@@ -5,6 +5,9 @@ import std.stdio : writeln;
 import deltotum.hal.sdl.sdl_lib : SdlLib;
 import deltotum.hal.sdl.sdl_window : SdlWindow;
 import deltotum.hal.sdl.sdl_surface: SdlSurface;
+import deltotum.hal.sdl.sdl_texture: SdlTexture;
+import deltotum.hal.sdl.sdl_renderer: SdlRenderer;
+
 
 import bindbc.sdl;
 
