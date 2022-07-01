@@ -7,6 +7,11 @@ import bindbc.sdl;
 
 class SdlSurface : SdlObjectWrapper!SDL_Surface
 {
+    this()
+    {
+        super();
+    }
+
     this(SDL_Surface* ptr)
     {
         super(ptr);

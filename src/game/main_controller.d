@@ -7,6 +7,9 @@ import deltotum.hal.sdl.sdl_window : SdlWindow;
 import deltotum.hal.sdl.sdl_surface: SdlSurface;
 import deltotum.hal.sdl.sdl_texture: SdlTexture;
 import deltotum.hal.sdl.sdl_renderer: SdlRenderer;
+import deltotum.hal.sdl.img.sdl_image: SdlImage;
+import deltotum.hal.sdl.img.sdl_img_lib: SdlImgLib;
+
 
 
 import bindbc.sdl;

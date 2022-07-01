@@ -9,7 +9,7 @@ import deltotum.hal.sdl.base.sdl_object : SdlObject;
 
 class SdlLib : SdlObject
 {
-    void initialize()
+    void initialize() const
     {
         SDLSupport loadResult = loadSDL();
         if (loadResult != bindbcConfig.sdlSupport)
@@ -19,10 +19,11 @@ class SdlLib : SdlObject
             {
                 error ~= " The SDL shared library failed to load.";
             }
-            else if (SDLSupport.badLibrary)
+            else if (loadResult == SDLSupport.badLibrary)
             {
                 error ~= " One or more SDL symbols failed to load.";
             }
+            
             throw new Exception(error);
         }
 
