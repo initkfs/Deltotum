@@ -1,6 +1,6 @@
 module deltotum.hal.sdl.sdl_lib;
 
-import std.string: toStringz, fromStringz;
+import std.string : toStringz, fromStringz;
 
 import bindbc.sdl;
 import bindbcConfig = bindbc.sdl.config;
@@ -44,31 +44,8 @@ class SdlLib : SdlObject
         return SDL_WasInit(flags);
     }
 
-    void clearError() const @nogc nothrow
-    {
-        //Move from SdlObject to prevent accidental call and error loss
-        SDL_ClearError();
-    }
-
     void quit() const @nogc nothrow
     {
         SDL_Quit();
-    }
-
-    void clearHints() const @nogc nothrow
-    {
-        SDL_ClearHints();
-    }
-
-    bool setHint(string name, string value)
-    {
-        //TODO string loss due to garbage collector?
-        SDL_bool isSet = SDL_SetHint(name.toStringz,
-            value.toStringz);
-        if (const err = getError)
-        {
-            throw new Exception(err);
-        }
-        return toBool(isSet);
     }
 }

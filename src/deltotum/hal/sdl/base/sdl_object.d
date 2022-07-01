@@ -13,6 +13,12 @@ class SdlObject
         return error.length > 0 ? error : null;
     }
 
+    void clearError() const @nogc nothrow
+    {
+        //Move from SdlObject to prevent accidental call and error loss
+        SDL_ClearError();
+    }
+
     bool toBool(SDL_bool value) const @nogc nothrow @safe
     {
         if (value == SDL_bool.SDL_TRUE)
@@ -30,7 +36,7 @@ class SdlObject
 
     string getSdlVersionInfo() const
     {
-        import std.format: format;
+        import std.format : format;
 
         SDL_version ver;
         SDL_GetVersion(&ver);
@@ -42,5 +48,22 @@ class SdlObject
         const(char)* hintPtr = SDL_GetHint(name.toStringz);
         string hintValue = hintPtr.fromStringz.idup;
         return hintValue;
+    }
+
+    void clearHints() const @nogc nothrow
+    {
+        SDL_ClearHints();
+    }
+
+    bool setHint(string name, string value)
+    {
+        //TODO string loss due to garbage collector?
+        SDL_bool isSet = SDL_SetHint(name.toStringz,
+            value.toStringz);
+        if (const err = getError)
+        {
+            throw new Exception(err);
+        }
+        return toBool(isSet);
     }
 }
