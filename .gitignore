@@ -1,0 +1,6 @@
+/.vscode/
+/.dub/
+/data/
+/dist/
+/dub.selections.json
+/deltotum

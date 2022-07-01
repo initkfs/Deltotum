@@ -1,0 +1,40 @@
+{
+    "description": "A simple graphics experiment.",
+    "license": "proprietary",
+    "authors": [
+        "initkfs"
+    ],
+    "copyright": "Copyright © 2022, initkfs",
+    "name": "deltotum",
+    "configurations": [{
+            "name": "app-dev",
+            "versions": [
+                "dev"
+            ],
+            "targetType": "executable",
+            "targetName": "deltotum",
+            "platforms": [
+                "linux"
+            ]
+        },
+        {
+            "name": "app-dist",
+            "versions": [],
+            "targetType": "executable",
+            "targetName": "./dist/deltotum",
+            "platforms": [
+                "linux"
+            ]
+        }
+    ],
+    "sourcePaths": ["./src"],
+    "importPaths": ["./src"],
+    "dependencies": {
+        "bindbc-sdl": "~>1.2.1"
+    },
+    "libs-posix": ["libudev"],
+    "versions": [
+        "SDL_Image",
+        "SDL_TTF"
+    ]
+}
