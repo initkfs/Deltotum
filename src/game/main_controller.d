@@ -23,6 +23,7 @@ class MainController
 
         sdlLib = new SdlLib;
         sdlLib.initialize;
+        writeln(sdlLib.getSdlVersionInfo);
 
         window = new SdlWindow(windowTitle, SDL_WINDOWPOS_UNDEFINED,
             SDL_WINDOWPOS_UNDEFINED,

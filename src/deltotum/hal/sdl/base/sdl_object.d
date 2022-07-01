@@ -27,4 +27,20 @@ class SdlObject
     {
         return value ? SDL_bool.SDL_TRUE : SDL_bool.SDL_FALSE;
     }
+
+    string getSdlVersionInfo() const
+    {
+        import std.format: format;
+
+        SDL_version ver;
+        SDL_GetVersion(&ver);
+        return format("%s.%s.%s", ver.major, ver.minor, ver.patch);
+    }
+
+    string getHint(string name) const nothrow
+    {
+        const(char)* hintPtr = SDL_GetHint(name.toStringz);
+        string hintValue = hintPtr.fromStringz.idup;
+        return hintValue;
+    }
 }
