@@ -33,15 +33,16 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
 
     }
 
-    bool setRenderDrawColor(ubyte r, ubyte g, ubyte b, ubyte a) @nogc nothrow
+    int setRenderDrawColor(ubyte r, ubyte g, ubyte b, ubyte a) @nogc nothrow
     {
-        int res = SDL_SetRenderDrawColor(ptr, r, g, b, a);
-        return res == 0;
+        const int zeroOrErrorCode = SDL_SetRenderDrawColor(ptr, r, g, b, a);
+        return zeroOrErrorCode;
     }
 
-    void clear() @nogc nothrow
+    int clear() @nogc nothrow
     {
-        SDL_RenderClear(ptr);
+        const int zeroOrErrorCode = SDL_RenderClear(ptr);
+        return zeroOrErrorCode;
     }
 
     void present() @nogc nothrow
@@ -49,34 +50,40 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         SDL_RenderPresent(ptr);
     }
 
-    void copy(SdlTexture texture) @nogc nothrow
+    int copy(SdlTexture texture) @nogc nothrow
     {
-        SDL_RenderCopy(ptr, texture.getStruct, null, null);
+        const int zeroOrErrorCode = SDL_RenderCopy(ptr, texture.getStruct, null, null);
+        return zeroOrErrorCode;
     }
 
-    void drawRect(SDL_Rect* rect) @nogc nothrow
+    int drawRect(SDL_Rect* rect) @nogc nothrow
     {
-        SDL_RenderDrawRect(ptr, rect);
+        const int zeroOrErrorCode = SDL_RenderDrawRect(ptr, rect);
+        return zeroOrErrorCode;
     }
 
-    void drawPoint(int x, int y) @nogc nothrow
+    int drawPoint(int x, int y) @nogc nothrow
     {
-        SDL_RenderDrawPoint(ptr, x, y);
+        const int zeroOrErrorCode = SDL_RenderDrawPoint(ptr, x, y);
+        return zeroOrErrorCode;
     }
 
-    void drawLine(int startX, int startY, int endX, int endY) @nogc nothrow
+    int drawLine(int startX, int startY, int endX, int endY) @nogc nothrow
     {
-        SDL_RenderDrawLine(ptr, startX, startY, endX, endY);
+        const int zeroOrErrorCode = SDL_RenderDrawLine(ptr, startX, startY, endX, endY);
+        return zeroOrErrorCode;
     }
 
-    void setViewport(SDL_Rect* rect) @nogc nothrow
+    int setViewport(SDL_Rect* rect) @nogc nothrow
     {
-        SDL_RenderSetViewport(ptr, rect);
+        const int zeroOrErrorCode = SDL_RenderSetViewport(ptr, rect);
+        return zeroOrErrorCode;
     }
 
-    void fillRect(SDL_Rect* rect) @nogc nothrow
+    int fillRect(SDL_Rect* rect) @nogc nothrow
     {
-        SDL_RenderFillRect(ptr, rect);
+         const int zeroOrErrorCode = SDL_RenderFillRect(ptr, rect);
+         return zeroOrErrorCode;
     }
 
     override void destroy()

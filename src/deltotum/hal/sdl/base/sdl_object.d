@@ -46,7 +46,10 @@ class SdlObject
     string getHint(string name) const nothrow
     {
         const(char)* hintPtr = SDL_GetHint(name.toStringz);
-        string hintValue = hintPtr.fromStringz.idup;
+        if(hintPtr is null){
+            return null;
+        }
+        immutable hintValue = hintPtr.fromStringz.idup;
         return hintValue;
     }
 
