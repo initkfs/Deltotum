@@ -1,10 +1,10 @@
-module app;
-
 /**
  * Authors: initkfs
  */
 
 int main(string[] args)
 {
-    return 0;
+    import game.main_controller: MainController;
+    const int result = (new MainController).run;
+    return result;
 }
