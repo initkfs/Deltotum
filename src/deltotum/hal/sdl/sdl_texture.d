@@ -18,6 +18,11 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         super();
     }
 
+    int getSize(int* width, int* height){
+        const int zeroOrErrorCode = SDL_QueryTexture(ptr, null, null, width, height);
+        return zeroOrErrorCode;
+    }
+
     void fromRenderer(SdlRenderer renderer, SdlSurface surface)
     {
         ptr = SDL_CreateTextureFromSurface(renderer.getStruct, surface.getStruct);

@@ -46,7 +46,7 @@ class MainController
             480);
         renderer = new SdlRenderer(window, SDL_RENDERER_ACCELERATED);
 
-        animationBitmap = new AnimationBitmap(renderer, 128, 128, 7);
+        animationBitmap = new AnimationBitmap(renderer, 7);
 
         //TODO asset manager
         import std.file: thisExePath;

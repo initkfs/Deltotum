@@ -19,14 +19,14 @@ class AnimationBitmap : DisplayObject
         int frameWidth;
         int frameHeight;
         int frameCount;
+        int frameDelay;
     }
 
-    this(SdlRenderer renderer, int frameWidth, int frameHeight, int frameCount)
+    this(SdlRenderer renderer, int frameCount, int frameDelay = 100)
     {
         this.renderer = renderer;
-        this.frameWidth = frameWidth;
-        this.frameHeight = frameHeight;
         this.frameCount = frameCount;
+        this.frameDelay = frameDelay;
     }
 
     void load(string path)
@@ -34,6 +34,22 @@ class AnimationBitmap : DisplayObject
         auto image = new SdlImage(path);
         texture = new SdlTexture;
         texture.fromRenderer(renderer, image);
+        int width;
+        int height;
+        int result = texture.getSize(&width, &height);
+        if (result != 0)
+        {
+            string error = "Unable to load image from " ~ path;
+            if (const err = texture.getError)
+            {
+                error ~= err;
+            }
+            throw new Exception(error);
+        }
+
+        frameWidth = width / frameCount;
+        frameHeight = height;
+
         image.destroy;
     }
 
@@ -86,7 +102,7 @@ class AnimationBitmap : DisplayObject
     override void update()
     {
         super.update;
-        currentFrame = int(((SDL_GetTicks() / frameWidth) % frameCount));
+        currentFrame = int(((SDL_GetTicks() / frameDelay) % frameCount));
     }
 
     override void destroy()
