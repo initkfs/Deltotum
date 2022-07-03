@@ -19,13 +19,14 @@ class SdlApplication : GraphicsApplication
         SdlImgLib imgLib;
         SdlEventManager eventManager;
 
-        double frameRate = 0;
+
         //TODO check overflow and remove increment
         double deltaTime = 0;
         double deltaTimeAccumulator = 0;
         double lastUpdateTime = 0;
     }
 
+    @property double frameRate = 0;
     @property bool isRunning;
     @property void delegate(double) onUpdate;
 
@@ -95,7 +96,7 @@ class SdlApplication : GraphicsApplication
             if (onUpdate !is null)
             {
                 //TODO, constant
-                onUpdate(1);
+                onUpdate(frameTime / 1000);
             }
             deltaTimeAccumulator -= frameTime;
         }

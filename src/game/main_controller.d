@@ -66,8 +66,8 @@ class MainController
         eventManager.onMouse = (e) {
             if (e.event == MouseEvent.Event.MOUSE_DOWN)
             {
-                sprite.velocity.x = 3;
-                sprite.acceleration.x = 0.4;
+                sprite.velocity.x = 500;
+                sprite.acceleration.x = 500;
             }
         };
 
