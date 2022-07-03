@@ -1,10 +1,8 @@
-module deltotum.display.bitmap.animation_bitmap;
+module deltotum.display.bitmap.bitmap;
 
 import std.stdio;
 
 import deltotum.display.display_object : DisplayObject;
-
-import deltotum.display.bitmap.bitmap: Bitmap;
 
 //TODO extract interfaces
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
@@ -13,25 +11,21 @@ import deltotum.hal.sdl.img.sdl_image : SdlImage;
 
 import bindbc.sdl;
 
-class AnimationBitmap : Bitmap
+//TODO remove duplication with animation bitmap, but it's not clear what code would be required
+class Bitmap : DisplayObject
 {
     protected
     {
-        int currentFrame;
-        int frameWidth;
-        int frameHeight;
-        int frameCount;
-        int frameDelay;
+        SdlTexture texture;
+        SdlRenderer renderer;
     }
 
-    this(SdlRenderer renderer, int frameCount, int frameDelay = 100)
+    this(SdlRenderer renderer)
     {
-        super(renderer);
-        this.frameCount = frameCount;
-        this.frameDelay = frameDelay;
+        this.renderer = renderer;
     }
 
-    override void load(string path)
+    void load(string path)
     {
         auto image = new SdlImage(path);
         texture = new SdlTexture;
@@ -49,31 +43,26 @@ class AnimationBitmap : Bitmap
             throw new Exception(error);
         }
 
-        frameWidth = width / frameCount;
-        frameHeight = height;
-
-        this.width = frameWidth;
-        this.height = frameHeight;
+        this.width = width;
+        this.height = height;
 
         image.destroy;
     }
 
-    void drawFrame(double x, double y, int width, int height, int currentRow, int currentFrame, SDL_RendererFlip flip = SDL_RendererFlip
+    void drawImage(int x, int y, int width, int height, SDL_RendererFlip flip = SDL_RendererFlip
             .SDL_FLIP_NONE)
     {
         SDL_Rect srcRect;
         SDL_Rect destRect;
-        srcRect.x = width * currentFrame;
-        srcRect.y = height * (currentRow - 1);
 
+        srcRect.x = 0;
+        srcRect.y = 0;
         srcRect.w = width;
         destRect.w = width;
-
-        srcRect.h = width;
+        srcRect.h = height;
         destRect.h = height;
-
-        destRect.x = cast(int) x;
-        destRect.y = cast(int) y;
+        destRect.x = x;
+        destRect.y = y;
 
         SDL_Point center = {0, 0};
         renderer.copyEx(texture, &srcRect, &destRect, 0, &center, flip);
@@ -82,12 +71,18 @@ class AnimationBitmap : Bitmap
     override void draw()
     {
         super.draw;
-        drawFrame(x, y, frameWidth, frameHeight, 1, currentFrame);
+        //or double?
+        drawImage(cast(int) x, cast(int) y, cast(int) width, cast(int) height);
     }
 
     override void update(double delta)
     {
         super.update(delta);
-        currentFrame = int(((SDL_GetTicks() / frameDelay) % frameCount));
+    }
+
+    override void destroy()
+    {
+        super.destroy;
+        texture.destroy;
     }
 }

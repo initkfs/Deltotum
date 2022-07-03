@@ -9,6 +9,7 @@ import deltotum.hal.sdl.sdl_texture : SdlTexture;
 import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 import deltotum.hal.sdl.img.sdl_image : SdlImage;
 import deltotum.hal.sdl.img.sdl_img_lib : SdlImgLib;
+import deltotum.display.bitmap.bitmap: Bitmap;
 import deltotum.display.bitmap.animation_bitmap : AnimationBitmap;
 import deltotum.application.sdl.sdl_application : SdlApplication;
 import deltotum.event.sdl.sdl_event_manager : SdlEventManager;
@@ -22,7 +23,7 @@ class MainController
     private
     {
         string windowTitle = "Hello, Deltotum.";
-        AnimationBitmap animationBitmap;
+        Bitmap sprite;
         bool running = true;
         SdlApplication application;
         Window window;
@@ -46,46 +47,48 @@ class MainController
         auto sdlRenderer = new SdlRenderer(sdlWindow, SDL_RENDERER_ACCELERATED);
         window = new Window(sdlRenderer, sdlWindow);
 
-        animationBitmap = new AnimationBitmap(window.renderer, 7);
+        //sprite = new AnimationBitmap(window.renderer, 7);
+        sprite = new Bitmap(window.renderer);
 
         //TODO asset manager
         import std.file : thisExePath;
         import std.path : buildPath, dirName;
 
-        string image = buildPath(thisExePath.dirName, "data/assets/anim-sprite.png");
+        string image = buildPath(thisExePath.dirName, "data/assets/sprite.png");
 
-        animationBitmap.load(image);
-        animationBitmap.x = 100;
-        animationBitmap.y = 100;
+        sprite.load(image);
+        sprite.x = 100;
+        sprite.y = 100;
+        sprite.draw;
 
         import deltotum.input.mouse.event.mouse_event : MouseEvent;
 
         eventManager.onMouse = (e) {
             if (e.event == MouseEvent.Event.MOUSE_DOWN)
             {
-                animationBitmap.velocity.x = 3;
-                animationBitmap.acceleration.x = 0.4;
+                sprite.velocity.x = 3;
+                sprite.acceleration.x = 0.4;
             }
         };
 
         application.onUpdate = (elapsedMs) {
 
-            if (animationBitmap.velocity.x > 0 && animationBitmap.x >= gameWidth - animationBitmap.width)
+            if (sprite.velocity.x > 0 && sprite.x >= gameWidth - sprite.width)
             {
-                animationBitmap.x = gameWidth - animationBitmap.width;
-                animationBitmap.velocity.x = 0;
-                animationBitmap.acceleration.x *= -1;
+                sprite.x = gameWidth - sprite.width;
+                sprite.velocity.x = 0;
+                sprite.acceleration.x *= -1;
             }
-            else if (animationBitmap.velocity.x < 0 && animationBitmap.x <= 0)
+            else if (sprite.velocity.x < 0 && sprite.x <= 0)
             {
-                animationBitmap.x = 0;
-                animationBitmap.velocity.x = 0;
-                animationBitmap.acceleration.x *= -1;
+                sprite.x = 0;
+                sprite.velocity.x = 0;
+                sprite.acceleration.x *= -1;
             }
 
             window.renderer.clear;
-            animationBitmap.draw;
-            animationBitmap.update(elapsedMs);
+            sprite.draw;
+            sprite.update(elapsedMs);
             window.renderer.present;
         };
 
@@ -93,7 +96,7 @@ class MainController
 
         application.clearErrors;
 
-        animationBitmap.destroy;
+        sprite.destroy;
 
         window.destroy;
 
