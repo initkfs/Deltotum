@@ -57,7 +57,11 @@ class SdlApplication : GraphicsApplication
         }
     }
 
-    override void quit()
+    void clearErrors(){
+        sdlLib.clearError;
+    }
+
+    override void quit() const @nogc nothrow
     {
         //TODO process EXIT event
         imgLib.quit;
@@ -96,9 +100,8 @@ class SdlApplication : GraphicsApplication
             lastElapsedMs = elapsedMs;
             delayMs = cast(uint)(freqMs - lastElapsedMs);
             SDL_Delay(delayMs);
-            import std.stdio;
-
-            writeln(1000 / delayMs);
+            //import std.stdio;
+            //writeln(1000 / delayMs);
         }
 
         return true;
@@ -106,13 +109,13 @@ class SdlApplication : GraphicsApplication
 
     void handleEvent(SDL_Event* event)
     {
+        eventManager.process(event);
+
         if (event.type == SDL_QUIT)
         {
             isRunning = false;
             return;
         }
-
-        eventManager.process(event);
     }
 
 }

@@ -11,7 +11,7 @@ import deltotum.hal.sdl.img.sdl_image : SdlImage;
 import deltotum.hal.sdl.img.sdl_img_lib : SdlImgLib;
 import deltotum.display.bitmap.animation_bitmap : AnimationBitmap;
 import deltotum.application.sdl.sdl_application : SdlApplication;
-import deltotum.event.sdl.sdl_event_manager: SdlEventManager;
+import deltotum.event.sdl.sdl_event_manager : SdlEventManager;
 
 import bindbc.sdl;
 
@@ -31,6 +31,7 @@ class MainController
     int run()
     {
         auto eventManager = new SdlEventManager;
+        eventManager.onApplication = (event) { writeln(event); };
 
         application = new SdlApplication(new SdlLib, new SdlImgLib, eventManager);
         application.initialize;
@@ -61,6 +62,8 @@ class MainController
         };
 
         application.runWait;
+
+        application.clearErrors;
 
         animationBitmap.destroy;
         renderer.destroy;
