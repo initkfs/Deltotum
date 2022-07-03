@@ -86,9 +86,16 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         return zeroOrErrorCode;
     }
 
-    int copyEx(SdlTexture texture, SDL_Rect* srcRect, SDL_Rect* destRect, double angle, SDL_Point* center, SDL_RendererFlip flip = SDL_RendererFlip.SDL_FLIP_NONE)
+    int copyEx(SdlTexture texture, SDL_Rect* srcRect, SDL_Rect* destRect, double angle, SDL_Point* center, SDL_RendererFlip flip = SDL_RendererFlip
+            .SDL_FLIP_NONE)
     {
         const int zeroOrErrorCode = SDL_RenderCopyEx(ptr, texture.getStruct, srcRect, destRect, angle, center, flip);
+        return zeroOrErrorCode;
+    }
+
+    int getOutputSize(int* width, int* height) @nogc nothrow
+    {
+        const int zeroOrErrorCode = SDL_GetRendererOutputSize(ptr, width, height);
         return zeroOrErrorCode;
     }
 

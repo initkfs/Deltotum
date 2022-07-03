@@ -34,6 +34,68 @@ class SdlWindow : SdlObjectWrapper!SDL_Window
         super(ptr);
     }
 
+    void focus() @nogc nothrow
+    {
+        SDL_RaiseWindow(ptr);
+    }
+
+    void getSize(int* width, int* height) @nogc nothrow
+    {
+        SDL_GetWindowSize(ptr, width, height);
+    }
+
+    void getPos(int* x, int* y) @nogc nothrow
+    {
+        SDL_GetWindowPosition(ptr, x, y);
+    }
+
+    void move(int x, int y) @nogc nothrow
+    {
+        SDL_SetWindowPosition(ptr, x, y);
+    }
+
+    void resize(int width, int height) @nogc nothrow
+    {
+        SDL_SetWindowSize(ptr, width, height);
+    }
+
+    void setBordered(bool value) @nogc nothrow
+    {
+        const SDL_bool sdlValue = fromBool(value);
+        SDL_SetWindowBordered(ptr, sdlValue);
+    }
+
+    void maximize() @nogc nothrow
+    {
+        SDL_MaximizeWindow(ptr);
+    }
+
+    void minimize() @nogc nothrow
+    {
+        SDL_MinimizeWindow(ptr);
+    }
+
+    void setTitle(string title) nothrow
+    {
+        SDL_SetWindowTitle(ptr, title.toStringz);
+    }
+
+    void setResizable(bool isResizable) @nogc nothrow
+    {
+        SDL_bool isSdlResizable = fromBool(isResizable);
+        SDL_SetWindowResizable(ptr, isSdlResizable);
+    }
+
+    void restore() @nogc nothrow
+    {
+        SDL_RestoreWindow(ptr);
+    }
+
+    uint getId() @nogc nothrow
+    {
+        return SDL_GetWindowID(ptr);
+    }
+
     override void destroy()
     {
         SDL_DestroyWindow(ptr);

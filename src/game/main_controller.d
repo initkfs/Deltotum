@@ -12,6 +12,7 @@ import deltotum.hal.sdl.img.sdl_img_lib : SdlImgLib;
 import deltotum.display.bitmap.animation_bitmap : AnimationBitmap;
 import deltotum.application.sdl.sdl_application : SdlApplication;
 import deltotum.event.sdl.sdl_event_manager : SdlEventManager;
+import deltotum.window.window: Window;
 
 import bindbc.sdl;
 
@@ -21,11 +22,10 @@ class MainController
     private
     {
         string windowTitle = "Hello, Deltotum.";
-        SdlWindow window;
-        SdlRenderer renderer;
         AnimationBitmap animationBitmap;
         bool running = true;
         SdlApplication application;
+        Window window;
     }
 
     int run()
@@ -36,13 +36,14 @@ class MainController
         application = new SdlApplication(new SdlLib, new SdlImgLib, eventManager);
         application.initialize;
 
-        window = new SdlWindow(windowTitle, SDL_WINDOWPOS_UNDEFINED,
+        auto sdlWindow = new SdlWindow(windowTitle, SDL_WINDOWPOS_UNDEFINED,
             SDL_WINDOWPOS_UNDEFINED,
             640,
             480);
-        renderer = new SdlRenderer(window, SDL_RENDERER_ACCELERATED);
+        auto sdlRenderer = new SdlRenderer(sdlWindow, SDL_RENDERER_ACCELERATED);
+        window = new Window(sdlRenderer, sdlWindow);
 
-        animationBitmap = new AnimationBitmap(renderer, 7);
+        animationBitmap = new AnimationBitmap(window.renderer, 7);
 
         //TODO asset manager
         import std.file : thisExePath;
@@ -55,10 +56,10 @@ class MainController
         animationBitmap.y = 100;
 
         application.onUpdate = (elapsedMs) {
-            renderer.clear;
+            window.renderer.clear;
             animationBitmap.draw;
             animationBitmap.update;
-            renderer.present;
+            window.renderer.present;
         };
 
         application.runWait;
@@ -66,7 +67,8 @@ class MainController
         application.clearErrors;
 
         animationBitmap.destroy;
-        renderer.destroy;
+
+        
         window.destroy;
 
         application.quit;
