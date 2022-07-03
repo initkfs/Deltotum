@@ -93,14 +93,14 @@ class SdlApplication : GraphicsApplication
         uint delayMs = 0;
         if (elapsedMs < freqMs)
         {
-            delayMs = cast(uint)(freqMs - elapsedMs);
+            lastElapsedMs = elapsedMs;
+            delayMs = cast(uint)(freqMs - lastElapsedMs);
             SDL_Delay(delayMs);
+            import std.stdio;
+
+            writeln(1000 / delayMs);
         }
 
-        lastElapsedMs = delayMs;
-
-        //import std.stdio;
-        //writeln(1000 / lastElapsedMs);
         return true;
     }
 
