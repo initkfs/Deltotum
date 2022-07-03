@@ -55,10 +55,18 @@ class MainController
         animationBitmap.x = 100;
         animationBitmap.y = 100;
 
+        import deltotum.input.mouse.event.mouse_event: MouseEvent;
+        eventManager.onMouse = (e){
+            if(e.event == MouseEvent.Event.MOUSE_DOWN){
+                animationBitmap.velocity.x = 1;
+                animationBitmap.velocity.y = 1;
+            }
+        };
+
         application.onUpdate = (elapsedMs) {
             window.renderer.clear;
             animationBitmap.draw;
-            animationBitmap.update;
+            animationBitmap.update(elapsedMs);
             window.renderer.present;
         };
 

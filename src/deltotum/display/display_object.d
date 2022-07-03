@@ -1,19 +1,30 @@
 module deltotum.display.display_object;
 
-class DisplayObject {
+import deltotum.math.vector3d : Vector3D;
 
-    @property int x;
-    @property int y;
+class DisplayObject
+{
 
-    void draw(){
+    @property double x;
+    @property double y;
+    @property Vector3D* velocity = new Vector3D;
+    @property Vector3D* acceleration = new Vector3D;
+
+    void draw()
+    {
 
     }
 
-    void update(){
-
+    void update(double delta)
+    {
+        velocity.x += acceleration.x;
+        velocity.y += acceleration.y;
+        x += velocity.x;
+        y += velocity.y;
     }
 
-    void destroy(){
+    void destroy()
+    {
 
     }
 }

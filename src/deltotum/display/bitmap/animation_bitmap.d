@@ -1,5 +1,7 @@
 module deltotum.display.bitmap.animation_bitmap;
 
+import std.stdio;
+
 import deltotum.display.display_object : DisplayObject;
 
 //TODO extract interfaces
@@ -72,7 +74,7 @@ class AnimationBitmap : DisplayObject
         renderer.copyEx(texture, &srcRect, &destRect, 0, &center, flip);
     }
 
-    void drawFrame(int x, int y, int width, int height, int currentRow, int currentFrame, SDL_RendererFlip flip = SDL_RendererFlip
+    void drawFrame(double x, double y, int width, int height, int currentRow, int currentFrame, SDL_RendererFlip flip = SDL_RendererFlip
             .SDL_FLIP_NONE)
     {
         SDL_Rect srcRect;
@@ -86,8 +88,8 @@ class AnimationBitmap : DisplayObject
         srcRect.h = width;
         destRect.h = height;
 
-        destRect.x = x;
-        destRect.y = y;
+        destRect.x = cast(int) x;
+        destRect.y = cast(int) y;
 
         SDL_Point center = {0, 0};
         renderer.copyEx(texture, &srcRect, &destRect, 0, &center, flip);
@@ -99,9 +101,9 @@ class AnimationBitmap : DisplayObject
         drawFrame(x, y, frameWidth, frameHeight, 1, currentFrame);
     }
 
-    override void update()
+    override void update(double delta)
     {
-        super.update;
+        super.update(delta);
         currentFrame = int(((SDL_GetTicks() / frameDelay) % frameCount));
     }
 
