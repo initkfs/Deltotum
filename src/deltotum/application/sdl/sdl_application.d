@@ -7,7 +7,6 @@ import deltotum.hal.sdl.sdl_lib : SdlLib;
 import deltotum.hal.sdl.img.sdl_img_lib : SdlImgLib;
 
 import std.stdio;
-import std.math.rounding : floor;
 
 import bindbc.sdl;
 
@@ -19,11 +18,12 @@ class SdlApplication : GraphicsApplication
         SdlLib sdlLib;
         SdlImgLib imgLib;
         SdlEventManager eventManager;
-        double frameRate = 0;
-        uint lastUpdate;
 
-        bool inBackground;
-        double lastElapsedMs = 0;
+        double frameRate = 0;
+        //TODO check overflow and remove increment
+        double deltaTime = 0;
+        double deltaTimeAccumulator = 0;
+        double lastUpdateTime = 0;
     }
 
     @property bool isRunning;
@@ -51,13 +51,15 @@ class SdlApplication : GraphicsApplication
 
     override void runWait()
     {
+        lastUpdateTime = SDL_GetTicks();
         while (isRunning)
         {
             update;
         }
     }
 
-    void clearErrors(){
+    void clearErrors()
+    {
         sdlLib.clearError;
     }
 
@@ -70,7 +72,13 @@ class SdlApplication : GraphicsApplication
 
     override bool update()
     {
-        ulong start = SDL_GetPerformanceCounter();
+        deltaTime = SDL_GetTicks() - lastUpdateTime;
+        lastUpdateTime += deltaTime;
+        deltaTimeAccumulator += deltaTime;
+
+        enum msInSec = 1000;
+        const frameTime = msInSec / frameRate;
+
         SDL_Event event;
 
         while (SDL_PollEvent(&event))
@@ -82,26 +90,14 @@ class SdlApplication : GraphicsApplication
             }
         }
 
-        if (onUpdate !is null)
+        while (deltaTimeAccumulator > frameTime)
         {
-            onUpdate(lastElapsedMs);
-        }
-
-        double freq = cast(double) SDL_GetPerformanceFrequency();
-        ulong end = SDL_GetPerformanceCounter();
-
-        enum double msInSec = 1000.0;
-        auto elapsedMs = (end - start) / freq * msInSec;
-        //TODO floor, compare double
-        double freqMs = msInSec / frameRate;
-        uint delayMs = 0;
-        if (elapsedMs < freqMs)
-        {
-            lastElapsedMs = elapsedMs;
-            delayMs = cast(uint)(floor(freqMs - lastElapsedMs));
-            SDL_Delay(delayMs);
-            //import std.stdio;
-            //writeln(1000 / delayMs);
+            if (onUpdate !is null)
+            {
+                //TODO, constant
+                onUpdate(1);
+            }
+            deltaTimeAccumulator -= frameTime;
         }
 
         return true;
@@ -117,5 +113,4 @@ class SdlApplication : GraphicsApplication
             return;
         }
     }
-
 }
