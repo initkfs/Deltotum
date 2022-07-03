@@ -9,7 +9,7 @@ import deltotum.hal.sdl.base.sdl_object : SdlObject;
 
 class SdlLib : SdlObject
 {
-    void initialize() const
+    void initialize(uint flags = SDL_INIT_EVERYTHING) const
     {
         SDLSupport loadResult = loadSDL();
         if (loadResult != bindbcConfig.sdlSupport)
@@ -27,7 +27,7 @@ class SdlLib : SdlObject
             throw new Exception(error);
         }
 
-        const result = SDL_Init(SDL_INIT_EVERYTHING);
+        const result = SDL_Init(flags);
         if (result != 0)
         {
             string initError = "Unable to initialize sdl subsystems.";

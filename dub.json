@@ -35,6 +35,7 @@
     "libs-posix": ["libudev"],
     "versions": [
         "SDL_Image",
-        "SDL_TTF"
+        "SDL_TTF",
+        "SDL_205"
     ]
 }

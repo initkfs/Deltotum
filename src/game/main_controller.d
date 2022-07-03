@@ -9,9 +9,9 @@ import deltotum.hal.sdl.sdl_texture : SdlTexture;
 import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 import deltotum.hal.sdl.img.sdl_image : SdlImage;
 import deltotum.hal.sdl.img.sdl_img_lib : SdlImgLib;
-import deltotum.display.bitmap.animation_bitmap: AnimationBitmap;
-
-;
+import deltotum.display.bitmap.animation_bitmap : AnimationBitmap;
+import deltotum.application.sdl.sdl_application : SdlApplication;
+import deltotum.event.sdl.sdl_event_manager: SdlEventManager;
 
 import bindbc.sdl;
 
@@ -20,25 +20,20 @@ class MainController
 
     private
     {
-        SdlLib sdlLib;
         string windowTitle = "Hello, Deltotum.";
         SdlWindow window;
         SdlRenderer renderer;
-        SdlImgLib imageLib;
         AnimationBitmap animationBitmap;
         bool running = true;
-        
+        SdlApplication application;
     }
 
     int run()
     {
+        auto eventManager = new SdlEventManager;
 
-        sdlLib = new SdlLib;
-        sdlLib.initialize;
-        writeln(sdlLib.getSdlVersionInfo);
-
-        imageLib = new SdlImgLib;
-        imageLib.initialize;
+        application = new SdlApplication(new SdlLib, new SdlImgLib, eventManager);
+        application.initialize;
 
         window = new SdlWindow(windowTitle, SDL_WINDOWPOS_UNDEFINED,
             SDL_WINDOWPOS_UNDEFINED,
@@ -49,43 +44,29 @@ class MainController
         animationBitmap = new AnimationBitmap(renderer, 7);
 
         //TODO asset manager
-        import std.file: thisExePath;
-        import std.path: buildPath, dirName;
+        import std.file : thisExePath;
+        import std.path : buildPath, dirName;
 
-        string image = buildPath(thisExePath.dirName, "data/assets/space/asteroids/asteroid.png"); 
+        string image = buildPath(thisExePath.dirName, "data/assets/space/asteroids/asteroid.png");
 
         animationBitmap.load(image);
         animationBitmap.x = 100;
         animationBitmap.y = 100;
 
-        while (running)
-        {
-            SDL_Event event;
-            //TODO while loop for events
-            if (SDL_PollEvent(&event))
-            {
-                switch (event.type)
-                {
-                case SDL_QUIT:
-                    running = false;
-                    break;
-                default:
-                    break;
-                }
-            }
-
+        application.onUpdate = (elapsedMs) {
             renderer.clear;
             animationBitmap.draw;
             animationBitmap.update;
             renderer.present;
-        }
+        };
+
+        application.runWait;
 
         animationBitmap.destroy;
         renderer.destroy;
-        sdlLib.clearError;
         window.destroy;
-        imageLib.quit;
-        sdlLib.quit;
+
+        application.quit;
         return 0;
     }
 }
