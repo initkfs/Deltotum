@@ -7,6 +7,8 @@ class DisplayObject
 
     @property double x;
     @property double y;
+    @property double width;
+    @property double height;
     @property Vector3D* velocity = new Vector3D;
     @property Vector3D* acceleration = new Vector3D;
 
@@ -17,10 +19,10 @@ class DisplayObject
 
     void update(double delta)
     {
-        velocity.x += acceleration.x;
-        velocity.y += acceleration.y;
-        x += velocity.x;
-        y += velocity.y;
+        velocity.x += acceleration.x * delta;
+        velocity.y += acceleration.y * delta;
+        x += velocity.x * delta;
+        y += velocity.y * delta;
     }
 
     void destroy()

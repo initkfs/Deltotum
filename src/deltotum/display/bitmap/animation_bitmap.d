@@ -52,6 +52,9 @@ class AnimationBitmap : DisplayObject
         frameWidth = width / frameCount;
         frameHeight = height;
 
+        this.width = frameWidth;
+        this.height = frameHeight;
+
         image.destroy;
     }
 

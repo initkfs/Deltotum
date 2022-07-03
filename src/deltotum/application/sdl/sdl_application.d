@@ -23,7 +23,7 @@ class SdlApplication : GraphicsApplication
         uint lastUpdate;
 
         bool inBackground;
-        double lastElapsedMs;
+        double lastElapsedMs = 0;
     }
 
     @property bool isRunning;
@@ -98,7 +98,7 @@ class SdlApplication : GraphicsApplication
         if (elapsedMs < freqMs)
         {
             lastElapsedMs = elapsedMs;
-            delayMs = cast(uint)(freqMs - lastElapsedMs);
+            delayMs = cast(uint)(floor(freqMs - lastElapsedMs));
             SDL_Delay(delayMs);
             //import std.stdio;
             //writeln(1000 / delayMs);
