@@ -3,6 +3,7 @@ module deltotum.display.display_object;
 import deltotum.application.components.uni.uni_component : UniComponent;
 
 import deltotum.math.vector3d : Vector3D;
+import deltotum.math.rect : Rect;
 
 /**
  * Authors: initkfs
@@ -50,6 +51,12 @@ abstract class DisplayObject : UniComponent
         velocity.y += acceleration.y * delta;
         x += velocity.x * delta;
         y += velocity.y * delta;
+    }
+
+    Rect bounds()
+    {
+        const Rect bounds = {x, y, width, height};
+        return bounds;
     }
 
     void destroy()
