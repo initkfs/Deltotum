@@ -14,7 +14,6 @@ import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 import deltotum.hal.sdl.img.sdl_image : SdlImage;
 import deltotum.hal.sdl.img.sdl_img_lib : SdlImgLib;
 import deltotum.display.bitmap.bitmap : Bitmap;
-import deltotum.display.bitmap.animation_bitmap : AnimationBitmap;
 import deltotum.application.sdl.sdl_application : SdlApplication;
 import deltotum.event.sdl.sdl_event_manager : SdlEventManager;
 import deltotum.window.window : Window;
