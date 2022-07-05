@@ -34,7 +34,8 @@ class SpriteSheet : Bitmap
 
         SpriteSheetAnimation[] animations = [];
         SpriteSheetAnimation currentAnimation;
-        uint currentAnimationIndex;
+        size_t currentAnimationIndex;
+        SDL_RendererFlip currentFlip = SDL_RendererFlip.SDL_FLIP_NONE;
     }
 
     this(int frameWidth, int frameHeight, int frameDelay = 100)
@@ -58,7 +59,7 @@ class SpriteSheet : Bitmap
         return isLoad;
     }
 
-    void addAnimation(string name, int[] indices, int row = 0, bool autoplay = true)
+    void addAnimation(string name, int[] indices, int row = 0, bool autoplay = false)
     {
         //TODO check exists;
         auto anim = new SpriteSheetAnimation;
@@ -73,13 +74,20 @@ class SpriteSheet : Bitmap
         }
     }
 
-    void playAnimation(string name)
+    void playAnimation(string name, SDL_RendererFlip flip = SDL_RendererFlip.SDL_FLIP_NONE)
     {
+        if (currentAnimation !is null && currentAnimation.name == name)
+        {
+            return;
+        }
+
         foreach (anim; animations)
         {
             if (anim.name == name)
             {
                 currentAnimation = anim;
+                currentAnimationIndex = 0;
+                this.currentFlip = flip;
             }
         }
     }
@@ -91,8 +99,8 @@ class SpriteSheet : Bitmap
         SDL_Rect destRect;
 
         //TODO remove casts
-        srcRect.x = cast(int) (width * frameIndex);
-        srcRect.y = cast(int) (height * rowIndex);
+        srcRect.x = cast(int)(width * frameIndex);
+        srcRect.y = cast(int)(height * rowIndex);
 
         srcRect.w = cast(int) width;
         destRect.w = cast(int) width;
@@ -117,12 +125,18 @@ class SpriteSheet : Bitmap
         const frameIndex = currentAnimation.indices[currentAnimationIndex];
         const frameRow = currentAnimation.row;
 
-        drawFrame(x, y, width, height, frameIndex, frameRow);
+        drawFrame(x, y, width, height, frameIndex, frameRow, currentFlip);
     }
 
     override void update(double delta)
     {
         super.update(delta);
+
+        if (currentAnimation is null)
+        {
+            return;
+        }
+
         const animLength = currentAnimation.indices.length;
         if (animLength > 0)
         {

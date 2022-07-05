@@ -5,10 +5,12 @@ import deltotum.event.sdl.sdl_event_manager : SdlEventManager;
 import deltotum.asset.asset_manager : AssetManager;
 import deltotum.state.state_manager : StateManager;
 import deltotum.state.state : State;
+import deltotum.input.keyboard.event.key_event : KeyEvent;
 
 import deltotum.hal.sdl.sdl_lib : SdlLib;
 import deltotum.hal.sdl.img.sdl_img_lib : SdlImgLib;
 import deltotum.window.window : Window;
+import deltotum.input.input : Input;
 
 import std.experimental.logger : Logger, MultiLogger, FileLogger, LogLevel, sharedLog;
 import std.stdio;
@@ -60,7 +62,21 @@ class SdlApplication : GraphicsApplication
         //set new global default logger
         sharedLog = multiLogger;
 
+        input = new Input;
+
         eventManager = new SdlEventManager;
+        eventManager.onKey = (key) {
+            if (key.event == KeyEvent.Event.KEY_DOWN)
+            {
+                input.justPressed = true;
+                input.lastKey = key.keyCode;
+            }
+            else if (key.event == KeyEvent.Event.KEY_UP)
+            {
+                input.justPressed = false;
+                input.lastKey = key.keyCode;
+            }
+        };
 
         stateManager = new StateManager;
 

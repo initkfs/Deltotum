@@ -4,6 +4,7 @@ import deltotum.application.components.units.simple_unit : SimpleUnit;
 
 import deltotum.asset.asset_manager : AssetManager;
 import deltotum.window.window : Window;
+import deltotum.input.input : Input;
 
 import std.experimental.logger.core : Logger;
 
@@ -17,6 +18,7 @@ class UniComponent : SimpleUnit
         Logger _logger;
         AssetManager _assets;
         Window _window;
+        Input _input;
     }
 
     void build(UniComponent uniComponent)
@@ -42,6 +44,7 @@ class UniComponent : SimpleUnit
         uniComponent.logger = parent.logger;
         uniComponent.assets = parent.assets;
         uniComponent.window = parent.window;
+        uniComponent.input = parent.input;
 
         uniComponent.afterBuild();
     }
@@ -98,6 +101,21 @@ class UniComponent : SimpleUnit
 
         enforce(window !is null, "Window must not be null");
         _window = window;
+
+    }
+
+    @property Input input() @safe pure nothrow
+    out (_input; _input !is null)
+    {
+        return _input;
+    }
+
+    @property void input(Input input) @safe pure
+    {
+        import std.exception : enforce;
+
+        enforce(input !is null, "Input must not be null");
+        _input = input;
 
     }
 }

@@ -14,11 +14,19 @@ abstract class DisplayObject : UniComponent
     @property double y = 0;
     @property double width = 0;
     @property double height = 0;
-    @property Vector3D* velocity = new Vector3D;
-    @property Vector3D* acceleration = new Vector3D;
+    @property Vector3D* velocity;
+    @property Vector3D* acceleration;
     @property bool isRedraw = false;
 
-    void drawContent() {
+    this()
+    {
+        //use initialization in constructor
+        velocity = new Vector3D;
+        acceleration = new Vector3D;
+    }
+
+    void drawContent()
+    {
 
     }
 
@@ -29,7 +37,8 @@ abstract class DisplayObject : UniComponent
         return true;
     }
 
-    void requestRedraw(){
+    void requestRedraw()
+    {
         isRedraw = true;
     }
 
