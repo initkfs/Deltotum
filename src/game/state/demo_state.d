@@ -4,6 +4,7 @@ import deltotum.state.state : State;
 
 import deltotum.display.bitmap.bitmap : Bitmap;
 import deltotum.display.bitmap.sprite_sheet : SpriteSheet;
+import deltotum.hal.sdl.mix.sdl_mix_music : SdlMixMusic;
 
 import std.stdio;
 

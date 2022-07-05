@@ -11,7 +11,7 @@ struct Rect
     double height = 0;
 
     bool overlaps(Rect other){
-        auto isOverlaps = (other.right > x) && (other.x < right) && (other.bottom > y) && (other.y < botton);
+        auto isOverlaps = (other.right > x) && (other.x < right) && (other.bottom > y) && (other.y < bottom);
         return isOverlaps;
     }
 

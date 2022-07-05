@@ -4,11 +4,14 @@ import deltotum.application.graphics_application : GraphicsApplication;
 import deltotum.event.sdl.sdl_event_manager : SdlEventManager;
 import deltotum.asset.asset_manager : AssetManager;
 import deltotum.state.state_manager : StateManager;
+import deltotum.audio.audio: Audio;
 import deltotum.state.state : State;
 import deltotum.input.keyboard.event.key_event : KeyEvent;
 
 import deltotum.hal.sdl.sdl_lib : SdlLib;
 import deltotum.hal.sdl.img.sdl_img_lib : SdlImgLib;
+import deltotum.hal.sdl.mix.sdl_mix_lib: SdlMixLib;
+
 import deltotum.window.window : Window;
 import deltotum.input.input : Input;
 
@@ -27,6 +30,7 @@ class SdlApplication : GraphicsApplication
     {
         SdlLib sdlLib;
         SdlImgLib imgLib;
+        SdlMixLib audioMixLib;
 
         //TODO check overflow and remove increment
         double deltaTime = 0;
@@ -40,10 +44,11 @@ class SdlApplication : GraphicsApplication
     @property SdlEventManager eventManager;
     @property StateManager stateManager;
 
-    this(SdlLib lib, SdlImgLib imgLib)
+    this(SdlLib lib, SdlImgLib imgLib, SdlMixLib audioMixLib)
     {
         this.sdlLib = lib;
         this.imgLib = imgLib;
+        this.audioMixLib = audioMixLib;
     }
 
     override void initialize(double frameRate = 60)
@@ -54,6 +59,7 @@ class SdlApplication : GraphicsApplication
         SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_WARN);
 
         imgLib.initialize;
+        audioMixLib.initialize;
 
         this.frameRate = frameRate;
 
@@ -63,6 +69,8 @@ class SdlApplication : GraphicsApplication
         sharedLog = multiLogger;
 
         input = new Input;
+
+        audio = new Audio(audioMixLib);
 
         eventManager = new SdlEventManager;
         eventManager.onKey = (key) {
@@ -125,7 +133,12 @@ class SdlApplication : GraphicsApplication
         {
             stateManager.destroy;
         }
+
+        //TODO auto destroy all services
+        audio.destroy;
+
         //TODO process EXIT event
+        audioMixLib.quit;
         imgLib.quit;
         sdlLib.quit;
     }

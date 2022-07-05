@@ -5,6 +5,7 @@ import deltotum.application.components.units.simple_unit : SimpleUnit;
 import deltotum.asset.asset_manager : AssetManager;
 import deltotum.window.window : Window;
 import deltotum.input.input : Input;
+import deltotum.audio.audio : Audio;
 
 import std.experimental.logger.core : Logger;
 
@@ -19,6 +20,7 @@ class UniComponent : SimpleUnit
         AssetManager _assets;
         Window _window;
         Input _input;
+        Audio _audio;
     }
 
     void build(UniComponent uniComponent)
@@ -45,6 +47,7 @@ class UniComponent : SimpleUnit
         uniComponent.assets = parent.assets;
         uniComponent.window = parent.window;
         uniComponent.input = parent.input;
+        uniComponent._audio = parent._audio;
 
         uniComponent.afterBuild();
     }
@@ -116,6 +119,21 @@ class UniComponent : SimpleUnit
 
         enforce(input !is null, "Input must not be null");
         _input = input;
+
+    }
+
+    @property Audio audio() @safe pure nothrow
+    out (_audio; _audio !is null)
+    {
+        return _audio;
+    }
+
+    @property void audio(Audio audio) @safe pure
+    {
+        import std.exception : enforce;
+
+        enforce(audio !is null, "Audio must not be null");
+        _audio = audio;
 
     }
 }

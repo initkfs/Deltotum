@@ -32,10 +32,11 @@
     "dependencies": {
         "bindbc-sdl": "~>1.2.1"
     },
-    "libs-posix": ["libudev"],
+    "libs-posix": [],
     "versions": [
         "SDL_Image",
         "SDL_TTF",
-        "SDL_205"
+        "SDL_205",
+        "SDL_Mixer_202"
     ]
 }
