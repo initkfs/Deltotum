@@ -27,9 +27,8 @@ class AnimationBitmap : Bitmap
         int frameDelay;
     }
 
-    this(SdlRenderer renderer, int frameCount, int frameDelay = 100)
+    this(int frameCount, int frameDelay = 100)
     {
-        super(renderer);
         this.frameCount = frameCount;
         this.frameDelay = frameDelay;
     }
@@ -38,7 +37,7 @@ class AnimationBitmap : Bitmap
     {
         auto image = new SdlImage(path);
         texture = new SdlTexture;
-        texture.fromRenderer(renderer, image);
+        texture.fromRenderer(window.renderer, image);
         int width;
         int height;
         int result = texture.getSize(&width, &height);
@@ -81,7 +80,7 @@ class AnimationBitmap : Bitmap
         destRect.y = cast(int) y;
 
         SDL_Point center = {0, 0};
-        renderer.copyEx(texture, &srcRect, &destRect, 0, &center, flip);
+        window.renderer.copyEx(texture, &srcRect, &destRect, 0, &center, flip);
     }
 
     override void drawContent()

@@ -21,12 +21,6 @@ class Bitmap : DisplayObject
     protected
     {
         SdlTexture texture;
-        SdlRenderer renderer;
-    }
-
-    this(SdlRenderer renderer)
-    {
-        this.renderer = renderer;
     }
 
     bool load(string path, int requestWidth = -1, int requestHeight = -1)
@@ -54,7 +48,7 @@ class Bitmap : DisplayObject
         }
 
         texture = new SdlTexture;
-        texture.fromRenderer(renderer, image);
+        texture.fromRenderer(window.renderer, image);
         int width;
         int height;
 
@@ -94,7 +88,7 @@ class Bitmap : DisplayObject
         destRect.y = y;
 
         SDL_Point center = {0, 0};
-        renderer.copyEx(texture, &srcRect, &destRect, 0, &center, flip);
+        window.renderer.copyEx(texture, &srcRect, &destRect, 0, &center, flip);
     }
 
     override void drawContent()

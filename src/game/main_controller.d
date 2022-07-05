@@ -19,6 +19,7 @@ import deltotum.application.sdl.sdl_application : SdlApplication;
 import deltotum.event.sdl.sdl_event_manager : SdlEventManager;
 import deltotum.window.window : Window;
 import deltotum.application.components.uni.uni_component : UniComponent;
+import game.state.demo_state: DemoState;
 
 import bindbc.sdl;
 
@@ -31,19 +32,12 @@ class MainController : UniComponent
     private
     {
         string windowTitle = "Hello, Deltotum.";
-        Bitmap sprite;
-        bool running = true;
         SdlApplication application;
-        Window window;
-
     }
 
     int run()
     {
-        auto eventManager = new SdlEventManager;
-        eventManager.onApplication = (event) { writeln(event); };
-
-        application = new SdlApplication(new SdlLib, new SdlImgLib, eventManager);
+        application = new SdlApplication(new SdlLib, new SdlImgLib);
         application.initialize;
 
         //TODO move to state
@@ -58,42 +52,12 @@ class MainController : UniComponent
             gameWidth,
             gameHeight);
         auto sdlRenderer = new SdlRenderer(sdlWindow, SDL_RENDERER_ACCELERATED);
-        window = new Window(sdlRenderer, sdlWindow);
+        application.window = new Window(sdlRenderer, sdlWindow);
 
-        //sprite = new AnimationBitmap(window.renderer, 7);
-        sprite = new Bitmap(window.renderer);
-        build(sprite);
-
-        bool isLoad = sprite.load("foreground.png", gameWidth,gameHeight);
-        if (!isLoad)
-        {
-            logger.error("Unable to load test sprite");
-        }
-
-        import deltotum.input.mouse.event.mouse_event : MouseEvent;
-
-        eventManager.onMouse = (e) {
-            if (e.event == MouseEvent.Event.MOUSE_DOWN)
-            {
-                sprite.velocity.x = 500;
-                sprite.acceleration.x = 500;
-            }
-        };
-
-        application.onUpdate = (elapsedMs) {
-
-            window.renderer.clear;
-            sprite.update(elapsedMs);
-            window.renderer.present;
-        };
+        auto gameState = new DemoState;
+        application.addState(gameState);
 
         application.runWait;
-
-        application.clearErrors;
-
-        sprite.destroy;
-
-        window.destroy;
 
         application.quit;
         return 0;
