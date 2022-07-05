@@ -64,14 +64,11 @@ class MainController : UniComponent
         sprite = new Bitmap(window.renderer);
         build(sprite);
 
-        bool isLoad = sprite.load("sprite.png");
+        bool isLoad = sprite.load("foreground.png", gameWidth,gameHeight);
         if (!isLoad)
         {
             logger.error("Unable to load test sprite");
         }
-        sprite.x = 100;
-        sprite.y = 100;
-        sprite.draw;
 
         import deltotum.input.mouse.event.mouse_event : MouseEvent;
 
@@ -85,21 +82,7 @@ class MainController : UniComponent
 
         application.onUpdate = (elapsedMs) {
 
-            if (sprite.velocity.x > 0 && sprite.x >= gameWidth - sprite.width)
-            {
-                sprite.x = gameWidth - sprite.width;
-                sprite.velocity.x = 0;
-                sprite.acceleration.x *= -1;
-            }
-            else if (sprite.velocity.x < 0 && sprite.x <= 0)
-            {
-                sprite.x = 0;
-                sprite.velocity.x = 0;
-                sprite.acceleration.x *= -1;
-            }
-
             window.renderer.clear;
-            sprite.draw;
             sprite.update(elapsedMs);
             window.renderer.present;
         };

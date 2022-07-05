@@ -34,7 +34,7 @@ class AnimationBitmap : Bitmap
         this.frameDelay = frameDelay;
     }
 
-    override bool load(string path)
+    override bool load(string path, int requestWidth = -1, int requestHeight = -1)
     {
         auto image = new SdlImage(path);
         texture = new SdlTexture;
@@ -84,9 +84,9 @@ class AnimationBitmap : Bitmap
         renderer.copyEx(texture, &srcRect, &destRect, 0, &center, flip);
     }
 
-    override void draw()
+    override void drawContent()
     {
-        super.draw;
+        super.drawContent;
         drawFrame(x, y, frameWidth, frameHeight, 1, currentFrame);
     }
 

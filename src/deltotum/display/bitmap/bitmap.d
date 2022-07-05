@@ -6,6 +6,7 @@ import deltotum.display.display_object : DisplayObject;
 
 //TODO extract interfaces
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
+import deltotum.hal.sdl.sdl_surface : SdlSurface;
 import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 import deltotum.hal.sdl.img.sdl_image : SdlImage;
 
@@ -28,7 +29,7 @@ class Bitmap : DisplayObject
         this.renderer = renderer;
     }
 
-    bool load(string path)
+    bool load(string path, int requestWidth = -1, int requestHeight = -1)
     {
         import std.path : isAbsolute;
         import std.file : isFile, exists;
@@ -40,11 +41,23 @@ class Bitmap : DisplayObject
             return false;
         }
 
-        auto image = new SdlImage(imagePath);
+        SdlSurface image = new SdlImage(imagePath);
+        int imageWidth = image.width;
+        int imageHeight = image.height;
+
+        //TODO move to image
+        if (requestWidth > 0 && requestWidth != imageWidth || requestHeight > 0 && requestHeight != imageHeight)
+        {
+            image.resize(requestWidth, requestHeight);
+            imageWidth = image.width;
+            imageHeight = image.height;
+        }
+
         texture = new SdlTexture;
         texture.fromRenderer(renderer, image);
         int width;
         int height;
+
         int result = texture.getSize(&width, &height);
         if (result != 0)
         {
@@ -61,6 +74,7 @@ class Bitmap : DisplayObject
         this.height = height;
 
         image.destroy;
+        requestRedraw;
         return true;
     }
 
@@ -83,16 +97,11 @@ class Bitmap : DisplayObject
         renderer.copyEx(texture, &srcRect, &destRect, 0, &center, flip);
     }
 
-    override void draw()
+    override void drawContent()
     {
-        super.draw;
+        super.drawContent;
         //or double?
         drawImage(cast(int) x, cast(int) y, cast(int) width, cast(int) height);
-    }
-
-    override void update(double delta)
-    {
-        super.update(delta);
     }
 
     override void destroy()
