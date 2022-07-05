@@ -5,6 +5,9 @@ import deltotum.hal.sdl.sdl_window : SdlWindow;
 
 import bindbc.sdl;
 
+/**
+ * Authors: initkfs
+ */
 class SdlSurface : SdlObjectWrapper!SDL_Surface
 {
     this()

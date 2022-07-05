@@ -5,6 +5,9 @@ import std.math.algebraic : sqrt;
 import std.math.operations : isClose;
 import std.math.trigonometry : acos;
 
+/**
+ * Authors: initkfs
+ */
 //TODO template types, operator overloads
 struct Vector3D
 {

@@ -6,6 +6,9 @@ import deltotum.hal.sdl.sdl_surface : SdlSurface;
 
 import bindbc.sdl;
 
+/**
+ * Authors: initkfs
+ */
 class SdlTexture : SdlObjectWrapper!SDL_Texture
 {
     this(SDL_Texture* ptr)
@@ -18,7 +21,8 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         super();
     }
 
-    int getSize(int* width, int* height){
+    int getSize(int* width, int* height)
+    {
         const int zeroOrErrorCode = SDL_QueryTexture(ptr, null, null, width, height);
         return zeroOrErrorCode;
     }

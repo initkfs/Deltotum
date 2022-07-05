@@ -2,6 +2,9 @@ module deltotum.event.event_base;
 
 import deltotum.event.event_type : EventType;
 
+/**
+ * Authors: initkfs
+ */
 mixin template EventBase()
 {
     EventType type;

@@ -3,6 +3,9 @@ module deltotum.input.mouse.event.mouse_event;
 import deltotum.event.event_base : EventBase;
 import deltotum.event.event_type : EventType;
 
+/**
+ * Authors: initkfs
+ */
 immutable struct MouseEvent
 {
     mixin EventBase;

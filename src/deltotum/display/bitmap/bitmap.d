@@ -11,6 +11,9 @@ import deltotum.hal.sdl.img.sdl_image : SdlImage;
 
 import bindbc.sdl;
 
+/**
+ * Authors: initkfs
+ */
 //TODO remove duplication with animation bitmap, but it's not clear what code would be required
 class Bitmap : DisplayObject
 {
@@ -25,9 +28,19 @@ class Bitmap : DisplayObject
         this.renderer = renderer;
     }
 
-    void load(string path)
+    bool load(string path)
     {
-        auto image = new SdlImage(path);
+        import std.path : isAbsolute;
+        import std.file : isFile, exists;
+
+        string imagePath = path.isAbsolute ? path : assets.filePath(path);
+        if (imagePath.length == 0 || !imagePath.exists || !imagePath.isFile)
+        {
+            //TODO log, texture placeholder
+            return false;
+        }
+
+        auto image = new SdlImage(imagePath);
         texture = new SdlTexture;
         texture.fromRenderer(renderer, image);
         int width;
@@ -40,13 +53,15 @@ class Bitmap : DisplayObject
             {
                 error ~= err;
             }
-            throw new Exception(error);
+            logger.errorf(error);
+            return false;
         }
 
         this.width = width;
         this.height = height;
 
         image.destroy;
+        return true;
     }
 
     void drawImage(int x, int y, int width, int height, SDL_RendererFlip flip = SDL_RendererFlip

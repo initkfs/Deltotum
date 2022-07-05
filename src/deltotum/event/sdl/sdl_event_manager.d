@@ -9,6 +9,9 @@ import deltotum.window.event.window_event : WindowEvent;
 import bindbc.sdl;
 import std.stdio;
 
+/**
+ * Authors: initkfs
+ */
 class SdlEventManager
 {
     @property void delegate(ApplicationEvent) onApplication;

@@ -6,6 +6,9 @@ import deltotum.hal.sdl.sdl_texture : SdlTexture;
 
 import bindbc.sdl;
 
+/**
+ * Authors: initkfs
+ */
 class SdlRenderer : SdlObjectWrapper!SDL_Renderer
 {
     @property SdlWindow window;

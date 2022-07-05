@@ -6,6 +6,9 @@ import std.string : toStringz, fromStringz;
 
 import bindbc.sdl;
 
+/**
+ * Authors: initkfs
+ */
 class SdlWindow : SdlObjectWrapper!SDL_Window
 {
 

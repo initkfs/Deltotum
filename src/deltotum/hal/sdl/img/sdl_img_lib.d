@@ -4,6 +4,9 @@ import deltotum.hal.sdl.img.base.sdl_image_object : SdlImageObject;
 
 import bindbc.sdl;
 
+/**
+ * Authors: initkfs
+ */
 class SdlImgLib : SdlImageObject
 {
 

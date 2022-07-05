@@ -4,6 +4,9 @@ import deltotum.hal.sdl.base.sdl_object : SdlObject;
 
 import std.exception : enforce;
 
+/**
+ * Authors: initkfs
+ */
 abstract class SdlObjectWrapper(T) : SdlObject
 {
     protected

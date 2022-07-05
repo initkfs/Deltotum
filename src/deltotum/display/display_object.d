@@ -1,8 +1,13 @@
 module deltotum.display.display_object;
 
+import deltotum.application.components.uni.uni_component : UniComponent;
+
 import deltotum.math.vector3d : Vector3D;
 
-class DisplayObject
+/**
+ * Authors: initkfs
+ */
+class DisplayObject : UniComponent
 {
 
     @property double x;

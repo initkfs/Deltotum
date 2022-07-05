@@ -6,6 +6,9 @@ import std.string : toStringz, fromStringz;
 
 import bindbc.sdl;
 
+/**
+ * Authors: initkfs
+ */
 class SdlImage : SdlSurface
 {
 
@@ -28,7 +31,7 @@ class SdlImage : SdlSurface
             }
             throw new Exception(error);
         }
-        
+
         auto surface = ptr;
         if (screenSurface !is null)
         {

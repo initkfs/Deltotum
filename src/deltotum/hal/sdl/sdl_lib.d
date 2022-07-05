@@ -7,6 +7,9 @@ import bindbcConfig = bindbc.sdl.config;
 
 import deltotum.hal.sdl.base.sdl_object : SdlObject;
 
+/**
+ * Authors: initkfs
+ */
 class SdlLib : SdlObject
 {
     void initialize(uint flags = SDL_INIT_EVERYTHING) const
@@ -23,7 +26,7 @@ class SdlLib : SdlObject
             {
                 error ~= " One or more SDL symbols failed to load.";
             }
-            
+
             throw new Exception(error);
         }
 

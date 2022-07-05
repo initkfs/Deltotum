@@ -2,14 +2,19 @@ module deltotum.application.sdl.sdl_application;
 
 import deltotum.application.graphics_application : GraphicsApplication;
 import deltotum.event.sdl.sdl_event_manager : SdlEventManager;
+import deltotum.asset.asset_manager : AssetManager;
 
 import deltotum.hal.sdl.sdl_lib : SdlLib;
 import deltotum.hal.sdl.img.sdl_img_lib : SdlImgLib;
 
+import std.experimental.logger : Logger, MultiLogger, FileLogger, LogLevel, sharedLog;
 import std.stdio;
 
 import bindbc.sdl;
 
+/**
+ * Authors: initkfs
+ */
 class SdlApplication : GraphicsApplication
 {
 
@@ -18,7 +23,6 @@ class SdlApplication : GraphicsApplication
         SdlLib sdlLib;
         SdlImgLib imgLib;
         SdlEventManager eventManager;
-
 
         //TODO check overflow and remove increment
         double deltaTime = 0;
@@ -47,12 +51,27 @@ class SdlApplication : GraphicsApplication
         imgLib.initialize;
 
         this.frameRate = frameRate;
+
+        auto multiLogger = new MultiLogger(LogLevel.trace);
+        this.logger = multiLogger;
+        //set new global default logger
+        sharedLog = multiLogger;
+
+        enum consoleLoggerLevel = LogLevel.trace;
+        auto consoleLogger = new FileLogger(stdout, consoleLoggerLevel);
+        const string consoleLoggerName = "stdout_logger";
+        multiLogger.insertLogger(consoleLoggerName, consoleLogger);
+        logger.tracef("Create stdout logger, name '%s', level '%s'",
+            consoleLoggerName, consoleLoggerLevel);
+
+        auto assetManager = new AssetManager(logger);
+        assets = assetManager;
+
         isRunning = true;
     }
 
     override void runWait()
     {
-        lastUpdateTime = SDL_GetTicks();
         while (isRunning)
         {
             update;

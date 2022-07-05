@@ -1,6 +1,11 @@
 module deltotum.application.graphics_application;
 
-abstract class GraphicsApplication
+import deltotum.application.components.uni.uni_component : UniComponent;
+
+/**
+ * Authors: initkfs
+ */
+abstract class GraphicsApplication : UniComponent
 {
 
     abstract void initialize(double frameRate);

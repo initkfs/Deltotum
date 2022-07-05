@@ -4,7 +4,7 @@ import std.stdio;
 
 import deltotum.display.display_object : DisplayObject;
 
-import deltotum.display.bitmap.bitmap: Bitmap;
+import deltotum.display.bitmap.bitmap : Bitmap;
 
 //TODO extract interfaces
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
@@ -13,6 +13,9 @@ import deltotum.hal.sdl.img.sdl_image : SdlImage;
 
 import bindbc.sdl;
 
+/**
+ * Authors: initkfs
+ */
 class AnimationBitmap : Bitmap
 {
     protected
@@ -31,7 +34,7 @@ class AnimationBitmap : Bitmap
         this.frameDelay = frameDelay;
     }
 
-    override void load(string path)
+    override bool load(string path)
     {
         auto image = new SdlImage(path);
         texture = new SdlTexture;
@@ -46,7 +49,8 @@ class AnimationBitmap : Bitmap
             {
                 error ~= err;
             }
-            throw new Exception(error);
+            logger.errorf(error);
+            return false;
         }
 
         frameWidth = width / frameCount;
@@ -56,6 +60,7 @@ class AnimationBitmap : Bitmap
         this.height = frameHeight;
 
         image.destroy;
+        return true;
     }
 
     void drawFrame(double x, double y, int width, int height, int currentRow, int currentFrame, SDL_RendererFlip flip = SDL_RendererFlip

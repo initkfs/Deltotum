@@ -6,6 +6,9 @@ import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 //TODO move to deltotum.hal;
 import bindbc.sdl;
 
+/**
+ * Authors: initkfs
+ */
 class Window
 {
     @property SdlRenderer renderer;

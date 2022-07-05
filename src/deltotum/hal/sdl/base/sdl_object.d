@@ -4,6 +4,9 @@ import std.string : toStringz, fromStringz;
 
 import bindbc.sdl;
 
+/**
+ * Authors: initkfs
+ */
 class SdlObject
 {
     string getError() const nothrow
@@ -46,7 +49,8 @@ class SdlObject
     string getHint(string name) const nothrow
     {
         const(char)* hintPtr = SDL_GetHint(name.toStringz);
-        if(hintPtr is null){
+        if (hintPtr is null)
+        {
             return null;
         }
         immutable hintValue = hintPtr.fromStringz.idup;

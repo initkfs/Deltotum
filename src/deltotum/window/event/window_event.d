@@ -3,6 +3,9 @@ module deltotum.window.event.window_event;
 import deltotum.event.event_base : EventBase;
 import deltotum.event.event_type : EventType;
 
+/**
+ * Authors: initkfs
+ */
 immutable struct WindowEvent
 {
     mixin EventBase;

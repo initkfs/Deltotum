@@ -1,5 +1,9 @@
 module game.main_controller;
 
+import deltotum.asset.asset_manager : AssetManager;
+
+import std.experimental.logger : Logger;
+
 import std.stdio : writeln;
 
 import deltotum.hal.sdl.sdl_lib : SdlLib;
@@ -9,15 +13,19 @@ import deltotum.hal.sdl.sdl_texture : SdlTexture;
 import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 import deltotum.hal.sdl.img.sdl_image : SdlImage;
 import deltotum.hal.sdl.img.sdl_img_lib : SdlImgLib;
-import deltotum.display.bitmap.bitmap: Bitmap;
+import deltotum.display.bitmap.bitmap : Bitmap;
 import deltotum.display.bitmap.animation_bitmap : AnimationBitmap;
 import deltotum.application.sdl.sdl_application : SdlApplication;
 import deltotum.event.sdl.sdl_event_manager : SdlEventManager;
 import deltotum.window.window : Window;
+import deltotum.application.components.uni.uni_component : UniComponent;
 
 import bindbc.sdl;
 
-class MainController
+/**
+ * Authors: initkfs
+ */
+class MainController : UniComponent
 {
 
     private
@@ -27,6 +35,7 @@ class MainController
         bool running = true;
         SdlApplication application;
         Window window;
+
     }
 
     int run()
@@ -37,8 +46,12 @@ class MainController
         application = new SdlApplication(new SdlLib, new SdlImgLib, eventManager);
         application.initialize;
 
-        enum gameWidth = 320;
-        enum gameHeight = 240;
+        //TODO move to state
+        this.logger = application.logger;
+        this.assets = application.assets;
+
+        enum gameWidth = 640;
+        enum gameHeight = 480;
 
         auto sdlWindow = new SdlWindow(windowTitle, SDL_WINDOWPOS_UNDEFINED,
             SDL_WINDOWPOS_UNDEFINED,
@@ -49,14 +62,13 @@ class MainController
 
         //sprite = new AnimationBitmap(window.renderer, 7);
         sprite = new Bitmap(window.renderer);
+        build(sprite);
 
-        //TODO asset manager
-        import std.file : thisExePath;
-        import std.path : buildPath, dirName;
-
-        string image = buildPath(thisExePath.dirName, "data/assets/sprite.png");
-
-        sprite.load(image);
+        bool isLoad = sprite.load("sprite.png");
+        if (!isLoad)
+        {
+            logger.error("Unable to load test sprite");
+        }
         sprite.x = 100;
         sprite.y = 100;
         sprite.draw;

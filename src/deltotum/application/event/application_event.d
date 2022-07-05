@@ -3,6 +3,9 @@ module deltotum.application.event.application_event;
 import deltotum.event.event_base : EventBase;
 import deltotum.event.event_type : EventType;
 
+/**
+ * Authors: initkfs
+ */
 immutable struct ApplicationEvent
 {
     mixin EventBase;

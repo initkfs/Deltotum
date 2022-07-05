@@ -3,6 +3,9 @@ module deltotum.input.keyboard.event.key_event;
 import deltotum.event.event_base : EventBase;
 import deltotum.event.event_type : EventType;
 
+/**
+ * Authors: initkfs
+ */
 immutable struct KeyEvent
 {
     mixin EventBase;
@@ -26,7 +29,7 @@ immutable struct KeyEvent
         this.modifier = modifier;
     }
 
-     string toString() immutable
+    string toString() immutable
     {
         import std.format : format;
 

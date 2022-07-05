@@ -4,6 +4,9 @@ import std.string : toStringz, fromStringz;
 
 import bindbc.sdl;
 
+/**
+ * Authors: initkfs
+ */
 class SdlImageObject
 {
 
