@@ -69,6 +69,12 @@ class Window
         return y;
     }
 
+    Rect getWorldBounds() @nogc nothrow {
+        auto bounds = nativeWindow.getWorldBounds;
+        Rect boundsRect = {bounds.x, bounds.y, bounds.w, bounds.h};
+        return boundsRect;
+    }
+
     Rect getScaleBounds() @nogc nothrow
     {
         auto bounds = nativeWindow.getScaleBounds;

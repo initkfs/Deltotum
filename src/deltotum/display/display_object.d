@@ -51,7 +51,6 @@ abstract class DisplayObject : UniComponent
             destRect.y = cast(int)(y + bounds.y);
             destRect.w = cast(int) width;
             destRect.h = cast(int) height;
-
             SDL_Point center = {0, 0};
             window.renderer.copyEx(texture, &srcRect, &destRect, 0, &center, flip);
         }

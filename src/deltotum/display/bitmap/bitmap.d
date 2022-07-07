@@ -76,8 +76,8 @@ class Bitmap : DisplayObject
     void drawImage(int x, int y, int width, int height, SDL_RendererFlip flip = SDL_RendererFlip
             .SDL_FLIP_NONE)
     {
-        Rect srcBounds = {x, y, width, height};
-        drawTexture(texture, srcBounds, x, y, flip);
+        Rect textureBounds = {0, 0, width, height};
+        drawTexture(texture, textureBounds, x, y, flip);
     }
 
     override void drawContent()

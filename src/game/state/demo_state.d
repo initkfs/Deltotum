@@ -3,8 +3,10 @@ module game.state.demo_state;
 import deltotum.state.state : State;
 
 import deltotum.display.bitmap.bitmap : Bitmap;
+import deltotum.display.scrolling.scroller : Scroller;
 import deltotum.display.bitmap.sprite_sheet : SpriteSheet;
 import deltotum.hal.sdl.mix.sdl_mix_music : SdlMixMusic;
+import deltotum.math.direction : Direction;
 
 import std.stdio;
 
@@ -18,7 +20,9 @@ class DemoState : State
     private
     {
         Bitmap foreground;
+        Bitmap foreground2;
         SpriteSheet player;
+        Scroller scroller;
 
         double jumpTimer = 0;
         bool jumping;
@@ -28,14 +32,20 @@ class DemoState : State
     {
         foreground = new Bitmap;
         build(foreground);
+        foreground2 = new Bitmap;
+        build(foreground2);
 
-        bool isLoad = foreground.load("foreground.png", gameWidth, gameHeight);
-        if (!isLoad)
-        {
-            logger.error("Unable to load test sprite");
-        }
+        scroller = new Scroller;
+        add(scroller);
+        build(scroller);
+        scroller.speed = 30;
+        scroller.direction = Direction.left;
 
-        add(foreground);
+        foreground.load("foreground.png", gameWidth, gameHeight);
+        foreground2.load("foreground.png", gameWidth, gameHeight);
+
+        scroller.current = foreground;
+        scroller.next = foreground2;
 
         player = new SpriteSheet(71, 67, 160);
         build(player);
@@ -66,6 +76,8 @@ class DemoState : State
 
         enum speed = 100;
 
+        auto worldBounds = window.getWorldBounds;
+
         auto up = input.pressed(SDLK_w);
         auto down = input.pressed(SDLK_s);
         auto left = input.pressed(SDLK_a);
@@ -84,13 +96,32 @@ class DemoState : State
             right = false;
         }
 
+        if (scroller.direction == Direction.left && !right)
+        {
+            scroller.isScroll = false;
+        }
+
+        if (scroller.direction == Direction.right && !left)
+        {
+            scroller.isScroll = false;
+        }
+
         if (right)
         {
             if (!up && !fall)
             {
                 player.playAnimation("run");
             }
-            player.x += speed * delta;
+
+            if (player.x <= worldBounds.width / 2 - player.width)
+            {
+                player.x += speed * delta;
+            }
+            else
+            {
+                scroller.isScroll = true;
+            }
+
         }
         else if (left)
         {
@@ -136,6 +167,5 @@ class DemoState : State
             fall = false;
             jumping = false;
         }
-
     }
 }

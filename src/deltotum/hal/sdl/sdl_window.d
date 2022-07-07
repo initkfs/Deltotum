@@ -52,19 +52,31 @@ class SdlWindow : SdlObjectWrapper!SDL_Window
         SDL_RaiseWindow(ptr);
     }
 
+    SDL_Rect getWorldBounds() @nogc nothrow
+    {
+        SDL_Rect bounds;
+        bounds.x = 0;
+        bounds.y = 0;
+        bounds.w = initialWidth;
+        bounds.h = initialHeight;
+        return bounds;
+    }
+
     SDL_Rect getScaleBounds() @nogc nothrow
     {
         int width, height;
         getSize(&width, &height);
-    
+
         SDL_Rect bounds;
-        if(width > initialWidth){
+        if (width > initialWidth)
+        {
             const widthBar = (width - initialWidth) / 2;
             bounds.x = widthBar;
             bounds.w = width - widthBar;
         }
 
-        if(height > initialHeight){
+        if (height > initialHeight)
+        {
             const heightBar = (height - initialHeight) / 2;
             bounds.y = heightBar;
             bounds.h = height - heightBar;
