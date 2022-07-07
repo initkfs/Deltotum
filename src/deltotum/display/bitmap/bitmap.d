@@ -9,6 +9,7 @@ import deltotum.hal.sdl.sdl_texture : SdlTexture;
 import deltotum.hal.sdl.sdl_surface : SdlSurface;
 import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 import deltotum.hal.sdl.img.sdl_image : SdlImage;
+import deltotum.math.rect : Rect;
 
 import bindbc.sdl;
 
@@ -75,20 +76,8 @@ class Bitmap : DisplayObject
     void drawImage(int x, int y, int width, int height, SDL_RendererFlip flip = SDL_RendererFlip
             .SDL_FLIP_NONE)
     {
-        SDL_Rect srcRect;
-        SDL_Rect destRect;
-
-        srcRect.x = 0;
-        srcRect.y = 0;
-        srcRect.w = width;
-        destRect.w = width;
-        srcRect.h = height;
-        destRect.h = height;
-        destRect.x = x;
-        destRect.y = y;
-
-        SDL_Point center = {0, 0};
-        window.renderer.copyEx(texture, &srcRect, &destRect, 0, &center, flip);
+        Rect srcBounds = {x, y, width, height};
+        drawTexture(texture, srcBounds, x, y, flip);
     }
 
     override void drawContent()

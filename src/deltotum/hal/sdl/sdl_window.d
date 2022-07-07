@@ -14,12 +14,22 @@ class SdlWindow : SdlObjectWrapper!SDL_Window
 
     @property string title;
 
+    private
+    {
+        int initialWidth;
+        int initialHeight;
+        double initialAspectRatio = 0;
+    }
+
     this(string title,
         int x, int y, int w,
         int h, uint flags = SDL_WINDOW_RESIZABLE)
     {
         super();
         this.title = title;
+        this.initialWidth = w;
+        this.initialHeight = h;
+        initialAspectRatio = initialWidth / initialHeight;
 
         ptr = SDL_CreateWindow(title.toStringz,
             x, y, w,
@@ -40,6 +50,27 @@ class SdlWindow : SdlObjectWrapper!SDL_Window
     void focus() @nogc nothrow
     {
         SDL_RaiseWindow(ptr);
+    }
+
+    SDL_Rect getScaleBounds() @nogc nothrow
+    {
+        int width, height;
+        getSize(&width, &height);
+    
+        SDL_Rect bounds;
+        if(width > initialWidth){
+            const widthBar = (width - initialWidth) / 2;
+            bounds.x = widthBar;
+            bounds.w = width - widthBar;
+        }
+
+        if(height > initialHeight){
+            const heightBar = (height - initialHeight) / 2;
+            bounds.y = heightBar;
+            bounds.h = height - heightBar;
+        }
+
+        return bounds;
     }
 
     void getSize(int* width, int* height) @nogc nothrow

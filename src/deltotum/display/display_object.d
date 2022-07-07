@@ -4,6 +4,9 @@ import deltotum.application.components.uni.uni_component : UniComponent;
 
 import deltotum.math.vector3d : Vector3D;
 import deltotum.math.rect : Rect;
+import deltotum.hal.sdl.sdl_texture : SdlTexture;
+
+import bindbc.sdl;
 
 /**
  * Authors: initkfs
@@ -31,6 +34,29 @@ abstract class DisplayObject : UniComponent
 
     }
 
+    void drawTexture(SdlTexture texture, Rect textureBounds, int x = 0, int y = 0, SDL_RendererFlip flip = SDL_RendererFlip
+            .SDL_FLIP_NONE)
+    {
+        {
+            SDL_Rect srcRect;
+            srcRect.x = cast(int) textureBounds.x;
+            srcRect.y = cast(int) textureBounds.y;
+            srcRect.w = cast(int) textureBounds.width;
+            srcRect.h = cast(int) textureBounds.height;
+
+            Rect bounds = window.getScaleBounds;
+
+            SDL_Rect destRect;
+            destRect.x = cast(int)(x + bounds.x);
+            destRect.y = cast(int)(y + bounds.y);
+            destRect.w = cast(int) width;
+            destRect.h = cast(int) height;
+
+            SDL_Point center = {0, 0};
+            window.renderer.copyEx(texture, &srcRect, &destRect, 0, &center, flip);
+        }
+    }
+
     final bool draw()
     {
         //TODO layer
@@ -45,8 +71,6 @@ abstract class DisplayObject : UniComponent
 
     void update(double delta)
     {
-        draw;
-
         velocity.x += acceleration.x * delta;
         velocity.y += acceleration.y * delta;
         x += velocity.x * delta;

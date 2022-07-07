@@ -10,6 +10,7 @@ import deltotum.display.bitmap.bitmap : Bitmap;
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
 import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 import deltotum.hal.sdl.img.sdl_image : SdlImage;
+import deltotum.math.rect: Rect;
 
 import bindbc.sdl;
 
@@ -95,24 +96,13 @@ class SpriteSheet : Bitmap
     void drawFrame(double x, double y, double width, double height, int frameIndex, int rowIndex, SDL_RendererFlip flip = SDL_RendererFlip
             .SDL_FLIP_NONE)
     {
-        SDL_Rect srcRect;
-        SDL_Rect destRect;
-
-        //TODO remove casts
+        Rect srcRect;
         srcRect.x = cast(int)(width * frameIndex);
         srcRect.y = cast(int)(height * rowIndex);
+        srcRect.width = cast(int) width;
+        srcRect.height = cast(int) height;
 
-        srcRect.w = cast(int) width;
-        destRect.w = cast(int) width;
-
-        srcRect.h = cast(int) width;
-        destRect.h = cast(int) height;
-
-        destRect.x = cast(int) x;
-        destRect.y = cast(int) y;
-
-        SDL_Point center = {0, 0};
-        window.renderer.copyEx(texture, &srcRect, &destRect, 0, &center, flip);
+        drawTexture(texture, srcRect, cast(int) x, cast(int) y, flip);
     }
 
     override void drawContent()

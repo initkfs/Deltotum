@@ -2,6 +2,7 @@ module deltotum.window.window;
 
 import deltotum.hal.sdl.sdl_window : SdlWindow;
 import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
+import deltotum.math.rect : Rect;
 
 //TODO move to deltotum.hal;
 import bindbc.sdl;
@@ -66,6 +67,13 @@ class Window
         int x, y;
         nativeWindow.getPos(&x, &y);
         return y;
+    }
+
+    Rect getScaleBounds() @nogc nothrow
+    {
+        auto bounds = nativeWindow.getScaleBounds;
+        Rect boundsRect = {bounds.x, bounds.y, bounds.w, bounds.h};
+        return boundsRect;
     }
 
     double getScale() @nogc nothrow

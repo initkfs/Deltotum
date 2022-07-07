@@ -27,6 +27,7 @@ class State : UniComponent
         foreach (obj; displayObjects)
         {
             obj.update(delta);
+            obj.draw;
         }
     }
 
