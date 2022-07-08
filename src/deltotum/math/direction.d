@@ -1,5 +1,7 @@
 module deltotum.math.direction;
-
+/**
+ * Authors: initkfs
+ */
 enum Direction
 {
     none,

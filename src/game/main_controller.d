@@ -53,6 +53,8 @@ class MainController : UniComponent
             gameHeight);
         auto sdlRenderer = new SdlRenderer(sdlWindow, SDL_RENDERER_ACCELERATED);
         application.window = new Window(sdlRenderer, sdlWindow);
+        //TODO remove
+        application.window.frameRate = application.frameRate;
 
         auto gameState = new DemoState;
         application.addState(gameState);

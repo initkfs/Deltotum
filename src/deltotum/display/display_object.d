@@ -5,8 +5,10 @@ import deltotum.application.components.uni.uni_component : UniComponent;
 import deltotum.math.vector2d : Vector2D;
 import deltotum.math.rect : Rect;
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
-import deltotum.physics.physical_body: PhysicalBody;
+import deltotum.physics.physical_body : PhysicalBody;
 
+import std.math.operations : isClose;
+import std.stdio;
 
 import bindbc.sdl;
 
@@ -23,6 +25,7 @@ abstract class DisplayObject : PhysicalBody
     @property Vector2D* velocity;
     @property Vector2D* acceleration;
     @property bool isRedraw = false;
+    @property double opacity = 1;
 
     this()
     {
@@ -56,6 +59,13 @@ abstract class DisplayObject : PhysicalBody
             destRect.w = cast(int) width;
             destRect.h = cast(int) height;
             SDL_Point center = {0, 0};
+
+            //TODO compare double
+            if (!isClose(texture.opacity, opacity))
+            {
+                texture.opacity = opacity;
+            }
+
             window.renderer.copyEx(texture, &srcRect, &destRect, 0, &center, flip);
         }
     }

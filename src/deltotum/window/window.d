@@ -14,6 +14,8 @@ class Window
 {
     @property SdlRenderer renderer;
     @property SdlWindow nativeWindow;
+    //TODO remove
+    @property double frameRate;
 
     this(SdlRenderer renderer, SdlWindow window)
     {

@@ -9,6 +9,7 @@ import deltotum.hal.sdl.mix.sdl_mix_music : SdlMixMusic;
 import deltotum.math.direction : Direction;
 import deltotum.particles.emitter : Emitter;
 import deltotum.particles.particle : Particle;
+import deltotum.tweens.tween : Tween;
 
 import deltotum.physics.collision.aabb_collision.detector : AABBCollisionDetector;
 import deltotum.physics.collision.newtonian_collision_resolver : NewtonianCollisionResolver;
@@ -38,6 +39,7 @@ class DemoState : State
         bool fall;
         AABBCollisionDetector collisionDetector;
         NewtonianCollisionResolver collisionResolver;
+        Tween tween;
     }
     override void create()
     {
@@ -116,6 +118,14 @@ class DemoState : State
 
         //     return true;
         // };
+
+        // tween = new Tween(0, 1, 2000, window.frameRate);
+        // build(tween);
+        // tween.isInverse = true;
+        // tween.onValue = (value) { foreground.opacity = value; };
+        // add(tween);
+        // tween.run;
+
     }
 
     override void update(double delta)

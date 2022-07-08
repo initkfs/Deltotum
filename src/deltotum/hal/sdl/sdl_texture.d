@@ -11,6 +11,12 @@ import bindbc.sdl;
  */
 class SdlTexture : SdlObjectWrapper!SDL_Texture
 {
+    //TODO move to Texture
+    private
+    {
+        double _opacity;
+    }
+
     this(SDL_Texture* ptr)
     {
         super(ptr);
@@ -40,10 +46,32 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
             //TODO or tryParse\return bool?
             throw new Exception(error);
         }
+        SDL_SetTextureBlendMode(ptr, SDL_BLENDMODE_BLEND);
+    }
+
+    int changeOpacity(double opacity)  @nogc nothrow
+    {
+        const int zeroOrErrorCode = SDL_SetTextureAlphaMod(ptr, cast(ubyte)(255 * opacity));
+        return zeroOrErrorCode;
     }
 
     override void destroy() @nogc nothrow
     {
         SDL_DestroyTexture(ptr);
     }
+
+    @property double opacity() @safe pure nothrow
+    {
+        return _opacity;
+    }
+
+    @property void opacity(double opacity) @nogc nothrow
+    {
+        _opacity = opacity;
+        if (ptr)
+        {
+            changeOpacity(_opacity);
+        }
+    }
+
 }
