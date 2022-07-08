@@ -1,7 +1,7 @@
 module deltotum.particles.particle;
 
 import deltotum.display.bitmap.sprite_sheet : SpriteSheet;
-import deltotum.math.vector3d : Vector3D;
+import deltotum.math.vector2d : Vector2D;
 
 /**
  * Authors: initkfs

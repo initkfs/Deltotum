@@ -2,7 +2,7 @@ module deltotum.display.display_object;
 
 import deltotum.application.components.uni.uni_component : UniComponent;
 
-import deltotum.math.vector3d : Vector3D;
+import deltotum.math.vector2d : Vector2D;
 import deltotum.math.rect : Rect;
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
 
@@ -18,15 +18,15 @@ abstract class DisplayObject : UniComponent
     @property double y = 0;
     @property double width = 0;
     @property double height = 0;
-    @property Vector3D* velocity;
-    @property Vector3D* acceleration;
+    @property Vector2D* velocity;
+    @property Vector2D* acceleration;
     @property bool isRedraw = false;
 
     this()
     {
         //use initialization in constructor
-        velocity = new Vector3D;
-        acceleration = new Vector3D;
+        velocity = new Vector2D;
+        acceleration = new Vector2D;
     }
 
     void drawContent()

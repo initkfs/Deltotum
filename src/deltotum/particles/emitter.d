@@ -2,7 +2,7 @@ module deltotum.particles.emitter;
 
 import deltotum.display.display_object : DisplayObject;
 import deltotum.particles.particle : Particle;
-import deltotum.math.vector3d : Vector3D;
+import deltotum.math.vector2d : Vector2D;
 
 import std.stdio;
 
@@ -14,8 +14,8 @@ class Emitter : DisplayObject
     @property int lifetime = 200;
     @property int countPerFrame;
     @property Particle delegate() particleFactory;
-    @property Vector3D* particleVelocity;
-    @property Vector3D* particleAcceleration;
+    @property Vector2D* particleVelocity;
+    @property Vector2D* particleAcceleration;
 
     private
     {
@@ -26,8 +26,8 @@ class Emitter : DisplayObject
     this()
     {
         super();
-        particleVelocity = new Vector3D;
-        particleAcceleration = new Vector3D;
+        particleVelocity = new Vector2D;
+        particleAcceleration = new Vector2D;
     }
 
     void emit()
