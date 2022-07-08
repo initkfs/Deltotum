@@ -10,6 +10,9 @@ import deltotum.math.direction : Direction;
 import deltotum.particles.emitter : Emitter;
 import deltotum.particles.particle : Particle;
 
+import deltotum.physics.collision.aabb_collision.detector : AABBCollisionDetector;
+import deltotum.physics.collision.newtonian_collision_resolver : NewtonianCollisionResolver;
+
 import std.stdio;
 
 import bindbc.sdl;
@@ -33,6 +36,8 @@ class DemoState : State
         double jumpTimer = 0;
         bool jumping;
         bool fall;
+        AABBCollisionDetector collisionDetector;
+        NewtonianCollisionResolver collisionResolver;
     }
     override void create()
     {
@@ -76,11 +81,12 @@ class DemoState : State
         add(player);
 
         emitter = new Emitter;
+        emitter.countPerFrame = 1;
         build(emitter);
         add(emitter);
 
         emitter.lifetime = 200;
-        emitter.countPerFrame = 10;
+        emitter.countPerFrame = 1;
         emitter.particleVelocity.y = 100;
 
         emitter.particleFactory = () {
@@ -93,9 +99,23 @@ class DemoState : State
             return particle;
         };
 
-        
+        emitter.particleMass = 0.1;
+        player.mass = 0.1;
+
         emitter.x = 100 + player.width / 2;
         emitter.y = 200;
+
+        collisionResolver = new NewtonianCollisionResolver;
+        collisionDetector = new AABBCollisionDetector;
+        // emitter.onParticleUpdate = (Particle p) {
+        //     if (collisionDetector.intersect(p.bounds, player.bounds))
+        //     {
+        //         collisionResolver.resolve(p, player);
+        //         return false;
+        //     }
+
+        //     return true;
+        // };
     }
 
     override void update(double delta)

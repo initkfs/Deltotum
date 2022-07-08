@@ -1,5 +1,6 @@
 module deltotum.math.rect;
 
+import deltotum.math.vector2d: Vector2D;
 /**
  * Authors: initkfs
  */
@@ -26,6 +27,16 @@ struct Rect
 
     double bottom(){
         return y + height;
+    }
+
+    Vector2D minPoint(){
+        Vector2D minXPos = {x, y};
+        return minXPos;
+    }
+
+    Vector2D maxPoint(){
+        Vector2D maxYPos = {right, bottom};
+        return maxYPos;
     }
 
 }

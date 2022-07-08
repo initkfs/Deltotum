@@ -16,6 +16,8 @@ class Emitter : DisplayObject
     @property Particle delegate() particleFactory;
     @property Vector2D* particleVelocity;
     @property Vector2D* particleAcceleration;
+    @property double particleMass = 0;
+    @property bool delegate(Particle) onParticleUpdate;
 
     private
     {
@@ -43,6 +45,7 @@ class Emitter : DisplayObject
         particle.lifetime = lifetime;
         particle.x = x;
         particle.y = y;
+        particle.mass = particleMass;
         particle.velocity.x = particleVelocity.x;
         particle.velocity.y = particleVelocity.y;
         particle.acceleration.x = particleAcceleration.x;
@@ -81,6 +84,18 @@ class Emitter : DisplayObject
         {
             if (!p.isAlive)
             {
+                continue;
+            }
+
+            bool alive = true;
+            if (onParticleUpdate !is null)
+            {
+                alive = onParticleUpdate(p);
+            }
+
+            if(!alive){
+                p.isAlive = false;
+                resetParticle(p);
                 continue;
             }
 

@@ -32,8 +32,8 @@ struct Vector2D
         double normY = 0;
         if (!isClose(length, 0.0))
         {
-            normX /= length;
-            normY /= length;
+            normX = x / length;
+            normY = y / length;
         }
 
         return Vector2D(normX, normY);

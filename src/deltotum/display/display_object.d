@@ -5,13 +5,15 @@ import deltotum.application.components.uni.uni_component : UniComponent;
 import deltotum.math.vector2d : Vector2D;
 import deltotum.math.rect : Rect;
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
+import deltotum.physics.physical_body: PhysicalBody;
+
 
 import bindbc.sdl;
 
 /**
  * Authors: initkfs
  */
-abstract class DisplayObject : UniComponent
+abstract class DisplayObject : PhysicalBody
 {
 
     @property double x = 0;
@@ -24,7 +26,9 @@ abstract class DisplayObject : UniComponent
 
     this()
     {
+        super();
         //use initialization in constructor
+        //TODO move to physical body?
         velocity = new Vector2D;
         acceleration = new Vector2D;
     }

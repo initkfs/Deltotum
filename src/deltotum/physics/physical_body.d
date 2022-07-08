@@ -1,15 +1,22 @@
 module deltotum.physics.physical_body;
 
 import deltotum.math.vector2d : Vector2D;
-import deltotum.display.display_object : DisplayObject;
+import deltotum.application.components.uni.uni_component : UniComponent;
+import deltotum.math.rect: Rect;
 
 /**
  * Authors: initkfs
  */
-class PhysicalBody : DisplayObject
+class PhysicalBody : UniComponent
 {
-    @property double mass;
+    @property double mass = 0;
     @property gravitationalAcceleration = 9.81;
+    @property Rect* hitbox;
+    @property double restitution = 0;
+
+    this(){
+        hitbox = new Rect;
+    }
 
     Vector2D gravity()
     {
@@ -22,10 +29,5 @@ class PhysicalBody : DisplayObject
         Vector2D gravityForce = gravity;
         Vector2D accelerationForce = {gravityForce.x / mass, gravityForce.y / mass};
         return accelerationForce;
-    }
-
-    override void update(double delta)
-    {
-        super.update(delta);
     }
 }
