@@ -7,11 +7,16 @@ import deltotum.display.scrolling.scroller : Scroller;
 import deltotum.display.bitmap.sprite_sheet : SpriteSheet;
 import deltotum.hal.sdl.mix.sdl_mix_music : SdlMixMusic;
 import deltotum.math.direction : Direction;
+import deltotum.particles.emitter : Emitter;
+import deltotum.particles.particle : Particle;
 
 import std.stdio;
 
 import bindbc.sdl;
 
+/**
+ * Authors: initkfs
+ */
 class DemoState : State
 {
     enum gameWidth = 640;
@@ -23,6 +28,7 @@ class DemoState : State
         Bitmap foreground2;
         SpriteSheet player;
         Scroller scroller;
+        Emitter emitter;
 
         double jumpTimer = 0;
         bool jumping;
@@ -68,6 +74,28 @@ class DemoState : State
         player.y = 350;
 
         add(player);
+
+        emitter = new Emitter;
+        build(emitter);
+        add(emitter);
+
+        emitter.lifetime = 200;
+        emitter.countPerFrame = 10;
+        emitter.particleVelocity.y = 100;
+
+        emitter.particleFactory = () {
+            //TODO cache
+            auto particle = new Particle();
+            build(particle);
+            particle.load("laser1.png", 12, 18);
+            //TODO fix implicit boolean parameter casting
+            particle.addAnimation("idle", [0], 0, true);
+            return particle;
+        };
+
+        
+        emitter.x = 100 + player.width / 2;
+        emitter.y = 200;
     }
 
     override void update(double delta)

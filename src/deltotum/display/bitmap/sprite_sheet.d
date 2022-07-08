@@ -39,7 +39,7 @@ class SpriteSheet : Bitmap
         SDL_RendererFlip currentFlip = SDL_RendererFlip.SDL_FLIP_NONE;
     }
 
-    this(int frameWidth, int frameHeight, int frameDelay = 100)
+    this(int frameWidth = 0, int frameHeight = 0, int frameDelay = 100)
     {
         this.frameDelay = frameDelay;
 
@@ -52,7 +52,7 @@ class SpriteSheet : Bitmap
         auto frameWidth = width;
         auto frameHeight = height;
         const isLoad = super.load(path, requestWidth, requestHeight);
-        if (isLoad)
+        if (isLoad && frameWidth > 0 && frameHeight > 0)
         {
             width = frameWidth;
             height = frameHeight;

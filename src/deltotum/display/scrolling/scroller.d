@@ -3,6 +3,9 @@ module deltotum.display.scrolling.scroller;
 import deltotum.display.display_object : DisplayObject;
 import deltotum.math.direction : Direction;
 
+/**
+ * Authors: initkfs
+ */
 class Scroller : DisplayObject
 {
     @property double speed = 0;
@@ -79,11 +82,13 @@ class Scroller : DisplayObject
     @property void next(DisplayObject next)
     {
         import std.exception : enforce;
+
         enforce(next !is null, "Next sprite must not be null");
         _next = next;
 
         auto worldBounds = window.getWorldBounds;
-        if(direction == Direction.left){
+        if (direction == Direction.left)
+        {
             next.x = worldBounds.right;
         }
     }
