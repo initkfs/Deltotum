@@ -11,6 +11,7 @@ import deltotum.particles.emitter : Emitter;
 import deltotum.particles.particle : Particle;
 import deltotum.animation.interp.interpolator: Interpolator;
 import deltotum.animation.interp.uni_interpolator: UniInterpolator;
+import deltotum.animation.object.property.opacity_transition: OpacityTransition;
 
 import deltotum.animation.transition: Transition;
 
@@ -122,10 +123,9 @@ class DemoState : State
         //     return true;
         // };
 
-        transition = new Transition(0, 1, 2000, window.frameRate);
+        transition = new OpacityTransition(foreground, 2000);
         build(transition);
         transition.isInverse = true;
-        transition.onValue = (value) { foreground.opacity = value; };
         transition.interpolator.interpolateMethod = &transition.interpolator.elasticOut;
         add(transition);
         transition.run;

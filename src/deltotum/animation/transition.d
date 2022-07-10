@@ -36,13 +36,12 @@ class Transition : DisplayObject
         TransitionState state = TransitionState.none;
     }
 
-    this(double minValue, double maxValue, int timeMs, double frameRateHz, Interpolator interpolator = null)
+    this(double minValue = 0, double maxValue = 1, int timeMs = 200, Interpolator interpolator = null)
     {
         super();
         this.minValue = minValue;
         this.maxValue = maxValue;
         this.timeMs = timeMs;
-        frameCount = (timeMs * frameRateHz) / 1000;
         if (interpolator is null)
         {
             this.interpolator = new UniInterpolator;
@@ -51,12 +50,19 @@ class Transition : DisplayObject
 
     void run() @nogc nothrow @safe
     {
+        const double frameRateHz = window.frameRate;
+        //TODO error if <= 0
+        if (frameRateHz > 0)
+        {
+            frameCount = (timeMs * frameRateHz) / 1000;
+        }
         state = TransitionState.direct;
     }
 
     void stop() @nogc nothrow @safe
     {
         state = TransitionState.end;
+        frameCount = 0;
     }
 
     override void update(double delta)

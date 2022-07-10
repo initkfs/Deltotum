@@ -62,7 +62,7 @@ class UniComponent : SimpleUnit
 
     }
 
-    @property Logger logger() @safe pure nothrow
+    @property Logger logger() @nogc @safe pure nothrow
     out (_logger; _logger !is null)
     {
         return _logger;
@@ -77,7 +77,7 @@ class UniComponent : SimpleUnit
 
     }
 
-    @property AssetManager assets() @safe pure nothrow
+    @property AssetManager assets() @nogc @safe pure nothrow
     out (_assets; _assets !is null)
     {
         return _assets;
@@ -92,7 +92,7 @@ class UniComponent : SimpleUnit
 
     }
 
-    @property Window window() @safe pure nothrow
+    @property Window window() @nogc @safe pure nothrow
     out (_window; _window !is null)
     {
         return _window;
@@ -107,7 +107,7 @@ class UniComponent : SimpleUnit
 
     }
 
-    @property Input input() @safe pure nothrow
+    @property Input input() @nogc @safe pure nothrow
     out (_input; _input !is null)
     {
         return _input;
@@ -122,7 +122,7 @@ class UniComponent : SimpleUnit
 
     }
 
-    @property Audio audio() @safe pure nothrow
+    @property Audio audio() @nogc @safe pure nothrow
     out (_audio; _audio !is null)
     {
         return _audio;
