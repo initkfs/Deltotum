@@ -2,20 +2,23 @@ module deltotum.animation.object.display_object_transition;
 
 import deltotum.display.display_object : DisplayObject;
 import deltotum.animation.interp.interpolator : Interpolator;
-import deltotum.animation.interp.uni_interpolator : UniInterpolator;
 import deltotum.animation.transition: Transition;
+
+import deltotum.math.vector2d: Vector2D;
+
+import std.traits: isIntegral, isFloatingPoint;
 
 /**
  * Authors: initkfs
  */
-class DisplayObjectTransition : Transition
+class DisplayObjectTransition(T) if (isIntegral!T || isFloatingPoint!T || is(T : Vector2D)) : Transition!T
 {
     protected
     {
         @property DisplayObject displayObject;
     }
 
-    this(DisplayObject obj, double minValue, double maxValue, int timeMs, Interpolator interpolator = null)
+    this(DisplayObject obj, T minValue, T maxValue, int timeMs, Interpolator interpolator = null)
     {
         super(minValue, maxValue, timeMs, interpolator);
         this.displayObject = obj;

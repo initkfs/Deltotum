@@ -26,16 +26,23 @@ class UniInterpolator : Interpolator
 
     @property double delegate(double) @nogc nothrow interpolateMethod;
 
-    override double interpolate(double start, double end, double value) const @nogc nothrow
+    //TODO more flexible way 
+    static UniInterpolator fromMethod(string methodName = "linear")() {
+        auto interp = new UniInterpolator;
+        interp.interpolateMethod = mixin(`&`, __traits(identifier, interp) ~ `.` ~ methodName);
+        return interp;
+    }
+
+    override double interpolate(double value) const @nogc nothrow
     {
         if (interpolateMethod is null)
         {
             return 0;
         }
 
-        const double progress = MathUtil.clamp1(value);
-
-        return start + (end - start) * interpolateMethod(progress);
+        const double progress = MathUtil.clamp01(value);
+        const double interpProgress = interpolateMethod(progress);
+        return interpProgress;
     }
 
     double linear(double value) const @nogc nothrow

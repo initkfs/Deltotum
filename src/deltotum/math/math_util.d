@@ -4,6 +4,7 @@ import math = std.math.trigonometry;
 import mathConst = std.math.constants;
 import mathCore = core.math;
 import mathExp = std.math.exponential;
+import deltotum.math.vector2d : Vector2D;
 
 /**
  * Authors: initkfs
@@ -13,12 +14,20 @@ class MathUtil
     enum PI = mathConst.PI;
 
     //the a value and the b value should not change during the interpolation.
-    static double lerp(double start, double end, double t) @nogc nothrow pure @safe
+    static double lerp(double start, double end, double t, bool clamp = true) @nogc nothrow pure @safe
     {
-        return start + (end - start) * clamp1(t);
+        const double progressValue = clamp ? clamp01(t) : t;
+        return start + (end - start) * progressValue;
     }
 
-    static double clamp1(double value) @nogc nothrow pure @safe
+    static Vector2D lerp(Vector2D a, Vector2D b, float t, bool clamp = true) @nogc nothrow pure @safe
+    {
+        const double progress0to1 = clamp ? clamp01(t) : t;
+        return Vector2D(a.x + (b.x - a.x) * progress0to1,
+            a.y + (b.y - a.y) * progress0to1);
+    }
+
+    static double clamp01(double value) @nogc nothrow pure @safe
     {
         //TODO compare double
         if (value < 0)

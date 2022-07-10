@@ -14,6 +14,7 @@ import deltotum.animation.interp.uni_interpolator: UniInterpolator;
 import deltotum.animation.object.property.opacity_transition: OpacityTransition;
 
 import deltotum.animation.transition: Transition;
+import deltotum.animation.object.value_transition: ValueTransition;
 
 import deltotum.physics.collision.aabb_collision.detector : AABBCollisionDetector;
 import deltotum.physics.collision.newtonian_collision_resolver : NewtonianCollisionResolver;
@@ -43,7 +44,7 @@ class DemoState : State
         bool fall;
         AABBCollisionDetector collisionDetector;
         NewtonianCollisionResolver collisionResolver;
-        Transition transition;
+        ValueTransition transition;
     }
     override void create()
     {
@@ -123,10 +124,9 @@ class DemoState : State
         //     return true;
         // };
 
-        transition = new OpacityTransition(foreground, 2000);
+        transition = new OpacityTransition(foreground, 2000, UniInterpolator.fromMethod!"elasticOut");
         build(transition);
         transition.isInverse = true;
-        transition.interpolator.interpolateMethod = &transition.interpolator.elasticOut;
         add(transition);
         transition.run;
 

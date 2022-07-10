@@ -3,6 +3,10 @@ module deltotum.animation.transition;
 import deltotum.display.display_object : DisplayObject;
 import deltotum.animation.interp.interpolator : Interpolator;
 import deltotum.animation.interp.uni_interpolator : UniInterpolator;
+import deltotum.math.vector2d : Vector2D;
+import deltotum.math.math_util: MathUtil;
+
+import std.traits : isIntegral, isFloatingPoint;
 
 private
 {
@@ -18,33 +22,36 @@ private
 /**
  * Authors: initkfs
  */
-class Transition : DisplayObject
+class Transition(T) if (isIntegral!T || isFloatingPoint!T || is(T : Vector2D)) : DisplayObject
 {
-    @property void delegate(double) onValue;
+    @property void delegate(T) onValue;
     @property bool isInverse;
     @property bool isCycle = true;
-    @property UniInterpolator interpolator;
+    @property Interpolator interpolator;
 
     private
     {
         double timeMs = 0;
         double frameCount = 0;
         long currentFrame;
-        double minValue = 0;
-        double maxValue = 0;
+        T minValue;
+        T maxValue;
 
         TransitionState state = TransitionState.none;
     }
 
-    this(double minValue = 0, double maxValue = 1, int timeMs = 200, Interpolator interpolator = null)
+    this(T minValue, T maxValue, int timeMs = 200, Interpolator interpolator = null)
     {
         super();
         this.minValue = minValue;
         this.maxValue = maxValue;
         this.timeMs = timeMs;
-        if (interpolator is null)
+        this.interpolator = interpolator;
+        if (this.interpolator is null)
         {
-            this.interpolator = new UniInterpolator;
+            auto uniInterp = new UniInterpolator;
+            uniInterp.interpolateMethod = &uniInterp.linear;
+            this.interpolator = uniInterp;
         }
     }
 
@@ -93,8 +100,8 @@ class Transition : DisplayObject
             currentFrame = 0;
         }
 
-        double start;
-        double end;
+        T start;
+        T end;
         switch (state)
         {
         case TransitionState.direct:
@@ -111,7 +118,8 @@ class Transition : DisplayObject
 
         double deltaT = currentFrame / frameCount;
         //TODO check is finite
-        double value = interpolator.interpolate(start, end, deltaT);
+        double interpProgress = interpolator.interpolate(deltaT);
+        T value = MathUtil.lerp(start, end, interpProgress, false);
 
         onValue(value);
 
