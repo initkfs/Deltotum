@@ -1,12 +1,12 @@
-module deltotum.tweens.tween;
+module deltotum.animation.transition;
 
 import deltotum.display.display_object : DisplayObject;
-import deltotum.tweens.interp.interpolator : Interpolator;
-import deltotum.tweens.interp.linear : Linear;
+import deltotum.animation.interp.interpolator : Interpolator;
+import deltotum.animation.interp.uni_interpolator : UniInterpolator;
 
 private
 {
-    enum TweenState
+    enum TransitionState
     {
         none,
         direct,
@@ -18,12 +18,12 @@ private
 /**
  * Authors: initkfs
  */
-class Tween : DisplayObject
+class Transition : DisplayObject
 {
     @property void delegate(double) onValue;
     @property bool isInverse;
     @property bool isCycle = true;
-    @property Interpolator interpolator;
+    @property UniInterpolator interpolator;
 
     private
     {
@@ -33,7 +33,7 @@ class Tween : DisplayObject
         double minValue = 0;
         double maxValue = 0;
 
-        TweenState state = TweenState.none;
+        TransitionState state = TransitionState.none;
     }
 
     this(double minValue, double maxValue, int timeMs, double frameRateHz, Interpolator interpolator = null)
@@ -45,23 +45,23 @@ class Tween : DisplayObject
         frameCount = (timeMs * frameRateHz) / 1000;
         if (interpolator is null)
         {
-            this.interpolator = new Linear;
+            this.interpolator = new UniInterpolator;
         }
     }
 
     void run() @nogc nothrow @safe
     {
-        state = TweenState.direct;
+        state = TransitionState.direct;
     }
 
     void stop() @nogc nothrow @safe
     {
-        state = TweenState.end;
+        state = TransitionState.end;
     }
 
     override void update(double delta)
     {
-        if (state == TweenState.none || state == TweenState.end || onValue is null)
+        if (state == TransitionState.none || state == TransitionState.end || onValue is null)
         {
             return;
         }
@@ -72,17 +72,17 @@ class Tween : DisplayObject
         {
             if (!isCycle)
             {
-                state = TweenState.end;
+                state = TransitionState.end;
                 return;
             }
 
-            if (state == TweenState.direct)
+            if (state == TransitionState.direct)
             {
-                state = TweenState.back;
+                state = TransitionState.back;
             }
-            else if (state == TweenState.back)
+            else if (state == TransitionState.back)
             {
-                state = TweenState.direct;
+                state = TransitionState.direct;
             }
             currentFrame = 0;
         }
@@ -91,11 +91,11 @@ class Tween : DisplayObject
         double end;
         switch (state)
         {
-        case TweenState.direct:
+        case TransitionState.direct:
             start = minValue;
             end = maxValue;
             break;
-        case TweenState.back:
+        case TransitionState.back:
             start = maxValue;
             end = minValue;
             break;
