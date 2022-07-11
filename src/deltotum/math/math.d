@@ -1,4 +1,4 @@
-module deltotum.math.math_util;
+module deltotum.math.math;
 
 import math = std.math.trigonometry;
 import mathConst = std.math.constants;
@@ -9,7 +9,7 @@ import deltotum.math.vector2d : Vector2D;
 /**
  * Authors: initkfs
  */
-class MathUtil
+class Math
 {
     enum PI = mathConst.PI;
 

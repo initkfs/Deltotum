@@ -4,7 +4,7 @@ import deltotum.display.display_object : DisplayObject;
 import deltotum.animation.interp.interpolator : Interpolator;
 import deltotum.animation.interp.uni_interpolator : UniInterpolator;
 import deltotum.math.vector2d : Vector2D;
-import deltotum.math.math_util: MathUtil;
+import deltotum.math.math: Math;
 
 import std.traits : isIntegral, isFloatingPoint;
 
@@ -121,7 +121,7 @@ class Transition(T) if (isIntegral!T || isFloatingPoint!T || is(T : Vector2D)) :
         double deltaT = currentFrame / frameCount;
         //TODO check is finite
         double interpProgress = interpolator.interpolate(deltaT);
-        T value = MathUtil.lerp(start, end, interpProgress, false);
+        T value = Math.lerp(start, end, interpProgress, false);
 
         onValue(value);
 

@@ -4,7 +4,7 @@ import deltotum.animation.object.value_transition: ValueTransition;
 import deltotum.display.display_object : DisplayObject;
 import deltotum.animation.interp.interpolator : Interpolator;
 import deltotum.math.vector2d : Vector2D;
-import deltotum.math.math_util : MathUtil;
+import deltotum.math.math : Math;
 
 /**
  * Authors: initkfs
@@ -13,7 +13,6 @@ class CircularMotionTransition : ValueTransition
 {
     private
     {
-        double currentAngleDeg = 0;
         double radius = 0;
         double centerX;
         double centerY;
@@ -26,9 +25,8 @@ class CircularMotionTransition : ValueTransition
         centerX = center.x;
         centerY = center.y;
         onValue = (value) {
-            obj.x = centerX + MathUtil.cosDeg(currentAngleDeg) * radius;
-            obj.y = centerY + MathUtil.sinDeg(currentAngleDeg) * radius;
-            currentAngleDeg++;
+            obj.x = centerX + Math.cosDeg(value) * radius;
+            obj.y = centerY + Math.sinDeg(value) * radius;
         };
     }
 }
