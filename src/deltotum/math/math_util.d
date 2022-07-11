@@ -27,6 +27,11 @@ class MathUtil
             a.y + (b.y - a.y) * progress0to1);
     }
 
+    static double degToRad(double deg) @nogc nothrow pure @safe
+    {
+        return deg * (PI / 180.0);
+    }
+
     static double clamp01(double value) @nogc nothrow pure @safe
     {
         //TODO compare double
@@ -49,9 +54,19 @@ class MathUtil
         return math.sin(value);
     }
 
+    static double sinDeg(double valueDeg) @nogc nothrow pure @safe
+    {
+        return sin(degToRad(valueDeg));
+    }
+
     static double cos(double value) @nogc nothrow pure @safe
     {
         return math.cos(value);
+    }
+
+    static double cosDeg(double valueDeg) @nogc nothrow pure @safe
+    {
+        return cos(degToRad(valueDeg));
     }
 
     static double sqrt(double value) @nogc nothrow pure @safe

@@ -8,6 +8,8 @@ import deltotum.math.math_util: MathUtil;
 
 import std.traits : isIntegral, isFloatingPoint;
 
+import std.stdio;
+
 private
 {
     enum TransitionState
@@ -80,7 +82,7 @@ class Transition(T) if (isIntegral!T || isFloatingPoint!T || is(T : Vector2D)) :
         }
 
         super.update(delta);
-
+        
         if (currentFrame > frameCount)
         {
             if (!isCycle)

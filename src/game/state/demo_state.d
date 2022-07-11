@@ -12,6 +12,9 @@ import deltotum.particles.particle : Particle;
 import deltotum.animation.interp.interpolator: Interpolator;
 import deltotum.animation.interp.uni_interpolator: UniInterpolator;
 import deltotum.animation.object.property.opacity_transition: OpacityTransition;
+import deltotum.animation.object.motion.circular_motion_transition: CircularMotionTransition;
+import deltotum.animation.object.motion.linear_motion_transition: LinearMotionTransition;
+import deltotum.math.vector2d: Vector2D;
 
 import deltotum.animation.transition: Transition;
 import deltotum.animation.object.value_transition: ValueTransition;
@@ -44,7 +47,7 @@ class DemoState : State
         bool fall;
         AABBCollisionDetector collisionDetector;
         NewtonianCollisionResolver collisionResolver;
-        ValueTransition transition;
+        CircularMotionTransition transition;
     }
     override void create()
     {
@@ -124,7 +127,11 @@ class DemoState : State
         //     return true;
         // };
 
-        transition = new OpacityTransition(foreground, 2000, UniInterpolator.fromMethod!"elasticOut");
+        import deltotum.math.vector2d: Vector2D;
+        Vector2D start = {player.x, player.y};
+        Vector2D end = {gameWidth - player.width, player.y};
+
+        transition = new CircularMotionTransition(player, start, 100, 5000, UniInterpolator.fromMethod!"linear");
         build(transition);
         transition.isInverse = true;
         add(transition);
