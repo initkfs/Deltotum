@@ -47,7 +47,7 @@ class DemoState : State
         bool fall;
         AABBCollisionDetector collisionDetector;
         NewtonianCollisionResolver collisionResolver;
-        CircularMotionTransition transition;
+        LinearMotionTransition transition;
     }
     override void create()
     {
@@ -131,7 +131,7 @@ class DemoState : State
         Vector2D start = {player.x, player.y};
         Vector2D end = {gameWidth - player.width, player.y};
 
-        transition = new CircularMotionTransition(player, start, 100, 5000, UniInterpolator.fromMethod!"linear");
+        transition = new LinearMotionTransition(player, start, end, 5000, UniInterpolator.fromMethod!"linear");
         build(transition);
         transition.isInverse = true;
         add(transition);

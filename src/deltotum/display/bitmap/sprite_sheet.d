@@ -102,7 +102,7 @@ class SpriteSheet : Bitmap
         srcRect.width = cast(int) width;
         srcRect.height = cast(int) height;
 
-        drawTexture(texture, srcRect, cast(int) x, cast(int) y, flip);
+        drawTexture(texture, srcRect, cast(int) x, cast(int) y, angle, flip);
     }
 
     override void drawContent()

@@ -26,6 +26,7 @@ abstract class DisplayObject : PhysicalBody
     @property Vector2D* acceleration;
     @property bool isRedraw = false;
     @property double opacity = 1;
+    @property double angle = 0;
 
     this()
     {
@@ -41,7 +42,7 @@ abstract class DisplayObject : PhysicalBody
 
     }
 
-    void drawTexture(SdlTexture texture, Rect textureBounds, int x = 0, int y = 0, SDL_RendererFlip flip = SDL_RendererFlip
+    void drawTexture(SdlTexture texture, Rect textureBounds, int x = 0, int y = 0, double angle = 0, SDL_RendererFlip flip = SDL_RendererFlip
             .SDL_FLIP_NONE)
     {
         {
@@ -58,15 +59,17 @@ abstract class DisplayObject : PhysicalBody
             destRect.y = cast(int)(y + bounds.y);
             destRect.w = cast(int) width;
             destRect.h = cast(int) height;
-            SDL_Point center = {0, 0};
+
+            //FIXME some texture sizes can crash when changing the angle
+            //double newW = height * abs(Math.sinDeg(angle)) + width * abs(Math.cosDeg(angle));
+            //double newH = height * abs(Math.cosDeg(angle)) + width * abs(Math.sinDeg(angle));
 
             //TODO compare double
             if (!isClose(texture.opacity, opacity))
             {
                 texture.opacity = opacity;
             }
-
-            window.renderer.copyEx(texture, &srcRect, &destRect, 0, &center, flip);
+            window.renderer.copyEx(texture, &srcRect, &destRect, angle, null, flip);
         }
     }
 
