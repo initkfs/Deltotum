@@ -65,8 +65,8 @@ class Bitmap : DisplayObject
             return false;
         }
 
-        this.width = width;
-        this.height = height;
+        this.width = width * scale;
+        this.height = height * scale;
 
         image.destroy;
         requestRedraw;

@@ -10,7 +10,7 @@ import deltotum.display.bitmap.bitmap : Bitmap;
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
 import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 import deltotum.hal.sdl.img.sdl_image : SdlImage;
-import deltotum.math.rect: Rect;
+import deltotum.math.rect : Rect;
 
 import bindbc.sdl;
 
@@ -37,25 +37,25 @@ class SpriteSheet : Bitmap
         SpriteSheetAnimation currentAnimation;
         size_t currentAnimationIndex;
         SDL_RendererFlip currentFlip = SDL_RendererFlip.SDL_FLIP_NONE;
+        double frameWidth = 0;
+        double frameHeight = 0;
     }
 
     this(int frameWidth = 0, int frameHeight = 0, int frameDelay = 100)
     {
         this.frameDelay = frameDelay;
 
-        this.width = frameWidth;
-        this.height = frameHeight;
+        this.frameWidth = frameWidth;
+        this.frameHeight = frameHeight;
     }
 
     override bool load(string path, int requestWidth = -1, int requestHeight = -1)
     {
-        auto frameWidth = width;
-        auto frameHeight = height;
         const isLoad = super.load(path, requestWidth, requestHeight);
         if (isLoad && frameWidth > 0 && frameHeight > 0)
         {
-            width = frameWidth;
-            height = frameHeight;
+            width = frameWidth * scale;
+            height = frameHeight * scale;
         }
         return isLoad;
     }
@@ -97,10 +97,10 @@ class SpriteSheet : Bitmap
             .SDL_FLIP_NONE)
     {
         Rect srcRect;
-        srcRect.x = cast(int)(width * frameIndex);
-        srcRect.y = cast(int)(height * rowIndex);
-        srcRect.width = cast(int) width;
-        srcRect.height = cast(int) height;
+        srcRect.x = cast(int)(frameWidth * frameIndex);
+        srcRect.y = cast(int)(frameHeight * rowIndex);
+        srcRect.width = cast(int) frameWidth;
+        srcRect.height = cast(int) frameHeight;
 
         drawTexture(texture, srcRect, cast(int) x, cast(int) y, angle, flip);
     }

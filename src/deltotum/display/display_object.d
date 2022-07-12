@@ -27,6 +27,7 @@ abstract class DisplayObject : PhysicalBody
     @property bool isRedraw = false;
     @property double opacity = 1;
     @property double angle = 0;
+    @property double scale = 1;
 
     this()
     {
