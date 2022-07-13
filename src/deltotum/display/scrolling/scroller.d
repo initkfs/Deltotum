@@ -17,8 +17,14 @@ class Scroller : DisplayObject
     override void drawContent()
     {
         //TODO check in bounds
-        current.draw;
-        next.draw;
+        if (_current)
+        {
+            _current.draw;
+        }
+        if (_next)
+        {
+            _next.draw;
+        }
     }
 
     override void update(double delta)

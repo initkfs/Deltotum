@@ -9,15 +9,15 @@ import deltotum.hal.sdl.mix.sdl_mix_music : SdlMixMusic;
 import deltotum.math.direction : Direction;
 import deltotum.particles.emitter : Emitter;
 import deltotum.particles.particle : Particle;
-import deltotum.animation.interp.interpolator: Interpolator;
-import deltotum.animation.interp.uni_interpolator: UniInterpolator;
-import deltotum.animation.object.property.opacity_transition: OpacityTransition;
-import deltotum.animation.object.motion.circular_motion_transition: CircularMotionTransition;
-import deltotum.animation.object.motion.linear_motion_transition: LinearMotionTransition;
-import deltotum.math.vector2d: Vector2D;
+import deltotum.animation.interp.interpolator : Interpolator;
+import deltotum.animation.interp.uni_interpolator : UniInterpolator;
+import deltotum.animation.object.property.opacity_transition : OpacityTransition;
+import deltotum.animation.object.motion.circular_motion_transition : CircularMotionTransition;
+import deltotum.animation.object.motion.linear_motion_transition : LinearMotionTransition;
+import deltotum.math.vector2d : Vector2D;
 
-import deltotum.animation.transition: Transition;
-import deltotum.animation.object.value_transition: ValueTransition;
+import deltotum.animation.transition : Transition;
+import deltotum.animation.object.value_transition : ValueTransition;
 
 import deltotum.physics.collision.aabb_collision.detector : AABBCollisionDetector;
 import deltotum.physics.collision.newtonian_collision_resolver : NewtonianCollisionResolver;
@@ -36,10 +36,16 @@ class Game : State
 
     private
     {
-        Bitmap foreground;
-        Bitmap foreground2;
+        Bitmap townBackground;
+        Bitmap townBackground1;
+        Bitmap townForeground;
+        Bitmap townForeground1;
+
+        Scroller backgroundScroller;
+        Scroller foregroundScroller;
+
         SpriteSheet player;
-        Scroller scroller;
+
         Emitter emitter;
 
         double jumpTimer = 0;
@@ -51,22 +57,39 @@ class Game : State
     }
     override void create()
     {
-        foreground = new Bitmap;
-        build(foreground);
-        foreground2 = new Bitmap;
-        build(foreground2);
+        townBackground = new Bitmap;
+        build(townBackground);
+        townBackground1 = new Bitmap;
+        build(townBackground1);
+        townForeground = new Bitmap;
+        build(townForeground);
+        townForeground1 = new Bitmap;
+        build(townForeground1);
 
-        scroller = new Scroller;
-        add(scroller);
-        build(scroller);
-        scroller.speed = 30;
-        scroller.direction = Direction.left;
+        backgroundScroller = new Scroller;
+        build(backgroundScroller);
+        backgroundScroller.speed = 20;
+        backgroundScroller.direction = Direction.left;
 
-        foreground.load("foreground.png", gameWidth, gameHeight);
-        foreground2.load("foreground.png", gameWidth, gameHeight);
+        foregroundScroller = new Scroller;
+        build(foregroundScroller);
+        foregroundScroller.speed = 30;
+        foregroundScroller.direction = Direction.left;
 
-        scroller.current = foreground;
-        scroller.next = foreground2;
+        //TODO clone
+        townBackground.load("cybercity/town/town_background.png", gameWidth, gameHeight);
+        townBackground1.load("cybercity/town/town_background.png", gameWidth, gameHeight);
+        townForeground.load("cybercity/town/town_foreground.png", gameWidth, gameHeight);
+        townForeground1.load("cybercity/town/town_foreground.png", gameWidth, gameHeight);
+
+        backgroundScroller.current = townBackground;
+        backgroundScroller.next = townBackground1;
+
+        foregroundScroller.current = townForeground;
+        foregroundScroller.next = townForeground1;
+
+        add(backgroundScroller);
+        add(foregroundScroller);
 
         player = new SpriteSheet(71, 67, 160);
         build(player);
@@ -89,53 +112,6 @@ class Game : State
         player.y = 350;
 
         add(player);
-
-        emitter = new Emitter;
-        emitter.countPerFrame = 1;
-        build(emitter);
-        add(emitter);
-
-        emitter.lifetime = 200;
-        emitter.countPerFrame = 1;
-        emitter.particleVelocity.y = 100;
-
-        emitter.particleFactory = () {
-            //TODO cache
-            auto particle = new Particle();
-            build(particle);
-            particle.load("laser1.png", 12, 18);
-            //TODO fix implicit boolean parameter casting
-            particle.addAnimation("idle", [0], 0, true);
-            return particle;
-        };
-
-        emitter.particleMass = 0.1;
-        player.mass = 0.1;
-
-        emitter.x = 100 + player.width / 2;
-        emitter.y = 200;
-
-        collisionResolver = new NewtonianCollisionResolver;
-        collisionDetector = new AABBCollisionDetector;
-        // emitter.onParticleUpdate = (Particle p) {
-        //     if (collisionDetector.intersect(p.bounds, player.bounds))
-        //     {
-        //         collisionResolver.resolve(p, player);
-        //         return false;
-        //     }
-
-        //     return true;
-        // };
-
-        import deltotum.math.vector2d: Vector2D;
-        Vector2D start = {player.x, player.y};
-        Vector2D end = {gameWidth - player.width, player.y};
-
-        transition = new LinearMotionTransition(player, start, end, 5000, UniInterpolator.fromMethod!"linear");
-        build(transition);
-        transition.isInverse = true;
-        add(transition);
-        transition.run;
 
     }
 
@@ -165,14 +141,24 @@ class Game : State
             right = false;
         }
 
-        if (scroller.direction == Direction.left && !right)
+        if (backgroundScroller.direction == Direction.left && !right)
         {
-            scroller.isScroll = false;
+            backgroundScroller.isScroll = false;
         }
 
-        if (scroller.direction == Direction.right && !left)
+        if (foregroundScroller.direction == Direction.left && !right)
         {
-            scroller.isScroll = false;
+            foregroundScroller.isScroll = false;
+        }
+
+        if (backgroundScroller.direction == Direction.right && !left)
+        {
+            backgroundScroller.isScroll = false;
+        }
+
+        if (foregroundScroller.direction == Direction.right && !left)
+        {
+            foregroundScroller.isScroll = false;
         }
 
         if (right)
@@ -188,7 +174,8 @@ class Game : State
             }
             else
             {
-                scroller.isScroll = true;
+                backgroundScroller.isScroll = true;
+                foregroundScroller.isScroll = true;
             }
 
         }
