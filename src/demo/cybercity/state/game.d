@@ -55,8 +55,11 @@ class Game : State
         NewtonianCollisionResolver collisionResolver;
         LinearMotionTransition transition;
     }
+
     override void create()
     {
+        super.create;
+
         townBackground = new Bitmap;
         build(townBackground);
         townBackground1 = new Bitmap;
@@ -113,6 +116,20 @@ class Game : State
 
         add(player);
 
+        import deltotum.display.layer.light_layer : LightLayer;
+        import deltotum.display.light.light_spot : LightSpot;
+
+        auto lightLayer = new LightLayer(window.renderer, window.getWidth, window.getHeight);
+        build(lightLayer);
+
+        auto light = new LightSpot;
+        build(light);
+        light.load("world/light/lightmap2.png");
+        light.x = 100;
+        light.y = 100;
+
+        lightLayer.addLight(light);
+        addLayer(lightLayer);
     }
 
     override void update(double delta)

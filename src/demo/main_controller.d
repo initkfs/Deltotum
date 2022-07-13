@@ -56,6 +56,7 @@ class MainController : UniComponent
         application.window = new Window(sdlRenderer, sdlWindow);
         //TODO remove
         application.window.frameRate = application.frameRate;
+        this.window = application.window;
 
         auto gameState = new Game;
         application.addState(gameState);

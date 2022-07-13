@@ -147,9 +147,9 @@ class SdlApplication : GraphicsApplication
     {
         if (window !is null)
         {
-            window.renderer.clear;
+            //window.renderer.clear;
             stateManager.update(delta);
-            window.renderer.present;
+            //window.renderer.present;
         }
     }
 

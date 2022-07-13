@@ -92,4 +92,9 @@ class Bitmap : DisplayObject
         super.destroy;
         texture.destroy;
     }
+
+    //TODO remove
+    SDL_Texture* getStruct(){
+        return texture.getStruct;
+    }
 }

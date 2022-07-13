@@ -33,6 +33,22 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         return zeroOrErrorCode;
     }
 
+    void create(SdlRenderer renderer, uint format,
+        SDL_TextureAccess access, int w,
+        int h)
+    {
+        ptr = SDL_CreateTexture(renderer.getStruct, format, access, w, h);
+        if (ptr is null)
+        {
+            string error = "Unable create texture.";
+            if (const err = getError)
+            {
+                error ~= err;
+            }
+            throw new Exception(error);
+        }
+    }
+
     void fromRenderer(SdlRenderer renderer, SdlSurface surface)
     {
         ptr = SDL_CreateTextureFromSurface(renderer.getStruct, surface.getStruct);
@@ -49,7 +65,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         SDL_SetTextureBlendMode(ptr, SDL_BLENDMODE_BLEND);
     }
 
-    int changeOpacity(double opacity)  @nogc nothrow
+    int changeOpacity(double opacity) @nogc nothrow
     {
         const int zeroOrErrorCode = SDL_SetTextureAlphaMod(ptr, cast(ubyte)(255 * opacity));
         return zeroOrErrorCode;
