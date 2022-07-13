@@ -1,4 +1,4 @@
-module game.state.demo_state;
+module demo.cybercity.state.game;
 
 import deltotum.state.state : State;
 
@@ -29,7 +29,7 @@ import bindbc.sdl;
 /**
  * Authors: initkfs
  */
-class DemoState : State
+class Game : State
 {
     enum gameWidth = 640;
     enum gameHeight = 480;

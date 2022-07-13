@@ -19,7 +19,8 @@ import deltotum.application.sdl.sdl_application : SdlApplication;
 import deltotum.event.sdl.sdl_event_manager : SdlEventManager;
 import deltotum.window.window : Window;
 import deltotum.application.components.uni.uni_component : UniComponent;
-import game.state.demo_state: DemoState;
+
+import demo.cybercity.state.game: Game;
 
 import bindbc.sdl;
 
@@ -56,7 +57,7 @@ class MainController : UniComponent
         //TODO remove
         application.window.frameRate = application.frameRate;
 
-        auto gameState = new DemoState;
+        auto gameState = new Game;
         application.addState(gameState);
 
         application.runWait;
