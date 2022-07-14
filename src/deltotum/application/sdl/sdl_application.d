@@ -3,14 +3,16 @@ module deltotum.application.sdl.sdl_application;
 import deltotum.application.graphics_application : GraphicsApplication;
 import deltotum.event.sdl.sdl_event_manager : SdlEventManager;
 import deltotum.asset.asset_manager : AssetManager;
+import deltotum.asset.fonts.font : Font;
 import deltotum.state.state_manager : StateManager;
-import deltotum.audio.audio: Audio;
+import deltotum.audio.audio : Audio;
 import deltotum.state.state : State;
 import deltotum.input.keyboard.event.key_event : KeyEvent;
 
 import deltotum.hal.sdl.sdl_lib : SdlLib;
 import deltotum.hal.sdl.img.sdl_img_lib : SdlImgLib;
-import deltotum.hal.sdl.mix.sdl_mix_lib: SdlMixLib;
+import deltotum.hal.sdl.mix.sdl_mix_lib : SdlMixLib;
+import deltotum.hal.sdl.ttf.sdl_ttf_lib : SdlTTFLib;
 
 import deltotum.window.window : Window;
 import deltotum.input.input : Input;
@@ -31,6 +33,7 @@ class SdlApplication : GraphicsApplication
         SdlLib sdlLib;
         SdlImgLib imgLib;
         SdlMixLib audioMixLib;
+        SdlTTFLib fontLib;
 
         //TODO check overflow and remove increment
         double deltaTime = 0;
@@ -40,15 +43,15 @@ class SdlApplication : GraphicsApplication
 
     @property double frameRate = 0;
     @property bool isRunning;
-    @property void delegate(double) onUpdate;
     @property SdlEventManager eventManager;
     @property StateManager stateManager;
 
-    this(SdlLib lib, SdlImgLib imgLib, SdlMixLib audioMixLib)
+    this(SdlLib lib, SdlImgLib imgLib, SdlMixLib audioMixLib, SdlTTFLib fontLib)
     {
         this.sdlLib = lib;
         this.imgLib = imgLib;
         this.audioMixLib = audioMixLib;
+        this.fontLib = fontLib;
     }
 
     override void initialize(double frameRate = 60)
@@ -60,6 +63,7 @@ class SdlApplication : GraphicsApplication
 
         imgLib.initialize;
         audioMixLib.initialize;
+        fontLib.initialize;
 
         this.frameRate = frameRate;
 
@@ -97,6 +101,10 @@ class SdlApplication : GraphicsApplication
 
         auto assetManager = new AssetManager(logger);
         assets = assetManager;
+
+        //TODO from config
+        Font defaultFont = assetManager.font("fonts/OpenSans-Regular.ttf", 14);
+        assetManager.defaultFont = defaultFont;
 
         isRunning = true;
     }
@@ -141,6 +149,7 @@ class SdlApplication : GraphicsApplication
         audioMixLib.quit;
         imgLib.quit;
         sdlLib.quit;
+        fontLib.quit;
     }
 
     void updateState(double delta)
@@ -155,33 +164,42 @@ class SdlApplication : GraphicsApplication
 
     override bool update()
     {
-        deltaTime = SDL_GetTicks() - lastUpdateTime;
-        lastUpdateTime += deltaTime;
-        deltaTimeAccumulator += deltaTime;
-
         enum msInSec = 1000;
         const frameTime = msInSec / frameRate;
 
+        //TODO SDL_GetPerformanceCounter
+        //(double)((now - start)*1000) / SDL_GetPerformanceFrequency()
+        const start = SDL_GetTicks();
+        deltaTime = start - lastUpdateTime;
+        lastUpdateTime += deltaTime;
+        deltaTimeAccumulator += deltaTime;
+
         SDL_Event event;
+
+        stateManager._currentState.timeEventProcessing = 0;
 
         while (SDL_PollEvent(&event))
         {
+            const startEvent = SDL_GetTicks();
             handleEvent(&event);
+            const endEvent = SDL_GetTicks();
+            stateManager._currentState.timeEventProcessing += endEvent - startEvent;
             if (!isRunning)
             {
                 return isRunning;
             }
         }
 
+        stateManager._currentState.timeRate = frameRate / deltaTime;
+
         while (deltaTimeAccumulator > frameTime)
         {
             //constant
             immutable delta = frameTime / 1000;
-            if (onUpdate !is null)
-            {
-                onUpdate(delta);
-            }
+            const startStateTime = SDL_GetTicks();
             updateState(delta);
+            const endStateTime = SDL_GetTicks();
+            stateManager._currentState.timeUpdate = endStateTime - startStateTime;
             deltaTimeAccumulator -= frameTime;
         }
 

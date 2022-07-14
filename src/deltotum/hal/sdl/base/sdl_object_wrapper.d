@@ -31,4 +31,13 @@ abstract class SdlObjectWrapper(T) : SdlObject
     {
         return ptr;
     }
+
+    void updateStruct(T* newPtr)
+    {
+        if (ptr)
+        {
+            destroy;
+        }
+        ptr = newPtr;
+    }
 }

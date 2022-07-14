@@ -10,11 +10,15 @@ import std.file : exists, isDir, isFile;
 
 import std.stdio;
 
+import deltotum.asset.fonts.font : Font;
+
 /**
  * Authors: initkfs
  */
 class AssetManager : LoggableUnit
 {
+    @property Font defaultFont;
+
     this(Logger logger)
     {
         super(logger);
@@ -53,5 +57,12 @@ class AssetManager : LoggableUnit
 
         logger.errorf("Unable to load resource %s, file does not exist or is not a file", filePath);
         return null;
+    }
+
+    Font font(string fontFilePath, int size)
+    {
+        const path = filePath(fontFilePath);
+        Font font = new Font(path, size);
+        return font;
     }
 }

@@ -15,6 +15,7 @@ import deltotum.animation.object.property.opacity_transition : OpacityTransition
 import deltotum.animation.object.motion.circular_motion_transition : CircularMotionTransition;
 import deltotum.animation.object.motion.linear_motion_transition : LinearMotionTransition;
 import deltotum.math.vector2d : Vector2D;
+import deltotum.ui.text: Text;
 
 import deltotum.animation.transition : Transition;
 import deltotum.animation.object.value_transition : ValueTransition;
@@ -23,6 +24,7 @@ import deltotum.physics.collision.aabb_collision.detector : AABBCollisionDetecto
 import deltotum.physics.collision.newtonian_collision_resolver : NewtonianCollisionResolver;
 
 import std.stdio;
+import std.format:format;
 
 import bindbc.sdl;
 
@@ -54,6 +56,7 @@ class Game : State
         AABBCollisionDetector collisionDetector;
         NewtonianCollisionResolver collisionResolver;
         LinearMotionTransition transition;
+        Text fps;
     }
 
     override void create()
@@ -116,25 +119,21 @@ class Game : State
 
         add(player);
 
-        import deltotum.display.layer.light_layer : LightLayer;
-        import deltotum.display.light.light_spot : LightSpot;
-
-        auto lightLayer = new LightLayer(window.renderer, window.getWidth, window.getHeight);
-        build(lightLayer);
-
-        auto light = new LightSpot;
-        build(light);
-        light.load("world/light/lightmap2.png");
-        light.x = 100;
-        light.y = 100;
-
-        lightLayer.addLight(light);
-        addLayer(lightLayer);
+        fps = new Text(assets.defaultFont);
+        build(fps);
+        fps.x = 10;
+        fps.y = 10;
+        fps.text = "Hello";
+        add(fps);
     }
 
     override void update(double delta)
     {
         super.update(delta);
+
+        const timeCycle = timeEventProcessing + timeUpdate;
+        string fpsInfo = format("%s. u: %s ms, e: %s ms, c: %s ms", timeRate, timeUpdate, timeEventProcessing, timeCycle);
+        fps.text = fpsInfo;
 
         enum speed = 100;
 

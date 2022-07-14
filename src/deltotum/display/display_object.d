@@ -43,7 +43,7 @@ abstract class DisplayObject : PhysicalBody
 
     }
 
-    void drawTexture(SdlTexture texture, Rect textureBounds, int x = 0, int y = 0, double angle = 0, SDL_RendererFlip flip = SDL_RendererFlip
+    int drawTexture(SdlTexture texture, Rect textureBounds, int x = 0, int y = 0, double angle = 0, SDL_RendererFlip flip = SDL_RendererFlip
             .SDL_FLIP_NONE)
     {
         {
@@ -70,7 +70,7 @@ abstract class DisplayObject : PhysicalBody
             {
                 texture.opacity = opacity;
             }
-            window.renderer.copyEx(texture, &srcRect, &destRect, angle, null, flip);
+            return window.renderer.copyEx(texture, &srcRect, &destRect, angle, null, flip);
         }
     }
 

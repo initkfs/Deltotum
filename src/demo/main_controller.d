@@ -14,6 +14,7 @@ import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 import deltotum.hal.sdl.img.sdl_image : SdlImage;
 import deltotum.hal.sdl.img.sdl_img_lib : SdlImgLib;
 import deltotum.hal.sdl.mix.sdl_mix_lib: SdlMixLib;
+import deltotum.hal.sdl.ttf.sdl_ttf_lib: SdlTTFLib;
 import deltotum.display.bitmap.bitmap : Bitmap;
 import deltotum.application.sdl.sdl_application : SdlApplication;
 import deltotum.event.sdl.sdl_event_manager : SdlEventManager;
@@ -38,7 +39,7 @@ class MainController : UniComponent
 
     int run()
     {
-        application = new SdlApplication(new SdlLib, new SdlImgLib, new SdlMixLib);
+        application = new SdlApplication(new SdlLib, new SdlImgLib, new SdlMixLib, new SdlTTFLib);
         application.initialize;
 
         //TODO move to state
