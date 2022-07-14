@@ -28,6 +28,7 @@ import std.format : format;
 
 import demo.cybercity.world.town.street1 : Street1;
 import demo.cybercity.world.town.street2 : Street2;
+import demo.cybercity.world.people.player : Player;
 
 import bindbc.sdl;
 
@@ -49,7 +50,7 @@ class Game : State
         Scroller backgroundScroller;
         Scroller foregroundScroller;
 
-        SpriteSheet player;
+        Player player;
 
         Emitter emitter;
 
@@ -93,7 +94,7 @@ class Game : State
         foregroundScroller = new Scroller;
         build(foregroundScroller);
         foregroundScroller.speed = 30;
-        foregroundScroller.direction = Direction.left;        
+        foregroundScroller.direction = Direction.left;
 
         foregroundScroller.current = street1;
         foregroundScroller.next = street2;
@@ -101,27 +102,14 @@ class Game : State
         add(backgroundScroller);
         add(foregroundScroller);
 
-        player = new SpriteSheet(71, 67, 160);
+        player = new Player();
         build(player);
-        player.load("player.png");
-
-        player.addAnimation("idle", [0, 1, 2, 3], 0, true);
-        player.addAnimation("walk", [
-                0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
-            ], 1);
-        player.addAnimation("run", [0, 1, 2, 3, 4, 5, 6, 7], 2);
-        player.addAnimation("run-shoot", [0, 1, 2, 3, 4, 5, 6, 7], 3);
-        player.addAnimation("jump", [0, 1, 2, 3], 4);
-        player.addAnimation("jump-back", [0, 1, 2, 3, 4, 5, 6], 5);
-        player.addAnimation("climp", [0, 1, 2, 3, 4, 5], 6);
-        player.addAnimation("crouch", [0], 7);
-        player.addAnimation("shoot", [0], 8);
-        player.addAnimation("hurt", [0], 9);
-
+        player.create;
+        
+        add(player);
+        
         player.x = 100;
         player.y = 350;
-
-        add(player);
 
         fps = new Text(assets.defaultFont);
         build(fps);
