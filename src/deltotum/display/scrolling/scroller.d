@@ -29,6 +29,17 @@ class Scroller : DisplayObject
 
     override void update(double delta)
     {
+        if (current)
+        {
+            current.update(delta);
+        }
+
+        //TODO check in bounds
+        if (next)
+        {
+            next.update(delta);
+        }
+
         if (!isScroll)
         {
             return;
@@ -37,20 +48,20 @@ class Scroller : DisplayObject
         final switch (direction)
         {
         case Direction.up:
-            current.y -= offset;
-            next.y -= offset;
+            current.y = current.y - offset;
+            next.y = next.y - offset;
             break;
         case Direction.down:
-            current.y += offset;
-            next.y += offset;
+            current.y = current.y + offset;
+            next.y = next.y + offset;
             break;
         case Direction.left:
-            current.x -= offset;
-            next.x -= offset;
+            current.x = current.x - offset;
+            next.x = next.x - offset;
             break;
         case Direction.right:
-            current.x += offset;
-            next.x += offset;
+            current.x = current.x + offset;
+            next.x = next.x + offset;
             break;
         case Direction.none:
             break;

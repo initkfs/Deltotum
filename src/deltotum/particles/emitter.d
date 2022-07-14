@@ -40,7 +40,7 @@ class Emitter : DisplayObject
         particle.isAlive = true;
     }
 
-    protected void tuneParticle(Particle particle) const @nogc nothrow pure @safe
+    protected void tuneParticle(Particle particle) @nogc nothrow pure @safe
     {
         particle.lifetime = lifetime;
         particle.x = x;

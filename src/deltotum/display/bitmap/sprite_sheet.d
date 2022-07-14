@@ -59,7 +59,7 @@ class SpriteSheet : Bitmap
         }
         return isLoad;
     }
-
+    
     void addAnimation(string name, int[] indices, int row = 0, bool autoplay = false)
     {
         //TODO check exists;
@@ -105,7 +105,7 @@ class SpriteSheet : Bitmap
         drawTexture(texture, srcRect, cast(int) x, cast(int) y, angle, flip);
     }
 
-    override void drawContent()
+    override void drawFrames()
     {
         if (currentAnimation is null)
         {

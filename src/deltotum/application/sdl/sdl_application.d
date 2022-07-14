@@ -77,6 +77,7 @@ class SdlApplication : GraphicsApplication
         audio = new Audio(audioMixLib);
 
         eventManager = new SdlEventManager;
+        this.events = eventManager;
         eventManager.onKey = (key) {
             if (key.event == KeyEvent.Event.KEY_DOWN)
             {

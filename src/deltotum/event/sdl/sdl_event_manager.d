@@ -15,9 +15,11 @@ import std.stdio;
 class SdlEventManager
 {
     @property void delegate(ApplicationEvent) onApplication;
-    @property void delegate(MouseEvent) onMouse;
+    //@property void delegate(MouseEvent) onMouse;
     @property void delegate(KeyEvent) onKey;
     @property void delegate(WindowEvent) onWindow;
+
+    @property void delegate(MouseEvent)[] onMouseListeners = [];
 
     void process(SDL_Event* event)
     {
@@ -79,10 +81,10 @@ class SdlEventManager
 
     void handleMouseEvent(SDL_Event* event)
     {
-        if (onMouse is null)
-        {
-            return;
-        }
+        // if (onMouse is null)
+        // {
+        //     return;
+        // }
 
         auto type = MouseEvent.Event.NONE;
         double x = 0;
@@ -133,7 +135,11 @@ class SdlEventManager
         }
 
         immutable mouseEvent = MouseEvent(EventType.MOUSE, type, event.window.windowID, x, y, button, movementX, movementY);
-        onMouse(mouseEvent);
+        //onMouse(mouseEvent);
+        foreach (void delegate(MouseEvent) listener; onMouseListeners)
+        {
+            listener(mouseEvent);
+        }
     }
 
     void handleWindowEvent(SDL_Event* event)

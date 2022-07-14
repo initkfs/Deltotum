@@ -80,11 +80,16 @@ class Bitmap : DisplayObject
         drawTexture(texture, textureBounds, x, y, angle, flip);
     }
 
+    void drawFrames()
+    {
+        //or double?
+        drawImage(cast(int) x, cast(int) y, cast(int) width, cast(int) height);
+    }
+
     override void drawContent()
     {
         super.drawContent;
-        //or double?
-        drawImage(cast(int) x, cast(int) y, cast(int) width, cast(int) height);
+        drawFrames;
     }
 
     override void destroy()
@@ -94,7 +99,8 @@ class Bitmap : DisplayObject
     }
 
     //TODO remove
-    SDL_Texture* getStruct(){
+    SDL_Texture* getStruct()
+    {
         return texture.getStruct;
     }
 }

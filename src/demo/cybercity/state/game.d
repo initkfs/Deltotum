@@ -15,7 +15,7 @@ import deltotum.animation.object.property.opacity_transition : OpacityTransition
 import deltotum.animation.object.motion.circular_motion_transition : CircularMotionTransition;
 import deltotum.animation.object.motion.linear_motion_transition : LinearMotionTransition;
 import deltotum.math.vector2d : Vector2D;
-import deltotum.ui.text: Text;
+import deltotum.ui.text : Text;
 
 import deltotum.animation.transition : Transition;
 import deltotum.animation.object.value_transition : ValueTransition;
@@ -24,7 +24,10 @@ import deltotum.physics.collision.aabb_collision.detector : AABBCollisionDetecto
 import deltotum.physics.collision.newtonian_collision_resolver : NewtonianCollisionResolver;
 
 import std.stdio;
-import std.format:format;
+import std.format : format;
+
+import demo.cybercity.world.town.street1 : Street1;
+import demo.cybercity.world.town.street2 : Street2;
 
 import bindbc.sdl;
 
@@ -40,8 +43,8 @@ class Game : State
     {
         Bitmap townBackground;
         Bitmap townBackground1;
-        Bitmap townForeground;
-        Bitmap townForeground1;
+        Street1 street1;
+        Street2 street2;
 
         Scroller backgroundScroller;
         Scroller foregroundScroller;
@@ -67,32 +70,33 @@ class Game : State
         build(townBackground);
         townBackground1 = new Bitmap;
         build(townBackground1);
-        townForeground = new Bitmap;
-        build(townForeground);
-        townForeground1 = new Bitmap;
-        build(townForeground1);
 
         backgroundScroller = new Scroller;
         build(backgroundScroller);
         backgroundScroller.speed = 20;
         backgroundScroller.direction = Direction.left;
 
-        foregroundScroller = new Scroller;
-        build(foregroundScroller);
-        foregroundScroller.speed = 30;
-        foregroundScroller.direction = Direction.left;
-
-        //TODO clone
         townBackground.load("cybercity/town/town_background.png", gameWidth, gameHeight);
         townBackground1.load("cybercity/town/town_background.png", gameWidth, gameHeight);
-        townForeground.load("cybercity/town/town_foreground.png", gameWidth, gameHeight);
-        townForeground1.load("cybercity/town/town_foreground.png", gameWidth, gameHeight);
 
         backgroundScroller.current = townBackground;
         backgroundScroller.next = townBackground1;
 
-        foregroundScroller.current = townForeground;
-        foregroundScroller.next = townForeground1;
+        street1 = new Street1;
+        build(street1);
+        street1.create;
+
+        street2 = new Street2;
+        build(street2);
+        street2.create;
+
+        foregroundScroller = new Scroller;
+        build(foregroundScroller);
+        foregroundScroller.speed = 30;
+        foregroundScroller.direction = Direction.left;        
+
+        foregroundScroller.current = street1;
+        foregroundScroller.next = street2;
 
         add(backgroundScroller);
         add(foregroundScroller);
@@ -186,7 +190,7 @@ class Game : State
 
             if (player.x <= worldBounds.width / 2 - player.width)
             {
-                player.x += speed * delta;
+                player.x = player.x + (speed * delta);
             }
             else
             {
@@ -202,7 +206,7 @@ class Game : State
                 player.playAnimation("run", SDL_RendererFlip.SDL_FLIP_HORIZONTAL);
             }
 
-            player.x -= speed * delta;
+            player.x = player.x - (speed * delta);
         }
         else if (up)
         {
