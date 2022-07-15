@@ -29,6 +29,7 @@ import std.format : format;
 import demo.cybercity.world.town.street1 : Street1;
 import demo.cybercity.world.town.street2 : Street2;
 import demo.cybercity.world.people.player : Player;
+import demo.cybercity.world.animals.dog: Dog;
 
 import bindbc.sdl;
 
@@ -51,6 +52,7 @@ class Game : State
         Scroller foregroundScroller;
 
         Player player;
+        Dog dog;
 
         Emitter emitter;
 
@@ -102,14 +104,23 @@ class Game : State
         add(backgroundScroller);
         add(foregroundScroller);
 
-        player = new Player();
+        player = new Player;
         build(player);
         player.create;
 
         add(player);
 
         player.x = 100;
-        player.y = 350;
+        player.y = 370;
+
+        dog = new Dog;
+        build(dog);
+        dog.create;
+        dog.owner = player;
+        add(dog);
+
+        dog.x = 50;
+        dog.y = 410;
 
         fps = new Text(assets.defaultFont);
         build(fps);
@@ -171,7 +182,7 @@ class Game : State
         {
             if (!up && !fall)
             {
-                player.runRigth(delta);
+                player.runRigth;
             }
 
             if (player.x >= worldBounds.width / 2 - player.width)
@@ -184,7 +195,7 @@ class Game : State
         {
             if (!up && !fall)
             {
-                player.runLeft(delta);
+                player.runLeft;
             }
         }
         else if (up)
@@ -197,7 +208,7 @@ class Game : State
         }
         else
         {
-            player.stand;
+            player.stop;
         }
 
         if (up)
