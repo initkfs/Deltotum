@@ -122,6 +122,12 @@ class Game : State
         dog.x = 50;
         dog.y = 410;
 
+        import demo.cybercity.world.vehicles.police: Police;
+        auto police = new Police;
+        build(police);
+        police.create;
+        add(police); 
+
         fps = new Text(assets.defaultFont);
         build(fps);
         fps.x = 10;

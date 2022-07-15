@@ -121,7 +121,7 @@ class Dog : SpriteSheet
             break;
         case State.walk:
             playAnimation(State.walk);
-            x = x + (speed * delta);
+            x = x + speed * delta;
             break;
         default:
             break;

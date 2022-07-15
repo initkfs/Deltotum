@@ -138,13 +138,13 @@ class Player : SpriteSheet
                 auto worldBounds = window.getWorldBounds;
                 if (x <= worldBounds.width / 2 - width)
                 {
-                    x = x + (speed * delta);
+                    x = x + speed * delta;
                 }
             }
             else if (runDirection == Direction.left)
             {
                 playAnimation(State.run, SDL_RendererFlip.SDL_FLIP_HORIZONTAL);
-                x = x - (speed * delta);
+                x = x - speed * delta;
             }
             break;
         case State.jump:
