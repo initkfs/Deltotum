@@ -105,9 +105,9 @@ class Game : State
         player = new Player();
         build(player);
         player.create;
-        
+
         add(player);
-        
+
         player.x = 100;
         player.y = 350;
 
@@ -126,8 +126,6 @@ class Game : State
         const timeCycle = timeEventProcessing + timeUpdate;
         string fpsInfo = format("%s. u: %s ms, e: %s ms, c: %s ms", timeRate, timeUpdate, timeEventProcessing, timeCycle);
         fps.text = fpsInfo;
-
-        enum speed = 100;
 
         auto worldBounds = window.getWorldBounds;
 
@@ -173,40 +171,33 @@ class Game : State
         {
             if (!up && !fall)
             {
-                player.playAnimation("run");
+                player.runRigth(delta);
             }
 
-            if (player.x <= worldBounds.width / 2 - player.width)
-            {
-                player.x = player.x + (speed * delta);
-            }
-            else
+            if (player.x >= worldBounds.width / 2 - player.width)
             {
                 backgroundScroller.isScroll = true;
                 foregroundScroller.isScroll = true;
             }
-
         }
         else if (left)
         {
             if (!up && !fall)
             {
-                player.playAnimation("run", SDL_RendererFlip.SDL_FLIP_HORIZONTAL);
+                player.runLeft(delta);
             }
-
-            player.x = player.x - (speed * delta);
         }
         else if (up)
         {
-            player.playAnimation("jump");
+            player.jump;
         }
         else if (down)
         {
-            player.playAnimation("crouch");
+            player.crouch;
         }
         else
         {
-            player.playAnimation("idle");
+            player.stand;
         }
 
         if (up)

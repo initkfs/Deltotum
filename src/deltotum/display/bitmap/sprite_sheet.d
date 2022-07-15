@@ -19,8 +19,8 @@ private
     class SpriteSheetAnimation
     {
         @property string name;
-        @property int[] indices = [];
-        @property int row = 0;
+        @property int[] frameIndices = [];
+        @property int frameRow = 0;
     }
 }
 
@@ -60,13 +60,14 @@ class SpriteSheet : Bitmap
         return isLoad;
     }
     
-    void addAnimation(string name, int[] indices, int row = 0, bool autoplay = false)
+    void addAnimation(string name, int[] frameIndices, int frameRow = 0, bool autoplay = false)
     {
+        assert(name.length > 0);
         //TODO check exists;
         auto anim = new SpriteSheetAnimation;
         anim.name = name;
-        anim.indices = indices;
-        anim.row = row;
+        anim.frameIndices = frameIndices;
+        anim.frameRow = frameRow;
         animations ~= anim;
 
         if (autoplay)
@@ -77,6 +78,7 @@ class SpriteSheet : Bitmap
 
     void playAnimation(string name, SDL_RendererFlip flip = SDL_RendererFlip.SDL_FLIP_NONE)
     {
+        assert(name.length > 0);
         if (currentAnimation !is null && currentAnimation.name == name)
         {
             return;
@@ -112,8 +114,8 @@ class SpriteSheet : Bitmap
             return;
         }
 
-        const frameIndex = currentAnimation.indices[currentAnimationIndex];
-        const frameRow = currentAnimation.row;
+        const frameIndex = currentAnimation.frameIndices[currentAnimationIndex];
+        const frameRow = currentAnimation.frameRow;
 
         drawFrame(x, y, width, height, frameIndex, frameRow, currentFlip);
     }
@@ -127,10 +129,10 @@ class SpriteSheet : Bitmap
             return;
         }
 
-        const animLength = currentAnimation.indices.length;
+        const animLength = currentAnimation.frameIndices.length;
         if (animLength > 0)
         {
-            if (currentAnimationIndex >= currentAnimation.indices.length - 1)
+            if (currentAnimationIndex >= currentAnimation.frameIndices.length - 1)
             {
                 currentAnimationIndex = 0;
             }
