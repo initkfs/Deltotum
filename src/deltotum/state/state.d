@@ -5,11 +5,8 @@ import deltotum.display.display_object : DisplayObject;
 
 import std.stdio;
 
-import deltotum.display.layer.layer : Layer;
-
-//TODO remove HAL api
+//TODO remove hal api
 import bindbc.sdl;
-import deltotum.display.light.light_spot : LightSpot;
 
 /**
  * Authors: initkfs
@@ -25,7 +22,6 @@ class State : UniComponent
     protected
     {
         DisplayObject[] displayObjects = [];
-        Layer[] layers = [];
     }
 
     void create()
@@ -36,24 +32,10 @@ class State : UniComponent
     {
         window.renderer.clear;
 
-        auto renderer = window.renderer.getStruct;
-
         foreach (obj; displayObjects)
         {
             obj.update(delta);
             obj.draw;
-        }
-
-        if (layers.length > 0)
-        {
-            SDL_Rect gameRect = {0, 0, window.getWidth, window.getHeight};
-            foreach (Layer layer; layers)
-            {
-                SDL_SetRenderTarget(renderer, layer.getStruct);
-                layer.drawContent;
-                SDL_SetRenderTarget(renderer, null);
-                SDL_RenderCopy(renderer, layer.getStruct, &gameRect, &gameRect);
-            }
         }
 
         window.renderer.present;
@@ -66,12 +48,6 @@ class State : UniComponent
             obj.destroy;
         }
         displayObjects = [];
-    }
-
-    void addLayer(Layer layer)
-    {
-        //TODO check if exists
-        layers ~= layer;
     }
 
     void add(DisplayObject object)

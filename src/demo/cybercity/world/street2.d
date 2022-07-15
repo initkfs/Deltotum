@@ -8,7 +8,7 @@ import demo.cybercity.world.town.street1: Street1;
 class Street2 : Street1
 {
     override void createEnvironment(){
-
+        super.createEnvironment;
     }
 
     override void create()
