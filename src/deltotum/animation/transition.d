@@ -4,7 +4,7 @@ import deltotum.display.display_object : DisplayObject;
 import deltotum.animation.interp.interpolator : Interpolator;
 import deltotum.animation.interp.uni_interpolator : UniInterpolator;
 import deltotum.math.vector2d : Vector2D;
-import deltotum.math.math: Math;
+import deltotum.math.math : Math;
 
 import std.traits : isIntegral, isFloatingPoint;
 
@@ -30,6 +30,7 @@ class Transition(T) if (isIntegral!T || isFloatingPoint!T || is(T : Vector2D)) :
     @property bool isInverse;
     @property bool isCycle = true;
     @property Interpolator interpolator;
+    @property T lastValue;
 
     private
     {
@@ -76,13 +77,13 @@ class Transition(T) if (isIntegral!T || isFloatingPoint!T || is(T : Vector2D)) :
 
     override void update(double delta)
     {
-        if (state == TransitionState.none || state == TransitionState.end || onValue is null)
+        if (state == TransitionState.none || state == TransitionState.end)
         {
             return;
         }
 
         super.update(delta);
-        
+
         if (currentFrame > frameCount)
         {
             if (!isCycle)
@@ -121,9 +122,12 @@ class Transition(T) if (isIntegral!T || isFloatingPoint!T || is(T : Vector2D)) :
         double deltaT = currentFrame / frameCount;
         //TODO check is finite
         double interpProgress = interpolator.interpolate(deltaT);
-        T value = Math.lerp(start, end, interpProgress, false);
+        lastValue = Math.lerp(start, end, interpProgress, false);
 
-        onValue(value);
+        if (onValue !is null)
+        {
+            onValue(lastValue);
+        }
 
         currentFrame++;
     }

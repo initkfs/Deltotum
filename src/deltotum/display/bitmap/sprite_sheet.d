@@ -11,6 +11,10 @@ import deltotum.hal.sdl.sdl_texture : SdlTexture;
 import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 import deltotum.hal.sdl.img.sdl_image : SdlImage;
 import deltotum.math.rect : Rect;
+import deltotum.animation.interp.interpolator : Interpolator;
+import deltotum.animation.transition : Transition;
+import std.math.rounding : floor;
+import std.conv : to;
 
 import bindbc.sdl;
 
@@ -20,7 +24,9 @@ private
     {
         @property string name;
         @property int[] frameIndices = [];
-        @property int frameRow = 0;
+        @property int frameRow;
+        @property Transition!double transition;
+        @property int frameDelay;
     }
 }
 
@@ -31,7 +37,7 @@ class SpriteSheet : Bitmap
 {
     protected
     {
-        int frameDelay;
+        int commonFrameDelay;
 
         SpriteSheetAnimation[] animations = [];
         SpriteSheetAnimation currentAnimation;
@@ -41,9 +47,9 @@ class SpriteSheet : Bitmap
         double frameHeight = 0;
     }
 
-    this(int frameWidth = 0, int frameHeight = 0, int frameDelay = 100)
+    this(int frameWidth = 0, int frameHeight = 0, int commonFrameDelay = 100)
     {
-        this.frameDelay = frameDelay;
+        this.commonFrameDelay = commonFrameDelay;
 
         this.frameWidth = frameWidth;
         this.frameHeight = frameHeight;
@@ -59,8 +65,8 @@ class SpriteSheet : Bitmap
         }
         return isLoad;
     }
-    
-    void addAnimation(string name, int[] frameIndices, int frameRow = 0, bool autoplay = false)
+
+    void addAnimation(string name, int[] frameIndices, int frameRow = 0, bool autoplay = false, int frameDelay = 0, Interpolator interpolator = null)
     {
         assert(name.length > 0);
         //TODO check exists;
@@ -68,20 +74,37 @@ class SpriteSheet : Bitmap
         anim.name = name;
         anim.frameIndices = frameIndices;
         anim.frameRow = frameRow;
+        anim.frameDelay = frameDelay > 0 ? frameDelay : commonFrameDelay;
+        if (interpolator !is null)
+        {
+            anim.transition = new Transition!double(0, 1, anim.frameDelay, interpolator);
+            build(anim.transition);
+        }
         animations ~= anim;
 
         if (autoplay)
         {
-            currentAnimation = anim;
+            playAnimation(name);
         }
     }
 
     void playAnimation(string name, SDL_RendererFlip flip = SDL_RendererFlip.SDL_FLIP_NONE)
     {
         assert(name.length > 0);
-        if (currentAnimation !is null && currentAnimation.name == name)
+        if (currentAnimation !is null)
         {
-            return;
+            if (currentAnimation.name == name)
+            {
+                return;
+            }
+            else
+            {
+                if (currentAnimation.transition !is null)
+                {
+                    currentAnimation.transition.stop;
+                }
+            }
+
         }
 
         foreach (anim; animations)
@@ -89,6 +112,10 @@ class SpriteSheet : Bitmap
             if (anim.name == name)
             {
                 currentAnimation = anim;
+                if (currentAnimation.transition !is null)
+                {
+                    currentAnimation.transition.run;
+                }
                 currentAnimationIndex = 0;
                 this.currentFlip = flip;
             }
@@ -138,8 +165,40 @@ class SpriteSheet : Bitmap
             }
             else
             {
-                currentAnimationIndex = (SDL_GetTicks() / frameDelay) % animLength;
+                if (currentAnimation.transition !is null)
+                {
+                    currentAnimation.transition.update(delta);
+                    const progress0to1 = currentAnimation.transition.lastValue;
+                    const indicesLength = currentAnimation.frameIndices.length;
+                    //TODO smooth
+                    int index = to!int(progress0to1 * indicesLength * (1 - double.epsilon));
+                    if (index > 0 && index < indicesLength)
+                    {
+                        currentAnimationIndex = index;
+                    }
+                }
+                else
+                {
+                    auto delay = currentAnimation.frameDelay > 0 ? currentAnimation.frameDelay
+                        : commonFrameDelay;
+                    currentAnimationIndex = (SDL_GetTicks() / delay) % animLength;
+                }
+
             }
         }
+    }
+
+    override void destroy()
+    {
+        super.destroy;
+        foreach (SpriteSheetAnimation animation; animations)
+        {
+            if (animation.transition !is null)
+            {
+                animation.transition.stop;
+                animation.transition.destroy;
+            }
+        }
+        animations = [];
     }
 }
