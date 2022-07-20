@@ -4,3 +4,5 @@
 /dist/
 /dub.selections.json
 /deltotum
+/src/app.d
+/src/demo/
