@@ -27,10 +27,15 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         super();
     }
 
+    int query(int* width, int* height, uint* format, SDL_TextureAccess* access)
+    {
+        const int zeroOrErrorCode = SDL_QueryTexture(ptr, format, access, width, height);
+        return zeroOrErrorCode;
+    }
+
     int getSize(int* width, int* height)
     {
-        const int zeroOrErrorCode = SDL_QueryTexture(ptr, null, null, width, height);
-        return zeroOrErrorCode;
+        return query(width, height, null, null);
     }
 
     void create(SdlRenderer renderer, uint format,

@@ -2,6 +2,12 @@ module demo.cybercity.world.town.street1;
 
 import deltotum.display.bitmap.sprite_sheet : SpriteSheet;
 import deltotum.display.bitmap.bitmap : Bitmap;
+import deltotum.display.light.light_environment : LightEnvironment;
+import deltotum.display.light.light_spot : LightSpot;
+
+//TODO remove HAL api
+import deltotum.hal.sdl.sdl_texture : SdlTexture;
+import bindbc.sdl;
 
 /**
  * Authors: initkfs
@@ -81,6 +87,44 @@ class Street1 : Bitmap
         bannerBig.y = 80;
         add(bannerBig);
         bannerBig.isDraggable = true;
+
+        auto lightLayer = new LightEnvironment;
+        build(lightLayer);
+
+        auto light1 = new LightSpot;
+        build(light1);
+        light1.load("world/light/lightmap2.png");
+        light1.x = 365;
+        light1.y = 222;
+        lightLayer.addLight(light1);
+
+        auto light2 = new LightSpot;
+        build(light2);
+        light2.load("world/light/lightmap2.png");
+        light2.x = 267;
+        light2.y = 14;
+        lightLayer.addLight(light2);
+
+        auto light3 = new LightSpot;
+        build(light3);
+        light3.load("world/light/lightmap2.png");
+        light3.x = 461;
+        light3.y = 125;
+        lightLayer.addLight(light3);
+
+        auto light4 = new LightSpot;
+        build(light4);
+        light4.load("world/light/lightmap1.png");
+        light4.x = 25;
+        light4.y = 48;
+        lightLayer.addLight(light4);
+
+        lightLayer.create;
+        lightLayer.draw;
+
+        add(lightLayer);
+
+        //SDL_SetTextureBlendMode(getStruct, SDL_BLENDMODE_MOD);
     }
 
     override void create()

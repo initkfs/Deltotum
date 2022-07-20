@@ -22,12 +22,14 @@ abstract class DisplayObject : PhysicalBody
     @property double height = 0;
     @property Vector2D* velocity;
     @property Vector2D* acceleration;
-    @property bool isRedraw = false;
+    @property bool isRedraw = true;
     @property double opacity = 1;
     @property double angle = 0;
     @property double scale = 1;
     @property bool isManaged = true;
     @property bool isDraggable = false;
+    @property bool isVisible = true;
+    @property bool isUpdatable = true;
 
     protected
     {
@@ -171,14 +173,27 @@ abstract class DisplayObject : PhysicalBody
     final bool draw()
     {
         //TODO layer
-        drawContent;
+        bool redraw;
+        if (isVisible && isRedraw)
+        {
+            drawContent;
+            redraw = true;
+        }
 
         foreach (DisplayObject child; children)
         {
+            if (!child.isVisible || !child.isRedraw)
+            {
+                continue;
+            }
             child.drawContent;
+            if (!redraw)
+            {
+                redraw = true;
+            }
         }
 
-        return true;
+        return redraw;
     }
 
     void requestRedraw()
@@ -188,16 +203,25 @@ abstract class DisplayObject : PhysicalBody
 
     void update(double delta)
     {
-        velocity.x += acceleration.x * delta;
-        velocity.y += acceleration.y * delta;
-        const dx = velocity.x * delta;
-        const dy = velocity.y * delta;
+        double dx = 0;
+        double dy = 0;
+        if (isUpdatable)
+        {
+            velocity.x += acceleration.x * delta;
+            velocity.y += acceleration.y * delta;
+            dx = velocity.x * delta;
+            dy = velocity.y * delta;
 
-        _x += dx;
-        _y += dy;
+            _x += dx;
+            _y += dy;
+        }
 
         foreach (DisplayObject child; children)
         {
+            if (!child.isUpdatable)
+            {
+                continue;
+            }
             child.update(delta);
             if (child.isManaged)
             {

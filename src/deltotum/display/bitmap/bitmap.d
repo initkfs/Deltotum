@@ -24,6 +24,16 @@ class Bitmap : DisplayObject
         SdlTexture texture;
     }
 
+    this()
+    {
+
+    }
+
+    this(SdlTexture texture)
+    {
+        this.texture = texture;
+    }
+
     bool load(string path, int requestWidth = -1, int requestHeight = -1)
     {
         import std.path : isAbsolute;
@@ -46,6 +56,11 @@ class Bitmap : DisplayObject
             image.resize(requestWidth, requestHeight);
             imageWidth = image.width;
             imageHeight = image.height;
+        }
+
+        if (texture !is null)
+        {
+            destroy;
         }
 
         texture = new SdlTexture;
@@ -71,6 +86,12 @@ class Bitmap : DisplayObject
         image.destroy;
         requestRedraw;
         return true;
+    }
+
+    void drawImage(SDL_RendererFlip flip = SDL_RendererFlip
+            .SDL_FLIP_NONE)
+    {
+        drawImage(cast(int) x, cast(int) y, cast(int) width, cast(int) height, flip);
     }
 
     void drawImage(int x, int y, int width, int height, SDL_RendererFlip flip = SDL_RendererFlip
