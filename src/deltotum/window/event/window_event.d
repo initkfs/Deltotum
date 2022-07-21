@@ -1,7 +1,9 @@
 module deltotum.window.event.window_event;
 
-import deltotum.event.event_base : EventBase;
-import deltotum.event.event_type : EventType;
+import deltotum.events.event_base : EventBase;
+import deltotum.events.event_type : EventType;
+import deltotum.utils.type_util: eventNameByIndex;
+
 
 /**
  * Authors: initkfs
@@ -49,6 +51,6 @@ immutable struct WindowEvent
     {
         import std.format : format;
 
-        return format("{%s,%s,x:%s,y:%s,w:%s,h:%s,winid:%s}", type, getEventName!Event(event), x, y, width, height, windowId);
+        return format("{%s,%s,x:%s,y:%s,w:%s,h:%s,winid:%s}", type, eventNameByIndex!Event(event), x, y, width, height, windowId);
     }
 }

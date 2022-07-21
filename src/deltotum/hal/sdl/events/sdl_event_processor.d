@@ -1,6 +1,8 @@
-module deltotum.event.sdl.sdl_event_manager;
+module deltotum.hal.sdl.events.sdl_event_processor;
 
-import deltotum.event.event_type : EventType;
+import deltotum.events.processing.event_processor : EventProcessor;
+
+import deltotum.events.event_type : EventType;
 import deltotum.application.event.application_event : ApplicationEvent;
 import deltotum.input.mouse.event.mouse_event : MouseEvent;
 import deltotum.input.keyboard.event.key_event : KeyEvent;
@@ -12,16 +14,9 @@ import std.stdio;
 /**
  * Authors: initkfs
  */
-class SdlEventManager
+class SdlEventProcessor : EventProcessor!(SDL_Event*)
 {
-    @property void delegate(ApplicationEvent) onApplication;
-    //@property void delegate(MouseEvent) onMouse;
-    @property void delegate(KeyEvent) onKey;
-    @property void delegate(WindowEvent) onWindow;
-
-    @property void delegate(MouseEvent)[] onMouseListeners = [];
-
-    void process(SDL_Event* event)
+    override void process(SDL_Event* event)
     {
         switch (event.type)
         {
@@ -49,7 +44,7 @@ class SdlEventManager
             return;
         }
         immutable exitEvent = ApplicationEvent(
-            EventType.APPLICATION, ApplicationEvent.Event.EXIT, event.window.windowID);
+            EventType.application, ApplicationEvent.Event.EXIT, event.window.windowID);
         onApplication(exitEvent);
     }
 
@@ -60,14 +55,14 @@ class SdlEventManager
             return;
         }
 
-        auto type = KeyEvent.Event.NONE;
+        auto type = KeyEvent.Event.none;
         switch (event.type)
         {
         case SDL_KEYDOWN:
-            type = KeyEvent.Event.KEY_DOWN;
+            type = KeyEvent.Event.keyDown;
             break;
         case SDL_KEYUP:
-            type = KeyEvent.Event.KEY_UP;
+            type = KeyEvent.Event.keyUp;
             break;
         default:
             break;
@@ -75,18 +70,18 @@ class SdlEventManager
         const int keyCode = event.key.keysym.sym;
         const int mod = event.key.keysym.mod;
         const windowId = event.key.windowID;
-        immutable keyEvent = KeyEvent(EventType.KEY, type, windowId, keyCode, mod);
+        immutable keyEvent = KeyEvent(EventType.key, type, windowId, keyCode, mod);
         onKey(keyEvent);
     }
 
     void handleMouseEvent(SDL_Event* event)
     {
-        // if (onMouse is null)
-        // {
-        //     return;
-        // }
+        if (onMouse is null)
+        {
+            return;
+        }
 
-        auto type = MouseEvent.Event.NONE;
+        auto type = MouseEvent.Event.none;
         double x = 0;
         double y = 0;
         double movementX = 0;
@@ -96,7 +91,7 @@ class SdlEventManager
         switch (event.type)
         {
         case SDL_MOUSEMOTION:
-            type = MouseEvent.Event.MOUSE_MOVE;
+            type = MouseEvent.Event.mouseMove;
             x = event.motion.x;
             y = event.motion.y;
             movementX = event.motion.xrel;
@@ -104,7 +99,7 @@ class SdlEventManager
             break;
         case SDL_MOUSEBUTTONDOWN:
             SDL_CaptureMouse(SDL_TRUE);
-            type = MouseEvent.Event.MOUSE_DOWN;
+            type = MouseEvent.Event.mouseDown;
             // - 1
             button = event.button.button;
             x = event.button.x;
@@ -112,13 +107,13 @@ class SdlEventManager
             break;
         case SDL_MOUSEBUTTONUP:
             SDL_CaptureMouse(SDL_FALSE);
-            type = MouseEvent.Event.MOUSE_UP;
+            type = MouseEvent.Event.mouseUp;
             button = event.button.button;
             x = event.button.x;
             y = event.button.y;
             break;
         case SDL_MOUSEWHEEL:
-            type = MouseEvent.Event.MOUSE_WHEEL;
+            type = MouseEvent.Event.mouseWheel;
             if (event.wheel.direction == SDL_MouseWheelDirection.SDL_MOUSEWHEEL_FLIPPED)
             {
                 x = -event.wheel.x;
@@ -134,12 +129,8 @@ class SdlEventManager
             break;
         }
 
-        immutable mouseEvent = MouseEvent(EventType.MOUSE, type, event.window.windowID, x, y, button, movementX, movementY);
-        //onMouse(mouseEvent);
-        foreach (void delegate(MouseEvent) listener; onMouseListeners)
-        {
-            listener(mouseEvent);
-        }
+        auto mouseEvent = MouseEvent(EventType.mouse, type, event.window.windowID, x, y, button, movementX, movementY);
+        onMouse(mouseEvent);
     }
 
     void handleWindowEvent(SDL_Event* event)
@@ -203,7 +194,7 @@ class SdlEventManager
             break;
         }
 
-        immutable windowEvent = WindowEvent(EventType.WINDOW, type, event.window.windowID, width, height, x, y);
+        immutable windowEvent = WindowEvent(EventType.window, type, event.window.windowID, width, height, x, y);
         onWindow(windowEvent);
     }
 }

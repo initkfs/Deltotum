@@ -14,6 +14,11 @@ class Scroller : DisplayObject
     @property DisplayObject _next;
     @property bool isScroll;
 
+    this(){
+        super();
+        isRedrawChildren = false;
+    }
+
     override void drawContent()
     {
         //TODO check in bounds
@@ -88,7 +93,7 @@ class Scroller : DisplayObject
 
         enforce(current !is null, "Current sprite must not be null");
         _current = current;
-
+        add(current);
     }
 
     @property DisplayObject next() @nogc nothrow
@@ -108,5 +113,7 @@ class Scroller : DisplayObject
         {
             next.x = worldBounds.right;
         }
+
+        add(next);
     }
 }

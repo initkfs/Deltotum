@@ -1,7 +1,10 @@
 module deltotum.input.mouse.event.mouse_event;
 
-import deltotum.event.event_base : EventBase;
-import deltotum.event.event_type : EventType;
+import deltotum.events.event_base : EventBase;
+import deltotum.events.event_type : EventType;
+import deltotum.utils.type_util : eventNameByIndex;
+import deltotum.events.event_target : EventTarget;
+import deltotum.events.event_source : EventSource;
 
 /**
  * Authors: initkfs
@@ -12,11 +15,11 @@ immutable struct MouseEvent
 
     static enum Event
     {
-        NONE,
-        MOUSE_DOWN,
-        MOUSE_UP,
-        MOUSE_MOVE,
-        MOUSE_WHEEL
+        none,
+        mouseDown,
+        mouseUp,
+        mouseMove,
+        mouseWheel
     }
 
     double x;
@@ -43,7 +46,7 @@ immutable struct MouseEvent
     {
         import std.format : format;
 
-        return format("{%s,%s,x:%s,y:%s,btn:%s,movX:%s,movY:%s,winid:%s}", type, getEventName!Event(
+        return format("{%s,%s,x:%s,y:%s,btn:%s,movX:%s,movY:%s,winid:%s}", type, eventNameByIndex!Event(
                 event), x, y, button, movementX, movementY, windowId);
     }
 }

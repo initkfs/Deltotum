@@ -9,9 +9,6 @@ import deltotum.audio.audio : Audio;
 
 import std.experimental.logger.core : Logger;
 
-//TODO remove HAL
-import deltotum.event.sdl.sdl_event_manager: SdlEventManager;
-
 /**
  * Authors: initkfs
  */
@@ -24,7 +21,6 @@ class UniComponent : SimpleUnit
         Window _window;
         Input _input;
         Audio _audio;
-        SdlEventManager _events;
     }
 
     void build(UniComponent uniComponent)
@@ -52,7 +48,6 @@ class UniComponent : SimpleUnit
         uniComponent.window = parent.window;
         uniComponent.input = parent.input;
         uniComponent.audio = parent._audio;
-        uniComponent.events = parent.events;
 
         uniComponent.afterBuild();
     }
@@ -139,21 +134,5 @@ class UniComponent : SimpleUnit
 
         enforce(audio !is null, "Audio must not be null");
         _audio = audio;
-
-    }
-
-     @property SdlEventManager events() @nogc @safe pure nothrow
-    out (_events; _events !is null)
-    {
-        return _events;
-    }
-
-    @property void events(SdlEventManager events) @safe pure
-    {
-        import std.exception : enforce;
-
-        enforce(events !is null, "Event manager must not be null");
-        _events = events;
-
     }
 }

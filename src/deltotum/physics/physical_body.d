@@ -1,13 +1,13 @@
 module deltotum.physics.physical_body;
 
 import deltotum.math.vector2d : Vector2D;
-import deltotum.application.components.uni.uni_component : UniComponent;
 import deltotum.math.rect: Rect;
+import deltotum.events.event_target: EventTarget;
 
 /**
  * Authors: initkfs
  */
-class PhysicalBody : UniComponent
+class PhysicalBody : EventTarget
 {
     @property double mass = 0;
     @property gravitationalAcceleration = 9.81;

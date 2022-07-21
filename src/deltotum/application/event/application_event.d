@@ -1,7 +1,8 @@
 module deltotum.application.event.application_event;
 
-import deltotum.event.event_base : EventBase;
-import deltotum.event.event_type : EventType;
+import deltotum.events.event_base : EventBase;
+import deltotum.events.event_type : EventType;
+import deltotum.utils.type_util: eventNameByIndex;
 
 /**
  * Authors: initkfs
@@ -16,7 +17,7 @@ immutable struct ApplicationEvent
         EXIT
     }
 
-    immutable this(EventType type, uint event, uint windowId)
+    immutable this(immutable EventType type, uint event, uint windowId)
     {
         this.type = type;
         this.event = event;
@@ -27,6 +28,6 @@ immutable struct ApplicationEvent
     {
         import std.format : format;
 
-        return format("{%s,%s,winid:%s}", type, getEventName!Event(event), windowId);
+        return format("{%s,%s,winid:%s}", type, eventNameByIndex!Event(event), windowId);
     }
 }

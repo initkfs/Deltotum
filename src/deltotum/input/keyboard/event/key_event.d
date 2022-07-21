@@ -1,7 +1,8 @@
 module deltotum.input.keyboard.event.key_event;
 
-import deltotum.event.event_base : EventBase;
-import deltotum.event.event_type : EventType;
+import deltotum.events.event_base : EventBase;
+import deltotum.events.event_type : EventType;
+import deltotum.utils.type_util: eventNameByIndex;
 
 /**
  * Authors: initkfs
@@ -12,9 +13,9 @@ immutable struct KeyEvent
 
     static enum Event
     {
-        NONE,
-        KEY_DOWN,
-        KEY_UP
+        none,
+        keyDown,
+        keyUp
     }
 
     int keyCode;
@@ -33,6 +34,6 @@ immutable struct KeyEvent
     {
         import std.format : format;
 
-        return format("{%s,%s,code:%s,mod:%s,winid:%s}", type, getEventName!Event(event), keyCode, modifier, windowId);
+        return format("{%s,%s,code:%s,mod:%s,winid:%s}", type, eventNameByIndex!Event(event), keyCode, modifier, windowId);
     }
 }

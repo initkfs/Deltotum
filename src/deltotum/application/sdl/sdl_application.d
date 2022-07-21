@@ -1,7 +1,8 @@
 module deltotum.application.sdl.sdl_application;
 
 import deltotum.application.graphics_application : GraphicsApplication;
-import deltotum.event.sdl.sdl_event_manager : SdlEventManager;
+import deltotum.events.event_manager : EventManager;
+import deltotum.hal.sdl.events.sdl_event_processor : SdlEventProcessor;
 import deltotum.asset.asset_manager : AssetManager;
 import deltotum.asset.fonts.font : Font;
 import deltotum.state.state_manager : StateManager;
@@ -43,7 +44,7 @@ class SdlApplication : GraphicsApplication
 
     @property double frameRate = 0;
     @property bool isRunning;
-    @property SdlEventManager eventManager;
+    @property EventManager eventManager;
     @property StateManager stateManager;
 
     this(SdlLib lib, SdlImgLib imgLib, SdlMixLib audioMixLib, SdlTTFLib fontLib)
@@ -76,22 +77,24 @@ class SdlApplication : GraphicsApplication
 
         audio = new Audio(audioMixLib);
 
-        eventManager = new SdlEventManager;
-        this.events = eventManager;
+        stateManager = new StateManager;
+
+        //TODO remove sdl api
+        eventManager = new EventManager(stateManager);
+        eventManager.eventProcessor = new SdlEventProcessor;
+        eventManager.startEvents;
         eventManager.onKey = (key) {
-            if (key.event == KeyEvent.Event.KEY_DOWN)
+            if (key.event == KeyEvent.Event.keyDown)
             {
                 input.justPressed = true;
                 input.lastKey = key.keyCode;
             }
-            else if (key.event == KeyEvent.Event.KEY_UP)
+            else if (key.event == KeyEvent.Event.keyUp)
             {
                 input.justPressed = false;
                 input.lastKey = key.keyCode;
             }
         };
-
-        stateManager = new StateManager;
 
         enum consoleLoggerLevel = LogLevel.trace;
         auto consoleLogger = new FileLogger(stdout, consoleLoggerLevel);
@@ -127,7 +130,7 @@ class SdlApplication : GraphicsApplication
     {
         build(state);
         state.create;
-        stateManager.setState(state);
+        stateManager.currentState = state;
     }
 
     override void quit()
@@ -177,21 +180,21 @@ class SdlApplication : GraphicsApplication
 
         SDL_Event event;
 
-        stateManager._currentState.timeEventProcessing = 0;
+        stateManager.currentState.timeEventProcessing = 0;
 
         while (SDL_PollEvent(&event))
         {
             const startEvent = SDL_GetTicks();
             handleEvent(&event);
             const endEvent = SDL_GetTicks();
-            stateManager._currentState.timeEventProcessing += endEvent - startEvent;
+            stateManager.currentState.timeEventProcessing += endEvent - startEvent;
             if (!isRunning)
             {
                 return isRunning;
             }
         }
 
-        stateManager._currentState.timeRate = frameRate / deltaTime;
+        stateManager.currentState.timeRate = frameRate / deltaTime;
 
         while (deltaTimeAccumulator > frameTime)
         {
@@ -200,7 +203,7 @@ class SdlApplication : GraphicsApplication
             const startStateTime = SDL_GetTicks();
             updateState(delta);
             const endStateTime = SDL_GetTicks();
-            stateManager._currentState.timeUpdate = endStateTime - startStateTime;
+            stateManager.currentState.timeUpdate = endStateTime - startStateTime;
             deltaTimeAccumulator -= frameTime;
         }
 
@@ -209,7 +212,7 @@ class SdlApplication : GraphicsApplication
 
     void handleEvent(SDL_Event* event)
     {
-        eventManager.process(event);
+        eventManager.eventProcessor.process(event);
 
         if (event.type == SDL_QUIT)
         {

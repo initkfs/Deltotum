@@ -6,6 +6,9 @@ import deltotum.math.vector2d : Vector2D;
 import deltotum.math.rect : Rect;
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
 import deltotum.physics.physical_body : PhysicalBody;
+import deltotum.input.mouse.event.mouse_event : MouseEvent;
+import deltotum.application.event.application_event : ApplicationEvent;
+import deltotum.input.keyboard.event.key_event : KeyEvent;
 
 import std.math.operations : isClose;
 import std.stdio;
@@ -18,11 +21,13 @@ import bindbc.sdl;
  */
 abstract class DisplayObject : PhysicalBody
 {
+    @property DisplayObject parent;
     @property double width = 0;
     @property double height = 0;
     @property Vector2D* velocity;
     @property Vector2D* acceleration;
     @property bool isRedraw = true;
+    @property bool isRedrawChildren = true;
     @property double opacity = 1;
     @property double angle = 0;
     @property double scale = 1;
@@ -30,6 +35,7 @@ abstract class DisplayObject : PhysicalBody
     @property bool isDraggable = false;
     @property bool isVisible = true;
     @property bool isUpdatable = true;
+    @property bool isFocus = false;
 
     protected
     {
@@ -56,11 +62,16 @@ abstract class DisplayObject : PhysicalBody
 
     void create()
     {
-        import deltotum.input.mouse.event.mouse_event : MouseEvent;
+        eventMouseHandler = (e) {
 
-        //TODO add listeners
-        events.onMouseListeners ~= (e) {
-            if (e.event == MouseEvent.Event.MOUSE_DOWN)
+            bool isConsumed = runListeners(e);
+
+            if (isConsumed)
+            {
+                return isConsumed;
+            }
+
+            if (e.event == MouseEvent.Event.mouseDown)
             {
                 if (isDraggable && bounds.contains(e.x, e.y))
                 {
@@ -78,11 +89,10 @@ abstract class DisplayObject : PhysicalBody
                         {
                             child.startDrag(e.x, e.y);
                         }
-
                     }
                 }
             }
-            else if (e.event == MouseEvent.Event.MOUSE_MOVE)
+            else if (e.event == MouseEvent.Event.mouseMove)
             {
                 if (isDrag)
                 {
@@ -101,7 +111,7 @@ abstract class DisplayObject : PhysicalBody
                     }
                 }
             }
-            else if (e.event == MouseEvent.Event.MOUSE_UP)
+            else if (e.event == MouseEvent.Event.mouseUp)
             {
                 if (isDraggable && isDrag)
                 {
@@ -116,6 +126,8 @@ abstract class DisplayObject : PhysicalBody
                     }
                 }
             }
+
+            return false;
         };
     }
 
@@ -132,6 +144,46 @@ abstract class DisplayObject : PhysicalBody
         offsetX = 0;
         offsetY = 0;
         this.isDrag = false;
+    }
+
+    void buildEventRoute(T, E)(ref T[] chain, E e)
+    {
+        static if (__traits(compiles, e.target))
+        {
+            if (e.target !is null)
+            {
+                if (e.target is this)
+                {
+                    chain ~= this;
+                }
+            }
+            else
+            {
+                static if (is(E : MouseEvent))
+                {
+                    if (boundsParent.contains(e.x, e.y))
+                    {
+                        chain ~= this;
+                    }
+                }
+
+                static if (is(E : KeyEvent))
+                {
+                    if (isFocus)
+                    {
+                        chain ~= this;
+                    }
+                }
+            }
+        }
+
+        if (children.length > 0)
+        {
+            foreach (DisplayObject child; children)
+            {
+                child.buildEventRoute(chain, e);
+            }
+        }
     }
 
     void drawContent()
@@ -170,7 +222,7 @@ abstract class DisplayObject : PhysicalBody
         }
     }
 
-    final bool draw()
+    bool draw()
     {
         //TODO layer
         bool redraw;
@@ -180,16 +232,19 @@ abstract class DisplayObject : PhysicalBody
             redraw = true;
         }
 
-        foreach (DisplayObject child; children)
+        if (isRedrawChildren)
         {
-            if (!child.isVisible || !child.isRedraw)
+            foreach (DisplayObject child; children)
             {
-                continue;
-            }
-            child.drawContent;
-            if (!redraw)
-            {
-                redraw = true;
+                if (!child.isVisible || !child.isRedraw)
+                {
+                    continue;
+                }
+                child.drawContent;
+                if (!redraw)
+                {
+                    redraw = true;
+                }
             }
         }
 
@@ -233,6 +288,19 @@ abstract class DisplayObject : PhysicalBody
         }
     }
 
+    Rect boundsParent()
+    {
+        if (parent is null)
+        {
+            return bounds();
+        }
+
+        Rect parentBounds = bounds;
+        parentBounds.x = parent.x + parentBounds.x;
+        parentBounds.y = parent.y + parentBounds.y;
+        return parentBounds;
+    }
+
     Rect bounds()
     {
         const Rect bounds = {x, y, width, height};
@@ -243,6 +311,7 @@ abstract class DisplayObject : PhysicalBody
     {
         foreach (DisplayObject child; children)
         {
+            child.parent = null;
             child.destroy;
         }
     }
@@ -254,6 +323,7 @@ abstract class DisplayObject : PhysicalBody
             obj.x = x + obj.x;
             obj.y = y + obj.y;
         }
+        obj.parent = this;
         //TODO check if exists
         children ~= obj;
     }

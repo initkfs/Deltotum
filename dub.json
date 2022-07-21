@@ -9,7 +9,7 @@
     "configurations": [{
             "name": "app-dev",
             "versions": [
-                "dev"
+                "dev", "sdl_backend"
             ],
             "targetType": "executable",
             "targetName": "deltotum",
@@ -19,7 +19,7 @@
         },
         {
             "name": "app-dist",
-            "versions": [],
+            "versions": ["sdl_backend"],
             "targetType": "executable",
             "targetName": "./dist/deltotum",
             "platforms": [
