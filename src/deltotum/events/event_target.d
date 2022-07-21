@@ -58,6 +58,15 @@ abstract class EventTarget : UniComponent
                 return eventMouseHandler(e);
             }
         }
+
+        static if (is(E : KeyEvent))
+        {
+            if (eventKeyHandler !is null)
+            {
+                return eventKeyHandler(e);
+            }
+        }
+
         return false;
     }
 
