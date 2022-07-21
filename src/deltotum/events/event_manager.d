@@ -1,7 +1,7 @@
 module deltotum.events.event_manager;
 
 import deltotum.events.processing.event_processor : EventProcessor;
-import deltotum.state.state_manager : StateManager;
+import deltotum.scene.scene_manager: SceneManager;
 
 import deltotum.application.event.application_event : ApplicationEvent;
 import deltotum.input.mouse.event.mouse_event : MouseEvent;
@@ -22,14 +22,14 @@ class EventManager
         @property SdlEventProcessor eventProcessor;
     }
 
-    @property StateManager stateManager;
+    @property SceneManager sceneManager;
 
     //TODO for input
     @property void delegate(KeyEvent) onKey;
 
-    this(StateManager stateManager)
+    this(SceneManager sceneManager)
     {
-        this.stateManager = stateManager;
+        this.sceneManager = sceneManager;
     }
 
     void startEvents()
@@ -52,7 +52,7 @@ class EventManager
     {
         DisplayObject[] eventChain = [];
 
-        foreach (DisplayObject target; stateManager.currentState.getActiveObjects)
+        foreach (DisplayObject target; sceneManager.currentScene.getActiveObjects)
         {
             target.buildEventRoute(eventChain, e);
             static if (__traits(compiles, e.target))

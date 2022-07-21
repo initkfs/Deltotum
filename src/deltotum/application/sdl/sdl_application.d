@@ -5,9 +5,9 @@ import deltotum.events.event_manager : EventManager;
 import deltotum.hal.sdl.events.sdl_event_processor : SdlEventProcessor;
 import deltotum.asset.asset_manager : AssetManager;
 import deltotum.asset.fonts.font : Font;
-import deltotum.state.state_manager : StateManager;
+import deltotum.scene.scene_manager : SceneManager;
 import deltotum.audio.audio : Audio;
-import deltotum.state.state : State;
+import deltotum.scene.scene: Scene;
 import deltotum.input.keyboard.event.key_event : KeyEvent;
 
 import deltotum.hal.sdl.sdl_lib : SdlLib;
@@ -45,7 +45,7 @@ class SdlApplication : GraphicsApplication
     @property double frameRate = 0;
     @property bool isRunning;
     @property EventManager eventManager;
-    @property StateManager stateManager;
+    @property SceneManager sceneManager;
 
     this(SdlLib lib, SdlImgLib imgLib, SdlMixLib audioMixLib, SdlTTFLib fontLib)
     {
@@ -77,10 +77,10 @@ class SdlApplication : GraphicsApplication
 
         audio = new Audio(audioMixLib);
 
-        stateManager = new StateManager;
+        sceneManager = new SceneManager;
 
         //TODO remove sdl api
-        eventManager = new EventManager(stateManager);
+        eventManager = new EventManager(sceneManager);
         eventManager.eventProcessor = new SdlEventProcessor;
         eventManager.startEvents;
         eventManager.onKey = (key) {
@@ -126,11 +126,11 @@ class SdlApplication : GraphicsApplication
         sdlLib.clearError;
     }
 
-    void addState(State state)
+    void addScene(Scene scene)
     {
-        build(state);
-        state.create;
-        stateManager.currentState = state;
+        build(scene);
+        scene.create;
+        sceneManager.currentScene = scene;
     }
 
     override void quit()
@@ -141,9 +141,9 @@ class SdlApplication : GraphicsApplication
             window.destroy;
         }
 
-        if (stateManager !is null)
+        if (sceneManager !is null)
         {
-            stateManager.destroy;
+            sceneManager.destroy;
         }
 
         //TODO auto destroy all services
@@ -161,7 +161,7 @@ class SdlApplication : GraphicsApplication
         if (window !is null)
         {
             //window.renderer.clear;
-            stateManager.update(delta);
+            sceneManager.update(delta);
             //window.renderer.present;
         }
     }
@@ -180,21 +180,21 @@ class SdlApplication : GraphicsApplication
 
         SDL_Event event;
 
-        stateManager.currentState.timeEventProcessing = 0;
+        sceneManager.currentScene.timeEventProcessing = 0;
 
         while (SDL_PollEvent(&event))
         {
             const startEvent = SDL_GetTicks();
             handleEvent(&event);
             const endEvent = SDL_GetTicks();
-            stateManager.currentState.timeEventProcessing += endEvent - startEvent;
+            sceneManager.currentScene.timeEventProcessing += endEvent - startEvent;
             if (!isRunning)
             {
                 return isRunning;
             }
         }
 
-        stateManager.currentState.timeRate = frameRate / deltaTime;
+        sceneManager.currentScene.timeRate = frameRate / deltaTime;
 
         while (deltaTimeAccumulator > frameTime)
         {
@@ -203,7 +203,7 @@ class SdlApplication : GraphicsApplication
             const startStateTime = SDL_GetTicks();
             updateState(delta);
             const endStateTime = SDL_GetTicks();
-            stateManager.currentState.timeUpdate = endStateTime - startStateTime;
+            sceneManager.currentScene.timeUpdate = endStateTime - startStateTime;
             deltaTimeAccumulator -= frameTime;
         }
 

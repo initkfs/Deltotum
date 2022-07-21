@@ -1,4 +1,4 @@
-module deltotum.state.state;
+module deltotum.scene.scene;
 
 import deltotum.application.components.uni.uni_component : UniComponent;
 import deltotum.display.display_object : DisplayObject;
@@ -11,9 +11,9 @@ import bindbc.sdl;
 /**
  * Authors: initkfs
  */
-class State : UniComponent
+class Scene : UniComponent
 {
-    @property void delegate(State) onStateChange;
+    @property void delegate(Scene) onSceneChange;
 
     @property size_t timeEventProcessing;
     @property double timeRate = 0;
@@ -56,11 +56,11 @@ class State : UniComponent
         displayObjects ~= object;
     }
 
-    void changeState(State other)
+    void changeScene(Scene other)
     {
-        if (onStateChange !is null)
+        if (onSceneChange !is null)
         {
-            onStateChange(other);
+            onSceneChange(other);
         }
     }
 
