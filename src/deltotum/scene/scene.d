@@ -2,6 +2,7 @@ module deltotum.scene.scene;
 
 import deltotum.application.components.uni.uni_component : UniComponent;
 import deltotum.display.display_object : DisplayObject;
+import deltotum.graphics.colors.color : Color;
 
 import std.stdio;
 
@@ -18,6 +19,7 @@ class Scene : UniComponent
     @property size_t timeEventProcessing;
     @property double timeRate = 0;
     @property size_t timeUpdate;
+    @property bool isClearingInCycle = true;
 
     protected
     {
@@ -30,7 +32,13 @@ class Scene : UniComponent
 
     void update(double delta)
     {
-        window.renderer.clear;
+        if (isClearingInCycle)
+        {
+            const screenColor = Color.black;
+            window.renderer.setRenderDrawColor(screenColor.r, screenColor.g, screenColor.b, screenColor
+                    .alphaNorm);
+            window.renderer.clear;
+        }
 
         foreach (obj; displayObjects)
         {

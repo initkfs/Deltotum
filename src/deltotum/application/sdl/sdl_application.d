@@ -7,13 +7,16 @@ import deltotum.asset.asset_manager : AssetManager;
 import deltotum.asset.fonts.font : Font;
 import deltotum.scene.scene_manager : SceneManager;
 import deltotum.audio.audio : Audio;
-import deltotum.scene.scene: Scene;
+import deltotum.graphics.graphics : Graphics;
+import deltotum.scene.scene : Scene;
 import deltotum.input.keyboard.event.key_event : KeyEvent;
 
 import deltotum.hal.sdl.sdl_lib : SdlLib;
 import deltotum.hal.sdl.img.sdl_img_lib : SdlImgLib;
 import deltotum.hal.sdl.mix.sdl_mix_lib : SdlMixLib;
 import deltotum.hal.sdl.ttf.sdl_ttf_lib : SdlTTFLib;
+import deltotum.hal.sdl.sdl_window: SdlWindow;
+import deltotum.hal.sdl.sdl_renderer: SdlRenderer;
 
 import deltotum.window.window : Window;
 import deltotum.input.input : Input;
@@ -40,15 +43,21 @@ class SdlApplication : GraphicsApplication
         double deltaTime = 0;
         double deltaTimeAccumulator = 0;
         double lastUpdateTime = 0;
+        int sceneWidth;
+        int sceneHeight;
     }
 
+    @property string title;
     @property double frameRate = 0;
     @property bool isRunning;
     @property EventManager eventManager;
     @property SceneManager sceneManager;
 
-    this(SdlLib lib, SdlImgLib imgLib, SdlMixLib audioMixLib, SdlTTFLib fontLib)
+    this(string title, int sceneWidth, int sceneHeight, SdlLib lib, SdlImgLib imgLib, SdlMixLib audioMixLib, SdlTTFLib fontLib)
     {
+        this.title = title;
+        this.sceneWidth = sceneWidth;
+        this.sceneHeight = sceneHeight;
         this.sdlLib = lib;
         this.imgLib = imgLib;
         this.audioMixLib = audioMixLib;
@@ -73,9 +82,20 @@ class SdlApplication : GraphicsApplication
         //set new global default logger
         sharedLog = multiLogger;
 
+        auto sdlWindow = new SdlWindow(title, SDL_WINDOWPOS_UNDEFINED,
+            SDL_WINDOWPOS_UNDEFINED,
+            sceneWidth,
+            sceneHeight);
+        auto sdlRenderer = new SdlRenderer(sdlWindow, SDL_RENDERER_ACCELERATED);
+        window = new Window(sdlRenderer, sdlWindow);
+        //TODO remove
+        window.frameRate = frameRate;
+
         input = new Input;
 
         audio = new Audio(audioMixLib);
+
+        graphics = new Graphics(window.renderer);
 
         sceneManager = new SceneManager;
 

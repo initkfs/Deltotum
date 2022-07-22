@@ -18,6 +18,15 @@ if [[ ! -d $scriptDir ]]; then
 fi
 #Start script
 
+if [[ $1 == "test" ]]; then
+  dub -b unittest
+  if [[ $? -ne 0 ]]; then
+    echo "Test mode error, exit." >&2
+    exit 1
+  fi
+  exit 0
+fi
+
 dub --quiet run --compiler=ldc2 --config=app-dev
 errDub=$?
 if [[ $errDub -ne 0 ]]; then

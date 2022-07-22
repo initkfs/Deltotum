@@ -38,6 +38,15 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
 
     int setRenderDrawColor(ubyte r, ubyte g, ubyte b, ubyte a) @nogc nothrow
     {
+        ubyte oldR, oldG, oldB, oldA;
+        //TODO log?
+        const int zeroOrErrorColor = SDL_GetRenderDrawColor(ptr,
+            &oldR, &oldG, &oldB, &oldA);
+        if (r == oldR && g == oldG && b == oldB && a == oldA)
+        {
+            return 0;
+        }
+
         const int zeroOrErrorCode = SDL_SetRenderDrawColor(ptr, r, g, b, a);
         return zeroOrErrorCode;
     }
@@ -57,6 +66,12 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
     {
         const int zeroOrErrorCode = SDL_RenderCopy(ptr, texture.getStruct, null, null);
         return zeroOrErrorCode;
+    }
+
+    int drawRect(int x, int y, int width, int height)
+    {
+        SDL_Rect rect = {x, y, width, height};
+        return drawRect(&rect);
     }
 
     int drawRect(SDL_Rect* rect) @nogc nothrow
@@ -81,6 +96,12 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
     {
         const int zeroOrErrorCode = SDL_RenderSetViewport(ptr, rect);
         return zeroOrErrorCode;
+    }
+
+    int fillRect(int x, int y, int width, int height) @nogc nothrow
+    {
+        SDL_Rect rect = {x, y, width, height};
+        return fillRect(&rect);
     }
 
     int fillRect(SDL_Rect* rect) @nogc nothrow
