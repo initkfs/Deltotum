@@ -16,16 +16,31 @@ mixin template ToString()
         mixin("string toString() pure @safe { return " ~ __traits(identifier, toStringImpl) ~ "; }");
     }
 
-    private string toStringImpl() pure @safe
+    private string toStringImpl(this C)() pure @safe
     {
         import std.traits : FieldNameTuple;
         import std.conv : to;
 
-        string result = __traits(identifier, Self) ~ "{";
+        static if (is(Self == class))
+        {
+            string result = C.classinfo.name;
+
+            import std.string : lastIndexOf;
+            const lastModuleDotPos = result.lastIndexOf('.');
+            if(lastModuleDotPos != -1){
+                result = result[lastModuleDotPos + 1 .. $];
+            }
+        }
+        else
+        {
+            string result = __traits(identifier, Self);
+        }
+
+        result ~= "{";
         static if (__traits(compiles, super.toString) && __traits(isOverrideFunction, super
                 .toString))
         {
-            result ~= super.toStringImpl ~ " ";
+            result ~= super.toString ~ " ";
         }
 
         enum fields = FieldNameTuple!(typeof(this));
@@ -35,7 +50,7 @@ mixin template ToString()
             {
                 auto fieldValue = __traits(getMember, this, field);
                 result ~= field ~ ":" ~ to!string(fieldValue);
-                static if (fieldsCount > 0 && fieldsCount < fieldsCount - 1)
+                static if (fieldsCount > 0 && i < fieldsCount - 1)
                 {
                     result ~= ",";
                 }
@@ -57,7 +72,7 @@ unittest
     }
 
     A a = new A;
-    assert(a.toString == "A{i:1d:2s:string}");
+    assert(a.toString == "A{i:1,d:2,s:string}");
 
     class B : A
     {
@@ -66,7 +81,7 @@ unittest
     }
 
     B b = new B;
-    assert(b.toString == "B{A{i:1d:2s:string} s1:string1}");
+    assert(b.toString == "B{A{i:1,d:2,s:string} s1:string1}");
 
     immutable class C
     {
@@ -104,5 +119,5 @@ unittest
     }
 
     A a;
-    assert(a.toString == "A{i:1d:2s:string}");
+    assert(a.toString == "A{i:1,d:2,s:string}");
 }
