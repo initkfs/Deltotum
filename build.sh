@@ -27,9 +27,13 @@ if [[ $1 == "test" ]]; then
   exit 0
 fi
 
-dub --quiet run --compiler=ldc2 --config=app-dev
+testBinFile=$scriptDir/deltotum;
+
+time dub --quiet build --compiler=ldc2 --config=app-dev
 errDub=$?
 if [[ $errDub -ne 0 ]]; then
   echo "Dub error, exit." >&2
   exit 1
 fi
+
+"$testBinFile" "$@"
