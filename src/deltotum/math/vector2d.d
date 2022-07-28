@@ -15,17 +15,17 @@ struct Vector2D
     double x = 0;
     double y = 0;
 
-    Vector2D add(Vector2D other) const @nogc nothrow @safe
+    Vector2D add(Vector2D other) const @nogc nothrow pure @safe
     {
         return Vector2D(x + other.x, y + other.y);
     }
 
-    Vector2D subtract(Vector2D other) const @nogc nothrow @safe
+    Vector2D subtract(Vector2D other) const @nogc nothrow pure @safe
     {
         return Vector2D(x - other.x, y - other.y);
     }
 
-    Vector2D normalize() const @nogc nothrow @safe
+    Vector2D normalize() const @nogc nothrow pure @safe
     {
         const double length = magnitude;
         double normX = 0;
@@ -39,32 +39,32 @@ struct Vector2D
         return Vector2D(normX, normY);
     }
 
-    Vector2D clone() const @nogc nothrow @safe
+    Vector2D clone() const @nogc nothrow pure @safe
     {
         return Vector2D(x, y);
     }
 
-    double magnitude() const @nogc nothrow @safe
+    double magnitude() const @nogc nothrow pure @safe
     {
         return magnitudeXY(x, y);
     }
 
-    double magnitudeSquared() const @nogc nothrow @safe
+    double magnitudeSquared() const @nogc nothrow pure @safe
     {
         return magnitudeSquaredXY(x, y);
     }
 
-    double magnitudeSquaredXY(double x, double y) const @nogc nothrow @safe
+    double magnitudeSquaredXY(double x, double y) const @nogc nothrow pure @safe
     {
         return x * x + y * y;
     }
 
-    double magnitudeXY(double x, double y) const @nogc nothrow @safe
+    double magnitudeXY(double x, double y) const @nogc nothrow pure @safe
     {
         return sqrt(magnitudeSquaredXY(x, y));
     }
 
-    double distanceTo(Vector2D other) const @nogc nothrow @safe
+    double distanceTo(Vector2D other) const @nogc nothrow pure @safe
     {
         const double deltaX = other.x - x;
         const double deltaY = other.y - y;
@@ -72,24 +72,31 @@ struct Vector2D
     }
 
     //or multiply?
-    Vector2D scale(double factor) const @nogc nothrow @safe
+    Vector2D scale(double factor) const @nogc nothrow pure @safe
     {
-        assert(!isClose(factor, 0.0));
         return Vector2D(x * factor, y * factor);
     }
 
-    Vector2D project(double factor) const @nogc nothrow @safe
+    Vector2D inc(double value) const @nogc nothrow pure @safe {
+        return Vector2D(x + value, y + value);
+    }
+
+    Vector2D dec(double value) const @nogc nothrow pure @safe {
+        return Vector2D(x - value, y - value);
+    }
+
+    Vector2D project(double factor) const @nogc nothrow pure @safe
     {
         assert(!isClose(factor, 0.0));
         return Vector2D(x / factor, y / factor);
     }
 
-    double dotProduct(Vector2D other) const @nogc nothrow @safe
+    double dotProduct(Vector2D other) const @nogc nothrow pure @safe
     {
         return x * other.x + y * other.y;
     }
 
-    double angleDegBetween(Vector2D other) const @nogc nothrow @safe
+    double angleDegBetween(Vector2D other) const @nogc nothrow pure @safe
     {
         const double delta = (x * other.x + y * other.y) / sqrt(
             magnitudeSquaredXY(x, y) * magnitudeSquaredXY(other.x, other.y));

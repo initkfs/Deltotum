@@ -2,7 +2,8 @@ module deltotum.graphics.graphics;
 
 import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 import deltotum.graphics.colors.color : Color;
-import deltotum.math.vector2d;
+import deltotum.math.vector2d : Vector2D;
+import deltotum.math.math : Math;
 import deltotum.graphics.shape.shape_style : ShapeStyle;
 
 import std.conv : to;
@@ -133,5 +134,59 @@ class Graphics
         const lineWidth = style.lineWidth;
         drawRect(x + lineWidth, y + lineWidth, width - lineWidth * 2, height - lineWidth * 2, style
                 .fillColor);
+    }
+
+    void drawBezier(Vector2D p0, Color color, scope Vector2D delegate(double v) onInterpValue, bool delegate(
+            Vector2D) onPoint = null)
+    {
+        adjustRender(color);
+        enum delta = 0.01; //100 segments
+        Vector2D start = p0;
+        //TODO exact comparison of doubles?
+        for (double i = 0; i < 1; i += delta)
+        {
+            auto end = onInterpValue(i);
+            if (onPoint !is null && !onPoint(end))
+            {
+                start = end;
+                continue;
+            }
+            renderer.drawLine(toInt(start.x), toInt(start.y), toInt(end.x), toInt(end.y));
+            start = end;
+        }
+    }
+
+    void drawBezier(Vector2D p0, Vector2D p1, Vector2D p2, Color color, bool delegate(
+            Vector2D) onPoint = null)
+    {
+        drawBezier(p0, color, (t) { return bezierInterp(p0, p1, p2, t); }, onPoint);
+    }
+
+    void drawBezier(Vector2D p0, Vector2D p1, Vector2D p2, Vector2D p3, Color color, bool delegate(
+            Vector2D) onPoint = null)
+    {
+        drawBezier(p0, color, (t) { return bezierInterp(p0, p1, p2, p3, t); }, onPoint);
+    }
+
+    private Vector2D bezierInterp(Vector2D p0, Vector2D p1, Vector2D p2, Vector2D p3, double t) @nogc nothrow pure @safe
+    {
+        const dt = 1 - t;
+        Vector2D p0p1 = p0.scale(dt).add(p1.scale(t));
+        Vector2D p1p2 = p1.scale(dt).add(p2.scale(t));
+        Vector2D p2p3 = p2.scale(dt).add(p3.scale(t));
+        Vector2D p0p1p2 = p0p1.scale(dt).add(p1p2.scale(t));
+        Vector2D p1p2p3 = p1p2.scale(dt).add(p2p3.scale(t));
+        Vector2D result = p0p1p2.scale(dt).add(p1p2p3.scale(t));
+
+        return result;
+    }
+
+    private Vector2D bezierInterp(Vector2D p0, Vector2D p1, Vector2D p2, double t) @nogc nothrow pure @safe
+    {
+        const dt = 1 - t;
+        Vector2D p0p1 = p0.scale(dt).add(p1.scale(t));
+        Vector2D p1p2 = p1.scale(dt).add(p2.scale(t));
+        Vector2D result = p0p1.scale(dt).add(p1p2.scale(t));
+        return result;
     }
 }
