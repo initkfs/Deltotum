@@ -4,7 +4,7 @@ import deltotum.hal.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.hal.sdl.sdl_window : SdlWindow;
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
 
-import deltotum.math.vector2d: Vector2D;
+import deltotum.math.vector2d : Vector2D;
 
 import bindbc.sdl;
 
@@ -96,8 +96,8 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
 
     int drawLines(Vector2D[] linePoints) nothrow
     {
-        import std.algorithm.iteration: map;
-        import std.array: array;
+        import std.algorithm.iteration : map;
+        import std.array : array;
 
         SDL_Point[] points = linePoints.map!(p => SDL_Point(cast(int) p.x, cast(int) p.y)).array;
         const int zeroOrErrorCode = SDL_RenderDrawLines(ptr,
@@ -135,6 +135,16 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
     {
         const int zeroOrErrorCode = SDL_GetRendererOutputSize(ptr, width, height);
         return zeroOrErrorCode;
+    }
+
+    void setRendererTarget(SDL_Texture* texture)
+    {
+        SDL_SetRenderTarget(ptr, texture);
+    }
+
+    void resetRendererTarget()
+    {
+        SDL_SetRenderTarget(ptr, null);
     }
 
     override void destroy()

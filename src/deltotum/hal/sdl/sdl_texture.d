@@ -54,6 +54,13 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         }
     }
 
+    void createRGBA(SdlRenderer renderer, int width, int height)
+    {
+        create(renderer, SDL_PIXELFORMAT_RGBA32,
+            SDL_TextureAccess.SDL_TEXTUREACCESS_TARGET, width,
+            height);
+    }
+
     void fromRenderer(SdlRenderer renderer, SdlSurface surface)
     {
         ptr = SDL_CreateTextureFromSurface(renderer.getStruct, surface.getStruct);
