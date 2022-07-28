@@ -2,6 +2,8 @@ module deltotum.graphics.graphics;
 
 import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 import deltotum.graphics.colors.color : Color;
+import deltotum.math.vector2d;
+import deltotum.graphics.shape.shape_style : ShapeStyle;
 
 import std.conv : to;
 
@@ -41,57 +43,95 @@ class Graphics
         renderer.drawLine(toInt(startX), toInt(startY), toInt(endX), toInt(endY));
     }
 
-    void drawRect(double x, double y, double width, double height, Color fillColor = Color.black)
-    {
-        adjustRender(fillColor);
-        renderer.fillRect(toInt(x), toInt(y), toInt(width), toInt(height));
-    }
-
     void drawPoint(double x, double y, Color color)
     {
         adjustRender(color);
         renderer.drawPoint(toInt(x), toInt(y));
     }
 
-    void drawCircle(double centerX, double centerY, double radius, Color color)
+    void drawLines(Vector2D[] points)
+    {
+        renderer.drawLines(points);
+    }
+
+    void drawCircle(double centerX, double centerY, double radius, Color fillColor)
     {
         //Midpoint circle algorithm
-        const diameter = toInt(radius * 2);
+        adjustRender(fillColor);
+
         int xCenter = toInt(centerX);
         int yCenter = toInt(centerY);
 
-        int x = toInt(radius - 1);
-        int y;
-        int tx = 1;
-        int ty = 1;
-        int error = to!int(tx - diameter);
+        int r = toInt(radius);
+        int xOffset;
+        int yOffset = r;
+        enum decisionParamDelta = 1;
+        //5.0 / 4 - r
+        int decisionParam = r - decisionParamDelta;
+        enum decisionOffset = 2;
 
-        adjustRender(color);
-
-        while (x >= y)
+        while (yOffset >= xOffset)
         {
-            renderer.drawPoint(xCenter + x, yCenter - y);
-            renderer.drawPoint(xCenter + x, yCenter + y);
-            renderer.drawPoint(xCenter - x, yCenter - y);
-            renderer.drawPoint(xCenter - x, yCenter + y);
-            renderer.drawPoint(xCenter + y, yCenter - x);
-            renderer.drawPoint(xCenter + y, yCenter + x);
-            renderer.drawPoint(xCenter - y, yCenter - x);
-            renderer.drawPoint(xCenter - y, yCenter + x);
+            renderer.drawLine(xCenter - yOffset, yCenter + xOffset,
+                xCenter + yOffset, yCenter + xOffset);
+            renderer.drawLine(xCenter - xOffset, yCenter + yOffset,
+                xCenter + xOffset, yCenter + yOffset);
+            renderer.drawLine(xCenter - xOffset, yCenter - yOffset,
+                xCenter + xOffset, yCenter - yOffset);
+            renderer.drawLine(xCenter - yOffset, yCenter - xOffset,
+                xCenter + yOffset, yCenter - xOffset);
 
-            if (error <= 0)
+            if (decisionParam >= decisionOffset * xOffset)
             {
-                ++y;
-                error += ty;
-                ty += 2;
+                decisionParam -= decisionOffset * xOffset + decisionParamDelta;
+                xOffset++;
             }
-
-            if (error > 0)
+            else if (decisionParam < decisionOffset * (r - yOffset))
             {
-                --x;
-                tx += 2;
-                error += (tx - diameter);
+                decisionParam += decisionOffset * yOffset - decisionParamDelta;
+                yOffset--;
+            }
+            else
+            {
+                decisionParam += decisionOffset * (yOffset - xOffset - decisionParamDelta);
+                yOffset--;
+                xOffset++;
             }
         }
+    }
+
+    void drawCircle(double centerX, double centerY, double r, ShapeStyle style = ShapeStyle
+            .simple)
+    {
+        if (style.isFill && style.lineWidth == 0)
+        {
+            drawCircle(centerX, centerY, r, style.fillColor);
+            return;
+        }
+
+        drawCircle(centerX, centerY, r, style.lineColor);
+        drawCircle(centerX, centerY, r - style.lineWidth, style.fillColor);
+    }
+
+    void drawRect(double x, double y, double width, double height, Color fillColor)
+    {
+        adjustRender(fillColor);
+        renderer.fillRect(toInt(x), toInt(y), toInt(width), toInt(height));
+    }
+
+    void drawRect(double x, double y, double width, double height, ShapeStyle style = ShapeStyle
+            .simple)
+    {
+        if (style.isFill && style.lineWidth == 0)
+        {
+            drawRect(x, y, width, height, style.fillColor);
+            return;
+        }
+
+        drawRect(x, y, width, height, style.lineColor);
+
+        const lineWidth = style.lineWidth;
+        drawRect(x + lineWidth, y + lineWidth, width - lineWidth * 2, height - lineWidth * 2, style
+                .fillColor);
     }
 }
