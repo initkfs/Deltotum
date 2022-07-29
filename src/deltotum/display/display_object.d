@@ -9,7 +9,7 @@ import deltotum.physics.physical_body : PhysicalBody;
 import deltotum.input.mouse.event.mouse_event : MouseEvent;
 import deltotum.application.event.application_event : ApplicationEvent;
 import deltotum.input.keyboard.event.key_event : KeyEvent;
-import deltotum.utils.canonical;
+import deltotum.utils.tostring;
 
 import std.math.operations : isClose;
 import std.stdio;
@@ -38,7 +38,7 @@ abstract class DisplayObject : PhysicalBody
     @property bool isUpdatable = true;
     @property bool isFocus = false;
 
-    mixin Canonical;
+    mixin ToString;
 
     protected
     {

@@ -7,34 +7,37 @@ mixin template HashCode(alias HashFunc = object.hashOf)
 {
     alias Self = typeof(this);
 
-    static if (is(Self == class) && !is(Self == immutable) && !is(Self == shared))
-    {
-        mixin("override size_t toHash(){ return " ~ __traits(identifier, hashCode) ~ "; }");
-    }
-    else
-    {
-        mixin("size_t toHash() { return " ~ __traits(identifier, hashCode) ~ "; }");
-    }
+    mixin("size_t toHash(this C)() { return " ~ __traits(identifier, hashCode) ~ "!C; }");
 
-    private size_t hashCode() nothrow @safe
+    // static if (is(Self == class) && !is(Self == immutable) && !is(Self == shared))
+    // {
+    //     mixin("override size_t toHash(){ return " ~ __traits(identifier, hashCode) ~ "; }");
+    // }
+    // else
+    // {
+    //     mixin("size_t toHash() { return " ~ __traits(identifier, hashCode) ~ "; }");
+    // }
+
+    private size_t hashCode(C)() nothrow @safe
     {
-        import std.traits : FieldNameTuple;
+        import deltotum.utils.type_util: AllFieldNamesTuple;
 
-        static if (__traits(compiles, super.toHash) && __traits(isOverrideFunction, super
-                .toHash))
-        {
-            size_t hash = super.toHash;
-        }
-        else
-        {
-            size_t hash;
-        }
+        // static if (__traits(compiles, super.toHash) && __traits(isOverrideFunction, super
+        //         .toHash))
+        // {
+        //     size_t hash = super.toHash;
+        // }
+        // else
+        // {
+        //     size_t hash;
+        // }
+        size_t hash;
 
-        static foreach (field; FieldNameTuple!(typeof(this)))
+        static foreach (field; AllFieldNamesTuple!C)
         {
             {
-                //null.hashOf == 0
-                auto fieldValue = __traits(getMember, this, field);
+                //TODO null.hashOf == 0, pointers?
+                auto fieldValue = __traits(getMember, cast(C) this, field);
                 static if (__traits(compiles, fieldValue.toHash) && __traits(compiles, fieldValue is null))
                 {
                     if (fieldValue !is null)
@@ -79,12 +82,18 @@ unittest
 
     class C : B
     {
-        mixin HashCode;
-        int i = 3;
+        
     }
 
     auto c = new C;
-    assert(c.toHash > 0);
+    assert(c.toHash == b.toHash);
+
+    class C1 : B {
+        int i = 3;
+    }
+
+    auto c1 = new C1;
+    assert(c.toHash != c1.toHash);
 
     immutable class I
     {
