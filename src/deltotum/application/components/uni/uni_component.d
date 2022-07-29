@@ -7,6 +7,7 @@ import deltotum.window.window : Window;
 import deltotum.input.input : Input;
 import deltotum.audio.audio : Audio;
 import deltotum.graphics.graphics : Graphics;
+import deltotum.application.components.uni.attribute.attributes: service;
 
 import std.experimental.logger.core : Logger;
 
@@ -17,12 +18,12 @@ class UniComponent : SimpleUnit
 {
     private
     {
-        Logger _logger;
-        AssetManager _assets;
-        Window _window;
-        Input _input;
-        Audio _audio;
-        Graphics _graphics;
+        @service Logger _logger;
+        @service AssetManager _assets;
+        @service Window _window;
+        @service Input _input;
+        @service Audio _audio;
+        @service Graphics _graphics;
     }
 
     void build(UniComponent uniComponent)
@@ -65,7 +66,7 @@ class UniComponent : SimpleUnit
 
     }
 
-    @property Logger logger() @nogc @safe pure nothrow
+    @property @service Logger logger() @nogc @safe pure nothrow
     out (_logger; _logger !is null)
     {
         return _logger;
@@ -80,7 +81,7 @@ class UniComponent : SimpleUnit
 
     }
 
-    @property AssetManager assets() @nogc @safe pure nothrow
+    @property @service AssetManager assets() @nogc @safe pure nothrow
     out (_assets; _assets !is null)
     {
         return _assets;
@@ -95,7 +96,7 @@ class UniComponent : SimpleUnit
 
     }
 
-    @property Window window() @nogc @safe pure nothrow
+    @property @service Window window() @nogc @safe pure nothrow
     out (_window; _window !is null)
     {
         return _window;
@@ -110,7 +111,7 @@ class UniComponent : SimpleUnit
 
     }
 
-    @property Input input() @nogc @safe pure nothrow
+    @property @service Input input() @nogc @safe pure nothrow
     out (_input; _input !is null)
     {
         return _input;
@@ -125,7 +126,7 @@ class UniComponent : SimpleUnit
 
     }
 
-    @property Audio audio() @nogc @safe pure nothrow
+    @property @service Audio audio() @nogc @safe pure nothrow
     out (_audio; _audio !is null)
     {
         return _audio;
@@ -139,7 +140,7 @@ class UniComponent : SimpleUnit
         _audio = audio;
     }
 
-    @property Graphics graphics() @nogc @safe pure nothrow
+    @property @service Graphics graphics() @nogc @safe pure nothrow
     out (_graphics; _graphics !is null)
     {
         return _graphics;

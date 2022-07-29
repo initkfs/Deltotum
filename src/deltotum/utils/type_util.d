@@ -34,3 +34,24 @@ string eventNameByIndex(E, I)(const I index) @nogc nothrow pure @safe
     }
     return name;
 }
+
+template ChainHierarchy(T)
+{
+    static if (is(T == class))
+    {
+        import std.traits : BaseClassesTuple;
+        import std.meta: Reverse, AliasSeq;
+
+        alias ChainHierarchy = Reverse!(AliasSeq!(T,
+                BaseClassesTuple!T[0 .. $ - 1]));
+    }
+    else
+    {
+        alias ChainHierarchy = T;
+    }
+}
+
+import std.traits : FieldNameTuple;
+import std.meta : staticMap;
+
+alias AllFieldNamesTuple(T) = staticMap!(FieldNameTuple, ChainHierarchy!T);

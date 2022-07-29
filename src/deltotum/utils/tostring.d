@@ -7,53 +7,63 @@ mixin template ToString()
 {
     alias Self = typeof(this);
 
-    static if (is(Self == class) && !is(Self == immutable) && !is(Self == shared))
-    {
-        mixin("override string toString() pure @safe { return " ~ __traits(identifier, toStringImpl) ~ "; }");
-    }
-    else
-    {
-        mixin("string toString() pure @safe { return " ~ __traits(identifier, toStringImpl) ~ "; }");
-    }
+    mixin("string toString(this C)() { return " ~ __traits(identifier, toStringImpl) ~ "!C; }");
 
-    private string toStringImpl(this C)() pure @safe
+    private string toStringImpl(C)()
     {
-        import std.traits : FieldNameTuple;
+        import deltotum.utils.type_util;
         import std.conv : to;
 
-        static if (is(Self == class))
+        static if (is(C == class))
         {
             string result = C.classinfo.name;
 
             import std.string : lastIndexOf;
+
             const lastModuleDotPos = result.lastIndexOf('.');
-            if(lastModuleDotPos != -1){
+            if (lastModuleDotPos != -1)
+            {
                 result = result[lastModuleDotPos + 1 .. $];
             }
         }
         else
         {
-            string result = __traits(identifier, Self);
+            string result = __traits(identifier, C);
         }
 
         result ~= "{";
-        static if (__traits(compiles, super.toString) && __traits(isOverrideFunction, super
-                .toString))
-        {
-            result ~= super.toString ~ " ";
-        }
 
-        enum fields = FieldNameTuple!(typeof(this));
+        enum fields = AllFieldNamesTuple!C;
         enum fieldsCount = fields.length;
-        static foreach (i, field; fields)
+
+        import std.traits : isDelegate, hasUDA, isPointer;
+        import deltotum.application.components.uni.attribute.attributes : service;
+
+        static foreach (i, fieldName; fields)
         {
             {
-                auto fieldValue = __traits(getMember, this, field);
-                result ~= field ~ ":" ~ to!string(fieldValue);
-                static if (fieldsCount > 0 && i < fieldsCount - 1)
+                alias field = __traits(getMember, C, fieldName);
+                auto fieldValue = __traits(getMember, cast(C) this, fieldName);
+                alias fieldType = typeof(fieldValue);
+                //TODO filter or ToStringExclude...?
+                //TODO check alias with __traits(compiles, hasUDA!(member, attribute)
+                static if (!isDelegate!fieldType && !hasUDA!(field, service))
                 {
-                    result ~= ",";
+                    static if (isPointer!fieldType)
+                    {
+                        result ~= fieldName ~ ":*" ~ to!string(*fieldValue);
+                    }
+                    else
+                    {
+                        result ~= fieldName ~ ":" ~ to!string(fieldValue);
+                    }
+
+                    static if (fieldsCount > 0 && i < fieldsCount - 1)
+                    {
+                        result ~= ",";
+                    }
                 }
+
             }
         }
         result ~= "}";
@@ -76,12 +86,11 @@ unittest
 
     class B : A
     {
-        mixin ToString;
         string s1 = "string1";
     }
 
     B b = new B;
-    assert(b.toString == "B{A{i:1,d:2,s:string} s1:string1}");
+    assert(b.toString == "B{i:1,d:2,s:string,s1:string1}");
 
     immutable class C
     {
