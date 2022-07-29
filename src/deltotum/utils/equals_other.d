@@ -164,46 +164,46 @@ unittest
     assert(new D == new D);
 }
 
-// unittest
-// {
-//     struct S
-//     {
-//         mixin EqualsOther;
-//         string s = "string";
-//         int i = 4;
-//     }
+unittest
+{
+    struct S
+    {
+        mixin EqualsOther;
+        string s = "string";
+        int i = 4;
+    }
 
-//     S s;
-//     S s1;
-//     assert(s == s1);
+    S s;
+    S s1;
+    assert(s == s1);
 
-//     immutable struct SI
-//     {
-//         mixin EqualsOther;
-//         string s = "string";
-//     }
+    immutable struct SI
+    {
+        mixin EqualsOther;
+        string s = "string";
+    }
 
-//     SI si;
-//     SI si1;
-//     assert(si == si1);
+    SI si;
+    SI si1;
+    assert(si == si1);
 
-//     const struct SC
-//     {
-//         mixin EqualsOther;
-//         int i = 0;
-//     }
+    const struct SC
+    {
+        mixin EqualsOther;
+        int i = 0;
+    }
 
-//     SC sc;
-//     SC sc1;
-//     assert(sc == sc1);
+    SC sc;
+    SC sc1;
+    assert(sc == sc1);
 
-//     shared struct SH
-//     {
-//         mixin EqualsOther;
-//         int i = 0;
-//     }
+    shared struct SH
+    {
+        mixin EqualsOther;
+        int i = 0;
+    }
 
-//     SH sh;
-//     SH sh1;
-//     assert(sh == sh1);
-// }
+    SH sh;
+    SH sh1;
+    assert(sh == sh1);
+}
