@@ -2,7 +2,9 @@ module deltotum.ui.controls.control;
 
 import deltotum.display.display_object : DisplayObject;
 import deltotum.ui.theme.theme : Theme;
-import deltotum.ui.layouts.layout: Layout;
+import deltotum.ui.layouts.layout : Layout;
+import deltotum.display.texture.texture : Texture;
+import deltotum.graphics.shape.shape_style: ShapeStyle;
 
 /**
  * Authors: initkfs
@@ -22,9 +24,39 @@ class Control : DisplayObject
 
     @property Theme theme;
 
+    protected
+    {
+        Texture background;
+        ShapeStyle* backgroundStyle;
+    }
+
+    @property Texture delegate() backgroundFactory;
+
     this(Theme theme)
     {
         this.theme = theme;
+        backgroundFactory = () {
+            import deltotum.graphics.shape.rectangle : Rectangle;
+            import deltotum.graphics.shape.shape_style : ShapeStyle;
+
+            backgroundStyle = new ShapeStyle(1, theme.colorAccent, true, theme
+                    .colorSecondary);
+            auto background = new Rectangle(width, height, backgroundStyle);
+            background.opacity = theme.controlOpacity;
+            background.isLayoutManaged = false;
+            return background;
+        };
+    }
+
+    override void create()
+    {
+        super.create;
+
+        if (backgroundFactory !is null)
+        {
+            background = backgroundFactory();
+            addCreated(background);
+        }
     }
 
     void invalidate()
@@ -34,9 +66,24 @@ class Control : DisplayObject
             requestRedraw;
         }
 
+        layout.layout(this);
+
         if (invalidateListener !is null)
         {
             invalidateListener();
         }
+    }
+
+    override void destroy()
+    {
+        super.destroy;
+        if (background !is null)
+        {
+            background.destroy;
+        }
+        backgroundFactory = null;
+
+        //TODO destroy?
+        backgroundStyle = null;
     }
 }

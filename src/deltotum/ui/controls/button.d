@@ -5,10 +5,12 @@ import deltotum.graphics.shape.shape : Shape;
 import deltotum.graphics.shape.shape_style : ShapeStyle;
 import deltotum.graphics.shape.rectangle : Rectangle;
 import deltotum.ui.events.action_event : ActionEvent;
-import deltotum.animation.object.property.opacity_transition : OpacityTransition;
+import deltotum.animation.object.value_transition : ValueTransition;
+import deltotum.animation.object.property.opacity_transition: OpacityTransition;
 import deltotum.ui.controls.text;
 import deltotum.ui.theme.theme : Theme;
 import deltotum.ui.layouts.center_layout : CenterLayout;
+import deltotum.display.texture.texture : Texture;
 
 /**
  * Authors: initkfs
@@ -19,13 +21,19 @@ class Button : Control
     @property void delegate(ActionEvent) onAction;
     @property string _buttonText;
 
+    @property Texture delegate() hoverFactory;
+    @property Texture delegate() clickEffectFactory;
+    @property Text delegate() textFactory;
+    @property ValueTransition delegate() clickEffectAnimationFactory;
+
     protected
     {
-        Shape background;
-        Shape hover;
-        Shape clickEffect;
-        OpacityTransition clickEffectAnimation;
+        Texture hover;
+        Texture clickEffect;
+        ValueTransition clickEffectAnimation;
         Text text;
+        ShapeStyle* hoverStyle;
+        ShapeStyle* clickEffectStyle;
     }
 
     this(Theme theme, double width = 80, double height = 40, string text = "Button")
@@ -35,62 +43,95 @@ class Button : Control
         this.height = height;
         this._buttonText = text;
         this.layout = new CenterLayout;
+
+        hoverStyle = new ShapeStyle(0.0, theme.colorAccent, true, theme.colorAccent);
+        clickEffectStyle = new ShapeStyle(0.0, theme.colorAccent, true, theme.colorAccent);
+
+        hoverFactory = () {
+            double padding = 0;
+            if (backgroundStyle !is null)
+            {
+                padding = backgroundStyle.lineWidth;
+            }
+            auto hover = new Rectangle(width - padding * 2, height - padding * 2, hoverStyle);
+            hover.x = padding;
+            hover.y = padding;
+            hover.isVisible = false;
+            hover.opacity = theme.controlOpacity;
+            hover.isLayoutManaged = false;
+            return hover;
+        };
+
+        clickEffectFactory = () {
+            double padding = 0;
+            if (backgroundStyle !is null)
+            {
+                padding = backgroundStyle.lineWidth;
+            }
+
+            auto clickEffect = new Rectangle(width - padding * 2, height - padding * 2, clickEffectStyle);
+            clickEffect.x = padding;
+            clickEffect.y = padding;
+            clickEffect.opacity = 0;
+            clickEffect.isLayoutManaged = false;
+
+            return clickEffect;
+        };
+
+        textFactory = () {
+            auto text = new Text(theme);
+            build(text);
+            text.text = _buttonText;
+            text.create;
+            return text;
+        };
+
+        clickEffectAnimationFactory = () {
+            assert(clickEffect !is null);
+            auto clickEffectAnimation = new OpacityTransition(clickEffect, 50);
+            clickEffectAnimation.isCycle = false;
+            clickEffectAnimation.isInverse = true;
+            return clickEffectAnimation;
+        };
     }
 
     override void create()
     {
         super.create;
 
-        ShapeStyle* backgoundStyle = new ShapeStyle(1, theme.colorAccent, true, theme
-                .colorSecondary);
-        ShapeStyle* hoverStyle = new ShapeStyle(0.0, theme.colorAccent, true, theme.hoverColor);
-        background = new Rectangle(width, height, backgoundStyle);
-        hover = new Rectangle(width - backgoundStyle.lineWidth * 2, height - backgoundStyle.lineWidth * 2, hoverStyle);
-        hover.x = backgoundStyle.lineWidth;
-        hover.y = backgoundStyle.lineWidth;
-        hover.isVisible = false;
+        if (hoverFactory !is null)
+        {
+            hover = hoverFactory();
+            addOrAddCreated(hover);
+        }
 
-        ShapeStyle* clickStyle = new ShapeStyle(0.0, theme.colorAccent, true, theme.colorAccent);
-        clickEffect = new Rectangle(width - backgoundStyle.lineWidth * 2, height - backgoundStyle.lineWidth * 2, clickStyle);
-        clickEffect.x = backgoundStyle.lineWidth;
-        clickEffect.y = backgoundStyle.lineWidth;
-        clickEffect.opacity = 0;
+        if (clickEffectFactory !is null)
+        {
+            clickEffect = clickEffectFactory();
+            addOrAddCreated(clickEffect);
+        }
 
-        clickEffectAnimation = new OpacityTransition(clickEffect, 50);
-        build(clickEffectAnimation);
-        clickEffectAnimation.isCycle = false;
-        clickEffectAnimation.isInverse = true;
+        if (textFactory !is null)
+        {
+            text = textFactory();
+            addOrAddCreated(text);
+        }
 
-        build(background);
-        build(hover);
-        build(clickEffect);
-        background.create;
-        hover.create;
-        clickEffect.create;
-
-        add(clickEffectAnimation);
-
-        add(background);
-        add(hover);
-        add(clickEffect);
-
-        text = new Text(theme);
-        build(text);
-        text.text = _buttonText;
-        text.create;
-
-        add(text);
+        if (clickEffect !is null)
+        {
+            clickEffectAnimation = clickEffectAnimationFactory();
+            addOrAddCreated(clickEffectAnimation);
+        }
 
         layout.layout(this);
 
         createListeners;
-
     }
 
     void createListeners()
     {
         onMouseEntered = (e) {
-            if (!hover.isVisible)
+            if (hover !is null && !hover.isVisible)
             {
                 hover.isVisible = true;
             }
@@ -98,7 +139,7 @@ class Button : Control
         };
 
         onMouseExited = (e) {
-            if (hover.isVisible)
+            if (hover !is null && hover.isVisible)
             {
                 hover.isVisible = false;
             }
@@ -107,7 +148,7 @@ class Button : Control
 
         onMouseUp = (e) {
 
-            if (!clickEffectAnimation.isRun)
+            if (clickEffectAnimation !is null && !clickEffectAnimation.isRun)
             {
                 clickEffectAnimation.run;
             }

@@ -22,21 +22,29 @@ class Theme
 
     Color colorPrimary()
     {
-        return Color.blue;
+        //gray 700
+        return Color(97, 97, 97);
     }
 
     Color colorSecondary()
     {
-        return Color.green;
+        //gray 500
+        return Color(158, 158, 158);
     }
 
     Color colorAccent()
     {
-        return Color.red;
+        //gray 200
+        return Color(238, 238, 238);
     }
 
-    Color hoverColor()
+    Color colorHover()
     {
-        return Color.white;
+        //gray 400
+        return Color(189, 189, 189);
+    }
+
+    double controlOpacity(){
+        return 0.5;
     }
 }

@@ -33,16 +33,18 @@ abstract class DisplayObject : PhysicalBody
     @property double angle = 0;
     @property double scale = 1;
     @property bool isManaged = true;
+    @property bool isLayoutManaged = true;
     @property bool isDraggable = false;
     @property bool isVisible = true;
     @property bool isUpdatable = true;
     @property bool isFocus = false;
+    @property bool isCreated = false;
 
     mixin ToString;
 
     //protected
     //{
-        @property DisplayObject[] children = [];
+    @property DisplayObject[] children = [];
     //}
 
     private
@@ -108,6 +110,8 @@ abstract class DisplayObject : PhysicalBody
 
             return false;
         };
+
+        isCreated = true;
     }
 
     void startDrag(double x, double y)
@@ -140,7 +144,8 @@ abstract class DisplayObject : PhysicalBody
             {
                 static if (is(E : MouseEvent))
                 {
-                    if (bounds.contains(e.x, e.y) || e.event == MouseEvent.Event.mouseEntered || e.event == MouseEvent.Event.mouseExited)
+                    if (bounds.contains(e.x, e.y) || e.event == MouseEvent.Event.mouseEntered || e.event == MouseEvent
+                        .Event.mouseExited)
                     {
                         chain ~= this;
                     }
@@ -282,6 +287,25 @@ abstract class DisplayObject : PhysicalBody
         }
     }
 
+    void addCreated(DisplayObject obj)
+    {
+        build(obj);
+        obj.create;
+        add(obj);
+    }
+
+    void addOrAddCreated(DisplayObject obj)
+    {
+        if (obj.isCreated)
+        {
+            add(obj);
+        }
+        else
+        {
+            addCreated(obj);
+        }
+    }
+
     void add(DisplayObject obj)
     {
         if (obj.isManaged)
@@ -303,8 +327,11 @@ abstract class DisplayObject : PhysicalBody
     {
         foreach (DisplayObject child; children)
         {
-            double dx = newX - _x;
-            child.x = child.x + dx;
+            if (child.isManaged)
+            {
+                double dx = newX - _x;
+                child.x = child.x + dx;
+            }
         }
         _x = newX;
     }
@@ -318,8 +345,11 @@ abstract class DisplayObject : PhysicalBody
     {
         foreach (DisplayObject child; children)
         {
-            double dy = newY - _y;
-            child.y = child.y + dy;
+            if (child.isManaged)
+            {
+                double dy = newY - _y;
+                child.y = child.y + dy;
+            }
         }
         _y = newY;
     }

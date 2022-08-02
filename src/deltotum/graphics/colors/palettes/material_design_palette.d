@@ -1,5 +1,7 @@
 module deltotum.graphics.colors.palettes.material_design_palette;
-
+/**
+ * Authors: initkfs
+ */
 enum MaterialDesignPalette
 {
     red50 = "#ffebee",

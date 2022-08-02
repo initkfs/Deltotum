@@ -34,6 +34,7 @@ class Text : Control
 
     override void create()
     {
+        backgroundFactory = null;
         super.create;
         updateFont;
     }
