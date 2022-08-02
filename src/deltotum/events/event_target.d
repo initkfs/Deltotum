@@ -20,6 +20,10 @@ abstract class EventTarget : UniComponent
     @property bool delegate(MouseEvent) onMouseMove;
     @property bool delegate(MouseEvent) onMouseWheel;
 
+    @property bool isMouseOver;
+    @property bool delegate(MouseEvent) onMouseEntered;
+    @property bool delegate(MouseEvent) onMouseExited;
+
     @property bool delegate(KeyEvent) eventKeyFilter;
     @property bool delegate(KeyEvent) eventKeyHandler;
 
@@ -98,6 +102,20 @@ abstract class EventTarget : UniComponent
             if (onMouseWheel !is null)
             {
                 return onMouseWheel(e);
+            }
+        }
+        else if (e.event == MouseEvent.Event.mouseEntered)
+        {
+            if (onMouseEntered !is null)
+            {
+                return onMouseEntered(e);
+            }
+        }
+        else if (e.event == MouseEvent.Event.mouseExited)
+        {
+            if (onMouseExited !is null)
+            {
+                return onMouseExited(e);
             }
         }
 

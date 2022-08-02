@@ -39,6 +39,7 @@ class Transition(T) if (isIntegral!T || isFloatingPoint!T || is(T : Vector2D)) :
         long currentFrame;
         T minValue;
         T maxValue;
+        bool onShort;
 
         TransitionState state = TransitionState.none;
     }
@@ -69,10 +70,17 @@ class Transition(T) if (isIntegral!T || isFloatingPoint!T || is(T : Vector2D)) :
         state = TransitionState.direct;
     }
 
+    bool isRun() @nogc nothrow @safe
+    {
+        return state != TransitionState.end && state != TransitionState.none;
+    }
+
     void stop() @nogc nothrow @safe
     {
         state = TransitionState.end;
         frameCount = 0;
+        currentFrame = 0;
+        onShort = false;
     }
 
     override void update(double delta)
@@ -88,8 +96,15 @@ class Transition(T) if (isIntegral!T || isFloatingPoint!T || is(T : Vector2D)) :
         {
             if (!isCycle)
             {
-                state = TransitionState.end;
-                return;
+                if (!isInverse || onShort)
+                {
+                    stop;
+                    return;
+                }
+                else
+                {
+                    onShort = true;
+                }
             }
 
             if (state == TransitionState.direct)

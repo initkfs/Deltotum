@@ -37,7 +37,7 @@ struct Color
     ubyte r;
     ubyte g;
     ubyte b;
-    double alpha = 0;
+    double alpha = 1;
 
     private
     {

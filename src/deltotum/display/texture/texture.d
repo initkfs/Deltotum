@@ -28,6 +28,14 @@ class Texture : DisplayObject
         texture = new SdlTexture;
         //TODO toInt?
         texture.createRGBA(window.renderer, cast(int) width, cast(int) height);
+        texture.setBlendModeBlend;
+        window.renderer.setRendererTarget(texture.getStruct);
+        createTextureContent;
+        window.renderer.resetRendererTarget;
+    }
+
+    void createTextureContent(){
+
     }
 
     override void drawContent()

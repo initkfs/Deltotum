@@ -1,11 +1,12 @@
-module deltotum.ui.text;
+module deltotum.ui.controls.text;
 
-import deltotum.display.display_object : DisplayObject;
-import deltotum.asset.fonts.font: Font;
-import deltotum.hal.sdl.sdl_texture: SdlTexture;
-import deltotum.math.rect: Rect;
+import deltotum.ui.controls.control : Control;
+import deltotum.asset.fonts.font : Font;
+import deltotum.hal.sdl.sdl_texture : SdlTexture;
+import deltotum.math.rect : Rect;
+import deltotum.ui.theme.theme : Theme;
 
-import std.string: toStringz;
+import std.string : toStringz;
 
 //TODO remove HAL api
 import bindbc.sdl;
@@ -13,33 +14,39 @@ import bindbc.sdl;
 /**
  * Authors: initkfs
  */
-class Text : DisplayObject
+class Text : Control
 {
-    @property string text;
+    @property string text = "text";
 
     private
     {
         Font font;
         SdlTexture fontTexture;
-
         string oldText;
     }
 
-    this(Font font)
+    this(Theme theme)
     {
+        super(theme);
         //TODO validate
-        this.font = font;
+        this.font = theme.defaultFontMedium;
+    }
+
+    override void create()
+    {
+        super.create;
+        updateFont;
     }
 
     override void drawContent()
     {
-        super.drawContent;
-        if (oldText == text && fontTexture !is null)
-        {
-            updateFont;
-            return;
-        }
+        Rect textureBounds = {0, 0, width, height};
+        //TODO to int
+        drawTexture(fontTexture, textureBounds, cast(int) x, cast(int) y, angle);
+    }
 
+    protected void updateFont()
+    {
         SDL_Color color = {255, 255, 255, 255};
         //TODO toStringz and GC
         SDL_Surface* fontSurfacePtr = TTF_RenderUTF8_Blended(font.getStruct, text.toStringz, color);
@@ -63,29 +70,23 @@ class Text : DisplayObject
         {
             fontTexture = new SdlTexture(fontTexturePtr);
         }
-        
-        SDL_FreeSurface(fontSurfacePtr);
 
-        updateFont;
-
-        oldText = text;
-    }
-
-    protected void updateFont()
-    {
         int width, height;
         fontTexture.getSize(&width, &height);
-        if (this.width != width)
-        {
-            this.width = width;
-        }
+        this.width = width;
+        this.height = height;
 
-        if (this.height != height)
+        SDL_FreeSurface(fontSurfacePtr);
+    }
+
+    override void update(double delta)
+    {
+        if (oldText == text && fontTexture !is null)
         {
-            this.height = height;
+            return;
         }
-        Rect fontBounds = {0, 0, width, height};
-        drawTexture(fontTexture, fontBounds, cast(int) x, cast(int) y, angle);
+        updateFont;
+        oldText = text;
     }
 
     override void destroy()

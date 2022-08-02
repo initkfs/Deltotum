@@ -13,11 +13,8 @@ class Rectangle : Shape
         super(width, height, style);
     }
 
-    override void create()
+    override void createTextureContent()
     {
-        super.create;
-        window.renderer.setRendererTarget(texture.getStruct);
-        graphics.drawRect(0, 0, width, height, *style);
-        window.renderer.resetRendererTarget;
+       graphics.drawRect(0, 0, width, height, *style);
     }
 }

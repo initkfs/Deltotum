@@ -40,10 +40,10 @@ abstract class DisplayObject : PhysicalBody
 
     mixin ToString;
 
-    protected
-    {
+    //protected
+    //{
         @property DisplayObject[] children = [];
-    }
+    //}
 
     private
     {
@@ -80,20 +80,6 @@ abstract class DisplayObject : PhysicalBody
                 {
                     startDrag(e.x, e.y);
                 }
-
-                foreach (DisplayObject child; children)
-                {
-                    if (child.isDraggable)
-                    {
-                        auto localBounds = child.bounds;
-                        localBounds.x = localBounds.x + _x;
-                        localBounds.y = localBounds.y + _y;
-                        if (localBounds.contains(e.x, e.y))
-                        {
-                            child.startDrag(e.x, e.y);
-                        }
-                    }
-                }
             }
             else if (e.event == MouseEvent.Event.mouseMove)
             {
@@ -102,16 +88,6 @@ abstract class DisplayObject : PhysicalBody
                     x = e.x + offsetX;
                     y = e.y + offsetY;
                     debug writefln("Drag parent. x:%s, y:%s", x, y);
-                }
-
-                foreach (DisplayObject child; children)
-                {
-                    if (child.isDrag)
-                    {
-                        child.x = e.x + offsetX;
-                        child.y = e.y + offsetY;
-                        debug writefln("Drag child. x:%s, y:%s", child.x, child.y);
-                    }
                 }
             }
             else if (e.event == MouseEvent.Event.mouseUp)
@@ -164,7 +140,7 @@ abstract class DisplayObject : PhysicalBody
             {
                 static if (is(E : MouseEvent))
                 {
-                    if (boundsParent.contains(e.x, e.y))
+                    if (bounds.contains(e.x, e.y) || e.event == MouseEvent.Event.mouseEntered || e.event == MouseEvent.Event.mouseExited)
                     {
                         chain ~= this;
                     }
@@ -289,19 +265,6 @@ abstract class DisplayObject : PhysicalBody
                 child.y = child.y + dy;
             }
         }
-    }
-
-    Rect boundsParent()
-    {
-        if (parent is null)
-        {
-            return bounds();
-        }
-
-        Rect parentBounds = bounds;
-        parentBounds.x = parent.x + parentBounds.x;
-        parentBounds.y = parent.y + parentBounds.y;
-        return parentBounds;
     }
 
     Rect bounds()

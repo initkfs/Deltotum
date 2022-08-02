@@ -16,11 +16,8 @@ class Circle : Shape
         this.radius = radius;
     }
 
-    override void create()
+    override void createTextureContent()
     {
-        super.create;
-        window.renderer.setRendererTarget(texture.getStruct);
         graphics.drawCircle(width / 2, height / 2, radius, *style);
-        window.renderer.resetRendererTarget;
     }
 }

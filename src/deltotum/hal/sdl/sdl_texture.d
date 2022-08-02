@@ -61,6 +61,11 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
             height);
     }
 
+    //SDL_BlendMode
+    void setBlendModeBlend(){
+        SDL_SetTextureBlendMode(ptr, SDL_BLENDMODE_BLEND);
+    }
+
     void fromRenderer(SdlRenderer renderer, SdlSurface surface)
     {
         ptr = SDL_CreateTextureFromSurface(renderer.getStruct, surface.getStruct);
