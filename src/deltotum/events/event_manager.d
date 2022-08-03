@@ -7,7 +7,7 @@ import deltotum.application.event.application_event : ApplicationEvent;
 import deltotum.input.mouse.event.mouse_event : MouseEvent;
 import deltotum.input.keyboard.event.key_event : KeyEvent;
 import deltotum.window.event.window_event : WindowEvent;
-import deltotum.events.event_type: EventType;
+import deltotum.events.event_type : EventType;
 
 import deltotum.display.display_object : DisplayObject;
 
@@ -39,107 +39,22 @@ class EventManager
         {
             return;
         }
-        eventProcessor.onMouse = (mouseEvent) { dispatchMouseEvent(mouseEvent); };
+        eventProcessor.onMouse = (mouseEvent) { dispatchEvent(mouseEvent); };
         eventProcessor.onKey = (keyEvent) {
             if (onKey !is null)
             {
                 onKey(keyEvent);
             }
-            dispatchKeyEvent(keyEvent);
+            dispatchEvent(keyEvent);
         };
     }
 
-    void dispatchKeyEvent(KeyEvent e)
+    void dispatchEvent(E)(E e)
     {
-        DisplayObject[] eventChain = [];
-
         foreach (DisplayObject target; sceneManager.currentScene.getActiveObjects)
         {
-            target.buildEventRoute(eventChain, e);
-            static if (__traits(compiles, e.target))
-            {
-                if (e.target is target)
-                {
-                    break;
-                }
-            }
-        }
-    }
-
-    void dispatchMouseEvent(MouseEvent e)
-    {
-        DisplayObject[] eventChain = [];
-        //TODO remove chains
-        DisplayObject[] eventChainEntered = [];
-        DisplayObject[] eventChainExited = [];
-        MouseEvent[] exitedEvents = [];
-        MouseEvent[] enteredEvents = [];
-
-        foreach (DisplayObject target; sceneManager.currentScene.getActiveObjects)
-        {
-            if (!target.bounds.contains(e.x, e.y))
-            {
-                if (target.isMouseOver)
-                {
-                    target.isMouseOver = false;
-                    exitedEvents ~= MouseEvent(EventType.mouse, MouseEvent.Event.mouseExited, e.windowId, e.x, e.y, e
-                            .button, e.movementX, e.movementY);
-                    target.buildEventRoute(eventChainExited, exitedEvents[0]);
-                }
-                continue;
-            }
-
-            if (!target.isMouseOver)
-            {
-                target.isMouseOver = true;
-                enteredEvents ~= MouseEvent(EventType.mouse, MouseEvent.Event.mouseEntered, e.windowId, e.x, e.y, e
-                        .button, e.movementX, e.movementY);
-                target.buildEventRoute(eventChainEntered, enteredEvents[0]);
-            }
-
-            target.buildEventRoute(eventChain, e);
-            static if (__traits(compiles, e.target))
-            {
-                if (e.target is target)
-                {
-                    break;
-                }
-            }
-        }
-
-        if (eventChainEntered.length > 0 && enteredEvents.length > 0)
-        {
-            processEvent(eventChainEntered, enteredEvents[0]);
-        }
-
-        //or after?
-        if (eventChainExited.length > 0 && exitedEvents.length > 0)
-        {
-            processEvent(eventChainExited, exitedEvents[0]);
-        }
-
-        processEvent(eventChain, e);
-
-    }
-
-    void processEvent(E)(DisplayObject[] eventChain, E e)
-    {
-        foreach (DisplayObject eventTarget; eventChain)
-        {
-            const isConsumed = eventTarget.runEventFilters(e);
-            if (isConsumed)
-            {
-                return;
-            }
-        }
-
-        foreach_reverse (DisplayObject eventTarget; eventChain)
-        {
-            const isConsumed = eventTarget.runEventHandlers(e);
-            if (isConsumed)
-            {
-                return;
-            }
+            DisplayObject[] eventChain = [];
+            target.dispatchEvent(e, eventChain, true);
         }
     }
 }

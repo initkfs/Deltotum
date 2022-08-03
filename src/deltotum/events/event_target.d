@@ -30,7 +30,7 @@ abstract class EventTarget : UniComponent
     @property bool delegate(KeyEvent) onKeyUp;
     @property bool delegate(KeyEvent) onKeyDown;
 
-    void buildEventRoute(T, E)(ref T[] targets, E e);
+    abstract void dispatchEvent(T, E)(E e, ref T[] targets, bool isRoot = true);
 
     bool runEventFilters(E)(E e)
     {
@@ -143,5 +143,18 @@ abstract class EventTarget : UniComponent
         }
 
         return false;
+    }
+
+    void fireEvent(E)(E e)
+    {
+        if (const isConsumed = runEventFilters!E(e))
+        {
+            return;
+        }
+
+        if (const isConsumed = runEventHandlers!E(e))
+        {
+            return;
+        }
     }
 }

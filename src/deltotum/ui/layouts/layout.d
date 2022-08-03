@@ -1,8 +1,11 @@
 module deltotum.ui.layouts.layout;
 
-import deltotum.ui.controls.control: Control;
+import deltotum.display.display_object : DisplayObject;
 
-abstract class Layout {
-
-    abstract void layout(Control root);
+/**
+ * Authors: initkfs
+ */
+abstract class Layout
+{
+    abstract void layout(DisplayObject root);
 }

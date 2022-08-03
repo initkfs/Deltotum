@@ -32,7 +32,7 @@ immutable struct MouseEvent
     double movementX;
     double movementY;
 
-    immutable this(EventType type, uint event, long windowId, double x, double y, int button, double movementX, double movementY)
+    immutable this(EventType type, uint event, long windowId, double x, double y, int button, double movementX, double movementY, bool isChained = true)
     {
         this.type = type;
         this.event = event;
@@ -42,13 +42,14 @@ immutable struct MouseEvent
         this.button = button;
         this.movementX = movementX;
         this.movementY = movementY;
+        this.isChained = isChained;
     }
 
     string toString() immutable
     {
         import std.format : format;
 
-        return format("{%s,%s,x:%s,y:%s,btn:%s,movX:%s,movY:%s,winid:%s}", type, eventNameByIndex!Event(
-                event), x, y, button, movementX, movementY, windowId);
+        return format("{%s,%s,x:%s,y:%s,btn:%s,movX:%s,movY:%s,winid:%s,%s}", type, eventNameByIndex!Event(
+                event), x, y, button, movementX, movementY, windowId, isChained);
     }
 }

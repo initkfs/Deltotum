@@ -58,6 +58,12 @@ class Scene : UniComponent
         displayObjects = [];
     }
 
+    void addCreated(DisplayObject obj){
+        build(obj);
+        obj.create;
+        add(obj);
+    }
+
     void add(DisplayObject object)
     {
         //TODO check if exists

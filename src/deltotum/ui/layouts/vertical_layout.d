@@ -1,4 +1,4 @@
-module deltotum.ui.layouts.horizontal_layout;
+module deltotum.ui.layouts.vertical_layout;
 
 import deltotum.display.display_object : DisplayObject;
 import deltotum.ui.layouts.managed_layout : ManagedLayout;
@@ -7,7 +7,7 @@ import deltotum.math.alignment : Alignment;
 /**
  * Authors: initkfs
  */
-class HorizontalLayout : ManagedLayout
+class VerticalLayout : ManagedLayout
 {
     @property double spacing = 0;
 
@@ -19,7 +19,7 @@ class HorizontalLayout : ManagedLayout
     override void layout(DisplayObject root)
     {
         auto bounds = root.bounds;
-        double nextX = bounds.x;
+        double nextY = bounds.y;
         foreach (child; root.children)
         {
             if (!child.isLayoutManaged)
@@ -27,12 +27,12 @@ class HorizontalLayout : ManagedLayout
                 continue;
             }
             auto childBounds = child.bounds;
-            child.x = nextX;
-            nextX = child.x + childBounds.width + spacing;
+            child.y = nextY;
+            nextY = child.y + childBounds.height + spacing;
 
-            if (child.alignment == Alignment.y)
+            if (child.alignment == Alignment.x)
             {
-                alignY(root, child);
+                alignX(root, child);
             }
         }
     }

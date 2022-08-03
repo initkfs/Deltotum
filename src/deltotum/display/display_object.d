@@ -4,11 +4,13 @@ import deltotum.application.components.uni.uni_component : UniComponent;
 
 import deltotum.math.vector2d : Vector2D;
 import deltotum.math.rect : Rect;
+import deltotum.math.alignment : Alignment;
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
 import deltotum.physics.physical_body : PhysicalBody;
 import deltotum.input.mouse.event.mouse_event : MouseEvent;
 import deltotum.application.event.application_event : ApplicationEvent;
 import deltotum.input.keyboard.event.key_event : KeyEvent;
+import deltotum.events.event_type : EventType;
 import deltotum.utils.tostring;
 
 import std.math.operations : isClose;
@@ -39,6 +41,7 @@ abstract class DisplayObject : PhysicalBody
     @property bool isUpdatable = true;
     @property bool isFocus = false;
     @property bool isCreated = false;
+    @property Alignment alignment = Alignment.none;
 
     mixin ToString;
 
@@ -46,6 +49,8 @@ abstract class DisplayObject : PhysicalBody
     //{
     @property DisplayObject[] children = [];
     //}
+
+    @property bool delegate(double, double) onDrag;
 
     private
     {
@@ -87,9 +92,14 @@ abstract class DisplayObject : PhysicalBody
             {
                 if (isDrag)
                 {
-                    x = e.x + offsetX;
-                    y = e.y + offsetY;
-                    debug writefln("Drag parent. x:%s, y:%s", x, y);
+                    auto x = e.x + offsetX;
+                    auto y = e.y + offsetY;
+                    if (onDrag is null || onDrag(x, y))
+                    {
+                        this.x = x;
+                        this.y = y;
+                        debug writefln("Drag parent. x:%s, y:%s", x, y);
+                    }
                 }
             }
             else if (e.event == MouseEvent.Event.mouseUp)
@@ -129,7 +139,7 @@ abstract class DisplayObject : PhysicalBody
         this.isDrag = false;
     }
 
-    void buildEventRoute(T, E)(ref T[] chain, E e)
+    void dispatchEvent(T, E)(E e, ref T[] chain, bool isRoot = true)
     {
         static if (__traits(compiles, e.target))
         {
@@ -144,8 +154,51 @@ abstract class DisplayObject : PhysicalBody
             {
                 static if (is(E : MouseEvent))
                 {
-                    if (bounds.contains(e.x, e.y) || e.event == MouseEvent.Event.mouseEntered || e.event == MouseEvent
-                        .Event.mouseExited)
+                    if (bounds.contains(e.x, e.y))
+                    {
+                        if (e.event == MouseEvent.Event.mouseMove)
+                        {
+                            if (!isMouseOver)
+                            {
+                                isMouseOver = true;
+                                auto enteredEvent = MouseEvent(EventType.mouse, MouseEvent.Event.mouseEntered, e
+                                        .windowId, e
+                                        .x, e.y, e
+                                        .button, e.movementX, e.movementY, false);
+                                fireEvent(enteredEvent);
+                            }
+
+                            chain ~= this;
+                        }
+                        else if (e.isChained)
+                        {
+                            chain ~= this;
+                        }
+                    }
+                    else
+                    {
+                        if (e.event == MouseEvent.Event.mouseMove)
+                        {
+                            if (isMouseOver)
+                            {
+                                isMouseOver = false;
+                                auto exitedEvent = MouseEvent(EventType.mouse, MouseEvent.Event.mouseExited, e
+                                        .windowId, e
+                                        .x, e.y, e
+                                        .button, e.movementX, e.movementY, false);
+                                fireEvent(exitedEvent);
+                            }
+
+                            chain ~= this;
+                        }
+                        else if (isDrag && e.isChained)
+                        {
+                            chain ~= this;
+                        }
+                    }
+
+                    if (e.event == MouseEvent.Event.mouseMove && (isDrag || bounds.contains(e.x, e
+                            .y)))
                     {
                         chain ~= this;
                     }
@@ -165,14 +218,41 @@ abstract class DisplayObject : PhysicalBody
         {
             foreach (DisplayObject child; children)
             {
-                child.buildEventRoute(chain, e);
+                child.dispatchEvent(e, chain, false);
+            }
+        }
+
+        if (isRoot && chain.length > 0)
+        {
+            foreach (DisplayObject eventTarget; chain)
+            {
+                const isConsumed = eventTarget.runEventFilters(e);
+                if (isConsumed)
+                {
+                    return;
+                }
+            }
+
+            foreach_reverse (DisplayObject eventTarget; chain)
+            {
+                const isConsumed = eventTarget.runEventHandlers(e);
+                if (isConsumed)
+                {
+                    return;
+                }
             }
         }
     }
 
     void drawContent()
     {
-
+        foreach (DisplayObject child; children)
+        {
+            if (child.isVisible)
+            {
+                child.drawContent;
+            }
+        }
     }
 
     int drawTexture(SdlTexture texture, Rect textureBounds, int x = 0, int y = 0, double angle = 0, SDL_RendererFlip flip = SDL_RendererFlip
@@ -216,7 +296,7 @@ abstract class DisplayObject : PhysicalBody
             redraw = true;
         }
 
-        if (isRedrawChildren)
+        if (isVisible && isRedrawChildren)
         {
             foreach (DisplayObject child; children)
             {
@@ -224,6 +304,7 @@ abstract class DisplayObject : PhysicalBody
                 {
                     continue;
                 }
+                //child.draw;
                 child.drawContent;
                 if (!redraw)
                 {
