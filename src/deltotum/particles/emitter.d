@@ -3,6 +3,7 @@ module deltotum.particles.emitter;
 import deltotum.display.display_object : DisplayObject;
 import deltotum.particles.particle : Particle;
 import deltotum.math.vector2d : Vector2D;
+import deltotum.math.rnd : Rnd;
 
 import std.stdio;
 
@@ -12,12 +13,19 @@ import std.stdio;
 class Emitter : DisplayObject
 {
     @property int lifetime = 200;
-    @property int countPerFrame;
+    @property int countPerFrame = 10;
     @property Particle delegate() particleFactory;
-    @property Vector2D* particleVelocity;
-    @property Vector2D* particleAcceleration;
     @property double particleMass = 0;
     @property bool delegate(Particle) onParticleUpdate;
+    @property Rnd random;
+    @property double minVelocityX = 0;
+    @property double maxVelocityX = 0;
+    @property double minVelocityY = 0;
+    @property double maxVelocityY = 0;
+    @property double minAccelerationX = 0;
+    @property double maxAccelerationX = 0;
+    @property double minAccelerationY = 0;
+    @property double maxAccelerationY = 0;
 
     private
     {
@@ -28,28 +36,62 @@ class Emitter : DisplayObject
     this()
     {
         super();
-        particleVelocity = new Vector2D;
-        particleAcceleration = new Vector2D;
+        //TODO seed, etc
+        random = Rnd(42);
     }
 
     void emit()
     {
         auto particle = particleFactory();
+        build(particle);
+        particle.create;
         particles ~= particle;
         tuneParticle(particle);
         particle.isAlive = true;
     }
 
-    protected void tuneParticle(Particle particle) @nogc nothrow pure @safe
+    protected void tuneParticle(Particle particle) pure @safe
     {
         particle.lifetime = lifetime;
         particle.x = x;
         particle.y = y;
         particle.mass = particleMass;
-        particle.velocity.x = particleVelocity.x;
-        particle.velocity.y = particleVelocity.y;
-        particle.acceleration.x = particleAcceleration.x;
-        particle.acceleration.y = particleAcceleration.y;
+
+        if (minVelocityX != maxVelocityY)
+        {
+            particle.velocity.x = random.randomBetween(minVelocityX, maxVelocityX);
+        }
+        else
+        {
+            particle.velocity.x = minVelocityX;
+        }
+
+        if (minVelocityY != maxVelocityY)
+        {
+            particle.velocity.y = random.randomBetween(minVelocityY, maxVelocityY);
+        }
+        else
+        {
+            particle.velocity.y = minVelocityY;
+        }
+
+        if (minAccelerationX != maxAccelerationX)
+        {
+            particle.acceleration.x = random.randomBetween(minAccelerationX, maxAccelerationX);
+        }
+        else
+        {
+            particle.acceleration.x = minAccelerationX;
+        }
+
+        if (minAccelerationY != maxAccelerationY)
+        {
+            particle.acceleration.y = random.randomBetween(minAccelerationY, maxAccelerationY);
+        }
+        else
+        {
+            particle.acceleration.y = minAccelerationY;
+        }
     }
 
     protected void resetParticle(Particle p) const @nogc nothrow pure @safe
@@ -60,6 +102,7 @@ class Emitter : DisplayObject
         p.velocity.y = 0;
         p.acceleration.x = 0;
         p.acceleration.y = 0;
+        p.angle = 0;
         p.x = 0;
         p.y = 0;
     }
@@ -93,7 +136,8 @@ class Emitter : DisplayObject
                 alive = onParticleUpdate(p);
             }
 
-            if(!alive){
+            if (!alive)
+            {
                 p.isAlive = false;
                 resetParticle(p);
                 continue;

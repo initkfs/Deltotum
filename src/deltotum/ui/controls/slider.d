@@ -18,6 +18,8 @@ class Slider : Control
     @property double maxValue;
     @property double value;
 
+    @property void delegate(double) onValue;
+
     protected
     {
         Texture track;
@@ -48,7 +50,10 @@ class Slider : Control
 
         thumb = new Circle(10, thumbStyle);
         thumb.alignment = Alignment.y;
-        thumb.x = -(thumb.width / 2);
+
+        //thumb.x = -(thumb.width / 2);
+        thumb.x = width / 2;
+
         addCreated(thumb);
         thumb.isDraggable = true;
         thumb.onDrag = (x, y) {
@@ -61,11 +66,18 @@ class Slider : Control
             }
             thumb.x = x;
 
-            const range = bounds.width;
-            const dx = thumb.x - bounds.x;
-            value = (dx * maxValue) / range;
-            import std.stdio;
-            writeln(value);
+            const widthRange = bounds.width;
+            auto dx = thumb.x - bounds.x;
+            if(dx < 0){
+                dx = -dx;
+            }
+            const numRange = maxValue - minValue;
+            value = minValue + (numRange / widthRange) * dx;
+
+            if(onValue !is null){
+                onValue(value);
+            }
+
             return false;
         };
 

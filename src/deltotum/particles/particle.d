@@ -1,19 +1,21 @@
 module deltotum.particles.particle;
 
-import deltotum.display.bitmap.sprite_sheet : SpriteSheet;
+import deltotum.graphics.shape.circle: Circle;
+import deltotum.graphics.shape.shape_style : ShapeStyle;
 import deltotum.math.vector2d : Vector2D;
 
 /**
  * Authors: initkfs
  */
-class Particle : SpriteSheet
+//TODO Particle : DisplayObject
+class Particle : Circle
 {
     @property bool isAlive;
     @property int lifetime;
     @property int age;
 
-    this(int frameWidth = 0, int frameHeight = 0, int frameDelay = 100)
+     this(double radius, ShapeStyle* style, double borderWidth = 1.0)
     {
-        super(frameWidth, frameHeight, frameDelay);
+        super(radius, style, borderWidth);
     }
 }

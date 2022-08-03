@@ -296,22 +296,22 @@ abstract class DisplayObject : PhysicalBody
             redraw = true;
         }
 
-        if (isVisible && isRedrawChildren)
-        {
-            foreach (DisplayObject child; children)
-            {
-                if (!child.isVisible || !child.isRedraw)
-                {
-                    continue;
-                }
-                //child.draw;
-                child.drawContent;
-                if (!redraw)
-                {
-                    redraw = true;
-                }
-            }
-        }
+        // if (isVisible && isRedrawChildren)
+        // {
+        //     foreach (DisplayObject child; children)
+        //     {
+        //         if (!child.isVisible || !child.isRedraw)
+        //         {
+        //             continue;
+        //         }
+        //         //child.draw;
+        //         child.drawContent;
+        //         if (!redraw)
+        //         {
+        //             redraw = true;
+        //         }
+        //     }
+        // }
 
         return redraw;
     }

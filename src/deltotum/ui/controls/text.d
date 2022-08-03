@@ -16,7 +16,7 @@ import bindbc.sdl;
  */
 class Text : Control
 {
-    @property string text = "text";
+    @property string text;
 
     private
     {
@@ -25,11 +25,12 @@ class Text : Control
         string oldText;
     }
 
-    this(Theme theme)
+    this(Theme theme, string text = "text")
     {
         super(theme);
         //TODO validate
         this.font = theme.defaultFontMedium;
+        this.text = text;
     }
 
     override void create()
