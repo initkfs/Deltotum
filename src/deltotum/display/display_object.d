@@ -25,23 +25,29 @@ import bindbc.sdl;
 abstract class DisplayObject : PhysicalBody
 {
     @property DisplayObject parent;
+
     @property double width = 0;
     @property double height = 0;
-    @property Vector2D* velocity;
-    @property Vector2D* acceleration;
-    @property bool isRedraw = true;
-    @property bool isRedrawChildren = true;
+
     @property double opacity = 1;
     @property double angle = 0;
     @property double scale = 1;
+
+    @property Vector2D velocity;
+    @property Vector2D acceleration;
+
+    @property bool isRedraw = true;
+    @property bool isRedrawChildren = true;
     @property bool isManaged = true;
+    @property bool isUpdatable = true;
+
     @property bool isLayoutManaged = true;
+    @property Alignment alignment = Alignment.none;
+
+    @property bool isCreated = false;
+    @property bool isFocus = false;
     @property bool isDraggable = false;
     @property bool isVisible = true;
-    @property bool isUpdatable = true;
-    @property bool isFocus = false;
-    @property bool isCreated = false;
-    @property Alignment alignment = Alignment.none;
 
     mixin ToString;
 
@@ -59,15 +65,6 @@ abstract class DisplayObject : PhysicalBody
         @property double offsetX = 0;
         @property double offsetY = 0;
         @property bool isDrag = false;
-    }
-
-    this()
-    {
-        super();
-        //use initialization in constructor
-        //TODO move to physical body?
-        velocity = new Vector2D;
-        acceleration = new Vector2D;
     }
 
     void create()

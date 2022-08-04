@@ -18,7 +18,7 @@ class NewtonianCollisionResolver
     void resolve(DisplayObject a, DisplayObject b) const @nogc nothrow @safe
     {
         const Vector2D motionNormal = a.velocity.normalize;
-        const Vector2D relativeVelocity = b.velocity.subtract(*a.velocity);
+        const Vector2D relativeVelocity = b.velocity.subtract(a.velocity);
 
         const double alongNormal = relativeVelocity.dotProduct(motionNormal);
         if (alongNormal > 0)
