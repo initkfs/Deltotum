@@ -15,6 +15,7 @@ import deltotum.animation.interp.interpolator : Interpolator;
 import deltotum.animation.transition : Transition;
 import std.math.rounding : floor;
 import std.conv : to;
+import deltotum.math.flip: Flip;
 
 import bindbc.sdl;
 
@@ -42,7 +43,7 @@ class SpriteSheet : Bitmap
         SpriteSheetAnimation[] animations = [];
         SpriteSheetAnimation currentAnimation;
         size_t currentAnimationIndex;
-        SDL_RendererFlip currentFlip = SDL_RendererFlip.SDL_FLIP_NONE;
+        Flip currentFlip = Flip.none;
         double frameWidth = 0;
         double frameHeight = 0;
     }
@@ -88,7 +89,7 @@ class SpriteSheet : Bitmap
         }
     }
 
-    void playAnimation(string name, SDL_RendererFlip flip = SDL_RendererFlip.SDL_FLIP_NONE)
+    void playAnimation(string name, Flip flip = Flip.none)
     {
         assert(name.length > 0);
         if (currentAnimation !is null)
@@ -122,8 +123,7 @@ class SpriteSheet : Bitmap
         }
     }
 
-    void drawFrame(double x, double y, double width, double height, int frameIndex, int rowIndex, SDL_RendererFlip flip = SDL_RendererFlip
-            .SDL_FLIP_NONE)
+    void drawFrame(double x, double y, double width, double height, int frameIndex, int rowIndex, Flip flip = Flip.none)
     {
         Rect srcRect;
         srcRect.x = cast(int)(frameWidth * frameIndex);

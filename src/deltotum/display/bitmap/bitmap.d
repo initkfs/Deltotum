@@ -11,6 +11,7 @@ import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 import deltotum.hal.sdl.img.sdl_image : SdlImage;
 import deltotum.display.textures.texture: Texture;
 import deltotum.math.rect : Rect;
+import deltotum.math.flip: Flip;
 
 import bindbc.sdl;
 
@@ -83,14 +84,12 @@ class Bitmap : Texture
         return true;
     }
 
-    void drawImage(SDL_RendererFlip flip = SDL_RendererFlip
-            .SDL_FLIP_NONE)
+    void drawImage(Flip flip = Flip.none)
     {
         drawImage(cast(int) x, cast(int) y, cast(int) width, cast(int) height, flip);
     }
 
-    void drawImage(int x, int y, int width, int height, SDL_RendererFlip flip = SDL_RendererFlip
-            .SDL_FLIP_NONE)
+    void drawImage(int x, int y, int width, int height, Flip flip = Flip.none)
     {
         Rect textureBounds = {0, 0, width, height};
         drawTexture(texture, textureBounds, x, y, angle, flip);

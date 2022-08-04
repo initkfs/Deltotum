@@ -5,6 +5,7 @@ import deltotum.display.display_object : DisplayObject;
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
 import deltotum.math.rect : Rect;
 import std.math.operations : isClose;
+import deltotum.math.flip : Flip;
 
 import bindbc.sdl;
 
@@ -18,11 +19,13 @@ class Texture : DisplayObject
         SdlTexture texture;
     }
 
-    this(){
+    this()
+    {
 
     }
 
-    this(SdlTexture texture){
+    this(SdlTexture texture)
+    {
         this.texture = texture;
         int w, h;
         texture.getSize(&w, &h);
@@ -37,8 +40,8 @@ class Texture : DisplayObject
         drawTexture(texture, textureBounds, cast(int) x, cast(int) y, angle);
     }
 
-    int drawTexture(SdlTexture texture, Rect textureBounds, int x = 0, int y = 0, double angle = 0, SDL_RendererFlip flip = SDL_RendererFlip
-            .SDL_FLIP_NONE)
+    int drawTexture(SdlTexture texture, Rect textureBounds, int x = 0, int y = 0, double angle = 0, Flip flip = Flip
+            .none)
     {
         {
             SDL_Rect srcRect;
@@ -64,11 +67,28 @@ class Texture : DisplayObject
             {
                 texture.opacity = opacity;
             }
-            return window.renderer.copyEx(texture, &srcRect, &destRect, angle, null, flip);
+
+            //TODO move to helper
+            SDL_RendererFlip sdlFlip;
+            final switch (flip)
+            {
+            case Flip.none:
+                sdlFlip = SDL_RendererFlip.SDL_FLIP_NONE;
+                break;
+            case Flip.horizontal:
+                sdlFlip = SDL_RendererFlip.SDL_FLIP_HORIZONTAL;
+                break;
+            case Flip.vertical:
+                sdlFlip = SDL_RendererFlip.SDL_FLIP_VERTICAL;
+                break;
+            }
+
+            return window.renderer.copyEx(texture, &srcRect, &destRect, angle, null, sdlFlip);
         }
     }
 
-    SdlTexture nativeTexture(){
+    SdlTexture nativeTexture()
+    {
         return this.texture;
     }
 
