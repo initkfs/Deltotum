@@ -11,7 +11,7 @@ import bindbc.sdl;
  */
 class SdlTexture : SdlObjectWrapper!SDL_Texture
 {
-    //TODO move to Texture
+    //TODO move to RgbaTexture
     private
     {
         double _opacity;

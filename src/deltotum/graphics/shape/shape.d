@@ -1,12 +1,12 @@
 module deltotum.graphics.shape.shape;
 
-import deltotum.display.texture.texture : Texture;
+import deltotum.display.textures.rgba_texture: RgbaTexture;
 import deltotum.graphics.styles.graphic_style: GraphicStyle;
 
 /**
  * Authors: initkfs
  */
-class Shape : Texture
+class Shape : RgbaTexture
 {
     @property GraphicStyle style;
 

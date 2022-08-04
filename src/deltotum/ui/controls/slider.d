@@ -2,7 +2,7 @@ module deltotum.ui.controls.slider;
 
 import deltotum.ui.controls.control : Control;
 import deltotum.ui.theme.theme : Theme;
-import deltotum.display.texture.texture : Texture;
+import deltotum.display.textures.texture : Texture;
 
 import deltotum.graphics.shape.shape : Shape;
 import deltotum.graphics.styles.graphic_style: GraphicStyle;

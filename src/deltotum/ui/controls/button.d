@@ -10,7 +10,7 @@ import deltotum.animation.object.property.opacity_transition : OpacityTransition
 import deltotum.ui.controls.text;
 import deltotum.ui.theme.theme : Theme;
 import deltotum.ui.layouts.center_layout : CenterLayout;
-import deltotum.display.texture.texture : Texture;
+import deltotum.display.textures.texture : Texture;
 
 /**
  * Authors: initkfs
