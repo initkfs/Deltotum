@@ -1,4 +1,4 @@
-module deltotum.graphics.shape.shape;
+module deltotum.graphics.shapes.shape;
 
 import deltotum.display.textures.rgba_texture: RgbaTexture;
 import deltotum.graphics.styles.graphic_style: GraphicStyle;

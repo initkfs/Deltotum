@@ -1,6 +1,6 @@
-module deltotum.graphics.shape.circle;
+module deltotum.graphics.shapes.circle;
 
-import deltotum.graphics.shape.shape;
+import deltotum.graphics.shapes.shape;
 import deltotum.graphics.styles.graphic_style: GraphicStyle;
 
 /**

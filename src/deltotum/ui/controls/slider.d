@@ -4,7 +4,7 @@ import deltotum.ui.controls.control : Control;
 import deltotum.ui.theme.theme : Theme;
 import deltotum.display.textures.texture : Texture;
 
-import deltotum.graphics.shape.shape : Shape;
+import deltotum.graphics.shapes.shape : Shape;
 import deltotum.graphics.styles.graphic_style: GraphicStyle;
 import deltotum.ui.layouts.managed_layout: ManagedLayout;
 import deltotum.math.alignment: Alignment;
@@ -46,7 +46,7 @@ class Slider : Control
         trackStyle = GraphicStyle(0.0, theme.colorAccent, true, theme.colorAccent);
         thumbStyle = GraphicStyle(0.0, theme.colorAccent, true, theme.colorAccent);
 
-        import deltotum.graphics.shape.circle : Circle;
+        import deltotum.graphics.shapes.circle : Circle;
 
         thumb = new Circle(10, thumbStyle);
         thumb.alignment = Alignment.y;
@@ -81,7 +81,7 @@ class Slider : Control
             return false;
         };
 
-        import deltotum.graphics.shape.rectangle: Rectangle;
+        import deltotum.graphics.shapes.rectangle: Rectangle;
 
         track = new Rectangle(width, height / 6, trackStyle);
         track.alignment = Alignment.y;

@@ -1,9 +1,9 @@
 module deltotum.ui.controls.button;
 
 import deltotum.ui.controls.control : Control;
-import deltotum.graphics.shape.shape : Shape;
+import deltotum.graphics.shapes.shape : Shape;
 import deltotum.graphics.styles.graphic_style : GraphicStyle;
-import deltotum.graphics.shape.rectangle : Rectangle;
+import deltotum.graphics.shapes.rectangle : Rectangle;
 import deltotum.ui.events.action_event : ActionEvent;
 import deltotum.animation.object.value_transition : ValueTransition;
 import deltotum.animation.object.property.opacity_transition : OpacityTransition;

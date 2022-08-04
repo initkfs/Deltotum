@@ -38,7 +38,7 @@ class Control : DisplayObject
         backgroundStyle = GraphicStyle(1, theme.colorAccent, true, theme
                 .colorSecondary);
         backgroundFactory = () {
-            import deltotum.graphics.shape.rectangle : Rectangle;
+            import deltotum.graphics.shapes.rectangle : Rectangle;
 
             auto background = new Rectangle(width, height, backgroundStyle);
             background.opacity = theme.controlOpacity;
