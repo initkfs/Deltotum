@@ -5,7 +5,7 @@ import deltotum.ui.theme.theme : Theme;
 import deltotum.display.texture.texture : Texture;
 
 import deltotum.graphics.shape.shape : Shape;
-import deltotum.graphics.shape.shape_style : ShapeStyle;
+import deltotum.graphics.styles.graphic_style: GraphicStyle;
 import deltotum.ui.layouts.managed_layout: ManagedLayout;
 import deltotum.math.alignment: Alignment;
 
@@ -24,8 +24,8 @@ class Slider : Control
     {
         Texture track;
         Texture thumb;
-        ShapeStyle* trackStyle;
-        ShapeStyle* thumbStyle;
+        GraphicStyle trackStyle;
+        GraphicStyle thumbStyle;
     }
 
     this(Theme theme, double minValue = 0, double maxValue = 1.0, double width = 120, double height = 40)
@@ -43,8 +43,8 @@ class Slider : Control
     {
         super.create;
 
-        trackStyle = new ShapeStyle(0.0, theme.colorAccent, true, theme.colorAccent);
-        thumbStyle = new ShapeStyle(0.0, theme.colorAccent, true, theme.colorAccent);
+        trackStyle = GraphicStyle(0.0, theme.colorAccent, true, theme.colorAccent);
+        thumbStyle = GraphicStyle(0.0, theme.colorAccent, true, theme.colorAccent);
 
         import deltotum.graphics.shape.circle : Circle;
 

@@ -4,7 +4,7 @@ import deltotum.display.display_object : DisplayObject;
 import deltotum.ui.theme.theme : Theme;
 import deltotum.ui.layouts.layout : Layout;
 import deltotum.display.texture.texture : Texture;
-import deltotum.graphics.shape.shape_style : ShapeStyle;
+import deltotum.graphics.styles.graphic_style : GraphicStyle;
 
 /**
  * Authors: initkfs
@@ -27,7 +27,7 @@ class Control : DisplayObject
     protected
     {
         Texture background;
-        ShapeStyle* backgroundStyle;
+        GraphicStyle backgroundStyle;
     }
 
     @property Texture delegate() backgroundFactory;
@@ -35,15 +35,10 @@ class Control : DisplayObject
     this(Theme theme)
     {
         this.theme = theme;
+        backgroundStyle = GraphicStyle(1, theme.colorAccent, true, theme
+                .colorSecondary);
         backgroundFactory = () {
             import deltotum.graphics.shape.rectangle : Rectangle;
-            import deltotum.graphics.shape.shape_style : ShapeStyle;
-
-            if (backgroundStyle is null)
-            {
-                backgroundStyle = new ShapeStyle(1, theme.colorAccent, true, theme
-                        .colorSecondary);
-            }
 
             auto background = new Rectangle(width, height, backgroundStyle);
             background.opacity = theme.controlOpacity;
@@ -99,8 +94,5 @@ class Control : DisplayObject
             background.destroy;
         }
         backgroundFactory = null;
-
-        //TODO destroy?
-        backgroundStyle = null;
     }
 }

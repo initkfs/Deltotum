@@ -17,7 +17,6 @@ class Emitter : DisplayObject
     @property Particle delegate() particleFactory;
     @property double particleMass = 0;
     @property bool delegate(Particle) onParticleUpdate;
-    @property Rnd random;
     @property double minVelocityX = 0;
     @property double maxVelocityX = 0;
     @property double minVelocityY = 0;
@@ -31,6 +30,7 @@ class Emitter : DisplayObject
     {
         //TODO pools implementation
         Particle[] particles;
+        @property Rnd random;
     }
 
     this()

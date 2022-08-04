@@ -2,7 +2,7 @@ module deltotum.ui.controls.tabs.tabpane;
 
 import deltotum.ui.containers.container : Container;
 import deltotum.ui.theme.theme : Theme;
-import deltotum.graphics.shape.shape_style : ShapeStyle;
+import deltotum.graphics.styles.graphic_style: GraphicStyle;
 import deltotum.ui.containers.hbox : HBox;
 import deltotum.ui.containers.vbox : VBox;
 import deltotum.ui.containers.stack_box : StackBox;
@@ -35,8 +35,8 @@ class TabPane : Container
         VBox container;
         HBox header;
         StackBox content;
-        ShapeStyle* headerStyle;
-        ShapeStyle* contentStyle;
+        GraphicStyle headerStyle;
+        GraphicStyle contentStyle;
         Tab[] tabs = [];
         Tab currentTab;
     }
@@ -44,8 +44,8 @@ class TabPane : Container
     this(Theme theme, Tab[] tabs)
     {
         super(theme);
-        headerStyle = new ShapeStyle(0, theme.colorSecondary, true, theme.colorPrimary);
-        contentStyle = new ShapeStyle(0, theme.colorSecondary, true, theme.colorSecondary);
+        headerStyle = GraphicStyle(0, theme.colorSecondary, true, theme.colorPrimary);
+        contentStyle = GraphicStyle(0, theme.colorSecondary, true, theme.colorSecondary);
         this.tabs = tabs;
     }
 

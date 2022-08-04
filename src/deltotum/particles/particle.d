@@ -1,7 +1,7 @@
 module deltotum.particles.particle;
 
 import deltotum.graphics.shape.circle: Circle;
-import deltotum.graphics.shape.shape_style : ShapeStyle;
+import deltotum.graphics.styles.graphic_style: GraphicStyle;
 import deltotum.math.vector2d : Vector2D;
 
 /**
@@ -14,7 +14,7 @@ class Particle : Circle
     @property int lifetime;
     @property int age;
 
-     this(double radius, ShapeStyle* style, double borderWidth = 1.0)
+     this(double radius, GraphicStyle style, double borderWidth = 1.0)
     {
         super(radius, style, borderWidth);
     }

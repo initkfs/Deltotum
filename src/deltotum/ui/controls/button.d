@@ -2,11 +2,11 @@ module deltotum.ui.controls.button;
 
 import deltotum.ui.controls.control : Control;
 import deltotum.graphics.shape.shape : Shape;
-import deltotum.graphics.shape.shape_style : ShapeStyle;
+import deltotum.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.graphics.shape.rectangle : Rectangle;
 import deltotum.ui.events.action_event : ActionEvent;
 import deltotum.animation.object.value_transition : ValueTransition;
-import deltotum.animation.object.property.opacity_transition: OpacityTransition;
+import deltotum.animation.object.property.opacity_transition : OpacityTransition;
 import deltotum.ui.controls.text;
 import deltotum.ui.theme.theme : Theme;
 import deltotum.ui.layouts.center_layout : CenterLayout;
@@ -32,8 +32,8 @@ class Button : Control
         Texture clickEffect;
         ValueTransition clickEffectAnimation;
         Text text;
-        ShapeStyle* hoverStyle;
-        ShapeStyle* clickEffectStyle;
+        GraphicStyle hoverStyle;
+        GraphicStyle clickEffectStyle;
     }
 
     this(Theme theme, double width = 80, double height = 40, string text = "Button")
@@ -44,15 +44,11 @@ class Button : Control
         this._buttonText = text;
         this.layout = new CenterLayout;
 
-        hoverStyle = new ShapeStyle(0.0, theme.colorAccent, true, theme.colorAccent);
-        clickEffectStyle = new ShapeStyle(0.0, theme.colorAccent, true, theme.colorAccent);
+        hoverStyle = GraphicStyle(0.0, theme.colorAccent, true, theme.colorAccent);
+        clickEffectStyle = GraphicStyle(0.0, theme.colorAccent, true, theme.colorAccent);
 
         hoverFactory = () {
-            double padding = 0;
-            if (backgroundStyle !is null)
-            {
-                padding = backgroundStyle.lineWidth;
-            }
+            double padding = backgroundStyle.lineWidth;
             auto hover = new Rectangle(width - padding * 2, height - padding * 2, hoverStyle);
             hover.x = padding;
             hover.y = padding;
@@ -63,11 +59,7 @@ class Button : Control
         };
 
         clickEffectFactory = () {
-            double padding = 0;
-            if (backgroundStyle !is null)
-            {
-                padding = backgroundStyle.lineWidth;
-            }
+            double padding = backgroundStyle.lineWidth;
 
             auto clickEffect = new Rectangle(width - padding * 2, height - padding * 2, clickEffectStyle);
             clickEffect.x = padding;

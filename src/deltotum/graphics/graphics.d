@@ -4,7 +4,7 @@ import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 import deltotum.graphics.colors.color : Color;
 import deltotum.math.vector2d : Vector2D;
 import deltotum.math.math : Math;
-import deltotum.graphics.shape.shape_style : ShapeStyle;
+import deltotum.graphics.styles.graphic_style: GraphicStyle;
 
 import std.conv : to;
 
@@ -101,7 +101,7 @@ class Graphics
         }
     }
 
-    void drawCircle(double centerX, double centerY, double r, ShapeStyle style = ShapeStyle
+    void drawCircle(double centerX, double centerY, double r, GraphicStyle style = GraphicStyle
             .simple)
     {
         if (style.isFill && style.lineWidth == 0)
@@ -120,7 +120,7 @@ class Graphics
         renderer.fillRect(toInt(x), toInt(y), toInt(width), toInt(height));
     }
 
-    void drawRect(double x, double y, double width, double height, ShapeStyle style = ShapeStyle
+    void drawRect(double x, double y, double width, double height, GraphicStyle style = GraphicStyle
             .simple)
     {
         if (style.isFill && style.lineWidth == 0)
