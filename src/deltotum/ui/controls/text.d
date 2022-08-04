@@ -3,6 +3,7 @@ module deltotum.ui.controls.text;
 import deltotum.ui.controls.control : Control;
 import deltotum.asset.fonts.font : Font;
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
+import deltotum.display.textures.texture: Texture;
 import deltotum.math.rect : Rect;
 import deltotum.ui.theme.theme : Theme;
 
@@ -21,7 +22,7 @@ class Text : Control
     private
     {
         Font font;
-        SdlTexture fontTexture;
+        Texture fontTexture;
         string oldText;
     }
 
@@ -42,9 +43,9 @@ class Text : Control
 
     override void drawContent()
     {
-        Rect textureBounds = {0, 0, width, height};
-        //TODO to int
-        drawTexture(fontTexture, textureBounds, cast(int) x, cast(int) y, angle);
+        fontTexture.x = x;
+        fontTexture.y = y;
+        fontTexture.drawContent;
     }
 
     protected void updateFont()
@@ -66,17 +67,17 @@ class Text : Control
 
         if (fontTexture !is null)
         {
-            fontTexture.updateStruct(fontTexturePtr);
+            fontTexture.nativeTexture.updateStruct(fontTexturePtr);
         }
         else
         {
-            fontTexture = new SdlTexture(fontTexturePtr);
+            fontTexture = new Texture(new SdlTexture(fontTexturePtr));
+            build(fontTexture);
         }
 
-        int width, height;
-        fontTexture.getSize(&width, &height);
-        this.width = width;
-        this.height = height;
+        const bounds = fontTexture.bounds;
+        this.width = bounds.width;
+        this.height = bounds.height;
 
         SDL_FreeSurface(fontSurfacePtr);
     }

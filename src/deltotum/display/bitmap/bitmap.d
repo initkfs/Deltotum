@@ -9,6 +9,7 @@ import deltotum.hal.sdl.sdl_texture : SdlTexture;
 import deltotum.hal.sdl.sdl_surface : SdlSurface;
 import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 import deltotum.hal.sdl.img.sdl_image : SdlImage;
+import deltotum.display.textures.texture: Texture;
 import deltotum.math.rect : Rect;
 
 import bindbc.sdl;
@@ -17,21 +18,15 @@ import bindbc.sdl;
  * Authors: initkfs
  */
 //TODO remove duplication with animation bitmap, but it's not clear what code would be required
-class Bitmap : DisplayObject
+class Bitmap : Texture
 {
-    protected
-    {
-        SdlTexture texture;
-    }
-
-    this()
-    {
-
+    this(){
+        super();
     }
 
     this(SdlTexture texture)
     {
-        this.texture = texture;
+        super(texture);
     }
 
     bool load(string path, int requestWidth = -1, int requestHeight = -1)

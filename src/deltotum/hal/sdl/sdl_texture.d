@@ -4,6 +4,8 @@ import deltotum.hal.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 import deltotum.hal.sdl.sdl_surface : SdlSurface;
 
+import deltotum.math.rect: Rect;
+
 import bindbc.sdl;
 
 /**
@@ -62,7 +64,8 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
     }
 
     //SDL_BlendMode
-    void setBlendModeBlend(){
+    void setBlendModeBlend()
+    {
         SDL_SetTextureBlendMode(ptr, SDL_BLENDMODE_BLEND);
     }
 

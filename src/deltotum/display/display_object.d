@@ -17,8 +17,6 @@ import std.math.operations : isClose;
 import std.stdio;
 import std.math.algebraic : abs;
 
-import bindbc.sdl;
-
 /**
  * Authors: initkfs
  */
@@ -249,37 +247,6 @@ abstract class DisplayObject : PhysicalBody
             {
                 child.drawContent;
             }
-        }
-    }
-
-    int drawTexture(SdlTexture texture, Rect textureBounds, int x = 0, int y = 0, double angle = 0, SDL_RendererFlip flip = SDL_RendererFlip
-            .SDL_FLIP_NONE)
-    {
-        {
-            SDL_Rect srcRect;
-            srcRect.x = cast(int) textureBounds.x;
-            srcRect.y = cast(int) textureBounds.y;
-            srcRect.w = cast(int) textureBounds.width;
-            srcRect.h = cast(int) textureBounds.height;
-
-            Rect bounds = window.getScaleBounds;
-
-            SDL_Rect destRect;
-            destRect.x = cast(int)(x + bounds.x);
-            destRect.y = cast(int)(y + bounds.y);
-            destRect.w = cast(int) width;
-            destRect.h = cast(int) height;
-
-            //FIXME some texture sizes can crash when changing the angle
-            //double newW = height * abs(Math.sinDeg(angle)) + width * abs(Math.cosDeg(angle));
-            //double newH = height * abs(Math.cosDeg(angle)) + width * abs(Math.sinDeg(angle));
-
-            //TODO compare double
-            if (!isClose(texture.opacity, opacity))
-            {
-                texture.opacity = opacity;
-            }
-            return window.renderer.copyEx(texture, &srcRect, &destRect, angle, null, flip);
         }
     }
 
