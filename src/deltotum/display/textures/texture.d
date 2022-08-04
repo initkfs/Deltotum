@@ -30,10 +30,6 @@ class Texture : DisplayObject
         this.height = h;
     }
 
-    void createTextureContent(){
-
-    }
-
     override void drawContent()
     {
         Rect textureBounds = Rect(0, 0, width, height);

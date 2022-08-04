@@ -17,6 +17,10 @@ class RgbaTexture : Texture
         this.height = height;
     }
 
+    void createTextureContent(){
+
+    }
+
     override void create()
     {
         super.create;
