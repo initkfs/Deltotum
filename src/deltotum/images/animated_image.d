@@ -1,4 +1,4 @@
-module deltotum.images.sprite_sheet;
+module deltotum.images.animated_image;
 
 import std.stdio;
 
@@ -21,7 +21,7 @@ import bindbc.sdl;
 
 private
 {
-    class SpriteSheetAnimation
+    class ImageAnimation
     {
         @property string name;
         @property int[] frameIndices = [];
@@ -34,14 +34,14 @@ private
 /**
  * Authors: initkfs
  */
-class SpriteSheet : Image
+class AnimatedImage : Image
 {
     protected
     {
         int commonFrameDelay;
 
-        SpriteSheetAnimation[] animations = [];
-        SpriteSheetAnimation currentAnimation;
+        ImageAnimation[] animations = [];
+        ImageAnimation currentAnimation;
         size_t currentAnimationIndex;
         Flip currentFlip = Flip.none;
         double frameWidth = 0;
@@ -71,7 +71,7 @@ class SpriteSheet : Image
     {
         assert(name.length > 0);
         //TODO check exists;
-        auto anim = new SpriteSheetAnimation;
+        auto anim = new ImageAnimation;
         anim.name = name;
         anim.frameIndices = frameIndices;
         anim.frameRow = frameRow;
@@ -191,7 +191,7 @@ class SpriteSheet : Image
     override void destroy()
     {
         super.destroy;
-        foreach (SpriteSheetAnimation animation; animations)
+        foreach (ImageAnimation animation; animations)
         {
             if (animation.transition !is null)
             {
