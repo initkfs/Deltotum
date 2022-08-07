@@ -1,4 +1,4 @@
-module deltotum.ui.theme.theme;
+module deltotum.graphics.themes.theme;
 
 import deltotum.graphics.colors.color : Color;
 import deltotum.asset.fonts.font: Font;

@@ -5,7 +5,6 @@ import deltotum.asset.fonts.font : Font;
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
 import deltotum.display.textures.texture: Texture;
 import deltotum.math.rect : Rect;
-import deltotum.ui.theme.theme : Theme;
 
 import std.string : toStringz;
 
@@ -26,16 +25,16 @@ class Text : Control
         string oldText;
     }
 
-    this(Theme theme, string text = "text")
+    this(string text = "text")
     {
-        super(theme);
+        super();
         //TODO validate
-        this.font = theme.defaultFontMedium;
         this.text = text;
     }
 
     override void create()
     {
+        this.font = graphics.theme.defaultFontMedium;
         backgroundFactory = null;
         super.create;
         updateFont;

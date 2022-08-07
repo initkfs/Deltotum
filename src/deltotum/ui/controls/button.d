@@ -8,7 +8,6 @@ import deltotum.ui.events.action_event : ActionEvent;
 import deltotum.animation.object.value_transition : ValueTransition;
 import deltotum.animation.object.property.opacity_transition : OpacityTransition;
 import deltotum.ui.controls.text;
-import deltotum.ui.theme.theme : Theme;
 import deltotum.display.layouts.center_layout : CenterLayout;
 import deltotum.display.textures.texture : Texture;
 
@@ -36,16 +35,13 @@ class Button : Control
         GraphicStyle clickEffectStyle;
     }
 
-    this(Theme theme, double width = 80, double height = 40, string text = "Button")
+    this(double width = 80, double height = 40, string text = "Button")
     {
-        super(theme);
+        super();
         this.width = width;
         this.height = height;
         this._buttonText = text;
         this.layout = new CenterLayout;
-
-        hoverStyle = GraphicStyle(0.0, theme.colorAccent, true, theme.colorAccent);
-        clickEffectStyle = GraphicStyle(0.0, theme.colorAccent, true, theme.colorAccent);
 
         hoverFactory = () {
             double padding = backgroundStyle.lineWidth;
@@ -53,7 +49,7 @@ class Button : Control
             hover.x = padding;
             hover.y = padding;
             hover.isVisible = false;
-            hover.opacity = theme.controlOpacity;
+            hover.opacity = graphics.theme.controlOpacity;
             hover.isLayoutManaged = false;
             return hover;
         };
@@ -71,7 +67,7 @@ class Button : Control
         };
 
         textFactory = () {
-            auto text = new Text(theme);
+            auto text = new Text();
             build(text);
             text.text = _buttonText;
             text.create;
@@ -90,6 +86,9 @@ class Button : Control
     override void create()
     {
         super.create;
+
+        hoverStyle = GraphicStyle(0.0, graphics.theme.colorAccent, true, graphics.theme.colorAccent);
+        clickEffectStyle = GraphicStyle(0.0, graphics.theme.colorAccent, true, graphics.theme.colorAccent);
 
         if (hoverFactory !is null)
         {

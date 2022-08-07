@@ -1,7 +1,6 @@
 module deltotum.ui.controls.slider;
 
 import deltotum.ui.controls.control : Control;
-import deltotum.ui.theme.theme : Theme;
 import deltotum.display.textures.texture : Texture;
 
 import deltotum.graphics.shapes.shape : Shape;
@@ -28,9 +27,8 @@ class Slider : Control
         GraphicStyle thumbStyle;
     }
 
-    this(Theme theme, double minValue = 0, double maxValue = 1.0, double width = 120, double height = 40)
+    this(double minValue = 0, double maxValue = 1.0, double width = 120, double height = 40)
     {
-        super(theme);
         this.width = width;
         this.height = height;
         this.minValue = minValue;
@@ -43,8 +41,8 @@ class Slider : Control
     {
         super.create;
 
-        trackStyle = GraphicStyle(0.0, theme.colorAccent, true, theme.colorAccent);
-        thumbStyle = GraphicStyle(0.0, theme.colorAccent, true, theme.colorAccent);
+        trackStyle = GraphicStyle(0.0, graphics.theme.colorAccent, true, graphics.theme.colorAccent);
+        thumbStyle = GraphicStyle(0.0, graphics.theme.colorAccent, true, graphics.theme.colorAccent);
 
         import deltotum.graphics.shapes.circle : Circle;
 

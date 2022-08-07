@@ -5,6 +5,8 @@ import deltotum.graphics.colors.color : Color;
 import deltotum.math.vector2d : Vector2D;
 import deltotum.math.math : Math;
 import deltotum.graphics.styles.graphic_style: GraphicStyle;
+import deltotum.graphics.themes.theme: Theme;
+
 
 import std.conv : to;
 
@@ -13,18 +15,22 @@ import std.conv : to;
  */
 class Graphics
 {
+    @property Theme theme;
 
     private
     {
         SdlRenderer renderer;
     }
 
-    this(SdlRenderer renderer)
+    this(SdlRenderer renderer, Theme theme)
     {
         import std.exception : enforce;
 
         enforce(renderer !is null, "Renderer must not be null");
         this.renderer = renderer;
+
+        enforce(theme !is null, "Theme must not be null");
+        this.theme = theme;
     }
 
     //inline?

@@ -1,7 +1,6 @@
 module deltotum.ui.controls.control;
 
 import deltotum.display.display_object : DisplayObject;
-import deltotum.ui.theme.theme : Theme;
 import deltotum.display.layouts.layout : Layout;
 import deltotum.display.textures.texture : Texture;
 import deltotum.graphics.styles.graphic_style : GraphicStyle;
@@ -22,8 +21,6 @@ class Control : DisplayObject
 
     @property void delegate() invalidateListener;
 
-    @property Theme theme;
-
     protected
     {
         Texture background;
@@ -32,16 +29,13 @@ class Control : DisplayObject
 
     @property Texture delegate() backgroundFactory;
 
-    this(Theme theme)
+    this()
     {
-        this.theme = theme;
-        backgroundStyle = GraphicStyle(1, theme.colorAccent, true, theme
-                .colorSecondary);
         backgroundFactory = () {
             import deltotum.graphics.shapes.rectangle : Rectangle;
 
             auto background = new Rectangle(width, height, backgroundStyle);
-            background.opacity = theme.controlOpacity;
+            background.opacity = graphics.theme.controlOpacity;
             background.isLayoutManaged = false;
             return background;
         };
@@ -62,6 +56,10 @@ class Control : DisplayObject
     override void create()
     {
         super.create;
+        
+        backgroundStyle = GraphicStyle(1, graphics.theme.colorAccent, true, graphics.theme
+                .colorSecondary);
+
         if (layout !is null)
         {
             layout.layout(this);

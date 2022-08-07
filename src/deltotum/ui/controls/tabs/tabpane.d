@@ -1,23 +1,25 @@
 module deltotum.ui.controls.tabs.tabpane;
 
 import deltotum.ui.containers.container : Container;
-import deltotum.ui.theme.theme : Theme;
-import deltotum.graphics.styles.graphic_style: GraphicStyle;
+import deltotum.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.ui.containers.hbox : HBox;
 import deltotum.ui.containers.vbox : VBox;
 import deltotum.ui.containers.stack_box : StackBox;
 import deltotum.ui.controls.tabs.tab : Tab;
 import deltotum.ui.controls.button : Button;
 
-class TabButton : Button {
+class TabButton : Button
+{
     @property Tab tab;
     @property void delegate(Tab tab) onTab;
 
-    this(Theme theme, Tab tab){
-        super(theme, 80, 40, tab.text);
+    this(Tab tab)
+    {
+        super(80, 40, tab.text);
         this.tab = tab;
-        onAction = (e){
-            if(onTab !is null){
+        onAction = (e) {
+            if (onTab !is null)
+            {
                 onTab(tab);
             }
         };
@@ -41,11 +43,9 @@ class TabPane : Container
         Tab currentTab;
     }
 
-    this(Theme theme, Tab[] tabs)
+    this(Tab[] tabs)
     {
-        super(theme);
-        headerStyle = GraphicStyle(0, theme.colorSecondary, true, theme.colorPrimary);
-        contentStyle = GraphicStyle(0, theme.colorSecondary, true, theme.colorSecondary);
+        super();
         this.tabs = tabs;
     }
 
@@ -53,10 +53,13 @@ class TabPane : Container
     {
         super.create;
 
-        container = new VBox(theme);
+        headerStyle = GraphicStyle(0, graphics.theme.colorSecondary, true, graphics.theme.colorPrimary);
+        contentStyle = GraphicStyle(0, graphics.theme.colorSecondary, true, graphics.theme.colorSecondary);
+
+        container = new VBox();
         build(container);
 
-        header = new HBox(theme, 1);
+        header = new HBox(1);
         header.backgroundStyle = headerStyle;
         header.width = width;
         header.height = 40;
@@ -66,17 +69,15 @@ class TabPane : Container
         foreach (i, Tab tab; tabs)
         {
             //TODO move, remove tabs, etc
-            auto tabButton = new TabButton(theme, tab);
+            auto tabButton = new TabButton(tab);
             tabButton.tab = tab;
-            tabButton.onTab = (tab) {
-                changeTab(tab);
-            };
+            tabButton.onTab = (tab) { changeTab(tab); };
             header.addCreated(tabButton);
         }
 
         header.invalidate;
 
-        content = new StackBox(theme);
+        content = new StackBox();
         content.backgroundStyle = contentStyle;
         container.addCreated(content);
         content.width = width;

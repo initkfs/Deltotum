@@ -15,8 +15,8 @@ import deltotum.hal.sdl.sdl_lib : SdlLib;
 import deltotum.hal.sdl.img.sdl_img_lib : SdlImgLib;
 import deltotum.hal.sdl.mix.sdl_mix_lib : SdlMixLib;
 import deltotum.hal.sdl.ttf.sdl_ttf_lib : SdlTTFLib;
-import deltotum.hal.sdl.sdl_window: SdlWindow;
-import deltotum.hal.sdl.sdl_renderer: SdlRenderer;
+import deltotum.hal.sdl.sdl_window : SdlWindow;
+import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 
 import deltotum.window.window : Window;
 import deltotum.input.input : Input;
@@ -95,8 +95,6 @@ class SdlApplication : GraphicsApplication
 
         audio = new Audio(audioMixLib);
 
-        graphics = new Graphics(window.renderer);
-
         sceneManager = new SceneManager;
 
         //TODO remove sdl api
@@ -129,6 +127,12 @@ class SdlApplication : GraphicsApplication
         //TODO from config
         Font defaultFont = assetManager.font("fonts/OpenSans-Regular.ttf", 14);
         assetManager.defaultFont = defaultFont;
+
+        import deltotum.graphics.themes.theme : Theme;
+
+        auto theme = new Theme(defaultFont);
+
+        graphics = new Graphics(window.renderer, theme);
 
         isRunning = true;
     }
