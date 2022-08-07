@@ -1,4 +1,4 @@
-module deltotum.display.light.light_spot;
+module deltotum.physics.light.light_spot;
 
 import deltotum.display.bitmap.bitmap : Bitmap;
 

@@ -1,7 +1,7 @@
-module deltotum.display.light.light_environment;
+module deltotum.physics.light.light_environment;
 
 import deltotum.display.bitmap.bitmap : Bitmap;
-import deltotum.display.light.light_spot : LightSpot;
+import deltotum.physics.light.light_spot : LightSpot;
 
 //TODO remove hal api
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
