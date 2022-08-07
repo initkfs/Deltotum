@@ -4,7 +4,7 @@ import deltotum.application.components.uni.uni_component : UniComponent;
 
 import deltotum.math.vector2d : Vector2D;
 import deltotum.math.rect : Rect;
-import deltotum.math.alignment : Alignment;
+import deltotum.display.alignment : Alignment;
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
 import deltotum.physics.physical_body : PhysicalBody;
 import deltotum.input.mouse.event.mouse_event : MouseEvent;

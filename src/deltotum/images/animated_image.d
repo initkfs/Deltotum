@@ -15,7 +15,7 @@ import deltotum.animation.interp.interpolator : Interpolator;
 import deltotum.animation.transition : Transition;
 import std.math.rounding : floor;
 import std.conv : to;
-import deltotum.math.flip: Flip;
+import deltotum.display.flip: Flip;
 
 import bindbc.sdl;
 

@@ -1,4 +1,4 @@
-module deltotum.math.flip;
+module deltotum.display.flip;
 
 enum Flip {
     none,

@@ -6,7 +6,7 @@ import deltotum.display.textures.texture : Texture;
 import deltotum.graphics.shapes.shape : Shape;
 import deltotum.graphics.styles.graphic_style: GraphicStyle;
 import deltotum.display.layouts.managed_layout: ManagedLayout;
-import deltotum.math.alignment: Alignment;
+import deltotum.display.alignment: Alignment;
 
 /**
  * Authors: initkfs

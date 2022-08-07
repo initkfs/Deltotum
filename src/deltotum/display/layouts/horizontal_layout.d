@@ -2,7 +2,7 @@ module deltotum.display.layouts.horizontal_layout;
 
 import deltotum.display.display_object : DisplayObject;
 import deltotum.display.layouts.managed_layout : ManagedLayout;
-import deltotum.math.alignment : Alignment;
+import deltotum.display.alignment : Alignment;
 
 /**
  * Authors: initkfs

@@ -1,4 +1,4 @@
-module deltotum.math.direction;
+module deltotum.physics.direction;
 /**
  * Authors: initkfs
  */

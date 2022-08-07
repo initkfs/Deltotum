@@ -5,7 +5,7 @@ import deltotum.display.display_object : DisplayObject;
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
 import deltotum.math.rect : Rect;
 import std.math.operations : isClose;
-import deltotum.math.flip : Flip;
+import deltotum.display.flip : Flip;
 
 import bindbc.sdl;
 

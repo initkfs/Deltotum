@@ -1,4 +1,4 @@
-module deltotum.math.alignment;
+module deltotum.display.alignment;
 /**
  * Authors: initkfs
  */

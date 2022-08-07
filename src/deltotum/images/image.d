@@ -11,7 +11,7 @@ import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 import deltotum.hal.sdl.img.sdl_image : SdlImage;
 import deltotum.display.textures.texture: Texture;
 import deltotum.math.rect : Rect;
-import deltotum.math.flip: Flip;
+import deltotum.display.flip: Flip;
 
 import bindbc.sdl;
 
