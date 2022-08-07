@@ -2,7 +2,7 @@ module deltotum.ui.containers.stack_box;
 
 import deltotum.ui.containers.container : Container;
 import deltotum.ui.theme.theme : Theme;
-import deltotum.ui.layouts.center_layout: CenterLayout;
+import deltotum.display.layouts.center_layout: CenterLayout;
 
 /**
  * Authors: initkfs

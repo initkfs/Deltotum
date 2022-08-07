@@ -1,7 +1,7 @@
-module deltotum.ui.layouts.center_layout;
+module deltotum.display.layouts.center_layout;
 
 import deltotum.display.display_object : DisplayObject;
-import deltotum.ui.layouts.managed_layout : ManagedLayout;
+import deltotum.display.layouts.managed_layout : ManagedLayout;
 
 /**
  * Authors: initkfs

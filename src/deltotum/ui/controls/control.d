@@ -2,7 +2,7 @@ module deltotum.ui.controls.control;
 
 import deltotum.display.display_object : DisplayObject;
 import deltotum.ui.theme.theme : Theme;
-import deltotum.ui.layouts.layout : Layout;
+import deltotum.display.layouts.layout : Layout;
 import deltotum.display.textures.texture : Texture;
 import deltotum.graphics.styles.graphic_style : GraphicStyle;
 

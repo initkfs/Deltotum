@@ -2,7 +2,7 @@ module deltotum.ui.containers.vbox;
 
 import deltotum.ui.containers.container : Container;
 import deltotum.ui.theme.theme : Theme;
-import deltotum.ui.layouts.vertical_layout : VerticalLayout;
+import deltotum.display.layouts.vertical_layout : VerticalLayout;
 
 /**
  * Authors: initkfs

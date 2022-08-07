@@ -1,6 +1,6 @@
-module deltotum.ui.layouts.managed_layout;
+module deltotum.display.layouts.managed_layout;
 
-import deltotum.ui.layouts.layout : Layout;
+import deltotum.display.layouts.layout : Layout;
 import deltotum.display.display_object : DisplayObject;
 import deltotum.ui.controls.control : Control;
 import deltotum.math.alignment : Alignment;

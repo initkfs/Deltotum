@@ -1,4 +1,4 @@
-module deltotum.ui.layouts.layout;
+module deltotum.display.layouts.layout;
 
 import deltotum.display.display_object : DisplayObject;
 

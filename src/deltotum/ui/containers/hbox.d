@@ -2,7 +2,7 @@ module deltotum.ui.containers.hbox;
 
 import deltotum.ui.containers.container: Container;
 import deltotum.ui.theme.theme : Theme;
-import deltotum.ui.layouts.horizontal_layout: HorizontalLayout;
+import deltotum.display.layouts.horizontal_layout: HorizontalLayout;
 
 /**
  * Authors: initkfs
