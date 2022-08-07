@@ -1,4 +1,4 @@
-module deltotum.display.scrolling.scroller;
+module deltotum.physics.scrolling.scroller;
 
 import deltotum.display.display_object : DisplayObject;
 import deltotum.math.direction : Direction;
