@@ -1,6 +1,6 @@
 module deltotum.physics.light.light_spot;
 
-import deltotum.display.bitmap.bitmap : Bitmap;
+import deltotum.images.image : Image;
 
 //TODO remove hal api
 import bindbc.sdl;
@@ -9,7 +9,7 @@ import bindbc.sdl;
  * Authors: initkfs
  */
 //TODO or spritesheet?
-class LightSpot : Bitmap
+class LightSpot : Image
 {
     
 }

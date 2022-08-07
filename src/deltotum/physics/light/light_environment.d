@@ -1,6 +1,6 @@
 module deltotum.physics.light.light_environment;
 
-import deltotum.display.bitmap.bitmap : Bitmap;
+import deltotum.images.image : Image;
 import deltotum.physics.light.light_spot : LightSpot;
 
 //TODO remove hal api
@@ -11,7 +11,7 @@ import bindbc.sdl;
 /**
  * Authors: initkfs
  */
-class LightEnvironment : Bitmap
+class LightEnvironment : Image
 {
     private
     {

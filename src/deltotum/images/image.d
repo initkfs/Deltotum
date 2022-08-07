@@ -1,4 +1,4 @@
-module deltotum.display.bitmap.bitmap;
+module deltotum.images.image;
 
 import std.stdio;
 
@@ -19,7 +19,7 @@ import bindbc.sdl;
  * Authors: initkfs
  */
 //TODO remove duplication with animation bitmap, but it's not clear what code would be required
-class Bitmap : Texture
+class Image : Texture
 {
     this(){
         super();

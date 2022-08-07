@@ -1,10 +1,10 @@
-module deltotum.display.bitmap.sprite_sheet;
+module deltotum.images.sprite_sheet;
 
 import std.stdio;
 
 import deltotum.display.display_object : DisplayObject;
 
-import deltotum.display.bitmap.bitmap : Bitmap;
+import deltotum.images.image : Image;
 
 //TODO extract interfaces
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
@@ -34,7 +34,7 @@ private
 /**
  * Authors: initkfs
  */
-class SpriteSheet : Bitmap
+class SpriteSheet : Image
 {
     protected
     {
