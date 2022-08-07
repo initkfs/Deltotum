@@ -3,7 +3,7 @@ module deltotum.particles.emitter;
 import deltotum.display.display_object : DisplayObject;
 import deltotum.particles.particle : Particle;
 import deltotum.math.vector2d : Vector2D;
-import deltotum.math.rnd : Rnd;
+import deltotum.math.random : Random;
 
 import std.stdio;
 
@@ -30,14 +30,14 @@ class Emitter : DisplayObject
     {
         //TODO pools implementation
         Particle[] particles;
-        @property Rnd random;
+        @property Random random;
     }
 
     this()
     {
         super();
         //TODO seed, etc
-        random = Rnd(42);
+        random = Random(42);
     }
 
     void emit()

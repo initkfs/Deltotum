@@ -1,22 +1,22 @@
-module deltotum.math.rnd;
+module deltotum.math.random;
 
-import std.random : uniform, Random;
+import std.random : uniform, StdRandom = Random;
 import std.traits;
 
 /**
  * Authors: initkfs
  */
-struct Rnd
+struct Random
 {
 
     private
     {
-        Random rnd;
+        StdRandom rnd;
     }
 
     this(int seed)
     {
-        rnd = Random(seed);
+        rnd = StdRandom(seed);
     }
 
     T randomBetween(T)(T minValue, T maxValue) if (isNumeric!T)
