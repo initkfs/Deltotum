@@ -32,6 +32,11 @@ class Math
         return deg * (PI / 180.0);
     }
 
+    static double radToDeg(double rad) @nogc nothrow pure @safe
+    {
+        return rad * (180 / PI);
+    }
+
     static double clamp01(double value) @nogc nothrow pure @safe
     {
         //TODO compare double
@@ -82,5 +87,10 @@ class Math
     static double asin(double value) @nogc nothrow pure @safe
     {
         return math.asin(value);
+    }
+
+    static double atan2(double y, double x) @nogc nothrow pure @safe
+    {
+        return math.atan2(y, x);
     }
 }

@@ -77,12 +77,46 @@ struct Vector2D
         return Vector2D(x * factor, y * factor);
     }
 
-    Vector2D inc(double value) const @nogc nothrow pure @safe {
+    Vector2D inc(double value) const @nogc nothrow pure @safe
+    {
         return Vector2D(x + value, y + value);
     }
 
-    Vector2D dec(double value) const @nogc nothrow pure @safe {
+    Vector2D inv() const @nogc nothrow pure @safe
+    {
+        return Vector2D(-x, -y);
+    }
+
+    Vector2D dec(double value) const @nogc nothrow pure @safe
+    {
         return Vector2D(x - value, y - value);
+    }
+
+    Vector2D perpendicular() const @nogc nothrow pure @safe
+    {
+        //or y, -x to left
+        return Vector2D(-y, x);
+    }
+
+    Vector2D translate(double tx, double ty) const @nogc nothrow pure @safe
+    {
+        return Vector2D(x + tx, y + ty);
+    }
+
+    Vector2D rotate(double angleDeg) const @nogc nothrow pure @safe
+    {
+        import deltotum.math.math : Math;
+
+        immutable newX = x * Math.cosDeg(angleDeg) - y * Math.sinDeg(angleDeg);
+        immutable newY = x * Math.sinDeg(angleDeg) + y * Math.cosDeg(angleDeg);
+        return Vector2D(newX, newY);
+    }
+
+    Vector2D shear(double sx, double sy) const @nogc nothrow pure @safe
+    {
+        immutable newX = x + sx * y;
+        immutable newY = y + sy * x;
+        return Vector2D(newX, newY);
     }
 
     Vector2D project(double factor) const @nogc nothrow pure @safe
@@ -94,6 +128,22 @@ struct Vector2D
     double dotProduct(Vector2D other) const @nogc nothrow pure @safe
     {
         return x * other.x + y * other.y;
+    }
+
+    double angleRad() const @nogc nothrow pure @safe
+    {
+        import deltotum.math.math : Math;
+
+        immutable angle = Math.atan2(y, x);
+        return angle;
+    }
+
+    double angleDeg() const @nogc nothrow pure @safe
+    {
+        import deltotum.math.math : Math;
+
+        immutable anleDeg = Math.radToDeg(angleRad);
+        return anleDeg;
     }
 
     double angleDegBetween(Vector2D other) const @nogc nothrow pure @safe
@@ -112,6 +162,15 @@ struct Vector2D
         //TODO angle utils
         const angleRad = acos(delta) * (180.0 / PI);
         return angleRad;
+    }
+
+    Vector2D polar(double angleDeg, double radius)
+    {
+        import deltotum.math.math : Math;
+
+        immutable pX = radius * Math.cosDeg(angleDeg);
+        immutable pY = radius * Math.sinDeg(angleDeg);
+        return Vector2D(pX, pY);
     }
 
     string toString() immutable
