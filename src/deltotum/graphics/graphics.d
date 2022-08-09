@@ -56,8 +56,9 @@ class Graphics
         renderer.drawPoint(toInt(x), toInt(y));
     }
 
-    void drawLines(Vector2D[] points)
+    void drawLines(Vector2D[] points, Color color)
     {
+        adjustRender(color);
         renderer.drawLines(points);
     }
 

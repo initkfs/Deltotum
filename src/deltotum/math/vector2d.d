@@ -164,7 +164,7 @@ struct Vector2D
         return angleRad;
     }
 
-    Vector2D polar(double angleDeg, double radius)
+    Vector2D polar(double angleDeg, double radius) const @nogc nothrow pure @safe
     {
         import deltotum.math.math : Math;
 
@@ -173,7 +173,7 @@ struct Vector2D
         return Vector2D(pX, pY);
     }
 
-    string toString() immutable
+    string toString() const
     {
         import std.format : format;
 
