@@ -4,9 +4,8 @@ import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 import deltotum.graphics.colors.color : Color;
 import deltotum.math.vector2d : Vector2D;
 import deltotum.math.math : Math;
-import deltotum.graphics.styles.graphic_style: GraphicStyle;
-import deltotum.graphics.themes.theme: Theme;
-
+import deltotum.graphics.styles.graphic_style : GraphicStyle;
+import deltotum.graphics.themes.theme : Theme;
 
 import std.conv : to;
 
@@ -62,9 +61,124 @@ class Graphics
         renderer.drawLines(points);
     }
 
+    Vector2D[] linePoints(int startX, int startY, int endX, int endY) const nothrow pure @safe
+    {
+        //Bresenham algorithm
+        import deltotum.math.math : Math;
+
+        Vector2D[] points = [];
+
+        immutable deltaX = endX - startX;
+        immutable deltaY = endY - startY;
+
+        enum delta1 = 1;
+        enum delta1Neg = -1;
+
+        int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
+        if (deltaX < 0)
+        {
+            dx1 = delta1Neg;
+            dx2 = delta1Neg;
+        }
+        else if (deltaX > 0)
+        {
+            dx1 = delta1;
+            dx2 = delta1;
+        }
+
+        if (deltaY < 0)
+        {
+            dy1 = delta1Neg;
+        }
+        else if (deltaY > 0)
+        {
+            dy1 = delta1;
+        }
+
+        int longestLen = Math.abs(deltaX);
+        int shortestLen = Math.abs(deltaY);
+
+        if (longestLen < shortestLen)
+        {
+            longestLen = Math.abs(deltaY);
+            shortestLen = Math.abs(deltaX);
+            if (deltaY < 0)
+            {
+                dy2 = delta1Neg;
+            }
+            else if (deltaY > 0)
+            {
+                dy2 = delta1;
+            }
+
+            dx2 = 0;
+        }
+
+        int shortestLen2 = shortestLen * 2;
+        int longestLen2 = longestLen * 2;
+        int num = 0;
+        for (int i = 0; i <= longestLen; i++)
+        {
+            points ~= Vector2D(startX, startY);
+            num += shortestLen2;
+            if (num > longestLen)
+            {
+                num -= longestLen2;
+                startX += dx1;
+                startY += dy1;
+            }
+            else
+            {
+                startX += dx2;
+                startY += dy2;
+            }
+        }
+
+        return points;
+    }
+
+    Vector2D[] circlePoints(int centerX, int centerY, int radius) const nothrow pure @safe
+    {
+        //Bresenham algorithm
+        import deltotum.math.math : Math;
+
+        Vector2D[] points = [];
+
+        int x = 0;
+        int y = radius;
+        int delta = 1 - 2 * radius;
+        int error = 0;
+        while (y >= x)
+        {
+            points ~= Vector2D(centerX + x, centerY + y);
+            points ~= Vector2D(centerX + x, centerY - y);
+            points ~= Vector2D(centerX - x, centerY + y);
+            points ~= Vector2D(centerX - x, centerY - y);
+            points ~= Vector2D(centerX + y, centerY + x);
+            points ~= Vector2D(centerX + y, centerY - x);
+            points ~= Vector2D(centerX - y, centerY + x);
+            points ~= Vector2D(centerX - y, centerY - x);
+            error = 2 * (delta + y) - 1;
+            if ((delta < 0) && (error <= 0))
+            {
+                delta += 2 * ++x + 1;
+                continue;
+            }
+
+            if ((delta > 0) && (error > 0))
+            {
+                delta -= 2 * --y + 1;
+                continue;
+            }
+
+            delta += 2 * (++x - --y);
+        }
+
+        return points;
+    }
+
     void drawCircle(double centerX, double centerY, double radius, Color fillColor)
     {
-        //Midpoint circle algorithm
         adjustRender(fillColor);
 
         int xCenter = toInt(centerX);

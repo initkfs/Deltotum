@@ -93,4 +93,10 @@ class Math
     {
         return math.atan2(y, x);
     }
+
+    static T abs(T)(T value) @nogc nothrow pure @safe
+    {
+        import std.math.algebraic: Abs = abs;
+        return Abs(value);
+    }
 }
