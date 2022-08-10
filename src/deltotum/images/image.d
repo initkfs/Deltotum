@@ -10,7 +10,7 @@ import deltotum.hal.sdl.sdl_surface : SdlSurface;
 import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 import deltotum.hal.sdl.img.sdl_image : SdlImage;
 import deltotum.display.textures.texture: Texture;
-import deltotum.math.rect : Rect;
+import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.display.flip: Flip;
 
 import bindbc.sdl;
@@ -91,7 +91,7 @@ class Image : Texture
 
     void drawImage(int x, int y, int width, int height, Flip flip = Flip.none)
     {
-        Rect textureBounds = {0, 0, width, height};
+        Rect2d textureBounds = {0, 0, width, height};
         drawTexture(texture, textureBounds, x, y, angle, flip);
     }
 

@@ -4,7 +4,7 @@ import math = std.math.trigonometry;
 import mathConst = std.math.constants;
 import mathCore = core.math;
 import mathExp = std.math.exponential;
-import deltotum.math.vector2d : Vector2D;
+import deltotum.math.vector2d : Vector2d;
 
 /**
  * Authors: initkfs
@@ -20,10 +20,10 @@ class Math
         return start + (end - start) * progressValue;
     }
 
-    static Vector2D lerp(Vector2D a, Vector2D b, float t, bool clamp = true) @nogc nothrow pure @safe
+    static Vector2d lerp(Vector2d a, Vector2d b, float t, bool clamp = true) @nogc nothrow pure @safe
     {
         const double progress0to1 = clamp ? clamp01(t) : t;
-        return Vector2D(a.x + (b.x - a.x) * progress0to1,
+        return Vector2d(a.x + (b.x - a.x) * progress0to1,
             a.y + (b.y - a.y) * progress0to1);
     }
 

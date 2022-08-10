@@ -2,8 +2,8 @@ module deltotum.display.display_object;
 
 import deltotum.application.components.uni.uni_component : UniComponent;
 
-import deltotum.math.vector2d : Vector2D;
-import deltotum.math.rect : Rect;
+import deltotum.math.vector2d : Vector2d;
+import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.display.alignment : Alignment;
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
 import deltotum.physics.physical_body : PhysicalBody;
@@ -31,8 +31,8 @@ abstract class DisplayObject : PhysicalBody
     @property double angle = 0;
     @property double scale = 1;
 
-    @property Vector2D velocity;
-    @property Vector2D acceleration;
+    @property Vector2d velocity;
+    @property Vector2d acceleration;
 
     @property bool isRedraw = true;
     @property bool isRedrawChildren = true;
@@ -317,9 +317,9 @@ abstract class DisplayObject : PhysicalBody
         }
     }
 
-    Rect bounds()
+    Rect2d bounds()
     {
-        const Rect bounds = {x, y, width, height};
+        const Rect2d bounds = {x, y, width, height};
         return bounds;
     }
 

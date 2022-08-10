@@ -4,14 +4,14 @@ import deltotum.display.display_object : DisplayObject;
 import deltotum.animation.interp.interpolator : Interpolator;
 import deltotum.animation.transition: Transition;
 
-import deltotum.math.vector2d: Vector2D;
+import deltotum.math.vector2d: Vector2d;
 
 import std.traits: isIntegral, isFloatingPoint;
 
 /**
  * Authors: initkfs
  */
-class DisplayObjectTransition(T) if (isIntegral!T || isFloatingPoint!T || is(T : Vector2D)) : Transition!T
+class DisplayObjectTransition(T) if (isIntegral!T || isFloatingPoint!T || is(T : Vector2d)) : Transition!T
 {
     protected
     {

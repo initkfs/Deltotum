@@ -1,7 +1,7 @@
 module deltotum.physics.collision.aabb_collision.detector;
 
-import deltotum.math.rect : Rect;
-import deltotum.math.vector2d : Vector2D;
+import deltotum.math.shapes.rect2d : Rect2d;
+import deltotum.math.vector2d : Vector2d;
 
 /**
  * Authors: initkfs
@@ -10,7 +10,7 @@ import deltotum.math.vector2d : Vector2D;
 //Axis-Aligned Bounding Box
 class AABBCollisionDetector
 {
-    bool intersect(Rect a, Rect b)
+    bool intersect(Rect2d a, Rect2d b)
     {
         if (a.maxPoint.x < b.minPoint.x || a.minPoint.x > b.maxPoint.x)
         {

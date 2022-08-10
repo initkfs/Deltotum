@@ -10,7 +10,7 @@ import deltotum.images.image : Image;
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
 import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 import deltotum.hal.sdl.img.sdl_image : SdlImage;
-import deltotum.math.rect : Rect;
+import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.animation.interp.interpolator : Interpolator;
 import deltotum.animation.transition : Transition;
 import std.math.rounding : floor;
@@ -125,7 +125,7 @@ class AnimatedImage : Image
 
     void drawFrame(double x, double y, double width, double height, int frameIndex, int rowIndex, Flip flip = Flip.none)
     {
-        Rect srcRect;
+        Rect2d srcRect;
         srcRect.x = cast(int)(frameWidth * frameIndex);
         srcRect.y = cast(int)(frameHeight * rowIndex);
         srcRect.width = cast(int) frameWidth;

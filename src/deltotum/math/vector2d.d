@@ -10,22 +10,22 @@ import std.math.constants : PI;
  * Authors: initkfs
  */
 //TODO template types, operator overloads
-struct Vector2D
+struct Vector2d
 {
     double x = 0;
     double y = 0;
 
-    Vector2D add(Vector2D other) const @nogc nothrow pure @safe
+    Vector2d add(Vector2d other) const @nogc nothrow pure @safe
     {
-        return Vector2D(x + other.x, y + other.y);
+        return Vector2d(x + other.x, y + other.y);
     }
 
-    Vector2D subtract(Vector2D other) const @nogc nothrow pure @safe
+    Vector2d subtract(Vector2d other) const @nogc nothrow pure @safe
     {
-        return Vector2D(x - other.x, y - other.y);
+        return Vector2d(x - other.x, y - other.y);
     }
 
-    Vector2D normalize() const @nogc nothrow pure @safe
+    Vector2d normalize() const @nogc nothrow pure @safe
     {
         const double length = magnitude;
         double normX = 0;
@@ -36,12 +36,12 @@ struct Vector2D
             normY = y / length;
         }
 
-        return Vector2D(normX, normY);
+        return Vector2d(normX, normY);
     }
 
-    Vector2D clone() const @nogc nothrow pure @safe
+    Vector2d clone() const @nogc nothrow pure @safe
     {
-        return Vector2D(x, y);
+        return Vector2d(x, y);
     }
 
     double magnitude() const @nogc nothrow pure @safe
@@ -64,7 +64,7 @@ struct Vector2D
         return sqrt(magnitudeSquaredXY(x, y));
     }
 
-    double distanceTo(Vector2D other) const @nogc nothrow pure @safe
+    double distanceTo(Vector2d other) const @nogc nothrow pure @safe
     {
         const double deltaX = other.x - x;
         const double deltaY = other.y - y;
@@ -72,60 +72,60 @@ struct Vector2D
     }
 
     //or multiply?
-    Vector2D scale(double factor) const @nogc nothrow pure @safe
+    Vector2d scale(double factor) const @nogc nothrow pure @safe
     {
-        return Vector2D(x * factor, y * factor);
+        return Vector2d(x * factor, y * factor);
     }
 
-    Vector2D inc(double value) const @nogc nothrow pure @safe
+    Vector2d inc(double value) const @nogc nothrow pure @safe
     {
-        return Vector2D(x + value, y + value);
+        return Vector2d(x + value, y + value);
     }
 
-    Vector2D inv() const @nogc nothrow pure @safe
+    Vector2d inv() const @nogc nothrow pure @safe
     {
-        return Vector2D(-x, -y);
+        return Vector2d(-x, -y);
     }
 
-    Vector2D dec(double value) const @nogc nothrow pure @safe
+    Vector2d dec(double value) const @nogc nothrow pure @safe
     {
-        return Vector2D(x - value, y - value);
+        return Vector2d(x - value, y - value);
     }
 
-    Vector2D perpendicular() const @nogc nothrow pure @safe
+    Vector2d perpendicular() const @nogc nothrow pure @safe
     {
         //or y, -x to left
-        return Vector2D(-y, x);
+        return Vector2d(-y, x);
     }
 
-    Vector2D translate(double tx, double ty) const @nogc nothrow pure @safe
+    Vector2d translate(double tx, double ty) const @nogc nothrow pure @safe
     {
-        return Vector2D(x + tx, y + ty);
+        return Vector2d(x + tx, y + ty);
     }
 
-    Vector2D rotate(double angleDeg) const @nogc nothrow pure @safe
+    Vector2d rotate(double angleDeg) const @nogc nothrow pure @safe
     {
         import deltotum.math.math : Math;
 
         immutable newX = x * Math.cosDeg(angleDeg) - y * Math.sinDeg(angleDeg);
         immutable newY = x * Math.sinDeg(angleDeg) + y * Math.cosDeg(angleDeg);
-        return Vector2D(newX, newY);
+        return Vector2d(newX, newY);
     }
 
-    Vector2D shear(double sx, double sy) const @nogc nothrow pure @safe
+    Vector2d shear(double sx, double sy) const @nogc nothrow pure @safe
     {
         immutable newX = x + sx * y;
         immutable newY = y + sy * x;
-        return Vector2D(newX, newY);
+        return Vector2d(newX, newY);
     }
 
-    Vector2D project(double factor) const @nogc nothrow pure @safe
+    Vector2d project(double factor) const @nogc nothrow pure @safe
     {
         assert(!isClose(factor, 0.0));
-        return Vector2D(x / factor, y / factor);
+        return Vector2d(x / factor, y / factor);
     }
 
-    double dotProduct(Vector2D other) const @nogc nothrow pure @safe
+    double dotProduct(Vector2d other) const @nogc nothrow pure @safe
     {
         return x * other.x + y * other.y;
     }
@@ -146,7 +146,7 @@ struct Vector2D
         return anleDeg;
     }
 
-    double angleDegBetween(Vector2D other) const @nogc nothrow pure @safe
+    double angleDegBetween(Vector2d other) const @nogc nothrow pure @safe
     {
         const double delta = (x * other.x + y * other.y) / sqrt(
             magnitudeSquaredXY(x, y) * magnitudeSquaredXY(other.x, other.y));
@@ -164,13 +164,13 @@ struct Vector2D
         return angleRad;
     }
 
-    Vector2D polar(double angleDeg, double radius) const @nogc nothrow pure @safe
+    Vector2d polar(double angleDeg, double radius) const @nogc nothrow pure @safe
     {
         import deltotum.math.math : Math;
 
         immutable pX = radius * Math.cosDeg(angleDeg);
         immutable pY = radius * Math.sinDeg(angleDeg);
-        return Vector2D(pX, pY);
+        return Vector2d(pX, pY);
     }
 
     string toString() const

@@ -1,11 +1,11 @@
-module deltotum.math.ellipse2d;
+module deltotum.math.shapes.ellipse2d;
 
-import deltotum.math.vector2d : Vector2D;
+import deltotum.math.vector2d : Vector2d;
 
 /**
  * Authors: initkfs
  */
-struct Ellipse2D
+struct Ellipse2d
 {
     double x = 0;
     double y = 0;
@@ -20,7 +20,7 @@ struct Ellipse2D
         return (dx * dx) / (width * 0.5 * width * 0.5) + (dy * dy) / (height * 0.5 * height * 0.5) <= 1.0;
     }
 
-    bool contains(Vector2D p) const @nogc nothrow pure @safe
+    bool contains(Vector2d p) const @nogc nothrow pure @safe
     {
         return contains(p.x, p.y);
     }

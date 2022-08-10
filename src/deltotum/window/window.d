@@ -2,7 +2,7 @@ module deltotum.window.window;
 
 import deltotum.hal.sdl.sdl_window : SdlWindow;
 import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
-import deltotum.math.rect : Rect;
+import deltotum.math.shapes.rect2d : Rect2d;
 
 //TODO move to deltotum.hal;
 import bindbc.sdl;
@@ -71,16 +71,16 @@ class Window
         return y;
     }
 
-    Rect getWorldBounds() @nogc nothrow {
+    Rect2d getWorldBounds() @nogc nothrow {
         auto bounds = nativeWindow.getWorldBounds;
-        Rect boundsRect = {bounds.x, bounds.y, bounds.w, bounds.h};
+        Rect2d boundsRect = {bounds.x, bounds.y, bounds.w, bounds.h};
         return boundsRect;
     }
 
-    Rect getScaleBounds() @nogc nothrow
+    Rect2d getScaleBounds() @nogc nothrow
     {
         auto bounds = nativeWindow.getScaleBounds;
-        Rect boundsRect = {bounds.x, bounds.y, bounds.w, bounds.h};
+        Rect2d boundsRect = {bounds.x, bounds.y, bounds.w, bounds.h};
         return boundsRect;
     }
 

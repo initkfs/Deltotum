@@ -3,7 +3,7 @@ module deltotum.display.textures.texture;
 import deltotum.display.display_object : DisplayObject;
 
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
-import deltotum.math.rect : Rect;
+import deltotum.math.shapes.rect2d : Rect2d;
 import std.math.operations : isClose;
 import deltotum.display.flip : Flip;
 
@@ -35,12 +35,12 @@ class Texture : DisplayObject
 
     override void drawContent()
     {
-        Rect textureBounds = Rect(0, 0, width, height);
+        Rect2d textureBounds = Rect2d(0, 0, width, height);
         //TODO flip, toInt?
         drawTexture(texture, textureBounds, cast(int) x, cast(int) y, angle);
     }
 
-    int drawTexture(SdlTexture texture, Rect textureBounds, int x = 0, int y = 0, double angle = 0, Flip flip = Flip
+    int drawTexture(SdlTexture texture, Rect2d textureBounds, int x = 0, int y = 0, double angle = 0, Flip flip = Flip
             .none)
     {
         {
@@ -50,7 +50,7 @@ class Texture : DisplayObject
             srcRect.w = cast(int) textureBounds.width;
             srcRect.h = cast(int) textureBounds.height;
 
-            Rect bounds = window.getScaleBounds;
+            Rect2d bounds = window.getScaleBounds;
 
             SDL_Rect destRect;
             destRect.x = cast(int)(x + bounds.x);

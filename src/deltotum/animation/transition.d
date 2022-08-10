@@ -3,7 +3,7 @@ module deltotum.animation.transition;
 import deltotum.display.display_object : DisplayObject;
 import deltotum.animation.interp.interpolator : Interpolator;
 import deltotum.animation.interp.uni_interpolator : UniInterpolator;
-import deltotum.math.vector2d : Vector2D;
+import deltotum.math.vector2d : Vector2d;
 import deltotum.math.math : Math;
 
 import std.traits : isIntegral, isFloatingPoint;
@@ -24,7 +24,7 @@ private
 /**
  * Authors: initkfs
  */
-class Transition(T) if (isIntegral!T || isFloatingPoint!T || is(T : Vector2D)) : DisplayObject
+class Transition(T) if (isIntegral!T || isFloatingPoint!T || is(T : Vector2d)) : DisplayObject
 {
     @property void delegate(T) onValue;
     @property bool isInverse;

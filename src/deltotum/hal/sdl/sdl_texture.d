@@ -4,7 +4,7 @@ import deltotum.hal.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 import deltotum.hal.sdl.sdl_surface : SdlSurface;
 
-import deltotum.math.rect: Rect;
+import deltotum.math.shapes.rect2d: Rect2d;
 
 import bindbc.sdl;
 

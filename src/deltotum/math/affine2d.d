@@ -1,11 +1,11 @@
 module deltotum.math.affine2d;
 
-import deltotum.math.vector2d : Vector2D;
+import deltotum.math.vector2d : Vector2d;
 
 /**
  * Authors: initkfs
  */
-struct Affine2D
+struct Affine2d
 {
     private
     {
@@ -17,54 +17,54 @@ struct Affine2D
         double m12 = 0;
     }
 
-    static Affine2D identity() @nogc nothrow pure @safe
+    static Affine2d identity() @nogc nothrow pure @safe
     {
-        return Affine2D(1, 0, 0, 0, 1, 0);
+        return Affine2d(1, 0, 0, 0, 1, 0);
     }
 
-    Affine2D setTranslation(double x, double y) const @nogc nothrow pure @safe
+    Affine2d setTranslation(double x, double y) const @nogc nothrow pure @safe
     {
-        return Affine2D(
+        return Affine2d(
             1, 0, x,
             0, 1, y
         );
     }
 
-    Affine2D setScaling(double scaleX, double scaleY) const @nogc nothrow pure @safe
+    Affine2d setScaling(double scaleX, double scaleY) const @nogc nothrow pure @safe
     {
-        return Affine2D(
+        return Affine2d(
             scaleX, 0, 0,
             0, scaleY, 0
         );
     }
 
-    Affine2D setRotation(double angleDeg) const @nogc nothrow pure @safe
+    Affine2d setRotation(double angleDeg) const @nogc nothrow pure @safe
     {
         import deltotum.math.math : Math;
 
         immutable cos = Math.cosDeg(angleDeg);
         immutable sin = Math.sinDeg(angleDeg);
 
-        return Affine2D(
+        return Affine2d(
             cos, -sin, 0,
             sin, cos, 0
         );
     }
 
-    Affine2D setShearing(double shearX, double shearY) @nogc nothrow pure @safe
+    Affine2d setShearing(double shearX, double shearY) @nogc nothrow pure @safe
     {
-        return Affine2D(
+        return Affine2d(
             1, shearX, 0,
             shearY, 1, 0
         );
     }
 
-    static Affine2D valueOf(double translateX, double translateY, double angleDeg, double scaleX, double scaleY) @nogc nothrow pure @safe
+    static Affine2d valueOf(double translateX, double translateY, double angleDeg, double scaleX, double scaleY) @nogc nothrow pure @safe
     {
 
         if (angleDeg == 0)
         {
-            return Affine2D(
+            return Affine2d(
                 scaleX, 0, translateX,
                 0, scaleX, translateY
             );
@@ -75,21 +75,21 @@ struct Affine2D
         immutable sin = Math.sinDeg(angleDeg);
         immutable cos = Math.cosDeg(angleDeg);
 
-        return Affine2D(
+        return Affine2d(
             cos * scaleX, -sin * scaleY, translateX,
             sin * scaleX, cos * scaleY, translateY
         );
     }
 
-    static Affine2D valueOf(double translateX, double translateY, double scaleX, double scaleY) @nogc nothrow pure @safe
+    static Affine2d valueOf(double translateX, double translateY, double scaleX, double scaleY) @nogc nothrow pure @safe
     {
-        return Affine2D(
+        return Affine2d(
             scaleX, 0, translateX,
             0, scaleY, translateY
         );
     }
 
-    Affine2D product(Affine2D l, Affine2D r) const @nogc nothrow pure @safe
+    Affine2d product(Affine2d l, Affine2d r) const @nogc nothrow pure @safe
     {
         immutable pm00 = l.m00 * r.m00 + l.m01 * r.m10;
         immutable pm01 = l.m00 * r.m01 + l.m01 * r.m11;
@@ -97,10 +97,10 @@ struct Affine2D
         immutable pm10 = l.m10 * r.m00 + l.m11 * r.m10;
         immutable pm11 = l.m10 * r.m01 + l.m11 * r.m11;
         immutable pm12 = l.m10 * r.m02 + l.m11 * r.m12 + l.m12;
-        return Affine2D(pm00, pm01, pm02, pm10, pm11, pm12);
+        return Affine2d(pm00, pm01, pm02, pm10, pm11, pm12);
     }
 
-    Affine2D invert() const @nogc nothrow pure @safe
+    Affine2d invert() const @nogc nothrow pure @safe
     {
         immutable matrixDet = det;
         if (matrixDet == 0)
@@ -110,15 +110,15 @@ struct Affine2D
 
         double invDet = 1.0 / matrixDet;
 
-        return Affine2D(
+        return Affine2d(
             m11 * invDet, -m01 * invDet, (m01 * m12 - m11 * m02) * invDet,
             -m10 * invDet, m00 * invDet, (m10 * m02 - m00 * m12) * invDet
         );
     }
 
-    Affine2D mul(Affine2D other) const @nogc nothrow pure @safe
+    Affine2d mul(Affine2d other) const @nogc nothrow pure @safe
     {
-        return Affine2D(
+        return Affine2d(
             m00 * other.m00 + m01 * other.m10,
             m00 * other.m01 + m01 * other.m11,
             m00 * other.m02 + m01 * other.m12 + m02,
@@ -128,27 +128,27 @@ struct Affine2D
         );
     }
 
-    Affine2D translate(double x, double y) const @nogc nothrow pure @safe
+    Affine2d translate(double x, double y) const @nogc nothrow pure @safe
     {
-        return Affine2D(
+        return Affine2d(
             m00, m01, m02 + (m00 * x + m01 * y),
             m10, m11, m12 + (m10 * x + m11 * y)
         );
     }
 
-    Affine2D scale(double scaleX, double scaleY) const @nogc nothrow pure @safe
+    Affine2d scale(double scaleX, double scaleY) const @nogc nothrow pure @safe
     {
-        return Affine2D(
+        return Affine2d(
             m00 * scaleX, m01 * scaleY, m02,
             m10 * scaleX, m11 * scaleY, m12
         );
     }
 
-    Affine2D rotate(double angleDeg) const @nogc nothrow pure @safe
+    Affine2d rotate(double angleDeg) const @nogc nothrow pure @safe
     {
         if (angleDeg == 0)
         {
-            return Affine2D(m00, m01, m02, m10, m11, m12);
+            return Affine2d(m00, m01, m02, m10, m11, m12);
         }
 
         import deltotum.math.math : Math;
@@ -156,7 +156,7 @@ struct Affine2D
         immutable cos = Math.cosDeg(angleDeg);
         immutable sin = Math.sinDeg(angleDeg);
 
-        return Affine2D(
+        return Affine2d(
             m00 * cos + m01 * sin,
             m00 * -sin + m01 * cos,
             m02,
@@ -166,9 +166,9 @@ struct Affine2D
         );
     }
 
-    Affine2D shear(double shearX, double shearY) const @nogc nothrow pure @safe
+    Affine2d shear(double shearX, double shearY) const @nogc nothrow pure @safe
     {
-        return Affine2D(
+        return Affine2d(
             m00 + shearY * m01,
             m01 + shearX * m00,
             m02,
@@ -194,11 +194,11 @@ struct Affine2D
         return (m00 == 1 && m01 == 0 && m10 == 0 && m11 == 1);
     }
 
-    Vector2D transform(Vector2D point) const @nogc nothrow pure @safe
+    Vector2d transform(Vector2d point) const @nogc nothrow pure @safe
     {
         immutable newX = m00 * point.x + m01 * point.y + m02;
         immutable newY = m10 * point.x + m11 * point.y + m12;
-        return Vector2D(newX, newY);
+        return Vector2d(newX, newY);
     }
 
     string toString() const

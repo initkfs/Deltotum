@@ -2,7 +2,7 @@ module deltotum.particles.particle;
 
 import deltotum.graphics.shapes.circle: Circle;
 import deltotum.graphics.styles.graphic_style: GraphicStyle;
-import deltotum.math.vector2d : Vector2D;
+import deltotum.math.vector2d : Vector2d;
 
 /**
  * Authors: initkfs

@@ -4,7 +4,7 @@ import deltotum.hal.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.hal.sdl.sdl_window : SdlWindow;
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
 
-import deltotum.math.vector2d : Vector2D;
+import deltotum.math.vector2d : Vector2d;
 
 import bindbc.sdl;
 
@@ -94,7 +94,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         return zeroOrErrorCode;
     }
 
-    int drawLines(Vector2D[] linePoints) nothrow
+    int drawLines(Vector2d[] linePoints) nothrow
     {
         import std.algorithm.iteration : map;
         import std.array : array;

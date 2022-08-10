@@ -3,7 +3,7 @@ module deltotum.animation.object.motion.circular_motion_transition;
 import deltotum.animation.object.value_transition: ValueTransition;
 import deltotum.display.display_object : DisplayObject;
 import deltotum.animation.interp.interpolator : Interpolator;
-import deltotum.math.vector2d : Vector2D;
+import deltotum.math.vector2d : Vector2d;
 import deltotum.math.math : Math;
 
 /**
@@ -18,7 +18,7 @@ class CircularMotionTransition : ValueTransition
         double centerY;
     }
 
-    this(DisplayObject obj, Vector2D center, double radius = 100, int timeMs = 200, Interpolator interpolator = null)
+    this(DisplayObject obj, Vector2d center, double radius = 100, int timeMs = 200, Interpolator interpolator = null)
     {
         super(obj, 0, 360, timeMs, interpolator);
         this.radius = radius;

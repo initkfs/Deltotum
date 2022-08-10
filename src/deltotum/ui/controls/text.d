@@ -4,7 +4,7 @@ import deltotum.ui.controls.control : Control;
 import deltotum.asset.fonts.font : Font;
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
 import deltotum.display.textures.texture: Texture;
-import deltotum.math.rect : Rect;
+import deltotum.math.shapes.rect2d : Rect2d;
 
 import std.string : toStringz;
 

@@ -1,12 +1,12 @@
-module deltotum.math.rect;
+module deltotum.math.shapes.rect2d;
 
-import deltotum.math.vector2d : Vector2D;
-import deltotum.math.circle2d : Circle2D;
+import deltotum.math.vector2d : Vector2d;
+import deltotum.math.shapes.circle2d : Circle2d;
 
 /**
  * Authors: initkfs
  */
-struct Rect
+struct Rect2d
 {
     double x = 0;
     double y = 0;
@@ -18,19 +18,19 @@ struct Rect
         return x >= this.x && y >= this.y && x < right && y < bottom;
     }
 
-    bool contains(Vector2D point) const @nogc nothrow pure @safe
+    bool contains(Vector2d point) const @nogc nothrow pure @safe
     {
         return contains(point.x, point.y);
     }
 
-    bool contains(Circle2D circle) const @nogc nothrow pure @safe
+    bool contains(Circle2d circle) const @nogc nothrow pure @safe
     {
         return (circle.x + circle.radius <= right) && (circle.x - circle.radius >= x) && (
             circle.y + circle.radius <= bottom) && (
             circle.y - circle.radius >= y);
     }
 
-    bool contains(Rect rect) const @nogc nothrow pure @safe
+    bool contains(Rect2d rect) const @nogc nothrow pure @safe
     {
         float minX = rect.x;
         float maxX = right;
@@ -42,7 +42,7 @@ struct Rect
             && ((minY > y && minY < bottom) && (maxY > y && maxY < bottom));
     }
 
-    bool overlaps(Rect other) const @nogc nothrow pure @safe
+    bool overlaps(Rect2d other) const @nogc nothrow pure @safe
     {
         auto isOverlaps = (other.right > x) && (other.x < right) && (other.bottom > y) && (
             other.y < bottom);
@@ -79,21 +79,21 @@ struct Rect
         return height / 2;
     }
 
-    Vector2D minPoint() const @nogc nothrow pure @safe
+    Vector2d minPoint() const @nogc nothrow pure @safe
     {
-        Vector2D minXPos = {x, y};
+        Vector2d minXPos = {x, y};
         return minXPos;
     }
 
-    Vector2D maxPoint() const @nogc nothrow pure @safe
+    Vector2d maxPoint() const @nogc nothrow pure @safe
     {
-        Vector2D maxYPos = {right, bottom};
+        Vector2d maxYPos = {right, bottom};
         return maxYPos;
     }
 
-    Vector2D center() const @nogc nothrow pure @safe
+    Vector2d center() const @nogc nothrow pure @safe
     {
-        return Vector2D(x + halfWidth, y + halfHeight);
+        return Vector2d(x + halfWidth, y + halfHeight);
     }
 
     double aspectRatio() const @nogc nothrow pure @safe

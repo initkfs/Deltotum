@@ -1,11 +1,11 @@
-module deltotum.math.circle2d;
+module deltotum.math.shapes.circle2d;
 
-import deltotum.math.vector2d : Vector2D;
+import deltotum.math.vector2d : Vector2d;
 
 /**
  * Authors: initkfs
  */
-struct Circle2D
+struct Circle2d
 {
     double x = 0;
     double y = 0;
@@ -19,12 +19,12 @@ struct Circle2D
         return dx * dx + dy * dy <= radius * radius;
     }
 
-    bool contains(Vector2D p) const @nogc nothrow pure @safe
+    bool contains(Vector2d p) const @nogc nothrow pure @safe
     {
         return contains(p.x, p.y);
     }
 
-    bool contains(Circle2D other) const @nogc nothrow pure @safe
+    bool contains(Circle2d other) const @nogc nothrow pure @safe
     {
         immutable deltaRadius = radius - other.radius;
         if (deltaRadius < 0.0)
@@ -45,7 +45,7 @@ struct Circle2D
         return false;
     }
 
-    bool overlaps(Circle2D other) const @nogc nothrow pure @safe
+    bool overlaps(Circle2d other) const @nogc nothrow pure @safe
     {
         immutable dx = x - other.x;
         immutable dy = y - other.y;

@@ -2,7 +2,7 @@ module deltotum.graphics.graphics;
 
 import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 import deltotum.graphics.colors.color : Color;
-import deltotum.math.vector2d : Vector2D;
+import deltotum.math.vector2d : Vector2d;
 import deltotum.math.math : Math;
 import deltotum.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.graphics.themes.theme : Theme;
@@ -55,18 +55,18 @@ class Graphics
         renderer.drawPoint(toInt(x), toInt(y));
     }
 
-    void drawLines(Vector2D[] points, Color color)
+    void drawLines(Vector2d[] points, Color color)
     {
         adjustRender(color);
         renderer.drawLines(points);
     }
 
-    Vector2D[] linePoints(int startX, int startY, int endX, int endY) const nothrow pure @safe
+    Vector2d[] linePoints(int startX, int startY, int endX, int endY) const nothrow pure @safe
     {
         //Bresenham algorithm
         import deltotum.math.math : Math;
 
-        Vector2D[] points = [];
+        Vector2d[] points = [];
 
         immutable deltaX = endX - startX;
         immutable deltaY = endY - startY;
@@ -119,7 +119,7 @@ class Graphics
         int num = 0;
         for (int i = 0; i <= longestLen; i++)
         {
-            points ~= Vector2D(startX, startY);
+            points ~= Vector2d(startX, startY);
             num += shortestLen2;
             if (num > longestLen)
             {
@@ -137,12 +137,12 @@ class Graphics
         return points;
     }
 
-    Vector2D[] circlePoints(int centerX, int centerY, int radius) const nothrow pure @safe
+    Vector2d[] circlePoints(int centerX, int centerY, int radius) const nothrow pure @safe
     {
         //Bresenham algorithm
         import deltotum.math.math : Math;
 
-        Vector2D[] points = [];
+        Vector2d[] points = [];
 
         int x = 0;
         int y = radius;
@@ -150,14 +150,14 @@ class Graphics
         int error = 0;
         while (y >= x)
         {
-            points ~= Vector2D(centerX + x, centerY + y);
-            points ~= Vector2D(centerX + x, centerY - y);
-            points ~= Vector2D(centerX - x, centerY + y);
-            points ~= Vector2D(centerX - x, centerY - y);
-            points ~= Vector2D(centerX + y, centerY + x);
-            points ~= Vector2D(centerX + y, centerY - x);
-            points ~= Vector2D(centerX - y, centerY + x);
-            points ~= Vector2D(centerX - y, centerY - x);
+            points ~= Vector2d(centerX + x, centerY + y);
+            points ~= Vector2d(centerX + x, centerY - y);
+            points ~= Vector2d(centerX - x, centerY + y);
+            points ~= Vector2d(centerX - x, centerY - y);
+            points ~= Vector2d(centerX + y, centerY + x);
+            points ~= Vector2d(centerX + y, centerY - x);
+            points ~= Vector2d(centerX - y, centerY + x);
+            points ~= Vector2d(centerX - y, centerY - x);
             error = 2 * (delta + y) - 1;
             if ((delta < 0) && (error <= 0))
             {
@@ -257,12 +257,12 @@ class Graphics
                 .fillColor);
     }
 
-    void drawBezier(Vector2D p0, Color color, scope Vector2D delegate(double v) onInterpValue, bool delegate(
-            Vector2D) onPoint = null)
+    void drawBezier(Vector2d p0, Color color, scope Vector2d delegate(double v) onInterpValue, bool delegate(
+            Vector2d) onPoint = null)
     {
         adjustRender(color);
         enum delta = 0.01; //100 segments
-        Vector2D start = p0;
+        Vector2d start = p0;
         //TODO exact comparison of doubles?
         for (double i = 0; i < 1; i += delta)
         {
@@ -277,37 +277,37 @@ class Graphics
         }
     }
 
-    void drawBezier(Vector2D p0, Vector2D p1, Vector2D p2, Color color, bool delegate(
-            Vector2D) onPoint = null)
+    void drawBezier(Vector2d p0, Vector2d p1, Vector2d p2, Color color, bool delegate(
+            Vector2d) onPoint = null)
     {
         drawBezier(p0, color, (t) { return bezierInterp(p0, p1, p2, t); }, onPoint);
     }
 
-    void drawBezier(Vector2D p0, Vector2D p1, Vector2D p2, Vector2D p3, Color color, bool delegate(
-            Vector2D) onPoint = null)
+    void drawBezier(Vector2d p0, Vector2d p1, Vector2d p2, Vector2d p3, Color color, bool delegate(
+            Vector2d) onPoint = null)
     {
         drawBezier(p0, color, (t) { return bezierInterp(p0, p1, p2, p3, t); }, onPoint);
     }
 
-    private Vector2D bezierInterp(Vector2D p0, Vector2D p1, Vector2D p2, Vector2D p3, double t) @nogc nothrow pure @safe
+    private Vector2d bezierInterp(Vector2d p0, Vector2d p1, Vector2d p2, Vector2d p3, double t) @nogc nothrow pure @safe
     {
         const dt = 1 - t;
-        Vector2D p0p1 = p0.scale(dt).add(p1.scale(t));
-        Vector2D p1p2 = p1.scale(dt).add(p2.scale(t));
-        Vector2D p2p3 = p2.scale(dt).add(p3.scale(t));
-        Vector2D p0p1p2 = p0p1.scale(dt).add(p1p2.scale(t));
-        Vector2D p1p2p3 = p1p2.scale(dt).add(p2p3.scale(t));
-        Vector2D result = p0p1p2.scale(dt).add(p1p2p3.scale(t));
+        Vector2d p0p1 = p0.scale(dt).add(p1.scale(t));
+        Vector2d p1p2 = p1.scale(dt).add(p2.scale(t));
+        Vector2d p2p3 = p2.scale(dt).add(p3.scale(t));
+        Vector2d p0p1p2 = p0p1.scale(dt).add(p1p2.scale(t));
+        Vector2d p1p2p3 = p1p2.scale(dt).add(p2p3.scale(t));
+        Vector2d result = p0p1p2.scale(dt).add(p1p2p3.scale(t));
 
         return result;
     }
 
-    private Vector2D bezierInterp(Vector2D p0, Vector2D p1, Vector2D p2, double t) @nogc nothrow pure @safe
+    private Vector2d bezierInterp(Vector2d p0, Vector2d p1, Vector2d p2, double t) @nogc nothrow pure @safe
     {
         const dt = 1 - t;
-        Vector2D p0p1 = p0.scale(dt).add(p1.scale(t));
-        Vector2D p1p2 = p1.scale(dt).add(p2.scale(t));
-        Vector2D result = p0p1.scale(dt).add(p1p2.scale(t));
+        Vector2d p0p1 = p0.scale(dt).add(p1.scale(t));
+        Vector2d p1p2 = p1.scale(dt).add(p2.scale(t));
+        Vector2d result = p0p1.scale(dt).add(p1p2.scale(t));
         return result;
     }
 }

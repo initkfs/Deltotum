@@ -2,7 +2,7 @@ module deltotum.particles.emitter;
 
 import deltotum.display.display_object : DisplayObject;
 import deltotum.particles.particle : Particle;
-import deltotum.math.vector2d : Vector2D;
+import deltotum.math.vector2d : Vector2d;
 import deltotum.math.random : Random;
 
 import std.stdio;
