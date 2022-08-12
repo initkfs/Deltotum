@@ -1,7 +1,7 @@
-module deltotum.animation.object.property.opacity_transition;
+module deltotum.display.animation.object.property.opacity_transition;
 
-import deltotum.animation.object.value_transition: ValueTransition;
-import deltotum.animation.interp.interpolator: Interpolator;
+import deltotum.display.animation.object.value_transition: ValueTransition;
+import deltotum.display.animation.interp.interpolator: Interpolator;
 import deltotum.display.display_object: DisplayObject;
 
 /**

@@ -1,8 +1,8 @@
-module deltotum.animation.transition;
+module deltotum.display.animation.transition;
 
 import deltotum.display.display_object : DisplayObject;
-import deltotum.animation.interp.interpolator : Interpolator;
-import deltotum.animation.interp.uni_interpolator : UniInterpolator;
+import deltotum.display.animation.interp.interpolator : Interpolator;
+import deltotum.display.animation.interp.uni_interpolator : UniInterpolator;
 import deltotum.math.vector2d : Vector2d;
 import deltotum.math.math : Math;
 

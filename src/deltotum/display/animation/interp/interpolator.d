@@ -1,4 +1,4 @@
-module deltotum.animation.interp.interpolator;
+module deltotum.display.animation.interp.interpolator;
 
 import deltotum.math.vector2d : Vector2d;
 

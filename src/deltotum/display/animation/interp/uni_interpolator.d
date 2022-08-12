@@ -1,6 +1,6 @@
-module deltotum.animation.interp.uni_interpolator;
+module deltotum.display.animation.interp.uni_interpolator;
 
-import deltotum.animation.interp.interpolator : Interpolator;
+import deltotum.display.animation.interp.interpolator : Interpolator;
 import deltotum.math.math : Math;
 
 /**
