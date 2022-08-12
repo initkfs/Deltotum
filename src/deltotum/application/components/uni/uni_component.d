@@ -156,7 +156,7 @@ class UniComponent : SimpleUnit
         _graphics = graphics;
     }
 
-    @property @service debugger() @nogc @safe pure nothrow
+    @property @service Debugger debugger() @nogc @safe pure nothrow
     out (_debugger; _debugger !is null)
     {
         return _debugger;
