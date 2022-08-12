@@ -1,4 +1,4 @@
-module deltotum.images.image;
+module deltotum.display.images.image;
 
 import std.stdio;
 

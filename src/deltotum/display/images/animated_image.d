@@ -1,10 +1,10 @@
-module deltotum.images.animated_image;
+module deltotum.display.images.animated_image;
 
 import std.stdio;
 
 import deltotum.display.display_object : DisplayObject;
 
-import deltotum.images.image : Image;
+import deltotum.display.images.image : Image;
 
 //TODO extract interfaces
 import deltotum.hal.sdl.sdl_texture : SdlTexture;

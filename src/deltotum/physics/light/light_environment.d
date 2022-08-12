@@ -1,6 +1,6 @@
 module deltotum.physics.light.light_environment;
 
-import deltotum.images.image : Image;
+import deltotum.display.images.image : Image;
 import deltotum.physics.light.light_spot : LightSpot;
 
 //TODO remove hal api

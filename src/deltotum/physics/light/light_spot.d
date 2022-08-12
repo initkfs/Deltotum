@@ -1,6 +1,6 @@
 module deltotum.physics.light.light_spot;
 
-import deltotum.images.image : Image;
+import deltotum.display.images.image : Image;
 
 //TODO remove hal api
 import bindbc.sdl;
