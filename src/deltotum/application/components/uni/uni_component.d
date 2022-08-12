@@ -7,8 +7,8 @@ import deltotum.window.window : Window;
 import deltotum.input.input : Input;
 import deltotum.audio.audio : Audio;
 import deltotum.graphics.graphics : Graphics;
-import deltotum.application.components.uni.attribute.attributes: service;
-
+import deltotum.application.components.uni.attribute.attributes : service;
+import deltotum.debugging.debugger : Debugger;
 import std.experimental.logger.core : Logger;
 
 /**
@@ -24,6 +24,7 @@ class UniComponent : SimpleUnit
         @service Input _input;
         @service Audio _audio;
         @service Graphics _graphics;
+        @service Debugger _debugger;
     }
 
     void build(UniComponent uniComponent)
@@ -52,6 +53,7 @@ class UniComponent : SimpleUnit
         uniComponent.input = parent.input;
         uniComponent.audio = parent.audio;
         uniComponent.graphics = parent.graphics;
+        uniComponent.debugger = parent.debugger;
 
         uniComponent.afterBuild();
     }
@@ -152,5 +154,20 @@ class UniComponent : SimpleUnit
 
         enforce(graphics !is null, "Graphics must not be null");
         _graphics = graphics;
+    }
+
+    @property @service debugger() @nogc @safe pure nothrow
+    out (_debugger; _debugger !is null)
+    {
+        return _debugger;
+    }
+
+    @property void debugger(Debugger debugger) @safe pure
+    {
+        import std.exception : enforce;
+
+        enforce(debugger !is null, "Debugger must not be null");
+        _debugger = debugger;
+
     }
 }

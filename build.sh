@@ -18,6 +18,8 @@ if [[ ! -d $scriptDir ]]; then
 fi
 #Start script
 
+testBinFile=$scriptDir/deltotum
+
 if [[ $1 == "test" ]]; then
   dub -b unittest
   if [[ $? -ne 0 ]]; then
@@ -27,9 +29,24 @@ if [[ $1 == "test" ]]; then
   exit 0
 fi
 
-testBinFile=$scriptDir/deltotum;
+buildType=""
+case $1 in
+  debug | release | release-debug | release-nobounds | profile | profile-gc)
+    buildType=$1
+    shift
+  ;;
+  "")
+    buildType=debug
+  ;;
+  *)
+    echo "Unsupported build type: $1. Exit" >&2
+    exit 1 
+  ;;
+esac
 
-time dub --quiet build --compiler=ldc2 --config=app-dev
+echo "Build type: $buildType"
+
+time dub --quiet build --compiler=ldc2 --config=app-dev "--build=$buildType"
 errDub=$?
 if [[ $errDub -ne 0 ]]; then
   echo "Dub error, exit." >&2

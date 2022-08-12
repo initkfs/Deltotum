@@ -82,6 +82,15 @@ class SdlApplication : GraphicsApplication
         //set new global default logger
         sharedLog = multiLogger;
 
+        import deltotum.debugging.debugger: Debugger;
+        import deltotum.debugging.profiling.profilers.time_profiler: TimeProfiler;
+        import deltotum.debugging.profiling.profilers.memory_profiler: MemoryProfiler;
+
+        auto timeProfiler = new TimeProfiler;
+        auto memoryProfiler = new MemoryProfiler;
+
+        debugger = new Debugger(timeProfiler, memoryProfiler);
+
         auto sdlWindow = new SdlWindow(title, SDL_WINDOWPOS_UNDEFINED,
             SDL_WINDOWPOS_UNDEFINED,
             sceneWidth,
