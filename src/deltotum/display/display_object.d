@@ -336,6 +336,27 @@ abstract class DisplayObject : PhysicalBody
         return bounds;
     }
 
+    void positionCenter(){
+        positionCenterX;
+        positionCenterY;
+    }
+
+    void positionCenterX()
+    {
+        if (width > 0)
+        {
+            x = window.getWidth / 2 - width / 2;
+        }
+    }
+
+    void positionCenterY()
+    {
+        if (height > 0)
+        {
+            y = window.getHeight / 2 - height / 2;
+        }
+    }
+
     void destroy()
     {
         foreach (DisplayObject child; children)

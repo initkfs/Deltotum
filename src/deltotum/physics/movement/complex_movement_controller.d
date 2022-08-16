@@ -8,7 +8,7 @@ import deltotum.physics.direction : Direction;
 /**
  * Authors: initkfs
  */
-class ComplexMovementController : DisplayObject
+class ComplexMovementController : MovementController
 {
     static enum WorldBoundsConstraint
     {
@@ -37,7 +37,6 @@ class ComplexMovementController : DisplayObject
 
     override void update(double delta)
     {
-        super.update(delta);
         //TODO remove hal layer
         import bindbc.sdl;
 
@@ -191,11 +190,5 @@ class ComplexMovementController : DisplayObject
                 targetObject.velocity.y = 0;
             }
         }
-    }
-
-    override void destroy()
-    {
-        super.destroy;
-        targetObject = null;
     }
 }
