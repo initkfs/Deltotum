@@ -7,6 +7,7 @@ import deltotum.application.event.application_event : ApplicationEvent;
 import deltotum.input.mouse.event.mouse_event : MouseEvent;
 import deltotum.input.keyboard.event.key_event : KeyEvent;
 import deltotum.window.event.window_event : WindowEvent;
+import deltotum.input.joystick.event.joystick_event : JoystickEvent;
 
 import bindbc.sdl;
 import std.stdio;
@@ -25,6 +26,9 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
             break;
         case SDL_MOUSEMOTION, SDL_MOUSEBUTTONDOWN, SDL_MOUSEBUTTONUP, SDL_MOUSEWHEEL:
             handleMouseEvent(event);
+            break;
+        case SDL_JOYAXISMOTION, SDL_JOYBUTTONDOWN, SDL_JOYBUTTONUP:
+            handleJoystickEvent(event);
             break;
         case SDL_QUIT:
             handleQuit(event);
@@ -131,6 +135,30 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
 
         auto mouseEvent = MouseEvent(EventType.mouse, type, event.window.windowID, x, y, button, movementX, movementY);
         onMouse(mouseEvent);
+    }
+
+    void handleJoystickEvent(SDL_Event* event)
+    {
+        JoystickEvent.Event type = JoystickEvent.Event.none;
+        switch (event.type)
+        {
+        case SDL_JOYAXISMOTION:
+            type = JoystickEvent.Event.axis;
+            break;
+        case SDL_JOYBUTTONDOWN:
+            type = JoystickEvent.Event.press;
+            break;
+        case SDL_JOYBUTTONUP:
+            type = JoystickEvent.Event.release;
+            break;
+        default:
+            break;
+        }
+        import std.stdio;
+        immutable joystickEvent = JoystickEvent(
+            EventType.joystick, type, event.window.windowID, event.jbutton.button, event
+                .jaxis.axis, event.jaxis.value);
+        onJoystick(joystickEvent);
     }
 
     void handleWindowEvent(SDL_Event* event)

@@ -15,7 +15,7 @@ import deltotum.display.animation.interp.interpolator : Interpolator;
 import deltotum.display.animation.transition : Transition;
 import std.math.rounding : floor;
 import std.conv : to;
-import deltotum.display.flip: Flip;
+import deltotum.display.flip : Flip;
 
 import bindbc.sdl;
 
@@ -28,6 +28,7 @@ private
         @property int frameRow;
         @property Transition!double transition;
         @property int frameDelay;
+        @property bool isLooping;
     }
 }
 
@@ -67,7 +68,7 @@ class AnimatedImage : Image
         return isLoad;
     }
 
-    void addAnimation(string name, int[] frameIndices, int frameRow = 0, bool autoplay = false, int frameDelay = 0, Interpolator interpolator = null)
+    void addAnimation(string name, int[] frameIndices, int frameRow = 0, bool autoplay = false, int frameDelay = 0, bool isLooping = true, Interpolator interpolator = null)
     {
         assert(name.length > 0);
         //TODO check exists;
@@ -75,6 +76,7 @@ class AnimatedImage : Image
         anim.name = name;
         anim.frameIndices = frameIndices;
         anim.frameRow = frameRow;
+        anim.isLooping = isLooping;
         anim.frameDelay = frameDelay > 0 ? frameDelay : commonFrameDelay;
         if (interpolator !is null)
         {
@@ -108,6 +110,9 @@ class AnimatedImage : Image
 
         }
 
+        currentAnimationIndex = 0;
+        this.currentFlip = flip;
+
         foreach (anim; animations)
         {
             if (anim.name == name)
@@ -117,13 +122,12 @@ class AnimatedImage : Image
                 {
                     currentAnimation.transition.run;
                 }
-                currentAnimationIndex = 0;
-                this.currentFlip = flip;
             }
         }
     }
 
-    void drawFrame(double x, double y, double width, double height, int frameIndex, int rowIndex, Flip flip = Flip.none)
+    void drawFrame(double x, double y, double width, double height, int frameIndex, int rowIndex, Flip flip = Flip
+            .none)
     {
         Rect2d srcRect;
         srcRect.x = cast(int)(frameWidth * frameIndex);
@@ -161,6 +165,10 @@ class AnimatedImage : Image
         {
             if (currentAnimationIndex >= currentAnimation.frameIndices.length - 1)
             {
+                if (!currentAnimation.isLooping)
+                {
+                    return;
+                }
                 currentAnimationIndex = 0;
             }
             else

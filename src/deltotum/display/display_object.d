@@ -10,6 +10,7 @@ import deltotum.physics.physical_body : PhysicalBody;
 import deltotum.input.mouse.event.mouse_event : MouseEvent;
 import deltotum.application.event.application_event : ApplicationEvent;
 import deltotum.input.keyboard.event.key_event : KeyEvent;
+import deltotum.input.joystick.event.joystick_event : JoystickEvent;
 import deltotum.events.event_type : EventType;
 import deltotum.utils.tostring;
 
@@ -67,6 +68,7 @@ abstract class DisplayObject : PhysicalBody
 
     void create()
     {
+        super.createHandlers;
         eventMouseHandler = (e) {
 
             bool isConsumed = runListeners(e);
@@ -206,6 +208,11 @@ abstract class DisplayObject : PhysicalBody
                         chain ~= this;
                     }
                 }
+
+                static if (is(E : JoystickEvent))
+                {
+                    chain ~= this;
+                }
             }
         }
 
@@ -320,6 +327,12 @@ abstract class DisplayObject : PhysicalBody
     Rect2d bounds()
     {
         const Rect2d bounds = {x, y, width, height};
+        return bounds;
+    }
+
+    Rect2d geometryBounds()
+    {
+        const Rect2d bounds = {0, 0, width, height};
         return bounds;
     }
 

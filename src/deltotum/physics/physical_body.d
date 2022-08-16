@@ -13,6 +13,7 @@ class PhysicalBody : EventTarget
     @property gravitationalAcceleration = 9.81;
     @property Rect2d* hitbox;
     @property double restitution = 0;
+    @property double speed = 0;
 
     this(){
         hitbox = new Rect2d;

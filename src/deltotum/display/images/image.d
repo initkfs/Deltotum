@@ -103,7 +103,8 @@ class Image : Texture
 
     override void drawContent()
     {
-        super.drawContent;
+        //We don't need to draw the texture itself
+        //super.drawContent;
         drawFrames;
     }
 

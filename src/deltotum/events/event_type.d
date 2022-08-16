@@ -21,6 +21,7 @@ immutable class EventType
         EventType mouse = new EventType("MOUSE", any);
         EventType key = new EventType("KEY", any);
         EventType window = new EventType("WINDOW", any);
+        EventType joystick = new EventType("JOYSTICK", any);
     }
 
 }

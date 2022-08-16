@@ -5,6 +5,7 @@ import deltotum.application.components.uni.uni_component : UniComponent;
 import deltotum.input.mouse.event.mouse_event : MouseEvent;
 import deltotum.application.event.application_event : ApplicationEvent;
 import deltotum.input.keyboard.event.key_event : KeyEvent;
+import deltotum.input.joystick.event.joystick_event : JoystickEvent;
 
 /**
  * Authors: initkfs
@@ -30,7 +31,21 @@ abstract class EventTarget : UniComponent
     @property bool delegate(KeyEvent) onKeyUp;
     @property bool delegate(KeyEvent) onKeyDown;
 
+    @property bool delegate(JoystickEvent) eventJoystickFilter;
+    @property bool delegate(JoystickEvent) eventJoystickHandler;
+
+    @property bool delegate(JoystickEvent) onJoystickAxis;
+    @property bool delegate(JoystickEvent) onJoystickButtonPress;
+    @property bool delegate(JoystickEvent) onJoystickButtonRelease;
+
     abstract void dispatchEvent(T, E)(E e, ref T[] targets, bool isRoot = true);
+
+    void createHandlers()
+    {
+        eventMouseHandler = (e) { return runListeners(e); };
+        eventKeyHandler = (e) { return runListeners(e); };
+        eventJoystickHandler = (e) { return runListeners(e); };
+    }
 
     bool runEventFilters(E)(E e)
     {
@@ -47,6 +62,14 @@ abstract class EventTarget : UniComponent
             if (eventKeyFilter !is null)
             {
                 return eventKeyFilter(e);
+            }
+        }
+
+        static if (is(E : JoystickEvent))
+        {
+            if (eventJoystickFilter !is null)
+            {
+                return eventJoystickFilter(e);
             }
         }
 
@@ -68,6 +91,14 @@ abstract class EventTarget : UniComponent
             if (eventKeyHandler !is null)
             {
                 return eventKeyHandler(e);
+            }
+        }
+
+        static if (is(E : JoystickEvent))
+        {
+            if (eventJoystickHandler !is null)
+            {
+                return eventJoystickHandler(e);
             }
         }
 
@@ -138,6 +169,35 @@ abstract class EventTarget : UniComponent
             if (onKeyDown !is null)
             {
                 return onKeyDown(keyEvent);
+            }
+            break;
+        }
+
+        return false;
+    }
+
+    bool runListeners(JoystickEvent joystickEvent)
+    {
+        final switch (joystickEvent.event)
+        {
+        case JoystickEvent.Event.none:
+            break;
+        case JoystickEvent.Event.press:
+            if (onJoystickButtonPress !is null)
+            {
+                return onJoystickButtonPress(joystickEvent);
+            }
+            break;
+        case JoystickEvent.Event.release:
+            if (onJoystickButtonRelease !is null)
+            {
+                return onJoystickButtonRelease(joystickEvent);
+            }
+            break;
+        case JoystickEvent.Event.axis:
+            if (onJoystickAxis !is null)
+            {
+                return onJoystickAxis(joystickEvent);
             }
             break;
         }

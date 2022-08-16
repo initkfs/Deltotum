@@ -6,6 +6,7 @@ import deltotum.scene.scene_manager : SceneManager;
 import deltotum.application.event.application_event : ApplicationEvent;
 import deltotum.input.mouse.event.mouse_event : MouseEvent;
 import deltotum.input.keyboard.event.key_event : KeyEvent;
+import deltotum.input.joystick.event.joystick_event : JoystickEvent;
 import deltotum.window.event.window_event : WindowEvent;
 import deltotum.events.event_type : EventType;
 
@@ -27,6 +28,7 @@ class EventManager
 
     //TODO for input
     @property void delegate(KeyEvent) onKey;
+    @property void delegate(JoystickEvent) onJoystick;
 
     this(SceneManager sceneManager)
     {
@@ -40,6 +42,13 @@ class EventManager
             return;
         }
         eventProcessor.onMouse = (mouseEvent) { dispatchEvent(mouseEvent); };
+        eventProcessor.onJoystick = (joystickEvent) {
+            if (onJoystick !is null)
+            {
+                onJoystick(joystickEvent);
+            }
+            dispatchEvent(joystickEvent);
+        };
         eventProcessor.onKey = (keyEvent) {
             if (onKey !is null)
             {
