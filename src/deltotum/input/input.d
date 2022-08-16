@@ -12,9 +12,8 @@ class Input
     @property bool justJoystickChangesAxisValue;
     @property double joystickAxisDelta = 0;
     @property bool justJoystickPressed;
-    @property int lastJoystickAxis;
-    @property int lastJoystickButton;
-    @property int lastJoystickAxisValue;
+
+    @property JoystickEvent lastJoystickEvent;
 
     bool pressed(int keyCode)
     {

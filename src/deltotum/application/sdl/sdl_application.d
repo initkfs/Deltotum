@@ -137,24 +137,23 @@ class SdlApplication : GraphicsApplication
                 if (input.justJoystickActive)
                 {
                     input.justJoystickChangeAxis = joystickEvent.axis != input
-                        .lastJoystickAxis;
-                    input.justJoystickChangesAxisValue = input.lastJoystickAxisValue != joystickEvent
+                        .lastJoystickEvent.axis;
+                    input.justJoystickChangesAxisValue = input.lastJoystickEvent.axisValue != joystickEvent
                         .axisValue;
-                    input.joystickAxisDelta = joystickEvent.axisValue - input.lastJoystickAxisValue;
+                    input.joystickAxisDelta = joystickEvent.axisValue - input
+                        .lastJoystickEvent.axisValue;
                 }
             }
             else if (joystickEvent.event == JoystickEvent.Event.press)
             {
                 input.justJoystickPressed = true;
-                input.lastJoystickButton = joystickEvent.button;
             }
             else if (joystickEvent.event == JoystickEvent.Event.release)
             {
                 input.justJoystickPressed = false;
             }
 
-            input.lastJoystickAxis = joystickEvent.axis;
-            input.lastJoystickAxisValue = joystickEvent.axisValue;
+            input.lastJoystickEvent = joystickEvent;
             if (!input.justJoystickActive)
             {
                 input.justJoystickActive = true;

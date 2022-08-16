@@ -62,7 +62,8 @@ class ComplexMovementController : DisplayObject
         enum moveButtonIndex = 1;
         if (input.justJoystickActive)
         {
-            if (input.lastJoystickButton == moveButtonIndex)
+            const lastJoystickEvent = input.lastJoystickEvent;
+            if (lastJoystickEvent.button == moveButtonIndex)
             {
                 if (input.justJoystickPressed)
                 {
@@ -78,9 +79,9 @@ class ComplexMovementController : DisplayObject
 
             if (isMovement)
             {
-                if (input.lastJoystickAxis == 0)
+                if (lastJoystickEvent.axis == 0)
                 {
-                    if (input.lastJoystickAxisValue > 0)
+                    if (lastJoystickEvent.axisValue > 0)
                     {
                         right = true;
                     }
@@ -89,9 +90,9 @@ class ComplexMovementController : DisplayObject
                         left = true;
                     }
                 }
-                else if (input.lastJoystickAxis == 1)
+                else if (lastJoystickEvent.axis == 1)
                 {
-                    if (input.lastJoystickAxisValue > 0)
+                    if (lastJoystickEvent.axisValue > 0)
                     {
                         down = true;
                     }
