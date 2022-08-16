@@ -47,7 +47,7 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
         {
             return;
         }
-        immutable exitEvent = ApplicationEvent(
+        auto exitEvent = ApplicationEvent(
             EventType.application, ApplicationEvent.Event.EXIT, event.window.windowID);
         onApplication(exitEvent);
     }
@@ -74,7 +74,7 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
         const int keyCode = event.key.keysym.sym;
         const int mod = event.key.keysym.mod;
         const windowId = event.key.windowID;
-        immutable keyEvent = KeyEvent(EventType.key, type, windowId, keyCode, mod);
+        auto keyEvent = KeyEvent(EventType.key, type, windowId, keyCode, mod);
         onKey(keyEvent);
     }
 
@@ -155,7 +155,7 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
             break;
         }
         import std.stdio;
-        immutable joystickEvent = JoystickEvent(
+        auto joystickEvent = JoystickEvent(
             EventType.joystick, type, event.window.windowID, event.jbutton.button, event
                 .jaxis.axis, event.jaxis.value);
         onJoystick(joystickEvent);
@@ -222,7 +222,7 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
             break;
         }
 
-        immutable windowEvent = WindowEvent(EventType.window, type, event.window.windowID, width, height, x, y);
+        auto windowEvent = WindowEvent(EventType.window, type, event.window.windowID, width, height, x, y);
         onWindow(windowEvent);
     }
 }

@@ -9,7 +9,7 @@ import deltotum.events.event_source : EventSource;
 /**
  * Authors: initkfs
  */
-immutable struct MouseEvent
+struct MouseEvent
 {
     mixin EventBase;
 
@@ -32,7 +32,7 @@ immutable struct MouseEvent
     double movementX;
     double movementY;
 
-    immutable this(EventType type, uint event, long windowId, double x, double y, int button, double movementX, double movementY, bool isChained = true)
+    this(EventType type, uint event, long windowId, double x, double y, int button, double movementX, double movementY, bool isChained = true)
     {
         this.type = type;
         this.event = event;
@@ -45,7 +45,7 @@ immutable struct MouseEvent
         this.isChained = isChained;
     }
 
-    string toString() immutable
+    string toString()
     {
         import std.format : format;
 

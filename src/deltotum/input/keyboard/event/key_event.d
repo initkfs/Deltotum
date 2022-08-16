@@ -7,7 +7,7 @@ import deltotum.utils.type_util: eventNameByIndex;
 /**
  * Authors: initkfs
  */
-immutable struct KeyEvent
+struct KeyEvent
 {
     mixin EventBase;
 
@@ -21,7 +21,7 @@ immutable struct KeyEvent
     int keyCode;
     int modifier;
 
-    immutable this(EventType type, uint event, uint windowId, int keyCode, int modifier)
+    this(EventType type, uint event, uint windowId, int keyCode, int modifier)
     {
         this.type = type;
         this.event = event;
@@ -30,7 +30,7 @@ immutable struct KeyEvent
         this.modifier = modifier;
     }
 
-    string toString() immutable
+    string toString()
     {
         import std.format : format;
 

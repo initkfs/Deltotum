@@ -7,7 +7,7 @@ import deltotum.utils.type_util: eventNameByIndex;
 /**
  * Authors: initkfs
  */
-immutable struct ApplicationEvent
+struct ApplicationEvent
 {
     mixin EventBase;
 
@@ -17,14 +17,14 @@ immutable struct ApplicationEvent
         EXIT
     }
 
-    immutable this(immutable EventType type, uint event, uint windowId)
+    this(EventType type, uint event, uint windowId)
     {
         this.type = type;
         this.event = event;
         this.windowId = windowId;
     }
 
-    string toString() immutable
+    string toString()
     {
         import std.format : format;
 

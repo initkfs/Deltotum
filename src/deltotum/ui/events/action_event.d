@@ -9,7 +9,7 @@ import deltotum.events.event_source : EventSource;
 /**
  * Authors: initkfs
  */
-immutable struct ActionEvent
+struct ActionEvent
 {
     mixin EventBase;
 
@@ -32,7 +32,7 @@ immutable struct ActionEvent
         this.button = button;
     }
 
-    string toString() immutable
+    string toString()
     {
         import std.format : format;
 

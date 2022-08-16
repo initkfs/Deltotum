@@ -2,26 +2,37 @@ module deltotum.events.event_type;
 /**
  * Authors: initkfs
  */
-immutable class EventType
+class EventType
 {
-    EventType parent;
-    string name;
+    @property EventType parent;
+    @property string name;
 
-    this(immutable string name, immutable EventType parent = null)
+    static
+    {
+        EventType any;
+        EventType application;
+        EventType action;
+        EventType mouse;
+        EventType key;
+        EventType window;
+        EventType joystick;
+    }
+
+    this(string name, EventType parent = null)
     {
         this.name = name;
         this.parent = parent;
     }
 
-    static immutable
+    shared static this()
     {
-        EventType any = new EventType("ANY");
-        EventType application = new EventType("APPLICATION", any);
-        EventType action = new EventType("ACTION", any);
-        EventType mouse = new EventType("MOUSE", any);
-        EventType key = new EventType("KEY", any);
-        EventType window = new EventType("WINDOW", any);
-        EventType joystick = new EventType("JOYSTICK", any);
+        any = new EventType("ANY");
+        application = new EventType("APPLICATION", any);
+        action = new EventType("ACTION", any);
+        mouse = new EventType("MOUSE", any);
+        key = new EventType("KEY", any);
+        window = new EventType("WINDOW", any);
+        joystick = new EventType("JOYSTICK", any);
     }
 
 }

@@ -8,7 +8,7 @@ import deltotum.utils.type_util: eventNameByIndex;
 /**
  * Authors: initkfs
  */
-immutable struct WindowEvent
+struct WindowEvent
 {
     mixin EventBase;
 
@@ -36,7 +36,7 @@ immutable struct WindowEvent
     double x;
     double y;
 
-    immutable this(EventType type, uint event, uint windowId, double width, double height, double x, double y)
+    this(EventType type, uint event, uint windowId, double width, double height, double x, double y)
     {
         this.type = type;
         this.event = event;
@@ -47,7 +47,7 @@ immutable struct WindowEvent
         this.height = height;
     }
 
-    string toString() immutable
+    string toString()
     {
         import std.format : format;
 
