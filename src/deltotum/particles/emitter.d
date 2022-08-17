@@ -25,6 +25,7 @@ class Emitter : DisplayObject
     @property double maxAccelerationX = 0;
     @property double minAccelerationY = 0;
     @property double maxAccelerationY = 0;
+    @property bool isActive;
 
     private
     {
@@ -33,18 +34,32 @@ class Emitter : DisplayObject
         @property Random random;
     }
 
-    this()
+    this(bool isActive = true)
     {
         super();
         //TODO seed, etc
         random = Random(42);
+        this.isActive = isActive;
     }
 
     void emit()
     {
+        if (particleFactory is null)
+        {
+            return;
+        }
+
         auto particle = particleFactory();
         particle.isManaged = false;
-        build(particle);
+        if (!particle.isBuilt)
+        {
+            build(particle);
+        }
+
+        if(!particle.isCreated){
+            particle.create;
+        }
+
         particle.create;
         particles ~= particle;
         tuneParticle(particle);
@@ -109,15 +124,21 @@ class Emitter : DisplayObject
         p.y = 0;
     }
 
-    override void drawContent()
+    override bool draw()
     {
+        bool redraw;
         foreach (Particle p; particles)
         {
             if (p.isAlive)
             {
-                p.drawContent;
+                p.draw;
+                if (!redraw)
+                {
+                    redraw = true;
+                }
             }
         }
+        return redraw;
     }
 
     override void update(double delta)
@@ -150,6 +171,11 @@ class Emitter : DisplayObject
             //p.update(delta);
             p.age++;
             aliveCount++;
+        }
+
+        if (!isActive)
+        {
+            return;
         }
 
         int newParticlesCount = 0;

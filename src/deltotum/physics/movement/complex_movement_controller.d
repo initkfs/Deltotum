@@ -40,10 +40,10 @@ class ComplexMovementController : MovementController
         //TODO remove hal layer
         import bindbc.sdl;
 
-        auto up = input.pressed(SDLK_w);
-        auto down = input.pressed(SDLK_s);
-        auto left = input.pressed(SDLK_a);
-        auto right = input.pressed(SDLK_d);
+        auto up = input.isPressedKey(SDLK_w);
+        auto down = input.isPressedKey(SDLK_s);
+        auto left = input.isPressedKey(SDLK_a);
+        auto right = input.isPressedKey(SDLK_d);
 
         if (up && down)
         {

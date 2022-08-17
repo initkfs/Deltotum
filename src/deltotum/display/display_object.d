@@ -37,6 +37,7 @@ abstract class DisplayObject : PhysicalBody
 
     @property bool isRedraw = true;
     @property bool isRedrawChildren = true;
+    @property bool isDrawAfterParent = true;
     @property bool isManaged = true;
     @property bool isUpdatable = true;
 
@@ -119,6 +120,23 @@ abstract class DisplayObject : PhysicalBody
         };
 
         isCreated = true;
+    }
+
+    void buildCreated(DisplayObject obj)
+    {
+        if (obj.isBuilt)
+        {
+            throw new Exception("Object already built");
+        }
+
+        build(obj);
+
+        if (obj.isCreated)
+        {
+            throw new Exception("Object already created");
+        }
+
+        obj.create;
     }
 
     void startDrag(double x, double y)
@@ -246,48 +264,41 @@ abstract class DisplayObject : PhysicalBody
         }
     }
 
-    void drawChildren()
-    {
-        foreach (DisplayObject child; children)
-        {
-            if (child.isVisible)
-            {
-                child.drawContent;
-            }
-        }
-    }
-
     void drawContent()
     {
-        drawChildren;
+
     }
 
     bool draw()
     {
         //TODO layer
         bool redraw;
-        if (isVisible && isRedraw)
-        {
-            drawContent;
-            redraw = true;
-        }
 
-        // if (isVisible && isRedrawChildren)
-        // {
-        //     foreach (DisplayObject child; children)
-        //     {
-        //         if (!child.isVisible || !child.isRedraw)
-        //         {
-        //             continue;
-        //         }
-        //         //child.draw;
-        //         child.drawContent;
-        //         if (!redraw)
-        //         {
-        //             redraw = true;
-        //         }
-        //     }
-        // }
+        if (isVisible)
+        {
+            foreach (DisplayObject obj; children)
+            {
+                if (!obj.isDrawAfterParent && obj.isVisible)
+                {
+                    obj.draw;
+                }
+            }
+
+            if (isRedraw)
+            {
+                drawContent;
+                redraw = true;
+            }
+
+            foreach (DisplayObject obj; children)
+            {
+                if (obj.isDrawAfterParent && obj.isVisible)
+                {
+                    obj.draw;
+                }
+            }
+
+        }
 
         return redraw;
     }

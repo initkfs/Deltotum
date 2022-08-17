@@ -121,13 +121,11 @@ class SdlApplication : GraphicsApplication
         eventManager.onKey = (key) {
             if (key.event == KeyEvent.Event.keyDown)
             {
-                input.justPressed = true;
-                input.lastKey = key.keyCode;
+                input.addPressedKey(key.keyCode);
             }
             else if (key.event == KeyEvent.Event.keyUp)
             {
-                input.justPressed = false;
-                input.lastKey = key.keyCode;
+                input.addReleasedKey(key.keyCode);
             }
         };
         eventManager.onJoystick = (joystickEvent) {

@@ -52,6 +52,7 @@ class AnimatedImage : LoadableImage
 
         this.frameWidth = frameWidth;
         this.frameHeight = frameHeight;
+        isDrawTexture = false;
     }
 
     override bool load(string path, int requestWidth = -1, int requestHeight = -1)
@@ -150,8 +151,8 @@ class AnimatedImage : LoadableImage
 
     override void drawContent()
     {
-        super.drawContent;
         drawFrames;
+        super.drawContent;
     }
 
     override void update(double delta)

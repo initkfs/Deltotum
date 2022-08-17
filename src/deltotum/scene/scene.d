@@ -40,7 +40,8 @@ class Scene : UniComponent
         auto imagesFactory = new CreationImages;
         build(imagesFactory);
 
-        import deltotum.factories.creation_shapes: CreationShapes;
+        import deltotum.factories.creation_shapes : CreationShapes;
+
         auto shapesFactory = new CreationShapes;
         build(shapesFactory);
 

@@ -16,6 +16,8 @@ import std.experimental.logger.core : Logger;
  */
 class UniComponent : SimpleUnit
 {
+    @property bool isBuilt;
+
     private
     {
         @service Logger _logger;
@@ -56,6 +58,7 @@ class UniComponent : SimpleUnit
         uniComponent.debugger = parent.debugger;
 
         uniComponent.afterBuild();
+        uniComponent.isBuilt = true;
     }
 
     public void beforeBuild()

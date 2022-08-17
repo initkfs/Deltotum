@@ -37,13 +37,15 @@ class Texture : DisplayObject
 
     override void drawContent()
     {
-        super.drawContent;
+        //draw parent first
         if (isDrawTexture)
         {
             Rect2d textureBounds = Rect2d(0, 0, width, height);
             //TODO flip, toInt?
             drawTexture(texture, textureBounds, cast(int) x, cast(int) y, angle);
         }
+        
+        super.drawContent;
     }
 
     int drawTexture(SdlTexture texture, Rect2d textureBounds, int x = 0, int y = 0, double angle = 0, Flip flip = Flip

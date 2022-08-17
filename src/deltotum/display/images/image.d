@@ -25,7 +25,7 @@ class Image : LoadableImage
 
     override void drawContent()
     {
-        super.drawContent;
         drawImage;
+        super.drawContent;
     }
 }
