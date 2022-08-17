@@ -43,11 +43,13 @@ class Emitter : DisplayObject
     void emit()
     {
         auto particle = particleFactory();
+        particle.isManaged = false;
         build(particle);
         particle.create;
         particles ~= particle;
         tuneParticle(particle);
         particle.isAlive = true;
+        add(particle);
     }
 
     protected void tuneParticle(Particle particle) pure @safe
@@ -136,21 +138,16 @@ class Emitter : DisplayObject
                 alive = onParticleUpdate(p);
             }
 
-            if (!alive)
+            if (!alive || p.age >= p.lifetime)
             {
                 p.isAlive = false;
+                p.isUpdatable = false;
+                p.isVisible = false;
                 resetParticle(p);
                 continue;
             }
 
-            if (p.age >= p.lifetime)
-            {
-                p.isAlive = false;
-                resetParticle(p);
-                continue;
-            }
-
-            p.update(delta);
+            //p.update(delta);
             p.age++;
             aliveCount++;
         }
@@ -180,6 +177,8 @@ class Emitter : DisplayObject
                 {
                     tuneParticle(p);
                     p.isAlive = true;
+                    p.isUpdatable = true;
+                    p.isVisible = true;
                     revived++;
                 }
             }

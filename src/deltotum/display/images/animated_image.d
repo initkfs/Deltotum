@@ -1,10 +1,7 @@
 module deltotum.display.images.animated_image;
 
-import std.stdio;
-
+import deltotum.display.images.loadable_image : LoadableImage;
 import deltotum.display.display_object : DisplayObject;
-
-import deltotum.display.images.image : Image;
 
 //TODO extract interfaces
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
@@ -35,7 +32,7 @@ private
 /**
  * Authors: initkfs
  */
-class AnimatedImage : Image
+class AnimatedImage : LoadableImage
 {
     protected
     {
@@ -138,7 +135,7 @@ class AnimatedImage : Image
         drawTexture(texture, srcRect, cast(int) x, cast(int) y, angle, flip);
     }
 
-    override void drawFrames()
+    void drawFrames()
     {
         if (currentAnimation is null)
         {
@@ -149,6 +146,12 @@ class AnimatedImage : Image
         const frameRow = currentAnimation.frameRow;
 
         drawFrame(x, y, width, height, frameIndex, frameRow, currentFlip);
+    }
+
+    override void drawContent()
+    {
+        super.drawContent;
+        drawFrames;
     }
 
     override void update(double delta)

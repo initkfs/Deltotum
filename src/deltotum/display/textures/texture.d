@@ -14,6 +14,8 @@ import bindbc.sdl;
  */
 class Texture : DisplayObject
 {
+    @property bool isDrawTexture = true;
+
     protected
     {
         SdlTexture texture;
@@ -35,9 +37,13 @@ class Texture : DisplayObject
 
     override void drawContent()
     {
-        Rect2d textureBounds = Rect2d(0, 0, width, height);
-        //TODO flip, toInt?
-        drawTexture(texture, textureBounds, cast(int) x, cast(int) y, angle);
+        super.drawContent;
+        if (isDrawTexture)
+        {
+            Rect2d textureBounds = Rect2d(0, 0, width, height);
+            //TODO flip, toInt?
+            drawTexture(texture, textureBounds, cast(int) x, cast(int) y, angle);
+        }
     }
 
     int drawTexture(SdlTexture texture, Rect2d textureBounds, int x = 0, int y = 0, double angle = 0, Flip flip = Flip

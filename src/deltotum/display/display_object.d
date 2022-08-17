@@ -246,7 +246,7 @@ abstract class DisplayObject : PhysicalBody
         }
     }
 
-    void drawContent()
+    void drawChildren()
     {
         foreach (DisplayObject child; children)
         {
@@ -255,6 +255,11 @@ abstract class DisplayObject : PhysicalBody
                 child.drawContent;
             }
         }
+    }
+
+    void drawContent()
+    {
+        drawChildren;
     }
 
     bool draw()
@@ -313,14 +318,16 @@ abstract class DisplayObject : PhysicalBody
             {
                 continue;
             }
-            child.update(delta);
+
             if (child.isManaged)
             {
                 child.velocity.x = velocity.x;
                 child.velocity.y = velocity.y;
-                child.x = child.x + dx;
-                child.y = child.y + dy;
+                //child.x = child.x + dx;
+                //child.y = child.y + dy;
             }
+
+            child.update(delta);
         }
     }
 
@@ -336,7 +343,8 @@ abstract class DisplayObject : PhysicalBody
         return bounds;
     }
 
-    void positionCenter(){
+    void positionCenter()
+    {
         positionCenterX;
         positionCenterY;
     }
