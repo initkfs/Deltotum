@@ -36,6 +36,12 @@ class Input
 
     bool addReleasedKey(int keyCode)
     {
+        if (pressedKeys.front == keyCode)
+        {
+            pressedKeys.removeFront;
+            return true;
+        }
+        
         import std.algorithm.searching : find;
         import std.range : take;
 

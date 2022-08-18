@@ -42,7 +42,7 @@ class ParticlesEditor : DisplayObject
         auto configButton = new Button(100, 40, "Config");
         configButton.onAction = (e){
             import std.stdio;
-            writefln("Config. cpf: %s, lf: %s, minVX: %s, maxVX: %s, minVY: %s, maxVY:%s\n", emitter.countPerFrame, emitter.lifetime, emitter.minVelocityX, emitter.maxVelocityX, emitter.minVelocityY, emitter.maxVelocityY);
+            writeln(emitter.toConfig);
         };
         controlContainer.addCreated(configButton);
 

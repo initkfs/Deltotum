@@ -96,7 +96,20 @@ abstract class DisplayObject : PhysicalBody
                     {
                         this.x = x;
                         this.y = y;
-                        debug writefln("Drag parent. x:%s, y:%s", x, y);
+
+                        debug
+                        {
+                            import std.format : format;
+
+                            string dragInfo = format("Drag. x:%s, y:%s.", x, y);
+                            if (parent !is null)
+                            {
+                                const xInParent = x - parent.x;
+                                const yInParent = y - parent.y;
+                                dragInfo ~= format("In parent x:%s, y:%s.", xInParent, yInParent);
+                            }
+                            writefln(dragInfo);
+                        }
                     }
                 }
             }
@@ -414,6 +427,12 @@ abstract class DisplayObject : PhysicalBody
         obj.parent = this;
         //TODO check if exists
         children ~= obj;
+    }
+
+    void xy(double x, double y) @nogc @safe pure nothrow
+    {
+        this.x = x;
+        this.y = y;
     }
 
     @property double x() @nogc @safe pure nothrow

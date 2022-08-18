@@ -55,6 +55,15 @@ class Graphics
         renderer.drawPoint(toInt(x), toInt(y));
     }
 
+    void drawPoints(Vector2d[] points, Color color)
+    {
+        adjustRender(color);
+        foreach (p; points)
+        {
+            drawPoint(p.x, p.y, color);
+        }
+    }
+
     void drawLines(Vector2d[] points, Color color)
     {
         adjustRender(color);

@@ -24,7 +24,7 @@ private
 /**
  * Authors: initkfs
  */
-class Transition(T) if (isIntegral!T || isFloatingPoint!T || is(T : Vector2d)) : DisplayObject
+class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : DisplayObject
 {
     @property void delegate(T) onValue;
     @property bool isInverse;
@@ -107,13 +107,16 @@ class Transition(T) if (isIntegral!T || isFloatingPoint!T || is(T : Vector2d)) :
                 }
             }
 
-            if (state == TransitionState.direct)
+            if (isInverse)
             {
-                state = TransitionState.back;
-            }
-            else if (state == TransitionState.back)
-            {
-                state = TransitionState.direct;
+                if (state == TransitionState.direct)
+                {
+                    state = TransitionState.back;
+                }
+                else if (state == TransitionState.back)
+                {
+                    state = TransitionState.direct;
+                }
             }
             currentFrame = 0;
         }

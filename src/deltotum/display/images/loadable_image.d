@@ -7,9 +7,9 @@ import deltotum.hal.sdl.sdl_texture : SdlTexture;
 import deltotum.hal.sdl.sdl_surface : SdlSurface;
 import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 import deltotum.hal.sdl.img.sdl_image : SdlImage;
-import deltotum.display.textures.texture: Texture;
+import deltotum.display.textures.texture : Texture;
 import deltotum.math.shapes.rect2d : Rect2d;
-import deltotum.display.flip: Flip;
+import deltotum.display.flip : Flip;
 
 import bindbc.sdl;
 
@@ -19,7 +19,8 @@ import bindbc.sdl;
 //TODO remove duplication with animation bitmap, but it's not clear what code would be required
 class LoadableImage : Texture
 {
-    this(){
+    this()
+    {
         super();
     }
 
@@ -44,12 +45,20 @@ class LoadableImage : Texture
         int imageWidth = image.width;
         int imageHeight = image.height;
 
-        //TODO move to image
         if (requestWidth > 0 && requestWidth != imageWidth || requestHeight > 0 && requestHeight != imageHeight)
         {
-            image.resize(requestWidth, requestHeight);
+            image.resize(cast(int) (requestWidth * scale), cast(int) (requestHeight * scale));
             imageWidth = image.width;
             imageHeight = image.height;
+        }
+        else
+        {
+            if (scale != 1 && scale > 0)
+            {
+                image.resize(cast(int) (imageWidth * scale), cast(int) (imageHeight * scale));
+                imageWidth = image.width;
+                imageHeight = image.height;
+            }
         }
 
         if (texture !is null)

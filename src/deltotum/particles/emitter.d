@@ -2,6 +2,8 @@ module deltotum.particles.emitter;
 
 import deltotum.display.display_object : DisplayObject;
 import deltotum.particles.particle : Particle;
+import deltotum.particles.config.emitter_config : EmitterConfig;
+import deltotum.config.attributes.configurable : Configurable;
 import deltotum.math.vector2d : Vector2d;
 import deltotum.math.random : Random;
 
@@ -12,34 +14,54 @@ import std.stdio;
  */
 class Emitter : DisplayObject
 {
-    @property int lifetime = 200;
-    @property int countPerFrame = 10;
     @property Particle delegate() particleFactory;
-    @property double particleMass = 0;
     @property bool delegate(Particle) onParticleUpdate;
-    @property double minVelocityX = 0;
-    @property double maxVelocityX = 0;
-    @property double minVelocityY = 0;
-    @property double maxVelocityY = 0;
-    @property double minAccelerationX = 0;
-    @property double maxAccelerationX = 0;
-    @property double minAccelerationY = 0;
-    @property double maxAccelerationY = 0;
+
     @property bool isActive;
+
+    @Configurable
+    @property int lifetime = 200;
+    @Configurable
+    @property int countPerFrame = 10;
+    @Configurable
+    @property double particleMass = 0;
+    @Configurable
+    @property double minVelocityX = 0;
+    @Configurable
+    @property double maxVelocityX = 0;
+    @Configurable
+    @property double minVelocityY = 0;
+    @Configurable
+    @property double maxVelocityY = 0;
+    @Configurable
+    @property double minAccelerationX = 0;
+    @Configurable
+    @property double maxAccelerationX = 0;
+    @Configurable
+    @property double minAccelerationY = 0;
+    @Configurable
+    @property double maxAccelerationY = 0;
 
     private
     {
         //TODO pools implementation
         Particle[] particles;
         @property Random random;
+        EmitterConfig emitterConfig;
     }
 
-    this(bool isActive = true)
+    this(bool isActive = true, EmitterConfig config = null)
     {
         super();
         //TODO seed, etc
         random = Random(42);
         this.isActive = isActive;
+        if (config is null)
+        {
+            import deltotum.particles.config.json_emitter_config : JsonEmitterConfig;
+
+            emitterConfig = new JsonEmitterConfig;
+        }
     }
 
     void emit()
@@ -56,14 +78,15 @@ class Emitter : DisplayObject
             build(particle);
         }
 
-        if(!particle.isCreated){
+        if (!particle.isCreated)
+        {
             particle.create;
         }
 
         particle.create;
         particles ~= particle;
         tuneParticle(particle);
-        particle.isAlive = true;
+        particle.alive(true);
         add(particle);
     }
 
@@ -161,9 +184,7 @@ class Emitter : DisplayObject
 
             if (!alive || p.age >= p.lifetime)
             {
-                p.isAlive = false;
-                p.isUpdatable = false;
-                p.isVisible = false;
+                p.alive(false);
                 resetParticle(p);
                 continue;
             }
@@ -202,9 +223,7 @@ class Emitter : DisplayObject
                 if (!p.isAlive)
                 {
                     tuneParticle(p);
-                    p.isAlive = true;
-                    p.isUpdatable = true;
-                    p.isVisible = true;
+                    p.alive(true);
                     revived++;
                 }
             }
@@ -218,5 +237,15 @@ class Emitter : DisplayObject
                 emit;
             }
         }
+    }
+
+    string toConfig()
+    {
+        return emitterConfig.toConfig(this);
+    }
+
+    bool applyConfig(string config)
+    {
+        return emitterConfig.applyConfig(this, config);
     }
 }
