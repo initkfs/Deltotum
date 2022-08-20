@@ -41,6 +41,7 @@ class AnimatedImage : LoadableImage
         ImageAnimation[] animations = [];
         ImageAnimation currentAnimation;
         size_t currentAnimationIndex;
+        size_t currentAnimationStartTime;
         Flip currentFlip = Flip.none;
         double frameWidth = 0;
         double frameHeight = 0;
@@ -122,6 +123,8 @@ class AnimatedImage : LoadableImage
                 }
             }
         }
+
+        currentAnimationStartTime = SDL_GetTicks();
     }
 
     void drawFrame(double x, double y, double width, double height, int frameIndex, int rowIndex, Flip flip = Flip
@@ -164,39 +167,34 @@ class AnimatedImage : LoadableImage
             return;
         }
 
-        const animLength = currentAnimation.frameIndices.length;
-        if (animLength > 0)
+        immutable animLength = currentAnimation.frameIndices.length;
+        if (animLength == 0)
         {
-            if (currentAnimationIndex >= currentAnimation.frameIndices.length - 1)
-            {
-                if (!currentAnimation.isLooping)
-                {
-                    return;
-                }
-                currentAnimationIndex = 0;
-            }
-            else
-            {
-                if (currentAnimation.transition !is null)
-                {
-                    currentAnimation.transition.update(delta);
-                    const progress0to1 = currentAnimation.transition.lastValue;
-                    const indicesLength = currentAnimation.frameIndices.length;
-                    //TODO smooth
-                    int index = to!int(progress0to1 * indicesLength * (1 - double.epsilon));
-                    if (index > 0 && index < indicesLength)
-                    {
-                        currentAnimationIndex = index;
-                    }
-                }
-                else
-                {
-                    auto delay = currentAnimation.frameDelay > 0 ? currentAnimation.frameDelay
-                        : commonFrameDelay;
-                    currentAnimationIndex = (SDL_GetTicks() / delay) % animLength;
-                }
+            return;
+        }
 
+        if (!currentAnimation.isLooping && currentAnimationIndex >= currentAnimation.frameIndices.length - 1)
+        {
+            return;
+        }
+
+        if (currentAnimation.transition !is null)
+        {
+            currentAnimation.transition.update(delta);
+            const progress0to1 = currentAnimation.transition.lastValue;
+            const indicesLength = currentAnimation.frameIndices.length;
+            //TODO smooth
+            int index = to!int(progress0to1 * indicesLength * (1 - double.epsilon));
+            if (index > 0 && index < indicesLength)
+            {
+                currentAnimationIndex = index;
             }
+        }
+        else
+        {
+            auto delay = currentAnimation.frameDelay > 0 ? currentAnimation.frameDelay
+                : commonFrameDelay;
+            currentAnimationIndex = ((SDL_GetTicks() - currentAnimationStartTime) / delay) % animLength;
         }
     }
 
