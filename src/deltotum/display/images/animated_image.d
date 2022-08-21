@@ -93,11 +93,15 @@ class AnimatedImage : LoadableImage
     void playAnimation(string name, Flip flip = Flip.none)
     {
         assert(name.length > 0);
+
         if (currentAnimation !is null)
         {
             if (currentAnimation.name == name)
             {
-                return;
+                if (currentFlip == flip)
+                {
+                    return;
+                }
             }
             else
             {
@@ -110,7 +114,7 @@ class AnimatedImage : LoadableImage
         }
 
         currentAnimationIndex = 0;
-        this.currentFlip = flip;
+        currentFlip = flip;
 
         foreach (anim; animations)
         {
@@ -127,7 +131,7 @@ class AnimatedImage : LoadableImage
         currentAnimationStartTime = SDL_GetTicks();
     }
 
-    void drawFrame(double x, double y, double width, double height, int frameIndex, int rowIndex, Flip flip = Flip
+    void drawFrame(int frameIndex, int rowIndex, Flip flip = Flip
             .none)
     {
         Rect2d srcRect;
@@ -149,7 +153,7 @@ class AnimatedImage : LoadableImage
         const frameIndex = currentAnimation.frameIndices[currentAnimationIndex];
         const frameRow = currentAnimation.frameRow;
 
-        drawFrame(x, y, width, height, frameIndex, frameRow, currentFlip);
+        drawFrame(frameIndex, frameRow, currentFlip);
     }
 
     override void drawContent()

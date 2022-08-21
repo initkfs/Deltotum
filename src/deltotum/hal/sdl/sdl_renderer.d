@@ -4,7 +4,9 @@ import deltotum.hal.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.hal.sdl.sdl_window : SdlWindow;
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
 
+import deltotum.display.flip: Flip;
 import deltotum.math.vector2d : Vector2d;
+import deltotum.math.shapes.rect2d: Rect2d;
 
 import bindbc.sdl;
 
@@ -20,12 +22,13 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         super(ptr);
     }
 
-    this(SdlWindow window, int index = -1, uint flags = 0)
+    this(SdlWindow window, uint flags = 0)
     {
         super();
         this.window = window;
+        enum firstDriverIndex = -1;
         ptr = SDL_CreateRenderer(window.getStruct,
-            index, flags);
+            firstDriverIndex, flags);
         if (ptr is null)
         {
             string msg = "Cannot initialize renderer.";
@@ -104,6 +107,48 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
             points.ptr,
             cast(int) points.length);
         return zeroOrErrorCode;
+    }
+
+    int drawTexture(SdlTexture texture, Rect2d textureBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
+            .none)
+    {
+        {
+            SDL_Rect srcRect;
+            srcRect.x = cast(int) textureBounds.x;
+            srcRect.y = cast(int) textureBounds.y;
+            srcRect.w = cast(int) textureBounds.width;
+            srcRect.h = cast(int) textureBounds.height;
+
+            SDL_Rect bounds = window.getScaleBounds;
+
+            SDL_Rect destRect;
+            destRect.x = cast(int)(destBounds.x + bounds.x);
+            destRect.y = cast(int)(destBounds.y + bounds.y);
+            destRect.w = cast(int) destBounds.width;
+            destRect.h = cast(int) destBounds.height;
+
+            //FIXME some texture sizes can crash when changing the angle
+            //double newW = height * abs(Math.sinDeg(angle)) + width * abs(Math.cosDeg(angle));
+            //double newH = height * abs(Math.cosDeg(angle)) + width * abs(Math.sinDeg(angle));
+
+            //TODO move to helper
+            SDL_RendererFlip sdlFlip;
+            final switch (flip)
+            {
+            case Flip.none:
+                sdlFlip = SDL_RendererFlip.SDL_FLIP_NONE;
+                break;
+            case Flip.horizontal:
+                sdlFlip = SDL_RendererFlip.SDL_FLIP_HORIZONTAL;
+                break;
+            case Flip.vertical:
+                sdlFlip = SDL_RendererFlip.SDL_FLIP_VERTICAL;
+                break;
+            }
+
+            //https://discourse.libsdl.org/t/1st-frame-sdl-renderer-software-sdl-flip-horizontal-ubuntu-wrong-display-is-it-a-bug-of-sdl-rendercopyex/25924
+            return copyEx(texture, &srcRect, &destRect, angle, null, sdlFlip);
+        }
     }
 
     int setViewport(SDL_Rect* rect) @nogc nothrow

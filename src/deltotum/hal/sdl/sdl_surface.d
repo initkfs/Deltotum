@@ -20,7 +20,13 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface
         super(ptr);
     }
 
-    protected SDL_Surface* createRGBSurfacePtr(uint flags, int width, int height, int depth,
+    void createRGBSurface(uint flags, int width, int height, int depth,
+        uint rmask, uint gmask, uint bmask, uint amask)
+    {
+        ptr = createRGBSurfacePtr(flags, width, height, depth, rmask, gmask, bmask, amask);
+    }
+
+    SDL_Surface* createRGBSurfacePtr(uint flags, int width, int height, int depth,
         uint rmask, uint gmask, uint bmask, uint amask)
     {
         auto newPtr = SDL_CreateRGBSurface(

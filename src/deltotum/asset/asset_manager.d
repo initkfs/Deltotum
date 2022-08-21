@@ -11,6 +11,7 @@ import std.file : exists, isDir, isFile;
 import std.stdio;
 
 import deltotum.asset.fonts.font : Font;
+import deltotum.ui.texts.fonts.bitmap.bitmap_font: BitmapFont;
 
 /**
  * Authors: initkfs
@@ -18,6 +19,7 @@ import deltotum.asset.fonts.font : Font;
 class AssetManager : LoggableUnit
 {
     @property Font defaultFont;
+    @property BitmapFont defaultBitmapFont;
 
     this(Logger logger)
     {
