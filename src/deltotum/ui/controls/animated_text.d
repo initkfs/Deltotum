@@ -25,61 +25,36 @@ class AnimatedText : Text
 
     @property void delegate() onEnd;
 
-    this(string text = "text")
+    this(string text = "text", int animationDelayMs = 2000)
     {
         super(text);
+        animation = new Transition!double(0.0, 0.0, animationDelayMs);
     }
 
-    override void drawContent()
+    override void create()
     {
-        renderText(renderedGlyphs);
-    }
-
-    override void update(double delta)
-    {
-        super.update(delta);
-
-        if (animation !is null)
-        {
-            animation.update(delta);
-            if(animation.isRun){
-                return;
-            }
-        }
-
-        if (renderedGlyphs.length > 0 && oldText == text)
-        {
-            return;
-        }
-
-        textGlyphs = textToGlyphs(text);
-        renderedGlyphs = [];
- 
-        //TODO reuse transition
-        animation = new Transition!double(0.0, to!(double)(text.length - 1), 2000);
+        super.create;
         build(animation);
         animation.onValue = (value) {
-            assert(value >= 0);
-            assert(textGlyphs.length > 0);
-            size_t index = cast(size_t) value;
-            if (index > textGlyphs.length - 1)
+            if (value < 0 || textGlyphs.length <= 0)
             {
-                index = textGlyphs.length - 1;
+                return;
+            }
+            const size_t lastGlyphIndex = textGlyphs.length - 1;
+            size_t index = cast(size_t) value;
+            if (index > lastGlyphIndex)
+            {
+                index = lastGlyphIndex;
             }
 
-            if (index == 0 && currentGlyphIndex == textGlyphs.length - 1)
+            if (index == 0 && currentGlyphIndex == lastGlyphIndex)
             {
                 //renderedGlyphs = [];
-                if (animation !is null)
-                {
-                    animation.stop;
-                }
-
+                animation.stop;
                 if (onEnd !is null)
                 {
                     onEnd();
                 }
-
                 return;
             }
 
@@ -91,6 +66,38 @@ class AnimatedText : Text
             renderedGlyphs ~= textGlyphs[index];
             currentGlyphIndex = index;
         };
+    }
+
+    override void drawContent()
+    {
+        renderText(renderedGlyphs);
+    }
+
+    override void update(double delta)
+    {
+        super.update(delta);
+
+        animation.update(delta);
+        if (animation.isRun)
+        {
+            return;
+        }
+
+        if (text.length == 0 || (renderedGlyphs.length > 0 && oldText == text))
+        {
+            return;
+        }
+
+        textGlyphs = textToGlyphs(text);
+        if (textGlyphs.length == 0)
+        {
+            return;
+        }
+
+        renderedGlyphs = [];
+
+        animation.maxValue = textGlyphs.length - 1;
+
         animation.run;
         oldText = text;
     }

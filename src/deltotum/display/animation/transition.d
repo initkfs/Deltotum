@@ -32,13 +32,15 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : DisplayObject
     @property Interpolator interpolator;
     @property T lastValue;
 
+    @property T _minValue;
+    @property T _maxValue;
+
     private
     {
         double timeMs = 0;
         double frameCount = 0;
         long currentFrame;
-        T minValue;
-        T maxValue;
+
         bool onShort;
 
         TransitionState state = TransitionState.none;
@@ -47,8 +49,8 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : DisplayObject
     this(T minValue, T maxValue, int timeMs = 200, Interpolator interpolator = null)
     {
         super();
-        this.minValue = minValue;
-        this.maxValue = maxValue;
+        this._minValue = minValue;
+        this._maxValue = maxValue;
         this.timeMs = timeMs;
         this.interpolator = interpolator;
         if (this.interpolator is null)
@@ -90,6 +92,11 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : DisplayObject
             return;
         }
 
+        if (_minValue == _maxValue)
+        {
+            return;
+        }
+
         super.update(delta);
 
         if (currentFrame > frameCount)
@@ -126,12 +133,12 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : DisplayObject
         switch (state)
         {
         case TransitionState.direct:
-            start = minValue;
-            end = maxValue;
+            start = _minValue;
+            end = _maxValue;
             break;
         case TransitionState.back:
-            start = maxValue;
-            end = minValue;
+            start = _maxValue;
+            end = _minValue;
             break;
         default:
             break;
@@ -149,4 +156,35 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : DisplayObject
 
         currentFrame++;
     }
+
+    @property T minValue() @nogc @safe pure nothrow
+    {
+        return _minValue;
+    }
+
+    @property void minValue(T newValue) @nogc @safe nothrow
+    {
+        if (isRun)
+        {
+            //TODO log.
+            stop;
+        }
+        _minValue = newValue;
+    }
+
+    @property T maxValue() @nogc @safe pure nothrow
+    {
+        return _maxValue;
+    }
+
+    @property void maxValue(T newValue) @nogc @safe nothrow
+    {
+        if (isRun)
+        {
+            stop;
+            //TODO log
+        }
+        _maxValue = newValue;
+    }
+
 }
