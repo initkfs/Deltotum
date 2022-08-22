@@ -1,4 +1,4 @@
-module deltotum.i18n.texts.alphabets.alphabet;
+module deltotum.i18n.langs.alphabets.alphabet;
 
 /**
  * Authors: initkfs

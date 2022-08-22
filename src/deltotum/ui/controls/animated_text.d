@@ -4,7 +4,7 @@ import deltotum.ui.controls.text : Text;
 import deltotum.display.animation.transition : Transition;
 import deltotum.display.animation.interp.interpolator : Interpolator;
 import deltotum.math.shapes.rect2d : Rect2d;
-import deltotum.i18n.texts.glyph : Glyph;
+import deltotum.i18n.langs.glyph : Glyph;
 
 import std.conv : to;
 import std.stdio;

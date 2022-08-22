@@ -1,6 +1,6 @@
-module deltotum.i18n.texts.alphabets.arabic_numerals_alphabet;
+module deltotum.i18n.langs.alphabets.arabic_numerals_alphabet;
 
-import deltotum.i18n.texts.alphabets.alphabet : Alphabet;
+import deltotum.i18n.langs.alphabets.alphabet : Alphabet;
 
 /**
  * Authors: initkfs

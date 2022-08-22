@@ -1,6 +1,6 @@
-module deltotum.i18n.texts.glyph;
+module deltotum.i18n.langs.glyph;
 
-import deltotum.i18n.texts.alphabets.alphabet: Alphabet;
+import deltotum.i18n.langs.alphabets.alphabet: Alphabet;
 
 import deltotum.math.shapes.rect2d : Rect2d;
 

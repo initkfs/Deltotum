@@ -182,10 +182,10 @@ class SdlApplication : GraphicsApplication
         import deltotum.ui.texts.fonts.bitmap.bitmap_font : BitmapFont;
 
         //TODO from locale\config;
-        import deltotum.i18n.texts.alphabets.alphabet_ru : AlphabetRu;
-        import deltotum.i18n.texts.alphabets.alphabet_en : AlphabetEn;
-        import deltotum.i18n.texts.alphabets.arabic_numerals_alphabet : ArabicNumeralsAlpabet;
-        import deltotum.i18n.texts.alphabets.special_characters_alphabet : SpecialCharactersAlphabet;
+        import deltotum.i18n.langs.alphabets.alphabet_ru : AlphabetRu;
+        import deltotum.i18n.langs.alphabets.alphabet_en : AlphabetEn;
+        import deltotum.i18n.langs.alphabets.arabic_numerals_alphabet : ArabicNumeralsAlpabet;
+        import deltotum.i18n.langs.alphabets.special_characters_alphabet : SpecialCharactersAlphabet;
 
         import deltotum.ui.texts.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
 

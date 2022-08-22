@@ -1,7 +1,7 @@
 module deltotum.ui.texts.fonts.bitmap.bitmap_font;
 
 import deltotum.display.textures.texture : Texture;
-import deltotum.i18n.texts.glyph : Glyph;
+import deltotum.i18n.langs.glyph : Glyph;
 
 /**
  * Authors: initkfs

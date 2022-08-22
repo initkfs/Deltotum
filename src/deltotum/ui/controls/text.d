@@ -5,7 +5,7 @@ import deltotum.ui.texts.fonts.bitmap.bitmap_font : BitmapFont;
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.math.vector2d : Vector2d;
 import deltotum.display.flip : Flip;
-import deltotum.i18n.texts.glyph : Glyph;
+import deltotum.i18n.langs.glyph : Glyph;
 
 import std.stdio;
 

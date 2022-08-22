@@ -1,6 +1,6 @@
-module deltotum.i18n.texts.alphabets.alphabet_en;
+module deltotum.i18n.langs.alphabets.alphabet_en;
 
-import deltotum.i18n.texts.alphabets.alphabet : Alphabet;
+import deltotum.i18n.langs.alphabets.alphabet : Alphabet;
 
 /**
  * Authors: initkfs
