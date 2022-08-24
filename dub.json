@@ -30,7 +30,9 @@
     "sourcePaths": ["./src"],
     "importPaths": ["./src"],
     "dependencies": {
-        "bindbc-sdl": "~>1.2.1"
+        "bindbc-sdl": "~>1.2.1",
+        "lubeck": "~>1.5.1",
+        "mir-algorithm": "~>3.14.18"
     },
     "libs-posix": [],
     "versions": [

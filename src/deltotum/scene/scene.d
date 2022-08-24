@@ -17,10 +17,11 @@ class Scene : UniComponent
 {
     @property void delegate(Scene) onSceneChange;
 
-    @property size_t timeEventProcessing;
-    @property double timeRate = 0;
-    @property size_t timeUpdate;
+    @property size_t timeEventProcessingMs;
+    @property size_t timeUpdateProcessingMs;
+
     @property bool isClearingInCycle = true;
+    @property size_t worldTicks;
 
     protected
     {
@@ -51,6 +52,8 @@ class Scene : UniComponent
 
     void update(double delta)
     {
+        worldTicks++;
+
         if (isClearingInCycle)
         {
             const screenColor = Color.black;

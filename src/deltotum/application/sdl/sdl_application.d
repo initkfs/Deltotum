@@ -273,21 +273,19 @@ class SdlApplication : GraphicsApplication
 
         SDL_Event event;
 
-        sceneManager.currentScene.timeEventProcessing = 0;
+        sceneManager.currentScene.timeEventProcessingMs = 0;
 
         while (SDL_PollEvent(&event))
         {
             const startEvent = SDL_GetTicks();
             handleEvent(&event);
             const endEvent = SDL_GetTicks();
-            sceneManager.currentScene.timeEventProcessing += endEvent - startEvent;
+            sceneManager.currentScene.timeEventProcessingMs = endEvent - startEvent;
             if (!isRunning)
             {
                 return isRunning;
             }
         }
-
-        sceneManager.currentScene.timeRate = frameRate / deltaTime;
 
         while (deltaTimeAccumulator > frameTime)
         {
@@ -295,7 +293,7 @@ class SdlApplication : GraphicsApplication
             const startStateTime = SDL_GetTicks();
             updateState(delta);
             const endStateTime = SDL_GetTicks();
-            sceneManager.currentScene.timeUpdate = endStateTime - startStateTime;
+            sceneManager.currentScene.timeUpdateProcessingMs = endStateTime - startStateTime;
             deltaTimeAccumulator -= frameTime;
         }
 

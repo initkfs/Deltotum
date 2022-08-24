@@ -18,6 +18,12 @@ if [[ ! -d $scriptDir ]]; then
 fi
 #Start script
 
+cd $scriptDir
+if [[ $? -ne 0 ]]; then
+  echo "Failed to enter script directory $scriptDir, exit." >&2
+  exit 1
+fi
+
 testBinFile=$scriptDir/deltotum
 
 if [[ $1 == "test" ]]; then
