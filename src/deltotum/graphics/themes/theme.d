@@ -2,6 +2,7 @@ module deltotum.graphics.themes.theme;
 
 import deltotum.graphics.colors.color : Color;
 import deltotum.asset.fonts.font: Font;
+import deltotum.display.padding: Padding;
 
 /**
  * Authors: initkfs
@@ -46,5 +47,9 @@ class Theme
 
     double controlOpacity(){
         return 0.5;
+    }
+
+    Padding controlPadding(){
+        return Padding(5);
     }
 }

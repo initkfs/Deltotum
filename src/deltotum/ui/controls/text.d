@@ -16,6 +16,13 @@ import std.stdio;
 class Text : Control
 {
     @property string text;
+    @property int spaceWidth = 5;
+
+    protected
+    {
+        @property string oldText;
+        @property Glyph[] glyphs;
+    }
 
     this(string text = "text")
     {
@@ -32,11 +39,9 @@ class Text : Control
 
     protected Glyph[] textToGlyphs(string textString)
     {
-        Glyph[] glyphs = [];
-
         if (textString.length == 0)
         {
-            return glyphs;
+            return [];
         }
 
         import std.uni : isSpace;
@@ -44,12 +49,15 @@ class Text : Control
 
         dstring mustBeText = to!dstring(textString);
 
+        //Grapheme walkLength?
+        Glyph[] glyphs = new Glyph[mustBeText.length];
+
         foreach (dchar letter; mustBeText)
         {
             //TODO isSpace?
             if (letter.isSpace)
             {
-                Rect2d emptyGeometry;
+                Rect2d emptyGeometry = Rect2d(0, 0, spaceWidth, 0);
                 //TODO alphabet?
                 glyphs ~= Glyph(null, letter, emptyGeometry, true);
                 continue;
@@ -60,6 +68,7 @@ class Text : Control
                 if (glyph.grapheme == letter)
                 {
                     glyphs ~= glyph;
+                    break;
                 }
             }
         }
@@ -75,13 +84,11 @@ class Text : Control
         }
         Vector2d position = Vector2d(x, y);
 
-        enum spaceWidth = 5;
-
         foreach (glyph; glyphs)
         {
             if (glyph.isEmpty)
             {
-                position.x += spaceWidth;
+                position.x += glyph.geometry.width;
                 continue;
             }
 
@@ -95,12 +102,6 @@ class Text : Control
         }
     }
 
-    protected void renderText(string text)
-    {
-        Glyph[] glyphs = textToGlyphs(text);
-        renderText(glyphs);
-    }
-
     override void drawContent()
     {
         if (text.length == 0)
@@ -108,6 +109,12 @@ class Text : Control
             return;
         }
 
-        renderText(text);
+        if (oldText != text)
+        {
+            glyphs = textToGlyphs(text);
+            oldText = text;
+        }
+
+        renderText(glyphs);
     }
 }

@@ -64,7 +64,7 @@ class TabPane : Container
         header.width = width;
         header.height = 40;
         container.addCreated(header);
-        header.createBackground;
+        header.createBackground(width, height);
 
         foreach (i, Tab tab; tabs)
         {
@@ -82,7 +82,7 @@ class TabPane : Container
         container.addCreated(content);
         content.width = width;
         content.height = height - header.height;
-        content.createBackground;
+        content.createBackground(width, height);
 
         foreach (Tab tab; tabs)
         {

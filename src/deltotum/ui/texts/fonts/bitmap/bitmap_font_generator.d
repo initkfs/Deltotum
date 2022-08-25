@@ -50,7 +50,7 @@ class BitmapFontGenerator : FontGenerator
             {
                 const(char*) utfPtr = toUTFz!(const(char)*)([letter]);
                 //TODO does SDL keep a reference?
-                SDL_Surface* glyphRepresentation = TTF_RenderUTF8_Solid(font.getStruct, utfPtr, foregroundColor);
+                SDL_Surface* glyphRepresentation = TTF_RenderUTF8_Blended(font.getStruct, utfPtr, foregroundColor);
                 glyphPosition.w = glyphRepresentation.w;
                 glyphPosition.h = glyphRepresentation.h;
 

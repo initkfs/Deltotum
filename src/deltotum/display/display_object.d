@@ -25,9 +25,6 @@ abstract class DisplayObject : PhysicalBody
 {
     @property DisplayObject parent;
 
-    @property double width = 0;
-    @property double height = 0;
-
     @property double opacity = 1;
     @property double angle = 0;
     @property double scale = 1;
@@ -57,14 +54,22 @@ abstract class DisplayObject : PhysicalBody
     //}
 
     @property bool delegate(double, double) onDrag;
+    @property void delegate() invalidateListener;
+    @property void delegate(double) onInvalidateWidth;
+    @property void delegate(double) onInvalidateHeight;
 
     private
     {
         @property double _x = 0;
         @property double _y = 0;
+
+        @property double _width = 0;
+        @property double _height = 0;
+
         @property double offsetX = 0;
         @property double offsetY = 0;
         @property bool isDrag = false;
+        @property bool valid = true;
     }
 
     void create()
@@ -282,6 +287,14 @@ abstract class DisplayObject : PhysicalBody
 
     }
 
+    void invalidate()
+    {
+        if (invalidateListener !is null)
+        {
+            invalidateListener();
+        }
+    }
+
     bool draw()
     {
         //TODO layer
@@ -289,6 +302,12 @@ abstract class DisplayObject : PhysicalBody
 
         if (isVisible)
         {
+            if (!isValid)
+            {
+                invalidate;
+                setValid(true);
+            }
+
             foreach (DisplayObject obj; children)
             {
                 if (!obj.isDrawAfterParent && obj.isVisible)
@@ -357,13 +376,13 @@ abstract class DisplayObject : PhysicalBody
 
     Rect2d bounds()
     {
-        const Rect2d bounds = {x, y, width, height};
+        const Rect2d bounds = {x, y, _width, _height};
         return bounds;
     }
 
     Rect2d geometryBounds()
     {
-        const Rect2d bounds = {0, 0, width, height};
+        const Rect2d bounds = {0, 0, _width, _height};
         return bounds;
     }
 
@@ -375,17 +394,17 @@ abstract class DisplayObject : PhysicalBody
 
     void positionCenterX()
     {
-        if (width > 0)
+        if (_width > 0)
         {
-            x = window.getWidth / 2 - width / 2;
+            x = window.getWidth / 2 - _width / 2;
         }
     }
 
     void positionCenterY()
     {
-        if (height > 0)
+        if (_height > 0)
         {
-            y = window.getHeight / 2 - height / 2;
+            y = window.getHeight / 2 - _height / 2;
         }
     }
 
@@ -429,6 +448,43 @@ abstract class DisplayObject : PhysicalBody
         children ~= obj;
     }
 
+    bool has(DisplayObject obj)
+    {
+        if (obj is null)
+        {
+            throw new Exception("Unable to check for child existence: object is null");
+        }
+
+        foreach (DisplayObject child; children)
+        {
+            if (obj is child)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool remove(DisplayObject obj)
+    {
+        if (!has(obj))
+        {
+            return false;
+        }
+
+        import std.algorithm.searching : countUntil;
+        import std.algorithm.mutation : remove;
+
+        auto mustBeIndex = children.countUntil(obj);
+        if (mustBeIndex < 0)
+        {
+            return false;
+        }
+
+        children = children.remove(mustBeIndex);
+        return true;
+    }
+
     void xy(double x, double y) @nogc @safe pure nothrow
     {
         this.x = x;
@@ -469,5 +525,80 @@ abstract class DisplayObject : PhysicalBody
             }
         }
         _y = newY;
+    }
+
+    @property double width() @nogc @safe pure nothrow
+    {
+        //TODO children?
+        return _width;
+    }
+
+    @property void width(double value)
+    {
+        if (_width == value)
+        {
+            return;
+        }
+
+        if (isCreated && onInvalidateWidth !is null)
+        {
+            onInvalidateWidth(value);
+            setInvalid;
+        }
+        _width = value;
+    }
+
+    @property double height() @nogc @safe pure nothrow
+    {
+        return _height;
+    }
+
+    @property void height(double value)
+    {
+        if (_height == value)
+        {
+            return;
+        }
+
+        if (isCreated && onInvalidateHeight !is null)
+        {
+            onInvalidateHeight(value);
+            setInvalid;
+        }
+
+        _height = value;
+    }
+
+    @property bool isValid() @nogc @safe pure nothrow
+    {
+        bool isAllValid = valid;
+        foreach (DisplayObject child; children)
+        {
+            if (!child.isValid && isAllValid)
+            {
+                isAllValid = false;
+            }
+        }
+        return isAllValid;
+    }
+
+    @property void setValid(bool isValidControl) @nogc @safe pure nothrow
+    {
+        valid = isValidControl;
+        if (valid)
+        {
+            foreach (DisplayObject child; children)
+            {
+                if (!child.isValid)
+                {
+                    child.setValid(true);
+                }
+            }
+        }
+    }
+
+    void setInvalid() @nogc @safe pure nothrow
+    {
+        setValid(false);
     }
 }
