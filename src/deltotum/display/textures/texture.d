@@ -47,6 +47,12 @@ class Texture : DisplayObject
 
     override void drawContent()
     {
+        if (texture is null)
+        {
+            //TODO logging
+            return;
+        }
+
         //draw parent first
         if (isDrawTexture)
         {
@@ -82,6 +88,9 @@ class Texture : DisplayObject
     override void destroy()
     {
         super.destroy;
-        texture.destroy;
+        if (texture !is null)
+        {
+            texture.destroy;
+        }
     }
 }

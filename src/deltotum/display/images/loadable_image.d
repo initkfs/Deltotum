@@ -47,7 +47,7 @@ class LoadableImage : Texture
 
         if (requestWidth > 0 && requestWidth != imageWidth || requestHeight > 0 && requestHeight != imageHeight)
         {
-            image.resize(cast(int) (requestWidth * scale), cast(int) (requestHeight * scale));
+            image.resize(cast(int)(requestWidth * scale), cast(int)(requestHeight * scale));
             imageWidth = image.width;
             imageHeight = image.height;
         }
@@ -55,7 +55,7 @@ class LoadableImage : Texture
         {
             if (scale != 1 && scale > 0)
             {
-                image.resize(cast(int) (imageWidth * scale), cast(int) (imageHeight * scale));
+                image.resize(cast(int)(imageWidth * scale), cast(int)(imageHeight * scale));
                 imageWidth = image.width;
                 imageHeight = image.height;
             }
@@ -98,6 +98,11 @@ class LoadableImage : Texture
 
     void drawImage(int x, int y, int width, int height, Flip flip = Flip.none)
     {
+        if (texture is null)
+        {
+            //TODO logging
+            return;
+        }
         Rect2d textureBounds = {0, 0, width, height};
         drawTexture(texture, textureBounds, x, y, angle, flip);
     }
@@ -105,7 +110,9 @@ class LoadableImage : Texture
     override void destroy()
     {
         super.destroy;
-        texture.destroy;
+        if(texture !is null){
+            texture.destroy;
+        }
     }
 
     //TODO remove

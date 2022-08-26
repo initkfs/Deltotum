@@ -1,14 +1,18 @@
 module deltotum.factories.creation_images;
 
-import deltotum.application.components.uni.uni_component : UniComponent;
+import deltotum.display.factories.display_object_factory: DisplayObjectFactory;
 import deltotum.display.images.image : Image;
 import deltotum.display.images.animated_image : AnimatedImage;
 
 /**
  * Authors: initkfs
  */
-class CreationImages : UniComponent
+class CreationImages : DisplayObjectFactory!Image
 {
+    override Image createObject(){
+        //TODO default image-placeholder
+        return null;
+    }
 
     Image image(string path, int requestWidth = -1, int requestHeight = -1)
     {

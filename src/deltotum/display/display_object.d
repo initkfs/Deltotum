@@ -419,6 +419,11 @@ abstract class DisplayObject : PhysicalBody
 
     void addCreated(DisplayObject obj)
     {
+        if (obj is null)
+        {
+            //TODO logging
+            throw new Exception("Cannot add null object");
+        }
         build(obj);
         obj.create;
         add(obj);
