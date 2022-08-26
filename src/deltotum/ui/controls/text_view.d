@@ -10,18 +10,28 @@ import deltotum.ui.controls.text : Text;
 
 import std.stdio;
 
+struct TextRow
+{
+    Glyph[] glyphs = [];
+}
+
 /**
  * Authors: initkfs
  */
 class TextView : Text
 {
+    protected
+    {
+        double scrollPosition = 0;
+    }
 
     this(string text = "text")
     {
         super(text);
     }
 
-    override void create(){
+    override void create()
+    {
         super.create;
         backgroundFactory = (width, height) {
             import deltotum.graphics.shapes.rectangle : Rectangle;
@@ -35,46 +45,62 @@ class TextView : Text
         createBackground(width, height);
     }
 
-    override protected void renderText(Glyph[] glyphs)
+    override void drawContent()
     {
+        if (text.length == 0)
+        {
+            return;
+        }
+
         if (width == 0 || height == 0)
         {
             return;
         }
 
-        Vector2d position = Vector2d(x, y);
-        position.x += padding.left;
-        position.y += padding.top;
-
-        //TODO from font?
-        enum rowHeight = 15;
-
-        foreach (Glyph glyph; glyphs)
+        if (oldText != text)
         {
-            if (position.x + glyph.geometry.width > (x + width - padding.right))
-            {
-                position.y += rowHeight;
-                position.x = padding.left;
-            }
-
-            if (position.y + glyph.geometry.height > (y + height - padding.bottom))
-            {
-                break;
-            }
-
-            if (glyph.isEmpty)
-            {
-                position.x += glyph.geometry.width;
-                continue;
-            }
-
-            Rect2d textureBounds = glyph.geometry;
-            Rect2d destBounds = Rect2d(position.x, position.y, glyph.geometry.width, glyph
-                    .geometry.height);
-            window.renderer.drawTexture(assets.defaultBitmapFont.nativeTexture, textureBounds, destBounds, angle, Flip
-                     .none);
-
-            position.x += glyph.geometry.width;
+            updateRows;
+            oldText = text;
         }
+
+        if (rows.length == 0)
+        {
+            return;
+        }
+
+        import std.conv : to;
+
+        //TODO Gap buffer, TextRow[]?
+        const lastRowIndex = rows.length - 1;
+        const rowsInViewport = to!(int)((height - padding.top - padding.bottom) / rowHeight);
+        if (rows.length <= rowsInViewport)
+        {
+            renderText(rows);
+        }
+        else
+        {
+            import std.math.rounding : round;
+
+            //TODO only one hanging line in text
+            size_t mustBeLastRowIndex = lastRowIndex;
+            if(mustBeLastRowIndex > rowsInViewport){
+                mustBeLastRowIndex-= rowsInViewport - 1;
+            }
+
+            size_t mustBeStartRowIndex = to!size_t(round(scrollPosition * mustBeLastRowIndex));
+            size_t mustBeEndRowIndex = mustBeStartRowIndex + rowsInViewport;
+            if (mustBeEndRowIndex > lastRowIndex)
+            {
+                mustBeEndRowIndex = lastRowIndex;
+            }
+
+            auto rowsForView = rows[mustBeStartRowIndex .. mustBeEndRowIndex + 1];
+            renderText(rowsForView);
+        }
+    }
+
+    void scrollTo(double value)
+    {
+        scrollPosition = value;
     }
 }

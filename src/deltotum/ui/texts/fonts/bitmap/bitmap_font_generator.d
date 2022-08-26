@@ -46,7 +46,7 @@ class BitmapFontGenerator : FontGenerator
         {
             dstring allLetters = alphabet.allLetters;
             //TODO byGrapheme?
-            foreach (i, letter; allLetters)
+            foreach (i, dchar letter; allLetters)
             {
                 const(char*) utfPtr = toUTFz!(const(char)*)([letter]);
                 //TODO does SDL keep a reference?
