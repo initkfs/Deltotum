@@ -1,6 +1,6 @@
 module deltotum.worlds.world_object;
 
-import deltotum.worlds.narratives.desctiption.description_object : DescriptionObject;
+import deltotum.worlds.narratives.desctiptions.description_object : DescriptionObject;
 
 /**
  * Authors: initkfs

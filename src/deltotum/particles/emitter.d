@@ -54,7 +54,7 @@ class Emitter : DisplayObject
     {
         super();
         //TODO seed, etc
-        random = Random(42);
+        random = new Random;
         this.isActive = isActive;
         if (config is null)
         {

@@ -91,12 +91,12 @@ class Text : Control
         return newGlyphs;
     }
 
-    void updateRows()
+    protected TextRow[] textToRows(string text)
     {
-        this.rows = [];
+        TextRow[] newRows = [];
         if (width == 0 || height == 0)
         {
-            return;
+            return newRows;
         }
 
         auto glyphs = textToGlyphs(text);
@@ -107,7 +107,7 @@ class Text : Control
         {
             if (glyphPosX + glyph.geometry.width > (x + width - padding.right))
             {
-                rows ~= row;
+                newRows ~= row;
                 row = TextRow();
                 glyphPosX = padding.left;
             }
@@ -118,8 +118,19 @@ class Text : Control
 
         if (row.glyphs.length > 0)
         {
-            rows ~= row;
+            newRows ~= row;
         }
+        return newRows;
+    }
+
+    void updateRows()
+    {
+        this.rows = textToRows(text);
+    }
+
+    void addRows(string text)
+    {
+        this.rows ~= textToRows(text);
     }
 
     protected void renderText(TextRow[] rows)
@@ -179,5 +190,19 @@ class Text : Control
         }
 
         renderText(rows);
+    }
+
+    void appendText(string text)
+    {
+        if (rows.length == 0)
+        {
+            this.text = text;
+        }
+        else
+        {
+            addRows(text);
+            this.text ~= text;
+            this.oldText = text;
+        }
     }
 }

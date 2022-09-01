@@ -1,4 +1,4 @@
-module deltotum.worlds.narratives.desctiption.description_object;
+module deltotum.worlds.narratives.desctiptions.description_object;
 
 import deltotum.events.event_target: EventTarget;
 

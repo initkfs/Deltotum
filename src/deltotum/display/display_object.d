@@ -606,4 +606,20 @@ abstract class DisplayObject : PhysicalBody
     {
         setValid(false);
     }
+
+    string classnameShort()
+    {
+        string name;
+        immutable string fullClassName = this.classinfo.name;
+
+        import std.string : lastIndexOf;
+
+        immutable lastDotPosIndex = fullClassName.lastIndexOf(".");
+        if (lastDotPosIndex < 0)
+        {
+            return name;
+        }
+        name = fullClassName[lastDotPosIndex + 1 .. $];
+        return name;
+    }
 }
