@@ -52,7 +52,7 @@ esac
 
 echo "Build type: $buildType"
 
-time dub --quiet build --compiler=ldc2 --config=app-dev "--build=$buildType"
+time dub --quiet build --compiler=dmd --config=app-dev "--build=$buildType"
 errDub=$?
 if [[ $errDub -ne 0 ]]; then
   echo "Dub error, exit." >&2

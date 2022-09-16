@@ -34,6 +34,7 @@
         "lubeck": "~>1.5.1",
         "mir-algorithm": "~>3.14.18"
     },
+    "dflags": ["-dip1000"],
     "libs-posix": [],
     "versions": [
         "SDL_Image",
