@@ -193,12 +193,16 @@ struct FixedArrayMatrix(T = double, size_t RowDimension = 1, size_t ColDimension
     {
         if (rowIndex >= RowDimension)
         {
-            throw new Exception("Row index must be less than " ~ RowDimension);
+            import std.format : format;
+
+            throw new Exception(format("Row index must be less than row dimension %s", RowDimension));
         }
 
         if (columnIndex >= ColDimension)
         {
-            throw new Exception("Column index must be less than " ~ ColDimension);
+            import std.format : format;
+
+            throw new Exception(format("Column index must be less than column dimension %s", ColDimension));
         }
 
         return matrix[rowIndex][columnIndex];

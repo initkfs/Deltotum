@@ -5,6 +5,7 @@ import std.math.algebraic : sqrt;
 import std.math.operations : isClose;
 import std.math.trigonometry : acos;
 import std.math.constants : PI;
+import deltotum.math.matrices.matrix : Matrix2x2, Matrix2x1;
 
 /**
  * Authors: initkfs
@@ -173,11 +174,33 @@ struct Vector2d
         return Vector2d(pX, pY);
     }
 
+    Matrix2x1 transpose() const pure @safe
+    {
+        return Matrix2x1([[x], [y]]);
+    }
+
+    Vector2d linoperator(Matrix2x2 linearOpMatrix) const pure @safe
+    {
+        Matrix2x1 result = linearOpMatrix.multiply(transpose);
+        return Vector2d(result.value(0, 0), result.value(1, 0));
+    }
+
     string toString() const
     {
         import std.format : format;
 
         return format("x:%s,y:%s", x, y);
+    }
+
+    unittest
+    {
+
+        Vector2d v1 = Vector2d(2, 1);
+
+        Vector2d horizontalReflect = v1.linoperator(Matrix2x2([[-1, 0], [0, 1]]));
+        assert(horizontalReflect.x == -2);
+        assert(horizontalReflect.y == 1);
+
     }
 
 }
