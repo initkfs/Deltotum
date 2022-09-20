@@ -83,11 +83,6 @@ struct Vector2d
         return Vector2d(x + value, y + value);
     }
 
-    Vector2d inv() const @nogc nothrow pure @safe
-    {
-        return Vector2d(-x, -y);
-    }
-
     Vector2d dec(double value) const @nogc nothrow pure @safe
     {
         return Vector2d(x - value, y - value);
@@ -185,22 +180,82 @@ struct Vector2d
         return Vector2d(result.value(0, 0), result.value(1, 0));
     }
 
+    Vector2d reflectX() const @nogc nothrow pure @safe
+    {
+        return Vector2d(-x, y);
+    }
+
+    Vector2d reflectY() const @nogc nothrow pure @safe
+    {
+        return Vector2d(x, -y);
+    }
+
+    Vector2d reflect() const @nogc nothrow pure @safe
+    {
+        return Vector2d(-x, -y);
+    }
+
     string toString() const
     {
         import std.format : format;
 
-        return format("x:%s,y:%s", x, y);
+        return format("x:%.10f,y:%.10f", x, y);
+    }
+
+    void opOpAssign(string op)(Vector2d other)
+    {
+        const otherId = __traits(identifier, other);
+        mixin("x" ~ op ~ "=" ~ otherId ~ ".x;");
+        mixin("y" ~ op ~ "=" ~ otherId ~ ".y;");
+    }
+
+    Vector2d opBinary(string op)(Vector2d other)
+    {
+        static if (op == "+")
+            return add(other);
+        else static if (op == "-")
+            return subtract(other);
+        else
+            static assert(0, "Operator " ~ op ~ " not implemented");
     }
 
     unittest
     {
+        import std.math.operations: isClose;
 
-        Vector2d v1 = Vector2d(2, 1);
+        Vector2d v = Vector2d(5, 6);
+        v += Vector2d(1, 1);
+        assert(v.x == 6);
+        assert(v.y == 7);
 
-        Vector2d horizontalReflect = v1.linoperator(Matrix2x2([[-1, 0], [0, 1]]));
-        assert(horizontalReflect.x == -2);
-        assert(horizontalReflect.y == 1);
+        v = Vector2d(3, 4);
+        v -= Vector2d(1, 1);
+        assert(v.x == 2);
+        assert(v.y == 3);
+        
+        v = Vector2d(5, 6);
+        auto addV = v + v;
+        assert(addV.x == 10);
+        assert(addV.y == 12);
 
+        v = Vector2d(5, 6);
+        auto subtractV = v - v;
+        assert(subtractV.x == 0);
+        assert(subtractV.y == 0);
+
+        auto norm = Vector2d(5, 6).normalize;
+        assert(isClose(norm.x, 0.640184, 1e-6));
+        assert(isClose(norm.y, 0.768221, 1e-6));
+        
+        auto distance = Vector2d(5, 6).distanceTo(Vector2d(10, 12));
+        assert(isClose(distance, 7.81025, 1e-6));
+
+        Vector2d horizontalReflect = Vector2d(5, 6).linoperator(Matrix2x2([[-1, 0], [0, 1]]));
+        assert(horizontalReflect.x == -5);
+        assert(horizontalReflect.y == 6);
+
+        double dot = Vector2d(5, 6).dotProduct(Vector2d(2, 4));
+        assert(dot == 34);
     }
 
 }
