@@ -57,9 +57,17 @@ class Scene : UniComponent
         if (isClearingInCycle)
         {
             const screenColor = Color.black;
-            window.renderer.setRenderDrawColor(screenColor.r, screenColor.g, screenColor.b, screenColor
-                    .alphaNorm);
-            window.renderer.clear;
+            if (const err = window.renderer.setRenderDrawColor(screenColor.r, screenColor.g, screenColor.b, screenColor
+                    .alphaNorm))
+            {
+                //TODO logging in main loop?
+            }
+            else
+            {
+                if(const err = window.renderer.clear){
+                    //TODO loggong in main loop?
+                }
+            }
         }
 
         foreach (obj; displayObjects)

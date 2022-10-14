@@ -1,5 +1,6 @@
 module deltotum.hal.sdl.mix.sdl_mix_music;
 
+import deltotum.hal.result.hal_result: HalResult;
 import deltotum.hal.sdl.mix.base.sdl_mix_object : SdlMixObject;
 
 import std.string: toStringz, fromStringz;
@@ -28,16 +29,16 @@ class SdlMixMusic : SdlMixObject
         }
     }
 
-    int play(int loops = -1)
+    HalResult play(int loops = -1) nothrow
     {
-        const int zeroOrErrorCode = Mix_PlayMusic(ptr, loops);
-        return zeroOrErrorCode;
+        immutable int zeroOrErrorCode = Mix_PlayMusic(ptr, loops);
+        return HalResult(zeroOrErrorCode);
     }
 
-    int stop()
+    HalResult stop() nothrow
     {
-        const int alwaysZero = Mix_HaltMusic();
-        return alwaysZero;
+        immutable int alwaysZero = Mix_HaltMusic();
+        return HalResult(alwaysZero);
     }
 
     void destroy()

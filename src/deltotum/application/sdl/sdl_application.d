@@ -176,7 +176,7 @@ class SdlApplication : GraphicsApplication
 
         auto theme = new Theme(defaultFont);
 
-        graphics = new Graphics(window.renderer, theme);
+        graphics = new Graphics(logger, window.renderer, theme);
 
         //TODO build and run services after all
         import deltotum.ui.texts.fonts.bitmap.bitmap_font : BitmapFont;

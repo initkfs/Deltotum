@@ -51,14 +51,14 @@ class SimpleText : Control
     {
         SDL_Color color = {255, 255, 255, 255};
         //TODO toStringz and GC
-        SDL_Surface* fontSurfacePtr = TTF_RenderUTF8_Blended(font.getStruct, text.toStringz, color);
+        SDL_Surface* fontSurfacePtr = TTF_RenderUTF8_Blended(font.getSdlObject, text.toStringz, color);
         if (!fontSurfacePtr)
         {
             //TODO return error
             throw new Exception("Unable to render text");
         }
 
-        auto fontTexturePtr = SDL_CreateTextureFromSurface(window.renderer.getStruct, fontSurfacePtr);
+        auto fontTexturePtr = SDL_CreateTextureFromSurface(window.renderer.getSdlObject, fontSurfacePtr);
         if (!fontTexturePtr)
         {
             throw new Exception("Unable to create texture from text");
@@ -66,7 +66,7 @@ class SimpleText : Control
 
         if (fontTexture !is null)
         {
-            fontTexture.nativeTexture.updateStruct(fontTexturePtr);
+            fontTexture.nativeTexture.updateObject(fontTexturePtr);
         }
         else
         {

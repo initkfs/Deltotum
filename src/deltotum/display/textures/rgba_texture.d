@@ -29,7 +29,7 @@ class RgbaTexture : Texture
         //TODO toInt?
         texture.createRGBA(window.renderer, cast(int) width, cast(int) height);
         texture.setBlendModeBlend;
-        window.renderer.setRendererTarget(texture.getStruct);
+        window.renderer.setRendererTarget(texture.getSdlObject);
         createTextureContent;
         window.renderer.resetRendererTarget;
     }

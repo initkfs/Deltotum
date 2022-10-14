@@ -16,7 +16,9 @@ class Audio
     {
         this.audioLib = audioLib;
 
-        audioLib.openAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+        if(const err = audioLib.openAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048)){
+            throw new Exception(err.toString);
+        }
     }
 
     void destroy()

@@ -1,12 +1,13 @@
 module deltotum.hal.sdl.sdl_renderer;
 
+import deltotum.hal.result.hal_result : HalResult;
 import deltotum.hal.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.hal.sdl.sdl_window : SdlWindow;
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
 
-import deltotum.display.flip: Flip;
+import deltotum.display.flip : Flip;
 import deltotum.math.vector2d : Vector2d;
-import deltotum.math.shapes.rect2d: Rect2d;
+import deltotum.math.shapes.rect2d : Rect2d;
 
 import bindbc.sdl;
 
@@ -27,7 +28,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         super();
         this.window = window;
         enum firstDriverIndex = -1;
-        ptr = SDL_CreateRenderer(window.getStruct,
+        ptr = SDL_CreateRenderer(window.getSdlObject,
             firstDriverIndex, flags);
         if (ptr is null)
         {
@@ -41,25 +42,35 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
 
     }
 
-    int setRenderDrawColor(ubyte r, ubyte g, ubyte b, ubyte a) @nogc nothrow
+    HalResult setRenderDrawColor(ubyte r, ubyte g, ubyte b, ubyte a) @nogc nothrow
     {
         ubyte oldR, oldG, oldB, oldA;
         //TODO log?
-        const int zeroOrErrorColor = SDL_GetRenderDrawColor(ptr,
+        immutable int zeroOrErrorColor = SDL_GetRenderDrawColor(ptr,
             &oldR, &oldG, &oldB, &oldA);
-        if (r == oldR && g == oldG && b == oldB && a == oldA)
+        if (zeroOrErrorColor)
         {
-            return 0;
+            return HalResult(zeroOrErrorColor, "Error getting render old color for drawing");
         }
 
-        const int zeroOrErrorCode = SDL_SetRenderDrawColor(ptr, r, g, b, a);
-        return zeroOrErrorCode;
+        if (r == oldR && g == oldG && b == oldB && a == oldA)
+        {
+            return HalResult();
+        }
+
+        immutable int zeroOrErrorCode = SDL_SetRenderDrawColor(ptr, r, g, b, a);
+        if (zeroOrErrorCode)
+        {
+            return HalResult(zeroOrErrorCode, "Color drawing error");
+        }
+
+        return HalResult();
     }
 
-    int clear() @nogc nothrow
+    HalResult clear() @nogc nothrow
     {
-        const int zeroOrErrorCode = SDL_RenderClear(ptr);
-        return zeroOrErrorCode;
+        immutable int zeroOrErrorCode = SDL_RenderClear(ptr);
+        return HalResult(zeroOrErrorCode);
     }
 
     void present() @nogc nothrow
@@ -67,49 +78,49 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         SDL_RenderPresent(ptr);
     }
 
-    int copy(SdlTexture texture) @nogc nothrow
+    HalResult copy(SdlTexture texture) @nogc nothrow
     {
-        const int zeroOrErrorCode = SDL_RenderCopy(ptr, texture.getStruct, null, null);
-        return zeroOrErrorCode;
+        immutable int zeroOrErrorCode = SDL_RenderCopy(ptr, texture.getSdlObject, null, null);
+        return HalResult(zeroOrErrorCode);
     }
 
-    int drawRect(int x, int y, int width, int height)
+    HalResult drawRect(int x, int y, int width, int height)
     {
         SDL_Rect rect = {x, y, width, height};
         return drawRect(&rect);
     }
 
-    int drawRect(SDL_Rect* rect) @nogc nothrow
+    HalResult drawRect(SDL_Rect* rect) @nogc nothrow
     {
-        const int zeroOrErrorCode = SDL_RenderDrawRect(ptr, rect);
-        return zeroOrErrorCode;
+        immutable int zeroOrErrorCode = SDL_RenderDrawRect(ptr, rect);
+        return HalResult(zeroOrErrorCode);
     }
 
-    int drawPoint(int x, int y) @nogc nothrow
+    HalResult drawPoint(int x, int y) @nogc nothrow
     {
-        const int zeroOrErrorCode = SDL_RenderDrawPoint(ptr, x, y);
-        return zeroOrErrorCode;
+        immutable int zeroOrErrorCode = SDL_RenderDrawPoint(ptr, x, y);
+        return HalResult(zeroOrErrorCode);
     }
 
-    int drawLine(int startX, int startY, int endX, int endY) @nogc nothrow
+    HalResult drawLine(int startX, int startY, int endX, int endY) @nogc nothrow
     {
-        const int zeroOrErrorCode = SDL_RenderDrawLine(ptr, startX, startY, endX, endY);
-        return zeroOrErrorCode;
+        immutable int zeroOrErrorCode = SDL_RenderDrawLine(ptr, startX, startY, endX, endY);
+        return HalResult(zeroOrErrorCode);
     }
 
-    int drawLines(Vector2d[] linePoints) nothrow
+    HalResult drawLines(Vector2d[] linePoints) nothrow
     {
         import std.algorithm.iteration : map;
         import std.array : array;
 
         SDL_Point[] points = linePoints.map!(p => SDL_Point(cast(int) p.x, cast(int) p.y)).array;
-        const int zeroOrErrorCode = SDL_RenderDrawLines(ptr,
+        immutable int zeroOrErrorCode = SDL_RenderDrawLines(ptr,
             points.ptr,
             cast(int) points.length);
-        return zeroOrErrorCode;
+        return HalResult(zeroOrErrorCode);
     }
 
-    int drawTexture(SdlTexture texture, Rect2d textureBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
+    HalResult drawTexture(SdlTexture texture, Rect2d textureBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
             .none)
     {
         {
@@ -151,35 +162,35 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         }
     }
 
-    int setViewport(SDL_Rect* rect) @nogc nothrow
+    HalResult setViewport(SDL_Rect* rect) @nogc nothrow
     {
-        const int zeroOrErrorCode = SDL_RenderSetViewport(ptr, rect);
-        return zeroOrErrorCode;
+        immutable int zeroOrErrorCode = SDL_RenderSetViewport(ptr, rect);
+        return HalResult(zeroOrErrorCode);
     }
 
-    int fillRect(int x, int y, int width, int height) @nogc nothrow
+    HalResult fillRect(int x, int y, int width, int height) @nogc nothrow
     {
         SDL_Rect rect = {x, y, width, height};
         return fillRect(&rect);
     }
 
-    int fillRect(SDL_Rect* rect) @nogc nothrow
+    HalResult fillRect(SDL_Rect* rect) @nogc nothrow
     {
-        const int zeroOrErrorCode = SDL_RenderFillRect(ptr, rect);
-        return zeroOrErrorCode;
+        immutable int zeroOrErrorCode = SDL_RenderFillRect(ptr, rect);
+        return HalResult(zeroOrErrorCode);
     }
 
-    int copyEx(SdlTexture texture, SDL_Rect* srcRect, SDL_Rect* destRect, double angle, SDL_Point* center, SDL_RendererFlip flip = SDL_RendererFlip
+    HalResult copyEx(SdlTexture texture, SDL_Rect* srcRect, SDL_Rect* destRect, double angle, SDL_Point* center, SDL_RendererFlip flip = SDL_RendererFlip
             .SDL_FLIP_NONE)
     {
-        const int zeroOrErrorCode = SDL_RenderCopyEx(ptr, texture.getStruct, srcRect, destRect, angle, center, flip);
-        return zeroOrErrorCode;
+        immutable int zeroOrErrorCode = SDL_RenderCopyEx(ptr, texture.getSdlObject, srcRect, destRect, angle, center, flip);
+        return HalResult(zeroOrErrorCode);
     }
 
-    int getOutputSize(int* width, int* height) @nogc nothrow
+    HalResult getOutputSize(int* width, int* height) @nogc nothrow
     {
-        const int zeroOrErrorCode = SDL_GetRendererOutputSize(ptr, width, height);
-        return zeroOrErrorCode;
+        immutable int zeroOrErrorCode = SDL_GetRendererOutputSize(ptr, width, height);
+        return HalResult(zeroOrErrorCode);
     }
 
     void setRendererTarget(SDL_Texture* texture)

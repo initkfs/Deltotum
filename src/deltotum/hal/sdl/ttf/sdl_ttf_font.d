@@ -1,5 +1,6 @@
 module deltotum.hal.sdl.ttf.sdl_ttf_font;
 
+import deltotum.hal.sdl.base.sdl_object_wrapper: SdlObjectWrapper;
 import deltotum.hal.sdl.ttf.base.sdl_ttf_object : SdlTTFObject;
 
 import bindbc.sdl;
@@ -9,11 +10,10 @@ import std.string : toStringz;
 /**
  * Authors: initkfs
  */
-class SdlTTFFont : SdlTTFObject
+class SdlTTFFont : SdlObjectWrapper!TTF_Font
 {
     private
     {
-        TTF_Font* ptr;
         string path;
         int fontSize;
     }
@@ -35,12 +35,7 @@ class SdlTTFFont : SdlTTFObject
         }
     }
 
-    TTF_Font* getStruct()
-    {
-        return ptr;
-    }
-
-    void destroy()
+    override void destroy()
     {
         TTF_CloseFont(ptr);
     }

@@ -1,5 +1,6 @@
 module deltotum.hal.sdl.sdl_texture;
 
+import deltotum.hal.result.hal_result: HalResult;
 import deltotum.hal.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 import deltotum.hal.sdl.sdl_surface : SdlSurface;
@@ -29,10 +30,10 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         super();
     }
 
-    int query(int* width, int* height, uint* format, SDL_TextureAccess* access)
+    HalResult query(int* width, int* height, uint* format, SDL_TextureAccess* access)
     {
-        const int zeroOrErrorCode = SDL_QueryTexture(ptr, format, access, width, height);
-        return zeroOrErrorCode;
+        immutable int zeroOrErrorCode = SDL_QueryTexture(ptr, format, access, width, height);
+        return HalResult(zeroOrErrorCode);
     }
 
     int getSize(int* width, int* height)
@@ -44,7 +45,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         SDL_TextureAccess access, int w,
         int h)
     {
-        ptr = SDL_CreateTexture(renderer.getStruct, format, access, w, h);
+        ptr = SDL_CreateTexture(renderer.getSdlObject, format, access, w, h);
         if (ptr is null)
         {
             string error = "Unable create texture.";
@@ -71,7 +72,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
 
     void fromRenderer(SdlRenderer renderer, SdlSurface surface)
     {
-        ptr = SDL_CreateTextureFromSurface(renderer.getStruct, surface.getStruct);
+        ptr = SDL_CreateTextureFromSurface(renderer.getSdlObject, surface.getSdlObject);
         if (ptr is null)
         {
             string error = "Unable create texture from renderer and surface.";
@@ -85,10 +86,10 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         SDL_SetTextureBlendMode(ptr, SDL_BLENDMODE_BLEND);
     }
 
-    int changeOpacity(double opacity) @nogc nothrow
+    HalResult changeOpacity(double opacity) @nogc nothrow
     {
-        const int zeroOrErrorCode = SDL_SetTextureAlphaMod(ptr, cast(ubyte)(255 * opacity));
-        return zeroOrErrorCode;
+        immutable int zeroOrErrorCode = SDL_SetTextureAlphaMod(ptr, cast(ubyte)(255 * opacity));
+        return HalResult(zeroOrErrorCode);
     }
 
     override void destroy() @nogc nothrow
@@ -106,7 +107,10 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         _opacity = opacity;
         if (ptr)
         {
-            changeOpacity(_opacity);
+            if(const err = changeOpacity(_opacity)){
+                //TODO logging?
+                return;
+            }
         }
     }
 

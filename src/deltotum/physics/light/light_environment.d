@@ -24,7 +24,7 @@ class LightEnvironment : Image
         lightTexture.create(window.renderer, SDL_PIXELFORMAT_RGBA32,
             SDL_TextureAccess.SDL_TEXTUREACCESS_TARGET, cast(int) window.getWidth,
             cast(int) window.getHeight);
-        SDL_SetTextureBlendMode(lightTexture.getStruct, SDL_BLENDMODE_MOD);
+        SDL_SetTextureBlendMode(lightTexture.getSdlObject, SDL_BLENDMODE_MOD);
 
         this.texture = lightTexture;
         int width, height;
@@ -32,23 +32,25 @@ class LightEnvironment : Image
         this.width = width;
         this.height = height;
 
-        SDL_SetRenderTarget(window.renderer.getStruct, texture.getStruct);
+        SDL_SetRenderTarget(window.renderer.getSdlObject, texture.getSdlObject);
         //TODO night color?
-        window.renderer.setRenderDrawColor(60, 0, 100, 255);
-        SDL_RenderFillRect(window.renderer.getStruct, null);
+        if(const err = window.renderer.setRenderDrawColor(60, 0, 100, 255)){
+            throw new Exception("Error setting render color to create light");
+        }
+        SDL_RenderFillRect(window.renderer.getSdlObject, null);
 
         foreach (light; lights)
         {
             light.drawImage;
         }
 
-        SDL_SetRenderTarget(window.renderer.getStruct, null);
+        SDL_SetRenderTarget(window.renderer.getSdlObject, null);
     }
 
     void addLight(LightSpot light)
     {
         //TODO validate
-        SDL_SetTextureBlendMode(light.getStruct, SDL_BLENDMODE_ADD);
+        SDL_SetTextureBlendMode(light.getSdlObject, SDL_BLENDMODE_ADD);
         lights ~= light;
     }
 

@@ -23,17 +23,18 @@ abstract class SdlObjectWrapper(T) : SdlObject
 
     this(T* ptr)
     {
-        enforce(ptr !is null, "Pointer must not be null");
+        enforce(ptr !is null, "SDL object pointer must not be null");
         this.ptr = ptr;
     }
 
-    T* getStruct() @nogc nothrow @safe
+    T* getSdlObject() @nogc nothrow @safe
     {
         return ptr;
     }
 
-    void updateStruct(T* newPtr)
+    void updateObject(T* newPtr)
     {
+        enforce(newPtr !is null, "New SDL object pointer must not be null");
         if (ptr)
         {
             destroy;

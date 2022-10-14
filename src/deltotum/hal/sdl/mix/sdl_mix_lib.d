@@ -1,5 +1,6 @@
 module deltotum.hal.sdl.mix.sdl_mix_lib;
 
+import deltotum.hal.result.hal_result : HalResult;
 import deltotum.hal.sdl.mix.base.sdl_mix_object : SdlMixObject;
 
 import bindbc.sdl;
@@ -41,13 +42,21 @@ class SdlMixLib : SdlMixObject
         }
     }
 
-     int openAudio(int frequency, ushort format, int channels, int chunksize)
+    HalResult openAudio(int frequency, ushort audioFormat, int channels, int chunksize)
     {
-        const int zeroOrErrorCode = Mix_OpenAudio(frequency, format, channels, chunksize);
-        return zeroOrErrorCode;
+        immutable int zeroOrErrorCode = Mix_OpenAudio(frequency, audioFormat, channels, chunksize);
+        if (zeroOrErrorCode < 0)
+        {
+            import std.format : format;
+
+            immutable errMessage = format("Error opening audio with frequency %s, format %s, channels %s, chunksize %s", frequency, audioFormat, channels, chunksize);
+            return HalResult(zeroOrErrorCode, errMessage);
+        }
+        return HalResult();
     }
 
-    void closeAudio(){
+    void closeAudio()
+    {
         Mix_CloseAudio();
     }
 

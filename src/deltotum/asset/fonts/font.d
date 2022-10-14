@@ -36,9 +36,9 @@ class Font
         }
     }
 
-    TTF_Font* getStruct()
+    TTF_Font* getSdlObject()
     {
-        return font.getStruct;
+        return font.getSdlObject;
     }
 
 }

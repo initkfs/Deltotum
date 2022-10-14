@@ -89,8 +89,10 @@ class Window
         int outputWidth;
         int outputHeight;
 
-        //TODO check errors
-        renderer.getOutputSize(&outputWidth, &outputHeight);
+        if(const err = renderer.getOutputSize(&outputWidth, &outputHeight)){
+            //TODO logging
+            return 0;
+        }
 
         int windowWidth;
         int windowHeight;

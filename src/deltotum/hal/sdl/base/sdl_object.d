@@ -12,24 +12,35 @@ class SdlObject
     string getError() const nothrow
     {
         const char* errorPtr = SDL_GetError();
+        immutable err = ptrToError(errorPtr);
+        return err;
+    }
+
+    protected string ptrToError(scope const(char*) errorPtr) const nothrow
+    {
+        if (!errorPtr)
+        {
+            return null;
+        }
         immutable string error = errorPtr.fromStringz.idup;
         return error.length > 0 ? error : null;
     }
 
-    void clearError() const @nogc nothrow
+    bool clearError() const @nogc nothrow
     {
-        //Move from SdlObject to prevent accidental call and error loss
         SDL_ClearError();
+        return true;
     }
 
     bool toBool(SDL_bool value) const @nogc nothrow @safe
     {
-        if (value == SDL_bool.SDL_TRUE)
+        final switch (value)
         {
+        case SDL_TRUE:
             return true;
+        case SDL_FALSE:
+            return false;
         }
-        //TODO but what happens if there are other values in the SDL_bool type.
-        return false;
     }
 
     SDL_bool fromBool(bool value) const @nogc nothrow @safe
@@ -37,13 +48,14 @@ class SdlObject
         return value ? SDL_bool.SDL_TRUE : SDL_bool.SDL_FALSE;
     }
 
-    string getSdlVersionInfo() const
+    string getSdlVersionInfo() const nothrow
     {
-        import std.format : format;
+        import std.conv : text;
 
         SDL_version ver;
         SDL_GetVersion(&ver);
-        return format("%s.%s.%s", ver.major, ver.minor, ver.patch);
+        //format is not nothrow
+        return text(ver.major, ".", ver.minor, ".", ver.patch);
     }
 
     string getHint(string name) const nothrow
@@ -62,15 +74,11 @@ class SdlObject
         SDL_ClearHints();
     }
 
-    bool setHint(string name, string value)
+    bool setHint(string name, string value) const nothrow
     {
         //TODO string loss due to garbage collector?
         SDL_bool isSet = SDL_SetHint(name.toStringz,
             value.toStringz);
-        if (const err = getError)
-        {
-            throw new Exception(err);
-        }
         return toBool(isSet);
     }
 }

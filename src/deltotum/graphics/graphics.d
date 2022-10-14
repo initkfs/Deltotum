@@ -1,5 +1,7 @@
 module deltotum.graphics.graphics;
 
+import deltotum.application.components.units.service.loggable_unit;
+
 import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 import deltotum.graphics.colors.color : Color;
 import deltotum.math.vector2d : Vector2d;
@@ -7,12 +9,13 @@ import deltotum.math.math : Math;
 import deltotum.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.graphics.themes.theme : Theme;
 
+import std.experimental.logger.core : Logger;
 import std.conv : to;
 
 /**
  * Authors: initkfs
  */
-class Graphics
+class Graphics : LoggableUnit
 {
     @property Theme theme;
 
@@ -21,8 +24,10 @@ class Graphics
         SdlRenderer renderer;
     }
 
-    this(SdlRenderer renderer, Theme theme)
+    this(Logger logger, SdlRenderer renderer, Theme theme)
     {
+        super(logger);
+
         import std.exception : enforce;
 
         enforce(renderer !is null, "Renderer must not be null");
@@ -40,19 +45,30 @@ class Graphics
 
     private void adjustRender(Color color)
     {
-        renderer.setRenderDrawColor(color.r, color.g, color.b, color.alphaNorm);
+        if(const err = renderer.setRenderDrawColor(color.r, color.g, color.b, color.alphaNorm)){
+            logger.errorf("Adjust render error. %s", err);
+        }
+    }
+
+    void drawLine(double startX, double startY, double endX, double endY)
+    {
+        if(const err = renderer.drawLine(toInt(startX), toInt(startY), toInt(endX), toInt(endY))){
+            logger.errorf("Line drawing error. %s", err);
+        }
     }
 
     void drawLine(double startX, double startY, double endX, double endY, Color color = Color.black)
     {
         adjustRender(color);
-        renderer.drawLine(toInt(startX), toInt(startY), toInt(endX), toInt(endY));
+        drawLine(startX, startY, endX, endY);
     }
 
     void drawPoint(double x, double y, Color color)
     {
         adjustRender(color);
-        renderer.drawPoint(toInt(x), toInt(y));
+        if(const err = renderer.drawPoint(toInt(x), toInt(y))){
+            logger.errorf("Point drawing error. %s", err);
+        }
     }
 
     void drawPoints(Vector2d[] points, Color color)
@@ -67,7 +83,9 @@ class Graphics
     void drawLines(Vector2d[] points, Color color)
     {
         adjustRender(color);
-        renderer.drawLines(points);
+        if(const err = renderer.drawLines(points)){
+            logger.errorf("Lines drawing error. %s", err);
+        }
     }
 
     Vector2d[] linePoints(int startX, int startY, int endX, int endY) const nothrow pure @safe
@@ -203,13 +221,13 @@ class Graphics
 
         while (yOffset >= xOffset)
         {
-            renderer.drawLine(xCenter - yOffset, yCenter + xOffset,
+            drawLine(xCenter - yOffset, yCenter + xOffset,
                 xCenter + yOffset, yCenter + xOffset);
-            renderer.drawLine(xCenter - xOffset, yCenter + yOffset,
+            drawLine(xCenter - xOffset, yCenter + yOffset,
                 xCenter + xOffset, yCenter + yOffset);
-            renderer.drawLine(xCenter - xOffset, yCenter - yOffset,
+            drawLine(xCenter - xOffset, yCenter - yOffset,
                 xCenter + xOffset, yCenter - yOffset);
-            renderer.drawLine(xCenter - yOffset, yCenter - xOffset,
+            drawLine(xCenter - yOffset, yCenter - xOffset,
                 xCenter + yOffset, yCenter - xOffset);
 
             if (decisionParam >= decisionOffset * xOffset)
@@ -247,7 +265,9 @@ class Graphics
     void drawRect(double x, double y, double width, double height, Color fillColor)
     {
         adjustRender(fillColor);
-        renderer.fillRect(toInt(x), toInt(y), toInt(width), toInt(height));
+        if(const err = renderer.fillRect(toInt(x), toInt(y), toInt(width), toInt(height))){
+            logger.errorf("Draw rect error. %s", err);
+        }
     }
 
     void drawRect(double x, double y, double width, double height, GraphicStyle style = GraphicStyle
@@ -281,7 +301,7 @@ class Graphics
                 start = end;
                 continue;
             }
-            renderer.drawLine(toInt(start.x), toInt(start.y), toInt(end.x), toInt(end.y));
+            drawLine(toInt(start.x), toInt(start.y), toInt(end.x), toInt(end.y));
             start = end;
         }
     }

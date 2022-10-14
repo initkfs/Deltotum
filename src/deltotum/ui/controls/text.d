@@ -168,8 +168,11 @@ class Text : Control
                 Rect2d textureBounds = glyph.geometry;
                 Rect2d destBounds = Rect2d(position.x, position.y, glyph.geometry.width, glyph
                         .geometry.height);
-                window.renderer.drawTexture(assets.defaultBitmapFont.nativeTexture, textureBounds, destBounds, angle, Flip
-                        .none);
+                if (const err = window.renderer.drawTexture(assets.defaultBitmapFont.nativeTexture, textureBounds, destBounds, angle, Flip
+                        .none))
+                {
+                    //TODO logging
+                }
 
                 position.x += glyph.geometry.width;
             }
