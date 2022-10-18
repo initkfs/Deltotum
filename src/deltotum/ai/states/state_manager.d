@@ -1,4 +1,4 @@
-module deltotum.ai.state.state_manager;
+module deltotum.ai.states.state_manager;
 
 import std.container.util: make;
 import std.container.dlist : DList;
