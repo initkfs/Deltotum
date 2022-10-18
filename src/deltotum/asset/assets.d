@@ -1,4 +1,4 @@
-module deltotum.asset.asset_manager;
+module deltotum.asset.assets;
 
 import deltotum.application.components.units.simple_unit : SimpleUnit;
 import deltotum.application.components.units.service.loggable_unit : LoggableUnit;
@@ -16,7 +16,7 @@ import deltotum.ui.texts.fonts.bitmap.bitmap_font: BitmapFont;
 /**
  * Authors: initkfs
  */
-class AssetManager : LoggableUnit
+class Assets : LoggableUnit
 {
     @property Font defaultFont;
     @property BitmapFont defaultBitmapFont;

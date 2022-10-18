@@ -5,7 +5,7 @@ module deltotum.application.components.units.unitable;
  */
 class Unitable
 {
-    string getClassName() @safe pure nothrow const
+    string getClassName() const nothrow pure @safe
     {
         return this.classinfo.name;
     }

@@ -3,7 +3,7 @@ module deltotum.application.sdl.sdl_application;
 import deltotum.application.graphics_application : GraphicsApplication;
 import deltotum.events.event_manager : EventManager;
 import deltotum.hal.sdl.events.sdl_event_processor : SdlEventProcessor;
-import deltotum.asset.asset_manager : AssetManager;
+import deltotum.asset.assets : Assets;
 import deltotum.asset.fonts.font : Font;
 import deltotum.scene.scene_manager : SceneManager;
 import deltotum.audio.audio : Audio;
@@ -165,7 +165,7 @@ class SdlApplication : GraphicsApplication
         logger.tracef("Create stdout logger, name '%s', level '%s'",
             consoleLoggerName, consoleLoggerLevel);
 
-        auto assetManager = new AssetManager(logger);
+        auto assetManager = new Assets(logger);
         assets = assetManager;
 
         //TODO from config

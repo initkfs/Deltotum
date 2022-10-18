@@ -9,29 +9,21 @@ class LoggableUnit
 {
     private
     {
-        Logger _logger;
+        const Logger _logger;
     }
 
-    @safe pure this(Logger logger)
+    this(Logger logger)
     {
         import std.exception : enforce;
 
         enforce(logger !is null, "Logger must not be null");
 
-        this.logger = logger;
+        this._logger = logger;
     }
 
-    @property Logger logger() @safe pure nothrow
+    Logger logger() @safe pure nothrow
     out (_logger; _logger !is null)
     {
         return _logger;
-    }
-
-    @property void logger(Logger logger) @safe pure
-    {
-        import std.exception : enforce;
-
-        enforce(logger !is null, "Logger must not be null");
-        _logger = logger;
     }
 }
