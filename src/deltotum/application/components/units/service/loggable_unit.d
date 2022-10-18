@@ -9,7 +9,7 @@ class LoggableUnit
 {
     private
     {
-        const Logger _logger;
+        Logger _logger;
     }
 
     this(Logger logger)
