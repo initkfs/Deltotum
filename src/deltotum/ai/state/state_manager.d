@@ -1,21 +1,25 @@
-module deltotum.ai.fsm.fsm;
+module deltotum.ai.state.state_manager;
 
+import std.container.util: make;
 import std.container.dlist : DList;
 import std.typecons : Nullable;
+
+alias NumericStateManager = StateManager!int;
+alias StringStateManager = StateManager!string;
 
 /**
  * Authors: initkfs
  */
-class Fsm(T)
+class StateManager(T)
 {
     protected
     {
         DList!T states;
     }
 
-    this() nothrow pure @safe
+    this() nothrow @safe
     {
-        states = DList!T();
+        states = make!(DList!T)();
     }
 
     Nullable!T state() @nogc nothrow pure @safe
@@ -34,7 +38,6 @@ class Fsm(T)
     {
         import std.traits : isPointer, isAssociativeArray;
 
-        //other?
         static if (__traits(compiles, state !is null))
         {
             import std.exception : enforce;
@@ -51,6 +54,11 @@ class Fsm(T)
     bool isEmpty() const @nogc nothrow pure @safe
     {
         return states.empty;
+    }
+
+    size_t length() nothrow pure @safe {
+        import std.range : walkLength;
+        return states[].walkLength;
     }
 
     bool clear() nothrow pure @safe
@@ -72,4 +80,32 @@ class Fsm(T)
         states.removeBack;
         return true;
     }
+}
+
+unittest {
+    auto fsm = new StateManager!string;
+    assert(fsm.isEmpty);
+    assert(fsm.state.isNull);
+    assert(fsm.length == 0);
+    
+    enum state1 = "state1";
+    assert(fsm.push(state1));
+    assert(!fsm.isEmpty);
+    assert(fsm.length == 1);
+
+    enum state2 = "state2";
+    assert(fsm.push(state2));
+    assert(fsm.length == 2);
+
+    immutable lastState = fsm.state;
+    assert(!lastState.isNull);
+    assert(lastState.get == state2);
+
+    assert(fsm.pop);
+    assert(fsm.length == 1);
+    assert(fsm.state.get == state1);
+
+    assert(fsm.pop);
+    assert(fsm.isEmpty);
+    assert(fsm.length == 0);
 }
