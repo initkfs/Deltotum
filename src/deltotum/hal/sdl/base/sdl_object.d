@@ -1,13 +1,14 @@
 module deltotum.hal.sdl.base.sdl_object;
 
+import deltotum.hal.object.hal_object : HalObject;
+
 import std.string : toStringz, fromStringz;
 
 import bindbc.sdl;
-
 /**
  * Authors: initkfs
  */
-class SdlObject
+class SdlObject : HalObject
 {
     string getError() const nothrow
     {
@@ -16,7 +17,7 @@ class SdlObject
         return err;
     }
 
-    protected string ptrToError(scope const(char*) errorPtr) const nothrow
+    protected string ptrToError(const char* errorPtr) const nothrow
     {
         if (!errorPtr)
         {

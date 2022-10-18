@@ -142,13 +142,18 @@ class SdlWindow : SdlObjectWrapper!SDL_Window
         return SDL_GetWindowID(ptr);
     }
 
-    override void destroy()
+    override protected bool destroyPtr()
     {
-        SDL_DestroyWindow(ptr);
-        if (auto err = getError)
+        if (ptr)
         {
-            throw new Exception("Unable to destroy SDL window: " ~ err);
+            SDL_DestroyWindow(ptr);
+            if (auto err = getError)
+            {
+                throw new Exception("Unable to destroy SDL window: " ~ err);
+            }
+            return true;
         }
+        return false;
     }
 
 }

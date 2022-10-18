@@ -100,12 +100,11 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface
             getPixelFormat.Gmask, getPixelFormat.Bmask, getPixelFormat.Amask);
 
         scaleToPtr(newSurfacePtr, &dest);
-        destroyPtr(ptr);
-        ptr = newSurfacePtr;
+        updateObject(newSurfacePtr);
         return true;
     }
 
-    SDL_PixelFormat* getPixelFormat() @nogc nothrow @safe
+    inout(SDL_PixelFormat*) getPixelFormat() inout @nogc nothrow @safe
     {
         return ptr.format;
     }
@@ -120,13 +119,13 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface
         return ptr.h;
     }
 
-    void destroyPtr(SDL_Surface* ptr) @nogc nothrow
+    override protected bool destroyPtr() @nogc nothrow
     {
-        SDL_FreeSurface(ptr);
-    }
-
-    override void destroy() @nogc nothrow
-    {
-        destroyPtr(ptr);
+        if (ptr)
+        {
+            SDL_FreeSurface(ptr);
+            return true;
+        }
+        return false;
     }
 }

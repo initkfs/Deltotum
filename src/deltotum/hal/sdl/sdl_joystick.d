@@ -46,8 +46,13 @@ class SdlJoystick : SdlObjectWrapper!SDL_Joystick
         return new SdlJoystick(0);
     }
 
-    override void destroy() @nogc nothrow
+    override protected bool destroyPtr() @nogc nothrow
     {
-        SDL_JoystickClose(ptr);
+        if (ptr)
+        {
+            SDL_JoystickClose(ptr);
+            return true;
+        }
+        return false;
     }
 }

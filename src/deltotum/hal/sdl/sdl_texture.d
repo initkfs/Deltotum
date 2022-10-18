@@ -1,11 +1,11 @@
 module deltotum.hal.sdl.sdl_texture;
 
-import deltotum.hal.result.hal_result: HalResult;
+import deltotum.hal.result.hal_result : HalResult;
 import deltotum.hal.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 import deltotum.hal.sdl.sdl_surface : SdlSurface;
 
-import deltotum.math.shapes.rect2d: Rect2d;
+import deltotum.math.shapes.rect2d : Rect2d;
 
 import bindbc.sdl;
 
@@ -30,13 +30,13 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         super();
     }
 
-    HalResult query(int* width, int* height, uint* format, SDL_TextureAccess* access)
+    HalResult query(int* width, int* height, uint* format, SDL_TextureAccess* access) @nogc nothrow
     {
         immutable int zeroOrErrorCode = SDL_QueryTexture(ptr, format, access, width, height);
         return HalResult(zeroOrErrorCode);
     }
 
-    int getSize(int* width, int* height)
+    int getSize(int* width, int* height) @nogc nothrow
     {
         return query(width, height, null, null);
     }
@@ -65,7 +65,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
     }
 
     //SDL_BlendMode
-    void setBlendModeBlend()
+    void setBlendModeBlend() @nogc nothrow
     {
         SDL_SetTextureBlendMode(ptr, SDL_BLENDMODE_BLEND);
     }
@@ -92,9 +92,14 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         return HalResult(zeroOrErrorCode);
     }
 
-    override void destroy() @nogc nothrow
+    override protected bool destroyPtr() @nogc nothrow
     {
-        SDL_DestroyTexture(ptr);
+        if (ptr)
+        {
+            SDL_DestroyTexture(ptr);
+            return true;
+        }
+        return false;
     }
 
     @property double opacity() @safe pure nothrow
@@ -107,7 +112,8 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         _opacity = opacity;
         if (ptr)
         {
-            if(const err = changeOpacity(_opacity)){
+            if (const err = changeOpacity(_opacity))
+            {
                 //TODO logging?
                 return;
             }

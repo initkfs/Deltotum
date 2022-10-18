@@ -1,6 +1,6 @@
 module deltotum.hal.sdl.ttf.sdl_ttf_font;
 
-import deltotum.hal.sdl.base.sdl_object_wrapper: SdlObjectWrapper;
+import deltotum.hal.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.hal.sdl.ttf.base.sdl_ttf_object : SdlTTFObject;
 
 import bindbc.sdl;
@@ -35,9 +35,14 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font
         }
     }
 
-    override void destroy()
+    override bool destroyPtr()
     {
-        TTF_CloseFont(ptr);
+        if (ptr)
+        {
+            TTF_CloseFont(ptr);
+            return true;
+        }
+        return false;
     }
 
 }

@@ -16,7 +16,7 @@ import bindbc.sdl;
  */
 class SdlRenderer : SdlObjectWrapper!SDL_Renderer
 {
-    @property SdlWindow window;
+    SdlWindow window;
 
     this(SDL_Renderer* ptr)
     {
@@ -26,7 +26,12 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
     this(SdlWindow window, uint flags = 0)
     {
         super();
+
+        import std.exception : enforce;
+
+        enforce(window !is null, "Window must not be null");
         this.window = window;
+
         enum firstDriverIndex = -1;
         ptr = SDL_CreateRenderer(window.getSdlObject,
             firstDriverIndex, flags);
@@ -90,7 +95,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         return drawRect(&rect);
     }
 
-    HalResult drawRect(SDL_Rect* rect) @nogc nothrow
+    HalResult drawRect(const SDL_Rect* rect) @nogc nothrow
     {
         immutable int zeroOrErrorCode = SDL_RenderDrawRect(ptr, rect);
         return HalResult(zeroOrErrorCode);
@@ -174,13 +179,13 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         return fillRect(&rect);
     }
 
-    HalResult fillRect(SDL_Rect* rect) @nogc nothrow
+    HalResult fillRect(const SDL_Rect* rect) @nogc nothrow
     {
         immutable int zeroOrErrorCode = SDL_RenderFillRect(ptr, rect);
         return HalResult(zeroOrErrorCode);
     }
 
-    HalResult copyEx(SdlTexture texture, SDL_Rect* srcRect, SDL_Rect* destRect, double angle, SDL_Point* center, SDL_RendererFlip flip = SDL_RendererFlip
+    HalResult copyEx(SdlTexture texture, const SDL_Rect* srcRect, const SDL_Rect* destRect, double angle, const SDL_Point* center, SDL_RendererFlip flip = SDL_RendererFlip
             .SDL_FLIP_NONE)
     {
         immutable int zeroOrErrorCode = SDL_RenderCopyEx(ptr, texture.getSdlObject, srcRect, destRect, angle, center, flip);
@@ -203,12 +208,17 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         SDL_SetRenderTarget(ptr, null);
     }
 
-    override void destroy()
+    override protected bool destroyPtr()
     {
-        SDL_DestroyRenderer(ptr);
-        if (const err = getError)
+        if (ptr)
         {
-            throw new Exception("Unable to destroy renderer: " ~ err);
+            SDL_DestroyRenderer(ptr);
+            if (const err = getError)
+            {
+                throw new Exception("Unable to destroy renderer: " ~ err);
+            }
+            return true;
         }
+        return false;
     }
 }

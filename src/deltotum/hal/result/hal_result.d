@@ -7,22 +7,31 @@ import core.attribute : mustuse;
  */
 @mustuse struct HalResult
 {
-    immutable static codeSuccess = 0;
-
-    int code = codeSuccess;
-    string message;
-
-    bool isError() const nothrow @nogc
+    immutable
     {
-        return message.length > 0 || code != codeSuccess;
+        int code;
+        string message;
+        int codeSuccess;
+    }
+
+    this(int code, string message = "", int codeSuccess = 0) inout nothrow @nogc @safe
+    {
+        this.code = code;
+        this.message = message;
+        this.codeSuccess = codeSuccess;
+    }
+
+    bool isError() const nothrow @nogc pure @safe
+    {
+        return code != codeSuccess;
     }
 
     alias isError this;
 
-    string toString() const nothrow
+    string toString() const nothrow pure @safe
     {
         import std.conv : text;
-
-        return text(message, " Code: ", code);
+        immutable string stringMessage = message.length > 0 ? message : "\"\"";
+        return text("Result code: ", code, ". ", "Message: ", stringMessage);
     }
 }
