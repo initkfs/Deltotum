@@ -5,6 +5,7 @@ import deltotum.i18n.langs.glyph : Glyph;
 
 import deltotum.asset.fonts.font : Font;
 import deltotum.display.textures.texture : Texture;
+import deltotum.graphics.colors.color: Color;
 
 import deltotum.ui.texts.fonts.bitmap.bitmap_font : BitmapFont;
 import deltotum.i18n.langs.alphabets.alphabet : Alphabet;
@@ -38,7 +39,7 @@ class BitmapFontGenerator : FontGenerator
 
         SDL_Rect glyphPosition;
         Glyph[] glyphs = [];
-        SDL_Color foregroundColor = {255, 255, 255, 255};
+        Color foregroundColor = Color.white;
 
         //TTF_SetFontHinting(font.getSdlObject, TTF_HINTING_MONO);
 
@@ -50,9 +51,9 @@ class BitmapFontGenerator : FontGenerator
             {
                 const(char*) utfPtr = toUTFz!(const(char)*)([letter]);
                 //TODO does SDL keep a reference?
-                SDL_Surface* glyphRepresentation = TTF_RenderUTF8_Blended(font.getSdlObject, utfPtr, foregroundColor);
-                glyphPosition.w = glyphRepresentation.w;
-                glyphPosition.h = glyphRepresentation.h;
+                SdlSurface glyphRepresentation = font.renderSurface(utfPtr, foregroundColor);
+                glyphPosition.w = glyphRepresentation.getSdlObject.w;
+                glyphPosition.h = glyphRepresentation.getSdlObject.h;
 
                 if (glyphPosition.x + glyphPosition.w >= fontTextureWidth)
                 {
@@ -69,9 +70,8 @@ class BitmapFontGenerator : FontGenerator
                 glyphs ~= Glyph(alphabet, letter, Rect2d(glyphPosition.x, glyphPosition.y, glyphPosition.w, glyphPosition
                         .h));
 
-                SDL_BlitSurface(glyphRepresentation, null, fontMapSurface.getSdlObject, &glyphPosition);
-
-                SDL_FreeSurface(glyphRepresentation);
+                glyphRepresentation.blit(null, fontMapSurface.getSdlObject, &glyphPosition);
+                glyphRepresentation.destroy;
 
                 glyphPosition.x += glyphPosition.w;
             }

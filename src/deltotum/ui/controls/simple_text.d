@@ -3,8 +3,9 @@ module deltotum.ui.controls.simple_text;
 import deltotum.ui.controls.control : Control;
 import deltotum.asset.fonts.font : Font;
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
-import deltotum.display.textures.texture: Texture;
+import deltotum.display.textures.texture : Texture;
 import deltotum.math.shapes.rect2d : Rect2d;
+import deltotum.graphics.colors.color : Color;
 
 import std.string : toStringz;
 
@@ -47,38 +48,19 @@ class SimpleText : Control
         fontTexture.drawContent;
     }
 
-    protected void updateFont()
+    protected void updateFont(Color color = Color.white)
     {
-        SDL_Color color = {255, 255, 255, 255};
-        //TODO toStringz and GC
-        SDL_Surface* fontSurfacePtr = TTF_RenderUTF8_Blended(font.getSdlObject, text.toStringz, color);
-        if (!fontSurfacePtr)
-        {
-            //TODO return error
-            throw new Exception("Unable to render text");
-        }
+        auto fontSurface = font.renderSurface(text, color);
+        //TODO this.fontTexture !is null
+        fontTexture = new Texture();
+        fontTexture.loadFromSurface(fontSurface);
+        build(fontTexture);
 
-        auto fontTexturePtr = SDL_CreateTextureFromSurface(window.renderer.getSdlObject, fontSurfacePtr);
-        if (!fontTexturePtr)
-        {
-            throw new Exception("Unable to create texture from text");
-        }
-
-        if (fontTexture !is null)
-        {
-            fontTexture.nativeTexture.updateObject(fontTexturePtr);
-        }
-        else
-        {
-            fontTexture = new Texture(new SdlTexture(fontTexturePtr));
-            build(fontTexture);
-        }
+        fontSurface.destroy;
 
         const bounds = fontTexture.bounds;
         this.width = bounds.width;
         this.height = bounds.height;
-
-        SDL_FreeSurface(fontSurfacePtr);
     }
 
     override void update(double delta)

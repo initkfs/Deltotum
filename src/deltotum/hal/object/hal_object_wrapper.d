@@ -42,6 +42,10 @@ mixin template HalObjectWrapper(T)
         return ptr;
     }
 
+    bool isEmpty() @nogc nothrow pure @safe {
+        return ptr is null;
+    }
+
     void updateObject(T* newPtr)
     {
         enforce(newPtr !is null, "New object pointer must not be null");

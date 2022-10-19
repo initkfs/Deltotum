@@ -104,6 +104,10 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface
         return true;
     }
 
+    void blit(const SDL_Rect* srcRect, SDL_Surface* dst, SDL_Rect* dstRect){
+        SDL_BlitSurface(ptr, srcRect, dst, dstRect);
+    }
+
     inout(SDL_PixelFormat*) getPixelFormat() inout @nogc nothrow @safe
     {
         return ptr.format;
