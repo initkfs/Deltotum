@@ -20,8 +20,8 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface
         super(ptr);
     }
 
-    void createRGBSurface(uint flags, int width, int height, int depth,
-        uint rmask, uint gmask, uint bmask, uint amask)
+    void createRGBSurface(uint flags = 0, int width = 10, int height = 10, int depth = 32,
+        uint rmask = 0, uint gmask = 0, uint bmask = 0, uint amask = 0)
     {
         ptr = createRGBSurfacePtr(flags, width, height, depth, rmask, gmask, bmask, amask);
     }

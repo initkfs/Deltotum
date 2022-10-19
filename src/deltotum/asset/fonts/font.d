@@ -1,18 +1,19 @@
 module deltotum.asset.fonts.font;
 
-import deltotum.application.components.uni.uni_component;
+import deltotum.application.components.units.service.loggable_unit : LoggableUnit;
+import deltotum.graphics.colors.color : Color;
 
 import deltotum.hal.sdl.ttf.sdl_ttf_font : SdlTTFFont;
-import deltotum.graphics.colors.color : Color;
 import deltotum.hal.sdl.sdl_surface : SdlSurface;
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
 
-import std.string: toStringz;
+import std.experimental.logger.core : Logger;
+import std.string : toStringz;
 
 /**
  * Authors: initkfs
  */
-class Font
+class Font : LoggableUnit
 {
     private
     {
@@ -22,8 +23,9 @@ class Font
         int fontSize;
     }
 
-    this(string fontPath, int fontSize = 12)
+    this(Logger logger, string fontPath, int fontSize = 12)
     {
+        super(logger);
         //TODO validate
         this.fontPath = fontPath;
         this.fontSize = fontSize;
@@ -43,14 +45,18 @@ class Font
         if (const fontRenderErr = font.render(fontSurface, text, color.r, color.g, color.b, color
                 .alphaNorm))
         {
-            //TODO logging?
-            throw new Exception(fontRenderErr.toString);
+            logger.error(fontRenderErr.toString);
+            fontSurface.createRGBSurface;
+            return fontSurface;
         }
 
         if (fontSurface.isEmpty)
         {
-            //TODO logging?
-            throw new Exception("Font surface is empty");
+            import std.string : fromStringz;
+
+            logger.errorf("Received empty surface for text: %s", text.fromStringz.idup);
+            fontSurface.createRGBSurface;
+            return fontSurface;
         }
 
         return fontSurface;

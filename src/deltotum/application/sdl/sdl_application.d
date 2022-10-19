@@ -165,7 +165,17 @@ class SdlApplication : GraphicsApplication
         logger.tracef("Create stdout logger, name '%s', level '%s'",
             consoleLoggerName, consoleLoggerLevel);
 
-        auto assetManager = new Assets(logger);
+        //TODO move to config
+        import std.file : thisExePath, exists, isDir;
+        import std.path: buildPath, dirName;
+        immutable assetsDirPath = "data/assets";
+        immutable assetsDir = buildPath(thisExePath.dirName, assetsDirPath);
+        if (!exists(assetsDir) || !isDir(assetsDir))
+        {
+            throw new Exception("Unable to find resource directory: " ~ assetsDir);
+        }
+
+        auto assetManager = new Assets(logger, assetsDir);
         assets = assetManager;
 
         //TODO from config
