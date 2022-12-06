@@ -87,8 +87,9 @@ class SdlApplication : GraphicsApplication
 
         auto multiLogger = new MultiLogger(LogLevel.trace);
         this.logger = multiLogger;
+        //FIXME, dmd v.101: non-shared method `std.logger.multilogger.MultiLogger.insertLogger` is not callable using a `shared` object
         //set new global default logger
-        sharedLog = multiLogger;
+        () @trusted { sharedLog = cast(shared) multiLogger; }();
 
         import deltotum.debugging.debugger : Debugger;
         import deltotum.debugging.profiling.profilers.time_profiler : TimeProfiler;
@@ -167,7 +168,8 @@ class SdlApplication : GraphicsApplication
 
         //TODO move to config
         import std.file : thisExePath, exists, isDir;
-        import std.path: buildPath, dirName;
+        import std.path : buildPath, dirName;
+
         immutable assetsDirPath = "data/assets";
         immutable assetsDir = buildPath(thisExePath.dirName, assetsDirPath);
         if (!exists(assetsDir) || !isDir(assetsDir))
@@ -202,9 +204,9 @@ class SdlApplication : GraphicsApplication
         auto fontGenerator = new BitmapFontGenerator;
         build(fontGenerator);
         assetManager.defaultBitmapFont = fontGenerator.generate([
-            new ArabicNumeralsAlpabet, 
+            new ArabicNumeralsAlpabet,
             new SpecialCharactersAlphabet,
-            new AlphabetEn, 
+            new AlphabetEn,
             new AlphabetRu
         ], defaultFont);
 
