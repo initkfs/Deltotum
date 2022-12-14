@@ -490,6 +490,11 @@ abstract class DisplayObject : PhysicalBody
         return true;
     }
 
+    Vector2d position() @nogc @safe pure nothrow
+    {
+        return Vector2d(x, y);
+    }
+
     void xy(double x, double y) @nogc @safe pure nothrow
     {
         this.x = x;

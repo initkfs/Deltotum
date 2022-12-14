@@ -1,6 +1,7 @@
 module deltotum.input.input;
 
 import deltotum.input.joystick.event.joystick_event : JoystickEvent;
+import deltotum.math.vector2d : Vector2d;
 
 import std.container.slist : SList;
 
@@ -41,7 +42,7 @@ class Input
             pressedKeys.removeFront;
             return true;
         }
-        
+
         import std.algorithm.searching : find;
         import std.range : take;
 
@@ -65,5 +66,15 @@ class Input
         }
 
         return false;
+    }
+
+    Vector2d mousePos()
+    {
+        //TODO remove HAL api
+        import bindbc.sdl;
+
+        int x, y;
+        SDL_GetMouseState(&x, &y);
+        return Vector2d(x, y);
     }
 }

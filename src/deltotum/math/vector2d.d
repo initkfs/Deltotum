@@ -195,6 +195,17 @@ struct Vector2d
         return Vector2d(-x, -y);
     }
 
+    Vector2d truncate(double maxValue) const @nogc nothrow pure @safe
+    {
+        double scaleFactor = maxValue / this.magnitude;
+
+        import std.math.operations : cmp;
+
+        scaleFactor = cmp(scaleFactor, 1.0) < 0 ? scaleFactor : 1.0;
+        Vector2d result = scale(scaleFactor);
+        return result;
+    }
+
     string toString() const
     {
         import std.format : format;
@@ -209,7 +220,7 @@ struct Vector2d
         mixin("y" ~ op ~ "=" ~ otherId ~ ".y;");
     }
 
-    Vector2d opBinary(string op)(Vector2d other)
+    Vector2d opBinary(string op)(Vector2d other) const @nogc nothrow pure @safe
     {
         static if (op == "+")
             return add(other);
@@ -221,7 +232,7 @@ struct Vector2d
 
     unittest
     {
-        import std.math.operations: isClose;
+        import std.math.operations : isClose;
 
         Vector2d v = Vector2d(5, 6);
         v += Vector2d(1, 1);
@@ -232,7 +243,7 @@ struct Vector2d
         v -= Vector2d(1, 1);
         assert(v.x == 2);
         assert(v.y == 3);
-        
+
         v = Vector2d(5, 6);
         auto addV = v + v;
         assert(addV.x == 10);
@@ -246,11 +257,13 @@ struct Vector2d
         auto norm = Vector2d(5, 6).normalize;
         assert(isClose(norm.x, 0.640184, 1e-6));
         assert(isClose(norm.y, 0.768221, 1e-6));
-        
+
         auto distance = Vector2d(5, 6).distanceTo(Vector2d(10, 12));
         assert(isClose(distance, 7.81025, 1e-6));
 
-        Vector2d horizontalReflect = Vector2d(5, 6).linoperator(Matrix2x2([[-1, 0], [0, 1]]));
+        Vector2d horizontalReflect = Vector2d(5, 6).linoperator(Matrix2x2([
+                [-1, 0], [0, 1]
+            ]));
         assert(horizontalReflect.x == -5);
         assert(horizontalReflect.y == 6);
 
