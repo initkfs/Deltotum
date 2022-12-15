@@ -220,6 +220,11 @@ class SdlWindow : SdlObjectWrapper!SDL_Window
         return setCursor(MouseCursorType.arrow);
     }
 
+    void mousePos(int* x, int* y) @nogc nothrow
+    {
+        SDL_GetMouseState(x, y);
+    }
+
     override protected bool destroyPtr()
     {
         destroyCursor;

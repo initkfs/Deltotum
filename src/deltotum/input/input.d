@@ -67,14 +67,4 @@ class Input
 
         return false;
     }
-
-    Vector2d mousePos()
-    {
-        //TODO remove HAL api
-        import bindbc.sdl;
-
-        int x, y;
-        SDL_GetMouseState(&x, &y);
-        return Vector2d(x, y);
-    }
 }
