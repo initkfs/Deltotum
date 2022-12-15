@@ -1,6 +1,7 @@
 module deltotum.graphics.colors.rgba;
 
 import deltotum.graphics.colors.palettes.html4_palette : Html4Palette;
+import deltotum.graphics.colors.hsv : HSV;
 
 import std.regex;
 import std.conv : to;
@@ -88,10 +89,8 @@ struct RGBA
 
     static RGBA web(string colorString, double alpha = RGBAData.maxAlpha) pure @safe
     {
-        import std.traits;
-        import std.algorithm.searching : canFind;
+        import std.traits : EnumMembers;
         import std.uni : sicmp;
-        import std.conv : to;
 
         string webString = colorString;
 
@@ -205,6 +204,56 @@ struct RGBA
         return format("rgba(%s,%s,%s,%.1f)", r, g, b, alpha);
     }
 
+    double colorNorm(double colorValue) const pure @safe
+    {
+        return colorValue / RGBAData.maxColor;
+    }
+
+    HSV toHSV() const @safe
+    {
+        immutable double newR = colorNorm(r);
+        immutable double newG = colorNorm(g);
+        immutable double newB = colorNorm(b);
+
+        import std.math.operations : isClose;
+        import std.algorithm.comparison : min, max;
+        import std.math.remainder : fmod;
+
+        immutable double cmax = max(newR, max(newG, newB));
+        immutable double cmin = min(newR, min(newG, newB));
+        immutable double delta = cmax - cmin;
+
+        enum hueStartAngle = 60;
+
+        double hue = -1;
+
+        if (isClose(cmax, cmin))
+        {
+            hue = 0;
+        }
+        else if (isClose(cmax, newR))
+        {
+            hue = fmod(hueStartAngle * ((newG - newB) / delta) + HSV.HSVData.maxHue, HSV
+                    .HSVData.maxHue);
+        }
+        else if (isClose(cmax, newG))
+        {
+            hue = fmod(hueStartAngle * ((newB - newR) / delta) + 120, HSV.HSVData.maxHue);
+        }
+        else if (isClose(cmax, newB))
+        {
+            hue = fmod(hueStartAngle * ((newR - newG) / delta) + 240, HSV.HSVData.maxHue);
+        }else {
+            //TODO exception?
+        }
+
+        immutable double saturation = isClose(cmax, 0) ? 0 : (
+            delta / cmax) * HSV.HSVData.maxSaturation;
+        immutable double value = cmax * HSV.HSVData.maxValue;
+
+        return HSV(hue, saturation, value);
+    }
+
 }
 
 unittest
@@ -264,4 +313,26 @@ unittest
     assert(white.r == 255);
     assert(white.g == 255);
     assert(white.b == 255);
+}
+
+unittest
+{
+    import std.math.operations : isClose;
+    import std.math.rounding : round;
+
+    HSV hsv0 = RGBA.black.toHSV;
+
+    assert(hsv0.hue == 0);
+    assert(hsv0.saturation == 0);
+    assert(hsv0.value == 0);
+
+    HSV hsv255 = RGBA.white.toHSV;
+    assert(hsv255.hue == 0);
+    assert(hsv255.saturation == 0);
+    assert(hsv255.value == 100);
+
+    HSV hsv1 = RGBA(34, 50, 16).toHSV;
+    assert(isClose(hsv1.hue, 88.24, 0.0001));
+    assert(isClose(hsv1.saturation, 68));
+    assert(isClose(hsv1.value, 19.6, 0.001));
 }
