@@ -1,6 +1,9 @@
 module deltotum.hal.sdl.sdl_window;
 
+import deltotum.hal.result.hal_result : HalResult;
 import deltotum.hal.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
+import deltotum.input.mouse.mouse_cursor_type : MouseCursorType;
+import deltotum.hal.sdl.sdl_cursor : SDLCursor;
 
 import std.string : toStringz, fromStringz;
 
@@ -19,6 +22,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window
         int initialWidth;
         int initialHeight;
         double initialAspectRatio = 0;
+        SDLCursor lastCursor;
     }
 
     this(string title,
@@ -142,8 +146,84 @@ class SdlWindow : SdlObjectWrapper!SDL_Window
         return SDL_GetWindowID(ptr);
     }
 
+    HalResult setCursor(MouseCursorType type)
+    {
+        SDL_SystemCursor sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_ARROW;
+        final switch (type) with (MouseCursorType)
+        {
+        case none, arrow:
+            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_ARROW;
+            break;
+        case crossHair:
+            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_CROSSHAIR;
+            break;
+        case ibeam:
+            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_IBEAM;
+            break;
+        case no:
+            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_NO;
+            break;
+        case sizeNorthWestSouthEast:
+            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_SIZENWSE;
+            break;
+        case sizeNorthEastSouthWest:
+            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_SIZENESW;
+            break;
+        case sizeWestEast:
+            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_SIZEWE;
+            break;
+        case sizeNorthSouth:
+            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_SIZENS;
+            break;
+        case sizeAll:
+            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_SIZEALL;
+            break;
+        case hand:
+            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_HAND;
+            break;
+        case wait:
+            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_WAIT;
+            break;
+        case waitArrow:
+            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_WAITARROW;
+            break;
+        }
+
+        SDL_Cursor* cursor = SDL_CreateSystemCursor(sdlType);
+        if (cursor is null)
+        {
+            return HalResult(-1, getError);
+        }
+
+        destroyCursor;
+
+        lastCursor = new SDLCursor(cursor);
+
+        SDL_SetCursor(cursor);
+
+        return HalResult(0);
+    }
+
+    protected bool destroyCursor()
+    {
+        if (lastCursor !is null && !lastCursor.isDefault)
+        {
+            lastCursor.destroy;
+            lastCursor = null;
+            return true;
+        }
+        return false;
+    }
+
+    HalResult restoreCursor()
+    {
+        return setCursor(MouseCursorType.arrow);
+    }
+
     override protected bool destroyPtr()
     {
+        destroyCursor;
+
         if (ptr)
         {
             SDL_DestroyWindow(ptr);

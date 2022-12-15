@@ -3,6 +3,7 @@ module deltotum.window.window;
 import deltotum.hal.sdl.sdl_window : SdlWindow;
 import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
 import deltotum.math.shapes.rect2d : Rect2d;
+import deltotum.input.mouse.mouse_cursor_type: MouseCursorType;
 
 //TODO move to deltotum.hal;
 import bindbc.sdl;
@@ -151,6 +152,20 @@ class Window
     void setTitle(string title) nothrow
     {
         nativeWindow.setTitle(title);
+    }
+
+    void restoreCursor(){
+        if(const err = nativeWindow.restoreCursor){
+            //TODO logging
+            throw new Exception(err.toString);
+        }
+    }
+
+    void setCursor(MouseCursorType type){
+        if(const err = nativeWindow.setCursor(type)){
+            //TODO logging
+            throw new Exception(err.toString);
+        }
     }
 
     void destroy()
