@@ -1,32 +1,9 @@
 module deltotum.graphics.colors.rgba;
 
+import deltotum.graphics.colors.palettes.html4_palette : Html4Palette;
+
 import std.regex;
 import std.conv : to;
-
-import std.stdio;
-
-immutable string[string] html4Palette;
-shared static this()
-{
-    html4Palette = [
-        "aqua": "#00ffff",
-        "black": "#000000",
-        "blue": "#0000ff",
-        "fuchsia": "#ff00ff",
-        "gray": "#808080",
-        "green": "#008000",
-        "lime": "#00ff00",
-        "maroon": "#800000",
-        "navy": "#000080",
-        "olive": "#808000",
-        "purple": "#800080",
-        "red": "#ff0000",
-        "silver": "#c0c0c0",
-        "teal": "#008080",
-        "white": "#ffffff",
-        "yellow": "#ffff00",
-    ];
-}
 
 /**
  * Authors: initkfs
@@ -111,10 +88,24 @@ struct RGBA
 
     static RGBA web(string colorString, double alpha = RGBAData.maxAlpha) pure @safe
     {
-        auto webString = colorString;
-        if (auto paletteColorPtr = webString in html4Palette)
+        import std.traits;
+        import std.algorithm.searching : canFind;
+        import std.uni : sicmp;
+        import std.conv : to;
+
+        string webString = colorString;
+
+        enum htmlColorsNames = __traits(allMembers, Html4Palette);
+        enum string[htmlColorsNames.length] htmlColorsValues = [
+                EnumMembers!Html4Palette
+            ];
+
+        foreach (i, colorName; htmlColorsNames)
         {
-            webString = *paletteColorPtr;
+            if (sicmp(colorName, colorString) == 0)
+            {
+                webString = htmlColorsValues[i];
+            }
         }
 
         debug
