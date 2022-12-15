@@ -1,7 +1,7 @@
 module deltotum.graphics.draw.canvas;
 
 import deltotum.display.textures.rgba_texture : RgbaTexture;
-import deltotum.graphics.colors.color: Color;
+import deltotum.graphics.colors.rgba: RGBA;
 
 /**
  * Authors: initkfs

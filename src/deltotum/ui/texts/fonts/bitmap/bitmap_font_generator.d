@@ -5,7 +5,7 @@ import deltotum.i18n.langs.glyph : Glyph;
 
 import deltotum.asset.fonts.font : Font;
 import deltotum.display.textures.texture : Texture;
-import deltotum.graphics.colors.color: Color;
+import deltotum.graphics.colors.rgba: RGBA;
 
 import deltotum.ui.texts.fonts.bitmap.bitmap_font : BitmapFont;
 import deltotum.i18n.langs.alphabets.alphabet : Alphabet;
@@ -39,7 +39,7 @@ class BitmapFontGenerator : FontGenerator
 
         SDL_Rect glyphPosition;
         Glyph[] glyphs = [];
-        Color foregroundColor = Color.white;
+        RGBA foregroundColor = RGBA.white;
 
         //TTF_SetFontHinting(font.getSdlObject, TTF_HINTING_MONO);
 

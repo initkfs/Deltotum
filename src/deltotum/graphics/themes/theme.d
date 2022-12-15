@@ -1,6 +1,6 @@
 module deltotum.graphics.themes.theme;
 
-import deltotum.graphics.colors.color : Color;
+import deltotum.graphics.colors.rgba : RGBA;
 import deltotum.asset.fonts.font: Font;
 import deltotum.display.padding: Padding;
 
@@ -21,28 +21,28 @@ class Theme
         return defaultMediumFont;
     }
 
-    Color colorPrimary()
+    RGBA colorPrimary()
     {
         //gray 700
-        return Color(97, 97, 97);
+        return RGBA(97, 97, 97);
     }
 
-    Color colorSecondary()
+    RGBA colorSecondary()
     {
         //gray 500
-        return Color(158, 158, 158);
+        return RGBA(158, 158, 158);
     }
 
-    Color colorAccent()
+    RGBA colorAccent()
     {
         //gray 200
-        return Color(238, 238, 238);
+        return RGBA(238, 238, 238);
     }
 
-    Color colorHover()
+    RGBA colorHover()
     {
         //gray 400
-        return Color(189, 189, 189);
+        return RGBA(189, 189, 189);
     }
 
     double controlOpacity(){

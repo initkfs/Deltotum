@@ -1,7 +1,7 @@
 module deltotum.asset.fonts.font;
 
 import deltotum.application.components.units.service.loggable_unit : LoggableUnit;
-import deltotum.graphics.colors.color : Color;
+import deltotum.graphics.colors.rgba : RGBA;
 
 import deltotum.hal.sdl.ttf.sdl_ttf_font : SdlTTFFont;
 import deltotum.hal.sdl.sdl_surface : SdlSurface;
@@ -34,12 +34,12 @@ class Font : LoggableUnit
         font = new SdlTTFFont(fontPath, fontSize);
     }
 
-    SdlSurface renderSurface(string text, Color color = Color.white)
+    SdlSurface renderSurface(string text, RGBA color = RGBA.white)
     {
         return renderSurface(text.toStringz, color);
     }
 
-    SdlSurface renderSurface(const char* text, Color color = Color.white)
+    SdlSurface renderSurface(const char* text, RGBA color = RGBA.white)
     {
         SdlSurface fontSurface = new SdlSurface;
         if (const fontRenderErr = font.render(fontSurface, text, color.r, color.g, color.b, color

@@ -3,7 +3,7 @@ module deltotum.graphics.graphics;
 import deltotum.application.components.units.service.loggable_unit;
 
 import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
-import deltotum.graphics.colors.color : Color;
+import deltotum.graphics.colors.rgba : RGBA;
 import deltotum.math.vector2d : Vector2d;
 import deltotum.math.math : Math;
 import deltotum.graphics.styles.graphic_style : GraphicStyle;
@@ -43,7 +43,7 @@ class Graphics : LoggableUnit
         return cast(int) value;
     }
 
-    private void adjustRender(Color color)
+    private void adjustRender(RGBA color)
     {
         if(const err = renderer.setRenderDrawColor(color.r, color.g, color.b, color.alphaNorm)){
             logger.errorf("Adjust render error. %s", err);
@@ -57,13 +57,13 @@ class Graphics : LoggableUnit
         }
     }
 
-    void drawLine(double startX, double startY, double endX, double endY, Color color = Color.black)
+    void drawLine(double startX, double startY, double endX, double endY, RGBA color = RGBA.black)
     {
         adjustRender(color);
         drawLine(startX, startY, endX, endY);
     }
 
-    void drawPoint(double x, double y, Color color)
+    void drawPoint(double x, double y, RGBA color)
     {
         adjustRender(color);
         if(const err = renderer.drawPoint(toInt(x), toInt(y))){
@@ -71,7 +71,7 @@ class Graphics : LoggableUnit
         }
     }
 
-    void drawPoints(Vector2d[] points, Color color)
+    void drawPoints(Vector2d[] points, RGBA color)
     {
         adjustRender(color);
         foreach (p; points)
@@ -80,7 +80,7 @@ class Graphics : LoggableUnit
         }
     }
 
-    void drawLines(Vector2d[] points, Color color)
+    void drawLines(Vector2d[] points, RGBA color)
     {
         adjustRender(color);
         if(const err = renderer.drawLines(points)){
@@ -204,7 +204,7 @@ class Graphics : LoggableUnit
         return points;
     }
 
-    void drawCircle(double centerX, double centerY, double radius, Color fillColor)
+    void drawCircle(double centerX, double centerY, double radius, RGBA fillColor)
     {
         adjustRender(fillColor);
 
@@ -262,7 +262,7 @@ class Graphics : LoggableUnit
         drawCircle(centerX, centerY, r - style.lineWidth, style.fillColor);
     }
 
-    void drawRect(double x, double y, double width, double height, Color fillColor)
+    void drawRect(double x, double y, double width, double height, RGBA fillColor)
     {
         adjustRender(fillColor);
         if(const err = renderer.fillRect(toInt(x), toInt(y), toInt(width), toInt(height))){
@@ -286,7 +286,7 @@ class Graphics : LoggableUnit
                 .fillColor);
     }
 
-    void drawBezier(Vector2d p0, Color color, scope Vector2d delegate(double v) onInterpValue, bool delegate(
+    void drawBezier(Vector2d p0, RGBA color, scope Vector2d delegate(double v) onInterpValue, bool delegate(
             Vector2d) onPoint = null)
     {
         adjustRender(color);
@@ -306,13 +306,13 @@ class Graphics : LoggableUnit
         }
     }
 
-    void drawBezier(Vector2d p0, Vector2d p1, Vector2d p2, Color color, bool delegate(
+    void drawBezier(Vector2d p0, Vector2d p1, Vector2d p2, RGBA color, bool delegate(
             Vector2d) onPoint = null)
     {
         drawBezier(p0, color, (t) { return bezierInterp(p0, p1, p2, t); }, onPoint);
     }
 
-    void drawBezier(Vector2d p0, Vector2d p1, Vector2d p2, Vector2d p3, Color color, bool delegate(
+    void drawBezier(Vector2d p0, Vector2d p1, Vector2d p2, Vector2d p3, RGBA color, bool delegate(
             Vector2d) onPoint = null)
     {
         drawBezier(p0, color, (t) { return bezierInterp(p0, p1, p2, p3, t); }, onPoint);

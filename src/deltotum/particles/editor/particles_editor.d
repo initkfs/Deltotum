@@ -6,7 +6,7 @@ import deltotum.particles.emitter : Emitter;
 import deltotum.particles.particle : Particle;
 import deltotum.graphics.shapes.circle : Circle;
 import deltotum.graphics.styles.graphic_style : GraphicStyle;
-import deltotum.graphics.colors.color : Color;
+import deltotum.graphics.colors.rgba : RGBA;
 import deltotum.ui.containers.vbox : VBox;
 import deltotum.ui.controls.text : Text;
 import deltotum.ui.controls.slider : Slider;

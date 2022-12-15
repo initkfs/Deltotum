@@ -66,7 +66,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         immutable int zeroOrErrorCode = SDL_SetRenderDrawColor(ptr, r, g, b, a);
         if (zeroOrErrorCode)
         {
-            return HalResult(zeroOrErrorCode, "Color drawing error");
+            return HalResult(zeroOrErrorCode, "RGBA drawing error");
         }
 
         return HalResult();

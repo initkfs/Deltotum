@@ -1,6 +1,6 @@
 module deltotum.graphics.styles.graphic_style;
 
-import deltotum.graphics.colors.color : Color;
+import deltotum.graphics.colors.rgba : RGBA;
 
 /**
  * Authors: initkfs
@@ -8,11 +8,11 @@ import deltotum.graphics.colors.color : Color;
 struct GraphicStyle
 {
     double lineWidth;
-    Color lineColor;
+    RGBA lineColor;
     bool isFill;
-    Color fillColor;
+    RGBA fillColor;
 
     static GraphicStyle simple(){
-        return GraphicStyle(1.0, Color.white, false, Color.transparent);
+        return GraphicStyle(1.0, RGBA.white, false, RGBA.transparent);
     }
 }

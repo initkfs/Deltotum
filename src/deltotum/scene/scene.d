@@ -2,7 +2,7 @@ module deltotum.scene.scene;
 
 import deltotum.application.components.uni.uni_component : UniComponent;
 import deltotum.display.display_object : DisplayObject;
-import deltotum.graphics.colors.color : Color;
+import deltotum.graphics.colors.rgba : RGBA;
 import deltotum.factories.creation : Creation;
 
 import std.stdio;
@@ -56,7 +56,7 @@ class Scene : UniComponent
 
         if (isClearingInCycle)
         {
-            const screenColor = Color.black;
+            const screenColor = RGBA.black;
             if (const err = window.renderer.setRenderDrawColor(screenColor.r, screenColor.g, screenColor.b, screenColor
                     .alphaNorm))
             {

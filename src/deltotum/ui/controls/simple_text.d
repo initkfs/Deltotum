@@ -5,7 +5,7 @@ import deltotum.asset.fonts.font : Font;
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
 import deltotum.display.textures.texture : Texture;
 import deltotum.math.shapes.rect2d : Rect2d;
-import deltotum.graphics.colors.color : Color;
+import deltotum.graphics.colors.rgba : RGBA;
 
 import std.string : toStringz;
 
@@ -48,7 +48,7 @@ class SimpleText : Control
         fontTexture.drawContent;
     }
 
-    protected void updateFont(Color color = Color.white)
+    protected void updateFont(RGBA color = RGBA.white)
     {
         auto fontSurface = font.renderSurface(text, color);
         //TODO this.fontTexture !is null

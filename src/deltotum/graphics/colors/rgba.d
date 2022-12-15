@@ -1,4 +1,4 @@
-module deltotum.graphics.colors.color;
+module deltotum.graphics.colors.rgba;
 
 import std.regex;
 import std.conv : to;
@@ -31,7 +31,7 @@ shared static this()
 /**
  * Authors: initkfs
  */
-struct Color
+struct RGBA
 {
     //full names conflict with static color factories
     ubyte r;
@@ -52,7 +52,7 @@ struct Color
         }
     }
 
-    static immutable struct RGBA
+    static immutable struct RGBAData
     {
         static enum
         {
@@ -66,50 +66,50 @@ struct Color
     static
     {
         //TODO meta
-        Color transparent() @nogc nothrow pure @safe
+        RGBA transparent() @nogc nothrow pure @safe
         {
-            return Color(0, 0, 0, 0);
+            return RGBA(0, 0, 0, 0);
         }
 
-        Color white() @nogc nothrow pure @safe
+        RGBA white() @nogc nothrow pure @safe
         {
-            return Color(255, 255, 255);
+            return RGBA(255, 255, 255);
         }
 
-        Color black() @nogc nothrow pure @safe
+        RGBA black() @nogc nothrow pure @safe
         {
-            return Color(0, 0, 0);
+            return RGBA(0, 0, 0);
         }
 
-        Color red() @nogc nothrow pure @safe
+        RGBA red() @nogc nothrow pure @safe
         {
-            return Color(255, 0, 0);
+            return RGBA(255, 0, 0);
         }
 
-        Color green() @nogc nothrow pure @safe
+        RGBA green() @nogc nothrow pure @safe
         {
-            return Color(0, 128, 0);
+            return RGBA(0, 128, 0);
         }
 
-        Color blue() @nogc nothrow pure @safe
+        RGBA blue() @nogc nothrow pure @safe
         {
-            return Color(0, 0, 255);
+            return RGBA(0, 0, 255);
         }
 
-        static Color gray(ubyte grayColor, double alpha = RGBA.maxAlpha) @nogc nothrow pure @safe
+        static RGBA gray(ubyte grayColor, double alpha = RGBAData.maxAlpha) @nogc nothrow pure @safe
         {
-            return Color(grayColor, grayColor, grayColor, alpha);
+            return RGBA(grayColor, grayColor, grayColor, alpha);
         }
     }
 
-    static Color rgba(ubyte r = RGBA.maxColor, ubyte g = RGBA.maxColor, ubyte b = RGBA.maxColor, double a = RGBA
+    static RGBA rgba(ubyte r = RGBAData.maxColor, ubyte g = RGBAData.maxColor, ubyte b = RGBAData.maxColor, double a = RGBAData
             .maxAlpha) @nogc nothrow pure @safe
     {
-        const Color color = {r, g, b, a};
+        const RGBA color = {r, g, b, a};
         return color;
     }
 
-    static Color web(string colorString, double alpha = RGBA.maxAlpha) pure @safe
+    static RGBA web(string colorString, double alpha = RGBAData.maxAlpha) pure @safe
     {
         auto webString = colorString;
         if (auto paletteColorPtr = webString in html4Palette)
@@ -167,16 +167,16 @@ struct Color
             bValue = to!ubyte(replicate(mustBeColor[2 .. 3], replicateCount), hexBase);
         }
 
-        Color c = {rValue, gValue, bValue, alpha};
+        RGBA c = {rValue, gValue, bValue, alpha};
         return c;
     }
 
-    Color invert() @nogc nothrow pure @safe
+    RGBA invert() @nogc nothrow pure @safe
     {
-        return Color(RGBA.maxColor - r, RGBA.maxColor - g, RGBA.maxColor - b, alpha);
+        return RGBA(RGBAData.maxColor - r, RGBAData.maxColor - g, RGBAData.maxColor - b, alpha);
     }
 
-    Color interpolate(Color start, Color end, double factor = 0.5) pure @safe
+    RGBA interpolate(RGBA start, RGBA end, double factor = 0.5) pure @safe
     {
         if (factor <= 0)
         {
@@ -192,12 +192,12 @@ struct Color
         auto gValue = to!ubyte(start.g + (end.g - start.g) * factor);
         auto bValue = to!ubyte(start.b + (end.b - start.b) * factor);
         auto alphaValue = to!ubyte(start.alpha + (end.alpha - start.alpha) * factor);
-        return Color(rValue, gValue, bValue, alphaValue);
+        return RGBA(rValue, gValue, bValue, alphaValue);
     }
 
     ubyte alphaNorm() const pure @safe
     {
-        return to!ubyte(alpha * RGBA.maxColor);
+        return to!ubyte(alpha * RGBAData.maxColor);
     }
 
     string toWebHex() const pure @safe
@@ -219,7 +219,7 @@ struct Color
 unittest
 {
     enum colorMin = 0;
-    Color rgba1 = Color.rgba(colorMin, colorMin, colorMin, colorMin);
+    RGBA rgba1 = RGBA.rgba(colorMin, colorMin, colorMin, colorMin);
     assert(rgba1.r == colorMin);
     assert(rgba1.g == colorMin);
     assert(rgba1.b == colorMin);
@@ -230,7 +230,7 @@ unittest
 
     enum colorMax = 255;
     enum alphaMax = 1;
-    Color rgba2 = Color.rgba(colorMax, colorMax, colorMax, alphaMax);
+    RGBA rgba2 = RGBA.rgba(colorMax, colorMax, colorMax, alphaMax);
     assert(rgba2.r == colorMax);
     assert(rgba2.g == colorMax);
     assert(rgba2.b == colorMax);
@@ -242,34 +242,34 @@ unittest
 
 unittest
 {
-    Color colorWeb6Upper = Color.web("#FFFFFF", 0.5);
+    RGBA colorWeb6Upper = RGBA.web("#FFFFFF", 0.5);
     assert(colorWeb6Upper.r == 255);
     assert(colorWeb6Upper.g == 255);
     assert(colorWeb6Upper.b == 255);
     assert(colorWeb6Upper.alpha == 0.5);
 
-    Color colorWeb6 = Color.web("#ffffff", 0.5);
+    RGBA colorWeb6 = RGBA.web("#ffffff", 0.5);
     assert(colorWeb6.r == 255);
     assert(colorWeb6.g == 255);
     assert(colorWeb6.b == 255);
     assert(colorWeb6.alpha == 0.5);
 
-    Color colorWeb3 = Color.web("#ABC");
+    RGBA colorWeb3 = RGBA.web("#ABC");
     assert(colorWeb3.r == 170);
     assert(colorWeb3.g == 187);
     assert(colorWeb3.b == 204);
 
-    Color colorAqua = Color.web("#00ffff");
+    RGBA colorAqua = RGBA.web("#00ffff");
     assert(colorAqua.r == 0);
     assert(colorAqua.g == 255);
     assert(colorAqua.b == 255);
 
-    Color colorAqua2 = Color.web("aqua");
+    RGBA colorAqua2 = RGBA.web("aqua");
     assert(colorAqua2.r == 0);
     assert(colorAqua2.g == 255);
     assert(colorAqua2.b == 255);
 
-    Color white = Color.web("white");
+    RGBA white = RGBA.web("white");
     assert(white.r == 255);
     assert(white.g == 255);
     assert(white.b == 255);
