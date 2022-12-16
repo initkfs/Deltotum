@@ -14,11 +14,15 @@ import core.attribute : mustuse;
         int codeSuccess;
     }
 
-    this(int code, string message = "", int codeSuccess = 0) inout nothrow @nogc @safe
+    this(int code, string message = "", int codeSuccess = 0) inout nothrow @nogc pure @safe
     {
         this.code = code;
         this.message = message;
         this.codeSuccess = codeSuccess;
+    }
+
+    static HalResult success() nothrow @nogc pure @safe {
+        return HalResult(0);
     }
 
     bool isError() const nothrow @nogc pure @safe

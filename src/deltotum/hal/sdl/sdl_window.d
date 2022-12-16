@@ -225,6 +225,35 @@ class SdlWindow : SdlObjectWrapper!SDL_Window
         SDL_GetMouseState(x, y);
     }
 
+    //TODO move clipboard api to input
+    bool clipboardHasText() @nogc nothrow
+    {
+        SDL_bool hasText = SDL_HasClipboardText();
+        return toBool(hasText);
+    }
+
+    HalResult clipboardSetText(char* text) nothrow
+    {
+        const int result = SDL_SetClipboardText(text);
+        if (result != 0)
+        {
+            return HalResult(result, getError);
+        }
+        return HalResult.success;
+    }
+
+    HalResult clipboardGetText(out string text) nothrow
+    {
+        char* textPtr = SDL_GetClipboardText();
+        if (!textPtr)
+        {
+            return HalResult(-1, "Failed to get text from clipboard: " ~ getError);
+        }
+        text = textPtr.fromStringz.idup;
+        SDL_free(textPtr);
+        return HalResult.success;
+    }
+
     override protected bool destroyPtr()
     {
         destroyCursor;
