@@ -14,6 +14,7 @@ import deltotum.input.joystick.event.joystick_event : JoystickEvent;
 import deltotum.events.event_type : EventType;
 import deltotum.utils.tostring;
 
+import std.container : DList;
 import std.math.operations : isClose;
 import std.stdio;
 import std.math.algebraic : abs;
@@ -172,7 +173,7 @@ abstract class DisplayObject : PhysicalBody
         this.isDrag = false;
     }
 
-    void dispatchEvent(T, E)(E e, ref T[] chain, bool isRoot = true)
+    void dispatchEvent(T, E)(E e, ref DList!T chain)
     {
         static if (__traits(compiles, e.target))
         {
@@ -180,7 +181,7 @@ abstract class DisplayObject : PhysicalBody
             {
                 if (e.target is this)
                 {
-                    chain ~= this;
+                    chain.insert(this);
                 }
             }
             else
@@ -201,11 +202,11 @@ abstract class DisplayObject : PhysicalBody
                                 fireEvent(enteredEvent);
                             }
 
-                            chain ~= this;
+                            chain.insert(this);
                         }
                         else if (e.isChained)
                         {
-                            chain ~= this;
+                            chain.insert(this);
                         }
                     }
                     else
@@ -222,18 +223,18 @@ abstract class DisplayObject : PhysicalBody
                                 fireEvent(exitedEvent);
                             }
 
-                            chain ~= this;
+                            chain.insert(this);
                         }
                         else if (isDrag && e.isChained)
                         {
-                            chain ~= this;
+                            chain.insert(this);
                         }
                     }
 
                     if (e.event == MouseEvent.Event.mouseMove && (isDrag || bounds.contains(e.x, e
                             .y)))
                     {
-                        chain ~= this;
+                        chain.insert(this);
                     }
                 }
 
@@ -241,13 +242,13 @@ abstract class DisplayObject : PhysicalBody
                 {
                     if (isFocus)
                     {
-                        chain ~= this;
+                        chain.insert(this);
                     }
                 }
 
                 static if (is(E : JoystickEvent))
                 {
-                    chain ~= this;
+                    chain.insert(this);
                 }
             }
         }
@@ -256,28 +257,7 @@ abstract class DisplayObject : PhysicalBody
         {
             foreach (DisplayObject child; children)
             {
-                child.dispatchEvent(e, chain, false);
-            }
-        }
-
-        if (isRoot && chain.length > 0)
-        {
-            foreach (DisplayObject eventTarget; chain)
-            {
-                const isConsumed = eventTarget.runEventFilters(e);
-                if (isConsumed)
-                {
-                    return;
-                }
-            }
-
-            foreach_reverse (DisplayObject eventTarget; chain)
-            {
-                const isConsumed = eventTarget.runEventHandlers(e);
-                if (isConsumed)
-                {
-                    return;
-                }
+                child.dispatchEvent(e, chain);
             }
         }
     }

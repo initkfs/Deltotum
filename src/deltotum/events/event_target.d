@@ -11,34 +11,32 @@ import deltotum.input.joystick.event.joystick_event : JoystickEvent;
  * Authors: initkfs
  *  Returning true from handler indicates that the event has been handled, and that it should not propagate further.
  */
-abstract class EventTarget : UniComponent
+class EventTarget : UniComponent
 {
-    @property bool delegate(MouseEvent) eventMouseFilter;
-    @property bool delegate(MouseEvent) eventMouseHandler;
+    bool delegate(MouseEvent) eventMouseFilter;
+    bool delegate(MouseEvent) eventMouseHandler;
 
-    @property bool delegate(MouseEvent) onMouseDown;
-    @property bool delegate(MouseEvent) onMouseUp;
-    @property bool delegate(MouseEvent) onMouseMove;
-    @property bool delegate(MouseEvent) onMouseWheel;
+    bool delegate(MouseEvent) onMouseDown;
+    bool delegate(MouseEvent) onMouseUp;
+    bool delegate(MouseEvent) onMouseMove;
+    bool delegate(MouseEvent) onMouseWheel;
 
-    @property bool isMouseOver;
-    @property bool delegate(MouseEvent) onMouseEntered;
-    @property bool delegate(MouseEvent) onMouseExited;
+    bool isMouseOver;
+    bool delegate(MouseEvent) onMouseEntered;
+    bool delegate(MouseEvent) onMouseExited;
 
-    @property bool delegate(KeyEvent) eventKeyFilter;
-    @property bool delegate(KeyEvent) eventKeyHandler;
+    bool delegate(KeyEvent) eventKeyFilter;
+    bool delegate(KeyEvent) eventKeyHandler;
 
-    @property bool delegate(KeyEvent) onKeyUp;
-    @property bool delegate(KeyEvent) onKeyDown;
+    bool delegate(KeyEvent) onKeyUp;
+    bool delegate(KeyEvent) onKeyDown;
 
-    @property bool delegate(JoystickEvent) eventJoystickFilter;
-    @property bool delegate(JoystickEvent) eventJoystickHandler;
+    bool delegate(JoystickEvent) eventJoystickFilter;
+    bool delegate(JoystickEvent) eventJoystickHandler;
 
-    @property bool delegate(JoystickEvent) onJoystickAxis;
-    @property bool delegate(JoystickEvent) onJoystickButtonPress;
-    @property bool delegate(JoystickEvent) onJoystickButtonRelease;
-
-    abstract void dispatchEvent(T, E)(E e, ref T[] targets, bool isRoot = true);
+    bool delegate(JoystickEvent) onJoystickAxis;
+    bool delegate(JoystickEvent) onJoystickButtonPress;
+    bool delegate(JoystickEvent) onJoystickButtonRelease;
 
     void createHandlers()
     {
@@ -155,17 +153,17 @@ abstract class EventTarget : UniComponent
 
     bool runListeners(KeyEvent keyEvent)
     {
-        final switch (keyEvent.event)
+        final switch (keyEvent.event) with (KeyEvent)
         {
-        case KeyEvent.Event.none:
+        case Event.none:
             break;
-        case KeyEvent.Event.keyUp:
+        case Event.keyUp:
             if (onKeyUp !is null)
             {
                 return onKeyUp(keyEvent);
             }
             break;
-        case KeyEvent.Event.keyDown:
+        case Event.keyDown:
             if (onKeyDown !is null)
             {
                 return onKeyDown(keyEvent);
@@ -178,23 +176,23 @@ abstract class EventTarget : UniComponent
 
     bool runListeners(JoystickEvent joystickEvent)
     {
-        final switch (joystickEvent.event)
+        final switch (joystickEvent.event) with (JoystickEvent)
         {
-        case JoystickEvent.Event.none:
+        case Event.none:
             break;
-        case JoystickEvent.Event.press:
+        case Event.press:
             if (onJoystickButtonPress !is null)
             {
                 return onJoystickButtonPress(joystickEvent);
             }
             break;
-        case JoystickEvent.Event.release:
+        case Event.release:
             if (onJoystickButtonRelease !is null)
             {
                 return onJoystickButtonRelease(joystickEvent);
             }
             break;
-        case JoystickEvent.Event.axis:
+        case Event.axis:
             if (onJoystickAxis !is null)
             {
                 return onJoystickAxis(joystickEvent);

@@ -1,11 +1,18 @@
 module deltotum.events.event_type;
+
+import std.typecons : Nullable;
+
 /**
  * Authors: initkfs
  */
 class EventType
 {
-    @property EventType parent;
-    @property string name;
+    immutable string name;
+
+    private
+    {
+        EventType _parent;
+    }
 
     static
     {
@@ -18,13 +25,13 @@ class EventType
         EventType joystick;
     }
 
-    this(string name, EventType parent = null)
+    this(string name, EventType parent = null) pure @safe
     {
         this.name = name;
-        this.parent = parent;
+        this._parent = parent;
     }
 
-    shared static this()
+    shared static this() @safe
     {
         any = new EventType("ANY");
         application = new EventType("APPLICATION", any);
@@ -33,6 +40,15 @@ class EventType
         key = new EventType("KEY", any);
         window = new EventType("WINDOW", any);
         joystick = new EventType("JOYSTICK", any);
+    }
+
+    Nullable!EventType parent() @nogc nothrow pure @safe
+    {
+        if (_parent is null)
+        {
+            return Nullable!EventType();
+        }
+        return Nullable!EventType(_parent);
     }
 
 }

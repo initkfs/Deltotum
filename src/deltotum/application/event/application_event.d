@@ -17,14 +17,14 @@ struct ApplicationEvent
         EXIT
     }
 
-    this(EventType type, uint event, uint windowId)
+    this(EventType type, uint event, uint windowId) pure @safe
     {
         this.type = type;
         this.event = event;
         this.windowId = windowId;
     }
 
-    string toString()
+    string toString() const
     {
         import std.format : format;
 

@@ -21,16 +21,15 @@ class EventManager
     {
         import deltotum.hal.sdl.events.sdl_event_processor : SdlEventProcessor;
 
-        @property SdlEventProcessor eventProcessor;
+        SdlEventProcessor eventProcessor;
     }
 
-    @property SceneManager sceneManager;
+    SceneManager sceneManager;
 
-    //TODO for input
-    @property void delegate(KeyEvent) onKey;
-    @property void delegate(JoystickEvent) onJoystick;
+    void delegate(KeyEvent) onKey;
+    void delegate(JoystickEvent) onJoystick;
 
-    this(SceneManager sceneManager)
+    this(SceneManager sceneManager) pure @safe
     {
         this.sceneManager = sceneManager;
     }
@@ -60,10 +59,40 @@ class EventManager
 
     void dispatchEvent(E)(E e)
     {
+        import std.container : DList;
+
+        DList!DisplayObject chain = DList!DisplayObject();
+
         foreach (DisplayObject target; sceneManager.currentScene.getActiveObjects)
         {
-            DisplayObject[] eventChain = [];
-            target.dispatchEvent(e, eventChain, true);
+            if (!chain.empty)
+            {
+                chain.clear;
+            }
+
+            target.dispatchEvent(e, chain);
+
+            if (!chain.empty)
+            {
+                foreach (DisplayObject eventTarget; chain)
+                {
+                    const isConsumed = eventTarget.runEventFilters(e);
+                    if (isConsumed)
+                    {
+                        return;
+                    }
+                }
+
+                foreach_reverse (DisplayObject eventTarget; chain)
+                {
+                    const isConsumed = eventTarget.runEventHandlers(e);
+                    if (isConsumed)
+                    {
+                        return;
+                    }
+                }
+            }
         }
+
     }
 }
