@@ -2,14 +2,15 @@ module deltotum.application.components.uni.uni_component;
 
 import deltotum.application.components.units.simple_unit : SimpleUnit;
 
+import deltotum.application.components.uni.attribute.attributes : Service;
+
 import deltotum.asset.assets : Assets;
-import deltotum.window.window : Window;
-import deltotum.input.input : Input;
 import deltotum.audio.audio : Audio;
-import deltotum.graphics.graphics : Graphics;
-import deltotum.application.components.uni.attribute.attributes : service;
 import deltotum.debugging.debugger : Debugger;
+import deltotum.graphics.graphics : Graphics;
 import std.experimental.logger.core : Logger;
+import deltotum.input.input : Input;
+import deltotum.window.window : Window;
 
 /**
  * Authors: initkfs
@@ -20,13 +21,13 @@ class UniComponent : SimpleUnit
 
     private
     {
-        @service Logger _logger;
-        @service Assets _assets;
-        @service Window _window;
-        @service Input _input;
-        @service Audio _audio;
-        @service Graphics _graphics;
-        @service Debugger _debugger;
+        Logger _logger;
+        Assets _assets;
+        Window _window;
+        Input _input;
+        Audio _audio;
+        Graphics _graphics;
+        Debugger _debugger;
     }
 
     void build(UniComponent uniComponent)
@@ -49,13 +50,16 @@ class UniComponent : SimpleUnit
 
         uniComponent.beforeBuild();
 
-        uniComponent.logger = parent.logger;
-        uniComponent.assets = parent.assets;
-        uniComponent.window = parent.window;
-        uniComponent.input = parent.input;
-        uniComponent.audio = parent.audio;
-        uniComponent.graphics = parent.graphics;
-        uniComponent.debugger = parent.debugger;
+        import std.traits : hasUDA;
+
+        alias parentType = typeof(parent);
+        static foreach (const fieldName; __traits(allMembers, parentType))
+        {
+            static if (hasUDA!(__traits(getMember, parentType, fieldName), Service))
+            {
+                __traits(getMember, uniComponent, fieldName) = __traits(getMember, parent, fieldName);
+            }
+        }
 
         uniComponent.afterBuild();
         uniComponent.isBuilt = true;
@@ -71,13 +75,13 @@ class UniComponent : SimpleUnit
 
     }
 
-    @service Logger logger() @nogc @safe pure nothrow
+    @Service Logger logger() @nogc nothrow pure @safe
     out (_logger; _logger !is null)
     {
         return _logger;
     }
 
-    void logger(Logger logger) @safe pure
+    void logger(Logger logger) pure @safe
     {
         import std.exception : enforce;
 
@@ -86,13 +90,13 @@ class UniComponent : SimpleUnit
 
     }
 
-    @service Assets assets() @nogc @safe pure nothrow
+    @Service Assets assets() @nogc nothrow pure @safe
     out (_assets; _assets !is null)
     {
         return _assets;
     }
 
-    void assets(Assets assetManager) @safe pure
+    void assets(Assets assetManager) pure @safe
     {
         import std.exception : enforce;
 
@@ -101,13 +105,13 @@ class UniComponent : SimpleUnit
 
     }
 
-    @service Window window() @nogc @safe pure nothrow
+    @Service Window window() @nogc nothrow pure @safe
     out (_window; _window !is null)
     {
         return _window;
     }
 
-    void window(Window window) @safe pure
+    void window(Window window) pure @safe
     {
         import std.exception : enforce;
 
@@ -116,13 +120,13 @@ class UniComponent : SimpleUnit
 
     }
 
-    @service Input input() @nogc @safe pure nothrow
+    @Service Input input() @nogc nothrow pure @safe
     out (_input; _input !is null)
     {
         return _input;
     }
 
-    void input(Input input) @safe pure
+    void input(Input input) pure @safe
     {
         import std.exception : enforce;
 
@@ -131,13 +135,13 @@ class UniComponent : SimpleUnit
 
     }
 
-    @service Audio audio() @nogc @safe pure nothrow
+    @Service Audio audio() @nogc nothrow pure @safe
     out (_audio; _audio !is null)
     {
         return _audio;
     }
 
-    void audio(Audio audio) @safe pure
+    void audio(Audio audio) pure @safe
     {
         import std.exception : enforce;
 
@@ -145,13 +149,13 @@ class UniComponent : SimpleUnit
         _audio = audio;
     }
 
-    @service Graphics graphics() @nogc @safe pure nothrow
+    @Service Graphics graphics() @nogc nothrow pure @safe
     out (_graphics; _graphics !is null)
     {
         return _graphics;
     }
 
-    void graphics(Graphics graphics) @safe pure
+    void graphics(Graphics graphics) pure @safe
     {
         import std.exception : enforce;
 
@@ -159,13 +163,13 @@ class UniComponent : SimpleUnit
         _graphics = graphics;
     }
 
-    @service Debugger debugger() @nogc @safe pure nothrow
+    @Service Debugger debugger() @nogc nothrow pure @safe
     out (_debugger; _debugger !is null)
     {
         return _debugger;
     }
 
-    void debugger(Debugger debugger) @safe pure
+    void debugger(Debugger debugger) pure @safe
     {
         import std.exception : enforce;
 

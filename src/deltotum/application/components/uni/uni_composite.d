@@ -51,7 +51,6 @@ class UniComposite : UniComponent
         import std.algorithm.mutation : remove;
         import std.algorithm.searching : countUntil;
 
-        //TODO short api
         _units = _units.remove(_units.countUntil(unit));
     }
 
@@ -66,8 +65,7 @@ class UniComposite : UniComponent
         return false;
     }
 
-    //TODO copy
-    @property UniComponent[] units()
+    const(UniComponent[]) units() const @nogc nothrow pure @safe
     {
         return _units;
     }
@@ -76,4 +74,33 @@ class UniComposite : UniComponent
     {
         _units = [];
     }
+}
+
+unittest
+{
+    import std.exception : assertThrown;
+
+    auto composite = new UniComposite;
+    auto component1 = new UniComponent;
+
+    composite.addUnit(component1);
+    assert(composite.hasUnit(component1));
+    assert(composite.units.length == 1);
+
+    assertThrown(composite.addUnit(component1));
+
+    auto component2 = new UniComponent;
+    composite.addUnit(component2);
+    assert(composite.hasUnit(component2));
+    assert(composite.units.length == 2);
+
+    assert(composite.removeUnitIfPresent(component1));
+    assert(!composite.hasUnit(component1));
+    assert(!composite.removeUnitIfPresent(component1));
+    assert(composite.units.length == 1);
+
+    assert(composite.removeUnitIfPresent(component2));
+    assert(!composite.hasUnit(component2));
+    assert(!composite.removeUnitIfPresent(component2));
+    assert(composite.units.length == 0);
 }

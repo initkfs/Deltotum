@@ -1,4 +1,4 @@
-module deltotum.application.components.units.service.loggable_unit;
+module deltotum.application.components.units.services.loggable_unit;
 
 import std.experimental.logger.core : Logger;
 
@@ -12,7 +12,7 @@ class LoggableUnit
         Logger _logger;
     }
 
-    this(Logger logger)
+    this(Logger logger) pure @safe
     {
         import std.exception : enforce;
 
@@ -21,7 +21,7 @@ class LoggableUnit
         this._logger = logger;
     }
 
-    Logger logger() @safe pure nothrow
+    Logger logger() @nogc nothrow pure @safe
     out (_logger; _logger !is null)
     {
         return _logger;

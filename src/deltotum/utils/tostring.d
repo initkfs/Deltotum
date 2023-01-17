@@ -37,7 +37,7 @@ mixin template ToString()
         enum fieldsCount = fields.length;
 
         import std.traits : isDelegate, hasUDA, isPointer;
-        import deltotum.application.components.uni.attribute.attributes : service;
+        import deltotum.application.components.uni.attribute.attributes : Service;
 
         static foreach (i, fieldName; fields)
         {
@@ -47,7 +47,7 @@ mixin template ToString()
                 alias fieldType = typeof(fieldValue);
                 //TODO filter or ToStringExclude...?
                 //TODO check alias with __traits(compiles, hasUDA!(member, attribute)
-                static if (!isDelegate!fieldType && !hasUDA!(field, service))
+                static if (!isDelegate!fieldType && !hasUDA!(field, Service))
                 {
                     static if (isPointer!fieldType)
                     {
