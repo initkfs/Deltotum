@@ -14,7 +14,12 @@ class SdlObject : PlatformObject
 {
     protected
     {
-        SdlTypeConverter typeConverter;
+        SdlTypeConverter typeConverter = new SdlTypeConverter;
+    }
+
+    invariant
+    {
+        assert(typeConverter !is null);
     }
 
     string getError() const nothrow

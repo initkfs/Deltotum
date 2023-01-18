@@ -19,8 +19,8 @@ class SdlImage : SdlSurface
         super();
         this.path = path;
 
-        SDL_Surface* ptr = IMG_Load(path.toStringz);
-        if (ptr is null)
+        SDL_Surface* imgPtr = IMG_Load(path.toStringz);
+        if (imgPtr is null)
         {
             import std.format : format;
 
@@ -32,16 +32,17 @@ class SdlImage : SdlSurface
             throw new Exception(error);
         }
 
-        auto surface = ptr;
         if (screenSurface !is null)
         {
-            auto oldSurface = surface;
+            auto oldSurface = imgPtr;
             //TODO check errors?
-            surface = convertSurfacePtr(surface, screenSurface.getPixelFormat);
+            if(const err = convertSurfacePtr(imgPtr, imgPtr, screenSurface.getPixelFormat)){
+                throw new Exception(err.toString);
+            }
             oldSurface.destroy;
         }
 
-        this.ptr = surface;
+        this.ptr = imgPtr;
     }
 
     this(SDL_Surface* ptr)

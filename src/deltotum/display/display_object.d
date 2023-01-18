@@ -595,11 +595,11 @@ abstract class DisplayObject : PhysicalBody
     string classnameShort()
     {
         string name;
-        immutable string fullClassName = this.classinfo.name;
+        const string fullClassName = this.classinfo.name;
 
         import std.string : lastIndexOf;
 
-        immutable lastDotPosIndex = fullClassName.lastIndexOf(".");
+        const lastDotPosIndex = fullClassName.lastIndexOf(".");
         if (lastDotPosIndex < 0)
         {
             return name;

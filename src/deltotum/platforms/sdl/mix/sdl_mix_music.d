@@ -51,7 +51,7 @@ class SdlMixMusic : SdlMixObject
         {
             return PlatformResult(-1, "Sound not loaded");
         }
-        immutable int zeroOrErrorCode = Mix_PlayMusic(ptr, loops);
+        const int zeroOrErrorCode = Mix_PlayMusic(ptr, loops);
         return PlatformResult(zeroOrErrorCode);
     }
 
@@ -62,7 +62,7 @@ class SdlMixMusic : SdlMixObject
             return PlatformResult(-1, "Sound not loaded");
         }
 
-        immutable int alwaysZero = Mix_HaltMusic();
+        const int alwaysZero = Mix_HaltMusic();
         return PlatformResult(alwaysZero);
     }
 

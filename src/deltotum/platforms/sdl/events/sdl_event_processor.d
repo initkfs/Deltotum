@@ -17,8 +17,13 @@ import std.stdio;
  */
 class SdlEventProcessor : EventProcessor!(SDL_Event*)
 {
-    override void process(SDL_Event* event)
+    override bool process(SDL_Event* event)
     {
+        if (!event)
+        {
+            return false;
+        }
+
         switch (event.type)
         {
         case SDL_KEYDOWN, SDL_KEYUP:
@@ -37,11 +42,13 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
             handleWindowEvent(event);
             break;
         default:
-            break;
+            return false;
         }
+
+        return true;
     }
 
-    void handleQuit(SDL_Event* event)
+    protected void handleQuit(SDL_Event* event)
     {
         if (onApplication is null)
         {
@@ -52,7 +59,7 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
         onApplication(exitEvent);
     }
 
-    void handleKeyEvent(SDL_Event* event)
+    protected void handleKeyEvent(SDL_Event* event)
     {
         if (onKey is null)
         {
@@ -78,7 +85,7 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
         onKey(keyEvent);
     }
 
-    void handleMouseEvent(SDL_Event* event)
+    protected void handleMouseEvent(SDL_Event* event)
     {
         if (onMouse is null)
         {
@@ -137,8 +144,13 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
         onMouse(mouseEvent);
     }
 
-    void handleJoystickEvent(SDL_Event* event)
+    protected void handleJoystickEvent(SDL_Event* event)
     {
+        if (onJoystick is null)
+        {
+            return;
+        }
+        
         JoystickEvent.Event type = JoystickEvent.Event.none;
         switch (event.type)
         {
@@ -160,7 +172,7 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
         onJoystick(joystickEvent);
     }
 
-    void handleWindowEvent(SDL_Event* event)
+    protected void handleWindowEvent(SDL_Event* event)
     {
         if (onWindow is null)
         {

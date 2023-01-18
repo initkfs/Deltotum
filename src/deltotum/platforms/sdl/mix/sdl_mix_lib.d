@@ -44,7 +44,7 @@ class SdlMixLib : SdlMixObject
 
     PlatformResult openAudio(int frequency, ushort audioFormat, int channels, int chunksize)
     {
-        immutable int zeroOrErrorCode = Mix_OpenAudio(frequency, audioFormat, channels, chunksize);
+        const int zeroOrErrorCode = Mix_OpenAudio(frequency, audioFormat, channels, chunksize);
         if (zeroOrErrorCode < 0)
         {
             import std.format : format;

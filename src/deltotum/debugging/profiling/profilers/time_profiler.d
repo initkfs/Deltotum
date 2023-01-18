@@ -21,7 +21,7 @@ class TimeProfiler : StatisticalValuesProfiler
             import core.sys.posix.time;
 
             timespec time;
-            immutable int timeResult = clock_gettime(CLOCK_MONOTONIC, &time);
+            const int timeResult = clock_gettime(CLOCK_MONOTONIC, &time);
             if (timeResult < 0)
             {
                 //TODO errno

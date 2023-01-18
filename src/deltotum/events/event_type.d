@@ -7,7 +7,7 @@ import std.typecons : Nullable;
  */
 class EventType
 {
-    immutable string name;
+    const string name;
 
     private
     {

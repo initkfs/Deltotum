@@ -33,7 +33,9 @@ class BitmapFontGenerator : FontGenerator
         const int fontTextureHeight = 400;
 
         SdlSurface fontMapSurface = new SdlSurface;
-        fontMapSurface.createRGBSurface(0, fontTextureWidth, fontTextureHeight, 32, 0, 0, 0, 0xff);
+        if(const err = fontMapSurface.createRGBSurface(0, fontTextureWidth, fontTextureHeight, 32, 0, 0, 0, 0xff)){
+            throw new Exception(err.toString);
+        }
         SDL_SetColorKey(fontMapSurface.getObject, SDL_TRUE, SDL_MapRGBA(
                 fontMapSurface.getObject.format, 0, 0, 0, 0));
 
@@ -70,7 +72,9 @@ class BitmapFontGenerator : FontGenerator
                 glyphs ~= Glyph(alphabet, letter, Rect2d(glyphPosition.x, glyphPosition.y, glyphPosition.w, glyphPosition
                         .h));
 
-                glyphRepresentation.blit(null, fontMapSurface.getObject, &glyphPosition);
+                if(const err = glyphRepresentation.blit(null, fontMapSurface.getObject, &glyphPosition)){
+                    throw new Exception(err.toString);
+                }
                 glyphRepresentation.destroy;
 
                 glyphPosition.x += glyphPosition.w;

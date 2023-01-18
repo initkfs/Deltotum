@@ -47,7 +47,12 @@ class LoadableImage : Texture
 
         if (requestWidth > 0 && requestWidth != imageWidth || requestHeight > 0 && requestHeight != imageHeight)
         {
-            image.resize(cast(int)(requestWidth * scale), cast(int)(requestHeight * scale));
+            bool isResized;
+            if (const err = image.resize(cast(int)(requestWidth * scale), cast(int)(
+                    requestHeight * scale), isResized))
+            {
+                throw new Exception(err.toString);
+            }
             imageWidth = image.width;
             imageHeight = image.height;
         }
@@ -55,7 +60,10 @@ class LoadableImage : Texture
         {
             if (scale != 1 && scale > 0)
             {
-                image.resize(cast(int)(imageWidth * scale), cast(int)(imageHeight * scale));
+                bool isResized;
+                if(const err = image.resize(cast(int)(imageWidth * scale), cast(int)(imageHeight * scale), isResized)){
+                    throw new Exception(err.toString);
+                }
                 imageWidth = image.width;
                 imageHeight = image.height;
             }
@@ -67,7 +75,10 @@ class LoadableImage : Texture
         }
 
         texture = new SdlTexture;
-        texture.fromRenderer(window.renderer, image);
+        if (const err = texture.fromRenderer(window.renderer, image))
+        {
+            throw new Exception(err.toString);
+        }
         int width;
         int height;
 
@@ -110,7 +121,8 @@ class LoadableImage : Texture
     override void destroy()
     {
         super.destroy;
-        if(texture !is null){
+        if (texture !is null)
+        {
             texture.destroy;
         }
     }

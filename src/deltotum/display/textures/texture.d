@@ -28,21 +28,34 @@ class Texture : DisplayObject
 
     this(SdlTexture texture)
     {
-        this.texture = texture;
         int w, h;
-        texture.getSize(&w, &h);
+        if (const sizeErr = texture.getSize(&w, &h))
+        {
+            throw new Exception(sizeErr.toString);
+        }
+
         this.width = w;
         this.height = h;
+
+        this.texture = texture;
     }
 
     void loadFromSurface(SdlSurface surface)
     {
-        texture = new SdlTexture;
-        texture.fromRenderer(window.renderer, surface);
+        auto newTexture = new SdlTexture;
+        if(const err = newTexture.fromRenderer(window.renderer, surface)){
+            throw new Exception(err.toString);
+        }
         int w, h;
-        texture.getSize(&w, &h);
+        if (const sizeErr = newTexture.getSize(&w, &h))
+        {
+            throw new Exception(sizeErr.toString);
+        }
+
         this.width = w;
         this.height = h;
+
+        texture = newTexture;
     }
 
     override void drawContent()

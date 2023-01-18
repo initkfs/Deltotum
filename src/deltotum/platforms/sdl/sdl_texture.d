@@ -17,7 +17,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
     //TODO move to RgbaTexture
     private
     {
-        double _opacity;
+        double _opacity = 0;
     }
 
     this()
@@ -32,19 +32,28 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
 
     PlatformResult query(int* width, int* height, uint* format, SDL_TextureAccess* access) @nogc nothrow
     {
-        immutable int zeroOrErrorCode = SDL_QueryTexture(ptr, format, access, width, height);
+        if (!ptr)
+        {
+            return PlatformResult.error("Texture query error: texture ponter is null");
+        }
+        const int zeroOrErrorCode = SDL_QueryTexture(ptr, format, access, width, height);
         return PlatformResult(zeroOrErrorCode);
     }
 
-    int getSize(int* width, int* height) @nogc nothrow
+    PlatformResult getSize(int* width, int* height) @nogc nothrow
     {
         return query(width, height, null, null);
     }
 
-    void create(SdlRenderer renderer, uint format,
+    PlatformResult create(SdlRenderer renderer, uint format,
         SDL_TextureAccess access, int w,
         int h)
     {
+        if (ptr)
+        {
+            destroyPtr;
+        }
+
         ptr = SDL_CreateTexture(renderer.getObject, format, access, w, h);
         if (ptr is null)
         {
@@ -53,25 +62,32 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
             {
                 error ~= err;
             }
-            throw new Exception(error);
+            return PlatformResult.error(error);
         }
+
+        return PlatformResult.success;
     }
 
-    void createRGBA(SdlRenderer renderer, int width, int height)
+    PlatformResult createRGBA(SdlRenderer renderer, int width, int height)
     {
-        create(renderer, SDL_PIXELFORMAT_RGBA32,
+        return create(renderer, SDL_PIXELFORMAT_RGBA32,
             SDL_TextureAccess.SDL_TEXTUREACCESS_TARGET, width,
             height);
     }
 
-    //SDL_BlendMode
-    void setBlendModeBlend() @nogc nothrow
+    PlatformResult setBlendModeBlend() @nogc nothrow
     {
-        SDL_SetTextureBlendMode(ptr, SDL_BLENDMODE_BLEND);
+        const int zeroOrErrorCode = SDL_SetTextureBlendMode(ptr, SDL_BLENDMODE_BLEND);
+        return PlatformResult(zeroOrErrorCode);
     }
 
-    void fromRenderer(SdlRenderer renderer, SdlSurface surface)
+    PlatformResult fromRenderer(SdlRenderer renderer, SdlSurface surface)
     {
+        if (ptr)
+        {
+            destroyPtr;
+        }
+
         ptr = SDL_CreateTextureFromSurface(renderer.getObject, surface.getObject);
         if (ptr is null)
         {
@@ -80,15 +96,19 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
             {
                 error ~= err;
             }
-            //TODO or tryParse\return bool?
-            throw new Exception(error);
+            return PlatformResult.error(error);
         }
         SDL_SetTextureBlendMode(ptr, SDL_BLENDMODE_BLEND);
+        return PlatformResult.success;
     }
 
     PlatformResult changeOpacity(double opacity) @nogc nothrow
     {
-        immutable int zeroOrErrorCode = SDL_SetTextureAlphaMod(ptr, cast(ubyte)(255 * opacity));
+        if (!ptr)
+        {
+            return PlatformResult.error("Texture opacity change error: texture is null");
+        }
+        const int zeroOrErrorCode = SDL_SetTextureAlphaMod(ptr, cast(ubyte)(255 * opacity));
         return PlatformResult(zeroOrErrorCode);
     }
 
@@ -102,12 +122,12 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         return false;
     }
 
-    @property double opacity() @safe pure nothrow
+    double opacity() @safe pure nothrow
     {
         return _opacity;
     }
 
-    @property void opacity(double opacity) @nogc nothrow
+    void opacity(double opacity) @nogc nothrow
     {
         _opacity = opacity;
         if (ptr)

@@ -42,13 +42,13 @@ class Assets : LoggableUnit
 
     string image(string path)
     {
-        immutable string imagePath = filePath(path);
+        const string imagePath = filePath(path);
         return imagePath;
     }
 
     Font font(string fontFilePath, int size)
     {
-        immutable string path = filePath(fontFilePath);
+        const string path = filePath(fontFilePath);
         Font font = new Font(logger, path, size);
         return font;
     }

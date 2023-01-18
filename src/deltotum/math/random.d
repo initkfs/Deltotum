@@ -86,11 +86,11 @@ class Random
 
     double chanceAll(Tuple!(double, void delegate())[] chanceDelegates)
     {
-        immutable double random0to1 = randomBetween0to1;
+        const double random0to1 = randomBetween0to1;
         double accumulator = 0;
         foreach (chanceDg; chanceDelegates)
         {
-            immutable double chance = chanceDg[0];
+            const double chance = chanceDg[0];
             accumulator += chance;
             if (random0to1 <= accumulator)
             {

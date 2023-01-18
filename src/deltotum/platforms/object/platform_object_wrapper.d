@@ -37,6 +37,7 @@ mixin template PlatformObjectWrapper(T)
     }
 
     final inout(T*) getObject() inout @nogc nothrow @safe
+    out (p; p !is null)
     {
         return ptr;
     }

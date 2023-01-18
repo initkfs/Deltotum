@@ -4,7 +4,7 @@ import deltotum.application.events.application_event : ApplicationEvent;
 import deltotum.input.mouse.event.mouse_event : MouseEvent;
 import deltotum.input.keyboard.event.key_event : KeyEvent;
 import deltotum.window.event.window_event : WindowEvent;
-import deltotum.input.joystick.event.joystick_event: JoystickEvent;
+import deltotum.input.joystick.event.joystick_event : JoystickEvent;
 
 /**
  * Authors: initkfs
@@ -18,5 +18,5 @@ abstract class EventProcessor(E)
     @property void delegate(WindowEvent) onWindow;
     @property void delegate(JoystickEvent) onJoystick;
 
-    abstract void process(E event);
+    abstract bool process(E event);
 }

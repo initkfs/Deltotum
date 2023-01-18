@@ -1,5 +1,6 @@
 module deltotum.platforms.sdl.sdl_surface;
 
+import deltotum.platforms.result.platform_result : PlatformResult;
 import deltotum.platforms.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.platforms.sdl.sdl_window : SdlWindow;
 
@@ -20,10 +21,24 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface
         super(ptr);
     }
 
-    void createRGBSurface(uint flags = 0, int width = 10, int height = 10, int depth = 32,
+    PlatformResult createRGBSurface(uint flags = 0, int width = 10, int height = 10, int depth = 32,
         uint rmask = 0, uint gmask = 0, uint bmask = 0, uint amask = 0)
     {
+        if (ptr)
+        {
+            destroyPtr;
+        }
         ptr = createRGBSurfacePtr(flags, width, height, depth, rmask, gmask, bmask, amask);
+        if (!ptr)
+        {
+            string error = "Cannot create rgb surface.";
+            if (const err = getError)
+            {
+                error ~= err;
+            }
+            return PlatformResult.error(error);
+        }
+        return PlatformResult.success;
     }
 
     SDL_Surface* createRGBSurfacePtr(uint flags, int width, int height, int depth,
@@ -38,47 +53,53 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface
             gmask,
             bmask,
             amask);
-        if (!newPtr)
-        {
-            string error = "Cannot create rgb surface.";
-            if (const err = getError)
-            {
-                error ~= err;
-            }
-            throw new Exception(error);
-        }
         return newPtr;
     }
 
     static SdlSurface getWindowSurface(SdlWindow window)
     {
         SDL_Surface* ptr = SDL_GetWindowSurface(window.getObject);
+        if (!ptr)
+        {
+            throw new Exception("New surface pointer is null.");
+        }
         return new SdlSurface(ptr);
     }
 
-    SDL_Surface* convertSurfacePtr(SDL_Surface* src, SDL_PixelFormat* format, uint flags = 0) const @nogc nothrow
+    PlatformResult convertSurfacePtr(SDL_Surface* src, out SDL_Surface* dest, SDL_PixelFormat* format, uint flags = 0) const
     {
         SDL_Surface* ptr = SDL_ConvertSurface(src, format, flags);
-        return ptr;
+        if (!ptr)
+        {
+            string errMessage = "New surface сonverted pointer is null.";
+            if (const err = getError)
+            {
+                errMessage ~= err;
+            }
+            return PlatformResult.error(errMessage);
+        }
+        dest = ptr;
+        return PlatformResult.success;
     }
 
-    protected void scaleToPtr(SDL_Surface* destPtr, SDL_Rect* bounds) @nogc nothrow
+    protected PlatformResult scaleToPtr(SDL_Surface* destPtr, SDL_Rect* bounds) @nogc nothrow
     {
-        SDL_BlitScaled(ptr, null, destPtr, bounds);
+        const int zeroOrErrorCode = SDL_BlitScaled(ptr, null, destPtr, bounds);
+        return PlatformResult(zeroOrErrorCode);
     }
 
-    void scaleTo(SdlSurface dest, SDL_Rect* bounds) @nogc nothrow
+    PlatformResult scaleTo(SdlSurface dest, SDL_Rect* bounds) @nogc nothrow
     {
-        scaleToPtr(dest.getObject, bounds);
+        return scaleToPtr(dest.getObject, bounds);
     }
 
-    bool resize(int newWidth, int newHeight)
+    PlatformResult resize(int newWidth, int newHeight, out bool isResized)
     {
         //https://stackoverflow.com/questions/40850196/sdl2-resize-a-surface
         // https://stackoverflow.com/questions/33850453/sdl2-blit-scaled-from-a-palettized-8bpp-surface-gives-error-blit-combination/33944312
         if (newWidth <= 0 || newHeight <= 0)
         {
-            return false;
+            return PlatformResult.success;
         }
 
         int w = width;
@@ -86,7 +107,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface
 
         if (w == newWidth && h == newHeight)
         {
-            return false;
+            return PlatformResult.success;
         }
 
         SDL_Rect dest;
@@ -99,26 +120,46 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface
             getPixelFormat.BitsPerPixel, getPixelFormat.Rmask,
             getPixelFormat.Gmask, getPixelFormat.Bmask, getPixelFormat.Amask);
 
-        scaleToPtr(newSurfacePtr, &dest);
+        if (!newSurfacePtr)
+        {
+            string error = "Resizing error: new surface pointer is null";
+            if (const err = getError)
+            {
+                error ~= err;
+            }
+            return PlatformResult.error(error);
+        }
+
+        if (const err = scaleToPtr(newSurfacePtr, &dest))
+        {
+            return err;
+        }
+
         updateObject(newSurfacePtr);
-        return true;
+        isResized = true;
+        return PlatformResult.success;
     }
 
-    void blit(const SDL_Rect* srcRect, SDL_Surface* dst, SDL_Rect* dstRect){
-        SDL_BlitSurface(ptr, srcRect, dst, dstRect);
+    PlatformResult blit(const SDL_Rect* srcRect, SDL_Surface* dst, SDL_Rect* dstRect)
+    {
+        const int zeroOrErrorCode = SDL_BlitSurface(ptr, srcRect, dst, dstRect);
+        return PlatformResult(zeroOrErrorCode);
     }
 
     inout(SDL_PixelFormat*) getPixelFormat() inout @nogc nothrow @safe
+    in (ptr !is null)
     {
         return ptr.format;
     }
 
     int width() @nogc nothrow @safe
+    in (ptr !is null)
     {
         return ptr.w;
     }
 
     int height() @nogc nothrow @safe
+    in(ptr !is null)
     {
         return ptr.h;
     }

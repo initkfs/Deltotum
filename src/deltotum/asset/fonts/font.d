@@ -46,7 +46,9 @@ class Font : LoggableUnit
                 .alphaNorm))
         {
             logger.error(fontRenderErr.toString);
-            fontSurface.createRGBSurface;
+            if(const err = fontSurface.createRGBSurface){
+                throw new Exception(err.toString);
+            }
             return fontSurface;
         }
 
@@ -55,7 +57,9 @@ class Font : LoggableUnit
             import std.string : fromStringz;
 
             logger.errorf("Received empty surface for text: %s", text.fromStringz.idup);
-            fontSurface.createRGBSurface;
+            if(const err = fontSurface.createRGBSurface){
+                throw new Exception(err.toString);
+            }
             return fontSurface;
         }
 

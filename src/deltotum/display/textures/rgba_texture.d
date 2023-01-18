@@ -1,6 +1,6 @@
 module deltotum.display.textures.rgba_texture;
 
-import deltotum.display.textures.texture: Texture;
+import deltotum.display.textures.texture : Texture;
 
 import deltotum.platforms.sdl.sdl_texture : SdlTexture;
 import deltotum.math.shapes.rect2d : Rect2d;
@@ -17,7 +17,8 @@ class RgbaTexture : Texture
         this.height = height;
     }
 
-    void createTextureContent(){
+    void createTextureContent()
+    {
 
     }
 
@@ -27,8 +28,15 @@ class RgbaTexture : Texture
 
         texture = new SdlTexture;
         //TODO toInt?
-        texture.createRGBA(window.renderer, cast(int) width, cast(int) height);
-        texture.setBlendModeBlend;
+        const createErr = texture.createRGBA(window.renderer, cast(int) width, cast(int) height);
+        if (createErr)
+        {
+            throw new Exception(createErr.toString);
+        }
+        if (const blendErr = texture.setBlendModeBlend)
+        {
+            throw new Exception(blendErr.toString);
+        }
         window.renderer.setRendererTarget(texture.getObject);
         createTextureContent;
         window.renderer.resetRendererTarget;

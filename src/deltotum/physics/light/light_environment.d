@@ -21,14 +21,19 @@ class LightEnvironment : Image
     override void create()
     {
         auto lightTexture = new SdlTexture;
-        lightTexture.create(window.renderer, SDL_PIXELFORMAT_RGBA32,
+        const createErr = lightTexture.create(window.renderer, SDL_PIXELFORMAT_RGBA32,
             SDL_TextureAccess.SDL_TEXTUREACCESS_TARGET, cast(int) window.getWidth,
             cast(int) window.getHeight);
+        if(createErr){
+            throw new Exception(createErr.toString);
+        }
         SDL_SetTextureBlendMode(lightTexture.getObject, SDL_BLENDMODE_MOD);
 
         this.texture = lightTexture;
         int width, height;
-        texture.getSize(&width, &height);
+        if(const err = texture.getSize(&width, &height)){
+            throw new Exception(err.toString);
+        }
         this.width = width;
         this.height = height;
 

@@ -30,8 +30,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         import std.exception : enforce;
 
         enforce(window !is null, "Window must not be null");
-        this.window = window;
-
+        
         enum firstDriverIndex = -1;
         ptr = SDL_CreateRenderer(window.getObject,
             firstDriverIndex, flags);
@@ -45,13 +44,14 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
             throw new Exception(msg);
         }
 
+        this.window = window;
     }
 
     PlatformResult setRenderDrawColor(ubyte r, ubyte g, ubyte b, ubyte a) @nogc nothrow
     {
         ubyte oldR, oldG, oldB, oldA;
         //TODO log?
-        immutable int zeroOrErrorColor = SDL_GetRenderDrawColor(ptr,
+        const int zeroOrErrorColor = SDL_GetRenderDrawColor(ptr,
             &oldR, &oldG, &oldB, &oldA);
         if (zeroOrErrorColor)
         {
@@ -63,7 +63,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
             return PlatformResult();
         }
 
-        immutable int zeroOrErrorCode = SDL_SetRenderDrawColor(ptr, r, g, b, a);
+        const int zeroOrErrorCode = SDL_SetRenderDrawColor(ptr, r, g, b, a);
         if (zeroOrErrorCode)
         {
             return PlatformResult(zeroOrErrorCode, "RGBA drawing error");
@@ -74,7 +74,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
 
     PlatformResult clear() @nogc nothrow
     {
-        immutable int zeroOrErrorCode = SDL_RenderClear(ptr);
+        const int zeroOrErrorCode = SDL_RenderClear(ptr);
         return PlatformResult(zeroOrErrorCode);
     }
 
@@ -85,7 +85,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
 
     PlatformResult copy(SdlTexture texture) @nogc nothrow
     {
-        immutable int zeroOrErrorCode = SDL_RenderCopy(ptr, texture.getObject, null, null);
+        const int zeroOrErrorCode = SDL_RenderCopy(ptr, texture.getObject, null, null);
         return PlatformResult(zeroOrErrorCode);
     }
 
@@ -97,19 +97,19 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
 
     PlatformResult drawRect(const SDL_Rect* rect) @nogc nothrow
     {
-        immutable int zeroOrErrorCode = SDL_RenderDrawRect(ptr, rect);
+        const int zeroOrErrorCode = SDL_RenderDrawRect(ptr, rect);
         return PlatformResult(zeroOrErrorCode);
     }
 
     PlatformResult drawPoint(int x, int y) @nogc nothrow
     {
-        immutable int zeroOrErrorCode = SDL_RenderDrawPoint(ptr, x, y);
+        const int zeroOrErrorCode = SDL_RenderDrawPoint(ptr, x, y);
         return PlatformResult(zeroOrErrorCode);
     }
 
     PlatformResult drawLine(int startX, int startY, int endX, int endY) @nogc nothrow
     {
-        immutable int zeroOrErrorCode = SDL_RenderDrawLine(ptr, startX, startY, endX, endY);
+        const int zeroOrErrorCode = SDL_RenderDrawLine(ptr, startX, startY, endX, endY);
         return PlatformResult(zeroOrErrorCode);
     }
 
@@ -119,7 +119,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         import std.array : array;
 
         SDL_Point[] points = linePoints.map!(p => SDL_Point(cast(int) p.x, cast(int) p.y)).array;
-        immutable int zeroOrErrorCode = SDL_RenderDrawLines(ptr,
+        const int zeroOrErrorCode = SDL_RenderDrawLines(ptr,
             points.ptr,
             cast(int) points.length);
         return PlatformResult(zeroOrErrorCode);
@@ -169,7 +169,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
 
     PlatformResult setViewport(SDL_Rect* rect) @nogc nothrow
     {
-        immutable int zeroOrErrorCode = SDL_RenderSetViewport(ptr, rect);
+        const int zeroOrErrorCode = SDL_RenderSetViewport(ptr, rect);
         return PlatformResult(zeroOrErrorCode);
     }
 
@@ -181,20 +181,20 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
 
     PlatformResult fillRect(const SDL_Rect* rect) @nogc nothrow
     {
-        immutable int zeroOrErrorCode = SDL_RenderFillRect(ptr, rect);
+        const int zeroOrErrorCode = SDL_RenderFillRect(ptr, rect);
         return PlatformResult(zeroOrErrorCode);
     }
 
     PlatformResult copyEx(SdlTexture texture, const SDL_Rect* srcRect, const SDL_Rect* destRect, double angle, const SDL_Point* center, SDL_RendererFlip flip = SDL_RendererFlip
             .SDL_FLIP_NONE)
     {
-        immutable int zeroOrErrorCode = SDL_RenderCopyEx(ptr, texture.getObject, srcRect, destRect, angle, center, flip);
+        const int zeroOrErrorCode = SDL_RenderCopyEx(ptr, texture.getObject, srcRect, destRect, angle, center, flip);
         return PlatformResult(zeroOrErrorCode);
     }
 
     PlatformResult getOutputSize(int* width, int* height) @nogc nothrow
     {
-        immutable int zeroOrErrorCode = SDL_GetRendererOutputSize(ptr, width, height);
+        const int zeroOrErrorCode = SDL_GetRendererOutputSize(ptr, width, height);
         return PlatformResult(zeroOrErrorCode);
     }
 

@@ -211,17 +211,17 @@ struct RGBA
 
     HSV toHSV() const @safe
     {
-        immutable double newR = colorNorm(r);
-        immutable double newG = colorNorm(g);
-        immutable double newB = colorNorm(b);
+        const double newR = colorNorm(r);
+        const double newG = colorNorm(g);
+        const double newB = colorNorm(b);
 
         import std.math.operations : isClose;
         import std.algorithm.comparison : min, max;
         import std.math.remainder : fmod;
 
-        immutable double cmax = max(newR, max(newG, newB));
-        immutable double cmin = min(newR, min(newG, newB));
-        immutable double delta = cmax - cmin;
+        const double cmax = max(newR, max(newG, newB));
+        const double cmin = min(newR, min(newG, newB));
+        const double delta = cmax - cmin;
 
         enum hueStartAngle = 60;
 
@@ -247,9 +247,9 @@ struct RGBA
             //TODO exception?
         }
 
-        immutable double saturation = isClose(cmax, 0) ? 0 : (
+        const double saturation = isClose(cmax, 0) ? 0 : (
             delta / cmax) * HSV.HSVData.maxSaturation;
-        immutable double value = cmax * HSV.HSVData.maxValue;
+        const double value = cmax * HSV.HSVData.maxValue;
 
         return HSV(hue, saturation, value);
     }
