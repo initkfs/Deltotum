@@ -4,9 +4,9 @@ import deltotum.display.images.loadable_image : LoadableImage;
 import deltotum.display.display_object : DisplayObject;
 
 //TODO extract interfaces
-import deltotum.hal.sdl.sdl_texture : SdlTexture;
-import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
-import deltotum.hal.sdl.img.sdl_image : SdlImage;
+import deltotum.platforms.sdl.sdl_texture : SdlTexture;
+import deltotum.platforms.sdl.sdl_renderer : SdlRenderer;
+import deltotum.platforms.sdl.img.sdl_image : SdlImage;
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.display.animation.interp.interpolator : Interpolator;
 import deltotum.display.animation.transition : Transition;

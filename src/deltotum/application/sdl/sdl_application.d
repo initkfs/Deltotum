@@ -2,7 +2,7 @@ module deltotum.application.sdl.sdl_application;
 
 import deltotum.application.graphics_application : GraphicsApplication;
 import deltotum.events.event_manager : EventManager;
-import deltotum.hal.sdl.events.sdl_event_processor : SdlEventProcessor;
+import deltotum.platforms.sdl.events.sdl_event_processor : SdlEventProcessor;
 import deltotum.asset.assets : Assets;
 import deltotum.asset.fonts.font : Font;
 import deltotum.scene.scene_manager : SceneManager;
@@ -12,13 +12,13 @@ import deltotum.scene.scene : Scene;
 import deltotum.input.keyboard.event.key_event : KeyEvent;
 import deltotum.input.joystick.event.joystick_event : JoystickEvent;
 
-import deltotum.hal.sdl.sdl_lib : SdlLib;
-import deltotum.hal.sdl.img.sdl_img_lib : SdlImgLib;
-import deltotum.hal.sdl.mix.sdl_mix_lib : SdlMixLib;
-import deltotum.hal.sdl.ttf.sdl_ttf_lib : SdlTTFLib;
-import deltotum.hal.sdl.sdl_window : SdlWindow;
-import deltotum.hal.sdl.sdl_renderer : SdlRenderer;
-import deltotum.hal.sdl.sdl_joystick : SdlJoystick;
+import deltotum.platforms.sdl.sdl_lib : SdlLib;
+import deltotum.platforms.sdl.img.sdl_img_lib : SdlImgLib;
+import deltotum.platforms.sdl.mix.sdl_mix_lib : SdlMixLib;
+import deltotum.platforms.sdl.ttf.sdl_ttf_lib : SdlTTFLib;
+import deltotum.platforms.sdl.sdl_window : SdlWindow;
+import deltotum.platforms.sdl.sdl_renderer : SdlRenderer;
+import deltotum.platforms.sdl.sdl_joystick : SdlJoystick;
 
 import deltotum.window.window : Window;
 import deltotum.input.input : Input;

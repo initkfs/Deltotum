@@ -19,7 +19,7 @@ class EventManager
 {
     version (sdl_backend)
     {
-        import deltotum.hal.sdl.events.sdl_event_processor : SdlEventProcessor;
+        import deltotum.platforms.sdl.events.sdl_event_processor : SdlEventProcessor;
 
         SdlEventProcessor eventProcessor;
     }
