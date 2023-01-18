@@ -33,7 +33,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         this.window = window;
 
         enum firstDriverIndex = -1;
-        ptr = SDL_CreateRenderer(window.getSdlObject,
+        ptr = SDL_CreateRenderer(window.getObject,
             firstDriverIndex, flags);
         if (ptr is null)
         {
@@ -85,7 +85,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
 
     HalResult copy(SdlTexture texture) @nogc nothrow
     {
-        immutable int zeroOrErrorCode = SDL_RenderCopy(ptr, texture.getSdlObject, null, null);
+        immutable int zeroOrErrorCode = SDL_RenderCopy(ptr, texture.getObject, null, null);
         return HalResult(zeroOrErrorCode);
     }
 
@@ -188,7 +188,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
     HalResult copyEx(SdlTexture texture, const SDL_Rect* srcRect, const SDL_Rect* destRect, double angle, const SDL_Point* center, SDL_RendererFlip flip = SDL_RendererFlip
             .SDL_FLIP_NONE)
     {
-        immutable int zeroOrErrorCode = SDL_RenderCopyEx(ptr, texture.getSdlObject, srcRect, destRect, angle, center, flip);
+        immutable int zeroOrErrorCode = SDL_RenderCopyEx(ptr, texture.getObject, srcRect, destRect, angle, center, flip);
         return HalResult(zeroOrErrorCode);
     }
 

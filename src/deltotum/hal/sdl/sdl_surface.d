@@ -52,7 +52,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface
 
     static SdlSurface getWindowSurface(SdlWindow window)
     {
-        SDL_Surface* ptr = SDL_GetWindowSurface(window.getSdlObject);
+        SDL_Surface* ptr = SDL_GetWindowSurface(window.getObject);
         return new SdlSurface(ptr);
     }
 
@@ -69,7 +69,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface
 
     void scaleTo(SdlSurface dest, SDL_Rect* bounds) @nogc nothrow
     {
-        scaleToPtr(dest.getSdlObject, bounds);
+        scaleToPtr(dest.getObject, bounds);
     }
 
     bool resize(int newWidth, int newHeight)
@@ -95,7 +95,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface
         dest.w = newWidth;
         dest.h = newHeight;
 
-        auto newSurfacePtr = createRGBSurfacePtr(getSdlObject.flags, dest.w, dest.h,
+        auto newSurfacePtr = createRGBSurfacePtr(getObject.flags, dest.w, dest.h,
             getPixelFormat.BitsPerPixel, getPixelFormat.Rmask,
             getPixelFormat.Gmask, getPixelFormat.Bmask, getPixelFormat.Amask);
 

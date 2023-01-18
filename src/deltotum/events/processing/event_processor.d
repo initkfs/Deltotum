@@ -1,6 +1,6 @@
 module deltotum.events.processing.event_processor;
 
-import deltotum.application.event.application_event : ApplicationEvent;
+import deltotum.application.events.application_event : ApplicationEvent;
 import deltotum.input.mouse.event.mouse_event : MouseEvent;
 import deltotum.input.keyboard.event.key_event : KeyEvent;
 import deltotum.window.event.window_event : WindowEvent;

@@ -17,12 +17,12 @@ mixin template HalObjectWrapper(T)
 
     abstract protected bool destroyPtr();
 
-    this()
+    this() pure @safe
     {
 
     }
 
-    this(T* ptr)
+    this(T* ptr) pure @safe
     {
         enforce(ptr !is null, "Object pointer must not be null");
         this.ptr = ptr;
@@ -33,20 +33,22 @@ mixin template HalObjectWrapper(T)
         if (ptr && !isDestroyed)
         {
             import std.stdio : stderr;
+
             stderr.writefln("Warning! Undestroyed HAL object %s", typeof(this).stringof);
         }
     }
 
-    inout(T*) getSdlObject() inout @nogc nothrow @safe
+    final inout(T*) getObject() inout @nogc nothrow @safe
     {
         return ptr;
     }
 
-    bool isEmpty() @nogc nothrow pure @safe {
+    final bool isEmpty() @nogc nothrow pure @safe
+    {
         return ptr is null;
     }
 
-    void updateObject(T* newPtr)
+    final void updateObject(T* newPtr)
     {
         enforce(newPtr !is null, "New object pointer must not be null");
         if (ptr)
@@ -59,7 +61,7 @@ mixin template HalObjectWrapper(T)
 
     final bool destroy()
     {
-        isDestroyed = destroyPtr;
+        isDestroyed = destroyPtr();
         return isDestroyed;
     }
 }

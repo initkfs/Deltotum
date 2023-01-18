@@ -8,7 +8,7 @@ import deltotum.display.alignment : Alignment;
 import deltotum.hal.sdl.sdl_texture : SdlTexture;
 import deltotum.physics.physical_body : PhysicalBody;
 import deltotum.input.mouse.event.mouse_event : MouseEvent;
-import deltotum.application.event.application_event : ApplicationEvent;
+import deltotum.application.events.application_event : ApplicationEvent;
 import deltotum.input.keyboard.event.key_event : KeyEvent;
 import deltotum.input.joystick.event.joystick_event : JoystickEvent;
 import deltotum.events.event_type : EventType;

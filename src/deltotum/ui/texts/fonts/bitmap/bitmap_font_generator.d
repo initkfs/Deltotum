@@ -34,14 +34,14 @@ class BitmapFontGenerator : FontGenerator
 
         SdlSurface fontMapSurface = new SdlSurface;
         fontMapSurface.createRGBSurface(0, fontTextureWidth, fontTextureHeight, 32, 0, 0, 0, 0xff);
-        SDL_SetColorKey(fontMapSurface.getSdlObject, SDL_TRUE, SDL_MapRGBA(
-                fontMapSurface.getSdlObject.format, 0, 0, 0, 0));
+        SDL_SetColorKey(fontMapSurface.getObject, SDL_TRUE, SDL_MapRGBA(
+                fontMapSurface.getObject.format, 0, 0, 0, 0));
 
         SDL_Rect glyphPosition;
         Glyph[] glyphs = [];
         RGBA foregroundColor = RGBA.white;
 
-        //TTF_SetFontHinting(font.getSdlObject, TTF_HINTING_MONO);
+        //TTF_SetFontHinting(font.getObject, TTF_HINTING_MONO);
 
         foreach (alphabet; alphabets)
         {
@@ -52,8 +52,8 @@ class BitmapFontGenerator : FontGenerator
                 const(char*) utfPtr = toUTFz!(const(char)*)([letter]);
                 //TODO does SDL keep a reference?
                 SdlSurface glyphRepresentation = font.renderSurface(utfPtr, foregroundColor);
-                glyphPosition.w = glyphRepresentation.getSdlObject.w;
-                glyphPosition.h = glyphRepresentation.getSdlObject.h;
+                glyphPosition.w = glyphRepresentation.getObject.w;
+                glyphPosition.h = glyphRepresentation.getObject.h;
 
                 if (glyphPosition.x + glyphPosition.w >= fontTextureWidth)
                 {
@@ -70,7 +70,7 @@ class BitmapFontGenerator : FontGenerator
                 glyphs ~= Glyph(alphabet, letter, Rect2d(glyphPosition.x, glyphPosition.y, glyphPosition.w, glyphPosition
                         .h));
 
-                glyphRepresentation.blit(null, fontMapSurface.getSdlObject, &glyphPosition);
+                glyphRepresentation.blit(null, fontMapSurface.getObject, &glyphPosition);
                 glyphRepresentation.destroy;
 
                 glyphPosition.x += glyphPosition.w;

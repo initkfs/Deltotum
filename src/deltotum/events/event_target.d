@@ -3,7 +3,7 @@ module deltotum.events.event_target;
 import deltotum.application.components.uni.uni_component : UniComponent;
 
 import deltotum.input.mouse.event.mouse_event : MouseEvent;
-import deltotum.application.event.application_event : ApplicationEvent;
+import deltotum.application.events.application_event : ApplicationEvent;
 import deltotum.input.keyboard.event.key_event : KeyEvent;
 import deltotum.input.joystick.event.joystick_event : JoystickEvent;
 

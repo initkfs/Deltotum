@@ -116,8 +116,8 @@ class LoadableImage : Texture
     }
 
     //TODO remove
-    SDL_Texture* getSdlObject()
+    SDL_Texture* getObject()
     {
-        return texture.getSdlObject;
+        return texture.getObject;
     }
 }

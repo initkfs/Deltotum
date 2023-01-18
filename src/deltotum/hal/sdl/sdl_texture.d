@@ -45,7 +45,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         SDL_TextureAccess access, int w,
         int h)
     {
-        ptr = SDL_CreateTexture(renderer.getSdlObject, format, access, w, h);
+        ptr = SDL_CreateTexture(renderer.getObject, format, access, w, h);
         if (ptr is null)
         {
             string error = "Unable create texture.";
@@ -72,7 +72,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
 
     void fromRenderer(SdlRenderer renderer, SdlSurface surface)
     {
-        ptr = SDL_CreateTextureFromSurface(renderer.getSdlObject, surface.getSdlObject);
+        ptr = SDL_CreateTextureFromSurface(renderer.getObject, surface.getObject);
         if (ptr is null)
         {
             string error = "Unable create texture from renderer and surface.";

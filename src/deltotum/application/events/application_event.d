@@ -1,4 +1,4 @@
-module deltotum.application.event.application_event;
+module deltotum.application.events.application_event;
 
 import deltotum.events.event_base : EventBase;
 import deltotum.events.event_type : EventType;
