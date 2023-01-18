@@ -1,7 +1,5 @@
 module deltotum.platforms.object.platform_object_wrapper;
 
-import std.exception : enforce;
-
 /**
  * Authors: initkfs
  */
@@ -22,6 +20,8 @@ mixin template PlatformObjectWrapper(T)
 
     this(T* ptr) pure @safe
     {
+        import std.exception : enforce;
+
         enforce(ptr !is null, "Platform object pointer must not be null");
         this.ptr = ptr;
     }
@@ -48,6 +48,8 @@ mixin template PlatformObjectWrapper(T)
 
     final void updateObject(T* newPtr)
     {
+        import std.exception : enforce;
+
         enforce(newPtr !is null, "New platform object pointer must not be null");
         if (ptr)
         {
@@ -59,7 +61,7 @@ mixin template PlatformObjectWrapper(T)
 
     final bool destroy()
     {
-        isDestroyed = destroyPtr();
+        isDestroyed = ptr ? destroyPtr() : false;
         return isDestroyed;
     }
 }

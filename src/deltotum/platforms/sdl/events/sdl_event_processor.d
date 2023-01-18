@@ -154,7 +154,6 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
         default:
             break;
         }
-        import std.stdio;
         auto joystickEvent = JoystickEvent(
             EventType.joystick, type, event.window.windowID, event.jbutton.button, event
                 .jaxis.axis, event.jaxis.value);

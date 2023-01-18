@@ -52,4 +52,39 @@ class SdlLib : SdlObject
     {
         SDL_Quit();
     }
+
+    string getSdlVersionInfo() const nothrow
+    {
+        import std.conv : text;
+
+        SDL_version ver;
+        SDL_GetVersion(&ver);
+        //format is not nothrow
+        return text(ver.major, ".", ver.minor, ".", ver.patch);
+    }
+
+    string getHint(string name) const nothrow
+    {
+        const(char)* hintPtr = SDL_GetHint(name.toStringz);
+        if (hintPtr is null)
+        {
+            return null;
+        }
+        immutable hintValue = hintPtr.fromStringz.idup;
+        return hintValue;
+    }
+
+    void clearHints() const @nogc nothrow
+    {
+        SDL_ClearHints();
+    }
+
+    bool setHint(string name, string value) const nothrow
+    {
+        import std.string: toStringz;
+        //TODO string loss due to garbage collector?
+        SDL_bool isSet = SDL_SetHint(name.toStringz,
+            value.toStringz);
+        return typeConverter.toBool(isSet);
+    }
 }

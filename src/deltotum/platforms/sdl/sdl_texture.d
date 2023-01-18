@@ -20,14 +20,14 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         double _opacity;
     }
 
-    this(SDL_Texture* ptr)
-    {
-        super(ptr);
-    }
-
     this()
     {
         super();
+    }
+
+    this(SDL_Texture* ptr)
+    {
+        super(ptr);
     }
 
     PlatformResult query(int* width, int* height, uint* format, SDL_TextureAccess* access) @nogc nothrow

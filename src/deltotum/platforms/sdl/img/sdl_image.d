@@ -12,7 +12,7 @@ import bindbc.sdl;
 class SdlImage : SdlSurface
 {
 
-    @property string path;
+    string path;
 
     this(string path, SdlSurface screenSurface = null)
     {

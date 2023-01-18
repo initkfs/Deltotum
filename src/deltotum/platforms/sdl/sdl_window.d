@@ -15,7 +15,7 @@ import bindbc.sdl;
 class SdlWindow : SdlObjectWrapper!SDL_Window
 {
 
-    @property string title;
+    string title;
 
     private
     {
@@ -111,7 +111,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window
 
     void setBordered(bool value) @nogc nothrow
     {
-        const SDL_bool sdlValue = fromBool(value);
+        const SDL_bool sdlValue = typeConverter.fromBool(value);
         SDL_SetWindowBordered(ptr, sdlValue);
     }
 
@@ -132,7 +132,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window
 
     void setResizable(bool isResizable) @nogc nothrow
     {
-        SDL_bool isSdlResizable = fromBool(isResizable);
+        SDL_bool isSdlResizable = typeConverter.fromBool(isResizable);
         SDL_SetWindowResizable(ptr, isSdlResizable);
     }
 
@@ -229,7 +229,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window
     bool clipboardHasText() @nogc nothrow
     {
         SDL_bool hasText = SDL_HasClipboardText();
-        return toBool(hasText);
+        return typeConverter.toBool(hasText);
     }
 
     PlatformResult clipboardSetText(char* text) nothrow

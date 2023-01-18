@@ -13,7 +13,7 @@ class SdlImageObject : SdlObject
     override string getError() const nothrow
     {
         const char* errPtr = IMG_GetError();
-        immutable error = ptrToError(errPtr);
+        const string error = ptrToError(errPtr);
         return error;
     }
 

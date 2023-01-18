@@ -14,7 +14,7 @@ class SdlMixObject : SdlObject
     override string getError() const nothrow
     {
         const char* errPtr = Mix_GetError();
-        immutable error = ptrToError(errPtr);
+        const string error = ptrToError(errPtr);
         return error;
     }
 
