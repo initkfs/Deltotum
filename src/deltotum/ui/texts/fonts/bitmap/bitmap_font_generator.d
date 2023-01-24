@@ -40,7 +40,7 @@ class BitmapFontGenerator : FontGenerator
                 fontMapSurface.getObject.format, 0, 0, 0, 0));
 
         SDL_Rect glyphPosition;
-        Glyph[] glyphs = [];
+        Glyph[] glyphs;
         RGBA foregroundColor = RGBA.white;
 
         //TTF_SetFontHinting(font.getObject, TTF_HINTING_MONO);

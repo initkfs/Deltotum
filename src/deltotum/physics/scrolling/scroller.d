@@ -8,11 +8,11 @@ import deltotum.physics.direction : Direction;
  */
 class Scroller : DisplayObject
 {
-    @property double speed = 0;
-    @property Direction direction = Direction.none;
-    @property DisplayObject _current;
-    @property DisplayObject _next;
-    @property bool isScroll;
+    double speed = 0;
+    Direction direction = Direction.none;
+    DisplayObject _current;
+    DisplayObject _next;
+    bool isScroll;
 
     this(){
         super();
@@ -82,12 +82,12 @@ class Scroller : DisplayObject
         }
     }
 
-    @property DisplayObject current() @nogc nothrow
+    DisplayObject current() @nogc nothrow
     {
         return _current;
     }
 
-    @property void current(DisplayObject current)
+    void current(DisplayObject current)
     {
         import std.exception : enforce;
 
@@ -96,12 +96,12 @@ class Scroller : DisplayObject
         add(current);
     }
 
-    @property DisplayObject next() @nogc nothrow
+    DisplayObject next() @nogc nothrow
     {
         return _next;
     }
 
-    @property void next(DisplayObject next)
+    void next(DisplayObject next)
     {
         import std.exception : enforce;
 

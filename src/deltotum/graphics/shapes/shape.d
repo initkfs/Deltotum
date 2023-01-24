@@ -8,7 +8,7 @@ import deltotum.graphics.styles.graphic_style: GraphicStyle;
  */
 class Shape : Canvas
 {
-    @property GraphicStyle style;
+    GraphicStyle style;
 
     this(double width, double height, GraphicStyle style)
     {

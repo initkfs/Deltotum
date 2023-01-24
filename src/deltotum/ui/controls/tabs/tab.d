@@ -7,7 +7,7 @@ import deltotum.ui.containers.container: Container;
  */
 class Tab : Container {
     
-    @property string text;
+    string text;
 
     this(string text = "Tab"){
         super();

@@ -26,14 +26,14 @@ private
  */
 class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : DisplayObject
 {
-    @property void delegate(T) onValue;
-    @property bool isInverse;
-    @property bool isCycle = true;
-    @property Interpolator interpolator;
-    @property T lastValue;
+    void delegate(T) onValue;
+    bool isInverse;
+    bool isCycle = true;
+    Interpolator interpolator;
+    T lastValue;
 
-    @property T _minValue;
-    @property T _maxValue;
+    T _minValue;
+    T _maxValue;
 
     private
     {
@@ -157,12 +157,12 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : DisplayObject
         currentFrame++;
     }
 
-    @property T minValue() @nogc @safe pure nothrow
+    T minValue() @nogc @safe pure nothrow
     {
         return _minValue;
     }
 
-    @property void minValue(T newValue) @nogc @safe nothrow
+    void minValue(T newValue) @nogc @safe nothrow
     {
         if (isRun)
         {
@@ -172,12 +172,12 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : DisplayObject
         _minValue = newValue;
     }
 
-    @property T maxValue() @nogc @safe pure nothrow
+    T maxValue() @nogc @safe pure nothrow
     {
         return _maxValue;
     }
 
-    @property void maxValue(T newValue) @nogc @safe nothrow
+    void maxValue(T newValue) @nogc @safe nothrow
     {
         if (isRun)
         {

@@ -10,9 +10,9 @@ import deltotum.math.vector2d : Vector2d;
  */
 class Particle : DisplayObject
 {
-    @property bool isAlive;
-    @property int lifetime;
-    @property int age;
+    bool isAlive;
+    int lifetime;
+    int age;
 
     this(){
         super();

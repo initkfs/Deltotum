@@ -24,53 +24,53 @@ import std.math.algebraic : abs;
  */
 abstract class DisplayObject : PhysicalBody
 {
-    @property DisplayObject parent;
+    DisplayObject parent;
 
-    @property double opacity = 1;
-    @property double angle = 0;
-    @property double scale = 1;
+    double opacity = 1;
+    double angle = 0;
+    double scale = 1;
 
-    @property Vector2d velocity;
-    @property Vector2d acceleration;
+    Vector2d velocity;
+    Vector2d acceleration;
 
-    @property bool isRedraw = true;
-    @property bool isRedrawChildren = true;
-    @property bool isDrawAfterParent = true;
-    @property bool isManaged = true;
-    @property bool isUpdatable = true;
+    bool isRedraw = true;
+    bool isRedrawChildren = true;
+    bool isDrawAfterParent = true;
+    bool isManaged = true;
+    bool isUpdatable = true;
 
-    @property bool isLayoutManaged = true;
-    @property Alignment alignment = Alignment.none;
+    bool isLayoutManaged = true;
+    Alignment alignment = Alignment.none;
 
-    @property bool isCreated = false;
-    @property bool isFocus = false;
-    @property bool isDraggable = false;
-    @property bool isVisible = true;
+    bool isCreated = false;
+    bool isFocus = false;
+    bool isDraggable = false;
+    bool isVisible = true;
 
     mixin ToString;
 
     //protected
     //{
-    @property DisplayObject[] children = [];
+    DisplayObject[] children;
     //}
 
-    @property bool delegate(double, double) onDrag;
-    @property void delegate() invalidateListener;
-    @property void delegate(double) onInvalidateWidth;
-    @property void delegate(double) onInvalidateHeight;
+    bool delegate(double, double) onDrag;
+    void delegate() invalidateListener;
+    void delegate(double) onInvalidateWidth;
+    void delegate(double) onInvalidateHeight;
 
     private
     {
-        @property double _x = 0;
-        @property double _y = 0;
+        double _x = 0;
+        double _y = 0;
 
-        @property double _width = 0;
-        @property double _height = 0;
+        double _width = 0;
+        double _height = 0;
 
-        @property double offsetX = 0;
-        @property double offsetY = 0;
-        @property bool isDrag = false;
-        @property bool valid = true;
+        double offsetX = 0;
+        double offsetY = 0;
+        bool isDrag = false;
+        bool valid = true;
     }
 
     void create()
@@ -481,12 +481,12 @@ abstract class DisplayObject : PhysicalBody
         this.y = y;
     }
 
-    @property double x() @nogc @safe pure nothrow
+    double x() @nogc @safe pure nothrow
     {
         return _x;
     }
 
-    @property void x(double newX) @nogc @safe pure nothrow
+    void x(double newX) @nogc @safe pure nothrow
     {
         foreach (DisplayObject child; children)
         {
@@ -499,12 +499,12 @@ abstract class DisplayObject : PhysicalBody
         _x = newX;
     }
 
-    @property double y() @nogc @safe pure nothrow
+    double y() @nogc @safe pure nothrow
     {
         return _y;
     }
 
-    @property void y(double newY) @nogc @safe pure nothrow
+    void y(double newY) @nogc @safe pure nothrow
     {
         foreach (DisplayObject child; children)
         {
@@ -517,13 +517,13 @@ abstract class DisplayObject : PhysicalBody
         _y = newY;
     }
 
-    @property double width() @nogc @safe pure nothrow
+    double width() @nogc @safe pure nothrow
     {
         //TODO children?
         return _width;
     }
 
-    @property void width(double value)
+    void width(double value)
     {
         if (_width == value)
         {
@@ -538,12 +538,12 @@ abstract class DisplayObject : PhysicalBody
         _width = value;
     }
 
-    @property double height() @nogc @safe pure nothrow
+    double height() @nogc @safe pure nothrow
     {
         return _height;
     }
 
-    @property void height(double value)
+    void height(double value)
     {
         if (_height == value)
         {
@@ -559,7 +559,7 @@ abstract class DisplayObject : PhysicalBody
         _height = value;
     }
 
-    @property bool isValid() @nogc @safe pure nothrow
+    bool isValid() @nogc @safe pure nothrow
     {
         bool isAllValid = valid;
         foreach (DisplayObject child; children)
@@ -572,7 +572,7 @@ abstract class DisplayObject : PhysicalBody
         return isAllValid;
     }
 
-    @property void setValid(bool isValidControl) @nogc @safe pure nothrow
+    void setValid(bool isValidControl) @nogc @safe pure nothrow
     {
         valid = isValidControl;
         if (valid)

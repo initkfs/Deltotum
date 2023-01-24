@@ -14,39 +14,39 @@ import std.stdio;
  */
 class Emitter : DisplayObject
 {
-    @property Particle delegate() particleFactory;
-    @property bool delegate(Particle) onParticleUpdate;
+    Particle delegate() particleFactory;
+    bool delegate(Particle) onParticleUpdate;
 
-    @property bool isActive;
+    bool isActive;
 
     @Configurable
-    @property int lifetime = 200;
+    int lifetime = 200;
     @Configurable
-    @property int countPerFrame = 10;
+    int countPerFrame = 10;
     @Configurable
-    @property double particleMass = 0;
+    double particleMass = 0;
     @Configurable
-    @property double minVelocityX = 0;
+    double minVelocityX = 0;
     @Configurable
-    @property double maxVelocityX = 0;
+    double maxVelocityX = 0;
     @Configurable
-    @property double minVelocityY = 0;
+    double minVelocityY = 0;
     @Configurable
-    @property double maxVelocityY = 0;
+    double maxVelocityY = 0;
     @Configurable
-    @property double minAccelerationX = 0;
+    double minAccelerationX = 0;
     @Configurable
-    @property double maxAccelerationX = 0;
+    double maxAccelerationX = 0;
     @Configurable
-    @property double minAccelerationY = 0;
+    double minAccelerationY = 0;
     @Configurable
-    @property double maxAccelerationY = 0;
+    double maxAccelerationY = 0;
 
     private
     {
         //TODO pools implementation
         Particle[] particles;
-        @property Random random;
+        Random random;
         EmitterConfig emitterConfig;
     }
 

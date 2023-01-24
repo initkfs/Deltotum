@@ -20,12 +20,12 @@ private
 {
     class ImageAnimation
     {
-        @property string name;
-        @property int[] frameIndices = [];
-        @property int frameRow;
-        @property Transition!double transition;
-        @property int frameDelay;
-        @property bool isLooping;
+        string name;
+        int[] frameIndices;
+        int frameRow;
+        Transition!double transition;
+        int frameDelay;
+        bool isLooping;
     }
 }
 
@@ -38,7 +38,7 @@ class AnimatedImage : LoadableImage
     {
         int commonFrameDelay;
 
-        ImageAnimation[] animations = [];
+        ImageAnimation[] animations;
         ImageAnimation currentAnimation;
         size_t currentAnimationIndex;
         size_t currentAnimationStartTime;

@@ -11,8 +11,8 @@ import std.stdio;
  */
 class TextArea : HBox
 {
-    @property TextView textView;
-    @property VScrollbar scroll;
+    TextView textView;
+    VScrollbar scroll;
 
     this(){
         textView = new TextView;

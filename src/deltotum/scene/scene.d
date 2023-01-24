@@ -15,17 +15,17 @@ import bindbc.sdl;
  */
 class Scene : UniComponent
 {
-    @property void delegate(Scene) onSceneChange;
+    void delegate(Scene) onSceneChange;
 
-    @property size_t timeEventProcessingMs;
-    @property size_t timeUpdateProcessingMs;
+    size_t timeEventProcessingMs;
+    size_t timeUpdateProcessingMs;
 
-    @property bool isClearingInCycle = true;
-    @property size_t worldTicks;
+    bool isClearingInCycle = true;
+    size_t worldTicks;
 
     protected
     {
-        DisplayObject[] displayObjects = [];
+        DisplayObject[] displayObjects;
     }
 
     private
@@ -114,7 +114,7 @@ class Scene : UniComponent
         return displayObjects;
     }
 
-    @property void creation(Creation creation) @safe pure
+    void creation(Creation creation) @safe pure
     {
         import std.exception : enforce;
 
@@ -122,7 +122,7 @@ class Scene : UniComponent
         _creation = creation;
     }
 
-    @property Creation creation() @nogc @safe pure nothrow
+    Creation creation() @nogc @safe pure nothrow
     out (_creation; _creation !is null)
     {
         return _creation;

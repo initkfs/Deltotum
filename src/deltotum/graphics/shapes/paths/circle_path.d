@@ -8,7 +8,7 @@ import deltotum.graphics.styles.graphic_style : GraphicStyle;
  */
 class CirclePath : Path
 {
-    @property int radius;
+    int radius;
 
     this(int radius, GraphicStyle style)
     {

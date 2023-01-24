@@ -9,7 +9,7 @@ import deltotum.i18n.langs.glyph : Glyph;
 class BitmapFont : Texture
 {
 
-    @property Glyph[] glyphs = [];
+    Glyph[] glyphs;
 
     this(Glyph[] glyphs)
     {

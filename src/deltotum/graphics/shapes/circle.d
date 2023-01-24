@@ -8,7 +8,7 @@ import deltotum.graphics.styles.graphic_style: GraphicStyle;
  */
 class Circle : Shape
 {
-    @property double radius = 0;
+    double radius = 0;
 
     this(double radius, GraphicStyle style, double borderWidth = 1.0)
     {

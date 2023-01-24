@@ -14,10 +14,10 @@ import bindbc.sdl;
  */
 class Window
 {
-    @property SdlRenderer renderer;
-    @property SdlWindow nativeWindow;
+    SdlRenderer renderer;
+    SdlWindow nativeWindow;
     //TODO remove
-    @property double frameRate;
+    double frameRate;
 
     this(SdlRenderer renderer, SdlWindow window)
     {

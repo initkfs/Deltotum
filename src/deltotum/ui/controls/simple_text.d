@@ -17,7 +17,7 @@ import bindbc.sdl;
  */
 class SimpleText : Control
 {
-    @property string text;
+    string text;
 
     private
     {

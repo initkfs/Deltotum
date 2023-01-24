@@ -12,11 +12,11 @@ import deltotum.input.joystick.event.joystick_event : JoystickEvent;
  */
 abstract class EventProcessor(E)
 {
-    @property void delegate(ApplicationEvent) onApplication;
-    @property void delegate(MouseEvent) onMouse;
-    @property void delegate(KeyEvent) onKey;
-    @property void delegate(WindowEvent) onWindow;
-    @property void delegate(JoystickEvent) onJoystick;
+    void delegate(ApplicationEvent) onApplication;
+    void delegate(MouseEvent) onMouse;
+    void delegate(KeyEvent) onKey;
+    void delegate(WindowEvent) onWindow;
+    void delegate(JoystickEvent) onJoystick;
 
     abstract bool process(E event);
 }

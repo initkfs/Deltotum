@@ -50,11 +50,11 @@ class SdlApplication : GraphicsApplication
         int sceneHeight;
     }
 
-    @property string title;
-    @property double frameRate = 0;
-    @property bool isRunning;
-    @property EventManager eventManager;
-    @property SceneManager sceneManager;
+    string title;
+    double frameRate = 0;
+    bool isRunning;
+    EventManager eventManager;
+    SceneManager sceneManager;
 
     this(string title, int sceneWidth, int sceneHeight, SdlLib lib, SdlImgLib imgLib, SdlMixLib audioMixLib, SdlTTFLib fontLib)
     {

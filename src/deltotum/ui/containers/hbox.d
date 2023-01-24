@@ -8,7 +8,7 @@ import deltotum.display.layouts.horizontal_layout: HorizontalLayout;
  */
 class HBox : Container
 {
-    @property double spacing = 0;
+    double spacing = 0;
 
     this(double spacing = 0)
     {

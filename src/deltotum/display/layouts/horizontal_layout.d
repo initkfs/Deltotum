@@ -9,7 +9,7 @@ import deltotum.display.alignment : Alignment;
  */
 class HorizontalLayout : ManagedLayout
 {
-    @property double spacing = 0;
+    double spacing = 0;
 
     this(double spacing = 0)
     {

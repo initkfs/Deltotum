@@ -5,19 +5,19 @@ module deltotum.debugging.profiling.profiler;
  */
 abstract class Profiler
 {
-    @property bool isEnabled;
+    bool isEnabled;
 
-    @property void delegate(string) onProfilingPointCreate;
-    @property void delegate(string) onProfilingPointUpdate;
-    @property void delegate(string) onProfilingPointStop;
+    void delegate(string) onProfilingPointCreate;
+    void delegate(string) onProfilingPointUpdate;
+    void delegate(string) onProfilingPointStop;
 
     protected
     {
-        @property size_t currentPointIndex;
-        @property string[] profilingPoints = [];
+        size_t currentPointIndex;
+        string[] profilingPoints;
 
-        @property string units = "units";
-        @property string name = "Profiler";
+        string units = "units";
+        string name = "Profiler";
     }
 
     invariant

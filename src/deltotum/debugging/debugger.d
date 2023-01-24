@@ -9,8 +9,8 @@ import deltotum.debugging.profiling.profilers.memory_profiler : MemoryProfiler;
 
 class Debugger
 {
-    @property TimeProfiler timeProfiler;
-    @property MemoryProfiler memoryProfiler;
+    TimeProfiler timeProfiler;
+    MemoryProfiler memoryProfiler;
 
     this(TimeProfiler timeProfiler, MemoryProfiler memoryProfiler)
     {

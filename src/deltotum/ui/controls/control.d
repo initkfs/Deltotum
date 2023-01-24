@@ -11,17 +11,17 @@ import deltotum.display.padding: Padding;
  */
 class Control : DisplayObject
 {
-    @property double minWidth = 0;
-    @property double mnHeight = 0;
-    @property double maxWidth = 0;
-    @property double maxHeight = 0;
-    @property double prefWidth = 0;
-    @property double prefHeight = 0;
-    @property Padding padding;
+    double minWidth = 0;
+    double mnHeight = 0;
+    double maxWidth = 0;
+    double maxHeight = 0;
+    double prefWidth = 0;
+    double prefHeight = 0;
+    Padding padding;
 
-    @property Texture delegate(double, double) backgroundFactory;
+    Texture delegate(double, double) backgroundFactory;
 
-    @property Layout layout;
+    Layout layout;
 
     protected
     {

@@ -17,13 +17,13 @@ import deltotum.display.textures.texture : Texture;
 class Button : Control
 {
 
-    @property void delegate(ActionEvent) onAction;
-    @property string _buttonText;
+    void delegate(ActionEvent) onAction;
+    string _buttonText;
 
-    @property Texture delegate() hoverFactory;
-    @property Texture delegate() clickEffectFactory;
-    @property Text delegate() textFactory;
-    @property ValueTransition delegate() clickEffectAnimationFactory;
+    Texture delegate() hoverFactory;
+    Texture delegate() clickEffectFactory;
+    Text delegate() textFactory;
+    ValueTransition delegate() clickEffectAnimationFactory;
 
     protected
     {

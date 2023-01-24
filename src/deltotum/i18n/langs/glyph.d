@@ -9,8 +9,8 @@ import deltotum.math.shapes.rect2d : Rect2d;
  */
 struct Glyph
 {
-    @property Alphabet alphabet;
-    @property dchar grapheme;
-    @property Rect2d geometry;
-    @property bool isEmpty = false;
+    Alphabet alphabet;
+    dchar grapheme;
+    Rect2d geometry;
+    bool isEmpty = false;
 }

@@ -24,7 +24,7 @@ class UniInterpolator : Interpolator
         enum ELASTIC_PERIOD = 0.4;
     }
 
-    @property double delegate(double) @nogc nothrow interpolateMethod;
+    double delegate(double) @nogc nothrow interpolateMethod;
 
     //TODO more flexible way 
     static UniInterpolator fromMethod(string methodName = "linear")() {

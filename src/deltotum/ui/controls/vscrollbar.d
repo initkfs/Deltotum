@@ -15,11 +15,11 @@ import deltotum.display.alignment: Alignment;
  */
 class VScrollbar : Control
 {
-    @property double minValue;
-    @property double maxValue;
-    @property double value;
+    double minValue;
+    double maxValue;
+    double value;
 
-    @property void delegate(double) onValue;
+    void delegate(double) onValue;
 
     protected
     {

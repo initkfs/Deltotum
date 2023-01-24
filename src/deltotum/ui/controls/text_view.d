@@ -12,7 +12,7 @@ import std.stdio;
 
 struct TextRow
 {
-    Glyph[] glyphs = [];
+    Glyph[] glyphs;
 }
 
 /**

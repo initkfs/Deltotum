@@ -9,7 +9,7 @@ import std.exception : enforce;
  */
 class UniComposite : UniComponent
 {
-    private UniComponent[] _units = [];
+    private UniComponent[] _units;
 
     void buildChildComponent(UniComponent component)
     {

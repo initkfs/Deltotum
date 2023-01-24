@@ -13,7 +13,7 @@ public
 {
     struct TextRow
     {
-        Glyph[] glyphs = [];
+        Glyph[] glyphs;
     }
 }
 
@@ -23,15 +23,15 @@ public
  */
 class Text : Control
 {
-    @property string text;
-    @property int spaceWidth = 5;
+    string text;
+    int spaceWidth = 5;
     //TODO from font?
-    @property int rowHeight = 16;
+    int rowHeight = 16;
 
     protected
     {
-        @property string oldText;
-        @property TextRow[] rows = [];
+        string oldText;
+        TextRow[] rows;
     }
 
     this(string text = "text")
@@ -65,7 +65,7 @@ class Text : Control
         dstring mustBeText = to!dstring(textString);
 
         //Grapheme walkLength?
-        Glyph[] newGlyphs = [];
+        Glyph[] newGlyphs;
         newGlyphs.reserve(mustBeText.length);
 
         foreach (dchar letter; mustBeText)
@@ -93,7 +93,7 @@ class Text : Control
 
     protected TextRow[] textToRows(string text)
     {
-        TextRow[] newRows = [];
+        TextRow[] newRows;
         if (width == 0 || height == 0)
         {
             return newRows;

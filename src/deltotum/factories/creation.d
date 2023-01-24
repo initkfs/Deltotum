@@ -11,8 +11,8 @@ import deltotum.factories.creation_shapes: CreationShapes;
 class Creation : UniComponent
 {
 
-    @property CreationImages images;
-    @property CreationShapes shapes;
+    CreationImages images;
+    CreationShapes shapes;
 
     this(CreationImages images, CreationShapes shapes)
     {

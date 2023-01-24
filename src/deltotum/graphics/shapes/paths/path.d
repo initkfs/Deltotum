@@ -9,8 +9,8 @@ import deltotum.math.vector2d : Vector2d;
  */
 class Path : Shape
 {
-    @property Vector2d[] points = [];
-    @property bool isDrawPoints = false;
+    Vector2d[] points;
+    bool isDrawPoints = false;
 
     this(double canvasWidth, double canvasHeight, GraphicStyle style)
     {

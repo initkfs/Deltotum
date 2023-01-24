@@ -16,13 +16,13 @@ class ComplexMovementController : MovementController
         alwaysWithinBounds
     }
 
-    @property void delegate() onLeft;
-    @property void delegate() onUp;
-    @property void delegate() onDown;
-    @property void delegate() onRight;
-    @property void delegate(Direction) onOtherDirection;
+    void delegate() onLeft;
+    void delegate() onUp;
+    void delegate() onDown;
+    void delegate() onRight;
+    void delegate(Direction) onOtherDirection;
 
-    @property worldBoundsConstraints = WorldBoundsConstraint.none;
+    WorldBoundsConstraint worldBoundsConstraints = WorldBoundsConstraint.none;
 
     private
     {

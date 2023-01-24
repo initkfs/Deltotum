@@ -14,7 +14,7 @@ import bindbc.sdl;
  */
 class Texture : DisplayObject
 {
-    @property bool isDrawTexture = true;
+    bool isDrawTexture = true;
 
     protected
     {

@@ -10,7 +10,7 @@ import std.stdio;
 class SceneManager
 {
     //TODO stack
-    @property Scene _currentScene;
+    Scene _currentScene;
 
     void update(double delta)
     {
@@ -29,13 +29,13 @@ class SceneManager
         }
     }
 
-    @property Scene currentScene() @nogc @safe pure nothrow
+    Scene currentScene() @nogc @safe pure nothrow
     out (_currentScene; _currentScene !is null)
     {
         return _currentScene;
     }
 
-    @property void currentScene(Scene state) @safe pure
+    void currentScene(Scene state) @safe pure
     {
         import std.exception : enforce;
 

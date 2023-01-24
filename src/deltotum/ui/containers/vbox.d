@@ -8,7 +8,7 @@ import deltotum.display.layouts.vertical_layout : VerticalLayout;
  */
 class VBox : Container
 {
-    @property double spacing = 0;
+    double spacing = 0;
     this(double spacing = 0)
     {
         super();

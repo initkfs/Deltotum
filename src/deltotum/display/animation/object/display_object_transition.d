@@ -15,7 +15,7 @@ class DisplayObjectTransition(T) if (isIntegral!T || isFloatingPoint!T || is(T :
 {
     protected
     {
-        @property DisplayObject displayObject;
+        DisplayObject displayObject;
     }
 
     this(DisplayObject obj, T minValue, T maxValue, int timeMs, Interpolator interpolator = null)

@@ -17,7 +17,7 @@ import std.conv : to;
  */
 class Graphics : LoggableUnit
 {
-    @property Theme theme;
+    Theme theme;
 
     private
     {
@@ -93,7 +93,7 @@ class Graphics : LoggableUnit
         //Bresenham algorithm
         import deltotum.math.math : Math;
 
-        Vector2d[] points = [];
+        Vector2d[] points;
 
         immutable deltaX = endX - startX;
         immutable deltaY = endY - startY;
@@ -169,7 +169,7 @@ class Graphics : LoggableUnit
         //Bresenham algorithm
         import deltotum.math.math : Math;
 
-        Vector2d[] points = [];
+        Vector2d[] points;
 
         int x = 0;
         int y = radius;

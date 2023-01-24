@@ -15,7 +15,7 @@ class LightEnvironment : Image
 {
     private
     {
-        LightSpot[] lights = [];
+        LightSpot[] lights;
     }
 
     override void create()

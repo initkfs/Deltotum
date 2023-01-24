@@ -7,15 +7,15 @@ import std.container.slist : SList;
 
 class Input
 {
-    @property SList!int pressedKeys;
+    SList!int pressedKeys;
 
-    @property bool justJoystickActive;
-    @property bool justJoystickChangeAxis;
-    @property bool justJoystickChangesAxisValue;
-    @property double joystickAxisDelta = 0;
-    @property bool justJoystickPressed;
+    bool justJoystickActive;
+    bool justJoystickChangeAxis;
+    bool justJoystickChangesAxisValue;
+    double joystickAxisDelta = 0;
+    bool justJoystickPressed;
 
-    @property JoystickEvent lastJoystickEvent;
+    JoystickEvent lastJoystickEvent;
 
     this()
     {

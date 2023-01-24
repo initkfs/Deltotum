@@ -24,7 +24,7 @@ class AnimatedText : Text
     //     string oldText;
     // }
 
-    // @property void delegate() onEnd;
+    // void delegate() onEnd;
 
     this(string text = "text", int animationDelayMs = 2000)
     {

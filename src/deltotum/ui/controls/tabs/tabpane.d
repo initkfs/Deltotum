@@ -10,8 +10,8 @@ import deltotum.ui.controls.button : Button;
 
 class TabButton : Button
 {
-    @property Tab tab;
-    @property void delegate(Tab tab) onTab;
+    Tab tab;
+    void delegate(Tab tab) onTab;
 
     this(Tab tab)
     {
@@ -39,7 +39,7 @@ class TabPane : Container
         StackBox content;
         GraphicStyle headerStyle;
         GraphicStyle contentStyle;
-        Tab[] tabs = [];
+        Tab[] tabs;
         Tab currentTab;
     }
 

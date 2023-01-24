@@ -9,11 +9,11 @@ import deltotum.events.event_target: EventTarget;
  */
 class PhysicalBody : EventTarget
 {
-    @property double mass = 0;
-    @property gravitationalAcceleration = 9.81;
-    @property Rect2d* hitbox;
-    @property double restitution = 0;
-    @property double speed = 0;
+    double mass = 0;
+    double gravitationalAcceleration = 9.81;
+    Rect2d* hitbox;
+    double restitution = 0;
+    double speed = 0;
 
     this(){
         hitbox = new Rect2d;
