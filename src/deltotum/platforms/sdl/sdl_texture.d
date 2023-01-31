@@ -5,7 +5,7 @@ import deltotum.platforms.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.platforms.sdl.sdl_renderer : SdlRenderer;
 import deltotum.platforms.sdl.sdl_surface : SdlSurface;
 
-import deltotum.math.shapes.rect2d : Rect2d;
+import deltotum.core.math.shapes.rect2d : Rect2d;
 
 import bindbc.sdl;
 

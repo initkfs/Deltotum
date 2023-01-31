@@ -1,13 +1,13 @@
 module deltotum.platforms.sdl.events.sdl_event_processor;
 
-import deltotum.events.processing.event_processor : EventProcessor;
+import deltotum.engine.events.processing.event_processor : EventProcessor;
 
-import deltotum.events.event_type : EventType;
-import deltotum.application.events.application_event : ApplicationEvent;
-import deltotum.input.mouse.event.mouse_event : MouseEvent;
-import deltotum.input.keyboard.event.key_event : KeyEvent;
-import deltotum.window.event.window_event : WindowEvent;
-import deltotum.input.joystick.event.joystick_event : JoystickEvent;
+import deltotum.engine.events.event_type : EventType;
+import deltotum.core.application.events.application_event : ApplicationEvent;
+import deltotum.engine.input.mouse.event.mouse_event : MouseEvent;
+import deltotum.engine.input.keyboard.event.key_event : KeyEvent;
+import deltotum.engine.window.event.window_event : WindowEvent;
+import deltotum.engine.input.joystick.event.joystick_event : JoystickEvent;
 
 import bindbc.sdl;
 import std.stdio;
