@@ -12,12 +12,12 @@ struct FixedArrayMatrix(T = double, size_t RowDimension = 1, size_t ColDimension
         T[ColDimension][RowDimension] matrix;
     }
 
-    this(T initValue) @nogc nothrow @safe
+    this(T initValue) pure @nogc nothrow @safe
     {
         fill(initValue);
     }
 
-    this(const T[][] data) @safe
+    this(const T[][] data) pure @safe
     {
         if (data.length != RowDimension)
         {
@@ -239,7 +239,7 @@ struct FixedArrayMatrix(T = double, size_t RowDimension = 1, size_t ColDimension
 
     unittest
     {
-        auto m0 = FixedArrayMatrix!(double, 1, 1)([[0]]);
+        immutable m0 = FixedArrayMatrix!(double, 1, 1)([[0]]);
         assert(m0.transpose.toArrayCopy == [[0]]);
         assert(m0.mainDiagonal == [0]);
         assert(m0.sideDiagonal == [0]);
@@ -250,7 +250,7 @@ struct FixedArrayMatrix(T = double, size_t RowDimension = 1, size_t ColDimension
             [1, 2, 3],
             [4, 5, 6]
         ];
-        auto m1 = FixedArrayMatrix!(double, 2, 3)(m1Data);
+        immutable m1 = FixedArrayMatrix!(double, 2, 3)(m1Data);
 
         assert(m1.rowDimension == 2);
         assert(m1.columnDimension == 3);
@@ -264,14 +264,14 @@ struct FixedArrayMatrix(T = double, size_t RowDimension = 1, size_t ColDimension
         auto m1Sub = m1.sub(m1);
         assert(m1Sub.toArrayCopy == [[0, 0, 0], [0, 0, 0]]);
 
-        auto m2 = FixedArrayMatrix!(double, 3, 3)([
+        immutable m2 = FixedArrayMatrix!(double, 3, 3)([
             [1, 2, 3], [4, 5, 6], [6, 7, 8]
         ]);
 
         auto m1m2Multiply = m1.multiply(m2);
         assert(m1m2Multiply.toArrayCopy == [[27, 33, 39], [60, 75, 90]]);
 
-        auto m3 = FixedArrayMatrix!(double, 3, 4)([
+        immutable m3 = FixedArrayMatrix!(double, 3, 4)([
             [1, 2, 3, 4],
             [5, 6, 7, 8],
             [9, 10, 11, 12]
@@ -280,7 +280,7 @@ struct FixedArrayMatrix(T = double, size_t RowDimension = 1, size_t ColDimension
         assert(m3.mainDiagonal == [1, 6, 11]);
         assert(m3.sideDiagonal == [9, 6, 3]);
 
-        auto m4 = FixedArrayMatrix!(double, 3, 3)([
+        immutable m4 = FixedArrayMatrix!(double, 3, 3)([
             [1, 2, 3],
             [4, 5, 6],
             [7, 8, 9]
