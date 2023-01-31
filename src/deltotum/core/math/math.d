@@ -94,9 +94,15 @@ class Math
         return math.atan2(y, x);
     }
 
-    static T abs(T)(T value) @nogc nothrow pure @safe
+    static T abs(T)(T value)
     {
-        import std.math.algebraic: Abs = abs;
+        import std.math.algebraic : Abs = abs;
+
         return Abs(value);
+    }
+
+    static T factorial(T)(T n)
+    {
+        return (n == 0 || n == 1) ? 1 : n * factorial(n - 1);
     }
 }
