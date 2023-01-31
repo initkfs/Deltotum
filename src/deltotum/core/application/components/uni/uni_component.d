@@ -2,7 +2,7 @@ module deltotum.core.application.components.uni.uni_component;
 
 import deltotum.core.application.components.units.simple_unit : SimpleUnit;
 
-import deltotum.core.application.components.uni.attribute.attributes : Service;
+import deltotum.core.application.components.uni.attributes : Service;
 
 import deltotum.engine.asset.assets : Assets;
 import deltotum.engine.audio.audio : Audio;
@@ -75,13 +75,13 @@ class UniComponent : SimpleUnit
 
     }
 
-    @Service Logger logger() @nogc nothrow pure @safe
+    @Service final Logger logger() @nogc nothrow pure @safe
     out (_logger; _logger !is null)
     {
         return _logger;
     }
 
-    void logger(Logger logger) pure @safe
+    final void logger(Logger logger) pure @safe
     {
         import std.exception : enforce;
 
@@ -90,13 +90,13 @@ class UniComponent : SimpleUnit
 
     }
 
-    @Service Assets assets() @nogc nothrow pure @safe
+    @Service final Assets assets() @nogc nothrow pure @safe
     out (_assets; _assets !is null)
     {
         return _assets;
     }
 
-    void assets(Assets assetManager) pure @safe
+    final void assets(Assets assetManager) pure @safe
     {
         import std.exception : enforce;
 
@@ -105,13 +105,13 @@ class UniComponent : SimpleUnit
 
     }
 
-    @Service Window window() @nogc nothrow pure @safe
+    @Service final Window window() @nogc nothrow pure @safe
     out (_window; _window !is null)
     {
         return _window;
     }
 
-    void window(Window window) pure @safe
+    final void window(Window window) pure @safe
     {
         import std.exception : enforce;
 
@@ -120,13 +120,13 @@ class UniComponent : SimpleUnit
 
     }
 
-    @Service Input input() @nogc nothrow pure @safe
+    @Service final Input input() @nogc nothrow pure @safe
     out (_input; _input !is null)
     {
         return _input;
     }
 
-    void input(Input input) pure @safe
+    final void input(Input input) pure @safe
     {
         import std.exception : enforce;
 
@@ -135,13 +135,13 @@ class UniComponent : SimpleUnit
 
     }
 
-    @Service Audio audio() @nogc nothrow pure @safe
+    @Service final Audio audio() @nogc nothrow pure @safe
     out (_audio; _audio !is null)
     {
         return _audio;
     }
 
-    void audio(Audio audio) pure @safe
+    final void audio(Audio audio) pure @safe
     {
         import std.exception : enforce;
 
@@ -149,13 +149,13 @@ class UniComponent : SimpleUnit
         _audio = audio;
     }
 
-    @Service Graphics graphics() @nogc nothrow pure @safe
+    @Service final Graphics graphics() @nogc nothrow pure @safe
     out (_graphics; _graphics !is null)
     {
         return _graphics;
     }
 
-    void graphics(Graphics graphics) pure @safe
+    final void graphics(Graphics graphics) pure @safe
     {
         import std.exception : enforce;
 
@@ -163,13 +163,13 @@ class UniComponent : SimpleUnit
         _graphics = graphics;
     }
 
-    @Service Debugger debugger() @nogc nothrow pure @safe
+    @Service final Debugger debugger() @nogc nothrow pure @safe
     out (_debugger; _debugger !is null)
     {
         return _debugger;
     }
 
-    void debugger(Debugger debugger) pure @safe
+    final void debugger(Debugger debugger) pure @safe
     {
         import std.exception : enforce;
 

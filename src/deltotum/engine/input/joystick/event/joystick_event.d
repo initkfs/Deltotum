@@ -1,7 +1,7 @@
 module deltotum.engine.input.joystick.event.joystick_event;
 
-import deltotum.engine.events.event_base : EventBase;
-import deltotum.engine.events.event_type : EventType;
+import deltotum.core.events.event_base : EventBase;
+import deltotum.core.events.event_type : EventType;
 import deltotum.core.utils.type_util : eventNameByIndex;
 
 /**
@@ -23,11 +23,11 @@ struct JoystickEvent
     int axis;
     int axisValue;
 
-    this(EventType type, uint event, uint windowId, int button = 0, int axis = 0, int axisValue = 0)
+    this(EventType type, uint event, uint ownerId, int button = 0, int axis = 0, int axisValue = 0)
     {
         this.type = type;
         this.event = event;
-        this.windowId = windowId;
+        this.ownerId = ownerId;
         this.button = button;
         this.axis = axis;
         this.axisValue = axisValue;

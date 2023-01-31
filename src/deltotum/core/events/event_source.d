@@ -1,4 +1,4 @@
-module deltotum.engine.events.event_source;
+module deltotum.core.events.event_source;
 
 /**
  * Authors: initkfs

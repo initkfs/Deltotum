@@ -146,7 +146,7 @@ class Button : Control
 
             if (onAction !is null)
             {
-                onAction(ActionEvent(e.windowId, e.x, e.y, e.button));
+                onAction(ActionEvent(e.ownerId, e.x, e.y, e.button));
             }
             return false;
         };

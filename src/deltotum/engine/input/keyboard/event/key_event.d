@@ -1,7 +1,7 @@
 module deltotum.engine.input.keyboard.event.key_event;
 
-import deltotum.engine.events.event_base : EventBase;
-import deltotum.engine.events.event_type : EventType;
+import deltotum.core.events.event_base : EventBase;
+import deltotum.core.events.event_type : EventType;
 import deltotum.core.utils.type_util: eventNameByIndex;
 
 /**
@@ -21,11 +21,11 @@ struct KeyEvent
     int keyCode;
     int modifier;
 
-    this(EventType type, uint event, uint windowId, int keyCode, int modifier)
+    this(EventType type, uint event, uint ownerId, int keyCode, int modifier)
     {
         this.type = type;
         this.event = event;
-        this.windowId = windowId;
+        this.ownerId = ownerId;
         this.keyCode = keyCode;
         this.modifier = modifier;
     }
@@ -34,6 +34,6 @@ struct KeyEvent
     {
         import std.format : format;
 
-        return format("{%s,%s,code:%s,mod:%s,winid:%s}", type, eventNameByIndex!Event(event), keyCode, modifier, windowId);
+        return format("{%s,%s,code:%s,mod:%s,winid:%s}", type, eventNameByIndex!Event(event), keyCode, modifier, ownerId);
     }
 }

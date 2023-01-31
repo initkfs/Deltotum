@@ -1,4 +1,4 @@
-module deltotum.core.application.graphics_application;
+module deltotum.engine.application.graphics_application;
 
 import deltotum.core.application.components.uni.uni_component : UniComponent;
 

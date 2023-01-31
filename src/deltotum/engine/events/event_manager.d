@@ -8,7 +8,7 @@ import deltotum.engine.input.mouse.event.mouse_event : MouseEvent;
 import deltotum.engine.input.keyboard.event.key_event : KeyEvent;
 import deltotum.engine.input.joystick.event.joystick_event : JoystickEvent;
 import deltotum.engine.window.event.window_event : WindowEvent;
-import deltotum.engine.events.event_type : EventType;
+import deltotum.core.events.event_type : EventType;
 
 import deltotum.engine.display.display_object : DisplayObject;
 

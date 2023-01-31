@@ -1,7 +1,8 @@
-module deltotum.engine.events.event_target;
+module deltotum.engine.events.event_engine_target;
 
 import deltotum.core.application.components.uni.uni_component : UniComponent;
 
+import deltotum.core.events.event_target: EventTarget;
 import deltotum.engine.input.mouse.event.mouse_event : MouseEvent;
 import deltotum.core.application.events.application_event : ApplicationEvent;
 import deltotum.engine.input.keyboard.event.key_event : KeyEvent;
@@ -11,7 +12,7 @@ import deltotum.engine.input.joystick.event.joystick_event : JoystickEvent;
  * Authors: initkfs
  *  Returning true from handler indicates that the event has been handled, and that it should not propagate further.
  */
-class EventTarget : UniComponent
+class EventEngineTarget : EventTarget
 {
     bool delegate(MouseEvent) eventMouseFilter;
     bool delegate(MouseEvent) eventMouseHandler;

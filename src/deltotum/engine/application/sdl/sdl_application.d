@@ -1,6 +1,6 @@
-module deltotum.core.application.sdl.sdl_application;
+module deltotum.engine.application.sdl.sdl_application;
 
-import deltotum.core.application.graphics_application : GraphicsApplication;
+import deltotum.engine.application.graphics_application : GraphicsApplication;
 import deltotum.engine.events.event_manager : EventManager;
 import deltotum.platforms.sdl.events.sdl_event_processor : SdlEventProcessor;
 import deltotum.engine.asset.assets : Assets;

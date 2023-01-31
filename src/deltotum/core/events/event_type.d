@@ -1,4 +1,4 @@
-module deltotum.engine.events.event_type;
+module deltotum.core.events.event_type;
 
 import std.typecons : Nullable;
 

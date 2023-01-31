@@ -2,7 +2,7 @@ module deltotum.platforms.sdl.events.sdl_event_processor;
 
 import deltotum.engine.events.processing.event_processor : EventProcessor;
 
-import deltotum.engine.events.event_type : EventType;
+import deltotum.core.events.event_type : EventType;
 import deltotum.core.application.events.application_event : ApplicationEvent;
 import deltotum.engine.input.mouse.event.mouse_event : MouseEvent;
 import deltotum.engine.input.keyboard.event.key_event : KeyEvent;
@@ -80,8 +80,8 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
         }
         const int keyCode = event.key.keysym.sym;
         const int mod = event.key.keysym.mod;
-        const windowId = event.key.windowID;
-        auto keyEvent = KeyEvent(EventType.key, type, windowId, keyCode, mod);
+        const ownerId = event.key.windowID;
+        auto keyEvent = KeyEvent(EventType.key, type, ownerId, keyCode, mod);
         onKey(keyEvent);
     }
 

@@ -25,44 +25,44 @@ class UniComposite : UniComponent
         }
     }
 
-    protected void addUnit(UniComponent unit)
+    protected bool addUnit(UniComponent unit)
     {
-        if (hasUnit(unit))
+        if (unit is null || hasUnit(unit))
         {
-            throw new Exception("Unit already exists: " ~ unit.toString);
+            return false;
         }
         _units ~= unit;
+        return true;
     }
 
     bool hasUnit(UniComponent unit)
     {
-        enforce(unit !is null, "Unit must not be null");
+        if (unit is null)
+        {
+            return false;
+        }
+
         import std.algorithm.searching : canFind;
 
         return _units.canFind(unit);
     }
 
-    public void removeUnit(UniComponent unit)
+    public bool removeUnit(UniComponent unit)
     {
-        if (!hasUnit(unit))
+        if (unit is null || !hasUnit(unit))
         {
-            throw new Exception("Unable to remove unit, unit not found: " ~ unit.toString);
+            return false;
         }
         import std.algorithm.mutation : remove;
         import std.algorithm.searching : countUntil;
 
-        _units = _units.remove(_units.countUntil(unit));
-    }
-
-    bool removeUnitIfPresent(UniComponent unit)
-    {
-        if (unit !is null && hasUnit(unit))
+        immutable ptrdiff_t removePos = _units.countUntil(unit);
+        if (removePos == -1)
         {
-            removeUnit(unit);
-            return true;
+            return false;
         }
-
-        return false;
+        _units = _units.remove(removePos);
+        return true;
     }
 
     const(UniComponent[]) units() const @nogc nothrow pure @safe
@@ -82,25 +82,31 @@ unittest
 
     auto composite = new UniComposite;
     auto component1 = new UniComponent;
+    auto component3 = new UniComponent;
 
-    composite.addUnit(component1);
+    assert(!composite.addUnit(null));
+
+    assert(composite.addUnit(component1));
+    assert(!composite.addUnit(component1));
     assert(composite.hasUnit(component1));
     assert(composite.units.length == 1);
 
-    assertThrown(composite.addUnit(component1));
-
     auto component2 = new UniComponent;
-    composite.addUnit(component2);
+    assert(composite.addUnit(component2));
     assert(composite.hasUnit(component2));
     assert(composite.units.length == 2);
 
-    assert(composite.removeUnitIfPresent(component1));
+    assert(!composite.hasUnit(component3));
+    assert(!composite.removeUnit(component3));
+
+    assert(!composite.removeUnit(null));
+    assert(composite.removeUnit(component1));
     assert(!composite.hasUnit(component1));
-    assert(!composite.removeUnitIfPresent(component1));
+    assert(!composite.removeUnit(component1));
     assert(composite.units.length == 1);
 
-    assert(composite.removeUnitIfPresent(component2));
+    assert(composite.removeUnit(component2));
     assert(!composite.hasUnit(component2));
-    assert(!composite.removeUnitIfPresent(component2));
+    assert(!composite.removeUnit(component2));
     assert(composite.units.length == 0);
 }

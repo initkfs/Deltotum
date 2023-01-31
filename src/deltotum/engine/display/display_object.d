@@ -11,7 +11,7 @@ import deltotum.engine.input.mouse.event.mouse_event : MouseEvent;
 import deltotum.core.application.events.application_event : ApplicationEvent;
 import deltotum.engine.input.keyboard.event.key_event : KeyEvent;
 import deltotum.engine.input.joystick.event.joystick_event : JoystickEvent;
-import deltotum.engine.events.event_type : EventType;
+import deltotum.core.events.event_type : EventType;
 import deltotum.core.utils.tostring;
 
 import std.container : DList;
@@ -196,7 +196,7 @@ abstract class DisplayObject : PhysicalBody
                             {
                                 isMouseOver = true;
                                 auto enteredEvent = MouseEvent(EventType.mouse, MouseEvent.Event.mouseEntered, e
-                                        .windowId, e
+                                        .ownerId, e
                                         .x, e.y, e
                                         .button, e.movementX, e.movementY, false);
                                 fireEvent(enteredEvent);
@@ -217,7 +217,7 @@ abstract class DisplayObject : PhysicalBody
                             {
                                 isMouseOver = false;
                                 auto exitedEvent = MouseEvent(EventType.mouse, MouseEvent.Event.mouseExited, e
-                                        .windowId, e
+                                        .ownerId, e
                                         .x, e.y, e
                                         .button, e.movementX, e.movementY, false);
                                 fireEvent(exitedEvent);
