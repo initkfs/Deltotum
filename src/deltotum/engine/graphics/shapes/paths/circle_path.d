@@ -26,13 +26,13 @@ class CirclePath : Path
 
     override void create()
     {
-        import deltotum.core.math.math : Math;
+        import math = deltotum.core.math.maths;
         import deltotum.core.math.vector2d : Vector2d;
 
         foreach (angleDeg; 1 .. 361)
         {
-            immutable pX = width / 2 + radius * Math.cosDeg(angleDeg);
-            immutable pY = height / 2 + radius * Math.sinDeg(angleDeg);
+            immutable pX = width / 2 + radius * math.cosDeg(angleDeg);
+            immutable pY = height / 2 + radius * math.sinDeg(angleDeg);
             points ~= Vector2d(pX, pY);
         }
         super.create;

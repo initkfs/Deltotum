@@ -58,16 +58,16 @@ struct Circle2d
 
     double circumference() const @nogc nothrow pure @safe
     {
-        import deltotum.core.math.math : Math;
+        import math = deltotum.core.math.maths;
 
-        return radius * (Math.PI * 2);
+        return radius * (math.PI * 2);
     }
 
     double area() const @nogc nothrow pure @safe
     {
-        import deltotum.core.math.math : Math;
+        import math = deltotum.core.math.maths;
 
-        return radius * radius * Math.PI;
+        return radius * radius * math.PI;
     }
 
     string toString() const

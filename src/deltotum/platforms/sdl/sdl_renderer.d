@@ -144,8 +144,8 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
             destRect.h = cast(int) destBounds.height;
 
             //FIXME some texture sizes can crash when changing the angle
-            //double newW = height * abs(Math.sinDeg(angle)) + width * abs(Math.cosDeg(angle));
-            //double newH = height * abs(Math.cosDeg(angle)) + width * abs(Math.sinDeg(angle));
+            //double newW = height * abs(math.sinDeg(angle)) + width * abs(math.cosDeg(angle));
+            //double newH = height * abs(math.cosDeg(angle)) + width * abs(math.sinDeg(angle));
 
             //TODO move to helper
             SDL_RendererFlip sdlFlip;

@@ -96,9 +96,9 @@ class SteeringBehavior
 
     Vector2d pursuitForce(Vector2d position, Vector2d target, Vector2d currentVelocity, Vector2d targetVelocity, double maxVelocity) const @nogc nothrow pure @safe
     {
-        import deltotum.core.math.math : Math;
+        import math = deltotum.core.math.maths;
 
-        const predictionDistance = Math.abs(position.distanceTo(target) / maxVelocity);
+        const predictionDistance = math.abs(position.distanceTo(target) / maxVelocity);
         const Vector2d futurePosition = position + targetVelocity.scale(predictionDistance);
         return seekForce(position, futurePosition, currentVelocity, maxVelocity);
     }
@@ -112,9 +112,9 @@ class SteeringBehavior
 
     Vector2d evadeForce(Vector2d position, Vector2d target, Vector2d currentVelocity, Vector2d targetVelocity, double maxVelocity) const @nogc nothrow pure @safe
     {
-        import deltotum.core.math.math : Math;
+        import math = deltotum.core.math.maths;
         //TODO remove code duplication with pursuitForce
-        const predictionDistance = Math.abs(position.distanceTo(target) / maxVelocity);
+        const predictionDistance = math.abs(position.distanceTo(target) / maxVelocity);
         Vector2d futurePosition = position + targetVelocity.scale(predictionDistance);
         return fleeForce(position, futurePosition, currentVelocity, maxVelocity);
     }

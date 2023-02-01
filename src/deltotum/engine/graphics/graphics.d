@@ -5,7 +5,7 @@ import deltotum.core.application.components.units.services.loggable_unit;
 import deltotum.platforms.sdl.sdl_renderer : SdlRenderer;
 import deltotum.engine.graphics.colors.rgba : RGBA;
 import deltotum.core.math.vector2d : Vector2d;
-import deltotum.core.math.math : Math;
+import math = deltotum.core.math.maths;
 import deltotum.engine.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.engine.graphics.themes.theme : Theme;
 
@@ -91,7 +91,7 @@ class Graphics : LoggableUnit
     Vector2d[] linePoints(int startX, int startY, int endX, int endY) const nothrow pure @safe
     {
         //Bresenham algorithm
-        import deltotum.core.math.math : Math;
+        import math = deltotum.core.math.maths;
 
         Vector2d[] points;
 
@@ -122,13 +122,13 @@ class Graphics : LoggableUnit
             dy1 = delta1;
         }
 
-        int longestLen = Math.abs(deltaX);
-        int shortestLen = Math.abs(deltaY);
+        int longestLen = math.abs(deltaX);
+        int shortestLen = math.abs(deltaY);
 
         if (longestLen < shortestLen)
         {
-            longestLen = Math.abs(deltaY);
-            shortestLen = Math.abs(deltaX);
+            longestLen = math.abs(deltaY);
+            shortestLen = math.abs(deltaX);
             if (deltaY < 0)
             {
                 dy2 = delta1Neg;
@@ -167,7 +167,7 @@ class Graphics : LoggableUnit
     Vector2d[] circlePoints(int centerX, int centerY, int radius) const nothrow pure @safe
     {
         //Bresenham algorithm
-        import deltotum.core.math.math : Math;
+        import math = deltotum.core.math.maths;
 
         Vector2d[] points;
 

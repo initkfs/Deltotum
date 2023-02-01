@@ -3,49 +3,45 @@ module deltotum.core.math.probability;
 /**
  * Authors: initkfs
  */
-class Probability
+double probability(double countSuccessfulEvents, double allEvents) pure nothrow @nogc @safe
 {
-    double probability(double countSuccessfulEvents, double allEvents) const pure nothrow @nogc @safe
+    import std.math.operations : isClose;
+
+    if (isClose(countSuccessfulEvents, 0))
     {
-        import std.math.operations : isClose;
-
-        if (isClose(countSuccessfulEvents, 0))
-        {
-            return 0;
-        }
-
-        if (isClose(countSuccessfulEvents, allEvents))
-        {
-            return 1;
-        }
-
-        return countSuccessfulEvents / allEvents;
+        return 0;
     }
 
-    double probabilityInv(double countSuccessfulEvents, double allEvents) const pure nothrow @nogc @safe
+    if (isClose(countSuccessfulEvents, allEvents))
     {
-        return 1 - probability(countSuccessfulEvents, allEvents);
+        return 1;
     }
 
-    double probabilityFromAll(double nElements, double allElements){
-        import deltotum.core.math.combinatorics: Combinatorics;
+    return countSuccessfulEvents / allEvents;
+}
 
-        if(nElements >= allElements){
-            return 0;
-        }
-        auto comb = new Combinatorics;
-        return comb.combinationsMfromN(nElements, allElements);
+double probabilityInv(double countSuccessfulEvents, double allEvents) pure nothrow @nogc @safe
+{
+    return 1 - probability(countSuccessfulEvents, allEvents);
+}
+
+double probabilityFromAll(double nElements, double allElements)
+{
+    import deltotum.core.math.combinatorics;
+
+    if (nElements >= allElements)
+    {
+        return 0;
     }
+    return combinationsMfromN(nElements, allElements);
 }
 
 unittest
 {
-    auto prob = new Probability;
-
     import std.math.operations : isClose;
 
-    assert(isClose(prob.probability(1, 10), 0.1));
-    assert(isClose(prob.probabilityInv(1, 10), 0.9));
+    assert(isClose(probability(1, 10), 0.1));
+    assert(isClose(probabilityInv(1, 10), 0.9));
 
-    assert(prob.probabilityFromAll(2, 10) == 45);
+    assert(probabilityFromAll(2, 10) == 45);
 }

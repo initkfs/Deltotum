@@ -1,7 +1,7 @@
 module deltotum.engine.display.animation.interp.uni_interpolator;
 
 import deltotum.engine.display.animation.interp.interpolator : Interpolator;
-import deltotum.core.math.math : Math;
+import math = deltotum.core.math.maths;
 
 /**
  * Authors: initkfs
@@ -11,9 +11,9 @@ class UniInterpolator : Interpolator
 {
     private
     {
-        enum PI2 = Math.PI / 2;
+        enum PI2 = math.PI / 2;
 
-        enum EL = 2 * Math.PI / 0.45;
+        enum EL = 2 * math.PI / 0.45;
         enum B1 = 1 / 2.75;
         enum B2 = 2 / 2.75;
         enum B3 = 1.5 / 2.75;
@@ -40,7 +40,7 @@ class UniInterpolator : Interpolator
             return 0;
         }
 
-        const double progress = Math.clamp01(value);
+        const double progress = math.clamp01(value);
         const double interpProgress = interpolateMethod(progress);
         return interpProgress;
     }
@@ -148,17 +148,17 @@ class UniInterpolator : Interpolator
 
     double sineIn(double value) const @nogc nothrow
     {
-        return -Math.cos(PI2 * value) + 1;
+        return -math.cos(PI2 * value) + 1;
     }
 
     double sineOut(double value) const @nogc nothrow
     {
-        return Math.sin(PI2 * value);
+        return math.sin(PI2 * value);
     }
 
     double sineInOut(double value) const @nogc nothrow
     {
-        return -Math.cos(Math.PI * value) / 2 + .5;
+        return -math.cos(math.PI * value) / 2 + .5;
     }
 
     double bounceIn(double value) const @nogc nothrow
@@ -247,34 +247,34 @@ class UniInterpolator : Interpolator
 
     double circIn(double value) const @nogc nothrow
     {
-        return -(Math.sqrt(1 - value * value) - 1);
+        return -(math.sqrt(1 - value * value) - 1);
     }
 
     double circOut(double value) const @nogc nothrow
     {
-        return Math.sqrt(1 - (value - 1) * (value - 1));
+        return math.sqrt(1 - (value - 1) * (value - 1));
     }
 
     double circInOut(double value) const @nogc nothrow
     {
-        return value <= 0.5 ? (Math.sqrt(1 - value * value * 4) - 1) / -2 : (
-            Math.sqrt(1 - (value * 2 - 2) * (value * 2 - 2)) + 1) / 2;
+        return value <= 0.5 ? (math.sqrt(1 - value * value * 4) - 1) / -2 : (
+            math.sqrt(1 - (value * 2 - 2) * (value * 2 - 2)) + 1) / 2;
     }
 
     double expoIn(double value) const @nogc nothrow
     {
-        return Math.pow(2, 10 * (value - 1));
+        return math.pow(2, 10 * (value - 1));
     }
 
     double expoOut(double value) const @nogc nothrow
     {
-        return -Math.pow(2, -10 * value) + 1;
+        return -math.pow(2, -10 * value) + 1;
     }
 
     double expoInOut(double value) const @nogc nothrow
     {
-        return value < 0.5 ? Math.pow(2, 10 * (value * 2 - 1)) / 2 : (
-            -Math.pow(2, -10 * (value * 2 - 1)) + 2) / 2;
+        return value < 0.5 ? math.pow(2, 10 * (value * 2 - 1)) / 2 : (
+            -math.pow(2, -10 * (value * 2 - 1)) + 2) / 2;
     }
 
     double backIn(double value) const @nogc nothrow
@@ -301,18 +301,18 @@ class UniInterpolator : Interpolator
 
     double elasticIn(double value) const @nogc nothrow
     {
-        return -(ELASTIC_AMPLITUDE * Math.pow(2,
-                10 * (value -= 1)) * Math.sin((value - (ELASTIC_PERIOD / (
-                2 * Math.PI) * Math.asin(1 / ELASTIC_AMPLITUDE))) * (
-                2 * Math.PI) / ELASTIC_PERIOD));
+        return -(ELASTIC_AMPLITUDE * math.pow(2,
+                10 * (value -= 1)) * math.sin((value - (ELASTIC_PERIOD / (
+                2 * math.PI) * math.asin(1 / ELASTIC_AMPLITUDE))) * (
+                2 * math.PI) / ELASTIC_PERIOD));
     }
 
     double elasticOut(double value) const @nogc nothrow
     {
-        return (ELASTIC_AMPLITUDE * Math.pow(2,
-                -10 * value) * Math.sin((value - (ELASTIC_PERIOD / (
-                2 * Math.PI) * Math.asin(1 / ELASTIC_AMPLITUDE))) * (
-                2 * Math.PI) / ELASTIC_PERIOD)
+        return (ELASTIC_AMPLITUDE * math.pow(2,
+                -10 * value) * math.sin((value - (ELASTIC_PERIOD / (
+                2 * math.PI) * math.asin(1 / ELASTIC_AMPLITUDE))) * (
+                2 * math.PI) / ELASTIC_PERIOD)
                 + 1);
     }
 
@@ -320,11 +320,11 @@ class UniInterpolator : Interpolator
     {
         if (value < 0.5)
         {
-            return -0.5 * (Math.pow(2, 10 * (value -= 0.5)) * Math.sin(
-                    (value - (ELASTIC_PERIOD / 4)) * (2 * Math.PI) / ELASTIC_PERIOD));
+            return -0.5 * (math.pow(2, 10 * (value -= 0.5)) * math.sin(
+                    (value - (ELASTIC_PERIOD / 4)) * (2 * math.PI) / ELASTIC_PERIOD));
         }
-        return Math.pow(2, -10 * (value -= 0.5)) * Math.sin(
-            (value - (ELASTIC_PERIOD / 4)) * (2 * Math.PI) / ELASTIC_PERIOD) * 0.5 + 1;
+        return math.pow(2, -10 * (value -= 0.5)) * math.sin(
+            (value - (ELASTIC_PERIOD / 4)) * (2 * math.PI) / ELASTIC_PERIOD) * 0.5 + 1;
     }
 
 }

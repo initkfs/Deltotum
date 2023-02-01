@@ -101,10 +101,10 @@ struct Vector2d
 
     Vector2d rotate(double angleDeg) const @nogc nothrow pure @safe
     {
-        import deltotum.core.math.math : Math;
+        import math = deltotum.core.math.maths;
 
-        immutable newX = x * Math.cosDeg(angleDeg) - y * Math.sinDeg(angleDeg);
-        immutable newY = x * Math.sinDeg(angleDeg) + y * Math.cosDeg(angleDeg);
+        immutable newX = x * math.cosDeg(angleDeg) - y * math.sinDeg(angleDeg);
+        immutable newY = x * math.sinDeg(angleDeg) + y * math.cosDeg(angleDeg);
         return Vector2d(newX, newY);
     }
 
@@ -128,17 +128,17 @@ struct Vector2d
 
     double angleRad() const @nogc nothrow pure @safe
     {
-        import deltotum.core.math.math : Math;
+        import math = deltotum.core.math.maths;
 
-        immutable angle = Math.atan2(y, x);
+        immutable angle = math.atan2(y, x);
         return angle;
     }
 
     double angleDeg() const @nogc nothrow pure @safe
     {
-        import deltotum.core.math.math : Math;
+        import math = deltotum.core.math.maths;
 
-        immutable anleDeg = Math.radToDeg(angleRad);
+        immutable anleDeg = math.radToDeg(angleRad);
         return anleDeg;
     }
 
@@ -162,10 +162,10 @@ struct Vector2d
 
     Vector2d polar(double angleDeg, double radius) const @nogc nothrow pure @safe
     {
-        import deltotum.core.math.math : Math;
+        import math = deltotum.core.math.maths;
 
-        immutable pX = radius * Math.cosDeg(angleDeg);
-        immutable pY = radius * Math.sinDeg(angleDeg);
+        immutable pX = radius * math.cosDeg(angleDeg);
+        immutable pY = radius * math.sinDeg(angleDeg);
         return Vector2d(pX, pY);
     }
 

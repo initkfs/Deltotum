@@ -4,7 +4,7 @@ import deltotum.engine.display.animation.object.value_transition: ValueTransitio
 import deltotum.engine.display.display_object : DisplayObject;
 import deltotum.engine.display.animation.interp.interpolator : Interpolator;
 import deltotum.core.math.vector2d : Vector2d;
-import deltotum.core.math.math : Math;
+import math = deltotum.core.math.maths;
 
 /**
  * Authors: initkfs
@@ -25,8 +25,8 @@ class CircularMotionTransition : ValueTransition
         centerX = center.x;
         centerY = center.y;
         onValue = (value) {
-            obj.x = centerX + Math.cosDeg(value) * radius;
-            obj.y = centerY + Math.sinDeg(value) * radius;
+            obj.x = centerX + math.cosDeg(value) * radius;
+            obj.y = centerY + math.sinDeg(value) * radius;
         };
     }
 }
