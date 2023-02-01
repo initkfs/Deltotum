@@ -1,7 +1,7 @@
-module deltotum.core.math.shapes.rect2d;
+module deltotum.core.maths.shapes.rect2d;
 
-import deltotum.core.math.vector2d : Vector2d;
-import deltotum.core.math.shapes.circle2d : Circle2d;
+import deltotum.core.maths.vector2d : Vector2d;
+import deltotum.core.maths.shapes.circle2d : Circle2d;
 
 /**
  * Authors: initkfs

@@ -2,8 +2,8 @@ module deltotum.engine.ui.controls.text;
 
 import deltotum.engine.ui.controls.control : Control;
 import deltotum.engine.ui.texts.fonts.bitmap.bitmap_font : BitmapFont;
-import deltotum.core.math.shapes.rect2d : Rect2d;
-import deltotum.core.math.vector2d : Vector2d;
+import deltotum.core.maths.shapes.rect2d : Rect2d;
+import deltotum.core.maths.vector2d : Vector2d;
 import deltotum.engine.display.flip : Flip;
 import deltotum.engine.i18n.langs.glyph : Glyph;
 

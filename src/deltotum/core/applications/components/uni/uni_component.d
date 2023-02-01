@@ -1,8 +1,8 @@
-module deltotum.core.application.components.uni.uni_component;
+module deltotum.core.applications.components.uni.uni_component;
 
-import deltotum.core.application.components.units.simple_unit : SimpleUnit;
+import deltotum.core.applications.components.units.simple_unit : SimpleUnit;
 
-import deltotum.core.application.components.uni.attributes : Service;
+import deltotum.core.applications.components.uni.attributes : Service;
 
 import deltotum.engine.asset.assets : Assets;
 import deltotum.engine.audio.audio : Audio;

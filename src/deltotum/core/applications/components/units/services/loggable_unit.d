@@ -1,4 +1,4 @@
-module deltotum.core.application.components.units.services.loggable_unit;
+module deltotum.core.applications.components.units.services.loggable_unit;
 
 import std.experimental.logger.core : Logger;
 

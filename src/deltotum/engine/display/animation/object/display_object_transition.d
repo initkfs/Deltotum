@@ -4,7 +4,7 @@ import deltotum.engine.display.display_object : DisplayObject;
 import deltotum.engine.display.animation.interp.interpolator : Interpolator;
 import deltotum.engine.display.animation.transition: Transition;
 
-import deltotum.core.math.vector2d: Vector2d;
+import deltotum.core.maths.vector2d: Vector2d;
 
 import std.traits: isIntegral, isFloatingPoint;
 

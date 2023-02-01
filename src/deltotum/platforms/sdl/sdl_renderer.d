@@ -6,8 +6,8 @@ import deltotum.platforms.sdl.sdl_window : SdlWindow;
 import deltotum.platforms.sdl.sdl_texture : SdlTexture;
 
 import deltotum.engine.display.flip : Flip;
-import deltotum.core.math.vector2d : Vector2d;
-import deltotum.core.math.shapes.rect2d : Rect2d;
+import deltotum.core.maths.vector2d : Vector2d;
+import deltotum.core.maths.shapes.rect2d : Rect2d;
 
 import bindbc.sdl;
 

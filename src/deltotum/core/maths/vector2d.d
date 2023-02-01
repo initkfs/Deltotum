@@ -1,11 +1,11 @@
-module deltotum.core.math.vector2d;
+module deltotum.core.maths.vector2d;
 
 //TODO fast sqrt?
 import std.math.algebraic : sqrt;
 import std.math.operations : isClose;
 import std.math.trigonometry : acos;
 import std.math.constants : PI;
-import deltotum.core.math.matrices.matrix : Matrix2x2, Matrix2x1;
+import deltotum.core.maths.matrices.matrix : Matrix2x2, Matrix2x1;
 
 /**
  * Authors: initkfs
@@ -101,7 +101,7 @@ struct Vector2d
 
     Vector2d rotate(double angleDeg) const @nogc nothrow pure @safe
     {
-        import math = deltotum.core.math.maths;
+        import math = deltotum.core.maths.math;
 
         immutable newX = x * math.cosDeg(angleDeg) - y * math.sinDeg(angleDeg);
         immutable newY = x * math.sinDeg(angleDeg) + y * math.cosDeg(angleDeg);
@@ -128,7 +128,7 @@ struct Vector2d
 
     double angleRad() const @nogc nothrow pure @safe
     {
-        import math = deltotum.core.math.maths;
+        import math = deltotum.core.maths.math;
 
         immutable angle = math.atan2(y, x);
         return angle;
@@ -136,7 +136,7 @@ struct Vector2d
 
     double angleDeg() const @nogc nothrow pure @safe
     {
-        import math = deltotum.core.math.maths;
+        import math = deltotum.core.maths.math;
 
         immutable anleDeg = math.radToDeg(angleRad);
         return anleDeg;
@@ -162,7 +162,7 @@ struct Vector2d
 
     Vector2d polar(double angleDeg, double radius) const @nogc nothrow pure @safe
     {
-        import math = deltotum.core.math.maths;
+        import math = deltotum.core.maths.math;
 
         immutable pX = radius * math.cosDeg(angleDeg);
         immutable pY = radius * math.sinDeg(angleDeg);

@@ -1,14 +1,14 @@
 module deltotum.engine.display.display_object;
 
-import deltotum.core.application.components.uni.uni_component : UniComponent;
+import deltotum.core.applications.components.uni.uni_component : UniComponent;
 
-import deltotum.core.math.vector2d : Vector2d;
-import deltotum.core.math.shapes.rect2d : Rect2d;
+import deltotum.core.maths.vector2d : Vector2d;
+import deltotum.core.maths.shapes.rect2d : Rect2d;
 import deltotum.engine.display.alignment : Alignment;
 import deltotum.platforms.sdl.sdl_texture : SdlTexture;
 import deltotum.engine.physics.physical_body : PhysicalBody;
 import deltotum.engine.input.mouse.event.mouse_event : MouseEvent;
-import deltotum.core.application.events.application_event : ApplicationEvent;
+import deltotum.core.applications.events.application_event : ApplicationEvent;
 import deltotum.engine.input.keyboard.event.key_event : KeyEvent;
 import deltotum.engine.input.joystick.event.joystick_event : JoystickEvent;
 import deltotum.core.events.event_type : EventType;

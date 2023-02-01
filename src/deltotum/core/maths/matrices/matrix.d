@@ -1,6 +1,6 @@
-module deltotum.core.math.matrices.matrix;
+module deltotum.core.maths.matrices.matrix;
 
-import deltotum.core.math.matrices.fixed_array_matrix : FixedArrayMatrix;
+import deltotum.core.maths.matrices.fixed_array_matrix : FixedArrayMatrix;
 
 /**
  * Authors: initkfs

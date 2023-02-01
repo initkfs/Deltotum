@@ -1,6 +1,6 @@
 module deltotum.engine.particles.config.json_emitter_config;
 
-import deltotum.core.config.attributes.configurable : Configurable;
+import deltotum.core.configs.attributes.configurable : Configurable;
 import deltotum.engine.particles.config.emitter_config : EmitterConfig;
 import deltotum.engine.particles.emitter : Emitter;
 

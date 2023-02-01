@@ -3,9 +3,9 @@ module deltotum.engine.particles.emitter;
 import deltotum.engine.display.display_object : DisplayObject;
 import deltotum.engine.particles.particle : Particle;
 import deltotum.engine.particles.config.emitter_config : EmitterConfig;
-import deltotum.core.config.attributes.configurable : Configurable;
-import deltotum.core.math.vector2d : Vector2d;
-import deltotum.core.math.random : Random;
+import deltotum.core.configs.attributes.configurable : Configurable;
+import deltotum.core.maths.vector2d : Vector2d;
+import deltotum.core.maths.random : Random;
 
 import std.stdio;
 

@@ -3,7 +3,7 @@ module deltotum.engine.events.event_manager;
 import deltotum.engine.events.processing.event_processor : EventProcessor;
 import deltotum.engine.scene.scene_manager : SceneManager;
 
-import deltotum.core.application.events.application_event : ApplicationEvent;
+import deltotum.core.applications.events.application_event : ApplicationEvent;
 import deltotum.engine.input.mouse.event.mouse_event : MouseEvent;
 import deltotum.engine.input.keyboard.event.key_event : KeyEvent;
 import deltotum.engine.input.joystick.event.joystick_event : JoystickEvent;

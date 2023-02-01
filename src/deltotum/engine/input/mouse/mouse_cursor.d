@@ -1,6 +1,6 @@
 module deltotum.engine.input.mouse.mouse_cursor;
 
-import deltotum.core.math.vector2d: Vector2d;
+import deltotum.core.maths.vector2d: Vector2d;
 import deltotum.engine.input.mouse.mouse_cursor_type: MouseCursorType;
 
 /**

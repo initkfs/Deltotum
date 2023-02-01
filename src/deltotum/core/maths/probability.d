@@ -1,4 +1,4 @@
-module deltotum.core.math.probability;
+module deltotum.core.maths.probability;
 
 /**
  * Authors: initkfs
@@ -27,7 +27,7 @@ double probabilityInv(double countSuccessfulEvents, double allEvents) pure nothr
 
 double probabilityFromAll(double nElements, double allElements)
 {
-    import deltotum.core.math.combinatorics;
+    import deltotum.core.maths.combinatorics;
 
     if (nElements >= allElements)
     {

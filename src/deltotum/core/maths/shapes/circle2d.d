@@ -1,6 +1,6 @@
-module deltotum.core.math.shapes.circle2d;
+module deltotum.core.maths.shapes.circle2d;
 
-import deltotum.core.math.vector2d : Vector2d;
+import deltotum.core.maths.vector2d : Vector2d;
 
 /**
  * Authors: initkfs
@@ -58,14 +58,14 @@ struct Circle2d
 
     double circumference() const @nogc nothrow pure @safe
     {
-        import math = deltotum.core.math.maths;
+        import math = deltotum.core.maths.math;
 
         return radius * (math.PI * 2);
     }
 
     double area() const @nogc nothrow pure @safe
     {
-        import math = deltotum.core.math.maths;
+        import math = deltotum.core.maths.math;
 
         return radius * radius * math.PI;
     }

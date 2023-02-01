@@ -1,6 +1,6 @@
-module deltotum.core.math.shapes.ellipse2d;
+module deltotum.core.maths.shapes.ellipse2d;
 
-import deltotum.core.math.vector2d : Vector2d;
+import deltotum.core.maths.vector2d : Vector2d;
 
 /**
  * Authors: initkfs
@@ -27,7 +27,7 @@ struct Ellipse2d
 
     double circumference() const @nogc nothrow pure @safe
     {
-        import math = deltotum.core.math.maths;
+        import math = deltotum.core.maths.math;
 
         return math.PI * (semiMajorAxis + semiMinorAxis);
     }
@@ -44,7 +44,7 @@ struct Ellipse2d
 
     double area() const @nogc nothrow pure @safe
     {
-        import math = deltotum.core.math.maths;
+        import math = deltotum.core.maths.math;
 
         return math.PI * semiMajorAxis * semiMinorAxis;
     }

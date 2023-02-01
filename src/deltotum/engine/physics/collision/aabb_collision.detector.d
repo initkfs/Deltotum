@@ -1,7 +1,7 @@
 module deltotum.engine.physics.collision.aabb_collision.detector;
 
-import deltotum.core.math.shapes.rect2d : Rect2d;
-import deltotum.core.math.vector2d : Vector2d;
+import deltotum.core.maths.shapes.rect2d : Rect2d;
+import deltotum.core.maths.vector2d : Vector2d;
 
 /**
  * Authors: initkfs

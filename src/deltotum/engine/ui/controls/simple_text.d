@@ -4,7 +4,7 @@ import deltotum.engine.ui.controls.control : Control;
 import deltotum.engine.asset.fonts.font : Font;
 import deltotum.platforms.sdl.sdl_texture : SdlTexture;
 import deltotum.engine.display.textures.texture : Texture;
-import deltotum.core.math.shapes.rect2d : Rect2d;
+import deltotum.core.maths.shapes.rect2d : Rect2d;
 import deltotum.engine.graphics.colors.rgba : RGBA;
 
 import std.string : toStringz;

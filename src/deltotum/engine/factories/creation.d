@@ -1,6 +1,6 @@
 module deltotum.engine.factories.creation;
 
-import deltotum.core.application.components.uni.uni_component : UniComponent;
+import deltotum.core.applications.components.uni.uni_component : UniComponent;
 
 import deltotum.engine.factories.creation_images : CreationImages;
 import deltotum.engine.factories.creation_shapes: CreationShapes;

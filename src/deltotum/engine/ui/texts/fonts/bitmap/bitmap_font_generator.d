@@ -9,7 +9,7 @@ import deltotum.engine.graphics.colors.rgba: RGBA;
 
 import deltotum.engine.ui.texts.fonts.bitmap.bitmap_font : BitmapFont;
 import deltotum.engine.i18n.langs.alphabets.alphabet : Alphabet;
-import deltotum.core.math.shapes.rect2d : Rect2d;
+import deltotum.core.maths.shapes.rect2d : Rect2d;
 
 import bindbc.sdl;
 

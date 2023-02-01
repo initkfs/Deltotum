@@ -3,7 +3,7 @@ module deltotum.engine.ui.controls.animated_text;
 import deltotum.engine.ui.controls.text : Text;
 import deltotum.engine.display.animation.transition : Transition;
 import deltotum.engine.display.animation.interp.interpolator : Interpolator;
-import deltotum.core.math.shapes.rect2d : Rect2d;
+import deltotum.core.maths.shapes.rect2d : Rect2d;
 import deltotum.engine.i18n.langs.glyph : Glyph;
 
 import std.conv : to;

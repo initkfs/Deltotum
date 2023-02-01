@@ -4,7 +4,7 @@ import deltotum.engine.display.display_object : DisplayObject;
 
 import deltotum.platforms.sdl.sdl_texture : SdlTexture;
 import deltotum.platforms.sdl.sdl_surface : SdlSurface;
-import deltotum.core.math.shapes.rect2d : Rect2d;
+import deltotum.core.maths.shapes.rect2d : Rect2d;
 import deltotum.engine.display.flip : Flip;
 
 import bindbc.sdl;

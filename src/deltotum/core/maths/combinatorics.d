@@ -1,4 +1,4 @@
-module deltotum.core.math.combinatorics;
+module deltotum.core.maths.combinatorics;
 
 /**
  * Authors: initkfs
@@ -10,14 +10,14 @@ double combinationsMfromN(double m, double n) pure @nogc nothrow
     {
         return 0;
     }
-    import math = deltotum.core.math.maths;
+    import math = deltotum.core.maths.math;
 
     return math.factorial(n) / (math.factorial(m) * math.factorial(n - m));
 }
 
 double permutations(double n) pure @nogc nothrow
 {
-    import math = deltotum.core.math.maths;
+    import math = deltotum.core.maths.math;
 
     return math.factorial(n);
 }
@@ -28,7 +28,7 @@ double permutationsMofN(double m, double n) pure @nogc nothrow
     {
         return 0;
     }
-    import math = deltotum.core.math.maths;
+    import math = deltotum.core.maths.math;
 
     return math.factorial(n) / math.factorial(n - m);
 }

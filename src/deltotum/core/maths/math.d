@@ -1,10 +1,10 @@
-module deltotum.core.math.maths;
+module deltotum.core.maths.math;
 
 import math = std.math.trigonometry;
 import mathConst = std.math.constants;
 import mathCore = core.math;
 import mathExp = std.math.exponential;
-import deltotum.core.math.vector2d : Vector2d;
+import deltotum.core.maths.vector2d : Vector2d;
 
 /**
  * Authors: initkfs

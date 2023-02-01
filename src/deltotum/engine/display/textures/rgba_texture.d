@@ -3,7 +3,7 @@ module deltotum.engine.display.textures.rgba_texture;
 import deltotum.engine.display.textures.texture : Texture;
 
 import deltotum.platforms.sdl.sdl_texture : SdlTexture;
-import deltotum.core.math.shapes.rect2d : Rect2d;
+import deltotum.core.maths.shapes.rect2d : Rect2d;
 
 /**
  * Authors: initkfs

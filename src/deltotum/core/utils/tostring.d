@@ -37,7 +37,7 @@ mixin template ToString()
         enum fieldsCount = fields.length;
 
         import std.traits : isDelegate, hasUDA, isPointer;
-        import deltotum.core.application.components.uni.attributes : Service;
+        import deltotum.core.applications.components.uni.attributes : Service;
 
         static foreach (i, fieldName; fields)
         {

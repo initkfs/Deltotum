@@ -1,4 +1,4 @@
-module deltotum.core.math.matrices.fixed_array_matrix;
+module deltotum.core.maths.matrices.fixed_array_matrix;
 
 /**
  * Authors: initkfs

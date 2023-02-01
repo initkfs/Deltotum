@@ -1,6 +1,6 @@
-module deltotum.core.math.affine2d;
+module deltotum.core.maths.affine2d;
 
-import deltotum.core.math.vector2d : Vector2d;
+import deltotum.core.maths.vector2d : Vector2d;
 
 /**
  * Authors: initkfs
@@ -40,7 +40,7 @@ struct Affine2d
 
     Affine2d setRotation(double angleDeg) const @nogc nothrow pure @safe
     {
-        import math = deltotum.core.math.maths;
+        import math = deltotum.core.maths.math;
 
         immutable cos = math.cosDeg(angleDeg);
         immutable sin = math.sinDeg(angleDeg);
@@ -70,7 +70,7 @@ struct Affine2d
             );
         }
 
-        import math = deltotum.core.math.maths;
+        import math = deltotum.core.maths.math;
 
         immutable sin = math.sinDeg(angleDeg);
         immutable cos = math.cosDeg(angleDeg);
@@ -151,7 +151,7 @@ struct Affine2d
             return Affine2d(m00, m01, m02, m10, m11, m12);
         }
 
-        import math = deltotum.core.math.maths;
+        import math = deltotum.core.maths.math;
 
         immutable cos = math.cosDeg(angleDeg);
         immutable sin = math.sinDeg(angleDeg);

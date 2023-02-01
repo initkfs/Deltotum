@@ -7,7 +7,7 @@ import deltotum.engine.display.display_object : DisplayObject;
 import deltotum.platforms.sdl.sdl_texture : SdlTexture;
 import deltotum.platforms.sdl.sdl_renderer : SdlRenderer;
 import deltotum.platforms.sdl.img.sdl_image : SdlImage;
-import deltotum.core.math.shapes.rect2d : Rect2d;
+import deltotum.core.maths.shapes.rect2d : Rect2d;
 import deltotum.engine.display.animation.interp.interpolator : Interpolator;
 import deltotum.engine.display.animation.transition : Transition;
 import std.math.rounding : floor;

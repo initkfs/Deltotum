@@ -3,7 +3,7 @@ module deltotum.engine.display.animation.object.motion.linear_motion_transition;
 import deltotum.engine.display.animation.object.display_object_transition : DisplayObjectTransition;
 import deltotum.engine.display.display_object : DisplayObject;
 import deltotum.engine.display.animation.interp.interpolator : Interpolator;
-import deltotum.core.math.vector2d : Vector2d;
+import deltotum.core.maths.vector2d : Vector2d;
 
 /**
  * Authors: initkfs
