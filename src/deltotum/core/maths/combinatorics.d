@@ -3,16 +3,20 @@ module deltotum.core.maths.combinatorics;
 /**
  * Authors: initkfs
  */
-double permutationCount(double count) pure @nogc nothrow
+size_t permutationCount(size_t count) pure @nogc nothrow
 {
+    if (count == 0)
+    {
+        return 0;
+    }
     import math = deltotum.core.maths.math;
 
     return math.factorial(count);
 }
 
-double permutationCountMfromN(double m, double n) pure @nogc nothrow
+size_t permutationCountMfromN(size_t m, size_t n) pure @nogc nothrow
 {
-    if (m >= n)
+    if (m == 0 || n == 0 || m >= n)
     {
         return 0;
     }
@@ -62,9 +66,9 @@ T[][] permutation(T)(in T[] container) pure nothrow @safe if (!is(T == void))
     return result;
 }
 
-double combinationCountMfromN(double m, double n) pure @nogc nothrow
+size_t combinationCountMfromN(size_t m, size_t n) pure @nogc nothrow
 {
-    if (m >= n)
+    if (m == 0 || n == 0 || m >= n)
     {
         return 0;
     }
@@ -111,10 +115,14 @@ T[][] combination(T)(in T[] container, size_t byCount) pure nothrow @safe
 
 unittest
 {
-    import std.math.operations : isClose;
+    assert(permutationCount(0) == 0);
+    assert(permutationCount(9) == 362_880);
 
-    assert(isClose(permutationCount(9), 362_880));
-    assert(isClose(permutationCountMfromN(3, 9), 504));
+    assert(permutationCountMfromN(0, 0) == 0);
+    assert(permutationCountMfromN(0, 1) == 0);
+    assert(permutationCountMfromN(1, 0) == 0);
+    assert(permutationCountMfromN(3, 9) == 504);
+    assert(permutationCountMfromN(9, 3) == 0);
 
     assert(permutation([1]) == [[1]]);
 
@@ -133,7 +141,11 @@ unittest
     assert(permResult[4] == [2, 3, 1]);
     assert(permResult[5] == [3, 2, 1]);
 
+    assert(combinationCountMfromN(0, 0) == 0);
+    assert(combinationCountMfromN(0, 1) == 0);
+    assert(combinationCountMfromN(1, 0) == 0);
     assert(combinationCountMfromN(3, 9) == 84);
+    assert(combinationCountMfromN(9, 3) == 0);
 
     assert(combination([0], 0) == [[]]);
     assert(combination([1, 2], 0) == [[]]);

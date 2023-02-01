@@ -25,11 +25,11 @@ double probabilityInv(double countSuccessfulEvents, double allEvents) pure nothr
     return 1 - probability(countSuccessfulEvents, allEvents);
 }
 
-double probabilityFromAll(double nElements, double allElements)
+size_t probabilityFromAll(size_t nElements, size_t allElements)
 {
     import deltotum.core.maths.combinatorics;
 
-    if (nElements >= allElements)
+    if (nElements == 0 || allElements == 0 || nElements >= allElements)
     {
         return 0;
     }
