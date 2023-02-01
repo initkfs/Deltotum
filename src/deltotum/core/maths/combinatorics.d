@@ -3,7 +3,14 @@ module deltotum.core.maths.combinatorics;
 /**
  * Authors: initkfs
  */
-double combinationsMfromN(double m, double n) pure @nogc nothrow
+double permutationCount(double count) pure @nogc nothrow
+{
+    import math = deltotum.core.maths.math;
+
+    return math.factorial(count);
+}
+
+double permutationCountMfromN(double m, double n) pure @nogc nothrow
 {
     if (m >= n)
     {
@@ -11,24 +18,15 @@ double combinationsMfromN(double m, double n) pure @nogc nothrow
     }
     import math = deltotum.core.maths.math;
 
-    return math.factorial(n) / (math.factorial(m) * math.factorial(n - m));
-}
-
-double permutations(double n) pure @nogc nothrow
-{
-    import math = deltotum.core.maths.math;
-
-    return math.factorial(n);
+    return math.factorial(n) / math.factorial(n - m);
 }
 
 /** 
  * https://www.quickperm.org
  */
-import std.traits;
-
-T[][] permutations(T)(in T[] container) pure nothrow @safe if (!is(T == void))
+T[][] permutation(T)(in T[] container) pure nothrow @safe if (!is(T == void))
 {
-    T[][] result;
+    typeof(return) result;
     immutable containerLength = container.length;
     if (containerLength == 0)
     {
@@ -64,7 +62,7 @@ T[][] permutations(T)(in T[] container) pure nothrow @safe if (!is(T == void))
     return result;
 }
 
-double permutationsMofN(double m, double n) pure @nogc nothrow
+double combinationCountMfromN(double m, double n) pure @nogc nothrow
 {
     if (m >= n)
     {
@@ -72,25 +70,60 @@ double permutationsMofN(double m, double n) pure @nogc nothrow
     }
     import math = deltotum.core.maths.math;
 
-    return math.factorial(n) / math.factorial(n - m);
+    return math.factorial(n) / (math.factorial(m) * math.factorial(n - m));
+}
+
+/** 
+ * https://rosettacode.org/wiki/Combinations#D
+ */
+T[][] combination(T)(in T[] container, size_t byCount) pure nothrow @safe
+        if (!is(T == void))
+{
+    if (byCount == 0)
+    {
+        //base case for recursion
+        return [[]];
+    }
+
+    if (byCount == container.length)
+    {
+        return [container.dup];
+    }
+
+    typeof(return) result;
+
+    immutable containerLength = container.length;
+    if (containerLength == 0 || byCount > containerLength)
+    {
+        return result;
+    }
+
+    foreach (i, element; container)
+    {
+        foreach (tail; container[i + 1 .. $].combination(byCount - 1))
+        {
+            result ~= element ~ tail;
+        }
+    }
+
+    return result;
 }
 
 unittest
 {
     import std.math.operations : isClose;
 
-    assert(combinationsMfromN(3, 9) == 84);
-    assert(isClose(permutations(9), 362_880));
-    assert(isClose(permutationsMofN(3, 9), 504));
+    assert(isClose(permutationCount(9), 362_880));
+    assert(isClose(permutationCountMfromN(3, 9), 504));
 
-    assert(permutations([1]) == [[1]]);
+    assert(permutation([1]) == [[1]]);
 
-    double[][] permDoubleResult = permutations([0.0, 0.0]);
+    double[][] permDoubleResult = permutation([0.0, 0.0]);
     assert(permDoubleResult.length == 2);
     assert(permDoubleResult[0] == [0, 0]);
     assert(permDoubleResult[1] == [0, 0]);
 
-    int[][] permResult = permutations([1, 2, 3]);
+    int[][] permResult = permutation([1, 2, 3]);
 
     assert(permResult.length == 6);
     assert(permResult[0] == [1, 2, 3]);
@@ -99,4 +132,25 @@ unittest
     assert(permResult[3] == [1, 3, 2]);
     assert(permResult[4] == [2, 3, 1]);
     assert(permResult[5] == [3, 2, 1]);
+
+    assert(combinationCountMfromN(3, 9) == 84);
+
+    assert(combination([0], 0) == [[]]);
+    assert(combination([1, 2], 0) == [[]]);
+    assert(combination([1, 2], 10) == []);
+
+    auto comb1to3by2 = [1, 2, 3].combination(2);
+    assert(comb1to3by2.length == 3);
+    assert(comb1to3by2[0] == [1, 2]);
+    assert(comb1to3by2[1] == [1, 3]);
+    assert(comb1to3by2[2] == [2, 3]);
+
+    assert([1, 2, 3].combination(3) == [[1, 2, 3]]);
+
+    auto comb1to4by3 = [1, 2, 3, 4].combination(3);
+    assert(comb1to4by3.length == 4);
+    assert(comb1to4by3[0] == [1, 2, 3]);
+    assert(comb1to4by3[1] == [1, 2, 4]);
+    assert(comb1to4by3[2] == [1, 3, 4]);
+    assert(comb1to4by3[3] == [2, 3, 4]);
 }

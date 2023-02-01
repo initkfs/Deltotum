@@ -33,7 +33,7 @@ double probabilityFromAll(double nElements, double allElements)
     {
         return 0;
     }
-    return combinationsMfromN(nElements, allElements);
+    return combinationCountMfromN(nElements, allElements);
 }
 
 unittest
