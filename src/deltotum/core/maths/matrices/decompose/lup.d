@@ -18,7 +18,7 @@ struct LUP(T = double, size_t RowDim, size_t ColDim)
  * https://en.wikipedia.org/wiki/LU_decomposition
  */
 LUP!(T, RowDim, ColDim) decompose(T = double, size_t RowDim, size_t ColDim)(
-    FixedArrayMatrix!(T, RowDim, ColDim) matrix) if (RowDim == ColDim)
+    ref FixedArrayMatrix!(T, RowDim, ColDim) matrix) if (RowDim == ColDim)
 {
     LUP!(T, RowDim, ColDim) result;
 
@@ -93,7 +93,7 @@ LUP!(T, RowDim, ColDim) decompose(T = double, size_t RowDim, size_t ColDim)(
  * solution of A*x=b
  * TODO return FixedArrayMatrix, remove memory allocation
  */
-double[] solve(T = double, size_t RowDim, size_t ColDim)(LUP!(T, RowDim, ColDim) lupResult, double[] b)
+double[] solve(T = double, size_t RowDim, size_t ColDim)(ref LUP!(T, RowDim, ColDim) lupResult, double[] b)
 {
     double[] x = new double[](b.length);
     foreach (i; 0 .. RowDim)
@@ -119,7 +119,7 @@ double[] solve(T = double, size_t RowDim, size_t ColDim)(LUP!(T, RowDim, ColDim)
 }
 
 FixedArrayMatrix!(T, RowDim, ColDim) invert(T = double, size_t RowDim, size_t ColDim)(
-    LUP!(T, RowDim, ColDim) lupResult)
+    ref LUP!(T, RowDim, ColDim) lupResult)
 {
     enum matrixDim = RowDim;
     FixedArrayMatrix!(T, RowDim, ColDim) result;
@@ -148,7 +148,7 @@ FixedArrayMatrix!(T, RowDim, ColDim) invert(T = double, size_t RowDim, size_t Co
     return result;
 }
 
-double det(T = double, size_t RowDim, size_t ColDim)(LUP!(T, RowDim, ColDim) lupResult)
+double det(T = double, size_t RowDim, size_t ColDim)(ref LUP!(T, RowDim, ColDim) lupResult)
 {
     immutable size_t matrixDim = lupResult.LU.length;
     double detResult = lupResult.LU[0][0];

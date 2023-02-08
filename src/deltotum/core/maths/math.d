@@ -117,3 +117,25 @@ T factorial(T)(T n)
 {
     return (n == 0 || n == 1) ? 1 : n * factorial(n - 1);
 }
+
+double hypot(double a, double b)
+{
+    import std.math.operations : isClose;
+
+    double result = 0;
+    if (abs(a) > abs(b))
+    {
+        result = b / a;
+        result = abs(a) * sqrt(1 + result ^^ 2);
+        return result;
+    }
+
+    if (!isClose(b, 0))
+    {
+        result = a / b;
+        result = abs(b) * sqrt(1 + result ^^ 2);
+        return result;
+    }
+
+    return result;
+}
