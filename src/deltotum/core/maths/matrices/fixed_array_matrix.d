@@ -3,13 +3,13 @@ module deltotum.core.maths.matrices.fixed_array_matrix;
 /**
  * Authors: initkfs
  */
-struct FixedArrayMatrix(T = double, size_t RowDimension = 1, size_t ColDimension = 1)
-        if (RowDimension >= 1 && ColDimension >= 1)
+struct FixedArrayMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
+        if (RowDim >= 1 && ColDim >= 1)
 {
     private
     {
         //TODO T.init for floating point
-        T[ColDimension][RowDimension] matrix;
+        T[ColDim][RowDim] matrix;
     }
 
     this(T initValue) pure @nogc nothrow @safe
@@ -19,23 +19,23 @@ struct FixedArrayMatrix(T = double, size_t RowDimension = 1, size_t ColDimension
 
     this(const T[][] data) pure @safe
     {
-        if (data.length != RowDimension)
+        if (data.length != RowDim)
         {
             import std.format : format;
 
             throw new Exception(
-                format("Invalid row dimension. Expected %s but received %s", RowDimension, data
+                format("Invalid row dimension. Expected %s but received %s", RowDim, data
                     .length));
         }
 
         foreach (rowIndex, row; data)
         {
-            if (row.length != ColDimension)
+            if (row.length != ColDim)
             {
                 import std.format : format;
 
                 throw new Exception(
-                    format("Invalid column dimension with row index %s. Expected %s but received %s", rowIndex, ColDimension, row
+                    format("Invalid column dimension with row index %s. Expected %s but received %s", rowIndex, ColDim, row
                         .length));
             }
             foreach (columnIndex, columnValue; row)
@@ -45,7 +45,7 @@ struct FixedArrayMatrix(T = double, size_t RowDimension = 1, size_t ColDimension
         }
     }
 
-    protected void eachRow(scope bool delegate(size_t rowIndex, scope const T[]) pure @safe onRow) const pure @safe
+    void eachRow(scope bool delegate(size_t rowIndex, scope const T[]) pure @safe onRow) const pure @safe
     {
         foreach (size_t rowIndex, const ref row; matrix)
         {
@@ -58,10 +58,26 @@ struct FixedArrayMatrix(T = double, size_t RowDimension = 1, size_t ColDimension
         }
     }
 
-    FixedArrayMatrix!(T, RowDimension, ColDimension) add(
-        FixedArrayMatrix!(T, RowDimension, ColDimension) other) const pure @safe
+    void eachCol(scope bool delegate(size_t rowIndex, size_t colIndex, T value) pure @safe onCol) const pure @safe
     {
-        FixedArrayMatrix!(T, RowDimension, ColDimension) result;
+        //immutable -> const(col)
+        foreach (size_t rowIndex, ref row; matrix)
+        {
+            foreach (colIndex, ref col; row)
+            {
+                immutable isContinue = onCol(rowIndex, colIndex, col);
+                if (!isContinue)
+                {
+                    return;
+                }
+            }
+        }
+    }
+
+    FixedArrayMatrix!(T, RowDim, ColDim) add(
+        FixedArrayMatrix!(T, RowDim, ColDim) other) const pure @safe
+    {
+        FixedArrayMatrix!(T, RowDim, ColDim) result;
 
         eachRow((rowIndex, row) {
             foreach (columnIndex, column; row)
@@ -73,10 +89,10 @@ struct FixedArrayMatrix(T = double, size_t RowDimension = 1, size_t ColDimension
         return result;
     }
 
-    FixedArrayMatrix!(T, RowDimension, ColDimension) sub(
-        FixedArrayMatrix!(T, RowDimension, ColDimension) other) const pure @safe
+    FixedArrayMatrix!(T, RowDim, ColDim) sub(
+        FixedArrayMatrix!(T, RowDim, ColDim) other) const pure @safe
     {
-        FixedArrayMatrix!(T, RowDimension, ColDimension) result;
+        FixedArrayMatrix!(T, RowDim, ColDim) result;
 
         eachRow((rowIndex, row) {
             foreach (columnIndex, column; row)
@@ -88,13 +104,13 @@ struct FixedArrayMatrix(T = double, size_t RowDimension = 1, size_t ColDimension
         return result;
     }
 
-    FixedArrayMatrix!(T, RowDimension, ColDimensionOther) multiply(T, size_t RowDimensionOther, size_t ColDimensionOther)(
-        FixedArrayMatrix!(T, RowDimensionOther, ColDimensionOther) other) const pure @safe
-            if (ColDimension == RowDimensionOther)
+    FixedArrayMatrix!(T, RowDim, ColDimOther) multiply(T, size_t RowDimOther, size_t ColDimOther)(
+        FixedArrayMatrix!(T, RowDimOther, ColDimOther) other) const pure @safe
+            if (ColDim == RowDimOther)
     {
         import std.traits;
 
-        FixedArrayMatrix!(T, RowDimension, ColDimensionOther) result;
+        FixedArrayMatrix!(T, RowDim, ColDimOther) result;
 
         //TODO Void arrays?
         static if (isFloatingPoint!T)
@@ -104,9 +120,9 @@ struct FixedArrayMatrix(T = double, size_t RowDimension = 1, size_t ColDimension
 
         foreach (rowIndex; 0 .. rowDimension)
         {
-            foreach (otherColIndex; 0 .. ColDimensionOther)
+            foreach (otherColIndex; 0 .. ColDimOther)
             {
-                foreach (otherRowIndex; 0 .. RowDimensionOther)
+                foreach (otherRowIndex; 0 .. RowDimOther)
                 {
                     auto thisValue = matrix[rowIndex][otherRowIndex];
                     auto otherValue = other.value(otherRowIndex, otherColIndex);
@@ -117,9 +133,9 @@ struct FixedArrayMatrix(T = double, size_t RowDimension = 1, size_t ColDimension
         return result;
     }
 
-    FixedArrayMatrix!(T, ColDimension, RowDimension) transpose() const pure @safe
+    FixedArrayMatrix!(T, ColDim, RowDim) transpose() const pure @safe
     {
-        FixedArrayMatrix!(T, ColDimension, RowDimension) result;
+        FixedArrayMatrix!(T, ColDim, RowDim) result;
 
         eachRow((rowIndex, row) {
             foreach (columnIndex, column; row)
@@ -145,7 +161,7 @@ struct FixedArrayMatrix(T = double, size_t RowDimension = 1, size_t ColDimension
     {
         T[] result;
         eachRow((rowIndex, row) {
-            result ~= matrix[RowDimension - 1 - rowIndex][rowIndex];
+            result ~= matrix[RowDim - 1 - rowIndex][rowIndex];
             return true;
         });
         return result;
@@ -153,9 +169,9 @@ struct FixedArrayMatrix(T = double, size_t RowDimension = 1, size_t ColDimension
 
     void fill(T val) @nogc pure @safe
     {
-        foreach (rowIndex; 0 .. RowDimension)
+        foreach (rowIndex; 0 .. RowDim)
         {
-            foreach (colIndex; 0 .. ColDimension)
+            foreach (colIndex; 0 .. ColDim)
             {
                 matrix[rowIndex][colIndex] = val;
             }
@@ -179,7 +195,106 @@ struct FixedArrayMatrix(T = double, size_t RowDimension = 1, size_t ColDimension
 
     bool isSquare() const @nogc nothrow pure @safe
     {
-        return RowDimension == ColDimension;
+        return RowDim == ColDim;
+    }
+
+    bool isEmpty() const @nogc nothrow pure @safe
+    {
+        return RowDim == 0;
+    }
+
+    auto minor(size_t targetRow, size_t targetCol) const pure @safe
+    {
+        static if (ColDim == RowDim && RowDim >= 2)
+        {
+            FixedArrayMatrix!(T, ColDim - 1, RowDim - 1) result;
+            if (!isSquare || rowDimension < 2 || columnDimension < 2)
+            {
+                return result;
+            }
+
+            if (targetRow >= rowDimension)
+            {
+                import std.format : format;
+
+                throw new Exception(format("Row max index is %s, but received %s", rowDimension - 1, targetRow));
+            }
+
+            if (targetCol >= columnDimension)
+            {
+                import std.format : format;
+
+                throw new Exception(format("Column max index is %s, but received %s", columnDimension - 1, targetCol));
+            }
+
+            immutable size_t minorSize = rowDimension - 1;
+
+            foreach (rowIndex; 0 .. minorSize)
+                foreach (colIndex; 0 .. minorSize)
+                {
+                    if (rowIndex < targetRow && colIndex < targetCol)
+                    {
+                        result[rowIndex][colIndex] = matrix[rowIndex][colIndex];
+                    }
+                    else if (rowIndex >= targetRow && colIndex < targetCol)
+                    {
+                        result[rowIndex][colIndex] = matrix[rowIndex + 1][colIndex];
+                    }
+                    else if (rowIndex < targetRow && colIndex >= targetCol)
+                    {
+                        result[rowIndex][colIndex] = matrix[rowIndex][colIndex + 1];
+                    }
+                    else
+                    {
+                        result[rowIndex][colIndex] = matrix[rowIndex + 1][colIndex + 1];
+                    }
+                }
+
+            return result;
+        }
+        else
+        {
+            FixedArrayMatrix!(T, ColDim, RowDim) result;
+            return result;
+        }
+    }
+
+    double det() const pure @safe
+    {
+        if (!isSquare)
+        {
+            return T.init;
+        }
+
+        if (rowDimension == 1)
+        {
+            return matrix[0][0];
+        }
+
+        byte sign = 1;
+        double result = 0;
+        foreach (i; 0 .. rowDimension)
+        {
+            result += sign * matrix[0][i] * minor(0, i).det;
+            sign *= -1;
+        }
+
+        return result;
+    }
+
+    double permanent() const pure @safe
+    {
+        if (rowDimension == 1)
+        {
+            return matrix[0][0];
+        }
+
+        double sum = 0;
+        foreach (i; 0 .. rowDimension)
+        {
+            sum += matrix[0][i] * minor(0, i).permanent;
+        }
+        return sum;
     }
 
     T[][] toArrayCopy() const pure @safe
@@ -191,21 +306,37 @@ struct FixedArrayMatrix(T = double, size_t RowDimension = 1, size_t ColDimension
 
     ref T value(size_t rowIndex, size_t columnIndex) @safe
     {
-        if (rowIndex >= RowDimension)
+        if (rowIndex >= RowDim)
         {
             import std.format : format;
 
-            throw new Exception(format("Row index must be less than row dimension %s", RowDimension));
+            throw new Exception(format("Row index must be less than row dimension %s", RowDim));
         }
 
-        if (columnIndex >= ColDimension)
+        if (columnIndex >= ColDim)
         {
             import std.format : format;
 
-            throw new Exception(format("Column index must be less than column dimension %s", ColDimension));
+            throw new Exception(format("Column index must be less than column dimension %s", ColDim));
         }
 
         return matrix[rowIndex][columnIndex];
+    }
+
+    T[] opIndex(size_t rowIndex)
+    {
+        if (rowIndex >= RowDim)
+        {
+            import std.format : format;
+
+            throw new Exception(format("Row index must be less than row dimension %s", RowDim));
+        }
+        return matrix[rowIndex];
+    }
+
+    ref T opIndex(size_t row, size_t col)
+    {
+        return value(row, col);
     }
 
     string toString() const
@@ -229,64 +360,114 @@ struct FixedArrayMatrix(T = double, size_t RowDimension = 1, size_t ColDimension
 
     size_t rowDimension() const @nogc nothrow pure @safe
     {
-        return RowDimension;
+        return RowDim;
     }
 
     size_t columnDimension() const @nogc nothrow pure @safe
     {
-        return ColDimension;
+        return ColDim;
     }
+}
 
-    unittest
-    {
-        immutable m0 = FixedArrayMatrix!(double, 1, 1)([[0]]);
-        assert(m0.transpose.toArrayCopy == [[0]]);
-        assert(m0.mainDiagonal == [0]);
-        assert(m0.sideDiagonal == [0]);
-        assert(m0.add(m0).toArrayCopy == [[0]]);
-        assert(m0.multiply(m0).toArrayCopy == [[0]]);
+unittest
+{
+    import std.math.operations : isClose;
 
-        double[][] m1Data = [
-            [1, 2, 3],
-            [4, 5, 6]
-        ];
-        immutable m1 = FixedArrayMatrix!(double, 2, 3)(m1Data);
+    immutable m0 = FixedArrayMatrix!(double, 1, 1)([[0]]);
+    assert(m0.transpose.toArrayCopy == [[0]]);
+    assert(m0.mainDiagonal == [0]);
+    assert(m0.sideDiagonal == [0]);
+    assert(m0.add(m0).toArrayCopy == [[0]]);
+    assert(m0.multiply(m0).toArrayCopy == [[0]]);
 
-        assert(m1.rowDimension == 2);
-        assert(m1.columnDimension == 3);
+    double[][] m1Data = [
+        [1, 2, 3],
+        [4, 5, 6]
+    ];
+    immutable m1 = FixedArrayMatrix!(double, 2, 3)(m1Data);
 
-        auto transM1 = m1.transpose;
-        assert(transM1.toArrayCopy == [[1, 4], [2, 5], [3, 6]]);
+    assert(m1.rowDimension == 2);
+    assert(m1.columnDimension == 3);
 
-        auto m1Add = m1.add(m1);
-        assert(m1Add.toArrayCopy == [[2, 4, 6], [8, 10, 12]]);
+    auto transM1 = m1.transpose;
+    assert(transM1.toArrayCopy == [[1, 4], [2, 5], [3, 6]]);
 
-        auto m1Sub = m1.sub(m1);
-        assert(m1Sub.toArrayCopy == [[0, 0, 0], [0, 0, 0]]);
+    auto m1Add = m1.add(m1);
+    assert(m1Add.toArrayCopy == [[2, 4, 6], [8, 10, 12]]);
 
-        immutable m2 = FixedArrayMatrix!(double, 3, 3)([
-            [1, 2, 3], [4, 5, 6], [6, 7, 8]
+    auto m1Sub = m1.sub(m1);
+    assert(m1Sub.toArrayCopy == [[0, 0, 0], [0, 0, 0]]);
+
+    immutable m2 = FixedArrayMatrix!(double, 3, 3)([
+        [1, 2, 3], [4, 5, 6], [6, 7, 8]
+    ]);
+
+    auto m1m2Multiply = m1.multiply(m2);
+    assert(m1m2Multiply.toArrayCopy == [[27, 33, 39], [60, 75, 90]]);
+
+    immutable m3 = FixedArrayMatrix!(double, 3, 4)([
+        [1, 2, 3, 4],
+        [5, 6, 7, 8],
+        [9, 10, 11, 12]
+    ]);
+
+    assert(m3.mainDiagonal == [1, 6, 11]);
+    assert(m3.sideDiagonal == [9, 6, 3]);
+
+    immutable m4 = FixedArrayMatrix!(double, 3, 3)([
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9]
+    ]);
+
+    assert(m4.mainDiagonal == [1, 5, 9]);
+    assert(m4.sideDiagonal == [7, 5, 3]);
+
+    immutable mat22 = FixedArrayMatrix!(double, 2, 2)([
+            [1, 2],
+            [3, 4],
         ]);
 
-        auto m1m2Multiply = m1.multiply(m2);
-        assert(m1m2Multiply.toArrayCopy == [[27, 33, 39], [60, 75, 90]]);
+    auto minor00Mat22 = mat22.minor(0, 0);
+    assert(minor00Mat22.toArrayCopy == [[4]]);
+    auto minor11Mat22 = mat22.minor(1, 1);
+    assert(minor11Mat22.toArrayCopy == [[1]]);
 
-        immutable m3 = FixedArrayMatrix!(double, 3, 4)([
-            [1, 2, 3, 4],
-            [5, 6, 7, 8],
-            [9, 10, 11, 12]
+    immutable mmin = FixedArrayMatrix!(double, 4, 4)([
+        [1, 2, 3, 4],
+        [5, 6, 7, 8],
+        [9, 10, 11, 12],
+        [13, 14, 15, 16]
+    ]);
+
+    auto minor00 = mmin.minor(0, 0);
+    assert(minor00[0] == [6, 7, 8]);
+    assert(minor00[1] == [10, 11, 12]);
+    assert(minor00[2] == [14, 15, 16]);
+
+    auto minor22 = mmin.minor(2, 2);
+    assert(minor22[0] == [1, 2, 4]);
+    assert(minor22[1] == [5, 6, 8]);
+    assert(minor22[2] == [13, 14, 16]);
+
+    auto minor33 = mmin.minor(3, 3);
+    assert(minor33[0] == [1, 2, 3]);
+    assert(minor33[1] == [5, 6, 7]);
+    assert(minor33[2] == [9, 10, 11]);
+
+    auto dd1 = FixedArrayMatrix!(double, 2, 2)([
+            [1, 2],
+            [3, 4]
         ]);
+    auto dd1Det = dd1.det;
+    assert(dd1Det == -2);
 
-        assert(m3.mainDiagonal == [1, 6, 11]);
-        assert(m3.sideDiagonal == [9, 6, 3]);
-
-        immutable m4 = FixedArrayMatrix!(double, 3, 3)([
-            [1, 2, 3],
-            [4, 5, 6],
-            [7, 8, 9]
-        ]);
-
-        assert(m4.mainDiagonal == [1, 5, 9]);
-        assert(m4.sideDiagonal == [7, 5, 3]);
-    }
+    auto dd2 = FixedArrayMatrix!(double, 4, 4)([
+        [11, 21, 32, 4],
+        [15, 56, 32, 12],
+        [23, 22, 11, 10],
+        [11, 76, 32, 56]
+    ]);
+    auto dd2Det = dd2.det;
+    assert(isClose(dd2Det, -811036));
 }

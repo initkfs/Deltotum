@@ -92,6 +92,20 @@ double atan2(double y, double x) @nogc nothrow pure @safe
     return math.atan2(y, x);
 }
 
+T min(T)(T x, T y) @nogc nothrow pure @safe
+{
+    import std.algorithm.comparison : min;
+
+    return min(x, y);
+}
+
+T max(T)(T x, T y) @nogc nothrow pure @safe
+{
+    import std.algorithm.comparison : max;
+
+    return max(x, y);
+}
+
 T abs(T)(T value)
 {
     import std.math.algebraic : Abs = abs;
