@@ -1,6 +1,6 @@
 module deltotum.core.maths.matrices.decompositions.svd;
 
-import deltotum.core.maths.matrices.fixed_array_matrix : FixedArrayMatrix;
+import deltotum.core.maths.matrices.dense_matrix : DenseMatrix;
 import Math = deltotum.core.maths.math;
 import Matrix = deltotum.core.maths.matrices.matrix;
 
@@ -21,7 +21,7 @@ class SingularValueDecomposition(T = double, size_t RowDim, size_t ColDim)
     private int m, n;
 
     //by value
-    this(FixedArrayMatrix!(T, RowDim, ColDim) matrix)
+    this(DenseMatrix!(T, RowDim, ColDim) matrix)
     {
         if (RowDim < ColDim)
         {
@@ -577,9 +577,9 @@ unittest
 {
     import std.math.operations : isClose;
     import std.algorithm.comparison : equal;
-    import deltotum.core.maths.matrices.fixed_array_matrix : FixedArrayMatrix;
+    import deltotum.core.maths.matrices.dense_matrix : DenseMatrix;
 
-    auto m1 = FixedArrayMatrix!(double, 3, 3)([
+    auto m1 = DenseMatrix!(double, 3, 3)([
         [1, 2, 3],
         [4, 5, 6],
         [7, 8, 9],

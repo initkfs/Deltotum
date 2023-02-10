@@ -1,6 +1,6 @@
 module deltotum.core.maths.matrices.decompose.qr;
 
-import deltotum.core.maths.matrices.fixed_array_matrix : FixedArrayMatrix;
+import deltotum.core.maths.matrices.dense_matrix : DenseMatrix;
 import Math = deltotum.core.maths.math;
 
 /**
@@ -16,7 +16,7 @@ struct QR(T = double, size_t RowDim, size_t ColDim)
     // diagonal of R.
     double[ColDim] Rdiag;
 
-    FixedArrayMatrix!(T, ColDim, ColDim) factorR()
+    DenseMatrix!(T, ColDim, ColDim) factorR()
     {
         typeof(return) result;
 
@@ -46,7 +46,7 @@ struct QR(T = double, size_t RowDim, size_t ColDim)
         return result;
     }
 
-    FixedArrayMatrix!(T, RowDim, ColDim) factorQ()
+    DenseMatrix!(T, RowDim, ColDim) factorQ()
     {
         typeof(return) result;
 
@@ -92,7 +92,7 @@ struct QR(T = double, size_t RowDim, size_t ColDim)
         return true;
     }
 
-    FixedArrayMatrix!(T, RowDim, ColDim) householder()
+    DenseMatrix!(T, RowDim, ColDim) householder()
     {
         typeof(return) result;
         foreach (i; 0 .. RowDim)
@@ -117,7 +117,7 @@ struct QR(T = double, size_t RowDim, size_t ColDim)
  * https://en.wikipedia.org/wiki/QR_decomposition
  */
 QR!(T, RowDim, ColDim) decompose(T = double, size_t RowDim, size_t ColDim)(
-    ref FixedArrayMatrix!(T, RowDim, ColDim) matrix)
+    ref DenseMatrix!(T, RowDim, ColDim) matrix)
         if (RowDim > 0 && ColDim > 0 && RowDim >= ColDim)
 {
     typeof(return) result;
@@ -243,9 +243,9 @@ unittest
 {
     import std.math.operations : isClose;
     import std.algorithm.comparison : equal;
-    import deltotum.core.maths.matrices.fixed_array_matrix : FixedArrayMatrix;
+    import deltotum.core.maths.matrices.dense_matrix : DenseMatrix;
 
-    auto m1 = FixedArrayMatrix!(double, 4, 3)([
+    auto m1 = DenseMatrix!(double, 4, 3)([
         [2, 7, 6],
         [9, 5, 1],
         [4, 3, 8],
@@ -277,7 +277,7 @@ unittest
     //3x +2y + z =360
     //x + 6y +2z = 300
     //4x + y + 5z = 675
-    auto m2 = FixedArrayMatrix!(double, 3, 3)([[3, 2, 1], [1, 6, 2], [4, 1, 5]]);
+    auto m2 = DenseMatrix!(double, 3, 3)([[3, 2, 1], [1, 6, 2], [4, 1, 5]]);
     auto m2qr = decompose(m2);
     auto m2result = solve(m2qr, [360, 300, 675]);
     assert(isClose(m2result[0], 90));

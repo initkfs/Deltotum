@@ -1,6 +1,6 @@
 module deltotum.core.maths.matrices.decompose.lup;
 
-import deltotum.core.maths.matrices.fixed_array_matrix : FixedArrayMatrix;
+import deltotum.core.maths.matrices.dense_matrix : DenseMatrix;
 
 /**
  * Authors: initkfs
@@ -18,7 +18,7 @@ struct LUP(T = double, size_t RowDim, size_t ColDim)
  * https://en.wikipedia.org/wiki/LU_decomposition
  */
 LUP!(T, RowDim, ColDim) decompose(T = double, size_t RowDim, size_t ColDim)(
-    ref FixedArrayMatrix!(T, RowDim, ColDim) matrix) if (RowDim == ColDim)
+    ref DenseMatrix!(T, RowDim, ColDim) matrix) if (RowDim == ColDim)
 {
     LUP!(T, RowDim, ColDim) result;
 
@@ -91,7 +91,7 @@ LUP!(T, RowDim, ColDim) decompose(T = double, size_t RowDim, size_t ColDim)(
 
 /* 
  * solution of A*x=b
- * TODO return FixedArrayMatrix, remove memory allocation
+ * TODO return DenseMatrix, remove memory allocation
  */
 double[] solve(T = double, size_t RowDim, size_t ColDim)(ref LUP!(T, RowDim, ColDim) lupResult, double[] b)
 {
@@ -118,11 +118,11 @@ double[] solve(T = double, size_t RowDim, size_t ColDim)(ref LUP!(T, RowDim, Col
     return x;
 }
 
-FixedArrayMatrix!(T, RowDim, ColDim) invert(T = double, size_t RowDim, size_t ColDim)(
+DenseMatrix!(T, RowDim, ColDim) invert(T = double, size_t RowDim, size_t ColDim)(
     ref LUP!(T, RowDim, ColDim) lupResult)
 {
     enum matrixDim = RowDim;
-    FixedArrayMatrix!(T, RowDim, ColDim) result;
+    DenseMatrix!(T, RowDim, ColDim) result;
 
     foreach (j; 0 .. matrixDim)
     {
@@ -168,9 +168,9 @@ double det(T = double, size_t RowDim, size_t ColDim)(ref LUP!(T, RowDim, ColDim)
 unittest
 {
     import std.math.operations : isClose;
-    import deltotum.core.maths.matrices.fixed_array_matrix : FixedArrayMatrix;
+    import deltotum.core.maths.matrices.dense_matrix : DenseMatrix;
 
-    auto m1 = FixedArrayMatrix!(double, 4, 4)([
+    auto m1 = DenseMatrix!(double, 4, 4)([
         [2, 7, 6, 2],
         [9, 5, 1, 3],
         [4, 3, 8, 4],
@@ -213,7 +213,7 @@ unittest
     //3x +2y + z =360
     //x + 6y +2z = 300
     //4x + y + 5z = 675
-    auto m2 = FixedArrayMatrix!(double, 3, 3)([[3, 2, 1], [1, 6, 2], [4, 1, 5]]);
+    auto m2 = DenseMatrix!(double, 3, 3)([[3, 2, 1], [1, 6, 2], [4, 1, 5]]);
     auto m2lup = decompose(m2);
     auto m2result = solve(m2lup, [360, 300, 675]);
     assert(m2result[0] == 90);
@@ -222,7 +222,7 @@ unittest
 
     //3x - 2y = 6;
     //5x + 4y = 32;
-    auto m3 = FixedArrayMatrix!(double, 2, 2)([[3, 2], [5, 4]]);
+    auto m3 = DenseMatrix!(double, 2, 2)([[3, 2], [5, 4]]);
     auto m3lup = decompose(m3);
     auto m3result = solve(m3lup, [6, 32]);
     assert(isClose(m3result[0], -20));

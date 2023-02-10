@@ -1,9 +1,9 @@
-module deltotum.core.maths.matrices.fixed_array_matrix;
+module deltotum.core.maths.matrices.dense_matrix;
 
 /**
  * Authors: initkfs
  */
-struct FixedArrayMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
+struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         if (RowDim >= 1 && ColDim >= 1)
 {
     //TODO make private
@@ -75,10 +75,10 @@ struct FixedArrayMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         }
     }
 
-    FixedArrayMatrix!(T, RowDim, ColDim) add(
-        FixedArrayMatrix!(T, RowDim, ColDim) other) const pure @safe
+    DenseMatrix!(T, RowDim, ColDim) add(
+        DenseMatrix!(T, RowDim, ColDim) other) const pure @safe
     {
-        FixedArrayMatrix!(T, RowDim, ColDim) result;
+        DenseMatrix!(T, RowDim, ColDim) result;
 
         eachRow((rowIndex, row) {
             foreach (columnIndex, column; row)
@@ -90,10 +90,10 @@ struct FixedArrayMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         return result;
     }
 
-    FixedArrayMatrix!(T, RowDim, ColDim) sub(
-        FixedArrayMatrix!(T, RowDim, ColDim) other) const pure @safe
+    DenseMatrix!(T, RowDim, ColDim) sub(
+        DenseMatrix!(T, RowDim, ColDim) other) const pure @safe
     {
-        FixedArrayMatrix!(T, RowDim, ColDim) result;
+        DenseMatrix!(T, RowDim, ColDim) result;
 
         eachRow((rowIndex, row) {
             foreach (columnIndex, column; row)
@@ -105,13 +105,13 @@ struct FixedArrayMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         return result;
     }
 
-    FixedArrayMatrix!(T, RowDim, ColDimOther) multiply(T, size_t RowDimOther, size_t ColDimOther)(
-        FixedArrayMatrix!(T, RowDimOther, ColDimOther) other) const pure @safe
+    DenseMatrix!(T, RowDim, ColDimOther) multiply(T, size_t RowDimOther, size_t ColDimOther)(
+        DenseMatrix!(T, RowDimOther, ColDimOther) other) const pure @safe
             if (ColDim == RowDimOther)
     {
         import std.traits;
 
-        FixedArrayMatrix!(T, RowDim, ColDimOther) result;
+        DenseMatrix!(T, RowDim, ColDimOther) result;
 
         //TODO Void arrays?
         static if (isFloatingPoint!T)
@@ -134,9 +134,9 @@ struct FixedArrayMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         return result;
     }
 
-    FixedArrayMatrix!(T, ColDim, RowDim) transpose() const pure @safe
+    DenseMatrix!(T, ColDim, RowDim) transpose() const pure @safe
     {
-        FixedArrayMatrix!(T, ColDim, RowDim) result;
+        DenseMatrix!(T, ColDim, RowDim) result;
 
         eachRow((rowIndex, row) {
             foreach (columnIndex, column; row)
@@ -234,7 +234,7 @@ struct FixedArrayMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         return t;
     }
 
-    FixedArrayMatrix!(T, RowDim, ColDim) identity() const pure @safe
+    DenseMatrix!(T, RowDim, ColDim) identity() const pure @safe
     {
         typeof(return) newMatrix;
         foreach (i; 0 .. RowDim)
@@ -287,7 +287,7 @@ struct FixedArrayMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
     {
         static if (ColDim == RowDim && RowDim >= 2)
         {
-            FixedArrayMatrix!(T, ColDim - 1, RowDim - 1) result;
+            DenseMatrix!(T, ColDim - 1, RowDim - 1) result;
             if (!isSquare || rowDimension < 2 || columnDimension < 2)
             {
                 return result;
@@ -334,7 +334,7 @@ struct FixedArrayMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         }
         else
         {
-            FixedArrayMatrix!(T, ColDim, RowDim) result;
+            DenseMatrix!(T, ColDim, RowDim) result;
             return result;
         }
     }
@@ -453,7 +453,7 @@ unittest
 {
     import std.math.operations : isClose;
 
-    immutable m0 = FixedArrayMatrix!(double, 1, 1)([[0]]);
+    immutable m0 = DenseMatrix!(double, 1, 1)([[0]]);
     assert(m0.transpose.toArrayCopy == [[0]]);
     assert(m0.mainDiagonal == [0]);
     assert(m0.sideDiagonal == [0]);
@@ -464,7 +464,7 @@ unittest
         [1, 2, 3],
         [4, 5, 6]
     ];
-    immutable m1 = FixedArrayMatrix!(double, 2, 3)(m1Data);
+    immutable m1 = DenseMatrix!(double, 2, 3)(m1Data);
 
     assert(m1.rowDimension == 2);
     assert(m1.columnDimension == 3);
@@ -478,14 +478,14 @@ unittest
     auto m1Sub = m1.sub(m1);
     assert(m1Sub.toArrayCopy == [[0, 0, 0], [0, 0, 0]]);
 
-    immutable m2 = FixedArrayMatrix!(double, 3, 3)([
+    immutable m2 = DenseMatrix!(double, 3, 3)([
         [1, 2, 3], [4, 5, 6], [6, 7, 8]
     ]);
 
     auto m1m2Multiply = m1.multiply(m2);
     assert(m1m2Multiply.toArrayCopy == [[27, 33, 39], [60, 75, 90]]);
 
-    immutable m3 = FixedArrayMatrix!(double, 3, 4)([
+    immutable m3 = DenseMatrix!(double, 3, 4)([
         [1, 2, 3, 4],
         [5, 6, 7, 8],
         [9, 10, 11, 12]
@@ -494,7 +494,7 @@ unittest
     assert(m3.mainDiagonal == [1, 6, 11]);
     assert(m3.sideDiagonal == [9, 6, 3]);
 
-    immutable m4 = FixedArrayMatrix!(double, 3, 3)([
+    immutable m4 = DenseMatrix!(double, 3, 3)([
         [1, 2, 3],
         [4, 5, 6],
         [7, 8, 9]
@@ -503,7 +503,7 @@ unittest
     assert(m4.mainDiagonal == [1, 5, 9]);
     assert(m4.sideDiagonal == [7, 5, 3]);
 
-    immutable mat22 = FixedArrayMatrix!(double, 2, 2)([
+    immutable mat22 = DenseMatrix!(double, 2, 2)([
             [1, 2],
             [3, 4],
         ]);
@@ -513,7 +513,7 @@ unittest
     auto minor11Mat22 = mat22.minor(1, 1);
     assert(minor11Mat22.toArrayCopy == [[1]]);
 
-    immutable mmin = FixedArrayMatrix!(double, 4, 4)([
+    immutable mmin = DenseMatrix!(double, 4, 4)([
         [1, 2, 3, 4],
         [5, 6, 7, 8],
         [9, 10, 11, 12],
@@ -535,14 +535,14 @@ unittest
     assert(minor33[1] == [5, 6, 7]);
     assert(minor33[2] == [9, 10, 11]);
 
-    auto dd1 = FixedArrayMatrix!(double, 2, 2)([
+    auto dd1 = DenseMatrix!(double, 2, 2)([
             [1, 2],
             [3, 4]
         ]);
     auto dd1Det = dd1.det;
     assert(dd1Det == -2);
 
-    auto dd2 = FixedArrayMatrix!(double, 4, 4)([
+    auto dd2 = DenseMatrix!(double, 4, 4)([
         [11, 21, 32, 4],
         [15, 56, 32, 12],
         [23, 22, 11, 10],
