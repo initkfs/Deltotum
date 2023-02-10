@@ -177,7 +177,6 @@ unittest
         [5, 6, 7, 8],
     ]);
     auto m1Result = decompose!(double, 4, 4)(m1);
-    import std.stdio;
 
     auto m1ResultLU = m1Result.LU;
 

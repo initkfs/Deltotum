@@ -6,11 +6,12 @@ module deltotum.core.maths.matrices.fixed_array_matrix;
 struct FixedArrayMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         if (RowDim >= 1 && ColDim >= 1)
 {
-    private
-    {
+    //TODO make private
+    //private
+    //{
         //TODO T.init for floating point
         T[ColDim][RowDim] matrix;
-    }
+    //}
 
     this(T initValue) pure @nogc nothrow @safe
     {
