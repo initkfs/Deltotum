@@ -9,8 +9,8 @@ struct FixedArrayMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
     //TODO make private
     //private
     //{
-        //TODO T.init for floating point
-        T[ColDim][RowDim] matrix;
+    //TODO T.init for floating point
+    T[ColDim][RowDim] matrix;
     //}
 
     this(T initValue) pure @nogc nothrow @safe
@@ -166,6 +166,85 @@ struct FixedArrayMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
             return true;
         });
         return result;
+    }
+
+    //maximum column sum.
+    //norm 2 in the SVD
+    double opnorm1() const pure @safe
+    {
+        import Math = deltotum.core.maths.math;
+
+        double f = 0;
+        foreach (j; 0 .. ColDim)
+        {
+            double s = 0;
+            foreach (i; 0 .. RowDim)
+            {
+                s += Math.abs!T(matrix[i][j]);
+            }
+            f = Math.max!T(f, s);
+        }
+        return f;
+    }
+
+    //maximum row sum.
+    double opnormInf() const pure @safe
+    {
+        import Math = deltotum.core.maths.math;
+
+        double f = 0;
+        foreach (i; 0 .. RowDim)
+        {
+            double s = 0;
+            foreach (j; 0 .. ColDim)
+            {
+                s += Math.abs(matrix[i][j]);
+            }
+            f = Math.max(f, s);
+        }
+        return f;
+    }
+
+    //sqrt of sum squares elements.
+    double normFrobenius() const pure @safe
+    {
+        import Math = deltotum.core.maths.math;
+
+        double f = 0;
+        foreach (i; 0 .. RowDim)
+        {
+            foreach (j; 0 .. ColDim)
+            {
+                f = Math.hypot(f, matrix[i][j]);
+            }
+        }
+        return f;
+    }
+
+    //sum of the diagonal elements.
+    double trace() const pure @safe
+    {
+        import Math = deltotum.core.maths.math;
+
+        double t = 0;
+        foreach (i; 0 .. Math.min(RowDim, ColDim))
+        {
+            t += matrix[i][i];
+        }
+        return t;
+    }
+
+    FixedArrayMatrix!(T, RowDim, ColDim) identity() const pure @safe
+    {
+        typeof(return) newMatrix;
+        foreach (i; 0 .. RowDim)
+        {
+            foreach (j; 0 .. ColDim)
+            {
+                newMatrix[i][j] = (i == j ? 1 : 0);
+            }
+        }
+        return newMatrix;
     }
 
     void fill(T val) @nogc pure @safe
@@ -471,4 +550,18 @@ unittest
     ]);
     auto dd2Det = dd2.det;
     assert(isClose(dd2Det, -811036));
+
+    //Norms
+    assert(isClose(dd2.opnorm1, 175));
+    assert(isClose(dd2.opnormInf, 175));
+    assert(isClose(dd2.normFrobenius, 131.992424025));
+    assert(isClose(dd2.trace, 134));
+
+    //Identity
+    assert(dd2.identity.toArrayCopy == [
+            [1, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1]
+        ]);
 }
