@@ -23,9 +23,11 @@ class JsonEmitterConfig : EmitterConfig
         JSONValue config;
         config.object = null;
 
+        import deltotum.core.utils.meta: hasOverloads;
+
         static foreach (fieldName; __traits(allMembers, Emitter))
         {
-            static if (hasUDA!(__traits(getMember, Emitter, fieldName), Configurable))
+            static if (!hasOverloads!(Emitter, fieldName) && hasUDA!(__traits(getMember, Emitter, fieldName), Configurable))
             {
                 {
                     config.object[fieldName] = JSONValue(__traits(getMember, emitter, fieldName));
@@ -49,13 +51,14 @@ class JsonEmitterConfig : EmitterConfig
 
         import std.json : parseJSON;
         import std.traits : hasUDA;
+        import deltotum.core.utils.meta: hasOverloads;
 
         bool isApplied;
 
         auto json = parseJSON(config);
         static foreach (fieldName; __traits(allMembers, Emitter))
         {
-            static if (hasUDA!(__traits(getMember, Emitter, fieldName), Configurable))
+            static if (!hasOverloads!(Emitter, fieldName) && hasUDA!(__traits(getMember, Emitter, fieldName), Configurable))
             {
                 if (fieldName in json)
                 {

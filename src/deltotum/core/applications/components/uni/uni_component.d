@@ -21,13 +21,13 @@ class UniComponent : SimpleUnit
 
     private
     {
-        Logger _logger;
-        Assets _assets;
-        Window _window;
-        Input _input;
-        Audio _audio;
-        Graphics _graphics;
-        Debugger _debugger;
+        @Service Logger _logger;
+        @Service Assets _assets;
+        @Service Window _window;
+        @Service Input _input;
+        @Service Audio _audio;
+        @Service Graphics _graphics;
+        @Service Debugger _debugger;
     }
 
     void build(UniComponent uniComponent)
@@ -51,13 +51,14 @@ class UniComponent : SimpleUnit
         uniComponent.beforeBuild();
 
         import std.traits : hasUDA;
+        import deltotum.core.utils.meta : hasOverloads;
 
         alias parentType = typeof(parent);
         static foreach (const fieldName; __traits(allMembers, parentType))
         {
-            static if (hasUDA!(__traits(getMember, parentType, fieldName), Service))
+            static if (!hasOverloads!(parentType, fieldName) && hasUDA!(__traits(getMember, parent, fieldName), Service))
             {
-                __traits(getMember, uniComponent, fieldName) = __traits(getMember, parent, fieldName);
+                __traits(getMember, uniComponent, fieldName[1 .. $]) = __traits(getMember, parent, fieldName[1 .. $]);
             }
         }
 
@@ -65,17 +66,17 @@ class UniComponent : SimpleUnit
         uniComponent.isBuilt = true;
     }
 
-    public void beforeBuild()
+    void beforeBuild()
     {
 
     }
 
-    public void afterBuild()
+    void afterBuild()
     {
 
     }
 
-    @Service final Logger logger() @nogc nothrow pure @safe
+    final Logger logger() @nogc nothrow pure @safe
     out (_logger; _logger !is null)
     {
         return _logger;
@@ -90,7 +91,7 @@ class UniComponent : SimpleUnit
 
     }
 
-    @Service final Assets assets() @nogc nothrow pure @safe
+    final Assets assets() @nogc nothrow pure @safe
     out (_assets; _assets !is null)
     {
         return _assets;
@@ -105,7 +106,7 @@ class UniComponent : SimpleUnit
 
     }
 
-    @Service final Window window() @nogc nothrow pure @safe
+    final Window window() @nogc nothrow pure @safe
     out (_window; _window !is null)
     {
         return _window;
@@ -120,7 +121,7 @@ class UniComponent : SimpleUnit
 
     }
 
-    @Service final Input input() @nogc nothrow pure @safe
+    final Input input() @nogc nothrow pure @safe
     out (_input; _input !is null)
     {
         return _input;
@@ -135,7 +136,7 @@ class UniComponent : SimpleUnit
 
     }
 
-    @Service final Audio audio() @nogc nothrow pure @safe
+    final Audio audio() @nogc nothrow pure @safe
     out (_audio; _audio !is null)
     {
         return _audio;
@@ -149,7 +150,7 @@ class UniComponent : SimpleUnit
         _audio = audio;
     }
 
-    @Service final Graphics graphics() @nogc nothrow pure @safe
+    final Graphics graphics() @nogc nothrow pure @safe
     out (_graphics; _graphics !is null)
     {
         return _graphics;
@@ -163,7 +164,7 @@ class UniComponent : SimpleUnit
         _graphics = graphics;
     }
 
-    @Service final Debugger debugger() @nogc nothrow pure @safe
+    final Debugger debugger() @nogc nothrow pure @safe
     out (_debugger; _debugger !is null)
     {
         return _debugger;

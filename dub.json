@@ -27,6 +27,7 @@
             ]
         }
     ],
+    "buildRequirements": ["disallowDeprecations"],
     "sourcePaths": ["./src"],
     "importPaths": ["./src"],
     "dependencies": {

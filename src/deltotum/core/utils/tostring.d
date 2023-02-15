@@ -38,6 +38,7 @@ mixin template ToString()
 
         import std.traits : isDelegate, hasUDA, isPointer;
         import deltotum.core.applications.components.uni.attributes : Service;
+        import deltotum.core.utils.meta : hasOverloads;
 
         static foreach (i, fieldName; fields)
         {
@@ -47,7 +48,8 @@ mixin template ToString()
                 alias fieldType = typeof(fieldValue);
                 //TODO filter or ToStringExclude...?
                 //TODO check alias with __traits(compiles, hasUDA!(member, attribute)
-                static if (!isDelegate!fieldType && !hasUDA!(field, Service))
+                //TODO replace hasUDA for overloads
+                static if (!isDelegate!fieldType && !hasOverloads!(cast(C) this, fieldName) && !hasUDA!(field, Service))
                 {
                     static if (isPointer!fieldType)
                     {
