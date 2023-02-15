@@ -419,6 +419,18 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         return value(row, col);
     }
 
+    T[] opSlice(size_t rowDim = 0)(size_t start = 0, size_t end = ColDim)
+            if (rowDim <= RowDim)
+    {
+        if (end > ColDim)
+        {
+            import std.format : format;
+
+            throw new Exception(format("End column index %s must be less than column dimension %s", end, ColDim));
+        }
+        return matrix[rowDim][start .. end];
+    }
+
     string toString() const
     {
         import std.array : appender, join;
@@ -479,8 +491,8 @@ unittest
     assert(m1Sub.toArrayCopy == [[0, 0, 0], [0, 0, 0]]);
 
     immutable m2 = DenseMatrix!(double, 3, 3)([
-        [1, 2, 3], [4, 5, 6], [6, 7, 8]
-    ]);
+            [1, 2, 3], [4, 5, 6], [6, 7, 8]
+        ]);
 
     auto m1m2Multiply = m1.multiply(m2);
     assert(m1m2Multiply.toArrayCopy == [[27, 33, 39], [60, 75, 90]]);
@@ -495,10 +507,10 @@ unittest
     assert(m3.sideDiagonal == [9, 6, 3]);
 
     immutable m4 = DenseMatrix!(double, 3, 3)([
-        [1, 2, 3],
-        [4, 5, 6],
-        [7, 8, 9]
-    ]);
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9]
+        ]);
 
     assert(m4.mainDiagonal == [1, 5, 9]);
     assert(m4.sideDiagonal == [7, 5, 3]);

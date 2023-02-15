@@ -49,7 +49,7 @@ mixin template ToString()
                 //TODO filter or ToStringExclude...?
                 //TODO check alias with __traits(compiles, hasUDA!(member, attribute)
                 //TODO replace hasUDA for overloads
-                static if (!isDelegate!fieldType && !hasOverloads!(cast(C) this, fieldName) && !hasUDA!(field, Service))
+                static if (!isDelegate!fieldType && !hasOverloads!(typeof(cast(C) this), fieldName) && !hasUDA!(field, Service))
                 {
                     static if (isPointer!fieldType)
                     {
