@@ -19,7 +19,7 @@ mixin template EqualsOther()
         alias Other = Self;
     }
 
-    alias CopyTypeQualifiers!(Self, Other) OtherType;
+    alias OtherType = CopyTypeQualifiers!(Self, Other);
     static if (is(Self == class))
     {
         enum opEqualsParameter = fullyQualifiedName!OtherType;
@@ -31,23 +31,23 @@ mixin template EqualsOther()
 
     import std.format : format;
 
-    // enum opEqualsSignature = format("bool opEquals(%s other) @safe { return %s(other); }", opEqualsParameter, __traits(
-    //             identifier, equalsOther));
+    enum opEqualsSignature = format(
+            "bool opEquals(%s other) nothrow @safe { return %s!(%s, %s)(other); }",
+            opEqualsParameter,
+            __traits(identifier, equalsOther),
+            __traits(identifier, Self),
+            opEqualsParameter);
 
-    // static if (is(Self == class) && isImplicitlyConvertible!(Other, OtherType))
-    // {
-    //     mixin("override " ~ opEqualsSignature);
-    // }
-    // else
-    // {
-    //     mixin(opEqualsSignature);
-    // }
+    static if (is(Self == class) && isImplicitlyConvertible!(Other, OtherType))
+    {
+        mixin("override " ~ opEqualsSignature);
+    }
+    else
+    {
+        mixin(opEqualsSignature);
+    }
 
-    enum opEqualsSignature = format("bool opEquals(this C)(%s other) @safe { return %s!(C, %s)(other); }", opEqualsParameter, __traits(
-                identifier, equalsOther), opEqualsParameter);
-    mixin(opEqualsSignature);
-
-    private bool equalsOther(C, T)(T other) @safe
+    private bool equalsOther(C, T)(T other) nothrow @safe
     {
         static if (is(T == class))
         {
@@ -61,14 +61,14 @@ mixin template EqualsOther()
                 return true;
             }
 
-            // static if (__traits(compiles, super.opEquals) && __traits(isOverrideFunction, super
-            //         .opEquals))
-            // {
-            //     if (!super.opEquals(other))
-            //     {
-            //         return false;
-            //     }
-            // }
+            static if (__traits(compiles, super.opEquals) && __traits(isOverrideFunction, super
+                    .opEquals))
+            {
+                if (!super.opEquals(other))
+                {
+                    return false;
+                }
+            }
 
             auto otherType = cast(C) other;
             if (!otherType)
@@ -77,9 +77,9 @@ mixin template EqualsOther()
             }
         }
 
-        import deltotum.core.utils.type_util : AllFieldNamesTuple;
+        import std.traits : FieldNameTuple;
 
-        static foreach (field; AllFieldNamesTuple!(C))
+        static foreach (field; FieldNameTuple!(C))
         {
             //TODO pointers, etc?
             static if (is(C == class))

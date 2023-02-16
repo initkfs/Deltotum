@@ -7,48 +7,51 @@ mixin template HashCode(alias HashFunc = object.hashOf)
 {
     alias Self = typeof(this);
 
-    mixin("size_t toHash(this C)() { return " ~ __traits(identifier, hashCode) ~ "!C; }");
+    //mixin("size_t toHash(this C)() { return " ~ __traits(identifier, hashCode) ~ "; }");
 
-    // static if (is(Self == class) && !is(Self == immutable) && !is(Self == shared))
-    // {
-    //     mixin("override size_t toHash(){ return " ~ __traits(identifier, hashCode) ~ "; }");
-    // }
-    // else
-    // {
-    //     mixin("size_t toHash() { return " ~ __traits(identifier, hashCode) ~ "; }");
-    // }
-
-    private size_t hashCode(C)() nothrow @safe
+    static if (is(Self == class) && !is(Self == immutable) && !is(Self == shared))
     {
-        import deltotum.core.utils.type_util: AllFieldNamesTuple;
+        mixin("override size_t toHash() const nothrow pure @safe { return ", __traits(identifier, hashCode), "; }");
+    }
+    else
+    {
+        mixin("size_t toHash() const nothrow pure @safe { return ", __traits(identifier, hashCode), "; }");
+    }
 
-        // static if (__traits(compiles, super.toHash) && __traits(isOverrideFunction, super
-        //         .toHash))
-        // {
-        //     size_t hash = super.toHash;
-        // }
-        // else
-        // {
-        //     size_t hash;
-        // }
-        size_t hash;
-
-        static foreach (field; AllFieldNamesTuple!C)
+    private size_t hashCode() const nothrow pure @safe
+    {
+        static if (__traits(compiles, super.toHash) && __traits(isOverrideFunction, super
+                .toHash))
         {
+            size_t hash = super.toHash;
+        }
+        else
+        {
+            size_t hash;
+        }
+
+        foreach (field; this.tupleof)
+        {
+
+            //TODO null.hashOf == 0, pointers?
+            static if (__traits(compiles, field.toHash))
             {
-                //TODO null.hashOf == 0, pointers?
-                auto fieldValue = __traits(getMember, cast(C) this, field);
-                static if (__traits(compiles, fieldValue.toHash) && __traits(compiles, fieldValue is null))
+                static if (__traits(compiles, field is null))
                 {
-                    if (fieldValue !is null)
+                    if (field !is null)
                     {
-                        hash += fieldValue.toHash;
+                        hash += field.toHash;
                     }
                 }
                 else
                 {
-                    hash = HashFunc(fieldValue, hash);
+                    hash += field.toHash;
                 }
+
+            }
+            else
+            {
+                hash += HashFunc(field, hash);
             }
         }
         return hash;
@@ -60,6 +63,7 @@ unittest
     class A
     {
         mixin HashCode;
+
         int i = 1;
         double d = 2;
         string s = "string";
@@ -82,14 +86,17 @@ unittest
 
     class C : B
     {
-        
+
     }
 
     auto c = new C;
     assert(c.toHash == b.toHash);
 
-    class C1 : B {
+    class C1 : B
+    {
         int i = 3;
+
+        mixin HashCode;
     }
 
     auto c1 = new C1;
