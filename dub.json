@@ -33,7 +33,7 @@
     "dependencies": {
         "bindbc-sdl": "~>1.2.1"
     },
-    "dflags": ["-dip1000"],
+    "dflags": ["-dip1000", "-preview=in"],
     "libs-posix": [],
     "versions": [
         "SDL_Image",
