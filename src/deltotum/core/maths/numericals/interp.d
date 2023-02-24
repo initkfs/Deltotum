@@ -3,7 +3,6 @@ module deltotum.core.maths.numericals.interp;
 /**
  * Authors: initkfs
  */
-import std.traits : isSigned;
 import std.math.traits : isFinite;
 
 double lagrange(in double x, in double[] xValues, in double[] yValues) @nogc pure @safe nothrow
