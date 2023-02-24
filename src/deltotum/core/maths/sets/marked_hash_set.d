@@ -190,7 +190,7 @@ class MarkedHashSet(T)
     //A ⊂ B
     bool isSubsetOf(MarkedHashSet!T other) const @safe
     {
-        //TODO empty sets?
+        //TODO empty sets, >=?
         if (length > other.length)
         {
             return false;
