@@ -5,9 +5,9 @@ double rungekutt4th(double x0, double y0, double x, double dx, double delegate(d
 in (x >= x0)
 in (dx > 0)
 {
-    import std.math.rounding : ceil;
+    import std.math.rounding: round;
 
-    immutable size_t stepSize = cast(size_t) ceil((x - x0) / dx);
+    immutable size_t stepSize = cast(size_t) round((x - x0) / dx);
 
     double k1, k2, k3, k4;
 
@@ -36,8 +36,8 @@ unittest
     double x0 = 0, y0 = 1, h = 0.05;
 
     double[] results = [
-        1, 1.0010004992, 1.0080320835, 1.0438074071, 1.0660923943, 1.1331484459,
-        1.3160370401, 1.4091687088, 1.6686249048, 2.0730057545, 2.7182787121
+        1, 1.0010004992, 1.0080320835, 1.0273677997, 1.0660923943, 1.1331484459,
+        1.2411023627, 1.4091687088, 1.6686249048, 2.0730057545, 2.7182787121
     ];
 
     foreach (i; 0 .. 11)
