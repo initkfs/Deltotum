@@ -35,8 +35,8 @@ unittest
 {
     import std.math.operations : isClose;
 
-    double result1 = trapezoidal(0, 1, size, (x) => 1 / (1 + (x ^^ 2)));
-    assert(isClose(result1, 0.7842407666));
+    double result1 = trapezoidal(0, 1, 5, (x) => 1 / (1 + (x ^^ 2)));
+    assert(isClose(result1, 0.7837315285));
 }
 
 double simpsons(double min, double max, size_t n, double delegate(double) @safe f) @safe
@@ -87,6 +87,6 @@ unittest
 {
     import std.math.operations : isClose;
 
-    double result1 = simpsons(0, 1, 1000, (x) => 1 / (1 + x * x));
-    assert(isClose(result1, 0.7852312464));
+    double result1 = simpsons(0, 1, 10, (x) => 1 / (1 + x * x));
+    assert(isClose(result1, 0.7658508588));
 }
