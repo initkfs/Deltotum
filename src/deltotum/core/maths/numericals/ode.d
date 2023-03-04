@@ -1,7 +1,7 @@
 module deltotum.core.maths.numericals.ode;
 
 //TODO add relative error
-double rungekutt4th(double x0, double y0, double x, double dx, double delegate(double, double) @safe dydx) @safe
+double rungekutta4th(double x0, double y0, double x, double dx, double delegate(double, double) @safe dydx) @safe
 in (x >= x0)
 in (dx > 0)
 {
@@ -43,7 +43,7 @@ unittest
     foreach (i; 0 .. 11)
     {
         auto x = x0 + 2 * h * i;
-        auto res = rungekutt4th(x0, y0, x, h, (double x, double y) => 3 * (x ^^ 2) * y);
+        auto res = rungekutta4th(x0, y0, x, h, (double x, double y) => 3 * (x ^^ 2) * y);
         assert(isClose(res, results[i]), format("Expected %s result %.10f, but received %.10f", i, results[i], res));
     }
 }
