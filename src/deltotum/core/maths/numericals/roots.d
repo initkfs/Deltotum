@@ -1,4 +1,4 @@
-module deltotum.core.maths.roots;
+module deltotum.core.maths.numericals.roots;
 
 //f(x) = 0
 double secant(in double x1, in double x2, in double delegate(double) @safe func, in double accuracy = double.epsilon) @safe
