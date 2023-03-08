@@ -1,7 +1,5 @@
 module deltotum.engine.display.display_object;
 
-import deltotum.core.applications.components.uni.uni_component : UniComponent;
-
 import deltotum.core.maths.vector2d : Vector2d;
 import deltotum.core.maths.shapes.rect2d : Rect2d;
 import deltotum.engine.display.alignment : Alignment;

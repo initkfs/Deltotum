@@ -1,6 +1,6 @@
 module deltotum.engine.scene.scene;
 
-import deltotum.core.applications.components.uni.uni_component : UniComponent;
+import deltotum.engine.applications.components.graphics_component: GraphicsComponent;
 import deltotum.engine.display.display_object : DisplayObject;
 import deltotum.engine.graphics.colors.rgba : RGBA;
 import deltotum.engine.factories.creation : Creation;
@@ -13,7 +13,7 @@ import bindbc.sdl;
 /**
  * Authors: initkfs
  */
-class Scene : UniComponent
+class Scene : GraphicsComponent
 {
     void delegate(Scene) onSceneChange;
 

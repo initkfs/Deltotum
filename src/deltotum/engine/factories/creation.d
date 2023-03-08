@@ -1,6 +1,6 @@
 module deltotum.engine.factories.creation;
 
-import deltotum.core.applications.components.uni.uni_component : UniComponent;
+import deltotum.engine.applications.components.graphics_component : GraphicsComponent;
 
 import deltotum.engine.factories.creation_images : CreationImages;
 import deltotum.engine.factories.creation_shapes: CreationShapes;
@@ -8,7 +8,7 @@ import deltotum.engine.factories.creation_shapes: CreationShapes;
 /**
  * Authors: initkfs
  */
-class Creation : UniComponent
+class Creation : GraphicsComponent
 {
 
     CreationImages images;

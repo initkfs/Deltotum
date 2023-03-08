@@ -1,11 +1,11 @@
 module deltotum.engine.physics.movement.movement_controller;
 
-import deltotum.core.applications.components.uni.uni_component : UniComponent;
+import deltotum.engine.applications.components.graphics_component : GraphicsComponent;
 
 /**
  * Authors: initkfs
  */
-abstract class MovementController : UniComponent
+abstract class MovementController : GraphicsComponent
 {
     abstract void update(double delta);
 }

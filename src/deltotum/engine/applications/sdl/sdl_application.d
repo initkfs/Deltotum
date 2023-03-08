@@ -1,6 +1,7 @@
-module deltotum.engine.application.sdl.sdl_application;
+module deltotum.engine.applications.sdl.sdl_application;
 
 import deltotum.core.applications.graphic_application : GraphicApplication;
+import deltotum.engine.applications.components.graphics_component: GraphicsComponent;
 import deltotum.engine.events.event_manager : EventManager;
 import deltotum.platforms.sdl.events.sdl_event_processor : SdlEventProcessor;
 import deltotum.engine.asset.assets : Assets;
@@ -48,6 +49,7 @@ class SdlApplication : GraphicApplication
         double lastUpdateTime = 0;
         int sceneWidth;
         int sceneHeight;
+
     }
 
     string title;
@@ -70,6 +72,8 @@ class SdlApplication : GraphicApplication
     override void initialize()
     {
         super.initialize;
+        graphicsComponentBuilder = new GraphicsComponent;
+        uniComponentBuilder.build(graphicsComponentBuilder);
 
         sdlLib.initialize(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK);
 
@@ -92,13 +96,14 @@ class SdlApplication : GraphicApplication
             sceneWidth,
             sceneHeight);
         auto sdlRenderer = new SdlRenderer(sdlWindow, SDL_RENDERER_ACCELERATED);
-        window = new Window(sdlRenderer, sdlWindow);
+        auto window = new Window(sdlRenderer, sdlWindow);
         //TODO remove
         window.frameRate = frameRate;
+        graphicsComponentBuilder.window = window;
 
-        input = new Input;
+        graphicsComponentBuilder.input = new Input;
 
-        audio = new Audio(audioMixLib);
+        graphicsComponentBuilder.audio = new Audio(audioMixLib);
 
         sceneManager = new SceneManager;
 
@@ -109,40 +114,40 @@ class SdlApplication : GraphicApplication
         eventManager.onKey = (key) {
             if (key.event == KeyEvent.Event.keyDown)
             {
-                input.addPressedKey(key.keyCode);
+                graphicsComponentBuilder.input.addPressedKey(key.keyCode);
             }
             else if (key.event == KeyEvent.Event.keyUp)
             {
-                input.addReleasedKey(key.keyCode);
+                graphicsComponentBuilder.input.addReleasedKey(key.keyCode);
             }
         };
         eventManager.onJoystick = (joystickEvent) {
 
             if (joystickEvent.event == JoystickEvent.Event.axis)
             {
-                if (input.justJoystickActive)
+                if (graphicsComponentBuilder.input.justJoystickActive)
                 {
-                    input.justJoystickChangeAxis = joystickEvent.axis != input
+                    graphicsComponentBuilder.input.justJoystickChangeAxis = joystickEvent.axis != graphicsComponentBuilder.input
                         .lastJoystickEvent.axis;
-                    input.justJoystickChangesAxisValue = input.lastJoystickEvent.axisValue != joystickEvent
+                    graphicsComponentBuilder.input.justJoystickChangesAxisValue = graphicsComponentBuilder.input.lastJoystickEvent.axisValue != joystickEvent
                         .axisValue;
-                    input.joystickAxisDelta = joystickEvent.axisValue - input
+                    graphicsComponentBuilder.input.joystickAxisDelta = joystickEvent.axisValue - graphicsComponentBuilder.input
                         .lastJoystickEvent.axisValue;
                 }
             }
             else if (joystickEvent.event == JoystickEvent.Event.press)
             {
-                input.justJoystickPressed = true;
+                graphicsComponentBuilder.input.justJoystickPressed = true;
             }
             else if (joystickEvent.event == JoystickEvent.Event.release)
             {
-                input.justJoystickPressed = false;
+                graphicsComponentBuilder.input.justJoystickPressed = false;
             }
 
-            input.lastJoystickEvent = joystickEvent;
-            if (!input.justJoystickActive)
+            graphicsComponentBuilder.input.lastJoystickEvent = joystickEvent;
+            if (!graphicsComponentBuilder.input.justJoystickActive)
             {
-                input.justJoystickActive = true;
+                graphicsComponentBuilder.input.justJoystickActive = true;
             }
         };
 
@@ -158,7 +163,7 @@ class SdlApplication : GraphicApplication
         }
 
         auto assetManager = new Assets(logger, assetsDir);
-        assets = assetManager;
+        graphicsComponentBuilder.assets = assetManager;
 
         //TODO from config
         Font defaultFont = assetManager.font("fonts/OpenSans-Regular.ttf", 14);
@@ -168,7 +173,7 @@ class SdlApplication : GraphicApplication
 
         auto theme = new Theme(defaultFont);
 
-        graphics = new Graphics(logger, window.renderer, theme);
+        graphicsComponentBuilder.graphics = new Graphics(logger, window.renderer, theme);
 
         //TODO build and run services after all
         import deltotum.engine.ui.texts.fonts.bitmap.bitmap_font : BitmapFont;
@@ -216,9 +221,9 @@ class SdlApplication : GraphicApplication
     override void quit()
     {
         clearErrors;
-        if (window !is null)
+        if (graphicsComponentBuilder.window !is null)
         {
-            window.destroy;
+            graphicsComponentBuilder.window.destroy;
         }
 
         if (sceneManager !is null)
@@ -227,7 +232,7 @@ class SdlApplication : GraphicApplication
         }
 
         //TODO auto destroy all services
-        audio.destroy;
+        graphicsComponentBuilder.audio.destroy;
 
         if (joystick !is null)
         {
@@ -243,7 +248,7 @@ class SdlApplication : GraphicApplication
 
     void updateState(double delta)
     {
-        if (window !is null)
+        if (graphicsComponentBuilder.window !is null)
         {
             //window.renderer.clear;
             sceneManager.update(delta);

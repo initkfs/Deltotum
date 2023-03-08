@@ -5,8 +5,10 @@ import deltotum.core.debugging.debugger : Debugger;
 
 import std.logger : Logger;
 
-class CliApplication : UniComponent
+class CliApplication
 {
+    UniComponent uniComponentBuilder;
+
     protected Logger createLogger()
     {
         import std.logger : MultiLogger, FileLogger, LogLevel;
@@ -41,16 +43,33 @@ class CliApplication : UniComponent
     {
         import std.experimental.logger : sharedLog;
 
-        logger = createLogger;
+        uniComponentBuilder = new UniComponent;
+
+        uniComponentBuilder.logger = createLogger;
         //FIXME, dmd v.101: non-shared method `std.logger.multilogger.MultiLogger.insertLogger` is not callable using a `shared` object
         //set new global default logger
         () @trusted { sharedLog = cast(shared) logger; }();
 
-        debugger = createDebugger;
+        uniComponentBuilder.debugger = createDebugger;
         logger.trace("Debug service built");
+    }
+
+    void build(UniComponent component)
+    {
+        uniComponentBuilder.build(component);
     }
 
     abstract void runWait();
     abstract void quit();
     abstract bool update();
+
+    Logger logger()
+    {
+        return uniComponentBuilder.logger;
+    }
+
+    Debugger debugger()
+    {
+        return uniComponentBuilder.debugger;
+    }
 }
