@@ -3,24 +3,24 @@ module deltotum.core.maths.probability;
 /**
  * Authors: initkfs
  */
-double probability(double countSuccessfulEvents, double allEvents) pure nothrow @nogc @safe
+double probability(size_t countSuccessfulEvents, size_t allEvents) pure nothrow @nogc @safe
 {
-    import std.math.operations : isClose;
+    import std.math.operations : cmp;
 
-    if (isClose(countSuccessfulEvents, 0))
+    if (countSuccessfulEvents == 0 || allEvents == 0)
     {
         return 0;
     }
 
-    if (isClose(countSuccessfulEvents, allEvents))
+    if (countSuccessfulEvents == allEvents)
     {
         return 1;
     }
 
-    return countSuccessfulEvents / allEvents;
+    return countSuccessfulEvents / cast(real) allEvents;
 }
 
-double probabilityInv(double countSuccessfulEvents, double allEvents) pure nothrow @nogc @safe
+double probabilityInv(size_t countSuccessfulEvents, size_t allEvents) pure nothrow @nogc @safe
 {
     return 1 - probability(countSuccessfulEvents, allEvents);
 }

@@ -31,7 +31,7 @@ struct Vector2d
         const double length = magnitude;
         double normX = 0;
         double normY = 0;
-        if (!isClose(length, 0.0))
+        if (length != 0)
         {
             normX = x / length;
             normY = y / length;
@@ -116,8 +116,8 @@ struct Vector2d
     }
 
     Vector2d project(double factor) const @nogc nothrow pure @safe
+    in(factor != 0.0)
     {
-        assert(!isClose(factor, 0.0));
         return Vector2d(x / factor, y / factor);
     }
 

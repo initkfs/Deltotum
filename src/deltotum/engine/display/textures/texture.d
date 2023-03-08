@@ -84,7 +84,8 @@ class Texture : DisplayObject
             //TODO compare double, where to set opacity?
             import std.math.operations : isClose;
 
-            if (!isClose(texture.opacity, opacity))
+            //!isClose(texture.opacity, opacity)
+            if (texture.opacity != opacity)
             {
                 texture.opacity = opacity;
             }

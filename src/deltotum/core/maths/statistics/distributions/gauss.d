@@ -3,7 +3,7 @@ module deltotum.core.maths.statistics.distributions.gauss;
 //https://en.wikipedia.org/wiki/Marsaglia_polar_method
 double[] normal(size_t n)
 {
-    import std.math.operations : isClose;
+    import std.math.operations : isClose, cmp;
     import deltotum.core.maths.random : Random;
     import Math = deltotum.core.maths.math;
     import std.math.exponential : log;
@@ -22,7 +22,8 @@ double[] normal(size_t n)
             v = 2.0 * rand.randomBetween0to1 - 1.0;
             s = u * u + v * v;
         }
-        while (s > 1 || isClose(s, 1) || isClose(s, 0));
+        //cmp(s, 1.0) >= 0
+        while (s > 1 || isClose(s, 1.0) || isClose(s, 0.0, 0.0, double.epsilon));
         auto f = Math.sqrt(-2.0 * log(s) / s);
         values ~= u * f;
         values ~= v * f;

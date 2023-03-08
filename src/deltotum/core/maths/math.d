@@ -120,8 +120,6 @@ T factorial(T)(T n)
 
 double hypot(double a, double b) @nogc nothrow pure @safe
 {
-    import std.math.operations : isClose;
-
     double result = 0;
     if (abs(a) > abs(b))
     {
@@ -130,7 +128,7 @@ double hypot(double a, double b) @nogc nothrow pure @safe
         return result;
     }
 
-    if (!isClose(b, 0))
+    if (b != 0.0)
     {
         result = a / b;
         result = abs(b) * sqrt(1 + result ^^ 2);

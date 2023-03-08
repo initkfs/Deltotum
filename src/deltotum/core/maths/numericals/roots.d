@@ -23,7 +23,7 @@ double secant(in double x1, in double x2, in double delegate(double) @safe func,
             x11 = x22;
             x22 = mustBeRoot;
 
-            if (isClose(checkIsRoot, 0))
+            if (isClose(checkIsRoot, 0.0, 0.0, double.epsilon))
             {
                 break;
             }
@@ -50,9 +50,10 @@ unittest
 double regulafalsi(in double x1, in double x2, in double delegate(double) @safe func, size_t maxIterations = 100_000) @safe
 {
     import std.math.operations : isClose;
+    import std.math.operations: cmp;
 
     immutable double x1x2 = func(x1) * func(x2);
-    if (isClose(x1x2, 0) || x1x2 > 0)
+    if (cmp(x1x2, 0.0) >= 0)
     {
         return double.nan;
     }
@@ -64,7 +65,7 @@ double regulafalsi(in double x1, in double x2, in double delegate(double) @safe 
     {
         result = (x11 * func(x22) - x22 * func(x11)) / (func(x22) - func(x11));
 
-        immutable isRoot = isClose(func(result), 0);
+        immutable isRoot = isClose(func(result), 0.0, 0.0, double.epsilon);
         if (isRoot)
         {
             break;

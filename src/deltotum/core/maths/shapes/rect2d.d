@@ -100,7 +100,7 @@ struct Rect2d
     {
         import std.math.operations : isClose;
 
-        if (isClose(height, 0))
+        if (height == 0)
         {
             return 0;
         }

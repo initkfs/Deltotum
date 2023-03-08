@@ -4,19 +4,9 @@ double trapezoidal(double min, double max, size_t n, double delegate(double) @sa
 in (min < max)
 in (n > 0)
 {
-    import std.math.operations : isClose;
+    import std.math.operations : cmp;
 
-    if (isClose(min, max))
-    {
-        return double.nan;
-    }
-
-    if (min > max)
-    {
-        return double.nan;
-    }
-
-    if (n == 0)
+    if (cmp(min, max) >= 0 || n == 0)
     {
         return double.nan;
     }

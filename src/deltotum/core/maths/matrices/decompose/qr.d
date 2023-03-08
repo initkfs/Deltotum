@@ -61,7 +61,7 @@ struct QR(T = double, size_t RowDim, size_t ColDim)
             result[k][k] = 1.0;
             foreach (j; k .. ColDim)
             {
-                if (!isClose(QR[k][k], 0))
+                if (QR[k][k] != 0.0)
                 {
                     double s = 0;
                     foreach (i; k .. RowDim)
@@ -140,7 +140,7 @@ QR!(T, RowDim, ColDim) decompose(T = double, size_t RowDim, size_t ColDim)(
             nrm = Math.hypot(nrm, result.QR[i][k]);
         }
 
-        if (!isClose(nrm, 0))
+        if (nrm != 0)
         {
             // Form k-th Householder vector.
             if (result.QR[k][k] < 0)

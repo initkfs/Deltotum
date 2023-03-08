@@ -125,12 +125,12 @@ unittest
     /*
      * randomBetween0to1
      */
-    import std.math.operations : isClose;
+    import std.math.operations : cmp;
 
     foreach (i; 0 .. 10)
     {
         auto res = rnd.randomBetween0to1;
-        assert((isClose(res, 0) || isClose(res, 1.0)) || (res > 0 && res < 1.0));
+        assert((cmp(res, 0) >= 0 && (cmp(res, 1.0) <= 1.0)));
     }
 
     /*
