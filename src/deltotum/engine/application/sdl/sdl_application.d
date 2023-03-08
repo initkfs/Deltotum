@@ -1,6 +1,6 @@
 module deltotum.engine.application.sdl.sdl_application;
 
-import deltotum.engine.application.graphics_application : GraphicsApplication;
+import deltotum.core.applications.graphic_application : GraphicApplication;
 import deltotum.engine.events.event_manager : EventManager;
 import deltotum.platforms.sdl.events.sdl_event_processor : SdlEventProcessor;
 import deltotum.engine.asset.assets : Assets;
@@ -31,7 +31,7 @@ import bindbc.sdl;
 /**
  * Authors: initkfs
  */
-class SdlApplication : GraphicsApplication
+class SdlApplication : GraphicApplication
 {
 
     private
@@ -51,7 +51,6 @@ class SdlApplication : GraphicsApplication
     }
 
     string title;
-    double frameRate = 0;
     bool isRunning;
     EventManager eventManager;
     SceneManager sceneManager;
@@ -65,10 +64,13 @@ class SdlApplication : GraphicsApplication
         this.imgLib = imgLib;
         this.audioMixLib = audioMixLib;
         this.fontLib = fontLib;
+        this.frameRate = 60;
     }
 
-    override void initialize(double frameRate = 60)
+    override void initialize()
     {
+        super.initialize;
+
         sdlLib.initialize(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK);
 
         //TODO move to hal layer
@@ -84,21 +86,6 @@ class SdlApplication : GraphicsApplication
         // }
 
         this.frameRate = frameRate;
-
-        auto multiLogger = new MultiLogger(LogLevel.trace);
-        this.logger = multiLogger;
-        //FIXME, dmd v.101: non-shared method `std.logger.multilogger.MultiLogger.insertLogger` is not callable using a `shared` object
-        //set new global default logger
-        () @trusted { sharedLog = cast(shared) multiLogger; }();
-
-        import deltotum.engine.debugging.debugger : Debugger;
-        import deltotum.engine.debugging.profiling.profilers.time_profiler : TimeProfiler;
-        import deltotum.engine.debugging.profiling.profilers.memory_profiler : MemoryProfiler;
-
-        auto timeProfiler = new TimeProfiler;
-        auto memoryProfiler = new MemoryProfiler;
-
-        debugger = new Debugger(timeProfiler, memoryProfiler);
 
         auto sdlWindow = new SdlWindow(title, SDL_WINDOWPOS_UNDEFINED,
             SDL_WINDOWPOS_UNDEFINED,
@@ -158,13 +145,6 @@ class SdlApplication : GraphicsApplication
                 input.justJoystickActive = true;
             }
         };
-
-        enum consoleLoggerLevel = LogLevel.trace;
-        auto consoleLogger = new FileLogger(stdout, consoleLoggerLevel);
-        const string consoleLoggerName = "stdout_logger";
-        multiLogger.insertLogger(consoleLoggerName, consoleLogger);
-        logger.tracef("Create stdout logger, name '%s', level '%s'",
-            consoleLoggerName, consoleLoggerLevel);
 
         //TODO move to config
         import std.file : thisExePath, exists, isDir;
@@ -280,7 +260,7 @@ class SdlApplication : GraphicsApplication
         //(double)((now - start)*1000) / SDL_GetPerformanceFrequency()
         const start = SDL_GetTicks();
         deltaTime = start - lastUpdateTime;
-        lastUpdateTime += deltaTime;
+        lastUpdateTime = start;
         deltaTimeAccumulator += deltaTime;
 
         SDL_Event event;
@@ -301,9 +281,9 @@ class SdlApplication : GraphicsApplication
 
         while (deltaTimeAccumulator > frameTime)
         {
-            immutable delta = frameTime / 100;
+            immutable constantDelta = frameTime / 100;
             const startStateTime = SDL_GetTicks();
-            updateState(delta);
+            updateState(constantDelta);
             const endStateTime = SDL_GetTicks();
             sceneManager.currentScene.timeUpdateProcessingMs = endStateTime - startStateTime;
             deltaTimeAccumulator -= frameTime;

@@ -1,6 +1,6 @@
-module deltotum.engine.debugging.profiling.profilers.memory_profiler;
+module deltotum.core.debugging.profiling.profilers.memory_profiler;
 
-import deltotum.engine.debugging.profiling.statistical_values_profiler : StatisticalValuesProfiler;
+import deltotum.core.debugging.profiling.statistical_values_profiler : StatisticalValuesProfiler;
 
 /**
  * Authors: initkfs

@@ -1,7 +1,7 @@
-module deltotum.engine.debugging.debugger;
+module deltotum.core.debugging.debugger;
 
-import deltotum.engine.debugging.profiling.profilers.time_profiler : TimeProfiler;
-import deltotum.engine.debugging.profiling.profilers.memory_profiler : MemoryProfiler;
+import deltotum.core.debugging.profiling.profilers.time_profiler : TimeProfiler;
+import deltotum.core.debugging.profiling.profilers.memory_profiler : MemoryProfiler;
 
 /**
  * Authors: initkfs

@@ -6,7 +6,7 @@ import deltotum.core.applications.components.uni.attributes : Service;
 
 import deltotum.engine.asset.assets : Assets;
 import deltotum.engine.audio.audio : Audio;
-import deltotum.engine.debugging.debugger : Debugger;
+import deltotum.core.debugging.debugger : Debugger;
 import deltotum.engine.graphics.graphics : Graphics;
 import std.experimental.logger.core : Logger;
 import deltotum.engine.input.input : Input;
@@ -21,13 +21,16 @@ class UniComponent : SimpleUnit
 
     private
     {
+        //Uni component
         @Service Logger _logger;
-        @Service Assets _assets;
-        @Service Window _window;
-        @Service Input _input;
-        @Service Audio _audio;
-        @Service Graphics _graphics;
         @Service Debugger _debugger;
+
+        //TODO extract GraphicComponent
+        @Service Audio _audio;
+        @Service Assets _assets;
+        @Service Input _input;
+        @Service Graphics _graphics;
+        @Service Window _window;
     }
 
     void build(UniComponent uniComponent)
@@ -89,6 +92,20 @@ class UniComponent : SimpleUnit
         enforce(logger !is null, "Logger must not be null");
         _logger = logger;
 
+    }
+
+     final Debugger debugger() @nogc nothrow pure @safe
+    out (_debugger; _debugger !is null)
+    {
+        return _debugger;
+    }
+
+    final void debugger(Debugger debugger) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(debugger !is null, "Debugger must not be null");
+        _debugger = debugger;
     }
 
     final Assets assets() @nogc nothrow pure @safe
@@ -162,19 +179,5 @@ class UniComponent : SimpleUnit
 
         enforce(graphics !is null, "Graphics must not be null");
         _graphics = graphics;
-    }
-
-    final Debugger debugger() @nogc nothrow pure @safe
-    out (_debugger; _debugger !is null)
-    {
-        return _debugger;
-    }
-
-    final void debugger(Debugger debugger) pure @safe
-    {
-        import std.exception : enforce;
-
-        enforce(debugger !is null, "Debugger must not be null");
-        _debugger = debugger;
     }
 }
