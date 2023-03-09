@@ -7,7 +7,14 @@ import std.logger : Logger;
 
 class CliApplication
 {
-    UniComponent uniComponentBuilder;
+    private
+    {
+        UniComponent _uniServices;
+    }
+
+    abstract {
+        void quit();
+    }
 
     protected Logger createLogger()
     {
@@ -43,33 +50,33 @@ class CliApplication
     {
         import std.experimental.logger : sharedLog;
 
-        uniComponentBuilder = new UniComponent;
+        _uniServices = new UniComponent;
 
-        uniComponentBuilder.logger = createLogger;
+        uservices.logger = createLogger;
         //FIXME, dmd v.101: non-shared method `std.logger.multilogger.MultiLogger.insertLogger` is not callable using a `shared` object
         //set new global default logger
-        () @trusted { sharedLog = cast(shared) logger; }();
+        () @trusted { sharedLog = cast(shared) uservices.logger; }();
 
-        uniComponentBuilder.debugger = createDebugger;
-        logger.trace("Debug service built");
+        uservices.debugger = createDebugger;
+        uservices.logger.trace("Debug service built");
     }
 
     void build(UniComponent component)
     {
-        uniComponentBuilder.build(component);
+        uservices.build(component);
     }
 
-    abstract void runWait();
-    abstract void quit();
-    abstract bool update();
-
-    Logger logger()
+    UniComponent uservices() @nogc nothrow pure @safe
+    out (_uniServices; _uniServices !is null)
     {
-        return uniComponentBuilder.logger;
+        return _uniServices;
     }
 
-    Debugger debugger()
+    void uservices(UniComponent services) pure @safe
     {
-        return uniComponentBuilder.debugger;
+        import std.exception : enforce;
+
+        enforce(services !is null, "Services must not be null");
+        _uniServices = services;
     }
 }

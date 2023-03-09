@@ -11,7 +11,24 @@ abstract class GraphicApplication : CliApplication
 {
     double frameRate = 60;
 
-    GraphicsComponent graphicsComponentBuilder;
+    private
+    {
+        GraphicsComponent _graphicsServices;
+    }
+
+    abstract
+    {
+        void runWait();
+        bool update();
+    }
+
+    override void initialize()
+    {
+        super.initialize;
+
+        _graphicsServices = new GraphicsComponent;
+        super.build(_graphicsServices);
+    }
 
     override void build(UniComponent component)
     {
@@ -20,6 +37,20 @@ abstract class GraphicApplication : CliApplication
 
     void build(GraphicsComponent component)
     {
-        graphicsComponentBuilder.build(component);
+        gservices.build(component);
+    }
+
+    GraphicsComponent gservices() @nogc nothrow pure @safe
+    out (_graphicsServices; _graphicsServices !is null)
+    {
+        return _graphicsServices;
+    }
+
+    void gservices(GraphicsComponent services) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(services !is null, "Graphics services must not be null");
+        _graphicsServices = services;
     }
 }

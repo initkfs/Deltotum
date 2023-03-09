@@ -72,8 +72,6 @@ class SdlApplication : GraphicApplication
     override void initialize()
     {
         super.initialize;
-        graphicsComponentBuilder = new GraphicsComponent;
-        uniComponentBuilder.build(graphicsComponentBuilder);
 
         sdlLib.initialize(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK);
 
@@ -99,11 +97,11 @@ class SdlApplication : GraphicApplication
         auto window = new Window(sdlRenderer, sdlWindow);
         //TODO remove
         window.frameRate = frameRate;
-        graphicsComponentBuilder.window = window;
+        gservices.window = window;
 
-        graphicsComponentBuilder.input = new Input;
+        gservices.input = new Input;
 
-        graphicsComponentBuilder.audio = new Audio(audioMixLib);
+        gservices.audio = new Audio(audioMixLib);
 
         sceneManager = new SceneManager;
 
@@ -114,40 +112,40 @@ class SdlApplication : GraphicApplication
         eventManager.onKey = (key) {
             if (key.event == KeyEvent.Event.keyDown)
             {
-                graphicsComponentBuilder.input.addPressedKey(key.keyCode);
+                gservices.input.addPressedKey(key.keyCode);
             }
             else if (key.event == KeyEvent.Event.keyUp)
             {
-                graphicsComponentBuilder.input.addReleasedKey(key.keyCode);
+                gservices.input.addReleasedKey(key.keyCode);
             }
         };
         eventManager.onJoystick = (joystickEvent) {
 
             if (joystickEvent.event == JoystickEvent.Event.axis)
             {
-                if (graphicsComponentBuilder.input.justJoystickActive)
+                if (gservices.input.justJoystickActive)
                 {
-                    graphicsComponentBuilder.input.justJoystickChangeAxis = joystickEvent.axis != graphicsComponentBuilder.input
+                    gservices.input.justJoystickChangeAxis = joystickEvent.axis != gservices.input
                         .lastJoystickEvent.axis;
-                    graphicsComponentBuilder.input.justJoystickChangesAxisValue = graphicsComponentBuilder.input.lastJoystickEvent.axisValue != joystickEvent
+                    gservices.input.justJoystickChangesAxisValue = gservices.input.lastJoystickEvent.axisValue != joystickEvent
                         .axisValue;
-                    graphicsComponentBuilder.input.joystickAxisDelta = joystickEvent.axisValue - graphicsComponentBuilder.input
+                    gservices.input.joystickAxisDelta = joystickEvent.axisValue - gservices.input
                         .lastJoystickEvent.axisValue;
                 }
             }
             else if (joystickEvent.event == JoystickEvent.Event.press)
             {
-                graphicsComponentBuilder.input.justJoystickPressed = true;
+                gservices.input.justJoystickPressed = true;
             }
             else if (joystickEvent.event == JoystickEvent.Event.release)
             {
-                graphicsComponentBuilder.input.justJoystickPressed = false;
+                gservices.input.justJoystickPressed = false;
             }
 
-            graphicsComponentBuilder.input.lastJoystickEvent = joystickEvent;
-            if (!graphicsComponentBuilder.input.justJoystickActive)
+            gservices.input.lastJoystickEvent = joystickEvent;
+            if (!gservices.input.justJoystickActive)
             {
-                graphicsComponentBuilder.input.justJoystickActive = true;
+                gservices.input.justJoystickActive = true;
             }
         };
 
@@ -162,8 +160,8 @@ class SdlApplication : GraphicApplication
             throw new Exception("Unable to find resource directory: " ~ assetsDir);
         }
 
-        auto assetManager = new Assets(logger, assetsDir);
-        graphicsComponentBuilder.assets = assetManager;
+        auto assetManager = new Assets(gservices.logger, assetsDir);
+        gservices.assets = assetManager;
 
         //TODO from config
         Font defaultFont = assetManager.font("fonts/OpenSans-Regular.ttf", 14);
@@ -173,7 +171,7 @@ class SdlApplication : GraphicApplication
 
         auto theme = new Theme(defaultFont);
 
-        graphicsComponentBuilder.graphics = new Graphics(logger, window.renderer, theme);
+        gservices.graphics = new Graphics(gservices.logger, window.renderer, theme);
 
         //TODO build and run services after all
         import deltotum.engine.ui.texts.fonts.bitmap.bitmap_font : BitmapFont;
@@ -221,9 +219,9 @@ class SdlApplication : GraphicApplication
     override void quit()
     {
         clearErrors;
-        if (graphicsComponentBuilder.window !is null)
+        if (gservices.window !is null)
         {
-            graphicsComponentBuilder.window.destroy;
+            gservices.window.destroy;
         }
 
         if (sceneManager !is null)
@@ -232,7 +230,7 @@ class SdlApplication : GraphicApplication
         }
 
         //TODO auto destroy all services
-        graphicsComponentBuilder.audio.destroy;
+        gservices.audio.destroy;
 
         if (joystick !is null)
         {
@@ -248,7 +246,7 @@ class SdlApplication : GraphicApplication
 
     void updateState(double delta)
     {
-        if (graphicsComponentBuilder.window !is null)
+        if (gservices.window !is null)
         {
             //window.renderer.clear;
             sceneManager.update(delta);
