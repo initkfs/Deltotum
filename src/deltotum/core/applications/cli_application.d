@@ -2,6 +2,7 @@ module deltotum.core.applications.cli_application;
 
 import deltotum.core.applications.components.uni.uni_component : UniComponent;
 import deltotum.core.debugging.debugger : Debugger;
+import deltotum.core.clis.cli : Cli;
 
 import std.logger : Logger;
 
@@ -12,7 +13,8 @@ class CliApplication
         UniComponent _uniServices;
     }
 
-    abstract {
+    abstract
+    {
         void quit();
     }
 
@@ -46,7 +48,16 @@ class CliApplication
         return debugger;
     }
 
-    void initialize()
+    protected Cli createCli(string[] args)
+    {
+        import deltotum.core.clis.printers.cli_printer : CliPrinter;
+
+        auto printer = new CliPrinter;
+        auto cli = new Cli(args, printer);
+        return cli;
+    }
+
+    void initialize(string[] args)
     {
         import std.experimental.logger : sharedLog;
 
@@ -59,6 +70,9 @@ class CliApplication
 
         uservices.debugger = createDebugger;
         uservices.logger.trace("Debug service built");
+
+        uservices.cli = createCli(args);
+        uservices.logger.trace("Cli service built");
     }
 
     void build(UniComponent component)

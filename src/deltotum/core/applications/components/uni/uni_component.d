@@ -4,13 +4,9 @@ import deltotum.core.applications.components.units.simple_unit : SimpleUnit;
 
 import deltotum.core.applications.components.uni.attributes : Service;
 
-import deltotum.engine.asset.assets : Assets;
-import deltotum.engine.audio.audio : Audio;
-import deltotum.core.debugging.debugger : Debugger;
-import deltotum.engine.graphics.graphics : Graphics;
 import std.experimental.logger.core : Logger;
-import deltotum.engine.input.input : Input;
-import deltotum.engine.window.window : Window;
+import deltotum.core.debugging.debugger : Debugger;
+import deltotum.core.clis.cli : Cli;
 
 /**
  * Authors: initkfs
@@ -23,6 +19,7 @@ class UniComponent : SimpleUnit
     {
         @Service Logger _logger;
         @Service Debugger _debugger;
+        @Service Cli _cli;
     }
 
     void build(UniComponent uniComponent)
@@ -98,5 +95,19 @@ class UniComponent : SimpleUnit
 
         enforce(debugger !is null, "Debugger must not be null");
         _debugger = debugger;
+    }
+
+    final Cli cli() @nogc nothrow pure @safe
+    out (_cli; _cli !is null)
+    {
+        return _cli;
+    }
+
+    final void cli(Cli cli) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(cli !is null, "Cli must not be null");
+        _cli = cli;
     }
 }

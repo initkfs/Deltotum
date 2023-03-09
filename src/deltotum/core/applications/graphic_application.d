@@ -22,9 +22,9 @@ abstract class GraphicApplication : CliApplication
         bool update();
     }
 
-    override void initialize()
+    override void initialize(string[] args)
     {
-        super.initialize;
+        super.initialize(args);
 
         _graphicsServices = new GraphicsComponent;
         super.build(_graphicsServices);

@@ -69,9 +69,9 @@ class SdlApplication : GraphicApplication
         this.frameRate = 60;
     }
 
-    override void initialize()
+    override void initialize(string[] args)
     {
-        super.initialize;
+        super.initialize(args);
 
         sdlLib.initialize(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK);
 
