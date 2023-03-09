@@ -1,5 +1,6 @@
 module deltotum.engine.applications.sdl.sdl_application;
 
+import deltotum.core.applications.application_exit: ApplicationExit;
 import deltotum.core.applications.graphic_application : GraphicApplication;
 import deltotum.engine.applications.components.graphics_component: GraphicsComponent;
 import deltotum.engine.events.event_manager : EventManager;
@@ -69,9 +70,11 @@ class SdlApplication : GraphicApplication
         this.frameRate = 60;
     }
 
-    override void initialize(string[] args)
+    override ApplicationExit initialize(string[] args)
     {
-        super.initialize(args);
+        if(auto isExit = super.initialize(args)){
+            return isExit;
+        }
 
         sdlLib.initialize(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK);
 
@@ -150,11 +153,11 @@ class SdlApplication : GraphicApplication
         };
 
         //TODO move to config
-        import std.file : thisExePath, exists, isDir;
+        import std.file : getcwd, exists, isDir;
         import std.path : buildPath, dirName;
 
         immutable assetsDirPath = "data/assets";
-        immutable assetsDir = buildPath(thisExePath.dirName, assetsDirPath);
+        immutable assetsDir = buildPath(getcwd, assetsDirPath);
         if (!exists(assetsDir) || !isDir(assetsDir))
         {
             throw new Exception("Unable to find resource directory: " ~ assetsDir);
@@ -194,6 +197,7 @@ class SdlApplication : GraphicApplication
         ], defaultFont);
 
         isRunning = true;
+        return ApplicationExit(false);
     }
 
     override void runWait()

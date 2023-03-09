@@ -1,5 +1,6 @@
 module deltotum.core.applications.graphic_application;
 
+import deltotum.core.applications.application_exit: ApplicationExit;
 import deltotum.core.applications.cli_application : CliApplication;
 import deltotum.engine.applications.components.graphics_component : GraphicsComponent;
 import deltotum.core.applications.components.uni.uni_component : UniComponent;
@@ -22,12 +23,15 @@ abstract class GraphicApplication : CliApplication
         bool update();
     }
 
-    override void initialize(string[] args)
+    override ApplicationExit initialize(string[] args)
     {
-        super.initialize(args);
+        if(auto isExit = super.initialize(args)){
+            return isExit;
+        }
 
         _graphicsServices = new GraphicsComponent;
         super.build(_graphicsServices);
+        return ApplicationExit(false);
     }
 
     override void build(UniComponent component)
