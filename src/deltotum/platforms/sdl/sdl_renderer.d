@@ -5,7 +5,7 @@ import deltotum.platforms.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.platforms.sdl.sdl_window : SdlWindow;
 import deltotum.platforms.sdl.sdl_texture : SdlTexture;
 
-import deltotum.engine.display.flip : Flip;
+import deltotum.toolkit.display.flip : Flip;
 import deltotum.core.maths.vector2d : Vector2d;
 import deltotum.core.maths.shapes.rect2d : Rect2d;
 

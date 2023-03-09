@@ -2,7 +2,7 @@ module deltotum.platforms.sdl.sdl_window;
 
 import deltotum.platforms.result.platform_result : PlatformResult;
 import deltotum.platforms.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
-import deltotum.engine.input.mouse.mouse_cursor_type : MouseCursorType;
+import deltotum.toolkit.input.mouse.mouse_cursor_type : MouseCursorType;
 import deltotum.platforms.sdl.sdl_cursor : SDLCursor;
 
 import std.string : toStringz, fromStringz;
