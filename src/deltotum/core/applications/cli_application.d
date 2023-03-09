@@ -4,6 +4,8 @@ import deltotum.core.applications.application_exit : ApplicationExit;
 import deltotum.core.applications.components.uni.uni_component : UniComponent;
 import deltotum.core.debugging.debugger : Debugger;
 import deltotum.core.clis.cli : Cli;
+import deltotum.core.applications.contexts.context : Context;
+
 import deltotum.core.applications.crashes.crash_handler : CrashHandler;
 
 import std.logger : Logger;
@@ -27,10 +29,6 @@ class CliApplication
 
     protected
     {
-        bool isSilentMode = false;
-        bool isDebugMode = false;
-        string mustBeDataDirectory;
-        string mustBeConfigFile;
         bool isRethrowStartHandlerExceptions = true;
         bool isStopMainController = true;
     }
@@ -38,6 +36,11 @@ class CliApplication
     private
     {
         UniComponent _uniServices;
+
+        bool isSilentMode = false;
+        bool isDebugMode = false;
+        string mustBeDataDirectory;
+        string mustBeConfigFile;
     }
 
     abstract
@@ -53,6 +56,7 @@ class CliApplication
 
         auto cli = createCli(args);
         uservices.cli = cli;
+        
         auto cliResult = parseCli(uservices.cli);
 
         if (cliResult.helpWanted)
@@ -69,42 +73,7 @@ class CliApplication
             cli.printIfNotSilent("Debug mode active");
         }
 
-        import std.path : dirName, buildPath, isAbsolute;
-        import std.file : exists, isDir, isFile, getcwd;
-
-        const currentDir = getcwd;
-        cli.printIfNotSilent("Current working directory: " ~ currentDir);
-
-        string dataDirectory;
-        if (mustBeDataDirectory)
-        {
-            dataDirectory = mustBeDataDirectory;
-            cli.printIfNotSilent("Received data directory from cli: " ~ dataDirectory);
-            if (!dataDirectory.isAbsolute)
-            {
-                dataDirectory = buildPath(currentDir, dataDirectory);
-                cli.printIfNotSilent(
-                    "Convert data directory from cli to absolute path: " ~ dataDirectory);
-            }
-        }
-        else
-        {
-            dataDirectory = buildPath(currentDir, defaultDataDirectory);
-            cli.printIfNotSilent("Default data directory will be used: " ~ dataDirectory);
-        }
-
-        if (!dataDirectory.exists)
-        {
-            throw new Exception("Application data directory does not exist: " ~ dataDirectory);
-        }
-
-        if (!dataDirectory.isDir)
-        {
-            throw new Exception(
-                "Application data directory is not a directory: " ~ dataDirectory);
-        }
-
-        const userDir = buildPath(dataDirectory, defaultUserDataDir);
+        uservices.context = createContext;
 
         uservices.logger = createLogger;
         //FIXME, dmd v.101: non-shared method `std.logger.multilogger.MultiLogger.insertLogger` is not callable using a `shared` object
@@ -163,7 +132,6 @@ class CliApplication
         import std.format : format;
         import std.uni : toLower;
 
-        //not const
         GetoptResult cliResult = cliManager.parse("s|silent",
             "Silent mode, less information in program output.", &isSilentMode,
             "g|debug", "Debug mode",
@@ -172,6 +140,54 @@ class CliApplication
             &mustBeDataDirectory, "c|config", "Config file", &mustBeConfigFile);
 
         return cliResult;
+    }
+
+    protected Context createContext()
+    in(uservices.cli !is null)
+    {
+
+        import std.path : dirName, buildPath, isAbsolute;
+        import std.file : exists, isDir, isFile, getcwd;
+
+        const currentDir = getcwd;
+        uservices.cli.printIfNotSilent("Current working directory: " ~ currentDir);
+
+        string dataDirectory;
+        if (mustBeDataDirectory)
+        {
+            dataDirectory = mustBeDataDirectory;
+            uservices.cli.printIfNotSilent("Received data directory from cli: " ~ dataDirectory);
+            if (!dataDirectory.isAbsolute)
+            {
+                dataDirectory = buildPath(currentDir, dataDirectory);
+                uservices.cli.printIfNotSilent(
+                    "Convert data directory from cli to absolute path: " ~ dataDirectory);
+            }
+        }
+        else
+        {
+            dataDirectory = buildPath(currentDir, defaultDataDirectory);
+            uservices.cli.printIfNotSilent("Default data directory will be used: " ~ dataDirectory);
+        }
+
+        if (!dataDirectory.exists)
+        {
+            throw new Exception("Application data directory does not exist: " ~ dataDirectory);
+        }
+
+        if (!dataDirectory.isDir)
+        {
+            throw new Exception(
+                "Application data directory is not a directory: " ~ dataDirectory);
+        }
+
+        const userDir = buildPath(dataDirectory, defaultUserDataDir);
+
+        import deltotum.core.applications.contexts.apps.app_context : AppContext;
+
+        const appContext = new AppContext(currentDir, dataDirectory, userDir, isDebugMode, isSilentMode);
+        auto context = new Context(appContext);
+        return context;
     }
 
     protected Logger createLogger()

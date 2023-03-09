@@ -1,12 +1,12 @@
 module deltotum.core.applications.components.uni.uni_component;
 
 import deltotum.core.applications.components.units.simple_unit : SimpleUnit;
-
 import deltotum.core.applications.components.uni.attributes : Service;
-
-import std.experimental.logger.core : Logger;
 import deltotum.core.debugging.debugger : Debugger;
 import deltotum.core.clis.cli : Cli;
+import deltotum.core.applications.contexts.context : Context;
+
+import std.experimental.logger.core : Logger;
 
 /**
  * Authors: initkfs
@@ -17,6 +17,7 @@ class UniComponent : SimpleUnit
 
     private
     {
+        @Service Context _context;
         @Service Logger _logger;
         @Service Debugger _debugger;
         @Service Cli _cli;
@@ -65,6 +66,21 @@ class UniComponent : SimpleUnit
 
     void afterBuild()
     {
+
+    }
+
+    final Context context() @nogc nothrow pure @safe
+    out (_context; _context !is null)
+    {
+        return _context;
+    }
+
+    final void context(Context context) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(context !is null, "Context must not be null");
+        _context = context;
 
     }
 
