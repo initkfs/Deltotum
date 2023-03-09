@@ -5,7 +5,7 @@ import std.stdio;
 import deltotum.toolkit.display.images.loadable_image : LoadableImage;
 
 //TODO remove hal api
-import deltotum.platforms.sdl.sdl_texture: SdlTexture;
+import deltotum.platform.sdl.sdl_texture: SdlTexture;
 
 /**
  * Authors: initkfs

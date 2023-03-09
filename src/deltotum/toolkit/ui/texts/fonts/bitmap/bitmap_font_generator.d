@@ -25,7 +25,7 @@ class BitmapFontGenerator : FontGenerator
 {
     BitmapFont generate(Alphabet[] alphabets, Font font)
     {
-        import deltotum.platforms.sdl.sdl_surface : SdlSurface;
+        import deltotum.platform.sdl.sdl_surface : SdlSurface;
         import bindbc.sdl;
 
         //correct size?

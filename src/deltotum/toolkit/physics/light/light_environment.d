@@ -4,7 +4,7 @@ import deltotum.toolkit.display.images.image : Image;
 import deltotum.toolkit.physics.light.light_spot : LightSpot;
 
 //TODO remove hal api
-import deltotum.platforms.sdl.sdl_texture : SdlTexture;
+import deltotum.platform.sdl.sdl_texture : SdlTexture;
 
 import bindbc.sdl;
 

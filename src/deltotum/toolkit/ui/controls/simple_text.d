@@ -2,7 +2,7 @@ module deltotum.toolkit.ui.controls.simple_text;
 
 import deltotum.toolkit.ui.controls.control : Control;
 import deltotum.toolkit.asset.fonts.font : Font;
-import deltotum.platforms.sdl.sdl_texture : SdlTexture;
+import deltotum.platform.sdl.sdl_texture : SdlTexture;
 import deltotum.toolkit.display.textures.texture : Texture;
 import deltotum.core.maths.shapes.rect2d : Rect2d;
 import deltotum.toolkit.graphics.colors.rgba : RGBA;
