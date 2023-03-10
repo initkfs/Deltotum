@@ -2,6 +2,7 @@ module deltotum.core.applications.components.uni.uni_component;
 
 import deltotum.core.applications.components.units.simple_unit : SimpleUnit;
 import deltotum.core.applications.components.uni.attributes : Service;
+import deltotum.core.configs.config: Config;
 import deltotum.core.debugging.debugger : Debugger;
 import deltotum.core.clis.cli : Cli;
 import deltotum.core.applications.contexts.context : Context;
@@ -19,6 +20,7 @@ class UniComponent : SimpleUnit
     {
         @Service Context _context;
         @Service Logger _logger;
+        @Service Config _config;
         @Service Debugger _debugger;
         @Service Cli _cli;
     }
@@ -97,6 +99,20 @@ class UniComponent : SimpleUnit
         enforce(logger !is null, "Logger must not be null");
         _logger = logger;
 
+    }
+
+    final Config config() @nogc nothrow pure @safe
+    out (_config; _config !is null)
+    {
+        return _config;
+    }
+
+    final void config(Config config) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(config !is null, "Config must not be null");
+        _config = config;
     }
 
     final Debugger debugger() @nogc nothrow pure @safe

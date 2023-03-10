@@ -3,6 +3,7 @@ module deltotum.core.applications.cli_application;
 import deltotum.core.applications.application_exit : ApplicationExit;
 import deltotum.core.applications.components.uni.uni_component : UniComponent;
 import deltotum.core.debugging.debugger : Debugger;
+import deltotum.core.configs.config : Config;
 import deltotum.core.clis.cli : Cli;
 import deltotum.core.applications.contexts.context : Context;
 
@@ -40,7 +41,7 @@ class CliApplication
         bool isSilentMode = false;
         bool isDebugMode = false;
         string mustBeDataDirectory;
-        string mustBeConfigFile;
+        string mustBeConfigDir;
     }
 
     abstract
@@ -56,7 +57,7 @@ class CliApplication
 
         auto cli = createCli(args);
         uservices.cli = cli;
-        
+
         auto cliResult = parseCli(uservices.cli);
 
         if (cliResult.helpWanted)
@@ -74,6 +75,7 @@ class CliApplication
         }
 
         uservices.context = createContext;
+        uservices.config = createConfig(uservices.context);
 
         uservices.logger = createLogger;
         //FIXME, dmd v.101: non-shared method `std.logger.multilogger.MultiLogger.insertLogger` is not callable using a `shared` object
@@ -137,13 +139,13 @@ class CliApplication
             "g|debug", "Debug mode",
             &isDebugMode, format!"%s|%s"(defaultDataDirectory[0].toLower,
                 defaultDataDirectory), "Application data directory.",
-            &mustBeDataDirectory, "c|config", "Config file", &mustBeConfigFile);
+            &mustBeDataDirectory, "c|configdir", "Config directory", &mustBeConfigDir);
 
         return cliResult;
     }
 
     protected Context createContext()
-    in(uservices.cli !is null)
+    in (uservices.cli !is null)
     {
 
         import std.path : dirName, buildPath, isAbsolute;
@@ -188,6 +190,58 @@ class CliApplication
         const appContext = new AppContext(currentDir, dataDirectory, userDir, isDebugMode, isSilentMode);
         auto context = new Context(appContext);
         return context;
+    }
+
+    protected Config createConfig(Context context)
+    {
+        import std.path : buildPath, isAbsolute;
+
+        string configDir = mustBeConfigDir;
+        if (configDir)
+        {
+            uservices.cli.printIfNotSilent("Received config directory from cli: " ~ configDir);
+            if (!configDir.isAbsolute)
+            {
+                configDir = buildPath(context.appContext.dataDir, configDir);
+                uservices.cli.printIfNotSilent(
+                    "Convert config directory path from cli to absolute path: " ~ configDir);
+            }
+        }
+        else
+        {
+            configDir = buildPath(context.appContext.dataDir, "configs");
+            uservices.cli.printIfNotSilent("Default config directory will be used: " ~ configDir);
+        }
+
+        import std.file : isDir, exists;
+
+        if (!configDir.exists || !configDir.isDir)
+        {
+            throw new Exception("Config directory does not exist or not a directory: " ~ configDir);
+        }
+
+        import deltotum.core.configs.json.json_config : JsonConfig;
+        import deltotum.core.configs.config_aggregator : ConfigAggregator;
+        import std.file : dirEntries, SpanMode;
+        import std.algorithm.iteration : filter;
+        import std.algorithm.searching : endsWith;
+
+        Config[] configs;
+
+        //TODO factory by file extension
+        foreach (configPath; dirEntries(configDir, SpanMode.depth).filter!(f => f.isFile && f.name.endsWith(
+                ".json")))
+        {
+            //TODO check for duplicate keys
+            configs ~= new JsonConfig(configPath);
+        }
+        auto config = new ConfigAggregator(configs);
+        config.load;
+
+        import std.format : format;
+
+        uservices.cli.printIfNotSilent(format("Load %s configs from %s", configs.length, configDir));
+        return config;
     }
 
     protected Logger createLogger()
