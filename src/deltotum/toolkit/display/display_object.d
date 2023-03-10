@@ -1,7 +1,7 @@
 module deltotum.toolkit.display.display_object;
 
-import deltotum.core.maths.vector2d : Vector2d;
-import deltotum.core.maths.shapes.rect2d : Rect2d;
+import deltotum.math.vector2d : Vector2d;
+import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.toolkit.display.alignment : Alignment;
 import deltotum.platform.sdl.sdl_texture : SdlTexture;
 import deltotum.toolkit.physics.physical_body : PhysicalBody;

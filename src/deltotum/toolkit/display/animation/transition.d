@@ -3,8 +3,8 @@ module deltotum.toolkit.display.animation.transition;
 import deltotum.toolkit.display.display_object : DisplayObject;
 import deltotum.toolkit.display.animation.interp.interpolator : Interpolator;
 import deltotum.toolkit.display.animation.interp.uni_interpolator : UniInterpolator;
-import deltotum.core.maths.vector2d : Vector2d;
-import math = deltotum.core.maths.math;
+import deltotum.math.vector2d : Vector2d;
+import math = deltotum.math.math;
 
 import std.traits : isIntegral, isFloatingPoint;
 

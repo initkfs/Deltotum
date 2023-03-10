@@ -1,7 +1,7 @@
 module deltotum.toolkit.display.animation.interp.uni_interpolator;
 
 import deltotum.toolkit.display.animation.interp.interpolator : Interpolator;
-import math = deltotum.core.maths.math;
+import math = deltotum.math.math;
 
 /**
  * Authors: initkfs

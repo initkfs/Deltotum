@@ -3,8 +3,8 @@ module deltotum.toolkit.display.animation.object.motion.circular_motion_transiti
 import deltotum.toolkit.display.animation.object.value_transition: ValueTransition;
 import deltotum.toolkit.display.display_object : DisplayObject;
 import deltotum.toolkit.display.animation.interp.interpolator : Interpolator;
-import deltotum.core.maths.vector2d : Vector2d;
-import math = deltotum.core.maths.math;
+import deltotum.math.vector2d : Vector2d;
+import math = deltotum.math.math;
 
 /**
  * Authors: initkfs

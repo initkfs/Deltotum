@@ -4,8 +4,8 @@ import deltotum.core.applications.components.units.services.loggable_unit;
 
 import deltotum.platform.sdl.sdl_renderer : SdlRenderer;
 import deltotum.toolkit.graphics.colors.rgba : RGBA;
-import deltotum.core.maths.vector2d : Vector2d;
-import math = deltotum.core.maths.math;
+import deltotum.math.vector2d : Vector2d;
+import math = deltotum.math.math;
 import deltotum.toolkit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.toolkit.graphics.themes.theme : Theme;
 
@@ -91,7 +91,7 @@ class Graphics : LoggableUnit
     Vector2d[] linePoints(int startX, int startY, int endX, int endY) const nothrow pure @safe
     {
         //Bresenham algorithm
-        import math = deltotum.core.maths.math;
+        import math = deltotum.math.math;
 
         Vector2d[] points;
 
@@ -167,7 +167,7 @@ class Graphics : LoggableUnit
     Vector2d[] circlePoints(int centerX, int centerY, int radius) const nothrow pure @safe
     {
         //Bresenham algorithm
-        import math = deltotum.core.maths.math;
+        import math = deltotum.math.math;
 
         Vector2d[] points;
 
