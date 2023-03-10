@@ -6,6 +6,7 @@ import deltotum.core.debugging.debugger : Debugger;
 import deltotum.core.configs.config : Config;
 import deltotum.core.clis.cli : Cli;
 import deltotum.core.applications.contexts.context : Context;
+import deltotum.core.resources.resource : Resource;
 
 import deltotum.core.applications.crashes.crash_handler : CrashHandler;
 
@@ -84,6 +85,9 @@ class CliApplication
 
         uservices.debugger = createDebugger;
         uservices.logger.trace("Debug service built");
+
+        uservices.resource = createResource(uservices.config, uservices.context);
+        uservices.logger.trace("Resources service built");
 
         return ApplicationExit(false);
     }
@@ -272,6 +276,15 @@ class CliApplication
 
         auto debugger = new Debugger(timeProfiler, memoryProfiler);
         return debugger;
+    }
+
+    protected Resource createResource(Config config, Context context)
+    {
+        import std.path : buildPath;
+
+        string resourceDir = buildPath(context.appContext.dataDir, "resources");
+        auto resource = new Resource(resourceDir);
+        return resource;
     }
 
     protected Cli createCli(string[] args)

@@ -2,10 +2,11 @@ module deltotum.core.applications.components.uni.uni_component;
 
 import deltotum.core.applications.components.units.simple_unit : SimpleUnit;
 import deltotum.core.applications.components.uni.attributes : Service;
-import deltotum.core.configs.config: Config;
+import deltotum.core.configs.config : Config;
 import deltotum.core.debugging.debugger : Debugger;
 import deltotum.core.clis.cli : Cli;
 import deltotum.core.applications.contexts.context : Context;
+import deltotum.core.resources.resource : Resource;
 
 import std.experimental.logger.core : Logger;
 
@@ -21,8 +22,9 @@ class UniComponent : SimpleUnit
         @Service Context _context;
         @Service Logger _logger;
         @Service Config _config;
-        @Service Debugger _debugger;
         @Service Cli _cli;
+        @Service Debugger _debugger;
+        @Service Resource _resource;
     }
 
     void build(UniComponent uniComponent)
@@ -141,5 +143,19 @@ class UniComponent : SimpleUnit
 
         enforce(cli !is null, "Cli must not be null");
         _cli = cli;
+    }
+
+    final Resource resource() @nogc nothrow pure @safe
+    out (_resource; _resource !is null)
+    {
+        return _resource;
+    }
+
+    final void resource(Resource resource) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(resource !is null, "Resource must not be null");
+        _resource = resource;
     }
 }
