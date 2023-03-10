@@ -1,6 +1,6 @@
 module deltotum.core.applications.components.units.services.loggable_unit;
 
-import std.experimental.logger.core : Logger;
+import std.logger.core : Logger;
 
 /**
  * Authors: initkfs
