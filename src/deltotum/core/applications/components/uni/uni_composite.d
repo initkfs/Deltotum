@@ -1,4 +1,4 @@
-module deltotum.core.applications.components.components.uni.uni_composite;
+module deltotum.core.applications.components.uni.uni_composite;
 
 import deltotum.core.applications.components.uni.uni_component : UniComponent;
 
@@ -7,25 +7,25 @@ import std.exception : enforce;
 /**
  * Authors: initkfs
  */
-class UniComposite : UniComponent
+class UniComposite(C : UniComponent) : C
 {
-    private UniComponent[] _units;
+    private C[] _units;
 
-    void buildChildComponent(UniComponent component)
+    void buildChildComponent(C component)
     {
         buildFromParent(component, this);
         addUnit(component);
     }
 
-    void buildChildComponents(UniComponent[] components)
+    void buildChildComponents(C[] components)
     {
-        foreach (UniComponent component; components)
+        foreach (C component; components)
         {
             buildChildComponent(component);
         }
     }
 
-    protected bool addUnit(UniComponent unit)
+    protected bool addUnit(C unit)
     {
         if (unit is null || hasUnit(unit))
         {
@@ -35,7 +35,7 @@ class UniComposite : UniComponent
         return true;
     }
 
-    bool hasUnit(UniComponent unit)
+    bool hasUnit(C unit)
     {
         if (unit is null)
         {
@@ -47,7 +47,7 @@ class UniComposite : UniComponent
         return _units.canFind(unit);
     }
 
-    public bool removeUnit(UniComponent unit)
+    public bool removeUnit(C unit)
     {
         if (unit is null || !hasUnit(unit))
         {
@@ -65,7 +65,7 @@ class UniComposite : UniComponent
         return true;
     }
 
-    const(UniComponent[]) units() const @nogc nothrow pure @safe
+    const(C[]) units() const @nogc nothrow pure @safe
     {
         return _units;
     }
@@ -80,7 +80,7 @@ unittest
 {
     import std.exception : assertThrown;
 
-    auto composite = new UniComposite;
+    auto composite = new UniComposite!UniComponent;
     auto component1 = new UniComponent;
     auto component3 = new UniComponent;
 
