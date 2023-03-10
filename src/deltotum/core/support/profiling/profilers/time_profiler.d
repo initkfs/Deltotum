@@ -1,6 +1,6 @@
-module deltotum.core.debugging.profiling.profilers.time_profiler;
+module deltotum.core.supports.profiling.profilers.time_profiler;
 
-import deltotum.core.debugging.profiling.statistical_values_profiler : StatisticalValuesProfiler;
+import deltotum.core.supports.profiling.statistical_values_profiler : StatisticalValuesProfiler;
 
 /**
  * Authors: initkfs

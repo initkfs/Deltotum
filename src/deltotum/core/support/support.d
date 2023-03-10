@@ -1,13 +1,13 @@
-module deltotum.core.debugging.debugger;
+module deltotum.core.supports.support;
 
-import deltotum.core.debugging.profiling.profilers.time_profiler : TimeProfiler;
-import deltotum.core.debugging.profiling.profilers.memory_profiler : MemoryProfiler;
+import deltotum.core.supports.profiling.profilers.time_profiler : TimeProfiler;
+import deltotum.core.supports.profiling.profilers.memory_profiler : MemoryProfiler;
 
 /**
  * Authors: initkfs
  */
 
-class Debugger
+class Support
 {
     TimeProfiler timeProfiler;
     MemoryProfiler memoryProfiler;

@@ -1,4 +1,4 @@
-module deltotum.core.debugging.profiling.profiler;
+module deltotum.core.supports.profiling.profiler;
 
 /**
  * Authors: initkfs

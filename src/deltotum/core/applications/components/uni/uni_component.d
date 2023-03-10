@@ -3,7 +3,7 @@ module deltotum.core.applications.components.uni.uni_component;
 import deltotum.core.applications.components.units.simple_unit : SimpleUnit;
 import deltotum.core.applications.components.uni.attributes : Service;
 import deltotum.core.configs.config : Config;
-import deltotum.core.debugging.debugger : Debugger;
+import deltotum.core.supports.support : Support;
 import deltotum.core.clis.cli : Cli;
 import deltotum.core.applications.contexts.context : Context;
 import deltotum.core.resources.resource : Resource;
@@ -23,7 +23,7 @@ class UniComponent : SimpleUnit
         @Service Logger _logger;
         @Service Config _config;
         @Service Cli _cli;
-        @Service Debugger _debugger;
+        @Service Support _support;
         @Service Resource _resource;
     }
 
@@ -117,18 +117,18 @@ class UniComponent : SimpleUnit
         _config = config;
     }
 
-    final Debugger debugger() @nogc nothrow pure @safe
-    out (_debugger; _debugger !is null)
+    final Support support() @nogc nothrow pure @safe
+    out (_support; _support !is null)
     {
-        return _debugger;
+        return _support;
     }
 
-    final void debugger(Debugger debugger) pure @safe
+    final void support(Support support) pure @safe
     {
         import std.exception : enforce;
 
-        enforce(debugger !is null, "Debugger must not be null");
-        _debugger = debugger;
+        enforce(support !is null, "Support must not be null");
+        _support = support;
     }
 
     final Cli cli() @nogc nothrow pure @safe

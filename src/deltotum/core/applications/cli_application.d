@@ -2,7 +2,7 @@ module deltotum.core.applications.cli_application;
 
 import deltotum.core.applications.application_exit : ApplicationExit;
 import deltotum.core.applications.components.uni.uni_component : UniComponent;
-import deltotum.core.debugging.debugger : Debugger;
+import deltotum.core.supports.support : Support;
 import deltotum.core.configs.config : Config;
 import deltotum.core.clis.cli : Cli;
 import deltotum.core.applications.contexts.context : Context;
@@ -83,8 +83,8 @@ class CliApplication
         //set new global default logger
         () @trusted { sharedLog = cast(shared) uservices.logger; }();
 
-        uservices.debugger = createDebugger;
-        uservices.logger.trace("Debug service built");
+        uservices.support = createSupport;
+        uservices.logger.trace("Support service built");
 
         uservices.resource = createResource(uservices.config, uservices.context);
         uservices.logger.trace("Resources service built");
@@ -266,16 +266,16 @@ class CliApplication
         return multiLogger;
     }
 
-    protected Debugger createDebugger()
+    protected Support createSupport()
     {
-        import deltotum.core.debugging.profiling.profilers.time_profiler : TimeProfiler;
-        import deltotum.core.debugging.profiling.profilers.memory_profiler : MemoryProfiler;
+        import deltotum.core.supports.profiling.profilers.time_profiler : TimeProfiler;
+        import deltotum.core.supports.profiling.profilers.memory_profiler : MemoryProfiler;
 
         auto timeProfiler = new TimeProfiler;
         auto memoryProfiler = new MemoryProfiler;
 
-        auto debugger = new Debugger(timeProfiler, memoryProfiler);
-        return debugger;
+        auto support = new Support(timeProfiler, memoryProfiler);
+        return support;
     }
 
     protected Resource createResource(Config config, Context context)
