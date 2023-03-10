@@ -2,7 +2,7 @@ module deltotum.toolkit.graphics.shapes.paths.path;
 
 import deltotum.toolkit.graphics.shapes.shape : Shape;
 import deltotum.toolkit.graphics.styles.graphic_style : GraphicStyle;
-import deltotum.math.vector2d : Vector2d;
+import deltotum.maths.vector2d : Vector2d;
 
 /**
  * Authors: initkfs

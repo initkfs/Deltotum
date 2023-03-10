@@ -4,8 +4,8 @@ import deltotum.toolkit.display.display_object : DisplayObject;
 import deltotum.toolkit.particles.particle : Particle;
 import deltotum.toolkit.particles.config.emitter_config : EmitterConfig;
 import deltotum.core.configs.attributes.configurable : Configurable;
-import deltotum.math.vector2d : Vector2d;
-import deltotum.math.random : Random;
+import deltotum.maths.vector2d : Vector2d;
+import deltotum.maths.random : Random;
 
 import std.stdio;
 

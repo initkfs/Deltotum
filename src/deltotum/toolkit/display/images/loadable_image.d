@@ -8,7 +8,7 @@ import deltotum.platform.sdl.sdl_surface : SdlSurface;
 import deltotum.platform.sdl.sdl_renderer : SdlRenderer;
 import deltotum.platform.sdl.img.sdl_image : SdlImage;
 import deltotum.toolkit.display.textures.texture : Texture;
-import deltotum.math.shapes.rect2d : Rect2d;
+import deltotum.maths.shapes.rect2d : Rect2d;
 import deltotum.toolkit.display.flip : Flip;
 
 import bindbc.sdl;

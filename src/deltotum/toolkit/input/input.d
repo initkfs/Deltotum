@@ -1,7 +1,7 @@
 module deltotum.toolkit.input.input;
 
 import deltotum.toolkit.input.joystick.event.joystick_event : JoystickEvent;
-import deltotum.math.vector2d : Vector2d;
+import deltotum.maths.vector2d : Vector2d;
 
 import std.container.slist : SList;
 

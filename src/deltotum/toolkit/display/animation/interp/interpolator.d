@@ -1,6 +1,6 @@
 module deltotum.toolkit.display.animation.interp.interpolator;
 
-import deltotum.math.vector2d : Vector2d;
+import deltotum.maths.vector2d : Vector2d;
 
 /**
  * Authors: initkfs

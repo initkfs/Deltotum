@@ -1,7 +1,7 @@
 module deltotum.toolkit.physics.physical_body;
 
-import deltotum.math.vector2d : Vector2d;
-import deltotum.math.shapes.rect2d: Rect2d;
+import deltotum.maths.vector2d : Vector2d;
+import deltotum.maths.shapes.rect2d: Rect2d;
 import deltotum.toolkit.events.event_engine_target: EventEngineTarget;
 
 /**

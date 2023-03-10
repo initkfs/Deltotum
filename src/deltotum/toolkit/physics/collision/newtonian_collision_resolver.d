@@ -3,7 +3,7 @@ module deltotum.toolkit.physics.collision.newtonian_collision_resolver;
 //TODO replace display object woth physical body
 //import deltotum.toolkit.physics.physical_body: PhysicalBody;
 import deltotum.toolkit.display.display_object : DisplayObject;
-import deltotum.math.vector2d : Vector2d;
+import deltotum.maths.vector2d : Vector2d;
 
 import std.algorithm.comparison : min;
 
