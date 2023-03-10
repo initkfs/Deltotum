@@ -61,7 +61,8 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : DisplayObject
         }
     }
 
-    void run() @nogc nothrow @safe
+    //TODO state management
+    override void run() @nogc nothrow @safe
     {
         const double frameRateHz = window.frameRate;
         //TODO error if <= 0
@@ -77,7 +78,8 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : DisplayObject
         return state != TransitionState.end && state != TransitionState.none;
     }
 
-    void stop() @nogc nothrow @safe
+    //TODO state management
+    override void stop() @nogc nothrow @safe
     {
         state = TransitionState.end;
         frameCount = 0;
