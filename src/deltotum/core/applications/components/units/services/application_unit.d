@@ -1,7 +1,7 @@
 module deltotum.core.applications.components.units.services.application_unit;
 
 import deltotum.core.applications.components.units.services.loggable_unit: LoggableUnit;
-import deltotum.core.applications.contexts.context: Context;
+import deltotum.core.contexts.context: Context;
 import deltotum.core.configs.config: Config;
 
 import std.logger.core : Logger;

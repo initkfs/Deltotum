@@ -5,7 +5,7 @@ import deltotum.core.applications.components.uni.attributes : Service;
 import deltotum.core.configs.config : Config;
 import deltotum.core.supports.support : Support;
 import deltotum.core.clis.cli : Cli;
-import deltotum.core.applications.contexts.context : Context;
+import deltotum.core.contexts.context : Context;
 import deltotum.core.resources.resource : Resource;
 
 import std.experimental.logger.core : Logger;

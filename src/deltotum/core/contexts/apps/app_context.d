@@ -1,4 +1,4 @@
-module deltotum.core.applications.contexts.apps.app_context;
+module deltotum.core.contexts.apps.app_context;
 /**
  * Authors: initkfs
  */

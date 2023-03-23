@@ -1,6 +1,6 @@
-module deltotum.core.applications.contexts.context;
+module deltotum.core.contexts.context;
 
-import deltotum.core.applications.contexts.apps.app_context: AppContext;
+import deltotum.core.contexts.apps.app_context: AppContext;
 /**
  * Authors: initkfs
  */

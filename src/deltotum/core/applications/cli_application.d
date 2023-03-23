@@ -5,7 +5,7 @@ import deltotum.core.applications.components.uni.uni_component : UniComponent;
 import deltotum.core.supports.support : Support;
 import deltotum.core.configs.config : Config;
 import deltotum.core.clis.cli : Cli;
-import deltotum.core.applications.contexts.context : Context;
+import deltotum.core.contexts.context : Context;
 import deltotum.core.resources.resource : Resource;
 
 import deltotum.core.applications.crashes.crash_handler : CrashHandler;
@@ -189,7 +189,7 @@ class CliApplication
 
         const userDir = buildPath(dataDirectory, defaultUserDataDir);
 
-        import deltotum.core.applications.contexts.apps.app_context : AppContext;
+        import deltotum.core.contexts.apps.app_context : AppContext;
 
         const appContext = new AppContext(currentDir, dataDirectory, userDir, isDebugMode, isSilentMode);
         auto context = new Context(appContext);
