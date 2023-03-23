@@ -14,7 +14,7 @@ abstract class GraphicApplication : CliApplication
 
     private
     {
-        GraphicsComponent _graphicsServices;
+        GraphicsComponent _graphicServices;
     }
 
     abstract
@@ -29,9 +29,11 @@ abstract class GraphicApplication : CliApplication
             return isExit;
         }
 
-        _graphicsServices = new GraphicsComponent;
-        super.build(_graphicsServices);
-        return ApplicationExit(false);
+        _graphicServices = new GraphicsComponent;
+
+        super.build(_graphicServices);
+        
+        return ApplicationExit();
     }
 
     override void build(UniComponent component)
@@ -45,9 +47,9 @@ abstract class GraphicApplication : CliApplication
     }
 
     GraphicsComponent gservices() @nogc nothrow pure @safe
-    out (_graphicsServices; _graphicsServices !is null)
+    out (_graphicServices; _graphicServices !is null)
     {
-        return _graphicsServices;
+        return _graphicServices;
     }
 
     void gservices(GraphicsComponent services) pure @safe
@@ -55,6 +57,6 @@ abstract class GraphicApplication : CliApplication
         import std.exception : enforce;
 
         enforce(services !is null, "Graphics services must not be null");
-        _graphicsServices = services;
+        _graphicServices = services;
     }
 }

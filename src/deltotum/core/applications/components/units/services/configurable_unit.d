@@ -12,7 +12,7 @@ class ConfigurableUnit
         Config _config;
     }
 
-    @safe pure this(Config config)
+    this(Config config) pure @safe
     {
         import std.exception : enforce;
 
@@ -21,7 +21,7 @@ class ConfigurableUnit
         this._config = config;
     }
 
-    Config config() @safe pure nothrow @nogc
+    Config config() @nogc nothrow pure @safe
     {
         return _config;
     }

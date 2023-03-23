@@ -7,7 +7,7 @@ import deltotum.platform.sdl.ttf.sdl_ttf_font : SdlTTFFont;
 import deltotum.platform.sdl.sdl_surface : SdlSurface;
 import deltotum.platform.sdl.sdl_texture : SdlTexture;
 
-import std.experimental.logger.core : Logger;
+import std.logger.core : Logger;
 import std.string : toStringz;
 
 /**

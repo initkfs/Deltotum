@@ -9,7 +9,10 @@ import std.exception : enforce;
  */
 class UniComposite(C : UniComponent) : C
 {
-    private C[] _units;
+    private
+    {
+        C[] _units;
+    }
 
     void buildChildComponent(C component)
     {
@@ -19,13 +22,13 @@ class UniComposite(C : UniComponent) : C
 
     void buildChildComponents(C[] components)
     {
-        foreach (C component; components)
+        foreach (component; components)
         {
             buildChildComponent(component);
         }
     }
 
-    protected bool addUnit(C unit)
+    bool addUnit(C unit)
     {
         if (unit is null || hasUnit(unit))
         {
@@ -49,10 +52,11 @@ class UniComposite(C : UniComponent) : C
 
     public bool removeUnit(C unit)
     {
-        if (unit is null || !hasUnit(unit))
+        if (unit is null)
         {
             return false;
         }
+
         import std.algorithm.mutation : remove;
         import std.algorithm.searching : countUntil;
 

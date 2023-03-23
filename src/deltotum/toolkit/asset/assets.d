@@ -3,7 +3,7 @@ module deltotum.toolkit.asset.assets;
 import deltotum.core.applications.components.units.simple_unit : SimpleUnit;
 import deltotum.core.applications.components.units.services.loggable_unit : LoggableUnit;
 
-import std.experimental.logger : Logger;
+import std.logger : Logger;
 
 import std.path : buildPath, dirName;
 import std.file : exists, isDir, isFile;

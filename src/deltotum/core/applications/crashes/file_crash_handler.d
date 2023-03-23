@@ -9,8 +9,6 @@ class FileCrashHandler : CrashHandler
 {
     string workDir;
 
-    bool isWriteCrashFile = true;
-
     this(string workDir)
     {
         this.workDir = workDir;
@@ -29,7 +27,7 @@ class FileCrashHandler : CrashHandler
         return fileName;
     }
 
-    void writeCrash(Throwable exFromApplication, string message, string dirForErrors)
+    override void acceptCrash(Throwable exFromApplication, string message = "")
     {
         import std.path : buildPath;
         import std.array : appender;
@@ -41,20 +39,13 @@ class FileCrashHandler : CrashHandler
             content.put(message);
         }
 
-        content.put(exFromApplication.toString);
+        immutable errorInfo = exFromApplication !is null ? exFromApplication.toString
+            : "Throwable from application is null.";
+        content.put(errorInfo);
 
         const string crashFileName = createCrashName();
-        const string crashFile = buildPath(dirForErrors, crashFileName);
+        const string crashFile = buildPath(workDir, crashFileName);
 
         write(crashFile, content.toString);
-    }
-
-    override void acceptCrash(Throwable exFromApplication, string message = "")
-    {
-        if (!isWriteCrashFile)
-        {
-            return;
-        }
-        writeCrash(exFromApplication, message, workDir);
     }
 }

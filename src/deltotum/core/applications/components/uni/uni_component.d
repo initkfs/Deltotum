@@ -8,7 +8,7 @@ import deltotum.core.clis.cli : Cli;
 import deltotum.core.contexts.context : Context;
 import deltotum.core.resources.resource : Resource;
 
-import std.experimental.logger.core : Logger;
+import std.logger.core : Logger;
 
 /**
  * Authors: initkfs
@@ -16,6 +16,8 @@ import std.experimental.logger.core : Logger;
 class UniComponent : SimpleUnit
 {
     bool isBuilt;
+    bool callAfterBuild = true;
+    bool callBeforeBuild = true;
 
     private
     {
@@ -45,7 +47,10 @@ class UniComponent : SimpleUnit
             throw new Exception("Parent must not be null");
         }
 
-        uniComponent.beforeBuild();
+        if (callBeforeBuild)
+        {
+            uniComponent.beforeBuild();
+        }
 
         import std.traits : hasUDA;
         import deltotum.core.utils.meta : hasOverloads;
@@ -59,7 +64,11 @@ class UniComponent : SimpleUnit
             }
         }
 
-        uniComponent.afterBuild();
+        if (callAfterBuild)
+        {
+            uniComponent.afterBuild();
+        }
+
         uniComponent.isBuilt = true;
     }
 

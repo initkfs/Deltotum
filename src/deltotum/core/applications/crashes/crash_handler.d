@@ -9,6 +9,6 @@ abstract class CrashHandler
 
 	abstract
 	{
-		abstract void acceptCrash(Throwable exFromApplication, string message = "");
+		void acceptCrash(Throwable exFromApplication, string message = "");
 	}
 }

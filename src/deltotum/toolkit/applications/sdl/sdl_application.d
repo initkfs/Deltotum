@@ -25,7 +25,7 @@ import deltotum.platform.sdl.sdl_joystick : SdlJoystick;
 import deltotum.toolkit.window.window : Window;
 import deltotum.toolkit.input.input : Input;
 
-import std.experimental.logger : Logger, MultiLogger, FileLogger, LogLevel, sharedLog;
+import std.logger : Logger, MultiLogger, FileLogger, LogLevel, sharedLog;
 import std.stdio;
 
 import bindbc.sdl;

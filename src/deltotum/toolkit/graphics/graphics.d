@@ -9,7 +9,7 @@ import math = deltotum.maths.math;
 import deltotum.toolkit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.toolkit.graphics.themes.theme : Theme;
 
-import std.experimental.logger.core : Logger;
+import std.logger.core : Logger;
 import std.conv : to;
 
 /**

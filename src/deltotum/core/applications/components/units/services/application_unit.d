@@ -1,8 +1,8 @@
 module deltotum.core.applications.components.units.services.application_unit;
 
-import deltotum.core.applications.components.units.services.loggable_unit: LoggableUnit;
-import deltotum.core.contexts.context: Context;
-import deltotum.core.configs.config: Config;
+import deltotum.core.applications.components.units.services.loggable_unit : LoggableUnit;
+import deltotum.core.contexts.context : Context;
+import deltotum.core.configs.config : Config;
 
 import std.logger.core : Logger;
 
@@ -17,7 +17,7 @@ class ApplicationUnit : LoggableUnit
         Context _context;
     }
 
-    this(Logger logger, Config config, Context context) @safe
+    this(Logger logger, Config config, Context context) pure @safe
     {
         super(logger);
         import std.exception : enforce;
@@ -29,12 +29,12 @@ class ApplicationUnit : LoggableUnit
         this._context = context;
     }
 
-    Config config() @safe pure nothrow @nogc
+    Config config() @nogc nothrow pure @safe
     {
         return _config;
     }
 
-    Context context() @safe pure nothrow @nogc
+    Context context() @nogc nothrow pure @safe
     {
         return _context;
     }

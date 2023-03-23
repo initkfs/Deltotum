@@ -14,37 +14,38 @@ class SimpleUnit : Unitable
         UnitState _state = UnitState.none;
     }
 
-    UnitState state() @safe pure nothrow const
+    UnitState state() const nothrow pure @safe
     {
         return _state;
     }
 
-    bool isState(UnitState s) @safe pure nothrow const
+    pragma(inline, true);
+    bool isState(UnitState s) const nothrow pure @safe
     {
         return _state == s;
     }
 
-    bool isNone() @safe pure nothrow const
+    bool isNone() const nothrow pure @safe
     {
         return isState(UnitState.none);
     }
 
-    bool isInitialized() @safe pure nothrow const
+    bool isInitialized() const nothrow pure @safe
     {
         return isState(UnitState.initialize);
     }
 
-    bool isRunning() @safe pure nothrow const
+    bool isRunning() const nothrow pure @safe
     {
         return isState(UnitState.run);
     }
 
-    bool isStopped() @safe pure nothrow const
+    bool isStopped() const nothrow pure @safe
     {
         return isState(UnitState.stop);
     }
 
-    bool isDisposed() @safe pure nothrow const
+    bool isDisposed() const nothrow pure @safe
     {
         return isState(UnitState.dispose);
     }

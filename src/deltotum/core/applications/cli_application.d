@@ -1,5 +1,6 @@
 module deltotum.core.applications.cli_application;
 
+import deltotum.core.applications.crashes.crash_handler : CrashHandler;
 import deltotum.core.applications.application_exit : ApplicationExit;
 import deltotum.core.applications.components.uni.uni_component : UniComponent;
 import deltotum.core.supports.support : Support;
@@ -7,8 +8,6 @@ import deltotum.core.configs.config : Config;
 import deltotum.core.clis.cli : Cli;
 import deltotum.core.contexts.context : Context;
 import deltotum.core.resources.resource : Resource;
-
-import deltotum.core.applications.crashes.crash_handler : CrashHandler;
 
 import std.logger : Logger;
 import std.typecons : Nullable;
@@ -19,20 +18,19 @@ import std.getopt : GetoptResult;
  */
 class CliApplication
 {
-    CrashHandler[] crashHandlers;
-
-    int exitCodeSuccessWithoutController;
-    string defaultDataDirectory = "data";
-    string defaultConfigFile = "configs/main.conf";
-    string defaultUserDataDir = "userdata";
-
-    string defaultCrashDirEnvironmentKey = "APP_CRASH_DIR";
-    string defaultCrashFileDisableEnvironmentKey = "APP_CRASH_FILE_DISABLE";
-
     protected
     {
+        CrashHandler[] crashHandlers;
+
         bool isRethrowStartHandlerExceptions = true;
         bool isStopMainController = true;
+
+        string defaultDataDir = "data";
+        string defaultConfigsDire = "configs";
+        string defaultUserDataDir = "userdata";
+
+        string defaultCrashDirEnvironmentKey = "APP_CRASH_DIR";
+        string defaultCrashFileDisableEnvironmentKey = "APP_CRASH_FILE_DISABLE";
     }
 
     private
@@ -52,8 +50,6 @@ class CliApplication
 
     ApplicationExit initialize(string[] args)
     {
-        import std.experimental.logger : sharedLog;
-
         _uniServices = new UniComponent;
 
         auto cli = createCli(args);
@@ -65,7 +61,6 @@ class CliApplication
         {
             cli.printHelp(cliResult);
             return ApplicationExit(true);
-            //return exitCodeSuccessWithoutController;
         }
 
         cli.isSilentMode = isSilentMode;
@@ -81,6 +76,8 @@ class CliApplication
         uservices.logger = createLogger;
         //FIXME, dmd v.101: non-shared method `std.logger.multilogger.MultiLogger.insertLogger` is not callable using a `shared` object
         //set new global default logger
+        import std.logger : sharedLog;
+
         () @trusted { sharedLog = cast(shared) uservices.logger; }();
 
         uservices.support = createSupport;
@@ -89,7 +86,7 @@ class CliApplication
         uservices.resource = createResource(uservices.config, uservices.context);
         uservices.logger.trace("Resources service built");
 
-        return ApplicationExit(false);
+        return ApplicationExit();
     }
 
     protected void consumeThrowable(Throwable ex, bool isReThrow = true)
@@ -141,8 +138,8 @@ class CliApplication
         GetoptResult cliResult = cliManager.parse("s|silent",
             "Silent mode, less information in program output.", &isSilentMode,
             "g|debug", "Debug mode",
-            &isDebugMode, format!"%s|%s"(defaultDataDirectory[0].toLower,
-                defaultDataDirectory), "Application data directory.",
+            &isDebugMode, format!"%s|%s"(defaultDataDir[0].toLower,
+                defaultDataDir), "Application data directory.",
             &mustBeDataDirectory, "c|configdir", "Config directory", &mustBeConfigDir);
 
         return cliResult;
@@ -172,7 +169,7 @@ class CliApplication
         }
         else
         {
-            dataDirectory = buildPath(currentDir, defaultDataDirectory);
+            dataDirectory = buildPath(currentDir, defaultDataDir);
             uservices.cli.printIfNotSilent("Default data directory will be used: " ~ dataDirectory);
         }
 
@@ -213,7 +210,7 @@ class CliApplication
         }
         else
         {
-            configDir = buildPath(context.appContext.dataDir, "configs");
+            configDir = buildPath(context.appContext.dataDir, defaultConfigsDire);
             uservices.cli.printIfNotSilent("Default config directory will be used: " ~ configDir);
         }
 
@@ -310,7 +307,7 @@ class CliApplication
         {
             if (!mustBeCrashDir.exists || !mustBeCrashDir.isDir)
             {
-                throw new Exception(format("Crash dir from environment key %s does not exist or not a directory: %s",
+                throw new Exception(format("Crash directory from environment key %s does not exist or not a directory: %s",
                         defaultCrashDirEnvironmentKey, mustBeCrashDir));
             }
             crashDir = mustBeCrashDir;

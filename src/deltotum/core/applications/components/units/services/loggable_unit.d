@@ -22,7 +22,6 @@ class LoggableUnit
     }
 
     Logger logger() @nogc nothrow pure @safe
-    out (_logger; _logger !is null)
     {
         return _logger;
     }
