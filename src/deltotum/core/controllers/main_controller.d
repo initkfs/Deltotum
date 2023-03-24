@@ -11,13 +11,11 @@ abstract class MainController(C : UniComponent) : Controller!C
 
     abstract int startApplication();
 
-    protected void pause(int timeInSec) const
+    void pause(size_t timeInSec) const
     {
         import std.datetime : Duration, dur;
         import core.thread : Thread;
         import std.exception : enforce;
-
-        enforce(timeInSec > 0, "Pause time must be a positive number");
 
         Thread.sleep(dur!("seconds")(timeInSec));
     }

@@ -5,10 +5,10 @@ module deltotum.core.clis.printers.cli_printer;
  */
 class CliPrinter
 {
-    void print(T)(T message) const
+    void print(S...)(S messages) const
     {
         import std.stdio : writeln;
         
-        writeln(message);
+        writeln(messages);
     }
 }
