@@ -86,6 +86,8 @@ class CliApplication
         uservices.resource = createResource(uservices.config, uservices.context);
         uservices.logger.trace("Resources service built");
 
+        uservices.isBuilt = true;
+
         return ApplicationExit();
     }
 

@@ -16,8 +16,9 @@ import std.logger.core : Logger;
 class UniComponent : SimpleUnit
 {
     bool isBuilt;
-    bool callAfterBuild = true;
-    bool callBeforeBuild = true;
+    bool isAllowRebuild;
+    bool isCallAfterBuild = true;
+    bool isCallBeforeBuild = true;
 
     private
     {
@@ -47,7 +48,17 @@ class UniComponent : SimpleUnit
             throw new Exception("Parent must not be null");
         }
 
-        if (callBeforeBuild)
+        if (uniComponent.isBuilt && !isAllowRebuild)
+        {
+            throw new Exception("Component already built: " ~ uniComponent.className);
+        }
+
+        if (!parentComponent.isBuilt)
+        {
+            throw new Exception("Parent component not built: " ~ parentComponent.className);
+        }
+
+        if (isCallBeforeBuild)
         {
             uniComponent.beforeBuild();
         }
@@ -64,7 +75,7 @@ class UniComponent : SimpleUnit
             }
         }
 
-        if (callAfterBuild)
+        if (isCallAfterBuild)
         {
             uniComponent.afterBuild();
         }
