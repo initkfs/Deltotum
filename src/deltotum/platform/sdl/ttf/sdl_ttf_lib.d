@@ -1,5 +1,9 @@
 module deltotum.platform.sdl.ttf.sdl_ttf_lib;
 
+// dfmt off
+version(SdlBackend):
+// dfmt on
+
 import deltotum.platform.sdl.ttf.base.sdl_ttf_object : SdlTTFObject;
 
 import bindbc.sdl;

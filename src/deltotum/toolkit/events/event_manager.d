@@ -17,7 +17,7 @@ import deltotum.toolkit.display.display_object : DisplayObject;
  */
 class EventManager
 {
-    version (sdl_backend)
+    version (SdlBackend)
     {
         import deltotum.platform.sdl.events.sdl_event_processor : SdlEventProcessor;
 

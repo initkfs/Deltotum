@@ -1,5 +1,9 @@
 module deltotum.platform.sdl.sdl_joystick;
 
+// dfmt off
+version(SdlBackend):
+// dfmt on
+
 import deltotum.platform.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 
 import bindbc.sdl;

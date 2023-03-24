@@ -1,5 +1,9 @@
 module deltotum.platform.sdl.mix.base.sdl_mix_object;
 
+// dfmt off
+version(SdlBackend):
+// dfmt on
+
 import deltotum.platform.sdl.base.sdl_object : SdlObject;
 import std.string : fromStringz, toStringz;
 

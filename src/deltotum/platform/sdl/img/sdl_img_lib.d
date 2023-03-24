@@ -1,5 +1,9 @@
 module deltotum.platform.sdl.img.sdl_img_lib;
 
+// dfmt off
+version(SdlBackend):
+// dfmt on
+
 import deltotum.platform.sdl.img.base.sdl_image_object : SdlImageObject;
 
 import bindbc.sdl;

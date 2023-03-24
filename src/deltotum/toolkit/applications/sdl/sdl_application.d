@@ -77,6 +77,7 @@ class SdlApplication : GraphicApplication
         }
 
         sdlLib.initialize(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK);
+        gservices.logger.trace("SDL ", sdlLib.getSdlVersionInfo);
 
         //TODO move to hal layer
         SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_WARN);

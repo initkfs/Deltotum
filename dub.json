@@ -9,7 +9,7 @@
     "configurations": [{
             "name": "app-dev",
             "versions": [
-                "dev", "sdl_backend"
+                "dev", "SdlBackend"
             ],
             "targetType": "executable",
             "targetName": "deltotum",
@@ -38,7 +38,7 @@
     "versions": [
         "SDL_Image",
         "SDL_TTF",
-        "SDL_205",
+        "SDL_2020",
         "SDL_Mixer_202"
     ]
 }

@@ -1,6 +1,10 @@
 module deltotum.platform.sdl.sdl_renderer;
 
-import deltotum.platform.result.platform_result : PlatformResult;
+// dfmt off
+version(SdlBackend):
+// dfmt on
+
+import deltotum.platform.results.platform_result : PlatformResult;
 import deltotum.platform.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.platform.sdl.sdl_window : SdlWindow;
 import deltotum.platform.sdl.sdl_texture : SdlTexture;

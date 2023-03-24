@@ -1,4 +1,4 @@
-module deltotum.platform.result.platform_result;
+module deltotum.platform.results.platform_result;
 
 import core.attribute : mustuse;
 

@@ -1,6 +1,10 @@
 module deltotum.platform.sdl.sdl_window;
 
-import deltotum.platform.result.platform_result : PlatformResult;
+// dfmt off
+version(SdlBackend):
+// dfmt on
+
+import deltotum.platform.results.platform_result : PlatformResult;
 import deltotum.platform.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.toolkit.input.mouse.mouse_cursor_type : MouseCursorType;
 import deltotum.platform.sdl.sdl_cursor : SDLCursor;

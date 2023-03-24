@@ -1,6 +1,10 @@
 module deltotum.platform.sdl.base.sdl_object;
 
-import deltotum.platform.object.platform_object : PlatformObject;
+// dfmt off
+version(SdlBackend):
+// dfmt on
+
+import deltotum.platform.objects.platform_object : PlatformObject;
 import deltotum.platform.sdl.base.sdl_type_converter : SdlTypeConverter;
 
 import std.string : toStringz, fromStringz;
@@ -14,7 +18,12 @@ class SdlObject : PlatformObject
 {
     protected
     {
-        SdlTypeConverter typeConverter = new SdlTypeConverter;
+        SdlTypeConverter typeConverter;
+    }
+
+    this(SdlTypeConverter typeConverter = null) pure @safe
+    {
+        this.typeConverter = typeConverter !is null ? typeConverter : new SdlTypeConverter;
     }
 
     invariant

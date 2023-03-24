@@ -1,4 +1,4 @@
-module deltotum.platform.object.platform_object_wrapper;
+module deltotum.platform.objects.platform_object_wrapper;
 
 /**
  * Authors: initkfs

@@ -1,5 +1,9 @@
 module deltotum.platform.sdl.sdl_lib;
 
+// dfmt off
+version(SdlBackend):
+// dfmt on
+
 import std.string : toStringz, fromStringz;
 
 import bindbc.sdl;

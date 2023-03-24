@@ -1,8 +1,12 @@
 module deltotum.platform.sdl.mix.sdl_mix_music;
 
-import deltotum.platform.result.platform_result : PlatformResult;
+// dfmt off
+version(SdlBackend):
+// dfmt on
+
+import deltotum.platform.results.platform_result : PlatformResult;
 import deltotum.platform.sdl.mix.base.sdl_mix_object : SdlMixObject;
-import deltotum.platform.object.platform_object_wrapper : PlatformObjectWrapper;
+import deltotum.platform.objects.platform_object_wrapper : PlatformObjectWrapper;
 
 import std.string : toStringz, fromStringz;
 import bindbc.sdl;

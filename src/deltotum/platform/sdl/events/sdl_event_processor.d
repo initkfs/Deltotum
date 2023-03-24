@@ -1,5 +1,9 @@
 module deltotum.platform.sdl.events.sdl_event_processor;
 
+// dfmt off
+version(SdlBackend):
+// dfmt on
+
 import deltotum.toolkit.events.processing.event_processor : EventProcessor;
 
 import deltotum.core.events.event_type : EventType;
