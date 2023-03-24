@@ -62,7 +62,7 @@ class ConfigAggregator : Config
         throw new ConfigValueNotFoundException("Not found config for key: " ~ key);
     }
 
-    override bool getBool(string key)
+    override Nullable!bool getBool(string key)
     {
         return searchConfigByKey(key).getBool(key);
     }
@@ -72,7 +72,7 @@ class ConfigAggregator : Config
         searchConfigByKey(key).setBool(key, value);
     }
 
-    override string getString(string key)
+    override Nullable!string getString(string key)
     {
         return searchConfigByKey(key).getString(key);
     }
@@ -82,7 +82,7 @@ class ConfigAggregator : Config
         searchConfigByKey(key).setString(key, value);
     }
 
-    override long getLong(string key)
+    override Nullable!long getLong(string key)
     {
         return searchConfigByKey(key).getLong(key);
     }
@@ -92,7 +92,7 @@ class ConfigAggregator : Config
         searchConfigByKey(key).setLong(key, value);
     }
 
-    override double getDouble(string key)
+    override Nullable!double getDouble(string key)
     {
         return searchConfigByKey(key).getDouble(key);
     }

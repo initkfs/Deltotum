@@ -5,6 +5,7 @@ import deltotum.core.configs.exceptions.config_value_incorrect_exception : Confi
 import deltotum.core.configs.exceptions.config_value_notfound_exception : ConfigValueNotFoundException;
 
 import std.json : JSONValue;
+import std.typecons : Nullable;
 
 /**
  * Authors: initkfs
@@ -38,9 +39,11 @@ class JsonConfig : Config
             throw new Exception("Config path is not a file: " ~ configPath);
         }
 
-        import std.file: readText;
+        import std.file : readText;
+
         const jsonText = configPath.readText;
-        if(jsonText.length == 0){
+        if (jsonText.length == 0)
+        {
             //error?
         }
 
@@ -106,7 +109,7 @@ class JsonConfig : Config
         root[key] = value;
     }
 
-    override bool getBool(string key)
+    override Nullable!bool getBool(string key)
     {
         if (!containsKey(key))
         {
@@ -114,7 +117,7 @@ class JsonConfig : Config
                 "Not found boolean value in config with key: " ~ key);
         }
         const bool value = getValue!bool(key);
-        return value;
+        return Nullable!bool(value);
     }
 
     override void setBool(string key, bool value)
@@ -122,7 +125,7 @@ class JsonConfig : Config
         setValue(key, value);
     }
 
-    override string getString(string key)
+    override Nullable!string getString(string key)
     {
         if (!containsKey(key))
         {
@@ -138,7 +141,7 @@ class JsonConfig : Config
         {
             if (value.type == JSONType.null_)
             {
-                return "";
+                return Nullable!string("");
             }
 
             import std.format : format;
@@ -153,9 +156,9 @@ class JsonConfig : Config
         //TODO lowercase
         if (strValue == "null")
         {
-            return "";
+            return Nullable!string("");
         }
-        return strValue;
+        return Nullable!string(strValue);
     }
 
     override void setString(string key, string value)
@@ -163,7 +166,7 @@ class JsonConfig : Config
         setValue(key, value);
     }
 
-    override long getLong(string key)
+    override Nullable!long getLong(string key)
     {
         if (!containsKey(key))
         {
@@ -171,7 +174,7 @@ class JsonConfig : Config
                 "Not found integer value in config with key: " ~ key);
         }
         const long value = getValue!long(key);
-        return value;
+        return Nullable!long(value);
     }
 
     override void setLong(string key, long value)
@@ -179,7 +182,7 @@ class JsonConfig : Config
         setValue(key, value);
     }
 
-    override double getDouble(string key)
+    override Nullable!double getDouble(string key)
     {
         if (!containsKey(key))
         {
@@ -188,7 +191,7 @@ class JsonConfig : Config
         }
 
         const double value = getValue!double(key);
-        return value;
+        return Nullable!double(value);
     }
 
     override void setDouble(string key, double value)
@@ -242,7 +245,7 @@ unittest
 
     assert(jsonConfig.getString("a") == "foo");
     assert(isClose(jsonConfig.getDouble("b"), 56.2299999999999));
-    assert(jsonConfig.getBool("c"));
+    assert(jsonConfig.getBool("c").get);
     assert(jsonConfig.getString("d") == "");
     assert(jsonConfig.getString("e") == "");
     assert(jsonConfig.getString("f") == "");

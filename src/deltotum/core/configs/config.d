@@ -3,6 +3,8 @@ module deltotum.core.configs.config;
 import deltotum.core.configs.exceptions.config_value_incorrect_exception : ConfigValueIncorrectException;
 import deltotum.core.configs.exceptions.config_value_notfound_exception : ConfigValueNotFoundException;
 
+import std.typecons : Nullable;
+
 /**
  * Authors: initkfs
 */
@@ -15,30 +17,36 @@ abstract class Config
 
         bool containsKey(string key);
 
-        bool getBool(string key);
+        Nullable!bool getBool(string key);
         void setBool(string key, bool value);
 
-        string getString(string key);
+        Nullable!string getString(string key);
         void setString(string key, string value);
 
-        long getLong(string key);
+        Nullable!long getLong(string key);
         void setLong(string key, long value);
 
-        double getDouble(string key);
+        Nullable!double getDouble(string key);
         void setDouble(string key, double value);
     }
 
-    long getPositiveLong(string key)
+    Nullable!long getPositiveLong(string key)
     {
-        long value = getLong(key);
-        if (value <= 0)
+        auto mustBeValue = getLong(key);
+        if (!mustBeValue.isNull)
         {
-            import std.format : format;
+            const long value = mustBeValue.get;
 
-            throw new ConfigValueIncorrectException(format(
-                    "Expected positive long value from config with key '%s', but received %s", key, value));
+            if (value <= 0)
+            {
+                import std.format : format;
+
+                throw new ConfigValueIncorrectException(format(
+                        "Expected positive long value from config with key '%s', but received %s", key, value));
+            }
         }
-        return value;
+
+        return mustBeValue;
     }
 
     void setPositiveLong(string key, long value)
@@ -53,20 +61,25 @@ abstract class Config
         setLong(key, value);
     }
 
-    double getFiniteDouble(string key)
+    Nullable!double getFiniteDouble(string key)
     {
-        double val = getDouble(key);
-
-        import std.math.traits : isFinite;
-
-        if (!isFinite(val))
+        auto mustBeValue = getDouble(key);
+        if (!mustBeValue.isNull)
         {
-            import std.format : format;
+            double val = mustBeValue.get;
 
-            throw new ConfigValueIncorrectException(format(
-                    "Expected finite double from config with key '%s', but received %s", key, val));
+            import std.math.traits : isFinite;
+
+            if (!isFinite(val))
+            {
+                import std.format : format;
+
+                throw new ConfigValueIncorrectException(format(
+                        "Expected finite double from config with key '%s', but received %s", key, val));
+            }
         }
-        return val;
+
+        return mustBeValue;
     }
 
     void setFiniteDouble(string key, double value)
@@ -83,15 +96,19 @@ abstract class Config
         setDouble(key, value);
     }
 
-    string getNotEmptyString(string key)
+    Nullable!string getNotEmptyString(string key)
     {
-        const string value = getString(key);
-        if (value.length == 0)
+        auto mustBeString = getString(key);
+        if (!mustBeString.isNull)
         {
-            throw new ConfigValueIncorrectException(
-                "Received empty string value from config with key: " ~ key);
+            const string value = mustBeString.get;
+            if (value.length == 0)
+            {
+                throw new ConfigValueIncorrectException(
+                    "Received empty string value from config with key: " ~ key);
+            }
         }
-        return value;
+        return mustBeString;
     }
 
     void setNotEmptyString(string key, string value)

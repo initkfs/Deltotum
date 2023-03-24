@@ -171,22 +171,28 @@ class CliApplication
         }
         else
         {
-            dataDirectory = buildPath(currentDir, defaultDataDir);
-            uservices.cli.printIfNotSilent("Default data directory will be used: " ~ dataDirectory);
+            const relDataDir = buildPath(currentDir, defaultDataDir);
+            if (relDataDir.exists && relDataDir.isDir)
+            {
+                dataDirectory = relDataDir;
+                uservices.cli.printIfNotSilent(
+                    "Default data directory will be used: " ~ dataDirectory);
+            }
         }
 
-        if (!dataDirectory.exists)
+        string userDir;
+        const relUserDir = buildPath(dataDirectory, defaultUserDataDir);
+        if (relUserDir.exists && relUserDir.isDir)
         {
-            throw new Exception("Application data directory does not exist: " ~ dataDirectory);
+            userDir = relUserDir;
+            uservices.cli.printIfNotSilent(
+                "Found user directory: " ~ userDir);
         }
-
-        if (!dataDirectory.isDir)
+        else
         {
-            throw new Exception(
-                "Application data directory is not a directory: " ~ dataDirectory);
+            uservices.cli.printIfNotSilent(
+                "User directory not found");
         }
-
-        const userDir = buildPath(dataDirectory, defaultUserDataDir);
 
         import deltotum.core.contexts.apps.app_context : AppContext;
 
@@ -205,15 +211,43 @@ class CliApplication
             uservices.cli.printIfNotSilent("Received config directory from cli: " ~ configDir);
             if (!configDir.isAbsolute)
             {
-                configDir = buildPath(context.appContext.dataDir, configDir);
+                const mustBeDataDir = context.appContext.dataDir;
+                if (mustBeDataDir.isNull)
+                {
+                    throw new Exception("Config path directory from cli is relative, but the data directory was not found in application context");
+                }
+                configDir = buildPath(mustBeDataDir.get, configDir);
                 uservices.cli.printIfNotSilent(
                     "Convert config directory path from cli to absolute path: " ~ configDir);
             }
         }
         else
         {
-            configDir = buildPath(context.appContext.dataDir, defaultConfigsDire);
-            uservices.cli.printIfNotSilent("Default config directory will be used: " ~ configDir);
+            const mustBeDataDir = context.appContext.dataDir;
+            if (!mustBeDataDir.isNull)
+            {
+                configDir = buildPath(mustBeDataDir.get, defaultConfigsDire);
+                uservices.cli.printIfNotSilent(
+                    "Default config directory will be used: " ~ configDir);
+            }
+            else
+            {
+                uservices.cli.printIfNotSilent(
+                    "Data directory not found so default config path cannot be built");
+            }
+
+        }
+
+        if (configDir.length == 0)
+        {
+            uservices.cli.printIfNotSilent("Path to config directory is empty");
+            //TODO Environment config
+            import deltotum.core.configs.config_aggregator : ConfigAggregator;
+
+            Config[] configs;
+            auto config = new ConfigAggregator(configs);
+            config.load;
+            return config;
         }
 
         import std.file : isDir, exists;
@@ -281,7 +315,14 @@ class CliApplication
     {
         import std.path : buildPath;
 
-        string resourceDir = buildPath(context.appContext.dataDir, "resources");
+        const mustBeDataDir = context.appContext.dataDir;
+        if (mustBeDataDir.isNull)
+        {
+            auto resource = new Resource;
+            return resource;
+        }
+
+        string resourceDir = buildPath(mustBeDataDir.get, "resources");
         auto resource = new Resource(resourceDir);
         return resource;
     }
@@ -309,7 +350,8 @@ class CliApplication
         {
             if (!mustBeCrashDir.exists || !mustBeCrashDir.isDir)
             {
-                throw new Exception(format("Crash directory from environment key %s does not exist or not a directory: %s",
+                throw new Exception(format(
+                        "Crash directory from environment key %s does not exist or not a directory: %s",
                         defaultCrashDirEnvironmentKey, mustBeCrashDir));
             }
             crashDir = mustBeCrashDir;

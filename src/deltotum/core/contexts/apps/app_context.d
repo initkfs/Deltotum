@@ -1,4 +1,7 @@
 module deltotum.core.contexts.apps.app_context;
+
+import std.typecons : Nullable;
+
 /**
  * Authors: initkfs
  */
@@ -6,49 +9,81 @@ class AppContext
 {
     const
     {
-        string workingDir;
-        string dataDir;
-        string userDir;
-
         bool isDebug;
         bool isSilent;
     }
 
-    this(const string workingDir, const string dataDir, const string userDir, const bool isDebug, const bool isSilent)
+    private const
+    {
+        string _workingDir;
+        string _dataDir;
+        string _userDir;
+    }
+
+    this(const string workingDir = null, const string dataDir = null, const string userDir = null, const bool isDebug = true, const bool isSilent = false)
     {
         import std.string : strip;
         import std.exception : enforce;
         import std.file : isDir, exists;
 
-        enforce(workingDir !is null, "Working directory must not be null");
-        enforce(workingDir.strip.length > 0, "Working directory must not be empty");
-        if (!workingDir.exists || !workingDir.isDir)
+        if (workingDir !is null)
         {
-            import std.format : format;
-            import std.file : FileException;
+            enforce(workingDir.strip.length > 0, "Working directory must not be empty");
+            if (!workingDir.exists || !workingDir.isDir)
+            {
+                import std.file : FileException;
 
-            throw new FileException(format("Working directory is not a directory: %s",
-                    workingDir));
+                throw new FileException(
+                    "Working directory does not exist or is not a directory: " ~
+                        workingDir);
+            }
+
+            _workingDir = workingDir;
         }
 
-        enforce(dataDir !is null, "Data directory must not be null");
-        enforce(dataDir.strip.length > 0, "Data directory must not be empty");
-        if (!dataDir.exists || !dataDir.isDir)
+        if (dataDir !is null)
         {
-            import std.format : format;
-            import std.file : FileException;
+            enforce(dataDir.strip.length > 0, "Data directory must not be empty");
+            if (!dataDir.exists || !dataDir.isDir)
+            {
+                import std.file : FileException;
 
-            throw new FileException(format("Data directory is not a directory: %s", dataDir));
+                throw new FileException(
+                    "Data directory does not exist or is not a directory: " ~ dataDir);
+            }
+
+            _dataDir = dataDir;
         }
 
-        enforce(userDir !is null, "User directory must not be null");
-        enforce(userDir.strip.length > 0, "User directory must not be empty");
+        if (userDir !is null)
+        {
+            enforce(userDir.strip.length > 0, "User directory must not be empty");
+            if (!userDir.exists || !userDir.isDir)
+            {
+                import std.file : FileException;
 
-        this.workingDir = workingDir;
-        this.dataDir = dataDir;
-        this.userDir = userDir;
-        
+                throw new FileException(
+                    "User directory does not exist or is not a directory: " ~ userDir);
+            }
+            _userDir = userDir;
+        }
+
         this.isDebug = isDebug;
         this.isSilent = isSilent;
+    }
+
+    Nullable!string workingDir() const @nogc nothrow pure @safe
+    {
+        return Nullable!string(_workingDir);
+    }
+
+    Nullable!string dataDir() const @nogc nothrow pure @safe
+    {
+        return Nullable!string(_dataDir);
+    }
+
+    Nullable!string userDir() const @nogc nothrow pure @safe
+    {
+        return Nullable!string(_userDir);
     }
 }
