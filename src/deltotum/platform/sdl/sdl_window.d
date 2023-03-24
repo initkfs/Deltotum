@@ -8,6 +8,7 @@ import deltotum.platform.results.platform_result : PlatformResult;
 import deltotum.platform.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.toolkit.input.mouse.mouse_cursor_type : MouseCursorType;
 import deltotum.platform.sdl.sdl_cursor : SDLCursor;
+import deltotum.platform.sdl.sdl_surface : SdlSurface;
 
 import std.string : toStringz, fromStringz;
 
@@ -58,6 +59,90 @@ class SdlWindow : SdlObjectWrapper!SDL_Window
     void focus() @nogc nothrow
     {
         SDL_RaiseWindow(ptr);
+    }
+
+    void minimize() @nogc nothrow
+    {
+        SDL_MinimizeWindow(ptr);
+    }
+
+    void maximize() @nogc nothrow
+    {
+        SDL_MaximizeWindow(ptr);
+    }
+
+    void bordered(bool isBordered) @nogc nothrow
+    {
+        SDL_SetWindowBordered(ptr, typeConverter.fromBool(isBordered));
+    }
+
+    void grab(bool isGrabbed) @nogc nothrow
+    {
+        SDL_SetWindowGrab(ptr, typeConverter.fromBool(isGrabbed));
+    }
+
+    void grabKeyboard(bool isGrabbed) @nogc nothrow
+    {
+        SDL_SetWindowKeyboardGrab(ptr, typeConverter.fromBool(isGrabbed));
+    }
+
+    void grabMouse(bool isGrabbed) @nogc nothrow
+    {
+        SDL_SetWindowMouseGrab(ptr, typeConverter.fromBool(isGrabbed));
+    }
+
+    void windowIcon(SdlSurface surface)
+    {
+        SDL_SetWindowIcon(ptr, surface.getObject);
+    }
+
+    void resizable(bool isResizable) @nogc nothrow
+    {
+        SDL_SetWindowResizable(ptr, typeConverter.fromBool(isResizable));
+    }
+
+    PlatformResult opacity(float value0to1) nothrow
+    {
+        if (value0to1 < 0.0 || value0to1 > 1.0)
+        {
+            return PlatformResult.error("Opacity value must be in the range from 0 to 1.0");
+        }
+        const result = SDL_SetWindowOpacity(ptr, value0to1);
+        return result != 0 ? PlatformResult(result, getError) : PlatformResult.success;
+    }
+
+    PlatformResult inputFocus() nothrow
+    {
+        const result = SDL_SetWindowInputFocus(ptr);
+        return result != 0 ? PlatformResult(result, getError) : PlatformResult.success;
+    }
+
+    PlatformResult fullscreen() nothrow
+    {
+        const result = SDL_SetWindowFullscreen(ptr, SDL_WINDOW_FULLSCREEN);
+        return result != 0 ? PlatformResult(result, getError) : PlatformResult.success;
+    }
+
+    PlatformResult flash() nothrow
+    {
+        const result = SDL_FlashWindow(ptr, SDL_FlashOperation.SDL_FLASH_UNTIL_FOCUSED);
+        return result != 0 ? PlatformResult(result, getError) : PlatformResult.success;
+    }
+
+    void maxSize(int w, int h) @nogc nothrow
+    {
+        SDL_SetWindowMaximumSize(ptr, w, h);
+    }
+
+    void minSize(int w, int h) @nogc nothrow
+    {
+        SDL_SetWindowMinimumSize(ptr, w, h);
+    }
+
+    PlatformResult modalForParent(SdlWindow parent)
+    {
+        const result = SDL_SetWindowModalFor(ptr, parent.getObject);
+        return result != 0 ? PlatformResult(result, getError) : PlatformResult.success;
     }
 
     SDL_Rect getWorldBounds() @nogc nothrow
@@ -119,14 +204,14 @@ class SdlWindow : SdlObjectWrapper!SDL_Window
         SDL_SetWindowBordered(ptr, sdlValue);
     }
 
-    void maximize() @nogc nothrow
+    void show() @nogc nothrow
     {
-        SDL_MaximizeWindow(ptr);
+        SDL_ShowWindow(ptr);
     }
 
-    void minimize() @nogc nothrow
+    void hide() @nogc nothrow
     {
-        SDL_MinimizeWindow(ptr);
+        SDL_HideWindow(ptr);
     }
 
     void setTitle(string title) nothrow
