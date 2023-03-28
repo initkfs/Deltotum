@@ -3,6 +3,8 @@ module deltotum.maths.graphs.graph;
 import deltotum.maths.graphs.edge : Edge;
 import deltotum.maths.graphs.vertex : Vertex;
 
+import std.typecons : Nullable;
+
 /**
  * Authors: initkfs
  */
@@ -10,11 +12,11 @@ class Graph
 {
     private
     {
-        Edge[][2][Vertex] structure;
+        Edge[][Vertex] graph;
         size_t edgeCounter;
     }
 
-    bool addVertex(Vertex vertex)  pure @safe
+    bool addVertex(Vertex vertex) pure @safe
     {
         import std.exception : enforce;
 
@@ -25,14 +27,18 @@ class Graph
             return false;
         }
 
-        structure[vertex] = [[], []];
+        return addVertexUnsafe(vertex);
+    }
 
+    bool addVertexUnsafe(Vertex vertex) pure @safe
+    {
+        graph[vertex] = [];
         return true;
     }
 
     protected bool hasVertexUnsafe(Vertex vertex) nothrow @nogc pure @safe
     {
-        return (vertex in structure) !is null;
+        return (vertex in graph) !is null;
     }
 
     bool hasVertex(Vertex vertex) pure @safe
@@ -43,32 +49,66 @@ class Graph
         return hasVertexUnsafe(vertex);
     }
 
-    Edge[] getEdgesToVertex(Vertex vertex) pure @safe
+    void onEdgeForVertex(Vertex vertex, scope bool delegate(Edge) @safe onEdge) @safe
     {
         if (!hasVertex(vertex))
         {
-            return [];
+            return;
         }
-        return getEdgesToVertexUnsafe(vertex);
+        auto edges = graph[vertex];
+        foreach (edge; edges)
+        {
+            if (!onEdge(edge))
+            {
+                return;
+            }
+        }
     }
 
-    protected Edge[] getEdgesToVertexUnsafe(Vertex vertex) pure @safe
-    {
-        return structure[vertex][1];
-    }
-
-    protected Edge[] getEdgesFromVertexUnsafe(Vertex vertex) pure @safe
-    {
-        return structure[vertex][0];
-    }
-
-    Edge[] getEdgesFromVertex(Vertex vertex) pure @safe
+    Nullable!(Edge[]) getEdgesForVertex(Vertex vertex) pure @safe
     {
         if (!hasVertex(vertex))
         {
-            return [];
+            return Nullable!(Edge[]).init;
         }
-        return getEdgesFromVertexUnsafe(vertex);
+        auto edges = graph[vertex];
+        return Nullable!(Edge[])(edges);
+    }
+
+    void onEdgesToVertex(Vertex vertex, scope bool delegate(Edge) @safe onEdge) @safe
+    {
+        onEdgeForVertex(vertex, (Edge edge) {
+            if (edge.dest == vertex)
+            {
+                return onEdge(edge);
+            }
+            return true;
+        });
+    }
+
+    Edge[] getEdgesToVertex(Vertex vertex) @safe
+    {
+        Edge[] edges;
+        onEdgesToVertex(vertex, (Edge edge) { edges ~= edge; return true; });
+        return edges;
+    }
+
+    void onEdgesFromVertex(Vertex vertex, scope bool delegate(Edge) @safe onEdge) @safe
+    {
+        onEdgeForVertex(vertex, (edge) {
+            if (edge.src == vertex)
+            {
+                return onEdge(edge);
+            }
+            return true;
+        });
+    }
+
+    Edge[] getEdgesFromVertex(Vertex vertex)
+    {
+        Edge[] edges;
+        onEdgesFromVertex(vertex, (Edge edge) { edges ~= edge; return true; });
+        return edges;
     }
 
     bool addEdge(Edge edge)
@@ -81,7 +121,7 @@ class Graph
         Vertex fromVertex = edge.src;
         if (!hasVertexUnsafe(fromVertex))
         {
-            if (!addVertex(fromVertex))
+            if (!addVertexUnsafe(fromVertex))
             {
                 import std.format : format;
 
@@ -91,39 +131,51 @@ class Graph
 
         bool isEdgeAdd;
 
-        Vertex toVertex = edge.dest;
-        if (toVertex !is null)
+        Vertex destVertex = edge.dest;
+        if (destVertex !is null)
         {
-            if (!hasVertexUnsafe(toVertex))
+            if (!hasVertexUnsafe(destVertex))
             {
-                if (!addVertex(toVertex))
+                if (!addVertexUnsafe(destVertex))
                 {
                     import std.format : format;
 
-                    throw new Exception(format("Error adding destination vertex %s for edge %s", toVertex, edge));
+                    throw new Exception(format("Error adding destination vertex %s for edge %s", destVertex, edge));
                 }
             }
 
             import std.algorithm.searching : canFind;
 
-            Edge[] toEdges = getEdgesToVertexUnsafe(toVertex);
-            if (!toEdges.canFind(edge))
+            auto mustBeAllDestEdges = getEdgesForVertex(destVertex);
+            if (!mustBeAllDestEdges.isNull)
             {
-                structure[toVertex][1] ~= edge;
-                isEdgeAdd = true;
+                auto allDestEdges = mustBeAllDestEdges.get;
+                if (!allDestEdges.canFind(edge))
+                {
+                    graph[destVertex] ~= edge;
+                    isEdgeAdd = true;
+                }
+            }
+            else
+            {
+                throw new Exception("Not found edges for destination vertex " ~ destVertex.toString);
             }
 
         }
 
         import std.algorithm.searching : canFind;
 
-        Edge[] fromEdges = getEdgesFromVertexUnsafe(fromVertex);
-        if (fromEdges.canFind(edge))
+        auto mustBeFromEdges = getEdgesForVertex(fromVertex);
+        if (!mustBeFromEdges.isNull)
         {
-            return isEdgeAdd;
+            Edge[] fromEdges = mustBeFromEdges.get;
+            if (fromEdges.canFind(edge))
+            {
+                return isEdgeAdd;
+            }
         }
 
-        structure[fromVertex][0] ~= edge;
+        graph[fromVertex] ~= edge;
         edgeCounter++;
 
         return true;
@@ -131,7 +183,7 @@ class Graph
 
     size_t countVertices() nothrow @nogc pure @safe
     {
-        return structure.length;
+        return graph.length;
     }
 
     size_t countEdges() nothrow @nogc pure @safe
@@ -152,23 +204,42 @@ class Graph
 
         bool isRemove;
 
-        auto removeFromPos = getEdgesFromVertexUnsafe(fromVertex).countUntil(edge);
-        if (removeFromPos != -1)
+        auto fromVertexRemovePos = -1;
+        foreach (e; graph[fromVertex])
         {
-            structure[fromVertex][0] = structure[fromVertex][0].remove(removeFromPos);
+            fromVertexRemovePos++;
+            if (edge == e)
+            {
+                break;
+            }
+        }
+        if (fromVertexRemovePos != -1)
+        {
+            graph[fromVertex] = graph[fromVertex].remove(fromVertexRemovePos);
             isRemove = true;
             edgeCounter--;
         }
 
         Vertex toVertex = edge.dest;
-        if (toVertex !is null)
+        if (toVertex !is null && hasVertexUnsafe(toVertex))
         {
-            auto remooveToPos = getEdgesToVertexUnsafe(toVertex).countUntil(edge);
-            if (remooveToPos != -1)
+            //TODO duplicate code
+            auto toVertexRemovePos = -1;
+            foreach (e; graph[toVertex])
             {
-                structure[toVertex][1] = structure[toVertex][1].remove(remooveToPos);
+                toVertexRemovePos++;
+                if (edge == e)
+                {
+                    break;
+                }
+            }
+
+            if (toVertexRemovePos != -1)
+            {
+                graph[toVertex] = graph[toVertex].remove(toVertexRemovePos);
                 //isRemove = true;
             }
+
         }
 
         return isRemove;
