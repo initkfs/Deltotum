@@ -149,7 +149,9 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : DisplayObject
         double deltaT = currentFrame / frameCount;
         //TODO check is finite
         double interpProgress = interpolator.interpolate(deltaT);
-        lastValue = math.lerp(start, end, interpProgress, false);
+
+        import deltotum.maths.numericals.interp: lerp;
+        lastValue = lerp(start, end, interpProgress, false);
 
         if (onValue !is null)
         {

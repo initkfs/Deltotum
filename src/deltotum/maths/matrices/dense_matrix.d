@@ -29,7 +29,7 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
                     .length));
         }
 
-        foreach (rowIndex, row; data)
+        foreach (rowIndex, const row; data)
         {
             if (row.length != ColDim)
             {
@@ -78,7 +78,7 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
     DenseMatrix!(T, RowDim, ColDim) add(
         DenseMatrix!(T, RowDim, ColDim) other) const pure @safe
     {
-        DenseMatrix!(T, RowDim, ColDim) result;
+        typeof(return) result;
 
         eachRow((rowIndex, row) {
             foreach (columnIndex, column; row)
@@ -93,7 +93,7 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
     DenseMatrix!(T, RowDim, ColDim) sub(
         DenseMatrix!(T, RowDim, ColDim) other) const pure @safe
     {
-        DenseMatrix!(T, RowDim, ColDim) result;
+        typeof(return) result;
 
         eachRow((rowIndex, row) {
             foreach (columnIndex, column; row)
@@ -109,9 +109,9 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         DenseMatrix!(T, RowDimOther, ColDimOther) other) const pure @safe
             if (ColDim == RowDimOther)
     {
-        import std.traits;
+        import std.traits : isFloatingPoint;
 
-        DenseMatrix!(T, RowDim, ColDimOther) result;
+        typeof(return) result;
 
         //TODO Void arrays?
         static if (isFloatingPoint!T)
@@ -136,7 +136,7 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
 
     DenseMatrix!(T, ColDim, RowDim) transpose() const pure @safe
     {
-        DenseMatrix!(T, ColDim, RowDim) result;
+        typeof(return) result;
 
         eachRow((rowIndex, row) {
             foreach (columnIndex, column; row)
@@ -262,6 +262,7 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
     {
         import std.traits : isFloatingPoint;
 
+        //TODO char?
         static if (isFloatingPoint!T)
         {
             enum initValue = 0;

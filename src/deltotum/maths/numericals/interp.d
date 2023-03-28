@@ -3,6 +3,9 @@ module deltotum.maths.numericals.interp;
 /**
  * Authors: initkfs
  */
+import deltotum.maths.vector2d : Vector2d;
+import deltotum.maths.math: clamp01;
+
 import std.math.traits : isFinite;
 
 double lagrange(in double x, in double[] xValues, in double[] yValues) @nogc pure @safe nothrow
@@ -56,4 +59,18 @@ unittest
     auto yValues = [2.0, 3, 12, 147];
     double result1 = lagrange(3, xValues, yValues);
     assert(isClose(result1, 35));
+}
+
+//the a value and the b value should not change during the interpolation.
+double lerp(double start, double end, double t, bool clamp = true) @nogc nothrow pure @safe
+{
+    const double progressValue = clamp ? clamp01(t) : t;
+    return start + (end - start) * progressValue;
+}
+
+Vector2d lerp(Vector2d a, Vector2d b, float t, bool clamp = true) @nogc nothrow pure @safe
+{
+    const double progress0to1 = clamp ? clamp01(t) : t;
+    return Vector2d(a.x + (b.x - a.x) * progress0to1,
+        a.y + (b.y - a.y) * progress0to1);
 }

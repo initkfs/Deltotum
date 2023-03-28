@@ -11,20 +11,6 @@ import deltotum.maths.vector2d : Vector2d;
  */
 enum PI = mathConst.PI;
 
-//the a value and the b value should not change during the interpolation.
-double lerp(double start, double end, double t, bool clamp = true) @nogc nothrow pure @safe
-{
-    const double progressValue = clamp ? clamp01(t) : t;
-    return start + (end - start) * progressValue;
-}
-
-Vector2d lerp(Vector2d a, Vector2d b, float t, bool clamp = true) @nogc nothrow pure @safe
-{
-    const double progress0to1 = clamp ? clamp01(t) : t;
-    return Vector2d(a.x + (b.x - a.x) * progress0to1,
-        a.y + (b.y - a.y) * progress0to1);
-}
-
 double degToRad(double deg) @nogc nothrow pure @safe
 {
     return deg * (PI / 180.0);
@@ -52,46 +38,55 @@ double clamp01(double value) @nogc nothrow pure @safe
     }
 }
 
+pragma(inline, true);
 double sin(double value) @nogc nothrow pure @safe
 {
     return math.sin(value);
 }
 
+pragma(inline, true);
 double sinDeg(double valueDeg) @nogc nothrow pure @safe
 {
     return sin(degToRad(valueDeg));
 }
 
+pragma(inline, true);
 double cos(double value) @nogc nothrow pure @safe
 {
     return math.cos(value);
 }
 
+pragma(inline, true);
 double cosDeg(double valueDeg) @nogc nothrow pure @safe
 {
     return cos(degToRad(valueDeg));
 }
 
+pragma(inline, true);
 double sqrt(double value) @nogc nothrow pure @safe
 {
     return mathCore.sqrt(value);
 }
 
+pragma(inline, true);
 double pow(double value, double base) @nogc nothrow pure @safe
 {
     return mathExp.pow(value, base);
 }
 
+pragma(inline, true);
 double asin(double value) @nogc nothrow pure @safe
 {
     return math.asin(value);
 }
 
+pragma(inline, true);
 double atan2(double y, double x) @nogc nothrow pure @safe
 {
     return math.atan2(y, x);
 }
 
+pragma(inline, true);
 T min(T)(T x, T y) @nogc nothrow pure @safe
 {
     import std.algorithm.comparison : min;
@@ -99,6 +94,7 @@ T min(T)(T x, T y) @nogc nothrow pure @safe
     return min(x, y);
 }
 
+pragma(inline, true);
 T max(T)(T x, T y) @nogc nothrow pure @safe
 {
     import std.algorithm.comparison : max;
@@ -106,6 +102,7 @@ T max(T)(T x, T y) @nogc nothrow pure @safe
     return max(x, y);
 }
 
+pragma(inline, true);
 T abs(T)(T value)
 {
     import std.math.algebraic : Abs = abs;
