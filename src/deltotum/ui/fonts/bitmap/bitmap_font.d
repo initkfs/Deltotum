@@ -1,19 +1,17 @@
-module deltotum.ui.texts.fonts.bitmap.bitmap_font;
+module deltotum.ui.fonts.bitmap.bitmap_font;
 
 import deltotum.toolkit.display.textures.texture : Texture;
-import deltotum.toolkit.i18n.langs.glyph : Glyph;
+import deltotum.ui.fonts.glyphs.glyph : Glyph;
 
 /**
  * Authors: initkfs
  */
 class BitmapFont : Texture
 {
-
     Glyph[] glyphs;
 
-    this(Glyph[] glyphs)
+    this(Glyph[] glyphs = [])
     {
-        super();
         this.glyphs = glyphs;
     }
 

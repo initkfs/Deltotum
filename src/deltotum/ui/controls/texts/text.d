@@ -1,15 +1,15 @@
 module deltotum.ui.controls.texts.text;
 
 import deltotum.ui.controls.control : Control;
-import deltotum.ui.texts.fonts.bitmap.bitmap_font : BitmapFont;
+import deltotum.ui.fonts.bitmap.bitmap_font : BitmapFont;
 import deltotum.maths.shapes.rect2d : Rect2d;
 import deltotum.maths.vector2d : Vector2d;
 import deltotum.toolkit.display.flip : Flip;
-import deltotum.toolkit.i18n.langs.glyph : Glyph;
+import deltotum.ui.fonts.glyphs.glyph : Glyph;
 
 import std.stdio;
 
-public
+protected
 {
     struct TextRow
     {
@@ -36,17 +36,21 @@ class Text : Control
 
     this(string text = "text")
     {
-        super();
         //TODO validate
         this.text = text;
-        this.width = 100;
-        this.height = 50;
+        this.maxWidth = 100;
+        this.maxHeight = 50;
     }
 
-    override void create()
+    override void initialize()
     {
+        super.initialize;
         backgroundFactory = null;
+    }
+
+    override void create(){
         super.create;
+        drawContent;
     }
 
     protected Glyph[] textToGlyphs(string textString)
@@ -74,7 +78,7 @@ class Text : Control
             {
                 Rect2d emptyGeometry = Rect2d(0, 0, spaceWidth, 0);
                 //TODO alphabet?
-                newGlyphs ~= Glyph(null, letter, emptyGeometry, true);
+                newGlyphs ~= Glyph(letter, emptyGeometry, true, null);
                 continue;
             }
 
@@ -94,17 +98,28 @@ class Text : Control
     protected TextRow[] textToRows(string text)
     {
         TextRow[] newRows;
-        if (width == 0 || height == 0)
-        {
+
+        auto glyphs = textToGlyphs(text);
+        if(glyphs.length == 0){
             return newRows;
         }
 
-        auto glyphs = textToGlyphs(text);
+        //TODO move to render\update
+        width = padding.width;
+        //max height?
+        rowHeight = cast(int) glyphs[0].geometry.height;
 
-        double glyphPosX = 0;
+        double glyphPosX = padding.left;
         TextRow row;
         foreach (Glyph glyph; glyphs)
         {
+            //TODO move to render, bool check flags
+            double newWidth = width + glyph.geometry.width;
+            if (newWidth <= maxWidth)
+            {
+                width = newWidth;
+            }
+
             if (glyphPosX + glyph.geometry.width > (x + width - padding.right))
             {
                 newRows ~= row;
@@ -120,6 +135,9 @@ class Text : Control
         {
             newRows ~= row;
         }
+
+        height = newRows.length * rowHeight + padding.height;
+        
         return newRows;
     }
 

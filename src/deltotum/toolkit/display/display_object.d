@@ -317,6 +317,14 @@ abstract class DisplayObject : PhysicalBody
         isRedraw = true;
     }
 
+    void requestLayout()
+    {
+        if (layout !is null)
+        {
+            layout.layout(this);
+        }
+    }
+
     void update(double delta)
     {
         if (!isValid)
@@ -326,10 +334,7 @@ abstract class DisplayObject : PhysicalBody
                 invalidateListener();
             }
 
-            if (layout !is null)
-            {
-                layout.layout(this);
-            }
+            requestLayout;
 
             setValid(true);
         }
@@ -419,11 +424,8 @@ abstract class DisplayObject : PhysicalBody
         build(obj);
         obj.initialize;
         assert(obj.isInitialized);
-        obj.create;
 
-        //FIXME conflict with animation .run()
-        //obj.run;
-        //assert(obj.isRunning);
+        obj.create;
 
         add(obj);
     }
@@ -669,5 +671,14 @@ abstract class DisplayObject : PhysicalBody
         }
         name = fullClassName[lastDotPosIndex + 1 .. $];
         return name;
+    }
+
+    void drawBounds(){
+        import deltotum.toolkit.graphics.styles.graphic_style: GraphicStyle;
+        import deltotum.toolkit.graphics.shapes.rectangle: Rectangle;
+        import deltotum.toolkit.graphics.colors.rgba: RGBA;
+
+        auto rect = new Rectangle(width, height, GraphicStyle(1, RGBA.red, false, RGBA.transparent));
+        addCreated(rect);
     }
 }

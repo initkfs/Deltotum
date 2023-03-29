@@ -11,7 +11,7 @@ import std.file : exists, isDir, isFile;
 import std.stdio;
 
 import deltotum.toolkit.asset.fonts.font : Font;
-import deltotum.ui.texts.fonts.bitmap.bitmap_font : BitmapFont;
+import deltotum.ui.fonts.bitmap.bitmap_font : BitmapFont;
 
 /**
  * Authors: initkfs

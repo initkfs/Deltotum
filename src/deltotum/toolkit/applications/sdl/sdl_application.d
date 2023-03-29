@@ -178,7 +178,7 @@ class SdlApplication : GraphicApplication
         gservices.graphics = new Graphics(gservices.logger, window.renderer, theme);
 
         //TODO build and run services after all
-        import deltotum.ui.texts.fonts.bitmap.bitmap_font : BitmapFont;
+        import deltotum.ui.fonts.bitmap.bitmap_font : BitmapFont;
 
         //TODO from locale\config;
         import deltotum.toolkit.i18n.langs.alphabets.alphabet_ru : AlphabetRu;
@@ -186,7 +186,7 @@ class SdlApplication : GraphicApplication
         import deltotum.toolkit.i18n.langs.alphabets.arabic_numerals_alphabet : ArabicNumeralsAlpabet;
         import deltotum.toolkit.i18n.langs.alphabets.special_characters_alphabet : SpecialCharactersAlphabet;
 
-        import deltotum.ui.texts.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
+        import deltotum.ui.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
 
         auto fontGenerator = new BitmapFontGenerator;
         build(fontGenerator);

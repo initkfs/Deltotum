@@ -96,9 +96,6 @@ class Scene : GraphicsComponent
         assert(obj.isInitialized);
 
         obj.create;
-        
-        obj.run;
-        assert(obj.isRunning);
 
         add(obj);
     }

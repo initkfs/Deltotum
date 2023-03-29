@@ -120,6 +120,8 @@ class Button : Control
         if (textFactory !is null)
         {
             text = textFactory();
+            text.maxWidth = width - padding.width;
+            text.maxHeight = height - padding.height;
             addOrAddCreated(text);
         }
 
@@ -129,7 +131,7 @@ class Button : Control
             addOrAddCreated(clickEffectAnimation);
         }
 
-        layout.layout(this);
+        requestLayout;
 
         createListeners;
     }

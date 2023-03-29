@@ -1,13 +1,13 @@
-module deltotum.ui.texts.fonts.bitmap.bitmap_font_generator;
+module deltotum.ui.fonts.bitmap.bitmap_font_generator;
 
-import deltotum.ui.texts.fonts.font_generator : FontGenerator;
-import deltotum.toolkit.i18n.langs.glyph : Glyph;
+import deltotum.ui.fonts.font_generator : FontGenerator;
+import deltotum.ui.fonts.glyphs.glyph : Glyph;
 
 import deltotum.toolkit.asset.fonts.font : Font;
 import deltotum.toolkit.display.textures.texture : Texture;
 import deltotum.toolkit.graphics.colors.rgba: RGBA;
 
-import deltotum.ui.texts.fonts.bitmap.bitmap_font : BitmapFont;
+import deltotum.ui.fonts.bitmap.bitmap_font : BitmapFont;
 import deltotum.toolkit.i18n.langs.alphabets.alphabet : Alphabet;
 import deltotum.maths.shapes.rect2d : Rect2d;
 
@@ -69,8 +69,8 @@ class BitmapFontGenerator : FontGenerator
                     }
                 }
 
-                glyphs ~= Glyph(alphabet, letter, Rect2d(glyphPosition.x, glyphPosition.y, glyphPosition.w, glyphPosition
-                        .h));
+                glyphs ~= Glyph(letter, Rect2d(glyphPosition.x, glyphPosition.y, glyphPosition.w, glyphPosition
+                        .h), false, alphabet);
 
                 if(const err = glyphRepresentation.blit(null, fontMapSurface.getObject, &glyphPosition)){
                     throw new Exception(err.toString);
