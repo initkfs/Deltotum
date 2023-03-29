@@ -1,4 +1,4 @@
-module deltotum.toolkit.ui.controls.control;
+module deltotum.ui.controls.control;
 
 import deltotum.toolkit.display.display_object : DisplayObject;
 import deltotum.toolkit.display.layouts.layout : Layout;

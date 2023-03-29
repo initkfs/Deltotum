@@ -1,13 +1,13 @@
-module deltotum.toolkit.ui.texts.fonts.bitmap.bitmap_font_generator;
+module deltotum.ui.texts.fonts.bitmap.bitmap_font_generator;
 
-import deltotum.toolkit.ui.texts.fonts.font_generator : FontGenerator;
+import deltotum.ui.texts.fonts.font_generator : FontGenerator;
 import deltotum.toolkit.i18n.langs.glyph : Glyph;
 
 import deltotum.toolkit.asset.fonts.font : Font;
 import deltotum.toolkit.display.textures.texture : Texture;
 import deltotum.toolkit.graphics.colors.rgba: RGBA;
 
-import deltotum.toolkit.ui.texts.fonts.bitmap.bitmap_font : BitmapFont;
+import deltotum.ui.texts.fonts.bitmap.bitmap_font : BitmapFont;
 import deltotum.toolkit.i18n.langs.alphabets.alphabet : Alphabet;
 import deltotum.maths.shapes.rect2d : Rect2d;
 

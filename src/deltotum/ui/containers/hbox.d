@@ -1,6 +1,6 @@
-module deltotum.toolkit.ui.containers.hbox;
+module deltotum.ui.containers.hbox;
 
-import deltotum.toolkit.ui.containers.container: Container;
+import deltotum.ui.containers.container: Container;
 import deltotum.toolkit.display.layouts.horizontal_layout: HorizontalLayout;
 
 /**

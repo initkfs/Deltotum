@@ -2,7 +2,7 @@ module deltotum.toolkit.display.layouts.managed_layout;
 
 import deltotum.toolkit.display.layouts.layout : Layout;
 import deltotum.toolkit.display.display_object : DisplayObject;
-import deltotum.toolkit.ui.controls.control : Control;
+import deltotum.ui.controls.control : Control;
 import deltotum.toolkit.display.alignment : Alignment;
 
 /**

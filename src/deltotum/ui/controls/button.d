@@ -1,13 +1,13 @@
-module deltotum.toolkit.ui.controls.button;
+module deltotum.ui.controls.button;
 
-import deltotum.toolkit.ui.controls.control : Control;
+import deltotum.ui.controls.control : Control;
 import deltotum.toolkit.graphics.shapes.shape : Shape;
 import deltotum.toolkit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.toolkit.graphics.shapes.rectangle : Rectangle;
-import deltotum.toolkit.ui.events.action_event : ActionEvent;
+import deltotum.ui.events.action_event : ActionEvent;
 import deltotum.toolkit.display.animation.object.value_transition : ValueTransition;
 import deltotum.toolkit.display.animation.object.property.opacity_transition : OpacityTransition;
-import deltotum.toolkit.ui.controls.text;
+import deltotum.ui.controls.text;
 import deltotum.toolkit.display.layouts.center_layout : CenterLayout;
 import deltotum.toolkit.display.textures.texture : Texture;
 

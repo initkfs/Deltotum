@@ -1,6 +1,6 @@
-module deltotum.toolkit.ui.controls.tabs.tab;
+module deltotum.ui.controls.tabs.tab;
 
-import deltotum.toolkit.ui.containers.container: Container;
+import deltotum.ui.containers.container: Container;
 
 /**
  * Authors: initkfs

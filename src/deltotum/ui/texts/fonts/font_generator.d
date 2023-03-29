@@ -1,4 +1,4 @@
-module deltotum.toolkit.ui.texts.fonts.font_generator;
+module deltotum.ui.texts.fonts.font_generator;
 
 import deltotum.toolkit.applications.components.graphics_component: GraphicsComponent;
 

@@ -1,4 +1,4 @@
-module deltotum.toolkit.ui.events.action_event;
+module deltotum.ui.events.action_event;
 
 import deltotum.core.events.event_base : EventBase;
 import deltotum.core.events.event_type : EventType;

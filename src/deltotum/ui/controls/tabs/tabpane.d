@@ -1,12 +1,12 @@
-module deltotum.toolkit.ui.controls.tabs.tabpane;
+module deltotum.ui.controls.tabs.tabpane;
 
-import deltotum.toolkit.ui.containers.container : Container;
+import deltotum.ui.containers.container : Container;
 import deltotum.toolkit.graphics.styles.graphic_style : GraphicStyle;
-import deltotum.toolkit.ui.containers.hbox : HBox;
-import deltotum.toolkit.ui.containers.vbox : VBox;
-import deltotum.toolkit.ui.containers.stack_box : StackBox;
-import deltotum.toolkit.ui.controls.tabs.tab : Tab;
-import deltotum.toolkit.ui.controls.button : Button;
+import deltotum.ui.containers.hbox : HBox;
+import deltotum.ui.containers.vbox : VBox;
+import deltotum.ui.containers.stack_box : StackBox;
+import deltotum.ui.controls.tabs.tab : Tab;
+import deltotum.ui.controls.button : Button;
 
 class TabButton : Button
 {

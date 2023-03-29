@@ -1,6 +1,6 @@
-module deltotum.toolkit.ui.controls.vscrollbar;
+module deltotum.ui.controls.vscrollbar;
 
-import deltotum.toolkit.ui.controls.control : Control;
+import deltotum.ui.controls.control : Control;
 import deltotum.toolkit.display.textures.texture : Texture;
 
 import deltotum.toolkit.graphics.shapes.shape : Shape;

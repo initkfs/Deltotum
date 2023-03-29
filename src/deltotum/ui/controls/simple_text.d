@@ -1,6 +1,6 @@
-module deltotum.toolkit.ui.controls.simple_text;
+module deltotum.ui.controls.simple_text;
 
-import deltotum.toolkit.ui.controls.control : Control;
+import deltotum.ui.controls.control : Control;
 import deltotum.toolkit.asset.fonts.font : Font;
 import deltotum.platform.sdl.sdl_texture : SdlTexture;
 import deltotum.toolkit.display.textures.texture : Texture;

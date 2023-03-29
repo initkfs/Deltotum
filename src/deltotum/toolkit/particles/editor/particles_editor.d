@@ -7,10 +7,10 @@ import deltotum.toolkit.particles.particle : Particle;
 import deltotum.toolkit.graphics.shapes.circle : Circle;
 import deltotum.toolkit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.toolkit.graphics.colors.rgba : RGBA;
-import deltotum.toolkit.ui.containers.vbox : VBox;
-import deltotum.toolkit.ui.controls.text : Text;
-import deltotum.toolkit.ui.controls.slider : Slider;
-import deltotum.toolkit.ui.controls.button: Button;
+import deltotum.ui.containers.vbox : VBox;
+import deltotum.ui.controls.text : Text;
+import deltotum.ui.controls.slider : Slider;
+import deltotum.ui.controls.button: Button;
 
 /**
  * Authors: initkfs

@@ -1,6 +1,6 @@
-module deltotum.toolkit.ui.containers.vbox;
+module deltotum.ui.containers.vbox;
 
-import deltotum.toolkit.ui.containers.container : Container;
+import deltotum.ui.containers.container : Container;
 import deltotum.toolkit.display.layouts.vertical_layout : VerticalLayout;
 
 /**

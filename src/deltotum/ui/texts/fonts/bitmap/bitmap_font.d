@@ -1,4 +1,4 @@
-module deltotum.toolkit.ui.texts.fonts.bitmap.bitmap_font;
+module deltotum.ui.texts.fonts.bitmap.bitmap_font;
 
 import deltotum.toolkit.display.textures.texture : Texture;
 import deltotum.toolkit.i18n.langs.glyph : Glyph;

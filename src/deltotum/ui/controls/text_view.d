@@ -1,12 +1,12 @@
-module deltotum.toolkit.ui.controls.text_view;
+module deltotum.ui.controls.text_view;
 
-import deltotum.toolkit.ui.controls.control : Control;
-import deltotum.toolkit.ui.texts.fonts.bitmap.bitmap_font : BitmapFont;
+import deltotum.ui.controls.control : Control;
+import deltotum.ui.texts.fonts.bitmap.bitmap_font : BitmapFont;
 import deltotum.maths.shapes.rect2d : Rect2d;
 import deltotum.maths.vector2d : Vector2d;
 import deltotum.toolkit.display.flip : Flip;
 import deltotum.toolkit.i18n.langs.glyph : Glyph;
-import deltotum.toolkit.ui.controls.text : Text;
+import deltotum.ui.controls.text : Text;
 
 import std.stdio;
 
