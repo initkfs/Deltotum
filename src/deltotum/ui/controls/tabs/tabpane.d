@@ -6,7 +6,7 @@ import deltotum.ui.containers.hbox : HBox;
 import deltotum.ui.containers.vbox : VBox;
 import deltotum.ui.containers.stack_box : StackBox;
 import deltotum.ui.controls.tabs.tab : Tab;
-import deltotum.ui.controls.button : Button;
+import deltotum.ui.controls.buttons.button : Button;
 
 class TabButton : Button
 {
@@ -60,7 +60,7 @@ class TabPane : Container
         build(container);
 
         header = new HBox(1);
-        header.backgroundStyle = headerStyle;
+        header.style = headerStyle;
         header.width = width;
         header.height = 40;
         container.addCreated(header);
@@ -75,10 +75,10 @@ class TabPane : Container
             header.addCreated(tabButton);
         }
 
-        header.invalidate;
+        //header.setInvalid;
 
         content = new StackBox();
-        content.backgroundStyle = contentStyle;
+        content.style = contentStyle;
         container.addCreated(content);
         content.width = width;
         content.height = height - header.height;

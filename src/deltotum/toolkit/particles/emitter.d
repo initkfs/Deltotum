@@ -90,7 +90,7 @@ class Emitter : DisplayObject
         add(particle);
     }
 
-    protected void tuneParticle(Particle particle) pure @safe
+    protected void tuneParticle(Particle particle)
     {
         particle.lifetime = lifetime;
         particle.x = x;
@@ -134,7 +134,7 @@ class Emitter : DisplayObject
         }
     }
 
-    protected void resetParticle(Particle p) const @nogc nothrow pure @safe
+    protected void resetParticle(Particle p) const
     {
         p.lifetime = 0;
         p.age = 0;

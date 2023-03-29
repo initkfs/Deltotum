@@ -1,4 +1,4 @@
-module deltotum.ui.controls.text_view;
+module deltotum.ui.controls.texts.text_view;
 
 import deltotum.ui.controls.control : Control;
 import deltotum.ui.texts.fonts.bitmap.bitmap_font : BitmapFont;
@@ -6,7 +6,7 @@ import deltotum.maths.shapes.rect2d : Rect2d;
 import deltotum.maths.vector2d : Vector2d;
 import deltotum.toolkit.display.flip : Flip;
 import deltotum.toolkit.i18n.langs.glyph : Glyph;
-import deltotum.ui.controls.text : Text;
+import deltotum.ui.controls.texts.text : Text;
 
 import std.stdio;
 
@@ -36,7 +36,7 @@ class TextView : Text
         backgroundFactory = (width, height) {
             import deltotum.toolkit.graphics.shapes.rectangle : Rectangle;
 
-            auto background = new Rectangle(width, height, backgroundStyle);
+            auto background = new Rectangle(width, height, style);
             background.opacity = graphics.theme.controlOpacity;
             background.isLayoutManaged = false;
             return background;

@@ -2,7 +2,8 @@ module deltotum.toolkit.graphics.themes.theme;
 
 import deltotum.toolkit.graphics.colors.rgba : RGBA;
 import deltotum.toolkit.asset.fonts.font: Font;
-import deltotum.toolkit.display.padding: Padding;
+import deltotum.maths.geometry.insets: Insets;
+import deltotum.toolkit.graphics.styles.graphic_style: GraphicStyle;
 
 /**
  * Authors: initkfs
@@ -45,11 +46,27 @@ class Theme
         return RGBA(189, 189, 189);
     }
 
-    double controlOpacity(){
-        return 0.5;
+    RGBA colorBackground(){
+        return RGBA.blue;
     }
 
-    Padding controlPadding(){
-        return Padding(5);
+    double controlOpacity(){
+        return 0.8;
+    }
+
+    double controlHoverOpacity(){
+        return 0.4;
+    }
+
+    RGBA controlBackground(){
+        return RGBA.red;
+    }
+
+    Insets controlPadding(){
+        return Insets(5);
+    }
+
+    GraphicStyle controlStyle(){
+        return GraphicStyle.simple;
     }
 }

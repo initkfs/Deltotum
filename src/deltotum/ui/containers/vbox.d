@@ -9,9 +9,15 @@ import deltotum.toolkit.display.layouts.vertical_layout : VerticalLayout;
 class VBox : Container
 {
     double spacing = 0;
-    this(double spacing = 0)
+
+    this(double spacing = 0) pure
     {
-        super();
+        import std.exception : enforce;
+        import std.conv : text;
+
+        enforce(spacing >= 0, text("Vertical spacing must be positive value: ", spacing));
+        this.spacing = spacing;
+
         this.layout = new VerticalLayout(spacing);
     }
 }

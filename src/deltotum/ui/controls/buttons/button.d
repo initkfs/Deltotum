@@ -1,4 +1,4 @@
-module deltotum.ui.controls.button;
+module deltotum.ui.controls.buttons.button;
 
 import deltotum.ui.controls.control : Control;
 import deltotum.toolkit.graphics.shapes.shape : Shape;
@@ -7,9 +7,10 @@ import deltotum.toolkit.graphics.shapes.rectangle : Rectangle;
 import deltotum.ui.events.action_event : ActionEvent;
 import deltotum.toolkit.display.animation.object.value_transition : ValueTransition;
 import deltotum.toolkit.display.animation.object.property.opacity_transition : OpacityTransition;
-import deltotum.ui.controls.text;
+import deltotum.ui.controls.texts.text;
 import deltotum.toolkit.display.layouts.center_layout : CenterLayout;
 import deltotum.toolkit.display.textures.texture : Texture;
+import deltotum.toolkit.graphics.colors.rgba : RGBA;
 
 /**
  * Authors: initkfs
@@ -18,6 +19,7 @@ class Button : Control
 {
 
     void delegate(ActionEvent) onAction;
+
     string _buttonText;
 
     Texture delegate() hoverFactory;
@@ -31,8 +33,6 @@ class Button : Control
         Texture clickEffect;
         ValueTransition clickEffectAnimation;
         Text text;
-        GraphicStyle hoverStyle;
-        GraphicStyle clickEffectStyle;
     }
 
     this(double width = 80, double height = 40, string text = "Button")
@@ -41,25 +41,37 @@ class Button : Control
         this.width = width;
         this.height = height;
         this._buttonText = text;
-        this.layout = new CenterLayout;
 
+        this.layout = new CenterLayout;
+    }
+
+    override void initialize()
+    {
+        super.initialize;
         hoverFactory = () {
-            double padding = backgroundStyle.lineWidth;
+
+            double padding = style.lineWidth;
+            GraphicStyle hoverStyle = GraphicStyle(0, RGBA.transparent, true, graphics
+                    .theme.colorHover);
             auto hover = new Rectangle(width - padding * 2, height - padding * 2, hoverStyle);
             hover.x = padding;
             hover.y = padding;
             hover.isVisible = false;
-            hover.opacity = graphics.theme.controlOpacity;
+            hover.opacity = graphics.theme.controlHoverOpacity;
             hover.isLayoutManaged = false;
             return hover;
         };
 
         clickEffectFactory = () {
-            double padding = backgroundStyle.lineWidth;
+            double padding = style.lineWidth;
 
-            auto clickEffect = new Rectangle(width - padding * 2, height - padding * 2, clickEffectStyle);
+            GraphicStyle clickStyle = GraphicStyle(0, RGBA.transparent, true, graphics
+                    .theme.colorAccent);
+
+            auto clickEffect = new Rectangle(width - padding * 2, height - padding * 2, clickStyle);
             clickEffect.x = padding;
             clickEffect.y = padding;
+            clickEffect.isVisible = false;
             clickEffect.opacity = 0;
             clickEffect.isLayoutManaged = false;
 
@@ -75,10 +87,16 @@ class Button : Control
         };
 
         clickEffectAnimationFactory = () {
-            assert(clickEffect !is null);
             auto clickEffectAnimation = new OpacityTransition(clickEffect, 50);
             clickEffectAnimation.isCycle = false;
             clickEffectAnimation.isInverse = true;
+            clickEffectAnimation.onEnd = ()
+            {
+                if (clickEffect !is null)
+                {
+                    clickEffect.isVisible = false;
+                }
+            };
             return clickEffectAnimation;
         };
     }
@@ -86,9 +104,6 @@ class Button : Control
     override void create()
     {
         super.create;
-
-        hoverStyle = GraphicStyle(0.0, graphics.theme.colorAccent, true, graphics.theme.colorAccent);
-        clickEffectStyle = GraphicStyle(0.0, graphics.theme.colorAccent, true, graphics.theme.colorAccent);
 
         if (hoverFactory !is null)
         {
@@ -141,6 +156,7 @@ class Button : Control
 
             if (clickEffectAnimation !is null && !clickEffectAnimation.isRun)
             {
+                clickEffect.isVisible = true;
                 clickEffectAnimation.run;
             }
 

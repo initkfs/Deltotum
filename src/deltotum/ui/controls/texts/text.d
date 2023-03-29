@@ -1,4 +1,4 @@
-module deltotum.ui.controls.text;
+module deltotum.ui.controls.texts.text;
 
 import deltotum.ui.controls.control : Control;
 import deltotum.ui.texts.fonts.bitmap.bitmap_font : BitmapFont;

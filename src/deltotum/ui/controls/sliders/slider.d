@@ -1,4 +1,4 @@
-module deltotum.ui.controls.slider;
+module deltotum.ui.controls.sliders.slider;
 
 import deltotum.ui.controls.control : Control;
 import deltotum.toolkit.display.textures.texture : Texture;

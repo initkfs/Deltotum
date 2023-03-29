@@ -91,7 +91,15 @@ class Scene : GraphicsComponent
     void addCreated(DisplayObject obj)
     {
         build(obj);
+
+        obj.initialize;
+        assert(obj.isInitialized);
+
         obj.create;
+        
+        obj.run;
+        assert(obj.isRunning);
+
         add(obj);
     }
 

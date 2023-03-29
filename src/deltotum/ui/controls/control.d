@@ -2,107 +2,70 @@ module deltotum.ui.controls.control;
 
 import deltotum.toolkit.display.display_object : DisplayObject;
 import deltotum.toolkit.display.layouts.layout : Layout;
+import deltotum.maths.geometry.insets : Insets;
 import deltotum.toolkit.display.textures.texture : Texture;
 import deltotum.toolkit.graphics.styles.graphic_style : GraphicStyle;
-import deltotum.toolkit.display.padding: Padding;
+import deltotum.toolkit.display.alignment : Alignment;
 
 /**
  * Authors: initkfs
  */
-class Control : DisplayObject
+abstract class Control : DisplayObject
 {
-    double minWidth = 0;
-    double mnHeight = 0;
-    double maxWidth = 0;
-    double maxHeight = 0;
-    double prefWidth = 0;
-    double prefHeight = 0;
-    Padding padding;
-
+    Insets backgroundInsets;
     Texture delegate(double, double) backgroundFactory;
 
-    Layout layout;
+    GraphicStyle style;
 
     protected
     {
         Texture background;
-        GraphicStyle backgroundStyle;
-        bool valid = true;
     }
 
-    this()
+    override void initialize()
     {
+        super.initialize;
+
         backgroundFactory = (width, height) {
+
             import deltotum.toolkit.graphics.shapes.rectangle : Rectangle;
+            import deltotum.toolkit.graphics.styles.graphic_style : GraphicStyle;
+
+            GraphicStyle backgroundStyle = GraphicStyle(0, graphics.theme.colorBackground, true, graphics
+                    .theme.colorBackground);
 
             auto background = new Rectangle(width, height, backgroundStyle);
             background.opacity = graphics.theme.controlOpacity;
-            background.isLayoutManaged = false;
             return background;
         };
     }
 
-    bool createBackground(double w, double h)
+    bool createBackground(double width, double height)
     {
         if (backgroundFactory is null)
         {
             return false;
         }
 
-        background = backgroundFactory(w, h);
-        addCreated(background);
+        background = backgroundFactory(width, height);
         return true;
-    }
-
-    void resizeContent(double newWidth, double newHeight)
-    {
-        if (background !is null)
-        {
-            background.destroy;
-            bool isRemoved = remove(background);
-            if (!isRemoved)
-            {
-                //TODO log errors
-            }
-        }
-
-        createBackground(newWidth, newHeight);
     }
 
     override void create()
     {
         super.create;
 
-        backgroundStyle = GraphicStyle(1, graphics.theme.colorAccent, true, graphics
-                .theme
-                .colorSecondary);
-
         padding = graphics.theme.controlPadding;
+        style = graphics.theme.controlStyle;
 
-        onInvalidateWidth = (newWidth) { resizeContent(newWidth, height); };
-        onInvalidateHeight = (newHeight) { resizeContent(width, newHeight); };
-    }
-
-    protected void applyLayout()
-    {
-        if (layout !is null)
-        {
-            layout.layout(this);
-        }
-    }
-
-    override void invalidate()
-    {
-
-    }
-
-    override void destroy()
-    {
-        super.destroy;
+        createBackground(width - backgroundInsets.width, height - backgroundInsets.height);
         if (background !is null)
         {
-            background.destroy;
+            background.x = backgroundInsets.left;
+            background.y = backgroundInsets.top;
+            background.isLayoutManaged = false;
+            addCreated(background);
         }
-        backgroundFactory = null;
+
     }
 }

@@ -27,6 +27,8 @@ private
 class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : DisplayObject
 {
     void delegate(T) onValue;
+    void delegate() onEnd;
+
     bool isInverse;
     bool isCycle = true;
     Interpolator interpolator;
@@ -108,6 +110,10 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : DisplayObject
                 if (!isInverse || onShort)
                 {
                     stop;
+                    if (onEnd !is null)
+                    {
+                        onEnd();
+                    }
                     return;
                 }
                 else
@@ -150,7 +156,8 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : DisplayObject
         //TODO check is finite
         double interpProgress = interpolator.interpolate(deltaT);
 
-        import deltotum.maths.numericals.interp: lerp;
+        import deltotum.maths.numericals.interp : lerp;
+
         lastValue = lerp(start, end, interpProgress, false);
 
         if (onValue !is null)

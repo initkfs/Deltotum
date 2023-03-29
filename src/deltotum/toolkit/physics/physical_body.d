@@ -2,12 +2,12 @@ module deltotum.toolkit.physics.physical_body;
 
 import deltotum.maths.vector2d : Vector2d;
 import deltotum.maths.shapes.rect2d: Rect2d;
-import deltotum.toolkit.events.event_engine_target: EventEngineTarget;
+import deltotum.toolkit.events.event_toolkit_target: EventToolkitTarget;
 
 /**
  * Authors: initkfs
  */
-class PhysicalBody : EventEngineTarget
+class PhysicalBody : EventToolkitTarget
 {
     double mass = 0;
     double gravitationalAcceleration = 9.81;
@@ -15,7 +15,7 @@ class PhysicalBody : EventEngineTarget
     double restitution = 0;
     double speed = 0;
 
-    this(){
+    this() pure {
         hitbox = new Rect2d;
     }
 

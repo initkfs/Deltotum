@@ -7,9 +7,9 @@ import deltotum.ui.controls.control : Control;
  */
 class Container : Control
 {
-    override void create()
+    override void initialize()
     {
-        backgroundFactory = null;
-        super.create;
+        super.initialize;
+        //backgroundFactory = null;
     }
 }

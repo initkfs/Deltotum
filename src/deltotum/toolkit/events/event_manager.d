@@ -11,12 +11,18 @@ import deltotum.toolkit.window.event.window_event : WindowEvent;
 import deltotum.core.events.event_type : EventType;
 
 import deltotum.toolkit.display.display_object : DisplayObject;
+import std.container : DList;
 
 /**
  * Authors: initkfs
  */
 class EventManager
 {
+    private
+    {
+        DList!DisplayObject eventChain = DList!DisplayObject();
+    }
+
     version (SdlBackend)
     {
         import deltotum.platform.sdl.events.sdl_event_processor : SdlEventProcessor;
@@ -59,22 +65,18 @@ class EventManager
 
     void dispatchEvent(E)(E e)
     {
-        import std.container : DList;
-
-        DList!DisplayObject chain = DList!DisplayObject();
-
         foreach (DisplayObject target; sceneManager.currentScene.getActiveObjects)
         {
-            if (!chain.empty)
+            if (!eventChain.empty)
             {
-                chain.clear;
+                eventChain.clear;
             }
 
-            target.dispatchEvent(e, chain);
+            target.dispatchEvent(e, eventChain);
 
-            if (!chain.empty)
+            if (!eventChain.empty)
             {
-                foreach (DisplayObject eventTarget; chain)
+                foreach (DisplayObject eventTarget; eventChain)
                 {
                     const isConsumed = eventTarget.runEventFilters(e);
                     if (isConsumed)
@@ -83,7 +85,7 @@ class EventManager
                     }
                 }
 
-                foreach_reverse (DisplayObject eventTarget; chain)
+                foreach_reverse (DisplayObject eventTarget; eventChain)
                 {
                     const isConsumed = eventTarget.runEventHandlers(e);
                     if (isConsumed)

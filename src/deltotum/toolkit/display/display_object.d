@@ -3,6 +3,8 @@ module deltotum.toolkit.display.display_object;
 import deltotum.maths.vector2d : Vector2d;
 import deltotum.maths.shapes.rect2d : Rect2d;
 import deltotum.toolkit.display.alignment : Alignment;
+import deltotum.maths.geometry.insets : Insets;
+import deltotum.toolkit.display.layouts.layout : Layout;
 import deltotum.platform.sdl.sdl_texture : SdlTexture;
 import deltotum.toolkit.physics.physical_body : PhysicalBody;
 import deltotum.toolkit.input.mouse.event.mouse_event : MouseEvent;
@@ -36,7 +38,11 @@ abstract class DisplayObject : PhysicalBody
     bool isDrawAfterParent = true;
     bool isManaged = true;
     bool isUpdatable = true;
+    bool isResizable = true;
 
+    Insets padding;
+
+    Layout layout;
     bool isLayoutManaged = true;
     Alignment alignment = Alignment.none;
 
@@ -54,8 +60,19 @@ abstract class DisplayObject : PhysicalBody
 
     bool delegate(double, double) onDrag;
     void delegate() invalidateListener;
-    void delegate(double) onInvalidateWidth;
-    void delegate(double) onInvalidateHeight;
+
+    //old, new
+    void delegate(double, double) onChangeWidthFromTo;
+    void delegate(double, double) onChangeHeightFromTo;
+
+    double minWidth = 0;
+    double minHeight = 0;
+
+    double maxWidth = double.max;
+    double maxHeight = double.max;
+
+    void delegate(double, double) onChangeXFromTo;
+    void delegate(double, double) onChangeYFromTo;
 
     private
     {
@@ -171,84 +188,80 @@ abstract class DisplayObject : PhysicalBody
         this.isDrag = false;
     }
 
-    void dispatchEvent(T, E)(E e, ref DList!T chain)
+    void dispatchEvent(Target : DisplayObject, Event)(Event e, ref DList!Target chain)
     {
         static if (__traits(compiles, e.target))
         {
-            if (e.target !is null)
+            if (e.target !is null && e.target is this)
             {
-                if (e.target is this)
+                chain.insert(this);
+                return;
+            }
+        }
+
+        static if (is(Event : MouseEvent))
+        {
+            if (bounds.contains(e.x, e.y))
+            {
+                if (e.event == MouseEvent.Event.mouseMove)
+                {
+                    if (!isMouseOver)
+                    {
+                        isMouseOver = true;
+                        auto enteredEvent = MouseEvent(EventType.mouse, MouseEvent.Event.mouseEntered, e
+                                .ownerId, e
+                                .x, e.y, e
+                                .button, e.movementX, e.movementY, false);
+                        fireEvent(enteredEvent);
+                    }
+
+                    chain.insert(this);
+                }
+                else if (e.isChained)
                 {
                     chain.insert(this);
                 }
             }
             else
             {
-                static if (is(E : MouseEvent))
+                if (e.event == MouseEvent.Event.mouseMove)
                 {
-                    if (bounds.contains(e.x, e.y))
+                    if (isMouseOver)
                     {
-                        if (e.event == MouseEvent.Event.mouseMove)
-                        {
-                            if (!isMouseOver)
-                            {
-                                isMouseOver = true;
-                                auto enteredEvent = MouseEvent(EventType.mouse, MouseEvent.Event.mouseEntered, e
-                                        .ownerId, e
-                                        .x, e.y, e
-                                        .button, e.movementX, e.movementY, false);
-                                fireEvent(enteredEvent);
-                            }
-
-                            chain.insert(this);
-                        }
-                        else if (e.isChained)
-                        {
-                            chain.insert(this);
-                        }
-                    }
-                    else
-                    {
-                        if (e.event == MouseEvent.Event.mouseMove)
-                        {
-                            if (isMouseOver)
-                            {
-                                isMouseOver = false;
-                                auto exitedEvent = MouseEvent(EventType.mouse, MouseEvent.Event.mouseExited, e
-                                        .ownerId, e
-                                        .x, e.y, e
-                                        .button, e.movementX, e.movementY, false);
-                                fireEvent(exitedEvent);
-                            }
-
-                            chain.insert(this);
-                        }
-                        else if (isDrag && e.isChained)
-                        {
-                            chain.insert(this);
-                        }
+                        isMouseOver = false;
+                        auto exitedEvent = MouseEvent(EventType.mouse, MouseEvent.Event.mouseExited, e
+                                .ownerId, e
+                                .x, e.y, e
+                                .button, e.movementX, e.movementY, false);
+                        fireEvent(exitedEvent);
                     }
 
-                    if (e.event == MouseEvent.Event.mouseMove && (isDrag || bounds.contains(e.x, e
-                            .y)))
-                    {
-                        chain.insert(this);
-                    }
+                    chain.insert(this);
                 }
-
-                static if (is(E : KeyEvent))
-                {
-                    if (isFocus)
-                    {
-                        chain.insert(this);
-                    }
-                }
-
-                static if (is(E : JoystickEvent))
+                else if (isDrag && e.isChained)
                 {
                     chain.insert(this);
                 }
             }
+
+            if (e.event == MouseEvent.Event.mouseMove && (isDrag || bounds.contains(e.x, e
+                    .y)))
+            {
+                chain.insert(this);
+            }
+        }
+
+        static if (is(Event : KeyEvent))
+        {
+            if (isFocus)
+            {
+                chain.insert(this);
+            }
+        }
+
+        static if (is(Event : JoystickEvent))
+        {
+            chain.insert(this);
         }
 
         if (children.length > 0)
@@ -265,14 +278,6 @@ abstract class DisplayObject : PhysicalBody
 
     }
 
-    void invalidate()
-    {
-        if (invalidateListener !is null)
-        {
-            invalidateListener();
-        }
-    }
-
     bool draw()
     {
         //TODO layer
@@ -280,12 +285,6 @@ abstract class DisplayObject : PhysicalBody
 
         if (isVisible)
         {
-            if (!isValid)
-            {
-                invalidate;
-                setValid(true);
-            }
-
             foreach (DisplayObject obj; children)
             {
                 if (!obj.isDrawAfterParent && obj.isVisible)
@@ -320,6 +319,21 @@ abstract class DisplayObject : PhysicalBody
 
     void update(double delta)
     {
+        if (!isValid)
+        {
+            if (invalidateListener !is null)
+            {
+                invalidateListener();
+            }
+
+            if (layout !is null)
+            {
+                layout.layout(this);
+            }
+
+            setValid(true);
+        }
+
         double dx = 0;
         double dy = 0;
         if (isUpdatable)
@@ -403,7 +417,14 @@ abstract class DisplayObject : PhysicalBody
             throw new Exception("Cannot add null object");
         }
         build(obj);
+        obj.initialize;
+        assert(obj.isInitialized);
         obj.create;
+
+        //FIXME conflict with animation .run()
+        //obj.run;
+        //assert(obj.isRunning);
+
         add(obj);
     }
 
@@ -473,10 +494,10 @@ abstract class DisplayObject : PhysicalBody
         return Vector2d(x, y);
     }
 
-    void xy(double x, double y) @nogc @safe pure nothrow
+    void xy(double newX, double newY)
     {
-        this.x = x;
-        this.y = y;
+        x(newX);
+        y(newY);
     }
 
     double x() @nogc @safe pure nothrow
@@ -484,17 +505,25 @@ abstract class DisplayObject : PhysicalBody
         return _x;
     }
 
-    void x(double newX) @nogc @safe pure nothrow
+    void x(double newX)
     {
         foreach (DisplayObject child; children)
         {
-            if (child.isManaged)
+            if (child.isManaged && child.layout is null)
             {
                 double dx = newX - _x;
                 child.x = child.x + dx;
             }
         }
+
+        if (isCreated && onChangeXFromTo !is null)
+        {
+            onChangeXFromTo(_x, newX);
+        }
+
         _x = newX;
+
+        setInvalid;
     }
 
     double y() @nogc @safe pure nothrow
@@ -502,17 +531,25 @@ abstract class DisplayObject : PhysicalBody
         return _y;
     }
 
-    void y(double newY) @nogc @safe pure nothrow
+    void y(double newY)
     {
         foreach (DisplayObject child; children)
         {
-            if (child.isManaged)
+            if (child.isManaged && child.layout is null)
             {
                 double dy = newY - _y;
                 child.y = child.y + dy;
             }
         }
+
+        if (isCreated && onChangeYFromTo !is null)
+        {
+            onChangeYFromTo(_y, newY);
+        }
+
         _y = newY;
+
+        setInvalid;
     }
 
     double width() @nogc @safe pure nothrow
@@ -523,17 +560,32 @@ abstract class DisplayObject : PhysicalBody
 
     void width(double value)
     {
-        if (_width == value)
+        //quick but imprecise comparison 
+        if (!isResizable || _width == value || value < minWidth || value > maxWidth)
         {
             return;
         }
 
-        if (isCreated && onInvalidateWidth !is null)
-        {
-            onInvalidateWidth(value);
-            setInvalid;
-        }
+        immutable double oldWidth = _width;
         _width = value;
+
+        setInvalid;
+
+        if (isCreated && onChangeWidthFromTo !is null)
+        {
+            onChangeWidthFromTo(oldWidth, _width);
+        }
+
+        if (children.length > 0)
+        {
+            immutable double dw = _width - oldWidth;
+            foreach (child; children)
+            {
+                const newWidth = child.width + dw;
+                child.width(newWidth);
+            }
+        }
+
     }
 
     double height() @nogc @safe pure nothrow
@@ -543,18 +595,31 @@ abstract class DisplayObject : PhysicalBody
 
     void height(double value)
     {
-        if (_height == value)
+        ////quick but imprecise comparison 
+        if (!isResizable || _height == value || value < minHeight || value > maxHeight)
         {
             return;
         }
 
-        if (isCreated && onInvalidateHeight !is null)
+        immutable double oldHeight = _height;
+        _height = value;
+
+        setInvalid;
+
+        if (isCreated && onChangeHeightFromTo !is null)
         {
-            onInvalidateHeight(value);
-            setInvalid;
+            onChangeHeightFromTo(oldHeight, _height);
         }
 
-        _height = value;
+        if (children.length > 0)
+        {
+            const dh = _height - oldHeight;
+            foreach (child; children)
+            {
+                const newHeight = child.height + dh;
+                child.height(newHeight);
+            }
+        }
     }
 
     bool isValid() @nogc @safe pure nothrow

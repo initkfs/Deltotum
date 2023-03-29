@@ -8,9 +8,9 @@ import deltotum.toolkit.graphics.shapes.circle : Circle;
 import deltotum.toolkit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.toolkit.graphics.colors.rgba : RGBA;
 import deltotum.ui.containers.vbox : VBox;
-import deltotum.ui.controls.text : Text;
-import deltotum.ui.controls.slider : Slider;
-import deltotum.ui.controls.button: Button;
+import deltotum.ui.controls.texts.text : Text;
+import deltotum.ui.controls.sliders.slider : Slider;
+import deltotum.ui.controls.buttons.button: Button;
 
 /**
  * Authors: initkfs

@@ -1,7 +1,7 @@
 module deltotum.ui.containers.hbox;
 
-import deltotum.ui.containers.container: Container;
-import deltotum.toolkit.display.layouts.horizontal_layout: HorizontalLayout;
+import deltotum.ui.containers.container : Container;
+import deltotum.toolkit.display.layouts.horizontal_layout : HorizontalLayout;
 
 /**
  * Authors: initkfs
@@ -10,8 +10,14 @@ class HBox : Container
 {
     double spacing = 0;
 
-    this(double spacing = 0)
+    this(double spacing = 10) pure
     {
-       this.layout = new HorizontalLayout(spacing);
+        import std.exception : enforce;
+        import std.conv : text;
+
+        enforce(spacing >= 0, text("Horizontal spacing must be positive value or 0: ", spacing));
+        this.spacing = spacing;
+        
+        this.layout = new HorizontalLayout(spacing);
     }
 }

@@ -10,7 +10,6 @@ class StackBox : Container
 {
     this()
     {
-        super();
         this.layout = new CenterLayout;
     }
 }

@@ -1,4 +1,4 @@
-module deltotum.ui.controls.simple_text;
+module deltotum.ui.controls.texts.simple_text;
 
 import deltotum.ui.controls.control : Control;
 import deltotum.toolkit.asset.fonts.font : Font;

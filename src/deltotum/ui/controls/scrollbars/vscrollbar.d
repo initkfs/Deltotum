@@ -1,4 +1,4 @@
-module deltotum.ui.controls.vscrollbar;
+module deltotum.ui.controls.scrollbars.vscrollbar;
 
 import deltotum.ui.controls.control : Control;
 import deltotum.toolkit.display.textures.texture : Texture;
@@ -39,11 +39,11 @@ class VScrollbar : Control
 
     override void create()
     {
-        backgroundStyle = GraphicStyle(0.0, graphics.theme.colorAccent, true, graphics.theme.colorSecondary);
+        style = GraphicStyle(0.0, graphics.theme.colorAccent, true, graphics.theme.colorSecondary);
         backgroundFactory = (width, height) {
             import deltotum.toolkit.graphics.shapes.rectangle : Rectangle;
 
-            auto background = new Rectangle(width, height, backgroundStyle);
+            auto background = new Rectangle(width, height, style);
             background.opacity = graphics.theme.controlOpacity;
             background.isLayoutManaged = false;
             return background;

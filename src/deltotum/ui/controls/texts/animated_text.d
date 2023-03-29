@@ -1,6 +1,6 @@
-module deltotum.ui.controls.animated_text;
+module deltotum.ui.controls.texts.animated_text;
 
-import deltotum.ui.controls.text : Text;
+import deltotum.ui.controls.texts.text : Text;
 import deltotum.toolkit.display.animation.transition : Transition;
 import deltotum.toolkit.display.animation.interp.interpolator : Interpolator;
 import deltotum.maths.shapes.rect2d : Rect2d;

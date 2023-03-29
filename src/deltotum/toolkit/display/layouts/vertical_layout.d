@@ -11,7 +11,7 @@ class VerticalLayout : ManagedLayout
 {
     double spacing = 0;
 
-    this(double spacing = 0)
+    this(double spacing = 0) pure
     {
         this.spacing = spacing;
     }

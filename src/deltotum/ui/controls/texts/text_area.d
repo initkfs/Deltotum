@@ -1,7 +1,7 @@
-module deltotum.ui.controls.text_area;
+module deltotum.ui.controls.texts.text_area;
 
-import deltotum.ui.controls.text_view : TextView;
-import deltotum.ui.controls.vscrollbar: VScrollbar;
+import deltotum.ui.controls.texts.text_view : TextView;
+import deltotum.ui.controls.scrollbars.vscrollbar: VScrollbar;
 import deltotum.ui.containers.hbox: HBox;
 
 import std.stdio;
