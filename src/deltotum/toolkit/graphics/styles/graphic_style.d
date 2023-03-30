@@ -7,11 +7,11 @@ import deltotum.toolkit.graphics.colors.rgba : RGBA;
  */
 struct GraphicStyle
 {
-    double lineWidth;
-    RGBA lineColor;
+    double lineWidth = 0;
+    RGBA lineColor = RGBA.white;
 
     bool isFill;
-    RGBA fillColor;
+    RGBA fillColor = RGBA.transparent;
 
     static GraphicStyle simple()
     {

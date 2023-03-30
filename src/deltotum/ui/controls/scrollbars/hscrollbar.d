@@ -1,4 +1,4 @@
-module deltotum.ui.controls.scrollbars.vscrollbar;
+module deltotum.ui.controls.scrollbars.hscrollbar;
 
 import deltotum.ui.controls.control : Control;
 import deltotum.toolkit.display.textures.texture : Texture;
@@ -13,7 +13,7 @@ import deltotum.toolkit.display.alignment : Alignment;
  * Authors: initkfs
  * TODO remove duplication with slider after testing 
  */
-class VScrollbar : Control
+class HScrollbar : Control
 {
     double minValue;
     double maxValue;
@@ -30,7 +30,7 @@ class VScrollbar : Control
         Texture track;
     }
 
-    this(double minValue = 0, double maxValue = 1.0, double width = 20, double height = 120)
+    this(double minValue = 0, double maxValue = 1.0, double width = 120, double height = 20)
     {
         this.width = width;
         this.height = height;
@@ -55,7 +55,7 @@ class VScrollbar : Control
 
         thumbFactory = () {
             auto thumbStyle = GraphicStyle(0.0, graphics.theme.colorAccent, true, graphics.theme.colorAccent);
-            auto thumb = new Rectangle(width, 10, thumbStyle);
+            auto thumb = new Rectangle(10, height, thumbStyle);
             //thumb.alignment = Alignment.x;
             return thumb;
         };
@@ -73,22 +73,22 @@ class VScrollbar : Control
         thumb.isDraggable = true;
         thumb.onDrag = (x, y) {
             auto bounds = this.bounds;
-            const minY = bounds.y;
-            const maxY = bounds.bottom - thumb.height;
-            if (y <= minY || y >= maxY)
+            const minX = bounds.x;
+            const maxX = bounds.right - thumb.width;
+            if (x <= minX || x >= maxX)
             {
                 return false;
             }
-            thumb.y = y;
+            thumb.x = x;
 
-            const range = bounds.height - thumb.height;
-            auto dy = thumb.y - bounds.y;
-            if (dy < 0)
+            const range = bounds.width - thumb.width;
+            auto dx = thumb.x - bounds.x;
+            if (dx < 0)
             {
-                dy = -dy;
+                dx = -dx;
             }
             const numRange = maxValue - minValue;
-            value = minValue + (numRange / range) * dy;
+            value = minValue + (numRange / range) * dx;
 
             if (onValue !is null)
             {
