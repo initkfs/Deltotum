@@ -58,6 +58,18 @@ class Texture : DisplayObject
         texture = newTexture;
     }
 
+    void setBlendMode(){
+        if(const err = texture.setBlendModeBlend){
+            throw new Exception(err.toString);
+        }
+    }
+
+    void setBlendNone(){
+        if(const err = texture.setBlendModeNone){
+            throw new Exception(err.toString);
+        }
+    }
+
     override void drawContent()
     {
         if (texture is null)

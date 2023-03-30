@@ -72,6 +72,18 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         return PlatformResult.success;
     }
 
+    PlatformResult getColor(ubyte* r, ubyte* g, ubyte* b)
+    {
+        const int zeroOrErrorCode = SDL_GetTextureColorMod(ptr, r, g, b);
+        return PlatformResult(zeroOrErrorCode);
+    }
+
+    PlatformResult setColor(ubyte r, ubyte g, ubyte b)
+    {
+        const int zeroOrErrorCode = SDL_SetTextureColorMod(ptr, r, g, b);
+        return PlatformResult(zeroOrErrorCode);
+    }
+
     PlatformResult createRGBA(SdlRenderer renderer, int width, int height)
     {
         return create(renderer, SDL_PIXELFORMAT_RGBA32,
@@ -82,6 +94,12 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
     PlatformResult setBlendModeBlend() @nogc nothrow
     {
         const int zeroOrErrorCode = SDL_SetTextureBlendMode(ptr, SDL_BLENDMODE_BLEND);
+        return PlatformResult(zeroOrErrorCode);
+    }
+
+    PlatformResult setBlendModeNone() @nogc nothrow
+    {
+        const int zeroOrErrorCode = SDL_SetTextureBlendMode(ptr, SDL_BLENDMODE_NONE);
         return PlatformResult(zeroOrErrorCode);
     }
 

@@ -6,6 +6,7 @@ import deltotum.maths.shapes.rect2d : Rect2d;
 import deltotum.maths.vector2d : Vector2d;
 import deltotum.toolkit.display.flip : Flip;
 import deltotum.ui.fonts.glyphs.glyph : Glyph;
+import deltotum.toolkit.graphics.colors.rgba : RGBA;
 
 import std.stdio;
 
@@ -28,6 +29,8 @@ class Text : Control
     //TODO from font?
     int rowHeight = 16;
 
+    RGBA color = RGBA.white;
+
     protected
     {
         string oldText;
@@ -48,7 +51,8 @@ class Text : Control
         backgroundFactory = null;
     }
 
-    override void create(){
+    override void create()
+    {
         super.create;
         drawContent;
     }
@@ -100,7 +104,8 @@ class Text : Control
         TextRow[] newRows;
 
         auto glyphs = textToGlyphs(text);
-        if(glyphs.length == 0){
+        if (glyphs.length == 0)
+        {
             return newRows;
         }
 
@@ -137,7 +142,7 @@ class Text : Control
         }
 
         height = newRows.length * rowHeight + padding.height;
-        
+
         return newRows;
     }
 

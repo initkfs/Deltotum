@@ -168,7 +168,7 @@ class SdlApplication : GraphicApplication
         gservices.assets = assetManager;
 
         //TODO from config
-        Font defaultFont = assetManager.font("fonts/OpenSans-Regular.ttf", 14);
+        Font defaultFont = assetManager.font("fonts/NotoSans-Bold.ttf", 14);
         assetManager.defaultFont = defaultFont;
 
         import deltotum.toolkit.graphics.themes.theme : Theme;
@@ -195,7 +195,7 @@ class SdlApplication : GraphicApplication
             new SpecialCharactersAlphabet,
             new AlphabetEn,
             new AlphabetRu
-        ], defaultFont);
+        ], defaultFont, theme.colorText);
 
         isRunning = true;
         return ApplicationExit(false);

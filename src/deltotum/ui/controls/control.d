@@ -31,11 +31,11 @@ abstract class Control : DisplayObject
             import deltotum.toolkit.graphics.shapes.rectangle : Rectangle;
             import deltotum.toolkit.graphics.styles.graphic_style : GraphicStyle;
 
-            GraphicStyle backgroundStyle = GraphicStyle(0, graphics.theme.colorBackground, true, graphics
-                    .theme.colorBackground);
+            GraphicStyle backgroundStyle = GraphicStyle(1, graphics.theme.colorAccent, false, graphics
+                    .theme.colorControlBackground);
 
             auto background = new Rectangle(width, height, backgroundStyle);
-            background.opacity = graphics.theme.controlOpacity;
+            background.opacity = graphics.theme.opacityControl;
             return background;
         };
     }

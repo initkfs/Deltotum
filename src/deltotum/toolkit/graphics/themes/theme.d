@@ -24,30 +24,30 @@ class Theme
 
     RGBA colorPrimary()
     {
-        //gray 700
-        return RGBA(97, 97, 97);
+        //rgb(12, 51, 84)
+        return RGBA(12, 51, 84);
     }
 
     RGBA colorSecondary()
     {
-        //gray 500
-        return RGBA(158, 158, 158);
+        //rgb(5, 91, 148)
+        return RGBA(5, 91, 148);
     }
 
     RGBA colorAccent()
     {
-        //gray 200
-        return RGBA(238, 238, 238);
+        //#06E1F4
+        //rgb(6, 225, 244)
+        return RGBA(6, 225, 244);
+    }
+
+    RGBA colorText(){
+        return colorAccent;
     }
 
     RGBA colorHover()
     {
-        //gray 400
-        return RGBA(189, 189, 189);
-    }
-
-    RGBA colorBackground(){
-        return RGBA.blue;
+        return RGBA(0, 49, 53);
     }
 
     double controlOpacity(){
@@ -58,8 +58,20 @@ class Theme
         return 0.4;
     }
 
-    RGBA controlBackground(){
-        return RGBA.red;
+    RGBA colorContainerBackground(){
+        return colorPrimary;
+    }
+
+    RGBA colorControlBackground(){
+        return colorSecondary;
+    }
+
+    double opacityContainer(){
+        return 0.9;
+    }
+
+    double opacityControl(){
+        return 0.75;
     }
 
     Insets controlPadding(){

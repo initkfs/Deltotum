@@ -19,7 +19,7 @@ class HorizontalLayout : ManagedLayout
     override void layout(DisplayObject root)
     {
         auto bounds = root.bounds;
-        double nextX = bounds.x;
+        double nextX = bounds.x + root.padding.left;
         foreach (child; root.children)
         {
             if (!child.isLayoutManaged)

@@ -23,7 +23,7 @@ import std.stdio;
  */
 class BitmapFontGenerator : FontGenerator
 {
-    BitmapFont generate(Alphabet[] alphabets, Font font)
+    BitmapFont generate(Alphabet[] alphabets, Font font, RGBA foregroundColor = RGBA.white)
     {
         import deltotum.platform.sdl.sdl_surface : SdlSurface;
         import bindbc.sdl;
@@ -36,12 +36,13 @@ class BitmapFontGenerator : FontGenerator
         if(const err = fontMapSurface.createRGBSurface(0, fontTextureWidth, fontTextureHeight, 32, 0, 0, 0, 0xff)){
             throw new Exception(err.toString);
         }
+
+        //TODO background
         SDL_SetColorKey(fontMapSurface.getObject, SDL_TRUE, SDL_MapRGBA(
                 fontMapSurface.getObject.format, 0, 0, 0, 0));
 
         SDL_Rect glyphPosition;
         Glyph[] glyphs;
-        RGBA foregroundColor = RGBA.white;
 
         //TTF_SetFontHinting(font.getObject, TTF_HINTING_MONO);
 
@@ -84,6 +85,7 @@ class BitmapFontGenerator : FontGenerator
         auto bitmapFont = new BitmapFont(glyphs);
         build(bitmapFont);
         bitmapFont.loadFromSurface(fontMapSurface);
+        bitmapFont.setBlendMode;
         fontMapSurface.destroy;
         return bitmapFont;
     }

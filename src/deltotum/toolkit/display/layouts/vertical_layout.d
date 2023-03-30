@@ -19,7 +19,7 @@ class VerticalLayout : ManagedLayout
     override void layout(DisplayObject root)
     {
         auto bounds = root.bounds;
-        double nextY = bounds.y;
+        double nextY = bounds.y + root.padding.top;
         foreach (child; root.children)
         {
             if (!child.isLayoutManaged)

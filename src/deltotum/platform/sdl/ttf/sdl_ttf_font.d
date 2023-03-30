@@ -44,6 +44,7 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font
     PlatformResult render(SdlSurface targetFontSurface, const char* text, ubyte r = 255, ubyte g = 255, ubyte b = 255, ubyte a = 1)
     {
         SDL_Color color = {r, g, b, a};
+        //TODO calculate background color
         auto fontSurfacePtr = TTF_RenderUTF8_Blended(ptr, text, color);
         if (!fontSurfacePtr)
         {

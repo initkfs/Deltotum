@@ -428,6 +428,11 @@ abstract class DisplayObject : PhysicalBody
         obj.create;
 
         add(obj);
+
+        //TODO disable flag
+        if(layout !is null){
+            requestLayout;
+        }
     }
 
     void addOrAddCreated(DisplayObject obj)
@@ -679,6 +684,7 @@ abstract class DisplayObject : PhysicalBody
         import deltotum.toolkit.graphics.colors.rgba: RGBA;
 
         auto rect = new Rectangle(width, height, GraphicStyle(1, RGBA.red, false, RGBA.transparent));
+        rect.isLayoutManaged = false;
         addCreated(rect);
     }
 }

@@ -48,7 +48,7 @@ class ManagedLayout : Layout
             return false;
         }
 
-        const newX = rootBounds.middleX - targetBounds.halfWidth + root.padding.left;
+        const newX = rootBounds.middleX - targetBounds.halfWidth;
         target.x = newX;
         return true;
     }
@@ -63,7 +63,7 @@ class ManagedLayout : Layout
             return false;
         }
 
-        const newY = rootBounds.middleY - targetBounds.halfHeight + root.padding.top;
+        const newY = rootBounds.middleY - targetBounds.halfHeight ;
         target.y = newY;
         return true;
     }

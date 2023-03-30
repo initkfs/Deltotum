@@ -48,6 +48,7 @@ class Button : Control
     override void initialize()
     {
         super.initialize;
+
         hoverFactory = () {
 
             double padding = style.lineWidth;
