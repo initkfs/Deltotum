@@ -425,12 +425,19 @@ abstract class DisplayObject : PhysicalBody
         obj.initialize;
         assert(obj.isInitialized);
 
+        if (obj.isManaged)
+        {
+            obj.x = x + obj.x;
+            obj.y = y + obj.y;
+        }
+
         obj.create;
 
         add(obj);
 
         //TODO disable flag
-        if(layout !is null){
+        if (layout !is null)
+        {
             requestLayout;
         }
     }
@@ -449,11 +456,6 @@ abstract class DisplayObject : PhysicalBody
 
     void add(DisplayObject obj)
     {
-        if (obj.isManaged)
-        {
-            obj.x = x + obj.x;
-            obj.y = y + obj.y;
-        }
         obj.parent = this;
         //TODO check if exists
         children ~= obj;
@@ -678,10 +680,11 @@ abstract class DisplayObject : PhysicalBody
         return name;
     }
 
-    void drawBounds(){
-        import deltotum.toolkit.graphics.styles.graphic_style: GraphicStyle;
-        import deltotum.toolkit.graphics.shapes.rectangle: Rectangle;
-        import deltotum.toolkit.graphics.colors.rgba: RGBA;
+    void drawBounds()
+    {
+        import deltotum.toolkit.graphics.styles.graphic_style : GraphicStyle;
+        import deltotum.toolkit.graphics.shapes.rectangle : Rectangle;
+        import deltotum.toolkit.graphics.colors.rgba : RGBA;
 
         auto rect = new Rectangle(width, height, GraphicStyle(1, RGBA.red, false, RGBA.transparent));
         rect.isLayoutManaged = false;

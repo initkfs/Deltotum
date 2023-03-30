@@ -1,37 +1,37 @@
 module deltotum.ui.controls.texts.text_area;
 
 import deltotum.ui.controls.texts.text_view : TextView;
-import deltotum.ui.controls.scrollbars.vscrollbar: VScrollbar;
-import deltotum.ui.containers.hbox: HBox;
+import deltotum.ui.controls.scrollbars.vscrollbar : VScrollbar;
+import deltotum.ui.controls.control : Control;
+import deltotum.toolkit.display.layouts.horizontal_layout : HorizontalLayout;
 
 import std.stdio;
 
 /**
  * Authors: initkfs
  */
-class TextArea : HBox
+class TextArea : Control
 {
     TextView textView;
     VScrollbar scroll;
 
-    this(){
-        textView = new TextView;
-        scroll = new VScrollbar;
-    }
-
-    override void create(){
+    override void create()
+    {
         super.create;
 
-        scroll.height = height;
-        scroll.x = width - scroll.width;
+        layout = new HorizontalLayout;
+
+        scroll = new VScrollbar(0, 1.0, 20, height);
+
+        textView = new TextView;
+        textView.minHeight = height;
+        textView.maxHeight = height;
+        textView.minWidth = width - scroll.width;
+        textView.maxWidth = textView.minWidth;
+        addCreated(textView);
+
         addCreated(scroll);
 
-        scroll.onValue = (value){
-            textView.scrollTo(value);
-        };
-
-        textView.height = height;
-        textView.width = width - scroll.width;
-        addCreated(textView);
+        scroll.onValue = (value) { textView.scrollTo(value); };
     }
 }

@@ -30,21 +30,6 @@ class TextView : Text
         super(text);
     }
 
-    override void create()
-    {
-        super.create;
-        backgroundFactory = (width, height) {
-            import deltotum.toolkit.graphics.shapes.rectangle : Rectangle;
-
-            auto background = new Rectangle(width, height, style);
-            background.opacity = graphics.theme.controlOpacity;
-            background.isLayoutManaged = false;
-            return background;
-        };
-
-        createBackground(width, height);
-    }
-
     override void drawContent()
     {
         if (text.length == 0)

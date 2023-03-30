@@ -49,11 +49,15 @@ class Text : Control
     {
         super.initialize;
         backgroundFactory = null;
+
+        width = minWidth;
+        height = minHeight;
     }
 
     override void create()
     {
         super.create;
+        updateRows;
         drawContent;
     }
 
@@ -109,23 +113,22 @@ class Text : Control
             return newRows;
         }
 
-        //TODO move to render\update
-        width = padding.width;
-        //max height?
         rowHeight = cast(int) glyphs[0].geometry.height;
+
+        double incWidth = padding.width;
 
         double glyphPosX = padding.left;
         TextRow row;
         foreach (Glyph glyph; glyphs)
         {
             //TODO move to render, bool check flags
-            double newWidth = width + glyph.geometry.width;
-            if (newWidth <= maxWidth)
+            incWidth += glyph.geometry.width;
+            if (incWidth > width && incWidth <= maxWidth)
             {
-                width = newWidth;
+                width = incWidth;
             }
 
-            if (glyphPosX + glyph.geometry.width > (x + width - padding.right))
+            if (glyphPosX + glyph.geometry.width >= (width - padding.right))
             {
                 newRows ~= row;
                 row = TextRow();
@@ -141,7 +144,10 @@ class Text : Control
             newRows ~= row;
         }
 
-        height = newRows.length * rowHeight + padding.height;
+        auto newHeight = newRows.length * rowHeight - padding.height;
+        if(newHeight > height && newHeight <= maxHeight - padding.height){
+            height = newHeight;
+        }
 
         return newRows;
     }
@@ -174,7 +180,7 @@ class Text : Control
                 if (position.x + glyph.geometry.width > (x + width - padding.right))
                 {
                     position.y += rowHeight;
-                    position.x = padding.left;
+                    position.x = x + padding.left;
                 }
 
                 if (position.y + rowHeight > (y + height - padding.bottom))
