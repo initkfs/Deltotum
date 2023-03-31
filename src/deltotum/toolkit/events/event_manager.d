@@ -12,6 +12,7 @@ import deltotum.core.events.event_type : EventType;
 
 import deltotum.toolkit.display.display_object : DisplayObject;
 import std.container : DList;
+import std.typecons : Nullable;
 
 /**
  * Authors: initkfs
@@ -23,6 +24,8 @@ class EventManager
         DList!DisplayObject eventChain = DList!DisplayObject();
     }
 
+    Nullable!(DisplayObject[]) delegate() targetsProvider;
+
     version (SdlBackend)
     {
         import deltotum.platform.sdl.events.sdl_event_processor : SdlEventProcessor;
@@ -30,15 +33,9 @@ class EventManager
         SdlEventProcessor eventProcessor;
     }
 
-    SceneManager sceneManager;
-
     void delegate(KeyEvent) onKey;
     void delegate(JoystickEvent) onJoystick;
-
-    this(SceneManager sceneManager) pure @safe
-    {
-        this.sceneManager = sceneManager;
-    }
+    void delegate(WindowEvent) onWindow;
 
     void startEvents()
     {
@@ -46,6 +43,13 @@ class EventManager
         {
             return;
         }
+        eventProcessor.onWindow = (windowEvent) {
+            if (onWindow !is null)
+            {
+                onWindow(windowEvent);
+            }
+            dispatchEvent(windowEvent);
+        };
         eventProcessor.onMouse = (mouseEvent) { dispatchEvent(mouseEvent); };
         eventProcessor.onJoystick = (joystickEvent) {
             if (onJoystick !is null)
@@ -65,7 +69,20 @@ class EventManager
 
     void dispatchEvent(E)(E e)
     {
-        foreach (DisplayObject target; sceneManager.currentScene.getActiveObjects)
+        if (targetsProvider is null)
+        {
+            return;
+        }
+
+        auto mustBeTargets = targetsProvider();
+        if (mustBeTargets.isNull)
+        {
+            return;
+        }
+
+        DisplayObject[] targets = mustBeTargets.get;
+
+        foreach (DisplayObject target; targets)
         {
             if (!eventChain.empty)
             {

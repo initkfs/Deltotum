@@ -1,13 +1,14 @@
 module deltotum.toolkit.scene.scene_manager;
 
-import deltotum.toolkit.scene.scene: Scene;
+import deltotum.toolkit.applications.components.graphics_component: GraphicsComponent;
+import deltotum.toolkit.scene.scene : Scene;
 
 import std.stdio;
 
 /**
  * Authors: initkfs
  */
-class SceneManager
+class SceneManager : GraphicsComponent
 {
     //TODO stack
     Scene _currentScene;
@@ -41,5 +42,13 @@ class SceneManager
 
         enforce(state !is null, "Scene must not be null");
         _currentScene = state;
+    }
+
+    //TODO rename due .create()
+    void addScene(Scene scene)
+    {
+        build(scene);
+        scene.create;
+        currentScene = scene;
     }
 }

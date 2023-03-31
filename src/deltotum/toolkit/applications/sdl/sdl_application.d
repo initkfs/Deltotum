@@ -1,8 +1,8 @@
 module deltotum.toolkit.applications.sdl.sdl_application;
 
-import deltotum.core.applications.application_exit: ApplicationExit;
+import deltotum.core.applications.application_exit : ApplicationExit;
 import deltotum.core.applications.graphic_application : GraphicApplication;
-import deltotum.toolkit.applications.components.graphics_component: GraphicsComponent;
+import deltotum.toolkit.applications.components.graphics_component : GraphicsComponent;
 import deltotum.toolkit.events.event_manager : EventManager;
 import deltotum.platform.sdl.events.sdl_event_processor : SdlEventProcessor;
 import deltotum.toolkit.asset.assets : Assets;
@@ -10,6 +10,7 @@ import deltotum.toolkit.asset.fonts.font : Font;
 import deltotum.toolkit.scene.scene_manager : SceneManager;
 import deltotum.toolkit.audio.audio : Audio;
 import deltotum.toolkit.graphics.graphics : Graphics;
+import deltotum.toolkit.display.display_object : DisplayObject;
 import deltotum.toolkit.scene.scene : Scene;
 import deltotum.toolkit.input.keyboard.event.key_event : KeyEvent;
 import deltotum.toolkit.input.joystick.event.joystick_event : JoystickEvent;
@@ -21,6 +22,9 @@ import deltotum.platform.sdl.ttf.sdl_ttf_lib : SdlTTFLib;
 import deltotum.platform.sdl.sdl_window : SdlWindow;
 import deltotum.platform.sdl.sdl_renderer : SdlRenderer;
 import deltotum.platform.sdl.sdl_joystick : SdlJoystick;
+import deltotum.toolkit.window.event.window_event : WindowEvent;
+
+import std.typecons : Nullable;
 
 import deltotum.toolkit.window.window : Window;
 import deltotum.toolkit.input.input : Input;
@@ -35,6 +39,7 @@ import bindbc.sdl;
  */
 class SdlApplication : GraphicApplication
 {
+    Window[] windows;
 
     private
     {
@@ -48,36 +53,32 @@ class SdlApplication : GraphicApplication
         double deltaTime = 0;
         double deltaTimeAccumulator = 0;
         double lastUpdateTime = 0;
-        int sceneWidth;
-        int sceneHeight;
 
+        Audio _audio;
+        Assets _assets;
+        Input _input;
     }
 
-    string title;
     bool isRunning;
     EventManager eventManager;
-    SceneManager sceneManager;
 
-    this(string title, int sceneWidth, int sceneHeight, SdlLib lib, SdlImgLib imgLib, SdlMixLib audioMixLib, SdlTTFLib fontLib)
+    this(SdlLib lib = null, SdlImgLib imgLib = null, SdlMixLib audioMixLib = null, SdlTTFLib fontLib = null)
     {
-        this.title = title;
-        this.sceneWidth = sceneWidth;
-        this.sceneHeight = sceneHeight;
-        this.sdlLib = lib;
-        this.imgLib = imgLib;
-        this.audioMixLib = audioMixLib;
-        this.fontLib = fontLib;
-        this.frameRate = 60;
+        this.sdlLib = lib is null ? new SdlLib : lib;
+        this.imgLib = imgLib is null ? new SdlImgLib : imgLib;
+        this.audioMixLib = audioMixLib is null ? new SdlMixLib : audioMixLib;
+        this.fontLib = fontLib is null ? new SdlTTFLib : fontLib;
     }
 
     override ApplicationExit initialize(string[] args)
     {
-        if(auto isExit = super.initialize(args)){
+        if (auto isExit = super.initialize(args))
+        {
             return isExit;
         }
 
         sdlLib.initialize(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK);
-        gservices.logger.trace("SDL ", sdlLib.getSdlVersionInfo);
+        uservices.logger.trace("SDL ", sdlLib.getSdlVersionInfo);
 
         //TODO move to hal layer
         SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_WARN);
@@ -87,69 +88,135 @@ class SdlApplication : GraphicApplication
         fontLib.initialize;
 
         joystick = SdlJoystick.fromDevices;
-        // if(joystick !is null){
 
-        // }
-
-        this.frameRate = frameRate;
-
-        auto sdlWindow = new SdlWindow(title, SDL_WINDOWPOS_UNDEFINED,
-            SDL_WINDOWPOS_UNDEFINED,
-            sceneWidth,
-            sceneHeight);
-        auto sdlRenderer = new SdlRenderer(sdlWindow, SDL_RENDERER_ACCELERATED);
-        auto window = new Window(sdlRenderer, sdlWindow);
-        //TODO remove
-        window.frameRate = frameRate;
-        gservices.window = window;
-
-        gservices.input = new Input;
-
-        gservices.audio = new Audio(audioMixLib);
-
-        sceneManager = new SceneManager;
+        _input = new Input;
+        _audio = new Audio(audioMixLib);
 
         //TODO remove sdl api
-        eventManager = new EventManager(sceneManager);
+        eventManager = new EventManager();
+        eventManager.targetsProvider = () {
+            auto mustBeCurrentWindow = currentWindow;
+            if (mustBeCurrentWindow.isNull)
+            {
+                return Nullable!(DisplayObject[]).init;
+            }
+            auto targets = mustBeCurrentWindow.get.sceneManager.currentScene.getActiveObjects;
+            return Nullable!(DisplayObject[])(targets);
+        };
         eventManager.eventProcessor = new SdlEventProcessor;
         eventManager.startEvents;
         eventManager.onKey = (key) {
             if (key.event == KeyEvent.Event.keyDown)
             {
-                gservices.input.addPressedKey(key.keyCode);
+                _input.addPressedKey(key.keyCode);
             }
             else if (key.event == KeyEvent.Event.keyUp)
             {
-                gservices.input.addReleasedKey(key.keyCode);
+                _input.addReleasedKey(key.keyCode);
             }
         };
         eventManager.onJoystick = (joystickEvent) {
 
             if (joystickEvent.event == JoystickEvent.Event.axis)
             {
-                if (gservices.input.justJoystickActive)
+                if (_input.justJoystickActive)
                 {
-                    gservices.input.justJoystickChangeAxis = joystickEvent.axis != gservices.input
+                    _input.justJoystickChangeAxis = joystickEvent.axis != _input
                         .lastJoystickEvent.axis;
-                    gservices.input.justJoystickChangesAxisValue = gservices.input.lastJoystickEvent.axisValue != joystickEvent
+                    _input.justJoystickChangesAxisValue = _input.lastJoystickEvent.axisValue != joystickEvent
                         .axisValue;
-                    gservices.input.joystickAxisDelta = joystickEvent.axisValue - gservices.input
+                    _input.joystickAxisDelta = joystickEvent.axisValue - _input
                         .lastJoystickEvent.axisValue;
                 }
             }
             else if (joystickEvent.event == JoystickEvent.Event.press)
             {
-                gservices.input.justJoystickPressed = true;
+                _input.justJoystickPressed = true;
             }
             else if (joystickEvent.event == JoystickEvent.Event.release)
             {
-                gservices.input.justJoystickPressed = false;
+                _input.justJoystickPressed = false;
             }
 
-            gservices.input.lastJoystickEvent = joystickEvent;
-            if (!gservices.input.justJoystickActive)
+            _input.lastJoystickEvent = joystickEvent;
+            if (!_input.justJoystickActive)
             {
-                gservices.input.justJoystickActive = true;
+                _input.justJoystickActive = true;
+            }
+        };
+
+        eventManager.onWindow = (e) {
+            if (e.event == WindowEvent.Event.WINDOW_FOCUS_IN)
+            {
+                foreach (Window window; windows)
+                {
+                    if (window.id == e.ownerId)
+                    {
+                        //TODO check all windows
+                        window.isFocus = true;
+                    }
+                }
+            }
+            else if (e.event == WindowEvent.Event.WINDOW_FOCUS_OUT)
+            {
+                foreach (Window window; windows)
+                {
+                    if (window.id == e.ownerId)
+                    {
+                        //TODO check all windows
+                        window.isFocus = false;
+                    }
+                }
+            }
+            else if (e.event == WindowEvent.Event.WINDOW_SHOW)
+            {
+                foreach (Window window; windows)
+                {
+                    if (window.id == e.ownerId)
+                    {
+                        //TODO check all windows
+                        window.isShowing = true;
+                    }
+                }
+            }
+            else if (e.event == WindowEvent.Event.WINDOW_HIDE)
+            {
+                foreach (Window window; windows)
+                {
+                    if (window.id == e.ownerId)
+                    {
+                        //TODO check all windows
+                        window.isShowing = false;
+                    }
+                }
+            }
+            else if (e.event == WindowEvent.Event.WINDOW_CLOSE)
+            {
+                Window windowForClosing;
+                foreach (Window window; windows)
+                {
+                    if (window.id == e.ownerId)
+                    {
+                        windowForClosing = window;
+                        break;
+                    }
+                }
+                if (windowForClosing !is null)
+                {
+                    import std.algorithm.mutation : remove;
+                    import std.algorithm.searching : countUntil;
+
+                    immutable ptrdiff_t removePos = windows.countUntil(windowForClosing);
+                    if (removePos != -1)
+                    {
+                        windows = windows.remove(removePos);
+                    }
+                    windowForClosing.destroy;
+                }
+
+                // if(windows.length == 0){
+                //     quit;
+                // }
             }
         };
 
@@ -164,18 +231,50 @@ class SdlApplication : GraphicApplication
             throw new Exception("Unable to find resource directory: " ~ assetsDir);
         }
 
-        auto assetManager = new Assets(gservices.logger, assetsDir);
-        gservices.assets = assetManager;
+        _assets = new Assets(uservices.logger, assetsDir);
 
         //TODO from config
-        Font defaultFont = assetManager.font("fonts/NotoSans-Bold.ttf", 14);
-        assetManager.defaultFont = defaultFont;
+        Font defaultFont = _assets.font("fonts/NotoSans-Bold.ttf", 14);
+        _assets.defaultFont = defaultFont;
+
+        isRunning = true;
+        return ApplicationExit(false);
+    }
+
+    Window createWindow(string title, int prefWidth, int prefHeight)
+    {
+        auto sdlWindow = new SdlWindow(title, SDL_WINDOWPOS_UNDEFINED,
+            SDL_WINDOWPOS_UNDEFINED,
+            prefWidth,
+            prefHeight);
+
+        auto sdlRenderer = new SdlRenderer(sdlWindow, SDL_RENDERER_ACCELERATED);
+        uint id;
+        if (const err = sdlWindow.windowId(id))
+        {
+            throw new Exception(err.toString);
+        }
+        auto window = new Window(sdlRenderer, sdlWindow, id);
+
+        GraphicsComponent builder = new GraphicsComponent;
+        build(builder);
+
+        builder.input = _input;
+        builder.assets = _assets;
+        builder.audio = _audio;
+
+        //TODO remove
+        window.frameRate = frameRate;
+        builder.window = window;
 
         import deltotum.toolkit.graphics.themes.theme : Theme;
 
-        auto theme = new Theme(defaultFont);
+        auto theme = new Theme(_assets.defaultFont);
+        builder.graphics = new Graphics(uservices.logger, window.renderer, theme);
 
-        gservices.graphics = new Graphics(gservices.logger, window.renderer, theme);
+        builder.isBuilt = true;
+
+        import deltotum.ui.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
 
         //TODO build and run services after all
         import deltotum.ui.fonts.bitmap.bitmap_font : BitmapFont;
@@ -186,19 +285,24 @@ class SdlApplication : GraphicApplication
         import deltotum.toolkit.i18n.langs.alphabets.arabic_numerals_alphabet : ArabicNumeralsAlpabet;
         import deltotum.toolkit.i18n.langs.alphabets.special_characters_alphabet : SpecialCharactersAlphabet;
 
-        import deltotum.ui.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
-
         auto fontGenerator = new BitmapFontGenerator;
-        build(fontGenerator);
-        assetManager.defaultBitmapFont = fontGenerator.generate([
+        builder.build(fontGenerator);
+        import deltotum.toolkit.graphics.colors.rgba : RGBA;
+
+        //FIXME, extract default font from global assets
+        _assets.defaultBitmapFont = fontGenerator.generate([
             new ArabicNumeralsAlpabet,
             new SpecialCharactersAlphabet,
             new AlphabetEn,
             new AlphabetRu
-        ], defaultFont, theme.colorText);
+        ], _assets.defaultFont, theme.colorText);
 
-        isRunning = true;
-        return ApplicationExit(false);
+        auto sceneManager = new SceneManager;
+        builder.build(sceneManager);
+        window.sceneManager = sceneManager;
+        windows ~= window;
+
+        return window;
     }
 
     override void runWait()
@@ -214,28 +318,17 @@ class SdlApplication : GraphicApplication
         sdlLib.clearError;
     }
 
-    void addScene(Scene scene)
-    {
-        build(scene);
-        scene.create;
-        sceneManager.currentScene = scene;
-    }
-
     override void quit()
     {
         clearErrors;
-        if (gservices.window !is null)
-        {
-            gservices.window.destroy;
-        }
 
-        if (sceneManager !is null)
+        foreach (window; windows)
         {
-            sceneManager.destroy;
+            window.destroy;
         }
 
         //TODO auto destroy all services
-        gservices.audio.destroy;
+        _audio.destroy;
 
         if (joystick !is null)
         {
@@ -251,12 +344,29 @@ class SdlApplication : GraphicApplication
 
     void updateState(double delta)
     {
-        if (gservices.window !is null)
+        foreach (window; windows)
         {
-            //window.renderer.clear;
-            sceneManager.update(delta);
-            //window.renderer.present;
+            if (window.isShowing)
+            {
+                //window.renderer.clear;
+                window.update(delta);
+                break;
+                //window.renderer.present;
+            }
         }
+    }
+
+    Nullable!Window currentWindow()
+    {
+        foreach (window; windows)
+        {
+            if (window.isShowing)
+            {
+                return Nullable!Window(window);
+            }
+        }
+
+        return Nullable!Window.init;
     }
 
     override bool update()
@@ -273,14 +383,24 @@ class SdlApplication : GraphicApplication
 
         SDL_Event event;
 
-        sceneManager.currentScene.timeEventProcessingMs = 0;
+        auto mustBeWindow = currentWindow;
+
+        if (!mustBeWindow.isNull)
+        {
+            mustBeWindow.get.sceneManager.currentScene.timeEventProcessingMs = 0;
+        }
 
         while (SDL_PollEvent(&event))
         {
             const startEvent = SDL_GetTicks();
             handleEvent(&event);
             const endEvent = SDL_GetTicks();
-            sceneManager.currentScene.timeEventProcessingMs = endEvent - startEvent;
+
+            if (!mustBeWindow.isNull)
+            {
+                mustBeWindow.get.sceneManager.currentScene.timeEventProcessingMs = endEvent - startEvent;
+            }
+
             if (!isRunning)
             {
                 return isRunning;
@@ -293,7 +413,12 @@ class SdlApplication : GraphicApplication
             const startStateTime = SDL_GetTicks();
             updateState(constantDelta);
             const endStateTime = SDL_GetTicks();
-            sceneManager.currentScene.timeUpdateProcessingMs = endStateTime - startStateTime;
+
+            if (!mustBeWindow.isNull)
+            {
+                mustBeWindow.get.sceneManager.currentScene.timeUpdateProcessingMs = endStateTime - startStateTime;
+            }
+
             deltaTimeAccumulator -= frameTime;
         }
 

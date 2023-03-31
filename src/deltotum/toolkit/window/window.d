@@ -5,6 +5,7 @@ import deltotum.platform.sdl.sdl_renderer : SdlRenderer;
 import deltotum.maths.shapes.rect2d : Rect2d;
 import deltotum.maths.vector2d : Vector2d;
 import deltotum.toolkit.input.mouse.mouse_cursor_type : MouseCursorType;
+import deltotum.toolkit.scene.scene_manager : SceneManager;
 
 //TODO move to deltotum.platforms;
 import bindbc.sdl;
@@ -19,10 +20,18 @@ class Window
     //TODO remove
     double frameRate;
 
-    this(SdlRenderer renderer, SdlWindow window)
+    SceneManager sceneManager;
+    
+    bool isFocus;
+    bool isShowing;
+
+    const int id;
+
+    this(SdlRenderer renderer, SdlWindow window, int id = 0)
     {
         this.renderer = renderer;
         this.nativeWindow = window;
+        this.id = id;
     }
 
     void close()
@@ -182,8 +191,15 @@ class Window
         return Vector2d(x, y);
     }
 
+    void update(double delta){
+        sceneManager.currentScene.update(delta);
+    }
+
     void destroy()
     {
+        if(sceneManager !is null){
+            sceneManager.destroy;
+        }
         renderer.destroy;
         //after window
         nativeWindow.destroy;

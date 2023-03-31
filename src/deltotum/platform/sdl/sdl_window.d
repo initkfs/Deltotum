@@ -56,6 +56,17 @@ class SdlWindow : SdlObjectWrapper!SDL_Window
         super(ptr);
     }
 
+    PlatformResult windowId(out uint id)
+    {
+        const idOrZeroError = SDL_GetWindowID(ptr);
+        if (idOrZeroError != 0)
+        {
+            id = idOrZeroError;
+            return PlatformResult.success;
+        }
+        return PlatformResult(idOrZeroError, "Unable to determine window id: " ~ getError);
+    }
+
     void focus() @nogc nothrow
     {
         SDL_RaiseWindow(ptr);
