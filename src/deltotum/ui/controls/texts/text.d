@@ -27,8 +27,7 @@ class Text : Control
 {
     string text;
     int spaceWidth = 5;
-    //TODO from font?
-    int rowHeight = 16;
+    int rowHeight = 0;
 
     RGBA color = RGBA.white;
 
@@ -45,8 +44,6 @@ class Text : Control
     {
         //TODO validate
         this.text = text;
-        this.maxWidth = 100;
-        this.maxHeight = 50;
     }
 
     override void initialize()
@@ -162,12 +159,12 @@ class Text : Control
         {
             //TODO move to render, bool check flags
             incWidth += glyph.geometry.width;
-            if (incWidth > width && incWidth <= maxWidth)
+            if (incWidth > width && incWidth < maxWidth)
             {
                 width = incWidth;
             }
 
-            if (glyphPosX + glyph.geometry.width >= (width - padding.right))
+            if (glyphPosX + glyph.geometry.width > width - padding.right)
             {
                 newRows ~= row;
                 row = TextRow();
@@ -183,8 +180,8 @@ class Text : Control
             newRows ~= row;
         }
 
-        auto newHeight = newRows.length * rowHeight - padding.height;
-        if (newHeight > height && newHeight <= maxHeight - padding.height)
+        auto newHeight = newRows.length * rowHeight + padding.height;
+        if (newHeight > height && newHeight <= maxHeight)
         {
             height = newHeight;
         }
@@ -217,17 +214,6 @@ class Text : Control
         {
             foreach (Glyph glyph; row.glyphs)
             {
-                if (position.x + glyph.geometry.width > (x + width - padding.right))
-                {
-                    position.y += rowHeight;
-                    position.x = x + padding.left;
-                }
-
-                if (position.y + rowHeight > (y + height - padding.bottom))
-                {
-                    break;
-                }
-
                 if (glyph.isEmpty)
                 {
                     position.x += glyph.geometry.width;
@@ -245,6 +231,9 @@ class Text : Control
 
                 position.x += glyph.geometry.width;
             }
+
+            position.y += rowHeight;
+            position.x = x + padding.left;
         }
     }
 

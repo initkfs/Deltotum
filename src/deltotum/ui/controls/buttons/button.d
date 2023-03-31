@@ -121,6 +121,9 @@ class Button : Control
         if (textFactory !is null)
         {
             text = textFactory();
+            //FIXME
+            text.focusEffectFactory = null;
+
             text.maxWidth = width - padding.width;
             text.maxHeight = height - padding.height;
             addOrAddCreated(text);

@@ -57,7 +57,7 @@ class TextView : Text
 
         //TODO Gap buffer, TextRow[]?
         const lastRowIndex = rows.length - 1;
-        const rowsInViewport = to!(int)((height - padding.top - padding.bottom) / rowHeight);
+        const rowsInViewport = to!(int)((height - padding.height) / rowHeight);
         if (rows.length <= rowsInViewport)
         {
             renderText(rows);
@@ -73,13 +73,13 @@ class TextView : Text
             }
 
             size_t mustBeStartRowIndex = to!size_t(round(scrollPosition * mustBeLastRowIndex));
-            size_t mustBeEndRowIndex = mustBeStartRowIndex + rowsInViewport;
+            size_t mustBeEndRowIndex = mustBeStartRowIndex + rowsInViewport - 1;
             if (mustBeEndRowIndex > lastRowIndex)
             {
                 mustBeEndRowIndex = lastRowIndex;
             }
 
-            auto rowsForView = rows[mustBeStartRowIndex .. mustBeEndRowIndex + 1];
+            auto rowsForView = rows[mustBeStartRowIndex  .. mustBeEndRowIndex + 1];
             renderText(rowsForView);
         }
     }
