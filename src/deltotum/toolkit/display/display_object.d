@@ -348,7 +348,12 @@ abstract class DisplayObject : PhysicalBody
     {
         if (layout !is null)
         {
-            layout.layout(this);
+            layout.applyLayout(this);
+        }
+
+        foreach (child; children)
+        {
+            child.requestLayout;
         }
     }
 
@@ -458,9 +463,9 @@ abstract class DisplayObject : PhysicalBody
             obj.y = y + obj.y;
         }
 
-        obj.create;
-
         add(obj);
+
+        obj.create;
 
         //TODO disable flag
         if (layout !is null)
@@ -545,7 +550,7 @@ abstract class DisplayObject : PhysicalBody
     {
         foreach (DisplayObject child; children)
         {
-            if (child.isManaged && child.layout is null)
+            if (child.isManaged)
             {
                 double dx = newX - _x;
                 child.x = child.x + dx;
@@ -571,7 +576,7 @@ abstract class DisplayObject : PhysicalBody
     {
         foreach (DisplayObject child; children)
         {
-            if (child.isManaged && child.layout is null)
+            if (child.isManaged)
             {
                 double dy = newY - _y;
                 child.y = child.y + dy;

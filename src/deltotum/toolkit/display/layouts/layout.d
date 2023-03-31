@@ -7,5 +7,5 @@ import deltotum.toolkit.display.display_object : DisplayObject;
  */
 abstract class Layout
 {
-    abstract void layout(DisplayObject root);
+    abstract void applyLayout(DisplayObject root);
 }

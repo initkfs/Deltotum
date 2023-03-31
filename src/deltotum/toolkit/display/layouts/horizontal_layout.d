@@ -16,7 +16,7 @@ class HorizontalLayout : ManagedLayout
         this.spacing = spacing;
     }
 
-    override void layout(DisplayObject root)
+    override void applyLayout(DisplayObject root)
     {
         auto bounds = root.bounds;
         double nextX = bounds.x + root.padding.left;

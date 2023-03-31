@@ -13,7 +13,7 @@ class ManagedLayout : Layout
 
     bool alignment(DisplayObject root, DisplayObject obj)
     {
-        if (obj.alignment == Alignment.none)
+        if (obj.alignment == Alignment.none || !obj.isLayoutManaged)
         {
             return false;
         }
@@ -40,6 +40,9 @@ class ManagedLayout : Layout
 
     bool alignX(DisplayObject root, DisplayObject target)
     {
+        if(!target.isLayoutManaged){
+            return false;
+        }
         const rootBounds = root.bounds;
         const targetBounds = target.bounds;
 
@@ -55,6 +58,9 @@ class ManagedLayout : Layout
 
     bool alignY(DisplayObject root, DisplayObject target)
     {
+        if(!target.isLayoutManaged){
+            return false;
+        }
         const rootBounds = root.bounds;
         const targetBounds = target.bounds;
 
@@ -68,7 +74,7 @@ class ManagedLayout : Layout
         return true;
     }
 
-    override void layout(DisplayObject root)
+    override void applyLayout(DisplayObject root)
     {
         foreach (child; root.children)
         {

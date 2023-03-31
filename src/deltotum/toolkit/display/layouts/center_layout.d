@@ -8,7 +8,7 @@ import deltotum.toolkit.display.layouts.managed_layout : ManagedLayout;
  */
 class CenterLayout : ManagedLayout
 {
-    override void layout(DisplayObject root)
+    override void applyLayout(DisplayObject root)
     {
         foreach (child; root.children)
         {
