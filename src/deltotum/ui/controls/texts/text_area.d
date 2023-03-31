@@ -15,15 +15,26 @@ class TextArea : Control
     TextView textView;
     VScrollbar scroll;
 
+    override void initialize()
+    {
+        super.initialize;
+
+        import deltotum.maths.geometry.insets;
+
+        padding = Insets(0);
+    }
+
     override void create()
     {
         super.create;
 
-        layout = new HorizontalLayout;
-
         scroll = new VScrollbar(0, 1.0, 20, height);
 
         textView = new TextView;
+
+        //FIXME invalid padding
+        layout = new HorizontalLayout(5);
+
         textView.minHeight = height;
         textView.maxHeight = height;
         textView.minWidth = width - scroll.width;

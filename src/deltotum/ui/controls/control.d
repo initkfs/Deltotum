@@ -26,6 +26,9 @@ abstract class Control : DisplayObject
     {
         super.initialize;
 
+        padding = graphics.theme.controlPadding;
+        style = graphics.theme.controlStyle;
+
         backgroundFactory = (width, height) {
 
             import deltotum.toolkit.graphics.shapes.rectangle : Rectangle;
@@ -54,9 +57,6 @@ abstract class Control : DisplayObject
     override void create()
     {
         super.create;
-
-        padding = graphics.theme.controlPadding;
-        style = graphics.theme.controlStyle;
 
         createBackground(width - backgroundInsets.width, height - backgroundInsets.height);
         if (background !is null)

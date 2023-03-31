@@ -7,6 +7,7 @@ import deltotum.maths.vector2d : Vector2d;
 import deltotum.toolkit.display.flip : Flip;
 import deltotum.ui.fonts.glyphs.glyph : Glyph;
 import deltotum.toolkit.graphics.colors.rgba : RGBA;
+import deltotum.toolkit.display.textures.texture : Texture;
 
 import std.stdio;
 
@@ -31,6 +32,9 @@ class Text : Control
 
     RGBA color = RGBA.white;
 
+    Texture focusEffect;
+    Texture delegate() focusEffectFactory;
+
     protected
     {
         string oldText;
@@ -52,6 +56,33 @@ class Text : Control
 
         width = minWidth;
         height = minHeight;
+
+        onFocusIn = (e) {
+            if (focusEffect !is null)
+            {
+                focusEffect.isVisible = true;
+            }
+            return false;
+        };
+
+        onFocusOut = (e) {
+            if (focusEffect !is null && focusEffect.isVisible)
+            {
+                focusEffect.isVisible = false;
+            }
+            return false;
+        };
+
+        focusEffectFactory = () {
+            import deltotum.toolkit.graphics.shapes.rectangle : Rectangle;
+            import deltotum.toolkit.graphics.styles.graphic_style : GraphicStyle;
+
+            GraphicStyle style = GraphicStyle(1, graphics.theme.colorFocus);
+
+            auto effect = new Rectangle(width, height, style);
+            effect.isVisible = false;
+            return effect;
+        };
     }
 
     override void create()
@@ -59,6 +90,14 @@ class Text : Control
         super.create;
         updateRows;
         drawContent;
+
+        if (focusEffectFactory !is null)
+        {
+            focusEffect = focusEffectFactory();
+            focusEffect.isLayoutManaged = false;
+            focusEffect.isVisible = false;
+            addCreated(focusEffect);
+        }
     }
 
     protected Glyph[] textToGlyphs(string textString)
@@ -145,7 +184,8 @@ class Text : Control
         }
 
         auto newHeight = newRows.length * rowHeight - padding.height;
-        if(newHeight > height && newHeight <= maxHeight - padding.height){
+        if (newHeight > height && newHeight <= maxHeight - padding.height)
+        {
             height = newHeight;
         }
 

@@ -1,11 +1,12 @@
 module deltotum.toolkit.events.event_toolkit_target;
 
-import deltotum.toolkit.applications.components.graphics_component: GraphicsComponent;
-import deltotum.core.events.event_target: EventTarget;
-import deltotum.core.events.event_target: EventTarget;
+import deltotum.toolkit.applications.components.graphics_component : GraphicsComponent;
+import deltotum.core.events.event_target : EventTarget;
+import deltotum.core.events.event_target : EventTarget;
 import deltotum.toolkit.input.mouse.event.mouse_event : MouseEvent;
 import deltotum.core.applications.events.application_event : ApplicationEvent;
 import deltotum.toolkit.input.keyboard.event.key_event : KeyEvent;
+import deltotum.toolkit.display.events.focus.focus_event : FocusEvent;
 import deltotum.toolkit.input.joystick.event.joystick_event : JoystickEvent;
 
 /**
@@ -32,6 +33,12 @@ class EventToolkitTarget : GraphicsComponent, EventTarget
     bool delegate(KeyEvent) onKeyUp;
     bool delegate(KeyEvent) onKeyDown;
 
+    bool delegate(FocusEvent) eventFocusFilter;
+    bool delegate(FocusEvent) eventFocusHandler;
+
+    bool delegate(FocusEvent) onFocusIn;
+    bool delegate(FocusEvent) onFocusOut;
+
     bool delegate(JoystickEvent) eventJoystickFilter;
     bool delegate(JoystickEvent) eventJoystickHandler;
 
@@ -44,6 +51,7 @@ class EventToolkitTarget : GraphicsComponent, EventTarget
         eventMouseHandler = (e) { return runListeners(e); };
         eventKeyHandler = (e) { return runListeners(e); };
         eventJoystickHandler = (e) { return runListeners(e); };
+        eventFocusHandler = (e) { return runListeners(e); };
     }
 
     bool runEventFilters(E)(E e)
@@ -69,6 +77,14 @@ class EventToolkitTarget : GraphicsComponent, EventTarget
             if (eventJoystickFilter !is null)
             {
                 return eventJoystickFilter(e);
+            }
+        }
+
+        static if (is(E : FocusEvent))
+        {
+            if (eventFocusFilter !is null)
+            {
+                return eventFocusFilter(e);
             }
         }
 
@@ -98,6 +114,14 @@ class EventToolkitTarget : GraphicsComponent, EventTarget
             if (eventJoystickHandler !is null)
             {
                 return eventJoystickHandler(e);
+            }
+        }
+
+        static if (is(E : FocusEvent))
+        {
+            if (eventFocusHandler !is null)
+            {
+                return eventFocusHandler(e);
             }
         }
 
@@ -197,6 +221,29 @@ class EventToolkitTarget : GraphicsComponent, EventTarget
             if (onJoystickAxis !is null)
             {
                 return onJoystickAxis(joystickEvent);
+            }
+            break;
+        }
+
+        return false;
+    }
+
+    bool runListeners(FocusEvent focusEvent)
+    {
+        final switch (focusEvent.event) with (FocusEvent)
+        {
+        case Event.none:
+            break;
+        case Event.focusIn:
+            if (onFocusIn !is null)
+            {
+                return onFocusIn(focusEvent);
+            }
+            break;
+        case Event.focusOut:
+            if (onFocusOut !is null)
+            {
+                return onFocusOut(focusEvent);
             }
             break;
         }

@@ -10,6 +10,7 @@ import deltotum.toolkit.physics.physical_body : PhysicalBody;
 import deltotum.toolkit.input.mouse.event.mouse_event : MouseEvent;
 import deltotum.core.applications.events.application_event : ApplicationEvent;
 import deltotum.toolkit.input.keyboard.event.key_event : KeyEvent;
+import deltotum.toolkit.display.events.focus.focus_event : FocusEvent;
 import deltotum.toolkit.input.joystick.event.joystick_event : JoystickEvent;
 import deltotum.core.events.event_type : EventType;
 import deltotum.core.utils.tostring;
@@ -262,6 +263,32 @@ abstract class DisplayObject : PhysicalBody
         static if (is(Event : JoystickEvent))
         {
             chain.insert(this);
+        }
+
+        static if (is(Event : FocusEvent))
+        {
+            if (e.isChained)
+            {
+                if (bounds.contains(e.x, e.y))
+                {
+                    if (!isFocus && e.event == FocusEvent.Event.focusIn)
+                    {
+                        //TODO move to parent
+                        isFocus = true;
+                        chain.insert(this);
+                    }
+                }
+                else
+                {
+                    if (isFocus && e.event == FocusEvent
+                        .Event.focusOut)
+                    {
+                        isFocus = false;
+                        chain.insert(this);
+                    }
+                }
+
+            }
         }
 
         if (children.length > 0)

@@ -23,6 +23,7 @@ import deltotum.platform.sdl.sdl_window : SdlWindow;
 import deltotum.platform.sdl.sdl_renderer : SdlRenderer;
 import deltotum.platform.sdl.sdl_joystick : SdlJoystick;
 import deltotum.toolkit.window.event.window_event : WindowEvent;
+import deltotum.toolkit.input.mouse.event.mouse_event : MouseEvent;
 
 import std.typecons : Nullable;
 
@@ -104,7 +105,6 @@ class SdlApplication : GraphicApplication
             return Nullable!(DisplayObject[])(targets);
         };
         eventManager.eventProcessor = new SdlEventProcessor;
-        eventManager.startEvents;
         eventManager.onKey = (key) {
             if (key.event == KeyEvent.Event.keyDown)
             {
@@ -219,6 +219,55 @@ class SdlApplication : GraphicApplication
                 // }
             }
         };
+
+        eventManager.onMouse = (mouseEvent) {
+            if (mouseEvent.event == MouseEvent.Event.mouseDown)
+            {
+                auto mustBeWindow = currentWindow;
+                if (mustBeWindow.isNull)
+                {
+                    return;
+                }
+                auto window = mustBeWindow.get;
+                foreach (obj; window.sceneManager.currentScene.getActiveObjects)
+                {
+                    if (obj.bounds.contains(mouseEvent.x, mouseEvent.y))
+                    {
+                        if (!obj.isFocus)
+                        {
+                            obj.isFocus = true;
+                        }
+
+                        import deltotum.toolkit.display.events.focus.focus_event : FocusEvent;
+                        import deltotum.core.events.event_type : EventType;
+
+                        auto focusEvent = FocusEvent(EventType.focus, FocusEvent.Event.focusIn, mouseEvent
+                                .ownerId, mouseEvent.x, mouseEvent.y);
+                        eventManager.dispatchEvent(focusEvent, obj);
+
+                        //for children
+                        auto focusOutEvent = FocusEvent(EventType.focus, FocusEvent.Event.focusOut, mouseEvent
+                                .ownerId, mouseEvent.x, mouseEvent.y);
+                        eventManager.dispatchEvent(focusOutEvent, obj);
+                    }
+                    else
+                    {
+                        if (obj.isFocus)
+                        {
+                            obj.isFocus = false;
+                            import deltotum.toolkit.display.events.focus.focus_event : FocusEvent;
+                            import deltotum.core.events.event_type : EventType;
+
+                            auto focusEvent = FocusEvent(EventType.focus, FocusEvent.Event.focusOut, mouseEvent
+                                    .ownerId, mouseEvent.x, mouseEvent.y);
+                            eventManager.dispatchEvent(focusEvent, obj);
+                        }
+                    }
+                }
+            }
+        };
+
+        eventManager.startEvents;
 
         //TODO move to config
         import std.file : getcwd, exists, isDir;

@@ -36,6 +36,7 @@ class EventManager
     void delegate(KeyEvent) onKey;
     void delegate(JoystickEvent) onJoystick;
     void delegate(WindowEvent) onWindow;
+    void delegate(MouseEvent) onMouse;
 
     void startEvents()
     {
@@ -43,6 +44,7 @@ class EventManager
         {
             return;
         }
+
         eventProcessor.onWindow = (windowEvent) {
             if (onWindow !is null)
             {
@@ -50,7 +52,14 @@ class EventManager
             }
             dispatchEvent(windowEvent);
         };
-        eventProcessor.onMouse = (mouseEvent) { dispatchEvent(mouseEvent); };
+        eventProcessor.onMouse = (mouseEvent) {
+            if (onMouse !is null)
+            {
+                onMouse(mouseEvent);
+            }
+            dispatchEvent(mouseEvent);
+
+        };
         eventProcessor.onJoystick = (joystickEvent) {
             if (onJoystick !is null)
             {
@@ -84,34 +93,38 @@ class EventManager
 
         foreach (DisplayObject target; targets)
         {
-            if (!eventChain.empty)
+            dispatchEvent(e, target);
+        }
+    }
+
+    void dispatchEvent(E)(E e, DisplayObject target)
+    {
+        if (!eventChain.empty)
+        {
+            eventChain.clear;
+        }
+
+        target.dispatchEvent(e, eventChain);
+
+        if (!eventChain.empty)
+        {
+            foreach (DisplayObject eventTarget; eventChain)
             {
-                eventChain.clear;
+                const isConsumed = eventTarget.runEventFilters(e);
+                if (isConsumed)
+                {
+                    return;
+                }
             }
 
-            target.dispatchEvent(e, eventChain);
-
-            if (!eventChain.empty)
+            foreach_reverse (DisplayObject eventTarget; eventChain)
             {
-                foreach (DisplayObject eventTarget; eventChain)
+                const isConsumed = eventTarget.runEventHandlers(e);
+                if (isConsumed)
                 {
-                    const isConsumed = eventTarget.runEventFilters(e);
-                    if (isConsumed)
-                    {
-                        return;
-                    }
-                }
-
-                foreach_reverse (DisplayObject eventTarget; eventChain)
-                {
-                    const isConsumed = eventTarget.runEventHandlers(e);
-                    if (isConsumed)
-                    {
-                        return;
-                    }
+                    return;
                 }
             }
         }
-
     }
 }

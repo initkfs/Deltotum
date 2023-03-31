@@ -23,6 +23,7 @@ class EventType
         EventType key;
         EventType window;
         EventType joystick;
+        EventType focus;
     }
 
     this(string name, EventType parent = null) pure @safe

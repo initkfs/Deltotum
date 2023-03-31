@@ -50,6 +50,10 @@ class Theme
         return RGBA(0, 49, 53);
     }
 
+    RGBA colorFocus(){
+        return RGBA.red;
+    }
+
     double controlOpacity(){
         return 0.8;
     }
