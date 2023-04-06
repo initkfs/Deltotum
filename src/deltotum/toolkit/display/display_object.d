@@ -19,13 +19,16 @@ import std.container : DList;
 import std.math.operations : isClose;
 import std.stdio;
 import std.math.algebraic : abs;
-import std.typecons: Nullable;
+import std.typecons : Nullable;
+import deltotum.core.utils.tostring : ToStringExclude;
 
 /**
  * Authors: initkfs
  */
-abstract class DisplayObject : PhysicalBody
+class DisplayObject : PhysicalBody
 {
+    mixin ToString;
+
     DisplayObject parent;
 
     double opacity = 1;
@@ -46,14 +49,13 @@ abstract class DisplayObject : PhysicalBody
 
     Layout layout;
     bool isLayoutManaged = true;
+    bool isResizedByParent = false;
     Alignment alignment = Alignment.none;
 
     bool isCreated = false;
     bool isFocus = false;
     bool isDraggable = false;
     bool isVisible = true;
-
-    mixin ToString;
 
     //protected
     //{
@@ -89,7 +91,7 @@ abstract class DisplayObject : PhysicalBody
         double offsetX = 0;
         double offsetY = 0;
         bool isDrag = false;
-        bool valid = true;
+        bool isValid = true;
     }
 
     void create()
@@ -363,15 +365,16 @@ abstract class DisplayObject : PhysicalBody
         {
             layout.applyLayout(this);
         }
-
-        foreach (child; children)
-        {
-            child.requestLayout;
-        }
     }
 
     void update(double delta)
     {
+        if (!isChildrenValid)
+        {
+            requestLayout;
+            setChildrenValid;
+        }
+
         if (!isValid)
         {
             if (invalidateListener !is null)
@@ -379,7 +382,10 @@ abstract class DisplayObject : PhysicalBody
                 invalidateListener();
             }
 
-            requestLayout;
+            if (parent !is null && parent !is this)
+            {
+                parent.requestLayout;
+            }
 
             setValid(true);
         }
@@ -480,11 +486,8 @@ abstract class DisplayObject : PhysicalBody
 
         obj.create;
 
-        //TODO disable flag
-        if (layout !is null)
-        {
-            requestLayout;
-        }
+        obj.setInvalid;
+        setInvalid;
     }
 
     void addOrAddCreated(DisplayObject obj, long index = -1)
@@ -650,8 +653,11 @@ abstract class DisplayObject : PhysicalBody
             immutable double dw = _width - oldWidth;
             foreach (child; children)
             {
-                const newWidth = child.width + dw;
-                child.width(newWidth);
+                if (layout is null || child.isResizedByParent)
+                {
+                    const newWidth = child.width + dw;
+                    child.width(newWidth);
+                }
             }
         }
 
@@ -685,38 +691,42 @@ abstract class DisplayObject : PhysicalBody
             const dh = _height - oldHeight;
             foreach (child; children)
             {
-                const newHeight = child.height + dh;
-                child.height(newHeight);
+                if (layout is null || child.isResizedByParent)
+                {
+                    const newHeight = child.height + dh;
+                    child.height(newHeight);
+                }
+
             }
         }
     }
 
-    bool isValid() @nogc @safe pure nothrow
+    bool isChildrenValid() @nogc @safe pure nothrow
     {
-        bool isAllValid = valid;
         foreach (DisplayObject child; children)
         {
-            if (!child.isValid && isAllValid)
+            if (!child.isValid)
             {
-                isAllValid = false;
+                return false;
             }
         }
-        return isAllValid;
+        return true;
     }
 
-    void setValid(bool isValidControl) @nogc @safe pure nothrow
+    void setChildrenValid()
     {
-        valid = isValidControl;
-        if (valid)
+        foreach (DisplayObject child; children)
         {
-            foreach (DisplayObject child; children)
+            if (!child.isValid)
             {
-                if (!child.isValid)
-                {
-                    child.setValid(true);
-                }
+                child.setValid(true);
             }
         }
+    }
+
+    void setValid(bool value) @nogc @safe pure nothrow
+    {
+        isValid = value;
     }
 
     void setInvalid() @nogc @safe pure nothrow
@@ -774,22 +784,25 @@ abstract class DisplayObject : PhysicalBody
         }
     }
 
-     Nullable!DisplayObject findChildRecursive(DisplayObject child)
+    Nullable!DisplayObject findChildRecursive(DisplayObject child)
     {
-        if(child is null){
+        if (child is null)
+        {
             debug throw new Exception("Child must not be null");
             return Nullable!DisplayObject.init;
         }
         DisplayObject mustBeChild;
-        onChildrenRecursive((currentChild){
-            if(child is currentChild){
+        onChildrenRecursive((currentChild) {
+            if (child is currentChild)
+            {
                 mustBeChild = child;
                 return false;
             }
             return true;
         });
 
-        return mustBeChild is null ? Nullable!DisplayObject.init : Nullable!DisplayObject(mustBeChild);
+        return mustBeChild is null ? Nullable!DisplayObject.init
+            : Nullable!DisplayObject(mustBeChild);
     }
 
     Nullable!DisplayObject findChild(DisplayObject child)

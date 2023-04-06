@@ -122,7 +122,14 @@ class Text : Control
             {
                 Rect2d emptyGeometry = Rect2d(0, 0, spaceWidth, 0);
                 //TODO alphabet?
-                newGlyphs ~= Glyph(letter, emptyGeometry, true, null);
+                newGlyphs ~= Glyph(letter, emptyGeometry, true, false, null);
+                continue;
+            }
+            else if (letter == '\n')
+            { //TODO isControl?
+                Rect2d emptyGeometry = Rect2d();
+                //TODO alphabet?
+                newGlyphs ~= Glyph(letter, emptyGeometry, false, true, null);
                 continue;
             }
 
@@ -164,7 +171,7 @@ class Text : Control
                 width = incWidth;
             }
 
-            if (glyphPosX + glyph.geometry.width > width - padding.right)
+            if (glyph.isCarriageReturn || glyphPosX + glyph.geometry.width > width - padding.right)
             {
                 newRows ~= row;
                 row = TextRow();

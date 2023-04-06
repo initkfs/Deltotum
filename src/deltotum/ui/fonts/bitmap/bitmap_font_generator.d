@@ -70,8 +70,14 @@ class BitmapFontGenerator : FontGenerator
                     }
                 }
 
+                //TODO special?
+                import std.algorithm.comparison: among;
+                //FIXME \r\n
+                bool isCarriageReturn = letter.among('\n', '\r', ) != 0;
+                bool isEmpty = isCarriageReturn;
+
                 glyphs ~= Glyph(letter, Rect2d(glyphPosition.x, glyphPosition.y, glyphPosition.w, glyphPosition
-                        .h), false, alphabet);
+                        .h), isEmpty, isCarriageReturn, alphabet);
 
                 if(const err = glyphRepresentation.blit(null, fontMapSurface.getObject, &glyphPosition)){
                     throw new Exception(err.toString);

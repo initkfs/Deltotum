@@ -65,6 +65,7 @@ abstract class Control : DisplayObject
             {
                 background.x = backgroundInsets.left;
                 background.y = backgroundInsets.top;
+                background.isResizedByParent = true;
                 background.isLayoutManaged = false;
                 addCreated(background);
             }

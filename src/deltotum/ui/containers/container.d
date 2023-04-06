@@ -1,6 +1,7 @@
 module deltotum.ui.containers.container;
 
 import deltotum.ui.controls.control : Control;
+import deltotum.toolkit.display.display_object : DisplayObject;
 
 /**
  * Authors: initkfs

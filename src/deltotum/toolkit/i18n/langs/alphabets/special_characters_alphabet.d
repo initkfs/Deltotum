@@ -9,6 +9,6 @@ class SpecialCharactersAlphabet : Alphabet
 {
     override dstring allLetters()
     {
-        return "!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~";
+        return "!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~\n\r";
     }
 }

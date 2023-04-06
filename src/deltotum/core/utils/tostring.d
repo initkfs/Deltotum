@@ -1,5 +1,7 @@
 module deltotum.core.utils.tostring;
 
+enum ToStringExclude;
+
 /**
  * Authors: initkfs
  */
@@ -16,7 +18,7 @@ mixin template ToString()
 
         static if (is(C == class))
         {
-            string result = C.classinfo.name;
+            string result = this.classinfo.name;
 
             import std.string : lastIndexOf;
 
@@ -39,6 +41,7 @@ mixin template ToString()
         import std.traits : isDelegate, hasUDA, isPointer;
         import deltotum.core.applications.components.uni.attributes : Service;
         import deltotum.core.utils.meta : hasOverloads;
+        import deltotum.core.utils.tostring : ToStringExclude;
 
         static foreach (i, fieldName; fields)
         {
@@ -49,14 +52,21 @@ mixin template ToString()
                 //TODO filter or ToStringExclude...?
                 //TODO check alias with __traits(compiles, hasUDA!(member, attribute)
                 //TODO replace hasUDA for overloads
-                static if (!isDelegate!fieldType && !hasOverloads!(typeof(cast(C) this), fieldName) && !hasUDA!(field, Service))
+                static if (!isDelegate!fieldType && !hasOverloads!(typeof(cast(C) this), fieldName) && !hasUDA!(field, Service) && !hasUDA!(
+                        field, ToStringExclude))
                 {
                     static if (isPointer!fieldType)
                     {
-                        result ~= fieldName ~ ":*" ~ to!string(*fieldValue);
+                        result ~= fieldName ~ ":*" ~ (fieldValue is null ? "null" : to!string(
+                                *fieldValue));
+                    }
+                    else if (is(fieldType == Self))
+                    {
+                        result ~= fieldName ~ ":(this)" ~ Self.stringof;
                     }
                     else
                     {
+
                         result ~= fieldName ~ ":" ~ to!string(fieldValue);
                     }
 

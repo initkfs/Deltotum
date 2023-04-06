@@ -56,7 +56,7 @@ class ToggleSwitch : Control
     DisplayObject effectSwitchOn;
     DisplayObject effectSwitchOff;
 
-    this(double width = 80, double height = 40)
+    this(double width = 60, double height = 25)
     {
         this.width = width;
         this.height = height;

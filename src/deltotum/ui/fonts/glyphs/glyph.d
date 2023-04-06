@@ -13,6 +13,7 @@ struct Glyph
 
     Rect2d geometry;
     bool isEmpty;
+    bool isCarriageReturn;
 
     Alphabet alphabet;
 }

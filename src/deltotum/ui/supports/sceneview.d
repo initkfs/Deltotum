@@ -8,6 +8,7 @@ import deltotum.ui.controls.texts.text : Text;
 import deltotum.toolkit.scene.scene : Scene;
 import deltotum.toolkit.display.display_object : DisplayObject;
 import deltotum.ui.containers.container : Container;
+import deltotum.ui.controls.texts.text_area : TextArea;
 
 private
 {
@@ -37,12 +38,19 @@ class SceneView : VBox
     {
         DisplayObject objectOnDebug;
         size_t objectOnDebugSceneIndex;
+        bool isDebug;
+        TextArea objectFullInfo;
     }
 
     override void initialize()
     {
         super.initialize;
         isLayoutManaged = false;
+        spacing = 5;
+
+        import deltotum.maths.geometry.insets : Insets;
+
+        padding = Insets(5);
     }
 
     override void create()
@@ -50,6 +58,7 @@ class SceneView : VBox
         super.create;
 
         auto hbox = new HBox;
+        
         addCreated(hbox);
         auto text = new Text("Debug");
         auto tb = new ToggleSwitch;
@@ -58,16 +67,29 @@ class SceneView : VBox
             {
                 onEnableDebug();
             }
+            isDebug = true;
         };
         tb.onSwitchOff = () {
             if (onDisableDebug !is null)
             {
                 onDisableDebug();
             }
+
+            isDebug = false;
+            if (objectOnDebug)
+            {
+                removeDebugInfo(objectOnDebug);
+                objectOnDebug = null;
+            }
         };
 
         hbox.addCreated(text);
         hbox.addCreated(tb);
+
+        objectFullInfo = new TextArea();
+        objectFullInfo.width = width - padding.width;
+        objectFullInfo.height = 400;
+        addCreated(objectFullInfo);
 
         auto scene = sceneProvider();
         if (scene is null)
@@ -83,7 +105,7 @@ class SceneView : VBox
             }
 
             obj.onMouseDown = (e) {
-                if (e.button != 3)
+                if (!isDebug || e.button != 3)
                 {
                     return false;
                 }
@@ -185,6 +207,17 @@ class SceneView : VBox
         }
 
         obj.userData[debugUserDataKey] = createDebugInfo(obj);
+        fillDebugInfo(obj);
+    }
+
+    private void fillDebugInfo(DisplayObject obj)
+    {
+        if( objectFullInfo is null){
+            return;
+        }
+        import std.array : appender;
+
+        objectFullInfo.textView.text = obj.toString;
     }
 
     private void removeDebugInfo(DisplayObject obj)
@@ -193,12 +226,16 @@ class SceneView : VBox
         {
             return;
         }
-        
+
         if (auto debugData = cast(DebugInfo) obj.userData.get(debugUserDataKey, null))
         {
             obj.remove(debugData);
             obj.userData = null;
         }
+    }
+
+    override void update(double delta){
+        super.update(delta);
     }
 
 }
