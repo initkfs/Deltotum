@@ -1,6 +1,6 @@
 module deltotum.toolkit.display.animation.transition;
 
-import deltotum.toolkit.display.display_object : DisplayObject;
+import deltotum.toolkit.display.animation.animation: Animation;
 import deltotum.toolkit.display.animation.interp.interpolator : Interpolator;
 import deltotum.toolkit.display.animation.interp.uni_interpolator : UniInterpolator;
 import deltotum.maths.vector2d : Vector2d;
@@ -24,7 +24,7 @@ private
 /**
  * Authors: initkfs
  */
-class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : DisplayObject
+class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : Animation
 {
     void delegate(T) onValue;
     void delegate() onEnd;

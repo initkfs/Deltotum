@@ -112,7 +112,7 @@ struct Rect2d
     {
         import std.format : format;
 
-        return format("x: %s, y: %s, width: %s, height: %s", x, y, width, height);
+        return format("x: %s, y: %s, w: %s, h: %s", x, y, width, height);
     }
 
 }

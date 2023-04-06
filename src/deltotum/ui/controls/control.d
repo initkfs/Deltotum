@@ -58,14 +58,18 @@ abstract class Control : DisplayObject
     {
         super.create;
 
-        createBackground(width - backgroundInsets.width, height - backgroundInsets.height);
-        if (background !is null)
+        if (width > 0 && height > 0)
         {
-            background.x = backgroundInsets.left;
-            background.y = backgroundInsets.top;
-            background.isLayoutManaged = false;
-            addCreated(background);
+            createBackground(width - backgroundInsets.width, height - backgroundInsets.height);
+            if (background !is null)
+            {
+                background.x = backgroundInsets.left;
+                background.y = backgroundInsets.top;
+                background.isLayoutManaged = false;
+                addCreated(background);
+            }
+        }else {
+            logger.tracef("Dimensions not set, background cannot be created. Width: %s, height: %s in %s", width, height, className);
         }
-
     }
 }

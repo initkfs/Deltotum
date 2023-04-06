@@ -19,6 +19,7 @@ import std.container : DList;
 import std.math.operations : isClose;
 import std.stdio;
 import std.math.algebraic : abs;
+import std.typecons: Nullable;
 
 /**
  * Authors: initkfs
@@ -74,6 +75,8 @@ abstract class DisplayObject : PhysicalBody
 
     void delegate(double, double) onChangeXFromTo;
     void delegate(double, double) onChangeYFromTo;
+
+    Object[string] userData;
 
     private
     {
@@ -305,6 +308,16 @@ abstract class DisplayObject : PhysicalBody
 
     }
 
+    void onAllChildren(void delegate(DisplayObject) onChild, DisplayObject root)
+    {
+        onChild(root);
+
+        foreach (DisplayObject child; root.children)
+        {
+            onAllChildren(onChild, child);
+        }
+    }
+
     bool draw()
     {
         //TODO layer
@@ -446,7 +459,7 @@ abstract class DisplayObject : PhysicalBody
         }
     }
 
-    void addCreated(DisplayObject obj)
+    void addCreated(DisplayObject obj, long index = -1)
     {
         if (obj is null)
         {
@@ -463,7 +476,7 @@ abstract class DisplayObject : PhysicalBody
             obj.y = y + obj.y;
         }
 
-        add(obj);
+        add(obj, index);
 
         obj.create;
 
@@ -474,23 +487,43 @@ abstract class DisplayObject : PhysicalBody
         }
     }
 
-    void addOrAddCreated(DisplayObject obj)
+    void addOrAddCreated(DisplayObject obj, long index = -1)
     {
         if (obj.isCreated)
         {
-            add(obj);
+            add(obj, index);
         }
         else
         {
-            addCreated(obj);
+            addCreated(obj, index);
         }
     }
 
-    void add(DisplayObject obj)
+    void add(DisplayObject obj, long index = -1)
     {
         obj.parent = this;
         //TODO check if exists
-        children ~= obj;
+        //TODO check if exists
+        if (index < 0 || children.length == 0)
+        {
+            children ~= obj;
+        }
+        else
+        {
+            if (index >= children.length)
+            {
+                import std.format : format;
+
+                throw new Exception(format("Child index must not be greater than %s, but received %s for child %s", children
+                        .length, index, obj.toString));
+            }
+
+            import std.array : insertInPlace;
+
+            //TODO remove temp array
+            children.insertInPlace(cast(size_t) index, [obj]);
+        }
+
     }
 
     bool has(DisplayObject obj)
@@ -512,11 +545,6 @@ abstract class DisplayObject : PhysicalBody
 
     bool remove(DisplayObject obj)
     {
-        if (!has(obj))
-        {
-            return false;
-        }
-
         import std.algorithm.searching : countUntil;
         import std.algorithm.mutation : remove;
 
@@ -721,5 +749,58 @@ abstract class DisplayObject : PhysicalBody
         auto rect = new Rectangle(width, height, GraphicStyle(1, RGBA.red, false, RGBA.transparent));
         rect.isLayoutManaged = false;
         addCreated(rect);
+    }
+
+    void onChildrenRecursive(bool delegate(DisplayObject) onObject)
+    {
+        onChildrenRecursive(this, onObject);
+    }
+
+    void onChildrenRecursive(DisplayObject root, bool delegate(DisplayObject) onObjectIsContinue)
+    {
+        if (root is null)
+        {
+            return;
+        }
+
+        if (!onObjectIsContinue(root))
+        {
+            return;
+        }
+
+        foreach (child; root.children)
+        {
+            onChildrenRecursive(child, onObjectIsContinue);
+        }
+    }
+
+     Nullable!DisplayObject findChildRecursive(DisplayObject child)
+    {
+        if(child is null){
+            debug throw new Exception("Child must not be null");
+            return Nullable!DisplayObject.init;
+        }
+        DisplayObject mustBeChild;
+        onChildrenRecursive((currentChild){
+            if(child is currentChild){
+                mustBeChild = child;
+                return false;
+            }
+            return true;
+        });
+
+        return mustBeChild is null ? Nullable!DisplayObject.init : Nullable!DisplayObject(mustBeChild);
+    }
+
+    Nullable!DisplayObject findChild(DisplayObject child)
+    {
+        foreach (DisplayObject ch; children)
+        {
+            if (ch is child)
+            {
+                return Nullable!DisplayObject(ch);
+            }
+        }
+        return Nullable!DisplayObject.init;
     }
 }
