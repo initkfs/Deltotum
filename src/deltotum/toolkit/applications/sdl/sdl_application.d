@@ -90,6 +90,10 @@ class SdlApplication : GraphicApplication
 
         joystick = SdlJoystick.fromDevices;
 
+        //TODO extreact dependency
+        import deltotum.platform.sdl.sdl_keyboard: SdlKeyboard;
+        auto keyboard = new SdlKeyboard;
+
         _input = new Input;
         _audio = new Audio(audioMixLib);
 
@@ -104,7 +108,7 @@ class SdlApplication : GraphicApplication
             auto targets = mustBeCurrentWindow.get.sceneManager.currentScene.getActiveObjects;
             return Nullable!(DisplayObject[])(targets);
         };
-        eventManager.eventProcessor = new SdlEventProcessor;
+        eventManager.eventProcessor = new SdlEventProcessor(keyboard);
         eventManager.onKey = (key) {
             if (key.event == KeyEvent.Event.keyDown)
             {

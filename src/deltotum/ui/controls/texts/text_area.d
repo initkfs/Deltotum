@@ -15,6 +15,8 @@ class TextArea : Control
     TextView textView;
     VScrollbar scroll;
 
+    void delegate() onCaret;
+
     override void initialize()
     {
         super.initialize;
@@ -44,5 +46,34 @@ class TextArea : Control
         addCreated(scroll);
 
         scroll.onValue = (value) { textView.scrollTo(value); };
+
+        onKeyDown = (key) {
+            import deltotum.platform.commons.keyboards.key_name : KeyName;
+
+            if (key.keyName == KeyName.BACKSPACE && textView.text.length > 0)
+            {
+                textView.text = textView.text[0 .. $ - 1];
+                return true;
+            }
+
+            //import std;
+            // writeln(key);
+
+            if (key.keyName == KeyName.RETURN && key.keyMod.isCtrl && onCaret !is null)
+            {
+                onCaret();
+                return true;
+            }
+
+            foreach (glyph; assets.defaultBitmapFont.glyphs)
+            {
+                if (glyph.grapheme == key.keyCode)
+                {
+                    textView.text ~= glyph.grapheme;
+                }
+            }
+
+            return false;
+        };
     }
 }

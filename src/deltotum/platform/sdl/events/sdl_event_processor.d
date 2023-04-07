@@ -12,6 +12,7 @@ import deltotum.toolkit.input.mouse.event.mouse_event : MouseEvent;
 import deltotum.toolkit.input.keyboard.event.key_event : KeyEvent;
 import deltotum.toolkit.window.event.window_event : WindowEvent;
 import deltotum.toolkit.input.joystick.event.joystick_event : JoystickEvent;
+import deltotum.platform.sdl.sdl_keyboard : SdlKeyboard;
 
 import bindbc.sdl;
 import std.stdio;
@@ -21,6 +22,17 @@ import std.stdio;
  */
 class SdlEventProcessor : EventProcessor!(SDL_Event*)
 {
+    private
+    {
+        SdlKeyboard keyboard;
+    }
+
+    this(SdlKeyboard keyboard)
+    {
+        assert(keyboard !is null);
+        this.keyboard = keyboard;
+    }
+
     override bool process(SDL_Event* event)
     {
         if (!event)
@@ -82,10 +94,33 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
         default:
             break;
         }
-        const int keyCode = event.key.keysym.sym;
-        const int mod = event.key.keysym.mod;
+
+        import deltotum.platform.commons.keyboards.key_name : KeyName;
+
+        const SDL_Keycode keyCode = event.key.keysym.sym;
+        const keyName = keyboard.keyCodeToKeyName(keyCode);
+
+        const mod = event.key.keysym.mod;
+
+        import deltotum.platform.commons.keyboards.key_modifier_info : KeyModifierInfo;
+
+        KeyModifierInfo modInfo = KeyModifierInfo(
+            (mod & SDL_Keymod.KMOD_LSHIFT) == SDL_Keymod.KMOD_LSHIFT,
+            (mod & SDL_Keymod.KMOD_RSHIFT) == SDL_Keymod.KMOD_RSHIFT,
+            (mod & SDL_Keymod.KMOD_LCTRL) == SDL_Keymod.KMOD_LCTRL,
+            (mod & SDL_Keymod.KMOD_RCTRL) == SDL_Keymod.KMOD_RCTRL,
+            (mod & SDL_Keymod.KMOD_LALT) == SDL_Keymod.KMOD_LALT,
+            (mod & SDL_Keymod.KMOD_RALT) == SDL_Keymod.KMOD_RALT,
+            (mod & SDL_Keymod.KMOD_LGUI) == SDL_Keymod.KMOD_LGUI,
+            (mod & SDL_Keymod.KMOD_RGUI) == SDL_Keymod.KMOD_RGUI,
+            (mod & SDL_Keymod.KMOD_NUM) == SDL_Keymod.KMOD_NUM,
+            (mod & SDL_Keymod.KMOD_CAPS) == SDL_Keymod.KMOD_CAPS,
+            (mod & SDL_Keymod.KMOD_MODE) == SDL_Keymod.KMOD_MODE,
+            (mod & SDL_Keymod.KMOD_SCROLL) == SDL_Keymod.KMOD_SCROLL,
+        );
+
         const ownerId = event.key.windowID;
-        auto keyEvent = KeyEvent(EventType.key, type, ownerId, keyCode, mod);
+        auto keyEvent = KeyEvent(EventType.key, type, ownerId, keyName, modInfo, keyCode);
         onKey(keyEvent);
     }
 
@@ -154,7 +189,7 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
         {
             return;
         }
-        
+
         JoystickEvent.Event type = JoystickEvent.Event.none;
         switch (event.type)
         {

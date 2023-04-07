@@ -56,6 +56,7 @@ class DisplayObject : PhysicalBody
     bool isFocus = false;
     bool isDraggable = false;
     bool isVisible = true;
+    bool isReceiveEvents = true;
 
     //protected
     //{
@@ -196,6 +197,11 @@ class DisplayObject : PhysicalBody
 
     void dispatchEvent(Target : DisplayObject, Event)(Event e, ref DList!Target chain)
     {
+        if (!isVisible || !isReceiveEvents)
+        {
+            return;
+        }
+
         static if (__traits(compiles, e.target))
         {
             if (e.target !is null && e.target is this)
