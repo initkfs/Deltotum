@@ -25,7 +25,7 @@ protected
  */
 class Text : Control
 {
-    string text;
+    dstring _text;
     int spaceWidth = 5;
     int rowHeight = 0;
 
@@ -36,14 +36,21 @@ class Text : Control
 
     protected
     {
-        string oldText;
+        dstring oldText;
         TextRow[] rows;
     }
 
-    this(string text = "text")
+    this(string text)
+    {
+        import std.conv : to;
+
+        this(text.to!dstring);
+    }
+
+    this(dstring text = "text")
     {
         //TODO validate
-        this.text = text;
+        this._text = text;
     }
 
     override void initialize()
@@ -97,7 +104,7 @@ class Text : Control
         }
     }
 
-    protected Glyph[] textToGlyphs(string textString)
+    protected Glyph[] textToGlyphs(dstring textString)
     {
         if (textString.length == 0)
         {
@@ -125,7 +132,7 @@ class Text : Control
                 newGlyphs ~= Glyph(letter, emptyGeometry, true, false, null);
                 continue;
             }
-            else if (letter == '\n')
+            else if (letter == '\n' || letter == ' ')
             { //TODO isControl?
                 Rect2d emptyGeometry = Rect2d();
                 //TODO alphabet?
@@ -146,7 +153,7 @@ class Text : Control
         return newGlyphs;
     }
 
-    protected TextRow[] textToRows(string text)
+    protected TextRow[] textToRows(dstring text)
     {
         TextRow[] newRows;
 
@@ -198,10 +205,10 @@ class Text : Control
 
     void updateRows()
     {
-        this.rows = textToRows(text);
+        this.rows = textToRows(_text);
     }
 
-    void addRows(string text)
+    void addRows(dstring text)
     {
         this.rows ~= textToRows(text);
     }
@@ -246,31 +253,47 @@ class Text : Control
 
     override void drawContent()
     {
-        if (text.length == 0)
+        if (_text.length == 0)
         {
             return;
         }
 
-        if (oldText != text)
+        if (oldText != _text)
         {
             updateRows;
-            oldText = text;
+            oldText = _text;
         }
 
         renderText(rows);
     }
 
-    void appendText(string text)
+    void appendText(dstring text)
     {
         if (rows.length == 0)
         {
-            this.text = text;
+            this._text = text;
         }
         else
         {
             addRows(text);
-            this.text ~= text;
+            this._text ~= text;
             this.oldText = text;
         }
+    }
+
+    void text(string t)
+    {
+        import std.conv : to;
+
+        _text = t.to!dstring;
+    }
+
+    void text(dstring t)
+    {
+        _text = t;
+    }
+
+    ref dstring text(){
+        return _text;
     }
 }

@@ -20,7 +20,7 @@ class Button : Control
 
     void delegate(ActionEvent) onAction;
 
-    string _buttonText;
+    dstring _buttonText;
 
     Texture delegate() hoverFactory;
     Texture delegate() clickEffectFactory;
@@ -35,7 +35,7 @@ class Button : Control
         Text text;
     }
 
-    this(double width = 80, double height = 40, string text = "Button")
+    this(double width = 80, double height = 40, dstring text = "Button")
     {
         super();
         this.width = width;

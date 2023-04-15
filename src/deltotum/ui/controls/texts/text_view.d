@@ -25,7 +25,7 @@ class TextView : Text
         double scrollPosition = 0;
     }
 
-    this(string text = "text")
+    this(dstring text = "text")
     {
         super(text);
     }

@@ -77,9 +77,16 @@ class HBox : Container
             return 0;
         }
         import std.algorithm.searching : maxElement;
-        import std.algorithm.iteration: filter;
+        import std.algorithm.iteration: filter, map;
+        import std.algorithm.comparison: max;
+        import std.range.primitives: walkLength;
 
-        const double childrenMaxHeight = children.filter!(ch => ch.isLayoutManaged).maxElement!("a.height").height;
+        auto childrenRange = children.filter!(ch => ch.isLayoutManaged);
+        if(childrenRange.walkLength == 0){
+            return 0;
+        }
+        
+        const double childrenMaxHeight = childrenRange.maxElement!"a.height".height;
         return childrenMaxHeight;
     }
 }
