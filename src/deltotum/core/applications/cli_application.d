@@ -8,6 +8,7 @@ import deltotum.core.configs.config : Config;
 import deltotum.core.clis.cli : Cli;
 import deltotum.core.contexts.context : Context;
 import deltotum.core.resources.resource : Resource;
+import deltotum.core.extensions.extension : Extension;
 
 import std.logger : Logger;
 import std.typecons : Nullable;
@@ -85,6 +86,9 @@ class CliApplication
 
         uservices.resource = createResource(uservices.config, uservices.context);
         uservices.logger.trace("Resources service built");
+
+        uservices.extension = createExtension(uservices.logger, uservices.config, uservices.context);
+        uservices.logger.trace("Extension service built");
 
         uservices.isBuilt = true;
 
@@ -325,6 +329,26 @@ class CliApplication
         string resourceDir = buildPath(mustBeDataDir.get, "resources");
         auto resource = new Resource(resourceDir);
         return resource;
+    }
+
+    protected Extension createExtension(Logger logger, Config config, Context context)
+    {
+        import deltotum.core.extensions.lua.lua_extension_collector : LuaExtensionCollector;
+
+        //TODO from config;
+        import std.path : buildPath;
+        auto mustBeDataDir = context.appContext.dataDir;
+        if(mustBeDataDir.isNull){
+            //TODO or return Nullable?
+            throw new Exception("Data directory not found");
+        }
+
+        const extDir = buildPath(mustBeDataDir.get, "extensions");
+        auto collector = new LuaExtensionCollector(logger, config, context, extDir);
+        collector.initialize;
+        //FIXME lazy load
+        collector.load;
+        return collector;
     }
 
     protected Cli createCli(string[] args)

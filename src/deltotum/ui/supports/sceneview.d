@@ -186,9 +186,8 @@ class SceneView : VBox
 
         import deltotum.ui.controls.texts.text : Text;
         import std.format : format;
-        import std.conv: to;
 
-        auto sizeInfo = new Text(format("%s, p: %s", obj.bounds, obj.padding).to!dstring);
+        auto sizeInfo = new Text(format("%s, p: %s", obj.bounds, obj.padding));
 
         container.addCreated(sizeInfo);
 

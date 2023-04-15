@@ -31,7 +31,8 @@
     "sourcePaths": ["./src"],
     "importPaths": ["./src"],
     "dependencies": {
-        "bindbc-sdl": "~>1.2.1"
+        "bindbc-sdl": "~>1.2.1",
+        "bindbc-lua": "~>0.5.1"
     },
     "dflags": ["-dip1000", "-preview=in"],
     "libs-posix": [],
@@ -39,6 +40,7 @@
         "SDL_Image",
         "SDL_TTF",
         "SDL_2020",
-        "SDL_Mixer_202"
+        "SDL_Mixer_202",
+        "LUA_54"
     ]
 }

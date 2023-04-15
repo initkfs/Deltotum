@@ -1,11 +1,13 @@
 module deltotum.core.applications.components.units.services.configurable_unit;
 
+import deltotum.core.applications.components.units.simple_unit: SimpleUnit;
+
 import deltotum.core.configs.config : Config;
 
 /**
  * Authors: initkfs
  */
-class ConfigurableUnit
+class ConfigurableUnit : SimpleUnit
 {
     private
     {

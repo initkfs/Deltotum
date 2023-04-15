@@ -7,6 +7,7 @@ import deltotum.core.supports.support : Support;
 import deltotum.core.clis.cli : Cli;
 import deltotum.core.contexts.context : Context;
 import deltotum.core.resources.resource : Resource;
+import deltotum.core.extensions.extension : Extension;
 
 import std.logger.core : Logger;
 
@@ -28,6 +29,7 @@ class UniComponent : SimpleUnit
         @Service Cli _cli;
         @Service Support _support;
         @Service Resource _resource;
+        @Service Extension _extension;
     }
 
     void build(UniComponent uniComponent)
@@ -177,5 +179,19 @@ class UniComponent : SimpleUnit
 
         enforce(resource !is null, "Resource must not be null");
         _resource = resource;
+    }
+
+    final Extension extension() @nogc nothrow pure @safe
+    out (_extension; _extension !is null)
+    {
+        return _extension;
+    }
+
+    final void extension(Extension extension) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(extension !is null, "Extension must not be null");
+        _extension = extension;
     }
 }

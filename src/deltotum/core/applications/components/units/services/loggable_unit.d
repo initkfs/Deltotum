@@ -1,11 +1,13 @@
 module deltotum.core.applications.components.units.services.loggable_unit;
 
+import deltotum.core.applications.components.units.simple_unit: SimpleUnit;
+
 import std.logger.core : Logger;
 
 /**
  * Authors: initkfs
  */
-class LoggableUnit
+class LoggableUnit : SimpleUnit
 {
     private
     {
