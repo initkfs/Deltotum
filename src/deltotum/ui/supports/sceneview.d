@@ -34,6 +34,8 @@ class SceneView : VBox
     Scene delegate() sceneProvider;
     const string debugUserDataKey = "debugData";
 
+    TextArea output;
+
     private
     {
         DisplayObject objectOnDebug;
@@ -90,6 +92,11 @@ class SceneView : VBox
         objectFullInfo.width = width - padding.width;
         objectFullInfo.height = 400;
         addCreated(objectFullInfo);
+
+        output = new TextArea();
+        output.width = width - padding.width;
+        output.height = 150;
+        addCreated(output);
 
         auto scene = sceneProvider();
         if (scene is null)

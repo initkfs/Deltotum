@@ -1,22 +1,78 @@
 module deltotum.core.extensions.extension;
 
-import deltotum.core.applications.components.units.services.application_unit : ApplicationUnit;
-import deltotum.core.contexts.context : Context;
-import deltotum.core.configs.config : Config;
+import deltotum.core.applications.components.units.simple_unit: SimpleUnit;
+import deltotum.core.extensions.plugins.plugin : Plugin;
 
-import std.logger : Logger;
+import std.variant : Variant;
 
-abstract class Extension : ApplicationUnit
+class Extension : SimpleUnit
 {
-
-    this(Logger logger, Config config, Context context)
+    protected
     {
-        super(logger, config, context);
+        Plugin[] plugins;
     }
 
-    abstract
+    void call(string extName, string[] args, void delegate(Variant) onResult, void delegate(string) onError = null)
     {
-        bool load();
-        string[] call(string event, string[] args);
+        foreach (p; plugins)
+        {
+            if (p.name == extName)
+            {
+                p.call(args, onResult, onError);
+            }
+        }
+    }
+
+    override void initialize()
+    {
+        super.initialize;
+
+        foreach (p; plugins)
+        {
+            p.initialize;
+        }
+    }
+
+    override void run()
+    {
+        super.run;
+
+        foreach (p; plugins)
+        {
+            p.run;
+        }
+    }
+
+    override void stop()
+    {
+        super.stop;
+
+        foreach (p; plugins)
+        {
+            p.stop;
+        }
+    }
+
+    override void dispose()
+    {
+        super.dispose;
+
+        foreach (p; plugins)
+        {
+            p.dispose;
+        }
+    }
+
+    void addPlugin(Plugin plugin)
+    {
+        import std.algorithm : canFind;
+        import std.format : format;
+
+        if (plugins.canFind(plugin))
+        {
+            throw new Exception(format("Plugin %s has been already added", plugin));
+        }
+
+        plugins ~= plugin;
     }
 }

@@ -6,6 +6,7 @@ import deltotum.core.events.event_target : EventTarget;
 import deltotum.toolkit.input.mouse.event.mouse_event : MouseEvent;
 import deltotum.core.applications.events.application_event : ApplicationEvent;
 import deltotum.toolkit.input.keyboard.event.key_event : KeyEvent;
+import deltotum.toolkit.input.keyboard.event.text_input_event : TextInputEvent;
 import deltotum.toolkit.display.events.focus.focus_event : FocusEvent;
 import deltotum.toolkit.input.joystick.event.joystick_event : JoystickEvent;
 
@@ -33,6 +34,11 @@ class EventToolkitTarget : GraphicsComponent, EventTarget
     bool delegate(KeyEvent) onKeyUp;
     bool delegate(KeyEvent) onKeyDown;
 
+    bool delegate(TextInputEvent) eventTextInputFilter;
+    bool delegate(TextInputEvent) eventTextInputHandler;
+
+    bool delegate(TextInputEvent) onTextInput;
+
     bool delegate(FocusEvent) eventFocusFilter;
     bool delegate(FocusEvent) eventFocusHandler;
 
@@ -52,6 +58,7 @@ class EventToolkitTarget : GraphicsComponent, EventTarget
         eventKeyHandler = (e) { return runListeners(e); };
         eventJoystickHandler = (e) { return runListeners(e); };
         eventFocusHandler = (e) { return runListeners(e); };
+        eventTextInputHandler = (e) { return runListeners(e); };
     }
 
     bool runEventFilters(E)(E e)
@@ -69,6 +76,14 @@ class EventToolkitTarget : GraphicsComponent, EventTarget
             if (eventKeyFilter !is null)
             {
                 return eventKeyFilter(e);
+            }
+        }
+
+        static if (is(E : TextInputEvent))
+        {
+            if (eventTextInputFilter !is null)
+            {
+                return eventTextInputFilter(e);
             }
         }
 
@@ -106,6 +121,14 @@ class EventToolkitTarget : GraphicsComponent, EventTarget
             if (eventKeyHandler !is null)
             {
                 return eventKeyHandler(e);
+            }
+        }
+
+        static if (is(E : TextInputEvent))
+        {
+            if (eventTextInputHandler !is null)
+            {
+                return eventTextInputHandler(e);
             }
         }
 
@@ -192,6 +215,23 @@ class EventToolkitTarget : GraphicsComponent, EventTarget
             if (onKeyDown !is null)
             {
                 return onKeyDown(keyEvent);
+            }
+            break;
+        }
+
+        return false;
+    }
+
+    bool runListeners(TextInputEvent keyEvent)
+    {
+        final switch (keyEvent.event) with (TextInputEvent)
+        {
+        case Event.none:
+            break;
+        case Event.input:
+            if (onTextInput !is null)
+            {
+                return onTextInput(keyEvent);
             }
             break;
         }

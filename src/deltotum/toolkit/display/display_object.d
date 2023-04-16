@@ -11,6 +11,7 @@ import deltotum.toolkit.input.mouse.event.mouse_event : MouseEvent;
 import deltotum.core.applications.events.application_event : ApplicationEvent;
 import deltotum.toolkit.input.keyboard.event.key_event : KeyEvent;
 import deltotum.toolkit.display.events.focus.focus_event : FocusEvent;
+import deltotum.toolkit.input.keyboard.event.text_input_event: TextInputEvent;
 import deltotum.toolkit.input.joystick.event.joystick_event : JoystickEvent;
 import deltotum.core.events.event_type : EventType;
 import deltotum.core.utils.tostring;
@@ -263,7 +264,7 @@ class DisplayObject : PhysicalBody
             }
         }
 
-        static if (is(Event : KeyEvent))
+        static if (is(Event : KeyEvent) || is(Event : TextInputEvent))
         {
             if (isFocus)
             {

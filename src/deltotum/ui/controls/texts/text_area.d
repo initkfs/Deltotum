@@ -47,6 +47,18 @@ class TextArea : Control
 
         scroll.onValue = (value) { textView.scrollTo(value); };
 
+        onTextInput = (key) {
+            foreach (glyph; assets.defaultBitmapFont.glyphs)
+            {
+                if (glyph.grapheme == key.firstLetter)
+                {
+                    textView.text ~= glyph.grapheme;
+                }
+            }
+
+            return false;
+        };
+
         onKeyDown = (key) {
             import deltotum.platform.commons.keyboards.key_name : KeyName;
 
@@ -56,23 +68,17 @@ class TextArea : Control
                 return true;
             }
 
-            //import std;
-            // writeln(key);
-
-            if (key.keyName == KeyName.RETURN && key.keyMod.isCtrl && onCaret !is null)
+            if (key.keyName == KeyName.RETURN)
             {
-                onCaret();
-                return true;
-            }
-
-            foreach (glyph; assets.defaultBitmapFont.glyphs)
-            {
-                if (glyph.grapheme == key.keyCode)
+                if (key.keyMod.isCtrl && onCaret !is null)
                 {
-                    textView.text ~= glyph.grapheme;
+                    onCaret();
+                    return true;
                 }
-            }
 
+                textView.text ~= '\n';
+
+            }
             return false;
         };
     }

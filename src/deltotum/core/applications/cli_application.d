@@ -333,22 +333,76 @@ class CliApplication
 
     protected Extension createExtension(Logger logger, Config config, Context context)
     {
-        import deltotum.core.extensions.lua.lua_extension_collector : LuaExtensionCollector;
+        import deltotum.core.extensions.extension : Extension;
+        import deltotum.core.extensions.plugins.lua.lua_script_text_plugin : LuaScriptTextPlugin;
+        import deltotum.core.extensions.plugins.lua.lua_file_script_plugin : LuaFileScriptPlugin;
 
         //TODO from config;
         import std.path : buildPath;
+
         auto mustBeDataDir = context.appContext.dataDir;
-        if(mustBeDataDir.isNull){
+        if (mustBeDataDir.isNull)
+        {
             //TODO or return Nullable?
             throw new Exception("Data directory not found");
         }
 
-        const extDir = buildPath(mustBeDataDir.get, "extensions");
-        auto collector = new LuaExtensionCollector(logger, config, context, extDir);
-        collector.initialize;
-        //FIXME lazy load
-        collector.load;
-        return collector;
+        auto extension = new Extension;
+
+        const pluginsDir = buildPath(mustBeDataDir.get, "plugins");
+        import std.file : dirEntries, DirEntry, SpanMode, exists, isFile, isDir;
+        import std.path : buildPath, baseName;
+        import std.format: format;
+        import std.conv: to;
+
+        //TODO version(lua)
+        
+        //FIXME remove bindbc from core
+        import bindbc.lua;
+
+        const LuaSupport luaResult = loadLua();
+        if (luaResult != luaSupport)
+        {
+            if (luaResult == luaSupport.noLibrary)
+            {
+                throw new Exception("Lua shared library failed to load");
+            }
+            else if (luaResult == luaSupport.badLibrary)
+            {
+                throw new Exception("One or more Lua symbols failed to load");
+            }
+
+            throw new Exception(format("Couldn't load Lua environment, received lua load result: '%s'",
+                    to!string(luaSupport)));
+        }
+
+        foreach (DirEntry pluginFile; dirEntries(pluginsDir, SpanMode.shallow))
+        {
+            if (!pluginFile.isDir)
+            {
+                continue;
+            }
+
+            //TODO from config
+            enum pluginMainMethod = "main";
+            const filePath = buildPath(pluginsDir, "main.lua");
+            if (!filePath.exists || !filePath.isFile)
+            {
+                continue;
+            }
+
+            const name = baseName(pluginFile);
+            auto plugin = new LuaFileScriptPlugin(logger, config, context, name, filePath, pluginMainMethod);
+            extension.addPlugin(plugin);
+        }
+
+        auto consolePlugin = new LuaScriptTextPlugin(logger, config, context, "console");
+        extension.addPlugin(consolePlugin);
+
+        extension.initialize;
+        extension.run;
+
+        return extension;
     }
 
     protected Cli createCli(string[] args)

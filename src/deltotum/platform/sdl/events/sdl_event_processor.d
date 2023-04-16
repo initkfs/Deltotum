@@ -10,6 +10,7 @@ import deltotum.core.events.event_type : EventType;
 import deltotum.core.applications.events.application_event : ApplicationEvent;
 import deltotum.toolkit.input.mouse.event.mouse_event : MouseEvent;
 import deltotum.toolkit.input.keyboard.event.key_event : KeyEvent;
+import deltotum.toolkit.input.keyboard.event.text_input_event: TextInputEvent;
 import deltotum.toolkit.window.event.window_event : WindowEvent;
 import deltotum.toolkit.input.joystick.event.joystick_event : JoystickEvent;
 import deltotum.platform.sdl.sdl_keyboard : SdlKeyboard;
@@ -45,6 +46,9 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
         case SDL_KEYDOWN, SDL_KEYUP:
             handleKeyEvent(event);
             break;
+        case SDL_TEXTINPUT:
+            handleTextInputEvent(event);
+            break;
         case SDL_MOUSEMOTION, SDL_MOUSEBUTTONDOWN, SDL_MOUSEBUTTONUP, SDL_MOUSEWHEEL:
             handleMouseEvent(event);
             break;
@@ -73,6 +77,32 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
         auto exitEvent = ApplicationEvent(
             EventType.application, ApplicationEvent.Event.EXIT, event.window.windowID);
         onApplication(exitEvent);
+    }
+
+    protected void handleTextInputEvent(SDL_Event* event)
+    {
+        if (onTextInput is null)
+        {
+            return;
+        }
+
+        auto type = TextInputEvent.Event.input;
+
+        enum letterSize = dchar.sizeof;
+        if (event.text.text.length < letterSize)
+        {
+            return;
+        }
+
+        import std.conv : to;
+        import std.string: fromStringz;
+
+        //TODO full string?
+        dchar firstLetter = event.text.text[0 .. (letterSize + 1)].fromStringz.to!dchar;
+
+        const ownerId = event.key.windowID;
+        auto keyEvent = TextInputEvent(EventType.key, type, ownerId, firstLetter);
+        onTextInput(keyEvent);
     }
 
     protected void handleKeyEvent(SDL_Event* event)

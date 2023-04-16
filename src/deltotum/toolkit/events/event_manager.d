@@ -6,6 +6,7 @@ import deltotum.toolkit.scene.scene_manager : SceneManager;
 import deltotum.core.applications.events.application_event : ApplicationEvent;
 import deltotum.toolkit.input.mouse.event.mouse_event : MouseEvent;
 import deltotum.toolkit.input.keyboard.event.key_event : KeyEvent;
+import deltotum.toolkit.input.keyboard.event.text_input_event : TextInputEvent;
 import deltotum.toolkit.input.joystick.event.joystick_event : JoystickEvent;
 import deltotum.toolkit.window.event.window_event : WindowEvent;
 import deltotum.core.events.event_type : EventType;
@@ -37,6 +38,7 @@ class EventManager
     void delegate(JoystickEvent) onJoystick;
     void delegate(WindowEvent) onWindow;
     void delegate(MouseEvent) onMouse;
+    void delegate(TextInputEvent) onTextInput;
 
     void startEvents()
     {
@@ -71,6 +73,15 @@ class EventManager
             if (onKey !is null)
             {
                 onKey(keyEvent);
+            }
+            dispatchEvent(keyEvent);
+        };
+
+        eventProcessor.onTextInput = (keyEvent)
+        {
+            if (onTextInput !is null)
+            {
+                onTextInput(keyEvent);
             }
             dispatchEvent(keyEvent);
         };
