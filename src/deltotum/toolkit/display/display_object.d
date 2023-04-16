@@ -11,7 +11,7 @@ import deltotum.toolkit.input.mouse.event.mouse_event : MouseEvent;
 import deltotum.core.applications.events.application_event : ApplicationEvent;
 import deltotum.toolkit.input.keyboard.event.key_event : KeyEvent;
 import deltotum.toolkit.display.events.focus.focus_event : FocusEvent;
-import deltotum.toolkit.input.keyboard.event.text_input_event: TextInputEvent;
+import deltotum.toolkit.input.keyboard.event.text_input_event : TextInputEvent;
 import deltotum.toolkit.input.joystick.event.joystick_event : JoystickEvent;
 import deltotum.core.events.event_type : EventType;
 import deltotum.core.utils.tostring;
@@ -29,6 +29,8 @@ import deltotum.core.utils.tostring : ToStringExclude;
 class DisplayObject : PhysicalBody
 {
     mixin ToString;
+
+    enum debugFlag = "d_debug";
 
     DisplayObject parent;
 
@@ -763,9 +765,19 @@ class DisplayObject : PhysicalBody
         import deltotum.toolkit.graphics.shapes.rectangle : Rectangle;
         import deltotum.toolkit.graphics.colors.rgba : RGBA;
 
+        if(width == 0 || height == 0){
+            return;
+        }
+
         auto rect = new Rectangle(width, height, GraphicStyle(1, RGBA.red, false, RGBA.transparent));
+        rect.userData[debugFlag] = null;
         rect.isLayoutManaged = false;
         addCreated(rect);
+    }
+
+    void drawAllBounds()
+    {
+        onChildrenRecursive((ch) { ch.drawBounds; return true; });
     }
 
     void onChildrenRecursive(bool delegate(DisplayObject) onObject)
@@ -775,7 +787,7 @@ class DisplayObject : PhysicalBody
 
     void onChildrenRecursive(DisplayObject root, bool delegate(DisplayObject) onObjectIsContinue)
     {
-        if (root is null)
+        if (root is null || debugFlag in root.userData)
         {
             return;
         }

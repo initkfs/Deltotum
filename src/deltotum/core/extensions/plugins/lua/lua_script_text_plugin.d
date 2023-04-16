@@ -18,6 +18,12 @@ class LuaScriptTextPlugin : LuaPlugin
 
     override void call(string[] args, void delegate(Variant) onResult, void delegate(string) onError)
     {
+        call(args, null, onResult, onError);
+    }
+
+    void call(string[] args, void delegate(lua_State*) onState, void delegate(Variant) onResult, void delegate(
+            string) onError)
+    {
         if (args.length == 0)
         {
             return;
@@ -32,6 +38,10 @@ class LuaScriptTextPlugin : LuaPlugin
         lua_State* luaState = luaL_newstate();
         try
         {
+            if(onState){
+                onState(luaState);
+            }
+
             setState(luaState);
 
             const scriptResult = luaL_dostring(luaState, scriptContent.toStringz);

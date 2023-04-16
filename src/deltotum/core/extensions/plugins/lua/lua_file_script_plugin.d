@@ -5,7 +5,7 @@ import deltotum.core.contexts.context : Context;
 import deltotum.core.configs.config : Config;
 
 import std.logger : Logger;
-import std.variant: Variant;
+import std.variant : Variant;
 
 import bindbc.lua;
 
@@ -38,12 +38,23 @@ class LuaFileScriptPlugin : LuaPlugin
 
     override void call(string[] args, void delegate(Variant) onResult, void delegate(string) onError)
     {
+        call(args, null, onResult, onError);
+    }
+
+    void call(string[] args, void delegate(lua_State*) onState, void delegate(Variant) onResult, void delegate(
+            string) onError)
+    {
         import std.conv : to;
         import std.format : format;
 
         lua_State* luaState = luaL_newstate();
         try
         {
+            if (onState)
+            {
+                onState(luaState);
+            }
+
             setState(luaState);
 
             import std.format : format;
