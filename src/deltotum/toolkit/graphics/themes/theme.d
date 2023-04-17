@@ -47,7 +47,7 @@ class Theme
 
     RGBA colorHover()
     {
-        return RGBA(0, 49, 53);
+        return RGBA(195, 250, 255);
     }
 
     RGBA colorFocus(){

@@ -49,17 +49,88 @@ class Button : Control
     {
         super.initialize;
 
+        enum buttonCornerWidth = 8;
+
+        class ButtonBorder : Shape
+        {
+            this(double width, double height, GraphicStyle style)
+            {
+                super(width, height, style);
+            }
+
+            override void createTextureContent()
+            {
+                auto mainLineColor = style.lineColor;
+                enum cornerPadding = buttonCornerWidth;
+                enum lineWidth = 1;
+
+                const topLineStartX = cornerPadding;
+                const topLineStartY = 0;
+                const topLineEndX = width - cornerPadding - lineWidth;
+                const topLineEndY = 0;
+                graphics.drawLine(topLineStartX, topLineStartY, topLineEndX, topLineEndY, mainLineColor);
+
+                const topRightCornerStartX = topLineEndX;
+                const topRightCornerStartY = topLineEndY;
+                const topRightCornerEndX = width - lineWidth;
+                const topRightCornerEndY = cornerPadding;
+                graphics.drawLine(topRightCornerStartX, topRightCornerStartY, topRightCornerEndX, topRightCornerEndY, mainLineColor);
+
+                const rightLineStartX = topRightCornerEndX;
+                const rightLineStartY = topRightCornerEndY;
+                const rightLineEndX = width - lineWidth;
+                const rightLineEndY = height - cornerPadding - lineWidth;
+                graphics.drawLine(rightLineStartX, rightLineStartY, rightLineEndX, rightLineEndY, mainLineColor);
+
+                const bottomRightCornerStartX = rightLineEndX;
+                const bottomRightCornerStartY = rightLineEndY;
+                const bottomRightCornerEndX = width - cornerPadding - lineWidth;
+                const bottomRightCornerEndY = height - lineWidth;
+                graphics.drawLine(bottomRightCornerStartX, bottomRightCornerStartY, bottomRightCornerEndX, bottomRightCornerEndY, mainLineColor);
+
+                const bottomLineStartX = bottomRightCornerEndX;
+                const bottomLineStartY = bottomRightCornerEndY;
+                const bottomLineEndX = cornerPadding;
+                const bottomLineEndY = height - lineWidth;
+                graphics.drawLine(bottomLineStartX, bottomLineStartY, bottomLineEndX, bottomLineEndY, mainLineColor);
+
+                const bottomLeftCornerStartX = bottomLineEndX;
+                const bottomLeftCornerStartY = bottomLineEndY;
+                const bottomLeftCornerEndX = 0;
+                const bottomLeftCornerEndY = height - cornerPadding - lineWidth;
+                graphics.drawLine(bottomLeftCornerStartX, bottomLeftCornerStartY, bottomLeftCornerEndX, bottomLeftCornerEndY, mainLineColor);
+
+                const leftLineStartX = bottomLeftCornerEndX;
+                const leftLineStartY = bottomLeftCornerEndY;
+                const leftLineEndX = 0;
+                const leftLineEndY = cornerPadding;
+                graphics.drawLine(leftLineStartX, leftLineStartY, leftLineEndX, leftLineEndY, mainLineColor);
+
+                const topLeftCornerStartX = leftLineEndX;
+                const topLeftCornerStartY = leftLineEndY;
+                const topLeftCornerEndX = topLineStartX;
+                const topLeftCornerEndY = topLineStartY;
+                graphics.drawLine(topLeftCornerStartX, topLeftCornerStartY, topLeftCornerEndX, topLeftCornerEndY, mainLineColor);
+            }
+        }
+
+        backgroundFactory = (width, height) {
+
+            double padding = style.lineWidth;
+
+            import deltotum.toolkit.graphics.shapes.shape : Shape;
+
+            Shape object = new ButtonBorder(width, height, GraphicStyle(1, graphics.theme.colorAccent));
+            object.isLayoutManaged = false;
+            return object;
+        };
+
         hoverFactory = () {
 
             double padding = style.lineWidth;
-            GraphicStyle hoverStyle = GraphicStyle(0, RGBA.transparent, true, graphics
-                    .theme.colorHover);
-            auto hover = new Rectangle(width - padding * 2, height - padding * 2, hoverStyle);
-            hover.x = padding;
-            hover.y = padding;
-            hover.isVisible = false;
-            hover.opacity = graphics.theme.controlHoverOpacity;
+            Shape hover = new ButtonBorder(width, height, GraphicStyle(1, graphics.theme.colorHover));
             hover.isLayoutManaged = false;
+            hover.isVisible = false;
             return hover;
         };
 
@@ -69,9 +140,9 @@ class Button : Control
             GraphicStyle clickStyle = GraphicStyle(0, RGBA.transparent, true, graphics
                     .theme.colorAccent);
 
-            auto clickEffect = new Rectangle(width - padding * 2, height - padding * 2, clickStyle);
-            clickEffect.x = padding;
-            clickEffect.y = padding;
+            auto clickEffect = new Rectangle(width - buttonCornerWidth * 2, height, clickStyle);
+            clickEffect.x = width / 2 - clickEffect.width / 2;
+            clickEffect.y = height / 2 - clickEffect.height / 2;
             clickEffect.isVisible = false;
             clickEffect.opacity = 0;
             clickEffect.isLayoutManaged = false;
@@ -91,8 +162,7 @@ class Button : Control
             auto clickEffectAnimation = new OpacityTransition(clickEffect, 50);
             clickEffectAnimation.isCycle = false;
             clickEffectAnimation.isInverse = true;
-            clickEffectAnimation.onEnd = ()
-            {
+            clickEffectAnimation.onEnd = () {
                 if (clickEffect !is null)
                 {
                     clickEffect.isVisible = false;
