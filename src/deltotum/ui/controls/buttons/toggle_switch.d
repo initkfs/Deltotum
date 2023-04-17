@@ -37,12 +37,6 @@ class ToggleSwitch : Control
     void delegate() onSwitchOn;
     void delegate() onSwitchOff;
 
-    Texture switchOffArea;
-    Texture delegate() switchOffAreaFactory;
-
-    Texture switchOnArea;
-    Texture delegate() switchOnAreaFactory;
-
     Texture switchHandle;
     Texture delegate() switchHandleFactory;
 
@@ -53,14 +47,19 @@ class ToggleSwitch : Control
     DisplayObjectTransition!Vector2d delegate() clickSwitchOffAnimationFactory;
 
     //TODO factories, settings
-    DisplayObject effectSwitchOn;
-    DisplayObject effectSwitchOff;
+    DisplayObject effectHandleSwitchOn;
+    Texture delegate(double, double) effectHandleSwitchOnFactory;
+    DisplayObject effectBackgroundSwitchOn;
+    Texture delegate() effectBackgroundSwitchOnFactory;
 
     this(double width = 60, double height = 25)
     {
         this.width = width;
         this.height = height;
 
+        import deltotum.toolkit.display.layouts.center_layout: CenterLayout;
+
+        //FIXME center + isLManaged = false + align y not working
         this.layout = new HorizontalLayout;
     }
 
@@ -72,36 +71,38 @@ class ToggleSwitch : Control
 
         padding = Insets(0);
 
-        switchOffAreaFactory = () {
-
+        effectHandleSwitchOnFactory = (width, height) {
             import deltotum.toolkit.graphics.styles.graphic_style : GraphicStyle;
+            import deltotum.toolkit.graphics.shapes.regular_polygon : RegularPolygon;
 
-            GraphicStyle clickStyle = GraphicStyle(1, graphics.theme.colorAccent);
+            GraphicStyle style = GraphicStyle(1, graphics.theme.colorAccent, true, graphics.theme.colorAccent);
 
-            auto control = new Rectangle(width / 2, height, clickStyle);
-
+            auto control = new RegularPolygon(width - 5, height - 5, style, graphics
+                    .theme.cornersBevel);
             return control;
         };
 
-        switchOnAreaFactory = () {
-
+        effectBackgroundSwitchOnFactory = () {
             import deltotum.toolkit.graphics.styles.graphic_style : GraphicStyle;
+            import deltotum.toolkit.graphics.shapes.regular_polygon : RegularPolygon;
+            import deltotum.toolkit.graphics.shapes.rectangle: Rectangle;
 
-            GraphicStyle clickStyle = GraphicStyle(1, graphics.theme.colorAccent, true, graphics
+            GraphicStyle style = GraphicStyle(1, graphics.theme.colorAccent, true, graphics
                     .theme.colorAccent);
 
-            auto control = new Rectangle(width / 2, height, clickStyle);
+            auto control = new Rectangle(width / 2, height - graphics.theme.cornersBevel * 2, style);
             return control;
         };
 
         switchHandleFactory = () {
 
             import deltotum.toolkit.graphics.styles.graphic_style : GraphicStyle;
+            import deltotum.toolkit.graphics.shapes.regular_polygon : RegularPolygon;
 
-            GraphicStyle clickStyle = GraphicStyle(1, graphics.theme.colorAccent, true, graphics
-                    .theme.colorSecondary);
+            GraphicStyle clickStyle = GraphicStyle(1, graphics.theme.colorAccent);
 
-            auto control = new Rectangle(width / 2, height, clickStyle);
+            auto control = new RegularPolygon(width / 2, height, clickStyle, graphics
+                    .theme.cornersBevel);
             return control;
         };
 
@@ -138,28 +139,33 @@ class ToggleSwitch : Control
     {
         super.create;
 
-        switchOnArea = switchOnAreaFactory();
-        addCreated(switchOnArea);
+        if (effectBackgroundSwitchOnFactory)
+        {
+            effectBackgroundSwitchOn = effectBackgroundSwitchOnFactory();
+            //effectBackgroundSwitchOn.isLayoutManaged = false;
+            import deltotum.toolkit.display.alignment : Alignment;
+            effectBackgroundSwitchOn.alignment = Alignment.y;
+            effectBackgroundSwitchOn.isVisible = false;
+            addCreated(effectBackgroundSwitchOn);
+        }
 
-        switchOffArea = switchOffAreaFactory();
-        addCreated(switchOffArea);
+        if (switchHandleFactory)
+        {
+            switchHandle = switchHandleFactory();
+            switchHandle.isLayoutManaged = false;
 
-        switchHandle = switchHandleFactory();
-        switchHandle.isLayoutManaged = false;
+            import deltotum.toolkit.display.layouts.center_layout : CenterLayout;
 
-        import deltotum.toolkit.display.layouts.center_layout : CenterLayout;
+            switchHandle.layout = new CenterLayout;
+            addCreated(switchHandle);
 
-        switchHandle.layout = new CenterLayout;
-        addCreated(switchHandle);
-
-        import deltotum.toolkit.graphics.shapes.circle : Circle;
-
-        effectSwitchOn = new Circle(10, GraphicStyle(1, graphics.theme.colorAccent, true, graphics.theme.colorAccent));
-        switchHandle.addCreated(effectSwitchOn);
-        effectSwitchOn.isVisible = false;
-
-        effectSwitchOff = new Circle(10, GraphicStyle(1, graphics.theme.colorAccent));
-        switchHandle.addCreated(effectSwitchOff);
+            if (effectHandleSwitchOnFactory)
+            {
+                effectHandleSwitchOn = effectHandleSwitchOnFactory(switchHandle.width, switchHandle.height);
+                effectHandleSwitchOn.isVisible = false;
+                switchHandle.addCreated(effectHandleSwitchOn);
+            }
+        }
 
         if (clickSwitchOffAnimationFactory !is null)
         {
@@ -193,7 +199,14 @@ class ToggleSwitch : Control
                     clickSwitchOnAnimation.run;
                 }
 
-                effectSwitchOn.isVisible = true;
+                if (effectHandleSwitchOn)
+                {
+                    effectHandleSwitchOn.isVisible = true;
+                }
+
+                if(effectBackgroundSwitchOn){
+                    effectBackgroundSwitchOn.isVisible = true;
+                }
 
                 break;
             case on:
@@ -211,7 +224,14 @@ class ToggleSwitch : Control
                     clickSwitchOffAnimation.run;
                 }
 
-                effectSwitchOn.isVisible = false;
+                if (effectHandleSwitchOn)
+                {
+                    effectHandleSwitchOn.isVisible = false;
+                }
+
+                 if(effectBackgroundSwitchOn){
+                    effectBackgroundSwitchOn.isVisible = false;
+                }
 
                 break;
             }

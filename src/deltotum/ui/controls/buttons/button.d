@@ -22,7 +22,7 @@ class Button : Control
 
     dstring _buttonText;
 
-    Texture delegate() hoverFactory;
+    Texture delegate(double, double) hoverFactory;
     Texture delegate() clickEffectFactory;
     Text delegate() textFactory;
     ValueTransition delegate() clickEffectAnimationFactory;
@@ -51,103 +51,43 @@ class Button : Control
 
         enum buttonCornerWidth = 8;
 
-        class ButtonBorder : Shape
-        {
-            this(double width, double height, GraphicStyle style)
-            {
-                super(width, height, style);
-            }
-
-            override void createTextureContent()
-            {
-                auto mainLineColor = style.lineColor;
-                enum cornerPadding = buttonCornerWidth;
-                enum lineWidth = 1;
-
-                const topLineStartX = cornerPadding;
-                const topLineStartY = 0;
-                const topLineEndX = width - cornerPadding - lineWidth;
-                const topLineEndY = 0;
-                graphics.drawLine(topLineStartX, topLineStartY, topLineEndX, topLineEndY, mainLineColor);
-
-                const topRightCornerStartX = topLineEndX;
-                const topRightCornerStartY = topLineEndY;
-                const topRightCornerEndX = width - lineWidth;
-                const topRightCornerEndY = cornerPadding;
-                graphics.drawLine(topRightCornerStartX, topRightCornerStartY, topRightCornerEndX, topRightCornerEndY, mainLineColor);
-
-                const rightLineStartX = topRightCornerEndX;
-                const rightLineStartY = topRightCornerEndY;
-                const rightLineEndX = width - lineWidth;
-                const rightLineEndY = height - cornerPadding - lineWidth;
-                graphics.drawLine(rightLineStartX, rightLineStartY, rightLineEndX, rightLineEndY, mainLineColor);
-
-                const bottomRightCornerStartX = rightLineEndX;
-                const bottomRightCornerStartY = rightLineEndY;
-                const bottomRightCornerEndX = width - cornerPadding - lineWidth;
-                const bottomRightCornerEndY = height - lineWidth;
-                graphics.drawLine(bottomRightCornerStartX, bottomRightCornerStartY, bottomRightCornerEndX, bottomRightCornerEndY, mainLineColor);
-
-                const bottomLineStartX = bottomRightCornerEndX;
-                const bottomLineStartY = bottomRightCornerEndY;
-                const bottomLineEndX = cornerPadding;
-                const bottomLineEndY = height - lineWidth;
-                graphics.drawLine(bottomLineStartX, bottomLineStartY, bottomLineEndX, bottomLineEndY, mainLineColor);
-
-                const bottomLeftCornerStartX = bottomLineEndX;
-                const bottomLeftCornerStartY = bottomLineEndY;
-                const bottomLeftCornerEndX = 0;
-                const bottomLeftCornerEndY = height - cornerPadding - lineWidth;
-                graphics.drawLine(bottomLeftCornerStartX, bottomLeftCornerStartY, bottomLeftCornerEndX, bottomLeftCornerEndY, mainLineColor);
-
-                const leftLineStartX = bottomLeftCornerEndX;
-                const leftLineStartY = bottomLeftCornerEndY;
-                const leftLineEndX = 0;
-                const leftLineEndY = cornerPadding;
-                graphics.drawLine(leftLineStartX, leftLineStartY, leftLineEndX, leftLineEndY, mainLineColor);
-
-                const topLeftCornerStartX = leftLineEndX;
-                const topLeftCornerStartY = leftLineEndY;
-                const topLeftCornerEndX = topLineStartX;
-                const topLeftCornerEndY = topLineStartY;
-                graphics.drawLine(topLeftCornerStartX, topLeftCornerStartY, topLeftCornerEndX, topLeftCornerEndY, mainLineColor);
-            }
-        }
-
         backgroundFactory = (width, height) {
 
-            double padding = style.lineWidth;
+            import deltotum.toolkit.graphics.shapes.regular_polygon : RegularPolygon;
 
-            import deltotum.toolkit.graphics.shapes.shape : Shape;
-
-            Shape object = new ButtonBorder(width, height, GraphicStyle(1, graphics.theme.colorAccent));
+            Shape object = new RegularPolygon(width, height, GraphicStyle(1, graphics
+                    .theme.colorAccent), graphics.theme.cornersBevel);
             object.isLayoutManaged = false;
             return object;
         };
 
-        hoverFactory = () {
+        hoverFactory = (width, height) {
 
-            double padding = style.lineWidth;
-            Shape hover = new ButtonBorder(width, height, GraphicStyle(1, graphics.theme.colorHover));
+            import deltotum.toolkit.graphics.shapes.regular_polygon : RegularPolygon;
+
+            Shape hover = new RegularPolygon(width, height, GraphicStyle(1, graphics.theme.colorHover, true, graphics
+                    .theme.colorHover), graphics.theme.cornersBevel);
             hover.isLayoutManaged = false;
             hover.isVisible = false;
+            hover.opacity = graphics.theme.controlHoverOpacity;
             return hover;
         };
 
         clickEffectFactory = () {
             double padding = style.lineWidth;
 
-            GraphicStyle clickStyle = GraphicStyle(0, RGBA.transparent, true, graphics
+            import deltotum.toolkit.graphics.shapes.regular_polygon : RegularPolygon;
+
+            GraphicStyle clickStyle = GraphicStyle(1, graphics
+                    .theme.colorAccent, true, graphics
                     .theme.colorAccent);
 
-            auto clickEffect = new Rectangle(width - buttonCornerWidth * 2, height, clickStyle);
-            clickEffect.x = width / 2 - clickEffect.width / 2;
-            clickEffect.y = height / 2 - clickEffect.height / 2;
-            clickEffect.isVisible = false;
-            clickEffect.opacity = 0;
-            clickEffect.isLayoutManaged = false;
+            Shape click = new RegularPolygon(width, height, clickStyle, graphics.theme.cornersBevel);
+            click.isLayoutManaged = false;
+            click.isVisible = false;
+            click.opacity = 0;
 
-            return clickEffect;
+            return click;
         };
 
         textFactory = () {
@@ -178,7 +118,7 @@ class Button : Control
 
         if (hoverFactory !is null)
         {
-            hover = hoverFactory();
+            hover = hoverFactory(width, height);
             addOrAddCreated(hover);
         }
 

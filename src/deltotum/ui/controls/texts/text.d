@@ -83,7 +83,9 @@ class Text : Control
 
             GraphicStyle style = GraphicStyle(1, graphics.theme.colorFocus);
 
-            auto effect = new Rectangle(width, height, style);
+            import deltotum.toolkit.graphics.shapes.regular_polygon: RegularPolygon;
+            auto effect = new RegularPolygon(width, height, style, graphics.theme.cornersBevel);
+            //auto effect = new Rectangle(width, height, style);
             effect.isVisible = false;
             return effect;
         };

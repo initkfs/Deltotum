@@ -35,7 +35,7 @@ class TextArea : Control
         textView = new TextView;
 
         //FIXME invalid padding
-        layout = new HorizontalLayout(5);
+        layout = new HorizontalLayout(0);
 
         textView.minHeight = height;
         textView.maxHeight = height;

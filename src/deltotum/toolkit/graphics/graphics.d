@@ -38,23 +38,30 @@ class Graphics : LoggableUnit
     }
 
     //inline?
-    private int toInt(double value) pure @safe
+    private int toInt(double value) pure @safe const nothrow
     {
         return cast(int) value;
     }
 
     private void adjustRender(RGBA color)
     {
-        if(const err = renderer.setRenderDrawColor(color.r, color.g, color.b, color.alphaNorm)){
+        if (const err = renderer.setRenderDrawColor(color.r, color.g, color.b, color.alphaNorm))
+        {
             logger.errorf("Adjust render error. %s", err);
         }
     }
 
     void drawLine(double startX, double startY, double endX, double endY)
     {
-        if(const err = renderer.drawLine(toInt(startX), toInt(startY), toInt(endX), toInt(endY))){
+        if (const err = renderer.drawLine(toInt(startX), toInt(startY), toInt(endX), toInt(endY)))
+        {
             logger.errorf("Line drawing error. %s", err);
         }
+    }
+
+    void drawLine(Vector2d start, Vector2d end, RGBA color = RGBA.black)
+    {
+        drawLine(start.x, start.y, end.x, end.y, color);
     }
 
     void drawLine(double startX, double startY, double endX, double endY, RGBA color = RGBA.black)
@@ -66,7 +73,8 @@ class Graphics : LoggableUnit
     void drawPoint(double x, double y, RGBA color)
     {
         adjustRender(color);
-        if(const err = renderer.drawPoint(toInt(x), toInt(y))){
+        if (const err = renderer.drawPoint(toInt(x), toInt(y)))
+        {
             logger.errorf("Point drawing error. %s", err);
         }
     }
@@ -83,9 +91,15 @@ class Graphics : LoggableUnit
     void drawLines(Vector2d[] points, RGBA color)
     {
         adjustRender(color);
-        if(const err = renderer.drawLines(points)){
+        if (const err = renderer.drawLines(points))
+        {
             logger.errorf("Lines drawing error. %s", err);
         }
+    }
+
+    Vector2d[] linePoints(double startX, double startY, double endX, double endY) const nothrow pure @safe
+    {
+        return linePoints(toInt(startX), toInt(startY), toInt(endX), toInt(endY));
     }
 
     Vector2d[] linePoints(int startX, int startY, int endX, int endY) const nothrow pure @safe
@@ -204,6 +218,13 @@ class Graphics : LoggableUnit
         return points;
     }
 
+    void drawTriangle(Vector2d v1, Vector2d v2, Vector2d v3, RGBA fillColor)
+    {
+        scope Vector2d[] side1LinePoints = linePoints(v1.x, v1.y, v2.x, v2.y);
+        scope Vector2d[] side2LinePoints = linePoints(v3.x, v3.y, v2.x, v2.y);
+        fillPolyLines(side1LinePoints, side2LinePoints, fillColor);
+    }
+
     void drawCircle(double centerX, double centerY, double radius, RGBA fillColor)
     {
         adjustRender(fillColor);
@@ -265,7 +286,8 @@ class Graphics : LoggableUnit
     void drawRect(double x, double y, double width, double height, RGBA fillColor)
     {
         adjustRender(fillColor);
-        if(const err = renderer.fillRect(toInt(x), toInt(y), toInt(width), toInt(height))){
+        if (const err = renderer.fillRect(toInt(x), toInt(y), toInt(width), toInt(height)))
+        {
             logger.errorf("Draw rect error. %s", err);
         }
     }
@@ -338,5 +360,19 @@ class Graphics : LoggableUnit
         Vector2d p1p2 = p1.scale(dt).add(p2.scale(t));
         Vector2d result = p0p1.scale(dt).add(p1p2.scale(t));
         return result;
+    }
+
+    bool fillPolyLines(Vector2d[] vertexStart, Vector2d[] vertexEnd, RGBA fillColor)
+    {
+        foreach (i, vStart; vertexStart)
+        {
+            if (i >= vertexEnd.length)
+            {
+                break;
+            }
+            const vEnd = vertexEnd[i];
+            drawLine(vStart, vEnd, fillColor);
+        }
+        return true;
     }
 }

@@ -47,7 +47,8 @@ class Theme
 
     RGBA colorHover()
     {
-        return RGBA(195, 250, 255);
+        //return RGBA(195, 250, 255);
+        return colorSecondary;
     }
 
     RGBA colorFocus(){
@@ -84,5 +85,9 @@ class Theme
 
     GraphicStyle controlStyle(){
         return GraphicStyle.simple;
+    }
+
+    double cornersBevel(){
+        return 8;
     }
 }

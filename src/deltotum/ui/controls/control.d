@@ -31,13 +31,18 @@ abstract class Control : DisplayObject
 
         backgroundFactory = (width, height) {
 
-            import deltotum.toolkit.graphics.shapes.rectangle : Rectangle;
-            import deltotum.toolkit.graphics.styles.graphic_style : GraphicStyle;
+            import deltotum.toolkit.graphics.shapes.regular_polygon : RegularPolygon;
+
+            // import deltotum.toolkit.graphics.shapes.rectangle : Rectangle;
+            // import deltotum.toolkit.graphics.styles.graphic_style : GraphicStyle;
 
             GraphicStyle backgroundStyle = GraphicStyle(1, graphics.theme.colorAccent, false, graphics
                     .theme.colorControlBackground);
 
-            auto background = new Rectangle(width, height, backgroundStyle);
+            auto background = new RegularPolygon(width, height, backgroundStyle, graphics
+                    .theme.cornersBevel);
+
+            // auto background = new Rectangle(width, height, backgroundStyle);
             background.opacity = graphics.theme.opacityControl;
             return background;
         };
@@ -69,7 +74,9 @@ abstract class Control : DisplayObject
                 background.isLayoutManaged = false;
                 addCreated(background);
             }
-        }else {
+        }
+        else
+        {
             logger.tracef("Dimensions not set, background cannot be created. Width: %s, height: %s in %s", width, height, className);
         }
     }

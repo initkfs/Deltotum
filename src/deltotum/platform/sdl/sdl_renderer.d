@@ -34,7 +34,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         import std.exception : enforce;
 
         enforce(window !is null, "Window must not be null");
-        
+
         enum firstDriverIndex = -1;
         ptr = SDL_CreateRenderer(window.getObject,
             firstDriverIndex, flags);

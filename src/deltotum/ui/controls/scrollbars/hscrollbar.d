@@ -43,21 +43,24 @@ class HScrollbar : Control
     override void initialize()
     {
         super.initialize;
-        
-        trackFactory = () {
-            import deltotum.toolkit.graphics.styles.graphic_style : GraphicStyle;
-            import deltotum.toolkit.graphics.shapes.rectangle : Rectangle;
-
-            auto trackStyle = GraphicStyle(0.0, graphics.theme.colorAccent);
-            auto track = new Rectangle(width / 2, height / 2, trackStyle);
-            return track;
-        };
 
         thumbFactory = () {
-            auto thumbStyle = GraphicStyle(0.0, graphics.theme.colorAccent, true, graphics.theme.colorAccent);
-            auto thumb = new Rectangle(10, height, thumbStyle);
+
+            import deltotum.toolkit.graphics.shapes.regular_polygon : RegularPolygon;
+            import deltotum.toolkit.graphics.styles.graphic_style : GraphicStyle;
+
+            auto style = GraphicStyle(1, graphics.theme.colorAccent, true, graphics
+                    .theme.colorAccent);
+
+            auto node = new RegularPolygon(15, height, style, graphics
+                    .theme.cornersBevel);
+            return node;
+
+            // auto thumbStyle = GraphicStyle(0.0, graphics.theme.colorAccent, true, graphics
+            //         .theme.colorAccent);
+            // auto thumb = new Rectangle(10, height, style);
             //thumb.alignment = Alignment.x;
-            return thumb;
+            //return thumb;
         };
     }
 
@@ -65,37 +68,43 @@ class HScrollbar : Control
     {
         super.create;
 
-        track = trackFactory();
-        addCreated(track);
+        if (trackFactory)
+        {
+            track = trackFactory();
+            addCreated(track);
+        }
 
-        thumb = thumbFactory();
-        addCreated(thumb);
-        thumb.isDraggable = true;
-        thumb.onDrag = (x, y) {
-            auto bounds = this.bounds;
-            const minX = bounds.x;
-            const maxX = bounds.right - thumb.width;
-            if (x <= minX || x >= maxX)
-            {
+        if (thumbFactory)
+        {
+            thumb = thumbFactory();
+            addCreated(thumb);
+            thumb.isDraggable = true;
+            thumb.onDrag = (x, y) {
+                auto bounds = this.bounds;
+                const minX = bounds.x;
+                const maxX = bounds.right - thumb.width;
+                if (x <= minX || x >= maxX)
+                {
+                    return false;
+                }
+                thumb.x = x;
+
+                const range = bounds.width - thumb.width;
+                auto dx = thumb.x - bounds.x;
+                if (dx < 0)
+                {
+                    dx = -dx;
+                }
+                const numRange = maxValue - minValue;
+                value = minValue + (numRange / range) * dx;
+
+                if (onValue !is null)
+                {
+                    onValue(value);
+                }
+
                 return false;
-            }
-            thumb.x = x;
-
-            const range = bounds.width - thumb.width;
-            auto dx = thumb.x - bounds.x;
-            if (dx < 0)
-            {
-                dx = -dx;
-            }
-            const numRange = maxValue - minValue;
-            value = minValue + (numRange / range) * dx;
-
-            if (onValue !is null)
-            {
-                onValue(value);
-            }
-
-            return false;
-        };
+            };
+        }
     }
 }

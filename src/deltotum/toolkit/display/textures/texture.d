@@ -106,7 +106,7 @@ class Texture : DisplayObject
         }
     }
 
-    SdlTexture nativeTexture()
+    SdlTexture nativeTexture() nothrow 
     {
         return this.texture;
     }

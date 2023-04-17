@@ -43,7 +43,7 @@ class VScrollbar : Control
     override void initialize()
     {
         super.initialize;
-        
+
         trackFactory = () {
             import deltotum.toolkit.graphics.styles.graphic_style : GraphicStyle;
             import deltotum.toolkit.graphics.shapes.rectangle : Rectangle;
@@ -54,10 +54,21 @@ class VScrollbar : Control
         };
 
         thumbFactory = () {
-            auto thumbStyle = GraphicStyle(0.0, graphics.theme.colorAccent, true, graphics.theme.colorAccent);
-            auto thumb = new Rectangle(width, 10, thumbStyle);
-            //thumb.alignment = Alignment.x;
-            return thumb;
+
+            import deltotum.toolkit.graphics.shapes.regular_polygon : RegularPolygon;
+            import deltotum.toolkit.graphics.styles.graphic_style : GraphicStyle;
+
+            auto style = GraphicStyle(1, graphics.theme.colorAccent, true, graphics
+                    .theme.colorAccent);
+
+            auto node = new RegularPolygon(width, 15, style, graphics
+                    .theme.cornersBevel);
+            return node;
+
+            // auto thumbStyle = GraphicStyle(0.0, graphics.theme.colorAccent, true, graphics.theme.colorAccent);
+            // auto thumb = new Rectangle(width, 10, thumbStyle);
+            // //thumb.alignment = Alignment.x;
+            // return thumb;
         };
     }
 
