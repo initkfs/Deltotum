@@ -21,7 +21,7 @@ class Container : Control
                     .theme.colorContainerBackground);
 
             auto background = new Rectangle(width, height, backgroundStyle);
-            background.opacity = graphics.theme.opacityContainer;
+            background.opacity = graphics.theme.opacityContainers;
             return background;
         };
     }

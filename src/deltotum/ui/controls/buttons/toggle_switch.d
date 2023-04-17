@@ -78,7 +78,7 @@ class ToggleSwitch : Control
             GraphicStyle style = GraphicStyle(1, graphics.theme.colorAccent, true, graphics.theme.colorAccent);
 
             auto control = new RegularPolygon(width - 5, height - 5, style, graphics
-                    .theme.cornersBevel);
+                    .theme.controlCornersBevel);
             return control;
         };
 
@@ -90,7 +90,7 @@ class ToggleSwitch : Control
             GraphicStyle style = GraphicStyle(1, graphics.theme.colorAccent, true, graphics
                     .theme.colorAccent);
 
-            auto control = new Rectangle(width / 2, height - graphics.theme.cornersBevel * 2, style);
+            auto control = new Rectangle(width / 2, height - graphics.theme.controlCornersBevel * 2, style);
             return control;
         };
 
@@ -102,7 +102,7 @@ class ToggleSwitch : Control
             GraphicStyle clickStyle = GraphicStyle(1, graphics.theme.colorAccent);
 
             auto control = new RegularPolygon(width / 2, height, clickStyle, graphics
-                    .theme.cornersBevel);
+                    .theme.controlCornersBevel);
             return control;
         };
 

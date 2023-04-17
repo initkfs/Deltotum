@@ -53,7 +53,7 @@ class HScrollbar : Control
                     .theme.colorAccent);
 
             auto node = new RegularPolygon(15, height, style, graphics
-                    .theme.cornersBevel);
+                    .theme.controlCornersBevel);
             return node;
 
             // auto thumbStyle = GraphicStyle(0.0, graphics.theme.colorAccent, true, graphics

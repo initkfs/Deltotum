@@ -321,8 +321,11 @@ class SdlApplication : GraphicApplication
         builder.window = window;
 
         import deltotum.toolkit.graphics.themes.theme : Theme;
+        import deltotum.toolkit.graphics.themes.factories.theme_from_config_factory: ThemeFromConfigFactory;
 
-        auto theme = new Theme(_assets.defaultFont);
+        auto themeLoader = new ThemeFromConfigFactory(uservices.logger, uservices.config, uservices.context, _assets.defaultFont);
+
+        auto theme = themeLoader.create;
         builder.graphics = new Graphics(uservices.logger, window.renderer, theme);
 
         builder.isBuilt = true;

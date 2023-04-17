@@ -40,10 +40,10 @@ abstract class Control : DisplayObject
                     .theme.colorControlBackground);
 
             auto background = new RegularPolygon(width, height, backgroundStyle, graphics
-                    .theme.cornersBevel);
+                    .theme.controlCornersBevel);
 
             // auto background = new Rectangle(width, height, backgroundStyle);
-            background.opacity = graphics.theme.opacityControl;
+            background.opacity = graphics.theme.opacityControls;
             return background;
         };
     }

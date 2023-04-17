@@ -62,7 +62,7 @@ class VScrollbar : Control
                     .theme.colorAccent);
 
             auto node = new RegularPolygon(width, 15, style, graphics
-                    .theme.cornersBevel);
+                    .theme.controlCornersBevel);
             return node;
 
             // auto thumbStyle = GraphicStyle(0.0, graphics.theme.colorAccent, true, graphics.theme.colorAccent);

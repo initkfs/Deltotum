@@ -56,7 +56,7 @@ class Button : Control
             import deltotum.toolkit.graphics.shapes.regular_polygon : RegularPolygon;
 
             Shape object = new RegularPolygon(width, height, GraphicStyle(1, graphics
-                    .theme.colorAccent), graphics.theme.cornersBevel);
+                    .theme.colorAccent), graphics.theme.controlCornersBevel);
             object.isLayoutManaged = false;
             return object;
         };
@@ -66,10 +66,10 @@ class Button : Control
             import deltotum.toolkit.graphics.shapes.regular_polygon : RegularPolygon;
 
             Shape hover = new RegularPolygon(width, height, GraphicStyle(1, graphics.theme.colorHover, true, graphics
-                    .theme.colorHover), graphics.theme.cornersBevel);
+                    .theme.colorHover), graphics.theme.controlCornersBevel);
             hover.isLayoutManaged = false;
             hover.isVisible = false;
-            hover.opacity = graphics.theme.controlHoverOpacity;
+            hover.opacity = graphics.theme.opacityHover;
             return hover;
         };
 
@@ -82,7 +82,7 @@ class Button : Control
                     .theme.colorAccent, true, graphics
                     .theme.colorAccent);
 
-            Shape click = new RegularPolygon(width, height, clickStyle, graphics.theme.cornersBevel);
+            Shape click = new RegularPolygon(width, height, clickStyle, graphics.theme.controlCornersBevel);
             click.isLayoutManaged = false;
             click.isVisible = false;
             click.opacity = 0;
