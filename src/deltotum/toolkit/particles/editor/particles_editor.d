@@ -8,11 +8,12 @@ import deltotum.toolkit.graphics.shapes.circle : Circle;
 import deltotum.toolkit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.toolkit.graphics.colors.rgba : RGBA;
 import deltotum.ui.containers.vbox : VBox;
+import deltotum.ui.containers.hbox : HBox;
 import deltotum.ui.controls.texts.text : Text;
 import deltotum.ui.controls.scrollbars.hscrollbar : HScrollbar;
-import deltotum.ui.containers.container: Container;
-import deltotum.ui.controls.buttons.button: Button;
-import deltotum.toolkit.display.layouts.horizontal_layout: HorizontalLayout;
+import deltotum.ui.containers.container : Container;
+import deltotum.ui.controls.buttons.button : Button;
+import deltotum.toolkit.display.layouts.horizontal_layout : HorizontalLayout;
 
 /**
  * Authors: initkfs
@@ -28,6 +29,7 @@ class ParticlesEditor : Container
     {
         this.emitter = emitter;
         layout = new HorizontalLayout;
+        backgroundFactory = null;
     }
 
     override void create()
@@ -37,22 +39,26 @@ class ParticlesEditor : Container
         auto controlContainer = new VBox(2);
         addCreated(controlContainer);
 
-        import deltotum.ui.controls.buttons.toggle_switch: ToggleSwitch;
+        import deltotum.ui.controls.buttons.toggle_switch : ToggleSwitch;
+
+        auto controlButtonBox = new HBox(2);
+        //FIXME invalid width
+        controlButtonBox.width = 180;
+        controlContainer.addCreated(controlButtonBox);
 
         auto runButton = new Button;
         runButton.text = "Emit";
-        runButton.onAction = (e){
-            emitter.isActive = !emitter.isActive;
-        };
-        controlContainer.addCreated(runButton);
+        runButton.onAction = (e) { emitter.isActive = !emitter.isActive; };
+        controlButtonBox.addCreated(runButton);
 
         auto configButton = new Button;
         configButton.text = "JSON";
-        configButton.onAction = (e){
+        configButton.onAction = (e) {
             import std.stdio;
+
             writeln(emitter.toConfig);
         };
-        controlContainer.addCreated(configButton);
+        controlButtonBox.addCreated(configButton);
 
         auto textCount = new Text("CPF:");
         controlContainer.addCreated(textCount);
@@ -96,8 +102,10 @@ class ParticlesEditor : Container
         velocityYMax.onValue = (value) { emitter.maxVelocityY = value; };
         controlContainer.addCreated(velocityYMax);
 
-        import deltotum.ui.containers.stack_box: StackBox;
+        import deltotum.ui.containers.stack_box : StackBox;
+
         auto emitterContainer = new StackBox;
+        emitterContainer.backgroundFactory = null;
         emitterContainer.width = 400;
         emitterContainer.height = height;
         addCreated(emitterContainer);

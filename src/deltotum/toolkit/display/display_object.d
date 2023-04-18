@@ -63,7 +63,8 @@ class DisplayObject : PhysicalBody
 
     //protected
     //{
-    DisplayObject[] children;
+    //TODO information about children
+    @ToStringExclude DisplayObject[] children;
     //}
 
     bool delegate(double, double) onDrag;
@@ -765,7 +766,8 @@ class DisplayObject : PhysicalBody
         import deltotum.toolkit.graphics.shapes.rectangle : Rectangle;
         import deltotum.toolkit.graphics.colors.rgba : RGBA;
 
-        if(width == 0 || height == 0){
+        if (width == 0 || height == 0)
+        {
             return;
         }
 
@@ -777,7 +779,15 @@ class DisplayObject : PhysicalBody
 
     void drawAllBounds()
     {
-        onChildrenRecursive((ch) { ch.drawBounds; return true; });
+        onChildrenRecursive((ch) {
+            if (debugFlag in ch.userData)
+            {
+                return true;
+            }
+
+            ch.drawBounds;
+            return true;
+        });
     }
 
     void onChildrenRecursive(bool delegate(DisplayObject) onObject)
@@ -787,7 +797,7 @@ class DisplayObject : PhysicalBody
 
     void onChildrenRecursive(DisplayObject root, bool delegate(DisplayObject) onObjectIsContinue)
     {
-        if (root is null || debugFlag in root.userData)
+        if (root is null)
         {
             return;
         }

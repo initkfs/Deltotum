@@ -44,26 +44,29 @@ class SceneView : VBox
         TextArea objectFullInfo;
     }
 
+    this(){
+        super(5);
+    }
+
     override void initialize()
     {
         super.initialize;
         isLayoutManaged = false;
-        spacing = 5;
-
-        import deltotum.maths.geometry.insets : Insets;
-
-        padding = Insets(5);
     }
 
     override void create()
     {
         super.create;
 
+        import deltotum.maths.geometry.insets : Insets;
+
         auto hbox = new HBox;
-        
         addCreated(hbox);
-        auto text = new Text("Debug");
+
         auto tb = new ToggleSwitch;
+        import deltotum.toolkit.display.alignment: Alignment;
+        tb.alignment = Alignment.y;
+
         tb.onSwitchOn = () {
             if (onEnableDebug !is null)
             {
@@ -85,7 +88,6 @@ class SceneView : VBox
             }
         };
 
-        hbox.addCreated(text);
         hbox.addCreated(tb);
 
         objectFullInfo = new TextArea();
@@ -97,7 +99,9 @@ class SceneView : VBox
         output.width = width - padding.width;
         output.height = 150;
         addCreated(output);
+    }
 
+    void debugScene(){
         auto scene = sceneProvider();
         if (scene is null)
         {
@@ -131,7 +135,7 @@ class SceneView : VBox
                     {
                         if (inBoundsChildCount > objectOnDebugSceneIndex || !nextForDebug)
                         {
-                            objectOnDebugSceneIndex = inBoundsChildCount;
+                            objectOnDebugSceneIndex = inBoundsChildCount + 1;
                             nextForDebug = child;
                             return false;
                         }

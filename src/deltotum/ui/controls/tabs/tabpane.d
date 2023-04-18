@@ -28,6 +28,7 @@ class TabPane : Container
     {
         this.header = header ? header : new TabHeader;
         content = new StackBox;
+        content.backgroundFactory = null;
         layout = new VerticalLayout(2);
         backgroundFactory = null;
     }
