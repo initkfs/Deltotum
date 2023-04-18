@@ -32,7 +32,7 @@ class Button : Control
         Texture hover;
         Texture clickEffect;
         ValueTransition clickEffectAnimation;
-        Text text;
+        Text _text;
     }
 
     this(double width = 80, double height = 40, dstring text = "Button")
@@ -82,7 +82,8 @@ class Button : Control
                     .theme.colorAccent, true, graphics
                     .theme.colorAccent);
 
-            Shape click = new RegularPolygon(width, height, clickStyle, graphics.theme.controlCornersBevel);
+            Shape click = new RegularPolygon(width, height, clickStyle, graphics
+                    .theme.controlCornersBevel);
             click.isLayoutManaged = false;
             click.isVisible = false;
             click.opacity = 0;
@@ -130,13 +131,13 @@ class Button : Control
 
         if (textFactory !is null)
         {
-            text = textFactory();
+            _text = textFactory();
             //FIXME
-            text.focusEffectFactory = null;
+            _text.focusEffectFactory = null;
 
-            text.maxWidth = width - padding.width;
-            text.maxHeight = height - padding.height;
-            addOrAddCreated(text);
+            _text.maxWidth = width - padding.width;
+            _text.maxHeight = height - padding.height;
+            addOrAddCreated(_text);
         }
 
         if (clickEffect !is null)
@@ -182,6 +183,24 @@ class Button : Control
             }
             return false;
         };
+    }
+
+    void text(dstring t)
+    {
+        if(!_text){
+            _buttonText = t;
+            return;
+        }
+
+        _text.text = t;
+    }
+
+    dstring text()
+    {
+        if(_text){
+            return _text.text;
+        }
+        return _buttonText;
     }
 
 }

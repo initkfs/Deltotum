@@ -10,12 +10,14 @@ import deltotum.toolkit.graphics.colors.rgba : RGBA;
 import deltotum.ui.containers.vbox : VBox;
 import deltotum.ui.controls.texts.text : Text;
 import deltotum.ui.controls.scrollbars.hscrollbar : HScrollbar;
+import deltotum.ui.containers.container: Container;
 import deltotum.ui.controls.buttons.button: Button;
+import deltotum.toolkit.display.layouts.horizontal_layout: HorizontalLayout;
 
 /**
  * Authors: initkfs
  */
-class ParticlesEditor : DisplayObject
+class ParticlesEditor : Container
 {
     private
     {
@@ -25,21 +27,27 @@ class ParticlesEditor : DisplayObject
     this(Emitter emitter)
     {
         this.emitter = emitter;
-        isManaged = false;
+        layout = new HorizontalLayout;
     }
 
     override void create()
     {
         super.create;
 
-        auto controlContainer = new VBox(0);
-        controlContainer.isManaged = false;
-        controlContainer.width = window.getWidth;
-        controlContainer.height = window.getHeight;
-        controlContainer.x = 10;
-        build(controlContainer);
+        auto controlContainer = new VBox(2);
+        addCreated(controlContainer);
 
-        auto configButton = new Button(100, 40, "Config");
+        import deltotum.ui.controls.buttons.toggle_switch: ToggleSwitch;
+
+        auto runButton = new Button;
+        runButton.text = "Emit";
+        runButton.onAction = (e){
+            emitter.isActive = !emitter.isActive;
+        };
+        controlContainer.addCreated(runButton);
+
+        auto configButton = new Button;
+        configButton.text = "JSON";
         configButton.onAction = (e){
             import std.stdio;
             writeln(emitter.toConfig);
@@ -49,7 +57,7 @@ class ParticlesEditor : DisplayObject
         auto textCount = new Text("CPF:");
         controlContainer.addCreated(textCount);
 
-        auto cpf = new HScrollbar(5, 1000);
+        auto cpf = new HScrollbar(5, 3000);
         cpf.onValue = (value) { emitter.countPerFrame = cast(int) value; };
         controlContainer.addCreated(cpf);
 
@@ -88,16 +96,18 @@ class ParticlesEditor : DisplayObject
         velocityYMax.onValue = (value) { emitter.maxVelocityY = value; };
         controlContainer.addCreated(velocityYMax);
 
-        controlContainer.create;
-        add(controlContainer);
+        import deltotum.ui.containers.stack_box: StackBox;
+        auto emitterContainer = new StackBox;
+        emitterContainer.width = 400;
+        emitterContainer.height = height;
+        addCreated(emitterContainer);
 
-        auto controlContainer2 = new VBox(0);
-        controlContainer2.isManaged = false;
-        //TODO padding
-        controlContainer2.x = window.getWidth - 130;
-        controlContainer2.width = window.getWidth;
-        controlContainer2.height = window.getHeight;
-        build(controlContainer2);
+        emitter.width = 10;
+        emitter.height = 10;
+        emitterContainer.addCreated(emitter);
+
+        auto controlContainer2 = new VBox(2);
+        addCreated(controlContainer2);
 
         auto textAccX = new Text("Min acceleration X:");
         controlContainer2.addCreated(textAccX);
@@ -126,9 +136,6 @@ class ParticlesEditor : DisplayObject
         auto accelYMax = new HScrollbar(-1000, 1000);
         accelYMax.onValue = (value) { emitter.maxAccelerationY = value; };
         controlContainer2.addCreated(accelYMax);
-
-        controlContainer2.create;
-        add(controlContainer2);
     }
 
     override void destroy()

@@ -52,8 +52,6 @@ class Emitter : DisplayObject
 
     this(bool isActive = true, EmitterConfig config = null)
     {
-        super();
-        //TODO seed, etc
         random = new Random;
         this.isActive = isActive;
         if (config is null)
@@ -73,9 +71,15 @@ class Emitter : DisplayObject
 
         auto particle = particleFactory();
         particle.isManaged = false;
+
         if (!particle.isBuilt)
         {
             build(particle);
+        }
+
+        if (!particle.isInitialized)
+        {
+            particle.initialize;
         }
 
         if (!particle.isCreated)
@@ -83,11 +87,14 @@ class Emitter : DisplayObject
             particle.create;
         }
 
-        particle.create;
+        if (!particle.parent)
+        {
+            add(particle);
+        }
+
         particles ~= particle;
         tuneParticle(particle);
         particle.alive(true);
-        add(particle);
     }
 
     protected void tuneParticle(Particle particle)
@@ -97,41 +104,10 @@ class Emitter : DisplayObject
         particle.y = y;
         particle.mass = particleMass;
 
-        if (minVelocityX != maxVelocityY)
-        {
-            particle.velocity.x = random.randomBetween(minVelocityX, maxVelocityX);
-        }
-        else
-        {
-            particle.velocity.x = minVelocityX;
-        }
-
-        if (minVelocityY != maxVelocityY)
-        {
-            particle.velocity.y = random.randomBetween(minVelocityY, maxVelocityY);
-        }
-        else
-        {
-            particle.velocity.y = minVelocityY;
-        }
-
-        if (minAccelerationX != maxAccelerationX)
-        {
-            particle.acceleration.x = random.randomBetween(minAccelerationX, maxAccelerationX);
-        }
-        else
-        {
-            particle.acceleration.x = minAccelerationX;
-        }
-
-        if (minAccelerationY != maxAccelerationY)
-        {
-            particle.acceleration.y = random.randomBetween(minAccelerationY, maxAccelerationY);
-        }
-        else
-        {
-            particle.acceleration.y = minAccelerationY;
-        }
+        particle.velocity.x = random.randomBetween(minVelocityX, maxVelocityX);
+        particle.velocity.y = random.randomBetween(minVelocityY, maxVelocityY);
+        particle.acceleration.x = random.randomBetween(minAccelerationX, maxAccelerationX);
+        particle.acceleration.y = random.randomBetween(minAccelerationY, maxAccelerationY);
     }
 
     protected void resetParticle(Particle p) const

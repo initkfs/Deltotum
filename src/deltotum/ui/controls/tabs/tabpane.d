@@ -1,30 +1,14 @@
 module deltotum.ui.controls.tabs.tabpane;
 
+import deltotum.toolkit.display.display_object : DisplayObject;
 import deltotum.ui.containers.container : Container;
 import deltotum.toolkit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.ui.containers.hbox : HBox;
 import deltotum.ui.containers.vbox : VBox;
 import deltotum.ui.containers.stack_box : StackBox;
 import deltotum.ui.controls.tabs.tab : Tab;
-import deltotum.ui.controls.buttons.button : Button;
-
-class TabButton : Button
-{
-    Tab tab;
-    void delegate(Tab tab) onTab;
-
-    this(Tab tab)
-    {
-        super(80, 40, tab.text);
-        this.tab = tab;
-        onAction = (e) {
-            if (onTab !is null)
-            {
-                onTab(tab);
-            }
-        };
-    }
-}
+import deltotum.ui.controls.tabs.tab_header : TabHeader;
+import deltotum.toolkit.display.layouts.vertical_layout : VerticalLayout;
 
 /**
  * Authors: initkfs
@@ -34,99 +18,100 @@ class TabPane : Container
 
     private
     {
-        VBox container;
-        HBox header;
-        StackBox content;
-        GraphicStyle headerStyle;
-        GraphicStyle contentStyle;
-        Tab[] tabs;
+        TabHeader header;
         Tab currentTab;
     }
 
-    this(Tab[] tabs)
+    StackBox content;
+
+    this(TabHeader header = null)
     {
-        super();
-        this.tabs = tabs;
+        this.header = header ? header : new TabHeader;
+        content = new StackBox;
+        layout = new VerticalLayout(2);
+        backgroundFactory = null;
+    }
+
+    override void initialize()
+    {
+        super.initialize;
     }
 
     override void create()
     {
         super.create;
 
-        headerStyle = GraphicStyle(0, graphics.theme.colorSecondary, true, graphics.theme.colorPrimary);
-        contentStyle = GraphicStyle(0, graphics.theme.colorSecondary, true, graphics.theme.colorSecondary);
-
-        container = new VBox();
-        build(container);
-
-        header = new HBox(1);
-        header.style = headerStyle;
         header.width = width;
-        header.height = 40;
-        container.addCreated(header);
-        //header.createBackground(width, height);
+        //TODO max button height
+        header.height = 50;
 
-        foreach (i, Tab tab; tabs)
-        {
-            //TODO move, remove tabs, etc
-            auto tabButton = new TabButton(tab);
-            tabButton.tab = tab;
-            tabButton.onTab = (tab) { changeTab(tab); };
-            header.addCreated(tabButton);
-        }
+        addCreated(header);
 
-        //header.setInvalid;
-
-        content = new StackBox();
-        content.style = contentStyle;
-        container.addCreated(content);
         content.width = width;
         content.height = height - header.height;
-        //content.createBackground(width, height);
 
-        foreach (Tab tab; tabs)
+        addCreated(content);
+
+        if (header.tabs.length > 0)
         {
-            content.addCreated(tab);
+            changeTab(header.tabs[0]);
+        }
+    }
+
+    void createTabContent(Tab tab, DisplayObject obj)
+    {
+        if (!tab.isBuilt)
+        {
+            tab.onAction = () { changeTab(tab); };
+
+            header.addCreated(tab);
         }
 
-        if (tabs.length > 0)
-        {
-            changeTab(tabs[0]);
-        }
+        //TODO map?
+        obj.width = this.content.width;
+        obj.height = this.content.height;
 
-        container.create;
-        add(container);
+        tab.content = obj;
+        content.addCreated(obj);
+
+        obj.isVisible = false;
+        obj.isUpdatable = false;
     }
 
     //TODO events
     void changeTab(Tab newTab)
     {
-        if (!newTab.isVisible)
+        if (newTab is currentTab)
         {
-            newTab.isVisible = true;
-            //newTab.invalidate;
+            return;
+        }
+
+        if (currentTab && currentTab.content)
+        {
+            currentTab.content.isVisible = false;
+            currentTab.content.isUpdatable = false;
+        }
+
+        if (newTab.content)
+        {
+            newTab.content.isVisible = true;
+            newTab.content.isUpdatable = true;
         }
 
         currentTab = newTab;
-
-        foreach (Tab tab; tabs)
-        {
-            if (tab !is currentTab && tab.isVisible)
-            {
-                tab.isVisible = false;
-                //tab.invalidate;
-            }
-
-        }
-        //content.invalidate;
     }
 
     override void destroy()
     {
         super.destroy;
-        if (header !is null)
+        if (header)
         {
             header.destroy;
+        }
+
+        if (content)
+        {
+            content.destroy;
         }
     }
 }
