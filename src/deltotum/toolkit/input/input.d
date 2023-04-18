@@ -1,10 +1,14 @@
 module deltotum.toolkit.input.input;
 
+import deltotum.toolkit.input.clipboards.clipboard: Clipboard;
 import deltotum.toolkit.input.joystick.event.joystick_event : JoystickEvent;
 import deltotum.maths.vector2d : Vector2d;
 
 import std.container.slist : SList;
 
+/**
+ * Authors: initkfs
+ */
 class Input
 {
     SList!int pressedKeys;
@@ -17,8 +21,13 @@ class Input
 
     JoystickEvent lastJoystickEvent;
 
-    this()
+    Clipboard clipboard;
+
+    this(Clipboard clipboard)
     {
+        assert(clipboard);
+        this.clipboard = clipboard;
+        
         pressedKeys = SList!int();
     }
 

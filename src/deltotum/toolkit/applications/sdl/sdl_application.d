@@ -91,10 +91,16 @@ class SdlApplication : GraphicApplication
         joystick = SdlJoystick.fromDevices;
 
         //TODO extreact dependency
-        import deltotum.platform.sdl.sdl_keyboard: SdlKeyboard;
+        import deltotum.platform.sdl.sdl_keyboard : SdlKeyboard;
+
         auto keyboard = new SdlKeyboard;
 
-        _input = new Input;
+        import deltotum.toolkit.input.clipboards.clipboard : Clipboard;
+        import deltotum.platform.sdl.sdl_clipboard;
+
+        auto sdlClipboard = new SdlClipboard;
+        auto clipboard = new Clipboard(sdlClipboard);
+        _input = new Input(clipboard);
         _audio = new Audio(audioMixLib);
 
         //TODO remove sdl api
@@ -321,9 +327,10 @@ class SdlApplication : GraphicApplication
         builder.window = window;
 
         import deltotum.toolkit.graphics.themes.theme : Theme;
-        import deltotum.toolkit.graphics.themes.factories.theme_from_config_factory: ThemeFromConfigFactory;
+        import deltotum.toolkit.graphics.themes.factories.theme_from_config_factory : ThemeFromConfigFactory;
 
-        auto themeLoader = new ThemeFromConfigFactory(uservices.logger, uservices.config, uservices.context, _assets.defaultFont);
+        auto themeLoader = new ThemeFromConfigFactory(uservices.logger, uservices.config, uservices.context, _assets
+                .defaultFont);
 
         auto theme = themeLoader.create;
         builder.graphics = new Graphics(uservices.logger, window.renderer, theme);

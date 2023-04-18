@@ -79,6 +79,27 @@ class TextArea : Control
                 textView.text ~= '\n';
 
             }
+
+            if (key.keyMod.isCtrl && key.keyName == KeyName.c)
+            {
+                import std.conv : to;
+
+                if (textView.text.length > 0)
+                {
+                    input.clipboard.setText(textView.text.to!string);
+                }
+            }
+
+            if (key.keyMod.isCtrl && key.keyName == KeyName.v)
+            {
+                import std.conv : to;
+
+                if (input.clipboard.hasText)
+                {
+                    textView.text = input.clipboard.getText;
+                }
+            }
+
             return false;
         };
     }
