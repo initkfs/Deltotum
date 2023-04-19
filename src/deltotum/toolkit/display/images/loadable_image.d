@@ -3,10 +3,10 @@ module deltotum.toolkit.display.images.loadable_image;
 import deltotum.toolkit.display.display_object : DisplayObject;
 
 //TODO extract interfaces
-import deltotum.platform.sdl.sdl_texture : SdlTexture;
-import deltotum.platform.sdl.sdl_surface : SdlSurface;
-import deltotum.platform.sdl.sdl_renderer : SdlRenderer;
-import deltotum.platform.sdl.img.sdl_image : SdlImage;
+import deltotum.sdl.sdl_texture : SdlTexture;
+import deltotum.sdl.sdl_surface : SdlSurface;
+import deltotum.sdl.sdl_renderer : SdlRenderer;
+import deltotum.sdl.img.sdl_image : SdlImage;
 import deltotum.toolkit.display.textures.texture : Texture;
 import deltotum.maths.shapes.rect2d : Rect2d;
 import deltotum.toolkit.display.flip : Flip;

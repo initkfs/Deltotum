@@ -4,24 +4,24 @@ import deltotum.core.applications.application_exit : ApplicationExit;
 import deltotum.core.applications.graphic_application : GraphicApplication;
 import deltotum.toolkit.applications.components.graphics_component : GraphicsComponent;
 import deltotum.toolkit.events.event_manager : EventManager;
-import deltotum.platform.sdl.events.sdl_event_processor : SdlEventProcessor;
+import deltotum.sdl.events.sdl_event_processor : SdlEventProcessor;
 import deltotum.toolkit.asset.assets : Assets;
 import deltotum.toolkit.asset.fonts.font : Font;
 import deltotum.toolkit.scene.scene_manager : SceneManager;
-import deltotum.toolkit.audio.audio : Audio;
+import deltotum.media.audio.audio : Audio;
 import deltotum.toolkit.graphics.graphics : Graphics;
 import deltotum.toolkit.display.display_object : DisplayObject;
 import deltotum.toolkit.scene.scene : Scene;
 import deltotum.toolkit.input.keyboard.event.key_event : KeyEvent;
 import deltotum.toolkit.input.joystick.event.joystick_event : JoystickEvent;
 
-import deltotum.platform.sdl.sdl_lib : SdlLib;
-import deltotum.platform.sdl.img.sdl_img_lib : SdlImgLib;
-import deltotum.platform.sdl.mix.sdl_mix_lib : SdlMixLib;
-import deltotum.platform.sdl.ttf.sdl_ttf_lib : SdlTTFLib;
-import deltotum.platform.sdl.sdl_window : SdlWindow;
-import deltotum.platform.sdl.sdl_renderer : SdlRenderer;
-import deltotum.platform.sdl.sdl_joystick : SdlJoystick;
+import deltotum.sdl.sdl_lib : SdlLib;
+import deltotum.sdl.img.sdl_img_lib : SdlImgLib;
+import deltotum.sdl.mix.sdl_mix_lib : SdlMixLib;
+import deltotum.sdl.ttf.sdl_ttf_lib : SdlTTFLib;
+import deltotum.sdl.sdl_window : SdlWindow;
+import deltotum.sdl.sdl_renderer : SdlRenderer;
+import deltotum.sdl.sdl_joystick : SdlJoystick;
 import deltotum.toolkit.window.event.window_event : WindowEvent;
 import deltotum.toolkit.input.mouse.event.mouse_event : MouseEvent;
 
@@ -91,12 +91,12 @@ class SdlApplication : GraphicApplication
         joystick = SdlJoystick.fromDevices;
 
         //TODO extreact dependency
-        import deltotum.platform.sdl.sdl_keyboard : SdlKeyboard;
+        import deltotum.sdl.sdl_keyboard : SdlKeyboard;
 
         auto keyboard = new SdlKeyboard;
 
         import deltotum.toolkit.input.clipboards.clipboard : Clipboard;
-        import deltotum.platform.sdl.sdl_clipboard;
+        import deltotum.sdl.sdl_clipboard;
 
         auto sdlClipboard = new SdlClipboard;
         auto clipboard = new Clipboard(sdlClipboard);

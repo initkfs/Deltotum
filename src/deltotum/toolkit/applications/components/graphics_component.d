@@ -5,7 +5,7 @@ import deltotum.core.applications.components.uni.uni_component : UniComponent;
 import deltotum.core.applications.components.uni.attributes : Service;
 
 import deltotum.toolkit.asset.assets : Assets;
-import deltotum.toolkit.audio.audio : Audio;
+import deltotum.media.audio.audio : Audio;
 import deltotum.toolkit.graphics.graphics : Graphics;
 import deltotum.toolkit.input.input : Input;
 import deltotum.toolkit.window.window : Window;
