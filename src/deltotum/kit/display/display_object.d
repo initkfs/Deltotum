@@ -5,7 +5,7 @@ import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.kit.display.alignment : Alignment;
 import deltotum.math.geometry.insets : Insets;
 import deltotum.kit.display.layouts.layout : Layout;
-import deltotum.sdl.sdl_texture : SdlTexture;
+import deltotum.sys.sdl.sdl_texture : SdlTexture;
 import deltotum.phys.physical_body : PhysicalBody;
 import deltotum.kit.input.mouse.event.mouse_event : MouseEvent;
 import deltotum.core.applications.events.application_event : ApplicationEvent;

@@ -1,10 +1,10 @@
-module deltotum.sdl.sdl_clipboard;
+module deltotum.sys.sdl.sdl_clipboard;
 
 // dfmt off
 version(SdlBackend):
 // dfmt on
 
-import deltotum.sdl.base.sdl_object : SdlObject;
+import deltotum.sys.sdl.base.sdl_object : SdlObject;
 import deltotum.com.results.platform_result : PlatformResult;
 
 import bindbc.sdl;

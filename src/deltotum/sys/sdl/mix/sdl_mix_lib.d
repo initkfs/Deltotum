@@ -1,11 +1,11 @@
-module deltotum.sdl.mix.sdl_mix_lib;
+module deltotum.sys.sdl.mix.sdl_mix_lib;
 
 // dfmt off
 version(SdlBackend):
 // dfmt on
 
 import deltotum.com.results.platform_result : PlatformResult;
-import deltotum.sdl.mix.base.sdl_mix_object : SdlMixObject;
+import deltotum.sys.sdl.mix.base.sdl_mix_object : SdlMixObject;
 
 import bindbc.sdl;
 

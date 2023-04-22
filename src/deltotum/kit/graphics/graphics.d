@@ -2,7 +2,7 @@ module deltotum.kit.graphics.graphics;
 
 import deltotum.core.applications.components.units.services.loggable_unit;
 
-import deltotum.sdl.sdl_renderer : SdlRenderer;
+import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.math.vector2d : Vector2d;
 import math = deltotum.math.math;

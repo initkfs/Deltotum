@@ -1,7 +1,7 @@
 module deltotum.kit.input.clipboards.clipboard;
 
 //TODO remove SDL api
-import deltotum.sdl.sdl_clipboard : SdlClipboard;
+import deltotum.sys.sdl.sdl_clipboard : SdlClipboard;
 import bindbc.sdl;
 
 /**

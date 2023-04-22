@@ -1,11 +1,11 @@
-module deltotum.sdl.base.sdl_object_wrapper;
+module deltotum.sys.sdl.base.sdl_object_wrapper;
 
 // dfmt off
 version(SdlBackend):
 // dfmt on
 
 import deltotum.com.objects.platform_object_wrapper : PlatformObjectWrapper;
-import deltotum.sdl.base.sdl_object : SdlObject;
+import deltotum.sys.sdl.base.sdl_object : SdlObject;
 
 import std.exception : enforce;
 

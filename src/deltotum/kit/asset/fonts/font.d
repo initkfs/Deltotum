@@ -3,9 +3,9 @@ module deltotum.kit.asset.fonts.font;
 import deltotum.core.applications.components.units.services.loggable_unit : LoggableUnit;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 
-import deltotum.sdl.ttf.sdl_ttf_font : SdlTTFFont;
-import deltotum.sdl.sdl_surface : SdlSurface;
-import deltotum.sdl.sdl_texture : SdlTexture;
+import deltotum.sys.sdl.ttf.sdl_ttf_font : SdlTTFFont;
+import deltotum.sys.sdl.sdl_surface : SdlSurface;
+import deltotum.sys.sdl.sdl_texture : SdlTexture;
 
 import std.logger.core : Logger;
 import std.string : toStringz;

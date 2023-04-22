@@ -1,4 +1,4 @@
-module deltotum.sdl.base.sdl_type_converter;
+module deltotum.sys.sdl.base.sdl_type_converter;
 
 // dfmt off
 version(SdlBackend):

@@ -1,13 +1,13 @@
-module deltotum.sdl.ttf.sdl_ttf_font;
+module deltotum.sys.sdl.ttf.sdl_ttf_font;
 
 // dfmt off
 version(SdlBackend):
 // dfmt on
 
 import deltotum.com.results.platform_result : PlatformResult;
-import deltotum.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
-import deltotum.sdl.ttf.base.sdl_ttf_object : SdlTTFObject;
-import deltotum.sdl.sdl_surface: SdlSurface;
+import deltotum.sys.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
+import deltotum.sys.sdl.ttf.base.sdl_ttf_object : SdlTTFObject;
+import deltotum.sys.sdl.sdl_surface: SdlSurface;
 
 import bindbc.sdl;
 

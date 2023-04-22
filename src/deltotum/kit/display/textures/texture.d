@@ -2,8 +2,8 @@ module deltotum.kit.display.textures.texture;
 
 import deltotum.kit.display.display_object : DisplayObject;
 
-import deltotum.sdl.sdl_texture : SdlTexture;
-import deltotum.sdl.sdl_surface : SdlSurface;
+import deltotum.sys.sdl.sdl_texture : SdlTexture;
+import deltotum.sys.sdl.sdl_surface : SdlSurface;
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.kit.display.flip : Flip;
 

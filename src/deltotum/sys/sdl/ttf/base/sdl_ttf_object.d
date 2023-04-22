@@ -1,10 +1,10 @@
-module deltotum.sdl.ttf.base.sdl_ttf_object;
+module deltotum.sys.sdl.ttf.base.sdl_ttf_object;
 
 // dfmt off
 version(SdlBackend):
 // dfmt on
 
-import deltotum.sdl.base.sdl_object : SdlObject;
+import deltotum.sys.sdl.base.sdl_object : SdlObject;
 
 /**
  * Authors: initkfs

@@ -1,23 +1,22 @@
-module deltotum.sdl.mix.base.sdl_mix_object;
+module deltotum.sys.sdl.img.base.sdl_image_object;
 
 // dfmt off
 version(SdlBackend):
 // dfmt on
 
-import deltotum.sdl.base.sdl_object : SdlObject;
-import std.string : fromStringz, toStringz;
+import deltotum.sys.sdl.base.sdl_object : SdlObject;
+import std.string : toStringz, fromStringz;
 
 import bindbc.sdl;
 
 /**
  * Authors: initkfs
  */
-class SdlMixObject : SdlObject
+class SdlImageObject : SdlObject
 {
-
     override string getError() const nothrow
     {
-        const char* errPtr = Mix_GetError();
+        const char* errPtr = IMG_GetError();
         const string error = ptrToError(errPtr);
         return error;
     }

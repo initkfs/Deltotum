@@ -1,4 +1,4 @@
-module deltotum.sdl.events.sdl_event_processor;
+module deltotum.sys.sdl.events.sdl_event_processor;
 
 // dfmt off
 version(SdlBackend):
@@ -13,7 +13,7 @@ import deltotum.kit.input.keyboard.event.key_event : KeyEvent;
 import deltotum.kit.input.keyboard.event.text_input_event: TextInputEvent;
 import deltotum.kit.window.event.window_event : WindowEvent;
 import deltotum.kit.input.joystick.event.joystick_event : JoystickEvent;
-import deltotum.sdl.sdl_keyboard : SdlKeyboard;
+import deltotum.sys.sdl.sdl_keyboard : SdlKeyboard;
 
 import bindbc.sdl;
 import std.stdio;

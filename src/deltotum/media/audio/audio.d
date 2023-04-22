@@ -1,6 +1,6 @@
 module deltotum.media.audio.audio;
 
-import deltotum.sdl.mix.sdl_mix_lib : SdlMixLib;
+import deltotum.sys.sdl.mix.sdl_mix_lib : SdlMixLib;
 
 import bindbc.sdl;
 

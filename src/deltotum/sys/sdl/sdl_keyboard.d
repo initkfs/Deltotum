@@ -1,10 +1,10 @@
-module deltotum.sdl.sdl_keyboard;
+module deltotum.sys.sdl.sdl_keyboard;
 
 // dfmt off
 version(SdlBackend):
 // dfmt on
 
-import deltotum.sdl.base.sdl_object : SdlObject;
+import deltotum.sys.sdl.base.sdl_object : SdlObject;
 import deltotum.com.commons.keyboards.key_name : KeyName;
 
 import bindbc.sdl;

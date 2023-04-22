@@ -1,10 +1,10 @@
-module deltotum.sdl.img.sdl_image;
+module deltotum.sys.sdl.img.sdl_image;
 
 // dfmt off
 version(SdlBackend):
 // dfmt on
 
-import deltotum.sdl.sdl_surface : SdlSurface;
+import deltotum.sys.sdl.sdl_surface : SdlSurface;
 
 import std.string : toStringz, fromStringz;
 

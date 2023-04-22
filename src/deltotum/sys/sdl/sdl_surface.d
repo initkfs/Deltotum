@@ -1,12 +1,12 @@
-module deltotum.sdl.sdl_surface;
+module deltotum.sys.sdl.sdl_surface;
 
 // dfmt off
 version(SdlBackend):
 // dfmt on
 
 import deltotum.com.results.platform_result : PlatformResult;
-import deltotum.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
-import deltotum.sdl.sdl_window : SdlWindow;
+import deltotum.sys.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
+import deltotum.sys.sdl.sdl_window : SdlWindow;
 
 import bindbc.sdl;
 

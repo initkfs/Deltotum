@@ -1,4 +1,4 @@
-module deltotum.sdl.sdl_lib;
+module deltotum.sys.sdl.sdl_lib;
 
 // dfmt off
 version(SdlBackend):
@@ -9,7 +9,7 @@ import std.string : toStringz, fromStringz;
 import bindbc.sdl;
 import bindbcConfig = bindbc.sdl.config;
 
-import deltotum.sdl.base.sdl_object : SdlObject;
+import deltotum.sys.sdl.base.sdl_object : SdlObject;
 
 /**
  * Authors: initkfs

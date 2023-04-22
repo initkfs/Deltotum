@@ -1,14 +1,14 @@
-module deltotum.sdl.sdl_window;
+module deltotum.sys.sdl.sdl_window;
 
 // dfmt off
 version(SdlBackend):
 // dfmt on
 
 import deltotum.com.results.platform_result : PlatformResult;
-import deltotum.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
+import deltotum.sys.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.kit.input.mouse.mouse_cursor_type : MouseCursorType;
-import deltotum.sdl.sdl_cursor : SDLCursor;
-import deltotum.sdl.sdl_surface : SdlSurface;
+import deltotum.sys.sdl.sdl_cursor : SDLCursor;
+import deltotum.sys.sdl.sdl_surface : SdlSurface;
 
 import std.string : toStringz, fromStringz;
 

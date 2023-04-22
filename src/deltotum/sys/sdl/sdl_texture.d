@@ -1,13 +1,13 @@
-module deltotum.sdl.sdl_texture;
+module deltotum.sys.sdl.sdl_texture;
 
 // dfmt off
 version(SdlBackend):
 // dfmt on
 
 import deltotum.com.results.platform_result : PlatformResult;
-import deltotum.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
-import deltotum.sdl.sdl_renderer : SdlRenderer;
-import deltotum.sdl.sdl_surface : SdlSurface;
+import deltotum.sys.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
+import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
+import deltotum.sys.sdl.sdl_surface : SdlSurface;
 
 import deltotum.math.shapes.rect2d : Rect2d;
 

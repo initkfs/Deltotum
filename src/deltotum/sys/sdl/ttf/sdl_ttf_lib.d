@@ -1,10 +1,10 @@
-module deltotum.sdl.ttf.sdl_ttf_lib;
+module deltotum.sys.sdl.ttf.sdl_ttf_lib;
 
 // dfmt off
 version(SdlBackend):
 // dfmt on
 
-import deltotum.sdl.ttf.base.sdl_ttf_object : SdlTTFObject;
+import deltotum.sys.sdl.ttf.base.sdl_ttf_object : SdlTTFObject;
 
 import bindbc.sdl;
 

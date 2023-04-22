@@ -1,10 +1,10 @@
-module deltotum.sdl.sdl_joystick;
+module deltotum.sys.sdl.sdl_joystick;
 
 // dfmt off
 version(SdlBackend):
 // dfmt on
 
-import deltotum.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
+import deltotum.sys.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 
 import bindbc.sdl;
 

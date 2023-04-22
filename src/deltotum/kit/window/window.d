@@ -1,7 +1,7 @@
 module deltotum.kit.window.window;
 
-import deltotum.sdl.sdl_window : SdlWindow;
-import deltotum.sdl.sdl_renderer : SdlRenderer;
+import deltotum.sys.sdl.sdl_window : SdlWindow;
+import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.math.vector2d : Vector2d;
 import deltotum.kit.input.mouse.mouse_cursor_type : MouseCursorType;
