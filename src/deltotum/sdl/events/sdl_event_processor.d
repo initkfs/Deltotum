@@ -4,15 +4,15 @@ module deltotum.sdl.events.sdl_event_processor;
 version(SdlBackend):
 // dfmt on
 
-import deltotum.toolkit.events.processing.event_processor : EventProcessor;
+import deltotum.kit.events.processing.event_processor : EventProcessor;
 
 import deltotum.core.events.event_type : EventType;
 import deltotum.core.applications.events.application_event : ApplicationEvent;
-import deltotum.toolkit.input.mouse.event.mouse_event : MouseEvent;
-import deltotum.toolkit.input.keyboard.event.key_event : KeyEvent;
-import deltotum.toolkit.input.keyboard.event.text_input_event: TextInputEvent;
-import deltotum.toolkit.window.event.window_event : WindowEvent;
-import deltotum.toolkit.input.joystick.event.joystick_event : JoystickEvent;
+import deltotum.kit.input.mouse.event.mouse_event : MouseEvent;
+import deltotum.kit.input.keyboard.event.key_event : KeyEvent;
+import deltotum.kit.input.keyboard.event.text_input_event: TextInputEvent;
+import deltotum.kit.window.event.window_event : WindowEvent;
+import deltotum.kit.input.joystick.event.joystick_event : JoystickEvent;
 import deltotum.sdl.sdl_keyboard : SdlKeyboard;
 
 import bindbc.sdl;
@@ -125,14 +125,14 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
             break;
         }
 
-        import deltotum.platform.commons.keyboards.key_name : KeyName;
+        import deltotum.com.commons.keyboards.key_name : KeyName;
 
         const SDL_Keycode keyCode = event.key.keysym.sym;
         const keyName = keyboard.keyCodeToKeyName(keyCode);
 
         const mod = event.key.keysym.mod;
 
-        import deltotum.platform.commons.keyboards.key_modifier_info : KeyModifierInfo;
+        import deltotum.com.commons.keyboards.key_modifier_info : KeyModifierInfo;
 
         KeyModifierInfo modInfo = KeyModifierInfo(
             (mod & SDL_Keymod.KMOD_LSHIFT) == SDL_Keymod.KMOD_LSHIFT,

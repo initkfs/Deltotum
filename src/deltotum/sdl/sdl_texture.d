@@ -4,12 +4,12 @@ module deltotum.sdl.sdl_texture;
 version(SdlBackend):
 // dfmt on
 
-import deltotum.platform.results.platform_result : PlatformResult;
+import deltotum.com.results.platform_result : PlatformResult;
 import deltotum.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.sdl.sdl_renderer : SdlRenderer;
 import deltotum.sdl.sdl_surface : SdlSurface;
 
-import deltotum.maths.shapes.rect2d : Rect2d;
+import deltotum.math.shapes.rect2d : Rect2d;
 
 import bindbc.sdl;
 

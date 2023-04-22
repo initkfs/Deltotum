@@ -4,7 +4,7 @@ module deltotum.sdl.base.sdl_object;
 version(SdlBackend):
 // dfmt on
 
-import deltotum.platform.objects.platform_object : PlatformObject;
+import deltotum.com.objects.platform_object : PlatformObject;
 import deltotum.sdl.base.sdl_type_converter : SdlTypeConverter;
 
 import std.string : toStringz, fromStringz;

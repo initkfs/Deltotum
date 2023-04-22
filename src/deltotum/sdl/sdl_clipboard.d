@@ -5,7 +5,7 @@ version(SdlBackend):
 // dfmt on
 
 import deltotum.sdl.base.sdl_object : SdlObject;
-import deltotum.platform.results.platform_result : PlatformResult;
+import deltotum.com.results.platform_result : PlatformResult;
 
 import bindbc.sdl;
 

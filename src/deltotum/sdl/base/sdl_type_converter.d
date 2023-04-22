@@ -4,8 +4,8 @@ module deltotum.sdl.base.sdl_type_converter;
 version(SdlBackend):
 // dfmt on
 
-import deltotum.platform.objects.platform_object : PlatformObject;
-import deltotum.platform.types.platform_type_convertor : PlatformTypeConvertor;
+import deltotum.com.objects.platform_object : PlatformObject;
+import deltotum.com.types.platform_type_convertor : PlatformTypeConvertor;
 
 import bindbc.sdl;
 

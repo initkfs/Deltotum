@@ -4,7 +4,7 @@ module deltotum.sdl.ttf.sdl_ttf_font;
 version(SdlBackend):
 // dfmt on
 
-import deltotum.platform.results.platform_result : PlatformResult;
+import deltotum.com.results.platform_result : PlatformResult;
 import deltotum.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.sdl.ttf.base.sdl_ttf_object : SdlTTFObject;
 import deltotum.sdl.sdl_surface: SdlSurface;

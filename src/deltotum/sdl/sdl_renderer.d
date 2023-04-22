@@ -4,14 +4,14 @@ module deltotum.sdl.sdl_renderer;
 version(SdlBackend):
 // dfmt on
 
-import deltotum.platform.results.platform_result : PlatformResult;
+import deltotum.com.results.platform_result : PlatformResult;
 import deltotum.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.sdl.sdl_window : SdlWindow;
 import deltotum.sdl.sdl_texture : SdlTexture;
 
-import deltotum.toolkit.display.flip : Flip;
-import deltotum.maths.vector2d : Vector2d;
-import deltotum.maths.shapes.rect2d : Rect2d;
+import deltotum.kit.display.flip : Flip;
+import deltotum.math.vector2d : Vector2d;
+import deltotum.math.shapes.rect2d : Rect2d;
 
 import bindbc.sdl;
 

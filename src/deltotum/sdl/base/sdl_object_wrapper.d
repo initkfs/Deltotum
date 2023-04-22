@@ -4,7 +4,7 @@ module deltotum.sdl.base.sdl_object_wrapper;
 version(SdlBackend):
 // dfmt on
 
-import deltotum.platform.objects.platform_object_wrapper : PlatformObjectWrapper;
+import deltotum.com.objects.platform_object_wrapper : PlatformObjectWrapper;
 import deltotum.sdl.base.sdl_object : SdlObject;
 
 import std.exception : enforce;

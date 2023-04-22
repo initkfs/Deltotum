@@ -4,7 +4,7 @@ module deltotum.sdl.mix.sdl_mix_lib;
 version(SdlBackend):
 // dfmt on
 
-import deltotum.platform.results.platform_result : PlatformResult;
+import deltotum.com.results.platform_result : PlatformResult;
 import deltotum.sdl.mix.base.sdl_mix_object : SdlMixObject;
 
 import bindbc.sdl;
