@@ -40,7 +40,7 @@ struct Affine2d
 
     Affine2d setRotation(double angleDeg) const @nogc nothrow pure @safe
     {
-        import math = deltotum.math.math;
+        import math = deltotum.math;
 
         immutable cos = math.cosDeg(angleDeg);
         immutable sin = math.sinDeg(angleDeg);
@@ -70,7 +70,7 @@ struct Affine2d
             );
         }
 
-        import math = deltotum.math.math;
+        import math = deltotum.math;
 
         immutable sin = math.sinDeg(angleDeg);
         immutable cos = math.cosDeg(angleDeg);
@@ -151,7 +151,7 @@ struct Affine2d
             return Affine2d(m00, m01, m02, m10, m11, m12);
         }
 
-        import math = deltotum.math.math;
+        import math = deltotum.math;
 
         immutable cos = math.cosDeg(angleDeg);
         immutable sin = math.sinDeg(angleDeg);

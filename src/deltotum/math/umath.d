@@ -1,4 +1,4 @@
-module deltotum.math.math;
+module deltotum.math.umath;
 
 import math = std.math.trigonometry;
 import mathConst = std.math.constants;

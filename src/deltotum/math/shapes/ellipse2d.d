@@ -27,7 +27,7 @@ struct Ellipse2d
 
     double circumference() const @nogc nothrow pure @safe
     {
-        import math = deltotum.math.math;
+        import math = deltotum.math;
 
         return math.PI * (semiMajorAxis + semiMinorAxis);
     }
@@ -44,7 +44,7 @@ struct Ellipse2d
 
     double area() const @nogc nothrow pure @safe
     {
-        import math = deltotum.math.math;
+        import math = deltotum.math;
 
         return math.PI * semiMajorAxis * semiMinorAxis;
     }

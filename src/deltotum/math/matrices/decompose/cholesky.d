@@ -1,7 +1,7 @@
 module deltotum.math.matrices.decompose.cholesky;
 
 import deltotum.math.matrices.dense_matrix : DenseMatrix;
-import Math = deltotum.math.math;
+import Math = deltotum.math;
 
 /**
  * Authors: initkfs

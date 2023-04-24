@@ -9,7 +9,7 @@ size_t permutationCount(size_t count) pure @nogc nothrow
     {
         return 0;
     }
-    import math = deltotum.math.math;
+    import math = deltotum.math;
 
     return math.factorial(count);
 }
@@ -20,7 +20,7 @@ size_t permutationCountMfromN(size_t m, size_t n) pure @nogc nothrow
     {
         return 0;
     }
-    import math = deltotum.math.math;
+    import math = deltotum.math;
 
     return math.factorial(n) / math.factorial(n - m);
 }
@@ -72,7 +72,7 @@ size_t combinationCountMfromN(size_t m, size_t n) pure @nogc nothrow
     {
         return 0;
     }
-    import math = deltotum.math.math;
+    import math = deltotum.math;
 
     return math.factorial(n) / (math.factorial(m) * math.factorial(n - m));
 }

@@ -24,7 +24,7 @@ in(values.length > 1)
 double stddev(double[] values) @safe
 in(values.length > 1)
 {
-    import Math = deltotum.math.math;
+    import Math = deltotum.math;
 
     if(values.length <= 1){
         return double.nan;

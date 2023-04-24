@@ -172,7 +172,7 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
     //norm 2 in the SVD
     double opnorm1() const pure @safe
     {
-        import Math = deltotum.math.math;
+        import Math = deltotum.math;
 
         double f = 0;
         foreach (j; 0 .. ColDim)
@@ -190,7 +190,7 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
     //maximum row sum.
     double opnormInf() const pure @safe
     {
-        import Math = deltotum.math.math;
+        import Math = deltotum.math;
 
         double f = 0;
         foreach (i; 0 .. RowDim)
@@ -208,7 +208,7 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
     //sqrt of sum squares elements.
     double normFrobenius() const pure @safe
     {
-        import Math = deltotum.math.math;
+        import Math = deltotum.math;
 
         double f = 0;
         foreach (i; 0 .. RowDim)
@@ -224,7 +224,7 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
     //sum of the diagonal elements.
     double trace() const pure @safe
     {
-        import Math = deltotum.math.math;
+        import Math = deltotum.math;
 
         double t = 0;
         foreach (i; 0 .. Math.min(RowDim, ColDim))

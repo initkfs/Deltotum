@@ -4,7 +4,7 @@ module deltotum.math.numericals.roots;
 double secant(in double x1, in double x2, in double delegate(double) @safe func, in double accuracy = double.epsilon) @safe
 {
     import std.math.operations : isClose;
-    import Math = deltotum.math.math;
+    import Math = deltotum.math;
 
     //without initialization root is NaN
     double mustBeRoot;

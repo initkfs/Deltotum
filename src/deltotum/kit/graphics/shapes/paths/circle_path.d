@@ -26,7 +26,7 @@ class CirclePath : Path
 
     override void create()
     {
-        import math = deltotum.math.math;
+        import math = deltotum.math;
         import deltotum.math.vector2d : Vector2d;
 
         foreach (angleDeg; 1 .. 361)

@@ -5,7 +5,7 @@ double[] normal(size_t n)
 {
     import std.math.operations : isClose, cmp;
     import deltotum.math.random : Random;
-    import Math = deltotum.math.math;
+    import Math = deltotum.math;
     import std.math.exponential : log;
 
     auto rand = new Random;
@@ -33,7 +33,7 @@ double[] normal(size_t n)
 
 double pdf(double x) @safe
 {
-    import Math = deltotum.math.math;
+    import Math = deltotum.math;
     import std.math.exponential : exp;
 
     return exp(-x * x / 2) / Math.sqrt(2 * Math.PI);
@@ -62,7 +62,7 @@ double cdf(double x) @safe
     }
 
     import std.mathspecial : erfc;
-    import Math = deltotum.math.math;
+    import Math = deltotum.math;
 
     return 0.5 * erfc(-x * Math.sqrt(0.5));
 }
@@ -93,7 +93,7 @@ double inverseCDF(double x, double delta, double min, double max) @safe
 unittest
 {
     import std.math.operations : isClose;
-    import Math = deltotum.math.math;
+    import Math = deltotum.math;
 
     auto pdf1 = pdf(2.6, 11.8, 4.2);
     assert(isClose(pdf1, 0.008624778229));
@@ -103,7 +103,7 @@ unittest
 unittest
 {
     import std.math.operations : isClose;
-    import Math = deltotum.math.math;
+    import Math = deltotum.math;
 
     auto cdf1 = cdf(2.6, 11.8, 4.2);
     assert(isClose(cdf1, 0.014244859855));

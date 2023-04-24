@@ -4,7 +4,7 @@ import deltotum.kit.display.animation.object.value_transition: ValueTransition;
 import deltotum.kit.display.display_object : DisplayObject;
 import deltotum.kit.display.animation.interp.interpolator : Interpolator;
 import deltotum.math.vector2d : Vector2d;
-import math = deltotum.math.math;
+import math = deltotum.math;
 
 /**
  * Authors: initkfs

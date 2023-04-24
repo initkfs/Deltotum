@@ -4,7 +4,7 @@ module deltotum.math.numericals.interp;
  * Authors: initkfs
  */
 import deltotum.math.vector2d : Vector2d;
-import deltotum.math.math: clamp01;
+import deltotum.math: clamp01;
 
 import std.math.traits : isFinite;
 

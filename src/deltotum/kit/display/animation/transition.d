@@ -4,7 +4,7 @@ import deltotum.kit.display.animation.animation: Animation;
 import deltotum.kit.display.animation.interp.interpolator : Interpolator;
 import deltotum.kit.display.animation.interp.uni_interpolator : UniInterpolator;
 import deltotum.math.vector2d : Vector2d;
-import math = deltotum.math.math;
+import math = deltotum.math;
 
 import std.traits : isIntegral, isFloatingPoint;
 

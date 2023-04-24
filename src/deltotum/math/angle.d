@@ -41,7 +41,7 @@ struct Angle
 
     static Angle fromDecimal(double value) pure @safe
     {
-        import Math = deltotum.math.math;
+        import Math = deltotum.math;
         import std.math.operations : cmp;
 
         const bool isNeg = cmp(value, 0.0) < 0;
@@ -58,7 +58,7 @@ struct Angle
 
     double toDecimal() const nothrow pure @safe
     {
-        import Math = deltotum.math.math;
+        import Math = deltotum.math;
         import std.math.operations : cmp;
 
         double result = Math.abs(deg) + (
