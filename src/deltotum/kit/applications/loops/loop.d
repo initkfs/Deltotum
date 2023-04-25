@@ -12,6 +12,7 @@ abstract class Loop
     void delegate(size_t) onLoopTimeUpdate;
     void delegate(double) onFreqLoopDeltaUpdate;
     void delegate() onDelay;
+    void delegate() onQuit;
 
     abstract
     {
@@ -24,6 +25,7 @@ abstract class Loop
         assert(onLoopTimeUpdate);
         assert(onFreqLoopDeltaUpdate);
         assert(onDelay);
+        assert(onQuit);
 
         while (isRunning)
         {
@@ -31,5 +33,7 @@ abstract class Loop
             immutable time = timestampProvider();
             update(time);
         }
+
+        onQuit();
     }
 }

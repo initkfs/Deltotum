@@ -1,6 +1,6 @@
 module deltotum.kit.scene.scene;
 
-import deltotum.kit.applications.components.graphics_component: GraphicsComponent;
+import deltotum.kit.applications.components.graphics_component : GraphicsComponent;
 import deltotum.kit.display.display_object : DisplayObject;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.kit.factories.creation : Creation;
@@ -64,7 +64,8 @@ class Scene : GraphicsComponent
             }
             else
             {
-                if(const err = window.renderer.clear){
+                if (const err = window.renderer.clear)
+                {
                     //TODO loggong in main loop?
                 }
             }

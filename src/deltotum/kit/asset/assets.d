@@ -52,4 +52,10 @@ class Assets : LoggableUnit
         Font font = new Font(logger, path, size);
         return font;
     }
+
+    void destroy()
+    {
+        defaultFont.destroy;
+        defaultBitmapFont.destroy;
+    }
 }

@@ -1,4 +1,8 @@
-module deltotum.kit.applications.sdl.sdl_application;
+module deltotum.kit.applications.sdl_application;
+
+// dfmt off
+version(SdlBackend):
+// dfmt on
 
 import deltotum.core.applications.application_exit : ApplicationExit;
 import deltotum.kit.applications.graphic_application : GraphicApplication;
@@ -55,11 +59,17 @@ class SdlApplication : GraphicApplication
         Audio _audio;
         Assets _assets;
         Input _input;
+
+        bool isProcessEvents = true;
     }
 
     EventManager eventManager;
 
-    this(SdlLib lib = null, SdlImgLib imgLib = null, SdlMixLib audioMixLib = null, SdlTTFLib fontLib = null, Loop mainLoop = null)
+    this(SdlLib lib = null,
+        SdlImgLib imgLib = null,
+        SdlMixLib audioMixLib = null,
+        SdlTTFLib fontLib = null,
+        Loop mainLoop = null)
     {
         super(mainLoop ? mainLoop : new IntegratedLoop);
         this.sdlLib = lib is null ? new SdlLib : lib;
@@ -75,23 +85,11 @@ class SdlApplication : GraphicApplication
             return isExit;
         }
 
-        mainLoop.timestampProvider = ()
-        {
-            return SDL_GetTicks();
-        };
-
-        mainLoop.onLoopTimeUpdate = (timestamp)
-        {
-            updateLoop(timestamp);
-        };
-
-        mainLoop.onFreqLoopDeltaUpdate = (delta){
-            updateFreqLoopWidthDelta(delta);
-        };
-
-        mainLoop.onDelay = (){
-            //SDL_Delay(10);
-        };
+        mainLoop.onQuit = () => quit;
+        mainLoop.timestampProvider = () => sdlLib.getTicks;
+        mainLoop.onDelay = () => sdlLib.delay(1);
+        mainLoop.onLoopTimeUpdate = (timestamp) => updateLoop(timestamp);
+        mainLoop.onFreqLoopDeltaUpdate = (delta) => updateFreqLoopWidthDelta(delta);
 
         sdlLib.initialize(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK);
         uservices.logger.trace("SDL ", sdlLib.getSdlVersionInfo);
@@ -105,7 +103,7 @@ class SdlApplication : GraphicApplication
 
         joystick = SdlJoystick.fromDevices;
 
-        //TODO extreact dependency
+        //TODO extract dependency
         import deltotum.sys.sdl.sdl_keyboard : SdlKeyboard;
 
         auto keyboard = new SdlKeyboard;
@@ -118,7 +116,6 @@ class SdlApplication : GraphicApplication
         _input = new Input(clipboard);
         _audio = new Audio(audioMixLib);
 
-        //TODO remove sdl api
         eventManager = new EventManager();
         eventManager.targetsProvider = () {
             auto mustBeCurrentWindow = currentWindow;
@@ -126,20 +123,30 @@ class SdlApplication : GraphicApplication
             {
                 return Nullable!(DisplayObject[]).init;
             }
-            auto targets = mustBeCurrentWindow.get.sceneManager.currentScene.getActiveObjects;
+            auto currWindow = mustBeCurrentWindow.get;
+            if (!currWindow.isFocus)
+            {
+                return Nullable!(DisplayObject[]).init;
+            }
+            auto targets = currWindow.sceneManager.currentScene.getActiveObjects;
             return Nullable!(DisplayObject[])(targets);
         };
+
         eventManager.eventProcessor = new SdlEventProcessor(keyboard);
         eventManager.onKey = (key) {
-            if (key.event == KeyEvent.Event.keyDown)
+            final switch (key.event) with (KeyEvent.Event)
             {
+            case keyDown:
                 _input.addPressedKey(key.keyCode);
-            }
-            else if (key.event == KeyEvent.Event.keyUp)
-            {
+                break;
+            case keyUp:
                 _input.addReleasedKey(key.keyCode);
+                break;
+            case none:
+                break;
             }
         };
+
         eventManager.onJoystick = (joystickEvent) {
 
             if (joystickEvent.event == JoystickEvent.Event.axis)
@@ -171,77 +178,25 @@ class SdlApplication : GraphicApplication
         };
 
         eventManager.onWindow = (e) {
-            if (e.event == WindowEvent.Event.WINDOW_FOCUS_IN)
+            switch (e.event) with (WindowEvent.Event)
             {
-                foreach (Window window; windows)
-                {
-                    if (window.id == e.ownerId)
-                    {
-                        //TODO check all windows
-                        window.isFocus = true;
-                    }
-                }
-            }
-            else if (e.event == WindowEvent.Event.WINDOW_FOCUS_OUT)
-            {
-                foreach (Window window; windows)
-                {
-                    if (window.id == e.ownerId)
-                    {
-                        //TODO check all windows
-                        window.isFocus = false;
-                    }
-                }
-            }
-            else if (e.event == WindowEvent.Event.WINDOW_SHOW)
-            {
-                foreach (Window window; windows)
-                {
-                    if (window.id == e.ownerId)
-                    {
-                        //TODO check all windows
-                        window.isShowing = true;
-                    }
-                }
-            }
-            else if (e.event == WindowEvent.Event.WINDOW_HIDE)
-            {
-                foreach (Window window; windows)
-                {
-                    if (window.id == e.ownerId)
-                    {
-                        //TODO check all windows
-                        window.isShowing = false;
-                    }
-                }
-            }
-            else if (e.event == WindowEvent.Event.WINDOW_CLOSE)
-            {
-                Window windowForClosing;
-                foreach (Window window; windows)
-                {
-                    if (window.id == e.ownerId)
-                    {
-                        windowForClosing = window;
-                        break;
-                    }
-                }
-                if (windowForClosing !is null)
-                {
-                    import std.algorithm.mutation : remove;
-                    import std.algorithm.searching : countUntil;
-
-                    immutable ptrdiff_t removePos = windows.countUntil(windowForClosing);
-                    if (removePos != -1)
-                    {
-                        windows = windows.remove(removePos);
-                    }
-                    windowForClosing.destroy;
-                }
-
-                // if(windows.length == 0){
-                //     quit;
-                // }
+            case focusIn:
+                windowById(e.ownerId, win => win.isFocus = true);
+                break;
+            case focusOut:
+                windowById(e.ownerId, win => win.isFocus = false);
+                break;
+            case show:
+                windowById(e.ownerId, win => win.isShowing = true);
+                break;
+            case hide:
+                windowById(e.ownerId, win => win.isShowing = false);
+                break;
+            case close:
+                closeWindow(e.ownerId);
+                break;
+            default:
+                break;
             }
         };
 
@@ -292,34 +247,28 @@ class SdlApplication : GraphicApplication
             }
         };
 
-        eventManager.startEvents;
-
         //TODO move to config
         import std.file : getcwd, exists, isDir;
         import std.path : buildPath, dirName;
 
         immutable assetsDirPath = "data/assets";
         immutable assetsDir = buildPath(getcwd, assetsDirPath);
-        if (!exists(assetsDir) || !isDir(assetsDir))
-        {
-            throw new Exception("Unable to find resource directory: " ~ assetsDir);
-        }
-
         _assets = new Assets(uservices.logger, assetsDir);
 
-        //TODO from config
+        //TODO from config 
         Font defaultFont = _assets.font("fonts/NotoSans-Bold.ttf", 14);
         _assets.defaultFont = defaultFont;
+
+        eventManager.startEvents;
 
         return ApplicationExit(false);
     }
 
-    Window createWindow(string title, int prefWidth, int prefHeight)
+    override Window createWindow(dstring title, size_t prefWidth, size_t prefHeight, long x = 0, long y = 0)
     {
-        auto sdlWindow = new SdlWindow(title, SDL_WINDOWPOS_UNDEFINED,
-            SDL_WINDOWPOS_UNDEFINED,
-            prefWidth,
-            prefHeight);
+        //SDL_WINDOWPOS_UNDEFINED
+        auto sdlWindow = new SdlWindow(title, cast(int) x, cast(int) y, cast(int) prefWidth, cast(
+                int) prefHeight);
 
         auto sdlRenderer = new SdlRenderer(sdlWindow, SDL_RENDERER_ACCELERATED);
         uint id;
@@ -382,6 +331,39 @@ class SdlApplication : GraphicApplication
         return window;
     }
 
+    void closeWindow(long id)
+    {
+        scope Window[] windowsForClose;
+        windowById(id, (win) { windowsForClose ~= win; return true; });
+
+        if (windowsForClose.length > 0)
+        {
+            foreach (windowForClose; windowsForClose)
+            {
+                import std.algorithm.mutation : remove;
+                import std.algorithm.searching : countUntil;
+
+                immutable ptrdiff_t removePos = windows.countUntil(windowForClose);
+                if (removePos != -1)
+                {
+                    windows = windows.remove(removePos);
+                }
+                windowForClose.destroy;
+            }
+        }
+
+        if (windows.length == 0 && isQuitOnCloseAllWindows)
+        {
+            requestQuit;
+        }
+    }
+
+    void requestQuit()
+    {
+        mainLoop.isRunning = false;
+        isProcessEvents = false;
+    }
+
     void clearErrors()
     {
         sdlLib.clearError;
@@ -396,6 +378,8 @@ class SdlApplication : GraphicApplication
             window.destroy;
         }
 
+        _assets.destroy;
+
         //TODO auto destroy all services
         _audio.destroy;
 
@@ -407,35 +391,10 @@ class SdlApplication : GraphicApplication
         //TODO process EXIT event
         audioMixLib.quit;
         imgLib.quit;
-        sdlLib.quit;
+
         fontLib.quit;
-    }
 
-    void updateState(double delta)
-    {
-        foreach (window; windows)
-        {
-            if (window.isShowing)
-            {
-                //window.renderer.clear;
-                window.update(delta);
-                break;
-                //window.renderer.present;
-            }
-        }
-    }
-
-    Nullable!Window currentWindow()
-    {
-        foreach (window; windows)
-        {
-            if (window.isShowing)
-            {
-                return Nullable!Window(window);
-            }
-        }
-
-        return Nullable!Window.init;
+        sdlLib.quit;
     }
 
     void updateLoop(size_t timestamp)
@@ -449,7 +408,7 @@ class SdlApplication : GraphicApplication
             mustBeWindow.get.sceneManager.currentScene.timeEventProcessingMs = 0;
         }
 
-        while (SDL_PollEvent(&event))
+        while (isProcessEvents && SDL_PollEvent(&event))
         {
             const startEvent = SDL_GetTicks();
             handleEvent(&event);
@@ -465,7 +424,14 @@ class SdlApplication : GraphicApplication
     void updateFreqLoopWidthDelta(double delta)
     {
         const startStateTime = SDL_GetTicks();
-        updateState(delta);
+        foreach (window; windows)
+        {
+            //focus may not be on the window
+            if (window.isShowing)
+            {
+                window.update(delta);
+            }
+        }
         const endStateTime = SDL_GetTicks();
 
         auto mustBeWindow = currentWindow;
@@ -480,10 +446,17 @@ class SdlApplication : GraphicApplication
     {
         eventManager.eventProcessor.process(event);
 
+        //Ctrl + C
         if (event.type == SDL_QUIT)
         {
-            mainLoop.isRunning = false;
-            return;
+            uint windowId = event.window.windowID;
+            if (windowId == 0)
+            {
+                requestQuit;
+                return;
+            }
+
+            // closeWindow(windowId);
         }
     }
 }

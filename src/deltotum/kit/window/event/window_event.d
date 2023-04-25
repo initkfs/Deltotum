@@ -14,21 +14,21 @@ struct WindowEvent
 
     static enum Event
     {
-        NONE,
-        WINDOW_SHOW,
-        WINDOW_HIDE,
-        WINDOW_ENTER,
-        WINDOW_EXPOSE,
-        WINDOW_CLOSE,
-        WINDOW_DEACTIVATE,
-        WINDOW_FOCUS_IN,
-        WINDOW_FOCUS_OUT,
-        WINDOW_LEAVE,
-        WINDOW_MAXIMIZE,
-        WINDOW_MINIMIZE,
-        WINDOW_MOVE,
-        WINDOW_RESIZE,
-        WINDOW_RESTORE,
+        none,
+        show,
+        hide,
+        enter,
+        expose,
+        close,
+        deactivate,
+        focusIn,
+        focusOut,
+        leave,
+        maximize,
+        minimize,
+        move,
+        resize,
+        restore
     }
 
     double width;

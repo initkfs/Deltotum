@@ -62,7 +62,14 @@ mixin template PlatformObjectWrapper(T)
 
     final bool destroy()
     {
-        isDestroyed = ptr ? destroyPtr() : false;
+        if (ptr)
+        {
+            isDestroyed = destroyPtr;
+            if (isDestroyed)
+            {
+                ptr = null;
+            }
+        }
         return isDestroyed;
     }
 }

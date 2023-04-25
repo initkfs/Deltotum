@@ -114,7 +114,7 @@ class Texture : DisplayObject
     override void destroy()
     {
         super.destroy;
-        if (texture !is null)
+        if (texture)
         {
             texture.destroy;
         }

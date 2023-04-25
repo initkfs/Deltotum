@@ -217,10 +217,6 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         if (ptr)
         {
             SDL_DestroyRenderer(ptr);
-            if (const err = getError)
-            {
-                throw new Exception("Unable to destroy renderer: " ~ err);
-            }
             return true;
         }
         return false;

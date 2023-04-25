@@ -20,7 +20,7 @@ import bindbc.sdl;
 class SdlWindow : SdlObjectWrapper!SDL_Window
 {
 
-    string title;
+    dstring title;
 
     private
     {
@@ -30,7 +30,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window
         SDLCursor lastCursor;
     }
 
-    this(string title,
+    this(dstring title,
         int x, int y, int w,
         int h, uint flags = SDL_WINDOW_RESIZABLE)
     {
@@ -40,7 +40,9 @@ class SdlWindow : SdlObjectWrapper!SDL_Window
         this.initialHeight = h;
         initialAspectRatio = initialWidth / initialHeight;
 
-        ptr = SDL_CreateWindow(title.toStringz,
+        import std.conv: to;
+
+        ptr = SDL_CreateWindow(title.to!(string).toStringz,
             x, y, w,
             h, flags);
         if (ptr is null)
@@ -361,10 +363,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window
         if (ptr)
         {
             SDL_DestroyWindow(ptr);
-            if (auto err = getError)
-            {
-                throw new Exception("Unable to destroy SDL window: " ~ err);
-            }
             return true;
         }
         return false;

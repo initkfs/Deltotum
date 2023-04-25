@@ -75,9 +75,9 @@ abstract class Control : DisplayObject
                 addCreated(background);
             }
         }
-        else
-        {
-            logger.tracef("Dimensions not set, background cannot be created. Width: %s, height: %s in %s", width, height, className);
-        }
+        // else
+        // {
+        //     logger.tracef("Dimensions not set, background cannot be created. Width: %s, height: %s in %s", width, height, className);
+        // }
     }
 }

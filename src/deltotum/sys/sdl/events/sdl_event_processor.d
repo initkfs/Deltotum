@@ -248,7 +248,7 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
             return;
         }
 
-        auto type = WindowEvent.Event.NONE;
+        auto type = WindowEvent.Event.none;
         double x = 0;
         double y = 0;
         double width = 0;
@@ -256,47 +256,47 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
         switch (event.window.event)
         {
         case SDL_WindowEventID.SDL_WINDOWEVENT_SHOWN:
-            type = WindowEvent.Event.WINDOW_SHOW;
+            type = WindowEvent.Event.show;
             break;
         case SDL_WindowEventID.SDL_WINDOWEVENT_HIDDEN:
-            type = WindowEvent.Event.WINDOW_HIDE;
+            type = WindowEvent.Event.hide;
             break;
         case SDL_WindowEventID.SDL_WINDOWEVENT_EXPOSED:
-            type = WindowEvent.Event.WINDOW_EXPOSE;
+            type = WindowEvent.Event.expose;
             break;
         case SDL_WindowEventID.SDL_WINDOWEVENT_ENTER:
-            type = WindowEvent.Event.WINDOW_ENTER;
+            type = WindowEvent.Event.enter;
             break;
         case SDL_WindowEventID.SDL_WINDOWEVENT_CLOSE:
-            type = WindowEvent.Event.WINDOW_CLOSE;
+            type = WindowEvent.Event.close;
             break;
         case SDL_WindowEventID.SDL_WINDOWEVENT_FOCUS_GAINED:
-            type = WindowEvent.Event.WINDOW_FOCUS_IN;
+            type = WindowEvent.Event.focusIn;
             break;
         case SDL_WindowEventID.SDL_WINDOWEVENT_LEAVE:
-            type = WindowEvent.Event.WINDOW_LEAVE;
+            type = WindowEvent.Event.leave;
             break;
         case SDL_WindowEventID.SDL_WINDOWEVENT_FOCUS_LOST:
-            type = WindowEvent.Event.WINDOW_FOCUS_OUT;
+            type = WindowEvent.Event.focusOut;
             break;
         case SDL_WindowEventID.SDL_WINDOWEVENT_MINIMIZED:
-            type = WindowEvent.Event.WINDOW_MINIMIZE;
+            type = WindowEvent.Event.minimize;
             break;
         case SDL_WindowEventID.SDL_WINDOWEVENT_MAXIMIZED:
-            type = WindowEvent.Event.WINDOW_MAXIMIZE;
+            type = WindowEvent.Event.maximize;
             break;
         case SDL_WindowEventID.SDL_WINDOWEVENT_MOVED:
-            type = WindowEvent.Event.WINDOW_MOVE;
+            type = WindowEvent.Event.move;
             x = event.window.data1;
             y = event.window.data2;
             break;
         case SDL_WindowEventID.SDL_WINDOWEVENT_SIZE_CHANGED:
-            type = WindowEvent.Event.WINDOW_RESIZE;
+            type = WindowEvent.Event.resize;
             width = event.window.data1;
             height = event.window.data2;
             break;
         case SDL_WindowEventID.SDL_WINDOWEVENT_RESTORED:
-            type = WindowEvent.Event.WINDOW_RESTORE;
+            type = WindowEvent.Event.restore;
             break;
         default:
             break;

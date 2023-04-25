@@ -1,5 +1,6 @@
 module deltotum.kit.window.window;
 
+import deltotum.kit.applications.components.graphics_component : GraphicsComponent;
 import deltotum.sys.sdl.sdl_window : SdlWindow;
 import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
 import deltotum.math.shapes.rect2d : Rect2d;
@@ -13,7 +14,7 @@ import bindbc.sdl;
 /**
  * Authors: initkfs
  */
-class Window
+class Window : GraphicsComponent
 {
     SdlRenderer renderer;
     SdlWindow nativeWindow;
@@ -21,7 +22,7 @@ class Window
     double frameRate;
 
     SceneManager sceneManager;
-    
+
     bool isFocus;
     bool isShowing;
 
@@ -191,16 +192,18 @@ class Window
         return Vector2d(x, y);
     }
 
-    void update(double delta){
+    void update(double delta)
+    {
         sceneManager.currentScene.update(delta);
     }
 
     void destroy()
     {
-        if(sceneManager !is null){
+        renderer.destroy;
+        if (sceneManager !is null)
+        {
             sceneManager.destroy;
         }
-        renderer.destroy;
         //after window
         nativeWindow.destroy;
     }

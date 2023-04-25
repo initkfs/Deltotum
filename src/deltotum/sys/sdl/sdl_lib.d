@@ -47,6 +47,16 @@ class SdlLib : SdlObject
         }
     }
 
+    uint getTicks()
+    {
+        return SDL_GetTicks();
+    }
+
+    void delay(uint ms)
+    {
+        SDL_Delay(ms);
+    }
+
     uint wasInit(uint flags) const @nogc nothrow
     {
         return SDL_WasInit(flags);
@@ -85,7 +95,8 @@ class SdlLib : SdlObject
 
     bool setHint(string name, string value) const nothrow
     {
-        import std.string: toStringz;
+        import std.string : toStringz;
+
         //TODO string loss due to garbage collector?
         SDL_bool isSet = SDL_SetHint(name.toStringz,
             value.toStringz);
