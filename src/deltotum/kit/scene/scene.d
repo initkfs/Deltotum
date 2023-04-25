@@ -4,6 +4,7 @@ import deltotum.kit.applications.components.graphics_component : GraphicsCompone
 import deltotum.kit.display.display_object : DisplayObject;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.kit.factories.creation : Creation;
+import deltotum.kit.window.window: Window;
 
 import std.stdio;
 
@@ -132,6 +133,25 @@ class Scene : GraphicsComponent
     out (_creation; _creation !is null)
     {
         return _creation;
+    }
+
+    Window newWindow(dstring title, size_t prefWidth, size_t prefHeight, long x = 0, long y = 0)
+    {
+        version (SdlBackend)
+        {
+            import deltotum.kit.window.factories.sdl_window_factory : SdlWindowFactory;
+
+            auto winFactory = new SdlWindowFactory;
+            build(winFactory);
+
+            auto window = winFactory.create(title, prefWidth, prefHeight, x, y);
+            this.window.windowManager.add(window);
+            return window;
+        }
+        else
+        {
+            assert(0);
+        }
     }
 
 }

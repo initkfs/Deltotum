@@ -1,12 +1,12 @@
 module deltotum.kit.window.window;
 
-import deltotum.kit.applications.components.graphics_component : GraphicsComponent;
 import deltotum.sys.sdl.sdl_window : SdlWindow;
 import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.math.vector2d : Vector2d;
 import deltotum.kit.input.mouse.mouse_cursor_type : MouseCursorType;
 import deltotum.kit.scene.scene_manager : SceneManager;
+import deltotum.kit.window.window_manager : WindowManager;
 
 //TODO move to deltotum.platforms;
 import bindbc.sdl;
@@ -14,14 +14,17 @@ import bindbc.sdl;
 /**
  * Authors: initkfs
  */
-class Window : GraphicsComponent
+class Window
 {
+    Window parent;
+    WindowManager windowManager;
+
     SdlRenderer renderer;
     SdlWindow nativeWindow;
     //TODO remove
     double frameRate;
 
-    SceneManager sceneManager;
+    SceneManager scenes;
 
     bool isFocus;
     bool isShowing;
@@ -194,15 +197,16 @@ class Window : GraphicsComponent
 
     void update(double delta)
     {
-        sceneManager.currentScene.update(delta);
+        scenes.currentScene.update(delta);
     }
 
     void destroy()
     {
+        //TODO close child windows
         renderer.destroy;
-        if (sceneManager !is null)
+        if (scenes !is null)
         {
-            sceneManager.destroy;
+            scenes.destroy;
         }
         //after window
         nativeWindow.destroy;

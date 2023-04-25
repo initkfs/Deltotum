@@ -33,6 +33,7 @@ import deltotum.kit.window.window : Window;
 
 import deltotum.kit.applications.loops.integrated_loop : IntegratedLoop;
 import deltotum.kit.applications.loops.loop : Loop;
+import deltotum.kit.window.window_manager : WindowManager;
 
 import std.typecons : Nullable;
 
@@ -118,17 +119,17 @@ class SdlApplication : GraphicApplication
 
         eventManager = new EventManager();
         eventManager.targetsProvider = () {
-            auto mustBeCurrentWindow = currentWindow;
+            auto mustBeCurrentWindow = windowManager.currentWindow;
             if (mustBeCurrentWindow.isNull)
             {
                 return Nullable!(DisplayObject[]).init;
             }
             auto currWindow = mustBeCurrentWindow.get;
-            if (!currWindow.isFocus)
+            if (!currWindow.isShowing || !currWindow.isFocus)
             {
                 return Nullable!(DisplayObject[]).init;
             }
-            auto targets = currWindow.sceneManager.currentScene.getActiveObjects;
+            auto targets = currWindow.scenes.currentScene.getActiveObjects;
             return Nullable!(DisplayObject[])(targets);
         };
 
@@ -181,16 +182,16 @@ class SdlApplication : GraphicApplication
             switch (e.event) with (WindowEvent.Event)
             {
             case focusIn:
-                windowById(e.ownerId, win => win.isFocus = true);
+                windowManager.windowById(e.ownerId, win => win.isFocus = true);
                 break;
             case focusOut:
-                windowById(e.ownerId, win => win.isFocus = false);
+                windowManager.windowById(e.ownerId, win => win.isFocus = false);
                 break;
             case show:
-                windowById(e.ownerId, win => win.isShowing = true);
+                windowManager.windowById(e.ownerId, win => win.isShowing = true);
                 break;
             case hide:
-                windowById(e.ownerId, win => win.isShowing = false);
+                windowManager.windowById(e.ownerId, win => win.isShowing = false);
                 break;
             case close:
                 closeWindow(e.ownerId);
@@ -203,13 +204,13 @@ class SdlApplication : GraphicApplication
         eventManager.onMouse = (mouseEvent) {
             if (mouseEvent.event == MouseEvent.Event.mouseDown)
             {
-                auto mustBeWindow = currentWindow;
+                auto mustBeWindow = windowManager.currentWindow;
                 if (mustBeWindow.isNull)
                 {
                     return;
                 }
                 auto window = mustBeWindow.get;
-                foreach (obj; window.sceneManager.currentScene.getActiveObjects)
+                foreach (obj; window.scenes.currentScene.getActiveObjects)
                 {
                     if (obj.bounds.contains(mouseEvent.x, mouseEvent.y))
                     {
@@ -247,6 +248,8 @@ class SdlApplication : GraphicApplication
             }
         };
 
+        windowManager = new WindowManager;
+
         //TODO move to config
         import std.file : getcwd, exists, isDir;
         import std.path : buildPath, dirName;
@@ -264,95 +267,34 @@ class SdlApplication : GraphicApplication
         return ApplicationExit(false);
     }
 
-    override Window createWindow(dstring title, size_t prefWidth, size_t prefHeight, long x = 0, long y = 0)
+    override Window newWindow(dstring title, size_t prefWidth, size_t prefHeight, long x = 0, long y = 0)
     {
-        //SDL_WINDOWPOS_UNDEFINED
-        auto sdlWindow = new SdlWindow(title, cast(int) x, cast(int) y, cast(int) prefWidth, cast(
-                int) prefHeight);
-
-        auto sdlRenderer = new SdlRenderer(sdlWindow, SDL_RENDERER_ACCELERATED);
-        uint id;
-        if (const err = sdlWindow.windowId(id))
+        version (SdlBackend)
         {
-            throw new Exception(err.toString);
+            import deltotum.kit.window.factories.sdl_window_factory : SdlWindowFactory;
+
+            auto winFactory = new SdlWindowFactory;
+            winFactory.audio = _audio;
+            winFactory.input = _input;
+            build(winFactory);
+
+            auto window = winFactory.create(title, prefWidth, prefHeight, x, y);
+            window.windowManager = windowManager;
+
+            windowManager.add(window);
+            return window;
         }
-        auto window = new Window(sdlRenderer, sdlWindow, id);
-
-        GraphicsComponent builder = new GraphicsComponent;
-        build(builder);
-
-        builder.input = _input;
-        builder.assets = _assets;
-        builder.audio = _audio;
-
-        //TODO remove
-        window.frameRate = frameRate;
-        builder.window = window;
-
-        import deltotum.kit.graphics.themes.theme : Theme;
-        import deltotum.kit.graphics.themes.factories.theme_from_config_factory : ThemeFromConfigFactory;
-
-        auto themeLoader = new ThemeFromConfigFactory(uservices.logger, uservices.config, uservices.context, _assets
-                .defaultFont);
-
-        auto theme = themeLoader.create;
-        builder.graphics = new Graphics(uservices.logger, window.renderer, theme);
-
-        builder.isBuilt = true;
-
-        import deltotum.gui.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
-
-        //TODO build and run services after all
-        import deltotum.gui.fonts.bitmap.bitmap_font : BitmapFont;
-
-        //TODO from locale\config;
-        import deltotum.kit.i18n.langs.alphabets.alphabet_ru : AlphabetRu;
-        import deltotum.kit.i18n.langs.alphabets.alphabet_en : AlphabetEn;
-        import deltotum.kit.i18n.langs.alphabets.arabic_numerals_alphabet : ArabicNumeralsAlpabet;
-        import deltotum.kit.i18n.langs.alphabets.special_characters_alphabet : SpecialCharactersAlphabet;
-
-        auto fontGenerator = new BitmapFontGenerator;
-        builder.build(fontGenerator);
-        import deltotum.kit.graphics.colors.rgba : RGBA;
-
-        //FIXME, extract default font from global assets
-        _assets.defaultBitmapFont = fontGenerator.generate([
-            new ArabicNumeralsAlpabet,
-            new SpecialCharactersAlphabet,
-            new AlphabetEn,
-            new AlphabetRu
-        ], _assets.defaultFont, theme.colorText);
-
-        auto sceneManager = new SceneManager;
-        builder.build(sceneManager);
-        window.sceneManager = sceneManager;
-        windows ~= window;
-
-        return window;
+        else
+        {
+            assert(0);
+        }
     }
 
     void closeWindow(long id)
     {
-        scope Window[] windowsForClose;
-        windowById(id, (win) { windowsForClose ~= win; return true; });
+        windowManager.closeWindow(id);
 
-        if (windowsForClose.length > 0)
-        {
-            foreach (windowForClose; windowsForClose)
-            {
-                import std.algorithm.mutation : remove;
-                import std.algorithm.searching : countUntil;
-
-                immutable ptrdiff_t removePos = windows.countUntil(windowForClose);
-                if (removePos != -1)
-                {
-                    windows = windows.remove(removePos);
-                }
-                windowForClose.destroy;
-            }
-        }
-
-        if (windows.length == 0 && isQuitOnCloseAllWindows)
+        if (windowManager.windowsCount == 0 && isQuitOnCloseAllWindows)
         {
             requestQuit;
         }
@@ -373,10 +315,7 @@ class SdlApplication : GraphicApplication
     {
         clearErrors;
 
-        foreach (window; windows)
-        {
-            window.destroy;
-        }
+        windowManager.iterateWindows((win) { win.destroy; return true; });
 
         _assets.destroy;
 
@@ -401,11 +340,11 @@ class SdlApplication : GraphicApplication
     {
         SDL_Event event;
 
-        auto mustBeWindow = currentWindow;
+        auto mustBeWindow = windowManager.currentWindow;
 
         if (!mustBeWindow.isNull)
         {
-            mustBeWindow.get.sceneManager.currentScene.timeEventProcessingMs = 0;
+            mustBeWindow.get.scenes.currentScene.timeEventProcessingMs = 0;
         }
 
         while (isProcessEvents && SDL_PollEvent(&event))
@@ -416,7 +355,7 @@ class SdlApplication : GraphicApplication
 
             if (!mustBeWindow.isNull)
             {
-                mustBeWindow.get.sceneManager.currentScene.timeEventProcessingMs = endEvent - startEvent;
+                mustBeWindow.get.scenes.currentScene.timeEventProcessingMs = endEvent - startEvent;
             }
         }
     }
@@ -424,21 +363,22 @@ class SdlApplication : GraphicApplication
     void updateFreqLoopWidthDelta(double delta)
     {
         const startStateTime = SDL_GetTicks();
-        foreach (window; windows)
-        {
+        windowManager.iterateWindows((window) {
             //focus may not be on the window
             if (window.isShowing)
             {
                 window.update(delta);
             }
-        }
+            return true;
+        });
+
         const endStateTime = SDL_GetTicks();
 
-        auto mustBeWindow = currentWindow;
+        auto mustBeWindow = windowManager.currentWindow;
 
         if (!mustBeWindow.isNull)
         {
-            mustBeWindow.get.sceneManager.currentScene.timeUpdateProcessingMs = endStateTime - startStateTime;
+            mustBeWindow.get.scenes.currentScene.timeUpdateProcessingMs = endStateTime - startStateTime;
         }
     }
 

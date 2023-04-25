@@ -45,7 +45,7 @@ class SceneManager : GraphicsComponent
     }
 
     //TODO rename due .create()
-    void addScene(Scene scene)
+    void add(Scene scene)
     {
         build(scene);
         scene.create;

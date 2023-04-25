@@ -4,6 +4,7 @@ import deltotum.core.applications.application_exit : ApplicationExit;
 import deltotum.core.applications.cli_application : CliApplication;
 import deltotum.kit.applications.components.graphics_component : GraphicsComponent;
 import deltotum.core.applications.components.uni.uni_component : UniComponent;
+import deltotum.kit.window.window_manager : WindowManager;
 
 import deltotum.kit.window.window : Window;
 import deltotum.kit.applications.loops.loop : Loop;
@@ -21,7 +22,7 @@ abstract class GraphicApplication : CliApplication
 
     protected
     {
-        Window[] windows;
+        WindowManager windowManager;
         Loop mainLoop;
     }
 
@@ -33,7 +34,7 @@ abstract class GraphicApplication : CliApplication
 
     abstract
     {
-        Window createWindow(dstring title, size_t prefWidth, size_t prefHeight, long x, long y);
+        Window newWindow(dstring title, size_t prefWidth, size_t prefHeight, long x, long y);
     }
 
     void runLoop()
@@ -46,40 +47,5 @@ abstract class GraphicApplication : CliApplication
     override void build(UniComponent component)
     {
         return super.build(component);
-    }
-
-    void windowById(long id, bool delegate(Window) onWindowIsContinue)
-    {
-        foreach (Window window; windows)
-        {
-            if (window.id == id)
-            {
-                if (!onWindowIsContinue(window))
-                {
-                    break;
-                }
-            }
-        }
-    }
-
-    Nullable!Window windowByFirstId(long id)
-    {
-        Nullable!Window mustBeWindow;
-        windowById(id, (win) { mustBeWindow = Nullable!Window(win); return false; });
-
-        return mustBeWindow;
-    }
-
-    Nullable!Window currentWindow()
-    {
-        foreach (window; windows)
-        {
-            if (window.isShowing && window.isFocus)
-            {
-                return Nullable!Window(window);
-            }
-        }
-
-        return Nullable!Window.init;
     }
 }
