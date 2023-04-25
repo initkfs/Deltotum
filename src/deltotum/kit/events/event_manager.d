@@ -25,7 +25,7 @@ class EventManager
         DList!DisplayObject eventChain = DList!DisplayObject();
     }
 
-    Nullable!(DisplayObject[]) delegate() targetsProvider;
+    Nullable!(DisplayObject[]) delegate(long) targetsProvider;
 
     version (SdlBackend)
     {
@@ -94,7 +94,9 @@ class EventManager
             return;
         }
 
-        auto mustBeTargets = targetsProvider();
+        const windowId = e.ownerId;
+
+        auto mustBeTargets = targetsProvider(windowId);
         if (mustBeTargets.isNull)
         {
             return;

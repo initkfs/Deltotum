@@ -95,6 +95,11 @@ class UniComponent : SimpleUnit
 
     }
 
+    final bool hasContext() @nogc nothrow pure @safe
+    {
+        return _context !is null;
+    }
+
     final Context context() @nogc nothrow pure @safe
     out (_context; _context !is null)
     {
@@ -108,6 +113,11 @@ class UniComponent : SimpleUnit
         enforce(context !is null, "Context must not be null");
         _context = context;
 
+    }
+
+    final bool hasLogger() @nogc nothrow pure @safe
+    {
+        return _logger !is null;
     }
 
     final Logger logger() @nogc nothrow pure @safe
@@ -125,6 +135,11 @@ class UniComponent : SimpleUnit
 
     }
 
+    final bool hasConfig() @nogc nothrow pure @safe
+    {
+        return _config !is null;
+    }
+
     final Config config() @nogc nothrow pure @safe
     out (_config; _config !is null)
     {
@@ -137,6 +152,11 @@ class UniComponent : SimpleUnit
 
         enforce(config !is null, "Config must not be null");
         _config = config;
+    }
+
+    final bool hasSupport() @nogc nothrow pure @safe
+    {
+        return _support !is null;
     }
 
     final Support support() @nogc nothrow pure @safe
@@ -153,6 +173,11 @@ class UniComponent : SimpleUnit
         _support = support;
     }
 
+    final bool hasCli() @nogc nothrow pure @safe
+    {
+        return _cli !is null;
+    }
+
     final Cli cli() @nogc nothrow pure @safe
     out (_cli; _cli !is null)
     {
@@ -167,6 +192,11 @@ class UniComponent : SimpleUnit
         _cli = cli;
     }
 
+    final bool hasResource() @nogc nothrow pure @safe
+    {
+        return _resource !is null;
+    }
+
     final Resource resource() @nogc nothrow pure @safe
     out (_resource; _resource !is null)
     {
@@ -179,6 +209,11 @@ class UniComponent : SimpleUnit
 
         enforce(resource !is null, "Resource must not be null");
         _resource = resource;
+    }
+
+    final bool hasExtension() @nogc nothrow pure @safe
+    {
+        return _extension !is null;
     }
 
     final Extension extension() @nogc nothrow pure @safe

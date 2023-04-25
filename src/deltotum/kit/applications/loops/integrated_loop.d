@@ -7,7 +7,6 @@ import deltotum.kit.applications.loops.loop : Loop;
  */
 class IntegratedLoop : Loop
 {
-    double frameRate = 60;
     double deltaTime = 0;
     double deltaTimeAccumulator = 0;
     double lastUpdateTime = 0;

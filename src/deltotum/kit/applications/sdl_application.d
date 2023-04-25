@@ -118,8 +118,8 @@ class SdlApplication : GraphicApplication
         _audio = new Audio(audioMixLib);
 
         eventManager = new EventManager();
-        eventManager.targetsProvider = () {
-            auto mustBeCurrentWindow = windowManager.currentWindow;
+        eventManager.targetsProvider = (windowId) {
+            auto mustBeCurrentWindow = windowManager.windowByFirstId(windowId);
             if (mustBeCurrentWindow.isNull)
             {
                 return Nullable!(DisplayObject[]).init;
@@ -280,6 +280,7 @@ class SdlApplication : GraphicApplication
 
             auto window = winFactory.create(title, prefWidth, prefHeight, x, y);
             window.windowManager = windowManager;
+            window.frameRate = mainLoop.frameRate;
 
             windowManager.add(window);
             return window;

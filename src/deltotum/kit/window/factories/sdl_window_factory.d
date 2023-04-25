@@ -26,14 +26,15 @@ class SdlWindowFactory : GraphicsComponent
         {
             throw new Exception(err.toString);
         }
-        auto window = new Window(sdlRenderer, sdlWindow, id);
-        if (!window)
+        auto newWindow = new Window(sdlRenderer, sdlWindow, id);
+        if (hasWindow)
         {
-            window.windowManager = this.window.windowManager;
-            window.parent = window;
+            newWindow.windowManager = window.windowManager;
+            newWindow.parent = window;
+            newWindow.frameRate = window.frameRate;
         }
 
-        this.window = window;
+        this.window = newWindow;
 
         //TODO move to config, duplication with SdlApplication
         import std.file : getcwd, exists, isDir;
@@ -91,6 +92,6 @@ class SdlWindowFactory : GraphicsComponent
         build(sceneManager);
         window.scenes = sceneManager;
 
-        return window;
+        return newWindow;
     }
 }

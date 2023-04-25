@@ -7,6 +7,8 @@ abstract class Loop
 {
     bool isRunning;
 
+    double frameRate = 60;
+
     size_t delegate() timestampProvider;
 
     void delegate(size_t) onLoopTimeUpdate;

@@ -35,6 +35,11 @@ class GraphicsComponent : UniComponent
         buildFromParent(uniComponent, this);
     }
 
+    final bool hasAssets() @nogc nothrow pure @safe
+    {
+        return _assets !is null;
+    }
+
     final Assets assets() @nogc nothrow pure @safe
     out (_assets; _assets !is null)
     {
@@ -48,6 +53,11 @@ class GraphicsComponent : UniComponent
         enforce(assetManager !is null, "Asset manager must not be null");
         _assets = assetManager;
 
+    }
+
+    final bool hasWindow() @nogc nothrow pure @safe
+    {
+        return _window !is null;
     }
 
     final Window window() @nogc nothrow pure @safe
@@ -65,6 +75,11 @@ class GraphicsComponent : UniComponent
 
     }
 
+    final bool hasInput() @nogc nothrow pure @safe
+    {
+        return _input !is null;
+    }
+
     final Input input() @nogc nothrow pure @safe
     out (_input; _input !is null)
     {
@@ -80,6 +95,11 @@ class GraphicsComponent : UniComponent
 
     }
 
+    final bool hasAudio() @nogc nothrow pure @safe
+    {
+        return _audio !is null;
+    }
+
     final Audio audio() @nogc nothrow pure @safe
     out (_audio; _audio !is null)
     {
@@ -92,6 +112,11 @@ class GraphicsComponent : UniComponent
 
         enforce(audio !is null, "Audio must not be null");
         _audio = audio;
+    }
+
+    final bool hasGraphics() @nogc nothrow pure @safe
+    {
+        return _graphics !is null;
     }
 
     final Graphics graphics() @nogc nothrow pure @safe
