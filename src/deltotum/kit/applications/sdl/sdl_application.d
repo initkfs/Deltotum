@@ -1,7 +1,7 @@
 module deltotum.kit.applications.sdl.sdl_application;
 
 import deltotum.core.applications.application_exit : ApplicationExit;
-import deltotum.core.applications.graphic_application : GraphicApplication;
+import deltotum.kit.applications.graphic_application : GraphicApplication;
 import deltotum.kit.applications.components.graphics_component : GraphicsComponent;
 import deltotum.kit.events.event_manager : EventManager;
 import deltotum.sys.sdl.events.sdl_event_processor : SdlEventProcessor;
@@ -25,9 +25,13 @@ import deltotum.sys.sdl.sdl_joystick : SdlJoystick;
 import deltotum.kit.window.event.window_event : WindowEvent;
 import deltotum.kit.input.mouse.event.mouse_event : MouseEvent;
 
+import deltotum.kit.window.window : Window;
+
+import deltotum.kit.applications.loops.integrated_loop : IntegratedLoop;
+import deltotum.kit.applications.loops.loop : Loop;
+
 import std.typecons : Nullable;
 
-import deltotum.kit.window.window : Window;
 import deltotum.kit.input.input : Input;
 
 import std.logger : Logger, MultiLogger, FileLogger, LogLevel, sharedLog;
@@ -40,8 +44,6 @@ import bindbc.sdl;
  */
 class SdlApplication : GraphicApplication
 {
-    Window[] windows;
-
     private
     {
         SdlLib sdlLib;
@@ -50,21 +52,16 @@ class SdlApplication : GraphicApplication
         SdlTTFLib fontLib;
         SdlJoystick joystick;
 
-        //TODO check overflow and remove increment
-        double deltaTime = 0;
-        double deltaTimeAccumulator = 0;
-        double lastUpdateTime = 0;
-
         Audio _audio;
         Assets _assets;
         Input _input;
     }
 
-    bool isRunning;
     EventManager eventManager;
 
-    this(SdlLib lib = null, SdlImgLib imgLib = null, SdlMixLib audioMixLib = null, SdlTTFLib fontLib = null)
+    this(SdlLib lib = null, SdlImgLib imgLib = null, SdlMixLib audioMixLib = null, SdlTTFLib fontLib = null, Loop mainLoop = null)
     {
+        super(mainLoop ? mainLoop : new IntegratedLoop);
         this.sdlLib = lib is null ? new SdlLib : lib;
         this.imgLib = imgLib is null ? new SdlImgLib : imgLib;
         this.audioMixLib = audioMixLib is null ? new SdlMixLib : audioMixLib;
@@ -77,6 +74,24 @@ class SdlApplication : GraphicApplication
         {
             return isExit;
         }
+
+        mainLoop.timestampProvider = ()
+        {
+            return SDL_GetTicks();
+        };
+
+        mainLoop.onLoopTimeUpdate = (timestamp)
+        {
+            updateLoop(timestamp);
+        };
+
+        mainLoop.onFreqLoopDeltaUpdate = (delta){
+            updateFreqLoopWidthDelta(delta);
+        };
+
+        mainLoop.onDelay = (){
+            //SDL_Delay(10);
+        };
 
         sdlLib.initialize(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK);
         uservices.logger.trace("SDL ", sdlLib.getSdlVersionInfo);
@@ -296,7 +311,6 @@ class SdlApplication : GraphicApplication
         Font defaultFont = _assets.font("fonts/NotoSans-Bold.ttf", 14);
         _assets.defaultFont = defaultFont;
 
-        isRunning = true;
         return ApplicationExit(false);
     }
 
@@ -368,14 +382,6 @@ class SdlApplication : GraphicApplication
         return window;
     }
 
-    override void runWait()
-    {
-        while (isRunning)
-        {
-            update;
-        }
-    }
-
     void clearErrors()
     {
         sdlLib.clearError;
@@ -432,18 +438,8 @@ class SdlApplication : GraphicApplication
         return Nullable!Window.init;
     }
 
-    override bool update()
+    void updateLoop(size_t timestamp)
     {
-        enum msInSec = 1000;
-        const frameTime = msInSec / frameRate;
-
-        //TODO SDL_GetPerformanceCounter
-        //(double)((now - start)*1000) / SDL_GetPerformanceFrequency()
-        const start = SDL_GetTicks();
-        deltaTime = start - lastUpdateTime;
-        lastUpdateTime = start;
-        deltaTimeAccumulator += deltaTime;
-
         SDL_Event event;
 
         auto mustBeWindow = currentWindow;
@@ -463,29 +459,21 @@ class SdlApplication : GraphicApplication
             {
                 mustBeWindow.get.sceneManager.currentScene.timeEventProcessingMs = endEvent - startEvent;
             }
-
-            if (!isRunning)
-            {
-                return isRunning;
-            }
         }
+    }
 
-        while (deltaTimeAccumulator > frameTime)
+    void updateFreqLoopWidthDelta(double delta)
+    {
+        const startStateTime = SDL_GetTicks();
+        updateState(delta);
+        const endStateTime = SDL_GetTicks();
+
+        auto mustBeWindow = currentWindow;
+
+        if (!mustBeWindow.isNull)
         {
-            immutable constantDelta = frameTime / 100;
-            const startStateTime = SDL_GetTicks();
-            updateState(constantDelta);
-            const endStateTime = SDL_GetTicks();
-
-            if (!mustBeWindow.isNull)
-            {
-                mustBeWindow.get.sceneManager.currentScene.timeUpdateProcessingMs = endStateTime - startStateTime;
-            }
-
-            deltaTimeAccumulator -= frameTime;
+            mustBeWindow.get.sceneManager.currentScene.timeUpdateProcessingMs = endStateTime - startStateTime;
         }
-
-        return true;
     }
 
     void handleEvent(SDL_Event* event)
@@ -494,7 +482,7 @@ class SdlApplication : GraphicApplication
 
         if (event.type == SDL_QUIT)
         {
-            isRunning = false;
+            mainLoop.isRunning = false;
             return;
         }
     }
