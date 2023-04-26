@@ -92,6 +92,9 @@ class Window
             return;
         }
         isShowing = true;
+
+        //TODO from config
+        focusRequest;
     }
 
     void hide()
@@ -122,7 +125,9 @@ class Window
             return;
         }
 
+        windowManager.remove(this);
         isClosing = true;
+        destroy;
     }
 
     void focusRequest()
@@ -293,6 +298,7 @@ class Window
 
     void destroy()
     {
+        parent = null;
         //TODO close child windows
         renderer.destroy;
         if (scenes !is null)

@@ -2,9 +2,10 @@ module deltotum.kit.scene.scene;
 
 import deltotum.kit.applications.components.graphics_component : GraphicsComponent;
 import deltotum.kit.display.display_object : DisplayObject;
+import deltotum.kit.interacts.interact : Interact;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.kit.factories.creation : Creation;
-import deltotum.kit.windows.window: Window;
+import deltotum.kit.windows.window : Window;
 
 import std.stdio;
 
@@ -32,6 +33,7 @@ class Scene : GraphicsComponent
     private
     {
         Creation _creation;
+        Interact _interact;
     }
 
     void create()
@@ -49,6 +51,14 @@ class Scene : GraphicsComponent
 
         _creation = new Creation(imagesFactory, shapesFactory);
         build(_creation);
+
+        import deltotum.kit.interacts.dialogs.dialog_manager : DialogManager;
+
+        auto dialogManager = new DialogManager;
+        dialogManager.dialogWindowProvider = () { return newWindow; };
+        dialogManager.parentWindowProvider = () { return window; };
+
+        interact = new Interact(dialogManager);
     }
 
     void update(double delta)
@@ -121,6 +131,11 @@ class Scene : GraphicsComponent
         return displayObjects;
     }
 
+    bool hasCreation() @nogc @safe pure nothrow
+    {
+        return _creation !is null;
+    }
+
     void creation(Creation creation) @safe pure
     {
         import std.exception : enforce;
@@ -135,7 +150,26 @@ class Scene : GraphicsComponent
         return _creation;
     }
 
-    Window newWindow(dstring title, int prefWidth, int prefHeight, int x = 0, int y = 0)
+    final bool hasInteract() @nogc nothrow pure @safe
+    {
+        return _interact !is null;
+    }
+
+    final Interact interact() @nogc nothrow pure @safe
+    out (_interact; _interact !is null)
+    {
+        return _interact;
+    }
+
+    final void interact(Interact interact) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(interact !is null, "Interaction must not be null");
+        _interact = interact;
+    }
+
+    Window newWindow(dstring title = "New window", int prefWidth = 450, int prefHeight = 200, int x = 0, int y = 0)
     {
         version (SdlBackend)
         {

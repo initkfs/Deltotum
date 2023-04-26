@@ -92,7 +92,6 @@ class GraphicsComponent : UniComponent
 
         enforce(input !is null, "Input must not be null");
         _input = input;
-
     }
 
     final bool hasAudio() @nogc nothrow pure @safe

@@ -14,6 +14,7 @@ import deltotum.kit.asset.fonts.font : Font;
 import deltotum.kit.scene.scene_manager : SceneManager;
 import deltotum.media.audio.audio : Audio;
 import deltotum.kit.graphics.graphics : Graphics;
+import deltotum.kit.interacts.interact: Interact;
 import deltotum.kit.display.display_object : DisplayObject;
 import deltotum.kit.scene.scene : Scene;
 import deltotum.kit.input.keyboard.event.key_event : KeyEvent;
@@ -293,6 +294,7 @@ class SdlApplication : GraphicApplication
 
     void closeWindow(long id)
     {
+        uservices.logger.tracef("Request close window with id '%s'", id);
         windowManager.closeWindow(id);
 
         if (windowManager.windowsCount == 0 && isQuitOnCloseAllWindows)
