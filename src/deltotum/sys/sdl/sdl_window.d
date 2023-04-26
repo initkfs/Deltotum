@@ -90,7 +90,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         return PlatformResult.success;
     }
 
-     PlatformResult getPos(out int x, out int y) @nogc nothrow
+    PlatformResult getPos(out int x, out int y) @nogc nothrow
     {
         SDL_GetWindowPosition(ptr, &x, &y);
         return PlatformResult.success;
@@ -218,6 +218,18 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
     PlatformResult restore() @nogc nothrow
     {
         SDL_RestoreWindow(ptr);
+        return PlatformResult.success;
+    }
+
+    PlatformResult getScreenIndex(out size_t index) @nogc nothrow
+    {
+        const indexOrNegError = SDL_GetWindowDisplayIndex(ptr);
+        if (indexOrNegError < 0)
+        {
+            return PlatformResult.error(getError);
+        }
+        index = indexOrNegError;
+
         return PlatformResult.success;
     }
 

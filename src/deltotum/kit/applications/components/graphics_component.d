@@ -9,6 +9,7 @@ import deltotum.media.audio.audio : Audio;
 import deltotum.kit.graphics.graphics : Graphics;
 import deltotum.kit.input.input : Input;
 import deltotum.kit.windows.window : Window;
+import deltotum.kit.screen.screens: Screens;
 
 /**
  * Authors: initkfs
@@ -22,6 +23,7 @@ class GraphicsComponent : UniComponent
         @Service Input _input;
         @Service Graphics _graphics;
         @Service Window _window;
+        @Service Screens _screens;
     }
 
     //bypass hijacking
@@ -130,5 +132,24 @@ class GraphicsComponent : UniComponent
 
         enforce(graphics !is null, "Graphics must not be null");
         _graphics = graphics;
+    }
+
+    final bool hasScreens() @nogc nothrow pure @safe
+    {
+        return _screens !is null;
+    }
+
+    final Screens screens() @nogc nothrow pure @safe
+    out (_screens; _screens !is null)
+    {
+        return _screens;
+    }
+
+    final void screens(Screens screens) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(screens !is null, "Graphics must not be null");
+        _screens = screens;
     }
 }

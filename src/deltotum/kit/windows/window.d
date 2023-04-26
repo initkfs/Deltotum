@@ -8,6 +8,7 @@ import deltotum.math.vector2d : Vector2d;
 
 import deltotum.kit.scene.scene_manager : SceneManager;
 import deltotum.kit.windows.window_manager : WindowManager;
+import deltotum.kit.screen.screen: Screen;
 
 import std.logger.core : Logger;
 
@@ -289,6 +290,16 @@ class Window
     {
         setDecorated(true);
         setResizable(true);
+    }
+
+    int getScreenIndex(){
+        size_t screenIndex;
+        if(const err = nativeWindow.getScreenIndex(screenIndex)){
+            logger.error("Error getting screen from window: ", err.toString);
+            return -1;
+        }
+        import std.conv: to;
+        return screenIndex.to!int;
     }
 
     void update(double delta)

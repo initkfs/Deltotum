@@ -39,4 +39,6 @@ interface ComWindow
     PlatformResult getTitle(ref const(char)[] title) @nogc nothrow;
     PlatformResult setTitle(const(char)* title) @nogc nothrow;
 
+    PlatformResult getScreenIndex(out size_t screenIndex) @nogc nothrow;
+
 }

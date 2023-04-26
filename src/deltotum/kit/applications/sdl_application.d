@@ -14,7 +14,7 @@ import deltotum.kit.asset.fonts.font : Font;
 import deltotum.kit.scene.scene_manager : SceneManager;
 import deltotum.media.audio.audio : Audio;
 import deltotum.kit.graphics.graphics : Graphics;
-import deltotum.kit.interacts.interact: Interact;
+import deltotum.kit.interacts.interact : Interact;
 import deltotum.kit.display.display_object : DisplayObject;
 import deltotum.kit.scene.scene : Scene;
 import deltotum.kit.input.keyboard.event.key_event : KeyEvent;
@@ -31,6 +31,7 @@ import deltotum.kit.windows.event.window_event : WindowEvent;
 import deltotum.kit.input.mouse.event.mouse_event : MouseEvent;
 
 import deltotum.kit.windows.window : Window;
+import deltotum.kit.screen.screens : Screens;
 
 import deltotum.kit.applications.loops.integrated_loop : IntegratedLoop;
 import deltotum.kit.applications.loops.loop : Loop;
@@ -61,6 +62,7 @@ class SdlApplication : GraphicApplication
         Audio _audio;
         Assets _assets;
         Input _input;
+        Screens _screens;
 
         bool isProcessEvents = true;
     }
@@ -117,6 +119,11 @@ class SdlApplication : GraphicApplication
         auto clipboard = new Clipboard(sdlClipboard);
         _input = new Input(clipboard);
         _audio = new Audio(audioMixLib);
+
+        import deltotum.sys.sdl.sdl_screen : SDLScreen;
+
+        auto sdlScreen = new SDLScreen;
+        _screens = new Screens(uservices.logger, sdlScreen);
 
         eventManager = new EventManager();
         eventManager.targetsProvider = (windowId) {
@@ -277,6 +284,7 @@ class SdlApplication : GraphicApplication
             auto winFactory = new SdlWindowFactory;
             winFactory.audio = _audio;
             winFactory.input = _input;
+            winFactory.screens = _screens;
             build(winFactory);
 
             auto window = winFactory.create(title, prefWidth, prefHeight, x, y);
@@ -320,7 +328,8 @@ class SdlApplication : GraphicApplication
 
         windowManager.iterateWindows((win) { win.destroy; return true; });
 
-        if(_assets){
+        if (_assets)
+        {
             _assets.destroy;
         }
 
