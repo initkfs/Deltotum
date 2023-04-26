@@ -72,7 +72,7 @@ class Scroller : DisplayObject
             break;
         }
 
-        auto worldBounds = window.getWorldBounds;
+        auto worldBounds = window.bounds;
         if (direction == Direction.left && current.bounds.right <= 0)
         {
             auto mustBeNext = current;
@@ -108,7 +108,7 @@ class Scroller : DisplayObject
         enforce(next !is null, "Next sprite must not be null");
         _next = next;
 
-        auto worldBounds = window.getWorldBounds;
+        auto worldBounds = window.bounds;
         if (direction == Direction.left)
         {
             next.x = worldBounds.right;

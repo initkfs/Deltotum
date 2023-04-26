@@ -18,6 +18,9 @@ interface ComWindow
     PlatformResult close() @nogc nothrow;
     PlatformResult focusRequest() @nogc nothrow;
 
+    PlatformResult getPos(out int x, out int y) @nogc nothrow;
+    PlatformResult setPos(int x, int y) @nogc nothrow;
+
     PlatformResult minimize() @nogc nothrow;
     PlatformResult maximize() @nogc nothrow;
     PlatformResult restore() @nogc nothrow;
@@ -35,8 +38,5 @@ interface ComWindow
 
     PlatformResult getTitle(ref const(char)[] title) @nogc nothrow;
     PlatformResult setTitle(const(char)* title) @nogc nothrow;
-
-    PlatformResult getPos(out int x, out int y) @nogc nothrow;
-    PlatformResult setPos(int x, int y) @nogc nothrow;
 
 }

@@ -21,7 +21,10 @@ class SdlWindowFactory : GraphicsComponent
 
         auto newWindow = new Window(logger, sdlWindow);
 
+        newWindow.initialize;
         newWindow.create;
+
+        newWindow.setNormatWindow;
 
         newWindow.setSize(prefWidth, prefHeight);
         newWindow.setPos(x, y);

@@ -90,6 +90,18 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         return PlatformResult.success;
     }
 
+     PlatformResult getPos(out int x, out int y) @nogc nothrow
+    {
+        SDL_GetWindowPosition(ptr, &x, &y);
+        return PlatformResult.success;
+    }
+
+    PlatformResult setPos(int x, int y) @nogc nothrow
+    {
+        SDL_SetWindowPosition(ptr, x, y);
+        return PlatformResult.success;
+    }
+
     PlatformResult minimize() @nogc nothrow
     {
         SDL_MinimizeWindow(ptr);
@@ -142,18 +154,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
     PlatformResult setSize(int width, int height) @nogc nothrow
     {
         SDL_SetWindowSize(ptr, width, height);
-        return PlatformResult.success;
-    }
-
-    PlatformResult getPos(out int x, out int y) @nogc nothrow
-    {
-        SDL_GetWindowPosition(ptr, &x, &y);
-        return PlatformResult.success;
-    }
-
-    PlatformResult setPos(int x, int y) @nogc nothrow
-    {
-        SDL_SetWindowPosition(ptr, x, y);
         return PlatformResult.success;
     }
 
