@@ -34,7 +34,7 @@ abstract class GraphicApplication : CliApplication
 
     abstract
     {
-        Window newWindow(dstring title, size_t prefWidth, size_t prefHeight, long x, long y);
+        Window newWindow(dstring title, int prefWidth, int prefHeight, int x, int y);
     }
 
     void runLoop()

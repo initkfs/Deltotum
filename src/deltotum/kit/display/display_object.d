@@ -454,7 +454,7 @@ class DisplayObject : PhysicalBody
     {
         if (_width > 0)
         {
-            x = window.getWidth / 2 - _width / 2;
+            x = window.width / 2 - _width / 2;
         }
     }
 
@@ -462,7 +462,7 @@ class DisplayObject : PhysicalBody
     {
         if (_height > 0)
         {
-            y = window.getHeight / 2 - _height / 2;
+            y = window.height / 2 - _height / 2;
         }
     }
 

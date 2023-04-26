@@ -12,29 +12,23 @@ import bindbc.sdl;
  */
 class SdlWindowFactory : GraphicsComponent
 {
-    Window create(dstring title, size_t prefWidth, size_t prefHeight, long x = 0, long y = 0)
+    Window create(dstring title, int prefWidth, int prefHeight, int x = 0, int y = 0)
     {
         //SDL_WINDOWPOS_UNDEFINED
         import std.conv : to;
 
         auto sdlWindow = new SdlWindow;
-        if (const err = sdlWindow.initialize)
-        {
-            throw new Exception(err.toString);
-        }
-        if (const err = sdlWindow.create)
-        {
-            throw new Exception(err.toString);
-        }
+
+        auto newWindow = new Window(logger, sdlWindow);
+
+        newWindow.create;
+
+        newWindow.setSize(prefWidth, prefHeight);
+        newWindow.setPos(x, y);
 
         auto sdlRenderer = new SdlRenderer(sdlWindow, SDL_RENDERER_ACCELERATED);
-        int id;
-        if (const err = sdlWindow.obtainId(id))
-        {
-            throw new Exception(err.toString);
-        }
-        auto newWindow = new Window(logger, sdlRenderer, sdlWindow);
-        newWindow.id = id;
+        newWindow.renderer = sdlRenderer;
+
         if (hasWindow)
         {
             newWindow.windowManager = window.windowManager;
@@ -42,12 +36,9 @@ class SdlWindowFactory : GraphicsComponent
             newWindow.frameRate = window.frameRate;
         }
 
-        newWindow._width = prefWidth;
-        newWindow._height = prefHeight;
-        newWindow.x = x;
-        newWindow.y = y;
-
         this.window = newWindow;
+
+        window.setTitle(title);
 
         //TODO move to config, duplication with SdlApplication
         import std.file : getcwd, exists, isDir;

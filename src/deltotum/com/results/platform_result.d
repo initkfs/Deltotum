@@ -10,14 +10,14 @@ import core.attribute : mustuse;
     enum defaultCodeSuccess = 0;
     enum defaultCodeError = -1;
 
-    immutable
+    const
     {
         int code;
-        string message;
+        char[] message;
         int codeSuccess;
     }
 
-    this(int code, string message = "", int codeSuccess = defaultCodeSuccess) inout nothrow @nogc pure @safe
+    this(int code, const char[] message = "", int codeSuccess = defaultCodeSuccess) nothrow @nogc pure @safe
     {
         this.code = code;
         this.message = message;
@@ -29,7 +29,7 @@ import core.attribute : mustuse;
         return PlatformResult(0);
     }
 
-    static PlatformResult error(string message) nothrow @nogc pure @safe
+    static PlatformResult error(const char[] message) nothrow @nogc pure @safe
     {
         return PlatformResult(defaultCodeError, message);
     }
@@ -45,7 +45,6 @@ import core.attribute : mustuse;
     {
         import std.conv : text;
 
-        const string stringMessage = message.length > 0 ? message : "\"\"";
-        return text("Result code: ", code, ". ", "Message: ", stringMessage);
+        return text("Platform result with code ", code, ". ", "Message: ", message);
     }
 }

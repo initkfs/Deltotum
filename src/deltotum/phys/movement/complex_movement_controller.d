@@ -148,8 +148,8 @@ class ComplexMovementController : MovementController
         if (worldBoundsConstraints == WorldBoundsConstraint.alwaysWithinBounds)
         {
             //TODO window resizing
-            const worldWidth = window.getWidth;
-            const worldHeight = window.getHeight;
+            const worldWidth = window.width;
+            const worldHeight = window.height;
 
             const objBounds = targetObject.bounds;
             if (objBounds.x < 0)

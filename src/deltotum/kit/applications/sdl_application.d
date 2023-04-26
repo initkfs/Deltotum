@@ -267,7 +267,7 @@ class SdlApplication : GraphicApplication
         return ApplicationExit(false);
     }
 
-    override Window newWindow(dstring title = "New window", size_t prefWidth = 600, size_t prefHeight = 400, long x = 0, long y = 0)
+    override Window newWindow(dstring title = "New window", int prefWidth = 600, int prefHeight = 400, int x = 0, int y = 0)
     {
         version (SdlBackend)
         {

@@ -11,7 +11,7 @@ mixin template PlatformObjectWrapper(T)
         bool isDestroyed;
     }
 
-    abstract protected bool destroyPtr();
+    abstract protected bool destroyPtr() @nogc nothrow;
 
     this() pure @safe
     {
@@ -60,7 +60,7 @@ mixin template PlatformObjectWrapper(T)
         isDestroyed = false;
     }
 
-    final bool destroy()
+    final bool destroy() @nogc nothrow
     {
         if (ptr)
         {

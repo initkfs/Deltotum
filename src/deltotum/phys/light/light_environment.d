@@ -22,8 +22,8 @@ class LightEnvironment : Image
     {
         auto lightTexture = new SdlTexture;
         const createErr = lightTexture.create(graphics.renderer, SDL_PIXELFORMAT_RGBA32,
-            SDL_TextureAccess.SDL_TEXTUREACCESS_TARGET, cast(int) window.getWidth,
-            cast(int) window.getHeight);
+            SDL_TextureAccess.SDL_TEXTUREACCESS_TARGET, cast(int) window.width,
+            cast(int) window.height);
         if(createErr){
             throw new Exception(createErr.toString);
         }

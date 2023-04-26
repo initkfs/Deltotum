@@ -135,7 +135,7 @@ class Scene : GraphicsComponent
         return _creation;
     }
 
-    Window newWindow(dstring title, size_t prefWidth, size_t prefHeight, long x = 0, long y = 0)
+    Window newWindow(dstring title, int prefWidth, int prefHeight, int x = 0, int y = 0)
     {
         version (SdlBackend)
         {

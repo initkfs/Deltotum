@@ -14,10 +14,10 @@ import bindbc.sdl;
  */
 class SdlImageObject : SdlObject
 {
-    override string getError() const nothrow
+    override const(char[]) getError() const nothrow
     {
         const char* errPtr = IMG_GetError();
-        const string error = ptrToError(errPtr);
+        const error = ptrToError(errPtr);
         return error;
     }
 

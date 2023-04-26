@@ -31,20 +31,20 @@ class SdlObject : PlatformObject
         assert(typeConverter !is null);
     }
 
-    string getError() const nothrow
+    const(char[]) getError() const @nogc nothrow
     {
         const char* errorPtr = SDL_GetError();
-        const string err = ptrToError(errorPtr);
+        const err = ptrToError(errorPtr);
         return err;
     }
 
-    protected string ptrToError(const char* errorPtr) const nothrow
+    protected const(char[]) ptrToError(const char* errorPtr) const @nogc nothrow
     {
         if (errorPtr is null)
         {
             return "Cannot get error from pointer: pointer is null";
         }
-        const string error = errorPtr.fromStringz.idup;
+        const(char[]) error = errorPtr.fromStringz;
         return error;
     }
 

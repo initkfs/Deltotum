@@ -1,11 +1,12 @@
 module deltotum.kit.windows.window;
 
 import deltotum.core.applications.components.units.services.loggable_unit : LoggableUnit;
+import deltotum.com.windows.com_window : ComWindow;
 import deltotum.sys.sdl.sdl_window : SdlWindow;
 import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.math.vector2d : Vector2d;
-import deltotum.kit.input.mouse.mouse_cursor_type : MouseCursorType;
+
 import deltotum.kit.scene.scene_manager : SceneManager;
 import deltotum.kit.windows.window_manager : WindowManager;
 
@@ -19,14 +20,6 @@ import bindbc.sdl;
  */
 class Window : LoggableUnit
 {
-    int id;
-
-    size_t _width;
-    size_t _height;
-
-    long _x;
-    long _y;
-
     Window parent;
     WindowManager windowManager;
 
@@ -37,88 +30,139 @@ class Window : LoggableUnit
 
     bool isFocus;
     bool isShowing;
+    bool isClosing;
 
-    bool isAlreadyOnTop;
+    bool isResizable = true;
+    bool isDecorated = true;
+
+    bool isAlreadyOnTop = true;
     bool isFullscreen;
-    bool isUndecorated;
-    bool isResizable;
+
     bool isMinimized;
     bool isMaximized;
 
-    //SDL_SetWindowModalFor(SDL_Window* modal_window, SDL_Window* parent_window);
-
-    private
+    protected
     {
-        SdlRenderer renderer;
-        SdlWindow nativeWindow;
+        ComWindow nativeWindow;
     }
 
-    this(Logger logger, SdlRenderer renderer, SdlWindow window)
+    //TODO remove renderer
+    SdlRenderer renderer;
+
+    this(Logger logger, ComWindow window)
     {
         super(logger);
-        this.renderer = renderer;
         this.nativeWindow = window;
+    }
+
+    void create()
+    {
+        super.initialize;
+        if (const err = nativeWindow.initialize)
+        {
+            logger.error("Window initialization error. ", err.toString);
+        }
+
+        if (const err = nativeWindow.create)
+        {
+            throw new Exception(err.toString);
+        }
+
+        setDecorated(isDecorated);
+        setResizable(isResizable);
+        
     }
 
     void show()
     {
-        nativeWindow.minSize(cast(int) width, cast(int) height);
+        if (isShowing)
+        {
+            return;
+        }
+
         if (const err = nativeWindow.show)
         {
-            logger.errorf("Error when showing window: ", err.toString);
+            logger.error("Error showing window. ", err.toString);
         }
     }
 
     void close()
     {
-        destroy;
+        if (isClosing)
+        {
+            return;
+        }
+
+        if (const err = nativeWindow.close)
+        {
+            logger.error("Window closing error. ", err.toString);
+            return;
+        }
+
+        isClosing = true;
     }
 
     void focusRequest()
     {
         if (const err = nativeWindow.focusRequest)
         {
-            logger.error("Request focus error in window: ", err.toString);
+            logger.error("Request focus error in window. ", err.toString);
         }
     }
 
-    int getWidth()
+    int width()
     {
         int width, height;
-        nativeWindow.getSize(&width, &height);
+        if (const err = nativeWindow.getSize(width, height))
+        {
+            logger.error("Getting window size error for width. ", err.toString);
+        }
         return width;
     }
 
-    int getHeight()
+    int height()
     {
         int width, height;
-        nativeWindow.getSize(&width, &height);
+        if (const err = nativeWindow.getSize(width, height))
+        {
+            logger.error("Getting window size error for height. ", err.toString);
+        }
         return height;
     }
 
-    uint getId()
+    void setPos(int x, int y)
     {
-        return nativeWindow.getId;
+        if (const err = nativeWindow.setPos(x, y))
+        {
+            logger.errorf("Window coordinate setting error, x: %s, y: %s. %s", x, y, err.toString);
+        }
     }
 
-    int getX()
+    int x()
     {
         int x, y;
-        nativeWindow.getPos(&x, &y);
+        if (const err = nativeWindow.getPos(x, y))
+        {
+            logger.tracef("Error getting window position 'x'. ", err.toString);
+        }
         return x;
     }
 
-    int getY()
+    int y()
     {
         int x, y;
-        nativeWindow.getPos(&x, &y);
+        if (const err = nativeWindow.getPos(x, y))
+        {
+            logger.tracef("Error getting window position 'y'. ", err.toString);
+        }
         return y;
     }
 
     Rect2d getWorldBounds()
     {
-        auto bounds = nativeWindow.getWorldBounds;
-        Rect2d boundsRect = {bounds.x, bounds.y, bounds.w, bounds.h};
+        import deltotum.math.shapes.rect2d : Rect2d;
+
+        Rect2d boundsRect = {x, y, width, height};
         return boundsRect;
     }
 
@@ -140,10 +184,8 @@ class Window : LoggableUnit
             return 0;
         }
 
-        int windowWidth;
-        int windowHeight;
+        long windowWidth = width;
 
-        nativeWindow.getSize(&windowWidth, &windowHeight);
         //TODO height
         double scale = (cast(double)(outputWidth)) / windowWidth;
         return scale;
@@ -152,20 +194,27 @@ class Window : LoggableUnit
     void move(int x, int y)
     {
         //TODO check bounds
-        nativeWindow.move(x, y);
+        if (const err = nativeWindow.setPos(x, y))
+        {
+            //TODO logging
+        }
     }
 
-    void resize(int width, int height)
+    void setSize(int width, int height)
     {
         //TODO check bounds
-        nativeWindow.resize(width, height);
+        if (const err = nativeWindow.setSize(width, height))
+        {
+            //TODO logging;
+        }
     }
 
-    void setBorder(bool border)
+    void setDecorated(bool isDecorated)
     {
         //TODO set lazy
-        if(const err = nativeWindow.setDecorated(border)){
-            logger.error("Error changing window decoration property: ", err.toString);
+        if (const err = nativeWindow.setDecorated(isDecorated))
+        {
+            logger.error("Error changing window decoration property. ", err.toString);
         }
     }
 
@@ -175,62 +224,73 @@ class Window : LoggableUnit
         {
             if (const err = nativeWindow.maximize)
             {
-                logger.error("Window maximizing error: ", err.toString);
+                logger.error("Window maximizing error. ", err.toString);
             }
             return;
         }
 
-        nativeWindow.restore;
+        if (const err = nativeWindow.restore)
+        {
+            //TODO logging;
+        }
     }
 
     void setMinimized(bool isMinimized)
     {
         if (isMinimized)
         {
-            if(const err = nativeWindow.minimize){
-                logger.error("Window minimizing error: ", err.toString);
+            if (const err = nativeWindow.minimize)
+            {
+                logger.error("Window minimizing error. ", err.toString);
             }
             return;
         }
 
-        nativeWindow.restore;
+        if (const err = nativeWindow.restore)
+        {
+            //TODO logging
+        }
     }
 
     void setResizable(bool isResizable)
     {
-        if(const err = nativeWindow.setResizable(isResizable)){
-            logger.error("Window resizable property change error: ", err.toString);
+        if (const err = nativeWindow.setResizable(isResizable))
+        {
+            logger.error("Window resizable property change error. ", err.toString);
         }
     }
 
-    void setTitle(string title) nothrow
+    string getTitle()
     {
-        nativeWindow.setTitle(title);
-    }
-
-    void restoreCursor()
-    {
-        if (const err = nativeWindow.restoreCursor)
+        const(char)[] buff;
+        if (const err = nativeWindow.getTitle(buff))
         {
             //TODO logging
-            throw new Exception(err.toString);
         }
+        import std.conv : to;
+
+        return buff.to!string;
     }
 
-    void setCursor(MouseCursorType type)
+    int id()
     {
-        if (const err = nativeWindow.setCursor(type))
+        int winId;
+        if (const err = nativeWindow.obtainId(winId))
+        {
+            logger.error("Error getting window id", err.toString);
+        }
+        return winId;
+    }
+
+    void setTitle(dstring title)
+    {
+        import std.string : toStringz;
+        import std.conv : to;
+
+        if (const err = nativeWindow.setTitle(title.to!string.toStringz))
         {
             //TODO logging
-            throw new Exception(err.toString);
         }
-    }
-
-    Vector2d mousePos()
-    {
-        int x, y;
-        nativeWindow.mousePos(&x, &y);
-        return Vector2d(x, y);
     }
 
     void update(double delta)
@@ -248,45 +308,5 @@ class Window : LoggableUnit
         }
         //after window
         nativeWindow.destroy;
-    }
-
-    size_t width() const @nogc nothrow pure @safe
-    {
-        return _width;
-    }
-
-    void width(size_t value)
-    {
-        _width = value;
-    }
-
-    size_t height() const @nogc nothrow pure @safe
-    {
-        return _height;
-    }
-
-    void height(size_t value)
-    {
-        _height = value;
-    }
-
-    size_t x()
-    {
-        return _x;
-    }
-
-    void x(size_t value)
-    {
-        _x = value;
-    }
-
-    size_t y()
-    {
-        return _y;
-    }
-
-    void y(size_t value)
-    {
-        _y = value;
     }
 }
