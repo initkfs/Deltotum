@@ -1,7 +1,7 @@
-module deltotum.kit.window.factories.sdl_window_factory;
+module deltotum.kit.windows.factories.sdl_window_factory;
 
 import deltotum.kit.applications.components.graphics_component : GraphicsComponent;
-import deltotum.kit.window.window : Window;
+import deltotum.kit.windows.window : Window;
 
 import deltotum.sys.sdl.sdl_window : SdlWindow;
 import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
@@ -17,22 +17,35 @@ class SdlWindowFactory : GraphicsComponent
         //SDL_WINDOWPOS_UNDEFINED
         import std.conv : to;
 
-        auto sdlWindow = new SdlWindow(title, cast(int) x, cast(int) y, cast(int) prefWidth, cast(
-                int) prefHeight);
-
-        auto sdlRenderer = new SdlRenderer(sdlWindow, SDL_RENDERER_ACCELERATED);
-        uint id;
-        if (const err = sdlWindow.windowId(id))
+        auto sdlWindow = new SdlWindow;
+        if (const err = sdlWindow.initialize)
         {
             throw new Exception(err.toString);
         }
-        auto newWindow = new Window(sdlRenderer, sdlWindow, id);
+        if (const err = sdlWindow.create)
+        {
+            throw new Exception(err.toString);
+        }
+
+        auto sdlRenderer = new SdlRenderer(sdlWindow, SDL_RENDERER_ACCELERATED);
+        int id;
+        if (const err = sdlWindow.obtainId(id))
+        {
+            throw new Exception(err.toString);
+        }
+        auto newWindow = new Window(logger, sdlRenderer, sdlWindow);
+        newWindow.id = id;
         if (hasWindow)
         {
             newWindow.windowManager = window.windowManager;
             newWindow.parent = window;
             newWindow.frameRate = window.frameRate;
         }
+
+        newWindow._width = prefWidth;
+        newWindow._height = prefHeight;
+        newWindow.x = x;
+        newWindow.y = y;
 
         this.window = newWindow;
 

@@ -4,6 +4,8 @@ module deltotum.sys.sdl.sdl_window;
 version(SdlBackend):
 // dfmt on
 
+import deltotum.com.windows.common_window : CommonWindow;
+
 import deltotum.com.results.platform_result : PlatformResult;
 import deltotum.sys.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.kit.input.mouse.mouse_cursor_type : MouseCursorType;
@@ -17,40 +19,17 @@ import bindbc.sdl;
 /**
  * Authors: initkfs
  */
-class SdlWindow : SdlObjectWrapper!SDL_Window
+class SdlWindow : SdlObjectWrapper!SDL_Window, CommonWindow
 {
-
-    dstring title;
-
-    private
+    protected
     {
-        int initialWidth;
-        int initialHeight;
-        double initialAspectRatio = 0;
+        //TODO extract
         SDLCursor lastCursor;
     }
 
-    this(dstring title,
-        int x, int y, int w,
-        int h, uint flags = SDL_WINDOW_RESIZABLE)
+    this()
     {
         super();
-        this.title = title;
-        this.initialWidth = w;
-        this.initialHeight = h;
-        initialAspectRatio = initialWidth / initialHeight;
-
-        import std.conv: to;
-
-        ptr = SDL_CreateWindow(title.to!(string).toStringz,
-            x, y, w,
-            h, flags);
-        if (ptr is null)
-        {
-            string msg = getError;
-            throw new Exception("Unable to initialize SDL window: " ~ msg);
-        }
-
     }
 
     this(SDL_Window* ptr)
@@ -58,7 +37,30 @@ class SdlWindow : SdlObjectWrapper!SDL_Window
         super(ptr);
     }
 
-    PlatformResult windowId(out uint id)
+    PlatformResult initialize() @nogc nothrow
+    {
+        return PlatformResult.success;
+    }
+
+    PlatformResult create() nothrow
+    {
+        ptr = SDL_CreateWindow(
+            null,
+            0,
+            0,
+            0,
+            0,
+            SDL_WINDOW_HIDDEN);
+
+        if (ptr is null)
+        {
+            string msg = getError;
+            return PlatformResult.error("Unable to create SDL window: " ~ msg);
+        }
+        return PlatformResult.success;
+    }
+
+    PlatformResult obtainId(out int id) nothrow
     {
         const idOrZeroError = SDL_GetWindowID(ptr);
         if (idOrZeroError != 0)
@@ -69,58 +71,57 @@ class SdlWindow : SdlObjectWrapper!SDL_Window
         return PlatformResult(idOrZeroError, "Unable to determine window id: " ~ getError);
     }
 
-    void focus() @nogc nothrow
+    PlatformResult show() @nogc nothrow
+    {
+        SDL_ShowWindow(ptr);
+        return PlatformResult.success;
+    }
+
+    PlatformResult hide() @nogc nothrow
+    {
+        SDL_HideWindow(ptr);
+        return PlatformResult.success;
+    }
+
+    PlatformResult focusRequest() @nogc nothrow
     {
         SDL_RaiseWindow(ptr);
+        return PlatformResult.success;
     }
 
-    void minimize() @nogc nothrow
+    PlatformResult minimize() @nogc nothrow
     {
         SDL_MinimizeWindow(ptr);
+        return PlatformResult.success;
     }
 
-    void maximize() @nogc nothrow
+    PlatformResult maximize() @nogc nothrow
     {
         SDL_MaximizeWindow(ptr);
+        return PlatformResult.success;
     }
 
-    void bordered(bool isBordered) @nogc nothrow
+    PlatformResult setDecorated(bool isDecorated) @nogc nothrow
     {
-        SDL_SetWindowBordered(ptr, typeConverter.fromBool(isBordered));
+        SDL_SetWindowBordered(ptr, typeConverter.fromBool(isDecorated));
+        return PlatformResult.success;
     }
 
-    void grab(bool isGrabbed) @nogc nothrow
+    PlatformResult setResizable(bool isResizable) @nogc nothrow
     {
-        SDL_SetWindowGrab(ptr, typeConverter.fromBool(isGrabbed));
+        SDL_bool isSdlResizable = typeConverter.fromBool(isResizable);
+        SDL_SetWindowResizable(ptr, isSdlResizable);
+        return PlatformResult.success;
     }
 
-    void grabKeyboard(bool isGrabbed) @nogc nothrow
-    {
-        SDL_SetWindowKeyboardGrab(ptr, typeConverter.fromBool(isGrabbed));
-    }
-
-    void grabMouse(bool isGrabbed) @nogc nothrow
-    {
-        SDL_SetWindowMouseGrab(ptr, typeConverter.fromBool(isGrabbed));
-    }
-
-    void windowIcon(SdlSurface surface)
-    {
-        SDL_SetWindowIcon(ptr, surface.getObject);
-    }
-
-    void resizable(bool isResizable) @nogc nothrow
-    {
-        SDL_SetWindowResizable(ptr, typeConverter.fromBool(isResizable));
-    }
-
-    PlatformResult opacity(float value0to1) nothrow
+    PlatformResult setOpacity(double value0to1) nothrow
     {
         if (value0to1 < 0.0 || value0to1 > 1.0)
         {
             return PlatformResult.error("Opacity value must be in the range from 0 to 1.0");
         }
-        const result = SDL_SetWindowOpacity(ptr, value0to1);
+        
+        const result = SDL_SetWindowOpacity(ptr, cast(float) value0to1);
         return result != 0 ? PlatformResult(result, getError) : PlatformResult.success;
     }
 
@@ -134,61 +135,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window
     {
         const result = SDL_SetWindowFullscreen(ptr, SDL_WINDOW_FULLSCREEN);
         return result != 0 ? PlatformResult(result, getError) : PlatformResult.success;
-    }
-
-    PlatformResult flash() nothrow
-    {
-        const result = SDL_FlashWindow(ptr, SDL_FlashOperation.SDL_FLASH_UNTIL_FOCUSED);
-        return result != 0 ? PlatformResult(result, getError) : PlatformResult.success;
-    }
-
-    void maxSize(int w, int h) @nogc nothrow
-    {
-        SDL_SetWindowMaximumSize(ptr, w, h);
-    }
-
-    void minSize(int w, int h) @nogc nothrow
-    {
-        SDL_SetWindowMinimumSize(ptr, w, h);
-    }
-
-    PlatformResult modalForParent(SdlWindow parent)
-    {
-        const result = SDL_SetWindowModalFor(ptr, parent.getObject);
-        return result != 0 ? PlatformResult(result, getError) : PlatformResult.success;
-    }
-
-    SDL_Rect getWorldBounds() @nogc nothrow
-    {
-        SDL_Rect bounds;
-        bounds.x = 0;
-        bounds.y = 0;
-        bounds.w = initialWidth;
-        bounds.h = initialHeight;
-        return bounds;
-    }
-
-    SDL_Rect getScaleBounds() @nogc nothrow
-    {
-        int width, height;
-        getSize(&width, &height);
-
-        SDL_Rect bounds;
-        if (width > initialWidth)
-        {
-            const widthBar = (width - initialWidth) / 2;
-            bounds.x = widthBar;
-            bounds.w = width - widthBar;
-        }
-
-        if (height > initialHeight)
-        {
-            const heightBar = (height - initialHeight) / 2;
-            bounds.y = heightBar;
-            bounds.h = height - heightBar;
-        }
-
-        return bounds;
     }
 
     void getSize(int* width, int* height) @nogc nothrow
@@ -211,32 +157,63 @@ class SdlWindow : SdlObjectWrapper!SDL_Window
         SDL_SetWindowSize(ptr, width, height);
     }
 
-    void setBordered(bool value) @nogc nothrow
-    {
-        const SDL_bool sdlValue = typeConverter.fromBool(value);
-        SDL_SetWindowBordered(ptr, sdlValue);
-    }
-
-    void show() @nogc nothrow
-    {
-        SDL_ShowWindow(ptr);
-    }
-
-    void hide() @nogc nothrow
-    {
-        SDL_HideWindow(ptr);
-    }
-
     void setTitle(string title) nothrow
     {
         SDL_SetWindowTitle(ptr, title.toStringz);
     }
 
-    void setResizable(bool isResizable) @nogc nothrow
+    
+
+    void maxSize(int w, int h) @nogc nothrow
     {
-        SDL_bool isSdlResizable = typeConverter.fromBool(isResizable);
-        SDL_SetWindowResizable(ptr, isSdlResizable);
+        SDL_SetWindowMaximumSize(ptr, w, h);
     }
+
+    void minSize(int w, int h) @nogc nothrow
+    {
+        SDL_SetWindowMinimumSize(ptr, w, h);
+    }
+
+    PlatformResult modalForParent(SdlWindow parent)
+    {
+        const result = SDL_SetWindowModalFor(ptr, parent.getObject);
+        return result != 0 ? PlatformResult(result, getError) : PlatformResult.success;
+    }
+
+    SDL_Rect getWorldBounds() @nogc nothrow
+    {
+        int w, h;
+        getSize(&w, &h);
+        SDL_Rect bounds;
+        bounds.x = 0;
+        bounds.y = 0;
+        bounds.w = w;
+        bounds.h = h;
+        return bounds;
+    }
+
+    // SDL_Rect getScaleBounds() @nogc nothrow
+    // {
+    //     int w, h;
+    //     getSize(&w, &h);
+
+    //     SDL_Rect bounds;
+    //     if (w > width)
+    //     {
+    //         const widthBar = (w - width) / 2;
+    //         bounds.x = widthBar;
+    //         bounds.w = w - widthBar;
+    //     }
+
+    //     if (h > height)
+    //     {
+    //         const heightBar = (h - height) / 2;
+    //         bounds.y = heightBar;
+    //         bounds.h = h - heightBar;
+    //     }
+
+    //     return bounds;
+    // }
 
     void restore() @nogc nothrow
     {
@@ -325,35 +302,6 @@ class SdlWindow : SdlObjectWrapper!SDL_Window
     void mousePos(int* x, int* y) @nogc nothrow
     {
         SDL_GetMouseState(x, y);
-    }
-
-    //TODO move clipboard api to input
-    bool clipboardHasText() @nogc nothrow
-    {
-        SDL_bool hasText = SDL_HasClipboardText();
-        return typeConverter.toBool(hasText);
-    }
-
-    PlatformResult clipboardSetText(char* text) nothrow
-    {
-        const int result = SDL_SetClipboardText(text);
-        if (result != 0)
-        {
-            return PlatformResult(result, getError);
-        }
-        return PlatformResult.success;
-    }
-
-    PlatformResult clipboardGetText(out string text) nothrow
-    {
-        char* textPtr = SDL_GetClipboardText();
-        if (!textPtr)
-        {
-            return PlatformResult(-1, "Failed to get text from clipboard: " ~ getError);
-        }
-        text = textPtr.fromStringz.idup;
-        SDL_free(textPtr);
-        return PlatformResult.success;
     }
 
     override protected bool destroyPtr()

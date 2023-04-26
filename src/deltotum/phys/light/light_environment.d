@@ -21,7 +21,7 @@ class LightEnvironment : Image
     override void create()
     {
         auto lightTexture = new SdlTexture;
-        const createErr = lightTexture.create(window.renderer, SDL_PIXELFORMAT_RGBA32,
+        const createErr = lightTexture.create(graphics.renderer, SDL_PIXELFORMAT_RGBA32,
             SDL_TextureAccess.SDL_TEXTUREACCESS_TARGET, cast(int) window.getWidth,
             cast(int) window.getHeight);
         if(createErr){
@@ -37,19 +37,19 @@ class LightEnvironment : Image
         this.width = width;
         this.height = height;
 
-        SDL_SetRenderTarget(window.renderer.getObject, texture.getObject);
+        SDL_SetRenderTarget(graphics.renderer.getObject, texture.getObject);
         //TODO night color?
-        if(const err = window.renderer.setRenderDrawColor(60, 0, 100, 255)){
+        if(const err = graphics.renderer.setRenderDrawColor(60, 0, 100, 255)){
             throw new Exception("Error setting render color to create light");
         }
-        SDL_RenderFillRect(window.renderer.getObject, null);
+        SDL_RenderFillRect(graphics.renderer.getObject, null);
 
         foreach (light; lights)
         {
             light.drawImage;
         }
 
-        SDL_SetRenderTarget(window.renderer.getObject, null);
+        SDL_SetRenderTarget(graphics.renderer.getObject, null);
     }
 
     void addLight(LightSpot light)

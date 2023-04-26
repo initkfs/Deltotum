@@ -19,10 +19,10 @@ class Graphics : LoggableUnit
 {
     Theme theme;
 
-    private
-    {
+    //private
+    //{
         SdlRenderer renderer;
-    }
+   // }
 
     this(Logger logger, SdlRenderer renderer, Theme theme)
     {

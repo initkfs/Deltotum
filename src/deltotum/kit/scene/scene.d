@@ -4,7 +4,7 @@ import deltotum.kit.applications.components.graphics_component : GraphicsCompone
 import deltotum.kit.display.display_object : DisplayObject;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.kit.factories.creation : Creation;
-import deltotum.kit.window.window: Window;
+import deltotum.kit.windows.window: Window;
 
 import std.stdio;
 
@@ -58,14 +58,14 @@ class Scene : GraphicsComponent
         if (isClearingInCycle)
         {
             const screenColor = RGBA.black;
-            if (const err = window.renderer.setRenderDrawColor(screenColor.r, screenColor.g, screenColor.b, screenColor
+            if (const err = graphics.renderer.setRenderDrawColor(screenColor.r, screenColor.g, screenColor.b, screenColor
                     .alphaNorm))
             {
                 //TODO logging in main loop?
             }
             else
             {
-                if (const err = window.renderer.clear)
+                if (const err = graphics.renderer.clear)
                 {
                     //TODO loggong in main loop?
                 }
@@ -78,7 +78,7 @@ class Scene : GraphicsComponent
             obj.draw;
         }
 
-        window.renderer.present;
+        graphics.renderer.present;
     }
 
     void destroy()
@@ -139,7 +139,7 @@ class Scene : GraphicsComponent
     {
         version (SdlBackend)
         {
-            import deltotum.kit.window.factories.sdl_window_factory : SdlWindowFactory;
+            import deltotum.kit.windows.factories.sdl_window_factory : SdlWindowFactory;
 
             auto winFactory = new SdlWindowFactory;
             build(winFactory);

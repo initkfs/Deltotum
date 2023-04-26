@@ -1,6 +1,6 @@
-module deltotum.kit.window.window_manager;
+module deltotum.kit.windows.window_manager;
 
-import deltotum.kit.window.window : Window;
+import deltotum.kit.windows.window : Window;
 
 import std.typecons : Nullable;
 

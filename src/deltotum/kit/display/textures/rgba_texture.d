@@ -28,7 +28,7 @@ class RgbaTexture : Texture
 
         texture = new SdlTexture;
         //TODO toInt?
-        const createErr = texture.createRGBA(window.renderer, cast(int) width, cast(int) height);
+        const createErr = texture.createRGBA(graphics.renderer, cast(int) width, cast(int) height);
         if (createErr)
         {
             throw new Exception(createErr.toString);
@@ -37,8 +37,8 @@ class RgbaTexture : Texture
         {
             throw new Exception(blendErr.toString);
         }
-        window.renderer.setRendererTarget(texture.getObject);
+        graphics.renderer.setRendererTarget(texture.getObject);
         createTextureContent;
-        window.renderer.resetRendererTarget;
+        graphics.renderer.resetRendererTarget;
     }
 }

@@ -43,7 +43,7 @@ class Texture : DisplayObject
     void loadFromSurface(SdlSurface surface)
     {
         auto newTexture = new SdlTexture;
-        if(const err = newTexture.fromRenderer(window.renderer, surface)){
+        if(const err = newTexture.fromRenderer(graphics.renderer, surface)){
             throw new Exception(err.toString);
         }
         int w, h;
@@ -102,7 +102,7 @@ class Texture : DisplayObject
                 texture.opacity = opacity;
             }
             Rect2d destBounds = Rect2d(x, y, width, height);
-            return window.renderer.drawTexture(texture, textureBounds, destBounds, angle, flip);
+            return graphics.renderer.drawTexture(texture, textureBounds, destBounds, angle, flip);
         }
     }
 

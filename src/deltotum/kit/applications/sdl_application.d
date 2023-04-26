@@ -26,14 +26,14 @@ import deltotum.sys.sdl.ttf.sdl_ttf_lib : SdlTTFLib;
 import deltotum.sys.sdl.sdl_window : SdlWindow;
 import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
 import deltotum.sys.sdl.sdl_joystick : SdlJoystick;
-import deltotum.kit.window.event.window_event : WindowEvent;
+import deltotum.kit.windows.event.window_event : WindowEvent;
 import deltotum.kit.input.mouse.event.mouse_event : MouseEvent;
 
-import deltotum.kit.window.window : Window;
+import deltotum.kit.windows.window : Window;
 
 import deltotum.kit.applications.loops.integrated_loop : IntegratedLoop;
 import deltotum.kit.applications.loops.loop : Loop;
-import deltotum.kit.window.window_manager : WindowManager;
+import deltotum.kit.windows.window_manager : WindowManager;
 
 import std.typecons : Nullable;
 
@@ -267,11 +267,11 @@ class SdlApplication : GraphicApplication
         return ApplicationExit(false);
     }
 
-    override Window newWindow(dstring title, size_t prefWidth, size_t prefHeight, long x = 0, long y = 0)
+    override Window newWindow(dstring title = "New window", size_t prefWidth = 600, size_t prefHeight = 400, long x = 0, long y = 0)
     {
         version (SdlBackend)
         {
-            import deltotum.kit.window.factories.sdl_window_factory : SdlWindowFactory;
+            import deltotum.kit.windows.factories.sdl_window_factory : SdlWindowFactory;
 
             auto winFactory = new SdlWindowFactory;
             winFactory.audio = _audio;
@@ -318,7 +318,9 @@ class SdlApplication : GraphicApplication
 
         windowManager.iterateWindows((win) { win.destroy; return true; });
 
-        _assets.destroy;
+        if(_assets){
+            _assets.destroy;
+        }
 
         //TODO auto destroy all services
         _audio.destroy;

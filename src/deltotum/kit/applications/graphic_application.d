@@ -4,9 +4,9 @@ import deltotum.core.applications.application_exit : ApplicationExit;
 import deltotum.core.applications.cli_application : CliApplication;
 import deltotum.kit.applications.components.graphics_component : GraphicsComponent;
 import deltotum.core.applications.components.uni.uni_component : UniComponent;
-import deltotum.kit.window.window_manager : WindowManager;
+import deltotum.kit.windows.window_manager : WindowManager;
 
-import deltotum.kit.window.window : Window;
+import deltotum.kit.windows.window : Window;
 import deltotum.kit.applications.loops.loop : Loop;
 
 import std.typecons : Nullable;

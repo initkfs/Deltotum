@@ -239,7 +239,7 @@ class Text : Control
                 Rect2d textureBounds = glyph.geometry;
                 Rect2d destBounds = Rect2d(position.x, position.y, glyph.geometry.width, glyph
                         .geometry.height);
-                if (const err = window.renderer.drawTexture(assets.defaultBitmapFont.nativeTexture, textureBounds, destBounds, angle, Flip
+                if (const err = graphics.renderer.drawTexture(assets.defaultBitmapFont.nativeTexture, textureBounds, destBounds, angle, Flip
                         .none))
                 {
                     //TODO logging

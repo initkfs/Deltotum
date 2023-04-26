@@ -8,7 +8,7 @@ import deltotum.kit.asset.assets : Assets;
 import deltotum.media.audio.audio : Audio;
 import deltotum.kit.graphics.graphics : Graphics;
 import deltotum.kit.input.input : Input;
-import deltotum.kit.window.window : Window;
+import deltotum.kit.windows.window : Window;
 
 /**
  * Authors: initkfs

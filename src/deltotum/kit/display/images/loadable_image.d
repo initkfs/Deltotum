@@ -75,7 +75,7 @@ class LoadableImage : Texture
         }
 
         texture = new SdlTexture;
-        if (const err = texture.fromRenderer(window.renderer, image))
+        if (const err = texture.fromRenderer(graphics.renderer, image))
         {
             throw new Exception(err.toString);
         }

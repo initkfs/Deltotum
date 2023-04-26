@@ -139,11 +139,11 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
             srcRect.w = cast(int) textureBounds.width;
             srcRect.h = cast(int) textureBounds.height;
 
-            SDL_Rect bounds = window.getScaleBounds;
+            //SDL_Rect bounds = window.getScaleBounds;
 
             SDL_Rect destRect;
-            destRect.x = cast(int)(destBounds.x + bounds.x);
-            destRect.y = cast(int)(destBounds.y + bounds.y);
+            destRect.x = cast(int)(destBounds.x);// + bounds.x);
+            destRect.y = cast(int)(destBounds.y); // + bounds.y);
             destRect.w = cast(int) destBounds.width;
             destRect.h = cast(int) destBounds.height;
 
