@@ -1,6 +1,6 @@
-module deltotum.core.apps.components.uni.uni_composite;
+module deltotum.core.apps.uni.uni_composite;
 
-import deltotum.core.apps.components.uni.uni_component : UniComponent;
+import deltotum.core.apps.uni.uni_component : UniComponent;
 
 import std.exception : enforce;
 

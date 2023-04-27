@@ -1,7 +1,7 @@
 module deltotum.kit.assets.asset;
 
-import deltotum.core.apps.components.units.simple_unit : SimpleUnit;
-import deltotum.core.apps.components.units.services.loggable_unit : LoggableUnit;
+import deltotum.core.apps.units.simple_unit : SimpleUnit;
+import deltotum.core.apps.units.services.loggable_unit : LoggableUnit;
 
 import std.logger : Logger;
 

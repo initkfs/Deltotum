@@ -3,7 +3,7 @@ module deltotum.kit.apps.graphic_application;
 import deltotum.core.apps.application_exit : ApplicationExit;
 import deltotum.core.apps.cli_application : CliApplication;
 import deltotum.kit.apps.components.graphics_component : GraphicsComponent;
-import deltotum.core.apps.components.uni.uni_component : UniComponent;
+import deltotum.core.apps.uni.uni_component : UniComponent;
 import deltotum.kit.windows.window_manager : WindowManager;
 
 import deltotum.kit.windows.window : Window;

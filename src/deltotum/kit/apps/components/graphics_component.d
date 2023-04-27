@@ -1,8 +1,8 @@
 module deltotum.kit.apps.components.graphics_component;
 
-import deltotum.core.apps.components.uni.uni_component : UniComponent;
+import deltotum.core.apps.uni.uni_component : UniComponent;
 
-import deltotum.core.apps.components.uni.attributes : Service;
+import deltotum.core.apps.uni.attributes : Service;
 
 import deltotum.kit.assets.asset : Asset;
 import deltotum.media.audio.audio : Audio;

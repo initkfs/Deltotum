@@ -1,4 +1,4 @@
-module deltotum.core.apps.components.units.unitable;
+module deltotum.core.apps.units.unitable;
 
 /**
  * Authors: initkfs

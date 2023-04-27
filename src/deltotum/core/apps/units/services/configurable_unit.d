@@ -1,6 +1,6 @@
-module deltotum.core.apps.components.units.services.configurable_unit;
+module deltotum.core.apps.units.services.configurable_unit;
 
-import deltotum.core.apps.components.units.simple_unit: SimpleUnit;
+import deltotum.core.apps.units.simple_unit: SimpleUnit;
 
 import deltotum.core.configs.config : Config;
 

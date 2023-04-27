@@ -1,6 +1,6 @@
 module deltotum.kit.assets.fonts.font;
 
-import deltotum.core.apps.components.units.services.loggable_unit : LoggableUnit;
+import deltotum.core.apps.units.services.loggable_unit : LoggableUnit;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 
 import deltotum.sys.sdl.ttf.sdl_ttf_font : SdlTTFFont;

@@ -1,6 +1,6 @@
-module deltotum.core.apps.components.units.services.loggable_unit;
+module deltotum.core.apps.units.services.loggable_unit;
 
-import deltotum.core.apps.components.units.simple_unit: SimpleUnit;
+import deltotum.core.apps.units.simple_unit: SimpleUnit;
 
 import std.logger.core : Logger;
 

@@ -1,8 +1,8 @@
-module deltotum.core.apps.components.units.simple_unit;
+module deltotum.core.apps.units.simple_unit;
 
-import deltotum.core.apps.components.units.unitable : Unitable;
-import deltotum.core.apps.components.units.states.illegal_unit_state_exception : IllegalUnitStateException;
-import deltotum.core.apps.components.units.states.unit_state : UnitState;
+import deltotum.core.apps.units.unitable : Unitable;
+import deltotum.core.apps.units.states.illegal_unit_state_exception : IllegalUnitStateException;
+import deltotum.core.apps.units.states.unit_state : UnitState;
 
 /**
  * Authors: initkfs

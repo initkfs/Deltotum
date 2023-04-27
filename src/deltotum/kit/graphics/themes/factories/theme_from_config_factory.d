@@ -1,6 +1,6 @@
 module deltotum.kit.graphics.themes.factories.theme_from_config_factory;
 
-import deltotum.core.apps.components.units.services.application_unit : ApplicationUnit;
+import deltotum.core.apps.units.services.application_unit : ApplicationUnit;
 import deltotum.core.contexts.context : Context;
 import deltotum.core.configs.config : Config;
 import deltotum.kit.graphics.themes.theme : Theme;

@@ -39,7 +39,7 @@ mixin template ToString()
         enum fieldsCount = fields.length;
 
         import std.traits : isDelegate, hasUDA, isPointer;
-        import deltotum.core.apps.components.uni.attributes : Service;
+        import deltotum.core.apps.uni.attributes : Service;
         import deltotum.core.utils.meta : hasOverloads;
         import deltotum.core.utils.tostring : ToStringExclude;
 

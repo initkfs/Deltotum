@@ -1,6 +1,6 @@
-module deltotum.core.apps.components.units.services.application_unit;
+module deltotum.core.apps.units.services.application_unit;
 
-import deltotum.core.apps.components.units.services.loggable_unit : LoggableUnit;
+import deltotum.core.apps.units.services.loggable_unit : LoggableUnit;
 import deltotum.core.contexts.context : Context;
 import deltotum.core.configs.config : Config;
 

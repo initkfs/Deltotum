@@ -1,4 +1,4 @@
-module deltotum.core.apps.components.units.states.unit_state;
+module deltotum.core.apps.units.states.unit_state;
 /**
  * Authors: initkfs
  */

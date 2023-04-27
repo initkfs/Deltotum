@@ -1,7 +1,7 @@
-module deltotum.core.apps.components.uni.uni_component;
+module deltotum.core.apps.uni.uni_component;
 
-import deltotum.core.apps.components.units.simple_unit : SimpleUnit;
-import deltotum.core.apps.components.uni.attributes : Service;
+import deltotum.core.apps.units.simple_unit : SimpleUnit;
+import deltotum.core.apps.uni.attributes : Service;
 import deltotum.core.configs.config : Config;
 import deltotum.core.supports.support : Support;
 import deltotum.core.clis.cli : Cli;

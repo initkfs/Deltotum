@@ -2,7 +2,7 @@ module deltotum.core.apps.cli_application;
 
 import deltotum.core.apps.crashes.crash_handler : CrashHandler;
 import deltotum.core.apps.application_exit : ApplicationExit;
-import deltotum.core.apps.components.uni.uni_component : UniComponent;
+import deltotum.core.apps.uni.uni_component : UniComponent;
 import deltotum.core.supports.support : Support;
 import deltotum.core.configs.config : Config;
 import deltotum.core.clis.cli : Cli;

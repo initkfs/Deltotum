@@ -1,4 +1,4 @@
-module deltotum.core.apps.components.units.states.illegal_unit_state_exception;
+module deltotum.core.apps.units.states.illegal_unit_state_exception;
 /**
  * Authors: initkfs
  */
