@@ -1,6 +1,6 @@
-module deltotum.core.extensions.plugins.file_plugin;
+module deltotum.kit.extensions.plugins.file_plugin;
 
-import deltotum.core.extensions.plugins.plugin : Plugin;
+import deltotum.kit.extensions.plugins.plugin : Plugin;
 import deltotum.core.contexts.context : Context;
 import deltotum.core.configs.config : Config;
 

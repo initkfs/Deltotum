@@ -1,7 +1,7 @@
-module deltotum.core.extensions.extension;
+module deltotum.kit.extensions.extension;
 
 import deltotum.core.apps.components.units.simple_unit : SimpleUnit;
-import deltotum.core.extensions.plugins.plugin : Plugin;
+import deltotum.kit.extensions.plugins.plugin : Plugin;
 
 import std.variant : Variant;
 import std.typecons : Nullable;

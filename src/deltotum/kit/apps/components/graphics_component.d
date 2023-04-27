@@ -10,6 +10,7 @@ import deltotum.kit.graphics.graphics : Graphics;
 import deltotum.kit.inputs.input : Input;
 import deltotum.kit.windows.window : Window;
 import deltotum.kit.screens.screen: Screen;
+import deltotum.kit.extensions.extension : Extension;
 
 /**
  * Authors: initkfs
@@ -20,6 +21,7 @@ class GraphicsComponent : UniComponent
     {
         @Service Audio _audio;
         @Service Asset _asset;
+        @Service Extension _ext;
         @Service Input _input;
         @Service Graphics _graphics;
         @Service Window _window;
@@ -151,5 +153,24 @@ class GraphicsComponent : UniComponent
 
         enforce(screen !is null, "Screen must not be null");
         _screen = screen;
+    }
+
+    final bool hasExtension() @nogc nothrow pure @safe
+    {
+        return _ext !is null;
+    }
+
+    final Extension ext() @nogc nothrow pure @safe
+    out (_ext; _ext !is null)
+    {
+        return _ext;
+    }
+
+    final void ext(Extension ext) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(ext !is null, "Extension must not be null");
+        _ext = ext;
     }
 }

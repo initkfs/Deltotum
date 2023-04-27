@@ -1,6 +1,6 @@
-module deltotum.core.extensions.plugins.lua.lua_plugin;
+module deltotum.kit.extensions.plugins.lua.lua_plugin;
 
-import deltotum.core.extensions.plugins.plugin : Plugin;
+import deltotum.kit.extensions.plugins.plugin : Plugin;
 import deltotum.core.contexts.context : Context;
 import deltotum.core.configs.config : Config;
 

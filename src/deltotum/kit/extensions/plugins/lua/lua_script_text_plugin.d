@@ -1,6 +1,6 @@
-module deltotum.core.extensions.plugins.lua.lua_script_text_plugin;
+module deltotum.kit.extensions.plugins.lua.lua_script_text_plugin;
 
-import deltotum.core.extensions.plugins.lua.lua_plugin : LuaPlugin;
+import deltotum.kit.extensions.plugins.lua.lua_plugin : LuaPlugin;
 import deltotum.core.contexts.context : Context;
 import deltotum.core.configs.config : Config;
 

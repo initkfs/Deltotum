@@ -4,6 +4,8 @@ module deltotum.kit.apps.sdl_application;
 version(SdlBackend):
 // dfmt on
 
+import deltotum.core.configs.config: Config;
+import deltotum.core.contexts.context: Context;
 import deltotum.core.apps.application_exit : ApplicationExit;
 import deltotum.kit.apps.graphic_application : GraphicApplication;
 import deltotum.kit.apps.components.graphics_component : GraphicsComponent;
@@ -19,7 +21,7 @@ import deltotum.kit.display.display_object : DisplayObject;
 import deltotum.kit.scenes.scene : Scene;
 import deltotum.kit.inputs.keyboard.event.key_event : KeyEvent;
 import deltotum.kit.inputs.joystick.event.joystick_event : JoystickEvent;
-
+import deltotum.kit.extensions.extension : Extension;
 import deltotum.sys.sdl.sdl_lib : SdlLib;
 import deltotum.sys.sdl.img.sdl_img_lib : SdlImgLib;
 import deltotum.sys.sdl.mix.sdl_mix_lib : SdlMixLib;
@@ -63,6 +65,7 @@ class SdlApplication : GraphicApplication
         Asset _asset;
         Input _input;
         Screen _screen;
+        Extension _ext;
 
         bool isProcessEvents = true;
     }
@@ -119,6 +122,8 @@ class SdlApplication : GraphicApplication
         auto clipboard = new Clipboard(sdlClipboard);
         _input = new Input(clipboard);
         _audio = new Audio(audioMixLib);
+
+        _ext = createExtension(uservices.logger, uservices.config, uservices.context);
 
         import deltotum.sys.sdl.sdl_screen : SDLScreen;
 
@@ -275,6 +280,80 @@ class SdlApplication : GraphicApplication
         return ApplicationExit(false);
     }
 
+    protected Extension createExtension(Logger logger, Config config, Context context)
+    {
+        import deltotum.kit.extensions.extension : Extension;
+        import deltotum.kit.extensions.plugins.lua.lua_script_text_plugin : LuaScriptTextPlugin;
+        import deltotum.kit.extensions.plugins.lua.lua_file_script_plugin : LuaFileScriptPlugin;
+
+        //TODO from config;
+        import std.path : buildPath;
+
+        auto mustBeDataDir = context.appContext.dataDir;
+        if (mustBeDataDir.isNull)
+        {
+            //TODO or return Nullable?
+            throw new Exception("Data directory not found");
+        }
+
+        auto extension = new Extension;
+
+        const pluginsDir = buildPath(mustBeDataDir.get, "plugins");
+        import std.file : dirEntries, DirEntry, SpanMode, exists, isFile, isDir;
+        import std.path : buildPath, baseName;
+        import std.format : format;
+        import std.conv : to;
+
+        //TODO version(lua)
+
+        //FIXME remove bindbc from core
+        import bindbc.lua;
+
+        const LuaSupport luaResult = loadLua();
+        if (luaResult != luaSupport)
+        {
+            if (luaResult == luaSupport.noLibrary)
+            {
+                throw new Exception("Lua shared library failed to load");
+            }
+            else if (luaResult == luaSupport.badLibrary)
+            {
+                throw new Exception("One or more Lua symbols failed to load");
+            }
+
+            throw new Exception(format("Couldn't load Lua environment, received lua load result: '%s'",
+                    to!string(luaSupport)));
+        }
+
+        foreach (DirEntry pluginFile; dirEntries(pluginsDir, SpanMode.shallow))
+        {
+            if (!pluginFile.isDir)
+            {
+                continue;
+            }
+
+            //TODO from config
+            enum pluginMainMethod = "main";
+            const filePath = buildPath(pluginsDir, "main.lua");
+            if (!filePath.exists || !filePath.isFile)
+            {
+                continue;
+            }
+
+            const name = baseName(pluginFile);
+            auto plugin = new LuaFileScriptPlugin(logger, config, context, name, filePath, pluginMainMethod);
+            extension.addPlugin(plugin);
+        }
+
+        auto consolePlugin = new LuaScriptTextPlugin(logger, config, context, "console");
+        extension.addPlugin(consolePlugin);
+
+        extension.initialize;
+        extension.run;
+
+        return extension;
+    }
+
     override Window newWindow(dstring title = "New window", int prefWidth = 600, int prefHeight = 400, int x = 0, int y = 0)
     {
         version (SdlBackend)
@@ -285,6 +364,7 @@ class SdlApplication : GraphicApplication
             winFactory.audio = _audio;
             winFactory.input = _input;
             winFactory.screen = _screen;
+            winFactory.ext = _ext;
             build(winFactory);
 
             auto window = winFactory.create(title, prefWidth, prefHeight, x, y);
