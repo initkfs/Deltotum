@@ -21,8 +21,8 @@ class Graphics : LoggableUnit
 
     //private
     //{
-        SdlRenderer renderer;
-   // }
+    SdlRenderer renderer;
+    // }
 
     this(Logger logger, SdlRenderer renderer, Theme theme)
     {

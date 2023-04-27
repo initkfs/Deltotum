@@ -22,7 +22,6 @@ class Scene : GraphicsComponent
     size_t timeEventProcessingMs;
     size_t timeUpdateProcessingMs;
 
-    bool isClearingInCycle = true;
     size_t worldTicks;
 
     protected
@@ -65,30 +64,13 @@ class Scene : GraphicsComponent
     {
         worldTicks++;
 
-        if (isClearingInCycle)
-        {
-            const screenColor = RGBA.black;
-            if (const err = graphics.renderer.setRenderDrawColor(screenColor.r, screenColor.g, screenColor.b, screenColor
-                    .alphaNorm))
+        graphics.renderer.draw(() {
+            foreach (obj; displayObjects)
             {
-                //TODO logging in main loop?
+                obj.update(delta);
+                obj.draw;
             }
-            else
-            {
-                if (const err = graphics.renderer.clear)
-                {
-                    //TODO loggong in main loop?
-                }
-            }
-        }
-
-        foreach (obj; displayObjects)
-        {
-            obj.update(delta);
-            obj.draw;
-        }
-
-        graphics.renderer.present;
+        });
     }
 
     void destroy()

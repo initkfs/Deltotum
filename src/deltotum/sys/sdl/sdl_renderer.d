@@ -51,6 +51,32 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         this.window = window;
     }
 
+    //TODO extract to deltotum.kit.graphics
+    //TODO ectract to kit.graphics
+    void draw(void delegate() onDraw)
+    {
+        import deltotum.kit.graphics.colors.rgba : RGBA;
+
+        //isClearingInCycle
+        const screenColor = RGBA.black;
+        if (const err = setRenderDrawColor(screenColor.r, screenColor.g, screenColor.b, screenColor
+                .alphaNorm))
+        {
+            //TODO logging in main loop?
+        }
+        else
+        {
+            if (const err = clear)
+            {
+                //TODO loggong in main loop?
+            }
+        }
+
+        onDraw();
+
+        present;
+    }
+
     PlatformResult setRenderDrawColor(ubyte r, ubyte g, ubyte b, ubyte a) @nogc nothrow
     {
         ubyte oldR, oldG, oldB, oldA;
@@ -142,7 +168,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
             //SDL_Rect bounds = window.getScaleBounds;
 
             SDL_Rect destRect;
-            destRect.x = cast(int)(destBounds.x);// + bounds.x);
+            destRect.x = cast(int)(destBounds.x); // + bounds.x);
             destRect.y = cast(int)(destBounds.y); // + bounds.y);
             destRect.w = cast(int) destBounds.width;
             destRect.h = cast(int) destBounds.height;
