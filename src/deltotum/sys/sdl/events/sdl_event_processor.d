@@ -7,12 +7,12 @@ version(SdlBackend):
 import deltotum.kit.events.processing.event_processor : EventProcessor;
 
 import deltotum.core.events.event_type : EventType;
-import deltotum.core.applications.events.application_event : ApplicationEvent;
-import deltotum.kit.input.mouse.event.mouse_event : MouseEvent;
-import deltotum.kit.input.keyboard.event.key_event : KeyEvent;
-import deltotum.kit.input.keyboard.event.text_input_event: TextInputEvent;
+import deltotum.core.apps.events.application_event : ApplicationEvent;
+import deltotum.kit.inputs.mouse.event.mouse_event : MouseEvent;
+import deltotum.kit.inputs.keyboard.event.key_event : KeyEvent;
+import deltotum.kit.inputs.keyboard.event.text_input_event: TextInputEvent;
 import deltotum.kit.windows.event.window_event : WindowEvent;
-import deltotum.kit.input.joystick.event.joystick_event : JoystickEvent;
+import deltotum.kit.inputs.joystick.event.joystick_event : JoystickEvent;
 import deltotum.sys.sdl.sdl_keyboard : SdlKeyboard;
 
 import bindbc.sdl;

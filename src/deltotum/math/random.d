@@ -1,6 +1,6 @@
 module deltotum.math.random;
 
-import deltotum.core.applications.components.units.services.loggable_unit : LoggableUnit;
+import deltotum.core.apps.components.units.services.loggable_unit : LoggableUnit;
 
 import std.random : uniform, unpredictableSeed, StdRandom = Random;
 import std.range.primitives;

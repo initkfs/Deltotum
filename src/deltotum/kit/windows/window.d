@@ -6,9 +6,9 @@ import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.math.vector2d : Vector2d;
 
-import deltotum.kit.scene.scene_manager : SceneManager;
+import deltotum.kit.scenes.scene_manager : SceneManager;
 import deltotum.kit.windows.window_manager : WindowManager;
-import deltotum.kit.screen.screen: Screen;
+import deltotum.kit.screens.screen: Screen;
 
 import std.logger.core : Logger;
 

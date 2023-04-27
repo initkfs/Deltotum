@@ -1,6 +1,6 @@
 module deltotum.kit.windows.factories.sdl_window_factory;
 
-import deltotum.kit.applications.components.graphics_component : GraphicsComponent;
+import deltotum.kit.apps.components.graphics_component : GraphicsComponent;
 import deltotum.kit.windows.window : Window;
 
 import deltotum.sys.sdl.sdl_window : SdlWindow;
@@ -50,22 +50,22 @@ class SdlWindowFactory : GraphicsComponent
         immutable assetsDirPath = "data/assets";
         immutable assetsDir = buildPath(getcwd, assetsDirPath);
 
-        import deltotum.kit.asset.assets : Assets;
+        import deltotum.kit.assets.asset : Asset;
 
-        assets = new Assets(logger, assetsDir);
+        asset = new Asset(logger, assetsDir);
 
         import deltotum.kit.graphics.themes.theme : Theme;
         import deltotum.kit.graphics.themes.factories.theme_from_config_factory : ThemeFromConfigFactory;
 
-        auto themeLoader = new ThemeFromConfigFactory(logger, config, context, assets
+        auto themeLoader = new ThemeFromConfigFactory(logger, config, context, asset
                 .defaultFont);
 
         auto theme = themeLoader.create;
 
-        import deltotum.kit.asset.fonts.font : Font;
+        import deltotum.kit.assets.fonts.font : Font;
 
-        Font defaultFont = assets.font("fonts/NotoSans-Bold.ttf", 14);
-        assets.defaultFont = defaultFont;
+        Font defaultFont = asset.font("fonts/NotoSans-Bold.ttf", 14);
+        asset.defaultFont = defaultFont;
 
         import deltotum.kit.graphics.graphics : Graphics;
 
@@ -86,14 +86,14 @@ class SdlWindowFactory : GraphicsComponent
         build(fontGenerator);
         import deltotum.kit.graphics.colors.rgba : RGBA;
 
-        assets.defaultBitmapFont = fontGenerator.generate([
+        asset.defaultBitmapFont = fontGenerator.generate([
             new ArabicNumeralsAlpabet,
             new SpecialCharactersAlphabet,
             new AlphabetEn,
             new AlphabetRu
-        ], assets.defaultFont, theme.colorText);
+        ], asset.defaultFont, theme.colorText);
 
-        import deltotum.kit.scene.scene_manager : SceneManager;
+        import deltotum.kit.scenes.scene_manager : SceneManager;
 
         auto sceneManager = new SceneManager;
         build(sceneManager);

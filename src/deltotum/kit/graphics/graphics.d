@@ -1,6 +1,6 @@
 module deltotum.kit.graphics.graphics;
 
-import deltotum.core.applications.components.units.services.loggable_unit;
+import deltotum.core.apps.components.units.services.loggable_unit;
 
 import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
 import deltotum.kit.graphics.colors.rgba : RGBA;

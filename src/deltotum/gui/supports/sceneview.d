@@ -5,7 +5,7 @@ import deltotum.gui.containers.hbox : HBox;
 import deltotum.gui.containers.stack_box : StackBox;
 import deltotum.gui.controls.buttons.toggle_switch : ToggleSwitch;
 import deltotum.gui.controls.texts.text : Text;
-import deltotum.kit.scene.scene : Scene;
+import deltotum.kit.scenes.scene : Scene;
 import deltotum.kit.display.display_object : DisplayObject;
 import deltotum.gui.containers.container : Container;
 import deltotum.gui.controls.texts.text_area : TextArea;

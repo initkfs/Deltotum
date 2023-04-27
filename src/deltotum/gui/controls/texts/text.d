@@ -142,7 +142,7 @@ class Text : Control
                 continue;
             }
 
-            foreach (i, glyph; assets.defaultBitmapFont.glyphs)
+            foreach (i, glyph; asset.defaultBitmapFont.glyphs)
             {
                 if (glyph.grapheme == letter)
                 {
@@ -239,7 +239,7 @@ class Text : Control
                 Rect2d textureBounds = glyph.geometry;
                 Rect2d destBounds = Rect2d(position.x, position.y, glyph.geometry.width, glyph
                         .geometry.height);
-                if (const err = graphics.renderer.drawTexture(assets.defaultBitmapFont.nativeTexture, textureBounds, destBounds, angle, Flip
+                if (const err = graphics.renderer.drawTexture(asset.defaultBitmapFont.nativeTexture, textureBounds, destBounds, angle, Flip
                         .none))
                 {
                     //TODO logging

@@ -34,7 +34,7 @@ class LoadableImage : Texture
         import std.path : isAbsolute;
         import std.file : isFile, exists;
 
-        string imagePath = path.isAbsolute ? path : assets.image(path);
+        string imagePath = path.isAbsolute ? path : asset.image(path);
         if (imagePath.length == 0 || !imagePath.exists || !imagePath.isFile)
         {
             //TODO log, texture placeholder

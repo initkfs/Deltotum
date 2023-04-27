@@ -1,7 +1,7 @@
 module deltotum.kit.graphics.themes.theme;
 
 import deltotum.kit.graphics.colors.rgba : RGBA;
-import deltotum.kit.asset.fonts.font : Font;
+import deltotum.kit.assets.fonts.font : Font;
 import deltotum.math.geometry.insets : Insets;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 

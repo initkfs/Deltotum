@@ -1,6 +1,6 @@
 module deltotum.core.extensions.plugins.plugin;
 
-import deltotum.core.applications.components.units.services.application_unit : ApplicationUnit;
+import deltotum.core.apps.components.units.services.application_unit : ApplicationUnit;
 import deltotum.core.contexts.context : Context;
 import deltotum.core.configs.config : Config;
 

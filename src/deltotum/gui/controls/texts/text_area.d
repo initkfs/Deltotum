@@ -48,7 +48,7 @@ class TextArea : Control
         scroll.onValue = (value) { textView.scrollTo(value); };
 
         onTextInput = (key) {
-            foreach (glyph; assets.defaultBitmapFont.glyphs)
+            foreach (glyph; asset.defaultBitmapFont.glyphs)
             {
                 if (glyph.grapheme == key.firstLetter)
                 {

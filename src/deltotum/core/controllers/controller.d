@@ -1,7 +1,7 @@
 module deltotum.core.controllers.controller;
 
-import deltotum.core.applications.components.uni.uni_component : UniComponent;
-import deltotum.core.applications.components.uni.uni_composite : UniComposite;
+import deltotum.core.apps.components.uni.uni_component : UniComponent;
+import deltotum.core.apps.components.uni.uni_composite : UniComposite;
 
 /**
  * Authors: initkfs

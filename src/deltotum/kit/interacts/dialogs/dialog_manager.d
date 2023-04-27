@@ -1,9 +1,9 @@
 module deltotum.kit.interacts.dialogs.dialog_manager;
 
 import deltotum.kit.windows.window : Window;
-import deltotum.kit.applications.components.graphics_component : GraphicsComponent;
+import deltotum.kit.apps.components.graphics_component : GraphicsComponent;
 
-import deltotum.kit.scene.scene : Scene;
+import deltotum.kit.scenes.scene : Scene;
 
 private
 {
