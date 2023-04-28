@@ -83,8 +83,10 @@ class Text : Control
 
             GraphicStyle style = GraphicStyle(1, graphics.theme.colorFocus);
 
-            import deltotum.kit.graphics.shapes.regular_polygon: RegularPolygon;
-            auto effect = new RegularPolygon(width, height, style, graphics.theme.controlCornersBevel);
+            import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
+
+            auto effect = new RegularPolygon(width, height, style, graphics
+                    .theme.controlCornersBevel);
             //auto effect = new Rectangle(width, height, style);
             effect.isVisible = false;
             return effect;
@@ -239,11 +241,8 @@ class Text : Control
                 Rect2d textureBounds = glyph.geometry;
                 Rect2d destBounds = Rect2d(position.x, position.y, glyph.geometry.width, glyph
                         .geometry.height);
-                if (const err = graphics.renderer.drawTexture(asset.defaultBitmapFont.nativeTexture, textureBounds, destBounds, angle, Flip
-                        .none))
-                {
-                    //TODO logging
-                }
+                asset.defaultBitmapFont.drawTexture(textureBounds, destBounds, angle, Flip
+                        .none);
 
                 position.x += glyph.geometry.width;
             }
@@ -295,7 +294,8 @@ class Text : Control
         _text = t;
     }
 
-    ref dstring text(){
+    ref dstring text()
+    {
         return _text;
     }
 }

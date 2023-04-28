@@ -8,9 +8,17 @@ import deltotum.math.vector2d : Vector2d;
 import math = deltotum.math;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.kit.graphics.themes.theme : Theme;
+import deltotum.kit.display.textures.texture: Texture;
+
+import deltotum.kit.display.flip : Flip;
+import deltotum.math.shapes.rect2d : Rect2d;
 
 import std.logger.core : Logger;
 import std.conv : to;
+
+//TODO remove
+import deltotum.sys.sdl.sdl_texture: SdlTexture;
+import deltotum.sys.sdl.sdl_surface: SdlSurface;
 
 /**
  * Authors: initkfs
@@ -19,10 +27,15 @@ class Graphics : LoggableUnit
 {
     Theme theme;
 
-    //private
+    //protected
     //{
-    SdlRenderer renderer;
-    // }
+        SdlRenderer renderer;
+    //}
+
+    //TODO ComTexture, ComSurface;
+    //these factories are added for performance to avoid unnecessary wrapping in the object.
+    SdlTexture delegate() comTextureFactory;
+    SdlSurface delegate() comSurfaceFactory;
 
     this(Logger logger, SdlRenderer renderer, Theme theme)
     {
@@ -30,11 +43,23 @@ class Graphics : LoggableUnit
 
         import std.exception : enforce;
 
-        enforce(renderer !is null, "Renderer must not be null");
+        //TODO opengl
+        // enforce(renderer !is null, "Renderer must not be null");
         this.renderer = renderer;
 
         enforce(theme !is null, "Theme must not be null");
         this.theme = theme;
+    }
+
+    SdlTexture newComTexture(){
+        assert(comTextureFactory);
+        auto texture = comTextureFactory();
+        return texture;
+    }
+
+    SdlSurface newComSurface(){
+        assert(comSurfaceFactory);
+        return new SdlSurface();
     }
 
     //inline?

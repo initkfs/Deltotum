@@ -42,8 +42,9 @@ class Texture : DisplayObject
 
     void loadFromSurface(SdlSurface surface)
     {
-        auto newTexture = new SdlTexture;
-        if(const err = newTexture.fromRenderer(graphics.renderer, surface)){
+        auto newTexture = graphics.newComTexture;
+        if (const err = newTexture.fromSurface(surface))
+        {
             throw new Exception(err.toString);
         }
         int w, h;
@@ -58,14 +59,18 @@ class Texture : DisplayObject
         texture = newTexture;
     }
 
-    void setBlendMode(){
-        if(const err = texture.setBlendModeBlend){
+    void setBlendMode()
+    {
+        if (const err = texture.setBlendModeBlend)
+        {
             throw new Exception(err.toString);
         }
     }
 
-    void setBlendNone(){
-        if(const err = texture.setBlendModeNone){
+    void setBlendNone()
+    {
+        if (const err = texture.setBlendModeNone)
+        {
             throw new Exception(err.toString);
         }
     }
@@ -89,6 +94,14 @@ class Texture : DisplayObject
         super.drawContent;
     }
 
+    void drawTexture(Rect2d textureBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
+            .none)
+    {
+        if(const err = graphics.renderer.drawTexture(texture, textureBounds, destBounds, angle, flip)){
+            //TODO logging
+        }
+    }
+
     int drawTexture(SdlTexture texture, Rect2d textureBounds, int x = 0, int y = 0, double angle = 0, Flip flip = Flip
             .none)
     {
@@ -106,7 +119,7 @@ class Texture : DisplayObject
         }
     }
 
-    SdlTexture nativeTexture() nothrow 
+    SdlTexture nativeTexture() nothrow
     {
         return this.texture;
     }

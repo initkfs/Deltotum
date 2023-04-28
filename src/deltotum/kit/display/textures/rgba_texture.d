@@ -26,9 +26,9 @@ class RgbaTexture : Texture
     {
         super.create;
 
-        texture = new SdlTexture;
+        texture = graphics.newComTexture;
         //TODO toInt?
-        const createErr = texture.createRGBA(graphics.renderer, cast(int) width, cast(int) height);
+        const createErr = texture.createRGBA(cast(int) width, cast(int) height);
         if (createErr)
         {
             throw new Exception(createErr.toString);

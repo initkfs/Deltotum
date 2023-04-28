@@ -16,11 +16,19 @@ import std.string : toStringz, fromStringz;
 
 import bindbc.sdl;
 
+enum SdlWindowMode
+{
+    none,
+    opengl,
+    vulkan,
+}
+
 /**
  * Authors: initkfs
  */
 class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 {
+    SdlWindowMode mode;
 
     this()
     {
@@ -39,13 +47,25 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     PlatformResult create() nothrow
     {
+        uint flags = SDL_WINDOW_HIDDEN;
+        final switch (mode) with (SdlWindowMode)
+        {
+        case opengl:
+            flags |= SDL_WINDOW_OPENGL;
+            break;
+        case vulkan:
+            flags |= SDL_WINDOW_VULKAN;
+            break;
+        case none:
+            break;
+        }
         ptr = SDL_CreateWindow(
             null,
             0,
             0,
             0,
             0,
-            SDL_WINDOW_HIDDEN);
+            flags);
 
         if (ptr is null)
         {
@@ -230,6 +250,16 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         }
         index = indexOrNegError;
 
+        return PlatformResult.success;
+    }
+
+    PlatformResult nativePtr(out void* ptr) @nogc nothrow
+    {
+        if (!ptr && isDestroyed)
+        {
+            return PlatformResult.error("Native window pointer is destroyed or null");
+        }
+        ptr = cast(void*) this.ptr;
         return PlatformResult.success;
     }
 

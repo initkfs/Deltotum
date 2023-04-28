@@ -32,11 +32,6 @@ abstract class GraphicApplication : CliApplication
         this.mainLoop = loop;
     }
 
-    abstract
-    {
-        Window newWindow(dstring title, int prefWidth, int prefHeight, int x, int y);
-    }
-
     void runLoop()
     {
         assert(mainLoop);

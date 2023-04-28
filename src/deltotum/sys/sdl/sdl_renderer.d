@@ -27,7 +27,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         super(ptr);
     }
 
-    this(SdlWindow window, uint flags = 0)
+    this(SdlWindow window, uint flags = 0, int driverIndex = -1)
     {
         super();
 
@@ -35,9 +35,8 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
 
         enforce(window !is null, "Window must not be null");
 
-        enum firstDriverIndex = -1;
         ptr = SDL_CreateRenderer(window.getObject,
-            firstDriverIndex, flags);
+            driverIndex, flags);
         if (ptr is null)
         {
             string msg = "Cannot initialize renderer.";
@@ -53,7 +52,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
 
     //TODO extract to deltotum.kit.graphics
     //TODO ectract to kit.graphics
-    void draw(void delegate() onDraw)
+    void draw(scope void delegate() onDraw)
     {
         import deltotum.kit.graphics.colors.rgba : RGBA;
 

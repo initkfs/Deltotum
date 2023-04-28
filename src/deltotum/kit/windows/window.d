@@ -8,7 +8,8 @@ import deltotum.math.vector2d : Vector2d;
 
 import deltotum.kit.scenes.scene_manager : SceneManager;
 import deltotum.kit.windows.window_manager : WindowManager;
-import deltotum.kit.screens.screen: Screen;
+import deltotum.kit.windows.factories.window_factory : WindowFactory;
+import deltotum.kit.screens.screen : Screen;
 
 import std.logger.core : Logger;
 
@@ -21,6 +22,7 @@ import bindbc.sdl;
 class Window
 {
     Window parent;
+    Window delegate(dstring, int, int, int, int, WindowFactory) childWindowProvider;
     WindowManager windowManager;
 
     SceneManager scenes;
@@ -292,13 +294,16 @@ class Window
         setResizable(true);
     }
 
-    int getScreenIndex(){
+    int getScreenIndex()
+    {
         size_t screenIndex;
-        if(const err = nativeWindow.getScreenIndex(screenIndex)){
+        if (const err = nativeWindow.getScreenIndex(screenIndex))
+        {
             logger.error("Error getting screen from window: ", err.toString);
             return -1;
         }
-        import std.conv: to;
+        import std.conv : to;
+
         return screenIndex.to!int;
     }
 
@@ -307,9 +312,38 @@ class Window
         scenes.currentScene.update(delta);
     }
 
+    Window newChildWindow(dstring title = "New window", int width = 450, int height = 200, int x = -1, int y = -1, WindowFactory windowProvider = null)
+    {
+        Window win = newRootWindow(title, width, height, x, y, windowProvider);
+        win.parent = this;
+        return win;
+    }
+
+    Window newRootWindow(dstring title = "New window", int width = 450, int height = 200, int x = -1, int y = -1, WindowFactory windowProvider = null)
+    {
+        if (!childWindowProvider)
+        {
+            throw new Exception("Unable to open child windows. Window provider not installed");
+        }
+
+        Window newWindow = childWindowProvider(title, width, height, x, y, windowProvider);
+        return newWindow;
+    }
+
+    void nativePtr(out void* ptr)
+    {
+        if (const err = nativeWindow.nativePtr(ptr))
+        {
+            logger.error("Native window pointer is invalid");
+            ptr = null;
+        }
+    }
+
     void destroy()
     {
         parent = null;
+        childWindowProvider = null;
+
         //TODO close child windows
         renderer.destroy;
         if (scenes !is null)

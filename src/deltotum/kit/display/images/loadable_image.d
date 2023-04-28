@@ -74,8 +74,8 @@ class LoadableImage : Texture
             destroy;
         }
 
-        texture = new SdlTexture;
-        if (const err = texture.fromRenderer(graphics.renderer, image))
+        texture = graphics.newComTexture;
+        if (const err = texture.fromSurface(image))
         {
             throw new Exception(err.toString);
         }

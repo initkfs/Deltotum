@@ -4,8 +4,8 @@ module deltotum.kit.apps.sdl_application;
 version(SdlBackend):
 // dfmt on
 
-import deltotum.core.configs.config: Config;
-import deltotum.core.contexts.context: Context;
+import deltotum.core.configs.config : Config;
+import deltotum.core.contexts.context : Context;
 import deltotum.core.apps.application_exit : ApplicationExit;
 import deltotum.kit.apps.graphic_application : GraphicApplication;
 import deltotum.kit.apps.components.graphics_component : GraphicsComponent;
@@ -27,6 +27,7 @@ import deltotum.sys.sdl.img.sdl_img_lib : SdlImgLib;
 import deltotum.sys.sdl.mix.sdl_mix_lib : SdlMixLib;
 import deltotum.sys.sdl.ttf.sdl_ttf_lib : SdlTTFLib;
 import deltotum.sys.sdl.sdl_window : SdlWindow;
+import deltotum.sys.sdl.sdl_window : SdlWindowMode;
 import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
 import deltotum.sys.sdl.sdl_joystick : SdlJoystick;
 import deltotum.kit.windows.event.window_event : WindowEvent;
@@ -38,6 +39,7 @@ import deltotum.kit.screens.screen : Screen;
 import deltotum.kit.apps.loops.integrated_loop : IntegratedLoop;
 import deltotum.kit.apps.loops.loop : Loop;
 import deltotum.kit.windows.window_manager : WindowManager;
+import deltotum.kit.windows.factories.window_factory : WindowFactory;
 
 import std.typecons : Nullable;
 
@@ -354,30 +356,64 @@ class SdlApplication : GraphicApplication
         return extension;
     }
 
-    override Window newWindow(dstring title = "New window", int prefWidth = 600, int prefHeight = 400, int x = 0, int y = 0)
+    Window newWindow(
+        dstring title,
+        int width ,
+        int height,
+        int x,
+        int y,
+        SdlWindowMode mode = SdlWindowMode.none,
+        WindowFactory delegate() factoryProvider = null)
     {
-        version (SdlBackend)
+        WindowFactory winFactory;
+        if (factoryProvider)
         {
-            import deltotum.kit.windows.factories.sdl_window_factory : SdlWindowFactory;
-
-            auto winFactory = new SdlWindowFactory;
-            winFactory.audio = _audio;
-            winFactory.input = _input;
-            winFactory.screen = _screen;
-            winFactory.ext = _ext;
-            build(winFactory);
-
-            auto window = winFactory.create(title, prefWidth, prefHeight, x, y);
-            window.windowManager = windowManager;
-            window.frameRate = mainLoop.frameRate;
-
-            windowManager.add(window);
-            return window;
+            winFactory = factoryProvider();
         }
         else
         {
-            assert(0);
+            import deltotum.kit.windows.factories.sdl_window_factory : SdlWindowFactory;
+
+            winFactory = new SdlWindowFactory(title, width, height, x, y, mode);
         }
+
+        winFactory.audio = _audio;
+        winFactory.input = _input;
+        winFactory.screen = _screen;
+        winFactory.ext = _ext;
+        build(winFactory);
+
+        auto window = winFactory.createWindow();
+        window.windowManager = windowManager;
+        window.frameRate = mainLoop.frameRate;
+
+        if (factoryProvider)
+        {
+            window.setSize(width, height);
+            const newX = x != -1 ? x : 0;
+            const newY = y != -1 ? y : 0;
+            window.setPos(newX, newY);
+            window.setTitle(title);
+        }
+
+        windowManager.add(window);
+
+        window.childWindowProvider = (wtitle, w, h, wx, wy, windowManager) {
+            return newWindow(wtitle, w, h, wx, wy, factoryProvider);
+        };
+
+        return window;
+    }
+
+    Window newWindow(
+        dstring title = "New window",
+        int width = 400,
+        int height = 300,
+        int x = -1,
+        int y = -1,
+        WindowFactory delegate() factoryProvider = null)
+    {
+        return newWindow(title, width, height, x, y, SdlWindowMode.none, factoryProvider);
     }
 
     void closeWindow(long id)

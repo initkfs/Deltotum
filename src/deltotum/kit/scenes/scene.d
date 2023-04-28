@@ -54,7 +54,7 @@ class Scene : GraphicsComponent
         import deltotum.kit.interacts.dialogs.dialog_manager : DialogManager;
 
         auto dialogManager = new DialogManager;
-        dialogManager.dialogWindowProvider = () { return newWindow; };
+        dialogManager.dialogWindowProvider = () { return window.newChildWindow; };
         dialogManager.parentWindowProvider = () { return window; };
 
         interact = new Interact(dialogManager);
@@ -150,24 +150,4 @@ class Scene : GraphicsComponent
         enforce(interact !is null, "Interaction must not be null");
         _interact = interact;
     }
-
-    Window newWindow(dstring title = "New window", int prefWidth = 450, int prefHeight = 200, int x = 0, int y = 0)
-    {
-        version (SdlBackend)
-        {
-            import deltotum.kit.windows.factories.sdl_window_factory : SdlWindowFactory;
-
-            auto winFactory = new SdlWindowFactory;
-            build(winFactory);
-
-            auto window = winFactory.create(title, prefWidth, prefHeight, x, y);
-            this.window.windowManager.add(window);
-            return window;
-        }
-        else
-        {
-            assert(0);
-        }
-    }
-
 }

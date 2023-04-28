@@ -20,8 +20,8 @@ class LightEnvironment : Image
 
     override void create()
     {
-        auto lightTexture = new SdlTexture;
-        const createErr = lightTexture.create(graphics.renderer, SDL_PIXELFORMAT_RGBA32,
+        auto lightTexture = graphics.newComTexture;
+        const createErr = lightTexture.create(SDL_PIXELFORMAT_RGBA32,
             SDL_TextureAccess.SDL_TEXTUREACCESS_TARGET, cast(int) window.width,
             cast(int) window.height);
         if(createErr){

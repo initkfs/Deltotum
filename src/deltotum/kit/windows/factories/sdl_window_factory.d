@@ -1,23 +1,56 @@
 module deltotum.kit.windows.factories.sdl_window_factory;
 
-import deltotum.kit.apps.components.graphics_component : GraphicsComponent;
-import deltotum.kit.windows.window : Window;
+// dfmt off
+version(SdlBackend):
+// dfmt on
 
-import deltotum.sys.sdl.sdl_window : SdlWindow;
+import deltotum.kit.windows.factories.window_factory : WindowFactory;
+import deltotum.kit.windows.window : Window;
+import deltotum.kit.scenes.scene_manager : SceneManager;
+
+import deltotum.sys.sdl.sdl_window : SdlWindow, SdlWindowMode;
 import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
+
+//TODO remove
 import bindbc.sdl;
 
 /**
  * Authors: initkfs
  */
-class SdlWindowFactory : GraphicsComponent
+class SdlWindowFactory : WindowFactory
 {
-    Window create(dstring title, int prefWidth, int prefHeight, int x = 0, int y = 0)
+    //TODO graphics, assets...
+    SdlRenderer delegate() rendererProvider;
+    SceneManager delegate() sceneManagerProvider;
+
+    private
     {
-        //SDL_WINDOWPOS_UNDEFINED
+        SdlWindowMode mode;
+        dstring title;
+        int width;
+        int height;
+        int x;
+        int y;
+    }
+
+    this(dstring title = "New window", int prefWidth = 400, int prefHeight = 300, int x = -1, int y = -1, SdlWindowMode mode = SdlWindowMode
+            .none)
+    {
+        //TODO validate
+        this.title = title;
+        this.width = prefWidth;
+        this.height = prefHeight;
+        this.x = x;
+        this.y = y;
+        this.mode = mode;
+    }
+
+    override Window createWindow()
+    {
         import std.conv : to;
 
         auto sdlWindow = new SdlWindow;
+        sdlWindow.mode = mode;
 
         auto newWindow = new Window(logger, sdlWindow);
 
@@ -26,10 +59,17 @@ class SdlWindowFactory : GraphicsComponent
 
         newWindow.setNormatWindow;
 
-        newWindow.setSize(prefWidth, prefHeight);
-        newWindow.setPos(x, y);
+        newWindow.setSize(width, height);
 
-        auto sdlRenderer = new SdlRenderer(sdlWindow, SDL_RENDERER_ACCELERATED);
+        const int newX = (x == -1) ? SDL_WINDOWPOS_UNDEFINED : x;
+        const int newY = (y == -1) ? SDL_WINDOWPOS_UNDEFINED : y;
+
+        newWindow.setPos(newX, newY);
+
+        //TODO extract renderer
+        SdlRenderer sdlRenderer = !rendererProvider ? new SdlRenderer(sdlWindow, SDL_RENDERER_ACCELERATED)
+            : rendererProvider();
+
         newWindow.renderer = sdlRenderer;
 
         if (hasWindow)
@@ -70,6 +110,17 @@ class SdlWindowFactory : GraphicsComponent
         import deltotum.kit.graphics.graphics : Graphics;
 
         graphics = new Graphics(logger, sdlRenderer, theme);
+        graphics.comTextureFactory = ()
+        {
+            import deltotum.sys.sdl.sdl_texture : SdlTexture;
+
+            return new SdlTexture(sdlRenderer);
+        };
+
+        graphics.comSurfaceFactory = (){
+            import deltotum.sys.sdl.sdl_surface: SdlSurface;
+            return new SdlSurface();
+        };
 
         import deltotum.gui.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
 
@@ -77,25 +128,28 @@ class SdlWindowFactory : GraphicsComponent
         import deltotum.gui.fonts.bitmap.bitmap_font : BitmapFont;
 
         //TODO from locale\config;
-        import deltotum.kit.i18n.langs.alphabets.alphabet_ru : AlphabetRu;
-        import deltotum.kit.i18n.langs.alphabets.alphabet_en : AlphabetEn;
-        import deltotum.kit.i18n.langs.alphabets.arabic_numerals_alphabet : ArabicNumeralsAlpabet;
-        import deltotum.kit.i18n.langs.alphabets.special_characters_alphabet : SpecialCharactersAlphabet;
+        if (mode == SdlWindowMode.none)
+        {
+            import deltotum.kit.i18n.langs.alphabets.alphabet_ru : AlphabetRu;
+            import deltotum.kit.i18n.langs.alphabets.alphabet_en : AlphabetEn;
+            import deltotum.kit.i18n.langs.alphabets.arabic_numerals_alphabet : ArabicNumeralsAlpabet;
+            import deltotum.kit.i18n.langs.alphabets.special_characters_alphabet : SpecialCharactersAlphabet;
 
-        auto fontGenerator = new BitmapFontGenerator;
-        build(fontGenerator);
-        import deltotum.kit.graphics.colors.rgba : RGBA;
+            auto fontGenerator = new BitmapFontGenerator;
+            build(fontGenerator);
+            import deltotum.kit.graphics.colors.rgba : RGBA;
 
-        asset.defaultBitmapFont = fontGenerator.generate([
-            new ArabicNumeralsAlpabet,
-            new SpecialCharactersAlphabet,
-            new AlphabetEn,
-            new AlphabetRu
-        ], asset.defaultFont, theme.colorText);
+            asset.defaultBitmapFont = fontGenerator.generate([
+                new ArabicNumeralsAlpabet,
+                new SpecialCharactersAlphabet,
+                new AlphabetEn,
+                new AlphabetRu
+            ], asset.defaultFont, theme.colorText);
+        }
 
         import deltotum.kit.scenes.scene_manager : SceneManager;
 
-        auto sceneManager = new SceneManager;
+        auto sceneManager = !sceneManagerProvider ? new SceneManager : sceneManagerProvider();
         build(sceneManager);
         window.scenes = sceneManager;
 

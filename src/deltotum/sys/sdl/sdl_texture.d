@@ -22,16 +22,19 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
     private
     {
         double _opacity = 0;
+        SdlRenderer renderer;
     }
 
-    this()
+    this(SdlRenderer renderer)
     {
-        super();
+        assert(renderer);
+        this.renderer = renderer;
     }
 
-    this(SDL_Texture* ptr)
+    protected this(SDL_Texture* ptr, SdlRenderer renderer)
     {
         super(ptr);
+        this.renderer = renderer;
     }
 
     PlatformResult query(int* width, int* height, uint* format, SDL_TextureAccess* access) @nogc nothrow
@@ -49,7 +52,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         return query(width, height, null, null);
     }
 
-    PlatformResult create(SdlRenderer renderer, uint format,
+    PlatformResult create(uint format,
         SDL_TextureAccess access, int w,
         int h)
     {
@@ -84,9 +87,9 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         return PlatformResult(zeroOrErrorCode);
     }
 
-    PlatformResult createRGBA(SdlRenderer renderer, int width, int height)
+    PlatformResult createRGBA(int width, int height)
     {
-        return create(renderer, SDL_PIXELFORMAT_RGBA32,
+        return create(SDL_PIXELFORMAT_RGBA32,
             SDL_TextureAccess.SDL_TEXTUREACCESS_TARGET, width,
             height);
     }
@@ -103,7 +106,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         return PlatformResult(zeroOrErrorCode);
     }
 
-    PlatformResult fromRenderer(SdlRenderer renderer, SdlSurface surface)
+    PlatformResult fromSurface(SdlSurface surface)
     {
         if (ptr)
         {

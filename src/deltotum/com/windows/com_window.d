@@ -41,4 +41,6 @@ interface ComWindow
 
     PlatformResult getScreenIndex(out size_t screenIndex) @nogc nothrow;
 
+    PlatformResult nativePtr(out void* ptr) @nogc nothrow;
+
 }
