@@ -64,7 +64,7 @@ class Scene : GraphicsComponent
     {
         worldTicks++;
 
-        graphics.renderer.draw(() {
+        graphics.draw(() {
             foreach (obj; displayObjects)
             {
                 obj.update(delta);

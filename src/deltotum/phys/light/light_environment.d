@@ -5,6 +5,7 @@ import deltotum.phys.light.light_spot : LightSpot;
 
 //TODO remove hal api
 import deltotum.sys.sdl.sdl_texture : SdlTexture;
+import deltotum.kit.graphics.colors.rgba : RGBA;
 
 import bindbc.sdl;
 
@@ -24,32 +25,32 @@ class LightEnvironment : Image
         const createErr = lightTexture.create(SDL_PIXELFORMAT_RGBA32,
             SDL_TextureAccess.SDL_TEXTUREACCESS_TARGET, cast(int) window.width,
             cast(int) window.height);
-        if(createErr){
+        if (createErr)
+        {
             throw new Exception(createErr.toString);
         }
         SDL_SetTextureBlendMode(lightTexture.getObject, SDL_BLENDMODE_MOD);
 
         this.texture = lightTexture;
         int width, height;
-        if(const err = texture.getSize(&width, &height)){
+        if (const err = texture.getSize(&width, &height))
+        {
             throw new Exception(err.toString);
         }
         this.width = width;
         this.height = height;
 
-        SDL_SetRenderTarget(graphics.renderer.getObject, texture.getObject);
+        texture.setRendererTarget;
         //TODO night color?
-        if(const err = graphics.renderer.setRenderDrawColor(60, 0, 100, 255)){
-            throw new Exception("Error setting render color to create light");
-        }
-        SDL_RenderFillRect(graphics.renderer.getObject, null);
+        graphics.setColor(RGBA(60, 0, 100, 255));
+        //SDL_RenderFillRect(graphics.renderer.getObject, null);
 
         foreach (light; lights)
         {
             light.drawImage;
         }
 
-        SDL_SetRenderTarget(graphics.renderer.getObject, null);
+        texture.resetRendererTarget;
     }
 
     void addLight(LightSpot light)

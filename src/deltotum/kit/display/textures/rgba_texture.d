@@ -37,8 +37,9 @@ class RgbaTexture : Texture
         {
             throw new Exception(blendErr.toString);
         }
-        graphics.renderer.setRendererTarget(texture.getObject);
+
+        texture.setRendererTarget;
         createTextureContent;
-        graphics.renderer.resetRendererTarget;
+        texture.resetRendererTarget;
     }
 }

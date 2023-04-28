@@ -97,7 +97,7 @@ class Texture : DisplayObject
     void drawTexture(Rect2d textureBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
             .none)
     {
-        if(const err = graphics.renderer.drawTexture(texture, textureBounds, destBounds, angle, flip)){
+        if(const err = texture.draw(textureBounds, destBounds, angle, flip)){
             //TODO logging
         }
     }
@@ -115,7 +115,7 @@ class Texture : DisplayObject
                 texture.opacity = opacity;
             }
             Rect2d destBounds = Rect2d(x, y, width, height);
-            return graphics.renderer.drawTexture(texture, textureBounds, destBounds, angle, flip);
+            return texture.draw(textureBounds, destBounds, angle, flip);
         }
     }
 

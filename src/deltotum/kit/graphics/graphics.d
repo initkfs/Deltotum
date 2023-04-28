@@ -8,7 +8,7 @@ import deltotum.math.vector2d : Vector2d;
 import math = deltotum.math;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.kit.graphics.themes.theme : Theme;
-import deltotum.kit.display.textures.texture: Texture;
+import deltotum.kit.display.textures.texture : Texture;
 
 import deltotum.kit.display.flip : Flip;
 import deltotum.math.shapes.rect2d : Rect2d;
@@ -17,8 +17,8 @@ import std.logger.core : Logger;
 import std.conv : to;
 
 //TODO remove
-import deltotum.sys.sdl.sdl_texture: SdlTexture;
-import deltotum.sys.sdl.sdl_surface: SdlSurface;
+import deltotum.sys.sdl.sdl_texture : SdlTexture;
+import deltotum.sys.sdl.sdl_surface : SdlSurface;
 
 /**
  * Authors: initkfs
@@ -27,10 +27,10 @@ class Graphics : LoggableUnit
 {
     Theme theme;
 
-    //protected
-    //{
+    protected
+    {
         SdlRenderer renderer;
-    //}
+    }
 
     //TODO ComTexture, ComSurface;
     //these factories are added for performance to avoid unnecessary wrapping in the object.
@@ -51,13 +51,15 @@ class Graphics : LoggableUnit
         this.theme = theme;
     }
 
-    SdlTexture newComTexture(){
+    SdlTexture newComTexture()
+    {
         assert(comTextureFactory);
         auto texture = comTextureFactory();
         return texture;
     }
 
-    SdlSurface newComSurface(){
+    SdlSurface newComSurface()
+    {
         assert(comSurfaceFactory);
         return new SdlSurface();
     }
@@ -66,6 +68,11 @@ class Graphics : LoggableUnit
     private int toInt(double value) pure @safe const nothrow
     {
         return cast(int) value;
+    }
+
+    void setColor(RGBA color)
+    {
+        adjustRender(color);
     }
 
     private void adjustRender(RGBA color)
@@ -399,5 +406,28 @@ class Graphics : LoggableUnit
             drawLine(vStart, vEnd, fillColor);
         }
         return true;
+    }
+
+    void draw(scope void delegate() onDraw)
+    {
+        import deltotum.kit.graphics.colors.rgba : RGBA;
+        //isClearingInCycle
+        const screenColor = RGBA.black;
+        if (const err = renderer.setRenderDrawColor(screenColor.r, screenColor.g, screenColor.b, screenColor
+                .alphaNorm))
+        {
+            //TODO logging in main loop?
+        }
+        else
+        {
+            if (const err = renderer.clear)
+            {
+                //TODO loggong in main loop?
+            }
+        }
+
+        onDraw();
+
+        renderer.present;
     }
 }
