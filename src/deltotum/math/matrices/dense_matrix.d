@@ -385,6 +385,11 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         return result;
     }
 
+    const(T*) ptr() const pure @safe
+    {
+        return matrix[0].ptr;
+    }
+
     ref T value(size_t rowIndex, size_t columnIndex) @safe
     {
         if (rowIndex >= RowDim)

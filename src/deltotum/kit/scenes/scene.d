@@ -60,17 +60,22 @@ class Scene : GraphicsComponent
         interact = new Interact(dialogManager);
     }
 
+    void draw()
+    {
+        foreach (obj; displayObjects)
+        {
+            obj.draw;
+        }
+    }
+
     void update(double delta)
     {
         worldTicks++;
 
-        graphics.draw(() {
-            foreach (obj; displayObjects)
-            {
-                obj.update(delta);
-                obj.draw;
-            }
-        });
+        foreach (obj; displayObjects)
+        {
+            obj.update(delta);
+        }
     }
 
     void destroy()

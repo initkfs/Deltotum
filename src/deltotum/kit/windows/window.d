@@ -307,9 +307,18 @@ class Window
         return screenIndex.to!int;
     }
 
-    void update(double delta)
+    bool update(double delta)
     {
-        scenes.currentScene.update(delta);
+        auto currScene = scenes.currentScene;
+        if (!currScene)
+        {
+            return false;
+        }
+
+        currScene.update(delta);
+        currScene.draw;
+
+        return true;
     }
 
     Window newChildWindow(dstring title = "New window", int width = 450, int height = 200, int x = -1, int y = -1, WindowFactory windowProvider = null)

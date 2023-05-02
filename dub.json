@@ -34,7 +34,8 @@
         "bindbc-sdl": "~>1.2.1",
         "bindbc-lua": "~>0.5.1",
         "bindbc-opengl": "~>1.0.0",
-        "bindbc-glfw": "~>1.0.2"
+        "bindbc-glfw": "~>1.0.2",
+        "bindbc-freeimage": "~>1.0.2"
     },
     "dflags": ["-dip1000", "-preview=in"],
     "libs-posix": [],
