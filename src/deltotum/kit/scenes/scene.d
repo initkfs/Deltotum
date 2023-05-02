@@ -62,10 +62,12 @@ class Scene : GraphicsComponent
 
     void draw()
     {
-        foreach (obj; displayObjects)
-        {
-            obj.draw;
-        }
+        graphics.draw(() {
+            foreach (obj; displayObjects)
+            {
+                obj.draw;
+            }
+        });
     }
 
     void update(double delta)
