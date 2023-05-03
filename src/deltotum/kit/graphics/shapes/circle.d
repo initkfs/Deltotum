@@ -10,9 +10,9 @@ class Circle : Shape
 {
     double radius = 0;
 
-    this(double radius, GraphicStyle style, double borderWidth = 1.0)
+    this(double radius, GraphicStyle style)
     {
-        super(radius * 2 + borderWidth, radius * 2 + borderWidth, style);
+        super(radius * 2, radius * 2, style);
         this.radius = radius;
     }
 

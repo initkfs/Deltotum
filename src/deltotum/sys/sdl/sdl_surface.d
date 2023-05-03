@@ -150,6 +150,16 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface
         return PlatformResult(zeroOrErrorCode);
     }
 
+    inout(void*) pixels() inout @nogc nothrow @safe
+    {
+        return ptr.pixels;
+    }
+
+    int pitch() inout @nogc nothrow @safe
+    {
+        return ptr.pitch;
+    }
+
     inout(SDL_PixelFormat*) getPixelFormat() inout @nogc nothrow @safe
     in (ptr !is null)
     {
@@ -163,7 +173,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface
     }
 
     int height() @nogc nothrow @safe
-    in(ptr !is null)
+    in (ptr !is null)
     {
         return ptr.h;
     }

@@ -209,6 +209,21 @@ struct RGBA
         return colorValue / RGBAData.maxColor;
     }
 
+    double rNorm() const pure @safe
+    {
+        return colorNorm(r);
+    }
+
+    double gNorm() const pure @safe
+    {
+        return colorNorm(g);
+    }
+
+    double bNorm() const pure @safe
+    {
+        return colorNorm(b);
+    }
+
     HSV toHSV() const @safe
     {
         const double newR = colorNorm(r);
@@ -243,7 +258,9 @@ struct RGBA
         else if (isClose(cmax, newB))
         {
             hue = fmod(hueStartAngle * ((newR - newG) / delta) + 240, HSV.HSVData.maxHue);
-        }else {
+        }
+        else
+        {
             //TODO exception?
         }
 

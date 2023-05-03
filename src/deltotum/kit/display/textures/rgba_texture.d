@@ -38,6 +38,7 @@ class RgbaTexture : Texture
             throw new Exception(blendErr.toString);
         }
 
+        //TODO move to TextureCanvas
         texture.setRendererTarget;
         createTextureContent;
         texture.resetRendererTarget;

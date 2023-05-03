@@ -20,16 +20,47 @@ import Loader = bindbc.loader;
 
 extern (C) @nogc nothrow
 {
-    alias c_cairo_create = cairo_t* function(cairo_surface_t* target);
+    alias c_cairo_create = cairo_t * function(cairo_surface_t * target);
 
-    alias c_cairo_image_surface_create = cairo_surface_t* function(cairo_format_t format, int width, int height);
+    alias c_cairo_image_surface_create = cairo_surface_t * function(cairo_format_t format, int width, int height);
 
-    alias c_cairo_image_surface_create_for_data = cairo_surface_t* function(
-        ubyte* data, cairo_format_t format, int width, int height, int stride);
+    alias c_cairo_image_surface_create_for_data = cairo_surface_t * function(
+        ubyte * data, cairo_format_t format, int width, int height, int stride);
 
-    alias c_cairo_surface_destroy = void function(cairo_surface_t* surface);
+    alias c_cairo_surface_destroy = void function(cairo_surface_t * surface);
+    alias c_cairo_destroy = void function(cairo_t * cr);
 
-    alias c_cairo_destroy = void function(cairo_t* cr);
+    alias c_cairo_set_line_width = void function(cairo_t * cr, double width);
+    alias c_cairo_set_source_rgb = void function(cairo_t * cr, double red, double green, double blue);
+    alias c_cairo_set_source_rgba = void function(cairo_t * cr, double red, double green, double blue, double alpha);
+
+    alias c_cairo_stroke = void function(cairo_t * cr);
+    alias c_cairo_stroke_preserve = void function(cairo_t * cr);
+
+    alias c_cairo_fill = void function(cairo_t * cr);
+    alias c_cairo_fill_preserve = void function(cairo_t * cr);
+
+    alias c_cairo_translate = void function(cairo_t * cr, double tx, double ty);
+    alias c_cairo_scale = void function(cairo_t * cr, double sx, double sy);
+
+    alias c_cairo_arc = void function(
+        cairo_t * cr,
+        double xc,
+        double yc,
+        double radius,
+        double angle1,
+        double angle2);
+    alias c_cairo_arc_negative = void function(
+        cairo_t * cr,
+        double xc,
+        double yc,
+        double radius,
+        double angle1,
+        double angle2);
+
+    alias c_cairo_rectangle  = void function(cairo_t *cr,
+		 double x, double y,
+		 double width, double height);
 }
 
 __gshared
@@ -39,6 +70,25 @@ __gshared
     c_cairo_image_surface_create_for_data cairo_image_surface_create_for_data;
     c_cairo_surface_destroy cairo_surface_destroy;
     c_cairo_destroy cairo_destroy;
+
+    c_cairo_set_line_width cairo_set_line_width;
+    c_cairo_set_source_rgb cairo_set_source_rgb;
+    c_cairo_set_source_rgba cairo_set_source_rgba;
+
+    c_cairo_stroke cairo_stroke;
+    c_cairo_stroke_preserve cairo_stroke_preserve;
+
+    c_cairo_fill cairo_fill;
+    c_cairo_fill_preserve cairo_fill_preserve;
+
+    c_cairo_translate cairo_translate;
+    c_cairo_scale cairo_scale;
+
+    c_cairo_arc cairo_arc;
+    c_cairo_arc_negative cairo_arc_negative;
+
+    c_cairo_rectangle cairo_rectangle;
+
 }
 
 private
@@ -119,4 +169,22 @@ private void bindSymbols() @nogc nothrow
     Loader.bindSymbol(lib, cast(void**)&cairo_image_surface_create_for_data, "cairo_image_surface_create_for_data");
     Loader.bindSymbol(lib, cast(void**)&cairo_surface_destroy, "cairo_surface_destroy");
     Loader.bindSymbol(lib, cast(void**)&cairo_destroy, "cairo_destroy");
+
+    Loader.bindSymbol(lib, cast(void**)&cairo_set_line_width, "cairo_set_line_width");
+    Loader.bindSymbol(lib, cast(void**)&cairo_set_source_rgb, "cairo_set_source_rgb");
+     Loader.bindSymbol(lib, cast(void**)&cairo_set_source_rgba, "cairo_set_source_rgba");
+
+    Loader.bindSymbol(lib, cast(void**)&cairo_stroke, "cairo_stroke");
+    Loader.bindSymbol(lib, cast(void**)&cairo_stroke_preserve, "cairo_stroke_preserve");
+
+    Loader.bindSymbol(lib, cast(void**)&cairo_fill, "cairo_fill");
+    Loader.bindSymbol(lib, cast(void**)&cairo_fill_preserve, "cairo_fill_preserve");
+
+    Loader.bindSymbol(lib, cast(void**)&cairo_translate, "cairo_translate");
+    Loader.bindSymbol(lib, cast(void**)&cairo_scale, "cairo_scale");
+
+    Loader.bindSymbol(lib, cast(void**)&cairo_arc, "cairo_arc");
+    Loader.bindSymbol(lib, cast(void**)&cairo_arc_negative, "cairo_arc_negative");
+
+     Loader.bindSymbol(lib, cast(void**)&cairo_rectangle, "cairo_rectangle");
 }

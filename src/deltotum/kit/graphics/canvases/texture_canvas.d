@@ -1,4 +1,4 @@
-module deltotum.kit.graphics.canvases.canvas;
+module deltotum.kit.graphics.canvases.texture_canvas;
 
 import deltotum.kit.display.textures.rgba_texture : RgbaTexture;
 import deltotum.kit.graphics.colors.rgba: RGBA;
@@ -6,7 +6,7 @@ import deltotum.kit.graphics.colors.rgba: RGBA;
 /**
  * Authors: initkfs
  */
-class Canvas : RgbaTexture
+class TextureCanvas : RgbaTexture
 {
     this(double width, double height)
     {

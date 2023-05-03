@@ -19,9 +19,9 @@ class CreationShapes : DisplayObjectFactory!Shape
         return null;
     }
 
-    Circle circle(double radius, GraphicStyle style, double borderWidth = 1.0)
+    Circle circle(double radius, GraphicStyle style)
     {
-        auto shape = new Circle(radius, style, borderWidth);
+        auto shape = new Circle(radius, style);
         buildCreate(shape);
         return shape;
     }

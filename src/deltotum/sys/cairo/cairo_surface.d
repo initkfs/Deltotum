@@ -9,8 +9,7 @@ import deltotum.sys.cairo.libs;
 class CairoSurface : CairoObjectWrapper!cairo_surface_t
 {
 
-    this(ubyte* data, int width, int height, int stride, cairo_format_t format = cairo_format_t
-            .CAIRO_FORMAT_RGB24)
+    this(ubyte* data, cairo_format_t format, int width, int height, int stride)
     {
         ptr = cairo_image_surface_create_for_data(data, format, width, height, stride);
         if (!ptr)
@@ -19,8 +18,10 @@ class CairoSurface : CairoObjectWrapper!cairo_surface_t
         }
     }
 
-    override bool destroyPtr(){
-        if(ptr){
+    override bool destroyPtr()
+    {
+        if (ptr)
+        {
             cairo_surface_destroy(ptr);
             return true;
         }
