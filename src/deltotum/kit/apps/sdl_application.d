@@ -11,8 +11,6 @@ import deltotum.kit.apps.graphic_application : GraphicApplication;
 import deltotum.kit.apps.components.graphics_component : GraphicsComponent;
 import deltotum.kit.events.event_manager : EventManager;
 import deltotum.sys.sdl.events.sdl_event_processor : SdlEventProcessor;
-import deltotum.kit.assets.asset : Asset;
-import deltotum.kit.assets.fonts.font : Font;
 import deltotum.kit.scenes.scene_manager : SceneManager;
 import deltotum.media.audio.audio : Audio;
 import deltotum.kit.graphics.graphics : Graphics;
@@ -64,7 +62,6 @@ class SdlApplication : GraphicApplication
         SdlJoystick joystick;
 
         Audio _audio;
-        Asset _asset;
         Input _input;
         Screen _screen;
         Extension _ext;
@@ -124,6 +121,27 @@ class SdlApplication : GraphicApplication
         auto clipboard = new Clipboard(sdlClipboard);
         _input = new Input(clipboard);
         _audio = new Audio(audioMixLib);
+
+        //TODO unload
+        import CairoLib = deltotum.sys.cairo.libs;
+
+        auto cairoResult = CairoLib.load;
+        if (cairoResult == CairoLib.CairoSupport.noLibrary)
+        {
+            throw new Exception("Cairo library loading error");
+        }
+        else if (cairoResult == CairoLib.CairoSupport.badLibrary)
+        {
+            import std.string : fromStringz;
+            import std.format : format;
+
+            string[] errs;
+            foreach (err; CairoLib.errors)
+            {
+                errs ~= format("%s: %s", err.error.fromStringz.idup, err.message.fromStringz.idup);
+            }
+            throw new Exception(format("Cairo bad library: %s", errs));
+        }
 
         _ext = createExtension(uservices.logger, uservices.config, uservices.context);
 
@@ -269,14 +287,6 @@ class SdlApplication : GraphicApplication
         import std.file : getcwd, exists, isDir;
         import std.path : buildPath, dirName;
 
-        immutable assetsDirPath = "data/assets";
-        immutable assetsDir = buildPath(getcwd, assetsDirPath);
-        _asset = new Asset(uservices.logger, assetsDir);
-
-        //TODO from config 
-        Font defaultFont = _asset.font("fonts/NotoSans-Bold.ttf", 14);
-        _asset.defaultFont = defaultFont;
-
         eventManager.startEvents;
 
         return ApplicationExit(false);
@@ -358,7 +368,7 @@ class SdlApplication : GraphicApplication
 
     Window newWindow(
         dstring title,
-        int width ,
+        int width,
         int height,
         int x,
         int y,
@@ -444,11 +454,6 @@ class SdlApplication : GraphicApplication
 
         windowManager.iterateWindows((win) { win.destroy; return true; });
 
-        if (_asset)
-        {
-            _asset.destroy;
-        }
-
         //TODO auto destroy all services
         _audio.destroy;
 
@@ -474,7 +479,13 @@ class SdlApplication : GraphicApplication
 
         if (!mustBeWindow.isNull)
         {
-            mustBeWindow.get.scenes.currentScene.timeEventProcessingMs = 0;
+            auto currWindow = mustBeWindow.get;
+            //FIXME stop loop after destroy
+            if (!currWindow.isDestroyed)
+            {
+                mustBeWindow.get.scenes.currentScene.timeEventProcessingMs = 0;
+            }
+
         }
 
         while (isProcessEvents && SDL_PollEvent(&event))
@@ -485,7 +496,12 @@ class SdlApplication : GraphicApplication
 
             if (!mustBeWindow.isNull)
             {
-                mustBeWindow.get.scenes.currentScene.timeEventProcessingMs = endEvent - startEvent;
+                auto currWindow = mustBeWindow.get;
+                if (!currWindow.isDestroyed)
+                {
+                    currWindow.scenes.currentScene.timeEventProcessingMs = endEvent - startEvent;
+                }
+
             }
         }
     }

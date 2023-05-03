@@ -25,6 +25,8 @@ class Window
     Window delegate(dstring, int, int, int, int, WindowFactory) childWindowProvider;
     WindowManager windowManager;
 
+    void delegate() onAfterDestroy;
+
     SceneManager scenes;
 
     //TODO remove
@@ -32,6 +34,7 @@ class Window
 
     bool isFocus;
     bool isShowing;
+    bool isDestroyed;
 
     protected
     {
@@ -355,11 +358,15 @@ class Window
 
         //TODO close child windows
         renderer.destroy;
-        if (scenes !is null)
-        {
-            scenes.destroy;
-        }
+
         //after window
         nativeWindow.destroy;
+        isDestroyed = true;
+
+        if(onAfterDestroy){
+            onAfterDestroy();
+        }
+
+        onAfterDestroy = null;
     }
 }

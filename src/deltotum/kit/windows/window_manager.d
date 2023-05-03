@@ -86,9 +86,9 @@ class WindowManager
         return windows.length;
     }
 
-    void closeWindow(long id)
+    Window[] closeWindow(long id)
     {
-        scope Window[] windowsForClose;
+        Window[] windowsForClose;
         windowById(id, (win) { windowsForClose ~= win; return true; });
 
         if (windowsForClose.length > 0)
@@ -101,5 +101,7 @@ class WindowManager
                 }
             }
         }
+
+        return windowsForClose;
     }
 }

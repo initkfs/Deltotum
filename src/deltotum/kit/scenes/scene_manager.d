@@ -41,4 +41,11 @@ class SceneManager : GraphicsComponent
         }
         currentScene = scene;
     }
+
+    void destroy(){
+        //super.destroy;
+        if(_currentScene){
+            _currentScene.destroy;
+        }
+    }
 }

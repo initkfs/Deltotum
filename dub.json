@@ -49,6 +49,7 @@
         "GL_ARB_base_instance",
         "GL_ARB_compressed_texture_pixel_storage",
         "GL_AllowDeprecated",
-        "GLFW_33"
+        "GLFW_33",
+        "Cairo116"
     ]
 }

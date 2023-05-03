@@ -55,10 +55,12 @@ class Asset : LoggableUnit
 
     void destroy()
     {
-        if(defaultFont){
+        if (defaultFont)
+        {
             defaultFont.destroy;
         }
-        if(defaultBitmapFont){
+        if (defaultBitmapFont)
+        {
             defaultBitmapFont.destroy;
         }
     }

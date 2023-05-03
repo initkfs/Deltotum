@@ -248,5 +248,4 @@ class SceneView : VBox
     override void update(double delta){
         super.update(delta);
     }
-
 }

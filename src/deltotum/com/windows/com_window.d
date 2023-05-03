@@ -1,11 +1,12 @@
 module deltotum.com.windows.com_window;
 
 import deltotum.com.results.platform_result : PlatformResult;
+import deltotum.com.objects.destroyable: Destroyable;
 
 /**
  * Authors: initkfs
  */
-interface ComWindow
+interface ComWindow : Destroyable
 {
 
     PlatformResult initialize() @nogc nothrow;

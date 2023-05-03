@@ -1,7 +1,7 @@
 module deltotum.kit.graphics.shapes.shape;
 
-import deltotum.kit.graphics.draw.canvas: Canvas;
-import deltotum.kit.graphics.styles.graphic_style: GraphicStyle;
+import deltotum.kit.graphics.draw.canvas : Canvas;
+import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 
 /**
  * Authors: initkfs

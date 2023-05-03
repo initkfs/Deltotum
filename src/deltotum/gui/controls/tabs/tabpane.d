@@ -28,9 +28,8 @@ class TabPane : Container
     {
         this.header = header ? header : new TabHeader;
         content = new StackBox;
-        content.backgroundFactory = null;
+        content.isBackground = false;
         layout = new VerticalLayout(2);
-        backgroundFactory = null;
     }
 
     override void initialize()

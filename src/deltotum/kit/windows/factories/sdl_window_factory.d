@@ -110,15 +110,15 @@ class SdlWindowFactory : WindowFactory
         import deltotum.kit.graphics.graphics : Graphics;
 
         graphics = new Graphics(logger, sdlRenderer, theme);
-        graphics.comTextureFactory = ()
-        {
+        graphics.comTextureFactory = () {
             import deltotum.sys.sdl.sdl_texture : SdlTexture;
 
             return new SdlTexture(sdlRenderer);
         };
 
-        graphics.comSurfaceFactory = (){
-            import deltotum.sys.sdl.sdl_surface: SdlSurface;
+        graphics.comSurfaceFactory = () {
+            import deltotum.sys.sdl.sdl_surface : SdlSurface;
+
             return new SdlSurface();
         };
 
@@ -152,6 +152,11 @@ class SdlWindowFactory : WindowFactory
         auto sceneManager = !sceneManagerProvider ? new SceneManager : sceneManagerProvider();
         build(sceneManager);
         window.scenes = sceneManager;
+
+        window.onAfterDestroy = () {
+            sceneManager.asset.destroy;
+            sceneManager.destroy;
+        };
 
         return newWindow;
     }

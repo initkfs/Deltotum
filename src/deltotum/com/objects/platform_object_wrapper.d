@@ -60,7 +60,7 @@ mixin template PlatformObjectWrapper(T)
         isDestroyed = false;
     }
 
-    final bool destroy() @nogc nothrow
+    bool destroy() @nogc nothrow
     {
         if (ptr)
         {
