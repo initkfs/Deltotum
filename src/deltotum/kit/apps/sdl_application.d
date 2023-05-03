@@ -67,6 +67,7 @@ class SdlApplication : GraphicApplication
         Extension _ext;
 
         bool isProcessEvents = true;
+        bool isVectorGraphics;
     }
 
     EventManager eventManager;
@@ -126,21 +127,36 @@ class SdlApplication : GraphicApplication
         import CairoLib = deltotum.sys.cairo.libs;
 
         auto cairoResult = CairoLib.load;
-        if (cairoResult == CairoLib.CairoSupport.noLibrary)
-        {
-            throw new Exception("Cairo library loading error");
-        }
-        else if (cairoResult == CairoLib.CairoSupport.badLibrary)
-        {
-            import std.string : fromStringz;
-            import std.format : format;
 
-            string[] errs;
-            foreach (err; CairoLib.errors)
+        if (cairoResult == CairoLib.luaSupport)
+        {
+            isVectorGraphics = true;
+        }
+        else
+        {
+            isVectorGraphics = false;
+
+            string errorInfo = "Cairo error.";
+            switch (cairoResult) with (CairoLib.CairoSupport)
             {
-                errs ~= format("%s: %s", err.error.fromStringz.idup, err.message.fromStringz.idup);
+            case noLibrary:
+                errorInfo ~= " Cairo library loading error";
+                break;
+            case badLibrary:
+                import std.string : fromStringz;
+                import std.format : format;
+
+                foreach (err; CairoLib.errors)
+                {
+                    errorInfo ~= format(" Cairo bad library. %s: %s\n", err.error.fromStringz.idup, err
+                            .message.fromStringz.idup);
+                }
+                break;
+            default:
+                break;
             }
-            throw new Exception(format("Cairo bad library: %s", errs));
+
+            uservices.logger.error(errorInfo);
         }
 
         _ext = createExtension(uservices.logger, uservices.config, uservices.context);
@@ -391,6 +407,7 @@ class SdlApplication : GraphicApplication
         winFactory.input = _input;
         winFactory.screen = _screen;
         winFactory.ext = _ext;
+        winFactory.isVectorGraphics = isVectorGraphics;
         build(winFactory);
 
         auto window = winFactory.createWindow();

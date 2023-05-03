@@ -17,6 +17,8 @@ import deltotum.kit.extensions.extension : Extension;
  */
 class GraphicsComponent : UniComponent
 {
+    bool isVectorGraphics;
+
     private
     {
         @Service Audio _audio;
@@ -34,6 +36,7 @@ class GraphicsComponent : UniComponent
         if (auto graphicComponent = cast(GraphicsComponent) uniComponent)
         {
             buildFromParent!GraphicsComponent(graphicComponent, this);
+            graphicComponent.isVectorGraphics = isVectorGraphics;
             return;
         }
         buildFromParent(uniComponent, this);
