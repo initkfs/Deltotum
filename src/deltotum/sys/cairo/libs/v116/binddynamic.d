@@ -1,5 +1,7 @@
 module deltotum.sys.cairo.libs.v116.binddynamic;
-
+/**
+ * Authors: initkfs
+ */
 version (BindCairoStatic)
 {
     static assert(0, "Cairo static linking not supported yet.");
@@ -18,14 +20,25 @@ import Loader = bindbc.loader;
 
 extern (C) @nogc nothrow
 {
+    alias c_cairo_create = cairo_t* function(cairo_surface_t* target);
+
     alias c_cairo_image_surface_create = cairo_surface_t* function(cairo_format_t format, int width, int height);
-    alias c_cairo_create = cairo_t* function(cairo_surface_t* target); 
+
+    alias c_cairo_image_surface_create_for_data = cairo_surface_t* function(
+        ubyte* data, cairo_format_t format, int width, int height, int stride);
+
+    alias c_cairo_surface_destroy = void function(cairo_surface_t* surface);
+
+    alias c_cairo_destroy = void function(cairo_t* cr);
 }
 
 __gshared
 {
     c_cairo_image_surface_create cairo_image_surface_create;
     c_cairo_create cairo_create;
+    c_cairo_image_surface_create_for_data cairo_image_surface_create_for_data;
+    c_cairo_surface_destroy cairo_surface_destroy;
+    c_cairo_destroy cairo_destroy;
 }
 
 private
@@ -103,4 +116,7 @@ private void bindSymbols() @nogc nothrow
 {
     Loader.bindSymbol(lib, cast(void**)&cairo_image_surface_create, "cairo_image_surface_create");
     Loader.bindSymbol(lib, cast(void**)&cairo_create, "cairo_create");
+    Loader.bindSymbol(lib, cast(void**)&cairo_image_surface_create_for_data, "cairo_image_surface_create_for_data");
+    Loader.bindSymbol(lib, cast(void**)&cairo_surface_destroy, "cairo_surface_destroy");
+    Loader.bindSymbol(lib, cast(void**)&cairo_destroy, "cairo_destroy");
 }

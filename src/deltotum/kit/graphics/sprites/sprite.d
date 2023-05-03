@@ -1,6 +1,6 @@
 module deltotum.kit.graphics.sprites.sprite;
 
-import deltotum.kit.graphics.draw.canvas : Canvas;
+import deltotum.kit.graphics.canvases.canvas : Canvas;
 
 /**
  * Authors: initkfs

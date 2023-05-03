@@ -1,5 +1,7 @@
 module deltotum.sys.cairo.libs.v116;
-
+/**
+ * Authors: initkfs
+ */
 version (Cairo116)
 {
     public import deltotum.sys.cairo.libs.v116.types;
