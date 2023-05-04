@@ -1,7 +1,7 @@
 module deltotum.kit.scenes.scene;
 
 import deltotum.kit.apps.components.graphics_component : GraphicsComponent;
-import deltotum.kit.display.display_object : DisplayObject;
+import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.kit.interacts.interact : Interact;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.kit.factories.creation : Creation;
@@ -26,7 +26,7 @@ class Scene : GraphicsComponent
 
     protected
     {
-        DisplayObject[] displayObjects;
+        Sprite[] displayObjects;
     }
 
     private
@@ -89,7 +89,7 @@ class Scene : GraphicsComponent
         displayObjects = [];
     }
 
-    void addCreated(DisplayObject obj)
+    void addCreated(Sprite obj)
     {
         build(obj);
 
@@ -101,7 +101,7 @@ class Scene : GraphicsComponent
         add(obj);
     }
 
-    void add(DisplayObject object)
+    void add(Sprite object)
     {
         //TODO check if exists
         displayObjects ~= object;
@@ -115,7 +115,7 @@ class Scene : GraphicsComponent
         }
     }
 
-    DisplayObject[] getActiveObjects()
+    Sprite[] getActiveObjects()
     {
         return displayObjects;
     }

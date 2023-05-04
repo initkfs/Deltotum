@@ -2,7 +2,7 @@ module deltotum.phys.collision.newtonian_collision_resolver;
 
 //TODO replace display object woth physical body
 //import deltotum.phys.physical_body: PhysicalBody;
-import deltotum.kit.display.display_object : DisplayObject;
+import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.math.vector2d : Vector2d;
 
 import std.algorithm.comparison : min;
@@ -15,7 +15,7 @@ import std.stdio;
 class NewtonianCollisionResolver
 {
 
-    void resolve(DisplayObject a, DisplayObject b) const @nogc nothrow @safe
+    void resolve(Sprite a, Sprite b) const @nogc nothrow @safe
     {
         const Vector2d motionNormal = a.velocity.normalize;
         const Vector2d relativeVelocity = b.velocity.subtract(a.velocity);

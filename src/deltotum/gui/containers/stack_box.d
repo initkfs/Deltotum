@@ -1,7 +1,7 @@
 module deltotum.gui.containers.stack_box;
 
 import deltotum.gui.containers.container : Container;
-import deltotum.kit.display.layouts.center_layout: CenterLayout;
+import deltotum.kit.sprites.layouts.center_layout: CenterLayout;
 
 /**
  * Authors: initkfs

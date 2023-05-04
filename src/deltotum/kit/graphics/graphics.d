@@ -7,10 +7,10 @@ import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.math.vector2d : Vector2d;
 import math = deltotum.math;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
-import deltotum.kit.graphics.themes.theme : Theme;
-import deltotum.kit.display.textures.texture : Texture;
+import deltotum.kit.gui.themes.theme : Theme;
+import deltotum.kit.sprites.textures.texture : Texture;
 
-import deltotum.kit.display.flip : Flip;
+import deltotum.kit.sprites.flip : Flip;
 import deltotum.math.shapes.rect2d : Rect2d;
 
 import std.logger.core : Logger;
@@ -25,6 +25,7 @@ import deltotum.sys.sdl.sdl_surface : SdlSurface;
  */
 class Graphics : LoggableUnit
 {
+    //TODO move to gui module
     Theme theme;
 
     protected

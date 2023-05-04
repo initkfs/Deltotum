@@ -2,7 +2,7 @@ module deltotum.phys.movement.complex_movement_controller;
 
 import deltotum.phys.movement.movement_controller : MovementController;
 
-import deltotum.kit.display.display_object : DisplayObject;
+import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.phys.direction : Direction;
 
 /**
@@ -26,11 +26,11 @@ class ComplexMovementController : MovementController
 
     private
     {
-        DisplayObject targetObject;
+        Sprite targetObject;
         bool isMovement;
     }
 
-    this(DisplayObject obj)
+    this(Sprite obj)
     {
         targetObject = obj;
     }

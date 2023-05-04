@@ -3,7 +3,7 @@ module deltotum.gui.controls.texts.text_area;
 import deltotum.gui.controls.texts.text_view : TextView;
 import deltotum.gui.controls.scrollbars.vscrollbar : VScrollbar;
 import deltotum.gui.controls.control : Control;
-import deltotum.kit.display.layouts.horizontal_layout : HorizontalLayout;
+import deltotum.kit.sprites.layouts.horizontal_layout : HorizontalLayout;
 
 import std.stdio;
 

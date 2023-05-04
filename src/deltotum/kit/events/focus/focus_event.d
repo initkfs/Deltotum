@@ -1,4 +1,4 @@
-module deltotum.kit.display.events.focus.focus_event;
+module deltotum.kit.sprites.events.focus.focus_event;
 
 import deltotum.core.events.event_base : EventBase;
 import deltotum.core.events.event_type : EventType;

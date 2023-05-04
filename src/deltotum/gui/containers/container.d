@@ -1,7 +1,7 @@
 module deltotum.gui.containers.container;
 
 import deltotum.gui.controls.control : Control;
-import deltotum.kit.display.display_object : DisplayObject;
+import deltotum.kit.sprites.sprite : Sprite;
 
 /**
  * Authors: initkfs

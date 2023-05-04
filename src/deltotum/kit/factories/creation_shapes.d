@@ -1,6 +1,6 @@
 module deltotum.kit.factories.creation_shapes;
 
-import deltotum.kit.display.factories.display_object_factory : DisplayObjectFactory;
+import deltotum.kit.sprites.factories.display_object_factory : DisplayObjectFactory;
 
 import deltotum.kit.graphics.shapes.shape : Shape;
 import deltotum.kit.graphics.shapes.circle : Circle;

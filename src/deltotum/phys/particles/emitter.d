@@ -1,6 +1,6 @@
 module deltotum.phys.particles.emitter;
 
-import deltotum.kit.display.display_object : DisplayObject;
+import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.phys.particles.particle : Particle;
 import deltotum.phys.particles.config.emitter_config : EmitterConfig;
 import deltotum.core.configs.attributes.configurable : Configurable;
@@ -12,7 +12,7 @@ import std.stdio;
 /**
  * Authors: initkfs
  */
-class Emitter : DisplayObject
+class Emitter : Sprite
 {
     Particle delegate() particleFactory;
     bool delegate(Particle) onParticleUpdate;

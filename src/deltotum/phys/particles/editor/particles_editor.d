@@ -1,6 +1,6 @@
 module deltotum.phys.particles.editor.particles_editor;
 
-import deltotum.kit.display.display_object : DisplayObject;
+import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.phys.particles.emitter : Emitter;
 
 import deltotum.phys.particles.particle : Particle;
@@ -13,7 +13,7 @@ import deltotum.gui.controls.texts.text : Text;
 import deltotum.gui.controls.scrollbars.hscrollbar : HScrollbar;
 import deltotum.gui.containers.container : Container;
 import deltotum.gui.controls.buttons.button : Button;
-import deltotum.kit.display.layouts.horizontal_layout : HorizontalLayout;
+import deltotum.kit.sprites.layouts.horizontal_layout : HorizontalLayout;
 
 /**
  * Authors: initkfs

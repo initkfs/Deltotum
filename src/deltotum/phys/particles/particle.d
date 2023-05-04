@@ -1,6 +1,6 @@
 module deltotum.phys.particles.particle;
 
-import deltotum.kit.display.display_object : DisplayObject;
+import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.kit.graphics.shapes.circle : Circle;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.math.vector2d : Vector2d;
@@ -8,7 +8,7 @@ import deltotum.math.vector2d : Vector2d;
 /**
  * Authors: initkfs
  */
-class Particle : DisplayObject
+class Particle : Sprite
 {
     bool isAlive;
     int lifetime;
@@ -18,7 +18,7 @@ class Particle : DisplayObject
         super();
     }
 
-    this(DisplayObject[] newChildren)
+    this(Sprite[] newChildren)
     {
         super();
         foreach (child; newChildren)

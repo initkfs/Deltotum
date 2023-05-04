@@ -5,14 +5,14 @@ import deltotum.kit.graphics.shapes.shape : Shape;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.kit.graphics.shapes.rectangle : Rectangle;
 import deltotum.gui.events.action_event : ActionEvent;
-import deltotum.kit.display.animation.object.value_transition : ValueTransition;
-import deltotum.kit.display.animation.object.property.opacity_transition : OpacityTransition;
+import deltotum.kit.sprites.animations.object.value_transition : ValueTransition;
+import deltotum.kit.sprites.animations.object.property.opacity_transition : OpacityTransition;
 import deltotum.gui.controls.texts.text;
-import deltotum.kit.display.layouts.horizontal_layout : HorizontalLayout;
-import deltotum.kit.display.textures.texture : Texture;
-import deltotum.kit.display.display_object : DisplayObject;
+import deltotum.kit.sprites.layouts.horizontal_layout : HorizontalLayout;
+import deltotum.kit.sprites.textures.texture : Texture;
+import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.kit.graphics.colors.rgba : RGBA;
-import deltotum.kit.display.animation.object.display_object_transition : DisplayObjectTransition;
+import deltotum.kit.sprites.animations.object.display_object_transition : DisplayObjectTransition;
 import deltotum.math.vector2d : Vector2d;
 
 /**
@@ -47,9 +47,9 @@ class ToggleSwitch : Control
     DisplayObjectTransition!Vector2d delegate() clickSwitchOffAnimationFactory;
 
     //TODO factories, settings
-    DisplayObject effectHandleSwitchOn;
+    Sprite effectHandleSwitchOn;
     Texture delegate(double, double) effectHandleSwitchOnFactory;
-    DisplayObject effectBackgroundSwitchOn;
+    Sprite effectBackgroundSwitchOn;
     Texture delegate() effectBackgroundSwitchOnFactory;
 
     this(double width = 60, double height = 25)
@@ -57,7 +57,7 @@ class ToggleSwitch : Control
         this.width = width;
         this.height = height;
 
-        import deltotum.kit.display.layouts.center_layout: CenterLayout;
+        import deltotum.kit.sprites.layouts.center_layout: CenterLayout;
 
         //FIXME center + isLManaged = false + align y not working
         this.layout = new HorizontalLayout;
@@ -108,8 +108,8 @@ class ToggleSwitch : Control
 
         clickSwitchOnAnimationFactory = () {
             import deltotum.math.vector2d : Vector2d;
-            import deltotum.kit.display.animation.object.motion.linear_motion_transition : LinearMotionTransition;
-            import deltotum.kit.display.animation.interp.uni_interpolator : UniInterpolator;
+            import deltotum.kit.sprites.animations.object.motion.linear_motion_transition : LinearMotionTransition;
+            import deltotum.kit.sprites.animations.interp.uni_interpolator : UniInterpolator;
 
             auto uniInterp = new UniInterpolator;
             uniInterp.interpolateMethod = &uniInterp.quadInOut;
@@ -122,8 +122,8 @@ class ToggleSwitch : Control
 
         clickSwitchOffAnimationFactory = () {
             import deltotum.math.vector2d : Vector2d;
-            import deltotum.kit.display.animation.object.motion.linear_motion_transition : LinearMotionTransition;
-            import deltotum.kit.display.animation.interp.uni_interpolator : UniInterpolator;
+            import deltotum.kit.sprites.animations.object.motion.linear_motion_transition : LinearMotionTransition;
+            import deltotum.kit.sprites.animations.interp.uni_interpolator : UniInterpolator;
 
             auto start = Vector2d(bounds.right - switchHandle.width, y);
             auto uniInterp = new UniInterpolator;
@@ -143,7 +143,7 @@ class ToggleSwitch : Control
         {
             effectBackgroundSwitchOn = effectBackgroundSwitchOnFactory();
             //effectBackgroundSwitchOn.isLayoutManaged = false;
-            import deltotum.kit.display.alignment : Alignment;
+            import deltotum.kit.sprites.alignment : Alignment;
             effectBackgroundSwitchOn.alignment = Alignment.y;
             effectBackgroundSwitchOn.isVisible = false;
             addCreated(effectBackgroundSwitchOn);
@@ -154,7 +154,7 @@ class ToggleSwitch : Control
             switchHandle = switchHandleFactory();
             switchHandle.isLayoutManaged = false;
 
-            import deltotum.kit.display.layouts.center_layout : CenterLayout;
+            import deltotum.kit.sprites.layouts.center_layout : CenterLayout;
 
             switchHandle.layout = new CenterLayout;
             addCreated(switchHandle);

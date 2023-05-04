@@ -2,9 +2,9 @@ module deltotum.gui.controls.tabs.tab_header;
 
 import deltotum.gui.containers.container : Container;
 import deltotum.gui.controls.texts.text : Text;
-import deltotum.kit.display.layouts.horizontal_layout : HorizontalLayout;
+import deltotum.kit.sprites.layouts.horizontal_layout : HorizontalLayout;
 import deltotum.gui.controls.tabs.tab : Tab;
-import deltotum.kit.display.display_object : DisplayObject;
+import deltotum.kit.sprites.sprite : Sprite;
 
 /**
  * Authors: initkfs
@@ -19,7 +19,7 @@ class TabHeader : Container
         this.layout = new HorizontalLayout(tabSpacing);
     }
 
-    override void add(DisplayObject obj, long index = -1)
+    override void add(Sprite obj, long index = -1)
     {
         super.add(obj, index);
         if (auto tab = cast(Tab) obj)

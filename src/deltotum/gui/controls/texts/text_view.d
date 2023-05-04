@@ -4,7 +4,7 @@ import deltotum.gui.controls.control : Control;
 import deltotum.gui.fonts.bitmap.bitmap_font : BitmapFont;
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.math.vector2d : Vector2d;
-import deltotum.kit.display.flip : Flip;
+import deltotum.kit.sprites.flip : Flip;
 import deltotum.gui.fonts.glyphs.glyph : Glyph;
 import deltotum.gui.controls.texts.text : Text;
 

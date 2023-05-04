@@ -1,6 +1,6 @@
 module deltotum.gui.controls.tabs.tabpane;
 
-import deltotum.kit.display.display_object : DisplayObject;
+import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.gui.containers.container : Container;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.gui.containers.hbox : HBox;
@@ -8,7 +8,7 @@ import deltotum.gui.containers.vbox : VBox;
 import deltotum.gui.containers.stack_box : StackBox;
 import deltotum.gui.controls.tabs.tab : Tab;
 import deltotum.gui.controls.tabs.tab_header : TabHeader;
-import deltotum.kit.display.layouts.vertical_layout : VerticalLayout;
+import deltotum.kit.sprites.layouts.vertical_layout : VerticalLayout;
 
 /**
  * Authors: initkfs
@@ -58,7 +58,7 @@ class TabPane : Container
         }
     }
 
-    void createTabContent(Tab tab, DisplayObject obj)
+    void createTabContent(Tab tab, Sprite obj)
     {
         if (!tab.isBuilt)
         {

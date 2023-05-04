@@ -1,8 +1,8 @@
 module deltotum.gui.containers.hbox;
 
 import deltotum.gui.containers.container : Container;
-import deltotum.kit.display.layouts.horizontal_layout : HorizontalLayout;
-import deltotum.kit.display.display_object : DisplayObject;
+import deltotum.kit.sprites.layouts.horizontal_layout : HorizontalLayout;
+import deltotum.kit.sprites.sprite : Sprite;
 
 /**
  * Authors: initkfs

@@ -1,17 +1,17 @@
 module deltotum.phys.scrolling.scroller;
 
-import deltotum.kit.display.display_object : DisplayObject;
+import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.phys.direction : Direction;
 
 /**
  * Authors: initkfs
  */
-class Scroller : DisplayObject
+class Scroller : Sprite
 {
     double speed = 0;
     Direction direction = Direction.none;
-    DisplayObject _current;
-    DisplayObject _next;
+    Sprite _current;
+    Sprite _next;
     bool isScroll;
 
     this(){
@@ -82,12 +82,12 @@ class Scroller : DisplayObject
         }
     }
 
-    DisplayObject current() @nogc nothrow
+    Sprite current() @nogc nothrow
     {
         return _current;
     }
 
-    void current(DisplayObject current)
+    void current(Sprite current)
     {
         import std.exception : enforce;
 
@@ -96,12 +96,12 @@ class Scroller : DisplayObject
         add(current);
     }
 
-    DisplayObject next() @nogc nothrow
+    Sprite next() @nogc nothrow
     {
         return _next;
     }
 
-    void next(DisplayObject next)
+    void next(Sprite next)
     {
         import std.exception : enforce;
 

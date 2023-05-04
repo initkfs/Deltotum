@@ -5,11 +5,11 @@ import deltotum.kit.graphics.shapes.shape : Shape;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.kit.graphics.shapes.rectangle : Rectangle;
 import deltotum.gui.events.action_event : ActionEvent;
-import deltotum.kit.display.animation.object.value_transition : ValueTransition;
-import deltotum.kit.display.animation.object.property.opacity_transition : OpacityTransition;
+import deltotum.kit.sprites.animations.object.value_transition : ValueTransition;
+import deltotum.kit.sprites.animations.object.property.opacity_transition : OpacityTransition;
 import deltotum.gui.controls.texts.text;
-import deltotum.kit.display.layouts.center_layout : CenterLayout;
-import deltotum.kit.display.textures.texture : Texture;
+import deltotum.kit.sprites.layouts.center_layout : CenterLayout;
+import deltotum.kit.sprites.textures.texture : Texture;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 
 /**

@@ -1,7 +1,7 @@
 module deltotum.gui.containers.vbox;
 
 import deltotum.gui.containers.container : Container;
-import deltotum.kit.display.layouts.vertical_layout : VerticalLayout;
+import deltotum.kit.sprites.layouts.vertical_layout : VerticalLayout;
 
 /**
  * Authors: initkfs

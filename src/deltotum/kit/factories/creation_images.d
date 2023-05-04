@@ -1,8 +1,8 @@
 module deltotum.kit.factories.creation_images;
 
-import deltotum.kit.display.factories.display_object_factory: DisplayObjectFactory;
-import deltotum.kit.display.images.image : Image;
-import deltotum.kit.display.images.animated_image : AnimatedImage;
+import deltotum.kit.sprites.factories.display_object_factory: DisplayObjectFactory;
+import deltotum.kit.sprites.images.image : Image;
+import deltotum.kit.sprites.images.animated_image : AnimatedImage;
 
 /**
  * Authors: initkfs

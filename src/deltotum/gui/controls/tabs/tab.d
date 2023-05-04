@@ -2,7 +2,7 @@ module deltotum.gui.controls.tabs.tab;
 
 import deltotum.gui.containers.container : Container;
 import deltotum.gui.controls.buttons.button : Button;
-import deltotum.kit.display.display_object: DisplayObject;
+import deltotum.kit.sprites.sprite: Sprite;
 
 /**
  * Authors: initkfs
@@ -15,7 +15,7 @@ class Tab : Container
     }
 
     //TODO inconsistency without adding\creating
-    DisplayObject content;
+    Sprite content;
 
     void delegate() onAction;
 

@@ -6,7 +6,7 @@ import deltotum.gui.containers.stack_box : StackBox;
 import deltotum.gui.controls.buttons.toggle_switch : ToggleSwitch;
 import deltotum.gui.controls.texts.text : Text;
 import deltotum.kit.scenes.scene : Scene;
-import deltotum.kit.display.display_object : DisplayObject;
+import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.gui.containers.container : Container;
 import deltotum.gui.controls.texts.text_area : TextArea;
 
@@ -38,7 +38,7 @@ class SceneView : VBox
 
     private
     {
-        DisplayObject objectOnDebug;
+        Sprite objectOnDebug;
         size_t objectOnDebugSceneIndex;
         bool isDebug;
         TextArea objectFullInfo;
@@ -64,7 +64,7 @@ class SceneView : VBox
         addCreated(hbox);
 
         auto tb = new ToggleSwitch;
-        import deltotum.kit.display.alignment: Alignment;
+        import deltotum.kit.sprites.alignment: Alignment;
         tb.alignment = Alignment.y;
 
         tb.onSwitchOn = () {
@@ -121,7 +121,7 @@ class SceneView : VBox
                     return false;
                 }
 
-                DisplayObject nextForDebug = objectOnDebug;
+                Sprite nextForDebug = objectOnDebug;
 
                 size_t inBoundsChildCount = 0;
                 obj.onChildrenRecursive((child) {
@@ -167,7 +167,7 @@ class SceneView : VBox
         }
     }
 
-    private DebugInfo createDebugInfo(DisplayObject obj)
+    private DebugInfo createDebugInfo(Sprite obj)
     {
         import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
         import deltotum.kit.graphics.shapes.rectangle : Rectangle;
@@ -205,7 +205,7 @@ class SceneView : VBox
         return container;
     }
 
-    private void setDebugInfo(DisplayObject obj)
+    private void setDebugInfo(Sprite obj)
     {
         if (obj is null)
         {
@@ -221,7 +221,7 @@ class SceneView : VBox
         fillDebugInfo(obj);
     }
 
-    private void fillDebugInfo(DisplayObject obj)
+    private void fillDebugInfo(Sprite obj)
     {
         if( objectFullInfo is null){
             return;
@@ -231,7 +231,7 @@ class SceneView : VBox
         objectFullInfo.textView.text = obj.toString;
     }
 
-    private void removeDebugInfo(DisplayObject obj)
+    private void removeDebugInfo(Sprite obj)
     {
         if (obj is null)
         {

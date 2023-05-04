@@ -15,7 +15,7 @@ import deltotum.kit.scenes.scene_manager : SceneManager;
 import deltotum.media.audio.audio : Audio;
 import deltotum.kit.graphics.graphics : Graphics;
 import deltotum.kit.interacts.interact : Interact;
-import deltotum.kit.display.display_object : DisplayObject;
+import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.kit.scenes.scene : Scene;
 import deltotum.kit.inputs.keyboards.events.key_event : KeyEvent;
 import deltotum.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
@@ -167,15 +167,15 @@ class SdlApplication : GraphicApplication
             auto mustBeCurrentWindow = windowManager.windowByFirstId(windowId);
             if (mustBeCurrentWindow.isNull)
             {
-                return Nullable!(DisplayObject[]).init;
+                return Nullable!(Sprite[]).init;
             }
             auto currWindow = mustBeCurrentWindow.get;
             if (!currWindow.isShowing || !currWindow.isFocus)
             {
-                return Nullable!(DisplayObject[]).init;
+                return Nullable!(Sprite[]).init;
             }
             auto targets = currWindow.scenes.currentScene.getActiveObjects;
-            return Nullable!(DisplayObject[])(targets);
+            return Nullable!(Sprite[])(targets);
         };
 
         eventManager.eventProcessor = new SdlEventProcessor(keyboard);
@@ -264,7 +264,7 @@ class SdlApplication : GraphicApplication
                             obj.isFocus = true;
                         }
 
-                        import deltotum.kit.display.events.focus.focus_event : FocusEvent;
+                        import deltotum.kit.sprites.events.focus.focus_event : FocusEvent;
                         import deltotum.core.events.event_type : EventType;
 
                         auto focusEvent = FocusEvent(EventType.focus, FocusEvent.Event.focusIn, mouseEvent
@@ -281,7 +281,7 @@ class SdlApplication : GraphicApplication
                         if (obj.isFocus)
                         {
                             obj.isFocus = false;
-                            import deltotum.kit.display.events.focus.focus_event : FocusEvent;
+                            import deltotum.kit.sprites.events.focus.focus_event : FocusEvent;
                             import deltotum.core.events.event_type : EventType;
 
                             auto focusEvent = FocusEvent(EventType.focus, FocusEvent.Event.focusOut, mouseEvent
@@ -389,8 +389,8 @@ class SdlApplication : GraphicApplication
 
         windowBuilder.asset = new Asset(uservices.logger, assetsDir);
 
-        import deltotum.kit.graphics.themes.theme : Theme;
-        import deltotum.kit.graphics.themes.factories.theme_from_config_factory : ThemeFromConfigFactory;
+        import deltotum.kit.gui.themes.theme : Theme;
+        import deltotum.kit.gui.themes.factories.theme_from_config_factory : ThemeFromConfigFactory;
 
         auto themeLoader = new ThemeFromConfigFactory(uservices.logger, uservices.config, uservices.context, windowBuilder.asset
                 .defaultFont);

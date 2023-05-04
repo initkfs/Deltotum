@@ -1,6 +1,6 @@
 module deltotum.kit.graphics.canvases.vector_canvas;
 
-import deltotum.kit.display.textures.texture : Texture;
+import deltotum.kit.sprites.textures.texture : Texture;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 
 //TODO remove native api

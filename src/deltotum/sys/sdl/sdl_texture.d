@@ -10,7 +10,7 @@ import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
 import deltotum.sys.sdl.sdl_surface : SdlSurface;
 
 import deltotum.math.shapes.rect2d : Rect2d;
-import deltotum.kit.display.flip : Flip;
+import deltotum.kit.sprites.flip : Flip;
 
 import bindbc.sdl;
 

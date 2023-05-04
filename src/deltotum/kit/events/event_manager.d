@@ -11,7 +11,7 @@ import deltotum.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import deltotum.kit.windows.events.window_event : WindowEvent;
 import deltotum.core.events.event_type : EventType;
 
-import deltotum.kit.display.display_object : DisplayObject;
+import deltotum.kit.sprites.sprite : Sprite;
 import std.container : DList;
 import std.typecons : Nullable;
 
@@ -22,10 +22,10 @@ class EventManager
 {
     private
     {
-        DList!DisplayObject eventChain = DList!DisplayObject();
+        DList!Sprite eventChain = DList!Sprite();
     }
 
-    Nullable!(DisplayObject[]) delegate(long) targetsProvider;
+    Nullable!(Sprite[]) delegate(long) targetsProvider;
 
     version (SdlBackend)
     {
@@ -102,15 +102,15 @@ class EventManager
             return;
         }
 
-        DisplayObject[] targets = mustBeTargets.get;
+        Sprite[] targets = mustBeTargets.get;
 
-        foreach (DisplayObject target; targets)
+        foreach (Sprite target; targets)
         {
             dispatchEvent(e, target);
         }
     }
 
-    void dispatchEvent(E)(E e, DisplayObject target)
+    void dispatchEvent(E)(E e, Sprite target)
     {
         if (!eventChain.empty)
         {
@@ -121,7 +121,7 @@ class EventManager
 
         if (!eventChain.empty)
         {
-            foreach (DisplayObject eventTarget; eventChain)
+            foreach (Sprite eventTarget; eventChain)
             {
                 const isConsumed = eventTarget.runEventFilters(e);
                 if (isConsumed)
@@ -130,7 +130,7 @@ class EventManager
                 }
             }
 
-            foreach_reverse (DisplayObject eventTarget; eventChain)
+            foreach_reverse (Sprite eventTarget; eventChain)
             {
                 const isConsumed = eventTarget.runEventHandlers(e);
                 if (isConsumed)

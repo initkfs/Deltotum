@@ -1,13 +1,13 @@
 module deltotum.gui.controls.scrollbars.hscrollbar;
 
 import deltotum.gui.controls.control : Control;
-import deltotum.kit.display.textures.texture : Texture;
+import deltotum.kit.sprites.textures.texture : Texture;
 
 import deltotum.kit.graphics.shapes.shape : Shape;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
-import deltotum.kit.display.layouts.managed_layout : ManagedLayout;
+import deltotum.kit.sprites.layouts.managed_layout : ManagedLayout;
 import deltotum.kit.graphics.shapes.rectangle : Rectangle;
-import deltotum.kit.display.alignment : Alignment;
+import deltotum.kit.sprites.alignment : Alignment;
 
 /**
  * Authors: initkfs

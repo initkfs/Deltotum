@@ -1,16 +1,16 @@
 module deltotum.gui.controls.control;
 
-import deltotum.kit.display.display_object : DisplayObject;
-import deltotum.kit.display.layouts.layout : Layout;
+import deltotum.kit.sprites.sprite : Sprite;
+import deltotum.kit.sprites.layouts.layout : Layout;
 import deltotum.math.geometry.insets : Insets;
-import deltotum.kit.display.textures.texture : Texture;
+import deltotum.kit.sprites.textures.texture : Texture;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
-import deltotum.kit.display.alignment : Alignment;
+import deltotum.kit.sprites.alignment : Alignment;
 
 /**
  * Authors: initkfs
  */
-abstract class Control : DisplayObject
+abstract class Control : Sprite
 {
     Insets backgroundInsets;
     Texture delegate(double, double) backgroundFactory;

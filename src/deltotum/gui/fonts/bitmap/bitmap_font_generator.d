@@ -4,7 +4,7 @@ import deltotum.gui.fonts.font_generator : FontGenerator;
 import deltotum.gui.fonts.glyphs.glyph : Glyph;
 
 import deltotum.kit.assets.fonts.font : Font;
-import deltotum.kit.display.textures.texture : Texture;
+import deltotum.kit.sprites.textures.texture : Texture;
 import deltotum.kit.graphics.colors.rgba: RGBA;
 
 import deltotum.gui.fonts.bitmap.bitmap_font : BitmapFont;
