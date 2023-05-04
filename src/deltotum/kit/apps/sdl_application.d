@@ -55,8 +55,8 @@ class SdlApplication : GraphicApplication
     private
     {
         SdlLib sdlLib;
-        SdlImgLib imgLib;
         SdlMixLib audioMixLib;
+        SdlImgLib imgLib;
         SdlTTFLib fontLib;
         SdlJoystick joystick;
 
@@ -64,8 +64,6 @@ class SdlApplication : GraphicApplication
         Extension _ext;
         Input _input;
         Screen _screen;
-
-        bool isProcessEvents = true;
     }
 
     EventManager eventManager;
@@ -320,130 +318,6 @@ class SdlApplication : GraphicApplication
         component.ext = _ext;
     }
 
-    protected Extension createExtension(Logger logger, Config config, Context context)
-    {
-        import deltotum.kit.extensions.extension : Extension;
-        import deltotum.kit.extensions.plugins.lua.lua_script_text_plugin : LuaScriptTextPlugin;
-        import deltotum.kit.extensions.plugins.lua.lua_file_script_plugin : LuaFileScriptPlugin;
-
-        //TODO from config;
-        import std.path : buildPath;
-
-        auto mustBeDataDir = context.appContext.dataDir;
-        if (mustBeDataDir.isNull)
-        {
-            //TODO or return Nullable?
-            throw new Exception("Data directory not found");
-        }
-
-        auto extension = new Extension;
-
-        const pluginsDir = buildPath(mustBeDataDir.get, "plugins");
-        import std.file : dirEntries, DirEntry, SpanMode, exists, isFile, isDir;
-        import std.path : buildPath, baseName;
-        import std.format : format;
-        import std.conv : to;
-
-        //TODO version(lua)
-
-        //FIXME remove bindbc from core
-        import bindbc.lua;
-
-        const LuaSupport luaResult = loadLua();
-        if (luaResult != luaSupport)
-        {
-            if (luaResult == luaSupport.noLibrary)
-            {
-                throw new Exception("Lua shared library failed to load");
-            }
-            else if (luaResult == luaSupport.badLibrary)
-            {
-                throw new Exception("One or more Lua symbols failed to load");
-            }
-
-            throw new Exception(format("Couldn't load Lua environment, received lua load result: '%s'",
-                    to!string(luaSupport)));
-        }
-
-        foreach (DirEntry pluginFile; dirEntries(pluginsDir, SpanMode.shallow))
-        {
-            if (!pluginFile.isDir)
-            {
-                continue;
-            }
-
-            //TODO from config
-            enum pluginMainMethod = "main";
-            const filePath = buildPath(pluginsDir, "main.lua");
-            if (!filePath.exists || !filePath.isFile)
-            {
-                continue;
-            }
-
-            const name = baseName(pluginFile);
-            auto plugin = new LuaFileScriptPlugin(logger, config, context, name, filePath, pluginMainMethod);
-            extension.addPlugin(plugin);
-        }
-
-        auto consolePlugin = new LuaScriptTextPlugin(logger, config, context, "console");
-        extension.addPlugin(consolePlugin);
-
-        extension.initialize;
-        extension.run;
-
-        return extension;
-    }
-
-    // Window newWindow(
-    //     dstring title,
-    //     int width,
-    //     int height,
-    //     int x,
-    //     int y,
-    //     SdlWindowMode mode = SdlWindowMode.none,
-    //     WindowFactory delegate() factoryProvider = null)
-    // {
-    //     WindowFactory winFactory;
-    //     if (factoryProvider)
-    //     {
-    //         winFactory = factoryProvider();
-    //     }
-    //     else
-    //     {
-    //         import deltotum.kit.windows.factories.sdl_window_factory : SdlWindowFactory;
-
-    //         winFactory = new SdlWindowFactory(title, width, height, x, y, mode);
-    //     }
-
-    //     winFactory.audio = _audio;
-    //     winFactory.input = _input;
-    //     winFactory.screen = _screen;
-    //     winFactory.ext = _ext;
-    //     winFactory.isVectorGraphics = isVectorGraphics;
-    //     build(winFactory);
-
-    //     auto window = winFactory.createWindow();
-    //     window.windowManager = windowManager;
-    //     window.frameRate = mainLoop.frameRate;
-
-    //     if (factoryProvider)
-    //     {
-    //         window.setSize(width, height);
-    //         const newX = x != -1 ? x : 0;
-    //         const newY = y != -1 ? y : 0;
-    //         window.setPos(newX, newY);
-    //         window.setTitle(title);
-    //     }
-
-    //     windowManager.add(window);
-
-    //     window.childWindowProvider = (wtitle, w, h, wx, wy, windowManager) {
-    //         return newWindow(wtitle, w, h, wx, wy, factoryProvider);
-    //     };
-
-    //     return window;
-    // }
-
     Window newWindow(
         dstring title,
         int width,
@@ -595,23 +469,6 @@ class SdlApplication : GraphicApplication
         Window parent = null)
     {
         return newWindow(title, width, height, x, y, parent,  SdlWindowMode.none);
-    }
-
-    void closeWindow(long id)
-    {
-        uservices.logger.tracef("Request close window with id '%s'", id);
-        windowManager.closeWindow(id);
-
-        if (windowManager.windowsCount == 0 && isQuitOnCloseAllWindows)
-        {
-            requestQuit;
-        }
-    }
-
-    void requestQuit()
-    {
-        mainLoop.isRunning = false;
-        isProcessEvents = false;
     }
 
     void clearErrors()
