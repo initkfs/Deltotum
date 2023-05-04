@@ -1,6 +1,6 @@
 module deltotum.kit.windows.window;
 
-import deltotum.com.windows.com_window : ComWindow;
+import deltotum.com.gui.com_window : ComWindow;
 import deltotum.sys.sdl.sdl_window : SdlWindow;
 import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
 import deltotum.math.shapes.rect2d : Rect2d;

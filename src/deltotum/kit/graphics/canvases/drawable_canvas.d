@@ -35,7 +35,7 @@ class DrawableCanvas : Texture
     {
         comSurface = graphics.newComSurface;
 
-        import deltotum.com.results.platform_result : PlatformResult;
+        import deltotum.com.platforms.results.com_result : ComResult;
 
         //TODO or SDL_BYTEORDER?
         version (BigEndian)

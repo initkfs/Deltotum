@@ -4,7 +4,7 @@ module deltotum.sys.sdl.mix.sdl_mix_lib;
 version(SdlBackend):
 // dfmt on
 
-import deltotum.com.results.platform_result : PlatformResult;
+import deltotum.com.platforms.results.com_result : ComResult;
 import deltotum.sys.sdl.mix.base.sdl_mix_object : SdlMixObject;
 
 import bindbc.sdl;
@@ -46,7 +46,7 @@ class SdlMixLib : SdlMixObject
         }
     }
 
-    PlatformResult openAudio(int frequency, ushort audioFormat, int channels, int chunksize)
+    ComResult openAudio(int frequency, ushort audioFormat, int channels, int chunksize)
     {
         const int zeroOrErrorCode = Mix_OpenAudio(frequency, audioFormat, channels, chunksize);
         if (zeroOrErrorCode < 0)
@@ -54,9 +54,9 @@ class SdlMixLib : SdlMixObject
             import std.format : format;
 
             immutable errMessage = format("Error opening audio with frequency %s, format %s, channels %s, chunksize %s", frequency, audioFormat, channels, chunksize);
-            return PlatformResult(zeroOrErrorCode, errMessage);
+            return ComResult(zeroOrErrorCode, errMessage);
         }
-        return PlatformResult();
+        return ComResult();
     }
 
     void closeAudio()

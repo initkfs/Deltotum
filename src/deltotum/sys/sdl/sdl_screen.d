@@ -4,7 +4,7 @@ module deltotum.sys.sdl.sdl_screen;
 version(SdlBackend):
 // dfmt on
 
-import deltotum.com.results.platform_result : PlatformResult;
+import deltotum.com.platforms.results.com_result : ComResult;
 import deltotum.sys.sdl.base.sdl_object : SdlObject;
 
 import bindbc.sdl;
@@ -38,90 +38,90 @@ struct SDLDpi
 class SDLScreen : SdlObject
 {
 
-    PlatformResult getCount(out size_t count) @nogc nothrow
+    ComResult getCount(out size_t count) @nogc nothrow
     {
         const int screenCountOrNegErr = SDL_GetNumVideoDisplays();
         if (screenCountOrNegErr < 0)
         {
-            return PlatformResult.error(getError);
+            return ComResult.error(getError);
         }
 
         count = screenCountOrNegErr;
 
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult getBounds(int index, out int x, out int y,
+    ComResult getBounds(int index, out int x, out int y,
         out int width, out int height) @nogc nothrow
     {
         SDL_Rect bounds;
         const zeroOrErrorCode = SDL_GetDisplayBounds(index, &bounds);
         if (zeroOrErrorCode != 0)
         {
-            return PlatformResult(zeroOrErrorCode, getError);
+            return ComResult(zeroOrErrorCode, getError);
         }
 
         x = bounds.x;
         y = bounds.y;
         width = bounds.w;
         height = bounds.h;
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult getUsableBounds(int index, out int x, out int y,
+    ComResult getUsableBounds(int index, out int x, out int y,
         out int width, out int height) @nogc nothrow
     {
         SDL_Rect bounds;
         const zeroOrErrorCode = SDL_GetDisplayUsableBounds(index, &bounds);
         if (zeroOrErrorCode != 0)
         {
-            return PlatformResult(zeroOrErrorCode, getError);
+            return ComResult(zeroOrErrorCode, getError);
         }
 
         x = bounds.x;
         y = bounds.y;
         width = bounds.w;
         height = bounds.h;
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult getName(int index, ref const(char)* name)
+    ComResult getName(int index, ref const(char)* name)
     {
         const namePtr = SDL_GetDisplayName(index);
         if (!namePtr)
         {
-            return PlatformResult.error(getError);
+            return ComResult.error(getError);
         }
         name = namePtr;
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult getMode(int index, out SDLScreenMode mode)
+    ComResult getMode(int index, out SDLScreenMode mode)
     {
         SDL_DisplayMode m;
         const zeroOrError = SDL_GetCurrentDisplayMode(index, &m);
         if (zeroOrError != 0)
         {
-            return PlatformResult.error(getError);
+            return ComResult.error(getError);
         }
         mode = SDLScreenMode(m.w, m.h, m.refresh_rate);
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult getDPI(int index, out SDLDpi screenDPI)
+    ComResult getDPI(int index, out SDLDpi screenDPI)
     {
         SDLDpi dpi;
         const zeroOrError = SDL_GetDisplayDPI(index, &dpi.diagonalDPI, &dpi.horizontalDPI, &dpi
                 .verticalDPI);
         if (zeroOrError != 0)
         {
-            return PlatformResult.error(getError);
+            return ComResult.error(getError);
         }
         screenDPI = dpi;
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult getOrientation(int index, out SDLScreenOrientation result)
+    ComResult getOrientation(int index, out SDLScreenOrientation result)
     {
         const orientation = SDL_GetDisplayOrientation(index);
         final switch (orientation) with (SDL_DisplayOrientation)
@@ -143,6 +143,6 @@ class SDLScreen : SdlObject
             break;
         }
 
-        return PlatformResult.success;
+        return ComResult.success;
     }
 }

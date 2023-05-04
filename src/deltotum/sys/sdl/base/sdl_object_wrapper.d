@@ -4,7 +4,7 @@ module deltotum.sys.sdl.base.sdl_object_wrapper;
 version(SdlBackend):
 // dfmt on
 
-import deltotum.com.objects.platform_object_wrapper : PlatformObjectWrapper;
+import deltotum.com.platforms.objects.com_ptr_manager : ComPtrManager;
 import deltotum.sys.sdl.base.sdl_object : SdlObject;
 
 import std.exception : enforce;
@@ -14,5 +14,5 @@ import std.exception : enforce;
  */
 abstract class SdlObjectWrapper(T) : SdlObject
 {
-    mixin PlatformObjectWrapper!T;
+    mixin ComPtrManager!T;
 }

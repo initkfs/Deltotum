@@ -4,7 +4,7 @@ module deltotum.sys.sdl.base.sdl_object;
 version(SdlBackend):
 // dfmt on
 
-import deltotum.com.objects.platform_object : PlatformObject;
+import deltotum.com.platforms.objects.com_object : ComObject;
 import deltotum.sys.sdl.base.sdl_type_converter : SdlTypeConverter;
 
 import std.string : toStringz, fromStringz;
@@ -14,7 +14,7 @@ import bindbc.sdl;
 /**
  * Authors: initkfs
  */
-class SdlObject : PlatformObject
+class SdlObject : ComObject
 {
     protected
     {

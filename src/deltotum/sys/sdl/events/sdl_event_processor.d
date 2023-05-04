@@ -125,14 +125,14 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
             break;
         }
 
-        import deltotum.com.commons.keyboards.key_name : KeyName;
+        import deltotum.com.inputs.keyboards.key_name : KeyName;
 
         const SDL_Keycode keyCode = event.key.keysym.sym;
         const keyName = keyboard.keyCodeToKeyName(keyCode);
 
         const mod = event.key.keysym.mod;
 
-        import deltotum.com.commons.keyboards.key_modifier_info : KeyModifierInfo;
+        import deltotum.com.inputs.keyboards.key_modifier_info : KeyModifierInfo;
 
         KeyModifierInfo modInfo = KeyModifierInfo(
             (mod & SDL_Keymod.KMOD_LSHIFT) == SDL_Keymod.KMOD_LSHIFT,

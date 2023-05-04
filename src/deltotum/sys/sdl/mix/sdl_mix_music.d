@@ -4,16 +4,16 @@ module deltotum.sys.sdl.mix.sdl_mix_music;
 version(SdlBackend):
 // dfmt on
 
-import deltotum.com.results.platform_result : PlatformResult;
+import deltotum.com.platforms.results.com_result : ComResult;
 import deltotum.sys.sdl.mix.base.sdl_mix_object : SdlMixObject;
-import deltotum.com.objects.platform_object_wrapper : PlatformObjectWrapper;
+import deltotum.com.platforms.objects.com_ptr_manager : ComPtrManager;
 
 import std.string : toStringz, fromStringz;
 import bindbc.sdl;
 
 class SdlMixMusic : SdlMixObject
 {
-    mixin PlatformObjectWrapper!(Mix_Music);
+    mixin ComPtrManager!(Mix_Music);
 
     protected
     {
@@ -49,25 +49,25 @@ class SdlMixMusic : SdlMixObject
         return isLoad;
     }
 
-    PlatformResult play(int loops = -1) nothrow
+    ComResult play(int loops = -1) nothrow
     {
         if (!isLoad)
         {
-            return PlatformResult(-1, "Sound not loaded");
+            return ComResult(-1, "Sound not loaded");
         }
         const int zeroOrErrorCode = Mix_PlayMusic(ptr, loops);
-        return PlatformResult(zeroOrErrorCode);
+        return ComResult(zeroOrErrorCode);
     }
 
-    PlatformResult stop() nothrow
+    ComResult stop() nothrow
     {
         if (!isLoad)
         {
-            return PlatformResult(-1, "Sound not loaded");
+            return ComResult(-1, "Sound not loaded");
         }
 
         const int alwaysZero = Mix_HaltMusic();
-        return PlatformResult(alwaysZero);
+        return ComResult(alwaysZero);
     }
 
     bool destroyPtr()

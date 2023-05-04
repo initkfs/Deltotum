@@ -60,7 +60,7 @@ class TextArea : Control
         };
 
         onKeyDown = (key) {
-            import deltotum.com.commons.keyboards.key_name : KeyName;
+            import deltotum.com.inputs.keyboards.key_name : KeyName;
 
             if (key.keyName == KeyName.BACKSPACE && textView.text.length > 0)
             {

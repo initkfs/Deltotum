@@ -4,7 +4,7 @@ module deltotum.sys.sdl.sdl_surface;
 version(SdlBackend):
 // dfmt on
 
-import deltotum.com.results.platform_result : PlatformResult;
+import deltotum.com.platforms.results.com_result : ComResult;
 import deltotum.sys.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.sys.sdl.sdl_window : SdlWindow;
 
@@ -25,7 +25,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface
         super(ptr);
     }
 
-    PlatformResult createRGBSurface(uint flags = 0, int width = 10, int height = 10, int depth = 32,
+    ComResult createRGBSurface(uint flags = 0, int width = 10, int height = 10, int depth = 32,
         uint rmask = 0, uint gmask = 0, uint bmask = 0, uint amask = 0)
     {
         if (ptr)
@@ -40,9 +40,9 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface
             {
                 error ~= err;
             }
-            return PlatformResult.error(error);
+            return ComResult.error(error);
         }
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
     SDL_Surface* createRGBSurfacePtr(uint flags, int width, int height, int depth,
@@ -70,7 +70,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface
         return new SdlSurface(ptr);
     }
 
-    PlatformResult convertSurfacePtr(SDL_Surface* src, out SDL_Surface* dest, SDL_PixelFormat* format, uint flags = 0) const
+    ComResult convertSurfacePtr(SDL_Surface* src, out SDL_Surface* dest, SDL_PixelFormat* format, uint flags = 0) const
     {
         SDL_Surface* ptr = SDL_ConvertSurface(src, format, flags);
         if (!ptr)
@@ -80,30 +80,30 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface
             {
                 errMessage ~= err;
             }
-            return PlatformResult.error(errMessage);
+            return ComResult.error(errMessage);
         }
         dest = ptr;
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    protected PlatformResult scaleToPtr(SDL_Surface* destPtr, SDL_Rect* bounds) @nogc nothrow
+    protected ComResult scaleToPtr(SDL_Surface* destPtr, SDL_Rect* bounds) @nogc nothrow
     {
         const int zeroOrErrorCode = SDL_BlitScaled(ptr, null, destPtr, bounds);
-        return PlatformResult(zeroOrErrorCode);
+        return ComResult(zeroOrErrorCode);
     }
 
-    PlatformResult scaleTo(SdlSurface dest, SDL_Rect* bounds) @nogc nothrow
+    ComResult scaleTo(SdlSurface dest, SDL_Rect* bounds) @nogc nothrow
     {
         return scaleToPtr(dest.getObject, bounds);
     }
 
-    PlatformResult resize(int newWidth, int newHeight, out bool isResized)
+    ComResult resize(int newWidth, int newHeight, out bool isResized)
     {
         //https://stackoverflow.com/questions/40850196/sdl2-resize-a-surface
         // https://stackoverflow.com/questions/33850453/sdl2-blit-scaled-from-a-palettized-8bpp-surface-gives-error-blit-combination/33944312
         if (newWidth <= 0 || newHeight <= 0)
         {
-            return PlatformResult.success;
+            return ComResult.success;
         }
 
         int w = width;
@@ -111,7 +111,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface
 
         if (w == newWidth && h == newHeight)
         {
-            return PlatformResult.success;
+            return ComResult.success;
         }
 
         SDL_Rect dest;
@@ -131,7 +131,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface
             {
                 error ~= err;
             }
-            return PlatformResult.error(error);
+            return ComResult.error(error);
         }
 
         if (const err = scaleToPtr(newSurfacePtr, &dest))
@@ -141,13 +141,13 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface
 
         updateObject(newSurfacePtr);
         isResized = true;
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult blit(const SDL_Rect* srcRect, SDL_Surface* dst, SDL_Rect* dstRect)
+    ComResult blit(const SDL_Rect* srcRect, SDL_Surface* dst, SDL_Rect* dstRect)
     {
         const int zeroOrErrorCode = SDL_BlitSurface(ptr, srcRect, dst, dstRect);
-        return PlatformResult(zeroOrErrorCode);
+        return ComResult(zeroOrErrorCode);
     }
 
     inout(void*) pixels() inout @nogc nothrow @safe

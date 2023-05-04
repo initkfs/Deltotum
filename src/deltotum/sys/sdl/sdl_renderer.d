@@ -4,7 +4,7 @@ module deltotum.sys.sdl.sdl_renderer;
 version(SdlBackend):
 // dfmt on
 
-import deltotum.com.results.platform_result : PlatformResult;
+import deltotum.com.platforms.results.com_result : ComResult;
 import deltotum.sys.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.sys.sdl.sdl_window : SdlWindow;
 import deltotum.sys.sdl.sdl_texture : SdlTexture;
@@ -50,7 +50,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         this.window = window;
     }
 
-    PlatformResult setRenderDrawColor(ubyte r, ubyte g, ubyte b, ubyte a) @nogc nothrow
+    ComResult setRenderDrawColor(ubyte r, ubyte g, ubyte b, ubyte a) @nogc nothrow
     {
         ubyte oldR, oldG, oldB, oldA;
         //TODO log?
@@ -58,27 +58,27 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
             &oldR, &oldG, &oldB, &oldA);
         if (zeroOrErrorColor)
         {
-            return PlatformResult(zeroOrErrorColor, "Error getting render old color for drawing");
+            return ComResult(zeroOrErrorColor, "Error getting render old color for drawing");
         }
 
         if (r == oldR && g == oldG && b == oldB && a == oldA)
         {
-            return PlatformResult();
+            return ComResult();
         }
 
         const int zeroOrErrorCode = SDL_SetRenderDrawColor(ptr, r, g, b, a);
         if (zeroOrErrorCode)
         {
-            return PlatformResult(zeroOrErrorCode, "RGBA drawing error");
+            return ComResult(zeroOrErrorCode, "RGBA drawing error");
         }
 
-        return PlatformResult();
+        return ComResult();
     }
 
-    PlatformResult clear() @nogc nothrow
+    ComResult clear() @nogc nothrow
     {
         const int zeroOrErrorCode = SDL_RenderClear(ptr);
-        return PlatformResult(zeroOrErrorCode);
+        return ComResult(zeroOrErrorCode);
     }
 
     void present() @nogc nothrow
@@ -86,37 +86,37 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         SDL_RenderPresent(ptr);
     }
 
-    PlatformResult copy(SdlTexture texture) @nogc nothrow
+    ComResult copy(SdlTexture texture) @nogc nothrow
     {
         const int zeroOrErrorCode = SDL_RenderCopy(ptr, texture.getObject, null, null);
-        return PlatformResult(zeroOrErrorCode);
+        return ComResult(zeroOrErrorCode);
     }
 
-    PlatformResult drawRect(int x, int y, int width, int height)
+    ComResult drawRect(int x, int y, int width, int height)
     {
         SDL_Rect rect = {x, y, width, height};
         return drawRect(&rect);
     }
 
-    PlatformResult drawRect(const SDL_Rect* rect) @nogc nothrow
+    ComResult drawRect(const SDL_Rect* rect) @nogc nothrow
     {
         const int zeroOrErrorCode = SDL_RenderDrawRect(ptr, rect);
-        return PlatformResult(zeroOrErrorCode);
+        return ComResult(zeroOrErrorCode);
     }
 
-    PlatformResult drawPoint(int x, int y) @nogc nothrow
+    ComResult drawPoint(int x, int y) @nogc nothrow
     {
         const int zeroOrErrorCode = SDL_RenderDrawPoint(ptr, x, y);
-        return PlatformResult(zeroOrErrorCode);
+        return ComResult(zeroOrErrorCode);
     }
 
-    PlatformResult drawLine(int startX, int startY, int endX, int endY) @nogc nothrow
+    ComResult drawLine(int startX, int startY, int endX, int endY) @nogc nothrow
     {
         const int zeroOrErrorCode = SDL_RenderDrawLine(ptr, startX, startY, endX, endY);
-        return PlatformResult(zeroOrErrorCode);
+        return ComResult(zeroOrErrorCode);
     }
 
-    PlatformResult drawLines(Vector2d[] linePoints) nothrow
+    ComResult drawLines(Vector2d[] linePoints) nothrow
     {
         import std.algorithm.iteration : map;
         import std.array : array;
@@ -125,38 +125,38 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         const int zeroOrErrorCode = SDL_RenderDrawLines(ptr,
             points.ptr,
             cast(int) points.length);
-        return PlatformResult(zeroOrErrorCode);
+        return ComResult(zeroOrErrorCode);
     }
 
-    PlatformResult setViewport(SDL_Rect* rect) @nogc nothrow
+    ComResult setViewport(SDL_Rect* rect) @nogc nothrow
     {
         const int zeroOrErrorCode = SDL_RenderSetViewport(ptr, rect);
-        return PlatformResult(zeroOrErrorCode);
+        return ComResult(zeroOrErrorCode);
     }
 
-    PlatformResult fillRect(int x, int y, int width, int height) @nogc nothrow
+    ComResult fillRect(int x, int y, int width, int height) @nogc nothrow
     {
         SDL_Rect rect = {x, y, width, height};
         return fillRect(&rect);
     }
 
-    PlatformResult fillRect(const SDL_Rect* rect) @nogc nothrow
+    ComResult fillRect(const SDL_Rect* rect) @nogc nothrow
     {
         const int zeroOrErrorCode = SDL_RenderFillRect(ptr, rect);
-        return PlatformResult(zeroOrErrorCode);
+        return ComResult(zeroOrErrorCode);
     }
 
-    PlatformResult copyEx(SdlTexture texture, const SDL_Rect* srcRect, const SDL_Rect* destRect, double angle, const SDL_Point* center, SDL_RendererFlip flip = SDL_RendererFlip
+    ComResult copyEx(SdlTexture texture, const SDL_Rect* srcRect, const SDL_Rect* destRect, double angle, const SDL_Point* center, SDL_RendererFlip flip = SDL_RendererFlip
             .SDL_FLIP_NONE)
     {
         const int zeroOrErrorCode = SDL_RenderCopyEx(ptr, texture.getObject, srcRect, destRect, angle, center, flip);
-        return PlatformResult(zeroOrErrorCode);
+        return ComResult(zeroOrErrorCode);
     }
 
-    PlatformResult getOutputSize(int* width, int* height) @nogc nothrow
+    ComResult getOutputSize(int* width, int* height) @nogc nothrow
     {
         const int zeroOrErrorCode = SDL_GetRendererOutputSize(ptr, width, height);
-        return PlatformResult(zeroOrErrorCode);
+        return ComResult(zeroOrErrorCode);
     }
 
     override protected bool destroyPtr()

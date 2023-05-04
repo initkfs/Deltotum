@@ -4,7 +4,7 @@ module deltotum.sys.sdl.sdl_texture;
 version(SdlBackend):
 // dfmt on
 
-import deltotum.com.results.platform_result : PlatformResult;
+import deltotum.com.platforms.results.com_result : ComResult;
 import deltotum.sys.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
 import deltotum.sys.sdl.sdl_surface : SdlSurface;
@@ -38,17 +38,17 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         this.renderer = renderer;
     }
 
-    PlatformResult query(int* width, int* height, uint* format, SDL_TextureAccess* access) @nogc nothrow
+    ComResult query(int* width, int* height, uint* format, SDL_TextureAccess* access) @nogc nothrow
     {
         if (!ptr)
         {
-            return PlatformResult.error("Texture query error: texture ponter is null");
+            return ComResult.error("Texture query error: texture ponter is null");
         }
         const int zeroOrErrorCode = SDL_QueryTexture(ptr, format, access, width, height);
-        return PlatformResult(zeroOrErrorCode);
+        return ComResult(zeroOrErrorCode);
     }
 
-    PlatformResult getSize(int* width, int* height) @nogc nothrow
+    ComResult getSize(int* width, int* height) @nogc nothrow
     {
         return query(width, height, null, null);
     }
@@ -63,7 +63,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         SDL_SetRenderTarget(renderer.getObject, null);
     }
 
-    PlatformResult create(uint format,
+    ComResult create(uint format,
         SDL_TextureAccess access, int w,
         int h)
     {
@@ -80,44 +80,44 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
             {
                 error ~= err;
             }
-            return PlatformResult.error(error);
+            return ComResult.error(error);
         }
 
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult getColor(ubyte* r, ubyte* g, ubyte* b)
+    ComResult getColor(ubyte* r, ubyte* g, ubyte* b)
     {
         const int zeroOrErrorCode = SDL_GetTextureColorMod(ptr, r, g, b);
-        return PlatformResult(zeroOrErrorCode);
+        return ComResult(zeroOrErrorCode);
     }
 
-    PlatformResult setColor(ubyte r, ubyte g, ubyte b)
+    ComResult setColor(ubyte r, ubyte g, ubyte b)
     {
         const int zeroOrErrorCode = SDL_SetTextureColorMod(ptr, r, g, b);
-        return PlatformResult(zeroOrErrorCode);
+        return ComResult(zeroOrErrorCode);
     }
 
-    PlatformResult createRGBA(int width, int height)
+    ComResult createRGBA(int width, int height)
     {
         return create(SDL_PIXELFORMAT_RGBA32,
             SDL_TextureAccess.SDL_TEXTUREACCESS_TARGET, width,
             height);
     }
 
-    PlatformResult setBlendModeBlend() @nogc nothrow
+    ComResult setBlendModeBlend() @nogc nothrow
     {
         const int zeroOrErrorCode = SDL_SetTextureBlendMode(ptr, SDL_BLENDMODE_BLEND);
-        return PlatformResult(zeroOrErrorCode);
+        return ComResult(zeroOrErrorCode);
     }
 
-    PlatformResult setBlendModeNone() @nogc nothrow
+    ComResult setBlendModeNone() @nogc nothrow
     {
         const int zeroOrErrorCode = SDL_SetTextureBlendMode(ptr, SDL_BLENDMODE_NONE);
-        return PlatformResult(zeroOrErrorCode);
+        return ComResult(zeroOrErrorCode);
     }
 
-    PlatformResult fromSurface(SdlSurface surface)
+    ComResult fromSurface(SdlSurface surface)
     {
         if (ptr)
         {
@@ -132,23 +132,23 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
             {
                 error ~= err;
             }
-            return PlatformResult.error(error);
+            return ComResult.error(error);
         }
         SDL_SetTextureBlendMode(ptr, SDL_BLENDMODE_BLEND);
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult changeOpacity(double opacity) @nogc nothrow
+    ComResult changeOpacity(double opacity) @nogc nothrow
     {
         if (!ptr)
         {
-            return PlatformResult.error("Texture opacity change error: texture is null");
+            return ComResult.error("Texture opacity change error: texture is null");
         }
         const int zeroOrErrorCode = SDL_SetTextureAlphaMod(ptr, cast(ubyte)(255 * opacity));
-        return PlatformResult(zeroOrErrorCode);
+        return ComResult(zeroOrErrorCode);
     }
 
-    PlatformResult draw(Rect2d textureBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
+    ComResult draw(Rect2d textureBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
             .none)
     {
         SDL_Rect srcRect;

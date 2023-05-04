@@ -4,15 +4,15 @@ module deltotum.sys.sdl.base.sdl_type_converter;
 version(SdlBackend):
 // dfmt on
 
-import deltotum.com.objects.platform_object : PlatformObject;
-import deltotum.com.types.platform_type_convertor : PlatformTypeConvertor;
+import deltotum.com.platforms.objects.com_object : ComObject;
+import deltotum.com.platforms.types.com_type_convertor : ComTypeConvertor;
 
 import bindbc.sdl;
 
 /**
  * Authors: initkfs
  */
-class SdlTypeConverter : PlatformTypeConvertor
+class SdlTypeConverter : ComTypeConvertor
 {
     bool toBool(SDL_bool value) const @nogc nothrow @safe
     {

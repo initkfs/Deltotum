@@ -1,9 +1,9 @@
-module deltotum.com.objects.platform_object_wrapper;
+module deltotum.com.platforms.objects.com_ptr_manager;
 
 /**
  * Authors: initkfs
  */
-mixin template PlatformObjectWrapper(T)
+mixin template ComPtrManager(T)
 {
     protected
     {
@@ -22,7 +22,7 @@ mixin template PlatformObjectWrapper(T)
     {
         import std.exception : enforce;
 
-        enforce(ptr !is null, "Platform object pointer must not be null");
+        enforce(ptr !is null, "Common native object pointer must not be null");
         this.ptr = ptr;
     }
 
@@ -32,7 +32,7 @@ mixin template PlatformObjectWrapper(T)
         {
             import std.stdio : stderr;
 
-            stderr.writefln("Warning! Undestroyed platform object %s", typeof(this).stringof);
+            stderr.writefln("Warning! Undestroyed common native object %s", typeof(this).stringof);
         }
     }
 
@@ -51,7 +51,7 @@ mixin template PlatformObjectWrapper(T)
     {
         import std.exception : enforce;
 
-        enforce(newPtr !is null, "New platform object pointer must not be null");
+        enforce(newPtr !is null, "New common native object pointer must not be null");
         if (ptr)
         {
             destroyPtr;

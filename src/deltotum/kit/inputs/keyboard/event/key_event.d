@@ -4,8 +4,8 @@ import deltotum.core.events.event_base : EventBase;
 import deltotum.core.events.event_type : EventType;
 import deltotum.core.utils.type_util : eventNameByIndex;
 
-import deltotum.com.commons.keyboards.key_name : KeyName;
-import deltotum.com.commons.keyboards.key_modifier_info : KeyModifierInfo;
+import deltotum.com.inputs.keyboards.key_name : KeyName;
+import deltotum.com.inputs.keyboards.key_modifier_info : KeyModifierInfo;
 
 /**
  * Authors: initkfs

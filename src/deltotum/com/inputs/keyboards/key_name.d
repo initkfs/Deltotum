@@ -1,4 +1,4 @@
-module deltotum.com.commons.keyboards.key_name;
+module deltotum.com.inputs.keyboards.key_name;
 
 /**
  * Authors: initkfs

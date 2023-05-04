@@ -5,7 +5,7 @@ version(SdlBackend):
 // dfmt on
 
 import deltotum.sys.sdl.base.sdl_object : SdlObject;
-import deltotum.com.commons.keyboards.key_name : KeyName;
+import deltotum.com.inputs.keyboards.key_name : KeyName;
 
 import bindbc.sdl;
 

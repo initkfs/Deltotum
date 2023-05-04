@@ -4,7 +4,7 @@ module deltotum.sys.sdl.ttf.sdl_ttf_font;
 version(SdlBackend):
 // dfmt on
 
-import deltotum.com.results.platform_result : PlatformResult;
+import deltotum.com.platforms.results.com_result : ComResult;
 import deltotum.sys.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.sys.sdl.ttf.base.sdl_ttf_object : SdlTTFObject;
 import deltotum.sys.sdl.sdl_surface: SdlSurface;
@@ -41,7 +41,7 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font
         }
     }
 
-    PlatformResult render(SdlSurface targetFontSurface, const char* text, ubyte r = 255, ubyte g = 255, ubyte b = 255, ubyte a = 1)
+    ComResult render(SdlSurface targetFontSurface, const char* text, ubyte r = 255, ubyte g = 255, ubyte b = 255, ubyte a = 1)
     {
         SDL_Color color = {r, g, b, a};
         //TODO calculate background color
@@ -53,12 +53,12 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font
             {
                 errMsg ~= ". " ~ errMsg;
             }
-            return PlatformResult(-1, errMsg);
+            return ComResult(-1, errMsg);
         }
 
         targetFontSurface.updateObject(fontSurfacePtr);
 
-        return PlatformResult();
+        return ComResult();
     }
 
     override bool destroyPtr()

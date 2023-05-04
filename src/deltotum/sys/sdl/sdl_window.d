@@ -4,9 +4,9 @@ module deltotum.sys.sdl.sdl_window;
 version(SdlBackend):
 // dfmt on
 
-import deltotum.com.windows.com_window : ComWindow;
+import deltotum.com.gui.com_window : ComWindow;
 
-import deltotum.com.results.platform_result : PlatformResult;
+import deltotum.com.platforms.results.com_result : ComResult;
 import deltotum.sys.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.kit.inputs.mouse.mouse_cursor_type : MouseCursorType;
 
@@ -40,12 +40,12 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         super(ptr);
     }
 
-    PlatformResult initialize() @nogc nothrow
+    ComResult initialize() @nogc nothrow
     {
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult create() nothrow
+    ComResult create() nothrow
     {
         uint flags = SDL_WINDOW_HIDDEN;
         final switch (mode) with (SdlWindowMode)
@@ -70,146 +70,146 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         if (ptr is null)
         {
             const msg = getError;
-            return PlatformResult.error("Unable to create SDL window: " ~ msg);
+            return ComResult.error("Unable to create SDL window: " ~ msg);
         }
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult obtainId(out int id) nothrow
+    ComResult obtainId(out int id) nothrow
     {
         const idOrZeroError = SDL_GetWindowID(ptr);
         if (idOrZeroError != 0)
         {
             id = idOrZeroError;
-            return PlatformResult.success;
+            return ComResult.success;
         }
-        return PlatformResult(idOrZeroError, getError);
+        return ComResult(idOrZeroError, getError);
     }
 
-    PlatformResult show() @nogc nothrow
+    ComResult show() @nogc nothrow
     {
         SDL_ShowWindow(ptr);
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult hide() @nogc nothrow
+    ComResult hide() @nogc nothrow
     {
         SDL_HideWindow(ptr);
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult close() @nogc nothrow
+    ComResult close() @nogc nothrow
     {
         destroy;
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult focusRequest() @nogc nothrow
+    ComResult focusRequest() @nogc nothrow
     {
         SDL_RaiseWindow(ptr);
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult getPos(out int x, out int y) @nogc nothrow
+    ComResult getPos(out int x, out int y) @nogc nothrow
     {
         SDL_GetWindowPosition(ptr, &x, &y);
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult setPos(int x, int y) @nogc nothrow
+    ComResult setPos(int x, int y) @nogc nothrow
     {
         SDL_SetWindowPosition(ptr, x, y);
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult minimize() @nogc nothrow
+    ComResult minimize() @nogc nothrow
     {
         SDL_MinimizeWindow(ptr);
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult maximize() @nogc nothrow
+    ComResult maximize() @nogc nothrow
     {
         SDL_MaximizeWindow(ptr);
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult setDecorated(bool isDecorated) @nogc nothrow
+    ComResult setDecorated(bool isDecorated) @nogc nothrow
     {
         SDL_SetWindowBordered(ptr, typeConverter.fromBool(isDecorated));
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult setResizable(bool isResizable) @nogc nothrow
+    ComResult setResizable(bool isResizable) @nogc nothrow
     {
         SDL_bool isSdlResizable = typeConverter.fromBool(isResizable);
         SDL_SetWindowResizable(ptr, isSdlResizable);
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult setOpacity(double value0to1) @nogc nothrow
+    ComResult setOpacity(double value0to1) @nogc nothrow
     {
         if (value0to1 < 0.0 || value0to1 > 1.0)
         {
-            return PlatformResult.error("Opacity value must be in the range from 0 to 1.0");
+            return ComResult.error("Opacity value must be in the range from 0 to 1.0");
         }
 
         const result = SDL_SetWindowOpacity(ptr, cast(float) value0to1);
-        return result != 0 ? PlatformResult(result, getError) : PlatformResult.success;
+        return result != 0 ? ComResult(result, getError) : ComResult.success;
     }
 
-    PlatformResult setFullScreen(bool isFullScreen) @nogc nothrow
+    ComResult setFullScreen(bool isFullScreen) @nogc nothrow
     {
         const uint flags = isFullScreen ? SDL_WINDOW_FULLSCREEN : 0;
         const result = SDL_SetWindowFullscreen(ptr, flags);
-        return result != 0 ? PlatformResult(result, getError) : PlatformResult.success;
+        return result != 0 ? ComResult(result, getError) : ComResult.success;
     }
 
-    PlatformResult getSize(out int width, out int height) @nogc nothrow
+    ComResult getSize(out int width, out int height) @nogc nothrow
     {
         SDL_GetWindowSize(ptr, &width, &height);
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult setSize(int width, int height) @nogc nothrow
+    ComResult setSize(int width, int height) @nogc nothrow
     {
         SDL_SetWindowSize(ptr, width, height);
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult getTitle(ref const(char)[] title) @nogc nothrow
+    ComResult getTitle(ref const(char)[] title) @nogc nothrow
     {
         import std.string : fromStringz;
 
         //UTF-8
         title = SDL_GetWindowTitle(ptr).fromStringz;
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult setTitle(const(char)* title) @nogc nothrow
+    ComResult setTitle(const(char)* title) @nogc nothrow
     {
         import std.string : toStringz;
 
         SDL_SetWindowTitle(ptr, title);
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult setMaxSize(int w, int h) @nogc nothrow
+    ComResult setMaxSize(int w, int h) @nogc nothrow
     {
         SDL_SetWindowMaximumSize(ptr, w, h);
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult setMinSize(int w, int h) @nogc nothrow
+    ComResult setMinSize(int w, int h) @nogc nothrow
     {
         SDL_SetWindowMinimumSize(ptr, w, h);
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    // PlatformResult modalForParent(SdlWindow parent)
+    // ComResult modalForParent(SdlWindow parent)
     // {
     //     const result = SDL_SetWindowModalFor(ptr, parent.getObject);
-    //     return result != 0 ? PlatformResult(result, getError) : PlatformResult.success;
+    //     return result != 0 ? ComResult(result, getError) : ComResult.success;
     // }
 
     // SDL_Rect getScaleBounds() @nogc nothrow
@@ -235,32 +235,32 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
     //     return bounds;
     // }
 
-    PlatformResult restore() @nogc nothrow
+    ComResult restore() @nogc nothrow
     {
         SDL_RestoreWindow(ptr);
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult getScreenIndex(out size_t index) @nogc nothrow
+    ComResult getScreenIndex(out size_t index) @nogc nothrow
     {
         const indexOrNegError = SDL_GetWindowDisplayIndex(ptr);
         if (indexOrNegError < 0)
         {
-            return PlatformResult.error(getError);
+            return ComResult.error(getError);
         }
         index = indexOrNegError;
 
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult nativePtr(out void* ptr) @nogc nothrow
+    ComResult nativePtr(out void* ptr) @nogc nothrow
     {
         if (!ptr && isDestroyed)
         {
-            return PlatformResult.error("Native window pointer is destroyed or null");
+            return ComResult.error("Native window pointer is destroyed or null");
         }
         ptr = cast(void*) this.ptr;
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
     override protected bool destroyPtr()

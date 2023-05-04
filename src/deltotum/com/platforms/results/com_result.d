@@ -1,11 +1,11 @@
-module deltotum.com.results.platform_result;
+module deltotum.com.platforms.results.com_result;
 
 import core.attribute : mustuse;
 
 /**
  * Authors: initkfs
  */
-@mustuse struct PlatformResult
+@mustuse struct ComResult
 {
     enum defaultCodeSuccess = 0;
     enum defaultCodeError = -1;
@@ -13,6 +13,7 @@ import core.attribute : mustuse;
     const
     {
         int code;
+        //TODO free
         char[] message;
         int codeSuccess;
     }
@@ -24,14 +25,14 @@ import core.attribute : mustuse;
         this.codeSuccess = codeSuccess;
     }
 
-    static PlatformResult success() nothrow @nogc pure @safe
+    static ComResult success() nothrow @nogc pure @safe
     {
-        return PlatformResult(0);
+        return ComResult(0);
     }
 
-    static PlatformResult error(const char[] message) nothrow @nogc pure @safe
+    static ComResult error(const char[] message) nothrow @nogc pure @safe
     {
-        return PlatformResult(defaultCodeError, message);
+        return ComResult(defaultCodeError, message);
     }
 
     bool isError() const nothrow @nogc pure @safe
@@ -45,6 +46,6 @@ import core.attribute : mustuse;
     {
         import std.conv : text;
 
-        return text("Platform result with code ", code, ". ", "Message: ", message);
+        return text("COM result with code ", code, ". ", "Message: ", message);
     }
 }

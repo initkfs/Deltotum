@@ -1,6 +1,6 @@
 module deltotum.sys.cairo.base.cairo_object_wrapper;
 
-import deltotum.com.objects.platform_object_wrapper : PlatformObjectWrapper;
+import deltotum.com.platforms.objects.com_ptr_manager : ComPtrManager;
 
 import std.exception : enforce;
 
@@ -9,5 +9,5 @@ import std.exception : enforce;
  */
 abstract class CairoObjectWrapper(T)
 {
-    mixin PlatformObjectWrapper!T;
+    mixin ComPtrManager!T;
 }

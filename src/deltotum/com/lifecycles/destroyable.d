@@ -1,4 +1,4 @@
-module deltotum.com.objects.destroyable;
+module deltotum.com.lifecycles.destroyable;
 
 /**
  * Authors: initkfs

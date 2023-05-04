@@ -5,7 +5,7 @@ version(SdlBackend):
 // dfmt on
 
 import deltotum.sys.sdl.base.sdl_object : SdlObject;
-import deltotum.com.results.platform_result : PlatformResult;
+import deltotum.com.platforms.results.com_result : ComResult;
 
 import bindbc.sdl;
 
@@ -14,7 +14,7 @@ import bindbc.sdl;
  */
 class SdlClipboard : SdlObject
 {
-    PlatformResult getText(out string newText)
+    ComResult getText(out string newText)
     {
         const(char*) text = SDL_GetClipboardText();
         scope (exit)
@@ -28,24 +28,24 @@ class SdlClipboard : SdlObject
             {
                 error ~= err;
             }
-            return PlatformResult.error(error);
+            return ComResult.error(error);
         }
 
         import std.string : fromStringz;
         newText = text.fromStringz.idup;
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult hasText(out bool isHasText)
+    ComResult hasText(out bool isHasText)
     {
         const SDL_bool result = SDL_HasClipboardText();
         isHasText = typeConverter.toBool(result);
-        return PlatformResult.success;
+        return ComResult.success;
     }
 
-    PlatformResult setText(const char* text)
+    ComResult setText(const char* text)
     {
         const zeroOrErrorCode = SDL_SetClipboardText(text);
-        return PlatformResult(zeroOrErrorCode);
+        return ComResult(zeroOrErrorCode);
     }
 }
