@@ -8,7 +8,6 @@ import deltotum.math.vector2d : Vector2d;
 
 import deltotum.kit.scenes.scene_manager : SceneManager;
 import deltotum.kit.windows.window_manager : WindowManager;
-import deltotum.kit.windows.factories.window_factory : WindowFactory;
 import deltotum.kit.screens.screen : Screen;
 
 import std.logger.core : Logger;
@@ -22,7 +21,7 @@ import bindbc.sdl;
 class Window
 {
     Window parent;
-    Window delegate(dstring, int, int, int, int, WindowFactory) childWindowProvider;
+    Window delegate(dstring, int, int, int, int, Window) childWindowProvider;
     WindowManager windowManager;
 
     void delegate() onAfterDestroy;
@@ -291,7 +290,7 @@ class Window
         }
     }
 
-    void setNormatWindow()
+    void setNormalWindow()
     {
         setDecorated(true);
         setResizable(true);
@@ -324,21 +323,20 @@ class Window
         return true;
     }
 
-    Window newChildWindow(dstring title = "New window", int width = 450, int height = 200, int x = -1, int y = -1, WindowFactory windowProvider = null)
+    Window newChildWindow(dstring title = "New window", int width = 450, int height = 200, int x = -1, int y = -1)
     {
-        Window win = newRootWindow(title, width, height, x, y, windowProvider);
-        win.parent = this;
+        Window win = newRootWindow(title, width, height, x, y, this);
         return win;
     }
 
-    Window newRootWindow(dstring title = "New window", int width = 450, int height = 200, int x = -1, int y = -1, WindowFactory windowProvider = null)
+    Window newRootWindow(dstring title = "New window", int width = 450, int height = 200, int x = -1, int y = -1, Window parent = null)
     {
         if (!childWindowProvider)
         {
             throw new Exception("Unable to open child windows. Window provider not installed");
         }
 
-        Window newWindow = childWindowProvider(title, width, height, x, y, windowProvider);
+        Window newWindow = childWindowProvider(title, width, height, x, y, parent);
         return newWindow;
     }
 

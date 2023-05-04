@@ -51,7 +51,7 @@ class CliApplication
 
     ApplicationExit initialize(string[] args)
     {
-        _uniServices = new UniComponent;
+        _uniServices = newUniServices;
 
         auto cli = createCli(args);
         uservices.cli = cli;
@@ -90,6 +90,10 @@ class CliApplication
         uservices.isBuilt = true;
 
         return ApplicationExit();
+    }
+
+    UniComponent newUniServices(){
+        return new UniComponent;
     }
 
     protected void consumeThrowable(Throwable ex, bool isReThrow = true)

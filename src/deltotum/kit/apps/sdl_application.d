@@ -37,7 +37,6 @@ import deltotum.kit.screens.screen : Screen;
 import deltotum.kit.apps.loops.integrated_loop : IntegratedLoop;
 import deltotum.kit.apps.loops.loop : Loop;
 import deltotum.kit.windows.window_manager : WindowManager;
-import deltotum.kit.windows.factories.window_factory : WindowFactory;
 
 import std.typecons : Nullable;
 
@@ -62,12 +61,11 @@ class SdlApplication : GraphicApplication
         SdlJoystick joystick;
 
         Audio _audio;
+        Extension _ext;
         Input _input;
         Screen _screen;
-        Extension _ext;
 
         bool isProcessEvents = true;
-        bool isVectorGraphics;
     }
 
     EventManager eventManager;
@@ -308,6 +306,20 @@ class SdlApplication : GraphicApplication
         return ApplicationExit(false);
     }
 
+    protected void buildPartially(GraphicsComponent component)
+    {
+        import deltotum.core.apps.uni.uni_component : UniComponent;
+
+        super.build(cast(UniComponent) component);
+
+        component.isBuilt = false;
+
+        component.audio = _audio;
+        component.input = _input;
+        component.screen = _screen;
+        component.ext = _ext;
+    }
+
     protected Extension createExtension(Logger logger, Config config, Context context)
     {
         import deltotum.kit.extensions.extension : Extension;
@@ -382,52 +394,194 @@ class SdlApplication : GraphicApplication
         return extension;
     }
 
+    // Window newWindow(
+    //     dstring title,
+    //     int width,
+    //     int height,
+    //     int x,
+    //     int y,
+    //     SdlWindowMode mode = SdlWindowMode.none,
+    //     WindowFactory delegate() factoryProvider = null)
+    // {
+    //     WindowFactory winFactory;
+    //     if (factoryProvider)
+    //     {
+    //         winFactory = factoryProvider();
+    //     }
+    //     else
+    //     {
+    //         import deltotum.kit.windows.factories.sdl_window_factory : SdlWindowFactory;
+
+    //         winFactory = new SdlWindowFactory(title, width, height, x, y, mode);
+    //     }
+
+    //     winFactory.audio = _audio;
+    //     winFactory.input = _input;
+    //     winFactory.screen = _screen;
+    //     winFactory.ext = _ext;
+    //     winFactory.isVectorGraphics = isVectorGraphics;
+    //     build(winFactory);
+
+    //     auto window = winFactory.createWindow();
+    //     window.windowManager = windowManager;
+    //     window.frameRate = mainLoop.frameRate;
+
+    //     if (factoryProvider)
+    //     {
+    //         window.setSize(width, height);
+    //         const newX = x != -1 ? x : 0;
+    //         const newY = y != -1 ? y : 0;
+    //         window.setPos(newX, newY);
+    //         window.setTitle(title);
+    //     }
+
+    //     windowManager.add(window);
+
+    //     window.childWindowProvider = (wtitle, w, h, wx, wy, windowManager) {
+    //         return newWindow(wtitle, w, h, wx, wy, factoryProvider);
+    //     };
+
+    //     return window;
+    // }
+
     Window newWindow(
         dstring title,
         int width,
         int height,
         int x,
         int y,
-        SdlWindowMode mode = SdlWindowMode.none,
-        WindowFactory delegate() factoryProvider = null)
+        Window parent = null,
+        SdlWindowMode mode = SdlWindowMode.none)
     {
-        WindowFactory winFactory;
-        if (factoryProvider)
-        {
-            winFactory = factoryProvider();
+        import deltotum.kit.windows.window : Window;
+        import deltotum.kit.scenes.scene_manager : SceneManager;
+        import deltotum.sys.sdl.sdl_window : SdlWindow, SdlWindowMode;
+        import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
+
+        import std.conv : to;
+
+        auto sdlWindow = new SdlWindow;
+        sdlWindow.mode = mode;
+
+        auto windowBuilder = newGraphicServices;
+        buildPartially(windowBuilder);
+
+        auto window = new Window(uservices.logger, sdlWindow);
+
+        windowBuilder.window = window;
+
+        if(parent){
+            window.parent = parent;
+            window.frameRate = parent.frameRate;
+            window.windowManager = parent.windowManager;
+        }else {
+            window.frameRate = mainLoop.frameRate;
+            window.windowManager = windowManager;
         }
-        else
-        {
-            import deltotum.kit.windows.factories.sdl_window_factory : SdlWindowFactory;
 
-            winFactory = new SdlWindowFactory(title, width, height, x, y, mode);
+        windowBuilder.isVectorGraphics = isVectorGraphics;
+
+        window.childWindowProvider = (title, width, height, x, y, parent) {
+            return newWindow(title, width, height, x, y, parent);  
+        };
+
+        window.initialize;
+        window.create;
+
+        window.setNormalWindow;
+
+        window.setSize(width, height);
+
+        const int newX = (x == -1) ? SDL_WINDOWPOS_UNDEFINED : x;
+        const int newY = (y == -1) ? SDL_WINDOWPOS_UNDEFINED : y;
+
+        window.setPos(newX, newY);
+
+        //TODO extract renderer
+        SdlRenderer sdlRenderer = new SdlRenderer(sdlWindow, SDL_RENDERER_ACCELERATED);
+
+        window.renderer = sdlRenderer;
+
+        window.setTitle(title);
+
+        //TODO move to config, duplication with SdlApplication
+        import std.file : getcwd, exists, isDir;
+        import std.path : buildPath, dirName;
+
+        immutable assetsDirPath = "data/assets";
+        immutable assetsDir = buildPath(getcwd, assetsDirPath);
+
+        import deltotum.kit.assets.asset : Asset;
+
+        windowBuilder.asset = new Asset(uservices.logger, assetsDir);
+
+        import deltotum.kit.graphics.themes.theme : Theme;
+        import deltotum.kit.graphics.themes.factories.theme_from_config_factory : ThemeFromConfigFactory;
+
+        auto themeLoader = new ThemeFromConfigFactory(uservices.logger, uservices.config, uservices.context, windowBuilder.asset
+                .defaultFont);
+
+        auto theme = themeLoader.create;
+
+        import deltotum.kit.assets.fonts.font : Font;
+
+        Font defaultFont = windowBuilder.asset.font("fonts/NotoSans-Bold.ttf", 14);
+        windowBuilder.asset.defaultFont = defaultFont;
+
+        import deltotum.kit.graphics.graphics : Graphics;
+
+        windowBuilder.graphics = new Graphics(uservices.logger, sdlRenderer, theme);
+        windowBuilder.graphics.comTextureFactory = () {
+            import deltotum.sys.sdl.sdl_texture : SdlTexture;
+
+            return new SdlTexture(sdlRenderer);
+        };
+
+        windowBuilder.graphics.comSurfaceFactory = () {
+            import deltotum.sys.sdl.sdl_surface : SdlSurface;
+
+            return new SdlSurface();
+        };
+
+        windowBuilder.isBuilt = true;
+
+        import deltotum.gui.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
+
+        //TODO build and run services after all
+        import deltotum.gui.fonts.bitmap.bitmap_font : BitmapFont;
+
+        //TODO from locale\config;
+        if (mode == SdlWindowMode.none)
+        {
+            import deltotum.kit.i18n.langs.alphabets.alphabet_ru : AlphabetRu;
+            import deltotum.kit.i18n.langs.alphabets.alphabet_en : AlphabetEn;
+            import deltotum.kit.i18n.langs.alphabets.arabic_numerals_alphabet : ArabicNumeralsAlpabet;
+            import deltotum.kit.i18n.langs.alphabets.special_characters_alphabet : SpecialCharactersAlphabet;
+
+            auto fontGenerator = new BitmapFontGenerator;
+            windowBuilder.build(fontGenerator);
+            import deltotum.kit.graphics.colors.rgba : RGBA;
+
+            windowBuilder.asset.defaultBitmapFont = fontGenerator.generate([
+                new ArabicNumeralsAlpabet,
+                new SpecialCharactersAlphabet,
+                new AlphabetEn,
+                new AlphabetRu
+            ], windowBuilder.asset.defaultFont, theme.colorText);
         }
 
-        winFactory.audio = _audio;
-        winFactory.input = _input;
-        winFactory.screen = _screen;
-        winFactory.ext = _ext;
-        winFactory.isVectorGraphics = isVectorGraphics;
-        build(winFactory);
+        import deltotum.kit.scenes.scene_manager : SceneManager;
 
-        auto window = winFactory.createWindow();
-        window.windowManager = windowManager;
-        window.frameRate = mainLoop.frameRate;
+        auto sceneManager = new SceneManager;
+        windowBuilder.build(sceneManager);
+        window.scenes = sceneManager;
 
-        if (factoryProvider)
-        {
-            window.setSize(width, height);
-            const newX = x != -1 ? x : 0;
-            const newY = y != -1 ? y : 0;
-            window.setPos(newX, newY);
-            window.setTitle(title);
-        }
+        window.onAfterDestroy = () {
+            sceneManager.asset.destroy;
+            sceneManager.destroy;
+        };
 
         windowManager.add(window);
-
-        window.childWindowProvider = (wtitle, w, h, wx, wy, windowManager) {
-            return newWindow(wtitle, w, h, wx, wy, factoryProvider);
-        };
 
         return window;
     }
@@ -438,9 +592,9 @@ class SdlApplication : GraphicApplication
         int height = 300,
         int x = -1,
         int y = -1,
-        WindowFactory delegate() factoryProvider = null)
+        Window parent = null)
     {
-        return newWindow(title, width, height, x, y, SdlWindowMode.none, factoryProvider);
+        return newWindow(title, width, height, x, y, parent,  SdlWindowMode.none);
     }
 
     void closeWindow(long id)

@@ -24,10 +24,10 @@ class GraphicsComponent : UniComponent
         @Service Audio _audio;
         @Service Asset _asset;
         @Service Extension _ext;
-        @Service Input _input;
         @Service Graphics _graphics;
-        @Service Window _window;
+        @Service Input _input;
         @Service Screen _screen;
+        @Service Window _window;
     }
 
     //bypass hijacking
