@@ -1,4 +1,4 @@
-module deltotum.kit.inputs.joystick.event.joystick_event;
+module deltotum.kit.inputs.joysticks.events.joystick_event;
 
 import deltotum.core.events.event_base : EventBase;
 import deltotum.core.events.event_type : EventType;

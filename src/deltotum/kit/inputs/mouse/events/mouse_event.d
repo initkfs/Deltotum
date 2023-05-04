@@ -1,4 +1,4 @@
-module deltotum.kit.inputs.mouse.event.mouse_event;
+module deltotum.kit.inputs.mouse.events.mouse_event;
 
 import deltotum.core.events.event_base : EventBase;
 import deltotum.core.events.event_type : EventType;

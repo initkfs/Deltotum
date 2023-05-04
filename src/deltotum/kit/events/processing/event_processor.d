@@ -1,11 +1,11 @@
 module deltotum.kit.events.processing.event_processor;
 
 import deltotum.core.apps.events.application_event : ApplicationEvent;
-import deltotum.kit.inputs.mouse.event.mouse_event : MouseEvent;
-import deltotum.kit.inputs.keyboard.event.key_event : KeyEvent;
-import deltotum.kit.windows.event.window_event : WindowEvent;
-import deltotum.kit.inputs.joystick.event.joystick_event : JoystickEvent;
-import deltotum.kit.inputs.keyboard.event.text_input_event: TextInputEvent;
+import deltotum.kit.inputs.mouse.events.mouse_event : MouseEvent;
+import deltotum.kit.inputs.keyboards.events.key_event : KeyEvent;
+import deltotum.kit.windows.events.window_event : WindowEvent;
+import deltotum.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
+import deltotum.kit.inputs.keyboards.events.text_input_event: TextInputEvent;
 
 /**
  * Authors: initkfs

@@ -1,4 +1,4 @@
-module deltotum.kit.screens.screen_orientation;
+module deltotum.kit.screens.props.screen_orientation;
 
 /**
  * Authors: initkfs

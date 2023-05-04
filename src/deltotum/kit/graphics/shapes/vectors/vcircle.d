@@ -1,12 +1,12 @@
-module deltotum.kit.graphics.vectors.shapes.circle;
+module deltotum.kit.graphics.shapes.vectors.vcircle;
 
-import deltotum.kit.graphics.vectors.shapes.shape;
+import deltotum.kit.graphics.shapes.vectors.vshape: VShape;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 
 /**
  * Authors: initkfs
  */
-class Circle : Shape
+class VCircle : VShape
 {
     double radius = 0;
 

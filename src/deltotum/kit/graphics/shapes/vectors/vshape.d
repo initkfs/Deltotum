@@ -1,12 +1,12 @@
-module deltotum.kit.graphics.vectors.shapes.shape;
+module deltotum.kit.graphics.shapes.vectors.vshape;
 
-import deltotum.kit.graphics.canvases.drawable_canvas : DrawableCanvas;
+import deltotum.kit.graphics.canvases.vector_canvas : VectorCanvas;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 
 /**
  * Authors: initkfs
  */
-class Shape : DrawableCanvas
+class VShape : VectorCanvas
 {
     //TODO remove from shape
     GraphicStyle style;

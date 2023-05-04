@@ -1,4 +1,4 @@
-module deltotum.kit.graphics.canvases.drawable_canvas;
+module deltotum.kit.graphics.canvases.vector_canvas;
 
 import deltotum.kit.display.textures.texture : Texture;
 import deltotum.kit.graphics.colors.rgba : RGBA;
@@ -11,7 +11,7 @@ import deltotum.sys.cairo.cairo_context : CairoContext;
 /**
  * Authors: initkfs
  */
-class DrawableCanvas : Texture
+class VectorCanvas : Texture
 {
     protected
     {

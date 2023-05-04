@@ -1,4 +1,4 @@
-module deltotum.kit.inputs.keyboard.event.text_input_event;
+module deltotum.kit.inputs.keyboards.events.text_input_event;
 
 import deltotum.core.events.event_base : EventBase;
 import deltotum.core.events.event_type : EventType;

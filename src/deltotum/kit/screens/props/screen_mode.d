@@ -1,4 +1,4 @@
-module deltotum.kit.screens.screen_mode;
+module deltotum.kit.screens.props.screen_mode;
 
 /**
  * Authors: initkfs

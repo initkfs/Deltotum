@@ -1,8 +1,8 @@
 module deltotum.kit.screens.single_screen;
 
 import deltotum.math.shapes.rect2d : Rect2d;
-import deltotum.kit.screens.screen_mode : ScreenMode;
-import deltotum.kit.screens.screen_orientation : ScreenOrientation;
+import deltotum.kit.screens.props.screen_mode : ScreenMode;
+import deltotum.kit.screens.props.screen_orientation : ScreenOrientation;
 
 import std.logger.core : Logger;
 

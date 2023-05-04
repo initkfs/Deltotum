@@ -7,12 +7,12 @@ import deltotum.math.geometry.insets : Insets;
 import deltotum.kit.display.layouts.layout : Layout;
 import deltotum.sys.sdl.sdl_texture : SdlTexture;
 import deltotum.phys.physical_body : PhysicalBody;
-import deltotum.kit.inputs.mouse.event.mouse_event : MouseEvent;
+import deltotum.kit.inputs.mouse.events.mouse_event : MouseEvent;
 import deltotum.core.apps.events.application_event : ApplicationEvent;
-import deltotum.kit.inputs.keyboard.event.key_event : KeyEvent;
+import deltotum.kit.inputs.keyboards.events.key_event : KeyEvent;
 import deltotum.kit.display.events.focus.focus_event : FocusEvent;
-import deltotum.kit.inputs.keyboard.event.text_input_event : TextInputEvent;
-import deltotum.kit.inputs.joystick.event.joystick_event : JoystickEvent;
+import deltotum.kit.inputs.keyboards.events.text_input_event : TextInputEvent;
+import deltotum.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import deltotum.core.events.event_type : EventType;
 import deltotum.core.utils.tostring;
 

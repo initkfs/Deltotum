@@ -1,7 +1,7 @@
 module deltotum.kit.inputs.input;
 
 import deltotum.kit.inputs.clipboards.clipboard : Clipboard;
-import deltotum.kit.inputs.joystick.event.joystick_event : JoystickEvent;
+import deltotum.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import deltotum.math.vector2d : Vector2d;
 
 import deltotum.kit.inputs.mouse.mouse_cursor_type : MouseCursorType;

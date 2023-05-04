@@ -1,4 +1,4 @@
-module deltotum.kit.windows.event.window_event;
+module deltotum.kit.windows.events.window_event;
 
 import deltotum.core.events.event_base : EventBase;
 import deltotum.core.events.event_type : EventType;
