@@ -344,11 +344,14 @@ class SdlApplication : GraphicApplication
 
         windowBuilder.window = window;
 
-        if(parent){
+        if (parent)
+        {
             window.parent = parent;
             window.frameRate = parent.frameRate;
             window.windowManager = parent.windowManager;
-        }else {
+        }
+        else
+        {
             window.frameRate = mainLoop.frameRate;
             window.windowManager = windowManager;
         }
@@ -356,7 +359,7 @@ class SdlApplication : GraphicApplication
         windowBuilder.isVectorGraphics = isVectorGraphics;
 
         window.childWindowProvider = (title, width, height, x, y, parent) {
-            return newWindow(title, width, height, x, y, parent);  
+            return newWindow(title, width, height, x, y, parent);
         };
 
         window.initialize;
@@ -392,7 +395,8 @@ class SdlApplication : GraphicApplication
         import deltotum.kit.gui.themes.theme : Theme;
         import deltotum.kit.gui.themes.factories.theme_from_config_factory : ThemeFromConfigFactory;
 
-        auto themeLoader = new ThemeFromConfigFactory(uservices.logger, uservices.config, uservices.context, windowBuilder.asset
+        auto themeLoader = new ThemeFromConfigFactory(uservices.logger, uservices.config, uservices.context, windowBuilder
+                .asset
                 .defaultFont);
 
         auto theme = themeLoader.create;
@@ -436,7 +440,8 @@ class SdlApplication : GraphicApplication
             windowBuilder.build(fontGenerator);
             import deltotum.kit.graphics.colors.rgba : RGBA;
 
-            windowBuilder.asset.defaultBitmapFont = fontGenerator.generate([
+            windowBuilder.asset.defaultBitmapFont = fontGenerator.generate(
+                [
                 new ArabicNumeralsAlpabet,
                 new SpecialCharactersAlphabet,
                 new AlphabetEn,
@@ -468,7 +473,7 @@ class SdlApplication : GraphicApplication
         int y = -1,
         Window parent = null)
     {
-        return newWindow(title, width, height, x, y, parent,  SdlWindowMode.none);
+        return newWindow(title, width, height, x, y, parent, SdlWindowMode.none);
     }
 
     void clearErrors()

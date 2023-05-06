@@ -33,8 +33,6 @@
     "dependencies": {
         "bindbc-sdl": "~>1.2.1",
         "bindbc-lua": "~>0.5.1",
-        "bindbc-opengl": "~>1.0.0",
-        "bindbc-glfw": "~>1.0.2",
         "bindbc-freeimage": "~>1.0.2"
     },
     "dflags": ["-dip1000", "-preview=in"],
@@ -45,11 +43,6 @@
         "SDL_2020",
         "SDL_Mixer_202",
         "LUA_54",
-        "GL_42",
-        "GL_ARB_base_instance",
-        "GL_ARB_compressed_texture_pixel_storage",
-        "GL_AllowDeprecated",
-        "GLFW_33",
         "Cairo116"
     ]
 }

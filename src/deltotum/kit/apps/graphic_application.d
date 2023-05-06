@@ -23,6 +23,7 @@ abstract class GraphicApplication : CliApplication
     double frameRate = 60;
 
     bool isVectorGraphics;
+    bool isImageProcessing;
     bool isQuitOnCloseAllWindows = true;
 
     protected
