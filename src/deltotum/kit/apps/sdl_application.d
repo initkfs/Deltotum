@@ -45,6 +45,8 @@ import deltotum.kit.inputs.input : Input;
 import std.logger : Logger, MultiLogger, FileLogger, LogLevel, sharedLog;
 import std.stdio;
 
+import deltotum.sys.cairo.libs : CairoLib;
+
 import bindbc.sdl;
 
 /**
@@ -64,6 +66,8 @@ class SdlApplication : GraphicApplication
         Extension _ext;
         Input _input;
         Screen _screen;
+
+        CairoLib cairoLib;
     }
 
     EventManager eventManager;
@@ -119,41 +123,23 @@ class SdlApplication : GraphicApplication
         _input = new Input(clipboard);
         _audio = new Audio(audioMixLib);
 
-        //TODO unload
-        import CairoLib = deltotum.sys.cairo.libs;
+        auto cairoLibForLoad = new CairoLib;
 
-        auto cairoResult = CairoLib.load;
-
-        if (cairoResult == CairoLib.luaSupport)
-        {
+        cairoLibForLoad.onAfterLoad = () {
+            cairoLib = cairoLibForLoad;
             isVectorGraphics = true;
-        }
-        else
-        {
-            isVectorGraphics = false;
+            uservices.logger.trace("Load Cairo library.");
+        };
 
-            string errorInfo = "Cairo error.";
-            switch (cairoResult) with (CairoLib.CairoSupport)
-            {
-            case noLibrary:
-                errorInfo ~= " Cairo library loading error";
-                break;
-            case badLibrary:
-                import std.string : fromStringz;
-                import std.format : format;
+        cairoLibForLoad.onNoLibrary = () => uservices.logger.error("Cairo library loading error.");
+        cairoLibForLoad.onBadLibrary = () => uservices.logger.error("Cairo bad library.");
+        cairoLibForLoad.onErrorWithMessage = (err, msg) {
+            import std.string: fromStringz;
+            uservices.logger.errorf("Cairo loading error. %s: %s\n", err.fromStringz.idup, msg
+                .fromStringz.idup);
+        };
 
-                foreach (err; CairoLib.errors)
-                {
-                    errorInfo ~= format(" Cairo bad library. %s: %s\n", err.error.fromStringz.idup, err
-                            .message.fromStringz.idup);
-                }
-                break;
-            default:
-                break;
-            }
-
-            uservices.logger.error(errorInfo);
-        }
+        cairoLibForLoad.load;
 
         _ext = createExtension(uservices.logger, uservices.config, uservices.context);
 
