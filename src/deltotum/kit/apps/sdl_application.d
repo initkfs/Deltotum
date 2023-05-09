@@ -37,7 +37,7 @@ import deltotum.kit.screens.screen : Screen;
 import deltotum.kit.apps.loops.integrated_loop : IntegratedLoop;
 import deltotum.kit.apps.loops.loop : Loop;
 import deltotum.kit.windows.window_manager : WindowManager;
-import deltotum.kit.apps.capabilities.capability: Capability;
+import deltotum.kit.apps.capabilities.capability : Capability;
 
 import std.typecons : Nullable;
 
@@ -131,18 +131,45 @@ class SdlApplication : GraphicApplication
             _cap.isVectorGraphics = true;
             uservices.logger.trace("Load Cairo library.");
         };
-        
+
         cairoLibForLoad.onNoLibrary = () => uservices.logger.error("Cairo library loading error.");
         cairoLibForLoad.onBadLibrary = () => uservices.logger.error("Cairo bad library.");
         cairoLibForLoad.onErrorWithMessage = (err, msg) {
-            import std.string: fromStringz;
+            import std.string : fromStringz;
+
             uservices.logger.errorf("Cairo loading error. %s: %s\n", err.fromStringz.idup, msg
-                .fromStringz.idup);
+                    .fromStringz.idup);
             cairoLibForLoad.unload;
             cairoLib = null;
         };
 
         cairoLibForLoad.load;
+
+        //TODO version
+        import bindbc.freeimage;
+
+        FISupport ret = loadFreeImage();
+        if (ret == fiSupport)
+        {
+            _cap.isImageProcessing = true;
+            uservices.logger.trace("Load FreeImage library");
+        }
+        else
+        {
+            if (ret == FISupport.noLibrary)
+            {
+                uservices.logger.warning("FreeImage shared library failed to load");
+            }
+            else if (FISupport.badLibrary)
+            {
+                //TODO all errors
+                uservices.logger.warning("FreeImage bad library");
+            }
+            else
+            {
+                uservices.logger.warning("FreeImage library loading error");
+            }
+        }
 
         _ext = createExtension(uservices.logger, uservices.config, uservices.context);
 

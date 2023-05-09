@@ -45,6 +45,26 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface
         return ComResult.success;
     }
 
+    ComResult createRGBSurfaceFrom(void* pixels, int width, int height, int depth, int pitch,
+        uint rmask, uint gmask, uint bmask, uint amask)
+    {
+        if (ptr)
+        {
+            destroyPtr;
+        }
+        ptr = SDL_CreateRGBSurfaceFrom(pixels, width, height, depth, pitch, rmask, gmask, bmask, amask);
+        if (!ptr)
+        {
+            string error = "Cannot create rgb surface from pixels.";
+            if (const err = getError)
+            {
+                error ~= err;
+            }
+            return ComResult.error(error);
+        }
+        return ComResult.success;
+    }
+
     SDL_Surface* createRGBSurfacePtr(uint flags, int width, int height, int depth,
         uint rmask, uint gmask, uint bmask, uint amask)
     {

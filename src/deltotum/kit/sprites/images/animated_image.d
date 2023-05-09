@@ -1,6 +1,6 @@
 module deltotum.kit.sprites.images.animated_image;
 
-import deltotum.kit.sprites.images.loadable_image : LoadableImage;
+import deltotum.kit.sprites.images.texture_image : TextureImage;
 import deltotum.kit.sprites.sprite : Sprite;
 
 //TODO extract interfaces
@@ -32,7 +32,7 @@ private
 /**
  * Authors: initkfs
  */
-class AnimatedImage : LoadableImage
+class AnimatedImage : TextureImage
 {
     protected
     {

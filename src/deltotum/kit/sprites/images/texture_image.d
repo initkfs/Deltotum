@@ -1,4 +1,4 @@
-module deltotum.kit.sprites.images.loadable_image;
+module deltotum.kit.sprites.images.texture_image;
 
 import deltotum.kit.sprites.sprite : Sprite;
 
@@ -10,6 +10,7 @@ import deltotum.sys.sdl.img.sdl_image : SdlImage;
 import deltotum.kit.sprites.textures.texture : Texture;
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.kit.sprites.flip : Flip;
+import deltotum.kit.sprites.images.bitmaps.bitmap : Bitmap;
 
 import bindbc.sdl;
 
@@ -17,7 +18,7 @@ import bindbc.sdl;
  * Authors: initkfs
  */
 //TODO remove duplication with animation bitmap, but it's not clear what code would be required
-class LoadableImage : Texture
+class TextureImage : Texture
 {
     this()
     {
@@ -27,6 +28,40 @@ class LoadableImage : Texture
     this(SdlTexture texture)
     {
         super(texture);
+    }
+
+    bool load(Bitmap bitmap)
+    {
+        import deltotum.sys.sdl.sdl_surface : SdlSurface;
+
+        auto surface = new SdlSurface;
+        //TODO alpha mask?
+        if (const err = surface.createRGBSurfaceFrom(bitmap.bits, bitmap.width, bitmap.height, bitmap.bpp, bitmap
+                .pitch, bitmap.redMask, bitmap.greenMask, bitmap.blueMask, 0))
+        {
+            throw new Exception(err.toString);
+        }
+
+        texture = graphics.newComTexture;
+        if (const err = texture.fromSurface(surface))
+        {
+            throw new Exception(err.toString);
+        }
+        int width;
+        int height;
+        
+        if (const err = texture.getSize(&width, &height))
+        {
+            logger.errorf(err.toString);
+            return false;
+        }
+
+        this.width = width * scale;
+        this.height = height * scale;
+
+        surface.destroy;
+        requestRedraw;
+        return true;
     }
 
     bool load(string path, int requestWidth = -1, int requestHeight = -1)
@@ -61,7 +96,9 @@ class LoadableImage : Texture
             if (scale != 1 && scale > 0)
             {
                 bool isResized;
-                if(const err = image.resize(cast(int)(imageWidth * scale), cast(int)(imageHeight * scale), isResized)){
+                if (const err = image.resize(cast(int)(imageWidth * scale), cast(int)(
+                        imageHeight * scale), isResized))
+                {
                     throw new Exception(err.toString);
                 }
                 imageWidth = image.width;
