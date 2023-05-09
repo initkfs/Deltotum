@@ -67,7 +67,6 @@ class SdlApplication : GraphicApplication
         Extension _ext;
         Input _input;
         Screen _screen;
-        Capability _cap;
 
         CairoLib cairoLib;
     }
@@ -93,8 +92,6 @@ class SdlApplication : GraphicApplication
         {
             return isExit;
         }
-
-        _cap = new Capability;
 
         mainLoop.onQuit = () => quit;
         mainLoop.timestampProvider = () => sdlLib.getTicks;
@@ -134,13 +131,15 @@ class SdlApplication : GraphicApplication
             _cap.isVectorGraphics = true;
             uservices.logger.trace("Load Cairo library.");
         };
-
+        
         cairoLibForLoad.onNoLibrary = () => uservices.logger.error("Cairo library loading error.");
         cairoLibForLoad.onBadLibrary = () => uservices.logger.error("Cairo bad library.");
         cairoLibForLoad.onErrorWithMessage = (err, msg) {
             import std.string: fromStringz;
             uservices.logger.errorf("Cairo loading error. %s: %s\n", err.fromStringz.idup, msg
                 .fromStringz.idup);
+            cairoLibForLoad.unload;
+            cairoLib = null;
         };
 
         cairoLibForLoad.load;

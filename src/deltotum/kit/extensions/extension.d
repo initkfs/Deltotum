@@ -22,6 +22,8 @@ class Extension : SimpleUnit
                 p.call(args, onResult, onError);
             }
         }
+
+        //TODO logging if plugin not found
     }
 
     override void initialize()
