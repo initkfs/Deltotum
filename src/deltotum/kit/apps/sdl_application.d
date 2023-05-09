@@ -37,6 +37,7 @@ import deltotum.kit.screens.screen : Screen;
 import deltotum.kit.apps.loops.integrated_loop : IntegratedLoop;
 import deltotum.kit.apps.loops.loop : Loop;
 import deltotum.kit.windows.window_manager : WindowManager;
+import deltotum.kit.apps.capabilities.capability: Capability;
 
 import std.typecons : Nullable;
 
@@ -66,6 +67,7 @@ class SdlApplication : GraphicApplication
         Extension _ext;
         Input _input;
         Screen _screen;
+        Capability _cap;
 
         CairoLib cairoLib;
     }
@@ -91,6 +93,8 @@ class SdlApplication : GraphicApplication
         {
             return isExit;
         }
+
+        _cap = new Capability;
 
         mainLoop.onQuit = () => quit;
         mainLoop.timestampProvider = () => sdlLib.getTicks;
@@ -127,7 +131,7 @@ class SdlApplication : GraphicApplication
 
         cairoLibForLoad.onAfterLoad = () {
             cairoLib = cairoLibForLoad;
-            isVectorGraphics = true;
+            _cap.isVectorGraphics = true;
             uservices.logger.trace("Load Cairo library.");
         };
 
@@ -302,6 +306,7 @@ class SdlApplication : GraphicApplication
         component.input = _input;
         component.screen = _screen;
         component.ext = _ext;
+        component.cap = _cap;
     }
 
     Window newWindow(
@@ -341,8 +346,6 @@ class SdlApplication : GraphicApplication
             window.frameRate = mainLoop.frameRate;
             window.windowManager = windowManager;
         }
-
-        windowBuilder.isVectorGraphics = isVectorGraphics;
 
         window.childWindowProvider = (title, width, height, x, y, parent) {
             return newWindow(title, width, height, x, y, parent);

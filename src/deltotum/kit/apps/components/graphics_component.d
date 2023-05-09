@@ -9,16 +9,15 @@ import deltotum.media.audio.audio : Audio;
 import deltotum.kit.graphics.graphics : Graphics;
 import deltotum.kit.inputs.input : Input;
 import deltotum.kit.windows.window : Window;
-import deltotum.kit.screens.screen: Screen;
+import deltotum.kit.screens.screen : Screen;
 import deltotum.kit.extensions.extension : Extension;
+import deltotum.kit.apps.capabilities.capability : Capability;
 
 /**
  * Authors: initkfs
  */
 class GraphicsComponent : UniComponent
 {
-    bool isVectorGraphics;
-
     private
     {
         @Service Audio _audio;
@@ -28,6 +27,7 @@ class GraphicsComponent : UniComponent
         @Service Input _input;
         @Service Screen _screen;
         @Service Window _window;
+        @Service Capability _cap;
     }
 
     //bypass hijacking
@@ -36,7 +36,6 @@ class GraphicsComponent : UniComponent
         if (auto graphicComponent = cast(GraphicsComponent) uniComponent)
         {
             buildFromParent!GraphicsComponent(graphicComponent, this);
-            graphicComponent.isVectorGraphics = isVectorGraphics;
             return;
         }
         buildFromParent(uniComponent, this);
@@ -175,5 +174,24 @@ class GraphicsComponent : UniComponent
 
         enforce(ext !is null, "Extension must not be null");
         _ext = ext;
+    }
+
+    final bool hasCap() @nogc nothrow pure @safe
+    {
+        return _cap !is null;
+    }
+
+    final Capability cap() @nogc nothrow pure @safe
+    out (_cap; _cap !is null)
+    {
+        return _cap;
+    }
+
+    final void cap(Capability caps) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(caps !is null, "Capabilities must not be null");
+        _cap = caps;
     }
 }
