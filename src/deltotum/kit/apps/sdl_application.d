@@ -358,7 +358,6 @@ class SdlApplication : GraphicApplication
         buildPartially(windowBuilder);
 
         auto window = new Window(uservices.logger, sdlWindow);
-
         windowBuilder.window = window;
 
         if (parent)
@@ -391,9 +390,6 @@ class SdlApplication : GraphicApplication
 
         //TODO extract renderer
         SdlRenderer sdlRenderer = new SdlRenderer(sdlWindow, SDL_RENDERER_ACCELERATED);
-
-        window.renderer = sdlRenderer;
-
         window.setTitle(title);
 
         //TODO move to config, duplication with SdlApplication
@@ -437,6 +433,7 @@ class SdlApplication : GraphicApplication
         };
 
         windowBuilder.isBuilt = true;
+        windowBuilder.build(window);
 
         import deltotum.gui.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
 
@@ -473,6 +470,7 @@ class SdlApplication : GraphicApplication
         window.onAfterDestroy = () {
             sceneManager.asset.destroy;
             sceneManager.destroy;
+            sdlRenderer.destroy;
         };
 
         windowManager.add(window);

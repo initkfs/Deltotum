@@ -1,8 +1,7 @@
 module deltotum.kit.windows.window;
 
+import deltotum.core.apps.uni.uni_component : UniComponent;
 import deltotum.com.gui.com_window : ComWindow;
-import deltotum.sys.sdl.sdl_window : SdlWindow;
-import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.math.vector2d : Vector2d;
 
@@ -12,19 +11,22 @@ import deltotum.kit.screens.screen : Screen;
 
 import std.logger.core : Logger;
 
-//TODO move to deltotum.platforms;
-import bindbc.sdl;
-
 /**
  * Authors: initkfs
+ *
+ * Window cannot contain a circular reference to itself. Therefore, it cannot be a graphical component.
  */
-class Window
+class Window : UniComponent
 {
     Window parent;
     Window delegate(dstring, int, int, int, int, Window) childWindowProvider;
     WindowManager windowManager;
 
     void delegate() onAfterDestroy;
+    void delegate() onCreate;
+    void delegate() onShow;
+    void delegate() onHide;
+    void delegate() onClose;
 
     SceneManager scenes;
 
@@ -47,9 +49,6 @@ class Window
         Logger logger;
     }
 
-    //TODO remove renderer
-    SdlRenderer renderer;
-
     this(Logger logger, ComWindow window)
     {
         assert(logger);
@@ -58,8 +57,9 @@ class Window
         this.nativeWindow = window;
     }
 
-    void initialize()
+    override void initialize()
     {
+        super.initialize;
         if (const err = nativeWindow.initialize)
         {
             logger.error("Window initialization error. ", err.toString);
@@ -71,6 +71,11 @@ class Window
         if (const err = nativeWindow.create)
         {
             throw new Exception(err.toString);
+        }
+
+        if (onCreate)
+        {
+            onCreate();
         }
     }
 
@@ -100,6 +105,11 @@ class Window
 
         //TODO from config
         focusRequest;
+
+        if (onShow)
+        {
+            onShow();
+        }
     }
 
     void hide()
@@ -115,6 +125,10 @@ class Window
             return;
         }
         isShowing = false;
+
+        if(onHide){
+            onHide();
+        }
     }
 
     void close()
@@ -133,6 +147,10 @@ class Window
         windowManager.remove(this);
         isClosing = true;
         destroy;
+
+        if(onClose){
+            onClose();
+        }
     }
 
     void focusRequest()
@@ -249,24 +267,6 @@ class Window
         return y;
     }
 
-    double getScaleFactor()
-    {
-        int outputWidth;
-        int outputHeight;
-
-        if (const err = renderer.getOutputSize(&outputWidth, &outputHeight))
-        {
-            //TODO logging
-            return 0;
-        }
-
-        long windowWidth = width;
-
-        //TODO height
-        double scale = (cast(double)(outputWidth)) / windowWidth;
-        return scale;
-    }
-
     string getTitle()
     {
         const(char)[] buff;
@@ -286,7 +286,7 @@ class Window
 
         if (const err = nativeWindow.setTitle(title.to!string.toStringz))
         {
-            //TODO logging
+            logger.error("Error setting window title: ", err.toString);
         }
     }
 
@@ -352,19 +352,16 @@ class Window
     void destroy()
     {
         parent = null;
-        childWindowProvider = null;
 
         //TODO close child windows
-        renderer.destroy;
 
         //after window
         nativeWindow.destroy;
         isDestroyed = true;
 
-        if(onAfterDestroy){
+        if (onAfterDestroy)
+        {
             onAfterDestroy();
         }
-
-        onAfterDestroy = null;
     }
 }

@@ -19,12 +19,29 @@
         },
         {
             "name": "app-dist",
-            "versions": ["sdl_backend"],
+            "versions": [
+                "dev", "SdlBackend"
+            ],
             "targetType": "executable",
             "targetName": "./dist/deltotum",
             "platforms": [
                 "linux"
             ]
+        },
+        {
+            "name": "app-trace",
+            "versions": [
+                "dev", "SdlBackend"
+            ],
+            "targetType": "executable",
+            "targetName": "deltotum",
+            "platforms": [
+                "linux"
+            ],
+            "dflags-ldc": [
+                "--ftime-trace", "--ftime-trace-file=$PACKAGE_DIR/trace.json"
+            ],
+            "postBuildCommands": ["timetrace2txt $PACKAGE_DIR/trace.json --tsv $PACKAGE_DIR/trace.tsv -o $PACKAGE_DIR/trace.txt"]
         }
     ],
     "buildRequirements": ["disallowDeprecations"],
