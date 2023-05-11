@@ -37,7 +37,6 @@ class HBox : Container
             if (newWidth < maxW)
             {
                 width = newWidth;
-
             }
             else
             {
@@ -57,8 +56,6 @@ class HBox : Container
 
             height = min(maxH, maxHeight - padding.height);
         }
-
-        super.requestLayout;
     }
 
     double childrenWidth()
@@ -89,4 +86,5 @@ class HBox : Container
         const double childrenMaxHeight = childrenRange.maxElement!"a.height".height;
         return childrenMaxHeight;
     }
+
 }

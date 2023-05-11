@@ -56,6 +56,7 @@ class Sprite : PhysicalBody
     Layout layout;
     bool isLayoutManaged = true;
     bool isResizedByParent = false;
+    bool isResizeChildren = true;
     Alignment alignment = Alignment.none;
 
     ScaleMode scaleMode = ScaleMode.none;
@@ -109,7 +110,6 @@ class Sprite : PhysicalBody
         bool isDrag = false;
         bool isValid = true;
 
-        bool isResizeChildOnScale = true;
         bool _cached;
     }
 
@@ -217,8 +217,9 @@ class Sprite : PhysicalBody
         isCreated = true;
     }
 
-    void recreate(){
-        
+    void recreate()
+    {
+
     }
 
     void buildCreated(Sprite obj)
@@ -430,7 +431,7 @@ class Sprite : PhysicalBody
         isRedraw = true;
     }
 
-    void requestLayout()
+    void applyLayout()
     {
         if (layout !is null)
         {
@@ -440,11 +441,6 @@ class Sprite : PhysicalBody
 
     void update(double delta)
     {
-        if (!isChildrenValid)
-        {
-            requestLayout;
-            setChildrenValid;
-        }
 
         if (!isValid)
         {
@@ -453,10 +449,13 @@ class Sprite : PhysicalBody
                 invalidateListener();
             }
 
-            if (parent !is null && parent !is this)
-            {
-                parent.requestLayout;
-            }
+            //TODO cyclic parent call?
+            applyLayout;
+
+            // if (parent !is null && parent !is this)
+            // {
+            //     parent.applyLayout;
+            // }
 
             setValid(true);
         }
@@ -726,6 +725,11 @@ class Sprite : PhysicalBody
         immutable double oldWidth = _width;
         _width = value;
 
+        if (!isCreated)
+        {
+            return;
+        }
+
         setInvalid;
 
         if (isCreated && onChangeWidthFromTo !is null)
@@ -738,7 +742,7 @@ class Sprite : PhysicalBody
             recreateCache;
         }
 
-        if (isResizeChildOnScale && children.length > 0)
+        if (isResizeChildren && children.length > 0)
         {
             immutable double dw = _width - oldWidth;
             foreach (child; children)
@@ -768,6 +772,11 @@ class Sprite : PhysicalBody
         immutable double oldHeight = _height;
         _height = value;
 
+        if (!isCreated)
+        {
+            return;
+        }
+
         setInvalid;
 
         if (isCreated && onChangeHeightFromTo !is null)
@@ -780,7 +789,7 @@ class Sprite : PhysicalBody
             recreateCache;
         }
 
-        if (isResizeChildOnScale && children.length > 0)
+        if (isResizeChildren && children.length > 0)
         {
             const dh = _height - oldHeight;
             foreach (child; children)
@@ -836,29 +845,6 @@ class Sprite : PhysicalBody
         resize(newW, newH);
 
         return true;
-    }
-
-    bool isChildrenValid() @nogc @safe pure nothrow
-    {
-        foreach (Sprite child; children)
-        {
-            if (!child.isValid)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    void setChildrenValid()
-    {
-        foreach (Sprite child; children)
-        {
-            if (!child.isValid)
-            {
-                child.setValid(true);
-            }
-        }
     }
 
     void setValid(bool value) @nogc @safe pure nothrow

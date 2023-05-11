@@ -26,4 +26,14 @@ class Rectangle : Shape
             graphics.drawRect(x, y, width, height, style.lineColor);
         }
     }
+
+    // override double width(){
+    //     return super.width;
+    // }
+
+    // override void width(double v){
+    //     super.width(v);
+    //     import std;
+    //     writefln("Rectangle w: %s", v);
+    // }
 }

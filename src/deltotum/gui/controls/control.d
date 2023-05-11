@@ -55,12 +55,17 @@ abstract class Control : Sprite
 
     protected bool createBackground(double width, double height)
     {
-        if (!isBackground || backgroundFactory is null)
+        if (background || !isBackground || backgroundFactory is null)
         {
             return false;
         }
 
         background = backgroundFactory(width, height);
+        background.x = backgroundInsets.left;
+        background.y = backgroundInsets.top;
+        background.isResizedByParent = true;
+        background.isLayoutManaged = false;
+        addCreated(background, 0);
         return true;
     }
 
@@ -71,14 +76,6 @@ abstract class Control : Sprite
         if (width > 0 && height > 0)
         {
             createBackground(width - backgroundInsets.width, height - backgroundInsets.height);
-            if (background !is null)
-            {
-                background.x = backgroundInsets.left;
-                background.y = backgroundInsets.top;
-                background.isResizedByParent = true;
-                background.isLayoutManaged = false;
-                addCreated(background);
-            }
         }
         // else
         // {

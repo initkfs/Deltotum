@@ -28,9 +28,11 @@ class VBox : Container
             return 0;
         }
         import std.algorithm.searching : maxElement;
-        import std.algorithm.iteration: filter;
+        import std.algorithm.iteration : filter;
 
-        const double childrenMaxWidth = children.filter!(ch => ch.isLayoutManaged).maxElement!("a.width").width;
+        const double childrenMaxWidth = children.filter!(ch => ch.isLayoutManaged)
+            .maxElement!("a.width")
+            .width;
         return childrenMaxWidth;
     }
 
@@ -42,9 +44,11 @@ class VBox : Container
         }
 
         import std.algorithm.iteration : sum, map;
-        import std.algorithm.iteration: filter;
+        import std.algorithm.iteration : filter;
 
-        const double childrenHeight = children.filter!(ch => ch.isLayoutManaged).map!(ch => ch.height).sum;
+        const double childrenHeight = children.filter!(ch => ch.isLayoutManaged)
+            .map!(ch => ch.height)
+            .sum;
         return childrenHeight;
     }
 
@@ -98,7 +102,5 @@ class VBox : Container
             }
 
         }
-
-        super.requestLayout;
     }
 }

@@ -147,7 +147,7 @@ class Button : Control
             addOrAddCreated(clickEffectAnimation);
         }
 
-        requestLayout;
+        //requestLayout;
 
         createListeners;
     }
