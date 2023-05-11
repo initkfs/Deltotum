@@ -290,7 +290,7 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
             x = event.window.data1;
             y = event.window.data2;
             break;
-        case SDL_WindowEventID.SDL_WINDOWEVENT_SIZE_CHANGED:
+        case SDL_WindowEventID.SDL_WINDOWEVENT_RESIZED:
             type = WindowEvent.Event.resize;
             width = event.window.data1;
             height = event.window.data2;

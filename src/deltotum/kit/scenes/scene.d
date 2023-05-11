@@ -26,7 +26,7 @@ class Scene : GraphicsComponent
 
     protected
     {
-        Sprite[] displayObjects;
+        Sprite[] sprites;
     }
 
     private
@@ -63,7 +63,7 @@ class Scene : GraphicsComponent
     void draw()
     {
         graphics.draw(() {
-            foreach (obj; displayObjects)
+            foreach (obj; sprites)
             {
                 obj.draw;
             }
@@ -74,7 +74,7 @@ class Scene : GraphicsComponent
     {
         worldTicks++;
 
-        foreach (obj; displayObjects)
+        foreach (obj; sprites)
         {
             obj.update(delta);
         }
@@ -82,11 +82,11 @@ class Scene : GraphicsComponent
 
     void destroy()
     {
-        foreach (obj; displayObjects)
+        foreach (obj; sprites)
         {
             obj.destroy;
         }
-        displayObjects = [];
+        sprites = [];
     }
 
     void addCreated(Sprite obj)
@@ -104,7 +104,7 @@ class Scene : GraphicsComponent
     void add(Sprite object)
     {
         //TODO check if exists
-        displayObjects ~= object;
+        sprites ~= object;
     }
 
     void changeScene(Scene other)
@@ -115,9 +115,17 @@ class Scene : GraphicsComponent
         }
     }
 
+    void scale(double factorWidth, double factorHeight)
+    {
+        foreach (Sprite sprite; sprites)
+        {
+            sprite.setScale(factorWidth, factorHeight);
+        }
+    }
+
     Sprite[] getActiveObjects()
     {
-        return displayObjects;
+        return sprites;
     }
 
     bool hasCreation() @nogc @safe pure nothrow

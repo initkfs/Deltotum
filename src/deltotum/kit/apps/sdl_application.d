@@ -243,16 +243,34 @@ class SdlApplication : GraphicApplication
             switch (e.event) with (WindowEvent.Event)
             {
             case focusIn:
-                windowManager.windowById(e.ownerId, win => win.isFocus = true);
+                windowManager.windowById(e.ownerId, (win) {
+                    win.isFocus = true;
+                    return true;
+                });
                 break;
             case focusOut:
-                windowManager.windowById(e.ownerId, win => win.isFocus = false);
+                windowManager.windowById(e.ownerId, (win) {
+                    win.isFocus = false;
+                    return true;
+                });
                 break;
             case show:
-                windowManager.windowById(e.ownerId, win => win.isShowing = true);
+                windowManager.windowById(e.ownerId, (win) {
+                    win.isShowing = true;
+                    return true;
+                });
                 break;
             case hide:
-                windowManager.windowById(e.ownerId, win => win.isShowing = false);
+                windowManager.windowById(e.ownerId, (win) {
+                    win.isShowing = false;
+                    return true;
+                });
+                break;
+            case resize:
+                windowManager.windowById(e.ownerId, (win) {
+                    win.confirmResize(e.width, e.height);
+                    return true;
+                });
                 break;
             case close:
                 closeWindow(e.ownerId);
@@ -389,7 +407,7 @@ class SdlApplication : GraphicApplication
         window.setPos(newX, newY);
 
         //TODO extract renderer
-        SdlRenderer sdlRenderer = new SdlRenderer(sdlWindow, SDL_RENDERER_ACCELERATED);
+        SdlRenderer sdlRenderer = new SdlRenderer(sdlWindow, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
         window.setTitle(title);
 
         //TODO move to config, duplication with SdlApplication

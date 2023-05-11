@@ -15,6 +15,8 @@ import std.logger.core : Logger;
  * Authors: initkfs
  *
  * Window cannot contain a circular reference to itself. Therefore, it cannot be a graphical component.
+ *
+ * Window does not contain a renderer because the rendering implementation may change in the future.
  */
 class Window : UniComponent
 {
@@ -27,6 +29,7 @@ class Window : UniComponent
     void delegate() onShow;
     void delegate() onHide;
     void delegate() onClose;
+    void delegate(double, double, double, double) onResizeOldNewWidthHeight;
 
     SceneManager scenes;
 
@@ -47,6 +50,8 @@ class Window : UniComponent
     private
     {
         Logger logger;
+        double lastChangedWidth;
+        double lastChangedHeight;
     }
 
     this(Logger logger, ComWindow window)
@@ -126,7 +131,8 @@ class Window : UniComponent
         }
         isShowing = false;
 
-        if(onHide){
+        if (onHide)
+        {
             onHide();
         }
     }
@@ -148,7 +154,8 @@ class Window : UniComponent
         isClosing = true;
         destroy;
 
-        if(onClose){
+        if (onClose)
+        {
             onClose();
         }
     }
@@ -201,14 +208,34 @@ class Window : UniComponent
         }
     }
 
-    void setSize(int width, int height)
+    void setSize(double newWidth, double newHeight)
     {
         //TODO check bounds
-        if (const err = nativeWindow.setSize(width, height))
+        if (const err = nativeWindow.setSize(cast(int) newWidth, cast(int) newHeight))
         {
-            logger.errorf("Resizing window error, new width %s, height %s, current width %s, height %s", width, height, this
-                    .width, this.height);
+            logger.errorf("Resizing window error, new width %s, height %s, current width %s, height %s", newWidth, newHeight, width, height);
+            return;
         }
+        lastChangedWidth = width;
+        lastChangedHeight = height;
+    }
+
+    void confirmResize(double newWidth, double newHeight)
+    {
+        if (onResizeOldNewWidthHeight)
+        {
+            onResizeOldNewWidthHeight(lastChangedWidth, lastChangedHeight, newWidth, newHeight);
+        }
+
+        import std.math.operations : isClose;
+
+        double factorWidth = isClose(lastChangedWidth, newWidth) ? 1 : newWidth / lastChangedWidth;
+        double factorHeigth = isClose(lastChangedHeight, newHeight) ? 1 : newHeight / lastChangedHeight;
+
+        lastChangedWidth = newWidth;
+        lastChangedHeight = newHeight;
+
+        scenes.currentScene.scale(factorWidth, factorHeigth);
     }
 
     Rect2d bounds()

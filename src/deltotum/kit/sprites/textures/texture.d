@@ -21,6 +21,14 @@ class Texture : Sprite
         SdlTexture texture;
     }
 
+    private
+    {
+        //hack to reduce memory leak
+        double oldChangedWidth = 0;
+        double oldChangedHeight = 0;
+        double changeSizeDelta = 25;
+    }
+
     this()
     {
 
@@ -97,7 +105,8 @@ class Texture : Sprite
     void drawTexture(Rect2d textureBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
             .none)
     {
-        if(const err = texture.draw(textureBounds, destBounds, angle, flip)){
+        if (const err = texture.draw(textureBounds, destBounds, angle, flip))
+        {
             //TODO logging
         }
     }
@@ -116,6 +125,40 @@ class Texture : Sprite
             }
             Rect2d destBounds = Rect2d(x, y, width, height);
             return texture.draw(textureBounds, destBounds, angle, flip);
+        }
+    }
+
+    override double width()
+    {
+        return super.width;
+    }
+
+    override void width(double value)
+    {
+        super.width(value);
+        import Math = deltotum.math;
+
+        if (texture && Math.abs(oldChangedWidth - value) > changeSizeDelta)
+        {
+            create;
+            oldChangedWidth = width;
+        }
+    }
+
+    override double height()
+    {
+        return super.height;
+    }
+
+    override void height(double value)
+    {
+        super.height(value);
+        import Math = deltotum.math;
+
+        if (texture && Math.abs(oldChangedHeight - value) > changeSizeDelta)
+        {
+            create;
+            oldChangedHeight = value;
         }
     }
 

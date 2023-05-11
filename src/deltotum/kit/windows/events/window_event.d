@@ -47,7 +47,7 @@ struct WindowEvent
         this.height = height;
     }
 
-    string toString()
+    string toString() const
     {
         import std.format : format;
 

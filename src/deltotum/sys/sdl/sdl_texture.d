@@ -26,6 +26,12 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         SdlRenderer renderer;
     }
 
+    protected
+    {
+        //TODO getDepth?
+        int depth = 32;
+    }
+
     this(SdlRenderer renderer)
     {
         assert(renderer);
@@ -55,12 +61,22 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
 
     void setRendererTarget()
     {
-        SDL_SetRenderTarget(renderer.getObject, ptr);
+        const zeroOrErr = SDL_SetRenderTarget(renderer.getObject, ptr);
+        if (zeroOrErr != 0)
+        {
+            import std.string : fromStringz;
+
+            throw new Exception(getError.fromStringz.idup);
+        }
     }
 
     void resetRendererTarget()
     {
-        SDL_SetRenderTarget(renderer.getObject, null);
+        const zeroOrErr = SDL_SetRenderTarget(renderer.getObject, null);
+        import std.string : fromStringz;
+        if(zeroOrErr != 0){
+            throw new Exception(getError.fromStringz.idup);
+        }
     }
 
     ComResult create(uint format,
@@ -123,8 +139,17 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         {
             destroyPtr;
         }
+        return fromSurfacePtr(surface.getObject);
+    }
 
-        ptr = SDL_CreateTextureFromSurface(renderer.getObject, surface.getObject);
+    ComResult fromSurfacePtr(SDL_Surface* surface)
+    {
+        if (ptr)
+        {
+            destroyPtr;
+        }
+
+        ptr = SDL_CreateTextureFromSurface(renderer.getObject, surface);
         if (ptr is null)
         {
             string error = "Unable create texture from renderer and surface.";
@@ -135,6 +160,75 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
             return ComResult.error(error);
         }
         SDL_SetTextureBlendMode(ptr, SDL_BLENDMODE_BLEND);
+        return ComResult.success;
+    }
+
+    ComResult resize(double newWidth, double newHeight)
+    {
+        //TODO remove duplication
+        SDL_Rect srcRect, dstRect;
+
+        dstRect.x = 0;
+        dstRect.y = 0;
+        dstRect.w = cast(int) newWidth;
+        dstRect.h = cast(int) newHeight;
+
+        int textureWidth, textureHeight;
+        uint format;
+        SDL_TextureAccess access;
+        if (const err = query(&textureWidth, &textureHeight, &format, &access))
+        {
+            return err;
+        }
+
+        srcRect.x = 0;
+        srcRect.y = 0;
+        srcRect.w = textureWidth;
+        srcRect.h = textureHeight;
+
+        auto tempSrc = SDL_CreateRGBSurfaceWithFormat(0, srcRect.w, srcRect.h, depth, format);
+        if (!tempSrc)
+        {
+            //TODO errors
+            return ComResult(-2, getError);
+        }
+        scope (exit)
+        {
+            SDL_FreeSurface(tempSrc);
+        }
+
+        auto tempDst = SDL_CreateRGBSurfaceWithFormat(0, dstRect.w, dstRect.h, depth, format);
+        if (!tempDst)
+        {
+            return ComResult(-3, getError);
+        }
+
+        scope (exit)
+        {
+            SDL_FreeSurface(tempDst);
+        }
+
+        setRendererTarget;
+        const int zeroOrErrRead = SDL_RenderReadPixels(renderer.getObject, &srcRect, format, tempSrc.pixels, tempSrc
+                .pitch);
+        if (zeroOrErrRead != 0)
+        {
+            return ComResult(zeroOrErrRead, getError);
+        }
+
+        resetRendererTarget;
+
+        const int zeroOrErrorCode = SDL_BlitScaled(tempSrc, &srcRect, tempDst, &dstRect);
+        if (zeroOrErrorCode != 0)
+        {
+            return ComResult(zeroOrErrorCode);
+        }
+
+        if (const err = fromSurfacePtr(tempDst))
+        {
+            return err;
+        }
+
         return ComResult.success;
     }
 

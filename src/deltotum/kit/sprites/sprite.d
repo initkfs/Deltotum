@@ -7,6 +7,7 @@ import deltotum.math.geometry.insets : Insets;
 import deltotum.kit.sprites.layouts.layout : Layout;
 import deltotum.sys.sdl.sdl_texture : SdlTexture;
 import deltotum.phys.physical_body : PhysicalBody;
+import deltotum.kit.scenes.scaling.scale_mode : ScaleMode;
 import deltotum.kit.inputs.mouse.events.mouse_event : MouseEvent;
 import deltotum.core.apps.events.application_event : ApplicationEvent;
 import deltotum.kit.inputs.keyboards.events.key_event : KeyEvent;
@@ -47,6 +48,7 @@ class Sprite : PhysicalBody
     bool isManaged = true;
     bool isUpdatable = true;
     bool isResizable = true;
+    bool isKeepAspectRatio = false;
 
     Insets padding;
 
@@ -55,10 +57,13 @@ class Sprite : PhysicalBody
     bool isResizedByParent = false;
     Alignment alignment = Alignment.none;
 
+    ScaleMode scaleMode = ScaleMode.none;
+
     bool isCreated = false;
     bool isFocus = false;
     bool isDraggable = false;
     bool isVisible = true;
+    bool isScalable = true;
     bool isReceiveEvents = true;
 
     //protected
@@ -97,10 +102,18 @@ class Sprite : PhysicalBody
         double offsetY = 0;
         bool isDrag = false;
         bool isValid = true;
+
+        bool isResizeChildOnScale = true;
+
     }
 
     void create()
     {
+        if (isCreated)
+        {
+            return;
+        }
+
         super.createHandlers;
         eventMouseHandler = (e) {
 
@@ -658,7 +671,7 @@ class Sprite : PhysicalBody
             onChangeWidthFromTo(oldWidth, _width);
         }
 
-        if (children.length > 0)
+        if (isResizeChildOnScale && children.length > 0)
         {
             immutable double dw = _width - oldWidth;
             foreach (child; children)
@@ -670,7 +683,6 @@ class Sprite : PhysicalBody
                 }
             }
         }
-
     }
 
     double height() @nogc @safe pure nothrow
@@ -696,7 +708,7 @@ class Sprite : PhysicalBody
             onChangeHeightFromTo(oldHeight, _height);
         }
 
-        if (children.length > 0)
+        if (isResizeChildOnScale && children.length > 0)
         {
             const dh = _height - oldHeight;
             foreach (child; children)
@@ -709,6 +721,49 @@ class Sprite : PhysicalBody
 
             }
         }
+    }
+
+    bool resize(double newWidth, double newHeight)
+    {
+        width = newWidth;
+        height = newHeight;
+        return true;
+    }
+
+    bool setScale(double factorWidth, double factorHeight)
+    {
+        if (!isScalable)
+        {
+            return false;
+        }
+        auto newWidth = width * factorWidth;
+        auto newHeight = height * factorHeight;
+
+        if (!isKeepAspectRatio)
+        {
+            resize(newWidth, newHeight);
+            return true;
+        }
+
+        double scaleFactorWidth = 1, scaleFactorHeight = 1;
+        if (width >= height)
+        {
+            scaleFactorWidth = newWidth / width;
+            scaleFactorHeight = scaleFactorWidth;
+        }
+        else
+        {
+            scaleFactorHeight = newHeight / height;
+            scaleFactorWidth = scaleFactorHeight;
+        }
+
+        import std.math.rounding : round;
+
+        auto newW = round(width * scaleFactorWidth);
+        auto newH = round(height * scaleFactorHeight);
+        resize(newW, newH);
+
+        return true;
     }
 
     bool isChildrenValid() @nogc @safe pure nothrow
@@ -830,8 +885,7 @@ class Sprite : PhysicalBody
             return true;
         });
 
-        return mustBeChild is null ? Nullable!Sprite.init
-            : Nullable!Sprite(mustBeChild);
+        return mustBeChild is null ? Nullable!Sprite.init : Nullable!Sprite(mustBeChild);
     }
 
     Nullable!Sprite findChild(Sprite child)

@@ -26,21 +26,26 @@ class RgbaTexture : Texture
     {
         super.create;
 
-        texture = graphics.newComTexture;
+        auto newTexture = texture is null ? graphics.newComTexture : texture;
         //TODO toInt?
-        const createErr = texture.createRGBA(cast(int) width, cast(int) height);
+        const createErr = newTexture.createRGBA(cast(int) width, cast(int) height);
         if (createErr)
         {
             throw new Exception(createErr.toString);
         }
-        if (const blendErr = texture.setBlendModeBlend)
+        if (const blendErr = newTexture.setBlendModeBlend)
         {
             throw new Exception(blendErr.toString);
         }
 
         //TODO move to TextureCanvas
-        texture.setRendererTarget;
+        newTexture.setRendererTarget;
         createTextureContent;
-        texture.resetRendererTarget;
+        newTexture.resetRendererTarget;
+
+        if (!texture)
+        {
+            texture = newTexture;
+        }
     }
 }
