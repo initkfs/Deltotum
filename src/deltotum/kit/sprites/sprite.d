@@ -7,6 +7,7 @@ import deltotum.math.geometry.insets : Insets;
 import deltotum.kit.sprites.layouts.layout : Layout;
 import deltotum.sys.sdl.sdl_texture : SdlTexture;
 import deltotum.phys.physical_body : PhysicalBody;
+import deltotum.kit.graphics.canvases.texture_canvas : TextureCanvas;
 import deltotum.kit.scenes.scaling.scale_mode : ScaleMode;
 import deltotum.kit.inputs.mouse.events.mouse_event : MouseEvent;
 import deltotum.core.apps.events.application_event : ApplicationEvent;
@@ -72,6 +73,11 @@ class Sprite : PhysicalBody
     @ToStringExclude Sprite[] children;
     //}
 
+    protected
+    {
+        TextureCanvas _cache;
+    }
+
     bool delegate(double, double) onDrag;
     void delegate() invalidateListener;
 
@@ -104,7 +110,33 @@ class Sprite : PhysicalBody
         bool isValid = true;
 
         bool isResizeChildOnScale = true;
+        bool _cached;
+    }
 
+    protected void recreateCache()
+    {
+        if (!_cache)
+        {
+            _cache = new TextureCanvas(width, height);
+            build(_cache);
+            _cache.create;
+        }
+        else
+        {
+            _cache.width = width;
+            _cache.height = height;
+        }
+
+        //TODO remove hack;
+        double oldX = x, oldY = y;
+        x = 0;
+        y = 0;
+        _cache.captureRenderer(() { drawContent; });
+        x = oldX;
+        y = oldY;
+
+        _cache.x = x;
+        _cache.y = y;
     }
 
     void create()
@@ -112,6 +144,11 @@ class Sprite : PhysicalBody
         if (isCreated)
         {
             return;
+        }
+
+        if (isCached && !_cache)
+        {
+            recreateCache;
         }
 
         super.createHandlers;
@@ -360,8 +397,15 @@ class Sprite : PhysicalBody
 
             if (isRedraw)
             {
-                drawContent;
-                redraw = true;
+                if (!isCached)
+                {
+                    drawContent;
+                    redraw = true;
+                }
+                else
+                {
+                    _cache.draw;
+                }
             }
 
             foreach (Sprite obj; children)
@@ -481,6 +525,10 @@ class Sprite : PhysicalBody
 
     void destroy()
     {
+        if (_cache)
+        {
+            _cache.destroy;
+        }
         foreach (Sprite child; children)
         {
             child.parent = null;
@@ -618,6 +666,11 @@ class Sprite : PhysicalBody
 
         _x = newX;
 
+        if (_cache)
+        {
+            _cache.x = _x;
+        }
+
         setInvalid;
     }
 
@@ -644,6 +697,11 @@ class Sprite : PhysicalBody
 
         _y = newY;
 
+        if (_cache)
+        {
+            _cache.x = _y;
+        }
+
         setInvalid;
     }
 
@@ -669,6 +727,11 @@ class Sprite : PhysicalBody
         if (isCreated && onChangeWidthFromTo !is null)
         {
             onChangeWidthFromTo(oldWidth, _width);
+        }
+
+        if (_cache)
+        {
+            recreateCache;
         }
 
         if (isResizeChildOnScale && children.length > 0)
@@ -706,6 +769,11 @@ class Sprite : PhysicalBody
         if (isCreated && onChangeHeightFromTo !is null)
         {
             onChangeHeightFromTo(oldHeight, _height);
+        }
+
+        if (_cache)
+        {
+            recreateCache;
         }
 
         if (isResizeChildOnScale && children.length > 0)
@@ -898,5 +966,15 @@ class Sprite : PhysicalBody
             }
         }
         return Nullable!Sprite.init;
+    }
+
+    bool isCached()
+    {
+        return _cached;
+    }
+
+    void isCached(bool value)
+    {
+        _cached = value;
     }
 }

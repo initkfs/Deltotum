@@ -1,7 +1,7 @@
 module deltotum.kit.graphics.shapes.rectangle;
 
 import deltotum.kit.graphics.shapes.shape;
-import deltotum.kit.graphics.styles.graphic_style: GraphicStyle;
+import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 
 /**
  * Authors: initkfs
@@ -13,8 +13,17 @@ class Rectangle : Shape
         super(width, height, style);
     }
 
-    override void createTextureContent()
+    override void drawContent()
     {
-       graphics.drawRect(0, 0, width, height, style);
+        import deltotum.kit.graphics.colors.rgba : RGBA;
+
+        if (style.isFill)
+        {
+            graphics.fillRect(x, y, width, height, style.fillColor);
+        }
+        else
+        {
+            graphics.drawRect(x, y, width, height, style.lineColor);
+        }
     }
 }

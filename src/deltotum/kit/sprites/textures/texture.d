@@ -26,7 +26,7 @@ class Texture : Sprite
         //hack to reduce memory leak
         double oldChangedWidth = 0;
         double oldChangedHeight = 0;
-        double changeSizeDelta = 25;
+        double changeSizeDelta = 10;
     }
 
     this()
@@ -136,6 +136,10 @@ class Texture : Sprite
     override void width(double value)
     {
         super.width(value);
+        if (!isResizable)
+        {
+            return;
+        }
         import Math = deltotum.math;
 
         if (texture && Math.abs(oldChangedWidth - value) > changeSizeDelta)
@@ -153,6 +157,10 @@ class Texture : Sprite
     override void height(double value)
     {
         super.height(value);
+        if (!isResizable)
+        {
+            return;
+        }
         import Math = deltotum.math;
 
         if (texture && Math.abs(oldChangedHeight - value) > changeSizeDelta)

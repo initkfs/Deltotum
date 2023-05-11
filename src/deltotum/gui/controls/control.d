@@ -13,7 +13,7 @@ import deltotum.kit.sprites.alignment : Alignment;
 abstract class Control : Sprite
 {
     Insets backgroundInsets;
-    Texture delegate(double, double) backgroundFactory;
+    Sprite delegate(double, double) backgroundFactory;
 
     GraphicStyle style;
 
@@ -21,7 +21,7 @@ abstract class Control : Sprite
 
     protected
     {
-        Texture background;
+        Sprite background;
     }
 
     override void initialize()

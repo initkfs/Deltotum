@@ -1,5 +1,6 @@
 module deltotum.gui.controls.buttons.toggle_switch;
 
+import deltotum.kit.sprites.sprite: Sprite;
 import deltotum.gui.controls.control : Control;
 import deltotum.kit.graphics.shapes.shape : Shape;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
@@ -37,8 +38,8 @@ class ToggleSwitch : Control
     void delegate() onSwitchOn;
     void delegate() onSwitchOff;
 
-    Texture switchHandle;
-    Texture delegate() switchHandleFactory;
+    Sprite switchHandle;
+    Sprite delegate() switchHandleFactory;
 
     DisplayObjectTransition!Vector2d clickSwitchOnAnimation;
     DisplayObjectTransition!Vector2d clickSwitchOffAnimation;
@@ -48,9 +49,9 @@ class ToggleSwitch : Control
 
     //TODO factories, settings
     Sprite effectHandleSwitchOn;
-    Texture delegate(double, double) effectHandleSwitchOnFactory;
+    Sprite delegate(double, double) effectHandleSwitchOnFactory;
     Sprite effectBackgroundSwitchOn;
-    Texture delegate() effectBackgroundSwitchOnFactory;
+    Sprite delegate() effectBackgroundSwitchOnFactory;
 
     this(double width = 60, double height = 25)
     {

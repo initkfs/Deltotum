@@ -1,7 +1,7 @@
 module deltotum.kit.graphics.shapes.circle;
 
 import deltotum.kit.graphics.shapes.shape;
-import deltotum.kit.graphics.styles.graphic_style: GraphicStyle;
+import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 
 /**
  * Authors: initkfs
@@ -16,8 +16,13 @@ class Circle : Shape
         this.radius = radius;
     }
 
-    override void createTextureContent()
+    override void drawContent()
     {
-        graphics.drawCircle(width / 2, height / 2, radius, style);
+        super.drawContent;
+        double centerX = width / 2;
+        double centerY = height / 2;
+        centerX += x;
+        centerY += y;
+        graphics.drawCircle(centerX, centerY, radius, style.fillColor);
     }
 }

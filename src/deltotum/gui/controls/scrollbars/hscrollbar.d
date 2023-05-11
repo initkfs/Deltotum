@@ -1,5 +1,6 @@
 module deltotum.gui.controls.scrollbars.hscrollbar;
 
+import deltotum.kit.sprites.sprite: Sprite;
 import deltotum.gui.controls.control : Control;
 import deltotum.kit.sprites.textures.texture : Texture;
 
@@ -21,13 +22,13 @@ class HScrollbar : Control
 
     void delegate(double) onValue;
 
-    Texture delegate() thumbFactory;
-    Texture delegate() trackFactory;
+    Sprite delegate() thumbFactory;
+    Sprite delegate() trackFactory;
 
     protected
     {
-        Texture thumb;
-        Texture track;
+        Sprite thumb;
+        Sprite track;
     }
 
     this(double minValue = 0, double maxValue = 1.0, double width = 120, double height = 20)

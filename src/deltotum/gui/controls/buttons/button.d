@@ -1,5 +1,6 @@
 module deltotum.gui.controls.buttons.button;
 
+import deltotum.kit.sprites.sprite: Sprite;
 import deltotum.gui.controls.control : Control;
 import deltotum.kit.graphics.shapes.shape : Shape;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
@@ -22,15 +23,15 @@ class Button : Control
 
     dstring _buttonText;
 
-    Texture delegate(double, double) hoverFactory;
-    Texture delegate() clickEffectFactory;
+    Sprite delegate(double, double) hoverFactory;
+    Sprite delegate() clickEffectFactory;
     Text delegate() textFactory;
     ValueTransition delegate() clickEffectAnimationFactory;
 
     protected
     {
-        Texture hover;
-        Texture clickEffect;
+        Sprite hover;
+        Sprite clickEffect;
         ValueTransition clickEffectAnimation;
         Text _text;
     }

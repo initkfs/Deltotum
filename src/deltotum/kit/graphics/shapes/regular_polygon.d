@@ -16,51 +16,51 @@ class RegularPolygon : Shape
         this.cornerPadding = cornerPadding;
     }
 
-    override void createTextureContent()
+    override void drawContent()
     {
         auto mainLineColor = style.lineColor;
         const lineWidth = style.lineWidth;
 
-        const topLineStartX = cornerPadding;
-        const topLineStartY = 0;
-        const topLineEndX = width - cornerPadding - lineWidth;
-        const topLineEndY = 0;
+        const topLineStartX = x + cornerPadding;
+        const topLineStartY = y;
+        const topLineEndX = x + width - cornerPadding - lineWidth;
+        const topLineEndY = y;
         graphics.drawLine(topLineStartX, topLineStartY, topLineEndX, topLineEndY, mainLineColor);
 
         const topRightCornerStartX = topLineEndX;
         const topRightCornerStartY = topLineEndY;
-        const topRightCornerEndX = width - lineWidth;
-        const topRightCornerEndY = cornerPadding;
+        const topRightCornerEndX = x + width - lineWidth;
+        const topRightCornerEndY = y + cornerPadding;
         graphics.drawLine(topRightCornerStartX, topRightCornerStartY, topRightCornerEndX, topRightCornerEndY, mainLineColor);
 
         const rightLineStartX = topRightCornerEndX;
         const rightLineStartY = topRightCornerEndY;
-        const rightLineEndX = width - lineWidth;
-        const rightLineEndY = height - cornerPadding - lineWidth;
+        const rightLineEndX = x + width - lineWidth;
+        const rightLineEndY = y + height - cornerPadding - lineWidth;
         graphics.drawLine(rightLineStartX, rightLineStartY, rightLineEndX, rightLineEndY, mainLineColor);
 
         const bottomRightCornerStartX = rightLineEndX;
         const bottomRightCornerStartY = rightLineEndY;
-        const bottomRightCornerEndX = width - cornerPadding - lineWidth;
-        const bottomRightCornerEndY = height - lineWidth;
+        const bottomRightCornerEndX = x + width - cornerPadding - lineWidth;
+        const bottomRightCornerEndY = y + height - lineWidth;
         graphics.drawLine(bottomRightCornerStartX, bottomRightCornerStartY, bottomRightCornerEndX, bottomRightCornerEndY, mainLineColor);
 
         const bottomLineStartX = bottomRightCornerEndX;
         const bottomLineStartY = bottomRightCornerEndY;
-        const bottomLineEndX = cornerPadding;
-        const bottomLineEndY = height - lineWidth;
+        const bottomLineEndX = x + cornerPadding;
+        const bottomLineEndY = y + height - lineWidth;
         graphics.drawLine(bottomLineStartX, bottomLineStartY, bottomLineEndX, bottomLineEndY, mainLineColor);
 
         const bottomLeftCornerStartX = bottomLineEndX;
         const bottomLeftCornerStartY = bottomLineEndY;
-        const bottomLeftCornerEndX = 0;
-        const bottomLeftCornerEndY = height - cornerPadding - lineWidth;
+        const bottomLeftCornerEndX = x;
+        const bottomLeftCornerEndY = y + height - cornerPadding - lineWidth;
         graphics.drawLine(bottomLeftCornerStartX, bottomLeftCornerStartY, bottomLeftCornerEndX, bottomLeftCornerEndY, mainLineColor);
 
         const leftLineStartX = bottomLeftCornerEndX;
         const leftLineStartY = bottomLeftCornerEndY;
-        const leftLineEndX = 0;
-        const leftLineEndY = cornerPadding;
+        const leftLineEndX = x;
+        const leftLineEndY = y + cornerPadding;
         graphics.drawLine(leftLineStartX, leftLineStartY, leftLineEndX, leftLineEndY, mainLineColor);
 
         const topLeftCornerStartX = leftLineEndX;
@@ -69,30 +69,37 @@ class RegularPolygon : Shape
         const topLeftCornerEndY = topLineStartY;
         graphics.drawLine(topLeftCornerStartX, topLeftCornerStartY, topLeftCornerEndX, topLeftCornerEndY, mainLineColor);
 
-        if(style.isFill){
+        if (style.isFill)
+        {
             fill;
         }
     }
 
-    private void fill(){
-        import deltotum.math.vector2d: Vector2d;
-        graphics.drawRect(cornerPadding, 0, width - cornerPadding * 2, height, style);
+    private void fill()
+    {
+        import deltotum.math.vector2d : Vector2d;
+
+        graphics.drawRect(x + cornerPadding, y, width - cornerPadding * 2, height, style);
 
         //left side
-        graphics.drawRect(0, cornerPadding, cornerPadding, height - cornerPadding * 2, style);
+        graphics.drawRect(x, cornerPadding, y + cornerPadding, height - cornerPadding * 2, style);
         //right side
-        graphics.drawRect(width - cornerPadding - style.lineWidth, cornerPadding, cornerPadding, height - cornerPadding * 2, style);
+        graphics.drawRect(x + width - cornerPadding - style.lineWidth, y + cornerPadding, cornerPadding, height - cornerPadding * 2, style);
 
         //left top corner
-        graphics.drawTriangle(Vector2d(0, cornerPadding), Vector2d(cornerPadding, 0), Vector2d(cornerPadding, cornerPadding), style.fillColor);
+        graphics.drawTriangle(Vector2d(x, y + cornerPadding), Vector2d(x + cornerPadding, y), Vector2d(
+                x + cornerPadding, y + cornerPadding), style.fillColor);
 
         //left bottom corner
-        graphics.drawTriangle(Vector2d(0, height - cornerPadding - 1), Vector2d(cornerPadding, height - cornerPadding), Vector2d(cornerPadding, height - 1), style.fillColor);
-        
+        graphics.drawTriangle(Vector2d(x, y + height - cornerPadding - 1), Vector2d(x + cornerPadding, y + height - cornerPadding), Vector2d(
+                x + cornerPadding, y + height - 1), style.fillColor);
+
         //right top corner
-        graphics.drawTriangle(Vector2d(width - cornerPadding - style.lineWidth, 0), Vector2d(width- 1, cornerPadding), Vector2d(width - cornerPadding, cornerPadding), style.fillColor);
+        graphics.drawTriangle(Vector2d(x + width - cornerPadding - style.lineWidth, y), Vector2d(x + width - 1, y + cornerPadding), Vector2d(
+                x + width - cornerPadding, y + cornerPadding), style.fillColor);
 
         //right bottom corner
-        graphics.drawTriangle(Vector2d(width - cornerPadding - style.lineWidth, height - cornerPadding - 1), Vector2d(width - 1, height - cornerPadding - 1), Vector2d(width - cornerPadding - style.lineWidth, height - 1), style.fillColor);
+        graphics.drawTriangle(Vector2d(x + width - cornerPadding - style.lineWidth, y + height - cornerPadding - 1), Vector2d(x + width - 1, y + height - cornerPadding - 1), Vector2d(
+                x + width - cornerPadding - style.lineWidth, y + height - 1), style.fillColor);
     }
 }

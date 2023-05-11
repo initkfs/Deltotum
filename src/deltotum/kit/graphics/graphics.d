@@ -316,10 +316,19 @@ class Graphics : LoggableUnit
         drawCircle(centerX, centerY, r - style.lineWidth, style.fillColor);
     }
 
-    void drawRect(double x, double y, double width, double height, RGBA fillColor)
+    void fillRect(double x, double y, double width, double height, RGBA fillColor)
     {
         adjustRender(fillColor);
         if (const err = renderer.fillRect(toInt(x), toInt(y), toInt(width), toInt(height)))
+        {
+            logger.errorf("Fill rect error. %s", err);
+        }
+    }
+
+    void drawRect(double x, double y, double width, double height, RGBA color)
+    {
+        adjustRender(color);
+        if (const err = renderer.drawRect(toInt(x), toInt(y), toInt(width), toInt(height)))
         {
             logger.errorf("Draw rect error. %s", err);
         }

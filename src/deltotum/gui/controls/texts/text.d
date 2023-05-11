@@ -1,5 +1,6 @@
 module deltotum.gui.controls.texts.text;
 
+import deltotum.kit.sprites.sprite: Sprite;
 import deltotum.gui.controls.control : Control;
 import deltotum.gui.fonts.bitmap.bitmap_font : BitmapFont;
 import deltotum.math.shapes.rect2d : Rect2d;
@@ -31,8 +32,8 @@ class Text : Control
 
     RGBA color = RGBA.white;
 
-    Texture focusEffect;
-    Texture delegate() focusEffectFactory;
+    Sprite focusEffect;
+    Sprite delegate() focusEffectFactory;
 
     protected
     {
