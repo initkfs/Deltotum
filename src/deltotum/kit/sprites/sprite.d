@@ -217,6 +217,10 @@ class Sprite : PhysicalBody
         isCreated = true;
     }
 
+    void recreate(){
+        
+    }
+
     void buildCreated(Sprite obj)
     {
         if (obj.isBuilt)

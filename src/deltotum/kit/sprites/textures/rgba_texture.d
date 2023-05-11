@@ -31,6 +31,12 @@ class RgbaTexture : Texture
             texture = graphics.newComTexture;
         }
 
+        recreate;
+
+    }
+
+    override void recreate()
+    {
         //TODO toInt?
         const createErr = texture.createRGBA(cast(int) width, cast(int) height);
         if (createErr)

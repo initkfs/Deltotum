@@ -23,6 +23,6 @@ class Circle : Shape
         double centerY = height / 2;
         centerX += x;
         centerY += y;
-        graphics.drawCircle(centerX, centerY, radius, style.fillColor);
+        graphics.drawCircle(centerX, centerY, radius, style);
     }
 }

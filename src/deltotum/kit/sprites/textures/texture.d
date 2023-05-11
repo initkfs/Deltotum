@@ -144,7 +144,7 @@ class Texture : Sprite
 
         if (texture && Math.abs(oldChangedWidth - value) > changeSizeDelta)
         {
-            create;
+            recreate;
             oldChangedWidth = width;
         }
     }
@@ -165,7 +165,7 @@ class Texture : Sprite
 
         if (texture && Math.abs(oldChangedHeight - value) > changeSizeDelta)
         {
-            create;
+            recreate;
             oldChangedHeight = value;
         }
     }
