@@ -8,7 +8,7 @@ import deltotum.com.gui.com_window : ComWindow;
 
 import deltotum.com.platforms.results.com_result : ComResult;
 import deltotum.sys.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
-import deltotum.kit.inputs.mouse.mouse_cursor_type : MouseCursorType;
+import deltotum.com.inputs.cursors.com_system_cursor_type : ComSystemCursorType;
 
 import deltotum.sys.sdl.sdl_surface : SdlSurface;
 

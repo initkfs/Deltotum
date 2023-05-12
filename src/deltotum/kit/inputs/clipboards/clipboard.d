@@ -52,4 +52,8 @@ class Clipboard
         }
         return isHasText;
     }
+
+    void destroy(){
+        clipboard.destroy;
+    }
 }

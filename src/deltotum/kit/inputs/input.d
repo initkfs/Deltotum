@@ -1,16 +1,15 @@
 module deltotum.kit.inputs.input;
 
+import deltotum.kit.inputs.cursors.system_cursor: SystemCursor;
 import deltotum.kit.inputs.clipboards.clipboard : Clipboard;
 import deltotum.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import deltotum.math.vector2d : Vector2d;
 
-import deltotum.kit.inputs.mouse.mouse_cursor_type : MouseCursorType;
 import deltotum.math.vector2d : Vector2d;
 
 import std.container.slist : SList;
 
-//TODO move cursor and mouse
-import deltotum.sys.sdl.sdl_cursor : SDLCursor;
+//TODO remove
 import bindbc.sdl;
 
 /**
@@ -29,17 +28,15 @@ class Input
     JoystickEvent lastJoystickEvent;
 
     Clipboard clipboard;
+    SystemCursor systemCursor;
 
-    protected
-    {
-        //TODO remove
-        SDLCursor lastCursor;
-    }
-
-    this(Clipboard clipboard)
+    this(Clipboard clipboard, SystemCursor cursor)
     {
         assert(clipboard);
         this.clipboard = clipboard;
+
+        assert(cursor);
+        this.systemCursor = cursor;
 
         pressedKeys = SList!int();
     }
@@ -97,76 +94,9 @@ class Input
         return Vector2d(x, y);
     }
 
-    void setCursor(MouseCursorType type)
-    {
-        SDL_SystemCursor sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_ARROW;
-        final switch (type) with (MouseCursorType)
-        {
-        case none, arrow:
-            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_ARROW;
-            break;
-        case crossHair:
-            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_CROSSHAIR;
-            break;
-        case ibeam:
-            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_IBEAM;
-            break;
-        case no:
-            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_NO;
-            break;
-        case sizeNorthWestSouthEast:
-            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_SIZENWSE;
-            break;
-        case sizeNorthEastSouthWest:
-            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_SIZENESW;
-            break;
-        case sizeWestEast:
-            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_SIZEWE;
-            break;
-        case sizeNorthSouth:
-            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_SIZENS;
-            break;
-        case sizeAll:
-            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_SIZEALL;
-            break;
-        case hand:
-            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_HAND;
-            break;
-        case wait:
-            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_WAIT;
-            break;
-        case waitArrow:
-            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_WAITARROW;
-            break;
-        }
-
-        SDL_Cursor* cursor = SDL_CreateSystemCursor(sdlType);
-        if (cursor is null)
-        {
-            return;
-        }
-
-        destroyCursor;
-
-        lastCursor = new SDLCursor(cursor);
-
-        SDL_SetCursor(cursor);
-    }
-
-    protected bool destroyCursor()
-    {
-        if (lastCursor !is null && !lastCursor.isDefault)
-        {
-            lastCursor.destroy;
-            lastCursor = null;
-            return true;
-        }
-        return false;
-    }
-
-    void restoreCursor()
-    {
-        return setCursor(MouseCursorType.arrow);
+    void destroy(){
+        systemCursor.destroy;
+        clipboard.destroy;
     }
 
 }

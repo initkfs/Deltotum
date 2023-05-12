@@ -121,7 +121,17 @@ class SdlApplication : GraphicApplication
 
         auto sdlClipboard = new SdlClipboard;
         auto clipboard = new Clipboard(sdlClipboard);
-        _input = new Input(clipboard);
+        
+        import deltotum.kit.inputs.cursors.system_cursor: SystemCursor;
+        import deltotum.sys.sdl.sdl_cursor: SDLCursor;
+
+        auto cursor = new SystemCursor;
+        cursor.cursorFactory = (type){
+            auto newCursor = new SDLCursor(type);
+            return newCursor;
+        };
+        
+        _input = new Input(clipboard, cursor);
         _audio = new Audio(audioMixLib);
 
         auto cairoLibForLoad = new CairoLib;
@@ -525,6 +535,8 @@ class SdlApplication : GraphicApplication
         {
             joystick.destroy;
         }
+
+        _input.destroy;
 
         //TODO process EXIT event
         audioMixLib.quit;

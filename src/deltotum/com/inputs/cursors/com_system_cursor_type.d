@@ -1,9 +1,9 @@
-module deltotum.kit.inputs.mouse.mouse_cursor_type;
+module deltotum.com.inputs.cursors.com_system_cursor_type;
 
 /**
  * Authors: initkfs
  */
-enum MouseCursorType
+enum ComSystemCursorType
 {
    none,
    arrow,

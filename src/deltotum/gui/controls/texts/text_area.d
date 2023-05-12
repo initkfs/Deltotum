@@ -47,6 +47,7 @@ class TextArea : HBox
 
         scroll.onValue = (value) { textView.scrollTo(value); };
 
+        //TODO isDisabled
         onTextInput = (key) {
             foreach (glyph; asset.defaultBitmapFont.glyphs)
             {
@@ -100,6 +101,17 @@ class TextArea : HBox
                 }
             }
 
+            return false;
+        };
+
+        onMouseEntered = (e){
+            import deltotum.com.inputs.cursors.com_system_cursor_type: ComSystemCursorType;
+            input.systemCursor.change(ComSystemCursorType.ibeam);
+            return false;
+        };
+
+        onMouseExited = (e){
+            input.systemCursor.restore;
             return false;
         };
     }
