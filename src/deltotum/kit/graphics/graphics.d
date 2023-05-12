@@ -28,6 +28,8 @@ class Graphics : LoggableUnit
     //TODO move to gui module
     Theme theme;
 
+    RGBA defaultColor = RGBA.red;
+
     protected
     {
         SdlRenderer renderer;
@@ -71,12 +73,12 @@ class Graphics : LoggableUnit
         return cast(int) value;
     }
 
-    void setColor(RGBA color)
+    void setColor(RGBA color = defaultColor)
     {
         adjustRender(color);
     }
 
-    private void adjustRender(RGBA color)
+    private void adjustRender(RGBA color = defaultColor)
     {
         if (const err = renderer.setRenderDrawColor(color.r, color.g, color.b, color.alphaNorm))
         {
@@ -92,18 +94,18 @@ class Graphics : LoggableUnit
         }
     }
 
-    void drawLine(Vector2d start, Vector2d end, RGBA color = RGBA.black)
+    void drawLine(Vector2d start, Vector2d end, RGBA color = defaultColor)
     {
         drawLine(start.x, start.y, end.x, end.y, color);
     }
 
-    void drawLine(double startX, double startY, double endX, double endY, RGBA color = RGBA.black)
+    void drawLine(double startX, double startY, double endX, double endY, RGBA color = defaultColor)
     {
         adjustRender(color);
         drawLine(startX, startY, endX, endY);
     }
 
-    void drawPoint(double x, double y, RGBA color)
+    void drawPoint(double x, double y, RGBA color = defaultColor)
     {
         adjustRender(color);
         if (const err = renderer.drawPoint(toInt(x), toInt(y)))
@@ -112,7 +114,12 @@ class Graphics : LoggableUnit
         }
     }
 
-    void drawPoints(Vector2d[] points, RGBA color)
+    void drawPoint(Vector2d p, RGBA color = defaultColor)
+    {
+        drawPoint(p.x, p.y, color);
+    }
+
+    void drawPoints(Vector2d[] points, RGBA color = defaultColor)
     {
         adjustRender(color);
         foreach (p; points)
@@ -121,7 +128,7 @@ class Graphics : LoggableUnit
         }
     }
 
-    void drawLines(Vector2d[] points, RGBA color)
+    void drawLines(Vector2d[] points, RGBA color = defaultColor)
     {
         adjustRender(color);
         if (const err = renderer.drawLines(points))
@@ -251,14 +258,21 @@ class Graphics : LoggableUnit
         return points;
     }
 
-    void drawTriangle(Vector2d v1, Vector2d v2, Vector2d v3, RGBA fillColor)
+    void drawTriangle(Vector2d v1, Vector2d v2, Vector2d v3, RGBA fillColor = defaultColor, bool isOnlyVertex = false)
     {
+        if (isOnlyVertex)
+        {
+            drawPoint(v1, fillColor);
+            drawPoint(v2, fillColor);
+            drawPoint(v3, fillColor);
+            return;
+        }
         scope Vector2d[] side1LinePoints = linePoints(v1.x, v1.y, v2.x, v2.y);
         scope Vector2d[] side2LinePoints = linePoints(v3.x, v3.y, v2.x, v2.y);
         fillPolyLines(side1LinePoints, side2LinePoints, fillColor);
     }
 
-    void drawCircle(double centerX, double centerY, double radius, RGBA fillColor)
+    void drawCircle(double centerX, double centerY, double radius, RGBA fillColor = defaultColor)
     {
         adjustRender(fillColor);
 
@@ -316,7 +330,7 @@ class Graphics : LoggableUnit
         drawCircle(centerX, centerY, r - style.lineWidth, style.fillColor);
     }
 
-    void fillRect(double x, double y, double width, double height, RGBA fillColor)
+    void fillRect(double x, double y, double width, double height, RGBA fillColor = defaultColor)
     {
         adjustRender(fillColor);
         if (const err = renderer.fillRect(toInt(x), toInt(y), toInt(width), toInt(height)))
@@ -325,7 +339,7 @@ class Graphics : LoggableUnit
         }
     }
 
-    void drawRect(double x, double y, double width, double height, RGBA color)
+    void drawRect(double x, double y, double width, double height, RGBA color = defaultColor)
     {
         adjustRender(color);
         if (const err = renderer.drawRect(toInt(x), toInt(y), toInt(width), toInt(height)))
@@ -404,7 +418,7 @@ class Graphics : LoggableUnit
         return result;
     }
 
-    bool fillPolyLines(Vector2d[] vertexStart, Vector2d[] vertexEnd, RGBA fillColor)
+    bool fillPolyLines(Vector2d[] vertexStart, Vector2d[] vertexEnd, RGBA fillColor = defaultColor)
     {
         foreach (i, vStart; vertexStart)
         {
@@ -421,6 +435,7 @@ class Graphics : LoggableUnit
     void draw(scope void delegate() onDraw)
     {
         import deltotum.kit.graphics.colors.rgba : RGBA;
+
         //isClearingInCycle
         const screenColor = RGBA.black;
         if (const err = renderer.setRenderDrawColor(screenColor.r, screenColor.g, screenColor.b, screenColor

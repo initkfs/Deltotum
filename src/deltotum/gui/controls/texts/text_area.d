@@ -3,6 +3,7 @@ module deltotum.gui.controls.texts.text_area;
 import deltotum.gui.controls.texts.text_view : TextView;
 import deltotum.gui.controls.scrollbars.vscrollbar : VScrollbar;
 import deltotum.gui.controls.control : Control;
+import deltotum.gui.containers.hbox: HBox;
 import deltotum.kit.sprites.layouts.horizontal_layout : HorizontalLayout;
 
 import std.stdio;
@@ -10,7 +11,7 @@ import std.stdio;
 /**
  * Authors: initkfs
  */
-class TextArea : Control
+class TextArea : HBox
 {
     TextView textView;
     VScrollbar scroll;
@@ -22,8 +23,9 @@ class TextArea : Control
         super.initialize;
 
         import deltotum.math.geometry.insets;
-
         padding = Insets(0);
+        spacing = 0;
+        isBackground = true;
     }
 
     override void create()
@@ -34,12 +36,10 @@ class TextArea : Control
 
         textView = new TextView;
 
-        //FIXME invalid padding
-        layout = new HorizontalLayout(0);
-
         textView.minHeight = height;
         textView.maxHeight = height;
-        textView.minWidth = width - scroll.width;
+        //FIXME hack
+        textView.minWidth = width - scroll.width - scroll.width / 2;
         textView.maxWidth = textView.minWidth;
         addCreated(textView);
 

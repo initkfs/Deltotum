@@ -57,7 +57,7 @@ class Button : Control
             import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
 
             Shape object = new RegularPolygon(width, height, GraphicStyle(1, graphics
-                    .theme.colorAccent), graphics.theme.controlCornersBevel);
+                    .theme.colorAccent, true, graphics.theme.colorControlBackground), graphics.theme.controlCornersBevel);
             object.isLayoutManaged = false;
             return object;
         };

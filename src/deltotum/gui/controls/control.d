@@ -31,26 +31,23 @@ abstract class Control : Sprite
         padding = graphics.theme.controlPadding;
         style = graphics.theme.controlStyle;
 
-        if (isBackground)
-        {
-            backgroundFactory = (width, height) {
+        backgroundFactory = (width, height) {
 
-                import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
+            import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
 
-                // import deltotum.kit.graphics.shapes.rectangle : Rectangle;
-                // import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
+            // import deltotum.kit.graphics.shapes.rectangle : Rectangle;
+            // import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 
-                GraphicStyle backgroundStyle = GraphicStyle(1, graphics.theme.colorAccent, false, graphics
-                        .theme.colorControlBackground);
+            GraphicStyle backgroundStyle = GraphicStyle(1, graphics.theme.colorAccent, false, graphics
+                    .theme.colorControlBackground);
 
-                auto background = new RegularPolygon(width, height, backgroundStyle, graphics
-                        .theme.controlCornersBevel);
+            auto background = new RegularPolygon(width, height, backgroundStyle, graphics
+                    .theme.controlCornersBevel);
 
-                // auto background = new Rectangle(width, height, backgroundStyle);
-                background.opacity = graphics.theme.opacityControls;
-                return background;
-            };
-        }
+            // auto background = new Rectangle(width, height, backgroundStyle);
+            background.opacity = graphics.theme.opacityControls;
+            return background;
+        };
     }
 
     protected bool createBackground(double width, double height)

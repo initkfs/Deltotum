@@ -59,6 +59,14 @@ class Text : Control
         super.initialize;
         backgroundFactory = null;
 
+        onChangeWidthFromTo = (oldValue, newValue) {
+            updateRows;
+        };
+
+         onChangeHeightFromTo = (oldValue, newValue) {
+            updateRows;
+        };
+
         width = minWidth;
         height = minHeight;
 

@@ -1,12 +1,12 @@
 module deltotum.gui.controls.scrollbars.vscrollbar;
 
-import deltotum.kit.sprites.sprite: Sprite;
+import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.gui.controls.control : Control;
 import deltotum.kit.sprites.textures.texture : Texture;
 
 import deltotum.kit.graphics.shapes.shape : Shape;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
-import deltotum.kit.sprites.layouts.managed_layout : ManagedLayout;
+import deltotum.kit.sprites.layouts.center_layout : CenterLayout;
 import deltotum.kit.graphics.shapes.rectangle : Rectangle;
 import deltotum.kit.sprites.alignment : Alignment;
 
@@ -38,19 +38,23 @@ class VScrollbar : Control
         this.minValue = minValue;
         this.maxValue = maxValue;
 
-        this.layout = new ManagedLayout;
+        this.layout = new CenterLayout;
     }
 
     override void initialize()
     {
         super.initialize;
 
+        minWidth = 20;
+        minHeight = 100;
+        maxWidth = width;
+
         trackFactory = () {
             import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
-            import deltotum.kit.graphics.shapes.rectangle : Rectangle;
+            import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
 
             auto trackStyle = GraphicStyle(0.0, graphics.theme.colorAccent);
-            auto track = new Rectangle(width / 2, height / 2, trackStyle);
+            auto track = new RegularPolygon(3, height - 10, trackStyle, 1);
             return track;
         };
 
@@ -77,10 +81,11 @@ class VScrollbar : Control
     {
         super.create;
 
-        track = trackFactory();
-        addCreated(track);
+        //track = trackFactory();
+        //addCreated(track);
 
         thumb = thumbFactory();
+        thumb.isLayoutManaged = false;
         addCreated(thumb);
         thumb.isDraggable = true;
         thumb.onDrag = (x, y) {

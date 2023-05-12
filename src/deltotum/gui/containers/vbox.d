@@ -28,11 +28,15 @@ class VBox : Container
             return 0;
         }
         import std.algorithm.searching : maxElement;
-        import std.algorithm.iteration : filter;
+        import std.range.primitives : empty;
 
-        const double childrenMaxWidth = children.filter!(ch => ch.isLayoutManaged)
-            .maxElement!("a.width")
-            .width;
+        auto childrenForCalc = childrenWithGeometry;
+        if (childrenForCalc.empty)
+        {
+            return 0;
+        }
+
+        const double childrenMaxWidth = childrenForCalc.maxElement!("a.width").width;
         return childrenMaxWidth;
     }
 

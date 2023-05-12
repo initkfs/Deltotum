@@ -13,35 +13,56 @@ class Container : Control
 
     }
 
+    this() pure
+    {
+        isBackground = false;
+    }
+
     override void initialize()
     {
         super.initialize;
 
-        isBackground = false;
-
         backgroundFactory = (width, height) {
 
-            import deltotum.kit.graphics.shapes.rectangle : Rectangle;
+            import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
             import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
+            import deltotum.kit.graphics.colors.rgba : RGBA;
 
-            GraphicStyle backgroundStyle = GraphicStyle(0, graphics.theme.colorContainerBackground, true, graphics
-                    .theme.colorContainerBackground);
+            GraphicStyle backgroundStyle = GraphicStyle(1, graphics.theme.colorAccent, true, graphics
+                    .theme.colorControlBackground);
 
-            auto background = new Rectangle(width, height, backgroundStyle);
-            background.opacity = graphics.theme.opacityContainers;
+            auto background = new RegularPolygon(width, height, backgroundStyle, graphics
+                    .theme.controlCornersBevel);
+
+            // auto background = new Rectangle(width, height, backgroundStyle);
+            background.opacity = graphics.theme.opacityControls;
             return background;
         };
     }
 
+    protected auto childrenWithGeometry()
+    {
+        import std.algorithm.iteration : filter;
+
+        return children.filter!(ch => ch.isLayoutManaged);
+    }
+
     private void checkBackground()
     {
+        if (background)
+        {
+            background.width = width;
+            background.height = height;
+            return;
+        }
         if (width > 0 && height > 0)
         {
             createBackground(width - backgroundInsets.width, height - backgroundInsets.height);
         }
     }
 
-    protected void layoutWithoutChildren(){
+    protected void layoutWithoutChildren()
+    {
         isResizeChildren = false;
         requestLayout;
         isResizeChildren = true;
@@ -49,8 +70,11 @@ class Container : Control
 
     override void addCreated(Sprite obj, long index = -1)
     {
-        obj.x = 0;
-        obj.y = 0;
+        if (obj.isLayoutManaged)
+        {
+            obj.x = 0;
+            obj.y = 0;
+        }
         super.addCreated(obj, index);
         obj.isResizedByParent = true;
 

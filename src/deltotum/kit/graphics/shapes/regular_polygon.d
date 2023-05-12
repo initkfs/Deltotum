@@ -79,27 +79,34 @@ class RegularPolygon : Shape
     {
         import deltotum.math.vector2d : Vector2d;
 
-        graphics.drawRect(x + cornerPadding, y, width - cornerPadding * 2, height, style);
+        graphics.fillRect(x + cornerPadding, y + style.lineWidth, width - cornerPadding * 2, height - style.lineWidth - 1, style
+                .fillColor);
 
         //left side
-        graphics.drawRect(x, cornerPadding, y + cornerPadding, height - cornerPadding * 2, style);
+        graphics.fillRect(x + style.lineWidth, y + cornerPadding, cornerPadding, height - cornerPadding * 2, style
+                .fillColor);
         //right side
-        graphics.drawRect(x + width - cornerPadding - style.lineWidth, y + cornerPadding, cornerPadding, height - cornerPadding * 2, style);
+        graphics.fillRect(x + width - cornerPadding - style.lineWidth, y + cornerPadding, cornerPadding, height - cornerPadding * 2, style
+                .fillColor);
 
         //left top corner
-        graphics.drawTriangle(Vector2d(x, y + cornerPadding), Vector2d(x + cornerPadding, y), Vector2d(
-                x + cornerPadding, y + cornerPadding), style.fillColor);
+        graphics.drawTriangle(Vector2d(x + style.lineWidth * 2, y + cornerPadding - style.lineWidth), Vector2d(x + cornerPadding - style.lineWidth, y + style
+                .lineWidth * 2), Vector2d(
+                x + cornerPadding - style.lineWidth, y + cornerPadding - style.lineWidth), style
+                .fillColor);
 
         //left bottom corner
-        graphics.drawTriangle(Vector2d(x, y + height - cornerPadding - 1), Vector2d(x + cornerPadding, y + height - cornerPadding), Vector2d(
-                x + cornerPadding, y + height - 1), style.fillColor);
+        graphics.drawTriangle(Vector2d(x + style.lineWidth * 2, y + height - cornerPadding), Vector2d(x + cornerPadding - style.lineWidth, y + height - cornerPadding), Vector2d(
+                x + cornerPadding - style.lineWidth, y + height - style.lineWidth * 3), style
+                .fillColor);
 
         //right top corner
-        graphics.drawTriangle(Vector2d(x + width - cornerPadding - style.lineWidth, y), Vector2d(x + width - 1, y + cornerPadding), Vector2d(
-                x + width - cornerPadding, y + cornerPadding), style.fillColor);
+        graphics.drawTriangle(Vector2d(x + width - cornerPadding, y + style.lineWidth * 2), Vector2d(x + width - style.lineWidth * 3, y + cornerPadding - style
+                .lineWidth), Vector2d(
+                x + width - cornerPadding, y + cornerPadding - style.lineWidth), style.fillColor);
 
         //right bottom corner
-        graphics.drawTriangle(Vector2d(x + width - cornerPadding - style.lineWidth, y + height - cornerPadding - 1), Vector2d(x + width - 1, y + height - cornerPadding - 1), Vector2d(
-                x + width - cornerPadding - style.lineWidth, y + height - 1), style.fillColor);
+        graphics.drawTriangle(Vector2d(x + width - cornerPadding, y + height - cornerPadding), Vector2d(x + width - style.lineWidth * 3, y + height - cornerPadding), Vector2d(
+                x + width - cornerPadding, y + height - style.lineWidth * 3), style.fillColor);
     }
 }

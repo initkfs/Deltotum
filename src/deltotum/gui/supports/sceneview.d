@@ -46,6 +46,7 @@ class SceneView : VBox
 
     this(){
         super(5);
+        isBackground = true;
     }
 
     override void initialize()
