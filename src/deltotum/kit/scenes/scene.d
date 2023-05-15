@@ -21,6 +21,7 @@ class Scene : GraphicsComponent
 
     size_t timeEventProcessingMs;
     size_t timeUpdateProcessingMs;
+    size_t timeDrawProcessingMs;
 
     size_t worldTicks;
 

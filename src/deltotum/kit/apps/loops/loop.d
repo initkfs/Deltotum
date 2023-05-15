@@ -9,31 +9,33 @@ abstract class Loop
 
     double frameRate = 60;
 
-    size_t delegate() timestampProvider;
+    size_t delegate() timestampMsProvider;
 
-    void delegate(size_t) onLoopTimeUpdate;
-    void delegate(double) onFreqLoopDeltaUpdate;
+    void delegate(size_t) onLoopUpdateMs;
+    void delegate(double) onFreqLoopUpdateDelta;
     void delegate() onDelay;
+    void delegate() onRender;
     void delegate() onQuit;
 
     abstract
     {
-        void update(size_t);
+        void updateMs(size_t);
     }
 
     void runWait()
     {
-        assert(timestampProvider);
-        assert(onLoopTimeUpdate);
-        assert(onFreqLoopDeltaUpdate);
+        assert(timestampMsProvider);
+        assert(onLoopUpdateMs);
+        assert(onFreqLoopUpdateDelta);
         assert(onDelay);
+        assert(onRender);
         assert(onQuit);
 
         while (isRunning)
         {
             onDelay();
-            immutable time = timestampProvider();
-            update(time);
+            immutable time = timestampMsProvider();
+            updateMs(time);
         }
 
         onQuit();

@@ -336,6 +336,18 @@ class Window : UniComponent
         return screenIndex.to!int;
     }
 
+    bool draw()
+    {
+        auto currScene = scenes.currentScene;
+        if (!currScene)
+        {
+            return false;
+        }
+
+        currScene.draw;
+        return true;
+    }
+
     bool update(double delta)
     {
         auto currScene = scenes.currentScene;
@@ -345,8 +357,6 @@ class Window : UniComponent
         }
 
         currScene.update(delta);
-        currScene.draw;
-
         return true;
     }
 

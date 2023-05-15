@@ -7,33 +7,39 @@ import deltotum.kit.apps.loops.loop : Loop;
  */
 class IntegratedLoop : Loop
 {
-    double deltaTime = 0;
-    double deltaTimeAccumulator = 0;
-    double lastUpdateTime = 0;
-
     private
     {
         enum msInSec = 1000;
+        
+        double deltaTimeAccumulatorMs = 0;
+        double lastUpdateTimeMs = 0;
+
+        double frameTimeMs = 0;
+        double updateDelta = 0;
     }
 
-    override void update(size_t start)
+    this(){
+        frameTimeMs = msInSec / frameRate;
+        updateDelta = frameTimeMs / 100;
+    }
+
+    override void updateMs(size_t startMs)
     {
-        const frameTime = msInSec / frameRate;
         //TODO SDL_GetPerformanceCounter
         //(double)((now - start)*1000) / SDL_GetPerformanceFrequency()
-        deltaTime = start - lastUpdateTime;
-        lastUpdateTime = start;
-        deltaTimeAccumulator += deltaTime;
+        double deltaTimeMs = startMs - lastUpdateTimeMs;
+        lastUpdateTimeMs = startMs;
+        deltaTimeAccumulatorMs += deltaTimeMs;
 
-        onLoopTimeUpdate(start);
+        onLoopUpdateMs(startMs);
 
-        while (deltaTimeAccumulator > frameTime)
+        while (deltaTimeAccumulatorMs > frameTimeMs)
         {
-            immutable delta = frameTime / 100;
+            onFreqLoopUpdateDelta(updateDelta);
 
-            onFreqLoopDeltaUpdate(delta);
-
-            deltaTimeAccumulator -= frameTime;
+            deltaTimeAccumulatorMs -= frameTimeMs;
         }
+
+        onRender();
     }
 }

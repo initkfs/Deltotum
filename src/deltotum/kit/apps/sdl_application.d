@@ -94,10 +94,11 @@ class SdlApplication : GraphicApplication
         }
 
         mainLoop.onQuit = () => quit;
-        mainLoop.timestampProvider = () => sdlLib.getTicks;
+        mainLoop.timestampMsProvider = () => sdlLib.getTicks;
         mainLoop.onDelay = () => sdlLib.delay(1);
-        mainLoop.onLoopTimeUpdate = (timestamp) => updateLoop(timestamp);
-        mainLoop.onFreqLoopDeltaUpdate = (delta) => updateFreqLoopWidthDelta(delta);
+        mainLoop.onLoopUpdateMs = (timestamp) => updateLoopMs(timestamp);
+        mainLoop.onRender = () => updateRender;
+        mainLoop.onFreqLoopUpdateDelta = (delta) => updateFreqLoopDelta(delta);
 
         sdlLib.initialize(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK);
         uservices.logger.trace("SDL ", sdlLib.getSdlVersionInfo);
@@ -121,16 +122,16 @@ class SdlApplication : GraphicApplication
 
         auto sdlClipboard = new SdlClipboard;
         auto clipboard = new Clipboard(sdlClipboard);
-        
-        import deltotum.kit.inputs.cursors.system_cursor: SystemCursor;
-        import deltotum.sys.sdl.sdl_cursor: SDLCursor;
+
+        import deltotum.kit.inputs.cursors.system_cursor : SystemCursor;
+        import deltotum.sys.sdl.sdl_cursor : SDLCursor;
 
         auto cursor = new SystemCursor;
-        cursor.cursorFactory = (type){
+        cursor.cursorFactory = (type) {
             auto newCursor = new SDLCursor(type);
             return newCursor;
         };
-        
+
         _input = new Input(clipboard, cursor);
         _audio = new Audio(audioMixLib);
 
@@ -547,7 +548,7 @@ class SdlApplication : GraphicApplication
         sdlLib.quit;
     }
 
-    void updateLoop(size_t timestamp)
+    void updateLoopMs(size_t timestamp)
     {
         SDL_Event event;
 
@@ -582,7 +583,29 @@ class SdlApplication : GraphicApplication
         }
     }
 
-    void updateFreqLoopWidthDelta(double delta)
+    void updateRender()
+    {
+        const startStateTime = SDL_GetTicks();
+        windowManager.iterateWindows((window) {
+            //focus may not be on the window
+            if (window.isShowing)
+            {
+                window.draw;
+            }
+            return true;
+        });
+
+        const endStateTime = SDL_GetTicks();
+
+        auto mustBeWindow = windowManager.currentWindow;
+
+        if (!mustBeWindow.isNull)
+        {
+            mustBeWindow.get.scenes.currentScene.timeDrawProcessingMs = endStateTime - startStateTime;
+        }
+    }
+
+    void updateFreqLoopDelta(double delta)
     {
         const startStateTime = SDL_GetTicks();
         windowManager.iterateWindows((window) {
