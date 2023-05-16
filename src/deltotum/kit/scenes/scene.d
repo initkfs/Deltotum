@@ -17,6 +17,8 @@ import bindbc.sdl;
  */
 class Scene : GraphicsComponent
 {
+    string name;
+    
     void delegate(Scene) onSceneChange;
 
     size_t timeEventProcessingMs;

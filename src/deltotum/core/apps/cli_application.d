@@ -92,7 +92,8 @@ class CliApplication
         return ApplicationExit();
     }
 
-    UniComponent newUniServices(){
+    UniComponent newUniServices()
+    {
         return new UniComponent;
     }
 
@@ -142,12 +143,11 @@ class CliApplication
         import std.format : format;
         import std.uni : toLower;
 
-        GetoptResult cliResult = cliManager.parse("s|silent",
-            "Silent mode, less information in program output.", &isSilentMode,
-            "g|debug", "Debug mode",
-            &isDebugMode, format!"%s|%s"(defaultDataDir[0].toLower,
-                defaultDataDir), "Application data directory.",
-            &mustBeDataDirectory, "c|configdir", "Config directory", &mustBeConfigDir);
+        GetoptResult cliResult = cliManager.parse(
+            "s|silent", "Silent mode, less information in program output.", &isSilentMode,
+            "g|debug", "Debug mode", &isDebugMode,
+            "d|data", "Application data directory.", &mustBeDataDirectory, 
+            "c|configdir", "Config directory", &mustBeConfigDir);
 
         return cliResult;
     }
@@ -277,6 +277,11 @@ class CliApplication
             //TODO check for duplicate keys
             configs ~= new JsonConfig(configPath);
         }
+
+        import deltotum.core.configs.environments.env_config: EnvConfig;
+
+        configs ~= new EnvConfig;
+
         auto config = new ConfigAggregator(configs);
         config.load;
 

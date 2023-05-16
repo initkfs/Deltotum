@@ -10,7 +10,10 @@ import std.stdio;
  */
 class SceneManager : GraphicsComponent
 {
-    //TODO stack
+    protected
+    {
+        Scene[] scenes;
+    }
     Scene _currentScene;
 
     Scene currentScene() @nogc @safe pure nothrow
@@ -36,15 +39,50 @@ class SceneManager : GraphicsComponent
 
     void add(Scene scene)
     {
-        if(!scene.isBuilt){
+        if (!scene.isBuilt)
+        {
             throw new Exception("Scene not built");
         }
-        currentScene = scene;
+        //TODO exists
+        scenes ~= scene;
     }
 
-    void destroy(){
+    void setDefaultScene()
+    {
+
+        if (scenes.length == 0)
+        {
+            return;
+        }
+
+        debug
+        {
+            import ConfigKeys = deltotum.kit.kit_config_keys;
+
+            if (config.containsKey(ConfigKeys.sceneNameCurrent))
+            {
+                const sceneName = config.getNotEmptyString(ConfigKeys.sceneNameCurrent);
+                foreach (scene; scenes)
+                {
+                    if (scene.name == sceneName)
+                    {
+                        _currentScene = scene;
+                        break;
+                    }
+                }
+
+                return;
+            }
+        }
+
+        _currentScene = scenes[$ - 1];
+    }
+
+    void destroy()
+    {
         //super.destroy;
-        if(_currentScene){
+        if (_currentScene)
+        {
             _currentScene.destroy;
         }
     }

@@ -95,7 +95,7 @@ class SdlApplication : GraphicApplication
 
         mainLoop.onQuit = () => quit;
         mainLoop.timestampMsProvider = () => sdlLib.getTicks;
-        mainLoop.onDelay = () => sdlLib.delay(1);
+        mainLoop.onDelay = () => sdlLib.delay(20);
         mainLoop.onLoopUpdateMs = (timestamp) => updateLoopMs(timestamp);
         mainLoop.onRender = () => updateRender;
         mainLoop.onFreqLoopUpdateDelta = (delta) => updateFreqLoopDelta(delta);
@@ -495,6 +495,16 @@ class SdlApplication : GraphicApplication
         auto sceneManager = new SceneManager;
         windowBuilder.build(sceneManager);
         window.scenes = sceneManager;
+
+        debug
+        {
+            //TODO config, lazy delegate
+            import deltotum.gui.supports.guieditor : GuiEditor;
+
+            auto guiEditor = new GuiEditor;
+            guiEditor.name = "deltotum_gui_editor";
+            window.scenes.addCreate(guiEditor);
+        }
 
         window.onAfterDestroy = () {
             sceneManager.asset.destroy;
