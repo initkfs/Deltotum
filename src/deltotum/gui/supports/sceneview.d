@@ -62,7 +62,7 @@ class SceneView : VBox
         import deltotum.math.geometry.insets : Insets;
 
         auto hbox = new HBox;
-        addCreated(hbox);
+        addCreate(hbox);
 
         auto tb = new ToggleSwitch;
         import deltotum.kit.sprites.alignment: Alignment;
@@ -89,17 +89,17 @@ class SceneView : VBox
             }
         };
 
-        hbox.addCreated(tb);
+        hbox.addCreate(tb);
 
         objectFullInfo = new TextArea();
         objectFullInfo.width = width - padding.width;
         objectFullInfo.height = 400;
-        addCreated(objectFullInfo);
+        addCreate(objectFullInfo);
 
         output = new TextArea();
         output.width = width - padding.width;
         output.height = 150;
-        addCreated(output);
+        addCreate(output);
     }
 
     void debugScene(){
@@ -188,20 +188,20 @@ class SceneView : VBox
             container.height = 10;
         }
 
-        obj.addCreated(container);
+        obj.addCreate(container);
 
         //Random color?
         auto border = new Rectangle(container.width, container.height, borderStyle);
         border.isLayoutManaged = false;
 
-        container.addCreated(border);
+        container.addCreate(border);
 
         import deltotum.gui.controls.texts.text : Text;
         import std.format : format;
 
         auto sizeInfo = new Text(format("%s, p: %s", obj.bounds, obj.padding));
 
-        container.addCreated(sizeInfo);
+        container.addCreate(sizeInfo);
 
         return container;
     }

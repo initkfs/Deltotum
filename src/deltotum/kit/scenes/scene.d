@@ -18,6 +18,8 @@ import bindbc.sdl;
 class Scene : GraphicsComponent
 {
     string name;
+
+    bool isDestructible;
     
     void delegate(Scene) onSceneChange;
 
@@ -92,7 +94,7 @@ class Scene : GraphicsComponent
         sprites = [];
     }
 
-    void addCreated(Sprite obj)
+    void addCreate(Sprite obj)
     {
         build(obj);
 

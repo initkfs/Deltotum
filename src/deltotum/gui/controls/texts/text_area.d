@@ -41,9 +41,9 @@ class TextArea : HBox
         //FIXME hack
         textView.minWidth = width - scroll.width - scroll.width / 2;
         textView.maxWidth = textView.minWidth;
-        addCreated(textView);
+        addCreate(textView);
 
-        addCreated(scroll);
+        addCreate(scroll);
 
         scroll.onValue = (value) { textView.scrollTo(value); };
 

@@ -62,7 +62,7 @@ abstract class Control : Sprite
         background.y = backgroundInsets.top;
         background.isResizedByParent = true;
         background.isLayoutManaged = false;
-        addCreated(background, 0);
+        addCreate(background, 0);
         return true;
     }
 

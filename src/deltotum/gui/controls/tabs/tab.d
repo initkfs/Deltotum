@@ -44,6 +44,6 @@ class Tab : Container
             }
         };
 
-        addCreated(textButton);
+        addCreate(textButton);
     }
 }

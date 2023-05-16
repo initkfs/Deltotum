@@ -82,11 +82,11 @@ class VScrollbar : Control
         super.create;
 
         //track = trackFactory();
-        //addCreated(track);
+        //addCreate(track);
 
         thumb = thumbFactory();
         thumb.isLayoutManaged = false;
-        addCreated(thumb);
+        addCreate(thumb);
         thumb.isDraggable = true;
         thumb.onDrag = (x, y) {
             auto bounds = this.bounds;

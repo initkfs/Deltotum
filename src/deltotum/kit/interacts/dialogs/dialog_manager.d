@@ -22,18 +22,18 @@ private
             auto root = new VBox(5);
             root.width = window.width;
             root.height = window.height;
-            addCreated(root);
+            addCreate(root);
 
             import deltotum.gui.controls.texts.text : Text;
 
             auto text = new Text;
             text.text = contentText;
-            root.addCreated(text);
+            root.addCreate(text);
 
             import deltotum.gui.containers.hbox : HBox;
 
             auto buttonPanel = new HBox(5);
-            root.addCreated(buttonPanel);
+            root.addCreate(buttonPanel);
 
             import deltotum.gui.controls.buttons.button : Button;
 
@@ -54,8 +54,8 @@ private
                 }
             };
 
-            buttonPanel.addCreated(okButton);
-            buttonPanel.addCreated(cancelButton);
+            buttonPanel.addCreate(okButton);
+            buttonPanel.addCreate(cancelButton);
         }
     }
 }

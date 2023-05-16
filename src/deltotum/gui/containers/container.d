@@ -68,14 +68,22 @@ class Container : Control
         isResizeChildren = true;
     }
 
-    override void addCreated(Sprite obj, long index = -1)
+    override void addCreate(Sprite[] sprites)
+    {
+        foreach (sprite; sprites)
+        {
+            addCreate(sprite);
+        }
+    }
+
+    override void addCreate(Sprite obj, long index = -1)
     {
         if (obj.isLayoutManaged)
         {
             obj.x = 0;
             obj.y = 0;
         }
-        super.addCreated(obj, index);
+        super.addCreate(obj, index);
         obj.isResizedByParent = true;
 
         layoutWithoutChildren;

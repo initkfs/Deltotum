@@ -36,7 +36,7 @@ class Button : Control
         Text _text;
     }
 
-    this(double width = 80, double height = 40, dstring text = "Button")
+    this(dstring text = "Button", double width = 80, double height = 40)
     {
         super();
         this.width = width;
@@ -121,13 +121,13 @@ class Button : Control
         if (hoverFactory !is null)
         {
             hover = hoverFactory(width, height);
-            addOrAddCreated(hover);
+            addOraddCreate(hover);
         }
 
         if (clickEffectFactory !is null)
         {
             clickEffect = clickEffectFactory();
-            addOrAddCreated(clickEffect);
+            addOraddCreate(clickEffect);
         }
 
         if (textFactory !is null)
@@ -138,13 +138,13 @@ class Button : Control
 
             _text.maxWidth = width - padding.width;
             _text.maxHeight = height - padding.height;
-            addOrAddCreated(_text);
+            addOraddCreate(_text);
         }
 
         if (clickEffect !is null)
         {
             clickEffectAnimation = clickEffectAnimationFactory();
-            addOrAddCreated(clickEffectAnimation);
+            addOraddCreate(clickEffectAnimation);
         }
 
         //requestLayout;

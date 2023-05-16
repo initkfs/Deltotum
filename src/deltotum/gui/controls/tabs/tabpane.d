@@ -45,12 +45,12 @@ class TabPane : Container
         //TODO max button height
         header.height = 50;
 
-        addCreated(header);
+        addCreate(header);
 
         content.width = width;
         content.height = height - header.height;
 
-        addCreated(content);
+        addCreate(content);
 
         if (header.tabs.length > 0)
         {
@@ -64,7 +64,7 @@ class TabPane : Container
         {
             tab.onAction = () { changeTab(tab); };
 
-            header.addCreated(tab);
+            header.addCreate(tab);
         }
 
         //TODO map?
@@ -72,7 +72,7 @@ class TabPane : Container
         obj.height = this.content.height;
 
         tab.content = obj;
-        content.addCreated(obj);
+        content.addCreate(obj);
 
         obj.isVisible = false;
         obj.isUpdatable = false;

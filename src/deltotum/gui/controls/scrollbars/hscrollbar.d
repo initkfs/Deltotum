@@ -72,13 +72,13 @@ class HScrollbar : Control
         if (trackFactory)
         {
             track = trackFactory();
-            addCreated(track);
+            addCreate(track);
         }
 
         if (thumbFactory)
         {
             thumb = thumbFactory();
-            addCreated(thumb);
+            addCreate(thumb);
             thumb.isDraggable = true;
             thumb.onDrag = (x, y) {
                 auto bounds = this.bounds;

@@ -539,7 +539,15 @@ class Sprite : PhysicalBody
         }
     }
 
-    void addCreated(Sprite obj, long index = -1)
+    void addCreate(Sprite[] sprites)
+    {
+        foreach (sprite; sprites)
+        {
+            addCreate(sprite);
+        }
+    }
+
+    void addCreate(Sprite obj, long index = -1)
     {
         if (obj is null)
         {
@@ -564,7 +572,7 @@ class Sprite : PhysicalBody
         setInvalid;
     }
 
-    void addOrAddCreated(Sprite obj, long index = -1)
+    void addOraddCreate(Sprite obj, long index = -1)
     {
         if (obj.isCreated)
         {
@@ -572,7 +580,7 @@ class Sprite : PhysicalBody
         }
         else
         {
-            addCreated(obj, index);
+            addCreate(obj, index);
         }
     }
 
@@ -887,7 +895,7 @@ class Sprite : PhysicalBody
         auto rect = new Rectangle(width, height, GraphicStyle(1, RGBA.red, false, RGBA.transparent));
         rect.userData[debugFlag] = null;
         rect.isLayoutManaged = false;
-        addCreated(rect);
+        addCreate(rect);
     }
 
     void drawAllBounds()

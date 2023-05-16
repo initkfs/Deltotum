@@ -113,7 +113,7 @@ class Text : Control
             focusEffect = focusEffectFactory();
             focusEffect.isLayoutManaged = false;
             focusEffect.isVisible = false;
-            addCreated(focusEffect);
+            addCreate(focusEffect);
         }
     }
 

@@ -147,7 +147,7 @@ class ToggleSwitch : Control
             import deltotum.kit.sprites.alignment : Alignment;
             effectBackgroundSwitchOn.alignment = Alignment.y;
             effectBackgroundSwitchOn.isVisible = false;
-            addCreated(effectBackgroundSwitchOn);
+            addCreate(effectBackgroundSwitchOn);
         }
 
         if (switchHandleFactory)
@@ -158,26 +158,26 @@ class ToggleSwitch : Control
             import deltotum.kit.sprites.layouts.center_layout : CenterLayout;
 
             switchHandle.layout = new CenterLayout;
-            addCreated(switchHandle);
+            addCreate(switchHandle);
 
             if (effectHandleSwitchOnFactory)
             {
                 effectHandleSwitchOn = effectHandleSwitchOnFactory(switchHandle.width, switchHandle.height);
                 effectHandleSwitchOn.isVisible = false;
-                switchHandle.addCreated(effectHandleSwitchOn);
+                switchHandle.addCreate(effectHandleSwitchOn);
             }
         }
 
         if (clickSwitchOffAnimationFactory !is null)
         {
             clickSwitchOffAnimation = clickSwitchOffAnimationFactory();
-            addCreated(clickSwitchOffAnimation);
+            addCreate(clickSwitchOffAnimation);
         }
 
         if (clickSwitchOnAnimationFactory !is null)
         {
             clickSwitchOnAnimation = clickSwitchOnAnimationFactory();
-            addCreated(clickSwitchOnAnimation);
+            addCreate(clickSwitchOnAnimation);
         }
 
         onMouseDown = (e) {

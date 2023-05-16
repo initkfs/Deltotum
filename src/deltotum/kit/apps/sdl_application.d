@@ -500,10 +500,7 @@ class SdlApplication : GraphicApplication
         {
             //TODO config, lazy delegate
             import deltotum.gui.supports.guieditor : GuiEditor;
-
-            auto guiEditor = new GuiEditor;
-            guiEditor.name = "deltotum_gui_editor";
-            window.scenes.addCreate(guiEditor);
+            window.scenes.add(new GuiEditor);
         }
 
         window.onAfterDestroy = () {

@@ -7,6 +7,11 @@ import deltotum.kit.scenes.scene : Scene;
  */
 class GuiEditor : Scene
 {
+    this()
+    {
+        name = "deltotum_gui_editor";
+    }
+
     override void create()
     {
         super.create;
@@ -22,10 +27,10 @@ class GuiEditor : Scene
         root.width = window.width;
         root.height = window.height;
         root.isBackground = false;
-        addCreated(root);
+        addCreate(root);
 
         auto buttonsContainer = new HBox;
-        root.addCreated(buttonsContainer);
+        root.addCreate(buttonsContainer);
 
         import deltotum.gui.controls.buttons.button : Button;
 
@@ -33,19 +38,20 @@ class GuiEditor : Scene
         btn1.onAction = (e) {
             interact.dialog.showQuestion("Question?", (answer) {
                 import std;
+
                 writeln(answer);
             });
         };
         btn1._buttonText = "Question";
-        buttonsContainer.addCreated(btn1);
+        buttonsContainer.addCreate(btn1);
 
         auto btn2 = new Button;
         btn2._buttonText = "Кнопка";
-        buttonsContainer.addCreated(btn2);
+        buttonsContainer.addCreate(btn2);
 
         auto btn3 = new Button;
         btn3._buttonText = "Кнопка";
-        buttonsContainer.addCreated(btn3);
+        buttonsContainer.addCreate(btn3);
 
     }
 

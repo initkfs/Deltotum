@@ -30,31 +30,51 @@ class SceneManager : GraphicsComponent
         _currentScene = state;
     }
 
+    void create(Scene scene)
+    {
+        if (!scene.isBuilt)
+        {
+            build(scene);
+        }
+        scene.create;
+    }
+
     void addCreate(Scene scene)
     {
-        build(scene);
-        scene.create;
+        create(scene);
         add(scene);
+    }
+
+    void add(Scene[] scenes...)
+    {
+        foreach (Scene scene; scenes)
+        {
+            add(scene);
+        }
     }
 
     void add(Scene scene)
     {
-        if (!scene.isBuilt)
-        {
-            throw new Exception("Scene not built");
-        }
         //TODO exists
         scenes ~= scene;
     }
 
-    void setDefaultScene()
+    bool changeByName(string name)
     {
-
-        if (scenes.length == 0)
+        foreach (sc; scenes)
         {
-            return;
+            if (sc.name == name)
+            {
+                setCurrent(sc);
+                return true;
+            }
         }
+        return false;
+    }
 
+    void change(Scene scene)
+    {
+        //TODO check in scenes
         debug
         {
             import ConfigKeys = deltotum.kit.kit_config_keys;
@@ -62,20 +82,31 @@ class SceneManager : GraphicsComponent
             if (config.containsKey(ConfigKeys.sceneNameCurrent))
             {
                 const sceneName = config.getNotEmptyString(ConfigKeys.sceneNameCurrent);
-                foreach (scene; scenes)
+                if (!sceneName.isNull && changeByName(sceneName.get))
                 {
-                    if (scene.name == sceneName)
-                    {
-                        _currentScene = scene;
-                        break;
-                    }
+                    return;
                 }
-
-                return;
             }
         }
 
-        _currentScene = scenes[$ - 1];
+        setCurrent(scene);
+    }
+
+    protected void setCurrent(Scene scene)
+    {
+        assert(scene);
+
+        if (_currentScene && _currentScene.isDestructible)
+        {
+            _currentScene.destroy;
+        }
+
+        if (!scene.isBuilt || scene.isDestructible)
+        {
+            create(scene);
+        }
+
+        _currentScene = scene;
     }
 
     void destroy()
