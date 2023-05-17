@@ -1,15 +1,15 @@
 module deltotum.kit.factories.creation_images;
 
-import deltotum.kit.sprites.factories.display_object_factory: DisplayObjectFactory;
+import deltotum.kit.sprites.factories.sprite_factory: SpriteFactory;
 import deltotum.kit.sprites.images.image : Image;
 import deltotum.kit.sprites.images.animated_image : AnimatedImage;
 
 /**
  * Authors: initkfs
  */
-class CreationImages : DisplayObjectFactory!Image
+class CreationImages : SpriteFactory!Image
 {
-    override Image createObject(){
+    override Image createSprite(){
         //TODO default image-placeholder
         return null;
     }

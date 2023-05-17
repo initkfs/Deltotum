@@ -32,6 +32,7 @@ class SceneManager : GraphicsComponent
 
     void create(Scene scene)
     {
+        assert(scene);
         if (!scene.isBuilt)
         {
             build(scene);

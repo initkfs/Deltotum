@@ -48,24 +48,25 @@ class Sprite : PhysicalBody
     bool isDrawAfterParent = true;
     bool isManaged = true;
     bool isUpdatable = true;
-    bool isResizable = true;
-    bool isKeepAspectRatio = false;
+    bool isResizable;
+    bool isKeepAspectRatio;
 
     Insets padding;
 
     Layout layout;
     bool isLayoutManaged = true;
-    bool isResizedByParent = false;
-    bool isResizeChildren = true;
+    bool isResizeChildren;
+    bool isResizedByParent;
+    
     Alignment alignment = Alignment.none;
 
     ScaleMode scaleMode = ScaleMode.none;
 
-    bool isCreated = false;
-    bool isFocus = false;
-    bool isDraggable = false;
+    bool isCreated;
+    bool isFocus;
+    bool isDraggable;
+    bool isScalable;
     bool isVisible = true;
-    bool isScalable = true;
     bool isReceiveEvents = true;
 
     //protected
@@ -111,6 +112,13 @@ class Sprite : PhysicalBody
         bool isValid = true;
 
         bool _cached;
+    }
+
+    void buildCreate(Sprite obj)
+    {
+        assert(obj);
+        build(obj);
+        obj.create;
     }
 
     protected void recreateCache()
@@ -554,9 +562,17 @@ class Sprite : PhysicalBody
             //TODO logging
             throw new Exception("Cannot add null object");
         }
-        build(obj);
-        obj.initialize;
-        assert(obj.isInitialized);
+
+        if (!obj.isBuilt)
+        {
+            build(obj);
+        }
+
+        if (!obj.isInitialized)
+        {
+            obj.initialize;
+            assert(obj.isInitialized);
+        }
 
         if (obj.isManaged)
         {
@@ -572,9 +588,9 @@ class Sprite : PhysicalBody
         setInvalid;
     }
 
-    void addOraddCreate(Sprite obj, long index = -1)
+    void addOrCreate(Sprite obj, long index = -1)
     {
-        if (obj.isCreated)
+        if (obj.isBuilt && obj.isCreated)
         {
             add(obj, index);
         }
@@ -725,7 +741,8 @@ class Sprite : PhysicalBody
     void width(double value)
     {
         //quick but imprecise comparison 
-        if (!isResizable || _width == value || value < minWidth || value > maxWidth)
+        //!isResizable
+        if (_width == value || value < minWidth || value > maxWidth)
         {
             return;
         }
@@ -772,7 +789,7 @@ class Sprite : PhysicalBody
     void height(double value)
     {
         ////quick but imprecise comparison 
-        if (!isResizable || _height == value || value < minHeight || value > maxHeight)
+        if (_height == value || value < minHeight || value > maxHeight)
         {
             return;
         }

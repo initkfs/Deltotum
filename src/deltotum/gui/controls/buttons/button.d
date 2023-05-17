@@ -121,13 +121,13 @@ class Button : Control
         if (hoverFactory !is null)
         {
             hover = hoverFactory(width, height);
-            addOraddCreate(hover);
+            addOrCreate(hover);
         }
 
         if (clickEffectFactory !is null)
         {
             clickEffect = clickEffectFactory();
-            addOraddCreate(clickEffect);
+            addOrCreate(clickEffect);
         }
 
         if (textFactory !is null)
@@ -138,13 +138,13 @@ class Button : Control
 
             _text.maxWidth = width - padding.width;
             _text.maxHeight = height - padding.height;
-            addOraddCreate(_text);
+            addOrCreate(_text);
         }
 
         if (clickEffect !is null)
         {
             clickEffectAnimation = clickEffectAnimationFactory();
-            addOraddCreate(clickEffectAnimation);
+            addOrCreate(clickEffectAnimation);
         }
 
         //requestLayout;

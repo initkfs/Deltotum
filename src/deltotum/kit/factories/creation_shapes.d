@@ -1,6 +1,6 @@
 module deltotum.kit.factories.creation_shapes;
 
-import deltotum.kit.sprites.factories.display_object_factory : DisplayObjectFactory;
+import deltotum.kit.sprites.factories.sprite_factory : SpriteFactory;
 
 import deltotum.kit.graphics.shapes.shape : Shape;
 import deltotum.kit.graphics.shapes.circle : Circle;
@@ -11,9 +11,9 @@ import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 /**
  * Authors: initkfs
  */
-class CreationShapes : DisplayObjectFactory!Shape
+class CreationShapes : SpriteFactory!Shape
 {
-    override Shape createObject()
+    override Shape createSprite()
     {
         //TODO default shape-placeholder
         return null;

@@ -28,6 +28,9 @@ abstract class Control : Sprite
     {
         super.initialize;
 
+        isResizedByParent = true;
+        isResizable = true;
+
         padding = graphics.theme.controlPadding;
         style = graphics.theme.controlStyle;
 

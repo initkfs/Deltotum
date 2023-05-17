@@ -36,15 +36,17 @@ class AnimatedImage : TextureImage
 {
     protected
     {
-        int commonFrameDelay;
-
         ImageAnimation[] animations;
+
+        int commonFrameDelay;
+        double frameWidth = 0;
+        double frameHeight = 0;
+        
         ImageAnimation currentAnimation;
         size_t currentAnimationIndex;
         size_t currentAnimationStartTime;
+
         Flip currentFlip = Flip.none;
-        double frameWidth = 0;
-        double frameHeight = 0;
     }
 
     this(int frameWidth = 0, int frameHeight = 0, int commonFrameDelay = 100)
@@ -53,6 +55,7 @@ class AnimatedImage : TextureImage
 
         this.frameWidth = frameWidth;
         this.frameHeight = frameHeight;
+        
         isDrawTexture = false;
     }
 
@@ -140,6 +143,7 @@ class AnimatedImage : TextureImage
         srcRect.width = cast(int) frameWidth;
         srcRect.height = cast(int) frameHeight;
 
+        assert(texture);
         drawTexture(texture, srcRect, cast(int) x, cast(int) y, angle, flip);
     }
 
