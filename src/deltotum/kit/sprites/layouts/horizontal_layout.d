@@ -30,7 +30,7 @@ class HorizontalLayout : ManagedLayout
             child.x = nextX;
             nextX = child.x + childBounds.width + spacing;
 
-            if (child.alignment == Alignment.y)
+            if (isAlignY || child.alignment == Alignment.y)
             {
                 alignY(root, child);
             }

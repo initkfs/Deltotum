@@ -30,7 +30,7 @@ class VerticalLayout : ManagedLayout
             child.y = nextY;
             nextY = child.y + childBounds.height + spacing;
 
-            if (child.alignment == Alignment.x)
+            if (isAlignX || child.alignment == Alignment.x)
             {
                 alignX(root, child);
             }

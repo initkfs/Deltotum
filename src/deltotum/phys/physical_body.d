@@ -15,7 +15,7 @@ class PhysicalBody : EventToolkitTarget
     double restitution = 0;
     double speed = 0;
 
-    this() pure {
+    this() pure @safe {
         hitbox = new Rect2d;
     }
 

@@ -25,49 +25,65 @@ abstract class Control : Sprite
         Sprite background;
     }
 
+    this() pure @safe
+    {
+        isResizedByParent = true;
+        isResizable = true;
+        isLayoutManaged = true;
+    }
+
     override void initialize()
     {
         super.initialize;
 
-        isResizedByParent = true;
-        isResizable = true;
-        isLayoutManaged = true;
-
         padding = graphics.theme.controlPadding;
         style = graphics.theme.controlStyle;
 
-        backgroundFactory = (width, height) {
+        if (isBorder || isBackground)
+        {
+            backgroundFactory = (width, height) {
 
-            import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
-            import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
+                import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
+                import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 
-            const borderLineWidth = isBorder ? 1 : 0;
-        
-            GraphicStyle backgroundStyle = GraphicStyle(borderLineWidth, graphics.theme.colorAccent, false, graphics
-                    .theme.colorControlBackground);
+                GraphicStyle backgroundStyle = GraphicStyle(isBorder ? 1 : 0, graphics.theme.colorAccent, isBackground, graphics
+                        .theme.colorControlBackground);
 
-            auto background = new RegularPolygon(width, height, backgroundStyle, graphics
-                    .theme.controlCornersBevel);
+                auto background = new RegularPolygon(width, height, backgroundStyle, graphics
+                        .theme.controlCornersBevel);
 
-            // auto background = new Rectangle(width, height, backgroundStyle);
-            background.opacity = graphics.theme.opacityControls;
-            return background;
-        };
+                background.opacity = graphics.theme.opacityControls;
+                return background;
+            };
+        }
     }
 
     protected bool createBackground(double width, double height)
     {
-        if (background || (!isBackground && !isBorder) || backgroundFactory is null)
+        if (
+            background ||
+            width == 0 ||
+            height == 0 ||
+            (!isBackground && !isBorder)
+            || backgroundFactory is null)
         {
             return false;
         }
 
-        background = backgroundFactory(width, height);
+        assert(backgroundInsets.width < width);
+        assert(backgroundInsets.height < height);
+
+        background = backgroundFactory(width - backgroundInsets.width, height - backgroundInsets
+                .height);
+
         background.x = backgroundInsets.left;
         background.y = backgroundInsets.top;
+
         background.isResizedByParent = true;
         background.isLayoutManaged = false;
+
         addCreate(background, 0);
+
         return true;
     }
 
@@ -75,13 +91,6 @@ abstract class Control : Sprite
     {
         super.create;
 
-        if (width > 0 && height > 0)
-        {
-            createBackground(width - backgroundInsets.width, height - backgroundInsets.height);
-        }
-        // else
-        // {
-        //     logger.tracef("Dimensions not set, background cannot be created. Width: %s, height: %s in %s", width, height, className);
-        // }
+        createBackground(width, height);
     }
 }

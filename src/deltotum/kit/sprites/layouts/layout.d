@@ -7,5 +7,8 @@ import deltotum.kit.sprites.sprite : Sprite;
  */
 abstract class Layout
 {
+    bool isAlignX;
+    bool isAlignY;
+
     abstract void applyLayout(Sprite root);
 }

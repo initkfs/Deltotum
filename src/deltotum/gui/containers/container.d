@@ -8,12 +8,8 @@ import deltotum.kit.sprites.sprite : Sprite;
  */
 class Container : Control
 {
-    void requestLayout()
-    {
 
-    }
-
-    this() pure
+    this() pure @safe
     {
         isBackground = false;
     }
@@ -22,22 +18,20 @@ class Container : Control
     {
         super.initialize;
 
-        backgroundFactory = (width, height) {
+        invalidateListener = () { checkBackground; };
+    }
 
-            import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
-            import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
-            import deltotum.kit.graphics.colors.rgba : RGBA;
+    void requestResize()
+    {
+        isProcessLayout = true;
+        autoResize;
+        isProcessLayout = false;
+    }
 
-            GraphicStyle backgroundStyle = GraphicStyle(1, graphics.theme.colorAccent, isBackground, graphics
-                    .theme.colorControlBackground);
-
-            auto background = new RegularPolygon(width, height, backgroundStyle, graphics
-                    .theme.controlCornersBevel);
-
-            // auto background = new Rectangle(width, height, backgroundStyle);
-            background.opacity = graphics.theme.opacityControls;
-            return background;
-        };
+    override void applyLayout()
+    {
+        requestResize;
+        super.applyLayout;
     }
 
     protected auto childrenWithGeometry()
@@ -61,11 +55,80 @@ class Container : Control
         }
     }
 
-    protected void layoutWithoutChildren()
+    void autoResize()
     {
-        isResizeChildren = false;
-        requestLayout;
-        isResizeChildren = true;
+        double newWidth = childrenWidth;
+        if (padding.width > 0)
+        {
+            newWidth += padding.width;
+        }
+
+        if (newWidth > width)
+        {
+            if (newWidth < maxWidth)
+            {
+                width = newWidth;
+            }
+            else
+            {
+                const double decWidth = (maxWidth - padding.width) / children.length;
+                foreach (ch; children)
+                {
+                    ch.width(ch.width - decWidth);
+                }
+            }
+        }
+
+        double newHeight = childrenHeight;
+        if (padding.height > 0)
+        {
+            newHeight += padding.height;
+        }
+
+        if (newHeight > height)
+        {
+            if (newHeight < maxHeight)
+            {
+                height = newHeight;
+            }
+            else
+            {
+                //TODO reduce height
+            }
+
+        }
+    }
+
+    double childrenWidth()
+    {
+        import std.algorithm.iteration : sum, map;
+        import std.algorithm.iteration : filter;
+
+        const double childrenWidth = children.filter!(ch => ch.isLayoutManaged)
+            .map!(ch => ch.width)
+            .sum;
+        return childrenWidth;
+    }
+
+    double childrenHeight()
+    {
+        if (children.length == 0)
+        {
+            return 0;
+        }
+        import std.algorithm.searching : maxElement;
+        import std.algorithm.iteration : filter, map;
+        import std.algorithm.comparison : max;
+        import std.range.primitives : walkLength;
+
+        auto childrenRange = children.filter!(ch => ch.isLayoutManaged);
+        if (childrenRange.walkLength == 0)
+        {
+            return 0;
+        }
+
+        const double childrenMaxHeight = childrenRange.maxElement!"a.height".height;
+        return childrenMaxHeight;
     }
 
     override void addCreate(Sprite[] sprites)
@@ -76,38 +139,52 @@ class Container : Control
         }
     }
 
-    override void addCreate(Sprite obj, long index = -1)
+    override void addCreate(Sprite sprite, long index = -1)
     {
-        if (obj.isLayoutManaged)
+        if (sprite.isLayoutManaged)
         {
-            obj.x = 0;
-            obj.y = 0;
+            sprite.x = 0;
+            sprite.y = 0;
         }
-        super.addCreate(obj, index);
-        obj.isResizedByParent = true;
 
-        layoutWithoutChildren;
-    }
+        if (sprite.isManaged)
+        {
+            sprite.isResizedByParent = true;
+        }
+        
+        super.addCreate(sprite, index);
 
-    override double width()
-    {
-        return super.width;
+        requestResize;
     }
+}
 
-    override void width(double value)
-    {
-        super.width = value;
-        checkBackground;
-    }
+unittest
+{
 
-    override double height()
-    {
-        return super.height;
-    }
+    import deltotum.kit.sprites.sprite : Sprite;
 
-    override void height(double value)
-    {
-        super.height = value;
-        checkBackground;
-    }
+    auto sp1 = new Sprite;
+    sp1.width = 100;
+    sp1.height = 200;
+
+    auto container1 = new Container;
+    container1.add(sp1);
+    container1.update(0);
+
+    assert(container1.width == sp1.width);
+    assert(container1.height == sp1.height);
+
+    import deltotum.math.geometry.insets : Insets;
+
+    container1.padding = Insets(5);
+    container1.setInvalid;
+    container1.update(0);
+
+    assert(container1.width == (sp1.width + container1.padding.width));
+    assert(container1.height == (sp1.height + container1.padding.height));
+
+    sp1.width = sp1.width * 2;
+    sp1.update(0);
+
+    assert(container1.width == (sp1.width + container1.padding.width));
 }

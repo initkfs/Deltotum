@@ -114,6 +114,12 @@ class Sprite : PhysicalBody
         bool _cached;
     }
 
+    protected
+    {
+        bool isProcessLayout;
+        bool isProcessChildLayout;
+    }
+
     void buildCreate(Sprite sprite)
     {
         assert(sprite);
@@ -526,9 +532,16 @@ class Sprite : PhysicalBody
 
     void applyLayout()
     {
+        if (isProcessChildLayout)
+        {
+            return;
+        }
+
         if (layout !is null)
         {
+            isProcessChildLayout = true;
             layout.applyLayout(this);
+            isProcessChildLayout = false;
         }
     }
 
@@ -537,18 +550,21 @@ class Sprite : PhysicalBody
 
         if (!isValid)
         {
-            if (invalidateListener !is null)
+            if (invalidateListener)
             {
                 invalidateListener();
             }
 
-            //TODO cyclic parent call?
-            applyLayout;
+            isProcessLayout = true;
 
-            // if (parent !is null && parent !is this)
-            // {
-            //     parent.applyLayout;
-            // }
+            if (parent && parent !is this)
+            {
+                parent.applyLayout;
+            }
+
+            isProcessLayout = false;
+
+            applyLayout;
 
             setValid(true);
         }
@@ -658,6 +674,11 @@ class Sprite : PhysicalBody
             _cache.x = _x;
         }
 
+        if (isProcessLayout)
+        {
+            return;
+        }
+
         setInvalid;
     }
 
@@ -711,14 +732,14 @@ class Sprite : PhysicalBody
         immutable double oldWidth = _width;
         _width = value;
 
+        setInvalid;
+
         if (!isCreated)
         {
             return;
         }
 
-        setInvalid;
-
-        if (isCreated && onChangeWidthFromTo !is null)
+        if (onChangeWidthFromTo)
         {
             onChangeWidthFromTo(oldWidth, _width);
         }
@@ -728,7 +749,7 @@ class Sprite : PhysicalBody
             recreateCache;
         }
 
-        if (isResizeChildren && children.length > 0)
+        if (!isProcessLayout && isResizeChildren && children.length > 0)
         {
             immutable double dw = _width - oldWidth;
             foreach (child; children)
@@ -761,14 +782,14 @@ class Sprite : PhysicalBody
         immutable double oldHeight = _height;
         _height = value;
 
+        setInvalid;
+
         if (!isCreated)
         {
             return;
         }
 
-        setInvalid;
-
-        if (isCreated && onChangeHeightFromTo !is null)
+        if (onChangeHeightFromTo)
         {
             onChangeHeightFromTo(oldHeight, _height);
         }
@@ -778,7 +799,7 @@ class Sprite : PhysicalBody
             recreateCache;
         }
 
-        if (isResizeChildren && children.length > 0)
+        if (!isProcessLayout && isResizeChildren && children.length > 0)
         {
             const dh = _height - oldHeight;
             foreach (child; children)

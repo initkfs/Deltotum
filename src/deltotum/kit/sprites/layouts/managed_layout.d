@@ -13,6 +13,16 @@ class ManagedLayout : Layout
 
     bool alignment(Sprite root, Sprite obj)
     {
+        if (isAlignX)
+        {
+            return alignX(root, obj);
+        }
+
+        if (isAlignY)
+        {
+            return alignY(root, obj);
+        }
+
         if (obj.alignment == Alignment.none || !obj.isLayoutManaged)
         {
             return false;
@@ -35,12 +45,13 @@ class ManagedLayout : Layout
     {
         const bool isX = alignX(root, target);
         const bool isY = alignY(root, target);
-        return isX || isY;
+        return isX && isY;
     }
 
     bool alignX(Sprite root, Sprite target)
     {
-        if(!target.isLayoutManaged){
+        if (!target.isLayoutManaged)
+        {
             return false;
         }
         const rootBounds = root.bounds;
@@ -58,7 +69,8 @@ class ManagedLayout : Layout
 
     bool alignY(Sprite root, Sprite target)
     {
-        if(!target.isLayoutManaged){
+        if (!target.isLayoutManaged)
+        {
             return false;
         }
         const rootBounds = root.bounds;
@@ -69,7 +81,7 @@ class ManagedLayout : Layout
             return false;
         }
 
-        const newY = rootBounds.middleY - targetBounds.halfHeight ;
+        const newY = rootBounds.middleY - targetBounds.halfHeight;
         target.y = newY;
         return true;
     }
