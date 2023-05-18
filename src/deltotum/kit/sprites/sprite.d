@@ -57,6 +57,10 @@ class Sprite : PhysicalBody
     bool isResizedByParent;
 
     Insets padding;
+    Insets margin;
+    bool isHGrow;
+    bool isVGrow;
+    
     Alignment alignment = Alignment.none;
     ScaleMode scaleMode = ScaleMode.none;
 

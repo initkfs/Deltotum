@@ -36,6 +36,8 @@ abstract class Control : Sprite
     {
         super.initialize;
 
+        invalidateListener = () { checkBackground; };
+
         padding = graphics.theme.controlPadding;
         style = graphics.theme.controlStyle;
 
@@ -92,5 +94,19 @@ abstract class Control : Sprite
         super.create;
 
         createBackground(width, height);
+    }
+
+    void checkBackground()
+    {
+        if (background)
+        {
+            background.width = width;
+            background.height = height;
+            return;
+        }
+        if (width > 0 && height > 0)
+        {
+            createBackground(width - backgroundInsets.width, height - backgroundInsets.height);
+        }
     }
 }

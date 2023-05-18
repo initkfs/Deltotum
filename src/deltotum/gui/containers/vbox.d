@@ -10,7 +10,7 @@ class VBox : Container
 {
     double spacing = 0;
 
-    this(double spacing = 0) pure
+    this(double spacing = 5) pure
     {
         import std.exception : enforce;
         import std.conv : text;
@@ -25,46 +25,31 @@ class VBox : Container
 
     override double childrenWidth()
     {
-        if (children.length == 0)
+        double childrenWidth = 0;
+        foreach (child; childrenForLayout)
         {
-            return 0;
-        }
-        import std.algorithm.searching : maxElement;
-        import std.range.primitives : empty;
-
-        auto childrenForCalc = childrenWithGeometry;
-        if (childrenForCalc.empty)
-        {
-            return 0;
+            if (child.width > childrenWidth)
+            {
+                childrenWidth = child.width;
+            }
         }
 
-        const double childrenMaxWidth = childrenForCalc.maxElement!("a.width").width;
-        return childrenMaxWidth;
+        return childrenWidth;
     }
 
     override double childrenHeight()
     {
-        if (children.length == 0)
+        double childrenHeight = 0;
+        size_t childCount;
+        foreach (child; childrenForLayout)
         {
-            return 0;
+            childrenHeight += child.height + child.margin.height;
+            childCount++;
         }
 
-        import std.range.primitives : walkLength;
-        import std.algorithm.iteration : sum, map;
-
-        auto targetChildren = childrenWithGeometry;
-        const childrenCount = targetChildren.walkLength;
-        if (childrenCount == 0)
+        if (spacing > 0 && childCount > 1)
         {
-            return 0;
-        }
-
-        double childrenHeight = targetChildren
-            .map!(ch => ch.height)
-            .sum;
-        if (spacing > 0)
-        {
-            childrenHeight += spacing * (childrenCount - 1);
+            childrenHeight += spacing * (childCount - 1);
         }
         return childrenHeight;
     }

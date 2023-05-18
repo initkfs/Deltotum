@@ -27,8 +27,8 @@ class VerticalLayout : ManagedLayout
                 continue;
             }
             auto childBounds = child.bounds;
-            child.y = nextY;
-            nextY = child.y + childBounds.height + spacing;
+            child.y = nextY + child.margin.top;
+            nextY = child.y + childBounds.height + child.margin.bottom + spacing;
 
             if (isAlignX || child.alignment == Alignment.x)
             {

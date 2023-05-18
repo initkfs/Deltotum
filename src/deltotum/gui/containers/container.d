@@ -8,17 +8,9 @@ import deltotum.kit.sprites.sprite : Sprite;
  */
 class Container : Control
 {
-
     this() pure @safe
     {
         isBackground = false;
-    }
-
-    override void initialize()
-    {
-        super.initialize;
-
-        invalidateListener = () { checkBackground; };
     }
 
     void requestResize()
@@ -34,25 +26,11 @@ class Container : Control
         super.applyLayout;
     }
 
-    protected auto childrenWithGeometry()
+    protected auto childrenForLayout()
     {
         import std.algorithm.iteration : filter;
 
         return children.filter!(ch => ch.isLayoutManaged);
-    }
-
-    private void checkBackground()
-    {
-        if (background)
-        {
-            background.width = width;
-            background.height = height;
-            return;
-        }
-        if (width > 0 && height > 0)
-        {
-            createBackground(width - backgroundInsets.width, height - backgroundInsets.height);
-        }
     }
 
     void autoResize()
@@ -78,6 +56,10 @@ class Container : Control
                 }
             }
         }
+        else
+        {
+            resizeChildren;
+        }
 
         double newHeight = childrenHeight;
         if (padding.height > 0)
@@ -90,6 +72,7 @@ class Container : Control
             if (newHeight < maxHeight)
             {
                 height = newHeight;
+                resizeChildren;
             }
             else
             {
@@ -97,17 +80,68 @@ class Container : Control
             }
 
         }
+        else
+        {
+            //TODO split into horizontal and vertical to prevent double resize
+            resizeChildren;
+        }
+    }
+
+    //TODO the first child occupies all available space
+    void resizeChildren()
+    {
+        import std.range.primitives : empty, walkLength;
+        import std.algorithm.searching : count;
+
+        auto targetChildren = childrenForLayout;
+        if (targetChildren.empty)
+        {
+            return;
+        }
+
+        const hgrowChildren = targetChildren.count!(ch => ch.isHGrow);
+        const vgrowChildren = targetChildren.count!(ch => ch.isVGrow);
+
+        if (hgrowChildren == 0 && vgrowChildren == 0)
+        {
+            return;
+        }
+
+        const freeWidth = width - childrenWidth - padding.width;
+        const freeHeight = height - childrenHeight - padding.height;
+
+        const dtWidth = freeWidth / hgrowChildren;
+        const dtHeight = freeHeight / vgrowChildren;
+
+        foreach (child; targetChildren)
+        {
+            if (child.isHGrow)
+            {
+                child.width = child.width + dtWidth;
+            }
+
+            if (child.isVGrow)
+            {
+                child.height = child.height + dtHeight;
+            }
+        }
     }
 
     double childrenWidth()
     {
-        import std.algorithm.iteration : sum, map;
-        import std.algorithm.iteration : filter;
+        if (children.length == 0)
+        {
+            return 0;
+        }
 
-        const double childrenWidth = children.filter!(ch => ch.isLayoutManaged)
-            .map!(ch => ch.width)
-            .sum;
-        return childrenWidth;
+        auto targetChildren = childrenForLayout;
+        double childrendWidth = 0;
+        foreach (child; targetChildren)
+        {
+            childrendWidth += child.width + child.margin.width;
+        }
+
+        return childrendWidth;
     }
 
     double childrenHeight()
@@ -116,19 +150,15 @@ class Container : Control
         {
             return 0;
         }
-        import std.algorithm.searching : maxElement;
-        import std.algorithm.iteration : filter, map;
-        import std.algorithm.comparison : max;
-        import std.range.primitives : walkLength;
 
-        auto childrenRange = children.filter!(ch => ch.isLayoutManaged);
-        if (childrenRange.walkLength == 0)
+        auto targetChildren = childrenForLayout;
+        double childrendHeight = 0;
+        foreach (child; targetChildren)
         {
-            return 0;
+            childrendHeight += child.height + child.margin.height;
         }
 
-        const double childrenMaxHeight = childrenRange.maxElement!"a.height".height;
-        return childrenMaxHeight;
+        return childrendHeight;
     }
 
     override void addCreate(Sprite[] sprites)
@@ -151,7 +181,7 @@ class Container : Control
         {
             sprite.isResizedByParent = true;
         }
-        
+
         super.addCreate(sprite, index);
 
         requestResize;

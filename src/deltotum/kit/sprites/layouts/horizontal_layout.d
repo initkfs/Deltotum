@@ -27,8 +27,8 @@ class HorizontalLayout : ManagedLayout
                 continue;
             }
             auto childBounds = child.bounds;
-            child.x = nextX;
-            nextX = child.x + childBounds.width + spacing;
+            child.x = nextX + child.margin.left;
+            nextX = child.x + childBounds.width + child.margin.right + spacing;
 
             if (isAlignY || child.alignment == Alignment.y)
             {

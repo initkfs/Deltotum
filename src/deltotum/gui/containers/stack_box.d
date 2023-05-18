@@ -15,41 +15,30 @@ class StackBox : Container
 
     override double childrenWidth()
     {
-        //TODO remove duplication
-        if (children.length == 0)
+        double maxWidth = 0;
+        foreach (child; childrenForLayout)
         {
-            return 0;
-        }
-        import std.algorithm.searching : maxElement;
-        import std.range.primitives : empty;
-
-        auto childrenForCalc = childrenWithGeometry;
-        if (childrenForCalc.empty)
-        {
-            return 0;
+            if (child.width > maxWidth)
+            {
+                maxWidth = child.width;
+            }
         }
 
-        const double childrenMaxWidth = childrenForCalc.maxElement!("a.width").width;
-        return childrenMaxWidth;
+        return maxWidth;
     }
 
     override double childrenHeight()
     {
-        if (children.length == 0)
+        double maxHeight = 0;
+        foreach (child; childrenForLayout)
         {
-            return 0;
-        }
-        import std.algorithm.searching : maxElement;
-        import std.range.primitives : empty;
-
-        auto childrenForCalc = childrenWithGeometry;
-        if (childrenForCalc.empty)
-        {
-            return 0;
+            if (child.height > maxHeight)
+            {
+                maxHeight = child.height;
+            }
         }
 
-        const double maxValue = childrenForCalc.maxElement!("a.height").height;
-        return maxValue;
+        return maxHeight;
     }
 }
 
