@@ -36,7 +36,7 @@ abstract class Control : Sprite
     {
         super.initialize;
 
-        invalidateListener = () { checkBackground; };
+        invalidateListeners ~= () { checkBackground; };
 
         padding = graphics.theme.controlPadding;
         style = graphics.theme.controlStyle;

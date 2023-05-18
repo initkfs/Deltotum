@@ -1,6 +1,6 @@
 module deltotum.gui.controls.buttons.button;
 
-import deltotum.kit.sprites.sprite: Sprite;
+import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.gui.controls.control : Control;
 import deltotum.kit.graphics.shapes.shape : Shape;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
@@ -50,6 +50,19 @@ class Button : Control
     {
         super.initialize;
 
+        invalidateListeners ~= () {
+            if (hover)
+            {
+                hover.width = width;
+                hover.height = height;
+            }
+
+            if(clickEffect){
+                clickEffect.width = width;
+                clickEffect.height = height;
+            }
+        };
+
         enum buttonCornerWidth = 8;
 
         backgroundFactory = (width, height) {
@@ -57,7 +70,8 @@ class Button : Control
             import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
 
             Shape object = new RegularPolygon(width, height, GraphicStyle(1, graphics
-                    .theme.colorAccent, true, graphics.theme.colorControlBackground), graphics.theme.controlCornersBevel);
+                    .theme.colorAccent, true, graphics.theme.colorControlBackground), graphics
+                    .theme.controlCornersBevel);
             object.isLayoutManaged = false;
             return object;
         };
@@ -188,7 +202,8 @@ class Button : Control
 
     void text(dstring t)
     {
-        if(!_text){
+        if (!_text)
+        {
             _buttonText = t;
             return;
         }
@@ -198,7 +213,8 @@ class Button : Control
 
     dstring text()
     {
-        if(_text){
+        if (_text)
+        {
             return _text.text;
         }
         return _buttonText;

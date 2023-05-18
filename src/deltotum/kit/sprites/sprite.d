@@ -60,7 +60,7 @@ class Sprite : PhysicalBody
     Insets margin;
     bool isHGrow;
     bool isVGrow;
-    
+
     Alignment alignment = Alignment.none;
     ScaleMode scaleMode = ScaleMode.none;
 
@@ -85,7 +85,7 @@ class Sprite : PhysicalBody
     }
 
     bool delegate(double, double) onDrag;
-    void delegate() invalidateListener;
+    void delegate()[] invalidateListeners;
 
     //old, new
     void delegate(double, double) onChangeWidthFromTo;
@@ -554,9 +554,9 @@ class Sprite : PhysicalBody
 
         if (!isValid)
         {
-            if (invalidateListener)
+            foreach (invListener; invalidateListeners)
             {
-                invalidateListener();
+                invListener();
             }
 
             isProcessLayout = true;
@@ -977,6 +977,8 @@ class Sprite : PhysicalBody
             child.parent = null;
             child.destroy;
         }
+
+        invalidateListeners = null;
     }
 
     bool isCached()
