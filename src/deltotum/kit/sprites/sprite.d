@@ -32,6 +32,8 @@ class Sprite : PhysicalBody
 {
     mixin ToString;
 
+    string id;
+
     enum debugFlag = "d_debug";
 
     Sprite parent;
@@ -813,7 +815,6 @@ class Sprite : PhysicalBody
                     const newHeight = child.height + dh;
                     child.height(newHeight);
                 }
-
             }
         }
     }
@@ -934,6 +935,20 @@ class Sprite : PhysicalBody
         }
     }
 
+    Nullable!Sprite findChildRec(string id)
+    {
+        Sprite mustBeChild;
+        onChildrenRec((child) {
+            if (child.id == id)
+            {
+                mustBeChild = child;
+                return false;
+            }
+            return true;
+        });
+        return mustBeChild is null ? Nullable!Sprite.init : Nullable!Sprite(mustBeChild);
+    }
+
     Nullable!Sprite findChildRec(Sprite child)
     {
         if (child is null)
@@ -959,6 +974,18 @@ class Sprite : PhysicalBody
         foreach (Sprite ch; children)
         {
             if (ch is child)
+            {
+                return Nullable!Sprite(ch);
+            }
+        }
+        return Nullable!Sprite.init;
+    }
+
+    Nullable!Sprite findChild(string id)
+    {
+        foreach (Sprite ch; children)
+        {
+            if (ch.id == id)
             {
                 return Nullable!Sprite(ch);
             }

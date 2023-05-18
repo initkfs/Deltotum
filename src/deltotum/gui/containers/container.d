@@ -22,7 +22,17 @@ class Container : Control
 
     override void applyLayout()
     {
+        if (isProcessChildLayout)
+        {
+            return;
+        }
+        
         requestResize;
+
+        isProcessChildLayout = true;
+        resizeChildren;
+        isProcessChildLayout = false;
+
         super.applyLayout;
     }
 
@@ -56,10 +66,6 @@ class Container : Control
                 }
             }
         }
-        else
-        {
-            resizeChildren;
-        }
 
         double newHeight = childrenHeight;
         if (padding.height > 0)
@@ -79,11 +85,6 @@ class Container : Control
                 //TODO reduce height
             }
 
-        }
-        else
-        {
-            //TODO split into horizontal and vertical to prevent double resize
-            resizeChildren;
         }
     }
 
