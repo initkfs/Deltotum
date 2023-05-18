@@ -18,6 +18,7 @@ abstract class Control : Sprite
     GraphicStyle style;
 
     bool isBackground = true;
+    bool isBorder = true;
 
     protected
     {
@@ -30,6 +31,7 @@ abstract class Control : Sprite
 
         isResizedByParent = true;
         isResizable = true;
+        isLayoutManaged = true;
 
         padding = graphics.theme.controlPadding;
         style = graphics.theme.controlStyle;
@@ -37,11 +39,11 @@ abstract class Control : Sprite
         backgroundFactory = (width, height) {
 
             import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
+            import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 
-            // import deltotum.kit.graphics.shapes.rectangle : Rectangle;
-            // import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
-
-            GraphicStyle backgroundStyle = GraphicStyle(1, graphics.theme.colorAccent, false, graphics
+            const borderLineWidth = isBorder ? 1 : 0;
+        
+            GraphicStyle backgroundStyle = GraphicStyle(borderLineWidth, graphics.theme.colorAccent, false, graphics
                     .theme.colorControlBackground);
 
             auto background = new RegularPolygon(width, height, backgroundStyle, graphics
@@ -55,7 +57,7 @@ abstract class Control : Sprite
 
     protected bool createBackground(double width, double height)
     {
-        if (background || !isBackground || backgroundFactory is null)
+        if (background || (!isBackground && !isBorder) || backgroundFactory is null)
         {
             return false;
         }

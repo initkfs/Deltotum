@@ -60,7 +60,6 @@ class TextureImage : Texture
         this.height = height * scale;
 
         surface.destroy;
-        requestRedraw;
         return true;
     }
 
@@ -135,7 +134,6 @@ class TextureImage : Texture
         this.height = height * scale;
 
         image.destroy;
-        requestRedraw;
         return true;
     }
 

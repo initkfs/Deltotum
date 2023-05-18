@@ -24,46 +24,57 @@ class HBox : Container
 
     override void requestLayout()
     {
-        //obj.padding.width
-        const double newWidth = childrenWidth;
+
+        double newWidth = childrenWidth;
+        if (padding.width > 0)
+        {
+            newWidth += padding.width;
+        }
+
         if (newWidth > width)
         {
-            double maxW = maxWidth;
-            if (padding.width > 0 && maxW > padding.width)
-            {
-                maxW -= padding.width;
-            }
-
-            if (newWidth < maxW)
+            if (newWidth < maxWidth)
             {
                 width = newWidth;
             }
             else
             {
-                const double decWidth = (maxW - padding.width) / children.length;
+                const double decWidth = (maxWidth - padding.width) / children.length;
                 foreach (ch; children)
                 {
                     ch.width(ch.width - decWidth);
                 }
             }
-
         }
 
-        const double maxH = childrenHeight;
-        if (maxH > height - padding.height)
+        double newHeight = childrenHeight;
+        if (padding.height > 0)
         {
-            import std.algorithm.comparison : min;
+            newHeight += padding.height;
+        }
 
-            height = min(maxH, maxHeight - padding.height);
+        if (newHeight > height)
+        {
+            if (newHeight < maxHeight)
+            {
+                height = newHeight;
+            }
+            else
+            {
+                //TODO reduce height
+            }
+
         }
     }
 
     double childrenWidth()
     {
         import std.algorithm.iteration : sum, map;
-        import std.algorithm.iteration: filter;
+        import std.algorithm.iteration : filter;
 
-        const double childrenWidth = children.filter!(ch => ch.isLayoutManaged).map!(ch => ch.width).sum;
+        const double childrenWidth = children.filter!(ch => ch.isLayoutManaged)
+            .map!(ch => ch.width)
+            .sum;
         return childrenWidth;
     }
 
@@ -74,15 +85,16 @@ class HBox : Container
             return 0;
         }
         import std.algorithm.searching : maxElement;
-        import std.algorithm.iteration: filter, map;
-        import std.algorithm.comparison: max;
-        import std.range.primitives: walkLength;
+        import std.algorithm.iteration : filter, map;
+        import std.algorithm.comparison : max;
+        import std.range.primitives : walkLength;
 
         auto childrenRange = children.filter!(ch => ch.isLayoutManaged);
-        if(childrenRange.walkLength == 0){
+        if (childrenRange.walkLength == 0)
+        {
             return 0;
         }
-        
+
         const double childrenMaxHeight = childrenRange.maxElement!"a.height".height;
         return childrenMaxHeight;
     }

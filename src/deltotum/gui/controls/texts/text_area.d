@@ -26,6 +26,17 @@ class TextArea : HBox
         padding = Insets(0);
         spacing = 0;
         isBackground = true;
+
+        backgroundFactory = (width, height) {
+            import deltotum.kit.graphics.styles.graphic_style: GraphicStyle;
+            import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
+
+            GraphicStyle backgroundStyle = GraphicStyle(1, graphics.theme.colorAccent, isBackground, graphics
+                    .theme.colorPrimary);
+            auto background = new RegularPolygon(width, height, backgroundStyle, graphics
+                    .theme.controlCornersBevel);
+            return background;
+        };
     }
 
     override void create()

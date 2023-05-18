@@ -28,7 +28,7 @@ class Container : Control
             import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
             import deltotum.kit.graphics.colors.rgba : RGBA;
 
-            GraphicStyle backgroundStyle = GraphicStyle(1, graphics.theme.colorAccent, true, graphics
+            GraphicStyle backgroundStyle = GraphicStyle(1, graphics.theme.colorAccent, isBackground, graphics
                     .theme.colorControlBackground);
 
             auto background = new RegularPolygon(width, height, backgroundStyle, graphics

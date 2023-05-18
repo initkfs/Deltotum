@@ -36,8 +36,8 @@ class Sprite : PhysicalBody
 
     Sprite parent;
 
-    double opacity = 1;
     double angle = 0;
+    double opacity = 1;
     double scale = 1;
 
     Vector2d velocity;
@@ -51,21 +51,21 @@ class Sprite : PhysicalBody
     bool isResizable;
     bool isKeepAspectRatio;
 
-    Insets padding;
-
     Layout layout;
     bool isLayoutManaged = true;
     bool isResizeChildren;
     bool isResizedByParent;
-    
-    Alignment alignment = Alignment.none;
 
+    Insets padding;
+    Alignment alignment = Alignment.none;
     ScaleMode scaleMode = ScaleMode.none;
 
     bool isCreated;
     bool isFocus;
     bool isDraggable;
     bool isScalable;
+    bool isDrawBounds;
+
     bool isVisible = true;
     bool isReceiveEvents = true;
 
@@ -108,43 +108,30 @@ class Sprite : PhysicalBody
 
         double offsetX = 0;
         double offsetY = 0;
-        bool isDrag = false;
+        bool isDrag;
         bool isValid = true;
 
         bool _cached;
     }
 
-    void buildCreate(Sprite obj)
+    void buildCreate(Sprite sprite)
     {
-        assert(obj);
-        build(obj);
-        obj.create;
-    }
+        assert(sprite);
 
-    protected void recreateCache()
-    {
-        if (!_cache)
+        if (!sprite.isBuilt)
         {
-            _cache = new TextureCanvas(width, height);
-            build(_cache);
-            _cache.create;
-        }
-        else
-        {
-            _cache.width = width;
-            _cache.height = height;
+            build(sprite);
+            assert(sprite.isBuilt);
+
+            sprite.initialize;
+            assert(sprite.isInitialized);
         }
 
-        //TODO remove hack;
-        double oldX = x, oldY = y;
-        x = 0;
-        y = 0;
-        _cache.captureRenderer(() { drawContent; });
-        x = oldX;
-        y = oldY;
-
-        _cache.x = x;
-        _cache.y = y;
+        if (!sprite.isCreated)
+        {
+            sprite.create;
+            assert(sprite.isCreated);
+        }
     }
 
     void create()
@@ -230,21 +217,118 @@ class Sprite : PhysicalBody
 
     }
 
-    void buildCreated(Sprite obj)
+    void addCreate(Sprite[] sprites)
     {
-        if (obj.isBuilt)
+        foreach (sprite; sprites)
         {
-            throw new Exception("Object already built");
+            addCreate(sprite);
+        }
+    }
+
+    void addCreate(Sprite sprite, long index = -1)
+    {
+        if (sprite is null)
+        {
+            //TODO logging
+            throw new Exception("Cannot add null sprite");
         }
 
-        build(obj);
-
-        if (obj.isCreated)
+        if (sprite.isManaged)
         {
-            throw new Exception("Object already created");
+            sprite.x = x + sprite.x;
+            sprite.y = y + sprite.y;
         }
 
-        obj.create;
+        buildCreate(sprite);
+        add(sprite, index);
+    }
+
+    void add(Sprite sprite, long index = -1)
+    {
+        if (hasDirect(sprite))
+        {
+            return;
+        }
+
+        sprite.parent = this;
+
+        if (index < 0 || children.length == 0)
+        {
+            children ~= sprite;
+        }
+        else
+        {
+            if (index >= children.length)
+            {
+                import std.format : format;
+
+                throw new Exception(format("Child index must not be greater than %s, but received %s for child %s", children
+                        .length, index, sprite.toString));
+            }
+
+            import std.array : insertInPlace;
+
+            //TODO remove temp array
+            children.insertInPlace(cast(size_t) index, [sprite]);
+        }
+        setInvalid;
+    }
+
+    bool hasDirect(Sprite obj)
+    {
+        if (obj is null)
+        {
+            throw new Exception("Unable to check for child existence: object is null");
+        }
+
+        foreach (Sprite child; children)
+        {
+            if (obj is child)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool remove(Sprite obj)
+    {
+        import std.algorithm.searching : countUntil;
+        import std.algorithm.mutation : remove;
+
+        auto mustBeIndex = children.countUntil(obj);
+        if (mustBeIndex < 0)
+        {
+            return false;
+        }
+
+        children = children.remove(mustBeIndex);
+        return true;
+    }
+
+    protected void recreateCache()
+    {
+        if (!_cache)
+        {
+            _cache = new TextureCanvas(width, height);
+            buildCreate(_cache);
+        }
+        else
+        {
+            _cache.width = width;
+            _cache.height = height;
+        }
+
+        //TODO remove hack;
+        double oldX = x, oldY = y;
+        x = 0;
+        y = 0;
+        _cache.captureRenderer(() { drawContent; });
+        x = oldX;
+        y = oldY;
+
+        _cache.x = x;
+        _cache.y = y;
     }
 
     void startDrag(double x, double y)
@@ -378,12 +462,7 @@ class Sprite : PhysicalBody
         }
     }
 
-    void drawContent()
-    {
-
-    }
-
-    void onAllChildren(void delegate(Sprite) onChild, Sprite root)
+    void onAllChildren(scope void delegate(Sprite) onChild, Sprite root)
     {
         onChild(root);
 
@@ -393,50 +472,56 @@ class Sprite : PhysicalBody
         }
     }
 
+    void drawContent()
+    {
+
+    }
+
     bool draw()
     {
-        //TODO layer
+        if (!isVisible)
+        {
+            return false;
+        }
+
         bool redraw;
 
-        if (isVisible)
+        foreach (Sprite obj; children)
         {
-            foreach (Sprite obj; children)
+            if (!obj.isDrawAfterParent && obj.isVisible)
             {
-                if (!obj.isDrawAfterParent && obj.isVisible)
-                {
-                    obj.draw;
-                }
+                obj.draw;
             }
+        }
 
-            if (isRedraw)
+        if (isDrawBounds)
+        {
+            drawBounds;
+        }
+
+        if (isRedraw)
+        {
+            if (isCached)
             {
-                if (!isCached)
-                {
-                    drawContent;
-                    redraw = true;
-                }
-                else
-                {
-                    _cache.draw;
-                }
-            }
+                _cache.draw;
 
-            foreach (Sprite obj; children)
+            }
+            else
             {
-                if (obj.isDrawAfterParent && obj.isVisible)
-                {
-                    obj.draw;
-                }
+                drawContent;
+                redraw = true;
             }
+        }
 
+        foreach (Sprite obj; children)
+        {
+            if (obj.isDrawAfterParent && obj.isVisible)
+            {
+                obj.draw;
+            }
         }
 
         return redraw;
-    }
-
-    void requestRedraw()
-    {
-        isRedraw = true;
     }
 
     void applyLayout()
@@ -520,7 +605,7 @@ class Sprite : PhysicalBody
 
     void positionCenterX()
     {
-        if (_width > 0)
+        if (_width > 0 && window.width > 0 && _width < window.width)
         {
             x = window.width / 2 - _width / 2;
         }
@@ -528,135 +613,10 @@ class Sprite : PhysicalBody
 
     void positionCenterY()
     {
-        if (_height > 0)
+        if (_height > 0 && window.height > 0 && _height < window.height)
         {
             y = window.height / 2 - _height / 2;
         }
-    }
-
-    void destroy()
-    {
-        if (_cache)
-        {
-            _cache.destroy;
-        }
-        foreach (Sprite child; children)
-        {
-            child.parent = null;
-            child.destroy;
-        }
-    }
-
-    void addCreate(Sprite[] sprites)
-    {
-        foreach (sprite; sprites)
-        {
-            addCreate(sprite);
-        }
-    }
-
-    void addCreate(Sprite obj, long index = -1)
-    {
-        if (obj is null)
-        {
-            //TODO logging
-            throw new Exception("Cannot add null object");
-        }
-
-        if (!obj.isBuilt)
-        {
-            build(obj);
-        }
-
-        if (!obj.isInitialized)
-        {
-            obj.initialize;
-            assert(obj.isInitialized);
-        }
-
-        if (obj.isManaged)
-        {
-            obj.x = x + obj.x;
-            obj.y = y + obj.y;
-        }
-
-        add(obj, index);
-
-        obj.create;
-
-        obj.setInvalid;
-        setInvalid;
-    }
-
-    void addOrCreate(Sprite obj, long index = -1)
-    {
-        if (obj.isBuilt && obj.isCreated)
-        {
-            add(obj, index);
-        }
-        else
-        {
-            addCreate(obj, index);
-        }
-    }
-
-    void add(Sprite obj, long index = -1)
-    {
-        obj.parent = this;
-        //TODO check if exists
-        //TODO check if exists
-        if (index < 0 || children.length == 0)
-        {
-            children ~= obj;
-        }
-        else
-        {
-            if (index >= children.length)
-            {
-                import std.format : format;
-
-                throw new Exception(format("Child index must not be greater than %s, but received %s for child %s", children
-                        .length, index, obj.toString));
-            }
-
-            import std.array : insertInPlace;
-
-            //TODO remove temp array
-            children.insertInPlace(cast(size_t) index, [obj]);
-        }
-
-    }
-
-    bool has(Sprite obj)
-    {
-        if (obj is null)
-        {
-            throw new Exception("Unable to check for child existence: object is null");
-        }
-
-        foreach (Sprite child; children)
-        {
-            if (obj is child)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    bool remove(Sprite obj)
-    {
-        import std.algorithm.searching : countUntil;
-        import std.algorithm.mutation : remove;
-
-        auto mustBeIndex = children.countUntil(obj);
-        if (mustBeIndex < 0)
-        {
-            return false;
-        }
-
-        children = children.remove(mustBeIndex);
-        return true;
     }
 
     Vector2d position() @nogc @safe pure nothrow
@@ -734,15 +694,16 @@ class Sprite : PhysicalBody
 
     double width() @nogc @safe pure nothrow
     {
-        //TODO children?
         return _width;
     }
 
     void width(double value)
     {
-        //quick but imprecise comparison 
-        //!isResizable
-        if (_width == value || value < minWidth || value > maxWidth)
+        if (
+            value <= 0 ||
+            _width == value ||
+            value < minWidth ||
+            value > maxWidth)
         {
             return;
         }
@@ -788,8 +749,11 @@ class Sprite : PhysicalBody
 
     void height(double value)
     {
-        ////quick but imprecise comparison 
-        if (_height == value || value < minHeight || value > maxHeight)
+        //(_width != 0 && !isResizable) || 
+        if (value <= 0 ||
+            _height == value ||
+            value < minHeight ||
+            value > maxHeight)
         {
             return;
         }
@@ -833,7 +797,7 @@ class Sprite : PhysicalBody
     {
         width = newWidth;
         height = newHeight;
-        return true;
+        return width == newWidth && height == newHeight;
     }
 
     bool setScale(double factorWidth, double factorHeight)
@@ -847,8 +811,7 @@ class Sprite : PhysicalBody
 
         if (!isKeepAspectRatio)
         {
-            resize(newWidth, newHeight);
-            return true;
+            return resize(newWidth, newHeight);
         }
 
         double scaleFactorWidth = 1, scaleFactorHeight = 1;
@@ -867,9 +830,7 @@ class Sprite : PhysicalBody
 
         auto newW = round(width * scaleFactorWidth);
         auto newH = round(height * scaleFactorHeight);
-        resize(newW, newH);
-
-        return true;
+        return resize(newW, newH);
     }
 
     void setValid(bool value) @nogc @safe pure nothrow
@@ -901,7 +862,6 @@ class Sprite : PhysicalBody
     void drawBounds()
     {
         import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
-        import deltotum.kit.graphics.shapes.rectangle : Rectangle;
         import deltotum.kit.graphics.colors.rgba : RGBA;
 
         if (width == 0 || height == 0)
@@ -909,49 +869,47 @@ class Sprite : PhysicalBody
             return;
         }
 
-        auto rect = new Rectangle(width, height, GraphicStyle(1, RGBA.red, false, RGBA.transparent));
-        rect.userData[debugFlag] = null;
-        rect.isLayoutManaged = false;
-        addCreate(rect);
+        const b = bounds;
+        graphics.drawRect(b.x, b.y, b.width, b.height, GraphicStyle(1, RGBA.red));
     }
 
-    void drawAllBounds()
+    void drawAllBounds(bool isDraw)
     {
-        onChildrenRecursive((ch) {
+        onChildrenRec((ch) {
             if (debugFlag in ch.userData)
             {
                 return true;
             }
 
-            ch.drawBounds;
+            ch.isDrawBounds = isDraw;
             return true;
         });
     }
 
-    void onChildrenRecursive(bool delegate(Sprite) onObject)
+    void onChildrenRec(bool delegate(Sprite) onSprite)
     {
-        onChildrenRecursive(this, onObject);
+        onChildrenRec(this, onSprite);
     }
 
-    void onChildrenRecursive(Sprite root, bool delegate(Sprite) onObjectIsContinue)
+    void onChildrenRec(Sprite root, bool delegate(Sprite) onSpriteIsContinue)
     {
         if (root is null)
         {
             return;
         }
 
-        if (!onObjectIsContinue(root))
+        if (!onSpriteIsContinue(root))
         {
             return;
         }
 
         foreach (child; root.children)
         {
-            onChildrenRecursive(child, onObjectIsContinue);
+            onChildrenRec(child, onSpriteIsContinue);
         }
     }
 
-    Nullable!Sprite findChildRecursive(Sprite child)
+    Nullable!Sprite findChildRec(Sprite child)
     {
         if (child is null)
         {
@@ -959,7 +917,7 @@ class Sprite : PhysicalBody
             return Nullable!Sprite.init;
         }
         Sprite mustBeChild;
-        onChildrenRecursive((currentChild) {
+        onChildrenRec((currentChild) {
             if (child is currentChild)
             {
                 mustBeChild = child;
@@ -981,6 +939,19 @@ class Sprite : PhysicalBody
             }
         }
         return Nullable!Sprite.init;
+    }
+
+    void destroy()
+    {
+        if (_cache)
+        {
+            _cache.destroy;
+        }
+        foreach (Sprite child; children)
+        {
+            child.parent = null;
+            child.destroy;
+        }
     }
 
     bool isCached()

@@ -125,7 +125,7 @@ class SceneView : VBox
                 Sprite nextForDebug = objectOnDebug;
 
                 size_t inBoundsChildCount = 0;
-                obj.onChildrenRecursive((child) {
+                obj.onChildrenRec((child) {
 
                     if (cast(DebugInfo) child)
                     {
