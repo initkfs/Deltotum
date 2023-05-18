@@ -69,7 +69,6 @@ class Button : Control
             Shape hover = new RegularPolygon(width, height, GraphicStyle(1, graphics.theme.colorHover, true, graphics
                     .theme.colorHover), graphics.theme.controlCornersBevel);
             hover.id = "btn_hover";
-            hover.isResizedByParent = true;
             hover.isLayoutManaged = false;
             hover.isVisible = false;
             hover.opacity = graphics.theme.opacityHover;
@@ -89,7 +88,6 @@ class Button : Control
                     .theme.controlCornersBevel);
             click.id = "btn_click";
             click.isLayoutManaged = false;
-            click.isResizedByParent = true;
             click.isVisible = false;
             click.opacity = 0;
 

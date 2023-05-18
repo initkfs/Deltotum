@@ -78,7 +78,6 @@ class GuiEditor : Scene
         btnFull.isHGrow = true;
         btnFull._buttonText = "Кнопка";
         buttonsContainer2.width = 200;
-        buttonsContainer2.height = 100;
         buttonsContainer2.addCreate(btnFull);
 
     }

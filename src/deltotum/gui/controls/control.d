@@ -90,6 +90,17 @@ abstract class Control : Sprite
         return true;
     }
 
+    override void addCreate(Sprite[] sprites)
+    {
+        super.addCreate(sprites);
+    }
+
+    override void addCreate(Sprite sprite, long index = -1)
+    {
+        sprite.isResizedByParent = true;
+        super.addCreate(sprite, index);
+    }
+
     override void create()
     {
         super.create;
