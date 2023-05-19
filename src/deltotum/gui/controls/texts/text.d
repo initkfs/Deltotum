@@ -233,9 +233,10 @@ class Text : Control
         }
 
         auto newHeight = newRows.length * rowHeight + padding.height;
-        if (newHeight > height && newHeight <= maxHeight)
+        if (newHeight > height)
         {
-            height = newHeight;
+            import std.algorithm.comparison: min;
+            height = min(maxHeight, newHeight);
         }
 
         return newRows;

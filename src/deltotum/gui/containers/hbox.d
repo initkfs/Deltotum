@@ -9,17 +9,19 @@ import deltotum.kit.sprites.sprite : Sprite;
  */
 class HBox : Container
 {
-    double spacing = 0;
-
+    private {
+        double _spacing = 0;
+    }
+    
     this(double spacing = 5) pure
     {
         import std.exception : enforce;
         import std.conv : text;
 
         enforce(spacing >= 0, text("Horizontal spacing must be positive value or 0: ", spacing));
-        this.spacing = spacing;
+        this._spacing = spacing;
 
-        auto hlayout = new HorizontalLayout(spacing);
+        auto hlayout = new HorizontalLayout(_spacing);
         hlayout.isAlignY = true;
         this.layout = hlayout;
     }
@@ -53,5 +55,18 @@ class HBox : Container
         }
 
         return childrenHeight;
+    }
+
+    double spacing(){
+        return _spacing;
+    }
+
+    void spacing(double value)
+    {
+        _spacing = value;
+        if (auto hLayout = cast(HorizontalLayout) layout)
+        {
+            hLayout.spacing = value;
+        }
     }
 }

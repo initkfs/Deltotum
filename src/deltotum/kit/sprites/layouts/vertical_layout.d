@@ -19,16 +19,35 @@ class VerticalLayout : ManagedLayout
     override void applyLayout(Sprite root)
     {
         auto bounds = root.bounds;
-        double nextY = bounds.y + root.padding.top;
+        double nextY = 0;
+        if (isFillFromStartToEnd)
+        {
+            nextY = bounds.y + root.padding.top;
+        }
+        else
+        {
+            nextY = bounds.bottom - root.padding.bottom;
+        }
+
         foreach (child; root.children)
         {
             if (!child.isLayoutManaged)
             {
                 continue;
             }
+
             auto childBounds = child.bounds;
-            child.y = nextY + child.margin.top;
-            nextY = child.y + childBounds.height + child.margin.bottom + spacing;
+
+            if (isFillFromStartToEnd)
+            {
+                child.y = nextY + child.margin.top;
+                nextY = child.y + childBounds.height + child.margin.bottom + spacing;
+            }
+            else
+            {
+                child.y = nextY - child.margin.bottom - childBounds.height;
+                nextY = child.y + child.margin.top - spacing;
+            }
 
             if (isAlignX || child.alignment == Alignment.x)
             {

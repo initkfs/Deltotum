@@ -19,7 +19,16 @@ class HorizontalLayout : ManagedLayout
     override void applyLayout(Sprite root)
     {
         auto bounds = root.bounds;
-        double nextX = bounds.x + root.padding.left;
+        double nextX = 0;
+        if (isFillFromStartToEnd)
+        {
+            nextX = bounds.x + root.padding.left;
+        }
+        else
+        {
+            nextX = bounds.right - root.padding.right;
+        }
+
         foreach (child; root.children)
         {
             if (!child.isLayoutManaged)
@@ -27,8 +36,17 @@ class HorizontalLayout : ManagedLayout
                 continue;
             }
             auto childBounds = child.bounds;
-            child.x = nextX + child.margin.left;
-            nextX = child.x + childBounds.width + child.margin.right + spacing;
+
+            if (isFillFromStartToEnd)
+            {
+                child.x = nextX + child.margin.left;
+                nextX = child.x + childBounds.width + child.margin.right + spacing;
+            }
+            else
+            {
+                child.x = nextX - child.margin.right - childBounds.width;
+                nextX = child.x - child.margin.left - spacing;
+            }
 
             if (isAlignY || child.alignment == Alignment.y)
             {

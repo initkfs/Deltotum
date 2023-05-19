@@ -26,7 +26,7 @@ class Container : Control
         {
             return;
         }
-        
+
         requestResize;
 
         isProcessChildLayout = true;
@@ -186,6 +186,16 @@ class Container : Control
         super.addCreate(sprite, index);
 
         requestResize;
+    }
+
+    void isFillFromStartToEnd(bool isFill)
+    {
+        if (!layout)
+        {
+            return;
+        }
+
+        layout.isFillFromStartToEnd = isFill;
     }
 }
 

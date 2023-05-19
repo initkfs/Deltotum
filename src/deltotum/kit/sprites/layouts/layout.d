@@ -10,5 +10,7 @@ abstract class Layout
     bool isAlignX;
     bool isAlignY;
 
+    bool isFillFromStartToEnd = true;
+
     abstract void applyLayout(Sprite root);
 }

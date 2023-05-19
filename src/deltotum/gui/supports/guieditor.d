@@ -38,6 +38,7 @@ class GuiEditor : Scene
         import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
         import deltotum.kit.graphics.shapes.circle : Circle;
         import deltotum.kit.graphics.shapes.rectangle : Rectangle;
+        import deltotum.gui.controls.buttons.button : Button;
 
         enum size = 30;
         auto circle1 = new Circle(size / 2, GraphicStyle(5, RGBA.green));
@@ -46,54 +47,77 @@ class GuiEditor : Scene
         auto rect2 = new Rectangle(size, size, GraphicStyle(5, RGBA.green, true, RGBA.red));
         shapeContainer.addCreate([circle1, circle2, rect1, rect2]);
 
-        auto buttonsContainer = new HBox;
-        root.addCreate(buttonsContainer);
+        auto posContainer = new HBox;
+        root.addCreate(posContainer);
 
-        import deltotum.gui.controls.buttons.button : Button;
+        auto startToEndContainer = new HBox;
+        startToEndContainer.width = 350;
+        posContainer.addCreate(startToEndContainer);
 
-        auto btn1 = new Button;
-        btn1.onAction = (e) {
-            interact.dialog.showQuestion("Question?", (answer) {
-                import std;
+        startToEndContainer.addCreate([
+            new Button, new Button, new Button
+        ]);
 
-                writeln(answer);
-            });
-        };
-        btn1._buttonText = "Question";
-        buttonsContainer.addCreate(btn1);
+        auto fillBothContainer = new HBox(1);
+        fillBothContainer.width = 450;
+        posContainer.addCreate(fillBothContainer);
 
-        auto btn2 = new Button;
-        btn2._buttonText = "Кнопка";
-        btn2.margin = Insets(0, 0, 0, 50);
-        buttonsContainer.addCreate(btn2);
+        auto fbBtn1 = new Button("ExpandH");
+        fbBtn1.isHGrow = true;
 
-        auto btn3 = new Button;
-        btn3._buttonText = "Кнопка";
-        buttonsContainer.addCreate(btn3);
+        fillBothContainer.addCreate([
+            new Button, fbBtn1, new Button
+        ]);
 
-        auto buttonsContainer2 = new HBox;
-        root.addCreate(buttonsContainer2);
-
-        auto btnFull = new Button;
-        btnFull.isHGrow = true;
-        btnFull._buttonText = "Кнопка";
-        buttonsContainer2.width = 200;
-        buttonsContainer2.addCreate(btnFull);
-
+        auto endToStartContainer = new HBox;
+        endToStartContainer.isFillFromStartToEnd = false;
+        endToStartContainer.width = 350;
+        posContainer.addCreate(endToStartContainer);
+        endToStartContainer.addCreate([
+            new Button, new Button, new Button
+        ]);
 
         auto textsContainer = new HBox;
         root.addCreate(textsContainer);
 
-        import deltotum.gui.controls.texts.text: Text;
+        auto startEndVBox = new VBox;
+        startEndVBox.height = 200;
+        textsContainer.addCreate(startEndVBox);
+        startEndVBox.addCreate([
+            new Button, new Button, new Button
+        ]);
+
+        import deltotum.gui.controls.texts.text : Text;
 
         auto text1 = new Text;
         textsContainer.addCreate(text1);
         text1.text = "Text";
 
-        import deltotum.gui.controls.texts.text_area: TextArea;
+        import deltotum.gui.controls.texts.text_area : TextArea;
+
         auto textarea1 = new TextArea;
+        textarea1.width = 350;
+        textarea1.height = 150;
         textsContainer.addCreate(textarea1);
         textarea1.textView.text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+
+        auto endStartVBox = new VBox;
+        endStartVBox.isFillFromStartToEnd = false;
+        endStartVBox.height = 200;
+        textsContainer.addCreate(endStartVBox);
+        endStartVBox.addCreate([
+            new Button, new Button, new Button
+        ]);
+
+        auto fillVBox = new VBox;
+        fillVBox.height = 200;
+        textsContainer.addCreate(fillVBox);
+        auto fillVBtn1 = new Button;
+        fillVBtn1.isVGrow = true;
+        fillVBtn1.isHGrow = true;
+        fillVBox.addCreate([
+            fillVBtn1, new Button
+        ]);
 
     }
 

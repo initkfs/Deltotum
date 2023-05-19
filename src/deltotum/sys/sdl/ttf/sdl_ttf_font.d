@@ -48,9 +48,10 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font
         ubyte br = 255, ubyte bg = 255, ubyte bb = 255)
     {
         SDL_Color color = {fr, fg, fb, fa};
+        //TODO TTF_RenderText_Shaded
         SDL_Color backgroundColor = {br, bg, bb, 0};
         //TODO calculate background color
-        auto fontSurfacePtr = TTF_RenderUTF8_Shaded(ptr, text, color, backgroundColor);
+        auto fontSurfacePtr = TTF_RenderUTF8_Blended(ptr, text, color);
         if (!fontSurfacePtr)
         {
             string errMsg = "Unable to render text";

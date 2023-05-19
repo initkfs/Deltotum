@@ -18,6 +18,15 @@ class TextArea : HBox
 
     void delegate() onCaret;
 
+    this()
+    {
+        if (layout)
+        {
+            layout.isAlignY = false;
+            layout.isAlignX = false;
+        }
+    }
+
     override void initialize()
     {
         super.initialize;
@@ -48,10 +57,6 @@ class TextArea : HBox
 
         textView = new TextView;
 
-        textView.maxWidth = width;
-        textView.maxHeight = height;
-        textView.isDrawBounds = true;
-
         textView.onMouseEntered = (e) {
             import deltotum.com.inputs.cursors.com_system_cursor_type : ComSystemCursorType;
 
@@ -62,6 +67,10 @@ class TextArea : HBox
         textView.onMouseExited = (e) { input.systemCursor.restore; return false; };
 
         addCreate(textView);
+        
+        textView.maxWidth = width - padding.width - textView.margin.width - scroll.width - scroll.margin.width - spacing;
+
+        textView.maxHeight = height;
 
         addCreate(scroll);
 

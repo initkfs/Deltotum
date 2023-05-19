@@ -8,7 +8,10 @@ import deltotum.kit.sprites.layouts.vertical_layout : VerticalLayout;
  */
 class VBox : Container
 {
-    double spacing = 0;
+    private
+    {
+        double _spacing = 0;
+    }
 
     this(double spacing = 5) pure
     {
@@ -16,9 +19,9 @@ class VBox : Container
         import std.conv : text;
 
         enforce(spacing >= 0, text("Vertical spacing must be positive value: ", spacing));
-        this.spacing = spacing;
+        this._spacing = spacing;
 
-        auto vlayout = new VerticalLayout(spacing);
+        auto vlayout = new VerticalLayout(_spacing);
         vlayout.isAlignX = true;
         this.layout = vlayout;
     }
@@ -47,9 +50,9 @@ class VBox : Container
             childCount++;
         }
 
-        if (spacing > 0 && childCount > 1)
+        if (_spacing > 0 && childCount > 1)
         {
-            childrenHeight += spacing * (childCount - 1);
+            childrenHeight += _spacing * (childCount - 1);
         }
         return childrenHeight;
     }
@@ -62,6 +65,20 @@ class VBox : Container
     bool isAlignX()
     {
         return layout.isAlignX;
+    }
+
+    double spacing()
+    {
+        return _spacing;
+    }
+
+    void spacing(double value)
+    {
+        _spacing = value;
+        if (auto vlayout = cast(VerticalLayout) layout)
+        {
+            vlayout.spacing = value;
+        }
     }
 }
 
