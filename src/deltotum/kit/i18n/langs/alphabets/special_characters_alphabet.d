@@ -7,7 +7,7 @@ import deltotum.kit.i18n.langs.alphabets.alphabet : Alphabet;
  */
 class SpecialCharactersAlphabet : Alphabet
 {
-    override dstring allLetters()
+    override immutable(dchar)[] allLetters()
     {
         return "!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ \n\r";
     }

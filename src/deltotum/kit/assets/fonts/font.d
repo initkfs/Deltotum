@@ -15,13 +15,13 @@ import std.string : toStringz;
  */
 class Font : LoggableUnit
 {
-    private
-    {
+    //private
+    //{
         SdlTTFFont font;
 
         string fontPath;
         int fontSize;
-    }
+    //}
 
     this(Logger logger, string fontPath, int fontSize = 12)
     {
@@ -39,11 +39,11 @@ class Font : LoggableUnit
         return renderSurface(text.toStringz, color);
     }
 
-    SdlSurface renderSurface(const char* text, RGBA color = RGBA.white)
+    SdlSurface renderSurface(const char* text, RGBA color = RGBA.white, RGBA background = RGBA.black)
     {
         SdlSurface fontSurface = new SdlSurface;
         if (const fontRenderErr = font.render(fontSurface, text, color.r, color.g, color.b, color
-                .alphaNorm))
+                .alphaNorm, background.r, background.g, background.b))
         {
             logger.error(fontRenderErr.toString);
             if(const err = fontSurface.createRGBSurface){

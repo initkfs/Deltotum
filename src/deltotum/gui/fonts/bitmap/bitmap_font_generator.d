@@ -5,7 +5,7 @@ import deltotum.gui.fonts.glyphs.glyph : Glyph;
 
 import deltotum.kit.assets.fonts.font : Font;
 import deltotum.kit.sprites.textures.texture : Texture;
-import deltotum.kit.graphics.colors.rgba: RGBA;
+import deltotum.kit.graphics.colors.rgba : RGBA;
 
 import deltotum.gui.fonts.bitmap.bitmap_font : BitmapFont;
 import deltotum.kit.i18n.langs.alphabets.alphabet : Alphabet;
@@ -23,7 +23,7 @@ import std.stdio;
  */
 class BitmapFontGenerator : FontGenerator
 {
-    BitmapFont generate(Alphabet[] alphabets, Font font, RGBA foregroundColor = RGBA.white)
+    BitmapFont generate(Alphabet[] alphabets, Font font, RGBA foregroundColor = RGBA.white, RGBA backgroundColor = RGBA.black)
     {
         import deltotum.sys.sdl.sdl_surface : SdlSurface;
         import bindbc.sdl;
@@ -33,7 +33,8 @@ class BitmapFontGenerator : FontGenerator
         const int fontTextureHeight = 400;
 
         SdlSurface fontMapSurface = new SdlSurface;
-        if(const err = fontMapSurface.createRGBSurface(0, fontTextureWidth, fontTextureHeight, 32, 0, 0, 0, 0xff)){
+        if (const err = fontMapSurface.createRGBSurface(0, fontTextureWidth, fontTextureHeight, 32, 0, 0, 0, 0xff))
+        {
             throw new Exception(err.toString);
         }
 
@@ -44,7 +45,7 @@ class BitmapFontGenerator : FontGenerator
         SDL_Rect glyphPosition;
         Glyph[] glyphs;
 
-        //TTF_SetFontHinting(font.getObject, TTF_HINTING_MONO);
+        TTF_SetFontHinting(font.font.getObject, TTF_HINTING_NORMAL);
 
         foreach (alphabet; alphabets)
         {
@@ -52,9 +53,10 @@ class BitmapFontGenerator : FontGenerator
             //TODO byGrapheme?
             foreach (i, dchar letter; allLetters)
             {
-                const(char*) utfPtr = toUTFz!(const(char)*)([letter]);
+                dchar[1] letters = [letter];
+                const(char*) utfPtr = toUTFz!(const(char)*)(letters[]);
                 //TODO does SDL keep a reference?
-                SdlSurface glyphRepresentation = font.renderSurface(utfPtr, foregroundColor);
+                SdlSurface glyphRepresentation = font.renderSurface(utfPtr, foregroundColor, backgroundColor);
                 glyphPosition.w = glyphRepresentation.getObject.w;
                 glyphPosition.h = glyphRepresentation.getObject.h;
 
@@ -71,15 +73,22 @@ class BitmapFontGenerator : FontGenerator
                 }
 
                 //TODO special?
-                import std.algorithm.comparison: among;
-                //FIXME \r\n
-                bool isCarriageReturn = letter.among('\n', '\r', ) != 0;
-                bool isEmpty = isCarriageReturn;
+                import std.uni : isWhite;
+                import std.algorithm.comparison : among;
+
+                bool isNewline;
+                bool isEmpty = letter.isWhite;
+                if (isEmpty)
+                {
+                    //FIXME \r\n
+                    isNewline = letter.among('\n', '\r',) != 0;
+                }
 
                 glyphs ~= Glyph(letter, Rect2d(glyphPosition.x, glyphPosition.y, glyphPosition.w, glyphPosition
-                        .h), isEmpty, isCarriageReturn, alphabet);
+                        .h), alphabet, isEmpty, isNewline);
 
-                if(const err = glyphRepresentation.blit(null, fontMapSurface.getObject, &glyphPosition)){
+                if (const err = glyphRepresentation.blit(null, fontMapSurface.getObject, &glyphPosition))
+                {
                     throw new Exception(err.toString);
                 }
                 glyphRepresentation.destroy;

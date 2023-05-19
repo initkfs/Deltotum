@@ -487,7 +487,7 @@ class SdlApplication : GraphicApplication
                 new SpecialCharactersAlphabet,
                 new AlphabetEn,
                 new AlphabetRu
-            ], windowBuilder.asset.defaultFont, theme.colorText);
+            ], windowBuilder.asset.defaultFont, theme.colorText, theme.colorTextBackground);
         }
 
         import deltotum.kit.scenes.scene_manager : SceneManager;

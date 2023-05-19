@@ -8,7 +8,7 @@ import deltotum.kit.i18n.langs.alphabets.alphabet : Alphabet;
  */
 class AlphabetEn : Alphabet
 {
-    override dstring allLetters()
+    override immutable(dchar)[] allLetters()
     {
         return "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     }

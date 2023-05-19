@@ -32,22 +32,6 @@ class TextView : Text
 
     override void drawContent()
     {
-        if (text.length == 0)
-        {
-            return;
-        }
-
-        if (width == 0 || height == 0)
-        {
-            return;
-        }
-
-        if (oldText != text)
-        {
-            updateRows;
-            oldText = text;
-        }
-
         if (rows.length == 0)
         {
             return;

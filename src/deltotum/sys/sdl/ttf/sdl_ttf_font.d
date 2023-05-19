@@ -7,7 +7,7 @@ version(SdlBackend):
 import deltotum.com.platforms.results.com_result : ComResult;
 import deltotum.sys.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.sys.sdl.ttf.base.sdl_ttf_object : SdlTTFObject;
-import deltotum.sys.sdl.sdl_surface: SdlSurface;
+import deltotum.sys.sdl.sdl_surface : SdlSurface;
 
 import bindbc.sdl;
 
@@ -41,11 +41,16 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font
         }
     }
 
-    ComResult render(SdlSurface targetFontSurface, const char* text, ubyte r = 255, ubyte g = 255, ubyte b = 255, ubyte a = 1)
+    ComResult render(
+        SdlSurface targetFontSurface, 
+        const char* text, 
+        ubyte fr = 255, ubyte fg = 255, ubyte fb = 255, ubyte fa = 1, 
+        ubyte br = 255, ubyte bg = 255, ubyte bb = 255)
     {
-        SDL_Color color = {r, g, b, a};
+        SDL_Color color = {fr, fg, fb, fa};
+        SDL_Color backgroundColor = {br, bg, bb, 0};
         //TODO calculate background color
-        auto fontSurfacePtr = TTF_RenderUTF8_Blended(ptr, text, color);
+        auto fontSurfacePtr = TTF_RenderUTF8_Shaded(ptr, text, color, backgroundColor);
         if (!fontSurfacePtr)
         {
             string errMsg = "Unable to render text";

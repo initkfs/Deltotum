@@ -1,6 +1,6 @@
 module deltotum.gui.controls.texts.text;
 
-import deltotum.kit.sprites.sprite: Sprite;
+import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.gui.controls.control : Control;
 import deltotum.gui.fonts.bitmap.bitmap_font : BitmapFont;
 import deltotum.math.shapes.rect2d : Rect2d;
@@ -59,16 +59,7 @@ class Text : Control
         super.initialize;
         backgroundFactory = null;
 
-        onChangeWidthFromTo = (oldValue, newValue) {
-            updateRows;
-        };
-
-         onChangeHeightFromTo = (oldValue, newValue) {
-            updateRows;
-        };
-
-        width = minWidth;
-        height = minHeight;
+        invalidateListeners ~= () { updateRows; };
 
         onFocusIn = (e) {
             if (focusEffect !is null)
@@ -105,8 +96,8 @@ class Text : Control
     override void create()
     {
         super.create;
+
         updateRows;
-        drawContent;
 
         if (focusEffectFactory !is null)
         {
@@ -117,6 +108,7 @@ class Text : Control
         }
     }
 
+    //TODO buffer []
     protected Glyph[] textToGlyphs(dstring textString)
     {
         if (textString.length == 0)
@@ -124,42 +116,29 @@ class Text : Control
             return [];
         }
 
-        import std.uni : isSpace;
-        import std.conv : to;
-
-        //import std.uni : byGrapheme;
-        //import std.range.primitives : walkLength;
-
-        dstring mustBeText = to!dstring(textString);
-
-        //Grapheme walkLength?
         Glyph[] newGlyphs;
-        newGlyphs.reserve(mustBeText.length);
+        newGlyphs.reserve(textString.length);
 
-        foreach (dchar letter; mustBeText)
+        //TODO on^2?
+        foreach (grapheme; textString)
         {
-            if (letter.isSpace)
+            Glyph newGlyph;
+            foreach (glyph; asset.defaultBitmapFont.glyphs)
             {
-                Rect2d emptyGeometry = Rect2d(0, 0, spaceWidth, 0);
-                //TODO alphabet?
-                newGlyphs ~= Glyph(letter, emptyGeometry, true, false, null);
-                continue;
-            }
-            else if (letter == '\n' || letter == ' ')
-            { //TODO isControl?
-                Rect2d emptyGeometry = Rect2d();
-                //TODO alphabet?
-                newGlyphs ~= Glyph(letter, emptyGeometry, false, true, null);
-                continue;
+                if (glyph.grapheme == grapheme)
+                {
+                    newGlyph = glyph;
+                    continue;
+                }
             }
 
-            foreach (i, glyph; asset.defaultBitmapFont.glyphs)
+            if (!newGlyphs)
             {
-                if (glyph.grapheme == letter)
-                {
-                    newGlyphs ~= glyph;
-                    break;
-                }
+                //TODO placeholder
+            }
+            else
+            {
+                newGlyphs ~= newGlyph;
             }
         }
 
@@ -178,24 +157,70 @@ class Text : Control
 
         rowHeight = cast(int) glyphs[0].geometry.height;
 
-        double incWidth = padding.width;
+        const double startRowTextX = padding.left;
+        double endRowTextX = maxWidth - padding.right;
 
-        double glyphPosX = padding.left;
+        double glyphPosX = startRowTextX;
         TextRow row;
+        bool isStartNewLine;
         foreach (Glyph glyph; glyphs)
         {
-            //TODO move to render, bool check flags
-            incWidth += glyph.geometry.width;
-            if (incWidth > width && incWidth < maxWidth)
+            auto nextGlyphPosX = glyphPosX + glyph.geometry.width;
+            if (nextGlyphPosX <= endRowTextX && nextGlyphPosX > width)
             {
-                width = incWidth;
+                width = width + (nextGlyphPosX - width + padding.right);
             }
 
-            if (glyph.isCarriageReturn || glyphPosX + glyph.geometry.width > width - padding.right)
+            if (glyph.isNEL)
             {
                 newRows ~= row;
                 row = TextRow();
-                glyphPosX = padding.left;
+                glyphPosX = startRowTextX;
+                isStartNewLine = true;
+            }
+            else if (nextGlyphPosX >= endRowTextX)
+            {
+                long slicePos = -1;
+                foreach_reverse (j, oldGlyph; row.glyphs)
+                {
+                    if (oldGlyph.grapheme == ' ')
+                    {
+                        if (j == row.glyphs.length - 1)
+                        {
+                            continue;
+                        }
+                        slicePos = j;
+                        break;
+                    }
+                }
+
+                auto newRow = TextRow();
+                glyphPosX = startRowTextX;
+
+                if (slicePos != -1)
+                {
+                    foreach (i; slicePos + 1 .. row.glyphs.length)
+                    {
+                        auto oldGlyph = row.glyphs[i];
+                        newRow.glyphs ~= oldGlyph;
+                        glyphPosX += oldGlyph.geometry.width;
+                    }
+
+                    row.glyphs = row.glyphs[0 .. slicePos];
+                }
+
+                newRows ~= row;
+                row = newRow;
+                isStartNewLine = true;
+            }
+
+            if (isStartNewLine)
+            {
+                isStartNewLine = false;
+                if (glyph.isEmpty)
+                {
+                    continue;
+                }
             }
 
             row.glyphs ~= glyph;
@@ -214,6 +239,15 @@ class Text : Control
         }
 
         return newRows;
+    }
+
+    dstring glyphsToStr(Glyph[] glyphs)
+    {
+        import std.algorithm.iteration : map;
+        import std.conv : to;
+
+        return glyphs.map!(g => g.grapheme)
+            .to!dstring;
     }
 
     void updateRows()
@@ -263,6 +297,12 @@ class Text : Control
 
     override void drawContent()
     {
+        renderText(rows);
+    }
+
+    override void update(double delta)
+    {
+        super.update(delta);
         if (_text.length == 0)
         {
             return;
@@ -273,8 +313,6 @@ class Text : Control
             updateRows;
             oldText = _text;
         }
-
-        renderText(rows);
     }
 
     void appendText(dstring text)

@@ -80,6 +80,21 @@ class GuiEditor : Scene
         buttonsContainer2.width = 200;
         buttonsContainer2.addCreate(btnFull);
 
+
+        auto textsContainer = new HBox;
+        root.addCreate(textsContainer);
+
+        import deltotum.gui.controls.texts.text: Text;
+
+        auto text1 = new Text;
+        textsContainer.addCreate(text1);
+        text1.text = "Text";
+
+        import deltotum.gui.controls.texts.text_area: TextArea;
+        auto textarea1 = new TextArea;
+        textsContainer.addCreate(textarea1);
+        textarea1.textView.text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+
     }
 
 }

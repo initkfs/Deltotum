@@ -36,6 +36,7 @@ class ThemeFromConfigFactory : ApplicationUnit
 
         theme.colorFocus = fromStringColor(config.getString("themeColorFocus").get);
         theme.colorText = fromStringColor(config.getString("themeColorText").get);
+        theme.colorTextBackground = fromStringColor(config.getString("colorTextBackground").get);
         theme.colorHover = fromStringColor(config.getString("themeColorHover").get);
 
         theme.colorControlBackground = fromStringColor(

@@ -5,5 +5,5 @@ module deltotum.kit.i18n.langs.alphabets.alphabet;
  */
 abstract class Alphabet
 {
-    abstract dstring allLetters();
+    abstract immutable(dchar)[] allLetters();
 }

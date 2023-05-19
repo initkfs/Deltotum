@@ -3,7 +3,7 @@ module deltotum.gui.controls.texts.text_area;
 import deltotum.gui.controls.texts.text_view : TextView;
 import deltotum.gui.controls.scrollbars.vscrollbar : VScrollbar;
 import deltotum.gui.controls.control : Control;
-import deltotum.gui.containers.hbox: HBox;
+import deltotum.gui.containers.hbox : HBox;
 import deltotum.kit.sprites.layouts.horizontal_layout : HorizontalLayout;
 
 import std.stdio;
@@ -23,12 +23,13 @@ class TextArea : HBox
         super.initialize;
 
         import deltotum.math.geometry.insets;
+
         padding = Insets(0);
         spacing = 0;
         isBackground = true;
 
         backgroundFactory = (width, height) {
-            import deltotum.kit.graphics.styles.graphic_style: GraphicStyle;
+            import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
             import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
 
             GraphicStyle backgroundStyle = GraphicStyle(1, graphics.theme.colorAccent, isBackground, graphics
@@ -47,11 +48,19 @@ class TextArea : HBox
 
         textView = new TextView;
 
-        textView.minHeight = height;
+        textView.maxWidth = width;
         textView.maxHeight = height;
-        //FIXME hack
-        textView.minWidth = width - scroll.width - scroll.width / 2;
-        textView.maxWidth = textView.minWidth;
+        textView.isDrawBounds = true;
+
+        textView.onMouseEntered = (e) {
+            import deltotum.com.inputs.cursors.com_system_cursor_type : ComSystemCursorType;
+
+            input.systemCursor.change(ComSystemCursorType.ibeam);
+            return false;
+        };
+
+        textView.onMouseExited = (e) { input.systemCursor.restore; return false; };
+
         addCreate(textView);
 
         addCreate(scroll);
@@ -112,17 +121,6 @@ class TextArea : HBox
                 }
             }
 
-            return false;
-        };
-
-        onMouseEntered = (e){
-            import deltotum.com.inputs.cursors.com_system_cursor_type: ComSystemCursorType;
-            input.systemCursor.change(ComSystemCursorType.ibeam);
-            return false;
-        };
-
-        onMouseExited = (e){
-            input.systemCursor.restore;
             return false;
         };
     }

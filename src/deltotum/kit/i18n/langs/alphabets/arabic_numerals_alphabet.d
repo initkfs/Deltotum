@@ -7,7 +7,7 @@ import deltotum.kit.i18n.langs.alphabets.alphabet : Alphabet;
  */
 class ArabicNumeralsAlpabet : Alphabet
 {
-    override dstring allLetters()
+    override immutable(dchar)[] allLetters()
     {
         return "0123456789";
     }

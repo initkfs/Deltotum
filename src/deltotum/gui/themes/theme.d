@@ -20,6 +20,7 @@ class Theme
     RGBA colorAccent = RGBA.white;
     RGBA colorFocus = RGBA.red;
     RGBA colorText = RGBA.white;
+    RGBA colorTextBackground = RGBA.black;
     RGBA colorHover = RGBA.white;
 
     RGBA colorControlBackground = RGBA.black;
