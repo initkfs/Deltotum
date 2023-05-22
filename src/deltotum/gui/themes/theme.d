@@ -4,6 +4,8 @@ import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.kit.assets.fonts.font : Font;
 import deltotum.math.geometry.insets : Insets;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
+import deltotum.gui.themes.icons.icon_pack : IconPack;
+import deltotum.kit.sprites.images.image : Image;
 
 /**
  * Authors: initkfs
@@ -13,6 +15,7 @@ class Theme
     private
     {
         Font defaultMediumFont;
+        IconPack iconPack;
     }
 
     RGBA colorPrimary = RGBA.black;
@@ -34,13 +37,20 @@ class Theme
     double controlCornersBevel = 8;
     GraphicStyle controlStyle = GraphicStyle.simple;
 
-    this(Font defaultMediumFont)
+    this(Font defaultMediumFont, IconPack iconPack)
     {
         this.defaultMediumFont = defaultMediumFont;
+        this.iconPack = iconPack;
     }
 
     Font defaultFontMedium()
     {
         return defaultMediumFont;
     }
+
+    string iconData(string id)
+    {
+        return iconPack.icon(id);
+    }
+
 }

@@ -22,6 +22,9 @@ extern (C) @nogc nothrow
     alias c_cairo_set_source_rgb = void function(cairo_t* cr, double red, double green, double blue);
     alias c_cairo_set_source_rgba = void function(cairo_t* cr, double red, double green, double blue, double alpha);
 
+    alias c_cairo_move_to = void function(cairo_t* cr, double x, double y);
+    alias c_cairo_line_to = void function(cairo_t* cr, double x, double y);
+
     alias c_cairo_stroke = void function(cairo_t* cr);
     alias c_cairo_stroke_preserve = void function(cairo_t* cr);
 
@@ -66,6 +69,9 @@ __gshared
     c_cairo_stroke cairo_stroke;
     c_cairo_stroke_preserve cairo_stroke_preserve;
 
+    c_cairo_move_to cairo_move_to;
+    c_cairo_line_to cairo_line_to;
+
     c_cairo_fill cairo_fill;
     c_cairo_fill_preserve cairo_fill_preserve;
 
@@ -97,7 +103,8 @@ class CairoLib : SysLib
         const(char)[0][0] paths;
     }
 
-    override const(char[][]) libPaths(){
+    override const(char[][]) libPaths()
+    {
         return paths;
     }
 
@@ -115,6 +122,9 @@ class CairoLib : SysLib
 
         bind(cast(void**)&cairo_stroke, "cairo_stroke");
         bind(cast(void**)&cairo_stroke_preserve, "cairo_stroke_preserve");
+
+        bind(cast(void**)&cairo_move_to, "cairo_move_to");
+        bind(cast(void**)&cairo_line_to, "cairo_line_to");
 
         bind(cast(void**)&cairo_fill, "cairo_fill");
         bind(cast(void**)&cairo_fill_preserve, "cairo_fill_preserve");

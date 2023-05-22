@@ -49,7 +49,7 @@ class TextureImage : Texture
         }
         int width;
         int height;
-        
+
         if (const err = texture.getSize(&width, &height))
         {
             logger.errorf(err.toString);
@@ -63,19 +63,35 @@ class TextureImage : Texture
         return true;
     }
 
-    bool load(string path, int requestWidth = -1, int requestHeight = -1)
+    bool loadRaw(string content, int requestWidth = -1, int requestHeight = -1)
     {
-        import std.path : isAbsolute;
-        import std.file : isFile, exists;
+        //TODO remove bindbc
+        import bindbc.sdl;
+        import std.string : toStringz;
 
-        string imagePath = path.isAbsolute ? path : asset.image(path);
-        if (imagePath.length == 0 || !imagePath.exists || !imagePath.isFile)
+        SDL_RWops* rw = SDL_RWFromConstMem(cast(const(void*)) content.toStringz, cast(int) content
+                .length);
+        if (!rw)
         {
-            //TODO log, texture placeholder
-            return false;
+            throw new Exception("Cannot create memory buffer");
         }
+        // scope (exit)
+        // {
+        //     SDL_RWclose(rw);
+        // }
 
-        SdlSurface image = new SdlImage(imagePath);
+        SDL_Surface* surface = IMG_Load_RW(rw, 1);
+        if (!surface)
+        {
+            throw new Exception("Image loading error");
+        }
+        
+        SdlSurface surf = new SdlSurface(surface);
+        return load(surf, requestWidth, requestHeight);
+    }
+
+    protected bool load(SdlSurface image, int requestWidth = -1, int requestHeight = -1)
+    {
         int imageWidth = image.width;
         int imageHeight = image.height;
 
@@ -121,7 +137,7 @@ class TextureImage : Texture
         int result = texture.getSize(&width, &height);
         if (result != 0)
         {
-            string error = "Unable to load image from " ~ path;
+            string error = "Unable to load image.";
             if (const err = texture.getError)
             {
                 error ~= err;
@@ -135,6 +151,22 @@ class TextureImage : Texture
 
         image.destroy;
         return true;
+    }
+
+    bool load(string path, int requestWidth = -1, int requestHeight = -1)
+    {
+        import std.path : isAbsolute;
+        import std.file : isFile, exists;
+
+        string imagePath = path.isAbsolute ? path : asset.image(path);
+        if (imagePath.length == 0 || !imagePath.exists || !imagePath.isFile)
+        {
+            //TODO log, texture placeholder
+            return false;
+        }
+
+        SdlSurface image = new SdlImage(imagePath);
+        return load(image, requestWidth, requestHeight);
     }
 
     void drawImage(Flip flip = Flip.none)

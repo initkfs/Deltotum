@@ -52,7 +52,7 @@
         "bindbc-lua": "~>0.5.1",
         "bindbc-freeimage": "~>1.0.2"
     },
-    "dflags": ["-dip1000", "-preview=in"],
+    "dflags": ["-dip1000", "-preview=in", "-J=./data"],
     "libs-posix": [],
     "versions": [
         "SDL_Image",

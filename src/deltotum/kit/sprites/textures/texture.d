@@ -6,6 +6,7 @@ import deltotum.sys.sdl.sdl_texture : SdlTexture;
 import deltotum.sys.sdl.sdl_surface : SdlSurface;
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.kit.sprites.flip : Flip;
+import deltotum.kit.graphics.colors.rgba : RGBA;
 
 import bindbc.sdl;
 
@@ -126,6 +127,19 @@ class Texture : Sprite
             Rect2d destBounds = Rect2d(x, y, width, height);
             return texture.draw(textureBounds, destBounds, angle, flip);
         }
+    }
+
+    bool setColor(RGBA color)
+    {
+        if (!texture)
+        {
+            return false;
+        }
+        if (const err = texture.setColor(color.r, color.g, color.b))
+        {
+            throw new Exception(err.toString);
+        }
+        return true;
     }
 
     override double width()

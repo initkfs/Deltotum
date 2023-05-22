@@ -38,6 +38,7 @@ import deltotum.kit.apps.loops.integrated_loop : IntegratedLoop;
 import deltotum.kit.apps.loops.loop : Loop;
 import deltotum.kit.windows.window_manager : WindowManager;
 import deltotum.kit.apps.capabilities.capability : Capability;
+import deltotum.gui.themes.icons.icon_pack: IconPack;
 
 import std.typecons : Nullable;
 
@@ -69,6 +70,9 @@ class SdlApplication : GraphicApplication
         Screen _screen;
 
         CairoLib cairoLib;
+
+        //TODO themes, assets?
+        IconPack iconPack;
     }
 
     EventManager eventManager;
@@ -340,6 +344,9 @@ class SdlApplication : GraphicApplication
 
         windowManager = new WindowManager;
 
+        iconPack = new IconPack;
+        iconPack.load;
+
         //TODO move to config
         import std.file : getcwd, exists, isDir;
         import std.path : buildPath, dirName;
@@ -437,7 +444,7 @@ class SdlApplication : GraphicApplication
 
         auto themeLoader = new ThemeFromConfigFactory(uservices.logger, uservices.config, uservices.context, windowBuilder
                 .asset
-                .defaultFont);
+                .defaultFont, iconPack);
 
         auto theme = themeLoader.create;
 

@@ -7,6 +7,7 @@ import deltotum.kit.gui.themes.theme : Theme;
 import deltotum.kit.assets.fonts.font : Font;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.math.geometry.insets : Insets;
+import deltotum.gui.themes.icons.icon_pack: IconPack;
 
 import std.logger.core : Logger;
 
@@ -18,16 +19,18 @@ class ThemeFromConfigFactory : ApplicationUnit
     private
     {
         Font defaultFont;
+        IconPack iconPack;
     }
-    this(Logger logger, Config config, Context context, Font defaultFont) pure @safe
+    this(Logger logger, Config config, Context context, Font defaultFont, IconPack iconPack) pure @safe
     {
         super(logger, config, context);
         this.defaultFont = defaultFont;
+        this.iconPack = iconPack;
     }
 
     Theme create()
     {
-        auto theme = new Theme(defaultFont);
+        auto theme = new Theme(defaultFont, iconPack);
 
         //TODO rewrite
         theme.colorPrimary = fromStringColor(config.getString("themeColorPrimary").get);
