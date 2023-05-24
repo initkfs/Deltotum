@@ -86,11 +86,138 @@ class ManagedLayout : Layout
         return true;
     }
 
-    override void applyLayout(Sprite root)
+    void arrangeChildren(Sprite root)
     {
         foreach (child; root.children)
         {
             alignment(root, child);
         }
     }
+
+    override void applyLayout(Sprite root)
+    {
+        if (isResizeParent)
+        {
+            const bool rootOldLayoutStatus = root.isProcessLayout;
+            root.isProcessLayout = true;
+            layoutResize(root);
+            root.isProcessLayout = rootOldLayoutStatus;
+        }
+
+        if (isResizeChildren)
+        {
+            const bool rootOldProcessChildLayout = root.isProcessChildLayout;
+            root.isProcessChildLayout = true;
+            layoutResizeChildren(root);
+            root.isProcessChildLayout = rootOldProcessChildLayout;
+        }
+
+        arrangeChildren(root);
+    }
+
+    void layoutResize(Sprite root)
+    {
+        double newWidth = childrenWidth(root);
+        if (root.padding.width > 0)
+        {
+            newWidth += root.padding.width;
+        }
+
+        if (newWidth > root.width)
+        {
+            if (newWidth < root.maxWidth)
+            {
+                root.width = newWidth;
+            }
+        }
+
+        double newHeight = childrenHeight(root);
+        if (root.padding.height > 0)
+        {
+            newHeight += root.padding.height;
+        }
+
+        if (newHeight > root.height)
+        {
+            if (newHeight < root.maxHeight)
+            {
+                root.height = newHeight;
+            }
+        }
+    }
+
+    //TODO the first child occupies all available space
+    void layoutResizeChildren(Sprite root)
+    {
+        import std.range.primitives : empty, walkLength;
+        import std.algorithm.searching : count;
+
+        auto targetChildren = childrenForLayout(root);
+        if (targetChildren.empty)
+        {
+            return;
+        }
+
+        const hgrowChildren = targetChildren.count!(ch => ch.isHGrow);
+        const vgrowChildren = targetChildren.count!(ch => ch.isVGrow);
+
+        if (hgrowChildren == 0 && vgrowChildren == 0)
+        {
+            return;
+        }
+
+        const freeWidth = root.width - childrenWidth(root) - root.padding.width;
+        const freeHeight = root.height - childrenHeight(root) - root.padding.height;
+
+        const dtWidth = freeWidth / hgrowChildren;
+        const dtHeight = freeHeight / vgrowChildren;
+
+        foreach (child; targetChildren)
+        {
+            if (child.isHGrow)
+            {
+                child.width = child.width + dtWidth;
+            }
+
+            if (child.isVGrow)
+            {
+                child.height = child.height + dtHeight;
+            }
+        }
+    }
+
+    override double childrenWidth(Sprite root)
+    {
+        if (root.children.length == 0)
+        {
+            return 0;
+        }
+
+        auto targetChildren = childrenForLayout(root);
+        double childrendWidth = 0;
+        foreach (child; targetChildren)
+        {
+            childrendWidth += child.width + child.margin.width;
+        }
+
+        return childrendWidth;
+    }
+
+    override double childrenHeight(Sprite root)
+    {
+        if (root.children.length == 0)
+        {
+            return 0;
+        }
+
+        auto targetChildren = childrenForLayout(root);
+        double childrendHeight = 0;
+        foreach (child; targetChildren)
+        {
+            childrendHeight += child.height + child.margin.height;
+        }
+
+        return childrendHeight;
+    }
+
 }

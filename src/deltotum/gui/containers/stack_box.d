@@ -11,34 +11,7 @@ class StackBox : Container
     this()
     {
         this.layout = new CenterLayout;
-    }
-
-    override double childrenWidth()
-    {
-        double maxWidth = 0;
-        foreach (child; childrenForLayout)
-        {
-            if (child.width > maxWidth)
-            {
-                maxWidth = child.width;
-            }
-        }
-
-        return maxWidth;
-    }
-
-    override double childrenHeight()
-    {
-        double maxHeight = 0;
-        foreach (child; childrenForLayout)
-        {
-            if (child.height > maxHeight)
-            {
-                maxHeight = child.height;
-            }
-        }
-
-        return maxHeight;
+        layout.isAutoResize = true;
     }
 }
 

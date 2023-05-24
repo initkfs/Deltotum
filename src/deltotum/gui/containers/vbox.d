@@ -24,37 +24,7 @@ class VBox : Container
         auto vlayout = new VerticalLayout(_spacing);
         vlayout.isAlignX = true;
         this.layout = vlayout;
-    }
-
-    override double childrenWidth()
-    {
-        double childrenWidth = 0;
-        foreach (child; childrenForLayout)
-        {
-            if (child.width > childrenWidth)
-            {
-                childrenWidth = child.width;
-            }
-        }
-
-        return childrenWidth;
-    }
-
-    override double childrenHeight()
-    {
-        double childrenHeight = 0;
-        size_t childCount;
-        foreach (child; childrenForLayout)
-        {
-            childrenHeight += child.height + child.margin.height;
-            childCount++;
-        }
-
-        if (_spacing > 0 && childCount > 1)
-        {
-            childrenHeight += _spacing * (childCount - 1);
-        }
-        return childrenHeight;
+        layout.isAutoResize = true;
     }
 
     void isAlignX(bool isAlign)

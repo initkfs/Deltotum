@@ -8,11 +8,39 @@ import deltotum.kit.sprites.layouts.managed_layout : ManagedLayout;
  */
 class CenterLayout : ManagedLayout
 {
-    override void applyLayout(Sprite root)
+    override void arrangeChildren(Sprite root)
     {
         foreach (child; root.children)
         {
             alignXY(root, child);
         }
+    }
+
+    override double childrenWidth(Sprite root)
+    {
+        double maxWidth = 0;
+        foreach (child; childrenForLayout(root))
+        {
+            if (child.width > maxWidth)
+            {
+                maxWidth = child.width;
+            }
+        }
+
+        return maxWidth;
+    }
+
+    override double childrenHeight(Sprite root)
+    {
+        double maxHeight = 0;
+        foreach (child; childrenForLayout(root))
+        {
+            if (child.height > maxHeight)
+            {
+                maxHeight = child.height;
+            }
+        }
+
+        return maxHeight;
     }
 }

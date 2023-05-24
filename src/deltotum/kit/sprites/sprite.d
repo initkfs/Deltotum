@@ -120,11 +120,11 @@ class Sprite : PhysicalBody
         bool _cached;
     }
 
-    protected
-    {
+    //protected
+    //{
         bool isProcessLayout;
         bool isProcessChildLayout;
-    }
+    //}
 
     void buildCreate(Sprite sprite)
     {

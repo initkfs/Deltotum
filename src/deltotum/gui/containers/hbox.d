@@ -23,38 +23,8 @@ class HBox : Container
 
         auto hlayout = new HorizontalLayout(_spacing);
         hlayout.isAlignY = true;
+        hlayout.isAutoResize = true;
         this.layout = hlayout;
-    }
-
-    override double childrenWidth()
-    {
-        double childrenWidth = 0;
-        size_t childCount;
-        foreach (child; childrenForLayout)
-        {
-            childrenWidth += child.width + child.margin.width;
-            childCount++;
-        }
-
-        if (spacing > 0 && childCount > 1)
-        {
-            childrenWidth += spacing * (childCount - 1);
-        }
-        return childrenWidth;
-    }
-
-    override double childrenHeight()
-    {
-        double childrenHeight = 0;
-        foreach (child; childrenForLayout)
-        {
-            if (child.height > childrenHeight)
-            {
-                childrenHeight = child.height;
-            }
-        }
-
-        return childrenHeight;
     }
 
     double spacing(){

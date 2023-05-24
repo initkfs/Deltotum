@@ -16,7 +16,7 @@ class HorizontalLayout : ManagedLayout
         this.spacing = spacing;
     }
 
-    override void applyLayout(Sprite root)
+    override void arrangeChildren(Sprite root)
     {
         auto bounds = root.bounds;
         double nextX = 0;
@@ -53,5 +53,36 @@ class HorizontalLayout : ManagedLayout
                 alignY(root, child);
             }
         }
+    }
+
+    override double childrenWidth(Sprite root)
+    {
+        double childrenWidth = 0;
+        size_t childCount;
+        foreach (child; childrenForLayout(root))
+        {
+            childrenWidth += child.width + child.margin.width;
+            childCount++;
+        }
+
+        if (spacing > 0 && childCount > 1)
+        {
+            childrenWidth += spacing * (childCount - 1);
+        }
+        return childrenWidth;
+    }
+
+    override double childrenHeight(Sprite root)
+    {
+        double childrenHeight = 0;
+        foreach (child; childrenForLayout(root))
+        {
+            if (child.height > childrenHeight)
+            {
+                childrenHeight = child.height;
+            }
+        }
+
+        return childrenHeight;
     }
 }
