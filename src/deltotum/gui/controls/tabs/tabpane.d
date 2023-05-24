@@ -1,7 +1,7 @@
 module deltotum.gui.controls.tabs.tabpane;
 
 import deltotum.kit.sprites.sprite : Sprite;
-import deltotum.gui.containers.container : Container;
+import deltotum.gui.controls.control : Control;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.gui.containers.hbox : HBox;
 import deltotum.gui.containers.vbox : VBox;
@@ -13,28 +13,28 @@ import deltotum.kit.sprites.layouts.vertical_layout : VerticalLayout;
 /**
  * Authors: initkfs
  */
-class TabPane : Container
+class TabPane : Control
 {
 
     private
     {
         TabHeader header;
         Tab currentTab;
-    }
 
-    StackBox content;
+        StackBox content;
+    }
 
     this(TabHeader header = null)
     {
         this.header = header ? header : new TabHeader;
+        this.header.isHGrow = true;
+
         content = new StackBox;
         content.isBackground = false;
-        layout = new VerticalLayout(2);
-    }
+        content.isVGrow = true;
+        content.isHGrow = true;
 
-    override void initialize()
-    {
-        super.initialize;
+        layout = new VerticalLayout;
     }
 
     override void create()
@@ -42,13 +42,8 @@ class TabPane : Container
         super.create;
 
         header.width = width;
-        //TODO max button height
-        header.height = 50;
 
         addCreate(header);
-
-        content.width = width;
-        content.height = height - header.height;
 
         addCreate(content);
 
@@ -58,24 +53,36 @@ class TabPane : Container
         }
     }
 
-    void createTabContent(Tab tab, Sprite obj)
+    override void addCreate(Sprite[] sprite)
     {
-        if (!tab.isBuilt)
+        foreach (s; sprite)
         {
-            tab.onAction = () { changeTab(tab); };
+            addCreate(s);
+        }
+    }
 
-            header.addCreate(tab);
+    override void addCreate(Sprite sprite, long index = -1)
+    {
+        if (auto tab = cast(Tab) sprite)
+        {
+            createTabContent(tab);
+            return;
         }
 
-        //TODO map?
-        obj.width = this.content.width;
-        obj.height = this.content.height;
+        super.addCreate(sprite, index);
+    }
 
-        tab.content = obj;
-        content.addCreate(obj);
+    protected void createTabContent(Tab tab)
+    {
+        tab.onAction = () { changeTab(tab); };
+        header.addCreate(tab);
 
-        obj.isVisible = false;
-        obj.isUpdatable = false;
+        if (tab.content)
+        {
+            content.addCreate(tab.content);
+            tab.content.isVisible = false;
+            tab.content.isUpdatable = false;
+        }
     }
 
     //TODO events
@@ -86,19 +93,25 @@ class TabPane : Container
             return;
         }
 
-        if (currentTab && currentTab.content)
+        if (currentTab)
         {
-            currentTab.content.isVisible = false;
-            currentTab.content.isUpdatable = false;
-        }
+            if (currentTab.content)
+            {
+                currentTab.content.isVisible = false;
+                currentTab.content.isUpdatable = false;
+            }
 
-        if (newTab.content)
-        {
-            newTab.content.isVisible = true;
-            newTab.content.isUpdatable = true;
+            currentTab.isSelected = false;
         }
 
         currentTab = newTab;
+        currentTab.isSelected = true;
+
+        if (currentTab.content)
+        {
+            currentTab.content.isVisible = true;
+            currentTab.content.isUpdatable = true;
+        }
     }
 
     override void destroy()

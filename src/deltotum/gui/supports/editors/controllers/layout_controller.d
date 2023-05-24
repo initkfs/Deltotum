@@ -1,16 +1,24 @@
-module deltotum.gui.supports.guieditor;
+module deltotum.gui.supports.editors.controllers.layout_controller;
 
-import deltotum.kit.scenes.scene : Scene;
-import deltotum.kit.graphics.colors.rgba : RGBA;
+import deltotum.gui.controls.control: Control;
+import deltotum.kit.sprites.sprite: Sprite;
+import deltotum.kit.graphics.colors.rgba: RGBA;
+import deltotum.kit.graphics.styles.graphic_style: GraphicStyle;
 
 /**
  * Authors: initkfs
  */
-class GuiEditor : Scene
+class LayoutController : Control
 {
     this()
     {
-        name = "deltotum_gui_editor";
+        id = "deltotum_gui_editor_layout_controller";
+
+        import deltotum.kit.sprites.layouts.vertical_layout: VerticalLayout;
+
+        layout = new VerticalLayout(5);
+        layout.isAutoResize = true;
+        isBackground = false;
     }
 
     override void create()
@@ -24,32 +32,10 @@ class GuiEditor : Scene
         import deltotum.gui.containers.container : Container;
         import deltotum.gui.containers.stack_box : StackBox;
         import deltotum.math.geometry.insets : Insets;
-
-        auto root = new VBox;
-        root.width = window.width;
-        root.height = window.height;
-        root.isBackground = false;
-        addCreate(root);
-
-        auto shapeContainer = new HBox;
-        root.addCreate(shapeContainer);
-
-        import deltotum.kit.graphics.colors.palettes.material_design_palette : MaterialDesignPalette;
-        import deltotum.kit.graphics.colors.rgba : RGBA;
-        import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
-        import deltotum.kit.graphics.shapes.circle : Circle;
-        import deltotum.kit.graphics.shapes.rectangle : Rectangle;
-        import deltotum.gui.controls.buttons.button : Button;
-
-        enum size = 30;
-        auto circle1 = new Circle(size / 2, GraphicStyle(5, RGBA.green));
-        auto circle2 = new Circle(size / 2, GraphicStyle(5, RGBA.green, true, RGBA.red));
-        auto rect1 = new Rectangle(size, size, GraphicStyle(5, RGBA.green));
-        auto rect2 = new Rectangle(size, size, GraphicStyle(5, RGBA.green, true, RGBA.red));
-        shapeContainer.addCreate([circle1, circle2, rect1, rect2]);
+        import deltotum.gui.controls.buttons.button: Button;
 
         auto posContainer = new HBox;
-        root.addCreate(posContainer);
+        addCreate(posContainer);
 
         auto startToEndContainer = new HBox;
         startToEndContainer.width = 350;
@@ -79,7 +65,7 @@ class GuiEditor : Scene
             ]);
 
         auto textsContainer = new HBox;
-        root.addCreate(textsContainer);
+        addCreate(textsContainer);
 
         auto startEndVBox = new VBox;
         startEndVBox.height = 200;
@@ -150,39 +136,8 @@ class GuiEditor : Scene
         image5.loadRaw(graphics.theme.iconData("flash-outline"), 64, 64);
         image5.setColor(graphics.theme.colorAccent);
 
-        root.addCreate(iconsContainer);
+        addCreate(iconsContainer);
         iconsContainer.addCreate([image1, image2, image3, image4, image5]);
-
-        auto vectorContainers = new HBox;
-        root.addCreate(vectorContainers);
-        if (cap.isVectorGraphics)
-        {
-            import deltotum.math.geometry.curves.spirograph: Spirograph;
-            import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
-            import deltotum.kit.graphics.shapes.vectors.vpoints_shape : VPointsShape;
-            import deltotum.math.vector2d: Vector2d;
-
-            auto spirGen = new Spirograph;
-            Vector2d[] points1 = spirGen.hypotrochoidPoints(30, 1, 27, 20);
-            auto spir1 = new VPointsShape(points1, 150, 150, GraphicStyle(2, graphics.theme.colorAccent));
-
-            Vector2d[] points2 = spirGen.hypotrochoidPoints(30, 1, 29, 8);
-            auto spir2 = new VPointsShape(points2, 150, 150, GraphicStyle(2, graphics.theme.colorAccent));
-
-            Vector2d[] points3 = spirGen.hypotrochoidPoints(30, 1, 15, 45);
-            auto spir3 = new VPointsShape(points3, 150, 150, GraphicStyle(2, graphics.theme.colorAccent));
-
-            Vector2d[] points4 = spirGen.hypotrochoidPoints(30, 1, 10, 10);
-            auto spir4 = new VPointsShape(points4, 150, 150, GraphicStyle(2, graphics.theme.colorAccent));
-
-            vectorContainers.addCreate([spir1, spir2, spir3, spir4]);
-
-            import  deltotum.math.geometry.curves.lissajous: Lissajous;
-            auto liss = new Lissajous;
-            Vector2d[] lissPoints1 = liss.curve;
-            auto liss1 = new VPointsShape(lissPoints1, 150, 150, GraphicStyle(2, graphics.theme.colorAccent));
-            vectorContainers.addCreate(liss1);
-        }
     }
 
 }

@@ -1,49 +1,55 @@
 module deltotum.gui.controls.tabs.tab;
 
-import deltotum.gui.containers.container : Container;
+import deltotum.gui.controls.control : Control;
 import deltotum.gui.controls.buttons.button : Button;
-import deltotum.kit.sprites.sprite: Sprite;
+import deltotum.kit.sprites.sprite : Sprite;
 
 /**
  * Authors: initkfs
  */
-class Tab : Container
+class Tab : Control
 {
     private
     {
-        Button textButton;
+        Button label;
     }
 
-    //TODO inconsistency without adding\creating
     Sprite content;
 
     void delegate() onAction;
 
     this(dstring text = "Tab")
     {
-        textButton = new Button;
-        textButton.text = text;
-    }
+        label = new Button(text);
 
-    override void initialize()
-    {
-        super.initialize;
+        import deltotum.kit.sprites.layouts.center_layout: CenterLayout;
+        layout = new CenterLayout;
+        layout.isAutoResize = true;
 
-        width = textButton.width;
-        height = textButton.height;
+        isBorder = false;
+        isBackground = false;
     }
 
     override void create()
     {
         super.create;
 
-          textButton.onAction = (e) {
+        buildCreate(label);
+
+        width = label.width;
+        height = label.height;
+
+        add(label);
+
+        label.onAction = (e) {
             if (onAction)
             {
                 onAction();
             }
         };
+    }
 
-        addCreate(textButton);
+    void isSelected(bool isSelected){
+        label.isSelected(isSelected);
     }
 }

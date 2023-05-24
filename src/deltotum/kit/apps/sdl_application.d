@@ -506,7 +506,7 @@ class SdlApplication : GraphicApplication
         debug
         {
             //TODO config, lazy delegate
-            import deltotum.gui.supports.guieditor : GuiEditor;
+            import deltotum.gui.supports.editors.guieditor : GuiEditor;
             window.scenes.add(new GuiEditor);
         }
 

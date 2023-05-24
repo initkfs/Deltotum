@@ -17,8 +17,8 @@ abstract class Control : Sprite
 
     GraphicStyle style;
 
-    bool isBackground = true;
-    bool isBorder = true;
+    bool isBackground;
+    bool isBorder;
 
     protected
     {

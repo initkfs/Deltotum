@@ -11,6 +11,10 @@ class Container : Control
     this() pure @safe
     {
         isBackground = false;
+
+        import deltotum.kit.sprites.layouts.center_layout: CenterLayout;
+        layout = new CenterLayout;
+        layout.isAutoResize(true);
     }
 
     override void addCreate(Sprite[] sprites)

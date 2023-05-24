@@ -1,6 +1,6 @@
 module deltotum.gui.controls.buttons.button;
 
-import deltotum.kit.sprites.sprite: Sprite;
+import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.gui.controls.control : Control;
 import deltotum.kit.graphics.shapes.shape : Shape;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
@@ -34,6 +34,7 @@ class Button : Control
         Sprite clickEffect;
         ValueTransition clickEffectAnimation;
         Text _text;
+        bool _selected;
     }
 
     this(dstring text = "Button", double width = 80, double height = 40)
@@ -57,7 +58,8 @@ class Button : Control
             import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
 
             Shape object = new RegularPolygon(width, height, GraphicStyle(1, graphics
-                    .theme.colorAccent, true, graphics.theme.colorControlBackground), graphics.theme.controlCornersBevel);
+                    .theme.colorAccent, true, graphics.theme.colorControlBackground), graphics
+                    .theme.controlCornersBevel);
             object.isLayoutManaged = false;
             return object;
         };
@@ -157,6 +159,12 @@ class Button : Control
     void createListeners()
     {
         onMouseEntered = (e) {
+
+            if (_selected)
+            {
+                return false;
+            }
+
             if (hover !is null && !hover.isVisible)
             {
                 hover.isVisible = true;
@@ -165,6 +173,12 @@ class Button : Control
         };
 
         onMouseExited = (e) {
+
+            if (_selected)
+            {
+                return false;
+            }
+
             if (hover !is null && hover.isVisible)
             {
                 hover.isVisible = false;
@@ -173,6 +187,11 @@ class Button : Control
         };
 
         onMouseUp = (e) {
+
+            if (_selected)
+            {
+                return false;
+            }
 
             if (clickEffectAnimation !is null && !clickEffectAnimation.isRun)
             {
@@ -190,7 +209,8 @@ class Button : Control
 
     void text(dstring t)
     {
-        if(!_text){
+        if (!_text)
+        {
             _buttonText = t;
             return;
         }
@@ -200,10 +220,20 @@ class Button : Control
 
     dstring text()
     {
-        if(_text){
+        if (_text)
+        {
             return _text.text;
         }
         return _buttonText;
+    }
+
+    void isSelected(bool isSelected)
+    {
+        _selected = isSelected;
+        if (hover)
+        {
+            hover.isVisible = isSelected;
+        }
     }
 
 }

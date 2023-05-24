@@ -122,8 +122,8 @@ class Sprite : PhysicalBody
 
     //protected
     //{
-        bool isProcessLayout;
-        bool isProcessChildLayout;
+    bool isProcessLayout;
+    bool isProcessChildLayout;
     //}
 
     void buildCreate(Sprite sprite)
@@ -253,6 +253,14 @@ class Sprite : PhysicalBody
 
         buildCreate(sprite);
         add(sprite, index);
+    }
+
+    void add(Sprite[] sprites)
+    {
+        foreach (s; sprites)
+        {
+            add(s);
+        }
     }
 
     void add(Sprite sprite, long index = -1)
