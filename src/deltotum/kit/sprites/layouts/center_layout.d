@@ -21,9 +21,10 @@ class CenterLayout : ManagedLayout
         double maxWidth = 0;
         foreach (child; childrenForLayout(root))
         {
-            if (child.width > maxWidth)
+            const childW = child.width + child.margin.width;
+            if (childW > maxWidth)
             {
-                maxWidth = child.width;
+                maxWidth = childW;
             }
         }
 
@@ -35,9 +36,10 @@ class CenterLayout : ManagedLayout
         double maxHeight = 0;
         foreach (child; childrenForLayout(root))
         {
-            if (child.height > maxHeight)
+            const childH = child.height + child.margin.height;
+            if (childH > maxHeight)
             {
-                maxHeight = child.height;
+                maxHeight = childH;
             }
         }
 

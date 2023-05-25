@@ -55,6 +55,7 @@ class ManagedLayout : Layout
             return false;
         }
         const rootBounds = root.bounds;
+        //TODO target.layoutBounds
         const targetBounds = target.bounds;
 
         if (rootBounds.width == 0 || targetBounds.width == 0)
@@ -125,7 +126,7 @@ class ManagedLayout : Layout
 
         if (newWidth > root.width)
         {
-            if (newWidth < root.maxWidth)
+            if (newWidth <= root.maxWidth)
             {
                 root.width = newWidth;
             }
@@ -139,7 +140,7 @@ class ManagedLayout : Layout
 
         if (newHeight > root.height)
         {
-            if (newHeight < root.maxHeight)
+            if (newHeight <= root.maxHeight)
             {
                 root.height = newHeight;
             }

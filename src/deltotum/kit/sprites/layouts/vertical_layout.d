@@ -52,6 +52,8 @@ class VerticalLayout : ManagedLayout
             if (isAlignX || child.alignment == Alignment.x)
             {
                 alignX(root, child);
+            }else {
+                child.x = root.x + root.padding.left + child.margin.left;
             }
         }
     }
@@ -61,9 +63,10 @@ class VerticalLayout : ManagedLayout
         double childrenWidth = 0;
         foreach (child; childrenForLayout(root))
         {
-            if (child.width > childrenWidth)
+            const chWidth = child.width + child.margin.width;
+            if (chWidth > childrenWidth)
             {
-                childrenWidth = child.width;
+                childrenWidth = chWidth;
             }
         }
 

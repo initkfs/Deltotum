@@ -621,6 +621,12 @@ class Sprite : PhysicalBody
         return bounds;
     }
 
+     Rect2d layoutBounds()
+    {
+        const Rect2d bounds = {x - margin.left, y - margin.top, _width + margin.width, _height + margin.height};
+        return bounds;
+    }
+
     Rect2d geometryBounds()
     {
         const Rect2d bounds = {0, 0, _width, _height};
@@ -736,9 +742,14 @@ class Sprite : PhysicalBody
     {
         if (
             value <= 0 ||
-            _width == value ||
             value < minWidth ||
-            value > maxWidth)
+            value > maxWidth ||
+            _width == value)
+        {
+            return;
+        }
+
+        if (!isProcessLayout && isLayoutManaged && value > _width && !canExpandW(value - _width))
         {
             return;
         }
@@ -786,9 +797,22 @@ class Sprite : PhysicalBody
     {
         //(_width != 0 && !isResizable) || 
         if (value <= 0 ||
-            _height == value ||
-            value < minHeight ||
-            value > maxHeight)
+            _height == value)
+        {
+            return;
+        }
+
+        if (value < minHeight)
+        {
+            value = minHeight;
+        }
+
+        if (value > maxHeight)
+        {
+            value = maxHeight;
+        }
+
+        if (value > _height && !canExpandH(value - _height))
         {
             return;
         }
@@ -1024,5 +1048,46 @@ class Sprite : PhysicalBody
     void isCached(bool value)
     {
         _cached = value;
+    }
+
+    bool canExpandW(double value)
+    {
+        Sprite curParent = parent;
+        if (!curParent || !curParent.layout)
+        {
+            return true;
+        }
+
+        while (curParent)
+        {
+            auto freeMaxWidth = curParent.layout.freeMaxWidth(curParent);
+            if (freeMaxWidth < value)
+            {
+                return false;
+            }
+
+            curParent = curParent.parent;
+        }
+
+        return true;
+    }
+
+    bool canExpandH(double value)
+    {
+        Sprite curParent = parent;
+        while (curParent)
+        {
+            if (curParent.layout)
+            {
+                const freeMaxHeight = curParent.layout.freeMaxHeight(curParent);
+                if (freeMaxHeight < value)
+                {
+                    return false;
+                }
+            }
+            curParent = curParent.parent;
+        }
+
+        return true;
     }
 }

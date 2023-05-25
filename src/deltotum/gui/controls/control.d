@@ -20,10 +20,10 @@ abstract class Control : Sprite
     bool isBackground;
     bool isBorder;
 
-    protected
-    {
+    //protected
+    //{
         Sprite background;
-    }
+    //}
 
     this() pure @safe
     {
@@ -54,6 +54,7 @@ abstract class Control : Sprite
 
                 auto background = new RegularPolygon(width, height, backgroundStyle, graphics
                         .theme.controlCornersBevel);
+                background.id = "control_background";
 
                 background.opacity = graphics.theme.opacityControls;
                 return background;
@@ -112,6 +113,7 @@ abstract class Control : Sprite
     {
         if (background)
         {
+            import std;
             background.width = width;
             background.height = height;
             return;

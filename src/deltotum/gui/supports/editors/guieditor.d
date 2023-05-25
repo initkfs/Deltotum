@@ -25,16 +25,22 @@ class GuiEditor : Scene
 
         addCreate(root);
 
-        import deltotum.gui.supports.editors.controllers.layout_controller : LayoutController;
+        import deltotum.gui.supports.editors.sections.controls : Controls;
+
+        auto controlsTab = new Tab("Controls");
+        controlsTab.content = new Controls;
+        root.addCreate(controlsTab);
+
+        import deltotum.gui.supports.editors.sections.layouts : Layouts;
 
         auto layoutTab = new Tab("Layouts");
-        layoutTab.content = new LayoutController;
+        layoutTab.content = new Layouts;
         root.addCreate(layoutTab);
 
-        import deltotum.gui.supports.editors.controllers.curves_controller : CurvesController;
+        import deltotum.gui.supports.editors.sections.curves : Curves;
 
         auto curvesTab = new Tab("Curves");
-        curvesTab.content = new CurvesController;
+        curvesTab.content = new Curves;
         root.addCreate(curvesTab);
 
         root.changeTab(layoutTab);

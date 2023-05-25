@@ -1,4 +1,4 @@
-module deltotum.gui.supports.editors.controllers.curves_controller;
+module deltotum.gui.supports.editors.sections.curves;
 
 import deltotum.gui.controls.control: Control;
 import deltotum.kit.sprites.sprite: Sprite;
@@ -8,11 +8,11 @@ import deltotum.kit.graphics.styles.graphic_style: GraphicStyle;
 /**
  * Authors: initkfs
  */
-class CurvesController : Control
+class Curves : Control
 {
     this()
     {
-        id = "deltotum_gui_editor_layout_controller";
+        id = "deltotum_gui_editor_section_curves";
 
         import deltotum.kit.sprites.layouts.vertical_layout: VerticalLayout;
 

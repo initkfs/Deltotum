@@ -52,6 +52,10 @@ class HorizontalLayout : ManagedLayout
             {
                 alignY(root, child);
             }
+            else
+            {
+                child.y = root.y + root.padding.top + child.margin.top;
+            }
         }
     }
 
@@ -77,9 +81,10 @@ class HorizontalLayout : ManagedLayout
         double childrenHeight = 0;
         foreach (child; childrenForLayout(root))
         {
-            if (child.height > childrenHeight)
+            const childH = child.height + child.margin.height;
+            if (childH > childrenHeight)
             {
-                childrenHeight = child.height;
+                childrenHeight = childH;
             }
         }
 
