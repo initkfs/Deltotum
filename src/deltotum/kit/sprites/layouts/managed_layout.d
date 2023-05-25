@@ -147,6 +147,16 @@ class ManagedLayout : Layout
         }
     }
 
+    double freeWidth(Sprite root)
+    {
+        return root.width - childrenWidth(root) - root.padding.width;
+    }
+
+    double freeHeight(Sprite root)
+    {
+        return root.height - childrenHeight(root) - root.padding.height;
+    }
+
     //TODO the first child occupies all available space
     void layoutResizeChildren(Sprite root)
     {
@@ -167,11 +177,11 @@ class ManagedLayout : Layout
             return;
         }
 
-        const freeWidth = root.width - childrenWidth(root) - root.padding.width;
-        const freeHeight = root.height - childrenHeight(root) - root.padding.height;
+        const freeW = freeWidth(root);
+        const freeH = freeHeight(root);
 
-        const dtWidth = freeWidth / hgrowChildren;
-        const dtHeight = freeHeight / vgrowChildren;
+        const dtWidth = freeW / hgrowChildren;
+        const dtHeight = freeH / vgrowChildren;
 
         foreach (child; targetChildren)
         {

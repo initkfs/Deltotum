@@ -206,6 +206,30 @@ class Layouts : Control
         stBtn1.isVGrow = true;
 
         s2.addCreate(stBtn1);
+
+        import deltotum.gui.containers.border_box: BorderBox;
+
+        auto bBox = configureControl(new BorderBox);
+        posVContainer.addCreate(bBox);
+        
+        auto top = createButton("top");
+        top.isHGrow = true;
+        bBox.top.addCreate(top);
+
+        auto left = createButton("left");
+        bBox.left.addCreate(left);
+
+        auto center = createButton("center");
+        bBox.center.addCreate(center);
+
+        auto rigth = createButton("right");
+        bBox.right.addCreate(rigth);
+
+        auto bottom = createButton("bottom");
+        bottom.width = 100;
+        bottom.isHGrow = true;
+        bBox.bottom.addCreate(bottom);
+
     }
 
 }

@@ -52,7 +52,9 @@ class VerticalLayout : ManagedLayout
             if (isAlignX || child.alignment == Alignment.x)
             {
                 alignX(root, child);
-            }else {
+            }
+            else
+            {
                 child.x = root.x + root.padding.left + child.margin.left;
             }
         }
@@ -88,6 +90,50 @@ class VerticalLayout : ManagedLayout
             childrenHeight += spacing * (childCount - 1);
         }
         return childrenHeight;
+    }
+
+    //TODO REMOVE duplication.
+    override void layoutResizeChildren(Sprite root)
+    {
+        import std.range.primitives : empty, walkLength;
+        import std.algorithm.searching : count;
+
+        auto targetChildren = childrenForLayout(root);
+        if (targetChildren.empty)
+        {
+            return;
+        }
+
+        const hgrowChildren = targetChildren.count!(ch => ch.isHGrow);
+        const vgrowChildren = targetChildren.count!(ch => ch.isVGrow);
+
+        if (hgrowChildren == 0 && vgrowChildren == 0)
+        {
+            return;
+        }
+
+        auto freeW = root.width - root.padding.width;
+        if (freeW < 0)
+        {
+            freeW = 0;
+        }
+        const freeH = freeHeight(root);
+
+        const dtWidth = freeW;
+        const dtHeight = freeH / vgrowChildren;
+
+        foreach (child; targetChildren)
+        {
+            if (child.isHGrow && dtWidth > 0)
+            {
+                child.width = dtWidth;
+            }
+
+            if (child.isVGrow)
+            {
+                child.height = child.height + dtHeight;
+            }
+        }
     }
 
 }
