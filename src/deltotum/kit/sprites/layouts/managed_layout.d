@@ -64,7 +64,13 @@ class ManagedLayout : Layout
         }
 
         const newX = rootBounds.middleX - targetBounds.halfWidth;
+        if (target.x == newX)
+        {
+            return false;
+        }
+
         target.x = newX;
+
         return true;
     }
 
@@ -83,6 +89,11 @@ class ManagedLayout : Layout
         }
 
         const newY = rootBounds.middleY - targetBounds.halfHeight;
+        if (target.y == newY)
+        {
+            return false;
+        }
+
         target.y = newY;
         return true;
     }
@@ -99,18 +110,12 @@ class ManagedLayout : Layout
     {
         if (isResizeParent)
         {
-            const bool rootOldLayoutStatus = root.isProcessLayout;
-            root.isProcessLayout = true;
             layoutResize(root);
-            root.isProcessLayout = rootOldLayoutStatus;
         }
 
         if (isResizeChildren)
         {
-            const bool rootOldProcessChildLayout = root.isProcessChildLayout;
-            root.isProcessChildLayout = true;
             layoutResizeChildren(root);
-            root.isProcessChildLayout = rootOldProcessChildLayout;
         }
 
         arrangeChildren(root);
@@ -187,12 +192,20 @@ class ManagedLayout : Layout
         {
             if (child.isHGrow)
             {
-                child.width = child.width + dtWidth;
+                const newWidth = child.width + dtWidth;
+                if (child.width != newWidth)
+                {
+                    child.width = newWidth;
+                }
             }
 
             if (child.isVGrow)
             {
-                child.height = child.height + dtHeight;
+                const newHeight = child.height + dtHeight;
+                if (child.height != newHeight)
+                {
+                    child.height = child.height + dtHeight;
+                }
             }
         }
     }

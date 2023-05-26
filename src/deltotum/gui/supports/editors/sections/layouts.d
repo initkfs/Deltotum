@@ -68,6 +68,11 @@ class Layouts : Control
         enum prefContainerWidth = 180;
         enum maxContainerWidth = 300;
 
+        auto btn = createButton("Btn");
+        btn.isHGrow = true;
+        btn.id = "btn";
+        posContainer.addCreate(btn);
+
         auto posWrapper1 = configureControl(new HBox);
         posWrapper1.width = prefContainerWidth;
         posWrapper1.maxWidth = maxContainerWidth;

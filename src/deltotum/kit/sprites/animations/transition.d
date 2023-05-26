@@ -61,6 +61,8 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : Animation
             uniInterp.interpolateMethod = &uniInterp.linear;
             this.interpolator = uniInterp;
         }
+        isManaged = false;
+        isVisible = false;
     }
 
     //TODO state management

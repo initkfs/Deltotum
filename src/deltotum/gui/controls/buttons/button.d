@@ -61,6 +61,7 @@ class Button : Control
                     .theme.colorAccent, true, graphics.theme.colorControlBackground), graphics
                     .theme.controlCornersBevel);
             object.isLayoutManaged = false;
+            object.id = "btn_background";
             return object;
         };
 

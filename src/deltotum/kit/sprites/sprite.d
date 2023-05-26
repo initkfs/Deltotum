@@ -122,8 +122,9 @@ class Sprite : PhysicalBody
 
     //protected
     //{
+    bool isProcessParentLayout;
     bool isProcessLayout;
-    bool isProcessChildLayout;
+    bool isProcessDelayedInvalidation;
     //}
 
     void buildCreate(Sprite sprite)
@@ -546,37 +547,21 @@ class Sprite : PhysicalBody
 
     void applyLayout()
     {
-        if (isProcessChildLayout)
-        {
-            return;
-        }
-
         if (layout !is null)
         {
-            isProcessChildLayout = true;
+            isProcessLayout = true;
             layout.applyLayout(this);
-            isProcessChildLayout = false;
         }
     }
 
     void update(double delta)
     {
-
         if (!isValid)
         {
             foreach (invListener; invalidateListeners)
             {
                 invListener();
             }
-
-            isProcessLayout = true;
-
-            if (parent && parent !is this)
-            {
-                parent.applyLayout;
-            }
-
-            isProcessLayout = false;
 
             applyLayout;
 
@@ -598,21 +583,33 @@ class Sprite : PhysicalBody
 
         foreach (Sprite child; children)
         {
+            //TODO there may be cycles here due to disabling the update flag
+            if (
+                !child.isValid &&
+                child.isLayoutManaged &&
+                !isProcessLayout &&
+                layout !is null && isValid)
+            {
+                setInvalid;
+            }
+
             if (!child.isUpdatable)
             {
                 continue;
             }
 
-            if (child.isManaged)
+            if (child.isManaged && !child.isLayoutManaged)
             {
                 child.velocity.x = velocity.x;
                 child.velocity.y = velocity.y;
-                //child.x = child.x + dx;
-                //child.y = child.y + dy;
+                child.x = child.x + dx;
+                child.y = child.y + dy;
             }
 
             child.update(delta);
         }
+
+        isProcessLayout = false;
     }
 
     Rect2d bounds()
@@ -621,473 +618,496 @@ class Sprite : PhysicalBody
         return bounds;
     }
 
-     Rect2d layoutBounds()
+    Rect2d layoutBounds()
     {
-        const Rect2d bounds = {x - margin.left, y - margin.top, _width + margin.width, _height + margin.height};
-        return bounds;
-    }
-
-    Rect2d geometryBounds()
-    {
-        const Rect2d bounds = {0, 0, _width, _height};
-        return bounds;
-    }
-
-    void positionCenter()
-    {
-        positionCenterX;
-        positionCenterY;
-    }
-
-    void positionCenterX()
-    {
-        if (_width > 0 && window.width > 0 && _width < window.width)
-        {
-            x = window.width / 2 - _width / 2;
+        const Rect2d bounds = {
+            x - margin.left, y - margin.top, _width + margin.width, _height + margin.height};
+            return bounds;
         }
-    }
 
-    void positionCenterY()
-    {
-        if (_height > 0 && window.height > 0 && _height < window.height)
+        Rect2d geometryBounds()
         {
-            y = window.height / 2 - _height / 2;
+            const Rect2d bounds = {0, 0, _width, _height};
+            return bounds;
         }
-    }
 
-    Vector2d position() @nogc @safe pure nothrow
-    {
-        return Vector2d(x, y);
-    }
-
-    void xy(double newX, double newY)
-    {
-        x(newX);
-        y(newY);
-    }
-
-    double x() @nogc @safe pure nothrow
-    {
-        return _x;
-    }
-
-    void x(double newX)
-    {
-        foreach (Sprite child; children)
+        void positionCenter()
         {
-            if (child.isManaged)
+            positionCenterX;
+            positionCenterY;
+        }
+
+        void positionCenterX()
+        {
+            if (_width > 0 && window.width > 0 && _width < window.width)
             {
-                double dx = newX - _x;
-                child.x = child.x + dx;
+                x = window.width / 2 - _width / 2;
             }
         }
 
-        if (isCreated && onChangeXFromTo !is null)
+        void positionCenterY()
         {
-            onChangeXFromTo(_x, newX);
-        }
-
-        _x = newX;
-
-        if (_cache)
-        {
-            _cache.x = _x;
-        }
-
-        if (isProcessLayout)
-        {
-            return;
-        }
-
-        setInvalid;
-    }
-
-    double y() @nogc @safe pure nothrow
-    {
-        return _y;
-    }
-
-    void y(double newY)
-    {
-        foreach (Sprite child; children)
-        {
-            if (child.isManaged)
+            if (_height > 0 && window.height > 0 && _height < window.height)
             {
-                double dy = newY - _y;
-                child.y = child.y + dy;
+                y = window.height / 2 - _height / 2;
             }
         }
 
-        if (isCreated && onChangeYFromTo !is null)
+        Vector2d position() @nogc @safe pure nothrow
         {
-            onChangeYFromTo(_y, newY);
+            return Vector2d(x, y);
         }
 
-        _y = newY;
-
-        if (_cache)
+        void xy(double newX, double newY)
         {
-            _cache.x = _y;
+            x(newX);
+            y(newY);
         }
 
-        setInvalid;
-    }
-
-    double width() @nogc @safe pure nothrow
-    {
-        return _width;
-    }
-
-    void width(double value)
-    {
-        if (
-            value <= 0 ||
-            value < minWidth ||
-            value > maxWidth ||
-            _width == value)
+        double x() @nogc @safe pure nothrow
         {
-            return;
+            return _x;
         }
 
-        if (!isProcessLayout && isLayoutManaged && value > _width && !canExpandW(value - _width))
+        void x(double newX)
         {
-            return;
-        }
-
-        immutable double oldWidth = _width;
-        _width = value;
-
-        setInvalid;
-
-        if (!isCreated)
-        {
-            return;
-        }
-
-        if (onChangeWidthFromTo)
-        {
-            onChangeWidthFromTo(oldWidth, _width);
-        }
-
-        if (_cache)
-        {
-            recreateCache;
-        }
-
-        if (!isProcessLayout && isResizeChildren && children.length > 0)
-        {
-            immutable double dw = _width - oldWidth;
-            foreach (child; children)
+            foreach (Sprite child; children)
             {
-                if (layout is null || child.isResizedByParent)
+                if (child.isManaged)
                 {
-                    const newWidth = child.width + dw;
-                    child.width(newWidth);
+                    double dx = newX - _x;
+                    child.x = child.x + dx;
+                }
+            }
+
+            if (isCreated && onChangeXFromTo !is null)
+            {
+                onChangeXFromTo(_x, newX);
+            }
+
+            _x = newX;
+
+            if (_cache)
+            {
+                _cache.x = _x;
+            }
+
+            // if (isProcessParentLayout)
+            // {
+            //     return;
+            // }
+
+            setInvalid;
+        }
+
+        double y() @nogc @safe pure nothrow
+        {
+            return _y;
+        }
+
+        void y(double newY)
+        {
+            foreach (Sprite child; children)
+            {
+                if (child.isManaged)
+                {
+                    double dy = newY - _y;
+                    child.y = child.y + dy;
+                }
+            }
+
+            if (isCreated && onChangeYFromTo !is null)
+            {
+                onChangeYFromTo(_y, newY);
+            }
+
+            _y = newY;
+
+            if (_cache)
+            {
+                _cache.x = _y;
+            }
+
+            // if (isProcessParentLayout)
+            // {
+            //     return;
+            // }
+
+            setInvalid;
+        }
+
+        double width() @nogc @safe pure nothrow
+        {
+            return _width;
+        }
+
+        void width(double value)
+        {
+            if (id == "btn")
+            {
+                import std;
+
+                writefln("Test value: %s", value);
+            }
+            if (
+                value <= 0 ||
+                value < minWidth ||
+                value > maxWidth ||
+                _width == value)
+            {
+                return;
+            }
+
+            if (isLayoutManaged && value > _width && !canExpandW(
+                    value - _width))
+            {
+                return;
+            }
+
+            immutable double oldWidth = _width;
+            _width = value;
+
+            setInvalid;
+
+            if (!isCreated)
+            {
+                return;
+            }
+
+            if (onChangeWidthFromTo)
+            {
+                onChangeWidthFromTo(oldWidth, _width);
+            }
+
+            if (_cache)
+            {
+                recreateCache;
+            }
+
+            //!isProcessLayout && !isProcessParentLayout && 
+            if (isResizeChildren && children.length > 0)
+            {
+                immutable double dw = _width - oldWidth;
+                foreach (child; children)
+                {
+                    if (layout is null || (!child.isLayoutManaged && child.isResizedByParent))
+                    {
+                        const newWidth = child.width + dw;
+                        child.width(newWidth);
+                    }
                 }
             }
         }
-    }
 
-    double height() @nogc @safe pure nothrow
-    {
-        return _height;
-    }
-
-    void height(double value)
-    {
-        //(_width != 0 && !isResizable) || 
-        if (value <= 0 ||
-            _height == value)
+        double height() @nogc @safe pure nothrow
         {
-            return;
+            return _height;
         }
 
-        if (value < minHeight)
+        void height(double value)
         {
-            value = minHeight;
-        }
-
-        if (value > maxHeight)
-        {
-            value = maxHeight;
-        }
-
-        if (value > _height && !canExpandH(value - _height))
-        {
-            return;
-        }
-
-        immutable double oldHeight = _height;
-        _height = value;
-
-        setInvalid;
-
-        if (!isCreated)
-        {
-            return;
-        }
-
-        if (onChangeHeightFromTo)
-        {
-            onChangeHeightFromTo(oldHeight, _height);
-        }
-
-        if (_cache)
-        {
-            recreateCache;
-        }
-
-        if (!isProcessLayout && isResizeChildren && children.length > 0)
-        {
-            const dh = _height - oldHeight;
-            foreach (child; children)
+            //(_width != 0 && !isResizable) || 
+            if (value <= 0 ||
+                _height == value)
             {
-                if (layout is null || child.isResizedByParent)
+                return;
+            }
+
+            if (value < minHeight)
+            {
+                value = minHeight;
+            }
+
+            if (value > maxHeight)
+            {
+                value = maxHeight;
+            }
+
+            if (isLayoutManaged && value > _height && !canExpandH(value - _height))
+            {
+                return;
+            }
+
+            immutable double oldHeight = _height;
+            _height = value;
+
+            setInvalid;
+
+            if (!isCreated)
+            {
+                return;
+            }
+
+            if (onChangeHeightFromTo)
+            {
+                onChangeHeightFromTo(oldHeight, _height);
+            }
+
+            if (_cache)
+            {
+                recreateCache;
+            }
+
+            //!isProcessLayout && !isProcessParentLayout && 
+            if (isResizeChildren && children.length > 0)
+            {
+                const dh = _height - oldHeight;
+                foreach (child; children)
                 {
-                    const newHeight = child.height + dh;
-                    child.height(newHeight);
+                    if (layout is null || (!child.isLayoutManaged && child.isResizedByParent))
+                    {
+                        const newHeight = child.height + dh;
+                        child.height(newHeight);
+                    }
                 }
             }
         }
-    }
 
-    bool resize(double newWidth, double newHeight)
-    {
-        width = newWidth;
-        height = newHeight;
-        return width == newWidth && height == newHeight;
-    }
-
-    bool setScale(double factorWidth, double factorHeight)
-    {
-        if (!isScalable)
+        bool resize(double newWidth, double newHeight)
         {
-            return false;
-        }
-        auto newWidth = width * factorWidth;
-        auto newHeight = height * factorHeight;
-
-        if (!isKeepAspectRatio)
-        {
-            return resize(newWidth, newHeight);
+            width = newWidth;
+            height = newHeight;
+            return width == newWidth && height == newHeight;
         }
 
-        double scaleFactorWidth = 1, scaleFactorHeight = 1;
-        if (width >= height)
+        bool setScale(double factorWidth, double factorHeight)
         {
-            scaleFactorWidth = newWidth / width;
-            scaleFactorHeight = scaleFactorWidth;
+            if (!isScalable)
+            {
+                return false;
+            }
+            auto newWidth = width * factorWidth;
+            auto newHeight = height * factorHeight;
+
+            if (!isKeepAspectRatio)
+            {
+                return resize(newWidth, newHeight);
+            }
+
+            double scaleFactorWidth = 1, scaleFactorHeight = 1;
+            if (width >= height)
+            {
+                scaleFactorWidth = newWidth / width;
+                scaleFactorHeight = scaleFactorWidth;
+            }
+            else
+            {
+                scaleFactorHeight = newHeight / height;
+                scaleFactorWidth = scaleFactorHeight;
+            }
+
+            import std.math.rounding : round;
+
+            auto newW = round(width * scaleFactorWidth);
+            auto newH = round(height * scaleFactorHeight);
+            return resize(newW, newH);
         }
-        else
+
+        void setValid(bool value) @nogc @safe pure nothrow
         {
-            scaleFactorHeight = newHeight / height;
-            scaleFactorWidth = scaleFactorHeight;
+            isValid = value;
         }
 
-        import std.math.rounding : round;
-
-        auto newW = round(width * scaleFactorWidth);
-        auto newH = round(height * scaleFactorHeight);
-        return resize(newW, newH);
-    }
-
-    void setValid(bool value) @nogc @safe pure nothrow
-    {
-        isValid = value;
-    }
-
-    void setInvalid() @nogc @safe pure nothrow
-    {
-        setValid(false);
-    }
-
-    string classnameShort()
-    {
-        string name;
-        const string fullClassName = this.classinfo.name;
-
-        import std.string : lastIndexOf;
-
-        const lastDotPosIndex = fullClassName.lastIndexOf(".");
-        if (lastDotPosIndex < 0)
+        void setValidChildren(bool value) @nogc @safe pure nothrow
         {
+            foreach (child; children)
+            {
+                child.isValid = value;
+            }
+        }
+
+        void setInvalid() @nogc @safe pure nothrow
+        {
+            setValid(false);
+        }
+
+        string classnameShort()
+        {
+            string name;
+            const string fullClassName = this.classinfo.name;
+
+            import std.string : lastIndexOf;
+
+            const lastDotPosIndex = fullClassName.lastIndexOf(".");
+            if (lastDotPosIndex < 0)
+            {
+                return name;
+            }
+            name = fullClassName[lastDotPosIndex + 1 .. $];
             return name;
         }
-        name = fullClassName[lastDotPosIndex + 1 .. $];
-        return name;
-    }
 
-    void drawBounds()
-    {
-        import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
-        import deltotum.kit.graphics.colors.rgba : RGBA;
-
-        if (width == 0 || height == 0)
+        void drawBounds()
         {
-            return;
+            import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
+            import deltotum.kit.graphics.colors.rgba : RGBA;
+
+            if (width == 0 || height == 0)
+            {
+                return;
+            }
+
+            const b = bounds;
+            graphics.drawRect(b.x, b.y, b.width, b.height, GraphicStyle(1, RGBA.red));
         }
 
-        const b = bounds;
-        graphics.drawRect(b.x, b.y, b.width, b.height, GraphicStyle(1, RGBA.red));
-    }
+        void drawAllBounds(bool isDraw)
+        {
+            onChildrenRec((ch) {
+                if (debugFlag in ch.userData)
+                {
+                    return true;
+                }
 
-    void drawAllBounds(bool isDraw)
-    {
-        onChildrenRec((ch) {
-            if (debugFlag in ch.userData)
+                ch.isDrawBounds = isDraw;
+                return true;
+            });
+        }
+
+        void onChildrenRec(bool delegate(Sprite) onSprite)
+        {
+            onChildrenRec(this, onSprite);
+        }
+
+        void onChildrenRec(Sprite root, bool delegate(Sprite) onSpriteIsContinue)
+        {
+            if (root is null)
+            {
+                return;
+            }
+
+            if (!onSpriteIsContinue(root))
+            {
+                return;
+            }
+
+            foreach (child; root.children)
+            {
+                onChildrenRec(child, onSpriteIsContinue);
+            }
+        }
+
+        Nullable!Sprite findChildRec(string id)
+        {
+            Sprite mustBeChild;
+            onChildrenRec((child) {
+                if (child.id == id)
+                {
+                    mustBeChild = child;
+                    return false;
+                }
+                return true;
+            });
+            return mustBeChild is null ? Nullable!Sprite.init : Nullable!Sprite(mustBeChild);
+        }
+
+        Nullable!Sprite findChildRec(Sprite child)
+        {
+            if (child is null)
+            {
+                debug throw new Exception("Child must not be null");
+                return Nullable!Sprite.init;
+            }
+            Sprite mustBeChild;
+            onChildrenRec((currentChild) {
+                if (child is currentChild)
+                {
+                    mustBeChild = child;
+                    return false;
+                }
+                return true;
+            });
+
+            return mustBeChild is null ? Nullable!Sprite.init : Nullable!Sprite(mustBeChild);
+        }
+
+        Nullable!Sprite findChild(Sprite child)
+        {
+            foreach (Sprite ch; children)
+            {
+                if (ch is child)
+                {
+                    return Nullable!Sprite(ch);
+                }
+            }
+            return Nullable!Sprite.init;
+        }
+
+        Nullable!Sprite findChild(string id)
+        {
+            foreach (Sprite ch; children)
+            {
+                if (ch.id == id)
+                {
+                    return Nullable!Sprite(ch);
+                }
+            }
+            return Nullable!Sprite.init;
+        }
+
+        void destroy()
+        {
+            if (_cache)
+            {
+                _cache.destroy;
+            }
+            foreach (Sprite child; children)
+            {
+                child.parent = null;
+                child.destroy;
+            }
+
+            invalidateListeners = null;
+        }
+
+        bool isCached()
+        {
+            return _cached;
+        }
+
+        void isCached(bool value)
+        {
+            _cached = value;
+        }
+
+        bool canExpandW(double value)
+        {
+            Sprite curParent = parent;
+            if (!curParent || !curParent.layout)
             {
                 return true;
             }
 
-            ch.isDrawBounds = isDraw;
-            return true;
-        });
-    }
-
-    void onChildrenRec(bool delegate(Sprite) onSprite)
-    {
-        onChildrenRec(this, onSprite);
-    }
-
-    void onChildrenRec(Sprite root, bool delegate(Sprite) onSpriteIsContinue)
-    {
-        if (root is null)
-        {
-            return;
-        }
-
-        if (!onSpriteIsContinue(root))
-        {
-            return;
-        }
-
-        foreach (child; root.children)
-        {
-            onChildrenRec(child, onSpriteIsContinue);
-        }
-    }
-
-    Nullable!Sprite findChildRec(string id)
-    {
-        Sprite mustBeChild;
-        onChildrenRec((child) {
-            if (child.id == id)
+            while (curParent)
             {
-                mustBeChild = child;
-                return false;
-            }
-            return true;
-        });
-        return mustBeChild is null ? Nullable!Sprite.init : Nullable!Sprite(mustBeChild);
-    }
-
-    Nullable!Sprite findChildRec(Sprite child)
-    {
-        if (child is null)
-        {
-            debug throw new Exception("Child must not be null");
-            return Nullable!Sprite.init;
-        }
-        Sprite mustBeChild;
-        onChildrenRec((currentChild) {
-            if (child is currentChild)
-            {
-                mustBeChild = child;
-                return false;
-            }
-            return true;
-        });
-
-        return mustBeChild is null ? Nullable!Sprite.init : Nullable!Sprite(mustBeChild);
-    }
-
-    Nullable!Sprite findChild(Sprite child)
-    {
-        foreach (Sprite ch; children)
-        {
-            if (ch is child)
-            {
-                return Nullable!Sprite(ch);
-            }
-        }
-        return Nullable!Sprite.init;
-    }
-
-    Nullable!Sprite findChild(string id)
-    {
-        foreach (Sprite ch; children)
-        {
-            if (ch.id == id)
-            {
-                return Nullable!Sprite(ch);
-            }
-        }
-        return Nullable!Sprite.init;
-    }
-
-    void destroy()
-    {
-        if (_cache)
-        {
-            _cache.destroy;
-        }
-        foreach (Sprite child; children)
-        {
-            child.parent = null;
-            child.destroy;
-        }
-
-        invalidateListeners = null;
-    }
-
-    bool isCached()
-    {
-        return _cached;
-    }
-
-    void isCached(bool value)
-    {
-        _cached = value;
-    }
-
-    bool canExpandW(double value)
-    {
-        Sprite curParent = parent;
-        if (!curParent || !curParent.layout)
-        {
-            return true;
-        }
-
-        while (curParent)
-        {
-            auto freeMaxWidth = curParent.layout.freeMaxWidth(curParent);
-            if (freeMaxWidth < value)
-            {
-                return false;
-            }
-
-            curParent = curParent.parent;
-        }
-
-        return true;
-    }
-
-    bool canExpandH(double value)
-    {
-        Sprite curParent = parent;
-        while (curParent)
-        {
-            if (curParent.layout)
-            {
-                const freeMaxHeight = curParent.layout.freeMaxHeight(curParent);
-                if (freeMaxHeight < value)
+                auto freeMaxWidth = curParent.layout.freeMaxWidth(curParent);
+                if (freeMaxWidth < value)
                 {
                     return false;
                 }
+
+                curParent = curParent.parent;
             }
-            curParent = curParent.parent;
+
+            return true;
         }
 
-        return true;
+        bool canExpandH(double value)
+        {
+            Sprite curParent = parent;
+            while (curParent)
+            {
+                if (curParent.layout)
+                {
+                    const freeMaxHeight = curParent.layout.freeMaxHeight(curParent);
+                    if (freeMaxHeight < value)
+                    {
+                        return false;
+                    }
+                }
+                curParent = curParent.parent;
+            }
+
+            return true;
+        }
     }
-}
