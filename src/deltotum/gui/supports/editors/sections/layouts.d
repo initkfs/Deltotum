@@ -235,6 +235,33 @@ class Layouts : Control
         bottom.isHGrow = true;
         bBox.bottom.addCreate(bottom);
 
+        import deltotum.gui.containers.flow_box: FlowBox;
+        auto flowBox1 = configureControl(new FlowBox(5, 5));
+        flowBox1.width = 200;
+        flowBox1.height = 200;
+        posVContainer.addCreate(flowBox1);
+
+        foreach (i; 0..5)
+        {
+            import std.conv: to;
+            auto btn = createButton(i.to!dstring);
+            flowBox1.addCreate(btn);
+        }
+
+        auto fbox2 = new FlowBox(5, 5);
+        fbox2.layout.isFillFromStartToEnd = false;
+        auto flowBoxEndToStart = configureControl(fbox2);
+        flowBoxEndToStart.width = 200;
+        flowBoxEndToStart.height = 200;
+        posVContainer.addCreate(flowBoxEndToStart);
+
+        foreach (i; 0..5)
+        {
+            import std.conv: to;
+            auto btn = createButton(i.to!dstring);
+            flowBoxEndToStart.addCreate(btn);
+        }
+
     }
 
 }
