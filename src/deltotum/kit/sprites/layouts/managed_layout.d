@@ -10,6 +10,8 @@ import deltotum.kit.sprites.alignment : Alignment;
  */
 class ManagedLayout : Layout
 {
+    bool isArrangeBeforeResize;
+    bool isArragneAfterResize = true;
 
     bool alignment(Sprite root, Sprite obj)
     {
@@ -108,6 +110,10 @@ class ManagedLayout : Layout
 
     override void applyLayout(Sprite root)
     {
+        if(isArrangeBeforeResize){
+            arrangeChildren(root);
+        }
+
         if (isResizeParent)
         {
             layoutResize(root);
@@ -118,7 +124,9 @@ class ManagedLayout : Layout
             layoutResizeChildren(root);
         }
 
-        arrangeChildren(root);
+        if(isArragneAfterResize){
+            arrangeChildren(root);
+        }
     }
 
     void layoutResize(Sprite root)

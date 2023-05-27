@@ -160,7 +160,7 @@ struct Vector2d
         return angleRad;
     }
 
-    Vector2d polar(double angleDeg, double radius) const @nogc nothrow pure @safe
+    static Vector2d polarDeg(double angleDeg, double radius) @nogc nothrow pure @safe
     {
         import math = deltotum.math;
 

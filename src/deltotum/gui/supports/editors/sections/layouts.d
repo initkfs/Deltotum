@@ -241,7 +241,7 @@ class Layouts : Control
         flowBox1.height = 200;
         posVContainer.addCreate(flowBox1);
 
-        foreach (i; 0..5)
+        foreach (i; 1..6)
         {
             import std.conv: to;
             auto btn = createButton(i.to!dstring);
@@ -255,11 +255,26 @@ class Layouts : Control
         flowBoxEndToStart.height = 200;
         posVContainer.addCreate(flowBoxEndToStart);
 
-        foreach (i; 0..5)
+        foreach (i; 1..6)
         {
             import std.conv: to;
             auto btn = createButton(i.to!dstring);
             flowBoxEndToStart.addCreate(btn);
+        }
+
+        auto pos2Container = configureControl(new HBox);
+        addCreate(pos2Container);
+
+        import deltotum.gui.containers.circle_box: CircleBox;
+
+        auto circleBox1 = configureControl(new CircleBox);
+        pos2Container.addCreate(circleBox1);
+
+        foreach (i; 1..7)
+        {
+            import std.conv: to;
+            auto btn = createButton(i.to!dstring);
+            circleBox1.addCreate(btn);
         }
 
     }

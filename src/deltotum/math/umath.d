@@ -10,6 +10,7 @@ import deltotum.math.vector2d : Vector2d;
  * Authors: initkfs
  */
 enum PI = mathConst.PI;
+enum PI2 = PI * 2;
 
 double degToRad(double deg) @nogc nothrow pure @safe
 {
