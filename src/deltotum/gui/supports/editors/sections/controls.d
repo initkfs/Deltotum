@@ -21,11 +21,33 @@ class Controls : Control
         isBackground = false;
     }
 
+    T configureControl(T)(T sprite)
+    {
+        if (is(T : Control))
+        {
+            sprite.isBorder = true;
+        }
+        return sprite;
+    }
+
     override void create()
     {
         super.create;
 
-        // auto iconsContainer = new HBox;
+        import deltotum.gui.containers.hbox : HBox;
+
+        auto controlsContainer = configureControl(new HBox);
+        addCreate(controlsContainer);
+
+        import deltotum.gui.controls.choices.choice_box: ChoiceBox;
+
+        auto choice1 = configureControl(new ChoiceBox);
+        controlsContainer.addCreate(choice1);
+
+        choice1.fill([
+            "A", "B", "C", "D", "String1", "String2"
+        ]);
+
         // iconsContainer.isBackground = false;
 
         // import deltotum.kit.sprites.images.image : Image;
