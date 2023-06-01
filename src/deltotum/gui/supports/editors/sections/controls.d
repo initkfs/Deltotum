@@ -48,6 +48,11 @@ class Controls : Control
             "A", "B", "C", "D", "String1", "String2"
         ]);
 
+        import deltotum.gui.controls.choices.checkbox: CheckBox;
+        auto check1 = new CheckBox;
+        controlsContainer.addCreate(check1);
+        check1.label.text = "Check";
+
         // iconsContainer.isBackground = false;
 
         // import deltotum.kit.sprites.images.image : Image;
