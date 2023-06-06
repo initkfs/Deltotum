@@ -116,7 +116,7 @@ struct Vector2d
     }
 
     Vector2d project(double factor) const @nogc nothrow pure @safe
-    in(factor != 0.0)
+    in (factor != 0.0)
     {
         return Vector2d(x / factor, y / factor);
     }
@@ -160,13 +160,39 @@ struct Vector2d
         return angleRad;
     }
 
-    static Vector2d polarDeg(double angleDeg, double radius) @nogc nothrow pure @safe
+    static Vector2d fromPolarDeg(double angleDeg, double radius) @nogc nothrow pure @safe
     {
-        import math = deltotum.math;
+        import Math = deltotum.math;
 
-        immutable pX = radius * math.cosDeg(angleDeg);
-        immutable pY = radius * math.sinDeg(angleDeg);
+        return fromPolarRad(Math.degToRad(angleDeg), radius);
+    }
+
+    static Vector2d fromPolarRad(double angleRad, double radius) @nogc nothrow pure @safe
+    {
+        import Math = deltotum.math;
+
+        immutable pX = radius * Math.cos(angleRad);
+        immutable pY = radius * Math.sin(angleRad);
         return Vector2d(pX, pY);
+    }
+
+    //TODO vector?
+    static Vector2d toPolarRad(double x, double y) @nogc nothrow pure @safe
+    {
+        import Math = deltotum.math;
+
+        const radius = Math.sqrt(x * x + y * y);
+        const angleRad = Math.atan2(y, x);
+
+        return Vector2d(radius, angleRad);
+    }
+
+    static Vector2d toPolarDeg(double x, double y) @nogc nothrow pure @safe
+    {
+        import Math = deltotum.math;
+
+        const polarRad = toPolarRad(x, y);
+        return Vector2d(polarRad.x, Math.radToDeg(polarRad.y));
     }
 
     Matrix2x1 transpose() const pure @safe

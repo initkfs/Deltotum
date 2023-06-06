@@ -28,7 +28,8 @@ class Graphics : LoggableUnit
     //TODO move to gui module
     Theme theme;
 
-    RGBA defaultColor = RGBA.red;
+    //TODO remove
+    static RGBA defaultColor = RGBA.red;
 
     protected
     {
@@ -78,12 +79,24 @@ class Graphics : LoggableUnit
         adjustRender(color);
     }
 
-    private void adjustRender(RGBA color = defaultColor)
+    //TODO Remove color change
+    RGBA adjustRender(RGBA color = defaultColor)
     {
+        RGBA prevColor;
+        ubyte r, g, b, a;
+        if(const err = renderer.getRenderDrawColor(r, g, b, a)){
+            logger.errorf("Error getting current renderer color");
+            return prevColor;
+        }
+
+        prevColor = RGBA(r, g, b, a / ubyte.max);
+
         if (const err = renderer.setRenderDrawColor(color.r, color.g, color.b, color.alphaNorm))
         {
             logger.errorf("Adjust render error. %s", err);
         }
+
+        return prevColor;
     }
 
     void drawLine(double startX, double startY, double endX, double endY)

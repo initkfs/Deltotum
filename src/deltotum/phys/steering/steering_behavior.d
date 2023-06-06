@@ -80,7 +80,7 @@ class SteeringBehavior
         const Vector2d circleCenter = velocity.clone.normalize.scale(wandlerCircleDistance);
         Vector2d displacement = Vector2d(0, -1).scale(wanderCircleRadius);
 
-        displacement = Vector2d.polarDeg(wanderAngle, displacement.magnitude);
+        displacement = Vector2d.fromPolarDeg(wanderAngle, displacement.magnitude);
         //const angleDiff = random.randomBetween0to1 * angleChange - angleChange * 0.5;
         //newAngle = newAngle.inc(angleDiff);
         const Vector2d wanderForce = circleCenter + displacement;

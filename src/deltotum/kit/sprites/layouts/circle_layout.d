@@ -46,7 +46,7 @@ class CircleLayout : ManagedLayout
         int nextDeg = 0;
         foreach (child; children)
         {
-            const pos = Vector2d.polarDeg(nextDeg, radius);
+            const pos = Vector2d.fromPolarDeg(nextDeg, radius);
             child.x = startX + radius + pos.x; //- child.width / 2;
             child.y = startY + radius + pos.y; //- child.height / 2;
             nextDeg += angleDegStep;

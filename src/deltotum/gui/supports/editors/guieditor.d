@@ -43,7 +43,7 @@ class GuiEditor : Scene
         curvesTab.content = new Curves;
         root.addCreate(curvesTab);
 
-        root.changeTab(controlsTab);
+        root.changeTab(curvesTab);
     }
 
 }

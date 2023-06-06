@@ -53,12 +53,10 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
     ComResult setRenderDrawColor(ubyte r, ubyte g, ubyte b, ubyte a) @nogc nothrow
     {
         ubyte oldR, oldG, oldB, oldA;
-        //TODO log?
-        const int zeroOrErrorColor = SDL_GetRenderDrawColor(ptr,
-            &oldR, &oldG, &oldB, &oldA);
-        if (zeroOrErrorColor)
+
+        if (const err = getRenderDrawColor(oldR, oldG, oldB, oldA))
         {
-            return ComResult(zeroOrErrorColor, "Error getting render old color for drawing");
+            return err;
         }
 
         if (r == oldR && g == oldG && b == oldB && a == oldA)
@@ -73,6 +71,18 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         }
 
         return ComResult();
+    }
+
+    ComResult getRenderDrawColor(out ubyte r, out ubyte g, out ubyte b, out ubyte a) @nogc nothrow
+    {
+        const int zeroOrErrorColor = SDL_GetRenderDrawColor(ptr,
+            &r, &g, &b, &a);
+        if (zeroOrErrorColor)
+        {
+            return ComResult(zeroOrErrorColor, "Error getting render old color for drawing");
+        }
+
+        return ComResult.success;
     }
 
     ComResult clear() @nogc nothrow

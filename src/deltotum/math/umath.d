@@ -58,9 +58,53 @@ double cos(double value) @nogc nothrow pure @safe
 }
 
 pragma(inline, true);
+double sec(double value) @nogc nothrow pure @safe
+{
+    return 1.0 / cos(value);
+}
+
+pragma(inline, true);
 double cosDeg(double valueDeg) @nogc nothrow pure @safe
 {
     return cos(degToRad(valueDeg));
+}
+
+pragma(inline, true);
+double tan(double valueRad) @nogc nothrow pure @safe
+{
+    return math.tan(valueRad);
+}
+
+pragma(inline, true);
+double tanDeg(double valueDeg) @nogc nothrow pure @safe
+{
+    return math.tan(degToRad(valueDeg));
+}
+
+pragma(inline, true);
+double tanHyp(double valueRad) @nogc nothrow pure @safe
+{
+    import std.math.trigonometry : tanh;
+
+    return tanh(valueRad);
+}
+
+pragma(inline, true);
+double cosHyp(double valueRad) @nogc nothrow pure @safe
+{
+    import std.math.trigonometry : cosh;
+
+    return cosh(valueRad);
+}
+
+double ctg(double x)
+{
+    return 1 / tan(x);
+}
+
+double arcctg(double x)
+{
+    return PI / 2 - math.atan(x);
 }
 
 pragma(inline, true);
@@ -134,4 +178,9 @@ double hypot(double a, double b) @nogc nothrow pure @safe
     }
 
     return result;
+}
+
+double sign(double value){
+    import std.math.traits: sgn;
+    return sgn(value);
 }
