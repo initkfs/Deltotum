@@ -15,7 +15,7 @@ struct RGBA
     ubyte r;
     ubyte g;
     ubyte b;
-    double alpha = 1;
+    double a = 1;
 
     private
     {
@@ -74,9 +74,9 @@ struct RGBA
             return RGBA(0, 0, 255);
         }
 
-        static RGBA gray(ubyte grayColor, double alpha = RGBAData.maxAlpha) @nogc nothrow pure @safe
+        static RGBA gray(ubyte grayColor, double a = RGBAData.maxAlpha) @nogc nothrow pure @safe
         {
-            return RGBA(grayColor, grayColor, grayColor, alpha);
+            return RGBA(grayColor, grayColor, grayColor, a);
         }
     }
 
@@ -87,7 +87,7 @@ struct RGBA
         return color;
     }
 
-    static RGBA web(string colorString, double alpha = RGBAData.maxAlpha) pure @safe
+    static RGBA web(string colorString, double a = RGBAData.maxAlpha) pure @safe
     {
         import std.traits : EnumMembers;
         import std.uni : sicmp;
@@ -157,13 +157,13 @@ struct RGBA
             bValue = to!ubyte(replicate(mustBeColor[2 .. 3], replicateCount), hexBase);
         }
 
-        RGBA c = {rValue, gValue, bValue, alpha};
+        RGBA c = {rValue, gValue, bValue, a};
         return c;
     }
 
     RGBA invert() @nogc nothrow pure @safe
     {
-        return RGBA(RGBAData.maxColor - r, RGBAData.maxColor - g, RGBAData.maxColor - b, alpha);
+        return RGBA(RGBAData.maxColor - r, RGBAData.maxColor - g, RGBAData.maxColor - b, a);
     }
 
     RGBA interpolate(RGBA start, RGBA end, double factor = 0.5) pure @safe
@@ -181,13 +181,13 @@ struct RGBA
         auto rValue = to!ubyte(start.r + (end.r - start.r) * factor);
         auto gValue = to!ubyte(start.g + (end.g - start.g) * factor);
         auto bValue = to!ubyte(start.b + (end.b - start.b) * factor);
-        auto alphaValue = to!ubyte(start.alpha + (end.alpha - start.alpha) * factor);
+        auto alphaValue = to!ubyte(start.a + (end.a - start.a) * factor);
         return RGBA(rValue, gValue, bValue, alphaValue);
     }
 
-    ubyte alphaNorm() const pure @safe
+    ubyte aNorm() const pure @safe
     {
-        return to!ubyte(alpha * RGBAData.maxColor);
+        return to!ubyte(a * RGBAData.maxColor);
     }
 
     string toWebHex() const pure @safe
@@ -201,7 +201,7 @@ struct RGBA
     {
         import std.format : format;
 
-        return format("rgba(%s,%s,%s,%.1f)", r, g, b, alpha);
+        return format("rgba(%s,%s,%s,%.1f)", r, g, b, a);
     }
 
     static RGBA fromUint(uint value) pure @safe
@@ -239,14 +239,14 @@ struct RGBA
             ubyte byte1 = r;
             ubyte byte2 = g;
             ubyte byte3 = b;
-            ubyte byte4 = alphaNorm;
+            ubyte byte4 = aNorm;
         }
         else version (BigEndian)
         {
             ubyte byte4 = b;
             ubyte byte3 = g;
             ubyte byte2 = r;
-            ubyte byte1 = alphaNorm;
+            ubyte byte1 = aNorm;
         }
 
         enum sizeOfBits = ubyte.sizeof * 8;
@@ -278,13 +278,13 @@ struct RGBA
     bool isMin() const pure @safe
     {
         enum minColor = RGBAData.minColor;
-        return r == minColor && g == minColor && b == minColor && alpha == RGBAData.minColor;
+        return r == minColor && g == minColor && b == minColor && a == RGBAData.minColor;
     }
 
     bool isMax() const pure @safe
     {
         enum maxColor = RGBAData.maxColor;
-        return r == maxColor && g == maxColor && b == maxColor && alpha == RGBAData.maxAlpha;
+        return r == maxColor && g == maxColor && b == maxColor && a == RGBAData.maxAlpha;
     }
 
     HSV toHSV() const @safe
@@ -343,7 +343,7 @@ unittest
     assert(rgba1.r == colorMin);
     assert(rgba1.g == colorMin);
     assert(rgba1.b == colorMin);
-    assert(rgba1.alpha == colorMin);
+    assert(rgba1.a == colorMin);
 
     assert(rgba1.toString == "rgba(0,0,0,0.0)");
     assert(rgba1.toWebHex == "#000");
@@ -354,7 +354,7 @@ unittest
     assert(rgba2.r == colorMax);
     assert(rgba2.g == colorMax);
     assert(rgba2.b == colorMax);
-    assert(rgba2.alpha == alphaMax);
+    assert(rgba2.a == alphaMax);
 
     assert(rgba2.toString == "rgba(255,255,255,1.0)");
     assert(rgba2.toWebHex == "#FFFFFF");
@@ -366,13 +366,13 @@ unittest
     assert(colorWeb6Upper.r == 255);
     assert(colorWeb6Upper.g == 255);
     assert(colorWeb6Upper.b == 255);
-    assert(colorWeb6Upper.alpha == 0.5);
+    assert(colorWeb6Upper.a == 0.5);
 
     RGBA colorWeb6 = RGBA.web("#ffffff", 0.5);
     assert(colorWeb6.r == 255);
     assert(colorWeb6.g == 255);
     assert(colorWeb6.b == 255);
-    assert(colorWeb6.alpha == 0.5);
+    assert(colorWeb6.a == 0.5);
 
     RGBA colorWeb3 = RGBA.web("#ABC");
     assert(colorWeb3.r == 170);
@@ -428,7 +428,7 @@ unittest
     assert(color1FromUint.r == 17);
     assert(color1FromUint.g == 54);
     assert(color1FromUint.b == 76);
-    assert(color1FromUint.alpha == 1.0);
+    assert(color1FromUint.a == 1.0);
 
     const color0 = RGBA(0, 0, 0, 0);
     assert(color0.toUint == 0);
@@ -437,5 +437,5 @@ unittest
     assert(color0FromUint.r == 0);
     assert(color0FromUint.g == 0);
     assert(color0FromUint.b == 0);
-    assert(color0FromUint.alpha == 0);
+    assert(color0FromUint.a == 0);
 }

@@ -43,7 +43,7 @@ class Font : LoggableUnit
     {
         SdlSurface fontSurface = new SdlSurface;
         if (const fontRenderErr = font.render(fontSurface, text, color.r, color.g, color.b, color
-                .alphaNorm, background.r, background.g, background.b))
+                .aNorm, background.r, background.g, background.b))
         {
             logger.error(fontRenderErr.toString);
             if(const err = fontSurface.createRGBSurface){

@@ -25,7 +25,7 @@ struct Pixel
 
     void setColor(RGBA color)
     {
-        const newColor = SDL_MapRGBA(format, color.r, color.g, color.b, color.alphaNorm);
+        const newColor = SDL_MapRGBA(format, color.r, color.g, color.b, color.aNorm);
         *ptr = newColor;
     }
 

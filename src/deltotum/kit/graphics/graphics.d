@@ -91,7 +91,7 @@ class Graphics : LoggableUnit
 
         prevColor = RGBA(r, g, b, a / ubyte.max);
 
-        if (const err = renderer.setRenderDrawColor(color.r, color.g, color.b, color.alphaNorm))
+        if (const err = renderer.setRenderDrawColor(color.r, color.g, color.b, color.aNorm))
         {
             logger.errorf("Adjust render error. %s", err);
         }
@@ -452,7 +452,7 @@ class Graphics : LoggableUnit
         //isClearingInCycle
         const screenColor = RGBA.black;
         if (const err = renderer.setRenderDrawColor(screenColor.r, screenColor.g, screenColor.b, screenColor
-                .alphaNorm))
+                .aNorm))
         {
             //TODO logging in main loop?
         }
