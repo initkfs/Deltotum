@@ -126,7 +126,7 @@ unittest
     assert(brush.pos.x == 10);
     assert(brush.pos.y == 0);
 
-    brush.angleDeg = 90;
+    brush.rotateRight(90);
     brush.move(10);
 
     assert(brush.pos.x == 10);

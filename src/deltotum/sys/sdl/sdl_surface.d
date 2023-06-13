@@ -170,9 +170,43 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface
         return ComResult(zeroOrErrorCode);
     }
 
+    ComResult lock()
+    {
+        assert(ptr);
+        const int zeroOrErrorCode = SDL_LockSurface(ptr);
+        return ComResult(zeroOrErrorCode);
+    }
+
+    ComResult unlock()
+    {
+        assert(ptr);
+        SDL_UnlockSurface(ptr);
+        return ComResult.success;
+    }
+
     inout(void*) pixels() inout @nogc nothrow @safe
     {
         return ptr.pixels;
+    }
+
+    uint* pixel(int x, int y)
+    {
+        uint* pixelPos = cast(Uint32*)(
+            cast(
+                Uint8*) ptr.pixels + y * ptr.pitch + x * ptr.format.BytesPerPixel);
+        return pixelPos;
+    }
+
+    void setPixel(int x, int y, ubyte r, ubyte g, ubyte b, ubyte a)
+    {
+        uint* pixelPtr = pixel(x, y);
+        setPixel(pixelPtr, r, g, b, a);
+    }
+
+    void setPixel(uint* pixel, ubyte r, ubyte g, ubyte b, ubyte a)
+    {
+        Uint32 color = SDL_MapRGBA(ptr.format, r, g, b, a);
+        *pixel = color;
     }
 
     int pitch() inout @nogc nothrow @safe

@@ -49,7 +49,13 @@ class GuiEditor : Scene
         fractalsTab.content = new Fractals;
         root.addCreate(fractalsTab);
 
-        root.changeTab(fractalsTab);
+        import deltotum.gui.supports.editors.sections.images: Images;
+
+        auto imagesTab = new Tab("Images");
+        imagesTab.content = new Images;
+        root.addCreate(imagesTab);
+
+        root.changeTab(imagesTab);
     }
 
 }

@@ -15,6 +15,7 @@ import deltotum.kit.sprites.layouts.vertical_layout : VerticalLayout;
  */
 class TabPane : Control
 {
+    bool isLazyContent = true;
 
     private
     {
@@ -79,7 +80,6 @@ class TabPane : Control
 
         if (tab.content)
         {
-            content.addCreate(tab.content);
             tab.content.isVisible = false;
             tab.content.isUpdatable = false;
         }
@@ -109,6 +109,11 @@ class TabPane : Control
 
         if (currentTab.content)
         {
+            if (!currentTab.content.isCreated)
+            {
+                content.addCreate(newTab.content);
+            }
+
             currentTab.content.isVisible = true;
             currentTab.content.isUpdatable = true;
         }

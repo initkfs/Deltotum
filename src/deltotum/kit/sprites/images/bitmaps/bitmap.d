@@ -16,6 +16,11 @@ class Bitmap
         _bitmap = new FreeImageBitmap(path);
     }
 
+    void loadPng(const(char*) ptr){
+        _bitmap = new FreeImageBitmap;
+        _bitmap.loadPng(ptr);
+    }
+
     ubyte* bits()
     {
         return cast(ubyte*) _bitmap.bits;

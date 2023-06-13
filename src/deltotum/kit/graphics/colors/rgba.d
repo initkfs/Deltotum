@@ -204,6 +204,57 @@ struct RGBA
         return format("rgba(%s,%s,%s,%.1f)", r, g, b, alpha);
     }
 
+    static RGBA fromUint(uint value) pure @safe
+    {
+        ubyte max = ubyte.max;
+        const sizeOfBits = ubyte.sizeof * 8;
+
+        ubyte byte1 = (value >> sizeOfBits * 3) & max;
+        ubyte byte2 = (value >> sizeOfBits * 2) & max;
+        ubyte byte3 = (value >> sizeOfBits) & max;
+        ubyte byte4 = value & max;
+
+        version (LittleEndian)
+        {
+            ubyte r = byte1;
+            ubyte g = byte2;
+            ubyte b = byte3;
+            ubyte a = byte4;
+        }
+        else version (BigEndian)
+        {
+            ubyte r = byte4;
+            ubyte g = byte3;
+            ubyte b = byte2;
+            ubyte a = byte1;
+        }
+
+        return RGBA(r, g, b, a / max);
+    }
+
+    uint toUint() const pure @safe
+    {
+        version (LittleEndian)
+        {
+            ubyte byte1 = r;
+            ubyte byte2 = g;
+            ubyte byte3 = b;
+            ubyte byte4 = alphaNorm;
+        }
+        else version (BigEndian)
+        {
+            ubyte byte4 = b;
+            ubyte byte3 = g;
+            ubyte byte2 = r;
+            ubyte byte1 = alphaNorm;
+        }
+
+        enum sizeOfBits = ubyte.sizeof * 8;
+        uint rgba = (byte1 << sizeOfBits * 3) + (byte2 << sizeOfBits * 2) + (
+            byte3 << sizeOfBits) + (byte4);
+        return rgba;
+    }
+
     double colorNorm(double colorValue) const pure @safe
     {
         return colorValue / RGBAData.maxColor;
@@ -222,6 +273,18 @@ struct RGBA
     double bNorm() const pure @safe
     {
         return colorNorm(b);
+    }
+
+    bool isMin() const pure @safe
+    {
+        enum minColor = RGBAData.minColor;
+        return r == minColor && g == minColor && b == minColor && alpha == RGBAData.minColor;
+    }
+
+    bool isMax() const pure @safe
+    {
+        enum maxColor = RGBAData.maxColor;
+        return r == maxColor && g == maxColor && b == maxColor && alpha == RGBAData.maxAlpha;
     }
 
     HSV toHSV() const @safe
@@ -352,4 +415,27 @@ unittest
     assert(isClose(hsv1.hue, 88.24, 0.0001));
     assert(isClose(hsv1.saturation, 68));
     assert(isClose(hsv1.value, 19.6, 0.001));
+}
+
+unittest
+{
+    const color1 = RGBA(17, 54, 76, 1.0);
+    uint color1Uint = color1.toUint;
+
+    assert(color1Uint == 0x11364cff);
+
+    const color1FromUint = RGBA.fromUint(color1Uint);
+    assert(color1FromUint.r == 17);
+    assert(color1FromUint.g == 54);
+    assert(color1FromUint.b == 76);
+    assert(color1FromUint.alpha == 1.0);
+
+    const color0 = RGBA(0, 0, 0, 0);
+    assert(color0.toUint == 0);
+
+    const color0FromUint = RGBA.fromUint(0);
+    assert(color0FromUint.r == 0);
+    assert(color0FromUint.g == 0);
+    assert(color0FromUint.b == 0);
+    assert(color0FromUint.alpha == 0);
 }

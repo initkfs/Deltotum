@@ -9,10 +9,33 @@ import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
 import deltotum.sys.sdl.img.sdl_image : SdlImage;
 import deltotum.kit.sprites.textures.texture : Texture;
 import deltotum.math.shapes.rect2d : Rect2d;
+import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.kit.sprites.flip : Flip;
 import deltotum.kit.sprites.images.bitmaps.bitmap : Bitmap;
 
 import bindbc.sdl;
+
+//TODO struct? 
+import bindbc.sdl;
+
+struct Pixel
+{
+    uint* ptr;
+    SDL_PixelFormat* format;
+
+    void setColor(RGBA color)
+    {
+        const newColor = SDL_MapRGBA(format, color.r, color.g, color.b, color.alphaNorm);
+        *ptr = newColor;
+    }
+
+    RGBA getColor()
+    {
+        ubyte r, g, b, a;
+        SDL_GetRGBA(*ptr, format, &r, &g, &b, &a);
+        return RGBA(r, g, b, a / ubyte.max);
+    }
+}
 
 /**
  * Authors: initkfs
@@ -78,7 +101,7 @@ class TextureImage : Texture
         return true;
     }
 
-    bool loadRaw(string content, int requestWidth = -1, int requestHeight = -1)
+    bool loadRaw(string content, int requestWidth = -1, int requestHeight = -1, scope void delegate(int, int, ref Pixel) onPixels = null)
     {
         //TODO remove bindbc
         import bindbc.sdl;
@@ -102,6 +125,33 @@ class TextureImage : Texture
         }
 
         SdlSurface surf = new SdlSurface(surface);
+        if (onPixels)
+        {
+            if (const err = surf.lock)
+            {
+                throw new Exception(err.toString);
+            }
+
+            scope (exit)
+            {
+                if (const err = surf.unlock)
+                {
+                    throw new Exception(err.toString);
+                }
+            }
+
+            foreach (y; 0 .. surf.height)
+            {
+                foreach (x; 0 .. surf.width)
+                {
+                    //TODO more optimal iteration
+                    uint* pixel = surf.pixel(x, y);
+                    auto pixelPtr = Pixel(pixel, surf.getObject.format);
+                    onPixels(x, y, pixelPtr);
+                }
+            }
+        }
+
         return load(surf, requestWidth, requestHeight);
     }
 

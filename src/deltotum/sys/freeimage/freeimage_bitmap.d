@@ -8,6 +8,9 @@ import bindbc.freeimage;
 
 class FreeImageBitmap : FreeImagePtrManager!(FIBITMAP)
 {
+    this(){
+        super();
+    }
 
     this(string path)
     {
@@ -20,6 +23,17 @@ class FreeImageBitmap : FreeImagePtrManager!(FIBITMAP)
         }
 
         //TODO coordinates?
+        FreeImage_FlipVertical(ptr);
+    }
+
+    void loadPng(const(char*) rawPtr)
+    {
+        ptr = FreeImage_Load(FREE_IMAGE_FORMAT.FIF_PNG, rawPtr);
+        if (!ptr)
+        {
+            throw new Exception("Png image loading error from memory pointer.");
+        }
+
         FreeImage_FlipVertical(ptr);
     }
 
