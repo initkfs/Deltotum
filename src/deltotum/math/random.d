@@ -41,6 +41,12 @@ class Random
         return value;
     }
 
+    T randomBetweenType(T)() pure @safe
+            if (isNumeric!T)
+    {
+       return randomBetween!T(T.min, T.max);
+    }
+
     double randomBetween0to1() pure @safe
     {
         return randomBetween!double(0, 1);

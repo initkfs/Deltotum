@@ -74,7 +74,9 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
     {
         const zeroOrErr = SDL_SetRenderTarget(renderer.getObject, null);
         import std.string : fromStringz;
-        if(zeroOrErr != 0){
+
+        if (zeroOrErr != 0)
+        {
             throw new Exception(getError.fromStringz.idup);
         }
     }
@@ -114,11 +116,55 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         return ComResult(zeroOrErrorCode);
     }
 
+    ComResult createMutableRGBA32(int width, int height)
+    {
+        return create(SDL_PIXELFORMAT_RGBA32,
+            SDL_TextureAccess.SDL_TEXTUREACCESS_STREAMING, width,
+            height);
+    }
+
     ComResult createRGBA(int width, int height)
     {
         return create(SDL_PIXELFORMAT_RGBA32,
             SDL_TextureAccess.SDL_TEXTUREACCESS_TARGET, width,
             height);
+    }
+
+    ComResult lock(ref uint* pixels, out int pitch) @nogc nothrow
+    {
+        assert(ptr);
+        //pitch == length row of pixels in bytes
+        const zeroOrErrorCode = SDL_LockTexture(ptr, null, cast(void**) &pixels, &pitch);
+        return ComResult(zeroOrErrorCode, getError);
+    }
+
+    ComResult unlock() @nogc nothrow
+    {
+        SDL_UnlockTexture(ptr);
+        return ComResult.success;
+    }
+
+    ComResult changeColor(uint x, uint y, uint* pixels, uint pitch, ubyte r, ubyte g, ubyte b, ubyte a) @nogc nothrow
+    {
+        //TODO pass format as a parameter?
+        uint formatValue;
+        if (const err = query(null, null, &formatValue, null))
+        {
+            return err;
+        }
+
+        //TODO class field or SDL global cache?
+        SDL_PixelFormat* format = SDL_AllocFormat(formatValue);
+        if(!format){
+            return ComResult.error(getError);
+        }
+
+        Uint32 color = SDL_MapRGBA(format, r, g, b, a);
+        const pixelPosition = (y * (pitch / int.sizeof) + x);
+
+        pixels[pixelPosition] = color;
+
+        return ComResult.success;
     }
 
     ComResult setBlendModeBlend() @nogc nothrow

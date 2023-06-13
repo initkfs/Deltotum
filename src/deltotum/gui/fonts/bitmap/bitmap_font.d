@@ -10,7 +10,9 @@ class BitmapFont : Texture
 {
     Glyph[] glyphs;
 
-    this(Glyph[] glyphs = [])
+    Glyph placeholder;
+
+    this(Glyph[] glyphs = null)
     {
         this.glyphs = glyphs;
     }

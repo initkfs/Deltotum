@@ -123,23 +123,23 @@ class Text : Control
         foreach (grapheme; textString)
         {
             Glyph newGlyph;
+            bool isFound;
             foreach (glyph; asset.defaultBitmapFont.glyphs)
             {
                 if (glyph.grapheme == grapheme)
                 {
                     newGlyph = glyph;
-                    continue;
+                    isFound = true;
+                    break;
                 }
             }
 
-            if (!newGlyphs)
+            if (!isFound)
             {
-                //TODO placeholder
+                newGlyph = asset.defaultBitmapFont.placeholder;
             }
-            else
-            {
-                newGlyphs ~= newGlyph;
-            }
+
+            newGlyphs ~= newGlyph;
         }
 
         return newGlyphs;

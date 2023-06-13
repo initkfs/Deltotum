@@ -8,6 +8,9 @@ import deltotum.sys.sdl.sdl_surface : SdlSurface;
 import deltotum.sys.cairo.cairo_surface : CairoSurface;
 import deltotum.sys.cairo.cairo_context : CairoContext;
 
+//TODO remove native api
+import deltotum.sys.cairo.libs;
+
 /**
  * Authors: initkfs
  */
@@ -24,6 +27,17 @@ class VectorCanvas : Texture
     {
         this.width = width;
         this.height = height;
+    }
+
+    override bool setColor(RGBA color)
+    {
+        if (!isCreated)
+        {
+            return false;
+        }
+        auto ctx = cairoContext.getObject;
+        cairo_set_source_rgb(ctx, color.rNorm, color.gNorm, color.bNorm);
+        return true;
     }
 
     void createTextureContent()
@@ -81,8 +95,8 @@ class VectorCanvas : Texture
     {
         super.initialize;
 
-        createTempSurface;
-        createCairoContext;
+        //createTempSurface;
+        //createCairoContext;
     }
 
     override void create()

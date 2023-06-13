@@ -15,14 +15,20 @@ class VPointsShape : VShape
     bool isClosePath;
     bool isDrawFromCenter;
 
-    private
+    double translateX = 0;
+    double translateY = 0;
+
+    void delegate() onDraw;
+
+    protected
     {
         Vector2d[] points;
     }
+
     this(Vector2d[] points, double width, double height, GraphicStyle style, bool isClosePath = false, bool isDrawFromCenter = false)
     {
         super(width, height, style);
-        
+
         this.points = points;
         this.isClosePath = isClosePath;
         this.isDrawFromCenter = isDrawFromCenter;
@@ -35,8 +41,17 @@ class VPointsShape : VShape
         const cairo_matrix_t flipYAxisMatrix = {1, 0, 0, -1, 0, height};
         cairo_set_matrix(ctx, &flipYAxisMatrix);
 
-        if(isDrawFromCenter){
+        if (isDrawFromCenter)
+        {
+            //TODO translateX?
             cairo_translate(ctx, width / 2, height / 2);
+        }
+        else
+        {
+            if (translateX > 0 || translateY > 0)
+            {
+                cairo_translate(ctx, translateX, translateY);
+            }
         }
     }
 
@@ -45,8 +60,7 @@ class VPointsShape : VShape
         auto ctx = cairoContext.getObject;
 
         cairo_set_line_width(ctx, style.lineWidth);
-        auto color = style.lineColor;
-        cairo_set_source_rgb(ctx, color.rNorm, color.gNorm, color.bNorm);
+        setColor(style.lineColor);
     }
 
     void drawPoints()
@@ -58,11 +72,20 @@ class VPointsShape : VShape
         foreach (p; points[1 .. $])
         {
             cairo_line_to(ctx, p.x, p.y);
+            if (onDraw)
+            {
+                onDraw();
+            }
         }
 
         if (isClosePath)
         {
             cairo_line_to(ctx, startX, startY);
+            //TODO extract method
+            if (onDraw)
+            {
+                onDraw();
+            }
         }
 
         cairo_stroke(ctx);

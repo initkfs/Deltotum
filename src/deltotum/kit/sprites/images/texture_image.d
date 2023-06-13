@@ -30,6 +30,21 @@ class TextureImage : Texture
         super(texture);
     }
 
+    bool createMutableRGBA32()
+    {
+        assert(width > 0 && height > 0);
+
+        texture = graphics.newComTexture;
+
+        if (const err = texture.createMutableRGBA32(cast(int) width, cast(int) height))
+        {
+            //TODO log
+            throw new Exception(err.toString);
+        }
+
+        return true;
+    }
+
     bool load(Bitmap bitmap)
     {
         import deltotum.sys.sdl.sdl_surface : SdlSurface;
@@ -85,7 +100,7 @@ class TextureImage : Texture
         {
             throw new Exception("Image loading error");
         }
-        
+
         SdlSurface surf = new SdlSurface(surface);
         return load(surf, requestWidth, requestHeight);
     }
@@ -167,6 +182,24 @@ class TextureImage : Texture
 
         SdlSurface image = new SdlImage(imagePath);
         return load(image, requestWidth, requestHeight);
+    }
+
+    bool createMutable(out ubyte* data)
+    {
+        if (width <= 0 || height <= 0)
+        {
+            logger.error("Unable to create an image with zero dimensions");
+            return false;
+        }
+
+        if (const err = texture.createMutableRGBA32(cast(int) width, cast(int) height))
+        {
+            logger.errorf("Error creating mutable texture for image, width %s, height %s. %s", width, height, err
+                    .toString);
+            return false;
+        }
+
+        return true;
     }
 
     void drawImage(Flip flip = Flip.none)

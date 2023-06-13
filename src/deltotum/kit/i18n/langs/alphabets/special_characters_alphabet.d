@@ -9,6 +9,6 @@ class SpecialCharactersAlphabet : Alphabet
 {
     override immutable(dchar)[] allLetters()
     {
-        return "!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ \n\r";
+        return "𑑛!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ \n\r";
     }
 }

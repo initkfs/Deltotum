@@ -23,7 +23,8 @@ import std.stdio;
  */
 class BitmapFontGenerator : FontGenerator
 {
-    BitmapFont generate(Alphabet[] alphabets, Font font, RGBA foregroundColor = RGBA.white, RGBA backgroundColor = RGBA.black)
+    BitmapFont generate(Alphabet[] alphabets, Font font, RGBA foregroundColor = RGBA.white, RGBA backgroundColor = RGBA
+            .black)
     {
         import deltotum.sys.sdl.sdl_surface : SdlSurface;
         import bindbc.sdl;
@@ -46,6 +47,9 @@ class BitmapFontGenerator : FontGenerator
         Glyph[] glyphs;
 
         TTF_SetFontHinting(font.font.getObject, TTF_HINTING_NORMAL);
+
+        auto bitmapFont = new BitmapFont;
+        build(bitmapFont);
 
         foreach (alphabet; alphabets)
         {
@@ -84,8 +88,16 @@ class BitmapFontGenerator : FontGenerator
                     isNewline = letter.among('\n', '\r',) != 0;
                 }
 
-                glyphs ~= Glyph(letter, Rect2d(glyphPosition.x, glyphPosition.y, glyphPosition.w, glyphPosition
+                auto glyph = Glyph(letter, Rect2d(glyphPosition.x, glyphPosition.y, glyphPosition.w, glyphPosition
                         .h), alphabet, isEmpty, isNewline);
+
+                //TODO config?
+                if (glyph.grapheme == '𑑛')
+                {
+                    bitmapFont.placeholder = glyph;
+                }
+
+                glyphs ~= glyph;
 
                 if (const err = glyphRepresentation.blit(null, fontMapSurface.getObject, &glyphPosition))
                 {
@@ -97,8 +109,8 @@ class BitmapFontGenerator : FontGenerator
             }
         }
 
-        auto bitmapFont = new BitmapFont(glyphs);
-        build(bitmapFont);
+        bitmapFont.glyphs = glyphs;
+
         bitmapFont.loadFromSurface(fontMapSurface);
         bitmapFont.setBlendMode;
         fontMapSurface.destroy;
