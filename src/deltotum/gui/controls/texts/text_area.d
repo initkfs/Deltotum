@@ -31,7 +31,7 @@ class TextArea : HBox
     {
         super.initialize;
 
-        import deltotum.math.geometry.insets;
+        import deltotum.math.geom.insets;
 
         padding = Insets(0);
         spacing = 0;

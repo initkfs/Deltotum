@@ -1,4 +1,4 @@
-module deltotum.math.geometry.insets;
+module deltotum.math.geom.insets;
 
 /**
  * Authors: initkfs

@@ -3,7 +3,7 @@ module deltotum.kit.sprites.sprite;
 import deltotum.math.vector2d : Vector2d;
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.kit.sprites.alignment : Alignment;
-import deltotum.math.geometry.insets : Insets;
+import deltotum.math.geom.insets : Insets;
 import deltotum.kit.sprites.layouts.layout : Layout;
 import deltotum.sys.sdl.sdl_texture : SdlTexture;
 import deltotum.phys.physical_body : PhysicalBody;

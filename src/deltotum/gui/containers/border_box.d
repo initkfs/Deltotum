@@ -4,7 +4,7 @@ import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.gui.containers.container : Container;
 import deltotum.kit.sprites.layouts.vertical_layout : VerticalLayout;
 import deltotum.gui.containers.stack_box : StackBox;
-import deltotum.math.geometry.insets : Insets;
+import deltotum.math.geom.insets : Insets;
 import deltotum.gui.containers.hbox : HBox;
 
 /**

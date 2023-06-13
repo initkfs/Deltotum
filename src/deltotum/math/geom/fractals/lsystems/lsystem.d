@@ -1,4 +1,4 @@
-module deltotum.math.geometry.fractals.lsystems.lsystem;
+module deltotum.math.geom.fractals.lsystems.lsystem;
 
 /**
  * Authors: initkfs

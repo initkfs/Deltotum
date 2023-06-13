@@ -1,6 +1,6 @@
-module deltotum.math.geometry.fractals.lsystems.lsystem_parser;
+module deltotum.math.geom.fractals.lsystems.lsystem_parser;
 
-import deltotum.math.geometry.fractals.lsystems.lsystem : LSystem;
+import deltotum.math.geom.fractals.lsystems.lsystem : LSystem;
 
 /**
  * Authors: initkfs

@@ -1,6 +1,6 @@
-module deltotum.math.geometry.curves.lissajous;
+module deltotum.math.geom.curves.lissajous;
 import deltotum.math.vector2d : Vector2d;
-import deltotum.math.geometry.curves.curve_maker : CurveMaker;
+import deltotum.math.geom.curves.curve_maker : CurveMaker;
 
 import Math = deltotum.math;
 

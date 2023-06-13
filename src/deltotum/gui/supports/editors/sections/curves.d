@@ -86,12 +86,12 @@ class Curves : Control
                 import deltotum.gui.containers.vbox : VBox;
                 import deltotum.gui.containers.container : Container;
                 import deltotum.gui.containers.stack_box : StackBox;
-                import deltotum.math.geometry.insets : Insets;
+                import deltotum.math.geom.insets : Insets;
 
                 auto planeShapeContainer = new HBox;
                 addCreate(planeShapeContainer);
 
-                import deltotum.math.geometry.curves.spirals : Spirals;
+                import deltotum.math.geom.curves.spirals : Spirals;
 
                 auto spiralCalc = new Spirals;
 
@@ -99,7 +99,7 @@ class Curves : Control
                 auto spirs2 = createCurveInfo("Lituus", spiralCalc.lituus(2, 8, 10));
                 auto spirs3 = createCurveInfo("Cochleoid", spiralCalc.cochleoid(4, 8, 30));
 
-                import deltotum.math.geometry.curves.plane_curves : PlaneCurve;
+                import deltotum.math.geom.curves.plane_curves : PlaneCurve;
 
                 auto planeCurveCalc = new PlaneCurve;
 
@@ -121,7 +121,7 @@ class Curves : Control
 
                 auto decart1 = createCurveInfo("Descart\nfolium", planeCurveCalc.foliumOfDescartes(3.14 / 2, 0.01, 10));
 
-                import deltotum.math.geometry.curves.cubic_plane_curves : CubicPlaneCurves;
+                import deltotum.math.geom.curves.cubic_plane_curves : CubicPlaneCurves;
 
                 auto cubicCurveCalc = new CubicPlaneCurves;
                 Vector2d[] cub1Points = cubicCurveCalc.trisectrixMaclaurin(20);
@@ -135,7 +135,7 @@ class Curves : Control
                 auto superellipseContainer = new HBox;
                 addCreate(superellipseContainer);
 
-                import deltotum.math.geometry.curves.superellipse : Superellipse;
+                import deltotum.math.geom.curves.superellipse : Superellipse;
 
                 auto ellipseCuveCalc = new Superellipse;
 
@@ -164,7 +164,7 @@ class Curves : Control
                 auto rosesContainer = new HBox;
                 addCreate(rosesContainer);
 
-                import deltotum.math.geometry.curves.roses : Roses;
+                import deltotum.math.geom.curves.roses : Roses;
 
                 auto rosesCuveCalc = new Roses;
                 auto rose1 = createCurveInfo("Rose 3", rosesCuveCalc.rose(25, 3, 1));
@@ -179,7 +179,7 @@ class Curves : Control
                         rose1, rose2, rose3, rose4, rose5, rose6, rose7
                 ]);
 
-                import deltotum.math.geometry.curves.cycloidal : Cycloidal;
+                import deltotum.math.geom.curves.cycloidal : Cycloidal;
 
                 auto cyclContainer = new HBox;
                 addCreate(cyclContainer);
@@ -195,7 +195,7 @@ class Curves : Control
                                 cycl, cycl1, cycl2, cycl3
                         ]);
 
-                import deltotum.math.geometry.curves.lissajous : Lissajous;
+                import deltotum.math.geom.curves.lissajous : Lissajous;
 
                 auto lissContainer = new HBox;
                 addCreate(lissContainer);

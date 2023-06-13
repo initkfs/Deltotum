@@ -3,7 +3,7 @@ module deltotum.gui.supports.editors.sections.layouts;
 import deltotum.gui.controls.control : Control;
 import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.kit.graphics.colors.rgba : RGBA;
-import deltotum.math.geometry.insets : Insets;
+import deltotum.math.geom.insets : Insets;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 
 import deltotum.gui.containers.container : Container;

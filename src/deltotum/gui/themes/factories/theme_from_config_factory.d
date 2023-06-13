@@ -6,7 +6,7 @@ import deltotum.core.configs.config : Config;
 import deltotum.kit.gui.themes.theme : Theme;
 import deltotum.kit.assets.fonts.font : Font;
 import deltotum.kit.graphics.colors.rgba : RGBA;
-import deltotum.math.geometry.insets : Insets;
+import deltotum.math.geom.insets : Insets;
 import deltotum.gui.themes.icons.icon_pack: IconPack;
 
 import std.logger.core : Logger;

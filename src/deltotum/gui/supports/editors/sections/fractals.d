@@ -92,7 +92,7 @@ class Fractals : Control
                 import deltotum.gui.containers.vbox : VBox;
                 import deltotum.gui.containers.container : Container;
                 import deltotum.gui.containers.stack_box : StackBox;
-                import deltotum.math.geometry.insets : Insets;
+                import deltotum.math.geom.insets : Insets;
 
                 auto container = new HBox;
                 addCreate(container);

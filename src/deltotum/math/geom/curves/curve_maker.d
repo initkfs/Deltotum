@@ -1,4 +1,4 @@
-module deltotum.math.geometry.curves.curve_maker;
+module deltotum.math.geom.curves.curve_maker;
 import deltotum.math.vector2d : Vector2d;
 
 import Math = deltotum.math;

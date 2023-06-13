@@ -2,7 +2,7 @@ module deltotum.gui.controls.control;
 
 import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.kit.sprites.layouts.layout : Layout;
-import deltotum.math.geometry.insets : Insets;
+import deltotum.math.geom.insets : Insets;
 import deltotum.kit.sprites.textures.texture : Texture;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.kit.sprites.alignment : Alignment;

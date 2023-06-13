@@ -55,7 +55,7 @@ class VBox : Container
 unittest
 {
     import deltotum.kit.sprites.sprite : Sprite;
-    import deltotum.math.geometry.insets : Insets;
+    import deltotum.math.geom.insets : Insets;
 
     auto sp1 = new Sprite;
     sp1.width = 100;

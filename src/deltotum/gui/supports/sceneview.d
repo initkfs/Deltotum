@@ -59,7 +59,7 @@ class SceneView : VBox
     {
         super.create;
 
-        import deltotum.math.geometry.insets : Insets;
+        import deltotum.math.geom.insets : Insets;
 
         auto hbox = new HBox;
         addCreate(hbox);

@@ -6,7 +6,7 @@ import deltotum.kit.graphics.shapes.shape : Shape;
 import deltotum.kit.graphics.shapes.vectors.vpoints_shape : VPointsShape;
 import deltotum.kit.graphics.brushes.brush : Brush;
 import deltotum.math.vector2d : Vector2d;
-import deltotum.math.geometry.fractals.lsystems.lsystem_parser : LSystemParser;
+import deltotum.math.geom.fractals.lsystems.lsystem_parser : LSystemParser;
 
 import std.stdio;
 

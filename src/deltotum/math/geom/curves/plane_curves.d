@@ -1,6 +1,6 @@
-module deltotum.math.geometry.curves.plane_curves;
+module deltotum.math.geom.curves.plane_curves;
 
-import deltotum.math.geometry.curves.curve_maker : CurveMaker;
+import deltotum.math.geom.curves.curve_maker : CurveMaker;
 import deltotum.math.vector2d : Vector2d;
 
 import Math = deltotum.math;

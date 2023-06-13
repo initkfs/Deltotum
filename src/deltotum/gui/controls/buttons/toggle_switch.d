@@ -68,7 +68,7 @@ class ToggleSwitch : Control
     {
         super.initialize;
 
-        import deltotum.math.geometry.insets : Insets;
+        import deltotum.math.geom.insets : Insets;
 
         padding = Insets(0);
 
