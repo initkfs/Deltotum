@@ -954,16 +954,16 @@ class Sprite : PhysicalBody
             const b = bounds;
             //graphics.drawRect(b.x, b.y, b.width, b.height, GraphicStyle(1, RGBA.red));
             const double leftTopX = b.x, leftTopY = b.y;
-            
+
             const double rightTopX = leftTopX + b.width, rightTopY = leftTopY;
             graphics.drawLine(leftTopX, leftTopY, rightTopX, rightTopY, debugColor);
-            
+
             const double rightBottomX = rightTopX, rightBottomY = rightTopY + b.height;
             graphics.drawLine(rightTopX, rightTopY, rightBottomX, rightBottomY, debugColor);
-            
+
             const double leftBottomX = leftTopX, leftBottomY = leftTopY + b.height;
             graphics.drawLine(rightBottomX, rightBottomY, leftBottomX, leftBottomY, debugColor);
-            
+
             graphics.drawLine(leftBottomX, leftBottomY, leftTopX, leftTopY, debugColor);
 
             graphics.adjustRender(prevColor);

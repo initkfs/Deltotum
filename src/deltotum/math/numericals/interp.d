@@ -4,7 +4,7 @@ module deltotum.math.numericals.interp;
  * Authors: initkfs
  */
 import deltotum.math.vector2d : Vector2d;
-import deltotum.math: clamp01;
+import deltotum.math : clamp01;
 
 import std.math.traits : isFinite;
 
@@ -61,11 +61,16 @@ unittest
     assert(isClose(result1, 35));
 }
 
-//the a value and the b value should not change during the interpolation.
+//the start value and the end value should not change during the interpolation.
 double lerp(double start, double end, double t, bool clamp = true) @nogc nothrow pure @safe
 {
     const double progressValue = clamp ? clamp01(t) : t;
     return start + (end - start) * progressValue;
+}
+
+double blerp(double c00, double c10, double c01, double c11, double tx, double ty, bool clamp = true)
+{
+    return lerp(lerp(c00, c10, tx, clamp), lerp(c01, c11, tx, clamp), ty);
 }
 
 Vector2d lerp(Vector2d a, Vector2d b, float t, bool clamp = true) @nogc nothrow pure @safe

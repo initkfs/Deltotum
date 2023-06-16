@@ -60,17 +60,10 @@ abstract class ComplexFractalImage : Image
         uint* pixels;
         int pitch;
 
-        if (const err = texture.lock(pixels, pitch))
-        {
-            throw new Exception(err.toString);
-        }
-
+        lock(pixels, pitch);
         scope (exit)
         {
-            if (const err = texture.unlock)
-            {
-                throw new Exception(err.toString);
-            }
+            unlock;
         }
 
         createTextureContent(pixels, pitch);

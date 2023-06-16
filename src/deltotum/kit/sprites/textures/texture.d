@@ -189,6 +189,39 @@ class Texture : Sprite
         return this.texture;
     }
 
+    void lock(ref uint* pixels, out int pitch)
+    {
+        if (const err = texture.lock(pixels, pitch))
+        {
+            throw new Exception(err.toString);
+        }
+    }
+
+    void changeColor(uint x, uint y, uint* pixels, uint pitch, RGBA color)
+    {
+        if (const err = texture.changeColor(x, y, pixels, pitch, color.r, color.g, color.b, color
+                .aNorm))
+        {
+            throw new Exception(err.toString);
+        }
+    }
+
+    void pixel(uint x, uint y, uint* pixels, uint pitch, ref uint* pixel)
+    {
+        if (const err = texture.pixel(x, y, pixels, pitch, pixel))
+        {
+            throw new Exception(err.toString);
+        }
+    }
+
+    void unlock()
+    {
+        if (const err = texture.unlock)
+        {
+            throw new Exception(err.toString);
+        }
+    }
+
     override void destroy()
     {
         super.destroy;

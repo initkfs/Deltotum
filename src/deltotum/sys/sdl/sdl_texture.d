@@ -44,6 +44,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         this.renderer = renderer;
     }
 
+    //TODO replace with out
     ComResult query(int* width, int* height, uint* format, SDL_TextureAccess* access) @nogc nothrow
     {
         if (!ptr)
@@ -52,6 +53,17 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         }
         const int zeroOrErrorCode = SDL_QueryTexture(ptr, format, access, width, height);
         return ComResult(zeroOrErrorCode);
+    }
+
+    ComResult getFormat(ref SDL_PixelFormat* format)
+    {
+        uint formatPtr;
+        if (const err = query(null, null, &formatPtr, null))
+        {
+            return err;
+        }
+        format = SDL_AllocFormat(formatPtr);
+        return ComResult.success;
     }
 
     ComResult getSize(int* width, int* height) @nogc nothrow
@@ -134,7 +146,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
     {
         assert(ptr);
         //pitch == length row of pixels in bytes
-        const zeroOrErrorCode = SDL_LockTexture(ptr, null, cast(void**) &pixels, &pitch);
+        const zeroOrErrorCode = SDL_LockTexture(ptr, null, cast(void**)&pixels, &pitch);
         return ComResult(zeroOrErrorCode, getError);
     }
 
@@ -155,7 +167,8 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
 
         //TODO class field or SDL global cache?
         SDL_PixelFormat* format = SDL_AllocFormat(formatValue);
-        if(!format){
+        if (!format)
+        {
             return ComResult.error(getError);
         }
 
@@ -164,6 +177,13 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
 
         pixels[pixelPosition] = color;
 
+        return ComResult.success;
+    }
+
+    ComResult pixel(uint x, uint y, uint* pixels, uint pitch, out uint* pixel) @nogc nothrow
+    {
+        const pixelPosition = (y * (pitch / int.sizeof) + x);
+        pixel = &pixels[pixelPosition];
         return ComResult.success;
     }
 

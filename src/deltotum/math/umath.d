@@ -39,6 +39,20 @@ double clamp01(double value) @nogc nothrow pure @safe
     }
 }
 
+T clamp(T)(T value, T min, T max)
+{
+    if (value < min)
+    {
+        return min;
+    }
+    else if (value > max)
+    {
+        return max;
+    }
+
+    return value;
+}
+
 pragma(inline, true);
 double sin(double value) @nogc nothrow pure @safe
 {
@@ -147,6 +161,13 @@ T max(T)(T x, T y) @nogc nothrow pure @safe
     return max(x, y);
 }
 
+real round(real x) @nogc nothrow pure @safe
+{
+    import std.math.rounding : round;
+
+    return round(x);
+}
+
 pragma(inline, true);
 T abs(T)(T value)
 {
@@ -180,7 +201,9 @@ double hypot(double a, double b) @nogc nothrow pure @safe
     return result;
 }
 
-double sign(double value){
-    import std.math.traits: sgn;
+double sign(double value)
+{
+    import std.math.traits : sgn;
+
     return sgn(value);
 }

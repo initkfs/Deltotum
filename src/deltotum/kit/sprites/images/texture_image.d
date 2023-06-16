@@ -21,6 +21,7 @@ import bindbc.sdl;
 struct Pixel
 {
     uint* ptr;
+    int x, y;
     SDL_PixelFormat* format;
 
     void setColor(RGBA color)
@@ -43,6 +44,8 @@ struct Pixel
 //TODO remove duplication with animation bitmap, but it's not clear what code would be required
 class TextureImage : Texture
 {
+    void delegate(Pixel) colorProcessor;
+
     this()
     {
         super();
@@ -101,7 +104,7 @@ class TextureImage : Texture
         return true;
     }
 
-    bool loadRaw(string content, int requestWidth = -1, int requestHeight = -1, scope void delegate(int, int, ref Pixel) onPixels = null)
+    bool loadRaw(string content, int requestWidth = -1, int requestHeight = -1)
     {
         //TODO remove bindbc
         import bindbc.sdl;
@@ -125,7 +128,7 @@ class TextureImage : Texture
         }
 
         SdlSurface surf = new SdlSurface(surface);
-        if (onPixels)
+        if (colorProcessor)
         {
             if (const err = surf.lock)
             {
@@ -146,13 +149,57 @@ class TextureImage : Texture
                 {
                     //TODO more optimal iteration
                     uint* pixel = surf.pixel(x, y);
-                    auto pixelPtr = Pixel(pixel, surf.getObject.format);
-                    onPixels(x, y, pixelPtr);
+                    auto pixelPtr = Pixel(pixel, x, y, surf.getObject.format);
+                    colorProcessor(pixelPtr);
                 }
             }
         }
 
         return load(surf, requestWidth, requestHeight);
+    }
+
+    bool load(RGBA[][] colorBuf)
+    {
+        assert(width > 0);
+        assert(height > 0);
+        //TODO check width, height == colorBuf.dims
+        createMutableRGBA32;
+        assert(texture);
+
+        uint* pixels;
+        int pitch;
+        lock(pixels, pitch);
+        scope (exit)
+        {
+            unlock;
+        }
+
+        foreach (yy, ref RGBA[] colors; colorBuf)
+        {
+            foreach (xx, ref RGBA color; colors)
+            {
+                uint x = cast(uint) xx;
+                uint y = cast(uint) yy;
+
+                changeColor(x, y, pixels, pitch, color);
+
+                if(colorProcessor){
+                    //TODO multiple request
+                    SDL_PixelFormat* format;
+                    if (const err = texture.getFormat(format))
+                    {
+                        throw new Exception(err.toString);
+                    }
+                    uint* pixelPtr;
+                    pixel(x, y, pixels, pitch, pixelPtr);
+                    //TODO caches
+                    colorProcessor(Pixel(pixelPtr, x, y, format));
+                }    
+                
+
+            }
+        }
+        return true;
     }
 
     protected bool load(SdlSurface image, int requestWidth = -1, int requestHeight = -1)
@@ -215,6 +262,7 @@ class TextureImage : Texture
         this.height = height * scale;
 
         image.destroy;
+
         return true;
     }
 

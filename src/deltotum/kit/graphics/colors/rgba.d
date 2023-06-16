@@ -287,6 +287,86 @@ struct RGBA
         return r == maxColor && g == maxColor && b == maxColor && a == RGBAData.maxAlpha;
     }
 
+    uint sumColor() const pure @safe
+    {
+        return r + g + b;
+    }
+
+    double brightness() const pure @safe
+    {
+        double result = (r + b + g) / 3.0;
+        return result;
+    }
+
+    void brightness(double factor) pure @safe
+    {
+        //or convert to HSV, and scale V.
+        assert(factor > 0);
+        import std.conv : to;
+
+        import Math = deltotum.math;
+
+        scope ubyte delegate(ubyte) pure @safe calc = (color) => cast(ubyte) Math.min(
+            Math.round(color * factor), RGBAData.maxColor);
+
+        r = calc(r);
+        g = calc(g);
+        b = calc(b);
+    }
+
+    void contrast(double factor) pure @safe
+    {
+        import std.conv : to;
+
+        import Math = deltotum.math;
+
+        double maxCoeffFactor = 259.0;
+        double maxColor = RGBAData.maxColor;
+        double halfColor = (maxColor + 1) / 2;
+
+        const double correctFactor = (maxCoeffFactor * (factor + maxColor)) / (
+            maxColor * (maxCoeffFactor - factor));
+
+        scope ubyte delegate(ubyte) pure @safe calc = (color){
+            const newValue = correctFactor * (color - halfColor) + halfColor;
+            return cast(ubyte) Math.min(Math.abs(newValue), RGBA.RGBAData.maxColor);
+        };
+
+        r = calc(r);
+        g = calc(g);
+        b = calc(b);
+    }
+
+    void gamma(double value)  pure @safe
+    {
+        assert(value >= 0);
+        import std.conv : to;
+
+        import Math = deltotum.math;
+
+        enum maxColor = RGBA.RGBAData.maxColor;
+        double correctFactor = 1.0 / value;
+
+        scope ubyte delegate(double) pure @safe calc = (colorNorm){
+            const newValue = maxColor * (colorNorm ^^ correctFactor);
+            return cast(ubyte) Math.min(newValue, maxColor);
+        };
+
+        r = calc(rNorm);
+        g = calc(gNorm);
+        b = calc(bNorm);
+    }
+
+    double distance(ref RGBA other) const pure @safe
+    {
+        import Math = deltotum.math;
+
+        double distanceSum = ((r - other.r) ^^ 2) + (
+            (g - other.g) ^^ 2) + ((b - other.b) ^^ 2);
+        double distance = Math.sqrt(distanceSum);
+        return distance;
+    }
+
     HSV toHSV() const @safe
     {
         const double newR = colorNorm(r);
