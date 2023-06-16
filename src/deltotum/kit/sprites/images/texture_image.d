@@ -11,7 +11,6 @@ import deltotum.kit.sprites.textures.texture : Texture;
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.kit.sprites.flip : Flip;
-import deltotum.kit.sprites.images.bitmaps.bitmap : Bitmap;
 
 import bindbc.sdl;
 
@@ -68,39 +67,6 @@ class TextureImage : Texture
             throw new Exception(err.toString);
         }
 
-        return true;
-    }
-
-    bool load(Bitmap bitmap)
-    {
-        import deltotum.sys.sdl.sdl_surface : SdlSurface;
-
-        auto surface = new SdlSurface;
-        //TODO alpha mask?
-        if (const err = surface.createRGBSurfaceFrom(bitmap.bits, bitmap.width, bitmap.height, bitmap.bpp, bitmap
-                .pitch, bitmap.redMask, bitmap.greenMask, bitmap.blueMask, 0))
-        {
-            throw new Exception(err.toString);
-        }
-
-        texture = graphics.newComTexture;
-        if (const err = texture.fromSurface(surface))
-        {
-            throw new Exception(err.toString);
-        }
-        int width;
-        int height;
-
-        if (const err = texture.getSize(&width, &height))
-        {
-            logger.errorf(err.toString);
-            return false;
-        }
-
-        this.width = width * scale;
-        this.height = height * scale;
-
-        surface.destroy;
         return true;
     }
 

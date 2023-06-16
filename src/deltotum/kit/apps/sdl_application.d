@@ -160,32 +160,6 @@ class SdlApplication : GraphicApplication
 
         cairoLibForLoad.load;
 
-        //TODO version
-        import bindbc.freeimage;
-
-        FISupport ret = loadFreeImage();
-        if (ret == fiSupport)
-        {
-            _cap.isImageProcessing = true;
-            uservices.logger.trace("Load FreeImage library");
-        }
-        else
-        {
-            if (ret == FISupport.noLibrary)
-            {
-                uservices.logger.warning("FreeImage shared library failed to load");
-            }
-            else if (FISupport.badLibrary)
-            {
-                //TODO all errors
-                uservices.logger.warning("FreeImage bad library");
-            }
-            else
-            {
-                uservices.logger.warning("FreeImage library loading error");
-            }
-        }
-
         _ext = createExtension(uservices.logger, uservices.config, uservices.context);
 
         import deltotum.sys.sdl.sdl_screen : SDLScreen;
