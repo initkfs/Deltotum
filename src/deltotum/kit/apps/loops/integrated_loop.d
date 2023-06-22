@@ -7,6 +7,8 @@ import deltotum.kit.apps.loops.loop : Loop;
  */
 class IntegratedLoop : Loop
 {
+    double deltaTimeAccumulatorLimitMs = 100;
+
     private
     {
         enum msInSec = 1000;
@@ -31,6 +33,10 @@ class IntegratedLoop : Loop
         lastUpdateTimeMs = startMs;
         deltaTimeAccumulatorMs += deltaTimeMs;
 
+        if(deltaTimeAccumulatorMs > deltaTimeAccumulatorLimitMs){
+            deltaTimeAccumulatorMs = deltaTimeAccumulatorLimitMs;
+        }
+
         onLoopUpdateMs(startMs);
 
         while (deltaTimeAccumulatorMs > frameTimeMs)
@@ -40,6 +46,8 @@ class IntegratedLoop : Loop
             deltaTimeAccumulatorMs -= frameTimeMs;
         }
 
-        onRender();
+        const double accumRest = deltaTimeAccumulatorMs / frameTimeMs;
+
+        onRender(accumRest);
     }
 }

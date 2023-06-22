@@ -344,7 +344,7 @@ class Window : UniComponent
         return screenIndex.to!int;
     }
 
-    bool draw()
+    bool draw(double alpha)
     {
         auto currScene = scenes.currentScene;
         if (!currScene)

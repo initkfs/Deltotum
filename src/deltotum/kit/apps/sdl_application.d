@@ -101,7 +101,7 @@ class SdlApplication : GraphicApplication
         mainLoop.timestampMsProvider = () => sdlLib.getTicks;
         mainLoop.onDelay = () => sdlLib.delay(20);
         mainLoop.onLoopUpdateMs = (timestamp) => updateLoopMs(timestamp);
-        mainLoop.onRender = () => updateRender;
+        mainLoop.onRender = (accumMsRest) => updateRender(accumMsRest);
         mainLoop.onFreqLoopUpdateDelta = (delta) => updateFreqLoopDelta(delta);
 
         sdlLib.initialize(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK);
@@ -571,14 +571,14 @@ class SdlApplication : GraphicApplication
         }
     }
 
-    void updateRender()
+    void updateRender(double accumMsRest)
     {
         const startStateTime = SDL_GetTicks();
         windowManager.iterateWindows((window) {
             //focus may not be on the window
             if (window.isShowing)
             {
-                window.draw;
+                window.draw(accumMsRest);
             }
             return true;
         });

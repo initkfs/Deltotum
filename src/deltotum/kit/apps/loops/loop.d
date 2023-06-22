@@ -14,7 +14,7 @@ abstract class Loop
     void delegate(size_t) onLoopUpdateMs;
     void delegate(double) onFreqLoopUpdateDelta;
     void delegate() onDelay;
-    void delegate() onRender;
+    void delegate(double) onRender;
     void delegate() onQuit;
 
     abstract

@@ -1,9 +1,51 @@
 module deltotum.phys.physical_body;
 
 import deltotum.math.vector2d : Vector2d;
-import deltotum.math.shapes.rect2d: Rect2d;
-import deltotum.math.shapes.circle2d: Circle2d;
-import deltotum.kit.events.event_toolkit_target: EventToolkitTarget;
+import deltotum.math.shapes.rect2d : Rect2d;
+import deltotum.math.shapes.circle2d : Circle2d;
+import deltotum.kit.events.event_toolkit_target : EventToolkitTarget;
+
+struct PhysMaterial
+{
+    double density = 0;
+    double restitution = 0;
+
+    static PhysMaterial rock()
+    {
+        return PhysMaterial(0.6, 0.1);
+    }
+
+    static PhysMaterial wood()
+    {
+        return PhysMaterial(0.3, 0.2);
+    }
+
+    static PhysMaterial metal()
+    {
+        return PhysMaterial(1.2, 0.05);
+    }
+
+    static PhysMaterial bouncyBall()
+    {
+        return PhysMaterial(0.3, 0.8);
+    }
+
+    static PhysMaterial superBall()
+    {
+        return PhysMaterial(0.3, 0.95);
+    }
+
+    static PhysMaterial pillow()
+    {
+        return PhysMaterial(0.1, 0.2);
+    }
+
+    static PhysMaterial statics()
+    {
+        return PhysMaterial(0.0, 0.4);
+    }
+
+}
 
 /**
  * Authors: initkfs
@@ -11,15 +53,24 @@ import deltotum.kit.events.event_toolkit_target: EventToolkitTarget;
 class PhysicalBody : EventToolkitTarget
 {
     bool isPhysicsEnabled;
+
     double gravitationalAcceleration = 9.81;
-    
-    double restitution = 0;
+    double gravityScale = 1.0;
+
+    Vector2d externalForce;
+
+    PhysMaterial material;
+
     double speed = 0;
 
     private
     {
+        //TODO multiply the density by the volume of the physical body
         double _mass = 1.0;
         double _invMass = 1.0;
+
+        double _inertia = 0;
+        double _invInertia = 0;
     }
 
     this() pure @safe nothrow
@@ -43,6 +94,24 @@ class PhysicalBody : EventToolkitTarget
 
         _mass = value;
         _invMass = _mass == 0 ? 0 : 1.0 / _mass;
+    }
+
+    double invInertia()
+    {
+        return _invInertia;
+    }
+
+    double inertia()
+    {
+        return _inertia;
+    }
+
+    void inertia(double value)
+    {
+        assert(value >= 0);
+
+        _inertia = value;
+        _invInertia = 1.0 / _inertia;
     }
 
     Vector2d gravity()

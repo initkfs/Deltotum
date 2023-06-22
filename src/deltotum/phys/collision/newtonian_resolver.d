@@ -79,7 +79,7 @@ class NewtonianResolver
             return;
         }
 
-        const double restitution = Math.min(a.restitution, b.restitution);
+        const double restitution = Math.min(a.material.restitution, b.material.restitution);
 
         double forceMomentumScalar = -(1 + restitution) * alongNormal;
         forceMomentumScalar /= a.invMass + b.invMass;

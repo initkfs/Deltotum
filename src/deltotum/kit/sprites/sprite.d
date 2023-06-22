@@ -573,14 +573,25 @@ class Sprite : PhysicalBody
 
         double dx = 0;
         double dy = 0;
-        //TODO remove hack flag
-        bool isMove;
         if (isUpdatable && isPhysicsEnabled)
         {
-            velocity.x += acceleration.x * invMass * delta;
-            velocity.y += acceleration.y * invMass * delta;
-            dx = velocity.x * delta;
-            dy = velocity.y * delta;
+            //TODO check velocity is 0 || acceleration is 0
+            const double accelerationDx = acceleration.x * invMass * delta;
+            const double accelerationDy = acceleration.y * invMass * delta;
+
+            double newVelocityX = velocity.x + accelerationDx;
+            double newVelocityY = velocity.y + accelerationDy;
+
+            dx = newVelocityX * delta;
+            dy = newVelocityY * delta;
+
+            if(externalForce.x != 0){
+                externalForce.x = 0;
+            }
+
+            if(externalForce.y != 0){
+                externalForce.y = 0;
+            }
 
             if (inScreenBounds)
             {
@@ -589,20 +600,24 @@ class Sprite : PhysicalBody
                 thisBounds.y = _y + dy;
 
                 const screen = window.boundsLocal;
-                if (screen.contains(thisBounds))
+                if (!screen.contains(thisBounds))
                 {
-                    _x += dx;
-                    _y += dy;
-                    isMove = true;
-                }
+                    newVelocityX = 0;
+                    newVelocityY = 0;
 
+                    acceleration.x = 0;
+                    acceleration.y = 0;
+
+                    dx = 0;
+                    dy = 0;
+                }
             }
-            else
-            {
-                _x += dx;
-                _y += dy;
-                isMove = true;
-            }
+
+            _x += dx;
+            _y += dy;
+
+            velocity.x = newVelocityX;
+            velocity.y = newVelocityY;
         }
 
         foreach (Sprite child; children)
@@ -624,10 +639,11 @@ class Sprite : PhysicalBody
 
             if (child.isManaged && !child.isLayoutManaged)
             {
-                if (isMove)
+                child.velocity.x = velocity.x;
+                child.velocity.y = velocity.y;
+
+                if (dx != 0 || dy != 0)
                 {
-                    child.velocity.x = velocity.x;
-                    child.velocity.y = velocity.y;
                     child.x = child.x + dx;
                     child.y = child.y + dy;
                 }
@@ -696,7 +712,8 @@ class Sprite : PhysicalBody
             return Vector2d(x, y);
         }
 
-        Vector2d center(){
+        Vector2d center()
+        {
             return Vector2d(x + (width / 2.0), y + (height / 2.0));
         }
 
