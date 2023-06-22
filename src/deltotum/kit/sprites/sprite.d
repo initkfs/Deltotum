@@ -45,6 +45,8 @@ class Sprite : PhysicalBody
     Vector2d velocity;
     Vector2d acceleration;
 
+    bool inScreenBounds = true;
+
     bool isRedraw = true;
     bool isRedrawChildren = true;
     bool isDrawAfterParent = true;
@@ -84,6 +86,7 @@ class Sprite : PhysicalBody
     protected
     {
         TextureCanvas _cache;
+        Sprite _hitbox;
     }
 
     bool delegate(double, double) onDrag;
@@ -570,15 +573,36 @@ class Sprite : PhysicalBody
 
         double dx = 0;
         double dy = 0;
-        if (isUpdatable)
+        //TODO remove hack flag
+        bool isMove;
+        if (isUpdatable && isPhysicsEnabled)
         {
-            velocity.x += acceleration.x * delta;
-            velocity.y += acceleration.y * delta;
+            velocity.x += acceleration.x * invMass * delta;
+            velocity.y += acceleration.y * invMass * delta;
             dx = velocity.x * delta;
             dy = velocity.y * delta;
 
-            _x += dx;
-            _y += dy;
+            if (inScreenBounds)
+            {
+                auto thisBounds = bounds;
+                thisBounds.x = _x + dx;
+                thisBounds.y = _y + dy;
+
+                const screen = window.boundsLocal;
+                if (screen.contains(thisBounds))
+                {
+                    _x += dx;
+                    _y += dy;
+                    isMove = true;
+                }
+
+            }
+            else
+            {
+                _x += dx;
+                _y += dy;
+                isMove = true;
+            }
         }
 
         foreach (Sprite child; children)
@@ -600,16 +624,30 @@ class Sprite : PhysicalBody
 
             if (child.isManaged && !child.isLayoutManaged)
             {
-                child.velocity.x = velocity.x;
-                child.velocity.y = velocity.y;
-                child.x = child.x + dx;
-                child.y = child.y + dy;
+                if (isMove)
+                {
+                    child.velocity.x = velocity.x;
+                    child.velocity.y = velocity.y;
+                    child.x = child.x + dx;
+                    child.y = child.y + dy;
+                }
             }
 
             child.update(delta);
         }
 
         isProcessLayout = false;
+    }
+
+    bool intersect(Sprite other)
+    {
+        if (!hitbox && !other.hitbox)
+        {
+            return bounds.intersect(other.bounds);
+        }
+
+        return hitbox.intersect(other.hitbox);
+
     }
 
     Rect2d bounds()
@@ -656,6 +694,10 @@ class Sprite : PhysicalBody
         Vector2d position() @nogc @safe pure nothrow
         {
             return Vector2d(x, y);
+        }
+
+        Vector2d center(){
+            return Vector2d(x + (width / 2.0), y + (height / 2.0));
         }
 
         void xy(double newX, double newY)
@@ -1069,6 +1111,12 @@ class Sprite : PhysicalBody
             {
                 _cache.destroy;
             }
+
+            if (_hitbox)
+            {
+                _hitbox.destroy;
+            }
+
             foreach (Sprite child; children)
             {
                 child.parent = null;
@@ -1127,5 +1175,18 @@ class Sprite : PhysicalBody
             }
 
             return true;
+        }
+
+        void hitbox(Sprite sprite)
+        {
+            addCreate(sprite);
+            sprite.isLayoutManaged = false;
+            //sprite.isVisible = false;
+            _hitbox = sprite;
+        }
+
+        Sprite hitbox()
+        {
+            return _hitbox;
         }
     }

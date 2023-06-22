@@ -219,21 +219,21 @@ class Layouts : Control
         
         auto top = createButton("top");
         top.isHGrow = true;
-        bBox.top.addCreate(top);
+        bBox.topPane.addCreate(top);
 
         auto left = createButton("left");
-        bBox.left.addCreate(left);
+        bBox.leftPane.addCreate(left);
 
         auto center = createButton("center");
-        bBox.center.addCreate(center);
+        bBox.centerPane.addCreate(center);
 
         auto rigth = createButton("right");
-        bBox.right.addCreate(rigth);
+        bBox.rightPane.addCreate(rigth);
 
         auto bottom = createButton("bottom");
         bottom.width = 100;
         bottom.isHGrow = true;
-        bBox.bottom.addCreate(bottom);
+        bBox.bottomPane.addCreate(bottom);
 
         import deltotum.gui.containers.flow_box: FlowBox;
         auto flowBox1 = configureControl(new FlowBox(5, 5));

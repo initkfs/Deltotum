@@ -67,27 +67,27 @@ class BorderBox : Container
         addCreate(_bottom);
     }
 
-    StackBox top()
+    StackBox topPane()
     {
         return _top;
     }
 
-    StackBox left()
+    StackBox leftPane()
     {
         return _left;
     }
 
-    StackBox center()
+    StackBox centerPane()
     {
         return _center;
     }
 
-    StackBox right()
+    StackBox rightPane()
     {
         return _right;
     }
 
-    StackBox bottom()
+    StackBox bottomPane()
     {
         return _bottom;
     }

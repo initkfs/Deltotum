@@ -32,21 +32,54 @@ struct Rect2d
 
     bool contains(Rect2d rect) const @nogc nothrow pure @safe
     {
-        float minX = rect.x;
-        float maxX = right;
-
-        float minY = rect.y;
-        float maxY = bottom;
-
-        return ((minX > x && minX < right) && (maxX > x && maxX < right))
-            && ((minY > y && minY < bottom) && (maxY > y && maxY < bottom));
+        return ((rect.x > x && rect.x < right) && (rect.right > x && rect.right < right))
+            && ((rect.y > y && rect.y < bottom) && (rect.bottom > y && rect.bottom < bottom));
     }
 
-    bool overlaps(Rect2d other) const @nogc nothrow pure @safe
+    bool intersect(Rect2d other)
     {
-        auto isOverlaps = (other.right > x) && (other.x < right) && (other.bottom > y) && (
-            other.y < bottom);
-        return isOverlaps;
+        // auto isOverlaps = (other.right > x) && (other.x < right) && (other.bottom > y) && (
+        //    other.y < bottom);
+
+        //Separating Axis Theorem
+        if (right < other.x || x > other.right)
+        {
+            return false;
+        }
+        if (bottom < other.y || y > other.bottom)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    bool intersect(Circle2d circle)
+    {
+        import Math = deltotum.math;
+
+        double circleDistanceX = Math.abs(circle.x - x);
+        double circleDistanceY = Math.abs(circle.y - y);
+
+        const double halfWidth = width / 2.0;
+        const double halfHeight = height / 2.0; 
+
+        if (circleDistanceX > (halfWidth + circle.radius) || 
+        circleDistanceY > (halfHeight + circle.radius))
+        {
+            return false;
+        }
+
+        if (circleDistanceX <= halfWidth || circleDistanceY <= halfHeight)
+        {
+            return true;
+        }
+
+        double cornerDistance = (circleDistanceX - halfWidth) ^^ 2 +
+            (
+                circleDistanceY - halfHeight) ^^ 2;
+
+        return (cornerDistance <= (circle.radius ^^ 2));
     }
 
     double right() const @nogc nothrow pure @safe
@@ -79,18 +112,6 @@ struct Rect2d
         return height / 2;
     }
 
-    Vector2d minPoint() const @nogc nothrow pure @safe
-    {
-        Vector2d minXPos = {x, y};
-        return minXPos;
-    }
-
-    Vector2d maxPoint() const @nogc nothrow pure @safe
-    {
-        Vector2d maxYPos = {right, bottom};
-        return maxYPos;
-    }
-
     Vector2d center() const @nogc nothrow pure @safe
     {
         return Vector2d(x + halfWidth, y + halfHeight);
@@ -115,4 +136,39 @@ struct Rect2d
         return format("x: %s, y: %s, w: %s, h: %s", x, y, width, height);
     }
 
+}
+
+unittest
+{
+    enum w = 10;
+    enum h = 10;
+
+    Rect2d rect1 = Rect2d(10, 10, w, h);
+
+    assert(rect1.intersect(rect1));
+    assert(rect1.intersect(Rect2d(0, 0, w, h)));
+
+    assert(rect1.intersect(Rect2d(10, 0, w, h)));
+    assert(rect1.intersect(Rect2d(0, 10, w, h)));
+
+    assert(rect1.intersect(Rect2d(20, 0, w, h)));
+    assert(rect1.intersect(Rect2d(20, 10, w, h)));
+
+    assert(rect1.intersect(Rect2d(20, 20, w, h)));
+    assert(rect1.intersect(Rect2d(10, 20, w, h)));
+
+    //overlap
+    assert(rect1.intersect(Rect2d(0, 0, w * 3, h * 3)));
+    assert(rect1.intersect(Rect2d(10, 0, w, h * 2)));
+
+    assert(!rect1.intersect(Rect2d(0, 0, w - 1, h - 1)));
+
+    assert(!rect1.intersect(Rect2d(10, 0, w, h - 1)));
+    assert(!rect1.intersect(Rect2d(0, 10, w - 1, h)));
+
+    assert(!rect1.intersect(Rect2d(20 + 1, 0, w, h)));
+    assert(!rect1.intersect(Rect2d(20 + 1, 10, w, h)));
+
+    assert(!rect1.intersect(Rect2d(20, 20 + 1, w, h)));
+    assert(!rect1.intersect(Rect2d(10, 20 + 1, w, h)));
 }

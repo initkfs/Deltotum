@@ -78,9 +78,22 @@ struct Vector2d
         return Vector2d(x * factor, y * factor);
     }
 
+    Vector2d div(double factor) const @nogc nothrow pure @safe
+    {
+        assert(factor != 0);
+        const newX = x / factor;
+        const newY = y / factor;
+        return Vector2d(newX, newY);
+    }
+
     Vector2d inc(double value) const @nogc nothrow pure @safe
     {
         return Vector2d(x + value, y + value);
+    }
+
+     Vector2d incXY(double xValue, double yValud) const @nogc nothrow pure @safe
+    {
+        return Vector2d(x + xValue, y + yValud);
     }
 
     Vector2d dec(double value) const @nogc nothrow pure @safe
@@ -218,7 +231,9 @@ struct Vector2d
 
     Vector2d reflect() const @nogc nothrow pure @safe
     {
-        return Vector2d(-x, -y);
+        const newX = x == 0 ? 0 : -x;
+        const newY = y == 0 ? 0 : -y;
+        return Vector2d(newX, newY);
     }
 
     Vector2d truncate(double maxValue) const @nogc nothrow pure @safe

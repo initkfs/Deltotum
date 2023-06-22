@@ -55,7 +55,13 @@ class GuiEditor : Scene
         imagesTab.content = new Images;
         root.addCreate(imagesTab);
 
-        root.changeTab(imagesTab);
+        import deltotum.gui.supports.editors.sections.physics : Physics;
+
+        auto physicsTab = new Tab("Physics");
+        physicsTab.content = new Physics;
+        root.addCreate(physicsTab);
+
+        root.changeTab(physicsTab);
     }
 
 }

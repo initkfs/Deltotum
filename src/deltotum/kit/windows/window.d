@@ -246,6 +246,14 @@ class Window : UniComponent
         return boundsRect;
     }
 
+    Rect2d boundsLocal()
+    {
+        import deltotum.math.shapes.rect2d : Rect2d;
+
+        Rect2d boundsRect = {0, 0, width, height};
+        return boundsRect;
+    }
+
     int width()
     {
         int width, height;

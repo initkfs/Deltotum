@@ -45,7 +45,7 @@ struct Circle2d
         return false;
     }
 
-    bool overlaps(Circle2d other) const @nogc nothrow pure @safe
+    bool intersect(Circle2d other) const @nogc nothrow pure @safe
     {
         immutable dx = x - other.x;
         immutable dy = y - other.y;

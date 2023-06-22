@@ -18,4 +18,10 @@ abstract class Shape : Sprite
         this.height = height;
         this.style = style;
     }
+
+    this(double width, double height)
+    {
+        this.width = width;
+        this.height = height;
+    }
 }
