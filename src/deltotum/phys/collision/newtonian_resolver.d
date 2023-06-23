@@ -99,8 +99,8 @@ class NewtonianResolver
 
         if (penetration > 0)
         {
-            const double percent = 0.2; // 0.2 - 0.8
-            const double slop = 0.01; //0.01 - 0.1
+            const double percent = 0.3; // 0.2 - 0.8
+            const double slop = 0.5; //0.01 - 0.1
             double correctionValue = (Math.max(penetration - slop, 0.0) / (a.invMass + b.invMass)) * percent;
             Vector2d correction = collisionNormal.scale(correctionValue);
             a.position -= correction.scale(a.invMass);
@@ -113,7 +113,7 @@ class NewtonianResolver
         Rect2d abox = a.bounds;
         Rect2d bbox = b.bounds;
 
-        Vector2d n = a.position.subtract(b.position);
+        Vector2d n = a.center.subtract(b.center);
 
         double aExtent = abox.halfWidth;
         double bExtent = bbox.halfWidth;

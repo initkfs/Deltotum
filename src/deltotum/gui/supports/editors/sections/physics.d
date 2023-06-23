@@ -29,6 +29,7 @@ class Physics : Control
     NewtonianResolver collisionDetector;
     Rectangle rect1;
     Rectangle rect2;
+    Rectangle rect3;
     bool isCollisionProcess;
 
     override void create()
@@ -47,7 +48,7 @@ class Physics : Control
         rect1.hitbox = new Rectangle(50, 50, GraphicStyle(1, RGBA.blue));
         //rect1.hitbox = new Circle(25, GraphicStyle(1, RGBA.blue));
 
-        rect1.onMouseDown = (e) { rect1.velocity.x = 100; rect1.velocity.y = 10; return false; };
+        rect1.onMouseDown = (e) { rect1.velocity.x = 0; rect1.velocity.y = 50; return false; };
 
         rect2 = new Rectangle(50, 50);
         rect2.x = 500;
@@ -66,16 +67,23 @@ class Physics : Control
 
         rect2.onMouseDown = (e) { rect2.velocity.x = -100; return false; };
 
+        rect3 = new Rectangle(400, 20, GraphicStyle(1, RGBA.green));
+        rect3.x = 10;
+        rect3.y = window.height - 50;
+        rect3.isPhysicsEnabled = true;
+        addCreate(rect3);
+        rect3.hitbox = new Rectangle(400, 20);
+
     }
 
     override void update(double delta)
     {
         super.update(delta);
 
-        if (!isCollisionProcess && rect1.intersect(rect2))
+        if (!isCollisionProcess && rect1.intersect(rect3))
         {
             isCollisionProcess = true;
-            collisionDetector.resolve(rect1, rect2);
+            collisionDetector.resolve(rect1, rect3);
             // isCollisionProcess = false;
         }
 
