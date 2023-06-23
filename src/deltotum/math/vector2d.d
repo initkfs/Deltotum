@@ -72,10 +72,14 @@ struct Vector2d
         return magnitudeXY(deltaX, deltaY);
     }
 
-    //or multiply?
     Vector2d scale(double factor) const @nogc nothrow pure @safe
     {
         return Vector2d(x * factor, y * factor);
+    }
+
+    Vector2d multiply(Vector2d other) const @nogc nothrow pure @safe
+    {
+        return Vector2d(x * other.x, y * other.y);
     }
 
     Vector2d div(double factor) const @nogc nothrow pure @safe
@@ -91,7 +95,7 @@ struct Vector2d
         return Vector2d(x + value, y + value);
     }
 
-     Vector2d incXY(double xValue, double yValud) const @nogc nothrow pure @safe
+    Vector2d incXY(double xValue, double yValud) const @nogc nothrow pure @safe
     {
         return Vector2d(x + xValue, y + yValud);
     }

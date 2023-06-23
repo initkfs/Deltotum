@@ -106,6 +106,36 @@ class NewtonianResolver
             a.position -= correction.scale(a.invMass);
             b.position += correction.scale(b.invMass);
         }
+
+        //Friction
+        Vector2d rv = b.velocity - a.velocity;
+        Vector2d invDot = rv.multiply(collisionNormal).reflect;
+        Vector2d tangent = invDot.add(collisionNormal);
+        tangent = tangent.normalize;
+
+        double jt = -(rv.dotProduct(tangent));
+        jt = jt / (a.invMass + b.invMass);
+
+        if (jt != 0)
+        {
+            double mu = Math.hypot(a.staticFriction, b.staticFriction);
+
+            Vector2d frictionImpulse;
+            if (Math.abs(jt) < forceMomentumScalar * mu)
+            {
+                frictionImpulse = tangent.scale(jt);
+            }
+
+            else
+            {
+                auto dynamicFriction = Math.hypot(a.dynamicFriction, b.dynamicFriction);
+                frictionImpulse = tangent.scale(-forceMomentumScalar).scale(dynamicFriction);
+            }
+
+            a.velocity -= frictionImpulse.scale(a.invMass);
+            b.velocity += frictionImpulse.scale(b.invMass);
+        }
+
     }
 
     bool collisionAABB(Rectangle a, Rectangle b, out CollisionResult result)
@@ -158,7 +188,7 @@ class NewtonianResolver
 
         double distanceSquared = n.magnitudeSquared;
 
-        if (distanceSquared > r)
+        if (distanceSquared > r + 1.0)
         {
             return false;
         }
@@ -214,7 +244,7 @@ class NewtonianResolver
         }
 
         Vector2d closestPoint = aCenter.add(closest);
-        Vector2d normal = bCenter -  closestPoint;
+        Vector2d normal = bCenter - closestPoint;
         double distance = normal.magnitudeSquared;
 
         double r = b.radius;

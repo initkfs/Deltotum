@@ -57,11 +57,23 @@ class PhysicalBody : EventToolkitTarget
     double gravitationalAcceleration = 9.81;
     double gravityScale = 1.0;
 
+    Vector2d gravity;
+
     Vector2d externalForce;
 
     PhysMaterial material;
 
     double speed = 0;
+
+    double staticFriction = 1;
+    double dynamicFriction = 1;
+
+    //TODO replace with physbody
+    import deltotum.kit.sprites.sprite: Sprite;
+
+    Sprite[] spriteForCollisions;
+
+    void delegate(Sprite, Sprite) onCollision;
 
     private
     {
@@ -114,16 +126,39 @@ class PhysicalBody : EventToolkitTarget
         _invInertia = 1.0 / _inertia;
     }
 
-    Vector2d gravity()
-    {
-        Vector2d gravityForce = {0, mass * -gravitationalAcceleration};
-        return gravityForce;
+    void checkCollisions(){
+        if(!onCollision){
+            return;
+        }
+        //TODO optimizations;
+        foreach (i, firstSprite; spriteForCollisions)
+        {
+            foreach (secondSprite; spriteForCollisions[i + 1..$])
+            {
+                if(firstSprite is secondSprite){
+                    continue;
+                }
+                if(firstSprite.intersect(secondSprite)){
+                    onCollision(firstSprite, secondSprite);
+                }
+            }
+        }
     }
+
+    // Vector2d gravity()
+    // {
+    //     Vector2d gravityForce = {0, mass * -gravitationalAcceleration};
+    //     return gravityForce;
+    // }
 
     Vector2d accelerationForce()
     {
         Vector2d gravityForce = gravity;
         Vector2d accelerationForce = {gravityForce.x / mass, gravityForce.y / mass};
         return accelerationForce;
+    }
+
+    void destroy(){
+        spriteForCollisions = null;
     }
 }

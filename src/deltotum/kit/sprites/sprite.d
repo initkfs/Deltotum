@@ -573,6 +573,9 @@ class Sprite : PhysicalBody
 
         double dx = 0;
         double dy = 0;
+
+        checkCollisions;
+        
         if (isUpdatable && isPhysicsEnabled)
         {
             //TODO check velocity is 0 || acceleration is 0
@@ -582,14 +585,25 @@ class Sprite : PhysicalBody
             double newVelocityX = velocity.x + accelerationDx;
             double newVelocityY = velocity.y + accelerationDy;
 
+            if (gravity.x != 0 || gravity.y != 0)
+            {
+                //Vector2d forces = gravity.inc(invMass).scale(delta);
+                Vector2d forces = gravity.scale(delta);
+
+                newVelocityX += forces.x;
+                newVelocityY += forces.y;
+            }
+
             dx = newVelocityX * delta;
             dy = newVelocityY * delta;
 
-            if(externalForce.x != 0){
+            if (externalForce.x != 0)
+            {
                 externalForce.x = 0;
             }
 
-            if(externalForce.y != 0){
+            if (externalForce.y != 0)
+            {
                 externalForce.y = 0;
             }
 
@@ -1122,8 +1136,10 @@ class Sprite : PhysicalBody
             return Nullable!Sprite.init;
         }
 
-        void destroy()
+        override void destroy()
         {
+            super.destroy;
+
             if (_cache)
             {
                 _cache.destroy;
