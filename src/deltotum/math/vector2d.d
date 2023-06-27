@@ -143,6 +143,21 @@ struct Vector2d
         return x * other.x + y * other.y;
     }
 
+    double cross(Vector2d other) const @nogc nothrow pure @safe
+    {
+        return x * other.y - y * other.x;
+    }
+
+    Vector2d crossVecScalar(double s) const @nogc nothrow pure @safe
+    {
+        return Vector2d(s * y, -s * x);
+    }
+
+    Vector2d crossScalarVec(double s) const @nogc nothrow pure @safe
+    {
+        return Vec2(-s * y, s * x);
+    }
+
     double angleRad() const @nogc nothrow pure @safe
     {
         import math = deltotum.math;
