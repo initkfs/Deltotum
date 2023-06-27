@@ -46,6 +46,7 @@ class Sprite : PhysicalBody
     Vector2d acceleration;
 
     bool inScreenBounds = true;
+    bool delegate() onScreenBoundsIsStop;
 
     bool isRedraw = true;
     bool isRedrawChildren = true;
@@ -247,6 +248,11 @@ class Sprite : PhysicalBody
         {
             //TODO logging
             throw new Exception("Cannot add null sprite");
+        }
+
+        if (sprite is this)
+        {
+            throw new Exception("Cannot add this");
         }
 
         if (sprite.isManaged)
@@ -575,7 +581,7 @@ class Sprite : PhysicalBody
         double dy = 0;
 
         checkCollisions;
-        
+
         if (isUpdatable && isPhysicsEnabled)
         {
             //TODO check velocity is 0 || acceleration is 0
@@ -616,11 +622,19 @@ class Sprite : PhysicalBody
                 const screen = window.boundsLocal;
                 if (!screen.contains(thisBounds))
                 {
-                    newVelocityX = 0;
-                    newVelocityY = 0;
+                    if (!onScreenBoundsIsStop || onScreenBoundsIsStop())
+                    {
+                        newVelocityX = 0;
+                        newVelocityY = 0;
 
-                    acceleration.x = 0;
-                    acceleration.y = 0;
+                        acceleration.x = 0;
+                        acceleration.y = 0;
+                    }
+                    else
+                    {
+                        newVelocityX = velocity.x;
+                        newVelocityY = velocity.y;
+                    }
 
                     dx = 0;
                     dy = 0;

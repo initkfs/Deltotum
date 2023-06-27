@@ -240,6 +240,26 @@ struct Vector2d
         return Vector2d(newX, newY);
     }
 
+    Vector2d min(Vector2d other) const @nogc nothrow pure @safe
+    {
+        import Math = deltotum.math;
+
+        const newX = Math.min(x, other.x);
+        const newY = Math.min(y, other.y);
+
+        return Vector2d(newX, newY);
+    }
+
+    Vector2d max(Vector2d other) const @nogc nothrow pure @safe
+    {
+        import Math = deltotum.math;
+
+        const newX = Math.max(x, other.x);
+        const newY = Math.max(y, other.y);
+
+        return Vector2d(newX, newY);
+    }
+
     Vector2d truncate(double maxValue) const @nogc nothrow pure @safe
     {
         double scaleFactor = maxValue / this.magnitude;

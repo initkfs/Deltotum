@@ -24,6 +24,7 @@ struct CollisionResult
  */
 class NewtonianResolver
 {
+    double maxImpulseValue = 500;
 
     void resolve(Sprite a, Sprite b)
     {
@@ -89,8 +90,13 @@ class NewtonianResolver
         const massRatioA = 1.0 - a.mass / massSum;
         const massRatioB = 1.0 - b.mass / massSum;
 
-        const Vector2d aVelDelta = impulse.scale(massRatioA);
-        const Vector2d bVelDelta = impulse.scale(massRatioB);
+        const Vector2d maxValue = Vector2d(maxImpulseValue, maxImpulseValue);
+
+        const Vector2d aVelDelta = impulse.scale(massRatioA).min(maxValue);
+        const Vector2d bVelDelta = impulse.scale(massRatioB).min(maxValue);
+
+        a.isCollisionProcess = b;
+        b.isCollisionProcess = a;
 
         a.velocity -= aVelDelta;
         b.velocity += bVelDelta;
@@ -132,8 +138,8 @@ class NewtonianResolver
                 frictionImpulse = tangent.scale(-forceMomentumScalar).scale(dynamicFriction);
             }
 
-            a.velocity -= frictionImpulse.scale(a.invMass);
-            b.velocity += frictionImpulse.scale(b.invMass);
+            a.velocity -= frictionImpulse.scale(a.invMass).min(maxValue);
+            b.velocity += frictionImpulse.scale(b.invMass).min(maxValue);
         }
 
     }

@@ -68,8 +68,10 @@ class PhysicalBody : EventToolkitTarget
     double staticFriction = 1;
     double dynamicFriction = 1;
 
+    Sprite isCollisionProcess;
+
     //TODO replace with physbody
-    import deltotum.kit.sprites.sprite: Sprite;
+    import deltotum.kit.sprites.sprite : Sprite;
 
     Sprite[] spriteForCollisions;
 
@@ -126,20 +128,39 @@ class PhysicalBody : EventToolkitTarget
         _invInertia = 1.0 / _inertia;
     }
 
-    void checkCollisions(){
-        if(!onCollision){
+    void checkCollisions()
+    {
+        if (!onCollision)
+        {
             return;
         }
         //TODO optimizations;
         foreach (i, firstSprite; spriteForCollisions)
         {
-            foreach (secondSprite; spriteForCollisions[i + 1..$])
+            foreach (secondSprite; spriteForCollisions[i + 1 .. $])
             {
-                if(firstSprite is secondSprite){
+                if (firstSprite is secondSprite)
+                {
                     continue;
                 }
-                if(firstSprite.intersect(secondSprite)){
-                    onCollision(firstSprite, secondSprite);
+                if (firstSprite.intersect(secondSprite))
+                {
+                    if (!firstSprite.isCollisionProcess && !secondSprite.isCollisionProcess)
+                    {
+                        onCollision(firstSprite, secondSprite);
+                    }
+                }
+                else
+                {
+                    if (firstSprite.isCollisionProcess is secondSprite)
+                    {
+                        firstSprite.isCollisionProcess = null;
+                    }
+
+                    if (secondSprite.isCollisionProcess is firstSprite)
+                    {
+                        secondSprite.isCollisionProcess = null;
+                    }
                 }
             }
         }
@@ -158,7 +179,8 @@ class PhysicalBody : EventToolkitTarget
         return accelerationForce;
     }
 
-    void destroy(){
+    void destroy()
+    {
         spriteForCollisions = null;
     }
 }
