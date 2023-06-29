@@ -5,4 +5,5 @@ class Capability
     bool isVectorGraphics;
     bool isImageProcessing;
     bool isEmbeddedScripting;
+    bool isPhysics;
 }

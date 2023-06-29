@@ -25,6 +25,10 @@ import std.math.algebraic : abs;
 import std.typecons : Nullable;
 import deltotum.core.utils.tostring : ToStringExclude;
 
+//TODO move to PhysBody
+import deltotum.sys.chipmunk.chipm_body : ChipmBody;
+import deltotum.sys.chipmunk.chipm_space : ChipmSpace;
+
 /**
  * Authors: initkfs
  */
@@ -77,6 +81,9 @@ class Sprite : PhysicalBody
 
     bool isVisible = true;
     bool isReceiveEvents = true;
+
+    ChipmBody physBody;
+    ChipmSpace physSpace;
 
     //protected
     //{
@@ -582,6 +589,28 @@ class Sprite : PhysicalBody
 
         checkCollisions;
 
+        if (physBody)
+        {
+            Vector2d physVelocity = physBody.getVelocity;
+            Vector2d physPosition = physBody.getPosition;
+            double angleDeg = physBody.angleDeg;
+
+            this.angle = angleDeg;
+            if (width > 0 || height > 0)
+            {
+                //TODO offset in phys body
+                _x = physPosition.x - width / 2.0;
+                _y = physPosition.y - height / 2.0;
+            }
+            else
+            {
+                _x = physPosition.x;
+                _y = physPosition.y;
+            }
+
+            velocity = physVelocity;
+        }
+
         if (isUpdatable && isPhysicsEnabled)
         {
             //TODO check velocity is 0 || acceleration is 0
@@ -680,6 +709,11 @@ class Sprite : PhysicalBody
             child.update(delta);
         }
 
+        if (physSpace)
+        {
+            physSpace.step(delta);
+        }
+
         isProcessLayout = false;
     }
 
@@ -738,6 +772,12 @@ class Sprite : PhysicalBody
         Vector2d position() @nogc @safe pure nothrow
         {
             return Vector2d(x, y);
+        }
+
+        void position(Vector2d pos)
+        {
+            x = pos.x;
+            y = pos.y;
         }
 
         Vector2d center()
@@ -1162,6 +1202,25 @@ class Sprite : PhysicalBody
             if (_hitbox)
             {
                 _hitbox.destroy;
+            }
+
+            if (physBody)
+            {
+                if (physSpace)
+                {
+                    if (physBody.shape)
+                    {
+                        physSpace.removeShape(physBody.shape.getObject);
+                    }
+                    physSpace.removeBody(physBody.getObject);
+                }
+
+                if (physBody.shape)
+                {
+                    physBody.shape.destroy;
+                }
+
+                physBody.destroy;
             }
 
             foreach (Sprite child; children)

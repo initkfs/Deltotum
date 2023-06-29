@@ -7,18 +7,26 @@ import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.kit.graphics.shapes.circle : Circle;
 import deltotum.math.vector2d : Vector2d;
-import deltotum.kit.sprites.sprite: Sprite;
-import deltotum.kit.sprites.images.image: Image;
+import deltotum.kit.sprites.sprite : Sprite;
+import deltotum.kit.sprites.images.image : Image;
+import deltotum.kit.sprites.images.image : Image;
+import deltotum.sys.chipmunk.chipm_space : ChipmSpace;
+import deltotum.sys.chipmunk.chipm_body : ChipmBody;
+import deltotum.sys.chipmunk.chipm_shape : ChipmShape;
+import deltotum.math.random : Random;
 
 import Math = deltotum.math;
 
 import std.stdio;
+
+import chipmunk;
 
 /**
  * Authors: initkfs
  */
 class Physics : Control
 {
+    Random random;
     this()
     {
         import deltotum.kit.sprites.layouts.vertical_layout : VerticalLayout;
@@ -27,12 +35,15 @@ class Physics : Control
         // layout.isAutoResize = true;
         // isBackground = false;
         // layout.isAlignY = false;
+
+        random = new Random;
     }
 
-    NewtonianResolver collisionDetector;
-    Rectangle rect1;
-    Rectangle rect2;
-    Sprite rect3;
+    private
+    {
+        ChipmShape ground;
+        ChipmShape ground2;
+    }
 
     override void create()
     {
@@ -40,75 +51,71 @@ class Physics : Control
 
         import deltotum.kit.graphics.shapes.rectangle : Rectangle;
 
-        import deltotum.kit.sprites.images.image: Image;
+        auto space = new ChipmSpace;
+        physSpace = space;
 
-        rect1 = new Rectangle(50, 50, GraphicStyle(1, RGBA.red));
-       
-        rect1.x = 100;
-        rect1.mass = 100;
-        rect1.y = window.height / 2 - rect1.height / 2;
-        addCreate(rect1);
+        space.width = window.width;
+        space.height = window.height;
+        space.setGravityNorm(0, -5);
 
-        rect1.isPhysicsEnabled = true;
-        spriteForCollisions ~= rect1;
+        ground = space.newStaticSegmentShape(Vector2d(0, 300), Vector2d(window.width, 700));
+        ground.setFriction(1.0);
 
-        //rect1.hitbox = new Rectangle(50, 50, GraphicStyle(1, RGBA.blue));
-        auto c = new Circle(25, GraphicStyle(1, RGBA.blue));
-        c.isVisible = false;
-        c.x = 35;
-        rect1.hitbox = c;
-        // rect1.onScreenBoundsIsStop = () {
-        //     rect1.velocity = rect1.velocity.reflect;
-        //     return false;
-        // };
+        ground2 = space.newStaticSegmentShape(Vector2d(window.width - 10, 10), Vector2d(window.width - 10, window.height));
+        ground2.setFriction(1.0);
 
-       
+        import deltotum.gui.controls.buttons.button : Button;
 
-        rect2 = new Rectangle(50, 50);
+        auto c = new Button("Run!");
+        c.isBackground = true;
+        c.x = 100;
+        c.y = 100;
+        addCreate(c);
 
-         rect1.onMouseDown = (e) {
-            rect1.velocity.x = 50;
-            rect2.velocity.x = -50;
-            //rect1.velocity.y = 50; 
-            //rect1.gravity = Vector2d(0, 10);
-            return false;
+        c.onAction = (e) {
+            foreach (i; 0 .. 100)
+            {
+                createShape;
+            }
+            c.isVisible = false;
         };
-       
-        rect2.x =  window.width - 200;
-        rect2.mass = 10;
+    }
 
-        rect2.y = window.height / 2 - rect2.height / 2;
-        addCreate(rect2);
-        rect2.isPhysicsEnabled = true;
+    Sprite createShape()
+    {
+        enum radius = 25;
+        auto obj = new Circle(radius, GraphicStyle(1, RGBA.green, true, RGBA.red));
 
-        import deltotum.kit.graphics.shapes.circle : Circle;
+        addCreate(obj);
 
-        //rect2.hitbox = new Rectangle(50, 50, GraphicStyle(1, RGBA.green));
-        rect2.hitbox = new Circle(25, GraphicStyle(1, RGBA.green));
-        rect2.hitbox.isVisible = false;
+        cpFloat mass = random.randomBetween!double(1.0, 100);
 
-        // rect2.onScreenBoundsIsStop = () {
-        //     rect2.velocity = rect2.velocity.reflect;
-        //     return false;
-        // };
+        cpFloat moment = physSpace.momentForCircle(mass, 0, radius);
 
-        collisionDetector = new NewtonianResolver;
+        auto ballBody = new ChipmBody(mass, moment);
+        physSpace.addBody(ballBody.getObject);
+        ballBody.setPosition(Vector2d(200, 200));
 
-        rect2.onMouseDown = (e) { rect2.velocity.x = -20; return false; };
-        spriteForCollisions ~= rect2;
+        ChipmShape ballShape = ChipmShape.newCircleShape(ballBody, radius);
 
-        rect3 = new Rectangle(50, 50, GraphicStyle(1, RGBA.green));
-        rect3.x = window.width - 100;
-        rect3.y = window.height - 200;
-        rect3.isPhysicsEnabled = true;
-        rect3.mass = 10;
-        addCreate(rect3);
-        rect3.hitbox = new Circle(25, GraphicStyle(1, RGBA.green));
-        spriteForCollisions ~= rect3;
+        ballShape.setFriction(random.randomBetween(0.0, 2.0));
+        ballShape.setElasticity(random.randomBetween(0.0, 2.0));
 
-        onCollision = (first, second) {
-            collisionDetector.resolve(first, second);
-        };
+        physSpace.addShape(ballShape.getObject);
+        ballBody.shape = ballShape;
+        obj.physBody = ballBody;
 
+        return obj;
+    }
+
+    override bool draw()
+    {
+        super.draw;
+        graphics.drawLine(0, 300, window.width, 700, RGBA
+                .red);
+
+        graphics.drawLine(window.width - 10, 10, window.width - 10, window.height, RGBA
+                .red);
+        return true;
     }
 }

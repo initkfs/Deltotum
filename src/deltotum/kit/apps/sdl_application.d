@@ -38,7 +38,7 @@ import deltotum.kit.apps.loops.integrated_loop : IntegratedLoop;
 import deltotum.kit.apps.loops.loop : Loop;
 import deltotum.kit.windows.window_manager : WindowManager;
 import deltotum.kit.apps.capabilities.capability : Capability;
-import deltotum.gui.themes.icons.icon_pack: IconPack;
+import deltotum.gui.themes.icons.icon_pack : IconPack;
 
 import std.typecons : Nullable;
 
@@ -48,6 +48,7 @@ import std.logger : Logger, MultiLogger, FileLogger, LogLevel, sharedLog;
 import std.stdio;
 
 import deltotum.sys.cairo.libs : CairoLib;
+//import deltotum.sys.chipmunk.libs : ChipmLib;
 
 import bindbc.sdl;
 
@@ -70,6 +71,7 @@ class SdlApplication : GraphicApplication
         Screen _screen;
 
         CairoLib cairoLib;
+        //ChipmLib chipmLib;
 
         //TODO themes, assets?
         IconPack iconPack;
@@ -159,6 +161,28 @@ class SdlApplication : GraphicApplication
         };
 
         cairoLibForLoad.load;
+
+        //Physics
+        // auto physLibForLoad = new ChipmLib;
+
+        // physLibForLoad.onAfterLoad = () {
+        //     chipmLib = physLibForLoad;
+        //     _cap.isPhysics = true;
+        //     uservices.logger.trace("Load Chipmunk library.");
+        // };
+
+        // physLibForLoad.onNoLibrary = () => uservices.logger.error("Chipmunk library loading error.");
+        // physLibForLoad.onBadLibrary = () => uservices.logger.error("Chipmunk bad library.");
+        // physLibForLoad.onErrorWithMessage = (err, msg) {
+        //     import std.string : fromStringz;
+
+        //     uservices.logger.errorf("Chipmunk loading error. %s: %s\n", err.fromStringz.idup, msg
+        //             .fromStringz.idup);
+        //     physLibForLoad.unload;
+        //     physLibForLoad = null;
+        // };
+
+        // physLibForLoad.load;
 
         _ext = createExtension(uservices.logger, uservices.config, uservices.context);
 
@@ -481,6 +505,7 @@ class SdlApplication : GraphicApplication
         {
             //TODO config, lazy delegate
             import deltotum.gui.supports.editors.guieditor : GuiEditor;
+
             window.scenes.add(new GuiEditor);
         }
 

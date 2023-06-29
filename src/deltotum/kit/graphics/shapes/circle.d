@@ -13,7 +13,7 @@ class Circle : Shape
 {
     const double radius;
 
-    this(double radius, GraphicStyle style)
+    this(double radius, GraphicStyle style = GraphicStyle.simple)
     {
         super(radius * 2, radius * 2, style);
         this.radius = radius;

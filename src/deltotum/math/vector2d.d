@@ -155,7 +155,7 @@ struct Vector2d
 
     Vector2d crossScalarVec(double s) const @nogc nothrow pure @safe
     {
-        return Vec2(-s * y, s * x);
+        return Vector2d(-s * y, s * x);
     }
 
     double angleRad() const @nogc nothrow pure @safe
