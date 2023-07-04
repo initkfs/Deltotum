@@ -694,10 +694,10 @@ class Sprite : PhysicalBody
                 continue;
             }
 
-            if (child.isManaged && !child.isLayoutManaged)
+            if (layout is null || (child.isManaged && !child.isLayoutManaged))
             {
-                child.velocity.x = velocity.x;
-                child.velocity.y = velocity.y;
+                //child.velocity.x = velocity.x;
+                //child.velocity.y = velocity.y;
 
                 if (dx != 0 || dy != 0)
                 {

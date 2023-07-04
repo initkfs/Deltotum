@@ -67,7 +67,7 @@ class GuiEditor : Scene
         particlesTab.content = new Particles;
         root.addCreate(particlesTab);
 
-        root.changeTab(physicsTab);
+        root.changeTab(particlesTab);
     }
 
 }

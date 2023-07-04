@@ -44,7 +44,7 @@
             "postBuildCommands": ["timetrace2txt $PACKAGE_DIR/trace.json --tsv $PACKAGE_DIR/trace.tsv -o $PACKAGE_DIR/trace.txt"]
         }
     ],
-    "buildRequirements": ["disallowDeprecations"],
+    "buildRequirements": ["disallowDeprecations", "allowWarnings"],
     "sourcePaths": ["./src"],
     "importPaths": ["./src"],
     "dependencies": {

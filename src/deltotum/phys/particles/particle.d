@@ -13,25 +13,4 @@ class Particle : Sprite
     bool isAlive;
     int lifetime;
     int age;
-
-    this(){
-        super();
-    }
-
-    this(Sprite[] newChildren)
-    {
-        super();
-        foreach (child; newChildren)
-        {
-            add(child);
-        }
-    }
-
-    void alive(bool isObjectAlive)
-    {
-        isAlive = isObjectAlive;
-        isUpdatable = isAlive;
-        isVisible = isAlive;
-    }
-
 }

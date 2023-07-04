@@ -6,13 +6,11 @@ import deltotum.kit.graphics.shapes.rectangle : Rectangle;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.kit.graphics.shapes.circle : Circle;
 import deltotum.math.vector2d : Vector2d;
-import deltotum.phys.collision.newtonian_resolver : NewtonianResolver;
 
 import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.phys.particles.emitter : Emitter;
 
 import deltotum.phys.particles.particle : Particle;
-import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.gui.containers.vbox : VBox;
 import deltotum.gui.containers.hbox : HBox;
@@ -41,20 +39,19 @@ class Particles : Control
         // layout.isAlignY = false;
     }
 
-    NewtonianResolver collisionDetector;
     Emitter emitter;
 
     override void create()
     {
         super.create;
 
-        collisionDetector = new NewtonianResolver;
 
         import deltotum.phys.particles.emitter : Emitter;
 
         auto emitter = new Emitter(false);
         emitter.x = window.width / 2;
         emitter.y = window.height / 2;
+        emitter.isDrawBounds = true;
 
         addCreate(emitter);
 
@@ -62,24 +59,22 @@ class Particles : Control
             import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 
             auto p = new Particle;
-           // p.isPhysicsEnabled = true;
             p.mass = 10;
-            p.width = 10;
-            p.height = 10;
+            p.width = 20;
+            p.height = 20;
+
+            p.isVisible = false;
+            p.isUpdatable = false;
 
             build(p);
 
-            auto pPart = new Circle(5, GraphicStyle(1, RGBA.red, true, RGBA.green));
-
+            auto pPart = new Circle(10, GraphicStyle(1, RGBA.red, true, RGBA.green));
             p.addCreate(pPart);
 
             //spriteForCollisions ~= p;
             return p;
         };
 
-        // onCollision = (p1, p2){
-        //     collisionDetector.resolve(p1, p2);
-        // };
 
         auto controlContainer = new VBox(2);
         addCreate(controlContainer);
@@ -93,7 +88,10 @@ class Particles : Control
 
         auto runButton = new Button;
         runButton.text = "Emit";
-        runButton.onAction = (e) { emitter.isActive = !emitter.isActive; };
+        runButton.onAction = (e) { 
+            //emitter.emit;
+            emitter.isActive = !emitter.isActive; 
+            };
         controlButtonBox.addCreate(runButton);
 
         auto configButton = new Button;
@@ -108,14 +106,14 @@ class Particles : Control
         auto textCount = new Text("CPF:");
         controlContainer.addCreate(textCount);
 
-        auto cpf = new HScrollbar(5, 3000);
+        auto cpf = new HScrollbar(10, 3000);
         cpf.onValue = (value) { emitter.countPerFrame = cast(int) value; };
         controlContainer.addCreate(cpf);
 
         auto textLifeTime = new Text("Life time:");
         controlContainer.addCreate(textLifeTime);
 
-        auto lifetime = new HScrollbar(1, 200);
+        auto lifetime = new HScrollbar(10, 1000);
         lifetime.onValue = (value) { emitter.lifetime = cast(int) value; };
         controlContainer.addCreate(lifetime);
 
@@ -123,28 +121,28 @@ class Particles : Control
         controlContainer.addCreate(text);
 
         auto velocityX = new HScrollbar(-100, 100);
-        velocityX.onValue = (value) { emitter.minVelocityX = value; };
+        velocityX.onValue = (value) { emitter.minVelocity.x = value; };
         controlContainer.addCreate(velocityX);
 
         auto textVelXMax = new Text("Max velocity X:");
         controlContainer.addCreate(textVelXMax);
 
         auto velocityXMax = new HScrollbar(-100, 100);
-        velocityXMax.onValue = (value) { emitter.maxVelocityX = value; };
+        velocityXMax.onValue = (value) { emitter.maxVelocity.x = value; };
         controlContainer.addCreate(velocityXMax);
 
         auto velYText = new Text("Min velocity Y:");
         controlContainer.addCreate(velYText);
 
-        auto velocityY = new HScrollbar(-1000, 1000);
-        velocityY.onValue = (value) { emitter.minVelocityY = value; };
+        auto velocityY = new HScrollbar(-100, 100);
+        velocityY.onValue = (value) { emitter.minVelocity.y = value; };
         controlContainer.addCreate(velocityY);
 
         auto velYTextMax = new Text("Max velocity Y:");
         controlContainer.addCreate(velYTextMax);
 
-        auto velocityYMax = new HScrollbar(-1000, 1000);
-        velocityYMax.onValue = (value) { emitter.maxVelocityY = value; };
+        auto velocityYMax = new HScrollbar(-100, 100);
+        velocityYMax.onValue = (value) { emitter.maxVelocity.y = value; };
         controlContainer.addCreate(velocityYMax);
 
         import deltotum.gui.containers.stack_box : StackBox;
@@ -165,29 +163,29 @@ class Particles : Control
         auto textAccX = new Text("Min acceleration X:");
         controlContainer2.addCreate(textAccX);
 
-        auto accelX = new HScrollbar(-1000, 1000);
-        accelX.onValue = (value) { emitter.minAccelerationX = value; };
+        auto accelX = new HScrollbar(-100, 100);
+        accelX.onValue = (value) { emitter.minAcceleration.x = value; };
         controlContainer2.addCreate(accelX);
 
         auto textAccXMax = new Text("Max acceleration X:");
         controlContainer2.addCreate(textAccXMax);
 
-        auto accelXMax = new HScrollbar(-1000, 1000);
-        accelXMax.onValue = (value) { emitter.maxAccelerationX = value; };
+        auto accelXMax = new HScrollbar(-100, 100);
+        accelXMax.onValue = (value) { emitter.maxAcceleration.x = value; };
         controlContainer2.addCreate(accelXMax);
 
         auto textAccYMin = new Text("Min acceleration Y:");
         controlContainer2.addCreate(textAccYMin);
 
-        auto accelYMin = new HScrollbar(-1000, 1000);
-        accelYMin.onValue = (value) { emitter.minAccelerationY = value; };
+        auto accelYMin = new HScrollbar(-100, 100);
+        accelYMin.onValue = (value) { emitter.minAcceleration.y = value; };
         controlContainer2.addCreate(accelYMin);
 
         auto textAccYMax = new Text("Max acceleration Y:");
         controlContainer2.addCreate(textAccYMax);
 
-        auto accelYMax = new HScrollbar(-1000, 1000);
-        accelYMax.onValue = (value) { emitter.maxAccelerationY = value; };
+        auto accelYMax = new HScrollbar(-100, 100);
+        accelYMax.onValue = (value) { emitter.maxAcceleration.y = value; };
         controlContainer2.addCreate(accelYMax);
 
     }

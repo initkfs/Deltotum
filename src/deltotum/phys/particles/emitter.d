@@ -24,33 +24,22 @@ class Emitter : Sprite
     @Configurable
     int countPerFrame = 10;
     @Configurable
-    double particleMass = 0;
+    Vector2d minVelocity;
     @Configurable
-    double minVelocityX = 0;
+    Vector2d maxVelocity;
     @Configurable
-    double maxVelocityX = 0;
+    Vector2d minAcceleration;
     @Configurable
-    double minVelocityY = 0;
-    @Configurable
-    double maxVelocityY = 0;
-    @Configurable
-    double minAccelerationX = 0;
-    @Configurable
-    double maxAccelerationX = 0;
-    @Configurable
-    double minAccelerationY = 0;
-    @Configurable
-    double maxAccelerationY = 0;
+    Vector2d maxAcceleration;
 
     private
     {
-        //TODO pools implementation
         Particle[] particles;
         Random random;
         EmitterConfig emitterConfig;
     }
 
-    this(bool isActive = true, EmitterConfig config = null)
+    this(bool isActive = false, EmitterConfig config = null)
     {
         random = new Random;
         this.isActive = isActive;
@@ -70,7 +59,6 @@ class Emitter : Sprite
         }
 
         auto particle = particleFactory();
-        particle.isManaged = false;
 
         if (!particle.isBuilt)
         {
@@ -93,51 +81,60 @@ class Emitter : Sprite
         }
 
         particles ~= particle;
-        tuneParticle(particle);
-        particle.alive(true);
+        initParticle(particle);
     }
 
-    protected void tuneParticle(Particle particle)
+    Vector2d particleInitPos()
+    {
+        if (width > 0 || height > 0)
+        {
+            const b = bounds;
+            return Vector2d(b.middleX, b.middleY);
+        }
+        return Vector2d(x, y);
+    }
+
+    void initParticle(Particle particle)
     {
         particle.lifetime = lifetime;
-        particle.x = x;
-        particle.y = y;
-        particle.mass = particleMass;
+        Vector2d pos = particleInitPos;
+        if (particle.width > 0)
+        {
+            pos.x -= particle.width / 2;
+        }
 
-        particle.velocity.x = random.randomBetween(minVelocityX, maxVelocityX);
-        particle.velocity.y = random.randomBetween(minVelocityY, maxVelocityY);
-        particle.acceleration.x = random.randomBetween(minAccelerationX, maxAccelerationX);
-        particle.acceleration.y = random.randomBetween(minAccelerationY, maxAccelerationY);
+        if (particle.height > 0)
+        {
+            pos.y -= particle.height / 2;
+        }
+        particle.position = pos;
+        particle.isLayoutManaged = false;
+        // particle.isManaged = false;
+
+        particle.velocity = random.randomBerweenVec(minVelocity, maxVelocity);
+        particle.acceleration = random.randomBerweenVec(minAcceleration, maxAcceleration);
+
+        if (!particle.physBody)
+        {
+            particle.isPhysicsEnabled = true;
+        }
+
+        particle.id = "particle";
+
+        particle.isVisible = true;
+        particle.isUpdatable = true;
+        particle.isAlive = true;
     }
 
-    protected void resetParticle(Particle p) const
+    protected void resetParticle(Particle p)
     {
+        p.isVisible = false;
+        p.isUpdatable = false;
+
+        p.position = particleInitPos;
+
         p.lifetime = 0;
         p.age = 0;
-        p.velocity.x = 0;
-        p.velocity.y = 0;
-        p.acceleration.x = 0;
-        p.acceleration.y = 0;
-        p.angle = 0;
-        p.x = 0;
-        p.y = 0;
-    }
-
-    override bool draw()
-    {
-        bool redraw;
-        foreach (Particle p; particles)
-        {
-            if (p.isAlive)
-            {
-                p.draw;
-                if (!redraw)
-                {
-                    redraw = true;
-                }
-            }
-        }
-        return redraw;
     }
 
     override void update(double delta)
@@ -160,12 +157,11 @@ class Emitter : Sprite
 
             if (!alive || p.age >= p.lifetime)
             {
-                p.alive(false);
+                p.isAlive = false;
                 resetParticle(p);
                 continue;
             }
 
-            //p.update(delta);
             p.age++;
             aliveCount++;
         }
@@ -187,21 +183,18 @@ class Emitter : Sprite
         }
 
         int revived;
-        if (particles.length > 0 && aliveCount < particles.length)
+        foreach (p; particles)
         {
-            foreach (p; particles)
+            if (revived == newParticlesCount)
             {
-                if (revived == newParticlesCount)
-                {
-                    break;
-                }
+                break;
+            }
 
-                if (!p.isAlive)
-                {
-                    tuneParticle(p);
-                    p.alive(true);
-                    revived++;
-                }
+            if (!p.isAlive)
+            {
+                initParticle(p);
+                p.isAlive = true;
+                revived++;
             }
         }
 

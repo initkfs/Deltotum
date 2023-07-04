@@ -1,7 +1,7 @@
 module deltotum.math.random;
 
 import deltotum.core.apps.units.services.loggable_unit : LoggableUnit;
-
+import deltotum.math.vector2d : Vector2d;
 import std.random : uniform, unpredictableSeed, StdRandom = Random;
 import std.range.primitives;
 import std.typecons : Nullable, Tuple;
@@ -41,15 +41,21 @@ class Random
         return value;
     }
 
-    T randomBetweenType(T)() pure @safe
-            if (isNumeric!T)
+    T randomBetweenType(T)() pure @safe if (isNumeric!T)
     {
-       return randomBetween!T(T.min, T.max);
+        return randomBetween!T(T.min, T.max);
     }
 
     double randomBetween0to1() pure @safe
     {
         return randomBetween!double(0, 1);
+    }
+
+    Vector2d randomBerweenVec(Vector2d min, Vector2d max) pure @safe
+    {
+        const newX = randomBetween(min.x, max.x);
+        const newY = randomBetween(min.y, max.y);
+        return Vector2d(newX, newY);
     }
 
     Nullable!(Unqual!U) randomElement(T : U[], U)(T container) pure @safe
