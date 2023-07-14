@@ -145,7 +145,7 @@ class SdlApplication : GraphicApplication
 
         cairoLibForLoad.onAfterLoad = () {
             cairoLib = cairoLibForLoad;
-            _cap.isVectorGraphics = true;
+            gservices.cap.isVectorGraphics = true;
             uservices.logger.trace("Load Cairo library.");
         };
 
@@ -366,7 +366,7 @@ class SdlApplication : GraphicApplication
         component.input = _input;
         component.screen = _screen;
         component.ext = _ext;
-        component.cap = _cap;
+        component.cap = gservices.cap;
     }
 
     Window newWindow(

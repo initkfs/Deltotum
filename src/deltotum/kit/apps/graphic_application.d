@@ -25,21 +25,24 @@ abstract class GraphicApplication : CliApplication
 
     bool isQuitOnCloseAllWindows = true;
 
+    private
+    {
+        GraphicsComponent _graphicServices;
+    }
+
     protected
     {
-        WindowManager windowManager;
         Loop mainLoop;
-        GraphicsComponent _graphicServices;
+        WindowManager windowManager;
 
         bool isProcessEvents = true;
-
-        Capability _cap;
     }
 
     this(Loop loop)
     {
-        assert(loop);
-        this.mainLoop = loop;
+        import std.exception : enforce;
+
+        this.mainLoop = enforce(loop, "Main loop must not be null");
     }
 
     override ApplicationExit initialize(string[] args)
@@ -49,11 +52,22 @@ abstract class GraphicApplication : CliApplication
             return exit;
         }
 
-        _cap = new Capability;
+        if (!_graphicServices)
+        {
+            _graphicServices = newGraphicServices;
+        }
 
-        _graphicServices = new GraphicsComponent;
+        if (!_graphicServices.hasCap)
+        {
+            _graphicServices.cap = newCapability;
+        }
 
         return ApplicationExit(false);
+    }
+
+    Capability newCapability()
+    {
+        return new Capability;
     }
 
     GraphicsComponent newGraphicServices()
@@ -72,15 +86,15 @@ abstract class GraphicApplication : CliApplication
     }
 
     void runLoop()
+    in (mainLoop)
     {
-        assert(mainLoop);
         mainLoop.isRunning = true;
         mainLoop.runWait;
     }
 
     void stopLoop()
+    in (mainLoop)
     {
-        assert(mainLoop);
         mainLoop.isRunning = false;
     }
 
@@ -127,10 +141,10 @@ abstract class GraphicApplication : CliApplication
         }
         else
         {
-            _cap.isEmbeddedScripting = true;
+            _graphicServices.cap.isEmbeddedScripting = true;
         }
 
-        if (_cap.isEmbeddedScripting)
+        if (_graphicServices.cap.isEmbeddedScripting)
         {
             import deltotum.kit.extensions.plugins.lua.lua_script_text_plugin : LuaScriptTextPlugin;
             import deltotum.kit.extensions.plugins.lua.lua_file_script_plugin : LuaFileScriptPlugin;
