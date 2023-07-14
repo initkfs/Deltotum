@@ -11,17 +11,14 @@ struct HSV
     double saturation = 0;
     double value = 0;
 
-    static immutable struct HSVData
+    static enum
     {
-        static enum
-        {
-            minHue = 0,
-            maxHue = 360,
-            minSaturation = 0,
-            maxSaturation = 100,
-            minValue = 0,
-            maxValue = 100
-        }
+        minHue = 0,
+        maxHue = 360,
+        minSaturation = 0,
+        maxSaturation = 100,
+        minValue = 0,
+        maxValue = 100
     }
 
     RGBA toRGBA() const pure @safe
@@ -44,7 +41,7 @@ struct HSV
         }
         else
         {
-            h = (h == HSVData.maxHue) ? 0 : h / 60.0;
+            h = (h == maxHue) ? 0 : h / 60.0;
             i = cast(int) h;
             f = h - i;
 
@@ -98,7 +95,7 @@ struct HSV
         import std.conv : to;
 
         //TODO loss of precision and fractional values
-        auto toRGBAColor = (double value) => to!ubyte(round(value * RGBA.RGBAData.maxColor));
+        auto toRGBAColor = (double value) => to!ubyte(round(value * RGBA.maxColor));
 
         RGBA result = RGBA(toRGBAColor(r), toRGBAColor(g), toRGBAColor(b));
         return result;

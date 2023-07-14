@@ -38,10 +38,10 @@ class ImageProcessor
             coeffSrgb = 1.055 * (coeffLinear ^^ (1.0 / 2.4)) - 0.055;
         }
 
-        ubyte colorValue = (coeffSrgb * RGBA.RGBAData.maxColor).to!ubyte;
+        ubyte colorValue = (coeffSrgb * RGBA.maxColor).to!ubyte;
         if (threshold > 0)
         {
-            colorValue = colorValue > threshold ? RGBA.RGBAData.maxColor : RGBA.RGBAData.minColor;
+            colorValue = colorValue > threshold ? RGBA.maxColor : RGBA.minColor;
         }
 
         RGBA newColor = RGBA(colorValue, colorValue, colorValue, color.a);
@@ -52,7 +52,7 @@ class ImageProcessor
     {
         import std.conv : to;
 
-        ubyte maxColor = RGBA.RGBAData.maxColor;
+        ubyte maxColor = RGBA.maxColor;
         ubyte newR = (maxColor - color.r).to!ubyte;
         ubyte newG = (maxColor - color.g).to!ubyte;
         ubyte newB = (maxColor - color.b).to!ubyte;
@@ -68,7 +68,7 @@ class ImageProcessor
         import std.conv : to;
 
         const checkTreshold = (ubyte colorValue) {
-            return colorValue < threshold ? (RGBA.RGBAData.maxColor - colorValue)
+            return colorValue < threshold ? (RGBA.maxColor - colorValue)
                 .to!ubyte : colorValue;
         };
 
@@ -85,7 +85,7 @@ class ImageProcessor
         import Math = deltotum.math;
         import std.conv : to;
 
-        const maxColorValue = RGBA.RGBAData.maxColor;
+        const maxColorValue = RGBA.maxColor;
 
         const newR = 0.393 * color.r + 0.769 * color.g + 0.189 * color.b;
         const newG = 0.349 * color.r + 0.686 * color.g + 0.168 * color.b;
@@ -165,15 +165,15 @@ class ImageProcessor
                 //TODO remove duplication
                 rSum /= kSum;
                 rSum += offset;
-                rSum = Math.clamp(rSum, RGBA.RGBAData.minColor, RGBA.RGBAData.maxColor);
+                rSum = Math.clamp(rSum, RGBA.minColor, RGBA.maxColor);
 
                 gSum /= kSum;
                 gSum += offset;
-                gSum = Math.clamp(gSum, RGBA.RGBAData.minColor, RGBA.RGBAData.maxColor);
+                gSum = Math.clamp(gSum, RGBA.minColor, RGBA.maxColor);
 
                 bSum /= kSum;
                 bSum += offset;
-                bSum = Math.clamp(bSum, RGBA.RGBAData.minColor, RGBA.RGBAData.maxColor);
+                bSum = Math.clamp(bSum, RGBA.minColor, RGBA.maxColor);
 
                 colorsResult[y][x] = RGBA(cast(ubyte) rSum, cast(ubyte) gSum, cast(ubyte) bSum);
             }
@@ -506,8 +506,8 @@ class ImageProcessor
         RGBA[][] buffer = new RGBA[][](colorHeight, colorWidth);
 
         scope ubyte delegate(double) colorCalc = (value) {
-            const result = cast(ubyte) Math.clamp(Math.round(value), RGBA.RGBAData.minColor, RGBA
-                    .RGBAData.maxColor);
+            const result = cast(ubyte) Math.clamp(Math.round(value), RGBA.minColor, RGBA
+                    .maxColor);
             return result;
         };
 
@@ -557,7 +557,7 @@ class ImageProcessor
                 colorPtr.r = colorCalc(r);
                 colorPtr.g = colorCalc(g);
                 colorPtr.b = colorCalc(b);
-                colorPtr.a = Math.clamp(a, RGBA.RGBAData.minAlpha, RGBA.RGBAData.maxAlpha);
+                colorPtr.a = Math.clamp(a, RGBA.minAlpha, RGBA.maxAlpha);
 
             }
 
@@ -575,18 +575,18 @@ class ImageProcessor
 
     double blendDivide(double color, double colorMask)
     {
-        return (color * (RGBA.RGBAData.maxColor + 1)) / (colorMask + 1);
+        return (color * (RGBA.maxColor + 1)) / (colorMask + 1);
     }
 
     double blendScreen(double color, double colorMask)
     {
-        const max = RGBA.RGBAData.maxColor;
+        const max = RGBA.maxColor;
         return max - (((max - colorMask) * (max - color)) / max);
     }
 
     double blendOverlay(double color, double colorMask)
     {
-        const max = RGBA.RGBAData.maxColor;
+        const max = RGBA.maxColor;
         const coeff1 = (color / max);
         const coeff2 = (2 * colorMask) / max;
         return coeff1 * (color + coeff2 * (max - 1));

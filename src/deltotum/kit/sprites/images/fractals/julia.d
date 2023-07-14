@@ -64,7 +64,7 @@ class Julia : ComplexFractalImage
         import deltotum.kit.graphics.colors.hsv : HSV;
 
         //or iter step? iter/max
-        RGBA color = HSV((i * 2) % HSV.HSVData.maxHue, HSV.HSVData.maxSaturation, HSV.HSVData.maxValue * ((i < iterations) ? 1 : 0)).toRGBA;
+        RGBA color = HSV((i * 2) % HSV.maxHue, HSV.maxSaturation, HSV.maxValue * ((i < iterations) ? 1 : 0)).toRGBA;
         return color;
     }
 }

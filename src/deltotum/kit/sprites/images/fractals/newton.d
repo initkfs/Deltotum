@@ -51,7 +51,7 @@ class Newton : ComplexFractalImage
                 {
                     import std;
 
-                    RGBA color = HSV(i * 15 % HSV.HSVData.maxHue, HSV.HSVData.maxSaturation, HSV.HSVData.maxValue * (
+                    RGBA color = HSV(i * 15 % HSV.maxHue, HSV.maxSaturation, HSV.maxValue * (
                             (i < iterations) ? 1 : 0)).toRGBA;
                     return color;
                 }

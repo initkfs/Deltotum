@@ -30,15 +30,12 @@ struct RGBA
         }
     }
 
-    static immutable struct RGBAData
+    static enum
     {
-        static enum
-        {
-            minColor = 0,
-            maxColor = 255,
-            minAlpha = 0,
-            maxAlpha = 1
-        }
+        minColor = 0,
+        maxColor = 255,
+        minAlpha = 0,
+        maxAlpha = 1
     }
 
     static
@@ -74,20 +71,19 @@ struct RGBA
             return RGBA(0, 0, 255);
         }
 
-        static RGBA gray(ubyte grayColor, double a = RGBAData.maxAlpha) @nogc nothrow pure @safe
+        static RGBA gray(ubyte grayColor, double a = maxAlpha) @nogc nothrow pure @safe
         {
             return RGBA(grayColor, grayColor, grayColor, a);
         }
     }
 
-    static RGBA rgba(ubyte r = RGBAData.maxColor, ubyte g = RGBAData.maxColor, ubyte b = RGBAData.maxColor, double a = RGBAData
-            .maxAlpha) @nogc nothrow pure @safe
+    static RGBA rgba(ubyte r = maxColor, ubyte g = maxColor, ubyte b = maxColor, double a = maxAlpha) @nogc nothrow pure @safe
     {
         const RGBA color = {r, g, b, a};
         return color;
     }
 
-    static RGBA web(string colorString, double a = RGBAData.maxAlpha) pure @safe
+    static RGBA web(string colorString, double a = maxAlpha) pure @safe
     {
         import std.traits : EnumMembers;
         import std.uni : sicmp;
@@ -163,7 +159,7 @@ struct RGBA
 
     RGBA invert() @nogc nothrow pure @safe
     {
-        return RGBA(RGBAData.maxColor - r, RGBAData.maxColor - g, RGBAData.maxColor - b, a);
+        return RGBA(maxColor - r, maxColor - g, maxColor - b, a);
     }
 
     RGBA interpolate(RGBA start, RGBA end, double factor = 0.5) pure @safe
@@ -187,7 +183,7 @@ struct RGBA
 
     ubyte aNorm() const pure @safe
     {
-        return to!ubyte(a * RGBAData.maxColor);
+        return to!ubyte(a * maxColor);
     }
 
     string toWebHex() const pure @safe
@@ -257,7 +253,7 @@ struct RGBA
 
     double colorNorm(double colorValue) const pure @safe
     {
-        return colorValue / RGBAData.maxColor;
+        return colorValue / maxColor;
     }
 
     double rNorm() const pure @safe
@@ -277,14 +273,14 @@ struct RGBA
 
     bool isMin() const pure @safe
     {
-        enum minColor = RGBAData.minColor;
-        return r == minColor && g == minColor && b == minColor && a == RGBAData.minColor;
+        enum minColor = minColor;
+        return r == minColor && g == minColor && b == minColor && a == minColor;
     }
 
     bool isMax() const pure @safe
     {
-        enum maxColor = RGBAData.maxColor;
-        return r == maxColor && g == maxColor && b == maxColor && a == RGBAData.maxAlpha;
+        enum maxColor = maxColor;
+        return r == maxColor && g == maxColor && b == maxColor && a == maxAlpha;
     }
 
     uint sumColor() const pure @safe
@@ -307,7 +303,7 @@ struct RGBA
         import Math = deltotum.math;
 
         scope ubyte delegate(ubyte) pure @safe calc = (color) => cast(ubyte) Math.min(
-            Math.round(color * factor), RGBAData.maxColor);
+            Math.round(color * factor), maxColor);
 
         r = calc(r);
         g = calc(g);
@@ -321,15 +317,15 @@ struct RGBA
         import Math = deltotum.math;
 
         double maxCoeffFactor = 259.0;
-        double maxColor = RGBAData.maxColor;
+        double maxColor = maxColor;
         double halfColor = (maxColor + 1) / 2;
 
         const double correctFactor = (maxCoeffFactor * (factor + maxColor)) / (
             maxColor * (maxCoeffFactor - factor));
 
-        scope ubyte delegate(ubyte) pure @safe calc = (color){
+        scope ubyte delegate(ubyte) pure @safe calc = (color) {
             const newValue = correctFactor * (color - halfColor) + halfColor;
-            return cast(ubyte) Math.min(Math.abs(newValue), RGBA.RGBAData.maxColor);
+            return cast(ubyte) Math.min(Math.abs(newValue), RGBA.maxColor);
         };
 
         r = calc(r);
@@ -337,17 +333,17 @@ struct RGBA
         b = calc(b);
     }
 
-    void gamma(double value)  pure @safe
+    void gamma(double value) pure @safe
     {
         assert(value >= 0);
         import std.conv : to;
 
         import Math = deltotum.math;
 
-        enum maxColor = RGBA.RGBAData.maxColor;
+        enum maxColor = RGBA.maxColor;
         double correctFactor = 1.0 / value;
 
-        scope ubyte delegate(double) pure @safe calc = (colorNorm){
+        scope ubyte delegate(double) pure @safe calc = (colorNorm) {
             const newValue = maxColor * (colorNorm ^^ correctFactor);
             return cast(ubyte) Math.min(newValue, maxColor);
         };
@@ -391,16 +387,16 @@ struct RGBA
         }
         else if (isClose(cmax, newR))
         {
-            hue = fmod(hueStartAngle * ((newG - newB) / delta) + HSV.HSVData.maxHue, HSV
-                    .HSVData.maxHue);
+            hue = fmod(hueStartAngle * ((newG - newB) / delta) + HSV.maxHue, HSV
+                    .maxHue);
         }
         else if (isClose(cmax, newG))
         {
-            hue = fmod(hueStartAngle * ((newB - newR) / delta) + 120, HSV.HSVData.maxHue);
+            hue = fmod(hueStartAngle * ((newB - newR) / delta) + 120, HSV.maxHue);
         }
         else if (isClose(cmax, newB))
         {
-            hue = fmod(hueStartAngle * ((newR - newG) / delta) + 240, HSV.HSVData.maxHue);
+            hue = fmod(hueStartAngle * ((newR - newG) / delta) + 240, HSV.maxHue);
         }
         else
         {
@@ -408,8 +404,8 @@ struct RGBA
         }
 
         const double saturation = isClose(cmax, 0) ? 0 : (
-            delta / cmax) * HSV.HSVData.maxSaturation;
-        const double value = cmax * HSV.HSVData.maxValue;
+            delta / cmax) * HSV.maxSaturation;
+        const double value = cmax * HSV.maxValue;
 
         return HSV(hue, saturation, value);
     }
