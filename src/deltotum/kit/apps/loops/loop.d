@@ -13,31 +13,40 @@ abstract class Loop
 
     void delegate(size_t) onLoopUpdateMs;
     void delegate(double) onFreqLoopUpdateDelta;
+
     void delegate() onDelay;
     void delegate(double) onRender;
+
+    void delegate() onRun;
     void delegate() onQuit;
 
     abstract
     {
+        void setUp();
         void updateMs(size_t);
     }
 
     void runWait()
+    in (onDelay)
+    in (timestampMsProvider)
     {
-        assert(timestampMsProvider);
-        assert(onLoopUpdateMs);
-        assert(onFreqLoopUpdateDelta);
-        assert(onDelay);
-        assert(onRender);
-        assert(onQuit);
+        setUp;
+
+        if (onRun)
+        {
+            onRun();
+        }
 
         while (isRunning)
         {
             onDelay();
-            immutable time = timestampMsProvider();
-            updateMs(time);
+            immutable timeMs = timestampMsProvider();
+            updateMs(timeMs);
         }
 
-        onQuit();
+        if (onQuit)
+        {
+            onQuit();
+        }
     }
 }
