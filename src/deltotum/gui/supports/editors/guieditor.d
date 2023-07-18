@@ -67,7 +67,13 @@ class GuiEditor : Scene
         particlesTab.content = new Particles;
         root.addCreate(particlesTab);
 
-        root.changeTab(particlesTab);
+        import deltotum.gui.supports.editors.sections.scripting: Scripting;
+
+        auto scriptTab = new Tab("Scripting");
+        scriptTab.content = new Scripting;
+        root.addCreate(scriptTab);
+
+        root.changeTab(scriptTab);
     }
 
 }

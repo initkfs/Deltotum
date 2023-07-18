@@ -61,6 +61,7 @@
         "SDL_Mixer_202",
         "LUA_54",
         "Chipmunk7",
-        "Cairo116"
+        "Cairo116",
+        "JuliaV1"
     ]
 }

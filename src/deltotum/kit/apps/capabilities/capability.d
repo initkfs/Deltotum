@@ -4,6 +4,13 @@ class Capability
 {
     bool isVectorGraphics;
     bool isImageProcessing;
-    bool isEmbeddedScripting;
+
+    bool isLuaExtension;
+    bool isJuliaExtension;
+    
     bool isPhysics;
+
+    bool isEmbeddedScripting(){
+        return isLuaExtension || isJuliaExtension;
+    }
 }

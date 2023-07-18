@@ -81,7 +81,7 @@ class TabPane : Control
         if (tab.content)
         {
             tab.content.isVisible = false;
-            tab.content.isUpdatable = false;
+            //tab.content.isUpdatable = false;
         }
     }
 
@@ -98,7 +98,7 @@ class TabPane : Control
             if (currentTab.content)
             {
                 currentTab.content.isVisible = false;
-                currentTab.content.isUpdatable = false;
+                //currentTab.content.isUpdatable = false;
             }
 
             currentTab.isSelected = false;
@@ -115,7 +115,7 @@ class TabPane : Control
             }
 
             currentTab.content.isVisible = true;
-            currentTab.content.isUpdatable = true;
+            //currentTab.content.isUpdatable = true;
         }
     }
 

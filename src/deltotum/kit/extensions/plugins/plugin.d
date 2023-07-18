@@ -10,6 +10,8 @@ import std.variant: Variant;
 abstract class Plugin : ApplicationUnit
 {
     const string name;
+    
+    string workDirPath;
 
     this(Logger logger, Config config, Context context, const string name)
     {

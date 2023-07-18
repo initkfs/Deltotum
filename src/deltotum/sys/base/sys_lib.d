@@ -13,6 +13,8 @@ abstract class SysLib
         badLibrary = -2
     }
 
+    string workDirPath;
+
     protected
     {
         Loader.SharedLib _handle;
@@ -41,7 +43,7 @@ abstract class SysLib
         return false;
     }
 
-    bool unload() 
+    bool unload()
     {
         if (!isLoaded)
         {
@@ -63,12 +65,12 @@ abstract class SysLib
         return true;
     }
 
-    bool isLoaded()  
+    bool isLoaded()
     {
         return _loadedVersion == needVersion;
     }
 
-    int loadedVersion()  
+    int loadedVersion()
     {
         return _loadedVersion;
     }
@@ -78,36 +80,79 @@ abstract class SysLib
         Loader.bindSymbol(_handle, ptr, symbolName);
     }
 
-    void load() 
+    void load()
     {
         if (onBeforeLoad)
         {
             onBeforeLoad();
         }
 
+        import std.path : isAbsolute, buildPath;
+        import std.file : getcwd, exists, chdir;
+
+        auto lastWorkDir = getcwd;
+        bool isChangeWorkDir;
+        scope (exit)
+        {
+            if (isChangeWorkDir)
+            {
+                chdir(lastWorkDir);
+            }
+        }
+
         foreach (path; libPaths)
         {
+            if (!path.isAbsolute)
+            {
+                auto cwdDir = workDirPath ? workDirPath : lastWorkDir;
+                auto cwdPath = buildPath(cwdDir, path);
+
+                version (Posix)
+                {
+                    //TODO check symlink
+                    if (cwdPath.exists)
+                    {
+                        import std.path : dirName;
+                        import std.file : chdir, readLink;
+
+                        auto newCwd = cwdPath.readLink.dirName;
+                        isChangeWorkDir = true;
+                        if(!workDirPath){
+                            workDirPath = newCwd;
+                        }
+                        chdir(newCwd);
+                    }
+                }
+
+                if (loadFromPath(cwdPath.ptr))
+                {
+                    break;
+                }
+            }
+
             if (loadFromPath(path.ptr))
             {
-                if (onAfterLoad && isLoaded)
-                {
-                    onAfterLoad();
-                }
                 break;
             }
         }
+
+        if (onAfterLoad && isLoaded)
+        {
+            onAfterLoad();
+        }
+
+        if (onNoLibrary && _loadedVersion == InvalidLib.noLibrary)
+        {
+            onNoLibrary();
+        }
     }
 
-    bool loadFromPath(const(char)* libPath) 
+    bool loadFromPath(const(char)* libPath)
     {
         auto mustBeLib = Loader.load(libPath);
         if (mustBeLib == Loader.invalidHandle)
         {
             _loadedVersion = InvalidLib.noLibrary;
-            if (onNoLibrary)
-            {
-                onNoLibrary();
-            }
             return false;
         }
 
