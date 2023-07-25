@@ -67,8 +67,11 @@ class TextArea : HBox
         textView.onMouseExited = (e) { input.systemCursor.restore; return false; };
 
         addCreate(textView);
+
+        auto textViewWidth = width - padding.width - textView.margin.width - scroll.width - scroll.margin.width - spacing;
         
-        textView.maxWidth = width - padding.width - textView.margin.width - scroll.width - scroll.margin.width - spacing;
+        textView.width = textViewWidth;
+        textView.maxWidth = textView.width;
 
         textView.maxHeight = height;
 

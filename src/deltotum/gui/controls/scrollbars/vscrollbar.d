@@ -39,6 +39,8 @@ class VScrollbar : Control
         this.maxValue = maxValue;
 
         this.layout = new CenterLayout;
+        isBackground = true;
+        isBorder = true;
     }
 
     override void initialize()

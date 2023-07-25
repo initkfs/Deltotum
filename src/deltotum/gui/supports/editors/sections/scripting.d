@@ -27,34 +27,47 @@ class Scripting : Control
         import deltotum.gui.controls.texts.text_area : TextArea;
 
         TextArea juliaScriptArea = new TextArea;
-        juliaScriptArea.width = 200;
-        juliaScriptArea.height = 400;
+        juliaScriptArea.width = 300;
+        juliaScriptArea.height = 300;
         addCreate(juliaScriptArea);
 
         TextArea resultArea = new TextArea;
-        resultArea.width = 200;
-        resultArea.height = 200;
+        resultArea.width = 300;
+        resultArea.height = 300;
         addCreate(resultArea);
 
-        import deltotum.gui.controls.buttons.button : Button;
+        import deltotum.com.inputs.keyboards.key_name : KeyName;
 
-        auto juliaRunButton = new Button("Run");
-        juliaRunButton.onAction = (e) {
-            import std.variant : Variant;
-            import std.conv: to;
+        auto prevDown = juliaScriptArea.onKeyDown;
 
-            auto text = juliaScriptArea.textView.text;
-            ext.call("julia-console", [text.to!string], (res) {
-                import std.conv: to;
-                import std.variant: Variant;
-                resultArea.textView.text = res.to!string;
-            }, (err) {
-                resultArea.textView.text = err;
-                logger.trace("Julia error: %s", err);
-            });
+        juliaScriptArea.onKeyDown = (e) {
+            if (prevDown(e))
+            {
+                return true;
+            }
 
+            if (e.keyMod.isCtrl && e.keyName == KeyName.RETURN)
+            {
+                import std.variant : Variant;
+                import std.conv : to;
+
+                resultArea.textView.text = "";
+
+                auto text = juliaScriptArea.textView.text;
+                ext.call("julia-console", [text.to!string], (res) {
+                    import std.conv : to;
+                    import std.variant : Variant;
+
+                    resultArea.textView.text = res.to!string;
+                }, (err) {
+                    resultArea.textView.text = err;
+                    logger.trace("Julia error: %s", err);
+                });
+
+            }
+
+            return false;
         };
-        addCreate(juliaRunButton);
 
     }
 }
