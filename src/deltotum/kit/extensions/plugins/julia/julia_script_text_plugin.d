@@ -56,10 +56,18 @@ class JuliaScriptTextPlugin : JuliaPlugin
 
         if (onError)
         {
-            if (auto exPtr = jl_exception_occurred())
+            if (auto errorPtr = jl_exception_occurred())
             {
-                string exText = jl_typeof_str(exPtr).fromStringz.idup;
-                onError(exText);
+                auto modPtr = cast(jl_module_t*) jl_eval_string("Base");
+                auto showPtr = jl_get_function(modPtr, "showerror");
+                assert(showPtr);
+                auto sprintPtr = jl_get_function(modPtr, "sprint");
+                assert(sprintPtr);
+                auto sprintResPtr = jl_call2(sprintPtr, cast(jl_value_t*) showPtr, errorPtr);
+                assert(sprintResPtr);
+                auto errorTextPtr = jl_string_ptr(sprintResPtr);
+                assert(errorTextPtr);
+                onError(errorTextPtr.fromStringz.idup);
             }
         }
 

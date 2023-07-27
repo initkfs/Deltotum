@@ -61,7 +61,7 @@ class Scripting : Control
                     resultArea.textView.text = res.to!string;
                 }, (err) {
                     resultArea.textView.text = err;
-                    logger.trace("Julia error: %s", err);
+                    logger.tracef("Julia error: %s", err);
                 });
 
             }

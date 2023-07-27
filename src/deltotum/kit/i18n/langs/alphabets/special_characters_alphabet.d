@@ -7,8 +7,14 @@ import deltotum.kit.i18n.langs.alphabets.alphabet : Alphabet;
  */
 class SpecialCharactersAlphabet : Alphabet
 {
-    override immutable(dchar)[] allLetters()
+    override immutable(dchar)[] allLetters() pure
     {
-        return "𑑛!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ \n\r";
+        dchar[] letters = "𑑛!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ \n\r"d.dup;
+        //Box-drawing characters
+        foreach (dchar ch; '\u2500' .. '\u257F')
+        {
+            letters ~= ch;
+        }
+        return letters;
     }
 }

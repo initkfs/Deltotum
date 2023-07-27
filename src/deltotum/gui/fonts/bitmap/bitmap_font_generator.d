@@ -63,7 +63,7 @@ class BitmapFontGenerator : FontGenerator
                 SdlSurface glyphRepresentation = font.renderSurface(utfPtr, foregroundColor, backgroundColor);
                 glyphPosition.w = glyphRepresentation.getObject.w;
                 glyphPosition.h = glyphRepresentation.getObject.h;
-
+                
                 if (glyphPosition.x + glyphPosition.w >= fontTextureWidth)
                 {
                     glyphPosition.x = 0;

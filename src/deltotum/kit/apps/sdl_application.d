@@ -448,7 +448,7 @@ class SdlApplication : GraphicApplication
 
         import deltotum.kit.assets.fonts.font : Font;
 
-        Font defaultFont = windowBuilder.asset.font("fonts/NotoSans-Bold.ttf", 14);
+        Font defaultFont = windowBuilder.asset.font("fonts/JetBrains_Mono/static/JetBrainsMono-ExtraBold.ttf", 15);
         windowBuilder.asset.defaultFont = defaultFont;
 
         import deltotum.kit.graphics.graphics : Graphics;
