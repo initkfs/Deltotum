@@ -10,9 +10,20 @@ import core.stdc.stdint;
 
 extern (C) @nogc nothrow
 {
+    alias j_jl_gc_enable = int function(int);
+    alias j_JL_GC_PUSH1 = void function(void*);
+    alias j_jl_checked_assignment = void function(jl_binding_t* b, jl_value_t* rhs);
+    alias j_jl_get_binding_wr = jl_binding_t* function(jl_module_t* m, jl_sym_t* var, int alloc);
+
     alias j_jl_init = void function();
     alias j_jl_eval_string = jl_value_t* function(const char*);
     alias j_jl_atexit_hook = void function(int);
+
+    alias j_jl_set_global = void function(jl_module_t* m, jl_sym_t* var, jl_value_t* val);
+
+    alias j_jl_box_bool = jl_value_t* function(uint8_t);
+    alias j_jl_box_uint64 = jl_value_t* function(uint64_t);
+    alias j_jl_box_voidpointer = jl_value_t* function(void*);
 
     alias j_jl_unbox_float64 = double function(jl_value_t*);
     alias j_jl_unbox_int32 = int32_t function(jl_value_t*);
@@ -32,19 +43,29 @@ extern (C) @nogc nothrow
     alias j_jl_symbol = jl_sym_t* function(const char* str);
     alias j_jl_stderr_obj = jl_value_t* function();
 
-    alias  j_jl_call2 =  jl_value_t* function(jl_function_t *f, jl_value_t *a, jl_value_t *b);
-    alias  j_jl_call1 =  jl_value_t* function(jl_function_t *f, jl_value_t *a);
+    alias j_jl_call2 = jl_value_t* function(jl_function_t* f, jl_value_t* a, jl_value_t* b);
+    alias j_jl_call1 = jl_value_t* function(jl_function_t* f, jl_value_t* a);
 
-
-    alias j_jl_printf = int function(uv_stream_s *s, const char *format, ...);
+    alias j_jl_printf = int function(uv_stream_s* s, const char* format, ...);
     alias j_jl_stderr_stream = uv_stream_s* function();
 }
 
 __gshared
 {
+    j_JL_GC_PUSH1 JL_GC_PUSH1;
+    j_jl_checked_assignment jl_checked_assignment;
+    j_jl_get_binding_wr jl_get_binding_wr;
+    j_jl_gc_enable jl_gc_enable;
+
     j_jl_init jl_init;
     j_jl_eval_string jl_eval_string;
     j_jl_atexit_hook jl_atexit_hook;
+
+    j_jl_set_global jl_set_global;
+
+    j_jl_box_bool jl_box_bool;
+    j_jl_box_uint64 jl_box_uint64;
+    j_jl_box_voidpointer jl_box_voidpointer;
 
     j_jl_unbox_float64 jl_unbox_float64;
     j_jl_unbox_int32 jl_unbox_int32;
@@ -104,9 +125,19 @@ class JuliaLib : SysLib
 
     override void bindSymbols()
     {
+        bind(cast(void**)&jl_gc_enable, "jl_gc_enable");
+        bind(cast(void**)&jl_get_binding_wr, "jl_get_binding_wr");
+        bind(cast(void**)&jl_checked_assignment, "jl_checked_assignment");
+
         bind(cast(void**)&jl_init, "jl_init");
         bind(cast(void**)&jl_eval_string, "jl_eval_string");
         bind(cast(void**)&jl_atexit_hook, "jl_atexit_hook");
+
+        bind(cast(void**)&jl_set_global, "jl_set_global");
+
+        bind(cast(void**)&jl_box_bool, "jl_box_bool");
+        bind(cast(void**)&jl_box_uint64, "jl_box_uint64");
+        bind(cast(void**)&jl_box_voidpointer, "jl_box_voidpointer");
         bind(cast(void**)&jl_unbox_float64, "jl_unbox_float64");
         bind(cast(void**)&jl_unbox_int32, "jl_unbox_int32");
         bind(cast(void**)&jl_unbox_int64, "jl_unbox_int64");

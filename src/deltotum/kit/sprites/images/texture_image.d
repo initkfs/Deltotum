@@ -90,7 +90,10 @@ class TextureImage : Texture
         SDL_Surface* surface = IMG_Load_RW(rw, 1);
         if (!surface)
         {
-            throw new Exception("Image loading error");
+            //TODO remove bindbc
+            import std.string: fromStringz;
+            import bindbc.sdl;
+            throw new Exception("Image loading error: " ~ IMG_GetError().fromStringz.idup);
         }
 
         SdlSurface surf = new SdlSurface(surface);

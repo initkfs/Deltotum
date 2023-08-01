@@ -7,9 +7,26 @@ import deltotum.core.configs.config : Config;
 import std.logger : Logger;
 import std.variant : Variant;
 
+import std.experimental.allocator;
+
+struct JuliaCallback
+{
+    void* context;
+    void* func;
+}
+
 class JuliaScriptTextPlugin : JuliaPlugin
 {
-    bool isInit;
+    void delegate(void* buff, size_t sizeBytes) onCreateImage;
+
+    protected
+    {
+        bool isInit;
+
+        JuliaCallback callback;
+    }
+
+    void delegate(ubyte*, size_t) onBuff;
 
     this(Logger logger, Config config, Context context, const string name)
     {
@@ -44,6 +61,37 @@ class JuliaScriptTextPlugin : JuliaPlugin
         if (!isInit)
         {
             jl_init();
+            //jl_gc_enable(0);
+
+            import std.experimental.allocator : theAllocator;
+
+            callback.context = cast(void*) this;
+            callback.func = cast(void*)&exCreateImage;
+            //TODO remove root
+            import Mem = deltotum.core.utils.mem;
+            Mem.addRootSafe(callback.context);
+            Mem.addRootSafe(callback.func);
+
+            auto mainMod = cast(jl_module_t*) jl_eval_string("Main");
+            //TODO gc push?
+            auto tf = jl_get_binding_wr(mainMod, jl_symbol("ExImage"), size_t.sizeof);
+            jl_checked_assignment(tf, jl_box_voidpointer(cast(void*)(&callback)));
+
+            jl_eval_string("
+            struct ExCallback 
+                   context::Ptr{Cvoid}
+                   func::Ptr{Cvoid}
+            end
+
+            cbImagePtr = Base.unsafe_convert(Ptr{ExCallback}, ExImage)
+            cbImage = Base.unsafe_load(cbImagePtr)
+
+            function ext_image(buffer)
+                buffLen = length(buffer.data)
+                buffPtr = Base.unsafe_convert(Ptr{UInt8}, buffer.data)
+                @ccall $(cbImage.func)(buffPtr::Ptr{UInt8}, buffLen::Csize_t, cbImage.context::Ptr{Cvoid})::Cvoid
+            end
+            ");
         }
 
         string content = args[0];
@@ -113,6 +161,28 @@ class JuliaScriptTextPlugin : JuliaPlugin
         }
 
         chdir(lastCwd);
+    }
+
+    static extern (C) void exCreateImage(void* buff, size_t buffLen, void* data)
+    {
+        if (auto scriptObject = cast(JuliaScriptTextPlugin) data)
+        {
+            if (scriptObject.onCreateImage)
+            {
+                import std.stdio : writeln;
+
+                writeln("Run callback");
+                scriptObject.onCreateImage(buff, buffLen);
+            }
+
+            return;
+        }
+        debug
+        {
+            import std.stdio;
+
+            stderr.writeln("Invalid context received from script");
+        }
     }
 
     //TODO jl_atexit_hook(0);

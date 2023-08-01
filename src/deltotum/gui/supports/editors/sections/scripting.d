@@ -9,7 +9,6 @@ import std.stdio;
  */
 class Scripting : Control
 {
-
     this()
     {
         import deltotum.kit.sprites.layouts.horizontal_layout : HorizontalLayout;
@@ -31,6 +30,23 @@ class Scripting : Control
         juliaScriptArea.height = 300;
         addCreate(juliaScriptArea);
 
+        auto mustBePlugin = ext.findFirst("julia-console");
+        if (!mustBePlugin.isNull)
+        {
+            import deltotum.kit.extensions.plugins.julia.julia_script_text_plugin : JuliaScriptTextPlugin;
+
+            JuliaScriptTextPlugin p = cast(JuliaScriptTextPlugin) mustBePlugin.get;
+            p.onCreateImage = (buff, buffLen) {
+                import deltotum.kit.sprites.images.image: Image;
+                debug writeln("Received image buffer");
+                auto b = cast(string) buff[0..buffLen];
+                auto im = new Image;
+                build(im);
+                im.loadRaw(b);
+                addCreate(im);
+            };
+        }
+
         TextArea resultArea = new TextArea;
         resultArea.width = 300;
         resultArea.height = 300;
@@ -39,6 +55,8 @@ class Scripting : Control
         import deltotum.com.inputs.keyboards.key_name : KeyName;
 
         auto prevDown = juliaScriptArea.onKeyDown;
+
+        import deltotum.kit.sprites.images.image;
 
         juliaScriptArea.onKeyDown = (e) {
             if (prevDown(e))
@@ -57,6 +75,8 @@ class Scripting : Control
                 ext.call("julia-console", [text.to!string], (res) {
                     import std.conv : to;
                     import std.variant : Variant;
+
+                     debug writefln("Julia script result: %s", res.to!string);
 
                     resultArea.textView.text = res.to!string;
                 }, (err) {

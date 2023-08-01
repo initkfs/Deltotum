@@ -9,7 +9,7 @@ class SpecialCharactersAlphabet : Alphabet
 {
     override immutable(dchar)[] allLetters() pure
     {
-        dchar[] letters = "𑑛!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ \n\r"d.dup;
+        dchar[] letters = "𑑛!×\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ \n\r\t\b"d.dup;
         //Box-drawing characters
         foreach (dchar ch; '\u2500' .. '\u257F')
         {

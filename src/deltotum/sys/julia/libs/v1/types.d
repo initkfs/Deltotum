@@ -12,3 +12,4 @@ struct jl_module_t;
 struct jl_function_t;
 struct jl_sym_t;
 struct uv_stream_s;
+struct jl_binding_t;
