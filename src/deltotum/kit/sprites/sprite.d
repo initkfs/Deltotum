@@ -131,13 +131,6 @@ class Sprite : PhysicalBody
         bool _cached;
     }
 
-    //protected
-    //{
-    bool isProcessParentLayout;
-    bool isProcessLayout;
-    bool isProcessDelayedInvalidation;
-    //}
-
     void buildCreate(Sprite sprite)
     {
         assert(sprite);
@@ -565,12 +558,11 @@ class Sprite : PhysicalBody
     {
         if (layout !is null)
         {
-            isProcessLayout = true;
             layout.applyLayout(this);
         }
     }
 
-    void update(double delta)
+    void validate()
     {
         if (!isValid)
         {
@@ -579,11 +571,22 @@ class Sprite : PhysicalBody
                 invListener();
             }
 
-            applyLayout;
-
             setValid(true);
         }
+    }
 
+    void applyAllLayouts()
+    {
+        foreach (ch; children)
+        {
+            ch.applyAllLayouts;
+        }
+
+        applyLayout;
+    }
+
+    void update(double delta)
+    {
         double dx = 0;
         double dy = 0;
 
@@ -679,16 +682,6 @@ class Sprite : PhysicalBody
 
         foreach (Sprite child; children)
         {
-            //TODO there may be cycles here due to disabling the update flag
-            if (
-                !child.isValid &&
-                child.isLayoutManaged &&
-                !isProcessLayout &&
-                layout !is null && isValid)
-            {
-                setInvalid;
-            }
-
             if (!child.isUpdatable)
             {
                 continue;
@@ -713,8 +706,6 @@ class Sprite : PhysicalBody
         {
             physSpace.step(delta);
         }
-
-        isProcessLayout = false;
     }
 
     bool intersect(Sprite other)

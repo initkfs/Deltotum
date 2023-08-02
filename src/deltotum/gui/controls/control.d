@@ -123,4 +123,6 @@ abstract class Control : Sprite
             createBackground(width - backgroundInsets.width, height - backgroundInsets.height);
         }
     }
+
+   
 }

@@ -126,13 +126,11 @@ class VerticalLayout : ManagedLayout
         {
             if (child.isHGrow && dtWidth > 0)
             {
-                child.isProcessLayout = true;
                 child.width = dtWidth;
             }
 
             if (child.isVGrow)
             {
-                child.isProcessLayout = true;
                 child.height = child.height + dtHeight;
             }
         }

@@ -50,6 +50,12 @@ class Container : Control
 
         layout.isFillFromStartToEnd = isFill;
     }
+
+    override void update(double dt){
+        super.update(dt);
+        //TODO remove check
+        checkBackground;
+    }
 }
 
 unittest

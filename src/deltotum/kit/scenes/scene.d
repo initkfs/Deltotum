@@ -81,6 +81,8 @@ class Scene : GraphicsComponent
 
         foreach (obj; sprites)
         {
+            obj.validate;
+            obj.applyAllLayouts;
             obj.update(delta);
         }
     }
