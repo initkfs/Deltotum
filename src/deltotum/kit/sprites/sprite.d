@@ -115,6 +115,10 @@ class Sprite : PhysicalBody
 
     Object[string] userData;
 
+    bool isInvalidationProcess;
+
+    bool isValid = true;
+
     private
     {
         double _x = 0;
@@ -126,7 +130,7 @@ class Sprite : PhysicalBody
         double offsetX = 0;
         double offsetY = 0;
         bool isDrag;
-        bool isValid = true;
+        
 
         bool _cached;
     }
@@ -564,14 +568,36 @@ class Sprite : PhysicalBody
 
     void validate()
     {
+        foreach (ch; children)
+        {
+            ch.validate;
+            if (!ch.isValid)
+            {
+                setInvalid;
+            }
+        }
+
         if (!isValid)
         {
+            debug
+            {
+                import std.stdio : writeln;
+
+                writeln("Invalid: ", className);
+            }
             foreach (invListener; invalidateListeners)
             {
                 invListener();
             }
+        }
+    }
 
-            setValid(true);
+    void setInvalidationProcessAll(bool value)
+    {
+        isInvalidationProcess = value;
+        foreach (ch; children)
+        {
+            ch.setInvalidationProcessAll(value);
         }
     }
 
@@ -583,6 +609,7 @@ class Sprite : PhysicalBody
         }
 
         applyLayout;
+        isInvalidationProcess = true;
     }
 
     void update(double delta)
@@ -810,12 +837,10 @@ class Sprite : PhysicalBody
                 _cache.x = _x;
             }
 
-            // if (isProcessParentLayout)
-            // {
-            //     return;
-            // }
-
-            setInvalid;
+            if (!isInvalidationProcess)
+            {
+                setInvalid;
+            }
         }
 
         double y() @nogc @safe pure nothrow
@@ -843,15 +868,13 @@ class Sprite : PhysicalBody
 
             if (_cache)
             {
-                _cache.x = _y;
+                _cache.y = _y;
             }
 
-            // if (isProcessParentLayout)
-            // {
-            //     return;
-            // }
-
-            setInvalid;
+            if (!isInvalidationProcess)
+            {
+                setInvalid;
+            }
         }
 
         double width() @nogc @safe pure nothrow
@@ -861,12 +884,6 @@ class Sprite : PhysicalBody
 
         void width(double value)
         {
-            if (id == "btn")
-            {
-                import std;
-
-                writefln("Test value: %s", value);
-            }
             if (
                 value <= 0 ||
                 value < minWidth ||
@@ -885,7 +902,10 @@ class Sprite : PhysicalBody
             immutable double oldWidth = _width;
             _width = value;
 
-            setInvalid;
+            if (!isInvalidationProcess)
+            {
+                setInvalid;
+            }
 
             if (!isCreated)
             {
@@ -949,7 +969,10 @@ class Sprite : PhysicalBody
             immutable double oldHeight = _height;
             _height = value;
 
-            setInvalid;
+            if (!isInvalidationProcess)
+            {
+                setInvalid;
+            }
 
             if (!isCreated)
             {
@@ -1024,6 +1047,14 @@ class Sprite : PhysicalBody
         void setValid(bool value) @nogc @safe pure nothrow
         {
             isValid = value;
+        }
+
+        void setValidAll(bool value) @nogc @safe pure nothrow
+        {
+            isValid = value;
+            foreach(ch; children){
+                ch.setValidAll(value);
+            }
         }
 
         void setValidChildren(bool value) @nogc @safe pure nothrow

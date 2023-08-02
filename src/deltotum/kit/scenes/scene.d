@@ -20,7 +20,7 @@ class Scene : GraphicsComponent
     string name;
 
     bool isDestructible;
-    
+
     void delegate(Scene) onSceneChange;
 
     size_t timeEventProcessingMs;
@@ -82,7 +82,22 @@ class Scene : GraphicsComponent
         foreach (obj; sprites)
         {
             obj.validate;
-            obj.applyAllLayouts;
+            if (!obj.isValid)
+            {
+                foreach (ch; obj.children)
+                {
+                    if (!ch.isValid)
+                    {
+                        ch.applyAllLayouts;
+                    }
+                }
+
+                obj.applyLayout;
+                obj.setInvalidationProcessAll(false);
+
+                obj.setValidAll(true);
+            }
+
             obj.update(delta);
         }
     }
