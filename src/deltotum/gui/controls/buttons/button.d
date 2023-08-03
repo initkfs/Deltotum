@@ -28,14 +28,14 @@ class Button : Control
     Text delegate() textFactory;
     ValueTransition delegate() clickEffectAnimationFactory;
 
-    protected
-    {
+    //protected
+    //{
         Sprite hover;
         Sprite clickEffect;
         ValueTransition clickEffectAnimation;
         Text _text;
         bool _selected;
-    }
+    //}
 
     this(dstring text = "Button", double width = 80, double height = 40)
     {
@@ -45,13 +45,12 @@ class Button : Control
         this._buttonText = text;
 
         this.layout = new CenterLayout;
+        this.layout.isResizeParent = true;
     }
 
     override void initialize()
     {
         super.initialize;
-
-        enum buttonCornerWidth = 8;
 
         backgroundFactory = (width, height) {
 
@@ -138,11 +137,6 @@ class Button : Control
         if (textFactory !is null)
         {
             _text = textFactory();
-            //FIXME
-            _text.focusEffectFactory = null;
-
-            _text.maxWidth = width - padding.width;
-            _text.maxHeight = height - padding.height;
             addCreate(_text);
         }
 
