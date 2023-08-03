@@ -15,6 +15,13 @@ class SpecialCharactersAlphabet : Alphabet
         {
             letters ~= ch;
         }
+        
+        //Geometric Shapes block
+        foreach (dchar ch; '\u25A0' .. '\u25FF')
+        {
+            letters ~= ch;
+        }
+
         return letters;
     }
 }

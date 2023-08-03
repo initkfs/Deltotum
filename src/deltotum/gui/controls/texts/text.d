@@ -46,6 +46,7 @@ class Text : Control
         import std.conv : to;
 
         this(text.to!dstring);
+        isFocusable = true;
     }
 
     this(dstring text = "text")
@@ -77,20 +78,23 @@ class Text : Control
             return false;
         };
 
-        focusEffectFactory = () {
-            import deltotum.kit.graphics.shapes.rectangle : Rectangle;
-            import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
+        if (isFocusable)
+        {
+            focusEffectFactory = () {
+                import deltotum.kit.graphics.shapes.rectangle : Rectangle;
+                import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 
-            GraphicStyle style = GraphicStyle(1, graphics.theme.colorFocus);
+                GraphicStyle style = GraphicStyle(1, graphics.theme.colorFocus);
 
-            import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
+                import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
 
-            auto effect = new RegularPolygon(width, height, style, graphics
-                    .theme.controlCornersBevel);
-            //auto effect = new Rectangle(width, height, style);
-            effect.isVisible = false;
-            return effect;
-        };
+                auto effect = new RegularPolygon(width, height, style, graphics
+                        .theme.controlCornersBevel);
+                //auto effect = new Rectangle(width, height, style);
+                effect.isVisible = false;
+                return effect;
+            };
+        }
     }
 
     override void create()
@@ -235,7 +239,8 @@ class Text : Control
         auto newHeight = newRows.length * rowHeight + padding.height;
         if (newHeight > height)
         {
-            import std.algorithm.comparison: min;
+            import std.algorithm.comparison : min;
+
             height = min(maxHeight, newHeight);
         }
 

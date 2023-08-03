@@ -21,14 +21,16 @@ class ChoiceItem : Sprite
         layout.isAutoResize(true);
     }
 
-    override void create(){
+    override void create()
+    {
         super.create;
 
         label = new Text;
         addCreate(label);
 
         onMouseDown = (e) {
-            if(onChoice){
+            if (onChoice)
+            {
                 onChoice();
             }
             return false;
@@ -67,11 +69,11 @@ class ChoiceBox : Control
         super.create;
 
         label = new Text("----");
+        label.isFocusable = false;
         addCreate(label);
-        label.isDrawBounds = true;
 
-        button = new Button("*");
-        button.isDrawBounds = true;
+        button = new Button("▼");
+        button.isBackground = true;
         button.width = 50;
         addCreate(button);
 
@@ -99,10 +101,7 @@ class ChoiceBox : Control
             auto choiceListRow = new ChoiceItem;
             choiceList.addCreate(choiceListRow);
             choiceListRow.label.text = s;
-            choiceListRow.onChoice = () {
-                label.text = s;
-                toggleChoiceList;
-            };
+            choiceListRow.onChoice = () { label.text = s; toggleChoiceList; };
         }(s);
     }
 

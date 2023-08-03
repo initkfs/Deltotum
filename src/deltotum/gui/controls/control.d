@@ -19,6 +19,7 @@ abstract class Control : Sprite
 
     bool isBackground;
     bool isBorder;
+    bool isFocusable;
 
     //protected
     //{
@@ -42,7 +43,7 @@ abstract class Control : Sprite
         padding = graphics.theme.controlPadding;
         style = graphics.theme.controlStyle;
 
-        if (isBorder || isBackground)
+        if (!backgroundFactory && (isBorder || isBackground))
         {
             backgroundFactory = (width, height) {
 

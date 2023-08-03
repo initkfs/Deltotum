@@ -48,6 +48,7 @@ class CheckBox : Control
         marker.isVisible = false;
 
         label = new Text;
+        label.isFocusable = false;
         addCreate(label);
 
         onMouseDown = (e){
