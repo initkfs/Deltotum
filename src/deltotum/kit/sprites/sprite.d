@@ -589,27 +589,10 @@ class Sprite : PhysicalBody
             {
                 invListener();
             }
-        }
-    }
 
-    void setInvalidationProcessAll(bool value)
-    {
-        isInvalidationProcess = value;
-        foreach (ch; children)
-        {
-            ch.setInvalidationProcessAll(value);
+            applyLayout;
+            isInvalidationProcess = true;
         }
-    }
-
-    void applyAllLayouts()
-    {
-        foreach (ch; children)
-        {
-            ch.applyAllLayouts;
-        }
-
-        applyLayout;
-        isInvalidationProcess = true;
     }
 
     void update(double delta)

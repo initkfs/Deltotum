@@ -82,20 +82,22 @@ class Scene : GraphicsComponent
         foreach (obj; sprites)
         {
             obj.validate;
+
             if (!obj.isValid)
             {
-                foreach (ch; obj.children)
+                foreach (subtreeRoot; obj.children)
                 {
-                    if (!ch.isValid)
+                    if (!subtreeRoot.isValid)
                     {
-                        ch.applyAllLayouts;
+                        subtreeRoot.onAllChildren((ch) {
+                            ch.isInvalidationProcess = false;
+                            ch.isValid = true;
+                        }, subtreeRoot);
                     }
                 }
 
-                obj.applyLayout;
-                obj.setInvalidationProcessAll(false);
-
-                obj.setValidAll(true);
+                obj.isInvalidationProcess = false;
+                obj.isValid = true;
             }
 
             obj.update(delta);
