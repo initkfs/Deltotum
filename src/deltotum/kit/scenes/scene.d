@@ -79,28 +79,12 @@ class Scene : GraphicsComponent
     {
         worldTicks++;
 
-        foreach (obj; sprites)
+        foreach (root; sprites)
         {
-            obj.validate;
+            root.update(delta);
 
-            if (!obj.isValid)
-            {
-                foreach (subtreeRoot; obj.children)
-                {
-                    if (!subtreeRoot.isValid)
-                    {
-                        subtreeRoot.onAllChildren((ch) {
-                            ch.isInvalidationProcess = false;
-                            ch.isValid = true;
-                        }, subtreeRoot);
-                    }
-                }
-
-                obj.isInvalidationProcess = false;
-                obj.isValid = true;
-            }
-
-            obj.update(delta);
+            root.validate;
+            root.unvalidate;
         }
     }
 

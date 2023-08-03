@@ -116,6 +116,7 @@ class Sprite : PhysicalBody
     Object[string] userData;
 
     bool isInvalidationProcess;
+    bool isValidatableChildren = true;
 
     bool isValid = true;
 
@@ -130,7 +131,6 @@ class Sprite : PhysicalBody
         double offsetX = 0;
         double offsetY = 0;
         bool isDrag;
-        
 
         bool _cached;
     }
@@ -566,14 +566,28 @@ class Sprite : PhysicalBody
         }
     }
 
+    void unvalidate()
+    {
+        if (isValidatableChildren)
+        {
+            foreach (ch; children)
+            {
+                ch.unvalidate;
+            }
+        } 
+    }
+
     void validate()
     {
-        foreach (ch; children)
+        if (isValidatableChildren)
         {
-            ch.validate;
-            if (!ch.isValid)
+            foreach (ch; children)
             {
-                setInvalid;
+                ch.validate;
+                if (!ch.isValid)
+                {
+                    setInvalid;
+                }
             }
         }
 
@@ -591,8 +605,29 @@ class Sprite : PhysicalBody
             }
 
             applyLayout;
-            isInvalidationProcess = true;
         }
+
+        isInvalidationProcess = true;
+    }
+
+    void setInvalidationProcessAll(bool value)
+    {
+        isInvalidationProcess = value;
+        foreach (ch; children)
+        {
+            ch.setInvalidationProcessAll(value);
+        }
+    }
+
+    void applyAllLayouts()
+    {
+        foreach (ch; children)
+        {
+            ch.applyAllLayouts;
+        }
+
+        applyLayout;
+        isInvalidationProcess = true;
     }
 
     void update(double delta)
@@ -1035,7 +1070,8 @@ class Sprite : PhysicalBody
         void setValidAll(bool value) @nogc @safe pure nothrow
         {
             isValid = value;
-            foreach(ch; children){
+            foreach (ch; children)
+            {
                 ch.setValidAll(value);
             }
         }
@@ -1114,9 +1150,9 @@ class Sprite : PhysicalBody
             });
         }
 
-        void onChildrenRec(bool delegate(Sprite) onSprite)
+        void onChildrenRec(bool delegate(Sprite) onSpriteIsContinue)
         {
-            onChildrenRec(this, onSprite);
+            onChildrenRec(this, onSpriteIsContinue);
         }
 
         void onChildrenRec(Sprite root, bool delegate(Sprite) onSpriteIsContinue)
