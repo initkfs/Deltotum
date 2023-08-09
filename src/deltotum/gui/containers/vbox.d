@@ -22,18 +22,27 @@ class VBox : Container
         this._spacing = spacing;
 
         auto vlayout = new VerticalLayout(_spacing);
-        vlayout.isAlignX = true;
+        vlayout.isAlignX = false;
         this.layout = vlayout;
         layout.isAutoResize = true;
     }
 
     void isAlignX(bool isAlign)
     {
-        layout.isAlignX = isAlign;
+        assert(layout);
+
+        if(layout){
+            layout.isAlignX = isAlign;
+            setInvalid;
+        }
     }
 
     bool isAlignX()
     {
+        assert(layout);
+        if(!layout){
+            return false;
+        }
         return layout.isAlignX;
     }
 

@@ -58,7 +58,6 @@ class Text : Control
     override void initialize()
     {
         super.initialize;
-        backgroundFactory = null;
 
         invalidateListeners ~= () { updateRows; };
 

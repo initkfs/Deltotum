@@ -35,23 +35,30 @@ class Controls : Control
         super.create;
 
         import deltotum.gui.containers.hbox : HBox;
+        import deltotum.gui.containers.vbox : VBox;
+        import deltotum.gui.containers.frame : Frame;
 
-        auto controlsContainer = configureControl(new HBox);
-        addCreate(controlsContainer);
+        auto selectionContainer = configureControl(new Frame("Selection controls"));
+        selectionContainer.width = 400;
+        selectionContainer.height = 300;
+        addCreate(selectionContainer);
 
-        import deltotum.gui.controls.choices.choice_box: ChoiceBox;
+        auto choiceContainer = new HBox;
+        selectionContainer.addCreate(choiceContainer);
 
-        auto choice1 = configureControl(new ChoiceBox);
-        controlsContainer.addCreate(choice1);
+        import deltotum.gui.controls.choices.choice_box : ChoiceBox;
+
+        auto choice1 = new ChoiceBox;
+        choiceContainer.addCreate(choice1);
 
         choice1.fill([
-            "A", "B", "C", "D", "String1", "String2"
+            "label1", "label2", "string1", "string2"
         ]);
 
-        import deltotum.gui.controls.choices.checkbox: CheckBox;
-        auto check1 = new CheckBox;
-        controlsContainer.addCreate(check1);
-        check1.label.text = "Check";
+        // import deltotum.gui.controls.choices.checkbox: CheckBox;
+        // auto check1 = new CheckBox;
+        // controlsContainer.addCreate(check1);
+        // check1.label.text = "Check";
 
         // iconsContainer.isBackground = false;
 

@@ -22,7 +22,7 @@ class HBox : Container
         this._spacing = spacing;
 
         auto hlayout = new HorizontalLayout(_spacing);
-        hlayout.isAlignY = true;
+        hlayout.isAlignY = false;
         hlayout.isAutoResize = true;
         this.layout = hlayout;
     }

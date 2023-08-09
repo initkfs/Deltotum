@@ -16,6 +16,8 @@ class TextArea : HBox
     TextView textView;
     VScrollbar scroll;
 
+    bool isShowScroll = true;
+
     void delegate() onCaret;
 
     this()
@@ -69,7 +71,7 @@ class TextArea : HBox
         addCreate(textView);
 
         auto textViewWidth = width - padding.width - textView.margin.width - scroll.width - scroll.margin.width - spacing;
-        
+
         textView.width = textViewWidth;
         textView.maxWidth = textView.width;
 

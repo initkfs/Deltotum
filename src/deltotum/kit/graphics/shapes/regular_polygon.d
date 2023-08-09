@@ -1,7 +1,8 @@
 module deltotum.kit.graphics.shapes.regular_polygon;
 
-import deltotum.kit.graphics.shapes.shape;
+import deltotum.kit.graphics.shapes.shape : Shape;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
+import deltotum.math.line2d : Line2d;
 
 /**
  * Authors: initkfs
@@ -9,6 +10,9 @@ import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 class RegularPolygon : Shape
 {
     const double cornerPadding;
+
+    //TODO other sides  
+    Line2d topClip;
 
     this(double width, double height, GraphicStyle style, double cornerPadding)
     {
@@ -25,7 +29,16 @@ class RegularPolygon : Shape
         const topLineStartY = y;
         const topLineEndX = x + width - cornerPadding - lineWidth;
         const topLineEndY = y;
-        graphics.drawLine(topLineStartX, topLineStartY, topLineEndX, topLineEndY, mainLineColor);
+        //TODO y
+        if (topClip.start.x != 0 || topClip.end.x != 0)
+        {
+            graphics.drawLine(topLineStartX, topLineStartY, x + topClip.start.x, topLineEndY, mainLineColor);
+            graphics.drawLine(x + topClip.end.x, topLineStartY, topLineEndX, topLineEndY, mainLineColor);
+        }
+        else
+        {
+            graphics.drawLine(topLineStartX, topLineStartY, topLineEndX, topLineEndY, mainLineColor);
+        }
 
         const topRightCornerStartX = topLineEndX;
         const topRightCornerStartY = topLineEndY;

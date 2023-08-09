@@ -72,6 +72,7 @@ class Button : Control
                     .theme.colorHover), graphics.theme.controlCornersBevel);
             hover.id = "btn_hover";
             hover.isLayoutManaged = false;
+            hover.isResizedByParent = true;
             hover.isVisible = false;
             hover.opacity = graphics.theme.opacityHover;
             return hover;
@@ -90,6 +91,7 @@ class Button : Control
                     .theme.controlCornersBevel);
             click.id = "btn_click";
             click.isLayoutManaged = false;
+            click.isResizedByParent = true;
             click.isVisible = false;
             click.opacity = 0;
 
@@ -222,12 +224,17 @@ class Button : Control
         return _buttonText;
     }
 
+    bool isSelected(){
+        return _selected;
+    }
+
     void isSelected(bool isSelected)
     {
         _selected = isSelected;
         if (hover)
         {
             hover.isVisible = isSelected;
+            setInvalid;
         }
     }
 

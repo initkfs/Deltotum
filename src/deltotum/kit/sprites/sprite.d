@@ -325,7 +325,25 @@ class Sprite : PhysicalBody
         return false;
     }
 
-    bool remove(Sprite obj)
+    bool remove(Sprite[] sprites, bool isDestroy = true)
+    {
+        if (isDestroy)
+        {
+            foreach (sprite; sprites)
+            {
+                sprite.destroy;
+            }
+        }
+
+        import std.algorithm.mutation : remove;
+        import std.algorithm.searching : canFind;
+
+        children = children.remove!(s => sprites.canFind(s));
+        setInvalid;
+        return true;
+    }
+
+    bool remove(Sprite obj, bool isDestroy = true)
     {
         import std.algorithm.searching : countUntil;
         import std.algorithm.mutation : remove;
@@ -336,7 +354,13 @@ class Sprite : PhysicalBody
             return false;
         }
 
+        if (isDestroy)
+        {
+            children[mustBeIndex].destroy;
+        }
+
         children = children.remove(mustBeIndex);
+        setInvalid;
         return true;
     }
 
@@ -574,7 +598,7 @@ class Sprite : PhysicalBody
             {
                 ch.unvalidate;
             }
-        } 
+        }
     }
 
     void validate()
@@ -593,12 +617,12 @@ class Sprite : PhysicalBody
 
         if (!isValid)
         {
-            debug
-            {
-                import std.stdio : writeln;
+            // debug
+            // {
+            //     import std.stdio : writeln;
 
-                writeln("Invalid: ", className);
-            }
+            //     writeln("Invalid: ", className);
+            // }
             foreach (invListener; invalidateListeners)
             {
                 invListener();
@@ -1293,10 +1317,13 @@ class Sprite : PhysicalBody
 
             while (curParent)
             {
-                auto freeMaxWidth = curParent.layout.freeMaxWidth(curParent);
-                if (freeMaxWidth < value)
+                if (curParent.layout)
                 {
-                    return false;
+                    auto freeMaxWidth = curParent.layout.freeMaxWidth(curParent);
+                    if (freeMaxWidth < value)
+                    {
+                        return false;
+                    }
                 }
 
                 curParent = curParent.parent;
@@ -1335,5 +1362,11 @@ class Sprite : PhysicalBody
         Sprite hitbox()
         {
             return _hitbox;
+        }
+
+        void setGrow(bool isGrow = true)
+        {
+            isHGrow = true;
+            isVGrow = true;
         }
     }

@@ -23,7 +23,7 @@ abstract class Control : Sprite
 
     //protected
     //{
-        Sprite background;
+    Sprite background;
     //}
 
     this() pure @safe
@@ -38,12 +38,19 @@ abstract class Control : Sprite
     {
         super.initialize;
 
-        invalidateListeners ~= () { checkBackground; };
+        invalidateListeners ~= () {
+            if (!isCreated)
+            {
+                return;
+            }
+            
+            checkBackground;
+        };
 
         padding = graphics.theme.controlPadding;
         style = graphics.theme.controlStyle;
 
-        if (!backgroundFactory && (isBorder || isBackground))
+        if (!backgroundFactory)
         {
             backgroundFactory = (width, height) {
 
@@ -70,7 +77,7 @@ abstract class Control : Sprite
             width == 0 ||
             height == 0 ||
             (!isBackground && !isBorder)
-            || backgroundFactory is null)
+            || !backgroundFactory)
         {
             return false;
         }
@@ -99,7 +106,6 @@ abstract class Control : Sprite
 
     override void addCreate(Sprite sprite, long index = -1)
     {
-        sprite.isResizedByParent = true;
         super.addCreate(sprite, index);
     }
 
@@ -115,6 +121,7 @@ abstract class Control : Sprite
         if (background)
         {
             import std;
+
             background.width = width;
             background.height = height;
             return;
@@ -125,5 +132,4 @@ abstract class Control : Sprite
         }
     }
 
-   
 }

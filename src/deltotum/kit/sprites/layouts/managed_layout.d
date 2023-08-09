@@ -110,7 +110,8 @@ class ManagedLayout : Layout
 
     override void applyLayout(Sprite root)
     {
-        if(isArrangeBeforeResize){
+        if (isArrangeBeforeResize)
+        {
             arrangeChildren(root);
         }
 
@@ -124,7 +125,8 @@ class ManagedLayout : Layout
             layoutResizeChildren(root);
         }
 
-        if(isArragneAfterResize){
+        if (isArragneAfterResize)
+        {
             arrangeChildren(root);
         }
     }
@@ -137,12 +139,9 @@ class ManagedLayout : Layout
             newWidth += root.padding.width;
         }
 
-        if (newWidth > root.width)
+        if (newWidth > root.width && newWidth <= root.maxWidth)
         {
-            if (newWidth <= root.maxWidth)
-            {
-                root.width = newWidth;
-            }
+            root.width = newWidth;
         }
 
         double newHeight = childrenHeight(root);

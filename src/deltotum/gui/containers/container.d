@@ -11,10 +11,6 @@ class Container : Control
     this() pure @safe
     {
         isBackground = false;
-
-        import deltotum.kit.sprites.layouts.center_layout: CenterLayout;
-        layout = new CenterLayout;
-        layout.isAutoResize(true);
     }
 
     override void addCreate(Sprite[] sprites)
@@ -27,15 +23,10 @@ class Container : Control
 
     override void addCreate(Sprite sprite, long index = -1)
     {
-        if (sprite.isLayoutManaged)
+        if (layout && sprite.isLayoutManaged)
         {
             sprite.x = 0;
             sprite.y = 0;
-        }
-
-        if (sprite.isManaged)
-        {
-            sprite.isResizedByParent = true;
         }
 
         super.addCreate(sprite, index);
