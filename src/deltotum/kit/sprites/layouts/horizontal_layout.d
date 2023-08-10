@@ -90,4 +90,14 @@ class HorizontalLayout : ManagedLayout
 
         return childrenHeight;
     }
+
+    override double freeWidth(Sprite root, Sprite child)
+    {
+        return root.width - childrenWidth(root) - root.padding.width;
+    }
+
+    override double freeHeight(Sprite root, Sprite child)
+    {
+        return root.height - child.height - root.padding.height;
+    }
 }

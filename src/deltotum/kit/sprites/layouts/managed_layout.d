@@ -159,14 +159,14 @@ class ManagedLayout : Layout
         }
     }
 
-    double freeWidth(Sprite root)
+    double freeWidth(Sprite root, Sprite child)
     {
-        return root.width - childrenWidth(root) - root.padding.width;
+        return root.width - child.width - root.padding.width;
     }
 
-    double freeHeight(Sprite root)
+    double freeHeight(Sprite root, Sprite child)
     {
-        return root.height - childrenHeight(root) - root.padding.height;
+        return root.height - child.height - root.padding.height;
     }
 
     //TODO the first child occupies all available space
@@ -189,29 +189,40 @@ class ManagedLayout : Layout
             return;
         }
 
-        const freeW = freeWidth(root);
-        const freeH = freeHeight(root);
-
-        const dtWidth = freeW / hgrowChildren;
-        const dtHeight = freeH / vgrowChildren;
-
         foreach (child; targetChildren)
         {
             if (child.isHGrow)
             {
-                const newWidth = child.width + dtWidth;
-                if (child.width != newWidth)
+                const freeW = freeWidth(root, child);
+                const dtWidth = freeW / hgrowChildren;
+
+                if (dtWidth > 0)
                 {
-                    child.width = newWidth;
+                    import Math = deltotum.math;
+                    enum wDelta = 1.0;
+                    const newWidth = child.width + dtWidth;
+                    if (Math.abs(child.width - newWidth) > wDelta)
+                    {
+                        child.width = newWidth;
+                    }
                 }
             }
 
             if (child.isVGrow)
             {
-                const newHeight = child.height + dtHeight;
-                if (child.height != newHeight)
+                const freeH = freeHeight(root, child);
+                const dtHeight = freeH / vgrowChildren;
+
+                if (dtHeight > 0)
                 {
-                    child.height = child.height + dtHeight;
+                    import Math = deltotum.math;
+                    enum hDelta = 1.0;
+
+                    const newHeight = child.height + dtHeight;
+                    if (Math.abs(child.height - newHeight) > hDelta)
+                    {
+                        child.height = newHeight;
+                    }
                 }
             }
         }

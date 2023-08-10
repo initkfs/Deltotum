@@ -67,6 +67,7 @@ class ChoiceBox : TypedContainer!ChoiceItem
         layout.isAutoResize(true);
         layout.isAlignY = true;
         isBorder = true;
+        id = "choice_box";
     }
 
     override void create()
@@ -76,18 +77,24 @@ class ChoiceBox : TypedContainer!ChoiceItem
         import deltotum.gui.containers.vbox : VBox;
 
         auto prevNextContainer = new VBox(0);
+        prevNextContainer.setPadding(0);
+        //FIXME bug: appearance of an artifact in the background of the expand button
+        //prevNextContainer.isVGrow = true;
+
         auto prevButton = new Button("▲", 10, 10);
         prevButton.onAction = (e) { selectPrev; };
         prevButton.isBackground = false;
+
         auto nextButton = new Button("▼", 10, 10);
         nextButton.onAction = (e) { selectNext; };
         nextButton.isBackground = false;
         addCreate(prevNextContainer);
+        
         prevNextContainer.addCreate(prevButton);
         prevNextContainer.addCreate(nextButton);
 
         label = new Text("----");
-        label.setGrow(true);
+        label.id = "choice_box_label";
         addCreate(label);
 
         button = new Button("▼");

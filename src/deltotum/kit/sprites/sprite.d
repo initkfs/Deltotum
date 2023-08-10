@@ -1255,6 +1255,11 @@ class Sprite : PhysicalBody
             return Nullable!Sprite.init;
         }
 
+        void setPadding(double value)
+        {
+            padding = Insets(value);
+        }
+
         override void destroy()
         {
             super.destroy;
@@ -1366,7 +1371,7 @@ class Sprite : PhysicalBody
 
         void setGrow(bool isGrow = true)
         {
-            isHGrow = true;
-            isVGrow = true;
+            isHGrow = isGrow;
+            isVGrow = isGrow;
         }
     }
