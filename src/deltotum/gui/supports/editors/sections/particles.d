@@ -88,7 +88,7 @@ class Particles : Control
 
         auto runButton = new Button;
         runButton.text = "Emit";
-        runButton.onAction = (e) { 
+        runButton.onAction = (ref e) { 
             //emitter.emit;
             emitter.isActive = !emitter.isActive; 
             };
@@ -96,7 +96,7 @@ class Particles : Control
 
         auto configButton = new Button;
         configButton.text = "JSON";
-        configButton.onAction = (e) {
+        configButton.onAction = (ref e) {
             import std.stdio;
 
             writeln(emitter.toConfig);

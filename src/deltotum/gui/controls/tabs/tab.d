@@ -41,7 +41,7 @@ class Tab : Control
 
         add(label);
 
-        label.onAction = (e) {
+        label.onAction = (ref e) {
             if (onAction)
             {
                 onAction();

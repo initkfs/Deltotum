@@ -72,7 +72,7 @@ class Physics : Control
         c.y = 100;
         addCreate(c);
 
-        c.onAction = (e) {
+        c.onAction = (ref e) {
             foreach (i; 0 .. 100)
             {
                 createShape;

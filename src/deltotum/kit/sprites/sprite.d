@@ -168,13 +168,13 @@ class Sprite : PhysicalBody
         }
 
         super.createHandlers;
-        eventMouseHandler = (e) {
+        eventMouseHandler = (ref e) {
 
-            bool isConsumed = runListeners(e);
+            runListeners(e);
 
-            if (isConsumed)
+            if (e.isConsumed)
             {
-                return isConsumed;
+                return;
             }
 
             if (e.event == MouseEvent.Event.mouseDown)
@@ -226,8 +226,6 @@ class Sprite : PhysicalBody
                     }
                 }
             }
-
-            return false;
         };
 
         isCreated = true;

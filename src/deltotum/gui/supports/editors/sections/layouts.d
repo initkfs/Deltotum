@@ -49,14 +49,14 @@ class Layouts : Control
     Button createButtonInc10()
     {
         auto button = createButton("w+=10");
-        button.onAction = (e) => (button.width = button.width + 10);
+        button.onAction = (ref e) => (button.width = button.width + 10);
         return button;
     }
 
     Button createButtonDec10()
     {
         auto button = createButton("w-=10");
-        button.onAction = (e) => (button.width = button.width - 10);
+        button.onAction = (ref e) => (button.width = button.width - 10);
         return button;
     }
 

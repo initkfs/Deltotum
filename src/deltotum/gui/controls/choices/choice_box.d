@@ -33,7 +33,7 @@ class ChoiceItem : Sprite
         label.isHGrow = true;
         addCreate(label);
 
-        label.onAction = (e) {
+        label.onAction = (ref e) {
             if (onChoice)
             {
                 onChoice();
@@ -82,14 +82,14 @@ class ChoiceBox : TypedContainer!ChoiceItem
         //prevNextContainer.isVGrow = true;
 
         auto prevButton = new Button("▲", 10, 10);
-        prevButton.onAction = (e) { selectPrev; };
+        prevButton.onAction = (ref e) { selectPrev; };
         prevButton.isBackground = false;
 
         auto nextButton = new Button("▼", 10, 10);
-        nextButton.onAction = (e) { selectNext; };
+        nextButton.onAction = (ref e) { selectNext; };
         nextButton.isBackground = false;
         addCreate(prevNextContainer);
-        
+
         prevNextContainer.addCreate(prevButton);
         prevNextContainer.addCreate(nextButton);
 
@@ -103,24 +103,27 @@ class ChoiceBox : TypedContainer!ChoiceItem
         button.isVGrow = true;
         addCreate(button);
 
-        button.onAction = (e) { toggleChoiceList; };
+        button.onAction = (ref e) { toggleChoiceList; };
 
         choiceList = new VBox(2);
         choiceList.id = "choice_box_list";
         choiceList.isAlignX = true;
-        choiceList.onFocusOut = (e) {
+        choiceList.onFocusOut = (ref e) {
             if (choiceList.isVisible)
             {
                 choiceList.isVisible = false;
             }
-            return false;
         };
 
         auto oldOnFocusOut = onFocusOut;
-        onFocusOut = (e) {
-            if (oldOnFocusOut && oldOnFocusOut(e))
+        onFocusOut = (ref e) {
+            if (oldOnFocusOut)
             {
-                return true;
+                oldOnFocusOut(e);
+                if (e.isConsumed)
+                {
+                    return;
+                }
             }
 
             if (choiceList.isVisible)
@@ -128,13 +131,11 @@ class ChoiceBox : TypedContainer!ChoiceItem
                 const listBounds = choiceList.bounds;
                 if (listBounds.contains(input.mousePos))
                 {
-                    return false;
+                    return;
                 }
 
                 choiceList.isVisible = false;
             }
-
-            return false;
         };
 
         choiceList.isBorder = true;
@@ -154,17 +155,20 @@ class ChoiceBox : TypedContainer!ChoiceItem
 
         //TODO hack
         searchField.textView.maxWidth = double.max;
-        
+
         auto oldKeyTyped = searchField.onKeyDown;
-        searchField.onKeyDown = (e){
-            if(oldKeyTyped && oldKeyTyped(e)){
-                //return true;
+        searchField.onKeyDown = (ref e) {
+            if (oldKeyTyped)
+            {
+                oldKeyTyped(e);
+                if (e.isConsumed)
+                {
+                    return;
+                }
             }
 
             fillItemList;
             choiceList.applyLayout;
-
-            return false;
         };
 
     }

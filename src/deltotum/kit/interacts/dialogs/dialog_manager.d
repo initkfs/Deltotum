@@ -39,7 +39,7 @@ private
 
             auto okButton = new Button();
             okButton.text = "OK";
-            okButton.onAction = (e) {
+            okButton.onAction = (ref e) {
                 if (onOk)
                 {
                     onOk();
@@ -47,7 +47,7 @@ private
             };
             auto cancelButton = new Button();
             cancelButton.text = "Cancel";
-            cancelButton.onAction = (e) {
+            cancelButton.onAction = (ref e) {
                 if (onCancel)
                 {
                     onCancel();

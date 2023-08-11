@@ -59,14 +59,13 @@ class TextArea : HBox
 
         textView = new TextView;
 
-        textView.onMouseEntered = (e) {
+        textView.onMouseEntered = (ref e) {
             import deltotum.com.inputs.cursors.com_system_cursor_type : ComSystemCursorType;
 
             input.systemCursor.change(ComSystemCursorType.ibeam);
-            return false;
         };
 
-        textView.onMouseExited = (e) { input.systemCursor.restore; return false; };
+        textView.onMouseExited = (ref e) { input.systemCursor.restore; };
 
         addCreate(textView);
 
@@ -82,7 +81,7 @@ class TextArea : HBox
         scroll.onValue = (value) { textView.scrollTo(value); };
 
         //TODO isDisabled
-        onTextInput = (key) {
+        onTextInput = (ref key) {
             foreach (glyph; asset.defaultBitmapFont.glyphs)
             {
                 if (glyph.grapheme == key.firstLetter)
@@ -90,17 +89,16 @@ class TextArea : HBox
                     textView.text ~= glyph.grapheme;
                 }
             }
-
-            return false;
         };
 
-        onKeyDown = (key) {
+        onKeyDown = (ref key) {
             import deltotum.com.inputs.keyboards.key_name : KeyName;
 
             if (key.keyName == KeyName.BACKSPACE && textView.text.length > 0)
             {
                 textView.text = textView.text[0 .. $ - 1];
-                return true;
+                key.isConsumed = true;
+                return;
             }
 
             if (key.keyName == KeyName.RETURN)
@@ -108,11 +106,11 @@ class TextArea : HBox
                 if (key.keyMod.isCtrl && onCaret !is null)
                 {
                     onCaret();
-                    return true;
+                    key.isConsumed = true;
+                    return;
                 }
 
                 textView.text ~= '\n';
-
             }
 
             if (key.keyMod.isCtrl && key.keyName == KeyName.c)
@@ -134,8 +132,6 @@ class TextArea : HBox
                     textView.text = input.clipboard.getText;
                 }
             }
-
-            return false;
         };
     }
 }

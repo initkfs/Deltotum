@@ -180,7 +180,7 @@ class ToggleSwitch : Control
             addCreate(clickSwitchOnAnimation);
         }
 
-        onMouseDown = (e) {
+        onMouseDown = (ref e) {
 
             final switch (switchState) with (State)
             {
@@ -236,8 +236,6 @@ class ToggleSwitch : Control
 
                 break;
             }
-
-            return false;
         };
 
     }

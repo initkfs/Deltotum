@@ -116,10 +116,10 @@ class SceneView : VBox
                 continue;
             }
 
-            obj.onMouseDown = (e) {
+            obj.onMouseDown = (ref e) {
                 if (!isDebug || e.button != 3)
                 {
-                    return false;
+                    return;
                 }
 
                 Sprite nextForDebug = objectOnDebug;
@@ -162,8 +162,6 @@ class SceneView : VBox
                     objectOnDebug = nextForDebug;
                     setDebugInfo(objectOnDebug);
                 }
-
-                return false;
             };
         }
     }

@@ -51,9 +51,8 @@ class CheckBox : Control
         label.isFocusable = false;
         addCreate(label);
 
-        onMouseDown = (e){
+        onMouseDown = (ref e){
             toggle;
-            return false;
         };
     }
 

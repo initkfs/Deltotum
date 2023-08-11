@@ -16,58 +16,58 @@ import deltotum.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
  */
 class EventToolkitTarget : GraphicsComponent, EventTarget
 {
-    bool delegate(MouseEvent) eventMouseFilter;
-    bool delegate(MouseEvent) eventMouseHandler;
+    void delegate(ref MouseEvent) eventMouseFilter;
+    void delegate(ref MouseEvent) eventMouseHandler;
 
-    bool delegate(MouseEvent) onMouseDown;
-    bool delegate(MouseEvent) onMouseUp;
-    bool delegate(MouseEvent) onMouseMove;
-    bool delegate(MouseEvent) onMouseWheel;
+    void delegate(ref MouseEvent) onMouseDown;
+    void delegate(ref MouseEvent) onMouseUp;
+    void delegate(ref MouseEvent) onMouseMove;
+    void delegate(ref MouseEvent) onMouseWheel;
 
     bool isMouseOver;
-    bool delegate(MouseEvent) onMouseEntered;
-    bool delegate(MouseEvent) onMouseExited;
+    void delegate(ref MouseEvent) onMouseEntered;
+    void delegate(ref MouseEvent) onMouseExited;
 
-    bool delegate(KeyEvent) eventKeyFilter;
-    bool delegate(KeyEvent) eventKeyHandler;
+    void delegate(ref KeyEvent) eventKeyFilter;
+    void delegate(ref KeyEvent) eventKeyHandler;
 
-    bool delegate(KeyEvent) onKeyUp;
-    bool delegate(KeyEvent) onKeyDown;
+    void delegate(ref KeyEvent) onKeyUp;
+    void delegate(ref KeyEvent) onKeyDown;
 
-    bool delegate(TextInputEvent) eventTextInputFilter;
-    bool delegate(TextInputEvent) eventTextInputHandler;
+    void delegate(ref TextInputEvent) eventTextInputFilter;
+    void delegate(ref TextInputEvent) eventTextInputHandler;
 
-    bool delegate(TextInputEvent) onTextInput;
+    void delegate(ref TextInputEvent) onTextInput;
 
-    bool delegate(FocusEvent) eventFocusFilter;
-    bool delegate(FocusEvent) eventFocusHandler;
+    void delegate(ref FocusEvent) eventFocusFilter;
+    void delegate(ref FocusEvent) eventFocusHandler;
 
-    bool delegate(FocusEvent) onFocusIn;
-    bool delegate(FocusEvent) onFocusOut;
+    void delegate(ref FocusEvent) onFocusIn;
+    void delegate(ref FocusEvent) onFocusOut;
 
-    bool delegate(JoystickEvent) eventJoystickFilter;
-    bool delegate(JoystickEvent) eventJoystickHandler;
+    void delegate(ref JoystickEvent) eventJoystickFilter;
+    void delegate(ref JoystickEvent) eventJoystickHandler;
 
-    bool delegate(JoystickEvent) onJoystickAxis;
-    bool delegate(JoystickEvent) onJoystickButtonPress;
-    bool delegate(JoystickEvent) onJoystickButtonRelease;
+    void delegate(ref JoystickEvent) onJoystickAxis;
+    void delegate(ref JoystickEvent) onJoystickButtonPress;
+    void delegate(ref JoystickEvent) onJoystickButtonRelease;
 
     void createHandlers()
     {
-        eventMouseHandler = (e) { return runListeners(e); };
-        eventKeyHandler = (e) { return runListeners(e); };
-        eventJoystickHandler = (e) { return runListeners(e); };
-        eventFocusHandler = (e) { return runListeners(e); };
-        eventTextInputHandler = (e) { return runListeners(e); };
+        eventMouseHandler = (ref e) { runListeners(e); };
+        eventKeyHandler = (ref e) { runListeners(e); };
+        eventJoystickHandler = (ref e) { runListeners(e); };
+        eventFocusHandler = (ref e) { runListeners(e); };
+        eventTextInputHandler = (ref e) { runListeners(e); };
     }
 
-    bool runEventFilters(E)(E e)
+    void runEventFilters(E)(ref E e)
     {
         static if (is(E : MouseEvent))
         {
             if (eventMouseFilter !is null)
             {
-                return eventMouseFilter(e);
+                eventMouseFilter(e);
             }
         }
 
@@ -75,7 +75,7 @@ class EventToolkitTarget : GraphicsComponent, EventTarget
         {
             if (eventKeyFilter !is null)
             {
-                return eventKeyFilter(e);
+                eventKeyFilter(e);
             }
         }
 
@@ -83,7 +83,7 @@ class EventToolkitTarget : GraphicsComponent, EventTarget
         {
             if (eventTextInputFilter !is null)
             {
-                return eventTextInputFilter(e);
+                eventTextInputFilter(e);
             }
         }
 
@@ -91,7 +91,7 @@ class EventToolkitTarget : GraphicsComponent, EventTarget
         {
             if (eventJoystickFilter !is null)
             {
-                return eventJoystickFilter(e);
+                eventJoystickFilter(e);
             }
         }
 
@@ -99,20 +99,18 @@ class EventToolkitTarget : GraphicsComponent, EventTarget
         {
             if (eventFocusFilter !is null)
             {
-                return eventFocusFilter(e);
+                eventFocusFilter(e);
             }
         }
-
-        return false;
     }
 
-    bool runEventHandlers(E)(E e)
+    void runEventHandlers(E)(ref E e)
     {
         static if (is(E : MouseEvent))
         {
             if (eventMouseHandler !is null)
             {
-                return eventMouseHandler(e);
+                eventMouseHandler(e);
             }
         }
 
@@ -120,7 +118,7 @@ class EventToolkitTarget : GraphicsComponent, EventTarget
         {
             if (eventKeyHandler !is null)
             {
-                return eventKeyHandler(e);
+                eventKeyHandler(e);
             }
         }
 
@@ -128,7 +126,7 @@ class EventToolkitTarget : GraphicsComponent, EventTarget
         {
             if (eventTextInputHandler !is null)
             {
-                return eventTextInputHandler(e);
+                eventTextInputHandler(e);
             }
         }
 
@@ -136,7 +134,7 @@ class EventToolkitTarget : GraphicsComponent, EventTarget
         {
             if (eventJoystickHandler !is null)
             {
-                return eventJoystickHandler(e);
+                eventJoystickHandler(e);
             }
         }
 
@@ -144,62 +142,58 @@ class EventToolkitTarget : GraphicsComponent, EventTarget
         {
             if (eventFocusHandler !is null)
             {
-                return eventFocusHandler(e);
+                eventFocusHandler(e);
             }
         }
-
-        return false;
     }
 
-    bool runListeners(MouseEvent e)
+    void runListeners(ref MouseEvent e)
     {
         if (e.event == MouseEvent.Event.mouseDown)
         {
             if (onMouseDown !is null)
             {
-                return onMouseDown(e);
+                onMouseDown(e);
             }
         }
         else if (e.event == MouseEvent.Event.mouseMove)
         {
             if (onMouseMove !is null)
             {
-                return onMouseMove(e);
+                onMouseMove(e);
             }
         }
         else if (e.event == MouseEvent.Event.mouseUp)
         {
             if (onMouseUp !is null)
             {
-                return onMouseUp(e);
+                onMouseUp(e);
             }
         }
         else if (e.event == MouseEvent.Event.mouseWheel)
         {
             if (onMouseWheel !is null)
             {
-                return onMouseWheel(e);
+                onMouseWheel(e);
             }
         }
         else if (e.event == MouseEvent.Event.mouseEntered)
         {
             if (onMouseEntered !is null)
             {
-                return onMouseEntered(e);
+                onMouseEntered(e);
             }
         }
         else if (e.event == MouseEvent.Event.mouseExited)
         {
             if (onMouseExited !is null)
             {
-                return onMouseExited(e);
+                onMouseExited(e);
             }
         }
-
-        return false;
     }
 
-    bool runListeners(KeyEvent keyEvent)
+    void runListeners(ref KeyEvent keyEvent)
     {
         final switch (keyEvent.event) with (KeyEvent)
         {
@@ -208,21 +202,19 @@ class EventToolkitTarget : GraphicsComponent, EventTarget
         case Event.keyUp:
             if (onKeyUp !is null)
             {
-                return onKeyUp(keyEvent);
+                onKeyUp(keyEvent);
             }
             break;
         case Event.keyDown:
             if (onKeyDown !is null)
             {
-                return onKeyDown(keyEvent);
+                onKeyDown(keyEvent);
             }
             break;
         }
-
-        return false;
     }
 
-    bool runListeners(TextInputEvent keyEvent)
+    void runListeners(ref TextInputEvent keyEvent)
     {
         final switch (keyEvent.event) with (TextInputEvent)
         {
@@ -231,15 +223,13 @@ class EventToolkitTarget : GraphicsComponent, EventTarget
         case Event.input:
             if (onTextInput !is null)
             {
-                return onTextInput(keyEvent);
+                onTextInput(keyEvent);
             }
             break;
         }
-
-        return false;
     }
 
-    bool runListeners(JoystickEvent joystickEvent)
+    void runListeners(ref JoystickEvent joystickEvent)
     {
         final switch (joystickEvent.event) with (JoystickEvent)
         {
@@ -248,27 +238,25 @@ class EventToolkitTarget : GraphicsComponent, EventTarget
         case Event.press:
             if (onJoystickButtonPress !is null)
             {
-                return onJoystickButtonPress(joystickEvent);
+                onJoystickButtonPress(joystickEvent);
             }
             break;
         case Event.release:
             if (onJoystickButtonRelease !is null)
             {
-                return onJoystickButtonRelease(joystickEvent);
+                onJoystickButtonRelease(joystickEvent);
             }
             break;
         case Event.axis:
             if (onJoystickAxis !is null)
             {
-                return onJoystickAxis(joystickEvent);
+                onJoystickAxis(joystickEvent);
             }
             break;
         }
-
-        return false;
     }
 
-    bool runListeners(FocusEvent focusEvent)
+    void runListeners(ref FocusEvent focusEvent)
     {
         final switch (focusEvent.event) with (FocusEvent)
         {
@@ -277,30 +265,26 @@ class EventToolkitTarget : GraphicsComponent, EventTarget
         case Event.focusIn:
             if (onFocusIn !is null)
             {
-                return onFocusIn(focusEvent);
+                onFocusIn(focusEvent);
             }
             break;
         case Event.focusOut:
             if (onFocusOut !is null)
             {
-                return onFocusOut(focusEvent);
+                onFocusOut(focusEvent);
             }
             break;
         }
-
-        return false;
     }
 
-    void fireEvent(E)(E e)
+    void fireEvent(E)(ref E e)
     {
-        if (const isConsumed = runEventFilters!E(e))
+        runEventFilters!E(e);
+        if (e.isConsumed)
         {
             return;
         }
 
-        if (const isConsumed = runEventHandlers!E(e))
-        {
-            return;
-        }
+        runEventHandlers!E(e);
     }
 }

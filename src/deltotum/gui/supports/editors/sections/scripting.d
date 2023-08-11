@@ -58,10 +58,10 @@ class Scripting : Control
 
         import deltotum.kit.sprites.images.image;
 
-        juliaScriptArea.onKeyDown = (e) {
-            if (prevDown(e))
-            {
-                return true;
+        juliaScriptArea.onKeyDown = (ref e) {
+            prevDown(e);
+            if(e.isConsumed){
+                return;
             }
 
             if (e.keyMod.isCtrl && e.keyName == KeyName.RETURN)
@@ -85,8 +85,6 @@ class Scripting : Control
                 });
 
             }
-
-            return false;
         };
 
     }

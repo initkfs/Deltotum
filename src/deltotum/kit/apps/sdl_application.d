@@ -258,18 +258,21 @@ class SdlApplication : GraphicApplication
             case focusIn:
                 windowManager.windowById(e.ownerId, (win) {
                     win.isFocus = true;
+                    e.isConsumed = true;
                     return true;
                 });
                 break;
             case focusOut:
                 windowManager.windowById(e.ownerId, (win) {
                     win.isFocus = false;
+                    e.isConsumed = true;
                     return true;
                 });
                 break;
             case show:
                 windowManager.windowById(e.ownerId, (win) {
                     win.isShowing = true;
+                    e.isConsumed = true;
                     return true;
                 });
                 break;
@@ -282,6 +285,7 @@ class SdlApplication : GraphicApplication
             case resize:
                 windowManager.windowById(e.ownerId, (win) {
                     win.confirmResize(e.width, e.height);
+                    e.isConsumed = true;
                     return true;
                 });
                 break;

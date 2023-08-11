@@ -61,20 +61,18 @@ class Text : Control
 
         invalidateListeners ~= () { updateRows; };
 
-        onFocusIn = (e) {
+        onFocusIn = (ref e) {
             if (focusEffect !is null)
             {
                 focusEffect.isVisible = true;
             }
-            return false;
         };
 
-        onFocusOut = (e) {
+        onFocusOut = (ref e) {
             if (focusEffect !is null && focusEffect.isVisible)
             {
                 focusEffect.isVisible = false;
             }
-            return false;
         };
 
         if (isFocusable)

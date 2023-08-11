@@ -123,8 +123,8 @@ class EventManager
         {
             foreach (Sprite eventTarget; eventChain)
             {
-                const isConsumed = eventTarget.runEventFilters(e);
-                if (isConsumed)
+                eventTarget.runEventFilters(e);
+                if (e.isConsumed)
                 {
                     return;
                 }
@@ -132,8 +132,8 @@ class EventManager
 
             foreach_reverse (Sprite eventTarget; eventChain)
             {
-                const isConsumed = eventTarget.runEventHandlers(e);
-                if (isConsumed)
+                eventTarget.runEventHandlers(e);
+                if (e.isConsumed)
                 {
                     return;
                 }

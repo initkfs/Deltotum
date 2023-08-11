@@ -10,9 +10,14 @@ class CurveMaker
 {
     bool isReverse;
 
+    //FIXME default argument expected for `onNextStepIsContinue`
     protected void parametricEqOfT(double dots = 1000, double step = 0.01, scope bool delegate(
-            double) onNextStepIsContinue)
+            double) onNextStepIsContinue = null)
     {
+        if (!onNextStepIsContinue)
+        {
+            return;
+        }
         double dt = 0;
         foreach (dot; 0 .. dots)
         {
@@ -24,13 +29,13 @@ class CurveMaker
             dt += step;
         }
     }
-
+    
     void pointsIteration(double step, double minValueInclusive, double maxValueInclusive, scope bool delegate(
             double) onNextStepIsContinue)
     {
         assert(minValueInclusive < maxValueInclusive);
         assert(step > 0 && step < maxValueInclusive);
-        
+
         for (double i = minValueInclusive; i <= maxValueInclusive; i += step)
         {
             const resultDt = isReverse ? -(i) : i;

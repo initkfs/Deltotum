@@ -19,7 +19,7 @@ import deltotum.kit.graphics.colors.rgba : RGBA;
 class Button : Control
 {
 
-    void delegate(ActionEvent) onAction;
+    void delegate(ref ActionEvent) onAction;
 
     dstring _buttonText;
 
@@ -155,39 +155,37 @@ class Button : Control
 
     void createListeners()
     {
-        onMouseEntered = (e) {
+        onMouseEntered = (ref e) {
 
             if (_selected)
             {
-                return false;
+                return;
             }
 
             if (hover !is null && !hover.isVisible)
             {
                 hover.isVisible = true;
             }
-            return false;
         };
 
-        onMouseExited = (e) {
+        onMouseExited = (ref e) {
 
             if (_selected)
             {
-                return false;
+                return;
             }
 
             if (hover !is null && hover.isVisible)
             {
                 hover.isVisible = false;
             }
-            return false;
         };
 
-        onMouseUp = (e) {
+        onMouseUp = (ref e) {
 
             if (_selected)
             {
-                return false;
+                return;
             }
 
             if (clickEffectAnimation !is null && !clickEffectAnimation.isRun)
@@ -198,9 +196,9 @@ class Button : Control
 
             if (onAction !is null)
             {
-                onAction(ActionEvent(e.ownerId, e.x, e.y, e.button));
+                auto ea = ActionEvent(e.ownerId, e.x, e.y, e.button);
+                onAction(ea);
             }
-            return false;
         };
     }
 
