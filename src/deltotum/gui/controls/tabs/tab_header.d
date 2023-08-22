@@ -2,7 +2,7 @@ module deltotum.gui.controls.tabs.tab_header;
 
 import deltotum.gui.controls.control : Control;
 import deltotum.gui.controls.texts.text : Text;
-import deltotum.kit.sprites.layouts.horizontal_layout : HorizontalLayout;
+import deltotum.kit.sprites.layouts.hlayout : HLayout;
 import deltotum.gui.controls.tabs.tab : Tab;
 import deltotum.kit.sprites.sprite : Sprite;
 
@@ -16,7 +16,7 @@ class TabHeader : Control
 
     this(double tabSpacing = 5)
     {
-        layout = new HorizontalLayout(tabSpacing);
+        layout = new HLayout(tabSpacing);
         layout.isAutoResize = true;
         layout.isAlignY = true;
     }

@@ -9,7 +9,7 @@ import deltotum.gui.events.action_event : ActionEvent;
 import deltotum.kit.sprites.animations.object.value_transition : ValueTransition;
 import deltotum.kit.sprites.animations.object.property.opacity_transition : OpacityTransition;
 import deltotum.gui.controls.texts.text;
-import deltotum.kit.sprites.layouts.horizontal_layout : HorizontalLayout;
+import deltotum.kit.sprites.layouts.hlayout : HLayout;
 import deltotum.kit.sprites.textures.texture : Texture;
 import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.kit.graphics.colors.rgba : RGBA;
@@ -61,7 +61,7 @@ class ToggleSwitch : Control
         import deltotum.kit.sprites.layouts.center_layout: CenterLayout;
 
         //FIXME center + isLManaged = false + align y not working
-        this.layout = new HorizontalLayout;
+        this.layout = new HLayout;
     }
 
     override void initialize()

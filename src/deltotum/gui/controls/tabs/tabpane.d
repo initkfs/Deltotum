@@ -8,7 +8,7 @@ import deltotum.gui.containers.vbox : VBox;
 import deltotum.gui.containers.stack_box : StackBox;
 import deltotum.gui.controls.tabs.tab : Tab;
 import deltotum.gui.controls.tabs.tab_header : TabHeader;
-import deltotum.kit.sprites.layouts.vertical_layout : VerticalLayout;
+import deltotum.kit.sprites.layouts.vlayout : VLayout;
 
 /**
  * Authors: initkfs
@@ -35,7 +35,7 @@ class TabPane : Control
         content.isVGrow = true;
         content.isHGrow = true;
 
-        layout = new VerticalLayout;
+        layout = new VLayout;
     }
 
     override void create()

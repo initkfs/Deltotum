@@ -1,7 +1,7 @@
 module deltotum.gui.containers.hbox;
 
 import deltotum.gui.containers.container : Container;
-import deltotum.kit.sprites.layouts.horizontal_layout : HorizontalLayout;
+import deltotum.kit.sprites.layouts.hlayout : HLayout;
 import deltotum.kit.sprites.sprite : Sprite;
 
 /**
@@ -21,7 +21,7 @@ class HBox : Container
         enforce(spacing >= 0, text("Horizontal spacing must be positive value or 0: ", spacing));
         this._spacing = spacing;
 
-        auto hlayout = new HorizontalLayout(_spacing);
+        auto hlayout = new HLayout(_spacing);
         hlayout.isAlignY = false;
         hlayout.isAutoResize = true;
         this.layout = hlayout;
@@ -34,7 +34,7 @@ class HBox : Container
     void spacing(double value)
     {
         _spacing = value;
-        if (auto hLayout = cast(HorizontalLayout) layout)
+        if (auto hLayout = cast(HLayout) layout)
         {
             hLayout.spacing = value;
         }

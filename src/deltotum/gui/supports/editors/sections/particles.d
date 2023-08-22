@@ -18,7 +18,7 @@ import deltotum.gui.controls.texts.text : Text;
 import deltotum.gui.controls.scrollbars.hscrollbar : HScrollbar;
 import deltotum.gui.containers.container : Container;
 import deltotum.gui.controls.buttons.button : Button;
-import deltotum.kit.sprites.layouts.horizontal_layout : HorizontalLayout;
+import deltotum.kit.sprites.layouts.hlayout : HLayout;
 
 import Math = deltotum.math;
 
@@ -31,9 +31,9 @@ class Particles : Control
 {
     this()
     {
-        import deltotum.kit.sprites.layouts.horizontal_layout : HorizontalLayout;
+        import deltotum.kit.sprites.layouts.hlayout : HLayout;
 
-        layout = new HorizontalLayout(5);
+        layout = new HLayout(5);
         layout.isAutoResize = false;
         //isBackground = false;
         // layout.isAlignY = false;

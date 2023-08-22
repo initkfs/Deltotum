@@ -19,9 +19,9 @@ class CheckBox : Control
 
     this()
     {
-        import deltotum.kit.sprites.layouts.horizontal_layout : HorizontalLayout;
+        import deltotum.kit.sprites.layouts.hlayout : HLayout;
 
-        layout = new HorizontalLayout(5);
+        layout = new HLayout(5);
         layout.isAutoResize(true);
         layout.isAlignY = true;
 

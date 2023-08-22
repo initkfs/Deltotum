@@ -25,9 +25,9 @@ class Curves : Control
         {
                 id = "deltotum_gui_editor_section_curves";
 
-                import deltotum.kit.sprites.layouts.vertical_layout : VerticalLayout;
+                import deltotum.kit.sprites.layouts.vlayout : VLayout;
 
-                layout = new VerticalLayout(5);
+                layout = new VLayout(5);
                 layout.isAutoResize = true;
                 isBackground = false;
         }

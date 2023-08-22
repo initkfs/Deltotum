@@ -4,7 +4,7 @@ import deltotum.gui.controls.texts.text_view : TextView;
 import deltotum.gui.controls.scrollbars.vscrollbar : VScrollbar;
 import deltotum.gui.controls.control : Control;
 import deltotum.gui.containers.hbox : HBox;
-import deltotum.kit.sprites.layouts.horizontal_layout : HorizontalLayout;
+import deltotum.kit.sprites.layouts.hlayout : HLayout;
 
 import std.stdio;
 

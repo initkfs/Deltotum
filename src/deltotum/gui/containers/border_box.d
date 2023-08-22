@@ -2,7 +2,7 @@ module deltotum.gui.containers.border_box;
 
 import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.gui.containers.container : Container;
-import deltotum.kit.sprites.layouts.vertical_layout : VerticalLayout;
+import deltotum.kit.sprites.layouts.vlayout : VLayout;
 import deltotum.gui.containers.stack_box : StackBox;
 import deltotum.math.geom.insets : Insets;
 import deltotum.gui.containers.hbox : HBox;
@@ -25,7 +25,7 @@ class BorderBox : Container
 
     this()
     {
-        this.layout = new VerticalLayout;
+        this.layout = new VLayout;
         layout.isAutoResize = true;
     }
 

@@ -1,4 +1,4 @@
-module deltotum.kit.sprites.layouts.horizontal_layout;
+module deltotum.kit.sprites.layouts.vlayout;
 
 import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.kit.sprites.layouts.managed_layout : ManagedLayout;
@@ -7,7 +7,7 @@ import deltotum.kit.sprites.alignment : Alignment;
 /**
  * Authors: initkfs
  */
-class HorizontalLayout : ManagedLayout
+class VLayout : ManagedLayout
 {
     double spacing = 0;
 
@@ -19,14 +19,14 @@ class HorizontalLayout : ManagedLayout
     override void arrangeChildren(Sprite root)
     {
         auto bounds = root.bounds;
-        double nextX = 0;
+        double nextY = 0;
         if (isFillFromStartToEnd)
         {
-            nextX = bounds.x + root.padding.left;
+            nextY = bounds.y + root.padding.top;
         }
         else
         {
-            nextX = bounds.right - root.padding.right;
+            nextY = bounds.bottom - root.padding.bottom;
         }
 
         foreach (child; root.children)
@@ -35,26 +35,27 @@ class HorizontalLayout : ManagedLayout
             {
                 continue;
             }
+
             auto childBounds = child.bounds;
 
             if (isFillFromStartToEnd)
             {
-                child.x = nextX + child.margin.left;
-                nextX = child.x + childBounds.width + child.margin.right + spacing;
+                child.y = nextY + child.margin.top;
+                nextY = child.y + childBounds.height + child.margin.bottom + spacing;
             }
             else
             {
-                child.x = nextX - child.margin.right - childBounds.width;
-                nextX = child.x - child.margin.left - spacing;
+                child.y = nextY - child.margin.bottom - childBounds.height;
+                nextY = child.y + child.margin.top - spacing;
             }
 
-            if (isAlignY || child.alignment == Alignment.y)
+            if (isAlignX || child.alignment == Alignment.x)
             {
-                alignY(root, child);
+                alignX(root, child);
             }
             else
             {
-                child.y = root.y + root.padding.top + child.margin.top;
+                child.x = root.x + root.padding.left + child.margin.left;
             }
         }
     }
@@ -62,42 +63,45 @@ class HorizontalLayout : ManagedLayout
     override double childrenWidth(Sprite root)
     {
         double childrenWidth = 0;
-        size_t childCount;
         foreach (child; childrenForLayout(root))
         {
-            childrenWidth += child.width + child.margin.width;
-            childCount++;
+            const chWidth = child.width + child.margin.width;
+            if (chWidth > childrenWidth)
+            {
+                childrenWidth = chWidth;
+            }
         }
 
-        if (spacing > 0 && childCount > 1)
-        {
-            childrenWidth += spacing * (childCount - 1);
-        }
         return childrenWidth;
     }
 
     override double childrenHeight(Sprite root)
     {
         double childrenHeight = 0;
+        size_t childCount;
         foreach (child; childrenForLayout(root))
         {
-            const childH = child.height + child.margin.height;
-            if (childH > childrenHeight)
-            {
-                childrenHeight = childH;
-            }
+            childrenHeight += child.height + child.margin.height;
+            childCount++;
         }
 
+        if (spacing > 0 && childCount > 1)
+        {
+            childrenHeight += spacing * (childCount - 1);
+        }
         return childrenHeight;
     }
 
     override double freeWidth(Sprite root, Sprite child)
     {
-        return root.width - childrenWidth(root) - root.padding.width;
+        return root.width - child.width - root.padding.width;
     }
 
     override double freeHeight(Sprite root, Sprite child)
     {
-        return root.height - child.height - root.padding.height;
+        return root.height - childrenHeight(root) - root.padding.height;
     }
+
+
+
 }

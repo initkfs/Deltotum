@@ -1,7 +1,7 @@
 module deltotum.gui.containers.vbox;
 
 import deltotum.gui.containers.container : Container;
-import deltotum.kit.sprites.layouts.vertical_layout : VerticalLayout;
+import deltotum.kit.sprites.layouts.vlayout : VLayout;
 
 /**
  * Authors: initkfs
@@ -21,7 +21,7 @@ class VBox : Container
         enforce(spacing >= 0, text("Vertical spacing must be positive value: ", spacing));
         this._spacing = spacing;
 
-        auto vlayout = new VerticalLayout(_spacing);
+        auto vlayout = new VLayout(_spacing);
         vlayout.isAlignX = false;
         this.layout = vlayout;
         layout.isAutoResize = true;
@@ -54,7 +54,7 @@ class VBox : Container
     void spacing(double value)
     {
         _spacing = value;
-        if (auto vlayout = cast(VerticalLayout) layout)
+        if (auto vlayout = cast(VLayout) layout)
         {
             vlayout.spacing = value;
         }

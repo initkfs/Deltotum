@@ -14,9 +14,9 @@ class Controls : Control
     {
         id = "deltotum_gui_editor_section_controls";
 
-        import deltotum.kit.sprites.layouts.vertical_layout : VerticalLayout;
+        import deltotum.kit.sprites.layouts.vlayout : VLayout;
 
-        layout = new VerticalLayout(5);
+        layout = new VLayout(5);
         layout.isAutoResize = true;
         isBackground = false;
     }
@@ -37,7 +37,7 @@ class Controls : Control
         import deltotum.gui.containers.hbox : HBox;
         import deltotum.gui.containers.vbox : VBox;
         import deltotum.gui.containers.frame : Frame;
-        import deltotum.kit.sprites.layouts.vertical_layout: VerticalLayout;
+        import deltotum.kit.sprites.layouts.vlayout: VLayout;
 
         auto selectionContainer = new VBox(5);
         selectionContainer.width = 500;
@@ -68,7 +68,7 @@ class Controls : Control
         choice2.fill(choiceItems);
 
         auto choice3 = new ChoiceBox;
-        auto vlayout = new VerticalLayout(2);
+        auto vlayout = new VLayout(2);
         vlayout.isAutoResize = true;
         vlayout.isAlignX = true;
         choice3.layout = vlayout;

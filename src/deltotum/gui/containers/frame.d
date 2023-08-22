@@ -2,7 +2,7 @@ module deltotum.gui.containers.frame;
 
 import deltotum.gui.containers.container : Container;
 import deltotum.gui.controls.control : Control;
-import deltotum.kit.sprites.layouts.vertical_layout : VerticalLayout;
+import deltotum.kit.sprites.layouts.vlayout : VLayout;
 import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.gui.controls.texts.text : Text;
 
