@@ -92,6 +92,8 @@ class RegularPolygon : Shape
     {
         import deltotum.math.vector2d : Vector2d;
 
+        enum sizeDt = 2.0;
+
         graphics.fillRect(x + cornerPadding, y + style.lineWidth, width - cornerPadding * 2, height - style.lineWidth - 1, style
                 .fillColor);
 

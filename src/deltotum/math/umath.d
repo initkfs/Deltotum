@@ -39,6 +39,14 @@ double clamp01(double value) @nogc nothrow pure @safe
     }
 }
 
+T trunc(T)(T value) if (is(T : real))
+{
+    import std.math.rounding : trunc;
+
+    //TODO other real?
+    return trunc(value);
+}
+
 T clamp(T)(T value, T min, T max)
 {
     if (value < min)

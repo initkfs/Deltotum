@@ -193,12 +193,14 @@ class ManagedLayout : Layout
         {
             if (child.isHGrow)
             {
+                import Math = deltotum.math;
+
                 const freeW = freeWidth(root, child);
-                const dtWidth = freeW / hgrowChildren;
+                const dtWidth = Math.trunc(freeW / hgrowChildren);
 
                 if (dtWidth > 0)
                 {
-                    import Math = deltotum.math;
+                    
                     enum wDelta = 1.0;
                     const newWidth = child.width + dtWidth;
                     if (Math.abs(child.width - newWidth) > wDelta)
@@ -210,8 +212,10 @@ class ManagedLayout : Layout
 
             if (child.isVGrow)
             {
+                import Math = deltotum.math;
+
                 const freeH = freeHeight(root, child);
-                const dtHeight = freeH / vgrowChildren;
+                const dtHeight = Math.trunc(freeH / vgrowChildren);
 
                 if (dtHeight > 0)
                 {

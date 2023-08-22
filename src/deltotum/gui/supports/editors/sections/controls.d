@@ -37,10 +37,11 @@ class Controls : Control
         import deltotum.gui.containers.hbox : HBox;
         import deltotum.gui.containers.vbox : VBox;
         import deltotum.gui.containers.frame : Frame;
+        import deltotum.kit.sprites.layouts.vertical_layout: VerticalLayout;
 
-        auto selectionContainer = configureControl(new Frame("Selection controls"));
-        selectionContainer.width = 400;
-        selectionContainer.height = 300;
+        auto selectionContainer = new VBox(5);
+        selectionContainer.width = 500;
+        selectionContainer.height = 400;
         addCreate(selectionContainer);
 
         auto choiceContainer = new HBox;
@@ -48,17 +49,41 @@ class Controls : Control
 
         import deltotum.gui.controls.choices.choice_box : ChoiceBox;
 
+        dstring[] choiceItems = [
+            "label1", "label2", "string1", "string2"
+        ];
+
         auto choice1 = new ChoiceBox;
         choiceContainer.addCreate(choice1);
+        choice1.fill(choiceItems);
 
-        choice1.fill([
-            "label1", "label2", "string1", "string2"
-        ]);
+        auto choice22 = new ChoiceBox;
+        choice22.layout.isFillFromStartToEnd = false;
+        choiceContainer.addCreate(choice22);
+        choice22.fill(choiceItems);
 
-        import deltotum.gui.controls.choices.checkbox: CheckBox;
-        auto check1 = new CheckBox;
-        choiceContainer.addCreate(check1);
-        check1.label.text = "Check";
+        auto choice2 = new ChoiceBox;
+        choice2.isCreateStepSelection = true;
+        choiceContainer.addCreate(choice2);
+        choice2.fill(choiceItems);
+
+        auto choice3 = new ChoiceBox;
+        auto vlayout = new VerticalLayout(2);
+        vlayout.isAutoResize = true;
+        vlayout.isAlignX = true;
+        choice3.layout = vlayout;
+        choice3.isCreateStepSelection = true;
+        choiceContainer.addCreate(choice3);
+        choice3.fill(choiceItems);
+
+        auto choiceContainer2 = new HBox;
+        selectionContainer.addCreate(choiceContainer2);
+
+        import deltotum.gui.controls.choices.checkbox : CheckBox;
+
+        // auto check1 = new CheckBox;
+        // choiceContainer2.addCreate(check1);
+        // check1.label.text = "Check";
 
         // iconsContainer.isBackground = false;
 

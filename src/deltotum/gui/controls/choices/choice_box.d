@@ -47,6 +47,9 @@ class ChoiceItem : Sprite
  */
 class ChoiceBox : TypedContainer!ChoiceItem
 {
+    bool isCreateStepSelection;
+    bool isCreateExpandList;
+
     protected
     {
         Text label;
@@ -76,31 +79,49 @@ class ChoiceBox : TypedContainer!ChoiceItem
 
         import deltotum.gui.containers.vbox : VBox;
 
-        auto prevNextContainer = new VBox(0);
-        prevNextContainer.setPadding(0);
-        //FIXME bug: appearance of an artifact in the background of the expand button
-        //prevNextContainer.isVGrow = true;
+        if (isCreateStepSelection)
+        {
+            auto prevNextContainer = new VBox(0);
+            prevNextContainer.setPadding(0);
+            prevNextContainer.setGrow;
 
-        auto prevButton = new Button("▲", 10, 10);
-        prevButton.onAction = (ref e) { selectPrev; };
-        prevButton.isBackground = false;
+            auto prevButton = new Button("▲", 10, 10);
+            prevButton.onAction = (ref e) {
+                selectPrev;
+                if (choiceList.isVisible)
+                {
+                    choiceList.isVisible = false;
+                }
+            };
+            prevButton.isBackground = false;
+            prevButton.setGrow;
 
-        auto nextButton = new Button("▼", 10, 10);
-        nextButton.onAction = (ref e) { selectNext; };
-        nextButton.isBackground = false;
-        addCreate(prevNextContainer);
+            auto nextButton = new Button("▼", 10, 10);
+            nextButton.onAction = (ref e) {
+                selectNext;
+                if (choiceList.isVisible)
+                {
+                    choiceList.isVisible = false;
+                }
+            };
+            nextButton.isBackground = false;
+            nextButton.setGrow;
 
-        prevNextContainer.addCreate(prevButton);
-        prevNextContainer.addCreate(nextButton);
+            addCreate(prevNextContainer);
+
+            prevNextContainer.addCreate(prevButton);
+            prevNextContainer.addCreate(nextButton);
+        }
 
         label = new Text("----");
         label.id = "choice_box_label";
         addCreate(label);
 
         button = new Button("▼");
+        button.id = "choice_box_expand_button";
         button.isBackground = true;
-        button.width = 50;
-        button.isVGrow = true;
+        button.resize(25, 25);
+        button.setGrow;
         addCreate(button);
 
         button.onAction = (ref e) { toggleChoiceList; };
@@ -175,8 +196,11 @@ class ChoiceBox : TypedContainer!ChoiceItem
 
     protected void toggleChoiceList()
     {
-        choiceList.width = width;
-        choiceList.x = x;
+        if (choiceList.width < width)
+        {
+            choiceList.width = width;
+        }
+        choiceList.x = x + (width - choiceList.width) / 2;
         choiceList.y = bounds.bottom;
 
         foreach (item; items)
