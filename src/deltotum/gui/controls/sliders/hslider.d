@@ -1,5 +1,6 @@
-module deltotum.gui.controls.scrollbars.hscrollbar;
+module deltotum.gui.controls.sliders.hslider;
 
+import deltotum.gui.controls.sliders.base_slider: BaseSlider;
 import deltotum.kit.sprites.sprite: Sprite;
 import deltotum.gui.controls.control : Control;
 import deltotum.kit.sprites.textures.texture : Texture;
@@ -12,33 +13,15 @@ import deltotum.kit.sprites.alignment : Alignment;
 
 /**
  * Authors: initkfs
- * TODO remove duplication with slider after testing 
  */
-class HScrollbar : Control
+class HSlider : BaseSlider
 {
-    double minValue;
-    double maxValue;
-    double value;
-
-    void delegate(double) onValue;
-
-    Sprite delegate() thumbFactory;
-    Sprite delegate() trackFactory;
-
-    protected
-    {
-        Sprite thumb;
-        Sprite track;
-    }
 
     this(double minValue = 0, double maxValue = 1.0, double width = 120, double height = 20)
     {
+        super(minValue, maxValue);
         this.width = width;
         this.height = height;
-        this.minValue = minValue;
-        this.maxValue = maxValue;
-
-        this.layout = new ManagedLayout;
     }
 
     override void initialize()
@@ -56,12 +39,6 @@ class HScrollbar : Control
             auto node = new RegularPolygon(15, height, style, graphics
                     .theme.controlCornersBevel);
             return node;
-
-            // auto thumbStyle = GraphicStyle(0.0, graphics.theme.colorAccent, true, graphics
-            //         .theme.colorAccent);
-            // auto thumb = new Rectangle(10, height, style);
-            //thumb.alignment = Alignment.x;
-            //return thumb;
         };
     }
 
@@ -69,17 +46,14 @@ class HScrollbar : Control
     {
         super.create;
 
-        if (trackFactory)
-        {
-            track = trackFactory();
-            addCreate(track);
-        }
-
         if (thumbFactory)
         {
             thumb = thumbFactory();
+
             addCreate(thumb);
+
             thumb.isDraggable = true;
+
             thumb.onDrag = (x, y) {
                 auto bounds = this.bounds;
                 const minX = bounds.x;

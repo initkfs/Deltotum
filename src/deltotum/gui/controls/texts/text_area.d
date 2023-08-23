@@ -1,7 +1,7 @@
 module deltotum.gui.controls.texts.text_area;
 
 import deltotum.gui.controls.texts.text_view : TextView;
-import deltotum.gui.controls.scrollbars.vscrollbar : VScrollbar;
+import deltotum.gui.controls.sliders.vslider : VSlider;
 import deltotum.gui.controls.control : Control;
 import deltotum.gui.containers.hbox : HBox;
 import deltotum.kit.sprites.layouts.hlayout : HLayout;
@@ -14,7 +14,7 @@ import std.stdio;
 class TextArea : HBox
 {
     TextView textView;
-    VScrollbar scroll;
+    VSlider scroll;
 
     bool isShowScroll = true;
 
@@ -55,7 +55,7 @@ class TextArea : HBox
     {
         super.create;
 
-        scroll = new VScrollbar(0, 1.0, 20, height);
+        scroll = new VSlider(0, 1.0, 20, height);
 
         textView = new TextView;
 

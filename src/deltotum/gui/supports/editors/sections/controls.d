@@ -39,14 +39,14 @@ class Controls : Control
         import deltotum.gui.containers.frame : Frame;
         import deltotum.kit.sprites.layouts.vlayout : VLayout;
 
-        auto selectionContainer = new VBox(5);
-        selectionContainer.width = 500;
-        selectionContainer.height = 400;
-        selectionContainer.layout.isAlignY = true;
-        addCreate(selectionContainer);
+        auto rootContainer = new VBox(5);
+        rootContainer.width = 500;
+        rootContainer.height = 400;
+        rootContainer.layout.isAlignY = true;
+        addCreate(rootContainer);
 
-        auto choiceContainer = new HBox;
-        selectionContainer.addCreate(choiceContainer);
+        auto controlContainer1 = new HBox;
+        rootContainer.addCreate(controlContainer1);
 
         import deltotum.gui.controls.choices.choice_box : ChoiceBox;
 
@@ -55,17 +55,17 @@ class Controls : Control
         ];
 
         auto choice1 = new ChoiceBox;
-        choiceContainer.addCreate(choice1);
+        controlContainer1.addCreate(choice1);
         choice1.fill(choiceItems);
 
         auto choice22 = new ChoiceBox;
         choice22.layout.isFillFromStartToEnd = false;
-        choiceContainer.addCreate(choice22);
+        controlContainer1.addCreate(choice22);
         choice22.fill(choiceItems);
 
         auto choice2 = new ChoiceBox;
         choice2.isCreateStepSelection = true;
-        choiceContainer.addCreate(choice2);
+        controlContainer1.addCreate(choice2);
         choice2.fill(choiceItems);
 
         auto choice3 = new ChoiceBox;
@@ -74,21 +74,30 @@ class Controls : Control
         vlayout.isAlignX = true;
         choice3.layout = vlayout;
         choice3.isCreateStepSelection = true;
-        choiceContainer.addCreate(choice3);
+        controlContainer1.addCreate(choice3);
         choice3.fill(choiceItems);
 
-        auto choiceContainer2 = new HBox;
-        choiceContainer2.layout.isAlignY = true;
-        selectionContainer.addCreate(choiceContainer2);
+        import deltotum.gui.controls.sliders.hslider: HSlider;
+        import deltotum.gui.controls.sliders.vslider: VSlider;
+
+        auto vScrollbar = new VSlider;
+        controlContainer1.addCreate(vScrollbar);
+
+        auto hScrollbar = new HSlider;
+        controlContainer1.addCreate(hScrollbar);
+
+        auto controlContainer2 = new HBox;
+        controlContainer2.layout.isAlignY = true;
+        rootContainer.addCreate(controlContainer2);
 
         import deltotum.gui.controls.choices.toggle_switch: ToggleSwitch;
         auto switch1 = new ToggleSwitch;
-        choiceContainer2.addCreate(switch1);
+        controlContainer2.addCreate(switch1);
 
         import deltotum.gui.controls.choices.checkbox : CheckBox;
 
         auto check1 = new CheckBox;
-        choiceContainer2.addCreate(check1);
+        controlContainer2.addCreate(check1);
         check1.label.text = "Check";
 
         // iconsContainer.isBackground = false;

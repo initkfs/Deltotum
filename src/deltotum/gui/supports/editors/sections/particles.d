@@ -15,7 +15,7 @@ import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.gui.containers.vbox : VBox;
 import deltotum.gui.containers.hbox : HBox;
 import deltotum.gui.controls.texts.text : Text;
-import deltotum.gui.controls.scrollbars.hscrollbar : HScrollbar;
+import deltotum.gui.controls.sliders.hslider : HSlider;
 import deltotum.gui.containers.container : Container;
 import deltotum.gui.controls.buttons.button : Button;
 import deltotum.kit.sprites.layouts.hlayout : HLayout;
@@ -106,42 +106,42 @@ class Particles : Control
         auto textCount = new Text("CPF:");
         controlContainer.addCreate(textCount);
 
-        auto cpf = new HScrollbar(10, 3000);
+        auto cpf = new HSlider(10, 3000);
         cpf.onValue = (value) { emitter.countPerFrame = cast(int) value; };
         controlContainer.addCreate(cpf);
 
         auto textLifeTime = new Text("Life time:");
         controlContainer.addCreate(textLifeTime);
 
-        auto lifetime = new HScrollbar(10, 1000);
+        auto lifetime = new HSlider(10, 1000);
         lifetime.onValue = (value) { emitter.lifetime = cast(int) value; };
         controlContainer.addCreate(lifetime);
 
         auto text = new Text("Min velocity X:");
         controlContainer.addCreate(text);
 
-        auto velocityX = new HScrollbar(-100, 100);
+        auto velocityX = new HSlider(-100, 100);
         velocityX.onValue = (value) { emitter.minVelocity.x = value; };
         controlContainer.addCreate(velocityX);
 
         auto textVelXMax = new Text("Max velocity X:");
         controlContainer.addCreate(textVelXMax);
 
-        auto velocityXMax = new HScrollbar(-100, 100);
+        auto velocityXMax = new HSlider(-100, 100);
         velocityXMax.onValue = (value) { emitter.maxVelocity.x = value; };
         controlContainer.addCreate(velocityXMax);
 
         auto velYText = new Text("Min velocity Y:");
         controlContainer.addCreate(velYText);
 
-        auto velocityY = new HScrollbar(-100, 100);
+        auto velocityY = new HSlider(-100, 100);
         velocityY.onValue = (value) { emitter.minVelocity.y = value; };
         controlContainer.addCreate(velocityY);
 
         auto velYTextMax = new Text("Max velocity Y:");
         controlContainer.addCreate(velYTextMax);
 
-        auto velocityYMax = new HScrollbar(-100, 100);
+        auto velocityYMax = new HSlider(-100, 100);
         velocityYMax.onValue = (value) { emitter.maxVelocity.y = value; };
         controlContainer.addCreate(velocityYMax);
 
@@ -163,28 +163,28 @@ class Particles : Control
         auto textAccX = new Text("Min acceleration X:");
         controlContainer2.addCreate(textAccX);
 
-        auto accelX = new HScrollbar(-100, 100);
+        auto accelX = new HSlider(-100, 100);
         accelX.onValue = (value) { emitter.minAcceleration.x = value; };
         controlContainer2.addCreate(accelX);
 
         auto textAccXMax = new Text("Max acceleration X:");
         controlContainer2.addCreate(textAccXMax);
 
-        auto accelXMax = new HScrollbar(-100, 100);
+        auto accelXMax = new HSlider(-100, 100);
         accelXMax.onValue = (value) { emitter.maxAcceleration.x = value; };
         controlContainer2.addCreate(accelXMax);
 
         auto textAccYMin = new Text("Min acceleration Y:");
         controlContainer2.addCreate(textAccYMin);
 
-        auto accelYMin = new HScrollbar(-100, 100);
+        auto accelYMin = new HSlider(-100, 100);
         accelYMin.onValue = (value) { emitter.minAcceleration.y = value; };
         controlContainer2.addCreate(accelYMin);
 
         auto textAccYMax = new Text("Max acceleration Y:");
         controlContainer2.addCreate(textAccYMax);
 
-        auto accelYMax = new HScrollbar(-100, 100);
+        auto accelYMax = new HSlider(-100, 100);
         accelYMax.onValue = (value) { emitter.maxAcceleration.y = value; };
         controlContainer2.addCreate(accelYMax);
 
