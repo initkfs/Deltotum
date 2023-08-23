@@ -77,6 +77,10 @@ class Controls : Control
         controlContainer1.addCreate(choice3);
         choice3.fill(choiceItems);
 
+        import deltotum.gui.controls.separators.vseparator: VSeparator;
+        auto vsep = new VSeparator;
+        controlContainer1.addCreate(vsep);
+
         import deltotum.gui.controls.sliders.hslider : HSlider;
         import deltotum.gui.controls.sliders.vslider : VSlider;
 
@@ -85,6 +89,10 @@ class Controls : Control
 
         auto hScrollbar = new HSlider;
         controlContainer1.addCreate(hScrollbar);
+
+        import deltotum.gui.controls.separators.hseparator: HSeparator;
+        auto hSep = new HSeparator;
+        rootContainer.addCreate(hSep);
 
         auto controlContainer2 = new HBox;
         controlContainer2.layout.isAlignY = true;
