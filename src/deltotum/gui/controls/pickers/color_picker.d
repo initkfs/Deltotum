@@ -10,7 +10,8 @@ import deltotum.gui.controls.buttons.button : Button;
 import deltotum.kit.graphics.shapes.circle : Circle;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.kit.graphics.colors.palettes.material_design_palette : MaterialDesignPalette;
-import deltotum.gui.containers.flow_box : FlowBox;
+import deltotum.gui.containers.vbox : VBox;
+import deltotum.gui.containers.hbox : HBox;
 
 /**
  * Authors: initkfs
@@ -22,7 +23,7 @@ class ColorPicker : Control
         Circle colorIndicator;
         Text colorText;
         Button colorShowChooser;
-        FlowBox colorChooser;
+        VBox colorChooser;
     }
 
     this()
@@ -56,25 +57,37 @@ class ColorPicker : Control
 
         colorShowChooser.onAction = (ref e) { toggleChooser; };
 
-        colorChooser = new FlowBox;
+        colorChooser = new VBox(0);
         colorChooser.isLayoutManaged = false;
+
         addCreate(colorChooser);
-        colorChooser.width = 400;
+
         colorChooser.isVisible = false;
         import deltotum.kit.graphics.shapes.rectangle : Rectangle;
         import std.traits : EnumMembers;
 
+        enum colorContainerSize = 15;
+        enum colorTonesCount = 14;
+
+        HBox colorContainer;
+
         foreach (i, hexColor; EnumMembers!MaterialDesignPalette)
         {
+            if (i % colorTonesCount == 0)
+            {
+                colorContainer = new HBox(0);
+                colorContainer.id = "color_picker_tone_container";
+                //TODO remove paddings from initialization;
+                // colorContainer.padding = Insets(0);
+                colorChooser.addCreate(colorContainer);
+                colorContainer.padding = Insets(0);
+            }
+
             RGBA rgba = RGBA.web(hexColor);
-            const size = 15;
+            const size = colorContainerSize;
             auto rect = new Rectangle(size, size);
-            rect.onMouseEntered = (ref e) {
-                rect.style.lineColor = RGBA.white;
-            };
-            rect.onMouseExited = (ref e) {
-                rect.style.lineColor = rgba;
-            };
+            rect.onMouseEntered = (ref e) { rect.style.lineColor = RGBA.white; };
+            rect.onMouseExited = (ref e) { rect.style.lineColor = rgba; };
             rect.onMouseDown = (ref e) {
                 colorIndicator.style.fillColor = rgba;
                 colorIndicator.style.lineColor = rgba;
@@ -82,7 +95,7 @@ class ColorPicker : Control
                 toggleChooser;
             };
             rect.style = GraphicStyle(1, rgba, true, rgba);
-            colorChooser.addCreate(rect);
+            colorContainer.addCreate(rect);
         }
 
     }
