@@ -1,7 +1,8 @@
-module deltotum.gui.controls.buttons.toggle_switch;
+module deltotum.gui.controls.choices.toggle_switch;
 
-import deltotum.kit.sprites.sprite: Sprite;
+import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.gui.controls.control : Control;
+import deltotum.gui.containers.container: Container;
 import deltotum.kit.graphics.shapes.shape : Shape;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.kit.graphics.shapes.rectangle : Rectangle;
@@ -15,6 +16,7 @@ import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.kit.sprites.animations.object.display_object_transition : DisplayObjectTransition;
 import deltotum.math.vector2d : Vector2d;
+import deltotum.gui.controls.texts.text : Text;
 
 /**
  * Authors: initkfs
@@ -38,6 +40,8 @@ class ToggleSwitch : Control
     void delegate() onSwitchOn;
     void delegate() onSwitchOff;
 
+    Container switchContainer;
+
     Sprite switchHandle;
     Sprite delegate() switchHandleFactory;
 
@@ -50,18 +54,20 @@ class ToggleSwitch : Control
     //TODO factories, settings
     Sprite effectHandleSwitchOn;
     Sprite delegate(double, double) effectHandleSwitchOnFactory;
-    Sprite effectBackgroundSwitchOn;
-    Sprite delegate() effectBackgroundSwitchOnFactory;
+
+    Text label;
 
     this(double width = 60, double height = 25)
     {
         this.width = width;
         this.height = height;
 
-        import deltotum.kit.sprites.layouts.center_layout: CenterLayout;
+        import deltotum.kit.sprites.layouts.center_layout : CenterLayout;
 
-        //FIXME center + isLManaged = false + align y not working
-        this.layout = new HLayout;
+        auto layout = new HLayout;
+        layout.isAutoResize = true;
+        layout.isAlignY = true;
+        this.layout = layout;
     }
 
     override void initialize()
@@ -76,22 +82,11 @@ class ToggleSwitch : Control
             import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
             import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
 
-            GraphicStyle style = GraphicStyle(1, graphics.theme.colorAccent, true, graphics.theme.colorAccent);
-
-            auto control = new RegularPolygon(width - 5, height - 5, style, graphics
-                    .theme.controlCornersBevel);
-            return control;
-        };
-
-        effectBackgroundSwitchOnFactory = () {
-            import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
-            import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
-            import deltotum.kit.graphics.shapes.rectangle: Rectangle;
-
             GraphicStyle style = GraphicStyle(1, graphics.theme.colorAccent, true, graphics
                     .theme.colorAccent);
 
-            auto control = new Rectangle(width / 2, height - graphics.theme.controlCornersBevel * 2, style);
+            auto control = new RegularPolygon(width - 5, height - 5, style, graphics
+                    .theme.controlCornersBevel);
             return control;
         };
 
@@ -133,36 +128,47 @@ class ToggleSwitch : Control
             animation.isCycle = false;
             return animation;
         };
-
     }
 
     override void create()
     {
         super.create;
 
-        if (effectBackgroundSwitchOnFactory)
-        {
-            effectBackgroundSwitchOn = effectBackgroundSwitchOnFactory();
-            //effectBackgroundSwitchOn.isLayoutManaged = false;
-            import deltotum.kit.sprites.alignment : Alignment;
-            effectBackgroundSwitchOn.alignment = Alignment.y;
-            effectBackgroundSwitchOn.isVisible = false;
-            addCreate(effectBackgroundSwitchOn);
-        }
+        import deltotum.gui.containers.container;
+        import deltotum.kit.sprites.layouts.managed_layout: ManagedLayout;
+
+        switchContainer = new Container;
+        
+        switchContainer.layout = new ManagedLayout;
+        import deltotum.math.geom.insets: Insets;
+        switchContainer.padding = Insets(5);
+        switchContainer.layout.isAlignY = true;
+        switchContainer.layout.isAutoResize = true;
+        
+        switchContainer.isBorder = true;
+        
+        addCreate(switchContainer);
 
         if (switchHandleFactory)
         {
             switchHandle = switchHandleFactory();
-            switchHandle.isLayoutManaged = false;
 
             import deltotum.kit.sprites.layouts.center_layout : CenterLayout;
 
             switchHandle.layout = new CenterLayout;
-            addCreate(switchHandle);
+            switchContainer.addCreate(switchHandle);
+
+            switchHandle.x = switchContainer.padding.left;
+
+            const toHandleWidth = switchHandle.width * 2;
+            if(toHandleWidth > switchContainer.width){
+                switchContainer.width = switchContainer.width + toHandleWidth;
+            }
 
             if (effectHandleSwitchOnFactory)
             {
-                effectHandleSwitchOn = effectHandleSwitchOnFactory(switchHandle.width, switchHandle.height);
+                effectHandleSwitchOn = effectHandleSwitchOnFactory(switchHandle.width, switchHandle
+                        .height);
                 effectHandleSwitchOn.isVisible = false;
                 switchHandle.addCreate(effectHandleSwitchOn);
             }
@@ -171,14 +177,18 @@ class ToggleSwitch : Control
         if (clickSwitchOffAnimationFactory !is null)
         {
             clickSwitchOffAnimation = clickSwitchOffAnimationFactory();
-            addCreate(clickSwitchOffAnimation);
+            switchContainer.addCreate(clickSwitchOffAnimation);
         }
 
         if (clickSwitchOnAnimationFactory !is null)
         {
             clickSwitchOnAnimation = clickSwitchOnAnimationFactory();
-            addCreate(clickSwitchOnAnimation);
+            switchContainer.addCreate(clickSwitchOnAnimation);
         }
+
+        label = new Text("Switch");
+        label.isFocusable = false;
+        addCreate(label);
 
         onMouseDown = (ref e) {
 
@@ -194,19 +204,15 @@ class ToggleSwitch : Control
 
                 if (clickSwitchOnAnimation !is null && !clickSwitchOnAnimation.isRun)
                 {
-                    const b = bounds;
-                    clickSwitchOnAnimation.minValue = Vector2d(b.x, b.y);
-                    clickSwitchOnAnimation.maxValue = Vector2d(b.right - switchHandle.width, b.y);
+                    const b = switchContainer.bounds;
+                    clickSwitchOnAnimation.minValue = Vector2d(b.x + switchContainer.padding.left, b.y);
+                    clickSwitchOnAnimation.maxValue = Vector2d(b.right - switchHandle.width - switchContainer.padding.right, b.y);
                     clickSwitchOnAnimation.run;
                 }
 
                 if (effectHandleSwitchOn)
                 {
                     effectHandleSwitchOn.isVisible = true;
-                }
-
-                if(effectBackgroundSwitchOn){
-                    effectBackgroundSwitchOn.isVisible = true;
                 }
 
                 break;
@@ -219,19 +225,15 @@ class ToggleSwitch : Control
 
                 if (clickSwitchOffAnimation !is null && !clickSwitchOffAnimation.isRun)
                 {
-                    const b = bounds;
-                    clickSwitchOffAnimation.minValue = Vector2d(b.right - switchHandle.width, b.y);
-                    clickSwitchOffAnimation.maxValue = Vector2d(b.x, b.y);
+                    const b = switchContainer.bounds;
+                    clickSwitchOffAnimation.minValue = Vector2d(b.right - switchHandle.width - switchContainer.padding.right, b.y);
+                    clickSwitchOffAnimation.maxValue = Vector2d(b.x + switchContainer.padding.left, b.y);
                     clickSwitchOffAnimation.run;
                 }
 
                 if (effectHandleSwitchOn)
                 {
                     effectHandleSwitchOn.isVisible = false;
-                }
-
-                 if(effectBackgroundSwitchOn){
-                    effectBackgroundSwitchOn.isVisible = false;
                 }
 
                 break;

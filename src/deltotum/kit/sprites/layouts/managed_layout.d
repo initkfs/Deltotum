@@ -15,32 +15,37 @@ class ManagedLayout : Layout
 
     bool alignment(Sprite root, Sprite obj)
     {
+        //TODO return bool?
         if (isAlignX)
         {
-            return alignX(root, obj);
+            alignX(root, obj);
         }
 
         if (isAlignY)
         {
-            return alignY(root, obj);
+            alignY(root, obj);
         }
 
-        if (obj.alignment == Alignment.none || !obj.isLayoutManaged)
+        if (obj.alignment != Alignment.none && obj.isLayoutManaged)
         {
-            return false;
+            final switch (obj.alignment)
+            {
+            case Alignment.none:
+                break;
+            case Alignment.x:
+                alignX(root, obj);
+                break;
+            case Alignment.y:
+                alignY(root, obj);
+                break;
+            case Alignment.xy:
+                alignXY(root, obj);
+                break;
+            }
         }
 
-        final switch (obj.alignment)
-        {
-        case Alignment.none:
-            return false;
-        case Alignment.x:
-            return alignX(root, obj);
-        case Alignment.y:
-            return alignY(root, obj);
-        case Alignment.xy:
-            return alignXY(root, obj);
-        }
+        //TODO all bools?
+        return true;
     }
 
     bool alignXY(Sprite root, Sprite target)
@@ -200,7 +205,7 @@ class ManagedLayout : Layout
 
                 if (dtWidth > 0)
                 {
-                    
+
                     enum wDelta = 1.0;
                     const newWidth = child.width + dtWidth;
                     if (Math.abs(child.width - newWidth) > wDelta)
@@ -220,6 +225,7 @@ class ManagedLayout : Layout
                 if (dtHeight > 0)
                 {
                     import Math = deltotum.math;
+
                     enum hDelta = 1.0;
 
                     const newHeight = child.height + dtHeight;

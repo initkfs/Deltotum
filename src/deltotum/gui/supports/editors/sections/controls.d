@@ -37,11 +37,12 @@ class Controls : Control
         import deltotum.gui.containers.hbox : HBox;
         import deltotum.gui.containers.vbox : VBox;
         import deltotum.gui.containers.frame : Frame;
-        import deltotum.kit.sprites.layouts.vlayout: VLayout;
+        import deltotum.kit.sprites.layouts.vlayout : VLayout;
 
         auto selectionContainer = new VBox(5);
         selectionContainer.width = 500;
         selectionContainer.height = 400;
+        selectionContainer.layout.isAlignY = true;
         addCreate(selectionContainer);
 
         auto choiceContainer = new HBox;
@@ -77,13 +78,18 @@ class Controls : Control
         choice3.fill(choiceItems);
 
         auto choiceContainer2 = new HBox;
+        choiceContainer2.layout.isAlignY = true;
         selectionContainer.addCreate(choiceContainer2);
+
+        import deltotum.gui.controls.choices.toggle_switch: ToggleSwitch;
+        auto switch1 = new ToggleSwitch;
+        choiceContainer2.addCreate(switch1);
 
         import deltotum.gui.controls.choices.checkbox : CheckBox;
 
-        // auto check1 = new CheckBox;
-        // choiceContainer2.addCreate(check1);
-        // check1.label.text = "Check";
+        auto check1 = new CheckBox;
+        choiceContainer2.addCreate(check1);
+        check1.label.text = "Check";
 
         // iconsContainer.isBackground = false;
 

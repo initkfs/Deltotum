@@ -79,7 +79,7 @@ class Particles : Control
         auto controlContainer = new VBox(2);
         addCreate(controlContainer);
 
-        import deltotum.gui.controls.buttons.toggle_switch : ToggleSwitch;
+        import deltotum.gui.controls.choices.toggle_switch : ToggleSwitch;
 
         auto controlButtonBox = new HBox(2);
         //FIXME invalid width
