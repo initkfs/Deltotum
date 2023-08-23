@@ -77,8 +77,8 @@ class Controls : Control
         controlContainer1.addCreate(choice3);
         choice3.fill(choiceItems);
 
-        import deltotum.gui.controls.sliders.hslider: HSlider;
-        import deltotum.gui.controls.sliders.vslider: VSlider;
+        import deltotum.gui.controls.sliders.hslider : HSlider;
+        import deltotum.gui.controls.sliders.vslider : VSlider;
 
         auto vScrollbar = new VSlider;
         controlContainer1.addCreate(vScrollbar);
@@ -90,7 +90,8 @@ class Controls : Control
         controlContainer2.layout.isAlignY = true;
         rootContainer.addCreate(controlContainer2);
 
-        import deltotum.gui.controls.choices.toggle_switch: ToggleSwitch;
+        import deltotum.gui.controls.choices.toggle_switch : ToggleSwitch;
+
         auto switch1 = new ToggleSwitch;
         controlContainer2.addCreate(switch1);
 
@@ -99,6 +100,11 @@ class Controls : Control
         auto check1 = new CheckBox;
         controlContainer2.addCreate(check1);
         check1.label.text = "Check";
+
+        import deltotum.gui.controls.pickers.color_picker : ColorPicker;
+
+        auto colorPicker = new ColorPicker;
+        controlContainer2.addCreate(colorPicker);
 
         // iconsContainer.isBackground = false;
 

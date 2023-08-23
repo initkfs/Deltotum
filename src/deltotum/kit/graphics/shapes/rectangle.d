@@ -2,8 +2,8 @@ module deltotum.kit.graphics.shapes.rectangle;
 
 import deltotum.kit.graphics.shapes.shape;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
-import deltotum.kit.graphics.shapes.circle: Circle;
-import deltotum.kit.sprites.sprite: Sprite;
+import deltotum.kit.graphics.shapes.circle : Circle;
+import deltotum.kit.sprites.sprite : Sprite;
 
 /**
  * Authors: initkfs
@@ -24,13 +24,11 @@ class Rectangle : Shape
     {
         import deltotum.kit.graphics.colors.rgba : RGBA;
 
+        const lineWidth = style.lineWidth;
+        graphics.drawRect(x, y, width, height, style.lineColor);
         if (style.isFill)
         {
-            graphics.fillRect(x, y, width, height, style.fillColor);
-        }
-        else
-        {
-            graphics.drawRect(x, y, width, height, style.lineColor);
+            graphics.fillRect(x + lineWidth, y + lineWidth, width - lineWidth * 2, height - lineWidth * 2, style.fillColor);
         }
     }
 
@@ -41,7 +39,7 @@ class Rectangle : Shape
         {
             return bounds.intersect(circle.shape);
         }
-        
+
         return super.intersect(other);
     }
 
