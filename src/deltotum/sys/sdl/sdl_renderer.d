@@ -102,6 +102,31 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         return ComResult(zeroOrErrorCode);
     }
 
+    ComResult setClipRect(Rect2d clip) @nogc nothrow
+    {
+        SDL_Rect rect;
+        rect.x = cast(int) clip.x;
+        rect.y = cast(int) clip.y;
+        rect.w = cast(int) clip.width;
+        rect.h = cast(int) clip.height;
+        const zeroOrErrCode = SDL_RenderSetClipRect(ptr, &rect);
+        return ComResult(zeroOrErrCode);
+    }
+
+    ComResult getClipRect(out Rect2d clip) @nogc nothrow
+    {
+        SDL_Rect rect;
+        SDL_RenderGetClipRect(ptr, &rect);
+        clip = Rect2d(rect.x, rect.y, rect.w, rect.h);
+        return ComResult.success;
+    }
+
+    ComResult removeClipRect() @nogc nothrow
+    {
+        const zeroOrErrCode = SDL_RenderSetClipRect(ptr, null);
+        return ComResult(zeroOrErrCode);
+    }
+
     ComResult drawRect(int x, int y, int width, int height)
     {
         SDL_Rect rect = {x, y, width, height};

@@ -74,6 +74,23 @@ class Graphics : LoggableUnit
         return cast(int) value;
     }
 
+    void setClip(Rect2d clipRect)
+    {
+        if (const err = renderer.setClipRect(clipRect))
+        {
+            //TODO log
+            throw new Exception(err.toString);
+        }
+    }
+
+    void removeClip()
+    {
+        if (const err = renderer.removeClipRect)
+        {
+            throw new Exception(err.toString);
+        }
+    }
+
     void setColor(RGBA color = defaultColor)
     {
         adjustRender(color);
@@ -84,7 +101,8 @@ class Graphics : LoggableUnit
     {
         RGBA prevColor;
         ubyte r, g, b, a;
-        if(const err = renderer.getRenderDrawColor(r, g, b, a)){
+        if (const err = renderer.getRenderDrawColor(r, g, b, a))
+        {
             logger.errorf("Error getting current renderer color");
             return prevColor;
         }

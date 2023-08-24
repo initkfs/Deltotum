@@ -49,6 +49,11 @@ class Sprite : PhysicalBody
     Vector2d velocity;
     Vector2d acceleration;
 
+    Rect2d clip;
+    bool isMoveClip;
+    //TODO remove
+    bool isClipped;
+
     bool inScreenBounds = true;
     bool delegate() onScreenBoundsIsStop;
 
@@ -542,17 +547,18 @@ class Sprite : PhysicalBody
 
         bool redraw;
 
+        if (clip.width > 0 || clip.height > 0)
+        {
+            enableClipping;
+        }
+
         foreach (Sprite obj; children)
         {
             if (!obj.isDrawAfterParent && obj.isVisible)
             {
                 obj.draw;
+                checkClip(obj);
             }
-        }
-
-        if (isDrawBounds)
-        {
-            drawBounds;
         }
 
         if (isRedraw)
@@ -560,7 +566,6 @@ class Sprite : PhysicalBody
             if (isCached)
             {
                 _cache.draw;
-
             }
             else
             {
@@ -574,10 +579,51 @@ class Sprite : PhysicalBody
             if (obj.isDrawAfterParent && obj.isVisible)
             {
                 obj.draw;
+                checkClip(obj);
             }
         }
 
+        if (isClipped)
+        {
+            disableClipping;
+        }
+
+        if (isDrawBounds)
+        {
+            drawBounds;
+        }
+
+        //TODO remove duplication
+        if (clip.width > 0 || clip.height > 0)
+        {
+            enableClipping;
+        }
+
         return redraw;
+    }
+
+    protected void checkClip(Sprite obj)
+    {
+        if (obj.isClipped)
+        {
+            obj.disableClipping;
+            if (isClipped)
+            {
+                enableClipping;
+            }
+        }
+    }
+
+    void enableClipping()
+    {
+        graphics.setClip(clip);
+        isClipped = true;
+    }
+
+    void disableClipping()
+    {
+        graphics.removeClip;
+        isClipped = false;
     }
 
     void applyLayout()
@@ -792,9 +838,11 @@ class Sprite : PhysicalBody
         return bounds;
     }
 
-    Rect2d paddingBounds(){
+    Rect2d paddingBounds()
+    {
         const b = bounds;
-        const pBounds = Rect2d(b.x + padding.left, b.y + padding.top, b.width - padding.right, b.height - padding.bottom);
+        const pBounds = Rect2d(b.x + padding.left, b.y + padding.top, b.width - padding.right, b.height - padding
+                .bottom);
         return pBounds;
     }
 
@@ -876,6 +924,11 @@ class Sprite : PhysicalBody
                 onChangeXFromTo(_x, newX);
             }
 
+            if (isMoveClip && (clip.width > 0 || clip.height > 0))
+            {
+                clip.x = clip.x + (newX - _x);
+            }
+
             _x = newX;
 
             if (_cache)
@@ -908,6 +961,11 @@ class Sprite : PhysicalBody
             if (isCreated && onChangeYFromTo !is null)
             {
                 onChangeYFromTo(_y, newY);
+            }
+
+            if (isMoveClip && (clip.width > 0 || clip.height > 0))
+            {
+                clip.y = clip.y + (newY - _y);
             }
 
             _y = newY;

@@ -128,7 +128,7 @@ class Controls : Control
 
         double[] x = iota(1, 10, 0.01).array;
         double[] y = x.map!sin.array;
-
+        
         linearChart.data(x, y);
 
         // iconsContainer.isBackground = false;

@@ -140,6 +140,7 @@ class LinearChart : Control
     override bool draw()
     {
         super.draw;
+        
         const b = bounds;
         import deltotum.math.shapes.rect2d : Rect2d;
 

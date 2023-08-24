@@ -71,6 +71,9 @@ class Scene : GraphicsComponent
             foreach (obj; sprites)
             {
                 obj.draw;
+                if(obj.isClipped){
+                    obj.disableClipping;
+                }
             }
         });
     }
