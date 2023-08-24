@@ -792,6 +792,12 @@ class Sprite : PhysicalBody
         return bounds;
     }
 
+    Rect2d paddingBounds(){
+        const b = bounds;
+        const pBounds = Rect2d(b.x + padding.left, b.y + padding.top, b.width - padding.right, b.height - padding.bottom);
+        return pBounds;
+    }
+
     Rect2d layoutBounds()
     {
         const Rect2d bounds = {

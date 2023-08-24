@@ -114,6 +114,23 @@ class Controls : Control
         auto colorPicker = new ColorPicker;
         controlContainer2.addCreate(colorPicker);
 
+        auto chartContainer = new HBox;
+        rootContainer.addCreate(chartContainer);
+
+        import deltotum.gui.controls.charts.linear_chart: LinearChart;
+        auto linearChart = new LinearChart;
+        rootContainer.addCreate(linearChart);
+
+        import std.range: iota;
+        import std.array: array;
+        import std.algorithm.iteration: map;
+        import std.math.trigonometry: sin;
+
+        double[] x = iota(1, 10, 0.01).array;
+        double[] y = x.map!sin.array;
+
+        linearChart.data(x, y);
+
         // iconsContainer.isBackground = false;
 
         // import deltotum.kit.sprites.images.image : Image;
