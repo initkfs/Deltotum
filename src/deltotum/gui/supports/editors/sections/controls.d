@@ -77,7 +77,8 @@ class Controls : Control
         controlContainer1.addCreate(choice3);
         choice3.fill(choiceItems);
 
-        import deltotum.gui.controls.separators.vseparator: VSeparator;
+        import deltotum.gui.controls.separators.vseparator : VSeparator;
+
         auto vsep = new VSeparator;
         controlContainer1.addCreate(vsep);
 
@@ -90,7 +91,8 @@ class Controls : Control
         auto hScrollbar = new HSlider;
         controlContainer1.addCreate(hScrollbar);
 
-        import deltotum.gui.controls.separators.hseparator: HSeparator;
+        import deltotum.gui.controls.separators.hseparator : HSeparator;
+
         auto hSep = new HSeparator;
         rootContainer.addCreate(hSep);
 
@@ -114,22 +116,44 @@ class Controls : Control
         auto colorPicker = new ColorPicker;
         controlContainer2.addCreate(colorPicker);
 
-        auto chartContainer = new HBox;
-        rootContainer.addCreate(chartContainer);
+        auto container3 = new HBox;
+        rootContainer.addCreate(container3);
 
-        import deltotum.gui.controls.charts.linear_chart: LinearChart;
-        auto linearChart = new LinearChart;
-        rootContainer.addCreate(linearChart);
+        // import deltotum.gui.controls.charts.linear_chart: LinearChart;
+        // auto linearChart = new LinearChart;
+        // rootContainer.addCreate(linearChart);
 
-        import std.range: iota;
-        import std.array: array;
-        import std.algorithm.iteration: map;
-        import std.math.trigonometry: sin;
+        // import std.range: iota;
+        // import std.array: array;
+        // import std.algorithm.iteration: map;
+        // import std.math.trigonometry: sin;
 
-        double[] x = iota(1, 10, 0.01).array;
-        double[] y = x.map!sin.array;
+        // double[] x = iota(1, 10, 0.01).array;
+        // double[] y = x.map!sin.array;
+
+        // linearChart.data(x, y);
+
+        import deltotum.gui.containers.scroll_box : ScrollBox;
+
+        auto scrollBox = new ScrollBox;
+        scrollBox.isBorder = true;
+        scrollBox.width = 200;
+        scrollBox.height = 200;
+        container3.addCreate(scrollBox);
+        import deltotum.gui.containers.vbox : VBox;
+
+        auto vbox = new VBox;
+        vbox.isBorder = true;
+        vbox.resize(400, 400);
+        import deltotum.gui.controls.buttons.button : Button;
+
+        scrollBox.setContent(vbox);
+
+        foreach (i; 0 .. 10)
+        {
+            vbox.addCreate(new Button);
+        }
         
-        linearChart.data(x, y);
 
         // iconsContainer.isBackground = false;
 

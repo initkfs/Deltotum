@@ -1,7 +1,7 @@
 module deltotum.gui.controls.sliders.hslider;
 
-import deltotum.gui.controls.sliders.base_slider: BaseSlider;
-import deltotum.kit.sprites.sprite: Sprite;
+import deltotum.gui.controls.sliders.base_slider : BaseSlider;
+import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.gui.controls.control : Control;
 import deltotum.kit.sprites.textures.texture : Texture;
 
@@ -10,6 +10,7 @@ import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.kit.sprites.layouts.managed_layout : ManagedLayout;
 import deltotum.kit.graphics.shapes.rectangle : Rectangle;
 import deltotum.kit.sprites.alignment : Alignment;
+import std.math.operations: isClose;
 
 /**
  * Authors: initkfs
@@ -36,7 +37,7 @@ class HSlider : BaseSlider
             auto style = GraphicStyle(1, graphics.theme.colorAccent, true, graphics
                     .theme.colorAccent);
 
-            auto node = new RegularPolygon(15, height, style, graphics
+            auto node = new RegularPolygon(30, height, style, graphics
                     .theme.controlCornersBevel);
             return node;
         };
@@ -71,7 +72,16 @@ class HSlider : BaseSlider
                     dx = -dx;
                 }
                 const numRange = maxValue - minValue;
+
+                double oldValue = value;
+
                 value = minValue + (numRange / range) * dx;
+
+                valueDelta = value - oldValue;
+                if (isClose(valueDelta, 0.0, 0.0, float.epsilon))
+                {
+                    return false;
+                }
 
                 if (onValue !is null)
                 {

@@ -10,6 +10,7 @@ import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.kit.sprites.layouts.center_layout : CenterLayout;
 import deltotum.kit.graphics.shapes.rectangle : Rectangle;
 import deltotum.kit.sprites.alignment : Alignment;
+import std.math.operations: isClose;
 
 /**
  * Authors: initkfs
@@ -35,7 +36,7 @@ class VSlider : BaseSlider
             auto style = GraphicStyle(1, graphics.theme.colorAccent, true, graphics
                     .theme.colorAccent);
 
-            auto node = new RegularPolygon(width, 15, style, graphics
+            auto node = new RegularPolygon(width, 30, style, graphics
                     .theme.controlCornersBevel);
             return node;
         };
@@ -70,7 +71,15 @@ class VSlider : BaseSlider
                     dy = -dy;
                 }
                 const numRange = maxValue - minValue;
+
+                double oldValue = value;
+
                 value = minValue + (numRange / range) * dy;
+
+                valueDelta = value - oldValue;
+                if(isClose(valueDelta, 0.0, 0.0, float.epsilon)){
+                    return false;
+                }
 
                 if (onValue !is null)
                 {

@@ -18,7 +18,9 @@ abstract class BaseSlider : Control
 {
     double minValue;
     double maxValue;
-    double value;
+
+    double value = 0;
+    double valueDelta = 0;
 
     void delegate(double) onValue;
 

@@ -51,6 +51,9 @@ class Sprite : PhysicalBody
 
     Rect2d clip;
     bool isMoveClip;
+    bool isResizeClip;
+    void delegate(Rect2d* clip) onClipResize;
+    void delegate(Rect2d* clip) onClipMove;
     //TODO remove
     bool isClipped;
 
@@ -147,16 +150,16 @@ class Sprite : PhysicalBody
         if (!sprite.isBuilt)
         {
             build(sprite);
-            assert(sprite.isBuilt);
+            assert(sprite.isBuilt, "Sprite not built: " ~ className);
 
             sprite.initialize;
-            assert(sprite.isInitialized);
+            assert(sprite.isInitialized, "Sprite not initialized: " ~ className);
         }
 
         if (!sprite.isCreated)
         {
             sprite.create;
-            assert(sprite.isCreated);
+            assert(sprite.isCreated, "Sprite not created: " ~ className);
         }
     }
 
@@ -425,6 +428,12 @@ class Sprite : PhysicalBody
 
         static if (is(Event : MouseEvent))
         {
+            //isClipped
+            if ((clip.width > 0 || clip.height > 0) && !clip.contains(e.x, e.y))
+            {
+                return;
+            }
+
             if (bounds.contains(e.x, e.y))
             {
                 if (e.event == MouseEvent.Event.mouseMove)
@@ -927,6 +936,10 @@ class Sprite : PhysicalBody
             if (isMoveClip && (clip.width > 0 || clip.height > 0))
             {
                 clip.x = clip.x + (newX - _x);
+                if (onClipMove)
+                {
+                    onClipMove(&clip);
+                }
             }
 
             _x = newX;
@@ -966,6 +979,10 @@ class Sprite : PhysicalBody
             if (isMoveClip && (clip.width > 0 || clip.height > 0))
             {
                 clip.y = clip.y + (newY - _y);
+                if (onClipMove)
+                {
+                    onClipMove(&clip);
+                }
             }
 
             _y = newY;
@@ -1024,6 +1041,15 @@ class Sprite : PhysicalBody
             if (_cache)
             {
                 recreateCache;
+            }
+
+            if (isResizeClip && (clip.width > 0 || clip.height > 0))
+            {
+                clip.width = clip.width + (_width - oldWidth);
+                if (onClipResize)
+                {
+                    onClipResize(&clip);
+                }
             }
 
             //!isProcessLayout && !isProcessParentLayout && 
@@ -1091,6 +1117,15 @@ class Sprite : PhysicalBody
             if (_cache)
             {
                 recreateCache;
+            }
+
+            if (isResizeClip && (clip.width > 0 || clip.height > 0))
+            {
+                clip.height = clip.height + (_height - oldHeight);
+                if (onClipResize)
+                {
+                    onClipResize(&clip);
+                }
             }
 
             //!isProcessLayout && !isProcessParentLayout && 
