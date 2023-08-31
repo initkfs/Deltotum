@@ -57,6 +57,10 @@ class ScrollBox : VBox
         vslider.onValue = (double val) {
             import Math = deltotum.math;
 
+            if(!contentRoot){
+                return;
+            }
+
             double viewDt = contentRoot.height - content.height;
             double needContentYOffset = viewDt * val;
             double yDt = content.y - contentRoot.y;
@@ -69,6 +73,9 @@ class ScrollBox : VBox
         addCreate(hslider);
 
         hslider.onValue = (val) {
+            if(!contentRoot){
+                return;
+            }
             double viewDt = contentRoot.width - content.width;
             double needContentXOffset = viewDt * val;
             double xDt = content.x - contentRoot.x;

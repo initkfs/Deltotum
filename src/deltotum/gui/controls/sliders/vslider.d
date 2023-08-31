@@ -66,6 +66,17 @@ class VSlider : BaseSlider
 
                 const range = bounds.height - thumb.height;
                 auto dy = thumb.y - bounds.y;
+
+                enum errorDelta = 5;
+                if(dy < errorDelta){
+                    dy = 0;
+                }
+
+                const maxYDt = maxY - thumb.y;
+                if(maxYDt < errorDelta){
+                    dy += maxYDt;
+                }
+
                 if (dy < 0)
                 {
                     dy = -dy;
@@ -76,8 +87,7 @@ class VSlider : BaseSlider
 
                 value = minValue + (numRange / range) * dy;
 
-                valueDelta = value - oldValue;
-                if(isClose(valueDelta, 0.0, 0.0, float.epsilon)){
+                if(isClose(value, oldValue)){
                     return false;
                 }
 

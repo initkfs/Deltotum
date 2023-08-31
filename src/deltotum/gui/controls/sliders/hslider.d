@@ -67,6 +67,17 @@ class HSlider : BaseSlider
 
                 const range = bounds.width - thumb.width;
                 auto dx = thumb.x - bounds.x;
+
+                enum errorDelta = 5;
+                if(dx < errorDelta){
+                    dx = 0;
+                }
+
+                const maxXDt = maxX - thumb.x;
+                if(maxXDt < errorDelta){
+                    dx += maxXDt;
+                }
+
                 if (dx < 0)
                 {
                     dx = -dx;

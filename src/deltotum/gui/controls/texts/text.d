@@ -59,7 +59,9 @@ class Text : Control
     {
         super.initialize;
 
-        invalidateListeners ~= () { updateRows; };
+        invalidateListeners ~= () {
+            updateRows;
+        };
 
         onFocusIn = (ref e) {
             if (focusEffect !is null)
@@ -110,6 +112,8 @@ class Text : Control
     }
 
     //TODO buffer []
+    //TODO optimizations
+    // 35142       12631       12063           0     deltotum.gui.fonts.glyphs.glyph.Glyph[] deltotum.gui.controls.texts.text.Text.textToGlyphs(immutable(dchar)[])
     protected Glyph[] textToGlyphs(dstring textString)
     {
         if (textString.length == 0)

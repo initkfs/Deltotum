@@ -4,6 +4,7 @@ import deltotum.gui.controls.control : Control;
 import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
+import deltotum.gui.controls.data.tree_table_view: TreeItem;
 
 /**
  * Authors: initkfs
@@ -133,27 +134,52 @@ class Controls : Control
 
         // linearChart.data(x, y);
 
-        import deltotum.gui.containers.scroll_box : ScrollBox;
+        // import deltotum.gui.containers.scroll_box : ScrollBox;
 
-        auto scrollBox = new ScrollBox;
-        scrollBox.isBorder = true;
-        scrollBox.width = 200;
-        scrollBox.height = 200;
-        container3.addCreate(scrollBox);
-        import deltotum.gui.containers.vbox : VBox;
+        // auto scrollBox = new ScrollBox;
+        // scrollBox.isBorder = true;
+        // scrollBox.width = 200;
+        // scrollBox.height = 200;
+        // container3.addCreate(scrollBox);
+        // import deltotum.gui.containers.vbox : VBox;
 
-        auto vbox = new VBox;
-        vbox.isBorder = true;
-        vbox.resize(400, 400);
-        import deltotum.gui.controls.buttons.button : Button;
+        // auto vbox = new VBox;
+        // vbox.isBorder = true;
+        // vbox.resize(400, 400);
+        // import deltotum.gui.controls.buttons.button : Button;
 
-        scrollBox.setContent(vbox);
+        // scrollBox.setContent(vbox);
 
-        foreach (i; 0 .. 10)
-        {
-            vbox.addCreate(new Button);
-        }
-        
+        // foreach (i; 0 .. 10)
+        // {
+        //     vbox.addCreate(new Button);
+        // }
+
+        import deltotum.gui.controls.data.tree_table_view : TreeTableView, TreeItem;
+
+        auto tree1 = new TreeTableView!Sprite;
+        tree1.resize(200, 200);
+         auto root = new TreeItem!string("root");
+         auto child = new TreeItem!string("child1");
+         auto child2 = new TreeItem!string("child2");
+         auto root2 = new TreeItem!string("root2");
+         auto root3 = new TreeItem!string("root3");
+         auto root4 = new TreeItem!string("root4");
+         child.children ~= child2;
+         root.children ~= child;
+
+        container3.addCreate(tree1);
+        //tree1.fill([root, root2, root3, root4]);
+        tree1.fill([buildSpriteTree(rootContainer)]);
+        // import std;
+        // foreach (i; 0..400)
+        // {
+        //     root.children ~= new TreeItem!string(i.to!string);
+        // }
+         //tree1.fill([root]);
+        // tree1.fill([
+        //     "string1", "string2", "string3", "string4", "string5", "string6", "string7", "string8"
+        // ]);
 
         // iconsContainer.isBackground = false;
 
@@ -187,6 +213,20 @@ class Controls : Control
         // addCreate(iconsContainer);
         // iconsContainer.addCreate([image1, image2, image3, image4, image5]);
 
+    }
+
+    private TreeItem!Sprite buildSpriteTree(Sprite root)
+    {
+        
+        auto node = new TreeItem!Sprite(root);
+
+        foreach (ch; root.children)
+        {
+            auto childNode = buildSpriteTree(ch);
+            node.children ~= childNode;
+        }
+
+        return node;
     }
 
 }

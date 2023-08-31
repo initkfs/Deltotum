@@ -29,6 +29,19 @@ import deltotum.core.utils.tostring : ToStringExclude;
 import deltotum.sys.chipmunk.chipm_body : ChipmBody;
 import deltotum.sys.chipmunk.chipm_space : ChipmSpace;
 
+struct InvalidationState
+{
+    bool x, y, width, height, visible, managed, layout;
+
+    void reset()
+    {
+        foreach (field, ref fieldValue; this.tupleof)
+        {
+            fieldValue = false;
+        }
+    }
+}
+
 /**
  * Authors: initkfs
  */
@@ -63,13 +76,13 @@ class Sprite : PhysicalBody
     bool isRedraw = true;
     bool isRedrawChildren = true;
     bool isDrawAfterParent = true;
-    bool isManaged = true;
+    bool _managed = true;
     bool isUpdatable = true;
     bool isResizable;
     bool isKeepAspectRatio;
 
     Layout layout;
-    bool isLayoutManaged = true;
+    bool _layoutManaged = true;
     bool isResizeChildren;
     bool isResizedByParent;
 
@@ -87,7 +100,7 @@ class Sprite : PhysicalBody
     bool isScalable;
     bool isDrawBounds;
 
-    bool isVisible = true;
+    bool _visible = true;
     bool isReceiveEvents = true;
 
     ChipmBody physBody;
@@ -106,6 +119,8 @@ class Sprite : PhysicalBody
     }
 
     bool delegate(double, double) onDrag;
+
+    InvalidationState invalidationState;
     void delegate()[] invalidateListeners;
 
     //old, new
@@ -329,6 +344,25 @@ class Sprite : PhysicalBody
             }
         }
         return false;
+    }
+
+    bool removeAll(bool isDestroy = true)
+    {
+        if (children.length == 0)
+        {
+            return false;
+        }
+
+        foreach (ch; children)
+        {
+            if (isDestroy)
+            {
+                ch.destroy;
+            }
+        }
+        children = [];
+
+        return true;
     }
 
     bool remove(Sprite[] sprites, bool isDestroy = true)
@@ -652,6 +686,10 @@ class Sprite : PhysicalBody
                 ch.unvalidate;
             }
         }
+
+        isInvalidationProcess = false;
+        setValid(true);
+        invalidationState.reset;
     }
 
     void validate()
@@ -670,12 +708,6 @@ class Sprite : PhysicalBody
 
         if (!isValid)
         {
-            // debug
-            // {
-            //     import std.stdio : writeln;
-
-            //     writeln("Invalid: ", className);
-            // }
             foreach (invListener; invalidateListeners)
             {
                 invListener();
@@ -952,6 +984,7 @@ class Sprite : PhysicalBody
             if (!isInvalidationProcess)
             {
                 setInvalid;
+                invalidationState.x = true;
             }
         }
 
@@ -995,6 +1028,7 @@ class Sprite : PhysicalBody
             if (!isInvalidationProcess)
             {
                 setInvalid;
+                invalidationState.y = true;
             }
         }
 
@@ -1026,6 +1060,7 @@ class Sprite : PhysicalBody
             if (!isInvalidationProcess)
             {
                 setInvalid;
+                invalidationState.width = true;
             }
 
             if (!isCreated)
@@ -1102,6 +1137,7 @@ class Sprite : PhysicalBody
             if (!isInvalidationProcess)
             {
                 setInvalid;
+                invalidationState.height = true;
             }
 
             if (!isCreated)
@@ -1470,5 +1506,51 @@ class Sprite : PhysicalBody
         {
             isHGrow = isGrow;
             isVGrow = isGrow;
+        }
+
+        bool isVisible() pure @safe
+        {
+            return _visible;
+        }
+
+        void isVisible(bool value) pure @safe
+        {
+            if (_visible != value)
+            {
+                setInvalid;
+                invalidationState.visible = true;
+            }
+            _visible = value;
+        }
+
+        bool isManaged() pure @safe
+        {
+            return _managed;
+        }
+
+        void isManaged(bool value) pure @safe
+        {
+            if (_managed != value)
+            {
+                setInvalid;
+                invalidationState.managed = true;
+            }
+            _managed = value;
+        }
+
+        bool isLayoutManaged() pure @safe
+        {
+            return _layoutManaged;
+        }
+
+        void isLayoutManaged(bool value) pure @safe
+        {
+            if (_layoutManaged != value)
+            {
+                setInvalid;
+                invalidationState.layout = true;
+            }
+
+            _layoutManaged = value;
         }
     }
