@@ -706,14 +706,15 @@ class Sprite : PhysicalBody
             }
         }
 
+        applyLayout;
+
         if (!isValid)
         {
+            //listeners can expect to call layout manager
             foreach (invListener; invalidateListeners)
             {
                 invListener();
             }
-
-            applyLayout;
         }
 
         isInvalidationProcess = true;
