@@ -6,6 +6,7 @@ import deltotum.kit.interacts.interact : Interact;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.kit.factories.creation : Creation;
 import deltotum.kit.windows.window : Window;
+import deltotum.gui.supports.sceneview : SceneView;
 
 import std.stdio;
 
@@ -29,6 +30,8 @@ class Scene : GraphicsComponent
 
     size_t worldTicks;
 
+    SceneView debugger;
+
     protected
     {
         Sprite[] sprites;
@@ -38,6 +41,12 @@ class Scene : GraphicsComponent
     {
         Creation _creation;
         Interact _interact;
+    }
+
+    void createDebugger()
+    {
+        debugger = new SceneView(this);
+        addCreate(debugger);
     }
 
     void create()
@@ -71,7 +80,8 @@ class Scene : GraphicsComponent
             foreach (obj; sprites)
             {
                 obj.draw;
-                if(obj.isClipped){
+                if (obj.isClipped)
+                {
                     obj.disableClipping;
                 }
             }

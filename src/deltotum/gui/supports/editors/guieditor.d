@@ -74,6 +74,8 @@ class GuiEditor : Scene
         root.addCreate(scriptTab);
 
         root.changeTab(controlsTab);
+
+        createDebugger;
     }
 
 }

@@ -49,6 +49,7 @@ class ScrollBox : VBox
 
         content = new StackBox;
         contentContainer.addCreate(content);
+        content.padding = Insets(0);
 
         vslider = new VSlider;
         vslider.isVGrow = true;
@@ -85,11 +86,7 @@ class ScrollBox : VBox
 
         content.resize(width - spacing - vslider.width - padding.width, height - hslider.height);
 
-        enum clipPadding = 3;
-        content.clip = Rect2d(content.x + clipPadding, content.y + clipPadding, content.width - clipPadding, content
-                .height - clipPadding);
-        content.isMoveClip = true;
-        content.isResizeClip = true;
+        updateClip;
 
         onClipResize = (clipPtr){
             clipChildren(contentRoot);
@@ -98,6 +95,14 @@ class ScrollBox : VBox
         onClipMove = (clipPtr){
             clipChildren(contentRoot);
         };
+    }
+
+    protected void updateClip(){
+        enum clipPadding = 3;
+        content.clip = Rect2d(content.x + clipPadding, content.y + clipPadding, content.width - clipPadding, content
+                .height - clipPadding);
+        content.isMoveClip = true;
+        content.isResizeClip = true;
     }
 
     protected void clipChildren(Sprite root)

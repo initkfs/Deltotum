@@ -100,6 +100,9 @@ class Text : Control
     {
         super.create;
 
+        import deltotum.math.geom.insets: Insets;
+        padding = Insets(0);
+
         updateRows;
 
         if (focusEffectFactory !is null)

@@ -6,9 +6,13 @@ import deltotum.gui.containers.stack_box : StackBox;
 import deltotum.gui.controls.choices.toggle_switch : ToggleSwitch;
 import deltotum.gui.controls.texts.text : Text;
 import deltotum.kit.scenes.scene : Scene;
+import deltotum.gui.controls.buttons.button : Button;
 import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.gui.containers.container : Container;
 import deltotum.gui.controls.texts.text_area : TextArea;
+import deltotum.gui.controls.data.tree_table_view : TreeItem, TreeTableView;
+import deltotum.math.geom.insets : Insets;
+import deltotum.gui.containers.scroll_box : ScrollBox;
 
 private
 {
@@ -29,44 +33,52 @@ private
  */
 class SceneView : VBox
 {
+    Scene scene;
+
     void delegate() onEnableDebug;
     void delegate() onDisableDebug;
-    Scene delegate() sceneProvider;
+
     const string debugUserDataKey = "debugData";
 
     TextArea output;
 
+    Text shortInfo;
+    Text xInfo;
+    Text yInfo;
+    Text wInfo;
+    Text hInfo;
+
     private
     {
+        TreeTableView!Sprite controlStructure;
         Sprite objectOnDebug;
         size_t objectOnDebugSceneIndex;
         bool isDebug;
         TextArea objectFullInfo;
     }
 
-    this(){
-        super(5);
-        isBackground = true;
-    }
-
-    override void initialize()
+    this(Scene scene)
     {
-        super.initialize;
-        isLayoutManaged = false;
+        super(5);
+        this.scene = scene;
+        isBorder = true;
     }
 
     override void create()
     {
         super.create;
 
-        import deltotum.math.geom.insets : Insets;
+        isLayoutManaged = false;
 
-        auto hbox = new HBox;
-        addCreate(hbox);
+        //TODO autosize
+        width = 300;
+        height = scene.window.height;
+
+        auto btnContainer = new HBox;
+        addCreate(btnContainer);
 
         auto tb = new ToggleSwitch;
-        import deltotum.kit.sprites.alignment: Alignment;
-        tb.alignment = Alignment.y;
+        btnContainer.addCreate(tb);
 
         tb.onSwitchOn = () {
             if (onEnableDebug !is null)
@@ -89,22 +101,77 @@ class SceneView : VBox
             }
         };
 
-        hbox.addCreate(tb);
+        tb.label.text = "Debug";
+
+        auto fillStruct = new Button("Structure");
+        fillStruct.onAction = (ref e) { fillStructure; };
+        btnContainer.addCreate(fillStruct);
+
+        controlStructure = new TreeTableView!Sprite;
+        controlStructure.width = width - padding.width;
+        controlStructure.height = 200;
+        addCreate(controlStructure);
+
+        controlStructure.onSelectedOldNew = (oldSprite, newSprite) {
+            import std;
+            writefln("%s %s", oldSprite.classNameShort, newSprite.classNameShort);
+            if (newSprite is objectOnDebug)
+            {
+                return;
+            }
+
+            if (objectOnDebug)
+            {
+                removeDebugInfo(objectOnDebug);
+            }
+
+            objectOnDebug = newSprite;
+            setDebugInfo(objectOnDebug);
+        };
+
+        ScrollBox controlInfoContainer = new ScrollBox;
+        controlInfoContainer.width = width - padding.width;
+        //TODO children height from layout
+        controlInfoContainer.height = height - controlStructure.height - tb.height - spacing * 2 - padding
+            .bottom;
+        addCreate(controlInfoContainer);
+
+        VBox controlInfo = new VBox;
+        controlInfoContainer.setContent(controlInfo);
+
+        shortInfo = new Text("");
+        controlInfo.addCreate(shortInfo);
+
+        HBox h1 = new HBox();
+        controlInfo.addCreate(h1);
+        wInfo = new Text("0");
+        hInfo = new Text("0");
+        h1.addCreate([new Text("w:"), wInfo, new Text("h:"), hInfo]);
+
+        HBox h2 = new HBox();
+        controlInfo.addCreate(h2);
+        xInfo = new Text("0");
+        yInfo = new Text("0");
+        h2.addCreate([new Text("x:"), xInfo, new Text("y:"), yInfo]);
 
         objectFullInfo = new TextArea();
         objectFullInfo.width = width - padding.width;
         objectFullInfo.height = 400;
-        addCreate(objectFullInfo);
+        controlInfo.addCreate(objectFullInfo);
 
         output = new TextArea();
         output.width = width - padding.width;
         output.height = 150;
-        addCreate(output);
+        controlInfo.addCreate(output);
+
+        x = scene.window.width - width;
+
+        debugScene;
     }
 
-    void debugScene(){
-        auto scene = sceneProvider();
-        if (scene is null)
+    void debugScene()
+    {
+        if (!scene)
         {
             return;
         }
@@ -222,12 +289,48 @@ class SceneView : VBox
 
     private void fillDebugInfo(Sprite obj)
     {
-        if( objectFullInfo is null){
+        if (objectFullInfo is null)
+        {
             return;
         }
-        import std.array : appender;
+
+        import Math = deltotum.math;
+        import std.conv: to;
+        import std.format: format;
+
+        shortInfo.text = format("%s(%s)", obj.classNameShort, obj.id.length > 0 ? obj.id : "id");
+
+        xInfo.text = Math.trunc(obj.x).to!string;
+        yInfo.text = Math.trunc(obj.y).to!string;
+
+        wInfo.text = obj.width.to!string;
+        hInfo.text = obj.height.to!string;
 
         objectFullInfo.textView.text = obj.toString;
+    }
+
+    private void fillStructure()
+    {
+        if (!objectOnDebug)
+        {
+            return;
+        }
+        auto treeRootNode = buildSpriteTree(objectOnDebug);
+        controlStructure.fill(treeRootNode);
+    }
+
+    private TreeItem!Sprite buildSpriteTree(Sprite root)
+    {
+
+        auto node = new TreeItem!Sprite(root);
+
+        foreach (ch; root.children)
+        {
+            auto childNode = buildSpriteTree(ch);
+            node.children ~= childNode;
+        }
+
+        return node;
     }
 
     private void removeDebugInfo(Sprite obj)
@@ -244,7 +347,8 @@ class SceneView : VBox
         }
     }
 
-    override void update(double delta){
+    override void update(double delta)
+    {
         super.update(delta);
     }
 }

@@ -12,6 +12,7 @@ import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.math.geom.insets : Insets;
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.gui.controls.buttons.button : Button;
+import deltotum.gui.controls.texts.text : Text;
 
 class TreeItem(T)
 {
@@ -29,6 +30,8 @@ class TableRow(T) : Container
 {
     TreeItem!T item;
 
+    void delegate() onSelected;
+
     bool isExpand;
     size_t treeLevel;
 
@@ -37,7 +40,7 @@ class TableRow(T) : Container
     dstring expandSymbol = "▶";
     dstring hidingSymbol = "▼";
 
-    Button expandButton;
+    Text expandButton;
 
     void delegate() onExpand;
 
@@ -90,13 +93,43 @@ class TableRow(T) : Container
         import deltotum.gui.controls.texts.text : Text;
         import deltotum.math.geom.insets : Insets;
 
+        onMouseDown = (ref e) {
+            if (onSelected)
+            {
+                onSelected();
+            }
+        };
+
+        if (treeLevel > 0)
+        {
+            enum levelMargin = 5;
+            Text levelLabel = new Text("");
+            levelLabel.isFocusable = false;
+
+            auto level = treeLevel;
+            if (level > 1)
+            {
+                foreach (l; 0 .. level - 1)
+                {
+                    levelLabel.text = levelLabel.text ~ "│ ";
+                }
+            }
+            levelLabel.text = levelLabel.text ~ "├";
+
+            addCreate(levelLabel);
+            levelLabel.padding = Insets(0);
+            //TODO copy texture;
+            //levelLabel.opacity = 0.5;
+        }
+
         //TODO child !is null
         if (item.children.length > 0)
         {
-            expandButton = new Button("", 10, 10);
-            expandButton.margin = Insets(0, 0, 0, 5 * treeLevel);
+            expandButton = new Text("");
+            expandButton.isFocusable = false;
             addCreate(expandButton);
-            expandButton.onAction = (ref e) {
+            expandButton.padding = Insets(0);
+            expandButton.onMouseDown = (ref e) {
                 this.isExpand = !isExpand;
                 setButtonText;
                 foreach (ch; children)
@@ -118,12 +151,14 @@ class TableRow(T) : Container
         }
 
         auto t = new Text(text);
-        if (!expandButton)
-        {
-            enum buttonWidthOffset = 5;
-            t.margin = Insets(0, 0, 0, buttonWidthOffset * treeLevel);
-        }
+        t.isFocusable = false;
+        //if (!expandButton)
+        //{
+        //enum buttonWidthOffset = 5;
+        //t.margin = Insets(0, 0, 0, buttonWidthOffset * treeLevel);
+        //}
         addCreate(t);
+        t.padding = Insets(0);
 
         if (item.children.length > 0)
         {
@@ -141,6 +176,10 @@ class TreeTableView(T) : ScrollBox
 
     VBox rowContainer;
 
+    void delegate(T oldItem, T newItem) onSelectedOldNew;
+
+    T currentSelected;
+
     this()
     {
         isBorder = true;
@@ -152,6 +191,7 @@ class TreeTableView(T) : ScrollBox
 
         rowContainer = new VBox(0);
         setContent(rowContainer);
+        rowContainer.padding = Insets(0);
     }
 
     void buildTree(Sprite root, TreeItem!T item, TableRow!T parent = null, size_t treeLevel = 0)
@@ -164,6 +204,19 @@ class TreeTableView(T) : ScrollBox
             parent.children ~= row;
         }
         root.addCreate(row);
+        row.padding = Insets(0);
+        row.onSelected = () {
+            if (row is currentSelected)
+            {
+                return;
+            }
+            auto oldSelected = row.item.item;
+            currentSelected = row.item.item;
+            if (onSelectedOldNew)
+            {
+                onSelectedOldNew(oldSelected, currentSelected);
+            }
+        };
         if (item.children.length > 0)
         {
             treeLevel++;
@@ -174,11 +227,31 @@ class TreeTableView(T) : ScrollBox
         }
     }
 
+    bool clear()
+    {
+        if (rows.length > 0)
+        {
+            contentRoot.removeAll;
+            rows = [];
+            return true;
+        }
+
+        return false;
+    }
+
     void fill(TreeItem!T[] items)
     {
+        clear;
+
         foreach (TreeItem!T item; items)
         {
             buildTree(contentRoot, item);
         }
+    }
+
+    void fill(TreeItem!T item)
+    {
+        clear;
+        buildTree(contentRoot, item);
     }
 }

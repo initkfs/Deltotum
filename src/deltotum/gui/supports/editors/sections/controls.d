@@ -158,7 +158,7 @@ class Controls : Control
         import deltotum.gui.controls.data.tree_table_view : TreeTableView, TreeItem;
 
         auto tree1 = new TreeTableView!Sprite;
-        tree1.resize(200, 200);
+        tree1.resize(300, 350);
          auto root = new TreeItem!string("root");
          auto child = new TreeItem!string("child1");
          auto child2 = new TreeItem!string("child2");
