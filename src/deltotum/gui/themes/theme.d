@@ -1,4 +1,4 @@
-module deltotum.kit.gui.themes.theme;
+module deltotum.gui.themes.theme;
 
 import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.kit.assets.fonts.font : Font;
@@ -34,6 +34,7 @@ class Theme
     double opacityHover = 1;
 
     Insets controlPadding = Insets(5, 5, 5, 5);
+    double controlSpacing = 5;
     double controlCornersBevel = 8;
     GraphicStyle controlStyle = GraphicStyle.simple;
 

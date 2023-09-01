@@ -64,7 +64,7 @@ class ToggleSwitch : Control
 
         import deltotum.kit.sprites.layouts.center_layout : CenterLayout;
 
-        auto layout = new HLayout;
+        auto layout = new HLayout(5);
         layout.isAutoResize = true;
         layout.isAlignY = true;
         this.layout = layout;
@@ -73,10 +73,6 @@ class ToggleSwitch : Control
     override void initialize()
     {
         super.initialize;
-
-        import deltotum.math.geom.insets : Insets;
-
-        padding = Insets(0);
 
         effectHandleSwitchOnFactory = (width, height) {
             import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;

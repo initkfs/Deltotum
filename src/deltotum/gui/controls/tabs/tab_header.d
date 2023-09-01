@@ -21,6 +21,11 @@ class TabHeader : Control
         layout.isAlignY = true;
     }
 
+    override void initialize(){
+        super.initialize;
+        enablePadding;
+    }
+
     override void add(Sprite[] sprites)
     {
         foreach (s; sprites)

@@ -47,8 +47,6 @@ abstract class Control : Sprite
             checkBackground;
         };
 
-        //TODO remove from creation
-        padding = graphics.theme.controlPadding;
         style = graphics.theme.controlStyle;
 
         if (!backgroundFactory)

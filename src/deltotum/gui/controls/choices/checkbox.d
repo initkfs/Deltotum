@@ -32,6 +32,8 @@ class CheckBox : Control
     {
         super.create;
 
+        enableInsets;
+
         import deltotum.gui.containers.stack_box: StackBox;
 
         auto markerContainer = new StackBox;

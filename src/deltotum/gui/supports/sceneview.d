@@ -68,6 +68,8 @@ class SceneView : VBox
     {
         super.create;
 
+        enableInsets;
+
         isLayoutManaged = false;
 
         //TODO autosize
@@ -75,6 +77,7 @@ class SceneView : VBox
         height = scene.window.height;
 
         auto btnContainer = new HBox;
+        btnContainer.layout.isAlignY = true;
         addCreate(btnContainer);
 
         auto tb = new ToggleSwitch;
@@ -103,7 +106,7 @@ class SceneView : VBox
 
         tb.label.text = "Debug";
 
-        auto fillStruct = new Button("Structure");
+        auto fillStruct = new Button("Load");
         fillStruct.onAction = (ref e) { fillStructure; };
         btnContainer.addCreate(fillStruct);
 
@@ -138,18 +141,21 @@ class SceneView : VBox
 
         VBox controlInfo = new VBox;
         controlInfoContainer.setContent(controlInfo);
+        controlInfo.enableInsets;
 
         shortInfo = new Text("");
         controlInfo.addCreate(shortInfo);
 
         HBox h1 = new HBox();
         controlInfo.addCreate(h1);
+        h1.enableInsets;
         wInfo = new Text("0");
         hInfo = new Text("0");
         h1.addCreate([new Text("w:"), wInfo, new Text("h:"), hInfo]);
 
         HBox h2 = new HBox();
         controlInfo.addCreate(h2);
+        h2.enableInsets;
         xInfo = new Text("0");
         yInfo = new Text("0");
         h2.addCreate([new Text("x:"), xInfo, new Text("y:"), yInfo]);

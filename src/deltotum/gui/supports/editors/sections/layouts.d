@@ -30,9 +30,15 @@ class Layouts : Control
         isBackground = false;
     }
 
+    override void initialize()
+    {
+        super.initialize;
+        enablePadding;
+    }
+
     T configureControl(T)(T sprite)
     {
-        if (is(T : Control))
+        static if (is(T : Control))
         {
             sprite.isBorder = true;
         }
@@ -72,14 +78,17 @@ class Layouts : Control
         btn.isHGrow = true;
         btn.id = "btn";
         posContainer.addCreate(btn);
+        posContainer.enableInsets;
 
         auto posWrapper1 = configureControl(new HBox);
         posWrapper1.width = prefContainerWidth;
         posWrapper1.maxWidth = maxContainerWidth;
         posContainer.addCreate(posWrapper1);
+        posWrapper1.enableInsets;
 
         auto startToEndContainer = configureControl(new HBox);
         posWrapper1.addCreate(startToEndContainer);
+        startToEndContainer.enableInsets;
 
         startToEndContainer.addCreate([createButtonInc10, createButtonDec10]);
 
@@ -88,12 +97,14 @@ class Layouts : Control
         endToStartContainer.width = prefContainerWidth;
         endToStartContainer.maxWidth = maxContainerWidth;
         posContainer.addCreate(endToStartContainer);
+        endToStartContainer.enableInsets;
 
         endToStartContainer.addCreate([createButtonInc10, createButtonDec10]);
 
         auto fillBothContainer = configureControl(new HBox);
         fillBothContainer.width = 300;
         posContainer.addCreate(fillBothContainer);
+        fillBothContainer.enableInsets;
 
         auto fbBtn1 = configureControl(createButton("ExpH"));
         //FIXME check Text label resizing
@@ -107,6 +118,7 @@ class Layouts : Control
         auto marginsContainer = configureControl(new HBox);
         marginsContainer.layout.isAlignY = false;
         posContainer.addCreate(marginsContainer);
+        marginsContainer.enableInsets;
 
         auto btnM1 = configureControl(new Button("t10,r15"));
         btnM1.margin = Insets(10, 15, 0, 0);
@@ -116,6 +128,7 @@ class Layouts : Control
         auto marginsContainer2 = configureControl(new HBox);
         marginsContainer2.layout.isAlignY = false;
         posContainer.addCreate(marginsContainer2);
+        marginsContainer2.enableInsets;
 
         auto btnM2 = configureControl(createButton("t5,rb15"));
         btnM2.width = 80;
@@ -133,6 +146,7 @@ class Layouts : Control
     {
         auto posContainer = configureControl(new HBox);
         addCreate(posContainer);
+        posContainer.enableInsets;
 
         enum prefContainerHeight = 150;
         enum maxContainerHeight = 300;
@@ -141,9 +155,11 @@ class Layouts : Control
         posWrapper1.height = prefContainerHeight;
         posWrapper1.maxHeight = maxContainerHeight;
         posContainer.addCreate(posWrapper1);
+        posWrapper1.enableInsets;
 
         auto startToEndContainer = configureControl(new VBox);
         posWrapper1.addCreate(startToEndContainer);
+        startToEndContainer.enableInsets;
 
         startToEndContainer.addCreate([createButtonInc10, createButtonDec10]);
 
@@ -153,6 +169,7 @@ class Layouts : Control
         endToStartContainer.height = prefContainerHeight;
         endToStartContainer.maxHeight = maxContainerHeight;
         posContainer.addCreate(endToStartContainer);
+        endToStartContainer.enableInsets;
 
         auto eToSbtn1 = createButtonInc10;
         eToSbtn1.isHGrow = true;
@@ -163,6 +180,7 @@ class Layouts : Control
         fillBothContainer.width = 100;
         fillBothContainer.height = 200;
         posContainer.addCreate(fillBothContainer);
+        fillBothContainer.enableInsets;
 
         auto fbBtn1 = configureControl(createButton("ExpHV"));
         fbBtn1.isVGrow = true;
@@ -175,6 +193,7 @@ class Layouts : Control
         auto marginsContainer = configureControl(new VBox);
         marginsContainer.layout.isAlignX = false;
         posContainer.addCreate(marginsContainer);
+        marginsContainer.enableInsets;
 
         auto btnM1 = configureControl(new Button("t15,l10,b15"));
         btnM1.width = 100;
@@ -212,11 +231,11 @@ class Layouts : Control
 
         s2.addCreate(stBtn1);
 
-        import deltotum.gui.containers.border_box: BorderBox;
+        import deltotum.gui.containers.border_box : BorderBox;
 
         auto bBox = configureControl(new BorderBox);
         posVContainer.addCreate(bBox);
-        
+
         auto top = createButton("top");
         top.isHGrow = true;
         bBox.topPane.addCreate(top);
@@ -235,15 +254,17 @@ class Layouts : Control
         bottom.isHGrow = true;
         bBox.bottomPane.addCreate(bottom);
 
-        import deltotum.gui.containers.flow_box: FlowBox;
+        import deltotum.gui.containers.flow_box : FlowBox;
+
         auto flowBox1 = configureControl(new FlowBox(5, 5));
         flowBox1.width = 200;
         flowBox1.height = 200;
         posVContainer.addCreate(flowBox1);
 
-        foreach (i; 1..6)
+        foreach (i; 1 .. 6)
         {
-            import std.conv: to;
+            import std.conv : to;
+
             auto btn = createButton(i.to!dstring);
             flowBox1.addCreate(btn);
         }
@@ -255,9 +276,10 @@ class Layouts : Control
         flowBoxEndToStart.height = 200;
         posVContainer.addCreate(flowBoxEndToStart);
 
-        foreach (i; 1..6)
+        foreach (i; 1 .. 6)
         {
-            import std.conv: to;
+            import std.conv : to;
+
             auto btn = createButton(i.to!dstring);
             flowBoxEndToStart.addCreate(btn);
         }
@@ -265,14 +287,15 @@ class Layouts : Control
         auto pos2Container = configureControl(new HBox);
         addCreate(pos2Container);
 
-        import deltotum.gui.containers.circle_box: CircleBox;
+        import deltotum.gui.containers.circle_box : CircleBox;
 
         auto circleBox1 = configureControl(new CircleBox);
         pos2Container.addCreate(circleBox1);
 
-        foreach (i; 1..7)
+        foreach (i; 1 .. 7)
         {
-            import std.conv: to;
+            import std.conv : to;
+
             auto btn = createButton(i.to!dstring);
             circleBox1.addCreate(btn);
         }

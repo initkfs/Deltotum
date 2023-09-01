@@ -10,10 +10,10 @@ class VBox : Container
 {
     private
     {
-        double _spacing = 0;
+        double _spacing;
     }
 
-    this(double spacing = 5) pure
+    this(double spacing = 0) pure
     {
         import std.exception : enforce;
         import std.conv : text;
@@ -31,7 +31,8 @@ class VBox : Container
     {
         assert(layout);
 
-        if(layout){
+        if (layout)
+        {
             layout.isAlignX = isAlign;
             setInvalid;
         }
@@ -40,7 +41,8 @@ class VBox : Container
     bool isAlignX()
     {
         assert(layout);
-        if(!layout){
+        if (!layout)
+        {
             return false;
         }
         return layout.isAlignX;
@@ -58,6 +60,24 @@ class VBox : Container
         {
             vlayout.spacing = value;
         }
+    }
+
+    override void enableInsets()
+    {
+        super.enableInsets;
+        enableSpacing;
+    }
+
+    //TODO remove duplication with HBox
+    void enableSpacing()
+    {
+        if (!hasGraphics || !graphics.theme)
+        {
+            throw new Exception(
+                "Unable to enable spacing: graphic or theme is null. Perhaps the component is not built correctly");
+        }
+        const value = graphics.theme.controlSpacing;
+        spacing = value;
     }
 }
 

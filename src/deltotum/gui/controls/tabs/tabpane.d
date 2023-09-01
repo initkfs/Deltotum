@@ -38,6 +38,12 @@ class TabPane : Control
         layout = new VLayout;
     }
 
+    override void initialize(){
+        super.initialize;
+        
+        enablePadding;
+    }
+
     override void create()
     {
         super.create;

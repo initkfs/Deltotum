@@ -1,10 +1,16 @@
 module deltotum.gui.supports.editors.sections.controls;
 
 import deltotum.gui.controls.control : Control;
+import deltotum.gui.containers.container : Container;
 import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
-import deltotum.gui.controls.data.tree_table_view: TreeItem;
+import deltotum.gui.controls.data.tree_table_view : TreeItem;
+import deltotum.gui.controls.buttons.button : Button;
+import deltotum.gui.containers.hbox : HBox;
+import deltotum.gui.containers.vbox : VBox;
+import deltotum.gui.containers.frame : Frame;
+import deltotum.kit.sprites.layouts.vlayout : VLayout;
 
 /**
  * Authors: initkfs
@@ -22,6 +28,12 @@ class Controls : Control
         isBackground = false;
     }
 
+    override void initialize()
+    {
+        super.initialize;
+        enablePadding;
+    }
+
     T configureControl(T)(T sprite)
     {
         if (is(T : Control))
@@ -35,90 +47,33 @@ class Controls : Control
     {
         super.create;
 
-        import deltotum.gui.containers.hbox : HBox;
-        import deltotum.gui.containers.vbox : VBox;
-        import deltotum.gui.containers.frame : Frame;
-        import deltotum.kit.sprites.layouts.vlayout : VLayout;
-
-        auto rootContainer = new VBox(5);
+        auto rootContainer = new VBox;
         rootContainer.width = 500;
         rootContainer.height = 400;
         rootContainer.layout.isAlignY = true;
         addCreate(rootContainer);
 
-        auto controlContainer1 = new HBox;
-        rootContainer.addCreate(controlContainer1);
+        auto btnContainer = new HBox;
+        btnContainer.layout.isAlignY = true;
+        rootContainer.addCreate(btnContainer);
+        btnContainer.enableInsets;
 
-        import deltotum.gui.controls.choices.choice_box : ChoiceBox;
+        createButtons(btnContainer);
 
-        dstring[] choiceItems = [
-            "label1", "label2", "string1", "string2"
-        ];
+        auto selectionContainer = new HBox;
+        selectionContainer.layout.isAlignY = true;
+        rootContainer.addCreate(selectionContainer);
+        selectionContainer.enableInsets;
 
-        auto choice1 = new ChoiceBox;
-        controlContainer1.addCreate(choice1);
-        choice1.fill(choiceItems);
+        createSelections(selectionContainer);
 
-        auto choice22 = new ChoiceBox;
-        choice22.layout.isFillFromStartToEnd = false;
-        controlContainer1.addCreate(choice22);
-        choice22.fill(choiceItems);
+        createSeparators(selectionContainer);
 
-        auto choice2 = new ChoiceBox;
-        choice2.isCreateStepSelection = true;
-        controlContainer1.addCreate(choice2);
-        choice2.fill(choiceItems);
+        auto dataContainer = new HBox;
+        dataContainer.layout.isAlignY = true;
+        rootContainer.addCreate(dataContainer);
 
-        auto choice3 = new ChoiceBox;
-        auto vlayout = new VLayout(2);
-        vlayout.isAutoResize = true;
-        vlayout.isAlignX = true;
-        choice3.layout = vlayout;
-        choice3.isCreateStepSelection = true;
-        controlContainer1.addCreate(choice3);
-        choice3.fill(choiceItems);
-
-        import deltotum.gui.controls.separators.vseparator : VSeparator;
-
-        auto vsep = new VSeparator;
-        controlContainer1.addCreate(vsep);
-
-        import deltotum.gui.controls.sliders.hslider : HSlider;
-        import deltotum.gui.controls.sliders.vslider : VSlider;
-
-        auto vScrollbar = new VSlider;
-        controlContainer1.addCreate(vScrollbar);
-
-        auto hScrollbar = new HSlider;
-        controlContainer1.addCreate(hScrollbar);
-
-        import deltotum.gui.controls.separators.hseparator : HSeparator;
-
-        auto hSep = new HSeparator;
-        rootContainer.addCreate(hSep);
-
-        auto controlContainer2 = new HBox;
-        controlContainer2.layout.isAlignY = true;
-        rootContainer.addCreate(controlContainer2);
-
-        import deltotum.gui.controls.choices.toggle_switch : ToggleSwitch;
-
-        auto switch1 = new ToggleSwitch;
-        controlContainer2.addCreate(switch1);
-
-        import deltotum.gui.controls.choices.checkbox : CheckBox;
-
-        auto check1 = new CheckBox;
-        controlContainer2.addCreate(check1);
-        check1.label.text = "Check";
-
-        import deltotum.gui.controls.pickers.color_picker : ColorPicker;
-
-        auto colorPicker = new ColorPicker;
-        controlContainer2.addCreate(colorPicker);
-
-        auto container3 = new HBox;
-        rootContainer.addCreate(container3);
+        createDataControls(dataContainer);
 
         // import deltotum.gui.controls.charts.linear_chart: LinearChart;
         // auto linearChart = new LinearChart;
@@ -155,32 +110,6 @@ class Controls : Control
         //     vbox.addCreate(new Button);
         // }
 
-        import deltotum.gui.controls.data.tree_table_view : TreeTableView, TreeItem;
-
-        auto tree1 = new TreeTableView!Sprite;
-        tree1.resize(300, 350);
-         auto root = new TreeItem!string("root");
-         auto child = new TreeItem!string("child1");
-         auto child2 = new TreeItem!string("child2");
-         auto root2 = new TreeItem!string("root2");
-         auto root3 = new TreeItem!string("root3");
-         auto root4 = new TreeItem!string("root4");
-         child.children ~= child2;
-         root.children ~= child;
-
-        container3.addCreate(tree1);
-        //tree1.fill([root, root2, root3, root4]);
-        tree1.fill([buildSpriteTree(rootContainer)]);
-        // import std;
-        // foreach (i; 0..400)
-        // {
-        //     root.children ~= new TreeItem!string(i.to!string);
-        // }
-         //tree1.fill([root]);
-        // tree1.fill([
-        //     "string1", "string2", "string3", "string4", "string5", "string6", "string7", "string8"
-        // ]);
-
         // iconsContainer.isBackground = false;
 
         // import deltotum.kit.sprites.images.image : Image;
@@ -215,9 +144,117 @@ class Controls : Control
 
     }
 
+    void createButtons(Container root)
+    {
+        auto btn1 = new Button("Button");
+        root.addCreate(btn1);
+    }
+
+    void createSelections(Container root)
+    {
+        import deltotum.gui.controls.choices.toggle_switch : ToggleSwitch;
+        import deltotum.gui.controls.choices.checkbox : CheckBox;
+        import deltotum.gui.controls.choices.choice_box : ChoiceBox;
+
+        auto switch1 = new ToggleSwitch;
+        root.addCreate(switch1);
+
+        import deltotum.gui.controls.choices.checkbox : CheckBox;
+
+        auto check1 = new CheckBox;
+        root.addCreate(check1);
+        check1.label.text = "Check";
+
+        import deltotum.gui.controls.choices.choice_box : ChoiceBox;
+
+        dstring[] choiceItems = [
+            "label1", "label2", "string1", "string2"
+        ];
+
+        auto chContainer1 = new VBox;
+        root.addCreate(chContainer1);
+        chContainer1.enableInsets;
+
+        auto choice1 = new ChoiceBox;
+        chContainer1.addCreate(choice1);
+        choice1.fill(choiceItems);
+
+        auto choice22 = new ChoiceBox;
+        choice22.layout.isFillFromStartToEnd = false;
+        chContainer1.addCreate(choice22);
+        choice22.fill(choiceItems);
+
+        auto choice2 = new ChoiceBox;
+        choice2.isCreateStepSelection = true;
+        root.addCreate(choice2);
+        choice2.fill(choiceItems);
+
+        auto choice3 = new ChoiceBox;
+        auto vlayout = new VLayout(2);
+        vlayout.isAutoResize = true;
+        vlayout.isAlignX = true;
+        choice3.layout = vlayout;
+        choice3.isCreateStepSelection = true;
+        root.addCreate(choice3);
+        choice3.fill(choiceItems);
+
+        import deltotum.gui.controls.pickers.color_picker : ColorPicker;
+
+        auto colorPicker = new ColorPicker;
+        root.addCreate(colorPicker);
+    }
+
+    void createSeparators(Container root)
+    {
+        import deltotum.gui.controls.separators.vseparator : VSeparator;
+
+        auto vsep = new VSeparator;
+        vsep.height = 100;
+        root.addCreate(vsep);
+
+        import deltotum.gui.controls.sliders.hslider : HSlider;
+        import deltotum.gui.controls.sliders.vslider : VSlider;
+
+        auto vScrollbar = new VSlider;
+        root.addCreate(vScrollbar);
+
+        auto hScrollbar = new HSlider;
+        root.addCreate(hScrollbar);
+
+        import deltotum.gui.controls.separators.hseparator : HSeparator;
+
+        auto hSep = new HSeparator;
+        hSep.width = 100;
+        root.addCreate(hSep);
+    }
+
+    void createDataControls(Container rootContainer)
+    {
+
+        import deltotum.gui.controls.data.tree_table_view : TreeTableView, TreeItem;
+
+        auto tree1 = new TreeTableView!string;
+        tree1.resize(150, 150);
+        auto root = new TreeItem!string("root");
+        auto child = new TreeItem!string("child1");
+        auto child2 = new TreeItem!string("child2");
+
+        child.children ~= child2;
+        root.children ~= child;
+
+        import std.conv: to;
+        foreach (i; 0..10)
+        {
+            root.children ~= new TreeItem!string(i.to!string);
+        }
+
+        rootContainer.addCreate(tree1);
+        tree1.fill(root);
+    }
+
     private TreeItem!Sprite buildSpriteTree(Sprite root)
     {
-        
+
         auto node = new TreeItem!Sprite(root);
 
         foreach (ch; root.children)

@@ -86,8 +86,8 @@ class Sprite : PhysicalBody
     bool isResizeChildren;
     bool isResizedByParent;
 
-    Insets padding;
-    Insets margin;
+    Insets _padding;
+    Insets _margin;
     bool isHGrow;
     bool isVGrow;
 
@@ -1389,9 +1389,104 @@ class Sprite : PhysicalBody
             return Nullable!Sprite.init;
         }
 
-        void setPadding(double value)
+        void enableInsets()
         {
-            padding = Insets(value);
+            enablePadding;
+        }
+
+        void enablePadding()
+        {
+            if (!hasGraphics || !graphics.theme)
+            {
+                throw new Exception(
+                    "Unable to enable paddings: graphic or theme is null. Perhaps the component is not built correctly");
+            }
+            _padding = graphics.theme.controlPadding;
+        }
+
+        void disablePadding()
+        {
+            padding(0);
+        }
+
+        Insets padding()
+        {
+            return _padding;
+        }
+
+        void padding(Insets value)
+        {
+            _padding = value;
+        }
+
+        void padding(double value)
+        {
+            _padding = Insets(value);
+        }
+
+        void padding(double top = 0, double right = 0, double bottom = 0, double left = 0)
+        {
+            _padding = Insets(top, right, bottom, left);
+        }
+
+        void paddingTop(double value)
+        {
+            _padding.top = value;
+        }
+
+        void paddingRight(double value)
+        {
+            _padding.right = value;
+        }
+
+        void paddingLeft(double value)
+        {
+            _padding.left = value;
+        }
+
+        void paddingBottom(double value)
+        {
+            _padding.bottom = value;
+        }
+
+        Insets margin()
+        {
+            return _margin;
+        }
+
+        void margin(Insets value)
+        {
+            _margin = value;
+        }
+
+        void margin(double value)
+        {
+            _margin = Insets(value);
+        }
+
+        void margin(double top = 0, double right = 0, double bottom = 0, double left = 0)
+        {
+            _margin = Insets(top, right, bottom, left);
+        }
+
+        void marginTop(double value)
+        {
+            _margin.top = value;
+        }
+
+        void marginBottom(double value)
+        {
+            _margin.bottom = value;
+        }
+
+        void marginRight(double value)
+        {
+            _margin.right = value;
+        }
+
+        void marginLeft(double value)
+        {
+            _margin.left = value;
         }
 
         override void destroy()

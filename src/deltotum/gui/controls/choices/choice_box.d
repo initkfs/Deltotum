@@ -77,12 +77,14 @@ class ChoiceBox : TypedContainer!ChoiceItem
     {
         super.create;
 
+        enableInsets;
+
         import deltotum.gui.containers.vbox : VBox;
 
         if (isCreateStepSelection)
         {
             auto prevNextContainer = new VBox(0);
-            prevNextContainer.setPadding(0);
+            prevNextContainer.padding = 0;
             prevNextContainer.setGrow;
 
             auto prevButton = new Button("▲", 10, 10);
@@ -93,7 +95,7 @@ class ChoiceBox : TypedContainer!ChoiceItem
                     choiceList.isVisible = false;
                 }
             };
-            prevButton.isBackground = false;
+            prevButton.isBorder = false;
             prevButton.setGrow;
 
             auto nextButton = new Button("▼", 10, 10);
@@ -104,7 +106,7 @@ class ChoiceBox : TypedContainer!ChoiceItem
                     choiceList.isVisible = false;
                 }
             };
-            nextButton.isBackground = false;
+            nextButton.isBorder = false;
             nextButton.setGrow;
 
             addCreate(prevNextContainer);

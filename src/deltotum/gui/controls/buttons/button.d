@@ -46,18 +46,21 @@ class Button : Control
 
         this.layout = new CenterLayout;
         this.layout.isResizeParent = true;
+        isBorder = true;
     }
 
     override void initialize()
     {
         super.initialize;
 
+        enableInsets;
+
         backgroundFactory = (width, height) {
 
             import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
 
             Shape object = new RegularPolygon(width, height, GraphicStyle(1, graphics
-                    .theme.colorAccent, true, graphics.theme.colorControlBackground), graphics
+                    .theme.colorAccent, isBackground, graphics.theme.colorControlBackground), graphics
                     .theme.controlCornersBevel);
             object.isLayoutManaged = false;
             object.id = "btn_background";

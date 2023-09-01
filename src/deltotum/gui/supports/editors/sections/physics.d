@@ -45,6 +45,12 @@ class Physics : Control
         ChipmShape ground2;
     }
 
+    override void initialize()
+    {
+        super.initialize;
+        enablePadding;
+    }
+
     override void create()
     {
         super.create;
@@ -61,7 +67,8 @@ class Physics : Control
         ground = space.newStaticSegmentShape(Vector2d(0, 300), Vector2d(window.width, 700));
         ground.setFriction(1.0);
 
-        ground2 = space.newStaticSegmentShape(Vector2d(window.width - 10, 10), Vector2d(window.width - 10, window.height));
+        ground2 = space.newStaticSegmentShape(Vector2d(window.width - 10, 10), Vector2d(window.width - 10, window
+                .height));
         ground2.setFriction(1.0);
 
         import deltotum.gui.controls.buttons.button : Button;

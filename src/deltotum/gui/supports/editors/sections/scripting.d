@@ -19,6 +19,12 @@ class Scripting : Control
         layout.isAlignY = false;
     }
 
+    override void initialize()
+    {
+        super.initialize;
+        enablePadding;
+    }
+
     override void create()
     {
         super.create;
@@ -37,9 +43,10 @@ class Scripting : Control
 
             JuliaScriptTextPlugin p = cast(JuliaScriptTextPlugin) mustBePlugin.get;
             p.onCreateImage = (buff, buffLen) {
-                import deltotum.kit.sprites.images.image: Image;
+                import deltotum.kit.sprites.images.image : Image;
+
                 debug writeln("Received image buffer");
-                auto b = cast(string) buff[0..buffLen];
+                auto b = cast(string) buff[0 .. buffLen];
                 auto im = new Image;
                 build(im);
                 im.loadRaw(b);
@@ -60,7 +67,8 @@ class Scripting : Control
 
         juliaScriptArea.onKeyDown = (ref e) {
             prevDown(e);
-            if(e.isConsumed){
+            if (e.isConsumed)
+            {
                 return;
             }
 
@@ -76,7 +84,7 @@ class Scripting : Control
                     import std.conv : to;
                     import std.variant : Variant;
 
-                     debug writefln("Julia script result: %s", res.to!string);
+                    debug writefln("Julia script result: %s", res.to!string);
 
                     resultArea.textView.text = res.to!string;
                 }, (err) {

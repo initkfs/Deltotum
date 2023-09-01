@@ -3,7 +3,7 @@ module deltotum.kit.gui.themes.factories.theme_from_config_factory;
 import deltotum.core.apps.units.services.application_unit : ApplicationUnit;
 import deltotum.core.contexts.context : Context;
 import deltotum.core.configs.config : Config;
-import deltotum.kit.gui.themes.theme : Theme;
+import deltotum.gui.themes.theme : Theme;
 import deltotum.kit.assets.fonts.font : Font;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.math.geom.insets : Insets;

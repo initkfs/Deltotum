@@ -441,7 +441,7 @@ class SdlApplication : GraphicApplication
 
         windowBuilder.asset = new Asset(uservices.logger, assetsDir);
 
-        import deltotum.kit.gui.themes.theme : Theme;
+        import deltotum.gui.themes.theme : Theme;
         import deltotum.kit.gui.themes.factories.theme_from_config_factory : ThemeFromConfigFactory;
 
         auto themeLoader = new ThemeFromConfigFactory(uservices.logger, uservices.config, uservices.context, windowBuilder

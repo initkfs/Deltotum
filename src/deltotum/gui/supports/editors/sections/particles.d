@@ -41,10 +41,15 @@ class Particles : Control
 
     Emitter emitter;
 
+    override void initialize()
+    {
+        super.initialize;
+        enablePadding;
+    }
+
     override void create()
     {
         super.create;
-
 
         import deltotum.phys.particles.emitter : Emitter;
 
@@ -75,7 +80,6 @@ class Particles : Control
             return p;
         };
 
-
         auto controlContainer = new VBox(2);
         addCreate(controlContainer);
 
@@ -88,10 +92,10 @@ class Particles : Control
 
         auto runButton = new Button;
         runButton.text = "Emit";
-        runButton.onAction = (ref e) { 
+        runButton.onAction = (ref e) {
             //emitter.emit;
-            emitter.isActive = !emitter.isActive; 
-            };
+            emitter.isActive = !emitter.isActive;
+        };
         controlButtonBox.addCreate(runButton);
 
         auto configButton = new Button;

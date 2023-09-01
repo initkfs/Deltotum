@@ -30,7 +30,7 @@ class ColorPicker : Control
     {
         import deltotum.kit.sprites.layouts.hlayout : HLayout;
 
-        auto layout = new HLayout;
+        auto layout = new HLayout(5);
         layout.isAutoResize = true;
         layout.isAlignY = true;
         this.layout = layout;
@@ -42,13 +42,14 @@ class ColorPicker : Control
     {
         super.create;
 
+        enableInsets;
+
         RGBA startColor = RGBA.white;
 
         colorIndicator = new Circle(10, GraphicStyle(1, startColor, true, startColor));
         addCreate(colorIndicator);
 
         colorText = new Text(startColor.toWebHex);
-        colorText.setGrow;
         addCreate(colorText);
 
         colorShowChooser = new Button("▼", 10, 10);

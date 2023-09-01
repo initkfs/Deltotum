@@ -7,7 +7,7 @@ import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.math.vector2d : Vector2d;
 import math = deltotum.math;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
-import deltotum.kit.gui.themes.theme : Theme;
+import deltotum.gui.themes.theme : Theme;
 import deltotum.kit.sprites.textures.texture : Texture;
 
 import deltotum.kit.sprites.flip : Flip;

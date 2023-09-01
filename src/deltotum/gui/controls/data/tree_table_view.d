@@ -174,24 +174,27 @@ class TreeTableView(T) : ScrollBox
 {
     TableRow!T[] rows;
 
+    T initValue;
+
     VBox rowContainer;
 
     void delegate(T oldItem, T newItem) onSelectedOldNew;
 
-    T currentSelected;
+    TableRow!T currentSelected;
 
-    this()
+    this(T initValue = null)
     {
         isBorder = true;
+        this.initValue = initValue;
     }
 
     override void create()
     {
         super.create;
-
+        
         rowContainer = new VBox(0);
         setContent(rowContainer);
-        rowContainer.padding = Insets(0);
+        rowContainer.enablePadding;
     }
 
     void buildTree(Sprite root, TreeItem!T item, TableRow!T parent = null, size_t treeLevel = 0)
@@ -210,11 +213,11 @@ class TreeTableView(T) : ScrollBox
             {
                 return;
             }
-            auto oldSelected = row.item.item;
-            currentSelected = row.item.item;
+            auto oldSelected = currentSelected !is null ? currentSelected.item.item : initValue;
+            currentSelected = row;
             if (onSelectedOldNew)
             {
-                onSelectedOldNew(oldSelected, currentSelected);
+                onSelectedOldNew(oldSelected, currentSelected.item.item);
             }
         };
         if (item.children.length > 0)

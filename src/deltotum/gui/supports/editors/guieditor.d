@@ -43,13 +43,13 @@ class GuiEditor : Scene
         curvesTab.content = new Curves;
         root.addCreate(curvesTab);
 
-        import deltotum.gui.supports.editors.sections.fractals: Fractals;
+        import deltotum.gui.supports.editors.sections.fractals : Fractals;
 
         auto fractalsTab = new Tab("Fractals");
         fractalsTab.content = new Fractals;
         root.addCreate(fractalsTab);
 
-        import deltotum.gui.supports.editors.sections.images: Images;
+        import deltotum.gui.supports.editors.sections.images : Images;
 
         auto imagesTab = new Tab("Images");
         imagesTab.content = new Images;
@@ -61,13 +61,13 @@ class GuiEditor : Scene
         physicsTab.content = new Physics;
         root.addCreate(physicsTab);
 
-        import deltotum.gui.supports.editors.sections.particles: Particles;
+        import deltotum.gui.supports.editors.sections.particles : Particles;
 
         auto particlesTab = new Tab("Particles");
         particlesTab.content = new Particles;
         root.addCreate(particlesTab);
 
-        import deltotum.gui.supports.editors.sections.scripting: Scripting;
+        import deltotum.gui.supports.editors.sections.scripting : Scripting;
 
         auto scriptTab = new Tab("Scripting");
         scriptTab.content = new Scripting;

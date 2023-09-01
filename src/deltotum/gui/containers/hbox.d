@@ -9,11 +9,12 @@ import deltotum.kit.sprites.sprite : Sprite;
  */
 class HBox : Container
 {
-    private {
-        double _spacing = 0;
+    private
+    {
+        double _spacing;
     }
-    
-    this(double spacing = 5) pure
+
+    this(double spacing = 0) pure
     {
         import std.exception : enforce;
         import std.conv : text;
@@ -27,7 +28,8 @@ class HBox : Container
         this.layout = hlayout;
     }
 
-    double spacing(){
+    double spacing()
+    {
         return _spacing;
     }
 
@@ -38,5 +40,23 @@ class HBox : Container
         {
             hLayout.spacing = value;
         }
+    }
+
+    override void enableInsets()
+    {
+        super.enableInsets;
+        enableSpacing;
+    }
+
+    //TODO remove duplication with vbox
+    void enableSpacing()
+    {
+        if (!hasGraphics || !graphics.theme)
+        {
+            throw new Exception(
+                "Unable to enable spacing: graphic or theme is null. Perhaps the component is not built correctly");
+        }
+        const value = graphics.theme.controlSpacing;
+        spacing = value;
     }
 }

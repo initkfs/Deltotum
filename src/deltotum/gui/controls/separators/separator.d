@@ -13,7 +13,7 @@ abstract class Separator : Control
     }
 
     override void initialize()
-    {
+    {        
         backgroundFactory = (width, height) {
 
             import deltotum.kit.graphics.shapes.rectangle : Rectangle;

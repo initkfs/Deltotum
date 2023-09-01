@@ -18,263 +18,269 @@ import std.stdio;
  */
 class Images : Control
 {
-        private
+    private
+    {
+        const originalImage = import("resources/Lenna.png");
+
+        GraphicStyle shapeStyle = GraphicStyle.simple;
+
+        ImageProcessor imageProcessor;
+
+        enum imageSize = 100;
+    }
+
+    this()
+    {
+        id = "deltotum_gui_editor_section_images";
+
+        import deltotum.kit.sprites.layouts.vlayout : VLayout;
+
+        layout = new VLayout(5);
+        layout.isAutoResize = true;
+        isBackground = false;
+        layout.isAlignY = false;
+
+        imageProcessor = new ImageProcessor;
+    }
+
+    override void initialize()
+    {
+        super.initialize;
+        enablePadding;
+    }
+
+    T configureControl(T)(T sprite)
+    {
+        if (is(T : Control))
         {
-                const originalImage = import("resources/Lenna.png");
-
-                GraphicStyle shapeStyle = GraphicStyle.simple;
-
-                ImageProcessor imageProcessor;
-
-                enum imageSize = 100;
+            sprite.isBorder = true;
         }
+        return sprite;
+    }
 
-        this()
-        {
-                id = "deltotum_gui_editor_section_images";
+    Sprite createImageInfo(string name, Sprite image)
+    {
+        import deltotum.gui.containers.vbox : VBox;
+        import deltotum.gui.controls.texts.text : Text;
 
-                import deltotum.kit.sprites.layouts.vlayout : VLayout;
+        auto container = new VBox;
+        buildCreate(container);
 
-                layout = new VLayout(5);
-                layout.isAutoResize = true;
-                isBackground = false;
-                layout.isAlignY = false;
+        auto label = new Text;
+        label.text = name;
+        container.addCreate(label);
 
-                imageProcessor = new ImageProcessor;
-        }
+        container.addCreate(image);
 
-        T configureControl(T)(T sprite)
-        {
-                if (is(T : Control))
-                {
-                        sprite.isBorder = true;
-                }
-                return sprite;
-        }
+        return container;
+    }
 
-        Sprite createImageInfo(string name, Sprite image)
-        {
-                import deltotum.gui.containers.vbox : VBox;
-                import deltotum.gui.controls.texts.text : Text;
+    override void create()
+    {
+        super.create;
 
-                auto container = new VBox;
-                buildCreate(container);
+        import deltotum.gui.containers.container : Container;
+        import deltotum.gui.containers.hbox : HBox;
+        import deltotum.gui.containers.vbox : VBox;
+        import deltotum.gui.containers.container : Container;
+        import deltotum.gui.containers.stack_box : StackBox;
+        import deltotum.math.geom.insets : Insets;
 
-                auto label = new Text;
-                label.text = name;
-                container.addCreate(label);
+        auto container = new HBox;
+        addCreate(container);
 
-                container.addCreate(image);
+        auto original = new Image;
+        build(original);
 
-                return container;
-        }
+        static RGBA[][] colorBuff = new RGBA[][](imageSize, imageSize);
 
-        override void create()
-        {
-                super.create;
+        original.colorProcessor = (pixelData) {
+            colorBuff[pixelData.y][pixelData.x] = pixelData.getColor;
+        };
 
-                import deltotum.gui.containers.container : Container;
-                import deltotum.gui.containers.hbox : HBox;
-                import deltotum.gui.containers.vbox : VBox;
-                import deltotum.gui.containers.container : Container;
-                import deltotum.gui.containers.stack_box : StackBox;
-                import deltotum.math.geom.insets : Insets;
+        original.loadRaw(originalImage);
+        container.addCreate(createImageInfo("Original", original));
 
-                auto container = new HBox;
-                addCreate(container);
+        const size_t imageWidth = cast(size_t) original.width;
+        const size_t imageHeight = cast(size_t) original.height;
 
-                auto original = new Image;
-                build(original);
+        auto hist = new Image(imageWidth, imageHeight);
+        build(hist);
+        hist.load(imageProcessor.histogram(colorBuff));
+        container.addCreate(createImageInfo("Histogram", hist));
 
-                static RGBA[][] colorBuff = new RGBA[][](imageSize, imageSize);
+        auto grayscale = new Image(imageWidth, imageHeight);
+        build(grayscale);
+        grayscale.colorProcessor = (pixel) {
+            pixel.setColor(imageProcessor.grayscale(pixel.getColor));
+        };
+        grayscale.load(colorBuff);
+        container.addCreate(createImageInfo("Grayscale", grayscale));
 
-                original.colorProcessor = (pixelData) {
-                        colorBuff[pixelData.y][pixelData.x] = pixelData.getColor;
-                };
+        auto grayscaleThreshold = new Image(imageWidth, imageHeight);
+        build(grayscaleThreshold);
+        grayscaleThreshold.colorProcessor = (pixel) {
+            pixel.setColor(imageProcessor.grayscale(pixel.getColor, 200));
+        };
+        grayscaleThreshold.load(colorBuff);
+        container.addCreate(createImageInfo("Grayscale 200", grayscaleThreshold));
 
-                original.loadRaw(originalImage);
-                container.addCreate(createImageInfo("Original", original));
+        auto negative = new Image(imageWidth, imageHeight);
+        build(negative);
+        negative.colorProcessor = (pixel) {
+            pixel.setColor(imageProcessor.negative(pixel.getColor));
+        };
+        negative.load(colorBuff);
+        container.addCreate(createImageInfo("Negative", negative));
 
-                const size_t imageWidth = cast(size_t) original.width;
-                const size_t imageHeight = cast(size_t) original.height;
+        auto solar1 = new Image(imageWidth, imageHeight);
+        build(solar1);
+        solar1.colorProcessor = (pixel) {
+            pixel.setColor(imageProcessor.solarization(pixel.getColor, 120));
+        };
+        solar1.load(colorBuff);
+        container.addCreate(createImageInfo("Solar 120", solar1));
 
-                auto hist = new Image(imageWidth, imageHeight);
-                build(hist);
-                hist.load(imageProcessor.histogram(colorBuff));
-                container.addCreate(createImageInfo("Histogram", hist));
+        auto sepia = new Image(imageWidth, imageHeight);
+        build(sepia);
+        sepia.colorProcessor = (pixel) {
+            pixel.setColor(imageProcessor.sepia(pixel.getColor));
+        };
+        sepia.load(colorBuff);
+        container.addCreate(createImageInfo("Sepia", sepia));
 
-                auto grayscale = new Image(imageWidth, imageHeight);
-                build(grayscale);
-                grayscale.colorProcessor = (pixel) {
-                        pixel.setColor(imageProcessor.grayscale(pixel.getColor));
-                };
-                grayscale.load(colorBuff);
-                container.addCreate(createImageInfo("Grayscale", grayscale));
+        auto poster = new Image(imageWidth, imageHeight);
+        build(poster);
+        poster.colorProcessor = (pixel) {
+            pixel.setColor(imageProcessor.posterize(pixel.getColor, [
+                        RGBA.red,
+                        RGBA.blue,
+                        RGBA.green
+                    ], 160));
+        };
+        poster.load(colorBuff);
+        container.addCreate(createImageInfo("Poster", poster));
 
-                auto grayscaleThreshold = new Image(imageWidth, imageHeight);
-                build(grayscaleThreshold);
-                grayscaleThreshold.colorProcessor = (pixel) {
-                        pixel.setColor(imageProcessor.grayscale(pixel.getColor, 200));
-                };
-                grayscaleThreshold.load(colorBuff);
-                container.addCreate(createImageInfo("Grayscale 200", grayscaleThreshold));
+        import deltotum.kit.sprites.images.processing.image_processor : BlendMode;
 
-                auto negative = new Image(imageWidth, imageHeight);
-                build(negative);
-                negative.colorProcessor = (pixel) {
-                        pixel.setColor(imageProcessor.negative(pixel.getColor));
-                };
-                negative.load(colorBuff);
-                container.addCreate(createImageInfo("Negative", negative));
+        auto blend = new Image(imageWidth, imageHeight);
+        build(blend);
+        blend.load(imageProcessor.blend(colorBuff, RGBA.blue, BlendMode.overlay));
+        container.addCreate(createImageInfo("Blend", blend));
 
-                auto solar1 = new Image(imageWidth, imageHeight);
-                build(solar1);
-                solar1.colorProcessor = (pixel) {
-                        pixel.setColor(imageProcessor.solarization(pixel.getColor, 120));
-                };
-                solar1.load(colorBuff);
-                container.addCreate(createImageInfo("Solar 120", solar1));
+        auto container2 = new HBox;
+        addCreate(container2);
 
-                auto sepia = new Image(imageWidth, imageHeight);
-                build(sepia);
-                sepia.colorProcessor = (pixel) {
-                        pixel.setColor(imageProcessor.sepia(pixel.getColor));
-                };
-                sepia.load(colorBuff);
-                container.addCreate(createImageInfo("Sepia", sepia));
+        auto br1 = new Image(imageWidth, imageHeight);
+        build(br1);
+        br1.colorProcessor = (pixel) {
+            auto newColor = pixel.getColor;
+            newColor.brightness(2);
+            pixel.setColor(newColor);
+        };
+        br1.load(colorBuff);
+        container2.addCreate(createImageInfo("Bright x2", br1));
 
-                auto poster = new Image(imageWidth, imageHeight);
-                build(poster);
-                poster.colorProcessor = (pixel) {
-                        pixel.setColor(imageProcessor.posterize(pixel.getColor, [
-                                                RGBA.red,
-                                                RGBA.blue,
-                                                RGBA.green
-                                        ], 160));
-                };
-                poster.load(colorBuff);
-                container.addCreate(createImageInfo("Poster", poster));
+        auto gamma1 = new Image(imageWidth, imageHeight);
+        build(gamma1);
+        gamma1.colorProcessor = (pixel) {
+            auto newColor = pixel.getColor;
+            newColor.gamma(0.2);
+            pixel.setColor(newColor);
+        };
+        gamma1.load(colorBuff);
+        container2.addCreate(createImageInfo("Gamma 0.2", gamma1));
 
-                import deltotum.kit.sprites.images.processing.image_processor: BlendMode;
+        auto gamma2 = new Image(imageWidth, imageHeight);
+        build(gamma2);
+        gamma2.colorProcessor = (pixel) {
+            auto newColor = pixel.getColor;
+            newColor.gamma(2.0);
+            pixel.setColor(newColor);
+        };
+        gamma2.load(colorBuff);
+        container2.addCreate(createImageInfo("Gamma 2.0", gamma2));
 
-                auto blend = new Image(imageWidth, imageHeight);
-                build(blend);
-                blend.load(imageProcessor.blend(colorBuff, RGBA.blue, BlendMode.overlay));
-                container.addCreate(createImageInfo("Blend", blend));
+        auto contrast1 = new Image(imageWidth, imageHeight);
+        build(contrast1);
+        contrast1.colorProcessor = (pixel) {
+            auto newColor = pixel.getColor;
+            newColor.contrast(-50);
+            pixel.setColor(newColor);
+        };
+        contrast1.load(colorBuff);
+        container2.addCreate(createImageInfo("Contrast -50", contrast1));
 
-                auto container2 = new HBox;
-                addCreate(container2);
+        auto contrast2 = new Image(imageWidth, imageHeight);
+        build(contrast2);
+        contrast2.colorProcessor = (pixel) {
+            auto newColor = pixel.getColor;
+            newColor.contrast(80);
+            pixel.setColor(newColor);
+        };
+        contrast2.load(colorBuff);
+        container2.addCreate(createImageInfo("Contrast +80", contrast2));
 
-                auto br1 = new Image(imageWidth, imageHeight);
-                build(br1);
-                br1.colorProcessor = (pixel) {
-                        auto newColor = pixel.getColor;
-                        newColor.brightness(2);
-                        pixel.setColor(newColor);
-                };
-                br1.load(colorBuff);
-                container2.addCreate(createImageInfo("Bright x2", br1));
+        auto flop = new Image(imageWidth, imageHeight);
+        build(flop);
+        flop.load(imageProcessor.flop(colorBuff));
+        container2.addCreate(createImageInfo("Flop (X)", flop));
 
-                auto gamma1 = new Image(imageWidth, imageHeight);
-                build(gamma1);
-                gamma1.colorProcessor = (pixel) {
-                        auto newColor = pixel.getColor;
-                        newColor.gamma(0.2);
-                        pixel.setColor(newColor);
-                };
-                gamma1.load(colorBuff);
-                container2.addCreate(createImageInfo("Gamma 0.2", gamma1));
+        auto flip = new Image(imageWidth, imageHeight);
+        build(flip);
+        flip.load(imageProcessor.flip(colorBuff));
+        container2.addCreate(createImageInfo("Flip (Y)", flip));
 
-                auto gamma2 = new Image(imageWidth, imageHeight);
-                build(gamma2);
-                gamma2.colorProcessor = (pixel) {
-                        auto newColor = pixel.getColor;
-                        newColor.gamma(2.0);
-                        pixel.setColor(newColor);
-                };
-                gamma2.load(colorBuff);
-                container2.addCreate(createImageInfo("Gamma 2.0", gamma2));
+        auto mirror = new Image(imageWidth, imageHeight);
+        build(mirror);
+        mirror.load(imageProcessor.mirror(colorBuff));
+        container2.addCreate(createImageInfo("Mirror", mirror));
 
-                auto contrast1 = new Image(imageWidth, imageHeight);
-                build(contrast1);
-                contrast1.colorProcessor = (pixel) {
-                        auto newColor = pixel.getColor;
-                        newColor.contrast(-50);
-                        pixel.setColor(newColor);
-                };
-                contrast1.load(colorBuff);
-                container2.addCreate(createImageInfo("Contrast -50", contrast1));
+        auto rotate45 = new Image(imageWidth, imageHeight);
+        build(rotate45);
+        rotate45.load(imageProcessor.rotate(colorBuff, 45));
+        container2.addCreate(createImageInfo("Rotate 45", rotate45));
 
-                auto contrast2 = new Image(imageWidth, imageHeight);
-                build(contrast2);
-                contrast2.colorProcessor = (pixel) {
-                        auto newColor = pixel.getColor;
-                        newColor.contrast(80);
-                        pixel.setColor(newColor);
-                };
-                contrast2.load(colorBuff);
-                container2.addCreate(createImageInfo("Contrast +80", contrast2));
+        auto bilinear = new Image(imageWidth / 2, imageHeight / 2);
+        build(bilinear);
+        bilinear.load(imageProcessor.resizeBilinear(colorBuff, imageWidth / 2, imageHeight / 2));
+        container2.addCreate(createImageInfo("Bilinear", bilinear));
 
-                auto flop = new Image(imageWidth, imageHeight);
-                build(flop);
-                flop.load(imageProcessor.flop(colorBuff));
-                container2.addCreate(createImageInfo("Flop (X)", flop));
+        import deltotum.math.shapes.rect2d : Rect2d;
 
-                auto flip = new Image(imageWidth, imageHeight);
-                build(flip);
-                flip.load(imageProcessor.flip(colorBuff));
-                container2.addCreate(createImageInfo("Flip (Y)", flip));
+        auto crop = new Image(50, 50);
+        build(crop);
+        crop.load(imageProcessor.crop(colorBuff, Rect2d(10, 10, 50, 50)));
+        container2.addCreate(createImageInfo("Crop", crop));
 
-                auto mirror = new Image(imageWidth, imageHeight);
-                build(mirror);
-                mirror.load(imageProcessor.mirror(colorBuff));
-                container2.addCreate(createImageInfo("Mirror", mirror));
+        auto container3 = new HBox;
+        addCreate(container3);
 
-                auto rotate45 = new Image(imageWidth, imageHeight);
-                build(rotate45);
-                rotate45.load(imageProcessor.rotate(colorBuff, 45));
-                container2.addCreate(createImageInfo("Rotate 45", rotate45));
+        auto highpass = new Image(imageWidth, imageHeight);
+        build(highpass);
+        highpass.load(imageProcessor.highpass(colorBuff));
+        container3.addCreate(createImageInfo("Highpass", highpass));
 
-                auto bilinear = new Image(imageWidth / 2, imageHeight / 2);
-                build(bilinear);
-                bilinear.load(imageProcessor.resizeBilinear(colorBuff, imageWidth / 2, imageHeight / 2));
-                container2.addCreate(createImageInfo("Bilinear", bilinear));
+        auto lowpass = new Image(imageWidth, imageHeight);
+        build(lowpass);
+        lowpass.load(imageProcessor.lowpass(colorBuff));
+        container3.addCreate(createImageInfo("Lowpass", lowpass));
 
-                import deltotum.math.shapes.rect2d: Rect2d;
+        auto gaussian = new Image(imageWidth, imageHeight);
+        build(gaussian);
+        gaussian.load(imageProcessor.gaussian3x3(colorBuff));
+        container3.addCreate(createImageInfo("Gauss 3x3", gaussian));
 
-                auto crop = new Image(50, 50);
-                build(crop);
-                crop.load(imageProcessor.crop(colorBuff, Rect2d(10, 10, 50, 50)));
-                container2.addCreate(createImageInfo("Crop", crop));
+        auto sobel = new Image(imageWidth, imageHeight);
+        build(sobel);
+        sobel.load(imageProcessor.sobel(colorBuff));
+        container3.addCreate(createImageInfo("Sobel", sobel));
 
-                auto container3 = new HBox;
-                addCreate(container3);
+        auto emboss = new Image(imageWidth, imageHeight);
+        build(emboss);
+        emboss.load(imageProcessor.emboss(colorBuff));
+        container3.addCreate(createImageInfo("Emboss", emboss));
 
-                auto highpass = new Image(imageWidth, imageHeight);
-                build(highpass);
-                highpass.load(imageProcessor.highpass(colorBuff));
-                container3.addCreate(createImageInfo("Highpass", highpass));
-
-                auto lowpass = new Image(imageWidth, imageHeight);
-                build(lowpass);
-                lowpass.load(imageProcessor.lowpass(colorBuff));
-                container3.addCreate(createImageInfo("Lowpass", lowpass));
-
-                 auto gaussian = new Image(imageWidth, imageHeight);
-                build(gaussian);
-                gaussian.load(imageProcessor.gaussian3x3(colorBuff));
-                container3.addCreate(createImageInfo("Gauss 3x3", gaussian));
-
-                auto sobel = new Image(imageWidth, imageHeight);
-                build(sobel);
-                sobel.load(imageProcessor.sobel(colorBuff));
-                container3.addCreate(createImageInfo("Sobel", sobel));
-
-                auto emboss = new Image(imageWidth, imageHeight);
-                build(emboss);
-                emboss.load(imageProcessor.emboss(colorBuff));
-                container3.addCreate(createImageInfo("Emboss", emboss));
-
-        }
+    }
 
 }
