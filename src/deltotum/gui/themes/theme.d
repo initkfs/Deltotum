@@ -26,6 +26,10 @@ class Theme
     RGBA colorTextBackground = RGBA.black;
     RGBA colorHover = RGBA.white;
 
+    RGBA colorSuccess = RGBA(72, 199, 116);
+    RGBA colorDanger = RGBA(255, 56, 96);
+    RGBA colorWarning= RGBA(255, 221, 87);
+
     RGBA colorControlBackground = RGBA.black;
     RGBA colorContainerBackground = RGBA.black;
 

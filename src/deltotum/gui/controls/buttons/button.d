@@ -59,8 +59,9 @@ class Button : Control
 
             import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
 
-            Shape object = new RegularPolygon(width, height, GraphicStyle(1, graphics
-                    .theme.colorAccent, isBackground, graphics.theme.colorControlBackground), graphics
+            auto style = styleFromActionType;
+
+            Shape object = new RegularPolygon(width, height, style, graphics
                     .theme.controlCornersBevel);
             object.isLayoutManaged = false;
             object.id = "btn_background";

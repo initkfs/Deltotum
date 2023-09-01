@@ -146,8 +146,23 @@ class Controls : Control
 
     void createButtons(Container root)
     {
+        import deltotum.gui.controls.control : Control;
+
         auto btn1 = new Button("Button");
+        btn1.isBackground = true;
         root.addCreate(btn1);
+
+        auto btns = new Button("Success");
+        btns.actionType = Control.ActionType.success;
+        root.addCreate(btns);
+
+        auto btnw = new Button("Warning");
+        btnw.actionType = Control.ActionType.warning;
+        root.addCreate(btnw);
+
+        auto btnd = new Button("Danger");
+        btnd.actionType = Control.ActionType.danger;
+        root.addCreate(btnd);
     }
 
     void createSelections(Container root)
@@ -242,8 +257,9 @@ class Controls : Control
         child.children ~= child2;
         root.children ~= child;
 
-        import std.conv: to;
-        foreach (i; 0..10)
+        import std.conv : to;
+
+        foreach (i; 0 .. 10)
         {
             root.children ~= new TreeItem!string(i.to!string);
         }

@@ -12,6 +12,16 @@ import deltotum.kit.sprites.alignment : Alignment;
  */
 abstract class Control : Sprite
 {
+    enum ActionType : string
+    {
+        standard = "standard",
+        success = "success",
+        warning = "warning",
+        danger = "danger"
+    }
+
+    string actionType = ActionType.standard;
+
     Insets backgroundInsets;
     Sprite delegate(double, double) backgroundFactory;
 
@@ -43,7 +53,7 @@ abstract class Control : Sprite
             {
                 return;
             }
-            
+
             checkBackground;
         };
 
@@ -67,6 +77,36 @@ abstract class Control : Sprite
                 return background;
             };
         }
+    }
+
+    GraphicStyle styleFromActionType()
+    {
+        import deltotum.kit.graphics.colors.rgba: RGBA;
+        //TODO remove switch
+        RGBA borderColor = graphics.theme.colorAccent;
+        RGBA fillColor = graphics.theme.colorControlBackground;
+
+        if (actionType != ActionType.standard)
+        {
+            final switch (actionType) with (ActionType)
+            {
+            case standard:
+                break;
+            case success:
+                borderColor = graphics.theme.colorSuccess;
+                fillColor = borderColor;
+                break;
+            case warning:
+                borderColor = graphics.theme.colorWarning;
+                fillColor = borderColor;
+                break;
+            case danger:
+                borderColor = graphics.theme.colorDanger;
+                fillColor = borderColor;
+                break;
+            }
+        }
+        return GraphicStyle(isBorder ? 1 : 0, borderColor, isBackground, fillColor);
     }
 
     protected bool createBackground(double width, double height)

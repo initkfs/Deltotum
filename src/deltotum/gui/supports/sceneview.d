@@ -117,7 +117,6 @@ class SceneView : VBox
 
         controlStructure.onSelectedOldNew = (oldSprite, newSprite) {
             import std;
-            writefln("%s %s", oldSprite.classNameShort, newSprite.classNameShort);
             if (newSprite is objectOnDebug)
             {
                 return;
