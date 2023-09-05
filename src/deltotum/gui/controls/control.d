@@ -10,7 +10,7 @@ import deltotum.kit.sprites.alignment : Alignment;
 /**
  * Authors: initkfs
  */
-abstract class Control : Sprite
+class Control : Sprite
 {
     enum ActionType : string
     {

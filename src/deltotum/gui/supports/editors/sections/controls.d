@@ -75,40 +75,12 @@ class Controls : Control
 
         createDataControls(dataContainer);
 
-        // import deltotum.gui.controls.charts.linear_chart: LinearChart;
-        // auto linearChart = new LinearChart;
-        // rootContainer.addCreate(linearChart);
+        auto chartsContainer = new HBox;
+        chartsContainer.layout.isAlignY = true;
+        rootContainer.addCreate(chartsContainer);
+        chartsContainer.enableInsets;
 
-        // import std.range: iota;
-        // import std.array: array;
-        // import std.algorithm.iteration: map;
-        // import std.math.trigonometry: sin;
-
-        // double[] x = iota(1, 10, 0.01).array;
-        // double[] y = x.map!sin.array;
-
-        // linearChart.data(x, y);
-
-        // import deltotum.gui.containers.scroll_box : ScrollBox;
-
-        // auto scrollBox = new ScrollBox;
-        // scrollBox.isBorder = true;
-        // scrollBox.width = 200;
-        // scrollBox.height = 200;
-        // container3.addCreate(scrollBox);
-        // import deltotum.gui.containers.vbox : VBox;
-
-        // auto vbox = new VBox;
-        // vbox.isBorder = true;
-        // vbox.resize(400, 400);
-        // import deltotum.gui.controls.buttons.button : Button;
-
-        // scrollBox.setContent(vbox);
-
-        // foreach (i; 0 .. 10)
-        // {
-        //     vbox.addCreate(new Button);
-        // }
+        createCharts(chartsContainer);
 
         // iconsContainer.isBackground = false;
 
@@ -118,30 +90,6 @@ class Controls : Control
         // build(image1);
         // image1.loadRaw(graphics.theme.iconData("rainy-outline"), 64, 64);
         // image1.setColor(graphics.theme.colorAccent);
-
-        // auto image2 = new Image();
-        // build(image2);
-        // image2.loadRaw(graphics.theme.iconData("thunderstorm-outline"), 64, 64);
-        // image2.setColor(graphics.theme.colorAccent);
-
-        // auto image3 = new Image();
-        // build(image3);
-        // image3.loadRaw(graphics.theme.iconData("sunny-outline"), 64, 64);
-        // image3.setColor(graphics.theme.colorAccent);
-
-        // auto image4 = new Image();
-        // build(image4);
-        // image4.loadRaw(graphics.theme.iconData("cloudy-night-outline"), 64, 64);
-        // image4.setColor(graphics.theme.colorAccent);
-
-        // auto image5 = new Image();
-        // build(image5);
-        // image5.loadRaw(graphics.theme.iconData("flash-outline"), 64, 64);
-        // image5.setColor(graphics.theme.colorAccent);
-
-        // addCreate(iconsContainer);
-        // iconsContainer.addCreate([image1, image2, image3, image4, image5]);
-
     }
 
     void createButtons(Container root)
@@ -266,6 +214,24 @@ class Controls : Control
 
         rootContainer.addCreate(tree1);
         tree1.fill(root);
+    }
+
+    void createCharts(Container root)
+    {
+        import deltotum.gui.controls.charts.linear_chart : LinearChart;
+
+        auto linearChart = new LinearChart;
+        root.addCreate(linearChart);
+
+        import std.range : iota;
+        import std.array : array;
+        import std.algorithm.iteration : map;
+        import std.math.trigonometry : sin;
+
+        double[] x = iota(1, 10, 0.01).array;
+        double[] y = x.map!sin.array;
+
+        linearChart.data(x, y);
     }
 
     private TreeItem!Sprite buildSpriteTree(Sprite root)

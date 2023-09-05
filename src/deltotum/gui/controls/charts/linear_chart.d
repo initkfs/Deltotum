@@ -5,6 +5,8 @@ import deltotum.math.vector2d : Vector2d;
 import deltotum.math.geom.insets : Insets;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.kit.graphics.colors.palettes.material_design_palette : MaterialDesignPalette;
+import deltotum.gui.containers.container : Container;
+import deltotum.gui.controls.texts.text: Text;
 
 import Math = deltotum.math;
 import std.math.operations : isClose;
@@ -12,7 +14,7 @@ import std.math.operations : isClose;
 /**
  * Authors: initkfs
  */
-class LinearChart : Control
+class LinearChart : Container
 {
     protected
     {
@@ -36,13 +38,21 @@ class LinearChart : Control
         this.height = height;
 
         isBorder = true;
-        padding = Insets(10);
+        padding = Insets(5);
+
+        import deltotum.kit.sprites.layouts.hlayout : HLayout;
+
+        layout = new HLayout(5);
     }
 
     override void initialize()
     {
         super.initialize;
-        _referencePoint = Vector2d(0, height);
+        _referencePoint = Vector2d(padding.left, height - padding.bottom);
+    }
+
+    override void create(){
+        super.create;
     }
 
     void data(double[] newX, double[] newY)
@@ -140,13 +150,14 @@ class LinearChart : Control
     override bool draw()
     {
         super.draw;
-        
+
         const b = bounds;
         import deltotum.math.shapes.rect2d : Rect2d;
 
         drawAxis;
 
-        const boundsWithPadding = paddingBounds;
+        auto boundsWithPadding = paddingBounds;
+
         foreach (i, valueX; xValues)
         {
             const valueY = yValues[i];
@@ -155,10 +166,10 @@ class LinearChart : Control
             const drawX = pos.x;
             const drawY = pos.y;
 
-            // if (!boundsWithPadding.contains(drawX, drawY))
-            // {
-            //     continue;
-            // }
+            if (!boundsWithPadding.contains(drawX, drawY))
+            {
+                continue;
+            }
 
             graphics.drawPoint(drawX, drawY);
         }
@@ -168,9 +179,9 @@ class LinearChart : Control
     protected void drawAxis()
     {
         const minXPos = _referencePoint.x;
-        const minYPos = height - _referencePoint.y;
-        
         const maxXPos = width - padding.right;
+
+        const minYPos = height - _referencePoint.y;
         const maxYPos = padding.top;
 
         graphics.drawLine(x + minXPos, y + minYPos, x + maxXPos, y + minYPos, RGBA.web(
