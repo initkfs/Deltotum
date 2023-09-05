@@ -241,7 +241,7 @@ class Controls : Control
         import deltotum.gui.controls.texts.text_view: TextView;
         import deltotum.gui.controls.texts.text_area: TextArea;
 
-        auto t1 = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+        auto t1 = new Text("Ростов с Ильиным поспешили найти уголок, где бы они, не нарушая скромности Марьи Генриховны, могли бы переменить мокрое платье. Они пошли было за перегородку, чтобы переодеться; но в маленьком чуланчике, наполняя его весь, с одной свечкой на пустом ящике, сидели три офицера, играя в карты, и ни за что не хотели уступить свое место. Марья Генриховна уступила на время свою юбку, чтобы употребить ее вместо занавески, и за этой занавеской Ростов и Ильин с помощью Лаврушки, принесшего вьюки, сняли мокрое и надели сухое платье.");
         t1.maxWidth = 400;
         t1.isBorder = true;
         root.addCreate(t1);

@@ -10,6 +10,7 @@ import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.gui.fonts.bitmap.bitmap_font : BitmapFont;
 import deltotum.kit.i18n.langs.alphabets.alphabet : Alphabet;
 import deltotum.math.shapes.rect2d : Rect2d;
+import deltotum.math.vector2d: Vector2d;
 
 import bindbc.sdl;
 
@@ -89,7 +90,7 @@ class BitmapFontGenerator : FontGenerator
                 }
 
                 auto glyph = Glyph(letter, Rect2d(glyphPosition.x, glyphPosition.y, glyphPosition.w, glyphPosition
-                        .h), alphabet, isEmpty, isNewline);
+                        .h), Vector2d.init, alphabet, isEmpty, isNewline);
 
                 //TODO config?
                 if (glyph.grapheme == '𑑛')

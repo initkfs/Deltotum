@@ -19,7 +19,13 @@ protected
     struct TextRow
     {
         Glyph[] glyphs;
-        Vector2d start;
+    }
+
+    struct CursorPos
+    {
+        Vector2d pos;
+        size_t rowIndex;
+        size_t glyphIndex;
     }
 }
 
@@ -38,6 +44,8 @@ class Text : Control
     Sprite delegate() focusEffectFactory;
 
     Rectangle cursor;
+
+    CursorPos cursorPos;
 
     protected
     {
@@ -85,8 +93,8 @@ class Text : Control
             const mouseX = e.x;
             const mouseY = e.y;
 
-            Vector2d cursorPos = coordsToRowPos(mouseX, mouseY);
-            if (cursorPos.x == 0 && cursorPos.y == 0)
+            cursorPos = coordsToRowPos(mouseX, mouseY);
+            if (cursorPos.pos.x == 0 && cursorPos.pos.y == 0)
             {
                 //TODO error
                 return;
@@ -99,9 +107,64 @@ class Text : Control
                 writefln("Cursor position for %s, %s: %s", mouseX, mouseY, cursorPos);
             }
 
-            cursor.x = cursorPos.x;
-            cursor.y = cursorPos.y;
+            cursor.x = cursorPos.pos.x;
+            cursor.y = cursorPos.pos.y;
             cursor.isVisible = true;
+        };
+
+        onKeyDown = (ref e) {
+            import deltotum.com.inputs.keyboards.key_name : KeyName;
+
+            if (!cursor.isVisible)
+            {
+                return;
+            }
+
+            switch (e.keyName) with (KeyName)
+            {
+            case LEFT:
+                if (cursorPos.glyphIndex == 0)
+                {
+                    //TODO cursor to left border
+                    return;
+                }
+                const glyph = rows[cursorPos.rowIndex].glyphs[cursorPos.glyphIndex];
+                cursorPos.glyphIndex--;
+                cursor.x = cursor.x - glyph.geometry.width;
+                break;
+            case RIGHT:
+                const row = rows[cursorPos.rowIndex];
+                if (cursorPos.glyphIndex >= row.glyphs.length - 1)
+                {
+                    return;
+                }
+                const glyph = row.glyphs[cursorPos.glyphIndex];
+                cursorPos.glyphIndex++;
+                cursor.x = cursor.x + glyph.geometry.width;
+                break;
+            case DOWN:
+                if (rows.length <= 1 || cursorPos.rowIndex >= rows.length - 1)
+                {
+                    return;
+                }
+                const glyph = rows[cursorPos.rowIndex].glyphs[cursorPos.glyphIndex];
+                cursorPos.rowIndex++;
+                cursor.y = cursor.y + glyph.geometry.height;
+                break;
+            case UP:
+                if (cursorPos.rowIndex == 0)
+                {
+                    return;
+                }
+                const glyph = rows[cursorPos.rowIndex].glyphs[cursorPos.glyphIndex];
+                cursorPos.rowIndex--;
+                cursor.y = cursor.y - glyph.geometry.height;
+                break;
+            case BACKSPACE:
+            break;
+            default:
+                break;
+            }
         };
 
         if (isFocusable)
@@ -212,9 +275,6 @@ class Text : Control
 
         TextRow row;
         bool isStartNewLine;
-
-        row.start = Vector2d(glyphPosX, glyphPosY);
-
         foreach (Glyph glyph; glyphs)
         {
             auto nextGlyphPosX = glyphPosX + glyph.geometry.width;
@@ -229,12 +289,9 @@ class Text : Control
                 row = TextRow();
                 glyphPosX = startRowTextX;
                 glyphPosY += rowHeight;
-
-                row.start = Vector2d(glyphPosX, glyphPosY);
-
                 isStartNewLine = true;
             }
-            else if (nextGlyphPosX >= endRowTextX)
+            else if (nextGlyphPosX > endRowTextX)
             {
                 long slicePos = -1;
                 foreach_reverse (j, oldGlyph; row.glyphs)
@@ -254,13 +311,14 @@ class Text : Control
                 glyphPosX = startRowTextX;
                 glyphPosY += rowHeight;
 
-                newRow.start = Vector2d(glyphPosX, glyphPosY);
-
                 if (slicePos != -1)
                 {
                     foreach (i; slicePos + 1 .. row.glyphs.length)
                     {
                         auto oldGlyph = row.glyphs[i];
+                        oldGlyph.pos.x = glyphPosX;
+                        oldGlyph.pos.y = glyphPosY;
+
                         newRow.glyphs ~= oldGlyph;
                         glyphPosX += oldGlyph.geometry.width;
                     }
@@ -276,11 +334,14 @@ class Text : Control
             if (isStartNewLine)
             {
                 isStartNewLine = false;
-                if (glyph.isEmpty)
-                {
-                    continue;
-                }
+                // if (glyph.isEmpty)
+                // {
+                //     continue;
+                // }
             }
+
+            glyph.pos.x = glyphPosX;
+            glyph.pos.y = glyphPosY;
 
             row.glyphs ~= glyph;
             glyphPosX += glyph.geometry.width;
@@ -302,11 +363,11 @@ class Text : Control
         return newRows;
     }
 
-    protected Vector2d coordsToRowPos(double x, double y)
+    protected CursorPos coordsToRowPos(double x, double y)
     {
         const thisBounds = bounds;
         //TODO row height
-        foreach (row; rows)
+        foreach (ri, row; rows)
         {
             if (row.glyphs.length == 0)
             {
@@ -316,7 +377,7 @@ class Text : Control
             //TODO row height
             Glyph* firstGlyph = &(row.glyphs[0]);
 
-            const rowMinY = thisBounds.y + row.start.y;
+            const rowMinY = thisBounds.y + firstGlyph.pos.y;
             const rowMaxY = rowMinY + firstGlyph.geometry.height;
 
             if (y < rowMinY || y > rowMaxY)
@@ -324,19 +385,21 @@ class Text : Control
                 continue;
             }
 
-            double rowOffsetX = thisBounds.x + row.start.x;
-            foreach (glyph; row.glyphs)
+            foreach (gi, glyph; row.glyphs)
             {
-                if (x > rowOffsetX && x < (rowOffsetX + glyph.geometry.width))
+                const glyphMinX = thisBounds.x + glyph.pos.x;
+                const glyphMaxX = glyphMinX + glyph.geometry.width;
+
+                if (x > glyphMinX && x < glyphMaxX)
                 {
-                    return Vector2d(rowOffsetX + glyph.geometry.width, rowMinY);
+                    const minMaxRange = glyphMaxX - glyphMinX;
+                    const posX = x < (minMaxRange / 2) ? glyphMinX : glyphMaxX;
+                    const pos = Vector2d(posX, rowMinY);
+                    return CursorPos(pos, ri, gi);
                 }
-
-                rowOffsetX += glyph.geometry.width;
             }
-
         }
-        return Vector2d(0, 0);
+        return CursorPos.init;
     }
 
     dstring glyphsToStr(Glyph[] glyphs)
@@ -365,31 +428,19 @@ class Text : Control
             return;
         }
 
-        Vector2d position = Vector2d(x, y);
-        position.x += padding.left;
-        position.y += padding.top;
+        const thisBounds = bounds;
 
         foreach (TextRow row; rows)
         {
             foreach (Glyph glyph; row.glyphs)
             {
-                if (glyph.isEmpty)
-                {
-                    position.x += glyph.geometry.width;
-                    continue;
-                }
-
                 Rect2d textureBounds = glyph.geometry;
-                Rect2d destBounds = Rect2d(position.x, position.y, glyph.geometry.width, glyph
+                Rect2d destBounds = Rect2d(thisBounds.x + glyph.pos.x, thisBounds.y + glyph.pos.y, glyph
+                        .geometry.width, glyph
                         .geometry.height);
                 asset.defaultBitmapFont.drawTexture(textureBounds, destBounds, angle, Flip
                         .none);
-
-                position.x += glyph.geometry.width;
             }
-
-            position.y += rowHeight;
-            position.x = x + padding.left;
         }
     }
 
