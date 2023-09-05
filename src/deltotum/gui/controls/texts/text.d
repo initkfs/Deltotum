@@ -161,10 +161,35 @@ class Text : Control
                 cursor.y = cursor.y - glyph.geometry.height;
                 break;
             case BACKSPACE:
-            break;
+                size_t rowOffset;
+                foreach (rowIndex; 0 .. cursorPos.rowIndex)
+                {
+                    rowOffset += rows[rowIndex].glyphs.length;
+                }
+                size_t textIndex = rowOffset + cursorPos.glyphIndex;
+                import std.algorithm.mutation : remove;
+
+                _text = _text[0 .. textIndex] ~ _text[textIndex + 1 .. $];
+                break;
             default:
                 break;
             }
+        };
+
+        onTextInput = (ref e) {
+            if (!cursor.isVisible)
+            {
+                return;
+            }
+            size_t rowOffset;
+            foreach (rowIndex; 0 .. cursorPos.rowIndex)
+            {
+                rowOffset += rows[rowIndex].glyphs.length;
+            }
+            size_t textIndex = rowOffset + cursorPos.glyphIndex;
+            import std.array : insertInPlace;
+
+            _text.insertInPlace(textIndex, e.firstLetter);
         };
 
         if (isFocusable)
