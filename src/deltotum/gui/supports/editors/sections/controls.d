@@ -82,6 +82,8 @@ class Controls : Control
 
         createCharts(chartsContainer);
 
+        createTexts(chartsContainer);
+
         // iconsContainer.isBackground = false;
 
         // import deltotum.kit.sprites.images.image : Image;
@@ -232,6 +234,18 @@ class Controls : Control
         double[] y = x.map!sin.array;
 
         linearChart.data(x, y);
+    }
+
+    private void createTexts(Container root){
+        import deltotum.gui.controls.texts.text: Text;
+        import deltotum.gui.controls.texts.text_view: TextView;
+        import deltotum.gui.controls.texts.text_area: TextArea;
+
+        auto t1 = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+        t1.maxWidth = 400;
+        t1.isBorder = true;
+        root.addCreate(t1);
+        t1.enableInsets;
     }
 
     private TreeItem!Sprite buildSpriteTree(Sprite root)

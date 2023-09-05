@@ -9,6 +9,8 @@ import deltotum.kit.sprites.flip : Flip;
 import deltotum.gui.fonts.glyphs.glyph : Glyph;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.kit.sprites.textures.texture : Texture;
+import deltotum.math.geom.insets : Insets;
+import deltotum.kit.graphics.shapes.rectangle : Rectangle;
 
 import std.stdio;
 
@@ -17,6 +19,7 @@ protected
     struct TextRow
     {
         Glyph[] glyphs;
+        Vector2d start;
     }
 }
 
@@ -26,7 +29,6 @@ protected
  */
 class Text : Control
 {
-    dstring _text;
     int spaceWidth = 5;
     int rowHeight = 0;
 
@@ -35,10 +37,14 @@ class Text : Control
     Sprite focusEffect;
     Sprite delegate() focusEffectFactory;
 
+    Rectangle cursor;
+
     protected
     {
         dstring oldText;
         TextRow[] rows;
+
+        dstring _text;
     }
 
     this(string text)
@@ -59,9 +65,7 @@ class Text : Control
     {
         super.initialize;
 
-        invalidateListeners ~= () {
-            updateRows;
-        };
+        invalidateListeners ~= () { updateRows; };
 
         onFocusIn = (ref e) {
             if (focusEffect !is null)
@@ -75,6 +79,29 @@ class Text : Control
             {
                 focusEffect.isVisible = false;
             }
+        };
+
+        onMouseDown = (ref e) {
+            const mouseX = e.x;
+            const mouseY = e.y;
+
+            Vector2d cursorPos = coordsToRowPos(mouseX, mouseY);
+            if (cursorPos.x == 0 && cursorPos.y == 0)
+            {
+                //TODO error
+                return;
+            }
+
+            debug
+            {
+                import std;
+
+                writefln("Cursor position for %s, %s: %s", mouseX, mouseY, cursorPos);
+            }
+
+            cursor.x = cursorPos.x;
+            cursor.y = cursorPos.y;
+            cursor.isVisible = true;
         };
 
         if (isFocusable)
@@ -100,7 +127,8 @@ class Text : Control
     {
         super.create;
 
-        import deltotum.math.geom.insets: Insets;
+        import deltotum.math.geom.insets : Insets;
+
         padding = Insets(0);
 
         updateRows;
@@ -112,6 +140,14 @@ class Text : Control
             focusEffect.isVisible = false;
             addCreate(focusEffect);
         }
+
+        import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
+
+        cursor = new Rectangle(2, 10, GraphicStyle(1, RGBA.white, true, RGBA.white));
+        addCreate(cursor);
+        cursor.isLayoutManaged = false;
+        cursor.isVisible = false;
+
     }
 
     //TODO buffer []
@@ -132,6 +168,7 @@ class Text : Control
         {
             Glyph newGlyph;
             bool isFound;
+            //TODO hash map
             foreach (glyph; asset.defaultBitmapFont.glyphs)
             {
                 if (glyph.grapheme == grapheme)
@@ -168,9 +205,16 @@ class Text : Control
         const double startRowTextX = padding.left;
         double endRowTextX = maxWidth - padding.right;
 
+        const double startRowTextY = padding.top;
+
         double glyphPosX = startRowTextX;
+        double glyphPosY = startRowTextY;
+
         TextRow row;
         bool isStartNewLine;
+
+        row.start = Vector2d(glyphPosX, glyphPosY);
+
         foreach (Glyph glyph; glyphs)
         {
             auto nextGlyphPosX = glyphPosX + glyph.geometry.width;
@@ -184,6 +228,10 @@ class Text : Control
                 newRows ~= row;
                 row = TextRow();
                 glyphPosX = startRowTextX;
+                glyphPosY += rowHeight;
+
+                row.start = Vector2d(glyphPosX, glyphPosY);
+
                 isStartNewLine = true;
             }
             else if (nextGlyphPosX >= endRowTextX)
@@ -204,6 +252,9 @@ class Text : Control
 
                 auto newRow = TextRow();
                 glyphPosX = startRowTextX;
+                glyphPosY += rowHeight;
+
+                newRow.start = Vector2d(glyphPosX, glyphPosY);
 
                 if (slicePos != -1)
                 {
@@ -249,6 +300,43 @@ class Text : Control
         }
 
         return newRows;
+    }
+
+    protected Vector2d coordsToRowPos(double x, double y)
+    {
+        const thisBounds = bounds;
+        //TODO row height
+        foreach (row; rows)
+        {
+            if (row.glyphs.length == 0)
+            {
+                continue;
+            }
+
+            //TODO row height
+            Glyph* firstGlyph = &(row.glyphs[0]);
+
+            const rowMinY = thisBounds.y + row.start.y;
+            const rowMaxY = rowMinY + firstGlyph.geometry.height;
+
+            if (y < rowMinY || y > rowMaxY)
+            {
+                continue;
+            }
+
+            double rowOffsetX = thisBounds.x + row.start.x;
+            foreach (glyph; row.glyphs)
+            {
+                if (x > rowOffsetX && x < (rowOffsetX + glyph.geometry.width))
+                {
+                    return Vector2d(rowOffsetX + glyph.geometry.width, rowMinY);
+                }
+
+                rowOffsetX += glyph.geometry.width;
+            }
+
+        }
+        return Vector2d(0, 0);
     }
 
     dstring glyphsToStr(Glyph[] glyphs)

@@ -8,6 +8,7 @@ import deltotum.gui.fonts.glyphs.glyph : Glyph;
  */
 class BitmapFont : Texture
 {
+    //TODO hash map
     Glyph[] glyphs;
 
     Glyph placeholder;

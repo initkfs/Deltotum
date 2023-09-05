@@ -51,7 +51,7 @@ class Images : Control
 
     T configureControl(T)(T sprite)
     {
-        if (is(T : Control))
+        static if (is(T : Control))
         {
             sprite.isBorder = true;
         }
