@@ -18,7 +18,7 @@ protected
 {
     struct TextRow
     {
-        Glyph[] glyphs;
+        Glyph*[] glyphs;
     }
 
     struct CursorPos
@@ -51,7 +51,9 @@ class Text : Control
     {
         TextRow[] rows;
 
-        dchar[] _text;
+        dstring tempText;
+
+        Glyph[] _text;
         bool isRebuildRows;
     }
 
@@ -59,13 +61,17 @@ class Text : Control
     {
         import std.conv : to;
 
-        this(text.to!(dchar[]));
-        isFocusable = true;
+        this(text.to!dstring);
     }
 
     this(dstring text = "text")
     {
-        this._text = text.dup;
+        this.tempText = text;
+        isFocusable = true;
+
+        import deltotum.kit.sprites.layouts.managed_layout : ManagedLayout;
+
+        this.layout = new ManagedLayout;
     }
 
     override void initialize()
@@ -139,15 +145,16 @@ class Text : Control
                     return;
                 }
 
+                cursorPos.glyphIndex--;
+
                 import std.algorithm.mutation : remove;
 
-                cursorPos.glyphIndex--;
                 size_t textIndex = cursorGlyphIndex;
-
-                const glyph = rows[cursorPos.rowIndex].glyphs[cursorPos.glyphIndex];
+                auto glyph = rows[cursorPos.rowIndex].glyphs[cursorPos.glyphIndex];
 
                 _text = _text.remove(textIndex);
                 cursorPos.pos.x -= glyph.geometry.width;
+
                 updateCursor;
                 setInvalid;
                 break;
@@ -164,11 +171,27 @@ class Text : Control
             size_t textIndex = cursorGlyphIndex();
             import std.array : insertInPlace;
 
-            //TODO append glyph
-            const glyph = rows[cursorPos.rowIndex].glyphs[cursorPos.glyphIndex];
+            //TODO one glyph
+            import std.conv : to;
 
-            _text.insertInPlace(textIndex, e.firstLetter);
-            cursorPos.pos.x += glyph.geometry.width;
+            auto glyphsArr = textToGlyphs(e.firstLetter.to!dstring);
+
+            double glyphOffset;
+            foreach (ref glyph; glyphsArr)
+            {
+                glyphOffset += glyph.geometry.width;
+            }
+
+            if (textIndex == 0)
+            {
+                _text ~= glyphsArr;
+            }
+            else
+            {
+                _text.insertInPlace(textIndex, glyphsArr);
+            }
+
+            cursorPos.pos.x += glyphOffset;
             updateCursor;
             setInvalid;
         };
@@ -206,6 +229,7 @@ class Text : Control
         {
             focusEffect = focusEffectFactory();
             focusEffect.isLayoutManaged = false;
+            focusEffect.isResizedByParent = true;
             focusEffect.isVisible = false;
             addCreate(focusEffect);
         }
@@ -214,7 +238,7 @@ class Text : Control
 
         const cursorColor = graphics.theme.colorAccent;
 
-        cursor = new Rectangle(2, 10, GraphicStyle(0, cursorColor, true, cursorColor));
+        cursor = new Rectangle(2, 20, GraphicStyle(1, cursorColor, true, cursorColor));
         addCreate(cursor);
         cursor.isLayoutManaged = false;
         cursor.isVisible = false;
@@ -224,6 +248,11 @@ class Text : Control
     override void update(double delta)
     {
         super.update(delta);
+        if (tempText !is null)
+        {
+            updateRows;
+            tempText = null;
+        }
 
         if (isRebuildRows)
         {
@@ -244,21 +273,27 @@ class Text : Control
 
     size_t cursorGlyphIndex()
     {
+        return cursorGlyphIndex(cursorPos.rowIndex, cursorPos.glyphIndex);
+    }
+
+    size_t cursorGlyphIndex(size_t rowIndex, size_t glyphIndex)
+    {
         size_t rowOffset;
-        if (cursorPos.rowIndex > 0)
+        if (rowIndex > 0)
         {
-            foreach (rowIndex; 0 .. cursorPos.rowIndex)
+            enum hyphenCorrection = 1;
+            foreach (ri; 0 .. rowIndex)
             {
-                rowOffset += rows[rowIndex].glyphs.length;
+                rowOffset += rows[ri].glyphs.length + hyphenCorrection;
             }
         }
 
-        size_t index = rowOffset + cursorPos.glyphIndex;
+        size_t index = rowOffset + glyphIndex;
         return index;
     }
 
     //TODO optimizations
-    protected Glyph[] textToGlyphs(dchar[] textString)
+    protected Glyph[] textToGlyphs(dstring textString)
     {
         if (textString.length == 0)
         {
@@ -294,11 +329,10 @@ class Text : Control
         return newGlyphs;
     }
 
-    protected TextRow[] textToRows(dchar[] text)
+    protected TextRow[] glyphsToRows(Glyph[] glyphs)
     {
         TextRow[] newRows;
 
-        auto glyphs = textToGlyphs(text);
         if (glyphs.length == 0)
         {
             return newRows;
@@ -315,7 +349,8 @@ class Text : Control
         double glyphPosY = startRowTextY;
 
         TextRow row;
-        foreach (Glyph glyph; glyphs)
+        size_t glyphCount;
+        foreach (ref glyph; glyphs)
         {
             auto nextGlyphPosX = glyphPosX + glyph.geometry.width;
             if (nextGlyphPosX <= endRowTextX && nextGlyphPosX > width)
@@ -372,8 +407,20 @@ class Text : Control
             glyph.pos.x = glyphPosX;
             glyph.pos.y = glyphPosY;
 
-            row.glyphs ~= glyph;
+            row.glyphs ~= &glyph;
+            glyphCount++;
             glyphPosX += glyph.geometry.width;
+        }
+
+        debug
+        {
+            if (glyphCount != glyphs.length)
+            {
+                import std.format : format;
+
+                throw new Exception(format("Glyph count %s, but text count is %s", glyphCount, glyphs
+                        .length));
+            }
         }
 
         if (row.glyphs.length > 0)
@@ -404,7 +451,7 @@ class Text : Control
             }
 
             //TODO row height
-            Glyph* firstGlyph = &(row.glyphs[0]);
+            Glyph* firstGlyph = row.glyphs[0];
 
             const rowMinY = thisBounds.y + firstGlyph.pos.y;
             const rowMaxY = rowMinY + firstGlyph.geometry.height;
@@ -543,12 +590,21 @@ class Text : Control
             isRebuildRows = true;
             return;
         }
-        this.rows = textToRows(_text);
+
+        if (tempText.length > 0)
+        {
+            _text = textToGlyphs(tempText);
+            tempText = null;
+        }
+
+        this.rows = glyphsToRows(_text);
     }
 
     void addRows(dstring text)
     {
-        this.rows ~= textToRows(text.dup);
+        auto glyphs = textToGlyphs(text);
+        _text ~= glyphs;
+        this.rows ~= glyphsToRows(glyphs);
     }
 
     protected void renderText(TextRow[] rows)
@@ -562,7 +618,7 @@ class Text : Control
 
         foreach (TextRow row; rows)
         {
-            foreach (Glyph glyph; row.glyphs)
+            foreach (Glyph* glyph; row.glyphs)
             {
                 Rect2d textureBounds = glyph.geometry;
                 Rect2d destBounds = Rect2d(thisBounds.x + glyph.pos.x, thisBounds.y + glyph.pos.y, glyph
@@ -581,41 +637,40 @@ class Text : Control
 
     void appendText(dstring text)
     {
-        if (rows.length == 0)
-        {
-            this.text = text;
-            return;
-        }
-
         addRows(text);
-        this._text ~= text.dup;
-        updateRows;
-        //setInvalid;
+        setInvalid;
     }
 
     void text(string t)
     {
         import std.conv : to;
 
-        _text = t.to!(dchar[]);
-        updateRows;
-        //setInvalid
+        this.text(t.to!dstring);
     }
 
     void text(dstring t)
     {
-        _text = t.dup;
-        updateRows;
-        //setInvalid
-    }
+        if (!isBuilt)
+        {
+            tempText = t;
+            isRebuildRows = true;
+            return;
+        }
 
-    const(dchar[]) textBuff() pure
-    {
-        return _text;
+        _text = textToGlyphs(t);
+        tempText = null;
+        setInvalid;
     }
 
     dstring text()
     {
-        return _text.idup;
+        import std.array : appender;
+
+        auto builder = appender!dstring;
+        foreach (ref glyph; _text)
+        {
+            builder ~= glyph.grapheme;
+        }
+        return builder.data;
     }
 }

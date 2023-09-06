@@ -1094,6 +1094,7 @@ class Sprite : PhysicalBody
                 immutable double dw = _width - oldWidth;
                 foreach (child; children)
                 {
+                    //TODO only isResizedByParent
                     if (layout is null || (!child.isLayoutManaged && child.isResizedByParent))
                     {
                         const newWidth = child.width + dw;

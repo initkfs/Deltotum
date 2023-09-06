@@ -5,6 +5,7 @@ import deltotum.gui.containers.hbox : HBox;
 import deltotum.gui.containers.stack_box : StackBox;
 import deltotum.gui.controls.choices.toggle_switch : ToggleSwitch;
 import deltotum.gui.controls.texts.text : Text;
+import deltotum.gui.controls.texts.textfield: TextField;
 import deltotum.kit.scenes.scene : Scene;
 import deltotum.gui.controls.buttons.button : Button;
 import deltotum.kit.sprites.sprite : Sprite;
@@ -42,11 +43,11 @@ class SceneView : VBox
 
     TextArea output;
 
-    Text shortInfo;
-    Text xInfo;
-    Text yInfo;
-    Text wInfo;
-    Text hInfo;
+    TextField shortInfo;
+    TextField xInfo;
+    TextField yInfo;
+    TextField wInfo;
+    TextField hInfo;
 
     private
     {
@@ -142,21 +143,29 @@ class SceneView : VBox
         controlInfoContainer.setContent(controlInfo);
         controlInfo.enableInsets;
 
-        shortInfo = new Text("");
+        shortInfo = new TextField("");
         controlInfo.addCreate(shortInfo);
 
+        enum textWidth = 50;
+
         HBox h1 = new HBox();
+        h1.layout.isAlignY = true;
         controlInfo.addCreate(h1);
         h1.enableInsets;
-        wInfo = new Text("0");
-        hInfo = new Text("0");
+        wInfo = new TextField("0");
+        wInfo.width = textWidth;
+        hInfo = new TextField("0");
+        hInfo.width = textWidth;
         h1.addCreate([new Text("w:"), wInfo, new Text("h:"), hInfo]);
 
         HBox h2 = new HBox();
+        h2.layout.isAlignY = true;
         controlInfo.addCreate(h2);
         h2.enableInsets;
-        xInfo = new Text("0");
-        yInfo = new Text("0");
+        xInfo = new TextField("0");
+        xInfo.width = textWidth;
+        yInfo = new TextField("0");
+        yInfo.width = textWidth;
         h2.addCreate([new Text("x:"), xInfo, new Text("y:"), yInfo]);
 
         objectFullInfo = new TextArea();
@@ -269,7 +278,7 @@ class SceneView : VBox
         import deltotum.gui.controls.texts.text : Text;
         import std.format : format;
 
-        auto sizeInfo = new Text(format("%s, p: %s", obj.bounds, obj.padding));
+        auto sizeInfo = new TextField(format("%s, p: %s", obj.bounds, obj.padding));
 
         container.addCreate(sizeInfo);
 
