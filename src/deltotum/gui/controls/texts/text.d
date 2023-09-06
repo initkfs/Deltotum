@@ -26,12 +26,12 @@ protected
         Vector2d pos;
         size_t rowIndex;
         size_t glyphIndex;
+        bool isValid;
     }
 }
 
 /**
  * Authors: initkfs
- * TODO optimizations oldText == text
  */
 class Text : Control
 {
@@ -49,24 +49,23 @@ class Text : Control
 
     protected
     {
-        dstring oldText;
         TextRow[] rows;
 
-        dstring _text;
+        dchar[] _text;
+        bool isRebuildRows;
     }
 
     this(string text)
     {
         import std.conv : to;
 
-        this(text.to!dstring);
+        this(text.to!(dchar[]));
         isFocusable = true;
     }
 
     this(dstring text = "text")
     {
-        //TODO validate
-        this._text = text;
+        this._text = text.dup;
     }
 
     override void initialize()
@@ -86,6 +85,7 @@ class Text : Control
             if (focusEffect !is null && focusEffect.isVisible)
             {
                 focusEffect.isVisible = false;
+                cursor.isVisible = false;
             }
         };
 
@@ -102,13 +102,12 @@ class Text : Control
 
             debug
             {
-                import std;
+                import std.stdio;
 
-                writefln("Cursor position for %s, %s: %s", mouseX, mouseY, cursorPos);
+                writefln("Cursor pos for %s,%s: %s", mouseX, mouseY, cursorPos);
             }
 
-            cursor.x = cursorPos.pos.x;
-            cursor.y = cursorPos.pos.y;
+            updateCursor;
             cursor.isVisible = true;
         };
 
@@ -123,53 +122,34 @@ class Text : Control
             switch (e.keyName) with (KeyName)
             {
             case LEFT:
-                if (cursorPos.glyphIndex == 0)
-                {
-                    //TODO cursor to left border
-                    return;
-                }
-                const glyph = rows[cursorPos.rowIndex].glyphs[cursorPos.glyphIndex];
-                cursorPos.glyphIndex--;
-                cursor.x = cursor.x - glyph.geometry.width;
+                moveCursorLeft;
                 break;
             case RIGHT:
-                const row = rows[cursorPos.rowIndex];
-                if (cursorPos.glyphIndex >= row.glyphs.length - 1)
-                {
-                    return;
-                }
-                const glyph = row.glyphs[cursorPos.glyphIndex];
-                cursorPos.glyphIndex++;
-                cursor.x = cursor.x + glyph.geometry.width;
+                moveCursorRight;
                 break;
             case DOWN:
-                if (rows.length <= 1 || cursorPos.rowIndex >= rows.length - 1)
-                {
-                    return;
-                }
-                const glyph = rows[cursorPos.rowIndex].glyphs[cursorPos.glyphIndex];
-                cursorPos.rowIndex++;
-                cursor.y = cursor.y + glyph.geometry.height;
+                moveCursorDown;
                 break;
             case UP:
-                if (cursorPos.rowIndex == 0)
+                moveCursorUp;
+                break;
+            case BACKSPACE:
+                if (!cursorPos.isValid || cursorPos.glyphIndex == 0)
                 {
                     return;
                 }
-                const glyph = rows[cursorPos.rowIndex].glyphs[cursorPos.glyphIndex];
-                cursorPos.rowIndex--;
-                cursor.y = cursor.y - glyph.geometry.height;
-                break;
-            case BACKSPACE:
-                size_t rowOffset;
-                foreach (rowIndex; 0 .. cursorPos.rowIndex)
-                {
-                    rowOffset += rows[rowIndex].glyphs.length;
-                }
-                size_t textIndex = rowOffset + cursorPos.glyphIndex;
+
                 import std.algorithm.mutation : remove;
 
-                _text = _text[0 .. textIndex] ~ _text[textIndex + 1 .. $];
+                cursorPos.glyphIndex--;
+                size_t textIndex = cursorGlyphIndex;
+
+                const glyph = rows[cursorPos.rowIndex].glyphs[cursorPos.glyphIndex];
+
+                _text = _text.remove(textIndex);
+                cursorPos.pos.x -= glyph.geometry.width;
+                updateCursor;
+                setInvalid;
                 break;
             default:
                 break;
@@ -181,15 +161,16 @@ class Text : Control
             {
                 return;
             }
-            size_t rowOffset;
-            foreach (rowIndex; 0 .. cursorPos.rowIndex)
-            {
-                rowOffset += rows[rowIndex].glyphs.length;
-            }
-            size_t textIndex = rowOffset + cursorPos.glyphIndex;
+            size_t textIndex = cursorGlyphIndex();
             import std.array : insertInPlace;
 
+            //TODO append glyph
+            const glyph = rows[cursorPos.rowIndex].glyphs[cursorPos.glyphIndex];
+
             _text.insertInPlace(textIndex, e.firstLetter);
+            cursorPos.pos.x += glyph.geometry.width;
+            updateCursor;
+            setInvalid;
         };
 
         if (isFocusable)
@@ -231,17 +212,53 @@ class Text : Control
 
         import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 
-        cursor = new Rectangle(2, 10, GraphicStyle(1, RGBA.white, true, RGBA.white));
+        const cursorColor = graphics.theme.colorAccent;
+
+        cursor = new Rectangle(2, 10, GraphicStyle(0, cursorColor, true, cursorColor));
         addCreate(cursor);
         cursor.isLayoutManaged = false;
         cursor.isVisible = false;
 
     }
 
-    //TODO buffer []
+    override void update(double delta)
+    {
+        super.update(delta);
+
+        if (isRebuildRows)
+        {
+            updateRows;
+            isRebuildRows = false;
+        }
+    }
+
+    bool updateCursor()
+    {
+        if (!cursorPos.isValid)
+        {
+            return false;
+        }
+        cursor.xy(cursorPos.pos.x, cursorPos.pos.y);
+        return true;
+    }
+
+    size_t cursorGlyphIndex()
+    {
+        size_t rowOffset;
+        if (cursorPos.rowIndex > 0)
+        {
+            foreach (rowIndex; 0 .. cursorPos.rowIndex)
+            {
+                rowOffset += rows[rowIndex].glyphs.length;
+            }
+        }
+
+        size_t index = rowOffset + cursorPos.glyphIndex;
+        return index;
+    }
+
     //TODO optimizations
-    // 35142       12631       12063           0     deltotum.gui.fonts.glyphs.glyph.Glyph[] deltotum.gui.controls.texts.text.Text.textToGlyphs(immutable(dchar)[])
-    protected Glyph[] textToGlyphs(dstring textString)
+    protected Glyph[] textToGlyphs(dchar[] textString)
     {
         if (textString.length == 0)
         {
@@ -251,8 +268,7 @@ class Text : Control
         Glyph[] newGlyphs;
         newGlyphs.reserve(textString.length);
 
-        //TODO on^2?
-        foreach (grapheme; textString)
+        foreach (ref grapheme; textString)
         {
             Glyph newGlyph;
             bool isFound;
@@ -278,7 +294,7 @@ class Text : Control
         return newGlyphs;
     }
 
-    protected TextRow[] textToRows(dstring text)
+    protected TextRow[] textToRows(dchar[] text)
     {
         TextRow[] newRows;
 
@@ -291,7 +307,7 @@ class Text : Control
         rowHeight = cast(int) glyphs[0].geometry.height;
 
         const double startRowTextX = padding.left;
-        double endRowTextX = maxWidth - padding.right;
+        const double endRowTextX = maxWidth - padding.right;
 
         const double startRowTextY = padding.top;
 
@@ -299,7 +315,6 @@ class Text : Control
         double glyphPosY = startRowTextY;
 
         TextRow row;
-        bool isStartNewLine;
         foreach (Glyph glyph; glyphs)
         {
             auto nextGlyphPosX = glyphPosX + glyph.geometry.width;
@@ -314,7 +329,6 @@ class Text : Control
                 row = TextRow();
                 glyphPosX = startRowTextX;
                 glyphPosY += rowHeight;
-                isStartNewLine = true;
             }
             else if (nextGlyphPosX > endRowTextX)
             {
@@ -353,16 +367,6 @@ class Text : Control
 
                 newRows ~= row;
                 row = newRow;
-                isStartNewLine = true;
-            }
-
-            if (isStartNewLine)
-            {
-                isStartNewLine = false;
-                // if (glyph.isEmpty)
-                // {
-                //     continue;
-                // }
             }
 
             glyph.pos.x = glyphPosX;
@@ -418,13 +422,109 @@ class Text : Control
                 if (x > glyphMinX && x < glyphMaxX)
                 {
                     const minMaxRange = glyphMaxX - glyphMinX;
-                    const posX = x < (minMaxRange / 2) ? glyphMinX : glyphMaxX;
+                    double posX = glyphMinX;
+                    size_t glyphIndex = gi;
+                    if (x > (minMaxRange / 2) && glyphIndex < row.glyphs.length - 1)
+                    {
+                        glyphIndex++;
+                        posX = thisBounds.x + row.glyphs[glyphIndex].pos.x;
+                    }
                     const pos = Vector2d(posX, rowMinY);
-                    return CursorPos(pos, ri, gi);
+                    return CursorPos(pos, ri, glyphIndex, true);
                 }
             }
         }
         return CursorPos.init;
+    }
+
+    bool moveCursorLeft()
+    {
+        if (!cursorPos.isValid || cursorPos.glyphIndex == 0)
+        {
+            return false;
+        }
+        auto row = rows[cursorPos.rowIndex];
+        if (row.glyphs.length == 0)
+        {
+            return false;
+        }
+
+        double cursorOffset = 0;
+        if (cursorPos.glyphIndex == row.glyphs.length)
+        {
+            cursorPos.glyphIndex--;
+            const glyph = row.glyphs[cursorPos.glyphIndex];
+            cursorOffset = glyph.geometry.width;
+        }
+        else
+        {
+            const glyph = row.glyphs[cursorPos.glyphIndex];
+            cursorPos.glyphIndex--;
+            cursorOffset = glyph.geometry.width;
+        }
+
+        cursor.x = cursor.x - cursorOffset;
+
+        return true;
+    }
+
+    bool moveCursorRight()
+    {
+        if (!cursorPos.isValid)
+        {
+            return false;
+        }
+        const row = rows[cursorPos.rowIndex];
+        if (row.glyphs.length == 0)
+        {
+            return false;
+        }
+
+        if (cursorPos.glyphIndex >= row.glyphs.length)
+        {
+            return false;
+        }
+
+        const glyph = row.glyphs[cursorPos.glyphIndex];
+        cursorPos.glyphIndex++;
+        cursor.x = cursor.x + glyph.geometry.width;
+        return true;
+    }
+
+    bool moveCursorUp()
+    {
+        if (cursorPos.rowIndex == 0)
+        {
+            return false;
+        }
+
+        const row = rows[cursorPos.rowIndex];
+        if (row.glyphs.length == 0)
+        {
+            return false;
+        }
+
+        //TODO strings may not match in number of characters
+
+        const glyph = rows[cursorPos.rowIndex].glyphs[cursorPos.glyphIndex];
+        cursorPos.rowIndex--;
+        cursor.y = cursor.y - glyph.geometry.height;
+        return true;
+    }
+
+    bool moveCursorDown()
+    {
+        if (rows.length <= 1 || cursorPos.rowIndex >= rows.length - 1)
+        {
+            return false;
+        }
+
+        //TODO strings may not match in number of characters
+
+        const glyph = rows[cursorPos.rowIndex].glyphs[cursorPos.glyphIndex];
+        cursorPos.rowIndex++;
+        cursor.y = cursor.y + glyph.geometry.height;
+        return true;
     }
 
     dstring glyphsToStr(Glyph[] glyphs)
@@ -438,12 +538,17 @@ class Text : Control
 
     void updateRows()
     {
+        if (!isBuilt)
+        {
+            isRebuildRows = true;
+            return;
+        }
         this.rows = textToRows(_text);
     }
 
     void addRows(dstring text)
     {
-        this.rows ~= textToRows(text);
+        this.rows ~= textToRows(text.dup);
     }
 
     protected void renderText(TextRow[] rows)
@@ -474,49 +579,43 @@ class Text : Control
         renderText(rows);
     }
 
-    override void update(double delta)
-    {
-        super.update(delta);
-        if (_text.length == 0)
-        {
-            return;
-        }
-
-        if (oldText != _text)
-        {
-            updateRows;
-            oldText = _text;
-        }
-    }
-
     void appendText(dstring text)
     {
         if (rows.length == 0)
         {
-            this._text = text;
+            this.text = text;
+            return;
         }
-        else
-        {
-            addRows(text);
-            this._text ~= text;
-            this.oldText = text;
-        }
+
+        addRows(text);
+        this._text ~= text.dup;
+        updateRows;
+        //setInvalid;
     }
 
     void text(string t)
     {
         import std.conv : to;
 
-        _text = t.to!dstring;
+        _text = t.to!(dchar[]);
+        updateRows;
+        //setInvalid
     }
 
     void text(dstring t)
     {
-        _text = t;
+        _text = t.dup;
+        updateRows;
+        //setInvalid
     }
 
-    ref dstring text()
+    const(dchar[]) textBuff() pure
     {
         return _text;
+    }
+
+    dstring text()
+    {
+        return _text.idup;
     }
 }

@@ -86,7 +86,7 @@ class TextArea : HBox
             {
                 if (glyph.grapheme == key.firstLetter)
                 {
-                    textView.text ~= glyph.grapheme;
+                    textView.text = textView.text ~ glyph.grapheme;
                 }
             }
         };
@@ -110,7 +110,7 @@ class TextArea : HBox
                     return;
                 }
 
-                textView.text ~= '\n';
+                textView.text = textView.text ~ '\n';
             }
 
             if (key.keyMod.isCtrl && key.keyName == KeyName.c)
