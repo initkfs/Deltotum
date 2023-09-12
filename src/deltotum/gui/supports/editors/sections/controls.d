@@ -240,7 +240,7 @@ class Controls : Control
         import deltotum.gui.controls.texts.text: Text;
         import deltotum.gui.controls.texts.text_view: TextView;
         import deltotum.gui.controls.texts.text_area: TextArea;
-
+        
         auto t1 = new Text("Коммодор никак не мог отделаться от ощущения чудовищных перегрузок и невыносимой яркости освещения. Но он по-прежнему сидел в своем отсеке, хотя рука его еще лежала на клавише «Уничтожение». Экипаж, как и прежде, стоял строем, на лицах людей застыл ужас. Коммодор бросил взгляд на экран: чужого корабля не было видно, их окружал непроницаемый мрак. «Может, мне привиделся этот кошмар?» — подумал Коммодор. Он с трудом выпрямился за пультом.");
         t1.isEditable = true;
         t1.maxWidth = 350;

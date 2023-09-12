@@ -188,33 +188,6 @@ abstract class GraphicApplication : CliApplication
 
             auto consolePlugin = new LuaScriptTextPlugin(logger, config, context, "console");
             extension.addPlugin(consolePlugin);
-
-            import deltotum.sys.julia.libs;
-
-            auto juliaLib = new JuliaLib;
-
-            //TODO unload
-            juliaLib.onAfterLoad = () {
-                _graphicServices.cap.isJuliaExtension = true;
-                uservices.logger.trace("Load Julia library.");
-                import deltotum.kit.extensions.plugins.julia.julia_script_text_plugin: JuliaScriptTextPlugin;
-                auto juliaPlugin = new JuliaScriptTextPlugin(logger, config, context, "julia-console");
-                juliaPlugin.workDirPath = juliaLib.workDirPath;
-                extension.addPlugin(juliaPlugin);
-            };
-
-            juliaLib.onNoLibrary = () => uservices.logger.error(
-                "Julia library loading error.");
-            juliaLib.onBadLibrary = () => uservices.logger.error("Julia bad library.");
-            juliaLib.onErrorWithMessage = (err, msg) {
-                import std.string : fromStringz;
-
-                uservices.logger.errorf("Julia loading error. %s: %s\n", err.fromStringz.idup, msg
-                        .fromStringz.idup);
-                juliaLib.unload;
-            };
-
-            juliaLib.load;
         }
 
         extension.initialize;
