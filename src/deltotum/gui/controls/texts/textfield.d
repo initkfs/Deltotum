@@ -1,6 +1,6 @@
 module deltotum.gui.controls.texts.textfield;
 
-import deltotum.gui.controls.texts.text : Text;
+import deltotum.gui.controls.texts.text : Text, CursorState, CursorPos;
 
 /**
  * Authors: initkfs

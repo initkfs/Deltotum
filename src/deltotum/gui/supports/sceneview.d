@@ -5,7 +5,7 @@ import deltotum.gui.containers.hbox : HBox;
 import deltotum.gui.containers.stack_box : StackBox;
 import deltotum.gui.controls.choices.toggle_switch : ToggleSwitch;
 import deltotum.gui.controls.texts.text : Text;
-import deltotum.gui.controls.texts.textfield: TextField;
+import deltotum.gui.controls.texts.textfield : TextField;
 import deltotum.kit.scenes.scene : Scene;
 import deltotum.gui.controls.buttons.button : Button;
 import deltotum.kit.sprites.sprite : Sprite;
@@ -118,6 +118,7 @@ class SceneView : VBox
 
         controlStructure.onSelectedOldNew = (oldSprite, newSprite) {
             import std;
+
             if (newSprite is objectOnDebug)
             {
                 return;
@@ -153,8 +154,25 @@ class SceneView : VBox
         controlInfo.addCreate(h1);
         h1.enableInsets;
         wInfo = new TextField("0");
+        wInfo.onEnter = (ref e) {
+            if (objectOnDebug)
+            {
+                import std.conv : to;
+
+                objectOnDebug.width = wInfo.text.to!double;
+            }
+        };
         wInfo.width = textWidth;
+
         hInfo = new TextField("0");
+        hInfo.onEnter = (ref e) {
+            if (objectOnDebug)
+            {
+                import std.conv : to;
+
+                objectOnDebug.height = hInfo.text.to!double;
+            }
+        };
         hInfo.width = textWidth;
         h1.addCreate([new Text("w:"), wInfo, new Text("h:"), hInfo]);
 
@@ -163,8 +181,24 @@ class SceneView : VBox
         controlInfo.addCreate(h2);
         h2.enableInsets;
         xInfo = new TextField("0");
+        xInfo.onEnter = (ref e) {
+            if (objectOnDebug)
+            {
+                import std.conv : to;
+
+                objectOnDebug.x = xInfo.text.to!double;
+            }
+        };
         xInfo.width = textWidth;
         yInfo = new TextField("0");
+        yInfo.onEnter = (ref e) {
+            if (objectOnDebug)
+            {
+                import std.conv : to;
+
+                objectOnDebug.y = yInfo.text.to!double;
+            }
+        };
         yInfo.width = textWidth;
         h2.addCreate([new Text("x:"), xInfo, new Text("y:"), yInfo]);
 
@@ -309,8 +343,8 @@ class SceneView : VBox
         }
 
         import Math = deltotum.math;
-        import std.conv: to;
-        import std.format: format;
+        import std.conv : to;
+        import std.format : format;
 
         shortInfo.text = format("%s(%s)", obj.classNameShort, obj.id.length > 0 ? obj.id : "id");
 

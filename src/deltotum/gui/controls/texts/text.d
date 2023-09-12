@@ -11,24 +11,32 @@ import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.kit.sprites.textures.texture : Texture;
 import deltotum.math.geom.insets : Insets;
 import deltotum.kit.graphics.shapes.rectangle : Rectangle;
+import deltotum.kit.inputs.keyboards.events.key_event : KeyEvent;
 
 import std.stdio;
 
-protected
+// protected
+// {
+struct TextRow
 {
-    struct TextRow
-    {
-        Glyph*[] glyphs;
-    }
-
-    struct CursorPos
-    {
-        Vector2d pos;
-        size_t rowIndex;
-        size_t glyphIndex;
-        bool isValid;
-    }
+    Glyph*[] glyphs;
 }
+
+struct CursorPos
+{
+    CursorState state;
+    Vector2d pos;
+    size_t rowIndex;
+    size_t glyphIndex;
+    bool isValid;
+}
+
+enum CursorState
+{
+    forPrevGlyph,
+    forNextGlyph
+}
+//}
 
 /**
  * Authors: initkfs
@@ -42,6 +50,8 @@ class Text : Control
 
     Sprite focusEffect;
     Sprite delegate() focusEffectFactory;
+
+    void delegate(ref KeyEvent) onEnter;
 
     Rectangle cursor;
 
@@ -100,9 +110,32 @@ class Text : Control
             const mouseY = e.y;
 
             cursorPos = coordsToRowPos(mouseX, mouseY);
-            if (cursorPos.pos.x == 0 && cursorPos.pos.y == 0)
+            if (!cursorPos.isValid)
             {
-                //TODO error
+                Vector2d pos;
+                CursorState state;
+                size_t glyphIndex;
+                if (rows.length == 0)
+                {
+                    pos = Vector2d(x + padding.left, y + padding.top);
+                    state = CursorState.forNextGlyph;
+                }
+                else
+                {
+                    //TODO empty rows
+                    auto lastRow = rows[$ - 1];
+                    glyphIndex = lastRow.glyphs.length - 1;
+                    auto lastRowGlyph = lastRow.glyphs[$ - 1];
+                    pos = Vector2d(x + lastRowGlyph.pos.x + lastRowGlyph.geometry.width, y + lastRowGlyph
+                            .pos.y);
+                    state = CursorState.forPrevGlyph;
+                    cursorPos = CursorPos(state, pos, 0, glyphIndex, true);
+                }
+
+                updateCursor;
+                cursor.isVisible = true;
+
+                logger.tracef("Mouse position is invalid, new cursor pos: %s", cursorPos);
                 return;
             }
 
@@ -125,6 +158,12 @@ class Text : Control
                 return;
             }
 
+            if (e.keyName == KeyName.RETURN && onEnter)
+            {
+                onEnter(e);
+                return;
+            }
+
             switch (e.keyName) with (KeyName)
             {
             case LEFT:
@@ -140,20 +179,47 @@ class Text : Control
                 moveCursorUp;
                 break;
             case BACKSPACE:
-                if (!cursorPos.isValid || cursorPos.glyphIndex == 0)
+
+                if (!cursorPos.isValid)
                 {
                     return;
                 }
 
-                cursorPos.glyphIndex--;
+                logger.tracef("Backspace pressed for cursor: %s", cursorPos);
+
+                if (cursorPos.glyphIndex == 0)
+                {
+                    if (cursorPos.state == CursorState.forNextGlyph)
+                    {
+                        return;
+                    }
+                }
+
+                auto row = rows[cursorPos.rowIndex];
+
+                if (row.glyphs.length == 0)
+                {
+                    return;
+                }
+
+                if (cursorPos.state == CursorState.forNextGlyph)
+                {
+                    cursorPos.glyphIndex--;
+                }
+                else if (cursorPos.state == CursorState.forPrevGlyph)
+                {
+                    cursorPos.state = CursorState.forNextGlyph;
+                }
 
                 import std.algorithm.mutation : remove;
 
                 size_t textIndex = cursorGlyphIndex;
-                auto glyph = rows[cursorPos.rowIndex].glyphs[cursorPos.glyphIndex];
+                auto glyph = row.glyphs[cursorPos.glyphIndex];
 
                 _text = _text.remove(textIndex);
                 cursorPos.pos.x -= glyph.geometry.width;
+
+                logger.tracef("Remove index %s, new cursor pos: %s", textIndex, cursorPos);
 
                 updateCursor;
                 setInvalid;
@@ -168,6 +234,7 @@ class Text : Control
             {
                 return;
             }
+
             size_t textIndex = cursorGlyphIndex();
             import std.array : insertInPlace;
 
@@ -182,16 +249,11 @@ class Text : Control
                 glyphOffset += glyph.geometry.width;
             }
 
-            if (textIndex == 0)
-            {
-                _text ~= glyphsArr;
-            }
-            else
-            {
-                _text.insertInPlace(textIndex, glyphsArr);
-            }
+            _text.insertInPlace(textIndex, glyphsArr);
+            logger.tracef("Insert text %s with index %s", glyphsArr, textIndex);
 
             cursorPos.pos.x += glyphOffset;
+            cursorPos.glyphIndex++;
             updateCursor;
             setInvalid;
         };
@@ -468,16 +530,26 @@ class Text : Control
 
                 if (x > glyphMinX && x < glyphMaxX)
                 {
-                    const minMaxRange = glyphMaxX - glyphMinX;
+                    CursorState state = CursorState.forNextGlyph;
+                    const minMaxRangeMiddle = glyphMinX + (glyph.geometry.width / 2);
                     double posX = glyphMinX;
                     size_t glyphIndex = gi;
-                    if (x > (minMaxRange / 2) && glyphIndex < row.glyphs.length - 1)
+
+                    if (x > minMaxRangeMiddle)
                     {
-                        glyphIndex++;
-                        posX = thisBounds.x + row.glyphs[glyphIndex].pos.x;
+                        if (glyphIndex < row.glyphs.length - 1)
+                        {
+                            glyphIndex++;
+                        }
+                        else
+                        {
+                            posX += glyph.geometry.width;
+                            state = CursorState.forPrevGlyph;
+                        }
+                        posX = glyphMaxX;
                     }
                     const pos = Vector2d(posX, rowMinY);
-                    return CursorPos(pos, ri, glyphIndex, true);
+                    return CursorPos(state, pos, ri, glyphIndex, true);
                 }
             }
         }
@@ -486,15 +558,32 @@ class Text : Control
 
     bool moveCursorLeft()
     {
-        if (!cursorPos.isValid || cursorPos.glyphIndex == 0)
+        if (!cursorPos.isValid)
         {
             return false;
         }
+
+        if (cursorPos.glyphIndex == 0)
+        {
+            if (cursorPos.rowIndex == 0)
+            {
+                return false;
+            }
+            else
+            {
+                cursorPos.rowIndex--;
+                //TODO empty rows
+                auto row = rows[cursorPos.rowIndex];
+                auto lastGlyph = row.glyphs[$ - 1];
+                cursorPos.pos.x = lastGlyph.pos.x + lastGlyph.geometry.width;
+                updateCursor;
+                cursorPos.glyphIndex = row.glyphs.length - 1;
+                cursorPos.state = CursorState.forPrevGlyph;
+                return true;
+            }
+        }
+
         auto row = rows[cursorPos.rowIndex];
-        if (row.glyphs.length == 0)
-        {
-            return false;
-        }
 
         double cursorOffset = 0;
         if (cursorPos.glyphIndex == row.glyphs.length)
