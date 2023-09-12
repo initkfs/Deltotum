@@ -7,11 +7,6 @@ import deltotum.gui.controls.control : Control;
  */
 abstract class Separator : Control
 {
-    this() pure @safe
-    {
-
-    }
-
     override void initialize()
     {        
         backgroundFactory = (width, height) {

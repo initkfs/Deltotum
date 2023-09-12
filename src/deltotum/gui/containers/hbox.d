@@ -44,6 +44,7 @@ class HBox : Container
 
     override void enableInsets()
     {
+        //TODO lazy flag
         super.enableInsets;
         enableSpacing;
     }

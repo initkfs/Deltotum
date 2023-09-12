@@ -125,7 +125,7 @@ class ManagedLayout : Layout
             layoutResize(root);
         }
 
-        if (isResizeChildren)
+        if (isResizeChildren || root.isResizeChildren)
         {
             layoutResizeChildren(root);
         }
@@ -199,6 +199,11 @@ class ManagedLayout : Layout
             if (child.isHGrow)
             {
                 import Math = deltotum.math;
+
+                if(child.id == "tab_pane_header_separator"){
+                    import std;
+                    auto a = 4;
+                }
 
                 const freeW = freeWidth(root, child);
                 const dtWidth = Math.trunc(freeW / hgrowChildren);

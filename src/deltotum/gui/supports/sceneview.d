@@ -14,6 +14,10 @@ import deltotum.gui.controls.texts.text_area : TextArea;
 import deltotum.gui.controls.data.tree_table_view : TreeItem, TreeTableView;
 import deltotum.math.geom.insets : Insets;
 import deltotum.gui.containers.scroll_box : ScrollBox;
+import deltotum.gui.controls.tabs.tab : Tab;
+import deltotum.gui.controls.tabs.tabpane : TabPane;
+
+import std.conv : to;
 
 private
 {
@@ -48,6 +52,11 @@ class SceneView : VBox
     TextField yInfo;
     TextField wInfo;
     TextField hInfo;
+
+    TextField paddingTop;
+    TextField paddingRight;
+    TextField paddingBottom;
+    TextField paddingLeft;
 
     private
     {
@@ -116,6 +125,23 @@ class SceneView : VBox
         controlStructure.height = 200;
         addCreate(controlStructure);
 
+        auto controlSettings = new TabPane;
+        addCreate(controlSettings);
+
+        auto controlTab = new Tab("Sprite");
+        controlTab.content = createControlTab;
+        controlSettings.addCreate(controlTab);
+
+        auto layoutTab = new Tab("Layout");
+        layoutTab.content = createLayoutTab;
+        controlSettings.addCreate(layoutTab);
+
+        auto dumpTab = new Tab("Dump");
+        dumpTab.content = createDumpTab;
+        controlSettings.addCreate(dumpTab);
+
+        controlSettings.changeTab(controlTab);
+
         controlStructure.onSelectedOldNew = (oldSprite, newSprite) {
             import std;
 
@@ -133,15 +159,39 @@ class SceneView : VBox
             setDebugInfo(objectOnDebug);
         };
 
-        ScrollBox controlInfoContainer = new ScrollBox;
-        controlInfoContainer.width = width - padding.width;
-        //TODO children height from layout
-        controlInfoContainer.height = height - controlStructure.height - tb.height - spacing * 2 - padding
-            .bottom;
-        addCreate(controlInfoContainer);
+        x = scene.window.width - width;
+
+        debugScene;
+    }
+
+    Container createLayoutTab()
+    {
+        auto box = new HBox;
+        build(box);
+        box.create;
+        return box;
+    }
+
+    Container createDumpTab()
+    {
+        objectFullInfo = new TextArea();
+        objectFullInfo.width = width - padding.width;
+        objectFullInfo.height = 400;
+        build(objectFullInfo);
+        return objectFullInfo;
+    }
+
+    Container createControlTab()
+    {
+        VBox controlInfoContainer = new VBox;
+        controlInfoContainer.isHGrow = true;
+        controlInfoContainer.isVGrow = true;
+        build(controlInfoContainer);
+        controlInfoContainer.create;
 
         VBox controlInfo = new VBox;
-        controlInfoContainer.setContent(controlInfo);
+        controlInfo.isHGrow = true;
+        controlInfoContainer.addCreate(controlInfo);
         controlInfo.enableInsets;
 
         shortInfo = new TextField("");
@@ -202,19 +252,70 @@ class SceneView : VBox
         yInfo.width = textWidth;
         h2.addCreate([new Text("x:"), xInfo, new Text("y:"), yInfo]);
 
-        objectFullInfo = new TextArea();
-        objectFullInfo.width = width - padding.width;
-        objectFullInfo.height = 400;
-        controlInfo.addCreate(objectFullInfo);
+        auto paddingContainer = new HBox;
+        paddingContainer.layout.isAlignY = true;
+        controlInfo.addCreate(paddingContainer);
+        paddingContainer.enableInsets;
+
+        paddingContainer.addCreate(new Text("p:"));
+
+        paddingTop = new TextField("0");
+        paddingContainer.addCreate(paddingTop);
+        paddingTop.onEnter = (ref e) {
+            if (objectOnDebug)
+            {
+                objectOnDebug.padding.top = paddingTop.textTo!double;
+            }
+        };
+        paddingRight = new TextField("0");
+        paddingContainer.addCreate(paddingRight);
+        paddingRight.onEnter = (ref e) {
+            if (objectOnDebug)
+            {
+                objectOnDebug.padding.right = paddingRight.textTo!double;
+            }
+        };
+        paddingBottom = new TextField("0");
+        paddingContainer.addCreate(paddingBottom);
+        paddingBottom.onEnter = (ref e) {
+            if (objectOnDebug)
+            {
+                objectOnDebug.padding.bottom = paddingBottom.textTo!double;
+            }
+        };
+        paddingLeft = new TextField("0");
+        paddingContainer.addCreate(paddingLeft);
+        paddingLeft.onEnter = (ref e) {
+            if (objectOnDebug)
+            {
+                objectOnDebug.padding.left = paddingLeft.textTo!double;
+            }
+        };
+
+        foreach (ch; paddingContainer.children)
+        {
+            if (auto tf = cast(TextField) ch)
+            {
+                tf.width = 50;
+            }
+        }
+
+        auto invalidBtn = new Button("Invalidation");
+        invalidBtn.onAction = (ref e) {
+            if (objectOnDebug)
+            {
+                objectOnDebug.setInvalid;
+            }
+        };
+        controlInfo.addCreate(invalidBtn);
 
         output = new TextArea();
         output.width = width - padding.width;
         output.height = 150;
+        output.isVisible = false;
         controlInfo.addCreate(output);
 
-        x = scene.window.width - width;
-
-        debugScene;
+        return controlInfoContainer;
     }
 
     void debugScene()
@@ -354,7 +455,15 @@ class SceneView : VBox
         wInfo.text = obj.width.to!string;
         hInfo.text = obj.height.to!string;
 
-        objectFullInfo.textView.text = obj.toString;
+        paddingTop.text = obj.padding.top.to!string;
+        paddingRight.text = obj.padding.right.to!string;
+        paddingBottom.text = obj.padding.bottom.to!string;
+        paddingLeft.text = obj.padding.left.to!string;
+
+        if (objectFullInfo && objectFullInfo.isCreated)
+        {
+            objectFullInfo.textView.text = obj.toString;
+        }
     }
 
     private void fillStructure()

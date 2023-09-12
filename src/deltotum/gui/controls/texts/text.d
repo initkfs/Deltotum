@@ -13,6 +13,8 @@ import deltotum.math.geom.insets : Insets;
 import deltotum.kit.graphics.shapes.rectangle : Rectangle;
 import deltotum.kit.inputs.keyboards.events.key_event : KeyEvent;
 
+import std.conv : to;
+
 import std.stdio;
 
 // protected
@@ -57,6 +59,8 @@ class Text : Control
 
     CursorPos cursorPos;
 
+    bool isEditable;
+
     protected
     {
         TextRow[] rows;
@@ -90,173 +94,181 @@ class Text : Control
 
         invalidateListeners ~= () { updateRows; };
 
-        onFocusIn = (ref e) {
-            if (focusEffect !is null)
-            {
-                focusEffect.isVisible = true;
-            }
-        };
-
-        onFocusOut = (ref e) {
-            if (focusEffect !is null && focusEffect.isVisible)
-            {
-                focusEffect.isVisible = false;
-                cursor.isVisible = false;
-            }
-        };
-
-        onMouseDown = (ref e) {
-            const mouseX = e.x;
-            const mouseY = e.y;
-
-            cursorPos = coordsToRowPos(mouseX, mouseY);
-            if (!cursorPos.isValid)
-            {
-                Vector2d pos;
-                CursorState state;
-                size_t glyphIndex;
-                if (rows.length == 0)
+        if (isFocusable)
+        {
+            onFocusIn = (ref e) {
+                if (focusEffect !is null)
                 {
-                    pos = Vector2d(x + padding.left, y + padding.top);
-                    state = CursorState.forNextGlyph;
+                    focusEffect.isVisible = true;
                 }
-                else
+            };
+
+            onFocusOut = (ref e) {
+                if (focusEffect !is null && focusEffect.isVisible)
                 {
-                    //TODO empty rows
-                    auto lastRow = rows[$ - 1];
-                    glyphIndex = lastRow.glyphs.length - 1;
-                    auto lastRowGlyph = lastRow.glyphs[$ - 1];
-                    pos = Vector2d(x + lastRowGlyph.pos.x + lastRowGlyph.geometry.width, y + lastRowGlyph
-                            .pos.y);
-                    state = CursorState.forPrevGlyph;
-                    cursorPos = CursorPos(state, pos, 0, glyphIndex, true);
+                    focusEffect.isVisible = false;
+                    if(cursor){
+                        cursor.isVisible = false;
+                    }
+                }
+            };
+        }
+
+        if (isEditable)
+        {
+            onMouseDown = (ref e) {
+                const mouseX = e.x;
+                const mouseY = e.y;
+
+                cursorPos = coordsToRowPos(mouseX, mouseY);
+                if (!cursorPos.isValid)
+                {
+                    Vector2d pos;
+                    CursorState state;
+                    size_t glyphIndex;
+                    if (rows.length == 0)
+                    {
+                        pos = Vector2d(x + padding.left, y + padding.top);
+                        state = CursorState.forNextGlyph;
+                    }
+                    else
+                    {
+                        //TODO empty rows
+                        auto lastRow = rows[$ - 1];
+                        glyphIndex = lastRow.glyphs.length - 1;
+                        auto lastRowGlyph = lastRow.glyphs[$ - 1];
+                        pos = Vector2d(x + lastRowGlyph.pos.x + lastRowGlyph.geometry.width, y + lastRowGlyph
+                                .pos.y);
+                        state = CursorState.forPrevGlyph;
+                        cursorPos = CursorPos(state, pos, 0, glyphIndex, true);
+                    }
+
+                    updateCursor;
+                    cursor.isVisible = true;
+
+                    logger.tracef("Mouse position is invalid, new cursor pos: %s", cursorPos);
+                    return;
+                }
+
+                debug
+                {
+                    import std.stdio;
+
+                    writefln("Cursor pos for %s,%s: %s", mouseX, mouseY, cursorPos);
                 }
 
                 updateCursor;
                 cursor.isVisible = true;
+            };
 
-                logger.tracef("Mouse position is invalid, new cursor pos: %s", cursorPos);
-                return;
-            }
+            onKeyDown = (ref e) {
+                import deltotum.com.inputs.keyboards.key_name : KeyName;
 
-            debug
-            {
-                import std.stdio;
-
-                writefln("Cursor pos for %s,%s: %s", mouseX, mouseY, cursorPos);
-            }
-
-            updateCursor;
-            cursor.isVisible = true;
-        };
-
-        onKeyDown = (ref e) {
-            import deltotum.com.inputs.keyboards.key_name : KeyName;
-
-            if (!cursor.isVisible)
-            {
-                return;
-            }
-
-            if (e.keyName == KeyName.RETURN && onEnter)
-            {
-                onEnter(e);
-                return;
-            }
-
-            switch (e.keyName) with (KeyName)
-            {
-            case LEFT:
-                moveCursorLeft;
-                break;
-            case RIGHT:
-                moveCursorRight;
-                break;
-            case DOWN:
-                moveCursorDown;
-                break;
-            case UP:
-                moveCursorUp;
-                break;
-            case BACKSPACE:
-
-                if (!cursorPos.isValid)
+                if (!cursor.isVisible)
                 {
                     return;
                 }
 
-                logger.tracef("Backspace pressed for cursor: %s", cursorPos);
-
-                if (cursorPos.glyphIndex == 0)
+                if (e.keyName == KeyName.RETURN && onEnter)
                 {
-                    if (cursorPos.state == CursorState.forNextGlyph)
+                    onEnter(e);
+                    return;
+                }
+
+                switch (e.keyName) with (KeyName)
+                {
+                case LEFT:
+                    moveCursorLeft;
+                    break;
+                case RIGHT:
+                    moveCursorRight;
+                    break;
+                case DOWN:
+                    moveCursorDown;
+                    break;
+                case UP:
+                    moveCursorUp;
+                    break;
+                case BACKSPACE:
+
+                    if (!cursorPos.isValid)
                     {
                         return;
                     }
+
+                    logger.tracef("Backspace pressed for cursor: %s", cursorPos);
+
+                    if (cursorPos.glyphIndex == 0)
+                    {
+                        if (cursorPos.state == CursorState.forNextGlyph)
+                        {
+                            return;
+                        }
+                    }
+
+                    auto row = rows[cursorPos.rowIndex];
+
+                    if (row.glyphs.length == 0)
+                    {
+                        return;
+                    }
+
+                    if (cursorPos.state == CursorState.forNextGlyph)
+                    {
+                        cursorPos.glyphIndex--;
+                    }
+                    else if (cursorPos.state == CursorState.forPrevGlyph)
+                    {
+                        cursorPos.state = CursorState.forNextGlyph;
+                    }
+
+                    import std.algorithm.mutation : remove;
+
+                    size_t textIndex = cursorGlyphIndex;
+                    auto glyph = row.glyphs[cursorPos.glyphIndex];
+
+                    _text = _text.remove(textIndex);
+                    cursorPos.pos.x -= glyph.geometry.width;
+
+                    logger.tracef("Remove index %s, new cursor pos: %s", textIndex, cursorPos);
+
+                    updateCursor;
+                    setInvalid;
+                    break;
+                default:
+                    break;
                 }
+            };
 
-                auto row = rows[cursorPos.rowIndex];
-
-                if (row.glyphs.length == 0)
+            onTextInput = (ref e) {
+                if (!cursor.isVisible)
                 {
                     return;
                 }
 
-                if (cursorPos.state == CursorState.forNextGlyph)
+                size_t textIndex = cursorGlyphIndex();
+                import std.array : insertInPlace;
+
+                //TODO one glyph
+                import std.conv : to;
+
+                auto glyphsArr = textToGlyphs(e.firstLetter.to!dstring);
+
+                double glyphOffset;
+                foreach (ref glyph; glyphsArr)
                 {
-                    cursorPos.glyphIndex--;
-                }
-                else if (cursorPos.state == CursorState.forPrevGlyph)
-                {
-                    cursorPos.state = CursorState.forNextGlyph;
+                    glyphOffset += glyph.geometry.width;
                 }
 
-                import std.algorithm.mutation : remove;
+                _text.insertInPlace(textIndex, glyphsArr);
+                logger.tracef("Insert text %s with index %s", glyphsArr, textIndex);
 
-                size_t textIndex = cursorGlyphIndex;
-                auto glyph = row.glyphs[cursorPos.glyphIndex];
-
-                _text = _text.remove(textIndex);
-                cursorPos.pos.x -= glyph.geometry.width;
-
-                logger.tracef("Remove index %s, new cursor pos: %s", textIndex, cursorPos);
-
+                cursorPos.pos.x += glyphOffset;
+                cursorPos.glyphIndex++;
                 updateCursor;
                 setInvalid;
-                break;
-            default:
-                break;
-            }
-        };
-
-        onTextInput = (ref e) {
-            if (!cursor.isVisible)
-            {
-                return;
-            }
-
-            size_t textIndex = cursorGlyphIndex();
-            import std.array : insertInPlace;
-
-            //TODO one glyph
-            import std.conv : to;
-
-            auto glyphsArr = textToGlyphs(e.firstLetter.to!dstring);
-
-            double glyphOffset;
-            foreach (ref glyph; glyphsArr)
-            {
-                glyphOffset += glyph.geometry.width;
-            }
-
-            _text.insertInPlace(textIndex, glyphsArr);
-            logger.tracef("Insert text %s with index %s", glyphsArr, textIndex);
-
-            cursorPos.pos.x += glyphOffset;
-            cursorPos.glyphIndex++;
-            updateCursor;
-            setInvalid;
-        };
+            };
+        }
 
         if (isFocusable)
         {
@@ -298,12 +310,15 @@ class Text : Control
 
         import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 
-        const cursorColor = graphics.theme.colorAccent;
+        if (isEditable)
+        {
+            const cursorColor = graphics.theme.colorAccent;
 
-        cursor = new Rectangle(2, 20, GraphicStyle(1, cursorColor, true, cursorColor));
-        addCreate(cursor);
-        cursor.isLayoutManaged = false;
-        cursor.isVisible = false;
+            cursor = new Rectangle(2, 20, GraphicStyle(1, cursorColor, true, cursorColor));
+            addCreate(cursor);
+            cursor.isLayoutManaged = false;
+            cursor.isVisible = false;
+        }
 
     }
 
@@ -325,7 +340,7 @@ class Text : Control
 
     bool updateCursor()
     {
-        if (!cursorPos.isValid)
+        if (!cursor || !cursorPos.isValid)
         {
             return false;
         }
@@ -749,6 +764,11 @@ class Text : Control
         _text = textToGlyphs(t);
         tempText = null;
         setInvalid;
+    }
+
+    auto textTo(T)()
+    {
+        return text.to!T;
     }
 
     dstring text()

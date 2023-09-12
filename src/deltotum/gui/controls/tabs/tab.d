@@ -21,6 +21,7 @@ class Tab : Control
     this(dstring text = "Tab")
     {
         label = new Button(text);
+        label.isBorder = false;
 
         import deltotum.kit.sprites.layouts.center_layout: CenterLayout;
         layout = new CenterLayout;

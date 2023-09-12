@@ -6,6 +6,7 @@ import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.gui.containers.hbox : HBox;
 import deltotum.gui.containers.vbox : VBox;
 import deltotum.gui.containers.stack_box : StackBox;
+import deltotum.gui.containers.container: Container;
 import deltotum.gui.controls.tabs.tab : Tab;
 import deltotum.gui.controls.tabs.tab_header : TabHeader;
 import deltotum.kit.sprites.layouts.vlayout : VLayout;
@@ -22,20 +23,23 @@ class TabPane : Control
         TabHeader header;
         Tab currentTab;
 
-        StackBox content;
+        Container content;
     }
 
     this(TabHeader header = null)
     {
+        super();
+        id = "tab_pane";
         this.header = header ? header : new TabHeader;
         this.header.isHGrow = true;
 
-        content = new StackBox;
+        content = new Container;
         content.isBackground = false;
         content.isVGrow = true;
         content.isHGrow = true;
 
         layout = new VLayout;
+        layout.isAlignX = false;
     }
 
     override void initialize(){
@@ -51,6 +55,11 @@ class TabPane : Control
         header.width = width;
 
         addCreate(header);
+
+        import deltotum.gui.controls.separators.hseparator: HSeparator;
+        auto sep = new HSeparator;
+        sep.id = "tab_pane_header_separator";
+        addCreate(sep);
 
         addCreate(content);
 
@@ -118,6 +127,8 @@ class TabPane : Control
             if (!currentTab.content.isCreated)
             {
                 content.addCreate(newTab.content);
+            }else {
+                content.add(newTab.content);
             }
 
             currentTab.content.isVisible = true;

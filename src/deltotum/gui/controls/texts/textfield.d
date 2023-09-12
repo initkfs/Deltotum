@@ -12,6 +12,7 @@ class TextField : Text
         import std.conv : to;
 
         this(text.to!dstring);
+        isEditable = true;
     }
 
     this(dstring text)

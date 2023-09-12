@@ -54,6 +54,13 @@ class Control : Sprite
                 return;
             }
 
+            if (id == "tab_pane_header_separator")
+            {
+                import std;
+
+                writefln("sep invalid: %s, %s", width, height);
+            }
+
             checkBackground;
         };
 
@@ -81,7 +88,8 @@ class Control : Sprite
 
     GraphicStyle styleFromActionType()
     {
-        import deltotum.kit.graphics.colors.rgba: RGBA;
+        import deltotum.kit.graphics.colors.rgba : RGBA;
+
         //TODO remove switch
         RGBA borderColor = graphics.theme.colorAccent;
         RGBA fillColor = graphics.theme.colorControlBackground;
@@ -121,6 +129,13 @@ class Control : Sprite
             return false;
         }
 
+        if (id == "tab_pane_header_separator")
+        {
+            import std;
+
+            writefln("sep: %s, %s", width, height);
+        }
+
         assert(backgroundInsets.width < width);
         assert(backgroundInsets.height < height);
 
@@ -157,6 +172,13 @@ class Control : Sprite
 
     void checkBackground()
     {
+        if (id == "tab_pane_header_separator")
+        {
+            import std;
+
+            writefln("sep: %s, %s", width, height);
+        }
+
         if (background)
         {
             import std;

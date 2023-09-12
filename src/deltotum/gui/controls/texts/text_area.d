@@ -58,6 +58,7 @@ class TextArea : HBox
         scroll = new VSlider(0, 1.0, 20, height);
 
         textView = new TextView;
+        textView.isEditable = true;
 
         textView.onMouseEntered = (ref e) {
             import deltotum.com.inputs.cursors.com_system_cursor_type : ComSystemCursorType;

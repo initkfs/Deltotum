@@ -694,6 +694,7 @@ class Sprite : PhysicalBody
 
     void validate()
     {
+        bool isChildInvalid;
         if (isValidatableChildren)
         {
             foreach (ch; children)
@@ -702,6 +703,9 @@ class Sprite : PhysicalBody
                 if (!ch.isValid)
                 {
                     setInvalid;
+                    if(!isChildInvalid){
+                        isChildInvalid = true;
+                    }
                 }
             }
         }
@@ -714,6 +718,10 @@ class Sprite : PhysicalBody
             foreach (invListener; invalidateListeners)
             {
                 invListener();
+            }
+
+            if(!isChildInvalid){
+                setValid(true);
             }
         }
 
@@ -1058,11 +1066,11 @@ class Sprite : PhysicalBody
             immutable double oldWidth = _width;
             _width = value;
 
-            if (!isInvalidationProcess)
-            {
+            //if (!isInvalidationProcess)
+            //{
                 setInvalid;
                 invalidationState.width = true;
-            }
+            //}
 
             if (!isCreated)
             {
@@ -1136,11 +1144,11 @@ class Sprite : PhysicalBody
             immutable double oldHeight = _height;
             _height = value;
 
-            if (!isInvalidationProcess)
-            {
+            //if (!isInvalidationProcess)
+            //{
                 setInvalid;
                 invalidationState.height = true;
-            }
+            //}
 
             if (!isCreated)
             {

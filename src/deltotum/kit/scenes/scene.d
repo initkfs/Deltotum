@@ -97,7 +97,7 @@ class Scene : GraphicsComponent
             root.update(delta);
 
             root.validate;
-            root.unvalidate;
+            //root.unvalidate;
         }
     }
 
