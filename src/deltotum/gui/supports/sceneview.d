@@ -86,6 +86,11 @@ class SceneView : VBox
         width = 300;
         height = scene.window.height;
 
+        import deltotum.kit.graphics.styles.graphic_style: GraphicStyle;
+        import deltotum.kit.graphics.colors.rgba: RGBA;
+
+        style = new GraphicStyle(1, RGBA.web("#ffb641"));
+
         auto btnContainer = new HBox;
         btnContainer.layout.isAlignY = true;
         addCreate(btnContainer);

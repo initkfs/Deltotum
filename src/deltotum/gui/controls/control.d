@@ -25,7 +25,7 @@ class Control : Sprite
     Insets backgroundInsets;
     Sprite delegate(double, double) backgroundFactory;
 
-    GraphicStyle style;
+    GraphicStyle* style;
 
     bool isBackground;
     bool isBorder;
@@ -56,8 +56,6 @@ class Control : Sprite
 
             checkBackground;
         };
-
-        style = graphics.theme.controlStyle;
 
         if (!backgroundFactory)
         {

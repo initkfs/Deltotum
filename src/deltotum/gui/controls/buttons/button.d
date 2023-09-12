@@ -83,7 +83,6 @@ class Button : Control
         };
 
         clickEffectFactory = () {
-            double padding = style.lineWidth;
 
             import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
 

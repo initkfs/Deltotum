@@ -75,14 +75,15 @@ class Controls : Control
 
         createDataControls(dataContainer);
 
-        auto chartsContainer = new HBox;
-        chartsContainer.layout.isAlignY = true;
-        rootContainer.addCreate(chartsContainer);
-        chartsContainer.enableInsets;
+        auto container = new HBox;
+        container.layout.isAlignY = false;
+        rootContainer.addCreate(container);
+        container.enableInsets;
 
-        createCharts(chartsContainer);
+        createTexts(container);
 
-        createTexts(chartsContainer);
+        createCharts(container);
+        
 
         // iconsContainer.isBackground = false;
 
