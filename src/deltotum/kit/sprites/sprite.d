@@ -361,6 +361,7 @@ class Sprite : PhysicalBody
             }
         }
         children = [];
+        setInvalid;
 
         return true;
     }

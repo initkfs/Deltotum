@@ -34,11 +34,15 @@ class TableRow(T) : Container
 
     bool isExpand;
     size_t treeLevel;
+    bool isFirst;
+    bool isLast;
 
     TableRow!T[] children;
 
     dstring expandSymbol = "▶";
     dstring hidingSymbol = "▼";
+
+    Text levelLabel;
 
     Text expandButton;
 
@@ -102,12 +106,11 @@ class TableRow(T) : Container
 
         if (treeLevel > 0)
         {
-            enum levelMargin = 5;
-            Text levelLabel = new Text("");
+            levelLabel = new Text("");
             levelLabel.isFocusable = false;
 
             auto level = treeLevel;
-            if (level > 1)
+            if (level > 0)
             {
                 foreach (l; 0 .. level - 1)
                 {
@@ -165,6 +168,22 @@ class TableRow(T) : Container
             expand(isExpand);
         }
     }
+
+    //TODO hack, remove duplication
+    void setLastRowLabel()
+    {
+        dstring levelSymbol = "└";
+        dstring text = levelSymbol;
+        if (treeLevel > 0)
+        {
+            foreach (l; 0 .. treeLevel - 1)
+            {
+                text ~= levelSymbol;
+            }
+        }
+
+        levelLabel.text = text;
+    }
 }
 
 /**
@@ -207,6 +226,7 @@ class TreeTableView(T) : ScrollBox
             parent.children ~= row;
         }
         root.addCreate(row);
+        rows ~= row;
         row.padding = Insets(0);
         row.onSelected = () {
             if (row is currentSelected)
@@ -232,14 +252,24 @@ class TreeTableView(T) : ScrollBox
 
     bool clear()
     {
-        if (rows.length > 0)
+        if (rows.length == 0)
         {
-            contentRoot.removeAll;
-            rows = [];
-            return true;
+            return false;
         }
 
-        return false;
+        rows = [];
+        rowContainer.removeAll;
+
+        return true;
+    }
+
+    private void verifyRows()
+    {
+        if (rows.length > 0)
+        {
+            auto lastRow = rows[$ - 1];
+            lastRow.setLastRowLabel;
+        }
     }
 
     void fill(TreeItem!T[] items)
@@ -250,11 +280,13 @@ class TreeTableView(T) : ScrollBox
         {
             buildTree(contentRoot, item);
         }
+        verifyRows;
     }
 
     void fill(TreeItem!T item)
     {
         clear;
         buildTree(contentRoot, item);
+        verifyRows;
     }
 }

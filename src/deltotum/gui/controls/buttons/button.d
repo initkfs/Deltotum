@@ -38,7 +38,7 @@ class Button : Control
         string iconName;
     //}
 
-    this(dstring text = "Button", double width = 80, double height = 40)
+    this(dstring text = "Button", double width = 80, double height = 30)
     {
         super();
         this.width = width;
