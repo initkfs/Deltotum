@@ -16,6 +16,7 @@ import deltotum.kit.sprites.events.focus.focus_event : FocusEvent;
 import deltotum.kit.inputs.keyboards.events.text_input_event : TextInputEvent;
 import deltotum.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import deltotum.core.events.event_type : EventType;
+import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.core.utils.tostring;
 
 import std.container : DList;
@@ -69,6 +70,9 @@ class Sprite : PhysicalBody
     void delegate(Rect2d* clip) onClipMove;
     //TODO remove
     bool isClipped;
+
+    GraphicStyle* style;
+    bool isFindStyleInParent;
 
     bool inScreenBounds = true;
     bool delegate() onScreenBoundsIsStop;
@@ -259,6 +263,16 @@ class Sprite : PhysicalBody
 
     }
 
+    import deltotum.kit.apps.components.graphics_component: GraphicsComponent;
+    alias build = GraphicsComponent.build;
+
+    void build(Sprite sprite){
+        super.build(sprite);
+        if(style && !sprite.style){
+            sprite.style = style;
+        }
+    }
+
     void addCreate(Sprite[] sprites)
     {
         foreach (sprite; sprites)
@@ -306,6 +320,10 @@ class Sprite : PhysicalBody
         }
 
         sprite.parent = this;
+        if (style && !sprite.style)
+        {
+            sprite.style = style;
+        }
 
         if (index < 0 || children.length == 0)
         {
@@ -704,7 +722,8 @@ class Sprite : PhysicalBody
                 if (!ch.isValid)
                 {
                     setInvalid;
-                    if(!isChildInvalid){
+                    if (!isChildInvalid)
+                    {
                         isChildInvalid = true;
                     }
                 }
@@ -721,7 +740,8 @@ class Sprite : PhysicalBody
                 invListener();
             }
 
-            if(!isChildInvalid){
+            if (!isChildInvalid)
+            {
                 setValid(true);
             }
         }
@@ -1069,8 +1089,8 @@ class Sprite : PhysicalBody
 
             //if (!isInvalidationProcess)
             //{
-                setInvalid;
-                invalidationState.width = true;
+            setInvalid;
+            invalidationState.width = true;
             //}
 
             if (!isCreated)
@@ -1147,8 +1167,8 @@ class Sprite : PhysicalBody
 
             //if (!isInvalidationProcess)
             //{
-                setInvalid;
-                invalidationState.height = true;
+            setInvalid;
+            invalidationState.height = true;
             //}
 
             if (!isCreated)
@@ -1417,6 +1437,29 @@ class Sprite : PhysicalBody
         void disablePadding()
         {
             padding(0);
+        }
+
+        GraphicStyle* ownOrParentStyle()
+        {
+            if (style)
+            {
+                return style;
+            }
+
+            if (isFindStyleInParent)
+            {
+                Sprite currParent = parent;
+                while (currParent)
+                {
+                    if (currParent.style)
+                    {
+                        return currParent.style;
+                    }
+                    currParent = currParent.parent;
+                }
+            }
+
+            return parent ? parent.style : null;
         }
 
         Insets padding()

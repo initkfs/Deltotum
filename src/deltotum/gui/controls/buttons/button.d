@@ -73,8 +73,12 @@ class Button : Control
 
             import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
 
-            Shape hover = new RegularPolygon(width, height, GraphicStyle(1, graphics.theme.colorHover, true, graphics
-                    .theme.colorHover), graphics.theme.controlCornersBevel);
+            auto currStyle = ownOrParentStyle;
+            auto style = currStyle ? *currStyle :  GraphicStyle(1, graphics.theme.colorHover, true, graphics
+                    .theme.colorHover);
+            style.isFill = true;
+
+            Shape hover = new RegularPolygon(width, height, style, graphics.theme.controlCornersBevel);
             hover.id = "btn_hover";
             hover.isLayoutManaged = false;
             hover.isResizedByParent = true;
@@ -87,9 +91,12 @@ class Button : Control
 
             import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
 
-            GraphicStyle clickStyle = GraphicStyle(1, graphics
+            auto currStyle = ownOrParentStyle;
+
+            GraphicStyle clickStyle = currStyle ? *currStyle : GraphicStyle(1, graphics
                     .theme.colorAccent, true, graphics
                     .theme.colorAccent);
+            clickStyle.isFill = true;
 
             Shape click = new RegularPolygon(width, height, clickStyle, graphics
                     .theme.controlCornersBevel);

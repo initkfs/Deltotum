@@ -25,8 +25,6 @@ class Control : Sprite
     Insets backgroundInsets;
     Sprite delegate(double, double) backgroundFactory;
 
-    GraphicStyle* style;
-
     bool isBackground;
     bool isBorder;
     bool isFocusable;
@@ -64,7 +62,9 @@ class Control : Sprite
                 import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
                 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 
-                GraphicStyle backgroundStyle = GraphicStyle(isBorder ? 1 : 0, graphics.theme.colorAccent, isBackground, graphics
+                GraphicStyle* currStyle = ownOrParentStyle;
+
+                GraphicStyle backgroundStyle = currStyle ? *currStyle : GraphicStyle(isBorder ? 1 : 0, graphics.theme.colorAccent, isBackground, graphics
                         .theme.colorControlBackground);
 
                 auto background = new RegularPolygon(width, height, backgroundStyle, graphics
@@ -77,7 +77,8 @@ class Control : Sprite
         }
     }
 
-    void addCreateIcon(string iconName){
+    void addCreateIcon(string iconName)
+    {
         auto icon = createIcon(iconName);
         addCreate(icon);
     }
@@ -90,7 +91,7 @@ class Control : Sprite
         import deltotum.gui.themes.icons.icon_name;
         import deltotum.kit.sprites.images.image : Image;
 
-        import std.conv: to;
+        import std.conv : to;
 
         const iconData = graphics.theme.iconData(iconName);
         auto icon = new Image();
@@ -98,7 +99,12 @@ class Control : Sprite
         const iconSize = graphics.theme.iconSize;
         icon.loadRaw(iconData, iconSize.to!int, iconSize.to!int);
 
-        icon.setColor(graphics.theme.colorAccent);
+        auto color = graphics.theme.colorAccent;
+        if(style){
+            color = style.lineColor;
+        }
+
+        icon.setColor(color);
         icon.create;
         return icon;
     }
@@ -107,9 +113,10 @@ class Control : Sprite
     {
         import deltotum.kit.graphics.colors.rgba : RGBA;
 
+        auto currStyle = ownOrParentStyle;
         //TODO remove switch
-        RGBA borderColor = graphics.theme.colorAccent;
-        RGBA fillColor = graphics.theme.colorControlBackground;
+        RGBA borderColor = currStyle ? currStyle.lineColor : graphics.theme.colorAccent;
+        RGBA fillColor = currStyle ? currStyle.fillColor : graphics.theme.colorControlBackground;
 
         if (actionType != ActionType.standard)
         {

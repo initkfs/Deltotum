@@ -34,8 +34,11 @@ class HSlider : BaseSlider
             import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
             import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 
-            auto style = GraphicStyle(1, graphics.theme.colorAccent, true, graphics
+            auto currStyle = ownOrParentStyle;
+
+            auto style = currStyle ? *currStyle : GraphicStyle(1, graphics.theme.colorAccent, true, graphics
                     .theme.colorAccent);
+            style.isFill = true;
 
             auto node = new RegularPolygon(30, height, style, graphics
                     .theme.controlCornersBevel);

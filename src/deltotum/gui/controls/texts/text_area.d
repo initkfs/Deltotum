@@ -43,7 +43,9 @@ class TextArea : HBox
             import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
             import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
 
-            GraphicStyle backgroundStyle = GraphicStyle(1, graphics.theme.colorAccent, isBackground, graphics
+            auto style = ownOrParentStyle;
+
+            GraphicStyle backgroundStyle = style ? *style : GraphicStyle(1, graphics.theme.colorAccent, isBackground, graphics
                     .theme.colorPrimary);
             auto background = new RegularPolygon(width, height, backgroundStyle, graphics
                     .theme.controlCornersBevel);

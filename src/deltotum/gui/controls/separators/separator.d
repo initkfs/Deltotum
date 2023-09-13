@@ -14,7 +14,9 @@ abstract class Separator : Control
             import deltotum.kit.graphics.shapes.rectangle : Rectangle;
             import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 
-            GraphicStyle backgroundStyle = GraphicStyle(isBorder ? 1 : 0, graphics.theme.colorAccent, isBackground, graphics
+            auto currStyle = ownOrParentStyle;
+
+            GraphicStyle backgroundStyle = currStyle ? *currStyle : GraphicStyle(isBorder ? 1 : 0, graphics.theme.colorAccent, isBackground, graphics
                     .theme.colorControlBackground);
 
             auto background = new Rectangle(width, height, backgroundStyle);

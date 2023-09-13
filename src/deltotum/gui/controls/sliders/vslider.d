@@ -10,7 +10,7 @@ import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.kit.sprites.layouts.center_layout : CenterLayout;
 import deltotum.kit.graphics.shapes.rectangle : Rectangle;
 import deltotum.kit.sprites.alignment : Alignment;
-import std.math.operations: isClose;
+import std.math.operations : isClose;
 
 /**
  * Authors: initkfs
@@ -33,8 +33,11 @@ class VSlider : BaseSlider
             import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
             import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 
-            auto style = GraphicStyle(1, graphics.theme.colorAccent, true, graphics
+            auto currStyle = ownOrParentStyle;
+            
+            auto style = currStyle ? *currStyle : GraphicStyle(1, graphics.theme.colorAccent, true, graphics
                     .theme.colorAccent);
+            style.isFill = true;
 
             auto node = new RegularPolygon(width, 30, style, graphics
                     .theme.controlCornersBevel);
@@ -49,9 +52,9 @@ class VSlider : BaseSlider
         if (thumbFactory)
         {
             thumb = thumbFactory();
-            
+
             addCreate(thumb);
-            
+
             thumb.isDraggable = true;
 
             thumb.onDrag = (x, y) {
@@ -68,12 +71,14 @@ class VSlider : BaseSlider
                 auto dy = thumb.y - bounds.y;
 
                 enum errorDelta = 5;
-                if(dy < errorDelta){
+                if (dy < errorDelta)
+                {
                     dy = 0;
                 }
 
                 const maxYDt = maxY - thumb.y;
-                if(maxYDt < errorDelta){
+                if (maxYDt < errorDelta)
+                {
                     dy += maxYDt;
                 }
 
@@ -87,7 +92,8 @@ class VSlider : BaseSlider
 
                 value = minValue + (numRange / range) * dy;
 
-                if(isClose(value, oldValue)){
+                if (isClose(value, oldValue))
+                {
                     return false;
                 }
 

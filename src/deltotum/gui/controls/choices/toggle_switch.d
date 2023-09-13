@@ -78,8 +78,11 @@ class ToggleSwitch : Control
             import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
             import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
 
-            GraphicStyle style = GraphicStyle(1, graphics.theme.colorAccent, true, graphics
+            auto currStyle = ownOrParentStyle;
+
+            GraphicStyle style = currStyle ? *currStyle : GraphicStyle(1, graphics.theme.colorAccent, true, graphics
                     .theme.colorAccent);
+            style.isFill = true;
 
             auto control = new RegularPolygon(width - 5, height - 5, style, graphics
                     .theme.controlCornersBevel);
@@ -91,7 +94,9 @@ class ToggleSwitch : Control
             import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
             import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
 
-            GraphicStyle clickStyle = GraphicStyle(1, graphics.theme.colorAccent);
+            auto currStyle = ownOrParentStyle;
+
+            GraphicStyle clickStyle = currStyle ? *currStyle : GraphicStyle(1, graphics.theme.colorAccent);
 
             auto control = new RegularPolygon(width / 2, height, clickStyle, graphics
                     .theme.controlCornersBevel);
