@@ -184,6 +184,24 @@ class Texture : Sprite
         }
     }
 
+    void setAlpha(double valueOto1)
+    {
+        import std.conv : to;
+
+        ubyte value = (valueOto1 * ubyte.max).to!ubyte;
+        if (const err = texture.setColorAlpha(value))
+        {
+            throw new Exception(err.toString);
+        }
+    }
+
+    Texture copy()
+    {
+        assert(texture);
+        SdlTexture newTexture = texture.copy;
+        return new Texture(newTexture);
+    }
+
     SdlTexture nativeTexture() nothrow
     {
         return this.texture;

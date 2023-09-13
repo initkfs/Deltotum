@@ -116,6 +116,18 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         return ComResult.success;
     }
 
+    ComResult getColorAlpha(ubyte* alpha)
+    {
+        const int zeroOrErrorCode = SDL_GetTextureAlphaMod(ptr, alpha);
+        return ComResult(zeroOrErrorCode);
+    }
+
+    ComResult setColorAlpha(ubyte alpha)
+    {
+        const int zeroOrErrorCode = SDL_SetTextureAlphaMod(ptr, alpha);
+        return ComResult(zeroOrErrorCode);
+    }
+
     ComResult getColor(ubyte* r, ubyte* g, ubyte* b)
     {
         const int zeroOrErrorCode = SDL_GetTextureColorMod(ptr, r, g, b);
@@ -346,6 +358,36 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
 
         //https://discourse.libsdl.org/t/1st-frame-sdl-renderer-software-sdl-flip-horizontal-ubuntu-wrong-display-is-it-a-bug-of-sdl-rendercopyex/25924
         return renderer.copyEx(this, &srcRect, &destRect, angle, null, sdlFlip);
+    }
+
+    SdlTexture copy()
+    {
+        SdlTexture newTexture = new SdlTexture(renderer);
+        int width, height;
+        if(const err = getSize(&width, &height)){
+            throw new Exception(err.toString);
+        }
+        if (const err = newTexture.createRGBA(width, height))
+        {
+            //TODO return error;
+            throw new Exception(err.toString);
+        }
+        
+        if(const err = newTexture.setBlendModeBlend){
+            throw new Exception(err.toString);
+        }
+
+        newTexture.setRendererTarget;
+
+        Rect2d srcRect = {0, 0, width, height};
+        Rect2d destRect = {0, 0, width, height};
+
+        if (const err = draw(srcRect, destRect))
+        {
+            throw new Exception(err.toString);
+        }
+        resetRendererTarget;
+        return newTexture;
     }
 
     override protected bool destroyPtr() @nogc nothrow

@@ -57,6 +57,8 @@ class Text : Control
 
     Rectangle cursor;
 
+    Texture fontTexture;
+
     CursorPos cursorPos;
 
     bool isEditable;
@@ -297,6 +299,27 @@ class Text : Control
         import deltotum.math.geom.insets : Insets;
 
         padding = Insets(0);
+
+        auto currStyle = ownOrParentStyle;
+        if (currStyle)
+        {
+            auto color = currStyle.fillColor;
+            fontTexture = asset.cachedFont(color);
+            if (!fontTexture)
+            {
+                fontTexture = asset.defaultBitmapFont.copy;
+                fontTexture.setColor(color);
+                asset.addCachedFont(color, fontTexture);
+            }
+        }
+        else
+        {
+            fontTexture = asset.cachedFont(graphics.theme.colorText);
+            if (!fontTexture)
+            {
+                fontTexture = asset.defaultBitmapFont;
+            }
+        }
 
         updateRows;
 
@@ -735,7 +758,7 @@ class Text : Control
                 Rect2d destBounds = Rect2d(thisBounds.x + glyph.pos.x, thisBounds.y + glyph.pos.y, glyph
                         .geometry.width, glyph
                         .geometry.height);
-                asset.defaultBitmapFont.drawTexture(textureBounds, destBounds, angle, Flip
+                fontTexture.drawTexture(textureBounds, destBounds, angle, Flip
                         .none);
             }
         }

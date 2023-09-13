@@ -12,6 +12,8 @@ import std.stdio;
 
 import deltotum.kit.assets.fonts.font : Font;
 import deltotum.gui.fonts.bitmap.bitmap_font : BitmapFont;
+import deltotum.kit.graphics.colors.rgba: RGBA;
+import deltotum.kit.sprites.textures.texture: Texture;
 
 /**
  * Authors: initkfs
@@ -23,6 +25,8 @@ class Asset : LoggableUnit
     Font defaultFont;
     BitmapFont defaultBitmapFont;
 
+    Texture[RGBA] fontCache;
+
     this(Logger logger, string assetsDirPath)
     {
         super(logger);
@@ -32,6 +36,25 @@ class Asset : LoggableUnit
             throw new Exception("Assets directory must not be empty");
         }
         this.assetsDirPath = assetsDirPath;
+    }
+
+    bool addCachedFont(RGBA color, Texture fontTexture)
+    {
+        if (color in fontCache)
+        {
+            return false;
+        }
+        fontCache[color] = fontTexture;
+        return true;
+    }
+
+    Texture cachedFont(RGBA color)
+    {
+        if (auto cachePtr = color in fontCache)
+        {
+            return *cachePtr;
+        }
+        return null;
     }
 
     string filePath(string path)
