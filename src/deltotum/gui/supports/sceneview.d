@@ -91,7 +91,7 @@ class SceneView : VBox
         import deltotum.kit.graphics.styles.graphic_style: GraphicStyle;
         import deltotum.kit.graphics.colors.rgba: RGBA;
 
-        //style = new GraphicStyle(1, RGBA.web("#ffb641"), false, RGBA.web("#ffb641"));
+        style = new GraphicStyle(1,  RGBA.web("#DDCC66"), false,RGBA.web("#ffb641"));
 
         auto btnContainer = new HBox;
         btnContainer.layout.isAlignY = true;
