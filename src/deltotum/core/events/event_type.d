@@ -19,7 +19,7 @@ class EventType
         EventType any;
         EventType application;
         EventType action;
-        EventType mouse;
+        EventType pointer;
         EventType key;
         EventType window;
         EventType joystick;
@@ -37,7 +37,7 @@ class EventType
         any = new EventType("ANY");
         application = new EventType("APPLICATION", any);
         action = new EventType("ACTION", any);
-        mouse = new EventType("MOUSE", any);
+        pointer = new EventType("POINTER", any);
         key = new EventType("KEY", any);
         window = new EventType("WINDOW", any);
         joystick = new EventType("JOYSTICK", any);

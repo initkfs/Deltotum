@@ -29,7 +29,7 @@ import deltotum.sys.sdl.sdl_window : SdlWindowMode;
 import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
 import deltotum.sys.sdl.sdl_joystick : SdlJoystick;
 import deltotum.kit.windows.events.window_event : WindowEvent;
-import deltotum.kit.inputs.mouse.events.mouse_event : MouseEvent;
+import deltotum.kit.inputs.pointers.events.pointer_event : PointerEvent;
 
 import deltotum.kit.windows.window : Window;
 import deltotum.kit.screens.screen : Screen;
@@ -297,8 +297,8 @@ class SdlApplication : GraphicApplication
             }
         };
 
-        eventManager.onMouse = (mouseEvent) {
-            if (mouseEvent.event == MouseEvent.Event.mouseDown)
+        eventManager.onPointer = (mouseEvent) {
+            if (mouseEvent.event == PointerEvent.Event.down)
             {
                 auto mustBeWindow = windowManager.currentWindow;
                 if (mustBeWindow.isNull)

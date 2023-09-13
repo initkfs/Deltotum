@@ -1,4 +1,4 @@
-module deltotum.kit.inputs.mouse.events.mouse_event;
+module deltotum.kit.inputs.pointers.events.pointer_event;
 
 import deltotum.core.events.event_base : EventBase;
 import deltotum.core.events.event_type : EventType;
@@ -9,19 +9,19 @@ import deltotum.core.events.event_source : EventSource;
 /**
  * Authors: initkfs
  */
-struct MouseEvent
+struct PointerEvent
 {
     mixin EventBase;
 
     static enum Event
     {
         none,
-        mouseDown,
-        mouseUp,
-        mouseEntered,
-        mouseExited,
-        mouseMove,
-        mouseWheel
+        down,
+        up,
+        entered,
+        exited,
+        move,
+        wheel
     }
 
     double x;

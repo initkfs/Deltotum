@@ -158,7 +158,7 @@ class Button : Control
 
     void createListeners()
     {
-        onMouseEntered = (ref e) {
+        onPointerEntered = (ref e) {
 
             if (_selected)
             {
@@ -171,7 +171,7 @@ class Button : Control
             }
         };
 
-        onMouseExited = (ref e) {
+        onPointerExited = (ref e) {
 
             if (_selected)
             {
@@ -184,7 +184,7 @@ class Button : Control
             }
         };
 
-        onMouseUp = (ref e) {
+        onPointerUp = (ref e) {
 
             if (_selected)
             {

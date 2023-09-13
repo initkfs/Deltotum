@@ -8,7 +8,7 @@ import deltotum.kit.events.processing.event_processor : EventProcessor;
 
 import deltotum.core.events.event_type : EventType;
 import deltotum.core.apps.events.application_event : ApplicationEvent;
-import deltotum.kit.inputs.mouse.events.mouse_event : MouseEvent;
+import deltotum.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import deltotum.kit.inputs.keyboards.events.key_event : KeyEvent;
 import deltotum.kit.inputs.keyboards.events.text_input_event: TextInputEvent;
 import deltotum.kit.windows.events.window_event : WindowEvent;
@@ -156,12 +156,12 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
 
     protected void handleMouseEvent(SDL_Event* event)
     {
-        if (onMouse is null)
+        if (onPointer is null)
         {
             return;
         }
 
-        auto type = MouseEvent.Event.none;
+        auto type = PointerEvent.Event.none;
         double x = 0;
         double y = 0;
         double movementX = 0;
@@ -171,7 +171,7 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
         switch (event.type)
         {
         case SDL_MOUSEMOTION:
-            type = MouseEvent.Event.mouseMove;
+            type = PointerEvent.Event.move;
             x = event.motion.x;
             y = event.motion.y;
             movementX = event.motion.xrel;
@@ -179,7 +179,7 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
             break;
         case SDL_MOUSEBUTTONDOWN:
             SDL_CaptureMouse(SDL_TRUE);
-            type = MouseEvent.Event.mouseDown;
+            type = PointerEvent.Event.down;
             // - 1
             button = event.button.button;
             x = event.button.x;
@@ -187,13 +187,13 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
             break;
         case SDL_MOUSEBUTTONUP:
             SDL_CaptureMouse(SDL_FALSE);
-            type = MouseEvent.Event.mouseUp;
+            type = PointerEvent.Event.up;
             button = event.button.button;
             x = event.button.x;
             y = event.button.y;
             break;
         case SDL_MOUSEWHEEL:
-            type = MouseEvent.Event.mouseWheel;
+            type = PointerEvent.Event.wheel;
             if (event.wheel.direction == SDL_MouseWheelDirection.SDL_MOUSEWHEEL_FLIPPED)
             {
                 x = -event.wheel.x;
@@ -209,8 +209,8 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
             break;
         }
 
-        auto mouseEvent = MouseEvent(EventType.mouse, type, event.window.windowID, x, y, button, movementX, movementY);
-        onMouse(mouseEvent);
+        auto mouseEvent = PointerEvent(EventType.pointer, type, event.window.windowID, x, y, button, movementX, movementY);
+        onPointer(mouseEvent);
     }
 
     protected void handleJoystickEvent(SDL_Event* event)

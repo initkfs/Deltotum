@@ -60,13 +60,13 @@ class TextArea : HBox
         textView = new TextView;
         textView.isEditable = true;
 
-        textView.onMouseEntered = (ref e) {
+        textView.onPointerEntered = (ref e) {
             import deltotum.com.inputs.cursors.com_system_cursor_type : ComSystemCursorType;
 
             input.systemCursor.change(ComSystemCursorType.ibeam);
         };
 
-        textView.onMouseExited = (ref e) { input.systemCursor.restore; };
+        textView.onPointerExited = (ref e) { input.systemCursor.restore; };
 
         addCreate(textView);
 

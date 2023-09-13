@@ -3,7 +3,7 @@ module deltotum.kit.events.event_toolkit_target;
 import deltotum.kit.apps.components.graphics_component : GraphicsComponent;
 import deltotum.core.events.event_target : EventTarget;
 import deltotum.core.events.event_target : EventTarget;
-import deltotum.kit.inputs.mouse.events.mouse_event : MouseEvent;
+import deltotum.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import deltotum.core.apps.events.application_event : ApplicationEvent;
 import deltotum.kit.inputs.keyboards.events.key_event : KeyEvent;
 import deltotum.kit.inputs.keyboards.events.text_input_event : TextInputEvent;
@@ -16,17 +16,17 @@ import deltotum.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
  */
 class EventToolkitTarget : GraphicsComponent, EventTarget
 {
-    void delegate(ref MouseEvent) eventMouseFilter;
-    void delegate(ref MouseEvent) eventMouseHandler;
+    void delegate(ref PointerEvent) eventPointerFilter;
+    void delegate(ref PointerEvent) eventPointerHandler;
 
-    void delegate(ref MouseEvent) onMouseDown;
-    void delegate(ref MouseEvent) onMouseUp;
-    void delegate(ref MouseEvent) onMouseMove;
-    void delegate(ref MouseEvent) onMouseWheel;
+    void delegate(ref PointerEvent) onPointerDown;
+    void delegate(ref PointerEvent) onPointerUp;
+    void delegate(ref PointerEvent) onPointerMove;
+    void delegate(ref PointerEvent) onPointerWheel;
 
     bool isMouseOver;
-    void delegate(ref MouseEvent) onMouseEntered;
-    void delegate(ref MouseEvent) onMouseExited;
+    void delegate(ref PointerEvent) onPointerEntered;
+    void delegate(ref PointerEvent) onPointerExited;
 
     void delegate(ref KeyEvent) eventKeyFilter;
     void delegate(ref KeyEvent) eventKeyHandler;
@@ -54,7 +54,7 @@ class EventToolkitTarget : GraphicsComponent, EventTarget
 
     void createHandlers()
     {
-        eventMouseHandler = (ref e) { runListeners(e); };
+        eventPointerHandler = (ref e) { runListeners(e); };
         eventKeyHandler = (ref e) { runListeners(e); };
         eventJoystickHandler = (ref e) { runListeners(e); };
         eventFocusHandler = (ref e) { runListeners(e); };
@@ -63,11 +63,11 @@ class EventToolkitTarget : GraphicsComponent, EventTarget
 
     void runEventFilters(E)(ref E e)
     {
-        static if (is(E : MouseEvent))
+        static if (is(E : PointerEvent))
         {
-            if (eventMouseFilter !is null)
+            if (eventPointerFilter !is null)
             {
-                eventMouseFilter(e);
+                eventPointerFilter(e);
             }
         }
 
@@ -106,11 +106,11 @@ class EventToolkitTarget : GraphicsComponent, EventTarget
 
     void runEventHandlers(E)(ref E e)
     {
-        static if (is(E : MouseEvent))
+        static if (is(E : PointerEvent))
         {
-            if (eventMouseHandler !is null)
+            if (eventPointerHandler !is null)
             {
-                eventMouseHandler(e);
+                eventPointerHandler(e);
             }
         }
 
@@ -147,48 +147,48 @@ class EventToolkitTarget : GraphicsComponent, EventTarget
         }
     }
 
-    void runListeners(ref MouseEvent e)
+    void runListeners(ref PointerEvent e)
     {
-        if (e.event == MouseEvent.Event.mouseDown)
+        if (e.event == PointerEvent.Event.down)
         {
-            if (onMouseDown !is null)
+            if (onPointerDown !is null)
             {
-                onMouseDown(e);
+                onPointerDown(e);
             }
         }
-        else if (e.event == MouseEvent.Event.mouseMove)
+        else if (e.event == PointerEvent.Event.move)
         {
-            if (onMouseMove !is null)
+            if (onPointerMove !is null)
             {
-                onMouseMove(e);
+                onPointerMove(e);
             }
         }
-        else if (e.event == MouseEvent.Event.mouseUp)
+        else if (e.event == PointerEvent.Event.up)
         {
-            if (onMouseUp !is null)
+            if (onPointerUp !is null)
             {
-                onMouseUp(e);
+                onPointerUp(e);
             }
         }
-        else if (e.event == MouseEvent.Event.mouseWheel)
+        else if (e.event == PointerEvent.Event.wheel)
         {
-            if (onMouseWheel !is null)
+            if (onPointerWheel !is null)
             {
-                onMouseWheel(e);
+                onPointerWheel(e);
             }
         }
-        else if (e.event == MouseEvent.Event.mouseEntered)
+        else if (e.event == PointerEvent.Event.entered)
         {
-            if (onMouseEntered !is null)
+            if (onPointerEntered !is null)
             {
-                onMouseEntered(e);
+                onPointerEntered(e);
             }
         }
-        else if (e.event == MouseEvent.Event.mouseExited)
+        else if (e.event == PointerEvent.Event.exited)
         {
-            if (onMouseExited !is null)
+            if (onPointerExited !is null)
             {
-                onMouseExited(e);
+                onPointerExited(e);
             }
         }
     }

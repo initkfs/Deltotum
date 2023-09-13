@@ -116,7 +116,7 @@ class Text : Control
 
         if (isEditable)
         {
-            onMouseDown = (ref e) {
+            onPointerDown = (ref e) {
                 const mouseX = e.x;
                 const mouseY = e.y;
 

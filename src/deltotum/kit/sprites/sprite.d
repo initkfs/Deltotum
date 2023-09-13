@@ -9,7 +9,7 @@ import deltotum.sys.sdl.sdl_texture : SdlTexture;
 import deltotum.phys.physical_body : PhysicalBody;
 import deltotum.kit.graphics.canvases.texture_canvas : TextureCanvas;
 import deltotum.kit.scenes.scaling.scale_mode : ScaleMode;
-import deltotum.kit.inputs.mouse.events.mouse_event : MouseEvent;
+import deltotum.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import deltotum.core.apps.events.application_event : ApplicationEvent;
 import deltotum.kit.inputs.keyboards.events.key_event : KeyEvent;
 import deltotum.kit.sprites.events.focus.focus_event : FocusEvent;
@@ -191,7 +191,7 @@ class Sprite : PhysicalBody
         }
 
         super.createHandlers;
-        eventMouseHandler = (ref e) {
+        eventPointerHandler = (ref e) {
 
             runListeners(e);
 
@@ -200,14 +200,14 @@ class Sprite : PhysicalBody
                 return;
             }
 
-            if (e.event == MouseEvent.Event.mouseDown)
+            if (e.event == PointerEvent.Event.down)
             {
                 if (isDraggable && bounds.contains(e.x, e.y))
                 {
                     startDrag(e.x, e.y);
                 }
             }
-            else if (e.event == MouseEvent.Event.mouseMove)
+            else if (e.event == PointerEvent.Event.move)
             {
                 if (isDrag)
                 {
@@ -234,7 +234,7 @@ class Sprite : PhysicalBody
                     }
                 }
             }
-            else if (e.event == MouseEvent.Event.mouseUp)
+            else if (e.event == PointerEvent.Event.up)
             {
                 if (isDraggable && isDrag)
                 {
@@ -460,7 +460,7 @@ class Sprite : PhysicalBody
             }
         }
 
-        static if (is(Event : MouseEvent))
+        static if (is(Event : PointerEvent))
         {
             //isClipped
             if ((clip.width > 0 || clip.height > 0) && !clip.contains(e.x, e.y))
@@ -470,12 +470,12 @@ class Sprite : PhysicalBody
 
             if (bounds.contains(e.x, e.y))
             {
-                if (e.event == MouseEvent.Event.mouseMove)
+                if (e.event == PointerEvent.Event.move)
                 {
                     if (!isMouseOver)
                     {
                         isMouseOver = true;
-                        auto enteredEvent = MouseEvent(EventType.mouse, MouseEvent.Event.mouseEntered, e
+                        auto enteredEvent = PointerEvent(EventType.pointer, PointerEvent.Event.entered, e
                                 .ownerId, e
                                 .x, e.y, e
                                 .button, e.movementX, e.movementY, false);
@@ -491,12 +491,12 @@ class Sprite : PhysicalBody
             }
             else
             {
-                if (e.event == MouseEvent.Event.mouseMove)
+                if (e.event == PointerEvent.Event.move)
                 {
                     if (isMouseOver)
                     {
                         isMouseOver = false;
-                        auto exitedEvent = MouseEvent(EventType.mouse, MouseEvent.Event.mouseExited, e
+                        auto exitedEvent = PointerEvent(EventType.pointer, PointerEvent.Event.exited, e
                                 .ownerId, e
                                 .x, e.y, e
                                 .button, e.movementX, e.movementY, false);
@@ -511,7 +511,7 @@ class Sprite : PhysicalBody
                 }
             }
 
-            if (e.event == MouseEvent.Event.mouseMove && (isDrag || bounds.contains(e.x, e
+            if (e.event == PointerEvent.Event.move && (isDrag || bounds.contains(e.x, e
                     .y)))
             {
                 chain.insert(this);
