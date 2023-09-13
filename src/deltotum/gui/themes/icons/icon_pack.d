@@ -6,7 +6,7 @@ import std;
 
 private
 {
-    const iconPack = import("icons.txt");
+    const iconPack = import("resources/icons.txt");
 }
 
 /**

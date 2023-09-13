@@ -9,3 +9,4 @@
 /build.sh
 /trace.*
 /libjulia.so
+/*.groovy

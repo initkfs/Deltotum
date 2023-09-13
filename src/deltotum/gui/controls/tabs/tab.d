@@ -9,10 +9,7 @@ import deltotum.kit.sprites.sprite : Sprite;
  */
 class Tab : Control
 {
-    private
-    {
-        Button label;
-    }
+    Button label;
 
     Sprite content;
 

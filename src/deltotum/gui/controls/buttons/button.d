@@ -35,6 +35,7 @@ class Button : Control
         ValueTransition clickEffectAnimation;
         Text _text;
         bool _selected;
+        string iconName;
     //}
 
     this(dstring text = "Button", double width = 80, double height = 40)
@@ -137,6 +138,10 @@ class Button : Control
         {
             clickEffect = clickEffectFactory();
             addCreate(clickEffect);
+        }
+
+        if(iconName){
+            addCreateIcon(iconName);
         }
 
         if (textFactory !is null)

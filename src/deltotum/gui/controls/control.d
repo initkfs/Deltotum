@@ -77,6 +77,32 @@ class Control : Sprite
         }
     }
 
+    void addCreateIcon(string iconName){
+        auto icon = createIcon(iconName);
+        addCreate(icon);
+    }
+
+    //TODO or move to scene factory?
+    Sprite createIcon(string iconName)
+    {
+        assert(isCreated);
+
+        import deltotum.gui.themes.icons.icon_name;
+        import deltotum.kit.sprites.images.image : Image;
+
+        import std.conv: to;
+
+        const iconData = graphics.theme.iconData(iconName);
+        auto icon = new Image();
+        build(icon);
+        const iconSize = graphics.theme.iconSize;
+        icon.loadRaw(iconData, iconSize.to!int, iconSize.to!int);
+
+        icon.setColor(graphics.theme.colorAccent);
+        icon.create;
+        return icon;
+    }
+
     GraphicStyle styleFromActionType()
     {
         import deltotum.kit.graphics.colors.rgba : RGBA;

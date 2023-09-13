@@ -22,6 +22,8 @@ struct Pixel
     uint* ptr;
     int x, y;
     SDL_PixelFormat* format;
+    size_t imageWidth;
+    size_t imageHeight;
 
     void setColor(RGBA color)
     {
@@ -44,6 +46,8 @@ struct Pixel
 class TextureImage : Texture
 {
     void delegate(Pixel) colorProcessor;
+
+    bool isResizeBest;
 
     this()
     {
@@ -91,8 +95,9 @@ class TextureImage : Texture
         if (!surface)
         {
             //TODO remove bindbc
-            import std.string: fromStringz;
+            import std.string : fromStringz;
             import bindbc.sdl;
+
             throw new Exception("Image loading error: " ~ IMG_GetError().fromStringz.idup);
         }
 
@@ -118,7 +123,8 @@ class TextureImage : Texture
                 {
                     //TODO more optimal iteration
                     uint* pixel = surf.pixel(x, y);
-                    auto pixelPtr = Pixel(pixel, x, y, surf.getObject.format);
+                    auto pixelPtr = Pixel(pixel, x, y, surf.getObject.format, surf.width, surf
+                            .height);
                     colorProcessor(pixelPtr);
                 }
             }
@@ -152,7 +158,8 @@ class TextureImage : Texture
 
                 changeColor(x, y, pixels, pitch, color);
 
-                if(colorProcessor){
+                if (colorProcessor)
+                {
                     //TODO multiple request
                     SDL_PixelFormat* format;
                     if (const err = texture.getFormat(format))
@@ -163,8 +170,7 @@ class TextureImage : Texture
                     pixel(x, y, pixels, pitch, pixelPtr);
                     //TODO caches
                     colorProcessor(Pixel(pixelPtr, x, y, format));
-                }    
-                
+                }
 
             }
         }
@@ -178,14 +184,54 @@ class TextureImage : Texture
 
         if (requestWidth > 0 && requestWidth != imageWidth || requestHeight > 0 && requestHeight != imageHeight)
         {
-            bool isResized;
-            if (const err = image.resize(cast(int)(requestWidth * scale), cast(int)(
-                    requestHeight * scale), isResized))
+            if (!isResizeBest)
             {
-                throw new Exception(err.toString);
+                bool isResized;
+                if (const err = image.resize(cast(int)(requestWidth * scale), cast(int)(
+                        requestHeight * scale), isResized))
+                {
+                    throw new Exception(err.toString);
+                }
+
+                imageWidth = image.width;
+                imageHeight = image.height;
+
             }
-            imageWidth = image.width;
-            imageHeight = image.height;
+            else
+            {
+                //TODO remove allocation, add transparent colors
+                import deltotum.kit.sprites.images.processing.image_processor : ImageProcessor;
+
+                auto processor = new ImageProcessor;
+                RGBA[][] buff = new RGBA[][](image.getObject.h, image.getObject.w);
+
+                foreach (y; 0 .. image.getObject.h)
+                {
+                    foreach (x; 0 .. image.getObject.w)
+                    {
+                        auto ptr = image.getObject;
+                        uint* pixelPtr = cast(uint*)(ptr.pixels + y * ptr.pitch + x * ptr.format.BytesPerPixel);
+                        auto pixel = Pixel(pixelPtr, x, y, image.getObject.format, image.getObject.w, image
+                                .getObject.h);
+                        buff[pixel.y][pixel.x] = pixel.getColor;
+                    }
+                }
+
+                import std.conv : to;
+                import Math = deltotum.math;
+                
+                double newWidth = Math.trunc(requestWidth * scale);
+                double newHeight = Math.trunc(requestHeight * scale);
+
+                auto newBuff = processor.resizeBilinear(buff, newWidth
+                        .to!size_t, newHeight.to!size_t);
+                width = newWidth;
+                height = newHeight;
+                load(newBuff);
+                image.destroy;
+                return true;
+            }
+
         }
         else
         {

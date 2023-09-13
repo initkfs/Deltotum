@@ -17,6 +17,8 @@ import deltotum.gui.containers.scroll_box : ScrollBox;
 import deltotum.gui.controls.tabs.tab : Tab;
 import deltotum.gui.controls.tabs.tabpane : TabPane;
 
+import IconNames = deltotum.gui.themes.icons.icon_name;
+
 import std.conv : to;
 
 private
@@ -118,12 +120,14 @@ class SceneView : VBox
                 objectOnDebug = null;
             }
         };
+        
+        tb.label.text = "";
+        tb.label.addCreateIcon(IconNames.locate_outline);
 
-        tb.label.text = "Debug";
-
-        auto fillStruct = new Button("Load");
+        auto fillStruct = new Button("");
         fillStruct.onAction = (ref e) { fillStructure; };
         btnContainer.addCreate(fillStruct);
+        fillStruct.addCreateIcon(IconNames.enter_outline);
 
         controlStructure = new TreeTableView!Sprite;
         controlStructure.width = width - padding.width;
@@ -133,17 +137,22 @@ class SceneView : VBox
         auto controlSettings = new TabPane;
         addCreate(controlSettings);
 
-        auto controlTab = new Tab("Sprite");
+        import IconNames = deltotum.gui.themes.icons.icon_name;
+
+        auto controlTab = new Tab("");
         controlTab.content = createControlTab;
         controlSettings.addCreate(controlTab);
+        controlTab.label.addCreateIcon(IconNames.options_outline);
 
-        auto layoutTab = new Tab("Layout");
+        auto layoutTab = new Tab("");
         layoutTab.content = createLayoutTab;
         controlSettings.addCreate(layoutTab);
+        layoutTab.label.addCreateIcon(IconNames.grid_outline);
 
-        auto dumpTab = new Tab("Dump");
+        auto dumpTab = new Tab("");
         dumpTab.content = createDumpTab;
         controlSettings.addCreate(dumpTab);
+        dumpTab.label.addCreateIcon(IconNames.construct_outline);
 
         controlSettings.changeTab(controlTab);
 
@@ -305,7 +314,7 @@ class SceneView : VBox
             }
         }
 
-        auto invalidBtn = new Button("Invalidation");
+        auto invalidBtn = new Button("");
         invalidBtn.onAction = (ref e) {
             if (objectOnDebug)
             {
@@ -313,6 +322,7 @@ class SceneView : VBox
             }
         };
         controlInfo.addCreate(invalidBtn);
+        invalidBtn.addCreateIcon(IconNames.copy_outline);
 
         output = new TextArea();
         output.width = width - padding.width;

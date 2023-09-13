@@ -37,6 +37,8 @@ class Theme
     double opacityControls = 1;
     double opacityHover = 1;
 
+    size_t iconSize = 24;
+
     Insets controlPadding = Insets(5, 5, 5, 5);
     double controlSpacing = 5;
     double controlCornersBevel = 8;
