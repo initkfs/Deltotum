@@ -61,15 +61,15 @@ class Text : Control
 
     bool isEditable;
 
-    protected
-    {
-        TextRow[] rows;
+    //protected
+    //{
+    TextRow[] rows;
 
-        dstring tempText;
+    dstring tempText;
 
-        Glyph[] _text;
-        bool isRebuildRows;
-    }
+    Glyph[] _text;
+    bool isRebuildRows;
+    //}
 
     this(string text)
     {
@@ -107,7 +107,8 @@ class Text : Control
                 if (focusEffect !is null && focusEffect.isVisible)
                 {
                     focusEffect.isVisible = false;
-                    if(cursor){
+                    if (cursor)
+                    {
                         cursor.isVisible = false;
                     }
                 }
@@ -320,6 +321,11 @@ class Text : Control
             cursor.isVisible = false;
         }
 
+        if (tempText)
+        {
+            updateRows;
+            tempText = null;
+        }
     }
 
     override void update(double delta)
@@ -328,6 +334,7 @@ class Text : Control
         if (tempText !is null)
         {
             updateRows;
+            isRebuildRows = false;
             tempText = null;
         }
 
@@ -754,7 +761,7 @@ class Text : Control
 
     void text(dstring t)
     {
-        if (!isBuilt)
+        if (!isBuilt || !isCreated)
         {
             tempText = t;
             isRebuildRows = true;
@@ -773,6 +780,11 @@ class Text : Control
 
     dstring text()
     {
+        if ((!isBuilt || !isCreated) && tempText)
+        {
+            return tempText;
+        }
+
         import std.array : appender;
 
         auto builder = appender!dstring;

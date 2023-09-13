@@ -111,7 +111,7 @@ class TableRow(T) : Container
             {
                 foreach (l; 0 .. level - 1)
                 {
-                    levelLabel.text = levelLabel.text ~ "│ ";
+                    levelLabel.text = levelLabel.text ~ "│";
                 }
             }
             levelLabel.text = levelLabel.text ~ "├";
@@ -191,7 +191,7 @@ class TreeTableView(T) : ScrollBox
     override void create()
     {
         super.create;
-        
+
         rowContainer = new VBox(0);
         setContent(rowContainer);
         rowContainer.enablePadding;
