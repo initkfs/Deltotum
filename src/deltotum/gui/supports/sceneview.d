@@ -60,6 +60,12 @@ class SceneView : VBox
     TextField paddingBottom;
     TextField paddingLeft;
 
+    Text updateTimeMs;
+    Text drawTimeMs;
+    Text invalidNodesCount;
+
+    Text gcUsedBytes;
+
     private
     {
         TreeTableView!Sprite controlStructure;
@@ -92,6 +98,29 @@ class SceneView : VBox
         import deltotum.kit.graphics.colors.rgba: RGBA;
 
         style = new GraphicStyle(1,  RGBA.web("#DDCC66"), false,RGBA.web("#ffb641"));
+
+        auto infoContainer = new HBox;
+        infoContainer.layout.isAlignY = true;
+        addCreate(infoContainer);
+        infoContainer.enableInsets;
+
+        updateTimeMs = new Text("");
+        infoContainer.addCreate([new Text("Ums:"), updateTimeMs]);
+
+        drawTimeMs = new Text("");
+        infoContainer.addCreate([new Text("Dms:"), drawTimeMs]);
+
+        invalidNodesCount = new Text("");
+        infoContainer.addCreate([ new Text("Inv:"), invalidNodesCount]);
+
+        auto infoContainer2 = new HBox;
+        infoContainer2.layout.isAlignY = true;
+        addCreate(infoContainer2);
+        infoContainer2.enableInsets;
+
+        gcUsedBytes = new Text("");
+        infoContainer2.addCreate([new Text("GCu(KB):"), gcUsedBytes]);
+
 
         auto btnContainer = new HBox;
         btnContainer.layout.isAlignY = true;

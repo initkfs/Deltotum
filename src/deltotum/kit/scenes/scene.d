@@ -92,12 +92,29 @@ class Scene : GraphicsComponent
     {
         worldTicks++;
 
+        size_t invalidNodesCount;
+
         foreach (root; sprites)
         {
             root.update(delta);
 
-            root.validate;
+            root.validate((invSprite) { invalidNodesCount++; });
             //root.unvalidate;
+        }
+
+        if (debugger && debugger.isVisible)
+        {
+            import Math = deltotum.math;
+            import std.conv : to;
+
+            debugger.invalidNodesCount.text = invalidNodesCount.to!dstring;
+            debugger.updateTimeMs.text = Math.round(timeUpdateProcessingMs).to!dstring;
+            debugger.drawTimeMs.text = Math.round(timeDrawProcessingMs).to!dstring;
+
+            import core.memory: GC;
+            auto stats = GC.stats;
+            auto usedSize = stats.usedSize / 1000.0;
+            debugger.gcUsedBytes.text = usedSize.to!dstring;
         }
     }
 

@@ -263,12 +263,15 @@ class Sprite : PhysicalBody
 
     }
 
-    import deltotum.kit.apps.components.graphics_component: GraphicsComponent;
+    import deltotum.kit.apps.components.graphics_component : GraphicsComponent;
+
     alias build = GraphicsComponent.build;
 
-    void build(Sprite sprite){
+    void build(Sprite sprite)
+    {
         super.build(sprite);
-        if(style && !sprite.style){
+        if (style && !sprite.style)
+        {
             sprite.style = style;
         }
     }
@@ -711,14 +714,14 @@ class Sprite : PhysicalBody
         invalidationState.reset;
     }
 
-    void validate()
+    void validate(scope void delegate(Sprite) onInvalid = null)
     {
         bool isChildInvalid;
         if (isValidatableChildren)
         {
             foreach (ch; children)
             {
-                ch.validate;
+                ch.validate(onInvalid);
                 if (!ch.isValid)
                 {
                     setInvalid;
@@ -734,6 +737,10 @@ class Sprite : PhysicalBody
 
         if (!isValid)
         {
+            if (onInvalid)
+            {
+                onInvalid(this);
+            }
             //listeners can expect to call layout manager
             foreach (invListener; invalidateListeners)
             {
@@ -743,10 +750,11 @@ class Sprite : PhysicalBody
             if (!isChildInvalid)
             {
                 setValid(true);
+                invalidationState.reset;
             }
         }
 
-        isInvalidationProcess = true;
+        //isInvalidationProcess = true;
     }
 
     void setInvalidationProcessAll(bool value)
@@ -766,7 +774,7 @@ class Sprite : PhysicalBody
         }
 
         applyLayout;
-        isInvalidationProcess = true;
+        //isInvalidationProcess = true;
     }
 
     void update(double delta)
