@@ -6,8 +6,13 @@ module deltotum.kit.apps.loops.loop;
 abstract class Loop
 {
     bool isRunning;
+    bool isAutoStart;
 
+    double msInSec = 1000;
     double frameRate = 60;
+
+    double frameTimeMs = 0;
+    double updateDelta = 0;
 
     size_t delegate() timestampMsProvider;
 
@@ -17,33 +22,55 @@ abstract class Loop
     void delegate() onDelay;
     void delegate(double) onRender;
 
+    void delegate() onInit;
     void delegate() onRun;
     void delegate() onQuit;
 
     abstract
     {
-        void setUp();
         void updateMs(size_t);
     }
 
-    void runWait()
+    void setUp(double deltaFactor = 100)
+    {
+        frameTimeMs = msInSec / frameRate;
+        updateDelta = frameTimeMs / deltaFactor;
+        if(isAutoStart){
+            isRunning = true;
+        }
+
+        if(onInit){
+            onInit();
+        }
+    }
+
+    void loop()
     in (onDelay)
     in (timestampMsProvider)
     {
-        setUp;
-
-        if (onRun)
-        {
-            onRun();
-        }
-
         while (isRunning)
         {
             onDelay();
             immutable timeMs = timestampMsProvider();
             updateMs(timeMs);
         }
+    }
+    
+    void run()
+    {
+        if (onRun)
+        {
+            onRun();
+        }
 
+        loop;
+
+        quit;
+    }
+
+    void quit()
+    {
+        isRunning = false;
         if (onQuit)
         {
             onQuit();

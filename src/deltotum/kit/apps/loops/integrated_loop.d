@@ -7,23 +7,12 @@ import deltotum.kit.apps.loops.loop : Loop;
  */
 class IntegratedLoop : Loop
 {
-    double deltaTimeAccumulatorLimitMs = 100;
+    double deltaTimeAccumLimitMs = 100;
 
     protected
     {
-        enum msInSec = 1000;
-
         double deltaTimeAccumulatorMs = 0;
         double lastUpdateTimeMs = 0;
-
-        double frameTimeMs = 0;
-        double updateDelta = 0;
-    }
-
-    override void setUp()
-    {
-        frameTimeMs = msInSec / frameRate;
-        updateDelta = frameTimeMs / 100;
     }
 
     override void updateMs(size_t startMs)
@@ -37,9 +26,9 @@ class IntegratedLoop : Loop
         lastUpdateTimeMs = startMs;
         deltaTimeAccumulatorMs += deltaTimeMs;
 
-        if (deltaTimeAccumulatorMs > deltaTimeAccumulatorLimitMs)
+        if (deltaTimeAccumulatorMs > deltaTimeAccumLimitMs)
         {
-            deltaTimeAccumulatorMs = deltaTimeAccumulatorLimitMs;
+            deltaTimeAccumulatorMs = deltaTimeAccumLimitMs;
         }
 
         onLoopUpdateMs(startMs);

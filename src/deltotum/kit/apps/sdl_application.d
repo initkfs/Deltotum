@@ -35,6 +35,7 @@ import deltotum.kit.windows.window : Window;
 import deltotum.kit.screens.screen : Screen;
 
 import deltotum.kit.apps.loops.integrated_loop : IntegratedLoop;
+import deltotum.kit.apps.loops.interrupted_loop: InterruptedLoop;
 import deltotum.kit.apps.loops.loop : Loop;
 import deltotum.kit.windows.window_manager : WindowManager;
 import deltotum.kit.apps.caps.cap : Cap;
@@ -105,6 +106,9 @@ class SdlApplication : GraphicApplication
         mainLoop.onLoopUpdateMs = (timestamp) => updateLoopMs(timestamp);
         mainLoop.onRender = (accumMsRest) => updateRender(accumMsRest);
         mainLoop.onFreqLoopUpdateDelta = (delta) => updateFreqLoopDelta(delta);
+
+        mainLoop.isAutoStart = isAutoStart;
+        mainLoop.setUp;
 
         sdlLib.initialize(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK);
         uservices.logger.trace("SDL ", sdlLib.getSdlVersionInfo);

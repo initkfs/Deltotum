@@ -22,6 +22,7 @@ import std.typecons : Nullable;
 abstract class GraphicApplication : CliApplication
 {
     double frameRate = 60;
+    bool isAutoStart = true;
 
     bool isQuitOnCloseAllWindows = true;
 
@@ -30,13 +31,9 @@ abstract class GraphicApplication : CliApplication
         GraphicsComponent _graphicServices;
     }
 
-    protected
-    {
-        Loop mainLoop;
-        WindowManager windowManager;
-
-        bool isProcessEvents = true;
-    }
+    Loop mainLoop;
+    WindowManager windowManager;
+    bool isProcessEvents = true;
 
     this(Loop loop)
     {
@@ -88,8 +85,7 @@ abstract class GraphicApplication : CliApplication
     void runLoop()
     in (mainLoop)
     {
-        mainLoop.isRunning = true;
-        mainLoop.runWait;
+        mainLoop.run;
     }
 
     void stopLoop()
