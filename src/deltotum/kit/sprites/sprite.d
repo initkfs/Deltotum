@@ -263,7 +263,7 @@ class Sprite : PhysicalBody
 
     }
 
-    import deltotum.kit.apps.components.graphics_component : GraphicsComponent;
+    import deltotum.kit.apps.comps.graphics_component : GraphicsComponent;
 
     alias build = GraphicsComponent.build;
 

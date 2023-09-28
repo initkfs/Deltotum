@@ -1,6 +1,6 @@
-module deltotum.kit.apps.capabilities.capability;
+module deltotum.kit.apps.caps.cap;
 
-class Capability
+class Cap
 {
     bool isVectorGraphics;
     bool isImageProcessing;

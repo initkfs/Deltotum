@@ -1,6 +1,6 @@
 module deltotum.kit.factories.creation;
 
-import deltotum.kit.apps.components.graphics_component : GraphicsComponent;
+import deltotum.kit.apps.comps.graphics_component : GraphicsComponent;
 
 import deltotum.kit.factories.creation_images : CreationImages;
 import deltotum.kit.factories.creation_shapes: CreationShapes;

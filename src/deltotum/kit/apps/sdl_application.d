@@ -8,7 +8,7 @@ import deltotum.core.configs.config : Config;
 import deltotum.core.contexts.context : Context;
 import deltotum.core.apps.application_exit : ApplicationExit;
 import deltotum.kit.apps.graphic_application : GraphicApplication;
-import deltotum.kit.apps.components.graphics_component : GraphicsComponent;
+import deltotum.kit.apps.comps.graphics_component : GraphicsComponent;
 import deltotum.kit.events.event_manager : EventManager;
 import deltotum.sys.sdl.events.sdl_event_processor : SdlEventProcessor;
 import deltotum.kit.scenes.scene_manager : SceneManager;
@@ -37,7 +37,7 @@ import deltotum.kit.screens.screen : Screen;
 import deltotum.kit.apps.loops.integrated_loop : IntegratedLoop;
 import deltotum.kit.apps.loops.loop : Loop;
 import deltotum.kit.windows.window_manager : WindowManager;
-import deltotum.kit.apps.capabilities.capability : Capability;
+import deltotum.kit.apps.caps.cap : Cap;
 import deltotum.gui.themes.icons.icon_pack : IconPack;
 
 import std.typecons : Nullable;

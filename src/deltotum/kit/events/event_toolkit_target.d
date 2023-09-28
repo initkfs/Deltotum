@@ -1,6 +1,6 @@
 module deltotum.kit.events.event_toolkit_target;
 
-import deltotum.kit.apps.components.graphics_component : GraphicsComponent;
+import deltotum.kit.apps.comps.graphics_component : GraphicsComponent;
 import deltotum.core.events.event_target : EventTarget;
 import deltotum.core.events.event_target : EventTarget;
 import deltotum.kit.inputs.pointers.events.pointer_event : PointerEvent;

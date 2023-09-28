@@ -1,6 +1,6 @@
 module deltotum.kit.scenes.scene;
 
-import deltotum.kit.apps.components.graphics_component : GraphicsComponent;
+import deltotum.kit.apps.comps.graphics_component : GraphicsComponent;
 import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.kit.interacts.interact : Interact;
 import deltotum.kit.graphics.colors.rgba : RGBA;

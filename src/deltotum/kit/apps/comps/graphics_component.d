@@ -1,4 +1,4 @@
-module deltotum.kit.apps.components.graphics_component;
+module deltotum.kit.apps.comps.graphics_component;
 
 import deltotum.core.apps.uni.uni_component : UniComponent;
 
@@ -11,7 +11,7 @@ import deltotum.kit.inputs.input : Input;
 import deltotum.kit.windows.window : Window;
 import deltotum.kit.screens.screen : Screen;
 import deltotum.kit.extensions.extension : Extension;
-import deltotum.kit.apps.capabilities.capability : Capability;
+import deltotum.kit.apps.caps.cap : Cap;
 
 /**
  * Authors: initkfs
@@ -27,7 +27,7 @@ class GraphicsComponent : UniComponent
         @Service Input _input;
         @Service Screen _screen;
         @Service Window _window;
-        @Service Capability _cap;
+        @Service Cap _cap;
     }
 
     void build(GraphicsComponent gComponent)
@@ -178,13 +178,13 @@ class GraphicsComponent : UniComponent
         return _cap !is null;
     }
 
-    Capability cap() @nogc nothrow pure @safe
+    Cap cap() @nogc nothrow pure @safe
     out (_cap; _cap !is null)
     {
         return _cap;
     }
 
-    void cap(Capability caps) pure @safe
+    void cap(Cap caps) pure @safe
     {
         import std.exception : enforce;
 

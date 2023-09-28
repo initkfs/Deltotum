@@ -1,6 +1,6 @@
 module deltotum.kit.scenes.scene_manager;
 
-import deltotum.kit.apps.components.graphics_component : GraphicsComponent;
+import deltotum.kit.apps.comps.graphics_component : GraphicsComponent;
 import deltotum.kit.scenes.scene : Scene;
 
 import std.stdio;

@@ -4,11 +4,11 @@ import deltotum.core.configs.config : Config;
 import deltotum.core.contexts.context : Context;
 import deltotum.core.apps.application_exit : ApplicationExit;
 import deltotum.core.apps.cli_application : CliApplication;
-import deltotum.kit.apps.components.graphics_component : GraphicsComponent;
+import deltotum.kit.apps.comps.graphics_component : GraphicsComponent;
 import deltotum.core.apps.uni.uni_component : UniComponent;
 import deltotum.kit.windows.window_manager : WindowManager;
 import deltotum.kit.extensions.extension : Extension;
-import deltotum.kit.apps.capabilities.capability : Capability;
+import deltotum.kit.apps.caps.cap : Cap;
 
 import deltotum.kit.windows.window : Window;
 import deltotum.kit.apps.loops.loop : Loop;
@@ -65,9 +65,9 @@ abstract class GraphicApplication : CliApplication
         return ApplicationExit(false);
     }
 
-    Capability newCapability()
+    Cap newCapability()
     {
-        return new Capability;
+        return new Cap;
     }
 
     GraphicsComponent newGraphicServices()
