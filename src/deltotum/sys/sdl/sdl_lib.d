@@ -16,7 +16,7 @@ import deltotum.sys.sdl.base.sdl_object : SdlObject;
  */
 class SdlLib : SdlObject
 {
-    void initialize(uint flags = SDL_INIT_EVERYTHING) const
+    void initialize(uint flags) const
     {
         SDLSupport loadResult = loadSDL();
         if (loadResult != bindbcConfig.sdlSupport)

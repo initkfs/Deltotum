@@ -93,7 +93,15 @@ class Control : Sprite
 
         import std.conv : to;
 
-        const iconData = graphics.theme.iconData(iconName);
+        const mustBeIconData = graphics.theme.iconData(iconName);
+        if(mustBeIconData.isNull){
+            //TODO placeholder;
+            import deltotum.kit.graphics.shapes.rectangle: Rectangle;
+            import deltotum.kit.graphics.styles.graphic_style: GraphicStyle;
+            import deltotum.kit.graphics.colors.rgba: RGBA;
+            return new Rectangle(10, 10, GraphicStyle(1, RGBA.red, true, RGBA.red));
+        }
+        const string iconData = mustBeIconData.get;
         auto icon = new Image();
         build(icon);
         const iconSize = graphics.theme.iconSize;

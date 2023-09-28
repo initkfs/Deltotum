@@ -35,7 +35,7 @@ import deltotum.kit.windows.window : Window;
 import deltotum.kit.screens.screen : Screen;
 
 import deltotum.kit.apps.loops.integrated_loop : IntegratedLoop;
-import deltotum.kit.apps.loops.interrupted_loop: InterruptedLoop;
+import deltotum.kit.apps.loops.interrupted_loop : InterruptedLoop;
 import deltotum.kit.apps.loops.loop : Loop;
 import deltotum.kit.windows.window_manager : WindowManager;
 import deltotum.kit.apps.caps.cap : Cap;
@@ -49,22 +49,25 @@ import std.logger : Logger, MultiLogger, FileLogger, LogLevel, sharedLog;
 import std.stdio;
 
 import deltotum.sys.cairo.libs : CairoLib;
+
 //import deltotum.sys.chipmunk.libs : ChipmLib;
 
 import bindbc.sdl;
+import std.typecons : Nullable;
 
 /**
  * Authors: initkfs
  */
 class SdlApplication : GraphicApplication
 {
+    uint delegate(uint flags) onSdlInitFlags;
     private
     {
         SdlLib sdlLib;
         SdlMixLib audioMixLib;
         SdlImgLib imgLib;
         SdlTTFLib fontLib;
-        SdlJoystick joystick;
+        Nullable!SdlJoystick joystick;
 
         Audio _audio;
         Extension _ext;
@@ -75,7 +78,7 @@ class SdlApplication : GraphicApplication
         //ChipmLib chipmLib;
 
         //TODO themes, assets?
-        IconPack iconPack;
+        Nullable!IconPack iconPack;
     }
 
     EventManager eventManager;
@@ -100,17 +103,39 @@ class SdlApplication : GraphicApplication
             return isExit;
         }
 
-        mainLoop.onQuit = () => quit;
-        mainLoop.timestampMsProvider = () => sdlLib.getTicks;
-        mainLoop.onDelay = () => sdlLib.delay(20);
-        mainLoop.onLoopUpdateMs = (timestamp) => updateLoopMs(timestamp);
-        mainLoop.onRender = (accumMsRest) => updateRender(accumMsRest);
-        mainLoop.onFreqLoopUpdateDelta = (delta) => updateFreqLoopDelta(delta);
+        initLoop(mainLoop);
 
-        mainLoop.isAutoStart = isAutoStart;
-        mainLoop.setUp;
+        uint flags;
+        if (isVideoEnabled)
+        {
+            flags |= SDL_INIT_VIDEO;
+            gservices.cap.isVideo = true;
+        }
 
-        sdlLib.initialize(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK);
+        if (isAudioEnabled)
+        {
+            flags |= SDL_INIT_AUDIO;
+            gservices.cap.isAudio = true;
+        }
+
+        if (isTimerEnabled)
+        {
+            flags |= SDL_INIT_TIMER;
+            gservices.cap.isTimer = true;
+        }
+
+        if (isJoystickEnabled)
+        {
+            flags |= SDL_INIT_JOYSTICK;
+            gservices.cap.isJoystick = true;
+        }
+
+        if (onSdlInitFlags)
+        {
+            flags = onSdlInitFlags(flags);
+        }
+
+        sdlLib.initialize(flags);
         uservices.logger.trace("SDL ", sdlLib.getSdlVersionInfo);
 
         //TODO move to hal layer
@@ -120,7 +145,11 @@ class SdlApplication : GraphicApplication
         audioMixLib.initialize;
         fontLib.initialize;
 
-        joystick = SdlJoystick.fromDevices;
+        if (gservices.cap.isJoystick)
+        {
+            joystick = SdlJoystick.fromDevices;
+            uservices.logger.trace("Init joystick");
+        }
 
         //TODO extract dependency
         import deltotum.sys.sdl.sdl_keyboard : SdlKeyboard;
@@ -136,11 +165,20 @@ class SdlApplication : GraphicApplication
         import deltotum.kit.inputs.cursors.system_cursor : SystemCursor;
         import deltotum.sys.sdl.sdl_cursor : SDLCursor;
 
-        auto cursor = new SystemCursor;
-        cursor.cursorFactory = (type) {
-            auto newCursor = new SDLCursor(type);
-            return newCursor;
-        };
+        SystemCursor cursor;
+        try
+        {
+            cursor = new SystemCursor;
+            cursor.cursorFactory = (type) {
+                auto newCursor = new SDLCursor(type);
+                return newCursor;
+            };
+        }
+        catch (Exception e)
+        {
+            uservices.logger.warningf("Cursor error: %s", e);
+            cursor = new SystemCursor(null);
+        }
 
         _input = new Input(clipboard, cursor);
         _audio = new Audio(audioMixLib);
@@ -212,7 +250,7 @@ class SdlApplication : GraphicApplication
         };
 
         eventManager.eventProcessor = new SdlEventProcessor(keyboard);
-        eventManager.onKey = (key) {
+        eventManager.onKey = (ref key) {
             final switch (key.event) with (KeyEvent.Event)
             {
             case keyDown:
@@ -226,7 +264,7 @@ class SdlApplication : GraphicApplication
             }
         };
 
-        eventManager.onJoystick = (joystickEvent) {
+        eventManager.onJoystick = (ref joystickEvent) {
 
             if (joystickEvent.event == JoystickEvent.Event.axis)
             {
@@ -256,7 +294,7 @@ class SdlApplication : GraphicApplication
             }
         };
 
-        eventManager.onWindow = (e) {
+        eventManager.onWindow = (ref e) {
             switch (e.event) with (WindowEvent.Event)
             {
             case focusIn:
@@ -301,7 +339,7 @@ class SdlApplication : GraphicApplication
             }
         };
 
-        eventManager.onPointer = (mouseEvent) {
+        eventManager.onPointer = (ref mouseEvent) {
             if (mouseEvent.event == PointerEvent.Event.down)
             {
                 auto mustBeWindow = windowManager.currentWindow;
@@ -350,16 +388,32 @@ class SdlApplication : GraphicApplication
 
         windowManager = new WindowManager;
 
-        iconPack = new IconPack;
-        iconPack.load;
-
-        //TODO move to config
-        import std.file : getcwd, exists, isDir;
-        import std.path : buildPath, dirName;
+        if (isIconPackEnabled)
+        {
+            auto newIconPack = new IconPack;
+            newIconPack.load;
+            iconPack = newIconPack;
+            gservices.cap.isIconPack = true;
+        }
 
         eventManager.startEvents;
 
         return ApplicationExit(false);
+    }
+
+    protected void initLoop(Loop loop)
+    {
+        loop.onQuit = () => quit;
+        loop.timestampMsProvider = () => sdlLib.getTicks;
+        loop.onDelay = () => sdlLib.delay(20);
+        loop.onLoopUpdateMs = (timestamp) => updateLoopMs(timestamp);
+        loop.onRender = (accumMsRest) => updateRender(accumMsRest);
+        loop.onFreqLoopUpdateDelta = (delta) => updateFreqLoopDelta(delta);
+
+        loop.isAutoStart = isAutoStart;
+        loop.setUp;
+        uservices.logger.tracef("Init loop, autostart: %s, running: %s", loop.isAutoStart, loop
+                .isRunning);
     }
 
     protected void buildPartially(GraphicsComponent component)
@@ -431,7 +485,7 @@ class SdlApplication : GraphicApplication
         window.setPos(newX, newY);
 
         //TODO extract renderer
-        SdlRenderer sdlRenderer = new SdlRenderer(sdlWindow, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+        SdlRenderer sdlRenderer = new SdlRenderer(sdlWindow, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE | SDL_RENDERER_PRESENTVSYNC);
         window.setTitle(title);
 
         //TODO move to config, duplication with SdlApplication
@@ -448,15 +502,19 @@ class SdlApplication : GraphicApplication
         import deltotum.gui.themes.theme : Theme;
         import deltotum.kit.gui.themes.factories.theme_from_config_factory : ThemeFromConfigFactory;
 
+        //TODO null?
+        IconPack pack = iconPack.isNull ? null : iconPack.get;
+
         auto themeLoader = new ThemeFromConfigFactory(uservices.logger, uservices.config, uservices.context, windowBuilder
                 .asset
-                .defaultFont, iconPack);
+                .defaultFont, pack);
 
         auto theme = themeLoader.create;
 
         import deltotum.kit.assets.fonts.font : Font;
 
-        Font defaultFont = windowBuilder.asset.font("fonts/JetBrains_Mono/static/JetBrainsMono-ExtraBold.ttf", 15);
+        Font defaultFont = windowBuilder.asset.font(
+            "fonts/JetBrains_Mono/static/JetBrainsMono-ExtraBold.ttf", 15);
         windowBuilder.asset.defaultFont = defaultFont;
 
         import deltotum.kit.graphics.graphics : Graphics;
@@ -508,7 +566,6 @@ class SdlApplication : GraphicApplication
             themeFont.setColor(colorText);
             windowBuilder.asset.addCachedFont(colorText, themeFont);
         }
-        
 
         import deltotum.kit.scenes.scene_manager : SceneManager;
 
@@ -555,14 +612,17 @@ class SdlApplication : GraphicApplication
     {
         clearErrors;
 
-        windowManager.iterateWindows((win) { win.destroy; return true; });
+        if (windowManager)
+        {
+            windowManager.iterateWindows((win) { win.destroy; return true; });
+        }
 
         //TODO auto destroy all services
         _audio.destroy;
 
-        if (joystick !is null)
+        if (joystick.isNull)
         {
-            joystick.destroy;
+            joystick.get.destroy;
         }
 
         _input.destroy;
@@ -668,8 +728,6 @@ class SdlApplication : GraphicApplication
                 requestQuit;
                 return;
             }
-
-            // closeWindow(windowId);
         }
     }
 }

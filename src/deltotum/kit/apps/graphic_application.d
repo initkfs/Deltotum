@@ -24,6 +24,12 @@ abstract class GraphicApplication : CliApplication
     double frameRate = 60;
     bool isAutoStart = true;
 
+    bool isVideoEnabled = true;
+    bool isAudioEnabled;
+    bool isTimerEnabled;
+    bool isJoystickEnabled;
+    bool isIconPackEnabled = true;
+
     bool isQuitOnCloseAllWindows = true;
 
     private
@@ -96,6 +102,10 @@ abstract class GraphicApplication : CliApplication
 
     void requestQuit()
     {
+        if (uservices && uservices.logger)
+        {
+            uservices.logger.tracef("Request quit");
+        }
         stopLoop;
         isProcessEvents = false;
     }
@@ -107,6 +117,7 @@ abstract class GraphicApplication : CliApplication
 
         if (windowManager.windowsCount == 0 && isQuitOnCloseAllWindows)
         {
+            uservices.logger.tracef("All windows are closed, exit request");
             requestQuit;
         }
     }

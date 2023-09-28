@@ -28,25 +28,23 @@ class SystemCursor
         Sprite _cursorOwner;
     }
 
-    this(SDLCursor defaultCursor = null)
+    this()
     {
-        if (!defaultCursor)
+        if (const err = SDLCursor.defaultCursor(this.defaultCursor))
         {
-            if (const err = SDLCursor.defaultCursor(this.defaultCursor))
-            {
-                throw new Exception(err.toString);
-            }
-            assert(this.defaultCursor);
+            throw new Exception(err.toString);
         }
-        else
-        {
-            this.defaultCursor = defaultCursor;
-        }
+        assert(this.defaultCursor);
+    }
+
+    this(SDLCursor defaultCursor)
+    {
+        this.defaultCursor = defaultCursor;
     }
 
     void change(ComSystemCursorType type)
     {
-        if (_locked)
+        if (!defaultCursor || _locked)
         {
             return;
         }
@@ -102,6 +100,11 @@ class SystemCursor
 
     bool lock(Sprite owner)
     {
+        if (!defaultCursor)
+        {
+            return false;
+        }
+        
         if (!_locked && _cursorOwner is null && owner !is null)
         {
             _locked = true;

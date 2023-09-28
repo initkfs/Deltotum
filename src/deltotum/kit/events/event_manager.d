@@ -34,11 +34,11 @@ class EventManager
         SdlEventProcessor eventProcessor;
     }
 
-    void delegate(KeyEvent) onKey;
-    void delegate(JoystickEvent) onJoystick;
-    void delegate(WindowEvent) onWindow;
-    void delegate(PointerEvent) onPointer;
-    void delegate(TextInputEvent) onTextInput;
+    void delegate(ref KeyEvent) onKey;
+    void delegate(ref JoystickEvent) onJoystick;
+    void delegate(ref WindowEvent) onWindow;
+    void delegate(ref PointerEvent) onPointer;
+    void delegate(ref TextInputEvent) onTextInput;
 
     void startEvents()
     {
@@ -47,14 +47,14 @@ class EventManager
             return;
         }
 
-        eventProcessor.onWindow = (windowEvent) {
+        eventProcessor.onWindow = (ref windowEvent) {
             if (onWindow !is null)
             {
                 onWindow(windowEvent);
             }
             dispatchEvent(windowEvent);
         };
-        eventProcessor.onPointer = (pointerEvent) {
+        eventProcessor.onPointer = (ref pointerEvent) {
             if (onPointer !is null)
             {
                 onPointer(pointerEvent);
@@ -62,14 +62,14 @@ class EventManager
             dispatchEvent(pointerEvent);
 
         };
-        eventProcessor.onJoystick = (joystickEvent) {
+        eventProcessor.onJoystick = (ref joystickEvent) {
             if (onJoystick !is null)
             {
                 onJoystick(joystickEvent);
             }
             dispatchEvent(joystickEvent);
         };
-        eventProcessor.onKey = (keyEvent) {
+        eventProcessor.onKey = (ref keyEvent) {
             if (onKey !is null)
             {
                 onKey(keyEvent);
@@ -77,7 +77,7 @@ class EventManager
             dispatchEvent(keyEvent);
         };
 
-        eventProcessor.onTextInput = (keyEvent)
+        eventProcessor.onTextInput = (ref keyEvent)
         {
             if (onTextInput !is null)
             {

@@ -7,6 +7,8 @@ import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.gui.themes.icons.icon_pack : IconPack;
 import deltotum.kit.sprites.images.image : Image;
 
+import std.typecons: Nullable;
+
 /**
  * Authors: initkfs
  */
@@ -55,9 +57,13 @@ class Theme
         return defaultMediumFont;
     }
 
-    string iconData(string id)
+    Nullable!string iconData(string id)
     {
-        return iconPack.icon(id);
+        if(!iconPack){
+            return Nullable!(string).init;
+        }
+        Nullable!string data = iconPack.icon(id);
+        return data;
     }
 
 }
