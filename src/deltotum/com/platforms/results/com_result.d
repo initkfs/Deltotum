@@ -13,12 +13,12 @@ import core.attribute : mustuse;
     const
     {
         int code;
-        //TODO free
         char[] message;
-        int codeSuccess;
     }
 
-    this(int code, const char[] message = "", int codeSuccess = defaultCodeSuccess) nothrow @nogc pure @safe
+    int codeSuccess;
+
+    this(int code, const char[] message = null, int codeSuccess = defaultCodeSuccess) nothrow @nogc pure @safe
     {
         this.code = code;
         this.message = message;
@@ -27,7 +27,7 @@ import core.attribute : mustuse;
 
     static ComResult success() nothrow @nogc pure @safe
     {
-        return ComResult(0);
+        return ComResult(defaultCodeSuccess);
     }
 
     static ComResult error(const char[] message) nothrow @nogc pure @safe

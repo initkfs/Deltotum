@@ -520,7 +520,7 @@ class SdlApplication : GraphicApplication
                 .asset
                 .defaultFont, pack);
 
-        auto theme = themeLoader.create;
+        auto theme = themeLoader.createTheme;
 
         import deltotum.kit.assets.fonts.font : Font;
 
@@ -585,7 +585,7 @@ class SdlApplication : GraphicApplication
             //TODO config, lazy delegate
             import deltotum.gui.supports.editors.guieditor : GuiEditor;
 
-            window.scenes.add(new GuiEditor);
+            window.scenes.addCreate(new GuiEditor);
         }
 
         window.onAfterDestroy = () {

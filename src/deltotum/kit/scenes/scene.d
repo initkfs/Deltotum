@@ -49,8 +49,9 @@ class Scene : GraphicsComponent
         addCreate(debugger);
     }
 
-    void create()
+    override void create()
     {
+        super.create;
         //TODO move to scene manager?
         import deltotum.kit.factories.creation_images : CreationImages;
 

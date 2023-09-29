@@ -28,7 +28,7 @@ class ThemeFromConfigFactory : ApplicationUnit
         this.iconPack = iconPack;
     }
 
-    Theme create()
+    Theme createTheme()
     {
         auto theme = new Theme(defaultFont, iconPack);
 

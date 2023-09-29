@@ -38,8 +38,8 @@ class CliApplication
     {
         UniComponent _uniServices;
 
-        bool isSilentMode = false;
-        bool isDebugMode = false;
+        bool isSilentMode;
+        bool isDebugMode;
         string mustBeDataDirectory;
         string mustBeConfigDir;
     }

@@ -37,6 +37,7 @@ class SceneManager : GraphicsComponent
         {
             build(scene);
         }
+        scene.initialize;
         scene.create;
     }
 

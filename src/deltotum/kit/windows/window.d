@@ -71,8 +71,9 @@ class Window : UniComponent
         }
     }
 
-    void create()
+    override void create()
     {
+        super.create;
         if (const err = nativeWindow.create)
         {
             throw new Exception(err.toString);

@@ -198,6 +198,7 @@ abstract class GraphicApplication : CliApplication
         }
 
         extension.initialize;
+        extension.create;
         extension.run;
 
         return extension;

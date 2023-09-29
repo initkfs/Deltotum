@@ -33,6 +33,7 @@ mixin template ComPtrManager(T)
             import std.stdio : stderr;
 
             stderr.writefln("Warning! Undestroyed common native object %s", typeof(this).stringof);
+            destroy;
         }
     }
 

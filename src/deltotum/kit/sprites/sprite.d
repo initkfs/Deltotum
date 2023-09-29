@@ -182,12 +182,14 @@ class Sprite : PhysicalBody
         }
     }
 
-    void create()
+    override void create()
     {
         if (isCreated)
         {
             return;
         }
+
+        super.create;
 
         if (isCached && !_cache)
         {

@@ -35,6 +35,11 @@ class SimpleUnit : Unitable
         return isState(UnitState.initialize);
     }
 
+    bool isCreated() const nothrow pure @safe
+    {
+        return isState(UnitState.create);
+    }
+
     bool isRunning() const nothrow pure @safe
     {
         return isState(UnitState.run);
@@ -64,9 +69,23 @@ class SimpleUnit : Unitable
         _state = UnitState.initialize;
     }
 
+    void create()
+    {
+
+        if (!isNone && !isInitialized)
+        {
+            import std.format : format;
+
+            throw new IllegalUnitStateException(format("Cannot create component '%s' with state: %s",
+                    className, _state));
+        }
+
+        _state = UnitState.create;
+    }
+
     void run()
     {
-        if (!isInitialized && !isStopped)
+        if (!isCreated && !isStopped)
         {
             import std.format : format;
 
@@ -94,7 +113,7 @@ class SimpleUnit : Unitable
     {
 
         //allow dispose without running
-        if (!isStopped && !isInitialized)
+        if (!isStopped && !isInitialized && !isCreated)
         {
             import std.format : format;
 
@@ -133,6 +152,11 @@ class SimpleUnit : Unitable
 
         component.initialize;
         assert(component.isInitialized);
+
+        component.create;
+        assert(component.isCreated);
+        assertThrown(component.isCreated);
+        assertThrown(component.initialize);
 
         component.run;
         assert(component.isRunning);

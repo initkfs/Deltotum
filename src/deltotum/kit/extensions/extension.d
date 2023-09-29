@@ -36,6 +36,14 @@ class Extension : SimpleUnit
         }
     }
 
+    override void create(){
+        super.create;
+        foreach (p; plugins)
+        {
+            p.create;
+        }
+    }
+
     override void run()
     {
         super.run;
