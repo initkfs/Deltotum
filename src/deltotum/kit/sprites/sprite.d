@@ -621,7 +621,14 @@ class Sprite : PhysicalBody
         {
             if (!obj.isDrawAfterParent && obj.isVisible)
             {
-                obj.draw;
+                if (!isValid)
+                {
+                    obj.draw;
+                }
+                else
+                {
+                    isRedraw = false;
+                }
                 checkClip(obj);
             }
         }
@@ -643,7 +650,10 @@ class Sprite : PhysicalBody
         {
             if (obj.isDrawAfterParent && obj.isVisible)
             {
-                obj.draw;
+                if (!obj.isValid)
+                {
+                    obj.draw;
+                }
                 checkClip(obj);
             }
         }
@@ -709,7 +719,7 @@ class Sprite : PhysicalBody
             }
         }
 
-        isInvalidationProcess = false;
+        // isInvalidationProcess = false;
         setValid(true);
         invalidationState.reset;
     }
@@ -745,12 +755,6 @@ class Sprite : PhysicalBody
             foreach (invListener; invalidateListeners)
             {
                 invListener();
-            }
-
-            if (!isChildInvalid)
-            {
-                setValid(true);
-                invalidationState.reset;
             }
         }
 

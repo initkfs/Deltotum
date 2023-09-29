@@ -627,7 +627,7 @@ class SdlApplication : GraphicApplication
         //TODO auto destroy all services
         _audio.destroy;
 
-        if (joystick.isNull)
+        if (!joystick.isNull)
         {
             joystick.get.destroy;
         }

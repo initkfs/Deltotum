@@ -84,6 +84,8 @@ class Scene : GraphicsComponent
                 {
                     obj.disableClipping;
                 }
+
+                obj.unvalidate;
             }
         });
     }
