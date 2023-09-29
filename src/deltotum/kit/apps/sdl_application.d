@@ -30,6 +30,8 @@ import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
 import deltotum.sys.sdl.sdl_joystick : SdlJoystick;
 import deltotum.kit.windows.events.window_event : WindowEvent;
 import deltotum.kit.inputs.pointers.events.pointer_event : PointerEvent;
+import deltotum.sys.sdl.sdl_texture : SdlTexture;
+import deltotum.sys.sdl.sdl_surface : SdlSurface;
 
 import deltotum.kit.windows.window : Window;
 import deltotum.kit.screens.screen : Screen;
@@ -431,6 +433,19 @@ class SdlApplication : GraphicApplication
         component.cap = gservices.cap;
     }
 
+    SdlRenderer newRenderer(SdlWindow window){
+         auto sdlRenderer = new SdlRenderer(window, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE | SDL_RENDERER_PRESENTVSYNC);
+         return sdlRenderer;
+    }
+
+    SdlTexture newTexture(SdlRenderer renderer){
+        return new SdlTexture(renderer);
+    }
+
+    SdlSurface newSurface(){
+        return new SdlSurface();
+    }
+
     Window newWindow(
         dstring title,
         int width,
@@ -440,10 +455,7 @@ class SdlApplication : GraphicApplication
         Window parent = null,
         SdlWindowMode mode = SdlWindowMode.none)
     {
-        import deltotum.kit.windows.window : Window;
         import deltotum.kit.scenes.scene_manager : SceneManager;
-        import deltotum.sys.sdl.sdl_window : SdlWindow, SdlWindowMode;
-        import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
 
         import std.conv : to;
 
@@ -484,8 +496,7 @@ class SdlApplication : GraphicApplication
 
         window.setPos(newX, newY);
 
-        //TODO extract renderer
-        SdlRenderer sdlRenderer = new SdlRenderer(sdlWindow, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE | SDL_RENDERER_PRESENTVSYNC);
+        SdlRenderer sdlRenderer = newRenderer(sdlWindow);
         window.setTitle(title);
 
         //TODO move to config, duplication with SdlApplication
@@ -521,15 +532,11 @@ class SdlApplication : GraphicApplication
 
         windowBuilder.graphics = new Graphics(uservices.logger, sdlRenderer, theme);
         windowBuilder.graphics.comTextureFactory = () {
-            import deltotum.sys.sdl.sdl_texture : SdlTexture;
-
-            return new SdlTexture(sdlRenderer);
+            return newTexture(sdlRenderer);
         };
 
         windowBuilder.graphics.comSurfaceFactory = () {
-            import deltotum.sys.sdl.sdl_surface : SdlSurface;
-
-            return new SdlSurface();
+            return newSurface;
         };
 
         windowBuilder.isBuilt = true;
