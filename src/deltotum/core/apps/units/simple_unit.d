@@ -155,7 +155,6 @@ class SimpleUnit : Unitable
 
         component.create;
         assert(component.isCreated);
-        assertThrown(component.isCreated);
         assertThrown(component.initialize);
 
         component.run;
