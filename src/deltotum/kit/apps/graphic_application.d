@@ -21,9 +21,6 @@ import std.typecons : Nullable;
  */
 abstract class GraphicApplication : CliApplication
 {
-    double frameRate = 60;
-    bool isAutoStart = true;
-
     bool isVideoEnabled = true;
     bool isAudioEnabled;
     bool isTimerEnabled;
@@ -37,16 +34,7 @@ abstract class GraphicApplication : CliApplication
         GraphicsComponent _graphicServices;
     }
 
-    Loop mainLoop;
     WindowManager windowManager;
-    bool isProcessEvents = true;
-
-    this(Loop loop)
-    {
-        import std.exception : enforce;
-
-        this.mainLoop = enforce(loop, "Main loop must not be null");
-    }
 
     override ApplicationExit initialize(string[] args)
     {
@@ -88,26 +76,12 @@ abstract class GraphicApplication : CliApplication
         return super.build(component);
     }
 
-    void runLoop()
-    in (mainLoop)
-    {
-        mainLoop.run;
-    }
-
-    void stopLoop()
-    in (mainLoop)
-    {
-        mainLoop.isRunning = false;
-    }
-
     void requestQuit()
     {
         if (uservices && uservices.logger)
         {
             uservices.logger.tracef("Request quit");
         }
-        stopLoop;
-        isProcessEvents = false;
     }
 
     void closeWindow(long id)

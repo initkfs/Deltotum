@@ -7,8 +7,8 @@ version(SdlBackend):
 import deltotum.core.configs.config : Config;
 import deltotum.core.contexts.context : Context;
 import deltotum.core.apps.application_exit : ApplicationExit;
-import deltotum.kit.apps.graphic_application : GraphicApplication;
-import deltotum.kit.apps.comps.graphics_component : GraphicsComponent;
+import deltotum.kit.apps.continuously_application: ContinuouslyApplication;
+import deltotum.kit.apps.comps.graphics_component: GraphicsComponent;
 import deltotum.kit.events.event_manager : EventManager;
 import deltotum.sys.sdl.events.sdl_event_processor : SdlEventProcessor;
 import deltotum.kit.scenes.scene_manager : SceneManager;
@@ -60,7 +60,7 @@ import std.typecons : Nullable;
 /**
  * Authors: initkfs
  */
-class SdlApplication : GraphicApplication
+class SdlApplication : ContinuouslyApplication
 {
     uint delegate(uint flags) onSdlInitFlags;
     private
