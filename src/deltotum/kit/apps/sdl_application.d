@@ -7,12 +7,11 @@ version(SdlBackend):
 import deltotum.core.configs.config : Config;
 import deltotum.core.contexts.context : Context;
 import deltotum.core.apps.application_exit : ApplicationExit;
-import deltotum.kit.apps.continuously_application: ContinuouslyApplication;
-import deltotum.kit.apps.comps.graphics_component: GraphicsComponent;
+import deltotum.kit.apps.continuously_application : ContinuouslyApplication;
+import deltotum.kit.apps.comps.graphics_component : GraphicsComponent;
 import deltotum.kit.events.event_manager : EventManager;
 import deltotum.sys.sdl.events.sdl_event_processor : SdlEventProcessor;
 import deltotum.kit.scenes.scene_manager : SceneManager;
-import deltotum.media.audio.audio : Audio;
 import deltotum.kit.graphics.graphics : Graphics;
 import deltotum.kit.interacts.interact : Interact;
 import deltotum.kit.sprites.sprite : Sprite;
@@ -35,7 +34,6 @@ import deltotum.sys.sdl.sdl_texture : SdlTexture;
 import deltotum.sys.sdl.sdl_surface : SdlSurface;
 
 import deltotum.kit.windows.window : Window;
-import deltotum.kit.screens.screen : Screen;
 
 import deltotum.kit.apps.loops.integrated_loop : IntegratedLoop;
 import deltotum.kit.apps.loops.interrupted_loop : InterruptedLoop;
@@ -43,10 +41,11 @@ import deltotum.kit.apps.loops.loop : Loop;
 import deltotum.kit.windows.window_manager : WindowManager;
 import deltotum.kit.apps.caps.cap_graphics : CapGraphics;
 
-
 import std.typecons : Nullable;
 
+import deltotum.media.audio.audio : Audio;
 import deltotum.kit.inputs.input : Input;
+import deltotum.kit.screens.screen : Screen;
 
 import std.logger : Logger, MultiLogger, FileLogger, LogLevel, sharedLog;
 import std.stdio;
@@ -71,10 +70,6 @@ class SdlApplication : ContinuouslyApplication
         SdlImgLib imgLib;
         SdlTTFLib fontLib;
         Nullable!SdlJoystick joystick;
-
-        Audio _audio;
-        Input _input;
-        Screen _screen;
 
         CairoLib cairoLib;
         //ChipmLib chipmLib;
@@ -405,30 +400,19 @@ class SdlApplication : ContinuouslyApplication
                 .isRunning);
     }
 
-    protected void buildPartially(GraphicsComponent component)
+    SdlRenderer newRenderer(SdlWindow window)
     {
-        import deltotum.core.apps.uni.uni_component : UniComponent;
-
-        super.build(cast(UniComponent) component);
-
-        component.isBuilt = false;
-
-        component.audio = _audio;
-        component.input = _input;
-        component.screen = _screen;
-        component.capGraphics = gservices.capGraphics;
+        auto sdlRenderer = new SdlRenderer(window, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE | SDL_RENDERER_PRESENTVSYNC);
+        return sdlRenderer;
     }
 
-    SdlRenderer newRenderer(SdlWindow window){
-         auto sdlRenderer = new SdlRenderer(window, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE | SDL_RENDERER_PRESENTVSYNC);
-         return sdlRenderer;
-    }
-
-    SdlTexture newTexture(SdlRenderer renderer){
+    SdlTexture newTexture(SdlRenderer renderer)
+    {
         return new SdlTexture(renderer);
     }
 
-    SdlSurface newSurface(){
+    SdlSurface newSurface()
+    {
         return new SdlSurface();
     }
 
@@ -441,8 +425,6 @@ class SdlApplication : ContinuouslyApplication
         Window parent = null,
         SdlWindowMode mode = SdlWindowMode.none)
     {
-        import deltotum.kit.scenes.scene_manager : SceneManager;
-
         import std.conv : to;
 
         auto sdlWindow = new SdlWindow;
@@ -493,43 +475,30 @@ class SdlApplication : ContinuouslyApplication
 
         import deltotum.kit.graphics.graphics : Graphics;
 
+        //TODO factory method
         windowBuilder.graphics = new Graphics(uservices.logger, sdlRenderer, theme);
         windowBuilder.graphics.comTextureFactory = () {
             return newTexture(sdlRenderer);
         };
 
-        windowBuilder.graphics.comSurfaceFactory = () {
-            return newSurface;
-        };
+        windowBuilder.graphics.comSurfaceFactory = () { return newSurface; };
 
         windowBuilder.isBuilt = true;
         windowBuilder.build(window);
 
-        import deltotum.gui.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
-
-        //TODO build and run services after all
-        import deltotum.gui.fonts.bitmap.bitmap_font : BitmapFont;
-
         //TODO from locale\config;
         if (mode == SdlWindowMode.none)
         {
-            import deltotum.kit.i18n.langs.alphabets.alphabet_ru : AlphabetRu;
-            import deltotum.kit.i18n.langs.alphabets.alphabet_en : AlphabetEn;
-            import deltotum.kit.i18n.langs.alphabets.arabic_numerals_alphabet : ArabicNumeralsAlpabet;
-            import deltotum.kit.i18n.langs.alphabets.special_characters_alphabet : SpecialCharactersAlphabet;
+            import deltotum.gui.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
+            //TODO build and run services after all
+            import deltotum.gui.fonts.bitmap.bitmap_font : BitmapFont;
 
             auto fontGenerator = new BitmapFontGenerator;
             windowBuilder.build(fontGenerator);
-            import deltotum.kit.graphics.colors.rgba : RGBA;
-
-            windowBuilder.asset.defaultBitmapFont = fontGenerator.generate(
-                [
-                new ArabicNumeralsAlpabet,
-                new SpecialCharactersAlphabet,
-                new AlphabetEn,
-                new AlphabetRu
-            ], windowBuilder.asset.defaultFont, RGBA.white, theme.colorTextBackground);
-
+            
+            auto defaultBitmapFont = createFontTexture(fontGenerator, asset, theme);
+            windowBuilder.asset.defaultBitmapFont = defaultBitmapFont;
+          
             auto colorText = theme.colorText;
 
             auto themeFont = windowBuilder.asset.defaultBitmapFont.copy;
@@ -539,7 +508,7 @@ class SdlApplication : ContinuouslyApplication
 
         import deltotum.kit.scenes.scene_manager : SceneManager;
 
-        auto sceneManager = new SceneManager;
+        auto sceneManager = newSceneManager(uservices.logger, uservices.config, uservices.context);
         windowBuilder.build(sceneManager);
         window.scenes = sceneManager;
 

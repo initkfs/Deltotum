@@ -12,9 +12,15 @@ import deltotum.kit.apps.caps.cap_graphics : CapGraphics;
 import deltotum.kit.assets.asset : Asset;
 import deltotum.gui.themes.icons.icon_pack : IconPack;
 import deltotum.gui.themes.theme : Theme;
+import deltotum.gui.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
+import deltotum.kit.scenes.scene_manager : SceneManager;
 
 import deltotum.kit.windows.window : Window;
 import deltotum.kit.apps.loops.loop : Loop;
+
+import deltotum.media.audio.audio : Audio;
+import deltotum.kit.inputs.input : Input;
+import deltotum.kit.screens.screen : Screen;
 
 import std.logger : Logger;
 import std.typecons : Nullable;
@@ -31,6 +37,13 @@ abstract class GraphicApplication : CliApplication
     bool isIconPackEnabled = true;
 
     bool isQuitOnCloseAllWindows = true;
+
+    protected
+    {
+        Audio _audio;
+        Input _input;
+        Screen _screen;
+    }
 
     private
     {
@@ -75,6 +88,10 @@ abstract class GraphicApplication : CliApplication
         return new CapGraphics;
     }
 
+    SceneManager newSceneManager(Logger logger, Config config, Context context){
+        return new SceneManager;
+    }
+
     GraphicsComponent newGraphicServices()
     {
         return new GraphicsComponent;
@@ -83,6 +100,20 @@ abstract class GraphicApplication : CliApplication
     void build(GraphicsComponent component)
     {
         gservices.build(component);
+    }
+
+    protected void buildPartially(GraphicsComponent component)
+    {
+        import deltotum.core.apps.uni.uni_component : UniComponent;
+
+        super.build(cast(UniComponent) component);
+
+        component.isBuilt = false;
+
+        component.audio = _audio;
+        component.input = _input;
+        component.screen = _screen;
+        component.capGraphics = gservices.capGraphics;
     }
 
     override void build(UniComponent component)
@@ -146,6 +177,26 @@ abstract class GraphicApplication : CliApplication
         asset.defaultFont = defaultFont;
 
         return asset;
+    }
+
+    Texture createFontTexture(BitmapFontGenerator generator, Asset asset, Theme theme)
+    {
+        import deltotum.kit.graphics.colors.rgba : RGBA;
+        import deltotum.kit.i18n.langs.alphabets.alphabet_ru : AlphabetRu;
+        import deltotum.kit.i18n.langs.alphabets.alphabet_en : AlphabetEn;
+        import deltotum.kit.i18n.langs.alphabets.arabic_numerals_alphabet : ArabicNumeralsAlpabet;
+        import deltotum.kit.i18n.langs.alphabets.special_characters_alphabet : SpecialCharactersAlphabet;
+
+        //TODO from config
+        auto bitmapFont = generator.generate(
+            [
+            new ArabicNumeralsAlpabet,
+            new SpecialCharactersAlphabet,
+            new AlphabetEn,
+            new AlphabetRu
+        ], asset.defaultFont, RGBA.white, theme.colorTextBackground);
+
+        return bitmapFont;
     }
 
     GraphicsComponent gservices() @nogc nothrow pure @safe
