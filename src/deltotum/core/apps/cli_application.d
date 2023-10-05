@@ -9,7 +9,7 @@ import deltotum.core.clis.cli : Cli;
 import deltotum.core.contexts.context : Context;
 import deltotum.core.resources.resource : Resource;
 import deltotum.core.extensions.extension : Extension;
-import deltotum.core.apps.caps.cap_core: CapCore;
+import deltotum.core.apps.caps.cap_core : CapCore;
 
 import std.logger : Logger;
 import std.typecons : Nullable;
@@ -87,7 +87,7 @@ class CliApplication
         uservices.support = createSupport;
         uservices.logger.trace("Support service built");
 
-        uservices.resource = createResource(uservices.config, uservices.context);
+        uservices.resource = createResource(uservices.logger, uservices.config, uservices.context);
         uservices.logger.trace("Resources service built");
 
         uservices.ext = createExtension(uservices.logger, uservices.config, uservices.context);
@@ -327,19 +327,45 @@ class CliApplication
         return support;
     }
 
-    protected Resource createResource(Config config, Context context)
+    protected Resource createResource(Logger logger, Config config, Context context, string resourceDirPath = "resources")
     {
-        import std.path : buildPath;
+        import std.path : buildPath, isAbsolute;
+        import std.file : exists, isDir;
 
-        const mustBeDataDir = context.appContext.dataDir;
-        if (mustBeDataDir.isNull)
+        string mustBeResDir = resourceDirPath;
+        if (mustBeResDir.isAbsolute)
         {
-            auto resource = new Resource;
-            return resource;
+            if (!mustBeResDir.exists || !mustBeResDir.isDir)
+            {
+                uservices.logger.error(
+                    "Absolute resources directory path does not exist or not a directory: " ~ mustBeResDir);
+                //WARNING return
+                return new Resource(logger);
+            }
+        }
+        else
+        {
+            const mustBeDataDir = context.appContext.dataDir;
+            if (mustBeDataDir.isNull)
+            {
+                uservices.logger.errorf(
+                    "Received relative resource path %s, but data directory not found");
+                //WARNING return
+                return new Resource(logger);
+            }
+
+            mustBeResDir = buildPath(mustBeDataDir.get, mustBeResDir);
+            if (!mustBeResDir.exists || !mustBeResDir.isDir)
+            {
+                uservices.logger.error(
+                    "Resource directory path relative to the data does not exist or is not a directory: ", mustBeResDir);
+                //WARNING return
+                return new Resource(logger);
+            }
         }
 
-        string resourceDir = buildPath(mustBeDataDir.get, "resources");
-        auto resource = new Resource(resourceDir);
+        auto resource = new Resource(logger, mustBeResDir);
+        uservices.logger.trace("Create resources from directory: ", mustBeResDir);
         return resource;
     }
 
@@ -365,7 +391,7 @@ class CliApplication
             if (luaResult != luaSupport)
             {
                 uservices.capCore.isLuaExtension = false;
-                
+
                 if (luaResult == luaSupport.noLibrary)
                 {
                     uservices.logger.warning("Lua shared library failed to load");

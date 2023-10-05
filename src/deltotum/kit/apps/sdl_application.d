@@ -496,12 +496,12 @@ class SdlApplication : ContinuouslyApplication
             auto fontGenerator = new BitmapFontGenerator;
             windowBuilder.build(fontGenerator);
             
-            auto defaultBitmapFont = createFontTexture(fontGenerator, asset, theme);
-            windowBuilder.asset.defaultBitmapFont = defaultBitmapFont;
+            auto fontBitmap = createFontBitmap(fontGenerator, asset, theme);
+            windowBuilder.asset.fontBitmap = fontBitmap;
           
             auto colorText = theme.colorText;
 
-            auto themeFont = windowBuilder.asset.defaultBitmapFont.copy;
+            auto themeFont = windowBuilder.asset.fontBitmap.copy;
             themeFont.setColor(colorText);
             windowBuilder.asset.addCachedFont(colorText, themeFont);
         }

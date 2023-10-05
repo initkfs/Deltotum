@@ -11,9 +11,11 @@ import deltotum.core.extensions.extension : Extension;
 import deltotum.kit.apps.caps.cap_graphics : CapGraphics;
 import deltotum.kit.assets.asset : Asset;
 import deltotum.gui.themes.icons.icon_pack : IconPack;
+import deltotum.kit.sprites.textures.texture : Texture;
 import deltotum.gui.themes.theme : Theme;
 import deltotum.gui.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
 import deltotum.kit.scenes.scene_manager : SceneManager;
+import deltotum.gui.fonts.bitmap.bitmap_font : BitmapFont;
 
 import deltotum.kit.windows.window : Window;
 import deltotum.kit.apps.loops.loop : Loop;
@@ -88,7 +90,8 @@ abstract class GraphicApplication : CliApplication
         return new CapGraphics;
     }
 
-    SceneManager newSceneManager(Logger logger, Config config, Context context){
+    SceneManager newSceneManager(Logger logger, Config config, Context context)
+    {
         return new SceneManager;
     }
 
@@ -150,7 +153,7 @@ abstract class GraphicApplication : CliApplication
         import deltotum.kit.gui.themes.factories.theme_from_config_factory : ThemeFromConfigFactory;
 
         auto themeLoader = new ThemeFromConfigFactory(uservices.logger, uservices.config, uservices.context, asset
-                .defaultFont, pack);
+                .font, pack);
 
         auto theme = themeLoader.createTheme;
         return theme;
@@ -162,8 +165,13 @@ abstract class GraphicApplication : CliApplication
         import std.file : getcwd, exists, isDir;
         import std.path : buildPath, dirName;
 
-        immutable assetsDirPath = "data/assets";
-        immutable assetsDir = buildPath(getcwd, assetsDirPath);
+        auto mustBeResDir = uservices.resource.resourcesDir;
+        if (mustBeResDir.isNull)
+        {
+            throw new Exception("Resources directory not found");
+        }
+
+        immutable string assetsDir = mustBeResDir.get;
 
         import deltotum.kit.assets.asset : Asset;
 
@@ -172,14 +180,14 @@ abstract class GraphicApplication : CliApplication
         import deltotum.kit.assets.fonts.font : Font;
 
         //TODO from config
-        Font defaultFont = asset.font(
+        Font font = asset.newFont(
             "fonts/JetBrains_Mono/static/JetBrainsMono-ExtraBold.ttf", 15);
-        asset.defaultFont = defaultFont;
+        asset.font = font;
 
         return asset;
     }
 
-    Texture createFontTexture(BitmapFontGenerator generator, Asset asset, Theme theme)
+    BitmapFont createFontBitmap(BitmapFontGenerator generator, Asset asset, Theme theme)
     {
         import deltotum.kit.graphics.colors.rgba : RGBA;
         import deltotum.kit.i18n.langs.alphabets.alphabet_ru : AlphabetRu;
@@ -188,13 +196,13 @@ abstract class GraphicApplication : CliApplication
         import deltotum.kit.i18n.langs.alphabets.special_characters_alphabet : SpecialCharactersAlphabet;
 
         //TODO from config
-        auto bitmapFont = generator.generate(
+        BitmapFont bitmapFont = generator.generate(
             [
             new ArabicNumeralsAlpabet,
             new SpecialCharactersAlphabet,
             new AlphabetEn,
             new AlphabetRu
-        ], asset.defaultFont, RGBA.white, theme.colorTextBackground);
+        ], asset.font, RGBA.white, theme.colorTextBackground);
 
         return bitmapFont;
     }

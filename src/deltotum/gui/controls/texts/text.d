@@ -307,7 +307,7 @@ class Text : Control
             fontTexture = asset.cachedFont(color);
             if (!fontTexture)
             {
-                fontTexture = asset.defaultBitmapFont.copy;
+                fontTexture = asset.fontBitmap.copy;
                 fontTexture.setColor(color);
                 asset.addCachedFont(color, fontTexture);
             }
@@ -317,7 +317,7 @@ class Text : Control
             fontTexture = asset.cachedFont(graphics.theme.colorText);
             if (!fontTexture)
             {
-                fontTexture = asset.defaultBitmapFont;
+                fontTexture = asset.fontBitmap;
             }
         }
 
@@ -415,7 +415,7 @@ class Text : Control
             Glyph newGlyph;
             bool isFound;
             //TODO hash map
-            foreach (glyph; asset.defaultBitmapFont.glyphs)
+            foreach (glyph; asset.fontBitmap.glyphs)
             {
                 if (glyph.grapheme == grapheme)
                 {
@@ -427,7 +427,7 @@ class Text : Control
 
             if (!isFound)
             {
-                newGlyph = asset.defaultBitmapFont.placeholder;
+                newGlyph = asset.fontBitmap.placeholder;
             }
 
             newGlyphs ~= newGlyph;

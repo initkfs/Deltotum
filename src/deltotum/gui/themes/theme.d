@@ -52,7 +52,7 @@ class Theme
         this.iconPack = iconPack;
     }
 
-    Font defaultFontMedium()
+    Font fontMedium()
     {
         return defaultMediumFont;
     }

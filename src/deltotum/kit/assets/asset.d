@@ -1,6 +1,5 @@
 module deltotum.kit.assets.asset;
 
-import deltotum.core.apps.units.simple_unit : SimpleUnit;
 import deltotum.core.apps.units.services.loggable_unit : LoggableUnit;
 
 import std.logger : Logger;
@@ -12,34 +11,31 @@ import std.stdio;
 
 import deltotum.kit.assets.fonts.font : Font;
 import deltotum.gui.fonts.bitmap.bitmap_font : BitmapFont;
-import deltotum.kit.graphics.colors.rgba: RGBA;
-import deltotum.kit.sprites.textures.texture: Texture;
+import deltotum.kit.graphics.colors.rgba : RGBA;
+import deltotum.kit.sprites.textures.texture : Texture;
+import deltotum.core.resources.resource : Resource;
 
 /**
  * Authors: initkfs
  */
-class Asset : LoggableUnit
+class Asset : Resource
 {
-    string assetsDirPath;
-
-    Font defaultFont;
-    BitmapFont defaultBitmapFont;
-
+    Font font;
+    BitmapFont fontBitmap;
     Texture[RGBA] fontCache;
 
-    this(Logger logger, string assetsDirPath)
+    this(Logger logger, string assetsDir)
     {
-        super(logger);
-
-        if (assetsDirPath.length == 0)
-        {
-            throw new Exception("Assets directory must not be empty");
-        }
-        this.assetsDirPath = assetsDirPath;
+        super(logger, assetsDir);
     }
 
     bool addCachedFont(RGBA color, Texture fontTexture)
     {
+        if (fontTexture is fontBitmap)
+        {
+            throw new Exception("Main bitmap font cannot be cached");
+        }
+
         if (color in fontCache)
         {
             return false;
@@ -57,34 +53,41 @@ class Asset : LoggableUnit
         return null;
     }
 
-    string filePath(string path)
-    {
-        immutable filePath = buildPath(assetsDirPath, path);
-        return filePath;
-    }
-
     string image(string path)
     {
-        const string imagePath = filePath(path);
-        return imagePath;
+        auto mustBeImagePath = withResourceDir(path);
+        if (mustBeImagePath.isNull)
+        {
+            throw new Exception("Not found image in resources: " ~ path);
+        }
+        return mustBeImagePath.get;
     }
 
-    Font font(string fontFilePath, int size)
+    Font newFont(string fontFilePath, int size)
     {
-        const string path = filePath(fontFilePath);
-        Font font = new Font(logger, path, size);
-        return font;
+        auto mustBeFontPath = withResourceDir(fontFilePath);
+        if(mustBeFontPath.isNull){
+            throw new Exception("Not found font in resources: " ~ fontFilePath);
+        }
+        Font nFont = new Font(logger, mustBeFontPath.get, size);
+        return nFont;
     }
 
     void destroy()
     {
-        if (defaultFont)
+        if (font)
         {
-            defaultFont.destroy;
+            font.destroy;
         }
-        if (defaultBitmapFont)
+        if (fontBitmap)
         {
-            defaultBitmapFont.destroy;
+            fontBitmap.destroy;
+        }
+
+        //TODO check if font\fontBitmap in fontCache
+        foreach (fontTexture; fontCache)
+        {
+            fontTexture.destroy;
         }
     }
 }

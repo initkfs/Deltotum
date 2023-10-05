@@ -85,7 +85,7 @@ class TextArea : HBox
 
         //TODO isDisabled
         onTextInput = (ref key) {
-            foreach (glyph; asset.defaultBitmapFont.glyphs)
+            foreach (glyph; asset.fontBitmap.glyphs)
             {
                 if (glyph.grapheme == key.firstLetter)
                 {

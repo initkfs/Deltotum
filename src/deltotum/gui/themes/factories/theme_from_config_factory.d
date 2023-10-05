@@ -18,19 +18,19 @@ class ThemeFromConfigFactory : ApplicationUnit
 {
     private
     {
-        Font defaultFont;
+        Font font;
         IconPack iconPack;
     }
-    this(Logger logger, Config config, Context context, Font defaultFont, IconPack iconPack) pure @safe
+    this(Logger logger, Config config, Context context, Font font, IconPack iconPack) pure @safe
     {
         super(logger, config, context);
-        this.defaultFont = defaultFont;
+        this.font = font;
         this.iconPack = iconPack;
     }
 
     Theme createTheme()
     {
-        auto theme = new Theme(defaultFont, iconPack);
+        auto theme = new Theme(font, iconPack);
 
         //TODO rewrite
         theme.colorPrimary = fromStringColor(config.getString("themeColorPrimary").get);
