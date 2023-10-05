@@ -16,6 +16,7 @@ import deltotum.media.audio.audio : Audio;
 import deltotum.kit.graphics.graphics : Graphics;
 import deltotum.kit.interacts.interact : Interact;
 import deltotum.kit.sprites.sprite : Sprite;
+import deltotum.kit.assets.asset : Asset;
 import deltotum.kit.scenes.scene : Scene;
 import deltotum.kit.inputs.keyboards.events.key_event : KeyEvent;
 import deltotum.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
@@ -41,7 +42,7 @@ import deltotum.kit.apps.loops.interrupted_loop : InterruptedLoop;
 import deltotum.kit.apps.loops.loop : Loop;
 import deltotum.kit.windows.window_manager : WindowManager;
 import deltotum.kit.apps.caps.cap_graphics : CapGraphics;
-import deltotum.gui.themes.icons.icon_pack : IconPack;
+
 
 import std.typecons : Nullable;
 
@@ -77,9 +78,6 @@ class SdlApplication : ContinuouslyApplication
 
         CairoLib cairoLib;
         //ChipmLib chipmLib;
-
-        //TODO themes, assets?
-        Nullable!IconPack iconPack;
     }
 
     EventManager eventManager;
@@ -387,14 +385,6 @@ class SdlApplication : ContinuouslyApplication
 
         windowManager = new WindowManager;
 
-        if (isIconPackEnabled)
-        {
-            auto newIconPack = new IconPack;
-            newIconPack.load;
-            iconPack = newIconPack;
-            gservices.capGraphics.isIconPack = true;
-        }
-
         eventManager.startEvents;
 
         return ApplicationExit(false);
@@ -495,34 +485,11 @@ class SdlApplication : ContinuouslyApplication
         SdlRenderer sdlRenderer = newRenderer(sdlWindow);
         window.setTitle(title);
 
-        //TODO move to config, duplication with SdlApplication
-        import std.file : getcwd, exists, isDir;
-        import std.path : buildPath, dirName;
+        Asset asset = createAsset(uservices.logger, uservices.config, uservices.context);
+        assert(asset);
+        windowBuilder.asset = asset;
 
-        immutable assetsDirPath = "data/assets";
-        immutable assetsDir = buildPath(getcwd, assetsDirPath);
-
-        import deltotum.kit.assets.asset : Asset;
-
-        windowBuilder.asset = new Asset(uservices.logger, assetsDir);
-
-        import deltotum.gui.themes.theme : Theme;
-        import deltotum.kit.gui.themes.factories.theme_from_config_factory : ThemeFromConfigFactory;
-
-        //TODO null?
-        IconPack pack = iconPack.isNull ? null : iconPack.get;
-
-        auto themeLoader = new ThemeFromConfigFactory(uservices.logger, uservices.config, uservices.context, windowBuilder
-                .asset
-                .defaultFont, pack);
-
-        auto theme = themeLoader.createTheme;
-
-        import deltotum.kit.assets.fonts.font : Font;
-
-        Font defaultFont = windowBuilder.asset.font(
-            "fonts/JetBrains_Mono/static/JetBrainsMono-ExtraBold.ttf", 15);
-        windowBuilder.asset.defaultFont = defaultFont;
+        auto theme = createTheme(uservices.logger, uservices.config, uservices.context, asset);
 
         import deltotum.kit.graphics.graphics : Graphics;
 

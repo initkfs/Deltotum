@@ -9,6 +9,9 @@ import deltotum.core.apps.uni.uni_component : UniComponent;
 import deltotum.kit.windows.window_manager : WindowManager;
 import deltotum.core.extensions.extension : Extension;
 import deltotum.kit.apps.caps.cap_graphics : CapGraphics;
+import deltotum.kit.assets.asset : Asset;
+import deltotum.gui.themes.icons.icon_pack : IconPack;
+import deltotum.gui.themes.theme : Theme;
 
 import deltotum.kit.windows.window : Window;
 import deltotum.kit.apps.loops.loop : Loop;
@@ -32,6 +35,9 @@ abstract class GraphicApplication : CliApplication
     private
     {
         GraphicsComponent _graphicServices;
+
+        //TODO themes, assets?
+        Nullable!IconPack iconPack;
     }
 
     WindowManager windowManager;
@@ -51,6 +57,14 @@ abstract class GraphicApplication : CliApplication
         if (!_graphicServices.hasCapGraphics)
         {
             _graphicServices.capGraphics = newCapability;
+        }
+
+        if (isIconPackEnabled)
+        {
+            auto newIconPack = new IconPack;
+            newIconPack.load;
+            iconPack = newIconPack;
+            gservices.capGraphics.isIconPack = true;
         }
 
         return ApplicationExit(false);
@@ -94,6 +108,44 @@ abstract class GraphicApplication : CliApplication
             uservices.logger.tracef("All windows are closed, exit request");
             requestQuit;
         }
+    }
+
+    Theme createTheme(Logger logger, Config config, Context context, Asset asset)
+    {
+        //TODO null?
+        IconPack pack = iconPack.isNull ? null : iconPack.get;
+
+        import deltotum.gui.themes.theme : Theme;
+        import deltotum.kit.gui.themes.factories.theme_from_config_factory : ThemeFromConfigFactory;
+
+        auto themeLoader = new ThemeFromConfigFactory(uservices.logger, uservices.config, uservices.context, asset
+                .defaultFont, pack);
+
+        auto theme = themeLoader.createTheme;
+        return theme;
+    }
+
+    Asset createAsset(Logger logger, Config config, Context context)
+    {
+        //TODO move to config, duplication with SdlApplication
+        import std.file : getcwd, exists, isDir;
+        import std.path : buildPath, dirName;
+
+        immutable assetsDirPath = "data/assets";
+        immutable assetsDir = buildPath(getcwd, assetsDirPath);
+
+        import deltotum.kit.assets.asset : Asset;
+
+        auto asset = new Asset(uservices.logger, assetsDir);
+
+        import deltotum.kit.assets.fonts.font : Font;
+
+        //TODO from config
+        Font defaultFont = asset.font(
+            "fonts/JetBrains_Mono/static/JetBrainsMono-ExtraBold.ttf", 15);
+        asset.defaultFont = defaultFont;
+
+        return asset;
     }
 
     GraphicsComponent gservices() @nogc nothrow pure @safe
