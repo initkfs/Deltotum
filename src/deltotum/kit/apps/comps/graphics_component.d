@@ -10,8 +10,7 @@ import deltotum.kit.graphics.graphics : Graphics;
 import deltotum.kit.inputs.input : Input;
 import deltotum.kit.windows.window : Window;
 import deltotum.kit.screens.screen : Screen;
-import deltotum.kit.extensions.extension : Extension;
-import deltotum.kit.apps.caps.cap : Cap;
+import deltotum.kit.apps.caps.cap_graphics : CapGraphics;
 
 /**
  * Authors: initkfs
@@ -22,12 +21,11 @@ class GraphicsComponent : UniComponent
     {
         @Service Audio _audio;
         @Service Asset _asset;
-        @Service Extension _ext;
         @Service Graphics _graphics;
         @Service Input _input;
         @Service Screen _screen;
         @Service Window _window;
-        @Service Cap _cap;
+        @Service CapGraphics _capGraphics;
     }
 
     void build(GraphicsComponent gComponent)
@@ -154,41 +152,22 @@ class GraphicsComponent : UniComponent
         _screen = screen;
     }
 
-    bool hasExtension() @nogc nothrow pure @safe
+    bool hasCapGraphics() @nogc nothrow pure @safe
     {
-        return _ext !is null;
+        return _capGraphics !is null;
     }
 
-    Extension ext() @nogc nothrow pure @safe
-    out (_ext; _ext !is null)
+    CapGraphics capGraphics() @nogc nothrow pure @safe
+    out (_capGraphics; _capGraphics !is null)
     {
-        return _ext;
+        return _capGraphics;
     }
 
-    void ext(Extension ext) pure @safe
+    void capGraphics(CapGraphics caps) pure @safe
     {
         import std.exception : enforce;
 
-        enforce(ext !is null, "Extension must not be null");
-        _ext = ext;
-    }
-
-    bool hasCap() @nogc nothrow pure @safe
-    {
-        return _cap !is null;
-    }
-
-    Cap cap() @nogc nothrow pure @safe
-    out (_cap; _cap !is null)
-    {
-        return _cap;
-    }
-
-    void cap(Cap caps) pure @safe
-    {
-        import std.exception : enforce;
-
-        enforce(caps !is null, "Capabilities must not be null");
-        _cap = caps;
+        enforce(caps !is null, "Graphics capabilities must not be null");
+        _capGraphics = caps;
     }
 }

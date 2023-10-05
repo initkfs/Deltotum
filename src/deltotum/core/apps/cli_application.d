@@ -8,7 +8,8 @@ import deltotum.core.configs.config : Config;
 import deltotum.core.clis.cli : Cli;
 import deltotum.core.contexts.context : Context;
 import deltotum.core.resources.resource : Resource;
-import deltotum.kit.extensions.extension : Extension;
+import deltotum.core.extensions.extension : Extension;
+import deltotum.core.apps.caps.cap_core: CapCore;
 
 import std.logger : Logger;
 import std.typecons : Nullable;
@@ -53,6 +54,8 @@ class CliApplication
     {
         _uniServices = newUniServices;
 
+        uservices.capCore = new CapCore;
+
         auto cli = createCli(args);
         uservices.cli = cli;
 
@@ -86,6 +89,9 @@ class CliApplication
 
         uservices.resource = createResource(uservices.config, uservices.context);
         uservices.logger.trace("Resources service built");
+
+        uservices.ext = createExtension(uservices.logger, uservices.config, uservices.context);
+        uservices.logger.trace("Extension service built");
 
         uservices.isBuilt = true;
 
@@ -146,7 +152,7 @@ class CliApplication
         GetoptResult cliResult = cliManager.parse(
             "s|silent", "Silent mode, less information in program output.", &isSilentMode,
             "g|debug", "Debug mode", &isDebugMode,
-            "d|data", "Application data directory.", &mustBeDataDirectory, 
+            "d|data", "Application data directory.", &mustBeDataDirectory,
             "c|configdir", "Config directory", &mustBeConfigDir);
 
         return cliResult;
@@ -278,7 +284,7 @@ class CliApplication
             configs ~= new JsonConfig(configPath);
         }
 
-        import deltotum.core.configs.environments.env_config: EnvConfig;
+        import deltotum.core.configs.environments.env_config : EnvConfig;
 
         configs ~= new EnvConfig;
 
@@ -344,6 +350,91 @@ class CliApplication
         auto printer = new CliPrinter;
         auto cli = new Cli(args, printer);
         return cli;
+    }
+
+    protected Extension createExtension(Logger logger, Config config, Context context)
+    {
+        auto extension = new Extension;
+
+        version (ExtensionLua)
+        {
+            //FIXME remove bindbc from core
+            import bindbc.lua;
+
+            const LuaSupport luaResult = loadLua();
+            if (luaResult != luaSupport)
+            {
+                uservices.capCore.isLuaExtension = false;
+                
+                if (luaResult == luaSupport.noLibrary)
+                {
+                    uservices.logger.warning("Lua shared library failed to load");
+                }
+                else if (luaResult == luaSupport.badLibrary)
+                {
+                    uservices.logger.error("One or more Lua symbols failed to load");
+                }
+
+                import std.conv : to;
+
+                uservices.logger.warningf("Couldn't load Lua environment, received lua load result: '%s'",
+                    to!string(luaSupport));
+            }
+            else
+            {
+                uservices.capCore.isLuaExtension = true;
+
+                import deltotum.core.extensions.plugins.lua.lua_script_text_plugin : LuaScriptTextPlugin;
+                import deltotum.core.extensions.plugins.lua.lua_file_script_plugin : LuaFileScriptPlugin;
+
+                auto mustBeDataDir = context.appContext.dataDir;
+                if (mustBeDataDir.isNull)
+                {
+                    uservices.logger.warning(
+                        "Data directory not found, plugins will not be loaded");
+                }
+                else
+                {
+                    //TODO from config;
+                    import std.path : buildPath;
+
+                    const pluginsDir = buildPath(mustBeDataDir.get, "plugins");
+                    import std.file : dirEntries, DirEntry, SpanMode, exists, isFile, isDir;
+                    import std.path : buildPath, baseName;
+                    import std.format : format;
+                    import std.conv : to;
+
+                    foreach (DirEntry pluginFile; dirEntries(pluginsDir, SpanMode.shallow))
+                    {
+                        if (!pluginFile.isDir)
+                        {
+                            continue;
+                        }
+
+                        //TODO from config
+                        enum pluginMainMethod = "main";
+                        const filePath = buildPath(pluginsDir, "main.lua");
+                        if (!filePath.exists || !filePath.isFile)
+                        {
+                            continue;
+                        }
+
+                        const name = baseName(pluginFile);
+                        auto plugin = new LuaFileScriptPlugin(logger, config, context, name, filePath, pluginMainMethod);
+                        extension.addPlugin(plugin);
+                    }
+                }
+
+                auto consolePlugin = new LuaScriptTextPlugin(logger, config, context, "console");
+                extension.addPlugin(consolePlugin);
+            }
+        }
+
+        extension.initialize;
+        extension.create;
+        extension.run;
+
+        return extension;
     }
 
     protected void createCrashHandlers(string[] args)

@@ -67,7 +67,7 @@ class Fractals : Control
         //fractal.isDrawBounds = true;
         fractal.angle = rotateAngleDeg;
 
-        if (cap.isVectorGraphics)
+        if (capGraphics.isVectorGraphics)
         {
             import deltotum.kit.graphics.shapes.vectors.vpoints_shape : VPointsShape;
 

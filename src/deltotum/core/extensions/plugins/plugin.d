@@ -1,4 +1,4 @@
-module deltotum.kit.extensions.plugins.plugin;
+module deltotum.core.extensions.plugins.plugin;
 
 import deltotum.core.apps.units.services.application_unit : ApplicationUnit;
 import deltotum.core.contexts.context : Context;

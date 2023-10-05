@@ -19,7 +19,7 @@ import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.kit.scenes.scene : Scene;
 import deltotum.kit.inputs.keyboards.events.key_event : KeyEvent;
 import deltotum.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
-import deltotum.kit.extensions.extension : Extension;
+import deltotum.core.extensions.extension : Extension;
 import deltotum.sys.sdl.sdl_lib : SdlLib;
 import deltotum.sys.sdl.img.sdl_img_lib : SdlImgLib;
 import deltotum.sys.sdl.mix.sdl_mix_lib : SdlMixLib;
@@ -40,7 +40,7 @@ import deltotum.kit.apps.loops.integrated_loop : IntegratedLoop;
 import deltotum.kit.apps.loops.interrupted_loop : InterruptedLoop;
 import deltotum.kit.apps.loops.loop : Loop;
 import deltotum.kit.windows.window_manager : WindowManager;
-import deltotum.kit.apps.caps.cap : Cap;
+import deltotum.kit.apps.caps.cap_graphics : CapGraphics;
 import deltotum.gui.themes.icons.icon_pack : IconPack;
 
 import std.typecons : Nullable;
@@ -72,7 +72,6 @@ class SdlApplication : ContinuouslyApplication
         Nullable!SdlJoystick joystick;
 
         Audio _audio;
-        Extension _ext;
         Input _input;
         Screen _screen;
 
@@ -111,25 +110,25 @@ class SdlApplication : ContinuouslyApplication
         if (isVideoEnabled)
         {
             flags |= SDL_INIT_VIDEO;
-            gservices.cap.isVideo = true;
+            gservices.capGraphics.isVideo = true;
         }
 
         if (isAudioEnabled)
         {
             flags |= SDL_INIT_AUDIO;
-            gservices.cap.isAudio = true;
+            gservices.capGraphics.isAudio = true;
         }
 
         if (isTimerEnabled)
         {
             flags |= SDL_INIT_TIMER;
-            gservices.cap.isTimer = true;
+            gservices.capGraphics.isTimer = true;
         }
 
         if (isJoystickEnabled)
         {
             flags |= SDL_INIT_JOYSTICK;
-            gservices.cap.isJoystick = true;
+            gservices.capGraphics.isJoystick = true;
         }
 
         if (onSdlInitFlags)
@@ -147,7 +146,7 @@ class SdlApplication : ContinuouslyApplication
         audioMixLib.initialize;
         fontLib.initialize;
 
-        if (gservices.cap.isJoystick)
+        if (gservices.capGraphics.isJoystick)
         {
             joystick = SdlJoystick.fromDevices;
             uservices.logger.trace("Init joystick");
@@ -189,7 +188,7 @@ class SdlApplication : ContinuouslyApplication
 
         cairoLibForLoad.onAfterLoad = () {
             cairoLib = cairoLibForLoad;
-            gservices.cap.isVectorGraphics = true;
+            gservices.capGraphics.isVectorGraphics = true;
             uservices.logger.trace("Load Cairo library.");
         };
 
@@ -227,8 +226,6 @@ class SdlApplication : ContinuouslyApplication
         // };
 
         // physLibForLoad.load;
-
-        _ext = createExtension(uservices.logger, uservices.config, uservices.context);
 
         import deltotum.sys.sdl.sdl_screen : SDLScreen;
 
@@ -395,7 +392,7 @@ class SdlApplication : ContinuouslyApplication
             auto newIconPack = new IconPack;
             newIconPack.load;
             iconPack = newIconPack;
-            gservices.cap.isIconPack = true;
+            gservices.capGraphics.isIconPack = true;
         }
 
         eventManager.startEvents;
@@ -429,8 +426,7 @@ class SdlApplication : ContinuouslyApplication
         component.audio = _audio;
         component.input = _input;
         component.screen = _screen;
-        component.ext = _ext;
-        component.cap = gservices.cap;
+        component.capGraphics = gservices.capGraphics;
     }
 
     SdlRenderer newRenderer(SdlWindow window){

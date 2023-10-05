@@ -61,7 +61,7 @@ class Curves : Control
         container.addCreate(label);
 
         Sprite shape;
-        if (cap.isVectorGraphics)
+        if (capGraphics.isVectorGraphics)
         {
             import deltotum.kit.graphics.shapes.vectors.vpoints_shape : VPointsShape;
 

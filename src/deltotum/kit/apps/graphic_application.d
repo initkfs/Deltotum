@@ -7,8 +7,8 @@ import deltotum.core.apps.cli_application : CliApplication;
 import deltotum.kit.apps.comps.graphics_component : GraphicsComponent;
 import deltotum.core.apps.uni.uni_component : UniComponent;
 import deltotum.kit.windows.window_manager : WindowManager;
-import deltotum.kit.extensions.extension : Extension;
-import deltotum.kit.apps.caps.cap : Cap;
+import deltotum.core.extensions.extension : Extension;
+import deltotum.kit.apps.caps.cap_graphics : CapGraphics;
 
 import deltotum.kit.windows.window : Window;
 import deltotum.kit.apps.loops.loop : Loop;
@@ -48,17 +48,17 @@ abstract class GraphicApplication : CliApplication
             _graphicServices = newGraphicServices;
         }
 
-        if (!_graphicServices.hasCap)
+        if (!_graphicServices.hasCapGraphics)
         {
-            _graphicServices.cap = newCapability;
+            _graphicServices.capGraphics = newCapability;
         }
 
         return ApplicationExit(false);
     }
 
-    Cap newCapability()
+    CapGraphics newCapability()
     {
-        return new Cap;
+        return new CapGraphics;
     }
 
     GraphicsComponent newGraphicServices()
@@ -94,88 +94,6 @@ abstract class GraphicApplication : CliApplication
             uservices.logger.tracef("All windows are closed, exit request");
             requestQuit;
         }
-    }
-
-    protected Extension createExtension(Logger logger, Config config, Context context)
-    {
-        auto extension = new Extension;
-
-        //FIXME remove bindbc from core
-        import bindbc.lua;
-
-        const LuaSupport luaResult = loadLua();
-        if (luaResult != luaSupport)
-        {
-            if (luaResult == luaSupport.noLibrary)
-            {
-                uservices.logger.warning("Lua shared library failed to load");
-            }
-            else if (luaResult == luaSupport.badLibrary)
-            {
-                uservices.logger.error("One or more Lua symbols failed to load");
-            }
-
-            import std.conv : to;
-
-            uservices.logger.warningf("Couldn't load Lua environment, received lua load result: '%s'",
-                to!string(luaSupport));
-        }
-        else
-        {
-            _graphicServices.cap.isLuaExtension = true;
-        }
-
-        if (_graphicServices.cap.isLuaExtension)
-        {
-            import deltotum.kit.extensions.plugins.lua.lua_script_text_plugin : LuaScriptTextPlugin;
-            import deltotum.kit.extensions.plugins.lua.lua_file_script_plugin : LuaFileScriptPlugin;
-
-            auto mustBeDataDir = context.appContext.dataDir;
-            if (mustBeDataDir.isNull)
-            {
-                uservices.logger.warning("Data directory not found, plugins will not be loaded");
-            }
-            else
-            {
-                //TODO from config;
-                import std.path : buildPath;
-
-                const pluginsDir = buildPath(mustBeDataDir.get, "plugins");
-                import std.file : dirEntries, DirEntry, SpanMode, exists, isFile, isDir;
-                import std.path : buildPath, baseName;
-                import std.format : format;
-                import std.conv : to;
-
-                foreach (DirEntry pluginFile; dirEntries(pluginsDir, SpanMode.shallow))
-                {
-                    if (!pluginFile.isDir)
-                    {
-                        continue;
-                    }
-
-                    //TODO from config
-                    enum pluginMainMethod = "main";
-                    const filePath = buildPath(pluginsDir, "main.lua");
-                    if (!filePath.exists || !filePath.isFile)
-                    {
-                        continue;
-                    }
-
-                    const name = baseName(pluginFile);
-                    auto plugin = new LuaFileScriptPlugin(logger, config, context, name, filePath, pluginMainMethod);
-                    extension.addPlugin(plugin);
-                }
-            }
-
-            auto consolePlugin = new LuaScriptTextPlugin(logger, config, context, "console");
-            extension.addPlugin(consolePlugin);
-        }
-
-        extension.initialize;
-        extension.create;
-        extension.run;
-
-        return extension;
     }
 
     GraphicsComponent gservices() @nogc nothrow pure @safe

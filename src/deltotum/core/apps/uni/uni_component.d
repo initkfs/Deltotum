@@ -7,6 +7,8 @@ import deltotum.core.supports.support : Support;
 import deltotum.core.clis.cli : Cli;
 import deltotum.core.contexts.context : Context;
 import deltotum.core.resources.resource : Resource;
+import deltotum.core.extensions.extension : Extension;
+import deltotum.core.apps.caps.cap_core : CapCore;
 
 import std.logger.core : Logger;
 
@@ -28,6 +30,8 @@ class UniComponent : SimpleUnit
         @Service Cli _cli;
         @Service Support _support;
         @Service Resource _resource;
+        @Service Extension _ext;
+        @Service CapCore _capCore;
     }
 
     void build(UniComponent uniComponent)
@@ -207,5 +211,43 @@ class UniComponent : SimpleUnit
 
         enforce(resource !is null, "Resource must not be null");
         _resource = resource;
+    }
+
+    bool hasExtension() @nogc nothrow pure @safe
+    {
+        return _ext !is null;
+    }
+
+    Extension ext() @nogc nothrow pure @safe
+    out (_ext; _ext !is null)
+    {
+        return _ext;
+    }
+
+    void ext(Extension ext) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(ext !is null, "Extension must not be null");
+        _ext = ext;
+    }
+
+    bool hasCapCore() @nogc nothrow pure @safe
+    {
+        return _capCore !is null;
+    }
+
+    CapCore capCore() @nogc nothrow pure @safe
+    out (_capCore; _capCore !is null)
+    {
+        return _capCore;
+    }
+
+    void capCore(CapCore cap) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(cap !is null, "Core capabilities must not be null");
+        _capCore = cap;
     }
 }
