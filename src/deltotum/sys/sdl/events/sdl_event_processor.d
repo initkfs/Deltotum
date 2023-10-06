@@ -249,10 +249,10 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
         }
 
         auto type = WindowEvent.Event.none;
-        double x = 0;
-        double y = 0;
-        double width = 0;
-        double height = 0;
+        long x = 0;
+        long y = 0;
+        long width = 0;
+        long height = 0;
         switch (event.window.event)
         {
         case SDL_WindowEventID.SDL_WINDOWEVENT_SHOWN:

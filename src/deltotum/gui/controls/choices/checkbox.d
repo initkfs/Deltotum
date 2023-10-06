@@ -1,8 +1,8 @@
 module deltotum.gui.controls.choices.checkbox;
 
-import deltotum.kit.sprites.sprite: Sprite;
-import deltotum.gui.controls.control: Control;
-import deltotum.gui.controls.texts.text: Text;
+import deltotum.kit.sprites.sprite : Sprite;
+import deltotum.gui.controls.control : Control;
+import deltotum.gui.controls.texts.text : Text;
 
 /**
  * Authors: initkfs
@@ -10,12 +10,14 @@ import deltotum.gui.controls.texts.text: Text;
 class CheckBox : Control
 {
     //protected
-   // {
-        Text label;
-        Sprite marker;
-   // }
+    // {
+    Text label;
+    Sprite marker;
+    // }
 
     bool isCheck;
+
+    void delegate(bool, bool) onToggleOldNewValue;
 
     this()
     {
@@ -34,7 +36,7 @@ class CheckBox : Control
 
         enableInsets;
 
-        import deltotum.gui.containers.stack_box: StackBox;
+        import deltotum.gui.containers.stack_box : StackBox;
 
         auto markerContainer = new StackBox;
         markerContainer.width = 20;
@@ -42,10 +44,11 @@ class CheckBox : Control
         markerContainer.isBorder = true;
         addCreate(markerContainer);
 
-        import deltotum.kit.graphics.shapes.regular_polygon: RegularPolygon;
-        import deltotum.kit.graphics.styles.graphic_style: GraphicStyle;
+        import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
+        import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 
-        marker = new RegularPolygon(10, 10, GraphicStyle(1, graphics.theme.colorAccent, true, graphics.theme.colorAccent), 3);
+        marker = new RegularPolygon(10, 10, GraphicStyle(1, graphics.theme.colorAccent, true, graphics
+                .theme.colorAccent), 3);
         markerContainer.addCreate(marker);
         marker.isVisible = false;
 
@@ -53,14 +56,23 @@ class CheckBox : Control
         label.isFocusable = false;
         addCreate(label);
 
-        onPointerDown = (ref e){
-            toggle;
-        };
+        onPointerDown = (ref e) { toggle; };
     }
 
-    void toggle(){
-        isCheck = !isCheck;
+    void toggle(bool value)
+    {
+        const bool oldValue = isCheck;
+        isCheck = value;
         marker.isVisible = isCheck;
+        if (onToggleOldNewValue)
+        {
+            onToggleOldNewValue(oldValue, value);
+        }
+    }
+
+    void toggle()
+    {
+        toggle(!isCheck);
     }
 
 }

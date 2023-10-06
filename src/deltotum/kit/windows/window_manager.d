@@ -1,62 +1,114 @@
 module deltotum.kit.windows.window_manager;
 
+import deltotum.core.apps.units.services.loggable_unit : LoggableUnit;
 import deltotum.kit.windows.window : Window;
 
+import std.logger : Logger;
 import std.typecons : Nullable;
 
 /**
  * Authors: initkfs
  */
-class WindowManager
+class WindowManager : LoggableUnit
 {
     protected
     {
         Window[] windows;
     }
 
-    void windowById(long id, bool delegate(Window) onWindowIsContinue)
+    bool isAllowDuplicateId;
+
+    this(Logger logger) pure @safe
+    {
+        super(logger);
+    }
+
+    void onWindows(scope bool delegate(Window) onWindowIsContinue)
     {
         foreach (Window window; windows)
         {
-            if (window.id == id)
+            if (!onWindowIsContinue(window))
             {
-                if (!onWindowIsContinue(window))
-                {
-                    break;
-                }
+                break;
             }
         }
     }
 
-    Nullable!Window windowByFirstId(long id)
+    void onWindowsById(long id, scope bool delegate(Window) onWindowIsContinue)
+    {
+        onWindows((win) {
+            if (win.id == id)
+            {
+                return onWindowIsContinue(win);
+            }
+            return true;
+        });
+    }
+
+    Nullable!Window byFirstId(long id)
     {
         Nullable!Window mustBeWindow;
-        windowById(id, (win) { mustBeWindow = Nullable!Window(win); return false; });
+        onWindowsById(id, (win) {
+            mustBeWindow = Nullable!Window(win);
+            return false;
+        });
 
         return mustBeWindow;
     }
 
-    Nullable!Window currentWindow()
+    Nullable!Window current()
     {
-        foreach (window; windows)
-        {
+        Nullable!Window mustBeWindow;
+        onWindows((window) {
             if (window.isShowing && window.isFocus)
             {
-                return Nullable!Window(window);
+                mustBeWindow = window;
+                return false;
+            }
+            return true;
+        });
+
+        return mustBeWindow;
+    }
+
+    bool add(Window window)
+    {
+        if (!isAllowDuplicateId)
+        {
+            bool isAlreadyExists;
+            onWindows((oldWindow) {
+                if (oldWindow.id == window.id)
+                {
+                    isAlreadyExists = true;
+                    return false;
+                }
+                return true;
+            });
+
+            if (isAlreadyExists)
+            {
+                logger.tracef(
+                    "Duplication is prohibited: the window '%s' is not added because already exists with id %d", window
+                        .title, window
+                        .id);
+                return false;
             }
         }
 
-        return Nullable!Window.init;
-    }
-
-    void add(Window window)
-    {
-        //check id
         windows ~= window;
+        logger.tracef("Add window '%s' with id %d", window.title, window.id);
+        return true;
     }
 
     bool remove(Window window)
     {
+        if (windows.length == 0)
+        {
+            logger.tracef("Skip window removal '%s' with id %d due to missing windows", window.title, window
+                    .id);
+            return false;
+        }
+
         import std.algorithm.mutation : remove;
         import std.algorithm.searching : countUntil;
 
@@ -64,44 +116,66 @@ class WindowManager
         if (removePos != -1)
         {
             windows = windows.remove(removePos);
+            logger.tracef("Remove window '%s' with id %d", window.title, window.id);
             return true;
         }
+
+        logger.tracef("Skip window removal '%s' with id %d: window not found in window list", window.title, window
+                .id);
 
         return false;
     }
 
-    void iterateWindows(bool delegate(Window) onWindowIsContinue)
-    {
-        foreach (Window win; windows)
-        {
-            if (!onWindowIsContinue(win))
-            {
-                break;
-            }
-        }
-    }
-
-    size_t windowsCount()
+    size_t count()
     {
         return windows.length;
     }
 
-    Window[] closeWindow(long id)
+    size_t destroy(long id)
     {
-        Window[] windowsForClose;
-        windowById(id, (win) { windowsForClose ~= win; return true; });
-
-        if (windowsForClose.length > 0)
-        {
-            foreach (winForClose; windowsForClose)
+        Window winForDestroy;
+        size_t destroyCount;
+        scope Window[] otherWindows;
+        onWindowsById(id, (win) {
+            if (!winForDestroy)
             {
-                if (remove(winForClose))
+                winForDestroy = win;
+            }
+            else
+            {
+                otherWindows ~= win;
+            }
+            return true;
+        });
+
+        if (winForDestroy && remove(winForDestroy))
+        {
+            logger.tracef("Call destroy window '%s' with id %d", winForDestroy.title, winForDestroy.id);
+            winForDestroy.destroy;
+            destroyCount++;
+        }
+
+        if (otherWindows.length > 0)
+        {
+            if (!isAllowDuplicateId)
+            {
+                throw new Exception(
+                    "Windows with duplicate IDs found");
+            }
+
+            logger.warning("Windows with duplicate IDs found");
+            foreach (win; otherWindows)
+            {
+                if (remove(win))
                 {
-                    winForClose.destroy;
+                    logger.tracef("Call destroy window '%s' with a duplicate id %d", win.title, win
+                            .id);
+                    win.destroy;
+                    destroyCount++;
                 }
             }
         }
 
-        return windowsForClose;
+        return destroyCount;
     }
 }

@@ -83,7 +83,11 @@ class Controls : Control
         createTexts(container);
 
         createCharts(container);
-        
+
+        auto winContainer = new HBox(5);
+        rootContainer.addCreate(winContainer);
+        winContainer.enablePadding;
+        createWindows(winContainer);
 
         // iconsContainer.isBackground = false;
 
@@ -237,11 +241,66 @@ class Controls : Control
         linearChart.data(x, y);
     }
 
-    private void createTexts(Container root){
-        import deltotum.gui.controls.texts.text: Text;
-        import deltotum.gui.controls.texts.text_view: TextView;
-        import deltotum.gui.controls.texts.text_area: TextArea;
-        
+    private void createWindows(Container root)
+    {
+        import deltotum.gui.controls.buttons.button : Button;
+        import deltotum.gui.controls.choices.checkbox : CheckBox;
+
+        auto winMin = new Button("Min");
+        root.addCreate(winMin);
+        winMin.onAction = (ref e) {
+            //TODO false,false 
+            logger.trace("Window is minimized before request: ", window.isMinimized);
+            window.minimize;
+            logger.trace("Window is minimized after request: ", window.isMinimized);
+        };
+
+        auto winMax = new Button("Max");
+        root.addCreate(winMax);
+        winMax.onAction = (ref e) {
+            logger.trace("Window is maximized before request: ", window.isMaximized);
+            window.maximize;
+            logger.trace("Window is maximized after request: ", window.isMaximized);
+        };
+
+        auto winRestore = new Button("Restore");
+        root.addCreate(winRestore);
+        winRestore.onAction = (ref e) { window.restore; };
+
+        auto winFull = new Button("Fullscreen");
+        root.addCreate(winFull);
+        winFull.onAction = (ref e) {
+            auto oldValue = window.isFullScreen;
+            logger.trace("Window fullscreen before request: ", oldValue);
+            window.isFullScreen = !oldValue;
+            logger.trace("Window fullscreen after request: ", window.isFullScreen);
+        };
+
+        auto winDec = new Button("Decoration");
+        root.addCreate(winDec);
+        winDec.onAction = (ref e) {
+            auto oldValue = window.isDecorated;
+            logger.trace("Window decorated before request: ", oldValue);
+            window.isDecorated = !oldValue;
+            logger.trace("Window fullscreen after request: ", window.isDecorated);
+        };
+
+        auto winResize = new Button("Resizable");
+        root.addCreate(winResize);
+        winResize.onAction = (ref e) {
+            auto oldValue = window.isResizable;
+            logger.trace("Window resizable before request: ", oldValue);
+            window.isResizable = !oldValue;
+            logger.trace("Window resizable after request: ", window.isResizable);
+        };
+    }
+
+    private void createTexts(Container root)
+    {
+        import deltotum.gui.controls.texts.text : Text;
+        import deltotum.gui.controls.texts.text_view : TextView;
+        import deltotum.gui.controls.texts.text_area : TextArea;
+
         auto t1 = new Text("Коммодор никак не мог отделаться от ощущения чудовищных перегрузок и невыносимой яркости освещения. Но он по-прежнему сидел в своем отсеке, хотя рука его еще лежала на клавише «Уничтожение». Экипаж, как и прежде, стоял строем, на лицах людей застыл ужас. Коммодор бросил взгляд на экран: чужого корабля не было видно, их окружал непроницаемый мрак. «Может, мне привиделся этот кошмар?» — подумал Коммодор. Он с трудом выпрямился за пультом.");
         t1.isEditable = true;
         t1.maxWidth = 350;

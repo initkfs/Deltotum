@@ -31,12 +31,12 @@ struct WindowEvent
         restore
     }
 
-    double width;
-    double height;
-    double x;
-    double y;
+    long width;
+    long height;
+    long x;
+    long y;
 
-    this(EventType type, uint event, uint ownerId, double width, double height, double x, double y)
+    this(EventType type, uint event, uint ownerId, long width, long height, long x, long y)
     {
         this.type = type;
         this.event = event;

@@ -24,16 +24,20 @@ class Window : UniComponent
     Window delegate(dstring, int, int, int, int, Window) childWindowProvider;
     WindowManager windowManager;
 
-    void delegate() onAfterDestroy;
-    void delegate() onCreate;
-    void delegate() onShow;
-    void delegate() onHide;
-    void delegate() onClose;
-    void delegate(double, double, double, double) onResizeOldNewWidthHeight;
+    //Some delegates can be called by the event manager
+    void delegate()[] onCreate;
+    void delegate()[] onShow;
+    void delegate()[] onHide;
+    void delegate()[] onMinimize;
+    void delegate()[] onMaximize;
+    void delegate()[] onClose;
+    void delegate()[] onBeforeDestroy;
+    void delegate()[] onAfterDestroy;
+
+    void delegate(double, double, double, double)[] onResizeOldNewWidthHeight;
 
     SceneManager scenes;
 
-    //TODO remove
     double frameRate;
 
     bool isFocus;
@@ -49,16 +53,15 @@ class Window : UniComponent
 
     private
     {
-        Logger logger;
         double lastChangedWidth;
         double lastChangedHeight;
     }
 
-    this(Logger logger, ComWindow window)
+    this(ComWindow window)
     {
-        assert(logger);
-        assert(window);
-        this.logger = logger;
+        import std.exception : enforce;
+
+        enforce(window, "Window must not be null");
         this.nativeWindow = window;
     }
 
@@ -67,7 +70,12 @@ class Window : UniComponent
         super.initialize;
         if (const err = nativeWindow.initialize)
         {
-            logger.error("Window initialization error. ", err.toString);
+            const errorMessage = "Window initialization error. " ~ err.toString;
+            if (logger)
+            {
+                logger.error(errorMessage);
+            }
+            throw new Exception(errorMessage);
         }
     }
 
@@ -76,12 +84,22 @@ class Window : UniComponent
         super.create;
         if (const err = nativeWindow.create)
         {
-            throw new Exception(err.toString);
+            const errorMessage = "Window creation error. " ~ err.toString;
+            if (logger)
+            {
+                logger.error(errorMessage);
+            }
+            throw new Exception(errorMessage);
         }
 
-        if (onCreate)
+        logger.tracef("Create window '%s' with id %d", title, id);
+
+        if (onCreate.length > 0)
         {
-            onCreate();
+            foreach (dg; onCreate)
+            {
+                dg();
+            }
         }
     }
 
@@ -90,75 +108,96 @@ class Window : UniComponent
         int winId;
         if (const err = nativeWindow.obtainId(winId))
         {
-            logger.error("Error getting window id", err.toString);
+            logger.error("Error obtain window id", err.toString);
         }
         return winId;
+    }
+
+    bool isShown()
+    {
+        bool value;
+        if (const err = nativeWindow.isShown(value))
+        {
+            logger.error("Error reading window shown state. ", err.toString);
+        }
+        return value;
     }
 
     void show()
     {
         if (isShowing)
         {
+            //WARNING return
             return;
         }
 
         if (const err = nativeWindow.show)
         {
             logger.error("Error showing window. ", err.toString);
+            //WARNING return
             return;
         }
-        isShowing = true;
 
+        isShowing = true;
         //TODO from config
         focusRequest;
 
-        if (onShow)
+        logger.tracef("Show window '%s' with id %d", title, id);
+    }
+
+    bool isHidden()
+    {
+        bool value;
+        if (const err = nativeWindow.isHidden(value))
         {
-            onShow();
+            logger.error("Error reading window hidden state. ", err.toString);
         }
+        return value;
     }
 
     void hide()
     {
         if (!isShowing)
         {
+            //WARNING return
             return;
         }
 
         if (const err = nativeWindow.hide)
         {
             logger.error("Error hiding window. ", err.toString);
+            //WARNING return
             return;
         }
+
         isShowing = false;
 
-        if (onHide)
-        {
-            onHide();
-        }
+        logger.tracef("Hide window '%s' with id %d", title, id);
     }
 
     void close()
     {
         if (isClosing)
         {
+            //WARNING return
             return;
         }
 
         if (const err = nativeWindow.close)
         {
             logger.error("Window closing error. ", err.toString);
+            //WARNING return
             return;
         }
 
+        //TODO move to controller
         windowManager.remove(this);
-        isClosing = true;
-        destroy;
 
-        if (onClose)
-        {
-            onClose();
-        }
+        isClosing = true;
+
+        logger.trace("Destroy window '%s' with id %d", title, id);
+
+        destroy;
     }
 
     void focusRequest()
@@ -169,20 +208,58 @@ class Window : UniComponent
         }
     }
 
+    bool isMinimized()
+    {
+        bool value;
+        if (const err = nativeWindow.getMinimized(value))
+        {
+            logger.error("Error reading window minimized property.. ", err.toString);
+        }
+        return value;
+    }
+
     void minimize()
     {
-        if (const err = nativeWindow.minimize)
+        if (const err = nativeWindow.setMinimized)
         {
             logger.error("Window minimizing error. ", err.toString);
         }
     }
 
+    bool isMaximized()
+    {
+        bool value;
+        if (const err = nativeWindow.getMaximized(value))
+        {
+            logger.error("Error reading window maximized property.. ", err.toString);
+        }
+        return value;
+    }
+
     void maximize()
     {
-        if (const err = nativeWindow.maximize)
+        if (const err = nativeWindow.setMaximized)
         {
             logger.error("Window maximizing error. ", err.toString);
         }
+    }
+
+    void isFullScreen(bool value)
+    {
+        if (const err = nativeWindow.setFullScreen(value))
+        {
+            logger.error("Window fullscreen error. ", err.toString);
+        }
+    }
+
+    bool isFullScreen()
+    {
+        bool value;
+        if (const err = nativeWindow.getFullScreen(value))
+        {
+            logger.error("Error reading window fullscreen state. ", err.toString);
+        }
+        return value;
     }
 
     void restore()
@@ -193,7 +270,7 @@ class Window : UniComponent
         }
     }
 
-    void setDecorated(bool isDecorated)
+    void isDecorated(bool isDecorated)
     {
         if (const err = nativeWindow.setDecorated(isDecorated))
         {
@@ -201,7 +278,17 @@ class Window : UniComponent
         }
     }
 
-    void setResizable(bool isResizable)
+    bool isDecorated()
+    {
+        bool decorated;
+        if (const err = nativeWindow.getDecorated(decorated))
+        {
+            logger.error("Error changing window decoration property. ", err.toString);
+        }
+        return decorated;
+    }
+
+    void isResizable(bool isResizable)
     {
         if (const err = nativeWindow.setResizable(isResizable))
         {
@@ -209,10 +296,21 @@ class Window : UniComponent
         }
     }
 
-    void setSize(double newWidth, double newHeight)
+    bool isResizable()
     {
-        //TODO check bounds
-        if (const err = nativeWindow.setSize(cast(int) newWidth, cast(int) newHeight))
+        bool resizable;
+        if (const err = nativeWindow.getResizable(resizable))
+        {
+            logger.error("Error reading window resizable property. ", err.toString);
+        }
+        return resizable;
+    }
+
+    void resize(double newWidth, double newHeight)
+    {
+        import std.conv : to;
+
+        if (const err = nativeWindow.setSize(newWidth.to!int, newHeight.to!int))
         {
             logger.errorf("Resizing window error, new width %s, height %s, current width %s, height %s", newWidth, newHeight, width, height);
             return;
@@ -223,9 +321,12 @@ class Window : UniComponent
 
     void confirmResize(double newWidth, double newHeight)
     {
-        if (onResizeOldNewWidthHeight)
+        if (onResizeOldNewWidthHeight.length > 0)
         {
-            onResizeOldNewWidthHeight(lastChangedWidth, lastChangedHeight, newWidth, newHeight);
+            foreach (dg; onResizeOldNewWidthHeight)
+            {
+                dg(lastChangedWidth, lastChangedHeight, newWidth, newHeight);
+            }
         }
 
         import std.math.operations : isClose;
@@ -275,7 +376,7 @@ class Window : UniComponent
         return height;
     }
 
-    void setPos(int x, int y)
+    void pos(int x, int y)
     {
         if (const err = nativeWindow.setPos(x, y))
         {
@@ -303,23 +404,24 @@ class Window : UniComponent
         return y;
     }
 
-    string getTitle()
+    dstring title()
     {
         const(char)[] buff;
         if (const err = nativeWindow.getTitle(buff))
         {
-            //TODO logging
+            logger.tracef("Error getting window title. ", err.toString);
         }
         import std.conv : to;
 
-        return buff.to!string;
+        return buff.to!dstring;
     }
 
-    void setTitle(dstring title)
+    void title(dstring title)
     {
         import std.string : toStringz;
         import std.conv : to;
 
+        //TODO dup\copy?
         if (const err = nativeWindow.setTitle(title.to!string.toStringz))
         {
             logger.error("Error setting window title: ", err.toString);
@@ -328,21 +430,21 @@ class Window : UniComponent
 
     void setNormalWindow()
     {
-        setDecorated(true);
-        setResizable(true);
+        isDecorated(true);
+        isResizable(true);
     }
 
-    int getScreenIndex()
+    int screenIndex()
     {
-        size_t screenIndex;
-        if (const err = nativeWindow.getScreenIndex(screenIndex))
+        size_t index;
+        if (const err = nativeWindow.screenIndex(index))
         {
             logger.error("Error getting screen from window: ", err.toString);
             return -1;
         }
         import std.conv : to;
 
-        return screenIndex.to!int;
+        return index.to!int;
     }
 
     bool draw(double alpha)
@@ -397,17 +499,47 @@ class Window : UniComponent
 
     void destroy()
     {
-        parent = null;
+        if (isDestroyed)
+        {
+            logger.error("The window is already destroyed");
+            return;
+        }
 
         //TODO close child windows
+
+        logger.tracef("Destroy window '%s' with id %d", title, id);
+
+        if (onBeforeDestroy.length > 0)
+        {
+            foreach (dg; onBeforeDestroy)
+            {
+                dg();
+            }
+        }
+
+        parent = null;
+
+        onCreate = null;
+        onShow = null;
+        onHide = null;
+        onClose = null;
+        onMinimize = null;
+        onMaximize = null;
+        onBeforeDestroy = null;
+        onResizeOldNewWidthHeight = null;
 
         //after window
         nativeWindow.destroy;
         isDestroyed = true;
 
-        if (onAfterDestroy)
+        if (onAfterDestroy.length > 0)
         {
-            onAfterDestroy();
+            foreach (dg; onAfterDestroy)
+            {
+                dg();
+            }
         }
+
+        onAfterDestroy = null;
     }
 }

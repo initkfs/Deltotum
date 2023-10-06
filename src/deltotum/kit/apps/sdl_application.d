@@ -227,7 +227,7 @@ class SdlApplication : ContinuouslyApplication
 
         eventManager = new EventManager();
         eventManager.targetsProvider = (windowId) {
-            auto mustBeCurrentWindow = windowManager.windowByFirstId(windowId);
+            auto mustBeCurrentWindow = windowManager.byFirstId(windowId);
             if (mustBeCurrentWindow.isNull)
             {
                 return Nullable!(Sprite[]).init;
@@ -245,14 +245,14 @@ class SdlApplication : ContinuouslyApplication
         eventManager.onKey = (ref key) {
             final switch (key.event) with (KeyEvent.Event)
             {
-            case keyDown:
-                _input.addPressedKey(key.keyCode);
-                break;
-            case keyUp:
-                _input.addReleasedKey(key.keyCode);
-                break;
-            case none:
-                break;
+                case keyDown:
+                    _input.addPressedKey(key.keyCode);
+                    break;
+                case keyUp:
+                    _input.addReleasedKey(key.keyCode);
+                    break;
+                case none:
+                    break;
             }
         };
 
@@ -289,52 +289,107 @@ class SdlApplication : ContinuouslyApplication
         eventManager.onWindow = (ref e) {
             switch (e.event) with (WindowEvent.Event)
             {
-            case focusIn:
-                windowManager.windowById(e.ownerId, (win) {
-                    win.isFocus = true;
-                    e.isConsumed = true;
-                    return true;
-                });
-                break;
-            case focusOut:
-                windowManager.windowById(e.ownerId, (win) {
-                    win.isFocus = false;
-                    e.isConsumed = true;
-                    return true;
-                });
-                break;
-            case show:
-                windowManager.windowById(e.ownerId, (win) {
-                    win.isShowing = true;
-                    e.isConsumed = true;
-                    return true;
-                });
-                break;
-            case hide:
-                windowManager.windowById(e.ownerId, (win) {
-                    win.isShowing = false;
-                    return true;
-                });
-                break;
-            case resize:
-                windowManager.windowById(e.ownerId, (win) {
-                    win.confirmResize(e.width, e.height);
-                    e.isConsumed = true;
-                    return true;
-                });
-                break;
-            case close:
-                closeWindow(e.ownerId);
-                break;
-            default:
-                break;
+                case focusIn:
+                    windowManager.onWindowsById(e.ownerId, (win) {
+                        win.isFocus = true;
+                        e.isConsumed = true;
+                        uservices.logger.tracef("Window focus on window '%s' with id %d", win.title, win.id);
+                        return true;
+                    });
+                    break;
+                case focusOut:
+                    windowManager.onWindowsById(e.ownerId, (win) {
+                        win.isFocus = false;
+                        e.isConsumed = true;
+                        uservices.logger.tracef("Window focus out on window '%s' with id %d", win.title, win
+                            .id);
+                        return true;
+                    });
+                    break;
+                case show:
+                    windowManager.onWindowsById(e.ownerId, (win) {
+                        win.isShowing = true;
+                        e.isConsumed = true;
+                        if (win.onShow.length > 0)
+                        {
+                            foreach (dg; win.onShow)
+                            {
+                                dg();
+                            }
+                        }
+                        uservices.logger.tracef("Show window '%s' with id %d", win.title, win.id);
+                        return true;
+                    });
+                    break;
+                case hide:
+                    windowManager.onWindowsById(e.ownerId, (win) {
+                        win.isShowing = false;
+                        if (win.onHide.length > 0)
+                        {
+                            foreach (dg; win.onHide)
+                            {
+                                dg();
+                            }
+                        }
+                        uservices.logger.tracef("Hide window '%s' with id %d", win.title, win.id);
+                        return true;
+                    });
+                    break;
+                case resize:
+                    windowManager.onWindowsById(e.ownerId, (win) {
+                        win.confirmResize(e.width, e.height);
+                        e.isConsumed = true;
+                        return true;
+                    });
+                    break;
+                case minimize:
+                    windowManager.onWindowsById(e.ownerId, (win) {
+                        if (win.onMinimize.length > 0)
+                        {
+                            foreach (dg; win.onMinimize)
+                            {
+                                dg();
+                            }
+                        }
+                        uservices.logger.tracef("Minimize window '%s' with id %d", win.title, win.id);
+                        return true;
+                    });
+                    break;
+                case maximize:
+                    windowManager.onWindowsById(e.ownerId, (win) {
+                        if (win.onMaximize.length > 0)
+                        {
+                            foreach (dg; win.onMaximize)
+                            {
+                                dg();
+                            }
+                        }
+                        uservices.logger.tracef("Maximize window '%s' with id %d", win.title, win.id);
+                        return true;
+                    });
+                    break;
+                case close:
+                    windowManager.onWindowsById(e.ownerId, (win) {
+                        if (win.onClose.length > 0)
+                        {
+                            foreach (dg; win.onClose)
+                            {
+                                dg();
+                            }
+                        }
+                        return true;
+                    });
+                    this.close(e.ownerId);
+                    break;
+                default:
+                    break;
             }
         };
 
         eventManager.onPointer = (ref mouseEvent) {
             if (mouseEvent.event == PointerEvent.Event.down)
             {
-                auto mustBeWindow = windowManager.currentWindow;
+                auto mustBeWindow = windowManager.current;
                 if (mustBeWindow.isNull)
                 {
                     return;
@@ -378,7 +433,7 @@ class SdlApplication : ContinuouslyApplication
             }
         };
 
-        windowManager = new WindowManager;
+        windowManager = new WindowManager(uservices.logger);
 
         eventManager.startEvents;
 
@@ -433,7 +488,8 @@ class SdlApplication : ContinuouslyApplication
         auto windowBuilder = newGraphicServices;
         buildPartially(windowBuilder);
 
-        auto window = new Window(uservices.logger, sdlWindow);
+        auto window = new Window(sdlWindow);
+        build(window);
         windowBuilder.window = window;
 
         if (parent)
@@ -457,15 +513,15 @@ class SdlApplication : ContinuouslyApplication
 
         window.setNormalWindow;
 
-        window.setSize(width, height);
+        window.resize(width, height);
 
         const int newX = (x == -1) ? SDL_WINDOWPOS_UNDEFINED : x;
         const int newY = (y == -1) ? SDL_WINDOWPOS_UNDEFINED : y;
 
-        window.setPos(newX, newY);
+        window.pos(newX, newY);
 
         SdlRenderer sdlRenderer = newRenderer(sdlWindow);
-        window.setTitle(title);
+        window.title = title;
 
         Asset asset = createAsset(uservices.logger, uservices.config, uservices.context);
         assert(asset);
@@ -484,21 +540,21 @@ class SdlApplication : ContinuouslyApplication
         windowBuilder.graphics.comSurfaceFactory = () { return newSurface; };
 
         windowBuilder.isBuilt = true;
-        windowBuilder.build(window);
 
         //TODO from locale\config;
         if (mode == SdlWindowMode.none)
         {
             import deltotum.gui.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
+
             //TODO build and run services after all
             import deltotum.gui.fonts.bitmap.bitmap_font : BitmapFont;
 
             auto fontGenerator = new BitmapFontGenerator;
             windowBuilder.build(fontGenerator);
-            
+
             auto fontBitmap = createFontBitmap(fontGenerator, asset, theme);
             windowBuilder.asset.fontBitmap = fontBitmap;
-          
+
             auto colorText = theme.colorText;
 
             auto themeFont = windowBuilder.asset.fontBitmap.copy;
@@ -520,7 +576,7 @@ class SdlApplication : ContinuouslyApplication
             window.scenes.addCreate(new GuiEditor);
         }
 
-        window.onAfterDestroy = () {
+        window.onAfterDestroy ~= () {
             sceneManager.asset.destroy;
             sceneManager.destroy;
             sdlRenderer.destroy;
@@ -553,7 +609,7 @@ class SdlApplication : ContinuouslyApplication
 
         if (windowManager)
         {
-            windowManager.iterateWindows((win) { win.destroy; return true; });
+            windowManager.onWindows((win) { win.destroy; return true; });
         }
 
         //TODO auto destroy all services
@@ -579,7 +635,7 @@ class SdlApplication : ContinuouslyApplication
     {
         SDL_Event event;
 
-        auto mustBeWindow = windowManager.currentWindow;
+        auto mustBeWindow = windowManager.current;
 
         if (!mustBeWindow.isNull)
         {
@@ -613,7 +669,7 @@ class SdlApplication : ContinuouslyApplication
     void updateRender(double accumMsRest)
     {
         const startStateTime = SDL_GetTicks();
-        windowManager.iterateWindows((window) {
+        windowManager.onWindows((window) {
             //focus may not be on the window
             if (window.isShowing)
             {
@@ -624,7 +680,7 @@ class SdlApplication : ContinuouslyApplication
 
         const endStateTime = SDL_GetTicks();
 
-        auto mustBeWindow = windowManager.currentWindow;
+        auto mustBeWindow = windowManager.current;
 
         if (!mustBeWindow.isNull)
         {
@@ -635,7 +691,7 @@ class SdlApplication : ContinuouslyApplication
     void updateFreqLoopDelta(double delta)
     {
         const startStateTime = SDL_GetTicks();
-        windowManager.iterateWindows((window) {
+        windowManager.onWindows((window) {
             //focus may not be on the window
             if (window.isShowing)
             {
@@ -646,7 +702,7 @@ class SdlApplication : ContinuouslyApplication
 
         const endStateTime = SDL_GetTicks();
 
-        auto mustBeWindow = windowManager.currentWindow;
+        auto mustBeWindow = windowManager.current;
 
         if (!mustBeWindow.isNull)
         {

@@ -132,12 +132,12 @@ abstract class GraphicApplication : CliApplication
         }
     }
 
-    void closeWindow(long id)
+    void close(long id)
     {
         uservices.logger.tracef("Request close window with id '%s'", id);
-        windowManager.closeWindow(id);
+        windowManager.destroy(id);
 
-        if (windowManager.windowsCount == 0 && isQuitOnCloseAllWindows)
+        if (windowManager.count == 0 && isQuitOnCloseAllWindows)
         {
             uservices.logger.tracef("All windows are closed, exit request");
             requestQuit;

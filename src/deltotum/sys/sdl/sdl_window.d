@@ -50,14 +50,14 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         uint flags = SDL_WINDOW_HIDDEN;
         final switch (mode) with (SdlWindowMode)
         {
-        case opengl:
-            flags |= SDL_WINDOW_OPENGL;
-            break;
-        case vulkan:
-            flags |= SDL_WINDOW_VULKAN;
-            break;
-        case none:
-            break;
+            case opengl:
+                flags |= SDL_WINDOW_OPENGL;
+                break;
+            case vulkan:
+                flags |= SDL_WINDOW_VULKAN;
+                break;
+            case none:
+                break;
         }
         ptr = SDL_CreateWindow(
             null,
@@ -86,9 +86,27 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         return ComResult(idOrZeroError, getError);
     }
 
+    ComResult isShown(out bool value) @nogc nothrow {
+        uint flags;
+        if(const err = getFlags(flags)){
+            return err;
+        }
+        value = (flags & SDL_WINDOW_SHOWN) != 0;
+        return ComResult.success;
+    }
+
     ComResult show() @nogc nothrow
     {
         SDL_ShowWindow(ptr);
+        return ComResult.success;
+    }
+
+    ComResult isHidden(out bool value) @nogc nothrow {
+        uint flags;
+        if(const err = getFlags(flags)){
+            return err;
+        }
+        value = (flags & SDL_WINDOW_HIDDEN) != 0;
         return ComResult.success;
     }
 
@@ -122,15 +140,54 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         return ComResult.success;
     }
 
-    ComResult minimize() @nogc nothrow
+    ComResult getMinimized(out bool value) @nogc nothrow
+    {
+        uint flags;
+        if(const err = getFlags(flags)){
+            return err;
+        }
+
+        value = (flags & SDL_WINDOW_MINIMIZED) != 0;
+        return ComResult.success;
+    }
+
+    ComResult setMinimized() @nogc nothrow
     {
         SDL_MinimizeWindow(ptr);
         return ComResult.success;
     }
 
-    ComResult maximize() @nogc nothrow
+    ComResult getMaximized(out bool value) @nogc nothrow
+    {
+        uint flags;
+        if(const err = getFlags(flags)){
+            return err;
+        }
+
+        value = (flags & SDL_WINDOW_MAXIMIZED) != 0;
+        return ComResult.success;
+    }
+
+    ComResult setMaximized() @nogc nothrow
     {
         SDL_MaximizeWindow(ptr);
+        return ComResult.success;
+    }
+
+    ComResult getFlags(out uint flags) @nogc nothrow
+    {
+        flags = SDL_GetWindowFlags(ptr);
+        return ComResult.success;
+    }
+
+    ComResult getBorderless(out bool isBorderless) @nogc nothrow
+    {
+        uint flags;
+        if (const err = getFlags(flags))
+        {
+            return err;
+        }
+        isBorderless = (flags & SDL_WINDOW_BORDERLESS) != 0;
         return ComResult.success;
     }
 
@@ -140,10 +197,32 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         return ComResult.success;
     }
 
+    ComResult getDecorated(out bool isDecorated) @nogc nothrow
+    {
+        bool isBorderless;
+        if (const err = getBorderless(isBorderless))
+        {
+            return err;
+        }
+        isDecorated = !isBorderless;
+        return ComResult.success;
+    }
+
     ComResult setResizable(bool isResizable) @nogc nothrow
     {
         SDL_bool isSdlResizable = typeConverter.fromBool(isResizable);
         SDL_SetWindowResizable(ptr, isSdlResizable);
+        return ComResult.success;
+    }
+
+    ComResult getResizable(out bool isResizable) @nogc nothrow
+    {
+        uint flags;
+        if (const err = getFlags(flags))
+        {
+            return err;
+        }
+        isResizable = (flags & SDL_WINDOW_RESIZABLE) != 0;
         return ComResult.success;
     }
 
@@ -158,11 +237,36 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         return result != 0 ? ComResult(result, getError) : ComResult.success;
     }
 
+    ComResult getOpacity(out double value0to1) @nogc nothrow
+    {
+        float opValue;
+        const result = SDL_GetWindowOpacity(ptr, &opValue);
+        import std.math.traits : isFinite;
+
+        if (isFinite(opValue))
+        {
+            value0to1 = opValue;
+        }
+
+        return result != 0 ? ComResult(result, getError) : ComResult.success;
+    }
+
     ComResult setFullScreen(bool isFullScreen) @nogc nothrow
     {
         const uint flags = isFullScreen ? SDL_WINDOW_FULLSCREEN : 0;
         const result = SDL_SetWindowFullscreen(ptr, flags);
         return result != 0 ? ComResult(result, getError) : ComResult.success;
+    }
+
+    ComResult getFullScreen(out bool isFullScreen) @nogc nothrow
+    {
+        uint flags;
+        if (const err = getFlags(flags))
+        {
+            return err;
+        }
+        isFullScreen = flags & SDL_WINDOW_FULLSCREEN;
+        return ComResult.success;
     }
 
     ComResult getSize(out int width, out int height) @nogc nothrow
@@ -241,7 +345,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         return ComResult.success;
     }
 
-    ComResult getScreenIndex(out size_t index) @nogc nothrow
+    ComResult screenIndex(out size_t index) @nogc nothrow
     {
         const indexOrNegError = SDL_GetWindowDisplayIndex(ptr);
         if (indexOrNegError < 0)

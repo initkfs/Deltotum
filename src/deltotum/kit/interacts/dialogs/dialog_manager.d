@@ -73,15 +73,15 @@ class DialogManager
         assert(dialogWindowProvider);
 
         Window dialogWindow = dialogWindowProvider();
-        dialogWindow.setSize(400, 200);
-        dialogWindow.setDecorated(false);
+        dialogWindow.resize(400, 200);
+        dialogWindow.isDecorated(false);
         return dialogWindow;
     }
 
     void showQuestion(dstring text, void delegate(bool) onResult)
     {
         auto win = createDialog;
-        win.setTitle("Question");
+        win.title = "Question";
 
         if(parentWindowProvider){
             auto parentWindow = parentWindowProvider();
@@ -89,7 +89,7 @@ class DialogManager
                 const parentBounds = parentWindow.bounds;
                 const newX = cast(int) (parentBounds.width / 2 - win.width / 2);
                 const newY = cast(int) (parentBounds.height / 2 - win.height / 2);
-                win.setPos(newX, newY);
+                win.pos(newX, newY);
             }
         }
 
