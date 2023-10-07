@@ -17,7 +17,7 @@ import deltotum.gui.containers.scroll_box : ScrollBox;
 import deltotum.gui.controls.tabs.tab : Tab;
 import deltotum.gui.controls.tabs.tabpane : TabPane;
 
-import IconNames = deltotum.gui.themes.icons.icon_name;
+import IconNames = deltotum.kit.graphics.themes.icons.icon_name;
 
 import std.conv : to;
 
@@ -166,7 +166,7 @@ class SceneView : VBox
         auto controlSettings = new TabPane;
         addCreate(controlSettings);
 
-        import IconNames = deltotum.gui.themes.icons.icon_name;
+        import IconNames = deltotum.kit.graphics.themes.icons.icon_name;
 
         auto controlTab = new Tab("");
         controlTab.content = createControlTab;

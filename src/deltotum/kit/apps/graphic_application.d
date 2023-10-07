@@ -12,9 +12,9 @@ import deltotum.core.extensions.extension : Extension;
 import deltotum.kit.apps.caps.cap_graphics : CapGraphics;
 import deltotum.kit.graphics.graphics: Graphics;
 import deltotum.kit.assets.asset : Asset;
-import deltotum.gui.themes.icons.icon_pack : IconPack;
+import deltotum.kit.graphics.themes.icons.icon_pack : IconPack;
 import deltotum.kit.sprites.textures.texture : Texture;
-import deltotum.gui.themes.theme : Theme;
+import deltotum.kit.graphics.themes.theme : Theme;
 import deltotum.gui.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
 import deltotum.kit.scenes.scene_manager : SceneManager;
 import deltotum.gui.fonts.bitmap.bitmap_font : BitmapFont;
@@ -164,7 +164,7 @@ abstract class GraphicApplication : CliApplication
         //TODO null?
         IconPack pack = iconPack.isNull ? null : iconPack.get;
 
-        import deltotum.gui.themes.theme : Theme;
+        import deltotum.kit.graphics.themes.theme : Theme;
         import deltotum.kit.gui.themes.factories.theme_from_config_factory : ThemeFromConfigFactory;
 
         auto themeLoader = new ThemeFromConfigFactory(uservices.logger, uservices.config, uservices.context, asset

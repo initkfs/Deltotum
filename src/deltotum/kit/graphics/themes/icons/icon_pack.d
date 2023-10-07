@@ -1,4 +1,4 @@
-module deltotum.gui.themes.icons.icon_pack;
+module deltotum.kit.graphics.themes.icons.icon_pack;
 
 import deltotum.kit.sprites.images.image : Image;
 

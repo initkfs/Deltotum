@@ -3,11 +3,11 @@ module deltotum.kit.gui.themes.factories.theme_from_config_factory;
 import deltotum.core.apps.units.services.application_unit : ApplicationUnit;
 import deltotum.core.contexts.context : Context;
 import deltotum.core.configs.config : Config;
-import deltotum.gui.themes.theme : Theme;
+import deltotum.kit.graphics.themes.theme : Theme;
 import deltotum.kit.assets.fonts.font : Font;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.math.geom.insets : Insets;
-import deltotum.gui.themes.icons.icon_pack: IconPack;
+import deltotum.kit.graphics.themes.icons.icon_pack: IconPack;
 
 import std.logger.core : Logger;
 

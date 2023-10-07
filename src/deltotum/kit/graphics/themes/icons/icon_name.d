@@ -1,4 +1,4 @@
-module deltotum.gui.themes.icons.icon_name;
+module deltotum.kit.graphics.themes.icons.icon_name;
 
 /**
  * Authors: initkfs

@@ -88,7 +88,7 @@ class Control : Sprite
     {
         assert(isCreated);
 
-        import deltotum.gui.themes.icons.icon_name;
+        import deltotum.kit.graphics.themes.icons.icon_name;
         import deltotum.kit.sprites.images.image : Image;
 
         import std.conv : to;

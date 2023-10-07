@@ -1,10 +1,10 @@
-module deltotum.gui.themes.theme;
+module deltotum.kit.graphics.themes.theme;
 
 import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.kit.assets.fonts.font : Font;
 import deltotum.math.geom.insets : Insets;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
-import deltotum.gui.themes.icons.icon_pack : IconPack;
+import deltotum.kit.graphics.themes.icons.icon_pack : IconPack;
 import deltotum.kit.sprites.images.image : Image;
 
 import std.typecons: Nullable;
