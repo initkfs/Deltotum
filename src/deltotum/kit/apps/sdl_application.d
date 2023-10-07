@@ -489,7 +489,6 @@ class SdlApplication : ContinuouslyApplication
         buildPartially(windowBuilder);
 
         auto window = new Window(sdlWindow);
-        build(window);
         windowBuilder.window = window;
 
         if (parent)
@@ -508,6 +507,9 @@ class SdlApplication : ContinuouslyApplication
             return newWindow(title, width, height, x, y, parent);
         };
 
+        //At the stage of initialization and window creation, not all services can be created
+        buildPartially(window);
+
         window.initialize;
         window.create;
 
@@ -525,7 +527,7 @@ class SdlApplication : ContinuouslyApplication
 
         window.title = title;
 
-        Asset asset = createAsset(uservices.logger, uservices.config, uservices.context);
+        auto asset = createAsset(uservices.logger, uservices.config, uservices.context);
         assert(asset);
         windowBuilder.asset = asset;
 
@@ -534,7 +536,7 @@ class SdlApplication : ContinuouslyApplication
         import deltotum.kit.graphics.graphics : Graphics;
 
         //TODO factory method
-        windowBuilder.graphics = new Graphics(uservices.logger, sdlRenderer, theme);
+        windowBuilder.graphics = createGraphics(uservices.logger, sdlRenderer, theme);
         windowBuilder.graphics.comTextureFactory = () {
             return newTexture(sdlRenderer);
         };
@@ -551,7 +553,7 @@ class SdlApplication : ContinuouslyApplication
             //TODO build and run services after all
             import deltotum.gui.fonts.bitmap.bitmap_font : BitmapFont;
 
-            auto fontGenerator = new BitmapFontGenerator;
+            auto fontGenerator = newFontGenerator;
             windowBuilder.build(fontGenerator);
 
             auto fontBitmap = createFontBitmap(fontGenerator, asset, theme);
@@ -570,6 +572,9 @@ class SdlApplication : ContinuouslyApplication
         windowBuilder.build(sceneManager);
         window.scenes = sceneManager;
 
+        //Rebuilding window with all services
+        windowBuilder.build(window);
+
         debug
         {
             //TODO config, lazy delegate
@@ -580,7 +585,8 @@ class SdlApplication : ContinuouslyApplication
 
         window.onAfterDestroy ~= () {
             //TODO who should manage the assets?
-            asset.destroy;
+            window.asset.destroy;
+            window.graphics.destroy;
         };
 
         windowManager.add(window);

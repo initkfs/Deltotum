@@ -1,6 +1,6 @@
 module deltotum.kit.windows.window;
 
-import deltotum.core.apps.uni.uni_component : UniComponent;
+import deltotum.kit.apps.comps.graphics_component : GraphicsComponent;
 import deltotum.com.gui.com_window : ComWindow;
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.math.vector2d : Vector2d;
@@ -16,12 +16,8 @@ import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
 
 /**
  * Authors: initkfs
- *
- * Window cannot contain a circular reference to itself. Therefore, it cannot be a graphical component.
- *
- * Window does not contain a renderer because the rendering implementation may change in the future.
  */
-class Window : UniComponent
+class Window : GraphicsComponent
 {
     Window parent;
     Window delegate(dstring, int, int, int, int, Window) childWindowProvider;
@@ -548,7 +544,7 @@ class Window : UniComponent
 
         //after window
         nativeWindow.destroy;
-        
+
         isDestroyed = true;
 
         if (onAfterDestroy.length > 0)

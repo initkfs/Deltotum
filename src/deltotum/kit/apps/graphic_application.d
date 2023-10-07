@@ -5,11 +5,12 @@ import deltotum.core.contexts.context : Context;
 import deltotum.core.apps.application_exit : ApplicationExit;
 import deltotum.core.apps.cli_application : CliApplication;
 import deltotum.kit.apps.comps.graphics_component : GraphicsComponent;
-import deltotum.kit.apps.comps.window_component: WindowComponent;
+import deltotum.kit.apps.comps.window_component : WindowComponent;
 import deltotum.core.apps.uni.uni_component : UniComponent;
 import deltotum.kit.windows.window_manager : WindowManager;
 import deltotum.core.extensions.extension : Extension;
 import deltotum.kit.apps.caps.cap_graphics : CapGraphics;
+import deltotum.kit.graphics.graphics: Graphics;
 import deltotum.kit.assets.asset : Asset;
 import deltotum.gui.themes.icons.icon_pack : IconPack;
 import deltotum.kit.sprites.textures.texture : Texture;
@@ -27,6 +28,9 @@ import deltotum.kit.screens.screen : Screen;
 
 import std.logger : Logger;
 import std.typecons : Nullable;
+
+//TODO replace with ComRenderer
+import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
 
 /**
  * Authors: initkfs
@@ -96,7 +100,8 @@ abstract class GraphicApplication : CliApplication
         return new SceneManager;
     }
 
-    WindowComponent newWindowServices(){
+    WindowComponent newWindowServices()
+    {
         return new WindowComponent;
     }
 
@@ -149,6 +154,11 @@ abstract class GraphicApplication : CliApplication
         }
     }
 
+    Graphics createGraphics(Logger logger, SdlRenderer renderer, Theme theme)
+    {
+        return new Graphics(logger, renderer, theme);
+    }
+
     Theme createTheme(Logger logger, Config config, Context context, Asset asset)
     {
         //TODO null?
@@ -190,6 +200,10 @@ abstract class GraphicApplication : CliApplication
         asset.font = font;
 
         return asset;
+    }
+
+    BitmapFontGenerator newFontGenerator(){
+        return new BitmapFontGenerator;
     }
 
     BitmapFont createFontBitmap(BitmapFontGenerator generator, Asset asset, Theme theme)
