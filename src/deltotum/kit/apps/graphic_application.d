@@ -5,6 +5,7 @@ import deltotum.core.contexts.context : Context;
 import deltotum.core.apps.application_exit : ApplicationExit;
 import deltotum.core.apps.cli_application : CliApplication;
 import deltotum.kit.apps.comps.graphics_component : GraphicsComponent;
+import deltotum.kit.apps.comps.window_component: WindowComponent;
 import deltotum.core.apps.uni.uni_component : UniComponent;
 import deltotum.kit.windows.window_manager : WindowManager;
 import deltotum.core.extensions.extension : Extension;
@@ -93,6 +94,10 @@ abstract class GraphicApplication : CliApplication
     SceneManager newSceneManager(Logger logger, Config config, Context context)
     {
         return new SceneManager;
+    }
+
+    WindowComponent newWindowServices(){
+        return new WindowComponent;
     }
 
     GraphicsComponent newGraphicServices()

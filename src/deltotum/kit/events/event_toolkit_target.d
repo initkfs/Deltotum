@@ -1,6 +1,6 @@
 module deltotum.kit.events.event_toolkit_target;
 
-import deltotum.kit.apps.comps.graphics_component : GraphicsComponent;
+import deltotum.kit.apps.comps.window_component: WindowComponent;
 import deltotum.core.events.event_target : EventTarget;
 import deltotum.core.events.event_target : EventTarget;
 import deltotum.kit.inputs.pointers.events.pointer_event : PointerEvent;
@@ -14,7 +14,7 @@ import deltotum.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
  * Authors: initkfs
  *  Returning true from handler indicates that the event has been handled, and that it should not propagate further.
  */
-class EventToolkitTarget : GraphicsComponent, EventTarget
+class EventToolkitTarget : WindowComponent, EventTarget
 {
     void delegate(ref PointerEvent) eventPointerFilter;
     void delegate(ref PointerEvent) eventPointerHandler;

@@ -1,6 +1,6 @@
 module deltotum.kit.scenes.scene;
 
-import deltotum.kit.apps.comps.graphics_component : GraphicsComponent;
+import deltotum.kit.apps.comps.window_component: WindowComponent;
 import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.kit.interacts.interact : Interact;
 import deltotum.kit.graphics.colors.rgba : RGBA;
@@ -16,7 +16,7 @@ import bindbc.sdl;
 /**
  * Authors: initkfs
  */
-class Scene : GraphicsComponent
+class Scene : WindowComponent
 {
     string name;
 

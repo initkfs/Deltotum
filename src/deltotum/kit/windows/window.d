@@ -11,6 +11,9 @@ import deltotum.kit.screens.screen : Screen;
 
 import std.logger.core : Logger;
 
+//TODO replace with ComRenderer
+import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
+
 /**
  * Authors: initkfs
  *
@@ -38,7 +41,12 @@ class Window : UniComponent
 
     SceneManager scenes;
 
+    SdlRenderer renderer;
+
     double frameRate;
+
+    bool isDestroyScenes = true;
+    bool isDestroyRenderer = true;
 
     bool isFocus;
     bool isShowing;
@@ -528,8 +536,19 @@ class Window : UniComponent
         onBeforeDestroy = null;
         onResizeOldNewWidthHeight = null;
 
+        if (renderer && isDestroyRenderer)
+        {
+            renderer.destroy;
+        }
+
+        if (scenes && isDestroyScenes)
+        {
+            scenes.destroy;
+        }
+
         //after window
         nativeWindow.destroy;
+        
         isDestroyed = true;
 
         if (onAfterDestroy.length > 0)

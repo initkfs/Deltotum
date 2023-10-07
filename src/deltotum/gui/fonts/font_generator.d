@@ -1,11 +1,11 @@
 module deltotum.gui.fonts.font_generator;
 
-import deltotum.kit.apps.comps.graphics_component: GraphicsComponent;
+import deltotum.kit.apps.comps.window_component: WindowComponent;
 
 /**
  * Authors: initkfs
  */
-class FontGenerator : GraphicsComponent
+class FontGenerator : WindowComponent
 {
 
 }

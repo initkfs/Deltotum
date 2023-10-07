@@ -1,6 +1,6 @@
 module deltotum.kit.scenes.scene_manager;
 
-import deltotum.kit.apps.comps.graphics_component : GraphicsComponent;
+import deltotum.kit.apps.comps.window_component : WindowComponent;
 import deltotum.kit.scenes.scene : Scene;
 
 import std.stdio;
@@ -8,7 +8,7 @@ import std.stdio;
 /**
  * Authors: initkfs
  */
-class SceneManager : GraphicsComponent
+class SceneManager : WindowComponent
 {
     protected
     {

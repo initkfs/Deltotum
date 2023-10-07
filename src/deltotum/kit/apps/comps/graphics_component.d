@@ -24,7 +24,6 @@ class GraphicsComponent : UniComponent
         @Service Graphics _graphics;
         @Service Input _input;
         @Service Screen _screen;
-        @Service Window _window;
         @Service CapGraphics _capGraphics;
     }
 
@@ -55,25 +54,6 @@ class GraphicsComponent : UniComponent
 
         enforce(assetManager !is null, "Asset manager must not be null");
         _asset = assetManager;
-    }
-
-    bool hasWindow() @nogc nothrow pure @safe
-    {
-        return _window !is null;
-    }
-
-    Window window() @nogc nothrow pure @safe
-    out (_window; _window !is null)
-    {
-        return _window;
-    }
-
-    void window(Window window) pure @safe
-    {
-        import std.exception : enforce;
-
-        enforce(window !is null, "Window must not be null");
-        _window = window;
     }
 
     bool hasInput() @nogc nothrow pure @safe

@@ -485,7 +485,7 @@ class SdlApplication : ContinuouslyApplication
         auto sdlWindow = new SdlWindow;
         sdlWindow.mode = mode;
 
-        auto windowBuilder = newGraphicServices;
+        auto windowBuilder = newWindowServices;
         buildPartially(windowBuilder);
 
         auto window = new Window(sdlWindow);
@@ -521,6 +521,8 @@ class SdlApplication : ContinuouslyApplication
         window.pos(newX, newY);
 
         SdlRenderer sdlRenderer = newRenderer(sdlWindow);
+        window.renderer = sdlRenderer;
+
         window.title = title;
 
         Asset asset = createAsset(uservices.logger, uservices.config, uservices.context);
@@ -577,9 +579,8 @@ class SdlApplication : ContinuouslyApplication
         }
 
         window.onAfterDestroy ~= () {
-            sceneManager.asset.destroy;
-            sceneManager.destroy;
-            sdlRenderer.destroy;
+            //TODO who should manage the assets?
+            asset.destroy;
         };
 
         windowManager.add(window);

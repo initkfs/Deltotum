@@ -1,6 +1,6 @@
 module deltotum.kit.factories.creation;
 
-import deltotum.kit.apps.comps.graphics_component : GraphicsComponent;
+import deltotum.kit.apps.comps.window_component: WindowComponent;
 
 import deltotum.kit.factories.creation_images : CreationImages;
 import deltotum.kit.factories.creation_shapes: CreationShapes;
@@ -8,7 +8,7 @@ import deltotum.kit.factories.creation_shapes: CreationShapes;
 /**
  * Authors: initkfs
  */
-class Creation : GraphicsComponent
+class Creation : WindowComponent
 {
 
     CreationImages images;
