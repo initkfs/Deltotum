@@ -12,7 +12,7 @@ class SceneManager : WindowComponent
 {
     protected
     {
-        Scene[] scenes;
+        Scene[] _scenes;
     }
     Scene _currentScene;
 
@@ -28,6 +28,11 @@ class SceneManager : WindowComponent
 
         enforce(state !is null, "Scene must not be null");
         _currentScene = state;
+    }
+
+    override void create()
+    {
+        super.create;
     }
 
     void create(Scene scene)
@@ -58,12 +63,12 @@ class SceneManager : WindowComponent
     void add(Scene scene)
     {
         //TODO exists
-        scenes ~= scene;
+        _scenes ~= scene;
     }
 
     bool changeByName(string name)
     {
-        foreach (sc; scenes)
+        foreach (sc; _scenes)
         {
             if (sc.name == name)
             {
@@ -109,6 +114,54 @@ class SceneManager : WindowComponent
         }
 
         _currentScene = scene;
+    }
+
+    override void run()
+    {
+        super.run;
+        foreach (scene; _scenes)
+        {
+            if (!scene.isCreated)
+            {
+                continue;
+            }
+            scene.run;
+        }
+    }
+
+    override void stop()
+    {
+        super.stop;
+        foreach (scene; _scenes)
+        {
+            if (!scene.isRunning)
+            {
+                continue;
+            }
+            scene.stop;
+        }
+    }
+
+    bool draw(double alpha)
+    {
+        if (!_currentScene)
+        {
+            return false;
+        }
+
+        _currentScene.draw;
+        return true;
+    }
+
+    bool update(double delta)
+    {
+        if (!_currentScene)
+        {
+            return false;
+        }
+
+        _currentScene.update(delta);
+        return true;
     }
 
     void destroy()

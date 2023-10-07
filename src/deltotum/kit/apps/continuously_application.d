@@ -20,22 +20,26 @@ abstract class ContinuouslyApplication : GraphicApplication
         this.mainLoop = enforce(loop, "Main loop must not be null");
     }
 
-    void runLoop()
-    in (mainLoop)
+    override void run()
     {
+        super.run;
+
+        assert(mainLoop);
         mainLoop.run;
     }
 
-    void stopLoop()
-    in (mainLoop)
+    override void stop()
     {
+        super.stop;
+
+        assert(mainLoop);
         mainLoop.isRunning = false;
     }
 
     override void requestQuit()
     {
         super.requestQuit;
-        stopLoop;
+        stop;
         isProcessEvents = false;
     }
 

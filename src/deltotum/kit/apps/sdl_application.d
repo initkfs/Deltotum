@@ -293,7 +293,8 @@ class SdlApplication : ContinuouslyApplication
                     windowManager.onWindowsById(e.ownerId, (win) {
                         win.isFocus = true;
                         e.isConsumed = true;
-                        uservices.logger.tracef("Window focus on window '%s' with id %d", win.title, win.id);
+                        uservices.logger.tracef("Window focus on window '%s' with id %d", win.title, win
+                            .id);
                         return true;
                     });
                     break;
@@ -317,6 +318,10 @@ class SdlApplication : ContinuouslyApplication
                                 dg();
                             }
                         }
+                        if (win.isStopped)
+                        {
+                            win.run;
+                        }
                         uservices.logger.tracef("Show window '%s' with id %d", win.title, win.id);
                         return true;
                     });
@@ -330,6 +335,10 @@ class SdlApplication : ContinuouslyApplication
                             {
                                 dg();
                             }
+                        }
+                        if (win.isRunning)
+                        {
+                            win.stop;
                         }
                         uservices.logger.tracef("Hide window '%s' with id %d", win.title, win.id);
                         return true;
@@ -351,7 +360,8 @@ class SdlApplication : ContinuouslyApplication
                                 dg();
                             }
                         }
-                        uservices.logger.tracef("Minimize window '%s' with id %d", win.title, win.id);
+                        uservices.logger.tracef("Minimize window '%s' with id %d", win.title, win
+                            .id);
                         return true;
                     });
                     break;
@@ -364,7 +374,8 @@ class SdlApplication : ContinuouslyApplication
                                 dg();
                             }
                         }
-                        uservices.logger.tracef("Maximize window '%s' with id %d", win.title, win.id);
+                        uservices.logger.tracef("Maximize window '%s' with id %d", win.title, win
+                            .id);
                         return true;
                     });
                     break;
@@ -379,7 +390,7 @@ class SdlApplication : ContinuouslyApplication
                         }
                         return true;
                     });
-                    this.close(e.ownerId);
+                    destroyWindow(e.ownerId);
                     break;
                 default:
                     break;
@@ -570,6 +581,9 @@ class SdlApplication : ContinuouslyApplication
 
         auto sceneManager = newSceneManager(uservices.logger, uservices.config, uservices.context);
         windowBuilder.build(sceneManager);
+        sceneManager.initialize;
+        sceneManager.create;
+
         window.scenes = sceneManager;
 
         //Rebuilding window with all services
@@ -725,11 +739,9 @@ class SdlApplication : ContinuouslyApplication
         if (event.type == SDL_QUIT)
         {
             uint windowId = event.window.windowID;
-            if (windowId == 0)
-            {
-                requestQuit;
-                return;
-            }
+            destroyWindow(windowId);
+
+            requestQuit;
         }
     }
 }

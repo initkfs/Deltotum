@@ -451,28 +451,24 @@ class Window : GraphicsComponent
         return index.to!int;
     }
 
+    override void run(){
+        super.run;
+        scenes.run;
+    }
+
+    override void stop(){
+        super.stop;
+        scenes.stop;
+    }
+
     bool draw(double alpha)
     {
-        auto currScene = scenes.currentScene;
-        if (!currScene)
-        {
-            return false;
-        }
-
-        currScene.draw;
-        return true;
+        return scenes.draw(alpha);
     }
 
     bool update(double delta)
     {
-        auto currScene = scenes.currentScene;
-        if (!currScene)
-        {
-            return false;
-        }
-
-        currScene.update(delta);
-        return true;
+       return scenes.update(delta);
     }
 
     Window newChildWindow(dstring title = "New window", int width = 450, int height = 200, int x = -1, int y = -1)

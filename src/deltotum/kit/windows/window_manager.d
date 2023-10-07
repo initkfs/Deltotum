@@ -150,7 +150,8 @@ class WindowManager : LoggableUnit
 
         if (winForDestroy && remove(winForDestroy))
         {
-            logger.tracef("Call destroy window '%s' with id %d", winForDestroy.title, winForDestroy.id);
+            logger.tracef("Call destroy window '%s' with id %d", winForDestroy.title, winForDestroy
+                    .id);
             winForDestroy.destroy;
             destroyCount++;
         }

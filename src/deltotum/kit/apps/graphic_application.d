@@ -10,7 +10,7 @@ import deltotum.core.apps.uni.uni_component : UniComponent;
 import deltotum.kit.windows.window_manager : WindowManager;
 import deltotum.core.extensions.extension : Extension;
 import deltotum.kit.apps.caps.cap_graphics : CapGraphics;
-import deltotum.kit.graphics.graphics: Graphics;
+import deltotum.kit.graphics.graphics : Graphics;
 import deltotum.kit.assets.asset : Asset;
 import deltotum.kit.graphics.themes.icons.icon_pack : IconPack;
 import deltotum.kit.sprites.textures.texture : Texture;
@@ -134,6 +134,26 @@ abstract class GraphicApplication : CliApplication
         return super.build(component);
     }
 
+    override void run()
+    {
+        super.run;
+        windowManager.onWindows((win){
+            win.run;
+            assert(win.isRunning);
+            return true;
+        });
+    }
+
+    override void stop()
+    {
+        super.stop;
+        windowManager.onWindows((win){
+            win.stop;
+            assert(win.isStopped);
+            return true;
+        });
+    }
+
     void requestQuit()
     {
         if (uservices && uservices.logger)
@@ -142,7 +162,7 @@ abstract class GraphicApplication : CliApplication
         }
     }
 
-    void close(long id)
+    void destroyWindow(long id)
     {
         uservices.logger.tracef("Request close window with id '%s'", id);
         windowManager.destroy(id);
@@ -202,7 +222,8 @@ abstract class GraphicApplication : CliApplication
         return asset;
     }
 
-    BitmapFontGenerator newFontGenerator(){
+    BitmapFontGenerator newFontGenerator()
+    {
         return new BitmapFontGenerator;
     }
 

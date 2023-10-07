@@ -1,5 +1,6 @@
 module deltotum.core.apps.cli_application;
 
+import deltotum.core.apps.units.simple_unit: SimpleUnit;
 import deltotum.core.apps.crashes.crash_handler : CrashHandler;
 import deltotum.core.apps.application_exit : ApplicationExit;
 import deltotum.core.apps.uni.uni_component : UniComponent;
@@ -18,7 +19,7 @@ import std.getopt : GetoptResult;
 /**
  * Authors: initkfs
  */
-class CliApplication
+class CliApplication : SimpleUnit
 {
     protected
     {
@@ -52,6 +53,8 @@ class CliApplication
 
     ApplicationExit initialize(string[] args)
     {
+        super.initialize;
+        
         _uniServices = newUniServices;
 
         uservices.capCore = new CapCore;

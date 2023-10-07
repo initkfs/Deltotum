@@ -1,6 +1,6 @@
 module deltotum.kit.scenes.scene;
 
-import deltotum.kit.apps.comps.window_component: WindowComponent;
+import deltotum.kit.apps.comps.window_component : WindowComponent;
 import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.kit.interacts.interact : Interact;
 import deltotum.kit.graphics.colors.rgba : RGBA;
@@ -114,7 +114,8 @@ class Scene : WindowComponent
             debugger.updateTimeMs.text = Math.round(timeUpdateProcessingMs).to!dstring;
             debugger.drawTimeMs.text = Math.round(timeDrawProcessingMs).to!dstring;
 
-            import core.memory: GC;
+            import core.memory : GC;
+
             auto stats = GC.stats;
             auto usedSize = stats.usedSize / 1000.0;
             debugger.gcUsedBytes.text = usedSize.to!dstring;
