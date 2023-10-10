@@ -8,10 +8,10 @@ mixin template ComPtrManager(T)
     protected
     {
         T* ptr;
-        bool isDestroyed;
+        bool _disposed;
     }
 
-    abstract protected bool destroyPtr() @nogc nothrow;
+    abstract protected bool disposePtr() @nogc nothrow;
 
     this() pure @safe
     {
@@ -28,12 +28,12 @@ mixin template ComPtrManager(T)
 
     ~this()
     {
-        if (ptr && !isDestroyed)
+        if (ptr && !_disposed)
         {
             import std.stdio : stderr;
 
             stderr.writefln("Warning! Undestroyed common native object %s", typeof(this).stringof);
-            destroy;
+            dispose;
         }
     }
 
@@ -48,6 +48,11 @@ mixin template ComPtrManager(T)
         return ptr is null;
     }
 
+    final bool isDisposed() @nogc nothrow pure @safe
+    {
+        return _disposed;
+    }
+
     final void updateObject(T* newPtr)
     {
         import std.exception : enforce;
@@ -55,22 +60,22 @@ mixin template ComPtrManager(T)
         enforce(newPtr !is null, "New common native object pointer must not be null");
         if (ptr)
         {
-            destroyPtr;
+            disposePtr;
         }
         ptr = newPtr;
-        isDestroyed = false;
+        _disposed = false;
     }
 
-    bool destroy() @nogc nothrow
+    bool dispose() @nogc nothrow
     {
         if (ptr)
         {
-            isDestroyed = destroyPtr;
-            if (isDestroyed)
+            _disposed = disposePtr;
+            if (_disposed)
             {
                 ptr = null;
             }
         }
-        return isDestroyed;
+        return _disposed;
     }
 }

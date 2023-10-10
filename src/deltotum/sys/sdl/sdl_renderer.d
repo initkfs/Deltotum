@@ -194,7 +194,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         return ComResult(zeroOrErrorCode);
     }
 
-    override protected bool destroyPtr()
+    override protected bool disposePtr()
     {
         if (ptr)
         {

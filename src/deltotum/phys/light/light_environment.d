@@ -60,12 +60,12 @@ class LightEnvironment : Image
         lights ~= light;
     }
 
-    override void destroy()
+    override void dispose()
     {
-        super.destroy;
+        super.dispose;
         foreach (LightSpot light; lights)
         {
-            light.destroy;
+            light.dispose;
         }
         lights = [];
     }

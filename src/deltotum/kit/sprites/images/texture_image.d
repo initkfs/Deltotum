@@ -228,7 +228,7 @@ class TextureImage : Texture
                 width = newWidth;
                 height = newHeight;
                 load(newBuff);
-                image.destroy;
+                image.dispose;
                 return true;
             }
 
@@ -250,7 +250,7 @@ class TextureImage : Texture
 
         if (texture !is null)
         {
-            destroy;
+            texture.dispose;
         }
 
         texture = graphics.newComTexture;
@@ -276,7 +276,7 @@ class TextureImage : Texture
         this.width = width * scale;
         this.height = height * scale;
 
-        image.destroy;
+        image.dispose;
 
         return true;
     }
@@ -331,12 +331,12 @@ class TextureImage : Texture
         drawTexture(texture, textureBounds, x, y, angle, flip);
     }
 
-    override void destroy()
+    override void dispose()
     {
-        super.destroy;
+        super.dispose;
         if (texture !is null)
         {
-            texture.destroy;
+            texture.dispose;
         }
     }
 

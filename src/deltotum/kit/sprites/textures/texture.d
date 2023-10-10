@@ -199,7 +199,9 @@ class Texture : Sprite
     {
         assert(texture);
         SdlTexture newTexture = texture.copy;
-        return new Texture(newTexture);
+        auto texture = new Texture(newTexture);
+        texture.initialize;
+        return texture;
     }
 
     SdlTexture nativeTexture() nothrow
@@ -240,12 +242,12 @@ class Texture : Sprite
         }
     }
 
-    override void destroy()
+    override void dispose()
     {
-        super.destroy;
+        super.dispose;
         if (texture)
         {
-            texture.destroy;
+            texture.dispose;
         }
     }
 }

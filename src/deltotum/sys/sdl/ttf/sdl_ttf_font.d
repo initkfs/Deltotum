@@ -67,7 +67,7 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font
         return ComResult();
     }
 
-    override bool destroyPtr()
+    override bool disposePtr()
     {
         if (ptr)
         {

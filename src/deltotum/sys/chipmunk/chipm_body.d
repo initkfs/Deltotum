@@ -62,7 +62,7 @@ class ChipmBody : ChipmObjectWrapper!(cpBody)
         return Math.radToDeg(angleRad);
     }
 
-    override bool destroyPtr()
+    override bool disposePtr()
     {
         if (ptr)
         {

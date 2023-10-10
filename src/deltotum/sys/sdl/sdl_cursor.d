@@ -118,7 +118,7 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor
         return ComResult.success;
     }
 
-    override protected bool destroyPtr() @nogc nothrow
+    override protected bool disposePtr() @nogc nothrow
     {
         if (ptr)
         {

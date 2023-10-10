@@ -540,6 +540,8 @@ class SdlApplication : ContinuouslyApplication
 
         auto asset = createAsset(uservices.logger, uservices.config, uservices.context);
         assert(asset);
+        asset.initialize;
+
         windowBuilder.asset = asset;
 
         auto theme = createTheme(uservices.logger, uservices.config, uservices.context, asset);
@@ -548,6 +550,8 @@ class SdlApplication : ContinuouslyApplication
 
         //TODO factory method
         windowBuilder.graphics = createGraphics(uservices.logger, sdlRenderer, theme);
+        windowBuilder.graphics.initialize;
+
         windowBuilder.graphics.comTextureFactory = () {
             return newTexture(sdlRenderer);
         };
@@ -567,8 +571,8 @@ class SdlApplication : ContinuouslyApplication
             auto fontGenerator = newFontGenerator;
             windowBuilder.build(fontGenerator);
 
-            auto fontBitmap = createFontBitmap(fontGenerator, asset, theme);
-            windowBuilder.asset.fontBitmap = fontBitmap;
+            windowBuilder.asset.fontBitmap =  createFontBitmap(fontGenerator, asset, theme);
+            windowBuilder.asset.fontBitmap.initialize;
 
             auto colorText = theme.colorText;
 
@@ -599,8 +603,8 @@ class SdlApplication : ContinuouslyApplication
 
         window.onAfterDestroy ~= () {
             //TODO who should manage the assets?
-            window.asset.destroy;
-            window.graphics.destroy;
+            window.asset.dispose;
+            window.graphics.dispose;
         };
 
         windowManager.add(window);
@@ -630,18 +634,18 @@ class SdlApplication : ContinuouslyApplication
 
         if (windowManager)
         {
-            windowManager.onWindows((win) { win.destroy; return true; });
+            windowManager.onWindows((win) { win.dispose; return true; });
         }
 
         //TODO auto destroy all services
-        _audio.destroy;
+        _audio.dispose;
 
         if (!joystick.isNull)
         {
-            joystick.get.destroy;
+            joystick.get.dispose;
         }
 
-        _input.destroy;
+        _input.dispose;
 
         //TODO process EXIT event
         audioMixLib.quit;
@@ -662,7 +666,7 @@ class SdlApplication : ContinuouslyApplication
         {
             auto currWindow = mustBeWindow.get;
             //FIXME stop loop after destroy
-            if (!currWindow.isDestroyed)
+            if (!currWindow.isDisposed)
             {
                 mustBeWindow.get.scenes.currentScene.timeEventProcessingMs = 0;
             }
@@ -678,7 +682,7 @@ class SdlApplication : ContinuouslyApplication
             if (!mustBeWindow.isNull)
             {
                 auto currWindow = mustBeWindow.get;
-                if (!currWindow.isDestroyed)
+                if (!currWindow.isDisposed)
                 {
                     currWindow.scenes.currentScene.timeEventProcessingMs = endEvent - startEvent;
                 }

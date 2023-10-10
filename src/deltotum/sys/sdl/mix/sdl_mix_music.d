@@ -70,7 +70,7 @@ class SdlMixMusic : SdlMixObject
         return ComResult(alwaysZero);
     }
 
-    bool destroyPtr()
+    bool disposePtr()
     {
         if(!ptr){
             return false;

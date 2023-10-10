@@ -66,11 +66,12 @@ class Font : LoggableUnit
         return fontSurface;
     }
 
-    void destroy()
+    override void dispose()
     {
+        super.dispose;
         if (font !is null)
         {
-            font.destroy;
+            font.dispose;
         }
     }
 }

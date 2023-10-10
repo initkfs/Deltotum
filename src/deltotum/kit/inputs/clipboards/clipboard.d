@@ -53,7 +53,7 @@ class Clipboard
         return isHasText;
     }
 
-    void destroy(){
-        clipboard.destroy;
+    void dispose(){
+        clipboard.dispose;
     }
 }

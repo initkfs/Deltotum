@@ -394,7 +394,7 @@ class Sprite : EventKitTarget
         {
             if (isDestroy)
             {
-                ch.destroy;
+                ch.dispose;
             }
         }
         children = [];
@@ -409,7 +409,7 @@ class Sprite : EventKitTarget
         {
             foreach (sprite; sprites)
             {
-                sprite.destroy;
+                sprite.dispose;
             }
         }
 
@@ -434,7 +434,7 @@ class Sprite : EventKitTarget
 
         if (isDestroy)
         {
-            children[mustBeIndex].destroy;
+            children[mustBeIndex].dispose;
         }
 
         children = children.remove(mustBeIndex);
@@ -1589,16 +1589,18 @@ class Sprite : EventKitTarget
             _margin.left = value;
         }
 
-        void destroy()
+        override void dispose()
         {
+            super.dispose;
+
             if (_cache)
             {
-                _cache.destroy;
+                _cache.dispose;
             }
 
             if (_hitbox)
             {
-                _hitbox.destroy;
+                _hitbox.dispose;
             }
 
             if (physBody)
@@ -1614,16 +1616,16 @@ class Sprite : EventKitTarget
 
                 if (physBody.shape)
                 {
-                    physBody.shape.destroy;
+                    physBody.shape.dispose;
                 }
 
-                physBody.destroy;
+                physBody.dispose;
             }
 
             foreach (Sprite child; children)
             {
                 child.parent = null;
-                child.destroy;
+                child.dispose;
             }
 
             invalidateListeners = null;

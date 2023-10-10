@@ -131,7 +131,7 @@ class WindowManager : LoggableUnit
         return windows.length;
     }
 
-    size_t destroy(long id)
+    size_t dispose(long id)
     {
         Window winForDestroy;
         size_t destroyCount;
@@ -152,7 +152,11 @@ class WindowManager : LoggableUnit
         {
             logger.tracef("Call destroy window '%s' with id %d", winForDestroy.title, winForDestroy
                     .id);
-            winForDestroy.destroy;
+            if(winForDestroy.isRunning){
+                winForDestroy.stop;
+                assert(winForDestroy.isStopped);
+            }
+            winForDestroy.dispose;
             destroyCount++;
         }
 
@@ -171,7 +175,7 @@ class WindowManager : LoggableUnit
                 {
                     logger.tracef("Call destroy window '%s' with a duplicate id %d", win.title, win
                             .id);
-                    win.destroy;
+                    win.dispose;
                     destroyCount++;
                 }
             }

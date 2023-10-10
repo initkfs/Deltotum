@@ -141,11 +141,11 @@ class ChipmSpace : ChipmObjectWrapper!(cpSpace)
         return new ChipmBody(bodyPtr);
     }
 
-    override bool destroyPtr()
+    override bool disposePtr()
     {
         // foreach (ChipmShape shape; shapes)
         // {
-        //     shape.destroyPtr;
+        //     shape.disposePtr;
         // }
 
         shapes = null;

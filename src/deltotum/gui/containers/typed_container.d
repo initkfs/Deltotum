@@ -36,9 +36,9 @@ class TypedContainer(T : Sprite) : Control
         super.addCreate(sprite, index);
     }
 
-    override void destroy()
+    override void dispose()
     {
-        super.destroy;
+        super.dispose;
         items = null;
     }
 

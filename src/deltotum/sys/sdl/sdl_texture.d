@@ -99,7 +99,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
     {
         if (ptr)
         {
-            destroyPtr;
+            disposePtr;
         }
 
         ptr = SDL_CreateTexture(renderer.getObject, format, access, w, h);
@@ -215,7 +215,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
     {
         if (ptr)
         {
-            destroyPtr;
+            disposePtr;
         }
         return fromSurfacePtr(surface.getObject);
     }
@@ -224,7 +224,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
     {
         if (ptr)
         {
-            destroyPtr;
+            disposePtr;
         }
 
         ptr = SDL_CreateTextureFromSurface(renderer.getObject, surface);
@@ -390,7 +390,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture
         return newTexture;
     }
 
-    override protected bool destroyPtr() @nogc nothrow
+    override protected bool disposePtr() @nogc nothrow
     {
         if (ptr)
         {

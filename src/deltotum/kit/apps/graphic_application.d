@@ -165,7 +165,7 @@ abstract class GraphicApplication : CliApplication
     void destroyWindow(long id)
     {
         uservices.logger.tracef("Request close window with id '%s'", id);
-        windowManager.destroy(id);
+        windowManager.dispose(id);
 
         if (windowManager.count == 0 && isQuitOnCloseAllWindows)
         {

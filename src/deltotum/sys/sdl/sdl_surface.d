@@ -30,7 +30,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface
     {
         if (ptr)
         {
-            destroyPtr;
+            disposePtr;
         }
         ptr = createRGBSurfacePtr(flags, width, height, depth, rmask, gmask, bmask, amask);
         if (!ptr)
@@ -50,7 +50,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface
     {
         if (ptr)
         {
-            destroyPtr;
+            disposePtr;
         }
         ptr = SDL_CreateRGBSurfaceFrom(pixels, width, height, depth, pitch, rmask, gmask, bmask, amask);
         if (!ptr)
@@ -232,7 +232,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface
         return ptr.h;
     }
 
-    override protected bool destroyPtr() @nogc nothrow
+    override protected bool disposePtr() @nogc nothrow
     {
         if (ptr)
         {

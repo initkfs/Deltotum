@@ -70,24 +70,26 @@ class Asset : Resource
             throw new Exception("Not found font in resources: " ~ fontFilePath);
         }
         Font nFont = new Font(logger, mustBeFontPath.get, size);
+        nFont.initialize;
         return nFont;
     }
 
-    void destroy()
+    override void dispose()
     {
+        super.dispose;
         if (font)
         {
-            font.destroy;
+            font.dispose;
         }
         if (fontBitmap)
         {
-            fontBitmap.destroy;
+            fontBitmap.dispose;
         }
 
         //TODO check if font\fontBitmap in fontCache
         foreach (fontTexture; fontCache)
         {
-            fontTexture.destroy;
+            fontTexture.dispose;
         }
     }
 }

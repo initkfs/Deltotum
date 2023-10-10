@@ -21,7 +21,7 @@ class Audio
         }
     }
 
-    void destroy()
+    void dispose()
     {
         audioLib.closeAudio;
     }

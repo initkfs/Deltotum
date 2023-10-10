@@ -119,23 +119,25 @@ class SystemCursor
         return _locked;
     }
 
-    void destroy()
+    void dispose()
     {
-        foreach (type, cursor; cursors)
-        {
-            cursors.destroy;
-        }
-        _cursorOwner = null;
-
         if (defaultCursor)
         {
-            defaultCursor.destroy;
+            defaultCursor.dispose;
         }
 
         if (lastCursor)
         {
-            lastCursor.destroy;
+            lastCursor.dispose;
         }
+
+        foreach (type, cursor; cursors)
+        {
+            if(!cursor.isDisposed){
+                cursor.dispose;
+            }
+        }
+        _cursorOwner = null;
 
         cursors.clear;
     }

@@ -5,5 +5,5 @@ module deltotum.com.lifecycles.destroyable;
  */
 interface Destroyable
 {
-    bool destroy();
+    bool dispose();
 }

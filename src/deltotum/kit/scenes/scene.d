@@ -101,11 +101,12 @@ class Scene : WindowComponent
         addCreate(debugger);
     }
 
-    void destroy()
+    override void dispose()
     {
+        super.dispose;
         foreach (obj; sprites)
         {
-            obj.destroy;
+            obj.dispose;
         }
         sprites = null;
     }

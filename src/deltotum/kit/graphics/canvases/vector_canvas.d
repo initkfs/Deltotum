@@ -129,10 +129,10 @@ class VectorCanvas : Texture
             throw new Exception(err.toString);
         }
 
-        comSurface.destroy;
+        comSurface.dispose;
         comSurface = null;
 
-        cairoSurface.destroy;
-        cairoContext.destroy;
+        cairoSurface.dispose;
+        cairoContext.dispose;
     }
 }

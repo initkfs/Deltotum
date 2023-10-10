@@ -19,7 +19,7 @@ class CairoContext: CairoObjectWrapper!cairo_t
         }
     }
 
-    override bool destroyPtr(){
+    override bool disposePtr(){
         if(ptr){
             cairo_destroy(ptr);
             return true;

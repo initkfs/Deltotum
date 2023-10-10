@@ -18,7 +18,7 @@ class CairoSurface : CairoObjectWrapper!cairo_surface_t
         }
     }
 
-    override bool destroyPtr()
+    override bool disposePtr()
     {
         if (ptr)
         {

@@ -24,9 +24,9 @@ class DisplayObjectTransition(T) if (isIntegral!T || isFloatingPoint!T || is(T :
         this.displayObject = obj;
     }
 
-    override void destroy()
+    override void dispose()
     {
-        super.destroy;
+        super.dispose;
         displayObject = null;
     }
 

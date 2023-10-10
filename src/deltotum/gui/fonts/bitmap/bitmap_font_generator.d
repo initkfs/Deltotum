@@ -104,7 +104,7 @@ class BitmapFontGenerator : FontGenerator
                 {
                     throw new Exception(err.toString);
                 }
-                glyphRepresentation.destroy;
+                glyphRepresentation.dispose;
 
                 glyphPosition.x += glyphPosition.w;
             }
@@ -114,7 +114,7 @@ class BitmapFontGenerator : FontGenerator
 
         bitmapFont.loadFromSurface(fontMapSurface);
         bitmapFont.setBlendMode;
-        fontMapSurface.destroy;
+        fontMapSurface.dispose;
         return bitmapFont;
     }
 }

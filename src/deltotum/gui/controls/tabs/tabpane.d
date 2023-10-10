@@ -136,17 +136,17 @@ class TabPane : Control
         }
     }
 
-    override void destroy()
+    override void dispose()
     {
-        super.destroy;
-        if (header)
+        super.dispose;
+        if (header && !header.isDisposed)
         {
-            header.destroy;
+            header.dispose;
         }
 
-        if (content)
+        if (content && !content.isDisposed)
         {
-            content.destroy;
+            content.dispose;
         }
     }
 }

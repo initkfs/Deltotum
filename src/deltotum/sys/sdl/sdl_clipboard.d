@@ -48,4 +48,8 @@ class SdlClipboard : SdlObject
         const zeroOrErrorCode = SDL_SetClipboardText(text);
         return ComResult(zeroOrErrorCode);
     }
+
+    void dispose(){
+        
+    }
 }

@@ -118,7 +118,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult close() @nogc nothrow
     {
-        destroy;
+        dispose;
         return ComResult.success;
     }
 
@@ -359,7 +359,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult nativePtr(out void* ptr) @nogc nothrow
     {
-        if (!ptr && isDestroyed)
+        if (!ptr && isDisposed)
         {
             return ComResult.error("Native window pointer is destroyed or null");
         }
@@ -367,7 +367,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         return ComResult.success;
     }
 
-    override protected bool destroyPtr()
+    override protected bool disposePtr()
     {
         if (ptr)
         {

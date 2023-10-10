@@ -46,7 +46,7 @@ class Window : GraphicsComponent
 
     bool isFocus;
     bool isShowing;
-    bool isDestroyed;
+    bool isDisposed;
 
     protected
     {
@@ -201,7 +201,7 @@ class Window : GraphicsComponent
 
         logger.trace("Destroy window '%s' with id %d", title, id);
 
-        destroy;
+        dispose;
     }
 
     void focusRequest()
@@ -497,13 +497,14 @@ class Window : GraphicsComponent
         }
     }
 
-    void destroy()
+    override void dispose()
     {
-        if (isDestroyed)
+        if (isDisposed)
         {
             logger.error("The window is already destroyed");
             return;
         }
+        super.dispose;
 
         //TODO close child windows
 
@@ -530,18 +531,18 @@ class Window : GraphicsComponent
 
         if (renderer && isDestroyRenderer)
         {
-            renderer.destroy;
+            renderer.dispose;
         }
 
         if (scenes && isDestroyScenes)
         {
-            scenes.destroy;
+            scenes.dispose;
         }
 
         //after window
-        nativeWindow.destroy;
+        nativeWindow.dispose;
 
-        isDestroyed = true;
+        isDisposed = true;
 
         if (onAfterDestroy.length > 0)
         {

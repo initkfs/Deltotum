@@ -24,7 +24,7 @@ class ChipmShape : ChipmObjectWrapper!(cpShape)
         return Rect2d(b.l, b.t, b.r - b.l, b.b - b.t);
     }
 
-    override bool destroyPtr()
+    override bool disposePtr()
     {
         if (ptr)
         {

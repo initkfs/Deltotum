@@ -94,9 +94,9 @@ class Input
         return Vector2d(x, y);
     }
 
-    void destroy(){
-        systemCursor.destroy;
-        clipboard.destroy;
+    void dispose(){
+        systemCursor.dispose;
+        clipboard.dispose;
     }
 
 }

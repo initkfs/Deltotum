@@ -171,7 +171,7 @@ class SceneManager : Scene
 
         if (_currentScene && _currentScene.isDestructible)
         {
-            _currentScene.destroy;
+            _currentScene.dispose;
         }
 
         if (!scene.isBuilt || scene.isDestructible)
@@ -229,12 +229,12 @@ class SceneManager : Scene
         _currentScene.update(delta);
     }
 
-    override void destroy()
+    override void dispose()
     {
-        super.destroy;
+        super.dispose;
         if (_currentScene)
         {
-            _currentScene.destroy;
+            _currentScene.dispose;
         }
     }
 }

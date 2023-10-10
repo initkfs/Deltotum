@@ -206,15 +206,15 @@ class AnimatedImage : TextureImage
         }
     }
 
-    override void destroy()
+    override void dispose()
     {
-        super.destroy;
+        super.dispose;
         foreach (ImageAnimation animation; animations)
         {
             if (animation.transition !is null)
             {
                 animation.transition.stop;
-                animation.transition.destroy;
+                animation.transition.dispose;
             }
         }
         animations = [];
