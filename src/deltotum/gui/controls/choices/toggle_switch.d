@@ -191,7 +191,7 @@ class ToggleSwitch : Control
         label.isFocusable = false;
         addCreate(label);
 
-        onPointerDown = (ref e) {
+        onPointerDown ~= (ref e) {
 
             final switch (switchState) with (State)
             {

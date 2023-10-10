@@ -376,7 +376,7 @@ class SceneView : VBox
                 continue;
             }
 
-            obj.onPointerDown = (ref e) {
+            obj.onPointerDown ~= (ref e) {
                 if (!isDebug || e.button != 3)
                 {
                     return;

@@ -170,7 +170,7 @@ class Button : Control
 
     void createListeners()
     {
-        onPointerEntered = (ref e) {
+        onPointerEntered ~= (ref e) {
 
             if (_selected)
             {
@@ -183,7 +183,7 @@ class Button : Control
             }
         };
 
-        onPointerExited = (ref e) {
+        onPointerExited ~= (ref e) {
 
             if (_selected)
             {
@@ -196,7 +196,7 @@ class Button : Control
             }
         };
 
-        onPointerUp = (ref e) {
+        onPointerUp ~= (ref e) {
 
             if (_selected)
             {

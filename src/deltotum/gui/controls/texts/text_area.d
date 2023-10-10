@@ -62,13 +62,13 @@ class TextArea : HBox
         textView = new TextView;
         textView.isEditable = true;
 
-        textView.onPointerEntered = (ref e) {
+        textView.onPointerEntered ~= (ref e) {
             import deltotum.com.inputs.cursors.com_system_cursor_type : ComSystemCursorType;
 
             input.systemCursor.change(ComSystemCursorType.ibeam);
         };
 
-        textView.onPointerExited = (ref e) { input.systemCursor.restore; };
+        textView.onPointerExited ~= (ref e) { input.systemCursor.restore; };
 
         addCreate(textView);
 
@@ -84,7 +84,7 @@ class TextArea : HBox
         scroll.onValue = (value) { textView.scrollTo(value); };
 
         //TODO isDisabled
-        onTextInput = (ref key) {
+        onTextInput ~= (ref key) {
             foreach (glyph; asset.fontBitmap.glyphs)
             {
                 if (glyph.grapheme == key.firstLetter)
@@ -94,7 +94,7 @@ class TextArea : HBox
             }
         };
 
-        onKeyDown = (ref key) {
+        onKeyDown ~= (ref key) {
             import deltotum.com.inputs.keyboards.key_name : KeyName;
 
             if (key.keyName == KeyName.BACKSPACE && textView.text.length > 0)

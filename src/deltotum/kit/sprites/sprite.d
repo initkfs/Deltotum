@@ -197,9 +197,9 @@ class Sprite : PhysicalBody
         }
 
         super.createHandlers;
-        eventPointerHandler = (ref e) {
+        eventPointerHandlers ~= (ref e) {
 
-            runListeners(e);
+            //runListeners(e);
 
             if (e.isConsumed)
             {

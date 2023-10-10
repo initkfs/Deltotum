@@ -3,7 +3,7 @@ module deltotum.phys.physical_body;
 import deltotum.math.vector2d : Vector2d;
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.math.shapes.circle2d : Circle2d;
-import deltotum.kit.events.event_toolkit_target : EventToolkitTarget;
+import deltotum.kit.events.event_kit_target : EventKitTarget;
 
 struct PhysMaterial
 {
@@ -50,7 +50,7 @@ struct PhysMaterial
 /**
  * Authors: initkfs
  */
-class PhysicalBody : EventToolkitTarget
+class PhysicalBody : EventKitTarget
 {
     bool isPhysicsEnabled;
 

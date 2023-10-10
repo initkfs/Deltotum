@@ -56,7 +56,14 @@ class CheckBox : Control
         label.isFocusable = false;
         addCreate(label);
 
-        onPointerDown = (ref e) { toggle; };
+        onPointerDown ~= (ref e) { 
+            import std;
+            writeln("Pointer down on checkbox");
+            toggle; 
+            };
+
+        import std;
+        writeln(onPointerDown.length);
     }
 
     void toggle(bool value)

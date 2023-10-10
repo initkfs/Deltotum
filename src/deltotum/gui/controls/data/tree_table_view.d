@@ -97,7 +97,7 @@ class TableRow(T) : Container
         import deltotum.gui.controls.texts.text : Text;
         import deltotum.math.geom.insets : Insets;
 
-        onPointerDown = (ref e) {
+        onPointerDown ~= (ref e) {
             if (onSelected)
             {
                 onSelected();
@@ -132,7 +132,7 @@ class TableRow(T) : Container
             expandButton.isFocusable = false;
             addCreate(expandButton);
             expandButton.padding = Insets(0);
-            expandButton.onPointerDown = (ref e) {
+            expandButton.onPointerDown ~= (ref e) {
                 this.isExpand = !isExpand;
                 setButtonText;
                 foreach (ch; children)

@@ -98,14 +98,14 @@ class Text : Control
 
         if (isFocusable)
         {
-            onFocusIn = (ref e) {
+            onFocusIn ~= (ref e) {
                 if (focusEffect !is null)
                 {
                     focusEffect.isVisible = true;
                 }
             };
 
-            onFocusOut = (ref e) {
+            onFocusOut ~= (ref e) {
                 if (focusEffect !is null && focusEffect.isVisible)
                 {
                     focusEffect.isVisible = false;
@@ -119,7 +119,7 @@ class Text : Control
 
         if (isEditable)
         {
-            onPointerDown = (ref e) {
+            onPointerDown ~= (ref e) {
                 const mouseX = e.x;
                 const mouseY = e.y;
 
@@ -164,7 +164,7 @@ class Text : Control
                 cursor.isVisible = true;
             };
 
-            onKeyDown = (ref e) {
+            onKeyDown ~= (ref e) {
                 import deltotum.com.inputs.keyboards.key_name : KeyName;
 
                 if (!cursor.isVisible)
@@ -243,7 +243,7 @@ class Text : Control
                 }
             };
 
-            onTextInput = (ref e) {
+            onTextInput ~= (ref e) {
                 if (!cursor.isVisible)
                 {
                     return;
