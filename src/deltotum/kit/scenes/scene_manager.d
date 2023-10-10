@@ -3,18 +3,27 @@ module deltotum.kit.scenes.scene_manager;
 import deltotum.kit.apps.comps.window_component : WindowComponent;
 import deltotum.kit.scenes.scene : Scene;
 
+import deltotum.kit.factories.creation : Creation;
+import deltotum.kit.interacts.interact : Interact;
+import deltotum.kit.factories.creation_images : CreationImages;
+import deltotum.kit.factories.creation_shapes : CreationShapes;
+
 import std.stdio;
 
 /**
  * Authors: initkfs
  */
-class SceneManager : WindowComponent
+class SceneManager : Scene
 {
     protected
     {
         Scene[] _scenes;
     }
-    Scene _currentScene;
+
+    private
+    {
+        Scene _currentScene;
+    }
 
     Scene currentScene() @nogc @safe pure nothrow
     out (_currentScene; _currentScene !is null)
@@ -22,28 +31,75 @@ class SceneManager : WindowComponent
         return _currentScene;
     }
 
-    void currentScene(Scene state) @safe pure
+    void currentScene(Scene scene) @safe pure
     {
         import std.exception : enforce;
 
-        enforce(state !is null, "Scene must not be null");
-        _currentScene = state;
+        enforce(scene !is null, "Scene must not be null");
+        _currentScene = scene;
+    }
+
+    CreationImages newCreationImages()
+    {
+        return new CreationImages;
+    }
+
+    CreationShapes newCreationShapes()
+    {
+        return new CreationShapes;
     }
 
     override void create()
     {
         super.create;
+
+        auto imagesFactory = newCreationImages;
+        build(imagesFactory);
+
+        auto shapesFactory = newCreationShapes;
+        build(shapesFactory);
+
+        //TODO extrace factory methods
+        creation = new Creation(imagesFactory, shapesFactory);
+        build(creation);
+
+        import deltotum.kit.interacts.dialogs.dialog_manager : DialogManager;
+
+        auto dialogManager = new DialogManager;
+        dialogManager.dialogWindowProvider = () { return window.newChildWindow; };
+        dialogManager.parentWindowProvider = () { return window; };
+
+        interact = new Interact(dialogManager);
+    }
+
+    import deltotum.kit.apps.comps.window_component: WindowComponent;
+
+    alias build = WindowComponent.build;
+
+    void build(Scene scene)
+    {
+        super.build(scene);
+        scene.interact = interact;
+        scene.creation = creation;
     }
 
     void create(Scene scene)
     {
-        assert(scene);
+        import std.exception : enforce;
+
+        enforce(scene !is null, "Scene must not be null");
+
         if (!scene.isBuilt)
         {
             build(scene);
+            assert(scene.isBuilt);
         }
+
         scene.initialize;
+        assert(scene.isInitialized);
+
         scene.create;
+        assert(scene.isCreated);
     }
 
     void addCreate(Scene scene)
@@ -62,7 +118,17 @@ class SceneManager : WindowComponent
 
     void add(Scene scene)
     {
-        //TODO exists
+        import std.exception : enforce;
+
+        enforce(scene !is null, "Scene must not be null");
+
+        foreach (sc; _scenes)
+        {
+            if (sc is scene)
+            {
+                return;
+            }
+        }
         _scenes ~= scene;
     }
 
@@ -153,20 +219,19 @@ class SceneManager : WindowComponent
         return true;
     }
 
-    bool update(double delta)
+    override void update(double delta)
     {
         if (!_currentScene)
         {
-            return false;
+            return;
         }
 
         _currentScene.update(delta);
-        return true;
     }
 
-    void destroy()
+    override void destroy()
     {
-        //super.destroy;
+        super.destroy;
         if (_currentScene)
         {
             _currentScene.destroy;

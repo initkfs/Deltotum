@@ -2,9 +2,9 @@ module deltotum.kit.scenes.scene;
 
 import deltotum.kit.apps.comps.window_component : WindowComponent;
 import deltotum.kit.sprites.sprite : Sprite;
+import deltotum.kit.factories.creation : Creation;
 import deltotum.kit.interacts.interact : Interact;
 import deltotum.kit.graphics.colors.rgba : RGBA;
-import deltotum.kit.factories.creation : Creation;
 import deltotum.kit.windows.window : Window;
 import deltotum.gui.supports.sceneview : SceneView;
 
@@ -43,36 +43,9 @@ class Scene : WindowComponent
         Interact _interact;
     }
 
-    void createDebugger()
-    {
-        debugger = new SceneView(this);
-        addCreate(debugger);
-    }
-
     override void create()
     {
         super.create;
-        //TODO move to scene manager?
-        import deltotum.kit.factories.creation_images : CreationImages;
-
-        auto imagesFactory = new CreationImages;
-        build(imagesFactory);
-
-        import deltotum.kit.factories.creation_shapes : CreationShapes;
-
-        auto shapesFactory = new CreationShapes;
-        build(shapesFactory);
-
-        _creation = new Creation(imagesFactory, shapesFactory);
-        build(_creation);
-
-        import deltotum.kit.interacts.dialogs.dialog_manager : DialogManager;
-
-        auto dialogManager = new DialogManager;
-        dialogManager.dialogWindowProvider = () { return window.newChildWindow; };
-        dialogManager.parentWindowProvider = () { return window; };
-
-        interact = new Interact(dialogManager);
     }
 
     void draw()
@@ -122,30 +95,45 @@ class Scene : WindowComponent
         }
     }
 
+    void createDebugger()
+    {
+        debugger = new SceneView(this);
+        addCreate(debugger);
+    }
+
     void destroy()
     {
         foreach (obj; sprites)
         {
             obj.destroy;
         }
-        sprites = [];
+        sprites = null;
     }
 
     void addCreate(Sprite obj)
     {
-        build(obj);
+        if(!obj.isBuilt){
+            build(obj);
+        }
 
         obj.initialize;
         assert(obj.isInitialized);
 
         obj.create;
+        assert(obj.isCreated);
 
         add(obj);
     }
 
     void add(Sprite object)
     {
-        //TODO check if exists
+        foreach (sp; sprites)
+        {
+            if (object is sp)
+            {
+                return;
+            }
+        }
         sprites ~= object;
     }
 
@@ -157,25 +145,25 @@ class Scene : WindowComponent
         }
     }
 
-    void scale(double factorWidth, double factorHeight)
+    void rescale(double factorWidth, double factorHeight)
     {
         foreach (Sprite sprite; sprites)
         {
-            sprite.setScale(factorWidth, factorHeight);
+            sprite.rescale(factorWidth, factorHeight);
         }
     }
 
-    Sprite[] getActiveObjects()
+    Sprite[] activeSprites()
     {
         return sprites;
     }
 
-    bool hasCreation() @nogc @safe pure nothrow
+    final bool hasCreation() @nogc @safe pure nothrow
     {
         return _creation !is null;
     }
 
-    void creation(Creation creation) @safe pure
+    final void creation(Creation creation) @safe pure
     {
         import std.exception : enforce;
 
@@ -183,7 +171,7 @@ class Scene : WindowComponent
         _creation = creation;
     }
 
-    Creation creation() @nogc @safe pure nothrow
+    final Creation creation() @nogc @safe pure nothrow
     out (_creation; _creation !is null)
     {
         return _creation;

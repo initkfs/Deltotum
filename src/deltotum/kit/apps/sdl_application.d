@@ -237,7 +237,7 @@ class SdlApplication : ContinuouslyApplication
             {
                 return Nullable!(Sprite[]).init;
             }
-            auto targets = currWindow.scenes.currentScene.getActiveObjects;
+            auto targets = currWindow.scenes.currentScene.activeSprites;
             return Nullable!(Sprite[])(targets);
         };
 
@@ -406,7 +406,7 @@ class SdlApplication : ContinuouslyApplication
                     return;
                 }
                 auto window = mustBeWindow.get;
-                foreach (obj; window.scenes.currentScene.getActiveObjects)
+                foreach (obj; window.scenes.currentScene.activeSprites)
                 {
                     if (obj.bounds.contains(mouseEvent.x, mouseEvent.y))
                     {

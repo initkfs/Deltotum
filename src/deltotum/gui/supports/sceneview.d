@@ -369,7 +369,7 @@ class SceneView : VBox
             return;
         }
 
-        foreach (obj; scene.getActiveObjects)
+        foreach (obj; scene.activeSprites)
         {
             if (obj is this)
             {

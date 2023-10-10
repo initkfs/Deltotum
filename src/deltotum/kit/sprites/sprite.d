@@ -1231,7 +1231,7 @@ class Sprite : PhysicalBody
             return width == newWidth && height == newHeight;
         }
 
-        bool setScale(double factorWidth, double factorHeight)
+        bool rescale(double factorWidth, double factorHeight)
         {
             if (!isScalable)
             {

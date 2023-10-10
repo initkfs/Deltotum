@@ -341,7 +341,7 @@ class Window : GraphicsComponent
         lastChangedWidth = newWidth;
         lastChangedHeight = newHeight;
 
-        scenes.currentScene.scale(factorWidth, factorHeigth);
+        scenes.currentScene.rescale(factorWidth, factorHeigth);
     }
 
     Rect2d bounds()
@@ -466,9 +466,9 @@ class Window : GraphicsComponent
         return scenes.draw(alpha);
     }
 
-    bool update(double delta)
+    void update(double delta)
     {
-       return scenes.update(delta);
+       scenes.update(delta);
     }
 
     Window newChildWindow(dstring title = "New window", int width = 450, int height = 200, int x = -1, int y = -1)
