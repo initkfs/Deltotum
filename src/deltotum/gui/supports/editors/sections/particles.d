@@ -1,7 +1,6 @@
 module deltotum.gui.supports.editors.sections.particles;
 
 import deltotum.gui.controls.control : Control;
-import deltotum.phys.collision.newtonian_resolver : NewtonianResolver;
 import deltotum.kit.graphics.shapes.rectangle : Rectangle;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.kit.graphics.shapes.circle : Circle;
@@ -76,7 +75,7 @@ class Particles : Control
             auto pPart = new Circle(10, GraphicStyle(1, RGBA.red, true, RGBA.green));
             p.addCreate(pPart);
 
-            //spriteForCollisions ~= p;
+            //targetsForCollisions ~= p;
             return p;
         };
 

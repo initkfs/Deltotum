@@ -53,6 +53,7 @@ class EventKitTarget : WindowComponent, EventTarget
 
     void createHandlers()
     {
+        //TODO check duplication
         eventPointerHandlers ~= (ref e) { runListeners(e); };
         eventKeyHandlers ~= (ref e) { runListeners(e); };
         eventJoystickHandlers ~= (ref e) { runListeners(e); };

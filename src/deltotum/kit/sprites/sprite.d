@@ -1,12 +1,12 @@
 module deltotum.kit.sprites.sprite;
 
+import deltotum.kit.events.event_kit_target : EventKitTarget;
 import deltotum.math.vector2d : Vector2d;
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.kit.sprites.alignment : Alignment;
 import deltotum.math.geom.insets : Insets;
 import deltotum.kit.sprites.layouts.layout : Layout;
 import deltotum.sys.sdl.sdl_texture : SdlTexture;
-import deltotum.phys.physical_body : PhysicalBody;
 import deltotum.kit.graphics.canvases.texture_canvas : TextureCanvas;
 import deltotum.kit.scenes.scaling.scale_mode : ScaleMode;
 import deltotum.kit.inputs.pointers.events.pointer_event : PointerEvent;
@@ -46,7 +46,7 @@ struct InvalidationState
 /**
  * Authors: initkfs
  */
-class Sprite : PhysicalBody
+class Sprite : EventKitTarget
 {
     mixin ToString;
 
@@ -59,9 +59,18 @@ class Sprite : PhysicalBody
     double angle = 0;
     double opacity = 1;
     double scale = 1;
+    double mass = 1;
+    double speed = 0;
+
+    bool isPhysicsEnabled;
 
     Vector2d velocity;
     Vector2d acceleration;
+
+    Sprite isCollisionProcess;
+    Sprite[] targetsForCollisions;
+
+    bool delegate(Sprite, Sprite) onCollision;
 
     Rect2d clip;
     bool isMoveClip;
@@ -160,6 +169,11 @@ class Sprite : PhysicalBody
         bool isDrag;
 
         bool _cached;
+    }
+
+    this() pure @safe
+    {
+
     }
 
     void buildCreate(Sprite sprite)
@@ -821,27 +835,8 @@ class Sprite : PhysicalBody
             double newVelocityX = velocity.x + accelerationDx;
             double newVelocityY = velocity.y + accelerationDy;
 
-            if (gravity.x != 0 || gravity.y != 0)
-            {
-                //Vector2d forces = gravity.inc(invMass).scale(delta);
-                Vector2d forces = gravity.scale(delta);
-
-                newVelocityX += forces.x;
-                newVelocityY += forces.y;
-            }
-
             dx = newVelocityX * delta;
             dy = newVelocityY * delta;
-
-            if (externalForce.x != 0)
-            {
-                externalForce.x = 0;
-            }
-
-            if (externalForce.y != 0)
-            {
-                externalForce.y = 0;
-            }
 
             if (inScreenBounds)
             {
@@ -915,6 +910,44 @@ class Sprite : PhysicalBody
 
         return hitbox.intersect(other.hitbox);
 
+    }
+
+    void checkCollisions()
+    {
+        if (!onCollision)
+        {
+            return;
+        }
+
+        foreach (i, firstSprite; targetsForCollisions)
+        {
+            foreach (secondSprite; targetsForCollisions[i + 1 .. $])
+            {
+                if (firstSprite is secondSprite)
+                {
+                    continue;
+                }
+                if (firstSprite.intersect(secondSprite))
+                {
+                    if (!firstSprite.isCollisionProcess && !secondSprite.isCollisionProcess)
+                    {
+                        onCollision(firstSprite, secondSprite);
+                    }
+                }
+                else
+                {
+                    if (firstSprite.isCollisionProcess is secondSprite)
+                    {
+                        firstSprite.isCollisionProcess = null;
+                    }
+
+                    if (secondSprite.isCollisionProcess is firstSprite)
+                    {
+                        secondSprite.isCollisionProcess = null;
+                    }
+                }
+            }
+        }
     }
 
     Rect2d bounds()
@@ -1556,10 +1589,8 @@ class Sprite : PhysicalBody
             _margin.left = value;
         }
 
-        override void destroy()
+        void destroy()
         {
-            super.destroy;
-
             if (_cache)
             {
                 _cache.destroy;
@@ -1715,5 +1746,10 @@ class Sprite : PhysicalBody
             }
 
             _layoutManaged = value;
+        }
+
+        double invMass() pure @safe nothrow
+        {
+            return 1.0 / mass;
         }
     }

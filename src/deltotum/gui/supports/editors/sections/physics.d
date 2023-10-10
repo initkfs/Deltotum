@@ -1,7 +1,6 @@
 module deltotum.gui.supports.editors.sections.physics;
 
 import deltotum.gui.controls.control : Control;
-import deltotum.phys.collision.newtonian_resolver : NewtonianResolver;
 import deltotum.kit.graphics.shapes.rectangle : Rectangle;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.kit.graphics.colors.rgba : RGBA;
