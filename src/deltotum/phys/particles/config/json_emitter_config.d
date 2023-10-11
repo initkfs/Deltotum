@@ -13,13 +13,13 @@ class JsonEmitterConfig : EmitterConfig
 {
     override string toConfig(Emitter emitter)
     {
-        import std.traits : hasUDA, getUDAs;
-        import std.json;
+        //import std.traits : hasUDA, getUDAs;
+        // import std.json;
 
-        if (emitter is null)
-        {
-            throw new Exception("Emitter must not be null");
-        }
+        // if (emitter is null)
+        // {
+        //     throw new Exception("Emitter must not be null");
+        // }
 
         // JSONValue config;
         // config.object = null;
@@ -51,11 +51,11 @@ class JsonEmitterConfig : EmitterConfig
             return false;
         }
 
-        import std.json : parseJSON;
-        import std.traits : hasUDA;
-        import deltotum.core.utils.meta: hasOverloads;
+        // import std.json : parseJSON;
+        // import std.traits : hasUDA;
+        // import deltotum.core.utils.meta: hasOverloads;
 
-        bool isApplied;
+        // bool isApplied;
 
         // auto json = parseJSON(config);
         // static foreach (fieldName; __traits(allMembers, Emitter))
@@ -87,7 +87,7 @@ class JsonEmitterConfig : EmitterConfig
         //     }
         // }
 
-        return isApplied;
+        return false;
     }
 
 }

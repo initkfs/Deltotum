@@ -271,7 +271,7 @@ class CliApplication : SimpleUnit
             throw new Exception("Config directory does not exist or not a directory: " ~ configDir);
         }
 
-        import deltotum.core.configs.json.json_config : JsonConfig;
+        import deltotum.core.configs.properties.property_config: PropertyConfig;
         import deltotum.core.configs.config_aggregator : ConfigAggregator;
         import std.file : dirEntries, SpanMode;
         import std.algorithm.iteration : filter;
@@ -281,10 +281,10 @@ class CliApplication : SimpleUnit
 
         //TODO factory by file extension
         foreach (configPath; dirEntries(configDir, SpanMode.depth).filter!(f => f.isFile && f.name.endsWith(
-                ".json")))
+                ".config")))
         {
             //TODO check for duplicate keys
-            configs ~= new JsonConfig(configPath);
+            configs ~= new PropertyConfig(configPath);
         }
 
         import deltotum.core.configs.environments.env_config : EnvConfig;
