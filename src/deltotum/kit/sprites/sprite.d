@@ -25,8 +25,6 @@ import std.stdio;
 import std.math.algebraic : abs;
 import std.typecons : Nullable;
 import deltotum.core.utils.tostring : ToStringExclude;
-import deltotum.phys.phys_body: PhysBody;
-import deltotum.phys.phys_space: PhysSpace;
 
 struct InvalidationState
 {
@@ -113,9 +111,6 @@ class Sprite : EventKitTarget
 
     bool _visible = true;
     bool isReceiveEvents = true;
-
-    PhysBody physBody;
-    PhysSpace physSpace;
 
     //protected
     //{
@@ -802,28 +797,6 @@ class Sprite : EventKitTarget
 
         checkCollisions;
 
-        if (physBody)
-        {
-            Vector2d physVelocity = physBody.getVelocity;
-            Vector2d physPosition = physBody.getPosition;
-            double angleDeg = physBody.angleDeg;
-
-            this.angle = angleDeg;
-            if (width > 0 || height > 0)
-            {
-                //TODO offset in phys body
-                _x = physPosition.x - width / 2.0;
-                _y = physPosition.y - height / 2.0;
-            }
-            else
-            {
-                _x = physPosition.x;
-                _y = physPosition.y;
-            }
-
-            velocity = physVelocity;
-        }
-
         if (isUpdatable && isPhysicsEnabled)
         {
             //TODO check velocity is 0 || acceleration is 0
@@ -891,11 +864,6 @@ class Sprite : EventKitTarget
             }
 
             child.update(delta);
-        }
-
-        if (physSpace)
-        {
-            physSpace.step(delta);
         }
     }
 
@@ -1599,25 +1567,6 @@ class Sprite : EventKitTarget
             if (_hitbox)
             {
                 _hitbox.dispose;
-            }
-
-            if (physBody)
-            {
-                if (physSpace)
-                {
-                    if (physBody.shape)
-                    {
-                        physSpace.removeShape(physBody.shape);
-                    }
-                    physSpace.removeBody(physBody);
-                }
-
-                if (physBody.shape)
-                {
-                    physBody.shape.dispose;
-                }
-
-                physBody.dispose;
             }
 
             foreach (Sprite child; children)
