@@ -48,20 +48,14 @@
     "sourcePaths": ["./src"],
     "importPaths": ["./src"],
     "dependencies": {
-        "bindbc-sdl": "~>1.2.1",
-        "bindbc-lua": "~>0.5.1",
-        "chipmunkd": "~>1.0.0+7.0.1"
+        "bindbc-sdl": "~>1.2.1"
     },
     "dflags": ["-dip1000", "-preview=in", "-J=./data"],
-    "libs-posix": ["chipmunk"],
     "versions": [
         "SDL_Image",
         "SDL_TTF",
         "SDL_2020",
         "SDL_Mixer_202",
-        "LUA_54",
-        "Chipmunk7",
-        "Cairo116",
-        "JuliaV1"
+        "Cairo116"
     ]
 }

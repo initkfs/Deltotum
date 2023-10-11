@@ -25,10 +25,8 @@ import std.stdio;
 import std.math.algebraic : abs;
 import std.typecons : Nullable;
 import deltotum.core.utils.tostring : ToStringExclude;
-
-//TODO move to PhysBody
-import deltotum.sys.chipmunk.chipm_body : ChipmBody;
-import deltotum.sys.chipmunk.chipm_space : ChipmSpace;
+import deltotum.phys.phys_body: PhysBody;
+import deltotum.phys.phys_space: PhysSpace;
 
 struct InvalidationState
 {
@@ -116,8 +114,8 @@ class Sprite : EventKitTarget
     bool _visible = true;
     bool isReceiveEvents = true;
 
-    ChipmBody physBody;
-    ChipmSpace physSpace;
+    PhysBody physBody;
+    PhysSpace physSpace;
 
     //protected
     //{
@@ -1609,9 +1607,9 @@ class Sprite : EventKitTarget
                 {
                     if (physBody.shape)
                     {
-                        physSpace.removeShape(physBody.shape.getObject);
+                        physSpace.removeShape(physBody.shape);
                     }
-                    physSpace.removeBody(physBody.getObject);
+                    physSpace.removeBody(physBody);
                 }
 
                 if (physBody.shape)
