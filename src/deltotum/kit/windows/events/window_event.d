@@ -1,7 +1,7 @@
 module deltotum.kit.windows.events.window_event;
 
 import deltotum.core.events.event_base : EventBase;
-import deltotum.core.events.event_type : EventType;
+import deltotum.kit.events.kit_event_type: KitEventType;
 import deltotum.core.utils.type_util: eventNameByIndex;
 
 
@@ -36,9 +36,9 @@ struct WindowEvent
     long x;
     long y;
 
-    this(EventType type, uint event, uint ownerId, long width, long height, long x, long y)
+    this(int event, int ownerId, long width, long height, long x, long y)
     {
-        this.type = type;
+        this.type = KitEventType.window;
         this.event = event;
         this.ownerId = ownerId;
         this.x = x;

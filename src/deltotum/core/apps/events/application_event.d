@@ -1,7 +1,7 @@
 module deltotum.core.apps.events.application_event;
 
 import deltotum.core.events.event_base : EventBase;
-import deltotum.core.events.event_type : EventType;
+import deltotum.core.events.core_event_type : CoreEventType;
 import deltotum.core.utils.type_util: eventNameByIndex;
 
 /**
@@ -17,17 +17,10 @@ struct ApplicationEvent
         EXIT
     }
 
-    this(EventType type, uint event, uint ownerId) pure @safe
+    this(int event, int ownerId) pure @safe
     {
-        this.type = type;
+        this.type = CoreEventType.application;
         this.event = event;
         this.ownerId = ownerId;
-    }
-
-    string toString() const
-    {
-        import std.format : format;
-
-        return format("{%s,%s,ownid:%s}", type, eventNameByIndex!Event(event), ownerId);
     }
 }

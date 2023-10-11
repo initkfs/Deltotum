@@ -1,7 +1,7 @@
 module deltotum.kit.sprites.events.focus.focus_event;
 
 import deltotum.core.events.event_base : EventBase;
-import deltotum.core.events.event_type : EventType;
+import deltotum.kit.events.kit_event_type: KitEventType;
 import deltotum.core.utils.type_util : eventNameByIndex;
 import deltotum.core.events.event_target : EventTarget;
 import deltotum.core.events.event_source : EventSource;
@@ -23,13 +23,12 @@ struct FocusEvent
     double x = 0;
     double y = 0;
 
-    this(EventType type, uint event, long ownerId, double x, double y, bool isChained = true)
+    this(int event, int ownerId, double x, double y)
     {
-        this.type = type;
+        this.type = KitEventType.focus;
         this.event = event;
         this.ownerId = ownerId;
         this.x  = x;
         this.y = y;
-        this.isChained = isChained;
     }
 }

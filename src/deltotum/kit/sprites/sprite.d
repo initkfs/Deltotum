@@ -15,7 +15,6 @@ import deltotum.kit.inputs.keyboards.events.key_event : KeyEvent;
 import deltotum.kit.sprites.events.focus.focus_event : FocusEvent;
 import deltotum.kit.inputs.keyboards.events.text_input_event : TextInputEvent;
 import deltotum.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
-import deltotum.core.events.event_type : EventType;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.core.utils.tostring;
 
@@ -506,7 +505,7 @@ class Sprite : EventKitTarget
                     if (!isMouseOver)
                     {
                         isMouseOver = true;
-                        auto enteredEvent = PointerEvent(EventType.pointer, PointerEvent.Event.entered, e
+                        auto enteredEvent = PointerEvent(PointerEvent.Event.entered, e
                                 .ownerId, e
                                 .x, e.y, e
                                 .button, e.movementX, e.movementY, false);
@@ -527,7 +526,7 @@ class Sprite : EventKitTarget
                     if (isMouseOver)
                     {
                         isMouseOver = false;
-                        auto exitedEvent = PointerEvent(EventType.pointer, PointerEvent.Event.exited, e
+                        auto exitedEvent = PointerEvent(PointerEvent.Event.exited, e
                                 .ownerId, e
                                 .x, e.y, e
                                 .button, e.movementX, e.movementY, false);

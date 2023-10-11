@@ -9,7 +9,8 @@ import deltotum.kit.inputs.keyboards.events.key_event : KeyEvent;
 import deltotum.kit.inputs.keyboards.events.text_input_event : TextInputEvent;
 import deltotum.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import deltotum.kit.windows.events.window_event : WindowEvent;
-import deltotum.core.events.event_type : EventType;
+import deltotum.kit.events.kit_event_type: KitEventType;
+import deltotum.core.events.core_event_type: CoreEventType;
 
 import deltotum.kit.sprites.sprite : Sprite;
 import std.container : DList;

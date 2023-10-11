@@ -6,7 +6,8 @@ version(SdlBackend):
 
 import deltotum.kit.events.processing.event_processor : EventProcessor;
 
-import deltotum.core.events.event_type : EventType;
+import deltotum.kit.events.kit_event_type: KitEventType;
+import deltotum.core.events.core_event_type: CoreEventType;
 import deltotum.core.apps.events.application_event : ApplicationEvent;
 import deltotum.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import deltotum.kit.inputs.keyboards.events.key_event : KeyEvent;
@@ -74,8 +75,7 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
         {
             return;
         }
-        auto exitEvent = ApplicationEvent(
-            EventType.application, ApplicationEvent.Event.EXIT, event.window.windowID);
+        auto exitEvent = ApplicationEvent(ApplicationEvent.Event.EXIT, event.window.windowID);
         onApplication(exitEvent);
     }
 
@@ -101,7 +101,7 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
         dchar firstLetter = event.text.text[0 .. (letterSize + 1)].fromStringz.to!dchar;
 
         const ownerId = event.key.windowID;
-        auto keyEvent = TextInputEvent(EventType.key, type, ownerId, firstLetter);
+        auto keyEvent = TextInputEvent(type, ownerId, firstLetter);
         onTextInput(keyEvent);
     }
 
@@ -150,7 +150,7 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
         );
 
         const ownerId = event.key.windowID;
-        auto keyEvent = KeyEvent(EventType.key, type, ownerId, keyName, modInfo, keyCode);
+        auto keyEvent = KeyEvent(type, ownerId, keyName, modInfo, keyCode);
         onKey(keyEvent);
     }
 
@@ -209,7 +209,7 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
             break;
         }
 
-        auto mouseEvent = PointerEvent(EventType.pointer, type, event.window.windowID, x, y, button, movementX, movementY);
+        auto mouseEvent = PointerEvent(type, event.window.windowID, x, y, button, movementX, movementY);
         onPointer(mouseEvent);
     }
 
@@ -236,7 +236,7 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
             break;
         }
         auto joystickEvent = JoystickEvent(
-            EventType.joystick, type, event.window.windowID, event.jbutton.button, event
+            type, event.window.windowID, event.jbutton.button, event
                 .jaxis.axis, event.jaxis.value);
         onJoystick(joystickEvent);
     }
@@ -302,7 +302,7 @@ class SdlEventProcessor : EventProcessor!(SDL_Event*)
             break;
         }
 
-        auto windowEvent = WindowEvent(EventType.window, type, event.window.windowID, width, height, x, y);
+        auto windowEvent = WindowEvent(type, event.window.windowID, width, height, x, y);
         onWindow(windowEvent);
     }
 }

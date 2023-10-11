@@ -416,14 +416,13 @@ class SdlApplication : ContinuouslyApplication
                         }
 
                         import deltotum.kit.sprites.events.focus.focus_event : FocusEvent;
-                        import deltotum.core.events.event_type : EventType;
 
-                        auto focusEvent = FocusEvent(EventType.focus, FocusEvent.Event.focusIn, mouseEvent
+                        auto focusEvent = FocusEvent(FocusEvent.Event.focusIn, mouseEvent
                                 .ownerId, mouseEvent.x, mouseEvent.y);
                         eventManager.dispatchEvent(focusEvent, obj);
 
                         //for children
-                        auto focusOutEvent = FocusEvent(EventType.focus, FocusEvent.Event.focusOut, mouseEvent
+                        auto focusOutEvent = FocusEvent(FocusEvent.Event.focusOut, mouseEvent
                                 .ownerId, mouseEvent.x, mouseEvent.y);
                         eventManager.dispatchEvent(focusOutEvent, obj);
                     }
@@ -433,9 +432,8 @@ class SdlApplication : ContinuouslyApplication
                         {
                             obj.isFocus = false;
                             import deltotum.kit.sprites.events.focus.focus_event : FocusEvent;
-                            import deltotum.core.events.event_type : EventType;
 
-                            auto focusEvent = FocusEvent(EventType.focus, FocusEvent.Event.focusOut, mouseEvent
+                            auto focusEvent = FocusEvent(FocusEvent.Event.focusOut, mouseEvent
                                     .ownerId, mouseEvent.x, mouseEvent.y);
                             eventManager.dispatchEvent(focusEvent, obj);
                         }

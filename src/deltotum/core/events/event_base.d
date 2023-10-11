@@ -5,17 +5,16 @@ module deltotum.core.events.event_base;
  */
 mixin template EventBase()
 {
-    import deltotum.core.events.event_type : EventType;
     import deltotum.core.events.event_target : EventTarget;
     import deltotum.core.events.event_source : EventSource;
 
-    EventType type;
-    long event;
+    int type;
+    int event;
 
     EventSource source;
     EventTarget target;
     bool isChained = true;
     bool isConsumed;
 
-    long ownerId;
+    int ownerId;
 }

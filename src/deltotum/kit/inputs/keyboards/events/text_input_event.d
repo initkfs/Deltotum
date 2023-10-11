@@ -1,7 +1,7 @@
 module deltotum.kit.inputs.keyboards.events.text_input_event;
 
 import deltotum.core.events.event_base : EventBase;
-import deltotum.core.events.event_type : EventType;
+import deltotum.kit.events.kit_event_type: KitEventType;
 import deltotum.core.utils.type_util : eventNameByIndex;
 
 /**
@@ -19,9 +19,9 @@ struct TextInputEvent
 
     dchar firstLetter;
 
-    this(EventType type, uint event, uint ownerId, dchar firstLetter)
+    this(int event, uint ownerId, dchar firstLetter)
     {
-        this.type = type;
+        this.type = KitEventType.key;
         this.event = event;
         this.ownerId = ownerId;
         this.firstLetter = firstLetter;

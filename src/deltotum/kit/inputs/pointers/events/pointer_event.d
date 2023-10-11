@@ -1,7 +1,7 @@
 module deltotum.kit.inputs.pointers.events.pointer_event;
 
 import deltotum.core.events.event_base : EventBase;
-import deltotum.core.events.event_type : EventType;
+import deltotum.kit.events.kit_event_type: KitEventType;
 import deltotum.core.utils.type_util : eventNameByIndex;
 import deltotum.core.events.event_target : EventTarget;
 import deltotum.core.events.event_source : EventSource;
@@ -32,9 +32,9 @@ struct PointerEvent
     double movementX;
     double movementY;
 
-    this(EventType type, uint event, long ownerId, double x, double y, int button, double movementX, double movementY, bool isChained = true)
+    this(int event, int ownerId, double x, double y, int button, double movementX, double movementY, bool isChained = true)
     {
-        this.type = type;
+        this.type = KitEventType.pointer;
         this.event = event;
         this.ownerId = ownerId;
         this.x = x;
