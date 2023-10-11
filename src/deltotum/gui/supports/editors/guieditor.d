@@ -37,18 +37,6 @@ class GuiEditor : Scene
         layoutTab.content = new Layouts;
         root.addCreate(layoutTab);
 
-        import deltotum.gui.supports.editors.sections.curves : Curves;
-
-        auto curvesTab = new Tab("Curves");
-        curvesTab.content = new Curves;
-        root.addCreate(curvesTab);
-
-        import deltotum.gui.supports.editors.sections.fractals : Fractals;
-
-        auto fractalsTab = new Tab("Fractals");
-        fractalsTab.content = new Fractals;
-        root.addCreate(fractalsTab);
-
         import deltotum.gui.supports.editors.sections.images : Images;
 
         auto imagesTab = new Tab("Images");

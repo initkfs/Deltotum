@@ -13,12 +13,12 @@ import deltotum.kit.inputs.keyboards.events.text_input_event: TextInputEvent;
  */
 abstract class EventProcessor(E)
 {
-    void delegate(ApplicationEvent) onApplication;
-    void delegate(PointerEvent) onPointer;
-    void delegate(KeyEvent) onKey;
-    void delegate(WindowEvent) onWindow;
-    void delegate(JoystickEvent) onJoystick;
-    void delegate(TextInputEvent) onTextInput;
+    void delegate(ref ApplicationEvent) onApplication;
+    void delegate(ref PointerEvent) onPointer;
+    void delegate(ref KeyEvent) onKey;
+    void delegate(ref WindowEvent) onWindow;
+    void delegate(ref JoystickEvent) onJoystick;
+    void delegate(ref TextInputEvent) onTextInput;
 
     abstract bool process(E event);
 }
