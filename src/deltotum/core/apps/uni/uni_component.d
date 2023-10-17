@@ -19,8 +19,12 @@ class UniComponent : SimpleUnit
 {
     bool isBuilt;
     bool isAllowRebuild;
-    bool isCallAfterBuild = true;
-    bool isCallBeforeBuild = true;
+
+    bool isCallAfterBuildMethod = true;
+    bool isCallBeforeBuildMethod = true;
+
+    void delegate(UniComponent component) onPreBuild;
+    void delegate(UniComponent component) onPostBuild;
 
     private
     {
@@ -62,7 +66,12 @@ class UniComponent : SimpleUnit
             throw new Exception("Parent component not built: " ~ parentComponent.className);
         }
 
-        if (isCallBeforeBuild)
+        if (onPreBuild)
+        {
+            onPostBuild(uniComponent);
+        }
+
+        if (isCallBeforeBuildMethod)
         {
             uniComponent.beforeBuild();
         }
@@ -79,12 +88,17 @@ class UniComponent : SimpleUnit
             }
         }
 
-        if (isCallAfterBuild)
+        if (isCallAfterBuildMethod)
         {
             uniComponent.afterBuild();
         }
 
         uniComponent.isBuilt = true;
+
+        if (onPostBuild)
+        {
+            onPostBuild(uniComponent);
+        }
     }
 
     void beforeBuild()
@@ -97,7 +111,7 @@ class UniComponent : SimpleUnit
 
     }
 
-    final bool hasContext() @nogc nothrow pure @safe
+    final bool hasContext() const @nogc nothrow pure @safe
     {
         return _context !is null;
     }
@@ -114,10 +128,9 @@ class UniComponent : SimpleUnit
 
         enforce(context !is null, "Context must not be null");
         _context = context;
-
     }
 
-    final bool hasLogger() @nogc nothrow pure @safe
+    final bool hasLogger() const @nogc nothrow pure @safe
     {
         return _logger !is null;
     }
@@ -137,7 +150,7 @@ class UniComponent : SimpleUnit
 
     }
 
-    final bool hasConfig() @nogc nothrow pure @safe
+    final bool hasConfig() const @nogc nothrow pure @safe
     {
         return _config !is null;
     }
@@ -156,7 +169,7 @@ class UniComponent : SimpleUnit
         _config = config;
     }
 
-    final bool hasSupport() @nogc nothrow pure @safe
+    final bool hasSupport() const @nogc nothrow pure @safe
     {
         return _support !is null;
     }
@@ -175,7 +188,7 @@ class UniComponent : SimpleUnit
         _support = support;
     }
 
-    final bool hasCli() @nogc nothrow pure @safe
+    final bool hasCli() const @nogc nothrow pure @safe
     {
         return _cli !is null;
     }
@@ -194,7 +207,7 @@ class UniComponent : SimpleUnit
         _cli = cli;
     }
 
-    final bool hasResource() @nogc nothrow pure @safe
+    final bool hasResource() const @nogc nothrow pure @safe
     {
         return _resource !is null;
     }
@@ -213,7 +226,7 @@ class UniComponent : SimpleUnit
         _resource = resource;
     }
 
-    bool hasExtension() @nogc nothrow pure @safe
+    bool hasExtension() const @nogc nothrow pure @safe
     {
         return _ext !is null;
     }
@@ -232,7 +245,7 @@ class UniComponent : SimpleUnit
         _ext = ext;
     }
 
-    bool hasCapCore() @nogc nothrow pure @safe
+    bool hasCapCore() const @nogc nothrow pure @safe
     {
         return _capCore !is null;
     }

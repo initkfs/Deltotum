@@ -12,17 +12,36 @@ class Unitable
 
     string classNameShort() const pure @safe
     {
-        const name = className;
-        import std.string : lastIndexOf;
-        import std.exception: collectException;
+        return classNameShort(className);
+    }
 
-        enum nameSep = '.';
+    string classNameShort(string name, string nameSep = ".") const pure @safe
+    {
+        assert(nameSep.length > 0);
+
+        if (name.length == 0)
+        {
+            return name;
+        }
+
+        import std.string : lastIndexOf;
+
         const lastSepIndex = name.lastIndexOf(nameSep);
         if (lastSepIndex == -1)
         {
             return name;
         }
 
-        return name[lastSepIndex + 1 .. $];
+        auto mustBeName = name[(lastSepIndex + 1) .. $];
+        return mustBeName.length > 0 ? mustBeName : name;
     }
+}
+
+unittest
+{
+    auto unit = new Unitable;
+    assert(unit.classNameShort("") == "");
+    assert(unit.classNameShort("foo.") == "foo.");
+    assert(unit.classNameShort(".") == ".");
+    assert(unit.classNameShort("foo.bar") == "bar");
 }

@@ -1,6 +1,6 @@
 module deltotum.core.apps.cli_application;
 
-import deltotum.core.apps.units.simple_unit: SimpleUnit;
+import deltotum.core.apps.units.simple_unit : SimpleUnit;
 import deltotum.core.apps.crashes.crash_handler : CrashHandler;
 import deltotum.core.apps.application_exit : ApplicationExit;
 import deltotum.core.apps.uni.uni_component : UniComponent;
@@ -21,20 +21,16 @@ import std.getopt : GetoptResult;
  */
 class CliApplication : SimpleUnit
 {
-    protected
-    {
-        CrashHandler[] crashHandlers;
+    bool isStopMainController = true;
 
-        bool isRethrowStartHandlerExceptions = true;
-        bool isStopMainController = true;
+    string defaultDataDir = "data";
+    string defaultConfigsDir = "configs";
+    string defaultUserDataDir = "userdata";
 
-        string defaultDataDir = "data";
-        string defaultConfigsDire = "configs";
-        string defaultUserDataDir = "userdata";
+    string envCrashDirKey = "APP_CRASH_DIR";
+    string envCrashFileDisableKey = "APP_CRASH_FILE_DISABLE";
 
-        string defaultCrashDirEnvironmentKey = "APP_CRASH_DIR";
-        string defaultCrashFileDisableEnvironmentKey = "APP_CRASH_FILE_DISABLE";
-    }
+    CrashHandler[] crashHandlers;
 
     private
     {
@@ -54,10 +50,10 @@ class CliApplication : SimpleUnit
     ApplicationExit initialize(string[] args)
     {
         super.initialize;
-        
+
         _uniServices = newUniServices;
 
-        uservices.capCore = new CapCore;
+        uservices.capCore = newCapCore;
 
         auto cli = createCli(args);
         uservices.cli = cli;
@@ -106,7 +102,12 @@ class CliApplication : SimpleUnit
         return new UniComponent;
     }
 
-    protected void consumeThrowable(Throwable ex, bool isReThrow = true)
+    CapCore newCapCore()
+    {
+        return new CapCore;
+    }
+
+    protected void consumeThrowable(Throwable ex, bool isRethrow = true)
     {
         try
         {
@@ -140,7 +141,7 @@ class CliApplication : SimpleUnit
                 uservices.logger.errorf("Error from application. %s", ex);
             }
 
-            if (isReThrow)
+            if (isRethrow)
             {
                 throw ex;
             }
@@ -166,10 +167,10 @@ class CliApplication : SimpleUnit
     {
 
         import std.path : dirName, buildPath, isAbsolute;
-        import std.file : exists, isDir, isFile, getcwd;
+        import std.file : exists, isDir, isFile;
 
-        const currentDir = getcwd;
-        uservices.cli.printIfNotSilent("Current working directory: " ~ currentDir);
+        const string curDir = currentDir;
+        uservices.cli.printIfNotSilent("Current working directory: " ~ curDir);
 
         string dataDirectory;
         if (mustBeDataDirectory)
@@ -178,14 +179,14 @@ class CliApplication : SimpleUnit
             uservices.cli.printIfNotSilent("Received data directory from cli: " ~ dataDirectory);
             if (!dataDirectory.isAbsolute)
             {
-                dataDirectory = buildPath(currentDir, dataDirectory);
+                dataDirectory = buildPath(curDir, dataDirectory);
                 uservices.cli.printIfNotSilent(
                     "Convert data directory from cli to absolute path: " ~ dataDirectory);
             }
         }
         else
         {
-            const relDataDir = buildPath(currentDir, defaultDataDir);
+            const relDataDir = buildPath(curDir, defaultDataDir);
             if (relDataDir.exists && relDataDir.isDir)
             {
                 dataDirectory = relDataDir;
@@ -210,9 +211,46 @@ class CliApplication : SimpleUnit
 
         import deltotum.core.contexts.apps.app_context : AppContext;
 
-        const appContext = new AppContext(currentDir, dataDirectory, userDir, isDebugMode, isSilentMode);
+        const appContext = new AppContext(curDir, dataDirectory, userDir, isDebugMode, isSilentMode);
         auto context = new Context(appContext);
         return context;
+    }
+
+    protected Config newConfigFromFile(string configFile)
+    {
+        import std.algorithm.searching : startsWith;
+        import std.path : extension;
+
+        import deltotum.core.configs.properties.property_config: PropertyConfig;
+
+        string ext = configFile.extension;
+        if (ext.startsWith(".") && ext.length > 1)
+        {
+            ext = ext[1 .. $];
+        }
+        switch (ext)
+        {
+            case "config":
+                return new PropertyConfig(configFile);
+            default:
+                break;
+        }
+
+        throw new Exception("Not supported config: " ~ configFile);
+    }
+
+    protected Config newConfigAggregator(Config[] forConfigs)
+    {
+        import deltotum.core.configs.config_aggregator : ConfigAggregator;
+
+        return new ConfigAggregator(forConfigs);
+    }
+
+    protected Config newEnvConfig()
+    {
+        import deltotum.core.configs.environments.env_config : EnvConfig;
+
+        return new EnvConfig;
     }
 
     protected Config createConfig(Context context)
@@ -240,7 +278,7 @@ class CliApplication : SimpleUnit
             const mustBeDataDir = context.appContext.dataDir;
             if (!mustBeDataDir.isNull)
             {
-                configDir = buildPath(mustBeDataDir.get, defaultConfigsDire);
+                configDir = buildPath(mustBeDataDir.get, defaultConfigsDir);
                 uservices.cli.printIfNotSilent(
                     "Default config directory will be used: " ~ configDir);
             }
@@ -256,10 +294,9 @@ class CliApplication : SimpleUnit
         {
             uservices.cli.printIfNotSilent("Path to config directory is empty");
             //TODO Environment config
-            import deltotum.core.configs.config_aggregator : ConfigAggregator;
 
             Config[] configs;
-            auto config = new ConfigAggregator(configs);
+            auto config = newConfigAggregator(configs);
             config.load;
             return config;
         }
@@ -268,10 +305,11 @@ class CliApplication : SimpleUnit
 
         if (!configDir.exists || !configDir.isDir)
         {
-            throw new Exception("Config directory does not exist or not a directory: " ~ configDir);
+            throw new Exception(
+                "Config directory does not exist or not a directory: " ~ configDir);
         }
 
-        import deltotum.core.configs.properties.property_config: PropertyConfig;
+        import deltotum.core.configs.properties.property_config : PropertyConfig;
         import deltotum.core.configs.config_aggregator : ConfigAggregator;
         import std.file : dirEntries, SpanMode;
         import std.algorithm.iteration : filter;
@@ -279,19 +317,16 @@ class CliApplication : SimpleUnit
 
         Config[] configs;
 
-        //TODO factory by file extension
-        foreach (configPath; dirEntries(configDir, SpanMode.depth).filter!(f => f.isFile && f.name.endsWith(
-                ".config")))
+        //TODO is hidden
+        foreach (configPath; dirEntries(configDir, SpanMode.depth).filter!(f => f.isFile))
         {
-            //TODO check for duplicate keys
-            configs ~= new PropertyConfig(configPath);
+            configs ~= newConfigFromFile(configPath.name);
         }
 
-        import deltotum.core.configs.environments.env_config : EnvConfig;
+        configs ~= newEnvConfig;
 
-        configs ~= new EnvConfig;
-
-        auto config = new ConfigAggregator(configs);
+        //TODO check for duplicate keys
+        auto config = newConfigAggregator(configs);
         config.load;
 
         import std.format : format;
@@ -401,14 +436,14 @@ class CliApplication : SimpleUnit
 
         string crashDir = getcwd;
 
-        immutable mustBeCrashDir = environment.get(defaultCrashDirEnvironmentKey);
+        immutable mustBeCrashDir = environment.get(envCrashDirKey);
         if (mustBeCrashDir)
         {
             if (!mustBeCrashDir.exists || !mustBeCrashDir.isDir)
             {
                 throw new Exception(format(
                         "Crash directory from environment key %s does not exist or not a directory: %s",
-                        defaultCrashDirEnvironmentKey, mustBeCrashDir));
+                        envCrashDirKey, mustBeCrashDir));
             }
             crashDir = mustBeCrashDir;
         }
@@ -416,6 +451,13 @@ class CliApplication : SimpleUnit
         import deltotum.core.apps.crashes.file_crash_handler : FileCrashHandler;
 
         crashHandlers ~= new FileCrashHandler(crashDir);
+    }
+
+    string currentDir()
+    {
+        import std.file : getcwd;
+
+        return getcwd;
     }
 
     void build(UniComponent component)

@@ -2,36 +2,39 @@ module deltotum.core.apps.crashes.file_crash_handler;
 
 import deltotum.core.apps.crashes.crash_handler : CrashHandler;
 
+import std.datetime.systime : Clock, SysTime;
+
 /**
  * Authors: initkfs
  */
 class FileCrashHandler : CrashHandler
 {
-    string workDir;
+    string crashDir;
 
-    this(string workDir)
+    this(string crashDir) pure @safe
     {
-        this.workDir = workDir;
+        import std.exception: enforce;
+
+        enforce(crashDir.length > 0, "Crash directory must not be empty path");
+
+        this.crashDir = crashDir;
     }
 
-    string createCrashName()
+    string createCrashName(in SysTime time = Clock.currTime) inout @safe
     {
         import std.datetime.systime : Clock, SysTime;
         import std.datetime.timezone : UTC;
         import std.format : format;
         import std.array : replace;
 
-        const SysTime dateTimeNow = Clock.currTime;
-        const string fileName = format("crash_local-%s_utc-%s.txt",
-            dateTimeNow.toISOExtString(), dateTimeNow.toUTC.toISOExtString()).replace(":", "_");
+        immutable fileName = format("crash_local-%s_utc-%s.txt",
+            time.toISOExtString(), time.toUTC.toISOExtString()).replace(":", "_");
         return fileName;
     }
 
-    override void acceptCrash(Throwable exFromApplication, string message = "")
+    string createCrashInfo(Throwable t, string message = "") inout 
     {
-        import std.path : buildPath;
         import std.array : appender;
-        import std.file : write;
 
         auto content = appender!string;
         if (message.length > 0)
@@ -39,13 +42,43 @@ class FileCrashHandler : CrashHandler
             content.put(message);
         }
 
-        immutable errorInfo = exFromApplication !is null ? exFromApplication.toString
-            : "Throwable from application is null.";
+        immutable errorInfo = t ? t.toString : "Throwable from application is null.";
         content.put(errorInfo);
 
-        const string crashFileName = createCrashName();
-        const string crashFile = buildPath(workDir, crashFileName);
-
-        write(crashFile, content.toString);
+        return content.data;
     }
+
+    override void acceptCrash(Throwable t, string message = "") inout 
+    {
+        import std.path : buildPath;
+        import std.file : exists, write;
+
+        immutable string crashFileName = createCrashName();
+        immutable string crashContent = createCrashInfo(t, message);
+        immutable string crashFile = buildPath(crashDir, crashFileName);
+
+        if (crashFile.exists)
+        {
+            import std.file : append;
+
+            append(crashFile, crashContent);
+            return;
+        }
+
+        write(crashFile, crashContent);
+    }
+}
+
+unittest
+{
+    import std.datetime.timezone : UTC;
+    import std.datetime.date : DateTime;
+
+    immutable fch = new FileCrashHandler("/");
+    immutable st = SysTime(DateTime(2023, 1, 1, 11, 30, 10), UTC());
+    immutable crashName = fch.createCrashName(st);
+    assert(crashName == "crash_local-2023-01-01T11_30_10Z_utc-2023-01-01T11_30_10Z.txt");
+
+    immutable crashInfo = fch.createCrashInfo(new Exception("ex"));
+    assert(crashInfo.length > 0);
 }

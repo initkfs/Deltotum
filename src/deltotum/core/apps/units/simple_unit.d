@@ -71,7 +71,6 @@ class SimpleUnit : Unitable
 
     void create()
     {
-
         if (!isNone && !isInitialized)
         {
             import std.format : format;
@@ -111,7 +110,6 @@ class SimpleUnit : Unitable
 
     void dispose()
     {
-
         //allow dispose without running
         if (!isStopped && !isInitialized && !isCreated)
         {
@@ -126,7 +124,6 @@ class SimpleUnit : Unitable
 
     unittest
     {
-
         import std.exception : assertThrown;
 
         class TestComponent : SimpleUnit

@@ -38,7 +38,7 @@ class UniComposite(C : UniComponent) : C
         return true;
     }
 
-    bool hasUnit(C unit)
+    bool hasUnit(C unit) const
     {
         if (unit is null)
         {

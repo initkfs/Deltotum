@@ -13,11 +13,11 @@ struct ApplicationEvent
 
     static enum Event
     {
-        NONE,
-        EXIT
+        None,
+        Exit
     }
 
-    this(int event, int ownerId) pure @safe
+    this(int event, int ownerId = 0) pure @safe
     {
         this.type = CoreEventType.application;
         this.event = event;
