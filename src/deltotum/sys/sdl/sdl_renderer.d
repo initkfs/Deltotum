@@ -9,7 +9,7 @@ import deltotum.sys.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.sys.sdl.sdl_window : SdlWindow;
 import deltotum.sys.sdl.sdl_texture : SdlTexture;
 
-import deltotum.kit.sprites.flip : Flip;
+import deltotum.math.geom.flip : Flip;
 import deltotum.math.vector2d : Vector2d;
 import deltotum.math.shapes.rect2d : Rect2d;
 

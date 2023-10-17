@@ -1,4 +1,4 @@
-module deltotum.kit.sprites.alignment;
+module deltotum.math.geom.alignment;
 /**
  * Authors: initkfs
  */

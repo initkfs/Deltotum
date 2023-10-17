@@ -1,4 +1,4 @@
-module deltotum.kit.sprites.flip;
+module deltotum.math.geom.flip;
 
 enum Flip {
     none,

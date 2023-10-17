@@ -10,7 +10,7 @@ import deltotum.sys.sdl.img.sdl_image : SdlImage;
 import deltotum.kit.sprites.textures.texture : Texture;
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.kit.graphics.colors.rgba : RGBA;
-import deltotum.kit.sprites.flip : Flip;
+import deltotum.math.geom.flip : Flip;
 
 import bindbc.sdl;
 

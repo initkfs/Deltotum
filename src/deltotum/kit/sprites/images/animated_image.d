@@ -12,7 +12,7 @@ import deltotum.kit.sprites.animations.interp.interpolator : Interpolator;
 import deltotum.kit.sprites.animations.transition : Transition;
 import std.math.rounding : floor;
 import std.conv : to;
-import deltotum.kit.sprites.flip : Flip;
+import deltotum.math.geom.flip : Flip;
 
 import bindbc.sdl;
 

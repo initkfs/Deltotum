@@ -1,4 +1,4 @@
-module deltotum.kit.sprites.position;
+module deltotum.math.geom.position;
 /**
  * Authors: initkfs
  */

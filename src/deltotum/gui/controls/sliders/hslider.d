@@ -9,7 +9,7 @@ import deltotum.kit.graphics.shapes.shape : Shape;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.kit.sprites.layouts.managed_layout : ManagedLayout;
 import deltotum.kit.graphics.shapes.rectangle : Rectangle;
-import deltotum.kit.sprites.alignment : Alignment;
+import deltotum.math.geom.alignment : Alignment;
 import std.math.operations: isClose;
 
 /**

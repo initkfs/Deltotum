@@ -10,7 +10,7 @@ import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.kit.graphics.themes.theme : Theme;
 import deltotum.kit.sprites.textures.texture : Texture;
 
-import deltotum.kit.sprites.flip : Flip;
+import deltotum.math.geom.flip : Flip;
 import deltotum.math.shapes.rect2d : Rect2d;
 
 import std.logger.core : Logger;

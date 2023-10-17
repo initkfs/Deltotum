@@ -3,7 +3,7 @@ module deltotum.kit.sprites.layouts.managed_layout;
 import deltotum.kit.sprites.layouts.layout : Layout;
 import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.gui.controls.control : Control;
-import deltotum.kit.sprites.alignment : Alignment;
+import deltotum.math.geom.alignment : Alignment;
 
 /**
  * Authors: initkfs

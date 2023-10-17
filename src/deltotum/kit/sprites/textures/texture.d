@@ -5,7 +5,7 @@ import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.sys.sdl.sdl_texture : SdlTexture;
 import deltotum.sys.sdl.sdl_surface : SdlSurface;
 import deltotum.math.shapes.rect2d : Rect2d;
-import deltotum.kit.sprites.flip : Flip;
+import deltotum.math.geom.flip : Flip;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 
 import bindbc.sdl;
