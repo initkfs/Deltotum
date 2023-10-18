@@ -1,6 +1,6 @@
 module deltotum.core.clis.cli;
 
-import deltotum.core.clis.printers.cli_printer: CliPrinter;
+import deltotum.core.clis.printers.cli_printer : CliPrinter;
 
 import std.getopt;
 
@@ -9,33 +9,36 @@ import std.getopt;
  */
 class Cli
 {
-    private
-    {
-        string[] _cliArgs;
-    }
+    string[] cliArgs;
 
-    bool isSilentMode = false;
     CliPrinter printer;
 
-    this(string[] args, CliPrinter cliPrinter)
-    {
-        import std.exception : enforce;
+    bool isSilentMode;
 
-        enforce(cliPrinter !is null, "Cli printer must not be null");
-        enforce(args !is null, "Console line arguments must not be null");
-        _cliArgs = args;
-        printer = cliPrinter;
+    this(string[] args, CliPrinter cliPrinter = null, bool isSilentMode = false) pure @safe
+    {
+        cliArgs = args;
+        printer = cliPrinter ? cliPrinter : new CliPrinter;
+        this.isSilentMode = isSilentMode;
     }
 
-    GetoptResult parseSafe(T...)(T opt)
+    this(immutable string[] args, immutable CliPrinter cliPrinter = null, bool isSilentMode = false) immutable pure @safe
     {
-        auto result = getopt(_cliArgs, std.getopt.config.passThrough, opt);
+        cliArgs = args;
+        printer = cliPrinter ? cliPrinter : new immutable CliPrinter;
+        this.isSilentMode = isSilentMode;
+    }
+
+    GetoptResult parseSafe(T...)(T opt) const @safe
+    {
+        auto result = getopt(_cliArgs, opt);
         return result;
     }
 
-    GetoptResult parse(T...)(T opt)
+    GetoptResult parse(T...)(T opt) const @safe
     {
-        auto result = getopt(_cliArgs, opt);
+        string[] argsCopy = cliArgs.dup;
+        auto result = getopt(argsCopy, opt);
         return result;
     }
 
@@ -56,18 +59,33 @@ class Cli
         return true;
     }
 
-    void printOptions(string message, GetoptResult getoptResult)
+    void printOptions(string message, GetoptResult getoptResult) const
     {
         defaultGetoptPrinter(message, getoptResult.options);
     }
 
-    void printHelp(GetoptResult getoptResult)
+    void printHelp(GetoptResult getoptResult) const
     {
         printOptions("Usage:", getoptResult);
     }
+}
 
-    string[] cliArgs() @safe pure nothrow const
-    {
-        return _cliArgs.dup;
-    }
+unittest
+{
+    import deltotum.core.clis.printers.cli_printer : CliPrinter;
+
+    immutable string[] args = ["bin", "-d", "data", "-b"];
+   
+    auto mutCli = new Cli(args.dup, new CliPrinter);
+    mutCli.cliArgs = null;
+    assert(mutCli.cliArgs.length == 0);
+
+    immutable immCli = new immutable Cli(args, new immutable CliPrinter);
+    assert(immCli.cliArgs.length == args.length);
+    assert(typeid(immCli.cliArgs) == typeid(args));
+    
+    bool bArg; string strArg;
+    immCli.parse("d", &strArg, "b", &bArg);
+    assert(bArg);
+    assert(strArg == "data");
 }

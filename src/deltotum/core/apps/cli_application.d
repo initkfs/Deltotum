@@ -38,8 +38,9 @@ class CliApplication : SimpleUnit
 
         bool isSilentMode;
         bool isDebugMode;
-        string mustBeDataDirectory;
-        string mustBeConfigDir;
+        string cliDataDir;
+        string cliConfigDir;
+        size_t cliStartupDelayMs;
     }
 
     abstract
@@ -60,13 +61,26 @@ class CliApplication : SimpleUnit
 
         auto cliResult = parseCli(uservices.cli);
 
+        cli.isSilentMode = isSilentMode;
+
         if (cliResult.helpWanted)
         {
             cli.printHelp(cliResult);
             return ApplicationExit(true);
         }
 
-        cli.isSilentMode = isSilentMode;
+        if (cliStartupDelayMs > 0)
+        {
+            import std.conv : text;
+
+            cli.printIfNotSilent(text("Startup delay: ", cliStartupDelayMs, " ms"));
+
+            import core.thread.osthread : Thread;
+            import core.time : dur;
+
+            Thread.sleep(dur!"msecs"(cliStartupDelayMs));
+            cli.printIfNotSilent("Startup delay end");
+        }
 
         if (isDebugMode)
         {
@@ -152,12 +166,15 @@ class CliApplication : SimpleUnit
     {
         import std.format : format;
         import std.uni : toLower;
+        import std.getopt : config;
 
         GetoptResult cliResult = cliManager.parse(
-            "s|silent", "Silent mode, less information in program output.", &isSilentMode,
+            config.passThrough,
+            "c|configdir", "Config directory", &cliConfigDir,
+            "d|data", "Application data directory.", &cliDataDir,
             "g|debug", "Debug mode", &isDebugMode,
-            "d|data", "Application data directory.", &mustBeDataDirectory,
-            "c|configdir", "Config directory", &mustBeConfigDir);
+            "s|silent", "Silent mode, less information in program output.", &isSilentMode,
+            "w|wait", "Startup delay (ms)", &cliStartupDelayMs);
 
         return cliResult;
     }
@@ -173,9 +190,9 @@ class CliApplication : SimpleUnit
         uservices.cli.printIfNotSilent("Current working directory: " ~ curDir);
 
         string dataDirectory;
-        if (mustBeDataDirectory)
+        if (cliDataDir)
         {
-            dataDirectory = mustBeDataDirectory;
+            dataDirectory = cliDataDir;
             uservices.cli.printIfNotSilent("Received data directory from cli: " ~ dataDirectory);
             if (!dataDirectory.isAbsolute)
             {
@@ -221,7 +238,7 @@ class CliApplication : SimpleUnit
         import std.algorithm.searching : startsWith;
         import std.path : extension;
 
-        import deltotum.core.configs.properties.property_config: PropertyConfig;
+        import deltotum.core.configs.properties.property_config : PropertyConfig;
 
         string ext = configFile.extension;
         if (ext.startsWith(".") && ext.length > 1)
@@ -257,7 +274,7 @@ class CliApplication : SimpleUnit
     {
         import std.path : buildPath, isAbsolute;
 
-        string configDir = mustBeConfigDir;
+        string configDir = cliConfigDir;
         if (configDir)
         {
             uservices.cli.printIfNotSilent("Received config directory from cli: " ~ configDir);

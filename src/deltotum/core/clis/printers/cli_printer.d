@@ -12,3 +12,9 @@ class CliPrinter
         writeln(messages);
     }
 }
+
+unittest {
+    //Immutable constructor test
+    immutable cliPrinter = new immutable CliPrinter;
+    assert(cliPrinter);
+}
