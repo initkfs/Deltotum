@@ -14,6 +14,11 @@ class SimpleUnit : Unitable
         UnitState _state = UnitState.none;
     }
 
+    this(UnitState initState = UnitState.none) pure @safe
+    {
+        _state = initState;
+    }
+
     UnitState state() const nothrow pure @safe
     {
         return _state;
@@ -126,10 +131,24 @@ class SimpleUnit : Unitable
     {
         import std.exception : assertThrown;
 
-        class TestComponent : SimpleUnit
+        class ImmComponent : SimpleUnit {
+            this(UnitState state) immutable {
+                super(state);
+            }
+        }
+
+        //Test immutable
+        auto immcomp = new immutable ImmComponent(UnitState.run);
+        assert(immcomp.isRunning);
+
+        const immcomp2 = new const ImmComponent(UnitState.stop);
+        assert(immcomp2.isStopped);
+
+         class TestComponent : SimpleUnit
         {
         }
 
+        //Test mutable
         auto component = new TestComponent();
 
         assertThrown(component.run);

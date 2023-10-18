@@ -39,11 +39,20 @@ abstract class Controller(C : UniComponent) : UniComposite!C
         addUnit(controller);
     }
 
-    void requestCleanupResources()
+    void requestCleanResources()
     {
+        //TODO update for @safe in dmd v106
         import core.memory : GC;
 
         GC.collect;
         GC.minimize;
+    }
+
+    void pause(size_t delayMs) const
+    {
+        import std.datetime : dur;
+        import core.thread : Thread;
+
+        Thread.sleep(dur!("msecs")(delayMs));
     }
 }

@@ -23,7 +23,16 @@ class ConfigurableUnit : SimpleUnit
         this._config = config;
     }
 
-    Config config() @nogc nothrow pure @safe
+    this(immutable Config config) immutable pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(config !is null, "Config for immutable object must not be null");
+
+        this._config = config;
+    }
+
+    inout(Config) config() inout @nogc nothrow pure @safe
     {
         return _config;
     }

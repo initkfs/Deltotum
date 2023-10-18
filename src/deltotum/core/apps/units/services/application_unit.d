@@ -29,12 +29,24 @@ class ApplicationUnit : LoggableUnit
         this._context = context;
     }
 
-    Config config() @nogc nothrow pure @safe
+    this(const Logger logger, const Config config, const Context context) const pure @safe
+    {
+        super(logger);
+        import std.exception : enforce;
+
+        enforce(config !is null, "Config for constant object must not be null");
+        enforce(context !is null, "Context for constant object must not be null");
+
+        this._config = config;
+        this._context = context;
+    }
+
+    inout(Config) config() inout @nogc nothrow pure @safe
     {
         return _config;
     }
 
-    Context context() @nogc nothrow pure @safe
+    inout(Context) context() inout @nogc nothrow pure @safe
     {
         return _context;
     }

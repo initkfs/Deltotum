@@ -12,27 +12,16 @@ class Resource : LoggableUnit
         const string _resourcesDir;
     }
 
-    this(Logger logger, string resourcesDir = null)
+    this(Logger logger, string resourcesDir = null) pure @safe
     {
         super(logger);
-        if (resourcesDir !is null)
-        {
-            import std.file : exists, isDir;
+        this._resourcesDir = resourcesDir;
+    }
 
-            if (!resourcesDir.exists)
-            {
-                throw new Exception(
-                    "Application resources directory does not exist: " ~ resourcesDir);
-            }
-
-            if (!resourcesDir.isDir)
-            {
-                throw new Exception(
-                    "Application resources directory is not a directory: " ~ resourcesDir);
-            }
-
-            this._resourcesDir = resourcesDir;
-        }
+    this(const Logger logger, const string resourcesDir = null) const pure @safe
+    {
+        super(logger);
+        this._resourcesDir = resourcesDir;
     }
 
     Nullable!string resourcesDir() const

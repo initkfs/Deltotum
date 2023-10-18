@@ -13,7 +13,8 @@ class Extension : SimpleUnit
         Plugin[] plugins;
     }
 
-    void call(string extName, string[] args, void delegate(Variant) onResult, void delegate(string) onError = null)
+    void call(string extName, string[] args, scope void delegate(Variant) onResult, scope void delegate(
+            string) onError = null) inout
     {
         foreach (p; plugins)
         {

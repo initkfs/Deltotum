@@ -26,6 +26,6 @@ abstract class Plugin : ApplicationUnit
 
     abstract
     {
-        void call(string[] args, void delegate(Variant) onResult, void delegate(string) onError);
+        void call(string[] args, scope void delegate(Variant) onResult, scope void delegate(string) onError) inout;
     }
 }
