@@ -23,12 +23,12 @@ class EnvConfig : Config
         
     }
 
-    override bool containsKey(string key)
+    override bool containsKey(string key) const
     {
         return key in environment;
     }
 
-    T getValue(T)(string key)
+    T getValue(T)(string key) const
     {
         return environment[key].to!T;
     }
@@ -38,12 +38,12 @@ class EnvConfig : Config
         if (!containsKey(key))
         {
             throw new ConfigValueNotFoundException(
-                "Not found config key: " ~ key);
+                "Not found config key in environment: " ~ key);
         }
         environment[key] = to!string(value);
     }
 
-    override Nullable!bool getBool(string key)
+    override Nullable!bool getBool(string key) const
     {
         if (!containsKey(key))
         {
@@ -59,7 +59,7 @@ class EnvConfig : Config
         setValue(key, value);
     }
 
-    override Nullable!string getString(string key)
+    override Nullable!string getString(string key) const
     {
         if (!containsKey(key))
         {
@@ -76,7 +76,7 @@ class EnvConfig : Config
         setValue(key, value);
     }
 
-    override Nullable!long getLong(string key)
+    override Nullable!long getLong(string key) const
     {
         if (!containsKey(key))
         {
@@ -92,7 +92,7 @@ class EnvConfig : Config
         setValue(key, value);
     }
 
-    override Nullable!double getDouble(string key)
+    override Nullable!double getDouble(string key) const
     {
         if (!containsKey(key))
         {
@@ -109,7 +109,7 @@ class EnvConfig : Config
         setValue(key, value);
     }
 
-    T[] getList(T)(string key)
+    T[] getList(T)(string key) const
     {
         throw new Exception("Non supported yet");
     }

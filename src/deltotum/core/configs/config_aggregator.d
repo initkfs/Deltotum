@@ -13,17 +13,22 @@ class ConfigAggregator : Config
 {
     private
     {
-        Config[] configs;
+        Config[] _configs;
     }
 
-    this(Config[] configs)
+    this(Config[] configs) pure @safe
     {
-        this.configs = configs;
+        this._configs = configs;
+    }
+
+    this(immutable(Config[]) configs) immutable pure @safe
+    {
+        this._configs = configs;
     }
 
     override void load()
     {
-        foreach (config; configs)
+        foreach (config; _configs)
         {
             config.load;
         }
@@ -31,15 +36,15 @@ class ConfigAggregator : Config
 
     override void save()
     {
-        foreach (config; configs)
+        foreach (config; _configs)
         {
             config.save;
         }
     }
 
-    override bool containsKey(string key)
+    override bool containsKey(string key) const
     {
-        foreach (Config config; configs)
+        foreach (config; _configs)
         {
             if (config.containsKey(key))
             {
@@ -49,9 +54,9 @@ class ConfigAggregator : Config
         return false;
     }
 
-    Config searchConfigByKey(string key)
+    inout(Config) searchConfigByKey(string key) inout
     {
-        foreach (Config config; configs)
+        foreach (config; _configs)
         {
             if (config.containsKey(key))
             {
@@ -62,7 +67,7 @@ class ConfigAggregator : Config
         throw new ConfigValueNotFoundException("Not found config for key: " ~ key);
     }
 
-    override Nullable!bool getBool(string key)
+    override Nullable!bool getBool(string key) const
     {
         return searchConfigByKey(key).getBool(key);
     }
@@ -72,7 +77,7 @@ class ConfigAggregator : Config
         searchConfigByKey(key).setBool(key, value);
     }
 
-    override Nullable!string getString(string key)
+    override Nullable!string getString(string key) const
     {
         return searchConfigByKey(key).getString(key);
     }
@@ -82,7 +87,7 @@ class ConfigAggregator : Config
         searchConfigByKey(key).setString(key, value);
     }
 
-    override Nullable!long getLong(string key)
+    override Nullable!long getLong(string key) const
     {
         return searchConfigByKey(key).getLong(key);
     }
@@ -92,7 +97,7 @@ class ConfigAggregator : Config
         searchConfigByKey(key).setLong(key, value);
     }
 
-    override Nullable!double getDouble(string key)
+    override Nullable!double getDouble(string key) const
     {
         return searchConfigByKey(key).getDouble(key);
     }
@@ -101,4 +106,18 @@ class ConfigAggregator : Config
     {
         searchConfigByKey(key).setDouble(key, value);
     }
+
+    inout(Config[]) configs() inout
+    {
+        return _configs;
+    }
+}
+
+unittest
+{
+    //TODO add simple implementation
+    import deltotum.core.configs.environments.env_config : EnvConfig;
+
+    immutable ca = new immutable ConfigAggregator([new immutable EnvConfig]);
+    assert(!ca.containsKey("___not_key"));
 }

@@ -1,11 +1,11 @@
 module deltotum.core.configs.exceptions.config_value_notfound_exception;
+
+import std.exception : basicExceptionCtors;
+
 /**
  * Authors: initkfs
  */
 class ConfigValueNotFoundException : Exception
 {
-    this(string msg, string file = __FILE__, size_t line = __LINE__)
-    {
-        super(msg, file, line);
-    }
+    mixin basicExceptionCtors;
 }

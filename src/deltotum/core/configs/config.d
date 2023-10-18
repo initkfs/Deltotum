@@ -15,22 +15,22 @@ abstract class Config
         void load();
         void save();
 
-        bool containsKey(string key);
+        bool containsKey(const string key) const;
 
-        Nullable!bool getBool(string key);
+        Nullable!bool getBool(string key) const;
         void setBool(string key, bool value);
 
-        Nullable!string getString(string key);
+        Nullable!string getString(string key) const;
         void setString(string key, string value);
 
-        Nullable!long getLong(string key);
+        Nullable!long getLong(string key) const;
         void setLong(string key, long value);
 
-        Nullable!double getDouble(string key);
+        Nullable!double getDouble(string key) const;
         void setDouble(string key, double value);
     }
 
-    Nullable!long getPositiveLong(string key)
+    Nullable!long getPositiveLong(string key) const
     {
         auto mustBeValue = getLong(key);
         if (!mustBeValue.isNull)
@@ -61,7 +61,7 @@ abstract class Config
         setLong(key, value);
     }
 
-    Nullable!double getFiniteDouble(string key)
+    Nullable!double getFiniteDouble(string key) const
     {
         auto mustBeValue = getDouble(key);
         if (!mustBeValue.isNull)
@@ -96,7 +96,7 @@ abstract class Config
         setDouble(key, value);
     }
 
-    Nullable!string getNotEmptyString(string key)
+    Nullable!string getNotEmptyString(string key) const
     {
         auto mustBeString = getString(key);
         if (!mustBeString.isNull)

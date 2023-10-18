@@ -30,7 +30,7 @@ class PropertyConfig : Config
         Line*[] lines;
     //}
 
-    this(string configPath = null)
+    this(string configPath = null) pure @safe
     {
         this.configPath = configPath;
     }
@@ -98,7 +98,7 @@ class PropertyConfig : Config
         write(configPath, configString);
     }
 
-    override bool containsKey(string key)
+    override bool containsKey(string key) const
     {
         import std.exception : enforce;
 
@@ -109,7 +109,7 @@ class PropertyConfig : Config
         return isContainsKey;
     }
 
-    T getValue(T)(string key)
+    T getValue(T)(string key) const
     {
         return keyIndex[key].value.to!T;
     }
@@ -124,7 +124,7 @@ class PropertyConfig : Config
         keyIndex[key].value = value.to!string;
     }
 
-    override Nullable!bool getBool(string key)
+    override Nullable!bool getBool(string key) const
     {
         if (!containsKey(key))
         {
@@ -140,7 +140,7 @@ class PropertyConfig : Config
         setValue(key, value);
     }
 
-    override Nullable!string getString(string key)
+    override Nullable!string getString(string key) const
     {
         if (!containsKey(key))
         {
@@ -157,7 +157,7 @@ class PropertyConfig : Config
         setValue(key, value);
     }
 
-    override Nullable!long getLong(string key)
+    override Nullable!long getLong(string key) const
     {
         if (!containsKey(key))
         {
@@ -173,7 +173,7 @@ class PropertyConfig : Config
         setValue(key, value);
     }
 
-    override Nullable!double getDouble(string key)
+    override Nullable!double getDouble(string key) const
     {
         if (!containsKey(key))
         {
@@ -190,7 +190,7 @@ class PropertyConfig : Config
         setValue(key, value);
     }
 
-    T[] getList(T)(string key)
+    T[] getList(T)(string key) const
     {
         if (!containsKey(key))
         {
