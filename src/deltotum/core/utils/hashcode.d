@@ -33,7 +33,7 @@ mixin template HashCode(alias HashFunc = object.hashOf)
         foreach (field; this.tupleof)
         {
 
-            //TODO null.hashOf == 0, pointers?
+            //TODO collision with overflow, null.hashOf == 0, pointers?
             static if (__traits(compiles, field.toHash))
             {
                 static if (__traits(compiles, field is null))

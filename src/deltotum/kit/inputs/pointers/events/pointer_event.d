@@ -2,7 +2,7 @@ module deltotum.kit.inputs.pointers.events.pointer_event;
 
 import deltotum.core.events.event_base : EventBase;
 import deltotum.kit.events.kit_event_type: KitEventType;
-import deltotum.core.utils.type_util : eventNameByIndex;
+import deltotum.core.utils.type_util : enumNameByIndex;
 import deltotum.core.events.event_target : EventTarget;
 import deltotum.core.events.event_source : EventSource;
 
@@ -49,7 +49,7 @@ struct PointerEvent
     {
         import std.format : format;
 
-        return format("{%s,%s,x:%s,y:%s,btn:%s,movX:%s,movY:%s,winid:%s,%s}", type, eventNameByIndex!Event(
+        return format("{%s,%s,x:%s,y:%s,btn:%s,movX:%s,movY:%s,winid:%s,%s}", type, enumNameByIndex!Event(
                 event), x, y, button, movementX, movementY, ownerId, isChained);
     }
 }

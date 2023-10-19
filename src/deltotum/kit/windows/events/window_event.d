@@ -2,7 +2,7 @@ module deltotum.kit.windows.events.window_event;
 
 import deltotum.core.events.event_base : EventBase;
 import deltotum.kit.events.kit_event_type: KitEventType;
-import deltotum.core.utils.type_util: eventNameByIndex;
+import deltotum.core.utils.type_util: enumNameByIndex;
 
 
 /**
@@ -51,6 +51,6 @@ struct WindowEvent
     {
         import std.format : format;
 
-        return format("{%s,%s,x:%s,y:%s,w:%s,h:%s,winid:%s}", type, eventNameByIndex!Event(event), x, y, width, height, ownerId);
+        return format("{%s,%s,x:%s,y:%s,w:%s,h:%s,winid:%s}", type, enumNameByIndex!Event(event), x, y, width, height, ownerId);
     }
 }

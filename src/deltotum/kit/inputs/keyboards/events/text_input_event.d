@@ -2,7 +2,7 @@ module deltotum.kit.inputs.keyboards.events.text_input_event;
 
 import deltotum.core.events.event_base : EventBase;
 import deltotum.kit.events.kit_event_type: KitEventType;
-import deltotum.core.utils.type_util : eventNameByIndex;
+import deltotum.core.utils.type_util : enumNameByIndex;
 
 /**
  * Authors: initkfs
@@ -31,6 +31,6 @@ struct TextInputEvent
     {
         import std.format : format;
 
-        return format("{%s,%s,text:%s,winid:%s}", type, eventNameByIndex!Event(event), firstLetter, ownerId);
+        return format("{%s,%s,text:%s,winid:%s}", type, enumNameByIndex!Event(event), firstLetter, ownerId);
     }
 }

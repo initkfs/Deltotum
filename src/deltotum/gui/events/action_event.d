@@ -2,7 +2,7 @@ module deltotum.gui.events.action_event;
 
 import deltotum.core.events.event_base : EventBase;
 import deltotum.kit.events.kit_event_type: KitEventType;
-import deltotum.core.utils.type_util : eventNameByIndex;
+import deltotum.core.utils.type_util : enumNameByIndex;
 import deltotum.core.events.event_target : EventTarget;
 import deltotum.core.events.event_source : EventSource;
 

@@ -23,7 +23,7 @@ mixin template ToString()
             import std.string : lastIndexOf;
 
             const lastModuleDotPos = result.lastIndexOf('.');
-            if (lastModuleDotPos != -1)
+            if (lastModuleDotPos != -1 && result.length > 1)
             {
                 result = result[lastModuleDotPos + 1 .. $];
             }
@@ -40,7 +40,7 @@ mixin template ToString()
 
         import std.traits : isDelegate, hasUDA, isPointer;
         import deltotum.core.apps.uni.attributes : Service;
-        import deltotum.core.utils.meta : hasOverloads;
+        import deltotum.core.utils.type_util : hasOverloads;
         import deltotum.core.utils.tostring : ToStringExclude;
 
         static foreach (i, fieldName; fields)

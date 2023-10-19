@@ -75,7 +75,7 @@ class UniComponent : SimpleUnit
         }
 
         import std.traits : hasUDA;
-        import deltotum.core.utils.meta : hasOverloads;
+        import deltotum.core.utils.type_util : hasOverloads;
 
         alias parentType = typeof(parentComponent);
         static foreach (const fieldName; __traits(allMembers, parentType))

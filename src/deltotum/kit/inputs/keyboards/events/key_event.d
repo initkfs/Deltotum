@@ -2,7 +2,7 @@ module deltotum.kit.inputs.keyboards.events.key_event;
 
 import deltotum.core.events.event_base : EventBase;
 import deltotum.kit.events.kit_event_type: KitEventType;
-import deltotum.core.utils.type_util : eventNameByIndex;
+import deltotum.core.utils.type_util : enumNameByIndex;
 
 import deltotum.com.inputs.keyboards.key_name : KeyName;
 import deltotum.com.inputs.keyboards.key_modifier_info : KeyModifierInfo;

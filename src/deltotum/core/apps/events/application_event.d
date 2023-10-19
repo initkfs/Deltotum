@@ -2,7 +2,7 @@ module deltotum.core.apps.events.application_event;
 
 import deltotum.core.events.event_base : EventBase;
 import deltotum.core.events.core_event_type : CoreEventType;
-import deltotum.core.utils.type_util: eventNameByIndex;
+import deltotum.core.utils.type_util: enumNameByIndex;
 
 /**
  * Authors: initkfs

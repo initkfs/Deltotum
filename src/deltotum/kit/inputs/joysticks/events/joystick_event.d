@@ -2,7 +2,7 @@ module deltotum.kit.inputs.joysticks.events.joystick_event;
 
 import deltotum.core.events.event_base : EventBase;
 import deltotum.kit.events.kit_event_type: KitEventType;
-import deltotum.core.utils.type_util : eventNameByIndex;
+import deltotum.core.utils.type_util : enumNameByIndex;
 
 /**
  * Authors: initkfs
