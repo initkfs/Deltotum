@@ -3,7 +3,6 @@ module deltotum.core.apps.uni.uni_component;
 import deltotum.core.apps.units.simple_unit : SimpleUnit;
 import deltotum.core.apps.uni.attributes : Service;
 import deltotum.core.configs.config : Config;
-import deltotum.core.supports.support : Support;
 import deltotum.core.clis.cli : Cli;
 import deltotum.core.contexts.context : Context;
 import deltotum.core.resources.resource : Resource;
@@ -32,7 +31,6 @@ class UniComponent : SimpleUnit
         @Service Logger _logger;
         @Service Config _config;
         @Service Cli _cli;
-        @Service Support _support;
         @Service Resource _resource;
         @Service Extension _ext;
         @Service CapCore _capCore;
@@ -167,25 +165,6 @@ class UniComponent : SimpleUnit
 
         enforce(config !is null, "Config must not be null");
         _config = config;
-    }
-
-    final bool hasSupport() const @nogc nothrow pure @safe
-    {
-        return _support !is null;
-    }
-
-    final Support support() @nogc nothrow pure @safe
-    out (_support; _support !is null)
-    {
-        return _support;
-    }
-
-    final void support(Support support) pure @safe
-    {
-        import std.exception : enforce;
-
-        enforce(support !is null, "Support must not be null");
-        _support = support;
     }
 
     final bool hasCli() const @nogc nothrow pure @safe

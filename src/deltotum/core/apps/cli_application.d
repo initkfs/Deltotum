@@ -4,7 +4,6 @@ import deltotum.core.apps.units.simple_unit : SimpleUnit;
 import deltotum.core.apps.crashes.crash_handler : CrashHandler;
 import deltotum.core.apps.application_exit : ApplicationExit;
 import deltotum.core.apps.uni.uni_component : UniComponent;
-import deltotum.core.supports.support : Support;
 import deltotum.core.configs.config : Config;
 import deltotum.core.clis.cli : Cli;
 import deltotum.core.contexts.context : Context;
@@ -96,9 +95,6 @@ class CliApplication : SimpleUnit
         import std.logger : sharedLog;
 
         () @trusted { sharedLog = cast(shared) uservices.logger; }();
-
-        uservices.support = createSupport;
-        uservices.logger.trace("Support service built");
 
         uservices.resource = createResource(uservices.logger, uservices.config, uservices.context);
         uservices.logger.trace("Resources service built");
@@ -368,18 +364,6 @@ class CliApplication : SimpleUnit
             consoleLoggerName, consoleLoggerLevel);
 
         return multiLogger;
-    }
-
-    protected Support createSupport()
-    {
-        import deltotum.core.supports.profiling.profilers.time_profiler : TimeProfiler;
-        import deltotum.core.supports.profiling.profilers.memory_profiler : MemoryProfiler;
-
-        auto timeProfiler = new TimeProfiler;
-        auto memoryProfiler = new MemoryProfiler;
-
-        auto support = new Support(timeProfiler, memoryProfiler);
-        return support;
     }
 
     protected Resource createResource(Logger logger, Config config, Context context, string resourceDirPath = "resources")
