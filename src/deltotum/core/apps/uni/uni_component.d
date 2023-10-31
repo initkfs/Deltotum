@@ -18,12 +18,13 @@ class UniComponent : SimpleUnit
 {
     bool isBuilt;
     bool isAllowRebuild;
+    bool isAllowRebuildServices;
 
-    bool isCallAfterBuildMethod = true;
-    bool isCallBeforeBuildMethod = true;
-
-    void delegate(UniComponent component) onPreBuild;
-    void delegate(UniComponent component) onPostBuild;
+    bool isCallBeforeBuild;
+    bool isCallAfterBuild;
+    
+    bool delegate(UniComponent component, UniComponent) onPreBuildWithParentIsContinue;
+    void delegate(UniComponent component, UniComponent) onPostBuildWithParent;
 
     private
     {
@@ -43,7 +44,6 @@ class UniComponent : SimpleUnit
 
     protected void buildFromParent(C : UniComponent)(C uniComponent, C parentComponent)
     {
-
         if (uniComponent is null)
         {
             throw new Exception("Component must not be null");
@@ -54,7 +54,7 @@ class UniComponent : SimpleUnit
             throw new Exception("Parent must not be null");
         }
 
-        if (uniComponent.isBuilt && !isAllowRebuild)
+        if (uniComponent.isBuilt && !uniComponent.isAllowRebuild)
         {
             throw new Exception("Component already built: " ~ uniComponent.className);
         }
@@ -64,12 +64,13 @@ class UniComponent : SimpleUnit
             throw new Exception("Parent component not built: " ~ parentComponent.className);
         }
 
-        if (onPreBuild)
+        if (uniComponent.onPreBuildWithParentIsContinue
+            && (!uniComponent.onPreBuildWithParentIsContinue(uniComponent, parentComponent)))
         {
-            onPostBuild(uniComponent);
+            return;
         }
 
-        if (isCallBeforeBuildMethod)
+        if (uniComponent.isCallBeforeBuild)
         {
             uniComponent.beforeBuild();
         }
@@ -82,20 +83,33 @@ class UniComponent : SimpleUnit
         {
             static if (!hasOverloads!(parentType, fieldName) && hasUDA!(__traits(getMember, parentComponent, fieldName), Service))
             {
-                __traits(getMember, uniComponent, fieldName[1 .. $]) = __traits(getMember, parentComponent, fieldName[1 .. $]);
+                {
+                    import std.algorithm.searching : startsWith;
+                    import std.uni : toUpper;
+
+                    enum fieldSetterName = (fieldName.startsWith("_") ? fieldName[1 .. $]
+                                : fieldName);
+                    enum hasMethodName = "has" ~ fieldSetterName[0 .. 1].toUpper ~ fieldSetterName[1 .. $];
+                    immutable bool hasService = __traits(getMember, uniComponent, hasMethodName)();
+                    if (!hasService || uniComponent.isAllowRebuildServices)
+                    {
+                        __traits(getMember, uniComponent, fieldSetterName) = __traits(getMember, parentComponent, fieldSetterName);
+                    }
+                }
+
             }
         }
 
-        if (isCallAfterBuildMethod)
+        if (uniComponent.isCallAfterBuild)
         {
             uniComponent.afterBuild();
         }
 
         uniComponent.isBuilt = true;
 
-        if (onPostBuild)
+        if (uniComponent.onPostBuildWithParent)
         {
-            onPostBuild(uniComponent);
+            uniComponent.onPostBuildWithParent(uniComponent, parentComponent);
         }
     }
 
@@ -205,7 +219,7 @@ class UniComponent : SimpleUnit
         _resource = resource;
     }
 
-    bool hasExtension() const @nogc nothrow pure @safe
+    bool hasExt() const @nogc nothrow pure @safe
     {
         return _ext !is null;
     }
