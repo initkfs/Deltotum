@@ -1,4 +1,4 @@
-module deltotum.kit.graphics.shapes.shape;
+module deltotum.kit.sprites.shapes.shape;
 
 import deltotum.kit.sprites.sprite : Sprite;
 

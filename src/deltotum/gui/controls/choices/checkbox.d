@@ -44,7 +44,7 @@ class CheckBox : Control
         markerContainer.isBorder = true;
         addCreate(markerContainer);
 
-        import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
+        import deltotum.kit.sprites.shapes.regular_polygon : RegularPolygon;
         import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 
         marker = new RegularPolygon(10, 10, GraphicStyle(1, graphics.theme.colorAccent, true, graphics

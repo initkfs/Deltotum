@@ -41,7 +41,7 @@ class TextArea : HBox
 
         backgroundFactory = (width, height) {
             import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
-            import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
+            import deltotum.kit.sprites.shapes.regular_polygon : RegularPolygon;
 
             auto style = ownOrParentStyle;
 

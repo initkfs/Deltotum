@@ -1,4 +1,4 @@
-module deltotum.kit.graphics.canvases.texture_canvas;
+module deltotum.kit.sprites.canvases.texture_canvas;
 
 import deltotum.kit.sprites.textures.rgba_texture : RgbaTexture;
 import deltotum.kit.graphics.colors.rgba: RGBA;

@@ -11,7 +11,7 @@ abstract class Separator : Control
     {        
         backgroundFactory = (width, height) {
 
-            import deltotum.kit.graphics.shapes.rectangle : Rectangle;
+            import deltotum.kit.sprites.shapes.rectangle : Rectangle;
             import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 
             auto currStyle = ownOrParentStyle;

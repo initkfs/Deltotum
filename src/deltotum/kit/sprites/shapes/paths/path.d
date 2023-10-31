@@ -1,6 +1,6 @@
-module deltotum.kit.graphics.shapes.paths.path;
+module deltotum.kit.sprites.shapes.paths.path;
 
-import deltotum.kit.graphics.shapes.shape : Shape;
+import deltotum.kit.sprites.shapes.shape : Shape;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.math.vector2d : Vector2d;
 

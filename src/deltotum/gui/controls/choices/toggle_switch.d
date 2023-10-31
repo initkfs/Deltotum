@@ -3,9 +3,9 @@ module deltotum.gui.controls.choices.toggle_switch;
 import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.gui.controls.control : Control;
 import deltotum.gui.containers.container: Container;
-import deltotum.kit.graphics.shapes.shape : Shape;
+import deltotum.kit.sprites.shapes.shape : Shape;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
-import deltotum.kit.graphics.shapes.rectangle : Rectangle;
+import deltotum.kit.sprites.shapes.rectangle : Rectangle;
 import deltotum.gui.events.action_event : ActionEvent;
 import deltotum.kit.sprites.animations.object.value_transition : ValueTransition;
 import deltotum.kit.sprites.animations.object.property.opacity_transition : OpacityTransition;
@@ -76,7 +76,7 @@ class ToggleSwitch : Control
 
         effectHandleSwitchOnFactory = (width, height) {
             import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
-            import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
+            import deltotum.kit.sprites.shapes.regular_polygon : RegularPolygon;
 
             auto currStyle = ownOrParentStyle;
 
@@ -92,7 +92,7 @@ class ToggleSwitch : Control
         switchHandleFactory = () {
 
             import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
-            import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
+            import deltotum.kit.sprites.shapes.regular_polygon : RegularPolygon;
 
             auto currStyle = ownOrParentStyle;
 

@@ -1,8 +1,8 @@
-module deltotum.kit.graphics.shapes.rectangle;
+module deltotum.kit.sprites.shapes.rectangle;
 
-import deltotum.kit.graphics.shapes.shape;
+import deltotum.kit.sprites.shapes.shape;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
-import deltotum.kit.graphics.shapes.circle : Circle;
+import deltotum.kit.sprites.shapes.circle : Circle;
 import deltotum.kit.sprites.sprite : Sprite;
 
 /**

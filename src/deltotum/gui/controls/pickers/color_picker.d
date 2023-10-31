@@ -7,7 +7,7 @@ import deltotum.kit.sprites.textures.texture : Texture;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.gui.controls.texts.text : Text;
 import deltotum.gui.controls.buttons.button : Button;
-import deltotum.kit.graphics.shapes.circle : Circle;
+import deltotum.kit.sprites.shapes.circle : Circle;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.kit.graphics.colors.palettes.material_design_palette : MaterialDesignPalette;
 import deltotum.gui.containers.vbox : VBox;
@@ -64,7 +64,7 @@ class ColorPicker : Control
         addCreate(colorChooser);
 
         colorChooser.isVisible = false;
-        import deltotum.kit.graphics.shapes.rectangle : Rectangle;
+        import deltotum.kit.sprites.shapes.rectangle : Rectangle;
         import std.traits : EnumMembers;
 
         enum colorContainerSize = 15;

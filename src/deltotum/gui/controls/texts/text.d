@@ -10,7 +10,7 @@ import deltotum.gui.fonts.glyphs.glyph : Glyph;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.kit.sprites.textures.texture : Texture;
 import deltotum.math.geom.insets : Insets;
-import deltotum.kit.graphics.shapes.rectangle : Rectangle;
+import deltotum.kit.sprites.shapes.rectangle : Rectangle;
 import deltotum.kit.inputs.keyboards.events.key_event : KeyEvent;
 
 import std.conv : to;
@@ -276,12 +276,12 @@ class Text : Control
         if (isFocusable)
         {
             focusEffectFactory = () {
-                import deltotum.kit.graphics.shapes.rectangle : Rectangle;
+                import deltotum.kit.sprites.shapes.rectangle : Rectangle;
                 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 
                 GraphicStyle style = GraphicStyle(1, graphics.theme.colorFocus);
 
-                import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
+                import deltotum.kit.sprites.shapes.regular_polygon : RegularPolygon;
 
                 auto effect = new RegularPolygon(width, height, style, graphics
                         .theme.controlCornersBevel);

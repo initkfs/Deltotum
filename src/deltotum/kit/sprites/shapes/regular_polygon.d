@@ -1,6 +1,6 @@
-module deltotum.kit.graphics.shapes.regular_polygon;
+module deltotum.kit.sprites.shapes.regular_polygon;
 
-import deltotum.kit.graphics.shapes.shape : Shape;
+import deltotum.kit.sprites.shapes.shape : Shape;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.math.line2d : Line2d;
 

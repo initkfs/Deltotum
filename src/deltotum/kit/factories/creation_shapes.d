@@ -2,9 +2,9 @@ module deltotum.kit.factories.creation_shapes;
 
 import deltotum.kit.sprites.factories.sprite_factory : SpriteFactory;
 
-import deltotum.kit.graphics.shapes.shape : Shape;
-import deltotum.kit.graphics.shapes.circle : Circle;
-import deltotum.kit.graphics.shapes.rectangle : Rectangle;
+import deltotum.kit.sprites.shapes.shape : Shape;
+import deltotum.kit.sprites.shapes.circle : Circle;
+import deltotum.kit.sprites.shapes.rectangle : Rectangle;
 
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 

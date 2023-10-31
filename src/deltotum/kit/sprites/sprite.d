@@ -7,7 +7,7 @@ import deltotum.math.geom.alignment : Alignment;
 import deltotum.math.geom.insets : Insets;
 import deltotum.kit.sprites.layouts.layout : Layout;
 import deltotum.sys.sdl.sdl_texture : SdlTexture;
-import deltotum.kit.graphics.canvases.texture_canvas : TextureCanvas;
+import deltotum.kit.sprites.canvases.texture_canvas : TextureCanvas;
 import deltotum.kit.scenes.scaling.scale_mode : ScaleMode;
 import deltotum.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import deltotum.core.apps.events.application_event : ApplicationEvent;

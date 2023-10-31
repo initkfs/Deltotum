@@ -1,6 +1,6 @@
-module deltotum.kit.graphics.shapes.vectors.vshape;
+module deltotum.kit.sprites.shapes.vectors.vshape;
 
-import deltotum.kit.graphics.canvases.vector_canvas : VectorCanvas;
+import deltotum.kit.sprites.canvases.vector_canvas : VectorCanvas;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 
 /**

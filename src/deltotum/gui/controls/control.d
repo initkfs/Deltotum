@@ -59,7 +59,7 @@ class Control : Sprite
         {
             backgroundFactory = (width, height) {
 
-                import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
+                import deltotum.kit.sprites.shapes.regular_polygon : RegularPolygon;
                 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 
                 GraphicStyle* currStyle = ownOrParentStyle;
@@ -96,7 +96,7 @@ class Control : Sprite
         const mustBeIconData = graphics.theme.iconData(iconName);
         if(mustBeIconData.isNull){
             //TODO placeholder;
-            import deltotum.kit.graphics.shapes.rectangle: Rectangle;
+            import deltotum.kit.sprites.shapes.rectangle: Rectangle;
             import deltotum.kit.graphics.styles.graphic_style: GraphicStyle;
             import deltotum.kit.graphics.colors.rgba: RGBA;
             return new Rectangle(10, 10, GraphicStyle(1, RGBA.red, true, RGBA.red));

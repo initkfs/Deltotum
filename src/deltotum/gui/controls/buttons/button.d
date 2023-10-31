@@ -2,9 +2,9 @@ module deltotum.gui.controls.buttons.button;
 
 import deltotum.kit.sprites.sprite : Sprite;
 import deltotum.gui.controls.control : Control;
-import deltotum.kit.graphics.shapes.shape : Shape;
+import deltotum.kit.sprites.shapes.shape : Shape;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
-import deltotum.kit.graphics.shapes.rectangle : Rectangle;
+import deltotum.kit.sprites.shapes.rectangle : Rectangle;
 import deltotum.gui.events.action_event : ActionEvent;
 import deltotum.kit.sprites.animations.object.value_transition : ValueTransition;
 import deltotum.kit.sprites.animations.object.property.opacity_transition : OpacityTransition;
@@ -58,7 +58,7 @@ class Button : Control
 
         backgroundFactory = (width, height) {
 
-            import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
+            import deltotum.kit.sprites.shapes.regular_polygon : RegularPolygon;
 
             auto style = styleFromActionType;
 
@@ -71,7 +71,7 @@ class Button : Control
 
         hoverFactory = (width, height) {
 
-            import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
+            import deltotum.kit.sprites.shapes.regular_polygon : RegularPolygon;
 
             auto currStyle = ownOrParentStyle;
             auto style = currStyle ? *currStyle :  GraphicStyle(1, graphics.theme.colorHover, true, graphics
@@ -89,7 +89,7 @@ class Button : Control
 
         clickEffectFactory = () {
 
-            import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
+            import deltotum.kit.sprites.shapes.regular_polygon : RegularPolygon;
 
             auto currStyle = ownOrParentStyle;
 

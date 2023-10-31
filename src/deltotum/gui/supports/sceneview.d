@@ -429,7 +429,7 @@ class SceneView : VBox
     private DebugInfo createDebugInfo(Sprite obj)
     {
         import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
-        import deltotum.kit.graphics.shapes.rectangle : Rectangle;
+        import deltotum.kit.sprites.shapes.rectangle : Rectangle;
         import deltotum.kit.graphics.colors.rgba : RGBA;
 
         auto container = new DebugInfo;

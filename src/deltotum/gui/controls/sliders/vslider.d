@@ -5,10 +5,10 @@ import deltotum.gui.controls.sliders.base_slider : BaseSlider;
 import deltotum.gui.controls.control : Control;
 import deltotum.kit.sprites.textures.texture : Texture;
 
-import deltotum.kit.graphics.shapes.shape : Shape;
+import deltotum.kit.sprites.shapes.shape : Shape;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.kit.sprites.layouts.center_layout : CenterLayout;
-import deltotum.kit.graphics.shapes.rectangle : Rectangle;
+import deltotum.kit.sprites.shapes.rectangle : Rectangle;
 import deltotum.math.geom.alignment : Alignment;
 import std.math.operations : isClose;
 
@@ -30,7 +30,7 @@ class VSlider : BaseSlider
 
         thumbFactory = () {
 
-            import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
+            import deltotum.kit.sprites.shapes.regular_polygon : RegularPolygon;
             import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 
             auto currStyle = ownOrParentStyle;

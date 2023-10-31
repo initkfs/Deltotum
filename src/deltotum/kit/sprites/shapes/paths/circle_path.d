@@ -1,6 +1,6 @@
-module deltotum.kit.graphics.shapes.paths.circle_path;
+module deltotum.kit.sprites.shapes.paths.circle_path;
 
-import deltotum.kit.graphics.shapes.paths.path : Path;
+import deltotum.kit.sprites.shapes.paths.path : Path;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 
 /**

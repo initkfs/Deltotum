@@ -64,7 +64,7 @@ class Frame : Container
     {
         if (background && label)
         {
-            import deltotum.kit.graphics.shapes.regular_polygon : RegularPolygon;
+            import deltotum.kit.sprites.shapes.regular_polygon : RegularPolygon;
 
             if (auto rp = cast(RegularPolygon) background)
             {

@@ -4,10 +4,10 @@ import deltotum.kit.sprites.sprite: Sprite;
 import deltotum.gui.controls.control : Control;
 import deltotum.kit.sprites.textures.texture : Texture;
 
-import deltotum.kit.graphics.shapes.shape : Shape;
+import deltotum.kit.sprites.shapes.shape : Shape;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.kit.sprites.layouts.managed_layout : ManagedLayout;
-import deltotum.kit.graphics.shapes.rectangle : Rectangle;
+import deltotum.kit.sprites.shapes.rectangle : Rectangle;
 import deltotum.math.geom.alignment : Alignment;
 
 /**
