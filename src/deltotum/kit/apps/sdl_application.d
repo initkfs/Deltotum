@@ -569,7 +569,7 @@ class SdlApplication : ContinuouslyApplication
             auto fontGenerator = newFontGenerator;
             windowBuilder.build(fontGenerator);
 
-            windowBuilder.asset.fontBitmap =  createFontBitmap(fontGenerator, asset, theme);
+            windowBuilder.asset.fontBitmap = createFontBitmap(fontGenerator, asset, theme);
             windowBuilder.asset.fontBitmap.initialize;
 
             auto colorText = theme.colorText;

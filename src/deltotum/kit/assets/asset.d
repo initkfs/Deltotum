@@ -24,12 +24,59 @@ class Asset : Resource
     BitmapFont fontBitmap;
     Texture[RGBA] fontCache;
 
-    this(Logger logger, string assetsDir)
+    string defaultImagesResourceDir = "images";
+    string defaultFontResourceDir = "fonts";
+
+    this(Logger logger, string assetsDir) pure @safe
     {
         super(logger, assetsDir);
     }
 
-    bool addCachedFont(RGBA color, Texture fontTexture)
+    string imagePath(string imageFile) const
+    {
+        import std.path : isAbsolute;
+
+        if (imageFile.isAbsolute)
+        {
+            return imageFile;
+        }
+
+        auto mustBeImagePath = fileResource(defaultImagesResourceDir, imageFile);
+        if (mustBeImagePath.isNull)
+        {
+            throw new Exception("Not found image in resources: " ~ imageFile);
+        }
+
+        return mustBeImagePath.get;
+    }
+
+    string fontPath(string fontFile) const
+    {
+        import std.path : isAbsolute;
+
+        if (fontFile.isAbsolute)
+        {
+            return fontFile;
+        }
+
+        auto mustBeFontPath = fileResource(defaultFontResourceDir, fontFile);
+        if (mustBeFontPath.isNull)
+        {
+            throw new Exception("Not found font in resources: " ~ fontFile);
+        }
+        return mustBeFontPath.get;
+    }
+
+    Font newFont(string fontFilePath, int size)
+    {
+        const path = fontPath(fontFilePath);
+        Font nFont = new Font(logger, path, size);
+        nFont.initialize;
+        logger.trace("Create new font from ", path);
+        return nFont;
+    }
+
+    bool addCachedFont(RGBA color, Texture fontTexture) @safe
     {
         if (fontTexture is fontBitmap)
         {
@@ -51,27 +98,6 @@ class Asset : Resource
             return *cachePtr;
         }
         return null;
-    }
-
-    string image(string path)
-    {
-        auto mustBeImagePath = withResourceDir(path);
-        if (mustBeImagePath.isNull)
-        {
-            throw new Exception("Not found image in resources: " ~ path);
-        }
-        return mustBeImagePath.get;
-    }
-
-    Font newFont(string fontFilePath, int size)
-    {
-        auto mustBeFontPath = withResourceDir(fontFilePath);
-        if(mustBeFontPath.isNull){
-            throw new Exception("Not found font in resources: " ~ fontFilePath);
-        }
-        Font nFont = new Font(logger, mustBeFontPath.get, size);
-        nFont.initialize;
-        return nFont;
     }
 
     override void dispose()

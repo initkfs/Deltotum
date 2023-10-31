@@ -216,7 +216,7 @@ abstract class GraphicApplication : CliApplication
 
         //TODO from config
         Font font = asset.newFont(
-            "fonts/JetBrains_Mono/static/JetBrainsMono-ExtraBold.ttf", 15);
+            "JetBrains_Mono/static/JetBrainsMono-ExtraBold.ttf", 15);
         asset.font = font;
 
         return asset;

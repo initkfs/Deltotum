@@ -17,27 +17,20 @@ class WindowComponent : GraphicsComponent
         @Service Window _window;
     }
 
+    alias build = GraphicsComponent.build;
+    alias build = UniComponent.build;
+
     void build(WindowComponent wComponent)
     {
         buildFromParent(wComponent, this);
     }
 
-    override void build(GraphicsComponent gComponent)
-    {
-        buildFromParent(gComponent, this);
-    }
-
-    override void build(UniComponent uniComponent)
-    {
-        super.build(uniComponent);
-    }
-
-    bool hasWindow() @nogc nothrow pure @safe
+    bool hasWindow() const @nogc nothrow pure @safe
     {
         return _window !is null;
     }
 
-    Window window() @nogc nothrow pure @safe
+    inout(Window) window() inout @nogc nothrow pure @safe
     out (_window; _window !is null)
     {
         return _window;

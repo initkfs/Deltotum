@@ -65,7 +65,8 @@ class Graphics : LoggableUnit
     SdlSurface newComSurface()
     {
         assert(comSurfaceFactory);
-        return new SdlSurface();
+        auto surface = comSurfaceFactory();
+        return surface;
     }
 
     //inline?

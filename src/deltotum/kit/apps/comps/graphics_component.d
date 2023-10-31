@@ -27,22 +27,19 @@ class GraphicsComponent : UniComponent
         @Service CapGraphics _capGraphics;
     }
 
+    alias build = UniComponent.build;
+
     void build(GraphicsComponent gComponent)
     {
         buildFromParent(gComponent, this);
     }
 
-    override void build(UniComponent uniComponent)
-    {
-        super.build(uniComponent);
-    }
-
-    bool hasAsset() @nogc nothrow pure @safe
+    bool hasAsset() const @nogc nothrow pure @safe
     {
         return _asset !is null;
     }
 
-    Asset asset() @nogc nothrow pure @safe
+    inout(Asset) asset() inout @nogc nothrow pure @safe
     out (_asset; _asset !is null)
     {
         return _asset;
@@ -56,12 +53,12 @@ class GraphicsComponent : UniComponent
         _asset = assetManager;
     }
 
-    bool hasInput() @nogc nothrow pure @safe
+    bool hasInput() const @nogc nothrow pure @safe
     {
         return _input !is null;
     }
 
-    Input input() @nogc nothrow pure @safe
+    inout(Input) input() inout @nogc nothrow pure @safe
     out (_input; _input !is null)
     {
         return _input;
@@ -75,12 +72,12 @@ class GraphicsComponent : UniComponent
         _input = input;
     }
 
-    bool hasAudio() @nogc nothrow pure @safe
+    bool hasAudio() const @nogc nothrow pure @safe
     {
         return _audio !is null;
     }
 
-    Audio audio() @nogc nothrow pure @safe
+    inout(Audio) audio() inout @nogc nothrow pure @safe
     out (_audio; _audio !is null)
     {
         return _audio;
@@ -94,12 +91,12 @@ class GraphicsComponent : UniComponent
         _audio = audio;
     }
 
-    bool hasGraphics() @nogc nothrow pure @safe
+    bool hasGraphics() const @nogc nothrow pure @safe
     {
         return _graphics !is null;
     }
 
-    Graphics graphics() @nogc nothrow pure @safe
+    inout(Graphics) graphics() inout @nogc nothrow pure @safe
     out (_graphics; _graphics !is null)
     {
         return _graphics;
@@ -113,12 +110,12 @@ class GraphicsComponent : UniComponent
         _graphics = graphics;
     }
 
-    bool hasScreen() @nogc nothrow pure @safe
+    bool hasScreen() const @nogc nothrow pure @safe
     {
         return _screen !is null;
     }
 
-    Screen screen() @nogc nothrow pure @safe
+    inout(Screen) screen() inout @nogc nothrow pure @safe
     out (_screen; _screen !is null)
     {
         return _screen;
@@ -132,12 +129,12 @@ class GraphicsComponent : UniComponent
         _screen = screen;
     }
 
-    bool hasCapGraphics() @nogc nothrow pure @safe
+    bool hasCapGraphics() const @nogc nothrow pure @safe
     {
         return _capGraphics !is null;
     }
 
-    CapGraphics capGraphics() @nogc nothrow pure @safe
+    inout(CapGraphics) capGraphics() inout @nogc nothrow pure @safe
     out (_capGraphics; _capGraphics !is null)
     {
         return _capGraphics;
