@@ -39,7 +39,7 @@ abstract class Controller(C : UniComponent) : UniComposite!C
         addUnit(controller);
     }
 
-    void requestCleanResources()
+    void requestGC()
     {
         //TODO update for @safe in dmd v106
         import core.memory : GC;

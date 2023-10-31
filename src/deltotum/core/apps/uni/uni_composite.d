@@ -50,7 +50,7 @@ class UniComposite(C : UniComponent) : C
         return _units.canFind(unit);
     }
 
-    public bool removeUnit(C unit)
+    bool removeUnit(C unit)
     {
         if (unit is null)
         {
@@ -69,7 +69,7 @@ class UniComposite(C : UniComponent) : C
         return true;
     }
 
-    const(C[]) units() const @nogc nothrow pure @safe
+    inout(C[]) units() inout @nogc nothrow pure @safe
     {
         return _units;
     }

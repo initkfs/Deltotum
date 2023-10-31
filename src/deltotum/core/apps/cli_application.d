@@ -90,11 +90,6 @@ class CliApplication : SimpleUnit
         uservices.config = createConfig(uservices.context);
 
         uservices.logger = createLogger;
-        //FIXME, dmd v.101: non-shared method `std.logger.multilogger.MultiLogger.insertLogger` is not callable using a `shared` object
-        //set new global default logger
-        import std.logger : sharedLog;
-
-        () @trusted { sharedLog = cast(shared) uservices.logger; }();
 
         uservices.resource = createResource(uservices.logger, uservices.config, uservices.context);
         uservices.logger.trace("Resources service built");
@@ -133,7 +128,7 @@ class CliApplication : SimpleUnit
         catch (Exception exFromHandler)
         {
             exFromHandler.next = ex;
-            if (uservices.logger !is null)
+            if (uservices.logger)
             {
                 uservices.logger.errorf("Exception from error handler: %s", exFromHandler);
             }
@@ -146,7 +141,7 @@ class CliApplication : SimpleUnit
         }
         finally
         {
-            if (uservices.logger !is null)
+            if (uservices.logger)
             {
                 uservices.logger.errorf("Error from application. %s", ex);
             }
@@ -160,8 +155,6 @@ class CliApplication : SimpleUnit
 
     GetoptResult parseCli(Cli cliManager)
     {
-        import std.format : format;
-        import std.uni : toLower;
         import std.getopt : config;
 
         GetoptResult cliResult = cliManager.parse(

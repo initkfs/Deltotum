@@ -24,7 +24,6 @@ class SimpleUnit : Unitable
         return _state;
     }
 
-    pragma(inline, true);
     bool isState(UnitState s) const nothrow pure @safe
     {
         return _state == s;
@@ -62,7 +61,6 @@ class SimpleUnit : Unitable
 
     void initialize()
     {
-
         if (!isNone && !isDisposed)
         {
             import std.format : format;

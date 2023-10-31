@@ -22,7 +22,7 @@ class UniComponent : SimpleUnit
 
     bool isCallBeforeBuild;
     bool isCallAfterBuild;
-    
+
     bool delegate(UniComponent component, UniComponent) onPreBuildWithParentIsContinue;
     void delegate(UniComponent component, UniComponent) onPostBuildWithParent;
 
@@ -123,18 +123,18 @@ class UniComponent : SimpleUnit
 
     }
 
-    final bool hasContext() const @nogc nothrow pure @safe
+    bool hasContext() const @nogc nothrow pure @safe
     {
         return _context !is null;
     }
 
-    final Context context() @nogc nothrow pure @safe
+    inout(Context) context() inout @nogc nothrow pure @safe
     out (_context; _context !is null)
     {
         return _context;
     }
 
-    final void context(Context context) pure @safe
+    void context(Context context) pure @safe
     {
         import std.exception : enforce;
 
@@ -142,18 +142,18 @@ class UniComponent : SimpleUnit
         _context = context;
     }
 
-    final bool hasLogger() const @nogc nothrow pure @safe
+    bool hasLogger() const @nogc nothrow pure @safe
     {
         return _logger !is null;
     }
 
-    final Logger logger() @nogc nothrow pure @safe
+    inout(Logger) logger() inout @nogc nothrow pure @safe
     out (_logger; _logger !is null)
     {
         return _logger;
     }
 
-    final void logger(Logger logger) pure @safe
+    void logger(Logger logger) pure @safe
     {
         import std.exception : enforce;
 
@@ -162,18 +162,18 @@ class UniComponent : SimpleUnit
 
     }
 
-    final bool hasConfig() const @nogc nothrow pure @safe
+    bool hasConfig() const @nogc nothrow pure @safe
     {
         return _config !is null;
     }
 
-    final Config config() @nogc nothrow pure @safe
+    inout(Config) config() inout @nogc nothrow pure @safe
     out (_config; _config !is null)
     {
         return _config;
     }
 
-    final void config(Config config) pure @safe
+    void config(Config config) pure @safe
     {
         import std.exception : enforce;
 
@@ -181,18 +181,18 @@ class UniComponent : SimpleUnit
         _config = config;
     }
 
-    final bool hasCli() const @nogc nothrow pure @safe
+    bool hasCli() const @nogc nothrow pure @safe
     {
         return _cli !is null;
     }
 
-    final Cli cli() @nogc nothrow pure @safe
+    inout(Cli) cli() inout @nogc nothrow pure @safe
     out (_cli; _cli !is null)
     {
         return _cli;
     }
 
-    final void cli(Cli cli) pure @safe
+    void cli(Cli cli) pure @safe
     {
         import std.exception : enforce;
 
@@ -200,18 +200,18 @@ class UniComponent : SimpleUnit
         _cli = cli;
     }
 
-    final bool hasResource() const @nogc nothrow pure @safe
+    bool hasResource() const @nogc nothrow pure @safe
     {
         return _resource !is null;
     }
 
-    final Resource resource() @nogc nothrow pure @safe
+    inout(Resource) resource() inout @nogc nothrow pure @safe
     out (_resource; _resource !is null)
     {
         return _resource;
     }
 
-    final void resource(Resource resource) pure @safe
+    void resource(Resource resource) pure @safe
     {
         import std.exception : enforce;
 
@@ -224,7 +224,7 @@ class UniComponent : SimpleUnit
         return _ext !is null;
     }
 
-    Extension ext() @nogc nothrow pure @safe
+    inout(Extension) ext() inout @nogc nothrow pure @safe
     out (_ext; _ext !is null)
     {
         return _ext;
@@ -243,7 +243,7 @@ class UniComponent : SimpleUnit
         return _capCore !is null;
     }
 
-    CapCore capCore() @nogc nothrow pure @safe
+    inout(CapCore) capCore() inout @nogc nothrow pure @safe
     out (_capCore; _capCore !is null)
     {
         return _capCore;
