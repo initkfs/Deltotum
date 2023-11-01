@@ -105,23 +105,23 @@ class RegularPolygon : Shape
                 .fillColor);
 
         //left top corner
-        graphics.triangle(Vector2d(x + style.lineWidth * 2, y + cornerPadding - style.lineWidth), Vector2d(x + cornerPadding - style.lineWidth, y + style
+        graphics.fillTriangle(Vector2d(x + style.lineWidth * 2, y + cornerPadding - style.lineWidth), Vector2d(x + cornerPadding - style.lineWidth, y + style
                 .lineWidth * 2), Vector2d(
                 x + cornerPadding - style.lineWidth, y + cornerPadding - style.lineWidth), style
                 .fillColor);
 
         //left bottom corner
-        graphics.triangle(Vector2d(x + style.lineWidth * 2, y + height - cornerPadding), Vector2d(x + cornerPadding - style.lineWidth, y + height - cornerPadding), Vector2d(
+        graphics.fillTriangle(Vector2d(x + style.lineWidth * 2, y + height - cornerPadding), Vector2d(x + cornerPadding - style.lineWidth, y + height - cornerPadding), Vector2d(
                 x + cornerPadding - style.lineWidth, y + height - style.lineWidth * 3), style
                 .fillColor);
 
         //right top corner
-        graphics.triangle(Vector2d(x + width - cornerPadding, y + style.lineWidth * 2), Vector2d(x + width - style.lineWidth * 3, y + cornerPadding - style
+        graphics.fillTriangle(Vector2d(x + width - cornerPadding, y + style.lineWidth * 2), Vector2d(x + width - style.lineWidth * 3, y + cornerPadding - style
                 .lineWidth), Vector2d(
                 x + width - cornerPadding, y + cornerPadding - style.lineWidth), style.fillColor);
 
         //right bottom corner
-        graphics.triangle(Vector2d(x + width - cornerPadding, y + height - cornerPadding), Vector2d(x + width - style.lineWidth * 3, y + height - cornerPadding), Vector2d(
+        graphics.fillTriangle(Vector2d(x + width - cornerPadding, y + height - cornerPadding), Vector2d(x + width - style.lineWidth * 3, y + height - cornerPadding), Vector2d(
                 x + width - cornerPadding, y + height - style.lineWidth * 3), style.fillColor);
     }
 }

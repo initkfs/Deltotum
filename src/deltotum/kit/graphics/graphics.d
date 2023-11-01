@@ -33,6 +33,7 @@ class Graphics : LoggableUnit
 
     protected
     {
+        RGBA prevColor;
         SdlRenderer renderer;
     }
 
@@ -103,9 +104,8 @@ class Graphics : LoggableUnit
         }
     }
 
-    RGBA setColor(RGBA color = defaultColor)
+    RGBA changeColor(RGBA color = defaultColor)
     {
-        RGBA prevColor;
         ubyte r, g, b, a;
         if (const err = renderer.getRenderDrawColor(r, g, b, a))
         {
@@ -113,14 +113,25 @@ class Graphics : LoggableUnit
             return prevColor;
         }
 
-        prevColor = RGBA(r, g, b, a / ubyte.max);
+        const aNorm = (cast(double) a) / ubyte.max;
+        prevColor = RGBA(r, g, b, aNorm);
 
+        setColor(color);
+
+        return prevColor;
+    }
+
+    void setColor(RGBA color)
+    {
         if (const err = renderer.setRenderDrawColor(color.r, color.g, color.b, color.aNorm))
         {
             logger.errorf("Adjust render error. %s", err);
         }
+    }
 
-        return prevColor;
+    void restoreColor()
+    {
+        setColor(prevColor);
     }
 
     void line(double startX, double startY, double endX, double endY)
@@ -143,7 +154,11 @@ class Graphics : LoggableUnit
 
     void line(double startX, double startY, double endX, double endY, RGBA color = defaultColor)
     {
-        setColor(color);
+        changeColor(color);
+        scope (exit)
+        {
+            restoreColor;
+        }
         line(startX, startY, endX, endY);
     }
 
@@ -157,7 +172,12 @@ class Graphics : LoggableUnit
 
     void lines(Vector2d[] points, RGBA color = defaultColor)
     {
-        setColor(color);
+        changeColor(color);
+        scope (exit)
+        {
+            restoreColor;
+        }
+
         lines(points);
     }
 
@@ -176,7 +196,12 @@ class Graphics : LoggableUnit
 
     void point(double x, double y, RGBA color = defaultColor)
     {
-        setColor(color);
+        changeColor(color);
+        scope (exit)
+        {
+            restoreColor;
+        }
+
         point(x, y);
     }
 
@@ -195,21 +220,48 @@ class Graphics : LoggableUnit
 
     void points(Vector2d[] p, RGBA color = defaultColor)
     {
-        setColor(color);
+        changeColor(color);
+        scope (exit)
+        {
+            restoreColor;
+        }
+
         points(p);
     }
 
-    Vector2d[] linePoints(double startX, double startY, double endX, double endY) const nothrow pure @safe
+    Vector2d[] linePoints(Vector2d start, Vector2d end)
     {
-        return linePoints(toInt(startX), toInt(startY), toInt(endX), toInt(endY));
+        return linePoints(start.x, start.y, end.x, end.y);
     }
 
-    Vector2d[] linePoints(int startX, int startY, int endX, int endY) const nothrow pure @safe
+    Vector2d[] linePoints(double startXPos, double startYPos, double endXPos, double endYPos)
+    {
+        import std.array : appender;
+
+        auto points = appender!(Vector2d[]);
+        linePoints(startXPos, startYPos, endXPos, endYPos, (p) {
+            points ~= p;
+            return true;
+        });
+        return points[];
+    }
+
+    void linePoints(Vector2d start, Vector2d end, scope bool delegate(
+            Vector2d) onPoint)
+    {
+        linePoints(start.x, start.y, end.x, end.y, onPoint);
+    }
+
+    void linePoints(double startXPos, double startYPos, double endXPos, double endYPos, scope bool delegate(
+            Vector2d) onPoint)
     {
         //Bresenham algorithm
         import math = deltotum.math;
 
-        Vector2d[] points;
+        int startX = toInt(startXPos);
+        int startY = toInt(startYPos);
+        int endX = toInt(endXPos);
+        int endY = toInt(endYPos);
 
         immutable deltaX = endX - startX;
         immutable deltaY = endY - startY;
@@ -262,7 +314,10 @@ class Graphics : LoggableUnit
         int num = 0;
         for (int i = 0; i <= longestLen; i++)
         {
-            points ~= Vector2d(startX, startY);
+            if (!onPoint(Vector2d(startX, startY)))
+            {
+                return;
+            }
             num += shortestLen2;
             if (num > longestLen)
             {
@@ -276,16 +331,38 @@ class Graphics : LoggableUnit
                 startY += dy2;
             }
         }
-
-        return points;
     }
 
-    Vector2d[] circlePoints(int centerX, int centerY, int radius) const nothrow pure @safe
+    Vector2d[] circlePoints(Vector2d pos, int radius)
+    {
+        return circlePoints(pos.x, pos.y, radius);
+    }
+
+    Vector2d[] circlePoints(double centerXPos, double centerYPos, int radius)
+    {
+        import std.array : appender;
+
+        auto points = appender!(Vector2d[]);
+        circlePoints(centerXPos, centerYPos, radius, (p) {
+            points ~= p;
+            return true;
+        });
+        return points[];
+    }
+
+    void circlePoints(Vector2d pos, int radius, scope bool delegate(Vector2d) onPoint)
+    {
+        circlePoints(pos.x, pos.y, radius, onPoint);
+    }
+
+    void circlePoints(double centerXPos, double centerYPos, int radius, scope bool delegate(
+            Vector2d) onPoint)
     {
         //Bresenham algorithm
         import math = deltotum.math;
 
-        Vector2d[] points;
+        int centerX = toInt(centerXPos);
+        int centerY = toInt(centerYPos);
 
         int x = 0;
         int y = radius;
@@ -293,14 +370,39 @@ class Graphics : LoggableUnit
         int error = 0;
         while (y >= x)
         {
-            points ~= Vector2d(centerX + x, centerY + y);
-            points ~= Vector2d(centerX + x, centerY - y);
-            points ~= Vector2d(centerX - x, centerY + y);
-            points ~= Vector2d(centerX - x, centerY - y);
-            points ~= Vector2d(centerX + y, centerY + x);
-            points ~= Vector2d(centerX + y, centerY - x);
-            points ~= Vector2d(centerX - y, centerY + x);
-            points ~= Vector2d(centerX - y, centerY - x);
+            if (!onPoint(Vector2d(centerX + x, centerY + y)))
+            {
+                return;
+            }
+            if (!onPoint(Vector2d(centerX + x, centerY - y)))
+            {
+                return;
+            }
+            if (!onPoint(Vector2d(centerX - x, centerY + y)))
+            {
+                return;
+            }
+            if (!onPoint(Vector2d(centerX - x, centerY - y)))
+            {
+                return;
+            }
+            if (!onPoint(Vector2d(centerX + y, centerY + x)))
+            {
+                return;
+            }
+            if (!onPoint(Vector2d(centerX + y, centerY - x)))
+            {
+                return;
+            }
+            if (!onPoint(Vector2d(centerX - y, centerY + x)))
+            {
+                return;
+            }
+            if (!onPoint(Vector2d(centerX - y, centerY - x)))
+            {
+                return;
+            }
+
             error = 2 * (delta + y) - 1;
             if ((delta < 0) && (error <= 0))
             {
@@ -316,19 +418,10 @@ class Graphics : LoggableUnit
 
             delta += 2 * (++x - --y);
         }
-
-        return points;
     }
 
-    void triangle(Vector2d v1, Vector2d v2, Vector2d v3, RGBA fillColor = defaultColor, bool isOnlyVertex = false)
+    void fillTriangle(Vector2d v1, Vector2d v2, Vector2d v3, RGBA fillColor)
     {
-        if (isOnlyVertex)
-        {
-            point(v1, fillColor);
-            point(v2, fillColor);
-            point(v3, fillColor);
-            return;
-        }
         scope Vector2d[] side1LinePoints = linePoints(v1.x, v1.y, v2.x, v2.y);
         scope Vector2d[] side2LinePoints = linePoints(v3.x, v3.y, v2.x, v2.y);
         fillPolyLines(side1LinePoints, side2LinePoints, fillColor);
@@ -336,8 +429,16 @@ class Graphics : LoggableUnit
 
     void circle(double centerX, double centerY, double radius, RGBA fillColor = defaultColor)
     {
-        setColor(fillColor);
+        changeColor(fillColor);
+        scope (exit)
+        {
+            restoreColor;
+        }
+        circle(centerX, centerY, radius);
+    }
 
+    void circle(double centerX, double centerY, double radius)
+    {
         int xCenter = toInt(centerX);
         int yCenter = toInt(centerY);
 
@@ -392,22 +493,55 @@ class Graphics : LoggableUnit
         circle(centerX, centerY, r - style.lineWidth, style.fillColor);
     }
 
+    void fillRect(Vector2d pos, double width, double height, RGBA fillColor = defaultColor)
+    {
+        fillRect(pos.x, pos.y, width, height, fillColor);
+    }
+
     void fillRect(double x, double y, double width, double height, RGBA fillColor = defaultColor)
     {
-        setColor(fillColor);
+        changeColor(fillColor);
+        scope (exit)
+        {
+            restoreColor;
+        }
         if (const err = renderer.fillRect(toInt(x), toInt(y), toInt(width), toInt(height)))
         {
             logger.errorf("Fill rect error. %s", err);
         }
     }
 
+    void rect(Vector2d pos, double width, double height, RGBA color = defaultColor)
+    {
+        rect(pos.x, pos.y, width, height, color);
+    }
+
     void rect(double x, double y, double width, double height, RGBA color = defaultColor)
     {
-        setColor(color);
+        changeColor(color);
+        scope (exit)
+        {
+            restoreColor;
+        }
+        rect(x, y, width, height);
+    }
+
+    void rect(Vector2d pos, double width, double height)
+    {
+        rect(pos.x, pos.y, width, height);
+    }
+
+    void rect(double x, double y, double width, double height)
+    {
         if (const err = renderer.rect(toInt(x), toInt(y), toInt(width), toInt(height)))
         {
             logger.errorf("Draw rect error. %s", err);
         }
+    }
+
+    void rect(Vector2d pos, double width, double height, GraphicStyle style = GraphicStyle.simple)
+    {
+        rect(pos.x, pos.y, width, height, style);
     }
 
     void rect(double x, double y, double width, double height, GraphicStyle style = GraphicStyle
@@ -429,8 +563,20 @@ class Graphics : LoggableUnit
     void bezier(Vector2d p0, RGBA color, scope Vector2d delegate(double v) onInterpValue, bool delegate(
             Vector2d) onPoint = null)
     {
-        setColor(color);
-        enum delta = 0.01; //100 segments
+        changeColor(color);
+        scope (exit)
+        {
+            restoreColor;
+        }
+        bezier(p0, onInterpValue, onPoint);
+    }
+
+    void bezier(Vector2d p0,
+        scope Vector2d delegate(double v) onInterpValue,
+        bool delegate(Vector2d) onPoint = null,
+        double delta = 0.01)
+    {
+        //enum delta = 0.01; //100 segments
         Vector2d start = p0;
         //TODO exact comparison of doubles?
         for (double i = 0; i < 1; i += delta)
@@ -446,16 +592,16 @@ class Graphics : LoggableUnit
         }
     }
 
-    void bezier(Vector2d p0, Vector2d p1, Vector2d p2, RGBA color, bool delegate(
+    void bezier(Vector2d p0, Vector2d p1, Vector2d p2, scope bool delegate(
             Vector2d) onPoint = null)
     {
-        bezier(p0, color, (t) { return bezierInterp(p0, p1, p2, t); }, onPoint);
+        bezier(p0, (t) { return bezierInterp(p0, p1, p2, t); }, onPoint);
     }
 
-    void bezier(Vector2d p0, Vector2d p1, Vector2d p2, Vector2d p3, RGBA color, bool delegate(
+    void bezier(Vector2d p0, Vector2d p1, Vector2d p2, Vector2d p3, scope bool delegate(
             Vector2d) onPoint = null)
     {
-        bezier(p0, color, (t) { return bezierInterp(p0, p1, p2, p3, t); }, onPoint);
+        bezier(p0, (t) { return bezierInterp(p0, p1, p2, p3, t); }, onPoint);
     }
 
     private Vector2d bezierInterp(Vector2d p0, Vector2d p1, Vector2d p2, Vector2d p3, double t) @nogc nothrow pure @safe
@@ -480,7 +626,17 @@ class Graphics : LoggableUnit
         return result;
     }
 
-    bool fillPolyLines(Vector2d[] vertexStart, Vector2d[] vertexEnd, RGBA fillColor = defaultColor)
+    bool fillPolyLines(Vector2d[] vertexStart, Vector2d[] vertexEnd, RGBA fillColor)
+    {
+        changeColor(fillColor);
+        scope (exit)
+        {
+            restoreColor;
+        }
+        return fillPolyLines(vertexStart, vertexEnd);
+    }
+
+    bool fillPolyLines(Vector2d[] vertexStart, Vector2d[] vertexEnd)
     {
         foreach (i, vStart; vertexStart)
         {
@@ -489,7 +645,7 @@ class Graphics : LoggableUnit
                 break;
             }
             const vEnd = vertexEnd[i];
-            line(vStart, vEnd, fillColor);
+            line(vStart, vEnd);
         }
         return true;
     }

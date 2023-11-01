@@ -1337,24 +1337,24 @@ class Sprite : EventKitTarget
 
         const debugColor = RGBA.red;
 
-        const prevColor = graphics.setColor(debugColor);
+        graphics.changeColor(debugColor);
 
         const b = bounds;
         //graphics.rect(b.x, b.y, b.width, b.height, GraphicStyle(1, RGBA.red));
         const double leftTopX = b.x, leftTopY = b.y;
 
         const double rightTopX = leftTopX + b.width, rightTopY = leftTopY;
-        graphics.line(leftTopX, leftTopY, rightTopX, rightTopY, debugColor);
+        graphics.line(leftTopX, leftTopY, rightTopX, rightTopY);
 
         const double rightBottomX = rightTopX, rightBottomY = rightTopY + b.height;
-        graphics.line(rightTopX, rightTopY, rightBottomX, rightBottomY, debugColor);
+        graphics.line(rightTopX, rightTopY, rightBottomX, rightBottomY);
 
         const double leftBottomX = leftTopX, leftBottomY = leftTopY + b.height;
-        graphics.line(rightBottomX, rightBottomY, leftBottomX, leftBottomY, debugColor);
+        graphics.line(rightBottomX, rightBottomY, leftBottomX, leftBottomY);
 
-        graphics.line(leftBottomX, leftBottomY, leftTopX, leftTopY, debugColor);
+        graphics.line(leftBottomX, leftBottomY, leftTopX, leftTopY);
 
-        graphics.setColor(prevColor);
+        graphics.restoreColor;
     }
 
     void drawAllBounds(bool isDraw)
