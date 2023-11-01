@@ -1,8 +1,8 @@
-module deltotum.kit.graphics.colors.palettes.html4_palette;
+module deltotum.kit.graphics.colors.palettes.basic_palette;
 /**
  * Authors: initkfs
  */
-enum Html4Palette : string
+enum BasicPalette : string
 {
     aqua = "#00ffff",
     black = "#000000",

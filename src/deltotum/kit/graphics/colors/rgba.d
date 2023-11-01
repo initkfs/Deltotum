@@ -1,34 +1,37 @@
 module deltotum.kit.graphics.colors.rgba;
 
-import deltotum.kit.graphics.colors.palettes.html4_palette : Html4Palette;
+import deltotum.kit.graphics.colors.palettes.extended_palette : ExtendedPalette;
 import deltotum.kit.graphics.colors.hsv : HSV;
 
 import std.regex;
 import std.conv : to;
+import std.traits : EnumMembers;
+
+private
+{
+    debug
+    {
+    }
+    else
+    {
+        enum hexRegexCt = ctRegex!(`^(0x|#)([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$`);
+    }
+
+    immutable webColorsNames = __traits(allMembers, ExtendedPalette);
+    immutable string[webColorsNames.length] webColorsValues = [
+        EnumMembers!ExtendedPalette
+    ];
+}
 
 /**
  * Authors: initkfs
  */
 struct RGBA
 {
-    //full names conflict with static color factories
     ubyte r;
     ubyte g;
     ubyte b;
     double a = 1;
-
-    private
-    {
-
-        debug
-        {
-            //TODO placeholder
-        }
-        else
-        {
-            enum hexRegexRGB = ctRegex!(`^(0x|#)([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$`);
-        }
-    }
 
     static enum
     {
@@ -36,45 +39,6 @@ struct RGBA
         maxColor = 255,
         minAlpha = 0,
         maxAlpha = 1
-    }
-
-    static
-    {
-        //TODO meta
-        RGBA transparent() @nogc nothrow pure @safe
-        {
-            return RGBA(0, 0, 0, 0);
-        }
-
-        RGBA white() @nogc nothrow pure @safe
-        {
-            return RGBA(255, 255, 255);
-        }
-
-        RGBA black() @nogc nothrow pure @safe
-        {
-            return RGBA(0, 0, 0);
-        }
-
-        RGBA red() @nogc nothrow pure @safe
-        {
-            return RGBA(255, 0, 0);
-        }
-
-        RGBA green() @nogc nothrow pure @safe
-        {
-            return RGBA(0, 128, 0);
-        }
-
-        RGBA blue() @nogc nothrow pure @safe
-        {
-            return RGBA(0, 0, 255);
-        }
-
-        static RGBA gray(ubyte grayColor, double a = maxAlpha) @nogc nothrow pure @safe
-        {
-            return RGBA(grayColor, grayColor, grayColor, a);
-        }
     }
 
     static RGBA rgba(ubyte r = maxColor, ubyte g = maxColor, ubyte b = maxColor, double a = maxAlpha) @nogc nothrow pure @safe
@@ -85,50 +49,63 @@ struct RGBA
 
     static RGBA web(string colorString, double a = maxAlpha) pure @safe
     {
-        import std.traits : EnumMembers;
+        if (colorString.length == 0)
+        {
+            throw new Exception("Hex color string must not be empty");
+        }
+
+        string mustBeColor;
+
+        import std.ascii : isAlpha;
         import std.uni : sicmp;
 
-        string webString = colorString;
-
-        enum htmlColorsNames = __traits(allMembers, Html4Palette);
-        enum string[htmlColorsNames.length] htmlColorsValues = [
-                EnumMembers!Html4Palette
-            ];
-
-        foreach (i, colorName; htmlColorsNames)
+        if (!colorString[0].isAlpha)
         {
-            if (sicmp(colorName, colorString) == 0)
+            mustBeColor = colorString;
+        }
+        else
+        {
+            foreach (i, colorName; webColorsNames)
             {
-                webString = htmlColorsValues[i];
+                //TODO check cmp\icmp perfomance
+                if (sicmp(colorName, colorString) == 0)
+                {
+                    mustBeColor = webColorsValues[i];
+                    break;
+                }
+            }
+
+            if (mustBeColor.length == 0)
+            {
+                throw new Exception("Invalid web color name: " ~ colorString);
             }
         }
 
         debug
         {
-            auto mustBeColor = webString;
         }
         else
         {
-            auto mustBeMatchColor = matchFirst(webString, hexRegexRGB);
-            if (mustBeMatchColor.empty)
+            if (!__ctfe)
             {
-                throw new Exception("Wrong hex color representation: " ~ webString);
+                //matchAll impure
+                auto mustBeMatchColor = matchFirst(mustBeColor, hexRegexCt);
+                if (mustBeMatchColor.empty)
+                {
+                    throw new Exception(
+                        "Invalid hex color format: string does not match hexadecimal pattern: " ~ mustBeColor);
+                }
+                mustBeColor = mustBeMatchColor[0];
             }
-
-            auto mustBeColor = mustBeMatchColor[0];
         }
 
         import std.algorithm.searching : startsWith;
 
         enum webPrefix = "#";
         enum hexPrefix = "0x";
-        if (mustBeColor.startsWith(webPrefix))
+        if (mustBeColor.startsWith(webPrefix) || mustBeColor.startsWith(hexPrefix))
         {
-            mustBeColor = mustBeColor[1 .. $];
-        }
-        else if (mustBeColor.startsWith(hexPrefix))
-        {
-            mustBeColor = mustBeColor[2 .. $];
+            mustBeColor = mustBeColor[webPrefix.length .. $];
         }
 
         enum fullColorFormLength = 6;
@@ -151,6 +128,10 @@ struct RGBA
             rValue = to!ubyte(replicate(mustBeColor[0 .. 1], replicateCount), hexBase);
             gValue = to!ubyte(replicate(mustBeColor[1 .. 2], replicateCount), hexBase);
             bValue = to!ubyte(replicate(mustBeColor[2 .. 3], replicateCount), hexBase);
+        }
+        else
+        {
+            throw new Exception("Invalid hexadecimal RGBA value: " ~ mustBeColor);
         }
 
         RGBA c = {rValue, gValue, bValue, a};
@@ -179,11 +160,6 @@ struct RGBA
         auto bValue = to!ubyte(start.b + (end.b - start.b) * factor);
         auto alphaValue = to!ubyte(start.a + (end.a - start.a) * factor);
         return RGBA(rValue, gValue, bValue, alphaValue);
-    }
-
-    ubyte aNorm() const pure @safe
-    {
-        return to!ubyte(a * maxColor);
     }
 
     string toWebHex() const pure @safe
@@ -256,30 +232,18 @@ struct RGBA
         return colorValue / maxColor;
     }
 
-    double rNorm() const pure @safe
-    {
-        return colorNorm(r);
-    }
-
-    double gNorm() const pure @safe
-    {
-        return colorNorm(g);
-    }
-
-    double bNorm() const pure @safe
-    {
-        return colorNorm(b);
-    }
+    double rNorm() const pure @safe => colorNorm(r);
+    double gNorm() const pure @safe => colorNorm(g);
+    double bNorm() const pure @safe => colorNorm(b);
+    ubyte aNorm() const pure @safe => to!ubyte(a * maxColor);
 
     bool isMin() const pure @safe
     {
-        enum minColor = minColor;
         return r == minColor && g == minColor && b == minColor && a == minColor;
     }
 
     bool isMax() const pure @safe
     {
-        enum maxColor = maxColor;
         return r == maxColor && g == maxColor && b == maxColor && a == maxAlpha;
     }
 
@@ -410,6 +374,167 @@ struct RGBA
         return HSV(hue, saturation, value);
     }
 
+    static
+    {
+        // static foreach (i, colorName; webColorsNames)
+        // {
+        //     mixin(
+        //         "typeof(this) ", colorName, "() @nogc nothrow pure @safe { ",
+        //         "return ", "typeof(this)", ".web(\"", webColorsValues[i], "\");",
+        //         "}"
+        //     );
+        // }
+
+        RGBA transparent() @nogc nothrow pure @safe => RGBA(0, 0, 0, 0);
+
+        RGBA aliceblue() @nogc nothrow pure @safe => RGBA(240, 248, 255);
+        RGBA antiquewhite() @nogc nothrow pure @safe => RGBA(250, 235, 215);
+        RGBA aqua() @nogc nothrow pure @safe => RGBA(0, 255, 255);
+        RGBA aquamarine() @nogc nothrow pure @safe => RGBA(127, 255, 212);
+        RGBA azure() @nogc nothrow pure @safe => RGBA(240, 255, 255);
+        RGBA beige() @nogc nothrow pure @safe => RGBA(245, 245, 220);
+        RGBA bisque() @nogc nothrow pure @safe => RGBA(255, 228, 196);
+        RGBA black() @nogc nothrow pure @safe => RGBA(0, 0, 0);
+        RGBA blanchedalmond() @nogc nothrow pure @safe => RGBA(255, 235, 205);
+        RGBA blue() @nogc nothrow pure @safe => RGBA(0, 0, 255);
+        RGBA blueviolet() @nogc nothrow pure @safe => RGBA(138, 43, 226);
+        RGBA brown() @nogc nothrow pure @safe => RGBA(165, 42, 42);
+        RGBA burlywood() @nogc nothrow pure @safe => RGBA(222, 184, 135);
+        RGBA cadetblue() @nogc nothrow pure @safe => RGBA(95, 158, 160);
+        RGBA chartreuse() @nogc nothrow pure @safe => RGBA(127, 255, 0);
+        RGBA chocolate() @nogc nothrow pure @safe => RGBA(210, 105, 30);
+        RGBA coral() @nogc nothrow pure @safe => RGBA(255, 127, 80);
+        RGBA cornflowerblue() @nogc nothrow pure @safe => RGBA(100, 149, 237);
+        RGBA cornsilk() @nogc nothrow pure @safe => RGBA(255, 248, 220);
+        RGBA crimson() @nogc nothrow pure @safe => RGBA(220, 20, 60);
+        RGBA cyan() @nogc nothrow pure @safe => RGBA(0, 255, 255);
+        RGBA darkblue() @nogc nothrow pure @safe => RGBA(0, 0, 139);
+        RGBA darkcyan() @nogc nothrow pure @safe => RGBA(0, 139, 139);
+        RGBA darkgoldenrod() @nogc nothrow pure @safe => RGBA(184, 134, 11);
+        RGBA darkgray() @nogc nothrow pure @safe => RGBA(169, 169, 169);
+        RGBA darkgreen() @nogc nothrow pure @safe => RGBA(0, 100, 0);
+        RGBA darkgrey() @nogc nothrow pure @safe => RGBA(169, 169, 169);
+        RGBA darkkhaki() @nogc nothrow pure @safe => RGBA(189, 183, 107);
+        RGBA darkmagenta() @nogc nothrow pure @safe => RGBA(139, 0, 139);
+        RGBA darkolivegreen() @nogc nothrow pure @safe => RGBA(85, 107, 47);
+        RGBA darkorange() @nogc nothrow pure @safe => RGBA(255, 140, 0);
+        RGBA darkorchid() @nogc nothrow pure @safe => RGBA(153, 50, 204);
+        RGBA darkred() @nogc nothrow pure @safe => RGBA(139, 0, 0);
+        RGBA darksalmon() @nogc nothrow pure @safe => RGBA(233, 150, 122);
+        RGBA darkseagreen() @nogc nothrow pure @safe => RGBA(143, 188, 143);
+        RGBA darkslateblue() @nogc nothrow pure @safe => RGBA(72, 61, 139);
+        RGBA darkslategray() @nogc nothrow pure @safe => RGBA(47, 79, 79);
+        RGBA darkslategrey() @nogc nothrow pure @safe => RGBA(47, 79, 79);
+        RGBA darkturquoise() @nogc nothrow pure @safe => RGBA(0, 206, 209);
+        RGBA darkviolet() @nogc nothrow pure @safe => RGBA(148, 0, 211);
+        RGBA deeppink() @nogc nothrow pure @safe => RGBA(255, 20, 147);
+        RGBA deepskyblue() @nogc nothrow pure @safe => RGBA(0, 191, 255);
+        RGBA dimgray() @nogc nothrow pure @safe => RGBA(105, 105, 105);
+        RGBA dimgrey() @nogc nothrow pure @safe => RGBA(105, 105, 105);
+        RGBA dodgerblue() @nogc nothrow pure @safe => RGBA(30, 144, 255);
+        RGBA firebrick() @nogc nothrow pure @safe => RGBA(178, 34, 34);
+        RGBA floralwhite() @nogc nothrow pure @safe => RGBA(255, 250, 240);
+        RGBA forestgreen() @nogc nothrow pure @safe => RGBA(34, 139, 34);
+        RGBA fuchsia() @nogc nothrow pure @safe => RGBA(255, 0, 255);
+        RGBA gainsboro() @nogc nothrow pure @safe => RGBA(220, 220, 220);
+        RGBA ghostwhite() @nogc nothrow pure @safe => RGBA(248, 248, 255);
+        RGBA gold() @nogc nothrow pure @safe => RGBA(255, 215, 0);
+        RGBA goldenrod() @nogc nothrow pure @safe => RGBA(218, 165, 32);
+        RGBA gray() @nogc nothrow pure @safe => RGBA(128, 128, 128);
+        RGBA green() @nogc nothrow pure @safe => RGBA(0, 128, 0);
+        RGBA greenyellow() @nogc nothrow pure @safe => RGBA(173, 255, 47);
+        RGBA grey() @nogc nothrow pure @safe => RGBA(128, 128, 128);
+        RGBA honeydew() @nogc nothrow pure @safe => RGBA(240, 255, 240);
+        RGBA hotpink() @nogc nothrow pure @safe => RGBA(255, 105, 180);
+        RGBA indianred() @nogc nothrow pure @safe => RGBA(205, 92, 92);
+        RGBA indigo() @nogc nothrow pure @safe => RGBA(75, 0, 130);
+        RGBA ivory() @nogc nothrow pure @safe => RGBA(255, 255, 240);
+        RGBA khaki() @nogc nothrow pure @safe => RGBA(240, 230, 140);
+        RGBA lavender() @nogc nothrow pure @safe => RGBA(230, 230, 250);
+        RGBA lavenderblush() @nogc nothrow pure @safe => RGBA(255, 240, 245);
+        RGBA lawngreen() @nogc nothrow pure @safe => RGBA(124, 252, 0);
+        RGBA lemonchiffon() @nogc nothrow pure @safe => RGBA(255, 250, 205);
+        RGBA lightblue() @nogc nothrow pure @safe => RGBA(173, 216, 230);
+        RGBA lightcoral() @nogc nothrow pure @safe => RGBA(240, 128, 128);
+        RGBA lightcyan() @nogc nothrow pure @safe => RGBA(224, 255, 255);
+        RGBA lightgoldenrodyellow() @nogc nothrow pure @safe => RGBA(250, 250, 210);
+        RGBA lightgray() @nogc nothrow pure @safe => RGBA(211, 211, 211);
+        RGBA lightgreen() @nogc nothrow pure @safe => RGBA(144, 238, 144);
+        RGBA lightgrey() @nogc nothrow pure @safe => RGBA(211, 211, 211);
+        RGBA lightpink() @nogc nothrow pure @safe => RGBA(255, 182, 193);
+        RGBA lightsalmon() @nogc nothrow pure @safe => RGBA(255, 160, 122);
+        RGBA lightseagreen() @nogc nothrow pure @safe => RGBA(32, 178, 170);
+        RGBA lightskyblue() @nogc nothrow pure @safe => RGBA(135, 206, 250);
+        RGBA lightslategray() @nogc nothrow pure @safe => RGBA(119, 136, 153);
+        RGBA lightslategrey() @nogc nothrow pure @safe => RGBA(119, 136, 153);
+        RGBA lightsteelblue() @nogc nothrow pure @safe => RGBA(176, 196, 222);
+        RGBA lightyellow() @nogc nothrow pure @safe => RGBA(255, 255, 224);
+        RGBA lime() @nogc nothrow pure @safe => RGBA(0, 255, 0);
+        RGBA limegreen() @nogc nothrow pure @safe => RGBA(50, 205, 50);
+        RGBA linen() @nogc nothrow pure @safe => RGBA(250, 240, 230);
+        RGBA magenta() @nogc nothrow pure @safe => RGBA(255, 0, 255);
+        RGBA maroon() @nogc nothrow pure @safe => RGBA(128, 0, 0);
+        RGBA mediumaquamarine() @nogc nothrow pure @safe => RGBA(102, 205, 170);
+        RGBA mediumblue() @nogc nothrow pure @safe => RGBA(0, 0, 205);
+        RGBA mediumorchid() @nogc nothrow pure @safe => RGBA(186, 85, 211);
+        RGBA mediumpurple() @nogc nothrow pure @safe => RGBA(147, 112, 219);
+        RGBA mediumseagreen() @nogc nothrow pure @safe => RGBA(60, 179, 113);
+        RGBA mediumslateblue() @nogc nothrow pure @safe => RGBA(123, 104, 238);
+        RGBA mediumspringgreen() @nogc nothrow pure @safe => RGBA(0, 250, 154);
+        RGBA mediumturquoise() @nogc nothrow pure @safe => RGBA(72, 209, 204);
+        RGBA mediumvioletred() @nogc nothrow pure @safe => RGBA(199, 21, 133);
+        RGBA midnightblue() @nogc nothrow pure @safe => RGBA(25, 25, 112);
+        RGBA mintcream() @nogc nothrow pure @safe => RGBA(245, 255, 250);
+        RGBA mistyrose() @nogc nothrow pure @safe => RGBA(255, 228, 225);
+        RGBA moccasin() @nogc nothrow pure @safe => RGBA(255, 228, 181);
+        RGBA navajowhite() @nogc nothrow pure @safe => RGBA(255, 222, 173);
+        RGBA navy() @nogc nothrow pure @safe => RGBA(0, 0, 128);
+        RGBA oldlace() @nogc nothrow pure @safe => RGBA(253, 245, 230);
+        RGBA olive() @nogc nothrow pure @safe => RGBA(128, 128, 0);
+        RGBA olivedrab() @nogc nothrow pure @safe => RGBA(107, 142, 35);
+        RGBA orange() @nogc nothrow pure @safe => RGBA(255, 165, 0);
+        RGBA orangered() @nogc nothrow pure @safe => RGBA(255, 69, 0);
+        RGBA orchid() @nogc nothrow pure @safe => RGBA(218, 112, 214);
+        RGBA palegoldenrod() @nogc nothrow pure @safe => RGBA(238, 232, 170);
+        RGBA palegreen() @nogc nothrow pure @safe => RGBA(152, 251, 152);
+        RGBA paleturquoise() @nogc nothrow pure @safe => RGBA(175, 238, 238);
+        RGBA palevioletred() @nogc nothrow pure @safe => RGBA(219, 112, 147);
+        RGBA papayawhip() @nogc nothrow pure @safe => RGBA(255, 239, 213);
+        RGBA peachpuff() @nogc nothrow pure @safe => RGBA(255, 218, 185);
+        RGBA peru() @nogc nothrow pure @safe => RGBA(205, 133, 63);
+        RGBA pink() @nogc nothrow pure @safe => RGBA(255, 192, 203);
+        RGBA plum() @nogc nothrow pure @safe => RGBA(221, 160, 221);
+        RGBA powderblue() @nogc nothrow pure @safe => RGBA(176, 224, 230);
+        RGBA purple() @nogc nothrow pure @safe => RGBA(128, 0, 128);
+        RGBA red() @nogc nothrow pure @safe => RGBA(255, 0, 0);
+        RGBA rosybrown() @nogc nothrow pure @safe => RGBA(188, 143, 143);
+        RGBA royalblue() @nogc nothrow pure @safe => RGBA(65, 105, 225);
+        RGBA saddlebrown() @nogc nothrow pure @safe => RGBA(139, 69, 19);
+        RGBA salmon() @nogc nothrow pure @safe => RGBA(250, 128, 114);
+        RGBA sandybrown() @nogc nothrow pure @safe => RGBA(244, 164, 96);
+        RGBA seagreen() @nogc nothrow pure @safe => RGBA(46, 139, 87);
+        RGBA seashell() @nogc nothrow pure @safe => RGBA(255, 245, 238);
+        RGBA sienna() @nogc nothrow pure @safe => RGBA(160, 82, 45);
+        RGBA silver() @nogc nothrow pure @safe => RGBA(192, 192, 192);
+        RGBA skyblue() @nogc nothrow pure @safe => RGBA(135, 206, 235);
+        RGBA slateblue() @nogc nothrow pure @safe => RGBA(106, 90, 205);
+        RGBA slategray() @nogc nothrow pure @safe => RGBA(112, 128, 144);
+        RGBA slategrey() @nogc nothrow pure @safe => RGBA(112, 128, 144);
+        RGBA snow() @nogc nothrow pure @safe => RGBA(255, 250, 250);
+        RGBA springgreen() @nogc nothrow pure @safe => RGBA(0, 255, 127);
+        RGBA steelblue() @nogc nothrow pure @safe => RGBA(70, 130, 180);
+        RGBA tan() @nogc nothrow pure @safe => RGBA(210, 180, 140);
+        RGBA teal() @nogc nothrow pure @safe => RGBA(0, 128, 128);
+        RGBA thistle() @nogc nothrow pure @safe => RGBA(216, 191, 216);
+        RGBA tomato() @nogc nothrow pure @safe => RGBA(255, 99, 71);
+        RGBA turquoise() @nogc nothrow pure @safe => RGBA(64, 224, 208);
+        RGBA violet() @nogc nothrow pure @safe => RGBA(238, 130, 238);
+        RGBA wheat() @nogc nothrow pure @safe => RGBA(245, 222, 179);
+        RGBA white() @nogc nothrow pure @safe => RGBA(255, 255, 255);
+        RGBA whitesmoke() @nogc nothrow pure @safe => RGBA(245, 245, 245);
+        RGBA yellow() @nogc nothrow pure @safe => RGBA(255, 255, 0);
+        RGBA yellowgreen() @nogc nothrow pure @safe => RGBA(154, 205, 50);
+    }
 }
 
 unittest
@@ -469,6 +594,14 @@ unittest
     assert(white.r == 255);
     assert(white.g == 255);
     assert(white.b == 255);
+}
+
+unittest
+{
+    RGBA r = RGBA.red;
+    assert(r == RGBA.web("#ff0000"));
+    RGBA g = RGBA.green;
+    assert(g == RGBA.web("#008000"));
 }
 
 unittest
