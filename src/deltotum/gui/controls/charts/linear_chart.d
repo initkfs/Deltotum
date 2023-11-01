@@ -4,7 +4,7 @@ import deltotum.gui.controls.control : Control;
 import deltotum.math.vector2d : Vector2d;
 import deltotum.math.geom.insets : Insets;
 import deltotum.kit.graphics.colors.rgba : RGBA;
-import deltotum.kit.graphics.colors.palettes.material_design_palette : MaterialDesignPalette;
+import deltotum.kit.graphics.colors.palettes.material_palette : MaterialPalette;
 import deltotum.gui.containers.container : Container;
 import deltotum.gui.controls.texts.text: Text;
 
@@ -171,7 +171,7 @@ class LinearChart : Container
                 continue;
             }
 
-            graphics.drawPoint(drawX, drawY);
+            graphics.point(drawX, drawY);
         }
         return true;
     }
@@ -184,10 +184,10 @@ class LinearChart : Container
         const minYPos = height - _referencePoint.y;
         const maxYPos = padding.top;
 
-        graphics.drawLine(x + minXPos, y + minYPos, x + maxXPos, y + minYPos, RGBA.web(
-                MaterialDesignPalette.green300));
-        graphics.drawLine(x + minXPos, y + minYPos, x + minXPos, y + maxYPos, RGBA.web(
-                MaterialDesignPalette.yellow300));
+        graphics.line(x + minXPos, y + minYPos, x + maxXPos, y + minYPos, RGBA.web(
+                MaterialPalette.green300));
+        graphics.line(x + minXPos, y + minYPos, x + minXPos, y + maxYPos, RGBA.web(
+                MaterialPalette.yellow300));
 
     }
 

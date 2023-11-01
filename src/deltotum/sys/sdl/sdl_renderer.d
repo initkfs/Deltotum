@@ -127,31 +127,31 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         return ComResult(zeroOrErrCode);
     }
 
-    ComResult drawRect(int x, int y, int width, int height)
+    ComResult rect(int x, int y, int width, int height)
     {
-        SDL_Rect rect = {x, y, width, height};
-        return drawRect(&rect);
+        SDL_Rect r = {x, y, width, height};
+        return rect(&r);
     }
 
-    ComResult drawRect(const SDL_Rect* rect) @nogc nothrow
+    ComResult rect(const SDL_Rect* r) @nogc nothrow
     {
-        const int zeroOrErrorCode = SDL_RenderDrawRect(ptr, rect);
+        const int zeroOrErrorCode = SDL_RenderDrawRect(ptr, r);
         return ComResult(zeroOrErrorCode);
     }
 
-    ComResult drawPoint(int x, int y) @nogc nothrow
+    ComResult point(int x, int y) @nogc nothrow
     {
         const int zeroOrErrorCode = SDL_RenderDrawPoint(ptr, x, y);
         return ComResult(zeroOrErrorCode);
     }
 
-    ComResult drawLine(int startX, int startY, int endX, int endY) @nogc nothrow
+    ComResult line(int startX, int startY, int endX, int endY) @nogc nothrow
     {
         const int zeroOrErrorCode = SDL_RenderDrawLine(ptr, startX, startY, endX, endY);
         return ComResult(zeroOrErrorCode);
     }
 
-    ComResult drawLines(Vector2d[] linePoints) nothrow
+    ComResult lines(Vector2d[] linePoints) nothrow
     {
         import std.algorithm.iteration : map;
         import std.array : array;

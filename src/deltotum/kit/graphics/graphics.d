@@ -55,6 +55,7 @@ class Graphics : LoggableUnit
         this.theme = theme;
     }
 
+    //TODO remove sdl api
     SdlTexture newComTexture()
     {
         assert(comTextureFactory);
@@ -62,6 +63,7 @@ class Graphics : LoggableUnit
         return texture;
     }
 
+    //TODO remove sdl api
     SdlSurface newComSurface()
     {
         assert(comSurfaceFactory);
@@ -69,18 +71,27 @@ class Graphics : LoggableUnit
         return surface;
     }
 
-    //inline?
+    pragma(inline, true)
     private int toInt(double value) pure @safe const nothrow
     {
         return cast(int) value;
+    }
+
+    Rect2d getClip()
+    {
+        Rect2d clip;
+        if (const err = renderer.getClipRect(clip))
+        {
+            logger.error("Error receiving clipping. ", err.toString);
+        }
+        return clip;
     }
 
     void setClip(Rect2d clipRect)
     {
         if (const err = renderer.setClipRect(clipRect))
         {
-            //TODO log
-            throw new Exception(err.toString);
+            logger.error("Error setting clipping. ", err.toString);
         }
     }
 
@@ -88,17 +99,11 @@ class Graphics : LoggableUnit
     {
         if (const err = renderer.removeClipRect)
         {
-            throw new Exception(err.toString);
+            logger.error("Error removing clipping. ", err.toString);
         }
     }
 
-    void setColor(RGBA color = defaultColor)
-    {
-        adjustRender(color);
-    }
-
-    //TODO Remove color change
-    RGBA adjustRender(RGBA color = defaultColor)
+    RGBA setColor(RGBA color = defaultColor)
     {
         RGBA prevColor;
         ubyte r, g, b, a;
@@ -118,55 +123,80 @@ class Graphics : LoggableUnit
         return prevColor;
     }
 
-    void drawLine(double startX, double startY, double endX, double endY)
+    void line(double startX, double startY, double endX, double endY)
     {
-        if (const err = renderer.drawLine(toInt(startX), toInt(startY), toInt(endX), toInt(endY)))
+        if (const err = renderer.line(toInt(startX), toInt(startY), toInt(endX), toInt(endY)))
         {
-            logger.errorf("Line drawing error. %s", err);
+            logger.error("Line drawing error. ", err);
         }
     }
 
-    void drawLine(Vector2d start, Vector2d end, RGBA color = defaultColor)
+    void line(Vector2d start, Vector2d end)
     {
-        drawLine(start.x, start.y, end.x, end.y, color);
+        line(start.x, start.y, end.x, end.y);
     }
 
-    void drawLine(double startX, double startY, double endX, double endY, RGBA color = defaultColor)
+    void line(Vector2d start, Vector2d end, RGBA color = defaultColor)
     {
-        adjustRender(color);
-        drawLine(startX, startY, endX, endY);
+        line(start.x, start.y, end.x, end.y, color);
     }
 
-    void drawPoint(double x, double y, RGBA color = defaultColor)
+    void line(double startX, double startY, double endX, double endY, RGBA color = defaultColor)
     {
-        adjustRender(color);
-        if (const err = renderer.drawPoint(toInt(x), toInt(y)))
+        setColor(color);
+        line(startX, startY, endX, endY);
+    }
+
+    void lines(Vector2d[] points)
+    {
+        if (const err = renderer.lines(points))
+        {
+            logger.errorf("Lines drawing error. %s", err);
+        }
+    }
+
+    void lines(Vector2d[] points, RGBA color = defaultColor)
+    {
+        setColor(color);
+        lines(points);
+    }
+
+    void point(double x, double y)
+    {
+        if (const err = renderer.point(toInt(x), toInt(y)))
         {
             logger.errorf("Point drawing error. %s", err);
         }
     }
 
-    void drawPoint(Vector2d p, RGBA color = defaultColor)
+    void point(Vector2d p)
     {
-        drawPoint(p.x, p.y, color);
+        point(p.x, p.y);
     }
 
-    void drawPoints(Vector2d[] points, RGBA color = defaultColor)
+    void point(double x, double y, RGBA color = defaultColor)
     {
-        adjustRender(color);
+        setColor(color);
+        point(x, y);
+    }
+
+    void point(Vector2d p, RGBA color = defaultColor)
+    {
+        point(p.x, p.y, color);
+    }
+
+    void points(Vector2d[] points)
+    {
         foreach (p; points)
         {
-            drawPoint(p.x, p.y, color);
+            point(p.x, p.y);
         }
     }
 
-    void drawLines(Vector2d[] points, RGBA color = defaultColor)
+    void points(Vector2d[] p, RGBA color = defaultColor)
     {
-        adjustRender(color);
-        if (const err = renderer.drawLines(points))
-        {
-            logger.errorf("Lines drawing error. %s", err);
-        }
+        setColor(color);
+        points(p);
     }
 
     Vector2d[] linePoints(double startX, double startY, double endX, double endY) const nothrow pure @safe
@@ -290,13 +320,13 @@ class Graphics : LoggableUnit
         return points;
     }
 
-    void drawTriangle(Vector2d v1, Vector2d v2, Vector2d v3, RGBA fillColor = defaultColor, bool isOnlyVertex = false)
+    void triangle(Vector2d v1, Vector2d v2, Vector2d v3, RGBA fillColor = defaultColor, bool isOnlyVertex = false)
     {
         if (isOnlyVertex)
         {
-            drawPoint(v1, fillColor);
-            drawPoint(v2, fillColor);
-            drawPoint(v3, fillColor);
+            point(v1, fillColor);
+            point(v2, fillColor);
+            point(v3, fillColor);
             return;
         }
         scope Vector2d[] side1LinePoints = linePoints(v1.x, v1.y, v2.x, v2.y);
@@ -304,9 +334,9 @@ class Graphics : LoggableUnit
         fillPolyLines(side1LinePoints, side2LinePoints, fillColor);
     }
 
-    void drawCircle(double centerX, double centerY, double radius, RGBA fillColor = defaultColor)
+    void circle(double centerX, double centerY, double radius, RGBA fillColor = defaultColor)
     {
-        adjustRender(fillColor);
+        setColor(fillColor);
 
         int xCenter = toInt(centerX);
         int yCenter = toInt(centerY);
@@ -321,13 +351,13 @@ class Graphics : LoggableUnit
 
         while (yOffset >= xOffset)
         {
-            drawLine(xCenter - yOffset, yCenter + xOffset,
+            line(xCenter - yOffset, yCenter + xOffset,
                 xCenter + yOffset, yCenter + xOffset);
-            drawLine(xCenter - xOffset, yCenter + yOffset,
+            line(xCenter - xOffset, yCenter + yOffset,
                 xCenter + xOffset, yCenter + yOffset);
-            drawLine(xCenter - xOffset, yCenter - yOffset,
+            line(xCenter - xOffset, yCenter - yOffset,
                 xCenter + xOffset, yCenter - yOffset);
-            drawLine(xCenter - yOffset, yCenter - xOffset,
+            line(xCenter - yOffset, yCenter - xOffset,
                 xCenter + yOffset, yCenter - xOffset);
 
             if (decisionParam >= decisionOffset * xOffset)
@@ -349,57 +379,57 @@ class Graphics : LoggableUnit
         }
     }
 
-    void drawCircle(double centerX, double centerY, double r, GraphicStyle style = GraphicStyle
+    void circle(double centerX, double centerY, double r, GraphicStyle style = GraphicStyle
             .simple)
     {
         if (style.isFill && style.lineWidth == 0)
         {
-            drawCircle(centerX, centerY, r, style.fillColor);
+            circle(centerX, centerY, r, style.fillColor);
             return;
         }
 
-        drawCircle(centerX, centerY, r, style.lineColor);
-        drawCircle(centerX, centerY, r - style.lineWidth, style.fillColor);
+        circle(centerX, centerY, r, style.lineColor);
+        circle(centerX, centerY, r - style.lineWidth, style.fillColor);
     }
 
     void fillRect(double x, double y, double width, double height, RGBA fillColor = defaultColor)
     {
-        adjustRender(fillColor);
+        setColor(fillColor);
         if (const err = renderer.fillRect(toInt(x), toInt(y), toInt(width), toInt(height)))
         {
             logger.errorf("Fill rect error. %s", err);
         }
     }
 
-    void drawRect(double x, double y, double width, double height, RGBA color = defaultColor)
+    void rect(double x, double y, double width, double height, RGBA color = defaultColor)
     {
-        adjustRender(color);
-        if (const err = renderer.drawRect(toInt(x), toInt(y), toInt(width), toInt(height)))
+        setColor(color);
+        if (const err = renderer.rect(toInt(x), toInt(y), toInt(width), toInt(height)))
         {
             logger.errorf("Draw rect error. %s", err);
         }
     }
 
-    void drawRect(double x, double y, double width, double height, GraphicStyle style = GraphicStyle
+    void rect(double x, double y, double width, double height, GraphicStyle style = GraphicStyle
             .simple)
     {
         if (style.isFill && style.lineWidth == 0)
         {
-            drawRect(x, y, width, height, style.fillColor);
+            rect(x, y, width, height, style.fillColor);
             return;
         }
 
-        drawRect(x, y, width, height, style.lineColor);
+        rect(x, y, width, height, style.lineColor);
 
         const lineWidth = style.lineWidth;
-        drawRect(x + lineWidth, y + lineWidth, width - lineWidth * 2, height - lineWidth * 2, style
+        rect(x + lineWidth, y + lineWidth, width - lineWidth * 2, height - lineWidth * 2, style
                 .fillColor);
     }
 
-    void drawBezier(Vector2d p0, RGBA color, scope Vector2d delegate(double v) onInterpValue, bool delegate(
+    void bezier(Vector2d p0, RGBA color, scope Vector2d delegate(double v) onInterpValue, bool delegate(
             Vector2d) onPoint = null)
     {
-        adjustRender(color);
+        setColor(color);
         enum delta = 0.01; //100 segments
         Vector2d start = p0;
         //TODO exact comparison of doubles?
@@ -411,21 +441,21 @@ class Graphics : LoggableUnit
                 start = end;
                 continue;
             }
-            drawLine(toInt(start.x), toInt(start.y), toInt(end.x), toInt(end.y));
+            line(toInt(start.x), toInt(start.y), toInt(end.x), toInt(end.y));
             start = end;
         }
     }
 
-    void drawBezier(Vector2d p0, Vector2d p1, Vector2d p2, RGBA color, bool delegate(
+    void bezier(Vector2d p0, Vector2d p1, Vector2d p2, RGBA color, bool delegate(
             Vector2d) onPoint = null)
     {
-        drawBezier(p0, color, (t) { return bezierInterp(p0, p1, p2, t); }, onPoint);
+        bezier(p0, color, (t) { return bezierInterp(p0, p1, p2, t); }, onPoint);
     }
 
-    void drawBezier(Vector2d p0, Vector2d p1, Vector2d p2, Vector2d p3, RGBA color, bool delegate(
+    void bezier(Vector2d p0, Vector2d p1, Vector2d p2, Vector2d p3, RGBA color, bool delegate(
             Vector2d) onPoint = null)
     {
-        drawBezier(p0, color, (t) { return bezierInterp(p0, p1, p2, p3, t); }, onPoint);
+        bezier(p0, color, (t) { return bezierInterp(p0, p1, p2, p3, t); }, onPoint);
     }
 
     private Vector2d bezierInterp(Vector2d p0, Vector2d p1, Vector2d p2, Vector2d p3, double t) @nogc nothrow pure @safe
@@ -459,7 +489,7 @@ class Graphics : LoggableUnit
                 break;
             }
             const vEnd = vertexEnd[i];
-            drawLine(vStart, vEnd, fillColor);
+            line(vStart, vEnd, fillColor);
         }
         return true;
     }
@@ -479,7 +509,7 @@ class Graphics : LoggableUnit
         {
             if (const err = renderer.clear)
             {
-                //TODO loggong in main loop?
+                //TODO logging in main loop?
             }
         }
 

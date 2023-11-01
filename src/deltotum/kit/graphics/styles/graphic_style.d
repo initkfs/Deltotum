@@ -13,7 +13,7 @@ struct GraphicStyle
     bool isFill;
     RGBA fillColor = RGBA.transparent;
 
-    static GraphicStyle simple()
+    static GraphicStyle simple() @nogc pure @safe
     {
         return GraphicStyle(1.0, RGBA.white, false, RGBA.transparent);
     }

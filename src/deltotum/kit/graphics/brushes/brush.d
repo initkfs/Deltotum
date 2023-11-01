@@ -22,10 +22,10 @@ private
  */
 class Brush
 {
-    //TODO bounds
+    bool isBoundable;
     Rect2d bounds = Rect2d(0, 0, 100, 100);
 
-    protected
+    private
     {
         Vector2d _pos;
         Vector2d _initPos;
@@ -37,7 +37,7 @@ class Brush
 
     void delegate(Vector2d, Vector2d) onDrawLineStartEnd;
 
-    this(Vector2d initPos = Vector2d(0, 0), double initAngleDeg = 0)
+    this(Vector2d initPos = Vector2d(0, 0), double initAngleDeg = 0) pure @safe
     {
         _initPos = initPos;
         _pos = initPos;
@@ -58,57 +58,77 @@ class Brush
         return true;
     }
 
-    bool move(double distance)
+    bool move(double distance) @safe
     {
         const newPos = _pos + Vector2d.fromPolarDeg(_angleDeg, distance);
 
-        //TODO check bounds
+        if (isBoundable && !bounds.contains(newPos))
+        {
+            return false;
+        }
+
         _pos = newPos;
 
         return true;
     }
 
-    void rotateRight(double angleDeg)
+    void rotateRight(double angleDeg) @safe
     {
         _angleDeg += angleDeg;
     }
 
-    void rotateLeft(double angleDeg)
+    void rotateLeft(double angleDeg) @safe
     {
         _angleDeg -= angleDeg;
     }
 
-    Vector2d pos()
+    void pos(double x, double y) @safe
+    {
+        _pos = Vector2d(x, y);
+    }
+
+    void pos(Vector2d newPos) @safe
+    {
+        _pos = newPos;
+    }
+
+    Vector2d pos() @safe
     {
         return _pos;
     }
 
-    double angleDeg()
+    void angleDeg(double value) @safe
+    {
+        _angleDeg = value;
+    }
+
+    double angleDeg() @safe
     {
         return _angleDeg;
     }
 
-    void setState(Vector2d pos, double angleDeg)
+    void setState(Vector2d pos, double angleDeg) @safe
     {
-        _pos = pos;
-        _angleDeg = angleDeg;
+        pos = pos;
+        angleDeg = angleDeg;
     }
 
-    void saveState()
+    void saveState() @safe
     {
         _states.insertFront(BrushState(_pos, angleDeg));
     }
 
-    void restoreState()
+    bool restoreState() @safe
     {
         if (_states.empty)
         {
-            return;
+            return false;
         }
 
         const lastState = _states.front;
         _states.removeFront;
         setState(lastState.pos, lastState.angleDeg);
+        return true;
     }
 
 }

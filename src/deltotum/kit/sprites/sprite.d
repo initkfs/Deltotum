@@ -1337,24 +1337,24 @@ class Sprite : EventKitTarget
 
         const debugColor = RGBA.red;
 
-        const prevColor = graphics.adjustRender(debugColor);
+        const prevColor = graphics.setColor(debugColor);
 
         const b = bounds;
-        //graphics.drawRect(b.x, b.y, b.width, b.height, GraphicStyle(1, RGBA.red));
+        //graphics.rect(b.x, b.y, b.width, b.height, GraphicStyle(1, RGBA.red));
         const double leftTopX = b.x, leftTopY = b.y;
 
         const double rightTopX = leftTopX + b.width, rightTopY = leftTopY;
-        graphics.drawLine(leftTopX, leftTopY, rightTopX, rightTopY, debugColor);
+        graphics.line(leftTopX, leftTopY, rightTopX, rightTopY, debugColor);
 
         const double rightBottomX = rightTopX, rightBottomY = rightTopY + b.height;
-        graphics.drawLine(rightTopX, rightTopY, rightBottomX, rightBottomY, debugColor);
+        graphics.line(rightTopX, rightTopY, rightBottomX, rightBottomY, debugColor);
 
         const double leftBottomX = leftTopX, leftBottomY = leftTopY + b.height;
-        graphics.drawLine(rightBottomX, rightBottomY, leftBottomX, leftBottomY, debugColor);
+        graphics.line(rightBottomX, rightBottomY, leftBottomX, leftBottomY, debugColor);
 
-        graphics.drawLine(leftBottomX, leftBottomY, leftTopX, leftTopY, debugColor);
+        graphics.line(leftBottomX, leftBottomY, leftTopX, leftTopY, debugColor);
 
-        graphics.adjustRender(prevColor);
+        graphics.setColor(prevColor);
     }
 
     void drawAllBounds(bool isDraw)

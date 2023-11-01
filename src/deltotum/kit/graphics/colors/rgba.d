@@ -563,34 +563,34 @@ unittest
 
 unittest
 {
-    RGBA colorWeb6Upper = RGBA.web("#FFFFFF", 0.5);
+    immutable colorWeb6Upper = RGBA.web("#FFFFFF", 0.5);
     assert(colorWeb6Upper.r == 255);
     assert(colorWeb6Upper.g == 255);
     assert(colorWeb6Upper.b == 255);
     assert(colorWeb6Upper.a == 0.5);
 
-    RGBA colorWeb6 = RGBA.web("#ffffff", 0.5);
+    immutable colorWeb6 = RGBA.web("#ffffff", 0.5);
     assert(colorWeb6.r == 255);
     assert(colorWeb6.g == 255);
     assert(colorWeb6.b == 255);
     assert(colorWeb6.a == 0.5);
 
-    RGBA colorWeb3 = RGBA.web("#ABC");
+    immutable colorWeb3 = RGBA.web("#ABC");
     assert(colorWeb3.r == 170);
     assert(colorWeb3.g == 187);
     assert(colorWeb3.b == 204);
 
-    RGBA colorAqua = RGBA.web("#00ffff");
+    immutable colorAqua = RGBA.web("#00ffff");
     assert(colorAqua.r == 0);
     assert(colorAqua.g == 255);
     assert(colorAqua.b == 255);
 
-    RGBA colorAqua2 = RGBA.web("aqua");
+    const colorAqua2 = RGBA.web("aqua");
     assert(colorAqua2.r == 0);
     assert(colorAqua2.g == 255);
     assert(colorAqua2.b == 255);
 
-    RGBA white = RGBA.web("white");
+    shared white = RGBA.web("white");
     assert(white.r == 255);
     assert(white.g == 255);
     assert(white.b == 255);

@@ -25,7 +25,7 @@ class Circle : Shape
         double currentRadius = width / 2;
         double centerX = x + width / 2;
         double centerY = y + height / 2;
-        graphics.drawCircle(centerX, centerY, currentRadius, style);
+        graphics.circle(centerX, centerY, currentRadius, style);
     }
 
     Circle2d shape()

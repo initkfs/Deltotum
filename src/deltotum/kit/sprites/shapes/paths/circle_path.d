@@ -23,7 +23,7 @@ class CirclePath : Path
         {
             foreach (p; points)
             {
-                graphics.drawPoint(x + p.x, y + p.y, style.lineColor);
+                graphics.point(x + p.x, y + p.y, style.lineColor);
             }
         }
     }

@@ -9,7 +9,7 @@ import deltotum.gui.controls.texts.text : Text;
 import deltotum.gui.controls.buttons.button : Button;
 import deltotum.kit.sprites.shapes.circle : Circle;
 import deltotum.kit.graphics.colors.rgba : RGBA;
-import deltotum.kit.graphics.colors.palettes.material_design_palette : MaterialDesignPalette;
+import deltotum.kit.graphics.colors.palettes.material_palette : MaterialPalette;
 import deltotum.gui.containers.vbox : VBox;
 import deltotum.gui.containers.hbox : HBox;
 
@@ -72,7 +72,7 @@ class ColorPicker : Control
 
         HBox colorContainer;
 
-        foreach (i, hexColor; EnumMembers!MaterialDesignPalette)
+        foreach (i, hexColor; EnumMembers!MaterialPalette)
         {
             if (i % colorTonesCount == 0)
             {

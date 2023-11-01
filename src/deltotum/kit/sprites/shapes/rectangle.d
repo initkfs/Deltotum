@@ -25,7 +25,7 @@ class Rectangle : Shape
         import deltotum.kit.graphics.colors.rgba : RGBA;
 
         const lineWidth = style.lineWidth;
-        graphics.drawRect(x, y, width, height, style.lineColor);
+        graphics.rect(x, y, width, height, style.lineColor);
         if (style.isFill)
         {
             graphics.fillRect(x + lineWidth, y + lineWidth, width - lineWidth * 2, height - lineWidth * 2, style.fillColor);
