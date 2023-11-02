@@ -523,11 +523,79 @@ class Graphics : LoggableUnit
         }
     }
 
-    void fillTriangle(Vector2d v1, Vector2d v2, Vector2d v3, RGBA fillColor)
+    void fillTriangle(Vector2d v01, Vector2d v02, Vector2d v03, RGBA fillColor)
     {
-        scope Vector2d[] side1LinePoints = linePoints(v1.x, v1.y, v2.x, v2.y);
-        scope Vector2d[] side2LinePoints = linePoints(v3.x, v3.y, v2.x, v2.y);
-        fillPolyLines(side1LinePoints, side2LinePoints, fillColor);
+        changeColor(fillColor);
+        scope (exit)
+        {
+            restoreColor;
+        }
+
+        void scanline(const ref Vector2d v1, const ref Vector2d v2, const ref Vector2d v3, bool isFlatBottom = true)
+        {
+            double lineGradient1 = 0;
+            double lineGradient2 = 0;
+            double x1 = 0;
+            double x2 = 0;
+            if (isFlatBottom)
+            {
+                lineGradient1 = (v2.x - v1.x) / (v2.y - v1.y);
+                lineGradient2 = (v3.x - v1.x) / (v3.y - v1.y);
+
+                x1 = v1.x;
+                x2 = v1.x + 0.5;
+
+                for (auto scanlineY = toInt(v1.y); scanlineY <= v2.y; scanlineY++)
+                {
+                    line(toInt(x1), scanlineY, toInt(x2), scanlineY);
+                    x1 += lineGradient1;
+                    x2 += lineGradient2;
+                }
+            }
+            else
+            {
+                lineGradient1 = (v3.x - v1.x) / (v3.y - v1.y);
+                lineGradient2 = (v3.x - v2.x) / (v3.y - v2.y);
+
+                x1 = v3.x;
+                x2 = v3.x + 0.5;
+
+                for (auto scanlineY = toInt(v3.y); scanlineY > v1.y; scanlineY--)
+                {
+                    line(toInt(x1), scanlineY, toInt(x2), scanlineY);
+                    x1 -= lineGradient1;
+                    x2 -= lineGradient2;
+                }
+            }
+        }
+
+        import std.algorithm.sorting : sort;
+
+        Vector2d[3] vertexByY = [v01, v02, v03];
+        vertexByY[].sort!((v1, v2) => v1.y < v2.y);
+
+        Vector2d vt1 = vertexByY[0];
+        Vector2d vt2 = vertexByY[1];
+        Vector2d vt3 = vertexByY[2];
+
+        if (vt2.y == vt3.y)
+        {
+            //flat bottom
+            scanline(vt1, vt2, vt3);
+        }
+        else if (vt1.y == vt2.y)
+        {
+            //flat top
+            scanline(vt1, vt2, vt3, false);
+        }
+        else
+        {
+            const tempX = vt1.x + ((vt2.y - vt1.y) / (vt3.y - vt1.y)) * (vt3.x - vt1.x);
+            const tempY = vt2.y;
+            Vector2d temp = Vector2d(tempX, tempY);
+            scanline(vt1, vt2, temp);
+            scanline(vt2, temp, vt3, true);
+        }
     }
 
     void fillRect(Vector2d pos, double width, double height, RGBA fillColor = defaultColor)

@@ -64,8 +64,9 @@ class Grahpics : Control
 
         graphics.fillTriangle(Vector2d(300, 100), Vector2d(325, 150), Vector2d(350, 100), RGBA
                 .yellowgreen);
-        //The middle of the triangle is shown last to control for fill artifacts
-        graphics.fillTriangle(Vector2d(400, 100), Vector2d(450, 100), Vector2d(425, 150), RGBA
+        graphics.fillTriangle(Vector2d(360, 150), Vector2d(410, 150), Vector2d(385, 100), RGBA
+                .yellowgreen);
+         graphics.fillTriangle(Vector2d(420, 150), Vector2d(450, 100), Vector2d(430, 200), RGBA
                 .yellowgreen);
 
         graphics.fillRect(480, 100, 50, 20, RGBA.lightsalmon);

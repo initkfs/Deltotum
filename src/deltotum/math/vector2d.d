@@ -293,6 +293,32 @@ struct Vector2d
         return format("x:%.10f,y:%.10f", x, y);
     }
 
+    void opIndexAssign(double value, size_t i) @safe
+    {
+        if (i == 0)
+            x = value;
+        else if (i == 1)
+            y = value;
+        else
+        {
+            import std.conv : text;
+
+            throw new Exception(text("Invalid vector index: ", i));
+        }
+    }
+
+    double opIndex(size_t i) const pure @safe
+    {
+        if (i == 0)
+            return x;
+        if (i == 1)
+            return y;
+
+        import std.conv : text;
+
+        throw new Exception(text("Invalid vector index: ", i));
+    }
+
     void opOpAssign(string op)(Vector2d other)
     {
         const otherId = __traits(identifier, other);
