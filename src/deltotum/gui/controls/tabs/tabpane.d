@@ -128,7 +128,10 @@ class TabPane : Control
             {
                 content.addCreate(newTab.content);
             }else {
-                content.add(newTab.content);
+                //TODO add?
+                if(!content.hasDirect(newTab.content)){
+                    content.add(newTab.content);
+                }
             }
 
             currentTab.content.isVisible = true;

@@ -358,65 +358,168 @@ class Graphics : LoggableUnit
     void circlePoints(double centerXPos, double centerYPos, int radius, scope bool delegate(
             Vector2d) onPoint)
     {
-        //Bresenham algorithm
-        import math = deltotum.math;
+        ellipse(centerXPos, centerYPos, radius, radius, (p1, p2) {
+            if (!onPoint(p1))
+            {
+                return false;
+            }
+            if (!onPoint(p2))
+            {
+                return false;
+            }
+            return true;
+        }, (p1, p2) {
+            if (!onPoint(p1))
+            {
+                return false;
+            }
+            if (!onPoint(p2))
+            {
+                return false;
+            }
+            return true;
+        });
+    }
 
+    void circle(double centerX, double centerY, double radius, RGBA color = defaultColor, bool isFill = false)
+    {
+        ellipse(Vector2d(centerX, centerY), Vector2d(radius, radius), color, true, true);
+    }
+
+    void circle(double centerX, double centerY, double radius)
+    {
+        int radiusInt = toInt(radius);
+        ellipse(centerX, centerY, radiusInt, radiusInt);
+    }
+
+    void ellipse(Vector2d centerPos, Vector2d radiusXY, RGBA color, bool isFillTop = false, bool isFillBottom = false)
+    {
+        changeColor(color);
+        scope (exit)
+        {
+            restoreColor;
+        }
+        ellipse(centerPos, radiusXY,
+            (p1, p2) {
+            point(p1);
+            point(p2);
+            if (isFillTop)
+            {
+                line(p1, p2);
+            }
+            return true;
+        },
+            (p1, p2) {
+            point(p1);
+            point(p2);
+            if (isFillBottom)
+            {
+                line(p1, p2);
+            }
+            return true;
+        });
+    }
+
+    void ellipse(Vector2d centerPos, Vector2d radiusXY)
+    {
+        ellipse(centerPos.x, centerPos.y, toInt(radiusXY.x), toInt(radiusXY.y));
+    }
+
+    void ellipse(double centerX, double centerY, int radiusX, int radiusY)
+    {
+        ellipse(centerX, centerY, radiusX, radiusY,
+            (p1, p2) { point(p1); point(p2); return true; },
+            (p1, p2) { point(p1); point(p2); return true; });
+    }
+
+    void ellipse(Vector2d centerPos, Vector2d radiusXY,
+        scope bool delegate(Vector2d, Vector2d) onTopQuadPoints,
+        scope bool delegate(Vector2d, Vector2d) onBottomQuadPoints)
+    {
+        ellipse(centerPos.x, centerPos.y, toInt(radiusXY.x), toInt(radiusXY.y), onTopQuadPoints, onBottomQuadPoints);
+    }
+
+    void ellipse(double centerXPos, double centerYPos, int radiusX, int radiusY,
+        scope bool delegate(Vector2d, Vector2d) onTopQuadPoints,
+        scope bool delegate(Vector2d, Vector2d) onBottomQuadPoints)
+    {
+        //John Kennedy fast Bresenham algorithm
         int centerX = toInt(centerXPos);
         int centerY = toInt(centerYPos);
 
-        int x = 0;
-        int y = radius;
-        int delta = 1 - 2 * radius;
-        int error = 0;
-        while (y >= x)
+        auto drawPoints = (int x, int y) {
+            auto quadrand1Point = Vector2d(centerX + x, centerY + y);
+            auto quadrand2Point = Vector2d(centerX - x, centerY + y);
+
+            if (!onBottomQuadPoints(quadrand1Point, quadrand2Point))
+            {
+                return false;
+            }
+
+            auto quadrand3Point = Vector2d(centerX - x, centerY - y);
+            auto quadrand4Point = Vector2d(centerX + x, centerY - y);
+
+            if (!onTopQuadPoints(quadrand3Point, quadrand4Point))
+            {
+                return false;
+            }
+            return true;
+        };
+
+        int twoASquare = 2 * radiusX * radiusX;
+        int twoBSquare = 2 * radiusY * radiusY;
+        int x = radiusX;
+        int y;
+        int changeX = radiusY * radiusY * (1 - 2 * radiusX);
+        int changeY = radiusX * radiusX;
+        int ellipseError;
+        int stoppingX = twoBSquare * radiusX;
+        int stoppingY;
+
+        while (stoppingX >= stoppingY)
         {
-            if (!onPoint(Vector2d(centerX + x, centerY + y)))
+            if (!drawPoints(x, y))
             {
                 return;
             }
-            if (!onPoint(Vector2d(centerX + x, centerY - y)))
+            y++;
+            stoppingY += twoASquare;
+            ellipseError += changeY;
+            changeY += twoASquare;
+            if ((2 * ellipseError + changeX) > 0)
             {
-                return;
-            }
-            if (!onPoint(Vector2d(centerX - x, centerY + y)))
-            {
-                return;
-            }
-            if (!onPoint(Vector2d(centerX - x, centerY - y)))
-            {
-                return;
-            }
-            if (!onPoint(Vector2d(centerX + y, centerY + x)))
-            {
-                return;
-            }
-            if (!onPoint(Vector2d(centerX + y, centerY - x)))
-            {
-                return;
-            }
-            if (!onPoint(Vector2d(centerX - y, centerY + x)))
-            {
-                return;
-            }
-            if (!onPoint(Vector2d(centerX - y, centerY - x)))
-            {
-                return;
+                x--;
+                stoppingX -= twoBSquare;
+                ellipseError += changeX;
+                changeX += twoBSquare;
             }
 
-            error = 2 * (delta + y) - 1;
-            if ((delta < 0) && (error <= 0))
-            {
-                delta += 2 * ++x + 1;
-                continue;
-            }
+        }
 
-            if ((delta > 0) && (error > 0))
+        x = 0;
+        y = radiusY;
+        changeX = radiusY * radiusY;
+        changeY = radiusX * radiusX * (1 - 2 * radiusY);
+        ellipseError = 0;
+        stoppingX = 0;
+        stoppingY = twoASquare * radiusY;
+        while (stoppingX <= stoppingY)
+        {
+            if (!drawPoints(x, y))
             {
-                delta -= 2 * --y + 1;
-                continue;
+                return;
             }
-
-            delta += 2 * (++x - --y);
+            x++;
+            stoppingX += twoBSquare;
+            ellipseError += changeX;
+            changeX += twoBSquare;
+            if ((2 * ellipseError + changeY) > 0)
+            {
+                y--;
+                stoppingY -= twoASquare;
+                ellipseError += changeY;
+                changeY += twoASquare;
+            }
         }
     }
 
@@ -425,72 +528,6 @@ class Graphics : LoggableUnit
         scope Vector2d[] side1LinePoints = linePoints(v1.x, v1.y, v2.x, v2.y);
         scope Vector2d[] side2LinePoints = linePoints(v3.x, v3.y, v2.x, v2.y);
         fillPolyLines(side1LinePoints, side2LinePoints, fillColor);
-    }
-
-    void circle(double centerX, double centerY, double radius, RGBA fillColor = defaultColor)
-    {
-        changeColor(fillColor);
-        scope (exit)
-        {
-            restoreColor;
-        }
-        circle(centerX, centerY, radius);
-    }
-
-    void circle(double centerX, double centerY, double radius)
-    {
-        int xCenter = toInt(centerX);
-        int yCenter = toInt(centerY);
-
-        int r = toInt(radius);
-        int xOffset;
-        int yOffset = r;
-        enum decisionParamDelta = 1;
-        //5.0 / 4 - r
-        int decisionParam = r - decisionParamDelta;
-        enum decisionOffset = 2;
-
-        while (yOffset >= xOffset)
-        {
-            line(xCenter - yOffset, yCenter + xOffset,
-                xCenter + yOffset, yCenter + xOffset);
-            line(xCenter - xOffset, yCenter + yOffset,
-                xCenter + xOffset, yCenter + yOffset);
-            line(xCenter - xOffset, yCenter - yOffset,
-                xCenter + xOffset, yCenter - yOffset);
-            line(xCenter - yOffset, yCenter - xOffset,
-                xCenter + yOffset, yCenter - xOffset);
-
-            if (decisionParam >= decisionOffset * xOffset)
-            {
-                decisionParam -= decisionOffset * xOffset + decisionParamDelta;
-                xOffset++;
-            }
-            else if (decisionParam < decisionOffset * (r - yOffset))
-            {
-                decisionParam += decisionOffset * yOffset - decisionParamDelta;
-                yOffset--;
-            }
-            else
-            {
-                decisionParam += decisionOffset * (yOffset - xOffset - decisionParamDelta);
-                yOffset--;
-                xOffset++;
-            }
-        }
-    }
-
-    void circle(double centerX, double centerY, double r, GraphicStyle style = GraphicStyle
-            .simple)
-    {
-        if (style.isFill && style.lineWidth == 0)
-        {
-            circle(centerX, centerY, r, style.fillColor);
-            return;
-        }
-
-        circle(centerX, centerY, r, style.lineColor);
-        circle(centerX, centerY, r - style.lineWidth, style.fillColor);
     }
 
     void fillRect(Vector2d pos, double width, double height, RGBA fillColor = defaultColor)

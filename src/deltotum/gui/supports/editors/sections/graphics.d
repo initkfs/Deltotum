@@ -73,11 +73,13 @@ class Grahpics : Control
 
         graphics.setColor(RGBA.lightskyblue);
 
-        graphics.bezier(Vector2d(550, 150), Vector2d(530, 130), Vector2d(580, 100));
+        graphics.bezier(Vector2d(550, 150), Vector2d(510, 150), Vector2d(580, 100));
+
+        graphics.ellipse(Vector2d(650, 100), Vector2d(40, 20), RGBA.lightseagreen, true, false);
+        graphics.ellipse(Vector2d(650, 150), Vector2d(40, 20), RGBA.lightseagreen, false, true);
 
         graphics.restoreColor;
 
         return true;
     }
-
 }
