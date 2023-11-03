@@ -215,3 +215,10 @@ double sign(double value)
 
     return sgn(value);
 }
+
+bool isSameSign(double a, double b)
+    {
+        import std.math.traits : sgn;
+
+        return sign(a) == sign(b);
+    }

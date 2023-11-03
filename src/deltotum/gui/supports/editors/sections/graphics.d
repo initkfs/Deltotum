@@ -66,7 +66,7 @@ class Grahpics : Control
                 .yellowgreen);
         graphics.fillTriangle(Vector2d(360, 150), Vector2d(410, 150), Vector2d(385, 100), RGBA
                 .yellowgreen);
-         graphics.fillTriangle(Vector2d(420, 150), Vector2d(450, 100), Vector2d(430, 200), RGBA
+        graphics.fillTriangle(Vector2d(420, 150), Vector2d(450, 100), Vector2d(430, 200), RGBA
                 .yellowgreen);
 
         graphics.fillRect(480, 100, 50, 20, RGBA.lightsalmon);
@@ -78,6 +78,34 @@ class Grahpics : Control
 
         graphics.ellipse(Vector2d(650, 100), Vector2d(40, 20), RGBA.lightseagreen, true, false);
         graphics.ellipse(Vector2d(650, 150), Vector2d(40, 20), RGBA.lightseagreen, false, true);
+
+        // graphics.polygon([
+        //     Vector2d(20, 200),
+        //     Vector2d(65, 220),
+        //     Vector2d(75, 260),
+        //     Vector2d(30, 280),
+        // ]);
+
+        auto points = [
+            Vector2d(20, 200),
+            Vector2d(75, 240),
+            Vector2d(50, 270),
+            Vector2d(40, 260),
+            Vector2d(10, 270),
+        ];
+        graphics.polygon(points);
+
+        import Delaunay = deltotum.math.geom.triangulations.delaunay_triangulator;
+
+        auto res = Delaunay.triangulate(points);
+
+        foreach (t; res)
+        {
+            graphics.line(t.a, t.b);
+            graphics.line(t.b, t.c);
+            graphics.line(t.c, t.a);
+            //graphics.fillTriangle(t.a, t.b, t.c, RGBA.red);
+        }
 
         graphics.restoreColor;
 

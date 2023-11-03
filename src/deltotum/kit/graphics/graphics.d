@@ -594,7 +594,7 @@ class Graphics : LoggableUnit
             const tempY = vt2.y;
             Vector2d temp = Vector2d(tempX, tempY);
             scanline(vt1, vt2, temp);
-            scanline(vt2, temp, vt3, true);
+            scanline(vt2, temp, vt3, false);
         }
     }
 
@@ -729,6 +729,22 @@ class Graphics : LoggableUnit
         Vector2d p1p2 = p1.scale(dt).add(p2.scale(t));
         Vector2d result = p0p1.scale(dt).add(p1p2.scale(t));
         return result;
+    }
+
+    void polygon(Vector2d[] vertices)
+    {
+        if (vertices.length < 3)
+        {
+            return;
+        }
+        foreach (i, v; vertices)
+        {
+            if (i < vertices.length - 1)
+            {
+                line(v, vertices[i + 1]);
+            }
+        }
+        line(vertices[$ - 1], vertices[0]);
     }
 
     bool fillPolyLines(Vector2d[] vertexStart, Vector2d[] vertexEnd, RGBA fillColor)
