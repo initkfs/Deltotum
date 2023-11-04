@@ -1,6 +1,6 @@
-module deltotum.kit.sprites.images.fractals.julia;
+module deltotum.kit.addons.sprites.images.fractals.julia;
 
-import deltotum.kit.sprites.images.fractals.complex_fractal_image : ComplexFractalImage;
+import deltotum.kit.addons.sprites.images.fractals.complex_fractal_image : ComplexFractalImage;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 
 import Math = deltotum.math;

@@ -1,4 +1,4 @@
-module deltotum.kit.sprites.images.fractals.complex_fractal_image;
+module deltotum.kit.addons.sprites.images.fractals.complex_fractal_image;
 
 import deltotum.kit.sprites.images.image : Image;
 import deltotum.kit.graphics.colors.rgba : RGBA;

@@ -24,16 +24,17 @@ class UniInterpolator : Interpolator
         enum ELASTIC_PERIOD = 0.4;
     }
 
-    double delegate(double) @nogc nothrow interpolateMethod;
+    double delegate(double) interpolateMethod;
 
     //TODO more flexible way 
-    static UniInterpolator fromMethod(string methodName = "linear")() {
+    static UniInterpolator fromMethod(string methodName = "linear")()
+    {
         auto interp = new UniInterpolator;
         interp.interpolateMethod = mixin(`&`, __traits(identifier, interp) ~ `.` ~ methodName);
         return interp;
     }
 
-    override double interpolate(double value) const @nogc nothrow
+    override double interpolate(double value)
     {
         if (interpolateMethod is null)
         {
@@ -45,123 +46,128 @@ class UniInterpolator : Interpolator
         return interpProgress;
     }
 
-    double linear(double value) const @nogc nothrow
+    final double linear(double value) const @nogc nothrow
     {
         return value;
     }
 
-    double quadIn(double value) const @nogc nothrow
+    final double flip(double value) const @nogc nothrow
+    {
+        return 1 - value;
+    }
+
+    final double quadIn(double value) const @nogc nothrow
     {
         return value * value;
     }
 
-    double quadOut(double value) const @nogc nothrow
+    final double quadOut(double value) const @nogc nothrow
     {
         return -value * (value - 2);
     }
 
-    double quadInOut(double value) const @nogc nothrow
+    final double quadInOut(double value) const @nogc nothrow
     {
         return value <= 0.5 ? value * value * 2 : 1 - (
             --value) * value * 2;
     }
 
-    double cubeIn(double value) const @nogc nothrow
+    final double cubeIn(double value) const @nogc nothrow
     {
         return value * value * value;
     }
 
-    double cubeOut(double value) const @nogc nothrow
+    final double cubeOut(double value) const @nogc nothrow
     {
         return 1 + (--value) * value * value;
     }
 
-    double cubeInOut(double value) const @nogc nothrow
+    final double cubeInOut(double value) const @nogc nothrow
     {
         return value <= 0.5 ? value * value * value * 4 : 1 + (
             --value) * value * value * 4;
     }
 
-    double quartIn(double value) const @nogc nothrow
+    final double quartIn(double value) const @nogc nothrow
     {
         return value * value * value * value;
     }
 
-    double quartOut(double value) const @nogc nothrow
+    final double quartOut(double value) const @nogc nothrow
     {
         return 1 - (value -= 1) * value * value * value;
     }
 
-    double quartInOut(double value) const @nogc nothrow
+    final double quartInOut(double value) const @nogc nothrow
     {
         return value <= 0.5 ? value * value * value * value * 8 : (
             1 - (value = value * 2 - 2) * value * value * value) / 2 + 0.5;
     }
 
-    double quintIn(double value) const @nogc nothrow
+    final double quintIn(double value) const @nogc nothrow
     {
         return value * value * value * value * value;
     }
 
-    double quintOut(double value) const @nogc nothrow
+    final double quintOut(double value) const @nogc nothrow
     {
         return --value * value * value * value * value + 1;
     }
 
-    double quintInOut(double value) const @nogc nothrow
+    final double quintInOut(double value) const @nogc nothrow
     {
         return ((value *= 2) < 1) ? (
             value * value * value * value * value) / 2 : (
             (value -= 2) * value * value * value * value + 2) / 2;
     }
 
-    double smoothStepIn(double value) const @nogc nothrow
+    final double smoothStepIn(double value) const @nogc nothrow
     {
         return 2 * smoothStepInOut(value / 2);
     }
 
-    double smoothStepOut(double value) const @nogc nothrow
+    final double smoothStepOut(double value) const @nogc nothrow
     {
         return 2 * smoothStepInOut(value / 2 + 0.5) - 1;
     }
 
-    double smoothStepInOut(double value) const @nogc nothrow
+    final double smoothStepInOut(double value) const @nogc nothrow
     {
         return value * value * (value * -2 + 3);
     }
 
-    double smootherStepIn(double value) const @nogc nothrow
+    final double smootherStepIn(double value) const @nogc nothrow
     {
         return 2 * smootherStepInOut(value / 2);
     }
 
-    double smootherStepOut(double value) const @nogc nothrow
+    final double smootherStepOut(double value) const @nogc nothrow
     {
         return 2 * smootherStepInOut(value / 2 + 0.5) - 1;
     }
 
-    double smootherStepInOut(double value) const @nogc nothrow
+    final double smootherStepInOut(double value) const @nogc nothrow
     {
         return value * value * value * (
             value * (value * 6 - 15) + 10);
     }
 
-    double sineIn(double value) const @nogc nothrow
+    final double sineIn(double value) const @nogc nothrow
     {
         return -math.cos(PI2 * value) + 1;
     }
 
-    double sineOut(double value) const @nogc nothrow
+    final double sineOut(double value) const @nogc nothrow
     {
         return math.sin(PI2 * value);
     }
 
-    double sineInOut(double value) const @nogc nothrow
+    final double sineInOut(double value) const @nogc nothrow
     {
         return -math.cos(math.PI * value) / 2 + .5;
     }
 
-    double bounceIn(double value) const @nogc nothrow
+    final double bounceIn(double value) const @nogc nothrow
     {
         value = 1 - value;
         if (value < B1)
@@ -182,7 +188,7 @@ class UniInterpolator : Interpolator
         return 1 - (7.5625 * (value - B6) * (value - B6) + 0.984375);
     }
 
-    double bounceOut(double value) const @nogc nothrow
+    final double bounceOut(double value) const @nogc nothrow
     {
         if (value < B1)
         {
@@ -202,7 +208,7 @@ class UniInterpolator : Interpolator
         return 7.5625 * (value - B6) * (value - B6) + 0.984375;
     }
 
-    double bounceInOut(double value) const @nogc nothrow
+    final double bounceInOut(double value) const @nogc nothrow
     {
         if (value < 0.5)
         {
@@ -245,49 +251,49 @@ class UniInterpolator : Interpolator
         return (7.5625 * (value - B6) * (value - B6) + 0.984375) / 2 + 0.5;
     }
 
-    double circIn(double value) const @nogc nothrow
+    final double circIn(double value) const @nogc nothrow
     {
         return -(math.sqrt(1 - value * value) - 1);
     }
 
-    double circOut(double value) const @nogc nothrow
+    final double circOut(double value) const @nogc nothrow
     {
         return math.sqrt(1 - (value - 1) * (value - 1));
     }
 
-    double circInOut(double value) const @nogc nothrow
+    final double circInOut(double value) const @nogc nothrow
     {
         return value <= 0.5 ? (math.sqrt(1 - value * value * 4) - 1) / -2 : (
             math.sqrt(1 - (value * 2 - 2) * (value * 2 - 2)) + 1) / 2;
     }
 
-    double expoIn(double value) const @nogc nothrow
+    final double expoIn(double value) const @nogc nothrow
     {
         return math.pow(2, 10 * (value - 1));
     }
 
-    double expoOut(double value) const @nogc nothrow
+    final double expoOut(double value) const @nogc nothrow
     {
         return -math.pow(2, -10 * value) + 1;
     }
 
-    double expoInOut(double value) const @nogc nothrow
+    final double expoInOut(double value) const @nogc nothrow
     {
         return value < 0.5 ? math.pow(2, 10 * (value * 2 - 1)) / 2 : (
             -math.pow(2, -10 * (value * 2 - 1)) + 2) / 2;
     }
 
-    double backIn(double value) const @nogc nothrow
+    final double backIn(double value) const @nogc nothrow
     {
         return value * value * (2.70158 * value - 1.70158);
     }
 
-    double backOut(double value) const @nogc nothrow
+    final double backOut(double value) const @nogc nothrow
     {
         return 1 - (--value) * (value) * (-2.70158 * value - 1.70158);
     }
 
-    double backInOut(double value) const @nogc nothrow
+    final double backInOut(double value) const @nogc nothrow
     {
         value *= 2;
         if (value < 1)
@@ -299,7 +305,7 @@ class UniInterpolator : Interpolator
         return (1 - (--value) * (value) * (-2.70158 * value - 1.70158)) / 2 + 0.5;
     }
 
-    double elasticIn(double value) const @nogc nothrow
+    final double elasticIn(double value) const @nogc nothrow
     {
         return -(ELASTIC_AMPLITUDE * math.pow(2,
                 10 * (value -= 1)) * math.sin((value - (ELASTIC_PERIOD / (
@@ -307,7 +313,7 @@ class UniInterpolator : Interpolator
                 2 * math.PI) / ELASTIC_PERIOD));
     }
 
-    double elasticOut(double value) const @nogc nothrow
+    final double elasticOut(double value) const @nogc nothrow
     {
         return (ELASTIC_AMPLITUDE * math.pow(2,
                 -10 * value) * math.sin((value - (ELASTIC_PERIOD / (
@@ -316,7 +322,7 @@ class UniInterpolator : Interpolator
                 + 1);
     }
 
-    double elasticInOut(double value) const @nogc nothrow
+    final double elasticInOut(double value) const @nogc nothrow
     {
         if (value < 0.5)
         {

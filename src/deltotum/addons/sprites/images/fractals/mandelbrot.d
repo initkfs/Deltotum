@@ -1,6 +1,6 @@
-module deltotum.kit.sprites.images.fractals.mandelbrot;
+module deltotum.kit.addons.sprites.images.fractals.mandelbrot;
 
-import deltotum.kit.sprites.images.fractals.complex_fractal_image : ComplexFractalImage;
+import deltotum.kit.addons.sprites.images.fractals.complex_fractal_image : ComplexFractalImage;
 
 import Math = deltotum.math;
 

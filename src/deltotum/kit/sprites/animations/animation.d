@@ -7,5 +7,9 @@ import deltotum.kit.sprites.sprite : Sprite;
  */
 class Animation : Sprite
 {
+    bool isInverse;
+    bool isCycle;
+
+    void delegate() onEnd;
 
 }

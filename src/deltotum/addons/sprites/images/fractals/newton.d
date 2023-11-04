@@ -1,6 +1,6 @@
-module deltotum.kit.sprites.images.fractals.newton;
+module deltotum.kit.addons.sprites.images.fractals.newton;
 
-import deltotum.kit.sprites.images.fractals.complex_fractal_image : ComplexFractalImage;
+import deltotum.kit.addons.sprites.images.fractals.complex_fractal_image : ComplexFractalImage;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 import deltotum.kit.graphics.colors.hsv : HSV;
 

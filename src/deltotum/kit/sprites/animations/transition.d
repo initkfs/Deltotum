@@ -1,6 +1,6 @@
 module deltotum.kit.sprites.animations.transition;
 
-import deltotum.kit.sprites.animations.animation: Animation;
+import deltotum.kit.sprites.animations.animation : Animation;
 import deltotum.kit.sprites.animations.interp.interpolator : Interpolator;
 import deltotum.kit.sprites.animations.interp.uni_interpolator : UniInterpolator;
 import deltotum.math.vector2d : Vector2d;
@@ -27,15 +27,15 @@ private
 class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : Animation
 {
     void delegate(T) onValue;
-    void delegate() onEnd;
 
-    bool isInverse;
-    bool isCycle = true;
     Interpolator interpolator;
+
     T lastValue;
 
     T _minValue;
     T _maxValue;
+
+    double frameRateHz = 0;
 
     private
     {
@@ -46,16 +46,21 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : Animation
         bool onShort;
 
         TransitionState state = TransitionState.none;
+        enum firstFrame = 1;
     }
 
-    this(T minValue, T maxValue, int timeMs = 200, Interpolator interpolator = null)
+    this(T minValue, T maxValue, size_t timeMs = 200, Interpolator interpolator = null)
     {
         super();
         this._minValue = minValue;
         this._maxValue = maxValue;
-        this.timeMs = timeMs;
+
+        import std.conv : to;
+
+        this.timeMs = timeMs.to!double;
+
         this.interpolator = interpolator;
-        if (this.interpolator is null)
+        if (!this.interpolator)
         {
             auto uniInterp = new UniInterpolator;
             uniInterp.interpolateMethod = &uniInterp.linear;
@@ -65,16 +70,24 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : Animation
         isVisible = false;
     }
 
-    //TODO state management
-    override void run() @nogc nothrow @safe
+    override void run()
     {
-        const double frameRateHz = window.frameRate;
+        super.run;
+
+        const double frameRate = frameRateHz > 0 ? frameRateHz : window.frameRate;
         //TODO error if <= 0
-        if (frameRateHz > 0)
+        if (frameRate > 0)
         {
-            frameCount = (timeMs * frameRateHz) / 1000;
+            frameCount = getFrameCount(frameRate);
+            currentFrame = firstFrame;
         }
         state = TransitionState.direct;
+    }
+
+    double getFrameCount(double frameRateHz)
+    {
+        immutable double frames = (timeMs * frameRateHz) / 1000;
+        return frames;
     }
 
     bool isRun() @nogc nothrow @safe
@@ -83,11 +96,24 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : Animation
     }
 
     //TODO state management
-    override void stop() @nogc nothrow @safe
+    override void stop()
     {
+        super.stop;
+
         state = TransitionState.end;
         frameCount = 0;
         currentFrame = 0;
+
+        import std.traits : isFloatingPoint;
+
+        static if (isFloatingPoint!T)
+        {
+            lastValue = 0;
+        }
+        else
+        {
+            lastValue = T.init;
+        }
         onShort = false;
     }
 
@@ -112,7 +138,7 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : Animation
                 if (!isInverse || onShort)
                 {
                     stop;
-                    if (onEnd !is null)
+                    if (onEnd)
                     {
                         onEnd();
                     }
@@ -135,34 +161,34 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : Animation
                     state = TransitionState.direct;
                 }
             }
-            currentFrame = 0;
+            currentFrame = firstFrame;
         }
 
         T start;
         T end;
         switch (state)
         {
-        case TransitionState.direct:
-            start = _minValue;
-            end = _maxValue;
-            break;
-        case TransitionState.back:
-            start = _maxValue;
-            end = _minValue;
-            break;
-        default:
-            break;
+            case TransitionState.direct:
+                start = _minValue;
+                end = _maxValue;
+                break;
+            case TransitionState.back:
+                start = _maxValue;
+                end = _minValue;
+                break;
+            default:
+                break;
         }
 
         double deltaT = currentFrame / frameCount;
-        //TODO check is finite
+        //It’s better to check for isFinite
         double interpProgress = interpolator.interpolate(deltaT);
 
         import deltotum.math.numericals.interp : lerp;
 
         lastValue = lerp(start, end, interpProgress, false);
 
-        if (onValue !is null)
+        if (onValue)
         {
             onValue(lastValue);
         }
@@ -175,7 +201,7 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : Animation
         return _minValue;
     }
 
-    void minValue(T newValue) @nogc @safe nothrow
+    void minValue(T newValue)
     {
         if (isRun)
         {
@@ -190,7 +216,7 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : Animation
         return _maxValue;
     }
 
-    void maxValue(T newValue) @nogc @safe nothrow
+    void maxValue(T newValue)
     {
         if (isRun)
         {
@@ -200,4 +226,55 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : Animation
         _maxValue = newValue;
     }
 
+}
+
+unittest
+{
+    import std.conv : to;
+    import std.math.operations : isClose;
+
+    enum animationTimeMs = 100;
+    auto tr1 = new Transition!double(0, 10, animationTimeMs);
+    tr1.frameRateHz = 60;
+    tr1.initialize;
+    tr1.create;
+    tr1.run;
+
+    import std;
+
+    auto fc = tr1.getFrameCount(tr1.frameRateHz);
+    enum frameCount = 6;
+    assert(fc.to!int == frameCount);
+    enum eps = 0.001;
+    foreach (i; 0 .. frameCount + 1)
+    {
+        tr1.update(0);
+        switch (i)
+        {
+            case 0:
+                assert(isClose(tr1.lastValue, 1.666, 0.0, eps));
+                break;
+            case 1:
+                assert(isClose(tr1.lastValue, 3.333, 0.0, eps));
+                break;
+            case 2:
+                assert(isClose(tr1.lastValue, 5, 0.0, eps));
+                break;
+            case 3:
+                assert(isClose(tr1.lastValue, 6.666, 0.0, eps));
+                break;
+            case 4:
+                assert(isClose(tr1.lastValue, 8.333, 0.0, eps));
+                break;
+            case 5:
+                assert(isClose(tr1.lastValue, 10, 0.0, eps));
+                break;
+            case 6:
+                //Frame after animation stops
+                assert(isClose(tr1.lastValue, 0, 0.0, eps));
+                break;
+            default:
+                break;
+        }
+    }
 }

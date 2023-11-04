@@ -50,6 +50,8 @@ class ChoiceBox : TypedContainer!ChoiceItem
     bool isCreateStepSelection;
     bool isCreateExpandList;
 
+    void delegate(dstring, dstring) onChoice;
+
     protected
     {
         Text label;
@@ -169,10 +171,7 @@ class ChoiceBox : TypedContainer!ChoiceItem
         //TODO hack
         searchField.textView.maxWidth = double.max;
 
-        searchField.onKeyDown ~= (ref e) {
-            fillItemList;
-            choiceList.applyLayout;
-        };
+        searchField.onKeyDown ~= (ref e) { fillItemList; choiceList.applyLayout; };
 
     }
 
@@ -212,6 +211,10 @@ class ChoiceBox : TypedContainer!ChoiceItem
 
     void fill(dstring[] list)
     {
+        if (!isCreated)
+        {
+            throw new Exception("Control not created");
+        }
         items = [];
 
         if (list.length == 0)
@@ -231,6 +234,10 @@ class ChoiceBox : TypedContainer!ChoiceItem
             items ~= choiceListRow;
             choiceListRow.label.text = s;
             choiceListRow.onChoice = () {
+                if(onChoice){
+                    dstring oldValue = selected ? selected.label.text : "";
+                    onChoice(oldValue, choiceListRow.label.text);
+                }
                 selectItem(choiceListRow);
                 toggleChoiceList;
             };
@@ -365,6 +372,16 @@ class ChoiceBox : TypedContainer!ChoiceItem
         selected = items[selectedIndex];
         label.text = selected.label.text;
 
+        return true;
+    }
+
+    bool selectFirst()
+    {
+        if (choiceList.children.length == 0)
+        {
+            return false;
+        }
+        selectIndex(0);
         return true;
     }
 
