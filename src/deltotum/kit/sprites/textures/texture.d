@@ -38,7 +38,7 @@ class Texture : Sprite
     this(SdlTexture texture)
     {
         int w, h;
-        if (const sizeErr = texture.getSize(&w, &h))
+        if (const sizeErr = texture.getSize(w, h))
         {
             throw new Exception(sizeErr.toString);
         }
@@ -57,7 +57,7 @@ class Texture : Sprite
             throw new Exception(err.toString);
         }
         int w, h;
-        if (const sizeErr = newTexture.getSize(&w, &h))
+        if (const sizeErr = newTexture.getSize(w, h))
         {
             throw new Exception(sizeErr.toString);
         }
@@ -70,7 +70,7 @@ class Texture : Sprite
 
     void setBlendMode()
     {
-        if (const err = texture.setBlendModeBlend)
+        if (const err = texture.setModeBlend)
         {
             throw new Exception(err.toString);
         }
@@ -78,7 +78,7 @@ class Texture : Sprite
 
     void setBlendNone()
     {
-        if (const err = texture.setBlendModeNone)
+        if (const err = texture.setBlendNone)
         {
             throw new Exception(err.toString);
         }
@@ -135,7 +135,7 @@ class Texture : Sprite
         {
             return false;
         }
-        if (const err = texture.setColor(color.r, color.g, color.b))
+        if (const err = texture.setColor(color.r, color.g, color.b, color.aNorm))
         {
             throw new Exception(err.toString);
         }
@@ -184,16 +184,16 @@ class Texture : Sprite
         }
     }
 
-    void setAlpha(double valueOto1)
-    {
-        import std.conv : to;
+    // void setAlpha(double valueOto1)
+    // {
+    //     import std.conv : to;
 
-        ubyte value = (valueOto1 * ubyte.max).to!ubyte;
-        if (const err = texture.setColorAlpha(value))
-        {
-            throw new Exception(err.toString);
-        }
-    }
+    //     ubyte value = (valueOto1 * ubyte.max).to!ubyte;
+    //     if (const err = texture.setAlphaMod(value))
+    //     {
+    //         throw new Exception(err.toString);
+    //     }
+    // }
 
     Texture copy()
     {

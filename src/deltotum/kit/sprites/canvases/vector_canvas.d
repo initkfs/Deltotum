@@ -124,7 +124,7 @@ class VectorCanvas : Texture
             throw new Exception(createErr.toString);
         }
 
-        if (const err = texture.setBlendModeBlend)
+        if (const err = texture.setModeBlend)
         {
             throw new Exception(err.toString);
         }

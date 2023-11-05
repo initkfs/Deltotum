@@ -21,22 +21,26 @@ struct Pixel
 {
     uint* ptr;
     int x, y;
-    SDL_PixelFormat* format;
     size_t imageWidth;
     size_t imageHeight;
 
-    void setColor(RGBA color)
-    {
-        const newColor = SDL_MapRGBA(format, color.r, color.g, color.b, color.aNorm);
-        *ptr = newColor;
-    }
+    // void setColor(RGBA color)
+    // {
+    //     if (const err = texture.setPixelColor(ptr, color.r, color.g, color.b, color.aNorm))
+    //     {
+    //         throw new Exception(err.toString);
+    //     }
+    // }
 
-    RGBA getColor()
-    {
-        ubyte r, g, b, a;
-        SDL_GetRGBA(*ptr, format, &r, &g, &b, &a);
-        return RGBA(r, g, b, a / ubyte.max);
-    }
+    // RGBA getColor()
+    // {
+    //     ubyte r, g, b, a;
+    //     if (const err = texture.getPixelColor(ptr, r, g, b, a))
+    //     {
+    //         throw new Exception(err.toString);
+    //     }
+    //     return RGBA(r, g, b, a / ubyte.max);
+    // }
 }
 
 /**
@@ -59,13 +63,13 @@ class TextureImage : Texture
         super(texture);
     }
 
-    bool createMutableRGBA32()
+    bool createMutRGBA32()
     {
         assert(width > 0 && height > 0);
 
         texture = graphics.newComTexture;
 
-        if (const err = texture.createMutableRGBA32(cast(int) width, cast(int) height))
+        if (const err = texture.createMutRGBA32(cast(int) width, cast(int) height))
         {
             //TODO log
             throw new Exception(err.toString);
@@ -123,7 +127,7 @@ class TextureImage : Texture
                 {
                     //TODO more optimal iteration
                     uint* pixel = surf.pixel(x, y);
-                    auto pixelPtr = Pixel(pixel, x, y, surf.getObject.format, surf.width, surf
+                    auto pixelPtr = Pixel(pixel, x, y, surf.width, surf
                             .height);
                     colorProcessor(pixelPtr);
                 }
@@ -138,7 +142,7 @@ class TextureImage : Texture
         assert(width > 0);
         assert(height > 0);
         //TODO check width, height == colorBuf.dims
-        createMutableRGBA32;
+        createMutRGBA32;
         assert(texture);
 
         uint* pixels;
@@ -161,15 +165,15 @@ class TextureImage : Texture
                 if (colorProcessor)
                 {
                     //TODO multiple request
-                    SDL_PixelFormat* format;
-                    if (const err = texture.getFormat(format))
-                    {
-                        throw new Exception(err.toString);
-                    }
-                    uint* pixelPtr;
-                    pixel(x, y, pixels, pitch, pixelPtr);
-                    //TODO caches
-                    colorProcessor(Pixel(pixelPtr, x, y, format));
+                    // SDL_PixelFormat* format;
+                    // if (const err = texture.getFormat(format))
+                    // {
+                    //     throw new Exception(err.toString);
+                    // }
+                    // uint* pixelPtr;
+                    // pixel(x, y, pixels, pitch, pixelPtr);
+                    // //TODO caches
+                    // colorProcessor(Pixel(pixelPtr, x, y, format));
                 }
 
             }
@@ -209,17 +213,18 @@ class TextureImage : Texture
                 {
                     foreach (x; 0 .. image.getObject.w)
                     {
-                        auto ptr = image.getObject;
-                        uint* pixelPtr = cast(uint*)(ptr.pixels + y * ptr.pitch + x * ptr.format.BytesPerPixel);
-                        auto pixel = Pixel(pixelPtr, x, y, image.getObject.format, image.getObject.w, image
-                                .getObject.h);
-                        buff[pixel.y][pixel.x] = pixel.getColor;
+                        // auto ptr = image.getObject;
+                        // uint* pixelPtr = cast(uint*)(
+                        //     ptr.pixels + y * ptr.pitch + x * ptr.format.BytesPerPixel);
+                        // auto pixel = Pixel(pixelPtr, x, y, image.getObject.w, image
+                        //         .getObject.h);
+                        // buff[pixel.y][pixel.x] = pixel.getColor;
                     }
                 }
 
                 import std.conv : to;
                 import Math = deltotum.math;
-                
+
                 double newWidth = Math.trunc(requestWidth * scale);
                 double newHeight = Math.trunc(requestHeight * scale);
 
@@ -261,7 +266,7 @@ class TextureImage : Texture
         int width;
         int height;
 
-        int result = texture.getSize(&width, &height);
+        int result = texture.getSize(width, height);
         if (result != 0)
         {
             string error = "Unable to load image.";
@@ -305,7 +310,7 @@ class TextureImage : Texture
             return false;
         }
 
-        if (const err = texture.createMutableRGBA32(cast(int) width, cast(int) height))
+        if (const err = texture.createMutRGBA32(cast(int) width, cast(int) height))
         {
             logger.errorf("Error creating mutable texture for image, width %s, height %s. %s", width, height, err
                     .toString);

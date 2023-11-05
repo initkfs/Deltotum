@@ -55,7 +55,7 @@ abstract class ComplexFractalImage : Image
 
         super.create;
 
-        createMutableRGBA32;
+        createMutRGBA32;
 
         uint* pixels;
         int pitch;

@@ -38,12 +38,12 @@ class RgbaTexture : Texture
     override void recreate()
     {
         //TODO toInt?
-        const createErr = texture.createRGBA(cast(int) width, cast(int) height);
+        const createErr = texture.createTargetRGBA32(cast(int) width, cast(int) height);
         if (createErr)
         {
             throw new Exception(createErr.toString);
         }
-        if (const blendErr = texture.setBlendModeBlend)
+        if (const blendErr = texture.setModeBlend)
         {
             throw new Exception(blendErr.toString);
         }
@@ -59,8 +59,12 @@ class RgbaTexture : Texture
             return;
         }
 
-        texture.setRendererTarget;
+        if(const err = texture.setRendererTarget){
+            throw new Exception(err.toString);
+        }
         onRenderer();
-        texture.resetRendererTarget;
+        if(const err = texture.resetRendererTarget){
+            throw new Exception(err.toString);
+        }
     }
 }
