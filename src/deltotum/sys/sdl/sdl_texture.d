@@ -8,7 +8,7 @@ import deltotum.com.platforms.results.com_result : ComResult;
 import deltotum.com.gui.com_texture : ComTexture;
 import deltotum.sys.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
-import deltotum.sys.sdl.sdl_surface : SdlSurface;
+import deltotum.com.gui.com_surface : ComSurface;
 
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.math.geom.flip : Flip;
@@ -45,13 +45,20 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         this.renderer = renderer;
     }
 
-    ComResult fromSurface(SdlSurface surface) nothrow
+    ComResult fromSurface(ComSurface surface) nothrow
     {
         if (ptr)
         {
             disposePtr;
         }
-        return fromSurfacePtr(surface.getObject);
+        //TODO unsafe cast
+        void* ptr;
+        if (const err = surface.nativePtr(ptr))
+        {
+            return err;
+        }
+        SDL_Surface* surfPtr = cast(SDL_Surface*) ptr;
+        return fromSurfacePtr(surfPtr);
     }
 
     ComResult fromSurfacePtr(SDL_Surface* surface) nothrow
@@ -433,7 +440,8 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    ComResult nativePtr(out void* nptr) nothrow {
+    ComResult nativePtr(out void* nptr) nothrow
+    {
         assert(this.ptr);
         nptr = cast(void*) ptr;
         return ComResult.success;

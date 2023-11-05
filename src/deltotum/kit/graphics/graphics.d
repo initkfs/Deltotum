@@ -17,8 +17,7 @@ import std.logger.core : Logger;
 import std.conv : to;
 
 import deltotum.com.gui.com_texture: ComTexture;
-//TODO remove
-import deltotum.sys.sdl.sdl_surface : SdlSurface;
+import deltotum.com.gui.com_surface: ComSurface;
 
 /**
  * Authors: initkfs
@@ -40,7 +39,7 @@ class Graphics : LoggableUnit
     //TODO ComTexture, ComSurface;
     //these factories are added for performance to avoid unnecessary wrapping in the object.
     ComTexture delegate() comTextureFactory;
-    SdlSurface delegate() comSurfaceFactory;
+    ComSurface delegate() comSurfaceFactory;
 
     this(Logger logger, SdlRenderer renderer, Theme theme)
     {
@@ -56,7 +55,6 @@ class Graphics : LoggableUnit
         this.theme = theme;
     }
 
-    //TODO remove sdl api
     ComTexture newComTexture()
     {
         assert(comTextureFactory);
@@ -64,8 +62,7 @@ class Graphics : LoggableUnit
         return texture;
     }
 
-    //TODO remove sdl api
-    SdlSurface newComSurface()
+    ComSurface newComSurface()
     {
         assert(comSurfaceFactory);
         auto surface = comSurfaceFactory();

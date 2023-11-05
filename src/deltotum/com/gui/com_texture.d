@@ -6,15 +6,14 @@ import deltotum.com.lifecycles.destroyable : Destroyable;
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.math.geom.flip : Flip;
 
+import deltotum.com.gui.com_surface: ComSurface;
+
 /**
  * Authors: initkfs
  */
 interface ComTexture : Destroyable
 {
-    //TODO extract ComSurface
-    import deltotum.sys.sdl.sdl_surface : SdlSurface;
-
-    ComResult fromSurface(SdlSurface surface) nothrow;
+    ComResult fromSurface(ComSurface surface) nothrow;
 
     ComResult getSize(out int width, out int height) nothrow;
 

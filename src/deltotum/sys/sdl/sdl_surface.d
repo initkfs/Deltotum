@@ -4,6 +4,7 @@ module deltotum.sys.sdl.sdl_surface;
 version(SdlBackend):
 // dfmt on
 
+import deltotum.com.gui.com_surface: ComSurface;
 import deltotum.com.platforms.results.com_result : ComResult;
 import deltotum.sys.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.sys.sdl.sdl_window : SdlWindow;
@@ -13,7 +14,7 @@ import bindbc.sdl;
 /**
  * Authors: initkfs
  */
-class SdlSurface : SdlObjectWrapper!SDL_Surface
+class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 {
     this()
     {
@@ -230,6 +231,12 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface
     in (ptr !is null)
     {
         return ptr.h;
+    }
+
+    ComResult nativePtr(out void* nptr) nothrow {
+        assert(this.ptr);
+        nptr = cast(void*) ptr;
+        return ComResult.success;
     }
 
     override protected bool disposePtr() @nogc nothrow
