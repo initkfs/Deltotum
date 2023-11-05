@@ -32,6 +32,7 @@ import deltotum.kit.windows.events.window_event : WindowEvent;
 import deltotum.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import deltotum.sys.sdl.sdl_texture : SdlTexture;
 import deltotum.sys.sdl.sdl_surface : SdlSurface;
+import deltotum.com.gui.com_texture: ComTexture;
 
 import deltotum.kit.windows.window : Window;
 
@@ -470,7 +471,7 @@ class SdlApplication : ContinuouslyApplication
         return sdlRenderer;
     }
 
-    SdlTexture newTexture(SdlRenderer renderer)
+    ComTexture newComTexture(SdlRenderer renderer)
     {
         return new SdlTexture(renderer);
     }
@@ -551,7 +552,7 @@ class SdlApplication : ContinuouslyApplication
         windowBuilder.graphics.initialize;
 
         windowBuilder.graphics.comTextureFactory = () {
-            return newTexture(sdlRenderer);
+            return newComTexture(sdlRenderer);
         };
 
         windowBuilder.graphics.comSurfaceFactory = () { return newSurface; };

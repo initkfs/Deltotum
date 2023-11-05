@@ -3,7 +3,7 @@ module deltotum.kit.sprites.images.texture_image;
 import deltotum.kit.sprites.sprite : Sprite;
 
 //TODO extract interfaces
-import deltotum.sys.sdl.sdl_texture : SdlTexture;
+import deltotum.com.gui.com_texture: ComTexture;
 import deltotum.sys.sdl.sdl_surface : SdlSurface;
 import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
 import deltotum.sys.sdl.img.sdl_image : SdlImage;
@@ -58,7 +58,7 @@ class TextureImage : Texture
         super();
     }
 
-    this(SdlTexture texture)
+    this(ComTexture texture)
     {
         super(texture);
     }
@@ -266,15 +266,8 @@ class TextureImage : Texture
         int width;
         int height;
 
-        int result = texture.getSize(width, height);
-        if (result != 0)
-        {
-            string error = "Unable to load image.";
-            if (const err = texture.getError)
-            {
-                error ~= err;
-            }
-            logger.errorf(error);
+        if(const err = texture.getSize(width, height)){
+            logger.errorf(err.toString);
             return false;
         }
 
@@ -348,6 +341,10 @@ class TextureImage : Texture
     //TODO remove
     SDL_Texture* getObject()
     {
-        return texture.getObject;
+        void* ptr;
+        if(const err = texture.nativePtr(ptr)){
+            throw new Exception(err.toString);
+        }
+        return cast(SDL_Texture*) ptr;
     }
 }

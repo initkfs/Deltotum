@@ -11,6 +11,11 @@ import deltotum.math.geom.flip : Flip;
  */
 interface ComTexture : Destroyable
 {
+    //TODO extract ComSurface
+    import deltotum.sys.sdl.sdl_surface : SdlSurface;
+
+    ComResult fromSurface(SdlSurface surface) nothrow;
+
     ComResult getSize(out int width, out int height) nothrow;
 
     ComResult setRendererTarget() nothrow;
@@ -43,7 +48,7 @@ interface ComTexture : Destroyable
     ComResult draw(Rect2d textureBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
             .none);
 
-    //ComTexture copy();
+    ComResult copy(out ComTexture);
 
     double opacity() nothrow;
     void opacity(double opacity) nothrow;

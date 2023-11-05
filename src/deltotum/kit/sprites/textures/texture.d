@@ -2,7 +2,7 @@ module deltotum.kit.sprites.textures.texture;
 
 import deltotum.kit.sprites.sprite : Sprite;
 
-import deltotum.sys.sdl.sdl_texture : SdlTexture;
+import deltotum.com.gui.com_texture: ComTexture;
 import deltotum.sys.sdl.sdl_surface : SdlSurface;
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.math.geom.flip : Flip;
@@ -19,7 +19,7 @@ class Texture : Sprite
 
     protected
     {
-        SdlTexture texture;
+        ComTexture texture;
     }
 
     private
@@ -35,7 +35,7 @@ class Texture : Sprite
 
     }
 
-    this(SdlTexture texture)
+    this(ComTexture texture)
     {
         int w, h;
         if (const sizeErr = texture.getSize(w, h))
@@ -112,7 +112,7 @@ class Texture : Sprite
         }
     }
 
-    int drawTexture(SdlTexture texture, Rect2d textureBounds, int x = 0, int y = 0, double angle = 0, Flip flip = Flip
+    int drawTexture(ComTexture texture, Rect2d textureBounds, int x = 0, int y = 0, double angle = 0, Flip flip = Flip
             .none)
     {
         {
@@ -198,13 +198,16 @@ class Texture : Sprite
     Texture copy()
     {
         assert(texture);
-        SdlTexture newTexture = texture.copy;
+        ComTexture newTexture;
+        if(const err = texture.copy(newTexture)){
+            throw new Exception(err.toString);
+        }
         auto texture = new Texture(newTexture);
         texture.initialize;
         return texture;
     }
 
-    SdlTexture nativeTexture() nothrow
+    ComTexture nativeTexture() nothrow
     {
         return this.texture;
     }

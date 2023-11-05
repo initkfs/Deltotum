@@ -16,8 +16,8 @@ import deltotum.math.shapes.rect2d : Rect2d;
 import std.logger.core : Logger;
 import std.conv : to;
 
+import deltotum.com.gui.com_texture: ComTexture;
 //TODO remove
-import deltotum.sys.sdl.sdl_texture : SdlTexture;
 import deltotum.sys.sdl.sdl_surface : SdlSurface;
 
 /**
@@ -39,7 +39,7 @@ class Graphics : LoggableUnit
 
     //TODO ComTexture, ComSurface;
     //these factories are added for performance to avoid unnecessary wrapping in the object.
-    SdlTexture delegate() comTextureFactory;
+    ComTexture delegate() comTextureFactory;
     SdlSurface delegate() comSurfaceFactory;
 
     this(Logger logger, SdlRenderer renderer, Theme theme)
@@ -57,7 +57,7 @@ class Graphics : LoggableUnit
     }
 
     //TODO remove sdl api
-    SdlTexture newComTexture()
+    ComTexture newComTexture()
     {
         assert(comTextureFactory);
         auto texture = comTextureFactory();

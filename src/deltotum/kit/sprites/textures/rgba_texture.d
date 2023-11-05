@@ -2,7 +2,6 @@ module deltotum.kit.sprites.textures.rgba_texture;
 
 import deltotum.kit.sprites.textures.texture : Texture;
 
-import deltotum.sys.sdl.sdl_texture : SdlTexture;
 import deltotum.math.shapes.rect2d : Rect2d;
 
 /**

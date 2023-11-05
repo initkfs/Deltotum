@@ -33,7 +33,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         int depth = 32;
     }
 
-    this(SdlRenderer renderer)
+    this(SdlRenderer renderer) pure
     {
         assert(renderer);
         this.renderer = renderer;
@@ -395,28 +395,27 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return renderer.copyEx(this, &srcRect, &destRect, angle, null, sdlFlip);
     }
 
-    SdlTexture copy()
+    ComResult copy(out ComTexture toTexture)
     {
-        SdlTexture newTexture = new SdlTexture(renderer);
+        ComTexture newTexture = new SdlTexture(renderer);
         int width, height;
         if (const err = getSize(width, height))
         {
-            throw new Exception(err.toString);
+            return err;
         }
         if (const err = newTexture.createTargetRGBA32(width, height))
         {
-            //TODO return error;
-            throw new Exception(err.toString);
+            return err;
         }
 
         if (const err = newTexture.setModeBlend)
         {
-            throw new Exception(err.toString);
+            return err;
         }
 
         if (const err = newTexture.setRendererTarget)
         {
-            throw new Exception(err.toString);
+            return err;
         }
 
         Rect2d srcRect = {0, 0, width, height};
@@ -424,13 +423,14 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
         if (const err = draw(srcRect, destRect))
         {
-            throw new Exception(err.toString);
+            return err;
         }
         if (const err = resetRendererTarget)
         {
-            throw new Exception(err.toString);
+            return err;
         }
-        return newTexture;
+        toTexture = newTexture;
+        return ComResult.success;
     }
 
     ComResult nativePtr(out void* nptr) nothrow {
