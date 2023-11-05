@@ -1,4 +1,4 @@
-module deltotum.com.gui.com_surface;
+module deltotum.com.graphics.com_surface;
 
 import deltotum.com.platforms.results.com_result : ComResult;
 import deltotum.com.lifecycles.destroyable : Destroyable;

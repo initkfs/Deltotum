@@ -1,4 +1,4 @@
-module deltotum.com.gui.com_window;
+module deltotum.com.graphics.com_window;
 
 import deltotum.com.platforms.results.com_result : ComResult;
 import deltotum.com.lifecycles.destroyable: Destroyable;

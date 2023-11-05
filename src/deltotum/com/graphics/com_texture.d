@@ -1,4 +1,4 @@
-module deltotum.com.gui.com_texture;
+module deltotum.com.graphics.com_texture;
 
 import deltotum.com.platforms.results.com_result : ComResult;
 import deltotum.com.lifecycles.destroyable : Destroyable;
@@ -6,7 +6,7 @@ import deltotum.com.lifecycles.destroyable : Destroyable;
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.math.geom.flip : Flip;
 
-import deltotum.com.gui.com_surface: ComSurface;
+import deltotum.com.graphics.com_surface: ComSurface;
 
 /**
  * Authors: initkfs

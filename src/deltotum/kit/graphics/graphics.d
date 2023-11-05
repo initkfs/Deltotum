@@ -16,8 +16,8 @@ import deltotum.math.shapes.rect2d : Rect2d;
 import std.logger.core : Logger;
 import std.conv : to;
 
-import deltotum.com.gui.com_texture: ComTexture;
-import deltotum.com.gui.com_surface: ComSurface;
+import deltotum.com.graphics.com_texture: ComTexture;
+import deltotum.com.graphics.com_surface: ComSurface;
 
 /**
  * Authors: initkfs

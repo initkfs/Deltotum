@@ -32,8 +32,8 @@ import deltotum.kit.windows.events.window_event : WindowEvent;
 import deltotum.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import deltotum.sys.sdl.sdl_texture : SdlTexture;
 import deltotum.sys.sdl.sdl_surface : SdlSurface;
-import deltotum.com.gui.com_texture: ComTexture;
-import deltotum.com.gui.com_surface: ComSurface;
+import deltotum.com.graphics.com_texture: ComTexture;
+import deltotum.com.graphics.com_surface: ComSurface;
 
 import deltotum.kit.windows.window : Window;
 

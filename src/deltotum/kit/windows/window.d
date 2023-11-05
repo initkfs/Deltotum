@@ -1,7 +1,7 @@
 module deltotum.kit.windows.window;
 
 import deltotum.kit.apps.comps.graphics_component : GraphicsComponent;
-import deltotum.com.gui.com_window : ComWindow;
+import deltotum.com.graphics.com_window : ComWindow;
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.math.vector2d : Vector2d;
 

@@ -5,10 +5,10 @@ version(SdlBackend):
 // dfmt on
 
 import deltotum.com.platforms.results.com_result : ComResult;
-import deltotum.com.gui.com_texture : ComTexture;
+import deltotum.com.graphics.com_texture : ComTexture;
 import deltotum.sys.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
-import deltotum.com.gui.com_surface : ComSurface;
+import deltotum.com.graphics.com_surface : ComSurface;
 
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.math.geom.flip : Flip;

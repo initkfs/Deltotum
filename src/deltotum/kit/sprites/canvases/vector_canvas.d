@@ -3,7 +3,7 @@ module deltotum.kit.sprites.canvases.vector_canvas;
 import deltotum.kit.sprites.textures.texture : Texture;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 
-import deltotum.com.gui.com_surface: ComSurface;
+import deltotum.com.graphics.com_surface: ComSurface;
 //TODO remove native api
 import deltotum.sys.cairo.cairo_surface : CairoSurface;
 import deltotum.sys.cairo.cairo_context : CairoContext;

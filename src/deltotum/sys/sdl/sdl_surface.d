@@ -4,7 +4,7 @@ module deltotum.sys.sdl.sdl_surface;
 version(SdlBackend):
 // dfmt on
 
-import deltotum.com.gui.com_surface: ComSurface;
+import deltotum.com.graphics.com_surface: ComSurface;
 import deltotum.com.platforms.results.com_result : ComResult;
 import deltotum.sys.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.sys.sdl.sdl_window : SdlWindow;

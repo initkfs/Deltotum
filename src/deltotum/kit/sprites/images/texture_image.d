@@ -3,7 +3,7 @@ module deltotum.kit.sprites.images.texture_image;
 import deltotum.kit.sprites.sprite : Sprite;
 
 //TODO extract interfaces
-import deltotum.com.gui.com_texture: ComTexture;
+import deltotum.com.graphics.com_texture: ComTexture;
 import deltotum.sys.sdl.sdl_surface : SdlSurface;
 import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
 import deltotum.sys.sdl.img.sdl_image : SdlImage;

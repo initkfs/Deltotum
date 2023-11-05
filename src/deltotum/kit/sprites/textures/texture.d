@@ -2,7 +2,7 @@ module deltotum.kit.sprites.textures.texture;
 
 import deltotum.kit.sprites.sprite : Sprite;
 
-import deltotum.com.gui.com_texture: ComTexture;
+import deltotum.com.graphics.com_texture: ComTexture;
 import deltotum.sys.sdl.sdl_surface : SdlSurface;
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.math.geom.flip : Flip;
