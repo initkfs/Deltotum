@@ -12,6 +12,10 @@ class Resource : LoggableUnit
         const string _resourcesDir;
     }
 
+    bool isChangeAbsolutePaths;
+
+    string delegate(string) resourceDirPathResolver;
+
     this(Logger logger, string resourcesDir = null) pure @safe
     {
         super(logger);
@@ -26,10 +30,17 @@ class Resource : LoggableUnit
 
     Nullable!string resourcesDir() const
     {
+        if (resourceDirPathResolver)
+        {
+            immutable string mustBeResDir = resourceDirPathResolver(_resourcesDir);
+            return mustBeResDir.length > 0 ? Nullable!string(mustBeResDir) : Nullable!string.init;
+        }
+
         if (!_resourcesDir)
         {
             return Nullable!string.init;
         }
+
         return Nullable!string(_resourcesDir);
     }
 
@@ -37,7 +48,7 @@ class Resource : LoggableUnit
     {
         import std.path : buildPath, isAbsolute;
 
-        if (path.isAbsolute)
+        if (path.isAbsolute && !isChangeAbsolutePaths)
         {
             return Nullable!string(path);
         }
@@ -48,16 +59,17 @@ class Resource : LoggableUnit
 
     Nullable!string withResourcePaths(string[] paths...) const
     {
-        if (_resourcesDir.length == 0)
+        auto mustBeResDir = resourcesDir();
+        if (mustBeResDir.isNull)
         {
-            return Nullable!string.init;
+            return mustBeResDir;
         }
 
         import std.path : buildPath;
         import std.range : only, chain;
 
-        auto resourcePath = _resourcesDir.only.chain(paths).buildPath;
-        return Nullable!string(resourcePath);
+        auto resourcePath = mustBeResDir.get.only.chain(paths).buildPath;
+        return resourcePath.length > 0 ? Nullable!string(resourcePath) : Nullable!string.init;
     }
 
     Nullable!string fileResource(string[] paths...) const
