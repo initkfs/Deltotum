@@ -97,11 +97,11 @@ class Textures : Control
         container1.addCreate(rgbaText1);
 
         auto rgbaText1Copy = rgbaText1.copy;
-        container1.addCreate(rgbaText1Copy);
+        container1.add(rgbaText1Copy);
         rgbaText1Copy.opacity = 0.5;
 
         auto rgbaText1CopyFlip = rgbaText1.copy;
-        container1.addCreate(rgbaText1CopyFlip);
+        container1.add(rgbaText1CopyFlip);
         rgbaText1CopyFlip.flip = Flip.horizontal;
 
         auto leftUpperRect = new TestDrawLeftUpperRect;

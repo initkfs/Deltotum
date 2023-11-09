@@ -91,7 +91,7 @@ class Image : Texture
                     uint* pixelPtr = image.getPixel(x, y);
                     ubyte r, g, b, a;
                     image.getPixelRGBA(pixelPtr, r, g, b, a);
-                    RGBA oldColor = {r, g, b, a / RGBA.maxAlpha};
+                    RGBA oldColor = {r, g, b, RGBA.fromAnorm(a)};
                     RGBA newColor = colorProcessor(x, y, oldColor);
                     if (newColor != oldColor)
                     {

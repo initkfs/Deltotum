@@ -131,11 +131,11 @@ class Graphics : LoggableUnit
 
         setColor(color);
 
-        if (color.a != RGBA.maxAlpha)
-        {
-            changeBlendMode(ComBlendMode.blend);
-            isBlendModeByColorChanged = true;
-        }
+        // if (color.a != RGBA.maxAlpha)
+        // {
+        //     changeBlendMode(ComBlendMode.blend);
+        //     isBlendModeByColorChanged = true;
+        // }
 
         return prevColor;
     }
@@ -150,11 +150,11 @@ class Graphics : LoggableUnit
 
     void restoreColor()
     {
-        if (isBlendModeByColorChanged)
-        {
-            restoreBlendMode;
-            isBlendModeByColorChanged = false;
-        }
+        // if (isBlendModeByColorChanged)
+        // {
+        //     restoreBlendMode;
+        //     isBlendModeByColorChanged = false;
+        // }
         setColor(prevColor);
     }
 

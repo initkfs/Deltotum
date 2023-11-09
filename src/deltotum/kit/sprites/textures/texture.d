@@ -225,6 +225,9 @@ class Texture : Sprite
             throw new Exception(err.toString);
         }
         auto texture = new Texture(newTexture);
+        build(texture);
+        texture.initialize;
+        texture.create;
         return texture;
     }
 
@@ -269,7 +272,7 @@ class Texture : Sprite
         {
             throw new Exception(err.toString);
         }
-        return RGBA(r, g, b, a / RGBA.maxAlpha);
+        return RGBA(r, g, b, RGBA.fromAnorm(a));
     }
 
     void unlock()

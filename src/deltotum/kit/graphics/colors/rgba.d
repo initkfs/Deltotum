@@ -235,7 +235,9 @@ struct RGBA
     double rNorm() const pure @safe => colorNorm(r);
     double gNorm() const pure @safe => colorNorm(g);
     double bNorm() const pure @safe => colorNorm(b);
-    ubyte aNorm() const pure @safe => to!ubyte(a * maxAlpha);
+    ubyte aNorm() const pure @safe => to!ubyte(a * maxColor);
+    
+    static double fromAnorm(ubyte value) pure @safe => value / maxColor;
 
     bool isMin() const pure @safe
     {
