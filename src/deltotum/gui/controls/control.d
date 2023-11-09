@@ -105,7 +105,8 @@ class Control : Sprite
         auto icon = new Image();
         build(icon);
         const iconSize = graphics.theme.iconSize;
-        icon.loadRaw(iconData, iconSize.to!int, iconSize.to!int);
+        import std.conv: to;
+        icon.loadRaw(iconData.to!(const(void[])), iconSize.to!int, iconSize.to!int);
 
         auto color = graphics.theme.colorAccent;
         if(style){

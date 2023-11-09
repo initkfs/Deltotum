@@ -16,6 +16,8 @@ interface ComSurface : Destroyable
     ComResult createRGBSurfaceFrom(void* pixels, int width, int height, int depth, int pitch,
         uint rmask, uint gmask, uint bmask, uint amask);
 
+    ComResult loadFromPtr(void* ptr) nothrow;
+
     ComResult resize(int newWidth, int newHeight, out bool isResized);
 
     ComResult lock();
@@ -24,10 +26,11 @@ interface ComSurface : Destroyable
 
     inout(void*) pixels() inout @nogc nothrow @safe;
 
-    uint* pixel(int x, int y);
+    uint* getPixel(int x, int y) nothrow;
 
-    void setPixel(int x, int y, ubyte r, ubyte g, ubyte b, ubyte a);
-    void setPixel(uint* pixel, ubyte r, ubyte g, ubyte b, ubyte a);
+    void setPixelRGBA(int x, int y, ubyte r, ubyte g, ubyte b, ubyte a);
+    void setPixelRGBA(uint* pixel, ubyte r, ubyte g, ubyte b, ubyte a) nothrow;
+    void getPixelRGBA(uint* pixel, out ubyte r, out ubyte g, out ubyte b, out ubyte a) nothrow;
 
     int pitch() inout @nogc nothrow @safe;
 

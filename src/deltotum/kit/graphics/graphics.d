@@ -18,6 +18,7 @@ import std.conv : to;
 
 import deltotum.com.graphics.com_texture : ComTexture;
 import deltotum.com.graphics.com_surface : ComSurface;
+import deltotum.com.graphics.com_image: ComImage;
 import deltotum.com.graphics.com_blend_mode : ComBlendMode;
 
 /**
@@ -43,6 +44,8 @@ class Graphics : LoggableUnit
     //these factories are added for performance to avoid unnecessary wrapping in the object.
     ComTexture delegate() comTextureFactory;
     ComSurface delegate() comSurfaceFactory;
+    ComImage delegate() comImageFactory;
+
 
     this(Logger logger, SdlRenderer renderer, Theme theme)
     {
@@ -62,6 +65,7 @@ class Graphics : LoggableUnit
     {
         assert(comTextureFactory);
         auto texture = comTextureFactory();
+        assert(texture);
         return texture;
     }
 
@@ -69,7 +73,16 @@ class Graphics : LoggableUnit
     {
         assert(comSurfaceFactory);
         auto surface = comSurfaceFactory();
+        assert(surface);
         return surface;
+    }
+
+    ComImage newComImage()
+    {
+        assert(comImageFactory);
+        auto image = comImageFactory();
+        assert(image);
+        return image;
     }
 
     pragma(inline, true)

@@ -27,25 +27,25 @@ abstract class ComplexFractalImage : Image
 
     void createTextureContent(uint* pixels, int pitch)
     {
-        const centerX = width / 2;
-        const centerY = height / 2;
+        // const centerX = width / 2;
+        // const centerY = height / 2;
 
-        foreach (yi; 0 .. cast(int) height)
-        {
-            double y = (centerY - yi) * scaleFactor;
-            foreach (xi; 0 .. cast(int) width)
-            {
-                double x = (xi - centerX) * scaleFactor;
+        // foreach (yi; 0 .. cast(int) height)
+        // {
+        //     double y = (centerY - yi) * scaleFactor;
+        //     foreach (xi; 0 .. cast(int) width)
+        //     {
+        //         double x = (xi - centerX) * scaleFactor;
                 
-                RGBA color = calcColor(x, y);
+        //         RGBA color = calcColor(x, y);
 
-                if (const err = texture.changeColor(xi, yi, pixels, pitch, color.r, color.g, color.b, color
-                        .aNorm))
-                {
-                    throw new Exception(err.toString);
-                }
-            }
-        }
+        //         if (const err = texture.changeColor(xi, yi, pixels, pitch, color.r, color.g, color.b, color
+        //                 .aNorm))
+        //         {
+        //             throw new Exception(err.toString);
+        //         }
+        //     }
+        // }
     }
 
     override void create()
@@ -60,7 +60,7 @@ abstract class ComplexFractalImage : Image
         uint* pixels;
         int pitch;
 
-        lock(pixels, pitch);
+        lock();
         scope (exit)
         {
             unlock;

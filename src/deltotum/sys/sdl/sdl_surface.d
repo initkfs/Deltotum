@@ -4,7 +4,7 @@ module deltotum.sys.sdl.sdl_surface;
 version(SdlBackend):
 // dfmt on
 
-import deltotum.com.graphics.com_surface: ComSurface;
+import deltotum.com.graphics.com_surface : ComSurface;
 import deltotum.com.platforms.results.com_result : ComResult;
 import deltotum.sys.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.sys.sdl.sdl_window : SdlWindow;
@@ -79,6 +79,16 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
             bmask,
             amask);
         return newPtr;
+    }
+
+    ComResult loadFromPtr(void* ptr)
+    {
+        if (ptr)
+        {
+            disposePtr;
+        }
+        ptr = cast(SDL_Surface*) ptr;
+        return ComResult.success;
     }
 
     static SdlSurface getWindowSurface(SdlWindow window)
@@ -190,21 +200,27 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ptr.pixels;
     }
 
-    uint* pixel(int x, int y)
+    uint* getPixel(int x, int y)
     {
-        uint* pixelPos = cast(Uint32*)(
+        //TODO check bounds
+        uint* pixelPtr = cast(Uint32*)(
             cast(
                 Uint8*) ptr.pixels + y * ptr.pitch + x * ptr.format.BytesPerPixel);
-        return pixelPos;
+        return pixelPtr;
     }
 
-    void setPixel(int x, int y, ubyte r, ubyte g, ubyte b, ubyte a)
+    void setPixelRGBA(int x, int y, ubyte r, ubyte g, ubyte b, ubyte a)
     {
-        uint* pixelPtr = pixel(x, y);
-        setPixel(pixelPtr, r, g, b, a);
+        uint* pixelPtr = getPixel(x, y);
+        setPixelRGBA(pixelPtr, r, g, b, a);
     }
 
-    void setPixel(uint* pixel, ubyte r, ubyte g, ubyte b, ubyte a)
+    void getPixelRGBA(uint* pixel, out ubyte r, out ubyte g, out ubyte b, out ubyte a)
+    {
+        SDL_GetRGBA(*pixel, ptr.format, &r, &g, &b, &a);
+    }
+
+    void setPixelRGBA(uint* pixel, ubyte r, ubyte g, ubyte b, ubyte a)
     {
         Uint32 color = SDL_MapRGBA(ptr.format, r, g, b, a);
         *pixel = color;
@@ -233,7 +249,8 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ptr.h;
     }
 
-    ComResult nativePtr(out void* nptr) nothrow {
+    ComResult nativePtr(out void* nptr) nothrow
+    {
         assert(this.ptr);
         nptr = cast(void*) ptr;
         return ComResult.success;

@@ -51,7 +51,16 @@ class Texture : Sprite
 
     void loadFromSurface(ComSurface surface)
     {
-        auto newTexture = graphics.newComTexture;
+        auto newTexture = texture;
+        if (!newTexture)
+        {
+            newTexture = graphics.newComTexture;
+        }
+        else
+        {
+            texture = null;
+        }
+
         if (const err = newTexture.fromSurface(surface))
         {
             throw new Exception(err.toString);
@@ -65,7 +74,18 @@ class Texture : Sprite
         this.width = w;
         this.height = h;
 
-        texture = newTexture;
+        this.texture = newTexture;
+    }
+
+    void createMutRGBA32()
+    {
+        assert(width > 0 && height > 0);
+
+        texture = graphics.newComTexture;
+        if (const err = texture.createMutRGBA32(cast(int) width, cast(int) height))
+        {
+            throw new Exception(err.toString);
+        }
     }
 
     void blendMode(ComBlendMode mode)
@@ -95,13 +115,18 @@ class Texture : Sprite
 
         if (isDrawTexture)
         {
-            Rect2d textureBounds = {0, 0, width, height};
-            //TODO flip, toInt?
-            Rect2d destBounds = {x, y, width, height};
-            drawTexture(texture, textureBounds, destBounds, angle, flip);
+            drawTexture;
         }
 
         super.drawContent;
+    }
+
+    void drawTexture()
+    {
+        Rect2d textureBounds = {0, 0, width, height};
+        //TODO flip, toInt?
+        Rect2d destBounds = {x, y, width, height};
+        drawTexture(texture, textureBounds, destBounds, angle, flip);
     }
 
     void drawTexture(Rect2d textureBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
@@ -185,7 +210,8 @@ class Texture : Sprite
         }
     }
 
-    override void recreate(){
+    override void recreate()
+    {
         //isCreated = false;
         create;
     }
@@ -207,29 +233,43 @@ class Texture : Sprite
         return this.texture;
     }
 
-    void lock(ref uint* pixels, out int pitch)
+    void lock()
     {
-        if (const err = texture.lock(pixels, pitch))
+        assert(texture && !texture.isLocked);
+        if (const err = texture.lock)
         {
             throw new Exception(err.toString);
         }
     }
 
-    void changeColor(uint x, uint y, uint* pixels, uint pitch, RGBA color)
+    void changeColor(uint x, uint y, RGBA color)
     {
-        if (const err = texture.changeColor(x, y, pixels, pitch, color.r, color.g, color.b, color
-                .aNorm))
+        if (const err = texture.setPixelColor(x, y, color.r, color.g, color.b, color.aNorm))
         {
             throw new Exception(err.toString);
         }
     }
 
-    void pixel(uint x, uint y, uint* pixels, uint pitch, ref uint* pixel)
+    uint* pixel(uint x, uint y)
     {
-        if (const err = texture.pixel(x, y, pixels, pitch, pixel))
+        assert(texture && texture.isLocked);
+        uint* ptr;
+        if (const err = texture.getPixel(x, y, ptr))
         {
             throw new Exception(err.toString);
         }
+        return ptr;
+    }
+
+    RGBA pixelColor(uint x, uint y)
+    {
+        assert(texture && texture.isLocked);
+        ubyte r, g, b, a;
+        if (const err = texture.getPixelColor(x, y, r, g, b, a))
+        {
+            throw new Exception(err.toString);
+        }
+        return RGBA(r, g, b, a / RGBA.maxAlpha);
     }
 
     void unlock()

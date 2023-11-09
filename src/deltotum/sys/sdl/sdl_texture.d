@@ -26,6 +26,11 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     {
         double _opacity = 0;
         SdlRenderer renderer;
+
+        bool locked;
+        //pitch == length row of pixels in bytes
+        int pitch;
+        uint* pixelPtr;
     }
 
     protected
@@ -103,7 +108,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult(zeroOrErrorCode);
     }
 
-    protected ComResult getFormat(ref SDL_PixelFormat* format) @nogc nothrow
+    protected ComResult getFormat(out SDL_PixelFormat* format) @nogc nothrow
     {
         uint formatPtr;
         if (const err = query(null, null, &formatPtr, null))
@@ -207,22 +212,45 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             height);
     }
 
-    ComResult lock(uint* pixels, out int pitch) @nogc nothrow
+    ComResult lock() @nogc nothrow
     {
         assert(ptr);
-        //pitch == length row of pixels in bytes
-        const zeroOrErrorCode = SDL_LockTexture(ptr, null, cast(void**)&pixels, &pitch);
+        assert(!locked);
+        const zeroOrErrorCode = SDL_LockTexture(ptr, null, cast(void**)&pixelPtr, &pitch);
+        if (zeroOrErrorCode == 0)
+        {
+            locked = true;
+            return ComResult.success;
+        }
         return ComResult(zeroOrErrorCode, getError);
     }
 
     ComResult unlock() nothrow
     {
+        assert(locked);
         SDL_UnlockTexture(ptr);
+        locked = false;
+        pixelPtr = null;
+        pitch = 0;
         return ComResult.success;
     }
 
-    ComResult changeColor(uint x, uint y, uint* pixels, uint pitch, ubyte r, ubyte g, ubyte b, ubyte a) nothrow
+    ComResult getPixel(uint x, uint y, out uint* pixel) @nogc nothrow
     {
+        assert(locked);
+        assert(pitch > 0);
+        assert(pixelPtr);
+
+        const pixelPosition = (y * (pitch / pitch.sizeof) + x);
+        pixel = &pixelPtr[pixelPosition];
+        return ComResult.success;
+    }
+
+    ComResult setPixelColor(uint x, uint y, ubyte r, ubyte g, ubyte b, ubyte a) nothrow
+    {
+        assert(locked);
+        assert(pixelPtr);
+        assert(pitch > 0);
         //TODO pass format as a parameter?
         uint formatValue;
         if (const err = query(null, null, &formatValue, null))
@@ -238,9 +266,9 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         }
 
         Uint32 color = SDL_MapRGBA(format, r, g, b, a);
-        const pixelPosition = (y * (pitch / int.sizeof) + x);
+        const pixelPosition = (y * (pitch / pitch.sizeof) + x);
 
-        pixels[pixelPosition] = color;
+        pixelPtr[pixelPosition] = color;
 
         return ComResult.success;
     }
@@ -257,6 +285,16 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
+    ComResult getPixelColor(int x, int y, out ubyte r, out ubyte g, out ubyte b, out ubyte aNorm) nothrow
+    {
+        uint* pixel;
+        if (const err = getPixel(x, y, pixel))
+        {
+            return err;
+        }
+        return getPixelColor(pixel, r, g, b, aNorm);
+    }
+
     ComResult getPixelColor(uint* ptr, out ubyte r, out ubyte g, out ubyte b, out ubyte aNorm) @nogc nothrow
     {
         SDL_PixelFormat* format;
@@ -265,13 +303,6 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             return formatErr;
         }
         SDL_GetRGBA(*ptr, format, &r, &g, &b, &aNorm);
-        return ComResult.success;
-    }
-
-    ComResult pixel(uint x, uint y, uint* pixels, uint pitch, out uint* pixel) @nogc nothrow
-    {
-        const pixelPosition = (y * (pitch / int.sizeof) + x);
-        pixel = &pixels[pixelPosition];
         return ComResult.success;
     }
 
@@ -489,6 +520,11 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
                 return;
             }
         }
+    }
+
+    bool isLocked() nothrow
+    {
+        return locked;
     }
 
 }
