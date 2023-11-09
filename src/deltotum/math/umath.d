@@ -11,40 +11,29 @@ import deltotum.math.vector2d : Vector2d;
  */
 enum PI = mathConst.PI;
 enum PI2 = PI * 2;
+enum PIOver2 = mathConst.PI_2;
+enum PIOver4 = mathConst.PI_4;
+
+alias Tau = PI2;
+
+//2.718281...
+enum E = mathConst.E;
+//0.434294...
+enum Log10E = mathConst.LOG10E;
+//1.442695...
+enum Log2E = mathConst.LOG2E;
+
+enum angleFullDeg = 360.0;
+enum angleHalfDeg = 180.0;
 
 double degToRad(double deg) @nogc nothrow pure @safe
 {
-    return deg * (PI / 180.0);
+    return deg * (PI / angleHalfDeg);
 }
 
 double radToDeg(double rad) @nogc nothrow pure @safe
 {
-    return rad * (180 / PI);
-}
-
-double clamp01(double value) @nogc nothrow pure @safe
-{
-    //TODO compare double
-    if (value < 0)
-    {
-        return 0;
-    }
-    else if (value > 1)
-    {
-        return 1;
-    }
-    else
-    {
-        return value;
-    }
-}
-
-T trunc(T)(T value) if (is(T : real))
-{
-    import std.math.rounding : trunc;
-
-    //TODO other real?
-    return trunc(value);
+    return rad * (angleHalfDeg / PI);
 }
 
 T clamp(T)(T value, T min, T max)
@@ -53,12 +42,25 @@ T clamp(T)(T value, T min, T max)
     {
         return min;
     }
-    else if (value > max)
+
+    if (value > max)
     {
         return max;
     }
-
     return value;
+}
+
+double clamp01(double value) @nogc nothrow pure @safe
+{
+    return clamp(value, 0.0, 1.0);
+}
+
+T trunc(T)(T value) if (is(T : real))
+{
+    import std.math.rounding : trunc;
+
+    //TODO other real?
+    return trunc(value);
 }
 
 pragma(inline, true);
@@ -217,8 +219,13 @@ double sign(double value)
 }
 
 bool isSameSign(double a, double b)
-    {
-        import std.math.traits : sgn;
+{
+    import std.math.traits : sgn;
 
-        return sign(a) == sign(b);
-    }
+    return sign(a) == sign(b);
+}
+
+double toRange(double oldRangeValue, double oldMinInc, double oldMaxInc, double newMinInc, double newMaxInc)
+{
+    return (((oldRangeValue - oldMinInc) * (newMaxInc - newMinInc)) / (oldMaxInc - oldMinInc)) + newMinInc;
+}
