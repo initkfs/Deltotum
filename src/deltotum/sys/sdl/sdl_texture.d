@@ -9,7 +9,7 @@ import deltotum.com.graphics.com_texture : ComTexture;
 import deltotum.sys.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
 import deltotum.com.graphics.com_surface : ComSurface;
-import deltotum.com.graphics.com_texture_blend_mode : ComTextureBlendMode;
+import deltotum.com.graphics.com_blend_mode : ComBlendMode;
 
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.math.geom.flip : Flip;
@@ -275,39 +275,21 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    ComResult setBlendMode(ComTextureBlendMode mode) nothrow
+    ComResult setBlendMode(ComBlendMode mode) nothrow
     {
-        SDL_BlendMode newMode;
-        final switch (mode) with (ComTextureBlendMode)
-        {
-            case blend:
-                newMode = SDL_BLENDMODE_BLEND;
-                break;
-            case add:
-                newMode = SDL_BLENDMODE_ADD;
-                break;
-            case mod:
-                newMode = SDL_BLENDMODE_MOD;
-                break;
-            case mul:
-                newMode = SDL_BLENDMODE_MUL;
-                break;
-            case none:
-                newMode = SDL_BLENDMODE_NONE;
-                break;
-        }
+        SDL_BlendMode newMode = typeConverter.toNativeBlendMode(mode);
         const int zeroOrErrorCode = SDL_SetTextureBlendMode(ptr, newMode);
         return ComResult(zeroOrErrorCode);
     }
 
     ComResult setBlendModeBlend() nothrow
     {
-        return setBlendMode(ComTextureBlendMode.blend);
+        return setBlendMode(ComBlendMode.blend);
     }
 
     ComResult setBlendModeNone() nothrow
     {
-        return setBlendMode(ComTextureBlendMode.none);
+        return setBlendMode(ComBlendMode.none);
     }
 
     ComResult resize(double newWidth, double newHeight) nothrow

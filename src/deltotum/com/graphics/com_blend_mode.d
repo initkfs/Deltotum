@@ -1,9 +1,9 @@
-module deltotum.com.graphics.com_texture_blend_mode;
+module deltotum.com.graphics.com_blend_mode;
 
 /**
  * Authors: initkfs
  */
-enum ComTextureBlendMode
+enum ComBlendMode
 {
     none,
     /*

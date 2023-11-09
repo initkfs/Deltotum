@@ -79,12 +79,12 @@ class Grahpics : Control
         graphics.ellipse(Vector2d(650, 100), Vector2d(40, 20), RGBA.lightseagreen, true, false);
         graphics.ellipse(Vector2d(650, 150), Vector2d(40, 20), RGBA.lightseagreen, false, true);
 
-        // graphics.polygon([
-        //     Vector2d(20, 200),
-        //     Vector2d(65, 220),
-        //     Vector2d(75, 260),
-        //     Vector2d(30, 280),
-        // ]);
+        import deltotum.com.graphics.com_blend_mode : ComBlendMode;
+
+        graphics.fillRect(750, 100, 50, 50, RGBA.lightpink);
+        auto color2 = RGBA.lightcoral;
+        color2.a = 0.5;
+        graphics.fillRect(775, 100, 50, 50, color2);
 
         auto points = [
             Vector2d(20, 200),

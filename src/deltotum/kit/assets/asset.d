@@ -115,7 +115,9 @@ class Asset : Resource
         //TODO check if font\fontBitmap in fontCache
         foreach (fontTexture; fontCache)
         {
-            fontTexture.dispose;
+            if(fontTexture.isCreated){
+                fontTexture.dispose;
+            }
         }
     }
 }

@@ -4,7 +4,7 @@ import deltotum.kit.sprites.sprite : Sprite;
 
 import deltotum.com.graphics.com_texture : ComTexture;
 import deltotum.com.graphics.com_surface : ComSurface;
-import deltotum.com.graphics.com_texture_blend_mode : ComTextureBlendMode;
+import deltotum.com.graphics.com_blend_mode : ComBlendMode;
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.math.geom.flip : Flip;
 import deltotum.kit.graphics.colors.rgba : RGBA;
@@ -68,7 +68,7 @@ class Texture : Sprite
         texture = newTexture;
     }
 
-    void blendMode(ComTextureBlendMode mode)
+    void blendMode(ComBlendMode mode)
     {
         if (const err = texture.setBlendMode(mode))
         {
@@ -78,12 +78,12 @@ class Texture : Sprite
 
     void blendModeBlend()
     {
-        blendMode(ComTextureBlendMode.blend);
+        blendMode(ComBlendMode.blend);
     }
 
     void blendModeNone()
     {
-        blendMode(ComTextureBlendMode.none);
+        blendMode(ComBlendMode.none);
     }
 
     override void drawContent()

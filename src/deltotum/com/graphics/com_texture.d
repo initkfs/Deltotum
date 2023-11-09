@@ -1,7 +1,7 @@
 module deltotum.com.graphics.com_texture;
 
 import deltotum.com.platforms.results.com_result : ComResult;
-import deltotum.com.graphics.com_texture_blend_mode: ComTextureBlendMode;
+import deltotum.com.graphics.com_blend_mode: ComBlendMode;
 import deltotum.com.lifecycles.destroyable : Destroyable;
 
 import deltotum.math.shapes.rect2d : Rect2d;
@@ -38,7 +38,7 @@ interface ComTexture : Destroyable
     ComResult setPixelColor(uint* ptr, ubyte r, ubyte g, ubyte b, ubyte aNorm) nothrow;
     ComResult getPixelColor(uint* ptr, out ubyte r, out ubyte g, out ubyte b, out ubyte aNorm) nothrow;
 
-    ComResult setBlendMode(ComTextureBlendMode mode) nothrow;
+    ComResult setBlendMode(ComBlendMode mode) nothrow;
     ComResult setBlendModeBlend() nothrow;
     ComResult setBlendModeNone() nothrow;
 

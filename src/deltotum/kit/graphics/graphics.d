@@ -16,8 +16,9 @@ import deltotum.math.shapes.rect2d : Rect2d;
 import std.logger.core : Logger;
 import std.conv : to;
 
-import deltotum.com.graphics.com_texture: ComTexture;
-import deltotum.com.graphics.com_surface: ComSurface;
+import deltotum.com.graphics.com_texture : ComTexture;
+import deltotum.com.graphics.com_surface : ComSurface;
+import deltotum.com.graphics.com_blend_mode : ComBlendMode;
 
 /**
  * Authors: initkfs
@@ -32,6 +33,8 @@ class Graphics : LoggableUnit
 
     protected
     {
+        ComBlendMode prevMode;
+        bool isBlendModeByColorChanged;
         RGBA prevColor;
         SdlRenderer renderer;
     }
@@ -115,6 +118,12 @@ class Graphics : LoggableUnit
 
         setColor(color);
 
+        if (color.a != RGBA.maxAlpha)
+        {
+            changeBlendMode(ComBlendMode.blend);
+            isBlendModeByColorChanged = true;
+        }
+
         return prevColor;
     }
 
@@ -128,7 +137,42 @@ class Graphics : LoggableUnit
 
     void restoreColor()
     {
+        if (isBlendModeByColorChanged)
+        {
+            restoreBlendMode;
+            isBlendModeByColorChanged = false;
+        }
         setColor(prevColor);
+    }
+
+    ComBlendMode changeBlendMode(ComBlendMode mode = ComBlendMode.blend)
+    {
+        ComBlendMode mustBePrevMode;
+        if (const err = renderer.getBlendMode(mustBePrevMode))
+        {
+            logger.errorf("Error getting renderer blengind mode");
+            return ComBlendMode.none;
+        }
+
+        //TODO check prev == mode
+        prevMode = mustBePrevMode;
+
+        setBlendMode(mode);
+
+        return prevMode;
+    }
+
+    void setBlendMode(ComBlendMode mode = ComBlendMode.blend)
+    {
+        if (const err = renderer.setBlendMode(mode))
+        {
+            logger.error("Error setting blending mode for the renderer. ", err);
+        }
+    }
+
+    void restoreBlendMode()
+    {
+        setBlendMode(prevMode);
     }
 
     void line(double startX, double startY, double endX, double endY)

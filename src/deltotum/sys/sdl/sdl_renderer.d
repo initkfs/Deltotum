@@ -5,6 +5,7 @@ version(SdlBackend):
 // dfmt on
 
 import deltotum.com.platforms.results.com_result : ComResult;
+import deltotum.com.graphics.com_blend_mode : ComBlendMode;
 import deltotum.sys.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.sys.sdl.sdl_window : SdlWindow;
 import deltotum.sys.sdl.sdl_texture : SdlTexture;
@@ -125,6 +126,34 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
     {
         const zeroOrErrCode = SDL_RenderSetClipRect(ptr, null);
         return ComResult(zeroOrErrCode);
+    }
+
+    ComResult setBlendMode(ComBlendMode mode)
+    {
+        SDL_BlendMode newMode = typeConverter.toNativeBlendMode(mode);
+        const int zeroOrErrorCode = SDL_SetRenderDrawBlendMode(ptr, newMode);
+        return ComResult(zeroOrErrorCode);
+    }
+
+    ComResult getBlendMode(out ComBlendMode mode)
+    {
+        SDL_BlendMode oldMode;
+        const int zeroOrErrorCode = SDL_GetRenderDrawBlendMode(ptr, &oldMode);
+        if (zeroOrErrorCode == 0)
+        {
+            mode = typeConverter.fromNativeBlendMode(oldMode);
+        }
+        return ComResult(zeroOrErrorCode);
+    }
+
+    ComResult setBlendModeBlend()
+    {
+        return setBlendMode(ComBlendMode.blend);
+    }
+
+    ComResult setBlendModeNone()
+    {
+        return setBlendMode(ComBlendMode.none);
     }
 
     ComResult rect(int x, int y, int width, int height)
