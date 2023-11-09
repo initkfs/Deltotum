@@ -2,13 +2,12 @@ module deltotum.kit.sprites.textures.texture;
 
 import deltotum.kit.sprites.sprite : Sprite;
 
-import deltotum.com.graphics.com_texture: ComTexture;
-import deltotum.sys.sdl.sdl_surface : SdlSurface;
+import deltotum.com.graphics.com_texture : ComTexture;
+import deltotum.com.graphics.com_surface : ComSurface;
+import deltotum.com.graphics.com_texture_blend_mode : ComTextureBlendMode;
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.math.geom.flip : Flip;
 import deltotum.kit.graphics.colors.rgba : RGBA;
-
-import bindbc.sdl;
 
 /**
  * Authors: initkfs
@@ -16,6 +15,7 @@ import bindbc.sdl;
 class Texture : Sprite
 {
     bool isDrawTexture = true;
+    Flip flip = Flip.none;
 
     protected
     {
@@ -49,7 +49,7 @@ class Texture : Sprite
         this.texture = texture;
     }
 
-    void loadFromSurface(SdlSurface surface)
+    void loadFromSurface(ComSurface surface)
     {
         auto newTexture = graphics.newComTexture;
         if (const err = newTexture.fromSurface(surface))
@@ -68,36 +68,37 @@ class Texture : Sprite
         texture = newTexture;
     }
 
-    void setBlendMode()
+    void blendMode(ComTextureBlendMode mode)
     {
-        if (const err = texture.setModeBlend)
+        if (const err = texture.setBlendMode(mode))
         {
             throw new Exception(err.toString);
         }
     }
 
-    void setBlendNone()
+    void blendModeBlend()
     {
-        if (const err = texture.setBlendNone)
-        {
-            throw new Exception(err.toString);
-        }
+        blendMode(ComTextureBlendMode.blend);
+    }
+
+    void blendModeNone()
+    {
+        blendMode(ComTextureBlendMode.none);
     }
 
     override void drawContent()
     {
         if (texture is null)
         {
-            //TODO logging
             return;
         }
 
-        //draw parent first
         if (isDrawTexture)
         {
-            Rect2d textureBounds = Rect2d(0, 0, width, height);
+            Rect2d textureBounds = {0, 0, width, height};
             //TODO flip, toInt?
-            drawTexture(texture, textureBounds, cast(int) x, cast(int) y, angle);
+            Rect2d destBounds = {x, y, width, height};
+            drawTexture(texture, textureBounds, destBounds, angle, flip);
         }
 
         super.drawContent;
@@ -106,40 +107,40 @@ class Texture : Sprite
     void drawTexture(Rect2d textureBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
             .none)
     {
-        if (const err = texture.draw(textureBounds, destBounds, angle, flip))
-        {
-            //TODO logging
-        }
+        drawTexture(texture, textureBounds, destBounds, angle, flip);
     }
 
-    int drawTexture(ComTexture texture, Rect2d textureBounds, int x = 0, int y = 0, double angle = 0, Flip flip = Flip
+    void drawTexture(ComTexture texture, Rect2d textureBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
             .none)
     {
+        if (const err = texture.draw(textureBounds, destBounds, angle, flip))
         {
-            //TODO compare double, where to set opacity?
-            import std.math.operations : isClose;
-
-            //!isClose(texture.opacity, opacity)
-            if (texture.opacity != opacity)
-            {
-                texture.opacity = opacity;
-            }
-            Rect2d destBounds = Rect2d(x, y, width, height);
-            return texture.draw(textureBounds, destBounds, angle, flip);
+            logger.error(err.toString);
         }
     }
 
-    bool setColor(RGBA color)
+    void color(RGBA color)
     {
-        if (!texture)
-        {
-            return false;
-        }
+        import std.exception : enforce;
+
+        enforce(texture, "Texture not created");
         if (const err = texture.setColor(color.r, color.g, color.b, color.aNorm))
         {
             throw new Exception(err.toString);
         }
-        return true;
+    }
+
+    RGBA color()
+    {
+        import std.exception : enforce;
+
+        enforce(texture, "Texture not created");
+        ubyte r, g, b, a;
+        if (const err = texture.getColor(r, g, b, a))
+        {
+            throw new Exception(err.toString);
+        }
+        return RGBA(r, g, b, a / (cast(double) ubyte.max));
     }
 
     override double width()
@@ -184,30 +185,24 @@ class Texture : Sprite
         }
     }
 
-    // void setAlpha(double valueOto1)
-    // {
-    //     import std.conv : to;
-
-    //     ubyte value = (valueOto1 * ubyte.max).to!ubyte;
-    //     if (const err = texture.setAlphaMod(value))
-    //     {
-    //         throw new Exception(err.toString);
-    //     }
-    // }
+    override void recreate(){
+        //isCreated = false;
+        create;
+    }
 
     Texture copy()
     {
         assert(texture);
         ComTexture newTexture;
-        if(const err = texture.copy(newTexture)){
+        if (const err = texture.copy(newTexture))
+        {
             throw new Exception(err.toString);
         }
         auto texture = new Texture(newTexture);
-        texture.initialize;
         return texture;
     }
 
-    ComTexture nativeTexture() nothrow
+    inout(ComTexture) nativeTexture() inout @nogc nothrow
     {
         return this.texture;
     }
@@ -242,6 +237,21 @@ class Texture : Sprite
         if (const err = texture.unlock)
         {
             throw new Exception(err.toString);
+        }
+    }
+
+    override double opacity()
+    {
+        return super.opacity;
+    }
+
+    override void opacity(double value)
+    {
+        assert(texture);
+        super.opacity(value);
+        if (const err = texture.changeOpacity(value))
+        {
+            logger.error(err.toString);
         }
     }
 

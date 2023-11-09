@@ -51,7 +51,7 @@ class Sprite : EventKitTarget
     Sprite parent;
 
     double angle = 0;
-    double opacity = 1;
+    double _opacity = 1;
     double scale = 1;
     double mass = 1;
     double speed = 0;
@@ -1718,6 +1718,16 @@ class Sprite : EventKitTarget
     double invMass() pure @safe nothrow
     {
         return 1.0 / mass;
+    }
+
+    double opacity()
+    {
+        return _opacity;
+    }
+
+    void opacity(double value)
+    {
+        _opacity = value;
     }
 
 }

@@ -326,7 +326,8 @@ class TextureImage : Texture
             return;
         }
         Rect2d textureBounds = {0, 0, width, height};
-        drawTexture(texture, textureBounds, x, y, angle, flip);
+        Rect2d destBounds = {x, y, width, height};
+        drawTexture(texture, textureBounds, destBounds, angle, flip);
     }
 
     override void dispose()

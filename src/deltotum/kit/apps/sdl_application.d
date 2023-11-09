@@ -577,7 +577,7 @@ class SdlApplication : ContinuouslyApplication
             auto colorText = theme.colorText;
 
             auto themeFont = windowBuilder.asset.fontBitmap.copy;
-            themeFont.setColor(colorText);
+            themeFont.color = colorText;
             windowBuilder.asset.addCachedFont(colorText, themeFont);
         }
 

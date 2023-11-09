@@ -308,7 +308,7 @@ class Text : Control
             if (!fontTexture)
             {
                 fontTexture = asset.fontBitmap.copy;
-                fontTexture.setColor(color);
+                fontTexture.color = color;
                 asset.addCachedFont(color, fontTexture);
             }
         }

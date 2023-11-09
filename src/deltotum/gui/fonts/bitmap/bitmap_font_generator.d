@@ -113,7 +113,7 @@ class BitmapFontGenerator : FontGenerator
         bitmapFont.glyphs = glyphs;
 
         bitmapFont.loadFromSurface(fontMapSurface);
-        bitmapFont.setBlendMode;
+        bitmapFont.blendModeBlend;
         fontMapSurface.dispose;
         return bitmapFont;
     }

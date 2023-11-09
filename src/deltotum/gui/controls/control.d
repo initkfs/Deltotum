@@ -112,7 +112,7 @@ class Control : Sprite
             color = style.lineColor;
         }
 
-        icon.setColor(color);
+        icon.color = color;
         icon.create;
         return icon;
     }

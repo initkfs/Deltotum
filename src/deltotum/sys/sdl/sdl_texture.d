@@ -9,6 +9,7 @@ import deltotum.com.graphics.com_texture : ComTexture;
 import deltotum.sys.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
 import deltotum.com.graphics.com_surface : ComSurface;
+import deltotum.com.graphics.com_texture_blend_mode : ComTextureBlendMode;
 
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.math.geom.flip : Flip;
@@ -79,6 +80,16 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             return ComResult.error(error);
         }
         SDL_SetTextureBlendMode(ptr, SDL_BLENDMODE_BLEND);
+        return ComResult.success;
+    }
+
+    ComResult recreatePtr(void* newPtr) nothrow
+    {
+        if (ptr)
+        {
+            disposePtr;
+        }
+        ptr = cast(SDL_Texture*) newPtr;
         return ComResult.success;
     }
 
@@ -264,16 +275,39 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    ComResult setModeBlend() nothrow
+    ComResult setBlendMode(ComTextureBlendMode mode) nothrow
     {
-        const int zeroOrErrorCode = SDL_SetTextureBlendMode(ptr, SDL_BLENDMODE_BLEND);
+        SDL_BlendMode newMode;
+        final switch (mode) with (ComTextureBlendMode)
+        {
+            case blend:
+                newMode = SDL_BLENDMODE_BLEND;
+                break;
+            case add:
+                newMode = SDL_BLENDMODE_ADD;
+                break;
+            case mod:
+                newMode = SDL_BLENDMODE_MOD;
+                break;
+            case mul:
+                newMode = SDL_BLENDMODE_MUL;
+                break;
+            case none:
+                newMode = SDL_BLENDMODE_NONE;
+                break;
+        }
+        const int zeroOrErrorCode = SDL_SetTextureBlendMode(ptr, newMode);
         return ComResult(zeroOrErrorCode);
     }
 
-    ComResult setBlendNone() nothrow
+    ComResult setBlendModeBlend() nothrow
     {
-        const int zeroOrErrorCode = SDL_SetTextureBlendMode(ptr, SDL_BLENDMODE_NONE);
-        return ComResult(zeroOrErrorCode);
+        return setBlendMode(ComTextureBlendMode.blend);
+    }
+
+    ComResult setBlendModeNone() nothrow
+    {
+        return setBlendMode(ComTextureBlendMode.none);
     }
 
     ComResult resize(double newWidth, double newHeight) nothrow
@@ -415,7 +449,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             return err;
         }
 
-        if (const err = newTexture.setModeBlend)
+        if (const err = newTexture.setBlendModeBlend)
         {
             return err;
         }

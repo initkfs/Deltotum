@@ -144,7 +144,8 @@ class AnimatedImage : TextureImage
         srcRect.height = cast(int) frameHeight;
 
         assert(texture);
-        drawTexture(texture, srcRect, cast(int) x, cast(int) y, angle, flip);
+        Rect2d destRect = { x, y, width, height};
+        drawTexture(texture, srcRect, destRect, angle, flip);
     }
 
     void drawFrames()

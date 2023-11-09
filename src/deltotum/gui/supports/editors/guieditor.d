@@ -37,12 +37,20 @@ class GuiEditor : Scene
         layoutTab.content = new Layouts;
         root.addCreate(layoutTab);
 
-        import deltotum.gui.supports.editors.sections.graphics: Grahpics;
+        import deltotum.gui.supports.editors.sections.graphics : Grahpics;
+
         auto graphicsTab = new Tab("Graphics");
         graphicsTab.content = new Grahpics;
         root.addCreate(graphicsTab);
 
-        import deltotum.gui.supports.editors.sections.animations: Animations;
+        import deltotum.gui.supports.editors.sections.textures : Textures;
+
+        auto texturesTab = new Tab("Textures");
+        texturesTab.content = new Textures;
+        root.addCreate(texturesTab);
+
+        import deltotum.gui.supports.editors.sections.animations : Animations;
+
         auto animTab = new Tab("Animations");
         animTab.content = new Animations;
         root.addCreate(animTab);
@@ -59,7 +67,7 @@ class GuiEditor : Scene
         scriptTab.content = new Scripting;
         root.addCreate(scriptTab);
 
-        root.changeTab(animTab);
+        root.changeTab(texturesTab);
 
         createDebugger;
     }

@@ -9,7 +9,7 @@ import deltotum.math.shapes.rect2d : Rect2d;
  */
 class RgbaTexture : Texture
 {
-    this(double width, double height)
+    this(double width = 100, double height = 100)
     {
         super();
         this.width = width;
@@ -29,25 +29,18 @@ class RgbaTexture : Texture
         {
             texture = graphics.newComTexture;
         }
-
-        recreate;
-
-    }
-
-    override void recreate()
-    {
-        //TODO toInt?
-        const createErr = texture.createTargetRGBA32(cast(int) width, cast(int) height);
-        if (createErr)
+        
+        //autodisposing should work in ComTexture
+        if (const createErr = texture.createTargetRGBA32(cast(int) width, cast(int) height))
         {
             throw new Exception(createErr.toString);
         }
-        if (const blendErr = texture.setModeBlend)
+
+        if (const blendErr = texture.setBlendModeBlend)
         {
             throw new Exception(blendErr.toString);
         }
 
-        //TODO move to TextureCanvas
         captureRenderer(() { createTextureContent; });
     }
 
@@ -58,11 +51,13 @@ class RgbaTexture : Texture
             return;
         }
 
-        if(const err = texture.setRendererTarget){
+        if (const err = texture.setRendererTarget)
+        {
             throw new Exception(err.toString);
         }
         onRenderer();
-        if(const err = texture.resetRendererTarget){
+        if (const err = texture.resetRendererTarget)
+        {
             throw new Exception(err.toString);
         }
     }

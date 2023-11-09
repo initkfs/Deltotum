@@ -29,15 +29,11 @@ class VectorCanvas : Texture
         this.height = height;
     }
 
-    override bool setColor(RGBA color)
+    override void color(RGBA color)
     {
-        if (!isCreated)
-        {
-            return false;
-        }
+        assert(isCreated);
         auto ctx = cairoContext.getObject;
         cairo_set_source_rgb(ctx, color.rNorm, color.gNorm, color.bNorm);
-        return true;
     }
 
     void createTextureContent()
@@ -124,7 +120,7 @@ class VectorCanvas : Texture
             throw new Exception(createErr.toString);
         }
 
-        if (const err = texture.setModeBlend)
+        if (const err = texture.setBlendModeBlend)
         {
             throw new Exception(err.toString);
         }

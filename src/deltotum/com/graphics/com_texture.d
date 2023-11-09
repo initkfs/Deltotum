@@ -1,11 +1,11 @@
 module deltotum.com.graphics.com_texture;
 
 import deltotum.com.platforms.results.com_result : ComResult;
+import deltotum.com.graphics.com_texture_blend_mode: ComTextureBlendMode;
 import deltotum.com.lifecycles.destroyable : Destroyable;
 
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.math.geom.flip : Flip;
-
 import deltotum.com.graphics.com_surface: ComSurface;
 
 /**
@@ -14,6 +14,7 @@ import deltotum.com.graphics.com_surface: ComSurface;
 interface ComTexture : Destroyable
 {
     ComResult fromSurface(ComSurface surface) nothrow;
+    ComResult recreatePtr(void* newPtr) nothrow;
 
     ComResult getSize(out int width, out int height) nothrow;
 
@@ -37,8 +38,9 @@ interface ComTexture : Destroyable
     ComResult setPixelColor(uint* ptr, ubyte r, ubyte g, ubyte b, ubyte aNorm) nothrow;
     ComResult getPixelColor(uint* ptr, out ubyte r, out ubyte g, out ubyte b, out ubyte aNorm) nothrow;
 
-    ComResult setModeBlend() nothrow;
-    ComResult setBlendNone() nothrow;
+    ComResult setBlendMode(ComTextureBlendMode mode) nothrow;
+    ComResult setBlendModeBlend() nothrow;
+    ComResult setBlendModeNone() nothrow;
 
     ComResult resize(double newWidth, double newHeight) nothrow;
 

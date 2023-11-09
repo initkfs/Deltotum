@@ -60,7 +60,7 @@ class VPointsShape : VShape
         auto ctx = cairoContext.getObject;
 
         cairo_set_line_width(ctx, style.lineWidth);
-        setColor(style.lineColor);
+        color(style.lineColor);
     }
 
     void drawPoints()
