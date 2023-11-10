@@ -3,18 +3,12 @@ module deltotum.kit.sprites.images.animated_image;
 import deltotum.kit.sprites.images.image : Image;
 import deltotum.kit.sprites.sprite : Sprite;
 
-//TODO extract interfaces
-import deltotum.sys.sdl.sdl_texture : SdlTexture;
-import deltotum.sys.sdl.sdl_renderer : SdlRenderer;
-import deltotum.sys.sdl.img.sdl_image : SdlImage;
 import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.kit.sprites.animations.interp.interpolator : Interpolator;
 import deltotum.kit.sprites.animations.transition : Transition;
 import std.math.rounding : floor;
 import std.conv : to;
 import deltotum.math.geom.flip : Flip;
-
-import bindbc.sdl;
 
 private
 {
@@ -131,7 +125,7 @@ class AnimatedImage : Image
             }
         }
 
-        currentAnimationStartTime = SDL_GetTicks();
+        currentAnimationStartTime = timer.ticks;
     }
 
     void drawFrame(int frameIndex, int rowIndex, Flip flip = Flip
@@ -187,7 +181,7 @@ class AnimatedImage : Image
             return;
         }
 
-        if (currentAnimation.transition !is null)
+        if (currentAnimation.transition)
         {
             currentAnimation.transition.update(delta);
             const progress0to1 = currentAnimation.transition.lastValue;
@@ -203,7 +197,7 @@ class AnimatedImage : Image
         {
             auto delay = currentAnimation.frameDelay > 0 ? currentAnimation.frameDelay
                 : commonFrameDelay;
-            currentAnimationIndex = ((SDL_GetTicks() - currentAnimationStartTime) / delay) % animLength;
+            currentAnimationIndex = ((timer.ticks - currentAnimationStartTime) / delay) % animLength;
         }
     }
 

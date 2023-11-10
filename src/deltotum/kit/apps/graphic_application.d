@@ -25,6 +25,7 @@ import deltotum.kit.apps.loops.loop : Loop;
 import deltotum.media.audio.audio : Audio;
 import deltotum.kit.inputs.input : Input;
 import deltotum.kit.screens.screen : Screen;
+import deltotum.kit.timers.timer: Timer;
 
 import std.logger : Logger;
 import std.typecons : Nullable;
@@ -50,6 +51,7 @@ abstract class GraphicApplication : CliApplication
         Audio _audio;
         Input _input;
         Screen _screen;
+        Timer _timer;
     }
 
     private
@@ -126,6 +128,7 @@ abstract class GraphicApplication : CliApplication
         component.audio = _audio;
         component.input = _input;
         component.screen = _screen;
+        component.timer = _timer;
         component.capGraphics = gservices.capGraphics;
     }
 

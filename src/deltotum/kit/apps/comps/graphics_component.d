@@ -11,6 +11,7 @@ import deltotum.kit.inputs.input : Input;
 import deltotum.kit.windows.window : Window;
 import deltotum.kit.screens.screen : Screen;
 import deltotum.kit.apps.caps.cap_graphics : CapGraphics;
+import deltotum.kit.timers.timer : Timer;
 
 /**
  * Authors: initkfs
@@ -25,6 +26,7 @@ class GraphicsComponent : UniComponent
         @Service Input _input;
         @Service Screen _screen;
         @Service CapGraphics _capGraphics;
+        @Service Timer _timer;
     }
 
     alias build = UniComponent.build;
@@ -146,5 +148,24 @@ class GraphicsComponent : UniComponent
 
         enforce(caps !is null, "Graphics capabilities must not be null");
         _capGraphics = caps;
+    }
+
+    bool hasTimer() const @nogc nothrow pure @safe
+    {
+        return _timer !is null;
+    }
+
+    inout(Timer) timer() inout @nogc nothrow pure @safe
+    out (_timer; _timer !is null)
+    {
+        return _timer;
+    }
+
+    void timer(Timer t) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(t !is null, "Timer must not be null");
+        _timer = t;
     }
 }

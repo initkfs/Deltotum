@@ -36,6 +36,7 @@ import deltotum.sys.sdl.img.sdl_image : SdlImage;
 import deltotum.com.graphics.com_texture : ComTexture;
 import deltotum.com.graphics.com_surface : ComSurface;
 import deltotum.com.graphics.com_image : ComImage;
+import deltotum.kit.timers.timer : Timer;
 
 import deltotum.kit.windows.window : Window;
 
@@ -177,6 +178,8 @@ class SdlApplication : ContinuouslyApplication
             uservices.logger.warningf("Cursor error: %s", e);
             cursor = new SystemCursor(null);
         }
+
+        _timer = newTimer;
 
         _input = new Input(clipboard, cursor);
         _audio = new Audio(audioMixLib);
@@ -487,6 +490,13 @@ class SdlApplication : ContinuouslyApplication
     ComImage newComImage()
     {
         return new SdlImage();
+    }
+
+    Timer newTimer()
+    {
+        Timer t = new Timer(uservices.logger);
+        t.tickProvider = () { return SDL_GetTicks(); };
+        return t;
     }
 
     Window newWindow(
