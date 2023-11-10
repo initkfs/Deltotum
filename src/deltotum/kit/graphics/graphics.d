@@ -126,23 +126,23 @@ class Graphics : LoggableUnit
             return prevColor;
         }
 
-        const aNorm = (cast(double) a) / ubyte.max;
-        prevColor = RGBA(r, g, b, aNorm);
+        const aByte = (cast(double) a) / ubyte.max;
+        prevColor = RGBA(r, g, b, aByte);
 
         setColor(color);
 
-        // if (color.a != RGBA.maxAlpha)
-        // {
-        //     changeBlendMode(ComBlendMode.blend);
-        //     isBlendModeByColorChanged = true;
-        // }
+        if (color.a != RGBA.maxAlpha)
+        {
+            changeBlendMode(ComBlendMode.blend);
+            isBlendModeByColorChanged = true;
+        }
 
         return prevColor;
     }
 
     void setColor(RGBA color)
     {
-        if (const err = renderer.setRenderDrawColor(color.r, color.g, color.b, color.aNorm))
+        if (const err = renderer.setRenderDrawColor(color.r, color.g, color.b, color.aByte))
         {
             logger.errorf("Adjust render error. %s", err);
         }
@@ -150,11 +150,11 @@ class Graphics : LoggableUnit
 
     void restoreColor()
     {
-        // if (isBlendModeByColorChanged)
-        // {
-        //     restoreBlendMode;
-        //     isBlendModeByColorChanged = false;
-        // }
+        if (isBlendModeByColorChanged)
+        {
+            restoreBlendMode;
+            isBlendModeByColorChanged = false;
+        }
         setColor(prevColor);
     }
 
@@ -832,7 +832,7 @@ class Graphics : LoggableUnit
         //isClearingInCycle
         const screenColor = RGBA.black;
         if (const err = renderer.setRenderDrawColor(screenColor.r, screenColor.g, screenColor.b, screenColor
-                .aNorm))
+                .aByte))
         {
             //TODO logging in main loop?
         }

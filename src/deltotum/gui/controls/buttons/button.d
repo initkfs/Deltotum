@@ -203,7 +203,7 @@ class Button : Control
                 return;
             }
 
-            if (clickEffectAnimation !is null && !clickEffectAnimation.isRun)
+            if (clickEffectAnimation !is null && !clickEffectAnimation.isRunning)
             {
                 clickEffect.isVisible = true;
                 clickEffectAnimation.run;

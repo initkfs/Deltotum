@@ -149,7 +149,7 @@ class Texture : Sprite
         import std.exception : enforce;
 
         enforce(texture, "Texture not created");
-        if (const err = texture.setColor(color.r, color.g, color.b, color.aNorm))
+        if (const err = texture.setColor(color.r, color.g, color.b, color.aByte))
         {
             throw new Exception(err.toString);
         }
@@ -247,7 +247,7 @@ class Texture : Sprite
 
     void changeColor(uint x, uint y, RGBA color)
     {
-        if (const err = texture.setPixelColor(x, y, color.r, color.g, color.b, color.aNorm))
+        if (const err = texture.setPixelColor(x, y, color.r, color.g, color.b, color.aByte))
         {
             throw new Exception(err.toString);
         }
@@ -272,7 +272,7 @@ class Texture : Sprite
         {
             throw new Exception(err.toString);
         }
-        return RGBA(r, g, b, RGBA.fromAnorm(a));
+        return RGBA(r, g, b, RGBA.fromAByte(a));
     }
 
     void unlock()

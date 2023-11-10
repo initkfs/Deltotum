@@ -40,7 +40,7 @@ class Julia : ComplexFractalImage
                 RGBA color = calcColor(zRe, zIm);
 
                 // if (const err = texture.changeColor(x, y, pixels, pitch, color.r, color.g, color.b, color
-                //         .aNorm))
+                //         .aByte))
                 // {
                 //     throw new Exception(err.toString);
                 // }

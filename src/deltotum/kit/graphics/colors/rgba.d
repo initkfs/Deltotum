@@ -41,12 +41,6 @@ struct RGBA
         maxAlpha = 1
     }
 
-    static RGBA rgba(ubyte r = maxColor, ubyte g = maxColor, ubyte b = maxColor, double a = maxAlpha) @nogc nothrow pure @safe
-    {
-        const RGBA color = {r, g, b, a};
-        return color;
-    }
-
     static RGBA web(string colorString, double a = maxAlpha) pure @safe
     {
         if (colorString.length == 0)
@@ -211,14 +205,14 @@ struct RGBA
             ubyte byte1 = r;
             ubyte byte2 = g;
             ubyte byte3 = b;
-            ubyte byte4 = aNorm;
+            ubyte byte4 = aByte;
         }
         else version (BigEndian)
         {
             ubyte byte4 = b;
             ubyte byte3 = g;
             ubyte byte2 = r;
-            ubyte byte1 = aNorm;
+            ubyte byte1 = aByte;
         }
 
         enum sizeOfBits = ubyte.sizeof * 8;
@@ -235,9 +229,9 @@ struct RGBA
     double rNorm() const pure @safe => colorNorm(r);
     double gNorm() const pure @safe => colorNorm(g);
     double bNorm() const pure @safe => colorNorm(b);
-    ubyte aNorm() const pure @safe => to!ubyte(a * maxColor);
+    ubyte aByte() const pure @safe => to!ubyte(a * maxColor);
     
-    static double fromAnorm(ubyte value) pure @safe => value / maxColor;
+    static double fromAByte(ubyte value) pure @safe => (cast(double) value) / maxColor;
 
     bool isMin() const pure @safe
     {

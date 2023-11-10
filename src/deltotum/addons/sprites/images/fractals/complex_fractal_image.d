@@ -40,7 +40,7 @@ abstract class ComplexFractalImage : Image
         //         RGBA color = calcColor(x, y);
 
         //         if (const err = texture.changeColor(xi, yi, pixels, pitch, color.r, color.g, color.b, color
-        //                 .aNorm))
+        //                 .aByte))
         //         {
         //             throw new Exception(err.toString);
         //         }

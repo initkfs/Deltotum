@@ -203,7 +203,7 @@ class ToggleSwitch : Control
                     onSwitchOn();
                 }
 
-                if (clickSwitchOnAnimation !is null && !clickSwitchOnAnimation.isRun)
+                if (clickSwitchOnAnimation !is null && !clickSwitchOnAnimation.isRunning)
                 {
                     const b = switchContainer.bounds;
                     clickSwitchOnAnimation.minValue = Vector2d(b.x + switchContainer.padding.left, b.y);
@@ -224,7 +224,7 @@ class ToggleSwitch : Control
                     onSwitchOff();
                 }
 
-                if (clickSwitchOffAnimation !is null && !clickSwitchOffAnimation.isRun)
+                if (clickSwitchOffAnimation !is null && !clickSwitchOffAnimation.isRunning)
                 {
                     const b = switchContainer.bounds;
                     clickSwitchOffAnimation.minValue = Vector2d(b.right - switchHandle.width - switchContainer.padding.right, b.y);

@@ -91,11 +91,11 @@ class Image : Texture
                     uint* pixelPtr = image.getPixel(x, y);
                     ubyte r, g, b, a;
                     image.getPixelRGBA(pixelPtr, r, g, b, a);
-                    RGBA oldColor = {r, g, b, RGBA.fromAnorm(a)};
+                    RGBA oldColor = {r, g, b, RGBA.fromAByte(a)};
                     RGBA newColor = colorProcessor(x, y, oldColor);
                     if (newColor != oldColor)
                     {
-                        image.setPixelRGBA(x, y, newColor.r, newColor.g, newColor.b, newColor.aNorm);
+                        image.setPixelRGBA(x, y, newColor.r, newColor.g, newColor.b, newColor.aByte);
                     }
                 }
             }
@@ -153,7 +153,14 @@ class Image : Texture
             logger.error("Cannot convert image to surface from path ", path);
             return false;
         }
-        return load(comSurf, requestWidth, requestHeight);
+        if (load(comSurf, requestWidth, requestHeight))
+        {
+            comSurf.dispose;
+            return true;
+        }
+
+        logger.error("Error loading image from ", path);
+        return false;
     }
 
     bool loadRaw(const(void[]) content, int requestWidth = -1, int requestHeight = -1)
@@ -170,7 +177,14 @@ class Image : Texture
         {
             throw new Exception(err.toString);
         }
-        return load(surf, requestWidth, requestHeight);
+        if (load(surf, requestWidth, requestHeight))
+        {
+            surf.dispose;
+            return true;
+        }
+
+        logger.error("Error loading raw image");
+        return false;
     }
 
     bool load(RGBA[][] colorBuf)

@@ -90,11 +90,6 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : Animation
         return frames;
     }
 
-    bool isRun() @nogc nothrow @safe
-    {
-        return state != TransitionState.end && state != TransitionState.none;
-    }
-
     //TODO state management
     override void stop()
     {
@@ -203,7 +198,7 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : Animation
 
     void minValue(T newValue)
     {
-        if (isRun)
+        if (isRunning)
         {
             //TODO log.
             stop;
@@ -218,12 +213,21 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : Animation
 
     void maxValue(T newValue)
     {
-        if (isRun)
+        if (isRunning)
         {
             stop;
             //TODO log
         }
         _maxValue = newValue;
+    }
+
+    override void dispose()
+    {
+        if (isRunning)
+        {
+            stop;
+        }
+        super.dispose;
     }
 
 }

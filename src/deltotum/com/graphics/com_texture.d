@@ -34,10 +34,10 @@ interface ComTexture : Destroyable
     ComResult unlock() nothrow;
 
     ComResult getPixel(uint x, uint y, out uint* pixel) nothrow;
-    ComResult setPixelColor(uint x, uint y, ubyte r, ubyte g, ubyte b, ubyte aNorm) nothrow;
-    ComResult setPixelColor(uint* ptr, ubyte r, ubyte g, ubyte b, ubyte aNorm) nothrow;
-    ComResult getPixelColor(uint* ptr, out ubyte r, out ubyte g, out ubyte b, out ubyte aNorm) nothrow;
-    ComResult getPixelColor(int x, int y, out ubyte r, out ubyte g, out ubyte b, out ubyte aNorm) nothrow;
+    ComResult setPixelColor(uint x, uint y, ubyte r, ubyte g, ubyte b, ubyte aByte) nothrow;
+    ComResult setPixelColor(uint* ptr, ubyte r, ubyte g, ubyte b, ubyte aByte) nothrow;
+    ComResult getPixelColor(uint* ptr, out ubyte r, out ubyte g, out ubyte b, out ubyte aByte) nothrow;
+    ComResult getPixelColor(int x, int y, out ubyte r, out ubyte g, out ubyte b, out ubyte aByte) nothrow;
 
     ComResult setBlendMode(ComBlendMode mode) nothrow;
     ComResult setBlendModeBlend() nothrow;

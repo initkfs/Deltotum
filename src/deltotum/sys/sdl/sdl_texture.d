@@ -273,36 +273,36 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    ComResult setPixelColor(uint* ptr, ubyte r, ubyte g, ubyte b, ubyte aNorm) nothrow
+    ComResult setPixelColor(uint* ptr, ubyte r, ubyte g, ubyte b, ubyte aByte) nothrow
     {
         SDL_PixelFormat* format;
         if (const formatErr = getFormat(format))
         {
             return formatErr;
         }
-        const newColor = SDL_MapRGBA(format, r, g, b, aNorm);
+        const newColor = SDL_MapRGBA(format, r, g, b, aByte);
         *ptr = newColor;
         return ComResult.success;
     }
 
-    ComResult getPixelColor(int x, int y, out ubyte r, out ubyte g, out ubyte b, out ubyte aNorm) nothrow
+    ComResult getPixelColor(int x, int y, out ubyte r, out ubyte g, out ubyte b, out ubyte aByte) nothrow
     {
         uint* pixel;
         if (const err = getPixel(x, y, pixel))
         {
             return err;
         }
-        return getPixelColor(pixel, r, g, b, aNorm);
+        return getPixelColor(pixel, r, g, b, aByte);
     }
 
-    ComResult getPixelColor(uint* ptr, out ubyte r, out ubyte g, out ubyte b, out ubyte aNorm) @nogc nothrow
+    ComResult getPixelColor(uint* ptr, out ubyte r, out ubyte g, out ubyte b, out ubyte aByte) @nogc nothrow
     {
         SDL_PixelFormat* format;
         if (const formatErr = getFormat(format))
         {
             return formatErr;
         }
-        SDL_GetRGBA(*ptr, format, &r, &g, &b, &aNorm);
+        SDL_GetRGBA(*ptr, format, &r, &g, &b, &aByte);
         return ComResult.success;
     }
 
