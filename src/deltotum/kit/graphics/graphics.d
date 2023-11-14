@@ -10,6 +10,8 @@ import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 import deltotum.kit.graphics.themes.theme : Theme;
 import deltotum.kit.sprites.textures.texture : Texture;
 
+import Math = deltotum.math;
+
 import deltotum.math.geom.flip : Flip;
 import deltotum.math.shapes.rect2d : Rect2d;
 
@@ -18,7 +20,7 @@ import std.conv : to;
 
 import deltotum.com.graphics.com_texture : ComTexture;
 import deltotum.com.graphics.com_surface : ComSurface;
-import deltotum.com.graphics.com_image: ComImage;
+import deltotum.com.graphics.com_image : ComImage;
 import deltotum.com.graphics.com_blend_mode : ComBlendMode;
 
 /**
@@ -45,7 +47,6 @@ class Graphics : LoggableUnit
     ComTexture delegate() comTextureFactory;
     ComSurface delegate() comSurfaceFactory;
     ComImage delegate() comImageFactory;
-
 
     this(Logger logger, SdlRenderer renderer, Theme theme)
     {
@@ -433,6 +434,31 @@ class Graphics : LoggableUnit
             }
             return true;
         });
+    }
+
+    //TODO Determine the position 0 on the trigonometric circle and the clockwise/counterclockwise movements
+    void arc(double xCenter, double yCenter, double startAngleDeg, double endAngleDeg, double radiusArc)
+    {
+        assert(startAngleDeg != endAngleDeg);
+        assert(startAngleDeg < endAngleDeg);
+
+        immutable int radius = toInt(radiusArc);
+        immutable int centerX = toInt(xCenter);
+        immutable int centerY = toInt(yCenter);
+
+        immutable angleRadIncr = 1.0 / radius;
+
+        double startAngle = Math.degToRad(startAngleDeg);
+        double endAngle = Math.degToRad(endAngleDeg);
+
+        double angleRad = startAngle;
+        while (angleRad <= endAngle)
+        {
+            immutable double x = radius * Math.cos(angleRad);
+            immutable double y = radius * Math.sin(angleRad);
+            point(centerX + x, centerY + y);
+            angleRad += angleRadIncr;
+        }
     }
 
     void circle(double centerX, double centerY, double radius, RGBA color = defaultColor, bool isFill = false)

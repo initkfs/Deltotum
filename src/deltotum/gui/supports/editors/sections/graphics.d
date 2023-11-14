@@ -148,6 +148,9 @@ class Grahpics : Control
 
         graphics.restoreColor;
 
+        graphics.point(150, 200);
+        graphics.arc(150, 200, 0, 90, 50);
+
         return true;
     }
 }
