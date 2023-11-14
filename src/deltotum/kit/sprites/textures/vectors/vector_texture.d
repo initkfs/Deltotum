@@ -1,9 +1,10 @@
-module deltotum.kit.sprites.canvases.vector_canvas;
+module deltotum.kit.sprites.textures.vectors.vector_texture;
 
 import deltotum.kit.sprites.textures.texture : Texture;
 import deltotum.kit.graphics.colors.rgba : RGBA;
 
-import deltotum.com.graphics.com_surface: ComSurface;
+import deltotum.com.graphics.com_surface : ComSurface;
+
 //TODO remove native api
 import deltotum.sys.cairo.cairo_surface : CairoSurface;
 import deltotum.sys.cairo.cairo_context : CairoContext;
@@ -14,7 +15,7 @@ import deltotum.sys.cairo.libs;
 /**
  * Authors: initkfs
  */
-class VectorCanvas : Texture
+class VectorTexture : Texture
 {
     protected
     {
@@ -87,14 +88,6 @@ class VectorCanvas : Texture
         cairoContext = new CairoContext(cairoSurface);
     }
 
-    override void initialize()
-    {
-        super.initialize;
-
-        //createTempSurface;
-        //createCairoContext;
-    }
-
     override void create()
     {
         super.create;
@@ -120,15 +113,18 @@ class VectorCanvas : Texture
             throw new Exception(createErr.toString);
         }
 
+        scope (exit)
+        {
+            comSurface.dispose;
+            comSurface = null;
+
+            cairoSurface.dispose;
+            cairoContext.dispose;
+        }
+
         if (const err = texture.setBlendModeBlend)
         {
             throw new Exception(err.toString);
         }
-
-        comSurface.dispose;
-        comSurface = null;
-
-        cairoSurface.dispose;
-        cairoContext.dispose;
     }
 }

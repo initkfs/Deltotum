@@ -29,6 +29,45 @@ class Grahpics : Control
     override void create()
     {
         super.create;
+
+        import deltotum.gui.containers.vbox : VBox;
+
+        auto root = new VBox;
+        root.isLayoutManaged = false;
+        root.y = 350;
+        addCreate(root);
+        root.enableInsets;
+
+        import deltotum.gui.containers.hbox : HBox;
+
+        auto shapeContainer = new HBox;
+        root.addCreate(shapeContainer);
+        shapeContainer.enableInsets;
+
+        import deltotum.kit.sprites.shapes.circle : Circle;
+
+        auto circle = new Circle(20, GraphicStyle(1, RGBA.red));
+        shapeContainer.addCreate(circle);
+
+        auto circleFill = new Circle(20, GraphicStyle(1, RGBA.blue, true, RGBA.blue));
+        shapeContainer.addCreate(circleFill);
+
+        import deltotum.kit.sprites.shapes.rectangle : Rectangle;
+
+        auto rect = new Rectangle(50, 50, GraphicStyle(1, RGBA.yellow));
+        shapeContainer.addCreate(rect);
+
+        auto rectFill = new Rectangle(50, 50, GraphicStyle(1, RGBA.green, true, RGBA.green));
+        shapeContainer.addCreate(rectFill);
+
+        import deltotum.kit.sprites.shapes.regular_polygon : RegularPolygon;
+
+        auto reg = new RegularPolygon(50, 50, GraphicStyle(1, RGBA.lightcoral), 10);
+        shapeContainer.addCreate(reg);
+
+        auto regFill = new RegularPolygon(50, 50, GraphicStyle(1, RGBA.lightsteelblue, true, RGBA.lightsteelblue), 10);
+        shapeContainer.addCreate(regFill);
+
     }
 
     override bool draw()

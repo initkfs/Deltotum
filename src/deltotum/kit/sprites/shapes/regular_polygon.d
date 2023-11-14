@@ -9,7 +9,7 @@ import deltotum.math.line2d : Line2d;
  */
 class RegularPolygon : Shape
 {
-    const double cornerPadding;
+    double cornerPadding;
 
     //TODO other sides  
     Line2d topClip;
@@ -92,8 +92,6 @@ class RegularPolygon : Shape
     {
         import deltotum.math.vector2d : Vector2d;
 
-        enum sizeDt = 2.0;
-
         graphics.fillRect(x + cornerPadding, y + style.lineWidth, width - cornerPadding * 2, height - style.lineWidth - 1, style
                 .fillColor);
 
@@ -111,7 +109,7 @@ class RegularPolygon : Shape
                 .fillColor);
 
         //left bottom corner
-        graphics.fillTriangle(Vector2d(x + style.lineWidth * 2, y + height - cornerPadding), Vector2d(x + cornerPadding - style.lineWidth, y + height - cornerPadding), Vector2d(
+        graphics.fillTriangle(Vector2d(x + style.lineWidth * 2, y + height - cornerPadding - style.lineWidth), Vector2d(x + cornerPadding - style.lineWidth, y + height - cornerPadding - style.lineWidth), Vector2d(
                 x + cornerPadding - style.lineWidth, y + height - style.lineWidth * 3), style
                 .fillColor);
 
@@ -121,7 +119,7 @@ class RegularPolygon : Shape
                 x + width - cornerPadding, y + cornerPadding - style.lineWidth), style.fillColor);
 
         //right bottom corner
-        graphics.fillTriangle(Vector2d(x + width - cornerPadding, y + height - cornerPadding), Vector2d(x + width - style.lineWidth * 3, y + height - cornerPadding), Vector2d(
+        graphics.fillTriangle(Vector2d(x + width - cornerPadding, y + height - cornerPadding - style.lineWidth), Vector2d(x + width - style.lineWidth * 2, y + height - cornerPadding - style.lineWidth), Vector2d(
                 x + width - cornerPadding, y + height - style.lineWidth * 3), style.fillColor);
     }
 }

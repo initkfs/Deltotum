@@ -1,6 +1,6 @@
-module deltotum.kit.sprites.shapes.vectors.vcircle;
+module deltotum.kit.sprites.textures.vectors.vcircle;
 
-import deltotum.kit.sprites.shapes.vectors.vshape: VShape;
+import deltotum.kit.sprites.textures.vectors.vshape: VShape;
 import deltotum.kit.graphics.styles.graphic_style : GraphicStyle;
 
 /**

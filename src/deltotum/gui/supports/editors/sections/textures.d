@@ -30,17 +30,25 @@ class Textures : Control
 
     override void create()
     {
+        super.create;
+
+        import deltotum.gui.containers.vbox : VBox;
         import deltotum.gui.containers.hbox : HBox;
 
+        auto root = new VBox;
+        addCreate(root);
+        root.enableInsets;
+
         auto container1 = new HBox;
-        addCreate(container1);
+        root.addCreate(container1);
         container1.enableInsets;
 
         import deltotum.kit.sprites.textures.rgba_texture : RgbaTexture;
 
         class TestRgbaTexture : RgbaTexture
         {
-            this(){
+            this()
+            {
                 super(50, 50);
             }
 
@@ -113,7 +121,16 @@ class Textures : Control
         auto rightBottomRect = new TestDrawRightBottomRect;
         container1.addCreate(rightBottomRect);
 
-        super.create;
+        auto vContainer = new HBox;
+        root.addCreate(vContainer);
+
+        if(capGraphics.isVectorGraphics){
+            import deltotum.kit.sprites.textures.vectors.vcircle: VCircle;
+
+            auto vCircle = new VCircle(25, GraphicStyle(3.0, RGBA.red, true, RGBA.green));
+            vContainer.addCreate(vCircle);
+        }
+
     }
 
     override bool draw()

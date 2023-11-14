@@ -35,6 +35,12 @@ class Texture : Sprite
 
     }
 
+    this(double width, double height)
+    {
+        width = width;
+        height = height;
+    }
+
     this(ComTexture texture)
     {
         int w, h;

@@ -13,7 +13,7 @@ class Circle : Shape
 {
     const double radius;
 
-    this(double radius, GraphicStyle style = GraphicStyle.simple)
+    this(double radius = 25, GraphicStyle style = GraphicStyle.simple)
     {
         super(radius * 2, radius * 2, style);
         this.radius = radius;
@@ -35,8 +35,6 @@ class Circle : Shape
 
     override bool intersect(Sprite other)
     {
-
-        //TODO remove cast
         if (auto circle = cast(Circle) other)
         {
             return shape.intersect(circle.shape);

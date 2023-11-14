@@ -6,7 +6,7 @@ import deltotum.math.shapes.rect2d : Rect2d;
 import deltotum.math.geom.alignment : Alignment;
 import deltotum.math.geom.insets : Insets;
 import deltotum.kit.sprites.layouts.layout : Layout;
-import deltotum.kit.sprites.canvases.texture_canvas : TextureCanvas;
+import deltotum.kit.sprites.textures.rgba_texture : RgbaTexture;
 import deltotum.kit.scenes.scaling.scale_mode : ScaleMode;
 import deltotum.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import deltotum.core.apps.events.application_event : ApplicationEvent;
@@ -143,7 +143,7 @@ class Sprite : EventKitTarget
 
     protected
     {
-        TextureCanvas _cache;
+        RgbaTexture _cache;
         Sprite _hitbox;
     }
 
@@ -654,7 +654,7 @@ class Sprite : EventKitTarget
     {
         if (!_cache)
         {
-            _cache = new TextureCanvas(width, height);
+            _cache = new RgbaTexture(width, height);
             buildCreate(_cache);
         }
         else

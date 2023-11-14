@@ -17,7 +17,7 @@ class Rectangle : Shape
 
     this(double width, double height)
     {
-        super(width, height);
+        super(width, height, GraphicStyle.simple);
     }
 
     override void drawContent()
@@ -28,13 +28,13 @@ class Rectangle : Shape
         graphics.rect(x, y, width, height, style.lineColor);
         if (style.isFill)
         {
-            graphics.fillRect(x + lineWidth, y + lineWidth, width - lineWidth * 2, height - lineWidth * 2, style.fillColor);
+            graphics.fillRect(x + lineWidth, y + lineWidth, width - lineWidth * 2, height - lineWidth * 2, style
+                    .fillColor);
         }
     }
 
     override bool intersect(Sprite other)
     {
-        //TODO remove cast
         if (auto circle = cast(Circle) other)
         {
             return bounds.intersect(circle.shape);
@@ -42,14 +42,4 @@ class Rectangle : Shape
 
         return super.intersect(other);
     }
-
-    // override double width(){
-    //     return super.width;
-    // }
-
-    // override void width(double v){
-    //     super.width(v);
-    //     import std;
-    //     writefln("Rectangle w: %s", v);
-    // }
 }

@@ -437,7 +437,7 @@ class Graphics : LoggableUnit
 
     void circle(double centerX, double centerY, double radius, RGBA color = defaultColor, bool isFill = false)
     {
-        ellipse(Vector2d(centerX, centerY), Vector2d(radius, radius), color, true, true);
+        ellipse(Vector2d(centerX, centerY), Vector2d(radius, radius), color, isFill, isFill);
     }
 
     void circle(double centerX, double centerY, double radius)
