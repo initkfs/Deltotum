@@ -418,7 +418,7 @@ class Sprite : EventKitTarget
                 }
                 else
                 {
-                    isRedraw = false;
+                  //  isRedraw = false;
                 }
                 checkClip(obj);
             }
@@ -441,7 +441,7 @@ class Sprite : EventKitTarget
         {
             if (obj.isDrawAfterParent && obj.isVisible)
             {
-                if (!obj.isValid)
+                //if (!obj.isValid)
                 {
                     obj.draw;
                 }
