@@ -74,9 +74,6 @@ class Sprite : EventKitTarget
     //TODO remove
     bool isClipped;
 
-    GraphicStyle* style;
-    bool isFindStyleInParent;
-
     bool inScreenBounds = true;
     bool delegate() onScreenBoundsIsStop;
 
@@ -480,10 +477,7 @@ class Sprite : EventKitTarget
     void build(Sprite sprite)
     {
         assert(!sprite.isBuilt);
-
         super.build(sprite);
-        //TODO may be a harmful side effect
-        applyStyle(sprite);
     }
 
     void addCreate(Sprite[] sprites)
@@ -537,7 +531,6 @@ class Sprite : EventKitTarget
         }
 
         sprite.parent = this;
-        applyStyle(sprite);
 
         if (index < 0 || children.length == 0)
         {
@@ -558,15 +551,6 @@ class Sprite : EventKitTarget
             children.insertInPlace(cast(size_t) index, sprite);
         }
         setInvalid;
-    }
-
-    void applyStyle(Sprite sprite)
-    {
-        assert(sprite);
-        if (style && !sprite.style)
-        {
-            sprite.style = style;
-        }
     }
 
     bool hasDirect(Sprite obj)
@@ -1468,29 +1452,6 @@ class Sprite : EventKitTarget
     void disablePadding()
     {
         padding(0);
-    }
-
-    GraphicStyle* ownOrParentStyle()
-    {
-        if (style)
-        {
-            return style;
-        }
-
-        if (isFindStyleInParent)
-        {
-            Sprite currParent = parent;
-            while (currParent)
-            {
-                if (currParent.style)
-                {
-                    return currParent.style;
-                }
-                currParent = currParent.parent;
-            }
-        }
-
-        return parent ? parent.style : null;
     }
 
     Insets padding()

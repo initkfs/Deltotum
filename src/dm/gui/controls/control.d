@@ -29,6 +29,9 @@ class Control : Sprite
     bool isBorder;
     bool isFocusable;
 
+    GraphicStyle* style;
+    bool isFindStyleInParent;
+
     //protected
     //{
     Sprite background;
@@ -64,7 +67,15 @@ class Control : Sprite
 
                 GraphicStyle* currStyle = ownOrParentStyle;
 
-                GraphicStyle backgroundStyle = currStyle ? *currStyle : GraphicStyle(isBorder ? 1 : 0, graphics.theme.colorAccent, isBackground, graphics
+                if (id == "scene_view_update_timems")
+                {
+                    import std;
+
+                    writeln(currStyle);
+                }
+
+                GraphicStyle backgroundStyle = currStyle ? *currStyle : GraphicStyle(isBorder ? 1 : 0, graphics.theme
+                        .colorAccent, isBackground, graphics
                         .theme.colorControlBackground);
 
                 auto background = new RegularPolygon(width, height, backgroundStyle, graphics
@@ -74,6 +85,32 @@ class Control : Sprite
                 background.opacity = graphics.theme.opacityControls;
                 return background;
             };
+        }
+    }
+
+    alias build = Sprite.build;
+
+    override void build(Sprite sprite)
+    {
+        assert(!sprite.isBuilt);
+
+        super.build(sprite);
+        //TODO may be a harmful side effect
+        if (auto control = cast(Control) sprite)
+        {
+            applyStyle(control);
+        }
+
+    }
+
+    alias add = Sprite.add;
+
+    override void add(Sprite sprite, long index = -1)
+    {
+        super.add(sprite, index);
+        if (auto control = cast(Control) sprite)
+        {
+            applyStyle(control);
         }
     }
 
@@ -94,28 +131,64 @@ class Control : Sprite
         import std.conv : to;
 
         const mustBeIconData = graphics.theme.iconData(iconName);
-        if(mustBeIconData.isNull){
+        if (mustBeIconData.isNull)
+        {
             //TODO placeholder;
-            import dm.kit.sprites.shapes.rectangle: Rectangle;
-            import dm.kit.graphics.styles.graphic_style: GraphicStyle;
-            import dm.kit.graphics.colors.rgba: RGBA;
+            import dm.kit.sprites.shapes.rectangle : Rectangle;
+            import dm.kit.graphics.styles.graphic_style : GraphicStyle;
+            import dm.kit.graphics.colors.rgba : RGBA;
+
             return new Rectangle(10, 10, GraphicStyle(1, RGBA.red, true, RGBA.red));
         }
         const string iconData = mustBeIconData.get;
         auto icon = new Image();
         build(icon);
         const iconSize = graphics.theme.iconSize;
-        import std.conv: to;
+        import std.conv : to;
+
         icon.loadRaw(iconData.to!(const(void[])), iconSize.to!int, iconSize.to!int);
 
         auto color = graphics.theme.colorAccent;
-        if(style){
+        if (style)
+        {
             color = style.lineColor;
         }
 
         icon.color = color;
         icon.create;
         return icon;
+    }
+
+    void applyStyle(Control control)
+    {
+        assert(control);
+        if (style && !control.style)
+        {
+            control.style = style;
+        }
+    }
+
+    GraphicStyle* ownOrParentStyle()
+    {
+        if (style)
+        {
+            return style;
+        }
+
+        if (isFindStyleInParent)
+        {
+            Control currParent = cast(Control) parent;
+            while (currParent)
+            {
+                if (currParent.style)
+                {
+                    return currParent.style;
+                }
+                currParent = cast(Control) currParent.parent;
+            }
+        }
+
+        return null;
     }
 
     GraphicStyle styleFromActionType()
@@ -131,20 +204,20 @@ class Control : Sprite
         {
             final switch (actionType) with (ActionType)
             {
-            case standard:
-                break;
-            case success:
-                borderColor = graphics.theme.colorSuccess;
-                fillColor = borderColor;
-                break;
-            case warning:
-                borderColor = graphics.theme.colorWarning;
-                fillColor = borderColor;
-                break;
-            case danger:
-                borderColor = graphics.theme.colorDanger;
-                fillColor = borderColor;
-                break;
+                case standard:
+                    break;
+                case success:
+                    borderColor = graphics.theme.colorSuccess;
+                    fillColor = borderColor;
+                    break;
+                case warning:
+                    borderColor = graphics.theme.colorWarning;
+                    fillColor = borderColor;
+                    break;
+                case danger:
+                    borderColor = graphics.theme.colorDanger;
+                    fillColor = borderColor;
+                    break;
             }
         }
         return GraphicStyle(isBorder ? 1 : 0, borderColor, isBackground, fillColor);

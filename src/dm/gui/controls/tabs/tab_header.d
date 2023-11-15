@@ -26,6 +26,8 @@ class TabHeader : Control
         enablePadding;
     }
 
+    alias add = Control.add;
+
     override void add(Sprite[] sprites)
     {
         foreach (s; sprites)
