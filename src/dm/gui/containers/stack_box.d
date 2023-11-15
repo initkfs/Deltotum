@@ -10,7 +10,7 @@ class StackBox : Container
 {
     this()
     {
-        this.layout = new CenterLayout;
+        layout = new CenterLayout;
         layout.isAutoResize = true;
     }
 }

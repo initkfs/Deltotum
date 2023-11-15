@@ -13,13 +13,7 @@ class Container : Control
         isBackground = false;
     }
 
-    override void addCreate(Sprite[] sprites)
-    {
-        foreach (sprite; sprites)
-        {
-            addCreate(sprite);
-        }
-    }
+    alias addCreate = Sprite.addCreate;
 
     override void addCreate(Sprite sprite, long index = -1)
     {
@@ -32,20 +26,69 @@ class Container : Control
         super.addCreate(sprite, index);
     }
 
-    void isFillFromStartToEnd(bool isFill)
+    bool isAlignX()
     {
-        if (!layout)
-        {
-            return;
-        }
-
-        layout.isFillFromStartToEnd = isFill;
+        assert(layout);
+        return layout.isAlignX;
     }
 
-    override void update(double dt){
-        super.update(dt);
-        //TODO remove check
-        checkBackground;
+    void isAlignX(bool value)
+    {
+        assert(layout);
+        layout.isAlignX = value;
+        setInvalid;
+    }
+
+    bool isAlignY()
+    {
+        assert(layout);
+        return layout.isAlignY;
+    }
+
+    void isAlignY(bool value)
+    {
+        assert(layout);
+        layout.isAlignY = value;
+        setInvalid;
+    }
+
+    bool isFillFromStartToEnd()
+    {
+        assert(layout);
+        return layout.isFillFromStartToEnd;
+    }
+
+    void isFillFromStartToEnd(bool isFill)
+    {
+        assert(layout);
+        layout.isFillFromStartToEnd = isFill;
+        setInvalid;
+    }
+
+    bool isResizeChildren()
+    {
+        assert(layout);
+        return layout.isResizeChildren;
+    }
+
+    void isResizeChildren(bool value)
+    {
+        assert(layout);
+        layout.isResizeChildren = value;
+        setInvalid;
+    }
+
+    bool isResizeParent()
+    {
+        assert(layout);
+        return layout.isResizeParent;
+    }
+
+    void isResizeParent(bool value)
+    {
+        assert(layout);
+        layout.isResizeParent = value;
+        setInvalid;
     }
 }
 

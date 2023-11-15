@@ -1,83 +1,32 @@
 module dm.gui.containers.vbox;
 
-import dm.gui.containers.container : Container;
+import dm.gui.containers.base.spaceable_container: SpaceableContainer;
 import dm.kit.sprites.layouts.vlayout : VLayout;
 
 /**
  * Authors: initkfs
  */
-class VBox : Container
+class VBox : SpaceableContainer
 {
-    private
-    {
-        double _spacing;
-    }
-
     this(double spacing = 0) pure
     {
-        import std.exception : enforce;
-        import std.conv : text;
+        super(spacing);
 
-        enforce(spacing >= 0, text("Vertical spacing must be positive value: ", spacing));
-        this._spacing = spacing;
-
-        auto vlayout = new VLayout(_spacing);
+        auto vlayout = new VLayout(spacing);
         vlayout.isAlignX = false;
         this.layout = vlayout;
         layout.isAutoResize = true;
     }
 
-    void isAlignX(bool isAlign)
-    {
-        assert(layout);
+    alias spacing = SpaceableContainer.spacing;
 
-        if (layout)
-        {
-            layout.isAlignX = isAlign;
-            setInvalid;
-        }
-    }
-
-    bool isAlignX()
+    override void spacing(double value)
     {
-        assert(layout);
-        if (!layout)
-        {
-            return false;
-        }
-        return layout.isAlignX;
-    }
-
-    double spacing()
-    {
-        return _spacing;
-    }
-
-    void spacing(double value)
-    {
-        _spacing = value;
+        super.spacing = value;
         if (auto vlayout = cast(VLayout) layout)
         {
             vlayout.spacing = value;
         }
-    }
-
-    override void enableInsets()
-    {
-        super.enableInsets;
-        enableSpacing;
-    }
-
-    //TODO remove duplication with HBox
-    void enableSpacing()
-    {
-        if (!hasGraphics || !graphics.theme)
-        {
-            throw new Exception(
-                "Unable to enable spacing: graphic or theme is null. Perhaps the component is not built correctly");
-        }
-        const value = graphics.theme.controlSpacing;
-        spacing = value;
     }
 }
 

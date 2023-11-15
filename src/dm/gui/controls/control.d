@@ -67,13 +67,6 @@ class Control : Sprite
 
                 GraphicStyle* currStyle = ownOrParentStyle;
 
-                if (id == "scene_view_update_timems")
-                {
-                    import std;
-
-                    writeln(currStyle);
-                }
-
                 GraphicStyle backgroundStyle = currStyle ? *currStyle : GraphicStyle(isBorder ? 1 : 0, graphics.theme
                         .colorAccent, isBackground, graphics
                         .theme.colorControlBackground);
@@ -130,20 +123,24 @@ class Control : Sprite
 
         import std.conv : to;
 
+        const iconSize = graphics.theme.iconSize;
+
         const mustBeIconData = graphics.theme.iconData(iconName);
         if (mustBeIconData.isNull)
         {
-            //TODO placeholder;
             import dm.kit.sprites.shapes.rectangle : Rectangle;
             import dm.kit.graphics.styles.graphic_style : GraphicStyle;
             import dm.kit.graphics.colors.rgba : RGBA;
 
-            return new Rectangle(10, 10, GraphicStyle(1, RGBA.red, true, RGBA.red));
+            auto placeholder = new Rectangle(iconSize, iconSize, GraphicStyle(1, RGBA.red, true, RGBA
+                    .red));
+            return placeholder;
         }
+
         const string iconData = mustBeIconData.get;
         auto icon = new Image();
         build(icon);
-        const iconSize = graphics.theme.iconSize;
+
         import std.conv : to;
 
         icon.loadRaw(iconData.to!(const(void[])), iconSize.to!int, iconSize.to!int);
@@ -252,16 +249,6 @@ class Control : Sprite
         return true;
     }
 
-    override void addCreate(Sprite[] sprites)
-    {
-        super.addCreate(sprites);
-    }
-
-    override void addCreate(Sprite sprite, long index = -1)
-    {
-        super.addCreate(sprite, index);
-    }
-
     override void create()
     {
         super.create;
@@ -273,12 +260,11 @@ class Control : Sprite
     {
         if (background)
         {
-            import std;
-
             background.width = width;
             background.height = height;
             return;
         }
+
         if (width > 0 && height > 0)
         {
             createBackground(width - backgroundInsets.width, height - backgroundInsets.height);

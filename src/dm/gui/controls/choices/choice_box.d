@@ -4,7 +4,7 @@ import dm.kit.sprites.sprite : Sprite;
 import dm.gui.controls.control : Control;
 import dm.gui.controls.buttons.button : Button;
 import dm.gui.controls.texts.text : Text;
-import dm.gui.containers.typed_container : TypedContainer;
+import dm.gui.containers.base.typed_container : TypedContainer;
 import dm.gui.controls.texts.text_area : TextArea;
 
 import dm.gui.containers.vbox : VBox;
