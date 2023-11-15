@@ -1,6 +1,6 @@
 module dm.math.shapes.ellipse2d;
 
-import dm.math.vector2d : Vector2d;
+import dm.math.vector2 : Vector2;
 
 /**
  * Authors: initkfs
@@ -20,7 +20,7 @@ struct Ellipse2d
         return (dx * dx) / (width * 0.5 * width * 0.5) + (dy * dy) / (height * 0.5 * height * 0.5) <= 1.0;
     }
 
-    bool contains(Vector2d p) const @nogc nothrow pure @safe
+    bool contains(Vector2 p) const @nogc nothrow pure @safe
     {
         return contains(p.x, p.y);
     }

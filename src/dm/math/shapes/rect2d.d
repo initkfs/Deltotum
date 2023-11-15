@@ -1,6 +1,6 @@
 module dm.math.shapes.rect2d;
 
-import dm.math.vector2d : Vector2d;
+import dm.math.vector2 : Vector2;
 import dm.math.shapes.circle2d : Circle2d;
 
 /**
@@ -18,7 +18,7 @@ struct Rect2d
         return x >= this.x && y >= this.y && x < right && y < bottom;
     }
 
-    bool contains(Vector2d point) const @nogc nothrow pure @safe
+    bool contains(Vector2 point) const @nogc nothrow pure @safe
     {
         return contains(point.x, point.y);
     }
@@ -112,9 +112,9 @@ struct Rect2d
         return height / 2;
     }
 
-    Vector2d center() const @nogc nothrow pure @safe
+    Vector2 center() const @nogc nothrow pure @safe
     {
-        return Vector2d(x + halfWidth, y + halfHeight);
+        return Vector2(x + halfWidth, y + halfHeight);
     }
 
     double aspectRatio() const @nogc nothrow pure @safe

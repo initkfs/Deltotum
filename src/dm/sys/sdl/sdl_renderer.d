@@ -11,7 +11,7 @@ import dm.sys.sdl.sdl_window : SdlWindow;
 import dm.sys.sdl.sdl_texture : SdlTexture;
 
 import dm.math.geom.flip : Flip;
-import dm.math.vector2d : Vector2d;
+import dm.math.vector2 : Vector2;
 import dm.math.shapes.rect2d : Rect2d;
 
 import bindbc.sdl;
@@ -180,7 +180,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         return ComResult(zeroOrErrorCode);
     }
 
-    ComResult lines(Vector2d[] linePoints) nothrow
+    ComResult lines(Vector2[] linePoints) nothrow
     {
         import std.algorithm.iteration : map;
         import std.array : array;

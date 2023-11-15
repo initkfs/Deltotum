@@ -2,7 +2,7 @@ module dm.kit.sprites.textures.vectors.vpoints_shape;
 
 import dm.kit.sprites.textures.vectors.vshape : VShape;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import dm.math.vector2d : Vector2d;
+import dm.math.vector2 : Vector2;
 
 //TODO remove native api
 import dm.sys.cairo.libs;
@@ -22,10 +22,10 @@ class VPointsShape : VShape
 
     protected
     {
-        Vector2d[] points;
+        Vector2[] points;
     }
 
-    this(Vector2d[] points, double width, double height, GraphicStyle style, bool isClosePath = false, bool isDrawFromCenter = false)
+    this(Vector2[] points, double width, double height, GraphicStyle style, bool isClosePath = false, bool isDrawFromCenter = false)
     {
         super(width, height, style);
 

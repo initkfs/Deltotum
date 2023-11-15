@@ -4,7 +4,7 @@ import dm.core.apps.units.services.loggable_unit;
 
 import dm.sys.sdl.sdl_renderer : SdlRenderer;
 import dm.kit.graphics.colors.rgba : RGBA;
-import dm.math.vector2d : Vector2d;
+import dm.math.vector2 : Vector2;
 import math = dm.math;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import dm.kit.graphics.themes.theme : Theme;
@@ -197,12 +197,12 @@ class Graphics : LoggableUnit
         }
     }
 
-    void line(Vector2d start, Vector2d end)
+    void line(Vector2 start, Vector2 end)
     {
         line(start.x, start.y, end.x, end.y);
     }
 
-    void line(Vector2d start, Vector2d end, RGBA color = defaultColor)
+    void line(Vector2 start, Vector2 end, RGBA color = defaultColor)
     {
         line(start.x, start.y, end.x, end.y, color);
     }
@@ -217,7 +217,7 @@ class Graphics : LoggableUnit
         line(startX, startY, endX, endY);
     }
 
-    void lines(Vector2d[] points)
+    void lines(Vector2[] points)
     {
         if (const err = renderer.lines(points))
         {
@@ -225,7 +225,7 @@ class Graphics : LoggableUnit
         }
     }
 
-    void lines(Vector2d[] points, RGBA color = defaultColor)
+    void lines(Vector2[] points, RGBA color = defaultColor)
     {
         changeColor(color);
         scope (exit)
@@ -244,7 +244,7 @@ class Graphics : LoggableUnit
         }
     }
 
-    void point(Vector2d p)
+    void point(Vector2 p)
     {
         point(p.x, p.y);
     }
@@ -260,12 +260,12 @@ class Graphics : LoggableUnit
         point(x, y);
     }
 
-    void point(Vector2d p, RGBA color = defaultColor)
+    void point(Vector2 p, RGBA color = defaultColor)
     {
         point(p.x, p.y, color);
     }
 
-    void points(Vector2d[] points)
+    void points(Vector2[] points)
     {
         foreach (p; points)
         {
@@ -273,7 +273,7 @@ class Graphics : LoggableUnit
         }
     }
 
-    void points(Vector2d[] p, RGBA color = defaultColor)
+    void points(Vector2[] p, RGBA color = defaultColor)
     {
         changeColor(color);
         scope (exit)
@@ -284,16 +284,16 @@ class Graphics : LoggableUnit
         points(p);
     }
 
-    Vector2d[] linePoints(Vector2d start, Vector2d end)
+    Vector2[] linePoints(Vector2 start, Vector2 end)
     {
         return linePoints(start.x, start.y, end.x, end.y);
     }
 
-    Vector2d[] linePoints(double startXPos, double startYPos, double endXPos, double endYPos)
+    Vector2[] linePoints(double startXPos, double startYPos, double endXPos, double endYPos)
     {
         import std.array : appender;
 
-        auto points = appender!(Vector2d[]);
+        auto points = appender!(Vector2[]);
         linePoints(startXPos, startYPos, endXPos, endYPos, (p) {
             points ~= p;
             return true;
@@ -301,14 +301,14 @@ class Graphics : LoggableUnit
         return points[];
     }
 
-    void linePoints(Vector2d start, Vector2d end, scope bool delegate(
-            Vector2d) onPoint)
+    void linePoints(Vector2 start, Vector2 end, scope bool delegate(
+            Vector2) onPoint)
     {
         linePoints(start.x, start.y, end.x, end.y, onPoint);
     }
 
     void linePoints(double startXPos, double startYPos, double endXPos, double endYPos, scope bool delegate(
-            Vector2d) onPoint)
+            Vector2) onPoint)
     {
         //Bresenham algorithm
         import math = dm.math;
@@ -369,7 +369,7 @@ class Graphics : LoggableUnit
         int num = 0;
         for (int i = 0; i <= longestLen; i++)
         {
-            if (!onPoint(Vector2d(startX, startY)))
+            if (!onPoint(Vector2(startX, startY)))
             {
                 return;
             }
@@ -388,16 +388,16 @@ class Graphics : LoggableUnit
         }
     }
 
-    Vector2d[] circlePoints(Vector2d pos, int radius)
+    Vector2[] circlePoints(Vector2 pos, int radius)
     {
         return circlePoints(pos.x, pos.y, radius);
     }
 
-    Vector2d[] circlePoints(double centerXPos, double centerYPos, int radius)
+    Vector2[] circlePoints(double centerXPos, double centerYPos, int radius)
     {
         import std.array : appender;
 
-        auto points = appender!(Vector2d[]);
+        auto points = appender!(Vector2[]);
         circlePoints(centerXPos, centerYPos, radius, (p) {
             points ~= p;
             return true;
@@ -405,13 +405,13 @@ class Graphics : LoggableUnit
         return points[];
     }
 
-    void circlePoints(Vector2d pos, int radius, scope bool delegate(Vector2d) onPoint)
+    void circlePoints(Vector2 pos, int radius, scope bool delegate(Vector2) onPoint)
     {
         circlePoints(pos.x, pos.y, radius, onPoint);
     }
 
     void circlePoints(double centerXPos, double centerYPos, int radius, scope bool delegate(
-            Vector2d) onPoint)
+            Vector2) onPoint)
     {
         ellipse(centerXPos, centerYPos, radius, radius, (p1, p2) {
             if (!onPoint(p1))
@@ -463,7 +463,7 @@ class Graphics : LoggableUnit
 
     void circle(double centerX, double centerY, double radius, RGBA color = defaultColor, bool isFill = false)
     {
-        ellipse(Vector2d(centerX, centerY), Vector2d(radius, radius), color, isFill, isFill);
+        ellipse(Vector2(centerX, centerY), Vector2(radius, radius), color, isFill, isFill);
     }
 
     void circle(double centerX, double centerY, double radius)
@@ -472,7 +472,7 @@ class Graphics : LoggableUnit
         ellipse(centerX, centerY, radiusInt, radiusInt);
     }
 
-    void ellipse(Vector2d centerPos, Vector2d radiusXY, RGBA color, bool isFillTop = false, bool isFillBottom = false)
+    void ellipse(Vector2 centerPos, Vector2 radiusXY, RGBA color, bool isFillTop = false, bool isFillBottom = false)
     {
         changeColor(color);
         scope (exit)
@@ -500,7 +500,7 @@ class Graphics : LoggableUnit
         });
     }
 
-    void ellipse(Vector2d centerPos, Vector2d radiusXY)
+    void ellipse(Vector2 centerPos, Vector2 radiusXY)
     {
         ellipse(centerPos.x, centerPos.y, toInt(radiusXY.x), toInt(radiusXY.y));
     }
@@ -512,32 +512,32 @@ class Graphics : LoggableUnit
             (p1, p2) { point(p1); point(p2); return true; });
     }
 
-    void ellipse(Vector2d centerPos, Vector2d radiusXY,
-        scope bool delegate(Vector2d, Vector2d) onTopQuadPoints,
-        scope bool delegate(Vector2d, Vector2d) onBottomQuadPoints)
+    void ellipse(Vector2 centerPos, Vector2 radiusXY,
+        scope bool delegate(Vector2, Vector2) onTopQuadPoints,
+        scope bool delegate(Vector2, Vector2) onBottomQuadPoints)
     {
         ellipse(centerPos.x, centerPos.y, toInt(radiusXY.x), toInt(radiusXY.y), onTopQuadPoints, onBottomQuadPoints);
     }
 
     void ellipse(double centerXPos, double centerYPos, int radiusX, int radiusY,
-        scope bool delegate(Vector2d, Vector2d) onTopQuadPoints,
-        scope bool delegate(Vector2d, Vector2d) onBottomQuadPoints)
+        scope bool delegate(Vector2, Vector2) onTopQuadPoints,
+        scope bool delegate(Vector2, Vector2) onBottomQuadPoints)
     {
         //John Kennedy fast Bresenham algorithm
         int centerX = toInt(centerXPos);
         int centerY = toInt(centerYPos);
 
         auto drawPoints = (int x, int y) {
-            auto quadrand1Point = Vector2d(centerX + x, centerY + y);
-            auto quadrand2Point = Vector2d(centerX - x, centerY + y);
+            auto quadrand1Point = Vector2(centerX + x, centerY + y);
+            auto quadrand2Point = Vector2(centerX - x, centerY + y);
 
             if (!onBottomQuadPoints(quadrand1Point, quadrand2Point))
             {
                 return false;
             }
 
-            auto quadrand3Point = Vector2d(centerX - x, centerY - y);
-            auto quadrand4Point = Vector2d(centerX + x, centerY - y);
+            auto quadrand3Point = Vector2(centerX - x, centerY - y);
+            auto quadrand4Point = Vector2(centerX + x, centerY - y);
 
             if (!onTopQuadPoints(quadrand3Point, quadrand4Point))
             {
@@ -603,7 +603,7 @@ class Graphics : LoggableUnit
         }
     }
 
-    void fillTriangle(Vector2d v01, Vector2d v02, Vector2d v03, RGBA fillColor)
+    void fillTriangle(Vector2 v01, Vector2 v02, Vector2 v03, RGBA fillColor)
     {
         changeColor(fillColor);
         scope (exit)
@@ -611,7 +611,7 @@ class Graphics : LoggableUnit
             restoreColor;
         }
 
-        void scanline(const ref Vector2d v1, const ref Vector2d v2, const ref Vector2d v3, bool isFlatBottom = true)
+        void scanline(const ref Vector2 v1, const ref Vector2 v2, const ref Vector2 v3, bool isFlatBottom = true)
         {
             double lineGradient1 = 0;
             double lineGradient2 = 0;
@@ -651,12 +651,12 @@ class Graphics : LoggableUnit
 
         import std.algorithm.sorting : sort;
 
-        Vector2d[3] vertexByY = [v01, v02, v03];
+        Vector2[3] vertexByY = [v01, v02, v03];
         vertexByY[].sort!((v1, v2) => v1.y < v2.y);
 
-        Vector2d vt1 = vertexByY[0];
-        Vector2d vt2 = vertexByY[1];
-        Vector2d vt3 = vertexByY[2];
+        Vector2 vt1 = vertexByY[0];
+        Vector2 vt2 = vertexByY[1];
+        Vector2 vt3 = vertexByY[2];
 
         if (vt2.y == vt3.y)
         {
@@ -672,13 +672,13 @@ class Graphics : LoggableUnit
         {
             const tempX = vt1.x + ((vt2.y - vt1.y) / (vt3.y - vt1.y)) * (vt3.x - vt1.x);
             const tempY = vt2.y;
-            Vector2d temp = Vector2d(tempX, tempY);
+            Vector2 temp = Vector2(tempX, tempY);
             scanline(vt1, vt2, temp);
             scanline(vt2, temp, vt3, false);
         }
     }
 
-    void fillRect(Vector2d pos, double width, double height, RGBA fillColor = defaultColor)
+    void fillRect(Vector2 pos, double width, double height, RGBA fillColor = defaultColor)
     {
         fillRect(pos.x, pos.y, width, height, fillColor);
     }
@@ -696,7 +696,7 @@ class Graphics : LoggableUnit
         }
     }
 
-    void rect(Vector2d pos, double width, double height, RGBA color = defaultColor)
+    void rect(Vector2 pos, double width, double height, RGBA color = defaultColor)
     {
         rect(pos.x, pos.y, width, height, color);
     }
@@ -711,7 +711,7 @@ class Graphics : LoggableUnit
         rect(x, y, width, height);
     }
 
-    void rect(Vector2d pos, double width, double height)
+    void rect(Vector2 pos, double width, double height)
     {
         rect(pos.x, pos.y, width, height);
     }
@@ -724,7 +724,7 @@ class Graphics : LoggableUnit
         }
     }
 
-    void rect(Vector2d pos, double width, double height, GraphicStyle style = GraphicStyle.simple)
+    void rect(Vector2 pos, double width, double height, GraphicStyle style = GraphicStyle.simple)
     {
         rect(pos.x, pos.y, width, height, style);
     }
@@ -745,8 +745,8 @@ class Graphics : LoggableUnit
                 .fillColor);
     }
 
-    void bezier(Vector2d p0, RGBA color, scope Vector2d delegate(double v) onInterpValue, bool delegate(
-            Vector2d) onPoint = null)
+    void bezier(Vector2 p0, RGBA color, scope Vector2 delegate(double v) onInterpValue, bool delegate(
+            Vector2) onPoint = null)
     {
         changeColor(color);
         scope (exit)
@@ -756,13 +756,13 @@ class Graphics : LoggableUnit
         bezier(p0, onInterpValue, onPoint);
     }
 
-    void bezier(Vector2d p0,
-        scope Vector2d delegate(double v) onInterpValue,
-        bool delegate(Vector2d) onPoint = null,
+    void bezier(Vector2 p0,
+        scope Vector2 delegate(double v) onInterpValue,
+        bool delegate(Vector2) onPoint = null,
         double delta = 0.01)
     {
         //enum delta = 0.01; //100 segments
-        Vector2d start = p0;
+        Vector2 start = p0;
         //TODO exact comparison of doubles?
         for (double i = 0; i < 1; i += delta)
         {
@@ -777,41 +777,41 @@ class Graphics : LoggableUnit
         }
     }
 
-    void bezier(Vector2d p0, Vector2d p1, Vector2d p2, scope bool delegate(
-            Vector2d) onPoint = null)
+    void bezier(Vector2 p0, Vector2 p1, Vector2 p2, scope bool delegate(
+            Vector2) onPoint = null)
     {
         bezier(p0, (t) { return bezierInterp(p0, p1, p2, t); }, onPoint);
     }
 
-    void bezier(Vector2d p0, Vector2d p1, Vector2d p2, Vector2d p3, scope bool delegate(
-            Vector2d) onPoint = null)
+    void bezier(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3, scope bool delegate(
+            Vector2) onPoint = null)
     {
         bezier(p0, (t) { return bezierInterp(p0, p1, p2, p3, t); }, onPoint);
     }
 
-    private Vector2d bezierInterp(Vector2d p0, Vector2d p1, Vector2d p2, Vector2d p3, double t) @nogc nothrow pure @safe
+    private Vector2 bezierInterp(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3, double t) @nogc nothrow pure @safe
     {
         const dt = 1 - t;
-        Vector2d p0p1 = p0.scale(dt).add(p1.scale(t));
-        Vector2d p1p2 = p1.scale(dt).add(p2.scale(t));
-        Vector2d p2p3 = p2.scale(dt).add(p3.scale(t));
-        Vector2d p0p1p2 = p0p1.scale(dt).add(p1p2.scale(t));
-        Vector2d p1p2p3 = p1p2.scale(dt).add(p2p3.scale(t));
-        Vector2d result = p0p1p2.scale(dt).add(p1p2p3.scale(t));
+        Vector2 p0p1 = p0.scale(dt).add(p1.scale(t));
+        Vector2 p1p2 = p1.scale(dt).add(p2.scale(t));
+        Vector2 p2p3 = p2.scale(dt).add(p3.scale(t));
+        Vector2 p0p1p2 = p0p1.scale(dt).add(p1p2.scale(t));
+        Vector2 p1p2p3 = p1p2.scale(dt).add(p2p3.scale(t));
+        Vector2 result = p0p1p2.scale(dt).add(p1p2p3.scale(t));
 
         return result;
     }
 
-    private Vector2d bezierInterp(Vector2d p0, Vector2d p1, Vector2d p2, double t) @nogc nothrow pure @safe
+    private Vector2 bezierInterp(Vector2 p0, Vector2 p1, Vector2 p2, double t) @nogc nothrow pure @safe
     {
         const dt = 1 - t;
-        Vector2d p0p1 = p0.scale(dt).add(p1.scale(t));
-        Vector2d p1p2 = p1.scale(dt).add(p2.scale(t));
-        Vector2d result = p0p1.scale(dt).add(p1p2.scale(t));
+        Vector2 p0p1 = p0.scale(dt).add(p1.scale(t));
+        Vector2 p1p2 = p1.scale(dt).add(p2.scale(t));
+        Vector2 result = p0p1.scale(dt).add(p1p2.scale(t));
         return result;
     }
 
-    void polygon(Vector2d[] vertices)
+    void polygon(Vector2[] vertices)
     {
         if (vertices.length < 3)
         {
@@ -827,7 +827,7 @@ class Graphics : LoggableUnit
         line(vertices[$ - 1], vertices[0]);
     }
 
-    bool fillPolyLines(Vector2d[] vertexStart, Vector2d[] vertexEnd, RGBA fillColor)
+    bool fillPolyLines(Vector2[] vertexStart, Vector2[] vertexEnd, RGBA fillColor)
     {
         changeColor(fillColor);
         scope (exit)
@@ -837,7 +837,7 @@ class Graphics : LoggableUnit
         return fillPolyLines(vertexStart, vertexEnd);
     }
 
-    bool fillPolyLines(Vector2d[] vertexStart, Vector2d[] vertexEnd)
+    bool fillPolyLines(Vector2[] vertexStart, Vector2[] vertexEnd)
     {
         foreach (i, vStart; vertexStart)
         {

@@ -1,6 +1,6 @@
 module dm.math.shapes.triangle2d;
 
-import dm.math.vector2d : Vector2d;
+import dm.math.vector2 : Vector2;
 import dm.math.line2d : Line2d;
 
 import Math = dm.math;
@@ -10,22 +10,22 @@ import Math = dm.math;
  */
 struct Triangle2d
 {
-    Vector2d a;
-    Vector2d b;
-    Vector2d c;
+    Vector2 a;
+    Vector2 b;
+    Vector2 c;
 
-    bool contains(Vector2d p) const @nogc pure @safe
+    bool contains(Vector2 p) const @nogc pure @safe
     {
-        immutable Vector2d barCoords = toBarycentric(p);
+        immutable Vector2 barCoords = toBarycentric(p);
         bool isInside = (barCoords.x >= 0) && (barCoords.y >= 0) && ((barCoords.x + barCoords.y) <= 1);
         return isInside;
     }
 
-    Vector2d toBarycentric(Vector2d p) const @nogc pure @safe
+    Vector2 toBarycentric(Vector2 p) const @nogc pure @safe
     {
-        immutable Vector2d v0 = b - a;
-        immutable Vector2d v1 = c - a;
-        immutable Vector2d v2 = p - a;
+        immutable Vector2 v0 = b - a;
+        immutable Vector2 v1 = c - a;
+        immutable Vector2 v2 = p - a;
 
         immutable double d00 = v0.dotProduct(v0);
         immutable double d01 = v0.dotProduct(v1);
@@ -36,10 +36,10 @@ struct Triangle2d
         immutable double denom = d00 * d11 - d01 * d01;
         immutable x = (d11 * d20 - d01 * d21) / denom;
         immutable y = (d00 * d21 - d01 * d20) / denom;
-        return Vector2d(x, y);
+        return Vector2(x, y);
     }
 
-    bool hasVertex(Vector2d vertex) const @nogc pure @safe
+    bool hasVertex(Vector2 vertex) const @nogc pure @safe
     {
         if (a == vertex || b == vertex || c == vertex)
         {
@@ -59,17 +59,17 @@ struct Triangle2d
 
 unittest
 {
-    auto trig1 = Triangle2d(Vector2d(10, 10), Vector2d(20, 10), Vector2d(15, 20));
-    assert(trig1.contains(Vector2d(10, 10)));
-    assert(trig1.contains(Vector2d(20, 10)));
-    assert(trig1.contains(Vector2d(15, 20)));
+    auto trig1 = Triangle2d(Vector2(10, 10), Vector2(20, 10), Vector2(15, 20));
+    assert(trig1.contains(Vector2(10, 10)));
+    assert(trig1.contains(Vector2(20, 10)));
+    assert(trig1.contains(Vector2(15, 20)));
 
-    assert(!trig1.contains(Vector2d(9, 10)));
-    assert(!trig1.contains(Vector2d(21, 10)));
-    assert(!trig1.contains(Vector2d(16, 20)));
+    assert(!trig1.contains(Vector2(9, 10)));
+    assert(!trig1.contains(Vector2(21, 10)));
+    assert(!trig1.contains(Vector2(16, 20)));
 
-    assert(!trig1.contains(Vector2d(10, 9)));
-    assert(!trig1.contains(Vector2d(20, 9)));
-    assert(!trig1.contains(Vector2d(15, 21)));
+    assert(!trig1.contains(Vector2(10, 9)));
+    assert(!trig1.contains(Vector2(20, 9)));
+    assert(!trig1.contains(Vector2(15, 21)));
 
 }

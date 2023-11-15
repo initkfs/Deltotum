@@ -3,7 +3,7 @@ module dm.kit.windows.window;
 import dm.kit.apps.comps.graphics_component : GraphicsComponent;
 import dm.com.graphics.com_window : ComWindow;
 import dm.math.shapes.rect2d : Rect2d;
-import dm.math.vector2d : Vector2d;
+import dm.math.vector2 : Vector2;
 
 import dm.kit.scenes.scene_manager : SceneManager;
 import dm.kit.windows.window_manager : WindowManager;

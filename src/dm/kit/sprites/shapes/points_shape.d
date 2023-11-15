@@ -2,7 +2,7 @@ module dm.kit.sprites.shapes.points_shape;
 
 import dm.kit.sprites.shapes.shape : Shape;
 
-import dm.math.vector2d : Vector2d;
+import dm.math.vector2 : Vector2;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
 /**
@@ -13,9 +13,9 @@ class PointsShape : Shape
     bool isClosePath;
     bool isDrawFromCenter;
 
-    Vector2d[] points;
+    Vector2[] points;
 
-    this(double width = 100, double height = 100, GraphicStyle style = GraphicStyle.simple, Vector2d[] points = null, bool isClosePath = false, bool isDrawFromCenter = false)
+    this(double width = 100, double height = 100, GraphicStyle style = GraphicStyle.simple, Vector2[] points = null, bool isClosePath = false, bool isDrawFromCenter = false)
     {
         super(width, height, style);
         this.isClosePath = isClosePath;

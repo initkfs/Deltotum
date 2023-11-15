@@ -4,7 +4,7 @@ import dm.kit.sprites.sprite : Sprite;
 import dm.gui.controls.control : Control;
 import dm.gui.fonts.bitmap.bitmap_font : BitmapFont;
 import dm.math.shapes.rect2d : Rect2d;
-import dm.math.vector2d : Vector2d;
+import dm.math.vector2 : Vector2;
 import dm.math.geom.flip : Flip;
 import dm.gui.fonts.glyphs.glyph : Glyph;
 import dm.kit.graphics.colors.rgba : RGBA;
@@ -27,7 +27,7 @@ struct TextRow
 struct CursorPos
 {
     CursorState state;
-    Vector2d pos;
+    Vector2 pos;
     size_t rowIndex;
     size_t glyphIndex;
     bool isValid;
@@ -126,12 +126,12 @@ class Text : Control
                 cursorPos = coordsToRowPos(mouseX, mouseY);
                 if (!cursorPos.isValid)
                 {
-                    Vector2d pos;
+                    Vector2 pos;
                     CursorState state;
                     size_t glyphIndex;
                     if (rows.length == 0)
                     {
-                        pos = Vector2d(x + padding.left, y + padding.top);
+                        pos = Vector2(x + padding.left, y + padding.top);
                         state = CursorState.forNextGlyph;
                     }
                     else
@@ -140,7 +140,7 @@ class Text : Control
                         auto lastRow = rows[$ - 1];
                         glyphIndex = lastRow.glyphs.length - 1;
                         auto lastRowGlyph = lastRow.glyphs[$ - 1];
-                        pos = Vector2d(x + lastRowGlyph.pos.x + lastRowGlyph.geometry.width, y + lastRowGlyph
+                        pos = Vector2(x + lastRowGlyph.pos.x + lastRowGlyph.geometry.width, y + lastRowGlyph
                                 .pos.y);
                         state = CursorState.forPrevGlyph;
                         cursorPos = CursorPos(state, pos, 0, glyphIndex, true);
@@ -593,7 +593,7 @@ class Text : Control
                         }
                         posX = glyphMaxX;
                     }
-                    const pos = Vector2d(posX, rowMinY);
+                    const pos = Vector2(posX, rowMinY);
                     return CursorPos(state, pos, ri, glyphIndex, true);
                 }
             }

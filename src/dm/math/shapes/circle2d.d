@@ -1,6 +1,6 @@
 module dm.math.shapes.circle2d;
 
-import dm.math.vector2d : Vector2d;
+import dm.math.vector2 : Vector2;
 
 /**
  * Authors: initkfs
@@ -19,7 +19,7 @@ struct Circle2d
         return dx * dx + dy * dy <= radius * radius;
     }
 
-    bool contains(Vector2d p) const @nogc nothrow pure @safe
+    bool contains(Vector2 p) const @nogc nothrow pure @safe
     {
         return contains(p.x, p.y);
     }

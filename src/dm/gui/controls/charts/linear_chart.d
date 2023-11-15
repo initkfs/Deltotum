@@ -1,7 +1,7 @@
 module dm.gui.controls.charts.linear_chart;
 
 import dm.gui.controls.control : Control;
-import dm.math.vector2d : Vector2d;
+import dm.math.vector2 : Vector2;
 import dm.math.geom.insets : Insets;
 import dm.kit.graphics.colors.rgba : RGBA;
 import dm.kit.graphics.colors.palettes.material_palette : MaterialPalette;
@@ -29,7 +29,7 @@ class LinearChart : Container
         double rangeX = 0;
         double rangeY = 0;
 
-        Vector2d _referencePoint;
+        Vector2 _referencePoint;
     }
 
     this(double width = 100, double height = 100)
@@ -48,7 +48,7 @@ class LinearChart : Container
     override void initialize()
     {
         super.initialize;
-        _referencePoint = Vector2d(padding.left, height - padding.bottom);
+        _referencePoint = Vector2(padding.left, height - padding.bottom);
     }
 
     override void create(){
@@ -134,7 +134,7 @@ class LinearChart : Container
         return hY;
     }
 
-    protected Vector2d toSpritePos(double posX, double posY)
+    protected Vector2 toSpritePos(double posX, double posY)
     {
         import Math = dm.math;
 
@@ -144,7 +144,7 @@ class LinearChart : Container
         const newX = x + _referencePoint.x + wX;
         const newY = y + _referencePoint.y + hY;
 
-        return Vector2d(newX, newY);
+        return Vector2(newX, newY);
     }
 
     override bool draw()
@@ -193,10 +193,10 @@ class LinearChart : Container
 
     void referencePoint(double x, double y)
     {
-        _referencePoint = Vector2d(x, y);
+        _referencePoint = Vector2(x, y);
     }
 
-    Vector2d referencePoint()
+    Vector2 referencePoint()
     {
         return _referencePoint;
     }

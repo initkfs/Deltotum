@@ -6,7 +6,7 @@ import dm.kit.graphics.colors.rgba : RGBA;
 import dm.math.geom.flip : Flip;
 
 import Math = dm.math;
-import dm.math.vector2d : Vector2d;
+import dm.math.vector2 : Vector2;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import dm.math.shapes.rect2d : Rect2d;
 

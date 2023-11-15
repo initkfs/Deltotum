@@ -1,7 +1,7 @@
 module dm.math.random;
 
 import dm.core.apps.units.services.loggable_unit : LoggableUnit;
-import dm.math.vector2d : Vector2d;
+import dm.math.vector2 : Vector2;
 import std.random : uniform, unpredictableSeed, StdRandom = Random;
 import std.range.primitives;
 import std.typecons : Nullable, Tuple;
@@ -51,11 +51,11 @@ class Random
         return randomBetween!double(0, 1);
     }
 
-    Vector2d randomBerweenVec(Vector2d min, Vector2d max) pure @safe
+    Vector2 randomBerweenVec(Vector2 min, Vector2 max) pure @safe
     {
         const newX = randomBetween(min.x, max.x);
         const newY = randomBetween(min.y, max.y);
-        return Vector2d(newX, newY);
+        return Vector2(newX, newY);
     }
 
     Nullable!(Unqual!U) randomElement(T : U[], U)(T container) pure @safe

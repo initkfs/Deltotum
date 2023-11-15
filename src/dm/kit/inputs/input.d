@@ -3,9 +3,9 @@ module dm.kit.inputs.input;
 import dm.kit.inputs.cursors.system_cursor: SystemCursor;
 import dm.kit.inputs.clipboards.clipboard : Clipboard;
 import dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
-import dm.math.vector2d : Vector2d;
+import dm.math.vector2 : Vector2;
 
-import dm.math.vector2d : Vector2d;
+import dm.math.vector2 : Vector2;
 
 import std.container.slist : SList;
 
@@ -87,11 +87,11 @@ class Input
         return false;
     }
 
-    Vector2d mousePos()
+    Vector2 mousePos()
     {
         int x, y;
         SDL_GetMouseState(&x, &y);
-        return Vector2d(x, y);
+        return Vector2(x, y);
     }
 
     void dispose(){

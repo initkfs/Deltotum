@@ -1,7 +1,7 @@
 module dm.kit.sprites.sprite;
 
 import dm.kit.events.event_kit_target : EventKitTarget;
-import dm.math.vector2d : Vector2d;
+import dm.math.vector2 : Vector2;
 import dm.math.shapes.rect2d : Rect2d;
 import dm.math.geom.alignment : Alignment;
 import dm.math.geom.insets : Insets;
@@ -58,8 +58,8 @@ class Sprite : EventKitTarget
 
     bool isPhysicsEnabled;
 
-    Vector2d velocity;
-    Vector2d acceleration;
+    Vector2 velocity;
+    Vector2 acceleration;
 
     Sprite isCollisionProcess;
     Sprite[] targetsForCollisions;
@@ -967,20 +967,20 @@ class Sprite : EventKitTarget
         }
     }
 
-    Vector2d position() @nogc @safe pure nothrow
+    Vector2 position() @nogc @safe pure nothrow
     {
-        return Vector2d(x, y);
+        return Vector2(x, y);
     }
 
-    void position(Vector2d pos)
+    void position(Vector2 pos)
     {
         x = pos.x;
         y = pos.y;
     }
 
-    Vector2d center()
+    Vector2 center()
     {
-        return Vector2d(x + (width / 2.0), y + (height / 2.0));
+        return Vector2(x + (width / 2.0), y + (height / 2.0));
     }
 
     void xy(double newX, double newY)

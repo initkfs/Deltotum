@@ -5,7 +5,7 @@ import dm.kit.sprites.sprite : Sprite;
 import dm.kit.graphics.colors.rgba : RGBA;
 
 import Math = dm.math;
-import dm.math.vector2d : Vector2d;
+import dm.math.vector2 : Vector2;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
 import dm.kit.sprites.animations.interp.uni_interpolator : UniInterpolator;
@@ -66,8 +66,8 @@ class Animations : Control
         import dm.kit.graphics.colors.rgba: RGBA;
 
         auto rect = new Rectangle(50, 50, GraphicStyle(1.0, RGBA.lightcoral, true, RGBA.lightcoral));
-        const startPos = Vector2d(200, 200);
-        const endPos = Vector2d(450, 200);
+        const startPos = Vector2(200, 200);
+        const endPos = Vector2(450, 200);
         rect.x = startPos.x;
         rect.y = startPos.y;
         //TODO fix autoresize

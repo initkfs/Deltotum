@@ -2,14 +2,14 @@ module dm.kit.sprites.shapes.paths.path;
 
 import dm.kit.sprites.shapes.shape : Shape;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import dm.math.vector2d : Vector2d;
+import dm.math.vector2 : Vector2;
 
 /**
  * Authors: initkfs
  */
 class Path : Shape
 {
-    Vector2d[] points;
+    Vector2[] points;
     bool isDrawPoints = false;
 
     this(double canvasWidth, double canvasHeight, GraphicStyle style)

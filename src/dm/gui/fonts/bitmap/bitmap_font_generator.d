@@ -10,7 +10,7 @@ import dm.kit.graphics.colors.rgba : RGBA;
 import dm.gui.fonts.bitmap.bitmap_font : BitmapFont;
 import dm.kit.i18n.langs.alphabets.alphabet : Alphabet;
 import dm.math.shapes.rect2d : Rect2d;
-import dm.math.vector2d: Vector2d;
+import dm.math.vector2: Vector2;
 
 import bindbc.sdl;
 
@@ -90,7 +90,7 @@ class BitmapFontGenerator : FontGenerator
                 }
 
                 auto glyph = Glyph(letter, Rect2d(glyphPosition.x, glyphPosition.y, glyphPosition.w, glyphPosition
-                        .h), Vector2d.init, alphabet, isEmpty, isNewline);
+                        .h), Vector2.init, alphabet, isEmpty, isNewline);
 
                 //TODO config?
                 if (glyph.grapheme == '𑑛')

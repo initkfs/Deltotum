@@ -1,6 +1,6 @@
 module dm.math.geom.triangulations.delaunay_triangulator;
 
-import dm.math.vector2d : Vector2d;
+import dm.math.vector2 : Vector2;
 import dm.math.line2d : Line2d;
 import dm.math.shapes.triangle2d : Triangle2d;
 
@@ -29,7 +29,7 @@ struct LineDistance
     }
 }
 
-bool isPointInCircumCircle(Triangle2d tr, Vector2d point) @nogc pure @safe
+bool isPointInCircumCircle(Triangle2d tr, Vector2 point) @nogc pure @safe
 {
     immutable double a11 = tr.a.x - point.x;
     immutable double a21 = tr.b.x - point.x;
@@ -77,7 +77,7 @@ bool isNeighbour(Triangle2d tr, Line2d edge) @nogc pure @safe
             .end);
 }
 
-bool getNoneEdgeVertex(Triangle2d tr, Line2d edge, out Vector2d v) @nogc pure @safe
+bool getNoneEdgeVertex(Triangle2d tr, Line2d edge, out Vector2 v) @nogc pure @safe
 {
     if (tr.a != edge.start && tr.a != edge.end)
     {
@@ -98,7 +98,7 @@ bool getNoneEdgeVertex(Triangle2d tr, Line2d edge, out Vector2d v) @nogc pure @s
     return false;
 }
 
-LineDistance findNearestEdge(Triangle2d tr, Vector2d point) @nogc pure @safe
+LineDistance findNearestEdge(Triangle2d tr, Vector2 point) @nogc pure @safe
 {
     LineDistance[3] edges;
 
@@ -119,9 +119,9 @@ LineDistance findNearestEdge(Triangle2d tr, Vector2d point) @nogc pure @safe
     return edges[0];
 }
 
-Vector2d computeClosestPoint(Line2d edge, Vector2d point) @nogc pure @safe
+Vector2 computeClosestPoint(Line2d edge, Vector2 point) @nogc pure @safe
 {
-    immutable Vector2d ab = edge.end.subtract(edge.start);
+    immutable Vector2 ab = edge.end.subtract(edge.start);
     double t = point.subtract(edge.start).dotProduct(ab) / ab.dotProduct(ab);
 
     if (t < 0.0)
@@ -160,7 +160,7 @@ class TriangleStore
         return true;
     }
 
-    Nullable!Triangle2d findContainingTriangle(Vector2d point)
+    Nullable!Triangle2d findContainingTriangle(Vector2 point)
     {
         typeof(return) result;
         foreach (Triangle2d triangle; triangles)
@@ -202,7 +202,7 @@ class TriangleStore
         return result;
     }
 
-    Line2d findNearestEdge(Vector2d point)
+    Line2d findNearestEdge(Vector2 point)
     {
         LineDistance[] edgeList;
 
@@ -220,7 +220,7 @@ class TriangleStore
         return edges[0].line;
     }
 
-    void removeTriangles(Vector2d vertex)
+    void removeTriangles(Vector2 vertex)
     {
         Triangle2d[] forRemove;
 
@@ -240,7 +240,7 @@ class TriangleStore
 
 }
 
-void legalizeEdge(TriangleStore triangles, Triangle2d triangle, Line2d edge, Vector2d newVertex)
+void legalizeEdge(TriangleStore triangles, Triangle2d triangle, Line2d edge, Vector2 newVertex)
 {
     auto mustBeNeighbourTriangle = triangles.findNeighbour(triangle, edge);
 
@@ -252,7 +252,7 @@ void legalizeEdge(TriangleStore triangles, Triangle2d triangle, Line2d edge, Vec
             triangles.remove(triangle);
             triangles.remove(neighbourTriangle);
 
-            Vector2d noneEdgeVertex;
+            Vector2 noneEdgeVertex;
             neighbourTriangle.getNoneEdgeVertex(edge, noneEdgeVertex);
 
             Triangle2d firstTriangle = Triangle2d(noneEdgeVertex, edge.start, newVertex);
@@ -267,7 +267,7 @@ void legalizeEdge(TriangleStore triangles, Triangle2d triangle, Line2d edge, Vec
     }
 }
 
-public Triangle2d[] triangulate(Vector2d[] pointSet)
+public Triangle2d[] triangulate(Vector2[] pointSet)
 {
     TriangleStore triangles = new TriangleStore();
 
@@ -278,16 +278,16 @@ public Triangle2d[] triangulate(Vector2d[] pointSet)
 
     double maxOfAnyCoordinate = 0.0;
 
-    foreach (Vector2d vector; pointSet)
+    foreach (Vector2 vector; pointSet)
     {
         maxOfAnyCoordinate = Math.max(Math.max(vector.x, vector.y), maxOfAnyCoordinate);
     }
 
     maxOfAnyCoordinate *= 16.0;
 
-    Vector2d p1 = Vector2d(0.0, 3.0 * maxOfAnyCoordinate);
-    Vector2d p2 = Vector2d(3.0 * maxOfAnyCoordinate, 0.0);
-    Vector2d p3 = Vector2d(-3.0 * maxOfAnyCoordinate, -3.0 * maxOfAnyCoordinate);
+    Vector2 p1 = Vector2(0.0, 3.0 * maxOfAnyCoordinate);
+    Vector2 p2 = Vector2(3.0 * maxOfAnyCoordinate, 0.0);
+    Vector2 p3 = Vector2(-3.0 * maxOfAnyCoordinate, -3.0 * maxOfAnyCoordinate);
 
     Triangle2d superTriangle = Triangle2d(p1, p2, p3);
 
@@ -317,8 +317,8 @@ public Triangle2d[] triangulate(Vector2d[] pointSet)
 
             auto second = mustBeSecond.get;
 
-            Vector2d firstNoneEdgeVertex;
-            Vector2d secondNoneEdgeVertex;
+            Vector2 firstNoneEdgeVertex;
+            Vector2 secondNoneEdgeVertex;
 
             first.getNoneEdgeVertex(edge, firstNoneEdgeVertex);
             second.getNoneEdgeVertex(edge, secondNoneEdgeVertex);
@@ -347,9 +347,9 @@ public Triangle2d[] triangulate(Vector2d[] pointSet)
             * The vertex is inside a triangle.
             */
             Triangle2d triangle = mustBeTriangle.get;
-            Vector2d a = triangle.a;
-            Vector2d b = triangle.b;
-            Vector2d c = triangle.c;
+            Vector2 a = triangle.a;
+            Vector2 b = triangle.b;
+            Vector2 c = triangle.c;
 
             triangles.remove(triangle);
 

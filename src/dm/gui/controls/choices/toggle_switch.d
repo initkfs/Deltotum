@@ -15,7 +15,7 @@ import dm.kit.sprites.textures.texture : Texture;
 import dm.kit.sprites.sprite : Sprite;
 import dm.kit.graphics.colors.rgba : RGBA;
 import dm.kit.sprites.animations.object.display_object_transition : DisplayObjectTransition;
-import dm.math.vector2d : Vector2d;
+import dm.math.vector2 : Vector2;
 import dm.gui.controls.texts.text : Text;
 
 /**
@@ -45,11 +45,11 @@ class ToggleSwitch : Control
     Sprite switchHandle;
     Sprite delegate() switchHandleFactory;
 
-    DisplayObjectTransition!Vector2d clickSwitchOnAnimation;
-    DisplayObjectTransition!Vector2d clickSwitchOffAnimation;
+    DisplayObjectTransition!Vector2 clickSwitchOnAnimation;
+    DisplayObjectTransition!Vector2 clickSwitchOffAnimation;
 
-    DisplayObjectTransition!Vector2d delegate() clickSwitchOnAnimationFactory;
-    DisplayObjectTransition!Vector2d delegate() clickSwitchOffAnimationFactory;
+    DisplayObjectTransition!Vector2 delegate() clickSwitchOnAnimationFactory;
+    DisplayObjectTransition!Vector2 delegate() clickSwitchOffAnimationFactory;
 
     //TODO factories, settings
     Sprite effectHandleSwitchOn;
@@ -104,28 +104,28 @@ class ToggleSwitch : Control
         };
 
         clickSwitchOnAnimationFactory = () {
-            import dm.math.vector2d : Vector2d;
+            import dm.math.vector2 : Vector2;
             import dm.kit.sprites.animations.object.motion.linear_motion_transition : LinearMotionTransition;
             import dm.kit.sprites.animations.interp.uni_interpolator : UniInterpolator;
 
             auto uniInterp = new UniInterpolator;
             uniInterp.interpolateMethod = &uniInterp.quadInOut;
 
-            auto end = Vector2d(bounds.right - switchHandle.width, bounds.y);
-            auto animation = new LinearMotionTransition(switchHandle, Vector2d(x, y), end, 200, uniInterp);
+            auto end = Vector2(bounds.right - switchHandle.width, bounds.y);
+            auto animation = new LinearMotionTransition(switchHandle, Vector2(x, y), end, 200, uniInterp);
             animation.isCycle = false;
             return animation;
         };
 
         clickSwitchOffAnimationFactory = () {
-            import dm.math.vector2d : Vector2d;
+            import dm.math.vector2 : Vector2;
             import dm.kit.sprites.animations.object.motion.linear_motion_transition : LinearMotionTransition;
             import dm.kit.sprites.animations.interp.uni_interpolator : UniInterpolator;
 
-            auto start = Vector2d(bounds.right - switchHandle.width, y);
+            auto start = Vector2(bounds.right - switchHandle.width, y);
             auto uniInterp = new UniInterpolator;
             uniInterp.interpolateMethod = &uniInterp.quadInOut;
-            auto animation = new LinearMotionTransition(switchHandle, start, Vector2d(x, y), 200, uniInterp);
+            auto animation = new LinearMotionTransition(switchHandle, start, Vector2(x, y), 200, uniInterp);
             animation.isCycle = false;
             return animation;
         };
@@ -206,8 +206,8 @@ class ToggleSwitch : Control
                 if (clickSwitchOnAnimation !is null && !clickSwitchOnAnimation.isRunning)
                 {
                     const b = switchContainer.bounds;
-                    clickSwitchOnAnimation.minValue = Vector2d(b.x + switchContainer.padding.left, b.y);
-                    clickSwitchOnAnimation.maxValue = Vector2d(b.right - switchHandle.width - switchContainer.padding.right, b.y);
+                    clickSwitchOnAnimation.minValue = Vector2(b.x + switchContainer.padding.left, b.y);
+                    clickSwitchOnAnimation.maxValue = Vector2(b.right - switchHandle.width - switchContainer.padding.right, b.y);
                     clickSwitchOnAnimation.run;
                 }
 
@@ -227,8 +227,8 @@ class ToggleSwitch : Control
                 if (clickSwitchOffAnimation !is null && !clickSwitchOffAnimation.isRunning)
                 {
                     const b = switchContainer.bounds;
-                    clickSwitchOffAnimation.minValue = Vector2d(b.right - switchHandle.width - switchContainer.padding.right, b.y);
-                    clickSwitchOffAnimation.maxValue = Vector2d(b.x + switchContainer.padding.left, b.y);
+                    clickSwitchOffAnimation.minValue = Vector2(b.right - switchHandle.width - switchContainer.padding.right, b.y);
+                    clickSwitchOffAnimation.maxValue = Vector2(b.x + switchContainer.padding.left, b.y);
                     clickSwitchOffAnimation.run;
                 }
 

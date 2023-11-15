@@ -1,6 +1,6 @@
 module dm.kit.sprites.animations.interp.interpolator;
 
-import dm.math.vector2d : Vector2d;
+import dm.math.vector2 : Vector2;
 
 /**
  * Authors: initkfs

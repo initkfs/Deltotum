@@ -3,7 +3,7 @@ module dm.kit.sprites.animations.transition;
 import dm.kit.sprites.animations.animation : Animation;
 import dm.kit.sprites.animations.interp.interpolator : Interpolator;
 import dm.kit.sprites.animations.interp.uni_interpolator : UniInterpolator;
-import dm.math.vector2d : Vector2d;
+import dm.math.vector2 : Vector2;
 import math = dm.math;
 
 import std.traits : isIntegral, isFloatingPoint;
@@ -24,7 +24,7 @@ private
 /**
  * Authors: initkfs
  */
-class Transition(T) if (isFloatingPoint!T || is(T : Vector2d)) : Animation
+class Transition(T) if (isFloatingPoint!T || is(T : Vector2)) : Animation
 {
     void delegate(T) onValue;
 
