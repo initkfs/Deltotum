@@ -14,13 +14,14 @@ abstract class Layout
     bool isResizeChildren;
     bool isResizeParent;
 
+    double sizeChangeDelta = 0.2;
+
     abstract
     {
         void applyLayout(Sprite root);
 
         double childrenWidth(Sprite root);
         double childrenHeight(Sprite root);
-
     }
 
     double freeMaxWidth(Sprite root)

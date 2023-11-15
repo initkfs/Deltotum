@@ -5,6 +5,8 @@ import dm.kit.sprites.sprite : Sprite;
 import dm.gui.controls.control : Control;
 import dm.math.geom.alignment : Alignment;
 
+import Math = dm.math;
+
 /**
  * Authors: initkfs
  */
@@ -30,17 +32,17 @@ class ManagedLayout : Layout
         {
             final switch (obj.alignment)
             {
-            case Alignment.none:
-                break;
-            case Alignment.x:
-                alignX(root, obj);
-                break;
-            case Alignment.y:
-                alignY(root, obj);
-                break;
-            case Alignment.xy:
-                alignXY(root, obj);
-                break;
+                case Alignment.none:
+                    break;
+                case Alignment.x:
+                    alignX(root, obj);
+                    break;
+                case Alignment.y:
+                    alignY(root, obj);
+                    break;
+                case Alignment.xy:
+                    alignXY(root, obj);
+                    break;
             }
         }
 
@@ -71,7 +73,7 @@ class ManagedLayout : Layout
         }
 
         const newX = rootBounds.middleX - targetBounds.halfWidth;
-        if (target.x == newX)
+        if (Math.abs(target.x - newX) < sizeChangeDelta)
         {
             return false;
         }
@@ -96,7 +98,7 @@ class ManagedLayout : Layout
         }
 
         const newY = rootBounds.middleY - targetBounds.halfHeight;
-        if (target.y == newY)
+        if (Math.abs(target.y - newY) < sizeChangeDelta)
         {
             return false;
         }
@@ -144,7 +146,8 @@ class ManagedLayout : Layout
             newWidth += root.padding.width;
         }
 
-        if (newWidth > root.width && newWidth <= root.maxWidth)
+        if (newWidth > root.width && newWidth <= root.maxWidth && (
+                Math.abs(root.width - newWidth) >= sizeChangeDelta))
         {
             root.width = newWidth;
         }
@@ -155,12 +158,10 @@ class ManagedLayout : Layout
             newHeight += root.padding.height;
         }
 
-        if (newHeight > root.height)
+        if (newHeight > root.height && newHeight <= root.maxHeight && (
+                Math.abs(root.height - newHeight) >= sizeChangeDelta))
         {
-            if (newHeight <= root.maxHeight)
-            {
-                root.height = newHeight;
-            }
+            root.height = newHeight;
         }
     }
 
@@ -198,22 +199,13 @@ class ManagedLayout : Layout
         {
             if (child.isHGrow)
             {
-                import Math = dm.math;
-
-                if(child.id == "tab_pane_header_separator"){
-                    import std;
-                    auto a = 4;
-                }
-
                 const freeW = freeWidth(root, child);
                 const dtWidth = Math.trunc(freeW / hgrowChildren);
 
                 if (dtWidth > 0)
                 {
-
-                    enum wDelta = 1.0;
                     const newWidth = child.width + dtWidth;
-                    if (Math.abs(child.width - newWidth) > wDelta)
+                    if (Math.abs(child.width - newWidth) >= sizeChangeDelta)
                     {
                         child.width = newWidth;
                     }
@@ -229,12 +221,8 @@ class ManagedLayout : Layout
 
                 if (dtHeight > 0)
                 {
-                    import Math = dm.math;
-
-                    enum hDelta = 1.0;
-
                     const newHeight = child.height + dtHeight;
-                    if (Math.abs(child.height - newHeight) > hDelta)
+                    if (Math.abs(child.height - newHeight) >= sizeChangeDelta)
                     {
                         child.height = newHeight;
                     }

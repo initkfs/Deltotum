@@ -4,6 +4,8 @@ import dm.kit.sprites.sprite : Sprite;
 import dm.kit.sprites.layouts.managed_layout : ManagedLayout;
 import dm.math.geom.alignment : Alignment;
 
+import Math = dm.math;
+
 /**
  * Authors: initkfs
  */
@@ -69,8 +71,16 @@ class FlowLayout : ManagedLayout
                 {
                     nextX = newChildX;
                 }
-                child.x = nextX;
-                child.y = nextY;
+
+                if (Math.abs(child.x - nextY) >= sizeChangeDelta)
+                {
+                    child.x = nextX;
+                }
+
+                if (Math.abs(child.y - nextY) >= sizeChangeDelta)
+                {
+                    child.y = nextY;
+                }
 
                 nextX = child.bounds.right + hgap + child.margin.right;
             }
@@ -89,8 +99,17 @@ class FlowLayout : ManagedLayout
                 {
                     nextX = newChildX;
                 }
-                child.x = nextX;
-                child.y = nextY - childBounds.height - child.padding.bottom;
+
+                if (Math.abs(child.x - nextY) >= sizeChangeDelta)
+                {
+                    child.x = nextX;
+                }
+
+                const newChildY = nextY - childBounds.height - child.padding.bottom;
+                if (Math.abs(child.y - newChildY) >= sizeChangeDelta)
+                {
+                    child.y = newChildY;
+                }
 
                 nextX = child.bounds.x - hgap - child.margin.left;
             }

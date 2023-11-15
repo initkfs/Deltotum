@@ -170,7 +170,7 @@ class ToggleSwitch : Control
             {
                 effectHandleSwitchOn = effectHandleSwitchOnFactory(switchHandle.width, switchHandle
                         .height);
-                effectHandleSwitchOn.isVisible = false;
+                effectHandleSwitchOn.isVisible = true;
                 switchHandle.addCreate(effectHandleSwitchOn);
             }
         }

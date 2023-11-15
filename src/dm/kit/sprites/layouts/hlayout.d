@@ -4,6 +4,8 @@ import dm.kit.sprites.sprite : Sprite;
 import dm.kit.sprites.layouts.managed_layout : ManagedLayout;
 import dm.math.geom.alignment : Alignment;
 
+import Math = dm.math;
+
 /**
  * Authors: initkfs
  */
@@ -39,12 +41,21 @@ class HLayout : ManagedLayout
 
             if (isFillFromStartToEnd)
             {
-                child.x = nextX + child.margin.left;
+                const childX = nextX + child.margin.left;
+                if (Math.abs(child.x - childX) >= sizeChangeDelta)
+                {
+                    child.x = childX;
+                }
+
                 nextX = child.x + childBounds.width + child.margin.right + spacing;
             }
             else
             {
-                child.x = nextX - child.margin.right - childBounds.width;
+                const childX = nextX - child.margin.right - childBounds.width;
+                if (Math.abs(child.x - childX) >= sizeChangeDelta)
+                {
+                    child.x = childX;
+                }
                 nextX = child.x - child.margin.left - spacing;
             }
 
@@ -54,7 +65,10 @@ class HLayout : ManagedLayout
             }
             else
             {
-                child.y = root.y + root.padding.top + child.margin.top;
+                const newChildY = root.y + root.padding.top + child.margin.top;
+                if(Math.abs(child.y - newChildY) >= sizeChangeDelta){
+                    child.y = newChildY;
+                }
             }
         }
     }
