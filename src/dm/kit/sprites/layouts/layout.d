@@ -14,7 +14,7 @@ abstract class Layout
     bool isResizeChildren;
     bool isResizeParent;
 
-    double sizeChangeDelta = 0.2;
+    double sizeChangeDelta = 0.15;
 
     abstract
     {

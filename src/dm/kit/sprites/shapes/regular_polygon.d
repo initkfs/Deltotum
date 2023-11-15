@@ -92,34 +92,34 @@ class RegularPolygon : Shape
     {
         import dm.math.vector2d : Vector2d;
 
-        graphics.fillRect(x + cornerPadding, y + style.lineWidth, width - cornerPadding * 2, height - style.lineWidth - 1, style
-                .fillColor);
+        import dm.kit.graphics.colors.rgba : RGBA;
+
+        const fillColor = style.fillColor;
+
+        graphics.fillRect(x + cornerPadding, y + style.lineWidth, width - cornerPadding * 2, height - style.lineWidth - 1, fillColor);
 
         //left side
-        graphics.fillRect(x + style.lineWidth, y + cornerPadding, cornerPadding, height - cornerPadding * 2, style
-                .fillColor);
+        graphics.fillRect(x + style.lineWidth, y + cornerPadding, cornerPadding, height - cornerPadding * 2, fillColor);
         //right side
-        graphics.fillRect(x + width - cornerPadding - style.lineWidth, y + cornerPadding, cornerPadding, height - cornerPadding * 2, style
-                .fillColor);
+        graphics.fillRect(x + width - cornerPadding - style.lineWidth, y + cornerPadding, cornerPadding, height - cornerPadding * 2, fillColor);
 
         //left top corner
-        graphics.fillTriangle(Vector2d(x + style.lineWidth * 2, y + cornerPadding - style.lineWidth), Vector2d(x + cornerPadding - style.lineWidth, y + style
-                .lineWidth * 2), Vector2d(
-                x + cornerPadding - style.lineWidth, y + cornerPadding - style.lineWidth), style
-                .fillColor);
+        graphics.fillTriangle(Vector2d(x + style.lineWidth, y + cornerPadding), Vector2d(x + cornerPadding, y + style
+                .lineWidth), Vector2d(
+                x + cornerPadding, y + cornerPadding), fillColor);
 
         //left bottom corner
-        graphics.fillTriangle(Vector2d(x + style.lineWidth * 2, y + height - cornerPadding - style.lineWidth), Vector2d(x + cornerPadding - style.lineWidth, y + height - cornerPadding - style.lineWidth), Vector2d(
-                x + cornerPadding - style.lineWidth, y + height - style.lineWidth * 3), style
-                .fillColor);
+        graphics.fillTriangle(Vector2d(x + style.lineWidth, y + height - cornerPadding - style.lineWidth * 2),Vector2d(x + cornerPadding, y + height - cornerPadding - style
+                .lineWidth * 2), Vector2d(
+                x + cornerPadding, y + height - style.lineWidth * 2), fillColor);
 
         //right top corner
-        graphics.fillTriangle(Vector2d(x + width - cornerPadding, y + style.lineWidth * 2), Vector2d(x + width - style.lineWidth * 3, y + cornerPadding - style
-                .lineWidth), Vector2d(
-                x + width - cornerPadding, y + cornerPadding - style.lineWidth), style.fillColor);
+        graphics.fillTriangle(Vector2d(x + width - cornerPadding - style.lineWidth, y + style
+                .lineWidth), Vector2d(x + width - style.lineWidth * 2, y + cornerPadding), Vector2d(
+                x + width - cornerPadding - style.lineWidth, y + cornerPadding), fillColor);
 
         //right bottom corner
-        graphics.fillTriangle(Vector2d(x + width - cornerPadding, y + height - cornerPadding - style.lineWidth), Vector2d(x + width - style.lineWidth * 2, y + height - cornerPadding - style.lineWidth), Vector2d(
-                x + width - cornerPadding, y + height - style.lineWidth * 3), style.fillColor);
+        graphics.fillTriangle(Vector2d(x + width - cornerPadding - style.lineWidth, y + height - cornerPadding - style.lineWidth * 2), Vector2d(x + width - style.lineWidth, y + height - cornerPadding - style.lineWidth * 2), Vector2d(
+                x + width - cornerPadding - style.lineWidth, y + height - style.lineWidth * 2), fillColor);
     }
 }

@@ -158,6 +158,7 @@ class ChoiceBox : TypedContainer!ChoiceItem
         addCreate(choiceList);
         choiceList.isResizedByParent = false;
         choiceList.isVisible = false;
+        choiceList.enableInsets;
 
         searchField = new TextArea();
         searchField.width = choiceList.width;

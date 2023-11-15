@@ -84,7 +84,7 @@ class ToggleSwitch : Control
                     .theme.colorAccent);
             style.isFill = true;
 
-            auto control = new RegularPolygon(width - 5, height - 5, style, graphics
+            auto control = new RegularPolygon(width, height, style, graphics
                     .theme.controlCornersBevel);
             return control;
         };
@@ -170,7 +170,7 @@ class ToggleSwitch : Control
             {
                 effectHandleSwitchOn = effectHandleSwitchOnFactory(switchHandle.width, switchHandle
                         .height);
-                effectHandleSwitchOn.isVisible = true;
+                effectHandleSwitchOn.isVisible = false;
                 switchHandle.addCreate(effectHandleSwitchOn);
             }
         }
