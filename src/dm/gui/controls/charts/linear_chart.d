@@ -6,7 +6,7 @@ import dm.math.geom.insets : Insets;
 import dm.kit.graphics.colors.rgba : RGBA;
 import dm.kit.graphics.colors.palettes.material_palette : MaterialPalette;
 import dm.gui.containers.container : Container;
-import dm.gui.controls.texts.text: Text;
+import dm.gui.controls.texts.text : Text;
 
 import Math = dm.math;
 import std.math.operations : isClose;
@@ -32,6 +32,10 @@ class LinearChart : Container
         Vector2 _referencePoint;
     }
 
+    RGBA colorChartLine = RGBA.green;
+    RGBA colorXAxis = RGBA.lightgray;
+    RGBA colorYAxis = RGBA.lightgray;
+
     this(double width = 100, double height = 100)
     {
         this.width = width;
@@ -51,7 +55,8 @@ class LinearChart : Container
         _referencePoint = Vector2(padding.left, height - padding.bottom);
     }
 
-    override void create(){
+    override void create()
+    {
         super.create;
     }
 
@@ -69,7 +74,7 @@ class LinearChart : Container
         import std.algorithm.searching : minElement, maxElement;
         import std.math.traits : isFinite;
 
-        auto valueFilter = delegate(double[] arr) { return arr.filter!isFinite; };
+        auto valueFilter = (double[] arr) { return arr.filter!isFinite; };
 
         minX = valueFilter(newX).minElement;
         maxX = valueFilter(newX).maxElement;
@@ -151,10 +156,12 @@ class LinearChart : Container
     {
         super.draw;
 
-        const b = bounds;
-        import dm.math.shapes.rect2d : Rect2d;
-
         drawAxis;
+
+        graphics.changeColor(colorChartLine);
+        scope(exit){
+            graphics.restoreColor;
+        }
 
         auto boundsWithPadding = paddingBounds;
 
@@ -181,14 +188,20 @@ class LinearChart : Container
         const minXPos = _referencePoint.x;
         const maxXPos = width - padding.right;
 
-        const minYPos = height - _referencePoint.y;
-        const maxYPos = padding.top;
+        const refYPos = height - _referencePoint.y;
+        const minYPos = padding.top;
+        const maxYPos = height - padding.bottom;
 
-        graphics.line(x + minXPos, y + minYPos, x + maxXPos, y + minYPos, RGBA.web(
-                MaterialPalette.green300));
-        graphics.line(x + minXPos, y + minYPos, x + minXPos, y + maxYPos, RGBA.web(
-                MaterialPalette.yellow300));
+        graphics.changeColor(colorXAxis);
+        graphics.line(x + minXPos, y + refYPos, x + maxXPos, y + refYPos);
+        graphics.restoreColor;
 
+        graphics.changeColor(colorYAxis);
+        //top half of graph axis
+        graphics.line(x + minXPos, y + minYPos, x + minXPos, y + maxYPos);
+        //bottom half of graph axis
+        graphics.line(x + minXPos, y + refYPos, x + minXPos, y + maxYPos);
+        graphics.restoreColor;
     }
 
     void referencePoint(double x, double y)
@@ -200,5 +213,4 @@ class LinearChart : Container
     {
         return _referencePoint;
     }
-
 }
