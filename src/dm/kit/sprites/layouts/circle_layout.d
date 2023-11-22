@@ -15,7 +15,7 @@ class CircleLayout : ManagedLayout
     {
         this.radius = radius;
         isArrangeBeforeResize = true;
-        isArragneAfterResize = false;
+        isArrangeAfterResize = false;
     }
 
     //TODO reverse, paddng, margins

@@ -9,7 +9,7 @@ import dm.gui.events.action_event : ActionEvent;
 import dm.kit.sprites.animations.object.value_transition : ValueTransition;
 import dm.kit.sprites.animations.object.property.opacity_transition : OpacityTransition;
 import dm.gui.controls.texts.text;
-import dm.kit.sprites.layouts.center_layout : CenterLayout;
+import dm.kit.sprites.layouts.hlayout : HLayout;
 import dm.kit.sprites.textures.texture : Texture;
 import dm.kit.graphics.colors.rgba : RGBA;
 
@@ -62,15 +62,18 @@ class Button : Control
     string idControlHover = "btn_hover";
     string idControlClick = "btn_click";
 
-    this(dstring text = "Button", double width = 80, double height = 30)
+    this(dstring text = "Button", double width = 80, double height = 30, double graphicsGap = 5)
     {
         super();
         this.width = width;
         this.height = height;
         this._buttonText = text;
 
-        this.layout = new CenterLayout;
+        this.layout = new HLayout(graphicsGap);
         this.layout.isResizeParent = true;
+        this.layout.isAlignXifOneChild = true;
+        this.layout.isAlignYifOneChild = true;
+        this.layout.isAlignY = true;
         isBorder = true;
     }
 
@@ -132,10 +135,9 @@ class Button : Control
         textFactory = () {
             auto text = new Text();
             build(text);
-            if (_buttonText.length > 0)
-            {
-                text.text = _buttonText;
-            }
+            //String can be forced to be empty
+            //if (_buttonText.length > 0)
+            text.text = _buttonText;
             return text;
         };
 
@@ -146,6 +148,7 @@ class Button : Control
                 return null;
             }
             auto clickEffectAnimation = new OpacityTransition(clickEffect, 50);
+            clickEffectAnimation.isLayoutManaged = false;
             clickEffectAnimation.isCycle = false;
             clickEffectAnimation.isInverse = true;
             clickEffectAnimation.onEnd = () {
@@ -316,6 +319,16 @@ class Button : Control
         }
     }
 
+    override void addCreateIcon(string iconName)
+    {
+        super.addCreateIcon(iconName);
+        if (_text && _text.text.length == 0)
+        {
+            _text.isLayoutManaged = false;
+        }
+        setInvalid;
+    }
+
     void text(T)(T s) if (isSomeString!T)
     {
         dstring newText;
@@ -339,6 +352,9 @@ class Button : Control
         }
 
         _text.text = newText;
+        if(!_text.isLayoutManaged){
+            _text.isLayoutManaged = true;
+        }
 
         setInvalid;
     }

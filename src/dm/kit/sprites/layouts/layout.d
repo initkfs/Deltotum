@@ -10,6 +10,9 @@ abstract class Layout
     bool isAlignX;
     bool isAlignY;
 
+    bool isAlignXifOneChild;
+    bool isAlignYifOneChild;
+
     bool isFillFromStartToEnd = true;
     bool isResizeChildren;
     bool isResizeParent;

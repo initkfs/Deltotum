@@ -13,7 +13,7 @@ import Math = dm.math;
 class ManagedLayout : Layout
 {
     bool isArrangeBeforeResize;
-    bool isArragneAfterResize = true;
+    bool isArrangeAfterResize = true;
 
     bool alignment(Sprite root, Sprite obj)
     {
@@ -115,11 +115,46 @@ class ManagedLayout : Layout
         }
     }
 
+    bool arrangeForLayout(Sprite root)
+    {
+        bool isAlignX, isAlignY;
+        if (isAlignXifOneChild || isAlignYifOneChild)
+        {
+            import std.range.primitives : walkLength, front;
+
+            auto children = childrenForLayout(root);
+            auto childCount = children.walkLength;
+
+            if (childCount == 1)
+            {
+                if (isAlignXifOneChild)
+                {
+                    alignX(root, children.front);
+                    isAlignX = true;
+                }
+
+                if (isAlignYifOneChild)
+                {
+                    alignY(root, children.front);
+                    isAlignY = true;
+                }
+            }
+        }
+
+        if (isAlignX || isAlignY)
+        {
+            return true;
+        }
+
+        arrangeChildren(root);
+        return true;
+    }
+
     override void applyLayout(Sprite root)
     {
         if (isArrangeBeforeResize)
         {
-            arrangeChildren(root);
+            arrangeForLayout(root);
         }
 
         if (isResizeParent)
@@ -132,9 +167,9 @@ class ManagedLayout : Layout
             layoutResizeChildren(root);
         }
 
-        if (isArragneAfterResize)
+        if (isArrangeAfterResize)
         {
-            arrangeChildren(root);
+            arrangeForLayout(root);
         }
     }
 
