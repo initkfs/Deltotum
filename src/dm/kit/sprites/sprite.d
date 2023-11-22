@@ -1434,6 +1434,10 @@ class Sprite : EventKitTarget
         return Nullable!Sprite.init;
     }
 
+    bool isCanEnableInsets(){
+        return hasGraphics && graphics.theme;
+    }
+
     void enableInsets()
     {
         enablePadding;
@@ -1441,7 +1445,7 @@ class Sprite : EventKitTarget
 
     void enablePadding()
     {
-        if (!hasGraphics || !graphics.theme)
+        if (!isCanEnableInsets)
         {
             throw new Exception(
                 "Unable to enable paddings: graphic or theme is null. Perhaps the component is not built correctly");

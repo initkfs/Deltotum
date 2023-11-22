@@ -6,6 +6,7 @@ import dm.math.geom.insets : Insets;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import dm.kit.graphics.themes.icons.icon_pack : IconPack;
 import dm.kit.sprites.images.image : Image;
+import dm.kit.sprites.shapes.shape : Shape;
 
 import std.typecons: Nullable;
 
@@ -66,5 +67,13 @@ class Theme
         Nullable!string data = iconPack.icon(id);
         return data;
     }
+
+    Shape controlShape(double width, double height, GraphicStyle style){
+        import dm.kit.sprites.shapes.regular_polygon : RegularPolygon;
+        Shape newShape = new RegularPolygon(width, height, style, controlCornersBevel);
+        return newShape;
+    }
+
+
 
 }

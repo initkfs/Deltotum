@@ -13,6 +13,20 @@ import dm.kit.sprites.layouts.center_layout : CenterLayout;
 import dm.kit.sprites.textures.texture : Texture;
 import dm.kit.graphics.colors.rgba : RGBA;
 
+import std.traits : isSomeString;
+
+enum ButtonType
+{
+    normal,
+    cancel,
+    close,
+    next,
+    no,
+    ok,
+    previous,
+    yes
+}
+
 /**
  * Authors: initkfs
  */
@@ -21,22 +35,32 @@ class Button : Control
 
     void delegate(ref ActionEvent) onAction;
 
-    dstring _buttonText;
-
     Sprite delegate(double, double) hoverFactory;
     Sprite delegate() clickEffectFactory;
     Text delegate() textFactory;
     ValueTransition delegate() clickEffectAnimationFactory;
 
-    //protected
-    //{
+    bool isCancel;
+    void delegate() onCancel;
+
+    bool isDefault;
+    void delegate() onDefault;
+
+    protected
+    {
         Sprite hover;
         Sprite clickEffect;
         ValueTransition clickEffectAnimation;
         Text _text;
+
+        dstring _buttonText;
         bool _selected;
         string iconName;
-    //}
+    }
+
+    string idControlBackground = "btn_background";
+    string idControlHover = "btn_hover";
+    string idControlClick = "btn_click";
 
     this(dstring text = "Button", double width = 80, double height = 30)
     {
@@ -54,53 +78,49 @@ class Button : Control
     {
         super.initialize;
 
-        enableInsets;
+        if (isCanEnableInsets)
+        {
+            enableInsets;
+        }
 
         backgroundFactory = (width, height) {
-
-            import dm.kit.sprites.shapes.regular_polygon : RegularPolygon;
+            assert(graphics.theme);
 
             auto style = styleFromActionType;
-
-            Shape object = new RegularPolygon(width, height, style, graphics
-                    .theme.controlCornersBevel);
+            Shape object = graphics.theme.controlShape(width, height, style);
             object.isLayoutManaged = false;
-            object.id = "btn_background";
+            object.id = idControlBackground;
             return object;
         };
 
         hoverFactory = (width, height) {
-
-            import dm.kit.sprites.shapes.regular_polygon : RegularPolygon;
+            assert(graphics.theme);
 
             auto currStyle = ownOrParentStyle;
-            auto style = currStyle ? *currStyle :  GraphicStyle(1, graphics.theme.colorHover, true, graphics
+            auto style = currStyle ? *currStyle : GraphicStyle(1, graphics.theme.colorHover, true, graphics
                     .theme.colorHover);
             style.isFill = true;
 
-            Shape hover = new RegularPolygon(width, height, style, graphics.theme.controlCornersBevel);
-            hover.id = "btn_hover";
-            hover.isLayoutManaged = false;
-            hover.isResizedByParent = true;
-            hover.isVisible = false;
-            hover.opacity = graphics.theme.opacityHover;
-            return hover;
+            Shape newHover = graphics.theme.controlShape(width, height, style);
+            newHover.id = idControlHover;
+            newHover.isLayoutManaged = false;
+            newHover.isResizedByParent = true;
+            newHover.isVisible = false;
+            newHover.opacity = graphics.theme.opacityHover;
+            return newHover;
         };
 
         clickEffectFactory = () {
-
-            import dm.kit.sprites.shapes.regular_polygon : RegularPolygon;
+            assert(graphics.theme);
 
             auto currStyle = ownOrParentStyle;
-
             GraphicStyle clickStyle = currStyle ? *currStyle : GraphicStyle(1, graphics
                     .theme.colorAccent, true, graphics
                     .theme.colorAccent);
             clickStyle.isFill = true;
 
-            Shape click = new RegularPolygon(width, height, clickStyle, graphics
-                    .theme.controlCornersBevel);
-            click.id = "btn_click";
+            Shape click = graphics.theme.controlShape(width, height, clickStyle);
+            click.id = idControlClick;
             click.isLayoutManaged = false;
             click.isResizedByParent = true;
             click.isVisible = false;
@@ -112,12 +132,19 @@ class Button : Control
         textFactory = () {
             auto text = new Text();
             build(text);
-            text.text = _buttonText;
-            text.create;
+            if (_buttonText.length > 0)
+            {
+                text.text = _buttonText;
+            }
             return text;
         };
 
         clickEffectAnimationFactory = () {
+            if (!clickEffect)
+            {
+                logger.error("Cannot create click effect animation, click effect is null");
+                return null;
+            }
             auto clickEffectAnimation = new OpacityTransition(clickEffect, 50);
             clickEffectAnimation.isCycle = false;
             clickEffectAnimation.isInverse = true;
@@ -135,35 +162,63 @@ class Button : Control
     {
         super.create;
 
-        if (hoverFactory !is null)
+        if (hoverFactory)
         {
             hover = hoverFactory(width, height);
-            addCreate(hover);
+            if (hover)
+            {
+                addCreate(hover);
+            }
+            else
+            {
+                logger.error("Hover factory did not return the object");
+            }
         }
 
-        if (clickEffectFactory !is null)
+        if (clickEffectFactory)
         {
             clickEffect = clickEffectFactory();
-            addCreate(clickEffect);
+            if (clickEffect)
+            {
+                addCreate(clickEffect);
+            }
+            else
+            {
+                logger.error("Click effect factory did not return the object");
+            }
+
         }
 
-        if(iconName){
+        if (iconName)
+        {
             addCreateIcon(iconName);
         }
 
-        if (textFactory !is null)
+        if (textFactory)
         {
             _text = textFactory();
-            addCreate(_text);
+            if (_text)
+            {
+                addCreate(_text);
+            }
+            else
+            {
+                logger.error("Text factory did not return the object");
+            }
         }
 
-        if (clickEffect !is null)
+        if (clickEffect)
         {
             clickEffectAnimation = clickEffectAnimationFactory();
-            addCreate(clickEffectAnimation);
+            if (clickEffectAnimation)
+            {
+                addCreate(clickEffectAnimation);
+            }
+            else
+            {
+                logger.error("Click effect animation factory did not return the object");
+            }
         }
-
-        //requestLayout;
 
         createListeners;
     }
@@ -172,12 +227,12 @@ class Button : Control
     {
         onPointerEntered ~= (ref e) {
 
-            if (_selected)
+            if (isDisabled || _selected)
             {
                 return;
             }
 
-            if (hover !is null && !hover.isVisible)
+            if (hover && !hover.isVisible)
             {
                 hover.isVisible = true;
             }
@@ -185,12 +240,12 @@ class Button : Control
 
         onPointerExited ~= (ref e) {
 
-            if (_selected)
+            if (isDisabled || _selected)
             {
                 return;
             }
 
-            if (hover !is null && hover.isVisible)
+            if (hover && hover.isVisible)
             {
                 hover.isVisible = false;
             }
@@ -198,34 +253,94 @@ class Button : Control
 
         onPointerUp ~= (ref e) {
 
-            if (_selected)
+            if (isDisabled || _selected)
             {
                 return;
             }
 
-            if (clickEffectAnimation !is null && !clickEffectAnimation.isRunning)
+            if (clickEffect && !clickEffect.isVisible)
             {
                 clickEffect.isVisible = true;
-                clickEffectAnimation.run;
+                if (clickEffectAnimation && !clickEffectAnimation.isRunning)
+                {
+                    clickEffectAnimation.run;
+                }
+
             }
 
-            if (onAction !is null)
+            if (onAction)
             {
                 auto ea = ActionEvent(e.ownerId, e.x, e.y, e.button);
                 onAction(ea);
             }
         };
+
+        if (isCancel)
+        {
+            import dm.com.inputs.keyboards.key_name : KeyName;
+
+            onKeyDown ~= (ref e) {
+                if (isDisabled)
+                {
+                    return;
+                }
+
+                if (isFocus && e.keyName == KeyName.ESCAPE)
+                {
+                    if (onCancel)
+                    {
+                        onCancel();
+                    }
+                }
+            };
+        }
+
+        if (isDefault)
+        {
+            import dm.com.inputs.keyboards.key_name : KeyName;
+
+            onKeyDown ~= (ref e) {
+                if (isDisabled)
+                {
+                    return;
+                }
+
+                if (isFocus && e.keyName == KeyName.RETURN)
+                {
+                    if (onDefault)
+                    {
+                        onDefault();
+                    }
+                }
+            };
+        }
     }
 
-    void text(dstring t)
+    void text(T)(T s) if (isSomeString!T)
     {
+        dstring newText;
+
+        static if (!is(T : immutable(dchar[])))
+        {
+            import std.conv : to;
+
+            newText = s.to!dstring;
+        }
+        else
+        {
+            newText = s;
+        }
+
         if (!_text)
         {
-            _buttonText = t;
+            _buttonText = newText;
+            setInvalid;
             return;
         }
 
-        _text.text = t;
+        _text.text = newText;
+
+        setInvalid;
     }
 
     dstring text()
@@ -237,18 +352,31 @@ class Button : Control
         return _buttonText;
     }
 
-    bool isSelected(){
+    bool isSelected()
+    {
         return _selected;
     }
 
     void isSelected(bool isSelected)
     {
+        // if (isDisabled)
+        // {
+        //     return;
+        // }
         _selected = isSelected;
         if (hover)
         {
             hover.isVisible = isSelected;
             setInvalid;
         }
+    }
+
+    override void dispose()
+    {
+        super.dispose;
+        _buttonText = null;
+        _selected = false;
+        iconName = null;
     }
 
 }

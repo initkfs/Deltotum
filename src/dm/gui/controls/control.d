@@ -28,6 +28,7 @@ class Control : Sprite
     bool isBackground;
     bool isBorder;
     bool isFocusable;
+    bool isDisabled;
 
     GraphicStyle* style;
     bool isFindStyleInParent;

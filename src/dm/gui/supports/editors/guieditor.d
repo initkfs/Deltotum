@@ -67,7 +67,7 @@ class GuiEditor : Scene
         scriptTab.content = new Scripting;
         root.addCreate(scriptTab);
 
-        root.changeTab(graphicsTab);
+        root.changeTab(controlsTab);
 
         createDebugger;
     }
