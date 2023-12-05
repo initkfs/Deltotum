@@ -44,12 +44,12 @@ class UniComponent : SimpleUnit
 
     protected void buildFromParent(C : UniComponent)(C uniComponent, C parentComponent)
     {
-        if (uniComponent is null)
+        if (!uniComponent)
         {
             throw new Exception("Component must not be null");
         }
 
-        if (parentComponent is null)
+        if (!parentComponent)
         {
             throw new Exception("Parent must not be null");
         }

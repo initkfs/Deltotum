@@ -40,6 +40,7 @@ class FileCrashHandler : CrashHandler
         if (message.length > 0)
         {
             content.put(message);
+            content.put(" ");
         }
 
         immutable errorInfo = t ? t.toString : "Throwable from application is null.";

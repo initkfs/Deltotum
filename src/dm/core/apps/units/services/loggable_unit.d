@@ -32,6 +32,15 @@ class LoggableUnit : SimpleUnit
         this._logger = logger;
     }
 
+    this(immutable Logger logger) immutable pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(logger !is null, "Logger for immutable object must not be null");
+
+        this._logger = logger;
+    }
+
     inout(Logger) logger() inout @nogc nothrow pure @safe
     {
         return _logger;
@@ -41,9 +50,14 @@ class LoggableUnit : SimpleUnit
 unittest
 {
     import std.logger : NullLogger, LogLevel;
-    import std.traits: isMutable;
+    import std.traits : isMutable;
+    import std.conv : to;
 
-    const(Logger) nl = new NullLogger(LogLevel.all);
-    const(LoggableUnit) lu = new const LoggableUnit(nl);
-    assert(!isMutable!(typeof(lu.logger)));
+    const(Logger) nlc = new NullLogger(LogLevel.all);
+    const(LoggableUnit) lc = new const LoggableUnit(nlc);
+    assert(!isMutable!(typeof(lc.logger)));
+
+    immutable nli = cast(immutable(NullLogger)) new NullLogger(LogLevel.all);
+    auto li = new immutable LoggableUnit(nli);
+    assert(!isMutable!(typeof(li.logger)));
 }

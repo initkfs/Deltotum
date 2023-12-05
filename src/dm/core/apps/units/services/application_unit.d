@@ -41,6 +41,18 @@ class ApplicationUnit : LoggableUnit
         this._context = context;
     }
 
+    this(immutable Logger logger, immutable Config config, immutable Context context) immutable pure @safe
+    {
+        super(logger);
+        import std.exception : enforce;
+
+        enforce(config !is null, "Config for immutable object must not be null");
+        enforce(context !is null, "Context for immutable object must not be null");
+
+        this._config = config;
+        this._context = context;
+    }
+
     inout(Config) config() inout @nogc nothrow pure @safe
     {
         return _config;

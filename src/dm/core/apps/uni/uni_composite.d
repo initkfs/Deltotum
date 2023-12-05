@@ -30,7 +30,11 @@ class UniComposite(C : UniComponent) : C
 
     bool addUnit(C unit)
     {
-        if (unit is null || hasUnit(unit))
+        import std.exception : enforce;
+
+        enforce(unit, "Unit must not be null");
+
+        if (hasUnit(unit))
         {
             return false;
         }
@@ -40,10 +44,9 @@ class UniComposite(C : UniComponent) : C
 
     bool hasUnit(C unit) const
     {
-        if (unit is null)
-        {
-            return false;
-        }
+        import std.exception : enforce;
+
+        enforce(unit, "Unit must not be null");
 
         import std.algorithm.searching : canFind;
 
@@ -52,15 +55,14 @@ class UniComposite(C : UniComponent) : C
 
     bool removeUnit(C unit)
     {
-        if (unit is null)
-        {
-            return false;
-        }
+        import std.exception : enforce;
+
+        enforce(unit, "Unit must not be null");
 
         import std.algorithm.mutation : remove;
         import std.algorithm.searching : countUntil;
 
-        immutable ptrdiff_t removePos = _units.countUntil(unit);
+        immutable removePos = _units.countUntil(unit);
         if (removePos == -1)
         {
             return false;
@@ -88,7 +90,7 @@ unittest
     auto component1 = new UniComponent;
     auto component3 = new UniComponent;
 
-    assert(!composite.addUnit(null));
+    assertThrown(composite.addUnit(null));
 
     assert(composite.addUnit(component1));
     assert(!composite.addUnit(component1));
@@ -103,7 +105,7 @@ unittest
     assert(!composite.hasUnit(component3));
     assert(!composite.removeUnit(component3));
 
-    assert(!composite.removeUnit(null));
+    assertThrown(composite.removeUnit(null));
     assert(composite.removeUnit(component1));
     assert(!composite.hasUnit(component1));
     assert(!composite.removeUnit(component1));

@@ -23,6 +23,15 @@ class ConfigurableUnit : SimpleUnit
         this._config = config;
     }
 
+    this(const Config config) const pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(config !is null, "Config for constant object must not be null");
+
+        this._config = config;
+    }
+
     this(immutable Config config) immutable pure @safe
     {
         import std.exception : enforce;

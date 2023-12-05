@@ -26,7 +26,7 @@ class Unitable
 
         import std.string : lastIndexOf;
 
-        const lastSepIndex = name.lastIndexOf(nameSep);
+        immutable lastSepIndex = name.lastIndexOf(nameSep);
         if (lastSepIndex == -1)
         {
             return name;
