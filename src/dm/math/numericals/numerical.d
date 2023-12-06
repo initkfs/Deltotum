@@ -7,7 +7,7 @@ module dm.math.numericals.numerical;
  * 
  * lim Δx->0 (f(x0 + Δx) - f(x0)) / Δx
  */
-double delegate(double) derivative(double delegate(double) f, double deltaX = 0.000001)
+double delegate(double) derivative(scope double delegate(double) f, double deltaX = 0.000001)
 in (deltaX > 0)
 {
     auto derFunc = (double x0) => (f(x0 + deltaX) - f(x0)) / deltaX;

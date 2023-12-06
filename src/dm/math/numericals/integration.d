@@ -1,6 +1,6 @@
 module dm.math.numericals.integration;
 
-double trapezoidal(double min, double max, size_t n, double delegate(double) @safe f) @safe
+double trapezoidal(double min, double max, size_t n, scope double delegate(double) @safe f) @safe
 in (min < max)
 in (n > 0)
 {
@@ -29,7 +29,7 @@ unittest
     assert(isClose(result1, 0.7837315285));
 }
 
-double simpsons(double min, double max, size_t n, double delegate(double) @safe f) @safe
+double simpsons(double min, double max, size_t n, scope double delegate(double) @safe f) @safe
 in (min < max)
 in (n >= 2)
 in (n % 2 == 0)
