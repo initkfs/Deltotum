@@ -21,6 +21,7 @@ import std.getopt : GetoptResult;
 class CliApplication : SimpleUnit
 {
     bool isStopMainController = true;
+    bool isStrictConfigs = true;
 
     string defaultDataDir = "data";
     string defaultConfigsDir = "configs";
@@ -296,13 +297,17 @@ class CliApplication : SimpleUnit
 
         }
 
+        auto envConfig =  newEnvConfig;
+        envConfig.isThrowOnNotExistentKey = isStrictConfigs;
+        envConfig.isThrowOnSetValueNotExistentKey = isStrictConfigs;
+
         if (configDir.length == 0)
         {
             uservices.cli.printIfNotSilent("Path to config directory is empty");
             //TODO Environment config
+            import dm.core.configs.environments.env_config : EnvConfig;
 
-            Config[] configs;
-            auto config = newConfigAggregator(configs);
+            auto config = newConfigAggregator([envConfig]);
             config.load;
             return config;
         }
@@ -321,18 +326,23 @@ class CliApplication : SimpleUnit
         import std.algorithm.iteration : filter;
         import std.algorithm.searching : endsWith;
 
-        Config[] configs;
+        Config[] configs = [envConfig];
 
         //TODO is hidden
         foreach (configPath; dirEntries(configDir, SpanMode.depth).filter!(f => f.isFile))
         {
-            configs ~= newConfigFromFile(configPath.name);
+            auto newConfig = newConfigFromFile(configPath.name);
+            newConfig.isThrowOnNotExistentKey = isStrictConfigs;
+            newConfig.isThrowOnSetValueNotExistentKey = isStrictConfigs;
+            configs ~= newConfig;
         }
 
         configs ~= newEnvConfig;
 
         //TODO check for duplicate keys
         auto config = newConfigAggregator(configs);
+        config.isThrowOnNotExistentKey = isStrictConfigs;
+        config.isThrowOnSetValueNotExistentKey = isStrictConfigs;
         config.load;
 
         import std.format : format;

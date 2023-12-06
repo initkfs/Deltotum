@@ -64,47 +64,115 @@ class ConfigAggregator : Config
             }
         }
 
-        throw new ConfigValueNotFoundException("Not found config for key: " ~ key);
+        if (isThrowOnNotExistentKey)
+        {
+            throw new ConfigValueNotFoundException("Not found config for key: " ~ key);
+        }
+
+        return null;
     }
 
     override Nullable!bool getBool(string key) const
     {
-        return searchConfigByKey(key).getBool(key);
+        if (auto config = searchConfigByKey(key))
+        {
+            return config.getBool(key);
+        }
+        return Nullable!bool.init;
     }
 
-    override void setBool(string key, bool value)
+    override bool setBool(string key, bool value)
     {
-        searchConfigByKey(key).setBool(key, value);
+        if (auto config = searchConfigByKey(key))
+        {
+            return config.setBool(key, value);
+        }
+
+        if (isThrowOnSetValueNotExistentKey)
+        {
+            import std.conv : text;
+
+            throw new ConfigValueIncorrectException(text("Not found config for key ", key, " and bool value ", value));
+        }
+
+        return false;
     }
 
     override Nullable!string getString(string key) const
     {
-        return searchConfigByKey(key).getString(key);
+        if (auto config = searchConfigByKey(key))
+        {
+            return config.getString(key);
+        }
+        return Nullable!string.init;
     }
 
-    override void setString(string key, string value)
+    override bool setString(string key, string value)
     {
-        searchConfigByKey(key).setString(key, value);
+        if (auto config = searchConfigByKey(key))
+        {
+            return config.setString(key, value);
+        }
+
+        if (isThrowOnSetValueNotExistentKey)
+        {
+            import std.conv : text;
+
+            throw new ConfigValueIncorrectException(text("Not found config for key ", key, " and string value ", value));
+        }
+
+        return false;
     }
 
     override Nullable!long getLong(string key) const
     {
-        return searchConfigByKey(key).getLong(key);
+        if (auto config = searchConfigByKey(key))
+        {
+            return config.getLong(key);
+        }
+        return Nullable!long.init;
     }
 
-    override void setLong(string key, long value)
+    override bool setLong(string key, long value)
     {
-        searchConfigByKey(key).setLong(key, value);
+        if (auto config = searchConfigByKey(key))
+        {
+            return config.setLong(key, value);
+        }
+
+        if (isThrowOnSetValueNotExistentKey)
+        {
+            import std.conv : text;
+
+            throw new ConfigValueIncorrectException(text("Not found config for key ", key, " and long value ", value));
+        }
+
+        return false;
     }
 
     override Nullable!double getDouble(string key) const
     {
-        return searchConfigByKey(key).getDouble(key);
+        if (auto config = searchConfigByKey(key))
+        {
+            return config.getDouble(key);
+        }
+        return Nullable!double.init;
     }
 
-    override void setDouble(string key, double value)
+    override bool setDouble(string key, double value)
     {
-        searchConfigByKey(key).setDouble(key, value);
+        if (auto config = searchConfigByKey(key))
+        {
+            return config.setDouble(key, value);
+        }
+        if (isThrowOnSetValueNotExistentKey)
+        {
+            import std.conv : text;
+
+            throw new ConfigValueIncorrectException(text("Not found config for key ", key, " and double value ", value));
+        }
+
+        return false;
     }
 
     inout(Config[]) configs() inout
@@ -115,9 +183,24 @@ class ConfigAggregator : Config
 
 unittest
 {
+    import std.exception : assertThrown;
+
     //TODO add simple implementation
     import dm.core.configs.environments.env_config : EnvConfig;
 
-    immutable ca = new immutable ConfigAggregator([new immutable EnvConfig]);
-    assert(!ca.containsKey("___not_key"));
+    enum keyName = "key";
+
+    immutable ca = new immutable ConfigAggregator([]);
+    assert(!ca.containsKey(keyName));
+    assertThrown(ca.getNotEmptyString(keyName));
+
+    auto cMut = new ConfigAggregator([]);
+
+    assertThrown(cMut.getNotEmptyString(keyName));
+    cMut.isThrowOnNotExistentKey = false;
+    assert(cMut.getNotEmptyString(keyName).isNull);
+
+    assertThrown(cMut.setString(keyName, "value"));
+    cMut.isThrowOnSetValueNotExistentKey = false;
+    assert(!cMut.setString(keyName, "value"));
 }

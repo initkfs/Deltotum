@@ -25,7 +25,7 @@ import dm.kit.apps.loops.loop : Loop;
 import dm.media.audio.audio : Audio;
 import dm.kit.inputs.input : Input;
 import dm.kit.screens.screen : Screen;
-import dm.kit.timers.timer: Timer;
+import dm.kit.timers.timer : Timer;
 
 import std.logger : Logger;
 import std.typecons : Nullable;
@@ -38,11 +38,11 @@ import dm.sys.sdl.sdl_renderer : SdlRenderer;
  */
 abstract class GraphicApplication : CliApplication
 {
-    bool isVideoEnabled = true;
+    bool isVideoEnabled;
     bool isAudioEnabled;
     bool isTimerEnabled;
     bool isJoystickEnabled;
-    bool isIconPackEnabled = true;
+    bool isIconPackEnabled;
 
     bool isQuitOnCloseAllWindows = true;
 
@@ -81,6 +81,8 @@ abstract class GraphicApplication : CliApplication
             _graphicServices.capGraphics = newCapability;
         }
 
+        loadSettings;
+
         if (isIconPackEnabled)
         {
             auto newIconPack = new IconPack;
@@ -90,6 +92,31 @@ abstract class GraphicApplication : CliApplication
         }
 
         return ApplicationExit(false);
+    }
+
+    void loadSettings()
+    {
+        import KitConfigKeys = dm.kit.kit_config_keys;
+
+        immutable isVideoFlag = uservices.config.getBool(KitConfigKeys.backendIsVideoEnabled);
+        isVideoEnabled = isVideoFlag.isNull ? true : isVideoFlag.get;
+        uservices.logger.trace("Video enabled: ", isVideoEnabled);
+
+        immutable isAudioFlag = uservices.config.getBool(KitConfigKeys.backendIsAudioEnabled);
+        isAudioEnabled = isAudioFlag.isNull ? false : isAudioFlag.get;
+        uservices.logger.trace("Audio enabled: ", isAudioEnabled);
+
+        immutable isTimerFlag = uservices.config.getBool(KitConfigKeys.backendIsTimerEnabled);
+        isTimerEnabled = isTimerFlag.isNull ? false : isTimerFlag.get;
+        uservices.logger.trace("Timer enabled: ", isTimerEnabled);
+
+        immutable isJoystickFlag = uservices.config.getBool(KitConfigKeys.backendIsJoystickEnabled);
+        isJoystickEnabled = isJoystickFlag.isNull ? false : isJoystickFlag.get;
+        uservices.logger.trace("Joystick enabled: ", isJoystickEnabled);
+
+        immutable isIconPackFlag = uservices.config.getBool(KitConfigKeys.backendIsIconPackEnabled);
+        isIconPackEnabled = isIconPackFlag.isNull ? true : isIconPackFlag.get;
+        uservices.logger.trace("Icon pack enabled: ", isIconPackEnabled);
     }
 
     CapGraphics newCapability()
@@ -140,7 +167,7 @@ abstract class GraphicApplication : CliApplication
     override void run()
     {
         super.run;
-        windowManager.onWindows((win){
+        windowManager.onWindows((win) {
             win.run;
             assert(win.isRunning);
             return true;
@@ -150,7 +177,7 @@ abstract class GraphicApplication : CliApplication
     override void stop()
     {
         super.stop;
-        windowManager.onWindows((win){
+        windowManager.onWindows((win) {
             win.stop;
             assert(win.isStopped);
             return true;

@@ -16,18 +16,18 @@ class PropertyConfig : Config
     string valueSeparator = "=";
     //private
     //{
-        string configPath;
+    string configPath;
 
-        struct Line
-        {
-            string line;
-            string key;
-            string value;
-            bool isEmpty;
-        }
+    struct Line
+    {
+        string line;
+        string key;
+        string value;
+        bool isEmpty;
+    }
 
-        Line*[string] keyIndex;
-        Line*[] lines;
+    Line*[string] keyIndex;
+    Line*[] lines;
     //}
 
     this(string configPath = null) pure @safe
@@ -60,7 +60,7 @@ class PropertyConfig : Config
     {
         import std.array : split;
         import std.algorithm : map, canFind;
-        import std.string: strip;
+        import std.string : strip;
 
         foreach (line; configText.split(lineSeparator))
         {
@@ -114,88 +114,131 @@ class PropertyConfig : Config
         return keyIndex[key].value.to!T;
     }
 
-    void setValue(T)(string key, T value)
+    bool setValue(T)(string key, T value)
     {
         if (!containsKey(key))
         {
-            throw new ConfigValueNotFoundException(
-                "Not found config key: " ~ key);
+            if (isThrowOnNotExistentKey)
+            {
+                throw new ConfigValueNotFoundException(
+                    "Not found config key: " ~ key);
+            }
+            else
+            {
+                return false;
+            }
         }
         keyIndex[key].value = value.to!string;
+        return true;
     }
 
     override Nullable!bool getBool(string key) const
     {
         if (!containsKey(key))
         {
-            throw new ConfigValueNotFoundException(
-                "Not found boolean value in config with key: " ~ key);
+            if (isThrowOnNotExistentKey)
+            {
+                throw new ConfigValueNotFoundException(
+                    "Not found boolean value in config with key: " ~ key);
+            }
+            else
+            {
+                return Nullable!bool.init;
+            }
         }
         const bool value = getValue!bool(key);
         return Nullable!bool(value);
     }
 
-    override void setBool(string key, bool value)
+    override bool setBool(string key, bool value)
     {
-        setValue(key, value);
+        return setValue(key, value);
     }
 
     override Nullable!string getString(string key) const
     {
         if (!containsKey(key))
         {
-            throw new ConfigValueNotFoundException(
-                "Not found string value in config with key: " ~ key);
+            if (isThrowOnNotExistentKey)
+            {
+                throw new ConfigValueNotFoundException(
+                    "Not found string value in config with key: " ~ key);
+            }
+            else
+            {
+                return Nullable!string.init;
+            }
         }
 
         auto str = getValue!string(key);
         return Nullable!string(str);
     }
 
-    override void setString(string key, string value)
+    override bool setString(string key, string value)
     {
-        setValue(key, value);
+        return setValue(key, value);
     }
 
     override Nullable!long getLong(string key) const
     {
         if (!containsKey(key))
         {
-            throw new ConfigValueNotFoundException(
-                "Not found integer value in config with key: " ~ key);
+            if (isThrowOnNotExistentKey)
+            {
+                throw new ConfigValueNotFoundException(
+                    "Not found integer value in config with key: " ~ key);
+            }
+            else
+            {
+                return Nullable!long.init;
+            }
         }
         const long value = getValue!long(key);
         return Nullable!long(value);
     }
 
-    override void setLong(string key, long value)
+    override bool setLong(string key, long value)
     {
-        setValue(key, value);
+        return setValue(key, value);
     }
 
     override Nullable!double getDouble(string key) const
     {
         if (!containsKey(key))
         {
-            throw new ConfigValueNotFoundException(
-                "Not found double value in config with key: " ~ key);
+            if (isThrowOnNotExistentKey)
+            {
+                throw new ConfigValueNotFoundException(
+                    "Not found double value in config with key: " ~ key);
+            }
+            else
+            {
+                return Nullable!double.init;
+            }
         }
 
         const double value = getValue!double(key);
         return Nullable!double(value);
     }
 
-    override void setDouble(string key, double value)
+    override bool setDouble(string key, double value)
     {
-        setValue(key, value);
+        return setValue(key, value);
     }
 
     T[] getList(T)(string key) const
     {
         if (!containsKey(key))
         {
-            throw new ConfigValueNotFoundException(
-                "Not found array in config with key: " ~ key);
+            if (isThrowOnNotExistentKey)
+            {
+                throw new ConfigValueNotFoundException(
+                    "Not found array in config with key: " ~ key);
+            }
+            else
+            {
+                return [];
+            }
         }
 
         import std.algorithm : split;
@@ -247,7 +290,7 @@ value4=true";
     config.load(configText);
 
     assert(config.lines.length == 6);
-    
+
     assert(config.getLong("value1") == 1);
     assert(config.getDouble("value3") == 2.5);
     assert(config.getBool("value4") == true);

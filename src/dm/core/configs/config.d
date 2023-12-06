@@ -10,6 +10,9 @@ import std.typecons : Nullable;
 */
 abstract class Config
 {
+    bool isThrowOnNotExistentKey = true;
+    bool isThrowOnSetValueNotExistentKey = true;
+
     abstract
     {
         void load();
@@ -18,16 +21,16 @@ abstract class Config
         bool containsKey(const string key) const;
 
         Nullable!bool getBool(string key) const;
-        void setBool(string key, bool value);
+        bool setBool(string key, bool value);
 
         Nullable!string getString(string key) const;
-        void setString(string key, string value);
+        bool setString(string key, string value);
 
         Nullable!long getLong(string key) const;
-        void setLong(string key, long value);
+        bool setLong(string key, long value);
 
         Nullable!double getDouble(string key) const;
-        void setDouble(string key, double value);
+        bool setDouble(string key, double value);
     }
 
     Nullable!long getPositiveLong(string key) const
