@@ -2,7 +2,7 @@ module dm.kit.graphics.graphics;
 
 import dm.core.apps.units.services.loggable_unit;
 
-import dm.sys.sdl.sdl_renderer : SdlRenderer;
+import dm.com.graphics.com_renderer: ComRenderer;
 import dm.kit.graphics.colors.rgba : RGBA;
 import dm.math.vector2 : Vector2;
 import math = dm.math;
@@ -39,7 +39,7 @@ class Graphics : LoggableUnit
         ComBlendMode prevMode;
         bool isBlendModeByColorChanged;
         RGBA prevColor;
-        SdlRenderer renderer;
+        ComRenderer renderer;
     }
 
     //TODO ComTexture, ComSurface;
@@ -48,7 +48,7 @@ class Graphics : LoggableUnit
     ComSurface delegate() comSurfaceFactory;
     ComImage delegate() comImageFactory;
 
-    this(Logger logger, SdlRenderer renderer, Theme theme)
+    this(Logger logger, ComRenderer renderer, Theme theme)
     {
         super(logger);
 

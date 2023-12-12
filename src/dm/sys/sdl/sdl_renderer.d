@@ -4,6 +4,8 @@ module dm.sys.sdl.sdl_renderer;
 version(SdlBackend):
 // dfmt on
 
+import dm.com.graphics.com_renderer : ComRenderer;
+import dm.com.graphics.com_texture: ComTexture;
 import dm.com.platforms.results.com_result : ComResult;
 import dm.com.graphics.com_blend_mode : ComBlendMode;
 import dm.sys.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
@@ -19,7 +21,7 @@ import bindbc.sdl;
 /**
  * Authors: initkfs
  */
-class SdlRenderer : SdlObjectWrapper!SDL_Renderer
+class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
 {
     SdlWindow window;
 
@@ -97,10 +99,20 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         SDL_RenderPresent(ptr);
     }
 
-    ComResult copy(SdlTexture texture) @nogc nothrow
+    ComResult copy(ComTexture texture)
     {
-        const int zeroOrErrorCode = SDL_RenderCopy(ptr, texture.getObject, null, null);
-        return ComResult(zeroOrErrorCode);
+        if (auto sdlTexture = cast(SdlTexture) texture)
+        {
+            void* nPtr;
+            if(const err = texture.nativePtr(nPtr)){
+                return err;
+            }
+            //TODO unsafe
+            SDL_Texture* sdlPtr = cast(SDL_Texture*) nPtr;
+            const int zeroOrErrorCode = SDL_RenderCopy(ptr, sdlPtr, null, null);
+            return ComResult(zeroOrErrorCode);
+        }
+        return ComResult.error("Source texture is not a sdl texture");
     }
 
     ComResult setClipRect(Rect2d clip) @nogc nothrow
@@ -128,14 +140,14 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         return ComResult(zeroOrErrCode);
     }
 
-    ComResult setBlendMode(ComBlendMode mode)
+    ComResult setBlendMode(ComBlendMode mode) @nogc nothrow
     {
         SDL_BlendMode newMode = typeConverter.toNativeBlendMode(mode);
         const int zeroOrErrorCode = SDL_SetRenderDrawBlendMode(ptr, newMode);
         return ComResult(zeroOrErrorCode);
     }
 
-    ComResult getBlendMode(out ComBlendMode mode)
+    ComResult getBlendMode(out ComBlendMode mode) @nogc nothrow
     {
         SDL_BlendMode oldMode;
         const int zeroOrErrorCode = SDL_GetRenderDrawBlendMode(ptr, &oldMode);
@@ -146,17 +158,17 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer
         return ComResult(zeroOrErrorCode);
     }
 
-    ComResult setBlendModeBlend()
+    ComResult setBlendModeBlend() @nogc nothrow
     {
         return setBlendMode(ComBlendMode.blend);
     }
 
-    ComResult setBlendModeNone()
+    ComResult setBlendModeNone() @nogc nothrow
     {
         return setBlendMode(ComBlendMode.none);
     }
 
-    ComResult rect(int x, int y, int width, int height)
+    ComResult rect(int x, int y, int width, int height) @nogc nothrow
     {
         SDL_Rect r = {x, y, width, height};
         return rect(&r);

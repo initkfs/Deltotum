@@ -30,8 +30,7 @@ import dm.kit.timers.timer : Timer;
 import std.logger : Logger;
 import std.typecons : Nullable;
 
-//TODO replace with ComRenderer
-import dm.sys.sdl.sdl_renderer : SdlRenderer;
+import dm.com.graphics.com_renderer: ComRenderer;
 
 /**
  * Authors: initkfs
@@ -204,7 +203,7 @@ abstract class GraphicApplication : CliApplication
         }
     }
 
-    Graphics createGraphics(Logger logger, SdlRenderer renderer, Theme theme)
+    Graphics createGraphics(Logger logger, ComRenderer renderer, Theme theme)
     {
         return new Graphics(logger, renderer, theme);
     }

@@ -11,8 +11,7 @@ import dm.kit.screens.screen : Screen;
 
 import std.logger.core : Logger;
 
-//TODO replace with ComRenderer
-import dm.sys.sdl.sdl_renderer : SdlRenderer;
+import dm.com.graphics.com_renderer: ComRenderer;
 
 /**
  * Authors: initkfs
@@ -37,7 +36,7 @@ class Window : GraphicsComponent
 
     SceneManager scenes;
 
-    SdlRenderer renderer;
+    ComRenderer renderer;
 
     double frameRate;
 
