@@ -4,6 +4,7 @@ module dm.sys.sdl.sdl_clipboard;
 version(SdlBackend):
 // dfmt on
 
+import dm.com.inputs.com_clipboard: ComClipboard;
 import dm.sys.sdl.base.sdl_object : SdlObject;
 import dm.com.platforms.results.com_result : ComResult;
 
@@ -12,7 +13,7 @@ import bindbc.sdl;
 /**
  * Authors: initkfs
  */
-class SdlClipboard : SdlObject
+class SdlClipboard : SdlObject, ComClipboard
 {
     ComResult getText(out string newText)
     {
@@ -32,6 +33,7 @@ class SdlClipboard : SdlObject
         }
 
         import std.string : fromStringz;
+
         newText = text.fromStringz.idup;
         return ComResult.success;
     }
@@ -49,7 +51,13 @@ class SdlClipboard : SdlObject
         return ComResult(zeroOrErrorCode);
     }
 
-    void dispose(){
-        
+    bool isDisposed() @nogc nothrow pure @safe
+    {
+        return false;
+    }
+
+    bool dispose() @nogc nothrow
+    {
+        return false;
     }
 }

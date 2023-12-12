@@ -1,8 +1,6 @@
 module dm.kit.inputs.clipboards.clipboard;
 
-//TODO remove SDL api
-import dm.sys.sdl.sdl_clipboard : SdlClipboard;
-import bindbc.sdl;
+import dm.com.inputs.com_clipboard: ComClipboard;
 
 /**
  * Authors: initkfs
@@ -11,10 +9,10 @@ class Clipboard
 {
     private
     {
-        SdlClipboard clipboard;
+        ComClipboard clipboard;
     }
 
-    this(SdlClipboard c)
+    this(ComClipboard c)
     {
         assert(c);
         this.clipboard = c;

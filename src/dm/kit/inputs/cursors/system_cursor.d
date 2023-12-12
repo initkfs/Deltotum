@@ -3,7 +3,6 @@ module dm.kit.inputs.cursors.system_cursor;
 import dm.com.inputs.cursors.com_cursor : ComCursor, ComSystemCursorType;
 
 //TODO move cursor and mouse
-import dm.sys.sdl.sdl_cursor : SDLCursor;
 import dm.kit.sprites.sprite : Sprite;
 
 import bindbc.sdl;
