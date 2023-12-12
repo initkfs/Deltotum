@@ -5,5 +5,6 @@ module dm.com.lifecycles.destroyable;
  */
 interface Destroyable
 {
-    bool dispose();
+    bool isDisposed() @nogc nothrow pure @safe;
+    bool dispose() @nogc nothrow;
 }

@@ -167,11 +167,22 @@ class SdlApplication : ContinuouslyApplication
         SystemCursor cursor;
         try
         {
-            cursor = new SystemCursor;
-            cursor.cursorFactory = (type) {
-                auto newCursor = new SDLCursor(type);
-                return newCursor;
-            };
+            import dm.sys.sdl.sdl_cursor : SDLCursor;
+
+            auto sdlCursor = new SDLCursor;
+            if (auto err = sdlCursor.fromDefaultCursor)
+            {
+                uservices.logger.errorf("Cursor creating error. ", err);
+            }
+            else
+            {
+                cursor = new SystemCursor(sdlCursor);
+                cursor.cursorFactory = (type) {
+                    auto newCursor = new SDLCursor(type);
+                    return newCursor;
+                };
+            }
+
         }
         catch (Exception e)
         {

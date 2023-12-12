@@ -4,8 +4,9 @@ module dm.sys.sdl.sdl_cursor;
 version(SdlBackend):
 // dfmt on
 
+import dm.com.inputs.cursors.com_cursor: ComCursor, ComSystemCursorType;
+
 import dm.sys.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
-import dm.com.inputs.cursors.com_system_cursor_type : ComSystemCursorType;
 import dm.com.platforms.results.com_result : ComResult;
 
 import bindbc.sdl;
@@ -13,7 +14,7 @@ import bindbc.sdl;
 /**
  * Authors: initkfs
  */
-class SDLCursor : SdlObjectWrapper!SDL_Cursor
+class SDLCursor : SdlObjectWrapper!SDL_Cursor, ComCursor
 {
     bool isDefault;
 
@@ -79,18 +80,18 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor
         }
     }
 
-    static ComResult defaultCursor(out SDLCursor cursor)
+    ComResult fromDefaultCursor() @nogc nothrow
     {
         SDL_Cursor* cursorPtr;
         if (const err = defaultCursorPtr(cursorPtr))
         {
             return err;
         }
-        cursor = new SDLCursor(cursorPtr);
+        ptr = cursorPtr;
         return ComResult.success;
     }
 
-    static ComResult defaultCursorPtr(out SDL_Cursor* cursorPtr)
+    ComResult defaultCursorPtr(out SDL_Cursor* cursorPtr) @nogc nothrow
     {
         auto mustBeCursorPtr = SDL_GetCursor();
         if (!mustBeCursorPtr)
@@ -101,7 +102,7 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor
         return ComResult.success;
     }
 
-    ComResult set()
+    ComResult set() @nogc nothrow
     {
         if (!ptr)
         {
@@ -112,7 +113,7 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor
         return ComResult.success;
     }
 
-    ComResult redraw()
+    ComResult redraw() @nogc nothrow
     {
         SDL_SetCursor(null);
         return ComResult.success;

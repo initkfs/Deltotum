@@ -1,7 +1,6 @@
 module dm.kit.screens.screen;
 
-//TODO remove bindbc
-import dm.sys.sdl.sdl_screen : SDLScreen;
+import dm.com.graphics.com_screen: ComScreen;
 import dm.kit.screens.single_screen : SingleScreen;
 
 import std.logger.core : Logger;
@@ -13,11 +12,11 @@ class Screen
 {
     private
     {
-        SDLScreen nativeScreen;
+        ComScreen nativeScreen;
         Logger logger;
     }
 
-    this(Logger logger, SDLScreen screen)
+    this(Logger logger, ComScreen screen)
     {
         assert(screen);
         assert(logger);

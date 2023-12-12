@@ -124,7 +124,12 @@ class SDLScreen : SdlObject, ComScreen
         return ComResult.success;
     }
 
-    override bool dispose()
+    bool isDisposed() @nogc nothrow pure @safe
+    {
+        return false;
+    }
+
+    bool dispose()
     {
         return false;
     }

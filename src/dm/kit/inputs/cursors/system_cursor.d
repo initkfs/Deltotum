@@ -1,6 +1,6 @@
 module dm.kit.inputs.cursors.system_cursor;
 
-import dm.com.inputs.cursors.com_system_cursor_type : ComSystemCursorType;
+import dm.com.inputs.cursors.com_cursor : ComCursor, ComSystemCursorType;
 
 //TODO move cursor and mouse
 import dm.sys.sdl.sdl_cursor : SDLCursor;
@@ -13,31 +13,22 @@ import bindbc.sdl;
  */
 class SystemCursor
 {
-    SDLCursor delegate(ComSystemCursorType) cursorFactory;
+    ComCursor delegate(ComSystemCursorType) cursorFactory;
 
     protected
     {
-        SDLCursor[ComSystemCursorType] cursors;
+        ComCursor[ComSystemCursorType] cursors;
     }
     private
     {
-        SDLCursor defaultCursor;
+        ComCursor defaultCursor;
 
-        SDLCursor lastCursor;
+        ComCursor lastCursor;
         bool _locked;
         Sprite _cursorOwner;
     }
 
-    this()
-    {
-        if (const err = SDLCursor.defaultCursor(this.defaultCursor))
-        {
-            throw new Exception(err.toString);
-        }
-        assert(this.defaultCursor);
-    }
-
-    this(SDLCursor defaultCursor)
+    this(ComCursor defaultCursor)
     {
         this.defaultCursor = defaultCursor;
     }

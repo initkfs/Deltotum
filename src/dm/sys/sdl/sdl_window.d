@@ -8,7 +8,7 @@ import dm.com.graphics.com_window : ComWindow;
 
 import dm.com.platforms.results.com_result : ComResult;
 import dm.sys.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
-import dm.com.inputs.cursors.com_system_cursor_type : ComSystemCursorType;
+import dm.com.inputs.cursors.com_cursor : ComCursor, ComSystemCursorType;
 
 import dm.sys.sdl.sdl_surface : SdlSurface;
 

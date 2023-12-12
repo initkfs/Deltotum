@@ -63,7 +63,7 @@ class TextArea : HBox
         textView.isEditable = true;
 
         textView.onPointerEntered ~= (ref e) {
-            import dm.com.inputs.cursors.com_system_cursor_type : ComSystemCursorType;
+            import dm.com.inputs.cursors.com_cursor : ComSystemCursorType;
 
             input.systemCursor.change(ComSystemCursorType.ibeam);
         };
