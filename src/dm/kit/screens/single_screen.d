@@ -1,13 +1,9 @@
 module dm.kit.screens.single_screen;
 
 import dm.math.shapes.rect2d : Rect2d;
-import dm.kit.screens.props.screen_mode : ScreenMode;
-import dm.kit.screens.props.screen_orientation : ScreenOrientation;
+import dm.com.graphics.com_screen : ComScreen, ScreenMode, ScreenDpi, ScreenOrientation;
 
 import std.logger.core : Logger;
-
-//TODO remove bindbc
-import dm.sys.sdl.sdl_screen : SDLScreen;
 
 /**
  * Authors: initkfs
@@ -18,11 +14,11 @@ struct SingleScreen
 
     private
     {
-        SDLScreen nativeScreen;
+        ComScreen nativeScreen;
         Logger logger;
     }
 
-    this(Logger logger, SDLScreen screen, size_t index = 0)
+    this(Logger logger, ComScreen screen, size_t index = 0)
     {
         assert(screen);
         assert(logger);
@@ -55,44 +51,35 @@ struct SingleScreen
 
     ScreenMode mode()
     {
-        import dm.sys.sdl.sdl_screen : SDLScreenMode, SDLDpi;
+        import dm.com.graphics.com_screen : ScreenMode, ScreenDpi;
 
-        SDLScreenMode m;
+        ScreenMode m;
         if (const err = nativeScreen.getMode(cast(int) index, m))
         {
             logger.errorf("Error getting screen mode, index: %s: %s", index, err.toString);
         }
-        SDLDpi dpi;
+
+        return ScreenMode(m.width, m.height, m.rateHz);
+    }
+
+    ScreenDpi dpi()
+    {
+        ScreenDpi dpi;
         if (const err = nativeScreen.getDPI(cast(int) index, dpi))
         {
             logger.errorf("Error getting screen dpi, index %s: %s", index, err.toString);
         }
-        return ScreenMode(m.width, m.height, m.rateHz, dpi.diagonalDPI, dpi.horizontalDPI, dpi
-                .verticalDPI);
+        return dpi;
     }
 
     ScreenOrientation orientation()
     {
-        import dm.sys.sdl.sdl_screen : SDLScreenOrientation;
-
-        SDLScreenOrientation result;
+        ScreenOrientation result;
         if (const err = nativeScreen.getOrientation(cast(int) index, result))
         {
             logger.errorf("Error getting screen orientation with index %s: %s", index, err.toString);
         }
-        final switch (result) with (SDLScreenOrientation)
-        {
-        case none:
-            return ScreenOrientation.none;
-        case landscape:
-            return ScreenOrientation.landscape;
-        case landscapeFlipped:
-            return ScreenOrientation.landscapeFlipped;
-        case portrait:
-            return ScreenOrientation.portrait;
-        case portraitFlipped:
-            return ScreenOrientation.portraitFlipped;
-        }
+        return result;
     }
 
 }

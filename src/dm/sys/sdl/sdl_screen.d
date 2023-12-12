@@ -4,40 +4,17 @@ module dm.sys.sdl.sdl_screen;
 version(SdlBackend):
 // dfmt on
 
+import dm.com.graphics.com_screen : ComScreen, ScreenMode, ScreenOrientation, ScreenDpi;
 import dm.com.platforms.results.com_result : ComResult;
 import dm.sys.sdl.base.sdl_object : SdlObject;
 
 import bindbc.sdl;
 
-enum SDLScreenOrientation
-{
-    none,
-    landscape,
-    landscapeFlipped,
-    portrait,
-    portraitFlipped
-}
-
-struct SDLScreenMode
-{
-    int width;
-    int height;
-    int rateHz;
-}
-
-struct SDLDpi
-{
-    float diagonalDPI;
-    float horizontalDPI;
-    float verticalDPI;
-}
-
 /**
  * Authors: initkfs
  */
-class SDLScreen : SdlObject
+class SDLScreen : SdlObject, ComScreen
 {
-
     ComResult getCount(out size_t count) @nogc nothrow
     {
         const int screenCountOrNegErr = SDL_GetNumVideoDisplays();
@@ -85,7 +62,7 @@ class SDLScreen : SdlObject
         return ComResult.success;
     }
 
-    ComResult getName(int index, ref const(char)* name)
+    ComResult getName(int index, ref const(char)* name) @nogc nothrow
     {
         const namePtr = SDL_GetDisplayName(index);
         if (!namePtr)
@@ -96,7 +73,7 @@ class SDLScreen : SdlObject
         return ComResult.success;
     }
 
-    ComResult getMode(int index, out SDLScreenMode mode)
+    ComResult getMode(int index, out ScreenMode mode) @nogc nothrow
     {
         SDL_DisplayMode m;
         const zeroOrError = SDL_GetCurrentDisplayMode(index, &m);
@@ -104,45 +81,51 @@ class SDLScreen : SdlObject
         {
             return ComResult.error(getError);
         }
-        mode = SDLScreenMode(m.w, m.h, m.refresh_rate);
+        mode = ScreenMode(m.w, m.h, m.refresh_rate);
         return ComResult.success;
     }
 
-    ComResult getDPI(int index, out SDLDpi screenDPI)
+    ComResult getDPI(int index, out ScreenDpi screenDPI) @nogc nothrow
     {
-        SDLDpi dpi;
-        const zeroOrError = SDL_GetDisplayDPI(index, &dpi.diagonalDPI, &dpi.horizontalDPI, &dpi
-                .verticalDPI);
+        ScreenDpi dpi;
+        float diagDpi, horizDpi, vertDpi;
+        const zeroOrError = SDL_GetDisplayDPI(index, &diagDpi, &horizDpi, &vertDpi);
         if (zeroOrError != 0)
         {
             return ComResult.error(getError);
         }
+        dpi = ScreenDpi(diagDpi, horizDpi, vertDpi);
         screenDPI = dpi;
         return ComResult.success;
     }
 
-    ComResult getOrientation(int index, out SDLScreenOrientation result)
+    ComResult getOrientation(int index, out ScreenOrientation result) @nogc nothrow
     {
         const orientation = SDL_GetDisplayOrientation(index);
         final switch (orientation) with (SDL_DisplayOrientation)
         {
-        case SDL_ORIENTATION_UNKNOWN:
-            result = SDLScreenOrientation.none;
-            break;
-        case SDL_ORIENTATION_LANDSCAPE:
-            result = SDLScreenOrientation.landscape;
-            break;
-        case SDL_ORIENTATION_LANDSCAPE_FLIPPED:
-            result = SDLScreenOrientation.landscapeFlipped;
-            break;
-        case SDL_ORIENTATION_PORTRAIT:
-            result = SDLScreenOrientation.portrait;
-            break;
-        case SDL_ORIENTATION_PORTRAIT_FLIPPED:
-            result = SDLScreenOrientation.portraitFlipped;
-            break;
+            case SDL_ORIENTATION_UNKNOWN:
+                result = ScreenOrientation.none;
+                break;
+            case SDL_ORIENTATION_LANDSCAPE:
+                result = ScreenOrientation.landscape;
+                break;
+            case SDL_ORIENTATION_LANDSCAPE_FLIPPED:
+                result = ScreenOrientation.landscapeFlipped;
+                break;
+            case SDL_ORIENTATION_PORTRAIT:
+                result = ScreenOrientation.portrait;
+                break;
+            case SDL_ORIENTATION_PORTRAIT_FLIPPED:
+                result = ScreenOrientation.portraitFlipped;
+                break;
         }
 
         return ComResult.success;
+    }
+
+    override bool dispose()
+    {
+        return false;
     }
 }

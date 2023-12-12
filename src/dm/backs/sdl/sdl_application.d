@@ -1,4 +1,4 @@
-module dm.kit.apps.sdl_application;
+module dm.backs.sdl.sdl_application;
 
 // dfmt off
 version(SdlBackend):
