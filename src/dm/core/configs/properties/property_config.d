@@ -14,25 +14,25 @@ class PropertyConfig : Config
 {
     string lineSeparator = "\n";
     string valueSeparator = "=";
-    //private
-    //{
-    string configPath;
-
-    struct Line
+    private
     {
-        string line;
-        string key;
-        string value;
-        bool isEmpty;
-    }
+        string _configPath;
 
-    Line*[string] keyIndex;
-    Line*[] lines;
-    //}
+        struct Line
+        {
+            string line;
+            string key;
+            string value;
+            bool isEmpty;
+        }
+
+        Line*[string] keyIndex;
+        Line*[] lines;
+    }
 
     this(string configPath = null) pure @safe
     {
-        this.configPath = configPath;
+        this._configPath = configPath;
     }
 
     override void load()
@@ -40,19 +40,24 @@ class PropertyConfig : Config
         import std.exception : enforce;
         import std.file : exists, isFile;
 
-        if (!configPath.exists)
+        if (_configPath.length == 0)
         {
-            throw new Exception("Config path does not exist: " ~ configPath);
+            throw new Exception("Config path is empty");
         }
 
-        if (!configPath.isFile)
+        if (!_configPath.exists)
         {
-            throw new Exception("Config path is not a file: " ~ configPath);
+            throw new Exception("Config path does not exist: " ~ _configPath);
+        }
+
+        if (!_configPath.isFile)
+        {
+            throw new Exception("Config path is not a file: " ~ _configPath);
         }
 
         import std.file : readText;
 
-        auto configText = configPath.readText;
+        auto configText = _configPath.readText;
         load(configText);
     }
 
@@ -87,7 +92,7 @@ class PropertyConfig : Config
 
     override void save()
     {
-        if (!configPath)
+        if (!_configPath)
         {
             //TODO return bool
             return;
@@ -95,7 +100,7 @@ class PropertyConfig : Config
         import std.file : write;
 
         auto configString = toString;
-        write(configPath, configString);
+        write(_configPath, configString);
     }
 
     override bool containsKey(string key) const
@@ -246,6 +251,17 @@ class PropertyConfig : Config
         typeof(return) list = getString(key).split.to!(T[]);
 
         return list;
+    }
+
+    bool hasConfigPath() const nothrow pure @safe
+    {
+        return _configPath.length > 0;
+    }
+
+    string configPath() const nothrow pure @safe
+    in(_configPath.length > 0)
+    {
+        return _configPath;
     }
 
     override string toString() const
