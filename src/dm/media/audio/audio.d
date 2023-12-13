@@ -1,6 +1,6 @@
 module dm.media.audio.audio;
 
-import dm.sys.sdl.mix.sdl_mix_lib : SdlMixLib;
+import dm.backs.sdl2.mix.sdl_mix_lib : SdlMixLib;
 
 import bindbc.sdl;
 
