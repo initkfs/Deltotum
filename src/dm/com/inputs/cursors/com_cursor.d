@@ -28,5 +28,6 @@ interface ComCursor : Destroyable
    ComResult fromDefaultCursor() @nogc nothrow;
    ComResult set() @nogc nothrow;
    ComResult redraw() @nogc nothrow;
+   ComResult getPos(out int x, out int y) @nogc nothrow;
 
 }

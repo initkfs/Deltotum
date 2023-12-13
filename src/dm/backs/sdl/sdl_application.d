@@ -47,6 +47,7 @@ import dm.kit.apps.loops.interrupted_loop : InterruptedLoop;
 import dm.kit.apps.loops.loop : Loop;
 import dm.kit.windows.window_manager : WindowManager;
 import dm.kit.apps.caps.cap_graphics : CapGraphics;
+import dm.kit.events.processing.event_processor : EventProcessor;
 
 import std.typecons : Nullable;
 
@@ -82,7 +83,7 @@ class SdlApplication : ContinuouslyApplication
         //ChipmLib chipmLib;
     }
 
-    EventManager eventManager;
+    EventManager!(SDL_Event*) eventManager;
 
     this(SdlLib lib = null,
         SdlImgLib imgLib = null,
@@ -245,7 +246,8 @@ class SdlApplication : ContinuouslyApplication
         auto sdlScreen = new SDLScreen;
         _screen = new Screen(uservices.logger, sdlScreen);
 
-        eventManager = new EventManager();
+        auto processor = new SdlEventProcessor(keyboard);
+        eventManager = new EventManager!(SDL_Event*)(processor);
         eventManager.targetsProvider = (windowId) {
             auto mustBeCurrentWindow = windowManager.byFirstId(windowId);
             if (mustBeCurrentWindow.isNull)
@@ -261,7 +263,6 @@ class SdlApplication : ContinuouslyApplication
             return Nullable!(Sprite[])(targets);
         };
 
-        eventManager.eventProcessor = new SdlEventProcessor(keyboard);
         eventManager.onKey = (ref key) {
             final switch (key.event) with (KeyEvent.Event)
             {
@@ -777,7 +778,7 @@ class SdlApplication : ContinuouslyApplication
 
     void handleEvent(SDL_Event* event)
     {
-        eventManager.eventProcessor.process(event);
+        eventManager.process(event);
 
         //Ctrl + C
         if (event.type == SDL_QUIT)

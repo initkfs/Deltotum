@@ -9,9 +9,6 @@ import dm.math.vector2 : Vector2;
 
 import std.container.slist : SList;
 
-//TODO remove
-import bindbc.sdl;
-
 /**
  * Authors: initkfs
  */
@@ -89,9 +86,7 @@ class Input
 
     Vector2 mousePos()
     {
-        int x, y;
-        SDL_GetMouseState(&x, &y);
-        return Vector2(x, y);
+        return systemCursor.getPos;
     }
 
     void dispose(){

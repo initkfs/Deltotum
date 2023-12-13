@@ -9,8 +9,8 @@ import dm.kit.inputs.keyboards.events.key_event : KeyEvent;
 import dm.kit.inputs.keyboards.events.text_input_event : TextInputEvent;
 import dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import dm.kit.windows.events.window_event : WindowEvent;
-import dm.kit.events.kit_event_type: KitEventType;
-import dm.core.events.core_event_type: CoreEventType;
+import dm.kit.events.kit_event_type : KitEventType;
+import dm.core.events.core_event_type : CoreEventType;
 
 import dm.kit.sprites.sprite : Sprite;
 import std.container : DList;
@@ -19,27 +19,31 @@ import std.typecons : Nullable;
 /**
  * Authors: initkfs
  */
-class EventManager
+class EventManager(E)
 {
     private
     {
         DList!Sprite eventChain = DList!Sprite();
     }
 
-    Nullable!(Sprite[]) delegate(long) targetsProvider;
-
-    version (SdlBackend)
+    protected
     {
-        import dm.sys.sdl.events.sdl_event_processor : SdlEventProcessor;
-
-        SdlEventProcessor eventProcessor;
+        EventProcessor!E eventProcessor;
     }
+
+    Nullable!(Sprite[]) delegate(long) targetsProvider;
 
     void delegate(ref KeyEvent) onKey;
     void delegate(ref JoystickEvent) onJoystick;
     void delegate(ref WindowEvent) onWindow;
     void delegate(ref PointerEvent) onPointer;
     void delegate(ref TextInputEvent) onTextInput;
+
+    this(EventProcessor!E processor)
+    {
+        assert(processor);
+        this.eventProcessor = processor;
+    }
 
     void startEvents()
     {
@@ -78,14 +82,18 @@ class EventManager
             dispatchEvent(keyEvent);
         };
 
-        eventProcessor.onTextInput = (ref keyEvent)
-        {
+        eventProcessor.onTextInput = (ref keyEvent) {
             if (onTextInput !is null)
             {
                 onTextInput(keyEvent);
             }
             dispatchEvent(keyEvent);
         };
+    }
+
+    void process(E event)
+    {
+        eventProcessor.process(event);
     }
 
     void dispatchEvent(E)(E e)

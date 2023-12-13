@@ -2,10 +2,10 @@ module dm.kit.inputs.cursors.system_cursor;
 
 import dm.com.inputs.cursors.com_cursor : ComCursor, ComSystemCursorType;
 
+import dm.math.vector2 : Vector2;
+
 //TODO move cursor and mouse
 import dm.kit.sprites.sprite : Sprite;
-
-import bindbc.sdl;
 
 /**
  * Authors: initkfs
@@ -29,6 +29,7 @@ class SystemCursor
 
     this(ComCursor defaultCursor)
     {
+        assert(defaultCursor);
         this.defaultCursor = defaultCursor;
     }
 
@@ -94,7 +95,7 @@ class SystemCursor
         {
             return false;
         }
-        
+
         if (!_locked && _cursorOwner is null && owner !is null)
         {
             _locked = true;
@@ -107,6 +108,22 @@ class SystemCursor
     bool isLocked()
     {
         return _locked;
+    }
+
+    Vector2 getPos()
+    {
+        auto cursor = lastCursor;
+        if (!cursor)
+        {
+            cursor = defaultCursor;
+        }
+        int x, y;
+        if (const err = cursor.getPos(x, y))
+        {
+            //TODO log
+            throw new Exception(err.toString);
+        }
+        return Vector2(x, y);
     }
 
     void dispose()
@@ -123,7 +140,8 @@ class SystemCursor
 
         foreach (type, cursor; cursors)
         {
-            if(!cursor.isDisposed){
+            if (!cursor.isDisposed)
+            {
                 cursor.dispose;
             }
         }

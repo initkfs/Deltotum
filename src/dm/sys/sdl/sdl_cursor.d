@@ -119,6 +119,11 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor, ComCursor
         return ComResult.success;
     }
 
+    ComResult getPos(out int x, out int y) @nogc nothrow {
+        const zeroOrErr = SDL_GetMouseState(&x, &y);
+        return ComResult(zeroOrErr);
+    }
+
     override protected bool disposePtr() @nogc nothrow
     {
         if (ptr)

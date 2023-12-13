@@ -10,9 +10,6 @@ import dm.gui.supports.sceneview : SceneView;
 
 import std.stdio;
 
-//TODO remove hal api
-import bindbc.sdl;
-
 /**
  * Authors: initkfs
  */
