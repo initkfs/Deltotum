@@ -1,7 +1,7 @@
-module dm.gui.fonts.bitmap.bitmap_font;
+module dm.kit.assets.fonts.bitmap.bitmap_font;
 
 import dm.kit.sprites.textures.texture : Texture;
-import dm.gui.fonts.glyphs.glyph : Glyph;
+import dm.kit.assets.fonts.glyphs.glyph : Glyph;
 
 /**
  * Authors: initkfs

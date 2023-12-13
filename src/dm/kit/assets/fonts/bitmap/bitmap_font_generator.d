@@ -1,18 +1,18 @@
-module dm.gui.fonts.bitmap.bitmap_font_generator;
+module dm.kit.assets.fonts.bitmap.bitmap_font_generator;
 
-import dm.gui.fonts.font_generator : FontGenerator;
-import dm.gui.fonts.glyphs.glyph : Glyph;
+import dm.com.graphics.com_font : ComFontHinting, ComFont;
+import dm.com.graphics.com_surface : ComSurface;
+import dm.kit.assets.fonts.font_generator : FontGenerator;
+import dm.kit.assets.fonts.glyphs.glyph : Glyph;
 
 import dm.kit.assets.fonts.font : Font;
 import dm.kit.sprites.textures.texture : Texture;
 import dm.kit.graphics.colors.rgba : RGBA;
 
-import dm.gui.fonts.bitmap.bitmap_font : BitmapFont;
+import dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 import dm.kit.i18n.langs.alphabets.alphabet : Alphabet;
 import dm.math.shapes.rect2d : Rect2d;
-import dm.math.vector2: Vector2;
-
-import bindbc.sdl;
+import dm.math.vector2 : Vector2;
 
 import std.string : toStringz;
 import std.uni : byGrapheme;
@@ -24,30 +24,38 @@ import std.stdio;
  */
 class BitmapFontGenerator : FontGenerator
 {
+    ComSurface delegate() comSurfaceProvider;
+
+    this(ComSurface delegate() comSurfaceProvider)
+    {
+        this.comSurfaceProvider = comSurfaceProvider;
+    }
+
     BitmapFont generate(Alphabet[] alphabets, Font font, RGBA foregroundColor = RGBA.white, RGBA backgroundColor = RGBA
             .black)
     {
-        import dm.sys.sdl.sdl_surface : SdlSurface;
-        import bindbc.sdl;
-
         //correct size?
         const int fontTextureWidth = 400;
         const int fontTextureHeight = 400;
 
-        SdlSurface fontMapSurface = new SdlSurface;
-        if (const err = fontMapSurface.createRGBSurface(0, fontTextureWidth, fontTextureHeight, 32, 0, 0, 0, 0xff))
+        ComSurface fontMapSurface = comSurfaceProvider();
+        if (const err = fontMapSurface.createRGBSurface(fontTextureWidth, fontTextureHeight))
         {
             throw new Exception(err.toString);
         }
 
         //TODO background
-        SDL_SetColorKey(fontMapSurface.getObject, SDL_TRUE, SDL_MapRGBA(
-                fontMapSurface.getObject.format, 0, 0, 0, 0));
+        //SDL_SetColorKey(fontMapSurface.getObject, SDL_TRUE, SDL_MapRGBA(
+        //        fontMapSurface.getObject.format, 0, 0, 0, 0));
+        if (const err = fontMapSurface.setPixelIsTransparent(true, 0, 0, 0, 0))
+        {
+            throw new Exception(err.toString);
+        }
 
-        SDL_Rect glyphPosition;
+        Rect2d glyphPosition;
         Glyph[] glyphs;
 
-        TTF_SetFontHinting(font.font.getObject, TTF_HINTING_NORMAL);
+        font.setHinting(ComFontHinting.normal);
 
         auto bitmapFont = new BitmapFont;
         build(bitmapFont);
@@ -61,17 +69,19 @@ class BitmapFontGenerator : FontGenerator
                 dchar[1] letters = [letter];
                 const(char*) utfPtr = toUTFz!(const(char)*)(letters[]);
                 //TODO does SDL keep a reference?
-                SdlSurface glyphRepresentation = font.renderSurface(utfPtr, foregroundColor, backgroundColor);
-                glyphPosition.w = glyphRepresentation.getObject.w;
-                glyphPosition.h = glyphRepresentation.getObject.h;
-                
-                if (glyphPosition.x + glyphPosition.w >= fontTextureWidth)
+                //TODO reduce objects allocations
+                ComSurface glyphRepresentation = comSurfaceProvider();
+                font.renderSurface(glyphRepresentation, utfPtr, foregroundColor, backgroundColor);
+                glyphPosition.width = glyphRepresentation.width;
+                glyphPosition.height = glyphRepresentation.height;
+
+                if (glyphPosition.x + glyphPosition.width >= fontTextureWidth)
                 {
                     glyphPosition.x = 0;
 
-                    glyphPosition.y += glyphPosition.h + 1;
+                    glyphPosition.y += glyphPosition.height + 1;
 
-                    if (glyphPosition.y + glyphPosition.h >= fontTextureWidth)
+                    if (glyphPosition.y + glyphPosition.height >= fontTextureWidth)
                     {
                         throw new Exception("Font creation error, texture size too small");
                     }
@@ -89,8 +99,7 @@ class BitmapFontGenerator : FontGenerator
                     isNewline = letter.among('\n', '\r',) != 0;
                 }
 
-                auto glyph = Glyph(letter, Rect2d(glyphPosition.x, glyphPosition.y, glyphPosition.w, glyphPosition
-                        .h), Vector2.init, alphabet, isEmpty, isNewline);
+                auto glyph = Glyph(letter, glyphPosition, Vector2.init, alphabet, isEmpty, isNewline);
 
                 //TODO config?
                 if (glyph.grapheme == '𑑛')
@@ -100,21 +109,23 @@ class BitmapFontGenerator : FontGenerator
 
                 glyphs ~= glyph;
 
-                if (const err = glyphRepresentation.blit(null, fontMapSurface.getObject, &glyphPosition))
+                if (const err = glyphRepresentation.blit(fontMapSurface, glyphPosition))
                 {
                     throw new Exception(err.toString);
                 }
                 glyphRepresentation.dispose;
 
-                glyphPosition.x += glyphPosition.w;
+                glyphPosition.x += glyphPosition.width;
             }
         }
 
         bitmapFont.glyphs = glyphs;
 
         bitmapFont.loadFromSurface(fontMapSurface);
-        bitmapFont.blendModeBlend;
         fontMapSurface.dispose;
+
+        bitmapFont.blendModeBlend;
+        
         return bitmapFont;
     }
 }

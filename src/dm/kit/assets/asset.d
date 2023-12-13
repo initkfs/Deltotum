@@ -9,8 +9,9 @@ import std.file : exists, isDir, isFile;
 
 import std.stdio;
 
+import dm.com.graphics.com_font : ComFont;
 import dm.kit.assets.fonts.font : Font;
-import dm.gui.fonts.bitmap.bitmap_font : BitmapFont;
+import dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 import dm.kit.graphics.colors.rgba : RGBA;
 import dm.kit.sprites.textures.texture : Texture;
 import dm.core.resources.resource : Resource;
@@ -20,6 +21,8 @@ import dm.core.resources.resource : Resource;
  */
 class Asset : Resource
 {
+    ComFont delegate(string fontPath, int fontSize) comFontProvider;
+
     Font font;
     BitmapFont fontBitmap;
     Texture[RGBA] fontCache;
@@ -27,9 +30,13 @@ class Asset : Resource
     string defaultImagesResourceDir = "images";
     string defaultFontResourceDir = "fonts";
 
-    this(Logger logger, string assetsDir) pure @safe
+    this(Logger logger, string assetsDir, ComFont delegate(string fontPath, int fontSize) comFontProvider) pure @safe
     {
         super(logger, assetsDir);
+        import std.exception : enforce;
+
+        enforce(comFontProvider, "Font provider must not be null");
+        this.comFontProvider = comFontProvider;
     }
 
     string imagePath(string imageFile) const
@@ -70,7 +77,8 @@ class Asset : Resource
     Font newFont(string fontFilePath, int size)
     {
         const path = fontPath(fontFilePath);
-        Font nFont = new Font(logger, path, size);
+        auto comFont = comFontProvider(path, size);
+        Font nFont = new Font(logger, comFont);
         nFont.initialize;
         logger.trace("Create new font from ", path);
         return nFont;
@@ -103,11 +111,11 @@ class Asset : Resource
     override void dispose()
     {
         super.dispose;
-        if (font)
+        if (font && !fontBitmap.isDisposed)
         {
             font.dispose;
         }
-        if (fontBitmap)
+        if (fontBitmap && !fontBitmap.isDisposed)
         {
             fontBitmap.dispose;
         }
@@ -115,7 +123,8 @@ class Asset : Resource
         //TODO check if font\fontBitmap in fontCache
         foreach (fontTexture; fontCache)
         {
-            if(fontTexture.isCreated){
+            if (fontTexture.isCreated && !fontTexture.isDisposed)
+            {
                 fontTexture.dispose;
             }
         }

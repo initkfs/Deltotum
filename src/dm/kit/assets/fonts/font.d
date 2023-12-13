@@ -3,9 +3,9 @@ module dm.kit.assets.fonts.font;
 import dm.core.apps.units.services.loggable_unit : LoggableUnit;
 import dm.kit.graphics.colors.rgba : RGBA;
 
-import dm.sys.sdl.ttf.sdl_ttf_font : SdlTTFFont;
-import dm.sys.sdl.sdl_surface : SdlSurface;
-import dm.sys.sdl.sdl_texture : SdlTexture;
+import dm.com.graphics.com_font : ComFont, ComFontHinting;
+import dm.com.graphics.com_surface : ComSurface;
+import dm.com.graphics.com_texture : ComTexture;
 
 import std.logger.core : Logger;
 import std.string : toStringz;
@@ -15,55 +15,65 @@ import std.string : toStringz;
  */
 class Font : LoggableUnit
 {
-    //private
-    //{
-        SdlTTFFont font;
+    private
+    {
+        ComFont font;
+    }
 
-        string fontPath;
-        int fontSize;
-    //}
-
-    this(Logger logger, string fontPath, int fontSize = 12)
+    this(Logger logger, ComFont font)
     {
         super(logger);
-        //TODO validate
-        this.fontPath = fontPath;
-        this.fontSize = fontSize;
-
-        //TODO or load()?
-        font = new SdlTTFFont(fontPath, fontSize);
+        this.font = font;
     }
 
-    SdlSurface renderSurface(string text, RGBA color = RGBA.white)
+    void renderSurface(ComSurface surf, string text, RGBA color = RGBA.white)
     {
-        return renderSurface(text.toStringz, color);
+        return renderSurface(surf, text.toStringz, color);
     }
 
-    SdlSurface renderSurface(const char* text, RGBA color = RGBA.white, RGBA background = RGBA.black)
+    void renderSurface(ComSurface fontSurface, const char* text, RGBA color = RGBA.white, RGBA background = RGBA
+            .black)
     {
-        SdlSurface fontSurface = new SdlSurface;
         if (const fontRenderErr = font.render(fontSurface, text, color.r, color.g, color.b, color
-                .aByte, background.r, background.g, background.b))
+                .aByte, background.r, background.g, background.b, background.aByte))
         {
             logger.error(fontRenderErr.toString);
-            if(const err = fontSurface.createRGBSurface){
-                throw new Exception(err.toString);
-            }
-            return fontSurface;
         }
 
-        if (fontSurface.isEmpty)
+        if (fontSurface.width == 0 && fontSurface.height == 0)
         {
             import std.string : fromStringz;
 
             logger.errorf("Received empty surface for text: %s", text.fromStringz.idup);
-            if(const err = fontSurface.createRGBSurface){
-                throw new Exception(err.toString);
-            }
-            return fontSurface;
         }
+    }
 
-        return fontSurface;
+    string fontPath()
+    {
+        string path;
+        if (const err = font.fontPath(path))
+        {
+            logger.error("Font path error. ", err);
+        }
+        return path;
+    }
+
+    int fonSize()
+    {
+        int size;
+        if (const err = font.fontSize(size))
+        {
+            logger.error("Font size error. ", err);
+        }
+        return size;
+    }
+
+    void setHinting(ComFontHinting hinting)
+    {
+        if (const err = font.setHinting(hinting))
+        {
+            logger.error("Hinting error. ", err);
+        }
     }
 
     override void dispose()

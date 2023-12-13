@@ -4,10 +4,11 @@ module dm.sys.sdl.ttf.sdl_ttf_font;
 version(SdlBackend):
 // dfmt on
 
+import dm.com.graphics.com_font : ComFont, ComFontHinting;
 import dm.com.platforms.results.com_result : ComResult;
 import dm.sys.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import dm.sys.sdl.ttf.base.sdl_ttf_object : SdlTTFObject;
-import dm.sys.sdl.sdl_surface : SdlSurface;
+import dm.com.graphics.com_surface : ComSurface;
 
 import bindbc.sdl;
 
@@ -16,19 +17,19 @@ import std.string : toStringz;
 /**
  * Authors: initkfs
  */
-class SdlTTFFont : SdlObjectWrapper!TTF_Font
+class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
 {
     private
     {
-        string path;
-        int fontSize;
+        string _fontPath;
+        int _fontSize;
     }
 
     this(string fontFilePath, int fontSize = 12)
     {
-        this.path = fontFilePath;
-        this.fontSize = fontSize;
-        ptr = TTF_OpenFont(this.path.toStringz, fontSize);
+        this._fontPath = fontFilePath;
+        this._fontSize = fontSize;
+        ptr = TTF_OpenFont(this._fontPath.toStringz, fontSize);
         if (!ptr)
         {
             //TODO error from sdl?
@@ -42,16 +43,16 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font
     }
 
     ComResult render(
-        SdlSurface targetFontSurface, 
-        const char* text, 
-        ubyte fr = 255, ubyte fg = 255, ubyte fb = 255, ubyte fa = 1, 
-        ubyte br = 255, ubyte bg = 255, ubyte bb = 255)
+        ComSurface targetSurface,
+        const char* text,
+        ubyte fr = 255, ubyte fg = 255, ubyte fb = 255, ubyte fa = 1,
+        ubyte br = 255, ubyte bg = 255, ubyte bb = 255, ubyte ba = 1)
     {
         SDL_Color color = {fr, fg, fb, fa};
         //TODO TTF_RenderText_Shaded
-        SDL_Color backgroundColor = {br, bg, bb, 0};
+        SDL_Color backgroundColor = {br, bg, bb, ba};
         //TODO calculate background color
-        auto fontSurfacePtr = TTF_RenderUTF8_Blended(ptr, text, color);
+        SDL_Surface* fontSurfacePtr = TTF_RenderUTF8_Blended(ptr, text, color);
         if (!fontSurfacePtr)
         {
             string errMsg = "Unable to render text";
@@ -59,12 +60,49 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font
             {
                 errMsg ~= ". " ~ errMsg;
             }
-            return ComResult(-1, errMsg);
+            return ComResult.error(errMsg);
         }
 
-        targetFontSurface.updateObject(fontSurfacePtr);
+        //TODO unsafe
+        if(const err = targetSurface.loadFromPtr(cast(void*) fontSurfacePtr)){
+            return err;
+        }
 
-        return ComResult();
+        return ComResult.success;
+    }
+
+    ComResult fontPath(out string path)
+    {
+        path = this._fontPath;
+        return ComResult.success;
+    }
+
+    ComResult fontSize(out int size)
+    {
+        size = _fontSize;
+        return ComResult.success;
+    }
+
+    ComResult setHinting(ComFontHinting hinting)
+    {
+        int sdlHinting;
+        final switch (hinting) with (ComFontHinting)
+        {
+            case none:
+                sdlHinting = TTF_HINTING_NONE;
+                break;
+            case normal:
+                sdlHinting = TTF_HINTING_NORMAL;
+                break;
+            case light:
+                sdlHinting = TTF_HINTING_LIGHT;
+                break;
+            case mono:
+                sdlHinting = TTF_HINTING_MONO;
+                break;
+        }
+        TTF_SetFontHinting(ptr, sdlHinting);
+        return ComResult.success;
     }
 
     override bool disposePtr()

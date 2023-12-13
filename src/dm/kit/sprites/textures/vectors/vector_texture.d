@@ -48,34 +48,10 @@ class VectorTexture : Texture
 
         import dm.com.platforms.results.com_result : ComResult;
 
-        //TODO or SDL_BYTEORDER?
-        version (BigEndian)
-        {
-            const createErr = comSurface.createRGBSurface(
-                0,
-                cast(int) width,
-                cast(int) height,
-                32,
-                0x0000FF00,
-                0x00FF0000,
-                0xFF000000,
-                0x000000FF);
-        }
-
-        version (LittleEndian)
-        {
-            const createErr = comSurface.createRGBSurface(0, cast(int) width, cast(int) height, 32,
-                0x00ff0000,
-                0x0000ff00,
-                0x000000ff,
-                0xff000000);
-        }
-
-        if (createErr)
+        if (const createErr = comSurface.createRGBSurface(width, height))
         {
             throw new Exception(createErr.toString);
         }
-
     }
 
     private void createCairoContext()

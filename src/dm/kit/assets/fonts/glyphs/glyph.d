@@ -1,4 +1,4 @@
-module dm.gui.fonts.glyphs.glyph;
+module dm.kit.assets.fonts.glyphs.glyph;
 
 import dm.kit.i18n.langs.alphabets.alphabet : Alphabet;
 import dm.kit.i18n.langs.charactersets.ascii.special_symbol : SpecialSymbol;

@@ -1,5 +1,6 @@
 module dm.kit.apps.graphic_application;
 
+import dm.com.graphics.com_font : ComFont;
 import dm.core.configs.config : Config;
 import dm.core.contexts.context : Context;
 import dm.core.apps.application_exit : ApplicationExit;
@@ -15,9 +16,9 @@ import dm.kit.assets.asset : Asset;
 import dm.kit.graphics.themes.icons.icon_pack : IconPack;
 import dm.kit.sprites.textures.texture : Texture;
 import dm.kit.graphics.themes.theme : Theme;
-import dm.gui.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
+import dm.kit.assets.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
 import dm.kit.scenes.scene_manager : SceneManager;
-import dm.gui.fonts.bitmap.bitmap_font : BitmapFont;
+import dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 
 import dm.kit.windows.window : Window;
 import dm.kit.apps.loops.loop : Loop;
@@ -30,7 +31,8 @@ import dm.kit.timers.timer : Timer;
 import std.logger : Logger;
 import std.typecons : Nullable;
 
-import dm.com.graphics.com_renderer: ComRenderer;
+import dm.com.graphics.com_renderer : ComRenderer;
+import dm.com.graphics.com_surface : ComSurface;
 
 /**
  * Authors: initkfs
@@ -177,8 +179,11 @@ abstract class GraphicApplication : CliApplication
     {
         super.stop;
         windowManager.onWindows((win) {
-            win.stop;
-            assert(win.isStopped);
+            if (!win.isStopped)
+            {
+                win.stop;
+                assert(win.isStopped);
+            }
             return true;
         });
     }
@@ -223,7 +228,8 @@ abstract class GraphicApplication : CliApplication
         return theme;
     }
 
-    Asset createAsset(Logger logger, Config config, Context context)
+    Asset createAsset(Logger logger, Config config, Context context, ComFont delegate(
+            string fontPath, int fontSize) comFontProvider)
     {
         //TODO move to config, duplication with SdlApplication
         import std.file : getcwd, exists, isDir;
@@ -239,7 +245,7 @@ abstract class GraphicApplication : CliApplication
 
         import dm.kit.assets.asset : Asset;
 
-        auto asset = new Asset(uservices.logger, assetsDir);
+        auto asset = new Asset(uservices.logger, assetsDir, comFontProvider);
 
         import dm.kit.assets.fonts.font : Font;
 
@@ -251,9 +257,9 @@ abstract class GraphicApplication : CliApplication
         return asset;
     }
 
-    BitmapFontGenerator newFontGenerator()
+    BitmapFontGenerator newFontGenerator(ComSurface delegate() comSurfaceProvider)
     {
-        return new BitmapFontGenerator;
+        return new BitmapFontGenerator(comSurfaceProvider);
     }
 
     BitmapFont createFontBitmap(BitmapFontGenerator generator, Asset asset, Theme theme)

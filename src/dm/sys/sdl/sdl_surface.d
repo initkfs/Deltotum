@@ -5,9 +5,12 @@ version(SdlBackend):
 // dfmt on
 
 import dm.com.graphics.com_surface : ComSurface;
+import dm.com.graphics.com_blend_mode : ComBlendMode;
 import dm.com.platforms.results.com_result : ComResult;
 import dm.sys.sdl.base.sdl_object_wrapper : SdlObjectWrapper;
 import dm.sys.sdl.sdl_window : SdlWindow;
+
+import dm.math.shapes.rect2d : Rect2d;
 
 import bindbc.sdl;
 
@@ -24,6 +27,44 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
     this(SDL_Surface* ptr)
     {
         super(ptr);
+    }
+
+    ComResult createRGBSurface(double width, double height)
+    {
+        if (ptr)
+        {
+            disposePtr;
+        }
+        //TODO or SDL_BYTEORDER?
+        version (BigEndian)
+        {
+            if (const createErr = createRGBSurface(
+                    0,
+                    cast(int) width,
+                    cast(int) height,
+                    32,
+                    0x0000FF00,
+                    0x00FF0000,
+                    0xFF000000,
+                    0x000000FF))
+            {
+                return createErr;
+            }
+        }
+
+        version (LittleEndian)
+        {
+            if (const createErr = createRGBSurface(0, cast(int) width, cast(int) height, 32,
+                    0x00ff0000,
+                    0x0000ff00,
+                    0x000000ff,
+                    0xff000000))
+            {
+                return createErr;
+            }
+        }
+        assert(this.ptr);
+        return ComResult.success;
     }
 
     ComResult createRGBSurface(uint flags = 0, int width = 10, int height = 10, int depth = 32,
@@ -81,13 +122,13 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return newPtr;
     }
 
-    ComResult loadFromPtr(void* ptr)
+    ComResult loadFromPtr(void* newPtr)
     {
         if (ptr)
         {
             disposePtr;
         }
-        ptr = cast(SDL_Surface*) ptr;
+        this.ptr = cast(SDL_Surface*) newPtr;
         return ComResult.success;
     }
 
@@ -175,9 +216,95 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult blit(const SDL_Rect* srcRect, SDL_Surface* dst, SDL_Rect* dstRect)
+    ComResult blit(ComSurface dst, Rect2d dstRect)
+    {
+        SDL_Rect sdlDstRect = {
+            cast(int) dstRect.x, cast(int) dstRect.y, cast(int) dstRect.width, cast(int) dstRect
+                .height
+        };
+        return blitPtr(null, dst, &sdlDstRect);
+    }
+
+    ComResult blit(Rect2d srcRect, ComSurface dst, Rect2d dstRect)
+    {
+        SDL_Rect sdlSrcRect = {
+            cast(int) srcRect.x, cast(int) srcRect.y, cast(int) srcRect.width, cast(int) srcRect
+                .height
+        };
+
+        SDL_Rect sdlDstRect = {
+            cast(int) dstRect.x, cast(int) dstRect.y, cast(int) dstRect.width, cast(int) dstRect
+                .height
+        };
+        return blitPtr(&sdlSrcRect, dst, &sdlDstRect);
+    }
+
+    //https://discourse.libsdl.org/t/sdl-blitsurface-doesnt-work-in-sdl-2-0/19288/3
+    ComResult blitPtr(SDL_Rect* srcRect, ComSurface dst, SDL_Rect* dstRect)
+    {
+        void* dstPtr;
+        //TODO unsafe
+        if (const err = dst.nativePtr(dstPtr))
+        {
+            return err;
+        }
+        SDL_Surface* sdlDstPtr = cast(SDL_Surface*) dstPtr;
+        assert(sdlDstPtr);
+        
+        //TODO check is locked
+        const int zeroOrErrorCode = SDL_BlitSurface(ptr, srcRect, sdlDstPtr, dstRect);
+        return ComResult(zeroOrErrorCode);
+    }
+
+    ComResult blitPtr(SDL_Rect* srcRect, SDL_Surface* dst, SDL_Rect* dstRect)
     {
         const int zeroOrErrorCode = SDL_BlitSurface(ptr, srcRect, dst, dstRect);
+        return ComResult(zeroOrErrorCode);
+    }
+
+    ComResult getBlitAlphaMod(out int mod)
+    {
+        ubyte oldMod;
+        const int zeroOrErrorCode = SDL_GetSurfaceAlphaMod(ptr, &oldMod);
+        if (zeroOrErrorCode == 0)
+        {
+            mod = oldMod;
+            return ComResult.success;
+        }
+        return ComResult.error("Error change alpha blit mode");
+    }
+
+    ComResult setBlitAlhpaMod(int alpha)
+    {
+        //srcA = srcA * (alpha / 255)
+        const int zeroOrErrorCode = SDL_SetSurfaceAlphaMod(ptr, cast(ubyte) alpha);
+        return ComResult(zeroOrErrorCode);
+    }
+
+    ComResult setBlendMode(ComBlendMode mode)
+    {
+        const int zeroOrErrorCode = SDL_SetSurfaceBlendMode(ptr, typeConverter.toNativeBlendMode(
+                mode));
+        return ComResult(zeroOrErrorCode);
+    }
+
+    ComResult getBlendMode(out ComBlendMode mode)
+    {
+        SDL_BlendMode sdlMode;
+        const int zeroOrErrorCode = SDL_GetSurfaceBlendMode(ptr, &sdlMode);
+        if (zeroOrErrorCode == 0)
+        {
+            mode = typeConverter.fromNativeBlendMode(sdlMode);
+            return ComResult.success;
+        }
+        return ComResult(zeroOrErrorCode);
+    }
+
+    ComResult setPixelIsTransparent(bool isTransparent, ubyte r, ubyte g, ubyte b, ubyte a)
+    {
+        const colorKey = isTransparent ? SDL_TRUE : SDL_FALSE;
+        const int zeroOrErrorCode = SDL_SetColorKey(ptr, colorKey, SDL_MapRGBA(
+                ptr.format, r, g, b, a));
         return ComResult(zeroOrErrorCode);
     }
 

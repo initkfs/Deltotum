@@ -32,9 +32,11 @@ import dm.kit.windows.events.window_event : WindowEvent;
 import dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import dm.sys.sdl.sdl_texture : SdlTexture;
 import dm.sys.sdl.sdl_surface : SdlSurface;
+import dm.sys.sdl.ttf.sdl_ttf_font : SdlTTFFont;
 import dm.sys.sdl.img.sdl_image : SdlImage;
 import dm.com.graphics.com_texture : ComTexture;
 import dm.com.graphics.com_surface : ComSurface;
+import dm.com.graphics.com_font : ComFont;
 import dm.com.graphics.com_image : ComImage;
 import dm.kit.timers.timer : Timer;
 
@@ -498,6 +500,11 @@ class SdlApplication : ContinuouslyApplication
         return new SdlSurface();
     }
 
+    ComFont newComFont(string path, int size)
+    {
+        return new SdlTTFFont(path, size);
+    }
+
     ComImage newComImage()
     {
         return new SdlImage();
@@ -566,7 +573,9 @@ class SdlApplication : ContinuouslyApplication
 
         window.title = title;
 
-        auto asset = createAsset(uservices.logger, uservices.config, uservices.context);
+        auto asset = createAsset(uservices.logger, uservices.config, uservices.context, (path, size) {
+            return newComFont(path, size);
+        });
         assert(asset);
         asset.initialize;
 
@@ -592,12 +601,14 @@ class SdlApplication : ContinuouslyApplication
         //TODO from locale\config;
         if (mode == SdlWindowMode.none)
         {
-            import dm.gui.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
+            import dm.kit.assets.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
 
             //TODO build and run services after all
-            import dm.gui.fonts.bitmap.bitmap_font : BitmapFont;
+            import dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 
-            auto fontGenerator = newFontGenerator;
+            auto fontGenerator = newFontGenerator((){
+                return newComSurface;
+            });
             windowBuilder.build(fontGenerator);
 
             windowBuilder.asset.fontBitmap = createFontBitmap(fontGenerator, asset, theme);

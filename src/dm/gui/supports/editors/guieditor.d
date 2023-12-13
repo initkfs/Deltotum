@@ -49,6 +49,12 @@ class GuiEditor : Scene
         texturesTab.content = new Textures;
         root.addCreate(texturesTab);
 
+        import dm.gui.supports.editors.sections.fonts : Fonts;
+
+        auto fontsTab = new Tab("Fonts");
+        fontsTab.content = new Fonts;
+        root.addCreate(fontsTab);
+
         import dm.gui.supports.editors.sections.animations : Animations;
 
         auto animTab = new Tab("Animations");

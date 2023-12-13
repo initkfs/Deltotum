@@ -58,12 +58,12 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             disposePtr;
         }
         //TODO unsafe cast
-        void* ptr;
-        if (const err = surface.nativePtr(ptr))
+        void* newPtr;
+        if (const err = surface.nativePtr(newPtr))
         {
             return err;
         }
-        SDL_Surface* surfPtr = cast(SDL_Surface*) ptr;
+        SDL_Surface* surfPtr = cast(SDL_Surface*) newPtr;
         return fromSurfacePtr(surfPtr);
     }
 
@@ -84,6 +84,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             }
             return ComResult.error(error);
         }
+        //TODO side effect 
         SDL_SetTextureBlendMode(ptr, SDL_BLENDMODE_BLEND);
         return ComResult.success;
     }
