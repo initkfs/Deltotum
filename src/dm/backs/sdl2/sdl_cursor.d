@@ -4,7 +4,7 @@ module dm.backs.sdl2.sdl_cursor;
 version(SdlBackend):
 // dfmt on
 
-import dm.com.inputs.cursors.com_cursor: ComCursor, ComSystemCursorType;
+import dm.com.inputs.cursors.com_cursor : ComCursor, ComSystemCursorType;
 
 import dm.backs.sdl2.base.sdl_object_wrapper : SdlObjectWrapper;
 import dm.com.platforms.results.com_result : ComResult;
@@ -33,42 +33,42 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor, ComCursor
         SDL_SystemCursor sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_ARROW;
         final switch (type) with (ComSystemCursorType)
         {
-        case none, arrow:
-            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_ARROW;
-            break;
-        case crossHair:
-            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_CROSSHAIR;
-            break;
-        case ibeam:
-            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_IBEAM;
-            break;
-        case no:
-            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_NO;
-            break;
-        case sizeNorthWestSouthEast:
-            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_SIZENWSE;
-            break;
-        case sizeNorthEastSouthWest:
-            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_SIZENESW;
-            break;
-        case sizeWestEast:
-            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_SIZEWE;
-            break;
-        case sizeNorthSouth:
-            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_SIZENS;
-            break;
-        case sizeAll:
-            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_SIZEALL;
-            break;
-        case hand:
-            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_HAND;
-            break;
-        case wait:
-            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_WAIT;
-            break;
-        case waitArrow:
-            sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_WAITARROW;
-            break;
+            case none, arrow:
+                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_ARROW;
+                break;
+            case crossHair:
+                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_CROSSHAIR;
+                break;
+            case ibeam:
+                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_IBEAM;
+                break;
+            case no:
+                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_NO;
+                break;
+            case sizeNorthWestSouthEast:
+                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_SIZENWSE;
+                break;
+            case sizeNorthEastSouthWest:
+                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_SIZENESW;
+                break;
+            case sizeWestEast:
+                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_SIZEWE;
+                break;
+            case sizeNorthSouth:
+                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_SIZENS;
+                break;
+            case sizeAll:
+                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_SIZEALL;
+                break;
+            case hand:
+                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_HAND;
+                break;
+            case wait:
+                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_WAIT;
+                break;
+            case waitArrow:
+                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_WAITARROW;
+                break;
         }
 
         ptr = SDL_CreateSystemCursor(sdlType);
@@ -119,9 +119,11 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor, ComCursor
         return ComResult.success;
     }
 
-    ComResult getPos(out int x, out int y) @nogc nothrow {
-        const zeroOrErr = SDL_GetMouseState(&x, &y);
-        return ComResult(zeroOrErr);
+    ComResult getPos(out int x, out int y) @nogc nothrow
+    {
+        //const buttonMask = 
+        SDL_GetMouseState(&x, &y);
+        return ComResult.success;
     }
 
     override protected bool disposePtr() @nogc nothrow
