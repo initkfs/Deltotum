@@ -18,7 +18,7 @@ class LoggableUnit : SimpleUnit
     {
         import std.exception : enforce;
 
-        enforce(logger !is null, "Logger must not be null");
+        enforce(logger, "Logger must not be null");
 
         this._logger = logger;
     }
@@ -27,7 +27,7 @@ class LoggableUnit : SimpleUnit
     {
         import std.exception : enforce;
 
-        enforce(logger !is null, "Logger for constant object must not be null");
+        enforce(logger, "Logger for constant object must not be null");
 
         this._logger = logger;
     }
@@ -36,7 +36,7 @@ class LoggableUnit : SimpleUnit
     {
         import std.exception : enforce;
 
-        enforce(logger !is null, "Logger for immutable object must not be null");
+        enforce(logger, "Logger for immutable object must not be null");
 
         this._logger = logger;
     }

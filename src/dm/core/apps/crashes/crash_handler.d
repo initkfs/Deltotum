@@ -9,6 +9,6 @@ abstract class CrashHandler
 
 	abstract
 	{
-		void acceptCrash(Throwable exFromApplication, string message = "") inout;
+		void acceptCrash(Throwable t, const(char)[] message = "") inout;
 	}
 }

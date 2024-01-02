@@ -6,7 +6,9 @@ import dm.core.apps.application_exit : ApplicationExit;
 import dm.core.apps.uni.uni_component : UniComponent;
 import dm.core.configs.config : Config;
 import dm.core.clis.cli : Cli;
+import dm.core.clis.printers.cli_printer : CliPrinter;
 import dm.core.contexts.context : Context;
+import dm.core.contexts.apps.app_context : AppContext;
 import dm.core.resources.resource : Resource;
 import dm.core.extensions.extension : Extension;
 import dm.core.apps.caps.cap_core : CapCore;
@@ -216,11 +218,19 @@ class CliApplication : SimpleUnit
                 "User directory not found");
         }
 
-        import dm.core.contexts.apps.app_context : AppContext;
-
-        const appContext = new AppContext(curDir, dataDirectory, userDir, isDebugMode, isSilentMode);
-        auto context = new Context(appContext);
+        const appContext = newAppContext(curDir, dataDirectory, userDir, isDebugMode, isSilentMode);
+        auto context = newContext(appContext);
         return context;
+    }
+
+    protected AppContext newAppContext(string curDir, string dataDir, string userDir, bool isDebugMode, bool isSilentMode)
+    {
+        return new AppContext(curDir, dataDir, userDir, isDebugMode, isSilentMode);
+    }
+
+    protected Context newContext(const AppContext appContext)
+    {
+        return new Context(appContext);
     }
 
     protected Config newConfigFromFile(string configFile)
@@ -297,7 +307,7 @@ class CliApplication : SimpleUnit
 
         }
 
-        auto envConfig =  newEnvConfig;
+        auto envConfig = newEnvConfig;
         envConfig.isThrowOnNotExistentKey = isStrictConfigs;
         envConfig.isThrowOnSetValueNotExistentKey = isStrictConfigs;
 
@@ -413,22 +423,33 @@ class CliApplication : SimpleUnit
 
     protected Cli createCli(string[] args)
     {
-        import dm.core.clis.printers.cli_printer : CliPrinter;
-
-        auto printer = new CliPrinter;
-        auto cli = new Cli(args, printer);
+        auto printer = newCliPrinter;
+        auto cli = newCli(args, printer);
         return cli;
+    }
+
+    protected CliPrinter newCliPrinter(){
+        return new CliPrinter;
+    }
+
+    protected Cli newCli(string[] args, CliPrinter printer){
+        return new Cli(args, printer);
     }
 
     protected Extension createExtension(Logger logger, Config config, Context context)
     {
-        auto extension = new Extension;
+        auto extension = newExtension;
 
+        //TODO side effects
         extension.initialize;
         extension.create;
         extension.run;
 
         return extension;
+    }
+
+    protected Extension newExtension(){
+        return new Extension;
     }
 
     protected void createCrashHandlers(string[] args)

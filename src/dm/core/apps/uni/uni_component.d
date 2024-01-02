@@ -72,7 +72,7 @@ class UniComponent : SimpleUnit
 
         if (uniComponent.isCallBeforeBuild)
         {
-            uniComponent.beforeBuild();
+            uniComponent.beforeBuild;
         }
 
         import std.traits : hasUDA;
@@ -102,7 +102,7 @@ class UniComponent : SimpleUnit
 
         if (uniComponent.isCallAfterBuild)
         {
-            uniComponent.afterBuild();
+            uniComponent.afterBuild;
         }
 
         uniComponent.isBuilt = true;

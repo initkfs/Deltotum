@@ -18,7 +18,7 @@ class ConfigurableUnit : SimpleUnit
     {
         import std.exception : enforce;
 
-        enforce(config !is null, "Config must not be null");
+        enforce(config, "Config must not be null");
 
         this._config = config;
     }
@@ -27,7 +27,7 @@ class ConfigurableUnit : SimpleUnit
     {
         import std.exception : enforce;
 
-        enforce(config !is null, "Config for constant object must not be null");
+        enforce(config, "Config for constant object must not be null");
 
         this._config = config;
     }
@@ -36,7 +36,7 @@ class ConfigurableUnit : SimpleUnit
     {
         import std.exception : enforce;
 
-        enforce(config !is null, "Config for immutable object must not be null");
+        enforce(config, "Config for immutable object must not be null");
 
         this._config = config;
     }

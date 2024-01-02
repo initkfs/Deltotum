@@ -32,7 +32,7 @@ class FileCrashHandler : CrashHandler
         return fileName;
     }
 
-    string createCrashInfo(Throwable t, string message = "") inout 
+    string createCrashInfo(Throwable t, const(char)[] message = "") inout 
     {
         import std.array : appender;
 
@@ -49,7 +49,7 @@ class FileCrashHandler : CrashHandler
         return content.data;
     }
 
-    override void acceptCrash(Throwable t, string message = "") inout 
+    override void acceptCrash(Throwable t, const(char)[] message = "") inout 
     {
         import std.path : buildPath;
         import std.file : exists, write;

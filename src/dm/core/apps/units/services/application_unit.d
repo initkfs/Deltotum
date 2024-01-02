@@ -22,8 +22,8 @@ class ApplicationUnit : LoggableUnit
         super(logger);
         import std.exception : enforce;
 
-        enforce(config !is null, "Config must not be null");
-        enforce(context !is null, "Context must not be null");
+        enforce(config, "Config must not be null");
+        enforce(context, "Context must not be null");
 
         this._config = config;
         this._context = context;
@@ -34,8 +34,8 @@ class ApplicationUnit : LoggableUnit
         super(logger);
         import std.exception : enforce;
 
-        enforce(config !is null, "Config for constant object must not be null");
-        enforce(context !is null, "Context for constant object must not be null");
+        enforce(config, "Config for constant object must not be null");
+        enforce(context, "Context for constant object must not be null");
 
         this._config = config;
         this._context = context;
@@ -46,8 +46,8 @@ class ApplicationUnit : LoggableUnit
         super(logger);
         import std.exception : enforce;
 
-        enforce(config !is null, "Config for immutable object must not be null");
-        enforce(context !is null, "Context for immutable object must not be null");
+        enforce(config, "Config for immutable object must not be null");
+        enforce(context, "Context for immutable object must not be null");
 
         this._config = config;
         this._context = context;
