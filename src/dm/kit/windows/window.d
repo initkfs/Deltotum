@@ -311,9 +311,7 @@ class Window : GraphicsComponent
 
     void resize(double newWidth, double newHeight)
     {
-        import std.conv : to;
-
-        if (const err = nativeWindow.setSize(newWidth.to!int, newHeight.to!int))
+        if (const err = nativeWindow.setSize(cast(int) newWidth, cast(int) newHeight))
         {
             logger.errorf("Resizing window error, new width %s, height %s, current width %s, height %s", newWidth, newHeight, width, height);
             return;
@@ -447,6 +445,7 @@ class Window : GraphicsComponent
         }
         import std.conv : to;
 
+        //not cast(int) for overflow detection
         return index.to!int;
     }
 

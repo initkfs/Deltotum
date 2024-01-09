@@ -170,14 +170,15 @@ class Image : Texture
 
         if (const err = image.load(content))
         {
-            throw new Exception(err.toString);
+            logger.error("Cannot load image from raw data: ", err);
         }
-        //TODO use scope factory
-        ComSurface surf = graphics.comSurfaceProvider.getNew();
+
+        ComSurface surf;
         if (const err = image.toSurface(surf))
         {
-            throw new Exception(err.toString);
+            logger.error("Cannot convert image to surface from raw data: ", err);
         }
+
         if (load(surf, requestWidth, requestHeight))
         {
             surf.dispose;

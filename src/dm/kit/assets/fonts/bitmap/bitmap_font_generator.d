@@ -39,6 +39,7 @@ class BitmapFontGenerator : FontGenerator
         const int fontTextureWidth = 400;
         const int fontTextureHeight = 400;
 
+        //The size can be very large to create on a stack
         ComSurface fontMapSurface = comSurfaceProvider.getNew();
         if (const err = fontMapSurface.createRGBSurface(fontTextureWidth, fontTextureHeight))
         {

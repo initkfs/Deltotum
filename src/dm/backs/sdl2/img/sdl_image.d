@@ -77,6 +77,7 @@ class SdlImage : SdlSurface, ComImage
     ComResult toSurface(out ComSurface surf) nothrow
     {
         assert(ptr);
+        //FIXME check qualifiers 
         surf = cast(ComSurface) this;
         return ComResult.success;
     }

@@ -187,7 +187,7 @@ class AnimatedImage : Image
             const progress0to1 = currentAnimation.transition.lastValue;
             const indicesLength = currentAnimation.frameIndices.length;
             //TODO smooth
-            int index = to!int(progress0to1 * indicesLength * (1 - double.epsilon));
+            int index = cast(int) (progress0to1 * indicesLength * (1 - double.epsilon));
             if (index > 0 && index < indicesLength)
             {
                 currentAnimationIndex = index;

@@ -144,7 +144,7 @@ class Control : Sprite
 
         import std.conv : to;
 
-        icon.loadRaw(iconData.to!(const(void[])), iconSize.to!int, iconSize.to!int);
+        icon.loadRaw(iconData.to!(const(void[])), cast(int) iconSize, cast(int) iconSize);
 
         auto color = graphics.theme.colorAccent;
         if (style)
