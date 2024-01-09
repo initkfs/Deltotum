@@ -61,48 +61,6 @@ class Graphics : LoggableUnit
         this.theme = theme;
     }
 
-    ComTexture newComTexture()
-    {
-        assert(comTextureProvider.get);
-        auto texture = comTextureProvider.get();
-        assert(texture);
-        return texture;
-    }
-
-    void newComTextureScoped(scope void delegate(ComTexture) onNew)
-    {
-        assert(comTextureProvider.getScope);
-        comTextureProvider.getScope(onNew);
-    }
-
-    ComSurface newComSurface()
-    {
-        assert(comSurfaceProvider.get);
-        auto surface = comSurfaceProvider.get();
-        assert(surface);
-        return surface;
-    }
-
-    void newComSurfaceScoped(scope void delegate(ComSurface) onNew)
-    {
-        assert(comSurfaceProvider.getScope);
-        comSurfaceProvider.getScope(onNew);
-    }
-
-    ComImage newComImage()
-    {
-        assert(comImageProvider.get);
-        auto image = comImageProvider.get();
-        assert(image);
-        return image;
-    }
-
-    void newComImageScoped(scope void delegate(ComImage) onNew)
-    {
-        assert(comImageProvider.getScope);
-        comImageProvider.getScope(onNew);
-    }
-
     pragma(inline, true)
     private int toInt(double value) pure @safe const nothrow
     {

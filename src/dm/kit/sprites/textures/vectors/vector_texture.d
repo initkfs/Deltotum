@@ -44,7 +44,7 @@ class VectorTexture : Texture
 
     private void createTempSurface()
     {
-        comSurface = graphics.newComSurface;
+        comSurface = graphics.comSurfaceProvider.getNew();
 
         import dm.com.platforms.results.com_result : ComResult;
 
@@ -81,7 +81,7 @@ class VectorTexture : Texture
 
         createTextureContent;
 
-        texture = graphics.newComTexture;
+        texture = graphics.comTextureProvider.getNew();
         //TODO toInt?
         const createErr = texture.fromSurface(comSurface);
         if (createErr)

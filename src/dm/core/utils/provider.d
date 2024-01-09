@@ -7,14 +7,14 @@ enum ToStringExclude;
  */
 struct Provider(T)
 {
-    T delegate() get;
-    void delegate(scope void delegate(T) onT) getScope;
+    T delegate() getNew;
+    void delegate(scope void delegate(T) onT) getNewScoped;
 
-    this(T delegate() getProvider, void delegate(scope void delegate(T)) getScopeProvider) pure
+    this(T delegate() getNewProvider, void delegate(scope void delegate(T)) getNewScopeProvider) pure @safe
     {
         import std.exception : enforce;
 
-        this.get = enforce(getProvider, "Provider must not be null");
-        this.getScope = enforce(getScopeProvider, "Scope provider must not be null");
+        this.getNew = enforce(getNewProvider, "Provider must not be null");
+        this.getNewScoped = enforce(getNewScopeProvider, "Scope provider must not be null");
     }
 }

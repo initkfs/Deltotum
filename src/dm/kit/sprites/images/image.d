@@ -103,7 +103,7 @@ class Image : Texture
 
         if (!texture)
         {
-            texture = graphics.newComTexture;
+            texture = graphics.comTextureProvider.getNew();
         }
 
         if (const err = texture.fromSurface(image))
@@ -140,7 +140,7 @@ class Image : Texture
             return false;
         }
 
-        ComImage image = graphics.newComImage;
+        ComImage image = graphics.comImageProvider.getNew();
         if (const err = image.load(path))
         {
             logger.error("Unable to load image: ", err);
@@ -165,14 +165,15 @@ class Image : Texture
 
     bool loadRaw(const(void[]) content, int requestWidth = -1, int requestHeight = -1)
     {
-        auto image = graphics.newComImage;
+        auto image = graphics.comImageProvider.getNew();
         import std.conv : to;
 
         if (const err = image.load(content))
         {
             throw new Exception(err.toString);
         }
-        ComSurface surf = graphics.newComSurface;
+        //TODO use scope factory
+        ComSurface surf = graphics.comSurfaceProvider.getNew();
         if (const err = image.toSurface(surf))
         {
             throw new Exception(err.toString);

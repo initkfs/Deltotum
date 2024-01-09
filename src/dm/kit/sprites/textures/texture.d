@@ -60,7 +60,7 @@ class Texture : Sprite
         auto newTexture = texture;
         if (!newTexture)
         {
-            newTexture = graphics.newComTexture;
+            newTexture = graphics.comTextureProvider.getNew();
         }
         else
         {
@@ -87,7 +87,7 @@ class Texture : Sprite
     {
         assert(width > 0 && height > 0);
 
-        texture = graphics.newComTexture;
+        texture = graphics.comTextureProvider.getNew();
         if (const err = texture.createMutRGBA32(cast(int) width, cast(int) height))
         {
             throw new Exception(err.toString);

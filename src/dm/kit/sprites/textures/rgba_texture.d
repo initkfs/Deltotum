@@ -27,7 +27,7 @@ class RgbaTexture : Texture
 
         if (!texture)
         {
-            texture = graphics.newComTexture;
+            texture = graphics.comTextureProvider.getNew();
         }
         
         //autodisposing should work in ComTexture

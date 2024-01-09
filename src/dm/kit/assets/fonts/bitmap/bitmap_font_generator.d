@@ -39,7 +39,7 @@ class BitmapFontGenerator : FontGenerator
         const int fontTextureWidth = 400;
         const int fontTextureHeight = 400;
 
-        ComSurface fontMapSurface = comSurfaceProvider.get();
+        ComSurface fontMapSurface = comSurfaceProvider.getNew();
         if (const err = fontMapSurface.createRGBSurface(fontTextureWidth, fontTextureHeight))
         {
             throw new Exception(err.toString);
@@ -70,7 +70,7 @@ class BitmapFontGenerator : FontGenerator
                 dchar[1] letters = [letter];
                 const(char*) utfPtr = toUTFz!(const(char)*)(letters[]);
                 //TODO does SDL keep a reference?
-                comSurfaceProvider.getScope((glyphRepresentation) {
+                comSurfaceProvider.getNewScoped((glyphRepresentation) {
                     font.renderSurface(glyphRepresentation, utfPtr, foregroundColor, backgroundColor);
                     glyphPosition.width = glyphRepresentation.width;
                     glyphPosition.height = glyphRepresentation.height;
