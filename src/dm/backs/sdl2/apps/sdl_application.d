@@ -7,6 +7,7 @@ version(SdlBackend):
 import dm.core.configs.config : Config;
 import dm.core.contexts.context : Context;
 import dm.core.apps.application_exit : ApplicationExit;
+import dm.core.utils.provider : Provider;
 import dm.kit.apps.continuously_application : ContinuouslyApplication;
 import dm.kit.apps.comps.graphics_component : GraphicsComponent;
 import dm.kit.events.event_manager : EventManager;
@@ -496,9 +497,21 @@ class SdlApplication : ContinuouslyApplication
         return new SdlTexture(renderer);
     }
 
+    void newComTextureScoped(scope void delegate(ComTexture) onNew, SdlRenderer renderer)
+    {
+        scope surf = new SdlTexture(renderer);
+        onNew(surf);
+    }
+
     ComSurface newComSurface()
     {
-        return new SdlSurface();
+        return new SdlSurface;
+    }
+
+    void newComSurfaceScoped(scope void delegate(ComSurface) onNew)
+    {
+        scope surf = new SdlSurface;
+        onNew(surf);
     }
 
     ComFont newComFont(string path, int size)
@@ -509,6 +522,12 @@ class SdlApplication : ContinuouslyApplication
     ComImage newComImage()
     {
         return new SdlImage();
+    }
+
+    void newComImageScoped(scope void delegate(ComImage) onNew)
+    {
+        scope image = new SdlImage();
+        onNew(image);
     }
 
     Timer newTimer()
@@ -590,12 +609,20 @@ class SdlApplication : ContinuouslyApplication
         windowBuilder.graphics = createGraphics(uservices.logger, sdlRenderer, theme);
         windowBuilder.graphics.initialize;
 
-        windowBuilder.graphics.comTextureFactory = () {
-            return newComTexture(sdlRenderer);
-        };
+        windowBuilder.graphics.comTextureProvider = Provider!ComTexture(
+            () => newComTexture(sdlRenderer),
+            (dg) => newComTextureScoped(dg, sdlRenderer)
+        );
 
-        windowBuilder.graphics.comSurfaceFactory = () { return newComSurface; };
-        windowBuilder.graphics.comImageFactory = () { return newComImage; };
+        windowBuilder.graphics.comSurfaceProvider = Provider!ComSurface(
+            &newComSurface,
+            &newComSurfaceScoped
+        );
+
+        windowBuilder.graphics.comImageProvider = Provider!ComImage(
+            &newComImage,
+            &newComImageScoped
+        );
 
         windowBuilder.isBuilt = true;
 
@@ -607,9 +634,11 @@ class SdlApplication : ContinuouslyApplication
             //TODO build and run services after all
             import dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 
-            auto fontGenerator = newFontGenerator((){
-                return newComSurface;
-            });
+            auto comSurfProvider = Provider!ComSurface(
+                    &newComSurface,
+                    &newComSurfaceScoped
+            );
+            auto fontGenerator = newFontGenerator(comSurfProvider);
             windowBuilder.build(fontGenerator);
 
             windowBuilder.asset.fontBitmap = createFontBitmap(fontGenerator, asset, theme);

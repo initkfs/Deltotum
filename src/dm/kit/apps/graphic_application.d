@@ -19,6 +19,7 @@ import dm.kit.graphics.themes.theme : Theme;
 import dm.kit.assets.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
 import dm.kit.scenes.scene_manager : SceneManager;
 import dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
+import dm.core.utils.provider: Provider;
 
 import dm.kit.windows.window : Window;
 import dm.kit.apps.loops.loop : Loop;
@@ -90,6 +91,7 @@ abstract class GraphicApplication : CliApplication
             newIconPack.load;
             iconPack = newIconPack;
             gservices.capGraphics.isIconPack = true;
+            uservices.logger.trace("Load icon pack");
         }
 
         return ApplicationExit(false);
@@ -257,7 +259,7 @@ abstract class GraphicApplication : CliApplication
         return asset;
     }
 
-    BitmapFontGenerator newFontGenerator(ComSurface delegate() comSurfaceProvider)
+    BitmapFontGenerator newFontGenerator(Provider!ComSurface comSurfaceProvider)
     {
         return new BitmapFontGenerator(comSurfaceProvider);
     }

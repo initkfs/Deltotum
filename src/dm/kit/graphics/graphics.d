@@ -1,8 +1,9 @@
 module dm.kit.graphics.graphics;
 
 import dm.core.apps.units.services.loggable_unit;
+import dm.core.utils.provider : Provider;
 
-import dm.com.graphics.com_renderer: ComRenderer;
+import dm.com.graphics.com_renderer : ComRenderer;
 import dm.kit.graphics.colors.rgba : RGBA;
 import dm.math.vector2 : Vector2;
 import math = dm.math;
@@ -42,11 +43,9 @@ class Graphics : LoggableUnit
         ComRenderer renderer;
     }
 
-    //TODO ComTexture, ComSurface;
-    //these factories are added for performance to avoid unnecessary wrapping in the object.
-    ComTexture delegate() comTextureFactory;
-    ComSurface delegate() comSurfaceFactory;
-    ComImage delegate() comImageFactory;
+    Provider!ComTexture comTextureProvider;
+    Provider!ComSurface comSurfaceProvider;
+    Provider!ComImage comImageProvider;
 
     this(Logger logger, ComRenderer renderer, Theme theme)
     {
@@ -64,26 +63,44 @@ class Graphics : LoggableUnit
 
     ComTexture newComTexture()
     {
-        assert(comTextureFactory);
-        auto texture = comTextureFactory();
+        assert(comTextureProvider.get);
+        auto texture = comTextureProvider.get();
         assert(texture);
         return texture;
     }
 
+    void newComTextureScoped(scope void delegate(ComTexture) onNew)
+    {
+        assert(comTextureProvider.getScope);
+        comTextureProvider.getScope(onNew);
+    }
+
     ComSurface newComSurface()
     {
-        assert(comSurfaceFactory);
-        auto surface = comSurfaceFactory();
+        assert(comSurfaceProvider.get);
+        auto surface = comSurfaceProvider.get();
         assert(surface);
         return surface;
     }
 
+    void newComSurfaceScoped(scope void delegate(ComSurface) onNew)
+    {
+        assert(comSurfaceProvider.getScope);
+        comSurfaceProvider.getScope(onNew);
+    }
+
     ComImage newComImage()
     {
-        assert(comImageFactory);
-        auto image = comImageFactory();
+        assert(comImageProvider.get);
+        auto image = comImageProvider.get();
         assert(image);
         return image;
+    }
+
+    void newComImageScoped(scope void delegate(ComImage) onNew)
+    {
+        assert(comImageProvider.getScope);
+        comImageProvider.getScope(onNew);
     }
 
     pragma(inline, true)

@@ -4,6 +4,7 @@ import dm.com.graphics.com_font : ComFontHinting, ComFont;
 import dm.com.graphics.com_surface : ComSurface;
 import dm.kit.assets.fonts.font_generator : FontGenerator;
 import dm.kit.assets.fonts.glyphs.glyph : Glyph;
+import dm.core.utils.provider : Provider;
 
 import dm.kit.assets.fonts.font : Font;
 import dm.kit.sprites.textures.texture : Texture;
@@ -24,9 +25,9 @@ import std.stdio;
  */
 class BitmapFontGenerator : FontGenerator
 {
-    ComSurface delegate() comSurfaceProvider;
+    Provider!ComSurface comSurfaceProvider;
 
-    this(ComSurface delegate() comSurfaceProvider)
+    this(Provider!ComSurface comSurfaceProvider)
     {
         this.comSurfaceProvider = comSurfaceProvider;
     }
@@ -38,7 +39,7 @@ class BitmapFontGenerator : FontGenerator
         const int fontTextureWidth = 400;
         const int fontTextureHeight = 400;
 
-        ComSurface fontMapSurface = comSurfaceProvider();
+        ComSurface fontMapSurface = comSurfaceProvider.get();
         if (const err = fontMapSurface.createRGBSurface(fontTextureWidth, fontTextureHeight))
         {
             throw new Exception(err.toString);
@@ -69,51 +70,51 @@ class BitmapFontGenerator : FontGenerator
                 dchar[1] letters = [letter];
                 const(char*) utfPtr = toUTFz!(const(char)*)(letters[]);
                 //TODO does SDL keep a reference?
-                //TODO reduce objects allocations
-                ComSurface glyphRepresentation = comSurfaceProvider();
-                font.renderSurface(glyphRepresentation, utfPtr, foregroundColor, backgroundColor);
-                glyphPosition.width = glyphRepresentation.width;
-                glyphPosition.height = glyphRepresentation.height;
+                comSurfaceProvider.getScope((glyphRepresentation) {
+                    font.renderSurface(glyphRepresentation, utfPtr, foregroundColor, backgroundColor);
+                    glyphPosition.width = glyphRepresentation.width;
+                    glyphPosition.height = glyphRepresentation.height;
 
-                if (glyphPosition.x + glyphPosition.width >= fontTextureWidth)
-                {
-                    glyphPosition.x = 0;
-
-                    glyphPosition.y += glyphPosition.height + 1;
-
-                    if (glyphPosition.y + glyphPosition.height >= fontTextureWidth)
+                    if (glyphPosition.x + glyphPosition.width >= fontTextureWidth)
                     {
-                        throw new Exception("Font creation error, texture size too small");
+                        glyphPosition.x = 0;
+
+                        glyphPosition.y += glyphPosition.height + 1;
+
+                        if (glyphPosition.y + glyphPosition.height >= fontTextureWidth)
+                        {
+                            throw new Exception("Font creation error, texture size too small");
+                        }
                     }
-                }
 
-                //TODO special?
-                import std.uni : isWhite;
-                import std.algorithm.comparison : among;
+                    //TODO special?
+                    import std.uni : isWhite;
+                    import std.algorithm.comparison : among;
 
-                bool isNewline;
-                bool isEmpty = letter.isWhite;
-                if (isEmpty)
-                {
-                    //FIXME \r\n
-                    isNewline = letter.among('\n', '\r',) != 0;
-                }
+                    bool isNewline;
+                    bool isEmpty = letter.isWhite;
+                    if (isEmpty)
+                    {
+                        //FIXME \r\n
+                        isNewline = letter.among('\n', '\r',) != 0;
+                    }
 
-                auto glyph = Glyph(letter, glyphPosition, Vector2.init, alphabet, isEmpty, isNewline);
+                    auto glyph = Glyph(letter, glyphPosition, Vector2.init, alphabet, isEmpty, isNewline);
 
-                //TODO config?
-                if (glyph.grapheme == '𑑛')
-                {
-                    bitmapFont.placeholder = glyph;
-                }
+                    //TODO config?
+                    if (glyph.grapheme == '𑑛')
+                    {
+                        bitmapFont.placeholder = glyph;
+                    }
 
-                glyphs ~= glyph;
+                    glyphs ~= glyph;
 
-                if (const err = glyphRepresentation.blit(fontMapSurface, glyphPosition))
-                {
-                    throw new Exception(err.toString);
-                }
-                glyphRepresentation.dispose;
+                    if (const err = glyphRepresentation.blit(fontMapSurface, glyphPosition))
+                    {
+                        throw new Exception(err.toString);
+                    }
+                    glyphRepresentation.dispose;
+                });
 
                 glyphPosition.x += glyphPosition.width;
             }
@@ -125,7 +126,7 @@ class BitmapFontGenerator : FontGenerator
         fontMapSurface.dispose;
 
         bitmapFont.blendModeBlend;
-        
+
         return bitmapFont;
     }
 }
