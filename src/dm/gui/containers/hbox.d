@@ -1,6 +1,6 @@
 module dm.gui.containers.hbox;
 
-import dm.gui.containers.base.spaceable_container: SpaceableContainer;
+import dm.gui.containers.base.spaceable_container : SpaceableContainer;
 import dm.kit.sprites.layouts.hlayout : HLayout;
 import dm.kit.sprites.sprite : Sprite;
 
@@ -12,7 +12,7 @@ class HBox : SpaceableContainer
     this(double spacing = 0) pure
     {
         super(spacing);
-        
+
         auto hlayout = new HLayout(spacing);
         hlayout.isAlignY = false;
         hlayout.isAutoResize = true;
@@ -23,8 +23,10 @@ class HBox : SpaceableContainer
 
     override void spacing(double value)
     {
+        import dm.core.utils.type_util : castSafe;
+
         super.spacing = value;
-        if (auto hLayout = cast(HLayout) layout)
+        if (auto hLayout = layout.castSafe!HLayout)
         {
             hLayout.spacing = value;
         }

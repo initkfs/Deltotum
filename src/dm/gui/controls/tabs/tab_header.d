@@ -21,7 +21,8 @@ class TabHeader : Control
         layout.isAlignY = true;
     }
 
-    override void initialize(){
+    override void initialize()
+    {
         super.initialize;
         enablePadding;
     }
@@ -39,7 +40,10 @@ class TabHeader : Control
     override void add(Sprite obj, long index = -1)
     {
         super.add(obj, index);
-        if (auto tab = cast(Tab) obj)
+
+        import dm.core.utils.type_util : castSafe;
+
+        if (auto tab = obj.castSafe!Tab)
         {
             addTab(tab);
         }

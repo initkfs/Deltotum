@@ -86,11 +86,13 @@ class Control : Sprite
 
     override void build(Sprite sprite)
     {
+        import dm.core.utils.type_util : castSafe;
+
         assert(!sprite.isBuilt);
 
         super.build(sprite);
         //TODO may be a harmful side effect
-        if (auto control = cast(Control) sprite)
+        if (auto control = sprite.castSafe!Control)
         {
             applyStyle(control);
         }
@@ -101,8 +103,10 @@ class Control : Sprite
 
     override void add(Sprite sprite, long index = -1)
     {
+        import dm.core.utils.type_util : castSafe;
+
         super.add(sprite, index);
-        if (auto control = cast(Control) sprite)
+        if (auto control = sprite.castSafe!Control)
         {
             applyStyle(control);
         }
@@ -175,14 +179,16 @@ class Control : Sprite
 
         if (isFindStyleInParent)
         {
-            Control currParent = cast(Control) parent;
+            import dm.core.utils.type_util : castSafe;
+
+            Control currParent = parent.castSafe!Control;
             while (currParent)
             {
                 if (currParent.style)
                 {
                     return currParent.style;
                 }
-                currParent = cast(Control) currParent.parent;
+                currParent = currParent.parent.castSafe!Control;
             }
         }
 

@@ -6,7 +6,7 @@ import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import dm.gui.containers.hbox : HBox;
 import dm.gui.containers.vbox : VBox;
 import dm.gui.containers.stack_box : StackBox;
-import dm.gui.containers.container: Container;
+import dm.gui.containers.container : Container;
 import dm.gui.controls.tabs.tab : Tab;
 import dm.gui.controls.tabs.tab_header : TabHeader;
 import dm.kit.sprites.layouts.vlayout : VLayout;
@@ -42,9 +42,10 @@ class TabPane : Control
         layout.isAlignX = false;
     }
 
-    override void initialize(){
+    override void initialize()
+    {
         super.initialize;
-        
+
         enablePadding;
     }
 
@@ -56,7 +57,8 @@ class TabPane : Control
 
         addCreate(header);
 
-        import dm.gui.controls.separators.hseparator: HSeparator;
+        import dm.gui.controls.separators.hseparator : HSeparator;
+
         auto sep = new HSeparator;
         sep.id = "tab_pane_header_separator";
         addCreate(sep);
@@ -79,7 +81,9 @@ class TabPane : Control
 
     override void addCreate(Sprite sprite, long index = -1)
     {
-        if (auto tab = cast(Tab) sprite)
+        import dm.core.utils.type_util : castSafe;
+
+        if (auto tab = sprite.castSafe!Tab)
         {
             createTabContent(tab);
             return;
@@ -127,9 +131,12 @@ class TabPane : Control
             if (!currentTab.content.isCreated)
             {
                 content.addCreate(newTab.content);
-            }else {
+            }
+            else
+            {
                 //TODO add?
-                if(!content.hasDirect(newTab.content)){
+                if (!content.hasDirect(newTab.content))
+                {
                     content.add(newTab.content);
                 }
             }

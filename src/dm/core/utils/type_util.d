@@ -100,7 +100,7 @@ unittest
     {
     }
 
-    import std.meta: AliasSeq;
+    import std.meta : AliasSeq;
 
     alias ch = ChainHierarchy!C;
     assert(is(ch == AliasSeq!(A, B, C)));
@@ -110,3 +110,36 @@ import std.traits : FieldNameTuple;
 import std.meta : staticMap;
 
 alias AllFieldNamesTuple(T) = staticMap!(FieldNameTuple, ChainHierarchy!T);
+
+auto castSafe(To, From)(From target)
+{
+    import std.traits : CopyTypeQualifiers;
+
+    return cast(CopyTypeQualifiers!(typeof(target), To)) target;
+}
+
+unittest
+{
+    class Foo
+    {
+    }
+
+    class Bar : Foo
+    {
+    }
+
+    class Baz
+    {
+    }
+
+    auto bar = new Bar;
+    assert(bar.castSafe!Bar == bar);
+    assert(bar.castSafe!Foo == bar);
+    assert(bar.castSafe!Object == bar);
+    assert(bar.castSafe!Baz is null);
+
+    import std.traits: isMutable;
+
+    const cbar = new Bar;
+    assert(!isMutable!(typeof(cbar.castSafe!Foo)));
+}

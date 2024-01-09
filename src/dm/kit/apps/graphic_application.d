@@ -150,8 +150,9 @@ abstract class GraphicApplication : CliApplication
     protected void buildPartially(GraphicsComponent component)
     {
         import dm.core.apps.uni.uni_component : UniComponent;
+         import dm.core.utils.type_util: castSafe;
 
-        super.build(cast(UniComponent) component);
+        super.build(component.castSafe!UniComponent);
 
         component.isBuilt = false;
 

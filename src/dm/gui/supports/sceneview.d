@@ -94,10 +94,10 @@ class SceneView : VBox
         width = 300;
         height = scene.window.height;
 
-        import dm.kit.graphics.styles.graphic_style: GraphicStyle;
-        import dm.kit.graphics.colors.rgba: RGBA;
+        import dm.kit.graphics.styles.graphic_style : GraphicStyle;
+        import dm.kit.graphics.colors.rgba : RGBA;
 
-        style = new GraphicStyle(1,  RGBA.web("#DDCC66"), false,RGBA.web("#ffb641"));
+        style = new GraphicStyle(1, RGBA.web("#DDCC66"), false, RGBA.web("#ffb641"));
 
         auto infoContainer = new HBox;
         infoContainer.layout.isAlignY = true;
@@ -111,7 +111,7 @@ class SceneView : VBox
         infoContainer.addCreate([new Text("Dms:"), drawTimeMs]);
 
         invalidNodesCount = new Text("");
-        infoContainer.addCreate([ new Text("Inv:"), invalidNodesCount]);
+        infoContainer.addCreate([new Text("Inv:"), invalidNodesCount]);
 
         auto infoContainer2 = new HBox;
         infoContainer2.layout.isAlignY = true;
@@ -120,7 +120,6 @@ class SceneView : VBox
 
         gcUsedBytes = new Text("");
         infoContainer2.addCreate([new Text("GCu(KB):"), gcUsedBytes]);
-
 
         auto btnContainer = new HBox;
         btnContainer.layout.isAlignY = true;
@@ -149,7 +148,7 @@ class SceneView : VBox
                 objectOnDebug = null;
             }
         };
-        
+
         tb.label.text = "";
         tb.label.addCreateIcon(IconNames.locate_outline);
 
@@ -335,9 +334,11 @@ class SceneView : VBox
             }
         };
 
+        import dm.core.utils.type_util : castSafe;
+
         foreach (ch; paddingContainer.children)
         {
-            if (auto tf = cast(TextField) ch)
+            if (auto tf = ch.castSafe!TextField)
             {
                 tf.width = 50;
             }

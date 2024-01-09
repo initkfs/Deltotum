@@ -172,7 +172,7 @@ unittest
     /*
      * shuffle
      */
-    int[] arrForShuffle = [1, 2, 3, 4, 5];
+    int[] arrForShuffle = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     int[] arrShuffled = arrForShuffle.dup;
     rnd.shuffle(arrShuffled);
     assert(arrForShuffle != arrShuffled);

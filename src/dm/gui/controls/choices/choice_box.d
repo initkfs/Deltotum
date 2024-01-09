@@ -235,7 +235,8 @@ class ChoiceBox : TypedContainer!ChoiceItem
             items ~= choiceListRow;
             choiceListRow.label.text = s;
             choiceListRow.onChoice = () {
-                if(onChoice){
+                if (onChoice)
+                {
                     dstring oldValue = selected ? selected.label.text : "";
                     onChoice(oldValue, choiceListRow.label.text);
                 }
@@ -254,10 +255,12 @@ class ChoiceBox : TypedContainer!ChoiceItem
 
     protected void fillItemList()
     {
+        import dm.core.utils.type_util : castSafe;
+
         scope Sprite[] removed;
         foreach (oldItem; choiceList.children)
         {
-            if (cast(ChoiceItem) oldItem)
+            if (oldItem.castSafe!ChoiceItem)
             {
                 removed ~= oldItem;
             }
@@ -325,9 +328,11 @@ class ChoiceBox : TypedContainer!ChoiceItem
             return null;
         }
 
+        import dm.core.utils.type_util : castSafe;
+
         foreach (item; choiceList.children)
         {
-            if (auto cItem = cast(ChoiceItem) item)
+            if (auto cItem = item.castSafe!ChoiceItem)
             {
                 if (cItem.label.text == itemText)
                 {

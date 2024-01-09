@@ -65,8 +65,9 @@ class Frame : Container
         if (background && label)
         {
             import dm.kit.sprites.shapes.regular_polygon : RegularPolygon;
+            import dm.core.utils.type_util: castSafe;
 
-            if (auto rp = cast(RegularPolygon) background)
+            if (auto rp = background.castSafe!RegularPolygon)
             {
                 rp.topClip.start.x = label.x;
                 rp.topClip.end.x = label.bounds.right;

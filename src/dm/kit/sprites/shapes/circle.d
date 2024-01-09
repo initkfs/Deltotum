@@ -35,6 +35,8 @@ class Circle : Shape
 
     override bool intersect(Sprite other)
     {
+        //import dm.core.utils.type_util : castSafe;
+        //TODO unsafe cast, but fast
         if (auto circle = cast(Circle) other)
         {
             return shape.intersect(circle.shape);

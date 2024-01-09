@@ -9,6 +9,7 @@ mixin template EqualsOther()
     alias Self = typeof(this);
 
     import std.traits : CopyTypeQualifiers, isImplicitlyConvertible, fullyQualifiedName;
+    import dm.core.utils.type_util: castSafe;
 
     static if (is(Self == class))
     {
@@ -70,7 +71,7 @@ mixin template EqualsOther()
                 }
             }
 
-            auto otherType = cast(C) other;
+            auto otherType = other.castSafe!C;
             if (!otherType)
             {
                 return false;

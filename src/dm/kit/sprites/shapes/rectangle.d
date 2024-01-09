@@ -35,6 +35,7 @@ class Rectangle : Shape
 
     override bool intersect(Sprite other)
     {
+        //TODO unsafe cast, but fast
         if (auto circle = cast(Circle) other)
         {
             return bounds.intersect(circle.shape);
