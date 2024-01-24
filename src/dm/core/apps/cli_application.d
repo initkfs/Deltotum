@@ -11,6 +11,7 @@ import dm.core.contexts.context : Context;
 import dm.core.contexts.apps.app_context : AppContext;
 import dm.core.resources.resource : Resource;
 import dm.core.apps.caps.cap_core : CapCore;
+import dm.core.locators.service_locator: ServiceLocator;
 
 import std.logger : Logger;
 import std.typecons : Nullable;
@@ -95,6 +96,9 @@ class CliApplication : SimpleUnit
 
         uservices.resource = createResource(uservices.logger, uservices.config, uservices.context);
         uservices.logger.trace("Resources service built");
+
+        uservices.locator = createLocator(uservices.logger, uservices.config, uservices.context);
+        uservices.logger.trace("Service locator built");
 
         uservices.isBuilt = true;
 
@@ -415,6 +419,14 @@ class CliApplication : SimpleUnit
         auto resource = new Resource(logger, mustBeResDir);
         uservices.logger.trace("Create resources from directory: ", mustBeResDir);
         return resource;
+    }
+
+    protected ServiceLocator createLocator(Logger logger, Config config, Context context){
+        return newServiceLocator(logger);
+    }
+
+    protected ServiceLocator newServiceLocator(Logger logger){
+        return new ServiceLocator(logger);
     }
 
     protected Cli createCli(string[] args)

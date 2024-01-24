@@ -7,6 +7,7 @@ import dm.core.clis.cli : Cli;
 import dm.core.contexts.context : Context;
 import dm.core.resources.resource : Resource;
 import dm.core.apps.caps.cap_core : CapCore;
+import dm.core.locators.service_locator: ServiceLocator;
 
 import std.logger.core : Logger;
 
@@ -33,6 +34,7 @@ class UniComponent : SimpleUnit
         @Service Cli _cli;
         @Service Resource _resource;
         @Service CapCore _capCore;
+        @Service ServiceLocator _locator;
     }
 
     void build(UniComponent uniComponent)
@@ -234,5 +236,24 @@ class UniComponent : SimpleUnit
 
         enforce(cap !is null, "Core capabilities must not be null");
         _capCore = cap;
+    }
+
+    bool hasLocator() const @nogc nothrow pure @safe
+    {
+        return _locator !is null;
+    }
+
+    inout(ServiceLocator) locator() inout @nogc nothrow pure @safe
+    out (_locator; _locator !is null)
+    {
+        return _locator;
+    }
+
+    void locator(ServiceLocator locator) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(locator !is null, "Service locator must not be null");
+        _locator = locator;
     }
 }
