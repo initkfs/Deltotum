@@ -1,6 +1,6 @@
 module dm.kit.graphics.graphics;
 
-import dm.core.apps.units.services.loggable_unit;
+import dm.core.units.services.loggable_unit;
 import dm.core.utils.provider : Provider;
 
 import dm.com.graphics.com_renderer : ComRenderer;

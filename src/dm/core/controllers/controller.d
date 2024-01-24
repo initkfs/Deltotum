@@ -1,7 +1,7 @@
 module dm.core.controllers.controller;
 
-import dm.core.apps.uni.uni_component : UniComponent;
-import dm.core.apps.uni.uni_composite : UniComposite;
+import dm.core.units.components.uni_component : UniComponent;
+import dm.core.units.components.uni_composite : UniComposite;
 
 /**
  * Authors: initkfs

@@ -1,8 +1,8 @@
 module dm.kit.apps.comps.graphics_component;
 
-import dm.core.apps.uni.uni_component : UniComponent;
+import dm.core.units.components.uni_component : UniComponent;
 
-import dm.core.apps.uni.attributes : Service;
+import dm.core.units.components.attributes : Service;
 
 import dm.kit.assets.asset : Asset;
 import dm.media.audio.audio : Audio;

@@ -1,6 +1,6 @@
-module dm.core.apps.uni.uni_composite;
+module dm.core.units.components.uni_composite;
 
-import dm.core.apps.uni.uni_component : UniComponent;
+import dm.core.units.components.uni_component : UniComponent;
 
 import std.exception : enforce;
 

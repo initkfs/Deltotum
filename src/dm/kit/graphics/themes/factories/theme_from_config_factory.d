@@ -1,6 +1,6 @@
 module dm.kit.gui.themes.factories.theme_from_config_factory;
 
-import dm.core.apps.units.services.application_unit : ApplicationUnit;
+import dm.core.units.services.application_unit : ApplicationUnit;
 import dm.core.contexts.context : Context;
 import dm.core.configs.config : Config;
 import dm.kit.graphics.themes.theme : Theme;

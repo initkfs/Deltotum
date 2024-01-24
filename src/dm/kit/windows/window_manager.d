@@ -1,6 +1,6 @@
 module dm.kit.windows.window_manager;
 
-import dm.core.apps.units.services.loggable_unit : LoggableUnit;
+import dm.core.units.services.loggable_unit : LoggableUnit;
 import dm.kit.windows.window : Window;
 
 import std.logger : Logger;

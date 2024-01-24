@@ -1,6 +1,6 @@
 module dm.kit.assets.asset;
 
-import dm.core.apps.units.services.loggable_unit : LoggableUnit;
+import dm.core.units.services.loggable_unit : LoggableUnit;
 
 import std.logger : Logger;
 

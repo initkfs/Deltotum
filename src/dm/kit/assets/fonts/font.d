@@ -1,6 +1,6 @@
 module dm.kit.assets.fonts.font;
 
-import dm.core.apps.units.services.loggable_unit : LoggableUnit;
+import dm.core.units.services.loggable_unit : LoggableUnit;
 import dm.kit.graphics.colors.rgba : RGBA;
 
 import dm.com.graphics.com_font : ComFont, ComFontHinting;

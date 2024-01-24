@@ -7,7 +7,7 @@ import dm.core.apps.application_exit : ApplicationExit;
 import dm.core.apps.cli_application : CliApplication;
 import dm.kit.apps.comps.graphics_component : GraphicsComponent;
 import dm.kit.apps.comps.window_component : WindowComponent;
-import dm.core.apps.uni.uni_component : UniComponent;
+import dm.core.units.components.uni_component : UniComponent;
 import dm.kit.windows.window_manager : WindowManager;
 import dm.kit.apps.caps.cap_graphics : CapGraphics;
 import dm.kit.graphics.graphics : Graphics;
@@ -148,7 +148,7 @@ abstract class GraphicApplication : CliApplication
 
     protected void buildPartially(GraphicsComponent component)
     {
-        import dm.core.apps.uni.uni_component : UniComponent;
+        import dm.core.units.components.uni_component : UniComponent;
          import dm.core.utils.type_util: castSafe;
 
         super.build(component.castSafe!UniComponent);

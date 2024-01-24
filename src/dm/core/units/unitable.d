@@ -1,4 +1,4 @@
-module dm.core.apps.units.unitable;
+module dm.core.units.unitable;
 
 /**
  * Authors: initkfs
