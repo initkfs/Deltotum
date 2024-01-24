@@ -9,7 +9,6 @@ import dm.kit.apps.comps.graphics_component : GraphicsComponent;
 import dm.kit.apps.comps.window_component : WindowComponent;
 import dm.core.apps.uni.uni_component : UniComponent;
 import dm.kit.windows.window_manager : WindowManager;
-import dm.core.extensions.extension : Extension;
 import dm.kit.apps.caps.cap_graphics : CapGraphics;
 import dm.kit.graphics.graphics : Graphics;
 import dm.kit.assets.asset : Asset;

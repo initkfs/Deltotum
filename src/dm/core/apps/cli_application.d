@@ -10,7 +10,6 @@ import dm.core.clis.printers.cli_printer : CliPrinter;
 import dm.core.contexts.context : Context;
 import dm.core.contexts.apps.app_context : AppContext;
 import dm.core.resources.resource : Resource;
-import dm.core.extensions.extension : Extension;
 import dm.core.apps.caps.cap_core : CapCore;
 
 import std.logger : Logger;
@@ -96,9 +95,6 @@ class CliApplication : SimpleUnit
 
         uservices.resource = createResource(uservices.logger, uservices.config, uservices.context);
         uservices.logger.trace("Resources service built");
-
-        uservices.ext = createExtension(uservices.logger, uservices.config, uservices.context);
-        uservices.logger.trace("Extension service built");
 
         uservices.isBuilt = true;
 
@@ -434,22 +430,6 @@ class CliApplication : SimpleUnit
 
     protected Cli newCli(string[] args, CliPrinter printer){
         return new Cli(args, printer);
-    }
-
-    protected Extension createExtension(Logger logger, Config config, Context context)
-    {
-        auto extension = newExtension;
-
-        //TODO side effects
-        extension.initialize;
-        extension.create;
-        extension.run;
-
-        return extension;
-    }
-
-    protected Extension newExtension(){
-        return new Extension;
     }
 
     protected void createCrashHandlers(string[] args)

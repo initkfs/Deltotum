@@ -6,7 +6,6 @@ import dm.core.configs.config : Config;
 import dm.core.clis.cli : Cli;
 import dm.core.contexts.context : Context;
 import dm.core.resources.resource : Resource;
-import dm.core.extensions.extension : Extension;
 import dm.core.apps.caps.cap_core : CapCore;
 
 import std.logger.core : Logger;
@@ -33,7 +32,6 @@ class UniComponent : SimpleUnit
         @Service Config _config;
         @Service Cli _cli;
         @Service Resource _resource;
-        @Service Extension _ext;
         @Service CapCore _capCore;
     }
 
@@ -217,25 +215,6 @@ class UniComponent : SimpleUnit
 
         enforce(resource !is null, "Resource must not be null");
         _resource = resource;
-    }
-
-    bool hasExt() const @nogc nothrow pure @safe
-    {
-        return _ext !is null;
-    }
-
-    inout(Extension) ext() inout @nogc nothrow pure @safe
-    out (_ext; _ext !is null)
-    {
-        return _ext;
-    }
-
-    void ext(Extension ext) pure @safe
-    {
-        import std.exception : enforce;
-
-        enforce(ext !is null, "Extension must not be null");
-        _ext = ext;
     }
 
     bool hasCapCore() const @nogc nothrow pure @safe

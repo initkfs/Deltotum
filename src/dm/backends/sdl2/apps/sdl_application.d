@@ -20,7 +20,6 @@ import dm.kit.assets.asset : Asset;
 import dm.kit.scenes.scene : Scene;
 import dm.kit.inputs.keyboards.events.key_event : KeyEvent;
 import dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
-import dm.core.extensions.extension : Extension;
 import dm.backends.sdl2.sdl_lib : SdlLib;
 import dm.backends.sdl2.img.sdl_img_lib : SdlImgLib;
 import dm.backends.sdl2.mix.sdl_mix_lib : SdlMixLib;
