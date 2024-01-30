@@ -5,9 +5,10 @@ import dm.core.units.components.attributes : Service;
 import dm.core.configs.config : Config;
 import dm.core.clis.cli : Cli;
 import dm.core.contexts.context : Context;
+import dm.core.supports.support : Support;
 import dm.core.resources.resource : Resource;
 import dm.core.apps.caps.cap_core : CapCore;
-import dm.core.locators.service_locator: ServiceLocator;
+import dm.core.locators.service_locator : ServiceLocator;
 
 import std.logger.core : Logger;
 
@@ -33,6 +34,7 @@ class UniComponent : SimpleUnit
         @Service Config _config;
         @Service Cli _cli;
         @Service Resource _resource;
+        @Service Support _support;
         @Service CapCore _capCore;
         @Service ServiceLocator _locator;
     }
@@ -198,6 +200,25 @@ class UniComponent : SimpleUnit
 
         enforce(cli !is null, "Cli must not be null");
         _cli = cli;
+    }
+
+    bool hasSupport() const @nogc nothrow pure @safe
+    {
+        return _support !is null;
+    }
+
+    inout(Support) support() inout @nogc nothrow pure @safe
+    out (_support; _support !is null)
+    {
+        return _support;
+    }
+
+    void support(Support support) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(support !is null, "Support must not be null");
+        _support = support;
     }
 
     bool hasResource() const @nogc nothrow pure @safe

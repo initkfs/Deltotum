@@ -8,10 +8,11 @@ import dm.core.configs.config : Config;
 import dm.core.clis.cli : Cli;
 import dm.core.clis.printers.cli_printer : CliPrinter;
 import dm.core.contexts.context : Context;
+import dm.core.supports.support : Support;
 import dm.core.contexts.apps.app_context : AppContext;
 import dm.core.resources.resource : Resource;
 import dm.core.apps.caps.cap_core : CapCore;
-import dm.core.locators.service_locator: ServiceLocator;
+import dm.core.locators.service_locator : ServiceLocator;
 
 import std.logger : Logger;
 import std.typecons : Nullable;
@@ -89,16 +90,25 @@ class CliApplication : SimpleUnit
             cli.printIfNotSilent("Debug mode active");
         }
 
+        uservices.support = createSupport;
+
+        profile("Start services");
+
         uservices.context = createContext;
+        profile("Context is built");
+
         uservices.config = createConfig(uservices.context);
+        profile("Config is built");
 
         uservices.logger = createLogger;
 
         uservices.resource = createResource(uservices.logger, uservices.config, uservices.context);
         uservices.logger.trace("Resources service built");
+        profile("Resources built");
 
         uservices.locator = createLocator(uservices.logger, uservices.config, uservices.context);
         uservices.logger.trace("Service locator built");
+        profile("Service locator built");
 
         uservices.isBuilt = true;
 
@@ -167,7 +177,6 @@ class CliApplication : SimpleUnit
             "g|debug", "Debug mode", &isDebugMode,
             "s|silent", "Silent mode, less information in program output.", &isSilentMode,
             "w|wait", "Startup delay (ms)", &cliStartupDelayMs);
-
         return cliResult;
     }
 
@@ -179,13 +188,14 @@ class CliApplication : SimpleUnit
         import std.file : exists, isDir, isFile;
 
         const string curDir = currentDir;
-        uservices.cli.printIfNotSilent("Current working directory: " ~ curDir);
-
+        uservices.cli.printIfNotSilent(
+            "Current working directory: " ~ curDir);
         string dataDirectory;
         if (cliDataDir)
         {
             dataDirectory = cliDataDir;
-            uservices.cli.printIfNotSilent("Received data directory from cli: " ~ dataDirectory);
+            uservices.cli.printIfNotSilent(
+                "Received data directory from cli: " ~ dataDirectory);
             if (!dataDirectory.isAbsolute)
             {
                 dataDirectory = buildPath(curDir, dataDirectory);
@@ -196,7 +206,8 @@ class CliApplication : SimpleUnit
         else
         {
             const relDataDir = buildPath(curDir, defaultDataDir);
-            if (relDataDir.exists && relDataDir.isDir)
+            if (relDataDir.exists && relDataDir
+                .isDir)
             {
                 dataDirectory = relDataDir;
                 uservices.cli.printIfNotSilent(
@@ -253,7 +264,8 @@ class CliApplication : SimpleUnit
                 break;
         }
 
-        throw new Exception("Not supported config: " ~ configFile);
+        throw new Exception(
+            "Not supported config: " ~ configFile);
     }
 
     protected Config newConfigAggregator(Config[] forConfigs)
@@ -277,11 +289,14 @@ class CliApplication : SimpleUnit
         string configDir = cliConfigDir;
         if (configDir)
         {
-            uservices.cli.printIfNotSilent("Received config directory from cli: " ~ configDir);
+            uservices.cli.printIfNotSilent(
+                "Received config directory from cli: " ~ configDir);
             if (!configDir.isAbsolute)
             {
-                const mustBeDataDir = context.appContext.dataDir;
-                if (mustBeDataDir.isNull)
+                const mustBeDataDir = context
+                    .appContext.dataDir;
+                if (
+                    mustBeDataDir.isNull)
                 {
                     throw new Exception("Config path directory from cli is relative, but the data directory was not found in application context");
                 }
@@ -292,8 +307,10 @@ class CliApplication : SimpleUnit
         }
         else
         {
-            const mustBeDataDir = context.appContext.dataDir;
-            if (!mustBeDataDir.isNull)
+            const mustBeDataDir = context
+                .appContext.dataDir;
+            if (
+                !mustBeDataDir.isNull)
             {
                 configDir = buildPath(mustBeDataDir.get, defaultConfigsDir);
                 uservices.cli.printIfNotSilent(
@@ -313,11 +330,14 @@ class CliApplication : SimpleUnit
 
         if (configDir.length == 0)
         {
-            uservices.cli.printIfNotSilent("Path to config directory is empty");
+            uservices.cli.printIfNotSilent(
+                "Path to config directory is empty");
             //TODO Environment config
             import dm.core.configs.environments.env_config : EnvConfig;
 
-            auto config = newConfigAggregator([envConfig]);
+            auto config = newConfigAggregator([
+                    envConfig
+                ]);
             config.load;
             return config;
         }
@@ -336,28 +356,26 @@ class CliApplication : SimpleUnit
         import std.algorithm.iteration : filter;
         import std.algorithm.searching : endsWith;
 
-        Config[] configs = [envConfig];
-
-        //TODO is hidden
-        foreach (configPath; dirEntries(configDir, SpanMode.depth).filter!(f => f.isFile))
+        Config[] configs = [envConfig]; //TODO is hidden
+        foreach (configPath; dirEntries(configDir, SpanMode
+                .depth).filter!(f => f.isFile))
         {
-            auto newConfig = newConfigFromFile(configPath.name);
+            auto newConfig = newConfigFromFile(
+                configPath.name);
             newConfig.isThrowOnNotExistentKey = isStrictConfigs;
             newConfig.isThrowOnSetValueNotExistentKey = isStrictConfigs;
             configs ~= newConfig;
         }
 
-        configs ~= newEnvConfig;
-
-        //TODO check for duplicate keys
+        configs ~= newEnvConfig; //TODO check for duplicate keys
         auto config = newConfigAggregator(configs);
         config.isThrowOnNotExistentKey = isStrictConfigs;
         config.isThrowOnSetValueNotExistentKey = isStrictConfigs;
         config.load;
-
         import std.format : format;
 
-        uservices.cli.printIfNotSilent(format("Load %s configs from %s", configs.length, configDir));
+        uservices.cli.printIfNotSilent(format("Load %s configs from %s", configs
+                .length, configDir));
         return config;
     }
 
@@ -365,7 +383,8 @@ class CliApplication : SimpleUnit
     {
         import std.logger : MultiLogger, FileLogger, LogLevel;
 
-        auto multiLogger = new MultiLogger(LogLevel.trace);
+        auto multiLogger = new MultiLogger(
+            LogLevel.trace);
         import std.stdio : stdout;
 
         enum consoleLoggerLevel = LogLevel.trace;
@@ -373,10 +392,28 @@ class CliApplication : SimpleUnit
         const string consoleLoggerName = "stdout_logger";
         multiLogger.insertLogger(consoleLoggerName, consoleLogger);
 
-        multiLogger.tracef("Create stdout logger, name '%s', level '%s'",
+        multiLogger.tracef(
+            "Create stdout logger, name '%s', level '%s'",
             consoleLoggerName, consoleLoggerLevel);
 
         return multiLogger;
+    }
+
+    protected Support createSupport()
+    {
+        import dm.core.supports.profiling.profilers.tm_profiler : TMProfiler;
+
+        version (BuiltinProfiler)
+        {
+            auto tmProfiler = new TMProfiler(50);
+        }
+        else
+        {
+            auto tmProfiler = new TMProfiler;
+        }
+
+        auto support = new Support(tmProfiler);
+        return support;
     }
 
     protected Resource createResource(Logger logger, Config config, Context context, string resourceDirPath = "resources")
@@ -387,7 +424,8 @@ class CliApplication : SimpleUnit
         string mustBeResDir = resourceDirPath;
         if (mustBeResDir.isAbsolute)
         {
-            if (!mustBeResDir.exists || !mustBeResDir.isDir)
+            if (!mustBeResDir.exists || !mustBeResDir
+                .isDir)
             {
                 uservices.logger.error(
                     "Absolute resources directory path does not exist or not a directory: " ~ mustBeResDir);
@@ -397,7 +435,8 @@ class CliApplication : SimpleUnit
         }
         else
         {
-            const mustBeDataDir = context.appContext.dataDir;
+            const mustBeDataDir = context
+                .appContext.dataDir;
             if (mustBeDataDir.isNull)
             {
                 uservices.logger.errorf(
@@ -407,7 +446,8 @@ class CliApplication : SimpleUnit
             }
 
             mustBeResDir = buildPath(mustBeDataDir.get, mustBeResDir);
-            if (!mustBeResDir.exists || !mustBeResDir.isDir)
+            if (!mustBeResDir.exists || !mustBeResDir
+                .isDir)
             {
                 uservices.logger.error(
                     "Resource directory path relative to the data does not exist or is not a directory: ", mustBeResDir);
@@ -417,15 +457,19 @@ class CliApplication : SimpleUnit
         }
 
         auto resource = new Resource(logger, mustBeResDir);
-        uservices.logger.trace("Create resources from directory: ", mustBeResDir);
+        uservices.logger.trace(
+            "Create resources from directory: ", mustBeResDir);
         return resource;
     }
 
-    protected ServiceLocator createLocator(Logger logger, Config config, Context context){
+    protected ServiceLocator createLocator(Logger logger, Config config, Context context)
+    {
         return newServiceLocator(logger);
     }
 
-    protected ServiceLocator newServiceLocator(Logger logger){
+    protected ServiceLocator newServiceLocator(
+        Logger logger)
+    {
         return new ServiceLocator(logger);
     }
 
@@ -436,15 +480,18 @@ class CliApplication : SimpleUnit
         return cli;
     }
 
-    protected CliPrinter newCliPrinter(){
+    protected CliPrinter newCliPrinter()
+    {
         return new CliPrinter;
     }
 
-    protected Cli newCli(string[] args, CliPrinter printer){
+    protected Cli newCli(string[] args, CliPrinter printer)
+    {
         return new Cli(args, printer);
     }
 
-    protected void createCrashHandlers(string[] args)
+    protected void createCrashHandlers(
+        string[] args)
     {
         import std.path : dirName, buildPath, isAbsolute;
         import std.file : exists, isDir, isFile, getcwd;
@@ -453,10 +500,12 @@ class CliApplication : SimpleUnit
 
         string crashDir = getcwd;
 
-        immutable mustBeCrashDir = environment.get(envCrashDirKey);
+        immutable mustBeCrashDir = environment.get(
+            envCrashDirKey);
         if (mustBeCrashDir)
         {
-            if (!mustBeCrashDir.exists || !mustBeCrashDir.isDir)
+            if (!mustBeCrashDir.exists || !mustBeCrashDir
+                .isDir)
             {
                 throw new Exception(format(
                         "Crash directory from environment key %s does not exist or not a directory: %s",
@@ -467,7 +516,8 @@ class CliApplication : SimpleUnit
 
         import dm.core.apps.crashes.file_crash_handler : FileCrashHandler;
 
-        crashHandlers ~= new FileCrashHandler(crashDir);
+        crashHandlers ~= new FileCrashHandler(
+            crashDir);
     }
 
     string currentDir()
@@ -494,5 +544,14 @@ class CliApplication : SimpleUnit
 
         enforce(services !is null, "Services must not be null");
         _uniServices = services;
+    }
+
+    void profile(lazy string pointName)
+    {
+        version (BuiltinProfiler)
+        {
+            uservices.support.tmProfiler.createPoint(
+                pointName);
+        }
     }
 }

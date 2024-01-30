@@ -18,7 +18,7 @@ import dm.kit.graphics.themes.theme : Theme;
 import dm.kit.assets.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
 import dm.kit.scenes.scene_manager : SceneManager;
 import dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
-import dm.core.utils.provider: Provider;
+import dm.core.utils.provider : Provider;
 
 import dm.kit.windows.window : Window;
 import dm.kit.apps.loops.loop : Loop;
@@ -72,6 +72,8 @@ abstract class GraphicApplication : CliApplication
             return exit;
         }
 
+        profile("Start graphics");
+
         if (!_graphicServices)
         {
             _graphicServices = newGraphicServices;
@@ -92,6 +94,8 @@ abstract class GraphicApplication : CliApplication
             gservices.capGraphics.isIconPack = true;
             uservices.logger.trace("Load icon pack");
         }
+
+        profile("Load graphics settings");
 
         return ApplicationExit(false);
     }
@@ -149,7 +153,7 @@ abstract class GraphicApplication : CliApplication
     protected void buildPartially(GraphicsComponent component)
     {
         import dm.core.units.components.uni_component : UniComponent;
-         import dm.core.utils.type_util: castSafe;
+        import dm.core.utils.type_util : castSafe;
 
         super.build(component.castSafe!UniComponent);
 

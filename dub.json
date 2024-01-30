@@ -9,7 +9,7 @@
     "configurations": [{
             "name": "app-dev",
             "versions": [
-                "dev", "SdlBackend", "ExtensionLua"
+                "dev", "SdlBackend", "ExtensionLua", "BuiltinProfiler"
             ],
             "targetType": "executable",
             "targetName": "deltotum",
@@ -20,7 +20,7 @@
         {
             "name": "app-dist",
             "versions": [
-                "dev", "SdlBackend"
+                "dev", "SdlBackend", "BuiltinProfiler"
             ],
             "targetType": "executable",
             "targetName": "./dist/deltotum",
