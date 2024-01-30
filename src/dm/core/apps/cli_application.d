@@ -100,7 +100,7 @@ class CliApplication : SimpleUnit
         uservices.config = createConfig(uservices.context);
         profile("Config is built");
 
-        uservices.logger = createLogger;
+        uservices.logger = createLogger(uservices.support);
 
         uservices.resource = createResource(uservices.logger, uservices.config, uservices.context);
         uservices.logger.trace("Resources service built");
@@ -379,9 +379,9 @@ class CliApplication : SimpleUnit
         return config;
     }
 
-    protected Logger createLogger()
+    protected Logger createLogger(Support support)
     {
-        import std.logger : MultiLogger, FileLogger, LogLevel;
+        import std.logger : MultiLogger, FileLogger, LogLevel, Logger;
 
         auto multiLogger = new MultiLogger(
             LogLevel.trace);
@@ -391,6 +391,27 @@ class CliApplication : SimpleUnit
         auto consoleLogger = new FileLogger(stdout, consoleLoggerLevel);
         const string consoleLoggerName = "stdout_logger";
         multiLogger.insertLogger(consoleLoggerName, consoleLogger);
+
+        import std.format : format;
+
+        auto errLogger = new class Logger
+        {
+            this()
+            {
+                super(LogLevel.warning);
+            }
+
+            override void writeLogMsg(ref LogEntry payload) @trusted
+            {
+                auto logLevel = payload.logLevel;
+                auto dt = payload.timestamp;
+                string message = format("%02d:%02d %s %s(%d): %s", dt.hour(), dt.minute(),
+                    payload.logLevel, payload.moduleName, payload.line, payload.msg);
+                support.errStatus.error(message);
+            }
+        };
+
+        multiLogger.insertLogger("Error logger", errLogger);
 
         multiLogger.tracef(
             "Create stdout logger, name '%s', level '%s'",
@@ -402,6 +423,7 @@ class CliApplication : SimpleUnit
     protected Support createSupport()
     {
         import dm.core.supports.profiling.profilers.tm_profiler : TMProfiler;
+        import dm.core.supports.errors.err_status : ErrStatus;
 
         version (BuiltinProfiler)
         {
@@ -412,7 +434,9 @@ class CliApplication : SimpleUnit
             auto tmProfiler = new TMProfiler;
         }
 
-        auto support = new Support(tmProfiler);
+        auto errStatus = new ErrStatus;
+
+        auto support = new Support(tmProfiler, errStatus);
         return support;
     }
 
