@@ -1,6 +1,6 @@
-module dm.kit.addons.sprites.images.fractals.julia;
+module dm.addon.sprites.images.fractals.julia;
 
-import dm.kit.addons.sprites.images.fractals.complex_fractal_image : ComplexFractalImage;
+import dm.addon.sprites.images.fractals.complex_fractal_image : ComplexFractalImage;
 import dm.kit.graphics.colors.rgba : RGBA;
 
 import Math = dm.math;

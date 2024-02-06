@@ -1,4 +1,4 @@
-module dm.kit.addons.sprites.images.fractals.complex_fractal_image;
+module dm.addon.sprites.images.fractals.complex_fractal_image;
 
 import dm.kit.sprites.images.image : Image;
 import dm.kit.graphics.colors.rgba : RGBA;

@@ -1,6 +1,6 @@
-module dm.kit.addons.sprites.images.fractals.mandelbrot;
+module dm.addon.sprites.images.fractals.mandelbrot;
 
-import dm.kit.addons.sprites.images.fractals.complex_fractal_image : ComplexFractalImage;
+import dm.addon.sprites.images.fractals.complex_fractal_image : ComplexFractalImage;
 
 import Math = dm.math;
 

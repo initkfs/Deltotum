@@ -1,6 +1,6 @@
-module dm.kit.addons.sprites.images.fractals.newton;
+module dm.addon.sprites.images.fractals.newton;
 
-import dm.kit.addons.sprites.images.fractals.complex_fractal_image : ComplexFractalImage;
+import dm.addon.sprites.images.fractals.complex_fractal_image : ComplexFractalImage;
 import dm.kit.graphics.colors.rgba : RGBA;
 import dm.kit.graphics.colors.hsv : HSV;
 
