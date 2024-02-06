@@ -4,7 +4,7 @@ module dm.backends.sdl2.events.sdl_event_processor;
 version(SdlBackend):
 // dfmt on
 
-import dm.kit.events.processing.event_processor : EventProcessor;
+import dm.kit.events.processing.kit_event_processor : KitEventProcessor;
 
 import dm.kit.events.kit_event_type: KitEventType;
 import dm.core.events.core_event_type: CoreEventType;
@@ -22,7 +22,7 @@ import std.stdio;
 /**
  * Authors: initkfs
  */
-class SdlEventProcessor : EventProcessor!(SDL_Event*)
+class SdlEventProcessor : KitEventProcessor!(SDL_Event*)
 {
     private
     {

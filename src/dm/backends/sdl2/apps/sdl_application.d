@@ -47,7 +47,7 @@ import dm.kit.apps.loops.interrupted_loop : InterruptedLoop;
 import dm.kit.apps.loops.loop : Loop;
 import dm.kit.windows.window_manager : WindowManager;
 import dm.kit.apps.caps.cap_graphics : CapGraphics;
-import dm.kit.events.processing.event_processor : EventProcessor;
+import dm.kit.events.processing.kit_event_processor : KitEventProcessor;
 
 import std.typecons : Nullable;
 

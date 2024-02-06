@@ -1,6 +1,6 @@
 module dm.kit.events.event_manager;
 
-import dm.kit.events.processing.event_processor : EventProcessor;
+import dm.kit.events.processing.kit_event_processor : KitEventProcessor;
 import dm.kit.scenes.scene_manager : SceneManager;
 
 import dm.core.apps.events.application_event : ApplicationEvent;
@@ -28,7 +28,7 @@ class EventManager(E)
 
     protected
     {
-        EventProcessor!E eventProcessor;
+        KitEventProcessor!E eventProcessor;
     }
 
     Nullable!(Sprite[]) delegate(long) targetsProvider;
@@ -39,7 +39,7 @@ class EventManager(E)
     void delegate(ref PointerEvent) onPointer;
     void delegate(ref TextInputEvent) onTextInput;
 
-    this(EventProcessor!E processor)
+    this(KitEventProcessor!E processor)
     {
         assert(processor);
         this.eventProcessor = processor;
