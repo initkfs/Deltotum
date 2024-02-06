@@ -1,6 +1,8 @@
-module dm.kit.events.event_manager;
+module dm.kit.events.kit_event_manager;
 
-import dm.kit.events.processing.kit_event_processor : KitEventProcessor;
+import dm.core.events.processing.event_processor: EventProcessor;
+import dm.core.events.event_manager: EventManager;
+import dm.kit.events.processing.kit_event_processor: KitEventProcessor;
 import dm.kit.scenes.scene_manager : SceneManager;
 
 import dm.core.apps.events.application_event : ApplicationEvent;
@@ -19,18 +21,8 @@ import std.typecons : Nullable;
 /**
  * Authors: initkfs
  */
-class EventManager(E)
+class KitEventManager(E) : EventManager!(E, KitEventProcessor!E, Sprite)
 {
-    private
-    {
-        DList!Sprite eventChain = DList!Sprite();
-    }
-
-    protected
-    {
-        KitEventProcessor!E eventProcessor;
-    }
-
     Nullable!(Sprite[]) delegate(long) targetsProvider;
 
     void delegate(ref KeyEvent) onKey;
@@ -41,16 +33,12 @@ class EventManager(E)
 
     this(KitEventProcessor!E processor)
     {
-        assert(processor);
-        this.eventProcessor = processor;
+        super(processor);
     }
 
-    void startEvents()
+    override void startEvents()
     {
-        if (eventProcessor is null)
-        {
-            return;
-        }
+        super.startEvents;
 
         eventProcessor.onWindow = (ref windowEvent) {
             if (onWindow !is null)
@@ -89,11 +77,6 @@ class EventManager(E)
             }
             dispatchEvent(keyEvent);
         };
-    }
-
-    void process(E event)
-    {
-        eventProcessor.process(event);
     }
 
     void dispatchEvent(E)(E e)

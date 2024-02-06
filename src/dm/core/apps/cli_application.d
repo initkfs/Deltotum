@@ -12,6 +12,8 @@ import dm.core.supports.support : Support;
 import dm.core.contexts.apps.app_context : AppContext;
 import dm.core.resources.resource : Resource;
 import dm.core.apps.caps.cap_core : CapCore;
+import dm.core.events.bus.event_bus : EventBus;
+import dm.core.events.bus.core_bus_events : CoreBusEvents;
 import dm.core.locators.service_locator : ServiceLocator;
 
 import std.logger : Logger;
@@ -97,20 +99,31 @@ class CliApplication : SimpleUnit
         uservices.context = createContext;
         profile("Context is built");
 
+        uservices.eventBus = createEventBus(uservices.context);
+        profile("Event bus built");
+        uservices.eventBus.fire(CoreBusEvents.build_context, uservices.context);
+        uservices.eventBus.fire(CoreBusEvents.build_event_bus, uservices.eventBus);
+
         uservices.config = createConfig(uservices.context);
         profile("Config is built");
+        uservices.eventBus.fire(CoreBusEvents.build_config, uservices.config);
 
         uservices.logger = createLogger(uservices.support);
+        profile("Logger built");
+        uservices.eventBus.fire(CoreBusEvents.build_logger, uservices.logger);
 
         uservices.resource = createResource(uservices.logger, uservices.config, uservices.context);
         uservices.logger.trace("Resources service built");
         profile("Resources built");
+        uservices.eventBus.fire(CoreBusEvents.build_resource, uservices.resource);
 
         uservices.locator = createLocator(uservices.logger, uservices.config, uservices.context);
         uservices.logger.trace("Service locator built");
+        uservices.eventBus.fire(CoreBusEvents.build_locator, uservices.locator);
         profile("Service locator built");
 
         uservices.isBuilt = true;
+        uservices.eventBus.fire(CoreBusEvents.build_core_services, uservices);
 
         return ApplicationExit();
     }
@@ -484,6 +497,16 @@ class CliApplication : SimpleUnit
         uservices.logger.trace(
             "Create resources from directory: ", mustBeResDir);
         return resource;
+    }
+
+    protected EventBus createEventBus(Context context)
+    {
+        return newEventBus;
+    }
+
+    protected EventBus newEventBus()
+    {
+        return new EventBus;
     }
 
     protected ServiceLocator createLocator(Logger logger, Config config, Context context)

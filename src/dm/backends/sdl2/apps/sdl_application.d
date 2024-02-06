@@ -10,7 +10,7 @@ import dm.core.apps.application_exit : ApplicationExit;
 import dm.core.utils.provider : Provider;
 import dm.kit.apps.continuously_application : ContinuouslyApplication;
 import dm.kit.apps.comps.graphics_component : GraphicsComponent;
-import dm.kit.events.event_manager : EventManager;
+import dm.kit.events.kit_event_manager : KitEventManager;
 import dm.backends.sdl2.events.sdl_event_processor : SdlEventProcessor;
 import dm.kit.scenes.scene_manager : SceneManager;
 import dm.kit.graphics.graphics : Graphics;
@@ -83,7 +83,7 @@ class SdlApplication : ContinuouslyApplication
         //ChipmLib chipmLib;
     }
 
-    EventManager!(SDL_Event*) eventManager;
+    KitEventManager!(SDL_Event*) eventManager;
 
     this(SdlLib lib = null,
         SdlImgLib imgLib = null,
@@ -259,7 +259,7 @@ class SdlApplication : ContinuouslyApplication
         _screen = new Screen(uservices.logger, sdlScreen);
 
         auto processor = new SdlEventProcessor(keyboard);
-        eventManager = new EventManager!(SDL_Event*)(processor);
+        eventManager = new KitEventManager!(SDL_Event*)(processor);
         eventManager.targetsProvider = (windowId) {
             auto mustBeCurrentWindow = windowManager.byFirstId(windowId);
             if (mustBeCurrentWindow.isNull)

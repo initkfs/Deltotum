@@ -8,6 +8,7 @@ import dm.core.contexts.context : Context;
 import dm.core.supports.support : Support;
 import dm.core.resources.resource : Resource;
 import dm.core.apps.caps.cap_core : CapCore;
+import dm.core.events.bus.event_bus : EventBus;
 import dm.core.locators.service_locator : ServiceLocator;
 
 import std.logger.core : Logger;
@@ -36,6 +37,7 @@ class UniComponent : SimpleUnit
         @Service Resource _resource;
         @Service Support _support;
         @Service CapCore _capCore;
+        @Service EventBus _eventBus;
         @Service ServiceLocator _locator;
     }
 
@@ -257,6 +259,25 @@ class UniComponent : SimpleUnit
 
         enforce(cap !is null, "Core capabilities must not be null");
         _capCore = cap;
+    }
+
+    bool hasEventBus() const @nogc nothrow pure @safe
+    {
+        return _eventBus !is null;
+    }
+
+    inout(EventBus) eventBus() inout @nogc nothrow pure @safe
+    out (_eventBus; _eventBus !is null)
+    {
+        return _eventBus;
+    }
+
+    void eventBus(EventBus bus) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(bus !is null, "Event bus must not be null");
+        _eventBus = bus;
     }
 
     bool hasLocator() const @nogc nothrow pure @safe
