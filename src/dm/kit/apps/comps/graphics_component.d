@@ -5,7 +5,7 @@ import dm.core.units.components.uni_component : UniComponent;
 import dm.core.units.components.attributes : Service;
 
 import dm.kit.assets.asset : Asset;
-import dm.media.audio.audio : Audio;
+import dm.kit.media.audio.audio : Audio;
 import dm.kit.graphics.graphics : Graphics;
 import dm.kit.inputs.input : Input;
 import dm.kit.windows.window : Window;

@@ -51,7 +51,7 @@ import dm.kit.events.processing.kit_event_processor : KitEventProcessor;
 
 import std.typecons : Nullable;
 
-import dm.media.audio.audio : Audio;
+import dm.kit.media.audio.audio : Audio;
 import dm.kit.inputs.input : Input;
 import dm.kit.screens.screen : Screen;
 

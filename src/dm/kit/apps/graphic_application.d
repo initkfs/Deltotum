@@ -23,7 +23,7 @@ import dm.core.utils.provider : Provider;
 import dm.kit.windows.window : Window;
 import dm.kit.apps.loops.loop : Loop;
 
-import dm.media.audio.audio : Audio;
+import dm.kit.media.audio.audio : Audio;
 import dm.kit.inputs.input : Input;
 import dm.kit.screens.screen : Screen;
 import dm.kit.timers.timer : Timer;

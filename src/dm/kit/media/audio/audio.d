@@ -1,4 +1,4 @@
-module dm.media.audio.audio;
+module dm.kit.media.audio.audio;
 
 import dm.backends.sdl2.mix.sdl_mix_lib : SdlMixLib;
 
