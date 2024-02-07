@@ -65,6 +65,14 @@ class CliApplication : SimpleUnit
         uservices.cli = cli;
 
         auto cliResult = parseCli(uservices.cli);
+        if (!isSilentMode)
+        {
+            import std.stdio : writeln, writefln;
+
+            writeln("Received cli: ", cli.cliArgs);
+            writefln("Config dir: %s, data dir: %s, debug: %s, silent: %s, wait ms: %s",
+                cliConfigDir, cliDataDir, isDebugMode, isSilentMode, cliStartupDelayMs);
+        }
 
         cli.isSilentMode = isSilentMode;
 

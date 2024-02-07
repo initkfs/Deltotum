@@ -20,6 +20,7 @@ class Scene : WindowComponent
     bool isDestructible;
 
     void delegate(Scene) onSceneChange;
+    void delegate() onDraw;
 
     size_t timeEventProcessingMs;
     size_t timeUpdateProcessingMs;
@@ -48,6 +49,12 @@ class Scene : WindowComponent
     void draw()
     {
         graphics.draw(() {
+
+            if (onDraw)
+            {
+                onDraw();
+            }
+
             foreach (obj; sprites)
             {
                 obj.draw;
@@ -110,7 +117,8 @@ class Scene : WindowComponent
 
     void addCreate(Sprite obj)
     {
-        if(!obj.isBuilt){
+        if (!obj.isBuilt)
+        {
             build(obj);
         }
 

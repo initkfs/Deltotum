@@ -52,7 +52,7 @@ class Animations : Control
             {
                 alias func = __traits(getMember, interpolator, m);
                 //TODO best filter
-                static if (__traits(isFinalFunction, func))
+                static if (__traits(isStaticFunction, func))
                 {
                     const funcName = __traits(identifier, func).to!dstring;
                     animationsMap[funcName] = &func;
@@ -62,8 +62,8 @@ class Animations : Control
         }
 
         import dm.kit.sprites.shapes.rectangle : Rectangle;
-        import dm.kit.graphics.styles.graphic_style: GraphicStyle;
-        import dm.kit.graphics.colors.rgba: RGBA;
+        import dm.kit.graphics.styles.graphic_style : GraphicStyle;
+        import dm.kit.graphics.colors.rgba : RGBA;
 
         auto rect = new Rectangle(50, 50, GraphicStyle(1.0, RGBA.lightcoral, true, RGBA.lightcoral));
         const startPos = Vector2(200, 200);
@@ -101,12 +101,10 @@ class Animations : Control
 
         animSelect.selectFirst;
 
-        import std.functional : toDelegate;
-
         animSelect.onChoice = (oldItem, newItem) {
             auto newFunc = animationsMap[newItem];
             motionTransition.stop;
-            interpolator.interpolateMethod = newFunc.toDelegate;
+            interpolator.interpolateMethod = newFunc;
             motionTransition.run;
         };
 

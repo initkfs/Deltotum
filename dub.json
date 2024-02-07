@@ -6,10 +6,14 @@
     ],
     "copyright": "Copyright © 2022, initkfs",
     "name": "deltotum",
-    "configurations": [{
+    "configurations": [
+        {
             "name": "app-dev",
             "versions": [
-                "dev", "SdlBackend", "ExtensionLua", "BuiltinProfiler"
+                "dev",
+                "SdlBackend",
+                "ExtensionLua",
+                "BuiltinProfiler"
             ],
             "targetType": "executable",
             "targetName": "deltotum",
@@ -20,7 +24,9 @@
         {
             "name": "app-dist",
             "versions": [
-                "dev", "SdlBackend", "BuiltinProfiler"
+                "dev",
+                "SdlBackend",
+                "BuiltinProfiler"
             ],
             "targetType": "executable",
             "targetName": "./dist/deltotum",
@@ -29,9 +35,23 @@
             ]
         },
         {
+            "name": "app-lib",
+            "versions": [
+                "dev",
+                "SdlBackend",
+                "BuiltinProfiler"
+            ],
+            "targetType": "dynamicLibrary",
+            "targetName": "dm",
+            "platforms": [
+                "linux"
+            ]
+        },
+        {
             "name": "app-trace",
             "versions": [
-                "dev", "SdlBackend"
+                "dev",
+                "SdlBackend"
             ],
             "targetType": "executable",
             "targetName": "deltotum",
@@ -39,18 +59,32 @@
                 "linux"
             ],
             "dflags-ldc": [
-                "--ftime-trace", "--ftime-trace-file=$PACKAGE_DIR/trace.json"
+                "--ftime-trace",
+                "--ftime-trace-file=$PACKAGE_DIR/trace.json"
             ],
-            "postBuildCommands": ["timetrace2txt $PACKAGE_DIR/trace.json --tsv $PACKAGE_DIR/trace.tsv -o $PACKAGE_DIR/trace.txt"]
+            "postBuildCommands": [
+                "timetrace2txt $PACKAGE_DIR/trace.json --tsv $PACKAGE_DIR/trace.tsv -o $PACKAGE_DIR/trace.txt"
+            ]
         }
     ],
-    "buildRequirements": ["disallowDeprecations", "allowWarnings"],
-    "sourcePaths": ["./src"],
-    "importPaths": ["./src"],
+    "buildRequirements": [
+        "disallowDeprecations",
+        "allowWarnings"
+    ],
+    "sourcePaths": [
+        "./src"
+    ],
+    "importPaths": [
+        "./src"
+    ],
     "dependencies": {
         "bindbc-sdl": "~>1.2.1"
     },
-    "dflags": ["-dip1000", "-preview=in", "-J=./data"],
+    "dflags": [
+        "-dip1000",
+        "-preview=in",
+        "-J=./data"
+    ],
     "versions": [
         "SDL_Image",
         "SDL_TTF",

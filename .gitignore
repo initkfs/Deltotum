@@ -2,6 +2,7 @@
 /.dub
 /data
 /dist
+/libs
 /dub.selections.json
 /deltotum
 /src/app.d
@@ -9,4 +10,5 @@
 /build.sh
 /trace.*
 /libjulia.so
+/libdm.so
 /*.groovy
