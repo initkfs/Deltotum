@@ -69,7 +69,8 @@ class Asset : Resource
         auto mustBeFontPath = fileResource(defaultFontResourceDir, fontFile);
         if (mustBeFontPath.isNull)
         {
-            throw new Exception("Not found font in resources: " ~ fontFile);
+            import std.format: format;
+            throw new Exception(format("Not found font file %s in resource dir %s", fontFile, defaultFontResourceDir));
         }
         return mustBeFontPath.get;
     }

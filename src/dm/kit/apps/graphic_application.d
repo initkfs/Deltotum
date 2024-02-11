@@ -5,6 +5,7 @@ import dm.core.configs.config : Config;
 import dm.core.contexts.context : Context;
 import dm.core.apps.application_exit : ApplicationExit;
 import dm.core.apps.cli_application : CliApplication;
+import dm.core.resources.resource : Resource;
 import dm.kit.apps.comps.graphics_component : GraphicsComponent;
 import dm.kit.apps.comps.window_component : WindowComponent;
 import dm.core.units.components.uni_component : UniComponent;
@@ -219,7 +220,7 @@ abstract class GraphicApplication : CliApplication
         return new Graphics(logger, renderer, theme);
     }
 
-    Theme createTheme(Logger logger, Config config, Context context, Asset asset)
+    Theme createTheme(Logger logger, Config config, Context context, Resource resource, Asset asset)
     {
         //TODO null?
         IconPack pack = iconPack.isNull ? null : iconPack.get;
@@ -227,7 +228,7 @@ abstract class GraphicApplication : CliApplication
         import dm.kit.graphics.themes.theme : Theme;
         import dm.kit.gui.themes.factories.theme_from_config_factory : ThemeFromConfigFactory;
 
-        auto themeLoader = new ThemeFromConfigFactory(uservices.logger, uservices.config, uservices.context, asset
+        auto themeLoader = new ThemeFromConfigFactory(logger, config, context, resource, asset
                 .font, pack);
 
         auto theme = themeLoader.createTheme;
@@ -238,27 +239,105 @@ abstract class GraphicApplication : CliApplication
             string fontPath, int fontSize) comFontProvider)
     {
         //TODO move to config, duplication with SdlApplication
-        import std.file : getcwd, exists, isDir;
+        import std.file : getcwd, exists, isDir, isFile;
         import std.path : buildPath, dirName;
 
         auto mustBeResDir = uservices.resource.resourcesDir;
-        if (mustBeResDir.isNull)
-        {
-            throw new Exception("Resources directory not found");
-        }
-
-        immutable string assetsDir = mustBeResDir.get;
 
         import dm.kit.assets.asset : Asset;
-
-        auto asset = new Asset(uservices.logger, assetsDir, comFontProvider);
-
         import dm.kit.assets.fonts.font : Font;
 
-        //TODO from config
-        Font font = asset.newFont(
-            "JetBrains_Mono/static/JetBrainsMono-ExtraBold.ttf", 15);
-        asset.font = font;
+        Asset asset;
+        if (!mustBeResDir.isNull)
+        {
+            auto assetsDir = mustBeResDir.get;
+            logger.trace("Found resources directory: ", assetsDir);
+            //TODO from config
+            asset = new Asset(uservices.logger, assetsDir, comFontProvider);
+            Font font = asset.newFont(
+                "JetBrains_Mono/static/JetBrainsMono-ExtraBold.ttf", 15);
+            asset.font = font;
+        }
+        else
+        {
+            uservices.logger.warning("Resources directory not found");
+
+            import KitConfigKeys = dm.kit.kit_config_keys;
+
+            string fontFile;
+            if (config.containsKey(KitConfigKeys.fontDefaultTTFFile))
+            {
+                fontFile = config.getNotEmptyString(KitConfigKeys.fontDefaultTTFFile).get;
+            }
+
+            //TODO allsystem;
+            string fontPath;
+            if (config.containsKey(KitConfigKeys.fontSystemDefaultDir))
+            {
+                auto mustBeFontDir = config.getNotEmptyString(KitConfigKeys.fontSystemDefaultDir);
+                if (mustBeFontDir.isNull)
+                {
+                    throw new Exception(
+                        "System font dir is empty for config key: " ~ KitConfigKeys
+                            .fontSystemDefaultDir);
+                }
+                fontPath = mustBeFontDir.get;
+
+                if (!fontPath.exists || !fontPath.isDir)
+                {
+                    throw new Exception(
+                        "The system font directory does not exist or is not a directory: " ~ fontPath);
+                }
+            }
+            else
+            {
+                //TODO Fontconfig 
+                version (linux)
+                {
+                    ///usr/share/fonts/TTF/
+                    fontPath = "/usr/share/fonts/truetype/noto/";
+                    if (!fontFile)
+                    {
+                        fontFile = "NotoSansMono-Bold.ttf";
+                    }
+                }
+                else version (Windows)
+                {
+                    //TODO test separators /, \
+                    fontPath = "C:\\Windows\\Fonts";
+                    if (!fontFile)
+                    {
+                        fontFile = "arial.ttf";
+                    }
+                }
+                else version (OSX)
+                {
+                    fontPath = "/Library/Fonts";
+                    if (!fontFile)
+                    {
+                        fontFile = "Arial.ttf";
+                    }
+                }
+                else
+                {
+                    static assert(false, "Not supported default fonts for platform");
+                }
+            }
+
+            import std.path : buildPath;
+
+            auto fontFilePath = buildPath(fontPath, fontFile);
+            if (!fontFilePath.exists || !fontFilePath.isFile)
+            {
+                throw new Exception("Not found default system font: " ~ fontFilePath);
+            }        
+
+            //TODO default font
+            asset = new Asset(uservices.logger, fontPath, comFontProvider);
+            asset.defaultFontResourceDir = null;
+            Font font = asset.newFont(fontFile, 15);
+            asset.font = font;
+        }
 
         return asset;
     }

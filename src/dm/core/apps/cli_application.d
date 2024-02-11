@@ -349,54 +349,50 @@ class CliApplication : SimpleUnit
         envConfig.isThrowOnNotExistentKey = isStrictConfigs;
         envConfig.isThrowOnSetValueNotExistentKey = isStrictConfigs;
 
-        if (configDir.length == 0)
+        Config[] configs = [envConfig]; //TODO is hidden
+
+        if (configDir.length != 0)
+        {
+            import std.file : isDir, exists;
+
+            if (!configDir.exists || !configDir.isDir)
+            {
+                uservices.cli.printIfNotSilent(
+                    "Config directory does not exist or not a directory: " ~ configDir);
+            }
+            else
+            {
+                import dm.core.configs.properties.property_config : PropertyConfig;
+                import dm.core.configs.config_aggregator : ConfigAggregator;
+                import std.file : dirEntries, SpanMode;
+                import std.algorithm.iteration : filter;
+                import std.algorithm.searching : endsWith;
+
+                foreach (configPath; dirEntries(configDir, SpanMode
+                        .depth).filter!(f => f.isFile))
+                {
+                    auto newConfig = newConfigFromFile(
+                        configPath.name);
+                    newConfig.isThrowOnNotExistentKey = isStrictConfigs;
+                    newConfig.isThrowOnSetValueNotExistentKey = isStrictConfigs;
+                    configs ~= newConfig;
+                }
+            }
+        }
+        else
         {
             uservices.cli.printIfNotSilent(
                 "Path to config directory is empty");
-            //TODO Environment config
-            import dm.core.configs.environments.env_config : EnvConfig;
-
-            auto config = newConfigAggregator([
-                    envConfig
-                ]);
-            config.load;
-            return config;
         }
 
-        import std.file : isDir, exists;
-
-        if (!configDir.exists || !configDir.isDir)
-        {
-            throw new Exception(
-                "Config directory does not exist or not a directory: " ~ configDir);
-        }
-
-        import dm.core.configs.properties.property_config : PropertyConfig;
-        import dm.core.configs.config_aggregator : ConfigAggregator;
-        import std.file : dirEntries, SpanMode;
-        import std.algorithm.iteration : filter;
-        import std.algorithm.searching : endsWith;
-
-        Config[] configs = [envConfig]; //TODO is hidden
-        foreach (configPath; dirEntries(configDir, SpanMode
-                .depth).filter!(f => f.isFile))
-        {
-            auto newConfig = newConfigFromFile(
-                configPath.name);
-            newConfig.isThrowOnNotExistentKey = isStrictConfigs;
-            newConfig.isThrowOnSetValueNotExistentKey = isStrictConfigs;
-            configs ~= newConfig;
-        }
-
-        configs ~= newEnvConfig; //TODO check for duplicate keys
         auto config = newConfigAggregator(configs);
         config.isThrowOnNotExistentKey = isStrictConfigs;
         config.isThrowOnSetValueNotExistentKey = isStrictConfigs;
         config.load;
         import std.format : format;
 
-        uservices.cli.printIfNotSilent(format("Load %s configs from %s", configs
-                .length, configDir));
+        uservices.cli.printIfNotSilent(format("Load %s configs", configs
+                .length));
         return config;
     }
 
@@ -494,7 +490,7 @@ class CliApplication : SimpleUnit
             if (!mustBeResDir.exists || !mustBeResDir
                 .isDir)
             {
-                uservices.logger.error(
+                uservices.logger.warning(
                     "Resource directory path relative to the data does not exist or is not a directory: ", mustBeResDir);
                 //WARNING return
                 return new Resource(logger);

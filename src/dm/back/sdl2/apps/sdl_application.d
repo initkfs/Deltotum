@@ -614,7 +614,7 @@ class SdlApplication : ContinuouslyApplication
 
         windowBuilder.asset = asset;
 
-        auto theme = createTheme(uservices.logger, uservices.config, uservices.context, asset);
+        auto theme = createTheme(uservices.logger, uservices.config, uservices.context, uservices.resource, asset);
 
         import dm.kit.graphics.graphics : Graphics;
 

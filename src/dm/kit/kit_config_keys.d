@@ -10,3 +10,6 @@ enum backendIsAudioEnabled = "backendIsAudioEnabled";
 enum backendIsTimerEnabled = "backendIsTimerEnabled";
 enum backendIsJoystickEnabled = "backendIsJoystickEnabled";
 enum backendIsIconPackEnabled = "backendIsIconPackEnabled";
+
+enum fontSystemDefaultDir = "fontSystemDefaultDir";
+enum fontDefaultTTFFile = "fontDefaultTTFFile";
