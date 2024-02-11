@@ -2,19 +2,12 @@ module dm.kit.graphics.themes.icons.icon_pack;
 
 import dm.kit.sprites.images.image : Image;
 
-import std;
-
-private
-{
-    const iconPack = import("resources/icons.txt");
-}
-
 /**
  * Authors: initkfs
  */
 class IconPack
 {
-    private
+    protected
     {
         string[string] iconData;
     }
@@ -30,16 +23,24 @@ class IconPack
     }
 
     //TODO optimizations
-    void load()
+    void load(string iconPath)
     {
+        import std.stdio: File;
+        import std.file : isFile, exists;
         import std.string : splitLines;
         import std.algorithm.searching : startsWith;
+
+        if (!iconPath.exists || !iconPath.isFile)
+        {
+            throw new Exception("Icon path is not a file: " ~ iconPath);
+        }
 
         string currentIconName;
         string currentIconContent;
         enum iconPrefix = "icon:";
-        foreach (line; iconPack.splitLines)
+        foreach (lineBuff; File(iconPath).byLine)
         {
+            auto line = lineBuff.idup;
             if (line.startsWith(iconPrefix))
             {
                 if (currentIconContent)

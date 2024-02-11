@@ -346,6 +346,7 @@ class CliApplication : SimpleUnit
         }
 
         auto envConfig = newEnvConfig;
+        uservices.cli.printIfNotSilent("Create config from environment");
         envConfig.isThrowOnNotExistentKey = isStrictConfigs;
         envConfig.isThrowOnSetValueNotExistentKey = isStrictConfigs;
 
@@ -376,6 +377,8 @@ class CliApplication : SimpleUnit
                     newConfig.isThrowOnNotExistentKey = isStrictConfigs;
                     newConfig.isThrowOnSetValueNotExistentKey = isStrictConfigs;
                     configs ~= newConfig;
+                    uservices.cli.printIfNotSilent(
+                    "Load config: " ~ configPath.name);
                 }
             }
         }

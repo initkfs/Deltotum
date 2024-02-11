@@ -90,10 +90,16 @@ abstract class GraphicApplication : CliApplication
         if (isIconPackEnabled)
         {
             auto newIconPack = new IconPack;
-            newIconPack.load;
+            //TODO config
+            auto mustBeIconPath = uservices.resource.fileResource("icons/packs/ionicons.txt");
+            if(mustBeIconPath.isNull){
+                throw new Exception("Not found icons");
+            }
+            auto iconPath = mustBeIconPath.get;
+            newIconPack.load(iconPath);
             iconPack = newIconPack;
             gservices.capGraphics.isIconPack = true;
-            uservices.logger.trace("Load icon pack");
+            uservices.logger.trace("Load icon pack: ", iconPath);
         }
 
         profile("Load graphics settings");
