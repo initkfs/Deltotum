@@ -1,6 +1,6 @@
 module dm.kit.inputs.input;
 
-import dm.kit.inputs.cursors.system_cursor: SystemCursor;
+import dm.kit.inputs.cursors.cursor: Cursor;
 import dm.kit.inputs.clipboards.clipboard : Clipboard;
 import dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import dm.math.vector2 : Vector2;
@@ -25,9 +25,9 @@ class Input
     JoystickEvent lastJoystickEvent;
 
     Clipboard clipboard;
-    SystemCursor systemCursor;
+    Cursor systemCursor;
 
-    this(Clipboard clipboard, SystemCursor cursor)
+    this(Clipboard clipboard, Cursor cursor)
     {
         assert(clipboard);
         this.clipboard = clipboard;

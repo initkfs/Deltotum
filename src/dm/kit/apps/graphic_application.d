@@ -45,6 +45,7 @@ abstract class GraphicApplication : CliApplication
     bool isTimerEnabled;
     bool isJoystickEnabled;
     bool isIconPackEnabled;
+    bool isHeadless;
 
     bool isQuitOnCloseAllWindows = true;
 

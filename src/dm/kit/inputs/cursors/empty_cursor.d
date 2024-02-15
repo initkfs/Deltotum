@@ -1,17 +1,11 @@
 module dm.kit.inputs.cursors.empty_cursor;
 
-//TODO move cursor and mouse
-import dm.com.inputs.cursors.com_cursor: ComCursor;
-import dm.kit.inputs.cursors.system_cursor: SystemCursor;
+import dm.kit.inputs.cursors.cursor: Cursor;
 
 /**
  * Authors: initkfs
  */
-class EmptyCursor : SystemCursor
+class EmptyCursor : Cursor
 {
-    this(ComCursor defaultCursor)
-    {
-        super(defaultCursor);
-    }
-    
+  
 }

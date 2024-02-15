@@ -106,6 +106,12 @@ class SdlApplication : ContinuouslyApplication
             return isExit;
         }
 
+        if(isHeadless){
+            import std.process: environment;
+            environment["SDL_VIDEODRIVER"] = "dummy";
+            uservices.logger.trace("Headless mode enabled");
+        }
+
         profile("Start SDL backend");
 
         initLoop(mainLoop);
@@ -173,10 +179,10 @@ class SdlApplication : ContinuouslyApplication
         auto sdlClipboard = new SdlClipboard;
         auto clipboard = new Clipboard(sdlClipboard);
 
-        import dm.kit.inputs.cursors.system_cursor : SystemCursor;
+        import dm.kit.inputs.cursors.cursor : Cursor;
         import dm.back.sdl2.sdl_cursor : SDLCursor;
 
-        SystemCursor cursor;
+        Cursor cursor;
         try
         {
             import dm.back.sdl2.sdl_cursor : SDLCursor;
@@ -188,6 +194,8 @@ class SdlApplication : ContinuouslyApplication
             }
             else
             {
+                import dm.kit.inputs.cursors.system_cursor : SystemCursor;
+
                 cursor = new SystemCursor(sdlCursor);
                 cursor.cursorFactory = (type) {
                     auto newCursor = new SDLCursor(type);
@@ -198,8 +206,15 @@ class SdlApplication : ContinuouslyApplication
         }
         catch (Exception e)
         {
-            uservices.logger.warningf("Cursor error: %s", e);
-            cursor = new SystemCursor(null);
+            uservices.logger.warning("Cursor error: ", e);
+        }
+
+        if (!cursor)
+        {
+            import dm.kit.inputs.cursors.empty_cursor : EmptyCursor;
+
+            uservices.logger.warning("Create empty cursor");
+            cursor = new EmptyCursor;
         }
 
         _timer = newTimer;
@@ -505,7 +520,13 @@ class SdlApplication : ContinuouslyApplication
 
     SdlRenderer newRenderer(SdlWindow window)
     {
-        auto sdlRenderer = new SdlRenderer(window, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE | SDL_RENDERER_PRESENTVSYNC);
+        uint flags;
+        if(!isHeadless){
+            flags |= SDL_RENDERER_ACCELERATED;
+        }
+        flags |= SDL_RENDERER_TARGETTEXTURE;
+        flags |= SDL_RENDERER_PRESENTVSYNC;
+        auto sdlRenderer = new SdlRenderer(window, flags);
         return sdlRenderer;
     }
 
@@ -652,8 +673,8 @@ class SdlApplication : ContinuouslyApplication
             import dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 
             auto comSurfProvider = Provider!ComSurface(
-                    &newComSurface,
-                    &newComSurfaceScoped
+                &newComSurface,
+                &newComSurfaceScoped
             );
             auto fontGenerator = newFontGenerator(comSurfProvider);
             windowBuilder.build(fontGenerator);
