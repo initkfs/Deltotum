@@ -84,6 +84,7 @@ class SdlApplication : ContinuouslyApplication
     }
 
     KitEventManager!(SDL_Event*) eventManager;
+    bool isScreenSaverEnabled = true;
 
     this(SdlLib lib = null,
         SdlImgLib imgLib = null,
@@ -252,6 +253,9 @@ class SdlApplication : ContinuouslyApplication
         // };
 
         // physLibForLoad.load;
+
+        sdlLib.enableScreenSaver(isScreenSaverEnabled);
+        uservices.logger.trace("Screensaver: ", sdlLib.isScreenSaverEnabled);
 
         import dm.back.sdl2.sdl_screen : SDLScreen;
 

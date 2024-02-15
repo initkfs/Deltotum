@@ -67,6 +67,22 @@ class SdlLib : SdlObject
         SDL_Quit();
     }
 
+    void enableScreenSaver(bool isEnable = true) const @nogc nothrow
+    {
+        if (isEnable)
+        {
+            SDL_EnableScreenSaver();
+            return;
+        }
+        SDL_DisableScreenSaver();
+    }
+
+    bool isScreenSaverEnabled() const @nogc nothrow
+    {
+        auto isEnabled = SDL_IsScreenSaverEnabled();
+        return typeConverter.toBool(isEnabled);
+    }
+
     string getSdlVersionInfo() const nothrow
     {
         import std.conv : text;
