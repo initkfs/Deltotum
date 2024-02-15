@@ -10,6 +10,7 @@ import dm.kit.graphics.graphics : Graphics;
 import dm.kit.inputs.input : Input;
 import dm.kit.windows.window : Window;
 import dm.kit.screens.screen : Screen;
+import dm.kit.events.kit_event_manager : KitEventManager;
 import dm.kit.apps.caps.cap_graphics : CapGraphics;
 import dm.kit.timers.timer : Timer;
 
@@ -25,6 +26,7 @@ class GraphicsComponent : UniComponent
         @Service Graphics _graphics;
         @Service Input _input;
         @Service Screen _screen;
+        @Service KitEventManager _eventManager;
         @Service CapGraphics _capGraphics;
         @Service Timer _timer;
     }
@@ -129,6 +131,25 @@ class GraphicsComponent : UniComponent
 
         enforce(screen !is null, "Screen must not be null");
         _screen = screen;
+    }
+
+    bool hasEventManager() const @nogc nothrow pure @safe
+    {
+        return _eventManager !is null;
+    }
+
+    inout(KitEventManager) eventManager() inout @nogc nothrow pure @safe
+    out (_eventManager; _eventManager !is null)
+    {
+        return _eventManager;
+    }
+
+    void eventManager(KitEventManager manager) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(manager !is null, "Event manager must not be null");
+        _eventManager = manager;
     }
 
     bool hasCapGraphics() const @nogc nothrow pure @safe

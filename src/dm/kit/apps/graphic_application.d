@@ -28,6 +28,7 @@ import dm.kit.media.audio.audio : Audio;
 import dm.kit.inputs.input : Input;
 import dm.kit.screens.screen : Screen;
 import dm.kit.timers.timer : Timer;
+import dm.kit.events.kit_event_manager : KitEventManager;
 
 import std.logger : Logger;
 import std.typecons : Nullable;
@@ -55,6 +56,8 @@ abstract class GraphicApplication : CliApplication
         Input _input;
         Screen _screen;
         Timer _timer;
+
+        KitEventManager eventManager;
     }
 
     private
@@ -166,12 +169,12 @@ abstract class GraphicApplication : CliApplication
         super.build(component.castSafe!UniComponent);
 
         component.isBuilt = false;
-
         component.audio = _audio;
         component.input = _input;
         component.screen = _screen;
         component.timer = _timer;
         component.capGraphics = gservices.capGraphics;
+        component.eventManager = eventManager;
     }
 
     override void build(UniComponent component)

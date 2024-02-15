@@ -10,30 +10,10 @@ import std.typecons : Nullable;
 /**
  * Authors: initkfs
  */
-class EventManager(E, EProcessor, Component)
+class EventManager(Component)
 {
     protected
     {
         DList!Component eventChain = DList!Component();
-        EProcessor eventProcessor;
-    }
-
-    this(EProcessor processor)
-    {
-        assert(processor);
-        this.eventProcessor = processor;
-    }
-
-    void startEvents()
-    {
-        if (eventProcessor is null)
-        {
-            return;
-        }
-    }
-
-    void process(E event)
-    {
-        eventProcessor.process(event);
     }
 }

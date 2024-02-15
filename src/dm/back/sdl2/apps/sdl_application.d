@@ -83,7 +83,7 @@ class SdlApplication : ContinuouslyApplication
         //ChipmLib chipmLib;
     }
 
-    KitEventManager!(SDL_Event*) eventManager;
+    SdlEventProcessor eventProcessor;
     bool isScreenSaverEnabled = true;
 
     this(SdlLib lib = null,
@@ -277,8 +277,49 @@ class SdlApplication : ContinuouslyApplication
         auto sdlScreen = new SDLScreen;
         _screen = new Screen(uservices.logger, sdlScreen);
 
-        auto processor = new SdlEventProcessor(keyboard);
-        eventManager = new KitEventManager!(SDL_Event*)(processor);
+        eventProcessor = new SdlEventProcessor(keyboard);
+       
+        eventManager = new KitEventManager;
+        
+        eventProcessor.onWindow = (ref windowEvent) {
+            if(eventManager.onWindow){
+                eventManager.onWindow(windowEvent);
+            }
+            eventManager.dispatchEvent(windowEvent);
+        };
+
+        eventProcessor.onPointer = (ref pointerEvent) {
+            if (eventManager.onPointer)
+            {
+                eventManager.onPointer(pointerEvent);
+            }
+            eventManager.dispatchEvent(pointerEvent);
+        };
+
+        eventProcessor.onJoystick = (ref joystickEvent) {
+            if (eventManager.onJoystick)
+            {
+                eventManager.onJoystick(joystickEvent);
+            }
+            eventManager.dispatchEvent(joystickEvent);
+        };
+
+        eventProcessor.onKey = (ref keyEvent) {
+            if (eventManager.onKey)
+            {
+                eventManager.onKey(keyEvent);
+            }
+            eventManager.dispatchEvent(keyEvent);
+        };
+
+        eventProcessor.onTextInput = (ref keyEvent) {
+            if (eventManager.onTextInput)
+            {
+                eventManager.onTextInput(keyEvent);
+            }
+            eventManager.dispatchEvent(keyEvent);
+        };
+
         eventManager.targetsProvider = (windowId) {
             auto mustBeCurrentWindow = windowManager.byFirstId(windowId);
             if (mustBeCurrentWindow.isNull)
@@ -495,8 +536,6 @@ class SdlApplication : ContinuouslyApplication
         };
 
         windowManager = new WindowManager(uservices.logger);
-
-        eventManager.startEvents;
 
         profile("SDL backends end");
 
@@ -845,7 +884,7 @@ class SdlApplication : ContinuouslyApplication
 
     void handleEvent(SDL_Event* event)
     {
-        eventManager.process(event);
+        eventProcessor.process(event);
 
         //Ctrl + C
         if (event.type == SDL_QUIT)

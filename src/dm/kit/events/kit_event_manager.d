@@ -21,7 +21,7 @@ import std.typecons : Nullable;
 /**
  * Authors: initkfs
  */
-class KitEventManager(E) : EventManager!(E, KitEventProcessor!E, Sprite)
+class KitEventManager : EventManager!(Sprite)
 {
     Nullable!(Sprite[]) delegate(long) targetsProvider;
 
@@ -30,54 +30,6 @@ class KitEventManager(E) : EventManager!(E, KitEventProcessor!E, Sprite)
     void delegate(ref WindowEvent) onWindow;
     void delegate(ref PointerEvent) onPointer;
     void delegate(ref TextInputEvent) onTextInput;
-
-    this(KitEventProcessor!E processor)
-    {
-        super(processor);
-    }
-
-    override void startEvents()
-    {
-        super.startEvents;
-
-        eventProcessor.onWindow = (ref windowEvent) {
-            if (onWindow !is null)
-            {
-                onWindow(windowEvent);
-            }
-            dispatchEvent(windowEvent);
-        };
-        eventProcessor.onPointer = (ref pointerEvent) {
-            if (onPointer !is null)
-            {
-                onPointer(pointerEvent);
-            }
-            dispatchEvent(pointerEvent);
-
-        };
-        eventProcessor.onJoystick = (ref joystickEvent) {
-            if (onJoystick !is null)
-            {
-                onJoystick(joystickEvent);
-            }
-            dispatchEvent(joystickEvent);
-        };
-        eventProcessor.onKey = (ref keyEvent) {
-            if (onKey !is null)
-            {
-                onKey(keyEvent);
-            }
-            dispatchEvent(keyEvent);
-        };
-
-        eventProcessor.onTextInput = (ref keyEvent) {
-            if (onTextInput !is null)
-            {
-                onTextInput(keyEvent);
-            }
-            dispatchEvent(keyEvent);
-        };
-    }
 
     void dispatchEvent(E)(E e)
     {
