@@ -103,4 +103,13 @@ class VectorTexture : Texture
             throw new Exception(err.toString);
         }
     }
+
+    void snapToPixel(cairo_t* cr, out double x, out double y)
+    {
+        import Math = dm.math;
+        cairo_user_to_device(cr, &x, &y);
+        x = Math.round(x);
+        y = Math.round(y);
+        cairo_device_to_user(cr, &x, &y);
+    }
 }

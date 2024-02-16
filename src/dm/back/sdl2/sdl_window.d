@@ -59,6 +59,9 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
             case none:
                 break;
         }
+
+        //flags |= SDL_WINDOW_ALLOW_HIGHDPI;
+
         ptr = SDL_CreateWindow(
             null,
             0,

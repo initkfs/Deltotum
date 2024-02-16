@@ -70,15 +70,12 @@ class VRegularPolygon : VShape
 
         cairo_close_path(cr);
 
+        cairo_stroke_preserve(cr);
+        
         if (style.isFill)
         {
             cairo_fill(cr);
         }
-        else
-        {
-            cairo_stroke(cr);
-        }
-
     }
 
     // override void drawContent()
