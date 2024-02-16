@@ -62,22 +62,8 @@ class Control : Sprite
         if (!backgroundFactory)
         {
             backgroundFactory = (width, height) {
-
-                import dm.kit.sprites.shapes.regular_polygon : RegularPolygon;
-                import dm.kit.graphics.styles.graphic_style : GraphicStyle;
-
                 GraphicStyle* currStyle = ownOrParentStyle;
-
-                GraphicStyle backgroundStyle = currStyle ? *currStyle : GraphicStyle(isBorder ? 1 : 0, graphics.theme
-                        .colorAccent, isBackground, graphics
-                        .theme.colorControlBackground);
-
-                auto background = new RegularPolygon(width, height, backgroundStyle, graphics
-                        .theme.controlCornersBevel);
-                background.id = "control_background";
-
-                background.opacity = graphics.theme.opacityControls;
-                return background;
+                return graphics.theme.background(width, height, currStyle);
             };
         }
     }
@@ -199,10 +185,15 @@ class Control : Sprite
     {
         import dm.kit.graphics.colors.rgba : RGBA;
 
-        auto currStyle = ownOrParentStyle;
-        //TODO remove switch
-        RGBA borderColor = currStyle ? currStyle.lineColor : graphics.theme.colorAccent;
-        RGBA fillColor = currStyle ? currStyle.fillColor : graphics.theme.colorControlBackground;
+        GraphicStyle style;
+        if (auto parentStyle = ownOrParentStyle)
+        {
+            style = *parentStyle;
+        }
+        else
+        {
+            style = graphics.theme.defaultStyle;
+        }
 
         if (actionType != ActionType.standard)
         {
@@ -211,20 +202,24 @@ class Control : Sprite
                 case standard:
                     break;
                 case success:
-                    borderColor = graphics.theme.colorSuccess;
-                    fillColor = borderColor;
+                    style.lineColor = graphics.theme.colorSuccess;
                     break;
                 case warning:
-                    borderColor = graphics.theme.colorWarning;
-                    fillColor = borderColor;
+                    style.lineColor = graphics.theme.colorWarning;
                     break;
                 case danger:
-                    borderColor = graphics.theme.colorDanger;
-                    fillColor = borderColor;
+                    style.lineColor = graphics.theme.colorDanger;
                     break;
             }
+
+            style.fillColor = style.lineColor;
         }
-        return GraphicStyle(isBorder ? 1 : 0, borderColor, isBackground, fillColor);
+        style.isFill = isBackground;
+        if (!isBorder)
+        {
+            style.lineWidth = 0;
+        }
+        return style;
     }
 
     protected bool createBackground(double width, double height)
@@ -252,6 +247,10 @@ class Control : Sprite
         background.isLayoutManaged = false;
 
         addCreate(background, 0);
+
+        background.id = "control_background";
+        //if done in a factory, there may be an error on uncreated textures
+        background.opacity = graphics.theme.opacityControls;
 
         return true;
     }

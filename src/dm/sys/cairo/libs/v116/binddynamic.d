@@ -54,6 +54,9 @@ extern (C) @nogc nothrow
         double width, double height);
 
     alias c_cairo_set_matrix = void function(cairo_t* cr, const cairo_matrix_t* matrix);
+
+    alias c_cairo_close_path = void function(cairo_t* cr);
+    alias c_cairo_set_antialias = void function(cairo_t *cr, cairo_antialias_t antialias);
 }
 
 __gshared
@@ -86,6 +89,9 @@ __gshared
     c_cairo_rectangle cairo_rectangle;
 
     c_cairo_set_matrix cairo_set_matrix;
+
+    c_cairo_close_path cairo_close_path;
+    c_cairo_set_antialias cairo_set_antialias;
 }
 
 class CairoLib : SysLib
@@ -142,6 +148,8 @@ class CairoLib : SysLib
         bind(cast(void**)&cairo_rectangle, "cairo_rectangle");
 
         bind(cast(void**)&cairo_set_matrix, "cairo_set_matrix");
+        bind(cast(void**)&cairo_close_path, "cairo_close_path");
+        bind(cast(void**)&cairo_set_antialias, "cairo_set_antialias");
     }
 
     override protected int needVersion()

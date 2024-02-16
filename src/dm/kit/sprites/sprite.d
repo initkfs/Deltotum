@@ -162,12 +162,12 @@ class Sprite : EventKitTarget
         bool _cached;
     }
 
-    enum double defaulttrashold = 0.01;
+    enum double defaultTrashold = 0.01;
 
-    double xChangeThreshold = defaulttrashold;
-    double yChangeThreshold = defaulttrashold;
-    double widthChangeThreshold = defaulttrashold;
-    double heightChangeThreshold = defaulttrashold;
+    double xChangeThreshold = defaultTrashold;
+    double yChangeThreshold = defaultTrashold;
+    double widthChangeThreshold = defaultTrashold;
+    double heightChangeThreshold = defaultTrashold;
 
     this() pure @safe
     {

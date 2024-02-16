@@ -90,44 +90,59 @@ class Button : Control
             assert(graphics.theme);
 
             auto style = styleFromActionType;
-            Shape object = graphics.theme.controlShape(width, height, style);
-            object.isLayoutManaged = false;
-            object.id = idControlBackground;
-            return object;
+            auto newBackground = graphics.theme.background(width, height, &style);
+            newBackground.isLayoutManaged = false;
+            newBackground.id = idControlBackground;
+            return newBackground;
         };
 
         hoverFactory = (width, height) {
             assert(graphics.theme);
 
-            auto currStyle = ownOrParentStyle;
-            auto style = currStyle ? *currStyle : GraphicStyle(1, graphics.theme.colorHover, true, graphics
-                    .theme.colorHover);
-            style.isFill = true;
-
-            Shape newHover = graphics.theme.controlShape(width, height, style);
+            GraphicStyle style;
+            if (auto parentStyle = ownOrParentStyle)
+            {
+                style = *parentStyle;
+            }
+            else
+            {
+                style = graphics.theme.defaultStyle;
+                style.lineColor = graphics
+                    .theme.colorHover;
+                style.fillColor = graphics.theme.colorHover;
+                style.isFill = true;
+            }
+        
+            Sprite newHover = graphics.theme.background(width, height, &style);
             newHover.id = idControlHover;
             newHover.isLayoutManaged = false;
             newHover.isResizedByParent = true;
             newHover.isVisible = false;
-            newHover.opacity = graphics.theme.opacityHover;
             return newHover;
         };
 
         clickEffectFactory = () {
             assert(graphics.theme);
 
-            auto currStyle = ownOrParentStyle;
-            GraphicStyle clickStyle = currStyle ? *currStyle : GraphicStyle(1, graphics
-                    .theme.colorAccent, true, graphics
-                    .theme.colorAccent);
-            clickStyle.isFill = true;
+            GraphicStyle style;
+            if (auto parentStyle = ownOrParentStyle)
+            {
+                style = *parentStyle;
+            }
+            else
+            {
+                style = graphics.theme.defaultStyle;
+                style.lineColor = graphics
+                    .theme.colorAccent;
+                style.fillColor = graphics.theme.colorAccent;
+                style.isFill = true;
+            }
 
-            Shape click = graphics.theme.controlShape(width, height, clickStyle);
+            Sprite click = graphics.theme.background(width, height, &style);
             click.id = idControlClick;
             click.isLayoutManaged = false;
             click.isResizedByParent = true;
             click.isVisible = false;
-            click.opacity = 0;
 
             return click;
         };
@@ -176,6 +191,7 @@ class Button : Control
             {
                 logger.error("Hover factory did not return the object");
             }
+            hover.opacity = graphics.theme.opacityHover;
         }
 
         if (clickEffectFactory)
@@ -189,7 +205,7 @@ class Button : Control
             {
                 logger.error("Click effect factory did not return the object");
             }
-
+            clickEffect.opacity = 0;
         }
 
         if (iconName)
@@ -352,7 +368,8 @@ class Button : Control
         }
 
         _text.text = newText;
-        if(!_text.isLayoutManaged){
+        if (!_text.isLayoutManaged)
+        {
             _text.isLayoutManaged = true;
         }
 

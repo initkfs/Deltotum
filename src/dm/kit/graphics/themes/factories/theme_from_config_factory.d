@@ -59,6 +59,8 @@ class ThemeFromConfigFactory : ApplicationUnit
             theme.opacityHover = config.getDouble("themeOpacityHover").get;
             theme.controlPadding = Insets(config.getDouble("themeControlPadding").get);
             theme.controlCornersBevel = config.getDouble("themeControlCornersBevel").get;
+
+            theme.isUseVectorGraphics = config.getBool("themeUseVectorGraphics").get;
         }
 
         return theme;
