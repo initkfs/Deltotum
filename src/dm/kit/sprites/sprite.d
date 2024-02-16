@@ -24,6 +24,8 @@ import std.math.algebraic : abs;
 import std.typecons : Nullable;
 import dm.core.utils.tostring : ToStringExclude;
 
+import Math = dm.math;
+
 struct InvalidationState
 {
     bool x, y, width, height, visible, managed, layout;
@@ -51,10 +53,11 @@ class Sprite : EventKitTarget
     Sprite parent;
 
     double angle = 0;
-    double _opacity = 1;
     double scale = 1;
     double mass = 1;
     double speed = 0;
+
+    double _opacity = 1;
 
     bool isPhysicsEnabled;
 
@@ -131,12 +134,12 @@ class Sprite : EventKitTarget
     void delegate(double, double) onChangeXOldNew;
     void delegate(double, double) onChangeYOldNew;
 
-    Object[string] userData;
-
     bool isInvalidationProcess;
     bool isValidatableChildren = true;
 
     bool isValid = true;
+
+    Object[string] userData;
 
     protected
     {
@@ -154,10 +157,17 @@ class Sprite : EventKitTarget
 
         double offsetX = 0;
         double offsetY = 0;
-        bool isDrag;
 
+        bool isDrag;
         bool _cached;
     }
+
+    enum double defaulttrashold = 0.01;
+
+    double xChangeThreshold = defaulttrashold;
+    double yChangeThreshold = defaulttrashold;
+    double widthChangeThreshold = defaulttrashold;
+    double heightChangeThreshold = defaulttrashold;
 
     this() pure @safe
     {
@@ -171,16 +181,16 @@ class Sprite : EventKitTarget
         if (!sprite.isBuilt)
         {
             build(sprite);
-            assert(sprite.isBuilt, "Sprite not built: " ~ className);
+            assert(sprite.isBuilt, "Sprite not built: " ~ sprite.className);
 
             sprite.initialize;
-            assert(sprite.isInitialized, "Sprite not initialized: " ~ className);
+            assert(sprite.isInitialized, "Sprite not initialized: " ~ sprite.className);
         }
 
         if (!sprite.isCreated)
         {
             sprite.create;
-            assert(sprite.isCreated, "Sprite not created: " ~ className);
+            assert(sprite.isCreated, "Sprite not created: " ~ sprite.className);
         }
     }
 
@@ -188,7 +198,7 @@ class Sprite : EventKitTarget
     {
         if (isCreated)
         {
-            //TODO or error?
+            logger.warning("Trying to create a sprite twice: ", className);
             return;
         }
 
@@ -202,8 +212,6 @@ class Sprite : EventKitTarget
         super.createHandlers;
 
         eventPointerHandlers ~= (ref e) {
-
-            //runListeners(e);
 
             if (e.isConsumed)
             {
@@ -239,7 +247,7 @@ class Sprite : EventKitTarget
                                 const yInParent = y - parent.y;
                                 dragInfo ~= format("In parent x:%s, y:%s.", xInParent, yInParent);
                             }
-                            writefln(dragInfo);
+                            writeln(dragInfo);
                         }
                     }
                 }
@@ -415,7 +423,7 @@ class Sprite : EventKitTarget
                 }
                 else
                 {
-                  //  isRedraw = false;
+                    //  isRedraw = false;
                 }
                 checkClip(obj);
             }
@@ -726,7 +734,6 @@ class Sprite : EventKitTarget
             }
         }
 
-        // isInvalidationProcess = false;
         setValid(true);
         invalidationState.reset;
     }
@@ -764,8 +771,6 @@ class Sprite : EventKitTarget
                 invListener();
             }
         }
-
-        //isInvalidationProcess = true;
     }
 
     void setInvalidationProcessAll(bool value)
@@ -785,7 +790,6 @@ class Sprite : EventKitTarget
         }
 
         applyLayout;
-        //isInvalidationProcess = true;
     }
 
     void update(double delta)
@@ -996,6 +1000,11 @@ class Sprite : EventKitTarget
 
     void x(double newX)
     {
+        if (!Math.greater(_x, newX, xChangeThreshold))
+        {
+            return;
+        }
+
         foreach (Sprite child; children)
         {
             if (child.isManaged)
@@ -1040,6 +1049,11 @@ class Sprite : EventKitTarget
 
     void y(double newY)
     {
+        if (!Math.greater(_y, newY, yChangeThreshold))
+        {
+            return;
+        }
+
         foreach (Sprite child; children)
         {
             if (child.isManaged)
@@ -1084,11 +1098,19 @@ class Sprite : EventKitTarget
 
     void width(double value)
     {
+        if (value < minWidth)
+        {
+            value = minWidth;
+        }
+
+        if (value > maxWidth)
+        {
+            value = maxWidth;
+        }
+
         if (
             value <= 0 ||
-            value < minWidth ||
-            value > maxWidth ||
-            _width == value)
+            !Math.greater(_width, value, widthChangeThreshold))
         {
             return;
         }
@@ -1155,13 +1177,6 @@ class Sprite : EventKitTarget
 
     void height(double value)
     {
-        //(_width != 0 && !isResizable) || 
-        if (value <= 0 ||
-            _height == value)
-        {
-            return;
-        }
-
         if (value < minHeight)
         {
             value = minHeight;
@@ -1170,6 +1185,13 @@ class Sprite : EventKitTarget
         if (value > maxHeight)
         {
             value = maxHeight;
+        }
+
+        if (
+            value <= 0 ||
+            !Math.greater(_height, value, heightChangeThreshold))
+        {
+            return;
         }
 
         if (isLayoutManaged && value > _height && !canExpandH(value - _height))
@@ -1290,22 +1312,6 @@ class Sprite : EventKitTarget
     void setInvalid() @nogc @safe pure nothrow
     {
         setValid(false);
-    }
-
-    string classnameShort()
-    {
-        string name;
-        const string fullClassName = this.classinfo.name;
-
-        import std.string : lastIndexOf;
-
-        const lastDotPosIndex = fullClassName.lastIndexOf(".");
-        if (lastDotPosIndex < 0)
-        {
-            return name;
-        }
-        name = fullClassName[lastDotPosIndex + 1 .. $];
-        return name;
     }
 
     void drawBounds()
@@ -1434,7 +1440,8 @@ class Sprite : EventKitTarget
         return Nullable!Sprite.init;
     }
 
-    bool isCanEnableInsets(){
+    bool isCanEnableInsets()
+    {
         return hasGraphics && graphics.theme;
     }
 

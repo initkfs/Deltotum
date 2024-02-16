@@ -186,6 +186,13 @@ T abs(T)(T value)
     return Abs(value);
 }
 
+//TODO mixing numeric types
+pragma(inline, true);
+bool greater(T)(T oldValue, T newValue, T eps) @nogc nothrow pure @safe
+{
+    return (abs(newValue - oldValue) > eps);
+}
+
 T factorial(T)(T n)
 {
     return (n == 0 || n == 1) ? 1 : n * factorial(n - 1);
