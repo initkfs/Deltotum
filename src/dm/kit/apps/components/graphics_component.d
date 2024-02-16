@@ -1,4 +1,4 @@
-module dm.kit.apps.comps.graphics_component;
+module dm.kit.apps.components.graphics_component;
 
 import dm.core.units.components.uni_component : UniComponent;
 

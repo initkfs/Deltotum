@@ -1,6 +1,6 @@
 module dm.kit.events.event_kit_target;
 
-import dm.kit.apps.comps.window_component : WindowComponent;
+import dm.kit.apps.components.window_component : WindowComponent;
 import dm.core.events.event_target : EventTarget;
 
 import dm.core.apps.events.application_event : ApplicationEvent;
@@ -9,12 +9,16 @@ import dm.kit.inputs.keyboards.events.key_event : KeyEvent;
 import dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import dm.kit.inputs.keyboards.events.text_input_event : TextInputEvent;
 import dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
+import dm.kit.windows.events.window_event : WindowEvent;
 
 /**
  * Authors: initkfs
  */
 class EventKitTarget : WindowComponent, EventTarget
 {
+    void delegate(ref ApplicationEvent)[] eventAppFilters;
+    void delegate(ref ApplicationEvent)[] eventAppHandlers;
+
     void delegate(ref PointerEvent)[] eventPointerFilters;
     void delegate(ref PointerEvent)[] eventPointerHandlers;
 
@@ -51,14 +55,54 @@ class EventKitTarget : WindowComponent, EventTarget
     void delegate(ref JoystickEvent)[] onJoystickButtonPress;
     void delegate(ref JoystickEvent)[] onJoystickButtonRelease;
 
+    void delegate(ref WindowEvent)[] eventWindowFilters;
+    void delegate(ref WindowEvent)[] eventWindowHandlers;
+
+    bool isCreateApplicationHandler = true;
+    bool isCreatePointerHandler = true;
+    bool isCreateKeyHandler = true;
+    bool isCreateTextInputHandler = true;
+    bool isCreateFocusHandler = true;
+    bool isCreateJoystickHandler = true;
+    bool isCreateWindowHandler = true;
+
+    protected void createHandler(E)(ref void delegate(ref E)[] handlerArray)
+    {
+        //Transferring array to another memory location?
+        handlerArray ~= (ref e) { runListeners(e); };
+    }
+
     void createHandlers()
     {
-        //TODO check duplication
-        eventPointerHandlers ~= (ref e) { runListeners(e); };
-        eventKeyHandlers ~= (ref e) { runListeners(e); };
-        eventJoystickHandlers ~= (ref e) { runListeners(e); };
-        eventFocusHandlers ~= (ref e) { runListeners(e); };
-        eventTextInputHandlers ~= (ref e) { runListeners(e); };
+        if (isCreateApplicationHandler)
+        {
+            createHandler(eventAppHandlers);
+        }
+
+        if (isCreatePointerHandler)
+        {
+            createHandler(eventPointerHandlers);
+        }
+
+        if (isCreateKeyHandler)
+        {
+            createHandler(eventKeyHandlers);
+        }
+
+        if (isCreateJoystickHandler)
+        {
+            createHandler(eventJoystickHandlers);
+        }
+
+        if (isCreateFocusHandler)
+        {
+            createHandler(eventFocusHandlers);
+        }
+
+        if (isCreateTextInputHandler)
+        {
+            createHandler(eventTextInputHandlers);
+        }
     }
 
     protected void runDelegates(E)(ref E e, void delegate(ref E)[] array)
@@ -78,101 +122,111 @@ class EventKitTarget : WindowComponent, EventTarget
 
     void runEventFilters(E)(ref E e)
     {
-        static if (is(E : PointerEvent))
+        static if (is(E : ApplicationEvent))
+        {
+            runDelegates(e, eventAppFilters);
+        }
+        else static if (is(E : PointerEvent))
         {
             runDelegates(e, eventPointerFilters);
         }
-
-        static if (is(E : KeyEvent))
+        else static if (is(E : KeyEvent))
         {
             runDelegates(e, eventKeyFilters);
         }
-
-        static if (is(E : TextInputEvent))
+        else static if (is(E : TextInputEvent))
         {
             runDelegates(e, eventTextInputFilters);
         }
-
-        static if (is(E : JoystickEvent))
+        else static if (is(E : JoystickEvent))
         {
             runDelegates(e, eventJoystickFilters);
         }
-
-        static if (is(E : FocusEvent))
+        else static if (is(E : FocusEvent))
         {
             runDelegates(e, eventFocusFilters);
+        }
+        else static if (is(E : WindowEvent))
+        {
+            runDelegates(e, eventWindowFilters);
         }
     }
 
     void runEventHandlers(E)(ref E e)
     {
-        static if (is(E : PointerEvent))
+        static if (is(E : ApplicationEvent))
+        {
+            runDelegates(e, eventAppHandlers);
+        }
+        else static if (is(E : PointerEvent))
         {
             runDelegates(e, eventPointerHandlers);
         }
-
-        static if (is(E : KeyEvent))
+        else static if (is(E : KeyEvent))
         {
             runDelegates(e, eventKeyHandlers);
         }
-
-        static if (is(E : TextInputEvent))
+        else static if (is(E : TextInputEvent))
         {
             runDelegates(e, eventTextInputHandlers);
         }
-
-        static if (is(E : JoystickEvent))
+        else static if (is(E : JoystickEvent))
         {
             runDelegates(e, eventJoystickHandlers);
         }
-
-        static if (is(E : FocusEvent))
+        else static if (is(E : FocusEvent))
         {
             runDelegates(e, eventFocusHandlers);
         }
+        else static if (is(E : WindowEvent))
+        {
+            runDelegates(e, eventWindowHandlers);
+        }
+    }
+
+    void runListeners(ref ApplicationEvent)
+    {
+
     }
 
     void runListeners(ref PointerEvent e)
     {
-        if (e.event == PointerEvent.Event.down)
+        final switch (e.event) with (PointerEvent.Event)
         {
-            runDelegates(e, onPointerDown);
-        }
-        else if (e.event == PointerEvent.Event.move)
-        {
-            runDelegates(e, onPointerMove);
-        }
-        else if (e.event == PointerEvent.Event.up)
-        {
-            runDelegates(e, onPointerUp);
-        }
-        else if (e.event == PointerEvent.Event.wheel)
-        {
-            runDelegates(e, onPointerWheel);
-        }
-        else if (e.event == PointerEvent.Event.entered)
-        {
-            runDelegates(e, onPointerEntered);
-        }
-        else if (e.event == PointerEvent.Event.exited)
-        {
-            runDelegates(e, onPointerExited);
+            case down:
+                runDelegates(e, onPointerDown);
+                break;
+            case up:
+                runDelegates(e, onPointerUp);
+                break;
+            case move:
+                runDelegates(e, onPointerMove);
+                break;
+            case wheel:
+                runDelegates(e, onPointerWheel);
+                break;
+            case entered:
+                runDelegates(e, onPointerEntered);
+                break;
+            case exited:
+                runDelegates(e, onPointerExited);
+                break;
         }
     }
 
     void runListeners(ref KeyEvent keyEvent)
     {
-        final switch (keyEvent.event) with (KeyEvent)
+        final switch (keyEvent.event) with (KeyEvent.Event)
         {
-            case Event.none:
+            case none:
                 break;
-            case Event.keyUp:
+            case keyUp:
                 if (onKeyUp.length > 0)
                 {
                     runDelegates(keyEvent, onKeyUp);
                 }
                 break;
-            case Event.keyDown:
+            case keyDown:
                 runDelegates(keyEvent, onKeyDown);
                 break;
         }
@@ -180,11 +234,12 @@ class EventKitTarget : WindowComponent, EventTarget
 
     void runListeners(ref TextInputEvent keyEvent)
     {
-        final switch (keyEvent.event) with (TextInputEvent)
+        final switch (keyEvent.event) with (
+            TextInputEvent.Event)
         {
-            case Event.none:
+            case none:
                 break;
-            case Event.input:
+            case input:
                 runDelegates(keyEvent, onTextInput);
                 break;
         }
@@ -192,17 +247,18 @@ class EventKitTarget : WindowComponent, EventTarget
 
     void runListeners(ref JoystickEvent joystickEvent)
     {
-        final switch (joystickEvent.event) with (JoystickEvent)
+        final switch (joystickEvent.event) with (
+            JoystickEvent.Event)
         {
-            case Event.none:
+            case none:
                 break;
-            case Event.press:
+            case press:
                 runDelegates(joystickEvent, onJoystickButtonPress);
                 break;
-            case Event.release:
+            case release:
                 runDelegates(joystickEvent, onJoystickButtonRelease);
                 break;
-            case Event.axis:
+            case axis:
                 runDelegates(joystickEvent, onJoystickAxis);
                 break;
         }
@@ -210,17 +266,23 @@ class EventKitTarget : WindowComponent, EventTarget
 
     void runListeners(ref FocusEvent focusEvent)
     {
-        final switch (focusEvent.event) with (FocusEvent)
+        final switch (focusEvent.event) with (
+            FocusEvent.Event)
         {
-            case Event.none:
+            case none:
                 break;
-            case Event.focusIn:
+            case focusIn:
                 runDelegates(focusEvent, onFocusIn);
                 break;
-            case Event.focusOut:
+            case focusOut:
                 runDelegates(focusEvent, onFocusOut);
                 break;
         }
+    }
+
+    void runListeners(ref WindowEvent)
+    {
+
     }
 
     void fireEvent(E)(ref E e)
@@ -237,6 +299,9 @@ class EventKitTarget : WindowComponent, EventTarget
     override void dispose()
     {
         super.dispose;
+
+        eventAppFilters = null;
+        eventAppHandlers = null;
 
         eventPointerFilters = null;
         eventPointerHandlers = null;
@@ -272,6 +337,9 @@ class EventKitTarget : WindowComponent, EventTarget
         onJoystickAxis = null;
         onJoystickButtonPress = null;
         onJoystickButtonRelease = null;
+
+        eventWindowFilters = null;
+        eventWindowHandlers = null;
     }
 
 }

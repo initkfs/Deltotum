@@ -1,6 +1,6 @@
 module dm.kit.assets.fonts.font_generator;
 
-import dm.kit.apps.comps.window_component: WindowComponent;
+import dm.kit.apps.components.window_component: WindowComponent;
 
 /**
  * Authors: initkfs

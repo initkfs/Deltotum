@@ -1,6 +1,6 @@
 module dm.kit.scenes.scene_manager;
 
-import dm.kit.apps.comps.window_component : WindowComponent;
+import dm.kit.apps.components.window_component : WindowComponent;
 import dm.kit.scenes.scene : Scene;
 
 import dm.kit.factories.creation : Creation;
@@ -72,7 +72,7 @@ class SceneManager : Scene
         interact = new Interact(dialogManager);
     }
 
-    import dm.kit.apps.comps.window_component: WindowComponent;
+    import dm.kit.apps.components.window_component: WindowComponent;
 
     alias build = WindowComponent.build;
 

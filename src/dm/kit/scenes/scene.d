@@ -1,6 +1,6 @@
 module dm.kit.scenes.scene;
 
-import dm.kit.apps.comps.window_component : WindowComponent;
+import dm.kit.apps.components.window_component : WindowComponent;
 import dm.kit.sprites.sprite : Sprite;
 import dm.kit.factories.creation : Creation;
 import dm.kit.interacts.interact : Interact;

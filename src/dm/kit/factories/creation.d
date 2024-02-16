@@ -1,6 +1,6 @@
 module dm.kit.factories.creation;
 
-import dm.kit.apps.comps.window_component: WindowComponent;
+import dm.kit.apps.components.window_component: WindowComponent;
 
 import dm.kit.factories.creation_images : CreationImages;
 import dm.kit.factories.creation_shapes: CreationShapes;
