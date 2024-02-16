@@ -106,8 +106,10 @@ class SdlApplication : ContinuouslyApplication
             return isExit;
         }
 
-        if(isHeadless){
-            import std.process: environment;
+        if (isHeadless)
+        {
+            import std.process : environment;
+
             environment["SDL_VIDEODRIVER"] = "dummy";
             uservices.logger.trace("Headless mode enabled");
         }
@@ -278,11 +280,12 @@ class SdlApplication : ContinuouslyApplication
         _screen = new Screen(uservices.logger, sdlScreen);
 
         eventProcessor = new SdlEventProcessor(keyboard);
-       
+
         eventManager = new KitEventManager;
-        
+
         eventProcessor.onWindow = (ref windowEvent) {
-            if(eventManager.onWindow){
+            if (eventManager.onWindow)
+            {
                 eventManager.onWindow(windowEvent);
             }
             eventManager.dispatchEvent(windowEvent);
@@ -560,7 +563,8 @@ class SdlApplication : ContinuouslyApplication
     SdlRenderer newRenderer(SdlWindow window)
     {
         uint flags;
-        if(!isHeadless){
+        if (!isHeadless)
+        {
             flags |= SDL_RENDERER_ACCELERATED;
         }
         flags |= SDL_RENDERER_TARGETTEXTURE;
@@ -740,12 +744,23 @@ class SdlApplication : ContinuouslyApplication
         //Rebuilding window with all services
         windowBuilder.build(window);
 
+        import KitConfigKeys = dm.kit.kit_config_keys;
+
+        if (uservices.config.containsKey(KitConfigKeys.debugScene))
+        {
+            auto mustBeDebug = uservices.config.getBool(KitConfigKeys.debugScene);
+            if (!mustBeDebug.isNull && mustBeDebug.get)
+            {
+                import dm.gui.supports.editors.guieditor : GuiEditor;
+
+                window.scenes.addCreate(new GuiEditor);
+            }
+        }
+
         debug
         {
             //TODO config, lazy delegate
-            import dm.gui.supports.editors.guieditor : GuiEditor;
 
-            window.scenes.addCreate(new GuiEditor);
         }
 
         window.onAfterDestroy ~= () {

@@ -271,7 +271,7 @@ class Control : Sprite
             return;
         }
 
-        if (width > 0 && height > 0)
+        if (!background && width > 0 && height > 0)
         {
             createBackground(width - backgroundInsets.width, height - backgroundInsets.height);
         }

@@ -27,7 +27,7 @@ class Texture : Sprite
         //hack to reduce memory leak
         double oldChangedWidth = 0;
         double oldChangedHeight = 0;
-        double changeSizeDelta = 10;
+        double changeSizeDelta = 5;
     }
 
     this()
@@ -188,7 +188,7 @@ class Texture : Sprite
         }
         import Math = dm.math;
 
-        if (texture && Math.abs(oldChangedWidth - value) > changeSizeDelta)
+        if (texture && texture.isCreated && Math.abs(oldChangedWidth - value) > changeSizeDelta)
         {
             recreate;
             oldChangedWidth = width;
@@ -218,7 +218,6 @@ class Texture : Sprite
 
     override void recreate()
     {
-        //isCreated = false;
         create;
     }
 

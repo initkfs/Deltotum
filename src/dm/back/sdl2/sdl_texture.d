@@ -495,6 +495,10 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
+    bool isCreated() nothrow {
+        return ptr !is null;
+    }
+
     override protected bool disposePtr() @nogc nothrow
     {
         if (ptr)

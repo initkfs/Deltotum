@@ -13,6 +13,7 @@ import dm.com.graphics.com_surface : ComSurface;
  */
 interface ComTexture : Destroyable
 {
+    bool isCreated() nothrow;
     bool isLocked() nothrow;
     ComResult fromSurface(ComSurface surface) nothrow;
     ComResult recreatePtr(void* newPtr) nothrow;

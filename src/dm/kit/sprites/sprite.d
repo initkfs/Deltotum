@@ -198,7 +198,7 @@ class Sprite : EventKitTarget
     {
         if (isCreated)
         {
-            logger.warning("Trying to create a sprite twice: ", className);
+            //logger.warning("Trying to create a sprite twice: ", className);
             return;
         }
 

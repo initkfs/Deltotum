@@ -15,8 +15,5 @@ class VShape : VectorTexture
     {
         super(width, height);
         this.style = style;
-
-        //TODO exception
-        isResizable = false;
     }
 }

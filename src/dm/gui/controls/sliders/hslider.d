@@ -34,14 +34,18 @@ class HSlider : BaseSlider
             import dm.kit.sprites.shapes.regular_polygon : RegularPolygon;
             import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
-            auto currStyle = ownOrParentStyle;
+            auto style = graphics.theme.defaultStyle;
+            if(auto currStylePtr = ownOrParentStyle){
+                style = *currStylePtr;
+            }else {
+                style.lineColor = graphics.theme.colorAccent;
+                style.fillColor = graphics.theme.colorAccent;
+            }
 
-            auto style = currStyle ? *currStyle : GraphicStyle(1, graphics.theme.colorAccent, true, graphics
-                    .theme.colorAccent);
+            //TODO from parent style?
             style.isFill = true;
 
-            auto node = new RegularPolygon(30, height, style, graphics
-                    .theme.controlCornersBevel);
+            auto node = graphics.theme.background(30, height, &style);
             return node;
         };
     }

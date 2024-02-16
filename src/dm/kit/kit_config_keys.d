@@ -13,3 +13,5 @@ enum backendIsIconPackEnabled = "backendIsIconPackEnabled";
 
 enum fontSystemDefaultDir = "fontSystemDefaultDir";
 enum fontDefaultTTFFile = "fontDefaultTTFFile";
+
+enum debugScene = "debugScene";

@@ -97,7 +97,10 @@ class SceneView : VBox
         import dm.kit.graphics.styles.graphic_style : GraphicStyle;
         import dm.kit.graphics.colors.rgba : RGBA;
 
-        style = new GraphicStyle(1, RGBA.web("#DDCC66"), false, RGBA.web("#ffb641"));
+        style = graphics.theme.newDefaultStyle;
+        style.lineColor =  RGBA.web("#DDCC66");
+        style.fillColor = RGBA.web("#ffb641");
+        style.isFill = false;
 
         auto infoContainer = new HBox;
         infoContainer.layout.isAlignY = true;

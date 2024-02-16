@@ -28,6 +28,7 @@ class VectorTexture : Texture
     {
         this.width = width;
         this.height = height;
+        isResizable = true;
     }
 
     override void color(RGBA color)
@@ -58,6 +59,16 @@ class VectorTexture : Texture
     {
         import dm.sys.cairo.libs : cairo_format_t;
 
+        if (cairoSurface)
+        {
+            cairoSurface.dispose;
+        }
+
+        if (cairoContext)
+        {
+            cairoContext.dispose;
+        }
+
         cairoSurface = new CairoSurface(cast(ubyte*) comSurface.pixels, cairo_format_t
                 .CAIRO_FORMAT_ARGB32, cast(int) width, cast(int) height, comSurface.pitch);
 
@@ -72,6 +83,19 @@ class VectorTexture : Texture
         {
             createTempSurface;
         }
+        else
+        {
+            comSurface.dispose;
+            createTempSurface;
+            //TODO bug
+            // if (width > 0 && height > 0)
+            // {
+            //     bool isResized;
+            //     if(const err = comSurface.resize(cast(int) width, cast(int) height, isResized)){
+            //         logger.error(err.toString);
+            //     }
+            // }
+        }
 
         //TODO separate
         if (!cairoSurface || !cairoContext)
@@ -81,7 +105,11 @@ class VectorTexture : Texture
 
         createTextureContent;
 
-        texture = graphics.comTextureProvider.getNew();
+        if (!texture)
+        {
+            texture = graphics.comTextureProvider.getNew();
+        }
+
         //TODO toInt?
         const createErr = texture.fromSurface(comSurface);
         if (createErr)
@@ -91,11 +119,7 @@ class VectorTexture : Texture
 
         scope (exit)
         {
-            comSurface.dispose;
-            comSurface = null;
-
-            cairoSurface.dispose;
-            cairoContext.dispose;
+            disposeContext;
         }
 
         if (const err = texture.setBlendModeBlend)
@@ -104,9 +128,36 @@ class VectorTexture : Texture
         }
     }
 
+    void disposeContext()
+    {
+        if (cairoSurface)
+        {
+            cairoSurface.dispose;
+            cairoSurface = null;
+        }
+
+        if (cairoContext)
+        {
+            cairoContext.dispose;
+            cairoContext = null;
+        }
+    }
+
+    override void dispose()
+    {
+        super.dispose;
+        disposeContext;
+        if (comSurface)
+        {
+            comSurface.dispose;
+            comSurface = null;
+        }
+    }
+
     void snapToPixel(cairo_t* cr, out double x, out double y)
     {
         import Math = dm.math;
+
         cairo_user_to_device(cr, &x, &y);
         x = Math.round(x);
         y = Math.round(y);

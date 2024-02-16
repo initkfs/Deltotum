@@ -73,6 +73,11 @@ class Theme
         return data;
     }
 
+    GraphicStyle* newDefaultStyle()
+    {
+        return new GraphicStyle(lineThickness, colorAccent, false, colorControlBackground);
+    }
+
     GraphicStyle defaultStyle()
     {
         GraphicStyle style = GraphicStyle(lineThickness, colorAccent, false, colorControlBackground);
