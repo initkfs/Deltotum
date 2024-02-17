@@ -44,13 +44,14 @@ class Theme
 
     size_t iconSize = 24;
 
-    bool isUseVectorGraphics;
     int lineThickness = 3;
 
     Insets controlPadding = Insets(5, 5, 5, 5);
     double controlSpacing = 5;
     double controlCornersBevel = 8;
     GraphicStyle controlStyle = GraphicStyle.simple;
+
+    bool isUseVectorGraphics;
 
     this(Font defaultMediumFont, IconPack iconPack)
     {

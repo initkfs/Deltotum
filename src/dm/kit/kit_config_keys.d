@@ -15,3 +15,4 @@ enum fontSystemDefaultDir = "fontSystemDefaultDir";
 enum fontDefaultTTFFile = "fontDefaultTTFFile";
 
 enum debugScene = "debugScene";
+enum useVectorGraphics = "useVectorGraphics";

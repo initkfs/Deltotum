@@ -226,11 +226,31 @@ class SdlApplication : ContinuouslyApplication
 
         profile("Graphics services loaded");
 
+        //TODO lazy load with config value
         auto cairoLibForLoad = new CairoLib;
 
         cairoLibForLoad.onAfterLoad = () {
             cairoLib = cairoLibForLoad;
-            gservices.capGraphics.isVectorGraphics = true;
+
+            import KitConfigKeys = dm.kit.kit_config_keys;
+
+            if (uservices.config.containsKey(KitConfigKeys.useVectorGraphics))
+            {
+                const mustBeIsUseVector = uservices.config.getBool(
+                    KitConfigKeys.useVectorGraphics);
+                if (!mustBeIsUseVector.isNull)
+                {
+                    const bool isUseVector = mustBeIsUseVector.get;
+                    gservices.capGraphics.isVectorGraphics = isUseVector;
+                    uservices.logger.trace("Found using vector graphics from config: ", isUseVector);
+                }
+                else
+                {
+                    uservices.logger.error("Found using vector graphics key, but not value: ", KitConfigKeys
+                            .useVectorGraphics);
+                }
+            }
+
             uservices.logger.trace("Load Cairo library.");
         };
 

@@ -15,6 +15,7 @@ import dm.kit.sprites.events.focus.focus_event : FocusEvent;
 import dm.kit.inputs.keyboards.events.text_input_event : TextInputEvent;
 import dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import dm.kit.graphics.contexts.graphics_context : GraphicsContext;
 import dm.core.utils.tostring;
 
 import std.container : DList;
@@ -145,6 +146,7 @@ class Sprite : EventKitTarget
     {
         RgbaTexture _cache;
         Sprite _hitbox;
+        GraphicsContext _gContext;
     }
 
     private
@@ -270,6 +272,19 @@ class Sprite : EventKitTarget
         };
 
         isCreated = true;
+    }
+
+    GraphicsContext newGraphicContext()
+    {
+        import dm.kit.graphics.contexts.renderer_graphics_context : RendererGraphicsContext;
+
+        return new RendererGraphicsContext(this.graphics);
+    }
+
+    void createGraphicsContext()
+    {
+        _gContext = newGraphicContext;
+        assert(_gContext);
     }
 
     void dispatchEvent(Target : Sprite, Event)(Event e, ref DList!Target chain)
@@ -1700,6 +1715,18 @@ class Sprite : EventKitTarget
     void opacity(double value)
     {
         _opacity = value;
+    }
+
+    GraphicsContext gContext()
+    out (_gContext; _gContext !is null)
+    {
+        return _gContext;
+    }
+
+    void gContext(GraphicsContext context)
+    in (context !is null)
+    {
+        _gContext = context;
     }
 
 }
