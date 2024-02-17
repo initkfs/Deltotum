@@ -22,6 +22,7 @@ class Control : Sprite
 
     string actionType = ActionType.standard;
 
+    bool isCreateBackgroundFactory = true;
     Insets backgroundInsets;
     Sprite delegate(double, double) backgroundFactory;
 
@@ -59,13 +60,43 @@ class Control : Sprite
             checkBackground;
         };
 
-        if (!backgroundFactory)
+        if (!backgroundFactory && isCreateBackgroundFactory)
         {
-            backgroundFactory = (width, height) {
-                GraphicStyle* currStyle = ownOrParentStyle;
-                return graphics.theme.background(width, height, currStyle);
-            };
+            backgroundFactory = createBackgroundFactory;
         }
+    }
+
+    Sprite delegate(double, double) createBackgroundFactory()
+    {
+        return (w, h) {
+            return createDefaultShape(w, h);
+        };
+    }
+
+    protected GraphicStyle createDefaultStyle(double w, double h)
+    {
+        GraphicStyle newStyle;
+        if (auto parentPtr = ownOrParentStyle)
+        {
+            newStyle = *parentPtr;
+            newStyle.isNested = true;
+        }
+        else
+        {
+            newStyle = GraphicStyle(graphics.theme.lineThickness, graphics.theme.colorAccent, isBackground, graphics
+                    .theme.colorControlBackground);
+        }
+        return newStyle;
+    }
+
+    protected Sprite createDefaultShape(double w, double h)
+    {
+        return createDefaultShape(w, h, createDefaultStyle(w, h));
+    }
+
+    protected Sprite createDefaultShape(double width, double height, GraphicStyle style)
+    {
+        return graphics.theme.background(width, height, &style);
     }
 
     alias build = Sprite.build;

@@ -320,7 +320,7 @@ class Sprite : EventKitTarget
                 return;
             }
 
-            if (bounds.contains(e.x, e.y))
+            if (containsPoint(e.x, e.y))
             {
                 if (e.event == PointerEvent.Event.move)
                 {
@@ -387,7 +387,7 @@ class Sprite : EventKitTarget
         {
             if (e.isChained)
             {
-                if (bounds.contains(e.x, e.y))
+                if (containsPoint(e.x, e.y))
                 {
                     if (!isFocus && e.event == FocusEvent.Event.focusIn)
                     {
@@ -893,15 +893,24 @@ class Sprite : EventKitTarget
         }
     }
 
+    bool containsPoint(double x, double y)
+    {
+        return bounds.contains(x, y);
+    }
+
+    bool intersectBounds(Sprite other)
+    {
+        return bounds.intersect(other.bounds);
+    }
+
     bool intersect(Sprite other)
     {
         if (!hitbox && !other.hitbox)
         {
-            return bounds.intersect(other.bounds);
+            return intersectBounds(other);
         }
 
         return hitbox.intersect(other.hitbox);
-
     }
 
     void checkCollisions()

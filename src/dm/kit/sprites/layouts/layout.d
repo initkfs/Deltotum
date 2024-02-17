@@ -63,4 +63,22 @@ abstract class Layout
         isResizeParent = isResize;
         isResizeChildren = isResize;
     }
+
+    void isAlignOneChild(bool isAlign) pure @safe
+    {
+        isAlignXifOneChild = isAlign;
+        isAlignYifOneChild = isAlign;
+    }
+
+    void isAutoResizeAndAlignOne(bool value) pure @safe
+    {
+        isAutoResize = value;
+        isAlignOneChild = value;
+    }
+
+    void isAlign(bool value) pure @safe
+    {
+        isAlignX = value;
+        isAlignY = value;
+    }
 }

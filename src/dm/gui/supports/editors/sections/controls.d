@@ -53,12 +53,13 @@ class Controls : Control
         rootContainer.layout.isAlignY = true;
         addCreate(rootContainer);
 
-        auto btnContainer = new HBox;
+        auto btnContainer = new HBox(5);
         btnContainer.layout.isAlignY = true;
         rootContainer.addCreate(btnContainer);
         btnContainer.enableInsets;
 
         createButtons(btnContainer);
+        createWindows(btnContainer);
 
         auto selectionContainer = new HBox;
         selectionContainer.layout.isAlignY = true;
@@ -84,11 +85,6 @@ class Controls : Control
 
         createCharts(container);
 
-        auto winContainer = new HBox(5);
-        rootContainer.addCreate(winContainer);
-        winContainer.enablePadding;
-        createWindows(winContainer);
-
         // iconsContainer.isBackground = false;
 
         // import dm.kit.sprites.images.image : Image;
@@ -107,17 +103,20 @@ class Controls : Control
         btn1.isBackground = true;
         root.addCreate(btn1);
 
-        auto btns = new Button("Success");
-        btns.actionType = Control.ActionType.success;
-        root.addCreate(btns);
+        import dm.gui.controls.buttons.round_button: RoundButton;
+        auto circleBtn = new RoundButton("Button");
+        circleBtn.isBackground = true;
+        root.addCreate(circleBtn);
 
-        auto btnw = new Button("Warning");
-        btnw.actionType = Control.ActionType.warning;
-        root.addCreate(btnw);
+        import dm.gui.controls.buttons.rhombus_button: RhombusButton;
+        auto rhBtn = new RhombusButton("Button");
+        //rhBtn.isBackground = true;
+        root.addCreate(rhBtn);
 
-        auto btnd = new Button("Danger");
-        btnd.actionType = Control.ActionType.danger;
-        root.addCreate(btnd);
+        import dm.gui.controls.buttons.target_button: TargetButton;
+        auto targetBtn = new TargetButton("Button", 100);
+        //rhBtn.isBackground = true;
+        root.addCreate(targetBtn);
     }
 
     void createSelections(Container root)
@@ -245,8 +244,11 @@ class Controls : Control
     {
         import dm.gui.controls.buttons.button : Button;
         import dm.gui.controls.choices.checkbox : CheckBox;
+        import IconName = dm.kit.graphics.themes.icons.icon_name;
 
-        auto winMin = new Button("Min");
+        import dm.gui.controls.control : Control;
+
+        auto winMin = new Button("Minimize", IconName.arrow_down_outline);
         root.addCreate(winMin);
         winMin.onAction = (ref e) {
             //TODO false,false 
@@ -255,19 +257,32 @@ class Controls : Control
             logger.trace("Window is minimized after request: ", window.isMinimized);
         };
 
-        auto winMax = new Button("Max");
+        auto winMax = new Button("Maximize", IconName.arrow_up_outline);
         root.addCreate(winMax);
+        winMax.layout.isFillFromStartToEnd = false;
         winMax.onAction = (ref e) {
             logger.trace("Window is maximized before request: ", window.isMaximized);
             window.maximize;
             logger.trace("Window is maximized after request: ", window.isMaximized);
         };
 
-        auto winRestore = new Button("Restore");
+        import dm.kit.sprites.layouts.vlayout : VLayout;
+
+        auto winRestore = new Button("Restore", IconName.push_outline);
+        winRestore.actionType = Control.ActionType.success;
+        winRestore.layout = new VLayout(5);
+        winRestore.layout.isAutoResizeAndAlignOne = true;
+        winRestore.layout.isAlignX = true;
+
         root.addCreate(winRestore);
         winRestore.onAction = (ref e) { window.restore; };
 
-        auto winFull = new Button("Fullscreen");
+        auto winFull = new Button("Fullscreen", IconName.expand_outline);
+        winFull.actionType = Control.ActionType.danger;
+        winFull.layout = new VLayout(5);
+        winFull.layout.isAutoResizeAndAlignOne = true;
+        winFull.layout.isAlignX = true;
+        winFull.layout.isFillFromStartToEnd = false;
         root.addCreate(winFull);
         winFull.onAction = (ref e) {
             auto oldValue = window.isFullScreen;
@@ -276,7 +291,8 @@ class Controls : Control
             logger.trace("Window fullscreen after request: ", window.isFullScreen);
         };
 
-        auto winDec = new Button("Decoration");
+        auto winDec = new Button("Decoration", IconName.image_outline);
+        winDec.actionType = Control.ActionType.warning;
         root.addCreate(winDec);
         winDec.onAction = (ref e) {
             auto oldValue = window.isDecorated;
@@ -285,7 +301,7 @@ class Controls : Control
             logger.trace("Window fullscreen after request: ", window.isDecorated);
         };
 
-        auto winResize = new Button("Resizable");
+        auto winResize = new Button("Resizable", IconName.resize_outline);
         root.addCreate(winResize);
         winResize.onAction = (ref e) {
             auto oldValue = window.isResizable;
