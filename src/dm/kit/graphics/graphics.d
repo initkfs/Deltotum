@@ -586,6 +586,11 @@ class Graphics : LoggableUnit
             restoreColor;
         }
 
+        fillTriangle(v01, v02, v03);
+    }
+
+    void fillTriangle(Vector2 v01, Vector2 v02, Vector2 v03)
+    {
         void scanline(const ref Vector2 v1, const ref Vector2 v2, const ref Vector2 v3, bool isFlatBottom = true)
         {
             double lineGradient1 = 0;

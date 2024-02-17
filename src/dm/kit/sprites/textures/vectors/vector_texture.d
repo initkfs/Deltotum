@@ -105,7 +105,9 @@ class VectorTexture : Texture
         }
 
         //TODO may not always be necessary
-        createGraphicsContext();
+        if(!hasGraphicsContext){
+            createGraphicsContext();
+        }
 
         createTextureContent;
 

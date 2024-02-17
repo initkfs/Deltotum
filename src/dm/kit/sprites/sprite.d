@@ -281,6 +281,11 @@ class Sprite : EventKitTarget
         return new RendererGraphicsContext(this.graphics);
     }
 
+    bool hasGraphicsContext()
+    {
+        return _gContext !is null;
+    }
+
     void createGraphicsContext()
     {
         if (_gContext)
