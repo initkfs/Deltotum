@@ -274,7 +274,7 @@ class Sprite : EventKitTarget
         isCreated = true;
     }
 
-    GraphicsContext newGraphicContext()
+    GraphicsContext newGraphicsContext()
     {
         import dm.kit.graphics.contexts.renderer_graphics_context : RendererGraphicsContext;
 
@@ -283,7 +283,11 @@ class Sprite : EventKitTarget
 
     void createGraphicsContext()
     {
-        _gContext = newGraphicContext;
+        if (_gContext)
+        {
+            throw new Exception("Graphics context already exists");
+        }
+        _gContext = newGraphicsContext;
         assert(_gContext);
     }
 

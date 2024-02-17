@@ -2,6 +2,8 @@ module dm.kit.sprites.textures.vectors.vshape;
 
 import dm.kit.sprites.textures.vectors.vector_texture : VectorTexture;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import dm.kit.graphics.contexts.graphics_context : GraphicsContext;
+import dm.kit.sprites.textures.vectors.contexts.vector_graphics_context : VectorGraphicsContext;
 
 /**
  * Authors: initkfs

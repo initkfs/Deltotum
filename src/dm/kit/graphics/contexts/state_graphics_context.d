@@ -18,4 +18,9 @@ abstract class StateGraphicsContext : GraphicsContext
         this.x = x;
         this.y = y;
     }
+
+    void reset(){
+        this.x = 0;
+        this.y = 0;
+    }
 }

@@ -2,6 +2,7 @@ module dm.kit.sprites.textures.vectors.vector_texture;
 
 import dm.kit.sprites.textures.texture : Texture;
 import dm.kit.graphics.colors.rgba : RGBA;
+import dm.kit.graphics.contexts.graphics_context : GraphicsContext;
 
 import dm.com.graphics.com_surface : ComSurface;
 
@@ -103,6 +104,9 @@ class VectorTexture : Texture
             createCairoContext;
         }
 
+        //TODO may not always be necessary
+        createGraphicsContext();
+
         createTextureContent;
 
         if (!texture)
@@ -126,6 +130,13 @@ class VectorTexture : Texture
         {
             throw new Exception(err.toString);
         }
+    }
+
+    override GraphicsContext newGraphicsContext()
+    {
+        import dm.kit.sprites.textures.vectors.contexts.vector_graphics_context : VectorGraphicsContext;
+
+        return new VectorGraphicsContext(cairoContext);
     }
 
     void disposeContext()

@@ -703,6 +703,8 @@ class SdlApplication : ContinuouslyApplication
         windowBuilder.asset = asset;
 
         auto theme = createTheme(uservices.logger, uservices.config, uservices.context, uservices.resource, asset);
+        //TODO move to createTheme method
+        theme.isUseVectorGraphics = gservices.capGraphics.isVectorGraphics;
 
         import dm.kit.graphics.graphics : Graphics;
 

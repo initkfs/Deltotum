@@ -20,61 +20,55 @@ class VRegularPolygon : VShape
     }
 
     override void createTextureContent()
-    {
-        import Math = dm.math;
+    {        
+        gContext.setColor(style.fillColor);
 
-        //TODO remove native api
-        import dm.sys.cairo.libs;
-
-        auto cr = cairoContext.getObject;
-        cairo_set_antialias(cr, cairo_antialias_t.CAIRO_ANTIALIAS_GOOD);
-
-        cairo_set_source_rgb(cr, style.fillColor.rNorm, style.fillColor.gNorm, style
-                .fillColor.bNorm);
         const lineWidth = style.lineWidth;
-        cairo_set_line_width(cr, lineWidth);
+        gContext.setLineWidth(lineWidth);
 
         const topLineEndX = width - cornerPadding;
         const topLineEndY = 0;
 
-        cairo_move_to(cr, cornerPadding, 0);
-        cairo_line_to(cr, topLineEndX, topLineEndY);
+        gContext.moveTo(cornerPadding, 0);
+        gContext.lineTo(topLineEndX, topLineEndY);
 
         const topRightCornerEndX = width;
         const topRightCornerEndY = cornerPadding;
-        cairo_line_to(cr, topRightCornerEndX, topRightCornerEndY);
+        gContext.lineTo(topRightCornerEndX, topRightCornerEndY);
 
         const rightLineEndX = width;
         const rightLineEndY = height - cornerPadding;
-        cairo_line_to(cr, rightLineEndX, rightLineEndY);
+        gContext.lineTo(rightLineEndX, rightLineEndY);
 
         const bottomRightCornerEndX = width - cornerPadding;
         const bottomRightCornerEndY = height;
-        cairo_line_to(cr, bottomRightCornerEndX, bottomRightCornerEndY);
+        gContext.lineTo(bottomRightCornerEndX, bottomRightCornerEndY);
 
         const bottomLineEndX = cornerPadding;
         const bottomLineEndY = height;
-        cairo_line_to(cr, bottomLineEndX, bottomLineEndY);
+        gContext.lineTo(bottomLineEndX, bottomLineEndY);
 
         const bottomLeftCornerEndX = 0;
         const bottomLeftCornerEndY = height - cornerPadding;
-        cairo_line_to(cr, bottomLeftCornerEndX, bottomLeftCornerEndY);
+        gContext.lineTo(bottomLeftCornerEndX, bottomLeftCornerEndY);
 
         const leftLineEndX = 0;
         const leftLineEndY = cornerPadding;
-        cairo_line_to(cr, leftLineEndX, leftLineEndY);
+        gContext.lineTo(leftLineEndX, leftLineEndY);
 
         const topLeftCornerEndX = cornerPadding;
         const topLeftCornerEndY = 0;
-        cairo_line_to(cr, topLeftCornerEndX, topLeftCornerEndY);
+        gContext.lineTo(topLeftCornerEndX, topLeftCornerEndY);
 
-        cairo_close_path(cr);
+        gContext.closePath;
 
-        cairo_stroke_preserve(cr);
-        
         if (style.isFill)
         {
-            cairo_fill(cr);
+            gContext.fill;
+        }
+        else
+        {
+            gContext.stroke;
         }
     }
 }
