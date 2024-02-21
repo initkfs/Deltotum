@@ -31,8 +31,8 @@ class TargetButton : ButtonBase
         super(text, size, size, graphicsGap, iconName);
         isCreateHoverFactory = false;
         isCreateBackgroundFactory = false;
-        isCreateClickEffectFactory = false;
-        isCreateClickEffectAnimationFactory = false;
+        isCreatePointerEffectFactory = false;
+        isCreatePointerEffectAnimationFactory = false;
         isCreateTextFactory = false;
 
         this.layout = new CenterLayout;

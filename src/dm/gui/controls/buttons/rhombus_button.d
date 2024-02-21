@@ -78,7 +78,7 @@ class RhombusButton : ButtonBase
         };
     }
 
-    override Sprite delegate() createClickEffectFactory()
+    override Sprite delegate() createPointerEffectFactory()
     {
         return () {
             assert(graphics.theme);

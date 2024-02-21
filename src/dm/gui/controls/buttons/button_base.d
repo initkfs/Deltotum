@@ -6,8 +6,6 @@ import dm.kit.sprites.shapes.shape : Shape;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import dm.kit.sprites.shapes.rectangle : Rectangle;
 import dm.gui.events.action_event : ActionEvent;
-import dm.kit.sprites.animations.object.value_transition : ValueTransition;
-import dm.kit.sprites.animations.object.property.opacity_transition : OpacityTransition;
 import dm.gui.controls.texts.text : Text;
 import dm.kit.sprites.textures.texture : Texture;
 import dm.kit.graphics.colors.rgba : RGBA;
@@ -34,14 +32,8 @@ class ButtonBase : Labeled
 
     void delegate(ref ActionEvent) onAction;
 
-    bool isCreateHoverFactory = true;
-    bool isCreateClickEffectFactory = true;
-    bool isCreateClickEffectAnimationFactory = true;
     bool isCreateTextFactory = true;
 
-    Sprite delegate(double, double) hoverFactory;
-    Sprite delegate() clickEffectFactory;
-    ValueTransition delegate() clickEffectAnimationFactory;
     Text delegate() textFactory;
 
     bool isCancel;
@@ -52,10 +44,6 @@ class ButtonBase : Labeled
 
     protected
     {
-        Sprite hover;
-        Sprite clickEffect;
-        ValueTransition clickEffectAnimation;
-
         Text _text;
 
         dstring _buttonText;
@@ -64,8 +52,6 @@ class ButtonBase : Labeled
     }
 
     string idControlBackground = "btn_background";
-    string idControlHover = "btn_hover";
-    string idControlClick = "btn_click";
 
     enum double defaultWidth = 80;
     enum double defaultHeight = 30;
@@ -100,24 +86,9 @@ class ButtonBase : Labeled
             enableInsets;
         }
 
-        if (!hoverFactory && isCreateHoverFactory)
-        {
-            hoverFactory = createHoverFactory;
-        }
-
-        if (!clickEffectFactory && isCreateClickEffectFactory)
-        {
-            clickEffectFactory = createClickEffectFactory;
-        }
-
         if (!textFactory && isCreateTextFactory)
         {
             textFactory = createTextFactory;
-        }
-
-        if (!clickEffectAnimationFactory && isCreateClickEffectAnimationFactory)
-        {
-            clickEffectAnimationFactory = createClickEffectAnimationFactory;
         }
     }
 
@@ -146,116 +117,9 @@ class ButtonBase : Labeled
         };
     }
 
-    Sprite delegate(double, double) createHoverFactory()
-    {
-        return (width, height) {
-            assert(graphics.theme);
-
-            GraphicStyle style;
-            if (auto parentStyle = ownOrParentStyle)
-            {
-                style = *parentStyle;
-            }
-            else
-            {
-                style = graphics.theme.defaultStyle;
-                style.lineColor = graphics
-                    .theme.colorHover;
-                style.fillColor = graphics.theme.colorHover;
-                style.isFill = true;
-            }
-
-            Sprite newHover = graphics.theme.background(width, height, &style);
-            newHover.id = idControlHover;
-            newHover.isLayoutManaged = false;
-            newHover.isResizedByParent = true;
-            newHover.isVisible = false;
-            return newHover;
-        };
-    }
-
-    Sprite delegate() createClickEffectFactory()
-    {
-        return () {
-            assert(graphics.theme);
-
-            GraphicStyle style;
-            if (auto parentStyle = ownOrParentStyle)
-            {
-                style = *parentStyle;
-            }
-            else
-            {
-                style = graphics.theme.defaultStyle;
-                style.lineColor = graphics
-                    .theme.colorAccent;
-                style.fillColor = graphics.theme.colorAccent;
-                style.isFill = true;
-            }
-
-            Sprite click = graphics.theme.background(width, height, &style);
-            click.id = idControlClick;
-            click.isLayoutManaged = false;
-            click.isResizedByParent = true;
-            click.isVisible = false;
-
-            return click;
-        };
-    }
-
-    ValueTransition delegate() createClickEffectAnimationFactory()
-    {
-        return () {
-            if (!clickEffect)
-            {
-                logger.error("Cannot create click effect animation, click effect is null");
-                return null;
-            }
-            auto clickEffectAnimation = new OpacityTransition(clickEffect, 50);
-            clickEffectAnimation.isLayoutManaged = false;
-            clickEffectAnimation.isCycle = false;
-            clickEffectAnimation.isInverse = true;
-            clickEffectAnimation.onEnd = () {
-                if (clickEffect !is null)
-                {
-                    clickEffect.isVisible = false;
-                }
-            };
-            return clickEffectAnimation;
-        };
-    }
-
     override void create()
     {
         super.create;
-
-        if (hoverFactory)
-        {
-            hover = hoverFactory(width, height);
-            if (hover)
-            {
-                addCreate(hover);
-            }
-            else
-            {
-                logger.error("Hover factory did not return the object");
-            }
-            hover.opacity = graphics.theme.opacityHover;
-        }
-
-        if (clickEffectFactory)
-        {
-            clickEffect = clickEffectFactory();
-            if (clickEffect)
-            {
-                addCreate(clickEffect);
-            }
-            else
-            {
-                logger.error("Click effect factory did not return the object");
-            }
-            clickEffect.opacity = 0;
-        }
 
         if (iconName)
         {
@@ -272,19 +136,6 @@ class ButtonBase : Labeled
             else
             {
                 logger.error("Text factory did not return the object");
-            }
-        }
-
-        if (clickEffect)
-        {
-            clickEffectAnimation = clickEffectAnimationFactory();
-            if (clickEffectAnimation)
-            {
-                addCreate(clickEffectAnimation);
-            }
-            else
-            {
-                logger.error("Click effect animation factory did not return the object");
             }
         }
 
@@ -326,12 +177,12 @@ class ButtonBase : Labeled
                 return;
             }
 
-            if (clickEffect && !clickEffect.isVisible)
+            if (pointerEffect && !pointerEffect.isVisible)
             {
-                clickEffect.isVisible = true;
-                if (clickEffectAnimation && !clickEffectAnimation.isRunning)
+                pointerEffect.isVisible = true;
+                if (pointerEffectAnimation && !pointerEffectAnimation.isRunning)
                 {
-                    clickEffectAnimation.run;
+                    pointerEffectAnimation.run;
                 }
 
             }

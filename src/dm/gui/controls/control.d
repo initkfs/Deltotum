@@ -7,6 +7,9 @@ import dm.kit.sprites.textures.texture : Texture;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import dm.math.geom.alignment : Alignment;
 
+import dm.kit.sprites.animations.transition : Transition;
+import dm.kit.sprites.animations.object.property.opacity_transition : OpacityTransition;
+
 /**
  * Authors: initkfs
  */
@@ -34,10 +37,31 @@ class Control : Sprite
     GraphicStyle* style;
     bool isFindStyleInParent;
 
+    enum
+    {
+        idControlHover = "control_hover",
+        idControlClick = "control_click"
+    }
+
+    bool isCreateHoverFactory;
+    bool isCreatePointerEffectFactory;
+    bool isCreatePointerEffectAnimationFactory;
+
+    Sprite delegate(double, double) hoverFactory;
+    Sprite delegate() pointerEffectFactory;
+    Transition!double delegate() pointerEffectAnimationFactory;
+
     //protected
     //{
     Sprite background;
     //}
+
+    protected
+    {
+        Sprite hover;
+        Sprite pointerEffect;
+        Transition!double pointerEffectAnimation;
+    }
 
     this() pure @safe
     {
@@ -64,12 +88,95 @@ class Control : Sprite
         {
             backgroundFactory = createBackgroundFactory;
         }
+
+        if (!hoverFactory && isCreateHoverFactory)
+        {
+            hoverFactory = createHoverFactory;
+        }
+
+        if (!pointerEffectFactory && isCreatePointerEffectFactory)
+        {
+            pointerEffectFactory = createPointerEffectFactory;
+        }
+
+        if (!pointerEffectAnimationFactory && isCreatePointerEffectAnimationFactory)
+        {
+            pointerEffectAnimationFactory = createPointerEffectAnimationFactory;
+        }
     }
 
     Sprite delegate(double, double) createBackgroundFactory()
     {
+        return (w, h) { return createDefaultShape(w, h); };
+    }
+
+    Sprite delegate(double, double) createHoverFactory()
+    {
         return (w, h) {
-            return createDefaultShape(w, h);
+            assert(graphics.theme);
+
+            GraphicStyle newStyle = createDefaultStyle(w, h);
+            if (!newStyle.isNested)
+            {
+                newStyle.lineColor = graphics
+                    .theme.colorHover;
+                newStyle.fillColor = graphics.theme.colorHover;
+                newStyle.isFill = true;
+            }
+
+            Sprite newHover = graphics.theme.background(width, height, &newStyle);
+            newHover.id = idControlHover;
+            newHover.isLayoutManaged = false;
+            newHover.isResizedByParent = true;
+            newHover.isVisible = false;
+            return newHover;
+        };
+    }
+
+    Sprite delegate() createPointerEffectFactory()
+    {
+        return () {
+            assert(graphics.theme);
+
+            GraphicStyle newStyle = createDefaultStyle(width, height);
+            if (!newStyle.isNested)
+            {
+                newStyle.lineColor = graphics
+                    .theme.colorAccent;
+                newStyle.fillColor = graphics.theme.colorAccent;
+                newStyle.isFill = true;
+            }
+
+            Sprite click = graphics.theme.background(width, height, &newStyle);
+            click.id = idControlClick;
+            click.isLayoutManaged = false;
+            click.isResizedByParent = true;
+            click.isVisible = false;
+
+            return click;
+        };
+    }
+
+    Transition!double delegate() createPointerEffectAnimationFactory()
+    {
+        return () {
+
+            if (!pointerEffect)
+            {
+                throw new Exception("Cannot create click effect animation, pointer effect is null");
+            }
+
+            auto pointerEffectAnimation = new OpacityTransition(pointerEffect, 50);
+            pointerEffectAnimation.isLayoutManaged = false;
+            pointerEffectAnimation.isCycle = false;
+            pointerEffectAnimation.isInverse = true;
+            pointerEffectAnimation.onEnd = () {
+                if (pointerEffect !is null)
+                {
+                    pointerEffect.isVisible = false;
+                }
+            };
+            return pointerEffectAnimation;
         };
     }
 
@@ -97,6 +204,63 @@ class Control : Sprite
     protected Sprite createDefaultShape(double width, double height, GraphicStyle style)
     {
         return graphics.theme.background(width, height, &style);
+    }
+
+    override void create()
+    {
+        super.create;
+
+        createBackground(width, height);
+
+        if (hoverFactory)
+        {
+            hover = hoverFactory(width, height);
+            if (hover)
+            {
+                addCreate(hover);
+                hover.opacity = graphics.theme.opacityHover;
+            }
+            else
+            {
+                logger.error("Hover factory did not return the object");
+            }
+        }
+
+        if (pointerEffect)
+        {
+            pointerEffectAnimation = pointerEffectAnimationFactory();
+            if (pointerEffectAnimation)
+            {
+                addCreate(pointerEffectAnimation);
+            }
+            else
+            {
+                logger.error("Click effect animation factory did not return the object");
+            }
+        }
+
+        if (pointerEffectFactory)
+        {
+            pointerEffect = pointerEffectFactory();
+            if (pointerEffect)
+            {
+                addCreate(pointerEffect);
+                pointerEffect.opacity = 0;
+            }
+            else
+            {
+                logger.error("Pointer effect factory did not return the object");
+            }
+        }
+
+        if(pointerEffectAnimationFactory){
+            pointerEffectAnimation = pointerEffectAnimationFactory();
+            if(pointerEffectAnimation){
+                addCreate(pointerEffectAnimation);
+            }else {
+                logger.error("Pointern animation factory did not return the object");
+            }
+        }
     }
 
     alias build = Sprite.build;
@@ -284,13 +448,6 @@ class Control : Sprite
         background.opacity = graphics.theme.opacityControls;
 
         return true;
-    }
-
-    override void create()
-    {
-        super.create;
-
-        createBackground(width, height);
     }
 
     void checkBackground()
