@@ -122,17 +122,29 @@ class Controls : Control
     void createSelections(Container root)
     {
         import dm.gui.controls.choices.toggle_switch : ToggleSwitch;
-        import dm.gui.controls.choices.checkbox : CheckBox;
+        import dm.gui.controls.checks.checkbox : CheckBox;
         import dm.gui.controls.choices.choice_box : ChoiceBox;
+
+        import Icons = dm.kit.graphics.themes.icons.icon_name;
+
+        auto checkBoxContainer = new VBox(5);
+        root.addCreate(checkBoxContainer);
+
+        auto check1 = new CheckBox("Check", Icons.bug_outline);
+        checkBoxContainer.addCreate(check1);
+        check1.isCheck = true;
+
+        auto check2 = new CheckBox("Check", Icons.bug_outline);
+        checkBoxContainer.addCreate(check2);
+        check2.layout.isFillFromStartToEnd = false;
+        check2.isCheck = true;
 
         auto switch1 = new ToggleSwitch;
         root.addCreate(switch1);
 
-        import dm.gui.controls.choices.checkbox : CheckBox;
+        import dm.gui.controls.checks.checkbox : CheckBox;
 
-        auto check1 = new CheckBox;
-        root.addCreate(check1);
-        check1.label.text = "Check";
+        
 
         import dm.gui.controls.choices.choice_box : ChoiceBox;
 
@@ -243,7 +255,7 @@ class Controls : Control
     private void createWindows(Container root)
     {
         import dm.gui.controls.buttons.button : Button;
-        import dm.gui.controls.choices.checkbox : CheckBox;
+        import dm.gui.controls.checks.checkbox : CheckBox;
         import IconName = dm.kit.graphics.themes.icons.icon_name;
 
         import dm.gui.controls.control : Control;

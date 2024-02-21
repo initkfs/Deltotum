@@ -51,6 +51,9 @@ class Control : Sprite
     Sprite delegate() pointerEffectFactory;
     Transition!double delegate() pointerEffectAnimationFactory;
 
+    void delegate() onPreControlContentCreated;
+    void delegate() onPostControlContentCreated;
+
     //protected
     //{
     Sprite background;
@@ -214,6 +217,11 @@ class Control : Sprite
 
         createBackground(width, height);
 
+        if (onPreControlContentCreated)
+        {
+            onPreControlContentCreated();
+        }
+
         if (hoverFactory)
         {
             hover = hoverFactory(width, height);
@@ -266,6 +274,11 @@ class Control : Sprite
             {
                 logger.error("Pointern animation factory did not return the object");
             }
+        }
+
+        if (onPostControlContentCreated)
+        {
+            onPostControlContentCreated();
         }
 
         createInteractiveListeners;

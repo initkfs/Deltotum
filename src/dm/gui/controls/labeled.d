@@ -6,7 +6,7 @@ import dm.kit.sprites.layouts.layout : Layout;
 import dm.kit.sprites.layouts.hlayout : HLayout;
 import dm.gui.controls.texts.text : Text;
 
-import std.traits: isSomeString;
+import std.traits : isSomeString;
 
 /**
  * Authors: initkfs
@@ -20,6 +20,9 @@ class Labeled : Control
         Sprite _icon;
         Text _text;
     }
+
+    void delegate() onPreTextCreated;
+    void delegate() onPostTextCreated;
 
     bool isCreateTextFactory;
     Text delegate() textFactory;
@@ -43,6 +46,16 @@ class Labeled : Control
         isBorder = true;
     }
 
+    override void initialize()
+    {
+        super.initialize;
+
+        if (isCreateTextFactory)
+        {
+            textFactory = createTextFactory;
+        }
+    }
+
     override void create()
     {
         super.create;
@@ -55,6 +68,10 @@ class Labeled : Control
 
         if (textFactory)
         {
+            if (onPreTextCreated)
+            {
+                onPreTextCreated();
+            }
             _text = textFactory();
             if (_text)
             {
@@ -63,6 +80,11 @@ class Labeled : Control
             else
             {
                 logger.error("Text factory did not return the object");
+            }
+
+            if (onPostTextCreated)
+            {
+                onPostTextCreated();
             }
         }
     }
@@ -75,7 +97,7 @@ class Labeled : Control
             //String can be forced to be empty
             //if (_labelText.length > 0)
             //{
-                text.text = _labelText;
+            text.text = _labelText;
             //}
 
             return text;
@@ -136,7 +158,7 @@ class Labeled : Control
             _icon.dispose;
         }
         _icon = null;
-         _iconName = null;
+        _iconName = null;
         _labelText = null;
     }
 
