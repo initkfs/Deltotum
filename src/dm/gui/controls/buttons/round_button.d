@@ -66,7 +66,7 @@ class RoundButton : ButtonBase
             build(text);
             //String can be forced to be empty
             //if (_buttonText.length > 0)
-            text.text = _buttonText;
+            text.text = _labelText;
             return text;
         };
     }

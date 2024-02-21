@@ -47,7 +47,7 @@ class Tab : Control
         };
     }
 
-    void isSelected(bool isSelected){
+    override void isSelected(bool isSelected){
         label.isSelected(isSelected);
     }
 }

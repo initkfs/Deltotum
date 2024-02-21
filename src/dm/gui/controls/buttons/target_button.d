@@ -91,7 +91,7 @@ class TargetButton : ButtonBase
     {
         super.create;
 
-        innerButton = new Button(_buttonText);
+        innerButton = new Button(_labelText);
         innerButton.onAction = this.onAction;
         //TODO best size;
         innerButton.isBackground = false;
@@ -162,7 +162,7 @@ class TargetButton : ButtonBase
         };
     }
 
-    override void createListeners()
+    override void createInteractiveListeners()
     {
         onPointerEntered ~= (ref e) {
 

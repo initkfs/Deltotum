@@ -32,24 +32,11 @@ class ButtonBase : Labeled
 
     void delegate(ref ActionEvent) onAction;
 
-    bool isCreateTextFactory = true;
-
-    Text delegate() textFactory;
-
     bool isCancel;
     void delegate() onCancel;
 
     bool isDefault;
     void delegate() onDefault;
-
-    protected
-    {
-        Text _text;
-
-        dstring _buttonText;
-        bool _selected;
-        string iconName;
-    }
 
     string idControlBackground = "btn_background";
 
@@ -74,7 +61,8 @@ class ButtonBase : Labeled
         super(iconName, graphicsGap);
         this.width = width;
         this.height = height;
-        this._buttonText = text;
+        //TODO private
+        this._labelText = text;
     }
 
     override void initialize()
@@ -105,86 +93,15 @@ class ButtonBase : Labeled
         };
     }
 
-    Text delegate() createTextFactory()
-    {
-        return () {
-            auto text = new Text();
-            build(text);
-            //String can be forced to be empty
-            //if (_buttonText.length > 0)
-            text.text = _buttonText;
-            return text;
-        };
-    }
-
     override void create()
     {
         super.create;
-
-        if (iconName)
-        {
-            addCreateIcon(iconName);
-        }
-
-        if (textFactory)
-        {
-            _text = textFactory();
-            if (_text)
-            {
-                addCreate(_text);
-            }
-            else
-            {
-                logger.error("Text factory did not return the object");
-            }
-        }
-
-        createListeners;
-    }
-
-    void createListeners()
-    {
-        onPointerEntered ~= (ref e) {
-
-            if (isDisabled || _selected)
-            {
-                return;
-            }
-
-            if (hover && !hover.isVisible)
-            {
-                hover.isVisible = true;
-            }
-        };
-
-        onPointerExited ~= (ref e) {
-
-            if (isDisabled || _selected)
-            {
-                return;
-            }
-
-            if (hover && hover.isVisible)
-            {
-                hover.isVisible = false;
-            }
-        };
 
         onPointerUp ~= (ref e) {
 
             if (isDisabled || _selected)
             {
                 return;
-            }
-
-            if (pointerEffect && !pointerEffect.isVisible)
-            {
-                pointerEffect.isVisible = true;
-                if (pointerEffectAnimation && !pointerEffectAnimation.isRunning)
-                {
-                    pointerEffectAnimation.run;
-                }
-
             }
 
             if (onAction)
@@ -245,71 +162,9 @@ class ButtonBase : Labeled
         setInvalid;
     }
 
-    void text(T)(T s) if (isSomeString!T)
-    {
-        dstring newText;
-
-        static if (!is(T : immutable(dchar[])))
-        {
-            import std.conv : to;
-
-            newText = s.to!dstring;
-        }
-        else
-        {
-            newText = s;
-        }
-
-        if (!_text)
-        {
-            _buttonText = newText;
-            setInvalid;
-            return;
-        }
-
-        _text.text = newText;
-        if (!_text.isLayoutManaged)
-        {
-            _text.isLayoutManaged = true;
-        }
-
-        setInvalid;
-    }
-
-    dstring text()
-    {
-        if (_text)
-        {
-            return _text.text;
-        }
-        return _buttonText;
-    }
-
-    bool isSelected()
-    {
-        return _selected;
-    }
-
-    void isSelected(bool isSelected)
-    {
-        // if (isDisabled)
-        // {
-        //     return;
-        // }
-        _selected = isSelected;
-        if (hover)
-        {
-            hover.isVisible = isSelected;
-            setInvalid;
-        }
-    }
-
     override void dispose()
     {
         super.dispose;
-        _buttonText = null;
-        _selected = false;
-        iconName = null;
     }
 
 }

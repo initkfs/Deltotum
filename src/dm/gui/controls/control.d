@@ -61,6 +61,8 @@ class Control : Sprite
         Sprite hover;
         Sprite pointerEffect;
         Transition!double pointerEffectAnimation;
+
+        bool _selected;
     }
 
     this() pure @safe
@@ -253,14 +255,75 @@ class Control : Sprite
             }
         }
 
-        if(pointerEffectAnimationFactory){
+        if (pointerEffectAnimationFactory)
+        {
             pointerEffectAnimation = pointerEffectAnimationFactory();
-            if(pointerEffectAnimation){
+            if (pointerEffectAnimation)
+            {
                 addCreate(pointerEffectAnimation);
-            }else {
+            }
+            else
+            {
                 logger.error("Pointern animation factory did not return the object");
             }
         }
+
+        createInteractiveListeners;
+    }
+
+    void createInteractiveListeners()
+    {
+        //TODO remove previous
+        if (hover)
+        {
+            onPointerEntered ~= (ref e) {
+
+                if (isDisabled || _selected)
+                {
+                    return;
+                }
+
+                if (hover && !hover.isVisible)
+                {
+                    hover.isVisible = true;
+                }
+            };
+
+            onPointerExited ~= (ref e) {
+
+                if (isDisabled || _selected)
+                {
+                    return;
+                }
+
+                if (hover && hover.isVisible)
+                {
+                    hover.isVisible = false;
+                }
+            };
+        }
+
+        if (pointerEffect || pointerEffectAnimation)
+        {
+            onPointerUp ~= (ref e) {
+
+                if (isDisabled || _selected)
+                {
+                    return;
+                }
+
+                if (pointerEffect && !pointerEffect.isVisible)
+                {
+                    pointerEffect.isVisible = true;
+                    if (pointerEffectAnimation && !pointerEffectAnimation.isRunning)
+                    {
+                        pointerEffectAnimation.run;
+                    }
+
+                }
+            };
+        }
+
     }
 
     alias build = Sprite.build;
@@ -463,6 +526,32 @@ class Control : Sprite
         {
             createBackground(width - backgroundInsets.width, height - backgroundInsets.height);
         }
+    }
+
+    bool isSelected()
+    {
+        return _selected;
+    }
+
+    void isSelected(bool value)
+    {
+        // if (isDisabled)
+        // {
+        //     return;
+        // }
+        _selected = value;
+        if (hover)
+        {
+            hover.isVisible = value;
+            setInvalid;
+        }
+    }
+
+    override void dispose()
+    {
+        super.dispose;
+
+        _selected = false;
     }
 
 }
