@@ -103,17 +103,20 @@ class Controls : Control
         btn1.isBackground = true;
         root.addCreate(btn1);
 
-        import dm.gui.controls.buttons.round_button: RoundButton;
+        import dm.gui.controls.buttons.round_button : RoundButton;
+
         auto circleBtn = new RoundButton("Button");
         circleBtn.isBackground = true;
         root.addCreate(circleBtn);
 
-        import dm.gui.controls.buttons.rhombus_button: RhombusButton;
+        import dm.gui.controls.buttons.rhombus_button : RhombusButton;
+
         auto rhBtn = new RhombusButton("Button");
         //rhBtn.isBackground = true;
         root.addCreate(rhBtn);
 
-        import dm.gui.controls.buttons.target_button: TargetButton;
+        import dm.gui.controls.buttons.target_button : TargetButton;
+
         auto targetBtn = new TargetButton("Button", 100);
         //rhBtn.isBackground = true;
         root.addCreate(targetBtn);
@@ -121,7 +124,6 @@ class Controls : Control
 
     void createSelections(Container root)
     {
-        import dm.gui.controls.choices.toggle_switch : ToggleSwitch;
         import dm.gui.controls.checks.checkbox : CheckBox;
         import dm.gui.controls.choices.choice_box : ChoiceBox;
 
@@ -139,12 +141,19 @@ class Controls : Control
         check2.layout.isFillFromStartToEnd = false;
         check2.isCheck = true;
 
-        auto switch1 = new ToggleSwitch;
-        root.addCreate(switch1);
+        auto toggleContainer = new VBox(5);
+        root.addCreate(toggleContainer);
 
-        import dm.gui.controls.checks.checkbox : CheckBox;
+        import dm.gui.controls.toggles.toggle_switch : ToggleSwitch;
 
-        
+        auto switch1 = new ToggleSwitch("Toggle");
+        toggleContainer.addCreate(switch1);
+
+        auto switch2 = new ToggleSwitch;
+        switch2.iconName = Icons.flash_outline;
+        switch2.isCreateTextFactory = false;
+        toggleContainer.addCreate(switch2);
+        switch2.setSwitch(true);
 
         import dm.gui.controls.choices.choice_box : ChoiceBox;
 

@@ -21,8 +21,15 @@ class Labeled : Control
         Text _text;
     }
 
+    void delegate() onPreIconCreate;
+    void delegate() onPreIconCreated;
+    void delegate() onPostIconCreated;
+    void delegate() onPostIconCreate;
+
+    void delegate() onPreTextCreate;
     void delegate() onPreTextCreated;
     void delegate() onPostTextCreated;
+    void delegate() onPostTextCreate;
 
     bool isCreateTextFactory;
     Text delegate() textFactory;
@@ -59,11 +66,33 @@ class Labeled : Control
     override void create()
     {
         super.create;
+        if (onPreIconCreate)
+        {
+            onPreIconCreate();
+        }
         if (_iconName && capGraphics.isIconPack)
         {
+            if (onPreIconCreated)
+            {
+                onPreIconCreated();
+            }
             _icon = createIcon(_iconName);
             add(icon);
             _iconName = null;
+            if (onPostIconCreated)
+            {
+                onPostIconCreated();
+            }
+        }
+
+        if (onPostIconCreate)
+        {
+            onPostIconCreate();
+        }
+
+        if (onPreTextCreate)
+        {
+            onPreTextCreate();
         }
 
         if (textFactory)
@@ -86,6 +115,11 @@ class Labeled : Control
             {
                 onPostTextCreated();
             }
+        }
+
+        if (onPostTextCreate)
+        {
+            onPostTextCreate();
         }
     }
 
@@ -148,6 +182,17 @@ class Labeled : Control
             return _text.text;
         }
         return _labelText;
+    }
+
+    string iconName()
+    {
+        return _iconName;
+    }
+
+    void iconName(string name)
+    {
+        //TODO check names
+        _iconName = name;
     }
 
     override void dispose()

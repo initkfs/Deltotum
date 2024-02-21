@@ -3,7 +3,7 @@ module dm.gui.supports.sceneview;
 import dm.gui.containers.vbox : VBox;
 import dm.gui.containers.hbox : HBox;
 import dm.gui.containers.stack_box : StackBox;
-import dm.gui.controls.choices.toggle_switch : ToggleSwitch;
+import dm.gui.controls.toggles.toggle_switch : ToggleSwitch;
 import dm.gui.controls.texts.text : Text;
 import dm.gui.controls.texts.textfield : TextField;
 import dm.kit.scenes.scene : Scene;
@@ -152,8 +152,8 @@ class SceneView : VBox
             }
         };
 
-        tb.label.text = "";
-        tb.label.addCreateIcon(IconNames.locate_outline);
+        tb.addCreateIcon(IconNames.locate_outline);
+        tb.text = "";
 
         auto fillStruct = new Button("");
         fillStruct.onAction = (ref e) { fillStructure; };

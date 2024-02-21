@@ -129,7 +129,7 @@ class Control : Sprite
                 newStyle.isFill = true;
             }
 
-            Sprite newHover = graphics.theme.background(width, height, &newStyle);
+            Sprite newHover = graphics.theme.background(w, h, &newStyle);
             newHover.id = idControlHover;
             newHover.isLayoutManaged = false;
             newHover.isResizedByParent = true;
