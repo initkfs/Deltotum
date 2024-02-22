@@ -11,7 +11,7 @@ import dm.kit.screens.screen : Screen;
 
 import std.logger.core : Logger;
 
-import dm.com.graphics.com_renderer: ComRenderer;
+import dm.com.graphics.com_renderer : ComRenderer;
 
 /**
  * Authors: initkfs
@@ -21,6 +21,11 @@ class Window : GraphicsComponent
     Window parent;
     Window delegate(dstring, int, int, int, int, Window) childWindowProvider;
     WindowManager windowManager;
+
+    //import std.container : DList;
+    //DList!(void delegate())
+    void delegate(double)[] showingTasks;
+    size_t showingTaskDelayTicks = 20;
 
     //Some delegates can be called by the event manager
     void delegate()[] onCreate;
@@ -38,7 +43,7 @@ class Window : GraphicsComponent
 
     ComRenderer renderer;
 
-    double frameRate;
+    double frameRate = 0;
 
     bool isDestroyScenes = true;
     bool isDestroyRenderer = true;
@@ -56,8 +61,10 @@ class Window : GraphicsComponent
 
     private
     {
-        double lastChangedWidth;
-        double lastChangedHeight;
+        double lastChangedWidth = 0;
+        double lastChangedHeight = 0;
+
+        double lastShowingTick = 0;
     }
 
     this(ComWindow window)
@@ -142,6 +149,7 @@ class Window : GraphicsComponent
         }
 
         isShowing = true;
+        showingTaskDelayTicks = 0;
         //TODO from config
         focusRequest;
 
@@ -174,6 +182,7 @@ class Window : GraphicsComponent
         }
 
         isShowing = false;
+        showingTaskDelayTicks = 0;
 
         logger.tracef("Hide window '%s' with id %d", title, id);
     }
@@ -449,12 +458,14 @@ class Window : GraphicsComponent
         return index.to!int;
     }
 
-    override void run(){
+    override void run()
+    {
         super.run;
         scenes.run;
     }
 
-    override void stop(){
+    override void stop()
+    {
         super.stop;
         scenes.stop;
     }
@@ -466,7 +477,22 @@ class Window : GraphicsComponent
 
     void update(double delta)
     {
-       scenes.update(delta);
+        scenes.update(delta);
+        if (isShowing && showingTasks.length > 0)
+        {
+            lastShowingTick++;
+            if (lastShowingTick >= showingTaskDelayTicks)
+            {
+                lastShowingTick = 0;
+                foreach (task; showingTasks)
+                {
+                    task(delta);
+                }
+                import std;
+                writeln("RUN Microtasks");
+                showingTasks = null;
+            }
+        }
     }
 
     Window newChildWindow(dstring title = "New window", int width = 450, int height = 200, int x = -1, int y = -1)

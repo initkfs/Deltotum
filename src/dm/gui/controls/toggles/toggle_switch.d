@@ -212,13 +212,13 @@ class ToggleSwitch : Labeled
             }
         }
 
-        if (switchOffAnimationFactory !is null)
+        if (switchOffAnimationFactory)
         {
             switchOffAnimation = switchOffAnimationFactory();
             switchContainer.addCreate(switchOffAnimation);
         }
 
-        if (switchOnAnimationFactory !is null)
+        if (switchOnAnimationFactory)
         {
             switchOnAnimation = switchOnAnimationFactory();
             switchContainer.addCreate(switchOnAnimation);
@@ -256,11 +256,13 @@ class ToggleSwitch : Labeled
         if (switchOnAnimation && !switchOnAnimation.isRunning)
         {
             const b = switchContainer.bounds;
-            switchOnAnimation.minValue = Vector2(b.x + switchContainer.padding.left, b
+            const minValue = Vector2(b.x + switchContainer.padding.left, b
                     .y);
-            switchOnAnimation.maxValue = Vector2(
+            const maxValue = Vector2(
                 b.right - switchHandle.width - switchContainer.padding.right, b
                     .y);
+            switchOnAnimation.minValue = minValue;
+            switchOnAnimation.maxValue = maxValue;
             switchOnAnimation.run;
         }
 
@@ -315,14 +317,31 @@ class ToggleSwitch : Labeled
 
     void setSwitch(bool value, bool isRunListeners = true)
     {
-        if (value)
+        if (window && window.isShowing)
         {
-            setSwitchOn(isRunListeners);
+            if (value)
+            {
+                setSwitchOn(isRunListeners);
+            }
+            else
+            {
+                setSwitchOff(isRunListeners);
+            }
         }
         else
         {
-            setSwitchOff(isRunListeners);
+            window.showingTasks ~= (dt) {
+                if (value)
+                {
+                    setSwitchOn(isRunListeners);
+                }
+                else
+                {
+                    setSwitchOff(isRunListeners);
+                }
+            };
         }
+
     }
 
 }
