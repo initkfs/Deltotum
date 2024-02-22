@@ -1,52 +1,34 @@
-module dm.gui.controls.data.tree_table_view;
+module dm.gui.controls.trees.tree_row;
 
-import dm.gui.controls.control : Control;
-import dm.gui.containers.scroll_box : ScrollBox;
+import dm.kit.sprites.sprite: Sprite;
 import dm.gui.containers.container : Container;
-import dm.gui.containers.vbox : VBox;
-import dm.gui.containers.hbox : HBox;
-import dm.gui.containers.stack_box : StackBox;
-import dm.gui.controls.sliders.hslider : HSlider;
-import dm.gui.controls.sliders.vslider : VSlider;
-import dm.kit.sprites.sprite : Sprite;
-import dm.math.geom.insets : Insets;
-import dm.math.shapes.rect2d : Rect2d;
-import dm.gui.controls.buttons.button : Button;
-import dm.gui.controls.texts.text : Text;
+import dm.gui.controls.texts.text: Text;
 
-class TreeItem(T)
-{
-    T item;
-    TreeItem!T[] children;
+import dm.gui.controls.trees.tree_item: TreeItem;
 
-    this(T item, TreeItem!T[] children = null)
-    {
-        this.item = item;
-        this.children = children;
-    }
-}
-
-class TableRow(T) : Container
+/**
+ * Authors: initkfs
+ */
+class TreeRow(T) : Container
 {
     TreeItem!T item;
+    TreeRow!T[] children;
 
     void delegate() onSelected;
+    void delegate() onExpand;
+
+    size_t treeLevel;
 
     bool isExpand;
-    size_t treeLevel;
     bool isFirst;
     bool isLast;
-
-    TableRow!T[] children;
 
     dstring expandSymbol = "▶";
     dstring hidingSymbol = "▼";
 
+    Text itemLabel;
     Text levelLabel;
-
     Text expandButton;
-
-    void delegate() onExpand;
 
     this(TreeItem!T item, bool isExpand = false, size_t treeLevel = 0)
     {
@@ -70,7 +52,7 @@ class TableRow(T) : Container
         isLayoutManaged = value;
     }
 
-    void setButtonText()
+    protected void setButtonText()
     {
         if (expandButton)
         {
@@ -78,7 +60,7 @@ class TableRow(T) : Container
         }
     }
 
-    protected void toggleTreeBranch(TableRow!T row, bool isExpandRow)
+    protected void toggleTreeBranch(TreeRow!T row, bool isExpandRow)
     {
         row.expand(isExpandRow);
         if (row.children.length > 0)
@@ -96,6 +78,8 @@ class TableRow(T) : Container
         super.create;
         import dm.gui.controls.texts.text : Text;
         import dm.math.geom.insets : Insets;
+
+        //TODO recreate
 
         onPointerDown ~= (ref e) {
             if (onSelected)
@@ -153,15 +137,15 @@ class TableRow(T) : Container
             string text = sprite.id.length > 0 ? sprite.id : sprite.classNameShort;
         }
 
-        auto t = new Text(text);
-        t.isFocusable = false;
+        itemLabel = new Text(text);
+        itemLabel.isFocusable = false;
         //if (!expandButton)
         //{
         //enum buttonWidthOffset = 5;
         //t.margin = Insets(0, 0, 0, buttonWidthOffset * treeLevel);
         //}
-        addCreate(t);
-        t.padding = Insets(0);
+        addCreate(itemLabel);
+        itemLabel.padding = Insets(0);
 
         if (item.children.length > 0)
         {
@@ -172,6 +156,10 @@ class TableRow(T) : Container
     //TODO hack, remove duplication
     void setLastRowLabel()
     {
+        if(!levelLabel){
+            return;
+        }
+
         dstring levelSymbol = "└";
         dstring text = levelSymbol;
         if (treeLevel > 0)
@@ -186,107 +174,4 @@ class TableRow(T) : Container
     }
 }
 
-/**
- * Authors: initkfs
- */
-class TreeTableView(T) : ScrollBox
-{
-    TableRow!T[] rows;
 
-    T initValue;
-
-    VBox rowContainer;
-
-    void delegate(T oldItem, T newItem) onSelectedOldNew;
-
-    TableRow!T currentSelected;
-
-    this(T initValue = null)
-    {
-        isBorder = true;
-        this.initValue = initValue;
-    }
-
-    override void create()
-    {
-        super.create;
-
-        rowContainer = new VBox(0);
-        setContent(rowContainer);
-        rowContainer.enablePadding;
-    }
-
-    void buildTree(Sprite root, TreeItem!T item, TableRow!T parent = null, size_t treeLevel = 0)
-    {
-        const canExpand = item.children.length > 0 ? true : false;
-        auto row = new TableRow!T(item, canExpand, treeLevel);
-        row.isExpand = true;
-        if (parent)
-        {
-            parent.children ~= row;
-        }
-        root.addCreate(row);
-        rows ~= row;
-        row.padding = Insets(0);
-        row.onSelected = () {
-            if (row is currentSelected)
-            {
-                return;
-            }
-            auto oldSelected = currentSelected !is null ? currentSelected.item.item : initValue;
-            currentSelected = row;
-            if (onSelectedOldNew)
-            {
-                onSelectedOldNew(oldSelected, currentSelected.item.item);
-            }
-        };
-        if (item.children.length > 0)
-        {
-            treeLevel++;
-            foreach (ch; item.children)
-            {
-                buildTree(root, ch, row, treeLevel);
-            }
-        }
-    }
-
-    bool clear()
-    {
-        if (rows.length == 0)
-        {
-            return false;
-        }
-
-        rows = [];
-        rowContainer.removeAll;
-
-        return true;
-    }
-
-    private void verifyRows()
-    {
-        if (rows.length > 0)
-        {
-            auto lastRow = rows[$ - 1];
-            lastRow.setLastRowLabel;
-        }
-    }
-
-    void fill(TreeItem!T[] items)
-    {
-        clear;
-
-        foreach (TreeItem!T item; items)
-        {
-            buildTree(contentRoot, item);
-        }
-        verifyRows;
-    }
-
-    void fill(TreeItem!T item)
-    {
-        clear;
-        buildTree(contentRoot, item);
-        verifyRows;
-    }
-}

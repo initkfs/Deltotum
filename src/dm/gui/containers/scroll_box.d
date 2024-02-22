@@ -12,23 +12,46 @@ import dm.gui.controls.sliders.vslider : VSlider;
 import dm.kit.sprites.sprite : Sprite;
 import dm.math.geom.insets : Insets;
 
+enum ScrollBarPolicy
+{
+    never,
+    always,
+    ifneed
+}
+
 /**
  * Authors: initkfs
  */
-class ScrollBox : VBox
+class ScrollBox : Container
 {
     protected
     {
         VSlider vslider;
         HSlider hslider;
-        StackBox content;
-        HBox contentContainer;
+        Container content;
+        Container contentContainer;
         Sprite contentRoot;
+
+        enum {
+            idVscroll = "scb_scroll_v",
+            idHscroll = "scb_scroll_h"
+        }
+
+        ScrollBarPolicy _vScrollPolicy = ScrollBarPolicy.ifneed;
+        ScrollBarPolicy _hScrollPolicy = ScrollBarPolicy.ifneed;
     }
 
-    this()
+    this(double width = 100, double height = 100)
     {
+        this.width = width;
+        this.height = height;
 
+        import dm.kit.sprites.layouts.vlayout : VLayout;
+
+        isBorder = true;
+        layout = new VLayout(0);
+        layout.isAlignX = false;
+        layout.isAutoResize = true;
     }
 
     override void initialize()
@@ -40,25 +63,42 @@ class ScrollBox : VBox
     {
         super.create;
 
+        invalidateListeners ~= () {
+            if (!isCreated)
+            {
+                return;
+            }
+            checkScrolls;
+            updateClip;
+        };
+
         padding = Insets(0);
-        spacing = 0;
 
         contentContainer = new HBox(0);
+        contentContainer.isGrow = true;
         addCreate(contentContainer);
         contentContainer.padding = Insets(0);
 
         content = new StackBox;
+        content.isGrow = true;
         contentContainer.addCreate(content);
         content.padding = Insets(0);
 
         vslider = new VSlider;
+        vslider.id = idVscroll;
         vslider.isVGrow = true;
         contentContainer.addCreate(vslider);
+
+        if (_vScrollPolicy != ScrollBarPolicy.always)
+        {
+            disableScroll(vslider);
+        }
 
         vslider.onValue = (double val) {
             import Math = dm.math;
 
-            if(!contentRoot){
+            if (!contentRoot)
+            {
                 return;
             }
 
@@ -70,11 +110,18 @@ class ScrollBox : VBox
         };
 
         hslider = new HSlider;
+        hslider.id = idHscroll;
         hslider.isHGrow = true;
         addCreate(hslider);
 
+        if (_hScrollPolicy != ScrollBarPolicy.always)
+        {
+            disableScroll(hslider);
+        }
+
         hslider.onValue = (val) {
-            if(!contentRoot){
+            if (!contentRoot)
+            {
                 return;
             }
             double viewDt = contentRoot.width - content.width;
@@ -84,20 +131,69 @@ class ScrollBox : VBox
             contentRoot.x = contentRoot.x - dtX;
         };
 
-        content.resize(width - spacing - vslider.width - padding.width, height - hslider.height);
+        //TODO from layout
+        double spacing = 0;
+
+        //TODO slider if layout managed = false
+        double contentWidth = width - spacing - padding.width;
+        if (_hScrollPolicy != ScrollBarPolicy.never)
+        {
+            contentWidth -= vslider.width;
+        }
+
+        double contentHeight = height - padding.height;
+        if (_vScrollPolicy != ScrollBarPolicy.never)
+        {
+            contentHeight -= hslider.height;
+        }
+        content.resize(contentWidth, contentHeight);
+
+        checkScrolls;
 
         updateClip;
 
-        onClipResize = (clipPtr){
-            clipChildren(contentRoot);
-        };
+        onClipResize = (clipPtr) { clipChildren(contentRoot); };
 
-        onClipMove = (clipPtr){
-            clipChildren(contentRoot);
-        };
+        onClipMove = (clipPtr) { clipChildren(contentRoot); };
     }
 
-    protected void updateClip(){
+    protected void checkScrolls()
+    {
+        if (_hScrollPolicy == ScrollBarPolicy.ifneed && !hslider.isVisible)
+        {
+            assert(content);
+            if (contentRoot && contentRoot.width > content.width)
+            {
+                 enableScroll(hslider);
+            }
+        }
+
+        if (_vScrollPolicy == ScrollBarPolicy.ifneed && !vslider.isVisible)
+        {
+            assert(content);
+            if (contentRoot && contentRoot.height > content.height)
+            {
+                 enableScroll(vslider);
+            }
+        }
+    }
+
+    protected void disableScroll(Sprite scroll)
+    {
+        scroll.isVisible = false;
+        scroll.isLayoutManaged = false;
+        scroll.isResizedByParent = false;
+    }
+
+    protected void enableScroll(Sprite scroll)
+    {
+        scroll.isVisible = true;
+        scroll.isLayoutManaged = true;
+        scroll.isResizedByParent = true;
+    }
+
+    protected void updateClip()
+    {
         enum clipPadding = 3;
         content.clip = Rect2d(content.x + clipPadding, content.y + clipPadding, content.width - clipPadding, content
                 .height - clipPadding);
@@ -128,11 +224,30 @@ class ScrollBox : VBox
 
         if (contentRoot)
         {
-            content.remove(contentRoot);
+            //TODO destroy?
+            content.remove(contentRoot, false);
         }
 
         contentRoot = root;
-        content.addCreate(contentRoot);
+        if (!contentRoot.isCreated)
+        {
+            content.addCreate(contentRoot);
+        }
+        else
+        {
+            content.add(contentRoot);
+        }
+
+        checkScrolls;
+    }
+
+    override void dispose(){
+        if (contentRoot)
+        {
+            content.remove(contentRoot, false);
+        }
+        contentRoot = null;
+        super.dispose;
     }
 
 }

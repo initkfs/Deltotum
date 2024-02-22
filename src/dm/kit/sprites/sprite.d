@@ -385,6 +385,11 @@ class Sprite : EventKitTarget
 
         static if (is(Event : FocusEvent))
         {
+            if ((clip.width > 0 || clip.height > 0) && !clip.contains(e.x, e.y))
+            {
+                return;
+            }
+            
             if (e.isChained)
             {
                 if (containsPoint(e.x, e.y))
@@ -1745,6 +1750,17 @@ class Sprite : EventKitTarget
     in (context !is null)
     {
         _gContext = context;
+    }
+
+    void isGrow(bool value)
+    {
+        isHGrow = value;
+        isVGrow = value;
+    }
+
+    bool isGrow()
+    {
+        return isHGrow && isVGrow;
     }
 
 }

@@ -5,7 +5,7 @@ import dm.gui.containers.container : Container;
 import dm.kit.sprites.sprite : Sprite;
 import dm.kit.graphics.colors.rgba : RGBA;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import dm.gui.controls.data.tree_table_view : TreeItem;
+import dm.gui.controls.trees.tree_item : TreeItem;
 import dm.gui.controls.buttons.button : Button;
 import dm.gui.containers.hbox : HBox;
 import dm.gui.containers.vbox : VBox;
@@ -70,7 +70,7 @@ class Controls : Control
 
         createSeparators(selectionContainer);
 
-        auto dataContainer = new HBox;
+        auto dataContainer = new HBox(5);
         dataContainer.layout.isAlignY = true;
         rootContainer.addCreate(dataContainer);
 
@@ -220,27 +220,40 @@ class Controls : Control
 
     void createDataControls(Container rootContainer)
     {
+        import dm.gui.containers.scroll_box: ScrollBox;
+        import dm.gui.controls.texts.text: Text;
 
-        import dm.gui.controls.data.tree_table_view : TreeTableView, TreeItem;
+        auto sb1 = new ScrollBox(100, 100);
+        rootContainer.addCreate(sb1);
+        auto sbt = new Text();
+        sbt.maxWidth = 200;
+        sb1.setContent(sbt);
+        sbt.text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+        
+        import dm.gui.controls.trees.tree_list_view : TreeListView;
+        import dm.gui.controls.trees.tree_item: TreeItem;
 
-        auto tree1 = new TreeTableView!string;
-        tree1.resize(150, 150);
-        auto root = new TreeItem!string("root");
-        auto child = new TreeItem!string("child1");
-        auto child2 = new TreeItem!string("child2");
+        auto list1 = new TreeListView!string;
+        rootContainer.addCreate(list1);
+        list1.fill(["Item 1", "Item 2", "Item 3", "Item 4", "Item 5"]);
 
-        child.children ~= child2;
-        root.children ~= child;
+        // tree1.resize(150, 150);
+        // auto root = new TreeItem!string("root");
+        // auto child = new TreeItem!string("child1");
+        // auto child2 = new TreeItem!string("child2");
 
-        import std.conv : to;
+        // child.children ~= child2;
+        // root.children ~= child;
 
-        foreach (i; 0 .. 10)
-        {
-            root.children ~= new TreeItem!string(i.to!string);
-        }
+        // import std.conv : to;
 
-        rootContainer.addCreate(tree1);
-        tree1.fill(root);
+        // foreach (i; 0 .. 10)
+        // {
+        //     root.children ~= new TreeItem!string(i.to!string);
+        // }
+
+        // rootContainer.addCreate(tree1);
+        // tree1.fill(root);
     }
 
     void createCharts(Container root)

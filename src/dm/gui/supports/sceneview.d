@@ -11,7 +11,8 @@ import dm.gui.controls.buttons.button : Button;
 import dm.kit.sprites.sprite : Sprite;
 import dm.gui.containers.container : Container;
 import dm.gui.controls.texts.text_area : TextArea;
-import dm.gui.controls.data.tree_table_view : TreeItem, TreeTableView;
+import dm.gui.controls.trees.tree_item: TreeItem;
+import dm.gui.controls.trees.tree_list_view : TreeListView;
 import dm.math.geom.insets : Insets;
 import dm.gui.containers.scroll_box : ScrollBox;
 import dm.gui.controls.tabs.tab : Tab;
@@ -68,7 +69,7 @@ class SceneView : VBox
 
     private
     {
-        TreeTableView!Sprite controlStructure;
+        TreeListView!Sprite controlStructure;
         Sprite objectOnDebug;
         size_t objectOnDebugSceneIndex;
         bool isDebug;
@@ -160,7 +161,7 @@ class SceneView : VBox
         btnContainer.addCreate(fillStruct);
         fillStruct.addCreateIcon(IconNames.enter_outline);
 
-        controlStructure = new TreeTableView!Sprite;
+        controlStructure = new TreeListView!Sprite;
         controlStructure.width = width - padding.width;
         controlStructure.height = 200;
         addCreate(controlStructure);

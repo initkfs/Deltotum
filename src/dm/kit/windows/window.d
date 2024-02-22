@@ -488,8 +488,6 @@ class Window : GraphicsComponent
                 {
                     task(delta);
                 }
-                import std;
-                writeln("RUN Microtasks");
                 showingTasks = null;
             }
         }
