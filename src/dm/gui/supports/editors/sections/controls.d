@@ -222,8 +222,8 @@ class Controls : Control
 
     void createDataControls(Container rootContainer)
     {
-        import dm.gui.containers.scroll_box: ScrollBox;
-        import dm.gui.controls.texts.text: Text;
+        import dm.gui.containers.scroll_box : ScrollBox;
+        import dm.gui.controls.texts.text : Text;
 
         auto sb1 = new ScrollBox(100, 100);
         rootContainer.addCreate(sb1);
@@ -231,9 +231,9 @@ class Controls : Control
         sbt.maxWidth = 200;
         sb1.setContent(sbt);
         sbt.text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
-        
+
         import dm.gui.controls.trees.tree_list_view : TreeListView;
-        import dm.gui.controls.trees.tree_item: TreeItem;
+        import dm.gui.controls.trees.tree_item : TreeItem;
 
         auto list1 = new TreeListView!string;
         rootContainer.addCreate(list1);
@@ -362,8 +362,9 @@ class Controls : Control
         t1.enableInsets;
     }
 
-    private void createIndicators(Container root){
-        import dm.gui.controls.indicators.seven_segment: SevenSegment;
+    private void createIndicators(Container root)
+    {
+        import dm.gui.controls.indicators.seven_segment : SevenSegment;
 
         auto ssContainer = new HBox;
         root.addCreate(ssContainer);
@@ -371,10 +372,28 @@ class Controls : Control
         auto ss1 = new SevenSegment;
         ssContainer.addCreate(ss1);
         ss1.show0to9(8);
+        ss1.showSegmentLeftBottomDot;
 
         auto ss2 = new SevenSegment;
         ssContainer.addCreate(ss2);
         ss2.show0to9(9);
+
+        import dm.gui.controls.indicators.dot_matrix_display : DotMatrixDisplay;
+
+        auto dm1 = new DotMatrixDisplay!(7, 5);
+        root.addCreate(dm1);
+        //dfmt off
+        int[5][7] matrix = [
+            [1, 0, 0, 0, 1],
+            [1, 1, 0, 1, 1],
+            [1, 0, 1, 0, 1],
+            [1, 0, 0, 0, 1],
+            [1, 0, 0, 0, 1],
+            [1, 0, 0, 0, 1],
+            [1, 0, 0, 0, 1]
+        ];
+        //dfmt on
+        dm1.draw(matrix);
     }
 
     private TreeItem!Sprite buildSpriteTree(Sprite root)

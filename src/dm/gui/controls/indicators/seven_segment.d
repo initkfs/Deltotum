@@ -62,17 +62,16 @@ class SevenSegment : Control
 
         segmentLeftBottomDot = createDotSegment;
         setUpSegment(segmentLeftBottomDot);
+
+        layoutSegments;
+
+        invalidateListeners ~= (){
+            layoutSegments;
+        };
     }
 
-    override void applyLayout()
+    protected void layoutSegments()
     {
-        super.applyLayout;
-        //TODO invalidation
-        if (!isCreated)
-        {
-            return;
-        }
-        //TODO resize parent
         segmentA.x = bounds.middleX - segmentA.bounds.halfWidth;
         segmentA.y = bounds.y + padding.top;
 
@@ -96,7 +95,6 @@ class SevenSegment : Control
 
         segmentLeftBottomDot.x = segmentC.bounds.right + dotPadding - segmentCornerBevel;
         segmentLeftBottomDot.y = segmentD.bounds.middleY - segmentLeftBottomDot.bounds.halfHeight;
-
     }
 
     void setUpSegment(Sprite segment)
@@ -159,27 +157,61 @@ class SevenSegment : Control
 
     protected Sprite createDotSegment()
     {
-        import dm.kit.sprites.textures.vectors.vcircle : VCircle;
+        Sprite segment;
+        const double radius = dotDiameter / 2;
+        if (capGraphics.isVectorGraphics)
+        {
+            import dm.kit.sprites.textures.vectors.vcircle : VCircle;
 
-        auto segment = new VCircle(dotDiameter / 2, createSegmentStyle);
+            segment = new VCircle(radius, createSegmentStyle);
+        }
+        else
+        {
+            import dm.kit.sprites.shapes.circle : Circle;
+
+            segment = new Circle(radius, createSegmentStyle);
+        }
+
         segment.isVisible = false;
         return segment;
     }
 
     protected Sprite createHSegment()
     {
-        import dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+        Sprite segment;
+        if (capGraphics.isVectorGraphics)
+        {
+            import dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
 
-        auto segment = new VRegularPolygon(hSegmentWidth, hSegmentHeight, createSegmentStyle, segmentCornerBevel);
+            segment = new VRegularPolygon(hSegmentWidth, hSegmentHeight, createSegmentStyle, segmentCornerBevel);
+        }
+        else
+        {
+            import dm.kit.sprites.shapes.regular_polygon : RegularPolygon;
+
+            segment = new RegularPolygon(hSegmentWidth, hSegmentHeight, createSegmentStyle, segmentCornerBevel);
+        }
+
         segment.isVisible = false;
         return segment;
     }
 
     protected Sprite createVSegment()
     {
-        import dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+        Sprite segment;
+        if (capGraphics.isVectorGraphics)
+        {
+            import dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
 
-        auto segment = new VRegularPolygon(vSegmentWidth, vSegmentHeight, createSegmentStyle, segmentCornerBevel);
+            segment = new VRegularPolygon(vSegmentWidth, vSegmentHeight, createSegmentStyle, segmentCornerBevel);
+        }
+        else
+        {
+            import dm.kit.sprites.shapes.regular_polygon : RegularPolygon;
+
+            segment = new RegularPolygon(vSegmentWidth, vSegmentHeight, createSegmentStyle, segmentCornerBevel);
+        }
+
         segment.isVisible = false;
         return segment;
     }
