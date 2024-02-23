@@ -76,14 +76,16 @@ class Controls : Control
 
         createDataControls(dataContainer);
 
-        auto container = new HBox;
-        container.layout.isAlignY = false;
-        rootContainer.addCreate(container);
-        container.enableInsets;
+        createTexts(dataContainer);
 
-        createTexts(container);
+        createCharts(dataContainer);
 
-        createCharts(container);
+        auto indicatorContainer = new HBox;
+        indicatorContainer.layout.isAlignY = true;
+        rootContainer.addCreate(indicatorContainer);
+        indicatorContainer.enableInsets;
+
+        createIndicators(indicatorContainer);
 
         // iconsContainer.isBackground = false;
 
@@ -237,23 +239,24 @@ class Controls : Control
         rootContainer.addCreate(list1);
         list1.fill(["Item 1", "Item 2", "Item 3", "Item 4", "Item 5"]);
 
-        // tree1.resize(150, 150);
-        // auto root = new TreeItem!string("root");
-        // auto child = new TreeItem!string("child1");
-        // auto child2 = new TreeItem!string("child2");
+        auto tree1 = new TreeListView!string;
+        rootContainer.addCreate(tree1);
 
-        // child.children ~= child2;
-        // root.children ~= child;
+        tree1.resize(150, 150);
+        auto root = new TreeItem!string("root");
+        auto child = new TreeItem!string("child1");
+        auto child2 = new TreeItem!string("child2");
 
-        // import std.conv : to;
+        child.children ~= child2;
+        root.children ~= child;
 
-        // foreach (i; 0 .. 10)
-        // {
-        //     root.children ~= new TreeItem!string(i.to!string);
-        // }
+        import std.conv : to;
 
-        // rootContainer.addCreate(tree1);
-        // tree1.fill(root);
+        foreach (i; 0 .. 10)
+        {
+            root.children ~= new TreeItem!string(i.to!string);
+        }
+        tree1.fill(root);
     }
 
     void createCharts(Container root)
@@ -357,6 +360,21 @@ class Controls : Control
         t1.isBorder = true;
         root.addCreate(t1);
         t1.enableInsets;
+    }
+
+    private void createIndicators(Container root){
+        import dm.gui.controls.indicators.seven_segment: SevenSegment;
+
+        auto ssContainer = new HBox;
+        root.addCreate(ssContainer);
+
+        auto ss1 = new SevenSegment;
+        ssContainer.addCreate(ss1);
+        ss1.show0to9(8);
+
+        auto ss2 = new SevenSegment;
+        ssContainer.addCreate(ss2);
+        ss2.show0to9(9);
     }
 
     private TreeItem!Sprite buildSpriteTree(Sprite root)
