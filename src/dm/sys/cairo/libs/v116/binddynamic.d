@@ -63,6 +63,8 @@ extern (C) @nogc nothrow
     alias c_cairo_device_to_user = void function(cairo_t* cr,
         double* x,
         double* y);
+
+    alias c_cairo_set_dash = void function(cairo_t* cr, const double* dashes, int num_dashes, double offset);
 }
 
 __gshared
@@ -100,6 +102,8 @@ __gshared
     c_cairo_set_antialias cairo_set_antialias;
     c_cairo_user_to_device cairo_user_to_device;
     c_cairo_device_to_user cairo_device_to_user;
+
+    c_cairo_set_dash cairo_set_dash;
 }
 
 class CairoLib : SysLib
@@ -160,6 +164,7 @@ class CairoLib : SysLib
         bind(cast(void**)&cairo_set_antialias, "cairo_set_antialias");
         bind(cast(void**)&cairo_user_to_device, "cairo_user_to_device");
         bind(cast(void**)&cairo_device_to_user, "cairo_device_to_user");
+        bind(cast(void**)&cairo_set_dash, "cairo_set_dash");
     }
 
     override protected int needVersion()

@@ -1,41 +1,19 @@
 module dm.kit.sprites.textures.vectors.vcircle;
 
-import dm.kit.sprites.textures.vectors.vshape: VShape;
+import dm.kit.sprites.textures.vectors.varc: VArc;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
+
+import Math = dm.math;
 
 /**
  * Authors: initkfs
  */
-class VCircle : VShape
+class VCircle : VArc
 {
-    double radius = 0;
-
     this(double radius, GraphicStyle style)
     {
-        super(radius * 2, radius * 2, style);
-        this.radius = radius;
-    }
+        super(radius, style);
 
-    override void createTextureContent()
-    {
-        import Math = dm.math;
-
-        //TODO remove native api
-        import dm.sys.cairo.libs;
-
-        auto cr = cairoContext.getObject;
-
-        cairo_translate(cr, width / 2, height / 2);
-
-        cairo_set_source_rgb(cr, style.fillColor.rNorm, style.fillColor.gNorm, style
-                .fillColor.bNorm);
-        cairo_arc(cr, 0, 0, radius - style.lineWidth / 2, 0, 2 * Math.PI);
-        cairo_fill_preserve(cr);
-
-        cairo_set_line_width(cr, style.lineWidth);
-        cairo_set_source_rgb(cr, style.lineColor.rNorm, style.lineColor.gNorm, style
-                .lineColor.bNorm);
-
-        cairo_stroke(cr);
+        this.toAngleRad = 2 * Math.PI;
     }
 }

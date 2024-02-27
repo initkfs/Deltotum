@@ -394,6 +394,11 @@ class Controls : Control
         ];
         //dfmt on
         dm1.draw(matrix);
+
+        import dm.gui.controls.indicators.gauges.gauge: Gauge;
+
+        auto g1 = new Gauge;
+        root.addCreate(g1);
     }
 
     private TreeItem!Sprite buildSpriteTree(Sprite root)

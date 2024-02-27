@@ -18,4 +18,9 @@ struct GraphicStyle
     {
         return GraphicStyle(1.0, RGBA.white, false, RGBA.transparent);
     }
+
+    void color(RGBA color){
+        fillColor = color;
+        lineColor = color;
+    }
 }

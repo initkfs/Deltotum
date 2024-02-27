@@ -6,6 +6,9 @@ import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import dm.gui.containers.vbox : VBox;
 import dm.gui.containers.hbox : HBox;
 
+/**
+ * Authors: initkfs
+ */
 class Led : Control
 {
     double cornerBevel = 0;
