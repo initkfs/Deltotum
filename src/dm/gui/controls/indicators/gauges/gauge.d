@@ -5,6 +5,7 @@ import dm.gui.controls.control : Control;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import dm.gui.controls.texts.text : Text;
 import dm.gui.controls.indicators.seven_segment : SevenSegment;
+import dm.gui.controls.progress.base_radial_progress_bar: BaseRadialProgressBar;
 import dm.gui.containers.hbox : HBox;
 
 import Math = dm.math;
@@ -16,7 +17,6 @@ class Gauge : Control
 {
     protected
     {
-        Sprite[] segments;
         Text[] labels;
 
         Sprite outerFace;
@@ -24,15 +24,13 @@ class Gauge : Control
 
         double radius = 0;
 
-        enum segmentPadding = 2;
-        double innerPadding = 10;
-        double segmentCount = 20;
-
         double fromAngle = 270;
         double toAngle = 45;
 
         SevenSegment[] ledSegments;
         HBox ledDisplay;
+
+        BaseRadialProgressBar progressBar;
     }
 
     this(double radius = 60)
@@ -56,27 +54,12 @@ class Gauge : Control
 
     void layoutSegments()
     {
-        double fullAngle = (360 - (360 - fromAngle));
-        double angleDt = Math.round(fullAngle / segmentCount);
         import dm.math.vector2 : Vector2;
-
-        double sangle = 45 - angleDt / 2;
 
         double px = x + width / 2;
         double py = y + height / 2;
 
-        double angle = 45;
-        foreach (i, s; segments)
-        {
-            auto polarCoords = Vector2.fromPolarDeg(angle, radius - innerPadding);
-            s.x = px + polarCoords.x - s.width / 2;
-            s.y = py + polarCoords.y - s.height / 2;
-            angle = Math.round(angle - angleDt);
-            s.angle = sangle;
-            sangle = Math.round(sangle - angleDt);
-        }
-
-        double labelRadius = radius - 30;
+        double labelRadius = radius - 25;
         double labelAngleDt = Math.round((360 - 45) / labels.length);
         double labelAnglePos = 135;
         foreach (label; labels)
@@ -91,41 +74,15 @@ class Gauge : Control
     override void create()
     {
         super.create;
-        double semicircleLength = (2 * Math.PI * (radius - innerPadding)) - Math.degToRad(
-            360 - fromAngle);
-        semicircleLength -= segmentPadding * segmentCount;
-
-        double segmentWidth = semicircleLength / segmentCount;
-        assert(segmentWidth > 0);
-
-        double segmengHeight = segmentWidth;
-
-        auto style = createDefaultStyle(width, height);
-        if (!style.isNested)
-        {
-            style.isFill = true;
-            style.color = graphics.theme.colorAccent;
-        }
-
-        foreach (i; 0 .. segmentCount)
-        {
-            import dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
-
-            auto segment = new VRegularPolygon(segmentWidth, segmengHeight, style, 0);
-            segment.isLayoutManaged = false;
-            segment.isVisible = false;
-            addCreate(segment);
-            segments ~= segment;
-        }
-
-        import dm.kit.sprites.textures.vectors.varc : VArc;
-
+    
         auto faceStyle = createDefaultStyle(width, height);
         if (!faceStyle.isNested)
         {
-            faceStyle.lineWidth = 7;
+            faceStyle.lineWidth = 3;
             faceStyle.isFill = false;
         }
+
+        import dm.kit.sprites.textures.vectors.varc: VArc;
 
         auto newOuterFace = new VArc(radius, faceStyle);
         newOuterFace.fromAngleRad = (3 * Math.PI) / 4;
@@ -133,7 +90,20 @@ class Gauge : Control
         outerFace = newOuterFace;
         addCreate(outerFace);
 
-        auto newInnerFace = new VArc(radius - segmengHeight, faceStyle);
+        auto segmentWidth = 5;
+        auto segmentHeight = 10;
+        auto segmentCount = 20;
+        progressBar = new BaseRadialProgressBar(0, 1.0, radius * 2);
+        progressBar.innerPadding = 7;
+        progressBar.segmentWidth = segmentWidth;
+        progressBar.segmentHeight = segmentHeight;
+        progressBar.segmentCount = segmentCount;
+        progressBar.startAngleDeg = 145;
+        progressBar.endAngleDeg = 45;
+
+        addCreate(progressBar);
+
+        auto newInnerFace = new VArc(radius - segmentHeight, faceStyle);
         newInnerFace.fromAngleRad = newOuterFace.fromAngleRad;
         newInnerFace.toAngleRad = newOuterFace.toAngleRad;
         innerFace = newInnerFace;
@@ -171,43 +141,27 @@ class Gauge : Control
 
         layoutSegments;
 
-        selectSegments(4);
-
         foreach (s; ledSegments)
         {
             s.show0to9(9);
         }
+
+        progressBar.progress = 0.5;
     }
 
     void reset()
     {
-        foreach (s; segments)
-        {
-            if (s.isVisible)
-            {
-                s.isVisible = false;
-            }
-        }
+        
     }
 
     void selectAll()
     {
-        selectSegments(segments.length);
+       
     }
 
     void selectSegments(size_t count)
     {
-        assert(count < segments.length);
-        size_t counter;
-        foreach_reverse (s; segments)
-        {
-            s.isVisible = true;
-            if (counter >= count)
-            {
-                break;
-            }
-            counter++;
-        }
+        
     }
 
 }

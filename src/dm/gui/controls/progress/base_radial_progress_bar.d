@@ -27,6 +27,7 @@ class BaseRadialProgressBar : BaseProgressBar
     double segmentWidth = 5;
     double segmentHeight = 20;
     double startAngleDeg = 180;
+    double endAngleDeg = 180;
 
     this(double minValue = 0, double maxValue = 1.0, double diameter = 100)
     {
@@ -112,7 +113,8 @@ class BaseRadialProgressBar : BaseProgressBar
         const cx = bounds.middleX;
         const cy = bounds.middleY;
 
-        double angleDt = 360.0 / segments.length;
+        double angleRange = Math.abs(endAngleDeg - startAngleDeg);
+        double angleDt = (360.0 - angleRange) / segments.length;
         double angle = startAngleDeg;
         foreach (i, s; segments)
         {
@@ -140,7 +142,7 @@ class BaseRadialProgressBar : BaseProgressBar
 
         //TODO instability at small sizes, possible artifacts
         auto rotateDiameter = Math.round(Math.sqrt((segmentWidth ^^ 2) + (segmentHeight ^^ 2)));
-        auto segmentSize = rotateDiameter * 2;
+        auto segmentSize = rotateDiameter * 3;
 
         auto segment = new RgbaTexture(segmentSize, segmentSize);
         segment.isResizable = false;
