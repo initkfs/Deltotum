@@ -80,6 +80,13 @@ class Controls : Control
 
         createCharts(dataContainer);
 
+        auto progressContainer = new HBox;
+        progressContainer.layout.isAlignY = true;
+        rootContainer.addCreate(progressContainer);
+        progressContainer.enableInsets;
+
+        createProgressBars(progressContainer);
+
         auto indicatorContainer = new HBox;
         indicatorContainer.layout.isAlignY = true;
         rootContainer.addCreate(indicatorContainer);
@@ -360,6 +367,15 @@ class Controls : Control
         t1.isBorder = true;
         root.addCreate(t1);
         t1.enableInsets;
+    }
+
+    private void createProgressBars(Container root){
+        import dm.gui.controls.progress.radial_progress_bar: RadialProgressBar;
+
+        auto rb1 = new RadialProgressBar;
+        rb1.isPercentMode = true;
+        root.addCreate(rb1);
+        rb1.progress = 0.6;
     }
 
     private void createIndicators(Container root)

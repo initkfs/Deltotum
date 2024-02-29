@@ -2,6 +2,7 @@ module dm.com.graphics.com_texture;
 
 import dm.com.platforms.results.com_result : ComResult;
 import dm.com.graphics.com_blend_mode : ComBlendMode;
+import dm.com.graphics.com_texture_scale_mode : ComTextureScaleMode;
 import dm.com.lifecycles.destroyable : Destroyable;
 
 import dm.math.shapes.rect2d : Rect2d;
@@ -48,13 +49,22 @@ interface ComTexture : Destroyable
 
     ComResult changeOpacity(double opacity) nothrow;
 
+    ComResult draw(ComTexture other, Rect2d textureBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
+            .none);
     ComResult draw(Rect2d textureBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
             .none);
 
     ComResult copy(out ComTexture);
+    ComResult copyTo(ComTexture toTexture, Rect2d srcRect, Rect2d destRect, double angle = 0, Flip flip = Flip
+            .none);
+    ComResult copyFrom(ComTexture other, Rect2d srcRect, Rect2d dstRect, double angle = 0, Flip flip = Flip
+            .none);
 
     double opacity() nothrow;
     void opacity(double opacity) nothrow;
+
+    ComResult setScaleMode(ComTextureScaleMode) nothrow;
+    ComResult getScaleMode(out ComTextureScaleMode) nothrow;
 
     ComResult nativePtr(out void* ptr) nothrow;
 

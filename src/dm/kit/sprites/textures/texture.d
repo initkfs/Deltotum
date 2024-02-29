@@ -5,6 +5,7 @@ import dm.kit.sprites.sprite : Sprite;
 import dm.com.graphics.com_texture : ComTexture;
 import dm.com.graphics.com_surface : ComSurface;
 import dm.com.graphics.com_blend_mode : ComBlendMode;
+import dm.com.graphics.com_texture_scale_mode : ComTextureScaleMode;
 import dm.math.shapes.rect2d : Rect2d;
 import dm.math.geom.flip : Flip;
 import dm.kit.graphics.colors.rgba : RGBA;
@@ -30,6 +31,9 @@ class Texture : Sprite
         double changeSizeDelta = 5;
     }
 
+    void delegate(double, double) onPreRecreateWidthOldNew;
+    void delegate(double, double) onPreRecreateHeightOldNew;
+
     this()
     {
 
@@ -37,12 +41,14 @@ class Texture : Sprite
 
     this(double width, double height)
     {
-        width = width;
-        height = height;
+        this.width = width;
+        this.height = height;
     }
 
     this(ComTexture texture)
     {
+        assert(texture);
+
         int w, h;
         if (const sizeErr = texture.getSize(w, h))
         {
@@ -94,6 +100,18 @@ class Texture : Sprite
         }
     }
 
+    void createTargetRGBA32()
+    {
+        assert(width > 0 && height > 0);
+        assert(graphics);
+
+        texture = graphics.comTextureProvider.getNew();
+        if (const err = texture.createTargetRGBA32(cast(int) width, cast(int) height))
+        {
+            throw new Exception(err.toString);
+        }
+    }
+
     void blendMode(ComBlendMode mode)
     {
         if (const err = texture.setBlendMode(mode))
@@ -110,6 +128,26 @@ class Texture : Sprite
     void blendModeNone()
     {
         blendMode(ComBlendMode.none);
+    }
+
+    ComTextureScaleMode textureScaleMode()
+    {
+        assert(texture);
+        ComTextureScaleMode mode;
+        if (const err = texture.getScaleMode(mode))
+        {
+            logger.error(err.toString);
+        }
+        return mode;
+    }
+
+    void textureScaleMode(ComTextureScaleMode mode)
+    {
+        assert(texture);
+        if (const err = texture.setScaleMode(mode))
+        {
+            logger.error(err.toString);
+        }
     }
 
     override void drawContent()
@@ -190,6 +228,10 @@ class Texture : Sprite
 
         if (texture && texture.isCreated && Math.abs(oldChangedWidth - value) > changeSizeDelta)
         {
+            if (onPreRecreateWidthOldNew)
+            {
+                onPreRecreateHeightOldNew(oldChangedWidth, width);
+            }
             recreate;
             oldChangedWidth = width;
         }
@@ -211,6 +253,10 @@ class Texture : Sprite
 
         if (texture && Math.abs(oldChangedHeight - value) > changeSizeDelta)
         {
+            if (onPreRecreateHeightOldNew)
+            {
+                onPreRecreateHeightOldNew(oldChangedHeight, value);
+            }
             recreate;
             oldChangedHeight = value;
         }
@@ -229,11 +275,21 @@ class Texture : Sprite
         {
             throw new Exception(err.toString);
         }
-        auto texture = new Texture(newTexture);
-        build(texture);
-        texture.initialize;
-        texture.create;
-        return texture;
+        auto toTexture = new Texture(newTexture);
+        build(toTexture);
+        toTexture.initialize;
+        toTexture.create;
+        return toTexture;
+    }
+
+    void copyFrom(Texture other, Rect2d srcRect, Rect2d dstRect)
+    {
+        assert(texture);
+        if (const err = texture.copyFrom(other.nativeTexture, srcRect, dstRect, other.angle, other
+                .flip))
+        {
+            throw new Exception(err.toString);
+        }
     }
 
     inout(ComTexture) nativeTexture() inout @nogc nothrow

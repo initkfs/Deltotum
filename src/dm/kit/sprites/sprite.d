@@ -1168,14 +1168,14 @@ class Sprite : EventKitTarget
         invalidationState.width = true;
         //}
 
-        if (!isCreated)
-        {
-            return;
-        }
-
         if (onChangeWidthOldNew)
         {
             onChangeWidthOldNew(oldWidth, _width);
+        }
+
+        if (!isCreated)
+        {
+            return;
         }
 
         if (_cache)
@@ -1246,14 +1246,14 @@ class Sprite : EventKitTarget
         invalidationState.height = true;
         //}
 
-        if (!isCreated)
-        {
-            return;
-        }
-
         if (onChangeHeightOldNew)
         {
             onChangeHeightOldNew(oldHeight, _height);
+        }
+
+        if (!isCreated)
+        {
+            return;
         }
 
         if (_cache)

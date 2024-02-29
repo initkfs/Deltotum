@@ -10,6 +10,7 @@ import dm.back.sdl2.base.sdl_object_wrapper : SdlObjectWrapper;
 import dm.back.sdl2.sdl_renderer : SdlRenderer;
 import dm.com.graphics.com_surface : ComSurface;
 import dm.com.graphics.com_blend_mode : ComBlendMode;
+import dm.com.graphics.com_texture_scale_mode : ComTextureScaleMode;
 
 import dm.math.shapes.rect2d : Rect2d;
 import dm.math.geom.flip : Flip;
@@ -410,14 +411,20 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult(zeroOrErrorCode);
     }
 
-    ComResult draw(Rect2d textureBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
+    ComResult draw(Rect2d srcBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
+            .none)
+    {
+        return draw(this, srcBounds, destBounds, angle, flip);
+    }
+
+    ComResult draw(ComTexture other, Rect2d srcBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
             .none)
     {
         SDL_Rect srcRect;
-        srcRect.x = cast(int) textureBounds.x;
-        srcRect.y = cast(int) textureBounds.y;
-        srcRect.w = cast(int) textureBounds.width;
-        srcRect.h = cast(int) textureBounds.height;
+        srcRect.x = cast(int) srcBounds.x;
+        srcRect.y = cast(int) srcBounds.y;
+        srcRect.w = cast(int) srcBounds.width;
+        srcRect.h = cast(int) srcBounds.height;
 
         //SDL_Rect bounds = window.getScaleBounds;
 
@@ -447,7 +454,10 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         }
 
         //https://discourse.libsdl.org/t/1st-frame-sdl-renderer-software-sdl-flip-horizontal-ubuntu-wrong-display-is-it-a-bug-of-sdl-rendercopyex/25924
-        return renderer.copyEx(this, &srcRect, &destRect, angle, null, sdlFlip);
+        SdlTexture t = cast(SdlTexture) other;
+        assert(t);
+        SDL_Point* rotateCenter = null;
+        return renderer.copyEx(t, &srcRect, &destRect, angle, rotateCenter, sdlFlip);
     }
 
     ComResult copy(out ComTexture toTexture)
@@ -463,28 +473,117 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             return err;
         }
 
-        if (const err = newTexture.setBlendModeBlend)
-        {
-            return err;
-        }
-
-        if (const err = newTexture.setRendererTarget)
-        {
-            return err;
-        }
-
         Rect2d srcRect = {0, 0, width, height};
         Rect2d destRect = {0, 0, width, height};
 
-        if (const err = draw(srcRect, destRect))
-        {
-            return err;
-        }
-        if (const err = resetRendererTarget)
+        if (const err = copyTo(newTexture, srcRect, destRect))
         {
             return err;
         }
         toTexture = newTexture;
+        return ComResult.success;
+    }
+
+    ComResult copyTo(ComTexture toTexture, Rect2d srcRect, Rect2d destRect, double angle = 0, Flip flip = Flip
+            .none)
+    {
+        if (const err = toTexture.setBlendModeBlend)
+        {
+            return err;
+        }
+
+        if (const err = toTexture.setRendererTarget)
+        {
+            return err;
+        }
+
+        if (const err = draw(srcRect, destRect, angle, flip))
+        {
+            return err;
+        }
+
+        if (const err = resetRendererTarget)
+        {
+            return err;
+        }
+
+        return ComResult.success;
+    }
+
+    ComResult copyFrom(ComTexture other, Rect2d srcRect, Rect2d dstRect, double angle = 0, Flip flip = Flip
+            .none)
+    {
+        if (const err = setBlendModeBlend)
+        {
+            return err;
+        }
+
+        if (const err = setRendererTarget)
+        {
+            return err;
+        }
+
+        if (const err = draw(other, srcRect, dstRect, angle, flip))
+        {
+            return err;
+        }
+
+        if (const err = resetRendererTarget)
+        {
+            return err;
+        }
+
+        return ComResult.success;
+    }
+
+    //TODO type converter
+    private ComTextureScaleMode fromSdlMode(SDL_ScaleMode m) nothrow
+    {
+        final switch (m) with (SDL_ScaleMode)
+        {
+            case SDL_ScaleModeNearest:
+                return ComTextureScaleMode.speed;
+            case SDL_ScaleModeLinear:
+                return ComTextureScaleMode.balance;
+            case SDL_ScaleModeBest:
+                return ComTextureScaleMode.quality;
+        }
+    }
+
+    //TODO type converter
+    private SDL_ScaleMode toSdlMode(ComTextureScaleMode m) nothrow
+    {
+        final switch (m) with (ComTextureScaleMode)
+        {
+            case speed:
+                return SDL_ScaleMode.SDL_ScaleModeNearest;
+            case balance:
+                return SDL_ScaleMode.SDL_ScaleModeLinear;
+            case quality:
+                return SDL_ScaleMode.SDL_ScaleModeBest;
+        }
+    }
+
+    ComResult setScaleMode(ComTextureScaleMode mode) nothrow
+    {
+        const nativeMode = toSdlMode(mode);
+        const zeroOrErr = SDL_SetTextureScaleMode(ptr, nativeMode);
+        if (zeroOrErr != 0)
+        {
+            return ComResult(zeroOrErr);
+        }
+        return ComResult.success;
+    }
+
+    ComResult getScaleMode(out ComTextureScaleMode mode) nothrow
+    {
+        SDL_ScaleMode oldMode;
+        const zeroOrErr = SDL_GetTextureScaleMode(ptr, &oldMode);
+        if (zeroOrErr != 0)
+        {
+            return ComResult(zeroOrErr);
+        }
+        mode = fromSdlMode(oldMode);
         return ComResult.success;
     }
 
@@ -495,7 +594,8 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    bool isCreated() nothrow {
+    bool isCreated() nothrow
+    {
         return ptr !is null;
     }
 

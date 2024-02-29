@@ -155,6 +155,9 @@ class SdlApplication : ContinuouslyApplication
         //TODO move to hal layer
         SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_WARN);
 
+        //https://discourse.libsdl.org/t/graphic-artifacts-when-using-render-scale-quality/20320/3
+        //SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+
         imgLib.initialize;
         profile("Image libs loaded");
 
