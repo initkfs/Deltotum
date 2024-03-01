@@ -16,3 +16,4 @@ enum fontDefaultTTFFile = "fontDefaultTTFFile";
 
 enum debugScene = "debugScene";
 enum useVectorGraphics = "useVectorGraphics";
+enum useSmallFont = "useSmallFont";
