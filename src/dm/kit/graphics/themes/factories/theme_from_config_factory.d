@@ -1,4 +1,4 @@
-module dm.kit.gui.themes.factories.theme_from_config_factory;
+module dm.kit.graphics.themes.factories.theme_from_config_factory;
 
 import dm.core.units.services.application_unit : ApplicationUnit;
 import dm.core.contexts.context : Context;
@@ -19,22 +19,20 @@ class ThemeFromConfigFactory : ApplicationUnit
 {
     private
     {
-        Font font;
         IconPack iconPack;
         Resource resource;
     }
-    this(Logger logger, Config config, Context context, Resource resource, Font font, IconPack iconPack) pure @safe
+    this(Logger logger, Config config, Context context, Resource resource, IconPack iconPack) pure @safe
     {
         super(logger, config, context);
         //TODO check null
-        this.font = font;
         this.iconPack = iconPack;
         this.resource = resource;
     }
 
     Theme createTheme()
     {
-        auto theme = new Theme(font, iconPack);
+        auto theme = new Theme(iconPack);
 
         //TODO resource
         if (!resource.resourcesDir.isNull)

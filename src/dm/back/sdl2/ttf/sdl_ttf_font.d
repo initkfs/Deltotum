@@ -10,6 +10,8 @@ import dm.back.sdl2.base.sdl_object_wrapper : SdlObjectWrapper;
 import dm.back.sdl2.ttf.base.sdl_ttf_object : SdlTTFObject;
 import dm.com.graphics.com_surface : ComSurface;
 
+import std.conv: to;
+
 import bindbc.sdl;
 
 import std.string : toStringz;
@@ -22,14 +24,14 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
     private
     {
         string _fontPath;
-        int _fontSize;
+        size_t _fontSize;
     }
 
-    this(string fontFilePath, int fontSize = 12)
+    this(string fontFilePath, size_t fontSize = 12)
     {
         this._fontPath = fontFilePath;
         this._fontSize = fontSize;
-        ptr = TTF_OpenFont(this._fontPath.toStringz, fontSize);
+        ptr = TTF_OpenFont(this._fontPath.toStringz, fontSize.to!int);
         if (!ptr)
         {
             //TODO error from sdl?
@@ -77,7 +79,7 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
         return ComResult.success;
     }
 
-    ComResult fontSize(out int size)
+    ComResult fontSize(out size_t size)
     {
         size = _fontSize;
         return ComResult.success;

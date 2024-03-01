@@ -6,6 +6,7 @@ import std.logger : Logger;
 
 import std.path : buildPath, dirName;
 import std.file : exists, isDir, isFile;
+import std.typecons : Nullable;
 
 import std.stdio;
 
@@ -15,28 +16,38 @@ import dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 import dm.kit.graphics.colors.rgba : RGBA;
 import dm.kit.sprites.textures.texture : Texture;
 import dm.core.resources.resource : Resource;
+import dm.kit.assets.fonts.font_cache : FontCache;
+import dm.kit.assets.fonts.font_size : FontSize;
 
 /**
  * Authors: initkfs
  */
 class Asset : Resource
 {
-    ComFont delegate(string fontPath, int fontSize) comFontProvider;
+    ComFont delegate(string fontPath, size_t fontSize) comFontProvider;
 
-    Font font;
-    BitmapFont fontBitmap;
-    Texture[RGBA] fontCache;
+    enum defaultFontName = "DMDefaultFont";
+
+    RGBA defaultFontColor;
+    BitmapFont defaultFontBitmap;
+
+    protected
+    {
+        FontCache[string] fontCaches;
+    }
 
     string defaultImagesResourceDir = "images";
     string defaultFontResourceDir = "fonts";
 
-    this(Logger logger, string assetsDir, ComFont delegate(string fontPath, int fontSize) comFontProvider) pure @safe
+    this(Logger logger, string assetsDir, ComFont delegate(string fontPath, size_t fontSize) comFontProvider) pure @safe
     {
         super(logger, assetsDir);
         import std.exception : enforce;
 
         enforce(comFontProvider, "Font provider must not be null");
         this.comFontProvider = comFontProvider;
+
+        this.fontCaches[defaultFontName] = new FontCache(defaultFontName);
     }
 
     string imagePath(string imageFile) const
@@ -69,13 +80,14 @@ class Asset : Resource
         auto mustBeFontPath = fileResource(defaultFontResourceDir, fontFile);
         if (mustBeFontPath.isNull)
         {
-            import std.format: format;
+            import std.format : format;
+
             throw new Exception(format("Not found font file %s in resource dir %s", fontFile, defaultFontResourceDir));
         }
         return mustBeFontPath.get;
     }
 
-    Font newFont(string fontFilePath, int size)
+    Font newFont(string fontFilePath, size_t size)
     {
         const path = fontPath(fontFilePath);
         auto comFont = comFontProvider(path, size);
@@ -85,49 +97,142 @@ class Asset : Resource
         return nFont;
     }
 
-    bool addCachedFont(RGBA color, Texture fontTexture) @safe
+    bool hasFont(string name = defaultFontName, size_t size = FontSize.medium)
     {
-        if (fontTexture is fontBitmap)
+        if (auto fontCachePtr = name in fontCaches)
         {
-            throw new Exception("Main bitmap font cannot be cached");
+            return (*fontCachePtr).hasFont(size) !is null;
         }
 
-        if (color in fontCache)
-        {
-            return false;
-        }
-        fontCache[color] = fontTexture;
-        return true;
+        return false;
     }
 
-    Texture cachedFont(RGBA color)
+    bool hasLargeFont(string name = defaultFontName) => hasFont(name, FontSize.large);
+    bool hasSmallFont(string name = defaultFontName) => hasFont(name, FontSize.small);
+
+    void addFont(Font font, size_t size = FontSize.medium, string name = defaultFontName)
     {
-        if (auto cachePtr = color in fontCache)
+        fontCaches[name].addFont(size, font);
+    }
+
+    void addFontSmall(Font font, string name = defaultFontName)
+    {
+        addFont(font, FontSize.small, name);
+    }
+
+    void addFontLarge(Font font, string name = defaultFontName)
+    {
+        addFont(font, FontSize.large, name);
+    }
+
+    Font font(size_t size = FontSize.medium, string name = defaultFontName)
+    {
+        auto cachedFont = fontCaches[name].font(size);
+        assert(cachedFont);
+        return cachedFont;
+    }
+
+    Font fontSmall(string name = defaultFontName)
+    {
+        return font(FontSize.small, name);
+    }
+
+    Font fontLarge(string name = defaultFontName)
+    {
+        return font(FontSize.large, name);
+    }
+
+    void addFontColorBitmap(BitmapFont fontTexture, RGBA color, size_t size = FontSize.medium, string name = defaultFontName)
+    {
+        //TODO error not exists
+        fontCaches[name].bitmap(fontTexture, size, color);
+    }
+
+    void addFontColorBitmapLarge(BitmapFont fontTexture, RGBA color)
+    {
+        addFontColorBitmap(fontTexture, color, FontSize.large);
+    }
+
+    void addFontColorBitmapSmall(BitmapFont fontTexture, RGBA color)
+    {
+        addFontColorBitmap(fontTexture, color, FontSize.small);
+    }
+
+    void setFontBitmap(BitmapFont fontTexture)
+    {
+        addFontColorBitmap(fontTexture, defaultFontColor);
+    }
+
+    void setFontBitmapLarge(BitmapFont fontTexture)
+    {
+        addFontColorBitmap(fontTexture, defaultFontColor, FontSize.large);
+    }
+
+    void setFontBitmapSmall(BitmapFont fontTexture)
+    {
+        addFontColorBitmap(fontTexture, defaultFontColor, FontSize.small);
+    }
+
+    bool hasColorBitmap(RGBA color, size_t size = FontSize.medium, string name = defaultFontName)
+    {
+        auto fontCache = fontCaches[name];
+        return fontCache.hasBitmap(size, color) !is null;
+    }
+
+    BitmapFont fontColorBitmap(RGBA color, size_t size = FontSize.medium, string name = defaultFontName)
+    {
+        auto fontCache = fontCaches[name];
+        auto bitmapPtr = fontCache.hasBitmap(size, color);
+        if (!bitmapPtr)
         {
-            return *cachePtr;
+            logger.warningf("Not found font bitmap in cache for size %s and color %s", size, color);
+            auto defaultCache = fontCaches[defaultFontName];
+            auto defaultBitmapPtr = defaultCache.hasBitmap(FontSize.medium, defaultFontColor);
+            if (!defaultBitmapPtr)
+            {
+                import std.format : format;
+
+                throw new Exception(format(
+                        "Failed to get default bitmap to replace not-existing bitmap with color %s, size %s, name %s", color, size, name));
+            }
+            return *defaultBitmapPtr;
         }
-        return null;
+        return *bitmapPtr;
+    }
+
+    BitmapFont fontBitmap(size_t size = FontSize.medium, string name = defaultFontName)
+    {
+        return fontColorBitmap(defaultFontColor, size, name);
+    }
+
+    BitmapFont fontBitmapLarge()
+    {
+        return fontColorBitmap(defaultFontColor, FontSize.large);
+    }
+
+    BitmapFont fontBitmapSmall()
+    {
+        return fontColorBitmap(defaultFontColor, FontSize.small);
+    }
+
+    BitmapFont fontColorBitmapLarge(RGBA color)
+    {
+        return fontColorBitmap(color, FontSize.large);
+    }
+
+    BitmapFont fontColorBitmapSmall(RGBA color)
+    {
+        return fontColorBitmap(color, FontSize.small);
     }
 
     override void dispose()
     {
         super.dispose;
-        if (font && !fontBitmap.isDisposed)
-        {
-            font.dispose;
-        }
-        if (fontBitmap && !fontBitmap.isDisposed)
-        {
-            fontBitmap.dispose;
-        }
 
         //TODO check if font\fontBitmap in fontCache
-        foreach (fontTexture; fontCache)
+        foreach (cache; fontCaches)
         {
-            if (fontTexture.isCreated && !fontTexture.isDisposed)
-            {
-                fontTexture.dispose;
-            }
+            cache.dispose;
         }
     }
 }

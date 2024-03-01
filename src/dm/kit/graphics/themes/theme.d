@@ -18,7 +18,7 @@ class Theme
 {
     private
     {
-        Font defaultMediumFont;
+        Font _defaultMediumFont;
         IconPack iconPack;
     }
 
@@ -53,15 +53,20 @@ class Theme
 
     bool isUseVectorGraphics;
 
-    this(Font defaultMediumFont, IconPack iconPack)
+    this(IconPack iconPack)
     {
-        this.defaultMediumFont = defaultMediumFont;
         this.iconPack = iconPack;
     }
 
-    Font fontMedium()
+    void defaultMediumFont(Font font){
+        assert(font);
+        _defaultMediumFont = font;
+    }
+
+    Font defaultMediumFont()
     {
-        return defaultMediumFont;
+        assert(_defaultMediumFont, "Default medium font is null");
+        return _defaultMediumFont;
     }
 
     Nullable!string iconData(string id)

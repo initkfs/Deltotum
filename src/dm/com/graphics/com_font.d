@@ -24,7 +24,7 @@ interface ComFont : Destroyable
         ubyte br, ubyte bg, ubyte bb, ubyte ba);
 
     ComResult fontPath(out string path);
-    ComResult fontSize(out int size);
+    ComResult fontSize(out size_t size);
     ComResult setHinting(ComFontHinting hinting);
 
 }

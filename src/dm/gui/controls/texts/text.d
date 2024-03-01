@@ -57,7 +57,7 @@ class Text : Control
 
     Rectangle cursor;
 
-    Texture fontTexture;
+    BitmapFont fontTexture;
 
     CursorPos cursorPos;
 
@@ -180,66 +180,66 @@ class Text : Control
 
                 switch (e.keyName) with (KeyName)
                 {
-                case LEFT:
-                    moveCursorLeft;
-                    break;
-                case RIGHT:
-                    moveCursorRight;
-                    break;
-                case DOWN:
-                    moveCursorDown;
-                    break;
-                case UP:
-                    moveCursorUp;
-                    break;
-                case BACKSPACE:
+                    case LEFT:
+                        moveCursorLeft;
+                        break;
+                    case RIGHT:
+                        moveCursorRight;
+                        break;
+                    case DOWN:
+                        moveCursorDown;
+                        break;
+                    case UP:
+                        moveCursorUp;
+                        break;
+                    case BACKSPACE:
 
-                    if (!cursorPos.isValid)
-                    {
-                        return;
-                    }
-
-                    logger.tracef("Backspace pressed for cursor: %s", cursorPos);
-
-                    if (cursorPos.glyphIndex == 0)
-                    {
-                        if (cursorPos.state == CursorState.forNextGlyph)
+                        if (!cursorPos.isValid)
                         {
                             return;
                         }
-                    }
 
-                    auto row = rows[cursorPos.rowIndex];
+                        logger.tracef("Backspace pressed for cursor: %s", cursorPos);
 
-                    if (row.glyphs.length == 0)
-                    {
-                        return;
-                    }
+                        if (cursorPos.glyphIndex == 0)
+                        {
+                            if (cursorPos.state == CursorState.forNextGlyph)
+                            {
+                                return;
+                            }
+                        }
 
-                    if (cursorPos.state == CursorState.forNextGlyph)
-                    {
-                        cursorPos.glyphIndex--;
-                    }
-                    else if (cursorPos.state == CursorState.forPrevGlyph)
-                    {
-                        cursorPos.state = CursorState.forNextGlyph;
-                    }
+                        auto row = rows[cursorPos.rowIndex];
 
-                    import std.algorithm.mutation : remove;
+                        if (row.glyphs.length == 0)
+                        {
+                            return;
+                        }
 
-                    size_t textIndex = cursorGlyphIndex;
-                    auto glyph = row.glyphs[cursorPos.glyphIndex];
+                        if (cursorPos.state == CursorState.forNextGlyph)
+                        {
+                            cursorPos.glyphIndex--;
+                        }
+                        else if (cursorPos.state == CursorState.forPrevGlyph)
+                        {
+                            cursorPos.state = CursorState.forNextGlyph;
+                        }
 
-                    _text = _text.remove(textIndex);
-                    cursorPos.pos.x -= glyph.geometry.width;
+                        import std.algorithm.mutation : remove;
 
-                    logger.tracef("Remove index %s, new cursor pos: %s", textIndex, cursorPos);
+                        size_t textIndex = cursorGlyphIndex;
+                        auto glyph = row.glyphs[cursorPos.glyphIndex];
 
-                    updateCursor;
-                    setInvalid;
-                    break;
-                default:
-                    break;
+                        _text = _text.remove(textIndex);
+                        cursorPos.pos.x -= glyph.geometry.width;
+
+                        logger.tracef("Remove index %s, new cursor pos: %s", textIndex, cursorPos);
+
+                        updateCursor;
+                        setInvalid;
+                        break;
+                    default:
+                        break;
                 }
             };
 
@@ -304,21 +304,20 @@ class Text : Control
         if (currStyle)
         {
             auto color = currStyle.fillColor;
-            fontTexture = asset.cachedFont(color);
-            if (!fontTexture)
+            if (!asset.hasColorBitmap(color))
             {
-                fontTexture = asset.fontBitmap.copy;
+                fontTexture = asset.fontBitmap.copyBitmap;
                 fontTexture.color = color;
-                asset.addCachedFont(color, fontTexture);
+                asset.addFontColorBitmap(fontTexture, color);
+            }
+            else
+            {
+                fontTexture = asset.fontColorBitmap(color);
             }
         }
         else
         {
-            fontTexture = asset.cachedFont(graphics.theme.colorText);
-            if (!fontTexture)
-            {
-                fontTexture = asset.fontBitmap;
-            }
+            fontTexture = asset.fontBitmap;
         }
 
         updateRows;

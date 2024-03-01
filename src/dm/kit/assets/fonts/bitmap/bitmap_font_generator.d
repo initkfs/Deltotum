@@ -61,6 +61,8 @@ class BitmapFontGenerator : FontGenerator
 
         auto bitmapFont = new BitmapFont;
         build(bitmapFont);
+        bitmapFont.initialize;
+        assert(bitmapFont.isInitialized);
 
         foreach (alphabet; alphabets)
         {
@@ -125,6 +127,8 @@ class BitmapFontGenerator : FontGenerator
 
         bitmapFont.loadFromSurface(fontMapSurface);
         fontMapSurface.dispose;
+
+        bitmapFont.create;
 
         bitmapFont.blendModeBlend;
 

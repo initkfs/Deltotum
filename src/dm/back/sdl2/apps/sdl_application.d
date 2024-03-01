@@ -618,7 +618,7 @@ class SdlApplication : ContinuouslyApplication
         onNew(surf);
     }
 
-    ComFont newComFont(string path, int size)
+    ComFont newComFont(string path, size_t size)
     {
         return new SdlTTFFont(path, size);
     }
@@ -702,12 +702,17 @@ class SdlApplication : ContinuouslyApplication
         });
         assert(asset);
         asset.initialize;
-
+        uservices.logger.trace("Build assets for window: ", window.id);
+        
         windowBuilder.asset = asset;
 
-        auto theme = createTheme(uservices.logger, uservices.config, uservices.context, uservices.resource, asset);
+        auto theme = createTheme(uservices.logger, uservices.config, uservices.context, uservices
+                .resource);
         //TODO move to createTheme method
         theme.isUseVectorGraphics = gservices.capGraphics.isVectorGraphics;
+
+        theme.defaultMediumFont = asset.font;
+        uservices.logger.trace("Set theme font: ", theme.defaultMediumFont.fontPath);
 
         import dm.kit.graphics.graphics : Graphics;
 
@@ -747,14 +752,13 @@ class SdlApplication : ContinuouslyApplication
             auto fontGenerator = newFontGenerator(comSurfProvider);
             windowBuilder.build(fontGenerator);
 
-            windowBuilder.asset.fontBitmap = createFontBitmap(fontGenerator, asset, theme);
-            windowBuilder.asset.fontBitmap.initialize;
-
-            auto colorText = theme.colorText;
-
-            auto themeFont = windowBuilder.asset.fontBitmap.copy;
-            themeFont.color = colorText;
-            windowBuilder.asset.addCachedFont(colorText, themeFont);
+            createFontBitmaps(fontGenerator, windowBuilder.asset, theme, (bitmap){
+                // windowBuilder.build(bitmap);
+                // bitmap.initialize;
+                // assert(bitmap.isInitialized);
+                // bitmap.create;
+                // assert(bitmap.isCreated);
+            });
         }
 
         import dm.kit.scenes.scene_manager : SceneManager;

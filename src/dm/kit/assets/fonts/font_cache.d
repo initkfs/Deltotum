@@ -1,25 +1,26 @@
-module dm.kit.assets.fonts.font_data;
+module dm.kit.assets.fonts.font_cache;
 
 import dm.core.units.services.loggable_unit : LoggableUnit;
 import dm.kit.graphics.colors.rgba : RGBA;
 import dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
+import dm.kit.sprites.textures.texture : Texture;
 import dm.kit.assets.fonts.font : Font;
-import dm.kit.assets.fonts.font_size: FontSize;
+import dm.kit.assets.fonts.font_size : FontSize;
 
 /**
  * Authors: initkfs
  */
-class FontData
+class FontCache
 {
     const string name;
 
     protected
     {
-        Font[size_t] _map;
-        BitmapFont[RGBA][size_t] _bitmap;
+        Font[size_t] _fontCache;
+        BitmapFont[RGBA][size_t] _bitmapCache;
     }
 
-    this(string name)
+    this(string name) pure @safe
     {
         if (name.length == 0)
         {
@@ -28,12 +29,17 @@ class FontData
         this.name = name;
     }
 
-    inout(Font*) hasFont(size_t size) inout
+    inout(Font) defaultFont() inout
     {
-        return size in _map;
+        return font(FontSize.medium);
     }
 
-    inout(Font) fontBySize(size_t size) inout
+    inout(Font*) hasFont(size_t size) inout
+    {
+        return size in _fontCache;
+    }
+
+    inout(Font) font(size_t size) inout
     {
         if (auto fontPtr = hasFont(size))
         {
@@ -45,14 +51,14 @@ class FontData
         throw new Exception(format("Not found font '%s' with size '%s'", name, size));
     }
 
-    void fontBySize(size_t size, Font font)
+    void addFont(size_t size, Font font)
     {
-        _map[size] = font;
+        _fontCache[size] = font;
     }
 
     inout(BitmapFont*) hasBitmap(size_t size, RGBA color) inout
     {
-        if (auto colorCachePtr = size in _bitmap)
+        if (auto colorCachePtr = size in _bitmapCache)
         {
             if (auto fontPtr = color in *colorCachePtr)
             {
@@ -74,17 +80,42 @@ class FontData
         throw new Exception(format("Not found bitmap for size '%s', color '%s', name '%s'", size, color, name));
     }
 
-    void bitmap(size_t size, RGBA color, BitmapFont font)
+    void bitmap(BitmapFont font, size_t size, RGBA color)
     {
-        if (auto colorCachePtr = size in _bitmap)
+        if (auto colorCachePtr = size in _bitmapCache)
         {
             (*colorCachePtr)[color] = font;
         }
         else
         {
             BitmapFont[RGBA] colorCache = [color: font];
-            _bitmap[size] = colorCache;
+            _bitmapCache[size] = colorCache;
         }
+    }
+
+    void dispose()
+    {
+        foreach (font; _fontCache)
+        {
+            if (!font.isDisposed)
+            {
+                font.dispose;
+            }
+        }
+        _fontCache = null;
+
+        foreach (size, colorCache; _bitmapCache)
+        {
+            foreach (ref color, bitmap; colorCache)
+            {
+                if (!bitmap.isDisposed)
+                {
+                    bitmap.dispose;
+                }
+            }
+        }
+
+        _bitmapCache = null;
     }
 
 }

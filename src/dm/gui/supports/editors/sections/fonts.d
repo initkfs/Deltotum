@@ -34,5 +34,13 @@ class Fonts : Control
         defaultFontTexture.isDrawBounds = true;
         add(defaultFontTexture);
 
+        auto fontSmallTexture = asset.fontBitmapSmall.copy;
+        fontSmallTexture.isDrawBounds = true;
+        add(fontSmallTexture);
+
+        auto fontLargeTexture = asset.fontBitmapLarge.copy;
+        fontLargeTexture.isDrawBounds = true;
+        add(fontLargeTexture);
+
     }
 }

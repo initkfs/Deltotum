@@ -20,6 +20,7 @@ import dm.kit.assets.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
 import dm.kit.scenes.scene_manager : SceneManager;
 import dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 import dm.core.utils.provider : Provider;
+import dm.kit.i18n.langs.alphabets.alphabet : Alphabet;
 
 import dm.kit.windows.window : Window;
 import dm.kit.apps.loops.loop : Loop;
@@ -96,7 +97,8 @@ abstract class GraphicApplication : CliApplication
             auto newIconPack = new IconPack;
             //TODO config
             auto mustBeIconPath = uservices.resource.fileResource("icons/packs/ionicons.txt");
-            if(mustBeIconPath.isNull){
+            if (mustBeIconPath.isNull)
+            {
                 throw new Exception("Not found icons");
             }
             auto iconPath = mustBeIconPath.get;
@@ -230,24 +232,27 @@ abstract class GraphicApplication : CliApplication
         return new Graphics(logger, renderer, theme);
     }
 
-    Theme createTheme(Logger logger, Config config, Context context, Resource resource, Asset asset)
+    Theme createTheme(Logger logger, Config config, Context context, Resource resource)
     {
         //TODO null?
         IconPack pack = iconPack.isNull ? null : iconPack.get;
 
         import dm.kit.graphics.themes.theme : Theme;
-        import dm.kit.gui.themes.factories.theme_from_config_factory : ThemeFromConfigFactory;
+        import dm.kit.graphics.themes.factories.theme_from_config_factory : ThemeFromConfigFactory;
 
-        auto themeLoader = new ThemeFromConfigFactory(logger, config, context, resource, asset
-                .font, pack);
+        auto themeLoader = new ThemeFromConfigFactory(logger, config, context, resource, pack);
 
         auto theme = themeLoader.createTheme;
         return theme;
     }
 
     Asset createAsset(Logger logger, Config config, Context context, ComFont delegate(
-            string fontPath, int fontSize) comFontProvider)
+            string fontPath, size_t fontSize) comFontProvider)
     {
+        import dm.kit.assets.fonts.font_size : FontSize;
+
+        import KitConfigKeys = dm.kit.kit_config_keys;
+
         //TODO move to config, duplication with SdlApplication
         import std.file : getcwd, exists, isDir, isFile;
         import std.path : buildPath, dirName;
@@ -257,55 +262,49 @@ abstract class GraphicApplication : CliApplication
         import dm.kit.assets.asset : Asset;
         import dm.kit.assets.fonts.font : Font;
 
-        Asset asset;
+        //default dir?
+        string assetsDir = !mustBeResDir.isNull ? mustBeResDir.get : null;
+
+        Asset asset = new Asset(uservices.logger, assetsDir, comFontProvider);
+
+        //TODO from config, allsystem;
+        size_t fontSizeSmall = 8;
+        size_t fontSizeMedium = 14;
+        size_t fontSizeLarge = 20;
+
+        string fontDir;
+        string fontFile;
+
         if (!mustBeResDir.isNull)
         {
-            auto assetsDir = mustBeResDir.get;
-            logger.trace("Found resources directory: ", assetsDir);
-            //TODO from config
-            asset = new Asset(uservices.logger, assetsDir, comFontProvider);
-            Font font = asset.newFont(
-                "JetBrains_Mono/static/JetBrainsMono-ExtraBold.ttf", 15);
-            asset.font = font;
+            fontDir = buildPath(mustBeResDir.get, asset.defaultFontResourceDir);
+            logger.trace("Found font directory in resources: ", fontDir);
         }
         else
         {
-            uservices.logger.warning("Resources directory not found");
+            uservices.logger.trace("Resources directory not found");
 
-            import KitConfigKeys = dm.kit.kit_config_keys;
-
-            string fontFile;
-            if (config.containsKey(KitConfigKeys.fontDefaultTTFFile))
+            if (config.containsKey(KitConfigKeys.fontDir))
             {
-                fontFile = config.getNotEmptyString(KitConfigKeys.fontDefaultTTFFile).get;
-            }
-
-            //TODO allsystem;
-            string fontPath;
-            if (config.containsKey(KitConfigKeys.fontSystemDefaultDir))
-            {
-                auto mustBeFontDir = config.getNotEmptyString(KitConfigKeys.fontSystemDefaultDir);
+                auto mustBeFontDir = config.getNotEmptyString(KitConfigKeys.fontDir);
                 if (mustBeFontDir.isNull)
                 {
                     throw new Exception(
-                        "System font dir is empty for config key: " ~ KitConfigKeys
-                            .fontSystemDefaultDir);
+                        "Font directory is empty for config key: " ~ KitConfigKeys
+                            .fontDir);
                 }
-                fontPath = mustBeFontDir.get;
 
-                if (!fontPath.exists || !fontPath.isDir)
-                {
-                    throw new Exception(
-                        "The system font directory does not exist or is not a directory: " ~ fontPath);
-                }
+                fontDir = mustBeFontDir.get;
+                logger.trace("Set font directory from config: ", fontDir);
             }
             else
             {
+                logger.trace("Search font directory in system");
                 //TODO Fontconfig 
                 version (linux)
                 {
                     ///usr/share/fonts/TTF/
-                    fontPath = "/usr/share/fonts/truetype/noto/";
+                    fontDir = "/usr/share/fonts/truetype/noto/";
                     if (!fontFile)
                     {
                         fontFile = "NotoSansMono-Bold.ttf";
@@ -314,7 +313,7 @@ abstract class GraphicApplication : CliApplication
                 else version (Windows)
                 {
                     //TODO test separators /, \
-                    fontPath = "C:\\Windows\\Fonts";
+                    fontDir = "C:\\Windows\\Fonts";
                     if (!fontFile)
                     {
                         fontFile = "arial.ttf";
@@ -322,7 +321,7 @@ abstract class GraphicApplication : CliApplication
                 }
                 else version (OSX)
                 {
-                    fontPath = "/Library/Fonts";
+                    fontDir = "/Library/Fonts";
                     if (!fontFile)
                     {
                         fontFile = "Arial.ttf";
@@ -332,21 +331,149 @@ abstract class GraphicApplication : CliApplication
                 {
                     static assert(false, "Not supported default fonts for platform");
                 }
+                logger.tracef("Set system font directory %s and font file %s", fontDir, fontFile);
             }
+        }
 
-            import std.path : buildPath;
+        if (!fontDir.exists || !fontDir.isDir)
+        {
+            //TODO on all platforms?
+            throw new Exception(
+                "Font directory does not exist or is not a directory: " ~ fontDir);
+        }
 
-            auto fontFilePath = buildPath(fontPath, fontFile);
-            if (!fontFilePath.exists || !fontFilePath.isFile)
+        if (config.containsKey(KitConfigKeys.fontTTFFile))
+        {
+            logger.trace("Search font file in config with key: ", KitConfigKeys.fontTTFFile);
+            if (config.containsKey(KitConfigKeys.fontIsOverwriteFontFile) && config.getBool(
+                    KitConfigKeys.fontIsOverwriteFontFile).get)
             {
-                throw new Exception("Not found default system font: " ~ fontFilePath);
-            }        
+                fontFile = config.getNotEmptyString(KitConfigKeys.fontTTFFile).get;
+                logger.trace("Set font file from config: ", fontFile);
+            }
+            else
+            {
+                logger.trace(
+                    "Configuration does not allow overwriting the font file from config, config key: ", KitConfigKeys
+                        .fontIsOverwriteFontFile);
+            }
+        }else {
+            logger.trace("Not found font file from config with key: ", KitConfigKeys.fontTTFFile);
+        }
 
-            //TODO default font
-            asset = new Asset(uservices.logger, fontPath, comFontProvider);
-            asset.defaultFontResourceDir = null;
-            Font font = asset.newFont(fontFile, 15);
-            asset.font = font;
+        if(fontFile.length == 0){
+            throw new Exception("Font file is empty");
+        }
+
+        auto fontFilePath = buildPath(fontDir, fontFile);
+        if (!fontFilePath.exists || !fontFilePath.isFile)
+        {
+            throw new Exception("Font path does not exist or not a file: " ~ fontFilePath);
+        }
+
+        //TODO default font
+        asset = new Asset(uservices.logger, fontDir, comFontProvider);
+
+        auto defaultSize = fontSizeMedium;
+        if (config.containsKey(KitConfigKeys.fontSizeMedium))
+        {
+            logger.trace("Check font medium size in config with key: ", KitConfigKeys
+                    .fontSizeMedium);
+            auto mustBeNewSize = config.getLong(KitConfigKeys.fontSizeMedium);
+            if (!mustBeNewSize.isNull)
+            {
+                defaultSize = mustBeNewSize.get;
+                logger.trace("Set font default medium size from config: ", defaultSize);
+            }
+        }
+        else
+        {
+            logger.tracef("Default font medium size is used: ", defaultSize);
+        }
+
+        Font defaultFont = asset.newFont(fontFilePath, defaultSize);
+        asset.addFont(defaultFont);
+        logger.trace("Create medium font with size %s from %s", defaultSize, fontFilePath);
+
+        if (config.containsKey(KitConfigKeys.fontIsCreateSmall))
+        {
+            logger.trace("Checking creation small font in config with key: ", KitConfigKeys
+                    .fontIsCreateSmall);
+            const isSmallFontCreate = config.getBool(KitConfigKeys.fontIsCreateSmall);
+            if (!isSmallFontCreate.isNull && isSmallFontCreate.get)
+            {
+                size_t size = fontSizeSmall;
+                if (config.containsKey(KitConfigKeys.fontSizeSmall))
+                {
+                    logger.trace("Search small font size in config with key: ", KitConfigKeys
+                            .fontSizeSmall);
+                    const mustBeSmallSize = config.getPositiveLong(KitConfigKeys.fontSizeSmall);
+                    if (!mustBeSmallSize.isNull)
+                    {
+                        size = mustBeSmallSize.get;
+                        logger.trace("Set small font size from config: ", size);
+                    }
+                }
+                else
+                {
+                    logger.trace("Default font small size is used: ", size);
+                }
+
+                Font fontSmall = asset.newFont(fontFilePath, size);
+                asset.addFontSmall(fontSmall);
+                logger.tracef("Create small font with size %s from file %s", size, fontFilePath);
+            }
+            else
+            {
+                logger.trace("The config does not allow creating a small font with key: ", KitConfigKeys
+                        .fontIsCreateSmall);
+            }
+        }
+        else
+        {
+            logger.trace("Config does not contain small font key: ", KitConfigKeys
+                    .fontIsCreateSmall);
+        }
+
+        if (config.containsKey(KitConfigKeys.fontIsCreateLarge))
+        {
+            logger.trace("Checking creation large font in config with key: ", KitConfigKeys
+                    .fontIsCreateLarge);
+
+            const isLargeFontCreate = config.getBool(KitConfigKeys.fontIsCreateLarge);
+            if (!isLargeFontCreate.isNull && isLargeFontCreate.get)
+            {
+                size_t size = fontSizeLarge;
+                if (config.containsKey(KitConfigKeys.fontSizeLarge))
+                {
+                    logger.trace("Search large font size in config with key: ", KitConfigKeys
+                            .fontSizeLarge);
+                    const mustBeNewSize = config.getPositiveLong(KitConfigKeys.fontSizeLarge);
+                    if (!mustBeNewSize.isNull)
+                    {
+                        size = mustBeNewSize.get;
+                        logger.trace("Set large font size from config: ", size);
+                    }
+                }
+                else
+                {
+                    logger.trace("Default font large size is used: ", size);
+                }
+
+                Font fontLarge = asset.newFont(fontFilePath, size);
+                asset.addFontLarge(fontLarge);
+                logger.tracef("Create large font with size %s from file %s", size, fontFilePath);
+            }
+            else
+            {
+                logger.trace("The config does not allow creating a large font with key: ", KitConfigKeys
+                        .fontIsCreateLarge);
+            }
+        }
+        else
+        {
+            logger.trace("The config does not contain the large font creation key: ", KitConfigKeys
+                    .fontIsCreateLarge);
         }
 
         return asset;
@@ -357,24 +484,81 @@ abstract class GraphicApplication : CliApplication
         return new BitmapFontGenerator(comSurfaceProvider);
     }
 
-    BitmapFont createFontBitmap(BitmapFontGenerator generator, Asset asset, Theme theme)
+    Alphabet[] createMediumFontAlphabets()
     {
-        import dm.kit.graphics.colors.rgba : RGBA;
         import dm.kit.i18n.langs.alphabets.alphabet_ru : AlphabetRu;
         import dm.kit.i18n.langs.alphabets.alphabet_en : AlphabetEn;
         import dm.kit.i18n.langs.alphabets.arabic_numerals_alphabet : ArabicNumeralsAlpabet;
         import dm.kit.i18n.langs.alphabets.special_characters_alphabet : SpecialCharactersAlphabet;
 
-        //TODO from config
-        BitmapFont bitmapFont = generator.generate(
-            [
+        Alphabet[] alphabets = [
             new ArabicNumeralsAlpabet,
             new SpecialCharactersAlphabet,
             new AlphabetEn,
             new AlphabetRu
-        ], asset.font, RGBA.white, theme.colorTextBackground);
+        ];
+        return alphabets;
+    }
 
-        return bitmapFont;
+    Alphabet[] createSmallFontAlphabets()
+    {
+        import dm.kit.i18n.langs.alphabets.arabic_numerals_alphabet : ArabicNumeralsAlpabet;
+
+        Alphabet[] alphabets = [
+            new ArabicNumeralsAlpabet,
+        ];
+        return alphabets;
+    }
+
+    Alphabet[] createLargFontAlphabets()
+    {
+        import dm.kit.i18n.langs.alphabets.arabic_numerals_alphabet : ArabicNumeralsAlpabet;
+
+        Alphabet[] alphabets = [
+            new ArabicNumeralsAlpabet,
+        ];
+        return alphabets;
+    }
+
+    //TODO split function
+    void createFontBitmaps(BitmapFontGenerator generator, Asset assets, Theme theme, scope void delegate(BitmapFont) onBitmap)
+    {
+        //TODO from config
+        auto colorText = theme.colorText;
+        assets.defaultFontColor = colorText;
+        uservices.logger.trace("Set default text color to ", colorText);
+
+        auto colorTextBackground = theme.colorTextBackground;
+
+        if (assets.hasFont)
+        {
+            auto font = assets.font;
+            uservices.logger.trace("Found default font for default font bitmap: ", font.fontPath);
+            BitmapFont bitmapFont = generator.generate(createMediumFontAlphabets, font, colorText, colorTextBackground);
+            onBitmap(bitmapFont);
+            assets.setFontBitmap(bitmapFont);
+            uservices.logger.tracef("Create font bitmap with foreground %s and background %s", colorText, colorTextBackground);
+        }
+
+        if (assets.hasSmallFont)
+        {
+            auto font = assets.fontSmall;
+            uservices.logger.trace("Found small font for bitmap: ", font.fontPath);
+            BitmapFont bitmap = generator.generate(createSmallFontAlphabets, font, colorText, colorTextBackground);
+            onBitmap(bitmap);
+            assets.setFontBitmapSmall(bitmap);
+            uservices.logger.tracef("Create small font bitmap with foreground %s and background %s", colorText, colorTextBackground);
+        }
+
+        if (assets.hasLargeFont)
+        {
+            auto font = assets.fontLarge;
+            uservices.logger.trace("Found large font for bitmap: ", font.fontPath);
+            BitmapFont bitmap = generator.generate(createLargFontAlphabets, font, colorText, colorTextBackground);
+            onBitmap(bitmap);
+            assets.setFontBitmapLarge(bitmap);
+            uservices.logger.tracef("Create large font bitmap with foreground %s and background %s", colorText, colorTextBackground);
+        }
     }
 
     GraphicsComponent gservices() @nogc nothrow pure @safe

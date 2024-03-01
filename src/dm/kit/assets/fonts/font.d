@@ -58,9 +58,9 @@ class Font : LoggableUnit
         return path;
     }
 
-    int fonSize()
+    size_t fonSize()
     {
-        int size;
+        size_t size;
         if (const err = font.fontSize(size))
         {
             logger.error("Font size error. ", err);
