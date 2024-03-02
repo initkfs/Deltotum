@@ -49,6 +49,8 @@ class TargetButton : ButtonBase
         Transition!double stickAnimation;
 
         Button innerButton;
+
+        Sprite[] sticks;
     }
 
     protected Sprite createStick(double width, double height)
@@ -109,15 +111,19 @@ class TargetButton : ButtonBase
         topStick = createStick(sticckTopBottomWidth, sticckTopBottomHeight);
         bottomStick = createStick(sticckTopBottomWidth, sticckTopBottomHeight);
 
-        addCreate([leftStick, topStick, rightStick, bottomStick]);
+        sticks ~= [leftStick, topStick, rightStick, bottomStick];
+
+        addCreate(sticks);
 
         layoutSticks;
 
+        import dm.kit.sprites.animations.interp.uni_interpolator: UniInterpolator;
+
         //TODO infinite?
-        stickAnimation = new Transition!double(0, 10, 10000);
+        stickAnimation = new Transition!double(0, 10, 800);
+        stickAnimation.interpolator.interpolateMethod = &UniInterpolator.elasticInOut;
         addCreate(stickAnimation);
-        enum dt = 10;
-        stickAnimation.onValue = (v) {
+        stickAnimation.onValue = (dt) {
 
             if (stickAnimation.isInverse)
             {

@@ -24,7 +24,6 @@ class UniInterpolator : Interpolator
         enum ELASTIC_PERIOD = 0.4;
     }
 
-    double function(double) interpolateMethod;
 
     //TODO more flexible way 
     static UniInterpolator fromMethod(string methodName = "linear")()
@@ -32,18 +31,6 @@ class UniInterpolator : Interpolator
         auto interp = new UniInterpolator;
         interp.interpolateMethod = mixin(`&`, __traits(identifier, interp) ~ `.` ~ methodName);
         return interp;
-    }
-
-    override double interpolate(double value)
-    {
-        if (interpolateMethod is null)
-        {
-            return 0;
-        }
-
-        const double progress = math.clamp01(value);
-        const double interpProgress = interpolateMethod(progress);
-        return interpProgress;
     }
 
     static double linear(double value) @nogc nothrow
