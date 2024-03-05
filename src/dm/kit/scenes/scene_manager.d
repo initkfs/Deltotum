@@ -72,7 +72,7 @@ class SceneManager : Scene
         interact = new Interact(dialogManager);
     }
 
-    import dm.kit.apps.components.window_component: WindowComponent;
+    import dm.kit.apps.components.window_component : WindowComponent;
 
     alias build = WindowComponent.build;
 
@@ -232,9 +232,27 @@ class SceneManager : Scene
     override void dispose()
     {
         super.dispose;
-        if (_currentScene)
+        logger.trace("Start dispose all scenes");
+        foreach (Scene scene; _scenes)
         {
-            _currentScene.dispose;
+            const sceneName = scene.name;
+            if (scene.isComponentCreated)
+            {
+                logger.trace("Found created scene in window: ", sceneName);
+                if (scene.isRunning)
+                {
+                    scene.stop;
+                    assert(scene.isStopped);
+                    logger.trace("Stop created scene: ", sceneName);
+                }
+
+                scene.dispose;
+                logger.trace("Dispose created scene in window with name: ", sceneName);
+            }
+            else
+            {
+                logger.trace("Scene not created, disposing skipped: ", sceneName);
+            }
         }
     }
 }

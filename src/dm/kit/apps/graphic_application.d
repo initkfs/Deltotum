@@ -198,7 +198,7 @@ abstract class GraphicApplication : CliApplication
     {
         super.stop;
         windowManager.onWindows((win) {
-            if (!win.isStopped)
+            if (!win.isDisposed && !win.isStopped)
             {
                 win.stop;
                 assert(win.isStopped);
@@ -215,10 +215,27 @@ abstract class GraphicApplication : CliApplication
         }
     }
 
-    void destroyWindow(long id)
+    void destroyWindowById(long winId)
     {
-        uservices.logger.tracef("Request close window with id '%s'", id);
-        windowManager.dispose(id);
+        auto mustBeWindow = windowManager.byFirstId(winId);
+        if (mustBeWindow.isNull)
+        {
+            uservices.logger.error("No window found to close with id ", winId);
+            return ;
+        }
+        destroyWindow(mustBeWindow.get);
+    }
+
+    void destroyWindow(Window window)
+    {
+        auto winId = window.id;
+        uservices.logger.tracef("Request close window with id '%s'", winId);
+
+        if(window.isRunning){
+            window.stop;
+        }
+
+        window.close;
 
         if (windowManager.count == 0 && isQuitOnCloseAllWindows)
         {
@@ -357,11 +374,14 @@ abstract class GraphicApplication : CliApplication
                     "Configuration does not allow overwriting the font file from config, config key: ", KitConfigKeys
                         .fontIsOverwriteFontFile);
             }
-        }else {
+        }
+        else
+        {
             logger.trace("Not found font file from config with key: ", KitConfigKeys.fontTTFFile);
         }
 
-        if(fontFile.length == 0){
+        if (fontFile.length == 0)
+        {
             throw new Exception("Font file is empty");
         }
 
@@ -521,7 +541,8 @@ abstract class GraphicApplication : CliApplication
     }
 
     //TODO split function
-    void createFontBitmaps(BitmapFontGenerator generator, Asset assets, Theme theme, scope void delegate(BitmapFont) onBitmap)
+    void createFontBitmaps(BitmapFontGenerator generator, Asset assets, Theme theme, scope void delegate(
+            BitmapFont) onBitmap)
     {
         //TODO from config
         auto colorText = theme.colorText;

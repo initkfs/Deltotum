@@ -28,6 +28,10 @@ class UniComponent : SimpleUnit
     bool delegate(UniComponent component, UniComponent) onPreBuildWithParentIsContinue;
     void delegate(UniComponent component, UniComponent) onPostBuildWithParent;
 
+    bool isComponentInitialized;
+    bool isComponentCreated;
+    bool isComponentDisposed;
+
     private
     {
         @Service Context _context;
@@ -125,6 +129,31 @@ class UniComponent : SimpleUnit
     void afterBuild()
     {
 
+    }
+
+    override void initialize()
+    {
+        assert(!isComponentDisposed);
+        super.initialize;
+        isComponentInitialized = true;
+        //TODO assert?
+        isComponentDisposed = false;
+    }
+
+    override void create()
+    {
+        super.create;
+        isComponentCreated = true;
+        isComponentDisposed = false;
+    }
+
+    override void dispose()
+    {
+        super.dispose;
+        isComponentDisposed = true;
+
+        isComponentInitialized = false;
+        isComponentCreated = false;
     }
 
     bool hasContext() const @nogc nothrow pure @safe

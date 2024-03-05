@@ -207,7 +207,7 @@ class Window : GraphicsComponent
 
         isClosing = true;
 
-        logger.trace("Destroy window '%s' with id %d", title, id);
+        logger.tracef("Close window '%s' with id %d", title, id);
 
         dispose;
     }
@@ -521,17 +521,17 @@ class Window : GraphicsComponent
 
     override void dispose()
     {
+        const windowId = id;
         if (isDisposed)
         {
-            logger.error("The window is already destroyed");
+            logger.error("The window is already destroyed with id", windowId);
             return;
         }
+        logger.tracef("Start dispose window '%s' with id %d", title, windowId);
+
         super.dispose;
 
         //TODO close child windows
-
-        logger.tracef("Destroy window '%s' with id %d", title, id);
-
         if (onBeforeDestroy.length > 0)
         {
             foreach (dg; onBeforeDestroy)
@@ -539,6 +539,22 @@ class Window : GraphicsComponent
                 dg();
             }
         }
+
+        if (renderer && isDestroyRenderer)
+        {
+            renderer.dispose;
+            logger.trace("Dispose renderer in window with id: ", windowId);
+        }
+
+        if (scenes && isDestroyScenes)
+        {
+            scenes.dispose;
+            logger.trace("Dispose scenes in window with id: ", windowId);
+        }
+
+        //after window
+        nativeWindow.dispose;
+        logger.trace("Dispose native window with id: ", windowId);
 
         parent = null;
 
@@ -550,19 +566,6 @@ class Window : GraphicsComponent
         onMaximize = null;
         onBeforeDestroy = null;
         onResizeOldNewWidthHeight = null;
-
-        if (renderer && isDestroyRenderer)
-        {
-            renderer.dispose;
-        }
-
-        if (scenes && isDestroyScenes)
-        {
-            scenes.dispose;
-        }
-
-        //after window
-        nativeWindow.dispose;
 
         isDisposed = true;
 

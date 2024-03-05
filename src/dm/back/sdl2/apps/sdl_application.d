@@ -509,7 +509,8 @@ class SdlApplication : ContinuouslyApplication
                         }
                         return true;
                     });
-                    destroyWindow(e.ownerId);
+                    auto winId = e.ownerId;
+                    destroyWindowById(winId);
                     break;
                 default:
                     break;
@@ -934,7 +935,7 @@ class SdlApplication : ContinuouslyApplication
         if (event.type == SDL_QUIT)
         {
             uint windowId = event.window.windowID;
-            destroyWindow(windowId);
+            destroyWindowById(windowId);
 
             requestQuit;
         }
