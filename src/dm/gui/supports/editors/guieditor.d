@@ -67,6 +67,13 @@ class GuiEditor : Scene
         imagesTab.content = new Images;
         root.addCreate(imagesTab);
 
+        import dm.gui.supports.editors.sections.curves: Curves;
+
+        auto curvesTab = new Tab("Curves");
+        curvesTab.content = new Curves;
+        root.addCreate(curvesTab);
+
+
         import dm.gui.supports.editors.sections.scripting : Scripting;
 
         auto scriptTab = new Tab("Scripting");
