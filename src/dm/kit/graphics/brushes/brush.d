@@ -109,8 +109,8 @@ class Brush
 
     void setState(Vector2 pos, double angleDeg) @safe
     {
-        pos = pos;
-        angleDeg = angleDeg;
+        _pos = pos;
+        _angleDeg = angleDeg;
     }
 
     void saveState() @safe

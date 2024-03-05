@@ -73,6 +73,11 @@ class GuiEditor : Scene
         curvesTab.content = new Curves;
         root.addCreate(curvesTab);
 
+        import dm.gui.supports.editors.sections.fractals: Fractals;
+
+        auto fractalsTab = new Tab("Fractals");
+        fractalsTab.content = new Fractals;
+        root.addCreate(fractalsTab);
 
         import dm.gui.supports.editors.sections.scripting : Scripting;
 
