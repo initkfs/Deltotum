@@ -5,7 +5,7 @@ import dm.com.graphics.com_texture_scale_mode : ComTextureScaleMode;
 import dm.kit.sprites.textures.texture : Texture;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import dm.kit.sprites.sprite : Sprite;
-import dm.math.shapes.rect2d : Rect2d;
+import dm.math.rect2d : Rect2d;
 
 import Math = dm.math;
 

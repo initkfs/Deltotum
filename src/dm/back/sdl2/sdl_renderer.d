@@ -12,9 +12,9 @@ import dm.back.sdl2.base.sdl_object_wrapper : SdlObjectWrapper;
 import dm.back.sdl2.sdl_window : SdlWindow;
 import dm.back.sdl2.sdl_texture : SdlTexture;
 
-import dm.math.geom.flip : Flip;
+import dm.math.flip : Flip;
 import dm.math.vector2 : Vector2;
-import dm.math.shapes.rect2d : Rect2d;
+import dm.math.rect2d : Rect2d;
 
 import bindbc.sdl;
 

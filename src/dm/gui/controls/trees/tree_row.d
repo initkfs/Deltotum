@@ -77,7 +77,7 @@ class TreeRow(T) : Container
     {
         super.create;
         import dm.gui.controls.texts.text : Text;
-        import dm.math.geom.insets : Insets;
+        import dm.math.insets : Insets;
 
         //TODO recreate
 

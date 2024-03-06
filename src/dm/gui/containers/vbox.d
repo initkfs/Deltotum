@@ -33,7 +33,7 @@ class VBox : SpaceableContainer
 unittest
 {
     import dm.kit.sprites.sprite : Sprite;
-    import dm.math.geom.insets : Insets;
+    import dm.math.insets : Insets;
 
     auto sp1 = new Sprite;
     sp1.width = 100;

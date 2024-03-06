@@ -3,12 +3,12 @@ module dm.kit.sprites.images.animated_image;
 import dm.kit.sprites.images.image : Image;
 import dm.kit.sprites.sprite : Sprite;
 
-import dm.math.shapes.rect2d : Rect2d;
+import dm.math.rect2d : Rect2d;
 import dm.kit.sprites.animations.interp.interpolator : Interpolator;
 import dm.kit.sprites.animations.transition : Transition;
 import std.math.rounding : floor;
 import std.conv : to;
-import dm.math.geom.flip : Flip;
+import dm.math.flip : Flip;
 
 private
 {

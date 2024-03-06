@@ -1,4 +1,4 @@
-module dm.math.shapes.ellipse2d;
+module dm.math.ellipse2d;
 
 import dm.math.vector2 : Vector2;
 

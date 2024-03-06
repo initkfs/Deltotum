@@ -2,7 +2,7 @@ module dm.kit.sprites.shapes.circle;
 
 import dm.kit.sprites.shapes.shape;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import dm.math.shapes.circle2d : Circle2d;
+import dm.math.circle2d : Circle2d;
 import dm.kit.sprites.shapes.rectangle : Rectangle;
 import dm.kit.sprites.sprite : Sprite;
 

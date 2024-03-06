@@ -2,7 +2,7 @@ module dm.gui.controls.charts.linear_chart;
 
 import dm.gui.controls.control : Control;
 import dm.math.vector2 : Vector2;
-import dm.math.geom.insets : Insets;
+import dm.math.insets : Insets;
 import dm.kit.graphics.colors.rgba : RGBA;
 import dm.kit.graphics.colors.palettes.material_palette : MaterialPalette;
 import dm.gui.containers.container : Container;

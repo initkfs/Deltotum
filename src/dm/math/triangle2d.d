@@ -1,4 +1,4 @@
-module dm.math.shapes.triangle2d;
+module dm.math.triangle2d;
 
 import dm.math.vector2 : Vector2;
 import dm.math.line2d : Line2d;

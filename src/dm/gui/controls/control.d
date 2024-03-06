@@ -2,10 +2,10 @@ module dm.gui.controls.control;
 
 import dm.kit.sprites.sprite : Sprite;
 import dm.kit.sprites.layouts.layout : Layout;
-import dm.math.geom.insets : Insets;
+import dm.math.insets : Insets;
 import dm.kit.sprites.textures.texture : Texture;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import dm.math.geom.alignment : Alignment;
+import dm.math.alignment : Alignment;
 
 import dm.kit.sprites.animations.transition : Transition;
 import dm.kit.sprites.animations.object.property.opacity_transition : OpacityTransition;

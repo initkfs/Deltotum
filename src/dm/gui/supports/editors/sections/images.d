@@ -82,7 +82,7 @@ class Images : Control
         import dm.gui.containers.vbox : VBox;
         import dm.gui.containers.container : Container;
         import dm.gui.containers.stack_box : StackBox;
-        import dm.math.geom.insets : Insets;
+        import dm.math.insets : Insets;
 
         auto container = new HBox;
         addCreate(container);
@@ -230,7 +230,7 @@ class Images : Control
         bilinear.load(ImageProcessor.resizeBilinear(colorBuff, imageWidth / 2, imageHeight / 2));
         container2.addCreate(createImageInfo("Bilinear", bilinear));
 
-        import dm.math.shapes.rect2d : Rect2d;
+        import dm.math.rect2d : Rect2d;
 
         auto crop = new Image(50, 50);
         build(crop);

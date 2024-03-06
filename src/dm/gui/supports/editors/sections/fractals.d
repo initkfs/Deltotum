@@ -97,7 +97,7 @@ class Fractals : Control
         super.create;
 
         import dm.gui.containers.stack_box : StackBox;
-        import dm.math.geom.insets : Insets;
+        import dm.math.insets : Insets;
 
         auto container = newHContainer;
         addCreate(container);

@@ -1,4 +1,4 @@
-module dm.math.geom.position;
+module dm.math.position;
 /**
  * Authors: initkfs
  */

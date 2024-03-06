@@ -2,7 +2,7 @@ module dm.kit.windows.window;
 
 import dm.kit.apps.components.graphics_component : GraphicsComponent;
 import dm.com.graphics.com_window : ComWindow;
-import dm.math.shapes.rect2d : Rect2d;
+import dm.math.rect2d : Rect2d;
 import dm.math.vector2 : Vector2;
 
 import dm.kit.scenes.scene_manager : SceneManager;
@@ -352,7 +352,7 @@ class Window : GraphicsComponent
 
     Rect2d bounds()
     {
-        import dm.math.shapes.rect2d : Rect2d;
+        import dm.math.rect2d : Rect2d;
 
         Rect2d boundsRect = {x, y, width, height};
         return boundsRect;
@@ -360,7 +360,7 @@ class Window : GraphicsComponent
 
     Rect2d boundsLocal()
     {
-        import dm.math.shapes.rect2d : Rect2d;
+        import dm.math.rect2d : Rect2d;
 
         Rect2d boundsRect = {0, 0, width, height};
         return boundsRect;

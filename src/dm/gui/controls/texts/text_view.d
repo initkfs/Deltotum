@@ -2,9 +2,9 @@ module dm.gui.controls.texts.text_view;
 
 import dm.gui.controls.control : Control;
 import dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
-import dm.math.shapes.rect2d : Rect2d;
+import dm.math.rect2d : Rect2d;
 import dm.math.vector2 : Vector2;
-import dm.math.geom.flip : Flip;
+import dm.math.flip : Flip;
 import dm.kit.assets.fonts.glyphs.glyph : Glyph;
 import dm.gui.controls.texts.text : Text;
 

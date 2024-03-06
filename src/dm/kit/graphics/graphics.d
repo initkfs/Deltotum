@@ -13,8 +13,8 @@ import dm.kit.sprites.textures.texture : Texture;
 
 import Math = dm.math;
 
-import dm.math.geom.flip : Flip;
-import dm.math.shapes.rect2d : Rect2d;
+import dm.math.flip : Flip;
+import dm.math.rect2d : Rect2d;
 
 import std.logger.core : Logger;
 import std.conv : to;

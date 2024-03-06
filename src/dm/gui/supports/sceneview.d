@@ -13,7 +13,7 @@ import dm.gui.containers.container : Container;
 import dm.gui.controls.texts.text_area : TextArea;
 import dm.gui.controls.trees.tree_item : TreeItem;
 import dm.gui.controls.trees.tree_list_view : TreeListView;
-import dm.math.geom.insets : Insets;
+import dm.math.insets : Insets;
 import dm.gui.containers.scroll_box : ScrollBox;
 import dm.gui.controls.tabs.tab : Tab;
 import dm.gui.controls.tabs.tabpane : TabPane;

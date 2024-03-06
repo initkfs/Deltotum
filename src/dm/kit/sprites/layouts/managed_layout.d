@@ -3,7 +3,7 @@ module dm.kit.sprites.layouts.managed_layout;
 import dm.kit.sprites.layouts.layout : Layout;
 import dm.kit.sprites.sprite : Sprite;
 import dm.gui.controls.control : Control;
-import dm.math.geom.alignment : Alignment;
+import dm.math.alignment : Alignment;
 
 import Math = dm.math;
 

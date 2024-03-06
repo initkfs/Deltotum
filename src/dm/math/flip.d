@@ -1,4 +1,4 @@
-module dm.math.geom.flip;
+module dm.math.flip;
 
 enum Flip {
     none,

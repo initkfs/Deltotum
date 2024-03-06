@@ -7,7 +7,7 @@ import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import dm.kit.sprites.textures.vectors.contexts.vector_graphics_context : VectorGraphicsContext;
 
 import dm.com.graphics.com_surface : ComSurface;
-import dm.math.shapes.rect2d : Rect2d;
+import dm.math.rect2d : Rect2d;
 import dm.math.vector2 : Vector2;
 
 //TODO remove native api

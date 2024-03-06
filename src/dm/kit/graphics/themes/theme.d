@@ -2,7 +2,7 @@ module dm.kit.graphics.themes.theme;
 
 import dm.kit.graphics.colors.rgba : RGBA;
 import dm.kit.assets.fonts.font : Font;
-import dm.math.geom.insets : Insets;
+import dm.math.insets : Insets;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import dm.kit.graphics.themes.icons.icon_pack : IconPack;
 import dm.kit.sprites.images.image : Image;

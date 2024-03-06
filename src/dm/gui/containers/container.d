@@ -108,7 +108,7 @@ unittest
     // assert(container1.width == sp1.width);
     // assert(container1.height == sp1.height);
 
-    // import dm.math.geom.insets : Insets;
+    // import dm.math.insets : Insets;
 
     // container1.padding = Insets(5);
     // container1.setInvalid;

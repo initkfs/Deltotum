@@ -2,7 +2,7 @@ module dm.kit.graphics.brushes.brush;
 
 import dm.kit.graphics.colors.rgba : RGBA;
 import dm.math.vector2 : Vector2;
-import dm.math.shapes.rect2d : Rect2d;
+import dm.math.rect2d : Rect2d;
 
 import Math = dm.math;
 
@@ -136,7 +136,7 @@ class Brush
 unittest
 {
     import dm.math.vector2 : Vector2;
-    import dm.math.shapes.rect2d : Rect2d;
+    import dm.math.rect2d : Rect2d;
 
     const brushBounds = Rect2d(0, 0, 100, 100);
     auto brush = new Brush(Vector2(0, 0), 0);

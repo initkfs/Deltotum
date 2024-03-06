@@ -1,4 +1,4 @@
-module dm.math.shapes.circle2d;
+module dm.math.circle2d;
 
 import dm.math.vector2 : Vector2;
 

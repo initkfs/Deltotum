@@ -1,4 +1,4 @@
-module dm.math.geom.insets;
+module dm.math.insets;
 
 /**
  * Authors: initkfs

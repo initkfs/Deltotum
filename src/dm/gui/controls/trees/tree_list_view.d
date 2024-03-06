@@ -9,8 +9,8 @@ import dm.gui.containers.stack_box : StackBox;
 import dm.gui.controls.sliders.hslider : HSlider;
 import dm.gui.controls.sliders.vslider : VSlider;
 import dm.kit.sprites.sprite : Sprite;
-import dm.math.geom.insets : Insets;
-import dm.math.shapes.rect2d : Rect2d;
+import dm.math.insets : Insets;
+import dm.math.rect2d : Rect2d;
 import dm.gui.controls.buttons.button : Button;
 import dm.gui.controls.texts.text : Text;
 

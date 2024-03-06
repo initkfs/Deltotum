@@ -1,7 +1,7 @@
-module dm.math.shapes.rect2d;
+module dm.math.rect2d;
 
 import dm.math.vector2 : Vector2;
-import dm.math.shapes.circle2d : Circle2d;
+import dm.math.circle2d : Circle2d;
 
 /**
  * Authors: initkfs

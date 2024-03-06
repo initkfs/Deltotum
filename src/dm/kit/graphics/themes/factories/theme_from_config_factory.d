@@ -7,7 +7,7 @@ import dm.core.resources.resource: Resource;
 import dm.kit.graphics.themes.theme : Theme;
 import dm.kit.assets.fonts.font : Font;
 import dm.kit.graphics.colors.rgba : RGBA;
-import dm.math.geom.insets : Insets;
+import dm.math.insets : Insets;
 import dm.kit.graphics.themes.icons.icon_pack : IconPack;
 
 import std.logger.core : Logger;

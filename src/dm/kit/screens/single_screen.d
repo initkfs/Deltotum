@@ -1,6 +1,6 @@
 module dm.kit.screens.single_screen;
 
-import dm.math.shapes.rect2d : Rect2d;
+import dm.math.rect2d : Rect2d;
 import dm.com.graphics.com_screen : ComScreen, ScreenMode, ScreenDpi, ScreenOrientation;
 
 import std.logger.core : Logger;

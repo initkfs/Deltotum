@@ -3,12 +3,12 @@ module dm.gui.supports.editors.sections.textures;
 import dm.gui.controls.control : Control;
 import dm.kit.sprites.sprite : Sprite;
 import dm.kit.graphics.colors.rgba : RGBA;
-import dm.math.geom.flip : Flip;
+import dm.math.flip : Flip;
 
 import Math = dm.math;
 import dm.math.vector2 : Vector2;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import dm.math.shapes.rect2d : Rect2d;
+import dm.math.rect2d : Rect2d;
 
 import std.stdio;
 

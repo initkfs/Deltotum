@@ -2,7 +2,7 @@ module dm.kit.sprites.layouts.flow_layout;
 
 import dm.kit.sprites.sprite : Sprite;
 import dm.kit.sprites.layouts.managed_layout : ManagedLayout;
-import dm.math.geom.alignment : Alignment;
+import dm.math.alignment : Alignment;
 
 import Math = dm.math;
 

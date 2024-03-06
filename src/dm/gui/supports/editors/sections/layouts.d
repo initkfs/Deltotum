@@ -3,7 +3,7 @@ module dm.gui.supports.editors.sections.layouts;
 import dm.gui.controls.control : Control;
 import dm.kit.sprites.sprite : Sprite;
 import dm.kit.graphics.colors.rgba : RGBA;
-import dm.math.geom.insets : Insets;
+import dm.math.insets : Insets;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
 import dm.gui.containers.container : Container;

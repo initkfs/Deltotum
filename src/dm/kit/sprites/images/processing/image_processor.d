@@ -1,7 +1,7 @@
 module dm.kit.sprites.images.processing.image_processor;
 
 import dm.kit.graphics.colors.rgba : RGBA;
-import dm.math.shapes.rect2d : Rect2d;
+import dm.math.rect2d : Rect2d;
 import Math = dm.math;
 
 import std.stdio;

@@ -172,7 +172,7 @@ class ToggleSwitch : Labeled
         switchContainer = new Container;
 
         switchContainer.layout = new ManagedLayout;
-        import dm.math.geom.insets : Insets;
+        import dm.math.insets : Insets;
 
         switchContainer.padding = Insets(5);
         switchContainer.layout.isAlignY = true;

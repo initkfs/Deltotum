@@ -6,7 +6,7 @@ import dm.com.graphics.com_blend_mode: ComBlendMode;
 import dm.com.lifecycles.destroyable : Destroyable;
 
 import dm.math.vector2: Vector2;
-import dm.math.shapes.rect2d: Rect2d;
+import dm.math.rect2d: Rect2d;
 
 /**
  * Authors: initkfs

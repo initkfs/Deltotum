@@ -1,4 +1,4 @@
-module dm.math.geom.alignment;
+module dm.math.alignment;
 /**
  * Authors: initkfs
  */

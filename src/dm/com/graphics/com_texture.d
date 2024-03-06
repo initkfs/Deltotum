@@ -5,8 +5,8 @@ import dm.com.graphics.com_blend_mode : ComBlendMode;
 import dm.com.graphics.com_texture_scale_mode : ComTextureScaleMode;
 import dm.com.lifecycles.destroyable : Destroyable;
 
-import dm.math.shapes.rect2d : Rect2d;
-import dm.math.geom.flip : Flip;
+import dm.math.rect2d : Rect2d;
+import dm.math.flip : Flip;
 import dm.com.graphics.com_surface : ComSurface;
 
 /**

@@ -2,9 +2,9 @@ module dm.kit.sprites.sprite;
 
 import dm.kit.events.event_kit_target : EventKitTarget;
 import dm.math.vector2 : Vector2;
-import dm.math.shapes.rect2d : Rect2d;
-import dm.math.geom.alignment : Alignment;
-import dm.math.geom.insets : Insets;
+import dm.math.rect2d : Rect2d;
+import dm.math.alignment : Alignment;
+import dm.math.insets : Insets;
 import dm.kit.sprites.layouts.layout : Layout;
 import dm.kit.sprites.textures.rgba_texture : RgbaTexture;
 import dm.kit.scenes.scaling.scale_mode : ScaleMode;

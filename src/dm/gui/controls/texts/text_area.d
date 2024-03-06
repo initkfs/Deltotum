@@ -33,7 +33,7 @@ class TextArea : HBox
     {
         super.initialize;
 
-        import dm.math.geom.insets;
+        import dm.math.insets;
 
         padding = Insets(0);
         spacing = 0;

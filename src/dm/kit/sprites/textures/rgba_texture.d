@@ -2,7 +2,7 @@ module dm.kit.sprites.textures.rgba_texture;
 
 import dm.kit.sprites.textures.texture : Texture;
 
-import dm.math.shapes.rect2d : Rect2d;
+import dm.math.rect2d : Rect2d;
 
 /**
  * Authors: initkfs

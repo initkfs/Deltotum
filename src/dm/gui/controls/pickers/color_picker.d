@@ -2,7 +2,7 @@ module dm.gui.controls.pickers.color_picker;
 
 import dm.gui.controls.control : Control;
 import dm.kit.sprites.layouts.layout : Layout;
-import dm.math.geom.insets : Insets;
+import dm.math.insets : Insets;
 import dm.kit.sprites.textures.texture : Texture;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import dm.gui.controls.texts.text : Text;

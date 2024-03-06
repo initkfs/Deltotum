@@ -6,9 +6,9 @@ import dm.com.graphics.com_texture : ComTexture;
 import dm.com.graphics.com_image : ComImage;
 import dm.com.graphics.com_surface : ComSurface;
 import dm.kit.sprites.textures.texture : Texture;
-import dm.math.shapes.rect2d : Rect2d;
+import dm.math.rect2d : Rect2d;
 import dm.kit.graphics.colors.rgba : RGBA;
-import dm.math.geom.flip : Flip;
+import dm.math.flip : Flip;
 
 /**
  * Authors: initkfs

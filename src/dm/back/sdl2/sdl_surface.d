@@ -10,7 +10,7 @@ import dm.com.platforms.results.com_result : ComResult;
 import dm.back.sdl2.base.sdl_object_wrapper : SdlObjectWrapper;
 import dm.back.sdl2.sdl_window : SdlWindow;
 
-import dm.math.shapes.rect2d : Rect2d;
+import dm.math.rect2d : Rect2d;
 
 import bindbc.sdl;
 

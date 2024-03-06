@@ -134,7 +134,7 @@ class Grahpics : Control
         ];
         graphics.polygon(points);
 
-        import Delaunay = dm.math.geom.triangulations.delaunay_triangulator;
+        import Delaunay = dm.math.triangulations.delaunay_triangulator;
 
         auto res = Delaunay.triangulate(points);
 

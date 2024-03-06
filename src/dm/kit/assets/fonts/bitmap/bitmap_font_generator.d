@@ -12,7 +12,7 @@ import dm.kit.graphics.colors.rgba : RGBA;
 
 import dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 import dm.kit.i18n.langs.alphabets.alphabet : Alphabet;
-import dm.math.shapes.rect2d : Rect2d;
+import dm.math.rect2d : Rect2d;
 import dm.math.vector2 : Vector2;
 
 import std.string : toStringz;
