@@ -7,6 +7,7 @@ import dm.math.vector2 : Vector2;
 import math = dm.math;
 
 import std.traits : isIntegral, isFloatingPoint;
+import std.container.dlist : DList;
 
 import std.stdio;
 
@@ -26,6 +27,9 @@ private
  */
 class Transition(T) if (isFloatingPoint!T || is(T : Vector2)) : Animation
 {
+    DList!Animation prevs;
+    DList!Animation nexts;
+
     void delegate(T) onValue;
 
     Interpolator interpolator;
@@ -38,7 +42,7 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2)) : Animation
     double frameRateHz = 0;
     double timeMs = 0;
 
-    private
+    protected
     {
         double frameCount = 0;
         long currentFrame;
@@ -70,15 +74,33 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2)) : Animation
         isVisible = false;
     }
 
+    protected double getFrameRate()
+    {
+        const double rate = frameRateHz > 0 ? frameRateHz : window.frameRate;
+        return rate;
+    }
+
     override void run()
     {
         super.run;
 
-        const double frameRate = frameRateHz > 0 ? frameRateHz : window.frameRate;
-        //TODO error if <= 0
-        if (frameRate > 0)
+        if (!prevs.empty)
         {
-            frameCount = getFrameCount(frameRate);
+            foreach (prev; prevs)
+            {
+                assert(prev, "Previous animation must not be null");
+                if (prev.isRunning)
+                {
+                    prev.stop;
+                }
+            }
+        }
+
+        const double rate = getFrameRate;
+        //TODO error if <= 0
+        if (rate > 0)
+        {
+            frameCount = getFrameCount(rate);
             currentFrame = firstFrame;
         }
         state = TransitionState.direct;
@@ -96,8 +118,14 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2)) : Animation
         super.stop;
 
         state = TransitionState.end;
+
         frameCount = 0;
         currentFrame = 0;
+
+        if (onEnd)
+        {
+            onEnd();
+        }
 
         import std.traits : isFloatingPoint;
 
@@ -110,6 +138,24 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2)) : Animation
             lastValue = T.init;
         }
         onShort = false;
+
+        if (!nexts.empty)
+        {
+            foreach (next; nexts)
+            {
+                assert(next, "Next animation must not be null");
+                if (next.isRunning)
+                {
+                    next.stop;
+                }
+                next.run;
+            }
+        }
+    }
+
+    protected bool isRunningState()
+    {
+        return state == TransitionState.direct || state == TransitionState.back;
     }
 
     override void update(double delta)
@@ -133,10 +179,6 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2)) : Animation
                 if (!isInverse || onShort)
                 {
                     stop;
-                    if (onEnd)
-                    {
-                        onEnd();
-                    }
                     return;
                 }
                 else
