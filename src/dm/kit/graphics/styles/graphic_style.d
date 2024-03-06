@@ -7,8 +7,8 @@ import dm.kit.graphics.colors.rgba : RGBA;
  */
 struct GraphicStyle
 {
-    double lineWidth = 0;
-    RGBA lineColor = RGBA.white;
+    double lineWidth = 1;
+    RGBA lineColor = RGBA.lime;
 
     bool isFill;
     RGBA fillColor = RGBA.transparent;

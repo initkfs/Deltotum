@@ -18,7 +18,7 @@ class Roses : CurveMaker
         const petalsFactor = n / d;
 
         //For an integer k, the number of petals is k if k is odd and 2k if even
-        pointsIteration(step, 0, Math.PI * 2 * curlsCount - step, (angle) {
+        pointsIteration(step, 0, Math.PI * curlsCount - step, (angle) {
             auto r = roseSize * Math.sin(petalsFactor * angle);
             result ~= Vector2.fromPolarRad(angle, r);
             return true;

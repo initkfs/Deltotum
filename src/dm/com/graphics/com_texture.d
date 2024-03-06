@@ -28,12 +28,16 @@ interface ComTexture : Destroyable
     ComResult getColor(out ubyte r, out ubyte g, out ubyte b, out ubyte a) nothrow;
     ComResult setColor(ubyte r, ubyte g, ubyte b, ubyte a) nothrow;
 
+    ComResult createMutARGB8888(int width, int height) nothrow;
     ComResult createMutRGBA32(int width, int height) nothrow;
     ComResult createImmutRGBA32(int width, int height) nothrow;
     ComResult createTargetRGBA32(int width, int height) nothrow;
 
     ComResult lock() nothrow;
     ComResult unlock() nothrow;
+    ComResult getPitch(out int pitch) @nogc nothrow;
+    ComResult getPixels(out void* pixels) @nogc nothrow;
+    ComResult update(Rect2d rect, void* pixels, int pitch) @nogc nothrow;
 
     ComResult getPixel(uint x, uint y, out uint* pixel) nothrow;
     ComResult setPixelColor(uint x, uint y, ubyte r, ubyte g, ubyte b, ubyte aByte) nothrow;

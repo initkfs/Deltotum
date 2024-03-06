@@ -30,6 +30,8 @@ class Scene : WindowComponent
 
     SceneView debugger;
 
+    bool startDrawProcess;
+
     protected
     {
         Sprite[] sprites;
@@ -48,28 +50,42 @@ class Scene : WindowComponent
 
     void draw()
     {
-        graphics.draw(() {
 
-            if (onDraw)
+    }
+
+    void drawAll()
+    {
+        if (onDraw)
+        {
+            onDraw();
+        }
+
+        draw;
+
+        foreach (obj; sprites)
+        {
+            obj.draw;
+            if (obj.isClipped)
             {
-                onDraw();
+                obj.disableClipping;
             }
 
-            foreach (obj; sprites)
-            {
-                obj.draw;
-                if (obj.isClipped)
-                {
-                    obj.disableClipping;
-                }
+            obj.unvalidate;
+        }
 
-                obj.unvalidate;
-            }
-        });
+        startDrawProcess = false;
+        //TODO multiple scenes
+        graphics.rendererPresent;
     }
 
     void update(double delta)
     {
+        if (!startDrawProcess)
+        {
+            graphics.clearScreen;
+            startDrawProcess = true;
+        }
+
         worldTicks++;
 
         size_t invalidNodesCount;

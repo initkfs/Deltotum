@@ -34,6 +34,8 @@ class Graphics : LoggableUnit
 
     //TODO remove
     static RGBA defaultColor = RGBA.red;
+    
+    RGBA screenColor = RGBA.black;
 
     protected
     {
@@ -831,12 +833,13 @@ class Graphics : LoggableUnit
         return true;
     }
 
-    void draw(scope void delegate() onDraw)
-    {
-        import dm.kit.graphics.colors.rgba : RGBA;
+    void rendererPresent(){
+        renderer.present;
+    }
 
+    void clearScreen()
+    {
         //isClearingInCycle
-        const screenColor = RGBA.black;
         if (const err = renderer.setRenderDrawColor(screenColor.r, screenColor.g, screenColor.b, screenColor
                 .aByte))
         {
@@ -849,10 +852,6 @@ class Graphics : LoggableUnit
                 //TODO logging in main loop?
             }
         }
-
-        onDraw();
-
-        renderer.present;
     }
 
     double scaleFactorFor(long width, long height)

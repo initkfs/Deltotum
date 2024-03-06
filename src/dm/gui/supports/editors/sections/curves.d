@@ -180,7 +180,7 @@ class Curves : Control
         auto rosesCuveCalc = new Roses;
         auto rose1 = createCurveInfo("Rose 3", rosesCuveCalc.rose(25, 3, 1));
         auto rose2 = createCurveInfo("Rose 5", rosesCuveCalc.rose(25, 5, 1));
-        auto rose3 = createCurveInfo("Rose 4/7", rosesCuveCalc.rose(25, 4, 7, 10));
+        auto rose3 = createCurveInfo("Rose 4/7", rosesCuveCalc.rose(25, 4, 7, 14));
         auto rose4 = createCurveInfo("Rose 5/7", rosesCuveCalc.rose(25, 5, 7, 7));
         auto rose5 = createCurveInfo("Rose 3/2", rosesCuveCalc.rose(25, 3, 2, 7));
         auto rose6 = createCurveInfo("Rose 7/2", rosesCuveCalc.rose(25, 7, 2, 7));

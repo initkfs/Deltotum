@@ -36,10 +36,10 @@ class Transition(T) if (isFloatingPoint!T || is(T : Vector2)) : Animation
     T _maxValue;
 
     double frameRateHz = 0;
+    double timeMs = 0;
 
     private
     {
-        double timeMs = 0;
         double frameCount = 0;
         long currentFrame;
 

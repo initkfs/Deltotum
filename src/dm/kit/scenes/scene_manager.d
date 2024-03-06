@@ -215,7 +215,7 @@ class SceneManager : Scene
             return false;
         }
 
-        _currentScene.draw;
+        _currentScene.drawAll;
         return true;
     }
 

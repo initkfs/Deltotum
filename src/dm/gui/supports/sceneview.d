@@ -11,12 +11,13 @@ import dm.gui.controls.buttons.button : Button;
 import dm.kit.sprites.sprite : Sprite;
 import dm.gui.containers.container : Container;
 import dm.gui.controls.texts.text_area : TextArea;
-import dm.gui.controls.trees.tree_item: TreeItem;
+import dm.gui.controls.trees.tree_item : TreeItem;
 import dm.gui.controls.trees.tree_list_view : TreeListView;
 import dm.math.geom.insets : Insets;
 import dm.gui.containers.scroll_box : ScrollBox;
 import dm.gui.controls.tabs.tab : Tab;
 import dm.gui.controls.tabs.tabpane : TabPane;
+import dm.gui.controls.checks.checkbox : CheckBox;
 
 import IconNames = dm.kit.graphics.themes.icons.icon_name;
 
@@ -53,8 +54,11 @@ class SceneView : VBox
     TextField shortInfo;
     TextField xInfo;
     TextField yInfo;
+    TextField xpInfo;
+    TextField ypInfo;
     TextField wInfo;
     TextField hInfo;
+    TextField rInfo;
 
     TextField paddingTop;
     TextField paddingRight;
@@ -66,6 +70,8 @@ class SceneView : VBox
     Text invalidNodesCount;
 
     Text gcUsedBytes;
+
+    CheckBox isDrag;
 
     private
     {
@@ -99,7 +105,7 @@ class SceneView : VBox
         import dm.kit.graphics.colors.rgba : RGBA;
 
         style = graphics.theme.newDefaultStyle;
-        style.lineColor =  RGBA.web("#DDCC66");
+        style.lineColor = RGBA.web("#DDCC66");
         style.fillColor = RGBA.web("#ffb641");
         style.isFill = false;
 
@@ -160,6 +166,10 @@ class SceneView : VBox
         fillStruct.onAction = (ref e) { fillStructure; };
         btnContainer.addCreate(fillStruct);
         fillStruct.addCreateIcon(IconNames.enter_outline);
+
+        auto fillScene = new Button("Scene");
+        fillScene.onAction = (ref e) { fillFullScene; };
+        btnContainer.addCreate(fillScene);
 
         controlStructure = new TreeListView!Sprite;
         controlStructure.width = width - padding.width;
@@ -251,26 +261,25 @@ class SceneView : VBox
         h1.enableInsets;
         wInfo = new TextField("0");
         wInfo.onEnter = (ref e) {
-            if (objectOnDebug)
-            {
-                import std.conv : to;
-
-                objectOnDebug.width = wInfo.text.to!double;
-            }
+            onObjectDebug((object) => object.width = wInfo.text.to!double);
         };
         wInfo.width = textWidth;
 
         hInfo = new TextField("0");
         hInfo.onEnter = (ref e) {
-            if (objectOnDebug)
-            {
-                import std.conv : to;
-
-                objectOnDebug.height = hInfo.text.to!double;
-            }
+            onObjectDebug((object) => object.height = hInfo.text.to!double);
         };
         hInfo.width = textWidth;
-        h1.addCreate([new Text("w:"), wInfo, new Text("h:"), hInfo]);
+
+        rInfo = new TextField("0");
+        rInfo.onEnter = (ref e) {
+            onObjectDebug((object) { object.angle = rInfo.text.to!double; });
+        };
+        rInfo.width = textWidth;
+
+        h1.addCreate([
+            new Text("w:"), wInfo, new Text("h:"), hInfo, new Text("r:"), rInfo
+        ]);
 
         HBox h2 = new HBox();
         h2.layout.isAlignY = true;
@@ -297,6 +306,16 @@ class SceneView : VBox
         };
         yInfo.width = textWidth;
         h2.addCreate([new Text("x:"), xInfo, new Text("y:"), yInfo]);
+
+        HBox coordsParent = new HBox();
+        coordsParent.layout.isAlignY = true;
+        controlInfo.addCreate(coordsParent);
+        coordsParent.enableInsets;
+        xpInfo = new TextField("0");
+        xpInfo.width = textWidth;
+        ypInfo = new TextField("0");
+        ypInfo.width = textWidth;
+        coordsParent.addCreate([new Text("xp:"), xpInfo, new Text("yp:"), ypInfo]);
 
         auto paddingContainer = new HBox;
         paddingContainer.layout.isAlignY = true;
@@ -358,6 +377,21 @@ class SceneView : VBox
         controlInfo.addCreate(invalidBtn);
         invalidBtn.addCreateIcon(IconNames.copy_outline);
 
+        auto updateBtn = new Button("Update");
+        updateBtn.onAction = (ref e) {
+            if (objectOnDebug)
+            {
+                fillDebugInfo(objectOnDebug);
+            }
+        };
+        controlInfo.addCreate(updateBtn);
+
+        isDrag = new CheckBox("IsDrag");
+        isDrag.onToggleOldNewValue = (old, newValue) {
+            onObjectDebug((object) { object.isDraggable = newValue; });
+        };
+        controlInfo.addCreate(isDrag);
+
         output = new TextArea();
         output.width = width - padding.width;
         output.height = 150;
@@ -365,6 +399,14 @@ class SceneView : VBox
         controlInfo.addCreate(output);
 
         return controlInfoContainer;
+    }
+
+    void onObjectDebug(scope void delegate(Sprite) onObject)
+    {
+        if (objectOnDebug)
+        {
+            onObject(objectOnDebug);
+        }
     }
 
     void debugScene()
@@ -501,18 +543,46 @@ class SceneView : VBox
         xInfo.text = Math.trunc(obj.x).to!string;
         yInfo.text = Math.trunc(obj.y).to!string;
 
+        auto parentBounds = obj.boundsInParent;
+
+        xpInfo.text = Math.trunc(parentBounds.x).to!string;
+        ypInfo.text = Math.trunc(parentBounds.y).to!string;
+
         wInfo.text = obj.width.to!string;
         hInfo.text = obj.height.to!string;
+        rInfo.text = obj.angle.to!string;
 
         paddingTop.text = obj.padding.top.to!string;
         paddingRight.text = obj.padding.right.to!string;
         paddingBottom.text = obj.padding.bottom.to!string;
         paddingLeft.text = obj.padding.left.to!string;
 
+        isDrag.isCheck = obj.isDraggable;
+
         if (objectFullInfo && objectFullInfo.isCreated)
         {
             objectFullInfo.textView.text = obj.toString;
         }
+    }
+
+    private void fillFullScene()
+    {
+        if (!isDebug)
+        {
+            return;
+        }
+        auto roots = scene.activeSprites;
+        foreach (root; roots)
+        {
+            if (root is this)
+            {
+                continue;
+            }
+            auto treeRootNode = buildSpriteTree(root);
+            controlStructure.fill(treeRootNode);
+            break;
+        }
+
     }
 
     private void fillStructure()

@@ -962,6 +962,15 @@ class Sprite : EventKitTarget
         return bounds;
     }
 
+    Rect2d boundsInParent()
+    {
+        if(!parent){
+            return bounds;
+        }
+        const Rect2d pBounds = {x - parent.x, y - parent.y, _width, _height};
+        return pBounds;
+    }
+
     Rect2d paddingBounds()
     {
         const b = bounds;

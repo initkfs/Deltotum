@@ -286,6 +286,11 @@ struct Vector2
         return result;
     }
 
+    bool isZero() const @nogc pure @safe
+    {
+        return x == 0 && y == 0;
+    }
+
     string toString() const
     {
         import std.format : format;

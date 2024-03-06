@@ -193,6 +193,13 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return setAlphaMod(a);
     }
 
+    ComResult createMutARGB8888(int width, int height)
+    {
+        return create(SDL_PIXELFORMAT_ARGB8888,
+            SDL_TextureAccess.SDL_TEXTUREACCESS_STREAMING, width,
+            height);
+    }
+
     ComResult createMutRGBA32(int width, int height)
     {
         return create(SDL_PIXELFORMAT_RGBA32,
@@ -235,6 +242,38 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         pixelPtr = null;
         pitch = 0;
         return ComResult.success;
+    }
+
+    ComResult getPitch(out int pitch) @nogc nothrow
+    {
+        if (!locked)
+        {
+            return ComResult.error("Texture not locked for pitch");
+        }
+        pitch = this.pitch;
+        return ComResult.success;
+    }
+
+    ComResult getPixels(out void* pixels)
+    {
+        if (!locked)
+        {
+            return ComResult.error("Texture not locked for pixels");
+        }
+        pixels = cast(void*) pixelPtr;
+        return ComResult.success;
+    }
+
+    ComResult update(Rect2d rect, void* pixels, int pitch) @nogc nothrow
+    {
+        if (!locked)
+        {
+            return ComResult.error("Texture not locked for update");
+        }
+        SDL_Rect bounds = {0, 0, cast(int) rect.width, cast(int) rect.height};
+        const zeroOrErr = SDL_UpdateTexture(ptr,
+            &bounds, cast(void*) pixelPtr, pitch);
+        return ComResult(zeroOrErr);
     }
 
     ComResult getPixel(uint x, uint y, out uint* pixel) @nogc nothrow

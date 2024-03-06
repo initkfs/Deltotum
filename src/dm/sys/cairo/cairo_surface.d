@@ -8,6 +8,10 @@ import dm.sys.cairo.libs;
  */
 class CairoSurface : CairoObjectWrapper!cairo_surface_t
 {
+    this(cairo_surface_t* surf){
+        assert(surf);
+        super(surf);
+    }
 
     this(ubyte* data, cairo_format_t format, int width, int height, int stride)
     {

@@ -47,8 +47,8 @@ class LShape : VPointsShape
         {
             brush = new Brush(Vector2(0, 0));
             brush.onDrawLineStartEnd = (start, end) {
-                points ~= start;
-                points ~= end;
+                Vector2[2] pp = [start, end];
+                points.insert(pp[]);
             };
 
             lparser.onMoveDraw = () { brush.moveDraw(step); };
@@ -60,9 +60,15 @@ class LShape : VPointsShape
         }
     }
 
+    void parse()
+    {
+        assert(lparser);
+        lparser.parse(startAxiom, rules, generations);
+    }
+
     override void createTextureContent()
     {
-        lparser.parse(startAxiom, rules, generations);
+        parse;
         super.createTextureContent;
     }
 }

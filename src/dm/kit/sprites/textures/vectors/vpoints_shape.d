@@ -4,6 +4,8 @@ import dm.kit.sprites.textures.vectors.vshape : VShape;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import dm.math.vector2 : Vector2;
 
+import std.container.dlist : DList;
+
 //TODO remove native api
 import dm.sys.cairo.libs;
 
@@ -20,10 +22,10 @@ class VPointsShape : VShape
 
     void delegate() onDraw;
 
-    protected
-    {
-        Vector2[] points;
-    }
+    // protected
+    // {
+    DList!Vector2 points;
+    //}
 
     this(Vector2[] points, double width, double height, GraphicStyle style, bool isClosePath = false, bool isDrawFromCenter = false)
     {
@@ -32,6 +34,15 @@ class VPointsShape : VShape
         this.points = points;
         this.isClosePath = isClosePath;
         this.isDrawFromCenter = isDrawFromCenter;
+
+        this.points = DList!Vector2(points);
+    }
+
+    size_t length()
+    {
+        import std.range : walkLength;
+
+        return (points[]).walkLength;
     }
 
     void setDrawingContext()
@@ -65,11 +76,16 @@ class VPointsShape : VShape
 
     void drawPoints()
     {
+        assert(!points.empty);
         auto ctx = cairoContext.getObject;
 
-        double startX = points[0].x, startY = points[0].y;
+        double startX = points.front.x, startY = points.front.y;
         cairo_move_to(ctx, startX, startY);
-        foreach (p; points[1 .. $])
+
+        import std.range : enumerate;
+
+        //TODO first point
+        foreach (i, p; (points[]).enumerate(1))
         {
             cairo_line_to(ctx, p.x, p.y);
             if (onDraw)
@@ -93,7 +109,7 @@ class VPointsShape : VShape
 
     override void createTextureContent()
     {
-        if (points.length < 2)
+        if (length < 2)
         {
             return;
         }
