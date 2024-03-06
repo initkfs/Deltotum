@@ -7,8 +7,8 @@ import dm.kit.sprites.textures.texture : Texture;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import dm.math.alignment : Alignment;
 
-import dm.kit.sprites.animations.transition : Transition;
-import dm.kit.sprites.animations.object.property.opacity_transition : OpacityTransition;
+import dm.kit.sprites.transitions.min_max_transition : MinMaxTransition;
+import dm.kit.sprites.transitions.objects.props.opacity_transition : OpacityTransition;
 
 /**
  * Authors: initkfs
@@ -49,7 +49,7 @@ class Control : Sprite
 
     Sprite delegate(double, double) hoverFactory;
     Sprite delegate() pointerEffectFactory;
-    Transition!double delegate() pointerEffectAnimationFactory;
+    MinMaxTransition!double delegate() pointerEffectAnimationFactory;
 
     void delegate() onPreControlContentCreated;
     void delegate() onPostControlContentCreated;
@@ -63,7 +63,7 @@ class Control : Sprite
     {
         Sprite hover;
         Sprite pointerEffect;
-        Transition!double pointerEffectAnimation;
+        MinMaxTransition!double pointerEffectAnimation;
 
         bool _selected;
     }
@@ -162,7 +162,7 @@ class Control : Sprite
         };
     }
 
-    Transition!double delegate() createPointerEffectAnimationFactory()
+    MinMaxTransition!double delegate() createPointerEffectAnimationFactory()
     {
         return () {
 
@@ -171,11 +171,12 @@ class Control : Sprite
                 throw new Exception("Cannot create click effect animation, pointer effect is null");
             }
 
-            auto pointerEffectAnimation = new OpacityTransition(pointerEffect, 50);
+            auto pointerEffectAnimation = new OpacityTransition(50);
+            pointerEffectAnimation.addObject(pointerEffect);
             pointerEffectAnimation.isLayoutManaged = false;
             pointerEffectAnimation.isCycle = false;
             pointerEffectAnimation.isInverse = true;
-            pointerEffectAnimation.onEnd = () {
+            pointerEffectAnimation.onEnd ~= () {
                 if (pointerEffect !is null)
                 {
                     pointerEffect.isVisible = false;

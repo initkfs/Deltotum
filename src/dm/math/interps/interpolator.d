@@ -1,4 +1,4 @@
-module dm.kit.sprites.animations.interp.interpolator;
+module dm.math.interps.interpolator;
 
 import Math = dm.math;
 
@@ -9,13 +9,13 @@ abstract class Interpolator
 {
     double function(double) interpolateMethod;
 
+    invariant
+    {
+        assert(interpolateMethod, "Interpolate method must not be null");
+    }
+
     double interpolate(double progress0to1)
     {
-        if (!interpolateMethod)
-        {
-            return 0;
-        }
-
         const double progress = Math.clamp01(progress0to1);
         const double interpProgress = interpolateMethod(progress);
         return interpProgress;

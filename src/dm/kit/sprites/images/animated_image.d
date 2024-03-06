@@ -4,8 +4,8 @@ import dm.kit.sprites.images.image : Image;
 import dm.kit.sprites.sprite : Sprite;
 
 import dm.math.rect2d : Rect2d;
-import dm.kit.sprites.animations.interp.interpolator : Interpolator;
-import dm.kit.sprites.animations.transition : Transition;
+import dm.math.interps.interpolator : Interpolator;
+import dm.kit.sprites.transitions.min_max_transition : MinMaxTransition;
 import std.math.rounding : floor;
 import std.conv : to;
 import dm.math.flip : Flip;
@@ -17,7 +17,7 @@ private
         string name;
         int[] frameIndices;
         int frameRow;
-        Transition!double transition;
+        MinMaxTransition!double transition;
         int frameDelay;
         bool isLooping;
     }
@@ -76,7 +76,7 @@ class AnimatedImage : Image
         anim.frameDelay = frameDelay > 0 ? frameDelay : commonFrameDelay;
         if (interpolator !is null)
         {
-            anim.transition = new Transition!double(0, 1, anim.frameDelay, interpolator);
+            anim.transition = new MinMaxTransition!double(0, 1, anim.frameDelay, interpolator);
             build(anim.transition);
         }
         animations ~= anim;

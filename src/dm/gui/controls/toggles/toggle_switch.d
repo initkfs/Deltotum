@@ -7,13 +7,13 @@ import dm.kit.sprites.shapes.shape : Shape;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import dm.kit.sprites.shapes.rectangle : Rectangle;
 import dm.gui.events.action_event : ActionEvent;
-import dm.kit.sprites.animations.transition : Transition;
-import dm.kit.sprites.animations.object.value_transition : ValueTransition;
-import dm.kit.sprites.animations.object.property.opacity_transition : OpacityTransition;
+import dm.kit.sprites.transitions.min_max_transition : MinMaxTransition;
+import dm.kit.sprites.transitions.objects.value_transition : ValueTransition;
+import dm.kit.sprites.transitions.objects.props.opacity_transition : OpacityTransition;
 import dm.kit.sprites.textures.texture : Texture;
 import dm.kit.sprites.sprite : Sprite;
 import dm.kit.graphics.colors.rgba : RGBA;
-import dm.kit.sprites.animations.object.display_object_transition : DisplayObjectTransition;
+import dm.kit.sprites.transitions.objects.object_transition : ObjectTransition;
 import dm.math.vector2 : Vector2;
 import dm.gui.controls.texts.text : Text;
 
@@ -43,11 +43,11 @@ class ToggleSwitch : Labeled
     Sprite switchHandle;
     Sprite delegate() switchHandleFactory;
 
-    Transition!Vector2 switchOnAnimation;
-    Transition!Vector2 switchOffAnimation;
+    MinMaxTransition!Vector2 switchOnAnimation;
+    MinMaxTransition!Vector2 switchOffAnimation;
 
-    Transition!Vector2 delegate() switchOnAnimationFactory;
-    Transition!Vector2 delegate() switchOffAnimationFactory;
+    MinMaxTransition!Vector2 delegate() switchOnAnimationFactory;
+    MinMaxTransition!Vector2 delegate() switchOffAnimationFactory;
 
     //TODO factories, settings
     Sprite handleOnEffect;
@@ -128,27 +128,29 @@ class ToggleSwitch : Labeled
 
         switchOnAnimationFactory = () {
             import dm.math.vector2 : Vector2;
-            import dm.kit.sprites.animations.object.motion.linear_motion_transition : LinearMotionTransition;
-            import dm.kit.sprites.animations.interp.uni_interpolator : UniInterpolator;
+            import dm.kit.sprites.transitions.objects.motions.linear_motion : LinearMotion;
+            import dm.math.interps.uni_interpolator : UniInterpolator;
 
             auto uniInterp = new UniInterpolator;
             uniInterp.interpolateMethod = &uniInterp.quadInOut;
 
             auto end = Vector2(bounds.right - switchHandle.width, bounds.y);
-            auto animation = new LinearMotionTransition(switchHandle, Vector2(x, y), end, 200, uniInterp);
+            auto animation = new LinearMotion(Vector2(x, y), end, 200, uniInterp);
+            animation.addObject(switchHandle);
             animation.isCycle = false;
             return animation;
         };
 
         switchOffAnimationFactory = () {
             import dm.math.vector2 : Vector2;
-            import dm.kit.sprites.animations.object.motion.linear_motion_transition : LinearMotionTransition;
-            import dm.kit.sprites.animations.interp.uni_interpolator : UniInterpolator;
+            import dm.kit.sprites.transitions.objects.motions.linear_motion : LinearMotion;
+            import dm.math.interps.uni_interpolator : UniInterpolator;
 
             auto start = Vector2(bounds.right - switchHandle.width, y);
             auto uniInterp = new UniInterpolator;
             uniInterp.interpolateMethod = &uniInterp.quadInOut;
-            auto animation = new LinearMotionTransition(switchHandle, start, Vector2(x, y), 200, uniInterp);
+            auto animation = new LinearMotion(start, Vector2(x, y), 200, uniInterp);
+            animation.addObject(switchHandle);
             animation.isCycle = false;
             return animation;
         };

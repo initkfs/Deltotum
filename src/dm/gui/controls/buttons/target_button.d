@@ -6,7 +6,7 @@ import dm.kit.sprites.sprite : Sprite;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import dm.gui.controls.texts.text : Text;
 import dm.gui.controls.control : Control;
-import dm.kit.sprites.animations.transition : Transition;
+import dm.kit.sprites.transitions.min_max_transition : MinMaxTransition;
 import dm.kit.sprites.layouts.center_layout : CenterLayout;
 
 /**
@@ -46,7 +46,7 @@ class TargetButton : ButtonBase
         Sprite rightStick;
         Sprite bottomStick;
 
-        Transition!double stickAnimation;
+        MinMaxTransition!double stickAnimation;
 
         Button innerButton;
 
@@ -117,13 +117,13 @@ class TargetButton : ButtonBase
 
         layoutSticks;
 
-        import dm.kit.sprites.animations.interp.uni_interpolator: UniInterpolator;
+        import dm.math.interps.uni_interpolator: UniInterpolator;
 
         //TODO infinite?
-        stickAnimation = new Transition!double(0, 10, 800);
+        stickAnimation = new MinMaxTransition!double(0, 10, 800);
         stickAnimation.interpolator.interpolateMethod = &UniInterpolator.elasticInOut;
         addCreate(stickAnimation);
-        stickAnimation.onValue = (dt) {
+        stickAnimation.onValue ~= (dt) {
 
             if (stickAnimation.isInverse)
             {

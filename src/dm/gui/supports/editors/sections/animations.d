@@ -8,10 +8,10 @@ import Math = dm.math;
 import dm.math.vector2 : Vector2;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
-import dm.kit.sprites.animations.interp.uni_interpolator : UniInterpolator;
-import dm.kit.sprites.animations.object.motion.linear_motion_transition : LinearMotionTransition;
-import dm.kit.sprites.animations.object.value_transition : ValueTransition;
-import dm.kit.sprites.animations.object.property.angle_transition : AngleTransition;
+import dm.math.interps.uni_interpolator : UniInterpolator;
+import dm.kit.sprites.transitions.objects.motions.linear_motion : LinearMotion;
+import dm.kit.sprites.transitions.objects.value_transition : ValueTransition;
+import dm.kit.sprites.transitions.objects.props.angle_transition : AngleTransition;
 
 import std.stdio;
 import std.conv : to;
@@ -26,7 +26,7 @@ class Animations : Control
         double function(double)[dstring] animationsMap;
         UniInterpolator interpolator;
 
-        LinearMotionTransition motionTransition;
+        LinearMotion motionTransition;
         AngleTransition angleTransition;
     }
 
@@ -78,7 +78,8 @@ class Animations : Control
         rect.isLayoutManaged = false;
         addCreate(rect);
 
-        motionTransition = new LinearMotionTransition(rect, startPos, endPos, 1000, interpolator);
+        motionTransition = new LinearMotion(startPos, endPos, 1000, interpolator);
+        motionTransition.addObject(rect);
         addCreate(motionTransition);
         motionTransition.isCycle = true;
         motionTransition.isInverse = true;

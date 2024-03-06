@@ -1,9 +1,8 @@
-module dm.kit.sprites.animations.ranges.range_transition;
+module dm.kit.sprites.transitions.range_transition;
 
-import dm.kit.sprites.animations.transition : Transition;
-import dm.kit.sprites.animations.interp.interpolator : Interpolator;
-import dm.kit.sprites.animations.interp.uni_interpolator : UniInterpolator;
+import dm.kit.sprites.transitions.transition;
 import dm.math.vector2 : Vector2;
+
 import Math = dm.math;
 
 import std.traits : isIntegral, isFloatingPoint;
@@ -11,7 +10,7 @@ import std.traits : isIntegral, isFloatingPoint;
 /**
  * Authors: initkfs
  */
-class RangeTransition(T) : Transition!double
+class RangeTransition(T) : Transition
 {
     T[] range;
     size_t rangePositionStart;
@@ -19,9 +18,9 @@ class RangeTransition(T) : Transition!double
 
     void delegate(T[]) onValueSlice;
 
-    this(size_t timeMs = 200, Interpolator interpolator = null)
+    this(size_t timeMs = 200)
     {
-        super(0, 1, timeMs, interpolator);
+        super(timeMs);
     }
 
     override void run()
@@ -41,21 +40,8 @@ class RangeTransition(T) : Transition!double
         rangeIncreaseValue = 0;
     }
 
-    override void update(double delta)
+    override void onFrame()
     {
-        const prevValue = lastValue;
-        super.update(delta);
-
-        if(!isRunningState){
-            return;
-        }
-
-        const newValue = lastValue;
-
-        const dt = Math.abs(newValue - prevValue);
-        import std;
-        writeln(dt);
-
         if (rangeIncreaseValue == 0 && range.length == 0)
         {
             return;
@@ -81,5 +67,4 @@ class RangeTransition(T) : Transition!double
         }
         rangePositionStart = endPosition;
     }
-
 }

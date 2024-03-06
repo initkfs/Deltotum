@@ -1,6 +1,6 @@
-module dm.kit.sprites.animations.interp.uni_interpolator;
+module dm.math.interps.uni_interpolator;
 
-import dm.kit.sprites.animations.interp.interpolator : Interpolator;
+import dm.math.interps.interpolator : Interpolator;
 import math = dm.math;
 
 /**
@@ -24,137 +24,138 @@ class UniInterpolator : Interpolator
         enum ELASTIC_PERIOD = 0.4;
     }
 
+    static:
 
     //TODO more flexible way 
-    static UniInterpolator fromMethod(string methodName = "linear")()
+    UniInterpolator fromMethod(string methodName = "linear")()
     {
         auto interp = new UniInterpolator;
         interp.interpolateMethod = mixin(`&`, __traits(identifier, interp) ~ `.` ~ methodName);
         return interp;
     }
 
-    static double linear(double value) @nogc nothrow
+    double linear(double value) @nogc nothrow
     {
         return value;
     }
 
-    static double flip(double value) @nogc nothrow
+    double flip(double value) @nogc nothrow
     {
         return 1 - value;
     }
 
-    static double quadIn(double value) @nogc nothrow
+    double quadIn(double value) @nogc nothrow
     {
         return value * value;
     }
 
-    static double quadOut(double value) @nogc nothrow
+    double quadOut(double value) @nogc nothrow
     {
         return -value * (value - 2);
     }
 
-    static double quadInOut(double value) @nogc nothrow
+    double quadInOut(double value) @nogc nothrow
     {
         return value <= 0.5 ? value * value * 2 : 1 - (
             --value) * value * 2;
     }
 
-    static double cubeIn(double value) @nogc nothrow
+    double cubeIn(double value) @nogc nothrow
     {
         return value * value * value;
     }
 
-    static double cubeOut(double value) @nogc nothrow
+    double cubeOut(double value) @nogc nothrow
     {
         return 1 + (--value) * value * value;
     }
 
-    static double cubeInOut(double value) @nogc nothrow
+    double cubeInOut(double value) @nogc nothrow
     {
         return value <= 0.5 ? value * value * value * 4 : 1 + (
             --value) * value * value * 4;
     }
 
-    static double quartIn(double value) @nogc nothrow
+    double quartIn(double value) @nogc nothrow
     {
         return value * value * value * value;
     }
 
-    static double quartOut(double value) @nogc nothrow
+    double quartOut(double value) @nogc nothrow
     {
         return 1 - (value -= 1) * value * value * value;
     }
 
-    static double quartInOut(double value) @nogc nothrow
+    double quartInOut(double value) @nogc nothrow
     {
         return value <= 0.5 ? value * value * value * value * 8 : (
             1 - (value = value * 2 - 2) * value * value * value) / 2 + 0.5;
     }
 
-    static double quintIn(double value) @nogc nothrow
+    double quintIn(double value) @nogc nothrow
     {
         return value * value * value * value * value;
     }
 
-    static double quintOut(double value) @nogc nothrow
+    double quintOut(double value) @nogc nothrow
     {
         return --value * value * value * value * value + 1;
     }
 
-    static double quintInOut(double value) @nogc nothrow
+    double quintInOut(double value) @nogc nothrow
     {
         return ((value *= 2) < 1) ? (
             value * value * value * value * value) / 2 : (
             (value -= 2) * value * value * value * value + 2) / 2;
     }
 
-    static double smoothStepIn(double value) @nogc nothrow
+    double smoothStepIn(double value) @nogc nothrow
     {
         return 2 * smoothStepInOut(value / 2);
     }
 
-    static double smoothStepOut(double value) @nogc nothrow
+    double smoothStepOut(double value) @nogc nothrow
     {
         return 2 * smoothStepInOut(value / 2 + 0.5) - 1;
     }
 
-    static double smoothStepInOut(double value) @nogc nothrow
+    double smoothStepInOut(double value) @nogc nothrow
     {
         return value * value * (value * -2 + 3);
     }
 
-    static double smootherStepIn(double value) @nogc nothrow
+    double smootherStepIn(double value) @nogc nothrow
     {
         return 2 * smootherStepInOut(value / 2);
     }
 
-    static double smootherStepOut(double value) @nogc nothrow
+    double smootherStepOut(double value) @nogc nothrow
     {
         return 2 * smootherStepInOut(value / 2 + 0.5) - 1;
     }
 
-    static double smootherStepInOut(double value) @nogc nothrow
+    double smootherStepInOut(double value) @nogc nothrow
     {
         return value * value * value * (
             value * (value * 6 - 15) + 10);
     }
 
-    static double sineIn(double value) @nogc nothrow
+    double sineIn(double value) @nogc nothrow
     {
         return -math.cos(PI2 * value) + 1;
     }
 
-    static double sineOut(double value) @nogc nothrow
+    double sineOut(double value) @nogc nothrow
     {
         return math.sin(PI2 * value);
     }
 
-    static double sineInOut(double value) @nogc nothrow
+    double sineInOut(double value) @nogc nothrow
     {
         return -math.cos(math.PI * value) / 2 + .5;
     }
 
-    static double bounceIn(double value) @nogc nothrow
+    double bounceIn(double value) @nogc nothrow
     {
         value = 1 - value;
         if (value < B1)
@@ -175,7 +176,7 @@ class UniInterpolator : Interpolator
         return 1 - (7.5625 * (value - B6) * (value - B6) + 0.984375);
     }
 
-    static double bounceOut(double value) @nogc nothrow
+    double bounceOut(double value) @nogc nothrow
     {
         if (value < B1)
         {
@@ -195,7 +196,7 @@ class UniInterpolator : Interpolator
         return 7.5625 * (value - B6) * (value - B6) + 0.984375;
     }
 
-    static double bounceInOut(double value) @nogc nothrow
+    double bounceInOut(double value) @nogc nothrow
     {
         if (value < 0.5)
         {
@@ -238,49 +239,49 @@ class UniInterpolator : Interpolator
         return (7.5625 * (value - B6) * (value - B6) + 0.984375) / 2 + 0.5;
     }
 
-    static double circIn(double value) @nogc nothrow
+    double circIn(double value) @nogc nothrow
     {
         return -(math.sqrt(1 - value * value) - 1);
     }
 
-    static double circOut(double value) @nogc nothrow
+    double circOut(double value) @nogc nothrow
     {
         return math.sqrt(1 - (value - 1) * (value - 1));
     }
 
-    static double circInOut(double value) @nogc nothrow
+    double circInOut(double value) @nogc nothrow
     {
         return value <= 0.5 ? (math.sqrt(1 - value * value * 4) - 1) / -2 : (
             math.sqrt(1 - (value * 2 - 2) * (value * 2 - 2)) + 1) / 2;
     }
 
-    static double expoIn(double value) @nogc nothrow
+    double expoIn(double value) @nogc nothrow
     {
         return math.pow(2, 10 * (value - 1));
     }
 
-    static double expoOut(double value) @nogc nothrow
+    double expoOut(double value) @nogc nothrow
     {
         return -math.pow(2, -10 * value) + 1;
     }
 
-    static double expoInOut(double value) @nogc nothrow
+    double expoInOut(double value) @nogc nothrow
     {
         return value < 0.5 ? math.pow(2, 10 * (value * 2 - 1)) / 2 : (
             -math.pow(2, -10 * (value * 2 - 1)) + 2) / 2;
     }
 
-    static double backIn(double value) @nogc nothrow
+    double backIn(double value) @nogc nothrow
     {
         return value * value * (2.70158 * value - 1.70158);
     }
 
-    static double backOut(double value) @nogc nothrow
+    double backOut(double value) @nogc nothrow
     {
         return 1 - (--value) * (value) * (-2.70158 * value - 1.70158);
     }
 
-    static double backInOut(double value) @nogc nothrow
+    double backInOut(double value) @nogc nothrow
     {
         value *= 2;
         if (value < 1)
@@ -292,7 +293,7 @@ class UniInterpolator : Interpolator
         return (1 - (--value) * (value) * (-2.70158 * value - 1.70158)) / 2 + 0.5;
     }
 
-    static double elasticIn(double value) @nogc nothrow
+    double elasticIn(double value) @nogc nothrow
     {
         return -(ELASTIC_AMPLITUDE * math.pow(2,
                 10 * (value -= 1)) * math.sin((value - (ELASTIC_PERIOD / (
@@ -300,7 +301,7 @@ class UniInterpolator : Interpolator
                 2 * math.PI) / ELASTIC_PERIOD));
     }
 
-    static double elasticOut(double value) @nogc nothrow
+    double elasticOut(double value) @nogc nothrow
     {
         return (ELASTIC_AMPLITUDE * math.pow(2,
                 -10 * value) * math.sin((value - (ELASTIC_PERIOD / (
@@ -309,7 +310,7 @@ class UniInterpolator : Interpolator
                 + 1);
     }
 
-    static double elasticInOut(double value) @nogc nothrow
+    double elasticInOut(double value) @nogc nothrow
     {
         if (value < 0.5)
         {
