@@ -176,7 +176,7 @@ class Control : Sprite
             pointerEffectAnimation.isLayoutManaged = false;
             pointerEffectAnimation.isCycle = false;
             pointerEffectAnimation.isInverse = true;
-            pointerEffectAnimation.onEnd ~= () {
+            pointerEffectAnimation.onStop ~= () {
                 if (pointerEffect !is null)
                 {
                     pointerEffect.isVisible = false;

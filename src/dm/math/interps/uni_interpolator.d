@@ -24,6 +24,10 @@ class UniInterpolator : Interpolator
         enum ELASTIC_PERIOD = 0.4;
     }
 
+    this(){
+        interpolateMethod = &linear;
+    }
+
     static:
 
     //TODO more flexible way 
