@@ -22,7 +22,7 @@ class CircularMotion : ValueTransition
         this.radius = radius;
         this.center = center;
 
-        onValue ~= (value) {
+        onOldNewValue ~= (oldValue, value) {
             const x = center.x + math.cosDeg(value) * radius;
             const y = center.y + math.sinDeg(value) * radius;
 

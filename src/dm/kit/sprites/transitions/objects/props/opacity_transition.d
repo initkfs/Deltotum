@@ -11,7 +11,7 @@ class OpacityTransition : ValueTransition
     this(int timeMs, Interpolator interpolator = null)
     {
         super(0.0, 1.0, timeMs, interpolator);
-        onValue ~= (value) {
+        onOldNewValue ~= (oldValue, value) {
             onObjects((object) { object.opacity = value; });
         };
     }

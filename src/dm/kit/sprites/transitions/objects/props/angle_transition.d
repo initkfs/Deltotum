@@ -11,7 +11,7 @@ class AngleTransition : ValueTransition
     this(int timeMs, Interpolator interpolator = null)
     {
         super(0, 360, timeMs, interpolator);
-        onValue ~= (value) {
+        onOldNewValue ~= (oldValue, value) {
             onObjects((object) { object.angle = value; });
         };
     }

@@ -17,7 +17,7 @@ class MinMaxTransition(T) if (isFloatingPoint!T || is(T : Vector2)) : Transition
 {
     Interpolator interpolator;
 
-    void delegate(T)[] onValue;
+    void delegate(T, T)[] onOldNewValue;
 
     T lastValue;
 
@@ -38,15 +38,20 @@ class MinMaxTransition(T) if (isFloatingPoint!T || is(T : Vector2)) : Transition
             uniInterp.interpolateMethod = &uniInterp.linear;
             this.interpolator = uniInterp;
         }
+
+        resetLastValue;
     }
 
-    //TODO state management
     override void stop()
     {
         super.stop;
 
-        import std.traits : isFloatingPoint;
+        resetLastValue;
+        onShort = false;
+    }
 
+    protected void resetLastValue()
+    {
         static if (isFloatingPoint!T)
         {
             lastValue = 0;
@@ -55,7 +60,6 @@ class MinMaxTransition(T) if (isFloatingPoint!T || is(T : Vector2)) : Transition
         {
             lastValue = T.init;
         }
-        onShort = false;
     }
 
     override void onFrame()
@@ -82,13 +86,20 @@ class MinMaxTransition(T) if (isFloatingPoint!T || is(T : Vector2)) : Transition
 
         import dm.math.numericals.interp : lerp;
 
+        auto oldValue = lastValue;
+
         lastValue = lerp(start, end, interpProgress, false);
 
-        if (onValue.length > 0)
+        triggerListeners(oldValue, lastValue);
+    }
+
+    protected void triggerListeners(T oldValue, T newValue)
+    {
+        if (onOldNewValue.length > 0)
         {
-            foreach (dg; onValue)
+            foreach (dg; onOldNewValue)
             {
-                dg(lastValue);
+                dg(oldValue, newValue);
             }
         }
     }
@@ -133,9 +144,10 @@ class MinMaxTransition(T) if (isFloatingPoint!T || is(T : Vector2)) : Transition
         _maxValue = newValue;
     }
 
-    override void dispose(){
+    override void dispose()
+    {
         super.dispose;
-        onValue = null;
+        onOldNewValue = null;
     }
 }
 

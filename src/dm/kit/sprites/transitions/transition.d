@@ -71,21 +71,14 @@ abstract class Transition : Sprite
         return getFrameCount(getFrameRate);
     }
 
+    protected bool requestStop()
+    {
+        return true;
+    }
+
     override void run()
     {
         super.run;
-
-        if (!prevs.empty)
-        {
-            foreach (prev; prevs)
-            {
-                assert(prev, "Previous animation must not be null");
-                if (prev.isRunning)
-                {
-                    prev.stop;
-                }
-            }
-        }
 
         const double rate = getFrameRate;
         //TODO error if <= 0
@@ -150,7 +143,10 @@ abstract class Transition : Sprite
             {
                 if (!isInverse || onShort)
                 {
-                    stop;
+                    if (requestStop)
+                    {
+                        stop;
+                    }
                     return;
                 }
                 else
@@ -184,6 +180,15 @@ abstract class Transition : Sprite
         {
             throw new Exception("Previous transition must not be null");
         }
+
+        newPrev.onEnd ~= () {
+            if (!isStopped)
+            {
+                stop;
+            }
+            run;
+        };
+
         prevs ~= newPrev;
     }
 

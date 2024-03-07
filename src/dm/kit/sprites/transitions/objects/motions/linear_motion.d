@@ -12,7 +12,7 @@ class LinearMotion : ObjectTransition!Vector2
     this(Vector2 start, Vector2 end, int timeMs = 200, Interpolator interpolator = null)
     {
         super(start, end, timeMs, interpolator);
-        onValue ~= (value) {
+        onOldNewValue ~= (oldValue, value) {
             onObjects((object) { object.x = value.x; object.y = value.y; });
         };
     }

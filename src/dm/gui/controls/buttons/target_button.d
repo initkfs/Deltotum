@@ -123,7 +123,7 @@ class TargetButton : ButtonBase
         stickAnimation = new MinMaxTransition!double(0, 10, 800);
         stickAnimation.interpolator.interpolateMethod = &UniInterpolator.elasticInOut;
         addCreate(stickAnimation);
-        stickAnimation.onValue ~= (dt) {
+        stickAnimation.onOldNewValue ~= (oldValue, dt) {
 
             if (stickAnimation.isInverse)
             {
