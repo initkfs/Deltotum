@@ -12,6 +12,7 @@ import dm.kit.sprites.textures.texture : Texture;
 import dm.math.insets : Insets;
 import dm.kit.sprites.shapes.rectangle : Rectangle;
 import dm.kit.inputs.keyboards.events.key_event : KeyEvent;
+import dm.kit.assets.fonts.font_size: FontSize;
 
 import std.conv : to;
 
@@ -38,6 +39,7 @@ enum CursorState
     forPrevGlyph,
     forNextGlyph
 }
+
 //}
 
 /**
@@ -49,6 +51,7 @@ class Text : Control
     int rowHeight = 0;
 
     RGBA color = RGBA.white;
+    FontSize fontSize = FontSize.medium;
 
     Sprite focusEffect;
     Sprite delegate() focusEffectFactory;
@@ -304,20 +307,21 @@ class Text : Control
         if (currStyle)
         {
             auto color = currStyle.fillColor;
-            if (!asset.hasColorBitmap(color))
+            if (!asset.hasColorBitmap(color, fontSize))
             {
                 fontTexture = asset.fontBitmap.copyBitmap;
                 fontTexture.color = color;
-                asset.addFontColorBitmap(fontTexture, color);
+                asset.addFontColorBitmap(fontTexture, color, fontSize);
             }
             else
             {
-                fontTexture = asset.fontColorBitmap(color);
+                fontTexture = asset.fontColorBitmap(color, fontSize);
             }
         }
         else
         {
-            fontTexture = asset.fontBitmap;
+            //TODO if not found?
+            fontTexture = asset.fontBitmap(fontSize);
         }
 
         updateRows;
@@ -414,7 +418,7 @@ class Text : Control
             Glyph newGlyph;
             bool isFound;
             //TODO hash map
-            foreach (glyph; asset.fontBitmap.glyphs)
+            foreach (glyph; asset.fontBitmap(fontSize).glyphs)
             {
                 if (glyph.grapheme == grapheme)
                 {

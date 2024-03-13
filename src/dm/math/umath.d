@@ -150,6 +150,12 @@ double asin(double value) @nogc nothrow pure @safe
 }
 
 pragma(inline, true);
+double atan(double valueRad) @nogc nothrow pure @safe
+{
+    return math.atan(valueRad);
+}
+
+pragma(inline, true);
 double atan2(double y, double x) @nogc nothrow pure @safe
 {
     return math.atan2(y, x);

@@ -376,6 +376,12 @@ class Controls : Control
         rb1.isPercentMode = true;
         root.addCreate(rb1);
         rb1.progress = 0.6;
+
+        import dm.gui.controls.indicators.gauges.hlinear_gauge: HLinearGauge;
+
+        auto ling1 = new HLinearGauge;
+        //ling1.isBorder = true;
+        root.addCreate(ling1);
     }
 
     private void createIndicators(Container root)

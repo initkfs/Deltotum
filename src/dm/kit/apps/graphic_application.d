@@ -523,9 +523,11 @@ abstract class GraphicApplication : CliApplication
     Alphabet[] createSmallFontAlphabets()
     {
         import dm.kit.i18n.langs.alphabets.arabic_numerals_alphabet : ArabicNumeralsAlpabet;
+        import dm.kit.i18n.langs.alphabets.special_characters_alphabet : SpecialCharactersAlphabet;
 
         Alphabet[] alphabets = [
             new ArabicNumeralsAlpabet,
+            new SpecialCharactersAlphabet,
         ];
         return alphabets;
     }

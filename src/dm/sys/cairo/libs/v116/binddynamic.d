@@ -65,6 +65,9 @@ extern (C) @nogc nothrow
         double* y);
 
     alias c_cairo_set_dash = void function(cairo_t* cr, const double* dashes, int num_dashes, double offset);
+
+    alias c_cairo_set_line_join = void function(cairo_t* cr, cairo_line_join_t line_join);
+    alias c_cairo_set_line_cap = void function(cairo_t* cr, cairo_line_cap_t line_cap);
 }
 
 __gshared
@@ -104,6 +107,9 @@ __gshared
     c_cairo_device_to_user cairo_device_to_user;
 
     c_cairo_set_dash cairo_set_dash;
+
+    c_cairo_set_line_join cairo_set_line_join;
+    c_cairo_set_line_cap cairo_set_line_cap;
 }
 
 class CairoLib : SysLib
@@ -165,6 +171,8 @@ class CairoLib : SysLib
         bind(cast(void**)&cairo_user_to_device, "cairo_user_to_device");
         bind(cast(void**)&cairo_device_to_user, "cairo_device_to_user");
         bind(cast(void**)&cairo_set_dash, "cairo_set_dash");
+        bind(cast(void**)&cairo_set_line_cap, "cairo_set_line_cap");
+        bind(cast(void**)&cairo_set_line_join, "cairo_set_line_join");
     }
 
     override protected int needVersion()

@@ -357,6 +357,17 @@ class Sprite : EventKitTarget
 
                     chain.insert(this);
                 }
+                else if (e.event == PointerEvent.Event.wheel)
+                {
+                    if (onPointerWheel.length > 0)
+                    {
+                        auto mousePos = input.systemCursor.getPos;
+                        if (containsPoint(mousePos.x, mousePos.y))
+                        {
+                            chain.insert(this);
+                        }
+                    }
+                }
                 else if (isDrag && e.isChained)
                 {
                     chain.insert(this);
@@ -389,7 +400,7 @@ class Sprite : EventKitTarget
             {
                 return;
             }
-            
+
             if (e.isChained)
             {
                 if (containsPoint(e.x, e.y))
@@ -964,7 +975,8 @@ class Sprite : EventKitTarget
 
     Rect2d boundsInParent()
     {
-        if(!parent){
+        if (!parent)
+        {
             return bounds;
         }
         const Rect2d pBounds = {x - parent.x, y - parent.y, _width, _height};
