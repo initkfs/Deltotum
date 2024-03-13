@@ -12,8 +12,12 @@ class VCircle : VArc
 {
     this(double radius, GraphicStyle style)
     {
-        super(radius, style);
+        this(radius, style, radius * 2, radius * 2);
+    }
 
+    this(double radius, GraphicStyle style, double width, double height)
+    {
+        super(radius, style, width, height);
         this.toAngleRad = 2 * Math.PI;
     }
 }

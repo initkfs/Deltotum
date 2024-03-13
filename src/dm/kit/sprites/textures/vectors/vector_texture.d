@@ -25,6 +25,8 @@ class VectorTexture : Texture
         CairoContext cairoContext;
     }
 
+    bool delegate(ComSurface) onSurfaceIsContinue;
+
     this(double width, double height)
     {
         this.width = width;
@@ -36,7 +38,7 @@ class VectorTexture : Texture
     {
         assert(isCreated);
         auto ctx = cairoContext.getObject;
-        cairo_set_source_rgb(ctx, color.rNorm, color.gNorm, color.bNorm);
+        cairo_set_source_rgba(ctx, color.rNorm, color.gNorm, color.bNorm, color.a);
     }
 
     void createTextureContent()
@@ -104,12 +106,26 @@ class VectorTexture : Texture
             createCairoContext;
         }
 
+        scope (exit)
+        {
+            disposeContext;
+        }
+
         //TODO may not always be necessary
-        if(!hasGraphicsContext){
+        if (!hasGraphicsContext)
+        {
             createGraphicsContext();
         }
 
         createTextureContent;
+
+        if (onSurfaceIsContinue)
+        {
+            if (!onSurfaceIsContinue(comSurface))
+            {
+                return;
+            }
+        }
 
         if (!texture)
         {
@@ -121,11 +137,6 @@ class VectorTexture : Texture
         if (createErr)
         {
             throw new Exception(createErr.toString);
-        }
-
-        scope (exit)
-        {
-            disposeContext;
         }
 
         if (const err = texture.setBlendModeBlend)

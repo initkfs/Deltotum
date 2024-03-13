@@ -25,6 +25,9 @@ import std.math.algebraic : abs;
 import std.typecons : Nullable;
 import dm.core.utils.tostring : ToStringExclude;
 
+import dm.com.graphics.com_surface : ComSurface;
+import dm.kit.graphics.colors.rgba : RGBA;
+
 import Math = dm.math;
 
 struct InvalidationState
@@ -1782,6 +1785,34 @@ class Sprite : EventKitTarget
     bool isGrow()
     {
         return isHGrow && isVGrow;
+    }
+
+    RGBA[][] surfaceToBuffer(ComSurface surf)
+    {
+        assert(surf.width > 0 && surf.height > 0);
+        RGBA[][] buff = new RGBA[][](surf.height, surf.width);
+        surfaceToBuffer(surf, buff);
+        return buff;
+    }
+
+    void surfaceToBuffer(ComSurface surf, RGBA[][] buff)
+    {
+        assert(surf);
+
+        const surfWidth = surf.width;
+        const surfHeight = surf.width;
+
+        assert(surfWidth > 0 && surfHeight > 0);
+        assert(buff.length >= surfHeight);
+
+        import std.algorithm.searching : all;
+
+        assert(buff.all!(b => b.length >= surfWidth));
+
+        surf.getPixels((x, y, r, g, b, a) {
+            buff[y][x] = RGBA(r, g, b, RGBA.fromAByte(a));
+            return true;
+        });
     }
 
 }

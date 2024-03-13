@@ -18,7 +18,12 @@ class VArc : VShape
 
     this(double radius, GraphicStyle style)
     {
-        super(radius * 2, radius * 2, style);
+        this(radius, style, radius * 2, radius * 2);
+    }
+
+    this(double radius, GraphicStyle style, double width, double height)
+    {
+        super(width, height, style);
         this.radius = radius;
     }
 
@@ -35,8 +40,8 @@ class VArc : VShape
 
         if (style.isFill)
         {
-            cairo_set_source_rgb(cr, style.fillColor.rNorm, style.fillColor.gNorm, style
-                    .fillColor.bNorm);
+            cairo_set_source_rgba(cr, style.fillColor.rNorm, style.fillColor.gNorm, style
+                    .fillColor.bNorm, style.fillColor.a);
         }
 
         cairo_arc(cr, xCenter, yCenter, radius - style.lineWidth / 2, fromAngleRad, toAngleRad);
@@ -46,8 +51,8 @@ class VArc : VShape
         }
 
         cairo_set_line_width(cr, style.lineWidth);
-        cairo_set_source_rgb(cr, style.lineColor.rNorm, style.lineColor.gNorm, style
-                .lineColor.bNorm);
+        cairo_set_source_rgba(cr, style.lineColor.rNorm, style.lineColor.gNorm, style
+                .lineColor.bNorm, style.lineColor.a);
 
         cairo_stroke(cr);
     }

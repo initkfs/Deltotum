@@ -113,6 +113,20 @@ RGBA posterize(RGBA color, RGBA[] palette, double minDistance = 10)
 
 RGBA[][] convolution(RGBA[][] colors, double[][] kernel, double offset = 0)
 {
+    assert(colors.length > 0);
+
+    size_t colorHeight = colors.length;
+    size_t colorWidth = colors[0].length;
+    assert(colorWidth > 0);
+
+    //TODO remove allocation
+    RGBA[][] buff = new RGBA[][](colorHeight, colorWidth);
+    convolution(colors, kernel, buff, offset);
+    return buff;
+}
+
+void convolution(RGBA[][] colors, double[][] kernel, RGBA[][] colorsResult, double offset = 0)
+{
     assert(kernel.length > 0);
     assert(kernel[0].length > 0);
 
@@ -122,14 +136,11 @@ RGBA[][] convolution(RGBA[][] colors, double[][] kernel, double offset = 0)
     size_t colorHeight = colors.length;
     size_t colorWidth = colors[0].length;
 
-    //TODO remove allocation
-    RGBA[][] colorsResult = new RGBA[][](colorHeight, colorWidth);
-
-    foreach (x, ref RGBA[] colorRow; colors)
+    foreach (y, ref RGBA[] colorRow; colors)
     {
-        foreach (y, ref RGBA c; colorRow)
+        foreach (x, ref RGBA c; colorRow)
         {
-            double rSum = 0, gSum = 0, bSum = 0, kSum = 0;
+            double rSum = 0, gSum = 0, bSum = 0, aSum = 0, kSum = 0;
 
             foreach (kernelY, kernelRow; kernel)
             {
@@ -150,6 +161,7 @@ RGBA[][] convolution(RGBA[][] colors, double[][] kernel, double offset = 0)
                     rSum += color.r * kernelValue;
                     gSum += color.g * kernelValue;
                     bSum += color.b * kernelValue;
+                    aSum += color.aByte * kernelValue;
 
                     kSum += kernelValue;
                 }
@@ -173,11 +185,14 @@ RGBA[][] convolution(RGBA[][] colors, double[][] kernel, double offset = 0)
             bSum += offset;
             bSum = Math.clamp(bSum, RGBA.minColor, RGBA.maxColor);
 
-            colorsResult[y][x] = RGBA(cast(ubyte) rSum, cast(ubyte) gSum, cast(ubyte) bSum);
+            aSum /= kSum;
+            aSum += offset;
+            aSum = Math.clamp(aSum, RGBA.minColor, RGBA.maxColor);
+
+            colorsResult[y][x] = RGBA(cast(ubyte) rSum, cast(ubyte) gSum, cast(ubyte) bSum, RGBA.fromAByte(
+                    cast(ubyte) aSum));
         }
     }
-
-    return colorsResult;
 }
 
 RGBA[][] highpass(RGBA[][] colors, double offset = 0)
@@ -264,6 +279,18 @@ RGBA[][] emboss(RGBA[][] colors, double offset = 0)
         ], offset);
 }
 
+RGBA[][] boxblur(RGBA[][] colors, size_t size = 10, double divider = 9.0)
+{
+    //TODO remove allocations
+    const double value = 1 / divider;
+    double[][] matrix = new double[][](size, size);
+    foreach (ref row; matrix)
+    {
+        row[] = value;
+    }
+    return convolution(colors, matrix);
+}
+
 RGBA[][] gaussian3x3(RGBA[][] colors, double offset = 0)
 {
     enum div = 16.0;
@@ -271,6 +298,47 @@ RGBA[][] gaussian3x3(RGBA[][] colors, double offset = 0)
             [1.0 / div, 2 / div, 1 / div],
             [2.0 / div, 4 / div, 2 / div],
             [1.0 / div, 2 / div, 1 / div]
+        ], offset);
+}
+
+RGBA[][] gaussian5x5(RGBA[][] colors, double offset = 0)
+{
+    enum div = 273.0;
+    return convolution(colors, [
+            [1.0 / div, 4.0 / div, 7.0 / div, 4.0 / div, 1.0 / div],
+            [4.0 / div, 16.0 / div, 26.0 / div, 16.0 / div, 4.0 / div],
+            [7.0 / div, 26.0 / div, 41.0 / div, 26.0 / div, 7.0 / div],
+            [4.0 / div, 16.0 / div, 26.0 / div, 16.0 / div, 4.0 / div],
+            [1.0 / div, 4.0 / div, 7.0 / div, 4.0 / div, 1.0 / div]
+        ], offset);
+}
+
+RGBA[][] gaussian7x7(RGBA[][] colors, double offset = 0)
+{
+    enum div = 1003.0;
+    return convolution(colors, [
+            [0 / div, 0 / div, 1.0 / div, 2.0 / div, 1.0 / div, 0 / div, 0 / div],
+            [
+                0 / div, 3.0 / div, 13.0 / div, 22.0 / div, 13.0 / div, 3.0 / div,
+                0 / div
+            ],
+            [
+                1.0 / div, 13.0 / div, 59.0 / div, 97.0 / div, 59.0 / div,
+                13.0 / div, 1.0 / div
+            ],
+            [
+                2.0 / div, 22.0 / div, 97.0 / div, 159.0 / div, 97.0 / div,
+                22.0 / div, 2.0 / div
+            ],
+            [
+                1.0 / div, 13.0 / div, 59.0 / div, 97.0 / div, 59.0 / div,
+                13.0 / div, 1.0 / div
+            ],
+            [
+                0 / div, 3.0 / div, 13.0 / div, 22.0 / div, 13.0 / div, 3.0 / div,
+                0 / div
+            ],
+            [0 / div, 0 / div, 1.0 / div, 2.0 / div, 1.0 / div, 0 / div, 0 / div]
         ], offset);
 }
 

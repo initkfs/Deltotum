@@ -2,7 +2,7 @@ module dm.com.graphics.com_surface;
 
 import dm.com.platforms.results.com_result : ComResult;
 import dm.com.lifecycles.destroyable : Destroyable;
-import dm.com.graphics.com_blend_mode: ComBlendMode;
+import dm.com.graphics.com_blend_mode : ComBlendMode;
 
 import dm.math.rect2d : Rect2d;
 
@@ -33,6 +33,15 @@ interface ComSurface : Destroyable
     inout(void*) pixels() inout @nogc nothrow @safe;
 
     uint* getPixel(int x, int y) nothrow;
+
+    //TODO move RGBA color to math?
+    import std.typecons: Tuple;
+
+    void getPixels(scope bool delegate(size_t, size_t, ubyte, ubyte, ubyte, ubyte) onXYRGBAIsContinue);
+    void getPixels(Tuple!(ubyte, ubyte, ubyte, ubyte)[][] buff);
+    Tuple!(ubyte, ubyte, ubyte, ubyte)[][] getPixels();
+    void setPixels(Tuple!(ubyte, ubyte, ubyte, ubyte)[][] buff);
+    void setPixels(scope bool delegate(size_t, size_t, out Tuple!(ubyte, ubyte, ubyte, ubyte)) onXYRGBAIsContinue);
 
     void setPixelRGBA(int x, int y, ubyte r, ubyte g, ubyte b, ubyte a);
     void setPixelRGBA(uint* pixel, ubyte r, ubyte g, ubyte b, ubyte a) nothrow;

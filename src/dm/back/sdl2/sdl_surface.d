@@ -11,6 +11,7 @@ import dm.back.sdl2.base.sdl_object_wrapper : SdlObjectWrapper;
 import dm.back.sdl2.sdl_window : SdlWindow;
 
 import dm.math.rect2d : Rect2d;
+import std.typecons : Tuple;
 
 import bindbc.sdl;
 
@@ -250,7 +251,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         }
         SDL_Surface* sdlDstPtr = cast(SDL_Surface*) dstPtr;
         assert(sdlDstPtr);
-        
+
         //TODO check is locked
         const int zeroOrErrorCode = SDL_BlitSurface(ptr, srcRect, sdlDstPtr, dstRect);
         return ComResult(zeroOrErrorCode);
@@ -351,6 +352,65 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
     {
         Uint32 color = SDL_MapRGBA(ptr.format, r, g, b, a);
         *pixel = color;
+    }
+
+    void getPixels(scope bool delegate(size_t, size_t, ubyte, ubyte, ubyte, ubyte) onXYRGBAIsContinue)
+    {
+        foreach (y; 0 .. height)
+        {
+            foreach (x; 0 .. width)
+            {
+                auto pixelPtr = getPixel(x, y);
+                ubyte r, g, b, a;
+                getPixelRGBA(pixelPtr, r, g, b, a);
+                if (!onXYRGBAIsContinue(x, y, r, g, b, a))
+                {
+                    return;
+                }
+            }
+        }
+    }
+
+    void getPixels(Tuple!(ubyte, ubyte, ubyte, ubyte)[][] buff)
+    {
+        getPixels((x, y, r, g, b, a) {
+            Tuple!(ubyte, ubyte, ubyte, ubyte) color;
+            color[0] = r;
+            color[1] = g;
+            color[2] = b;
+            color[3] = a;
+            buff[y][x] = color;
+            return true;
+        });
+    }
+
+    Tuple!(ubyte, ubyte, ubyte, ubyte)[][] getPixels()
+    {
+        auto buff = new Tuple!(ubyte, ubyte, ubyte, ubyte)[][](height, width);
+        getPixels(buff);
+        return buff;
+    }
+
+    void setPixels(scope bool delegate(size_t, size_t, out Tuple!(ubyte, ubyte, ubyte, ubyte)) onXYRGBAIsContinue)
+    {
+        foreach (y; 0 .. height)
+        {
+            foreach (x; 0 .. width)
+            {
+                Tuple!(ubyte, ubyte, ubyte, ubyte) color;
+                bool isContinue = onXYRGBAIsContinue(x, y, color);
+                setPixelRGBA(x, y, color[0], color[1], color[2], color[3]);
+                if (!isContinue)
+                {
+                    return;
+                }
+            }
+        }
+    }
+
+    void setPixels(Tuple!(ubyte, ubyte, ubyte, ubyte)[][] buff)
+    {
+        setPixels((x, y, color) { color = buff[y][x]; return true; });
     }
 
     int pitch() inout @nogc nothrow @safe

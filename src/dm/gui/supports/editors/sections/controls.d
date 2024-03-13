@@ -382,6 +382,12 @@ class Controls : Control
         auto ling1 = new HLinearGauge;
         //ling1.isBorder = true;
         root.addCreate(ling1);
+
+        import dm.gui.controls.indicators.leds.led: Led;
+
+        auto led1 = new Led;
+        led1.isBorder = true;
+        root.addCreate(led1);
     }
 
     private void createIndicators(Container root)

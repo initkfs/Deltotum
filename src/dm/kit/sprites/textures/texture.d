@@ -282,6 +282,13 @@ class Texture : Sprite
         return toTexture;
     }
 
+    void copyFrom(Texture other)
+    {
+        Rect2d srcRect = {0, 0, other.width, other.height};
+        Rect2d destRect = {0, 0, width, height};
+        copyFrom(other, srcRect, destRect);
+    }
+
     void copyFrom(Texture other, Rect2d srcRect, Rect2d dstRect)
     {
         assert(texture);
@@ -325,6 +332,47 @@ class Texture : Sprite
         return ptr;
     }
 
+    RGBA[][] pixelColors()
+    {
+        assert(width > 0 && height > 0);
+        RGBA[][] buff = new RGBA[][](cast(size_t) height, cast(size_t) width);
+        pixelColors(buff);
+        return buff;
+    }
+
+    void pixelColors(RGBA[][] buff)
+    {
+        assert(width > 0);
+        assert(height > 0);
+        assert(texture && texture.isLocked);
+        assert(buff.length >= height);
+
+        //TODO all rows
+        assert(buff[0].length >= width);
+
+        foreach (y; 0 .. (cast(uint) height))
+        {
+            foreach (x; 0 .. (cast(uint)(width)))
+            {
+                buff[y][x] = pixelColor(x, y);
+            }
+        }
+    }
+
+    void setPixelColors(RGBA[][] buff)
+    {
+        //TODO width > 0, etc
+        //TODO check buffer size
+        foreach (y; 0 .. (cast(uint) height))
+        {
+            foreach (x; 0 .. (cast(uint)(width)))
+            {
+                auto color = buff[y][x];
+                changeColor(x, y, color);
+            }
+        }
+    }
+
     RGBA pixelColor(uint x, uint y)
     {
         assert(texture && texture.isLocked);
@@ -354,6 +402,22 @@ class Texture : Sprite
         assert(texture);
         super.opacity(value);
         if (const err = texture.changeOpacity(value))
+        {
+            logger.error(err.toString);
+        }
+    }
+
+    void setRendererTarget()
+    {
+        if (const err = texture.setRendererTarget)
+        {
+            logger.error(err.toString);
+        }
+    }
+
+    void resetRendererTarget()
+    {
+        if (const err = texture.resetRendererTarget)
         {
             logger.error(err.toString);
         }
