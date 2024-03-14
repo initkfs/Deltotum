@@ -8,7 +8,7 @@ import dm.kit.sprites.images.image : Image;
 import dm.kit.sprites.images.image : Image;
 import std.string : toStringz;
 
-import ImageProcessor = dm.kit.sprites.images.processing.image_processor;
+import ColorProcessor = dm.kit.graphics.colors.processing.color_processor;
 
 import Math = dm.math;
 
@@ -106,13 +106,13 @@ class Images : Control
 
         auto hist = new Image(imageWidth, imageHeight);
         build(hist);
-        hist.load(ImageProcessor.histogram(colorBuff));
+        hist.load(ColorProcessor.histogram(colorBuff));
         container.addCreate(createImageInfo("Histogram", hist));
 
         auto grayscale = new Image(imageWidth, imageHeight);
         build(grayscale);
         grayscale.colorProcessor = (x, y, color) {
-            return ImageProcessor.grayscale(color);
+            return ColorProcessor.grayscale(color);
         };
         grayscale.load(colorBuff);
         container.addCreate(createImageInfo("Grayscale", grayscale));
@@ -120,7 +120,7 @@ class Images : Control
         auto grayscaleThreshold = new Image(imageWidth, imageHeight);
         build(grayscaleThreshold);
         grayscaleThreshold.colorProcessor = (x, y, color) {
-            return ImageProcessor.grayscale(color, 200);
+            return ColorProcessor.grayscale(color, 200);
         };
         grayscaleThreshold.load(colorBuff);
         container.addCreate(createImageInfo("Grayscale 200", grayscaleThreshold));
@@ -128,7 +128,7 @@ class Images : Control
         auto negative = new Image(imageWidth, imageHeight);
         build(negative);
         negative.colorProcessor = (x, y, color) {
-            return ImageProcessor.negative(color);
+            return ColorProcessor.negative(color);
         };
         negative.load(colorBuff);
         container.addCreate(createImageInfo("Negative", negative));
@@ -136,7 +136,7 @@ class Images : Control
         auto solar1 = new Image(imageWidth, imageHeight);
         build(solar1);
         solar1.colorProcessor = (x, y, color) {
-            return ImageProcessor.solarization(color, 120);
+            return ColorProcessor.solarization(color, 120);
         };
         solar1.load(colorBuff);
         container.addCreate(createImageInfo("Solar 120", solar1));
@@ -144,7 +144,7 @@ class Images : Control
         auto sepia = new Image(imageWidth, imageHeight);
         build(sepia);
         sepia.colorProcessor = (x, y, color) {
-            return ImageProcessor.sepia(color);
+            return ColorProcessor.sepia(color);
         };
         sepia.load(colorBuff);
         container.addCreate(createImageInfo("Sepia", sepia));
@@ -152,7 +152,7 @@ class Images : Control
         auto poster = new Image(imageWidth, imageHeight);
         build(poster);
         poster.colorProcessor = (x, y, color) {
-            return ImageProcessor.posterize(color, [
+            return ColorProcessor.posterize(color, [
                     RGBA.red,
                     RGBA.blue,
                     RGBA.green
@@ -163,7 +163,7 @@ class Images : Control
 
         auto blend = new Image(imageWidth, imageHeight);
         build(blend);
-        blend.load(ImageProcessor.blend(colorBuff, RGBA.blue, ImageProcessor.BlendMode.overlay));
+        blend.load(ColorProcessor.blend(colorBuff, RGBA.blue, ColorProcessor.BlendMode.overlay));
         container.addCreate(createImageInfo("Blend", blend));
 
         auto container2 = new HBox;
@@ -207,34 +207,34 @@ class Images : Control
 
         auto flop = new Image(imageWidth, imageHeight);
         build(flop);
-        flop.load(ImageProcessor.flop(colorBuff));
+        flop.load(ColorProcessor.flop(colorBuff));
         container2.addCreate(createImageInfo("Flop (X)", flop));
 
         auto flip = new Image(imageWidth, imageHeight);
         build(flip);
-        flip.load(ImageProcessor.flip(colorBuff));
+        flip.load(ColorProcessor.flip(colorBuff));
         container2.addCreate(createImageInfo("Flip (Y)", flip));
 
         auto mirror = new Image(imageWidth, imageHeight);
         build(mirror);
-        mirror.load(ImageProcessor.mirror(colorBuff));
+        mirror.load(ColorProcessor.mirror(colorBuff));
         container2.addCreate(createImageInfo("Mirror", mirror));
 
         auto rotate45 = new Image(imageWidth, imageHeight);
         build(rotate45);
-        rotate45.load(ImageProcessor.rotate(colorBuff, 45));
+        rotate45.load(ColorProcessor.rotate(colorBuff, 45));
         container2.addCreate(createImageInfo("Rotate 45", rotate45));
 
         auto bilinear = new Image(imageWidth / 2, imageHeight / 2);
         build(bilinear);
-        bilinear.load(ImageProcessor.resizeBilinear(colorBuff, imageWidth / 2, imageHeight / 2));
+        bilinear.load(ColorProcessor.resizeBilinear(colorBuff, imageWidth / 2, imageHeight / 2));
         container2.addCreate(createImageInfo("Bilinear", bilinear));
 
         import dm.math.rect2d : Rect2d;
 
         auto crop = new Image(50, 50);
         build(crop);
-        crop.load(ImageProcessor.crop(colorBuff, Rect2d(10, 10, 50, 50)));
+        crop.load(ColorProcessor.crop(colorBuff, Rect2d(10, 10, 50, 50)));
         container2.addCreate(createImageInfo("Crop", crop));
 
         auto container3 = new HBox;
@@ -242,27 +242,27 @@ class Images : Control
 
         auto highpass = new Image(imageWidth, imageHeight);
         build(highpass);
-        highpass.load(ImageProcessor.highpass(colorBuff));
+        highpass.load(ColorProcessor.highpass(colorBuff));
         container3.addCreate(createImageInfo("Highpass", highpass));
 
         auto lowpass = new Image(imageWidth, imageHeight);
         build(lowpass);
-        lowpass.load(ImageProcessor.lowpass(colorBuff));
+        lowpass.load(ColorProcessor.lowpass(colorBuff));
         container3.addCreate(createImageInfo("Lowpass", lowpass));
 
         auto gaussian = new Image(imageWidth, imageHeight);
         build(gaussian);
-        gaussian.load(ImageProcessor.gaussian3x3(colorBuff));
+        gaussian.load(ColorProcessor.gaussian3x3(colorBuff));
         container3.addCreate(createImageInfo("Gauss 3x3", gaussian));
 
         auto sobel = new Image(imageWidth, imageHeight);
         build(sobel);
-        sobel.load(ImageProcessor.sobel(colorBuff));
+        sobel.load(ColorProcessor.sobel(colorBuff));
         container3.addCreate(createImageInfo("Sobel", sobel));
 
         auto emboss = new Image(imageWidth, imageHeight);
         build(emboss);
-        emboss.load(ImageProcessor.emboss(colorBuff));
+        emboss.load(ColorProcessor.emboss(colorBuff));
         container3.addCreate(createImageInfo("Emboss", emboss));
 
     }

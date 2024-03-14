@@ -1,4 +1,4 @@
-module dm.kit.sprites.images.processing.image_processor;
+module dm.kit.graphics.colors.processing.color_processor;
 
 import dm.kit.graphics.colors.rgba : RGBA;
 import dm.math.rect2d : Rect2d;

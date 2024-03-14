@@ -13,7 +13,7 @@ import dm.kit.graphics.colors.rgba : RGBA;
 class Led : Control
 {
 
-    this(double width = 50, double height = 50)
+    this(double width = 35, double height = 35)
     {
         this.width = width;
         this.height = height;
@@ -28,7 +28,7 @@ class Led : Control
         super.create;
 
         import dm.kit.sprites.textures.vectors.vcircle : VCircle;
-        import ImageProcessor = dm.kit.sprites.images.processing.image_processor;
+        import ColorProcessor = dm.kit.graphics.colors.processing.color_processor;
         import dm.kit.sprites.textures.texture : Texture;
 
         auto style = createDefaultStyle(width, height);
@@ -40,7 +40,7 @@ class Led : Control
         shape.onSurfaceIsContinue = (surf) {
 
             RGBA[][] buff = surfaceToBuffer(surf);
-            RGBA[][] gaussBuff = ImageProcessor.boxblur(buff, padding * 2);
+            RGBA[][] gaussBuff = ColorProcessor.boxblur(buff, padding * 2);
 
             surf.setPixels((x, y, color) {
                 auto buffColor = gaussBuff[y][x];
@@ -64,7 +64,7 @@ class Led : Control
         shape2.onSurfaceIsContinue = (surf) {
 
             RGBA[][] buff = surfaceToBuffer(surf);
-            RGBA[][] gaussBuff = ImageProcessor.boxblur(buff, padding * 4);
+            RGBA[][] gaussBuff = ColorProcessor.boxblur(buff, padding * 4);
 
             surf.setPixels((x, y, color) {
                 auto buffColor = gaussBuff[y][x];
@@ -91,7 +91,7 @@ class Led : Control
         shape3.onSurfaceIsContinue = (surf) {
 
             RGBA[][] buff = surfaceToBuffer(surf);
-            RGBA[][] gaussBuff = ImageProcessor.boxblur(buff, padding * 4);
+            RGBA[][] gaussBuff = ColorProcessor.boxblur(buff, padding * 4);
 
             surf.setPixels((x, y, color) {
                 auto buffColor = gaussBuff[y][x];
@@ -118,7 +118,7 @@ class Led : Control
 
         import dm.com.graphics.com_blend_mode : ComBlendMode;
 
-        //texture.blendMode = ComBlendMode.mul;
+        texture.blendMode = ComBlendMode.blend;
 
         shape.draw;
         shape2.draw;
