@@ -56,14 +56,14 @@ class Led : Control
         import dm.kit.sprites.textures.vectors.vcircle : VCircle;
 
         auto hsvColor = colorHue.toHSV;
-        hsvColor.saturation = 100;
-        hsvColor.value = 100;
+        hsvColor.saturation = 1;
+        hsvColor.value = 1;
 
         auto bottomHsvColor = hsvColor;
-        bottomHsvColor.value = 80;
+        bottomHsvColor.value = 0.8;
         auto middleHsvColor = hsvColor;
         auto topHsvColor = hsvColor;
-        topHsvColor.saturation = 10;
+        topHsvColor.saturation = 0.1;
 
         bottomLayerColor = bottomHsvColor.toRGBA;
         middleLayerColor = middleHsvColor.toRGBA;

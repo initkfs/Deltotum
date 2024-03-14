@@ -11,14 +11,17 @@ struct HSV
     double saturation = 0;
     double value = 0;
 
-    static enum
+    //TODO alpha?
+    //double alpha = 0;
+
+    static enum : double
     {
         minHue = 0,
         maxHue = 360,
         minSaturation = 0,
-        maxSaturation = 100,
+        maxSaturation = 1,
         minValue = 0,
-        maxValue = 100
+        maxValue = 1
     }
 
     RGBA toRGBA() const pure @safe
@@ -45,12 +48,13 @@ struct HSV
             i = cast(int) h;
             f = h - i;
 
-            s *= 0.01;
-            v *= 0.01;
+            // s *= 0.01;
+            // v *= 0.01;
+            enum double maxValue = 1.0;
 
-            p = v * (1.0 - s);
-            q = v * (1.0 - (s * f));
-            t = v * (1.0 - (s * (1.0 - f)));
+            p = v * (maxValue - s);
+            q = v * (maxValue - (s * f));
+            t = v * (maxValue - (s * (maxValue - f)));
 
             switch (i)
             {
@@ -108,18 +112,18 @@ unittest
     RGBA r0 = HSV(0, 0, 0).toRGBA;
     assert(r0 == RGBA.black);
 
-    RGBA r02 = HSV(360, 100, 0).toRGBA;
+    RGBA r02 = HSV(360, 1, 0).toRGBA;
     assert(r02 == RGBA.black);
 
     RGBA r03 = HSV(360, 0, 0).toRGBA;
     assert(r03 == RGBA.black);
 
-    RGBA rFF0004 = HSV(360, 100, 100).toRGBA;
+    RGBA rFF0004 = HSV(360, 1, 1).toRGBA;
     assert(rFF0004.r == 255);
     assert(rFF0004.g == 0);
     assert(rFF0004.b == 0);
 
-    RGBA r5e8339 = HSV(90.0, 56.4, 51.3).toRGBA;
+    RGBA r5e8339 = HSV(90.0, 0.564, 0.513).toRGBA;
     assert(r5e8339.r == 94);
     assert(r5e8339.g == 131);
     assert(r5e8339.b == 57);

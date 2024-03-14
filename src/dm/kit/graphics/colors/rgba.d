@@ -614,12 +614,12 @@ unittest
     HSV hsv255 = RGBA.white.toHSV;
     assert(hsv255.hue == 0);
     assert(hsv255.saturation == 0);
-    assert(hsv255.value == 100);
+    assert(hsv255.value == 1);
 
     HSV hsv1 = RGBA(34, 50, 16).toHSV;
     assert(isClose(hsv1.hue, 88.24, 0.0001));
-    assert(isClose(hsv1.saturation, 68));
-    assert(isClose(hsv1.value, 19.6, 0.001));
+    assert(isClose(hsv1.saturation, 0.68, 0.0001));
+    assert(isClose(hsv1.value, 0.196, 0.001));
 }
 
 unittest
