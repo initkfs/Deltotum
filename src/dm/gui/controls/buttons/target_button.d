@@ -55,7 +55,7 @@ class TargetButton : ButtonBase
 
     protected Sprite createStick(double width, double height)
     {
-        GraphicStyle style = createDefaultStyle(width, height);
+        GraphicStyle style = createDefaultStyle;
         if (!style.isNested)
         {
             style.isFill = true;

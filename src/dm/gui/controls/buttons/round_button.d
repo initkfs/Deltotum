@@ -81,7 +81,7 @@ class RoundButton : ButtonBase
         return (width, height) {
             assert(graphics.theme);
 
-            GraphicStyle style = createDefaultStyle(width, height);
+            GraphicStyle style = createDefaultStyle;
             if (!style.isNested)
             {
                 style.lineColor = graphics.theme.colorHover;
@@ -103,7 +103,7 @@ class RoundButton : ButtonBase
         return () {
             assert(graphics.theme);
 
-            GraphicStyle style = createDefaultStyle(width, height);
+            GraphicStyle style = createDefaultStyle;
             if (!style.isNested)
             {
                 style.lineColor = graphics

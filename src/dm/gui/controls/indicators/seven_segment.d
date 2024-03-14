@@ -145,7 +145,7 @@ class SevenSegment : Control
 
     protected GraphicStyle createSegmentStyle()
     {
-        GraphicStyle style = createDefaultStyle(width, height);
+        GraphicStyle style = createDefaultStyle;
         if (!style.isNested)
         {
             style.isFill = true;

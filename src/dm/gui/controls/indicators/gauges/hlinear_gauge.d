@@ -126,7 +126,7 @@ class HLinearGauge : Control
 
         foreach (r; rangeInfo)
         {
-            auto style = createDefaultStyle(width, height);
+            auto style = createDefaultStyle;
             style.isFill = true;
             style.color = r.color;
             import dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
@@ -248,7 +248,7 @@ class HLinearGauge : Control
 
     Sprite newPointer()
     {
-        auto style = createDefaultStyle(width, height);
+        auto style = createDefaultStyle;
         style.isFill = true;
         style.color = graphics.theme.colorAccent;
         import dm.kit.sprites.textures.vectors.vtriangle : VTriangle;
@@ -324,7 +324,7 @@ class HLinearGauge : Control
 
     Sprite newMinStepTick()
     {
-        GraphicStyle style = createDefaultStyle(width, height);
+        GraphicStyle style = createDefaultStyle;
         style.isFill = true;
         import dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
 
@@ -333,7 +333,7 @@ class HLinearGauge : Control
 
     Sprite newMaxStepTick()
     {
-        GraphicStyle style = createDefaultStyle(width, height);
+        GraphicStyle style = createDefaultStyle;
         style.isFill = true;
         import dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
 

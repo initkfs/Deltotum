@@ -75,7 +75,7 @@ class Gauge : Control
     {
         super.create;
     
-        auto faceStyle = createDefaultStyle(width, height);
+        auto faceStyle = createDefaultStyle;
         if (!faceStyle.isNested)
         {
             faceStyle.lineWidth = 3;

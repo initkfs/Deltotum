@@ -33,7 +33,7 @@ class RhombusButton : ButtonBase
 
     protected override Sprite createDefaultShape(double w, double h)
     {
-        return createDefaultShape(w, h, createDefaultStyle(w, h));
+        return createDefaultShape(w, h, createDefaultStyle);
     }
 
     protected override Sprite createDefaultShape(double width, double height, GraphicStyle style)
@@ -61,7 +61,7 @@ class RhombusButton : ButtonBase
         return (width, height) {
             assert(graphics.theme);
 
-            GraphicStyle style = createDefaultStyle(width, height);
+            GraphicStyle style = createDefaultStyle;
             if (!style.isNested)
             {
                 style.lineColor = graphics.theme.colorHover;
@@ -83,7 +83,7 @@ class RhombusButton : ButtonBase
         return () {
             assert(graphics.theme);
 
-            GraphicStyle style = createDefaultStyle(width, height);
+            GraphicStyle style = createDefaultStyle;
             if (!style.isNested)
             {
                 style.lineColor = graphics

@@ -26,7 +26,7 @@ class Led : Control
     override void create()
     {
         super.create;
-        auto style = createDefaultStyle(width, height);
+        auto style = createDefaultStyle;
         if (!style.isNested)
         {
             style.isFill = true;

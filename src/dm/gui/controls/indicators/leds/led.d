@@ -31,7 +31,7 @@ class Led : Control
         import ColorProcessor = dm.kit.graphics.colors.processing.color_processor;
         import dm.kit.sprites.textures.texture : Texture;
 
-        auto style = createDefaultStyle(width, height);
+        auto style = createDefaultStyle;
         style.isFill = true;
         style.color = RGBA.web("#12E104");
 
@@ -56,7 +56,7 @@ class Led : Control
 
         addCreate(shape);
 
-        auto style2 = createDefaultStyle(width, height);
+        auto style2 = createDefaultStyle;
         style2.isFill = true;
         style2.color = RGBA.web("#68FD5E");
 
@@ -83,7 +83,7 @@ class Led : Control
 
         style.color = RGBA.white;
 
-        auto style3 = createDefaultStyle(width, height);
+        auto style3 = createDefaultStyle;
         style3.isFill = true;
         style3.color = RGBA.web("#CEFFCB");
 

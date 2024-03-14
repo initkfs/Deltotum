@@ -120,7 +120,7 @@ class Control : Sprite
         return (w, h) {
             assert(graphics.theme);
 
-            GraphicStyle newStyle = createDefaultStyle(w, h);
+            GraphicStyle newStyle = createDefaultStyle;
             if (!newStyle.isNested)
             {
                 newStyle.lineColor = graphics
@@ -143,7 +143,7 @@ class Control : Sprite
         return () {
             assert(graphics.theme);
 
-            GraphicStyle newStyle = createDefaultStyle(width, height);
+            GraphicStyle newStyle = createDefaultStyle;
             if (!newStyle.isNested)
             {
                 newStyle.lineColor = graphics
@@ -186,7 +186,7 @@ class Control : Sprite
         };
     }
 
-    protected GraphicStyle createDefaultStyle(double w, double h)
+    protected GraphicStyle createDefaultStyle()
     {
         GraphicStyle newStyle;
         if (auto parentPtr = ownOrParentStyle)
@@ -196,7 +196,8 @@ class Control : Sprite
         }
         else
         {
-            newStyle = GraphicStyle(graphics.theme.lineThickness, graphics.theme.colorAccent, isBackground, graphics
+            const lineThickness = isBorder ? graphics.theme.lineThickness : 0;
+            newStyle = GraphicStyle(lineThickness, graphics.theme.colorAccent, isBackground, graphics
                     .theme.colorControlBackground);
         }
         return newStyle;
@@ -204,7 +205,7 @@ class Control : Sprite
 
     protected Sprite createDefaultShape(double w, double h)
     {
-        return createDefaultShape(w, h, createDefaultStyle(w, h));
+        return createDefaultShape(w, h, createDefaultStyle);
     }
 
     protected Sprite createDefaultShape(double width, double height, GraphicStyle style)
