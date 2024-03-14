@@ -3,17 +3,27 @@ module dm.gui.controls.indicators.leds.led;
 import dm.kit.sprites.sprite : Sprite;
 import dm.gui.controls.control : Control;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import dm.kit.sprites.textures.texture : Texture;
 import dm.gui.containers.vbox : VBox;
 import dm.gui.containers.hbox : HBox;
 import dm.kit.graphics.colors.rgba : RGBA;
+import dm.kit.graphics.colors.hsv: HSV;
+import dm.math.insets : Insets;
+
+import ColorProcessor = dm.kit.graphics.colors.processing.color_processor;
 
 /**
  * Authors: initkfs
  */
 class Led : Control
 {
+    RGBA topLayerColor;
+    RGBA middleLayerColor;
+    RGBA bottomLayerColor;
 
-    this(double width = 35, double height = 35)
+    RGBA colorHue;
+
+    this(RGBA colorHue = RGBA.red, double width = 50, double height = 50)
     {
         this.width = width;
         this.height = height;
@@ -21,6 +31,63 @@ class Led : Control
         import dm.kit.sprites.layouts.center_layout : CenterLayout;
 
         layout = new CenterLayout;
+        this.colorHue = colorHue;
+    }
+
+    double calcLayerPadding()
+    {
+        const padding = (width * 3) / 35;
+        return padding;
+    }
+
+    protected Sprite newLayer(GraphicStyle style, double padding, double blurSize)
+    {
+        auto shape = createLayerShape(style, padding, blurSize);
+        build(shape);
+        shape.initialize;
+        assert(shape.isInitialized);
+        shape.create;
+        assert(shape.isCreated);
+        return shape;
+    }
+
+    protected Sprite createLayerShape(GraphicStyle style = GraphicStyle.simple, double padding, double blurSize)
+    {
+        import dm.kit.sprites.textures.vectors.vcircle : VCircle;
+
+        auto hsvColor = colorHue.toHSV;
+        hsvColor.saturation = 100;
+        hsvColor.value = 100;
+
+        auto bottomHsvColor = hsvColor;
+        bottomHsvColor.value = 80;
+        auto middleHsvColor = hsvColor;
+        auto topHsvColor = hsvColor;
+        topHsvColor.saturation = 10;
+
+        bottomLayerColor = bottomHsvColor.toRGBA;
+        middleLayerColor = middleHsvColor.toRGBA;
+        topLayerColor = topHsvColor.toRGBA;
+
+        import std.conv : to;
+
+        auto shape = new VCircle(width / 2 - padding, style, width, height);
+        shape.onSurfaceIsContinue = (surf) {
+            RGBA[][] buff = surfaceToBuffer(surf);
+            RGBA[][] gaussBuff = ColorProcessor.boxblur(buff, blurSize.to!size_t);
+
+            surf.setPixels((x, y, color) {
+                auto buffColor = gaussBuff[y][x];
+                color[0] = buffColor.r;
+                color[1] = buffColor.g;
+                color[2] = buffColor.b;
+                color[3] = buffColor.aByte;
+                return true;
+            });
+
+            return true;
+        };
+        return shape;
     }
 
     override void create()
@@ -28,107 +95,53 @@ class Led : Control
         super.create;
 
         import dm.kit.sprites.textures.vectors.vcircle : VCircle;
-        import ColorProcessor = dm.kit.graphics.colors.processing.color_processor;
-        import dm.kit.sprites.textures.texture : Texture;
 
         auto style = createDefaultStyle;
         style.isFill = true;
-        style.color = RGBA.web("#12E104");
+        style.color = bottomLayerColor;
 
-        enum padding = 3;
-        auto shape = new VCircle(width / 2 - padding, style, width, height);
-        shape.onSurfaceIsContinue = (surf) {
+        const padding = calcLayerPadding;
 
-            RGBA[][] buff = surfaceToBuffer(surf);
-            RGBA[][] gaussBuff = ColorProcessor.boxblur(buff, padding * 2);
-
-            surf.setPixels((x, y, color) {
-                auto buffColor = gaussBuff[y][x];
-                color[0] = buffColor.r;
-                color[1] = buffColor.g;
-                color[2] = buffColor.b;
-                color[3] = buffColor.aByte;
-                return true;
-            });
-
-            return true;
+        auto bottomLayer = newLayer(style, padding, padding * 2);
+        window.showingTasks ~= (dt)
+        {
+            bottomLayer.dispose;
         };
-
-        addCreate(shape);
 
         auto style2 = createDefaultStyle;
         style2.isFill = true;
-        style2.color = RGBA.web("#68FD5E");
+        style2.color = middleLayerColor;
 
-        auto shape2 = new VCircle(width / 2 - padding * 2, style2, width, height);
-        shape2.onSurfaceIsContinue = (surf) {
-
-            RGBA[][] buff = surfaceToBuffer(surf);
-            RGBA[][] gaussBuff = ColorProcessor.boxblur(buff, padding * 4);
-
-            surf.setPixels((x, y, color) {
-                auto buffColor = gaussBuff[y][x];
-                color[0] = buffColor.r;
-                color[1] = buffColor.g;
-                color[2] = buffColor.b;
-                color[3] = buffColor.aByte;
-                return true;
-            });
-
-            return true;
+        auto middleLayer = newLayer(style2, padding * 2, padding * 4);
+        window.showingTasks ~= (dt)
+        {
+            middleLayer.dispose;
         };
-        build(shape2);
-        shape2.initialize;
-        shape2.create;
-
-        style.color = RGBA.white;
 
         auto style3 = createDefaultStyle;
         style3.isFill = true;
-        style3.color = RGBA.web("#CEFFCB");
+        style3.color = topLayerColor;
 
-        auto shape3 = new VCircle(width / 2 - padding * 3, style3, width, height);
-        shape3.onSurfaceIsContinue = (surf) {
-
-            RGBA[][] buff = surfaceToBuffer(surf);
-            RGBA[][] gaussBuff = ColorProcessor.boxblur(buff, padding * 4);
-
-            surf.setPixels((x, y, color) {
-                auto buffColor = gaussBuff[y][x];
-                color[0] = buffColor.r;
-                color[1] = buffColor.g;
-                color[2] = buffColor.b;
-                color[3] = buffColor.aByte;
-                return true;
-            });
-
-            return true;
+        auto topLayer = newLayer(style3, padding * 3, padding * 4);
+        window.showingTasks ~= (dt)
+        {
+            topLayer.dispose;
         };
-        build(shape3);
-        shape3.initialize;
-        shape3.create;
 
-        auto texture = new Texture(width, height);
-        build(texture);
-        texture.createTargetRGBA32;
-        texture.setRendererTarget;
-
-        //shape.opacity = 0.7;
-        //shape3.opacity = 0.5;
+        auto ledTexture = new Texture(width, height);
+        build(ledTexture);
+        ledTexture.createTargetRGBA32;
 
         import dm.com.graphics.com_blend_mode : ComBlendMode;
 
-        texture.blendMode = ComBlendMode.blend;
+        ledTexture.blendMode = ComBlendMode.blend;
 
-        shape.draw;
-        shape2.draw;
-        shape3.draw;
+        ledTexture.setRendererTarget;
+        bottomLayer.draw;
+        middleLayer.draw;
+        topLayer.draw;
+        ledTexture.resetRendererTarget;
 
-        texture.resetRendererTarget;
-
-        addCreate(texture);
-
-        shape.isVisible = false;
-
+        addCreate(ledTexture);
     }
 }

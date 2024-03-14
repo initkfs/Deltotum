@@ -2,6 +2,7 @@ module dm.kit.sprites.textures.vectors.vcircle;
 
 import dm.kit.sprites.textures.vectors.varc: VArc;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import dm.math.insets: Insets;
 
 import Math = dm.math;
 

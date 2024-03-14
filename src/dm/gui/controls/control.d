@@ -6,6 +6,7 @@ import dm.math.insets : Insets;
 import dm.kit.sprites.textures.texture : Texture;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import dm.math.alignment : Alignment;
+import dm.math.insets: Insets;
 
 import dm.kit.sprites.transitions.min_max_transition : MinMaxTransition;
 import dm.kit.sprites.transitions.objects.props.opacity_transition : OpacityTransition;
@@ -196,8 +197,9 @@ class Control : Sprite
         }
         else
         {
-            const lineThickness = isBorder ? graphics.theme.lineThickness : 0;
-            newStyle = GraphicStyle(lineThickness, graphics.theme.colorAccent, isBackground, graphics
+            //The method can be used for internal controls
+            //const lineThickness = isBorder ? graphics.theme.lineThickness : 0;
+            newStyle = GraphicStyle(graphics.theme.lineThickness, graphics.theme.colorAccent, isBackground, graphics
                     .theme.colorControlBackground);
         }
         return newStyle;
@@ -208,7 +210,7 @@ class Control : Sprite
         return createDefaultShape(w, h, createDefaultStyle);
     }
 
-    protected Sprite createDefaultShape(double width, double height, GraphicStyle style)
+    protected Sprite createDefaultShape(double width, double height, GraphicStyle style = GraphicStyle.simple)
     {
         return graphics.theme.background(width, height, &style);
     }
