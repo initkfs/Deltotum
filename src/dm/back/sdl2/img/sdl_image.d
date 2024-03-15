@@ -38,6 +38,11 @@ class SdlImage : SdlSurface, ComImage
 
     ComResult load(string path) nothrow
     {
+        if (ptr)
+        {
+            disposePtr;
+        }
+
         SDL_Surface* imgPtr = IMG_Load(path.toStringz);
         if (imgPtr is null)
         {
@@ -56,6 +61,11 @@ class SdlImage : SdlSurface, ComImage
     ComResult load(const(void[]) content) nothrow
     {
         import std.string : toStringz;
+
+        if (ptr)
+        {
+            disposePtr;
+        }
 
         SDL_RWops* rw = SDL_RWFromConstMem(content.ptr, cast(int) content
                 .length);
@@ -77,7 +87,8 @@ class SdlImage : SdlSurface, ComImage
     ComResult toSurface(out ComSurface surf) nothrow
     {
         assert(ptr);
-        import dm.core.utils.type_util: castSafe;
+        import dm.core.utils.type_util : castSafe;
+
         surf = this.castSafe!ComSurface;
         return ComResult.success;
     }

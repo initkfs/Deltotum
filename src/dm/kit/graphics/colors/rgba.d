@@ -230,7 +230,7 @@ struct RGBA
     double gNorm() const pure @safe => colorNorm(g);
     double bNorm() const pure @safe => colorNorm(b);
     ubyte aByte() const pure @safe => to!ubyte(a * maxColor);
-    
+
     static double fromAByte(ubyte value) pure @safe => (cast(double) value) / maxColor;
 
     bool isMin() const pure @safe
@@ -536,7 +536,7 @@ struct RGBA
 unittest
 {
     enum colorMin = 0;
-    RGBA rgba1 = { colorMin, colorMin, colorMin, colorMin };
+    RGBA rgba1 = {colorMin, colorMin, colorMin, colorMin};
     assert(rgba1.r == colorMin);
     assert(rgba1.g == colorMin);
     assert(rgba1.b == colorMin);
@@ -547,7 +547,7 @@ unittest
 
     enum colorMax = 255;
     enum alphaMax = 1;
-    RGBA rgba2 = { colorMax, colorMax, colorMax, alphaMax};
+    RGBA rgba2 = {colorMax, colorMax, colorMax, alphaMax};
     assert(rgba2.r == colorMax);
     assert(rgba2.g == colorMax);
     assert(rgba2.b == colorMax);

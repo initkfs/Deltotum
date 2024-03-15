@@ -193,6 +193,13 @@ class Image : Texture
     {
         assert(width > 0);
         assert(height > 0);
+
+        //TODO check is mutable
+        if(texture){
+            texture.dispose;
+            texture = null;
+        }
+
         //TODO check width, height == colorBuf.dims
         createMutRGBA32;
         assert(texture);

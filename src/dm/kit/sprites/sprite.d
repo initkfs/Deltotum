@@ -62,6 +62,7 @@ class Sprite : EventKitTarget
     double speed = 0;
 
     double _opacity = 1;
+    bool isOpacityForChildren;
 
     bool isPhysicsEnabled;
 
@@ -1762,6 +1763,17 @@ class Sprite : EventKitTarget
     void opacity(double value)
     {
         _opacity = value;
+        if (isOpacityForChildren)
+        {
+            onChildrenRec((child) {
+                if (child is this)
+                {
+                    return true;
+                }
+                child.opacity = value;
+                return true;
+            });
+        }
     }
 
     GraphicsContext gContext()

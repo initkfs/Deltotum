@@ -369,25 +369,60 @@ class Controls : Control
         t1.enableInsets;
     }
 
-    private void createProgressBars(Container root){
-        import dm.gui.controls.progress.radial_progress_bar: RadialProgressBar;
+    private void createProgressBars(Container root)
+    {
+        import dm.gui.controls.progress.radial_progress_bar : RadialProgressBar;
 
         auto rb1 = new RadialProgressBar;
         rb1.isPercentMode = true;
         root.addCreate(rb1);
         rb1.progress = 0.6;
 
-        import dm.gui.controls.indicators.gauges.hlinear_gauge: HLinearGauge;
+        import dm.gui.controls.indicators.gauges.hlinear_gauge : HLinearGauge;
 
         auto ling1 = new HLinearGauge;
         //ling1.isBorder = true;
         root.addCreate(ling1);
 
-        import dm.gui.controls.indicators.leds.led: Led;
+        import dm.gui.controls.indicators.leds.led : Led;
 
-        auto led1 = new Led;
-        led1.isBorder = true;
-        root.addCreate(led1);
+        auto ledContainer = new VBox;
+        root.addCreate(ledContainer);
+        ledContainer.enableInsets;
+
+        auto ledContainer1 = new HBox;
+        ledContainer1.layout.isAlignY = true;
+        ledContainer.addCreate(ledContainer1);
+        ledContainer1.enableInsets;
+
+        auto led1 = new Led(RGBA.red);
+        ledContainer1.addCreate(led1);
+
+        auto led2 = new Led(RGBA.yellow);
+        ledContainer1.addCreate(led2);
+
+        auto led3 = new Led(RGBA.green);
+        ledContainer1.addCreate(led3);
+
+        auto ledContainer2 = new HBox;
+        ledContainer2.layout.isAlignY = true;
+        ledContainer.addCreate(ledContainer2);
+        ledContainer2.enableInsets;
+
+        import dm.gui.controls.indicators.leds.led_icon : LedIcon;
+        import IconNames = dm.kit.graphics.themes.icons.icon_name;
+
+        import dm.kit.sprites.transitions.objects.props.opacity_transition : OpacityTransition;
+        import dm.math.interps.uni_interpolator : UniInterpolator;
+
+        auto ledIcon1 = new LedIcon(IconNames.flash_outline, RGBA.red);
+        ledContainer2.addCreate(ledIcon1);
+
+        auto ledIcon2 = new LedIcon(IconNames.battery_charging_outline, RGBA.yellow);
+        ledContainer2.addCreate(ledIcon2);
+
+        auto ledIcon3 = new LedIcon(IconNames.thermometer_outline, RGBA.green);
+        ledContainer2.addCreate(ledIcon3);
     }
 
     private void createIndicators(Container root)
@@ -423,7 +458,7 @@ class Controls : Control
         //dfmt on
         dm1.draw(matrix);
 
-        import dm.gui.controls.indicators.gauges.gauge: Gauge;
+        import dm.gui.controls.indicators.gauges.gauge : Gauge;
 
         auto g1 = new Gauge;
         root.addCreate(g1);

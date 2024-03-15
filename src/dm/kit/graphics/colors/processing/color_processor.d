@@ -568,8 +568,15 @@ RGBA[][] blend(RGBA[][] colors, RGBA maskColor, BlendMode mode = BlendMode.norma
     size_t colorWidth = colors[0].length;
 
     //TODO mask from RGBA[][]
-    //RGBA[][] mask = new RGBA[][](colorHeight, colorWidth);
     RGBA[][] buffer = new RGBA[][](colorHeight, colorWidth);
+    blend(colors, maskColor, buffer, mode);
+    return buffer;
+}
+
+void blend(RGBA[][] colors, RGBA maskColor, RGBA[][] buffer, BlendMode mode = BlendMode.normal)
+{
+    assert(colors.length > 0);
+    assert(colors[0].length > 0);
 
     scope ubyte delegate(double) colorCalc = (value) {
         const result = cast(ubyte) Math.clamp(Math.round(value), RGBA.minColor, RGBA
@@ -624,13 +631,8 @@ RGBA[][] blend(RGBA[][] colors, RGBA maskColor, BlendMode mode = BlendMode.norma
             colorPtr.g = colorCalc(g);
             colorPtr.b = colorCalc(b);
             colorPtr.a = Math.clamp(a, RGBA.minAlpha, RGBA.maxAlpha);
-
         }
-
     }
-
-    return buffer;
-
 }
 
 double blendMultiply(double color, double colorMask)
