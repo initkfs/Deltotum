@@ -159,6 +159,7 @@ abstract class Transition : Sprite
 
         frameCount = 0;
         currentFrame = 0;
+        onShort = false;
 
         if (onStop.length > 0)
         {
@@ -167,8 +168,6 @@ abstract class Transition : Sprite
                 dg();
             }
         }
-
-        onShort = false;
 
         if (!nexts.empty)
         {

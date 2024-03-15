@@ -385,6 +385,7 @@ class Controls : Control
         root.addCreate(ling1);
 
         import dm.gui.controls.indicators.leds.led : Led;
+        import dm.math.interps.uni_interpolator: UniInterpolator;
 
         auto ledContainer = new VBox;
         root.addCreate(ledContainer);
@@ -411,9 +412,6 @@ class Controls : Control
 
         import dm.gui.controls.indicators.leds.led_icon : LedIcon;
         import IconNames = dm.kit.graphics.themes.icons.icon_name;
-
-        import dm.kit.sprites.transitions.objects.props.opacity_transition : OpacityTransition;
-        import dm.math.interps.uni_interpolator : UniInterpolator;
 
         auto ledIcon1 = new LedIcon(IconNames.flash_outline, RGBA.red);
         ledContainer2.addCreate(ledIcon1);

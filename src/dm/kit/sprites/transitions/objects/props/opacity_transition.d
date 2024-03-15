@@ -8,11 +8,12 @@ import dm.math.interps.interpolator : Interpolator;
  */
 class OpacityTransition : ValueTransition
 {
-    this(int timeMs, Interpolator interpolator = null)
+    this(int timeMs, bool isCycle = false, bool isInverse = true, Interpolator interpolator = null)
     {
         super(0.0, 1.0, timeMs, interpolator);
 
-        isInverse = true;
+        this.isInverse = isInverse;
+        this.isCycle = isCycle;
 
         onOldNewValue ~= (oldValue, value) {
             onObjects((object) { object.opacity = value; });
