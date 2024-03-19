@@ -1,7 +1,7 @@
-module dm.gui.controls.sliders.vslider;
+module dm.gui.controls.scrolls.vscroll;
 
 import dm.kit.sprites.sprite : Sprite;
-import dm.gui.controls.sliders.base_slider : BaseSlider;
+import dm.gui.controls.scrolls.base_scroll : BaseScroll;
 import dm.gui.controls.control : Control;
 import dm.kit.sprites.textures.texture : Texture;
 
@@ -15,7 +15,7 @@ import std.math.operations : isClose;
 /**
  * Authors: initkfs
  */
-class VSlider : BaseSlider
+class VScroll : BaseScroll
 {
     this(double minValue = 0, double maxValue = 1.0, double width = 20, double height = 120)
     {
@@ -33,7 +33,7 @@ class VSlider : BaseSlider
             import dm.kit.sprites.shapes.regular_polygon : RegularPolygon;
             import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
-            //TODO remove copypaste with HSlider
+            //TODO remove copypaste with HScroll
             auto style = graphics.theme.defaultStyle;
             if(auto currStylePtr = ownOrParentStyle){
                 style = *currStylePtr;

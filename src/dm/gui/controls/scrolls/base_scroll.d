@@ -1,4 +1,4 @@
-module dm.gui.controls.sliders.base_slider;
+module dm.gui.controls.scrolls.base_scroll;
 
 import dm.kit.sprites.sprite: Sprite;
 import dm.gui.controls.control : Control;
@@ -14,7 +14,7 @@ import dm.math.alignment : Alignment;
  * Authors: initkfs
  * TODO remove duplication with slider after testing 
  */
-abstract class BaseSlider : Control
+abstract class BaseScroll : Control
 {
     double minValue;
     double maxValue;

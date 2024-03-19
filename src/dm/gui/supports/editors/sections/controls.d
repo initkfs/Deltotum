@@ -211,13 +211,13 @@ class Controls : Control
         vsep.height = 100;
         root.addCreate(vsep);
 
-        import dm.gui.controls.sliders.hslider : HSlider;
-        import dm.gui.controls.sliders.vslider : VSlider;
+        import dm.gui.controls.scrolls.hscroll : HScroll;
+        import dm.gui.controls.scrolls.vscroll : VScroll;
 
-        auto vScrollbar = new VSlider;
+        auto vScrollbar = new VScroll;
         root.addCreate(vScrollbar);
 
-        auto hScrollbar = new HSlider;
+        auto hScrollbar = new HScroll;
         root.addCreate(hScrollbar);
 
         import dm.gui.controls.separators.hseparator : HSeparator;

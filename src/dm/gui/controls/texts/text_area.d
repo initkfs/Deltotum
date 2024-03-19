@@ -1,7 +1,7 @@
 module dm.gui.controls.texts.text_area;
 
 import dm.gui.controls.texts.text_view : TextView;
-import dm.gui.controls.sliders.vslider : VSlider;
+import dm.gui.controls.scrolls.vscroll : VScroll;
 import dm.gui.controls.control : Control;
 import dm.gui.containers.hbox : HBox;
 import dm.kit.sprites.layouts.hlayout : HLayout;
@@ -14,7 +14,7 @@ import std.stdio;
 class TextArea : HBox
 {
     TextView textView;
-    VSlider scroll;
+    VScroll scroll;
 
     bool isShowScroll = true;
 
@@ -57,7 +57,7 @@ class TextArea : HBox
     {
         super.create;
 
-        scroll = new VSlider(0, 1.0, 20, height);
+        scroll = new VScroll(0, 1.0, 20, height);
 
         textView = new TextView;
         textView.isEditable = true;

@@ -7,8 +7,8 @@ import dm.math.rect2d : Rect2d;
 import dm.gui.containers.vbox : VBox;
 import dm.gui.containers.hbox : HBox;
 import dm.gui.containers.stack_box : StackBox;
-import dm.gui.controls.sliders.hslider : HSlider;
-import dm.gui.controls.sliders.vslider : VSlider;
+import dm.gui.controls.scrolls.hscroll : HScroll;
+import dm.gui.controls.scrolls.vscroll : VScroll;
 import dm.kit.sprites.sprite : Sprite;
 import dm.math.insets : Insets;
 
@@ -26,8 +26,8 @@ class ScrollBox : Container
 {
     protected
     {
-        VSlider vslider;
-        HSlider hslider;
+        VScroll vslider;
+        HScroll hslider;
         Container content;
         Container contentContainer;
         Sprite contentRoot;
@@ -84,7 +84,7 @@ class ScrollBox : Container
         contentContainer.addCreate(content);
         content.padding = Insets(0);
 
-        vslider = new VSlider;
+        vslider = new VScroll;
         vslider.id = idVscroll;
         vslider.isVGrow = true;
         contentContainer.addCreate(vslider);
@@ -109,7 +109,7 @@ class ScrollBox : Container
             contentRoot.y = contentRoot.y - dtY;
         };
 
-        hslider = new HSlider;
+        hslider = new HScroll;
         hslider.id = idHscroll;
         hslider.isHGrow = true;
         addCreate(hslider);

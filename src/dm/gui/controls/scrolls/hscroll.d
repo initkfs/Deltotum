@@ -1,6 +1,6 @@
-module dm.gui.controls.sliders.hslider;
+module dm.gui.controls.scrolls.hscroll;
 
-import dm.gui.controls.sliders.base_slider : BaseSlider;
+import dm.gui.controls.scrolls.base_scroll : BaseScroll;
 import dm.kit.sprites.sprite : Sprite;
 import dm.gui.controls.control : Control;
 import dm.kit.sprites.textures.texture : Texture;
@@ -15,7 +15,7 @@ import std.math.operations: isClose;
 /**
  * Authors: initkfs
  */
-class HSlider : BaseSlider
+class HScroll : BaseScroll
 {
 
     this(double minValue = 0, double maxValue = 1.0, double width = 120, double height = 20)
