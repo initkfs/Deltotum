@@ -26,6 +26,13 @@ struct Vector2
         return Vector2(x - other.x, y - other.y);
     }
 
+    Vector2 subtractAbs(Vector2 other) const @nogc nothrow pure @safe
+    {
+        import Math = dm.math;
+
+        return Vector2(Math.abs(x - other.x), Math.abs(y - other.y));
+    }
+
     Vector2 normalize() const @nogc nothrow pure @safe
     {
         const double length = magnitude;

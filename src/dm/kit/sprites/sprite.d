@@ -56,7 +56,11 @@ class Sprite : EventKitTarget
 
     Sprite parent;
 
-    double angle = 0;
+    protected
+    {
+        double _angle = 0;
+    }
+
     double scale = 1;
     double mass = 1;
     double speed = 0;
@@ -1568,7 +1572,7 @@ class Sprite : EventKitTarget
         _padding.bottom = value;
     }
 
-    Insets margin()
+    ref Insets margin()
     {
         return _margin;
     }
@@ -1583,7 +1587,7 @@ class Sprite : EventKitTarget
         _margin = Insets(value);
     }
 
-    void margin(double top = 0, double right = 0, double bottom = 0, double left = 0)
+    void margin(double top, double right, double bottom, double left)
     {
         _margin = Insets(top, right, bottom, left);
     }
@@ -1786,6 +1790,17 @@ class Sprite : EventKitTarget
     in (context !is null)
     {
         _gContext = context;
+    }
+
+    void angle(double value)
+    {
+        _angle = value;
+        setInvalid;
+    }
+
+    double angle()
+    {
+        return _angle;
     }
 
     void isGrow(bool value)

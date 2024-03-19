@@ -129,6 +129,24 @@ class MinMaxTransition(T) if (isFloatingPoint!T || is(T : Vector2)) : Transition
         _minValue = newValue;
     }
 
+    T rangeAbs() @nogc @safe pure nothrow
+    {
+        import Math = dm.math;
+
+        static if (isFloatingPoint!T)
+        {
+            return Math.abs(maxValue - minValue);
+        }
+        else static if (is(T : Vector2))
+        {
+            return maxValue.subtractAbs(minValue);
+        }
+        else
+        {
+            static assert(false, "Not supported type for range abs: " ~ T.stringof);
+        }
+    }
+
     T maxValue() @nogc @safe pure nothrow
     {
         return _maxValue;
