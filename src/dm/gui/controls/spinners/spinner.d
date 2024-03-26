@@ -29,7 +29,7 @@ class Spinner(T) : Control
         this.layout = new HLayout(2);
         layout.isAlignY = true;
         layout.isAutoResize = true;
-        layout.isAutoSizeReduction = true;
+        layout.isParentSizeReduce = true;
     }
 
     override void create()
@@ -47,7 +47,7 @@ class Spinner(T) : Control
         addCreate(decButton);
 
         auto valueContainer = new VBox;
-        valueContainer.layout.isAutoSizeReduction = true;
+        valueContainer.layout.isParentSizeReduce = true;
         addCreate(valueContainer);
 
         auto incTextExpander = new Expander;

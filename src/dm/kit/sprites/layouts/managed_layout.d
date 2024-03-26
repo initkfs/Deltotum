@@ -191,7 +191,7 @@ class ManagedLayout : Layout
 
         }
 
-        if (isAutoWidthReduction)
+        if (isParentWidthReduce)
         {
             auto newDecWidth = root.width - newWidth;
             if (newDecWidth > 0)
@@ -221,18 +221,15 @@ class ManagedLayout : Layout
             }
         }
 
-        if (isAutoHeightReduction)
+        if (isParentHeightReduce)
         {
             auto newDecHeight = root.height - newHeight;
             if (newDecHeight > 0)
             {
-                // if (
-                //     newDecHeight >= root.minHeight &&
-                //     newDecHeight <= root.maxHeight &&
-                //     Math.abs(root.height - newDecHeight) >= sizeChangeDelta)
-                // {
+                if (newDecHeight >= root.minHeight && newDecHeight <= root.maxHeight && (Math.abs(root.height - newDecHeight) >= sizeChangeDelta))
+                {
                     root.height = newDecHeight;
-              //  }
+                }
             }
         }
     }

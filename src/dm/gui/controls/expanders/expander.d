@@ -49,7 +49,7 @@ class Expander : Control
         import dm.kit.sprites.layouts.hlayout : HLayout;
 
         this.layout = new HLayout;
-        layout.isAutoSizeReduction = true;
+        layout.isParentSizeReduce = true;
         layout.isAutoResize = true;
     }
 
@@ -58,7 +58,7 @@ class Expander : Control
         import dm.kit.sprites.layouts.vlayout : VLayout;
 
         this.layout = new VLayout;
-        layout.isAutoSizeReduction = true;
+        layout.isParentSizeReduce = true;
         layout.isAutoResize = true;
     }
 
