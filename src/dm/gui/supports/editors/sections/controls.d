@@ -366,6 +366,7 @@ class Controls : Control
         auto exp = new Expander;
         exp.expandPosition = ExpanderPosition.top;
         root.addCreate(exp);
+        //exp.close;
 
         auto t1 = new Text("Коммодор никак не мог отделаться от ощущения чудовищных перегрузок и невыносимой яркости освещения. Но он по-прежнему сидел в своем отсеке, хотя рука его еще лежала на клавише «Уничтожение»...");
         t1.isEditable = true;

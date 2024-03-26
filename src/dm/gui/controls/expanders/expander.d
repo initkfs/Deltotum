@@ -100,7 +100,7 @@ class Expander : Control
             }
 
             auto labelRange = clipTransition.getFrameCount;
-            labelAngleDt = 90 / labelRange; 
+            labelAngleDt = 90 / labelRange;
 
             clipTransition.run;
         };
@@ -170,15 +170,18 @@ class Expander : Control
                 break;
         }
 
-        clipTransition = new MinMaxTransition!double(0, 1, 200);
+        clipTransition = new MinMaxTransition!double(0, 1, 250);
         addCreate(clipTransition);
 
         clipTransition.onOldNewValue ~= (oldValue, newValue) {
             clip.height = newValue;
 
-            if(state == ExpanderState.opened){
+            if (state == ExpanderState.opened)
+            {
                 expandLabel.angle = expandLabel.angle - labelAngleDt;
-            }else if(state == ExpanderState.closed){
+            }
+            else if (state == ExpanderState.closed)
+            {
                 expandLabel.angle = expandLabel.angle + labelAngleDt;
             }
 
@@ -197,17 +200,31 @@ class Expander : Control
             }
         };
 
-        setOpen;
+        open;
     }
 
-    protected void setOpen()
+    void open()
     {
         expandLabel.angle = 180;
+        clip.x = x;
+        clip.y = y;
+        clip.width = width;
+        clip.height = height;
+        contentContainer.isVisible = true;
+        contentContainer.isLayoutManaged = true;
+        state = ExpanderState.opened;
     }
 
-    protected void setClose()
+    void close()
     {
         expandLabel.angle = 90;
+        clip.x = x;
+        clip.y = y;
+        clip.width = width;
+        clip.height = expandBar.height;
+        contentContainer.isVisible = false;
+        contentContainer.isLayoutManaged = false;
+        state = ExpanderState.closed;
     }
 
 }
