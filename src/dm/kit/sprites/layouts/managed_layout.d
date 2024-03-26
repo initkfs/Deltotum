@@ -181,10 +181,29 @@ class ManagedLayout : Layout
             newWidth += root.padding.width;
         }
 
-        if (newWidth > root.width && newWidth <= root.maxWidth && (
-                Math.abs(root.width - newWidth) >= sizeChangeDelta))
+        if (newWidth > root.width)
         {
-            root.width = newWidth;
+            if (newWidth >= root.minWidth && newWidth <= root.maxWidth && (
+                    Math.abs(root.width - newWidth) >= sizeChangeDelta))
+            {
+                root.width = newWidth;
+            }
+
+        }
+
+        if (isAutoWidthReduction)
+        {
+            auto newDecWidth = root.width - newWidth;
+            if (newDecWidth > 0)
+            {
+                if (
+                    newDecWidth >= root.minWidth &&
+                    newDecWidth <= root.maxWidth &&
+                    Math.abs(root.width - newDecWidth) >= sizeChangeDelta)
+                {
+                    root.width = newDecWidth;
+                }
+            }
         }
 
         double newHeight = childrenHeight(root);
@@ -193,10 +212,28 @@ class ManagedLayout : Layout
             newHeight += root.padding.height;
         }
 
-        if (newHeight > root.height && newHeight <= root.maxHeight && (
-                Math.abs(root.height - newHeight) >= sizeChangeDelta))
+        if (newHeight > root.height)
         {
-            root.height = newHeight;
+            if (newHeight >= root.minHeight && newHeight <= root.maxHeight && (
+                    Math.abs(root.height - newHeight) >= sizeChangeDelta))
+            {
+                root.height = newHeight;
+            }
+        }
+
+        if (isAutoHeightReduction)
+        {
+            auto newDecHeight = root.height - newHeight;
+            if (newDecHeight > 0)
+            {
+                // if (
+                //     newDecHeight >= root.minHeight &&
+                //     newDecHeight <= root.maxHeight &&
+                //     Math.abs(root.height - newDecHeight) >= sizeChangeDelta)
+                // {
+                    root.height = newDecHeight;
+              //  }
+            }
         }
     }
 

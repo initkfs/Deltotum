@@ -197,6 +197,11 @@ class Controls : Control
         root.addCreate(choice3);
         choice3.fill(choiceItems);
 
+        import dm.gui.controls.spinners.spinner: Spinner;
+
+        auto spinner1 = new Spinner!int;
+        root.addCreate(spinner1);
+
         import dm.gui.controls.pickers.color_picker : ColorPicker;
 
         auto colorPicker = new ColorPicker;

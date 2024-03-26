@@ -115,6 +115,7 @@ class Sprite : EventKitTarget
     bool isDraggable;
     bool isScalable;
     bool isDrawBounds;
+    bool isDrawClip;
 
     bool _visible = true;
     bool isReceiveEvents = true;
@@ -510,6 +511,11 @@ class Sprite : EventKitTarget
         if (isDrawBounds)
         {
             drawBounds;
+        }
+
+        if (isDrawClip)
+        {
+            drawClip;
         }
 
         //TODO remove duplication
@@ -1409,6 +1415,27 @@ class Sprite : EventKitTarget
         graphics.line(rightBottomX, rightBottomY, leftBottomX, leftBottomY);
 
         graphics.line(leftBottomX, leftBottomY, leftTopX, leftTopY);
+
+        graphics.restoreColor;
+    }
+
+    void drawClip()
+    {
+        import dm.kit.graphics.styles.graphic_style : GraphicStyle;
+        import dm.kit.graphics.colors.rgba : RGBA;
+
+        if (clip.width == 0 || clip.height == 0)
+        {
+            return;
+        }
+
+        const color = RGBA.blueviolet;
+
+        graphics.changeColor(color);
+
+        import dm.math.vector2: Vector2;
+
+        graphics.rect(Vector2(clip.x, clip.y), clip.width, clip.height);
 
         graphics.restoreColor;
     }

@@ -17,6 +17,9 @@ abstract class Layout
     bool isResizeChildren;
     bool isResizeParent;
 
+    bool isAutoWidthReduction;
+    bool isAutoHeightReduction;
+
     double sizeChangeDelta = 0.15;
 
     abstract
@@ -55,7 +58,7 @@ abstract class Layout
     {
         import std.algorithm.iteration : filter;
 
-        return root.children.filter!(ch => ch.isLayoutManaged);
+        return root.children.filter!(ch => ch.isVisible && ch.isLayoutManaged);
     }
 
     void isAutoResize(bool isResize) pure @safe
@@ -80,5 +83,11 @@ abstract class Layout
     {
         isAlignX = value;
         isAlignY = value;
+    }
+
+    void isAutoSizeReduction(bool isValue)
+    {
+        isAutoWidthReduction = isValue;
+        isAutoHeightReduction = isValue;
     }
 }

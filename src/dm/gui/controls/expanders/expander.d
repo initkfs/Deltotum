@@ -35,6 +35,13 @@ class Expander : Control
         double labelAngleDt = 0;
     }
 
+    this()
+    {
+        super();
+        isMoveClip = true;
+        //isResizeClip = true;
+    }
+
     Sprite contentContainer;
 
     protected void createHLayout()
@@ -42,9 +49,8 @@ class Expander : Control
         import dm.kit.sprites.layouts.hlayout : HLayout;
 
         this.layout = new HLayout;
+        layout.isAutoSizeReduction = true;
         layout.isAutoResize = true;
-        isResizeClip = true;
-        isMoveClip = true;
     }
 
     protected void createVLayout()
@@ -52,6 +58,7 @@ class Expander : Control
         import dm.kit.sprites.layouts.vlayout : VLayout;
 
         this.layout = new VLayout;
+        layout.isAutoSizeReduction = true;
         layout.isAutoResize = true;
     }
 
@@ -74,6 +81,13 @@ class Expander : Control
                 return;
             }
 
+            if (state == ExpanderState.closed)
+            {
+                contentContainer.isVisible = true;
+                contentContainer.isLayoutManaged = true;
+                applyLayout;
+            }
+
             clip.x = x;
             clip.y = y;
             if (state == ExpanderState.closed)
@@ -91,12 +105,6 @@ class Expander : Control
 
                 clipTransition.minValue = height;
                 clipTransition.maxValue = expandBar.height;
-            }
-
-            if (state == ExpanderState.closed)
-            {
-                contentContainer.isVisible = true;
-                contentContainer.isLayoutManaged = true;
             }
 
             auto labelRange = clipTransition.getFrameCount;
@@ -178,11 +186,19 @@ class Expander : Control
 
             if (state == ExpanderState.opened)
             {
-                expandLabel.angle = expandLabel.angle - labelAngleDt;
+                if(expandPosition == ExpanderPosition.top){
+                    expandLabel.angle = expandLabel.angle - labelAngleDt;
+                }else if(expandPosition == ExpanderPosition.bottom){
+                    expandLabel.angle = expandLabel.angle + labelAngleDt;
+                }
             }
             else if (state == ExpanderState.closed)
             {
-                expandLabel.angle = expandLabel.angle + labelAngleDt;
+                if(expandPosition == ExpanderPosition.top){
+                    expandLabel.angle = expandLabel.angle + labelAngleDt;
+                }else if(expandPosition == ExpanderPosition.bottom){
+                    expandLabel.angle = expandLabel.angle - labelAngleDt;
+                }
             }
 
         };
@@ -193,6 +209,8 @@ class Expander : Control
                 contentContainer.isVisible = false;
                 contentContainer.isLayoutManaged = false;
                 state = ExpanderState.closed;
+                clip.width = 0;
+                clip.height = 0;
             }
             else if (state == ExpanderState.closed)
             {
@@ -205,7 +223,15 @@ class Expander : Control
 
     void open()
     {
-        expandLabel.angle = 180;
+        if (expandPosition == ExpanderPosition.top)
+        {
+            expandLabel.angle = 180;
+        }
+        else if (expandPosition == ExpanderPosition.bottom)
+        {
+            expandLabel.angle = 0;
+        }
+
         clip.x = x;
         clip.y = y;
         clip.width = width;
@@ -217,7 +243,11 @@ class Expander : Control
 
     void close()
     {
-        expandLabel.angle = 90;
+        if (expandPosition == ExpanderPosition.top || expandPosition == ExpanderPosition.bottom)
+        {
+            expandLabel.angle = 90;
+        }
+
         clip.x = x;
         clip.y = y;
         clip.width = width;
