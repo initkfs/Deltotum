@@ -126,6 +126,26 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor, ComCursor
         return ComResult.success;
     }
 
+    ComResult show() @nogc nothrow
+    {
+        const pozitiveOrError = SDL_ShowCursor(SDL_ENABLE);
+        if (pozitiveOrError < 0)
+        {
+            return ComResult(pozitiveOrError, getError);
+        }
+        return ComResult.success;
+    }
+
+    ComResult hide() @nogc nothrow
+    {
+        const pozitiveOrError = SDL_ShowCursor(SDL_DISABLE);
+        if (pozitiveOrError < 0)
+        {
+            return ComResult(pozitiveOrError, getError);
+        }
+        return ComResult.success;
+    }
+
     override protected bool disposePtr() @nogc nothrow
     {
         if (ptr)

@@ -225,10 +225,16 @@ class Images : Control
         rotate45.load(ColorProcessor.rotate(colorBuff, 45));
         container2.addCreate(createImageInfo("Rotate 45", rotate45));
 
+        import dm.gui.controls.magnifiers.magnifier : Magnifier, Source;
+        auto magn1 = new Magnifier;
+        container2.addCreate(magn1);
+        magn1.source = Source.screen;
+        magn1.original = original;
+        
         auto bilinear = new Image(imageWidth / 2, imageHeight / 2);
         build(bilinear);
         bilinear.load(ColorProcessor.resizeBilinear(colorBuff, imageWidth / 2, imageHeight / 2));
-        container2.addCreate(createImageInfo("Bilinear", bilinear));
+        magn1.addCreate(createImageInfo("Bilinear", bilinear));
 
         import dm.math.rect2d : Rect2d;
 

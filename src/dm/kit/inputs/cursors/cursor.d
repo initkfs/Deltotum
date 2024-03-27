@@ -116,6 +116,24 @@ abstract class Cursor
         return Vector2(x, y);
     }
 
+    void show()
+    {
+        assert(defaultCursor);
+        if (const err = defaultCursor.show)
+        {
+            throw new Exception(err.toString);
+        }
+    }
+
+    void hide()
+    {
+        assert(defaultCursor);
+        if (const err = defaultCursor.hide)
+        {
+            throw new Exception(err.toString);
+        }
+    }
+
     void dispose()
     {
         if (defaultCursor)

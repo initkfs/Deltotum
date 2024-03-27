@@ -34,7 +34,7 @@ class Graphics : LoggableUnit
 
     //TODO remove
     static RGBA defaultColor = RGBA.red;
-    
+
     RGBA screenColor = RGBA.black;
 
     protected
@@ -92,6 +92,14 @@ class Graphics : LoggableUnit
         if (const err = renderer.removeClipRect)
         {
             logger.error("Error removing clipping. ", err.toString);
+        }
+    }
+
+    void readPixels(Rect2d bounds, uint format, int pitch, void* pixelBuffer)
+    {
+        if (const err = renderer.readPixels(bounds, format, pitch, pixelBuffer))
+        {
+            throw new Exception(err.toString);
         }
     }
 
@@ -833,7 +841,8 @@ class Graphics : LoggableUnit
         return true;
     }
 
-    void rendererPresent(){
+    void rendererPresent()
+    {
         renderer.present;
     }
 

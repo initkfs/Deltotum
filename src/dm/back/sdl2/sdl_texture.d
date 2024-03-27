@@ -110,6 +110,17 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult(zeroOrErrorCode);
     }
 
+    ComResult getFormat(out uint format) @nogc nothrow
+    {
+        SDL_PixelFormat* fullFormat;
+        if (const err = getFormat(fullFormat))
+        {
+            return err;
+        }
+        format = fullFormat.format;
+        return ComResult.success;
+    }
+
     protected ComResult getFormat(out SDL_PixelFormat* format) @nogc nothrow
     {
         uint formatPtr;
@@ -129,6 +140,10 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     ComResult setRendererTarget() nothrow
     {
         const zeroOrErr = SDL_SetRenderTarget(renderer.getObject, ptr);
+        if (zeroOrErr != 0)
+        {
+            return ComResult(zeroOrErr, getError);
+        }
         return ComResult(zeroOrErr);
     }
 

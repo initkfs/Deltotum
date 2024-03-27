@@ -35,6 +35,7 @@ interface ComTexture : Destroyable
 
     ComResult lock() nothrow;
     ComResult unlock() nothrow;
+    ComResult getFormat(out uint format) @nogc nothrow;
     ComResult getPitch(out int pitch) @nogc nothrow;
     ComResult getPixels(out void* pixels) @nogc nothrow;
     ComResult update(Rect2d rect, void* pixels, int pitch) @nogc nothrow;

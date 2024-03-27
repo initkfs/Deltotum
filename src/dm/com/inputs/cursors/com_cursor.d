@@ -5,19 +5,19 @@ import dm.com.lifecycles.destroyable : Destroyable;
 
 enum ComSystemCursorType
 {
-   none,
-   arrow,
-   crossHair,
-   ibeam,
-   no,
-   sizeNorthWestSouthEast,
-   sizeNorthEastSouthWest,
-   sizeWestEast,
-   sizeNorthSouth,
-   sizeAll,
-   hand,
-   wait,
-   waitArrow,
+    none,
+    arrow,
+    crossHair,
+    ibeam,
+    no,
+    sizeNorthWestSouthEast,
+    sizeNorthEastSouthWest,
+    sizeWestEast,
+    sizeNorthSouth,
+    sizeAll,
+    hand,
+    wait,
+    waitArrow,
 }
 
 /**
@@ -25,9 +25,10 @@ enum ComSystemCursorType
  */
 interface ComCursor : Destroyable
 {
-   ComResult fromDefaultCursor() @nogc nothrow;
-   ComResult set() @nogc nothrow;
-   ComResult redraw() @nogc nothrow;
-   ComResult getPos(out int x, out int y) @nogc nothrow;
-
+    ComResult fromDefaultCursor() @nogc nothrow;
+    ComResult set() @nogc nothrow;
+    ComResult redraw() @nogc nothrow;
+    ComResult getPos(out int x, out int y) @nogc nothrow;
+    ComResult show() @nogc nothrow;
+    ComResult hide() @nogc nothrow;
 }

@@ -31,4 +31,5 @@ interface ComRenderer : Destroyable
     ComResult lines(Vector2[] linePoints) nothrow;
     ComResult fillRect(int x, int y, int width, int height) @nogc nothrow;
     ComResult getOutputSize(int* width, int* height) @nogc nothrow;
+    ComResult readPixels(Rect2d rect, uint format, int pitch, void* pixelBuffer) @nogc nothrow;
 }

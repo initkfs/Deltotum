@@ -197,7 +197,7 @@ class Controls : Control
         root.addCreate(choice3);
         choice3.fill(choiceItems);
 
-        import dm.gui.controls.spinners.spinner: Spinner;
+        import dm.gui.controls.spinners.spinner : Spinner;
 
         auto spinner1 = new Spinner!int;
         root.addCreate(spinner1);
@@ -366,7 +366,7 @@ class Controls : Control
         import dm.gui.controls.texts.text_view : TextView;
         import dm.gui.controls.texts.text_area : TextArea;
 
-        import dm.gui.controls.expanders.expander: Expander, ExpanderPosition;
+        import dm.gui.controls.expanders.expander : Expander, ExpanderPosition;
 
         auto exp = new Expander;
         exp.expandPosition = ExpanderPosition.top;
@@ -397,7 +397,7 @@ class Controls : Control
         root.addCreate(ling1);
 
         import dm.gui.controls.indicators.leds.led : Led;
-        import dm.math.interps.uni_interpolator: UniInterpolator;
+        import dm.math.interps.uni_interpolator : UniInterpolator;
 
         auto ledContainer = new VBox;
         root.addCreate(ledContainer);

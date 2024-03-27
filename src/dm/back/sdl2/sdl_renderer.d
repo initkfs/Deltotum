@@ -5,7 +5,7 @@ version(SdlBackend):
 // dfmt on
 
 import dm.com.graphics.com_renderer : ComRenderer;
-import dm.com.graphics.com_texture: ComTexture;
+import dm.com.graphics.com_texture : ComTexture;
 import dm.com.platforms.results.com_result : ComResult;
 import dm.com.graphics.com_blend_mode : ComBlendMode;
 import dm.back.sdl2.base.sdl_object_wrapper : SdlObjectWrapper;
@@ -104,7 +104,8 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         if (auto sdlTexture = cast(SdlTexture) texture)
         {
             void* nPtr;
-            if(const err = texture.nativePtr(nPtr)){
+            if (const err = texture.nativePtr(nPtr))
+            {
                 return err;
             }
             //TODO unsafe
@@ -137,6 +138,21 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
     ComResult removeClipRect() @nogc nothrow
     {
         const zeroOrErrCode = SDL_RenderSetClipRect(ptr, null);
+        return ComResult(zeroOrErrCode);
+    }
+
+    ComResult readPixels(Rect2d rect, uint format, int pitch, void* pixelBuffer) @nogc nothrow
+    {
+        SDL_Rect bounds;
+        bounds.x = cast(int) rect.x;
+        bounds.y = cast(int) rect.y;
+        bounds.w = cast(int) rect.width;
+        bounds.h = cast(int) rect.height;
+        const zeroOrErrCode = SDL_RenderReadPixels(ptr, &bounds, format, pixelBuffer, pitch);
+        if(zeroOrErrCode != 0){
+            return ComResult(zeroOrErrCode, getError);
+        }
+
         return ComResult(zeroOrErrCode);
     }
 

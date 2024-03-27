@@ -364,7 +364,7 @@ class Sprite : EventKitTarget
                         fireEvent(exitedEvent);
                     }
 
-                    chain.insert(this);
+                    //chain.insert(this);
                 }
                 else if (e.event == PointerEvent.Event.wheel)
                 {
@@ -615,6 +615,23 @@ class Sprite : EventKitTarget
         setInvalid;
     }
 
+    Nullable!Sprite hasDirectSprite(Sprite obj)
+    {
+        if (obj is null)
+        {
+            throw new Exception("Unable to check for child existence: object is null");
+        }
+
+        foreach (Sprite child; children)
+        {
+            if (obj is child)
+            {
+                return Nullable!Sprite(obj);
+            }
+        }
+        return Nullable!Sprite.init;
+    }
+
     bool hasDirect(Sprite obj)
     {
         if (obj is null)
@@ -649,6 +666,30 @@ class Sprite : EventKitTarget
         children = null;
         setInvalid;
 
+        return true;
+    }
+
+    bool changeIndex(Sprite sprite, size_t index)
+    {
+        //TODO check exists, etc
+        remove(sprite, false);
+        if (index >= children.length)
+        {
+            //TODO bool
+            add(sprite);
+        }
+        else
+        {
+            add(sprite, index);
+        }
+
+        return true;
+    }
+
+    bool changeIndexToLast(Sprite sprite)
+    {
+        remove(sprite, false);
+        add(sprite);
         return true;
     }
 
@@ -1433,7 +1474,7 @@ class Sprite : EventKitTarget
 
         graphics.changeColor(color);
 
-        import dm.math.vector2: Vector2;
+        import dm.math.vector2 : Vector2;
 
         graphics.rect(Vector2(clip.x, clip.y), clip.width, clip.height);
 
@@ -1508,6 +1549,30 @@ class Sprite : EventKitTarget
         });
 
         return mustBeChild is null ? Nullable!Sprite.init : Nullable!Sprite(mustBeChild);
+    }
+
+    int findChildIndex(Sprite child)
+    {
+        import std.conv : to;
+
+        foreach (i, Sprite ch; children)
+        {
+            if (ch is child)
+            {
+                return i.to!int;
+            }
+        }
+        return -1;
+    }
+
+    bool isLastIndex(Sprite child)
+    {
+        if (children.length == 0)
+        {
+            return false;
+        }
+        const index = findChildIndex(child);
+        return index == children.length - 1;
     }
 
     Nullable!Sprite findChild(Sprite child)

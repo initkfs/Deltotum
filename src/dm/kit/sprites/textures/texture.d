@@ -173,6 +173,17 @@ class Texture : Sprite
         drawTexture(texture, textureBounds, destBounds, angle, flip);
     }
 
+    void drawTexture(Rect2d src)
+    {
+        Rect2d dest = {x, y, src.width, src.height};
+        drawTexture(src, dest, this.angle, this.flip);
+    }
+
+    void drawTexture(Rect2d textureBounds, Rect2d destBounds)
+    {
+        drawTexture(textureBounds, destBounds, this.angle, this.flip);
+    }
+
     void drawTexture(Rect2d textureBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
             .none)
     {
@@ -319,6 +330,40 @@ class Texture : Sprite
         {
             throw new Exception(err.toString);
         }
+    }
+
+    uint format()
+    {
+        assert(texture && texture.isLocked);
+        uint format;
+        if (const err = texture.getFormat(format))
+        {
+            throw new Exception(err.toString);
+        }
+        return format;
+    }
+
+    int pitch()
+    {
+        assert(texture && texture.isLocked);
+        int pitch;
+        if (const err = texture.getPitch(pitch))
+        {
+            throw new Exception(err.toString);
+        }
+        return pitch;
+    }
+
+    void* pixels()
+    {
+        assert(texture && texture.isLocked);
+        void* ptr;
+        if (const err = texture.getPixels(ptr))
+        {
+            throw new Exception(err.toString);
+        }
+        assert(ptr);
+        return ptr;
     }
 
     uint* pixel(uint x, uint y)
