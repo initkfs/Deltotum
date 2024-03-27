@@ -418,6 +418,11 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ptr.pitch;
     }
 
+    uint format() inout @nogc nothrow @safe
+    {
+        return ptr.format.format;
+    }
+
     inout(SDL_PixelFormat*) getPixelFormat() inout @nogc nothrow @safe
     in (ptr !is null)
     {

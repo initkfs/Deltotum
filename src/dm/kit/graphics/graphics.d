@@ -95,6 +95,11 @@ class Graphics : LoggableUnit
         }
     }
 
+    void readPixels(Rect2d bounds, ComSurface surface)
+    {
+        readPixels(bounds, surface.format, surface.pitch, surface.pixels);
+    }
+
     void readPixels(Rect2d bounds, uint format, int pitch, void* pixelBuffer)
     {
         if (const err = renderer.readPixels(bounds, format, pitch, pixelBuffer))

@@ -34,7 +34,7 @@ class Image : Texture
         super(texture);
     }
 
-    protected bool load(ComSurface image, int requestWidth = -1, int requestHeight = -1)
+    bool load(ComSurface image, int requestWidth = -1, int requestHeight = -1)
     {
         assert(image);
         int imageWidth = image.width;
@@ -222,5 +222,12 @@ class Image : Texture
             }
         }
         return true;
+    }
+
+    void savePNG(ComSurface surf, string path){
+        auto image = graphics.comImageProvider.getNew();
+        if(const err = image.savePNG(surf, path)){
+            throw new Exception(err.toString);
+        }
     }
 }

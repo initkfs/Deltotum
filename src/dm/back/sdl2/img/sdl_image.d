@@ -93,6 +93,27 @@ class SdlImage : SdlSurface, ComImage
         return ComResult.success;
     }
 
+    ComResult savePNG(ComSurface surface, string path) nothrow
+    {
+        //TODO check exists
+        import std.string : toStringz;
+
+        void* nativePtr;
+        if (const err = surface.nativePtr(nativePtr))
+        {
+            return err;
+        }
+        assert(nativePtr);
+
+        //TODO unsafe
+        const zeroOrErr = IMG_SavePNG(cast(SDL_Surface*) nativePtr, path.toStringz);
+        if (zeroOrErr == -1)
+        {
+            return ComResult(zeroOrErr, getError);
+        }
+        return ComResult.success;
+    }
+
     override bool disposePtr()
     {
         if (rwBuffer)

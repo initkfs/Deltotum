@@ -35,7 +35,7 @@ interface ComSurface : Destroyable
     uint* getPixel(int x, int y) nothrow;
 
     //TODO move RGBA color to math?
-    import std.typecons: Tuple;
+    import std.typecons : Tuple;
 
     void getPixels(scope bool delegate(size_t, size_t, ubyte, ubyte, ubyte, ubyte) onXYRGBAIsContinue);
     void getPixels(Tuple!(ubyte, ubyte, ubyte, ubyte)[][] buff);
@@ -48,6 +48,7 @@ interface ComSurface : Destroyable
     void getPixelRGBA(uint* pixel, out ubyte r, out ubyte g, out ubyte b, out ubyte a) nothrow;
 
     int pitch() inout @nogc nothrow @safe;
+    uint format() inout @nogc nothrow @safe;
 
     int width() @nogc nothrow @safe;
     int height() @nogc nothrow @safe;

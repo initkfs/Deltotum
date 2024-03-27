@@ -7,6 +7,7 @@ import dm.kit.interacts.interact : Interact;
 import dm.kit.graphics.colors.rgba : RGBA;
 import dm.kit.windows.window : Window;
 import dm.gui.supports.sceneview : SceneView;
+import dm.com.graphics.com_surface : ComSurface;
 
 import std.stdio;
 
@@ -216,5 +217,43 @@ class Scene : WindowComponent
 
         enforce(interact !is null, "Interaction must not be null");
         _interact = interact;
+    }
+
+    ComSurface snapshot()
+    {
+        assert(window.width > 0 && window.height > 0);
+        import dm.math.rect2d : Rect2d;
+
+        auto bounds = Rect2d(
+            0, 0, window.width, window.height
+        );
+        auto surf = graphics.comSurfaceProvider.getNew();
+        auto err = surf.createRGBSurface(window.width, window.height);
+        if (err)
+        {
+            throw new Exception(err.toString);
+        }
+        graphics.readPixels(bounds, surf);
+        return surf;
+    }
+
+    void snapshot(string path)
+    {
+        auto surf = snapshot;
+        scope (exit)
+        {
+            surf.dispose;
+        }
+
+        import dm.kit.sprites.images.image : Image;
+
+        auto im = new Image;
+        build(im);
+        im.initialize;
+        im.create;
+        scope(exit){
+            im.dispose;
+        }
+        im.savePNG(surf, path);
     }
 }

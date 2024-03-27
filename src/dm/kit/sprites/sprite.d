@@ -1599,6 +1599,46 @@ class Sprite : EventKitTarget
         return Nullable!Sprite.init;
     }
 
+    ComSurface snapshot()
+    {
+        assert(width > 0 && height > 0);
+        import dm.math.rect2d : Rect2d;
+
+        auto bounds = Rect2d(
+            0, 0, width, height
+        );
+        auto surf = graphics.comSurfaceProvider.getNew();
+        auto err = surf.createRGBSurface(width, height);
+        if (err)
+        {
+            throw new Exception(err.toString);
+        }
+        graphics.readPixels(bounds, surf);
+        return surf;
+    }
+
+    void snapshot(string path)
+    {
+        //TODO unification with scene
+        auto surf = snapshot;
+        scope (exit)
+        {
+            surf.dispose;
+        }
+
+        import dm.kit.sprites.images.image : Image;
+
+        auto im = new Image;
+        build(im);
+        im.initialize;
+        im.create;
+        scope(exit){
+            im.dispose;
+        }
+        
+        im.savePNG(surf, path);
+    }
+
     bool isCanEnableInsets()
     {
         return hasGraphics && graphics.theme;
