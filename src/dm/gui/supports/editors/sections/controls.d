@@ -269,6 +269,11 @@ class Controls : Control
             root.children ~= new TreeItem!string(i.to!string);
         }
         tree1.fill(root);
+
+        import dm.gui.controls.datetimes.calendar : Calendar;
+
+        auto cal1 = new Calendar;
+        rootContainer.addCreate(cal1);
     }
 
     void createCharts(Container root)
