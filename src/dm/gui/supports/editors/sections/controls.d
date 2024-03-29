@@ -138,6 +138,14 @@ class Controls : Control
 
         import Icons = dm.kit.graphics.themes.icons.icon_name;
 
+        import dm.gui.controls.labels.hyperlink: Hyperlink;
+
+        auto container1 = new VBox(5);
+        root.addCreate(container1);
+
+        auto hyper1 = new Hyperlink;
+        container1.addCreate(hyper1);
+
         auto checkBoxContainer = new VBox(5);
         root.addCreate(checkBoxContainer);
 

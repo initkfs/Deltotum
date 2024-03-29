@@ -51,6 +51,10 @@ class Labeled : Control
         isCreateTextFactory = true;
 
         isBorder = true;
+
+        //TODO minWidth, height?
+        width = 10;
+        height = 10;
     }
 
     override void initialize()

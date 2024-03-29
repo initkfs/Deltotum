@@ -38,6 +38,7 @@ import dm.com.graphics.com_texture : ComTexture;
 import dm.com.graphics.com_surface : ComSurface;
 import dm.com.graphics.com_font : ComFont;
 import dm.com.graphics.com_image : ComImage;
+import dm.com.platforms.com_system : ComSystem;
 import dm.kit.timers.timer : Timer;
 
 import dm.kit.windows.window : Window;
@@ -584,6 +585,13 @@ class SdlApplication : ContinuouslyApplication
                 .isRunning);
     }
 
+    override ComSystem newComSystem()
+    {
+        import dm.back.sdl2.sdl_system : SDLSystem;
+
+        return new SDLSystem;
+    }
+
     SdlRenderer newRenderer(SdlWindow window)
     {
         uint flags;
@@ -704,7 +712,7 @@ class SdlApplication : ContinuouslyApplication
         assert(asset);
         asset.initialize;
         uservices.logger.trace("Build assets for window: ", window.id);
-        
+
         windowBuilder.asset = asset;
 
         auto theme = createTheme(uservices.logger, uservices.config, uservices.context, uservices
@@ -753,7 +761,7 @@ class SdlApplication : ContinuouslyApplication
             auto fontGenerator = newFontGenerator(comSurfProvider);
             windowBuilder.build(fontGenerator);
 
-            createFontBitmaps(fontGenerator, windowBuilder.asset, theme, (bitmap){
+            createFontBitmaps(fontGenerator, windowBuilder.asset, theme, (bitmap) {
                 // windowBuilder.build(bitmap);
                 // bitmap.initialize;
                 // assert(bitmap.isInitialized);

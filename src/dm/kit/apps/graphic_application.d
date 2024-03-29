@@ -36,6 +36,8 @@ import std.typecons : Nullable;
 
 import dm.com.graphics.com_renderer : ComRenderer;
 import dm.com.graphics.com_surface : ComSurface;
+import dm.com.platforms.com_system: ComSystem;
+import dm.kit.platforms.platform: Platform;
 
 /**
  * Authors: initkfs
@@ -57,6 +59,7 @@ abstract class GraphicApplication : CliApplication
         Input _input;
         Screen _screen;
         Timer _timer;
+        Platform _platform;
 
         KitEventManager eventManager;
     }
@@ -70,6 +73,8 @@ abstract class GraphicApplication : CliApplication
     }
 
     WindowManager windowManager;
+
+    abstract ComSystem newComSystem();
 
     override ApplicationExit initialize(string[] args)
     {
@@ -110,6 +115,8 @@ abstract class GraphicApplication : CliApplication
 
         profile("Load graphics settings");
 
+        _platform = newPlatform;
+
         return ApplicationExit(false);
     }
 
@@ -136,6 +143,10 @@ abstract class GraphicApplication : CliApplication
         immutable isIconPackFlag = uservices.config.getBool(KitConfigKeys.backendIsIconPackEnabled);
         isIconPackEnabled = isIconPackFlag.isNull ? true : isIconPackFlag.get;
         uservices.logger.trace("Icon pack enabled: ", isIconPackEnabled);
+    }
+
+    Platform newPlatform(){
+        return new Platform(newComSystem, uservices.logger, uservices.config, uservices.context);
     }
 
     CapGraphics newCapability()
@@ -175,6 +186,7 @@ abstract class GraphicApplication : CliApplication
         component.input = _input;
         component.screen = _screen;
         component.timer = _timer;
+        component.platform = _platform;
         component.capGraphics = gservices.capGraphics;
         component.eventManager = eventManager;
     }

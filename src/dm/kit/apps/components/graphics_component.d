@@ -13,6 +13,7 @@ import dm.kit.screens.screen : Screen;
 import dm.kit.events.kit_event_manager : KitEventManager;
 import dm.kit.apps.caps.cap_graphics : CapGraphics;
 import dm.kit.timers.timer : Timer;
+import dm.kit.platforms.platform : Platform;
 
 /**
  * Authors: initkfs
@@ -29,6 +30,7 @@ class GraphicsComponent : UniComponent
         @Service KitEventManager _eventManager;
         @Service CapGraphics _capGraphics;
         @Service Timer _timer;
+        @Service Platform _platform;
     }
 
     alias build = UniComponent.build;
@@ -188,5 +190,24 @@ class GraphicsComponent : UniComponent
 
         enforce(t !is null, "Timer must not be null");
         _timer = t;
+    }
+
+    bool hasPlatform() const @nogc nothrow pure @safe
+    {
+        return _platform !is null;
+    }
+
+    inout(Platform) platform() inout @nogc nothrow pure @safe
+    out (_platform; _platform !is null)
+    {
+        return _platform;
+    }
+
+    void platform(Platform p) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(p !is null, "Platform must not be null");
+        _platform = p;
     }
 }
