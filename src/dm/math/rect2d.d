@@ -114,7 +114,7 @@ struct Rect2d
 
     Vector2 center() const @nogc nothrow pure @safe
     {
-        return Vector2(x + halfWidth, y + halfHeight);
+        return Vector2(middleX, middleY);
     }
 
     double aspectRatio() const @nogc nothrow pure @safe

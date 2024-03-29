@@ -169,9 +169,11 @@ class Sprite : EventKitTarget
         double offsetX = 0;
         double offsetY = 0;
 
-        bool isDrag;
+        
         bool _cached;
     }
+
+    bool isDrag;
 
     enum double defaultTrashold = 0.01;
 

@@ -13,13 +13,13 @@ import std.traits : isSomeString;
  */
 class Labeled : Control
 {
-    protected
-    {
+    //protected
+    //{
         string _iconName;
         dstring _labelText;
         Sprite _icon;
         Text _text;
-    }
+   // }
 
     void delegate() onPreIconCreate;
     void delegate() onPreIconCreated;

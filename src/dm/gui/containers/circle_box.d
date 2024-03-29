@@ -9,11 +9,13 @@ import dm.kit.sprites.sprite : Sprite;
  */
 class CircleBox : Container
 {
-    this(double radius = 80) pure
+    this(double radius = 80, double startAngle = 0) pure
     {
         import std.exception : enforce;
 
-        layout = new CircleLayout(radius);
+        auto newLayout = new CircleLayout(radius);
+        newLayout.startAngle = startAngle;
+        this.layout = newLayout;
         layout.isAutoResize = true;
     }
 }

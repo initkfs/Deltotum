@@ -7,6 +7,8 @@ import std.math.trigonometry : acos;
 import std.math.constants : PI;
 import dm.math.matrices.matrix : Matrix2x2, Matrix2x1;
 
+import Math = dm.math;
+
 /**
  * Authors: initkfs
  */
@@ -45,6 +47,11 @@ struct Vector2
         }
 
         return Vector2(normX, normY);
+    }
+
+    Vector2 directionTo(Vector2 other) const @nogc nothrow pure @safe
+    {
+        return other.subtract(this).normalize;
     }
 
     Vector2 clone() const @nogc nothrow pure @safe
@@ -125,10 +132,8 @@ struct Vector2
 
     Vector2 rotate(double angleDeg) const @nogc nothrow pure @safe
     {
-        import math = dm.math;
-
-        immutable newX = x * math.cosDeg(angleDeg) - y * math.sinDeg(angleDeg);
-        immutable newY = x * math.sinDeg(angleDeg) + y * math.cosDeg(angleDeg);
+        immutable newX = x * Math.cosDeg(angleDeg) - y * Math.sinDeg(angleDeg);
+        immutable newY = x * Math.sinDeg(angleDeg) + y * Math.cosDeg(angleDeg);
         return Vector2(newX, newY);
     }
 
@@ -165,20 +170,53 @@ struct Vector2
         return Vector2(-s * y, s * x);
     }
 
+    double angleRadTo(Vector2 other) const @nogc nothrow pure @safe
+    {
+        immutable direction = directionTo(other);
+        immutable angle = angleRad(direction);
+        return angle;
+    }
+
+    double angleDegTo(Vector2 other) const @nogc nothrow pure @safe
+    {
+        immutable angleRad = angleRadTo(other);
+        immutable anleDeg = Math.radToDeg(angleRad);
+        return anleDeg;
+    }
+
+    double angleDeg360To(Vector2 other) const @nogc nothrow pure @safe
+    {
+        auto anleDeg = angleDegTo(other);
+        if (anleDeg < 0)
+        {
+            //TODO neg?
+            anleDeg = (180 + (180 - Math.abs(anleDeg))) % 360;
+        }
+        return anleDeg;
+    }
+
+    double angleRad(Vector2 vec) const @nogc nothrow pure @safe
+    {
+        //clockwise 0..180, counter-clockwise 0..-180
+        immutable angle = Math.atan2(vec.y, vec.x);
+        return angle;
+    }
+
+    double angleDeg(Vector2 vec) const @nogc nothrow pure @safe
+    {
+
+        immutable anleDeg = Math.radToDeg(angleRad(vec));
+        return anleDeg;
+    }
+
     double angleRad() const @nogc nothrow pure @safe
     {
-        import math = dm.math;
-
-        immutable angle = math.atan2(y, x);
-        return angle;
+        return angleRad(this);
     }
 
     double angleDeg() const @nogc nothrow pure @safe
     {
-        import math = dm.math;
-
-        immutable anleDeg = math.radToDeg(angleRad);
-        return anleDeg;
+        return angleDeg(this);
     }
 
     double angleDegBetween(Vector2 other) const @nogc nothrow pure @safe
@@ -201,15 +239,11 @@ struct Vector2
 
     static Vector2 fromPolarDeg(double angleDeg, double radius) @nogc nothrow pure @safe
     {
-        import Math = dm.math;
-
         return fromPolarRad(Math.degToRad(angleDeg), radius);
     }
 
     static Vector2 fromPolarRad(double angleRad, double radius) @nogc nothrow pure @safe
     {
-        import Math = dm.math;
-
         immutable pX = radius * Math.cos(angleRad);
         immutable pY = radius * Math.sin(angleRad);
         return Vector2(pX, pY);
@@ -218,8 +252,6 @@ struct Vector2
     //TODO vector?
     static Vector2 toPolarRad(double x, double y) @nogc nothrow pure @safe
     {
-        import Math = dm.math;
-
         const radius = Math.sqrt(x * x + y * y);
         const angleRad = Math.atan2(y, x);
 
@@ -228,8 +260,6 @@ struct Vector2
 
     static Vector2 toPolarDeg(double x, double y) @nogc nothrow pure @safe
     {
-        import Math = dm.math;
-
         const polarRad = toPolarRad(x, y);
         return Vector2(polarRad.x, Math.radToDeg(polarRad.y));
     }
@@ -264,8 +294,6 @@ struct Vector2
 
     Vector2 min(Vector2 other) const @nogc nothrow pure @safe
     {
-        import Math = dm.math;
-
         const newX = Math.min(x, other.x);
         const newY = Math.min(y, other.y);
 
@@ -274,8 +302,6 @@ struct Vector2
 
     Vector2 max(Vector2 other) const @nogc nothrow pure @safe
     {
-        import Math = dm.math;
-
         const newX = Math.max(x, other.x);
         const newY = Math.max(y, other.y);
 
@@ -350,7 +376,7 @@ struct Vector2
 
     unittest
     {
-        import std.math.operations : isClose;
+        import std.Math.operations : isClose;
 
         Vector2 v = Vector2(5, 6);
         v += Vector2(1, 1);

@@ -274,6 +274,11 @@ class Controls : Control
 
         auto cal1 = new Calendar;
         rootContainer.addCreate(cal1);
+
+        import dm.gui.controls.pickers.time_picker : TimePicker;
+
+        auto time1 = new TimePicker;
+        rootContainer.addCreate(time1);
     }
 
     void createCharts(Container root)

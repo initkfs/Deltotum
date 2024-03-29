@@ -10,6 +10,7 @@ import dm.math.alignment : Alignment;
 class CircleLayout : ManagedLayout
 {
     double radius = 0;
+    double startAngle = 0;
 
     this(double radius = 0) pure
     {
@@ -37,13 +38,13 @@ class CircleLayout : ManagedLayout
             return;
         }
 
-        const int angleDegStep = 360 / childCount;
+        const double angleDegStep = 360.0 / childCount;
 
         const rootBounds = root.bounds;
         const startX = rootBounds.x + root.padding.left;
         const startY = rootBounds.y + root.padding.top;
 
-        int nextDeg = 0;
+        double nextDeg = startAngle;
         foreach (child; children)
         {
             const pos = Vector2.fromPolarDeg(nextDeg, radius);
