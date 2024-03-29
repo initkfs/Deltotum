@@ -1,6 +1,6 @@
 module dm.kit.screens.screen;
 
-import dm.com.graphics.com_screen: ComScreen;
+import dm.com.graphics.com_screen : ComScreen;
 import dm.kit.screens.single_screen : SingleScreen;
 
 import std.logger.core : Logger;
@@ -24,14 +24,30 @@ class Screen
         this.logger = logger;
     }
 
-    SingleScreen[] all()
+    size_t count()
     {
         size_t screenCount;
         if (const err = nativeScreen.getCount(screenCount))
         {
             logger.error(err.toString);
+            return 0;
         }
+        return screenCount;
+    }
 
+    SingleScreen first()
+    {
+        auto screenCount = count;
+        if(screenCount == 0){
+            //TODO Nullable!?
+            throw new Exception("Not found screen");
+        }
+        return SingleScreen(logger, nativeScreen, 0);
+    }
+
+    SingleScreen[] all()
+    {
+        auto screenCount = count;
         SingleScreen[] screens;
         foreach (i; 0 .. screenCount)
         {

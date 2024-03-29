@@ -6,7 +6,8 @@ import dm.math.insets : Insets;
 import dm.kit.sprites.textures.texture : Texture;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import dm.math.alignment : Alignment;
-import dm.math.insets: Insets;
+import dm.math.insets : Insets;
+import dm.gui.controls.tooltips.tooltip : Tooltip;
 
 import dm.kit.sprites.transitions.min_max_transition : MinMaxTransition;
 import dm.kit.sprites.transitions.objects.props.opacity_transition : OpacityTransition;
@@ -67,6 +68,12 @@ class Control : Sprite
         MinMaxTransition!double pointerEffectAnimation;
 
         bool _selected;
+
+        Tooltip[] tooltips;
+
+        bool isTooltipDelay;
+        size_t tooltipDelay = 100;
+        size_t tooltipDelayCounter;
     }
 
     this() pure @safe
@@ -88,6 +95,31 @@ class Control : Sprite
             }
 
             checkBackground;
+        };
+
+        onPointerEntered ~= (ref e) {
+            if (tooltips.length > 0)
+            {
+                isTooltipDelay = true;
+            }
+        };
+
+        onPointerMove ~= (ref e) {
+            if (isTooltipDelay && tooltipDelayCounter != 0)
+            {
+                tooltipDelayCounter = 0;
+            }
+        };
+
+        onPointerExited ~= (ref e) {
+            if (tooltips.length > 0)
+            {
+                isTooltipDelay = false;
+                foreach (tooltip; tooltips)
+                {
+                    tooltip.hide;
+                }
+            }
         };
 
         if (!backgroundFactory && isCreateBackgroundFactory)
@@ -210,7 +242,8 @@ class Control : Sprite
         return createDefaultShape(w, h, createDefaultStyle);
     }
 
-    protected Sprite createDefaultShape(double width, double height, GraphicStyle style = GraphicStyle.simple)
+    protected Sprite createDefaultShape(double width, double height, GraphicStyle style = GraphicStyle
+            .simple)
     {
         return graphics.theme.background(width, height, &style);
     }
@@ -370,6 +403,11 @@ class Control : Sprite
         if (auto control = sprite.castSafe!Control)
         {
             applyStyle(control);
+        }
+
+        if (auto tooltip = sprite.castSafe!Tooltip)
+        {
+            tooltips ~= tooltip;
         }
     }
 
@@ -561,6 +599,28 @@ class Control : Sprite
         {
             hover.isVisible = value;
             setInvalid;
+        }
+    }
+
+    override void update(double dt)
+    {
+        super.update(dt);
+
+        if (isTooltipDelay)
+        {
+            if (tooltipDelayCounter >= tooltipDelay)
+            {
+                tooltipDelayCounter = 0;
+                isTooltipDelay = false;
+                foreach (t; tooltips)
+                {
+                    t.show;
+                }
+            }
+            else
+            {
+                tooltipDelayCounter++;
+            }
         }
     }
 

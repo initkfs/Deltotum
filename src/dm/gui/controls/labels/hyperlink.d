@@ -2,6 +2,9 @@ module dm.gui.controls.labels.hyperlink;
 
 import dm.gui.controls.labeled : Labeled;
 import dm.kit.sprites.sprite : Sprite;
+import dm.gui.controls.tooltips.tooltip: Tooltip;
+
+import std.conv: to;
 
 /**
  * Authors: initkfs
@@ -50,6 +53,9 @@ class Hyperlink : Labeled
     override void create()
     {
         super.create;
+
+        auto tooltip = new Tooltip(url.to!dstring);
+        addCreate(tooltip);
 
         import dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
 
