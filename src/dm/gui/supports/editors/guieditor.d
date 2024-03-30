@@ -61,6 +61,12 @@ class GuiEditor : Scene
         animTab.content = new Animations;
         root.addCreate(animTab);
 
+        import dm.gui.supports.editors.sections.physics : Physics;
+
+        auto physTab = new Tab("Physics");
+        physTab.content = new Physics;
+        root.addCreate(physTab);
+
         import dm.gui.supports.editors.sections.images : Images;
 
         auto imagesTab = new Tab("Images");

@@ -86,7 +86,7 @@ class Sprite : EventKitTarget
     //TODO remove
     bool isClipped;
 
-    bool inScreenBounds = true;
+    bool inScreenBounds;
     bool delegate() onScreenBoundsIsStop;
 
     bool isRedraw = true;
