@@ -146,6 +146,14 @@ class Controls : Control
         auto hyper1 = new Hyperlink;
         container1.addCreate(hyper1);
 
+        import dm.gui.controls.labels.badge: Badge;
+        import dm.gui.controls.texts.text: Text;
+
+        auto tb1 = new Text("Badge");
+        container1.addCreate(tb1);
+        auto b1 = new Badge("10");
+        tb1.addCreate(b1);
+
         auto checkBoxContainer = new VBox(5);
         root.addCreate(checkBoxContainer);
 
