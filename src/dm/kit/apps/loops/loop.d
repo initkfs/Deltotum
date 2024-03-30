@@ -20,6 +20,7 @@ abstract class Loop
     void delegate(double) onFreqLoopUpdateDelta;
 
     void delegate() onDelay;
+    void delegate(double) onDelayTimeRestMs;
     void delegate(double) onRender;
 
     void delegate() onInit;
@@ -33,6 +34,7 @@ abstract class Loop
 
     void setUp(double deltaFactor = 100)
     {
+        //TODO auto perfFreqMs = SDL_GetPerformanceFrequency() / 1000.0 / 1000;
         frameTimeMs = msInSec / frameRate;
         updateDelta = frameTimeMs / deltaFactor;
         if(isAutoStart){

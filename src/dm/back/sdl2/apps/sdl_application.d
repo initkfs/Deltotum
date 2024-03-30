@@ -117,8 +117,6 @@ class SdlApplication : ContinuouslyApplication
 
         profile("Start SDL backend");
 
-        initLoop(mainLoop);
-
         uint flags;
         if (isVideoEnabled)
         {
@@ -173,6 +171,8 @@ class SdlApplication : ContinuouslyApplication
             joystick = SdlJoystick.fromDevices;
             uservices.logger.trace("Init joystick");
         }
+
+        initLoop(mainLoop);
 
         //TODO extract dependency
         import dm.back.sdl2.sdl_keyboard : SdlKeyboard;
@@ -574,7 +574,8 @@ class SdlApplication : ContinuouslyApplication
     {
         loop.onQuit = () => quit;
         loop.timestampMsProvider = () => sdlLib.getTicks;
-        loop.onDelay = () => sdlLib.delay(20);
+        loop.onDelay = () => sdlLib.delay(10);
+        loop.onDelayTimeRestMs = (restMs) => sdlLib.delay(cast(uint) restMs);
         loop.onLoopUpdateMs = (timestamp) => updateLoopMs(timestamp);
         loop.onRender = (accumMsRest) => updateRender(accumMsRest);
         loop.onFreqLoopUpdateDelta = (delta) => updateFreqLoopDelta(delta);

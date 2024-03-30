@@ -2,6 +2,8 @@ module dm.kit.apps.loops.integrated_loop;
 
 import dm.kit.apps.loops.loop : Loop;
 
+import bindbc.sdl;
+
 /**
  * Authors: initkfs
  */
@@ -18,6 +20,7 @@ class IntegratedLoop : Loop
     override void updateMs(size_t startMs)
     in (onLoopUpdateMs)
     in (onFreqLoopUpdateDelta)
+    in (onDelayTimeRestMs)
     in (onRender)
     {
         //TODO SDL_GetPerformanceCounter
@@ -26,22 +29,27 @@ class IntegratedLoop : Loop
         lastUpdateTimeMs = startMs;
         deltaTimeAccumulatorMs += deltaTimeMs;
 
-        if (deltaTimeAccumulatorMs > deltaTimeAccumLimitMs)
-        {
-            deltaTimeAccumulatorMs = deltaTimeAccumLimitMs;
-        }
+        // if (deltaTimeAccumulatorMs > deltaTimeAccumLimitMs)
+        // {
+        //     deltaTimeAccumulatorMs = deltaTimeAccumLimitMs;
+        // }
 
         onLoopUpdateMs(startMs);
 
-        while (deltaTimeAccumulatorMs > frameTimeMs)
+        while (deltaTimeAccumulatorMs >= frameTimeMs)
         {
             onFreqLoopUpdateDelta(updateDelta);
-
             deltaTimeAccumulatorMs -= frameTimeMs;
         }
 
         immutable double accumRest = deltaTimeAccumulatorMs / frameTimeMs;
 
         onRender(accumRest);
+
+        if (deltaTimeAccumulatorMs < frameTimeMs)
+        {
+            immutable delay = frameTimeMs - deltaTimeAccumulatorMs;
+            onDelayTimeRestMs(delay);
+        }
     }
 }
