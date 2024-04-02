@@ -5,10 +5,7 @@ module dm.core.apps.crashes.crash_handler;
 abstract class CrashHandler
 {
 
-	bool isConsumed;
+    bool isConsumed;
 
-	abstract
-	{
-		void acceptCrash(Throwable t, const(char)[] message = "") inout;
-	}
+    void acceptCrash(Throwable t, const(char)[] message = "") inout;
 }

@@ -376,7 +376,7 @@ struct Vector2
 
     unittest
     {
-        import std.Math.operations : isClose;
+        import std.math.operations : isClose;
 
         Vector2 v = Vector2(5, 6);
         v += Vector2(1, 1);
