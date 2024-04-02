@@ -1,4 +1,4 @@
-module dm.core.apps.events.application_event;
+module dm.core.apps.events.app_event;
 
 import dm.core.events.event_base : EventBase;
 import dm.core.events.core_event_type : CoreEventType;
@@ -7,11 +7,11 @@ import dm.core.utils.type_util: enumNameByIndex;
 /**
  * Authors: initkfs
  */
-struct ApplicationEvent
+struct AppEvent
 {
     mixin EventBase;
 
-    static enum Event
+    enum Event
     {
         None,
         Exit

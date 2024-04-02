@@ -3,7 +3,7 @@ module dm.kit.events.event_kit_target;
 import dm.kit.apps.components.window_component : WindowComponent;
 import dm.core.events.event_target : EventTarget;
 
-import dm.core.apps.events.application_event : ApplicationEvent;
+import dm.core.apps.events.app_event : AppEvent;
 import dm.kit.sprites.events.focus.focus_event : FocusEvent;
 import dm.kit.inputs.keyboards.events.key_event : KeyEvent;
 import dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
@@ -16,8 +16,8 @@ import dm.kit.windows.events.window_event : WindowEvent;
  */
 class EventKitTarget : WindowComponent, EventTarget
 {
-    void delegate(ref ApplicationEvent)[] eventAppFilters;
-    void delegate(ref ApplicationEvent)[] eventAppHandlers;
+    void delegate(ref AppEvent)[] eventAppFilters;
+    void delegate(ref AppEvent)[] eventAppHandlers;
 
     void delegate(ref PointerEvent)[] eventPointerFilters;
     void delegate(ref PointerEvent)[] eventPointerHandlers;
@@ -122,7 +122,7 @@ class EventKitTarget : WindowComponent, EventTarget
 
     void runEventFilters(E)(ref E e)
     {
-        static if (is(E : ApplicationEvent))
+        static if (is(E : AppEvent))
         {
             runDelegates(e, eventAppFilters);
         }
@@ -154,7 +154,7 @@ class EventKitTarget : WindowComponent, EventTarget
 
     void runEventHandlers(E)(ref E e)
     {
-        static if (is(E : ApplicationEvent))
+        static if (is(E : AppEvent))
         {
             runDelegates(e, eventAppHandlers);
         }
@@ -184,7 +184,7 @@ class EventKitTarget : WindowComponent, EventTarget
         }
     }
 
-    void runListeners(ref ApplicationEvent)
+    void runListeners(ref AppEvent)
     {
 
     }

@@ -1,11 +1,11 @@
-module dm.core.apps.application_exit;
+module dm.core.apps.app_exit;
 
 import core.attribute : mustuse;
 
 /**
  * Authors: initkfs
  */
-@mustuse struct ApplicationExit
+@mustuse struct AppExit
 {
     bool isExit;
     

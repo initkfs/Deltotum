@@ -1,6 +1,6 @@
 module dm.core.events.processing.event_processor;
 
-import dm.core.apps.events.application_event : ApplicationEvent;
+import dm.core.apps.events.app_event : AppEvent;
 
 /**
  * Authors: initkfs
@@ -8,7 +8,7 @@ import dm.core.apps.events.application_event : ApplicationEvent;
  */
 abstract class EventProcessor(E)
 {
-    void delegate(ref ApplicationEvent) onApplication;
+    void delegate(ref AppEvent) onApplication;
 
     abstract bool process(E event);
 }

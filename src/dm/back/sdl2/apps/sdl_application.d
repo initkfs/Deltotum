@@ -6,7 +6,7 @@ version(SdlBackend):
 
 import dm.core.configs.config : Config;
 import dm.core.contexts.context : Context;
-import dm.core.apps.application_exit : ApplicationExit;
+import dm.core.apps.app_exit : AppExit;
 import dm.core.utils.provider : Provider;
 import dm.kit.apps.continuously_application : ContinuouslyApplication;
 import dm.kit.apps.components.graphics_component : GraphicsComponent;
@@ -100,7 +100,7 @@ class SdlApplication : ContinuouslyApplication
         this.fontLib = fontLib is null ? new SdlTTFLib : fontLib;
     }
 
-    override ApplicationExit initialize(string[] args)
+    override AppExit initialize(string[] args)
     {
         if (auto isExit = super.initialize(args))
         {
@@ -567,7 +567,7 @@ class SdlApplication : ContinuouslyApplication
 
         profile("SDL backends end");
 
-        return ApplicationExit(false);
+        return AppExit(false);
     }
 
     protected void initLoop(Loop loop)

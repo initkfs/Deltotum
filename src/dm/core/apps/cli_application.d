@@ -2,7 +2,7 @@ module dm.core.apps.cli_application;
 
 import dm.core.units.simple_unit : SimpleUnit;
 import dm.core.apps.crashes.crash_handler : CrashHandler;
-import dm.core.apps.application_exit : ApplicationExit;
+import dm.core.apps.app_exit : AppExit;
 import dm.core.units.components.uni_component : UniComponent;
 import dm.core.configs.config : Config;
 import dm.core.clis.cli : Cli;
@@ -15,6 +15,10 @@ import dm.core.apps.caps.cap_core : CapCore;
 import dm.core.events.bus.event_bus : EventBus;
 import dm.core.events.bus.core_bus_events : CoreBusEvents;
 import dm.core.locators.service_locator : ServiceLocator;
+import dm.core.supports.profiling.profilers.tm_profiler : TMProfiler;
+import dm.core.supports.errors.err_status : ErrStatus;
+
+import CoreEnvKeys = dm.core.core_env_keys;
 
 import std.logger : Logger;
 import std.typecons : Nullable;
@@ -31,9 +35,6 @@ class CliApplication : SimpleUnit
     string defaultDataDir = "data";
     string defaultConfigsDir = "configs";
     string defaultUserDataDir = "userdata";
-
-    string envCrashDirKey = "APP_CRASH_DIR";
-    string envCrashFileDisableKey = "APP_CRASH_FILE_DISABLE";
 
     CrashHandler[] crashHandlers;
 
@@ -53,87 +54,107 @@ class CliApplication : SimpleUnit
         void quit();
     }
 
-    ApplicationExit initialize(string[] args)
+    AppExit initialize(string[] args)
     {
         super.initialize;
 
-        _uniServices = newUniServices;
-
-        uservices.capCore = newCapCore;
-
-        auto cli = createCli(args);
-        uservices.cli = cli;
-
-        auto cliResult = parseCli(uservices.cli);
-        if (!isSilentMode)
+        try
         {
-            import std.stdio : writeln, writefln;
+            createCrashHandlers(args);
 
-            writeln("Received cli: ", cli.cliArgs);
-            writefln("Config dir: %s, data dir: %s, debug: %s, silent: %s, wait ms: %s",
-                cliConfigDir, cliDataDir, isDebugMode, isSilentMode, cliStartupDelayMs);
+            _uniServices = newUniServices;
+            assert(_uniServices, "Services must not be null");
+
+            uservices.capCore = newCapCore;
+
+            auto cli = createCli(args);
+            assert(cli);
+            uservices.cli = cli;
+
+            auto cliResult = parseCli(uservices.cli);
+            if (!isSilentMode)
+            {
+                import std.stdio : writeln, writefln;
+
+                writeln("Received cli: ", cli.cliArgs);
+                writefln("Config dir: %s, data dir: %s, debug: %s, silent: %s, wait ms: %s",
+                    cliConfigDir, cliDataDir, isDebugMode, isSilentMode, cliStartupDelayMs);
+            }
+
+            cli.isSilentMode = isSilentMode;
+
+            if (cliResult.helpWanted)
+            {
+                cli.printHelp(cliResult);
+                return AppExit(true);
+            }
+
+            if (cliStartupDelayMs > 0)
+            {
+                import std.conv : text;
+
+                cli.printIfNotSilent(text("Startup delay: ", cliStartupDelayMs, " ms"));
+
+                import core.thread.osthread : Thread;
+                import core.time : dur;
+
+                Thread.sleep(dur!"msecs"(cliStartupDelayMs));
+                cli.printIfNotSilent("Startup delay end");
+            }
+
+            if (isDebugMode)
+            {
+                cli.printIfNotSilent("Debug mode active");
+            }
+
+            uservices.support = createSupport;
+            assert(uservices.support);
+
+            profile("Start services");
+
+            uservices.context = createContext;
+            assert(uservices.context);
+            profile("Context is built");
+
+            uservices.eventBus = createEventBus(uservices.context);
+            assert(uservices.eventBus);
+            profile("Event bus built");
+            uservices.eventBus.fire(CoreBusEvents.build_context, uservices.context);
+            uservices.eventBus.fire(CoreBusEvents.build_event_bus, uservices.eventBus);
+
+            uservices.config = createConfig(uservices.context);
+            assert(uservices.config);
+            profile("Config is built");
+            uservices.eventBus.fire(CoreBusEvents.build_config, uservices.config);
+
+            uservices.logger = createLogger(uservices.support);
+            assert(uservices.logger);
+            profile("Logger built");
+            uservices.eventBus.fire(CoreBusEvents.build_logger, uservices.logger);
+
+            uservices.resource = createResource(uservices.logger, uservices.config, uservices
+                    .context);
+            assert(uservices.resource);
+            uservices.logger.trace("Resources service built");
+            profile("Resources built");
+            uservices.eventBus.fire(CoreBusEvents.build_resource, uservices.resource);
+
+            uservices.locator = createLocator(uservices.logger, uservices.config, uservices.context);
+            assert(uservices.locator);
+            uservices.logger.trace("Service locator built");
+            uservices.eventBus.fire(CoreBusEvents.build_locator, uservices.locator);
+            profile("Service locator built");
+
+            uservices.isBuilt = true;
+            uservices.eventBus.fire(CoreBusEvents.build_core_services, uservices);
+
+        }
+        catch (Exception e)
+        {
+            consumeThrowable(e, true);
         }
 
-        cli.isSilentMode = isSilentMode;
-
-        if (cliResult.helpWanted)
-        {
-            cli.printHelp(cliResult);
-            return ApplicationExit(true);
-        }
-
-        if (cliStartupDelayMs > 0)
-        {
-            import std.conv : text;
-
-            cli.printIfNotSilent(text("Startup delay: ", cliStartupDelayMs, " ms"));
-
-            import core.thread.osthread : Thread;
-            import core.time : dur;
-
-            Thread.sleep(dur!"msecs"(cliStartupDelayMs));
-            cli.printIfNotSilent("Startup delay end");
-        }
-
-        if (isDebugMode)
-        {
-            cli.printIfNotSilent("Debug mode active");
-        }
-
-        uservices.support = createSupport;
-
-        profile("Start services");
-
-        uservices.context = createContext;
-        profile("Context is built");
-
-        uservices.eventBus = createEventBus(uservices.context);
-        profile("Event bus built");
-        uservices.eventBus.fire(CoreBusEvents.build_context, uservices.context);
-        uservices.eventBus.fire(CoreBusEvents.build_event_bus, uservices.eventBus);
-
-        uservices.config = createConfig(uservices.context);
-        profile("Config is built");
-        uservices.eventBus.fire(CoreBusEvents.build_config, uservices.config);
-
-        uservices.logger = createLogger(uservices.support);
-        profile("Logger built");
-        uservices.eventBus.fire(CoreBusEvents.build_logger, uservices.logger);
-
-        uservices.resource = createResource(uservices.logger, uservices.config, uservices.context);
-        uservices.logger.trace("Resources service built");
-        profile("Resources built");
-        uservices.eventBus.fire(CoreBusEvents.build_resource, uservices.resource);
-
-        uservices.locator = createLocator(uservices.logger, uservices.config, uservices.context);
-        uservices.logger.trace("Service locator built");
-        uservices.eventBus.fire(CoreBusEvents.build_locator, uservices.locator);
-        profile("Service locator built");
-
-        uservices.isBuilt = true;
-        uservices.eventBus.fire(CoreBusEvents.build_core_services, uservices);
-
-        return ApplicationExit();
+        return AppExit();
     }
 
     UniComponent newUniServices()
@@ -189,6 +210,8 @@ class CliApplication : SimpleUnit
 
     GetoptResult parseCli(Cli cliManager)
     {
+        assert(cliManager);
+
         import std.getopt : config;
 
         GetoptResult cliResult = cliManager.parse(
@@ -202,8 +225,8 @@ class CliApplication : SimpleUnit
     }
 
     protected Context createContext()
-    in (uservices.cli !is null)
     {
+        assert(uservices.cli);
 
         import std.path : dirName, buildPath, isAbsolute;
         import std.file : exists, isDir, isFile;
@@ -255,17 +278,17 @@ class CliApplication : SimpleUnit
         return context;
     }
 
-    protected AppContext newAppContext(string curDir, string dataDir, string userDir, bool isDebugMode, bool isSilentMode)
+    AppContext newAppContext(string curDir, string dataDir, string userDir, bool isDebugMode, bool isSilentMode)
     {
         return new AppContext(curDir, dataDir, userDir, isDebugMode, isSilentMode);
     }
 
-    protected Context newContext(const AppContext appContext)
+    Context newContext(const AppContext appContext)
     {
         return new Context(appContext);
     }
 
-    protected Config newConfigFromFile(string configFile)
+    Config newConfigFromFile(string configFile)
     {
         import std.algorithm.searching : startsWith;
         import std.path : extension;
@@ -289,14 +312,14 @@ class CliApplication : SimpleUnit
             "Not supported config: " ~ configFile);
     }
 
-    protected Config newConfigAggregator(Config[] forConfigs)
+    Config newConfigAggregator(Config[] forConfigs)
     {
         import dm.core.configs.config_aggregator : ConfigAggregator;
 
         return new ConfigAggregator(forConfigs);
     }
 
-    protected Config newEnvConfig()
+    Config newEnvConfig()
     {
         import dm.core.configs.environments.env_config : EnvConfig;
 
@@ -305,6 +328,9 @@ class CliApplication : SimpleUnit
 
     protected Config createConfig(Context context)
     {
+        assert(uservices.cli);
+        assert(context);
+
         import std.path : buildPath, isAbsolute;
 
         string configDir = cliConfigDir;
@@ -378,7 +404,7 @@ class CliApplication : SimpleUnit
                     newConfig.isThrowOnSetValueNotExistentKey = isStrictConfigs;
                     configs ~= newConfig;
                     uservices.cli.printIfNotSilent(
-                    "Load config: " ~ configPath.name);
+                        "Load config: " ~ configPath.name);
                 }
             }
         }
@@ -401,6 +427,8 @@ class CliApplication : SimpleUnit
 
     protected Logger createLogger(Support support)
     {
+        assert(support);
+
         import std.logger : MultiLogger, FileLogger, LogLevel, Logger;
 
         auto multiLogger = new MultiLogger(
@@ -442,9 +470,6 @@ class CliApplication : SimpleUnit
 
     protected Support createSupport()
     {
-        import dm.core.supports.profiling.profilers.tm_profiler : TMProfiler;
-        import dm.core.supports.errors.err_status : ErrStatus;
-
         version (BuiltinProfiler)
         {
             auto tmProfiler = new TMProfiler(50);
@@ -456,12 +481,21 @@ class CliApplication : SimpleUnit
 
         auto errStatus = new ErrStatus;
 
-        auto support = new Support(tmProfiler, errStatus);
+        auto support = newSupport(tmProfiler, errStatus);
         return support;
+    }
+
+    Support newSupport(TMProfiler profiler, ErrStatus errStatus)
+    {
+        return new Support(profiler, errStatus);
     }
 
     protected Resource createResource(Logger logger, Config config, Context context, string resourceDirPath = "resources")
     {
+        assert(logger);
+        assert(config);
+        assert(context);
+
         import std.path : buildPath, isAbsolute;
         import std.file : exists, isDir;
 
@@ -471,10 +505,10 @@ class CliApplication : SimpleUnit
             if (!mustBeResDir.exists || !mustBeResDir
                 .isDir)
             {
-                uservices.logger.error(
-                    "Absolute resources directory path does not exist or not a directory: " ~ mustBeResDir);
+                logger.error(
+                    "Absolute resources directory path does not exist or not a directory: ", mustBeResDir);
                 //WARNING return
-                return new Resource(logger);
+                return newResource(logger);
             }
         }
         else
@@ -483,27 +517,32 @@ class CliApplication : SimpleUnit
                 .appContext.dataDir;
             if (mustBeDataDir.isNull)
             {
-                uservices.logger.errorf(
-                    "Received relative resource path %s, but data directory not found");
+                logger.errorf(
+                    "Received relative resource path %s, but data directory not found", mustBeResDir);
                 //WARNING return
-                return new Resource(logger);
+                return newResource(logger);
             }
 
             mustBeResDir = buildPath(mustBeDataDir.get, mustBeResDir);
             if (!mustBeResDir.exists || !mustBeResDir
                 .isDir)
             {
-                uservices.logger.warning(
+                logger.warning(
                     "Resource directory path relative to the data does not exist or is not a directory: ", mustBeResDir);
                 //WARNING return
-                return new Resource(logger);
+                return newResource(logger);
             }
         }
 
-        auto resource = new Resource(logger, mustBeResDir);
-        uservices.logger.trace(
+        auto resource = newResource(logger, mustBeResDir);
+        logger.trace(
             "Create resources from directory: ", mustBeResDir);
         return resource;
+    }
+
+    Resource newResource(Logger logger, string resourcesDir = null)
+    {
+        return new Resource(logger, resourcesDir);
     }
 
     protected EventBus createEventBus(Context context)
@@ -511,7 +550,7 @@ class CliApplication : SimpleUnit
         return newEventBus;
     }
 
-    protected EventBus newEventBus()
+    EventBus newEventBus()
     {
         return new EventBus;
     }
@@ -521,7 +560,7 @@ class CliApplication : SimpleUnit
         return newServiceLocator(logger);
     }
 
-    protected ServiceLocator newServiceLocator(
+    ServiceLocator newServiceLocator(
         Logger logger)
     {
         return new ServiceLocator(logger);
@@ -534,14 +573,30 @@ class CliApplication : SimpleUnit
         return cli;
     }
 
-    protected CliPrinter newCliPrinter()
+    CliPrinter newCliPrinter()
     {
         return new CliPrinter;
     }
 
-    protected Cli newCli(string[] args, CliPrinter printer)
+    Cli newCli(string[] args, CliPrinter printer)
     {
         return new Cli(args, printer);
+    }
+
+    bool isWriteCrashFile()
+    {
+        import std.process : environment;
+        import std.conv : to;
+
+        immutable mustBeIsDisableCrash = environment.get(
+            CoreEnvKeys.envCrashFileDisableKey);
+        if (!mustBeIsDisableCrash)
+        {
+            return true;
+        }
+
+        immutable bool isDisable = mustBeIsDisableCrash.to!bool;
+        return !isDisable;
     }
 
     protected void createCrashHandlers(
@@ -552,10 +607,15 @@ class CliApplication : SimpleUnit
         import std.process : environment;
         import std.format : format;
 
+        if (!isWriteCrashFile)
+        {
+            return;
+        }
+
         string crashDir = getcwd;
 
         immutable mustBeCrashDir = environment.get(
-            envCrashDirKey);
+            CoreEnvKeys.envCrashDirKey);
         if (mustBeCrashDir)
         {
             if (!mustBeCrashDir.exists || !mustBeCrashDir
@@ -563,7 +623,7 @@ class CliApplication : SimpleUnit
             {
                 throw new Exception(format(
                         "Crash directory from environment key %s does not exist or not a directory: %s",
-                        envCrashDirKey, mustBeCrashDir));
+                        CoreEnvKeys.envCrashDirKey, mustBeCrashDir));
             }
             crashDir = mustBeCrashDir;
         }
@@ -583,6 +643,7 @@ class CliApplication : SimpleUnit
 
     void build(UniComponent component)
     {
+        assert(uservices);
         uservices.build(component);
     }
 

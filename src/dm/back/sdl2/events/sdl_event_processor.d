@@ -8,7 +8,7 @@ import dm.kit.events.processing.kit_event_processor : KitEventProcessor;
 
 import dm.kit.events.kit_event_type: KitEventType;
 import dm.core.events.core_event_type: CoreEventType;
-import dm.core.apps.events.application_event : ApplicationEvent;
+import dm.core.apps.events.app_event : AppEvent;
 import dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import dm.kit.inputs.keyboards.events.key_event : KeyEvent;
 import dm.kit.inputs.keyboards.events.text_input_event: TextInputEvent;
@@ -75,7 +75,7 @@ class SdlEventProcessor : KitEventProcessor!(SDL_Event*)
         {
             return;
         }
-        auto exitEvent = ApplicationEvent(ApplicationEvent.Event.Exit, event.window.windowID);
+        auto exitEvent = AppEvent(AppEvent.Event.Exit, event.window.windowID);
         onApplication(exitEvent);
     }
 

@@ -3,7 +3,7 @@ module dm.kit.apps.graphic_application;
 import dm.com.graphics.com_font : ComFont;
 import dm.core.configs.config : Config;
 import dm.core.contexts.context : Context;
-import dm.core.apps.application_exit : ApplicationExit;
+import dm.core.apps.app_exit : AppExit;
 import dm.core.apps.cli_application : CliApplication;
 import dm.core.resources.resource : Resource;
 import dm.kit.apps.components.graphics_component : GraphicsComponent;
@@ -76,7 +76,7 @@ abstract class GraphicApplication : CliApplication
 
     abstract ComSystem newComSystem();
 
-    override ApplicationExit initialize(string[] args)
+    override AppExit initialize(string[] args)
     {
         if (const exit = super.initialize(args))
         {
@@ -117,7 +117,7 @@ abstract class GraphicApplication : CliApplication
 
         _platform = newPlatform;
 
-        return ApplicationExit(false);
+        return AppExit(false);
     }
 
     void loadSettings()
