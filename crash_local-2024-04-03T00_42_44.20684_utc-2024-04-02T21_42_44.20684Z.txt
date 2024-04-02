@@ -1,7 +1,0 @@
-object.Exception@src/dm/core/apps/cli_application.d(144): Resource!
-----------------
-src/dm/core/apps/cli_application.d:144 dm.core.apps.app_exit.AppExit dm.core.apps.cli_application.CliApplication.initialize(immutable(char)[][]) [0x55731f824cd1]
-src/dm/kit/apps/graphic_application.d:81 dm.core.apps.app_exit.AppExit dm.kit.apps.graphic_application.GraphicApplication.initialize(immutable(char)[][]) [0x55731f99395a]
-src/dm/back/sdl2/apps/sdl_application.d:105 dm.core.apps.app_exit.AppExit dm.back.sdl2.apps.sdl_application.SdlApplication.initialize(immutable(char)[][]) [0x55731f8147a8]
-src/dm/back/sdl2/base/ain_controller.d:31 int game.main_controller.MainController.run(immutable(char)[][]) [0x55731fa08960]
-src/app.d:20 _Dmain [0x55731f7fb837]
