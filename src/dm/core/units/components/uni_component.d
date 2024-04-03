@@ -50,6 +50,24 @@ class UniComponent : SimpleUnit
         buildFromParent(uniComponent, this);
     }
 
+    void buildInit(UniComponent component)
+    {
+        build(component);
+        initialize(component);
+    }
+
+    void buildInitCreate(UniComponent component)
+    {
+        buildInit(component);
+        create(component);
+    }
+
+    void buildInitCreateRun(UniComponent component)
+    {
+        buildInitCreate(component);
+        run(component);
+    }
+
     protected void buildFromParent(C : UniComponent)(C uniComponent, C parentComponent)
     {
         if (!uniComponent)
@@ -130,6 +148,12 @@ class UniComponent : SimpleUnit
     {
 
     }
+
+    alias initialize = SimpleUnit.initialize;
+    alias create = SimpleUnit.create;
+    alias run = SimpleUnit.run;
+    alias stop = SimpleUnit.stop;
+    alias dispose = SimpleUnit.dispose;
 
     override void initialize()
     {

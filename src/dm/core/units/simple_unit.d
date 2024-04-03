@@ -72,6 +72,15 @@ class SimpleUnit : Unitable
         _state = UnitState.initialize;
     }
 
+    void initialize(SimpleUnit unit)
+    {
+        assert(unit, "Unit must not be null");
+        assert(unit !is this, "Unit must not be this");
+
+        unit.initialize;
+        assert(unit.isInitialized, "Unit not initialized: " ~ unit.className);
+    }
+
     void create()
     {
         if (!isNone && !isInitialized)
@@ -83,6 +92,21 @@ class SimpleUnit : Unitable
         }
 
         _state = UnitState.create;
+    }
+
+    void create(SimpleUnit unit)
+    {
+        assert(unit, "Unit must not be null");
+        assert(unit !is this, "Unit must not be this");
+
+        unit.create;
+        assert(unit.isCreated, "Unit not created: " ~ unit.className);
+    }
+
+    void initCreate(SimpleUnit unit)
+    {
+        initialize(unit);
+        create(unit);
     }
 
     void run()
@@ -98,6 +122,22 @@ class SimpleUnit : Unitable
         _state = UnitState.run;
     }
 
+    void run(SimpleUnit unit)
+    {
+        assert(unit, "Unit must not be null");
+        assert(unit !is this, "Unit must not be this");
+
+        unit.run;
+        assert(unit.isRunning, "Unit not running: " ~ unit.className);
+    }
+
+    void initCreateRun(SimpleUnit unit)
+    {
+        initialize(unit);
+        create(unit);
+        run(unit);
+    }
+
     void stop()
     {
         if (!isRunning)
@@ -109,6 +149,15 @@ class SimpleUnit : Unitable
         }
 
         _state = UnitState.stop;
+    }
+
+    void stop(SimpleUnit unit)
+    {
+        assert(unit, "Unit must not be null");
+        assert(unit !is this, "Unit must not be this");
+
+        unit.stop;
+        assert(unit.isStopped, "Unit not stopped: " ~ unit.className);
     }
 
     void dispose()
@@ -125,12 +174,42 @@ class SimpleUnit : Unitable
         _state = UnitState.dispose;
     }
 
+    void dispose(SimpleUnit unit)
+    {
+        assert(unit, "Unit must not be null");
+        assert(unit !is this, "Unit must not be this");
+
+        unit.dispose;
+        assert(unit.isDisposed, "Unit not disposed: " ~ unit.className);
+    }
+
+    void stopDispose(SimpleUnit unit)
+    {
+        stop(unit);
+        dispose(unit);
+    }
+
+    void stopDisposeSafe(SimpleUnit unit)
+    {
+        assert(unit);
+        if (unit.isRunning)
+        {
+            stop(unit);
+        }
+        if (!unit.isDisposed)
+        {
+            dispose(unit);
+        }
+    }
+
     unittest
     {
         import std.exception : assertThrown;
 
-        class ImmComponent : SimpleUnit {
-            this(UnitState state) immutable {
+        class ImmComponent : SimpleUnit
+        {
+            this(UnitState state) immutable
+            {
                 super(state);
             }
         }
@@ -142,7 +221,7 @@ class SimpleUnit : Unitable
         const immcomp2 = new const ImmComponent(UnitState.stop);
         assert(immcomp2.isStopped);
 
-         class TestComponent : SimpleUnit
+        class TestComponent : SimpleUnit
         {
         }
 

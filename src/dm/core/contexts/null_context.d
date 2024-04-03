@@ -1,6 +1,7 @@
 module dm.core.contexts.null_context;
 
 import dm.core.contexts.apps.app_context : AppContext;
+import dm.core.contexts.platforms.platform_context : PlatformContext;
 import dm.core.contexts.context : Context;
 
 /**
@@ -8,8 +9,8 @@ import dm.core.contexts.context : Context;
  */
 class NullContext : Context
 {
-    this()
+    this() immutable pure @safe
     {
-        super(new AppContext);
+        super(new AppContext, new PlatformContext);
     }
 }

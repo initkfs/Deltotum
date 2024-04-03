@@ -7,6 +7,7 @@ import dm.kit.factories.creation : Creation;
 import dm.kit.interacts.interact : Interact;
 import dm.kit.factories.creation_images : CreationImages;
 import dm.kit.factories.creation_shapes : CreationShapes;
+import dm.core.units.simple_unit: SimpleUnit;
 
 import std.stdio;
 
@@ -82,6 +83,8 @@ class SceneManager : Scene
         scene.interact = interact;
         scene.creation = creation;
     }
+
+    alias create = SimpleUnit.create;
 
     void create(Scene scene)
     {

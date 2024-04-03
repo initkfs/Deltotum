@@ -14,18 +14,30 @@ class UniComposite(C : UniComponent) : C
         C[] _units;
     }
 
-    void buildChildComponent(C component)
+    void buildChild(C component)
     {
         buildFromParent(component, this);
         addUnit(component);
     }
 
-    void buildChildComponents(C[] components)
+    void buildChild(C[] components)
     {
         foreach (component; components)
         {
-            buildChildComponent(component);
+            buildChild(component);
         }
+    }
+
+    void buildInitChild(C component)
+    {
+        buildInit(component);
+        addUnit(component);
+    }
+
+    void buildInitRunChild(C component)
+    {
+        buildInitChild(component);
+        run(component);
     }
 
     bool addUnit(C unit)

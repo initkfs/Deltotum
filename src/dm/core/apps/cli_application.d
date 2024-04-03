@@ -7,6 +7,7 @@ import dm.core.units.components.uni_component : UniComponent;
 import dm.core.configs.config : Config;
 import dm.core.clis.cli : Cli;
 import dm.core.clis.printers.cli_printer : CliPrinter;
+import dm.core.contexts.platforms.platform_context: PlatformContext;
 import dm.core.contexts.context : Context;
 import dm.core.supports.support : Support;
 import dm.core.contexts.apps.app_context : AppContext;
@@ -274,7 +275,8 @@ class CliApplication : SimpleUnit
         }
 
         const appContext = newAppContext(curDir, dataDirectory, userDir, isDebugMode, isSilentMode);
-        auto context = newContext(appContext);
+        const platformContext = newPlatformContext;
+        auto context = newContext(appContext, platformContext);
         return context;
     }
 
@@ -283,9 +285,13 @@ class CliApplication : SimpleUnit
         return new AppContext(curDir, dataDir, userDir, isDebugMode, isSilentMode);
     }
 
-    Context newContext(const AppContext appContext)
+    PlatformContext newPlatformContext(){
+        return new PlatformContext;
+    }
+
+    Context newContext(const AppContext appContext, const PlatformContext platformContext)
     {
-        return new Context(appContext);
+        return new Context(appContext, platformContext);
     }
 
     Config newConfigFromFile(string configFile)
