@@ -32,7 +32,7 @@ class UniComponent : SimpleUnit
     bool isComponentCreated;
     bool isComponentDisposed;
 
-    private
+    protected
     {
         @Service Context _context;
         @Service Logger _logger;
