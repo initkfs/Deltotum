@@ -15,8 +15,9 @@ abstract class Config
 
     abstract
     {
-        void load();
-        void save();
+        bool load();
+        bool save();
+        bool clear();
 
         bool containsKey(const string key) const;
 
@@ -52,7 +53,7 @@ abstract class Config
         return mustBeValue;
     }
 
-    void setPositiveLong(string key, long value)
+    bool setPositiveLong(string key, long value)
     {
         if (value <= 0)
         {
@@ -61,7 +62,7 @@ abstract class Config
             throw new ConfigValueIncorrectException(format(
                     "Expected positive long value for config with key '%s', but received %s", key, value));
         }
-        setLong(key, value);
+        return setLong(key, value);
     }
 
     Nullable!double getFiniteDouble(string key) const
@@ -85,7 +86,7 @@ abstract class Config
         return mustBeValue;
     }
 
-    void setFiniteDouble(string key, double value)
+    bool setFiniteDouble(string key, double value)
     {
         import std.math.traits : isFinite;
 
@@ -96,7 +97,7 @@ abstract class Config
             throw new ConfigValueIncorrectException(format(
                     "Expected finite double for config with key '%s', but received %s", key, value));
         }
-        setDouble(key, value);
+        return setDouble(key, value);
     }
 
     Nullable!string getNotEmptyString(string key) const
@@ -114,7 +115,7 @@ abstract class Config
         return mustBeString;
     }
 
-    void setNotEmptyString(string key, string value)
+    bool setNotEmptyString(string key, string value)
     {
         import std.string : strip;
 
@@ -123,6 +124,6 @@ abstract class Config
             throw new ConfigValueIncorrectException(
                 "String must not be empty for config with key: " ~ key);
         }
-        setString(key, value);
+        return setString(key, value);
     }
 }

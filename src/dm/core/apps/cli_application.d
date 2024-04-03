@@ -319,11 +319,13 @@ class CliApplication : SimpleUnit
         return new ConfigAggregator(forConfigs);
     }
 
-    Config newEnvConfig()
+    Config newAAConstConfig()
     {
-        import dm.core.configs.environments.env_config : EnvConfig;
+        import dm.core.configs.aa_const_config : AAConstConfig;
+        import std.process: environment;
 
-        return new EnvConfig;
+        const envAA = environment.toAA;
+        return new AAConstConfig!string(envAA);
     }
 
     protected Config createConfig(Context context)
@@ -371,7 +373,7 @@ class CliApplication : SimpleUnit
 
         }
 
-        auto envConfig = newEnvConfig;
+        auto envConfig = newAAConstConfig;
         uservices.cli.printIfNotSilent("Create config from environment");
         envConfig.isThrowOnNotExistentKey = isStrictConfigs;
         envConfig.isThrowOnSetValueNotExistentKey = isStrictConfigs;
@@ -417,11 +419,11 @@ class CliApplication : SimpleUnit
         auto config = newConfigAggregator(configs);
         config.isThrowOnNotExistentKey = isStrictConfigs;
         config.isThrowOnSetValueNotExistentKey = isStrictConfigs;
-        config.load;
+        immutable bool isLoad = config.load;
         import std.format : format;
 
-        uservices.cli.printIfNotSilent(format("Load %s configs", configs
-                .length));
+        uservices.cli.printIfNotSilent(format("Load %s configs: %s", configs
+                .length, isLoad));
         return config;
     }
 

@@ -11,7 +11,8 @@ import std.typecons : Nullable;
 */
 class ConfigAggregator : Config
 {
-    private
+
+    protected
     {
         Config[] _configs;
     }
@@ -26,20 +27,60 @@ class ConfigAggregator : Config
         this._configs = configs;
     }
 
-    override void load()
+    override bool load()
     {
+        if (_configs.length == 0)
+        {
+            return false;
+        }
+
+        clear;
+
+        bool isLoad = true;
         foreach (config; _configs)
         {
-            config.load;
+            isLoad &= config.load;
         }
+        return isLoad;
     }
 
-    override void save()
+    override bool save()
     {
+        if (_configs.length == 0)
+        {
+            return false;
+        }
+
+        bool isSave = true;
         foreach (config; _configs)
         {
-            config.save;
+            isSave &= config.save;
         }
+        return isSave;
+    }
+
+    override bool clear()
+    {
+        _configs = null;
+        return true;
+    }
+
+    bool addConfig(Config config)
+    {
+        foreach (c; _configs)
+        {
+            if (c is config)
+            {
+                return false;
+            }
+        }
+        _configs ~= config;
+        return true;
+    }
+
+    size_t length()
+    {
+        return _configs.length;
     }
 
     override bool containsKey(string key) const
@@ -186,7 +227,7 @@ unittest
     import std.exception : assertThrown;
 
     //TODO add simple implementation
-    import dm.core.configs.environments.env_config : EnvConfig;
+    import dm.core.configs.aa_const_config : AAConstConfig;
 
     enum keyName = "key";
 
@@ -203,4 +244,7 @@ unittest
     assertThrown(cMut.setString(keyName, "value"));
     cMut.isThrowOnSetValueNotExistentKey = false;
     assert(!cMut.setString(keyName, "value"));
+
+    assert(cMut.clear);
+    assert(cMut.length == 0);
 }
