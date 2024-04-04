@@ -25,6 +25,11 @@ class PropertyConfig : Config
             string key;
             string value;
             bool isEmpty;
+
+            inout(Line) dup() inout
+            {
+                return Line(line, key, value, isEmpty);
+            }
         }
 
         Line*[string] keyIndex;
@@ -34,6 +39,15 @@ class PropertyConfig : Config
     this(string configPath = null) pure @safe
     {
         this._configPath = configPath;
+    }
+
+    this(string configPath,
+        immutable Line*[string] keyIndex,
+        immutable(Line*)[] lines) immutable pure @safe
+    {
+        this._configPath = configPath;
+        this.keyIndex = keyIndex;
+        this.lines = lines;
     }
 
     override bool load()
@@ -310,7 +324,7 @@ class PropertyConfig : Config
         return _configPath;
     }
 
-    override string toString() const
+    override string toText() const
     {
         if (lines.length == 0)
         {
@@ -343,6 +357,32 @@ class PropertyConfig : Config
         }
 
         return result[];
+    }
+
+    override string toString() const
+    {
+        return toText;
+    }
+
+    override immutable(PropertyConfig) idup() const
+    {
+        immutable(Line*)[] newLines;
+        foreach (l; lines)
+        {
+            newLines ~= new immutable Line(l.line, l.key, l.value, l.isEmpty);
+        }
+
+        Line*[string] newKeyIndex;
+        foreach (key, l; keyIndex)
+        {
+            newKeyIndex[key] = new Line(l.line, l.key, l.value, l.isEmpty);
+        }
+        import std.exception : assumeUnique;
+
+        immutable immNewKeyIndex = newKeyIndex.assumeUnique;
+
+        immutable config = new immutable PropertyConfig(_configPath, immNewKeyIndex, newLines);
+        return config;
     }
 }
 
@@ -409,4 +449,15 @@ value4=true";
     auto bV4 = config.getBool("value4");
     assert(!bV4.isNull);
     assert(bV4 == false);
+
+    immutable immConfig = config.idup;
+    assert(immConfig.containsKey("value1"));
+
+    auto immVal1 = config.getLong("value1");
+    assert(!immVal1.isNull);
+    assert(immVal1 == 2, immVal1.toString);
+
+    auto immVal3 = config.getDouble("value3");
+    assert(!immVal3.isNull);
+    assert(immVal3 == 10.5, immVal3.toString);
 }

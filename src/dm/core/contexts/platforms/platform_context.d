@@ -23,4 +23,9 @@ class PlatformContext
         Thread.sleep(dur!("msecs")(delayMs));
     }
 
+    immutable(PlatformContext) idup() immutable
+    {
+        return new immutable PlatformContext;
+    }
+
 }

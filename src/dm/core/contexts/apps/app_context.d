@@ -49,6 +49,11 @@ class AppContext
     {
         return _userDir ? Nullable!string(_userDir) : Nullable!string.init;
     }
+
+    immutable(AppContext) idup() immutable
+    {
+        return new immutable AppContext(_workDir, _dataDir, _userDir, isDebug, isSilent);
+    }
 }
 
 unittest

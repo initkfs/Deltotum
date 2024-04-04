@@ -99,6 +99,15 @@ class NullConfig : Config
     {
         return false;
     }
+
+    override string toText() const {
+        return "";
+    }
+
+    override immutable(NullConfig) idup() const
+    {
+        return new immutable NullConfig;
+    }
 }
 
 unittest

@@ -330,7 +330,7 @@ class CliApplication : SimpleUnit
         import dm.core.configs.aa_const_config : AAConstConfig;
         import std.process: environment;
 
-        const envAA = environment.toAA;
+        auto envAA = environment.toAA;
         return new AAConstConfig!string(envAA);
     }
 

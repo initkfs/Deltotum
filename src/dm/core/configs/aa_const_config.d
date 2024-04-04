@@ -13,14 +13,19 @@ import std.conv : to;
  */
 class AAConstConfig(V = string) : Config
 {
-    const V[string] config;
+    V[string] config;
 
-    this(const V[string] config) pure @safe
+    this(V[string] config) pure @safe
     {
         this.config = config;
     }
 
-    this(immutable V[string] config) immutable pure @safe
+    this(const V[string] config) const pure @safe
+    {
+        this.config = config;
+    }
+
+    this(immutable V[string] config) immutable
     {
         this.config = config;
     }
@@ -166,6 +171,20 @@ class AAConstConfig(V = string) : Config
     T[] getList(T)(string key) const
     {
         throw new Exception("Non supported yet");
+    }
+
+    override string toText() const
+    {
+        import std.conv : to;
+
+        return config.to!string;
+    }
+
+    override immutable(AAConstConfig) idup() const
+    {
+        //TODO unsafe hack        
+        immutable newConfig = cast(immutable(V[string])) config;
+        return new immutable AAConstConfig(newConfig);
     }
 }
 

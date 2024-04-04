@@ -18,6 +18,7 @@ abstract class Config
         bool load();
         bool save();
         bool clear();
+        string toText() const;
 
         bool containsKey(const string key) const;
 
@@ -32,6 +33,8 @@ abstract class Config
 
         Nullable!double getDouble(string key) const;
         bool setDouble(string key, double value);
+
+        immutable(Config) idup() const;
     }
 
     Nullable!long getPositiveLong(string key) const

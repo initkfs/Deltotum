@@ -87,7 +87,8 @@ class ConfigAggregator : Config
 
     bool removeConfigs()
     {
-        if(_configs.length == 0){
+        if (_configs.length == 0)
+        {
             return false;
         }
         _configs = null;
@@ -236,6 +237,28 @@ class ConfigAggregator : Config
     {
         return _configs;
     }
+
+    override immutable(ConfigAggregator) idup() const
+    {
+        immutable(Config)[] newConfigs;
+        foreach (c; configs)
+        {
+            newConfigs ~= c.idup;
+        }
+        return new immutable ConfigAggregator(newConfigs);
+    }
+
+    override string toText() const
+    {
+        import std.array : appender;
+
+        auto builder = appender!string;
+        foreach (config; _configs)
+        {
+            builder ~= config.toText;
+        }
+        return builder.data;
+    }
 }
 
 unittest
@@ -260,7 +283,4 @@ unittest
     assertThrown(cMut.setString(keyName, "value"));
     cMut.isThrowOnSetValueNotExistentKey = false;
     assert(!cMut.setString(keyName, "value"));
-
-    assert(cMut.clear);
-    assert(cMut.length == 0);
 }

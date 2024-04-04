@@ -68,6 +68,12 @@ class Cli
     {
         printOptions("Usage:", getoptResult);
     }
+
+    immutable(Cli) idup()
+    {
+        //TODO cli printer
+        return new immutable Cli(cliArgs.idup, null, isSilentMode);
+    }
 }
 
 unittest
@@ -75,7 +81,7 @@ unittest
     import dm.core.clis.printers.cli_printer : CliPrinter;
 
     immutable string[] args = ["bin", "-d", "data", "-b"];
-   
+
     auto mutCli = new Cli(args.dup, new CliPrinter);
     mutCli.cliArgs = null;
     assert(mutCli.cliArgs.length == 0);
@@ -83,8 +89,9 @@ unittest
     immutable immCli = new immutable Cli(args, new immutable CliPrinter);
     assert(immCli.cliArgs.length == args.length);
     assert(typeid(immCli.cliArgs) == typeid(args));
-    
-    bool bArg; string strArg;
+
+    bool bArg;
+    string strArg;
     immCli.parse("d", &strArg, "b", &bArg);
     assert(bArg);
     assert(strArg == "data");

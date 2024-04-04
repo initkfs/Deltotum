@@ -25,6 +25,14 @@ class Context
         this.appContext = appContext;
         this.platformContext = platformContext;
     }
+
+    immutable(Context) idup() immutable
+    {
+        assert(appContext);
+        assert(platformContext);
+
+        return new immutable Context(appContext.idup, platformContext.idup);
+    }
 }
 
 unittest
