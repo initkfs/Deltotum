@@ -45,9 +45,11 @@ class SdlClipboard : SdlObject, ComClipboard
         return ComResult.success;
     }
 
-    ComResult setText(const char* text)
+    ComResult setText(const(char)[] text)
     {
-        const zeroOrErrorCode = SDL_SetClipboardText(text);
+        import std.string: toStringz;
+
+        const zeroOrErrorCode = SDL_SetClipboardText(text.toStringz);
         return ComResult(zeroOrErrorCode);
     }
 

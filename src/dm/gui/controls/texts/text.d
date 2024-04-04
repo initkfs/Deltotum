@@ -168,20 +168,20 @@ class Text : Control
             };
 
             onKeyDown ~= (ref e) {
-                import dm.com.inputs.keyboards.key_name : KeyName;
+                import dm.com.inputs.com_keyboard : ComKeyName;
 
                 if (!cursor.isVisible)
                 {
                     return;
                 }
 
-                if (e.keyName == KeyName.RETURN && onEnter)
+                if (e.keyName == ComKeyName.RETURN && onEnter)
                 {
                     onEnter(e);
                     return;
                 }
 
-                switch (e.keyName) with (KeyName)
+                switch (e.keyName) with (ComKeyName)
                 {
                     case LEFT:
                         moveCursorLeft;

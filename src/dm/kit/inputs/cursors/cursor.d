@@ -1,6 +1,6 @@
 module dm.kit.inputs.cursors.cursor;
 
-import dm.com.inputs.cursors.com_cursor : ComCursor, ComSystemCursorType;
+import dm.com.inputs.com_cursor : ComCursor, ComSystemCursorType;
 
 import dm.math.vector2 : Vector2;
 

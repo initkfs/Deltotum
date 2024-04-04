@@ -113,7 +113,7 @@ class ButtonBase : Labeled
 
         if (isCancel)
         {
-            import dm.com.inputs.keyboards.key_name : KeyName;
+            import dm.com.inputs.com_keyboard : ComKeyName;
 
             onKeyDown ~= (ref e) {
                 if (isDisabled)
@@ -121,7 +121,7 @@ class ButtonBase : Labeled
                     return;
                 }
 
-                if (isFocus && e.keyName == KeyName.ESCAPE)
+                if (isFocus && e.keyName == ComKeyName.ESCAPE)
                 {
                     if (onCancel)
                     {
@@ -133,7 +133,7 @@ class ButtonBase : Labeled
 
         if (isDefault)
         {
-            import dm.com.inputs.keyboards.key_name : KeyName;
+            import dm.com.inputs.com_keyboard : ComKeyName;
 
             onKeyDown ~= (ref e) {
                 if (isDisabled)
@@ -141,7 +141,7 @@ class ButtonBase : Labeled
                     return;
                 }
 
-                if (isFocus && e.keyName == KeyName.RETURN)
+                if (isFocus && e.keyName == ComKeyName.RETURN)
                 {
                     if (onDefault)
                     {

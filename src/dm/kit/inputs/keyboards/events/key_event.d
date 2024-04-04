@@ -4,8 +4,8 @@ import dm.core.events.event_base : EventBase;
 import dm.kit.events.kit_event_type: KitEventType;
 import dm.core.utils.type_util : enumNameByIndex;
 
-import dm.com.inputs.keyboards.key_name : KeyName;
-import dm.com.inputs.keyboards.key_modifier_info : KeyModifierInfo;
+import dm.com.inputs.com_keyboard : ComKeyName;
+import dm.com.inputs.com_keyboard : KeyModifierInfo;
 
 /**
  * Authors: initkfs
@@ -21,11 +21,11 @@ struct KeyEvent
         keyUp
     }
 
-    KeyName keyName;
+    ComKeyName keyName;
     KeyModifierInfo keyMod;
     int keyCode;
 
-    this(int event, int ownerId, KeyName keyName, KeyModifierInfo keyModInfo, int keyCode)
+    this(int event, int ownerId, ComKeyName keyName, KeyModifierInfo keyModInfo, int keyCode)
     {
         this.type = KitEventType.key;
         this.event = event;

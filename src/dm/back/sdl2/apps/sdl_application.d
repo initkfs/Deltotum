@@ -194,7 +194,7 @@ class SdlApplication : ContinuouslyApplication
             import dm.back.sdl2.sdl_cursor : SDLCursor;
 
             auto sdlCursor = new SDLCursor;
-            if (auto err = sdlCursor.fromDefaultCursor)
+            if (auto err = sdlCursor.fromDefault)
             {
                 uservices.logger.errorf("Cursor creating error. ", err);
             }

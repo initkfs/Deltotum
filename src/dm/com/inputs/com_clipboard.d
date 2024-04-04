@@ -8,7 +8,9 @@ import dm.com.lifecycles.destroyable : Destroyable;
  */
 interface ComClipboard : Destroyable
 {
-    ComResult getText(out string newText);
+nothrow:
+
     ComResult hasText(out bool isHasText);
-    ComResult setText(const char* text);
+    ComResult getText(out string newText);
+    ComResult setText(const(char)[] text);
 }

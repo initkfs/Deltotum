@@ -125,14 +125,14 @@ class SdlEventProcessor : KitEventProcessor!(SDL_Event*)
             break;
         }
 
-        import dm.com.inputs.keyboards.key_name : KeyName;
+        import dm.com.inputs.com_keyboard : ComKeyName;
 
         const SDL_Keycode keyCode = event.key.keysym.sym;
         const keyName = keyboard.keyCodeToKeyName(keyCode);
 
         const mod = event.key.keysym.mod;
 
-        import dm.com.inputs.keyboards.key_modifier_info : KeyModifierInfo;
+        import dm.com.inputs.com_keyboard : KeyModifierInfo;
 
         KeyModifierInfo modInfo = KeyModifierInfo(
             (mod & SDL_Keymod.KMOD_LSHIFT) == SDL_Keymod.KMOD_LSHIFT,

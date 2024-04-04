@@ -63,7 +63,7 @@ class TextArea : HBox
         textView.isEditable = true;
 
         textView.onPointerEntered ~= (ref e) {
-            import dm.com.inputs.cursors.com_cursor : ComSystemCursorType;
+            import dm.com.inputs.com_cursor : ComSystemCursorType;
 
             input.systemCursor.change(ComSystemCursorType.ibeam);
         };
@@ -95,16 +95,16 @@ class TextArea : HBox
         };
 
         onKeyDown ~= (ref key) {
-            import dm.com.inputs.keyboards.key_name : KeyName;
+            import dm.com.inputs.com_keyboard : ComKeyName;
 
-            if (key.keyName == KeyName.BACKSPACE && textView.text.length > 0)
+            if (key.keyName == ComKeyName.BACKSPACE && textView.text.length > 0)
             {
                 textView.text = textView.text[0 .. $ - 1];
                 key.isConsumed = true;
                 return;
             }
 
-            if (key.keyName == KeyName.RETURN)
+            if (key.keyName == ComKeyName.RETURN)
             {
                 if (key.keyMod.isCtrl && onCaret !is null)
                 {
@@ -116,7 +116,7 @@ class TextArea : HBox
                 textView.text = textView.text ~ '\n';
             }
 
-            if (key.keyMod.isCtrl && key.keyName == KeyName.c)
+            if (key.keyMod.isCtrl && key.keyName == ComKeyName.c)
             {
                 import std.conv : to;
 
@@ -126,7 +126,7 @@ class TextArea : HBox
                 }
             }
 
-            if (key.keyMod.isCtrl && key.keyName == KeyName.v)
+            if (key.keyMod.isCtrl && key.keyName == ComKeyName.v)
             {
                 import std.conv : to;
 

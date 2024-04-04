@@ -4,7 +4,7 @@ module dm.back.sdl2.sdl_cursor;
 version(SdlBackend):
 // dfmt on
 
-import dm.com.inputs.cursors.com_cursor : ComCursor, ComSystemCursorType;
+import dm.com.inputs.com_cursor : ComCursor, ComSystemCursorType;
 
 import dm.back.sdl2.base.sdl_object_wrapper : SdlObjectWrapper;
 import dm.com.platforms.results.com_result : ComResult;
@@ -80,7 +80,7 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor, ComCursor
         }
     }
 
-    ComResult fromDefaultCursor() @nogc nothrow
+    ComResult fromDefault() @nogc nothrow
     {
         SDL_Cursor* cursorPtr;
         if (const err = defaultCursorPtr(cursorPtr))

@@ -1,4 +1,4 @@
-module dm.com.inputs.cursors.com_cursor;
+module dm.com.inputs.com_cursor;
 
 import dm.com.platforms.results.com_result : ComResult;
 import dm.com.lifecycles.destroyable : Destroyable;
@@ -25,10 +25,13 @@ enum ComSystemCursorType
  */
 interface ComCursor : Destroyable
 {
-    ComResult fromDefaultCursor() @nogc nothrow;
-    ComResult set() @nogc nothrow;
-    ComResult redraw() @nogc nothrow;
-    ComResult getPos(out int x, out int y) @nogc nothrow;
-    ComResult show() @nogc nothrow;
-    ComResult hide() @nogc nothrow;
+nothrow:
+
+    ComResult fromDefault();
+    ComResult show();
+    ComResult hide();
+    ComResult set();
+    ComResult redraw();
+    ComResult getPos(out int x, out int y);
+
 }

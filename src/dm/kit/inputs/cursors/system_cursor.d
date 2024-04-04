@@ -1,7 +1,7 @@
 module dm.kit.inputs.cursors.system_cursor;
 
 import dm.kit.inputs.cursors.cursor: Cursor;
-import dm.com.inputs.cursors.com_cursor : ComCursor;
+import dm.com.inputs.com_cursor : ComCursor;
 
 /**
  * Authors: initkfs

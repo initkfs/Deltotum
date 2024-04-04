@@ -31,7 +31,7 @@ class Clipboard
     {
         import std.string : toStringz;
 
-        const err = clipboard.setText(text.toStringz);
+        const err = clipboard.setText(text);
         if (err)
         {
             //logging?
