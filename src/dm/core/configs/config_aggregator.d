@@ -34,8 +34,6 @@ class ConfigAggregator : Config
             return false;
         }
 
-        clear;
-
         bool isLoad = true;
         foreach (config; _configs)
         {
@@ -61,8 +59,17 @@ class ConfigAggregator : Config
 
     override bool clear()
     {
-        _configs = null;
-        return true;
+        if (_configs.length == 0)
+        {
+            return false;
+        }
+
+        bool isClear = true;
+        foreach (config; _configs)
+        {
+            isClear &= config.clear;
+        }
+        return isClear;
     }
 
     bool addConfig(Config config)
@@ -75,6 +82,15 @@ class ConfigAggregator : Config
             }
         }
         _configs ~= config;
+        return true;
+    }
+
+    bool removeConfigs()
+    {
+        if(_configs.length == 0){
+            return false;
+        }
+        _configs = null;
         return true;
     }
 

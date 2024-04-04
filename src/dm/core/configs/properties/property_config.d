@@ -136,7 +136,10 @@ class PropertyConfig : Config
 
         enforce(key && key.length > 0, "Config key must not be empty");
 
-        return (key in keyIndex).to!(inout(Line**));
+        auto keyPtr = key in keyIndex;
+        assert(keyPtr);
+
+        return keyPtr.to!(inout(Line**));
     }
 
     T getValue(T)(string key) const
@@ -370,6 +373,11 @@ value4=true";
             .length));
 
     assert(config.toString == configText, text("==>", toStringResult, "<=="));
+
+    assert(config.containsKey("value1"));
+    assert(config.containsKey("value2"));
+    assert(config.containsKey("value3"));
+    assert(config.containsKey("value4"));
 
     auto val1 = config.getLong("value1");
     assert(!val1.isNull);

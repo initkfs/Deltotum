@@ -1,6 +1,6 @@
 module dm.kit.windows.window;
 
-import dm.kit.apps.components.graphics_component : GraphicsComponent;
+import dm.kit.components.graphics_component : GraphicsComponent;
 import dm.com.graphics.com_window : ComWindow;
 import dm.math.rect2d : Rect2d;
 import dm.math.vector2 : Vector2;

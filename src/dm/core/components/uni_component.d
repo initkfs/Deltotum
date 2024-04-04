@@ -1,7 +1,7 @@
-module dm.core.units.components.uni_component;
+module dm.core.components.uni_component;
 
-import dm.core.units.simple_unit : SimpleUnit;
-import dm.core.units.components.attributes : Service;
+import dm.core.components.units.simple_unit : SimpleUnit;
+import dm.core.components.attributes : Service;
 import dm.core.configs.config : Config;
 import dm.core.clis.cli : Cli;
 import dm.core.contexts.context : Context;

@@ -1,6 +1,6 @@
-module dm.core.units.services.application_unit;
+module dm.core.components.units.services.application_unit;
 
-import dm.core.units.services.loggable_unit : LoggableUnit;
+import dm.core.components.units.services.loggable_unit : LoggableUnit;
 import dm.core.contexts.context : Context;
 import dm.core.configs.config : Config;
 

@@ -1,6 +1,6 @@
 module dm.core.resources.resource;
 
-import dm.core.units.services.loggable_unit : LoggableUnit;
+import dm.core.components.units.services.loggable_unit : LoggableUnit;
 
 import std.logger : Logger;
 import std.typecons : Nullable;

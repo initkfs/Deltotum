@@ -1,6 +1,6 @@
 module dm.core.locators.service_locator;
 
-import dm.core.units.services.loggable_unit : LoggableUnit;
+import dm.core.components.units.services.loggable_unit : LoggableUnit;
 
 import std.logger.core : Logger;
 import std.variant;

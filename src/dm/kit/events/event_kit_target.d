@@ -1,6 +1,6 @@
 module dm.kit.events.event_kit_target;
 
-import dm.kit.apps.components.window_component : WindowComponent;
+import dm.kit.components.window_component : WindowComponent;
 import dm.core.events.event_target : EventTarget;
 
 import dm.core.apps.events.app_event : AppEvent;

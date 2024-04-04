@@ -39,7 +39,7 @@ mixin template ToString()
         enum fieldsCount = fields.length;
 
         import std.traits : isDelegate, hasUDA, isPointer;
-        import dm.core.units.components.attributes : Service;
+        import dm.core.components.attributes : Service;
         import dm.core.utils.type_util : hasOverloads;
         import dm.core.utils.tostring : ToStringExclude;
 

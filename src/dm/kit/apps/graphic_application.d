@@ -6,9 +6,9 @@ import dm.core.contexts.context : Context;
 import dm.core.apps.app_exit : AppExit;
 import dm.core.apps.cli_application : CliApplication;
 import dm.core.resources.resource : Resource;
-import dm.kit.apps.components.graphics_component : GraphicsComponent;
-import dm.kit.apps.components.window_component : WindowComponent;
-import dm.core.units.components.uni_component : UniComponent;
+import dm.kit.components.graphics_component : GraphicsComponent;
+import dm.kit.components.window_component : WindowComponent;
+import dm.core.components.uni_component : UniComponent;
 import dm.kit.windows.window_manager : WindowManager;
 import dm.kit.apps.caps.cap_graphics : CapGraphics;
 import dm.kit.graphics.graphics : Graphics;
@@ -176,7 +176,7 @@ abstract class GraphicApplication : CliApplication
 
     protected void buildPartially(GraphicsComponent component)
     {
-        import dm.core.units.components.uni_component : UniComponent;
+        import dm.core.components.uni_component : UniComponent;
         import dm.core.utils.type_util : castSafe;
 
         super.build(component.castSafe!UniComponent);

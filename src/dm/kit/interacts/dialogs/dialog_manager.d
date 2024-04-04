@@ -1,7 +1,7 @@
 module dm.kit.interacts.dialogs.dialog_manager;
 
 import dm.kit.windows.window : Window;
-import dm.kit.apps.components.window_component: WindowComponent;
+import dm.kit.components.window_component: WindowComponent;
 
 import dm.kit.scenes.scene : Scene;
 

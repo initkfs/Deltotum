@@ -1,6 +1,6 @@
 module dm.math.random;
 
-import dm.core.units.services.loggable_unit : LoggableUnit;
+import dm.core.components.units.services.loggable_unit : LoggableUnit;
 import dm.math.vector2 : Vector2;
 import std.random : uniform, unpredictableSeed, StdRandom = Random;
 import std.range.primitives;

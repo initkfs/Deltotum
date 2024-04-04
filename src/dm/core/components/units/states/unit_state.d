@@ -1,4 +1,4 @@
-module dm.core.units.states.unit_state;
+module dm.core.components.units.states.unit_state;
 /**
  * Authors: initkfs
  */

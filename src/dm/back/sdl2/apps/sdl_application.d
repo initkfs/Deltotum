@@ -9,7 +9,7 @@ import dm.core.contexts.context : Context;
 import dm.core.apps.app_exit : AppExit;
 import dm.core.utils.provider : Provider;
 import dm.kit.apps.continuously_application : ContinuouslyApplication;
-import dm.kit.apps.components.graphics_component : GraphicsComponent;
+import dm.kit.components.graphics_component : GraphicsComponent;
 import dm.kit.events.kit_event_manager : KitEventManager;
 import dm.back.sdl2.events.sdl_event_processor : SdlEventProcessor;
 import dm.kit.scenes.scene_manager : SceneManager;

@@ -1,4 +1,4 @@
-module dm.core.units.states.illegal_unit_state_exception;
+module dm.core.components.units.states.illegal_unit_state_exception;
 
 import std.exception : basicExceptionCtors;
 

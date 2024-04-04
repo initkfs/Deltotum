@@ -1,6 +1,6 @@
-module dm.core.units.services.loggable_unit;
+module dm.core.components.units.services.loggable_unit;
 
-import dm.core.units.simple_unit : SimpleUnit;
+import dm.core.components.units.simple_unit : SimpleUnit;
 
 import std.logger.core : Logger;
 

@@ -534,7 +534,7 @@ class Sprite : EventKitTarget
 
     }
 
-    import dm.kit.apps.components.window_component : WindowComponent;
+    import dm.kit.components.window_component : WindowComponent;
 
     alias build = WindowComponent.build;
 

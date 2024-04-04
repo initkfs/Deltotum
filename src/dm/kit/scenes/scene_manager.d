@@ -1,13 +1,13 @@
 module dm.kit.scenes.scene_manager;
 
-import dm.kit.apps.components.window_component : WindowComponent;
+import dm.kit.components.window_component : WindowComponent;
 import dm.kit.scenes.scene : Scene;
 
 import dm.kit.factories.creation : Creation;
 import dm.kit.interacts.interact : Interact;
 import dm.kit.factories.creation_images : CreationImages;
 import dm.kit.factories.creation_shapes : CreationShapes;
-import dm.core.units.simple_unit: SimpleUnit;
+import dm.core.components.units.simple_unit: SimpleUnit;
 
 import std.stdio;
 
@@ -73,7 +73,7 @@ class SceneManager : Scene
         interact = new Interact(dialogManager);
     }
 
-    import dm.kit.apps.components.window_component : WindowComponent;
+    import dm.kit.components.window_component : WindowComponent;
 
     alias build = WindowComponent.build;
 

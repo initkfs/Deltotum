@@ -1,6 +1,6 @@
-module dm.core.units.components.null_uni_component;
+module dm.core.components.null_uni_component;
 
-import dm.core.units.components.uni_component : UniComponent;
+import dm.core.components.uni_component : UniComponent;
 import dm.core.contexts.null_context : NullContext;
 import dm.core.configs.null_config : NullConfig;
 import dm.core.clis.null_cli : NullCli;
@@ -44,7 +44,7 @@ unittest
 
     import std.traits : hasUDA;
     import dm.core.utils.type_util : hasOverloads;
-    import dm.core.units.components.attributes : Service;
+    import dm.core.components.attributes : Service;
 
     alias componentType = typeof(nc);
     static foreach (const fieldName; __traits(allMembers, componentType))
@@ -59,5 +59,5 @@ unittest
     }
 
     nc1.stopDispose(nc);
-    assert(nc1.isDisposed);
+    assert(nc.isDisposed);
 }

@@ -1,6 +1,6 @@
-module dm.core.units.services.configurable_unit;
+module dm.core.components.units.services.configurable_unit;
 
-import dm.core.units.simple_unit : SimpleUnit;
+import dm.core.components.units.simple_unit : SimpleUnit;
 
 import dm.core.configs.config : Config;
 

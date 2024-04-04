@@ -1,9 +1,9 @@
 module dm.core.apps.cli_application;
 
-import dm.core.units.simple_unit : SimpleUnit;
+import dm.core.components.units.simple_unit : SimpleUnit;
 import dm.core.apps.crashes.crash_handler : CrashHandler;
 import dm.core.apps.app_exit : AppExit;
-import dm.core.units.components.uni_component : UniComponent;
+import dm.core.components.uni_component : UniComponent;
 import dm.core.configs.config : Config;
 import dm.core.clis.cli : Cli;
 import dm.core.clis.printers.cli_printer : CliPrinter;

@@ -1,8 +1,8 @@
 module dm.kit.platforms.platform;
 
 import dm.com.platforms.com_system : ComSystem;
-import dm.core.units.services.application_unit : ApplicationUnit;
-import dm.core.units.services.loggable_unit : LoggableUnit;
+import dm.core.components.units.services.application_unit : ApplicationUnit;
+import dm.core.components.units.services.loggable_unit : LoggableUnit;
 import dm.core.contexts.context : Context;
 import dm.core.configs.config : Config;
 

@@ -1,6 +1,6 @@
 module dm.kit.timers.timer;
 
-import dm.core.units.services.loggable_unit : LoggableUnit;
+import dm.core.components.units.services.loggable_unit : LoggableUnit;
 
 import std.logger.core : Logger;
 

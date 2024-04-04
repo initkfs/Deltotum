@@ -1,8 +1,8 @@
-module dm.core.units.simple_unit;
+module dm.core.components.units.simple_unit;
 
-import dm.core.units.unitable : Unitable;
-import dm.core.units.states.illegal_unit_state_exception : IllegalUnitStateException;
-import dm.core.units.states.unit_state : UnitState;
+import dm.core.components.units.unitable : Unitable;
+import dm.core.components.units.states.illegal_unit_state_exception : IllegalUnitStateException;
+import dm.core.components.units.states.unit_state : UnitState;
 
 /**
  * Authors: initkfs

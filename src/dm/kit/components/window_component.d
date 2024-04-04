@@ -1,9 +1,9 @@
-module dm.kit.apps.components.window_component;
+module dm.kit.components.window_component;
 
-import dm.kit.apps.components.graphics_component : GraphicsComponent;
-import dm.core.units.components.uni_component: UniComponent;
+import dm.kit.components.graphics_component : GraphicsComponent;
+import dm.core.components.uni_component: UniComponent;
 
-import dm.core.units.components.attributes : Service;
+import dm.core.components.attributes : Service;
 
 import dm.kit.windows.window : Window;
 
