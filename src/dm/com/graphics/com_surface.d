@@ -6,60 +6,50 @@ import dm.com.graphics.com_blend_mode : ComBlendMode;
 
 import dm.math.rect2d : Rect2d;
 
+import std.typecons : Tuple;
+
 /**
  * Authors: initkfs
  */
 interface ComSurface : Destroyable
 {
-    ComResult createRGBSurface(double width, double height);
+    ComResult getPixels(
+        scope bool delegate(size_t, size_t, ubyte, ubyte, ubyte, ubyte) onXYRGBAIsContinue
+    );
 
-    ComResult createRGBSurface(uint flags, int width, int height, int depth = 32,
+    ComResult setPixels(
+        scope bool delegate(size_t, size_t, out Tuple!(ubyte, ubyte, ubyte, ubyte)) onXYRGBAIsContinue
+    );
+
+nothrow:
+
+    ComResult createRGB(int width, int height);
+    ComResult createRGB(uint flags, int width, int height, int depth = 32,
         uint rmask = 0, uint gmask = 0, uint bmask = 0, uint amask = 0);
-
-    ComResult createRGBSurfaceFrom(void* pixels, int width, int height, int depth, int pitch,
+    ComResult createRGB(void* pixels, int width, int height, int depth, int pitch,
         uint rmask, uint gmask, uint bmask, uint amask);
-
-    ComResult loadFromPtr(void* ptr) nothrow;
-
+    ComResult createFromPtr(void* ptr) nothrow;
     ComResult resize(int newWidth, int newHeight, out bool isResized);
-
     ComResult lock();
-
     ComResult unlock();
-
     ComResult setBlendMode(ComBlendMode mode);
     ComResult getBlendMode(out ComBlendMode mode);
-
-    inout(void*) pixels() inout @nogc nothrow @safe;
-
-    uint* getPixel(int x, int y) nothrow;
-
-    //TODO move RGBA color to math?
-    import std.typecons : Tuple;
-
-    void getPixels(scope bool delegate(size_t, size_t, ubyte, ubyte, ubyte, ubyte) onXYRGBAIsContinue);
-    void getPixels(Tuple!(ubyte, ubyte, ubyte, ubyte)[][] buff);
-    Tuple!(ubyte, ubyte, ubyte, ubyte)[][] getPixels();
-    void setPixels(Tuple!(ubyte, ubyte, ubyte, ubyte)[][] buff);
-    void setPixels(scope bool delegate(size_t, size_t, out Tuple!(ubyte, ubyte, ubyte, ubyte)) onXYRGBAIsContinue);
-
-    void setPixelRGBA(int x, int y, ubyte r, ubyte g, ubyte b, ubyte a);
-    void setPixelRGBA(uint* pixel, ubyte r, ubyte g, ubyte b, ubyte a) nothrow;
-    void getPixelRGBA(uint* pixel, out ubyte r, out ubyte g, out ubyte b, out ubyte a) nothrow;
-
-    int pitch() inout @nogc nothrow @safe;
-    uint format() inout @nogc nothrow @safe;
-
-    int width() @nogc nothrow @safe;
-    int height() @nogc nothrow @safe;
-
+    ComResult getPixel(int x, int y, out uint* pixel);
+    ComResult getPixels(out void* pixels);
+    ComResult getPixels(Tuple!(ubyte, ubyte, ubyte, ubyte)[][] buff);
+    ComResult getPixels(out Tuple!(ubyte, ubyte, ubyte, ubyte)[][] buff);
+    ComResult setPixels(Tuple!(ubyte, ubyte, ubyte, ubyte)[][] buff);
+    ComResult setPixelRGBA(int x, int y, ubyte r, ubyte g, ubyte b, ubyte a);
+    ComResult setPixelRGBA(uint* pixel, ubyte r, ubyte g, ubyte b, ubyte a);
+    ComResult getPixelRGBA(uint* pixel, out ubyte r, out ubyte g, out ubyte b, out ubyte a);
+    ComResult getPitch(out int pitch);
+    ComResult getFormat(out uint format);
+    ComResult getWidth(out int w);
+    ComResult getHeight(out int h);
     ComResult blit(Rect2d srcRect, ComSurface dst, Rect2d dstRect);
     ComResult blit(ComSurface dst, Rect2d dstRect);
     ComResult getBlitAlphaMod(out int mod);
     ComResult setBlitAlhpaMod(int mod);
-
     ComResult setPixelIsTransparent(bool isTransparent, ubyte r, ubyte g, ubyte b, ubyte a);
-
     ComResult nativePtr(out void* ptr) nothrow;
-
 }

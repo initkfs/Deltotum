@@ -1,7 +1,7 @@
 module dm.gui.controls.progress.base_radial_progress_bar;
 
 import dm.gui.controls.progress.base_progress_bar : BaseProgressBar;
-import dm.com.graphics.com_texture_scale_mode : ComTextureScaleMode;
+import dm.com.graphics.com_texture : ComTextureScaleMode;
 import dm.kit.sprites.textures.texture : Texture;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import dm.kit.sprites.sprite : Sprite;

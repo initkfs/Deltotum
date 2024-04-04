@@ -1,7 +1,7 @@
 module dm.kit.screens.single_screen;
 
 import dm.math.rect2d : Rect2d;
-import dm.com.graphics.com_screen : ComScreen, ScreenMode, ScreenDpi, ScreenOrientation;
+import dm.com.graphics.com_screen : ComScreen, ComScreenMode, ComScreenDpi, ComScreenOrientation;
 
 import std.logger.core : Logger;
 
@@ -49,22 +49,22 @@ struct SingleScreen
         return namePtr.fromStringz.idup;
     }
 
-    ScreenMode mode()
+    ComScreenMode mode()
     {
-        import dm.com.graphics.com_screen : ScreenMode, ScreenDpi;
+        import dm.com.graphics.com_screen : ComScreenMode, ComScreenDpi;
 
-        ScreenMode m;
+        ComScreenMode m;
         if (const err = nativeScreen.getMode(cast(int) index, m))
         {
             logger.errorf("Error getting screen mode, index: %s: %s", index, err.toString);
         }
 
-        return ScreenMode(m.width, m.height, m.rateHz);
+        return ComScreenMode(m.width, m.height, m.rateHz);
     }
 
-    ScreenDpi dpi()
+    ComScreenDpi dpi()
     {
-        ScreenDpi dpi;
+        ComScreenDpi dpi;
         if (const err = nativeScreen.getDPI(cast(int) index, dpi))
         {
             logger.errorf("Error getting screen dpi, index %s: %s", index, err.toString);
@@ -72,9 +72,9 @@ struct SingleScreen
         return dpi;
     }
 
-    ScreenOrientation orientation()
+    ComScreenOrientation orientation()
     {
-        ScreenOrientation result;
+        ComScreenOrientation result;
         if (const err = nativeScreen.getOrientation(cast(int) index, result))
         {
             logger.errorf("Error getting screen orientation with index %s: %s", index, err.toString);

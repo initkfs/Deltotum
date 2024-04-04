@@ -228,7 +228,7 @@ class Scene : WindowComponent
             0, 0, window.width, window.height
         );
         auto surf = graphics.comSurfaceProvider.getNew();
-        auto err = surf.createRGBSurface(window.width, window.height);
+        auto err = surf.createRGB(window.width, window.height);
         if (err)
         {
             throw new Exception(err.toString);

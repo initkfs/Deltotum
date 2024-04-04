@@ -117,7 +117,7 @@ class Window : GraphicsComponent
     int id()
     {
         int winId;
-        if (const err = nativeWindow.obtainId(winId))
+        if (const err = nativeWindow.getId(winId))
         {
             logger.error("Error obtain window id", err.toString);
         }
@@ -444,10 +444,10 @@ class Window : GraphicsComponent
         isResizable(true);
     }
 
-    int screenIndex()
+    int getScreenIndex()
     {
         size_t index;
-        if (const err = nativeWindow.screenIndex(index))
+        if (const err = nativeWindow.getScreenIndex(index))
         {
             logger.error("Error getting screen from window: ", err.toString);
             return -1;

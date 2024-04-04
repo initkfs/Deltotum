@@ -53,11 +53,9 @@ mixin template ComPtrManager(T)
         return _disposed;
     }
 
-    final void updateObject(T* newPtr)
+    final void updateObject(T* newPtr) nothrow
     {
-        import std.exception : enforce;
-
-        enforce(newPtr !is null, "New common native object pointer must not be null");
+        assert(newPtr, "New common native object pointer must not be null");
         if (ptr)
         {
             disposePtr;

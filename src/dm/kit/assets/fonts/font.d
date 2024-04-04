@@ -34,13 +34,24 @@ class Font : LoggableUnit
     void renderSurface(ComSurface fontSurface, const char* text, RGBA color = RGBA.white, RGBA background = RGBA
             .black)
     {
-        if (const fontRenderErr = font.render(fontSurface, text, color.r, color.g, color.b, color
+        if (const fontRenderErr = font.renderFont(fontSurface, text, color.r, color.g, color.b, color
                 .aByte, background.r, background.g, background.b, background.aByte))
         {
             logger.error(fontRenderErr.toString);
         }
 
-        if (fontSurface.width == 0 && fontSurface.height == 0)
+        int w, h;
+        if (const err = fontSurface.getWidth(w))
+        {
+            logger.error(err.toString);
+        }
+
+        if (const err = fontSurface.getHeight(h))
+        {
+            logger.error(err.toString);
+        }
+
+        if (w == 0 && h == 0)
         {
             import std.string : fromStringz;
 
@@ -51,7 +62,7 @@ class Font : LoggableUnit
     string fontPath()
     {
         string path;
-        if (const err = font.fontPath(path))
+        if (const err = font.getFontPath(path))
         {
             logger.error("Font path error. ", err);
         }
@@ -61,7 +72,7 @@ class Font : LoggableUnit
     size_t fonSize()
     {
         size_t size;
-        if (const err = font.fontSize(size))
+        if (const err = font.getFontSize(size))
         {
             logger.error("Font size error. ", err);
         }

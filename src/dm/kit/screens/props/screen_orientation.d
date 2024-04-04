@@ -3,7 +3,7 @@ module dm.kit.screens.props.screen_orientation;
 /**
  * Authors: initkfs
  */
-enum ScreenOrientation
+enum ComScreenOrientation
 {
     none,
     landscape,

@@ -10,7 +10,7 @@ import dm.back.sdl2.base.sdl_object_wrapper : SdlObjectWrapper;
 import dm.back.sdl2.sdl_renderer : SdlRenderer;
 import dm.com.graphics.com_surface : ComSurface;
 import dm.com.graphics.com_blend_mode : ComBlendMode;
-import dm.com.graphics.com_texture_scale_mode : ComTextureScaleMode;
+import dm.com.graphics.com_texture : ComTextureScaleMode;
 
 import dm.math.rect2d : Rect2d;
 import dm.math.flip : Flip;
@@ -52,7 +52,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         this.renderer = renderer;
     }
 
-    ComResult fromSurface(ComSurface surface) nothrow
+    ComResult createFromSurface(ComSurface surface) nothrow
     {
         if (ptr)
         {
@@ -100,7 +100,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    protected ComResult query(int* width, int* height, uint* format, SDL_TextureAccess* access) @nogc nothrow
+    protected ComResult query(int* width, int* height, uint* format, SDL_TextureAccess* access) nothrow
     {
         if (!ptr)
         {
@@ -110,7 +110,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult(zeroOrErrorCode);
     }
 
-    ComResult getFormat(out uint format) @nogc nothrow
+    ComResult getFormat(out uint format) nothrow
     {
         SDL_PixelFormat* fullFormat;
         if (const err = getFormat(fullFormat))
@@ -121,7 +121,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    protected ComResult getFormat(out SDL_PixelFormat* format) @nogc nothrow
+    protected ComResult getFormat(out SDL_PixelFormat* format) nothrow
     {
         uint formatPtr;
         if (const err = query(null, null, &formatPtr, null))
@@ -236,7 +236,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             height);
     }
 
-    ComResult lock() @nogc nothrow
+    ComResult lock() nothrow
     {
         assert(ptr);
         assert(!locked);
@@ -259,7 +259,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    ComResult getPitch(out int pitch) @nogc nothrow
+    ComResult getPitch(out int pitch) nothrow
     {
         if (!locked)
         {
@@ -279,7 +279,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    ComResult update(Rect2d rect, void* pixels, int pitch) @nogc nothrow
+    ComResult update(Rect2d rect, void* pixels, int pitch) nothrow
     {
         if (!locked)
         {
@@ -291,7 +291,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult(zeroOrErr);
     }
 
-    ComResult getPixel(uint x, uint y, out uint* pixel) @nogc nothrow
+    ComResult getPixel(uint x, uint y, out uint* pixel) nothrow
     {
         assert(locked);
         assert(pitch > 0);
@@ -351,7 +351,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return getPixelColor(pixel, r, g, b, aByte);
     }
 
-    ComResult getPixelColor(uint* ptr, out ubyte r, out ubyte g, out ubyte b, out ubyte aByte) @nogc nothrow
+    ComResult getPixelColor(uint* ptr, out ubyte r, out ubyte g, out ubyte b, out ubyte aByte) nothrow
     {
         SDL_PixelFormat* format;
         if (const formatErr = getFormat(format))
@@ -454,17 +454,6 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    ComResult changeOpacity(double opacity) nothrow
-    {
-        //TODO setColor with alpha
-        if (!ptr)
-        {
-            return ComResult.error("Texture opacity change error: texture is null");
-        }
-        const int zeroOrErrorCode = SDL_SetTextureAlphaMod(ptr, cast(ubyte)(255 * opacity));
-        return ComResult(zeroOrErrorCode);
-    }
-
     ComResult draw(Rect2d srcBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
             .none)
     {
@@ -516,7 +505,16 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult copy(out ComTexture toTexture)
     {
-        ComTexture newTexture = new SdlTexture(renderer);
+        ComTexture newTexture;
+        try
+        {
+            newTexture = new SdlTexture(renderer);
+        }
+        catch (Exception e)
+        {
+            return ComResult.error(e.msg);
+        }
+
         int width, height;
         if (const err = getSize(width, height))
         {
@@ -648,12 +646,38 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    bool isCreated() nothrow
+    ComResult isCreated(out bool created) nothrow
     {
-        return ptr !is null;
+        created = ptr !is null;
+        return ComResult.success;
     }
 
-    override protected bool disposePtr() @nogc nothrow
+    ComResult isLocked(out bool value) nothrow
+    {
+        value = locked;
+        return ComResult.success;
+    }
+
+    ComResult getOpacity(out double value) @safe pure nothrow
+    {
+        value = _opacity;
+        return ComResult.success;
+    }
+
+    ComResult setOpacity(double opacity) nothrow
+    {
+        if (!ptr)
+        {
+            return ComResult.error("Texture opacity change error: texture is null");
+        }
+
+        _opacity = opacity;
+        //TODO setColor with alpha
+        const int zeroOrErrorCode = SDL_SetTextureAlphaMod(ptr, cast(ubyte)(255 * opacity));
+        return ComResult(zeroOrErrorCode);
+    }
+
+    override protected bool disposePtr() nothrow
     {
         if (ptr)
         {
@@ -662,28 +686,4 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         }
         return false;
     }
-
-    double opacity() @safe pure nothrow
-    {
-        return _opacity;
-    }
-
-    void opacity(double opacity) nothrow
-    {
-        _opacity = opacity;
-        if (ptr)
-        {
-            if (const err = changeOpacity(_opacity))
-            {
-                //TODO logging?
-                return;
-            }
-        }
-    }
-
-    bool isLocked() nothrow
-    {
-        return locked;
-    }
-
 }

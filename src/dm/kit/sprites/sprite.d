@@ -169,7 +169,6 @@ class Sprite : EventKitTarget
         double offsetX = 0;
         double offsetY = 0;
 
-        
         bool _cached;
     }
 
@@ -1610,7 +1609,7 @@ class Sprite : EventKitTarget
             0, 0, width, height
         );
         auto surf = graphics.comSurfaceProvider.getNew();
-        auto err = surf.createRGBSurface(width, height);
+        auto err = surf.createRGB(cast(int) width, cast(int) height);
         if (err)
         {
             throw new Exception(err.toString);
@@ -1634,10 +1633,11 @@ class Sprite : EventKitTarget
         build(im);
         im.initialize;
         im.create;
-        scope(exit){
+        scope (exit)
+        {
             im.dispose;
         }
-        
+
         im.savePNG(surf, path);
     }
 
@@ -1950,8 +1950,20 @@ class Sprite : EventKitTarget
 
     RGBA[][] surfaceToBuffer(ComSurface surf)
     {
-        assert(surf.width > 0 && surf.height > 0);
-        RGBA[][] buff = new RGBA[][](surf.height, surf.width);
+        assert(surf);
+        int w, h;
+        if (const err = surf.getWidth(w))
+        {
+            throw new Exception(err.toString);
+        }
+
+        if (const err = surf.getHeight(h))
+        {
+            throw new Exception(err.toString);
+        }
+
+        assert(w > 0 && h > 0);
+        RGBA[][] buff = new RGBA[][](h, w);
         surfaceToBuffer(surf, buff);
         return buff;
     }
@@ -1960,8 +1972,16 @@ class Sprite : EventKitTarget
     {
         assert(surf);
 
-        const surfWidth = surf.width;
-        const surfHeight = surf.width;
+        int surfWidth, surfHeight;
+        if (const err = surf.getWidth(surfWidth))
+        {
+            throw new Exception(err.toString);
+        }
+
+        if (const err = surf.getHeight(surfHeight))
+        {
+            throw new Exception(err.toString);
+        }
 
         assert(surfWidth > 0 && surfHeight > 0);
         assert(buff.length >= surfHeight);
@@ -1970,10 +1990,14 @@ class Sprite : EventKitTarget
 
         assert(buff.all!(b => b.length >= surfWidth));
 
-        surf.getPixels((x, y, r, g, b, a) {
+        auto pixErr = surf.getPixels((x, y, r, g, b, a) {
             buff[y][x] = RGBA(r, g, b, RGBA.fromAByte(a));
             return true;
         });
+        if (pixErr)
+        {
+            logger.error(pixErr.toString);
+        }
     }
 
 }

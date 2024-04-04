@@ -44,7 +44,7 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
         }
     }
 
-    ComResult render(
+    ComResult renderFont(
         ComSurface targetSurface,
         const char* text,
         ubyte fr = 255, ubyte fg = 255, ubyte fb = 255, ubyte fa = 1,
@@ -66,20 +66,20 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
         }
 
         //TODO unsafe
-        if(const err = targetSurface.loadFromPtr(cast(void*) fontSurfacePtr)){
+        if(const err = targetSurface.createFromPtr(cast(void*) fontSurfacePtr)){
             return err;
         }
 
         return ComResult.success;
     }
 
-    ComResult fontPath(out string path)
+    ComResult getFontPath(out string path)
     {
         path = this._fontPath;
         return ComResult.success;
     }
 
-    ComResult fontSize(out size_t size)
+    ComResult getFontSize(out size_t size)
     {
         size = _fontSize;
         return ComResult.success;

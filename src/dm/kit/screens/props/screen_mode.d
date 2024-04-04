@@ -3,7 +3,7 @@ module dm.kit.screens.props.screen_mode;
 /**
  * Authors: initkfs
  */
-struct ScreenMode
+struct ComScreenMode
 {
     int width;
     int height;

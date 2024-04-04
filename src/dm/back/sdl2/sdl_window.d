@@ -78,7 +78,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         return ComResult.success;
     }
 
-    ComResult obtainId(out int id) nothrow
+    ComResult getId(out int id) nothrow
     {
         const idOrZeroError = SDL_GetWindowID(ptr);
         if (idOrZeroError != 0)
@@ -348,7 +348,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         return ComResult.success;
     }
 
-    ComResult screenIndex(out size_t index) @nogc nothrow
+    ComResult getScreenIndex(out size_t index) @nogc nothrow
     {
         const indexOrNegError = SDL_GetWindowDisplayIndex(ptr);
         if (indexOrNegError < 0)

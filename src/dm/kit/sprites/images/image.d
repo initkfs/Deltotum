@@ -37,8 +37,18 @@ class Image : Texture
     bool load(ComSurface image, int requestWidth = -1, int requestHeight = -1)
     {
         assert(image);
-        int imageWidth = image.width;
-        int imageHeight = image.height;
+        int imageWidth;
+        int imageHeight;
+
+        if (auto err = image.getWidth(imageWidth))
+        {
+            throw new Exception(err.toString);
+        }
+
+        if (auto err = image.getHeight(imageHeight))
+        {
+            throw new Exception(err.toString);
+        }
 
         if (requestWidth > 0 && requestWidth != imageWidth || requestHeight > 0 && requestHeight != imageHeight)
         {
@@ -49,8 +59,15 @@ class Image : Texture
                 throw new Exception(err.toString);
             }
 
-            imageWidth = image.width;
-            imageHeight = image.height;
+            if (auto err = image.getWidth(imageWidth))
+            {
+                throw new Exception(err.toString);
+            }
+
+            if (auto err = image.getHeight(imageHeight))
+            {
+                throw new Exception(err.toString);
+            }
         }
         else
         {
@@ -63,8 +80,16 @@ class Image : Texture
                 {
                     throw new Exception(err.toString);
                 }
-                imageWidth = image.width;
-                imageHeight = image.height;
+
+                if (auto err = image.getWidth(imageWidth))
+                {
+                    throw new Exception(err.toString);
+                }
+
+                if (auto err = image.getHeight(imageHeight))
+                {
+                    throw new Exception(err.toString);
+                }
             }
         }
 
@@ -83,19 +108,30 @@ class Image : Texture
                 }
             }
 
-            foreach (y; 0 .. image.height)
+            foreach (y; 0 .. imageHeight)
             {
-                foreach (x; 0 .. image.width)
+                foreach (x; 0 .. imageWidth)
                 {
                     //TODO more optimal iteration
-                    uint* pixelPtr = image.getPixel(x, y);
+                    uint* pixelPtr;
+                    if (const err = image.getPixel(x, y, pixelPtr))
+                    {
+                        throw new Exception(err.toString);
+                    }
                     ubyte r, g, b, a;
-                    image.getPixelRGBA(pixelPtr, r, g, b, a);
+                    if (const err = image.getPixelRGBA(pixelPtr, r, g, b, a))
+                    {
+                        throw new Exception(err.toString);
+                    }
                     RGBA oldColor = {r, g, b, RGBA.fromAByte(a)};
                     RGBA newColor = colorProcessor(x, y, oldColor);
                     if (newColor != oldColor)
                     {
-                        image.setPixelRGBA(x, y, newColor.r, newColor.g, newColor.b, newColor.aByte);
+                        if (const err = image.setPixelRGBA(x, y, newColor.r, newColor.g, newColor.b, newColor
+                                .aByte))
+                        {
+                            throw new Exception(err.toString);
+                        }
                     }
                 }
             }
@@ -106,7 +142,7 @@ class Image : Texture
             texture = graphics.comTextureProvider.getNew();
         }
 
-        if (const err = texture.fromSurface(image))
+        if (const err = texture.createFromSurface(image))
         {
             throw new Exception(err.toString);
         }
@@ -195,7 +231,8 @@ class Image : Texture
         assert(height > 0);
 
         //TODO check is mutable
-        if(texture){
+        if (texture)
+        {
             texture.dispose;
             texture = null;
         }
@@ -224,9 +261,11 @@ class Image : Texture
         return true;
     }
 
-    void savePNG(ComSurface surf, string path){
+    void savePNG(ComSurface surf, string path)
+    {
         auto image = graphics.comImageProvider.getNew();
-        if(const err = image.savePNG(surf, path)){
+        if (const err = image.savePNG(surf, path))
+        {
             throw new Exception(err.toString);
         }
     }

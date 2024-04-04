@@ -49,7 +49,7 @@ class LedBase : Control
             RGBA[][] buff = surfaceToBuffer(surf);
             RGBA[][] gaussBuff = ColorProcessor.boxblur(buff, blurSize.to!size_t);
 
-            surf.setPixels((x, y, color) {
+            auto err = surf.setPixels((x, y, color) {
                 auto buffColor = gaussBuff[y][x];
                 color[0] = buffColor.r;
                 color[1] = buffColor.g;
@@ -57,6 +57,9 @@ class LedBase : Control
                 color[3] = buffColor.aByte;
                 return true;
             });
+            if(err){
+                logger.error(err.toString);
+            }
 
             return true;
         };

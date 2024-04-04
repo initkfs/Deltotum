@@ -52,7 +52,7 @@ class VectorTexture : Texture
 
         import dm.com.platforms.results.com_result : ComResult;
 
-        if (const createErr = comSurface.createRGBSurface(width, height))
+        if (const createErr = comSurface.createRGB(cast(int) width, cast(int) height))
         {
             throw new Exception(createErr.toString);
         }
@@ -72,8 +72,17 @@ class VectorTexture : Texture
             cairoContext.dispose;
         }
 
-        cairoSurface = new CairoSurface(cast(ubyte*) comSurface.pixels, cairo_format_t
-                .CAIRO_FORMAT_ARGB32, cast(int) width, cast(int) height, comSurface.pitch);
+        void* pixels;
+        if(const err = comSurface.getPixels(pixels)){
+            throw new Exception(err.toString);
+        }
+        int pitch;
+        if(const err = comSurface.getPitch(pitch)){
+            throw new Exception(err.toString);
+        }
+
+        cairoSurface = new CairoSurface(cast(ubyte*) pixels, cairo_format_t
+                .CAIRO_FORMAT_ARGB32, cast(int) width, cast(int) height, pitch);
 
         cairoContext = new CairoContext(cairoSurface);
     }
@@ -133,7 +142,7 @@ class VectorTexture : Texture
         }
 
         //TODO toInt?
-        const createErr = texture.fromSurface(comSurface);
+        const createErr = texture.createFromSurface(comSurface);
         if (createErr)
         {
             throw new Exception(createErr.toString);

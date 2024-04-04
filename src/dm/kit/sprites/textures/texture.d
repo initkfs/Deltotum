@@ -5,7 +5,7 @@ import dm.kit.sprites.sprite : Sprite;
 import dm.com.graphics.com_texture : ComTexture;
 import dm.com.graphics.com_surface : ComSurface;
 import dm.com.graphics.com_blend_mode : ComBlendMode;
-import dm.com.graphics.com_texture_scale_mode : ComTextureScaleMode;
+import dm.com.graphics.com_texture : ComTextureScaleMode;
 import dm.math.rect2d : Rect2d;
 import dm.math.flip : Flip;
 import dm.kit.graphics.colors.rgba : RGBA;
@@ -73,7 +73,7 @@ class Texture : Sprite
             texture = null;
         }
 
-        if (const err = newTexture.fromSurface(surface))
+        if (const err = newTexture.createFromSurface(surface))
         {
             throw new Exception(err.toString);
         }
@@ -237,14 +237,23 @@ class Texture : Sprite
         }
         import Math = dm.math;
 
-        if (texture && texture.isCreated && Math.abs(oldChangedWidth - value) > changeSizeDelta)
+        if (texture)
         {
-            if (onPreRecreateWidthOldNew)
+            bool isTextureCreated;
+            if (const err = texture.isCreated(isTextureCreated))
             {
-                onPreRecreateHeightOldNew(oldChangedWidth, width);
+                logger.error(err.toString);
             }
-            recreate;
-            oldChangedWidth = width;
+
+            if (isTextureCreated && Math.abs(oldChangedWidth - value) > changeSizeDelta)
+            {
+                if (onPreRecreateWidthOldNew)
+                {
+                    onPreRecreateHeightOldNew(oldChangedWidth, width);
+                }
+                recreate;
+                oldChangedWidth = width;
+            }
         }
     }
 
@@ -315,9 +324,17 @@ class Texture : Sprite
         return this.texture;
     }
 
+    bool isLocked(){
+        assert(texture);
+        bool locked;
+        if(const err = texture.isLocked(locked)){
+            throw new Exception(err.toString);
+        }
+        return locked;
+    }
+
     void lock()
     {
-        assert(texture && !texture.isLocked);
         if (const err = texture.lock)
         {
             throw new Exception(err.toString);
@@ -334,7 +351,7 @@ class Texture : Sprite
 
     uint format()
     {
-        assert(texture && texture.isLocked);
+        assert(texture && isLocked);
         uint format;
         if (const err = texture.getFormat(format))
         {
@@ -345,7 +362,7 @@ class Texture : Sprite
 
     int pitch()
     {
-        assert(texture && texture.isLocked);
+        assert(texture && isLocked);
         int pitch;
         if (const err = texture.getPitch(pitch))
         {
@@ -356,7 +373,7 @@ class Texture : Sprite
 
     void* pixels()
     {
-        assert(texture && texture.isLocked);
+        assert(texture && isLocked);
         void* ptr;
         if (const err = texture.getPixels(ptr))
         {
@@ -368,7 +385,7 @@ class Texture : Sprite
 
     uint* pixel(uint x, uint y)
     {
-        assert(texture && texture.isLocked);
+        assert(texture && isLocked);
         uint* ptr;
         if (const err = texture.getPixel(x, y, ptr))
         {
@@ -389,7 +406,7 @@ class Texture : Sprite
     {
         assert(width > 0);
         assert(height > 0);
-        assert(texture && texture.isLocked);
+        assert(texture && isLocked);
         assert(buff.length >= height);
 
         //TODO all rows
@@ -420,7 +437,7 @@ class Texture : Sprite
 
     RGBA pixelColor(uint x, uint y)
     {
-        assert(texture && texture.isLocked);
+        assert(texture && isLocked);
         ubyte r, g, b, a;
         if (const err = texture.getPixelColor(x, y, r, g, b, a))
         {
@@ -446,7 +463,7 @@ class Texture : Sprite
     {
         assert(texture);
         super.opacity(value);
-        if (const err = texture.changeOpacity(value))
+        if (const err = texture.setOpacity(value))
         {
             logger.error(err.toString);
         }

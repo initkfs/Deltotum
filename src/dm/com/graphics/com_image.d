@@ -9,8 +9,10 @@ import dm.com.lifecycles.destroyable : Destroyable;
  */
 interface ComImage : Destroyable
 {
-    ComResult load(string path) nothrow;
-    ComResult load(const(void[]) contentRaw) nothrow;
-    ComResult toSurface(out ComSurface toSurface) nothrow;
-    ComResult savePNG(ComSurface surface, string path) nothrow;
+    nothrow: 
+    
+    ComResult load(string path);
+    ComResult load(const(void[]) contentRaw);
+    ComResult toSurface(out ComSurface toSurface);
+    ComResult savePNG(ComSurface surface, string path);
 }

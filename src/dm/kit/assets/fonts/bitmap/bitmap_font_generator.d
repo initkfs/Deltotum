@@ -41,7 +41,7 @@ class BitmapFontGenerator : FontGenerator
 
         //The size can be very large to create on a stack
         ComSurface fontMapSurface = comSurfaceProvider.getNew();
-        if (const err = fontMapSurface.createRGBSurface(fontTextureWidth, fontTextureHeight))
+        if (const err = fontMapSurface.createRGB(fontTextureWidth, fontTextureHeight))
         {
             throw new Exception(err.toString);
         }
@@ -75,8 +75,18 @@ class BitmapFontGenerator : FontGenerator
                 //TODO does SDL keep a reference?
                 comSurfaceProvider.getNewScoped((glyphRepresentation) {
                     font.renderSurface(glyphRepresentation, utfPtr, foregroundColor, backgroundColor);
-                    glyphPosition.width = glyphRepresentation.width;
-                    glyphPosition.height = glyphRepresentation.height;
+                    int w, h;
+                    if (auto err = glyphRepresentation.getWidth(w))
+                    {
+                        throw new Exception(err.toString);
+                    }
+                    if (auto err = glyphRepresentation.getHeight(h))
+                    {
+                        throw new Exception(err.toString);
+                    }
+
+                    glyphPosition.width = w;
+                    glyphPosition.height = h;
 
                     if (glyphPosition.x + glyphPosition.width >= fontTextureWidth)
                     {

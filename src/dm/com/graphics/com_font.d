@@ -17,14 +17,17 @@ enum ComFontHinting
 
 interface ComFont : Destroyable
 {
-    ComResult render(
+    
+nothrow:
+
+    ComResult renderFont(
         ComSurface targetSurface,
         const char* text,
         ubyte fr, ubyte fg, ubyte fb, ubyte fa,
         ubyte br, ubyte bg, ubyte bb, ubyte ba);
 
-    ComResult fontPath(out string path);
-    ComResult fontSize(out size_t size);
+    ComResult getFontPath(out string path);
+    ComResult getFontSize(out size_t size);
     ComResult setHinting(ComFontHinting hinting);
 
 }

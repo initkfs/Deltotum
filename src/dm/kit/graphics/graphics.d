@@ -97,7 +97,22 @@ class Graphics : LoggableUnit
 
     void readPixels(Rect2d bounds, ComSurface surface)
     {
-        readPixels(bounds, surface.format, surface.pitch, surface.pixels);
+        uint format;
+        if (const err = surface.getFormat(format))
+        {
+            logger.error(err.toString);
+        }
+        int pitch;
+        if (const err = surface.getPitch(pitch))
+        {
+            logger.error(err.toString);
+        }
+        void* pixels;
+        if (const err = surface.getPixels(pixels))
+        {
+            logger.error(err.toString);
+        }
+        readPixels(bounds, format, pitch, pixels);
     }
 
     void readPixels(Rect2d bounds, uint format, int pitch, void* pixelBuffer)
@@ -111,7 +126,7 @@ class Graphics : LoggableUnit
     RGBA changeColor(RGBA color = defaultColor)
     {
         ubyte r, g, b, a;
-        if (const err = renderer.getRenderDrawColor(r, g, b, a))
+        if (const err = renderer.getDrawColor(r, g, b, a))
         {
             logger.errorf("Error getting current renderer color");
             return prevColor;
@@ -133,7 +148,7 @@ class Graphics : LoggableUnit
 
     void setColor(RGBA color)
     {
-        if (const err = renderer.setRenderDrawColor(color.r, color.g, color.b, color.aByte))
+        if (const err = renderer.setDrawColor(color.r, color.g, color.b, color.aByte))
         {
             logger.errorf("Adjust render error. %s", err);
         }
@@ -181,7 +196,7 @@ class Graphics : LoggableUnit
 
     void line(double startX, double startY, double endX, double endY)
     {
-        if (const err = renderer.line(toInt(startX), toInt(startY), toInt(endX), toInt(endY)))
+        if (const err = renderer.drawLine(toInt(startX), toInt(startY), toInt(endX), toInt(endY)))
         {
             logger.error("Line drawing error. ", err);
         }
@@ -209,7 +224,7 @@ class Graphics : LoggableUnit
 
     void lines(Vector2[] points)
     {
-        if (const err = renderer.lines(points))
+        if (const err = renderer.drawLines(points))
         {
             logger.errorf("Lines drawing error. %s", err);
         }
@@ -228,7 +243,7 @@ class Graphics : LoggableUnit
 
     void point(double x, double y)
     {
-        if (const err = renderer.point(toInt(x), toInt(y)))
+        if (const err = renderer.drawPoint(toInt(x), toInt(y)))
         {
             logger.errorf("Point drawing error. %s", err);
         }
@@ -685,7 +700,7 @@ class Graphics : LoggableUnit
         {
             restoreColor;
         }
-        if (const err = renderer.fillRect(toInt(x), toInt(y), toInt(width), toInt(height)))
+        if (const err = renderer.drawFillRect(toInt(x), toInt(y), toInt(width), toInt(height)))
         {
             logger.errorf("Fill rect error. %s", err);
         }
@@ -713,7 +728,7 @@ class Graphics : LoggableUnit
 
     void rect(double x, double y, double width, double height)
     {
-        if (const err = renderer.rect(toInt(x), toInt(y), toInt(width), toInt(height)))
+        if (const err = renderer.drawRect(toInt(x), toInt(y), toInt(width), toInt(height)))
         {
             logger.errorf("Draw rect error. %s", err);
         }
@@ -848,13 +863,16 @@ class Graphics : LoggableUnit
 
     void rendererPresent()
     {
-        renderer.present;
+        if (const err = renderer.present)
+        {
+            logger.error(err.toString);
+        }
     }
 
     void clearScreen()
     {
         //isClearingInCycle
-        if (const err = renderer.setRenderDrawColor(screenColor.r, screenColor.g, screenColor.b, screenColor
+        if (const err = renderer.setDrawColor(screenColor.r, screenColor.g, screenColor.b, screenColor
                 .aByte))
         {
             //TODO logging in main loop?

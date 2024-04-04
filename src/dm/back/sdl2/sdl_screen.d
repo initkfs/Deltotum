@@ -4,7 +4,7 @@ module dm.back.sdl2.sdl_screen;
 version(SdlBackend):
 // dfmt on
 
-import dm.com.graphics.com_screen : ComScreen, ScreenMode, ScreenOrientation, ScreenDpi;
+import dm.com.graphics.com_screen : ComScreen, ComScreenMode, ComScreenOrientation, ComScreenDpi;
 import dm.com.platforms.results.com_result : ComResult;
 import dm.back.sdl2.base.sdl_object : SdlObject;
 
@@ -73,7 +73,7 @@ class SDLScreen : SdlObject, ComScreen
         return ComResult.success;
     }
 
-    ComResult getMode(int index, out ScreenMode mode) @nogc nothrow
+    ComResult getMode(int index, out ComScreenMode mode) @nogc nothrow
     {
         SDL_DisplayMode m;
         const zeroOrError = SDL_GetCurrentDisplayMode(index, &m);
@@ -81,43 +81,43 @@ class SDLScreen : SdlObject, ComScreen
         {
             return ComResult.error(getError);
         }
-        mode = ScreenMode(m.w, m.h, m.refresh_rate);
+        mode = ComScreenMode(m.w, m.h, m.refresh_rate);
         return ComResult.success;
     }
 
-    ComResult getDPI(int index, out ScreenDpi screenDPI) @nogc nothrow
+    ComResult getDPI(int index, out ComScreenDpi screenDPI) @nogc nothrow
     {
-        ScreenDpi dpi;
+        ComScreenDpi dpi;
         float diagDpi, horizDpi, vertDpi;
         const zeroOrError = SDL_GetDisplayDPI(index, &diagDpi, &horizDpi, &vertDpi);
         if (zeroOrError != 0)
         {
             return ComResult.error(getError);
         }
-        dpi = ScreenDpi(diagDpi, horizDpi, vertDpi);
+        dpi = ComScreenDpi(diagDpi, horizDpi, vertDpi);
         screenDPI = dpi;
         return ComResult.success;
     }
 
-    ComResult getOrientation(int index, out ScreenOrientation result) @nogc nothrow
+    ComResult getOrientation(int index, out ComScreenOrientation result) @nogc nothrow
     {
         const orientation = SDL_GetDisplayOrientation(index);
         final switch (orientation) with (SDL_DisplayOrientation)
         {
             case SDL_ORIENTATION_UNKNOWN:
-                result = ScreenOrientation.none;
+                result = ComScreenOrientation.none;
                 break;
             case SDL_ORIENTATION_LANDSCAPE:
-                result = ScreenOrientation.landscape;
+                result = ComScreenOrientation.landscape;
                 break;
             case SDL_ORIENTATION_LANDSCAPE_FLIPPED:
-                result = ScreenOrientation.landscapeFlipped;
+                result = ComScreenOrientation.landscapeFlipped;
                 break;
             case SDL_ORIENTATION_PORTRAIT:
-                result = ScreenOrientation.portrait;
+                result = ComScreenOrientation.portrait;
                 break;
             case SDL_ORIENTATION_PORTRAIT_FLIPPED:
-                result = ScreenOrientation.portraitFlipped;
+                result = ComScreenOrientation.portraitFlipped;
                 break;
         }
 
