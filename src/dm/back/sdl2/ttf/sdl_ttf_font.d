@@ -10,7 +10,7 @@ import dm.back.sdl2.base.sdl_object_wrapper : SdlObjectWrapper;
 import dm.back.sdl2.ttf.base.sdl_ttf_object : SdlTTFObject;
 import dm.com.graphics.com_surface : ComSurface;
 
-import std.conv: to;
+import std.conv : to;
 
 import bindbc.sdl;
 
@@ -46,7 +46,7 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
 
     ComResult renderFont(
         ComSurface targetSurface,
-        const char* text,
+        const(dchar[]) text,
         ubyte fr = 255, ubyte fg = 255, ubyte fb = 255, ubyte fa = 1,
         ubyte br = 255, ubyte bg = 255, ubyte bb = 255, ubyte ba = 1)
     {
@@ -54,7 +54,21 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
         //TODO TTF_RenderText_Shaded
         SDL_Color backgroundColor = {br, bg, bb, ba};
         //TODO calculate background color
-        SDL_Surface* fontSurfacePtr = TTF_RenderUTF8_Blended(ptr, text, color);
+        import std.utf : toUTFz;
+
+        const(char)* textPtr;
+        try
+        {
+            textPtr = toUTFz!(const(char)*)(text);
+        }
+        catch (Exception e)
+        {
+            return ComResult.error(e.msg);
+        }
+
+        assert(textPtr);
+
+        SDL_Surface* fontSurfacePtr = TTF_RenderUTF8_Blended(ptr, textPtr, color);
         if (!fontSurfacePtr)
         {
             string errMsg = "Unable to render text";
@@ -66,7 +80,8 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
         }
 
         //TODO unsafe
-        if(const err = targetSurface.createFromPtr(cast(void*) fontSurfacePtr)){
+        if (const err = targetSurface.createFromPtr(cast(void*) fontSurfacePtr))
+        {
             return err;
         }
 

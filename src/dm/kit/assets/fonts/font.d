@@ -26,12 +26,7 @@ class Font : LoggableUnit
         this.font = font;
     }
 
-    void renderSurface(ComSurface surf, string text, RGBA color = RGBA.white)
-    {
-        return renderSurface(surf, text.toStringz, color);
-    }
-
-    void renderSurface(ComSurface fontSurface, const char* text, RGBA color = RGBA.white, RGBA background = RGBA
+    void renderSurface(ComSurface fontSurface, const(dchar[]) text, RGBA color = RGBA.white, RGBA background = RGBA
             .black)
     {
         if (const fontRenderErr = font.renderFont(fontSurface, text, color.r, color.g, color.b, color

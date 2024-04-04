@@ -247,9 +247,17 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         return ComResult(zeroOrErrorCode);
     }
 
-    ComResult getOutputSize(int* width, int* height) nothrow
+    ComResult getOutputSize(out int width, out int height) nothrow
     {
-        const int zeroOrErrorCode = SDL_GetRendererOutputSize(ptr, width, height);
+        int w, h;
+        const int zeroOrErrorCode = SDL_GetRendererOutputSize(ptr, &w, &h);
+        if (zeroOrErrorCode != 0)
+        {
+            return ComResult.error(getError);
+        }
+        width = w;
+        height = h;
+
         return ComResult(zeroOrErrorCode);
     }
 

@@ -891,7 +891,7 @@ class Graphics : LoggableUnit
         int outputWidth;
         int outputHeight;
 
-        if (const err = renderer.getOutputSize(&outputWidth, &outputHeight))
+        if (const err = renderer.getOutputSize(outputWidth, outputHeight))
         {
             logger.error("Error getting renderer size: ", err.toString);
             return 0;

@@ -416,14 +416,12 @@ class Window : GraphicsComponent
 
     dstring title()
     {
-        const(char)[] buff;
-        if (const err = nativeWindow.getTitle(buff))
+        dstring winTitle;
+        if (const err = nativeWindow.getTitle(winTitle))
         {
             logger.tracef("Error getting window title. ", err.toString);
         }
-        import std.conv : to;
-
-        return buff.to!dstring;
+        return winTitle;
     }
 
     void title(dstring title)
@@ -432,7 +430,7 @@ class Window : GraphicsComponent
         import std.conv : to;
 
         //TODO dup\copy?
-        if (const err = nativeWindow.setTitle(title.to!string.toStringz))
+        if (const err = nativeWindow.setTitle(title))
         {
             logger.error("Error setting window title: ", err.toString);
         }

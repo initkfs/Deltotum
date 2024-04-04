@@ -1,7 +1,7 @@
 module dm.com.graphics.com_font;
 
 import dm.com.platforms.results.com_result : ComResult;
-import dm.com.lifecycles.destroyable : Destroyable;
+import dm.com.destroyable : Destroyable;
 import dm.com.graphics.com_surface : ComSurface;
 
 /**
@@ -22,7 +22,7 @@ nothrow:
 
     ComResult renderFont(
         ComSurface targetSurface,
-        const char* text,
+        const(dchar[]) text,
         ubyte fr, ubyte fg, ubyte fb, ubyte fa,
         ubyte br, ubyte bg, ubyte bb, ubyte ba);
 

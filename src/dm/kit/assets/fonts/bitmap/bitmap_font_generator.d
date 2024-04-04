@@ -70,11 +70,10 @@ class BitmapFontGenerator : FontGenerator
             //TODO byGrapheme?
             foreach (i, dchar letter; allLetters)
             {
-                dchar[1] letters = [letter];
-                const(char*) utfPtr = toUTFz!(const(char)*)(letters[]);
+                const(dchar[1]) letters = [letter];
                 //TODO does SDL keep a reference?
                 comSurfaceProvider.getNewScoped((glyphRepresentation) {
-                    font.renderSurface(glyphRepresentation, utfPtr, foregroundColor, backgroundColor);
+                    font.renderSurface(glyphRepresentation, letters[], foregroundColor, backgroundColor);
                     int w, h;
                     if (auto err = glyphRepresentation.getWidth(w))
                     {

@@ -1,7 +1,7 @@
 module dm.com.graphics.com_surface;
 
 import dm.com.platforms.results.com_result : ComResult;
-import dm.com.lifecycles.destroyable : Destroyable;
+import dm.com.destroyable : Destroyable;
 import dm.com.graphics.com_blend_mode : ComBlendMode;
 
 import dm.math.rect2d : Rect2d;

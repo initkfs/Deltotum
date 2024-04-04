@@ -37,16 +37,16 @@ struct SingleScreen
         return Rect2d(x, y, width, height);
     }
 
-    string name()
+    dstring name()
     {
-        const(char)* namePtr;
-        if (const err = nativeScreen.getName(cast(int) index, namePtr))
+        dstring screenName;
+        if (const err = nativeScreen.getName(cast(int) index, screenName))
         {
             logger.errorf("Error getting screen name with index %s: %s", index, err.toString);
         }
         import std.string : fromStringz;
 
-        return namePtr.fromStringz.idup;
+        return screenName;
     }
 
     ComScreenMode mode()

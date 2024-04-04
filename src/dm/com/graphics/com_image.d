@@ -2,7 +2,7 @@ module dm.com.graphics.com_image;
 
 import dm.com.platforms.results.com_result : ComResult;
 import dm.com.graphics.com_surface : ComSurface;
-import dm.com.lifecycles.destroyable : Destroyable;
+import dm.com.destroyable : Destroyable;
 
 /**
  * Authors: initkfs

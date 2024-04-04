@@ -15,7 +15,7 @@ import bindbc.sdl;
  */
 class SDLScreen : SdlObject, ComScreen
 {
-    ComResult getCount(out size_t count) @nogc nothrow
+    ComResult getCount(out size_t count) nothrow
     {
         const int screenCountOrNegErr = SDL_GetNumVideoDisplays();
         if (screenCountOrNegErr < 0)
@@ -29,7 +29,7 @@ class SDLScreen : SdlObject, ComScreen
     }
 
     ComResult getBounds(int index, out int x, out int y,
-        out int width, out int height) @nogc nothrow
+        out int width, out int height) nothrow
     {
         SDL_Rect bounds;
         const zeroOrErrorCode = SDL_GetDisplayBounds(index, &bounds);
@@ -46,7 +46,7 @@ class SDLScreen : SdlObject, ComScreen
     }
 
     ComResult getUsableBounds(int index, out int x, out int y,
-        out int width, out int height) @nogc nothrow
+        out int width, out int height) nothrow
     {
         SDL_Rect bounds;
         const zeroOrErrorCode = SDL_GetDisplayUsableBounds(index, &bounds);
@@ -62,18 +62,27 @@ class SDLScreen : SdlObject, ComScreen
         return ComResult.success;
     }
 
-    ComResult getName(int index, ref const(char)* name) @nogc nothrow
+    ComResult getName(int index, out dstring name) nothrow
     {
         const namePtr = SDL_GetDisplayName(index);
         if (!namePtr)
         {
             return ComResult.error(getError);
         }
-        name = namePtr;
+        import std.conv : to;
+
+        try
+        {
+            name = namePtr.to!dstring;
+        }
+        catch (Exception e)
+        {
+            return ComResult.error(e.msg);
+        }
         return ComResult.success;
     }
 
-    ComResult getMode(int index, out ComScreenMode mode) @nogc nothrow
+    ComResult getMode(int index, out ComScreenMode mode) nothrow
     {
         SDL_DisplayMode m;
         const zeroOrError = SDL_GetCurrentDisplayMode(index, &m);
@@ -85,7 +94,7 @@ class SDLScreen : SdlObject, ComScreen
         return ComResult.success;
     }
 
-    ComResult getDPI(int index, out ComScreenDpi screenDPI) @nogc nothrow
+    ComResult getDPI(int index, out ComScreenDpi screenDPI) nothrow
     {
         ComScreenDpi dpi;
         float diagDpi, horizDpi, vertDpi;
@@ -99,7 +108,7 @@ class SDLScreen : SdlObject, ComScreen
         return ComResult.success;
     }
 
-    ComResult getOrientation(int index, out ComScreenOrientation result) @nogc nothrow
+    ComResult getOrientation(int index, out ComScreenOrientation result) nothrow
     {
         const orientation = SDL_GetDisplayOrientation(index);
         final switch (orientation) with (SDL_DisplayOrientation)
@@ -124,7 +133,7 @@ class SDLScreen : SdlObject, ComScreen
         return ComResult.success;
     }
 
-    bool isDisposed() @nogc nothrow pure @safe
+    bool isDisposed() nothrow pure @safe
     {
         return false;
     }

@@ -3,7 +3,7 @@ module dm.com.graphics.com_renderer;
 import dm.com.platforms.results.com_result : ComResult;
 import dm.com.graphics.com_texture : ComTexture;
 import dm.com.graphics.com_blend_mode : ComBlendMode;
-import dm.com.lifecycles.destroyable : Destroyable;
+import dm.com.destroyable : Destroyable;
 
 import dm.math.vector2 : Vector2;
 import dm.math.rect2d : Rect2d;
@@ -32,6 +32,6 @@ nothrow:
     ComResult drawFillRect(int x, int y, int width, int height);
     ComResult drawLine(int startX, int startY, int endX, int endY);
     ComResult drawLines(Vector2[] linePoints);
-    ComResult getOutputSize(int* width, int* height);
+    ComResult getOutputSize(out int width, out int height);
     ComResult readPixels(Rect2d rect, uint format, int pitch, void* pixelBuffer);
 }

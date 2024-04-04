@@ -1,7 +1,7 @@
 module dm.com.graphics.com_screen;
 
 import dm.com.platforms.results.com_result : ComResult;
-import dm.com.lifecycles.destroyable : Destroyable;
+import dm.com.destroyable : Destroyable;
 
 enum ComScreenOrientation
 {
@@ -37,7 +37,7 @@ nothrow:
     ComResult getBounds(int index, out int x, out int y,
         out int width, out int height);
     ComResult getUsableBounds(int index, out int x, out int y, out int width, out int height);
-    ComResult getName(int index, ref const(char)* name);
+    ComResult getName(int index, out dstring name);
     ComResult getMode(int index, out ComScreenMode mode);
     ComResult getDPI(int index, out ComScreenDpi screenDPI);
     ComResult getOrientation(int index, out ComScreenOrientation result);

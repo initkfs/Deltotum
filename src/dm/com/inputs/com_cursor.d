@@ -1,7 +1,7 @@
 module dm.com.inputs.com_cursor;
 
 import dm.com.platforms.results.com_result : ComResult;
-import dm.com.lifecycles.destroyable : Destroyable;
+import dm.com.destroyable : Destroyable;
 
 enum ComSystemCursorType
 {
