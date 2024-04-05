@@ -1,4 +1,4 @@
-module dm.back.sdl2.events.sdl_event_processor;
+module dm.back.sdl2.sdl_event_processor;
 
 // dfmt off
 version(SdlBackend):

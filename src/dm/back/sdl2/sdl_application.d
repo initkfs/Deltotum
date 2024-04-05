@@ -1,4 +1,4 @@
-module dm.back.sdl2.apps.sdl_application;
+module dm.back.sdl2.sdl_application;
 
 // dfmt off
 version(SdlBackend):
@@ -11,7 +11,7 @@ import dm.core.utils.provider : Provider;
 import dm.kit.apps.continuously_application : ContinuouslyApplication;
 import dm.kit.components.graphics_component : GraphicsComponent;
 import dm.kit.events.kit_event_manager : KitEventManager;
-import dm.back.sdl2.events.sdl_event_processor : SdlEventProcessor;
+import dm.back.sdl2.sdl_event_processor : SdlEventProcessor;
 import dm.kit.scenes.scene_manager : SceneManager;
 import dm.kit.graphics.graphics : Graphics;
 import dm.kit.interacts.interact : Interact;

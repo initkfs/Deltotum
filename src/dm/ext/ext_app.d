@@ -2,7 +2,7 @@ module dm.ext.ext_app;
 
 import std;
 
-import dm.back.sdl2.apps.sdl_application : SdlApplication;
+import dm.back.sdl2.sdl_application : SdlApplication;
 import dm.kit.apps.graphic_application : GraphicApplication;
 import dm.kit.scenes.scene : Scene;
 import dm.kit.windows.window : Window;
