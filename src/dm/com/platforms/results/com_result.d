@@ -10,42 +10,98 @@ import core.attribute : mustuse;
     enum defaultCodeSuccess = 0;
     enum defaultCodeError = -1;
 
-    const
-    {
-        int code;
-        char[] message;
-    }
+    int code;
+    string message;
+    bool isError;
 
-    int codeSuccess;
-
-    this(int code, const char[] message = null, int codeSuccess = defaultCodeSuccess) nothrow pure @safe
+    //TODO remove char[], 
+    this(int code, const(char[]) message = null, bool isError = false) nothrow pure @safe
     {
         this.code = code;
-        this.message = message;
-        this.codeSuccess = codeSuccess;
+        this.isError = isError;
+
+        import std.conv : to;
+
+        if(message){
+             this.message = message.to!string;
+        }
     }
 
-    static ComResult success() nothrow pure @safe
+    static ComResult success(int code = defaultCodeSuccess) nothrow pure @safe
     {
-        return ComResult(defaultCodeSuccess);
+        return ComResult(code, null, false);
     }
 
-    static ComResult error(const char[] message) nothrow pure @safe
+    static ComResult error(int code = defaultCodeError) nothrow pure @safe
     {
-        return ComResult(defaultCodeError, message);
+        return ComResult(code, null, true);
     }
 
-    bool isError() const nothrow pure @safe
+    static ComResult error(const(char[]) message) nothrow pure @safe
     {
-        return code != codeSuccess;
+        import std.conv : to;
+
+        return ComResult(defaultCodeError, message.to!string, true);
     }
 
-    alias isError this;
+    static ComResult error(int code, const(char[])[] messages...) nothrow pure @safe
+    {
+        import std.conv : text;
+
+        try
+        {
+            return ComResult(code, text(messages), true);
+        }
+        catch (Exception e)
+        {
+            assert(0);
+        }
+    }
+
+    bool convToBool() const pure @safe nothrow
+    {
+        return isError;
+    }
+
+    alias convToBool this;
 
     string toString() const nothrow pure @safe
     {
         import std.conv : text;
 
-        return text("COM result with code ", code, ". ", "Message: ", message);
+        return text("COM result, error: ", convToBool, ", code: ", code, ", ", "messages: ", message);
     }
+}
+
+unittest
+{
+    import std.conv : to;
+
+    const codeSuccess = ComResult.defaultCodeSuccess;
+    const codeError = ComResult.defaultCodeError;
+
+    immutable res1 = immutable ComResult(codeSuccess);
+    assert(!res1);
+    assert(!res1.isError);
+    assert(res1.code == codeSuccess, res1.code.to!string);
+
+    immutable res2 = ComResult(codeSuccess, "message");
+    assert(!res2.isError);
+    assert(res2.code == codeSuccess, res2.code.to!string);
+    assert(res2.message == "message", res2.message);
+
+    immutable resSucc1 = ComResult.success;
+    assert(!resSucc1.isError);
+    assert(resSucc1.code == codeSuccess, resSucc1.code.to!string);
+    assert(resSucc1.message.length == 0, resSucc1.message);
+
+    immutable resFail1 = ComResult.error;
+    assert(resFail1.isError);
+    assert(resFail1.code == codeError, resFail1.code.to!string);
+    assert(resFail1.message.length == 0, resFail1.message);
+
+    immutable resFail2 = ComResult.error(codeSuccess, "message1", "message2");
+    assert(resFail2.isError);
+    assert(resFail2.code == codeSuccess, resFail2.code.to!string);
+    assert(resFail2.message == "[\"message1\", \"message2\"]", resFail2.message);
 }
