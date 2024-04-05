@@ -7,5 +7,5 @@ import dm.com.platforms.results.com_result : ComResult;
  */
 interface ComSystem
 {
-    ComResult openHyperlink(string link) nothrow;
+    ComResult openURL(string link) nothrow;
 }

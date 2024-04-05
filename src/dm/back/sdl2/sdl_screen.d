@@ -20,7 +20,7 @@ class SDLScreen : SdlObject, ComScreen
         const int screenCountOrNegErr = SDL_GetNumVideoDisplays();
         if (screenCountOrNegErr < 0)
         {
-            return ComResult.error(getError);
+            return getErrorRes(screenCountOrNegErr);
         }
 
         count = screenCountOrNegErr;
@@ -33,9 +33,9 @@ class SDLScreen : SdlObject, ComScreen
     {
         SDL_Rect bounds;
         const zeroOrErrorCode = SDL_GetDisplayBounds(index, &bounds);
-        if (zeroOrErrorCode != 0)
+        if (zeroOrErrorCode)
         {
-            return ComResult(zeroOrErrorCode, getError);
+            return getErrorRes(zeroOrErrorCode);
         }
 
         x = bounds.x;
@@ -50,9 +50,9 @@ class SDLScreen : SdlObject, ComScreen
     {
         SDL_Rect bounds;
         const zeroOrErrorCode = SDL_GetDisplayUsableBounds(index, &bounds);
-        if (zeroOrErrorCode != 0)
+        if (zeroOrErrorCode)
         {
-            return ComResult(zeroOrErrorCode, getError);
+            return getErrorRes(zeroOrErrorCode);
         }
 
         x = bounds.x;
@@ -67,7 +67,7 @@ class SDLScreen : SdlObject, ComScreen
         const namePtr = SDL_GetDisplayName(index);
         if (!namePtr)
         {
-            return ComResult.error(getError);
+            return getErrorRes("Screen name not found");
         }
         import std.conv : to;
 
@@ -88,7 +88,7 @@ class SDLScreen : SdlObject, ComScreen
         const zeroOrError = SDL_GetCurrentDisplayMode(index, &m);
         if (zeroOrError != 0)
         {
-            return ComResult.error(getError);
+            return getErrorRes(zeroOrError);
         }
         mode = ComScreenMode(m.w, m.h, m.refresh_rate);
         return ComResult.success;
@@ -101,7 +101,7 @@ class SDLScreen : SdlObject, ComScreen
         const zeroOrError = SDL_GetDisplayDPI(index, &diagDpi, &horizDpi, &vertDpi);
         if (zeroOrError != 0)
         {
-            return ComResult.error(getError);
+            return getErrorRes(zeroOrError);
         }
         dpi = ComScreenDpi(diagDpi, horizDpi, vertDpi);
         screenDPI = dpi;

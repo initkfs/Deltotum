@@ -70,10 +70,9 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
             0,
             flags);
 
-        if (ptr is null)
+        if (!ptr)
         {
-            const msg = getError;
-            return ComResult.error("Unable to create SDL window: " ~ msg);
+            return getErrorRes("Unable to create SDL window");
         }
         return ComResult.success;
     }
@@ -81,12 +80,14 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
     ComResult getId(out int id) nothrow
     {
         const idOrZeroError = SDL_GetWindowID(ptr);
-        if (idOrZeroError != 0)
+        if (!idOrZeroError)
         {
-            id = idOrZeroError;
-            return ComResult.success;
+            return getErrorRes(idOrZeroError, "Error getting window id");
         }
-        return ComResult(idOrZeroError, getError);
+
+        id = idOrZeroError;
+
+        return ComResult.success;
     }
 
     ComResult isShown(out bool value) nothrow
@@ -242,29 +243,46 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
             return ComResult.error("Opacity value must be in the range from 0 to 1.0");
         }
 
-        const result = SDL_SetWindowOpacity(ptr, cast(float) value0to1);
-        return result != 0 ? ComResult(result, getError) : ComResult.success;
+        const zeroOrErrorCode = SDL_SetWindowOpacity(ptr, cast(float) value0to1);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
     }
 
     ComResult getOpacity(out double value0to1) nothrow
     {
         float opValue;
-        const result = SDL_GetWindowOpacity(ptr, &opValue);
+        const zeroOrErrorCode = SDL_GetWindowOpacity(ptr, &opValue);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+
         import std.math.traits : isFinite;
 
         if (isFinite(opValue))
         {
             value0to1 = opValue;
         }
+        else
+        {
+            return getErrorRes("Received non finite opacity");
+        }
 
-        return result != 0 ? ComResult(result, getError) : ComResult.success;
+        return ComResult.success;
     }
 
     ComResult setFullScreen(bool isFullScreen) nothrow
     {
         const uint flags = isFullScreen ? SDL_WINDOW_FULLSCREEN : 0;
-        const result = SDL_SetWindowFullscreen(ptr, flags);
-        return result != 0 ? ComResult(result, getError) : ComResult.success;
+        const zeroOrErrorCode = SDL_SetWindowFullscreen(ptr, flags);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
     }
 
     ComResult getFullScreen(out bool isFullScreen) nothrow
@@ -376,7 +394,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         const indexOrNegError = SDL_GetWindowDisplayIndex(ptr);
         if (indexOrNegError < 0)
         {
-            return ComResult.error(getError);
+            return getErrorRes(indexOrNegError);
         }
         index = indexOrNegError;
 

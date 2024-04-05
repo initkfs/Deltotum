@@ -14,14 +14,19 @@ import bindbc.sdl;
  */
 class SDLSystem : SdlObject, ComSystem
 {
-    ComResult openHyperlink(string link) nothrow
+    ComResult openURL(string link) nothrow
     {
         import std.string : toStringz;
 
-        const zeroOrNegErr = SDL_OpenURL(link.toStringz);
-        if (zeroOrNegErr < 0)
+        if (link.length == 0)
         {
-            return ComResult.error(getError);
+            return ComResult.error("URL must not be empty");
+        }
+
+        const zeroOrNegErr = SDL_OpenURL(link.toStringz);
+        if (zeroOrNegErr != 0)
+        {
+            return getErrorRes(zeroOrNegErr);
         }
         return ComResult.success;
     }

@@ -12,7 +12,7 @@ import dm.kit.sprites.sprite : Sprite;
  */
 abstract class Cursor
 {
-    ComCursor delegate(ComSystemCursorType) cursorFactory;
+    ComCursor delegate() cursorFactory;
 
     protected
     {
@@ -48,7 +48,11 @@ abstract class Cursor
 
         if (cursorFactory)
         {
-            auto newCursor = cursorFactory(type);
+            auto newCursor = cursorFactory();
+            if (const err = newCursor.createFromType(type))
+            {
+                throw new Exception(err.toString);
+            }
             cursors[type] = newCursor;
         }
     }

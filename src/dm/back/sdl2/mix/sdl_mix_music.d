@@ -26,56 +26,64 @@ class SdlMixMusic : SdlMixObject
         this.path = path;
     }
 
-    bool load()
+    ComResult load() nothrow
     {
         isLoad = false;
         if (path.length == 0)
         {
-            return isLoad;
+            return ComResult.error("Sound path is empty");
         }
 
         auto musPtr = Mix_LoadMUS(this.path.toStringz);
         if (!musPtr)
         {
-            string error = "Cannot load music from " ~ path ~ ".";
-            if (const err = getError)
-            {
-                error ~= err;
-            }
-            throw new Exception(error);
+            return ComResult.error("Cannot load sound file from " ~ path);
         }
+
         ptr = musPtr;
         isLoad = true;
-        return isLoad;
+
+        return ComResult.success;
     }
 
     ComResult play(int loops = -1) nothrow
     {
         if (!isLoad)
         {
-            return ComResult(-1, "Sound not loaded");
+            return ComResult.error("Sound not loaded");
         }
         const int zeroOrErrorCode = Mix_PlayMusic(ptr, loops);
-        return ComResult(zeroOrErrorCode);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
     }
 
     ComResult stop() nothrow
     {
         if (!isLoad)
         {
-            return ComResult(-1, "Sound not loaded");
+            return ComResult.error("Sound not loaded");
         }
 
         const int alwaysZero = Mix_HaltMusic();
-        return ComResult(alwaysZero);
+        if (alwaysZero != 0)
+        {
+            return getErrorRes(alwaysZero);
+        }
+
+        return ComResult.success;
     }
 
     bool disposePtr()
     {
-        if(!ptr){
-            return false;
+        if (ptr)
+        {
+            Mix_FreeMusic(ptr);
+            return true;
         }
-        Mix_FreeMusic(ptr);
-        return true;
+
+        return false;
     }
 }

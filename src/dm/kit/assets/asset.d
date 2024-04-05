@@ -24,7 +24,7 @@ import dm.kit.assets.fonts.font_size : FontSize;
  */
 class Asset : Resource
 {
-    ComFont delegate(string fontPath, size_t fontSize) comFontProvider;
+    ComFont delegate() comFontProvider;
 
     enum defaultFontName = "DMDefaultFont";
 
@@ -39,7 +39,7 @@ class Asset : Resource
     string defaultImagesResourceDir = "images";
     string defaultFontResourceDir = "fonts";
 
-    this(Logger logger, string assetsDir, ComFont delegate(string fontPath, size_t fontSize) comFontProvider) pure @safe
+    this(Logger logger, string assetsDir, ComFont delegate() comFontProvider) pure @safe
     {
         super(logger, assetsDir);
         import std.exception : enforce;
@@ -90,7 +90,11 @@ class Asset : Resource
     Font newFont(string fontFilePath, size_t size)
     {
         const path = fontPath(fontFilePath);
-        auto comFont = comFontProvider(path, size);
+        auto comFont = comFontProvider();
+        if (const err = comFont.load(path, size))
+        {
+            throw new Exception(err.toString);
+        }
         Font nFont = new Font(logger, comFont);
         nFont.initialize;
         logger.trace("Create new font from ", path);

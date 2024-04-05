@@ -27,7 +27,8 @@ interface ComCursor : Destroyable
 {
 nothrow:
 
-    ComResult fromDefault();
+    ComResult createFromType(ComSystemCursorType type);
+    ComResult createDefault();
     ComResult show();
     ComResult hide();
     ComResult set();

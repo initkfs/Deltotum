@@ -28,7 +28,7 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor, ComCursor
         super(ptr);
     }
 
-    this(ComSystemCursorType type)
+    ComResult createFromType(ComSystemCursorType type) nothrow
     {
         SDL_SystemCursor sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_ARROW;
         final switch (type) with (ComSystemCursorType)
@@ -71,16 +71,16 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor, ComCursor
                 break;
         }
 
-        ptr = SDL_CreateSystemCursor(sdlType);
-        if (!ptr)
+        auto cursorPtr = SDL_CreateSystemCursor(sdlType);
+        if (!cursorPtr)
         {
-            import std.string : fromStringz;
-
-            throw new Exception(getError.fromStringz.idup);
+            return getErrorRes("Error creating cursor");
         }
+        ptr = cursorPtr;
+        return ComResult.success;
     }
 
-    ComResult fromDefault() nothrow
+    ComResult createDefault() nothrow
     {
         SDL_Cursor* cursorPtr;
         if (const err = defaultCursorPtr(cursorPtr))
@@ -96,7 +96,7 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor, ComCursor
         auto mustBeCursorPtr = SDL_GetCursor();
         if (!mustBeCursorPtr)
         {
-            return ComResult.error("Default cursor pointer is null");
+            return getErrorRes("Default cursor pointer is null");
         }
         cursorPtr = mustBeCursorPtr;
         return ComResult.success;
@@ -131,7 +131,7 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor, ComCursor
         const pozitiveOrError = SDL_ShowCursor(SDL_ENABLE);
         if (pozitiveOrError < 0)
         {
-            return ComResult(pozitiveOrError, getError);
+            return getErrorRes(pozitiveOrError);
         }
         return ComResult.success;
     }
@@ -141,7 +141,7 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor, ComCursor
         const pozitiveOrError = SDL_ShowCursor(SDL_DISABLE);
         if (pozitiveOrError < 0)
         {
-            return ComResult(pozitiveOrError, getError);
+            return getErrorRes(pozitiveOrError);
         }
         return ComResult.success;
     }

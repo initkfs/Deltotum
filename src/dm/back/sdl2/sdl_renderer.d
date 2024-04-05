@@ -64,16 +64,16 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
 
         if (r == oldR && g == oldG && b == oldB && a == oldA)
         {
-            return ComResult();
+            return ComResult.success;
         }
 
         const int zeroOrErrorCode = SDL_SetRenderDrawColor(ptr, r, g, b, a);
         if (zeroOrErrorCode)
         {
-            return ComResult(zeroOrErrorCode, "RGBA drawing error");
+            return getErrorRes(zeroOrErrorCode);
         }
 
-        return ComResult();
+        return ComResult.success;
     }
 
     ComResult getDrawColor(out ubyte r, out ubyte g, out ubyte b, out ubyte a) nothrow
@@ -82,7 +82,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
             &r, &g, &b, &a);
         if (zeroOrErrorColor)
         {
-            return ComResult(zeroOrErrorColor, "Error getting render old color for drawing");
+            return getErrorRes(zeroOrErrorColor, "Error getting render old color for drawing");
         }
 
         return ComResult.success;
@@ -91,7 +91,11 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
     ComResult clear() nothrow
     {
         const int zeroOrErrorCode = SDL_RenderClear(ptr);
-        return ComResult(zeroOrErrorCode);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
     }
 
     ComResult present() nothrow
@@ -112,7 +116,10 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
             //TODO unsafe
             SDL_Texture* sdlPtr = cast(SDL_Texture*) nPtr;
             const int zeroOrErrorCode = SDL_RenderCopy(ptr, sdlPtr, null, null);
-            return ComResult(zeroOrErrorCode);
+            if (zeroOrErrorCode)
+            {
+                return getErrorRes(zeroOrErrorCode);
+            }
         }
         return ComResult.error("Source texture is not a sdl texture");
     }
@@ -124,8 +131,12 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         rect.y = cast(int) clip.y;
         rect.w = cast(int) clip.width;
         rect.h = cast(int) clip.height;
-        const zeroOrErrCode = SDL_RenderSetClipRect(ptr, &rect);
-        return ComResult(zeroOrErrCode);
+        const zeroOrErrorCode = SDL_RenderSetClipRect(ptr, &rect);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
     }
 
     ComResult getClipRect(out Rect2d clip) nothrow
@@ -138,8 +149,12 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
 
     ComResult removeClipRect() nothrow
     {
-        const zeroOrErrCode = SDL_RenderSetClipRect(ptr, null);
-        return ComResult(zeroOrErrCode);
+        const zeroOrErrorCode = SDL_RenderSetClipRect(ptr, null);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
     }
 
     ComResult readPixels(Rect2d rect, uint format, int pitch, void* pixelBuffer) nothrow
@@ -149,31 +164,36 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         bounds.y = cast(int) rect.y;
         bounds.w = cast(int) rect.width;
         bounds.h = cast(int) rect.height;
-        const zeroOrErrCode = SDL_RenderReadPixels(ptr, &bounds, format, pixelBuffer, pitch);
-        if (zeroOrErrCode != 0)
+        const zeroOrErrorCode = SDL_RenderReadPixels(ptr, &bounds, format, pixelBuffer, pitch);
+        if (zeroOrErrorCode)
         {
-            return ComResult(zeroOrErrCode, getError);
+            return getErrorRes(zeroOrErrorCode);
         }
 
-        return ComResult(zeroOrErrCode);
+        return ComResult.success;
     }
 
     ComResult setBlendMode(ComBlendMode mode) nothrow
     {
         SDL_BlendMode newMode = typeConverter.toNativeBlendMode(mode);
         const int zeroOrErrorCode = SDL_SetRenderDrawBlendMode(ptr, newMode);
-        return ComResult(zeroOrErrorCode);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
     }
 
     ComResult getBlendMode(out ComBlendMode mode) nothrow
     {
         SDL_BlendMode oldMode;
         const int zeroOrErrorCode = SDL_GetRenderDrawBlendMode(ptr, &oldMode);
-        if (zeroOrErrorCode == 0)
+        if (zeroOrErrorCode)
         {
-            mode = typeConverter.fromNativeBlendMode(oldMode);
+            return getErrorRes(zeroOrErrorCode);
         }
-        return ComResult(zeroOrErrorCode);
+        mode = typeConverter.fromNativeBlendMode(oldMode);
+        return ComResult.success;
     }
 
     ComResult setBlendModeBlend() nothrow
@@ -195,19 +215,31 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
     ComResult drawRect(const SDL_Rect* r) nothrow
     {
         const int zeroOrErrorCode = SDL_RenderDrawRect(ptr, r);
-        return ComResult(zeroOrErrorCode);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
     }
 
     ComResult drawPoint(int x, int y) nothrow
     {
         const int zeroOrErrorCode = SDL_RenderDrawPoint(ptr, x, y);
-        return ComResult(zeroOrErrorCode);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
     }
 
     ComResult drawLine(int startX, int startY, int endX, int endY) nothrow
     {
         const int zeroOrErrorCode = SDL_RenderDrawLine(ptr, startX, startY, endX, endY);
-        return ComResult(zeroOrErrorCode);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
     }
 
     ComResult drawLines(Vector2[] linePoints) nothrow
@@ -219,13 +251,21 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         const int zeroOrErrorCode = SDL_RenderDrawLines(ptr,
             points.ptr,
             cast(int) points.length);
-        return ComResult(zeroOrErrorCode);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
     }
 
     ComResult setViewport(SDL_Rect* rect) nothrow
     {
         const int zeroOrErrorCode = SDL_RenderSetViewport(ptr, rect);
-        return ComResult(zeroOrErrorCode);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
     }
 
     ComResult drawFillRect(int x, int y, int width, int height) nothrow
@@ -237,28 +277,36 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
     ComResult drawFillRect(const SDL_Rect* rect) nothrow
     {
         const int zeroOrErrorCode = SDL_RenderFillRect(ptr, rect);
-        return ComResult(zeroOrErrorCode);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
     }
 
     ComResult copyEx(SdlTexture texture, const SDL_Rect* srcRect, const SDL_Rect* destRect, double angle, const SDL_Point* center, SDL_RendererFlip flip = SDL_RendererFlip
             .SDL_FLIP_NONE) nothrow
     {
         const int zeroOrErrorCode = SDL_RenderCopyEx(ptr, texture.getObject, srcRect, destRect, angle, center, flip);
-        return ComResult(zeroOrErrorCode);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
     }
 
     ComResult getOutputSize(out int width, out int height) nothrow
     {
         int w, h;
         const int zeroOrErrorCode = SDL_GetRendererOutputSize(ptr, &w, &h);
-        if (zeroOrErrorCode != 0)
+        if (zeroOrErrorCode)
         {
-            return ComResult.error(getError);
+            return getErrorRes(zeroOrErrorCode);
         }
         width = w;
         height = h;
 
-        return ComResult(zeroOrErrorCode);
+        return ComResult.success;
     }
 
     override protected bool disposePtr()

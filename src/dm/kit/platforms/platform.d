@@ -45,7 +45,7 @@ class Platform : ApplicationUnit
             }
         }
 
-        if (const err = system.openHyperlink(url))
+        if (const err = system.openURL(url))
         {
             immutable message = "Error opening url: " ~ err.toString;
             if (isThrowOnOpen)

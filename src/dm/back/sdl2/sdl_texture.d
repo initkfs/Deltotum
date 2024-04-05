@@ -54,6 +54,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult createFromSurface(ComSurface surface) nothrow
     {
+        assert(surface, "Surface must not be null");
         if (ptr)
         {
             disposePtr;
@@ -70,28 +71,30 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult fromSurfacePtr(SDL_Surface* surface) nothrow
     {
+        assert(surface, "Surface ptr must not be null");
         if (ptr)
         {
             disposePtr;
         }
 
         ptr = SDL_CreateTextureFromSurface(renderer.getObject, surface);
-        if (ptr is null)
+        if (!ptr)
         {
-            string error = "Unable create texture from renderer and surface.";
-            if (const err = getError)
-            {
-                error ~= err;
-            }
-            return ComResult.error(error);
+            return getErrorRes("Unable create texture from renderer and surface.");
         }
         //TODO side effect 
-        SDL_SetTextureBlendMode(ptr, SDL_BLENDMODE_BLEND);
+        const zeroOrErrorCode = SDL_SetTextureBlendMode(ptr, SDL_BLENDMODE_BLEND);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
         return ComResult.success;
     }
 
     ComResult recreatePtr(void* newPtr) nothrow
     {
+        assert(newPtr);
+
         if (ptr)
         {
             disposePtr;
@@ -107,7 +110,11 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             return ComResult.error("Texture query error: texture ponter is null");
         }
         const int zeroOrErrorCode = SDL_QueryTexture(ptr, format, access, width, height);
-        return ComResult(zeroOrErrorCode);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
     }
 
     ComResult getFormat(out uint format) nothrow
@@ -139,18 +146,22 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult setRendererTarget() nothrow
     {
-        const zeroOrErr = SDL_SetRenderTarget(renderer.getObject, ptr);
-        if (zeroOrErr != 0)
+        const zeroOrErrorCode = SDL_SetRenderTarget(renderer.getObject, ptr);
+        if (zeroOrErrorCode)
         {
-            return ComResult(zeroOrErr, getError);
+            return getErrorRes(zeroOrErrorCode);
         }
-        return ComResult(zeroOrErr);
+        return ComResult.success;
     }
 
     ComResult resetRendererTarget() nothrow
     {
-        const zeroOrErr = SDL_SetRenderTarget(renderer.getObject, null);
-        return ComResult(zeroOrErr);
+        const zeroOrErrorCode = SDL_SetRenderTarget(renderer.getObject, null);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
     }
 
     protected ComResult create(uint format,
@@ -163,14 +174,9 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         }
 
         ptr = SDL_CreateTexture(renderer.getObject, format, access, w, h);
-        if (ptr is null)
+        if (!ptr)
         {
-            string error = "Unable create texture.";
-            if (const err = getError)
-            {
-                error ~= err;
-            }
-            return ComResult.error(error);
+            return getErrorRes("Unable create texture.");
         }
 
         return ComResult.success;
@@ -179,21 +185,29 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     protected ComResult getAlphaMod(out ubyte alpha) nothrow
     {
         const int zeroOrErrorCode = SDL_GetTextureAlphaMod(ptr, &alpha);
-        return ComResult(zeroOrErrorCode);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
     }
 
     protected ComResult setAlphaMod(ubyte alpha) nothrow
     {
         const int zeroOrErrorCode = SDL_SetTextureAlphaMod(ptr, alpha);
-        return ComResult(zeroOrErrorCode);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
     }
 
     ComResult getColor(out ubyte r, out ubyte g, out ubyte b, out ubyte a) nothrow
     {
         const int zeroOrErrorCode = SDL_GetTextureColorMod(ptr, &r, &g, &b);
-        if (zeroOrErrorCode != 0)
+        if (zeroOrErrorCode)
         {
-            return ComResult(zeroOrErrorCode);
+            return getErrorRes(zeroOrErrorCode);
         }
         return getAlphaMod(a);
     }
@@ -201,9 +215,9 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     ComResult setColor(ubyte r, ubyte g, ubyte b, ubyte a) nothrow
     {
         const int zeroOrErrorCode = SDL_SetTextureColorMod(ptr, r, g, b);
-        if (zeroOrErrorCode != 0)
+        if (zeroOrErrorCode)
         {
-            return ComResult(zeroOrErrorCode);
+            return getErrorRes(zeroOrErrorCode);
         }
         return setAlphaMod(a);
     }
@@ -241,12 +255,13 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         assert(ptr);
         assert(!locked);
         const zeroOrErrorCode = SDL_LockTexture(ptr, null, cast(void**)&pixelPtr, &pitch);
-        if (zeroOrErrorCode == 0)
+        if (zeroOrErrorCode)
         {
-            locked = true;
-            return ComResult.success;
+            return getErrorRes(zeroOrErrorCode);
         }
-        return ComResult(zeroOrErrorCode, getError);
+
+        locked = true;
+        return ComResult.success;
     }
 
     ComResult unlock() nothrow
@@ -286,9 +301,13 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             return ComResult.error("Texture not locked for update");
         }
         SDL_Rect bounds = {0, 0, cast(int) rect.width, cast(int) rect.height};
-        const zeroOrErr = SDL_UpdateTexture(ptr,
+        const zeroOrErrorCode = SDL_UpdateTexture(ptr,
             &bounds, cast(void*) pixelPtr, pitch);
-        return ComResult(zeroOrErr);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
     }
 
     ComResult getPixel(uint x, uint y, out uint* pixel) nothrow
@@ -366,7 +385,11 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     {
         SDL_BlendMode newMode = typeConverter.toNativeBlendMode(mode);
         const int zeroOrErrorCode = SDL_SetTextureBlendMode(ptr, newMode);
-        return ComResult(zeroOrErrorCode);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
     }
 
     ComResult setBlendModeBlend() nothrow
@@ -405,8 +428,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         auto tempSrc = SDL_CreateRGBSurfaceWithFormat(0, srcRect.w, srcRect.h, depth, format);
         if (!tempSrc)
         {
-            //TODO errors
-            return ComResult(-2, getError);
+            return getErrorRes("Source surface is null for format");
         }
         scope (exit)
         {
@@ -416,7 +438,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         auto tempDst = SDL_CreateRGBSurfaceWithFormat(0, dstRect.w, dstRect.h, depth, format);
         if (!tempDst)
         {
-            return ComResult(-3, getError);
+            return getErrorRes("Temp surface is null for format");
         }
 
         scope (exit)
@@ -428,11 +450,11 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         {
             return err;
         }
-        const int zeroOrErrRead = SDL_RenderReadPixels(renderer.getObject, &srcRect, format, tempSrc.pixels, tempSrc
+        const int zeroOrErrorRead = SDL_RenderReadPixels(renderer.getObject, &srcRect, format, tempSrc.pixels, tempSrc
                 .pitch);
-        if (zeroOrErrRead != 0)
+        if (zeroOrErrorRead)
         {
-            return ComResult(zeroOrErrRead, getError);
+            return getErrorRes(zeroOrErrorRead);
         }
 
         if (const err = resetRendererTarget)
@@ -441,9 +463,9 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         }
 
         const int zeroOrErrorCode = SDL_BlitScaled(tempSrc, &srcRect, tempDst, &dstRect);
-        if (zeroOrErrorCode != 0)
+        if (zeroOrErrorCode)
         {
-            return ComResult(zeroOrErrorCode);
+            return getErrorRes(zeroOrErrorCode);
         }
 
         if (const err = fromSurfacePtr(tempDst))
@@ -619,10 +641,10 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     ComResult setScaleMode(ComTextureScaleMode mode) nothrow
     {
         const nativeMode = toSdlMode(mode);
-        const zeroOrErr = SDL_SetTextureScaleMode(ptr, nativeMode);
-        if (zeroOrErr != 0)
+        const zeroOrErrorCode = SDL_SetTextureScaleMode(ptr, nativeMode);
+        if (zeroOrErrorCode)
         {
-            return ComResult(zeroOrErr);
+            return getErrorRes(zeroOrErrorCode);
         }
         return ComResult.success;
     }
@@ -630,10 +652,10 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     ComResult getScaleMode(out ComTextureScaleMode mode) nothrow
     {
         SDL_ScaleMode oldMode;
-        const zeroOrErr = SDL_GetTextureScaleMode(ptr, &oldMode);
-        if (zeroOrErr != 0)
+        const zeroOrErrorCode = SDL_GetTextureScaleMode(ptr, &oldMode);
+        if (zeroOrErrorCode)
         {
-            return ComResult(zeroOrErr);
+            return getErrorRes(zeroOrErrorCode);
         }
         mode = fromSdlMode(oldMode);
         return ComResult.success;
@@ -674,7 +696,11 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         _opacity = opacity;
         //TODO setColor with alpha
         const int zeroOrErrorCode = SDL_SetTextureAlphaMod(ptr, cast(ubyte)(255 * opacity));
-        return ComResult(zeroOrErrorCode);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
     }
 
     override protected bool disposePtr() nothrow

@@ -26,6 +26,7 @@ nothrow:
         ubyte fr, ubyte fg, ubyte fb, ubyte fa,
         ubyte br, ubyte bg, ubyte bb, ubyte ba);
 
+    ComResult load(string path, size_t size);
     ComResult getFontPath(out string path);
     ComResult getFontSize(out size_t size);
     ComResult setHinting(ComFontHinting hinting);

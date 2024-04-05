@@ -19,8 +19,6 @@ import bindbc.sdl;
  */
 class SdlImage : SdlSurface, ComImage
 {
-    string path;
-
     private
     {
         SDL_RWops* rwBuffer;
@@ -43,25 +41,23 @@ class SdlImage : SdlSurface, ComImage
             disposePtr;
         }
 
-        SDL_Surface* imgPtr = IMG_Load(path.toStringz);
-        if (imgPtr is null)
+        if (path.length == 0)
         {
-            import std.format : format;
-
-            string error = "Unable to load image from: " ~ path;
-            if (const err = getError)
-            {
-                error ~= err;
-            }
+            return ComResult.error("Image path must not be empty");
         }
+
+        SDL_Surface* imgPtr = IMG_Load(path.toStringz);
+        if (!imgPtr)
+        {
+            return getErrorRes("Unable to load image from: " ~ path);
+        }
+
         ptr = imgPtr;
         return ComResult.success;
     }
 
     ComResult load(const(void[]) content) nothrow
     {
-        import std.string : toStringz;
-
         if (ptr)
         {
             disposePtr;
@@ -71,14 +67,15 @@ class SdlImage : SdlSurface, ComImage
                 .length);
         if (!rw)
         {
-            return ComResult.error("Cannot create memory buffer for image");
+            return getErrorRes("Cannot create memory buffer for image");
         }
+
         rwBuffer = rw;
 
         SDL_Surface* surfPtr = IMG_Load_RW(rw, 1);
         if (!surfPtr)
         {
-            return ComResult.error("Image loading error: " ~ IMG_GetError().fromStringz.idup);
+            return getErrorRes("Error loading image from buffer");
         }
         this.ptr = surfPtr;
         return ComResult.success;
@@ -89,14 +86,17 @@ class SdlImage : SdlSurface, ComImage
         assert(ptr);
         import dm.core.utils.type_util : castSafe;
 
-        surf = this.castSafe!ComSurface;
+        auto thisSurf = castSafe!ComSurface(this);
+        assert(thisSurf);
+        surf = thisSurf;
         return ComResult.success;
     }
 
     ComResult savePNG(ComSurface surface, string path) nothrow
     {
-        //TODO check exists
-        import std.string : toStringz;
+        //If the file exists, it will be overwritten
+        assert(surface, "Surface must not be null");
+        assert(path.length > 0, "Image path must not be empty");
 
         void* nativePtr;
         if (const err = surface.nativePtr(nativePtr))
@@ -106,10 +106,10 @@ class SdlImage : SdlSurface, ComImage
         assert(nativePtr);
 
         //TODO unsafe
-        const zeroOrErr = IMG_SavePNG(cast(SDL_Surface*) nativePtr, path.toStringz);
-        if (zeroOrErr == -1)
+        const zeroOrErrorCode = IMG_SavePNG(cast(SDL_Surface*) nativePtr, path.toStringz);
+        if (zeroOrErrorCode != 0)
         {
-            return ComResult(zeroOrErr, getError);
+            return getErrorRes(zeroOrErrorCode);
         }
         return ComResult.success;
     }

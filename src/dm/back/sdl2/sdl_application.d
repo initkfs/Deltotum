@@ -194,7 +194,7 @@ class SdlApplication : ContinuouslyApplication
             import dm.back.sdl2.sdl_cursor : SDLCursor;
 
             auto sdlCursor = new SDLCursor;
-            if (auto err = sdlCursor.fromDefault)
+            if (auto err = sdlCursor.createDefault)
             {
                 uservices.logger.errorf("Cursor creating error. ", err);
             }
@@ -203,8 +203,8 @@ class SdlApplication : ContinuouslyApplication
                 import dm.kit.inputs.cursors.system_cursor : SystemCursor;
 
                 cursor = new SystemCursor(sdlCursor);
-                cursor.cursorFactory = (type) {
-                    auto newCursor = new SDLCursor(type);
+                cursor.cursorFactory = () {
+                    auto newCursor = new SDLCursor;
                     return newCursor;
                 };
             }
@@ -628,14 +628,14 @@ class SdlApplication : ContinuouslyApplication
         onNew(surf);
     }
 
-    ComFont newComFont(string path, size_t size)
+    ComFont newComFont()
     {
-        return new SdlTTFFont(path, size);
+        return new SdlTTFFont;
     }
 
     ComImage newComImage()
     {
-        return new SdlImage();
+        return new SdlImage;
     }
 
     void newComImageScoped(scope void delegate(ComImage) onNew)
@@ -707,8 +707,8 @@ class SdlApplication : ContinuouslyApplication
 
         window.title = title;
 
-        auto asset = createAsset(uservices.logger, uservices.config, uservices.context, (path, size) {
-            return newComFont(path, size);
+        auto asset = createAsset(uservices.logger, uservices.config, uservices.context, () {
+            return newComFont;
         });
         assert(asset);
         asset.initialize;

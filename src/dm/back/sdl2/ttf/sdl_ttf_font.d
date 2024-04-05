@@ -27,29 +27,43 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
         size_t _fontSize;
     }
 
-    this(string fontFilePath, size_t fontSize = 12)
+    ComResult load(string fontFilePath, size_t fontSize = 12) nothrow
     {
+        if (ptr)
+        {
+            disposePtr;
+        }
+
+        if (fontFilePath.length == 0)
+        {
+            return ComResult.error("Font file path must not be empty");
+        }
+
+        if (fontSize == 0)
+        {
+            return ComResult.error("Font file size must be positive number");
+        }
+
         this._fontPath = fontFilePath;
         this._fontSize = fontSize;
-        ptr = TTF_OpenFont(this._fontPath.toStringz, fontSize.to!int);
+
+        ptr = TTF_OpenFont(_fontPath.toStringz, cast(int) _fontSize);
         if (!ptr)
         {
-            //TODO error from sdl?
-            string error = "Unable to load ttf font.";
-            if (const err = getError)
-            {
-                error ~= err;
-            }
-            throw new Exception(error);
+            return getErrorRes("Unable to load ttf font from " ~ fontFilePath);
         }
+
+        return ComResult.success;
     }
 
     ComResult renderFont(
         ComSurface targetSurface,
         const(dchar[]) text,
-        ubyte fr = 255, ubyte fg = 255, ubyte fb = 255, ubyte fa = 1,
-        ubyte br = 255, ubyte bg = 255, ubyte bb = 255, ubyte ba = 1)
+        ubyte fr = 255, ubyte fg = 255, ubyte fb = 255, ubyte fa = 255,
+        ubyte br = 255, ubyte bg = 255, ubyte bb = 255, ubyte ba = 255) nothrow
     {
+        assert(targetSurface);
+
         SDL_Color color = {fr, fg, fb, fa};
         //TODO TTF_RenderText_Shaded
         SDL_Color backgroundColor = {br, bg, bb, ba};
@@ -71,12 +85,7 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
         SDL_Surface* fontSurfacePtr = TTF_RenderUTF8_Blended(ptr, textPtr, color);
         if (!fontSurfacePtr)
         {
-            string errMsg = "Unable to render text";
-            if (const sdlErr = getError)
-            {
-                errMsg ~= ". " ~ errMsg;
-            }
-            return ComResult.error(errMsg);
+            return getErrorRes("Unable to render text");
         }
 
         //TODO unsafe
@@ -88,14 +97,18 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
         return ComResult.success;
     }
 
-    ComResult getFontPath(out string path)
+    ComResult getFontPath(out string path) nothrow
     {
+        assert(ptr, "Font not loaded");
+
         path = this._fontPath;
         return ComResult.success;
     }
 
-    ComResult getFontSize(out size_t size)
+    ComResult getFontSize(out size_t size) nothrow
     {
+        assert(ptr, "Font not loaded");
+        ;
         size = _fontSize;
         return ComResult.success;
     }

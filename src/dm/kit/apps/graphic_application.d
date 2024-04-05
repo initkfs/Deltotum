@@ -275,8 +275,7 @@ abstract class GraphicApplication : CliApplication
         return theme;
     }
 
-    Asset createAsset(Logger logger, Config config, Context context, ComFont delegate(
-            string fontPath, size_t fontSize) comFontProvider)
+    Asset createAsset(Logger logger, Config config, Context context, ComFont delegate() comFontProvider)
     {
         import dm.kit.assets.fonts.font_size : FontSize;
 
