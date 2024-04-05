@@ -339,11 +339,8 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
     ComResult unlock() nothrow
     {
         assert(ptr);
-        const int zeroOrErrorCode = SDL_UnlockSurface(ptr);
-        if (zeroOrErrorCode)
-        {
-            return getErrorRes(zeroOrErrorCode);
-        }
+        //void???
+        SDL_UnlockSurface(ptr);
         return ComResult.success;
     }
 

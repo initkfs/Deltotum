@@ -80,9 +80,9 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
     ComResult getId(out int id) nothrow
     {
         const idOrZeroError = SDL_GetWindowID(ptr);
-        if (!idOrZeroError)
+        if (idOrZeroError == 0)
         {
-            return getErrorRes(idOrZeroError, "Error getting window id");
+            return getErrorRes("Error getting window id");
         }
 
         id = idOrZeroError;

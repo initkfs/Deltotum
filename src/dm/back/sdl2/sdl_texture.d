@@ -267,6 +267,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     ComResult unlock() nothrow
     {
         assert(locked);
+        assert(ptr);
         SDL_UnlockTexture(ptr);
         locked = false;
         pixelPtr = null;

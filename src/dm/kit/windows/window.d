@@ -194,13 +194,6 @@ class Window : GraphicsComponent
             return;
         }
 
-        if (const err = nativeWindow.close)
-        {
-            logger.error("Window closing error. ", err.toString);
-            //WARNING return
-            return;
-        }
-
         //TODO move to controller
         windowManager.remove(this);
 
@@ -534,6 +527,13 @@ class Window : GraphicsComponent
             return;
         }
         logger.tracef("Start dispose window '%s' with id %d", title, windowId);
+
+        if (const err = nativeWindow.close)
+        {
+            logger.error("Window closing error. ", err.toString);
+            //WARNING return
+            return;
+        }
 
         super.dispose;
 
