@@ -5,6 +5,7 @@ version(SdlBackend):
 // dfmt on
 
 import dm.com.platforms.objects.com_object : ComObject;
+import dm.com.platforms.results.com_result : ComResult;
 import dm.back.sdl2.base.sdl_type_converter : SdlTypeConverter;
 
 import std.string : toStringz, fromStringz;
@@ -31,20 +32,25 @@ class SdlObject : ComObject
         assert(typeConverter !is null);
     }
 
-    const(char[]) getError() const nothrow
+    ComResult getErrorRes(int code = -1, string message = null) const nothrow
+    {
+        return message ? ComResult.error(code, message, getError) : ComResult.error(code, getError);
+    }
+
+    string getError() const nothrow
     {
         const char* errorPtr = SDL_GetError();
-        const err = ptrToError(errorPtr);
+        const err = ptrToStr(errorPtr);
         return err;
     }
 
-    protected const(char[]) ptrToError(const char* errorPtr) const nothrow
+    protected string ptrToStr(const char* errorPtr) const nothrow
     {
-        if (errorPtr is null)
+        if (!errorPtr)
         {
-            return "Cannot get error from pointer: pointer is null";
+            return "";
         }
-        const(char[]) error = errorPtr.fromStringz;
+        const error = errorPtr.fromStringz.idup;
         return error;
     }
 

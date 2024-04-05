@@ -14,17 +14,11 @@ import core.attribute : mustuse;
     string message;
     bool isError;
 
-    //TODO remove char[], 
-    this(int code, const(char[]) message = null, bool isError = false) nothrow pure @safe
+    this(int code, string message = null, bool isError = false) inout nothrow pure @safe
     {
         this.code = code;
+        this.message = message;
         this.isError = isError;
-
-        import std.conv : to;
-
-        if(message){
-             this.message = message.to!string;
-        }
     }
 
     static ComResult success(int code = defaultCodeSuccess) nothrow pure @safe
@@ -37,14 +31,12 @@ import core.attribute : mustuse;
         return ComResult(code, null, true);
     }
 
-    static ComResult error(const(char[]) message) nothrow pure @safe
+    static ComResult error(string message) nothrow pure @safe
     {
-        import std.conv : to;
-
-        return ComResult(defaultCodeError, message.to!string, true);
+        return ComResult(defaultCodeError, message, true);
     }
 
-    static ComResult error(int code, const(char[])[] messages...) nothrow pure @safe
+    static ComResult error(int code, string[] messages...) nothrow pure @safe
     {
         import std.conv : text;
 
@@ -54,7 +46,7 @@ import core.attribute : mustuse;
         }
         catch (Exception e)
         {
-            assert(0);
+            assert(0, e.msg);
         }
     }
 

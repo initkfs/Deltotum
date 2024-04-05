@@ -421,7 +421,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         catch (Exception ex)
         {
             //TODO toString not nothrow
-            return ComResult.error(ex.message);
+            return ComResult.error(ex.msg);
         }
     }
 
@@ -483,7 +483,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         catch (Exception e)
         {
             //TODO toString not nothrow
-            return ComResult.error(e.message);
+            return ComResult.error(e.msg);
         }
     }
 

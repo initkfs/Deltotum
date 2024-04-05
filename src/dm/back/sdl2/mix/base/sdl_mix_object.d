@@ -15,10 +15,10 @@ import bindbc.sdl;
 class SdlMixObject : SdlObject
 {
 
-    override const(char[]) getError() const nothrow
+    override string getError() const nothrow
     {
         const char* errPtr = Mix_GetError();
-        const error = ptrToError(errPtr);
+        const error = ptrToStr(errPtr);
         return error;
     }
 
