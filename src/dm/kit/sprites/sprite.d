@@ -1086,7 +1086,7 @@ class Sprite : EventKitTarget
         }
     }
 
-    Vector2 position() @nogc @safe pure nothrow
+    Vector2 position() @safe pure nothrow
     {
         return Vector2(x, y);
     }
@@ -1108,7 +1108,7 @@ class Sprite : EventKitTarget
         y(newY);
     }
 
-    double x() @nogc @safe pure nothrow
+    double x() @safe pure nothrow
     {
         return _x;
     }
@@ -1157,7 +1157,7 @@ class Sprite : EventKitTarget
         }
     }
 
-    double y() @nogc @safe pure nothrow
+    double y() @safe pure nothrow
     {
         return _y;
     }
@@ -1206,7 +1206,7 @@ class Sprite : EventKitTarget
         }
     }
 
-    double width() @nogc @safe pure nothrow
+    double width() @safe pure nothrow
     {
         return _width;
     }
@@ -1285,7 +1285,7 @@ class Sprite : EventKitTarget
         }
     }
 
-    double height() @nogc @safe pure nothrow
+    double height() @safe pure nothrow
     {
         return _height;
     }
@@ -1402,12 +1402,12 @@ class Sprite : EventKitTarget
         return resize(newW, newH);
     }
 
-    void setValid(bool value) @nogc @safe pure nothrow
+    void setValid(bool value) @safe pure nothrow
     {
         isValid = value;
     }
 
-    void setValidAll(bool value) @nogc @safe pure nothrow
+    void setValidAll(bool value) @safe pure nothrow
     {
         isValid = value;
         foreach (ch; children)
@@ -1416,7 +1416,7 @@ class Sprite : EventKitTarget
         }
     }
 
-    void setValidChildren(bool value) @nogc @safe pure nothrow
+    void setValidChildren(bool value) @safe pure nothrow
     {
         foreach (child; children)
         {
@@ -1424,7 +1424,7 @@ class Sprite : EventKitTarget
         }
     }
 
-    void setInvalid() @nogc @safe pure nothrow
+    void setInvalid() @safe pure nothrow
     {
         setValid(false);
     }

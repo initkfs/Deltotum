@@ -26,7 +26,7 @@ class SceneManager : Scene
         Scene _currentScene;
     }
 
-    Scene currentScene() @nogc @safe pure nothrow
+    Scene currentScene() @safe pure nothrow
     out (_currentScene; _currentScene !is null)
     {
         return _currentScene;

@@ -25,12 +25,12 @@ class WindowComponent : GraphicsComponent
         buildFromParent(wComponent, this);
     }
 
-    bool hasWindow() const @nogc nothrow pure @safe
+    bool hasWindow() const nothrow pure @safe
     {
         return _window !is null;
     }
 
-    inout(Window) window() inout @nogc nothrow pure @safe
+    inout(Window) window() inout nothrow pure @safe
     out (_window; _window !is null)
     {
         return _window;

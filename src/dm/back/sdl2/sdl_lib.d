@@ -57,17 +57,17 @@ class SdlLib : SdlObject
         SDL_Delay(ms);
     }
 
-    uint wasInit(uint flags) const @nogc nothrow
+    uint wasInit(uint flags) const nothrow
     {
         return SDL_WasInit(flags);
     }
 
-    void quit() const @nogc nothrow
+    void quit() const nothrow
     {
         SDL_Quit();
     }
 
-    void enableScreenSaver(bool isEnable = true) const @nogc nothrow
+    void enableScreenSaver(bool isEnable = true) const nothrow
     {
         if (isEnable)
         {
@@ -77,7 +77,7 @@ class SdlLib : SdlObject
         SDL_DisableScreenSaver();
     }
 
-    bool isScreenSaverEnabled() const @nogc nothrow
+    bool isScreenSaverEnabled() const nothrow
     {
         auto isEnabled = SDL_IsScreenSaverEnabled();
         return typeConverter.toBool(isEnabled);
@@ -104,7 +104,7 @@ class SdlLib : SdlObject
         return hintValue;
     }
 
-    void clearHints() const @nogc nothrow
+    void clearHints() const nothrow
     {
         SDL_ClearHints();
     }

@@ -80,7 +80,7 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor, ComCursor
         }
     }
 
-    ComResult fromDefault() @nogc nothrow
+    ComResult fromDefault() nothrow
     {
         SDL_Cursor* cursorPtr;
         if (const err = defaultCursorPtr(cursorPtr))
@@ -91,7 +91,7 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor, ComCursor
         return ComResult.success;
     }
 
-    ComResult defaultCursorPtr(out SDL_Cursor* cursorPtr) @nogc nothrow
+    ComResult defaultCursorPtr(out SDL_Cursor* cursorPtr) nothrow
     {
         auto mustBeCursorPtr = SDL_GetCursor();
         if (!mustBeCursorPtr)
@@ -102,7 +102,7 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor, ComCursor
         return ComResult.success;
     }
 
-    ComResult set() @nogc nothrow
+    ComResult set() nothrow
     {
         if (!ptr)
         {
@@ -113,20 +113,20 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor, ComCursor
         return ComResult.success;
     }
 
-    ComResult redraw() @nogc nothrow
+    ComResult redraw() nothrow
     {
         SDL_SetCursor(null);
         return ComResult.success;
     }
 
-    ComResult getPos(out int x, out int y) @nogc nothrow
+    ComResult getPos(out int x, out int y) nothrow
     {
         //const buttonMask = 
         SDL_GetMouseState(&x, &y);
         return ComResult.success;
     }
 
-    ComResult show() @nogc nothrow
+    ComResult show() nothrow
     {
         const pozitiveOrError = SDL_ShowCursor(SDL_ENABLE);
         if (pozitiveOrError < 0)
@@ -136,7 +136,7 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor, ComCursor
         return ComResult.success;
     }
 
-    ComResult hide() @nogc nothrow
+    ComResult hide() nothrow
     {
         const pozitiveOrError = SDL_ShowCursor(SDL_DISABLE);
         if (pozitiveOrError < 0)
@@ -146,7 +146,7 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor, ComCursor
         return ComResult.success;
     }
 
-    override protected bool disposePtr() @nogc nothrow
+    override protected bool disposePtr() nothrow
     {
         if (ptr)
         {

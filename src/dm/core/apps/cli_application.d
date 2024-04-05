@@ -655,7 +655,7 @@ class CliApplication : SimpleUnit
         uservices.build(component);
     }
 
-    UniComponent uservices() @nogc nothrow pure @safe
+    UniComponent uservices() nothrow pure @safe
     out (_uniServices; _uniServices !is null)
     {
         return _uniServices;

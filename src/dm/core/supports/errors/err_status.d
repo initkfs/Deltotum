@@ -21,7 +21,7 @@ class ErrStatus
         }
     }
 
-    bool isError() const @nogc pure @safe
+    bool isError() const pure @safe
     {
         return _error;
     }

@@ -596,7 +596,7 @@ abstract class GraphicApplication : CliApplication
         }
     }
 
-    GraphicsComponent gservices() @nogc nothrow pure @safe
+    GraphicsComponent gservices() nothrow pure @safe
     out (_graphicServices; _graphicServices !is null)
     {
         return _graphicServices;

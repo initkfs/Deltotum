@@ -22,7 +22,7 @@ class StateManager(T)
         states = make!(DList!T)();
     }
 
-    Nullable!T state() @nogc nothrow pure @safe
+    Nullable!T state() nothrow pure @safe
     {
         Nullable!T last;
         if (isEmpty)
@@ -51,7 +51,7 @@ class StateManager(T)
         return isInsert == 1;
     }
 
-    bool isEmpty() const @nogc nothrow pure @safe
+    bool isEmpty() const nothrow pure @safe
     {
         return states.empty;
     }

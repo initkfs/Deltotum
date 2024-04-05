@@ -83,7 +83,7 @@ class UniComposite(C : UniComponent) : C
         return true;
     }
 
-    inout(C[]) units() inout @nogc nothrow pure @safe
+    inout(C[]) units() inout nothrow pure @safe
     {
         return _units;
     }

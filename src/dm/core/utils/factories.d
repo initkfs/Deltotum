@@ -36,7 +36,7 @@ class FactoryKit(Entity, Type = string)
         return factories[type];
     }
 
-    bool has(Type type) const @nogc pure @safe
+    bool has(Type type) const pure @safe
     {
         return (type in factories) !is null;
     }

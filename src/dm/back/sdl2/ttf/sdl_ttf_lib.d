@@ -44,7 +44,7 @@ class SdlTTFLib : SdlTTFObject
         }
     }
 
-    void quit() const @nogc nothrow
+    void quit() const nothrow
     {
         TTF_Quit();
     }

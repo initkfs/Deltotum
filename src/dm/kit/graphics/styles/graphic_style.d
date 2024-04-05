@@ -14,7 +14,7 @@ struct GraphicStyle
     RGBA fillColor = RGBA.transparent;
     bool isNested;
 
-    static GraphicStyle simple() @nogc pure @safe
+    static GraphicStyle simple() pure @safe
     {
         return GraphicStyle(1.0, RGBA.white, false, RGBA.transparent);
     }

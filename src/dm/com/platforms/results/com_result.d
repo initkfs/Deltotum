@@ -18,24 +18,24 @@ import core.attribute : mustuse;
 
     int codeSuccess;
 
-    this(int code, const char[] message = null, int codeSuccess = defaultCodeSuccess) nothrow @nogc pure @safe
+    this(int code, const char[] message = null, int codeSuccess = defaultCodeSuccess) nothrow pure @safe
     {
         this.code = code;
         this.message = message;
         this.codeSuccess = codeSuccess;
     }
 
-    static ComResult success() nothrow @nogc pure @safe
+    static ComResult success() nothrow pure @safe
     {
         return ComResult(defaultCodeSuccess);
     }
 
-    static ComResult error(const char[] message) nothrow @nogc pure @safe
+    static ComResult error(const char[] message) nothrow pure @safe
     {
         return ComResult(defaultCodeError, message);
     }
 
-    bool isError() const nothrow @nogc pure @safe
+    bool isError() const nothrow pure @safe
     {
         return code != codeSuccess;
     }

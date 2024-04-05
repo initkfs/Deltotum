@@ -180,12 +180,12 @@ class UniComponent : SimpleUnit
         isComponentCreated = false;
     }
 
-    bool hasContext() const @nogc nothrow pure @safe
+    bool hasContext() const nothrow pure @safe
     {
         return _context !is null;
     }
 
-    inout(Context) context() inout @nogc nothrow pure @safe
+    inout(Context) context() inout nothrow pure @safe
     out (_context; _context !is null)
     {
         return _context;
@@ -199,12 +199,12 @@ class UniComponent : SimpleUnit
         _context = context;
     }
 
-    bool hasLogger() const @nogc nothrow pure @safe
+    bool hasLogger() const nothrow pure @safe
     {
         return _logger !is null;
     }
 
-    inout(Logger) logger() inout @nogc nothrow pure @safe
+    inout(Logger) logger() inout nothrow pure @safe
     out (_logger; _logger !is null)
     {
         return _logger;
@@ -219,12 +219,12 @@ class UniComponent : SimpleUnit
 
     }
 
-    bool hasConfig() const @nogc nothrow pure @safe
+    bool hasConfig() const nothrow pure @safe
     {
         return _config !is null;
     }
 
-    inout(Config) config() inout @nogc nothrow pure @safe
+    inout(Config) config() inout nothrow pure @safe
     out (_config; _config !is null)
     {
         return _config;
@@ -238,12 +238,12 @@ class UniComponent : SimpleUnit
         _config = config;
     }
 
-    bool hasCli() const @nogc nothrow pure @safe
+    bool hasCli() const nothrow pure @safe
     {
         return _cli !is null;
     }
 
-    inout(Cli) cli() inout @nogc nothrow pure @safe
+    inout(Cli) cli() inout nothrow pure @safe
     out (_cli; _cli !is null)
     {
         return _cli;
@@ -257,12 +257,12 @@ class UniComponent : SimpleUnit
         _cli = cli;
     }
 
-    bool hasSupport() const @nogc nothrow pure @safe
+    bool hasSupport() const nothrow pure @safe
     {
         return _support !is null;
     }
 
-    inout(Support) support() inout @nogc nothrow pure @safe
+    inout(Support) support() inout nothrow pure @safe
     out (_support; _support !is null)
     {
         return _support;
@@ -276,12 +276,12 @@ class UniComponent : SimpleUnit
         _support = support;
     }
 
-    bool hasResource() const @nogc nothrow pure @safe
+    bool hasResource() const nothrow pure @safe
     {
         return _resource !is null;
     }
 
-    inout(Resource) resource() inout @nogc nothrow pure @safe
+    inout(Resource) resource() inout nothrow pure @safe
     out (_resource; _resource !is null)
     {
         return _resource;
@@ -295,12 +295,12 @@ class UniComponent : SimpleUnit
         _resource = resource;
     }
 
-    bool hasCapCore() const @nogc nothrow pure @safe
+    bool hasCapCore() const nothrow pure @safe
     {
         return _capCore !is null;
     }
 
-    inout(CapCore) capCore() inout @nogc nothrow pure @safe
+    inout(CapCore) capCore() inout nothrow pure @safe
     out (_capCore; _capCore !is null)
     {
         return _capCore;
@@ -314,12 +314,12 @@ class UniComponent : SimpleUnit
         _capCore = cap;
     }
 
-    bool hasEventBus() const @nogc nothrow pure @safe
+    bool hasEventBus() const nothrow pure @safe
     {
         return _eventBus !is null;
     }
 
-    inout(EventBus) eventBus() inout @nogc nothrow pure @safe
+    inout(EventBus) eventBus() inout nothrow pure @safe
     out (_eventBus; _eventBus !is null)
     {
         return _eventBus;
@@ -333,12 +333,12 @@ class UniComponent : SimpleUnit
         _eventBus = bus;
     }
 
-    bool hasLocator() const @nogc nothrow pure @safe
+    bool hasLocator() const nothrow pure @safe
     {
         return _locator !is null;
     }
 
-    inout(ServiceLocator) locator() inout @nogc nothrow pure @safe
+    inout(ServiceLocator) locator() inout nothrow pure @safe
     out (_locator; _locator !is null)
     {
         return _locator;

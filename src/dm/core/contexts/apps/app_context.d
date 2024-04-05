@@ -35,17 +35,17 @@ class AppContext
         this.isSilent = isSilent;
     }
 
-    Nullable!string workDir() const @nogc nothrow pure @safe
+    Nullable!string workDir() const nothrow pure @safe
     {
         return _workDir ? Nullable!string(_workDir) : Nullable!string.init;
     }
 
-    Nullable!string dataDir() const @nogc nothrow pure @safe
+    Nullable!string dataDir() const nothrow pure @safe
     {
         return _dataDir ? Nullable!string(_dataDir) : Nullable!string.init;
     }
 
-    Nullable!string userDir() const @nogc nothrow pure @safe
+    Nullable!string userDir() const nothrow pure @safe
     {
         return _userDir ? Nullable!string(_userDir) : Nullable!string.init;
     }

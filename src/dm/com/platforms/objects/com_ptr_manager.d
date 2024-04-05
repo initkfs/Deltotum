@@ -11,7 +11,7 @@ mixin template ComPtrManager(T)
         bool _disposed;
     }
 
-    abstract protected bool disposePtr() @nogc nothrow;
+    abstract protected bool disposePtr() nothrow;
 
     this() pure @safe
     {
@@ -37,18 +37,18 @@ mixin template ComPtrManager(T)
         }
     }
 
-    final inout(T*) getObject() inout @nogc nothrow @safe
+    final inout(T*) getObject() inout nothrow @safe
     out (p; p !is null)
     {
         return ptr;
     }
 
-    final bool isEmpty() @nogc nothrow pure @safe
+    final bool isEmpty() nothrow pure @safe
     {
         return ptr is null;
     }
 
-    final bool isDisposed() @nogc nothrow pure @safe
+    final bool isDisposed() nothrow pure @safe
     {
         return _disposed;
     }
@@ -64,7 +64,7 @@ mixin template ComPtrManager(T)
         _disposed = false;
     }
 
-    bool dispose() @nogc nothrow
+    bool dispose() nothrow
     {
         if (ptr)
         {

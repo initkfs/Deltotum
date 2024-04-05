@@ -50,7 +50,7 @@ class SdlJoystick : SdlObjectWrapper!SDL_Joystick
         return new SdlJoystick(0);
     }
 
-    override protected bool disposePtr() @nogc nothrow
+    override protected bool disposePtr() nothrow
     {
         if (ptr)
         {

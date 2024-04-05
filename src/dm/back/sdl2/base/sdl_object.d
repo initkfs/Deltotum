@@ -31,14 +31,14 @@ class SdlObject : ComObject
         assert(typeConverter !is null);
     }
 
-    const(char[]) getError() const @nogc nothrow
+    const(char[]) getError() const nothrow
     {
         const char* errorPtr = SDL_GetError();
         const err = ptrToError(errorPtr);
         return err;
     }
 
-    protected const(char[]) ptrToError(const char* errorPtr) const @nogc nothrow
+    protected const(char[]) ptrToError(const char* errorPtr) const nothrow
     {
         if (errorPtr is null)
         {
@@ -48,7 +48,7 @@ class SdlObject : ComObject
         return error;
     }
 
-    bool clearError() const @nogc nothrow
+    bool clearError() const nothrow
     {
         SDL_ClearError();
         return true;

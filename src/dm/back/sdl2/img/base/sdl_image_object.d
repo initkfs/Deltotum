@@ -21,7 +21,7 @@ class SdlImageObject : SdlObject
         return error;
     }
 
-    override bool clearError() const @nogc nothrow
+    override bool clearError() const nothrow
     {
         return false;
     }

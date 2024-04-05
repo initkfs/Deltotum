@@ -53,12 +53,12 @@ class SdlClipboard : SdlObject, ComClipboard
         return ComResult(zeroOrErrorCode);
     }
 
-    bool isDisposed() @nogc nothrow pure @safe
+    bool isDisposed() nothrow pure @safe
     {
         return false;
     }
 
-    bool dispose() @nogc nothrow
+    bool dispose() nothrow
     {
         return false;
     }

@@ -319,7 +319,7 @@ class Texture : Sprite
         }
     }
 
-    inout(ComTexture) nativeTexture() inout @nogc nothrow
+    inout(ComTexture) nativeTexture() inout nothrow
     {
         return this.texture;
     }

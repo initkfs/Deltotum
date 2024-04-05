@@ -40,12 +40,12 @@ class GraphicsComponent : UniComponent
         buildFromParent(gComponent, this);
     }
 
-    bool hasAsset() const @nogc nothrow pure @safe
+    bool hasAsset() const nothrow pure @safe
     {
         return _asset !is null;
     }
 
-    inout(Asset) asset() inout @nogc nothrow pure @safe
+    inout(Asset) asset() inout nothrow pure @safe
     out (_asset; _asset !is null)
     {
         return _asset;
@@ -59,12 +59,12 @@ class GraphicsComponent : UniComponent
         _asset = assetManager;
     }
 
-    bool hasInput() const @nogc nothrow pure @safe
+    bool hasInput() const nothrow pure @safe
     {
         return _input !is null;
     }
 
-    inout(Input) input() inout @nogc nothrow pure @safe
+    inout(Input) input() inout nothrow pure @safe
     out (_input; _input !is null)
     {
         return _input;
@@ -78,12 +78,12 @@ class GraphicsComponent : UniComponent
         _input = input;
     }
 
-    bool hasAudio() const @nogc nothrow pure @safe
+    bool hasAudio() const nothrow pure @safe
     {
         return _audio !is null;
     }
 
-    inout(Audio) audio() inout @nogc nothrow pure @safe
+    inout(Audio) audio() inout nothrow pure @safe
     out (_audio; _audio !is null)
     {
         return _audio;
@@ -97,12 +97,12 @@ class GraphicsComponent : UniComponent
         _audio = audio;
     }
 
-    bool hasGraphics() const @nogc nothrow pure @safe
+    bool hasGraphics() const nothrow pure @safe
     {
         return _graphics !is null;
     }
 
-    inout(Graphics) graphics() inout @nogc nothrow pure @safe
+    inout(Graphics) graphics() inout nothrow pure @safe
     out (_graphics; _graphics !is null)
     {
         return _graphics;
@@ -116,12 +116,12 @@ class GraphicsComponent : UniComponent
         _graphics = graphics;
     }
 
-    bool hasScreen() const @nogc nothrow pure @safe
+    bool hasScreen() const nothrow pure @safe
     {
         return _screen !is null;
     }
 
-    inout(Screen) screen() inout @nogc nothrow pure @safe
+    inout(Screen) screen() inout nothrow pure @safe
     out (_screen; _screen !is null)
     {
         return _screen;
@@ -135,12 +135,12 @@ class GraphicsComponent : UniComponent
         _screen = screen;
     }
 
-    bool hasEventManager() const @nogc nothrow pure @safe
+    bool hasEventManager() const nothrow pure @safe
     {
         return _eventManager !is null;
     }
 
-    inout(KitEventManager) eventManager() inout @nogc nothrow pure @safe
+    inout(KitEventManager) eventManager() inout nothrow pure @safe
     out (_eventManager; _eventManager !is null)
     {
         return _eventManager;
@@ -154,12 +154,12 @@ class GraphicsComponent : UniComponent
         _eventManager = manager;
     }
 
-    bool hasCapGraphics() const @nogc nothrow pure @safe
+    bool hasCapGraphics() const nothrow pure @safe
     {
         return _capGraphics !is null;
     }
 
-    inout(CapGraphics) capGraphics() inout @nogc nothrow pure @safe
+    inout(CapGraphics) capGraphics() inout nothrow pure @safe
     out (_capGraphics; _capGraphics !is null)
     {
         return _capGraphics;
@@ -173,12 +173,12 @@ class GraphicsComponent : UniComponent
         _capGraphics = caps;
     }
 
-    bool hasTimer() const @nogc nothrow pure @safe
+    bool hasTimer() const nothrow pure @safe
     {
         return _timer !is null;
     }
 
-    inout(Timer) timer() inout @nogc nothrow pure @safe
+    inout(Timer) timer() inout nothrow pure @safe
     out (_timer; _timer !is null)
     {
         return _timer;
@@ -192,12 +192,12 @@ class GraphicsComponent : UniComponent
         _timer = t;
     }
 
-    bool hasPlatform() const @nogc nothrow pure @safe
+    bool hasPlatform() const nothrow pure @safe
     {
         return _platform !is null;
     }
 
-    inout(Platform) platform() inout @nogc nothrow pure @safe
+    inout(Platform) platform() inout nothrow pure @safe
     out (_platform; _platform !is null)
     {
         return _platform;

@@ -799,7 +799,7 @@ class Graphics : LoggableUnit
         bezier(p0, (t) { return bezierInterp(p0, p1, p2, p3, t); }, onPoint);
     }
 
-    private Vector2 bezierInterp(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3, double t) @nogc nothrow pure @safe
+    private Vector2 bezierInterp(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3, double t) nothrow pure @safe
     {
         const dt = 1 - t;
         Vector2 p0p1 = p0.scale(dt).add(p1.scale(t));
@@ -812,7 +812,7 @@ class Graphics : LoggableUnit
         return result;
     }
 
-    private Vector2 bezierInterp(Vector2 p0, Vector2 p1, Vector2 p2, double t) @nogc nothrow pure @safe
+    private Vector2 bezierInterp(Vector2 p0, Vector2 p1, Vector2 p2, double t) nothrow pure @safe
     {
         const dt = 1 - t;
         Vector2 p0p1 = p0.scale(dt).add(p1.scale(t));

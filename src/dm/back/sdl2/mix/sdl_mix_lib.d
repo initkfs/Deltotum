@@ -64,7 +64,7 @@ class SdlMixLib : SdlMixObject
         Mix_CloseAudio();
     }
 
-    void quit() const @nogc nothrow
+    void quit() const nothrow
     {
         Mix_Quit();
     }

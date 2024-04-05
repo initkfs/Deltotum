@@ -181,7 +181,7 @@ class Scene : WindowComponent
         return sprites;
     }
 
-    final bool hasCreation() @nogc @safe pure nothrow
+    final bool hasCreation() @safe pure nothrow
     {
         return _creation !is null;
     }
@@ -194,18 +194,18 @@ class Scene : WindowComponent
         _creation = creation;
     }
 
-    final Creation creation() @nogc @safe pure nothrow
+    final Creation creation() @safe pure nothrow
     out (_creation; _creation !is null)
     {
         return _creation;
     }
 
-    final bool hasInteract() @nogc nothrow pure @safe
+    final bool hasInteract() nothrow pure @safe
     {
         return _interact !is null;
     }
 
-    final Interact interact() @nogc nothrow pure @safe
+    final Interact interact() nothrow pure @safe
     out (_interact; _interact !is null)
     {
         return _interact;

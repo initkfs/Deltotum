@@ -44,7 +44,7 @@ class SdlImgLib : SdlImageObject
         }
     }
 
-    void quit() const @nogc nothrow
+    void quit() const nothrow
     {
         IMG_Quit();
     }

@@ -15,7 +15,7 @@ import bindbc.sdl;
  */
 class SdlTypeConverter : ComTypeConvertor
 {
-    bool toBool(SDL_bool value) const @nogc nothrow @safe
+    bool toBool(SDL_bool value) const nothrow @safe
     {
         final switch (value)
         {
@@ -26,12 +26,12 @@ class SdlTypeConverter : ComTypeConvertor
         }
     }
 
-    SDL_bool fromBool(bool value) const @nogc nothrow @safe
+    SDL_bool fromBool(bool value) const nothrow @safe
     {
         return value ? SDL_bool.SDL_TRUE : SDL_bool.SDL_FALSE;
     }
 
-    SDL_BlendMode toNativeBlendMode(ComBlendMode mode) const @nogc nothrow @safe
+    SDL_BlendMode toNativeBlendMode(ComBlendMode mode) const nothrow @safe
     {
         SDL_BlendMode newMode;
         final switch (mode) with (ComBlendMode)
@@ -55,7 +55,7 @@ class SdlTypeConverter : ComTypeConvertor
         return newMode;
     }
 
-    ComBlendMode fromNativeBlendMode(SDL_BlendMode mode) const @nogc nothrow @safe
+    ComBlendMode fromNativeBlendMode(SDL_BlendMode mode) const nothrow @safe
     {
         ComBlendMode newMode;
         final switch (mode)

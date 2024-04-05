@@ -114,7 +114,7 @@ class MinMaxTransition(T) if (isFloatingPoint!T || is(T : Vector2)) : Transition
         super.update(delta);
     }
 
-    T minValue() @nogc @safe pure nothrow
+    T minValue() @safe pure nothrow
     {
         return _minValue;
     }
@@ -129,7 +129,7 @@ class MinMaxTransition(T) if (isFloatingPoint!T || is(T : Vector2)) : Transition
         _minValue = newValue;
     }
 
-    T rangeAbs() @nogc @safe pure nothrow
+    T rangeAbs() @safe pure nothrow
     {
         import Math = dm.math;
 
@@ -147,7 +147,7 @@ class MinMaxTransition(T) if (isFloatingPoint!T || is(T : Vector2)) : Transition
         }
     }
 
-    T maxValue() @nogc @safe pure nothrow
+    T maxValue() @safe pure nothrow
     {
         return _maxValue;
     }
