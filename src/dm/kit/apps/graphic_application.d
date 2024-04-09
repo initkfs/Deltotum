@@ -535,15 +535,17 @@ abstract class GraphicApplication : CliApplication
     {
         import dm.kit.i18n.langs.alphabets.arabic_numerals_alphabet : ArabicNumeralsAlpabet;
         import dm.kit.i18n.langs.alphabets.special_characters_alphabet : SpecialCharactersAlphabet;
+        import dm.kit.i18n.langs.alphabets.alphabet_en : AlphabetEn;
 
         Alphabet[] alphabets = [
             new ArabicNumeralsAlpabet,
             new SpecialCharactersAlphabet,
+            new AlphabetEn
         ];
         return alphabets;
     }
 
-    Alphabet[] createLargFontAlphabets()
+    Alphabet[] createLargeFontAlphabets()
     {
         import dm.kit.i18n.langs.alphabets.arabic_numerals_alphabet : ArabicNumeralsAlpabet;
 
@@ -588,7 +590,7 @@ abstract class GraphicApplication : CliApplication
         {
             auto font = assets.fontLarge;
             uservices.logger.trace("Found large font for bitmap: ", font.fontPath);
-            BitmapFont bitmap = generator.generate(createLargFontAlphabets, font, colorText, colorTextBackground);
+            BitmapFont bitmap = generator.generate(createLargeFontAlphabets, font, colorText, colorTextBackground);
             onBitmap(bitmap);
             assets.setFontBitmapLarge(bitmap);
             uservices.logger.tracef("Create large font bitmap with foreground %s and background %s", colorText, colorTextBackground);

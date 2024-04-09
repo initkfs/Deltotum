@@ -14,10 +14,14 @@ class FlowLayout : ManagedLayout
     double vgap = 0;
     double hgap = 0;
 
-    this(double hgap = 0, double vgap = 0) pure
+    double flowWidth = 0;
+    bool isUseFlowWidth;
+
+    this(double hgap = 0, double vgap = 0, double flowWidth = 0) pure
     {
         this.hgap = hgap;
         this.vgap = vgap;
+        this.flowWidth = flowWidth;
     }
 
     //TODO check paddng, margins, etc
@@ -35,11 +39,10 @@ class FlowLayout : ManagedLayout
         }
         else
         {
-            nextX = rootBounds.right - root.padding.right;
+            nextX = isUseFlowWidth ? rootBounds.x + flowWidth : rootBounds.right - root.padding.right;
             nextY = rootBounds.bottom - root.padding.bottom;
         }
 
-        double maxLineHeight = 0;
         foreach (child; root.children)
         {
             if (!child.isLayoutManaged)
@@ -50,39 +53,35 @@ class FlowLayout : ManagedLayout
             const childBounds = child.bounds;
 
             const childHeight = childBounds.height + child.margin.height;
-            if (childHeight > maxLineHeight)
-            {
-                maxLineHeight = childHeight;
-            }
 
             if (isFillFromStartToEnd)
             {
-                const rootRightEndX = rootBounds.right - root.padding.right;
+                const rootRightEndX = isUseFlowWidth ? rootBounds.x + flowWidth : rootBounds.right - root.padding.right;
                 const newChildX = nextX + child.margin.left;
                 const newChildEndX = newChildX + childBounds.width + child.margin.right;
-                if (newChildEndX > rootRightEndX)
+                //TODO > not =
+                if (newChildEndX >= rootRightEndX)
                 {
                     nextX = rootBounds.x + root.padding.left;
                     //TODO line height
-                    nextY += vgap + maxLineHeight;
-                    maxLineHeight = 0;
+                    nextY += vgap + childHeight;
                 }
                 else
                 {
                     nextX = newChildX;
                 }
 
-                if (Math.abs(child.x - nextY) >= sizeChangeDelta)
+                if (Math.abs(nextX - child.x) >= sizeChangeDelta)
                 {
                     child.x = nextX;
                 }
 
-                if (Math.abs(child.y - nextY) >= sizeChangeDelta)
+                if (Math.abs(nextY - child.y) >= sizeChangeDelta)
                 {
                     child.y = nextY;
                 }
 
-                nextX = child.bounds.right + hgap + child.margin.right;
+                nextX += child.bounds.width + hgap + child.margin.right;
             }
             else
             {
@@ -90,17 +89,17 @@ class FlowLayout : ManagedLayout
                 const newChildX = nextX - childBounds.width - child.margin.right;
                 if (newChildX < rootLeftX)
                 {
-                    nextX = rootBounds.right - root.padding.right - childBounds.width;
+                    const rootEndX = isUseFlowWidth ? root.bounds.x + flowWidth : root.bounds.right - root.padding.right;
+                    nextX = rootEndX - childBounds.width;
                     //TODO line height
-                    nextY -= vgap + maxLineHeight;
-                    maxLineHeight = 0;
+                    nextY -= vgap + childHeight;
                 }
                 else
                 {
                     nextX = newChildX;
                 }
 
-                if (Math.abs(child.x - nextY) >= sizeChangeDelta)
+                if (Math.abs(child.x - nextX) >= sizeChangeDelta)
                 {
                     child.x = nextX;
                 }

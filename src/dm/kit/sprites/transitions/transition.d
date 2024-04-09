@@ -25,6 +25,7 @@ abstract class Transition : Sprite
     void delegate()[] onStop;
     void delegate()[] onPause;
     void delegate()[] onResume;
+    void delegate()[] onEndFrames;
 
     double frameRateHz = 0;
     double timeMs = 0;
@@ -199,6 +200,14 @@ abstract class Transition : Sprite
 
         if (currentFrame > frameCount)
         {
+            if (onEndFrames.length > 0)
+            {
+                foreach (dg; onEndFrames)
+                {
+                    dg();
+                }
+            }
+
             if (!isCycle)
             {
                 if (!isInverse || onShort)

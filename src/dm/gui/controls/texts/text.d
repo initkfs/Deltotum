@@ -309,7 +309,7 @@ class Text : Control
             auto color = currStyle.fillColor;
             if (!asset.hasColorBitmap(color, fontSize))
             {
-                fontTexture = asset.fontBitmap.copyBitmap;
+                fontTexture = asset.fontBitmap(fontSize).copyBitmap;
                 fontTexture.color = color;
                 asset.addFontColorBitmap(fontTexture, color, fontSize);
             }

@@ -43,6 +43,12 @@ class GuiEditor : Scene
         graphicsTab.content = new Grahpics;
         root.addCreate(graphicsTab);
 
+        import dm.gui.supports.editors.sections.colors : Colors;
+
+        auto colorsTab = new Tab("Colors");
+        colorsTab.content = new Colors;
+        root.addCreate(colorsTab);
+
         import dm.gui.supports.editors.sections.textures : Textures;
 
         auto texturesTab = new Tab("Textures");
@@ -93,7 +99,7 @@ class GuiEditor : Scene
 
         root.changeTab(controlsTab);
 
-        createDebugger;
+        //createDebugger;
     }
 
 }
