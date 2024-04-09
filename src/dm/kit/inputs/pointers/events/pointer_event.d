@@ -1,7 +1,6 @@
 module dm.kit.inputs.pointers.events.pointer_event;
 
 import dm.core.events.event_base : EventBase;
-import dm.kit.events.kit_event_type: KitEventType;
 import dm.core.utils.type_util : enumNameByIndex;
 import dm.core.events.event_target : EventTarget;
 import dm.core.events.event_source : EventSource;
@@ -13,7 +12,7 @@ struct PointerEvent
 {
     mixin EventBase;
 
-    static enum Event
+    enum Event
     {
         none,
         down,
@@ -26,17 +25,16 @@ struct PointerEvent
 
     Event event;
 
-    double x;
-    double y;
+    double x = 0;
+    double y = 0;
 
     int button;
 
     double movementX;
     double movementY;
 
-    this(Event event, int ownerId, double x, double y, int button, double movementX, double movementY, bool isChained = true)
+    this(Event event, int ownerId = 0, double x = 0, double y = 0, int button = 0, double movementX = 0, double movementY = 0)
     {
-        this.type = KitEventType.pointer;
         this.event = event;
         this.ownerId = ownerId;
         this.x = x;
@@ -44,14 +42,13 @@ struct PointerEvent
         this.button = button;
         this.movementX = movementX;
         this.movementY = movementY;
-        this.isChained = isChained;
     }
 
     string toString()
     {
         import std.format : format;
 
-        return format("{%s,%s,x:%s,y:%s,btn:%s,movX:%s,movY:%s,winid:%s,%s}", type, enumNameByIndex!Event(
+        return format("{%s,x:%s,y:%s,btn:%s,movX:%s,movY:%s,winid:%s,%s}", enumNameByIndex!Event(
                 event), x, y, button, movementX, movementY, ownerId, isChained);
     }
 }

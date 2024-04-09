@@ -1,7 +1,6 @@
 module dm.kit.inputs.keyboards.events.key_event;
 
 import dm.core.events.event_base : EventBase;
-import dm.kit.events.kit_event_type: KitEventType;
 import dm.core.utils.type_util : enumNameByIndex;
 
 import dm.com.inputs.com_keyboard : ComKeyName;
@@ -14,7 +13,7 @@ struct KeyEvent
 {
     mixin EventBase;
 
-    static enum Event
+    enum Event
     {
         none,
         keyDown,
@@ -29,7 +28,6 @@ struct KeyEvent
 
     this(Event event, int ownerId, ComKeyName keyName, KeyModifierInfo keyModInfo, int keyCode)
     {
-        this.type = KitEventType.key;
         this.event = event;
         this.ownerId = ownerId;
         this.keyName = keyName;

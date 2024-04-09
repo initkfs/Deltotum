@@ -1,7 +1,6 @@
 module dm.kit.windows.events.window_event;
 
 import dm.core.events.event_base : EventBase;
-import dm.kit.events.kit_event_type: KitEventType;
 import dm.core.utils.type_util: enumNameByIndex;
 
 
@@ -12,7 +11,7 @@ struct WindowEvent
 {
     mixin EventBase;
 
-    static enum Event
+    enum Event
     {
         none,
         show,
@@ -40,7 +39,6 @@ struct WindowEvent
 
     this(Event event, int ownerId, long width, long height, long x, long y)
     {
-        this.type = KitEventType.window;
         this.event = event;
         this.ownerId = ownerId;
         this.x = x;
@@ -53,6 +51,6 @@ struct WindowEvent
     {
         import std.format : format;
 
-        return format("{%s,%s,x:%s,y:%s,w:%s,h:%s,winid:%s}", type, enumNameByIndex!Event(event), x, y, width, height, ownerId);
+        return format("{%s,x:%s,y:%s,w:%s,h:%s,winid:%s}", enumNameByIndex!Event(event), x, y, width, height, ownerId);
     }
 }

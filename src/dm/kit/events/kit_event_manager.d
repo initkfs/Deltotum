@@ -11,8 +11,6 @@ import dm.kit.inputs.keyboards.events.key_event : KeyEvent;
 import dm.kit.inputs.keyboards.events.text_input_event : TextInputEvent;
 import dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import dm.kit.windows.events.window_event : WindowEvent;
-import dm.kit.events.kit_event_type : KitEventType;
-import dm.core.events.core_event_type : CoreEventType;
 
 import dm.kit.sprites.sprite : Sprite;
 import std.container : DList;

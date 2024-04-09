@@ -340,7 +340,8 @@ class Sprite : EventKitTarget
                         auto enteredEvent = PointerEvent(PointerEvent.Event.entered, e
                                 .ownerId, e
                                 .x, e.y, e
-                                .button, e.movementX, e.movementY, false);
+                                .button, e.movementX, e.movementY);
+                        enteredEvent.isChained = false;
                         fireEvent(enteredEvent);
                     }
 
@@ -361,7 +362,8 @@ class Sprite : EventKitTarget
                         auto exitedEvent = PointerEvent(PointerEvent.Event.exited, e
                                 .ownerId, e
                                 .x, e.y, e
-                                .button, e.movementX, e.movementY, false);
+                                .button, e.movementX, e.movementY);
+                        exitedEvent.isChained = false;
                         fireEvent(exitedEvent);
                     }
 

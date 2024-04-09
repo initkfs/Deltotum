@@ -1,7 +1,5 @@
 module dm.gui.events.action_event;
 
-import dm.core.events.event_base : EventBase;
-import dm.kit.events.kit_event_type: KitEventType;
 import dm.core.utils.type_util : enumNameByIndex;
 import dm.core.events.event_target : EventTarget;
 import dm.core.events.event_source : EventSource;
@@ -11,9 +9,7 @@ import dm.core.events.event_source : EventSource;
  */
 struct ActionEvent
 {
-    mixin EventBase;
-
-    static enum Event
+    enum Event
     {
         none,
         action
@@ -26,9 +22,16 @@ struct ActionEvent
 
     int button;
 
+    EventSource source;
+    EventTarget target;
+
+    bool isChained = true;
+    bool isConsumed;
+
+    int ownerId;
+
     this(int ownerId, double x, double y, int button)
     {
-        this.type = KitEventType.action;
         this.event = Event.action;
         this.ownerId = ownerId;
         this.x = x;

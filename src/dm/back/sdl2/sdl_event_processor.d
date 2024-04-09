@@ -6,8 +6,6 @@ version(SdlBackend):
 
 import dm.kit.events.processing.kit_event_processor : KitEventProcessor;
 
-import dm.kit.events.kit_event_type: KitEventType;
-import dm.core.events.core_event_type: CoreEventType;
 import dm.core.apps.events.app_event : AppEvent;
 import dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import dm.kit.inputs.keyboards.events.key_event : KeyEvent;
