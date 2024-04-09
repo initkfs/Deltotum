@@ -1,4 +1,4 @@
-module dm.kit.sprites.events.focus.focus_event;
+module dm.kit.events.focus.focus_event;
 
 import dm.core.events.event_base : EventBase;
 import dm.kit.events.kit_event_type: KitEventType;
@@ -20,10 +20,12 @@ struct FocusEvent
         focusOut
     }
 
+    Event event;
+
     double x = 0;
     double y = 0;
 
-    this(int event, int ownerId, double x, double y)
+    this(Event event, int ownerId, double x, double y)
     {
         this.type = KitEventType.focus;
         this.event = event;

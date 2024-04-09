@@ -4,7 +4,7 @@ import dm.kit.components.window_component : WindowComponent;
 import dm.core.events.event_target : EventTarget;
 
 import dm.core.apps.events.app_event : AppEvent;
-import dm.kit.sprites.events.focus.focus_event : FocusEvent;
+import dm.kit.events.focus.focus_event : FocusEvent;
 import dm.kit.inputs.keyboards.events.key_event : KeyEvent;
 import dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import dm.kit.inputs.keyboards.events.text_input_event : TextInputEvent;
@@ -18,6 +18,8 @@ class EventKitTarget : WindowComponent, EventTarget
 {
     void delegate(ref AppEvent)[] eventAppFilters;
     void delegate(ref AppEvent)[] eventAppHandlers;
+
+    void delegate(ref AppEvent)[] onAppExit;
 
     void delegate(ref PointerEvent)[] eventPointerFilters;
     void delegate(ref PointerEvent)[] eventPointerHandlers;
@@ -184,15 +186,24 @@ class EventKitTarget : WindowComponent, EventTarget
         }
     }
 
-    void runListeners(ref AppEvent)
+    void runListeners(ref AppEvent e)
     {
-
+        final switch (e.event) with (AppEvent.Event)
+        {
+            case none:
+                break;
+            case exit:
+                runDelegates(e, onAppExit);
+                break;
+        }
     }
 
     void runListeners(ref PointerEvent e)
     {
         final switch (e.event) with (PointerEvent.Event)
         {
+            case none:
+                break;
             case down:
                 runDelegates(e, onPointerDown);
                 break;
@@ -221,10 +232,7 @@ class EventKitTarget : WindowComponent, EventTarget
             case none:
                 break;
             case keyUp:
-                if (onKeyUp.length > 0)
-                {
-                    runDelegates(keyEvent, onKeyUp);
-                }
+                runDelegates(keyEvent, onKeyUp);
                 break;
             case keyDown:
                 runDelegates(keyEvent, onKeyDown);
@@ -302,6 +310,8 @@ class EventKitTarget : WindowComponent, EventTarget
 
         eventAppFilters = null;
         eventAppHandlers = null;
+
+        onAppExit = null;
 
         eventPointerFilters = null;
         eventPointerHandlers = null;

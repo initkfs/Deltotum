@@ -36,7 +36,9 @@ struct WindowEvent
     long x;
     long y;
 
-    this(int event, int ownerId, long width, long height, long x, long y)
+    Event event;
+
+    this(Event event, int ownerId, long width, long height, long x, long y)
     {
         this.type = KitEventType.window;
         this.event = event;

@@ -99,7 +99,7 @@ class GuiEditor : Scene
 
         root.changeTab(controlsTab);
 
-        //createDebugger;
+        createDebugger;
     }
 
 }

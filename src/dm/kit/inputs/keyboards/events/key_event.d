@@ -21,11 +21,13 @@ struct KeyEvent
         keyUp
     }
 
+    Event event;
+
     ComKeyName keyName;
     KeyModifierInfo keyMod;
     int keyCode;
 
-    this(int event, int ownerId, ComKeyName keyName, KeyModifierInfo keyModInfo, int keyCode)
+    this(Event event, int ownerId, ComKeyName keyName, KeyModifierInfo keyModInfo, int keyCode)
     {
         this.type = KitEventType.key;
         this.event = event;

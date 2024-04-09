@@ -365,13 +365,13 @@ class SdlApplication : ContinuouslyApplication
         eventManager.onKey = (ref key) {
             final switch (key.event) with (KeyEvent.Event)
             {
+                case none:
+                    break;
                 case keyDown:
                     _input.addPressedKey(key.keyCode);
                     break;
                 case keyUp:
                     _input.addReleasedKey(key.keyCode);
-                    break;
-                case none:
                     break;
             }
         };
@@ -536,7 +536,7 @@ class SdlApplication : ContinuouslyApplication
                             obj.isFocus = true;
                         }
 
-                        import dm.kit.sprites.events.focus.focus_event : FocusEvent;
+                        import dm.kit.events.focus.focus_event : FocusEvent;
 
                         auto focusEvent = FocusEvent(FocusEvent.Event.focusIn, mouseEvent
                                 .ownerId, mouseEvent.x, mouseEvent.y);
@@ -552,7 +552,7 @@ class SdlApplication : ContinuouslyApplication
                         if (obj.isFocus)
                         {
                             obj.isFocus = false;
-                            import dm.kit.sprites.events.focus.focus_event : FocusEvent;
+                            import dm.kit.events.focus.focus_event : FocusEvent;
 
                             auto focusEvent = FocusEvent(FocusEvent.Event.focusOut, mouseEvent
                                     .ownerId, mouseEvent.x, mouseEvent.y);

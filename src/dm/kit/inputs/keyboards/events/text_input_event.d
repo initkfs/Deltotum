@@ -17,9 +17,11 @@ struct TextInputEvent
         input,
     }
 
+    Event event;
+
     dchar firstLetter;
 
-    this(int event, uint ownerId, dchar firstLetter)
+    this(Event event, uint ownerId, dchar firstLetter)
     {
         this.type = KitEventType.key;
         this.event = event;

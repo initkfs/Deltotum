@@ -24,6 +24,8 @@ struct PointerEvent
         wheel
     }
 
+    Event event;
+
     double x;
     double y;
 
@@ -32,7 +34,7 @@ struct PointerEvent
     double movementX;
     double movementY;
 
-    this(int event, int ownerId, double x, double y, int button, double movementX, double movementY, bool isChained = true)
+    this(Event event, int ownerId, double x, double y, int button, double movementX, double movementY, bool isChained = true)
     {
         this.type = KitEventType.pointer;
         this.event = event;

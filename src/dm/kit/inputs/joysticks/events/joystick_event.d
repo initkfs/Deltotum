@@ -19,11 +19,13 @@ struct JoystickEvent
         release
     }
 
+    Event event;
+
     int button;
     int axis;
     int axisValue;
 
-    this(uint event, uint ownerId, int button = 0, int axis = 0, int axisValue = 0)
+    this(Event event, uint ownerId, int button = 0, int axis = 0, int axisValue = 0)
     {
         this.type = KitEventType.joystick;
         this.event = event;

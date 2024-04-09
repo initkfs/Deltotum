@@ -11,7 +11,7 @@ import dm.kit.scenes.scaling.scale_mode : ScaleMode;
 import dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import dm.core.apps.events.app_event : AppEvent;
 import dm.kit.inputs.keyboards.events.key_event : KeyEvent;
-import dm.kit.sprites.events.focus.focus_event : FocusEvent;
+import dm.kit.events.focus.focus_event : FocusEvent;
 import dm.kit.inputs.keyboards.events.text_input_event : TextInputEvent;
 import dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;

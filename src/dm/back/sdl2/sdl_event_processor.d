@@ -75,7 +75,7 @@ class SdlEventProcessor : KitEventProcessor!(SDL_Event*)
         {
             return;
         }
-        auto exitEvent = AppEvent(AppEvent.Event.Exit, event.window.windowID);
+        auto exitEvent = AppEvent(AppEvent.Event.exit, event.window.windowID);
         onApplication(exitEvent);
     }
 
