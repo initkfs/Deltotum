@@ -16,14 +16,12 @@ import dm.kit.inputs.keyboards.events.text_input_event : TextInputEvent;
 import dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import dm.kit.graphics.contexts.graphics_context : GraphicsContext;
-import dm.core.utils.tostring;
 
 import std.container : DList;
 import std.math.operations : isClose;
 import std.stdio;
 import std.math.algebraic : abs;
 import std.typecons : Nullable;
-import dm.core.utils.tostring : ToStringExclude;
 
 import dm.com.graphics.com_surface : ComSurface;
 import dm.kit.graphics.colors.rgba : RGBA;
@@ -48,8 +46,6 @@ struct InvalidationState
  */
 class Sprite : EventKitTarget
 {
-    mixin ToString;
-
     enum debugFlag = "d_debug";
 
     string id;
@@ -123,7 +119,7 @@ class Sprite : EventKitTarget
     //protected
     //{
     //TODO information about children
-    @ToStringExclude Sprite[] children;
+    Sprite[] children;
     //}
 
     bool delegate(double, double) onDrag;
@@ -2000,6 +1996,13 @@ class Sprite : EventKitTarget
         {
             logger.error(pixErr.toString);
         }
+    }
+
+    override string toString()
+    {
+        import std.format : format;
+
+        return format("id: %d, parent: %s, x: %f, y: %f, width: %f, height: %f", id, parent, width, height);
     }
 
 }
