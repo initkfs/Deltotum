@@ -9,7 +9,6 @@ mixin template EventBase()
     import dm.core.events.event_source : EventSource;
 
     int type;
-    int event;
 
     EventSource source;
     EventTarget target;

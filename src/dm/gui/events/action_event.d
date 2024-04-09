@@ -15,8 +15,11 @@ struct ActionEvent
 
     static enum Event
     {
+        none,
         action
     }
+
+    Event event;
 
     double x;
     double y;
