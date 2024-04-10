@@ -51,6 +51,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         }
 
         this.window = window;
+        //SDL_RenderSetLogicalSize(ptr, w, h);
     }
 
     ComResult setDrawColor(ubyte r, ubyte g, ubyte b, ubyte a) nothrow
@@ -306,6 +307,69 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         width = w;
         height = h;
 
+        return ComResult.success;
+    }
+
+    ComResult setScale(double scaleX, double scaleY)
+    {
+        import std.conv : to;
+
+        float sX = scaleX.to!float, sY = scaleY.to!float;
+        const int zeroOrErrorCode = SDL_RenderSetScale(ptr, sX, sY);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
+    }
+
+    ComResult getScale(out double scaleX, out double scaleY)
+    {
+        float sX = 0, sY = 0;
+        SDL_RenderGetScale(ptr, &sX, &sY);
+        scaleX = sX;
+        scaleY = sY;
+        return ComResult.success;
+    }
+
+    ComResult setViewport(Rect2d viewport)
+    {
+        SDL_Rect rect = {
+            x: cast(int) viewport.x,
+            y: cast(int) viewport.y,
+            w: cast(int) viewport.width,
+            h: cast(int) viewport.height
+        };
+        const zeroOrErrorCode = SDL_RenderSetViewport(ptr, &rect);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
+    }
+
+    ComResult getViewport(out Rect2d viewport)
+    {
+        SDL_Rect rect;
+        SDL_RenderGetViewport(ptr, &rect);
+        viewport = Rect2d(rect.x, rect.y, rect.w, rect.h);
+
+        return ComResult.success;
+    }
+
+    ComResult setLogicalSize(int w, int h)
+    {
+        const zeroOrErrorCode = SDL_RenderSetLogicalSize(ptr, w, h);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
+    }
+
+    ComResult getLogicalSize(out int w, out int h)
+    {
+        SDL_RenderGetLogicalSize(ptr, &w, &h);
         return ComResult.success;
     }
 

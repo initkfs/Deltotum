@@ -7,6 +7,7 @@ version(SdlBackend):
 import dm.com.graphics.com_window : ComWindow;
 
 import dm.com.platforms.results.com_result : ComResult;
+import dm.com.graphics.com_surface : ComSurface;
 import dm.back.sdl2.base.sdl_object_wrapper : SdlObjectWrapper;
 import dm.com.inputs.com_cursor : ComCursor, ComSystemCursorType;
 
@@ -397,6 +398,41 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
             return getErrorRes(indexOrNegError);
         }
         index = indexOrNegError;
+
+        return ComResult.success;
+    }
+
+    ComResult setModalFor(ComWindow parent)
+    {
+        assert(parent);
+        void* nPtr;
+        if (const err = parent.nativePtr(nPtr))
+        {
+            return err;
+        }
+        assert(nPtr);
+        auto parentPtr = cast(SDL_Window*) nPtr;
+        const zeroOrErrorCode = SDL_SetWindowModalFor(ptr, parentPtr);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
+    }
+
+    ComResult setIcon(ComSurface icon)
+    {
+        assert(icon);
+
+        void* nPtr;
+        if (const err = icon.nativePtr(nPtr))
+        {
+            return err;
+        }
+        assert(nPtr);
+        //TODO unsafe
+        SDL_Surface* surfPtr = cast(SDL_Surface*) nPtr;
+        SDL_SetWindowIcon(ptr, surfPtr);
 
         return ComResult.success;
     }

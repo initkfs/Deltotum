@@ -20,7 +20,7 @@ class Platform : ApplicationUnit
         ComSystem system;
     }
 
-    uint delegate() platformTicksProvider;
+    ulong delegate() platformTicksProvider;
     enum invalidTimerId = -1;
 
     private
@@ -35,7 +35,7 @@ class Platform : ApplicationUnit
         }
     }
 
-    this(ComSystem system, Logger logger, Config config, Context context, uint delegate() tickProvider) pure @safe
+    this(ComSystem system, Logger logger, Config config, Context context, ulong delegate() tickProvider) pure @safe
     {
         super(logger, config, context);
 
@@ -168,9 +168,9 @@ class Platform : ApplicationUnit
             return false;
         }
 
-        if (TimerParam* timerParamPtr = timerId in timers)
+        if (TimerParam** timerParamPtr = timerId in timers)
         {
-            if (const isRemoved = removeTimer(timerId, timerParamPtr))
+            if (const isRemoved = removeTimer(timerId, *timerParamPtr))
             {
                 timers.remove(timerId);
                 return true;
@@ -180,7 +180,7 @@ class Platform : ApplicationUnit
         return false;
     }
 
-    uint ticks()
+    ulong ticks()
     {
         assert(platformTicksProvider);
         return platformTicksProvider();
@@ -192,7 +192,7 @@ class Platform : ApplicationUnit
 
         foreach (int timerId, TimerParam* param; timers)
         {
-            removeTimerData(timerId, param);
+            removeTimer(timerId, param);
         }
         timers = null;
     }

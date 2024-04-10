@@ -886,6 +886,40 @@ class Graphics : LoggableUnit
         }
     }
 
+    Rect2d viewport()
+    {
+        Rect2d v;
+        if (const err = renderer.getViewport(v))
+        {
+            logger.error("Error getting renderer viewport", err);
+        }
+        return v;
+    }
+
+    void viewport(Rect2d v)
+    {
+        if (const err = renderer.setViewport(v))
+        {
+            logger.error("Error setting renderer viewport", err);
+        }
+    }
+
+    void scale(double scaleX, double scaleY)
+    {
+        if (const err = renderer.setScale(scaleX, scaleY))
+        {
+            logger.error(err);
+        }
+    }
+
+    void logicalSize(int width, int height)
+    {
+        if (const err = renderer.setLogicalSize(width, height))
+        {
+            logger.error(err);
+        }
+    }
+
     double scaleFactorFor(long width, long height)
     {
         int outputWidth;

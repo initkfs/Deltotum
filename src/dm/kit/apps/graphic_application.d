@@ -115,7 +115,7 @@ abstract class GraphicApplication : CliApplication
         return AppExit(false);
     }
 
-    abstract uint ticks();
+    abstract ulong ticks();
 
     void loadSettings()
     {
@@ -142,7 +142,7 @@ abstract class GraphicApplication : CliApplication
         uservices.logger.trace("Icon pack enabled: ", isIconPackEnabled);
     }
 
-    Platform newPlatform(uint delegate() tickProvider)
+    Platform newPlatform(ulong delegate() tickProvider)
     {
         return new Platform(newComSystem, uservices.logger, uservices.config, uservices.context, tickProvider);
     }

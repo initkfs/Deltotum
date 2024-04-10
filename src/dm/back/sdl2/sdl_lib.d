@@ -47,9 +47,9 @@ class SdlLib : SdlObject
         }
     }
 
-    uint getTicks()
+    ulong getTicks()
     {
-        return SDL_GetTicks();
+        return SDL_GetTicks64();
     }
 
     void delay(uint ms)

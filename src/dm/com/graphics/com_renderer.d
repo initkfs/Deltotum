@@ -33,5 +33,11 @@ nothrow:
     ComResult drawLine(int startX, int startY, int endX, int endY);
     ComResult drawLines(Vector2[] linePoints);
     ComResult getOutputSize(out int width, out int height);
+    ComResult setScale(double scaleX, double scaleY);
+    ComResult getScale(out double scaleX, out double scaleY);
+    ComResult setViewport(Rect2d viewport);
+    ComResult getViewport(out Rect2d viewport);
+    ComResult setLogicalSize(int w, int h);
+    ComResult getLogicalSize(out int w, out int h);
     ComResult readPixels(Rect2d rect, uint format, int pitch, void* pixelBuffer);
 }

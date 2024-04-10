@@ -560,7 +560,7 @@ class SdlApplication : ContinuouslyApplication
         return AppExit(false);
     }
 
-    override uint ticks()
+    override ulong ticks()
     {
         assert(sdlLib);
         return sdlLib.getTicks;
@@ -870,9 +870,9 @@ class SdlApplication : ContinuouslyApplication
 
         while (isProcessEvents && SDL_PollEvent(&event))
         {
-            const startEvent = SDL_GetTicks();
+            const startEvent = SDL_GetTicks64();
             handleEvent(&event);
-            const endEvent = SDL_GetTicks();
+            const endEvent = SDL_GetTicks64();
 
             if (!mustBeWindow.isNull)
             {
@@ -888,7 +888,7 @@ class SdlApplication : ContinuouslyApplication
 
     void updateRender(double accumMsRest)
     {
-        const startStateTime = SDL_GetTicks();
+        const startStateTime = SDL_GetTicks64();
         windowManager.onWindows((window) {
             //focus may not be on the window
             if (window.isShowing)
@@ -898,7 +898,7 @@ class SdlApplication : ContinuouslyApplication
             return true;
         });
 
-        const endStateTime = SDL_GetTicks();
+        const endStateTime = SDL_GetTicks64();
 
         auto mustBeWindow = windowManager.current;
 
@@ -910,7 +910,7 @@ class SdlApplication : ContinuouslyApplication
 
     void updateFreqLoopDelta(double delta)
     {
-        const startStateTime = SDL_GetTicks();
+        const startStateTime = SDL_GetTicks64();
         windowManager.onWindows((window) {
             //focus may not be on the window
             if (window.isShowing)
@@ -920,7 +920,7 @@ class SdlApplication : ContinuouslyApplication
             return true;
         });
 
-        const endStateTime = SDL_GetTicks();
+        const endStateTime = SDL_GetTicks64();
 
         auto mustBeWindow = windowManager.current;
 

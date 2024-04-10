@@ -1,6 +1,7 @@
 module dm.com.graphics.com_window;
 
 import dm.com.platforms.results.com_result : ComResult;
+import dm.com.graphics.com_surface: ComSurface;
 import dm.com.destroyable : Destroyable;
 
 /**
@@ -41,6 +42,8 @@ nothrow:
     ComResult getTitle(out dstring title);
     ComResult setTitle(const(dchar[]) title);
     ComResult getScreenIndex(out size_t index);
+    ComResult setModalFor(ComWindow parent);
+    ComResult setIcon(ComSurface surf);
     ComResult nativePtr(out void* ptr);
 
 }
