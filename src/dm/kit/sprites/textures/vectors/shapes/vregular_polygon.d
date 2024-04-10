@@ -1,6 +1,6 @@
 module dm.kit.sprites.textures.vectors.shapes.vregular_polygon;
 
-import dm.kit.sprites.textures.vectors.vshape : VShape;
+import dm.kit.sprites.textures.vectors.shapes.vshape : VShape;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
 /**

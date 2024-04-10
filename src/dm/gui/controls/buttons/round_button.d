@@ -42,7 +42,7 @@ class RoundButton : ButtonBase
         Sprite shape;
         if (capGraphics.isVectorGraphics)
         {
-            import dm.kit.sprites.textures.vectors.vcircle : VCircle;
+            import dm.kit.sprites.textures.vectors.shapes.vcircle : VCircle;
 
             shape = new VCircle(radius, style);
         }

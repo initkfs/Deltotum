@@ -251,7 +251,7 @@ class HLinearGauge : Control
         auto style = createDefaultStyle;
         style.isFill = true;
         style.color = graphics.theme.colorAccent;
-        import dm.kit.sprites.textures.vectors.vtriangle : VTriangle;
+        import dm.kit.sprites.textures.vectors.shapes.vtriangle : VTriangle;
 
         auto pointer = new VTriangle(20, 15, style);
         pointer.isDraggable = true;

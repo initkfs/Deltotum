@@ -118,7 +118,7 @@ class Expander : Control
 
     protected void createExpandLabel()
     {
-        import dm.kit.sprites.textures.vectors.vtriangle : VTriangle;
+        import dm.kit.sprites.textures.vectors.shapes.vtriangle : VTriangle;
 
         auto style = createDefaultStyle;
         style.isFill = true;

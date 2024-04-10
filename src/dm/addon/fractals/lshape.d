@@ -3,7 +3,7 @@ module dm.addon.fractals.lshape;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
 import dm.kit.sprites.shapes.shape : Shape;
-import dm.kit.sprites.textures.vectors.vpoints_shape : VPointsShape;
+import dm.kit.sprites.textures.vectors.shapes.vpoints_shape : VPointsShape;
 import dm.kit.graphics.brushes.brush : Brush;
 import dm.math.vector2 : Vector2;
 import dm.addon.fractals.lsystems.lsystem_parser : LSystemParser;

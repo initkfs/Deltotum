@@ -1,6 +1,6 @@
-module dm.kit.sprites.textures.vectors.vcircle;
+module dm.kit.sprites.textures.vectors.shapes.vcircle;
 
-import dm.kit.sprites.textures.vectors.varc: VArc;
+import dm.kit.sprites.textures.vectors.shapes.varc: VArc;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import dm.math.insets: Insets;
 

@@ -1,4 +1,4 @@
-module dm.kit.sprites.textures.vectors.vshape;
+module dm.kit.sprites.textures.vectors.shapes.vshape;
 
 import dm.kit.sprites.textures.vectors.vector_texture : VectorTexture;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;

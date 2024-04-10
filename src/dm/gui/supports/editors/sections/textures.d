@@ -125,7 +125,7 @@ class Textures : Control
         root.addCreate(vContainer);
 
         if(capGraphics.isVectorGraphics){
-            import dm.kit.sprites.textures.vectors.vcircle: VCircle;
+            import dm.kit.sprites.textures.vectors.shapes.vcircle: VCircle;
 
             auto vCircle = new VCircle(25, GraphicStyle(3.0, RGBA.red, true, RGBA.green));
             vContainer.addCreate(vCircle);

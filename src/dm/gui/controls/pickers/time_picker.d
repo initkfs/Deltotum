@@ -110,7 +110,7 @@ class MinSecChooser : Control
         enum startAngle = 270;
         enum buttonSize = 20;
 
-        import dm.kit.sprites.textures.vectors.vcircle : VCircle;
+        import dm.kit.sprites.textures.vectors.shapes.vcircle : VCircle;
 
         auto style = createDefaultStyle;
         style.isFill = true;

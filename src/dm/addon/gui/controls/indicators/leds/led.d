@@ -27,7 +27,7 @@ class Led : LedBase
 
     override protected Sprite newLayerShape(GraphicStyle style, double layerInnerPadding, double blurSize)
     {
-        import dm.kit.sprites.textures.vectors.vcircle : VCircle;
+        import dm.kit.sprites.textures.vectors.shapes.vcircle : VCircle;
 
         auto shape = new VCircle(width / 2 - layerInnerPadding, style, width, height);
         setColorProcessing(shape, blurSize);

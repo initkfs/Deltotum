@@ -161,7 +161,7 @@ class SevenSegment : Control
         const double radius = dotDiameter / 2;
         if (capGraphics.isVectorGraphics)
         {
-            import dm.kit.sprites.textures.vectors.vcircle : VCircle;
+            import dm.kit.sprites.textures.vectors.shapes.vcircle : VCircle;
 
             segment = new VCircle(radius, createSegmentStyle);
         }

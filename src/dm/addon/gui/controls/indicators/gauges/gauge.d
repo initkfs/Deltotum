@@ -82,7 +82,7 @@ class Gauge : Control
             faceStyle.isFill = false;
         }
 
-        import dm.kit.sprites.textures.vectors.varc: VArc;
+        import dm.kit.sprites.textures.vectors.shapes.varc: VArc;
 
         auto newOuterFace = new VArc(radius, faceStyle);
         newOuterFace.fromAngleRad = (3 * Math.PI) / 4;

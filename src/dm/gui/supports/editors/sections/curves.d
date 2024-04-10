@@ -70,7 +70,7 @@ class Curves : Control
         Sprite shape;
         if (capGraphics.isVectorGraphics)
         {
-            import dm.kit.sprites.textures.vectors.vpoints_shape: VPointsShape;
+            import dm.kit.sprites.textures.vectors.shapes.vpoints_shape: VPointsShape;
 
             shape = new VPointsShape(points, shapeSize, shapeSize, shapeStyle, isClosePath, isDrawFromCenter);
         }

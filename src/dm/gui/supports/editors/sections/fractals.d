@@ -81,7 +81,7 @@ class Fractals : Control
 
         if (capGraphics.isVectorGraphics)
         {
-            import dm.kit.sprites.textures.vectors.vpoints_shape : VPointsShape;
+            import dm.kit.sprites.textures.vectors.shapes.vpoints_shape : VPointsShape;
 
             if (auto shape = cast(VPointsShape) fractal)
             {
