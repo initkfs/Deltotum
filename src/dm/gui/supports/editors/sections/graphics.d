@@ -65,7 +65,8 @@ class Grahpics : Control
         auto reg = new RegularPolygon(50, 50, GraphicStyle(1, RGBA.lightcoral), 10);
         shapeContainer.addCreate(reg);
 
-        auto regFill = new RegularPolygon(50, 50, GraphicStyle(1, RGBA.lightsteelblue, true, RGBA.lightsteelblue), 10);
+        auto regFill = new RegularPolygon(50, 50, GraphicStyle(1, RGBA.lightsteelblue, true, RGBA
+                .lightsteelblue), 10);
         shapeContainer.addCreate(regFill);
 
     }
@@ -134,16 +135,19 @@ class Grahpics : Control
         ];
         graphics.polygon(points);
 
-        import Delaunay = dm.math.triangulations.delaunay_triangulator;
-
-        auto res = Delaunay.triangulate(points);
-
-        foreach (t; res)
+        version (DmAddon)
         {
-            graphics.line(t.a, t.b);
-            graphics.line(t.b, t.c);
-            graphics.line(t.c, t.a);
-            //graphics.fillTriangle(t.a, t.b, t.c, RGBA.red);
+            import Delaunay = dm.addon.math.triangulations.delaunay_triangulator;
+
+            auto res = Delaunay.triangulate(points);
+
+            foreach (t; res)
+            {
+                graphics.line(t.a, t.b);
+                graphics.line(t.b, t.c);
+                graphics.line(t.c, t.a);
+                //graphics.fillTriangle(t.a, t.b, t.c, RGBA.red);
+            }
         }
 
         graphics.restoreColor;

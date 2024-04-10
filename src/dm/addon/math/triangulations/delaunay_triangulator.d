@@ -1,4 +1,4 @@
-module dm.math.triangulations.delaunay_triangulator;
+module dm.addon.math.triangulations.delaunay_triangulator;
 
 import dm.math.vector2 : Vector2;
 import dm.math.line2d : Line2d;
