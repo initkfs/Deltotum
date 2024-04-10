@@ -39,7 +39,6 @@ import dm.com.graphics.com_surface : ComSurface;
 import dm.com.graphics.com_font : ComFont;
 import dm.com.graphics.com_image : ComImage;
 import dm.com.platforms.com_system : ComSystem;
-import dm.kit.timers.timer : Timer;
 
 import dm.kit.windows.window : Window;
 
@@ -213,8 +212,6 @@ class SdlApplication : ContinuouslyApplication
             uservices.logger.warning("Create empty cursor");
             cursor = new EmptyCursor;
         }
-
-        _timer = newTimer;
 
         _input = new Input(clipboard, cursor);
         _audio = new Audio(audioMixLib);
@@ -563,10 +560,16 @@ class SdlApplication : ContinuouslyApplication
         return AppExit(false);
     }
 
+    override uint ticks()
+    {
+        assert(sdlLib);
+        return sdlLib.getTicks;
+    }
+
     protected void initLoop(Loop loop)
     {
         loop.onQuit = () => quit;
-        loop.timestampMsProvider = () => sdlLib.getTicks;
+        loop.timestampMsProvider = () => ticks;
         loop.onDelay = () => sdlLib.delay(10);
         loop.onDelayTimeRestMs = (restMs) => sdlLib.delay(cast(uint) restMs);
         loop.onLoopUpdateMs = (timestamp) => updateLoopMs(timestamp);
@@ -635,13 +638,6 @@ class SdlApplication : ContinuouslyApplication
     {
         scope image = new SdlImage();
         onNew(image);
-    }
-
-    Timer newTimer()
-    {
-        Timer t = new Timer(uservices.logger);
-        t.tickProvider = () { return SDL_GetTicks(); };
-        return t;
     }
 
     Window newWindow(

@@ -28,7 +28,6 @@ import dm.kit.apps.loops.loop : Loop;
 import dm.kit.media.audio.audio : Audio;
 import dm.kit.inputs.input : Input;
 import dm.kit.screens.screen : Screen;
-import dm.kit.timers.timer : Timer;
 import dm.kit.events.kit_event_manager : KitEventManager;
 
 import std.logger : Logger;
@@ -58,7 +57,6 @@ abstract class GraphicApplication : CliApplication
         Audio _audio;
         Input _input;
         Screen _screen;
-        Timer _timer;
         Platform _platform;
 
         KitEventManager eventManager;
@@ -111,11 +109,13 @@ abstract class GraphicApplication : CliApplication
             uservices.logger.trace("Load icon pack: ", iconPath);
         }
 
-        _platform = newPlatform;
+        _platform = newPlatform(() => ticks);
         initCreateRun(_platform);
 
         return AppExit(false);
     }
+
+    abstract uint ticks();
 
     void loadSettings()
     {
@@ -142,9 +142,9 @@ abstract class GraphicApplication : CliApplication
         uservices.logger.trace("Icon pack enabled: ", isIconPackEnabled);
     }
 
-    Platform newPlatform()
+    Platform newPlatform(uint delegate() tickProvider)
     {
-        return new Platform(newComSystem, uservices.logger, uservices.config, uservices.context);
+        return new Platform(newComSystem, uservices.logger, uservices.config, uservices.context, tickProvider);
     }
 
     CapGraphics newCapability()
@@ -183,7 +183,6 @@ abstract class GraphicApplication : CliApplication
         component.audio = _audio;
         component.input = _input;
         component.screen = _screen;
-        component.timer = _timer;
         component.platform = _platform;
         component.capGraphics = gservices.capGraphics;
         component.eventManager = eventManager;

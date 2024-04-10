@@ -20,6 +20,9 @@ class Platform : ApplicationUnit
         ComSystem system;
     }
 
+    uint delegate() platformTicksProvider;
+    enum invalidTimerId = -1;
+
     private
     {
         TimerParam*[int] timers;
@@ -32,12 +35,14 @@ class Platform : ApplicationUnit
         }
     }
 
-    this(ComSystem system, Logger logger, Config config, Context context) pure @safe
+    this(ComSystem system, Logger logger, Config config, Context context, uint delegate() tickProvider) pure @safe
     {
         super(logger, config, context);
 
         assert(system);
         this.system = system;
+        assert(tickProvider);
+        this.platformTicksProvider = tickProvider;
     }
 
     void openURL(string url, bool isThrowOnOpen = false, bool isThrowOnInvalidUrl = false)
@@ -95,6 +100,7 @@ class Platform : ApplicationUnit
             if (auto paramPtr = timerId in timers)
             {
                 auto dg = (*paramPtr).dg;
+                assert(dg);
                 return dg();
             }
         }
@@ -129,31 +135,64 @@ class Platform : ApplicationUnit
         {
             logger.error(err);
             Mem.removeRootSafe(paramPtr);
-            return -1;
+            return invalidTimerId;
         }
         param.timerId = timerId;
         timers[timerId] = param;
         return timerId;
     }
 
-    bool removeTimer(int timerId)
+    protected bool removeTimer(int timerId, TimerParam* timerParamPtr)
     {
+        assert(timerId != invalidTimerId);
+        assert(timerParamPtr);
+
         if (const err = system.removeTimer(timerId))
         {
             logger.error(err);
             return false;
         }
+
+        Mem.removeRootSafe(cast(void*) timerParamPtr);
+        timerParamPtr.dg = null;
+        timerParamPtr.thisPtr = null;
+
         return true;
+    }
+
+    bool removeTimer(int timerId)
+    {
+        if (timerId == invalidTimerId)
+        {
+            logger.error("Invalid timer id received: ", invalidTimerId);
+            return false;
+        }
+
+        if (TimerParam* timerParamPtr = timerId in timers)
+        {
+            if (const isRemoved = removeTimer(timerId, timerParamPtr))
+            {
+                timers.remove(timerId);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    uint ticks()
+    {
+        assert(platformTicksProvider);
+        return platformTicksProvider();
     }
 
     override void dispose()
     {
         super.dispose;
 
-        foreach (timerId, TimerParam* v; timers)
+        foreach (int timerId, TimerParam* param; timers)
         {
-            removeTimer(timerId);
-            Mem.removeRootSafe(cast(void*) v);
+            removeTimerData(timerId, param);
         }
         timers = null;
     }

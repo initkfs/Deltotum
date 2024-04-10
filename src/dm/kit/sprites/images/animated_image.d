@@ -125,7 +125,7 @@ class AnimatedImage : Image
             }
         }
 
-        currentAnimationStartTime = timer.ticks;
+        currentAnimationStartTime = platform.ticks;
     }
 
     void drawFrame(int frameIndex, int rowIndex, Flip flip = Flip
@@ -197,7 +197,7 @@ class AnimatedImage : Image
         {
             auto delay = currentAnimation.frameDelay > 0 ? currentAnimation.frameDelay
                 : commonFrameDelay;
-            currentAnimationIndex = ((timer.ticks - currentAnimationStartTime) / delay) % animLength;
+            currentAnimationIndex = ((platform.ticks - currentAnimationStartTime) / delay) % animLength;
         }
     }
 

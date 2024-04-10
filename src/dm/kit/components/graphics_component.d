@@ -12,7 +12,6 @@ import dm.kit.windows.window : Window;
 import dm.kit.screens.screen : Screen;
 import dm.kit.events.kit_event_manager : KitEventManager;
 import dm.kit.apps.caps.cap_graphics : CapGraphics;
-import dm.kit.timers.timer : Timer;
 import dm.kit.platforms.platform : Platform;
 
 /**
@@ -29,7 +28,6 @@ class GraphicsComponent : UniComponent
         @Service Screen _screen;
         @Service KitEventManager _eventManager;
         @Service CapGraphics _capGraphics;
-        @Service Timer _timer;
         @Service Platform _platform;
     }
 
@@ -171,25 +169,6 @@ class GraphicsComponent : UniComponent
 
         enforce(caps !is null, "Graphics capabilities must not be null");
         _capGraphics = caps;
-    }
-
-    bool hasTimer() const nothrow pure @safe
-    {
-        return _timer !is null;
-    }
-
-    inout(Timer) timer() inout nothrow pure @safe
-    out (_timer; _timer !is null)
-    {
-        return _timer;
-    }
-
-    void timer(Timer t) pure @safe
-    {
-        import std.exception : enforce;
-
-        enforce(t !is null, "Timer must not be null");
-        _timer = t;
     }
 
     bool hasPlatform() const nothrow pure @safe
