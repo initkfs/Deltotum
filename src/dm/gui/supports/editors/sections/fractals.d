@@ -1,5 +1,9 @@
 module dm.gui.supports.editors.sections.fractals;
 
+// dfmt off
+version(DmAddon):
+// dfmt on
+
 import dm.gui.controls.control : Control;
 import dm.kit.sprites.sprite : Sprite;
 import dm.kit.graphics.colors.rgba : RGBA;

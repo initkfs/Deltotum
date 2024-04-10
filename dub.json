@@ -16,20 +16,23 @@
                 "BuiltinProfiler"
             ],
             "targetType": "executable",
-            "targetName": "deltotum",
+            "targetName": "dm",
             "platforms": [
                 "linux"
+            ],
+            "excludedSourceFiles": [
+                "src/dm/addon/*"
             ]
         },
         {
             "name": "app-dist",
             "versions": [
-                "dev",
                 "SdlBackend",
-                "BuiltinProfiler"
+                "BuiltinProfiler",
+                "DmAddon"
             ],
             "targetType": "executable",
-            "targetName": "./dist/deltotum",
+            "targetName": "dm-dist",
             "platforms": [
                 "linux"
             ]

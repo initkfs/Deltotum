@@ -79,17 +79,20 @@ class GuiEditor : Scene
         imagesTab.content = new Images;
         root.addCreate(imagesTab);
 
-        import dm.gui.supports.editors.sections.curves: Curves;
+        version (DmAddon)
+        {
+            import dm.gui.supports.editors.sections.curves : Curves;
 
-        auto curvesTab = new Tab("Curves");
-        curvesTab.content = new Curves;
-        root.addCreate(curvesTab);
+            auto curvesTab = new Tab("Curves");
+            curvesTab.content = new Curves;
+            root.addCreate(curvesTab);
 
-        import dm.gui.supports.editors.sections.fractals: Fractals;
+            import dm.gui.supports.editors.sections.fractals : Fractals;
 
-        auto fractalsTab = new Tab("Fractals");
-        fractalsTab.content = new Fractals;
-        root.addCreate(fractalsTab);
+            auto fractalsTab = new Tab("Fractals");
+            fractalsTab.content = new Fractals;
+            root.addCreate(fractalsTab);
+        }
 
         import dm.gui.supports.editors.sections.scripting : Scripting;
 

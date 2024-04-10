@@ -4,7 +4,7 @@
 /dist
 /libs
 /dub.selections.json
-/deltotum
+/dm
 /src/app.d
 /src/game
 /build.sh
