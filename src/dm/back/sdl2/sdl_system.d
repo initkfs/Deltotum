@@ -4,7 +4,7 @@ module dm.back.sdl2.sdl_system;
 version(SdlBackend):
 // dfmt on
 import dm.back.sdl2.base.sdl_object : SdlObject;
-import dm.com.platforms.com_system : ComSystem;
+import dm.com.platforms.com_system : ComSystem, RetNextIntervalCallback;
 import dm.com.platforms.results.com_result : ComResult;
 
 import bindbc.sdl;
@@ -30,4 +30,26 @@ class SDLSystem : SdlObject, ComSystem
         }
         return ComResult.success;
     }
+
+    ComResult addTimer(out int timerId, int intervalMs, RetNextIntervalCallback callback, void* param)
+    {
+        const timerIdOrZeroErr = SDL_AddTimer(intervalMs, callback, param);
+        if (timerIdOrZeroErr == 0)
+        {
+            return getErrorRes("Error adding timer");
+        }
+        timerId = timerIdOrZeroErr;
+        return ComResult.success;
+    }
+
+    ComResult removeTimer(int timerId)
+    {
+        SDL_bool isRemove = SDL_RemoveTimer(timerId);
+        if (isRemove == SDL_bool.SDL_FALSE)
+        {
+            return getErrorRes("Timer not removed");
+        }
+        return ComResult.success;
+    }
+
 }

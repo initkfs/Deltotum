@@ -36,8 +36,8 @@ import std.typecons : Nullable;
 
 import dm.com.graphics.com_renderer : ComRenderer;
 import dm.com.graphics.com_surface : ComSurface;
-import dm.com.platforms.com_system: ComSystem;
-import dm.kit.platforms.platform: Platform;
+import dm.com.platforms.com_system : ComSystem;
+import dm.kit.platforms.platform : Platform;
 
 /**
  * Authors: initkfs
@@ -112,6 +112,7 @@ abstract class GraphicApplication : CliApplication
         }
 
         _platform = newPlatform;
+        initCreateRun(_platform);
 
         return AppExit(false);
     }
@@ -141,7 +142,8 @@ abstract class GraphicApplication : CliApplication
         uservices.logger.trace("Icon pack enabled: ", isIconPackEnabled);
     }
 
-    Platform newPlatform(){
+    Platform newPlatform()
+    {
         return new Platform(newComSystem, uservices.logger, uservices.config, uservices.context);
     }
 
@@ -215,12 +217,52 @@ abstract class GraphicApplication : CliApplication
         });
     }
 
+    override void quit()
+    {
+        super.quit;
+
+        if (_audio)
+        {
+            _audio.dispose;
+            uservices.logger.trace("Dispose audio");
+        }
+
+        if (_input)
+        {
+            _input.dispose;
+            uservices.logger.trace("Dispose input");
+        }
+
+        // if (_screen)
+        // {
+        //     _screen.dispose;
+        // }
+
+        // if (_timer)
+        // {
+        //     _timer.dispose;
+        //     uservices.logger.trace("Dispose timer");
+        // }
+
+        if (_platform)
+        {
+            stopDisposeSafe(_platform);
+            uservices.logger.trace("Dispose platform");
+        }
+
+        // if(eventManager){
+        //     eventManager.dispose;
+        // }
+    }
+
     void requestQuit()
     {
         if (uservices && uservices.logger)
         {
             uservices.logger.tracef("Request quit");
         }
+
+        quit;
     }
 
     void destroyWindowById(long winId)
@@ -229,7 +271,7 @@ abstract class GraphicApplication : CliApplication
         if (mustBeWindow.isNull)
         {
             uservices.logger.error("No window found to close with id ", winId);
-            return ;
+            return;
         }
         destroyWindow(mustBeWindow.get);
     }
@@ -239,7 +281,8 @@ abstract class GraphicApplication : CliApplication
         auto winId = window.id;
         uservices.logger.tracef("Request close window with id '%s'", winId);
 
-        if(window.isRunning){
+        if (window.isRunning)
+        {
             window.stop;
         }
 

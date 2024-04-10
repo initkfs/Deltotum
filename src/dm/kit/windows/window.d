@@ -194,9 +194,6 @@ class Window : GraphicsComponent
             return;
         }
 
-        //TODO move to controller
-        windowManager.remove(this);
-
         isClosing = true;
         isShowing = false;
 

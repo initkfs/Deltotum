@@ -49,11 +49,6 @@ class CliApplication : SimpleUnit
         size_t cliStartupDelayMs;
     }
 
-    abstract
-    {
-        void quit();
-    }
-
     AppExit initialize(string[] args)
     {
         super.initialize;
@@ -650,5 +645,10 @@ class CliApplication : SimpleUnit
 
         enforce(services !is null, "Services must not be null");
         _uniServices = services;
+    }
+
+    void quit()
+    {
+
     }
 }

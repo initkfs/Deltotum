@@ -551,7 +551,7 @@ class SdlApplication : ContinuouslyApplication
         };
 
         windowManager = new WindowManager(uservices.logger);
-        
+
         return AppExit(false);
     }
 
@@ -816,22 +816,27 @@ class SdlApplication : ContinuouslyApplication
 
     override void quit()
     {
+        super.quit;
+
         clearErrors;
 
         if (windowManager)
         {
-            windowManager.onWindows((win) { win.dispose; return true; });
+            windowManager.onWindows((win) {
+                if (win.isRunning)
+                {
+                    win.stop;
+                    assert(win.isStopped);
+                }
+                win.dispose;
+                return true;
+            });
         }
-
-        //TODO auto destroy all services
-        _audio.dispose;
 
         if (!joystick.isNull)
         {
             joystick.get.dispose;
         }
-
-        _input.dispose;
 
         //TODO process EXIT event
         audioMixLib.quit;
@@ -928,8 +933,17 @@ class SdlApplication : ContinuouslyApplication
         //Ctrl + C
         if (event.type == SDL_QUIT)
         {
-            uint windowId = event.window.windowID;
-            destroyWindowById(windowId);
+            auto mustBeWindow = windowManager.current;
+            if (!mustBeWindow.isNull)
+            {
+                uservices.logger.trace("Request close window from cli with id ", mustBeWindow
+                        .get.id);
+                destroyWindow(mustBeWindow.get);
+            }
+            else
+            {
+                uservices.logger.trace("No windows found for quit");
+            }
 
             requestQuit;
         }
