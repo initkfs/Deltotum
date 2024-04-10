@@ -83,8 +83,6 @@ abstract class GraphicApplication : CliApplication
             return exit;
         }
 
-        profile("Start graphics");
-
         if (!_graphicServices)
         {
             _graphicServices = newGraphicServices;
@@ -112,8 +110,6 @@ abstract class GraphicApplication : CliApplication
             gservices.capGraphics.isIconPack = true;
             uservices.logger.trace("Load icon pack: ", iconPath);
         }
-
-        profile("Load graphics settings");
 
         _platform = newPlatform;
 
@@ -424,7 +420,7 @@ abstract class GraphicApplication : CliApplication
 
         Font defaultFont = asset.newFont(fontFilePath, defaultSize);
         asset.addFont(defaultFont);
-        logger.trace("Create medium font with size %s from %s", defaultSize, fontFilePath);
+        logger.tracef("Create medium font with size %s from %s", defaultSize, fontFilePath);
 
         if (config.containsKey(KitConfigKeys.fontIsCreateSmall))
         {

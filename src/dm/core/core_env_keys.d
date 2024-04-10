@@ -6,5 +6,5 @@ module dm.core.core_env_keys;
 
 immutable:
 
-string envCrashDirKey = "DmAppCrashDir";
-string envCrashFileDisableKey = "DmAppCrashFileDisable";
+string appCrashDir = "DmAppCrashDir";
+string appCrashFileDisable = "DmAppCrashFileDisable";

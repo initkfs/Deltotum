@@ -115,8 +115,6 @@ class SdlApplication : ContinuouslyApplication
             uservices.logger.trace("Headless mode enabled");
         }
 
-        profile("Start SDL backend");
-
         uint flags;
         if (isVideoEnabled)
         {
@@ -149,7 +147,6 @@ class SdlApplication : ContinuouslyApplication
 
         sdlLib.initialize(flags);
         uservices.logger.trace("SDL ", sdlLib.getSdlVersionInfo);
-        profile("SDL loaded");
 
         //TODO move to hal layer
         SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_WARN);
@@ -158,18 +155,12 @@ class SdlApplication : ContinuouslyApplication
         //SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
         imgLib.initialize;
-        profile("Image libs loaded");
-
         audioMixLib.initialize;
-        profile("Audio libs loaded");
-
         fontLib.initialize;
-        profile("Font libs loaded");
 
         if (gservices.capGraphics.isJoystick)
         {
             joystick = SdlJoystick.fromDevices;
-            uservices.logger.trace("Init joystick");
         }
 
         initLoop(mainLoop);
@@ -228,8 +219,6 @@ class SdlApplication : ContinuouslyApplication
         _input = new Input(clipboard, cursor);
         _audio = new Audio(audioMixLib);
 
-        profile("Graphics services loaded");
-
         //TODO lazy load with config value
         auto cairoLibForLoad = new CairoLib;
 
@@ -270,8 +259,6 @@ class SdlApplication : ContinuouslyApplication
         };
 
         cairoLibForLoad.load;
-
-        profile("Cairo loaded");
 
         //Physics
         // auto physLibForLoad = new ChipmLib;
@@ -564,9 +551,7 @@ class SdlApplication : ContinuouslyApplication
         };
 
         windowManager = new WindowManager(uservices.logger);
-
-        profile("SDL backends end");
-
+        
         return AppExit(false);
     }
 

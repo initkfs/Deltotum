@@ -7,7 +7,7 @@ import dm.core.components.uni_component : UniComponent;
 import dm.core.configs.config : Config;
 import dm.core.clis.cli : Cli;
 import dm.core.clis.printers.cli_printer : CliPrinter;
-import dm.core.contexts.platforms.platform_context: PlatformContext;
+import dm.core.contexts.platforms.platform_context : PlatformContext;
 import dm.core.contexts.context : Context;
 import dm.core.supports.support : Support;
 import dm.core.contexts.apps.app_context : AppContext;
@@ -110,40 +110,32 @@ class CliApplication : SimpleUnit
             uservices.support = createSupport;
             assert(uservices.support);
 
-            profile("Start services");
-
             uservices.context = createContext;
             assert(uservices.context);
-            profile("Context is built");
 
             uservices.eventBus = createEventBus(uservices.context);
             assert(uservices.eventBus);
-            profile("Event bus built");
             uservices.eventBus.fire(CoreBusEvents.build_context, uservices.context);
             uservices.eventBus.fire(CoreBusEvents.build_event_bus, uservices.eventBus);
 
             uservices.config = createConfig(uservices.context);
             assert(uservices.config);
-            profile("Config is built");
             uservices.eventBus.fire(CoreBusEvents.build_config, uservices.config);
 
             uservices.logger = createLogger(uservices.support);
             assert(uservices.logger);
-            profile("Logger built");
             uservices.eventBus.fire(CoreBusEvents.build_logger, uservices.logger);
 
             uservices.resource = createResource(uservices.logger, uservices.config, uservices
                     .context);
             assert(uservices.resource);
             uservices.logger.trace("Resources service built");
-            profile("Resources built");
             uservices.eventBus.fire(CoreBusEvents.build_resource, uservices.resource);
 
             uservices.locator = createLocator(uservices.logger, uservices.config, uservices.context);
             assert(uservices.locator);
             uservices.logger.trace("Service locator built");
             uservices.eventBus.fire(CoreBusEvents.build_locator, uservices.locator);
-            profile("Service locator built");
 
             uservices.isBuilt = true;
             uservices.eventBus.fire(CoreBusEvents.build_core_services, uservices);
@@ -284,7 +276,8 @@ class CliApplication : SimpleUnit
         return new AppContext(curDir, dataDir, userDir, isDebugMode, isSilentMode);
     }
 
-    PlatformContext newPlatformContext(){
+    PlatformContext newPlatformContext()
+    {
         return new PlatformContext;
     }
 
@@ -327,7 +320,7 @@ class CliApplication : SimpleUnit
     Config newAAConstConfig()
     {
         import dm.core.configs.aa_const_config : AAConstConfig;
-        import std.process: environment;
+        import std.process : environment;
 
         auto envAA = environment.toAA;
         return new AAConstConfig!string(envAA);
@@ -587,7 +580,7 @@ class CliApplication : SimpleUnit
         import std.conv : to;
 
         immutable mustBeIsDisableCrash = environment.get(
-            CoreEnvKeys.envCrashFileDisableKey);
+            CoreEnvKeys.appCrashFileDisable);
         if (!mustBeIsDisableCrash)
         {
             return true;
@@ -613,7 +606,7 @@ class CliApplication : SimpleUnit
         string crashDir = getcwd;
 
         immutable mustBeCrashDir = environment.get(
-            CoreEnvKeys.envCrashDirKey);
+            CoreEnvKeys.appCrashDir);
         if (mustBeCrashDir)
         {
             if (!mustBeCrashDir.exists || !mustBeCrashDir
@@ -621,7 +614,7 @@ class CliApplication : SimpleUnit
             {
                 throw new Exception(format(
                         "Crash directory from environment key %s does not exist or not a directory: %s",
-                        CoreEnvKeys.envCrashDirKey, mustBeCrashDir));
+                        CoreEnvKeys.appCrashDir, mustBeCrashDir));
             }
             crashDir = mustBeCrashDir;
         }
@@ -657,14 +650,5 @@ class CliApplication : SimpleUnit
 
         enforce(services !is null, "Services must not be null");
         _uniServices = services;
-    }
-
-    void profile(lazy string pointName)
-    {
-        version (BuiltinProfiler)
-        {
-            uservices.support.tmProfiler.createPoint(
-                pointName);
-        }
     }
 }
