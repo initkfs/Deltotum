@@ -517,22 +517,10 @@ class Window : GraphicsComponent
 
     override void dispose()
     {
+        assert(!isDisposed);
+
         const windowId = id;
-        if (isDisposed)
-        {
-            logger.error("The window is already destroyed with id", windowId);
-            return;
-        }
         logger.tracef("Start dispose window '%s' with id %d", title, windowId);
-
-        if (const err = nativeWindow.close)
-        {
-            logger.error("Window closing error. ", err.toString);
-            //WARNING return
-            return;
-        }
-
-        super.dispose;
 
         //TODO close child windows
         if (onBeforeDestroy.length > 0)
@@ -542,6 +530,15 @@ class Window : GraphicsComponent
                 dg();
             }
         }
+
+        if (const err = nativeWindow.close)
+        {
+            logger.error("Window closing error. ", err.toString);
+            //WARNING return
+            return;
+        }
+
+        super.dispose;
 
         if (renderer && isDestroyRenderer)
         {

@@ -265,36 +265,6 @@ abstract class GraphicApplication : CliApplication
         quit;
     }
 
-    void destroyWindowById(long winId)
-    {
-        auto mustBeWindow = windowManager.byFirstId(winId);
-        if (mustBeWindow.isNull)
-        {
-            uservices.logger.error("No window found to close with id ", winId);
-            return;
-        }
-        destroyWindow(mustBeWindow.get);
-    }
-
-    void destroyWindow(Window window)
-    {
-        auto winId = window.id;
-        uservices.logger.tracef("Request close window with id '%s'", winId);
-
-        if (window.isRunning)
-        {
-            window.stop;
-        }
-
-        window.close;
-
-        if (windowManager.count == 0 && isQuitOnCloseAllWindows)
-        {
-            uservices.logger.tracef("All windows are closed, exit request");
-            requestQuit;
-        }
-    }
-
     Graphics createGraphics(Logger logger, ComRenderer renderer, Theme theme)
     {
         return new Graphics(logger, renderer, theme);

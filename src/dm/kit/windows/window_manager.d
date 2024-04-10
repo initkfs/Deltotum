@@ -131,56 +131,44 @@ class WindowManager : LoggableUnit
         return windows.length;
     }
 
-    size_t dispose(long id)
+    void destroyWindowById(long winId, bool isRemove = true)
     {
-        Window winForDestroy;
-        size_t destroyCount;
-        scope Window[] otherWindows;
-        onWindowsById(id, (win) {
-            if (!winForDestroy)
-            {
-                winForDestroy = win;
-            }
-            else
-            {
-                otherWindows ~= win;
-            }
-            return true;
-        });
-
-        if (winForDestroy && remove(winForDestroy))
+        auto mustBeWindow = byFirstId(winId);
+        if (mustBeWindow.isNull)
         {
-            logger.tracef("Call destroy window '%s' with id %d", winForDestroy.title, winForDestroy
-                    .id);
-            if(winForDestroy.isRunning){
-                winForDestroy.stop;
-                assert(winForDestroy.isStopped);
-            }
-            winForDestroy.dispose;
-            destroyCount++;
+            logger.error("No window found to destroy with id ", winId);
+            return;
+        }
+        destroyWindow(mustBeWindow.get, isRemove);
+    }
+
+    void destroyWindow(Window window, bool isRemove = true)
+    {
+        assert(window);
+        if (window.isDisposed)
+        {
+            logger.tracef("Window already disposed");
+            return;
+        }
+        auto winId = window.id;
+
+        auto isRemoved = remove(window);
+        logger.tracef("Remove window with id '%s': %s", winId, isRemoved);
+
+        if (window.isRunning)
+        {
+            window.stop;
         }
 
-        if (otherWindows.length > 0)
+        window.close;
+    }
+
+    void destroyAll()
+    {
+        foreach (Window win; windows)
         {
-            if (!isAllowDuplicateId)
-            {
-                throw new Exception(
-                    "Windows with duplicate IDs found");
-            }
-
-            logger.warning("Windows with duplicate IDs found");
-            foreach (win; otherWindows)
-            {
-                if (remove(win))
-                {
-                    logger.tracef("Call destroy window '%s' with a duplicate id %d", win.title, win
-                            .id);
-                    win.dispose;
-                    destroyCount++;
-                }
-            }
+            destroyWindow(win, false);
         }
-
-        return destroyCount;
+        windows = null;
     }
 }

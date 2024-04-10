@@ -498,7 +498,15 @@ class SdlApplication : ContinuouslyApplication
                         return true;
                     });
                     auto winId = e.ownerId;
-                    destroyWindowById(winId);
+                    windowManager.destroyWindowById(winId);
+                    if (windowManager.count == 0)
+                    {
+                        if (windowManager.count == 0 && isQuitOnCloseAllWindows)
+                        {
+                            uservices.logger.tracef("All windows are closed, exit request");
+                            requestQuit;
+                        }
+                    }
                     break;
                 default:
                     break;
@@ -933,18 +941,7 @@ class SdlApplication : ContinuouslyApplication
         //Ctrl + C
         if (event.type == SDL_QUIT)
         {
-            auto mustBeWindow = windowManager.current;
-            if (!mustBeWindow.isNull)
-            {
-                uservices.logger.trace("Request close window from cli with id ", mustBeWindow
-                        .get.id);
-                destroyWindow(mustBeWindow.get);
-            }
-            else
-            {
-                uservices.logger.trace("No windows found for quit");
-            }
-
+            windowManager.destroyAll;
             requestQuit;
         }
     }
