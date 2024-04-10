@@ -1,4 +1,4 @@
-module dm.gui.controls.indicators.leds.led_base;
+module dm.addon.gui.controls.indicators.leds.led_base;
 
 import dm.kit.sprites.sprite : Sprite;
 import dm.gui.controls.control : Control;

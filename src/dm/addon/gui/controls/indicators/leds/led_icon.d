@@ -1,6 +1,6 @@
-module dm.gui.controls.indicators.leds.led_icon;
+module dm.addon.gui.controls.indicators.leds.led_icon;
 
-import dm.gui.controls.indicators.leds.led_base : LedBase;
+import dm.addon.gui.controls.indicators.leds.led_base : LedBase;
 import dm.kit.sprites.sprite : Sprite;
 import dm.gui.controls.control : Control;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;

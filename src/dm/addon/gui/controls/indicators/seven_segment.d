@@ -1,4 +1,4 @@
-module dm.gui.controls.indicators.seven_segment;
+module dm.addon.gui.controls.indicators.seven_segment;
 
 import dm.kit.sprites.sprite : Sprite;
 import dm.gui.controls.control : Control;

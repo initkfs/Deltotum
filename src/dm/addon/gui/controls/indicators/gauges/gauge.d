@@ -1,10 +1,10 @@
-module dm.gui.controls.indicators.gauges.gauge;
+module dm.addon.gui.controls.indicators.gauges.gauge;
 
 import dm.kit.sprites.sprite : Sprite;
 import dm.gui.controls.control : Control;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import dm.gui.controls.texts.text : Text;
-import dm.gui.controls.indicators.seven_segment : SevenSegment;
+import dm.addon.gui.controls.indicators.seven_segment : SevenSegment;
 import dm.gui.controls.progress.base_radial_progress_bar: BaseRadialProgressBar;
 import dm.gui.containers.hbox : HBox;
 

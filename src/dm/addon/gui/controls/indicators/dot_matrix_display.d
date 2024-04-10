@@ -1,4 +1,4 @@
-module dm.gui.controls.indicators.dot_matrix_display;
+module dm.addon.gui.controls.indicators.dot_matrix_display;
 
 import dm.kit.sprites.sprite : Sprite;
 import dm.gui.controls.control : Control;

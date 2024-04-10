@@ -1,4 +1,4 @@
-module dm.gui.controls.indicators.gauges.hlinear_gauge;
+module dm.gui.controls.gauges.hlinear_gauge;
 
 import dm.kit.sprites.sprite : Sprite;
 import dm.gui.controls.control : Control;
