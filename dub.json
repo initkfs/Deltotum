@@ -12,8 +12,7 @@
             "versions": [
                 "dev",
                 "SdlBackend",
-                "ExtensionLua",
-                "BuiltinProfiler"
+                "ExtensionLua"
             ],
             "targetType": "executable",
             "targetName": "dm",
@@ -28,7 +27,6 @@
             "name": "app-dist",
             "versions": [
                 "SdlBackend",
-                "BuiltinProfiler",
                 "DmAddon"
             ],
             "targetType": "executable",
@@ -41,8 +39,7 @@
             "name": "app-lib",
             "versions": [
                 "dev",
-                "SdlBackend",
-                "BuiltinProfiler"
+                "SdlBackend"
             ],
             "targetType": "dynamicLibrary",
             "targetName": "dm",
@@ -57,7 +54,7 @@
                 "SdlBackend"
             ],
             "targetType": "executable",
-            "targetName": "deltotum",
+            "targetName": "dm",
             "platforms": [
                 "linux"
             ],
@@ -67,6 +64,9 @@
             ],
             "postBuildCommands": [
                 "timetrace2txt $PACKAGE_DIR/trace.json --tsv $PACKAGE_DIR/trace.tsv -o $PACKAGE_DIR/trace.txt"
+            ],
+            "excludedSourceFiles": [
+                "src/dm/addon/*"
             ]
         }
     ],

@@ -16,7 +16,6 @@ import dm.core.apps.caps.cap_core : CapCore;
 import dm.core.events.bus.event_bus : EventBus;
 import dm.core.events.bus.core_bus_events : CoreBusEvents;
 import dm.core.locators.service_locator : ServiceLocator;
-import dm.core.supports.profiling.profilers.tm_profiler : TMProfiler;
 import dm.core.supports.errors.err_status : ErrStatus;
 
 import CoreEnvKeys = dm.core.core_env_keys;
@@ -478,24 +477,15 @@ class CliApplication : SimpleUnit
 
     protected Support createSupport()
     {
-        version (BuiltinProfiler)
-        {
-            auto tmProfiler = new TMProfiler(50);
-        }
-        else
-        {
-            auto tmProfiler = new TMProfiler;
-        }
-
         auto errStatus = new ErrStatus;
 
-        auto support = newSupport(tmProfiler, errStatus);
+        auto support = newSupport(errStatus);
         return support;
     }
 
-    Support newSupport(TMProfiler profiler, ErrStatus errStatus)
+    Support newSupport(ErrStatus errStatus)
     {
-        return new Support(profiler, errStatus);
+        return new Support(errStatus);
     }
 
     protected Resource createResource(Logger logger, Config config, Context context, string resourceDirPath = "resources")
