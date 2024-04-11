@@ -6,6 +6,7 @@ version(SdlBackend):
 
 import dm.com.platforms.results.com_result : ComResult;
 import dm.com.graphics.com_texture : ComTexture;
+import dm.com.com_native_ptr : ComNativePtr;
 import dm.back.sdl2.base.sdl_object_wrapper : SdlObjectWrapper;
 import dm.back.sdl2.sdl_renderer : SdlRenderer;
 import dm.com.graphics.com_surface : ComSurface;
@@ -59,13 +60,12 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         {
             disposePtr;
         }
-        //TODO unsafe cast
-        void* newPtr;
+        ComNativePtr newPtr;
         if (const err = surface.nativePtr(newPtr))
         {
             return err;
         }
-        SDL_Surface* surfPtr = cast(SDL_Surface*) newPtr;
+        SDL_Surface* surfPtr = newPtr.castSafe!(SDL_Surface*);
         return fromSurfacePtr(surfPtr);
     }
 
@@ -662,10 +662,10 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    ComResult nativePtr(out void* nptr) nothrow
+    ComResult nativePtr(out ComNativePtr nptr) nothrow
     {
         assert(this.ptr);
-        nptr = cast(void*) ptr;
+        nptr = ComNativePtr(ptr);
         return ComResult.success;
     }
 

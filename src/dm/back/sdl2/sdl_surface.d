@@ -4,9 +4,11 @@ module dm.back.sdl2.sdl_surface;
 version(SdlBackend):
 // dfmt on
 
+import dm.com.com_native_ptr: ComNativePtr;
 import dm.com.graphics.com_surface : ComSurface;
 import dm.com.graphics.com_blend_mode : ComBlendMode;
 import dm.com.platforms.results.com_result : ComResult;
+import dm.com.com_native_ptr : ComNativePtr;
 import dm.back.sdl2.base.sdl_object_wrapper : SdlObjectWrapper;
 import dm.back.sdl2.sdl_window : SdlWindow;
 
@@ -237,13 +239,13 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
     //https://discourse.libsdl.org/t/sdl-blitsurface-doesnt-work-in-sdl-2-0/19288/3
     ComResult blitPtr(SDL_Rect* srcRect, ComSurface dst, SDL_Rect* dstRect) nothrow
     {
-        void* dstPtr;
+        ComNativePtr dstPtr;
         //TODO unsafe
         if (const err = dst.nativePtr(dstPtr))
         {
             return err;
         }
-        SDL_Surface* sdlDstPtr = cast(SDL_Surface*) dstPtr;
+        SDL_Surface* sdlDstPtr = dstPtr.castSafe!(SDL_Surface*);
         assert(sdlDstPtr);
 
         //TODO check is locked
@@ -539,10 +541,10 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult nativePtr(out void* nptr) nothrow
+    ComResult nativePtr(out ComNativePtr nptr) nothrow
     {
         assert(ptr);
-        nptr = cast(void*) ptr;
+        nptr = ComNativePtr(ptr);
         return ComResult.success;
     }
 

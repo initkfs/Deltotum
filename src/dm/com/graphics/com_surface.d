@@ -3,6 +3,7 @@ module dm.com.graphics.com_surface;
 import dm.com.platforms.results.com_result : ComResult;
 import dm.com.destroyable : Destroyable;
 import dm.com.graphics.com_blend_mode : ComBlendMode;
+import dm.com.com_native_ptr: ComNativePtr;
 
 import dm.math.rect2d : Rect2d;
 
@@ -51,5 +52,5 @@ nothrow:
     ComResult getBlitAlphaMod(out int mod);
     ComResult setBlitAlhpaMod(int mod);
     ComResult setPixelIsTransparent(bool isTransparent, ubyte r, ubyte g, ubyte b, ubyte a);
-    ComResult nativePtr(out void* ptr) nothrow;
+    ComResult nativePtr(out ComNativePtr ptr) nothrow;
 }

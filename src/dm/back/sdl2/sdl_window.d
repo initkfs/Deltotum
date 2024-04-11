@@ -7,6 +7,7 @@ version(SdlBackend):
 import dm.com.graphics.com_window : ComWindow;
 
 import dm.com.platforms.results.com_result : ComResult;
+import dm.com.com_native_ptr : ComNativePtr;
 import dm.com.graphics.com_surface : ComSurface;
 import dm.back.sdl2.base.sdl_object_wrapper : SdlObjectWrapper;
 import dm.com.inputs.com_cursor : ComCursor, ComSystemCursorType;
@@ -405,13 +406,12 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
     ComResult setModalFor(ComWindow parent)
     {
         assert(parent);
-        void* nPtr;
+        ComNativePtr nPtr;
         if (const err = parent.nativePtr(nPtr))
         {
             return err;
         }
-        assert(nPtr);
-        auto parentPtr = cast(SDL_Window*) nPtr;
+        auto parentPtr = nPtr.castSafe!(SDL_Window*);
         const zeroOrErrorCode = SDL_SetWindowModalFor(ptr, parentPtr);
         if (zeroOrErrorCode)
         {
@@ -424,26 +424,25 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
     {
         assert(icon);
 
-        void* nPtr;
+        ComNativePtr nPtr;
         if (const err = icon.nativePtr(nPtr))
         {
             return err;
         }
-        assert(nPtr);
-        //TODO unsafe
-        SDL_Surface* surfPtr = cast(SDL_Surface*) nPtr;
+        SDL_Surface* surfPtr = nPtr.castSafe!(SDL_Surface*);
         SDL_SetWindowIcon(ptr, surfPtr);
 
         return ComResult.success;
     }
 
-    ComResult nativePtr(out void* ptr) nothrow
+    ComResult nativePtr(out ComNativePtr ptrInfo) nothrow
     {
         if (!ptr && isDisposed)
         {
             return ComResult.error("Native window pointer is destroyed or null");
         }
-        ptr = cast(void*) this.ptr;
+
+        ptrInfo = ComNativePtr(ptr);
         return ComResult.success;
     }
 

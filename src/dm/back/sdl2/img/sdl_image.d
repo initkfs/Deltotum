@@ -98,15 +98,18 @@ class SdlImage : SdlSurface, ComImage
         assert(surface, "Surface must not be null");
         assert(path.length > 0, "Image path must not be empty");
 
-        void* nativePtr;
+        import dm.com.com_native_ptr: ComNativePtr;
+
+        ComNativePtr nativePtr;
         if (const err = surface.nativePtr(nativePtr))
         {
             return err;
         }
-        assert(nativePtr);
+
+        SDL_Surface* surfPtr = nativePtr.castSafe!(SDL_Surface*);
 
         //TODO unsafe
-        const zeroOrErrorCode = IMG_SavePNG(cast(SDL_Surface*) nativePtr, path.toStringz);
+        const zeroOrErrorCode = IMG_SavePNG(surfPtr, path.toStringz);
         if (zeroOrErrorCode != 0)
         {
             return getErrorRes(zeroOrErrorCode);

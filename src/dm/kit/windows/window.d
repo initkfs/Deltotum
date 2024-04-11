@@ -1,6 +1,7 @@
 module dm.kit.windows.window;
 
 import dm.kit.components.graphics_component : GraphicsComponent;
+import dm.com.com_native_ptr: ComNativePtr;
 import dm.com.graphics.com_window : ComWindow;
 import dm.math.rect2d : Rect2d;
 import dm.math.vector2 : Vector2;
@@ -506,12 +507,11 @@ class Window : GraphicsComponent
         return newWindow;
     }
 
-    void nativePtr(out void* ptr)
+    void nativePtr(out ComNativePtr ptr)
     {
         if (const err = nativeWindow.nativePtr(ptr))
         {
             logger.error("Native window pointer is invalid");
-            ptr = null;
         }
     }
 

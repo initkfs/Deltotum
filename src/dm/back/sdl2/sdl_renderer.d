@@ -4,6 +4,7 @@ module dm.back.sdl2.sdl_renderer;
 version(SdlBackend):
 // dfmt on
 
+import dm.com.com_native_ptr : ComNativePtr;
 import dm.com.graphics.com_renderer : ComRenderer;
 import dm.com.graphics.com_texture : ComTexture;
 import dm.com.platforms.results.com_result : ComResult;
@@ -107,15 +108,17 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
 
     ComResult copy(ComTexture texture) nothrow
     {
-        if (auto sdlTexture = cast(SdlTexture) texture)
+        import dm.core.utils.type_util : castSafe;
+
+        if (auto sdlTexture = texture.castSafe!SdlTexture)
         {
-            void* nPtr;
+            ComNativePtr nPtr;
             if (const err = texture.nativePtr(nPtr))
             {
                 return err;
             }
             //TODO unsafe
-            SDL_Texture* sdlPtr = cast(SDL_Texture*) nPtr;
+            SDL_Texture* sdlPtr = nPtr.castSafe!(SDL_Texture*);
             const int zeroOrErrorCode = SDL_RenderCopy(ptr, sdlPtr, null, null);
             if (zeroOrErrorCode)
             {

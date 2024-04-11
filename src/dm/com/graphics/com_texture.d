@@ -2,6 +2,7 @@ module dm.com.graphics.com_texture;
 
 import dm.com.platforms.results.com_result : ComResult;
 import dm.com.graphics.com_blend_mode : ComBlendMode;
+import dm.com.com_native_ptr: ComNativePtr;
 import dm.com.destroyable : Destroyable;
 
 import dm.math.rect2d : Rect2d;
@@ -63,5 +64,5 @@ nothrow:
     ComResult setOpacity(double opacity);
     ComResult setScaleMode(ComTextureScaleMode);
     ComResult getScaleMode(out ComTextureScaleMode);
-    ComResult nativePtr(out void* ptr);
+    ComResult nativePtr(out ComNativePtr ptr);
 }
