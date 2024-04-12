@@ -113,7 +113,7 @@ class Calendar : Control
             });
             load;
         };
-        monthLabel = new Text(month.to!dstring);
+        monthLabel = new Text(getMonthName(month));
         Button nextMonth = new Button("▶", prevNextButtonSize, prevNextButtonSize);
         nextMonth.onAction = (ref e) {
             currentDate.month = onNewMonth((Month month) {
@@ -207,7 +207,7 @@ class Calendar : Control
         }
 
         currentDate = date;
-        monthLabel.text = currentDate.month.to!dstring;
+        monthLabel.text = getMonthName(currentDate.month);
         yearLabel.text = currentDate.year.to!dstring;
     }
 
@@ -240,13 +240,13 @@ class Calendar : Control
 
     private Month onNewMonth(scope Month delegate(Month) onMonth)
     {
-        auto month = monthLabel.text.to!Month;
+        auto month = currentDate.month;
         return onMonth(month);
     }
 
     private int onNewYear(scope int delegate(int) onYear)
     {
-        auto year = yearLabel.text.to!int;
+        auto year = currentDate.year;
         return onYear(year);
     }
 
@@ -272,8 +272,63 @@ class Calendar : Control
 
     private dstring[] getWeekDayNames()
     {
-        dstring[] weekNames = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+        import KitI18nKeys = dm.kit.kit_i18n_keys;
+
+        dstring[] weekNames = [
+            i18n.getMessage(KitI18nKeys.dateWeekMo, "Mo"),
+            i18n.getMessage(KitI18nKeys.dateWeekTu, "Tu"),
+            i18n.getMessage(KitI18nKeys.dateWeekWe, "We"),
+            i18n.getMessage(KitI18nKeys.dateWeekTh, "Th"),
+            i18n.getMessage(KitI18nKeys.dateWeekFr, "Fr"),
+            i18n.getMessage(KitI18nKeys.dateWeekSa, "Sa"),
+            i18n.getMessage(KitI18nKeys.dateWeekSu, "Su")
+        ];
         return weekNames;
+    }
+
+    private dstring getMonthName(Month month)
+    {
+        import KitI18nKeys = dm.kit.kit_i18n_keys;
+
+        final switch (month) with (Month)
+        {
+            case jan:
+                return i18n.getMessage(KitI18nKeys.dateMonthJan, "january");
+                break;
+            case feb:
+                return i18n.getMessage(KitI18nKeys.dateMonthFeb, "february");
+                break;
+            case mar:
+                return i18n.getMessage(KitI18nKeys.dateMonthMar, "march");
+                break;
+            case apr:
+                return i18n.getMessage(KitI18nKeys.dateMonthApr, "april");
+                break;
+            case may:
+                return i18n.getMessage(KitI18nKeys.dateMonthMay, "may");
+                break;
+            case jun:
+                return i18n.getMessage(KitI18nKeys.dateMonthJun, "june");
+                break;
+            case jul:
+                return i18n.getMessage(KitI18nKeys.dateMonthJul, "july");
+                break;
+            case aug:
+                return i18n.getMessage(KitI18nKeys.dateMonthAug, "august");
+                break;
+            case sep:
+                return i18n.getMessage(KitI18nKeys.dateMonthSep, "september");
+                break;
+            case oct:
+                return i18n.getMessage(KitI18nKeys.dateMonthOct, "october");
+                break;
+            case nov:
+                return i18n.getMessage(KitI18nKeys.dateMonthNov, "november");
+                break;
+            case dec:
+                return i18n.getMessage(KitI18nKeys.dateMonthDec, "december");
+                break;
+        }
     }
 
     private Date getCurrentDate()

@@ -12,10 +12,10 @@ class LangMessages
 
     protected
     {
-        string[string][string] messages;
+        dstring[string][string] messages;
     }
 
-    this(string[string][string] keyMessages)
+    this(dstring[string][string] keyMessages)
     {
         this.messages = keyMessages;
     }
@@ -35,7 +35,7 @@ class LangMessages
         return (langKey in messages[key]) !is null;
     }
 
-    string get(string key, string langKey)
+    dstring get(string key, string langKey)
     {
         return messages[key][langKey];
     }

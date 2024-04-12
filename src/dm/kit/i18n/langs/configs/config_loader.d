@@ -5,5 +5,5 @@ module dm.kit.i18n.langs.configs.config_loader;
  */
 abstract class ConfigLoader
 {
-    string[string][string] load(string configText);
+    dstring[string][string] load(string configText);
 }

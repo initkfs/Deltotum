@@ -17,3 +17,11 @@ enum dateMonthSep = "dateMonthSep";
 enum dateMonthOct = "dateMonthOct";
 enum dateMonthNov = "dateMonthNov";
 enum dateMonthDec = "dateMonthDec";
+
+enum dateWeekMo = "dateWeekMo";
+enum dateWeekTu = "dateWeekTu";
+enum dateWeekWe = "dateWeekWe";
+enum dateWeekTh = "dateWeekTh";
+enum dateWeekFr = "dateWeekFr";
+enum dateWeekSa = "dateWeekSa";
+enum dateWeekSu = "dateWeekSu";

@@ -20,7 +20,7 @@ class I18n : LoggableUnit
         super(logger);
     }
 
-    string getMessage(string key, string defaultMessage = errorMessage)
+    dstring getMessage(string key, dstring defaultMessage = errorMessage)
     {
         if (key.length == 0)
         {
@@ -38,7 +38,7 @@ class I18n : LoggableUnit
         {
             if (message.hasLangKey(key, lang))
             {
-                string result = message.get(key, lang);
+                dstring result = message.get(key, lang);
                 return result;
             }
         }

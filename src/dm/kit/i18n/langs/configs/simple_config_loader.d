@@ -2,6 +2,8 @@ module dm.kit.i18n.langs.configs.simple_config_loader;
 
 import dm.kit.i18n.langs.configs.config_loader : ConfigLoader;
 
+import std.conv: to;
+
 /**
  * Authors: initkfs
  */
@@ -10,7 +12,7 @@ class SimpleConfigLoader : ConfigLoader
     string separator = ",";
     string[] allowedLangs;
 
-    string[string][string] loadFile(string configFile)
+    dstring[string][string] loadFile(string configFile)
     {
         import std.file : exists, readText, isFile;
 
@@ -28,7 +30,7 @@ class SimpleConfigLoader : ConfigLoader
         return load(configText);
     }
 
-    override string[string][string] load(string configText)
+    override dstring[string][string] load(string configText)
     {
 
         import std.string : lineSplitter, strip;
@@ -112,7 +114,7 @@ class SimpleConfigLoader : ConfigLoader
                     continue;
                 }
 
-                messageMap[messageBaseKey][messageKey] = messageValue;
+                messageMap[messageBaseKey][messageKey] = messageValue.to!dstring;
             }
 
             lineNumber++;
