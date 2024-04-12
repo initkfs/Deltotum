@@ -13,6 +13,7 @@ import dm.kit.screens.screen : Screen;
 import dm.kit.events.kit_event_manager : KitEventManager;
 import dm.kit.apps.caps.cap_graphics : CapGraphics;
 import dm.kit.platforms.platform : Platform;
+import dm.kit.i18n.i18n: I18n;
 
 /**
  * Authors: initkfs
@@ -29,6 +30,7 @@ class GraphicsComponent : UniComponent
         @Service KitEventManager _eventManager;
         @Service CapGraphics _capGraphics;
         @Service Platform _platform;
+        @Service I18n _i18n;
     }
 
     alias build = UniComponent.build;
@@ -53,7 +55,7 @@ class GraphicsComponent : UniComponent
     {
         import std.exception : enforce;
 
-        enforce(assetManager !is null, "Asset manager must not be null");
+        enforce(assetManager, "Asset manager must not be null");
         _asset = assetManager;
     }
 
@@ -72,7 +74,7 @@ class GraphicsComponent : UniComponent
     {
         import std.exception : enforce;
 
-        enforce(input !is null, "Input must not be null");
+        enforce(input, "Input must not be null");
         _input = input;
     }
 
@@ -91,7 +93,7 @@ class GraphicsComponent : UniComponent
     {
         import std.exception : enforce;
 
-        enforce(audio !is null, "Audio must not be null");
+        enforce(audio, "Audio must not be null");
         _audio = audio;
     }
 
@@ -110,7 +112,7 @@ class GraphicsComponent : UniComponent
     {
         import std.exception : enforce;
 
-        enforce(graphics !is null, "Graphics must not be null");
+        enforce(graphics, "Graphics must not be null");
         _graphics = graphics;
     }
 
@@ -129,7 +131,7 @@ class GraphicsComponent : UniComponent
     {
         import std.exception : enforce;
 
-        enforce(screen !is null, "Screen must not be null");
+        enforce(screen, "Screen must not be null");
         _screen = screen;
     }
 
@@ -148,7 +150,7 @@ class GraphicsComponent : UniComponent
     {
         import std.exception : enforce;
 
-        enforce(manager !is null, "Event manager must not be null");
+        enforce(manager, "Event manager must not be null");
         _eventManager = manager;
     }
 
@@ -167,7 +169,7 @@ class GraphicsComponent : UniComponent
     {
         import std.exception : enforce;
 
-        enforce(caps !is null, "Graphics capabilities must not be null");
+        enforce(caps, "Graphics capabilities must not be null");
         _capGraphics = caps;
     }
 
@@ -186,7 +188,26 @@ class GraphicsComponent : UniComponent
     {
         import std.exception : enforce;
 
-        enforce(p !is null, "Platform must not be null");
+        enforce(p, "Platform must not be null");
         _platform = p;
+    }
+
+    bool hasI18n() const nothrow pure @safe
+    {
+        return _i18n !is null;
+    }
+
+    inout(I18n) i18n() inout nothrow pure @safe
+    out (_i18n; _i18n !is null)
+    {
+        return _i18n;
+    }
+
+    void i18n(I18n service) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(service, "I18n must not be null");
+        _i18n = service;
     }
 }

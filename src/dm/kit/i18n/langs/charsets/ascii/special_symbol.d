@@ -1,4 +1,4 @@
-module dm.kit.i18n.langs.charactersets.ascii.special_symbol;
+module dm.kit.i18n.langs.charsets.ascii.special_symbol;
 
 import std.ascii : ControlChar;
 

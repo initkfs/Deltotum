@@ -4,6 +4,8 @@ module dm.kit.kit_config_keys;
  * Authors: initkfs
  */
 
+enum string i18nLang = "i18nLang";
+
 enum sceneNameCurrent = "sceneNameCurrent";
 enum backendIsVideoEnabled = "backendIsVideoEnabled";
 enum backendIsAudioEnabled = "backendIsAudioEnabled";

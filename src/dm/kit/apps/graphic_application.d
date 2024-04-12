@@ -37,6 +37,8 @@ import dm.com.graphics.com_renderer : ComRenderer;
 import dm.com.graphics.com_surface : ComSurface;
 import dm.com.platforms.com_system : ComSystem;
 import dm.kit.platforms.platform : Platform;
+import dm.kit.i18n.i18n : I18n;
+import dm.kit.i18n.langs.lang_messages : LangMessages;
 
 /**
  * Authors: initkfs
@@ -58,6 +60,7 @@ abstract class GraphicApplication : CliApplication
         Input _input;
         Screen _screen;
         Platform _platform;
+        I18n _i18n;
 
         KitEventManager eventManager;
     }
@@ -112,6 +115,8 @@ abstract class GraphicApplication : CliApplication
         _platform = newPlatform(() => ticks);
         initCreateRun(_platform);
 
+        _i18n = createI18n(uservices.logger, uservices.config, uservices.context);
+
         return AppExit(false);
     }
 
@@ -145,6 +150,70 @@ abstract class GraphicApplication : CliApplication
     Platform newPlatform(ulong delegate() tickProvider)
     {
         return new Platform(newComSystem, uservices.logger, uservices.config, uservices.context, tickProvider);
+    }
+
+    I18n newI18n()
+    {
+        return new I18n(uservices.logger);
+    }
+
+    I18n createI18n(Logger logger, Config config, Context context)
+    {
+        if (context.appContext.dataDir.isNull)
+        {
+            logger.trace("Not found data dir, i18n not loaded");
+            return newI18n;
+        }
+
+        import std.path : buildPath;
+        import std.file : exists, isDir, dirEntries, SpanMode;
+        import std.algorithm.iteration : filter;
+
+        //TODO from config;
+        auto langDir = buildPath(context.appContext.dataDir.get, "langs");
+        if (!langDir.exists || !langDir.isDir)
+        {
+            logger.trace("Not found language dir: ", langDir);
+            return newI18n;
+        }
+
+        import dm.kit.i18n.langs.configs.simple_config_loader : SimpleConfigLoader;
+        import KitConfigKeys = dm.kit.kit_config_keys;
+
+        string lang = "en_EN";
+        if (config.containsKey(KitConfigKeys.i18nLang))
+        {
+            auto mustBeLang = config.getNotEmptyString(KitConfigKeys.i18nLang);
+            if (mustBeLang.isNull)
+            {
+                logger.error("Received empty language from config with key ", KitConfigKeys
+                        .i18nLang);
+            }
+            else
+            {
+                logger.trace("Found i18n language from config: ", mustBeLang);
+                lang = mustBeLang.get;
+            }
+        }
+
+        LangMessages[] messages;
+
+        auto langLoader = new SimpleConfigLoader;
+        langLoader.allowedLangs ~= lang;
+
+        foreach (langFile; dirEntries(langDir, SpanMode
+                .depth).filter!(f => f.isFile))
+        {
+            auto newMessages = langLoader.loadFile(langFile);
+            messages ~= new LangMessages(newMessages);
+            logger.tracef("Load for lang '%s' i18n messages: %s", lang, langFile);
+        }
+
+        auto i18n = newI18n;
+        i18n.lang = lang;
+        i18n.langMessages = messages;
+
+        return i18n;
     }
 
     CapGraphics newCapability()
@@ -184,6 +253,7 @@ abstract class GraphicApplication : CliApplication
         component.input = _input;
         component.screen = _screen;
         component.platform = _platform;
+        component.i18n = _i18n;
         component.capGraphics = gservices.capGraphics;
         component.eventManager = eventManager;
     }
