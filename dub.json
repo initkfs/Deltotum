@@ -12,7 +12,8 @@
             "versions": [
                 "dev",
                 "SdlBackend",
-                "ExtensionLua"
+                "ExtensionLua",
+                "DmCtorDsl"
             ],
             "targetType": "executable",
             "targetName": "dm",
@@ -86,6 +87,7 @@
     "dflags": [
         "-dip1000",
         "-preview=in",
+        "-preview=fixAliasThis",
         "-J=./data"
     ],
     "versions": [
