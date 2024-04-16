@@ -177,9 +177,16 @@ class Sprite : EventKitTarget
     double widthChangeThreshold = defaultTrashold;
     double heightChangeThreshold = defaultTrashold;
 
-    this() pure @safe
-    {
+    bool isConstructed;
 
+    this()
+    {
+        construct;
+    }
+
+    void construct()
+    {
+        isConstructed = true;
     }
 
     void buildCreate(Sprite sprite)

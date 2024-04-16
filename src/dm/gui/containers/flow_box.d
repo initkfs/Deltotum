@@ -9,7 +9,7 @@ import dm.kit.sprites.sprite : Sprite;
  */
 class FlowBox : Container
 {
-    this(double hgap = 5, double vgap = 0) pure
+    this(double hgap = 5, double vgap = 0)
     {
         import std.exception : enforce;
         import std.conv : text;

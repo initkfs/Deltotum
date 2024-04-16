@@ -8,7 +8,7 @@ import dm.kit.sprites.layouts.vlayout : VLayout;
  */
 class VBox : SpaceableContainer
 {
-    this(double spacing = 0) pure
+    this(double spacing = 0)
     {
         super(spacing);
 

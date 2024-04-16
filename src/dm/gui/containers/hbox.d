@@ -9,7 +9,7 @@ import dm.kit.sprites.sprite : Sprite;
  */
 class HBox : SpaceableContainer
 {
-    this(double spacing = 0) pure
+    this(double spacing = 0)
     {
         super(spacing);
 

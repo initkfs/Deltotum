@@ -20,7 +20,7 @@ class Frame : Container
         dstring initText;
     }
 
-    this(dstring labelText = "Frame", double spacing = 5) pure
+    this(dstring labelText = "Frame", double spacing = 5)
     {
         import std.exception : enforce;
         import std.conv : text;

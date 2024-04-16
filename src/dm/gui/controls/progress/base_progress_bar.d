@@ -17,7 +17,7 @@ abstract class BaseProgressBar : Control
 
     void delegate(double) onValue;
 
-    this(double minValue = 0, double maxValue = 1.0) pure @safe
+    this(double minValue = 0, double maxValue = 1.0)
     {
         if (minValue > maxValue)
         {
@@ -30,6 +30,8 @@ abstract class BaseProgressBar : Control
         this.maxValue = maxValue;
 
         this.value = minValue;
+
+        construct;
     }
 
     double progress()

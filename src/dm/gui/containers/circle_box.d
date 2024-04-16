@@ -9,7 +9,7 @@ import dm.kit.sprites.sprite : Sprite;
  */
 class CircleBox : Container
 {
-    this(double radius = 80, double startAngle = 0) pure
+    this(double radius = 80, double startAngle = 0)
     {
         import std.exception : enforce;
 

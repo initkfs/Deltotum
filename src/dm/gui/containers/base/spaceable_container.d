@@ -12,7 +12,7 @@ class SpaceableContainer : Container
         double _spacing;
     }
 
-    this(double spacing = 0) pure
+    this(double spacing = 0)
     {
         import std.exception : enforce;
         import std.conv : text;

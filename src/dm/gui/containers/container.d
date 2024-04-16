@@ -8,8 +8,8 @@ import dm.kit.sprites.sprite : Sprite;
  */
 class Container : Control
 {
-    this() pure @safe
-    {
+    override void construct(){
+        super.construct;
         isBackground = false;
     }
 

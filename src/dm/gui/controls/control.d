@@ -76,8 +76,10 @@ class Control : Sprite
         size_t tooltipDelayCounter;
     }
 
-    this() pure @safe
+    override void construct()
     {
+        super.construct;
+
         isResizedByParent = true;
         isResizable = true;
         isLayoutManaged = true;
