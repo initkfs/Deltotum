@@ -3,6 +3,7 @@ module dm.kit.inputs.input;
 import dm.kit.inputs.cursors.cursor: Cursor;
 import dm.kit.inputs.clipboards.clipboard : Clipboard;
 import dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
+import dm.com.inputs.com_keyboard : ComKeyName;
 import dm.math.vector2 : Vector2;
 
 import dm.math.vector2 : Vector2;
@@ -14,7 +15,7 @@ import std.container.slist : SList;
  */
 class Input
 {
-    SList!int pressedKeys;
+    SList!ComKeyName pressedKeys;
 
     bool justJoystickActive;
     bool justJoystickChangeAxis;
@@ -35,25 +36,25 @@ class Input
         assert(cursor);
         this.systemCursor = cursor;
 
-        pressedKeys = SList!int();
+        pressedKeys = SList!ComKeyName();
     }
 
-    bool addPressedKey(int keyCode)
+    bool addPressedKey(ComKeyName keyName)
     {
-        foreach (int key; pressedKeys)
+        foreach (key; pressedKeys)
         {
-            if (keyCode == key)
+            if (keyName == key)
             {
                 return false;
             }
         }
-        pressedKeys.insertFront(keyCode);
+        pressedKeys.insertFront(keyName);
         return true;
     }
 
-    bool addReleasedKey(int keyCode)
+    bool addReleasedKey(ComKeyName keyName)
     {
-        if (pressedKeys.front == keyCode)
+        if (pressedKeys.front == keyName)
         {
             pressedKeys.removeFront;
             return true;
@@ -62,20 +63,20 @@ class Input
         import std.algorithm.searching : find;
         import std.range : take;
 
-        auto mustBeKeyCodes = find(pressedKeys[], keyCode);
-        if (mustBeKeyCodes.empty)
+        auto mustBekeyNames = find(pressedKeys[], keyName);
+        if (mustBekeyNames.empty)
         {
             return false;
         }
-        pressedKeys.linearRemove(take(mustBeKeyCodes, 1));
+        pressedKeys.linearRemove(take(mustBekeyNames, 1));
         return true;
     }
 
-    bool isPressedKey(int keyCode)
+    bool isPressedKey(ComKeyName keyName)
     {
-        foreach (int key; pressedKeys)
+        foreach (key; pressedKeys)
         {
-            if (key == keyCode)
+            if (key == keyName)
             {
                 return true;
             }

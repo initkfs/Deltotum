@@ -352,10 +352,10 @@ class SdlApplication : ContinuouslyApplication
                 case none:
                     break;
                 case keyDown:
-                    _input.addPressedKey(key.keyCode);
+                    _input.addPressedKey(key.keyName);
                     break;
                 case keyUp:
-                    _input.addReleasedKey(key.keyCode);
+                    _input.addReleasedKey(key.keyName);
                     break;
             }
         };

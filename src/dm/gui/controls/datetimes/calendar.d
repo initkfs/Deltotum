@@ -5,42 +5,186 @@ import dm.gui.containers.hbox : HBox;
 import dm.gui.containers.vbox : VBox;
 import dm.gui.controls.texts.text : Text;
 import dm.gui.controls.buttons.button : Button;
+import dm.kit.sprites.sprite : Sprite;
+import dm.kit.graphics.colors.rgba : RGBA;
+import KitI18nKeys = dm.kit.kit_i18n_keys;
 
 import std.datetime;
 import std.conv : to;
+import std.algorithm.searching : canFind;
 
 class DayContainer : Control
 {
+    dstring spacePlaceholder;
+
     Text dayLabel;
     Date dayDate;
-    dstring placeholder;
 
-    this(dstring placeholder = "  ")
+    bool canMark = true;
+    bool isEmpty = true;
+    bool isHoliday;
+
+    void delegate(bool) onMarkNewValue;
+
+    RGBA holidayColor;
+
+    protected
+    {
+        RGBA dayColor;
+    }
+
+    protected
+    {
+        bool _mark;
+    }
+
+    this(dstring spacePlaceholder = "  ")
+    {
+        this.spacePlaceholder = spacePlaceholder;
+    }
+
+    override void construct()
     {
         import dm.kit.sprites.layouts.center_layout : CenterLayout;
 
         this.layout = new CenterLayout;
         this.layout.isAutoResize = true;
 
-        this.placeholder = placeholder;
+        isBackground = true;
+
+        onBackgroundCreated = (newBackgound) {
+            if (!_mark)
+            {
+                background.isVisible = false;
+            }
+        };
+    }
+
+    override Sprite delegate(double, double) createBackgroundFactory()
+    {
+        return (w, h) {
+            auto style = createDefaultStyle;
+            //TODO caps
+            import dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+
+            return new VRegularPolygon(w, h, style, 0);
+        };
     }
 
     override void create()
     {
         super.create;
-        this.dayLabel = new Text(placeholder);
+
+        dayColor = graphics.theme.colorText;
+
+        this.dayLabel = new Text(spacePlaceholder);
+        dayLabel.isFocusable = false;
         addCreate(dayLabel);
+        dayLabel.color = dayColor;
+
+        if (canMark)
+        {
+            onPointerDown ~= (ref e) {
+                if (!canMark)
+                {
+                    return;
+                }
+                toggleMark;
+            };
+        }
+    }
+
+    void setHoliday()
+    {
+        assert(dayLabel);
+        dayLabel.color = holidayColor;
+    }
+
+    void unsetHoliday()
+    {
+        assert(dayLabel);
+        isHoliday = false;
+        if (dayLabel.color != dayColor)
+        {
+            dayLabel.color = dayColor;
+        }
+    }
+
+    void toggleMark()
+    {
+        if (_mark)
+        {
+            unmark;
+            return;
+        }
+
+        mark;
+    }
+
+    void setMark()
+    {
+        _mark = true;
+        if (background)
+        {
+            background.isVisible = true;
+        }
+    }
+
+    void mark()
+    {
+        setMark;
+        if (onMarkNewValue)
+        {
+            onMarkNewValue(_mark);
+        }
+    }
+
+    //TODO isSelected in parent
+    bool isMark()
+    {
+        return _mark;
+    }
+
+    void setUnmark()
+    {
+        _mark = false;
+        if (background)
+        {
+            background.isVisible = false;
+        }
+    }
+
+    void unmark()
+    {
+        setUnmark;
+        if (onMarkNewValue)
+        {
+            onMarkNewValue(_mark);
+        }
     }
 
     void reset()
     {
-        dayLabel.text = placeholder;
+        dayLabel.text = spacePlaceholder;
         dayDate = Date.init;
+        isEmpty = true;
+        unsetHoliday;
+        setUnmark;
+    }
+
+    override string toString()
+    {
+        assert(dayLabel);
+        import std.format : format;
+
+        return format("%s, %s", dayLabel.text, dayDate);
     }
 }
 
 class WeekContainer : Control
 {
+    bool isDateRangeContainer;
+
     DayContainer[] days;
 
     this()
@@ -70,10 +214,18 @@ class Calendar : Control
     Text monthLabel;
     Text yearLabel;
 
+    Button resetButton;
+    Button todayButton;
+
     Date currentDate;
+
+    RGBA holidayColor;
 
     dstring[] weekDayNames;
     size_t weekCount = 5 + 1;
+
+    DayContainer[] selected;
+    DayContainer startSelected;
 
     override void initialize()
     {
@@ -82,12 +234,17 @@ class Calendar : Control
 
         this.layout = new VLayout;
         this.layout.isAutoResize = true;
+        this.layout.isAlignX = true;
         isBorder = true;
     }
 
     override void create()
     {
         super.create;
+
+        import dm.kit.graphics.colors.palettes.material_palette: MaterialPalette;
+
+        holidayColor = RGBA.web(MaterialPalette.redA200);
 
         Date date = getCurrentDate;
 
@@ -113,7 +270,10 @@ class Calendar : Control
             });
             load;
         };
+
         monthLabel = new Text(getMonthName(month));
+        monthLabel.isFocusable = false;
+
         Button nextMonth = new Button("▶", prevNextButtonSize, prevNextButtonSize);
         nextMonth.onAction = (ref e) {
             currentDate.month = onNewMonth((Month month) {
@@ -130,7 +290,28 @@ class Calendar : Control
 
         Button prevYear = new Button("◀", prevNextButtonSize, prevNextButtonSize);
         prevYear.onAction = (ref e) { decYear; load; };
+
         yearLabel = new Text(year.to!dstring);
+        yearLabel.isEditable = true;
+
+        yearLabel.onKeyDown ~= (ref e) {
+            import dm.com.inputs.com_keyboard : ComKeyName;
+
+            if (e.keyName == ComKeyName.RETURN)
+            {
+                //TODO validate
+                try
+                {
+                    currentDate.year = yearLabel.text.to!int;
+                }
+                catch (Exception e)
+                {
+                    logger.trace("Error setting year from text field", e);
+                }
+            }
+
+        };
+
         Button nextYear = new Button("▶", prevNextButtonSize, prevNextButtonSize);
         nextYear.onAction = (ref e) { incYear; load; };
 
@@ -139,6 +320,7 @@ class Calendar : Control
         ]);
 
         auto weekDayNameContainer = new WeekContainer;
+        weekDayNameContainer.isDateRangeContainer = false;
         weekContainers ~= weekDayNameContainer;
         addCreate(weekDayNameContainer);
 
@@ -146,6 +328,7 @@ class Calendar : Control
         foreach (weekName; weekDayNames)
         {
             auto weekDay = new DayContainer;
+            weekDay.canMark = false;
             weekDayNameContainer.addCreate(weekDay);
             weekDay.dayLabel.text = weekName;
         }
@@ -153,14 +336,84 @@ class Calendar : Control
         foreach (wi; 0 .. weekCount)
         {
             WeekContainer weekContainer = new WeekContainer;
+            weekContainer.isDateRangeContainer = true;
             weekContainers ~= weekContainer;
             addCreate(weekContainer);
-            foreach (di; 0 .. weekDayNames.length)
-            {
+            foreach (_di; 0 .. weekDayNames.length)
+                (size_t di) {
                 auto dayContaner = new DayContainer;
+                dayContaner.holidayColor = holidayColor;
+                dayContaner.onMarkNewValue = (bool isMark) {
+                    import std.algorithm.searching : canFind;
+
+                    import dm.com.inputs.com_keyboard : ComKeyName;
+
+                    const isShift = input.isPressedKey(ComKeyName.LSHIFT) || input.isPressedKey(
+                        ComKeyName.RSHIFT);
+
+                    //TODO not mark for current date
+
+                    if (!isMark)
+                    {
+                        import std.algorithm.searching : countUntil;
+                        import std.algorithm.mutation : remove;
+
+                        auto pos = selected.countUntil(dayContaner);
+                        if (pos == -1)
+                        {
+                            logger.trace("Not found day container in selected: ", dayContaner);
+                            return;
+                        }
+                        selected = selected.remove(pos);
+                        logger.trace("Remove day container from selected: ", dayContaner);
+                        return;
+                    }
+
+                    if (isShift && startSelected && (startSelected !is dayContaner))
+                    {
+                        Date startDate;
+                        Date endDate;
+                        if (startSelected.dayDate < dayContaner.dayDate)
+                        {
+                            startDate = startSelected.dayDate;
+                            endDate = dayContaner.dayDate;
+                        }
+                        else
+                        {
+                            startDate = dayContaner.dayDate;
+                            endDate = startSelected.dayDate;
+                        }
+
+                        logger.tracef("Found dates for selected, start %s, end %s", startDate, endDate);
+
+                        //TODO best selection
+                        foreach (week; weekContainers)
+                        {
+                            if (week.isDateRangeContainer)
+                            {
+                                foreach (day; week.days)
+                                {
+                                    if (day.isEmpty)
+                                    {
+                                        continue;
+                                    }
+                                    const dayDate = day.dayDate;
+                                    if (dayDate > startDate && dayDate < endDate)
+                                    {
+                                        day.setMark;
+                                        addSelected(day);
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+
+                    addSelected(dayContaner);
+                };
                 weekContainer.days ~= dayContaner;
                 weekContainer.addCreate(dayContaner);
-            }
+            }(_di);
         }
 
         // Button today = new Button("Today", prevNextButtonSize, prevNextButtonSize);
@@ -171,6 +424,47 @@ class Calendar : Control
             week.enableInsets;
         }
 
+        import dm.gui.containers.hbox : HBox;
+        import dm.gui.containers.container : Container;
+
+        auto btnContainer = new HBox;
+        addCreate(btnContainer);
+        btnContainer.enableInsets;
+
+        todayButton = new Button(i18n.getMessage(KitI18nKeys.dateToday, "Today"));
+        todayButton.onAction = (ref e) { loadToday; };
+
+        resetButton = new Button(i18n.getMessage(KitI18nKeys.uiReset, "Reset"));
+        resetButton.onAction = (ref e) { reset; load; };
+
+        btnContainer.addCreate([todayButton, resetButton]);
+
+        load(getCurrentDate);
+    }
+
+    //TODO i18n
+    protected bool isHoliday(Date date)
+    {
+        return date.dayOfWeek == DayOfWeek.sat || date.dayOfWeek == DayOfWeek.sun;
+    }
+
+    protected bool addSelected(DayContainer container)
+    {
+        assert(container);
+        if (selected.canFind(container))
+        {
+            logger.trace("Day container already added: ", container);
+            return false;
+        }
+
+        logger.trace("Add day container to selected: ", container);
+        startSelected = container;
+        selected ~= container;
+        return true;
+    }
+
+    void loadToday()
+    {
         load(getCurrentDate);
     }
 
@@ -181,6 +475,7 @@ class Calendar : Control
 
     void load(Date date)
     {
+        const currDate = getCurrentDate;
         reset;
         auto monthDates = getRangeDatesByWeek(date);
         size_t weekIndex = 1;
@@ -201,7 +496,18 @@ class Calendar : Control
                 assert(day);
                 assert(day.dayLabel.text);
                 day.dayLabel.text = monthDate.day.to!dstring;
-                day.dayDate = date;
+                day.dayDate = monthDate;
+                day.isEmpty = false;
+
+                if (isHoliday(monthDate))
+                {
+                    day.setHoliday;
+                }
+
+                if (currDate == monthDate)
+                {
+                    day.setMark;
+                }
             }
             weekIndex++;
         }
@@ -272,8 +578,6 @@ class Calendar : Control
 
     private dstring[] getWeekDayNames()
     {
-        import KitI18nKeys = dm.kit.kit_i18n_keys;
-
         dstring[] weekNames = [
             i18n.getMessage(KitI18nKeys.dateWeekMo, "Mo"),
             i18n.getMessage(KitI18nKeys.dateWeekTu, "Tu"),
@@ -377,6 +681,8 @@ class Calendar : Control
 
     void reset()
     {
+        startSelected = null;
+        selected = null;
         foreach (week; weekContainers)
         {
             week.reset;

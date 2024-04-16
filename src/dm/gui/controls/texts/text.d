@@ -12,7 +12,7 @@ import dm.kit.sprites.textures.texture : Texture;
 import dm.math.insets : Insets;
 import dm.kit.sprites.shapes.rectangle : Rectangle;
 import dm.kit.inputs.keyboards.events.key_event : KeyEvent;
-import dm.kit.assets.fonts.font_size: FontSize;
+import dm.kit.assets.fonts.font_size : FontSize;
 
 import std.conv : to;
 
@@ -50,7 +50,7 @@ class Text : Control
     int spaceWidth = 5;
     int rowHeight = 0;
 
-    RGBA color = RGBA.white;
+    RGBA _color = RGBA.white;
     FontSize fontSize = FontSize.medium;
 
     Sprite focusEffect;
@@ -303,26 +303,15 @@ class Text : Control
 
         padding = Insets(0);
 
+        _color = graphics.theme.colorText;
+
         auto currStyle = ownOrParentStyle;
         if (currStyle)
         {
-            auto color = currStyle.fillColor;
-            if (!asset.hasColorBitmap(color, fontSize))
-            {
-                fontTexture = asset.fontBitmap(fontSize).copyBitmap;
-                fontTexture.color = color;
-                asset.addFontColorBitmap(fontTexture, color, fontSize);
-            }
-            else
-            {
-                fontTexture = asset.fontColorBitmap(color, fontSize);
-            }
+            _color = currStyle.fillColor;
         }
-        else
-        {
-            //TODO if not found?
-            fontTexture = asset.fontBitmap(fontSize);
-        }
+
+        setColorTexture;
 
         updateRows;
 
@@ -819,5 +808,35 @@ class Text : Control
             builder ~= glyph.grapheme;
         }
         return builder.data;
+    }
+
+    protected void setColorTexture()
+    {
+        if (!asset.hasColorBitmap(_color, fontSize))
+        {
+            fontTexture = asset.fontBitmap(fontSize).copyBitmap;
+            fontTexture.color = _color;
+            asset.addFontColorBitmap(fontTexture, _color, fontSize);
+            logger.tracef("Create new font with size %s, color %s", fontSize, _color);
+        }
+        else
+        {
+            fontTexture = asset.fontColorBitmap(_color, fontSize);
+        }
+    }
+
+    RGBA color()
+    {
+        return _color;
+    }
+
+    void color(RGBA color)
+    {
+        _color = color;
+        if (fontTexture)
+        {
+            setColorTexture;
+        }
+        setInvalid;
     }
 }

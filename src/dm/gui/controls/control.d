@@ -30,6 +30,8 @@ class Control : Sprite
     bool isCreateBackgroundFactory = true;
     Insets backgroundInsets;
     Sprite delegate(double, double) backgroundFactory;
+    Sprite delegate(Sprite) onBackgroundCreate;
+    void delegate(Sprite) onBackgroundCreated;
 
     bool isBackground;
     bool isBorder;
@@ -56,10 +58,10 @@ class Control : Sprite
     void delegate() onPreControlContentCreated;
     void delegate() onPostControlContentCreated;
 
-    //protected
-    //{
-    Sprite background;
-    //}
+    protected
+    {
+        Sprite _background;
+    }
 
     protected
     {
@@ -540,7 +542,7 @@ class Control : Sprite
     protected bool createBackground(double width, double height)
     {
         if (
-            background ||
+            _background ||
             width == 0 ||
             height == 0 ||
             (!isBackground && !isBorder)
@@ -552,34 +554,41 @@ class Control : Sprite
         assert(backgroundInsets.width < width);
         assert(backgroundInsets.height < height);
 
-        background = backgroundFactory(width - backgroundInsets.width, height - backgroundInsets
+        auto newBackground = backgroundFactory(width - backgroundInsets.width, height - backgroundInsets
                 .height);
 
-        background.x = backgroundInsets.left;
-        background.y = backgroundInsets.top;
+        _background = onBackgroundCreate ? onBackgroundCreate(newBackground) : newBackground;
 
-        background.isResizedByParent = true;
-        background.isLayoutManaged = false;
+        if (onBackgroundCreated)
+        {
+            onBackgroundCreated(_background);
+        }
 
-        addCreate(background, 0);
+        _background.x = backgroundInsets.left;
+        _background.y = backgroundInsets.top;
 
-        background.id = "control_background";
+        _background.isResizedByParent = true;
+        _background.isLayoutManaged = false;
+
+        addCreate(_background, 0);
+
+        _background.id = "control_background";
         //if done in a factory, there may be an error on uncreated textures
-        background.opacity = graphics.theme.opacityControls;
+        _background.opacity = graphics.theme.opacityControls;
 
         return true;
     }
 
     void checkBackground()
     {
-        if (background)
+        if (_background)
         {
-            background.width = width;
-            background.height = height;
+            _background.width = width;
+            _background.height = height;
             return;
         }
 
-        if (!background && width > 0 && height > 0)
+        if (!_background && width > 0 && height > 0)
         {
             createBackground(width - backgroundInsets.width, height - backgroundInsets.height);
         }
@@ -602,6 +611,12 @@ class Control : Sprite
             hover.isVisible = value;
             setInvalid;
         }
+    }
+
+    Sprite background()
+    {
+        //assert(_background, "Background is null");
+        return _background;
     }
 
     override void update(double dt)

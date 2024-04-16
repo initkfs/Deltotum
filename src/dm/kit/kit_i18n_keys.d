@@ -5,6 +5,9 @@ module dm.kit.kit_i18n_keys;
  */
 
 //TODO validate keys
+enum uiReset = "uiReset";
+
+enum dateToday = "dateToday";
 enum dateMonthJan = "dateMonthJan";
 enum dateMonthFeb = "dateMonthFeb";
 enum dateMonthMar = "dateMonthMar";
