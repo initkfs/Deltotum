@@ -46,6 +46,11 @@ class VectorGraphicsContext : GraphicsContext
 
     }
 
+    void translate(double x, double y)
+    {
+        cairo_translate(cr, x, y);
+    }
+
     void moveTo(double x, double y)
     {
         cairo_move_to(cr, x, y);
@@ -74,6 +79,11 @@ class VectorGraphicsContext : GraphicsContext
     void fill()
     {
         cairo_fill(cr);
+    }
+
+    void fillPreserve()
+    {
+        cairo_fill_preserve(cr);
     }
 
     void fillRect(double x, double y, double width, double height)

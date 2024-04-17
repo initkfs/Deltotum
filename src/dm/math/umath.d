@@ -242,3 +242,17 @@ double toRange(double oldRangeValue, double oldMinInc, double oldMaxInc, double 
 {
     return (((oldRangeValue - oldMinInc) * (newMaxInc - newMinInc)) / (oldMaxInc - oldMinInc)) + newMinInc;
 }
+
+double floor(double value)
+{
+    import MathRounding = std.math.rounding;
+
+    return MathRounding.floor(value);
+}
+
+double ceil(double value)
+{
+    import MathRounding = std.math.rounding;
+
+    return MathRounding.ceil(value);
+}

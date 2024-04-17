@@ -121,14 +121,37 @@ class Textures : Control
         auto rightBottomRect = new TestDrawRightBottomRect;
         container1.addCreate(rightBottomRect);
 
-        auto vContainer = new HBox;
+        auto vContainer = new HBox(5);
         root.addCreate(vContainer);
 
         if(capGraphics.isVectorGraphics){
             import dm.kit.sprites.textures.vectors.shapes.vcircle: VCircle;
 
-            auto vCircle = new VCircle(25, GraphicStyle(3.0, RGBA.red, true, RGBA.green));
+            auto style = GraphicStyle(3.0, RGBA.red, true, RGBA.green);
+
+            enum size = 50;
+
+            auto vCircle = new VCircle(size / 2, style);
             vContainer.addCreate(vCircle);
+
+            import dm.kit.sprites.textures.vectors.shapes.vtriangle: VTriangle;
+
+            auto vTrig = new VTriangle(size, size, style);
+            vContainer.addCreate(vTrig);
+
+            import dm.kit.sprites.textures.vectors.shapes.vregular_polygon: VRegularPolygon;
+
+            auto vReg = new VRegularPolygon(size, size, style, 10);
+            vContainer.addCreate(vReg);
+
+            import dm.kit.sprites.textures.vectors.shapes.vhexagon : VHexagon;
+            auto vHex = new VHexagon(size, style);
+            vContainer.addCreate(vHex);
+
+            import dm.kit.sprites.textures.vectors.shapes.vhexagon_grid : VHexagonGrid;
+            auto vHexGrid = new VHexagonGrid(250, 250, 35, style);
+            vContainer.addCreate(vHexGrid);
+            
         }
 
     }

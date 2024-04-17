@@ -20,8 +20,11 @@ class VRegularPolygon : VShape
     }
 
     override void createTextureContent()
-    {        
-        gContext.setColor(style.fillColor);
+    {
+        if (style.isFill)
+        {
+            gContext.setColor(style.fillColor);
+        }
 
         const lineWidth = style.lineWidth;
         gContext.setLineWidth(lineWidth);
@@ -62,13 +65,11 @@ class VRegularPolygon : VShape
 
         gContext.closePath;
 
-        if (style.isFill)
-        {
-            gContext.fill;
+        if(style.isFill){
+            gContext.fillPreserve;
         }
-        else
-        {
-            gContext.stroke;
-        }
+
+        gContext.setColor(style.lineColor);
+        gContext.stroke;
     }
 }
