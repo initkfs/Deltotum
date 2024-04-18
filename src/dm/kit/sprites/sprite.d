@@ -2005,6 +2005,13 @@ class Sprite : EventKitTarget
         }
     }
 
+    bool removeInvListener(void delegate() dg)
+    {
+        import dm.core.utils.type_util : drop;
+
+        return drop(invalidateListeners, dg);
+    }
+
     override string toString()
     {
         import std.format : format;

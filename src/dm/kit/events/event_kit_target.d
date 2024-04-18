@@ -11,6 +11,8 @@ import dm.kit.inputs.keyboards.events.text_input_event : TextInputEvent;
 import dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import dm.kit.windows.events.window_event : WindowEvent;
 
+import dm.core.utils.type_util : drop;
+
 /**
  * Authors: initkfs
  */
@@ -290,7 +292,7 @@ class EventKitTarget : WindowComponent, EventTarget
 
     void runListeners(ref WindowEvent)
     {
-
+        //TODO window events?
     }
 
     void fireEvent(E)(ref E e)
@@ -302,6 +304,151 @@ class EventKitTarget : WindowComponent, EventTarget
         }
 
         runEventHandlers!E(e);
+    }
+
+    bool removeFilter(void delegate(ref AppEvent) dg)
+    {
+        return drop(eventAppFilters, dg);
+    }
+
+    bool removeHandler(void delegate(ref AppEvent) dg)
+    {
+        return drop(eventAppHandlers, dg);
+    }
+
+    bool removeOnAppExit(void delegate(ref AppEvent) dg)
+    {
+        return drop(onAppExit, dg);
+    }
+
+    bool removeFilter(void delegate(ref PointerEvent) dg)
+    {
+        return drop(eventPointerFilters, dg);
+    }
+
+    bool removeHandler(void delegate(ref PointerEvent) dg)
+    {
+        return drop(eventPointerHandlers, dg);
+    }
+
+    bool removeOnPointerDown(void delegate(ref PointerEvent) dg)
+    {
+        return drop(onPointerDown, dg);
+    }
+
+    bool removeOnPointerUp(void delegate(ref PointerEvent) dg)
+    {
+        return drop(onPointerUp, dg);
+    }
+
+    bool removeOnPointerMove(void delegate(ref PointerEvent) dg)
+    {
+        return drop(onPointerMove, dg);
+    }
+
+    bool removeOnPointerWheel(void delegate(ref PointerEvent) dg)
+    {
+        return drop(onPointerWheel, dg);
+    }
+
+    bool removeOnPointerEntered(void delegate(ref PointerEvent) dg)
+    {
+        return drop(onPointerEntered, dg);
+    }
+
+    bool removeOnPointerExited(void delegate(ref PointerEvent) dg)
+    {
+        return drop(onPointerExited, dg);
+    }
+
+    bool removeFilter(void delegate(ref KeyEvent) dg)
+    {
+        return drop(eventKeyFilters, dg);
+    }
+
+    bool removeHandler(void delegate(ref KeyEvent) dg)
+    {
+        return drop(eventKeyHandlers, dg);
+    }
+
+    bool removeOnKeyUp(void delegate(ref KeyEvent) dg)
+    {
+        return drop(onKeyUp, dg);
+    }
+
+    bool removeOnKeyDown(void delegate(ref KeyEvent) dg)
+    {
+        return drop(onKeyUp, dg);
+    }
+
+    bool removeFilter(void delegate(ref TextInputEvent) dg)
+    {
+        return drop(eventTextInputFilters, dg);
+    }
+
+    bool removeHandler(void delegate(ref TextInputEvent) dg)
+    {
+        return drop(eventTextInputHandlers, dg);
+    }
+
+    bool removeOnTextInput(void delegate(ref TextInputEvent) dg)
+    {
+        return drop(onTextInput, dg);
+    }
+
+    bool removeFilter(void delegate(ref FocusEvent) dg)
+    {
+        return drop(eventFocusFilters, dg);
+    }
+
+    bool removeHandler(void delegate(ref FocusEvent) dg)
+    {
+        return drop(eventFocusHandlers, dg);
+    }
+
+    bool removeOnFocusIn(void delegate(ref FocusEvent) dg)
+    {
+        return drop(onFocusIn, dg);
+    }
+
+    bool removeOnFocusOut(void delegate(ref FocusEvent) dg)
+    {
+        return drop(onFocusOut, dg);
+    }
+
+    bool removeFilter(void delegate(ref JoystickEvent) dg)
+    {
+        return drop(eventJoystickFilters, dg);
+    }
+
+    bool removeHandler(void delegate(ref JoystickEvent) dg)
+    {
+        return drop(eventJoystickHandlers, dg);
+    }
+
+    bool removeOnJoystickAxis(void delegate(ref JoystickEvent) dg)
+    {
+        return drop(onJoystickAxis, dg);
+    }
+
+    bool removeOnJoystickButtonPress(void delegate(ref JoystickEvent) dg)
+    {
+        return drop(onJoystickButtonPress, dg);
+    }
+
+    bool removeOnJoystickButtonRelease(void delegate(ref JoystickEvent) dg)
+    {
+        return drop(onJoystickButtonRelease, dg);
+    }
+
+    bool removeFilter(void delegate(ref WindowEvent) dg)
+    {
+        return drop(eventWindowFilters, dg);
+    }
+
+    bool removeHandler(void delegate(ref WindowEvent) dg)
+    {
+        return drop(eventWindowHandlers, dg);
     }
 
     override void dispose()
