@@ -113,11 +113,6 @@ class RoundButton : ButtonBase
             }
 
             Sprite sprite = createDefaultShape(width, height, style);
-            sprite.id = idControlClick;
-            sprite.isLayoutManaged = false;
-            sprite.isResizedByParent = true;
-            sprite.isVisible = false;
-
             return sprite;
         };
     }
@@ -125,9 +120,9 @@ class RoundButton : ButtonBase
     //TODO more correct hitbox
     override bool containsPoint(double x, double y)
     {
-        if (background)
+        if (hasBackground)
         {
-            return background.containsPoint(x, y);
+            return background.get.containsPoint(x, y);
         }
 
         return super.containsPoint(x, y);
@@ -135,9 +130,9 @@ class RoundButton : ButtonBase
 
     override bool intersectBounds(Sprite other)
     {
-        if (background)
+        if (hasBackground)
         {
-            return background.intersectBounds(other);
+            return background.get.intersectBounds(other);
         }
         return super.intersectBounds(other);
     }

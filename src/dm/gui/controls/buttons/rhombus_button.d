@@ -93,11 +93,6 @@ class RhombusButton : ButtonBase
             }
 
             Sprite sprite = createDefaultShape(width, height, style);
-            sprite.id = idControlClick;
-            sprite.isLayoutManaged = false;
-            sprite.isResizedByParent = true;
-            sprite.isVisible = false;
-
             return sprite;
         };
     }

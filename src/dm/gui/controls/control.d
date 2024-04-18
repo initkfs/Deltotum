@@ -12,11 +12,20 @@ import dm.gui.controls.tooltips.tooltip : Tooltip;
 import dm.kit.sprites.transitions.min_max_transition : MinMaxTransition;
 import dm.kit.sprites.transitions.objects.props.opacity_transition : OpacityTransition;
 
+import std.typecons: Nullable;
+
 /**
  * Authors: initkfs
  */
 class Control : Sprite
 {
+    enum
+    {
+        idControlBackground = "control_background",
+        idControlHover = "control_hover",
+        idControlPointerEffect = "control_pointer_effect"
+    }
+
     enum ActionType : string
     {
         standard = "standard",
@@ -27,56 +36,54 @@ class Control : Sprite
 
     string actionType = ActionType.standard;
 
-    bool isCreateBackgroundFactory = true;
-    Insets backgroundInsets;
-    Sprite delegate(double, double) backgroundFactory;
-    Sprite delegate(Sprite) onBackgroundCreate;
-    void delegate(Sprite) onBackgroundCreated;
+    GraphicStyle* userStyle;
+    bool isFindStyleInParent;
 
     bool isBackground;
     bool isBorder;
     bool isFocusable;
     bool isDisabled;
 
-    GraphicStyle* style;
-    bool isFindStyleInParent;
-
-    enum
-    {
-        idControlHover = "control_hover",
-        idControlClick = "control_click"
-    }
-
+    bool isCreateBackgroundFactory = true;
     bool isCreateHoverFactory;
     bool isCreatePointerEffectFactory;
     bool isCreatePointerEffectAnimationFactory;
 
+    Sprite delegate(double, double) backgroundFactory;
+    Sprite delegate(Sprite) onBackgroundCreate;
+    void delegate(Sprite) onBackgroundCreated;
+
     Sprite delegate(double, double) hoverFactory;
+    Sprite delegate(Sprite) onHoverCreate;
+    void delegate(Sprite) onHoverCreated;
+
     Sprite delegate() pointerEffectFactory;
+    Sprite delegate(Sprite) onPointerEffectCreate;
+    void delegate(Sprite) onPointerEffectCreated;
+
     MinMaxTransition!double delegate() pointerEffectAnimationFactory;
+    MinMaxTransition!double delegate(MinMaxTransition!double) onPointerEffectAnimationCreate;
+    void delegate(MinMaxTransition!double) onPointerEffectAnimationCreated;
 
     void delegate() onPreControlContentCreated;
     void delegate() onPostControlContentCreated;
 
     protected
     {
-        Sprite _background;
-    }
-
-    protected
-    {
-        Sprite hover;
-        Sprite pointerEffect;
-        MinMaxTransition!double pointerEffectAnimation;
-
         bool _selected;
 
-        Tooltip[] tooltips;
+        Sprite _background;
+        Sprite _hover;
+        Sprite _pointerEffect;
+
+        MinMaxTransition!double _pointerEffectAnimation;
 
         bool isTooltipDelay;
-        size_t tooltipDelay = 100;
         size_t tooltipDelayCounter;
     }
+
+    Tooltip[] tooltips;
+    size_t tooltipDelay = 100;
 
     override void construct()
     {
@@ -92,13 +99,14 @@ class Control : Sprite
     {
         super.initialize;
 
+        //TODO remove listener?
         invalidateListeners ~= () {
             if (!isCreated)
             {
                 return;
             }
 
-            checkBackground;
+            adjustOrCreateBackground;
         };
 
         onPointerEntered ~= (ref e) {
@@ -119,10 +127,14 @@ class Control : Sprite
             if (tooltips.length > 0)
             {
                 isTooltipDelay = false;
-                foreach (tooltip; tooltips)
+                if (tooltips.length > 0)
                 {
-                    tooltip.hide;
+                    foreach (tooltip; tooltips)
+                    {
+                        tooltip.hide;
+                    }
                 }
+
             }
         };
 
@@ -167,10 +179,6 @@ class Control : Sprite
             }
 
             Sprite newHover = graphics.theme.background(w, h, &newStyle);
-            newHover.id = idControlHover;
-            newHover.isLayoutManaged = false;
-            newHover.isResizedByParent = true;
-            newHover.isVisible = false;
             return newHover;
         };
     }
@@ -189,36 +197,18 @@ class Control : Sprite
                 newStyle.isFill = true;
             }
 
-            Sprite click = graphics.theme.background(width, height, &newStyle);
-            click.id = idControlClick;
-            click.isLayoutManaged = false;
-            click.isResizedByParent = true;
-            click.isVisible = false;
-
-            return click;
+            Sprite effect = graphics.theme.background(width, height, &newStyle);
+            return effect;
         };
     }
 
     MinMaxTransition!double delegate() createPointerEffectAnimationFactory()
     {
         return () {
-
-            if (!pointerEffect)
-            {
-                throw new Exception("Cannot create click effect animation, pointer effect is null");
-            }
-
             auto pointerEffectAnimation = new OpacityTransition(50);
-            pointerEffectAnimation.addObject(pointerEffect);
-            pointerEffectAnimation.isLayoutManaged = false;
-            pointerEffectAnimation.isCycle = false;
-            pointerEffectAnimation.isInverse = true;
-            pointerEffectAnimation.onStop ~= () {
-                if (pointerEffect !is null)
-                {
-                    pointerEffect.isVisible = false;
-                }
-            };
+            assert(_pointerEffect, "Pointer effect is null");
+            //TODO move to create()
+            pointerEffectAnimation.addObject(_pointerEffect);
             return pointerEffectAnimation;
         };
     }
@@ -256,7 +246,7 @@ class Control : Sprite
     {
         super.create;
 
-        createBackground(width, height);
+        tryCreateBackground(width, height);
 
         if (onPreControlContentCreated)
         {
@@ -265,11 +255,21 @@ class Control : Sprite
 
         if (hoverFactory)
         {
-            hover = hoverFactory(width, height);
-            if (hover)
+            auto newHover = hoverFactory(width, height);
+            if (newHover)
             {
-                addCreate(hover);
-                hover.opacity = graphics.theme.opacityHover;
+                _hover = onHoverCreate ? onHoverCreate(newHover) : newHover;
+                _hover.id = idControlHover;
+                _hover.isLayoutManaged = false;
+                _hover.isResizedByParent = true;
+                _hover.isVisible = false;
+
+                addCreate(_hover);
+                _hover.opacity = graphics.theme.opacityHover;
+                if (onHoverCreated)
+                {
+                    onHoverCreated(_hover);
+                }
             }
             else
             {
@@ -277,26 +277,26 @@ class Control : Sprite
             }
         }
 
-        if (pointerEffect)
-        {
-            pointerEffectAnimation = pointerEffectAnimationFactory();
-            if (pointerEffectAnimation)
-            {
-                addCreate(pointerEffectAnimation);
-            }
-            else
-            {
-                logger.error("Click effect animation factory did not return the object");
-            }
-        }
-
         if (pointerEffectFactory)
         {
-            pointerEffect = pointerEffectFactory();
-            if (pointerEffect)
+            auto newPointerEffect = pointerEffectFactory();
+            if (newPointerEffect)
             {
-                addCreate(pointerEffect);
-                pointerEffect.opacity = 0;
+                _pointerEffect = onPointerEffectCreate ? onPointerEffectCreate(newPointerEffect)
+                    : newPointerEffect;
+                _pointerEffect.id = idControlPointerEffect;
+                _pointerEffect.isLayoutManaged = false;
+                _pointerEffect.isResizedByParent = true;
+                _pointerEffect.isVisible = false;
+
+                addCreate(_pointerEffect);
+
+                _pointerEffect.opacity = 0;
+
+                if (onPointerEffectCreated)
+                {
+                    onPointerEffectCreated(_pointerEffect);
+                }
             }
             else
             {
@@ -306,14 +306,39 @@ class Control : Sprite
 
         if (pointerEffectAnimationFactory)
         {
-            pointerEffectAnimation = pointerEffectAnimationFactory();
-            if (pointerEffectAnimation)
+            auto newEffectAnimation = pointerEffectAnimationFactory();
+            if (newEffectAnimation)
             {
-                addCreate(pointerEffectAnimation);
+                if (_pointerEffect)
+                {
+                    _pointerEffectAnimation = onPointerEffectAnimationCreate ? onPointerEffectAnimationCreate(
+                        newEffectAnimation) : newEffectAnimation;
+                    _pointerEffectAnimation.isLayoutManaged = false;
+                    _pointerEffectAnimation.isCycle = false;
+                    _pointerEffectAnimation.isInverse = true;
+                    _pointerEffectAnimation.onStop ~= () {
+                        if (_pointerEffect)
+                        {
+                            _pointerEffect.isVisible = false;
+                        }
+                    };
+
+                    addCreate(_pointerEffectAnimation);
+
+                    if (onPointerEffectAnimationCreated)
+                    {
+                        onPointerEffectAnimationCreated(_pointerEffectAnimation);
+                    }
+                }
+                else
+                {
+                    logger.error("Pointer effect is null for animation");
+                }
+
             }
             else
             {
-                logger.error("Pointern animation factory did not return the object");
+                logger.error("Pointer animation factory did not return the object or");
             }
         }
 
@@ -328,7 +353,7 @@ class Control : Sprite
     void createInteractiveListeners()
     {
         //TODO remove previous
-        if (hover)
+        if (_hover)
         {
             onPointerEntered ~= (ref e) {
 
@@ -337,9 +362,9 @@ class Control : Sprite
                     return;
                 }
 
-                if (hover && !hover.isVisible)
+                if (_hover && !_hover.isVisible)
                 {
-                    hover.isVisible = true;
+                    _hover.isVisible = true;
                 }
             };
 
@@ -350,14 +375,14 @@ class Control : Sprite
                     return;
                 }
 
-                if (hover && hover.isVisible)
+                if (_hover && _hover.isVisible)
                 {
-                    hover.isVisible = false;
+                    _hover.isVisible = false;
                 }
             };
         }
 
-        if (pointerEffect || pointerEffectAnimation)
+        if (_pointerEffect || _pointerEffectAnimation)
         {
             onPointerUp ~= (ref e) {
 
@@ -366,12 +391,12 @@ class Control : Sprite
                     return;
                 }
 
-                if (pointerEffect && !pointerEffect.isVisible)
+                if (_pointerEffect && !_pointerEffect.isVisible)
                 {
-                    pointerEffect.isVisible = true;
-                    if (pointerEffectAnimation && !pointerEffectAnimation.isRunning)
+                    _pointerEffect.isVisible = true;
+                    if (_pointerEffectAnimation && !_pointerEffectAnimation.isRunning)
                     {
-                        pointerEffectAnimation.run;
+                        _pointerEffectAnimation.run;
                     }
 
                 }
@@ -386,7 +411,7 @@ class Control : Sprite
     {
         import dm.core.utils.type_util : castSafe;
 
-        assert(!sprite.isBuilt);
+        assert(!sprite.isBuilt, "Sprite already built: " ~ sprite.className);
 
         super.build(sprite);
         //TODO may be a harmful side effect
@@ -424,7 +449,7 @@ class Control : Sprite
     //TODO or move to scene factory?
     Sprite createIcon(string iconName)
     {
-        assert(isCreated);
+        assert(isCreated, "Sprite not created");
 
         import dm.kit.graphics.themes.icons.icon_name;
         import dm.kit.sprites.images.image : Image;
@@ -454,9 +479,9 @@ class Control : Sprite
         icon.loadRaw(iconData.to!(const(void[])), cast(int) iconSize, cast(int) iconSize);
 
         auto color = graphics.theme.colorAccent;
-        if (style)
+        if (userStyle)
         {
-            color = style.lineColor;
+            color = userStyle.lineColor;
         }
 
         icon.color = color;
@@ -467,17 +492,18 @@ class Control : Sprite
     void applyStyle(Control control)
     {
         assert(control);
-        if (style && !control.style)
+        if (userStyle && !control.userStyle)
         {
-            control.style = style;
+            control.userStyle = userStyle;
         }
     }
 
+    //TODO nullable, but it will become more difficult to use in if branches
     GraphicStyle* ownOrParentStyle()
     {
-        if (style)
+        if (userStyle)
         {
-            return style;
+            return userStyle;
         }
 
         if (isFindStyleInParent)
@@ -487,9 +513,9 @@ class Control : Sprite
             Control currParent = parent.castSafe!Control;
             while (currParent)
             {
-                if (currParent.style)
+                if (currParent.userStyle)
                 {
-                    return currParent.style;
+                    return currParent.userStyle;
                 }
                 currParent = currParent.parent.castSafe!Control;
             }
@@ -539,7 +565,7 @@ class Control : Sprite
         return style;
     }
 
-    protected bool createBackground(double width, double height)
+    protected bool tryCreateBackground(double width, double height)
     {
         if (
             _background ||
@@ -551,35 +577,26 @@ class Control : Sprite
             return false;
         }
 
-        assert(backgroundInsets.width < width);
-        assert(backgroundInsets.height < height);
-
-        auto newBackground = backgroundFactory(width - backgroundInsets.width, height - backgroundInsets
-                .height);
+        auto newBackground = backgroundFactory(width, height);
 
         _background = onBackgroundCreate ? onBackgroundCreate(newBackground) : newBackground;
+        _background.id = idControlBackground;
+        _background.isResizedByParent = true;
+        _background.isLayoutManaged = false;
+
+        addCreate(_background, 0);
+
+        _background.opacity = graphics.theme.opacityControls;
 
         if (onBackgroundCreated)
         {
             onBackgroundCreated(_background);
         }
 
-        _background.x = backgroundInsets.left;
-        _background.y = backgroundInsets.top;
-
-        _background.isResizedByParent = true;
-        _background.isLayoutManaged = false;
-
-        addCreate(_background, 0);
-
-        _background.id = "control_background";
-        //if done in a factory, there may be an error on uncreated textures
-        _background.opacity = graphics.theme.opacityControls;
-
         return true;
     }
 
-    void checkBackground()
+    void adjustOrCreateBackground()
     {
         if (_background)
         {
@@ -590,7 +607,7 @@ class Control : Sprite
 
         if (!_background && width > 0 && height > 0)
         {
-            createBackground(width - backgroundInsets.width, height - backgroundInsets.height);
+            tryCreateBackground(width, height);
         }
     }
 
@@ -606,17 +623,67 @@ class Control : Sprite
         //     return;
         // }
         _selected = value;
-        if (hover)
+        if (_hover)
         {
-            hover.isVisible = value;
+            _hover.isVisible = value;
             setInvalid;
         }
     }
 
-    Sprite background()
+    bool hasBackground()
     {
-        //assert(_background, "Background is null");
-        return _background;
+        return _background !is null;
+    }
+
+    Nullable!Sprite background()
+    {
+        if (!hasBackground)
+        {
+            return Nullable!Sprite.init;
+        }
+        return Nullable!Sprite(_background);
+    }
+
+    bool hasHover()
+    {
+        return _hover !is null;
+    }
+
+    Nullable!Sprite hover()
+    {
+        if (!hasHover)
+        {
+            return Nullable!Sprite.init;
+        }
+        return Nullable!Sprite(_hover);
+    }
+
+    bool hasPointerEffect()
+    {
+        return _pointerEffect !is null;
+    }
+
+    Nullable!Sprite pointerEffect()
+    {
+        if (!hasPointerEffect)
+        {
+            return Nullable!Sprite.init;
+        }
+        return Nullable!Sprite(_pointerEffect);
+    }
+
+    bool hasPointerEffectAnimation()
+    {
+        return _pointerEffectAnimation !is null;
+    }
+
+    Nullable!Sprite pointerEffectAnimation()
+    {
+        if (!hasPointerEffectAnimation)
+        {
+            return Nullable!Sprite.init;
+        }
+        return Nullable!Sprite(_pointerEffectAnimation);
     }
 
     override void update(double dt)
@@ -644,8 +711,6 @@ class Control : Sprite
     override void dispose()
     {
         super.dispose;
-
-        _selected = false;
     }
 
 }

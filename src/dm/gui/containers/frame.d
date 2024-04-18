@@ -62,12 +62,12 @@ class Frame : Container
 
     protected void setFrameClipping()
     {
-        if (background && label)
+        if (hasBackground && label)
         {
             import dm.kit.sprites.shapes.regular_polygon : RegularPolygon;
             import dm.core.utils.type_util: castSafe;
 
-            if (auto rp = background.castSafe!RegularPolygon)
+            if (auto rp = background.get.castSafe!RegularPolygon)
             {
                 rp.topClip.start.x = label.x;
                 rp.topClip.end.x = label.bounds.right;

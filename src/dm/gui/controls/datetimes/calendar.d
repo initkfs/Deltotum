@@ -53,9 +53,9 @@ class DayContainer : Control
         isBackground = true;
 
         onBackgroundCreated = (newBackgound) {
-            if (!_mark)
+            if (!_mark && hasBackground)
             {
-                background.isVisible = false;
+                background.get.isVisible = false;
             }
         };
     }
@@ -124,9 +124,9 @@ class DayContainer : Control
     void setMark()
     {
         _mark = true;
-        if (background)
+        if (hasBackground)
         {
-            background.isVisible = true;
+            background.get.isVisible = true;
         }
     }
 
@@ -148,9 +148,9 @@ class DayContainer : Control
     void setUnmark()
     {
         _mark = false;
-        if (background)
+        if (hasBackground)
         {
-            background.isVisible = false;
+            background.get.isVisible = false;
         }
     }
 
