@@ -27,18 +27,13 @@ class VectorTexture : Texture
 
     bool delegate(ComSurface) onSurfaceIsContinue;
 
+    bool isMutable = true;
+
     this(double width, double height)
     {
         this.width = width;
         this.height = height;
         isResizable = true;
-    }
-
-    override void color(RGBA color)
-    {
-        assert(isCreated);
-        auto ctx = cairoContext.getObject;
-        cairo_set_source_rgba(ctx, color.rNorm, color.gNorm, color.bNorm, color.a);
     }
 
     void createTextureContent()
@@ -67,6 +62,16 @@ class VectorTexture : Texture
 
         assert(comSurface);
 
+        if (cairoSurface && !cairoSurface.isDisposed)
+        {
+            cairoSurface.dispose;
+        }
+
+        if (cairoContext && !cairoContext.isDisposed)
+        {
+            cairoContext.dispose;
+        }
+
         void* pixels;
         if (const err = comSurface.getPixels(pixels))
         {
@@ -82,15 +87,23 @@ class VectorTexture : Texture
                 .CAIRO_FORMAT_ARGB32, cast(int) width, cast(int) height, pitch);
 
         cairoContext = new CairoContext(cairoSurface);
+
+        createGraphicsContext;
     }
 
     override void create()
     {
         super.create;
-        createTexture;
+        if (isMutable)
+        {
+            createMutTexture;
+            return;
+        }
+
+        createStaticTexture;
     }
 
-    private void createTexture()
+    private void createStaticTexture()
     {
         tryCreateTempSurface;
         tryCreateCairoContext;
@@ -99,11 +112,6 @@ class VectorTexture : Texture
         scope (exit)
         {
             disposeContext;
-        }
-
-        if (!hasGraphicsContext)
-        {
-            createGraphicsContext();
         }
 
         createTextureContent;
@@ -121,15 +129,10 @@ class VectorTexture : Texture
             texture = graphics.comTextureProvider.getNew();
         }
 
-        loadTexture;
+        loadStaticTexture;
     }
 
-    void redraw()
-    {
-        createTexture;
-    }
-
-    private void loadTexture()
+    private void loadStaticTexture()
     {
         assert(texture);
         assert(comSurface);
@@ -139,11 +142,121 @@ class VectorTexture : Texture
         {
             throw new Exception(createErr.toString);
         }
+    }
 
-        // if (const err = texture.setBlendModeBlend)
-        // {
-        //     throw new Exception(err.toString);
-        // }
+    private void createMutTexture()
+    {
+        tryCreateTempSurface;
+        tryCreateCairoContext;
+
+        createTextureContent;
+
+        if (onSurfaceIsContinue)
+        {
+            if (!onSurfaceIsContinue(comSurface))
+            {
+                return;
+            }
+        }
+
+        if (!texture)
+        {
+            texture = graphics.comTextureProvider.getNew();
+        }
+
+        const createErr = texture.createMutRGBA32(cast(int) width, cast(int) height);
+        if (createErr)
+        {
+            throw new Exception(createErr.toString);
+        }
+
+        if (const err = texture.setBlendModeBlend)
+        {
+            throw new Exception(err.toString);
+        }
+
+        loadMutTexture;
+    }
+
+    private void loadMutTexture()
+    {
+        assert(texture);
+        assert(comSurface);
+
+        if (const err = texture.lock)
+        {
+            throw new Exception(err.toString);
+        }
+        scope (exit)
+        {
+            if (const err = texture.unlock)
+            {
+                throw new Exception(err.toString);
+            }
+        }
+
+        void* texturePixels;
+        if (const err = texture.getPixels(texturePixels))
+        {
+            throw new Exception(err.toString);
+        }
+
+        int pitch;
+        if (const err = texture.getPitch(pitch))
+        {
+            throw new Exception(err.toString);
+        }
+
+        void* surfPixels;
+        if (const err = comSurface.getPixels(surfPixels))
+        {
+            throw new Exception(err.toString);
+        }
+
+        size_t endBuff = pitch * (cast(size_t) height);
+        texturePixels[0 .. endBuff] = surfPixels[0 .. endBuff];
+    }
+
+    override void recreate()
+    {
+        if (!isMutable)
+        {
+            createStaticTexture;
+            return;
+        }
+
+        if (texture)
+        {
+            int w, h;
+            if (const err = texture.getSize(w, h))
+            {
+                throw new Exception(err.toString);
+            }
+            int newWidth = cast(int) width;
+            int newHeight = cast(int) height;
+            if (newWidth != w || newHeight != h)
+            {
+                createMutTexture;
+                return;
+            }
+
+            _gContext.clear(RGBA.transparent);
+            createTextureContent;
+
+            if (onSurfaceIsContinue)
+            {
+                if (!onSurfaceIsContinue(comSurface))
+                {
+                    return;
+                }
+            }
+
+            loadMutTexture;
+        }
+        else
+        {
+            createMutTexture;
+        }
     }
 
     override GraphicsContext newGraphicsContext()
@@ -151,6 +264,13 @@ class VectorTexture : Texture
         import dm.kit.sprites.textures.vectors.contexts.vector_graphics_context : VectorGraphicsContext;
 
         return new VectorGraphicsContext(cairoContext);
+    }
+
+    override void color(RGBA color)
+    {
+        assert(isCreated);
+        auto ctx = cairoContext.getObject;
+        cairo_set_source_rgba(ctx, color.rNorm, color.gNorm, color.bNorm, color.a);
     }
 
     void disposeContext()
@@ -175,11 +295,6 @@ class VectorTexture : Texture
     {
         super.dispose;
         disposeContext;
-        if (comSurface)
-        {
-            comSurface.dispose;
-            comSurface = null;
-        }
     }
 
     void snapToPixel(cairo_t* cr, out double x, out double y)

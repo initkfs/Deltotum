@@ -553,6 +553,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         if (ptr)
         {
             SDL_FreeSurface(ptr);
+            ptr = null;
             return true;
         }
         return false;

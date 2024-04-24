@@ -69,7 +69,7 @@ mixin template ComPtrManager(T)
         if (ptr)
         {
             _disposed = disposePtr;
-            if (_disposed)
+            if (_disposed && ptr)
             {
                 ptr = null;
             }

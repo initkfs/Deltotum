@@ -3,7 +3,7 @@ module dm.gui.supports.editors.sections.tesselations;
 import dm.gui.controls.control : Control;
 import dm.math.rect2d : Rect2d;
 import dm.kit.graphics.colors.rgba : RGBA;
-import dm.kit.sprites.transitions.pause_transition: PauseTransition;
+import dm.kit.sprites.transitions.pause_transition : PauseTransition;
 import dm.math.random : Random;
 import dm.kit.sprites.textures.vectors.tessellations.penrose_tiling : PenroseTiling;
 
@@ -55,9 +55,14 @@ class Tesselations : Control
         auto transition = new PauseTransition(700);
         transition.isCycle = true;
         addCreate(transition);
-        transition.onEndFrames ~= () { randomTiling(t1); t1.redraw; };
+        transition.onEndFrames ~= () { randomTiling(t1); t1.recreate; };
 
-        onPointerDown ~= (ref e){
+        onPointerDown ~= (ref e) {
+            if (transition.isRunning)
+            {
+                transition.stop;
+                return;
+            }
             transition.run;
         };
     }
@@ -69,7 +74,8 @@ class Tesselations : Control
             c = RGBA.random;
         }
         t.lineColor = RGBA.random;
-        if(currIndex >= modes.length){
+        if (currIndex >= modes.length)
+        {
             currIndex = 0;
         }
         t.mode = modes[currIndex];

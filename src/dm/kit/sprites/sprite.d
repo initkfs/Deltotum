@@ -301,10 +301,10 @@ class Sprite : EventKitTarget
 
     void createGraphicsContext()
     {
-        if (_gContext)
-        {
-            throw new Exception("Graphics context already exists");
-        }
+        // if (_gContext)
+        // {
+        //     throw new Exception("Graphics context already exists");
+        // }
         _gContext = newGraphicsContext;
         assert(_gContext);
     }
