@@ -132,6 +132,22 @@ struct RGBA
         return c;
     }
 
+    static RGBA random(double alpha = maxAlpha)
+    {
+        import dm.math.random : Random;
+
+        auto rnd = new Random;
+        const min = RGBA.minColor;
+        const max = RGBA.maxColor;
+        RGBA newColor = {
+            r: rnd.randomBetween!ubyte(min, max),
+            g: rnd.randomBetween!ubyte(min, max),
+            b: rnd.randomBetween!ubyte(min, max),
+            a: alpha
+        };
+        return newColor;
+    }
+
     RGBA invert() nothrow pure @safe
     {
         return RGBA(maxColor - r, maxColor - g, maxColor - b, a);

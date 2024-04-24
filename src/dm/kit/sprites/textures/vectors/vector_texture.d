@@ -46,9 +46,12 @@ class VectorTexture : Texture
 
     }
 
-    private void createTempSurface()
+    private void tryCreateTempSurface()
     {
-        comSurface = graphics.comSurfaceProvider.getNew();
+        if (!comSurface)
+        {
+            comSurface = graphics.comSurfaceProvider.getNew();
+        }
 
         import dm.com.platforms.results.com_result : ComResult;
 
@@ -58,26 +61,20 @@ class VectorTexture : Texture
         }
     }
 
-    private void createCairoContext()
+    private void tryCreateCairoContext()
     {
         import dm.sys.cairo.libs : cairo_format_t;
 
-        if (cairoSurface)
-        {
-            cairoSurface.dispose;
-        }
-
-        if (cairoContext)
-        {
-            cairoContext.dispose;
-        }
+        assert(comSurface);
 
         void* pixels;
-        if(const err = comSurface.getPixels(pixels)){
+        if (const err = comSurface.getPixels(pixels))
+        {
             throw new Exception(err.toString);
         }
         int pitch;
-        if(const err = comSurface.getPitch(pitch)){
+        if (const err = comSurface.getPitch(pitch))
+        {
             throw new Exception(err.toString);
         }
 
@@ -90,37 +87,20 @@ class VectorTexture : Texture
     override void create()
     {
         super.create;
+        createTexture;
+    }
 
-        if (!comSurface)
-        {
-            createTempSurface;
-        }
-        else
-        {
-            comSurface.dispose;
-            createTempSurface;
-            //TODO bug
-            // if (width > 0 && height > 0)
-            // {
-            //     bool isResized;
-            //     if(const err = comSurface.resize(cast(int) width, cast(int) height, isResized)){
-            //         logger.error(err.toString);
-            //     }
-            // }
-        }
+    private void createTexture()
+    {
+        tryCreateTempSurface;
+        tryCreateCairoContext;
 
-        //TODO separate
-        if (!cairoSurface || !cairoContext)
-        {
-            createCairoContext;
-        }
-
+        //There may be graphical artifacts when reloading textures
         scope (exit)
         {
             disposeContext;
         }
 
-        //TODO may not always be necessary
         if (!hasGraphicsContext)
         {
             createGraphicsContext();
@@ -141,17 +121,29 @@ class VectorTexture : Texture
             texture = graphics.comTextureProvider.getNew();
         }
 
-        //TODO toInt?
+        loadTexture;
+    }
+
+    void redraw()
+    {
+        createTexture;
+    }
+
+    private void loadTexture()
+    {
+        assert(texture);
+        assert(comSurface);
+
         const createErr = texture.createFromSurface(comSurface);
         if (createErr)
         {
             throw new Exception(createErr.toString);
         }
 
-        if (const err = texture.setBlendModeBlend)
-        {
-            throw new Exception(err.toString);
-        }
+        // if (const err = texture.setBlendModeBlend)
+        // {
+        //     throw new Exception(err.toString);
+        // }
     }
 
     override GraphicsContext newGraphicsContext()
@@ -163,16 +155,19 @@ class VectorTexture : Texture
 
     void disposeContext()
     {
+        if (comSurface)
+        {
+            comSurface.dispose;
+        }
+
         if (cairoSurface)
         {
             cairoSurface.dispose;
-            cairoSurface = null;
         }
 
         if (cairoContext)
         {
             cairoContext.dispose;
-            cairoContext = null;
         }
     }
 

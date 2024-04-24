@@ -56,6 +56,13 @@ class VectorGraphicsContext : GraphicsContext
         cairo_move_to(cr, x, y);
     }
 
+    void clear(RGBA color)
+    {
+        //TODO prev color
+        setColor(color);
+        cairo_paint(cr);
+    }
+
     void reset()
     {
         cairo_move_to(cr, 0, 0);
@@ -99,6 +106,11 @@ class VectorGraphicsContext : GraphicsContext
         lineTo(x3, y3);
         lineTo(x1, y1);
         fill;
+    }
+
+    void beginPath()
+    {
+        cairo_new_path(cr);
     }
 
     void closePath()

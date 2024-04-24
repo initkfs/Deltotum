@@ -120,7 +120,7 @@ class Platform : ApplicationUnit
         return 0;
     }
 
-    int addTimer(int intervalMs, int delegate() onTimer)
+    int addTimerMT(int intervalMs, int delegate() onTimer)
     {
         TimerParam* param = new TimerParam;
         param.dg = onTimer;
@@ -131,7 +131,7 @@ class Platform : ApplicationUnit
         Mem.addRootSafe(paramPtr);
 
         int timerId;
-        if (const err = system.addTimer(timerId, intervalMs, &timer_callback, paramPtr))
+        if (const err = system.addTimerMT(timerId, intervalMs, &timer_callback, paramPtr))
         {
             logger.error(err);
             Mem.removeRootSafe(paramPtr);

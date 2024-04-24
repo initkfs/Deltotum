@@ -89,6 +89,11 @@ class GuiEditor : Scene
         imagesTab.content = new Images;
         root.addCreate(imagesTab);
 
+        import dm.gui.supports.editors.sections.tesselations: Tesselations;
+        auto tessTab = new Tab("Tesselations");
+        tessTab.content = new Tesselations;
+        root.addCreate(tessTab);
+
         version (DmAddon)
         {
             import dm.gui.supports.editors.sections.curves : Curves;
@@ -110,9 +115,10 @@ class GuiEditor : Scene
         scriptTab.content = new Scripting;
         root.addCreate(scriptTab);
 
-        root.changeTab(controlsTab);
+        root.changeTab(tessTab);
 
-        createDebugger;
+        //import std;
+        //createDebugger;
     }
 
 }

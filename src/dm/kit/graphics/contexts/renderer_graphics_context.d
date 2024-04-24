@@ -55,6 +55,10 @@ class RendererGraphicsContext : StateGraphicsContext
 
     }
 
+    void beginPath(){
+        
+    }
+
     void closePath()
     {
 
@@ -63,6 +67,10 @@ class RendererGraphicsContext : StateGraphicsContext
     void fill()
     {
 
+    }
+
+    void clear(RGBA color){
+        
     }
 
     void fillRect(double x, double y, double width, double height)

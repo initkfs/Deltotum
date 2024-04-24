@@ -31,7 +31,7 @@ class SDLSystem : SdlObject, ComSystem
         return ComResult.success;
     }
 
-    ComResult addTimer(out int timerId, int intervalMs, RetNextIntervalCallback callback, void* param)
+    ComResult addTimerMT(out int timerId, int intervalMs, RetNextIntervalCallback callback, void* param)
     {
         const timerIdOrZeroErr = SDL_AddTimer(intervalMs, callback, param);
         if (timerIdOrZeroErr == 0)

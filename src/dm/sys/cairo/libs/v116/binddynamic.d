@@ -28,6 +28,7 @@ extern (C) @nogc nothrow
     alias c_cairo_stroke = void function(cairo_t* cr);
     alias c_cairo_stroke_preserve = void function(cairo_t* cr);
 
+    alias c_cairo_paint = void function(cairo_t* cr);
     alias c_cairo_fill = void function(cairo_t* cr);
     alias c_cairo_fill_preserve = void function(cairo_t* cr);
 
@@ -55,6 +56,7 @@ extern (C) @nogc nothrow
 
     alias c_cairo_set_matrix = void function(cairo_t* cr, const cairo_matrix_t* matrix);
 
+    alias c_cairo_new_path = void function(cairo_t* cr);
     alias c_cairo_close_path = void function(cairo_t* cr);
     alias c_cairo_set_antialias = void function(cairo_t* cr, cairo_antialias_t antialias);
     alias c_cairo_user_to_device = void function(cairo_t* cr,
@@ -89,6 +91,7 @@ __gshared
     c_cairo_line_to cairo_line_to;
 
     c_cairo_fill cairo_fill;
+    c_cairo_paint cairo_paint;
     c_cairo_fill_preserve cairo_fill_preserve;
 
     c_cairo_translate cairo_translate;
@@ -101,6 +104,7 @@ __gshared
 
     c_cairo_set_matrix cairo_set_matrix;
 
+    c_cairo_new_path cairo_new_path;
     c_cairo_close_path cairo_close_path;
     c_cairo_set_antialias cairo_set_antialias;
     c_cairo_user_to_device cairo_user_to_device;
@@ -154,6 +158,7 @@ class CairoLib : SysLib
         bind(cast(void**)&cairo_move_to, "cairo_move_to");
         bind(cast(void**)&cairo_line_to, "cairo_line_to");
 
+        bind(cast(void**)&cairo_paint, "cairo_paint");
         bind(cast(void**)&cairo_fill, "cairo_fill");
         bind(cast(void**)&cairo_fill_preserve, "cairo_fill_preserve");
 
@@ -166,6 +171,7 @@ class CairoLib : SysLib
         bind(cast(void**)&cairo_rectangle, "cairo_rectangle");
 
         bind(cast(void**)&cairo_set_matrix, "cairo_set_matrix");
+        bind(cast(void**)&cairo_new_path, "cairo_new_path");
         bind(cast(void**)&cairo_close_path, "cairo_close_path");
         bind(cast(void**)&cairo_set_antialias, "cairo_set_antialias");
         bind(cast(void**)&cairo_user_to_device, "cairo_user_to_device");

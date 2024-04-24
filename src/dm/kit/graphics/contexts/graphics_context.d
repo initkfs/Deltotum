@@ -13,9 +13,11 @@ interface GraphicsContext
     void moveTo(double x, double y);
     void setLineWidth(double width);
     void reset();
+    void clear(RGBA color);
     void lineTo(double x, double y);
     void stroke();
     void strokePreserve();
+    void beginPath();
     void closePath();
     void fill();
     void fillPreserve();
