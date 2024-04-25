@@ -27,7 +27,7 @@ class VectorTexture : Texture
 
     bool delegate(ComSurface) onSurfaceIsContinue;
 
-    bool isMutable = true;
+    bool isMutable;
 
     this(double width, double height)
     {
@@ -164,7 +164,7 @@ class VectorTexture : Texture
             texture = graphics.comTextureProvider.getNew();
         }
 
-        const createErr = texture.createMutRGBA32(cast(int) width, cast(int) height);
+        const createErr = texture.createMutARGB32(cast(int) width, cast(int) height);
         if (createErr)
         {
             throw new Exception(createErr.toString);
@@ -213,7 +213,37 @@ class VectorTexture : Texture
             throw new Exception(err.toString);
         }
 
-        size_t endBuff = pitch * (cast(size_t) height);
+        int surfacePitch;
+        if (const err = comSurface.getPitch(surfacePitch))
+        {
+            throw new Exception(err.toString);
+        }
+
+        if (pitch != surfacePitch)
+        {
+            import std.format : format;
+
+            throw new Exception(format("Pitch values do not match. Texture: %s, surface: %s", pitch, surfacePitch));
+        }
+
+        int surfHeight;
+        if(const err = comSurface.getHeight(surfHeight)){
+            throw new Exception(err.toString);
+        }
+
+        assert(height > 0);
+
+        int textureHeight = cast(int) height;
+        assert((textureHeight > 0));
+
+        if(surfHeight != textureHeight){
+            import std.format : format;
+
+            throw new Exception(format("Height values do not match. Texture: %s, surface: %s", textureHeight, surfHeight));
+        }
+        
+        //TODO unsafe cast to size_t, overflow, NaN;
+        size_t endBuff = cast(size_t) (pitch * textureHeight);
         texturePixels[0 .. endBuff] = surfPixels[0 .. endBuff];
     }
 
@@ -225,38 +255,37 @@ class VectorTexture : Texture
             return;
         }
 
-        if (texture)
-        {
-            int w, h;
-            if (const err = texture.getSize(w, h))
-            {
-                throw new Exception(err.toString);
-            }
-            int newWidth = cast(int) width;
-            int newHeight = cast(int) height;
-            if (newWidth != w || newHeight != h)
-            {
-                createMutTexture;
-                return;
-            }
-
-            _gContext.clear(RGBA.transparent);
-            createTextureContent;
-
-            if (onSurfaceIsContinue)
-            {
-                if (!onSurfaceIsContinue(comSurface))
-                {
-                    return;
-                }
-            }
-
-            loadMutTexture;
-        }
-        else
+        if (!texture)
         {
             createMutTexture;
+            return;
         }
+        
+        int w, h;
+        if (const err = texture.getSize(w, h))
+        {
+            throw new Exception(err.toString);
+        }
+        int newWidth = cast(int) width;
+        int newHeight = cast(int) height;
+        if (newWidth != w || newHeight != h)
+        {
+            createMutTexture;
+            return;
+        }
+
+        _gContext.clear(RGBA.transparent);
+        createTextureContent;
+
+        if (onSurfaceIsContinue)
+        {
+            if (!onSurfaceIsContinue(comSurface))
+            {
+                return;
+            }
+        }
+
+        loadMutTexture;
     }
 
     override GraphicsContext newGraphicsContext()

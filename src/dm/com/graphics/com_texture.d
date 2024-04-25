@@ -27,6 +27,7 @@ nothrow:
     ComResult isLocked(out bool locked);
     ComResult createMutARGB8888(int width, int height);
     ComResult createMutRGBA32(int width, int height);
+    ComResult createMutARGB32(int width, int height);
     ComResult createImmutRGBA32(int width, int height);
     ComResult createTargetRGBA32(int width, int height);
     ComResult createFromSurface(ComSurface surface);

@@ -231,7 +231,15 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult createMutRGBA32(int width, int height)
     {
+        //alias SDL_PIXELFORMAT_RGBA32 = SDL_PIXELFORMAT_ABGR8888;
         return create(SDL_PIXELFORMAT_RGBA32,
+            SDL_TextureAccess.SDL_TEXTUREACCESS_STREAMING, width,
+            height);
+    }
+
+    ComResult createMutARGB32(int width, int height)
+    {
+        return create(SDL_PIXELFORMAT_ARGB8888,
             SDL_TextureAccess.SDL_TEXTUREACCESS_STREAMING, width,
             height);
     }

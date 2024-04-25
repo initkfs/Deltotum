@@ -30,7 +30,7 @@ class Tesselations : Control
         enablePadding;
     }
 
-    size_t[] modes = [0, 1, 2, 6, 7, 8, 9, 10, 11];
+    size_t[] modes = [0, 1, 2, 6, 7, 8, 10, 11];
     size_t currIndex;
     Random rnd;
 
@@ -47,12 +47,13 @@ class Tesselations : Control
         root1.enableInsets;
 
         auto t1 = new PenroseTiling(400, 200);
+        t1.isMutable = true;
         t1.levels = 4;
         t1.lineWidth = 45 * t1.fi * t1.fi;
         randomTiling(t1);
         root1.addCreate(t1);
 
-        auto transition = new PauseTransition(700);
+        auto transition = new PauseTransition(600);
         transition.isCycle = true;
         addCreate(transition);
         transition.onEndFrames ~= () { randomTiling(t1); t1.recreate; };
