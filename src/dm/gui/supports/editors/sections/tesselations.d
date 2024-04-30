@@ -66,6 +66,10 @@ class Tesselations : Control
             }
             transition.run;
         };
+
+        import dm.kit.sprites.textures.vectors.tessellations.voderberg: Voderberg;
+        auto tv = new Voderberg;
+        root1.addCreate(tv);
     }
 
     private void randomTiling(PenroseTiling t)
