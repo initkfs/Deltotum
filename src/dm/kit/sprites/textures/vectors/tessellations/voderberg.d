@@ -18,11 +18,8 @@ enum ShapeType
 {
     triangle,
     voderberg,
-    lightning,
-    sigma,
     bentwedge,
-    tent,
-    random
+    tent
 }
 
 /**
@@ -35,16 +32,19 @@ class Voderberg : VShape
 
     ShapeType shapeType;
 
+    GraphicStyle delegate() styleSegmentProvider;
+    double scaleX = 1.0;
+    double scaleY = 1.0;
+
     private
     {
         immutable size_t[7] mod360 = [12, 15, 18, 30, 36, 45, 60];
     }
 
-    this(double width = 500, double height = 500)
+    this(double width = 100, double height = 100)
     {
         super(width, height, GraphicStyle.simple);
         rnd = new Random;
-        isDrawBounds = true;
     }
 
     override void createTextureContent()
@@ -58,17 +58,11 @@ class Voderberg : VShape
             case voderberg:
                 params = 111.0 + (153 - 111) * rand;
                 break;
-            case lightning:
-                params = 1.75 * rand;
-                break;
-            case sigma:
-                params = 0.72 + (2.65 - 0.72) * rand;
-                break;
             case bentwedge, tent:
                 params = 1;
                 break;
-            case random:
-                params = mod360[cast(size_t)(Math.floor(3 * rand))];
+                // case random:
+                //     params = mod360[cast(size_t)(Math.floor(3 * rand))];
                 break;
         }
 
@@ -76,7 +70,6 @@ class Voderberg : VShape
         auto shift = -3.0 + Math.floor(6 * rand);
 
         voderberg(shapeType, params, coronas, shift);
-
     }
 
     double rand()
@@ -99,7 +92,7 @@ class Voderberg : VShape
                 immutable double alef = param * Math.PI / 180;
                 immutable double x = 1;
                 immutable double h = 1.0 / (2 * Math.sin(alef / 2));
-                
+
                 double[3] S = [x, h, h];
                 double[3] phi = [
                     0, Math.PI / 2 + alef / 2, 3 * Math.PI / 2 - alef / 2
@@ -124,22 +117,126 @@ class Voderberg : VShape
                 immutable int antisym = 1;
                 complexCoords = radialSpiralTiling(V, A, sectors, coronas, shift, antisym);
                 break;
+            case voderberg:
+                immutable double alef = 12 * Math.PI / 180;
+                immutable double b = param;
+                immutable double beth = b * Math.PI / 180;
+                immutable double L = 2 * Math.sin((Math.PI - alef) / 2) / Math.cos(
+                    beth - Math.PI / 2);
+                immutable double x = (Math.csc(alef / 2) / 2 - L * Math.cos(Math.PI - beth)) / 2 - Math.sin(
+                    alef / 2);
+                double[] S = [1, x, L, x, 1, x, L, x, 1];
+                double[] theta = [
+                    alef, (3 * Math.PI - alef) / 2, (2 * Math.PI - beth), beth,
+                    (Math.PI + alef) / 2, (Math.PI - 3 * alef) / 2,
+                    (2 * Math.PI - beth), beth, (Math.PI + alef) / 2
+                ];
+                real[] phi = cumsum(theta.map!(v => Math.PI - v));
+
+                auto phiComplexRange = phi[].map!expi;
+                Complex!real[] z1 = cumsum(zip(S[], phiComplexRange).map!"a[0] * a[1]");
+                z1 = [complex!real(0)] ~ z1;
+
+                Complex!real maxImagZ = complex(0, z1.map!(v => v.im).maxElement);
+
+                Complex!real[] z3 = z1.map!(v => -v + 0.5 + maxImagZ).array;
+                Complex!real[] V = z1;
+                Complex!real[] A = z3;
+                auto sectors = 2 * Math.PI / alef;
+                auto antisym = 1;
+                complexCoords = radialSpiralTiling(V, A, sectors, coronas, shift, antisym);
+                break;
+            case bentwedge:
+                immutable double alef = Math.PI / 12;
+                double[] theta = [
+                    7 * alef, 11 * alef, 11 * alef, 11 * alef, 1 * alef, 13 * alef,
+                    13 * alef, 13 * alef, 4 * alef
+                ];
+                real[] phi = cumsum(theta.map!(v => Math.PI - v));
+                auto phiComplexRange = phi[].map!expi;
+                Complex!real[] z1 = cumsum(phiComplexRange).array;
+                z1 = [complex!real(0)] ~ z1;
+                auto z0 = z1[4];
+                z1 = z1.map!(v => v - z0).array;
+                auto V = z1.map!(v => conj(v)).array;
+
+                Complex!real maxImagZ = complex(0, z1.map!(v => v.im.abs).maxElement);
+
+                auto A = z1.map!(v => v + 0.5 + maxImagZ).array;
+                double sectors = 24;
+                int antisym = 0;
+                complexCoords = radialSpiralTiling(V, A, sectors, coronas, shift, antisym);
+                break;
+            case tent:
+                immutable double d = 14;
+                immutable double alef = 2 * Math.PI / d;
+                immutable double[] theta = [
+                    7 * alef, 5 * alef, 5 * alef, 5 * alef, alef, 9 * alef,
+                    9 * alef
+                ];
+                real[] phi = cumsum(theta.map!(v => Math.PI - v));
+                auto phiComplexRange = phi[].map!expi;
+                Complex!real[] z = cumsum(phiComplexRange).array;
+                z = [complex!real(0)] ~ z;
+
+                Complex!real maxImagZ = complex(0, z.map!(v => v.im.abs).maxElement);
+                Complex!real[] V = z.map!(v => conj(v) - 0.5 + maxImagZ).array;
+                Complex!real[] A = z;
+                double sectors = 14;
+                int antisym = 0;
+                complexCoords = radialSpiralTiling(V, A, sectors, coronas, shift, antisym);
+                break;
             default:
                 break;
         }
 
-        _gContext.setColor(RGBA.lightcyan);
+        if (!styleSegmentProvider)
+        {
+            _gContext.setColor(style.lineColor);
+        }
+
         _gContext.translate(width / 2, height / 2);
-        _gContext.moveTo(0, 0);
+
+        if (shapeType == ShapeType.tent)
+        {
+            assert(complexCoords.length > 0);
+            assert(complexCoords[0].length > 0);
+            auto complexValue = complexCoords[0][0];
+            auto newX = complexValue.re * scaleX;
+            auto newY = complexValue.im * scaleY;
+            gContext.moveTo(newX, newY);
+        }
+        else
+        {
+            _gContext.moveTo(0, 0);
+        }
 
         for (auto c = 0; c < complexCoords[0].length; c++)
         {
             for (auto r = 0; r < complexCoords.length; r++)
             {
                 auto complexValue = complexCoords[r][c];
-                auto newX = complexValue.re * 15;
-                auto newY = complexValue.im * 15;
+                auto newX = complexValue.re * scaleX;
+                auto newY = complexValue.im * scaleY;
                 _gContext.lineTo(newX, newY);
+
+                if (!styleSegmentProvider)
+                {
+                    if (style.isFill)
+                    {
+                        _gContext.setColor(style.fillColor);
+                        _gContext.fillPreserve;
+                        _gContext.setColor(style.lineColor);
+                    }
+                }
+                else
+                {
+                    auto style = styleSegmentProvider();
+                    _gContext.setColor(style.fillColor);
+                    _gContext.fillPreserve;
+                    _gContext.setColor(style.lineColor);
+                }
+
             }
             _gContext.stroke;
         }
@@ -206,18 +303,44 @@ class Voderberg : VShape
         return result;
     }
 
-    auto cumsum(T)(T[] arr)
+    auto cumsum(Range)(Range range) if (isInputRange!Range)
     {
-        T[] result = [];
-        T sum = complex(0);
+        alias RangeType = Unqual!(ElementType!Range);
 
-        for (auto i = 0; i < arr.length; i++)
+        static if (__traits(isFloating, RangeType))
+            RangeType sum = 0;
+        else static if (__traits(isSame, TemplateOf!RangeType, Complex))
+            RangeType sum = complex(0);
+        else
+            RangeType sum = RangeType.init;
+
+        RangeType[] result = [];
+
+        import std.array : appender;
+
+        auto app = appender(&result);
+
+        foreach (v; range)
         {
-            sum += arr[i];
-            result ~= sum;
+            static if (__traits(isFloating, typeof(sum)))
+            {
+                import std.math.traits : isFinite;
+
+                if (!isFinite(v))
+                {
+                    continue;
+                }
+            }
+            sum += v;
+            app ~= sum;
         }
 
         return result;
     }
 
+    void scale(double x, double y)
+    {
+        scaleX = x;
+        scaleY = y;
+    }
 }

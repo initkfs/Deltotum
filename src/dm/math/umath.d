@@ -256,3 +256,8 @@ double ceil(double value)
 
     return MathRounding.ceil(value);
 }
+
+double csc(double x)
+{
+    return 1.0 / sin(x);
+}
