@@ -18,6 +18,11 @@ struct Vector2
     double x = 0;
     double y = 0;
 
+    alias l1Norm = manhattan;
+    alias l2norm = distanceTo;
+    alias euclidean = distanceTo;
+    alias length = magnitude;
+
     Vector2 add(Vector2 other) const @nogc nothrow pure @safe
     {
         return Vector2(x + other.x, y + other.y);
@@ -81,9 +86,23 @@ struct Vector2
 
     double distanceTo(Vector2 other) const @nogc nothrow pure @safe
     {
-        const double deltaX = other.x - x;
-        const double deltaY = other.y - y;
-        return magnitudeXY(deltaX, deltaY);
+        const double powX = (other.x - x) ^^ 2;
+        const double powY = (other.y - y) ^^ 2;
+        return sqrt(powX + powY);
+    }
+
+    double manhattan(Vector2 other) const @nogc nothrow pure @safe
+    {
+        import Math = dm.math;
+
+        return Math.abs(other.x - x) + Math.abs(other.y - y);
+    }
+
+    double cosineSimilarity(Vector2 other) const @nogc nothrow pure @safe
+    {
+        import Math = dm.math;
+
+        return dotProduct(other) / (magnitude * other.magnitude);
     }
 
     Vector2 scale(double factor) const @nogc nothrow pure @safe
@@ -249,13 +268,22 @@ struct Vector2
         return Vector2(pX, pY);
     }
 
-    //TODO vector?
+    static Vector2 toPolarRad(Vector2 vec) @nogc nothrow pure @safe
+    {
+        return toPolarRad(vec.x, vec.y);
+    }
+
     static Vector2 toPolarRad(double x, double y) @nogc nothrow pure @safe
     {
         const radius = Math.sqrt(x * x + y * y);
         const angleRad = Math.atan2(y, x);
 
         return Vector2(radius, angleRad);
+    }
+
+    static Vector2 toPolarDeg(Vector2 vec) @nogc nothrow pure @safe
+    {
+        return toPolarDeg(vec.x, vec.y);
     }
 
     static Vector2 toPolarDeg(double x, double y) @nogc nothrow pure @safe
@@ -413,6 +441,16 @@ struct Vector2
 
         double dot = Vector2(5, 6).dotProduct(Vector2(2, 4));
         assert(dot == 34);
+
+        auto mVec1 = Vector2(23, 25);
+        auto mVec2 = Vector2(11, 2);
+        auto mres = mVec1.manhattan(mVec2);
+        assert(isClose(mres, 35));
+
+        auto cVec1 = Vector2(11, 12);
+        auto cVec2 = Vector2(5, 6);
+        auto cres = cVec1.cosineDistance(cVec2);
+        assert(isClose(cres, 0.998886));
     }
 
 }

@@ -197,7 +197,7 @@ class Voderberg : VShape
 
         _gContext.translate(width / 2, height / 2);
 
-        if (shapeType == ShapeType.tent)
+        if (shapeType == ShapeType.tent || shapeType == ShapeType.bentwedge)
         {
             assert(complexCoords.length > 0);
             assert(complexCoords[0].length > 0);
