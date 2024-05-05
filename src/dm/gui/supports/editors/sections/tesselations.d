@@ -44,8 +44,12 @@ class Tesselations : Control
 
         rnd = new Random;
 
+        auto root = new VBox(5);
+        addCreate(root);
+        root.enableInsets;
+
         auto root1 = new HBox(5);
-        addCreate(root1);
+        root.addCreate(root1);
         root1.enableInsets;
 
         auto t1 = new PenroseTiling(400, 200);
@@ -102,6 +106,23 @@ class Tesselations : Control
         v4.shapeType = ShapeType.tent;
         v4.scale(15, 15);
         vodRoot1.addCreate(v4);
+
+        auto noiseRoot = new HBox(5);
+        root.addCreate(noiseRoot);
+        noiseRoot.enableInsets;
+
+        import dm.kit.sprites.textures.vectors.noises.perlin: Perlin;
+        import dm.kit.sprites.textures.vectors.noises.open_simplex: OpenSimplex;
+
+        auto perlin = new Perlin;
+        noiseRoot.addCreate(perlin);
+
+        auto simplex = new OpenSimplex;
+        noiseRoot.addCreate(simplex);
+
+        import dm.kit.sprites.textures.vectors.noises.fractal_cell: FractalCell;
+        auto fr1 = new FractalCell;
+        noiseRoot.addCreate(fr1);
     }
 
     private void randomTiling(PenroseTiling t)
