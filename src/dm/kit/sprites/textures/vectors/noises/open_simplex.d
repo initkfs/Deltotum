@@ -1,6 +1,6 @@
 module dm.kit.sprites.textures.vectors.noises.open_simplex;
 
-import dm.kit.sprites.textures.texture : Texture;
+import dm.kit.sprites.textures.vectors.noises.noise : Noise;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import dm.kit.graphics.contexts.graphics_context : GraphicsContext;
 import dm.kit.graphics.colors.rgba : RGBA;
@@ -14,7 +14,7 @@ import Math = dm.math;
  * K.jpg's OpenSimplex 2, smooth variant ("SuperSimplex")
  * https://github.com/KdotJPG/OpenSimplex2
  */
-class OpenSimplex : Texture
+class OpenSimplex : Noise
 {
     this(double width = 100, double height = 100)
     {
@@ -54,6 +54,9 @@ class OpenSimplex : Texture
     enum float RSQUARED_3D = 3.0f / 4.0f;
     enum float RSQUARED_4D = 4.0f / 5.0f;
 
+    long SEED = 0;
+    double FREQUENCY = 1.0 / 24.0;
+
     private static float[] GRADIENTS_2D;
     private static float[] GRADIENTS_3D;
     private static float[] GRADIENTS_4D;
@@ -80,8 +83,6 @@ class OpenSimplex : Texture
 
     override void create()
     {
-        super.create;
-
         GRADIENTS_2D = new float[](N_GRADS_2D * 2);
         float[] grad2 = [
             0.38268343236509f, 0.923879532511287f,
@@ -1438,40 +1439,23 @@ class OpenSimplex : Texture
             }
         }
 
-        long SEED = 0;
-        double FREQUENCY = 1.0 / 24.0;
+        super.create;
+    }
 
-        createMutRGBA32;
-        assert(texture);
-        if (const err = texture.lock)
-        {
-            throw new Exception(err.toString);
-        }
+    override RGBA drawNoise(int x, int y)
+    {
+        import dm.kit.graphics.colors.hsv: HSV;
 
-        scope (exit)
-        {
-            if (const err = texture.unlock)
-            {
-                throw new Exception(err.toString);
-            }
-        }
-
-        int w = cast(int) width;
-        int h = cast(int) height;
-
-        for (int y = 0; y < h; y++)
-        {
-            for (int x = 0; x < w; x++)
-            {
-                double value = noise3_ImproveXY(SEED, x * FREQUENCY, y * FREQUENCY, 0.0);
-                int rgb = 0x010101 * cast(int)((value + 1) * 127.5);
-                RGBA color = RGBA.fromUint(cast(uint) rgb);
-                if (const err = texture.setPixelColor(x, y, color.r, color.g, color.b, color.aByte))
-                {
-                    throw new Exception(err.toString);
-                }
-            }
-        }
+        double value = noise3_ImproveXY(SEED, x * FREQUENCY, y * FREQUENCY, 0.0);
+        auto newColor = noiseColor;
+        newColor.value = Math.clamp(value, HSV.minValue, HSV.maxValue);
+        return newColor.toRGBA;
+        // int rgb = 0x010101 * cast(int)((value + 1) * 127.5);
+        // RGBA color = RGBA.fromUint(cast(uint) rgb);
+        // if (const err = texture.setPixelColor(x, y, color.r, color.g, color.b, color.aByte))
+        // {
+        //     throw new Exception(err.toString);
+        // }
     }
 
     public static float noise2(long seed, double x, double y)

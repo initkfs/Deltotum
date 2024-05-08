@@ -7,13 +7,6 @@ import dm.kit.graphics.colors.rgba : RGBA;
  */
 struct HSV
 {
-    double hue = 0;
-    double saturation = 0;
-    double value = 0;
-
-    //TODO alpha?
-    //double alpha = 0;
-
     static enum : double
     {
         minHue = 0,
@@ -23,6 +16,12 @@ struct HSV
         minValue = 0,
         maxValue = 1
     }
+
+    double hue = 0;
+    double saturation = maxSaturation;
+    double value = maxValue;
+    //TODO alpha?
+    //double alpha = 0;
 
     RGBA toRGBA() const pure @safe
     {
@@ -58,40 +57,40 @@ struct HSV
 
             switch (i)
             {
-            case 0:
-                r = v;
-                g = t;
-                b = p;
-                break;
-            case 1:
-                r = q;
-                g = v;
-                b = p;
-                break;
-            case 2:
-                r = p;
-                g = v;
-                b = t;
-                break;
-            case 3:
-                r = p;
-                g = q;
-                b = v;
-                break;
-            case 4:
-                r = t;
-                g = p;
-                b = v;
-                break;
-            case 5:
-                r = v;
-                g = p;
-                b = q;
-                break;
-            default:
-                r = v;
-                g = p;
-                b = q;
+                case 0:
+                    r = v;
+                    g = t;
+                    b = p;
+                    break;
+                case 1:
+                    r = q;
+                    g = v;
+                    b = p;
+                    break;
+                case 2:
+                    r = p;
+                    g = v;
+                    b = t;
+                    break;
+                case 3:
+                    r = p;
+                    g = q;
+                    b = v;
+                    break;
+                case 4:
+                    r = t;
+                    g = p;
+                    b = v;
+                    break;
+                case 5:
+                    r = v;
+                    g = p;
+                    b = q;
+                    break;
+                default:
+                    r = v;
+                    g = p;
+                    b = q;
             }
         }
 

@@ -1,9 +1,10 @@
 module dm.kit.sprites.textures.vectors.noises.perlin;
 
-import dm.kit.sprites.textures.texture : Texture;
+import dm.kit.sprites.textures.vectors.noises.noise : Noise;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import dm.kit.graphics.contexts.graphics_context : GraphicsContext;
 import dm.kit.graphics.colors.rgba : RGBA;
+import dm.kit.graphics.colors.hsv: HSV;
 import dm.kit.graphics.contexts.graphics_context : GraphicsContext;
 
 import Math = dm.math;
@@ -15,58 +16,18 @@ import std;
  * Authors: initkfs
  * See https://en.wikipedia.org/wiki/Perlin_noise
  */
-class Perlin : Texture
+class Perlin : Noise
 {
     this(double width = 100, double height = 100)
     {
         super(width, height);
     }
 
-    override void create()
-    {
-        super.create;
-
-        createMutRGBA32;
-        assert(texture);
-
-        if (const err = texture.lock)
-        {
-            throw new Exception(err.toString);
-        }
-
-        scope (exit)
-        {
-            if (const err = texture.unlock)
-            {
-                throw new Exception(err.toString);
-            }
-        }
-
-        double freq = 0.7f;
-        int depth = 5;
-        int scale = 10;
-        int xOrg = 100000;
-        int yOrg = 100000;
-
-        auto w = cast(int) width;
-        auto h = cast(int) height;
-        foreach (int y; 0 .. h)
-        {
-            foreach (int x; 0 .. w)
-            {
-                float xCoord = xOrg + x / (cast(float) width)*scale;
-                float yCoord = yOrg + y / (cast(float) height)*scale;
-                float value1 = perlin2d(xCoord, yCoord, freq, depth);
-                ubyte ucolor = cast(ubyte)(ubyte.max * value1);
-                RGBA color = RGBA(ucolor, ucolor, ucolor);
-                if (const err = texture.setPixelColor(x, y, color.r, color.g, color.b, color.aByte))
-                {
-                    throw new Exception(err.toString);
-                }
-            }
-        }
-
-    }
+    double freq = 0.7f;
+    int depth = 5;
+    int scale = 10;
+    int xOrg = 100000;
+    int yOrg = 100000;
 
     static int SEED = 1985;
 
@@ -96,6 +57,18 @@ class Perlin : Texture
         114, 20, 218, 113, 154, 27, 127, 246, 250, 1, 8, 198, 250, 209, 92, 222,
         173, 21, 88, 102, 219
     ];
+
+    override RGBA drawNoise(int x, int y)
+    {
+        float xCoord = xOrg + x / (cast(float) width) * scale;
+        float yCoord = yOrg + y / (cast(float) height) * scale;
+        float value = perlin2d(xCoord, yCoord, freq, depth);
+        //ubyte value = cast(ubyte)(ubyte.max * value1);
+        //RGBA color = RGBA(ucolor, ucolor, ucolor);
+        auto newColor = noiseColor;
+        newColor.value = Math.clamp(value, HSV.minValue, HSV.maxValue);
+        return newColor.toRGBA;
+    }
 
     int noise2(int x, int y)
     {

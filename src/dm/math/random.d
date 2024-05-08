@@ -23,6 +23,11 @@ class Random
         rnd = StdRandom(seed);
     }
 
+    void seed(uint newSeed) pure @safe
+    {
+        rnd.seed = newSeed;
+    }
+
     T randomBetween(T)(T minValueInclusive, T maxValueInclusive) pure @safe
             if (isNumeric!T)
     {

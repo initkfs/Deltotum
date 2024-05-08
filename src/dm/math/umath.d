@@ -243,6 +243,11 @@ double toRange(double oldRangeValue, double oldMinInc, double oldMaxInc, double 
     return (((oldRangeValue - oldMinInc) * (newMaxInc - newMinInc)) / (oldMaxInc - oldMinInc)) + newMinInc;
 }
 
+double norm(double x, double minX = 0, double maxX = 1)
+{
+    return (x - minX) / (maxX - minX);
+}
+
 double floor(double value)
 {
     import MathRounding = std.math.rounding;

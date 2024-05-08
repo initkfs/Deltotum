@@ -1,10 +1,10 @@
 module dm.kit.sprites.textures.vectors.noises.fractal_cell;
 
-import dm.kit.sprites.textures.texture : Texture;
+import dm.kit.sprites.textures.vectors.noises.noise : Noise;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import dm.kit.graphics.contexts.graphics_context : GraphicsContext;
 import dm.kit.graphics.colors.rgba : RGBA;
-import dm.kit.graphics.colors.hsv: HSV;
+import dm.kit.graphics.colors.hsv : HSV;
 import dm.kit.graphics.contexts.graphics_context : GraphicsContext;
 import dm.math.random : Random;
 
@@ -19,10 +19,10 @@ import std;
  * Port from https://github.com/lorenSchmidt/fractal_cell_noise
  * Copyright (c) 2022 lorenSchmidt, under MIT license https://github.com/lorenSchmidt/fractal_cell_noise/blob/main/LICENSE
  */
-class FractalCell : Texture
+class FractalCell : Noise
 {
     size_t stack_octaves = 12;
-    size_t seed = 88883;
+    size_t seed = 40000;
     double[] noise_table = [];
     //256
     enum size_t ns = 10;
@@ -41,44 +41,22 @@ class FractalCell : Texture
         rnd = new Random;
     }
 
-    override void create()
+    override RGBA drawNoise(int x, int y)
     {
-        super.create;
-
-        init_random_table;
-
-        createMutRGBA32;
-        assert(texture);
-
-        if (const err = texture.lock)
-        {
-            throw new Exception(err.toString);
-        }
-
-        scope (exit)
-        {
-            if (const err = texture.unlock)
-            {
-                throw new Exception(err.toString);
-            }
-        }
-
         auto w = cast(int) width;
         auto h = cast(int) height;
-        foreach (int y; 0 .. h)
-        {
-            foreach (int x; 0 .. w)
-            {
-                auto value = cell_noise_xy(x, y, w, h, 6, 10, 10, 0.5, 2, 7);
-                //ubyte ucolor = cast(ubyte)(ubyte.max * value);
-                RGBA color = HSV(198, 0.5, Math.clamp01(Math.abs(value))).toRGBA;
-                if (const err = texture.setPixelColor(x, y, color.r, color.g, color.b, color.aByte))
-                {
-                    throw new Exception(err.toString);
-                }
-            }
-        }
+        auto value = cell_noise_xy(x, y, w, h, 6, 10, 6, 0.2, 2, 4);
+        //ubyte ucolor = cast(ubyte)(ubyte.max * value);
+        auto newColor = noiseColor;
+        newColor.value = Math.clamp(value, HSV.minValue, HSV.maxValue);
+        return newColor.toRGBA;
+        //RGBA color = HSV(198, 0.5, Math.clamp01(Math.abs(value))).toRGBA;
+    }
 
+    override void create()
+    {
+        init_random_table;
+        super.create;
     }
 
     void init_random_table()
