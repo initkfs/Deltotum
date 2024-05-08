@@ -115,7 +115,7 @@ class GuiEditor : Scene
         scriptTab.content = new Scripting;
         root.addCreate(scriptTab);
 
-        root.changeTab(tessTab);
+        root.changeTab(procTab);
 
         //import std;
         //createDebugger;
