@@ -1,4 +1,4 @@
-module dm.gui.supports.editors.sections.tesselations;
+module dm.gui.supports.editors.sections.procedural;
 
 import dm.gui.controls.control : Control;
 import dm.math.rect2d : Rect2d;
@@ -16,7 +16,7 @@ import std.stdio;
 /**
  * Authors: initkfs
  */
-class Tesselations : Control
+class Procedural : Control
 {
     this()
     {

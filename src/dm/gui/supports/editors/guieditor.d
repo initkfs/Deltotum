@@ -89,10 +89,10 @@ class GuiEditor : Scene
         imagesTab.content = new Images;
         root.addCreate(imagesTab);
 
-        import dm.gui.supports.editors.sections.tesselations: Tesselations;
-        auto tessTab = new Tab("Tesselations");
-        tessTab.content = new Tesselations;
-        root.addCreate(tessTab);
+        import dm.gui.supports.editors.sections.procedural: Procedural;
+        auto procTab = new Tab("Procedural");
+        procTab.content = new Procedural;
+        root.addCreate(procTab);
 
         version (DmAddon)
         {
