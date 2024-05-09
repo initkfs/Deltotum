@@ -90,6 +90,11 @@ class Random
         randomShuffle(range, rnd);
     }
 
+    bool chanceHalf() pure @safe
+    {
+        return chance(0.5);
+    }
+
     bool chance(double chance0to1) pure @safe
     {
         if (chance0to1 < 0 || chance0to1 > 1)

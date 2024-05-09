@@ -116,61 +116,73 @@ class Procedural : Control
         import dm.kit.sprites.transitions.pause_transition : PauseTransition;
         import dm.math.random : Random;
 
-        enum w = 100;
-        enum h = 100;
-        enum hue = 110;
+        // enum w = 100;
+        // enum h = 100;
+        // enum hue = 110;
 
-        import dm.kit.sprites.textures.vectors.noises.samples.fractal_noise : FractalNoise;
-        import dm.kit.sprites.textures.vectors.noises.samples.voronoi : Voronoi;
-        import dm.kit.sprites.textures.vectors.noises.samples.value : Value;
-        import dm.kit.sprites.textures.vectors.noises.samples.worley : Worley;
-        import dm.kit.sprites.textures.vectors.noises.samples.simplex : Simplex;
-        import dm.kit.sprites.textures.vectors.noises.samples.perlin : SPerlin = Perlin;
+        // import dm.kit.sprites.textures.vectors.noises.samples.fractal_noise : FractalNoise;
+        // import dm.kit.sprites.textures.vectors.noises.samples.voronoi : Voronoi;
+        // import dm.kit.sprites.textures.vectors.noises.samples.value : Value;
+        // import dm.kit.sprites.textures.vectors.noises.samples.worley : Worley;
+        // import dm.kit.sprites.textures.vectors.noises.samples.simplex : Simplex;
+        // import dm.kit.sprites.textures.vectors.noises.samples.perlin : SPerlin = Perlin;
 
-        uint seed = 0;
+        // uint seed = 0;
 
-        auto frVor = new FractalNoise(new Voronoi(seed), w, h);
-        frVor.noiseColor.hue = hue;
-        frVor.valueScale = 3;
-        noiseRoot1.addCreate(frVor);
+        // auto frVor = new FractalNoise(new Voronoi(seed), w, h);
+        // frVor.noiseColor.hue = hue;
+        // frVor.valueScale = 3;
+        // noiseRoot1.addCreate(frVor);
 
-        auto frWorl = new FractalNoise(new Worley(seed), w, h);
-        frWorl.noiseColor.hue = 210;
-        frWorl.valueScale = 2;
-        noiseRoot1.addCreate(frWorl);
+        // auto frWorl = new FractalNoise(new Worley(seed), w, h);
+        // frWorl.noiseColor.hue = 210;
+        // frWorl.valueScale = 2;
+        // noiseRoot1.addCreate(frWorl);
 
-        auto frSimplex = new FractalNoise(new Simplex(seed), w, h);
-        frSimplex.noiseColor.hue = 320;
-        frSimplex.valueScale = 1.2;
-        noiseRoot1.addCreate(frSimplex);
+        // auto frSimplex = new FractalNoise(new Simplex(seed), w, h);
+        // frSimplex.noiseColor.hue = 320;
+        // frSimplex.valueScale = 1.2;
+        // noiseRoot1.addCreate(frSimplex);
 
-        auto frPerlin = new FractalNoise(new SPerlin(seed), w, h);
-        frPerlin.noiseColor.hue = 10;
-        frPerlin.valueScale = 1.2;
-        noiseRoot1.addCreate(frPerlin);
+        // auto frPerlin = new FractalNoise(new SPerlin(seed), w, h);
+        // frPerlin.noiseColor.hue = 10;
+        // frPerlin.valueScale = 1.2;
+        // noiseRoot1.addCreate(frPerlin);
 
-         auto frVal = new FractalNoise(new Value(seed), w, h);
-        frVal.noiseColor.hue = 130;
-        frVal.noiseColor.saturation = 0.3;
-        frVal.valueScale = 1.2;
-        noiseRoot1.addCreate(frVal);
+        //  auto frVal = new FractalNoise(new Value(seed), w, h);
+        // frVal.noiseColor.hue = 130;
+        // frVal.noiseColor.saturation = 0.3;
+        // frVal.valueScale = 1.2;
+        // noiseRoot1.addCreate(frVal);
 
-        auto noiseRoot2 = new HBox(5);
-        root.addCreate(noiseRoot2);
-        noiseRoot2.enableInsets;
+        // auto noiseRoot2 = new HBox(5);
+        // root.addCreate(noiseRoot2);
+        // noiseRoot2.enableInsets;
 
-        auto perlin = new Perlin(w, h);
-        perlin.noiseColor.hue = hue;
-        noiseRoot2.addCreate(perlin);
+        // auto perlin = new Perlin(w, h);
+        // perlin.noiseColor.hue = hue;
+        // noiseRoot2.addCreate(perlin);
 
-        auto simplex = new OpenSimplex(w, h);
-        simplex.noiseColor.hue = 210;
-        noiseRoot2.addCreate(simplex);
+        // auto simplex = new OpenSimplex(w, h);
+        // simplex.noiseColor.hue = 210;
+        // noiseRoot2.addCreate(simplex);
 
-        import dm.kit.sprites.textures.vectors.noises.fractal_cell: FractalCell;
-        auto fr1 = new FractalCell(w, h);
-        fr1.noiseColor.hue = 50;
-        noiseRoot2.addCreate(fr1);
+        // import dm.kit.sprites.textures.vectors.noises.fractal_cell: FractalCell;
+        // auto fr1 = new FractalCell(w, h);
+        // fr1.noiseColor.hue = 50;
+        // noiseRoot2.addCreate(fr1);
+
+        auto mazeRoot = new HBox(5);
+        root.addCreate(mazeRoot);
+        mazeRoot.enableInsets;
+
+        import dm.kit.sprites.textures.vectors.mazes.binary_tree: BinaryTree;
+
+        enum mazeWidth = 300;
+        enum mazeHeight = 200;
+
+        auto binTree1 = new BinaryTree(mazeWidth, mazeHeight, 20, 20);
+        mazeRoot.addCreate(binTree1);
     }
 
     private void randomTiling(PenroseTiling t)
