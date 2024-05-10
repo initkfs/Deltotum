@@ -1,4 +1,4 @@
-module dm.kit.sprites.textures.vectors.mazes.binary_tree;
+module dm.kit.sprites.textures.vectors.mazes.sidewinder;
 
 import dm.kit.sprites.textures.vectors.mazes.maze_cell : MazeCell;
 import dm.kit.sprites.textures.texture : Texture;
@@ -14,7 +14,7 @@ import dm.math.random : Random;
 /**
  * Authors: initkfs
  */
-class BinaryTree : Texture
+class Sidewinder : Texture
 {
     Random rnd;
     MazeCell[][] cells;
@@ -67,7 +67,7 @@ class BinaryTree : Texture
             foreach (colIndex; 0 .. cellCols)
             {
                 auto cell = new MazeCell(cellWidth, cellHeight, true);
-                cell.style = GraphicStyle(3, RGBA.lightgreen, true, RGBA.lightcoral);
+                cell.style = GraphicStyle(3, RGBA.lightgreen, true, RGBA.lightblue);
                 colContainer.addCreate(cell);
                 cells[rowIndex][colIndex] = cell;
 
@@ -95,50 +95,46 @@ class BinaryTree : Texture
             }
         }
 
+        size_t setOffset = 0;
         foreach (rowIndex; 0 .. cellRows)
         {
-            foreach (colIndex; 0 .. cellCols)
+            for (size_t colIndex = 0; colIndex < cellCols; colIndex++)
             {
                 auto cell = cells[rowIndex][colIndex];
-                if (rowIndex == 0)
+
+                if (rowIndex != 0)
+                {
+                    if (!rnd.chanceHalf && colIndex != lastColIndex)
+                    {
+                        cell.rightWall = false;
+                        cells[rowIndex][colIndex + 1].leftWall = false;
+                    }
+                    else
+                    {
+                        auto randCol = cast(size_t) rnd.randomBetween(setOffset, colIndex);
+                        cells[rowIndex - 1][randCol].bottomWall = false;
+                        cells[rowIndex][randCol].topWall = false;
+
+                        if (colIndex != lastColIndex)
+                        {
+                            setOffset = colIndex + 1;
+                        }
+                        else
+                        {
+                            setOffset = 0;
+                        }
+                    }
+
+                }
+                else
                 {
                     if (colIndex != lastColIndex)
                     {
                         cell.rightWall = false;
-                        auto nextCell = cells[rowIndex][colIndex + 1];
-                        nextCell.leftWall = false;
+                        cells[rowIndex][colIndex + 1].leftWall = false;
                     }
                 }
-                else
-                {
-                    if (colIndex == lastColIndex)
-                    {
-                        cell.topWall = false;
-                        auto topCell = cells[rowIndex - 1][colIndex];
-                        topCell.bottomWall = false;
-                    }
 
-                    if (rnd.chanceHalf)
-                    {
-                        cell.topWall = false;
-                        auto topCell = cells[rowIndex - 1][colIndex];
-                        topCell.bottomWall = false;
-                    }
-                    else
-                    {
-                        if (colIndex != lastColIndex)
-                        {
-                            cell.rightWall = false;
-                            auto nextCell = cells[rowIndex][colIndex + 1];
-                            nextCell.leftWall = false;
-                        }
-                        else
-                        {
-                            cells[rowIndex - 1][colIndex].bottomWall = false;
-                            cell.topWall = false;
-                        }
-                    }
-                }
             }
         }
 
@@ -149,6 +145,14 @@ class BinaryTree : Texture
                 auto cell = cells[rowIndex][colIndex];
                 cell.createMazeWalls;
             }
+        }
+    }
+
+    private void resetSet(MazeCell[] set)
+    {
+        foreach (ref cell; set)
+        {
+            cell = null;
         }
     }
 }

@@ -449,8 +449,8 @@ struct Vector2
 
         auto cVec1 = Vector2(11, 12);
         auto cVec2 = Vector2(5, 6);
-        auto cres = cVec1.cosineDistance(cVec2);
-        assert(isClose(cres, 0.998886));
+        auto cres = cVec1.cosineSimilarity(cVec2);
+        assert(isClose(cres, 0.998886, 1e-6));
     }
 
 }

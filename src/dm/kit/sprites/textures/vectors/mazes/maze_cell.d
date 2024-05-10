@@ -27,6 +27,8 @@ class MazeCell : Sprite
     MazeCell bottomNeighbour;
     MazeCell leftNeighbour;
 
+    bool isVisited;
+
     this(double width = 100, double height = 100, bool isWall = false)
     {
         //super(width, height);

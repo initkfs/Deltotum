@@ -1,4 +1,4 @@
-module dm.kit.sprites.textures.vectors.mazes.binary_tree;
+module dm.kit.sprites.textures.vectors.mazes.aldous_broder;
 
 import dm.kit.sprites.textures.vectors.mazes.maze_cell : MazeCell;
 import dm.kit.sprites.textures.texture : Texture;
@@ -14,7 +14,7 @@ import dm.math.random : Random;
 /**
  * Authors: initkfs
  */
-class BinaryTree : Texture
+class AldousBroder : Texture
 {
     Random rnd;
     MazeCell[][] cells;
@@ -67,7 +67,7 @@ class BinaryTree : Texture
             foreach (colIndex; 0 .. cellCols)
             {
                 auto cell = new MazeCell(cellWidth, cellHeight, true);
-                cell.style = GraphicStyle(3, RGBA.lightgreen, true, RGBA.lightcoral);
+                cell.style = GraphicStyle(3, RGBA.lightgreen, true, RGBA.lightblue);
                 colContainer.addCreate(cell);
                 cells[rowIndex][colIndex] = cell;
 
@@ -95,51 +95,92 @@ class BinaryTree : Texture
             }
         }
 
+        size_t setOffset = 0;
         foreach (rowIndex; 0 .. cellRows)
         {
-            foreach (colIndex; 0 .. cellCols)
+            for (size_t colIndex = 0; colIndex < cellCols; colIndex++)
             {
                 auto cell = cells[rowIndex][colIndex];
-                if (rowIndex == 0)
-                {
-                    if (colIndex != lastColIndex)
-                    {
-                        cell.rightWall = false;
-                        auto nextCell = cells[rowIndex][colIndex + 1];
-                        nextCell.leftWall = false;
-                    }
-                }
-                else
-                {
-                    if (colIndex == lastColIndex)
-                    {
-                        cell.topWall = false;
-                        auto topCell = cells[rowIndex - 1][colIndex];
-                        topCell.bottomWall = false;
-                    }
 
-                    if (rnd.chanceHalf)
+            }
+        }
+
+        size_t unvisited_cells = cellCols * cellRows;
+        size_t ix = rnd.randomBetween(0, lastColIndex);
+        size_t iy = rnd.randomBetween(0, lastRowIndex);
+
+        cells[iy][ix].isVisited = true;
+
+        unvisited_cells--;
+
+        string[] dirs = ["UP", "DOWN", "LEFT", "RIGHT"];
+
+        while (unvisited_cells != 0)
+        {
+            auto dir = dirs[rnd.randomBetween(0, 3)];
+
+            if (dir == "UP")
+            {
+                if (iy > 0)
+                {
+                    if (!cells[iy - 1][ix].isVisited)
                     {
-                        cell.topWall = false;
-                        auto topCell = cells[rowIndex - 1][colIndex];
-                        topCell.bottomWall = false;
-                    }
-                    else
-                    {
-                        if (colIndex != lastColIndex)
-                        {
-                            cell.rightWall = false;
-                            auto nextCell = cells[rowIndex][colIndex + 1];
-                            nextCell.leftWall = false;
+                        cells[iy - 1][ix].bottomWall = false;
+                        if(iy < lastRowIndex){
+                            cells[iy][ix].topWall = false;
                         }
-                        else
-                        {
-                            cells[rowIndex - 1][colIndex].bottomWall = false;
-                            cell.topWall = false;
-                        }
+                        cells[iy - 1][ix].isVisited = true;
+                        unvisited_cells--;
                     }
+                    
+                    iy = iy-1;
                 }
             }
+            else if (dir == "DOWN")
+            {
+                if ((iy + 1) <= lastRowIndex)
+                {
+                    if (!cells[iy + 1][ix].isVisited)
+                    {
+                        cells[iy][ix].bottomWall = false;
+                        cells[iy + 1][ix].topWall = false;
+                        cells[iy + 1][ix].isVisited = true;
+                        unvisited_cells = unvisited_cells - 1;
+                    }
+                    iy = iy + 1;
+                }
+
+            }
+            else if (dir == "RIGHT")
+            {
+                if ((ix + 1) <= lastColIndex)
+                {
+                    if (!cells[iy][ix + 1].isVisited)
+                    {
+                        cells[iy][ix].rightWall = false;
+                        cells[iy][ix + 1].leftWall = false;
+                        cells[iy][ix + 1].isVisited = true;
+                        unvisited_cells = unvisited_cells - 1;
+                    }
+                    ix = ix + 1;
+                }
+            }
+            else if (dir == "LEFT")
+            {
+                if (ix > 0)
+                {
+                    if (!cells[iy][ix - 1].isVisited)
+                    {
+                        cells[iy][ix - 1].rightWall = false;
+                        cells[iy][ix].leftWall = false;
+                        cells[iy][ix - 1].isVisited = true;
+                        unvisited_cells = unvisited_cells - 1;
+                    }
+                    ix = ix - 1;
+                }
+
+            }
+
         }
 
         foreach (rowIndex; 0 .. cellRows)
@@ -149,6 +190,14 @@ class BinaryTree : Texture
                 auto cell = cells[rowIndex][colIndex];
                 cell.createMazeWalls;
             }
+        }
+    }
+
+    private void resetSet(MazeCell[] set)
+    {
+        foreach (ref cell; set)
+        {
+            cell = null;
         }
     }
 }

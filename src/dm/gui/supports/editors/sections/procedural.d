@@ -176,13 +176,23 @@ class Procedural : Control
         root.addCreate(mazeRoot);
         mazeRoot.enableInsets;
 
-        import dm.kit.sprites.textures.vectors.mazes.binary_tree: BinaryTree;
+        import dm.kit.sprites.textures.vectors.mazes.binary_tree : BinaryTree;
 
         enum mazeWidth = 300;
         enum mazeHeight = 200;
 
-        auto binTree1 = new BinaryTree(mazeWidth, mazeHeight, 20, 20);
+        auto binTree1 = new BinaryTree(mazeWidth, mazeHeight, 10, 10);
         mazeRoot.addCreate(binTree1);
+
+        import dm.kit.sprites.textures.vectors.mazes.sidewinder : Sidewinder;
+
+        auto sidew1 = new Sidewinder(mazeWidth, mazeHeight, 10, 10);
+        mazeRoot.addCreate(sidew1);
+
+        import dm.kit.sprites.textures.vectors.mazes.aldous_broder : AldousBroder;
+
+        auto aldBrod1 = new AldousBroder(mazeWidth, mazeHeight, 10, 10);
+        mazeRoot.addCreate(aldBrod1);
     }
 
     private void randomTiling(PenroseTiling t)
