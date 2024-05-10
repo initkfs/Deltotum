@@ -64,48 +64,44 @@ class MazeCell : Sprite
 
             override void createTextureContent()
             {
-                if (style.isFill)
-                {
-                    gContext.setColor(style.fillColor);
-                }
+                import dm.kit.graphics.contexts.graphics_context : GraphicsContext;
 
+                gContext.setLineEnd(GraphicsContext.LineEnd.round);
                 gContext.setLineWidth(style.lineWidth);
 
-                //TODO lineWidth
-
+                //TODO check if no walls
+                //TODO auto padding = style.lineWidth / 2;
                 if (topWall)
                 {
                     gContext.moveTo(0, 0);
                     gContext.lineTo(width, 0);
-                    gContext.strokePreserve;
                 }
 
                 if (rightWall)
                 {
                     gContext.moveTo(width, 0);
                     gContext.lineTo(width, height);
-                    gContext.strokePreserve;
                 }
 
                 if (bottomWall)
                 {
                     gContext.moveTo(width, height);
                     gContext.lineTo(0, height);
-                    gContext.strokePreserve;
                 }
 
                 if (leftWall)
                 {
                     gContext.moveTo(0, height);
                     gContext.lineTo(0, 0);
-                    gContext.strokePreserve;
                 }
 
                 if (style.isFill)
                 {
+                    gContext.setColor(style.fillColor);
                     gContext.fillPreserve;
                 }
 
+                gContext.setColor(style.lineColor);
                 gContext.stroke;
             }
         };

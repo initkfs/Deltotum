@@ -36,6 +36,38 @@ class VectorGraphicsContext : GraphicsContext
         cairo_set_source_rgb(cr, rgba.rNorm, rgba.gNorm, rgba.bNorm);
     }
 
+    void setLineEnd(GraphicsContext.LineEnd end)
+    {
+        final switch (end) with (GraphicsContext.LineEnd)
+        {
+            case butt:
+                cairo_set_line_cap(cr, cairo_line_cap_t.CAIRO_LINE_CAP_BUTT);
+                break;
+            case round:
+                cairo_set_line_cap(cr, cairo_line_cap_t.CAIRO_LINE_CAP_ROUND);
+                break;
+            case square:
+                cairo_set_line_cap(cr, cairo_line_cap_t.CAIRO_LINE_CAP_SQUARE);
+                break;
+        }
+    }
+
+    void setLineJoin(GraphicsContext.LineJoin joinType)
+    {
+        final switch (joinType) with (GraphicsContext.LineJoin)
+        {
+            case miter:
+                cairo_set_line_join(cr, cairo_line_join_t.CAIRO_LINE_JOIN_MITER);
+                break;
+            case round:
+                cairo_set_line_join(cr, cairo_line_join_t.CAIRO_LINE_JOIN_ROUND);
+                break;
+            case bevel:
+                cairo_set_line_join(cr, cairo_line_join_t.CAIRO_LINE_JOIN_BEVEL);
+                break;
+        }
+    }
+
     void setLineWidth(double width)
     {
         cairo_set_line_width(cr, width);

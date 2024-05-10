@@ -1,5 +1,6 @@
 module dm.kit.sprites.textures.vectors.mazes.binary_tree;
 
+import dm.kit.sprites.textures.vectors.mazes.maze : Maze;
 import dm.kit.sprites.textures.vectors.mazes.maze_cell : MazeCell;
 import dm.kit.sprites.textures.texture : Texture;
 import dm.kit.graphics.styles.graphic_style : GraphicStyle;
@@ -11,90 +12,21 @@ import dm.gui.containers.vbox : VBox;
 import Math = dm.math;
 import dm.math.random : Random;
 
+import std.random : unpredictableSeed;
+
 /**
  * Authors: initkfs
+ * See https://habr.com/ru/articles/320140
  */
-class BinaryTree : Texture
+class BinaryTree : Maze
 {
-    Random rnd;
-    MazeCell[][] cells;
-    double cellWidth = 0;
-    double cellHeight = 0;
-
-    this(double width = 100, double height = 100, double cellWidth = 10, double cellHeight = 10)
+    this(double width = 100, double height = 100, size_t cellWidth = 10, size_t cellHeight = 10, uint seed = unpredictableSeed)
     {
-        super(width, height);
-        this.cellWidth = cellWidth;
-        this.cellHeight = cellHeight;
-        //TODO seed
-        rnd = new Random;
+        super(width, height, cellWidth, cellHeight, seed);
     }
 
-    override void create()
+    override void maze()
     {
-        super.create;
-
-        //createMutRGBA32;
-        //assert(texture);
-
-        assert(width > 0);
-        assert(height > 0);
-
-        size_t h = cast(size_t) height;
-        size_t w = cast(size_t) width;
-
-        assert(cellWidth > 0);
-        assert(cellHeight > 0);
-
-        size_t cellRows = cast(size_t)(h / cellHeight);
-        size_t cellCols = cast(size_t)(w / cellWidth);
-
-        cells = new MazeCell[][](cellRows, cellCols);
-
-        assert(cellRows > 1);
-        assert(cellCols > 1);
-
-        size_t lastRowIndex = cellRows - 1;
-        size_t lastColIndex = cellCols - 1;
-
-        auto rowContainer = new VBox(0);
-        addCreate(rowContainer);
-
-        foreach (rowIndex; 0 .. cellRows)
-        {
-            auto colContainer = new HBox(0);
-            rowContainer.addCreate(colContainer);
-            foreach (colIndex; 0 .. cellCols)
-            {
-                auto cell = new MazeCell(cellWidth, cellHeight, true);
-                cell.style = GraphicStyle(3, RGBA.lightgreen, true, RGBA.lightcoral);
-                colContainer.addCreate(cell);
-                cells[rowIndex][colIndex] = cell;
-
-                if (rowIndex != 0)
-                {
-                    auto prevRow = cells[rowIndex - 1];
-                    auto topNeighbour = prevRow[colIndex];
-                    if (!topNeighbour.bottomNeighbour)
-                    {
-                        topNeighbour.bottomNeighbour = cell;
-                    }
-
-                    cell.topNeighbour = topNeighbour;
-                }
-
-                if (colIndex != 0)
-                {
-                    auto prevCol = cells[rowIndex][colIndex - 1];
-                    if (!prevCol.rightNeighbour)
-                    {
-                        prevCol.rightNeighbour = cell;
-                    }
-                    cell.leftNeighbour = prevCol;
-                }
-            }
-        }
-
         foreach (rowIndex; 0 .. cellRows)
         {
             foreach (colIndex; 0 .. cellCols)
@@ -139,15 +71,6 @@ class BinaryTree : Texture
                         }
                     }
                 }
-            }
-        }
-
-        foreach (rowIndex; 0 .. cellRows)
-        {
-            foreach (colIndex; 0 .. cellCols)
-            {
-                auto cell = cells[rowIndex][colIndex];
-                cell.createMazeWalls;
             }
         }
     }

@@ -182,16 +182,19 @@ class Procedural : Control
         enum mazeHeight = 200;
 
         auto binTree1 = new BinaryTree(mazeWidth, mazeHeight, 10, 10);
+        binTree1.cellStyle = GraphicStyle(4, RGBA.lightpink);
         mazeRoot.addCreate(binTree1);
 
         import dm.kit.sprites.textures.vectors.mazes.sidewinder : Sidewinder;
 
         auto sidew1 = new Sidewinder(mazeWidth, mazeHeight, 10, 10);
+        sidew1.cellStyle = GraphicStyle(4, RGBA.lightskyblue);
         mazeRoot.addCreate(sidew1);
 
         import dm.kit.sprites.textures.vectors.mazes.aldous_broder : AldousBroder;
 
         auto aldBrod1 = new AldousBroder(mazeWidth, mazeHeight, 10, 10);
+        aldBrod1.cellStyle = GraphicStyle(4, RGBA.lightgreen);
         mazeRoot.addCreate(aldBrod1);
     }
 

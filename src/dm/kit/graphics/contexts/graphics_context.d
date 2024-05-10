@@ -7,7 +7,23 @@ import dm.kit.graphics.colors.rgba : RGBA;
  */
 interface GraphicsContext
 {
+    enum LineEnd
+    {
+        butt,
+        round,
+        square
+    }
+
+    enum LineJoin
+    {
+        miter,
+        round,
+        bevel
+    }
+
     void setColor(RGBA rgba);
+    void setLineEnd(LineEnd end);
+    void setLineJoin(LineJoin join);
     void restoreColor();
     void translate(double x, double y);
     void moveTo(double x, double y);

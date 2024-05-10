@@ -1,6 +1,7 @@
 module dm.kit.graphics.contexts.renderer_graphics_context;
 
 import dm.kit.graphics.contexts.state_graphics_context : StateGraphicsContext;
+import dm.kit.graphics.contexts.graphics_context : GraphicsContext;
 import dm.kit.graphics.graphics : Graphics;
 import dm.kit.graphics.colors.rgba : RGBA;
 import dm.math.vector2 : Vector2;
@@ -32,6 +33,14 @@ class RendererGraphicsContext : StateGraphicsContext
     void restoreColor()
     {
         graphics.restoreColor;
+    }
+
+    void setLineEnd(GraphicsContext.LineEnd end){
+
+    }
+
+    void setLineJoin(GraphicsContext.LineJoin join) {
+
     }
 
     void lineTo(double endX, double endY)
