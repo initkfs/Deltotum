@@ -1,11 +1,11 @@
-module dm.kit.i18n.langs.alphabets.special_characters_alphabet;
+module dm.kit.i18n.langs.alphabets.special_alphabet;
 
 import dm.kit.i18n.langs.alphabets.alphabet : Alphabet;
 
 /**
  * Authors: initkfs
  */
-class SpecialCharactersAlphabet : Alphabet
+class SpecialAlphabet : Alphabet
 {
     override immutable(dchar)[] allLetters() pure
     {

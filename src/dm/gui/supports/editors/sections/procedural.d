@@ -1,5 +1,9 @@
 module dm.gui.supports.editors.sections.procedural;
 
+// dfmt off
+version(DmAddon):
+// dfmt on
+
 import dm.gui.controls.control : Control;
 import dm.math.rect2d : Rect2d;
 import dm.kit.graphics.colors.rgba : RGBA;

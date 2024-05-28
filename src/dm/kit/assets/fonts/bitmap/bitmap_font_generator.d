@@ -27,18 +27,27 @@ class BitmapFontGenerator : FontGenerator
 {
     Provider!ComSurface comSurfaceProvider;
 
+    //TODO correct size?
+    enum size_t defaultFontTextureWidth = 400;
+    enum size_t defaultFontTextureHeight = 400;
+
     this(Provider!ComSurface comSurfaceProvider)
     {
         this.comSurfaceProvider = comSurfaceProvider;
     }
 
-    BitmapFont generate(Alphabet[] alphabets, Font font, RGBA foregroundColor = RGBA.white, RGBA backgroundColor = RGBA
-            .black)
+    BitmapFont generate(
+        Alphabet[] alphabets, 
+        Font font, 
+        RGBA foregroundColor = RGBA.white, 
+        RGBA backgroundColor = RGBA.black, 
+        int  fontTextureWidth = defaultFontTextureWidth, 
+        int fontTextureHeight = defaultFontTextureWidth
+        )
     {
-        //correct size?
-        const int fontTextureWidth = 400;
-        const int fontTextureHeight = 400;
-
+        assert(fontTextureWidth > 0);
+        assert(fontTextureHeight > 0);
+        
         //The size can be very large to create on a stack
         ComSurface fontMapSurface = comSurfaceProvider.getNew();
         if (const err = fontMapSurface.createRGB(fontTextureWidth, fontTextureHeight))

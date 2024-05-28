@@ -89,13 +89,14 @@ class GuiEditor : Scene
         imagesTab.content = new Images;
         root.addCreate(imagesTab);
 
-        import dm.gui.supports.editors.sections.procedural: Procedural;
-        auto procTab = new Tab("Procedural");
-        procTab.content = new Procedural;
-        root.addCreate(procTab);
-
         version (DmAddon)
         {
+            import dm.gui.supports.editors.sections.procedural : Procedural;
+
+            auto procTab = new Tab("Procedural");
+            procTab.content = new Procedural;
+            root.addCreate(procTab);
+
             import dm.gui.supports.editors.sections.curves : Curves;
 
             auto curvesTab = new Tab("Curves");
@@ -115,10 +116,10 @@ class GuiEditor : Scene
         scriptTab.content = new Scripting;
         root.addCreate(scriptTab);
 
-        root.changeTab(procTab);
+        root.changeTab(controlsTab);
 
         //import std;
-        //createDebugger;
+        createDebugger;
     }
 
 }

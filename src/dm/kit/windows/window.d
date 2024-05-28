@@ -26,7 +26,7 @@ class Window : GraphicsComponent
     //import std.container : DList;
     //DList!(void delegate())
     void delegate(double)[] showingTasks;
-    size_t showingTaskDelayTicks = 2;
+    size_t showingTaskDelayTicks = 1;
     bool isStartDrawing;
 
     //Some delegates can be called by the event manager

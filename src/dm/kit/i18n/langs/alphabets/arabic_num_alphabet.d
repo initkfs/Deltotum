@@ -1,11 +1,11 @@
-module dm.kit.i18n.langs.alphabets.arabic_numerals_alphabet;
+module dm.kit.i18n.langs.alphabets.arabic_num_alphabet;
 
 import dm.kit.i18n.langs.alphabets.alphabet : Alphabet;
 
 /**
  * Authors: initkfs
  */
-class ArabicNumeralsAlpabet : Alphabet
+class ArabicNumAlpabet : Alphabet
 {
     override immutable(dchar)[] allLetters()
     {

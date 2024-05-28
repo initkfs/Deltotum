@@ -472,14 +472,14 @@ class Sprite : EventKitTarget
         {
             if (!obj.isDrawAfterParent && obj.isVisible)
             {
-                if (!isValid)
-                {
-                    obj.draw;
-                }
-                else
-                {
-                    //  isRedraw = false;
-                }
+                //if (!isValid)
+                //{
+                obj.draw;
+                //}
+                //else
+                //{
+                //  isRedraw = false;
+                //}
                 checkClip(obj);
             }
         }
@@ -1942,6 +1942,34 @@ class Sprite : EventKitTarget
         return _angle;
     }
 
+    void show()
+    {
+        isVisible = true;
+    }
+
+    void showForLayout()
+    {
+        show;
+        if (!isLayoutManaged)
+        {
+            isLayoutManaged = true;
+        }
+    }
+
+    void hide()
+    {
+        isVisible = false;
+    }
+
+    void hideForLayout()
+    {
+        hide;
+        if (isLayoutManaged)
+        {
+            isLayoutManaged = false;
+        }
+    }
+
     void isGrow(bool value)
     {
         isHGrow = value;
@@ -2016,7 +2044,7 @@ class Sprite : EventKitTarget
     {
         import std.format : format;
 
-        return format("id: %d, parent: %s, x: %f, y: %f, width: %f, height: %f", id, parent, width, height);
+        return format("id: %d, parent: %s, x: %f, y: %f, width: %f, height: %f", id, parent, x, y, width, height);
     }
 
 }

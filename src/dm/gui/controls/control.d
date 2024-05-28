@@ -12,7 +12,7 @@ import dm.gui.controls.tooltips.tooltip : Tooltip;
 import dm.kit.sprites.transitions.min_max_transition : MinMaxTransition;
 import dm.kit.sprites.transitions.objects.props.opacity_transition : OpacityTransition;
 
-import std.typecons: Nullable;
+import std.typecons : Nullable;
 
 /**
  * Authors: initkfs
@@ -583,6 +583,7 @@ class Control : Sprite
         _background.id = idControlBackground;
         _background.isResizedByParent = true;
         _background.isLayoutManaged = false;
+        _background.isDrawAfterParent = false;
 
         addCreate(_background, 0);
 
@@ -642,6 +643,11 @@ class Control : Sprite
             return Nullable!Sprite.init;
         }
         return Nullable!Sprite(_background);
+    }
+
+    Sprite backgroundUnsafe()
+    {
+        return _background;
     }
 
     bool hasHover()

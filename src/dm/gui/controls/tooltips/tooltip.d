@@ -37,9 +37,9 @@ class Tooltip : Labeled
         super.create;
     }
 
-    void show()
+    override void show()
     {
-        isVisible = true;
+        super.show;
         if (!parent)
         {
             return;
@@ -74,10 +74,4 @@ class Tooltip : Labeled
         this.x = newX;
         this.y = newY;
     }
-
-    void hide()
-    {
-        isVisible = false;
-    }
-
 }

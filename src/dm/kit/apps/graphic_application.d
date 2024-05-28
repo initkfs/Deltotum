@@ -596,13 +596,13 @@ abstract class GraphicApplication : CliApplication
     Alphabet[] createMediumFontAlphabets()
     {
         import dm.kit.i18n.langs.alphabets.alphabet_ru : AlphabetRu;
-        import dm.kit.i18n.langs.alphabets.alphabet_en : AlphabetEn;
-        import dm.kit.i18n.langs.alphabets.arabic_numerals_alphabet : ArabicNumeralsAlpabet;
-        import dm.kit.i18n.langs.alphabets.special_characters_alphabet : SpecialCharactersAlphabet;
+        import dm.kit.i18n.langs.alphabets.en : AlphabetEn;
+        import dm.kit.i18n.langs.alphabets.arabic_num_alphabet : ArabicNumAlpabet;
+        import dm.kit.i18n.langs.alphabets.special_alphabet : SpecialAlphabet;
 
         Alphabet[] alphabets = [
-            new ArabicNumeralsAlpabet,
-            new SpecialCharactersAlphabet,
+            new ArabicNumAlpabet,
+            new SpecialAlphabet,
             new AlphabetEn,
             new AlphabetRu
         ];
@@ -611,13 +611,13 @@ abstract class GraphicApplication : CliApplication
 
     Alphabet[] createSmallFontAlphabets()
     {
-        import dm.kit.i18n.langs.alphabets.arabic_numerals_alphabet : ArabicNumeralsAlpabet;
-        import dm.kit.i18n.langs.alphabets.special_characters_alphabet : SpecialCharactersAlphabet;
-        import dm.kit.i18n.langs.alphabets.alphabet_en : AlphabetEn;
+        import dm.kit.i18n.langs.alphabets.arabic_num_alphabet : ArabicNumAlpabet;
+        import dm.kit.i18n.langs.alphabets.special_alphabet : SpecialAlphabet;
+        import dm.kit.i18n.langs.alphabets.en : AlphabetEn;
 
         Alphabet[] alphabets = [
-            new ArabicNumeralsAlpabet,
-            new SpecialCharactersAlphabet,
+            new ArabicNumAlpabet,
+            new SpecialAlphabet,
             new AlphabetEn
         ];
         return alphabets;
@@ -625,10 +625,12 @@ abstract class GraphicApplication : CliApplication
 
     Alphabet[] createLargeFontAlphabets()
     {
-        import dm.kit.i18n.langs.alphabets.arabic_numerals_alphabet : ArabicNumeralsAlpabet;
+        import dm.kit.i18n.langs.alphabets.arabic_num_alphabet : ArabicNumAlpabet;
+        import dm.kit.i18n.langs.alphabets.light_special_alphabet : LightSpecialAlphabet;
 
         Alphabet[] alphabets = [
-            new ArabicNumeralsAlpabet,
+            new ArabicNumAlpabet,
+            new LightSpecialAlphabet,
         ];
         return alphabets;
     }

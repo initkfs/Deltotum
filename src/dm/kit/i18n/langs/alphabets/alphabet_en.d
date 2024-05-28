@@ -1,4 +1,4 @@
-module dm.kit.i18n.langs.alphabets.alphabet_en;
+module dm.kit.i18n.langs.alphabets.en;
 
 import dm.kit.i18n.langs.alphabets.alphabet : Alphabet;
 
