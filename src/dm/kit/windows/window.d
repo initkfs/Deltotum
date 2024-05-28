@@ -1,7 +1,7 @@
 module dm.kit.windows.window;
 
 import dm.kit.components.graphics_component : GraphicsComponent;
-import dm.com.com_native_ptr: ComNativePtr;
+import dm.com.com_native_ptr : ComNativePtr;
 import dm.com.graphics.com_window : ComWindow;
 import dm.math.rect2d : Rect2d;
 import dm.math.vector2 : Vector2;
@@ -27,7 +27,6 @@ class Window : GraphicsComponent
     //DList!(void delegate())
     void delegate(double)[] showingTasks;
     size_t showingTaskDelayTicks = 1;
-    bool isStartDrawing;
 
     //Some delegates can be called by the event manager
     void delegate()[] onCreate;
@@ -461,14 +460,15 @@ class Window : GraphicsComponent
 
     bool draw(double alpha)
     {
-        if (!isStartDrawing)
-        {
-            isStartDrawing = true;
-        }
-        
         bool isDraw = scenes.draw(alpha);
+        return isDraw;
+    }
 
-        if (isShowing && isStartDrawing && showingTasks.length > 0)
+    void update(double delta)
+    {
+        scenes.update(delta);
+
+        if (isShowing && showingTasks.length > 0)
         {
             lastShowingTick++;
             if (lastShowingTick >= showingTaskDelayTicks)
@@ -476,18 +476,11 @@ class Window : GraphicsComponent
                 lastShowingTick = 0;
                 foreach (task; showingTasks)
                 {
-                    task(alpha);
+                    task(delta);
                 }
                 showingTasks = null;
             }
         }
-
-        return isDraw;
-    }
-
-    void update(double delta)
-    {
-        scenes.update(delta);
     }
 
     Window newChildWindow(dstring title = "New window", int width = 450, int height = 200, int x = -1, int y = -1)
