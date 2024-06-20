@@ -131,6 +131,8 @@ class Sprite : EventKitTarget
     void delegate(double, double) onChangeWidthOldNew;
     void delegate(double, double) onChangeHeightOldNew;
 
+    void delegate(double, double)[] onResize;
+
     double minWidth = 0;
     double minHeight = 0;
 

@@ -18,7 +18,7 @@ import std.conv : to;
 import std.format : format;
 import Math = dm.math;
 
-class TimeChooser : Control
+abstract class TimeChooser : Control
 {
     void delegate(dstring) onStrValue;
     void delegate(int) onNumValue;
@@ -34,18 +34,39 @@ class TimeChooser : Control
         isResizedByParent = false;
     }
 
+    abstract void setValue(int value);
+
     override void create()
     {
         super.create;
         import dm.kit.sprites.textures.vectors.shapes.vcircle : VCircle;
 
-        auto style = createDefaultStyle;
-        style.isFill = true;
+        auto sliderStyle = createDefaultStyle;
+        sliderStyle.isFill = true;
 
-        selectionSlider = new VCircle(15, style);
+        selectionSlider = new class VCircle
+        {
+            this()
+            {
+                super(15, sliderStyle);
+            }
+
+            override void createTextureContent()
+            {
+                super.createTextureContent;
+                import Math = dm.math;
+                auto gc = gContext;
+                gc.arc(0, 0, 2, 0, 2 * Math.PI);
+                gc.setColor(graphics.theme.colorAccent);
+                gc.fill;
+            }
+        };
+
         selectionSlider.isLayoutManaged = false;
         selectionSlider.isVisible = false;
         addCreate(selectionSlider);
+
+        selectionSlider.opacity = 0.8;
     }
 
     override void drawContent()
@@ -77,6 +98,7 @@ class TimeChooser : Control
             selectionSlider.isVisible = true;
         }
     }
+
 }
 
 //TODO remove duplication
@@ -98,6 +120,7 @@ class HourChooser : TimeChooser
         foreach (int i; 1 .. 13)
             (int j) {
             auto button = new Text(j.to!dstring);
+            button.isFocusable = false;
             button.isBorder = false;
             button.isBackground = false;
             hour1to12Box.addCreate(button);
@@ -124,6 +147,7 @@ class HourChooser : TimeChooser
             (size_t j) {
             dstring valueStr = j == 24 ? "00" : j.to!dstring;
             auto button = new Text(valueStr);
+            button.isFocusable = false;
             button.onPointerDown ~= (ref e) {
                 if (onStrValue)
                 {
@@ -144,7 +168,7 @@ class HourChooser : TimeChooser
         }(i);
     }
 
-    void setValue(int v)
+    override void setValue(int v)
     {
         const sliderBounds = selectionSlider.bounds;
         auto angle = ((360.0 / 12) * (v % 12) + 270) % 360;
@@ -167,6 +191,7 @@ class HourChooser : TimeChooser
 class MinSecChooser : TimeChooser
 {
     CircleBox minSec0to55Box;
+    CircleBox labelBox;
     Sprite textLabels;
 
     enum innerBoxRadius = 80;
@@ -195,6 +220,10 @@ class MinSecChooser : TimeChooser
             double angleRangeMinSec = 60 / 360.0;
 
             auto value = cast(int) Math.round(angleOffset * angleRangeMinSec);
+            if(value > 59){
+                value = 59;
+            }
+
             if (onNumValue)
             {
                 onNumValue(value);
@@ -208,6 +237,15 @@ class MinSecChooser : TimeChooser
             return false;
         };
 
+        labelBox = new CircleBox(innerBoxRadius - 15, startAngle);
+        addCreate(labelBox);
+
+        foreach (int i; 0..60)
+        {
+            auto minSecLabel = new Text("▪");
+            labelBox.addCreate(minSecLabel);
+        }
+
         minSec0to55Box = new CircleBox(innerBoxRadius, startAngle);
         addCreate(minSec0to55Box);
 
@@ -215,6 +253,7 @@ class MinSecChooser : TimeChooser
         foreach (int i; 0 .. 12)
             (int j, int min) {
             auto button = new Text(format("%02d", minValue).to!dstring);
+            button.isFocusable = false;
 
             button.isBorder = false;
             button.isBackground = false;
@@ -242,7 +281,7 @@ class MinSecChooser : TimeChooser
         }(i, minValue);
     }
 
-    void setValue(int v)
+    override void setValue(int v)
     {
         const sliderBounds = selectionSlider.bounds;
 
@@ -270,6 +309,9 @@ class TimePicker : Control
     Text minutesLabel;
     Text secsLabel;
 
+    Button hoursUp;
+    Button hoursDown;
+
     FontSize fontSize = fontSize.large;
 
     HourChooser hourChooser;
@@ -289,11 +331,13 @@ class TimePicker : Control
     {
         import dm.kit.sprites.layouts.vlayout : VLayout;
 
-        this.layout = new VLayout;
+        this.layout = new VLayout(5);
         this.layout.isAutoResize = true;
         this.layout.isAlignX = true;
 
         isBorder = true;
+        //TODO sliderRadius
+        paddingBottom = 10;
     }
 
     override void initialize()
@@ -306,6 +350,7 @@ class TimePicker : Control
         super.create;
 
         auto timeValuesContainer = new HBox(2);
+        timeValuesContainer.isAlignY = true;
         addCreate(timeValuesContainer);
         timeValuesContainer.enableInsets;
 
@@ -351,13 +396,42 @@ class TimePicker : Control
             secChooser.setValue(secsLabel.text.to!int);
         };
 
-        timeValuesContainer.addCreate([
-            hoursLabel,
-            newText(":"),
-            minutesLabel,
-            newText(":"),
-            secsLabel
-        ]);
+        enum spacing = 2;
+        auto hoursContainer = new VBox(spacing);
+        timeValuesContainer.addCreate(hoursContainer);
+
+        enum hourMaxValue = 23;
+        enum hourMinValue = 0;
+        setUpDownButtons(hoursContainer, hoursLabel, () {
+            incValueWrap(hoursLabel, hourMinValue, hourMaxValue, hourChooser);
+        }, () {
+            decValueWrap(hoursLabel, hourMinValue, hourMaxValue, hourChooser);
+        });
+
+        timeValuesContainer.addCreate(newText(":"));
+
+        auto minContainer = new VBox(spacing);
+        timeValuesContainer.addCreate(minContainer);
+
+        enum minSecMinValue = 0;
+        enum minSecMaxValue = 59;
+
+        setUpDownButtons(minContainer, minutesLabel, () {
+            incValueWrap(minutesLabel, minSecMinValue, minSecMaxValue, minChooser);
+        }, () {
+            decValueWrap(minutesLabel, minSecMinValue, minSecMaxValue, minChooser);
+        });
+
+        timeValuesContainer.addCreate(newText(":"));
+
+        auto secContainer = new VBox(spacing);
+        timeValuesContainer.addCreate(secContainer);
+
+        setUpDownButtons(secContainer, secsLabel, () {
+            incValueWrap(secsLabel, minSecMinValue, minSecMaxValue, secChooser);
+        }, () {
+            decValueWrap(secsLabel, minSecMinValue, minSecMaxValue, secChooser);
+        });
 
         chooserContainer = new StackBox;
         addCreate(chooserContainer);
@@ -384,14 +458,75 @@ class TimePicker : Control
 
         hourChooser.showForLayout;
 
-        window.showingTasks ~= (dt){
-             hourChooser.setValue(0);
-        };
+        window.showingTasks ~= (dt) { hourChooser.setValue(0); };
 
         minChooser.hideForLayout;
         secChooser.hideForLayout;
 
         reset;
+    }
+
+    protected void incValueWrap(Text label, int min, int max, TimeChooser chooser)
+    {
+        auto value = label.text.to!int;
+        if (value == max)
+        {
+            value = min;
+        }
+        else
+        {
+            value++;
+        }
+        label.text = formatTimeValue(value);
+        if (chooser && chooser.isVisible)
+        {
+            chooser.setValue(value);
+        }
+    }
+
+    protected void decValueWrap(Text label, int min, int max, TimeChooser chooser)
+    {
+        auto value = label.text.to!int;
+        if (value == min)
+        {
+            value = max;
+        }
+        else
+        {
+            value--;
+        }
+        label.text = formatTimeValue(value);
+        if (chooser && chooser.isVisible)
+        {
+            chooser.setValue(value);
+        }
+    }
+
+    protected void setUpDownButtons(VBox container, Text label, void delegate() onUp, void delegate() onDown)
+    {
+
+        container.isAlignX = true;
+
+        //TODO best size?
+        enum size = 15;
+        auto up = new Button("▲", 5, 5);
+        up.onAction = (ref e) { onUp(); };
+        up.height = size;
+        auto down = new Button("▼", 5, 5);
+        down.onAction = (ref e) { onDown(); };
+        down.height = size;
+        label.invalidateListeners ~= () {
+            if (label.width <= 0 || label.height <= 0)
+            {
+                return;
+            }
+            up.width = label.width;
+            down.width = label.width;
+        };
+
+        container.addCreate([up, label, down]);
+        up.padding = 0;
+        down.padding = 0;
     }
 
     protected Text newText(dstring text = "")
@@ -405,6 +540,14 @@ class TimePicker : Control
     {
         auto t = newText(text);
         t.isBackground = true;
+        t.onBackgroundCreated = (bg) {
+            //TODO remove hack
+            if (t is hoursLabel)
+            {
+                return;
+            }
+            bg.isVisible = false;
+        };
         return t;
     }
 

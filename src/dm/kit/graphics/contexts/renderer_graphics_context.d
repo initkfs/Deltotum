@@ -90,4 +90,8 @@ class RendererGraphicsContext : StateGraphicsContext
     void fillTriangle(double x1, double y1, double x2, double y2, double x3, double y3){
         graphics.fillTriangle(Vector2(x1, y1), Vector2(x2, y2), Vector2(x3, y3));
     }
+
+    void arc(double xc,double yc, double radius, double angle1, double angle2){
+
+    }
 }

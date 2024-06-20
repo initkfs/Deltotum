@@ -149,4 +149,8 @@ class VectorGraphicsContext : GraphicsContext
     {
         cairo_close_path(cr);
     }
+
+    void arc(double xc,double yc, double radius, double angle1, double angle2){
+        cairo_arc(cr, xc, yc, radius, angle1, angle2);
+    }
 }
