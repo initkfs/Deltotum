@@ -1,4 +1,4 @@
-module core.apps.cli_application;
+module core.apps.cli_app;
 
 import core.components.units.simple_unit : SimpleUnit;
 import core.apps.crashes.crash_handler : CrashHandler;
@@ -27,7 +27,7 @@ import std.getopt : GetoptResult;
 /**
  * Authors: initkfs
  */
-class CliApplication : SimpleUnit
+class CliApp : SimpleUnit
 {
     bool isStopMainController = true;
     bool isStrictConfigs = true;
@@ -72,7 +72,7 @@ class CliApplication : SimpleUnit
                 import std.stdio : writeln, writefln;
 
                 writeln("Received cli: ", cli.cliArgs);
-                writefln("Config dir: %s, data dir: %s, debug: %s, silent: %s, wait ms: %s",
+                writefln("Config dir: '%s', data dir: '%s', debug: %s, silent: %s, wait ms: %s",
                     cliConfigDir, cliDataDir, isDebugMode, isSilentMode, cliStartupDelayMs);
             }
 
@@ -81,7 +81,7 @@ class CliApplication : SimpleUnit
             if (cliResult.helpWanted)
             {
                 cli.printHelp(cliResult);
-                return AppExit(isExit: true, isInit: false);
+                return AppExit(true, false);
             }
 
             if (cliStartupDelayMs > 0)
@@ -141,7 +141,7 @@ class CliApplication : SimpleUnit
             consumeThrowable(e, true);
         }
 
-        return AppExit(isExit: false, isInit: true);
+        return AppExit(false, true);
     }
 
     UniComponent newUniServices()
@@ -361,7 +361,7 @@ class CliApplication : SimpleUnit
             else
             {
                 uservices.cli.printIfNotSilent(
-                    "Data directory not found so default config path cannot be built");
+                    "Default config path cannot be built: data directory not found");
             }
 
         }
@@ -415,8 +415,16 @@ class CliApplication : SimpleUnit
         immutable bool isLoad = config.load;
         import std.format : format;
 
-        uservices.cli.printIfNotSilent(format("Load %s configs: %s", configs
-                .length, isLoad));
+        if (isLoad)
+        {
+            uservices.cli.printIfNotSilent(format("Load %s configs", configs
+                    .length));
+        }
+        else
+        {
+            uservices.cli.printIfNotSilent("Configs were not loaded");
+        }
+
         return config;
     }
 
@@ -432,7 +440,7 @@ class CliApplication : SimpleUnit
 
         enum consoleLoggerLevel = LogLevel.trace;
         auto consoleLogger = new FileLogger(stdout, consoleLoggerLevel);
-        const string consoleLoggerName = "stdout_logger";
+        const string consoleLoggerName = "logger_stdout";
         multiLogger.insertLogger(consoleLoggerName, consoleLogger);
 
         import std.format : format;
@@ -476,7 +484,7 @@ class CliApplication : SimpleUnit
         return new Support(errStatus);
     }
 
-    protected Resource createResource(Logger logger, Config config, Context context, string resourceDirPath = "resources")
+    protected Resource createResource(Logger logger, Config config, Context context, string resourceDirPath = "")
     {
         assert(logger);
         assert(config);
@@ -486,6 +494,14 @@ class CliApplication : SimpleUnit
         import std.file : exists, isDir;
 
         string mustBeResDir = resourceDirPath;
+        if (mustBeResDir.length == 0)
+        {
+            logger.infof(
+                "Resource path is empty, empty resource manager created");
+            //WARNING return
+            return newResource(logger);
+        }
+
         if (mustBeResDir.isAbsolute)
         {
             if (!mustBeResDir.exists || !mustBeResDir
@@ -503,8 +519,8 @@ class CliApplication : SimpleUnit
                 .appContext.dataDir;
             if (mustBeDataDir.isNull)
             {
-                logger.errorf(
-                    "Received relative resource path %s, but data directory not found", mustBeResDir);
+                logger.infof(
+                    "Received relative path '%s', but data directory not found", mustBeResDir);
                 //WARNING return
                 return newResource(logger);
             }

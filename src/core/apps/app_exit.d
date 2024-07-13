@@ -8,6 +8,7 @@ import core.attribute : mustuse;
 @mustuse struct AppExit
 {
     bool isExit;
+    bool isInit;
     
-    alias isExit this;
+    alias isInit this;
 }

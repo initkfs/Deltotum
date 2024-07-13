@@ -1,7 +1,5 @@
 module core.utils.provider;
 
-enum ToStringExclude;
-
 /**
  * Authors: initkfs
  */

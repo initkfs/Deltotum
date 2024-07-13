@@ -15,7 +15,7 @@ class PlatformContext
         GC.minimize;
     }
 
-    void pause(size_t delayMs) const
+    void sleep(size_t delayMs) const
     {
         import std.datetime : dur;
         import core.thread : Thread;

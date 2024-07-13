@@ -79,9 +79,10 @@ abstract class GraphicApplication : CliApplication
 
     override AppExit initialize(string[] args)
     {
-        if (const exit = super.initialize(args))
+        const initRes = super.initialize(args);
+        if (!initRes || initRes.isExit)
         {
-            return exit;
+            return initRes;
         }
 
         if (!_graphicServices)
@@ -117,7 +118,7 @@ abstract class GraphicApplication : CliApplication
 
         _i18n = createI18n(uservices.logger, uservices.config, uservices.context);
 
-        return AppExit(false);
+        return AppExit(isExit: false, isInit: true);
     }
 
     abstract ulong ticks();

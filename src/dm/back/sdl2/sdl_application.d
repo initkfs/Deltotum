@@ -101,9 +101,10 @@ class SdlApplication : ContinuouslyApplication
 
     override AppExit initialize(string[] args)
     {
-        if (auto isExit = super.initialize(args))
+        const initRes = super.initialize(args);
+        if (!initRes || initRes.isExit)
         {
-            return isExit;
+            return initRes;
         }
 
         if (isHeadless)
@@ -557,7 +558,7 @@ class SdlApplication : ContinuouslyApplication
 
         windowManager = new WindowManager(uservices.logger);
 
-        return AppExit(false);
+        return AppExit(isExit: false, isInit: true);
     }
 
     override ulong ticks()

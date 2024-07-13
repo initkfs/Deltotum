@@ -27,6 +27,7 @@ class Support
 
     long stopwatch(StopWatch sw)
     {
+        assert(sw.running);
         sw.stop;
         const long msecs = sw.peek.total!"msecs";
         return msecs;
