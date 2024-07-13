@@ -1,11 +1,11 @@
 module dm.kit.events.kit_event_manager;
 
-import dm.core.events.processing.event_processor: EventProcessor;
-import dm.core.events.event_manager: EventManager;
+import core.events.processing.event_processor: EventProcessor;
+import core.events.event_manager: EventManager;
 import dm.kit.events.processing.kit_event_processor: KitEventProcessor;
 import dm.kit.scenes.scene_manager : SceneManager;
 
-import dm.core.apps.events.app_event : AppEvent;
+import core.apps.events.app_event : AppEvent;
 import dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import dm.kit.inputs.keyboards.events.key_event : KeyEvent;
 import dm.kit.inputs.keyboards.events.text_input_event : TextInputEvent;

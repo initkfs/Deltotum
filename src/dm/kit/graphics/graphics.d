@@ -1,7 +1,7 @@
 module dm.kit.graphics.graphics;
 
-import dm.core.components.units.services.loggable_unit;
-import dm.core.utils.provider : Provider;
+import core.components.units.services.loggable_unit;
+import core.utils.provider : Provider;
 
 import dm.com.graphics.com_renderer : ComRenderer;
 import dm.kit.graphics.colors.rgba : RGBA;

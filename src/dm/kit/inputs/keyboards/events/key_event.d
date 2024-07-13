@@ -1,7 +1,7 @@
 module dm.kit.inputs.keyboards.events.key_event;
 
-import dm.core.events.event_base : EventBase;
-import dm.core.utils.type_util : enumNameByIndex;
+import core.events.event_base : EventBase;
+import core.utils.type_util : enumNameByIndex;
 
 import dm.com.inputs.com_keyboard : ComKeyName;
 import dm.com.inputs.com_keyboard : KeyModifierInfo;

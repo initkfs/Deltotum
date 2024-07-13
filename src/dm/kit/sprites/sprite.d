@@ -9,7 +9,7 @@ import dm.kit.sprites.layouts.layout : Layout;
 import dm.kit.sprites.textures.rgba_texture : RgbaTexture;
 import dm.kit.scenes.scaling.scale_mode : ScaleMode;
 import dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
-import dm.core.apps.events.app_event : AppEvent;
+import core.apps.events.app_event : AppEvent;
 import dm.kit.inputs.keyboards.events.key_event : KeyEvent;
 import dm.kit.events.focus.focus_event : FocusEvent;
 import dm.kit.inputs.keyboards.events.text_input_event : TextInputEvent;
@@ -2037,7 +2037,7 @@ class Sprite : EventKitTarget
 
     bool removeInvListener(void delegate() dg)
     {
-        import dm.core.utils.type_util : drop;
+        import core.utils.type_util : drop;
 
         return drop(invalidateListeners, dg);
     }

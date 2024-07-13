@@ -1,12 +1,12 @@
 module dm.kit.platforms.platform;
 
 import dm.com.platforms.com_system : ComSystem;
-import dm.core.components.units.services.application_unit : ApplicationUnit;
-import dm.core.components.units.services.loggable_unit : LoggableUnit;
-import dm.core.contexts.context : Context;
-import dm.core.configs.config : Config;
+import core.components.units.services.application_unit : ApplicationUnit;
+import core.components.units.services.loggable_unit : LoggableUnit;
+import core.contexts.context : Context;
+import core.configs.config : Config;
 
-import Mem = dm.core.utils.mem;
+import Mem = core.utils.mem;
 
 import std.logger.core : Logger;
 

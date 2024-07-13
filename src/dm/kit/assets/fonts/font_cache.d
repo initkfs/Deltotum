@@ -1,6 +1,6 @@
 module dm.kit.assets.fonts.font_cache;
 
-import dm.core.components.units.services.loggable_unit : LoggableUnit;
+import core.components.units.services.loggable_unit : LoggableUnit;
 import dm.kit.graphics.colors.rgba : RGBA;
 import dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 import dm.kit.sprites.textures.texture : Texture;

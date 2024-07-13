@@ -1,9 +1,9 @@
 module dm.kit.inputs.pointers.events.pointer_event;
 
-import dm.core.events.event_base : EventBase;
-import dm.core.utils.type_util : enumNameByIndex;
-import dm.core.events.event_target : EventTarget;
-import dm.core.events.event_source : EventSource;
+import core.events.event_base : EventBase;
+import core.utils.type_util : enumNameByIndex;
+import core.events.event_target : EventTarget;
+import core.events.event_source : EventSource;
 
 /**
  * Authors: initkfs

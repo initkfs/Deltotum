@@ -7,7 +7,7 @@ import dm.kit.factories.creation : Creation;
 import dm.kit.interacts.interact : Interact;
 import dm.kit.factories.creation_images : CreationImages;
 import dm.kit.factories.creation_shapes : CreationShapes;
-import dm.core.components.units.simple_unit: SimpleUnit;
+import core.components.units.simple_unit: SimpleUnit;
 
 import std.stdio;
 

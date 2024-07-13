@@ -1,7 +1,7 @@
 module dm.kit.inputs.joysticks.events.joystick_event;
 
-import dm.core.events.event_base : EventBase;
-import dm.core.utils.type_util : enumNameByIndex;
+import core.events.event_base : EventBase;
+import core.utils.type_util : enumNameByIndex;
 
 /**
  * Authors: initkfs

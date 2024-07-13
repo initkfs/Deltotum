@@ -1,6 +1,6 @@
 module dm.kit.assets.asset;
 
-import dm.core.components.units.services.loggable_unit : LoggableUnit;
+import core.components.units.services.loggable_unit : LoggableUnit;
 
 import std.logger : Logger;
 
@@ -15,7 +15,7 @@ import dm.kit.assets.fonts.font : Font;
 import dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 import dm.kit.graphics.colors.rgba : RGBA;
 import dm.kit.sprites.textures.texture : Texture;
-import dm.core.resources.resource : Resource;
+import core.resources.resource : Resource;
 import dm.kit.assets.fonts.font_cache : FontCache;
 import dm.kit.assets.fonts.font_size : FontSize;
 

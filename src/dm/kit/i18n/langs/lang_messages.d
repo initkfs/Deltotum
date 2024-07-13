@@ -1,6 +1,6 @@
 module dm.kit.i18n.langs.lang_messages;
 
-import dm.core.components.units.services.loggable_unit : LoggableUnit;
+import core.components.units.services.loggable_unit : LoggableUnit;
 
 import std.logger : Logger;
 

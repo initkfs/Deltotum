@@ -1,9 +1,9 @@
 module dm.kit.events.event_kit_target;
 
 import dm.kit.components.window_component : WindowComponent;
-import dm.core.events.event_target : EventTarget;
+import core.events.event_target : EventTarget;
 
-import dm.core.apps.events.app_event : AppEvent;
+import core.apps.events.app_event : AppEvent;
 import dm.kit.events.focus.focus_event : FocusEvent;
 import dm.kit.inputs.keyboards.events.key_event : KeyEvent;
 import dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
@@ -11,7 +11,7 @@ import dm.kit.inputs.keyboards.events.text_input_event : TextInputEvent;
 import dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import dm.kit.windows.events.window_event : WindowEvent;
 
-import dm.core.utils.type_util : drop;
+import core.utils.type_util : drop;
 
 /**
  * Authors: initkfs

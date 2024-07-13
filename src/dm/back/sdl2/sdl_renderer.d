@@ -108,7 +108,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
 
     ComResult copy(ComTexture texture) nothrow
     {
-        import dm.core.utils.type_util : castSafe;
+        import core.utils.type_util : castSafe;
 
         if (auto sdlTexture = texture.castSafe!SdlTexture)
         {

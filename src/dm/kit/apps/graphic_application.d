@@ -1,14 +1,14 @@
 module dm.kit.apps.graphic_application;
 
 import dm.com.graphics.com_font : ComFont;
-import dm.core.configs.config : Config;
-import dm.core.contexts.context : Context;
-import dm.core.apps.app_exit : AppExit;
-import dm.core.apps.cli_application : CliApplication;
-import dm.core.resources.resource : Resource;
+import core.configs.config : Config;
+import core.contexts.context : Context;
+import core.apps.app_exit : AppExit;
+import core.apps.cli_application : CliApplication;
+import core.resources.resource : Resource;
 import dm.kit.components.graphics_component : GraphicsComponent;
 import dm.kit.components.window_component : WindowComponent;
-import dm.core.components.uni_component : UniComponent;
+import core.components.uni_component : UniComponent;
 import dm.kit.windows.window_manager : WindowManager;
 import dm.kit.apps.caps.cap_graphics : CapGraphics;
 import dm.kit.graphics.graphics : Graphics;
@@ -19,7 +19,7 @@ import dm.kit.graphics.themes.theme : Theme;
 import dm.kit.assets.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
 import dm.kit.scenes.scene_manager : SceneManager;
 import dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
-import dm.core.utils.provider : Provider;
+import core.utils.provider : Provider;
 import dm.kit.i18n.langs.alphabets.alphabet : Alphabet;
 
 import dm.kit.windows.window : Window;
@@ -243,8 +243,8 @@ abstract class GraphicApplication : CliApplication
 
     protected void buildPartially(GraphicsComponent component)
     {
-        import dm.core.components.uni_component : UniComponent;
-        import dm.core.utils.type_util : castSafe;
+        import core.components.uni_component : UniComponent;
+        import core.utils.type_util : castSafe;
 
         super.build(component.castSafe!UniComponent);
 

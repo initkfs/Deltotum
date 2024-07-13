@@ -23,7 +23,7 @@ class HBox : SpaceableContainer
 
     override void spacing(double value)
     {
-        import dm.core.utils.type_util : castSafe;
+        import core.utils.type_util : castSafe;
 
         super.spacing = value;
         if (auto hLayout = layout.castSafe!HLayout)

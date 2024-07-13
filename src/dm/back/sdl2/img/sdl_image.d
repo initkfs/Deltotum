@@ -84,7 +84,7 @@ class SdlImage : SdlSurface, ComImage
     ComResult toSurface(out ComSurface surf) nothrow
     {
         assert(ptr);
-        import dm.core.utils.type_util : castSafe;
+        import core.utils.type_util : castSafe;
 
         auto thisSurf = castSafe!ComSurface(this);
         assert(thisSurf);

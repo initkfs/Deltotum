@@ -81,7 +81,7 @@ class TabPane : Control
 
     override void addCreate(Sprite sprite, long index = -1)
     {
-        import dm.core.utils.type_util : castSafe;
+        import core.utils.type_util : castSafe;
 
         if (auto tab = sprite.castSafe!Tab)
         {

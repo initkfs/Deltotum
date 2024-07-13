@@ -4,10 +4,10 @@ module dm.back.sdl2.sdl_application;
 version(SdlBackend):
 // dfmt on
 
-import dm.core.configs.config : Config;
-import dm.core.contexts.context : Context;
-import dm.core.apps.app_exit : AppExit;
-import dm.core.utils.provider : Provider;
+import core.configs.config : Config;
+import core.contexts.context : Context;
+import core.apps.app_exit : AppExit;
+import core.utils.provider : Provider;
 import dm.kit.apps.continuously_application : ContinuouslyApplication;
 import dm.kit.components.graphics_component : GraphicsComponent;
 import dm.kit.events.kit_event_manager : KitEventManager;

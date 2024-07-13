@@ -1,9 +1,9 @@
 module dm.kit.components.window_component;
 
 import dm.kit.components.graphics_component : GraphicsComponent;
-import dm.core.components.uni_component: UniComponent;
+import core.components.uni_component: UniComponent;
 
-import dm.core.components.attributes : Service;
+import core.components.attributes : Service;
 
 import dm.kit.windows.window : Window;
 

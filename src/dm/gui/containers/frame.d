@@ -65,7 +65,7 @@ class Frame : Container
         if (hasBackground && label)
         {
             import dm.kit.sprites.shapes.regular_polygon : RegularPolygon;
-            import dm.core.utils.type_util: castSafe;
+            import core.utils.type_util: castSafe;
 
             if (auto rp = background.get.castSafe!RegularPolygon)
             {
