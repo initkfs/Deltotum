@@ -49,8 +49,8 @@ class CircleLayout : ManagedLayout
         {
             const childBounds = child.bounds;
             const pos = Vector2.fromPolarDeg(nextDeg, radius);
-            child.x = startX + pos.x - childBounds.halfWidth;
-            child.y = startY + pos.y - childBounds.halfHeight;
+            child.x = child.margin.left + startX + pos.x - childBounds.halfWidth - child.margin.right;
+            child.y = child.margin.top + startY + pos.y - childBounds.halfHeight- child.margin.bottom;
             nextDeg += angleDegStep;
         }
     }

@@ -9,7 +9,7 @@ class SpecialAlphabet : Alphabet
 {
     override immutable(dchar)[] allLetters() pure
     {
-        dchar[] letters = "𑑛!×\"—«»#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ \n\r\t\b"d.dup;
+        dchar[] letters = "∙𑑛!×\"—«»#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ \n\r\t\b"d.dup;
         //Box-drawing characters
         foreach (dchar ch; '\u2500' .. '\u257F')
         {
@@ -21,6 +21,18 @@ class SpecialAlphabet : Alphabet
         {
             letters ~= ch;
         }
+
+        //Geometric Shapes Extended
+        // foreach (dchar ch; '\U0001F780' .. '\U0001F7FF')
+        // {
+        //     letters ~= ch;
+        // }
+
+        //Miscellaneous Symbols and Pictographs
+        // foreach (dchar ch; '\U0001F300' .. '\U0001F5FF')
+        // {
+        //     letters ~= ch;
+        // }
 
         return letters;
     }

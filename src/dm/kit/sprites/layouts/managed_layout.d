@@ -72,7 +72,7 @@ class ManagedLayout : Layout
             return false;
         }
 
-        const newX = rootBounds.middleX - targetBounds.halfWidth;
+        const newX = rootBounds.middleX - targetBounds.halfWidth + target.margin.left - target.margin.right;
         if (Math.abs(target.x - newX) < sizeChangeDelta)
         {
             return false;
@@ -97,7 +97,7 @@ class ManagedLayout : Layout
             return false;
         }
 
-        const newY = rootBounds.middleY - targetBounds.halfHeight;
+        const newY = rootBounds.middleY - targetBounds.halfHeight + target.margin.top - target.margin.bottom;
         if (Math.abs(target.y - newY) < sizeChangeDelta)
         {
             return false;

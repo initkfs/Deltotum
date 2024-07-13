@@ -279,15 +279,19 @@ class Controls : Control
         }
         tree1.fill(root);
 
-        import dm.gui.controls.datetimes.calendar : Calendar;
+        // import dm.gui.controls.datetimes.calendar : Calendar;
 
-        auto cal1 = new Calendar;
-        rootContainer.addCreate(cal1);
+        // auto cal1 = new Calendar;
+        // rootContainer.addCreate(cal1);
 
-        import dm.gui.controls.pickers.time_picker : TimePicker;
+        // import dm.gui.controls.pickers.time_picker : TimePicker;
 
-        auto time1 = new TimePicker;
-        rootContainer.addCreate(time1);
+        // auto time1 = new TimePicker;
+        // rootContainer.addCreate(time1);
+
+        import dm.gui.controls.clocks.analog_clock: AnalogClock;
+        auto clock1 = new AnalogClock;
+        rootContainer.addCreate(clock1);
     }
 
     void createCharts(Container root)
