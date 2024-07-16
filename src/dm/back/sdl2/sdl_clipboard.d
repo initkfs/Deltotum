@@ -53,6 +53,24 @@ class SdlClipboard : SdlObject, ComClipboard
         return ComResult.success;
     }
 
+    // ComResult getPrimarySelection(out string text) nothrow
+    // {
+    //     auto textPtr = SDL_GetPrimarySelectionText();
+    //     if (!textPtr)
+    //     {
+    //         text = null;
+    //     }
+    //     import std.string : fromStringz;
+
+    //     text = textPtr.fromStringz.idup;
+    //     SDL_Free(textPtr);
+    //     if (text.length == 0)
+    //     {
+    //         return ComResult.error(getError);
+    //     }
+    //     return ComResult.success;
+    // }
+
     bool isDisposed() nothrow pure @safe
     {
         return false;
