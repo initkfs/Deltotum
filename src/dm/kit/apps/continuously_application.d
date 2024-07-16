@@ -36,9 +36,9 @@ abstract class ContinuouslyApplication : GraphicApplication
         mainLoop.isRunning = false;
     }
 
-    override void requestQuit()
+    override void requestExit()
     {
-        super.requestQuit;
+        super.requestExit;
         stop;
         isProcessEvents = false;
     }

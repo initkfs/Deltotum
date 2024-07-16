@@ -2037,7 +2037,7 @@ class Sprite : EventKitTarget
 
     bool removeInvListener(void delegate() dg)
     {
-        import core.utils.type_util : drop;
+        import core.utils.arrays : drop;
 
         return drop(invalidateListeners, dg);
     }

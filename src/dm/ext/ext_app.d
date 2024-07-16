@@ -79,7 +79,7 @@ extern (C) void dm_run()
 extern (C) int dm_exit()
 {
     assert(app);
-    app.requestQuit;
+    app.requestExit;
     return 0;
 }
 

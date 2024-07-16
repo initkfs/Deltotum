@@ -6,8 +6,8 @@ version(SdlBackend):
 
 import core.configs.config : Config;
 import core.contexts.context : Context;
-import core.apps.app_exit : AppExit;
-import core.utils.provider : Provider;
+import core.apps.app_init_ret : AppInitRet;
+import core.utils.factories : Provider;
 import dm.kit.apps.continuously_application : ContinuouslyApplication;
 import dm.kit.components.graphics_component : GraphicsComponent;
 import dm.kit.events.kit_event_manager : KitEventManager;
@@ -99,7 +99,7 @@ class SdlApplication : ContinuouslyApplication
         this.fontLib = fontLib is null ? new SdlTTFLib : fontLib;
     }
 
-    override AppExit initialize(string[] args)
+    override AppInitRet initialize(string[] args)
     {
         const initRes = super.initialize(args);
         if (!initRes || initRes.isExit)
@@ -502,7 +502,7 @@ class SdlApplication : ContinuouslyApplication
                         if (windowManager.count == 0 && isQuitOnCloseAllWindows)
                         {
                             uservices.logger.tracef("All windows are closed, exit request");
-                            requestQuit;
+                            requestExit;
                         }
                     }
                     break;
@@ -558,7 +558,7 @@ class SdlApplication : ContinuouslyApplication
 
         windowManager = new WindowManager(uservices.logger);
 
-        return AppExit(isExit: false, isInit: true);
+        return AppInitRet(isExit: false, isInit: true);
     }
 
     override ulong ticks()
@@ -569,7 +569,7 @@ class SdlApplication : ContinuouslyApplication
 
     protected void initLoop(Loop loop)
     {
-        loop.onQuit = () => quit;
+        loop.onExit = () => exit;
         loop.timestampMsProvider = () => ticks;
         loop.onDelay = () => sdlLib.delay(10);
         loop.onDelayTimeRestMs = (restMs) => sdlLib.delay(cast(uint) restMs);
@@ -819,9 +819,9 @@ class SdlApplication : ContinuouslyApplication
         sdlLib.clearError;
     }
 
-    override void quit()
+    override void exit(int code = 0)
     {
-        super.quit;
+        super.exit(code);
 
         clearErrors;
 
@@ -939,7 +939,7 @@ class SdlApplication : ContinuouslyApplication
         if (event.type == SDL_QUIT)
         {
             windowManager.destroyAll;
-            requestQuit;
+            requestExit;
         }
     }
 }

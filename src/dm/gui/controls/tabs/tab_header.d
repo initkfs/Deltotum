@@ -41,7 +41,7 @@ class TabHeader : Control
     {
         super.add(obj, index);
 
-        import core.utils.type_util : castSafe;
+        import core.utils.types : castSafe;
 
         if (auto tab = obj.castSafe!Tab)
         {

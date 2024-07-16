@@ -28,7 +28,8 @@
             "name": "app-dist",
             "versions": [
                 "SdlBackend",
-                "DmAddon"
+                "DmAddon",
+                "EventBusCoreEvents"
             ],
             "targetType": "executable",
             "targetName": "dm-dist",

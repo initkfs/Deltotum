@@ -1,7 +1,7 @@
 module dm.kit.inputs.pointers.events.pointer_event;
 
 import core.events.event_base : EventBase;
-import core.utils.type_util : enumNameByIndex;
+import core.utils.types : enumNameByIndex;
 import core.events.event_target : EventTarget;
 import core.events.event_source : EventSource;
 

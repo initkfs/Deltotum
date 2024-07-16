@@ -43,7 +43,7 @@ unittest
     assert(nc.isBuilt);
 
     import std.traits : hasUDA;
-    import core.utils.type_util : hasOverloads;
+    import core.utils.types : hasOverloads;
     import core.components.attributes : Service;
 
     alias componentType = typeof(nc);

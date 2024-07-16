@@ -9,7 +9,7 @@ mixin template EqualsOther()
     alias Self = typeof(this);
 
     import std.traits : CopyTypeQualifiers, isImplicitlyConvertible, fullyQualifiedName;
-    import core.utils.type_util: castSafe;
+    import core.utils.types: castSafe;
 
     static if (is(Self == class))
     {

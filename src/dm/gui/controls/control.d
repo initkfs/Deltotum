@@ -409,7 +409,7 @@ class Control : Sprite
 
     override void build(Sprite sprite)
     {
-        import core.utils.type_util : castSafe;
+        import core.utils.types : castSafe;
 
         assert(!sprite.isBuilt, "Sprite already built: " ~ sprite.className);
 
@@ -426,7 +426,7 @@ class Control : Sprite
 
     override void add(Sprite sprite, long index = -1)
     {
-        import core.utils.type_util : castSafe;
+        import core.utils.types : castSafe;
 
         super.add(sprite, index);
         if (auto control = sprite.castSafe!Control)
@@ -508,7 +508,7 @@ class Control : Sprite
 
         if (isFindStyleInParent)
         {
-            import core.utils.type_util : castSafe;
+            import core.utils.types : castSafe;
 
             Control currParent = parent.castSafe!Control;
             while (currParent)

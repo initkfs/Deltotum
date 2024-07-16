@@ -8,7 +8,7 @@ import core.apps.events.app_event : AppEvent;
  */
 abstract class EventProcessor(E)
 {
-    void delegate(ref AppEvent) onApplication;
+    void delegate(ref AppEvent) onApp;
 
     abstract bool process(E event);
 }

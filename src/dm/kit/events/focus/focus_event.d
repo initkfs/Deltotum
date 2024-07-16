@@ -1,7 +1,7 @@
 module dm.kit.events.focus.focus_event;
 
 import core.events.event_base : EventBase;
-import core.utils.type_util : enumNameByIndex;
+import core.utils.types : enumNameByIndex;
 
 /**
  * Authors: initkfs

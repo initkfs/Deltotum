@@ -11,7 +11,7 @@ import dm.kit.inputs.keyboards.events.text_input_event : TextInputEvent;
 import dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import dm.kit.windows.events.window_event : WindowEvent;
 
-import core.utils.type_util : drop;
+import core.utils.arrays : drop;
 
 /**
  * Authors: initkfs

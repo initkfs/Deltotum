@@ -53,13 +53,6 @@ class ApplicationUnit : LoggableUnit
         this._context = context;
     }
 
-    inout(Config) config() inout nothrow pure @safe
-    {
-        return _config;
-    }
-
-    inout(Context) context() inout nothrow pure @safe
-    {
-        return _context;
-    }
+    inout(Config) config() inout nothrow pure @safe => _config;
+    inout(Context) context() inout nothrow pure @safe => _context;
 }

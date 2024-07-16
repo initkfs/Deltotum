@@ -41,8 +41,5 @@ class ConfigurableUnit : SimpleUnit
         this._config = config;
     }
 
-    inout(Config) config() inout nothrow pure @safe
-    {
-        return _config;
-    }
+    inout(Config) config() inout nothrow pure @safe => _config;
 }

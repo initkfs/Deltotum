@@ -2,7 +2,7 @@ module core.apps.cli_app;
 
 import core.components.units.simple_unit : SimpleUnit;
 import core.apps.crashes.crash_handler : CrashHandler;
-import core.apps.app_exit : AppExit;
+import core.apps.app_init_ret : AppInitRet;
 import core.components.uni_component : UniComponent;
 import core.configs.config : Config;
 import core.clis.cli : Cli;
@@ -35,6 +35,7 @@ class CliApp : SimpleUnit
     string defaultDataDir = "data";
     string defaultConfigsDir = "configs";
     string defaultUserDataDir = "userdata";
+    string defaultResourcesDir = "resources";
 
     CrashHandler[] crashHandlers;
 
@@ -49,7 +50,7 @@ class CliApp : SimpleUnit
         size_t cliStartupDelayMs;
     }
 
-    AppExit initialize(string[] args)
+    AppInitRet initialize(string[] args)
     {
         super.initialize;
 
@@ -58,7 +59,7 @@ class CliApp : SimpleUnit
             createCrashHandlers(args);
 
             _uniServices = newUniServices;
-            assert(_uniServices, "Services must not be null");
+            assert(_uniServices);
 
             uservices.capCore = newCapCore;
 
@@ -81,7 +82,8 @@ class CliApp : SimpleUnit
             if (cliResult.helpWanted)
             {
                 cli.printHelp(cliResult);
-                return AppExit(true, false);
+                return AppInitRet(isExit : true, isInit:
+                    false);
             }
 
             if (cliStartupDelayMs > 0)
@@ -110,49 +112,66 @@ class CliApp : SimpleUnit
 
             uservices.eventBus = createEventBus(uservices.context);
             assert(uservices.eventBus);
-            uservices.eventBus.fire(CoreBusEvents.build_context, uservices.context);
-            uservices.eventBus.fire(CoreBusEvents.build_event_bus, uservices.eventBus);
+            version (EventBusCoreEvents)
+            {
+                uservices.eventBus.fire(CoreBusEvents.build_context, uservices.context);
+                uservices.eventBus.fire(CoreBusEvents.build_event_bus, uservices.eventBus);
+            }
 
             uservices.config = createConfig(uservices.context);
             assert(uservices.config);
-            uservices.eventBus.fire(CoreBusEvents.build_config, uservices.config);
+            version (EventBusCoreEvents)
+            {
+                uservices.eventBus.fire(CoreBusEvents.build_config, uservices.config);
+            }
 
             uservices.logger = createLogger(uservices.support);
             assert(uservices.logger);
-            uservices.eventBus.fire(CoreBusEvents.build_logger, uservices.logger);
+            version (EventBusCoreEvents)
+            {
+                uservices.eventBus.fire(CoreBusEvents.build_logger, uservices.logger);
+            }
 
             uservices.resource = createResource(uservices.logger, uservices.config, uservices
                     .context);
             assert(uservices.resource);
             uservices.logger.trace("Resources service built");
-            uservices.eventBus.fire(CoreBusEvents.build_resource, uservices.resource);
+            version (EventBusCoreEvents)
+            {
+                uservices.eventBus.fire(CoreBusEvents.build_resource, uservices.resource);
+            }
 
             uservices.locator = createLocator(uservices.logger, uservices.config, uservices.context);
             assert(uservices.locator);
             uservices.logger.trace("Service locator built");
-            uservices.eventBus.fire(CoreBusEvents.build_locator, uservices.locator);
+            version (EventBusCoreEvents)
+            {
+                uservices.eventBus.fire(CoreBusEvents.build_locator, uservices.locator);
+            }
 
             uservices.isBuilt = true;
-            uservices.eventBus.fire(CoreBusEvents.build_core_services, uservices);
-
+            version (EventBusCoreEvents)
+            {
+                uservices.eventBus.fire(CoreBusEvents.build_core_services, uservices);
+            }
         }
         catch (Exception e)
         {
             consumeThrowable(e, true);
         }
 
-        return AppExit(false, true);
+        return AppInitRet(false, true);
     }
 
-    UniComponent newUniServices()
+    void exit(int code = 0)
     {
-        return new UniComponent;
+        assert(uservices.context);
+        uservices.context.appContext.exit(code);
     }
 
-    CapCore newCapCore()
-    {
-        return new CapCore;
-    }
+    UniComponent newUniServices() => new UniComponent;
+
+    CapCore newCapCore() => new CapCore;
 
     protected void consumeThrowable(Throwable ex, bool isRethrow = true)
     {
@@ -484,7 +503,7 @@ class CliApp : SimpleUnit
         return new Support(errStatus);
     }
 
-    protected Resource createResource(Logger logger, Config config, Context context, string resourceDirPath = "")
+    protected Resource createResource(Logger logger, Config config, Context context)
     {
         assert(logger);
         assert(config);
@@ -493,7 +512,7 @@ class CliApp : SimpleUnit
         import std.path : buildPath, isAbsolute;
         import std.file : exists, isDir;
 
-        string mustBeResDir = resourceDirPath;
+        string mustBeResDir = defaultResourcesDir;
         if (mustBeResDir.length == 0)
         {
             logger.infof(
@@ -661,10 +680,5 @@ class CliApp : SimpleUnit
 
         enforce(services !is null, "Services must not be null");
         _uniServices = services;
-    }
-
-    void quit()
-    {
-
     }
 }

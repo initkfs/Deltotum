@@ -1,7 +1,7 @@
 module dm.kit.events.kit_event_manager;
 
 import core.events.processing.event_processor: EventProcessor;
-import core.events.event_manager: EventManager;
+import core.events.chain_event_manager: ChainEventManager;
 import dm.kit.events.processing.kit_event_processor: KitEventProcessor;
 import dm.kit.scenes.scene_manager : SceneManager;
 
@@ -19,7 +19,7 @@ import std.typecons : Nullable;
 /**
  * Authors: initkfs
  */
-class KitEventManager : EventManager!(Sprite)
+class KitEventManager : ChainEventManager!(Sprite)
 {
     Nullable!(Sprite[]) delegate(long) targetsProvider;
 

@@ -41,10 +41,7 @@ class LoggableUnit : SimpleUnit
         this._logger = logger;
     }
 
-    inout(Logger) logger() inout nothrow pure @safe
-    {
-        return _logger;
-    }
+    inout(Logger) logger() inout nothrow pure @safe => _logger;
 }
 
 unittest

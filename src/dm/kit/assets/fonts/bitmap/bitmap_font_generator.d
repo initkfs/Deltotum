@@ -4,7 +4,7 @@ import dm.com.graphics.com_font : ComFontHinting, ComFont;
 import dm.com.graphics.com_surface : ComSurface;
 import dm.kit.assets.fonts.font_generator : FontGenerator;
 import dm.kit.assets.fonts.glyphs.glyph : Glyph;
-import core.utils.provider : Provider;
+import core.utils.factories : Provider;
 
 import dm.kit.assets.fonts.font : Font;
 import dm.kit.sprites.textures.texture : Texture;

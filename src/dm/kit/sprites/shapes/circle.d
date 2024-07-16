@@ -35,7 +35,7 @@ class Circle : Shape
 
     override bool intersect(Sprite other)
     {
-        //import core.utils.type_util : castSafe;
+        //import core.utils.types : castSafe;
         //TODO unsafe cast, but fast
         if (auto circle = cast(Circle) other)
         {

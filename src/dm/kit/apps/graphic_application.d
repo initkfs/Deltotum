@@ -3,8 +3,8 @@ module dm.kit.apps.graphic_application;
 import dm.com.graphics.com_font : ComFont;
 import core.configs.config : Config;
 import core.contexts.context : Context;
-import core.apps.app_exit : AppExit;
-import core.apps.cli_application : CliApplication;
+import core.apps.app_init_ret : AppInitRet;
+import core.apps.cli_app : CliApp;
 import core.resources.resource : Resource;
 import dm.kit.components.graphics_component : GraphicsComponent;
 import dm.kit.components.window_component : WindowComponent;
@@ -19,7 +19,7 @@ import dm.kit.graphics.themes.theme : Theme;
 import dm.kit.assets.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
 import dm.kit.scenes.scene_manager : SceneManager;
 import dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
-import core.utils.provider : Provider;
+import core.utils.factories : Provider;
 import dm.kit.i18n.langs.alphabets.alphabet : Alphabet;
 
 import dm.kit.windows.window : Window;
@@ -43,7 +43,7 @@ import dm.kit.i18n.langs.lang_messages : LangMessages;
 /**
  * Authors: initkfs
  */
-abstract class GraphicApplication : CliApplication
+abstract class GraphicApplication : CliApp
 {
     bool isVideoEnabled;
     bool isAudioEnabled;
@@ -77,7 +77,7 @@ abstract class GraphicApplication : CliApplication
 
     abstract ComSystem newComSystem();
 
-    override AppExit initialize(string[] args)
+    override AppInitRet initialize(string[] args)
     {
         const initRes = super.initialize(args);
         if (!initRes || initRes.isExit)
@@ -118,7 +118,7 @@ abstract class GraphicApplication : CliApplication
 
         _i18n = createI18n(uservices.logger, uservices.config, uservices.context);
 
-        return AppExit(isExit: false, isInit: true);
+        return AppInitRet(isExit: false, isInit: true);
     }
 
     abstract ulong ticks();
@@ -245,7 +245,7 @@ abstract class GraphicApplication : CliApplication
     protected void buildPartially(GraphicsComponent component)
     {
         import core.components.uni_component : UniComponent;
-        import core.utils.type_util : castSafe;
+        import core.utils.types : castSafe;
 
         super.build(component.castSafe!UniComponent);
 
@@ -287,10 +287,8 @@ abstract class GraphicApplication : CliApplication
         });
     }
 
-    override void quit()
+    override void exit(int code = 0)
     {
-        super.quit;
-
         if (_audio)
         {
             _audio.dispose;
@@ -325,14 +323,14 @@ abstract class GraphicApplication : CliApplication
         // }
     }
 
-    void requestQuit()
+    void requestExit()
     {
         if (uservices && uservices.logger)
         {
             uservices.logger.tracef("Request quit");
         }
 
-        quit;
+        exit;
     }
 
     Graphics createGraphics(Logger logger, ComRenderer renderer, Theme theme)

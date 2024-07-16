@@ -69,12 +69,12 @@ class SdlEventProcessor : KitEventProcessor!(SDL_Event*)
 
     protected void handleQuit(SDL_Event* event)
     {
-        if (onApplication is null)
+        if (onApp is null)
         {
             return;
         }
         auto exitEvent = AppEvent(AppEvent.Event.exit, event.window.windowID);
-        onApplication(exitEvent);
+        onApp(exitEvent);
     }
 
     protected void handleTextInputEvent(SDL_Event* event)

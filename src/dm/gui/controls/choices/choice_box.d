@@ -255,7 +255,7 @@ class ChoiceBox : TypedContainer!ChoiceItem
 
     protected void fillItemList()
     {
-        import core.utils.type_util : castSafe;
+        import core.utils.types : castSafe;
 
         scope Sprite[] removed;
         foreach (oldItem; choiceList.children)
@@ -328,7 +328,7 @@ class ChoiceBox : TypedContainer!ChoiceItem
             return null;
         }
 
-        import core.utils.type_util : castSafe;
+        import core.utils.types : castSafe;
 
         foreach (item; choiceList.children)
         {

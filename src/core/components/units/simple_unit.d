@@ -19,44 +19,16 @@ class SimpleUnit : Unitable
         _state = initState;
     }
 
-    UnitState state() const nothrow pure @safe
+    const nothrow pure @safe
     {
-        return _state;
-    }
-
-    bool isState(UnitState s) const nothrow pure @safe
-    {
-        return _state == s;
-    }
-
-    bool isNone() const nothrow pure @safe
-    {
-        return isState(UnitState.none);
-    }
-
-    bool isInitialized() const nothrow pure @safe
-    {
-        return isState(UnitState.initialize);
-    }
-
-    bool isCreated() const nothrow pure @safe
-    {
-        return isState(UnitState.create);
-    }
-
-    bool isRunning() const nothrow pure @safe
-    {
-        return isState(UnitState.run);
-    }
-
-    bool isStopped() const nothrow pure @safe
-    {
-        return isState(UnitState.stop);
-    }
-
-    bool isDisposed() const nothrow pure @safe
-    {
-        return isState(UnitState.dispose);
+        UnitState state() => _state;
+        bool isState(UnitState s) => _state == s;
+        bool isNone() => isState(UnitState.none);
+        bool isInitialized() => isState(UnitState.initialize);
+        bool isCreated() => isState(UnitState.create);
+        bool isRunning() => isState(UnitState.run);
+        bool isStopped() => isState(UnitState.stop);
+        bool isDisposed() => isState(UnitState.dispose);
     }
 
     void initialize()

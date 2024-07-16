@@ -25,7 +25,7 @@ abstract class Loop
 
     void delegate() onInit;
     void delegate() onRun;
-    void delegate() onQuit;
+    void delegate() onExit;
 
     abstract
     {
@@ -73,9 +73,9 @@ abstract class Loop
     void quit()
     {
         isRunning = false;
-        if (onQuit)
+        if (onExit)
         {
-            onQuit();
+            onExit();
         }
     }
 }

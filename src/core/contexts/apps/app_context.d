@@ -54,6 +54,13 @@ class AppContext
     {
         return new immutable AppContext(_workDir, _dataDir, _userDir, isDebug, isSilent);
     }
+
+    void exit(int code) const
+    {
+        import StdcLib = core.stdc.stdlib;
+
+        StdcLib.exit(code);
+    }
 }
 
 unittest

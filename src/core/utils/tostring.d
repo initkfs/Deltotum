@@ -13,7 +13,7 @@ mixin template ToString()
 
     private string toStringImpl(C)()
     {
-        import core.utils.type_util;
+        import core.utils.types;
         import std.conv : to;
 
         static if (is(C == class))
@@ -40,7 +40,7 @@ mixin template ToString()
 
         import std.traits : isDelegate, hasUDA, isPointer;
         import core.components.attributes : Service;
-        import core.utils.type_util : hasOverloads;
+        import core.utils.types : hasOverloads;
         import core.utils.tostring : ToStringExclude;
 
         static foreach (i, fieldName; fields)

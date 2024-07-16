@@ -357,7 +357,7 @@ class SceneView : VBox
             }
         };
 
-        import core.utils.type_util : castSafe;
+        import core.utils.types : castSafe;
 
         foreach (ch; paddingContainer.children)
         {

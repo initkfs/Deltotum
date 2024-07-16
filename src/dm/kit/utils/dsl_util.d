@@ -15,7 +15,7 @@ mixin template CtorsJoin(Args...)
     enum getType(alias T) = typeof(T).stringof;
 
     import std.traits : hasUDA;
-    import core.utils.type_util : hasOverloads;
+    import core.utils.types : hasOverloads;
 
     static foreach (ctor; __traits(getOverloads, typeof(super), "__ctor"))
     {

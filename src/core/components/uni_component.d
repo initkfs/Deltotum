@@ -102,7 +102,7 @@ class UniComponent : SimpleUnit
         }
 
         import std.traits : hasUDA;
-        import core.utils.type_util : hasOverloads;
+        import core.utils.types : hasOverloads;
 
         alias parentType = typeof(parentComponent);
         static foreach (const fieldName; __traits(allMembers, parentType))

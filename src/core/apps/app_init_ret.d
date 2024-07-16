@@ -1,11 +1,11 @@
-module core.apps.app_exit;
+module core.apps.app_init_ret;
 
 import core.attribute : mustuse;
 
 /**
  * Authors: initkfs
  */
-@mustuse struct AppExit
+@mustuse struct AppInitRet
 {
     bool isExit;
     bool isInit;

@@ -9,10 +9,7 @@ import std.typecons : Nullable;
 /**
  * Authors: initkfs
  */
-class EventManager(Component)
+class EventManager
 {
-    protected
-    {
-        DList!Component eventChain = DList!Component();
-    }
+    
 }
