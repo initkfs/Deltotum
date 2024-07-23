@@ -56,9 +56,12 @@ class EventBus
 unittest
 {
     auto bus = new EventBus;
+    bus.enabled = true;
     enum eventName1 = "eventName";
     string eventRes;
-    bus.subscribe(eventName1, (payload) { eventRes = payload; });
+    bus.subscribe(eventName1, (payloadVar) {
+        eventRes = payloadVar.get!string;
+    });
     bus.fire(eventName1, eventName1);
     assert(eventRes == eventName1);
 }
