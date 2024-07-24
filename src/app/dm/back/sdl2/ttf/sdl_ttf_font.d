@@ -1,0 +1,148 @@
+module app.dm.back.sdl2.ttf.sdl_ttf_font;
+
+// dfmt off
+version(SdlBackend):
+// dfmt on
+
+import app.dm.com.graphics.com_font : ComFont, ComFontHinting;
+import app.dm.com.platforms.results.com_result : ComResult;
+import app.dm.back.sdl2.base.sdl_object_wrapper : SdlObjectWrapper;
+import app.dm.back.sdl2.ttf.base.sdl_ttf_object : SdlTTFObject;
+import app.dm.com.graphics.com_surface : ComSurface;
+
+import std.conv : to;
+
+import bindbc.sdl;
+
+import std.string : toStringz;
+
+/**
+ * Authors: initkfs
+ */
+class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
+{
+    private
+    {
+        string _fontPath;
+        size_t _fontSize;
+    }
+
+    ComResult load(string fontFilePath, size_t fontSize = 12) nothrow
+    {
+        if (ptr)
+        {
+            disposePtr;
+        }
+
+        if (fontFilePath.length == 0)
+        {
+            return ComResult.error("Font file path must not be empty");
+        }
+
+        if (fontSize == 0)
+        {
+            return ComResult.error("Font file size must be positive number");
+        }
+
+        this._fontPath = fontFilePath;
+        this._fontSize = fontSize;
+
+        ptr = TTF_OpenFont(_fontPath.toStringz, cast(int) _fontSize);
+        if (!ptr)
+        {
+            return getErrorRes("Unable to load ttf font from " ~ fontFilePath);
+        }
+
+        return ComResult.success;
+    }
+
+    ComResult renderFont(
+        ComSurface targetSurface,
+        const(dchar[]) text,
+        ubyte fr = 255, ubyte fg = 255, ubyte fb = 255, ubyte fa = 255,
+        ubyte br = 255, ubyte bg = 255, ubyte bb = 255, ubyte ba = 255) nothrow
+    {
+        assert(targetSurface);
+
+        SDL_Color color = {fr, fg, fb, fa};
+        //TODO TTF_RenderText_Shaded
+        SDL_Color backgroundColor = {br, bg, bb, ba};
+        //TODO calculate background color
+        import std.utf : toUTFz;
+
+        const(char)* textPtr;
+        try
+        {
+            textPtr = toUTFz!(const(char)*)(text);
+        }
+        catch (Exception e)
+        {
+            return ComResult.error(e.msg);
+        }
+
+        assert(textPtr);
+
+        SDL_Surface* fontSurfacePtr = TTF_RenderUTF8_Blended(ptr, textPtr, color);
+        if (!fontSurfacePtr)
+        {
+            return getErrorRes("Unable to render text");
+        }
+
+        //TODO unsafe
+        if (const err = targetSurface.createFromPtr(cast(void*) fontSurfacePtr))
+        {
+            return err;
+        }
+
+        return ComResult.success;
+    }
+
+    ComResult getFontPath(out string path) nothrow
+    {
+        assert(ptr, "Font not loaded");
+
+        path = this._fontPath;
+        return ComResult.success;
+    }
+
+    ComResult getFontSize(out size_t size) nothrow
+    {
+        assert(ptr, "Font not loaded");
+        ;
+        size = _fontSize;
+        return ComResult.success;
+    }
+
+    ComResult setHinting(ComFontHinting hinting)
+    {
+        int sdlHinting;
+        final switch (hinting) with (ComFontHinting)
+        {
+            case none:
+                sdlHinting = TTF_HINTING_NONE;
+                break;
+            case normal:
+                sdlHinting = TTF_HINTING_NORMAL;
+                break;
+            case light:
+                sdlHinting = TTF_HINTING_LIGHT;
+                break;
+            case mono:
+                sdlHinting = TTF_HINTING_MONO;
+                break;
+        }
+        TTF_SetFontHinting(ptr, sdlHinting);
+        return ComResult.success;
+    }
+
+    override bool disposePtr()
+    {
+        if (ptr)
+        {
+            TTF_CloseFont(ptr);
+            return true;
+        }
+        return false;
+    }
+
+}

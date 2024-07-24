@@ -5,8 +5,8 @@
 /libs
 /dub.selections.json
 /dm
-/src/app.d
-/src/game
+/src/main.d
+/src/app/game
 /build.sh
 /trace.*
 /libjulia.so
