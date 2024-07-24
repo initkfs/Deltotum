@@ -16,6 +16,8 @@ import core.apps.caps.cap_core : CapCore;
 import core.events.bus.event_bus : EventBus;
 import core.events.bus.core_bus_events : CoreBusEvents;
 import core.locators.service_locator : ServiceLocator;
+import core.mem.allocator : Allocator;
+import core.mem.mallocator : Mallocator;
 import core.supports.errors.err_status : ErrStatus;
 
 import CoreEnvKeys = core.core_env_keys;
@@ -130,6 +132,15 @@ class CliApp : SimpleUnit
             version (EventBusCoreEvents)
             {
                 uservices.eventBus.fire(CoreBusEvents.build_logger, uservices.logger);
+            }
+
+            uservices.alloc = createAllocator(uservices.logger, uservices.config, uservices
+                    .context);
+            assert(uservices.alloc);
+            uservices.logger.trace("Service allocator built");
+            version (EventBusCoreEvents)
+            {
+                uservices.eventBus.fire(CoreBusEvents.build_allocator, uservices.alloc);
             }
 
             uservices.resource = createResource(uservices.logger, uservices.config, uservices
@@ -585,6 +596,16 @@ class CliApp : SimpleUnit
         Logger logger)
     {
         return new ServiceLocator(logger);
+    }
+
+    Mallocator newMallocator()
+    {
+        return new Mallocator;
+    }
+
+    Allocator createAllocator(Logger logger, Config config, Context context)
+    {
+        return newMallocator;
     }
 
     protected Cli createCli(string[] args)

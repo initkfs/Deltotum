@@ -11,6 +11,7 @@ enum CoreBusEvents {
     build_config = "build_config",
     build_logger = "build_logger",
     build_resource = "build_resource",
+    build_allocator = "build_allocator",
     build_locator = "build_locator",
 
     build_core_services = "build_core_services"

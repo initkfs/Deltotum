@@ -8,6 +8,7 @@ import core.resources.null_resource : NullResource;
 import core.supports.null_support : NullSupport;
 import core.events.bus.null_event_bus : NullEventBus;
 import core.locators.null_service_locator : NullServiceLocator;
+import core.mem.mallocator: Mallocator;
 
 import core.apps.caps.cap_core : CapCore;
 
@@ -24,6 +25,8 @@ class NullUniComponent : UniComponent
         _context = new NullContext;
         _logger = new NullLogger;
         _config = new NullConfig;
+        //TODO NullAllocator?
+        _alloc = new Mallocator;
         _cli = new NullCli;
         _resource = new NullResource;
         _support = new NullSupport;

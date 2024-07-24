@@ -10,6 +10,7 @@ import core.resources.resource : Resource;
 import core.apps.caps.cap_core : CapCore;
 import core.events.bus.event_bus : EventBus;
 import core.locators.service_locator : ServiceLocator;
+import core.mem.allocator : Allocator;
 
 import std.logger.core : Logger;
 
@@ -37,6 +38,7 @@ class UniComponent : SimpleUnit
         @Service Context _context;
         @Service Logger _logger;
         @Service Config _config;
+        @Service Allocator _alloc;
         @Service Cli _cli;
         @Service Resource _resource;
         @Service Support _support;
@@ -236,6 +238,25 @@ class UniComponent : SimpleUnit
 
         enforce(config !is null, "Config must not be null");
         _config = config;
+    }
+
+    bool hasAlloc() const nothrow pure @safe
+    {
+        return _alloc !is null;
+    }
+
+    inout(Allocator) alloc() inout nothrow pure @safe
+    out (_alloc; _alloc !is null)
+    {
+        return _alloc;
+    }
+
+    void alloc(Allocator newAlloc) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(newAlloc !is null, "Service allocator must not be null");
+        _alloc = newAlloc;
     }
 
     bool hasCli() const nothrow pure @safe
