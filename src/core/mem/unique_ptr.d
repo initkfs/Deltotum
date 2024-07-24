@@ -3,11 +3,11 @@
  */
 module core.mem.unique_ptr;
 
-import core.mem.allocator: FreeFuncType, ReallocFuncType;
+import core.mem.allocator : FreeFuncType, ReallocFuncType;
 
 struct UniqPtr(T,
-    FreeFunc = FreeFuncType!T,
-    ReallocFunc = ReallocFuncType!T
+    FreeFunc = FreeFuncType,
+    ReallocFunc = ReallocFuncType
 )
 {
     private
@@ -43,7 +43,7 @@ struct UniqPtr(T,
         this(isAutoFree, newFreeFunPtr, newReallocFunPtr);
     }
 
-    this(T* ptr,
+    this(T* newPtr,
         size_t sizeBytes,
         bool isAutoFree = true,
         FreeFunc newFreeFunPtr = null,
@@ -51,7 +51,7 @@ struct UniqPtr(T,
     ) @nogc nothrow pure
     {
 
-        assert(ptr);
+        assert(newPtr);
 
         assert(sizeBytes > 0);
         assert(sizeBytes >= T.sizeof);
@@ -59,7 +59,7 @@ struct UniqPtr(T,
         auto capacity = sizeBytes / T.sizeof;
         assert(capacity > 0);
 
-        _ptr = ptr[0 .. capacity];
+        _ptr = newPtr[0 .. capacity];
         this(isAutoFree, newFreeFunPtr, newReallocFunPtr);
     }
 
@@ -114,10 +114,7 @@ struct UniqPtr(T,
         auto newSize = newCapacity * T.sizeof;
         assert((newSize / newCapacity) == T.sizeof, "Reallocation size overflow");
 
-        bool isRealloc = _reallocFunPtr(_ptr, newSize);
-        assert(isRealloc);
-
-        return true;
+        return realloc(newSize);
     }
 
     bool realloc(size_t newSizeBytes) @nogc nothrow @safe
@@ -127,8 +124,10 @@ struct UniqPtr(T,
     {
         assert(newSizeBytes > 0);
 
-        bool isRealloc = _reallocFunPtr(_ptr, newSizeBytes);
+        void[] reallocPtr = _ptr;
+        bool isRealloc = _reallocFunPtr(reallocPtr, newSizeBytes);
         assert(isRealloc);
+        _ptr = (() @trusted => cast(T[]) reallocPtr)();
 
         return true;
     }
@@ -342,17 +341,17 @@ struct UniqPtr(T,
             })();
         }
 
-        static bool reallocPtr(scope ref int[] ptr, size_t newBytes) @nogc nothrow @safe
+        static bool reallocPtr(scope ref void[] ptr, size_t newBytes) @nogc nothrow @safe
         {
             return (() @trusted {
                 void* newPtr = realloc(ptr.ptr, newBytes);
                 assert(newPtr);
-                ptr = cast(int[]) newPtr[0 .. newBytes];
+                ptr = newPtr[0 .. newBytes];
                 return true;
             })();
         }
 
-        static bool freePtr(scope int[] ptr) @nogc nothrow @safe
+        static bool freePtr(scope void[] ptr) @nogc nothrow @safe
         {
             return (() @trusted { free(ptr.ptr); return true; })();
         }
@@ -381,9 +380,14 @@ struct UniqPtr(T,
         }
 
         auto aCl = new A;
+        scope (exit)
+        {
+            aCl.ptr.free;
+        }
+
         int[] aClValue = allocate;
         aCl.ptr = UniqPtr!(int)(aClValue, isAutoFree:
-            true, &freePtr, &reallocPtr);
+            false, &freePtr, &reallocPtr);
         aCl.ptr = 20;
         assert(aCl.ptr.value == 20);
     }

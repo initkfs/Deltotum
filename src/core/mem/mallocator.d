@@ -8,26 +8,26 @@ import core.mem.unique_ptr : UniqPtr;
 
 import core.stdc.stdlib : malloc, realloc, free;
 
-ubyte[] allocate(size_t sizeBytes) @nogc nothrow @safe
+void[] allocate(size_t sizeBytes) @nogc nothrow @safe
 {
     return (() @trusted {
         void* newPtr = malloc(sizeBytes);
         assert(newPtr);
-        return cast(ubyte[]) newPtr[0 .. sizeBytes];
+        return newPtr[0 .. sizeBytes];
     })();
 }
 
-bool reallocate(scope ref ubyte[] ptr, size_t newBytes) @nogc nothrow @safe
+bool reallocate(scope ref void[] ptr, size_t newBytes) @nogc nothrow @safe
 {
     return (() @trusted {
         void* newPtr = realloc(ptr.ptr, newBytes);
         assert(newPtr);
-        ptr = cast(ubyte[]) newPtr[0 .. newBytes];
+        ptr = newPtr[0 .. newBytes];
         return true;
     })();
 }
 
-static bool deallocate(scope ubyte[] ptr) @nogc nothrow @safe
+static bool deallocate(scope void[] ptr) @nogc nothrow @safe
 {
     return (() @trusted { free(ptr.ptr); return true; })();
 }
