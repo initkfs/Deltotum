@@ -79,12 +79,12 @@ struct UniqPtr(T,
         }
     }
 
-    bool isFreed() const @nogc nothrow pure @safe
+    bool isFreed() const pure @safe
     {
         return _freed;
     }
 
-    void free() @nogc nothrow @safe
+    void free() @safe
     in (_ptr)
     in (_freeFunPtr)
     {
@@ -97,14 +97,14 @@ struct UniqPtr(T,
         _freed = true;
     }
 
-    void release() @nogc nothrow @safe
+    void release() @safe
     in (!_freed)
     {
         _ptr = null;
         _freed = false;
     }
 
-    bool reallcap(size_t newCapacity) @nogc nothrow @safe
+    bool reallcap(size_t newCapacity) @safe
     in (_ptr)
     in (!_freed)
     in (_reallocFunPtr)
@@ -117,7 +117,7 @@ struct UniqPtr(T,
         return realloc(newSize);
     }
 
-    bool realloc(size_t newSizeBytes) @nogc nothrow @safe
+    bool realloc(size_t newSizeBytes) @trusted
     in (_ptr)
     in (!_freed)
     in (_reallocFunPtr)
@@ -127,41 +127,41 @@ struct UniqPtr(T,
         void[] reallocPtr = _ptr;
         bool isRealloc = _reallocFunPtr(reallocPtr, newSizeBytes);
         assert(isRealloc);
-        _ptr = (() @trusted => cast(T[]) reallocPtr)();
+        _ptr = cast(T[]) reallocPtr;
 
         return true;
     }
 
-    protected inout(T*) index(size_t i) @nogc nothrow inout return @safe
+    protected inout(T*) index(size_t i) inout return @safe
     in (_ptr)
     in (!_freed)
     {
         return &_ptr[i];
     }
 
-    inout(T) opIndex(size_t i) @nogc nothrow inout @safe
+    inout(T) opIndex(size_t i) inout @safe
     {
         return *(index(i));
     }
 
-    inout(T) value() @nogc nothrow inout @safe
+    inout(T) value() inout @safe
     {
         return opIndex(0);
     }
 
-    void value(T newValue) @nogc nothrow @safe
+    void value(T newValue) @safe
     {
         *index(0) = newValue;
     }
 
-    inout(T[]) ptr() @nogc nothrow inout return @safe
+    inout(T[]) ptr() inout return @safe
     in (_ptr)
     in (!_freed)
     {
         return _ptr;
     }
 
-    inout(T[]) ptrUnsafe() @nogc nothrow inout
+    inout(T[]) ptrUnsafe() inout
     in (_ptr)
     in (!_freed)
     {
@@ -169,35 +169,35 @@ struct UniqPtr(T,
     }
 
     // a[i] = v
-    void opIndexAssign(T value, size_t i) @nogc nothrow @safe
+    void opIndexAssign(T value, size_t i) @safe
     {
         *(index(i)) = value;
     }
 
     // a[i1, i2] = v
-    void opIndexAssign(T value, size_t i1, size_t i2) @nogc nothrow @safe
+    void opIndexAssign(T value, size_t i1, size_t i2) @safe
     {
         opSlice(i1, i2)[] = value;
     }
 
-    void opIndexAssign(T[] value, size_t i1, size_t i2) @nogc nothrow @safe
+    void opIndexAssign(T[] value, size_t i1, size_t i2) @safe
     {
         opSlice(i1, i2)[] = value;
     }
 
-    inout(T[]) opSlice(size_t i, size_t j) @nogc nothrow inout return @safe
+    inout(T[]) opSlice(size_t i, size_t j) inout return @safe
     in (_ptr)
     in (!_freed)
     {
         return _ptr[i .. j];
     }
 
-    void opAssign(T newVal) @nogc nothrow @safe
+    void opAssign(T newVal) @safe
     {
         this.value(newVal);
     }
 
-    void opAssign(UniqPtr!T newPtr) @nogc nothrow @safe
+    void opAssign(UniqPtr!T newPtr) @safe
     {
         if (_ptr)
         {
@@ -215,29 +215,29 @@ struct UniqPtr(T,
         //newPtr.release;
     }
 
-    size_t sizeBytes() const @nogc nothrow @safe
+    size_t sizeBytes() const @safe
     {
         return _ptr.length * T.sizeof;
     }
 
-    size_t capacity() const @nogc nothrow @safe
+    size_t capacity() const @safe
     {
         return _ptr.length;
     }
 
-    FreeFunc freeFunPtr() const @nogc nothrow @safe
+    FreeFunc freeFunPtr() const @safe
     in (_freeFunPtr)
     {
         return _freeFunPtr;
     }
 
-    ReallocFunc reallocFunPtr() const @nogc nothrow @safe
+    ReallocFunc reallocFunPtr() const @safe
     in (_reallocFunPtr)
     {
         return _reallocFunPtr;
     }
 
-    auto range() @nogc nothrow return scope @safe
+    auto range() return scope @safe
     {
         static struct PtrRange
         {
@@ -331,29 +331,26 @@ struct UniqPtr(T,
     {
         import core.stdc.stdlib : malloc, realloc, free;
 
-        static int[] allocate(size_t capacity = 1)
+        static int[] allocate(size_t capacity = 1) @nogc nothrow @trusted
         {
-            return (() @trusted {
-                auto sizeBytes = capacity * int.sizeof;
-                void* newPtr = malloc(sizeBytes);
-                assert(newPtr);
-                return cast(int[]) newPtr[0 .. sizeBytes];
-            })();
+            auto sizeBytes = capacity * int.sizeof;
+            void* newPtr = malloc(sizeBytes);
+            assert(newPtr);
+            return cast(int[]) newPtr[0 .. sizeBytes];
         }
 
-        static bool reallocPtr(scope ref void[] ptr, size_t newBytes) @nogc nothrow @safe
+        static bool reallocPtr(scope ref void[] ptr, size_t newBytes) @nogc nothrow @trusted
         {
-            return (() @trusted {
-                void* newPtr = realloc(ptr.ptr, newBytes);
-                assert(newPtr);
-                ptr = newPtr[0 .. newBytes];
-                return true;
-            })();
+            void* newPtr = realloc(ptr.ptr, newBytes);
+            assert(newPtr);
+            ptr = newPtr[0 .. newBytes];
+            return true;
         }
 
-        static bool freePtr(scope void[] ptr) @nogc nothrow @safe
+        static bool freePtr(scope void[] ptr) @nogc nothrow @trusted
         {
-            return (() @trusted { free(ptr.ptr); return true; })();
+            free(ptr.ptr);
+            return true;
         }
 
         int[] value2 = allocate;
