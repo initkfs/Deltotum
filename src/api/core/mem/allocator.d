@@ -6,20 +6,32 @@ import api.core.mem.unique_ptr : UniqPtr;
  * Authors: initkfs
  */
 
-alias AllocFuncType = void[]function(size_t sizeBytes) @nogc nothrow @trusted;
-alias FreeFuncType = bool function(scope void[] ptr) @nogc nothrow @trusted;
-alias ReallocFuncType = bool function(scope ref void[], size_t newSizeBytes) @nogc nothrow @trusted;
+alias AllocFuncType = void[] function(size_t sizeBytes) @nogc nothrow @safe;
+alias FreeFuncType = bool function(scope void[] ptr) @nogc nothrow @safe;
+alias ReallocFuncType = bool function(scope ref void[], size_t newSizeBytes) @nogc nothrow @safe;
 
 mixin template MemFuncs()
 {
-    static
+    version (D_BetterC)
     {
-        AllocFuncType allocFunPtr;
-        ReallocFuncType reallocFunPtr;
-        FreeFuncType freeFunPtr;
+        __gshared
+        {
+            AllocFuncType allocFunPtr;
+            ReallocFuncType reallocFunPtr;
+            FreeFuncType freeFunPtr;
+        }
+    }
+    else
+    {
+        static
+        {
+            AllocFuncType allocFunPtr;
+            ReallocFuncType reallocFunPtr;
+            FreeFuncType freeFunPtr;
+        }
     }
 
-    UniqPtr!T uptr(T)(size_t capacity = 1, bool isAutoFree = true)
+    UniqPtr!T uniq(T)(size_t capacity = 1, bool isAutoFree = true)
     in (allocFunPtr)
     {
         assert(capacity > 0);
@@ -33,7 +45,15 @@ mixin template MemFuncs()
     }
 }
 
-abstract class Allocator
+mixin MemFuncs;
+
+version (D_BetterC)
 {
-    mixin MemFuncs;
+}
+else
+{
+    abstract class Allocator
+    {
+        mixin MemFuncs;
+    }
 }
