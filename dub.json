@@ -25,6 +25,21 @@
             ]
         },
         {
+            "name": "app-dev-addon",
+            "versions": [
+                "dev",
+                "SdlBackend",
+                "ExtensionLua",
+                "DmCtorDsl",
+                "DmAddon"
+            ],
+            "targetType": "executable",
+            "targetName": "dm",
+            "platforms": [
+                "linux"
+            ]
+        },
+        {
             "name": "app-dist",
             "versions": [
                 "SdlBackend",
