@@ -3,7 +3,7 @@ module api.dm.kit.sprites.layouts.managed_layout;
 import api.dm.kit.sprites.layouts.layout : Layout;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.gui.controls.control : Control;
-import api.dm.math.alignment : Alignment;
+import api.math.alignment : Alignment;
 
 import Math = api.dm.math;
 

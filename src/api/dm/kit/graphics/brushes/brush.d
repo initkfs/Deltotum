@@ -1,8 +1,8 @@
 module api.dm.kit.graphics.brushes.brush;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.math.vector2 : Vector2;
-import api.dm.math.rect2d : Rect2d;
+import api.math.vector2 : Vector2;
+import api.math.rect2d : Rect2d;
 
 import Math = api.dm.math;
 
@@ -135,8 +135,8 @@ class Brush
 
 unittest
 {
-    import api.dm.math.vector2 : Vector2;
-    import api.dm.math.rect2d : Rect2d;
+    import api.math.vector2 : Vector2;
+    import api.math.rect2d : Rect2d;
 
     const brushBounds = Rect2d(0, 0, 100, 100);
     auto brush = new Brush(Vector2(0, 0), 0);

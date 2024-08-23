@@ -1,4 +1,4 @@
-module api.dm.math.numericals.integration;
+module api.math.numericals.integration;
 
 double trapezoidal(double min, double max, size_t n, scope double delegate(double) @safe f) @safe
 in (min < max)

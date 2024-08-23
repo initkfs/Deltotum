@@ -1,6 +1,6 @@
-module api.dm.math.matrices.matrix;
+module api.math.matrices.matrix;
 
-import api.dm.math.matrices.dense_matrix : DenseMatrix;
+import api.math.matrices.dense_matrix : DenseMatrix;
 
 /**
  * Authors: initkfs

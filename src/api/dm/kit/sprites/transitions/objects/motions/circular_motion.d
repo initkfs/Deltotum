@@ -1,8 +1,8 @@
 module api.dm.kit.sprites.transitions.objects.motions.circular_motion;
 
 import api.dm.kit.sprites.transitions.objects.value_transition : ValueTransition;
-import api.dm.math.interps.interpolator : Interpolator;
-import api.dm.math.vector2 : Vector2;
+import api.math.interps.interpolator : Interpolator;
+import api.math.vector2 : Vector2;
 import math = api.dm.math;
 
 /**

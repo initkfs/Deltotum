@@ -2,7 +2,7 @@ module api.dm.kit.sprites.shapes.paths.path;
 
 import api.dm.kit.sprites.shapes.shape : Shape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.math.vector2 : Vector2;
+import api.math.vector2 : Vector2;
 
 /**
  * Authors: initkfs

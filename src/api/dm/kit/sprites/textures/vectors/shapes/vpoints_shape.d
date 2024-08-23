@@ -2,7 +2,7 @@ module api.dm.kit.sprites.textures.vectors.shapes.vpoints_shape;
 
 import api.dm.kit.sprites.textures.vectors.shapes.vshape : VShape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.math.vector2 : Vector2;
+import api.math.vector2 : Vector2;
 
 import std.container.dlist : DList;
 

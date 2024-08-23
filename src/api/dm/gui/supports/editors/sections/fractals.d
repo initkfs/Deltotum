@@ -8,8 +8,8 @@ import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.math.vector2 : Vector2;
-import api.dm.math.random : Random;
+import api.math.vector2 : Vector2;
+import api.math.random : Random;
 import api.dm.gui.containers.container: Container;
 import api.dm.gui.containers.hbox: HBox;
 
@@ -101,7 +101,7 @@ class Fractals : Control
         super.create;
 
         import api.dm.gui.containers.stack_box : StackBox;
-        import api.dm.math.insets : Insets;
+        import api.math.insets : Insets;
 
         auto container = newHContainer;
         addCreate(container);

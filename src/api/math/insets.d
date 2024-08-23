@@ -1,4 +1,4 @@
-module api.dm.math.insets;
+module api.math.insets;
 
 /**
  * Authors: initkfs

@@ -1,10 +1,10 @@
 module api.dm.kit.sprites.transitions.objects.object_transition;
 
 import api.dm.kit.sprites.sprite : Sprite;
-import api.dm.math.interps.interpolator : Interpolator;
+import api.math.interps.interpolator : Interpolator;
 import api.dm.kit.sprites.transitions.min_max_transition : MinMaxTransition;
 
-import api.dm.math.vector2 : Vector2;
+import api.math.vector2 : Vector2;
 
 import std.traits : isIntegral, isFloatingPoint;
 

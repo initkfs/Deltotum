@@ -1,6 +1,6 @@
-module api.dm.math.affine2d;
+module api.math.affine2d;
 
-import api.dm.math.vector2 : Vector2;
+import api.math.vector2 : Vector2;
 
 /**
  * Authors: initkfs

@@ -91,7 +91,7 @@ class Indicators : Control
         root.addCreate(g1);
 
         import api.dm.addon.gui.controls.indicators.leds.led : Led;
-        import api.dm.math.interps.uni_interpolator : UniInterpolator;
+        import api.math.interps.uni_interpolator : UniInterpolator;
 
         auto ledContainer = new VBox;
         root.addCreate(ledContainer);

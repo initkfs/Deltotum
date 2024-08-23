@@ -1,7 +1,7 @@
-module api.dm.math.random;
+module api.math.random;
 
 import api.core.components.units.services.loggable_unit : LoggableUnit;
-import api.dm.math.vector2 : Vector2;
+import api.math.vector2 : Vector2;
 import std.random : uniform, unpredictableSeed, StdRandom = Random;
 import std.range.primitives;
 import std.typecons : Nullable, Tuple;

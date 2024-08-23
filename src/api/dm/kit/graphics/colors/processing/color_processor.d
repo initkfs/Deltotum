@@ -1,7 +1,7 @@
 module api.dm.kit.graphics.colors.processing.color_processor;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.math.rect2d : Rect2d;
+import api.math.rect2d : Rect2d;
 import Math = api.dm.math;
 
 import std.stdio;
@@ -384,7 +384,7 @@ RGBA[][] rotate(RGBA[][] colors, double angleDegClockwise)
     size_t colorWidth = colors[0].length;
 
     import Math = api.dm.math;
-    import api.dm.math.matrices.dense_matrix : DenseMatrix;
+    import api.math.matrices.dense_matrix : DenseMatrix;
 
     //clockwise
     const angleRad = -Math.degToRad(angleDegClockwise);
@@ -417,7 +417,7 @@ RGBA[][] rotate(RGBA[][] colors, double angleDegClockwise)
     const resultMatrix = moveMatrix.multiply(rotateMatrix).multiply(backMatrix);
 
     //TODO it's all copied
-    import api.dm.math.matrices.dense_matrix : DenseMatrix;
+    import api.math.matrices.dense_matrix : DenseMatrix;
 
     foreach (y, colorRow; colors)
     {
@@ -455,7 +455,7 @@ RGBA[][] resizeBilinear(RGBA[][] colors, size_t newWidth, size_t newHeight)
 
     RGBA[][] buffer = new RGBA[][](newHeight, newWidth);
 
-    import api.dm.math.numericals.interp;
+    import api.math.numericals.interp;
 
     foreach (x; 0 .. newWidth)
     {

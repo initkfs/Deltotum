@@ -5,7 +5,7 @@ import api.dm.gui.containers.circle_box : CircleBox;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.math.vector2 : Vector2;
+import api.math.vector2 : Vector2;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.sprites.textures.vectors.shapes.vcircle : VCircle;
 import api.dm.kit.sprites.textures.vectors.shapes.varc : VArc;

@@ -33,7 +33,7 @@ class TextArea : HBox
     {
         super.initialize;
 
-        import api.dm.math.insets;
+        import api.math.insets;
 
         padding = Insets(0);
         spacing = 0;

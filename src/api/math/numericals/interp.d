@@ -1,9 +1,9 @@
-module api.dm.math.numericals.interp;
+module api.math.numericals.interp;
 
 /**
  * Authors: initkfs
  */
-import api.dm.math.vector2 : Vector2;
+import api.math.vector2 : Vector2;
 import api.dm.math : clamp01;
 
 import std.math.traits : isFinite;

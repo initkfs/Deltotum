@@ -4,7 +4,7 @@ import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.gui.containers.container : Container;
 import api.dm.kit.sprites.layouts.vlayout : VLayout;
 import api.dm.gui.containers.stack_box : StackBox;
-import api.dm.math.insets : Insets;
+import api.math.insets : Insets;
 import api.dm.gui.containers.hbox : HBox;
 
 /**

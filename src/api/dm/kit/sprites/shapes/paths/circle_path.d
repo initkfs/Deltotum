@@ -31,7 +31,7 @@ class CirclePath : Path
     override void create()
     {
         import math = api.dm.math;
-        import api.dm.math.vector2 : Vector2;
+        import api.math.vector2 : Vector2;
 
         foreach (angleDeg; 1 .. 361)
         {

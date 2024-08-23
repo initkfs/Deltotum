@@ -1,10 +1,10 @@
 module api.dm.kit.sprites.sprite;
 
 import api.dm.kit.events.event_kit_target : EventKitTarget;
-import api.dm.math.vector2 : Vector2;
-import api.dm.math.rect2d : Rect2d;
-import api.dm.math.alignment : Alignment;
-import api.dm.math.insets : Insets;
+import api.math.vector2 : Vector2;
+import api.math.rect2d : Rect2d;
+import api.math.alignment : Alignment;
+import api.math.insets : Insets;
 import api.dm.kit.sprites.layouts.layout : Layout;
 import api.dm.kit.sprites.textures.rgba_texture : RgbaTexture;
 import api.dm.kit.scenes.scaling.scale_mode : ScaleMode;
@@ -1482,7 +1482,7 @@ class Sprite : EventKitTarget
 
         graphics.changeColor(color);
 
-        import api.dm.math.vector2 : Vector2;
+        import api.math.vector2 : Vector2;
 
         graphics.rect(Vector2(clip.x, clip.y), clip.width, clip.height);
 
@@ -1610,7 +1610,7 @@ class Sprite : EventKitTarget
     ComSurface snapshot()
     {
         assert(width > 0 && height > 0);
-        import api.dm.math.rect2d : Rect2d;
+        import api.math.rect2d : Rect2d;
 
         auto bounds = Rect2d(
             0, 0, width, height

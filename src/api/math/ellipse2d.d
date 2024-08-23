@@ -1,6 +1,6 @@
-module api.dm.math.ellipse2d;
+module api.math.ellipse2d;
 
-import api.dm.math.vector2 : Vector2;
+import api.math.vector2 : Vector2;
 
 /**
  * Authors: initkfs

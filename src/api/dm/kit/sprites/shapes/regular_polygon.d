@@ -2,7 +2,7 @@ module api.dm.kit.sprites.shapes.regular_polygon;
 
 import api.dm.kit.sprites.shapes.shape : Shape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.math.line2d : Line2d;
+import api.math.line2d : Line2d;
 
 /**
  * Authors: initkfs
@@ -90,7 +90,7 @@ class RegularPolygon : Shape
 
     private void fill()
     {
-        import api.dm.math.vector2 : Vector2;
+        import api.math.vector2 : Vector2;
 
         import api.dm.kit.graphics.colors.rgba : RGBA;
 

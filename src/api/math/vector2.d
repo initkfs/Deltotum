@@ -1,11 +1,11 @@
-module api.dm.math.vector2;
+module api.math.vector2;
 
 //TODO fast sqrt?
 import std.math.algebraic : sqrt;
 import std.math.operations : isClose;
 import std.math.trigonometry : acos;
 import std.math.constants : PI;
-import api.dm.math.matrices.matrix : Matrix2x2, Matrix2x1;
+import api.math.matrices.matrix : Matrix2x2, Matrix2x1;
 
 import Math = api.dm.math;
 

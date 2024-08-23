@@ -1,6 +1,6 @@
-module api.dm.math.line2d;
+module api.math.line2d;
 
-import api.dm.math.vector2 : Vector2;
+import api.math.vector2 : Vector2;
 
 /**
  * Authors: initkfs

@@ -1,10 +1,10 @@
-module api.dm.math.angle;
+module api.math.angle;
 
 import math = std.math.trigonometry;
 import mathConst = std.math.constants;
 import mathCore = core.math;
 import mathExp = std.math.exponential;
-import api.dm.math.vector2 : Vector2;
+import api.math.vector2 : Vector2;
 
 /**
  * Authors: initkfs

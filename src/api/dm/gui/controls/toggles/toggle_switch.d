@@ -14,7 +14,7 @@ import api.dm.kit.sprites.textures.texture : Texture;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.sprites.transitions.objects.object_transition : ObjectTransition;
-import api.dm.math.vector2 : Vector2;
+import api.math.vector2 : Vector2;
 import api.dm.gui.controls.texts.text : Text;
 
 /**
@@ -127,9 +127,9 @@ class ToggleSwitch : Labeled
         };
 
         switchOnAnimationFactory = () {
-            import api.dm.math.vector2 : Vector2;
+            import api.math.vector2 : Vector2;
             import api.dm.kit.sprites.transitions.objects.motions.linear_motion : LinearMotion;
-            import api.dm.math.interps.uni_interpolator : UniInterpolator;
+            import api.math.interps.uni_interpolator : UniInterpolator;
 
             auto uniInterp = new UniInterpolator;
             uniInterp.interpolateMethod = &uniInterp.quadInOut;
@@ -142,9 +142,9 @@ class ToggleSwitch : Labeled
         };
 
         switchOffAnimationFactory = () {
-            import api.dm.math.vector2 : Vector2;
+            import api.math.vector2 : Vector2;
             import api.dm.kit.sprites.transitions.objects.motions.linear_motion : LinearMotion;
-            import api.dm.math.interps.uni_interpolator : UniInterpolator;
+            import api.math.interps.uni_interpolator : UniInterpolator;
 
             auto start = Vector2(bounds.right - switchHandle.width, y);
             auto uniInterp = new UniInterpolator;
@@ -174,7 +174,7 @@ class ToggleSwitch : Labeled
         switchContainer = new Container;
 
         switchContainer.layout = new ManagedLayout;
-        import api.dm.math.insets : Insets;
+        import api.math.insets : Insets;
 
         switchContainer.padding = Insets(5);
         switchContainer.layout.isAlignY = true;

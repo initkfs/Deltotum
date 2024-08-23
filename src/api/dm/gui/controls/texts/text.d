@@ -3,13 +3,13 @@ module api.dm.gui.controls.texts.text;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
-import api.dm.math.rect2d : Rect2d;
-import api.dm.math.vector2 : Vector2;
-import api.dm.math.flip : Flip;
+import api.math.rect2d : Rect2d;
+import api.math.vector2 : Vector2;
+import api.math.flip : Flip;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.sprites.textures.texture : Texture;
-import api.dm.math.insets : Insets;
+import api.math.insets : Insets;
 import api.dm.kit.sprites.shapes.rectangle : Rectangle;
 import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;
 import api.dm.kit.assets.fonts.font_size : FontSize;
@@ -299,7 +299,7 @@ class Text : Control
     {
         super.create;
 
-        import api.dm.math.insets : Insets;
+        import api.math.insets : Insets;
 
         padding = Insets(0);
 

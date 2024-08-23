@@ -1,4 +1,4 @@
-module api.dm.math.matrices.dense_matrix;
+module api.math.matrices.dense_matrix;
 
 /**
  * Authors: initkfs

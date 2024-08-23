@@ -117,7 +117,7 @@ class TargetButton : ButtonBase
 
         layoutSticks;
 
-        import api.dm.math.interps.uni_interpolator: UniInterpolator;
+        import api.math.interps.uni_interpolator: UniInterpolator;
 
         //TODO infinite?
         stickAnimation = new MinMaxTransition!double(0, 10, 800);

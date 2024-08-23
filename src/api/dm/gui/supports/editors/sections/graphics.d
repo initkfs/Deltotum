@@ -5,7 +5,7 @@ import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
 import Math = api.dm.math;
-import api.dm.math.vector2 : Vector2;
+import api.math.vector2 : Vector2;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
 import std.stdio;

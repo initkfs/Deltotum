@@ -1,4 +1,4 @@
-module api.dm.math.numericals.numerical;
+module api.math.numericals.numerical;
 /**
  * Authors: initkfs
  */

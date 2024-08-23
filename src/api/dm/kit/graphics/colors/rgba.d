@@ -134,7 +134,7 @@ struct RGBA
 
     static RGBA random(double alpha = maxAlpha)
     {
-        import api.dm.math.random : Random;
+        import api.math.random : Random;
 
         auto rnd = new Random;
         const min = RGBA.minColor;

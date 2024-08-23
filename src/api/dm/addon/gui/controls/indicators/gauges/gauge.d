@@ -54,7 +54,7 @@ class Gauge : Control
 
     void layoutSegments()
     {
-        import api.dm.math.vector2 : Vector2;
+        import api.math.vector2 : Vector2;
 
         double px = x + width / 2;
         double py = y + height / 2;

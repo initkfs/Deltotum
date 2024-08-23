@@ -2,7 +2,7 @@ module api.dm.kit.inputs.cursors.cursor;
 
 import api.dm.com.inputs.com_cursor : ComCursor, ComSystemCursorType;
 
-import api.dm.math.vector2 : Vector2;
+import api.math.vector2 : Vector2;
 
 //TODO move cursor and mouse
 import api.dm.kit.sprites.sprite : Sprite;

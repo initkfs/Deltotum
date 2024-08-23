@@ -6,7 +6,7 @@ import api.dm.kit.sprites.textures.texture : Texture;
 import api.dm.kit.sprites.layouts.layout : Layout;
 import api.dm.kit.sprites.layouts.hlayout : HLayout;
 import api.dm.gui.controls.texts.text : Text;
-import api.dm.math.rect2d : Rect2d;
+import api.math.rect2d : Rect2d;
 import Math = api.dm.math;
 
 enum Source

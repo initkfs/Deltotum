@@ -1,7 +1,7 @@
 module api.dm.kit.sprites.transitions.pause_transition;
 
 import api.dm.kit.sprites.transitions.min_max_transition: MinMaxTransition;
-import api.dm.math.interps.interpolator : Interpolator;
+import api.math.interps.interpolator : Interpolator;
 
 /**
  * Authors: initkfs

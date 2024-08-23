@@ -1,6 +1,6 @@
 module api.dm.kit.sprites.transitions.objects.value_transition;
 
-import api.dm.math.interps.interpolator : Interpolator;
+import api.math.interps.interpolator : Interpolator;
 import api.dm.kit.sprites.transitions.objects.object_transition : ObjectTransition;
 
 /**

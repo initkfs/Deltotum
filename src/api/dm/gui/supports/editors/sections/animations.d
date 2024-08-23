@@ -5,10 +5,10 @@ import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
 import Math = api.dm.math;
-import api.dm.math.vector2 : Vector2;
+import api.math.vector2 : Vector2;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
-import api.dm.math.interps.uni_interpolator : UniInterpolator;
+import api.math.interps.uni_interpolator : UniInterpolator;
 import api.dm.kit.sprites.transitions.objects.motions.linear_motion : LinearMotion;
 import api.dm.kit.sprites.transitions.objects.value_transition : ValueTransition;
 import api.dm.kit.sprites.transitions.objects.props.angle_transition : AngleTransition;

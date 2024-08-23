@@ -5,7 +5,7 @@ import api.dm.com.destroyable : Destroyable;
 import api.dm.com.graphics.com_blend_mode : ComBlendMode;
 import api.dm.com.com_native_ptr: ComNativePtr;
 
-import api.dm.math.rect2d : Rect2d;
+import api.math.rect2d : Rect2d;
 
 import std.typecons : Tuple;
 

@@ -1,8 +1,8 @@
 module api.dm.kit.sprites.transitions.slice_transition;
 
 import api.dm.kit.sprites.transitions.min_max_transition : MinMaxTransition;
-import api.dm.math.interps.interpolator : Interpolator;
-import api.dm.math.vector2 : Vector2;
+import api.math.interps.interpolator : Interpolator;
+import api.math.vector2 : Vector2;
 
 import Math = api.dm.math;
 

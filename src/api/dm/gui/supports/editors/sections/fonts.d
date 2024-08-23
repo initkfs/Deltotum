@@ -1,7 +1,7 @@
 module api.dm.gui.supports.editors.sections.fonts;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.math.rect2d : Rect2d;
+import api.math.rect2d : Rect2d;
 
 import std.stdio;
 

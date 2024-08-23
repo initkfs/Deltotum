@@ -4,7 +4,7 @@ import api.dm.kit.graphics.contexts.state_graphics_context : StateGraphicsContex
 import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
 import api.dm.kit.graphics.graphics : Graphics;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.math.vector2 : Vector2;
+import api.math.vector2 : Vector2;
 
 /**
  * Authors: initkfs

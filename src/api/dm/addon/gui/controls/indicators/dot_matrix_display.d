@@ -64,7 +64,7 @@ class DotMatrixDisplay(size_t Row = 7, size_t Col = 5) : VBox
         this.height = height;
         isBorder = true;
         layout.isAlign = true;
-        import api.dm.math.insets : Insets;
+        import api.math.insets : Insets;
 
         padding = Insets(5);
     }

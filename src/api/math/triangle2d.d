@@ -1,7 +1,7 @@
-module api.dm.math.triangle2d;
+module api.math.triangle2d;
 
-import api.dm.math.vector2 : Vector2;
-import api.dm.math.line2d : Line2d;
+import api.math.vector2 : Vector2;
+import api.math.line2d : Line2d;
 
 import Math = api.dm.math;
 

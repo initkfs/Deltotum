@@ -6,10 +6,10 @@ import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsv : HSV;
 import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
-import api.dm.math.random : Random;
+import api.math.random : Random;
 
 import Math = api.dm.math;
-import api.dm.math.vector2 : Vector2;
+import api.math.vector2 : Vector2;
 import std.conv : to;
 
 import std;

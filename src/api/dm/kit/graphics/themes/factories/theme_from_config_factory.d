@@ -7,7 +7,7 @@ import api.core.resources.resource: Resource;
 import api.dm.kit.graphics.themes.theme : Theme;
 import api.dm.kit.assets.fonts.font : Font;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.math.insets : Insets;
+import api.math.insets : Insets;
 import api.dm.kit.graphics.themes.icons.icon_pack : IconPack;
 
 import std.logger.core : Logger;

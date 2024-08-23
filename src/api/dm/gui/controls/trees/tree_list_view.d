@@ -9,8 +9,8 @@ import api.dm.gui.containers.stack_box : StackBox;
 import api.dm.gui.controls.scrolls.hscroll : HScroll;
 import api.dm.gui.controls.scrolls.vscroll : VScroll;
 import api.dm.kit.sprites.sprite : Sprite;
-import api.dm.math.insets : Insets;
-import api.dm.math.rect2d : Rect2d;
+import api.math.insets : Insets;
+import api.math.rect2d : Rect2d;
 import api.dm.gui.controls.buttons.button : Button;
 import api.dm.gui.controls.texts.text : Text;
 

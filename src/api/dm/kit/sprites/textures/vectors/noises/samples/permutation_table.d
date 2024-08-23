@@ -1,7 +1,7 @@
 module api.dm.kit.sprites.textures.vectors.noises.samples.permutation_table;
 
 import Math = api.dm.math;
-import api.dm.math.random : Random;
+import api.math.random : Random;
 import std.random : unpredictableSeed;
 import std.conv : to;
 

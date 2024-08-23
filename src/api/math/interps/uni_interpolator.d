@@ -1,6 +1,6 @@
-module api.dm.math.interps.uni_interpolator;
+module api.math.interps.uni_interpolator;
 
-import api.dm.math.interps.interpolator : Interpolator;
+import api.math.interps.interpolator : Interpolator;
 import math = api.dm.math;
 
 /**

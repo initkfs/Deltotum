@@ -1,8 +1,8 @@
 module api.dm.gui.controls.charts.linear_chart;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.math.vector2 : Vector2;
-import api.dm.math.insets : Insets;
+import api.math.vector2 : Vector2;
+import api.math.insets : Insets;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.palettes.material_palette : MaterialPalette;
 import api.dm.gui.containers.container : Container;

@@ -29,7 +29,7 @@ class TextField : Text
     override void create()
     {
         super.create;
-        import api.dm.math.insets : Insets;
+        import api.math.insets : Insets;
 
         _padding = Insets(5);
     }

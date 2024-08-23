@@ -9,7 +9,7 @@ import api.dm.kit.sprites.shapes.shape : Shape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites.layouts.managed_layout : ManagedLayout;
 import api.dm.kit.sprites.shapes.rectangle : Rectangle;
-import api.dm.math.alignment : Alignment;
+import api.math.alignment : Alignment;
 import std.math.operations: isClose;
 
 /**

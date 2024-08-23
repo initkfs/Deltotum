@@ -13,9 +13,9 @@ import api.dm.back.sdl2.base.sdl_object_wrapper : SdlObjectWrapper;
 import api.dm.back.sdl2.sdl_window : SdlWindow;
 import api.dm.back.sdl2.sdl_texture : SdlTexture;
 
-import api.dm.math.flip : Flip;
-import api.dm.math.vector2 : Vector2;
-import api.dm.math.rect2d : Rect2d;
+import api.math.flip : Flip;
+import api.math.vector2 : Vector2;
+import api.math.rect2d : Rect2d;
 
 import bindbc.sdl;
 

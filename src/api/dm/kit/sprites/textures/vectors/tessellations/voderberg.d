@@ -9,7 +9,7 @@ import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
 import Math = api.dm.math;
 import std : Tuple, tuple;
 import api.dm.sys.cairo.libs;
-import api.dm.math.random : Random;
+import api.math.random : Random;
 import std.complex;
 
 import std;

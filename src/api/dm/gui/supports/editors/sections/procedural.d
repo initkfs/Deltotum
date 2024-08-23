@@ -5,12 +5,12 @@ version(DmAddon):
 // dfmt on
 
 import api.dm.gui.controls.control : Control;
-import api.dm.math.rect2d : Rect2d;
+import api.math.rect2d : Rect2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.palettes.material_palette : MaterialPalette;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites.transitions.pause_transition : PauseTransition;
-import api.dm.math.random : Random;
+import api.math.random : Random;
 import api.dm.kit.sprites.textures.vectors.tessellations.penrose_tiling : PenroseTiling;
 import api.dm.gui.containers.hbox : HBox;
 import api.dm.gui.containers.vbox : VBox;
@@ -118,7 +118,7 @@ class Procedural : Control
         import api.dm.kit.sprites.textures.vectors.noises.perlin : Perlin;
         import api.dm.kit.sprites.textures.vectors.noises.open_simplex : OpenSimplex;
         import api.dm.kit.sprites.transitions.pause_transition : PauseTransition;
-        import api.dm.math.random : Random;
+        import api.math.random : Random;
 
         // enum w = 100;
         // enum h = 100;

@@ -2,11 +2,11 @@ module api.dm.gui.controls.control;
 
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.sprites.layouts.layout : Layout;
-import api.dm.math.insets : Insets;
+import api.math.insets : Insets;
 import api.dm.kit.sprites.textures.texture : Texture;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.math.alignment : Alignment;
-import api.dm.math.insets : Insets;
+import api.math.alignment : Alignment;
+import api.math.insets : Insets;
 import api.dm.gui.controls.tooltips.tooltip : Tooltip;
 
 import api.dm.kit.sprites.transitions.min_max_transition : MinMaxTransition;

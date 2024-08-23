@@ -10,7 +10,7 @@ import api.dm.gui.containers.hbox : HBox;
 import api.dm.gui.containers.vbox : VBox;
 
 import Math = api.dm.math;
-import api.dm.math.random : Random;
+import api.math.random : Random;
 
 import std.random : unpredictableSeed;
 

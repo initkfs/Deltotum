@@ -18,7 +18,7 @@ class StackBox : Container
 unittest
 {
     import api.dm.kit.sprites.sprite : Sprite;
-    import api.dm.math.insets : Insets;
+    import api.math.insets : Insets;
 
     auto sp1 = new Sprite;
     sp1.width = 100;

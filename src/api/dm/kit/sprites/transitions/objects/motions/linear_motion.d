@@ -1,8 +1,8 @@
 module api.dm.kit.sprites.transitions.objects.motions.linear_motion;
 
 import api.dm.kit.sprites.transitions.objects.object_transition : ObjectTransition;
-import api.dm.math.interps.interpolator : Interpolator;
-import api.dm.math.vector2 : Vector2;
+import api.math.interps.interpolator : Interpolator;
+import api.math.vector2 : Vector2;
 
 /**
  * Authors: initkfs

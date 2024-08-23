@@ -2,7 +2,7 @@ module api.dm.kit.sprites.layouts.circle_layout;
 
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.sprites.layouts.managed_layout : ManagedLayout;
-import api.dm.math.alignment : Alignment;
+import api.math.alignment : Alignment;
 
 /**
  * Authors: initkfs
@@ -28,7 +28,7 @@ class CircleLayout : ManagedLayout
         }
 
         import Math = api.dm.math;
-        import api.dm.math.vector2 : Vector2;
+        import api.math.vector2 : Vector2;
         import std.range.primitives : walkLength;
 
         auto children = childrenForLayout(root);

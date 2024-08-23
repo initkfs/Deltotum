@@ -2,7 +2,7 @@ module api.dm.gui.containers.scroll_box;
 
 import api.dm.gui.containers.container : Container;
 import api.dm.kit.sprites.layouts.managed_layout : ManagedLayout;
-import api.dm.math.rect2d : Rect2d;
+import api.math.rect2d : Rect2d;
 
 import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.containers.hbox : HBox;
@@ -10,7 +10,7 @@ import api.dm.gui.containers.stack_box : StackBox;
 import api.dm.gui.controls.scrolls.hscroll : HScroll;
 import api.dm.gui.controls.scrolls.vscroll : VScroll;
 import api.dm.kit.sprites.sprite : Sprite;
-import api.dm.math.insets : Insets;
+import api.math.insets : Insets;
 
 enum ScrollBarPolicy
 {

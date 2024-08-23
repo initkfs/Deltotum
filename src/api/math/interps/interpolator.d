@@ -1,4 +1,4 @@
-module api.dm.math.interps.interpolator;
+module api.math.interps.interpolator;
 
 import Math = api.dm.math;
 

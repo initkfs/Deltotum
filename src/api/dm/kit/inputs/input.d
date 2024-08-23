@@ -4,9 +4,9 @@ import api.dm.kit.inputs.cursors.cursor: Cursor;
 import api.dm.kit.inputs.clipboards.clipboard : Clipboard;
 import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import api.dm.com.inputs.com_keyboard : ComKeyName;
-import api.dm.math.vector2 : Vector2;
+import api.math.vector2 : Vector2;
 
-import api.dm.math.vector2 : Vector2;
+import api.math.vector2 : Vector2;
 
 import std.container.slist : SList;
 

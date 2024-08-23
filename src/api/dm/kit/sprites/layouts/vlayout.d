@@ -2,7 +2,7 @@ module api.dm.kit.sprites.layouts.vlayout;
 
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.sprites.layouts.managed_layout : ManagedLayout;
-import api.dm.math.alignment : Alignment;
+import api.math.alignment : Alignment;
 
 import Math = api.dm.math;
 

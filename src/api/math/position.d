@@ -1,4 +1,4 @@
-module api.dm.math.position;
+module api.math.position;
 /**
  * Authors: initkfs
  */

@@ -1,5 +1,5 @@
 module api.dm.addon.math.curves.curve_maker;
-import api.dm.math.vector2 : Vector2;
+import api.math.vector2 : Vector2;
 
 import Math = api.dm.math;
 

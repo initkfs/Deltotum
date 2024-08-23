@@ -1,9 +1,9 @@
 module api.dm.kit.sprites.transitions.min_max_transition;
 
 import api.dm.kit.sprites.transitions.transition : Transition, TransitionState;
-import api.dm.math.interps.interpolator : Interpolator;
-import api.dm.math.interps.uni_interpolator : UniInterpolator;
-import api.dm.math.vector2 : Vector2;
+import api.math.interps.interpolator : Interpolator;
+import api.math.interps.uni_interpolator : UniInterpolator;
+import api.math.vector2 : Vector2;
 import math = api.dm.math;
 
 import std.traits : isIntegral, isFloatingPoint;
@@ -84,7 +84,7 @@ class MinMaxTransition(T) if (isFloatingPoint!T || is(T : Vector2)) : Transition
         //It’s better to check for isFinite
         double interpProgress = interpolator.interpolate(deltaT);
 
-        import api.dm.math.numericals.interp : lerp;
+        import api.math.numericals.interp : lerp;
 
         auto oldValue = lastValue;
 

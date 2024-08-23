@@ -5,7 +5,7 @@ import api.dm.com.graphics.com_texture : ComTextureScaleMode;
 import api.dm.kit.sprites.textures.texture : Texture;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites.sprite : Sprite;
-import api.dm.math.rect2d : Rect2d;
+import api.math.rect2d : Rect2d;
 
 import Math = api.dm.math;
 
@@ -106,7 +106,7 @@ class BaseRadialProgressBar : BaseProgressBar
     {
         assert(segments.length == fillSegments.length);
 
-        import api.dm.math.vector2 : Vector2;
+        import api.math.vector2 : Vector2;
 
         double radius = diameter / 2 - innerPadding;
 

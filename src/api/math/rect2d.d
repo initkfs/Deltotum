@@ -1,7 +1,7 @@
-module api.dm.math.rect2d;
+module api.math.rect2d;
 
-import api.dm.math.vector2 : Vector2;
-import api.dm.math.circle2d : Circle2d;
+import api.math.vector2 : Vector2;
+import api.math.circle2d : Circle2d;
 
 /**
  * Authors: initkfs

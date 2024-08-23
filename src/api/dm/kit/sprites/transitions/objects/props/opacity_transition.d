@@ -1,7 +1,7 @@
 module api.dm.kit.sprites.transitions.objects.props.opacity_transition;
 
 import api.dm.kit.sprites.transitions.objects.value_transition : ValueTransition;
-import api.dm.math.interps.interpolator : Interpolator;
+import api.math.interps.interpolator : Interpolator;
 
 /**
  * Authors: initkfs
