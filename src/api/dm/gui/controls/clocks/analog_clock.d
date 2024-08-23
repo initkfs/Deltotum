@@ -83,6 +83,8 @@ class AnalogClock : Control
     Sprite minHand;
     Sprite secHand;
 
+    Sprite handHolder;
+
     PauseTransition clockAnimation;
 
     bool isAutorun = true;
@@ -126,31 +128,6 @@ class AnalogClock : Control
         enum labelsOffsest = 28;
         enum unitOffset = 12;
 
-        VCircle centerShape = new VCircle(5, GraphicStyle(1, graphics.theme.colorText, true, graphics
-                .theme.colorText));
-        addCreate(centerShape);
-
-        auto hourStyle = GraphicStyle(3, graphics.theme.colorAccent, true, graphics
-                .theme.colorSuccess);
-
-        hourHand = new Hand(width, height, 6, 55, hourStyle);
-        addCreate(hourHand);
-
-        auto minStyle = hourStyle;
-
-        minHand = new Hand(width, height, 6, 70, minStyle);
-        addCreate(minHand);
-
-        auto secStyle = GraphicStyle(1, graphics.theme.colorDanger, true, graphics
-                .theme.colorDanger);
-
-        secHand = new Hand(width, height, 5, 75, secStyle);
-        addCreate(secHand);
-
-        auto handHolder = new VHexagon(15, GraphicStyle(0, graphics.theme.colorDanger, true, graphics
-                .theme.colorDanger));
-        addCreate(handHolder);
-
         auto startAngle = 0;
 
         auto labelBox = new CircleBox(radius - labelsOffsest, 300);
@@ -183,6 +160,35 @@ class AnalogClock : Control
 
             unitLabelBox.addCreate(minSecLabel);
         }
+
+        VCircle centerShape = new VCircle(5, GraphicStyle(1, graphics.theme.colorText, true, graphics
+                .theme.colorText));
+        addCreate(centerShape);
+
+        auto hourStyle = GraphicStyle(3, graphics.theme.colorAccent, true, graphics
+                .theme.colorWarning);
+
+        hourHand = new Hand(width, height, 6, 55, hourStyle);
+        addCreate(hourHand);
+
+        auto minStyle = hourStyle;
+
+        minHand = new Hand(width, height, 6, 70, minStyle);
+        addCreate(minHand);
+
+        auto secStyle = GraphicStyle(1, graphics.theme.colorDanger, true, graphics
+                .theme.colorDanger);
+
+        secHand = new Hand(width, height, 5, 75, secStyle);
+        addCreate(secHand);
+
+        VHexagon holder = new VHexagon(15, GraphicStyle(0, graphics.theme.colorDanger, true, graphics
+                .theme.colorDanger));
+        addCreate(holder);
+        handHolder = holder;
+        
+        import api.dm.com.graphics.com_texture: ComTextureScaleMode;
+        holder.textureScaleMode = ComTextureScaleMode.quality;
 
         //auto outerSecIndicator = new CircleBox(width + 20, 0);
         //outerSecIndicator.isDrawBounds = true;
@@ -235,7 +241,7 @@ class AnalogClock : Control
                         style.isFill = true;
                         style.lineWidth = 2;
                         style.lineColor = graphics.theme.colorSecondary;
-                        style.fillColor = graphics.theme.colorSecondary;
+                        style.fillColor = graphics.theme.colorDanger;
                         return style;
                     }
                 };
@@ -368,6 +374,7 @@ class AnalogClock : Control
         hourHand.angle = hourDeg;
         minHand.angle = minDeg;
         secHand.angle = secDeg;
+        handHolder.angle = secDeg;
     }
 
     void preciseMinSecLabels(size_t i, Text minSecLabel)
