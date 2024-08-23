@@ -110,12 +110,6 @@ class GuiEditor : Scene
             root.addCreate(fractalsTab);
         }
 
-        import api.dm.gui.supports.editors.sections.scripting : Scripting;
-
-        auto scriptTab = new Tab("Scripting");
-        scriptTab.content = new Scripting;
-        root.addCreate(scriptTab);
-
         root.changeTab(controlsTab);
 
         //import std;
