@@ -1,5 +1,5 @@
-module api.dm.kit.sprites.textures.vectors.noises.samples.sample_noise;
-import api.dm.kit.sprites.textures.vectors.noises.samples.permutation_table : PermutationTable;
+module api.dm.addon.sprites.textures.vectors.noises.samples.sample_noise;
+import api.dm.addon.sprites.textures.vectors.noises.samples.permutation_table : PermutationTable;
 
 import std.random : unpredictableSeed;
 

@@ -1,8 +1,8 @@
-module api.dm.kit.sprites.textures.vectors.noises.samples.fractal_noise;
+module api.dm.addon.sprites.textures.vectors.noises.samples.fractal_noise;
 
 import api.dm.kit.sprites.textures.texture : Texture;
-import api.dm.kit.sprites.textures.vectors.noises.noise : Noise;
-import api.dm.kit.sprites.textures.vectors.noises.samples.sample_noise : SampleNoise;
+import api.dm.addon.sprites.textures.vectors.noises.noise : Noise;
+import api.dm.addon.sprites.textures.vectors.noises.samples.sample_noise : SampleNoise;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsv : HSV;
 

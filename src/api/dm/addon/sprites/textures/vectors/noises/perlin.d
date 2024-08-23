@@ -1,6 +1,6 @@
-module api.dm.kit.sprites.textures.vectors.noises.perlin;
+module api.dm.addon.sprites.textures.vectors.noises.perlin;
 
-import api.dm.kit.sprites.textures.vectors.noises.noise : Noise;
+import api.dm.addon.sprites.textures.vectors.noises.noise : Noise;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
 import api.dm.kit.graphics.colors.rgba : RGBA;

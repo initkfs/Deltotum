@@ -1,4 +1,4 @@
-module api.dm.kit.sprites.textures.vectors.noises.samples.permutation_table;
+module api.dm.addon.sprites.textures.vectors.noises.samples.permutation_table;
 
 import Math = api.dm.math;
 import api.math.random : Random;

@@ -1,4 +1,4 @@
-module api.dm.kit.sprites.textures.vectors.tessellations.voderberg;
+module api.dm.addon.sprites.textures.vectors.tessellations.voderberg;
 
 import api.dm.kit.sprites.textures.vectors.shapes.vshape : VShape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;

@@ -1,13 +1,13 @@
-module api.dm.kit.sprites.textures.vectors.noises.samples.worley;
+module api.dm.addon.sprites.textures.vectors.noises.samples.worley;
 
-import api.dm.kit.sprites.textures.vectors.noises.samples.sample_noise : SampleNoise;
-import api.dm.kit.sprites.textures.vectors.noises.samples.voronoi: VoronoiDistance, VoronoiCombination;
+import api.dm.addon.sprites.textures.vectors.noises.samples.sample_noise : SampleNoise;
+import api.dm.addon.sprites.textures.vectors.noises.samples.voronoi: VoronoiDistance, VoronoiCombination;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsv : HSV;
 import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
-import api.dm.kit.sprites.textures.vectors.noises.samples.permutation_table : PermutationTable;
+import api.dm.addon.sprites.textures.vectors.noises.samples.permutation_table : PermutationTable;
 
 import Math = api.dm.math;
 

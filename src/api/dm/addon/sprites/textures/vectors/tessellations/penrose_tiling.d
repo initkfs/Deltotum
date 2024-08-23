@@ -1,4 +1,4 @@
-module api.dm.kit.sprites.textures.vectors.tessellations.penrose_tiling;
+module api.dm.addon.sprites.textures.vectors.tessellations.penrose_tiling;
 
 import api.dm.kit.sprites.textures.vectors.shapes.vshape : VShape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;

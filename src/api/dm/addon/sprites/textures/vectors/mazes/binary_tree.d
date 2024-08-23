@@ -1,7 +1,7 @@
-module api.dm.kit.sprites.textures.vectors.mazes.binary_tree;
+module api.dm.addon.sprites.textures.vectors.mazes.binary_tree;
 
-import api.dm.kit.sprites.textures.vectors.mazes.maze : Maze;
-import api.dm.kit.sprites.textures.vectors.mazes.maze_cell : MazeCell;
+import api.dm.addon.sprites.textures.vectors.mazes.maze : Maze;
+import api.dm.addon.sprites.textures.vectors.mazes.maze_cell : MazeCell;
 import api.dm.kit.sprites.textures.texture : Texture;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.colors.rgba : RGBA;

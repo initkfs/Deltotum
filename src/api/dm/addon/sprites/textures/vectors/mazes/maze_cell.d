@@ -1,4 +1,4 @@
-module api.dm.kit.sprites.textures.vectors.mazes.maze_cell;
+module api.dm.addon.sprites.textures.vectors.mazes.maze_cell;
 
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.graphics.colors.rgba : RGBA;

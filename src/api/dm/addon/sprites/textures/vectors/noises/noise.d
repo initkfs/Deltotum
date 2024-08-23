@@ -1,4 +1,4 @@
-module api.dm.kit.sprites.textures.vectors.noises.noise;
+module api.dm.addon.sprites.textures.vectors.noises.noise;
 
 import api.dm.kit.sprites.textures.texture : Texture;
 import api.dm.kit.graphics.colors.rgba : RGBA;
