@@ -756,6 +756,37 @@ class Text : Control
         }
     }
 
+    void onFontTexture(scope bool delegate(Texture, const(Glyph*) glyph) onTextureIsContinue)
+    {
+        foreach (TextRow row; rows)
+        {
+            foreach (Glyph* glyph; row.glyphs)
+            {
+                if (!onTextureIsContinue(fontTexture, glyph))
+                {
+                    break;
+                }
+            }
+        }
+    }
+
+    void copyTo(Texture texture, Rect2d destBounds)
+    {
+        assert(texture);
+
+        import api.math.rect2d : Rect2d;
+
+        //TODO remove duplication with render()
+        foreach (TextRow row; rows)
+        {
+            foreach (Glyph* glyph; row.glyphs)
+            {
+                Rect2d textureBounds = glyph.geometry;
+                texture.copyFrom(fontTexture, textureBounds, destBounds);
+            }
+        }
+    }
+
     override void drawContent()
     {
         renderText(rows);

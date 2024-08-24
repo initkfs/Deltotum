@@ -154,15 +154,15 @@ class Sprite : EventKitTarget
         RgbaTexture _cache;
         Sprite _hitbox;
         GraphicsContext _gContext;
+
+        double _width = 0;
+        double _height = 0;
     }
 
     private
     {
         double _x = 0;
         double _y = 0;
-
-        double _width = 0;
-        double _height = 0;
 
         double offsetX = 0;
         double offsetY = 0;

@@ -30,7 +30,6 @@ class Hand : VShape
         super(textureWidth, textureHeight, style);
         this.handWidth = handWidth;
         this.handHeight = handHeight;
-        isDrawBounds = true;
         startPoint = Vector2(width / 2, height / 2);
     }
 
@@ -125,12 +124,12 @@ class AnalogClock : Control
 
         size_t radius = (width / 2).to!size_t;
 
-        enum labelsOffsest = 28;
+        enum labelsOffset = 28;
         enum unitOffset = 12;
 
         auto startAngle = 0;
 
-        auto labelBox = new CircleBox(radius - labelsOffsest, 300);
+        auto labelBox = new CircleBox(radius - labelsOffset, 300);
         addCreate(labelBox);
 
         foreach (int i; 1 .. 13)

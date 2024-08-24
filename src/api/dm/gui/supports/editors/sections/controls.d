@@ -418,6 +418,51 @@ class Controls : Control
         auto ling1 = new HLinearGauge;
         //ling1.isBorder = true;
         root.addCreate(ling1);
+
+        import api.dm.gui.controls.gauges.radial_gauge: RadialGauge;
+        enum gaugeDiameter = 150;
+        auto leftGauge = new RadialGauge(gaugeDiameter, 90, 270);
+        root.addCreate(leftGauge);
+
+        auto topGauge =  new RadialGauge(gaugeDiameter, 180, 0);
+        root.addCreate(topGauge);
+
+        auto rightGauge =  new RadialGauge(gaugeDiameter, 270, 90);
+        root.addCreate(rightGauge);
+
+        auto bottomGauge =  new RadialGauge(gaugeDiameter, 0, 180);
+        root.addCreate(bottomGauge);
+
+        import api.dm.kit.sprites.transitions.pause_transition : PauseTransition;
+        auto gaugeAnim1 = new PauseTransition(820);
+        gaugeAnim1.isCycle = true;
+        auto gaugeAnim2= new PauseTransition(1000);
+        gaugeAnim2.isCycle = true;
+        auto gaugeAnim3 = new PauseTransition(1500);
+        gaugeAnim3.isCycle = true;
+        auto gaugeAnim4 = new PauseTransition(657);
+        gaugeAnim4.isCycle = true;
+
+        import api.math.random: Random;
+        auto rnd = new Random;
+
+        import api.math.interps.uni_interpolator: UniInterpolator;
+
+        leftGauge.handTransition.interpolator.interpolateMethod = &UniInterpolator.elasticInOut;
+        topGauge.handTransition.interpolator.interpolateMethod = &UniInterpolator.backIn;
+        rightGauge.handTransition.interpolator.interpolateMethod = &UniInterpolator.bounceInOut;
+        bottomGauge.handTransition.interpolator.interpolateMethod = &UniInterpolator.backOut;
+
+        gaugeAnim1.onEndFrames ~= () => leftGauge.value = rnd.randomBetween(0.0, 1.0);
+        gaugeAnim2.onEndFrames ~= () => topGauge.value = rnd.randomBetween(0.0, 1.0);
+        gaugeAnim3.onEndFrames ~= () => rightGauge.value = rnd.randomBetween(0.0, 1.0);
+        gaugeAnim4.onEndFrames ~= () => bottomGauge.value = rnd.randomBetween(0.0, 1.0);
+
+        root.addCreate([gaugeAnim1, gaugeAnim2, gaugeAnim3, gaugeAnim4]);
+        //gaugeAnim1.run;
+        //gaugeAnim2.run;
+        //gaugeAnim3.run;
+        //gaugeAnim4.run;
     }
 
     private TreeItem!Sprite buildSpriteTree(Sprite root)
