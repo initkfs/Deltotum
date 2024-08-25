@@ -423,11 +423,11 @@ class SdlApplication : ContinuouslyApplication
                                 dg();
                             }
                         }
-                        if (win.isStopped)
+                        if (win.isStopped || win.isPaused)
                         {
                             win.run;
                         }
-                        uservices.logger.tracef("Show window '%s' with id %d", win.title, win.id);
+                        uservices.logger.tracef("Show window '%s' with id %d, state: %s", win.title, win.id, win.state);
                         return true;
                     });
                     break;
@@ -443,9 +443,9 @@ class SdlApplication : ContinuouslyApplication
                         }
                         if (win.isRunning)
                         {
-                            win.stop;
+                            win.pause;
                         }
-                        uservices.logger.tracef("Hide window '%s' with id %d", win.title, win.id);
+                        uservices.logger.tracef("Hide window '%s' with id %d, state: %s", win.title, win.id, win.state);
                         return true;
                     });
                     break;

@@ -56,6 +56,8 @@ abstract class Transition : Sprite
         isManaged = false;
         isVisible = false;
         isLayoutManaged = false;
+
+        isManagedByScene = true;
     }
 
     abstract void onFrame();
@@ -84,9 +86,18 @@ abstract class Transition : Sprite
 
     override void run()
     {
-        if (isPause)
+        if (isPaused)
         {
-            resume;
+            state = prevState;
+
+            if (onResume.length > 0)
+            {
+                foreach (dg; onResume)
+                {
+                    dg();
+                }
+            }
+            super.run;
             return;
         }
 
@@ -110,30 +121,9 @@ abstract class Transition : Sprite
         state = TransitionState.direct;
     }
 
-    void resume()
+    override void pause()
     {
-        if (!isPause)
-        {
-            return;
-        }
-
-        state = prevState;
-
-        if (onResume.length > 0)
-        {
-            foreach (dg; onResume)
-            {
-                dg();
-            }
-        }
-    }
-
-    void pause()
-    {
-        if (!isRunningState)
-        {
-            return;
-        }
+        super.pause;
 
         prevState = state;
         state = TransitionState.pause;

@@ -27,6 +27,7 @@ class SimpleUnit : Unitable
         bool isInitialized() => isState(UnitState.initialize);
         bool isCreated() => isState(UnitState.create);
         bool isRunning() => isState(UnitState.run);
+        bool isPaused() => isState(UnitState.pause);
         bool isStopped() => isState(UnitState.stop);
         bool isDisposed() => isState(UnitState.dispose);
     }
@@ -83,7 +84,7 @@ class SimpleUnit : Unitable
 
     void run()
     {
-        if (!isCreated && !isStopped)
+        if (!isCreated && !isStopped && !isPaused)
         {
             import std.format : format;
 
@@ -110,9 +111,31 @@ class SimpleUnit : Unitable
         run(unit);
     }
 
-    void stop()
+    void pause()
     {
         if (!isRunning)
+        {
+            import std.format : format;
+
+            throw new IllegalUnitStateException(format("Cannot pause component '%s' with state: %s",
+                    className, _state));
+        }
+
+        _state = UnitState.pause;
+    }
+
+    void pause(SimpleUnit unit)
+    {
+        assert(unit, "Unit must not be null");
+        assert(unit !is this, "Unit must not be this");
+
+        unit.pause;
+        assert(unit.isPaused, "Unit not paused: " ~ unit.className);
+    }
+
+    void stop()
+    {
+        if (!isRunning && !isPaused)
         {
             import std.format : format;
 
@@ -135,7 +158,7 @@ class SimpleUnit : Unitable
     void dispose()
     {
         //allow dispose without running
-        if (!isStopped && !isInitialized && !isCreated)
+        if (!isStopped && !isInitialized && !isCreated && !isPaused)
         {
             import std.format : format;
 
@@ -221,6 +244,18 @@ class SimpleUnit : Unitable
         component.create;
         assert(component.isCreated);
         assertThrown(component.initialize);
+
+        component.run;
+        assert(component.isRunning);
+        assertThrown(component.run);
+        assertThrown(component.initialize);
+        assertThrown(component.dispose);
+
+        component.pause;
+        assert(component.isPaused);
+        assertThrown(component.create);
+        assertThrown(component.initialize);
+        assertThrown(component.dispose);
 
         component.run;
         assert(component.isRunning);

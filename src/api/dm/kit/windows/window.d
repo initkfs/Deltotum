@@ -166,6 +166,18 @@ class Window : GraphicsComponent
         return value;
     }
 
+    override void pause()
+    {
+        super.pause;
+        scenes.pause;
+    }
+
+    override void run()
+    {
+        super.run;
+        scenes.run;
+    }
+
     void hide()
     {
         if (!isShowing)
@@ -444,12 +456,6 @@ class Window : GraphicsComponent
 
         //not cast(int) for overflow detection
         return index.to!int;
-    }
-
-    override void run()
-    {
-        super.run;
-        scenes.run;
     }
 
     override void stop()

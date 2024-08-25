@@ -18,7 +18,7 @@ import api.dm.kit.sprites.textures.texture : Texture;
 import api.math.rect2d : Rect2d;
 import Math = api.dm.math;
 
-debug import std.stdio: writeln, writefln;
+debug import std.stdio : writeln, writefln;
 
 import std.conv : to;
 
@@ -94,6 +94,12 @@ class AnalogClock : Control
 
     Sprite[] secIndicatorSegments;
 
+    private
+    {
+        bool isCheckFillSecs;
+        size_t lastSecIndex;
+    }
+
     version (DmAddon)
     {
         import api.dm.addon.gui.controls.indicators.seven_segment : SevenSegment;
@@ -120,6 +126,8 @@ class AnalogClock : Control
         {
             isPreciseMinSecLabels = true;
         }
+
+        isManagedByScene = true;
     }
 
     override void create()
@@ -209,13 +217,14 @@ class AnalogClock : Control
                         auto textPos = Vector2.fromPolarDeg(currAngle, radius - labelOffset);
 
                         size_t hourNum = (i / 5 + 3) % 12;
-                        if(hourNum == 0){
+                        if (hourNum == 0)
+                        {
                             hourNum = 12;
                         }
 
                         auto labelText = (hourNum).to!dstring;
                         labelProto.text = labelText;
-                        labelProto.updateRows(isForce: true);
+                        labelProto.updateRows(isForce : true);
 
                         auto glyphWidth = labelProto.rowGlyphWidth;
                         auto glyphHeight = labelProto.rowGlyphHeight;
@@ -237,12 +246,11 @@ class AnalogClock : Control
                         });
                     }
 
-                    
-
                     currAngle += angleOffset;
                 }
             }
         };
+
         addCreate(centerShape);
 
         auto hourStyle = GraphicStyle(3, graphics.theme.colorAccent, true, graphics
@@ -369,6 +377,13 @@ class AnalogClock : Control
             clockAnimation.run;
         }
 
+        run;
+    }
+
+    override void pause()
+    {
+        super.pause;
+        isCheckFillSecs = true;
     }
 
     void setTime(ubyte hour, ubyte min, ubyte sec)
@@ -432,7 +447,36 @@ class AnalogClock : Control
         {
             index--;
         }
+
+        if (isCheckFillSecs)
+        {
+            auto nextIndex = lastSecIndex + 1;
+            if (nextIndex < index)
+            {
+                foreach (i; nextIndex .. index)
+                {
+                    secIndicatorSegments[i].isVisible = true;
+                }
+            }
+            else
+            {
+                //TODO bounds
+                foreach (i; (index + 1) .. secIndicatorSegments.length)
+                {
+                    secIndicatorSegments[i].isVisible = false;
+                }
+
+                foreach (i; 0 .. index)
+                {
+                    secIndicatorSegments[i].isVisible = true;
+                }
+            }
+            isCheckFillSecs = false;
+        }
+
         secIndicatorSegments[index].isVisible = true;
+
+        lastSecIndex = index;
 
         //assert(hour >= 1 && hour <= 12);
 

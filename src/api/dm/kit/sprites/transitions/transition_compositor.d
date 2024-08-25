@@ -30,12 +30,11 @@ abstract class TransitionCompositor : Transition
         }
     }
 
-    override void resume()
+    void resume()
     {
-        super.resume;
         foreach (tr; transitions)
         {
-            tr.resume;
+            tr.run;
         }
     }
 

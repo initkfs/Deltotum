@@ -98,6 +98,8 @@ class Sprite : EventKitTarget
     bool isResizeChildren;
     bool isResizedByParent;
 
+    bool isManagedByScene;
+
     Insets _padding;
     Insets _margin;
     bool isHGrow;
@@ -209,6 +211,21 @@ class Sprite : EventKitTarget
             sprite.create;
             assert(sprite.isCreated, "Sprite not created: " ~ sprite.className);
         }
+    }
+
+    void onResume()
+    {
+
+    }
+
+    override void run()
+    {
+        if (isPaused)
+        {
+            onResume;
+        }
+
+        super.run;
     }
 
     override void create()
@@ -785,14 +802,23 @@ class Sprite : EventKitTarget
         this.isDrag = false;
     }
 
-    void onAllChildren(scope void delegate(Sprite) onChild, Sprite root)
+    //TODO remove root from children
+    void onAllChildren(scope void delegate(Sprite) onChild, Sprite root, bool isForRoot = true)
     {
-        onChild(root);
+        if (isForRoot)
+        {
+            onChild(root);
+        }
 
         foreach (Sprite child; root.children)
         {
             onAllChildren(onChild, child);
         }
+    }
+
+    void onAllChildren(scope void delegate(Sprite) onChild, bool isForRoot = true)
+    {
+        onAllChildren(onChild, this, isForRoot);
     }
 
     protected void checkClip(Sprite obj)
@@ -1753,8 +1779,35 @@ class Sprite : EventKitTarget
         _margin.left = value;
     }
 
+    void onScenePause()
+    {
+        if (isManagedByScene && isRunning)
+        {
+            pause;
+        }
+
+        onAllChildren((child) { child.onScenePause; }, isForRoot:
+            false);
+    }
+
+    void onSceneResume()
+    {
+        if (isManagedByScene && isPaused)
+        {
+            run;
+        }
+
+        onAllChildren((child) { child.onSceneResume; }, isForRoot:
+            false);
+    }
+
     override void dispose()
     {
+        if (isRunning)
+        {
+            stop;
+        }
+
         super.dispose;
 
         if (_cache)
@@ -1770,6 +1823,12 @@ class Sprite : EventKitTarget
         foreach (Sprite child; children)
         {
             child.parent = null;
+
+            if (child.isRunning)
+            {
+                child.stop;
+            }
+
             child.dispose;
         }
 

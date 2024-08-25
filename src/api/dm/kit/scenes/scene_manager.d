@@ -7,7 +7,7 @@ import api.dm.kit.factories.creation : Creation;
 import api.dm.kit.interacts.interact : Interact;
 import api.dm.kit.factories.creation_images : CreationImages;
 import api.dm.kit.factories.creation_shapes : CreationShapes;
-import api.core.components.units.simple_unit: SimpleUnit;
+import api.core.components.units.simple_unit : SimpleUnit;
 
 import std.stdio;
 
@@ -185,29 +185,32 @@ class SceneManager : Scene
         _currentScene = scene;
     }
 
+    override void pause()
+    {
+        if (!_currentScene)
+        {
+            return;
+        }
+        _currentScene.pause;
+    }
+
     override void run()
     {
-        super.run;
-        foreach (scene; _scenes)
+        if (!_currentScene)
         {
-            if (!scene.isCreated)
-            {
-                continue;
-            }
-            scene.run;
+            return;
         }
+        _currentScene.run;
     }
 
     override void stop()
     {
         super.stop;
-        foreach (scene; _scenes)
-        {
-            if (!scene.isRunning)
-            {
-                continue;
-            }
-            scene.stop;
+        if(!_currentScene){
+            return;
+        }
+        if(_currentScene.isRunning){
+            _currentScene.stop;
         }
     }
 

@@ -116,6 +116,34 @@ class Scene : WindowComponent
         }
     }
 
+    override void pause()
+    {
+        super.pause;
+        if (sprites.length > 0)
+        {
+            foreach (obj; sprites)
+            {
+                obj.onScenePause;
+            }
+        }
+    }
+
+    override void run()
+    {
+        if (isPaused)
+        {
+            if (sprites.length > 0)
+        {
+            foreach (obj; sprites)
+            {
+                obj.onSceneResume;
+            }
+        }
+        }
+
+        super.run;
+    }
+
     void createDebugger()
     {
         debugger = new SceneView(this);
@@ -251,7 +279,8 @@ class Scene : WindowComponent
         build(im);
         im.initialize;
         im.create;
-        scope(exit){
+        scope (exit)
+        {
             im.dispose;
         }
         im.savePNG(surf, path);
