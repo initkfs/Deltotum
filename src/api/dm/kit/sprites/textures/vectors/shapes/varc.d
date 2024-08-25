@@ -36,7 +36,7 @@ class VArc : VShape
 
         auto cr = cairoContext.getObject;
 
-        cairo_translate(cr, width / 2, height / 2);
+        cairo_translate(cr, radius, radius);
 
         if (style.isFill)
         {

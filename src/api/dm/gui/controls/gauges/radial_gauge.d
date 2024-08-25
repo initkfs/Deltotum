@@ -10,7 +10,7 @@ import api.dm.kit.sprites.textures.texture : Texture;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.sprites.transitions.transition : Transition;
 import api.dm.kit.sprites.transitions.objects.value_transition : ValueTransition;
- import api.dm.kit.assets.fonts.font_size : FontSize;
+import api.dm.kit.assets.fonts.font_size : FontSize;
 
 import api.math.vector2 : Vector2;
 import api.math.rect2d : Rect2d;
@@ -96,7 +96,7 @@ class RadialGauge : Control
     {
         double _diameter = 0;
         double _value;
-        
+
     }
 
     this(double diameter, double minAngleDeg, double maxAngleDeg)
@@ -133,9 +133,7 @@ class RadialGauge : Control
         handTransition.onOldNewValue ~= (oldValue, value) {
             setHandAngleDeg(value);
         };
-        handTransition.onStop ~= (){
-            setLabel(_value);
-        };
+        handTransition.onStop ~= () { setLabel(_value); };
         addCreate(handTransition);
 
         import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
@@ -195,8 +193,9 @@ class RadialGauge : Control
                 size_t ticksCount = (valueRange / valueStep).to!size_t;
                 assert(ticksCount >= 2);
 
-                if(minValue == 0){
-                   ticksCount++;
+                if (minValue == 0)
+                {
+                    ticksCount++;
                 }
 
                 size_t angleDegDiff = (Math.round(angleRange / (ticksCount - 1))).to!size_t;
@@ -236,95 +235,101 @@ class RadialGauge : Control
                         labelProto.onFontTexture((fontTexture, const glyphPtr) {
 
                             Rect2d textDest = {
-                                nextW, textY, glyphPtr.geometry.width, glyphPtr.geometry.height
-                            };
+                                nextW, textY, glyphPtr.geometry.width, glyphPtr.geometry.height};
 
-                            copyFrom(fontTexture, glyphPtr.geometry, textDest);
-                            nextW += glyphPtr.geometry.width;
-                            return true;
-                        });
+                                copyFrom(fontTexture, glyphPtr.geometry, textDest);
+                                nextW += glyphPtr.geometry.width;
+                                return true;
+                            });
+                        }
+
+                        startAngleDeg = (startAngleDeg + angleDegDiff) % 360;
                     }
-
-                    startAngleDeg = (startAngleDeg + angleDegDiff) % 360;
                 }
+            };
+
+            addCreate(centerShape);
+
+            auto handStyle = GraphicStyle(1, graphics.theme.colorDanger, true, graphics
+                    .theme.colorDanger);
+
+            hand = new Hand(width, height, 5, 35, handStyle);
+            addCreate(hand);
+
+            import api.dm.kit.sprites.textures.vectors.shapes.vhexagon : VHexagon;
+
+            VHexagon holder = new VHexagon(10, GraphicStyle(0, graphics.theme.colorDanger, true, graphics
+                    .theme.colorDanger));
+            addCreate(holder);
+            handHolder = holder;
+
+            //setHandAngleDeg(minAngleDeg);
+            setHandAngleDeg(minAngleDeg);
+
+            label = new Text("");
+            label.isLayoutManaged = false;
+            label.fontSize = FontSize.small;
+            addCreate(label);
+
+            setLabel(minValue);
+        }
+
+        override void applyLayout()
+        {
+            super.applyLayout;
+            label.x = bounds.middleX - label.bounds.halfWidth;
+            label.y = bounds.middleY + label.bounds.height;
+        }
+
+        protected void setHandAngleDeg(double angleDeg)
+        {
+            auto newAngle = (angleDeg + 90);
+
+            if (minAngleDeg < maxAngleDeg)
+            {
+                newAngle = Math.clamp(newAngle, minAngleDeg, maxAngleDeg + 90);
             }
-        };
+            else
+            {
+                newAngle = Math.clamp(newAngle, minAngleDeg, minAngleDeg + (
+                        minAngleDeg - maxAngleDeg) + 90);
+            }
 
-        addCreate(centerShape);
-
-        auto handStyle = GraphicStyle(1, graphics.theme.colorDanger, true, graphics
-                .theme.colorDanger);
-
-        hand = new Hand(width, height, 5, 35, handStyle);
-        addCreate(hand);
-
-        import api.dm.kit.sprites.textures.vectors.shapes.vhexagon : VHexagon;
-
-        VHexagon holder = new VHexagon(10, GraphicStyle(0, graphics.theme.colorDanger, true, graphics
-                .theme.colorDanger));
-        addCreate(holder);
-        handHolder = holder;
-
-        //setHandAngleDeg(minAngleDeg);
-        setHandAngleDeg(minAngleDeg);
-
-        label = new Text("");
-        label.isLayoutManaged = false;
-        label.fontSize = FontSize.small;
-        addCreate(label);
-
-        setLabel(minValue);
-    }
-
-    override void applyLayout(){
-        super.applyLayout;
-        label.x = bounds.middleX - label.bounds.halfWidth;
-        label.y = bounds.middleY + label.bounds.height;
-    }
-
-     protected void setHandAngleDeg(double angleDeg)
-    {
-        auto newAngle = (angleDeg + 90);
-
-        if(minAngleDeg < maxAngleDeg){
-            newAngle = Math.clamp(newAngle, minAngleDeg, maxAngleDeg + 90);
-        }else {
-            newAngle = Math.clamp(newAngle, minAngleDeg, minAngleDeg + (minAngleDeg - maxAngleDeg) + 90);
+            hand.angle = newAngle;
+            handHolder.angle = newAngle;
         }
 
-        hand.angle = newAngle;
-        handHolder.angle = newAngle;
-    }
-
-    void setLabel(double value){
-        label.text = value.to!dstring;
-    }
-
-    protected void setHandAngleDegAnim(double angleDeg)
-    {
-        if(handTransition.isRunning){
-            setHandAngleDeg(handTransition.maxValue);
-            handTransition.stop;
+        void setLabel(double value)
+        {
+            label.text = value.to!dstring;
         }
 
-        auto oldAngle = hand.angle;
+        protected void setHandAngleDegAnim(double angleDeg)
+        {
+            if (handTransition.isRunning)
+            {
+                setHandAngleDeg(handTransition.maxValue);
+                handTransition.stop;
+            }
 
-        handTransition.minValue = oldAngle;
-        handTransition.maxValue = angleDeg;
-        handTransition.run;
+            auto oldAngle = hand.angle;
+
+            handTransition.minValue = oldAngle;
+            handTransition.maxValue = angleDeg;
+            handTransition.run;
+        }
+
+        void value(double v)
+        {
+            double value = Math.clamp(v, minValue, maxValue);
+
+            auto range = Math.abs(maxValue - minValue);
+            auto angleRange = Math.abs(minAngleDeg - maxAngleDeg);
+
+            auto angleOffset = value * (angleRange / range);
+
+            auto newAngle = minAngleDeg + angleOffset;
+            setHandAngleDegAnim(newAngle);
+            _value = value;
+        }
     }
-
-    void value(double v)
-    {
-        double value = Math.clamp(v, minValue, maxValue);
-
-        auto range = Math.abs(maxValue - minValue);
-        auto angleRange = Math.abs(minAngleDeg - maxAngleDeg);
-
-        auto angleOffset = value * (angleRange / range);
-
-        auto newAngle = minAngleDeg + angleOffset;
-        setHandAngleDegAnim(newAngle);
-        _value = value;
-    }
-}

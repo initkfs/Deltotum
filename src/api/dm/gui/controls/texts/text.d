@@ -709,9 +709,9 @@ class Text : Control
             .to!dstring;
     }
 
-    void updateRows()
+    void updateRows(bool isForce = false)
     {
-        if (!isBuilt)
+        if (!isBuilt && !isForce)
         {
             isRebuildRows = true;
             return;
@@ -768,6 +768,33 @@ class Text : Control
                 }
             }
         }
+    }
+
+    double rowGlyphWidth(){
+        double result = 0;
+        foreach (TextRow row; rows)
+        {
+            foreach (Glyph* glyph; row.glyphs)
+            {
+                result += glyph.geometry.width;
+            }
+        }
+        return result;
+    }
+
+    double rowGlyphHeight(){
+        double result = 0;
+        foreach (TextRow row; rows)
+        {
+            foreach (Glyph* glyph; row.glyphs)
+            {
+                auto h = glyph.geometry.height;
+                if(h > result){
+                    result = h;
+                }
+            }
+        }
+        return result;
     }
 
     void copyTo(Texture texture, Rect2d destBounds)
@@ -869,5 +896,17 @@ class Text : Control
             setColorTexture;
         }
         setInvalid;
+    }
+
+    void setLargeSize(){
+        fontSize = FontSize.large;
+    }
+
+    void setMediumSize(){
+        fontSize = FontSize.medium;
+    }
+
+    void setSmallSize(){
+        fontSize = FontSize.small;
     }
 }

@@ -14,7 +14,11 @@ import api.dm.kit.sprites.textures.vectors.shapes.vhexagon : VHexagon;
 import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
 import api.dm.kit.sprites.textures.vectors.shapes.vshape : VShape;
 import api.dm.kit.sprites.transitions.pause_transition : PauseTransition;
+import api.dm.kit.sprites.textures.texture : Texture;
+import api.math.rect2d : Rect2d;
 import Math = api.dm.math;
+
+debug import std.stdio: writeln, writefln;
 
 import std.conv : to;
 
@@ -74,7 +78,7 @@ class Hand : VShape
  */
 class AnalogClock : Control
 {
-    enum defaultDiameter = 200;
+    enum defaultDiameter = 220;
 
     bool isPreciseMinSecLabels;
 
@@ -124,44 +128,121 @@ class AnalogClock : Control
 
         size_t radius = (width / 2).to!size_t;
 
-        enum labelsOffset = 28;
-        enum unitOffset = 12;
+        enum minorTickOffset = 15;
+        enum labelOffset = 30;
 
-        auto startAngle = 0;
+        double minorTickSize = 4;
+        double majorTickSize = 6;
 
-        auto labelBox = new CircleBox(radius - labelsOffset, 300);
-        addCreate(labelBox);
+        auto minorTickProto = new VCircle(minorTickSize, GraphicStyle(0, graphics.theme.colorAccent, true, graphics
+                .theme.colorAccent));
+        build(minorTickProto);
+        minorTickProto.initialize;
+        minorTickProto.create;
 
-        foreach (int i; 1 .. 13)
+        auto majorTickProto = new VCircle(majorTickSize, GraphicStyle(0, graphics.theme.colorDanger, true, graphics
+                .theme.colorDanger));
+        build(majorTickProto);
+        majorTickProto.initialize;
+        majorTickProto.create;
+
+        import api.dm.kit.assets.fonts.font_size : FontSize;
+
+        auto labelProto = new Text;
+        build(labelProto);
+        labelProto.initialize;
+        labelProto.create;
+
+        scope (exit)
         {
-            auto text = i.to!dstring;
-            auto label = new Text(text);
-            labelBox.addCreate(label);
+            minorTickProto.dispose;
+            majorTickProto.dispose;
+            labelProto.dispose;
         }
 
-        auto unitLabelBox = new CircleBox(radius - unitOffset, startAngle);
-        addCreate(unitLabelBox);
+        import api.dm.kit.sprites.textures.rgba_texture : RgbaTexture;
 
-        foreach (int i; 0 .. 60)
+        const centerShapeW = width;
+        const centerShapeH = height;
+
+        auto centerShape = new class RgbaTexture
         {
-            //
-            auto text = "∙";
-            if (i % 5 == 0)
+            this()
             {
-                text = "●";
-            }
-            auto minSecLabel = new Text(text);
-
-            if (isPreciseMinSecLabels)
-            {
-                //preciseMinSecLabels(i, minSecLabel);
+                super(centerShapeW, centerShapeH);
             }
 
-            unitLabelBox.addCreate(minSecLabel);
-        }
+            const ticksCount = 60;
+            const angleOffset = 360.0 / ticksCount;
 
-        VCircle centerShape = new VCircle(5, GraphicStyle(1, graphics.theme.colorText, true, graphics
-                .theme.colorText));
+            double endAngle = 360;
+
+            double currAngle = 0;
+
+            override void createTextureContent()
+            {
+                foreach (i; 0 .. ticksCount)
+                {
+                    // if (i == (ticksCount - 1))
+                    // {
+                    //     currAngle = endAngle;
+                    // }
+
+                    Texture proto = ((i % 5) == 0) ? majorTickProto : minorTickProto;
+
+                    if (!cast(VCircle) proto)
+                    {
+                        proto.angle = currAngle;
+                    }
+
+                    auto tickPos = Vector2.fromPolarDeg(currAngle, radius - minorTickOffset);
+                    auto tickX = radius + tickPos.x - proto.bounds.halfWidth;
+                    auto tickY = radius + tickPos.y - proto.bounds.halfHeight;
+
+                    auto tickBoundsW = proto.width;
+                    auto tickBoundsH = proto.height;
+
+                    copyFrom(proto, Rect2d(0, 0, proto.width, proto.height), Rect2d(tickX, tickY, tickBoundsW, tickBoundsH));
+
+                    if (proto is majorTickProto)
+                    {
+                        auto textPos = Vector2.fromPolarDeg(currAngle, radius - labelOffset);
+
+                        size_t hourNum = (i / 5 + 3) % 12;
+                        if(hourNum == 0){
+                            hourNum = 12;
+                        }
+
+                        auto labelText = (hourNum).to!dstring;
+                        labelProto.text = labelText;
+                        labelProto.updateRows(isForce: true);
+
+                        auto glyphWidth = labelProto.rowGlyphWidth;
+                        auto glyphHeight = labelProto.rowGlyphHeight;
+
+                        auto textX = radius + textPos.x - glyphWidth / 2;
+                        auto textY = radius + textPos.y - glyphHeight / 2;
+
+                        double nextW = textX;
+
+                        labelProto.onFontTexture((fontTexture, const glyphPtr) {
+
+                            Rect2d textDest = {
+                                nextW, textY, glyphPtr.geometry.width, glyphPtr.geometry.height
+                            };
+
+                            copyFrom(fontTexture, glyphPtr.geometry, textDest);
+                            nextW += glyphPtr.geometry.width;
+                            return true;
+                        });
+                    }
+
+                    
+
+                    currAngle += angleOffset;
+                }
+            }
+        };
         addCreate(centerShape);
 
         auto hourStyle = GraphicStyle(3, graphics.theme.colorAccent, true, graphics
@@ -185,17 +266,10 @@ class AnalogClock : Control
                 .theme.colorDanger));
         addCreate(holder);
         handHolder = holder;
-        
-        import api.dm.com.graphics.com_texture: ComTextureScaleMode;
+
+        import api.dm.com.graphics.com_texture : ComTextureScaleMode;
+
         holder.textureScaleMode = ComTextureScaleMode.quality;
-
-        //auto outerSecIndicator = new CircleBox(width + 20, 0);
-        //outerSecIndicator.isDrawBounds = true;
-        //addCreate(outerSecIndicator);
-
-        //const double circumference = 2 * Math.PI * width;
-        //const double segments = 60;
-        //double segmentWidth = circumference / segments;
 
         foreach (i; 0 .. 60)
         {
@@ -374,28 +448,6 @@ class AnalogClock : Control
         minHand.angle = minDeg;
         secHand.angle = secDeg;
         handHolder.angle = secDeg;
-    }
-
-    void preciseMinSecLabels(size_t i, Text minSecLabel)
-    {
-        // if (i == 3 || i == 32)
-        // {
-        //     minSecLabel.margin.left = 1;
-        // }
-        // if (i == 58 || i == 27)
-        // {
-        //     minSecLabel.margin.left = -1;
-        // }
-
-        // if (i == 42 || i == 48)
-        // {
-        //     minSecLabel.margin.top = 1;
-        // }
-
-        // if (i == 8 || i == 12 || i == 18)
-        // {
-        //     minSecLabel.margin.top = -1;
-        // }
     }
 
 }
