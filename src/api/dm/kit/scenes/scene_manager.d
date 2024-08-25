@@ -37,18 +37,20 @@ class SceneManager : Scene
         import std.exception : enforce;
 
         enforce(scene !is null, "Scene must not be null");
-        _currentScene = scene;
+
+        foreach (currScene; _scenes)
+        {
+            if (currScene is scene)
+            {
+                _currentScene = scene;
+                return;
+            }
+        }
+        throw new Exception("Scene not found in scene list: " ~ scene.name);
     }
 
-    CreationImages newCreationImages()
-    {
-        return new CreationImages;
-    }
-
-    CreationShapes newCreationShapes()
-    {
-        return new CreationShapes;
-    }
+    CreationImages newCreationImages() => new CreationImages;
+    CreationShapes newCreationShapes() => new CreationShapes;
 
     override void create()
     {
@@ -105,21 +107,23 @@ class SceneManager : Scene
         assert(scene.isCreated);
     }
 
-    void addCreate(Scene scene)
+    bool addCreate(Scene scene)
     {
         create(scene);
-        add(scene);
+        return add(scene);
     }
 
-    void add(Scene[] scenes...)
+    bool add(Scene[] scenes...)
     {
+        bool isAdd;
         foreach (Scene scene; scenes)
         {
-            add(scene);
+            isAdd &= add(scene);
         }
+        return isAdd;
     }
 
-    void add(Scene scene)
+    bool add(Scene scene)
     {
         import std.exception : enforce;
 
@@ -129,10 +133,11 @@ class SceneManager : Scene
         {
             if (sc is scene)
             {
-                return;
+                return false;
             }
         }
         _scenes ~= scene;
+        return true;
     }
 
     bool changeByName(string name)
@@ -151,9 +156,7 @@ class SceneManager : Scene
     void change(Scene scene)
     {
         //TODO check in scenes
-        debug
-        {
-            import ConfigKeys = api.dm.kit.kit_config_keys;
+        import ConfigKeys = api.dm.kit.kit_config_keys;
 
             if (config.containsKey(ConfigKeys.sceneNameCurrent))
             {
@@ -163,7 +166,6 @@ class SceneManager : Scene
                     return;
                 }
             }
-        }
 
         setCurrent(scene);
     }
@@ -206,10 +208,12 @@ class SceneManager : Scene
     override void stop()
     {
         super.stop;
-        if(!_currentScene){
+        if (!_currentScene)
+        {
             return;
         }
-        if(_currentScene.isRunning){
+        if (_currentScene.isRunning)
+        {
             _currentScene.stop;
         }
     }
