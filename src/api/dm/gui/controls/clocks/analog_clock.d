@@ -90,7 +90,7 @@ class AnalogClock : Control
 
     PauseTransition clockAnimation;
 
-    bool isAutorun = true;
+    bool isAutorun;
 
     Sprite[] secIndicatorSegments;
 

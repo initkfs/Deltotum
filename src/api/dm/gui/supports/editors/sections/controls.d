@@ -131,7 +131,7 @@ class Controls : Control
 
         import Icons = api.dm.kit.graphics.themes.icons.icon_name;
 
-        import api.dm.gui.controls.labels.hyperlink: Hyperlink;
+        import api.dm.gui.controls.labels.hyperlink : Hyperlink;
 
         auto container1 = new VBox(5);
         root.addCreate(container1);
@@ -139,8 +139,8 @@ class Controls : Control
         auto hyper1 = new Hyperlink;
         container1.addCreate(hyper1);
 
-        import api.dm.gui.controls.labels.badge: Badge;
-        import api.dm.gui.controls.texts.text: Text;
+        import api.dm.gui.controls.labels.badge : Badge;
+        import api.dm.gui.controls.texts.text : Text;
 
         auto tb1 = new Text("Badge");
         container1.addCreate(tb1);
@@ -289,7 +289,8 @@ class Controls : Control
         // auto time1 = new TimePicker;
         // rootContainer.addCreate(time1);
 
-        import api.dm.gui.controls.clocks.analog_clock: AnalogClock;
+        import api.dm.gui.controls.clocks.analog_clock : AnalogClock;
+
         auto clock1 = new AnalogClock;
         rootContainer.addCreate(clock1);
     }
@@ -408,50 +409,54 @@ class Controls : Control
     {
         import api.dm.gui.controls.progress.radial_progress_bar : RadialProgressBar;
 
-        auto rb1 = new RadialProgressBar;
-        rb1.isPercentMode = true;
-        root.addCreate(rb1);
-        rb1.progress = 0.6;
+        // auto rb1 = new RadialProgressBar;
+        // rb1.isPercentMode = true;
+        // root.addCreate(rb1);
+        // rb1.progress = 0.6;
 
-        import api.dm.gui.controls.gauges.hlinear_gauge : HLinearGauge;
+        // import api.dm.gui.controls.gauges.hlinear_gauge : HLinearGauge;
 
-        auto ling1 = new HLinearGauge;
-        //ling1.isBorder = true;
-        root.addCreate(ling1);
+        // auto ling1 = new HLinearGauge;
+        // //ling1.isBorder = true;
+        // root.addCreate(ling1);
 
-        import api.dm.gui.controls.gauges.radial_gauge: RadialGauge;
-        enum gaugeDiameter = 150;
+        import api.dm.gui.controls.gauges.radial_gauge : RadialGauge;
+
+        enum gaugeDiameter = 200;
         auto leftGauge = new RadialGauge(gaugeDiameter, 90, 270);
         root.addCreate(leftGauge);
 
-        auto topGauge =  new RadialGauge(gaugeDiameter, 180, 0);
+        auto topGauge = new RadialGauge(gaugeDiameter, 180, 0);
         root.addCreate(topGauge);
 
-        auto rightGauge =  new RadialGauge(gaugeDiameter, 270, 90);
+        auto rightGauge = new RadialGauge(gaugeDiameter, 270, 90);
         root.addCreate(rightGauge);
 
-        auto bottomGauge =  new RadialGauge(gaugeDiameter, 0, 180);
+        auto bottomGauge = new RadialGauge(gaugeDiameter, 0, 180);
         root.addCreate(bottomGauge);
 
         import api.dm.kit.sprites.transitions.pause_transition : PauseTransition;
-        auto gaugeAnim1 = new PauseTransition(820);
+
+        auto gaugeAnim1 = new PauseTransition(850);
         gaugeAnim1.isCycle = true;
-        auto gaugeAnim2= new PauseTransition(1000);
+        auto gaugeAnim2 = new PauseTransition(750);
         gaugeAnim2.isCycle = true;
-        auto gaugeAnim3 = new PauseTransition(1500);
+        auto gaugeAnim3 = new PauseTransition(820);
         gaugeAnim3.isCycle = true;
-        auto gaugeAnim4 = new PauseTransition(657);
+        auto gaugeAnim4 = new PauseTransition(910);
         gaugeAnim4.isCycle = true;
 
-        import api.math.random: Random;
+        import api.math.random : Random;
+
         auto rnd = new Random;
 
-        import api.math.interps.uni_interpolator: UniInterpolator;
+        import api.math.interps.uni_interpolator : UniInterpolator;
 
-        leftGauge.handTransition.interpolator.interpolateMethod = &UniInterpolator.elasticInOut;
-        topGauge.handTransition.interpolator.interpolateMethod = &UniInterpolator.backIn;
+        leftGauge.handTransition.interpolator.interpolateMethod = &UniInterpolator.backOut;
+        topGauge.handTransition.interpolator.interpolateMethod = &UniInterpolator.elasticOut;
+        //quartOut, smootherStepOut, elasticOut
         rightGauge.handTransition.interpolator.interpolateMethod = &UniInterpolator.bounceInOut;
-        bottomGauge.handTransition.interpolator.interpolateMethod = &UniInterpolator.backOut;
+        bottomGauge.handTransition.interpolator.interpolateMethod = &UniInterpolator.smootherStepOut;
 
         gaugeAnim1.onEndFrames ~= () => leftGauge.value = rnd.randomBetween(0.0, 1.0);
         gaugeAnim2.onEndFrames ~= () => topGauge.value = rnd.randomBetween(0.0, 1.0);
@@ -459,10 +464,11 @@ class Controls : Control
         gaugeAnim4.onEndFrames ~= () => bottomGauge.value = rnd.randomBetween(0.0, 1.0);
 
         root.addCreate([gaugeAnim1, gaugeAnim2, gaugeAnim3, gaugeAnim4]);
-        //gaugeAnim1.run;
-        //gaugeAnim2.run;
-        //gaugeAnim3.run;
-        //gaugeAnim4.run;
+
+        // gaugeAnim1.run;
+        // gaugeAnim2.run;
+        // gaugeAnim3.run;
+        // gaugeAnim4.run;
     }
 
     private TreeItem!Sprite buildSpriteTree(Sprite root)

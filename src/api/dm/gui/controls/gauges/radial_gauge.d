@@ -72,6 +72,12 @@ class Hand : VShape
     }
 }
 
+struct ZoneColor
+{
+    double percentTo = 0;
+    RGBA color;
+}
+
 /**
  * Authors: initkfs
  */
@@ -82,8 +88,8 @@ class RadialGauge : Control
 
     double minValue = 0;
     double maxValue = 1;
-    double valueStep = 0.1;
-    size_t labelStepCount = 2;
+    double valueStep = 0.05;
+    size_t labelStepCount = 5;
 
     Sprite hand;
     Sprite handHolder;
@@ -129,7 +135,7 @@ class RadialGauge : Control
         const centerShapeW = width;
         const centerShapeH = height;
 
-        handTransition = new ValueTransition(0, 0, 400);
+        handTransition = new ValueTransition(0, 0, 500);
         handTransition.onOldNewValue ~= (oldValue, value) {
             setHandAngleDeg(value);
         };
@@ -139,24 +145,24 @@ class RadialGauge : Control
         import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
         import api.dm.com.graphics.com_texture : ComTextureScaleMode;
 
-        auto tickWidth = 4;
-        auto tickHeight = 12;
+        auto tickWidth = 2;
+        auto tickHeight = 6;
 
-        auto smallTickProto = new VRegularPolygon(tickHeight, tickWidth, GraphicStyle(2, graphics.theme.colorAccent, true, graphics
+        auto smallTickProto = new VRegularPolygon(tickHeight, tickWidth, GraphicStyle(0, graphics.theme.colorAccent, true, graphics
                 .theme.colorAccent), 0);
         build(smallTickProto);
         smallTickProto.initialize;
         smallTickProto.create;
         smallTickProto.textureScaleMode = ComTextureScaleMode.quality;
 
-        auto bigTickProto = new VRegularPolygon(tickHeight, tickWidth, GraphicStyle(2, graphics.theme.colorDanger, true, graphics
+        auto bigTickProto = new VRegularPolygon(tickHeight * 2, tickWidth, GraphicStyle(2, graphics.theme.colorDanger, true, graphics
                 .theme.colorDanger), 0);
         build(bigTickProto);
         bigTickProto.initialize;
         bigTickProto.create;
         bigTickProto.textureScaleMode = ComTextureScaleMode.quality;
 
-        auto labelProto = new Text();
+        auto labelProto = new Text("!");
         build(labelProto);
         labelProto.fontSize = FontSize.small;
         labelProto.initialize;
@@ -199,12 +205,13 @@ class RadialGauge : Control
                 }
 
                 size_t angleDegDiff = (Math.round(angleRange / (ticksCount - 1))).to!size_t;
-
+                size_t endIndex = ticksCount - 1;
+                assert(endIndex < ticksCount);
                 foreach (i; 0 .. ticksCount)
                 {
-                    auto pos = Vector2.fromPolarDeg(startAngleDeg, radius - 25);
+                    auto pos = Vector2.fromPolarDeg(startAngleDeg, radius - 35);
 
-                    Texture proto = i % labelStepCount ? bigTickProto : smallTickProto;
+                    Texture proto = i % labelStepCount == 0 ? bigTickProto : smallTickProto;
 
                     proto.angle = startAngleDeg;
 
@@ -216,29 +223,27 @@ class RadialGauge : Control
 
                     copyFrom(proto, Rect2d(0, 0, proto.width, proto.height), Rect2d(tickX, tickY, tickBoundsW, tickBoundsH));
 
-                    if (proto is bigTickProto)
+                    if (i == 0 || i == endIndex || proto is bigTickProto)
                     {
-                        auto textPos = Vector2.fromPolarDeg(startAngleDeg, radius - 7);
+                        auto textPos = Vector2.fromPolarDeg(startAngleDeg, radius - 15);
 
                         auto labelText = (i * valueStep).to!dstring;
                         labelProto.text = labelText;
-                        labelProto.updateRows;
+                        labelProto.updateRows(isForce : true);
 
-                        auto labelW = labelProto.width;
-                        auto labelH = labelProto.height;
+                        auto textX = radius + textPos.x - labelProto.rowGlyphWidth / 2;
+                        auto textY = radius + textPos.y - labelProto.rowGlyphHeight / 2;
 
-                        auto textX = radius + textPos.x - labelProto.width / 2;
-                        auto textY = radius + textPos.y - labelProto.height / 2;
-
-                        double nextW = textX;
+                        double nextX = textX;
 
                         labelProto.onFontTexture((fontTexture, const glyphPtr) {
 
-                            Rect2d textDest = {
-                                nextW, textY, glyphPtr.geometry.width, glyphPtr.geometry.height};
+                            Rect2d textDest =
+                            {
+                                nextX, textY, glyphPtr.geometry.width, glyphPtr.geometry.height};
 
                                 copyFrom(fontTexture, glyphPtr.geometry, textDest);
-                                nextW += glyphPtr.geometry.width;
+                                nextX += glyphPtr.geometry.width;
                                 return true;
                             });
                         }
@@ -253,7 +258,7 @@ class RadialGauge : Control
             auto handStyle = GraphicStyle(1, graphics.theme.colorDanger, true, graphics
                     .theme.colorDanger);
 
-            hand = new Hand(width, height, 5, 35, handStyle);
+            hand = new Hand(width, height, 5, 45, handStyle);
             addCreate(hand);
 
             import api.dm.kit.sprites.textures.vectors.shapes.vhexagon : VHexagon;
@@ -272,6 +277,58 @@ class RadialGauge : Control
             addCreate(label);
 
             setLabel(minValue);
+
+            import api.dm.kit.sprites.textures.vectors.vector_texture : VectorTexture;
+
+            auto zoneShape = new class VectorTexture
+            {
+                this()
+                {
+                    super(centerShapeW, centerShapeH);
+                }
+
+                override void createTextureContent()
+                {
+                    import Math = api.dm.math;
+
+                    //TODO remove native api
+                    import api.dm.sys.cairo.libs;
+
+                    auto cr = cairoContext.getObject;
+
+                    const lineWidth = 6;
+                    gContext.setLineWidth(lineWidth);
+
+                    auto xCenter = centerShapeW / 2;
+                    auto yCenter = centerShapeH / 2;
+
+                    enum rangeParts = 3;
+
+                    const double angleDiff = Math.abs(maxAngleDeg - minAngleDeg) / rangeParts;
+
+                    double startAngle = minAngleDeg;
+                    double endAngle = startAngle + angleDiff;
+
+                    RGBA[rangeParts] colors = [
+                        graphics.theme.colorSuccess, graphics.theme.colorWarning,
+                        graphics.theme.colorDanger
+                    ];
+                    foreach (i; 0 .. rangeParts)
+                    {
+                        gContext.setColor(colors[i]);
+                        gContext.arc(xCenter, yCenter, xCenter - 45, Math.degToRad(startAngle), Math.degToRad(endAngle));
+                        gContext.stroke;
+                        
+                        startAngle = endAngle;
+                        endAngle += angleDiff;
+                    }
+
+                   
+                }
+            };
+
+            addCreate(zoneShape);
+
         }
 
         override void applyLayout()
@@ -308,11 +365,11 @@ class RadialGauge : Control
         {
             if (handTransition.isRunning)
             {
-                setHandAngleDeg(handTransition.maxValue);
+                //setHandAngleDeg(handTransition.maxValue);
                 handTransition.stop;
             }
 
-            auto oldAngle = hand.angle;
+            auto oldAngle = hand.angle - 90;
 
             handTransition.minValue = oldAngle;
             handTransition.maxValue = angleDeg;

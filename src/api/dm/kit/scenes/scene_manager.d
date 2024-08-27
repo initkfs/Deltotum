@@ -189,6 +189,7 @@ class SceneManager : Scene
 
     override void pause()
     {
+        super.pause;
         if (!_currentScene)
         {
             return;
@@ -198,6 +199,7 @@ class SceneManager : Scene
 
     override void run()
     {
+        super.run;
         if (!_currentScene)
         {
             return;

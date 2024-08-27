@@ -47,12 +47,14 @@ class Animations : Control
 
         interpolator = new UniInterpolator;
 
+        import std.traits: ReturnType;
+
         static foreach (m; __traits(derivedMembers, UniInterpolator))
         {
             {
                 alias func = __traits(getMember, interpolator, m);
                 //TODO best filter
-                static if (__traits(isStaticFunction, func))
+                static if (__traits(isStaticFunction, func) && is(ReturnType!func : double))
                 {
                     const funcName = __traits(identifier, func).to!dstring;
                     animationsMap[funcName] = &func;

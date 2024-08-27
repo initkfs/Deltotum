@@ -3,6 +3,11 @@ module api.math.interps.uni_interpolator;
 import api.math.interps.interpolator : Interpolator;
 import math = api.dm.math;
 
+struct UniInterpolatorMethod {
+    string name;
+    double function(double) ptr;
+}
+
 /**
  * Authors: initkfs
  * Some interpolation functions have been ported from HaxeFlixel under https://opensource.org/licenses/MIT|MIT License. Copyrights: 2009, Adam 'Atomic' Saltsman; 2012, Matt Tuttle; 2013, HaxeFlixel Team
@@ -29,6 +34,26 @@ class UniInterpolator : Interpolator
     }
 
     static:
+
+    UniInterpolatorMethod[] methodList() {
+       //TODO appender;
+       UniInterpolatorMethod[] methods;
+
+       import std.traits: ReturnType;
+       import std.conv: to;
+
+       foreach (m; __traits(derivedMembers, typeof(this)))
+        {
+            alias func = __traits(getMember, typeof(this), m);
+                //TODO best filter
+                static if (__traits(isStaticFunction, func) && is(ReturnType!func : double))
+                {
+                    const funcName = __traits(identifier, func).to!string;
+                    methods ~= UniInterpolatorMethod(funcName, &func);
+                }
+        }
+        return methods;
+    }
 
     //TODO more flexible way 
     UniInterpolator fromMethod(string methodName = "linear")()
