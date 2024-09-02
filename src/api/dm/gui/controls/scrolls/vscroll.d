@@ -62,7 +62,7 @@ class VScroll : BaseScroll
 
             thumb.isDraggable = true;
 
-            thumb.onDrag = (x, y) {
+            thumb.onDragXY = (x, y) {
                 auto bounds = this.bounds;
                 const minY = bounds.y;
                 const maxY = bounds.bottom - thumb.height;

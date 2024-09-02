@@ -124,7 +124,7 @@ class Sprite : EventKitTarget
     Sprite[] children;
     //}
 
-    bool delegate(double, double) onDrag;
+    bool delegate(double, double) onDragXY;
 
     InvalidationState invalidationState;
     void delegate()[] invalidateListeners;
@@ -135,11 +135,20 @@ class Sprite : EventKitTarget
 
     void delegate(double, double)[] onResize;
 
-    double minWidth = 0;
-    double minHeight = 0;
+    double minWidth = 1.0;
+    double minHeight = 1.0;
 
-    double maxWidth = double.max;
-    double maxHeight = double.max;
+    version (SdlBackend)
+    {
+        //TODO correct max size
+        double maxWidth = 16384;
+        double maxHeight = 16384;
+    }
+    else
+    {
+        double maxWidth = double.max;
+        double maxHeight = double.max;
+    }
 
     void delegate(double, double) onChangeXOldNew;
     void delegate(double, double) onChangeYOldNew;
@@ -265,7 +274,7 @@ class Sprite : EventKitTarget
                 {
                     auto x = e.x + offsetX;
                     auto y = e.y + offsetY;
-                    if (onDrag is null || onDrag(x, y))
+                    if (onDragXY is null || onDragXY(x, y))
                     {
                         this.x = x;
                         this.y = y;

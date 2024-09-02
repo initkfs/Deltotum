@@ -62,7 +62,7 @@ class HScroll : BaseScroll
 
             thumb.isDraggable = true;
 
-            thumb.onDrag = (x, y) {
+            thumb.onDragXY = (x, y) {
                 auto bounds = this.bounds;
                 const minX = bounds.x;
                 const maxX = bounds.right - thumb.width;

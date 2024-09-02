@@ -206,7 +206,7 @@ class MinSecChooser : TimeChooser
         style.isFill = true;
 
         selectionSlider.isDraggable = true;
-        selectionSlider.onDrag = (ddx, ddy) {
+        selectionSlider.onDragXY = (ddx, ddy) {
 
             immutable sliderBounds = selectionSlider.bounds;
             immutable center = minSec0to55Box.bounds.center;

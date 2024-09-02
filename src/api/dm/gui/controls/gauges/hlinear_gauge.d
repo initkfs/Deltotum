@@ -256,7 +256,7 @@ class HLinearGauge : Control
         auto pointer = new VTriangle(20, 15, style);
         pointer.isDraggable = true;
 
-        pointer.onDrag = (x, y) {
+        pointer.onDragXY = (x, y) {
             movePointer(pointer, x, y);
             return false;
         };
