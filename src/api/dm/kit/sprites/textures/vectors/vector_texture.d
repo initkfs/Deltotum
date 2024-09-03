@@ -34,6 +34,7 @@ class VectorTexture : Texture
         this.width = width;
         this.height = height;
         isResizable = true;
+        isResizedByParent = true;
     }
 
     void createTextureContent()

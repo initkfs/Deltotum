@@ -13,7 +13,6 @@ class HSplitBox : Container
     {
         layout = new HLayout;
         layout.isAutoResize = true;
-        isDrawBounds = true;
     }
 
     Sprite[] contents;
@@ -90,11 +89,27 @@ class HSplitBox : Container
 
             sep.x = x;
 
-            // if(dy > 0){
-            //     //up
-            // }else {
-            //     //down
-            // }
+            contents[0].isResizeChildren = true;
+            contents[1].isResizeChildren = true;
+
+            if (dx > 0)
+            {
+                //to left
+                if (contents[0].layout)
+                {
+                    contents[0].layout.isIncreaseRootSize = false;
+                    contents[0].layout.isResizeChildren = false;
+                }
+            }
+            else
+            {
+                //to right
+                if (contents[1].layout)
+                {
+                    contents[1].layout.isIncreaseRootSize = false;
+                    contents[1].layout.isResizeChildren = false;
+                }
+            }
 
             contents[0].width = contents[0].width - dx;
             contents[1].width = contents[1].width + dx;

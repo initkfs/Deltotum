@@ -112,8 +112,10 @@ class Sprite : EventKitTarget
     bool isFocus;
     bool isDraggable;
     bool isScalable;
-    bool isDrawBounds;
     bool isDrawClip;
+
+    bool isDrawBounds;
+    RGBA boundsColor = RGBA.red;
 
     bool _visible = true;
     bool isReceiveEvents = true;
@@ -1317,8 +1319,8 @@ class Sprite : EventKitTarget
             immutable double dw = _width - oldWidth;
             foreach (child; children)
             {
-                //TODO only isResizedByParent
-                if (layout is null || (!child.isLayoutManaged && child.isResizedByParent))
+                //layout is null || (!child.isLayoutManaged && child.isResizedByParent
+                if (child.isResizedByParent)
                 {
                     const newWidth = child.width + dw;
                     child.width(newWidth);
@@ -1481,7 +1483,7 @@ class Sprite : EventKitTarget
             return;
         }
 
-        const debugColor = RGBA.red;
+        const debugColor = boundsColor;
 
         graphics.changeColor(debugColor);
 

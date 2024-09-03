@@ -92,7 +92,7 @@ class Control : Sprite
         isResizedByParent = true;
         isResizable = true;
         isLayoutManaged = true;
-        isResizeChildren = true;
+        //isResizeChildren = true;
     }
 
     override void initialize()

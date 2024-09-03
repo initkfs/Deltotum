@@ -322,7 +322,6 @@ class Layouts : Control
 
         split1.addContent([content1, content2]);
 
-
         auto split2 = new HSplitBox;
         pos2Container.addCreate(split2);
     
@@ -333,6 +332,33 @@ class Layouts : Control
         buildInitCreate(content22);
 
         split2.addContent([content11, content22]);
+
+        //Complex splitting
+
+        auto splitLeft = new VSplitBox;
+        splitLeft.boundsColor = RGBA.blueviolet;
+        buildInitCreate(splitLeft);
+        auto contentLeftTop = new VRegularPolygon(60, 80, GraphicStyle(1, RGBA.greenyellow, true, RGBA.greenyellow), 0);
+        buildInitCreate(contentLeftTop);
+        auto contentLeftBottom = new VRegularPolygon(60, 80, GraphicStyle(1, RGBA.salmon, true, RGBA.salmon), 0);
+        buildInitCreate(contentLeftBottom);
+
+        splitLeft.addContent([contentLeftTop, contentLeftBottom]);
+
+        auto splitCenter = new VSplitBox;
+        buildInitCreate(splitCenter);
+        auto contentCenterTop = new VRegularPolygon(60, 80, GraphicStyle(1, RGBA.greenyellow, true, RGBA.greenyellow), 0);
+        buildInitCreate(contentCenterTop);
+        auto contentCenterBottom = new VRegularPolygon(60, 80, GraphicStyle(1, RGBA.salmon, true, RGBA.salmon), 0);
+        buildInitCreate(contentCenterBottom);
+
+        splitCenter.boundsColor = RGBA.aliceblue;
+
+        splitCenter.addContent([contentCenterTop, contentCenterBottom]);
+
+        auto splitLeftCenter = new HSplitBox;
+        pos2Container.addCreate(splitLeftCenter);
+        splitLeftCenter.addContent([splitLeft, splitCenter]);
     }
 
 }

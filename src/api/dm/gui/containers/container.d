@@ -65,13 +65,13 @@ class Container : Control
         setInvalid;
     }
 
-    bool isResizeChildren()
+    bool isLayoutResizeChildren()
     {
         assert(layout);
         return layout.isResizeChildren;
     }
 
-    void isResizeChildren(bool value)
+    void isLayoutResizeChildren(bool value)
     {
         assert(layout);
         layout.isResizeChildren = value;
