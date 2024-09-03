@@ -1,7 +1,7 @@
 module api.dm.kit.components.window_component;
 
 import api.dm.kit.components.graphics_component : GraphicsComponent;
-import api.core.components.uni_component: UniComponent;
+import api.core.components.uni_component : UniComponent;
 
 import api.core.components.attributes : Service;
 
@@ -19,10 +19,34 @@ class WindowComponent : GraphicsComponent
 
     alias build = GraphicsComponent.build;
     alias build = UniComponent.build;
+    alias buildInit = UniComponent.buildInit;
+    alias buildInit = GraphicsComponent.buildInit;
+    alias buildInitCreate = UniComponent.buildInitCreate;
+    alias buildInitCreate = GraphicsComponent.buildInitCreate;
+    alias buildInitCreateRun = UniComponent.buildInitCreateRun;
+    alias buildInitCreateRun = GraphicsComponent.buildInitCreateRun;
 
     void build(WindowComponent wComponent)
     {
         buildFromParent(wComponent, this);
+    }
+
+    void buildInit(WindowComponent component)
+    {
+        build(component);
+        initialize(component);
+    }
+
+    void buildInitCreate(WindowComponent component)
+    {
+        buildInit(component);
+        create(component);
+    }
+
+    void buildInitCreateRun(WindowComponent component)
+    {
+        buildInitCreate(component);
+        run(component);
     }
 
     bool hasWindow() const nothrow pure @safe

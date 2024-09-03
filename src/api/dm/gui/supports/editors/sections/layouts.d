@@ -284,7 +284,7 @@ class Layouts : Control
             flowBoxEndToStart.addCreate(btn);
         }
 
-        auto pos2Container = configureControl(new HBox);
+        auto pos2Container = configureControl(new HBox(5));
         addCreate(pos2Container);
 
         import api.dm.gui.containers.circle_box : CircleBox;
@@ -300,6 +300,39 @@ class Layouts : Control
             circleBox1.addCreate(btn);
         }
 
+        import api.dm.gui.containers.vsplit_box: VSplitBox;
+        import api.dm.gui.containers.hsplit_box: HSplitBox;
+        import api.dm.gui.containers.vbox: VBox;
+        import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon: VRegularPolygon;
+
+        auto split1 = new VSplitBox;
+        pos2Container.addCreate(split1);
+    
+        // auto content1 = new VBox;
+        // buildInitCreate(content1);
+        // content1.addCreate(new VRegularPolygon(100, 150, GraphicStyle(1, RGBA.blue, true, RGBA.blue), 0));
+        auto content1 = new VRegularPolygon(60, 80, GraphicStyle(1, RGBA.greenyellow, true, RGBA.greenyellow), 0);
+        buildInitCreate(content1);
+
+        // auto content2 = new VBox;
+        // buildInitCreate(content2);
+        // content2.addCreate(new VRegularPolygon(100, 150, GraphicStyle(1, RGBA.yellow, true, RGBA.yellow), 0));
+        auto content2 = new VRegularPolygon(60, 80, GraphicStyle(1, RGBA.salmon, true, RGBA.salmon), 0);
+        buildInitCreate(content2);
+
+        split1.addContent([content1, content2]);
+
+
+        auto split2 = new HSplitBox;
+        pos2Container.addCreate(split2);
+    
+        auto content11 = new VRegularPolygon(60, 80, GraphicStyle(1, RGBA.greenyellow, true, RGBA.greenyellow), 0);
+        buildInitCreate(content11);
+
+        auto content22 = new VRegularPolygon(60, 80, GraphicStyle(1, RGBA.salmon, true, RGBA.salmon), 0);
+        buildInitCreate(content22);
+
+        split2.addContent([content11, content22]);
     }
 
 }

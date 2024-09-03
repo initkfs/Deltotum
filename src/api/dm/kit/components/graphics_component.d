@@ -13,7 +13,7 @@ import api.dm.kit.screens.screen : Screen;
 import api.dm.kit.events.kit_event_manager : KitEventManager;
 import api.dm.kit.apps.caps.cap_graphics : CapGraphics;
 import api.dm.kit.platforms.platform : Platform;
-import api.dm.kit.i18n.i18n: I18n;
+import api.dm.kit.i18n.i18n : I18n;
 
 /**
  * Authors: initkfs
@@ -34,10 +34,31 @@ class GraphicsComponent : UniComponent
     }
 
     alias build = UniComponent.build;
+    alias buildInit = UniComponent.buildInit;
+    alias buildInitCreate = UniComponent.buildInitCreate;
+    alias buildInitCreateRun = UniComponent.buildInitCreateRun;
 
     void build(GraphicsComponent gComponent)
     {
         buildFromParent(gComponent, this);
+    }
+
+    void buildInit(GraphicsComponent component)
+    {
+        build(component);
+        initialize(component);
+    }
+
+    void buildInitCreate(GraphicsComponent component)
+    {
+        buildInit(component);
+        create(component);
+    }
+
+    void buildInitCreateRun(GraphicsComponent component)
+    {
+        buildInitCreate(component);
+        run(component);
     }
 
     bool hasAsset() const nothrow pure @safe
