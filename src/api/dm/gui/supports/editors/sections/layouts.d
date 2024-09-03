@@ -308,19 +308,14 @@ class Layouts : Control
         auto split1 = new VSplitBox;
         pos2Container.addCreate(split1);
     
-        // auto content1 = new VBox;
-        // buildInitCreate(content1);
-        // content1.addCreate(new VRegularPolygon(100, 150, GraphicStyle(1, RGBA.blue, true, RGBA.blue), 0));
         auto content1 = new VRegularPolygon(60, 80, GraphicStyle(1, RGBA.greenyellow, true, RGBA.greenyellow), 0);
         buildInitCreate(content1);
-
-        // auto content2 = new VBox;
-        // buildInitCreate(content2);
-        // content2.addCreate(new VRegularPolygon(100, 150, GraphicStyle(1, RGBA.yellow, true, RGBA.yellow), 0));
         auto content2 = new VRegularPolygon(60, 80, GraphicStyle(1, RGBA.salmon, true, RGBA.salmon), 0);
         buildInitCreate(content2);
+        auto content3 = new VRegularPolygon(60, 80, GraphicStyle(1, RGBA.salmon, true, RGBA.salmon), 0);
+        buildInitCreate(content3);
 
-        split1.addContent([content1, content2]);
+        split1.addContent([content1, content2, content3]);
 
         auto split2 = new HSplitBox;
         pos2Container.addCreate(split2);
@@ -331,7 +326,10 @@ class Layouts : Control
         auto content22 = new VRegularPolygon(60, 80, GraphicStyle(1, RGBA.salmon, true, RGBA.salmon), 0);
         buildInitCreate(content22);
 
-        split2.addContent([content11, content22]);
+        auto content33 = new VRegularPolygon(60, 80, GraphicStyle(1, RGBA.crimson, true, RGBA.crimson), 0);
+        buildInitCreate(content33);
+
+        split2.addContent([content11, content22, content33]);
 
         //Complex splitting
 
@@ -356,9 +354,20 @@ class Layouts : Control
 
         splitCenter.addContent([contentCenterTop, contentCenterBottom]);
 
-        auto splitLeftCenter = new HSplitBox;
-        pos2Container.addCreate(splitLeftCenter);
-        splitLeftCenter.addContent([splitLeft, splitCenter]);
+        auto splitRight = new VSplitBox;
+        buildInitCreate(splitRight);
+        auto contentRightTop = new VRegularPolygon(60, 80, GraphicStyle(1, RGBA.greenyellow, true, RGBA.greenyellow), 0);
+        buildInitCreate(contentRightTop);
+        auto contentRightBottom = new VRegularPolygon(60, 80, GraphicStyle(1, RGBA.salmon, true, RGBA.salmon), 0);
+        buildInitCreate(contentRightBottom);
+
+        splitRight.boundsColor = RGBA.fuchsia;
+
+        splitRight.addContent([contentRightTop, contentRightBottom]);
+
+        auto splitMain = new HSplitBox;
+        pos2Container.addCreate(splitMain);
+        splitMain.addContent([splitLeft, splitCenter, splitRight]);
     }
 
 }
