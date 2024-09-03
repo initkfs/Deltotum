@@ -15,16 +15,16 @@ class CircleLayout : ManagedLayout
     this(double radius = 0) pure
     {
         this.radius = radius;
-        isArrangeBeforeResize = true;
-        isArrangeAfterResize = false;
+        isAlignBeforeResize = true;
+        isAlignAfterResize = false;
     }
 
     //TODO reverse, paddng, margins
-    override void arrangeChildren(Sprite root)
+    override bool alignChildren(Sprite root)
     {
         if (radius <= 0)
         {
-            return;
+            return false;
         }
 
         import Math = api.dm.math;
@@ -35,7 +35,7 @@ class CircleLayout : ManagedLayout
         const childCount = children.walkLength;
         if (childCount == 0)
         {
-            return;
+            return false;
         }
 
         const double angleDegStep = 360.0 / childCount;
@@ -49,10 +49,13 @@ class CircleLayout : ManagedLayout
         {
             const childBounds = child.bounds;
             const pos = Vector2.fromPolarDeg(nextDeg, radius);
-            child.x = child.margin.left + startX + pos.x - childBounds.halfWidth - child.margin.right;
-            child.y = child.margin.top + startY + pos.y - childBounds.halfHeight- child.margin.bottom;
+            child.x = child.margin.left + startX + pos.x - childBounds.halfWidth - child
+                .margin.right;
+            child.y = child.margin.top + startY + pos.y - childBounds.halfHeight - child
+                .margin.bottom;
             nextDeg += angleDegStep;
         }
+        return true;
     }
 
     //FIXME padding is not always calculated correctly, check on an odd number
@@ -108,7 +111,8 @@ class CircleLayout : ManagedLayout
                 minY -= minDt;
             }
 
-            if(minDt > 0 && minDt){
+            if (minDt > 0 && minDt)
+            {
                 maxY += minDt;
             }
 

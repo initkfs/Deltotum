@@ -12,20 +12,21 @@ import Math = api.dm.math;
  */
 class ManagedLayout : Layout
 {
-    bool isArrangeBeforeResize;
-    bool isArrangeAfterResize = true;
+    //It’s easier to debug by seeing the arrangement of children
+    bool isAlignBeforeResize = true;
+    bool isAlignAfterResize;
 
     bool alignment(Sprite root, Sprite obj)
     {
-        //TODO return bool?
+        bool isAlign = true;
         if (isAlignX)
         {
-            alignX(root, obj);
+            isAlign &= alignX(root, obj);
         }
 
         if (isAlignY)
         {
-            alignY(root, obj);
+            isAlign &= alignY(root, obj);
         }
 
         if (obj.alignment != Alignment.none && obj.isLayoutManaged)
@@ -35,19 +36,18 @@ class ManagedLayout : Layout
                 case Alignment.none:
                     break;
                 case Alignment.x:
-                    alignX(root, obj);
+                    isAlign &= alignX(root, obj);
                     break;
                 case Alignment.y:
-                    alignY(root, obj);
+                    isAlign &= alignY(root, obj);
                     break;
                 case Alignment.xy:
-                    alignXY(root, obj);
+                    isAlign &= alignXY(root, obj);
                     break;
             }
         }
 
-        //TODO all bools?
-        return true;
+        return isAlign;
     }
 
     bool alignXY(Sprite root, Sprite target)
@@ -72,7 +72,8 @@ class ManagedLayout : Layout
             return false;
         }
 
-        const newX = rootBounds.middleX - targetBounds.halfWidth + target.margin.left - target.margin.right;
+        const newX = rootBounds.middleX - targetBounds.halfWidth + target.margin.left - target
+            .margin.right;
         if (Math.abs(target.x - newX) < sizeChangeDelta)
         {
             return false;
@@ -97,7 +98,8 @@ class ManagedLayout : Layout
             return false;
         }
 
-        const newY = rootBounds.middleY - targetBounds.halfHeight + target.margin.top - target.margin.bottom;
+        const newY = rootBounds.middleY - targetBounds.halfHeight + target.margin.top - target
+            .margin.bottom;
         if (Math.abs(target.y - newY) < sizeChangeDelta)
         {
             return false;
@@ -107,73 +109,75 @@ class ManagedLayout : Layout
         return true;
     }
 
-    void arrangeChildren(Sprite root)
+    bool alignChildren(Sprite root)
     {
+        bool isAlign = true;
         foreach (child; root.children)
         {
-            alignment(root, child);
+            isAlign &= alignment(root, child);
         }
+        return isAlign;
     }
 
-    bool arrangeForLayout(Sprite root)
+    bool alignForLayout(Sprite root)
     {
-        bool isAlignX, isAlignY;
         if (isAlignXifOneChild || isAlignYifOneChild)
         {
             import std.range.primitives : walkLength, front;
 
+            //TODO children count cache?
             auto children = childrenForLayout(root);
             auto childCount = children.walkLength;
 
             if (childCount == 1)
             {
+                bool isAlignX, isAlignY;
                 if (isAlignXifOneChild)
                 {
-                    alignX(root, children.front);
-                    isAlignX = true;
+                    isAlignX = alignX(root, children.front);
                 }
 
                 if (isAlignYifOneChild)
                 {
-                    alignY(root, children.front);
-                    isAlignY = true;
+                    isAlignY = alignY(root, children.front);
                 }
+
+                return isAlignX || isAlignY;
             }
         }
 
-        if (isAlignX || isAlignY)
-        {
-            return true;
-        }
-
-        arrangeChildren(root);
-        return true;
+        return alignChildren(root);
     }
 
     override void applyLayout(Sprite root)
     {
-        if (isArrangeBeforeResize)
+        if (isAlignBeforeResize)
         {
-            arrangeForLayout(root);
+            alignForLayout(root);
         }
 
-        if (isResizeParent)
+        if (isIncreaseRootWidth || isDecreaseRootWidth)
         {
-            layoutResize(root);
+            resizeRootWidth(root);
+        }
+
+        if (isIncreaseRootHeight || isDecreaseRootHeight)
+        {
+            resizeRootHeight(root);
         }
 
         if (isResizeChildren || root.isResizeChildren)
         {
-            layoutResizeChildren(root);
+            resizeChildren(root);
         }
 
-        if (isArrangeAfterResize)
+        if (isAlignAfterResize)
         {
-            arrangeForLayout(root);
+            alignForLayout(root);
         }
     }
 
-    void layoutResize(Sprite root)
+    void resizeRootWidth(Sprite root)
     {
         double newWidth = childrenWidth(root);
         if (root.padding.width > 0)
@@ -183,29 +187,36 @@ class ManagedLayout : Layout
 
         if (newWidth > root.width)
         {
-            if (newWidth >= root.minWidth && newWidth <= root.maxWidth && (
-                    Math.abs(root.width - newWidth) >= sizeChangeDelta))
+            if (isIncreaseRootWidth)
             {
-                root.width = newWidth;
-            }
-
-        }
-
-        if (isParentWidthReduce)
-        {
-            auto newDecWidth = root.width - newWidth;
-            if (newDecWidth > 0)
-            {
-                if (
-                    newDecWidth >= root.minWidth &&
-                    newDecWidth <= root.maxWidth &&
-                    Math.abs(root.width - newDecWidth) >= sizeChangeDelta)
+                if (newWidth >= root.minWidth && newWidth <= root.maxWidth && (
+                        Math.abs(root.width - newWidth) >= sizeChangeDelta))
                 {
-                    root.width = newDecWidth;
+                    root.width = newWidth;
                 }
             }
         }
+        else
+        {
+            if (isDecreaseRootWidth)
+            {
+                auto newDecrWidth = root.width - newWidth;
+                if (newDecrWidth > 0)
+                {
+                    if (
+                        newDecrWidth >= root.minWidth &&
+                        newDecrWidth <= root.maxWidth &&
+                        Math.abs(root.width - newDecrWidth) >= sizeChangeDelta)
+                    {
+                        root.width = newDecrWidth;
+                    }
+                }
+            }
+        }
+    }
 
+    void resizeRootHeight(Sprite root)
+    {
         double newHeight = childrenHeight(root);
         if (root.padding.height > 0)
         {
@@ -214,21 +225,27 @@ class ManagedLayout : Layout
 
         if (newHeight > root.height)
         {
-            if (newHeight >= root.minHeight && newHeight <= root.maxHeight && (
-                    Math.abs(root.height - newHeight) >= sizeChangeDelta))
+            if (isIncreaseRootHeight)
             {
-                root.height = newHeight;
+                if (newHeight >= root.minHeight && newHeight <= root.maxHeight && (
+                        Math.abs(root.height - newHeight) >= sizeChangeDelta))
+                {
+                    root.height = newHeight;
+                }
             }
         }
-
-        if (isParentHeightReduce)
+        else
         {
-            auto newDecHeight = root.height - newHeight;
-            if (newDecHeight > 0)
+            if (isDecreaseRootHeight)
             {
-                if (newDecHeight >= root.minHeight && newDecHeight <= root.maxHeight && (Math.abs(root.height - newDecHeight) >= sizeChangeDelta))
+                auto newDecrHeight = root.height - newHeight;
+                if (newDecrHeight > 0)
                 {
-                    root.height = newDecHeight;
+                    if (newDecrHeight >= root.minHeight && newDecrHeight <= root.maxHeight && (
+                            Math.abs(root.height - newDecrHeight) >= sizeChangeDelta))
+                    {
+                        root.height = newDecrHeight;
+                    }
                 }
             }
         }
@@ -245,7 +262,7 @@ class ManagedLayout : Layout
     }
 
     //TODO the first child occupies all available space
-    void layoutResizeChildren(Sprite root)
+    void resizeChildren(Sprite root)
     {
         import std.range.primitives : empty, walkLength;
         import std.algorithm.searching : count;
@@ -256,16 +273,59 @@ class ManagedLayout : Layout
             return;
         }
 
+        double reduceWidth = 0;
+        if (isDecreaseChildrenWidth)
+        {
+            auto chWidth = childrenWidth(root);
+            if (chWidth > root.width)
+            {
+                auto rootWidth = root.width;
+                if (root.padding.width > 0 || root.padding.width < rootWidth)
+                {
+                    rootWidth -= root.padding.width;
+                }
+                auto dw = chWidth - rootWidth;
+                reduceWidth = dw / targetChildren.walkLength;
+            }
+        }
+
+        double reduceHeight = 0;
+        if (isDecreaseChildrenHeight)
+        {
+            auto chHeight = childrenHeight(root);
+            if (chHeight > root.height)
+            {
+                auto rootHeight = root.height;
+                if (root.padding.height > 0 || root.padding.height < rootHeight)
+                {
+                    rootHeight -= root.padding.height;
+                }
+                auto dh = chHeight - rootHeight;
+                reduceHeight = dh / targetChildren.walkLength;
+            }
+        }
+
         const hgrowChildren = targetChildren.count!(ch => ch.isHGrow);
         const vgrowChildren = targetChildren.count!(ch => ch.isVGrow);
 
-        if (hgrowChildren == 0 && vgrowChildren == 0)
+        if (reduceWidth == 0 && reduceHeight == 0 && hgrowChildren == 0 && vgrowChildren == 0)
         {
             return;
         }
 
         foreach (child; targetChildren)
         {
+            //TODO min, max, delta
+            if (reduceWidth > 0)
+            {
+                child.width = reduceWidth;
+            }
+
+            if (reduceHeight > 0)
+            {
+                child.height = reduceHeight;
+            }
+
             if (child.isHGrow)
             {
                 const freeW = freeWidth(root, child);

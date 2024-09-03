@@ -18,7 +18,7 @@ class HLayout : ManagedLayout
         this.spacing = spacing;
     }
 
-    override void arrangeChildren(Sprite root)
+    override bool alignChildren(Sprite root)
     {
         auto bounds = root.bounds;
         double nextX = 0;
@@ -66,11 +66,13 @@ class HLayout : ManagedLayout
             else
             {
                 const newChildY = root.y + root.padding.top + child.margin.top;
-                if(Math.abs(child.y - newChildY) >= sizeChangeDelta){
+                if (Math.abs(child.y - newChildY) >= sizeChangeDelta)
+                {
                     child.y = newChildY;
                 }
             }
         }
+        return true;
     }
 
     override double childrenWidth(Sprite root)

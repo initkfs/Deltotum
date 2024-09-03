@@ -18,7 +18,7 @@ class VLayout : ManagedLayout
         this.spacing = spacing;
     }
 
-    override void arrangeChildren(Sprite root)
+    override bool alignChildren(Sprite root)
     {
         auto bounds = root.bounds;
         double nextY = 0;
@@ -72,6 +72,7 @@ class VLayout : ManagedLayout
                 }
             }
         }
+        return true;
     }
 
     override double childrenWidth(Sprite root)

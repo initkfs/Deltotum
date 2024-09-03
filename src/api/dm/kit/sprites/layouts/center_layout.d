@@ -8,12 +8,14 @@ import api.dm.kit.sprites.layouts.managed_layout : ManagedLayout;
  */
 class CenterLayout : ManagedLayout
 {
-    override void arrangeChildren(Sprite root)
+    override bool alignChildren(Sprite root)
     {
+        bool isAlign = true;
         foreach (child; root.children)
         {
-            alignXY(root, child);
+            isAlign &= alignXY(root, child);
         }
+        return isAlign;
     }
 
     override double childrenWidth(Sprite root)

@@ -25,7 +25,7 @@ class FlowLayout : ManagedLayout
     }
 
     //TODO check paddng, margins, etc
-    override void arrangeChildren(Sprite root)
+    override bool alignChildren(Sprite root)
     {
         const rootBounds = root.bounds;
 
@@ -113,6 +113,7 @@ class FlowLayout : ManagedLayout
                 nextX = child.bounds.x - hgap - child.margin.left;
             }
         }
+        return true;
     }
 
     override double childrenWidth(Sprite root)

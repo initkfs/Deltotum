@@ -15,7 +15,7 @@ class AnchorLayout : ManagedLayout
 
     }
 
-    override void arrangeChildren(Sprite root)
+    override bool alignChildren(Sprite root)
     {
         import Math = api.dm.math;
         import api.math.vector2 : Vector2;
@@ -25,7 +25,7 @@ class AnchorLayout : ManagedLayout
         const childCount = children.walkLength;
         if (childCount == 0)
         {
-            return;
+            return false;
         }
 
         const parentBounds = root.bounds;
@@ -43,6 +43,7 @@ class AnchorLayout : ManagedLayout
                 child.y = parentBounds.bottom - child.margin.bottom - child.height;
             }
         }
+        return true;
     }
 
     override double childrenWidth(Sprite root)

@@ -78,16 +78,16 @@ class Container : Control
         setInvalid;
     }
 
-    bool isResizeParent()
+    bool isResizeRoot()
     {
         assert(layout);
-        return layout.isResizeParent;
+        return layout.isResizeRoot;
     }
 
-    void isResizeParent(bool value)
+    void isResizeRoot(bool value)
     {
         assert(layout);
-        layout.isResizeParent = value;
+        layout.isIncreaseRootSize = value;
         setInvalid;
     }
 }

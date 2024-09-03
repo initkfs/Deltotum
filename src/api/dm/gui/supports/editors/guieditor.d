@@ -110,7 +110,7 @@ class GuiEditor : Scene
             root.addCreate(fractalsTab);
         }
 
-        root.changeTab(controlsTab);
+        root.changeTab(layoutTab);
 
         //import std;
         createDebugger;

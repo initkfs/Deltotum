@@ -14,11 +14,18 @@ abstract class Layout
     bool isAlignYifOneChild;
 
     bool isFillFromStartToEnd = true;
-    bool isResizeChildren;
-    bool isResizeParent;
 
-    bool isParentWidthReduce;
-    bool isParentHeightReduce;
+    bool isIncreaseChildrenWidth;
+    bool isIncreaseChildrenHeight;
+
+    bool isDecreaseChildrenWidth;
+    bool isDecreaseChildrenHeight;
+
+    bool isIncreaseRootWidth;
+    bool isIncreaseRootHeight;
+
+    bool isDecreaseRootWidth;
+    bool isDecreaseRootHeight;
 
     double sizeChangeDelta = 0.15;
 
@@ -62,9 +69,57 @@ abstract class Layout
         return root.children.filter!(ch => ch.isLayoutManaged);
     }
 
+    bool isIncreaseRootSize() const pure nothrow @safe
+    {
+        return isIncreaseRootWidth || isIncreaseRootHeight;
+    }
+
+    bool isDecreaseRootSize() const pure nothrow @safe
+    {
+        return isDecreaseRootWidth || isDecreaseRootHeight;
+    }
+
+    bool isResizeRoot() const pure nothrow @safe
+    {
+        return isIncreaseRootSize || isDecreaseRootSize;
+    }
+
+    void isIncreaseRootSize(bool value) pure nothrow @safe
+    {
+        isIncreaseRootWidth = value;
+        isIncreaseRootHeight = value;
+    }
+
+    void isDecreaseRootSize(bool value) pure nothrow @safe
+    {
+        isDecreaseRootWidth = value;
+        isDecreaseRootHeight = value;
+    }
+
+    bool isIncreaseChildrenSize() const pure nothrow @safe
+    {
+        return isIncreaseChildrenWidth || isIncreaseChildrenHeight;
+    }
+
+    bool isDecreaseChildrenSize() const pure nothrow @safe
+    {
+        return isDecreaseChildrenWidth || isDecreaseChildrenHeight;
+    }
+
+    bool isResizeChildren() const pure nothrow @safe
+    {
+        return isIncreaseChildrenSize || isDecreaseChildrenSize ;
+    }
+
+    void isResizeChildren(bool value) pure nothrow @safe
+    {
+        isIncreaseChildrenWidth = value;
+        isIncreaseChildrenHeight = value;
+    }
+
     void isAutoResize(bool isResize) pure @safe
     {
-        isResizeParent = isResize;
+        isIncreaseRootSize = isResize;
         isResizeChildren = isResize;
     }
 
@@ -86,9 +141,9 @@ abstract class Layout
         isAlignY = value;
     }
 
-    void isParentSizeReduce(bool isValue)
+    void isParentSizeReduce(bool isValue) pure @safe
     {
-        isParentWidthReduce = isValue;
-        isParentHeightReduce = isValue;
+        isDecreaseRootWidth = isValue;
+        isDecreaseRootHeight = isValue;
     }
 }
