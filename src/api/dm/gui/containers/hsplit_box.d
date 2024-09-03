@@ -80,6 +80,7 @@ class HSplitBox : Container
         addCreate(sep);
         sep.isLayoutManaged = false;
         sep.isDraggable = true;
+        sep.isResizedByParent = false;
 
         separators ~= SeparatorData(prev, next, sep);
 
@@ -115,7 +116,9 @@ class HSplitBox : Container
             sep.x = x;
 
             prev.isResizeChildren = true;
+            prev.isResizeChildrenAlways = true;
             next.isResizeChildren = true;
+            next.isResizeChildrenAlways = true;
 
             if (dx > 0)
             {

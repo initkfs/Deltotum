@@ -319,19 +319,20 @@ class ToggleSwitch : Labeled
 
     void setSwitch(bool value, bool isRunListeners = true)
     {
-        if (window && window.isShowing)
-        {
-            if (value)
-            {
-                setSwitchOn(isRunListeners);
-            }
-            else
-            {
-                setSwitchOff(isRunListeners);
-            }
-        }
-        else
-        {
+        //FIXME bug in TabPane, window is showing
+        // if (window && window.isShowing)
+        // {
+        //     if (value)
+        //     {
+        //         setSwitchOn(isRunListeners);
+        //     }
+        //     else
+        //     {
+        //         setSwitchOff(isRunListeners);
+        //     }
+        // }
+        // else
+        // {
             window.showingTasks ~= (dt) {
                 if (value)
                 {
@@ -342,7 +343,7 @@ class ToggleSwitch : Labeled
                     setSwitchOff(isRunListeners);
                 }
             };
-        }
+        //}
 
     }
 

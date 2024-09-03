@@ -95,7 +95,13 @@ class Sprite : EventKitTarget
 
     Layout layout;
     bool _layoutManaged = true;
+
     bool isResizeChildren;
+    bool isResizeChildrenIfNoLayout = true;
+    bool isResizeChildrenIfNotLManaged = true;
+    bool isResizeChildrenIfNotResizable;
+    bool isResizeChildrenAlways;
+
     bool isResizedByParent;
 
     bool isManagedByScene;
@@ -1313,20 +1319,44 @@ class Sprite : EventKitTarget
             }
         }
 
-        //!isProcessLayout && !isProcessParentLayout && 
         if (isResizeChildren && children.length > 0)
         {
             immutable double dw = _width - oldWidth;
+
+            //Branch expanded for easier debugging
             foreach (child; children)
             {
-                //layout is null || (!child.isLayoutManaged && child.isResizedByParent
-                if (child.isResizedByParent)
+                if (isResizeChildrenIfNoLayout && !layout)
                 {
-                    const newWidth = child.width + dw;
-                    child.width(newWidth);
+                    incChildWidth(child, dw);
+                }
+                else if (isResizeChildrenIfNotLManaged && !child.isLayoutManaged && child
+                    .isResizedByParent)
+                {
+                    incChildWidth(child, dw);
+                }
+                else if (isResizeChildrenAlways && child.isResizedByParent)
+                {
+                    incChildWidth(child, dw);
+                }
+                else if (isResizeChildrenIfNotResizable)
+                {
+                    incChildWidth(child, dw);
                 }
             }
         }
+    }
+
+    protected void incChildWidth(Sprite child, double dw)
+    {
+        const newWidth = child.width + dw;
+        child.width = newWidth;
+    }
+
+    protected void incChildHeight(Sprite child, double dh)
+    {
+        const newHeight = child.height + dh;
+        child.height = newHeight;
     }
 
     double height() @safe pure nothrow
@@ -1397,10 +1427,23 @@ class Sprite : EventKitTarget
             const dh = _height - oldHeight;
             foreach (child; children)
             {
-                if (layout is null || (!child.isLayoutManaged && child.isResizedByParent))
+                //Branch expanded for easier debugging
+                if (isResizeChildrenIfNoLayout && !layout)
                 {
-                    const newHeight = child.height + dh;
-                    child.height(newHeight);
+                    incChildHeight(child, dh);
+                }
+                else if (isResizeChildrenIfNotLManaged && !child.isLayoutManaged && child
+                    .isResizedByParent)
+                {
+                    incChildHeight(child, dh);
+                }
+                else if (isResizeChildrenAlways && child.isResizedByParent)
+                {
+                    incChildHeight(child, dh);
+                }
+                else if (isResizeChildrenIfNotResizable)
+                {
+                    incChildHeight(child, dh);
                 }
             }
         }
@@ -1992,6 +2035,7 @@ class Sprite : EventKitTarget
     }
 
     GraphicsContext gContext()
+
     out (_gContext; _gContext !is null)
     {
         return _gContext;

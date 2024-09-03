@@ -79,6 +79,7 @@ class VSplitBox : Container
         auto sep = new VRegularPolygon(10, 10,
             GraphicStyle(1, graphics.theme.colorAccent, true, graphics.theme.colorAccent), 0);
         addCreate(sep);
+        sep.isResizedByParent = false;
         sep.isLayoutManaged = false;
         sep.isDraggable = true;
 
