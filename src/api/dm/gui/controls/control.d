@@ -85,10 +85,8 @@ class Control : Sprite
     Tooltip[] tooltips;
     size_t tooltipDelay = 100;
 
-    override void construct()
+    this()
     {
-        super.construct;
-
         isResizedByParent = true;
         isResizable = true;
         isLayoutManaged = true;
@@ -587,7 +585,7 @@ class Control : Sprite
 
         addCreate(_background, 0);
 
-        _background.opacity = graphics.theme.opacityControls;
+        _background.opacity = graphics.theme.opacityBackground;
 
         if (onBackgroundCreated)
         {

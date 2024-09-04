@@ -202,11 +202,6 @@ class Sprite : EventKitTarget
 
     this()
     {
-        construct;
-    }
-
-    void construct()
-    {
         isConstructed = true;
     }
 

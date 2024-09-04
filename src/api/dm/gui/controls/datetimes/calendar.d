@@ -40,11 +40,9 @@ class DayContainer : Control
 
     this(dstring spacePlaceholder = "  ")
     {
+        super();
         this.spacePlaceholder = spacePlaceholder;
-    }
 
-    override void construct()
-    {
         import api.dm.kit.sprites.layouts.center_layout : CenterLayout;
 
         this.layout = new CenterLayout;

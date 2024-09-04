@@ -40,6 +40,7 @@ class Theme
 
     double opacityContainers = 1;
     double opacityControls = 1;
+    double opacityBackground = 0.4;
     double opacityHover = 1;
 
     size_t iconSize = 24;
@@ -96,7 +97,7 @@ class Theme
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
         GraphicStyle backgroundStyle = parentStyle ? *parentStyle : GraphicStyle(
-            lineThickness, colorAccent, false, colorControlBackground);
+            lineThickness, colorAccent, true, colorControlBackground);
 
         Sprite newBackground;
         if (isUseVectorGraphics)

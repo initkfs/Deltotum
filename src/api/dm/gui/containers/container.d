@@ -8,8 +8,8 @@ import api.dm.kit.sprites.sprite : Sprite;
  */
 class Container : Control
 {
-    override void construct(){
-        super.construct;
+
+    this(){
         isBackground = false;
     }
 

@@ -19,6 +19,7 @@ abstract class BaseProgressBar : Control
 
     this(double minValue = 0, double maxValue = 1.0)
     {
+        super();
         if (minValue > maxValue)
         {
             import std.format : format;
@@ -30,8 +31,6 @@ abstract class BaseProgressBar : Control
         this.maxValue = maxValue;
 
         this.value = minValue;
-
-        construct;
     }
 
     double progress()
