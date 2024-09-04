@@ -133,12 +133,12 @@ class Scene : WindowComponent
         if (isPaused)
         {
             if (sprites.length > 0)
-        {
-            foreach (obj; sprites)
             {
-                obj.onSceneResume;
+                foreach (obj; sprites)
+                {
+                    obj.onSceneResume;
+                }
             }
-        }
         }
 
         super.run;
@@ -146,8 +146,15 @@ class Scene : WindowComponent
 
     void createDebugger()
     {
+        import api.dm.gui.containers.slider : Slider, SliderPos;
+
+        auto debugWrapper = new Slider(SliderPos.right);
+        addCreate(debugWrapper);
         debugger = new SceneView(this);
-        addCreate(debugger);
+        debugWrapper.addContent(debugger);
+        window.showingTasks ~= (dt) {
+            debugWrapper.setInitialPos;
+        };
     }
 
     override void dispose()

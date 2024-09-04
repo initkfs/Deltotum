@@ -938,4 +938,18 @@ class Graphics : LoggableUnit
         double scale = (cast(double)(outputWidth)) / windowWidth;
         return scale;
     }
+
+    Rect2d renderBounds(){
+
+        int outputWidth;
+        int outputHeight;
+
+        if (const err = renderer.getOutputSize(outputWidth, outputHeight))
+        {
+            logger.error("Error getting renderer size: ", err.toString);
+            return Rect2d();
+        }
+
+        return Rect2d(0, 0, outputWidth, outputHeight);
+    }
 }

@@ -87,6 +87,7 @@ class SceneView : VBox
         super(5);
         this.scene = scene;
         isBorder = true;
+        isBackground = true;
     }
 
     override void create()
@@ -94,8 +95,6 @@ class SceneView : VBox
         super.create;
 
         enableInsets;
-
-        isLayoutManaged = false;
 
         //TODO autosize
         width = 300;
@@ -214,8 +213,6 @@ class SceneView : VBox
             objectOnDebug = newSprite;
             setDebugInfo(objectOnDebug);
         };
-
-        x = scene.window.width - width;
 
         debugScene;
     }
