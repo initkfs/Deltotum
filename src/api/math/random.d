@@ -204,3 +204,129 @@ unittest
         assert(res1);
     }
 }
+
+//See https://en.wikipedia.org/wiki/Mersenne_Twister
+struct MersenneTwister
+{
+    private
+    {
+        enum : uint
+        {
+            n = 624,
+            m = 397,
+            w = 32,
+            r = 31,
+            UMASK = (0xffffffffu << r),
+            LMASK = (0xffffffffu >> (w - r)),
+            a = 0x9908b0df,
+            u = 11,
+            s = 7,
+            t = 15,
+            l = 18,
+            b = 0x9d2c5680u,
+            c = 0xefc60000u,
+            f = 1812433253u
+        }
+
+        MersenneState state;
+        uint seed;
+
+        struct MersenneState
+        {
+            uint[n] stateArray;
+            int stateIndex;
+
+            uint[] slice() return pure nothrow @safe => stateArray[0 .. n];
+        }
+    }
+
+    this(uint seed) pure @safe
+    {
+        if (seed == 0)
+        {
+            throw new Exception("Seed value must not be 0");
+        }
+
+        this.seed = seed;
+
+        uint[] stateArray = state.slice;
+
+        uint seedVal = seed;
+        stateArray[0] = seedVal;
+        foreach (uint i; 1 .. n)
+        {
+            seedVal = f * (seedVal ^ (seedVal >> (w - 2))) + i;
+            stateArray[i] = seedVal;
+        }
+    }
+
+    uint randu() nothrow @safe
+    {
+        uint[] stateArray = state.slice;
+
+        int k = state.stateIndex;
+        int j = k - (n - 1);
+        if (j < 0)
+        {
+            j += n;
+        }
+
+        uint x = (stateArray[k] & UMASK) | (stateArray[j] & LMASK);
+
+        uint xA = x >> 1;
+        if (x & 1u)
+        {
+            xA ^= a;
+        }
+
+        j = k - (n - m);
+        if (j < 0)
+        {
+            j += n;
+        }
+
+        x = stateArray[j] ^ xA;
+        stateArray[k++] = x;
+
+        if (k >= n)
+        {
+            k = 0;
+        }
+
+        state.stateIndex = k;
+
+        uint y = x ^ (x >> u);
+        y = y ^ ((y << s) & b);
+        y = y ^ ((y << t) & c);
+
+        const uint z = y ^ (y >> l);
+
+        return z;
+    }
+
+}
+
+unittest
+{
+    MersenneTwister mersen = MersenneTwister(12345);
+    assert(mersen.randu == 3992670690);
+    assert(mersen.randu == 3823185381);
+    assert(mersen.randu == 1358822685);
+    assert(mersen.randu == 561383553);
+    assert(mersen.randu == 789925284);
+    assert(mersen.randu == 170765737);
+    assert(mersen.randu == 878579710);
+    assert(mersen.randu == 3549516158);
+    assert(mersen.randu == 2438360421);
+    assert(mersen.randu == 2285257250);
+    assert(mersen.randu == 2557845021);
+    assert(mersen.randu == 4107320065);
+    assert(mersen.randu == 4142558326);
+    assert(mersen.randu == 1983958385);
+    assert(mersen.randu == 2805374267);
+    assert(mersen.randu == 3967425166);
+    assert(mersen.randu == 3216529513);
+    assert(mersen.randu == 1605979227);
+    assert(mersen.randu == 2807061239);
+    assert(mersen.randu == 665605494);
+}

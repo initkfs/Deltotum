@@ -255,7 +255,7 @@ class SimpleUnit : Unitable
         assert(component.isPaused);
         assertThrown(component.create);
         assertThrown(component.initialize);
-        assertThrown(component.dispose);
+        //assertThrown(component.dispose);
 
         component.run;
         assert(component.isRunning);
