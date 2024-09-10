@@ -1,8 +1,8 @@
 module api.dm.kit.events.kit_event_manager;
 
-import api.core.events.processing.event_processor: EventProcessor;
-import api.core.events.chain_event_manager: ChainEventManager;
-import api.dm.kit.events.processing.kit_event_processor: KitEventProcessor;
+import api.core.events.processing.event_processor : EventProcessor;
+import api.core.events.chain_event_manager : ChainEventManager;
+import api.dm.kit.events.processing.kit_event_processor : KitEventProcessor;
 import api.dm.kit.scenes.scene_manager : SceneManager;
 
 import api.core.apps.events.app_event : AppEvent;
@@ -12,6 +12,8 @@ import api.dm.kit.inputs.keyboards.events.text_input_event : TextInputEvent;
 import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import api.dm.kit.windows.events.window_event : WindowEvent;
 
+import api.dm.kit.windows.window : Window;
+import api.dm.kit.scenes.scene : Scene;
 import api.dm.kit.sprites.sprite : Sprite;
 import std.container : DList;
 import std.typecons : Nullable;
@@ -21,7 +23,7 @@ import std.typecons : Nullable;
  */
 class KitEventManager : ChainEventManager!(Sprite)
 {
-    Nullable!(Sprite[]) delegate(long) targetsProvider;
+    Nullable!(Window) delegate(long) windowProviderById;
 
     void delegate(ref KeyEvent) onKey;
     void delegate(ref JoystickEvent) onJoystick;
@@ -31,35 +33,38 @@ class KitEventManager : ChainEventManager!(Sprite)
 
     void dispatchEvent(E)(E e)
     {
-        if (targetsProvider is null)
+        if (!windowProviderById)
         {
             return;
         }
 
         const windowId = e.ownerId;
 
-        auto mustBeTargets = targetsProvider(windowId);
-        if (mustBeTargets.isNull)
+        auto mustBeTargetWindow = windowProviderById(windowId);
+        if (mustBeTargetWindow.isNull)
         {
             return;
         }
 
-        Sprite[] targets = mustBeTargets.get;
+        Window targetWindow = mustBeTargetWindow.get;
+        Scene targetScene = targetWindow.scenes.currentScene;
+        Sprite[] targets = targetScene.activeSprites;
 
-        foreach (Sprite target; targets)
+        targetScene.runEventFilters(e);
+        if (e.isConsumed)
         {
-            dispatchEvent(e, target);
+            return;
         }
-    }
 
-    void dispatchEvent(E)(E e, Sprite target)
-    {
         if (!eventChain.empty)
         {
             eventChain.clear;
         }
 
-        target.dispatchEvent(e, eventChain);
+        foreach (Sprite target; targets)
+        {
+            target.dispatchEvent(e, eventChain);
+        }
 
         if (!eventChain.empty)
         {
@@ -81,5 +86,7 @@ class KitEventManager : ChainEventManager!(Sprite)
                 }
             }
         }
+
+        targetScene.runEventHandlers(e);
     }
 }

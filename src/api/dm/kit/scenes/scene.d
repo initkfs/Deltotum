@@ -1,6 +1,6 @@
 module api.dm.kit.scenes.scene;
 
-import api.dm.kit.components.window_component : WindowComponent;
+import api.dm.kit.events.event_kit_target : EventKitTarget;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.factories.creation : Creation;
 import api.dm.kit.interacts.interact : Interact;
@@ -14,7 +14,7 @@ import std.stdio;
 /**
  * Authors: initkfs
  */
-class Scene : WindowComponent
+class Scene : EventKitTarget
 {
     string name;
 
@@ -47,6 +47,15 @@ class Scene : WindowComponent
     override void create()
     {
         super.create;
+        createHandlers;
+    }
+
+    void dispatchEvent(Event)(Event e)
+    {
+        if (!isReceiveEvents)
+        {
+            return;
+        }
     }
 
     void draw()

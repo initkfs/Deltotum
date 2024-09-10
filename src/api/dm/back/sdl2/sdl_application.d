@@ -292,6 +292,20 @@ class SdlApplication : ContinuouslyApplication
 
         eventManager = new KitEventManager;
 
+        eventManager.windowProviderById = (windowId) {
+            auto mustBeCurrentWindow = windowManager.byFirstId(windowId);
+            if (mustBeCurrentWindow.isNull)
+            {
+                return Nullable!(Window).init;
+            }
+            auto currWindow = mustBeCurrentWindow.get;
+            if (!currWindow.isShowing || !currWindow.isFocus)
+            {
+                return Nullable!(Window).init;
+            }
+            return Nullable!Window(currWindow);
+        };
+
         eventProcessor.onWindow = (ref windowEvent) {
             if (eventManager.onWindow)
             {
@@ -330,21 +344,6 @@ class SdlApplication : ContinuouslyApplication
                 eventManager.onTextInput(keyEvent);
             }
             eventManager.dispatchEvent(keyEvent);
-        };
-
-        eventManager.targetsProvider = (windowId) {
-            auto mustBeCurrentWindow = windowManager.byFirstId(windowId);
-            if (mustBeCurrentWindow.isNull)
-            {
-                return Nullable!(Sprite[]).init;
-            }
-            auto currWindow = mustBeCurrentWindow.get;
-            if (!currWindow.isShowing || !currWindow.isFocus)
-            {
-                return Nullable!(Sprite[]).init;
-            }
-            auto targets = currWindow.scenes.currentScene.activeSprites;
-            return Nullable!(Sprite[])(targets);
         };
 
         eventManager.onKey = (ref key) {
@@ -427,7 +426,8 @@ class SdlApplication : ContinuouslyApplication
                         {
                             win.run;
                         }
-                        uservices.logger.tracef("Show window '%s' with id %d, state: %s", win.title, win.id, win.state);
+                        uservices.logger.tracef("Show window '%s' with id %d, state: %s", win.title, win.id, win
+                            .state);
                         return true;
                     });
                     break;
@@ -445,7 +445,8 @@ class SdlApplication : ContinuouslyApplication
                         {
                             win.pause;
                         }
-                        uservices.logger.tracef("Hide window '%s' with id %d, state: %s", win.title, win.id, win.state);
+                        uservices.logger.tracef("Hide window '%s' with id %d, state: %s", win.title, win.id, win
+                            .state);
                         return true;
                     });
                     break;
@@ -511,54 +512,10 @@ class SdlApplication : ContinuouslyApplication
             }
         };
 
-        eventManager.onPointer = (ref mouseEvent) {
-            if (mouseEvent.event == PointerEvent.Event.down)
-            {
-                auto mustBeWindow = windowManager.current;
-                if (mustBeWindow.isNull)
-                {
-                    return;
-                }
-                auto window = mustBeWindow.get;
-                foreach (obj; window.scenes.currentScene.activeSprites)
-                {
-                    if (obj.bounds.contains(mouseEvent.x, mouseEvent.y))
-                    {
-                        if (!obj.isFocus)
-                        {
-                            obj.isFocus = true;
-                        }
-
-                        import api.dm.kit.events.focus.focus_event : FocusEvent;
-
-                        auto focusEvent = FocusEvent(FocusEvent.Event.focusIn, mouseEvent
-                                .ownerId, mouseEvent.x, mouseEvent.y);
-                        eventManager.dispatchEvent(focusEvent, obj);
-
-                        //for children
-                        auto focusOutEvent = FocusEvent(FocusEvent.Event.focusOut, mouseEvent
-                                .ownerId, mouseEvent.x, mouseEvent.y);
-                        eventManager.dispatchEvent(focusOutEvent, obj);
-                    }
-                    else
-                    {
-                        if (obj.isFocus)
-                        {
-                            obj.isFocus = false;
-                            import api.dm.kit.events.focus.focus_event : FocusEvent;
-
-                            auto focusEvent = FocusEvent(FocusEvent.Event.focusOut, mouseEvent
-                                    .ownerId, mouseEvent.x, mouseEvent.y);
-                            eventManager.dispatchEvent(focusEvent, obj);
-                        }
-                    }
-                }
-            }
-        };
-
         windowManager = new WindowManager(uservices.logger);
 
-        return AppInitRet(isExit: false, isInit: true);
+        return AppInitRet(isExit : false, isInit:
+            true);
     }
 
     override ulong ticks()

@@ -368,7 +368,8 @@ class Sprite : EventKitTarget
             {
                 if (e.event == PointerEvent.Event.move)
                 {
-                    if (!isMouseOver)
+                    if (!isMouseOver && (onPointerEntered.length > 0 || eventPointerFilters.length > 0 || eventPointerHandlers
+                            .length > 0))
                     {
                         isMouseOver = true;
                         auto enteredEvent = PointerEvent(PointerEvent.Event.entered, e
@@ -377,6 +378,25 @@ class Sprite : EventKitTarget
                                 .button, e.movementX, e.movementY);
                         enteredEvent.isChained = false;
                         fireEvent(enteredEvent);
+                    }
+
+                    chain.insert(this);
+                }
+                else if (e.event == PointerEvent.Event.down)
+                {
+                    if (!isFocus)
+                    {
+                        isFocus = true;
+
+                        if (onFocusIn.length > 0 || eventFocusFilters.length > 0 || eventFocusHandlers.length > 0)
+                        {
+                            import api.dm.kit.events.focus.focus_event : FocusEvent;
+
+                            auto focusEvent = FocusEvent(FocusEvent.Event.focusIn, e
+                                    .ownerId, e.x, e.y);
+                            focusEvent.isChained = false;
+                            fireEvent(focusEvent);
+                        }
                     }
 
                     chain.insert(this);
@@ -402,6 +422,19 @@ class Sprite : EventKitTarget
                     }
 
                     //chain.insert(this);
+                }
+                else if (e.event == PointerEvent.Event.down)
+                {
+                    if (isFocus && (onFocusOut.length > 0 || eventFocusFilters.length > 0 || eventFocusHandlers.length > 0))
+                    {
+                        isFocus = false;
+                        import api.dm.kit.events.focus.focus_event : FocusEvent;
+
+                        auto focusEvent = FocusEvent(FocusEvent.Event.focusOut, e
+                                .ownerId, e.x, e.y);
+                        focusEvent.isChained = false;
+                        fireEvent(focusEvent);
+                    }
                 }
                 else if (e.event == PointerEvent.Event.wheel)
                 {
