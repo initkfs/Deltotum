@@ -76,7 +76,7 @@ class VSplitBox : Container
         import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
-        auto sep = new VRegularPolygon(10, 10,
+        auto sep = new VRegularPolygon(7, 7,
             GraphicStyle(1, graphics.theme.colorAccent, true, graphics.theme.colorAccent), 0);
         addCreate(sep);
         sep.isResizedByParent = false;

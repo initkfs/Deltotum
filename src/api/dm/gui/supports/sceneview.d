@@ -258,13 +258,17 @@ class SceneView : VBox
         h1.enableInsets;
         wInfo = new TextField("0");
         wInfo.onEnter = (ref e) {
-            onObjectDebug((object) => object.width = wInfo.text.to!double);
+            onObjectDebug((object){
+                object.width = wInfo.text.to!double;
+            });
         };
         wInfo.width = textWidth;
 
         hInfo = new TextField("0");
         hInfo.onEnter = (ref e) {
-            onObjectDebug((object) => object.height = hInfo.text.to!double);
+            onObjectDebug((object){
+                object.height = hInfo.text.to!double;
+            });
         };
         hInfo.width = textWidth;
 

@@ -1256,33 +1256,40 @@ class Sprite : EventKitTarget
         return _width;
     }
 
-    void width(double value)
+    bool canChangeWidth(double value)
     {
-        if (value < minWidth)
+        if (value < minWidth || value > maxWidth)
         {
-            value = minWidth;
-        }
-
-        if (value > maxWidth)
-        {
-            value = maxWidth;
+            return false;
         }
 
         if (
             value <= 0 ||
             !Math.greater(_width, value, widthChangeThreshold))
         {
-            return;
+            return false;
         }
 
         if (isLayoutManaged && value > _width && !canExpandW(
                 value - _width))
         {
-            return;
+            return false;
+        }
+
+        return true;
+    }
+
+    bool tryWidth(double value)
+    {
+        if (!canChangeWidth(value))
+        {
+            return false;
         }
 
         immutable double oldWidth = _width;
         _width = value;
+
+        bool isResized = true;
 
         //if (!isInvalidationProcess)
         //{
@@ -1297,7 +1304,7 @@ class Sprite : EventKitTarget
 
         if (!isCreated)
         {
-            return;
+            return isResized;
         }
 
         if (_cache)
@@ -1340,6 +1347,13 @@ class Sprite : EventKitTarget
                 }
             }
         }
+
+        return isResized;
+    }
+
+    bool width(double value)
+    {
+        return tryWidth(value);
     }
 
     protected void incChildWidth(Sprite child, double dw)
@@ -1359,32 +1373,39 @@ class Sprite : EventKitTarget
         return _height;
     }
 
-    void height(double value)
+    bool canChangeHeight(double value)
     {
-        if (value < minHeight)
+        if (value < minHeight || value > maxHeight)
         {
-            value = minHeight;
-        }
-
-        if (value > maxHeight)
-        {
-            value = maxHeight;
+            return false;
         }
 
         if (
             value <= 0 ||
             !Math.greater(_height, value, heightChangeThreshold))
         {
-            return;
+            return false;
         }
 
         if (isLayoutManaged && value > _height && !canExpandH(value - _height))
         {
-            return;
+            return false;
+        }
+
+        return true;
+    }
+
+    bool tryHeight(double value)
+    {
+        if (!canChangeHeight(value))
+        {
+            return false;
         }
 
         immutable double oldHeight = _height;
         _height = value;
+
+        bool isResized = true;
 
         //if (!isInvalidationProcess)
         //{
@@ -1399,7 +1420,7 @@ class Sprite : EventKitTarget
 
         if (!isCreated)
         {
-            return;
+            return isResized;
         }
 
         if (_cache)
@@ -1442,6 +1463,13 @@ class Sprite : EventKitTarget
                 }
             }
         }
+
+        return isResized;
+    }
+
+    bool height(double value)
+    {
+        return tryHeight(value);
     }
 
     bool resize(double newWidth, double newHeight)

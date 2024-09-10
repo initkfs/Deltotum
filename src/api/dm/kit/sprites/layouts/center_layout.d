@@ -10,10 +10,10 @@ class CenterLayout : ManagedLayout
 {
     override bool alignChildren(Sprite root)
     {
-        bool isAlign = true;
+        bool isAlign;
         foreach (child; root.children)
         {
-            isAlign &= alignXY(root, child);
+            isAlign |= alignXY(root, child);
         }
         return isAlign;
     }

@@ -18,15 +18,15 @@ class ManagedLayout : Layout
 
     bool alignment(Sprite root, Sprite obj)
     {
-        bool isAlign = true;
+        bool isAlign;
         if (isAlignX)
         {
-            isAlign &= alignX(root, obj);
+            isAlign |= alignX(root, obj);
         }
 
         if (isAlignY)
         {
-            isAlign &= alignY(root, obj);
+            isAlign |= alignY(root, obj);
         }
 
         if (obj.alignment != Alignment.none && obj.isLayoutManaged)
@@ -36,13 +36,13 @@ class ManagedLayout : Layout
                 case Alignment.none:
                     break;
                 case Alignment.x:
-                    isAlign &= alignX(root, obj);
+                    isAlign |= alignX(root, obj);
                     break;
                 case Alignment.y:
-                    isAlign &= alignY(root, obj);
+                    isAlign |= alignY(root, obj);
                     break;
                 case Alignment.xy:
-                    isAlign &= alignXY(root, obj);
+                    isAlign |= alignXY(root, obj);
                     break;
             }
         }
@@ -111,10 +111,10 @@ class ManagedLayout : Layout
 
     bool alignChildren(Sprite root)
     {
-        bool isAlign = true;
+        bool isAlign;
         foreach (child; root.children)
         {
-            isAlign &= alignment(root, child);
+            isAlign |= alignment(root, child);
         }
         return isAlign;
     }

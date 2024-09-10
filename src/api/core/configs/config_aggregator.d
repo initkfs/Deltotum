@@ -34,10 +34,10 @@ class ConfigAggregator : Config
             return false;
         }
 
-        bool isLoad = true;
+        bool isLoad;
         foreach (config; _configs)
         {
-            isLoad &= config.load;
+            isLoad |= config.load;
         }
         return isLoad;
     }
@@ -49,10 +49,10 @@ class ConfigAggregator : Config
             return false;
         }
 
-        bool isSave = true;
+        bool isSave;
         foreach (config; _configs)
         {
-            isSave &= config.save;
+            isSave |= config.save;
         }
         return isSave;
     }

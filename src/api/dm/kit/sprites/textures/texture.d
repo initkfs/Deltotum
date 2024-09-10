@@ -36,11 +36,13 @@ class Texture : Sprite
 
     this()
     {
-
+        isResizable = true;
+        isResizedByParent = true;
     }
 
     this(double width, double height)
     {
+        this();
         this.width = width;
         this.height = height;
     }
@@ -48,6 +50,8 @@ class Texture : Sprite
     this(ComTexture texture)
     {
         assert(texture);
+
+        this();
 
         int w, h;
         if (const sizeErr = texture.getSize(w, h))
@@ -91,7 +95,8 @@ class Texture : Sprite
 
     void createMutRGBA32()
     {
-        assert(width > 0 && height > 0);
+        assert(width > 0);
+        assert(height > 0);
 
         texture = graphics.comTextureProvider.getNew();
         if (const err = texture.createMutRGBA32(cast(int) width, cast(int) height))
@@ -102,7 +107,8 @@ class Texture : Sprite
 
     void createTargetRGBA32()
     {
-        assert(width > 0 && height > 0);
+        assert(width > 0);
+        assert(height > 0);
         assert(graphics);
 
         texture = graphics.comTextureProvider.getNew();
@@ -228,12 +234,12 @@ class Texture : Sprite
         return super.width;
     }
 
-    override void width(double value)
+    override bool width(double value)
     {
-        super.width(value);
+        auto isResized = super.width(value);
         if (!isResizable)
         {
-            return;
+            return isResized;
         }
         import Math = api.dm.math;
 
@@ -249,12 +255,16 @@ class Texture : Sprite
             {
                 if (onPreRecreateWidthOldNew)
                 {
-                    onPreRecreateHeightOldNew(oldChangedWidth, width);
+                    onPreRecreateWidthOldNew(oldChangedWidth, width);
                 }
                 recreate;
                 oldChangedWidth = width;
+
+                return true;
             }
         }
+
+        return isResized;
     }
 
     override double height()
@@ -262,12 +272,12 @@ class Texture : Sprite
         return super.height;
     }
 
-    override void height(double value)
+    override bool height(double value)
     {
-        super.height(value);
+        auto isResized = super.height(value);
         if (!isResizable)
         {
-            return;
+            return isResized;
         }
         import Math = api.dm.math;
 
@@ -279,7 +289,10 @@ class Texture : Sprite
             }
             recreate;
             oldChangedHeight = value;
+            return true;
         }
+
+        return isResized;
     }
 
     override void recreate()
@@ -324,10 +337,12 @@ class Texture : Sprite
         return this.texture;
     }
 
-    bool isLocked(){
+    bool isLocked()
+    {
         assert(texture);
         bool locked;
-        if(const err = texture.isLocked(locked)){
+        if (const err = texture.isLocked(locked))
+        {
             throw new Exception(err.toString);
         }
         return locked;
@@ -351,7 +366,8 @@ class Texture : Sprite
 
     uint format()
     {
-        assert(texture && isLocked);
+        assert(texture);
+        assert(isLocked);
         uint format;
         if (const err = texture.getFormat(format))
         {
@@ -362,7 +378,8 @@ class Texture : Sprite
 
     int pitch()
     {
-        assert(texture && isLocked);
+        assert(texture);
+        assert(isLocked);
         int pitch;
         if (const err = texture.getPitch(pitch))
         {
@@ -373,7 +390,8 @@ class Texture : Sprite
 
     void* pixels()
     {
-        assert(texture && isLocked);
+        assert(texture);
+        assert(isLocked);
         void* ptr;
         if (const err = texture.getPixels(ptr))
         {
@@ -385,7 +403,8 @@ class Texture : Sprite
 
     uint* pixel(uint x, uint y)
     {
-        assert(texture && isLocked);
+        assert(texture);
+        assert(isLocked);
         uint* ptr;
         if (const err = texture.getPixel(x, y, ptr))
         {
@@ -396,7 +415,8 @@ class Texture : Sprite
 
     RGBA[][] pixelColors()
     {
-        assert(width > 0 && height > 0);
+        assert(width > 0);
+        assert(height > 0);
         RGBA[][] buff = new RGBA[][](cast(size_t) height, cast(size_t) width);
         pixelColors(buff);
         return buff;
@@ -406,7 +426,8 @@ class Texture : Sprite
     {
         assert(width > 0);
         assert(height > 0);
-        assert(texture && isLocked);
+        assert(texture);
+        assert(isLocked);
         assert(buff.length >= height);
 
         //TODO all rows
@@ -437,7 +458,8 @@ class Texture : Sprite
 
     RGBA pixelColor(uint x, uint y)
     {
-        assert(texture && isLocked);
+        assert(texture);
+        assert(isLocked);
         ubyte r, g, b, a;
         if (const err = texture.getPixelColor(x, y, r, g, b, a))
         {

@@ -115,7 +115,7 @@ class SceneManager : Scene
 
     bool add(Scene[] scenes...)
     {
-        bool isAdd;
+        bool isAdd = true;
         foreach (Scene scene; scenes)
         {
             isAdd &= add(scene);
