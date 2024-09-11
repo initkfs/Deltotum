@@ -27,6 +27,7 @@ class Tooltip : Labeled
         isVisible = false;
         isLayoutManaged = false;
         isBorder = true;
+        isBackground = true;
     }
 
     override void initialize()

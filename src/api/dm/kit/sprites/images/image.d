@@ -20,7 +20,7 @@ class Image : Texture
 {
     RGBA delegate(int x, int y, RGBA color) colorProcessor;
 
-    bool isInterpolationResize = true;
+    bool isInterpolationResize;
     bool isKeepOriginalColorBuffer;
     RGBA[][] originalBuffer;
 
