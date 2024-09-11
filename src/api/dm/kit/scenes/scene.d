@@ -40,7 +40,7 @@ class Scene : EventKitTarget
 
     Sprite[] controlledSprites;
 
-    private
+    protected
     {
         Creation _creation;
         Interact _interact;

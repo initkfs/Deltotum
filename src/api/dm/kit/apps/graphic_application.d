@@ -21,6 +21,8 @@ import api.dm.kit.scenes.scene_manager : SceneManager;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 import api.core.utils.factories : Provider;
 import api.dm.kit.i18n.langs.alphabets.alphabet : Alphabet;
+import api.dm.kit.factories.creation_images : CreationImages;
+import api.dm.kit.factories.creation_shapes : CreationShapes;
 
 import api.dm.kit.windows.window : Window;
 import api.dm.kit.apps.loops.loop : Loop;
@@ -39,6 +41,8 @@ import api.dm.com.platforms.com_system : ComSystem;
 import api.dm.kit.platforms.platform : Platform;
 import api.dm.kit.i18n.i18n : I18n;
 import api.dm.kit.i18n.langs.lang_messages : LangMessages;
+import api.dm.kit.interacts.interact : Interact;
+import api.dm.kit.factories.creation : Creation;
 
 /**
  * Authors: initkfs
@@ -118,7 +122,8 @@ abstract class GraphicApplication : CliApp
 
         _i18n = createI18n(uservices.logger, uservices.config, uservices.context);
 
-        return AppInitRet(isExit: false, isInit: true);
+        return AppInitRet(isExit : false, isInit:
+            true);
     }
 
     abstract ulong ticks();
@@ -222,9 +227,9 @@ abstract class GraphicApplication : CliApp
         return new CapGraphics;
     }
 
-    SceneManager newSceneManager(Logger logger, Config config, Context context)
+    SceneManager newSceneManager(Logger logger, Config config, Context context, Interact interact, Creation creation)
     {
-        return new SceneManager;
+        return new SceneManager(interact, creation);
     }
 
     WindowComponent newWindowServices()

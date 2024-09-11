@@ -5,8 +5,6 @@ import api.dm.kit.scenes.scene : Scene;
 
 import api.dm.kit.factories.creation : Creation;
 import api.dm.kit.interacts.interact : Interact;
-import api.dm.kit.factories.creation_images : CreationImages;
-import api.dm.kit.factories.creation_shapes : CreationShapes;
 import api.core.components.units.simple_unit : SimpleUnit;
 
 import std.stdio;
@@ -24,6 +22,13 @@ class SceneManager : Scene
     private
     {
         Scene _currentScene;
+    }
+
+    this(Interact interact, Creation creation){
+        assert(interact);
+        this.interact = interact;
+        assert(creation);
+        this._creation = creation;
     }
 
     Scene currentScene() @safe pure nothrow
@@ -49,30 +54,9 @@ class SceneManager : Scene
         throw new Exception("Scene not found in scene list: " ~ scene.name);
     }
 
-    CreationImages newCreationImages() => new CreationImages;
-    CreationShapes newCreationShapes() => new CreationShapes;
-
     override void create()
     {
         super.create;
-
-        auto imagesFactory = newCreationImages;
-        build(imagesFactory);
-
-        auto shapesFactory = newCreationShapes;
-        build(shapesFactory);
-
-        //TODO extrace factory methods
-        creation = new Creation(imagesFactory, shapesFactory);
-        build(creation);
-
-        import api.dm.kit.interacts.dialogs.dialog_manager : DialogManager;
-
-        auto dialogManager = new DialogManager;
-        dialogManager.dialogWindowProvider = () { return window.newChildWindow; };
-        dialogManager.parentWindowProvider = () { return window; };
-
-        interact = new Interact(dialogManager);
     }
 
     import api.dm.kit.components.window_component : WindowComponent;
