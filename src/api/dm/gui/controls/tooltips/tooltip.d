@@ -17,6 +17,8 @@ class Tooltip : Labeled
         super(iconName, graphicsGap, isCreateLayout);
         _labelText = text;
 
+        isDrawByParent = false;
+
         isBorder = false;
         isCreateHoverFactory = false;
         isCreatePointerEffectFactory = false;

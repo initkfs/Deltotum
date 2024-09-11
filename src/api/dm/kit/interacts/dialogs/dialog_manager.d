@@ -97,7 +97,7 @@ class DialogManager
         scene.onOk = () { win.close; onResult(true); };
         scene.onCancel = () { win.close; onResult(false); };
         scene.contentText = text;
-        win.scenes.addCreate(scene);
+        win.scenes.add(scene);
         win.show;
     }
 }

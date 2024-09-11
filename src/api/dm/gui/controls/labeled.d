@@ -61,6 +61,7 @@ class Labeled : Control
     {
         super.initialize;
 
+        //TODO move in create()
         if (isCreateTextFactory)
         {
             textFactory = createTextFactory;

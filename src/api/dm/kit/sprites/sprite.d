@@ -16,6 +16,7 @@ import api.dm.kit.inputs.keyboards.events.text_input_event : TextInputEvent;
 import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
+import api.dm.kit.scenes.scene : Scene;
 
 import std.container : DList;
 import std.math.operations : isClose;
@@ -85,6 +86,7 @@ class Sprite : EventKitTarget
     bool inScreenBounds;
     bool delegate() onScreenBoundsIsStop;
 
+    bool isDrawByParent = true;
     bool isRedraw = true;
     bool isRedrawChildren = true;
     bool isDrawAfterParent = true;
@@ -145,6 +147,8 @@ class Sprite : EventKitTarget
 
     double minWidth = 1.0;
     double minHeight = 1.0;
+
+    Scene delegate() sceneProvider;
 
     version (SdlBackend)
     {
@@ -534,6 +538,11 @@ class Sprite : EventKitTarget
 
         foreach (Sprite obj; children)
         {
+            if (!obj.isDrawByParent)
+            {
+                continue;
+            }
+
             if (!obj.isDrawAfterParent && obj.isVisible)
             {
                 //if (!isValid)
@@ -563,6 +572,11 @@ class Sprite : EventKitTarget
 
         foreach (Sprite obj; children)
         {
+            if (!obj.isDrawByParent)
+            {
+                continue;
+            }
+
             if (obj.isDrawAfterParent && obj.isVisible)
             {
                 //if (!obj.isValid)
@@ -610,6 +624,29 @@ class Sprite : EventKitTarget
     {
         assert(!sprite.isBuilt);
         super.build(sprite);
+
+        //sprite can access parent properties before being added
+        trySetParentProps(sprite);
+    }
+
+    protected bool trySetParentProps(Sprite sprite)
+    {
+        assert(sprite);
+
+        bool isSet;
+        if (!sprite.parent)
+        {
+            sprite.parent = this;
+            isSet = true;
+        }
+
+        if (sceneProvider && !sprite.sceneProvider)
+        {
+            sprite.sceneProvider = sceneProvider;
+            isSet |= true;
+        }
+
+        return isSet;
     }
 
     void addCreate(Sprite[] sprites)
@@ -662,7 +699,7 @@ class Sprite : EventKitTarget
             return;
         }
 
-        sprite.parent = this;
+        trySetParentProps(sprite);
 
         if (index < 0 || children.length == 0)
         {

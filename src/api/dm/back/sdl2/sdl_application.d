@@ -739,7 +739,7 @@ class SdlApplication : ContinuouslyApplication
             {
                 import api.dm.gui.supports.editors.guieditor : GuiEditor;
 
-                window.scenes.addCreate(new GuiEditor);
+                window.scenes.add(new GuiEditor);
             }
         }
 

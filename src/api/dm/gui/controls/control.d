@@ -79,11 +79,12 @@ class Control : Sprite
         MinMaxTransition!double _pointerEffectAnimation;
 
         bool isTooltipDelay;
+        bool isTooltipListeners;
         size_t tooltipDelayCounter;
     }
 
     Tooltip[] tooltips;
-    size_t tooltipDelay = 100;
+    size_t tooltipDelay = 20;
 
     this()
     {
@@ -107,6 +108,38 @@ class Control : Sprite
             adjustOrCreateBackground;
         };
 
+        if (tooltips.length > 0)
+        {
+            initTooltipListeners;
+        }
+
+        if (!backgroundFactory && isCreateBackgroundFactory)
+        {
+            backgroundFactory = createBackgroundFactory;
+        }
+
+        if (!hoverFactory && isCreateHoverFactory)
+        {
+            hoverFactory = createHoverFactory;
+        }
+
+        if (!pointerEffectFactory && isCreatePointerEffectFactory)
+        {
+            pointerEffectFactory = createPointerEffectFactory;
+        }
+
+        if (!pointerEffectAnimationFactory && isCreatePointerEffectAnimationFactory)
+        {
+            pointerEffectAnimationFactory = createPointerEffectAnimationFactory;
+        }
+    }
+
+    void initTooltipListeners()
+    {
+        if (isTooltipListeners)
+        {
+            return;
+        }
         onPointerEntered ~= (ref e) {
             if (tooltips.length > 0)
             {
@@ -136,25 +169,7 @@ class Control : Sprite
             }
         };
 
-        if (!backgroundFactory && isCreateBackgroundFactory)
-        {
-            backgroundFactory = createBackgroundFactory;
-        }
-
-        if (!hoverFactory && isCreateHoverFactory)
-        {
-            hoverFactory = createHoverFactory;
-        }
-
-        if (!pointerEffectFactory && isCreatePointerEffectFactory)
-        {
-            pointerEffectFactory = createPointerEffectFactory;
-        }
-
-        if (!pointerEffectAnimationFactory && isCreatePointerEffectAnimationFactory)
-        {
-            pointerEffectAnimationFactory = createPointerEffectAnimationFactory;
-        }
+        isTooltipListeners = true;
     }
 
     Sprite delegate(double, double) createBackgroundFactory()
@@ -435,6 +450,11 @@ class Control : Sprite
         if (auto tooltip = sprite.castSafe!Tooltip)
         {
             tooltips ~= tooltip;
+            if(!isTooltipListeners){
+                initTooltipListeners;
+            }
+            assert(sceneProvider);
+            sceneProvider().controlledSprites ~= tooltip;
         }
     }
 

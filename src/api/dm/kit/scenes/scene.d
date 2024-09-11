@@ -38,6 +38,8 @@ class Scene : EventKitTarget
         Sprite[] sprites;
     }
 
+    Sprite[] controlledSprites;
+
     private
     {
         Creation _creation;
@@ -81,6 +83,15 @@ class Scene : EventKitTarget
             }
 
             obj.unvalidate;
+        }
+
+        if (controlledSprites.length > 0)
+        {
+            //TODO unvalidate?
+            foreach (cs; controlledSprites)
+            {
+                cs.draw;
+            }
         }
 
         startDrawProcess = false;
@@ -161,9 +172,7 @@ class Scene : EventKitTarget
         addCreate(debugWrapper);
         debugger = new SceneView(this);
         debugWrapper.addContent(debugger);
-        window.showingTasks ~= (dt) {
-            debugWrapper.setInitialPos;
-        };
+        window.showingTasks ~= (dt) { debugWrapper.setInitialPos; };
     }
 
     override void dispose()
@@ -178,6 +187,11 @@ class Scene : EventKitTarget
 
     void addCreate(Sprite obj)
     {
+        if (!obj.sceneProvider)
+        {
+            obj.sceneProvider = () => this;
+        }
+
         if (!obj.isBuilt)
         {
             build(obj);
@@ -194,6 +208,7 @@ class Scene : EventKitTarget
 
     void add(Sprite object)
     {
+        assert(object);
         foreach (sp; sprites)
         {
             if (object is sp)
@@ -201,6 +216,12 @@ class Scene : EventKitTarget
                 return;
             }
         }
+
+        if (!object.sceneProvider)
+        {
+            object.sceneProvider = () => this;
+        }
+
         sprites ~= object;
     }
 
