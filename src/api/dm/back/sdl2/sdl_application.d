@@ -692,6 +692,9 @@ class SdlApplication : ContinuouslyApplication
             &newComImageScoped
         );
 
+        auto interact = new Interact;
+        windowBuilder.interact = interact;
+
         windowBuilder.isBuilt = true;
 
         //TODO from locale\config;
@@ -721,7 +724,6 @@ class SdlApplication : ContinuouslyApplication
         import api.dm.kit.factories.creation_images : CreationImages;
         import api.dm.kit.factories.creation_shapes : CreationShapes;
         import api.dm.kit.scenes.scene_manager : SceneManager;
-        import api.dm.kit.interacts.dialogs.dialog_manager : DialogManager;
 
         CreationImages imageFactory = new CreationImages;
         windowBuilder.build(imageFactory);
@@ -731,13 +733,7 @@ class SdlApplication : ContinuouslyApplication
         import api.dm.kit.factories.creation : Creation;
         auto creation = new Creation(imageFactory, shapeFactory);
 
-        auto dialogManager = new DialogManager;
-        dialogManager.dialogWindowProvider = () { return window.newChildWindow; };
-        dialogManager.parentWindowProvider = () { return window; };
-
-        auto interact = new Interact(dialogManager);
-
-        auto sceneManager = newSceneManager(uservices.logger, uservices.config, uservices.context, interact, creation);
+        auto sceneManager = newSceneManager(uservices.logger, uservices.config, uservices.context, creation);
         windowBuilder.build(sceneManager);
         sceneManager.initialize;
         sceneManager.create;

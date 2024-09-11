@@ -6,6 +6,7 @@ import api.core.components.uni_component : UniComponent;
 import api.core.components.attributes : Service;
 
 import api.dm.kit.windows.window : Window;
+import api.dm.kit.interacts.interact : Interact;
 
 /**
  * Authors: initkfs
@@ -15,6 +16,7 @@ class WindowComponent : GraphicsComponent
     private
     {
         @Service Window _window;
+        @Service Interact _interact;
     }
 
     alias build = GraphicsComponent.build;
@@ -66,5 +68,24 @@ class WindowComponent : GraphicsComponent
 
         enforce(window !is null, "Window must not be null");
         _window = window;
+    }
+
+    bool hasInteract() nothrow pure @safe
+    {
+        return _interact !is null;
+    }
+
+    Interact interact() nothrow pure @safe
+    out (_interact; _interact !is null)
+    {
+        return _interact;
+    }
+
+    void interact(Interact interact) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(interact !is null, "Interaction must not be null");
+        _interact = interact;
     }
 }

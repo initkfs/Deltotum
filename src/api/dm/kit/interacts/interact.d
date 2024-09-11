@@ -1,16 +1,31 @@
 module api.dm.kit.interacts.interact;
 
-import api.dm.kit.interacts.dialogs.dialog_manager: DialogManager;
+import api.dm.kit.interacts.dialogs.dialog_manager : DialogManager;
 
 /**
  * Authors: initkfs
  */
 class Interact
 {
-    DialogManager dialog;
+    protected
+    {
+        DialogManager _dialog;
+    }
 
-    this(DialogManager dialogManager){
-        assert(dialogManager);
-        this.dialog = dialogManager;
+    void dialog(DialogManager newDialog)
+    {
+        assert(newDialog);
+        _dialog = newDialog;
+    }
+
+    DialogManager dialog()
+    {
+        assert(_dialog);
+        return _dialog;
+    }
+
+    bool hasDialog()
+    {
+        return _dialog !is null;
     }
 }

@@ -227,9 +227,9 @@ abstract class GraphicApplication : CliApp
         return new CapGraphics;
     }
 
-    SceneManager newSceneManager(Logger logger, Config config, Context context, Interact interact, Creation creation)
+    SceneManager newSceneManager(Logger logger, Config config, Context context, Creation creation)
     {
-        return new SceneManager(interact, creation);
+        return new SceneManager(creation);
     }
 
     WindowComponent newWindowServices()

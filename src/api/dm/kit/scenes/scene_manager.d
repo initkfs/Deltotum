@@ -4,7 +4,6 @@ import api.dm.kit.components.window_component : WindowComponent;
 import api.dm.kit.scenes.scene : Scene;
 
 import api.dm.kit.factories.creation : Creation;
-import api.dm.kit.interacts.interact : Interact;
 import api.core.components.units.simple_unit : SimpleUnit;
 
 import std.stdio;
@@ -24,9 +23,7 @@ class SceneManager : Scene
         Scene _currentScene;
     }
 
-    this(Interact interact, Creation creation){
-        assert(interact);
-        this.interact = interact;
+    this(Creation creation){
         assert(creation);
         this._creation = creation;
     }

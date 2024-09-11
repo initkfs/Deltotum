@@ -61,6 +61,13 @@ class Controls : Control
         createButtons(btnContainer);
         createWindows(btnContainer);
 
+        auto infoContainer = new HBox(5);
+        infoContainer.layout.isAlignY = true;
+        rootContainer.addCreate(infoContainer);
+        infoContainer.enableInsets;
+
+        createDialogs(infoContainer);
+
         auto selectionContainer = new HBox;
         selectionContainer.layout.isAlignY = true;
         rootContainer.addCreate(selectionContainer);
@@ -122,6 +129,21 @@ class Controls : Control
         auto targetBtn = new TargetButton("Button", 100);
         //rhBtn.isBackground = true;
         root.addCreate(targetBtn);
+    }
+
+    void createDialogs(Container root)
+    {
+        auto btnInfo = new Button("Info");
+        root.addCreate(btnInfo);
+        btnInfo.onAction = (ref e) { interact.dialog.showInfo("Info!"); };
+
+        auto btnError = new Button("Error");
+        root.addCreate(btnError);
+        btnError.onAction = (ref e) { interact.dialog.showError("Error!"); };
+
+        auto btnQuestion = new Button("Question");
+        root.addCreate(btnQuestion);
+        btnQuestion.onAction = (ref e) { interact.dialog.showQuestion("Question?"); };
     }
 
     void createSelections(Container root)
@@ -456,7 +478,8 @@ class Controls : Control
         topGauge.handTransition.interpolator.interpolateMethod = &UniInterpolator.elasticOut;
         //quartOut, smootherStepOut, elasticOut
         rightGauge.handTransition.interpolator.interpolateMethod = &UniInterpolator.bounceInOut;
-        bottomGauge.handTransition.interpolator.interpolateMethod = &UniInterpolator.smootherStepOut;
+        bottomGauge.handTransition.interpolator.interpolateMethod = &UniInterpolator
+            .smootherStepOut;
 
         gaugeAnim1.onEndFrames ~= () => leftGauge.value = rnd.randomBetween(0.0, 1.0);
         gaugeAnim2.onEndFrames ~= () => topGauge.value = rnd.randomBetween(0.0, 1.0);

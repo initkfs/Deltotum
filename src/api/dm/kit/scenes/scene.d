@@ -3,7 +3,6 @@ module api.dm.kit.scenes.scene;
 import api.dm.kit.events.event_kit_target : EventKitTarget;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.factories.creation : Creation;
-import api.dm.kit.interacts.interact : Interact;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.windows.window : Window;
 import api.dm.gui.supports.sceneview : SceneView;
@@ -43,7 +42,6 @@ class Scene : EventKitTarget
     protected
     {
         Creation _creation;
-        Interact _interact;
     }
 
     override void create()
@@ -91,6 +89,7 @@ class Scene : EventKitTarget
             foreach (cs; controlledSprites)
             {
                 cs.draw;
+                cs.unvalidate;
             }
         }
 
@@ -117,6 +116,15 @@ class Scene : EventKitTarget
 
             root.validate((invSprite) { invalidNodesCount++; });
             //root.unvalidate;
+        }
+
+        if (controlledSprites.length > 0)
+        {
+            foreach (cs; controlledSprites)
+            {
+                cs.update(delta);
+                cs.validate;
+            }
         }
 
         if (debugger && debugger.isVisible)
@@ -217,6 +225,15 @@ class Scene : EventKitTarget
             }
         }
 
+        if (!object.interact.hasDialog)
+        {
+            import api.dm.gui.interacts.dialogs.gui_dialog_manager : GuiDialogManager;
+
+            auto dialogManager = new GuiDialogManager;
+            object.addCreate(dialogManager);
+            object.interact.dialog = dialogManager;
+        }
+
         if (!object.sceneProvider)
         {
             object.sceneProvider = () => this;
@@ -263,25 +280,6 @@ class Scene : EventKitTarget
     out (_creation; _creation !is null)
     {
         return _creation;
-    }
-
-    final bool hasInteract() nothrow pure @safe
-    {
-        return _interact !is null;
-    }
-
-    final Interact interact() nothrow pure @safe
-    out (_interact; _interact !is null)
-    {
-        return _interact;
-    }
-
-    final void interact(Interact interact) pure @safe
-    {
-        import std.exception : enforce;
-
-        enforce(interact !is null, "Interaction must not be null");
-        _interact = interact;
     }
 
     ComSurface snapshot()
