@@ -374,7 +374,7 @@ class Sprite : EventKitTarget
             {
                 if (e.event == PointerEvent.Event.move)
                 {
-                    if (!isMouseOver && (onPointerEntered.length > 0 || eventPointerFilters.length > 0 || eventPointerHandlers
+                    if (!isMouseOver && (onPointerEntered.length > 0 || eventPointerHandlers
                             .length > 0))
                     {
                         isMouseOver = true;
@@ -394,7 +394,7 @@ class Sprite : EventKitTarget
                     {
                         isFocus = true;
 
-                        if (onFocusIn.length > 0 || eventFocusFilters.length > 0 || eventFocusHandlers.length > 0)
+                        if (onFocusIn.length > 0 || eventFocusHandlers.length > 0)
                         {
                             import api.dm.kit.events.focus.focus_event : FocusEvent;
 
@@ -431,7 +431,7 @@ class Sprite : EventKitTarget
                 }
                 else if (e.event == PointerEvent.Event.down)
                 {
-                    if (isFocus && (onFocusOut.length > 0 || eventFocusFilters.length > 0 || eventFocusHandlers.length > 0))
+                    if (isFocus && (onFocusOut.length > 0 || eventFocusHandlers.length > 0))
                     {
                         isFocus = false;
                         import api.dm.kit.events.focus.focus_event : FocusEvent;

@@ -18,12 +18,10 @@ import api.core.utils.arrays : drop;
  */
 class EventKitTarget : WindowComponent, EventTarget
 {
-    void delegate(ref AppEvent)[] eventAppFilters;
     void delegate(ref AppEvent)[] eventAppHandlers;
 
     void delegate(ref AppEvent)[] onAppExit;
 
-    void delegate(ref PointerEvent)[] eventPointerFilters;
     void delegate(ref PointerEvent)[] eventPointerHandlers;
 
     void delegate(ref PointerEvent)[] onPointerDown;
@@ -35,31 +33,26 @@ class EventKitTarget : WindowComponent, EventTarget
     void delegate(ref PointerEvent)[] onPointerEntered;
     void delegate(ref PointerEvent)[] onPointerExited;
 
-    void delegate(ref KeyEvent)[] eventKeyFilters;
     void delegate(ref KeyEvent)[] eventKeyHandlers;
 
     void delegate(ref KeyEvent)[] onKeyUp;
     void delegate(ref KeyEvent)[] onKeyDown;
 
-    void delegate(ref TextInputEvent)[] eventTextInputFilters;
     void delegate(ref TextInputEvent)[] eventTextInputHandlers;
 
     void delegate(ref TextInputEvent)[] onTextInput;
 
-    void delegate(ref FocusEvent)[] eventFocusFilters;
     void delegate(ref FocusEvent)[] eventFocusHandlers;
 
     void delegate(ref FocusEvent)[] onFocusIn;
     void delegate(ref FocusEvent)[] onFocusOut;
 
-    void delegate(ref JoystickEvent)[] eventJoystickFilters;
     void delegate(ref JoystickEvent)[] eventJoystickHandlers;
 
     void delegate(ref JoystickEvent)[] onJoystickAxis;
     void delegate(ref JoystickEvent)[] onJoystickButtonPress;
     void delegate(ref JoystickEvent)[] onJoystickButtonRelease;
 
-    void delegate(ref WindowEvent)[] eventWindowFilters;
     void delegate(ref WindowEvent)[] eventWindowHandlers;
 
     bool isCreateApplicationHandler = true;
@@ -121,38 +114,6 @@ class EventKitTarget : WindowComponent, EventTarget
                     break;
                 }
             }
-        }
-    }
-
-    void runEventFilters(E)(ref E e)
-    {
-        static if (is(E : AppEvent))
-        {
-            runDelegates(e, eventAppFilters);
-        }
-        else static if (is(E : PointerEvent))
-        {
-            runDelegates(e, eventPointerFilters);
-        }
-        else static if (is(E : KeyEvent))
-        {
-            runDelegates(e, eventKeyFilters);
-        }
-        else static if (is(E : TextInputEvent))
-        {
-            runDelegates(e, eventTextInputFilters);
-        }
-        else static if (is(E : JoystickEvent))
-        {
-            runDelegates(e, eventJoystickFilters);
-        }
-        else static if (is(E : FocusEvent))
-        {
-            runDelegates(e, eventFocusFilters);
-        }
-        else static if (is(E : WindowEvent))
-        {
-            runDelegates(e, eventWindowFilters);
         }
     }
 
@@ -297,18 +258,7 @@ class EventKitTarget : WindowComponent, EventTarget
 
     void fireEvent(E)(ref E e)
     {
-        runEventFilters!E(e);
-        if (e.isConsumed)
-        {
-            return;
-        }
-
         runEventHandlers!E(e);
-    }
-
-    bool removeFilter(void delegate(ref AppEvent) dg)
-    {
-        return drop(eventAppFilters, dg);
     }
 
     bool removeHandler(void delegate(ref AppEvent) dg)
@@ -319,11 +269,6 @@ class EventKitTarget : WindowComponent, EventTarget
     bool removeOnAppExit(void delegate(ref AppEvent) dg)
     {
         return drop(onAppExit, dg);
-    }
-
-    bool removeFilter(void delegate(ref PointerEvent) dg)
-    {
-        return drop(eventPointerFilters, dg);
     }
 
     bool removeHandler(void delegate(ref PointerEvent) dg)
@@ -361,11 +306,6 @@ class EventKitTarget : WindowComponent, EventTarget
         return drop(onPointerExited, dg);
     }
 
-    bool removeFilter(void delegate(ref KeyEvent) dg)
-    {
-        return drop(eventKeyFilters, dg);
-    }
-
     bool removeHandler(void delegate(ref KeyEvent) dg)
     {
         return drop(eventKeyHandlers, dg);
@@ -381,11 +321,6 @@ class EventKitTarget : WindowComponent, EventTarget
         return drop(onKeyUp, dg);
     }
 
-    bool removeFilter(void delegate(ref TextInputEvent) dg)
-    {
-        return drop(eventTextInputFilters, dg);
-    }
-
     bool removeHandler(void delegate(ref TextInputEvent) dg)
     {
         return drop(eventTextInputHandlers, dg);
@@ -394,11 +329,6 @@ class EventKitTarget : WindowComponent, EventTarget
     bool removeOnTextInput(void delegate(ref TextInputEvent) dg)
     {
         return drop(onTextInput, dg);
-    }
-
-    bool removeFilter(void delegate(ref FocusEvent) dg)
-    {
-        return drop(eventFocusFilters, dg);
     }
 
     bool removeHandler(void delegate(ref FocusEvent) dg)
@@ -414,11 +344,6 @@ class EventKitTarget : WindowComponent, EventTarget
     bool removeOnFocusOut(void delegate(ref FocusEvent) dg)
     {
         return drop(onFocusOut, dg);
-    }
-
-    bool removeFilter(void delegate(ref JoystickEvent) dg)
-    {
-        return drop(eventJoystickFilters, dg);
     }
 
     bool removeHandler(void delegate(ref JoystickEvent) dg)
@@ -441,11 +366,6 @@ class EventKitTarget : WindowComponent, EventTarget
         return drop(onJoystickButtonRelease, dg);
     }
 
-    bool removeFilter(void delegate(ref WindowEvent) dg)
-    {
-        return drop(eventWindowFilters, dg);
-    }
-
     bool removeHandler(void delegate(ref WindowEvent) dg)
     {
         return drop(eventWindowHandlers, dg);
@@ -455,12 +375,10 @@ class EventKitTarget : WindowComponent, EventTarget
     {
         super.dispose;
 
-        eventAppFilters = null;
         eventAppHandlers = null;
 
         onAppExit = null;
 
-        eventPointerFilters = null;
         eventPointerHandlers = null;
 
         onPointerDown = null;
@@ -471,31 +389,26 @@ class EventKitTarget : WindowComponent, EventTarget
         onPointerEntered = null;
         onPointerExited = null;
 
-        eventKeyFilters = null;
         eventKeyHandlers = null;
 
         onKeyUp = null;
         onKeyDown = null;
 
-        eventTextInputFilters = null;
         eventTextInputHandlers = null;
 
         onTextInput = null;
 
-        eventFocusFilters = null;
         eventFocusHandlers = null;
 
         onFocusIn = null;
         onFocusOut = null;
 
-        eventJoystickFilters = null;
         eventJoystickHandlers = null;
 
         onJoystickAxis = null;
         onJoystickButtonPress = null;
         onJoystickButtonRelease = null;
 
-        eventWindowFilters = null;
         eventWindowHandlers = null;
     }
 
