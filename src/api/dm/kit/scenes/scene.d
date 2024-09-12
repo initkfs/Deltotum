@@ -32,6 +32,9 @@ class Scene : EventKitTarget
 
     bool startDrawProcess;
 
+    bool isPause;
+    Sprite[] unlockSprites;
+
     protected
     {
         Sprite[] sprites;
@@ -107,6 +110,16 @@ class Scene : EventKitTarget
         }
 
         worldTicks++;
+
+        if (isPause)
+        {
+            foreach (obj; unlockSprites)
+            {
+                obj.update(delta);
+                obj.validate;
+            }
+            return;
+        }
 
         size_t invalidNodesCount;
 
@@ -232,6 +245,26 @@ class Scene : EventKitTarget
             auto dialogManager = new GuiDialogManager;
             object.addCreate(dialogManager, 0);
             object.interact.dialog = dialogManager;
+
+            onKeyDown ~= (ref e) {
+                import api.dm.com.inputs.com_keyboard : ComKeyName;
+
+                //TODO toggle pause?
+                if (e.keyName != ComKeyName.F12 || isPause)
+                {
+                    return;
+                }
+
+                if (!isPause)
+                {
+                    isPause = true;
+                    dialogManager.showInfo("Pause!", () {
+                        isPause = false;
+                        unlockSprites = null;
+                    });
+                    unlockSprites ~= dialogManager;
+                }
+            };
         }
 
         if (!object.sceneProvider)
@@ -260,7 +293,11 @@ class Scene : EventKitTarget
 
     Sprite[] activeSprites()
     {
-        return sprites;
+        if (!isPause || unlockSprites.length == 0)
+        {
+            return sprites;
+        }
+        return unlockSprites;
     }
 
     final bool hasCreation() @safe pure nothrow

@@ -14,6 +14,7 @@ class Dialog : Container
 {
     import api.dm.gui.controls.texts.text : Text;
 
+    void delegate() onAction;
     void delegate() onExit;
 
     protected
@@ -67,6 +68,11 @@ class Dialog : Container
         auto buttonOk = new Button("OK");
         buttonPanel.addCreate(buttonOk);
         buttonOk.onAction = (ref e) { 
+            if(onAction){
+                onAction();
+                onAction = null;
+            }
+            
             if(onExit){
                 onExit();
             }
@@ -138,16 +144,22 @@ class GuiDialogManager : Sprite, DialogManager
         isVisible = false;
     }
 
-    void showInfo(dstring text, void delegate(bool) onResult = null)
+    void showInfo(dstring text, void delegate() onAction = null)
     {
         showDialog;
         mainDialog.message = text;
+        if(onAction){
+            mainDialog.onAction = onAction;
+        }
     }
 
-    void showError(dstring text, void delegate(bool) onResult = null)
+    void showError(dstring text, void delegate() onAction = null)
     {
         showDialog;
         mainDialog.message = text;
+        if(onAction){
+            mainDialog.onAction = onAction;
+        }
     }
 
     void showQuestion(dstring text, void delegate(bool) onResult = null)
