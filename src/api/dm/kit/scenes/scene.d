@@ -230,7 +230,7 @@ class Scene : EventKitTarget
             import api.dm.gui.interacts.dialogs.gui_dialog_manager : GuiDialogManager;
 
             auto dialogManager = new GuiDialogManager;
-            object.addCreate(dialogManager);
+            object.addCreate(dialogManager, 0);
             object.interact.dialog = dialogManager;
         }
 

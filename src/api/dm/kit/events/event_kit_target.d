@@ -13,6 +13,36 @@ import api.dm.kit.windows.events.window_event : WindowEvent;
 
 import api.core.utils.arrays : drop;
 
+import std.meta : AliasSeq;
+
+alias AllAppEvents = AliasSeq!(AppEvent, FocusEvent, KeyEvent, PointerEvent, TextInputEvent, JoystickEvent, WindowEvent);
+
+enum EventKitPhase {
+    preDispatch,
+    preDispatchChildren,
+    postDispatchChildren,
+    postDispatch
+}
+
+mixin template EventPhaseProcesor()
+{
+    //TODO remove imports
+    import api.core.apps.events.app_event : AppEvent;
+    import api.dm.kit.events.focus.focus_event : FocusEvent;
+    import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;
+    import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
+    import api.dm.kit.inputs.keyboards.events.text_input_event : TextInputEvent;
+    import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
+    import api.dm.kit.windows.events.window_event : WindowEvent;
+    import api.dm.kit.events.event_kit_target : AllAppEvents, EventKitPhase;
+    import std.conv: text;
+
+    static foreach (e; AllAppEvents)
+    {
+        mixin((i"void onEventPhase(ref $(e.stringof) e, $(EventKitPhase.stringof) phase){}").text);
+    }
+}
+
 /**
  * Authors: initkfs
  */

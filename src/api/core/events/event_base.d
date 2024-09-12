@@ -13,6 +13,6 @@ mixin template EventBase()
 
     bool isSynthetic;
     bool isConsumed;
-
+    
     int ownerId;
 }

@@ -31,7 +31,7 @@ class KitEventManager : EventManager
     void delegate(ref PointerEvent) onPointer;
     void delegate(ref TextInputEvent) onTextInput;
 
-    void dispatchEvent(E)(E e)
+    void dispatchEvent(E)(ref E e)
     {
         if (!windowProviderById)
         {

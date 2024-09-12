@@ -345,12 +345,20 @@ class Sprite : EventKitTarget
         assert(_gContext);
     }
 
+    import api.dm.kit.events.event_kit_target: EventPhaseProcesor;
+
+    mixin EventPhaseProcesor;
+
     void dispatchEvent(Event)(ref Event e)
     {
         if (!isVisible || !isReceiveEvents || e.isConsumed)
         {
             return;
         }
+
+        import api.dm.kit.events.event_kit_target: EventKitPhase;
+
+        onEventPhase(e, EventKitPhase.preDispatch);
 
         static if (__traits(compiles, e.target))
         {
@@ -374,16 +382,20 @@ class Sprite : EventKitTarget
             {
                 if (e.event == PointerEvent.Event.move)
                 {
-                    if (!isMouseOver && (onPointerEntered.length > 0 || eventPointerHandlers
-                            .length > 0))
+                    if (!isMouseOver)
                     {
                         isMouseOver = true;
-                        auto enteredEvent = PointerEvent(PointerEvent.Event.entered, e
-                                .ownerId, e
-                                .x, e.y, e
-                                .button, e.movementX, e.movementY);
-                        enteredEvent.isSynthetic = true;
-                        fireEvent(enteredEvent);
+                        if (onPointerEntered.length > 0 || eventPointerHandlers
+                                .length > 0)
+                        {
+                            auto enteredEvent = PointerEvent(PointerEvent.Event.entered, e
+                                    .ownerId, e
+                                    .x, e.y, e
+                                    .button, e.movementX, e.movementY);
+                            enteredEvent.isSynthetic = true;
+                            fireEvent(enteredEvent);
+                        }
+
                     }
 
                     runEventHandlers(e);
@@ -455,15 +467,15 @@ class Sprite : EventKitTarget
                 }
                 else if (isDrag && !e.isSynthetic)
                 {
-                   runEventHandlers(e);
+                    runEventHandlers(e);
                 }
             }
 
-            if (e.event == PointerEvent.Event.move && (isDrag || bounds.contains(e.x, e
-                    .y)))
-            {
-                runEventHandlers(e);
-            }
+            // if (e.event == PointerEvent.Event.move && (isDrag || bounds.contains(e.x, e
+            //         .y)))
+            // {
+            //     runEventHandlers(e);
+            // }
         }
 
         static if (is(Event : KeyEvent) || is(Event : TextInputEvent))
@@ -512,11 +524,19 @@ class Sprite : EventKitTarget
 
         if (isForwardEventsToChildren && children.length > 0)
         {
+            onEventPhase(e, EventKitPhase.preDispatchChildren);
             foreach (Sprite child; children)
             {
                 child.dispatchEvent(e);
+                if (e.isConsumed)
+                {
+                    return;
+                }
             }
+            onEventPhase(e, EventKitPhase.postDispatchChildren);
         }
+
+        onEventPhase(e, EventKitPhase.postDispatch);
     }
 
     void drawContent()

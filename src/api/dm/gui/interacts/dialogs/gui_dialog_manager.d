@@ -30,10 +30,20 @@ class Dialog : Container
         isBorder = true;
     }
 
+    import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
+    import api.dm.kit.events.event_kit_target: EventKitPhase;
+
+    override void onEventPhase(ref PointerEvent e, EventKitPhase phase){
+        if(phase != EventKitPhase.postDispatch){
+            return;
+        }
+        e.isConsumed = true;
+    }
+
     override void create()
     {
         super.create;
-
+        //TODO focus
         import api.dm.gui.containers.vbox : VBox;
 
         auto root = new VBox(5);
@@ -60,8 +70,7 @@ class Dialog : Container
             if(onExit){
                 onExit();
             }
-            e.isConsumed = true;
-         };
+        };
     }
 
     void title(dstring text)

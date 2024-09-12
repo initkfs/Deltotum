@@ -27,6 +27,7 @@ struct ActionEvent
 
     bool isSynthetic;
     bool isConsumed;
+    bool isConsumeAfterDispatch;
 
     int ownerId;
 
