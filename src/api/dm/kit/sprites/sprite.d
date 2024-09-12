@@ -94,6 +94,7 @@ class Sprite : EventKitTarget
     bool isUpdatable = true;
     bool isResizable;
     bool isKeepAspectRatio;
+    bool isForwardEventsToChildren = true;
 
     Layout layout;
     bool _layoutManaged = true;
@@ -344,9 +345,9 @@ class Sprite : EventKitTarget
         assert(_gContext);
     }
 
-    void dispatchEvent(Target : Sprite, Event)(Event e, ref DList!Target chain)
+    void dispatchEvent(Event)(ref Event e)
     {
-        if (!isVisible || !isReceiveEvents)
+        if (!isVisible || !isReceiveEvents || e.isConsumed)
         {
             return;
         }
@@ -355,7 +356,7 @@ class Sprite : EventKitTarget
         {
             if (e.target !is null && e.target is this)
             {
-                chain.insert(this);
+                runEventHandlers(e);
                 return;
             }
         }
@@ -365,6 +366,7 @@ class Sprite : EventKitTarget
             //isClipped
             if ((clip.width > 0 || clip.height > 0) && !clip.contains(e.x, e.y))
             {
+                //Forwarding to children can be dangerous. Children may not have clipping
                 return;
             }
 
@@ -384,7 +386,7 @@ class Sprite : EventKitTarget
                         fireEvent(enteredEvent);
                     }
 
-                    chain.insert(this);
+                    runEventHandlers(e);
                 }
                 else if (e.event == PointerEvent.Event.down)
                 {
@@ -403,11 +405,11 @@ class Sprite : EventKitTarget
                         }
                     }
 
-                    chain.insert(this);
+                    runEventHandlers(e);
                 }
                 else if (e.isChained)
                 {
-                    chain.insert(this);
+                    runEventHandlers(e);
                 }
             }
             else
@@ -425,7 +427,7 @@ class Sprite : EventKitTarget
                         fireEvent(exitedEvent);
                     }
 
-                    //chain.insert(this);
+                    runEventHandlers(e);
                 }
                 else if (e.event == PointerEvent.Event.down)
                 {
@@ -447,20 +449,20 @@ class Sprite : EventKitTarget
                         auto mousePos = input.systemCursor.getPos;
                         if (containsPoint(mousePos.x, mousePos.y))
                         {
-                            chain.insert(this);
+                            runEventHandlers(e);
                         }
                     }
                 }
                 else if (isDrag && e.isChained)
                 {
-                    chain.insert(this);
+                   runEventHandlers(e);
                 }
             }
 
             if (e.event == PointerEvent.Event.move && (isDrag || bounds.contains(e.x, e
                     .y)))
             {
-                chain.insert(this);
+                runEventHandlers(e);
             }
         }
 
@@ -468,13 +470,13 @@ class Sprite : EventKitTarget
         {
             if (isFocus)
             {
-                chain.insert(this);
+                runEventHandlers(e);
             }
         }
 
         static if (is(Event : JoystickEvent))
         {
-            chain.insert(this);
+            runEventHandlers(e);
         }
 
         static if (is(Event : FocusEvent))
@@ -492,7 +494,7 @@ class Sprite : EventKitTarget
                     {
                         //TODO move to parent
                         isFocus = true;
-                        chain.insert(this);
+                        runEventHandlers(e);
                     }
                 }
                 else
@@ -501,18 +503,18 @@ class Sprite : EventKitTarget
                         .Event.focusOut)
                     {
                         isFocus = false;
-                        chain.insert(this);
+                        runEventHandlers(e);
                     }
                 }
 
             }
         }
 
-        if (children.length > 0)
+        if (isForwardEventsToChildren && children.length > 0)
         {
             foreach (Sprite child; children)
             {
-                child.dispatchEvent(e, chain);
+                child.dispatchEvent(e);
             }
         }
     }

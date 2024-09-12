@@ -1,7 +1,7 @@
 module api.dm.kit.events.kit_event_manager;
 
 import api.core.events.processing.event_processor : EventProcessor;
-import api.core.events.chain_event_manager : ChainEventManager;
+import api.core.events.event_manager: EventManager;
 import api.dm.kit.events.processing.kit_event_processor : KitEventProcessor;
 import api.dm.kit.scenes.scene_manager : SceneManager;
 
@@ -21,7 +21,7 @@ import std.typecons : Nullable;
 /**
  * Authors: initkfs
  */
-class KitEventManager : ChainEventManager!(Sprite)
+class KitEventManager : EventManager
 {
     Nullable!(Window) delegate(long) windowProviderById;
 
@@ -50,43 +50,19 @@ class KitEventManager : ChainEventManager!(Sprite)
         Scene targetScene = targetWindow.scenes.currentScene;
         Sprite[] targets = targetScene.activeSprites;
 
-        targetScene.runEventFilters(e);
+        targetScene.runEventHandlers(e);
         if (e.isConsumed)
         {
             return;
         }
 
-        if (!eventChain.empty)
-        {
-            eventChain.clear;
-        }
-
         foreach (Sprite target; targets)
         {
-            target.dispatchEvent(e, eventChain);
-        }
-
-        if (!eventChain.empty)
-        {
-            foreach (Sprite eventTarget; eventChain)
-            {
-                eventTarget.runEventFilters(e);
-                if (e.isConsumed)
-                {
-                    return;
-                }
-            }
-
-            foreach_reverse (Sprite eventTarget; eventChain)
-            {
-                eventTarget.runEventHandlers(e);
-                if (e.isConsumed)
-                {
-                    return;
-                }
+            target.dispatchEvent(e);
+            if(e.isConsumed){
+                return;
             }
         }
-
-        targetScene.runEventHandlers(e);
+        
     }
 }
