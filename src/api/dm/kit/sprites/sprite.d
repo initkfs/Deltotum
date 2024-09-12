@@ -369,6 +369,8 @@ class Sprite : EventKitTarget
             }
         }
 
+        bool isNeedConsumed;
+
         static if (is(Event : PointerEvent))
         {
             //isClipped

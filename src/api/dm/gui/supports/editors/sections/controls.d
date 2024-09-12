@@ -144,6 +144,11 @@ class Controls : Control
         auto btnQuestion = new Button("Question");
         root.addCreate(btnQuestion);
         btnQuestion.onAction = (ref e) { interact.dialog.showQuestion("Question?"); };
+
+        auto popBtn = new Button("Popup");
+        root.addCreate(popBtn);
+        popBtn.onAction = (ref e) { interact.popup.popup("Popup!"); };
+
     }
 
     void createSelections(Container root)

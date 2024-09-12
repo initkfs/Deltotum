@@ -49,6 +49,8 @@ class Control : Sprite
     bool isCreatePointerEffectFactory;
     bool isCreatePointerEffectAnimationFactory;
 
+    bool isConumeEventIfBackground = true;
+
     Sprite delegate(double, double) backgroundFactory;
     Sprite delegate(Sprite) onBackgroundCreate;
     void delegate(Sprite) onBackgroundCreated;
@@ -450,7 +452,8 @@ class Control : Sprite
         if (auto tooltip = sprite.castSafe!Popup)
         {
             tooltips ~= tooltip;
-            if(!isTooltipListeners){
+            if (!isTooltipListeners)
+            {
                 initTooltipListeners;
             }
             assert(sceneProvider);
@@ -581,6 +584,27 @@ class Control : Sprite
             style.lineWidth = 0;
         }
         return style;
+    }
+
+    import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
+    import api.dm.kit.events.event_kit_target : EventKitPhase;
+
+    override void onEventPhase(ref PointerEvent e, EventKitPhase phase)
+    {
+        super.onEventPhase(e, phase);
+
+        if(phase != EventKitPhase.postDispatch){
+            return;
+        }
+
+        if (isConumeEventIfBackground && (isBackground || hasBackground))
+        {
+            if (containsPoint(e.x, e.y))
+            {
+                e.isConsumed = true;
+            }
+        }
+
     }
 
     protected bool tryCreateBackground(double width, double height)

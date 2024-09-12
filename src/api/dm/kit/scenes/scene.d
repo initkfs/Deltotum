@@ -267,6 +267,16 @@ class Scene : EventKitTarget
             };
         }
 
+        if (!object.interact.hasPopup)
+        {
+            import api.dm.gui.controls.popups.gui_popup_manager : GuiPopupManager;
+
+            auto popupManager = new GuiPopupManager;
+            //TODO first, after dialogs
+            object.addCreate(popupManager, 1);
+            object.interact.popup = popupManager;
+        }
+
         if (!object.sceneProvider)
         {
             object.sceneProvider = () => this;

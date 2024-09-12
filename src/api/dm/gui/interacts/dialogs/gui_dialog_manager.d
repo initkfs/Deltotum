@@ -35,6 +35,7 @@ class Dialog : Container
     import api.dm.kit.events.event_kit_target: EventKitPhase;
 
     override void onEventPhase(ref PointerEvent e, EventKitPhase phase){
+        super.onEventPhase(e, phase);
         if(phase != EventKitPhase.postDispatch){
             return;
         }
