@@ -11,7 +11,7 @@ mixin template EventBase()
     EventSource source;
     EventTarget target;
 
-    bool isChained = true;
+    bool isSynthetic;
     bool isConsumed;
 
     int ownerId;

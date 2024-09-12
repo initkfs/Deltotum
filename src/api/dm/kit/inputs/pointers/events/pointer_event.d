@@ -49,6 +49,6 @@ struct PointerEvent
         import std.format : format;
 
         return format("{%s,x:%s,y:%s,btn:%s,movX:%s,movY:%s,winid:%s,%s}", enumNameByIndex!Event(
-                event), x, y, button, movementX, movementY, ownerId, isChained);
+                event), x, y, button, movementX, movementY, ownerId, isSynthetic);
     }
 }

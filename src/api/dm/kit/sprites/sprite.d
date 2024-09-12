@@ -382,7 +382,7 @@ class Sprite : EventKitTarget
                                 .ownerId, e
                                 .x, e.y, e
                                 .button, e.movementX, e.movementY);
-                        enteredEvent.isChained = false;
+                        enteredEvent.isSynthetic = true;
                         fireEvent(enteredEvent);
                     }
 
@@ -400,14 +400,14 @@ class Sprite : EventKitTarget
 
                             auto focusEvent = FocusEvent(FocusEvent.Event.focusIn, e
                                     .ownerId, e.x, e.y);
-                            focusEvent.isChained = false;
+                            focusEvent.isSynthetic = true;
                             fireEvent(focusEvent);
                         }
                     }
 
                     runEventHandlers(e);
                 }
-                else if (e.isChained)
+                else if (!e.isSynthetic)
                 {
                     runEventHandlers(e);
                 }
@@ -423,7 +423,7 @@ class Sprite : EventKitTarget
                                 .ownerId, e
                                 .x, e.y, e
                                 .button, e.movementX, e.movementY);
-                        exitedEvent.isChained = false;
+                        exitedEvent.isSynthetic = true;
                         fireEvent(exitedEvent);
                     }
 
@@ -438,7 +438,7 @@ class Sprite : EventKitTarget
 
                         auto focusEvent = FocusEvent(FocusEvent.Event.focusOut, e
                                 .ownerId, e.x, e.y);
-                        focusEvent.isChained = false;
+                        focusEvent.isSynthetic = true;
                         fireEvent(focusEvent);
                     }
                 }
@@ -453,7 +453,7 @@ class Sprite : EventKitTarget
                         }
                     }
                 }
-                else if (isDrag && e.isChained)
+                else if (isDrag && !e.isSynthetic)
                 {
                    runEventHandlers(e);
                 }
@@ -486,7 +486,7 @@ class Sprite : EventKitTarget
                 return;
             }
 
-            if (e.isChained)
+            if (!e.isSynthetic)
             {
                 if (containsPoint(e.x, e.y))
                 {
