@@ -2,7 +2,7 @@ module api.dm.gui.controls.labels.hyperlink;
 
 import api.dm.gui.controls.labeled : Labeled;
 import api.dm.kit.sprites.sprite : Sprite;
-import api.dm.gui.controls.tooltips.tooltip: Tooltip;
+import api.dm.gui.controls.tooltips.popup: Popup;
 
 import std.conv: to;
 
@@ -54,7 +54,7 @@ class Hyperlink : Labeled
     {
         super.create;
 
-        auto tooltip = new Tooltip(url.to!dstring);
+        auto tooltip = new Popup(url.to!dstring);
         addCreate(tooltip);
 
         import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;

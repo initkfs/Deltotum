@@ -1,18 +1,18 @@
-module api.dm.gui.controls.tooltips.tooltip;
+module api.dm.gui.controls.tooltips.popup;
 
 import api.dm.gui.controls.labeled : Labeled;
 
 /**
  * Authors: initkfs
  */
-class Tooltip : Labeled
+class Popup : Labeled
 {
     protected
     {
 
     }
 
-    this(dstring text = "Tooltip", string iconName = null, double graphicsGap = 0, bool isCreateLayout = true)
+    this(dstring text = "Popup", string iconName = null, double graphicsGap = 0, bool isCreateLayout = true)
     {
         super(iconName, graphicsGap, isCreateLayout);
         _labelText = text;
