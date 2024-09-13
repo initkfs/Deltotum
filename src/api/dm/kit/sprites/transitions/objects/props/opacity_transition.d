@@ -8,7 +8,7 @@ import api.math.interps.interpolator : Interpolator;
  */
 class OpacityTransition : ValueTransition
 {
-    this(int timeMs, bool isCycle = false, bool isInverse = true, Interpolator interpolator = null)
+    this(int timeMs, bool isCycle = false, bool isInverse = false, Interpolator interpolator = null)
     {
         super(0.0, 1.0, timeMs, interpolator);
 

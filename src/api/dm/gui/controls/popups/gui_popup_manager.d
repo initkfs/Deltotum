@@ -5,31 +5,55 @@ import api.dm.gui.containers.container : Container;
 import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.controls.texts.text : Text;
 import api.math.rect2d : Rect2d;
-import api.dm.kit.sprites.transitions.objects.props.opacity_transition: OpacityTransition;
+import api.dm.kit.sprites.transitions.objects.props.opacity_transition : OpacityTransition;
 
 class Popup : VBox
 {
 
     Text text;
+    void delegate() onClose;
+    OpacityTransition animation;
 
-    this(){
+    this()
+    {
         isBackground = true;
         isBorder = true;
+        isOpacityForChildren = true;
 
         _width = 200;
-        _height = 60;
+        _height = 50;
     }
 
     override void create()
     {
         super.create;
 
+        animation = new OpacityTransition(500);
+        animation.addObject(this);
+        addCreate(animation);
+
+        enableInsets;
+
         text = new Text;
         addCreate(text);
 
-        onPointerDown ~= (ref e){
+        opacity = 0;
+
+        //not onPointerDown, prevent accidental click on element under.
+        onPointerUp ~= (ref e) {
+
+            if(animation.isRunning){
+                return;
+            }
+
             isVisible = false;
+            isManaged = false;
+            isLayoutManaged = false;
             e.isConsumed = true;
+
+            if(onClose){
+                onClose();
+            }
         };
 
         isVisible = false;
@@ -37,24 +61,66 @@ class Popup : VBox
 
 }
 
+import api.dm.gui.containers.base.typed_container : TypedContainer;
+import api.dm.kit.sprites.layouts.vlayout : VLayout;
+import api.core.utils.arrays : drop;
+
+import std.container.dlist : DList;
+
 /**
  * Authors: initkfs
  */
 class GuiPopupManager : Container, PopupManager
 {
     Popup[] popupsPool;
+    DList!Popup activePopups;
+    DList!dstring messageQueue;
+
+    size_t popupSpacing = 5;
+
+    bool isNewPopupShowLast = true;
+
+    protected {
+        size_t activePopupsCount;
+    }
 
     double spacing = 5;
 
+    override void create()
+    {
+        super.create;
+
+    }
+
+    override void applyLayout()
+    {
+        super.applyLayout;
+        if(activePopupsCount == 0){
+            return;
+        }
+
+        double nextX = 0, nextY = 0;
+        foreach (Popup popup; activePopups[])
+        {
+            popup.x = nextX;
+            popup.y = nextY;
+
+            nextY += popup.height;
+            nextY += popupSpacing;
+        }
+    }
+
     void popup(dstring message)
     {
+        messageQueue.insertBack(message);
 
         Popup freePopup;
-        foreach (Popup p; popupsPool)
+        foreach (Popup popup; popupsPool)
         {
-            if (!p.isVisible)
+            if (!popup.isVisible)
             {
-                freePopup = p;
+                freePopup = popup;
+                break;
             }
         }
 
@@ -63,22 +129,31 @@ class GuiPopupManager : Container, PopupManager
             auto newPopup = new Popup;
             newPopup.isLayoutManaged = false;
             newPopup.isVisible = false;
+            newPopup.isDrawByParent = false;
             addCreate(newPopup);
             popupsPool ~= newPopup;
-            freePopup = newPopup;
-            newPopup.isDrawByParent = false;
             window.scenes.currentScene.controlledSprites ~= newPopup;
+
+            newPopup.onClose = (){
+                bool isRemoved = activePopups.linearRemoveElement(newPopup);
+                assert(isRemoved);
+                assert(activePopupsCount > 0);
+                activePopupsCount--;
+            };
+
+            freePopup = newPopup;
         }
 
         freePopup.text.text = message;
-
-        auto sceneBounds = window.bounds;
-        auto px = sceneBounds.x;
-        auto py = sceneBounds.y;
-
-        freePopup.x = px;
-        freePopup.y = py;
-
+        if(!isNewPopupShowLast){
+            activePopups.insertFront(freePopup);
+        }else {
+            activePopups.insertBack(freePopup);
+        }
+        
         freePopup.isVisible = true;
+        freePopup.opacity = 0;
+        freePopup.animation.run;
+        activePopupsCount++;
     }
 }
