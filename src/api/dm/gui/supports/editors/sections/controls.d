@@ -147,7 +147,7 @@ class Controls : Control
             interact.dialog.showQuestion("Question?");
         };
 
-        auto popBtn = new Button("Popup");
+        auto popBtn = new Button("PNotify");
         root.addCreate(popBtn);
 
         popBtn.onAction = (ref e) {
@@ -155,7 +155,18 @@ class Controls : Control
             import std.datetime;
 
             auto curt = Clock.currTime();
-            interact.popup.popup("Popup: " ~ curt.toISOExtString.to!dstring);
+            interact.popup.notify("Popup: " ~ curt.toISOExtString.to!dstring);
+        };
+
+        auto popUrgBtn = new Button("PUrgent");
+        root.addCreate(popUrgBtn);
+
+        popUrgBtn.onAction = (ref e) {
+            import std.conv : to;
+            import std.datetime;
+
+            auto curt = Clock.currTime();
+            interact.popup.urgent("Popup: " ~ curt.toISOExtString.to!dstring);
         };
 
     }

@@ -5,5 +5,6 @@ module api.dm.kit.interacts.popups.popup_manager;
  */
 interface PopupManager
 {
-    void popup(dstring text);
+    void urgent(dstring text);
+    void notify(dstring text);
 }

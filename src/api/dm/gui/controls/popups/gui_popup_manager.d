@@ -6,13 +6,27 @@ import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.controls.texts.text : Text;
 import api.math.rect2d : Rect2d;
 import api.dm.kit.sprites.transitions.objects.props.opacity_transition : OpacityTransition;
+import api.dm.kit.sprites.transitions.pause_transition : PauseTransition;
+import api.dm.kit.sprites.transitions.transition : Transition;
 
 class Popup : VBox
 {
-
     Text text;
+
     void delegate() onClose;
-    OpacityTransition animation;
+
+    Transition showAnimation;
+    Transition hideAnimation;
+    PauseTransition hideDelayAnimation;
+
+    bool isAutoClose;
+
+    protected
+    {
+        size_t _autoCloseDelayMS = 2000;
+    }
+
+    bool isClosed;
 
     this()
     {
@@ -28,9 +42,31 @@ class Popup : VBox
     {
         super.create;
 
-        animation = new OpacityTransition(800);
-        animation.addObject(this);
-        addCreate(animation);
+        auto newShowAnimation = new OpacityTransition(800);
+        newShowAnimation.addObject(this);
+        addCreate(newShowAnimation);
+        showAnimation = newShowAnimation;
+
+        newShowAnimation.onEndFrames ~= () {
+            if (isAutoClose && !hideDelayAnimation.isRunning)
+            {
+                hideDelayAnimation.run;
+            }
+        };
+
+        auto newHideAnimation = new OpacityTransition(800, isInverse:
+            true);
+        newHideAnimation.addObject(this);
+        addCreate(newHideAnimation);
+
+        hideAnimation = newHideAnimation;
+
+        //lazy
+        assert(_autoCloseDelayMS > 0);
+        hideDelayAnimation = new PauseTransition(_autoCloseDelayMS);
+        addCreate(hideDelayAnimation);
+
+        hideDelayAnimation.onEndFrames ~= () { close; };
 
         enableInsets;
 
@@ -43,21 +79,47 @@ class Popup : VBox
         //not onPointerDown, prevent accidental click on element under.
         onPointerUp ~= (ref e) {
 
-            if(animation.isRunning){
+            if (showAnimation.isRunning)
+            {
                 return;
             }
-
-            isVisible = false;
-            isManaged = false;
-            isLayoutManaged = false;
             e.isConsumed = true;
 
-            if(onClose){
-                onClose();
-            }
+            close;
         };
 
         isVisible = false;
+    }
+
+    void open()
+    {
+        if (showAnimation && !showAnimation.isRunning)
+        {
+            showAnimation.run;
+        }
+    }
+
+    void close()
+    {
+        isVisible = false;
+        isManaged = false;
+        isLayoutManaged = false;
+        if (onClose && !isClosed)
+        {
+            onClose();
+        }
+
+        isClosed = true;
+    }
+
+    void autoCloseDelayMS(size_t v)
+    {
+        assert(v > 0);
+        _autoCloseDelayMS = v;
+        if (hideDelayAnimation)
+        {
+            hideDelayAnimation.timeMs = _autoCloseDelayMS;
+        }
     }
 
 }
@@ -74,15 +136,23 @@ import std.container.dlist : DList;
 class GuiPopupManager : Container, PopupManager
 {
     Popup[] popupsPool;
-    DList!Popup activePopups;
-    DList!dstring messageQueue;
+
+    DList!Popup activeNotifyPopups;
+    DList!Popup activeUrgentPopups;
 
     size_t popupSpacing = 5;
 
     bool isNewPopupShowFirst;
 
-    protected {
-        size_t activePopupsCount;
+    bool isAutoCloseNotify = true;
+    bool isAutoCloseUrgent = true;
+    size_t autoCloseNotifyDelayMS = 3000;
+    size_t autoCloseUrgentDelayMS = 5000;
+
+    protected
+    {
+        size_t activeNotifyPopupsCount;
+        size_t activeUrgentPopupsCount;
     }
 
     double spacing = 5;
@@ -96,25 +166,38 @@ class GuiPopupManager : Container, PopupManager
     override void applyLayout()
     {
         super.applyLayout;
-        if(activePopupsCount == 0){
-            return;
-        }
-
-        double nextX = 0, nextY = 0;
-        foreach (Popup popup; activePopups[])
+        if (activeNotifyPopupsCount > 0)
         {
-            popup.x = nextX;
-            popup.y = nextY;
+            double nextX = 0, nextY = 0;
+            foreach (Popup popup; activeNotifyPopups[])
+            {
+                popup.x = nextX;
+                popup.y = nextY;
 
-            nextY += popup.height;
-            nextY += popupSpacing;
+                nextY += popup.height;
+                nextY += popupSpacing;
+            }
         }
+
+        if (activeUrgentPopupsCount > 0)
+        {
+            auto middleBounds = window.bounds;
+            double nextX = middleBounds.middleX;
+            double nextY = middleBounds.middleY;
+            foreach (Popup popup; activeUrgentPopups[])
+            {
+                popup.x = nextX - popup.bounds.halfWidth;
+                popup.y = nextY - popup.bounds.halfHeight;
+
+                nextY += popup.height;
+                nextY += popupSpacing;
+            }
+        }
+
     }
 
-    void popup(dstring message)
+    protected Popup freeOrNewPopup()
     {
-        messageQueue.insertBack(message);
-
         Popup freePopup;
         foreach (Popup popup; popupsPool)
         {
@@ -134,27 +217,94 @@ class GuiPopupManager : Container, PopupManager
             addCreate(newPopup);
             popupsPool ~= newPopup;
             window.scenes.currentScene.controlledSprites ~= newPopup;
-
-            newPopup.onClose = (){
-                bool isRemoved = activePopups.linearRemoveElement(newPopup);
-                assert(isRemoved);
-                assert(activePopupsCount > 0);
-                activePopupsCount--;
-            };
-
             freePopup = newPopup;
         }
 
-        freePopup.text.text = message;
-        if(isNewPopupShowFirst){
-            activePopups.insertFront(freePopup);
+        freePopup.isClosed = false;
+
+        return freePopup;
+    }
+
+    protected Popup freeOrNewNotifyPopup()
+    {
+        auto popup = freeOrNewPopup;
+
+        if (isAutoCloseNotify)
+        {
+            popup.isAutoClose = true;
+            popup.autoCloseDelayMS = autoCloseNotifyDelayMS;
         }else {
-            activePopups.insertBack(freePopup);
+            popup.isAutoClose = false;
         }
-        
-        freePopup.isVisible = true;
-        freePopup.opacity = 0;
-        freePopup.animation.run;
-        activePopupsCount++;
+
+        popup.onClose = () {
+            bool isRemoved = activeNotifyPopups.linearRemoveElement(popup);
+            assert(isRemoved);
+            assert(activeNotifyPopupsCount > 0);
+            activeNotifyPopupsCount--;
+        };
+        return popup;
+    }
+
+    protected Popup freeOrNewUrgentPopup()
+    {
+        auto popup = freeOrNewPopup;
+
+        if (isAutoCloseUrgent)
+        {
+            popup.isAutoClose = true;
+            popup.autoCloseDelayMS = autoCloseUrgentDelayMS;
+        }else {
+            popup.isAutoClose = false;
+        }
+
+        popup.onClose = () {
+            bool isRemoved = activeUrgentPopups.linearRemoveElement(popup);
+            assert(isRemoved);
+            assert(activeUrgentPopupsCount > 0);
+            activeUrgentPopupsCount--;
+        };
+        return popup;
+    }
+
+    void showPopup(Popup popup)
+    {
+        popup.isVisible = true;
+        popup.opacity = 0;
+        popup.showAnimation.run;
+    }
+
+    void urgent(dstring message)
+    {
+        auto popup = freeOrNewUrgentPopup;
+
+        popup.text.text = message;
+        if (isNewPopupShowFirst)
+        {
+            activeUrgentPopups.insertFront(popup);
+        }
+        else
+        {
+            activeUrgentPopups.insertBack(popup);
+        }
+        activeUrgentPopupsCount++;
+        showPopup(popup);
+    }
+
+    void notify(dstring message)
+    {
+        auto popup = freeOrNewNotifyPopup;
+
+        popup.text.text = message;
+        if (isNewPopupShowFirst)
+        {
+            activeNotifyPopups.insertFront(popup);
+        }
+        else
+        {
+            activeNotifyPopups.insertBack(popup);
+        }
+        activeNotifyPopupsCount++;
+        showPopup(popup);
     }
 }
