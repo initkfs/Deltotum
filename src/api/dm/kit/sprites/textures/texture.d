@@ -481,14 +481,22 @@ class Texture : Sprite
         return super.opacity;
     }
 
-    override void opacity(double value)
+    override bool opacity(double value)
     {
         assert(texture);
-        super.opacity(value);
+
+        bool isSet = super.opacity(value);
+        if (!isSet)
+        {
+            return isSet;
+        }
+
         if (const err = texture.setOpacity(value))
         {
             logger.error(err.toString);
         }
+
+        return isSet;
     }
 
     void setRendererTarget()

@@ -28,13 +28,14 @@ class Popup : VBox
     {
         super.create;
 
-        animation = new OpacityTransition(500);
+        animation = new OpacityTransition(800);
         animation.addObject(this);
         addCreate(animation);
 
         enableInsets;
 
         text = new Text;
+        text.isFocusable = false;
         addCreate(text);
 
         opacity = 0;
@@ -78,7 +79,7 @@ class GuiPopupManager : Container, PopupManager
 
     size_t popupSpacing = 5;
 
-    bool isNewPopupShowLast = true;
+    bool isNewPopupShowFirst;
 
     protected {
         size_t activePopupsCount;
@@ -145,7 +146,7 @@ class GuiPopupManager : Container, PopupManager
         }
 
         freePopup.text.text = message;
-        if(!isNewPopupShowLast){
+        if(isNewPopupShowFirst){
             activePopups.insertFront(freePopup);
         }else {
             activePopups.insertBack(freePopup);

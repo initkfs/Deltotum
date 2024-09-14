@@ -63,6 +63,7 @@ class Sprite : EventKitTarget
     double speed = 0;
 
     double _opacity = 1;
+    double maxOpacity = double.max;
     bool isOpacityForChildren;
 
     bool isPhysicsEnabled;
@@ -345,7 +346,7 @@ class Sprite : EventKitTarget
         assert(_gContext);
     }
 
-    import api.dm.kit.events.event_kit_target: EventPhaseProcesor;
+    import api.dm.kit.events.event_kit_target : EventPhaseProcesor;
 
     mixin EventPhaseProcesor;
 
@@ -356,7 +357,7 @@ class Sprite : EventKitTarget
             return;
         }
 
-        import api.dm.kit.events.event_kit_target: EventKitPhase;
+        import api.dm.kit.events.event_kit_target : EventKitPhase;
 
         onEventPhase(e, EventKitPhase.preDispatch);
 
@@ -388,7 +389,7 @@ class Sprite : EventKitTarget
                     {
                         isMouseOver = true;
                         if (onPointerEntered.length > 0 || eventPointerHandlers
-                                .length > 0)
+                            .length > 0)
                         {
                             auto enteredEvent = PointerEvent(PointerEvent.Event.entered, e
                                     .ownerId, e
@@ -2135,9 +2136,22 @@ class Sprite : EventKitTarget
         return _opacity;
     }
 
-    void opacity(double value)
+    bool canSetOpacity(double value) => value >= 0 && value <= maxOpacity;
+
+    bool opacity(double value)
     {
+        if (!canSetOpacity(value))
+        {
+            if (value > maxOpacity)
+            {
+                _opacity = maxOpacity;
+            }
+
+            return false;
+        }
+
         _opacity = value;
+
         if (isOpacityForChildren)
         {
             onChildrenRec((child) {
@@ -2149,6 +2163,14 @@ class Sprite : EventKitTarget
                 return true;
             });
         }
+
+        return true;
+    }
+
+    void opacityLimit(double v)
+    {
+        maxOpacity = v;
+        opacity = v;
     }
 
     GraphicsContext gContext()

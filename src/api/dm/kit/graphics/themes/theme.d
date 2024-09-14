@@ -40,7 +40,7 @@ class Theme
 
     double opacityContainers = 1;
     double opacityControls = 1;
-    double opacityBackground = 0.4;
+    double opacityBackground = 0.85;
     double opacityHover = 1;
 
     size_t iconSize = 24;

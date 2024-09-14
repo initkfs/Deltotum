@@ -280,7 +280,7 @@ class Control : Sprite
                 _hover.isVisible = false;
 
                 addCreate(_hover);
-                _hover.opacity = graphics.theme.opacityHover;
+                _hover.opacityLimit = graphics.theme.opacityHover;
                 if (onHoverCreated)
                 {
                     onHoverCreated(_hover);
@@ -629,7 +629,7 @@ class Control : Sprite
 
         addCreate(_background, 0);
 
-        _background.opacity = graphics.theme.opacityBackground;
+        _background.opacityLimit = graphics.theme.opacityBackground;
 
         if (onBackgroundCreated)
         {
