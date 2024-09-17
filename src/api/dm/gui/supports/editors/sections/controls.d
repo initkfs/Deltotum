@@ -274,12 +274,16 @@ class Controls : Control
 
         import api.dm.gui.controls.scrolls.hscroll : HScroll;
         import api.dm.gui.controls.scrolls.vscroll : VScroll;
+        import api.dm.gui.controls.scrolls.radial_scroll: RadialScroll;
 
         auto vScrollbar = new VScroll;
         root.addCreate(vScrollbar);
 
         auto hScrollbar = new HScroll;
         root.addCreate(hScrollbar);
+
+        auto rScroll = new RadialScroll;
+        root.addCreate(rScroll);
 
         import api.dm.gui.controls.separators.hseparator : HSeparator;
 

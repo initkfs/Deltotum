@@ -156,6 +156,10 @@ class Texture : Sprite
         }
     }
 
+    void bestScaleMode(){
+        textureScaleMode(ComTextureScaleMode.quality);
+    }
+
     override void drawContent()
     {
         if (texture is null)
