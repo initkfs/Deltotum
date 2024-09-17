@@ -218,8 +218,11 @@ class Scene : EventKitTarget
             build(obj);
         }
 
-        obj.initialize;
-        assert(obj.isInitialized);
+        if (!obj.isInitialized)
+        {
+            obj.initialize;
+            assert(obj.isInitialized);
+        }
 
         obj.create;
         assert(obj.isCreated);
@@ -258,7 +261,7 @@ class Scene : EventKitTarget
                 if (!isPause)
                 {
                     isPause = true;
-                    dialogManager.showInfo("Pause!", () {
+                    dialogManager.showInfo("Pause!", "Info", () {
                         isPause = false;
                         unlockSprites = null;
                     });

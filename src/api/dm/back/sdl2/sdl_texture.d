@@ -525,6 +525,9 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             case Flip.vertical:
                 sdlFlip = SDL_RendererFlip.SDL_FLIP_VERTICAL;
                 break;
+                sdlFlip = SDL_RendererFlip.SDL_FLIP_VERTICAL | SDL_RendererFlip.SDL_FLIP_HORIZONTAL;
+            case Flip.both:
+            break;
         }
 
         //https://discourse.libsdl.org/t/1st-frame-sdl-renderer-software-sdl-flip-horizontal-ubuntu-wrong-display-is-it-a-bug-of-sdl-rendercopyex/25924

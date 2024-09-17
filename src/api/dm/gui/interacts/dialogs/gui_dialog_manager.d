@@ -6,11 +6,11 @@ import api.dm.kit.scenes.scene : Scene;
 import api.dm.kit.windows.window : Window;
 import api.math.rect2d : Rect2d;
 import api.dm.kit.sprites.sprite : Sprite;
-import api.dm.gui.containers.container : Container;
+import api.dm.gui.containers.stack_box: StackBox;
 import api.dm.kit.interacts.interact : Interact;
 import api.dm.kit.interacts.dialogs.dialog_manager : DialogManager;
 
-class Dialog : Container
+class Dialog : StackBox
 {
     import api.dm.gui.controls.texts.text : Text;
 
@@ -25,8 +25,8 @@ class Dialog : Container
 
     this()
     {
-        _width = 200;
-        _height = 300;
+        _width = 100;
+        _height = 150;
         isBackground = true;
         isBorder = true;
     }
@@ -45,11 +45,18 @@ class Dialog : Container
     override void create()
     {
         super.create;
+
+        enableInsets;
         //TODO focus
         import api.dm.gui.containers.vbox : VBox;
 
         auto root = new VBox(5);
+        root.isGrow = true;
+        root.width = width;
+        root.height= height;
         addCreate(root);
+        root.enableInsets;
+        root.layout.isAlignX = true;
 
         _title = new Text("Title");
         _title.isHGrow = true;
@@ -57,6 +64,7 @@ class Dialog : Container
 
         _message = new Text("Message");
         _message.isHGrow = true;
+        _message.isVGrow = true;
         root.addCreate(_message);
 
         import api.dm.gui.containers.hbox: HBox;
@@ -64,7 +72,7 @@ class Dialog : Container
 
         auto buttonPanel = new HBox(5);
         root.addCreate(buttonPanel);
-        buttonPanel.isHGrow = true;
+        //buttonPanel.isHGrow = true;
 
         auto buttonOk = new Button("OK");
         buttonPanel.addCreate(buttonOk);
@@ -119,6 +127,7 @@ class GuiDialogManager : Sprite, DialogManager
 
         mainDialog.onExit = (){
             hideDialog;
+            window.scenes.currentScene.isPause = false;
         };
     }
 
@@ -130,14 +139,16 @@ class GuiDialogManager : Sprite, DialogManager
         {
             addCreate(mainDialog);
             window.scenes.currentScene.controlledSprites ~= this;
+            window.scenes.currentScene.unlockSprites ~= this;
         }
 
-        const sceneBounds = window.bounds;
+        const sceneBounds = graphics.renderBounds;
         mainDialog.x = sceneBounds.middleX - mainDialog.bounds.halfWidth;
         mainDialog.y = sceneBounds.middleY - mainDialog.bounds.halfHeight;
 
         mainDialog.isVisible = true;
         isVisible = true;
+        window.scenes.currentScene.isPause = true;
     }
 
     void hideDialog(){
@@ -145,27 +156,30 @@ class GuiDialogManager : Sprite, DialogManager
         isVisible = false;
     }
 
-    void showInfo(dstring text, void delegate() onAction = null)
+    void showInfo(dstring text, dstring title = "Info", void delegate() onAction = null)
     {
         showDialog;
         mainDialog.message = text;
+        mainDialog.title = title;
         if(onAction){
             mainDialog.onAction = onAction;
         }
     }
 
-    void showError(dstring text, void delegate() onAction = null)
+    void showError(dstring text, dstring title = "Error", void delegate() onAction = null)
     {
         showDialog;
         mainDialog.message = text;
+        mainDialog.title = title;
         if(onAction){
             mainDialog.onAction = onAction;
         }
     }
 
-    void showQuestion(dstring text, void delegate(bool) onResult = null)
+    void showQuestion(dstring text, dstring title = "Question", void delegate(bool) onResult = null)
     {
         showDialog;
         mainDialog.message = text;
+        mainDialog.title = title;
     }
 }

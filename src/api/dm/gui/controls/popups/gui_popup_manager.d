@@ -2,6 +2,7 @@ module api.dm.gui.controls.popups.gui_popup_manager;
 
 import api.dm.kit.interacts.popups.popup_manager : PopupManager;
 import api.dm.gui.containers.container : Container;
+import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.controls.texts.text : Text;
 import api.math.rect2d : Rect2d;
@@ -34,8 +35,8 @@ class Popup : VBox
         isBorder = true;
         isOpacityForChildren = true;
 
-        _width = 200;
-        _height = 50;
+        //_width = 200;
+        //_height = 50;
     }
 
     override void create()
@@ -181,7 +182,7 @@ class GuiPopupManager : Container, PopupManager
 
         if (activeUrgentPopupsCount > 0)
         {
-            auto middleBounds = window.bounds;
+            auto middleBounds = graphics.renderBounds;
             double nextX = middleBounds.middleX;
             double nextY = middleBounds.middleY;
             foreach (Popup popup; activeUrgentPopups[])
@@ -233,15 +234,20 @@ class GuiPopupManager : Container, PopupManager
         {
             popup.isAutoClose = true;
             popup.autoCloseDelayMS = autoCloseNotifyDelayMS;
-        }else {
+        }
+        else
+        {
             popup.isAutoClose = false;
         }
 
         popup.onClose = () {
             bool isRemoved = activeNotifyPopups.linearRemoveElement(popup);
-            assert(isRemoved);
-            assert(activeNotifyPopupsCount > 0);
-            activeNotifyPopupsCount--;
+            if (isRemoved)
+            {
+                assert(activeNotifyPopupsCount > 0);
+                activeNotifyPopupsCount--;
+            }
+
         };
         return popup;
     }
@@ -254,15 +260,19 @@ class GuiPopupManager : Container, PopupManager
         {
             popup.isAutoClose = true;
             popup.autoCloseDelayMS = autoCloseUrgentDelayMS;
-        }else {
+        }
+        else
+        {
             popup.isAutoClose = false;
         }
 
         popup.onClose = () {
             bool isRemoved = activeUrgentPopups.linearRemoveElement(popup);
-            assert(isRemoved);
-            assert(activeUrgentPopupsCount > 0);
-            activeUrgentPopupsCount--;
+            if (isRemoved)
+            {
+                assert(activeUrgentPopupsCount > 0);
+                activeUrgentPopupsCount--;
+            }
         };
         return popup;
     }
@@ -274,28 +284,36 @@ class GuiPopupManager : Container, PopupManager
         popup.showAnimation.run;
     }
 
-    void urgent(dstring message)
+    void urgent(dstring message, bool delegate(Sprite) onPreShowPopupIsContinue = null)
     {
         auto popup = freeOrNewUrgentPopup;
 
         popup.text.text = message;
-        if (isNewPopupShowFirst)
+
+        if (!onPreShowPopupIsContinue || onPreShowPopupIsContinue(popup))
         {
-            activeUrgentPopups.insertFront(popup);
+            addUrgentPopup(popup);
         }
-        else
-        {
-            activeUrgentPopups.insertBack(popup);
-        }
-        activeUrgentPopupsCount++;
+
         showPopup(popup);
     }
 
-    void notify(dstring message)
+    void notify(dstring message, bool delegate(Sprite) onPreShowPopupIsContinue = null)
     {
         auto popup = freeOrNewNotifyPopup;
 
         popup.text.text = message;
+
+        if (!onPreShowPopupIsContinue || onPreShowPopupIsContinue(popup))
+        {
+            addNotifyPopup(popup);
+        }
+
+        showPopup(popup);
+    }
+
+    protected void addNotifyPopup(Popup popup)
+    {
         if (isNewPopupShowFirst)
         {
             activeNotifyPopups.insertFront(popup);
@@ -305,6 +323,18 @@ class GuiPopupManager : Container, PopupManager
             activeNotifyPopups.insertBack(popup);
         }
         activeNotifyPopupsCount++;
-        showPopup(popup);
+    }
+
+    protected void addUrgentPopup(Popup popup)
+    {
+        if (isNewPopupShowFirst)
+        {
+            activeUrgentPopups.insertFront(popup);
+        }
+        else
+        {
+            activeUrgentPopups.insertBack(popup);
+        }
+        activeUrgentPopupsCount++;
     }
 }

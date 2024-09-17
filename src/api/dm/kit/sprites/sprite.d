@@ -719,14 +719,15 @@ class Sprite : EventKitTarget
         {
             debug
             {
-                throw new Exception("Sprite already added: " ~ sprite.toString);
+                import std.format: format;
+                throw new Exception(format("Sprite %s already added: %s. Parent %s: %s", typeid(sprite), sprite.toString, typeid(this), toString));
             }
             return;
         }
 
         trySetParentProps(sprite);
 
-        if (index < 0 || children.length == 0)
+        if (index < 0 || index == children.length)
         {
             children ~= sprite;
         }
@@ -736,8 +737,8 @@ class Sprite : EventKitTarget
             {
                 import std.format : format;
 
-                throw new Exception(format("Child index must not be greater than %s, but received %s for child %s", children
-                        .length, index, sprite.toString));
+                throw new Exception(format("Child index must not be greater than %s, but received %s for child %s with children length %s", children
+                        .length, index, sprite.toString, sprite.children.length));
             }
 
             import std.array : insertInPlace;
@@ -1053,7 +1054,7 @@ class Sprite : EventKitTarget
                 thisBounds.x = _x + dx;
                 thisBounds.y = _y + dy;
 
-                const screen = window.boundsLocal;
+                const screen = graphics.renderBounds;
                 if (!screen.contains(thisBounds))
                 {
                     if (!onScreenBoundsIsStop || onScreenBoundsIsStop())
@@ -1381,6 +1382,11 @@ class Sprite : EventKitTarget
             return false;
         }
 
+        return setWidth(value);
+    }
+
+    bool setWidth(double value)
+    {
         immutable double oldWidth = _width;
         _width = value;
 
@@ -1497,6 +1503,10 @@ class Sprite : EventKitTarget
             return false;
         }
 
+        return setHeight(value);
+    }
+
+    bool setHeight(double value){
         immutable double oldHeight = _height;
         _height = value;
 
@@ -1567,11 +1577,19 @@ class Sprite : EventKitTarget
         return tryHeight(value);
     }
 
-    bool resize(double newWidth, double newHeight)
+    bool resize(double newWidth, double newHeight, bool isForce = false)
     {
-        width = newWidth;
-        height = newHeight;
-        return width == newWidth && height == newHeight;
+        bool isResized;
+        if(isForce){
+            isResized |= setWidth(newWidth);
+            isResized |= setHeight(newHeight);
+            return isResized;
+        }
+
+        isResized |= width = newWidth;
+        isResized |= height = newHeight;
+        //TODO newWidth == oldWidth, etc
+        return isResized;
     }
 
     bool rescale(double factorWidth, double factorHeight)

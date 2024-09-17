@@ -8,6 +8,8 @@ import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.sprites.transitions.objects.motions.linear_motion : LinearMotion;
 import api.dm.kit.sprites.transitions.transition : Transition;
 import api.math.vector2 : Vector2;
+import Math = api.math;
+import api.math.numericals.interp;
 
 enum SliderPos
 {
@@ -31,16 +33,17 @@ class Slider : Container
         bool _expanded;
     }
 
-    this(SliderPos position = SliderPos.left)
+    this(SliderPos position = SliderPos.left, bool expand = false)
     {
         layout = (position == SliderPos.left || position == SliderPos.right) ? new HLayout(0) : new VLayout(
             0);
         layout.isAutoResize = true;
         layout.isAlignX = true;
         layout.isAlignY = true;
-        isDrawBounds = true;
 
         this.position = position;
+
+        _expanded = expand;
     }
 
     override void create()
@@ -80,31 +83,63 @@ class Slider : Container
         _handle.onPointerDown ~= (ref e) {
             if (motionAnimation && motionAnimation.isRunning)
             {
-                return;
+               return;
             }
-
-            if (_expanded)
-            {
-                collapse;
-            }
-            else
-            {
-                expand;
-            }
-            _expanded = !_expanded;
+            toggle;
         };
+
+        setWindowInitialPos;
+        if (_expanded)
+        {
+            window.showingTasks ~= (dt) { expand; };
+        }
     }
 
-    void toogle(bool isExpand = true)
+    void toggle()
     {
-        //TODO remove switch?
-        Vector2 endPoint;
+        switchState(!_expanded);
+    }
 
+    bool isAnimationRunning() => motionAnimation && motionAnimation.isRunning;
+
+    bool canSwitchState() => !isAnimationRunning; 
+
+    void switchState(bool expand)
+    {
+        if (_expanded == expand)
+        {
+            return;
+        }
+
+        if (isAnimationRunning)
+        {
+            motionAnimation.stop;
+            if(!_expanded){
+                setInitialPos;
+            }else {
+                Vector2 endPoint = getEndPointPanel(true);
+                x = endPoint.x;
+                y = endPoint.y;
+            }
+        }
+
+        _expanded = expand;
+
+        //TODO remove switch?
+        Vector2 endPoint = getEndPointPanel(expand);
+        motionAnimation.minValue = Vector2(x, y);
+        motionAnimation.maxValue = endPoint;
+        motionAnimation.run;
+    }
+
+    protected Vector2 getEndPointPanel(bool expand){
+        Vector2 endPoint;
         Vector2 offset = getMotionOffset;
         auto offsetX = offset.x;
         auto offsetY = offset.y;
-        
-        if(!isExpand){
+
+        if (!expand)
+        {
             offsetX = -offsetX;
             offsetY = -offsetY;
         }
@@ -124,26 +159,27 @@ class Slider : Container
                 endPoint = Vector2(x - offsetX, y);
                 break;
         }
-        motionAnimation.minValue = Vector2(x, y);
-        motionAnimation.maxValue = endPoint;
-        motionAnimation.run;
+
+        return endPoint;
     }
+
+    bool isExpand() => _expanded;
 
     void expand()
     {
-        toogle(isExpand : true);
+        switchState(expand : true);
     }
 
     void collapse()
     {
-        toogle(isExpand : false);
+        switchState(expand : false);
     }
 
     protected Vector2 getMotionOffset()
     {
         Vector2 sceneBoundsEx = checkSceneBoundsExceed;
-        auto offsetX = _content.width;
-        auto offsetY = _content.height;
+        auto offsetX = sliderWidth - handle.width;
+        auto offsetY = sliderHeight - handle.height;
         if (sceneBoundsEx.x > 0 && sceneBoundsEx.x < offsetX)
         {
             offsetX -= sceneBoundsEx.x;
@@ -160,15 +196,31 @@ class Slider : Container
     {
         double dx = 0, dy = 0;
         const sceneBounds = graphics.renderBounds;
-        if (width > sceneBounds.width)
+        if (sliderWidth > sceneBounds.width)
         {
             dx = width - sceneBounds.width;
         }
-        if (height > sceneBounds.height)
+        if (sliderHeight > sceneBounds.height)
         {
             dy = height - sceneBounds.height;
         }
         return Vector2(dx, dy);
+    }
+
+    protected double sliderWidth()
+    {
+        return Math.max(_content.width, width);
+    }
+
+    protected double sliderHeight()
+    {
+        return Math.max(_content.height, height);
+    }
+
+    void setWindowInitialPos()
+    {
+        assert(window);
+        window.showingTasks ~= (dt) { setInitialPos; };
     }
 
     void setInitialPos()
@@ -181,7 +233,7 @@ class Slider : Container
         final switch (position) with (SliderPos)
         {
             case left:
-                newX = sceneBounds.x - _content.width;
+                newX = sceneBounds.x - sliderWidth + _handle.width;
                 newY = sceneBounds.y;
                 break;
             case right:
@@ -190,7 +242,7 @@ class Slider : Container
                 break;
             case top:
                 newX = sceneBounds.x;
-                newY = sceneBounds.y - _content.height;
+                newY = sceneBounds.y - sliderHeight + _handle.height;
                 break;
             case bottom:
                 newX = sceneBounds.x;
@@ -200,8 +252,6 @@ class Slider : Container
         }
         x = newX;
         y = newY;
-
-        _expanded = false;
     }
 
     void addContent(Sprite newContent)
