@@ -16,7 +16,10 @@ class RadialScale : Control
     double minValue = 0;
     double maxValue = 1;
     double valueStep = 0.05;
-    size_t labelStepCount = 5;
+    size_t majorTickStep = 5;
+    size_t labelStep = 5;
+    
+    bool isShowFirstLastLabel = true;
 
     double _diameter = 0;
 
@@ -24,6 +27,9 @@ class RadialScale : Control
     size_t tickHeight = 6;
     size_t tickMajorWidth = 2;
     size_t tickMajorHeight = 12;
+
+    size_t tickOuterPadding = 10;
+    size_t labelOuterPadding = 2;
 
     this(double diameter = 50, double minAngleDeg = 0, double maxAngleDeg = 360)
     {
@@ -39,8 +45,6 @@ class RadialScale : Control
         import api.dm.kit.sprites.layouts.center_layout : CenterLayout;
 
         this.layout = new CenterLayout;
-
-        isDrawBounds = true;
     }
 
     override void create()
@@ -108,7 +112,7 @@ class RadialScale : Control
                 auto startAngleDeg = minAngleDeg;
                 auto endAngleDeg = maxAngleDeg;
 
-                auto angleRange = Math.abs(startAngleDeg - endAngleDeg);
+                double angleRange = Math.abs(startAngleDeg - endAngleDeg);
 
                 size_t ticksCount = (valueRange / valueStep).to!size_t;
                 assert(ticksCount >= 2);
@@ -118,14 +122,14 @@ class RadialScale : Control
                     ticksCount++;
                 }
 
-                size_t angleDegDiff = (Math.round(angleRange / (ticksCount - 1))).to!size_t;
+                double angleDegDiff = angleRange / (ticksCount - 1);
                 size_t endIndex = ticksCount - 1;
                 assert(endIndex < ticksCount);
                 foreach (i; 0 .. ticksCount)
                 {
-                    auto pos = Vector2.fromPolarDeg(startAngleDeg, radius - 35);
+                    auto pos = Vector2.fromPolarDeg(startAngleDeg, radius - tickOuterPadding);
 
-                    Texture proto = i % labelStepCount == 0 ? bigTickProto : smallTickProto;
+                    Texture proto = (majorTickStep > 0 && ((i % majorTickStep) == 0)) ? bigTickProto : smallTickProto;
 
                     proto.angle = startAngleDeg;
 
@@ -137,9 +141,9 @@ class RadialScale : Control
 
                     copyFrom(proto, Rect2d(0, 0, proto.width, proto.height), Rect2d(tickX, tickY, tickBoundsW, tickBoundsH));
 
-                    if (i == 0 || i == endIndex || proto is bigTickProto)
+                    if ((isShowFirstLastLabel && (i == 0 || i == endIndex)) || (labelStep > 0 &&(i % labelStep == 0)))
                     {
-                        auto textPos = Vector2.fromPolarDeg(startAngleDeg, radius - 15);
+                        auto textPos = Vector2.fromPolarDeg(startAngleDeg, radius - labelOuterPadding);
 
                         auto labelText = (i * valueStep).to!dstring;
                         labelProto.text = labelText;

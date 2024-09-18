@@ -1,6 +1,6 @@
 module api.dm.gui.controls.scrolls.base_scroll;
 
-import api.dm.kit.sprites.sprite: Sprite;
+import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites.textures.texture : Texture;
 
@@ -19,7 +19,11 @@ abstract class BaseScroll : Control
     double minValue;
     double maxValue;
 
-    double value = 0;
+    protected
+    {
+        double _value = 0;
+    }
+
     double valueDelta = 0;
 
     void delegate(double) onValue;
@@ -49,5 +53,30 @@ abstract class BaseScroll : Control
     override void create()
     {
         super.create;
+    }
+
+    double valueRange()
+    {
+        import Math = api.math;
+
+        if (minValue == maxValue)
+        {
+            return 0;
+        }
+
+        const double range = minValue < maxValue ? (maxValue - minValue) : (minValue - maxValue);
+        return range;
+    }
+
+    double value()
+    {
+        return _value;
+    }
+
+    void value(double v)
+    {
+        import Math = api.math;
+
+        _value = Math.clamp(v, minValue, maxValue);
     }
 }
