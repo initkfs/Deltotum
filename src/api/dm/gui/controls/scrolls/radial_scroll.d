@@ -19,7 +19,7 @@ class RadialScroll : BaseScroll
 
     RadialScale scale;
 
-    this(double minValue = 0, double maxValue = 1.0, double width = 100, double height = 100)
+    this(double minValue = 0, double maxValue = 1.0, double width = 200, double height = 200)
     {
         super(minValue, maxValue);
         this.width = width;
@@ -46,9 +46,9 @@ class RadialScroll : BaseScroll
         scale = new RadialScale(width - 10, fromAngleDeg, toAngleDeg);
         scale.tickOuterPadding *= 2;
         scale.labelOuterPadding *= 2;
-        scale.tickWidth = 1;
-        scale.tickMajorWidth = 1;
-        scale.labelStep = 0;
+        scale.tickWidth = 2;
+        scale.tickMajorWidth = 2;
+        scale.labelStep = 5;
         addCreate(scale);
 
         import api.dm.kit.sprites.textures.vectors.shapes.vcircle : VCircle;

@@ -340,6 +340,23 @@ class Controls : Control
         // auto time1 = new TimePicker;
         // rootContainer.addCreate(time1);
 
+        import api.dm.gui.controls.paginations.pagination: Pagination;
+        import api.dm.gui.controls.texts.text: Text;
+        import api.dm.gui.containers.vbox: VBox;
+
+        auto paginationRoot = new VBox(3);
+        paginationRoot.layout.isAlignX = true;
+        rootContainer.addCreate(paginationRoot);
+        auto paginationContent = new Text;
+        paginationRoot.addCreate(paginationContent);
+
+        auto pagination = new Pagination;
+        pagination.pageFactory = (size_t pageIndex){
+            import std.conv: to;
+            paginationContent.text = pageIndex.to!dstring;
+        };
+        paginationRoot.addCreate(pagination);
+
         import api.dm.gui.controls.clocks.analog_clock : AnalogClock;
 
         auto clock1 = new AnalogClock;

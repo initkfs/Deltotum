@@ -842,6 +842,7 @@ class Text : Control
         }
 
         _text = textToGlyphs(t);
+        rows = glyphsToRows(_text);
         tempText = null;
         setInvalid;
     }
