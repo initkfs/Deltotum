@@ -11,6 +11,7 @@ import api.dm.gui.containers.hbox : HBox;
 import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.containers.frame : Frame;
 import api.dm.kit.sprites.layouts.vlayout : VLayout;
+import api.dm.gui.controls.carousels.carousel;
 
 /**
  * Authors: initkfs
@@ -344,16 +345,29 @@ class Controls : Control
         import api.dm.gui.controls.texts.text: Text;
         import api.dm.gui.containers.vbox: VBox;
 
+        import api.dm.gui.controls.carousels.carousel: Carousel;
+
         auto paginationRoot = new VBox(3);
         paginationRoot.layout.isAlignX = true;
         rootContainer.addCreate(paginationRoot);
-        auto paginationContent = new Text;
+
+        import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon: VRegularPolygon;
+        import api.dm.kit.graphics.styles.graphic_style: GraphicStyle;
+        import api.dm.kit.graphics.colors.rgba: RGBA;
+
+        auto image1 = new VRegularPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.yellow));
+        auto image2 = new VRegularPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.green));
+        auto image3 = new VRegularPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.red));
+        auto image4 = new VRegularPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.blue));
+        auto image5 = new VRegularPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.orange));
+
+        auto paginationContent = new Carousel([image1, image2, image3, image4, image5]);
         paginationRoot.addCreate(paginationContent);
 
         auto pagination = new Pagination;
         pagination.pageFactory = (size_t pageIndex){
             import std.conv: to;
-            paginationContent.text = pageIndex.to!dstring;
+            
         };
         paginationRoot.addCreate(pagination);
 

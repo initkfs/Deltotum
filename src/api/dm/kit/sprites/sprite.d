@@ -941,6 +941,12 @@ class Sprite : EventKitTarget
         }
     }
 
+    void clipBounds(){
+        clip = Rect2d(x, y, width, height);
+        isMoveClip = true;
+        isResizeClip = true;
+    }
+
     void enableClipping()
     {
         graphics.setClip(clip);

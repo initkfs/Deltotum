@@ -13,7 +13,7 @@ class VRegularPolygon : VShape
         double cornerPadding = 0;
     }
 
-    this(double width, double height, GraphicStyle style, double cornerPadding)
+    this(double width, double height, GraphicStyle style = GraphicStyle.simpleFill, double cornerPadding = 0)
     {
         super(width, height, style);
         this.cornerPadding = cornerPadding;

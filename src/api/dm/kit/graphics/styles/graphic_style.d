@@ -19,6 +19,11 @@ struct GraphicStyle
         return GraphicStyle(1.0, RGBA.white, false, RGBA.transparent);
     }
 
+    static GraphicStyle simpleFill() pure @safe
+    {
+        return GraphicStyle(1.0, RGBA.lightcyan, true, RGBA.red);
+    }
+
     void color(RGBA color){
         fillColor = color;
         lineColor = color;
