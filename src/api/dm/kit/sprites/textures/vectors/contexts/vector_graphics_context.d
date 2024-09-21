@@ -83,6 +83,26 @@ class VectorGraphicsContext : GraphicsContext
         cairo_translate(cr, x, y);
     }
 
+    void scale(double sx, double sy)
+    {
+        cairo_scale(cr, sx, sy);
+    }
+
+    void rotateRad(double angleRad)
+    {
+        cairo_rotate(cr, angleRad);
+    }
+
+    void save()
+    {
+        cairo_save(cr);
+    }
+
+    void restore()
+    {
+        cairo_restore(cr);
+    }
+
     void moveTo(double x, double y)
     {
         cairo_move_to(cr, x, y);
@@ -150,7 +170,8 @@ class VectorGraphicsContext : GraphicsContext
         cairo_close_path(cr);
     }
 
-    void arc(double xc,double yc, double radius, double angle1, double angle2){
+    void arc(double xc, double yc, double radius, double angle1, double angle2)
+    {
         cairo_arc(cr, xc, yc, radius, angle1, angle2);
     }
 }

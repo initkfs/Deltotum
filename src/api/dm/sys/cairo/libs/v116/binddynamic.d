@@ -34,6 +34,7 @@ extern (C) @nogc nothrow
 
     alias c_cairo_translate = void function(cairo_t* cr, double tx, double ty);
     alias c_cairo_scale = void function(cairo_t* cr, double sx, double sy);
+    alias c_cairo_rotate = void function(cairo_t* cr, double angleRad);
 
     alias c_cairo_arc = void function(
         cairo_t* cr,
@@ -70,6 +71,9 @@ extern (C) @nogc nothrow
 
     alias c_cairo_set_line_join = void function(cairo_t* cr, cairo_line_join_t line_join);
     alias c_cairo_set_line_cap = void function(cairo_t* cr, cairo_line_cap_t line_cap);
+
+    alias c_cairo_save = void function(cairo_t* cr);
+    alias c_cairo_restore = void function(cairo_t* cr);
 }
 
 __gshared
@@ -96,6 +100,7 @@ __gshared
 
     c_cairo_translate cairo_translate;
     c_cairo_scale cairo_scale;
+    c_cairo_rotate cairo_rotate;
 
     c_cairo_arc cairo_arc;
     c_cairo_arc_negative cairo_arc_negative;
@@ -114,6 +119,9 @@ __gshared
 
     c_cairo_set_line_join cairo_set_line_join;
     c_cairo_set_line_cap cairo_set_line_cap;
+
+    c_cairo_save cairo_save;
+    c_cairo_restore cairo_restore;
 }
 
 class CairoLib : SysLib
@@ -164,6 +172,7 @@ class CairoLib : SysLib
 
         bind(cast(void**)&cairo_translate, "cairo_translate");
         bind(cast(void**)&cairo_scale, "cairo_scale");
+        bind(cast(void**)&cairo_rotate, "cairo_rotate");
 
         bind(cast(void**)&cairo_arc, "cairo_arc");
         bind(cast(void**)&cairo_arc_negative, "cairo_arc_negative");
@@ -179,6 +188,9 @@ class CairoLib : SysLib
         bind(cast(void**)&cairo_set_dash, "cairo_set_dash");
         bind(cast(void**)&cairo_set_line_cap, "cairo_set_line_cap");
         bind(cast(void**)&cairo_set_line_join, "cairo_set_line_join");
+
+        bind(cast(void**)&cairo_save, "cairo_save");
+        bind(cast(void**)&cairo_restore, "cairo_restore");
     }
 
     override protected int needVersion()

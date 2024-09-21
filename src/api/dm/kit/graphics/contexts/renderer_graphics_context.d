@@ -94,4 +94,20 @@ class RendererGraphicsContext : StateGraphicsContext
     void arc(double xc,double yc, double radius, double angle1, double angle2){
 
     }
+
+    void scale(double sx, double sy){
+
+    }
+
+    void rotateRad(double angleRad){
+        
+    }
+
+    void save(){
+
+    }
+
+    void restore(){
+
+    }
 }
