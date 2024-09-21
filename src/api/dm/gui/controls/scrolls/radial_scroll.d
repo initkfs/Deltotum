@@ -44,10 +44,10 @@ class RadialScroll : BaseScroll
         super.create;
 
         scale = new RadialScale(width - 10, fromAngleDeg, toAngleDeg);
-        scale.tickOuterPadding *= 2;
+        //scale.tickOuterPadding *= 2;
         scale.labelOuterPadding *= 2;
-        scale.tickWidth = 2;
-        scale.tickMajorWidth = 2;
+        //scale.tickWidth = 2;
+        //scale.tickMajorWidth = 2;
         scale.labelStep = 5;
         addCreate(scale);
 
@@ -55,7 +55,7 @@ class RadialScroll : BaseScroll
 
         double radiusBase = Math.min(width, height);
         //TODO correct offset
-        radiusBase -= 40;
+        radiusBase -= 60;
         auto pointerRadius = radiusBase / 2 - 10;
         auto thumbStyle = createDefaultStyle;
         auto newThumb = new class VCircle
