@@ -39,6 +39,8 @@ class Carousel : Control
         Sprite prev;
     }
 
+    bool isInfinite = true;
+
     this(Sprite[] newItems)
     {
         this._items = newItems;
@@ -46,7 +48,6 @@ class Carousel : Control
         layout = new HLayout(5);
         layout.isAlignY = true;
         layout.isAutoResize = true;
-        isDrawBounds = true;
     }
 
     override void create()
@@ -55,7 +56,7 @@ class Carousel : Control
 
         import api.math.interps.uni_interpolator : UniInterpolator;
 
-        animation = new MinMaxTransition!double(0.0, 1.0, 700);
+        animation = new MinMaxTransition!double(0.0, 1.0, 500);
         animation.interpolator.interpolateMethod = &UniInterpolator.circIn;
         addCreate(animation);
 
@@ -137,7 +138,6 @@ class Carousel : Control
         itemContainer = new Container;
         itemContainer.isResizeChildrenIfNoLayout = false;
         itemContainer.isResizeChildrenIfNotLManaged = false;
-        itemContainer.isDrawBounds = true;
         assert(itemContainer.width = maxItemWidth);
         assert(itemContainer.height = maxItemHeight);
 
@@ -147,10 +147,7 @@ class Carousel : Control
 
         foreach (item; _items)
         {
-            if (!item.isBuilt || !item.isCreated)
-            {
-                itemContainer.addCreate(item);
-            }
+            itemContainer.addCreate(item);
         }
 
         Button nextButton = new Button(">");
@@ -160,6 +157,8 @@ class Carousel : Control
             direction = CarouselDirection.fromRight;
             showNextItem;
         };
+
+        enableInsets;
 
         showItem;
     }
@@ -195,7 +194,11 @@ class Carousel : Control
         {
             if (currentItemIndex == 0)
             {
-                return;
+                if(!isInfinite || _items.length <= 1){
+                    return;
+                }
+                
+                currentItemIndex = _items.length - 1;
             }
 
             currentItemIndex--;
@@ -208,7 +211,12 @@ class Carousel : Control
             auto newIndex = currentItemIndex + 1;
             if (newIndex >= _items.length)
             {
-                return;
+                if(!isInfinite || _items.length <= 1){
+                    return;
+                }
+                
+                currentItemIndex = 0;
+                newIndex = currentItemIndex;
             }
 
             currentItemIndex = newIndex;

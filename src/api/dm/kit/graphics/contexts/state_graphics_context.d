@@ -1,6 +1,7 @@
 module api.dm.kit.graphics.contexts.state_graphics_context;
 
 import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
+import api.math.vector2: Vector2;
 
 /**
  * Authors: initkfs
@@ -17,6 +18,10 @@ abstract class StateGraphicsContext : GraphicsContext
     {
         this.x = x;
         this.y = y;
+    }
+
+    void moveTo(Vector2 pos){
+        moveTo(pos.x, pos.y);
     }
 
     void reset(){

@@ -14,6 +14,16 @@ class CreationImages : SpriteFactory!Image
         return null;
     }
 
+    Image[] images(string[] paths, int requestWidth = -1, int requestHeight = -1){
+        Image[] newImages;
+        foreach (p; paths)
+        {
+            //TODO appender
+            newImages ~= image(p, requestWidth, requestHeight);
+        }
+        return newImages;
+    }
+
     Image image(string path, int requestWidth = -1, int requestHeight = -1)
     {
         auto newImage = new Image;

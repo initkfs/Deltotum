@@ -51,18 +51,18 @@ class RadialScroll : BaseScroll
         scale.labelStep = 5;
         addCreate(scale);
 
-        import api.dm.kit.sprites.textures.vectors.shapes.vcircle : VCircle;
+        import api.dm.kit.sprites.textures.vectors.shapes.vhexagon : VHexagon;
 
         double radiusBase = Math.min(width, height);
         //TODO correct offset
         radiusBase -= 60;
         auto pointerRadius = radiusBase / 2 - 10;
         auto thumbStyle = createDefaultStyle;
-        auto newThumb = new class VCircle
+        auto newThumb = new class VHexagon
         {
             this()
             {
-                super(pointerRadius, thumbStyle);
+                super(pointerRadius * 1.95, thumbStyle, 10);
             }
 
             override void createTextureContent()
@@ -71,10 +71,24 @@ class RadialScroll : BaseScroll
 
                 gContext.setColor(graphics.theme.colorAccent);
 
-                auto pointRadius = pointerRadius - 10;
-                gContext.translate(0, 0);
-                auto ppointerPos = Vector2.fromPolarDeg(fromAngleDeg, pointRadius);
-                gContext.arc(ppointerPos.x, ppointerPos.y, 4, 0, Math.PI2);
+                auto pointRadius = pointerRadius - 5;
+                gContext.moveTo(0, 0);
+                gContext.translate(width / 2, height / 2);
+                auto pos = Vector2.fromPolarDeg(fromAngleDeg, pointRadius);
+
+                import api.math.vector2: Vector2;
+
+                auto shapeSize = 10;
+
+                auto rightVert = Vector2(pos.x, pos.y);
+                auto leftTopVert = Vector2(pos.x - shapeSize, pos.y - shapeSize / 2);
+                auto leftBottomVert = Vector2(pos.x - shapeSize, pos.y + shapeSize / 2);
+
+                gContext.moveTo(rightVert);
+                gContext.lineTo(leftTopVert);
+                gContext.lineTo(leftBottomVert);
+                gContext.lineTo(rightVert);
+
                 gContext.fill;
                 gContext.stroke;
             }

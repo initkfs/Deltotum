@@ -49,6 +49,10 @@ class RendererGraphicsContext : StateGraphicsContext
         moveTo(endX, endY);
     }
 
+    void lineTo(Vector2 pos){
+        lineTo(pos.x, pos.y);
+    }
+
     void setLineWidth(double width)
     {
 

@@ -719,8 +719,10 @@ class Sprite : EventKitTarget
         {
             debug
             {
-                import std.format: format;
-                throw new Exception(format("Sprite %s already added: %s. Parent %s: %s", typeid(sprite), sprite.toString, typeid(this), toString));
+                import std.format : format;
+
+                throw new Exception(format("Sprite %s already added: %s. Parent %s: %s", typeid(
+                        sprite), sprite.toString, typeid(this), toString));
             }
             return;
         }
@@ -737,7 +739,8 @@ class Sprite : EventKitTarget
             {
                 import std.format : format;
 
-                throw new Exception(format("Child index must not be greater than %s, but received %s for child %s with children length %s", children
+                throw new Exception(format(
+                        "Child index must not be greater than %s, but received %s for child %s with children length %s", children
                         .length, index, sprite.toString, sprite.children.length));
             }
 
@@ -941,7 +944,8 @@ class Sprite : EventKitTarget
         }
     }
 
-    void clipBounds(){
+    void clipBounds()
+    {
         clip = Rect2d(x, y, width, height);
         isMoveClip = true;
         isResizeClip = true;
@@ -1211,26 +1215,48 @@ class Sprite : EventKitTarget
         return bounds;
     }
 
-    void positionCenter()
+    void positionCenter(bool isUseParent = false)
     {
-        positionCenterX;
-        positionCenterY;
+        positionCenterX(isUseParent);
+        positionCenterY(isUseParent);
     }
 
-    void positionCenterX()
+    void positionCenterX(bool isUseParent = false)
     {
-        if (_width > 0 && window.width > 0 && _width < window.width)
+        Rect2d bounds = (isUseParent && parent) ? parent.bounds : graphics.renderBounds;
+        if (bounds.width == 0)
         {
-            x = window.width / 2 - _width / 2;
+            return;
         }
+
+        auto middleX = bounds.middleX;
+
+        if (_width > 0)
+        {
+            x = middleX - _width / 2;
+            return;
+        }
+
+        x = middleX;
     }
 
-    void positionCenterY()
+    void positionCenterY(bool isUseParent = false)
     {
-        if (_height > 0 && window.height > 0 && _height < window.height)
+        Rect2d bounds = (isUseParent && parent) ? parent.bounds : graphics.renderBounds;
+        if (bounds.height == 0)
         {
-            y = window.height / 2 - _height / 2;
+            return;
         }
+
+        auto middleY = bounds.middleY;
+
+        if (_height > 0)
+        {
+            y = middleY - _height / 2;
+            return;
+        }
+
+        y = middleY;
     }
 
     Vector2 position() @safe pure nothrow
@@ -1512,7 +1538,8 @@ class Sprite : EventKitTarget
         return setHeight(value);
     }
 
-    bool setHeight(double value){
+    bool setHeight(double value)
+    {
         immutable double oldHeight = _height;
         _height = value;
 
@@ -1586,7 +1613,8 @@ class Sprite : EventKitTarget
     bool resize(double newWidth, double newHeight, bool isForce = false)
     {
         bool isResized;
-        if(isForce){
+        if (isForce)
+        {
             isResized |= setWidth(newWidth);
             isResized |= setHeight(newHeight);
             return isResized;

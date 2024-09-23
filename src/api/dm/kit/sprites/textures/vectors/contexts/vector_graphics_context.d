@@ -3,6 +3,7 @@ module api.dm.kit.sprites.textures.vectors.contexts.vector_graphics_context;
 import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
 import api.dm.sys.cairo.cairo_context : CairoContext;
 import api.dm.kit.graphics.colors.rgba : RGBA;
+import api.math.vector2:Vector2;
 
 //TODO remove native api
 import api.dm.sys.cairo.libs;
@@ -108,6 +109,10 @@ class VectorGraphicsContext : GraphicsContext
         cairo_move_to(cr, x, y);
     }
 
+    void moveTo(Vector2 pos){
+        moveTo(pos.x, pos.y);
+    }
+
     void clear(RGBA color)
     {
         //TODO prev color
@@ -123,6 +128,10 @@ class VectorGraphicsContext : GraphicsContext
     void lineTo(double endX, double endY)
     {
         cairo_line_to(cr, endX, endY);
+    }
+
+    void lineTo(Vector2 pos){
+        lineTo(pos.x, pos.y);
     }
 
     void stroke()

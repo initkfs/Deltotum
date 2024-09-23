@@ -1,6 +1,7 @@
 module api.dm.kit.graphics.contexts.graphics_context;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
+import api.math.vector2: Vector2;
 
 /**
  * Authors: initkfs
@@ -29,10 +30,12 @@ interface GraphicsContext
     void scale(double sx, double sy);
     void rotateRad(double angleRad);
     void moveTo(double x, double y);
+    void moveTo(Vector2 pos);
     void setLineWidth(double width);
     void reset();
     void clear(RGBA color);
     void lineTo(double x, double y);
+    void lineTo(Vector2 pos);
     void stroke();
     void strokePreserve();
     void beginPath();
