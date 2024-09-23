@@ -18,27 +18,31 @@ enum TransitionState
  */
 abstract class Transition : Sprite
 {
-    bool isInverse;
-    bool isCycle;
+    bool isReverse;
+    bool isInfinite;
+    bool isOneShort;
+
+    size_t cycleCount;
 
     void delegate()[] onRun;
     void delegate()[] onStop;
     void delegate()[] onPause;
     void delegate()[] onResume;
-    void delegate()[] onEndFrames;
+    void delegate()[] onEnd;
 
     double frameRateHz = 0;
     double timeMs = 0;
 
     protected
     {
-        double frameCount = 0;
+        double currentFrameCount = 0;
         long currentFrame;
-
-        bool onShort;
+        size_t currentCycle;
+        bool currentShort;
 
         TransitionState state = TransitionState.none;
         TransitionState prevState;
+
         enum firstFrame = 1;
 
         DList!Transition prevs;
@@ -56,27 +60,26 @@ abstract class Transition : Sprite
         isManaged = false;
         isVisible = false;
         isLayoutManaged = false;
-
         isManagedByScene = true;
     }
 
     abstract void onFrame();
 
-    double getFrameRate()
+    double frameRate()
     {
         const double rate = frameRateHz > 0 ? frameRateHz : window.frameRate;
         return rate;
     }
 
-    double getFrameCount(double frameRateHz)
+    double frameCount(double frameRateHz)
     {
         immutable double frames = (timeMs * frameRateHz) / 1000;
         return frames;
     }
 
-    double getFrameCount()
+    double frameCount()
     {
-        return getFrameCount(getFrameRate);
+        return frameCount(frameRate);
     }
 
     protected bool requestStop()
@@ -111,11 +114,11 @@ abstract class Transition : Sprite
             }
         }
 
-        const double rate = getFrameRate;
+        const double rate = frameRate;
         //TODO error if <= 0
         if (rate > 0)
         {
-            frameCount = getFrameCount(rate);
+            currentFrameCount = frameCount(rate);
             currentFrame = firstFrame;
         }
         state = TransitionState.direct;
@@ -148,9 +151,10 @@ abstract class Transition : Sprite
 
         state = TransitionState.end;
 
-        frameCount = 0;
+        currentFrameCount = 0;
         currentFrame = 0;
-        onShort = false;
+        currentCycle = 0;
+        currentShort = false;
 
         if (onStop.length > 0)
         {
@@ -181,26 +185,26 @@ abstract class Transition : Sprite
 
     override void update(double delta)
     {
-        if (!isRunningState)
+        if (!isRunning || !isRunningState)
         {
             return;
         }
 
         super.update(delta);
 
-        if (currentFrame > frameCount)
+        if (currentFrame > currentFrameCount)
         {
-            if (onEndFrames.length > 0)
+            if (onEnd.length > 0)
             {
-                foreach (dg; onEndFrames)
+                foreach (dg; onEnd)
                 {
                     dg();
                 }
             }
 
-            if (!isCycle)
+            if (!isInfinite)
             {
-                if (!isInverse || onShort)
+                if ((cycleCount == 0 && !isOneShort) || currentShort)
                 {
                     if (requestStop)
                     {
@@ -208,29 +212,56 @@ abstract class Transition : Sprite
                     }
                     return;
                 }
-                else
+
+                if ((cycleCount > 0 && (currentCycle == (cycleCount - 1))) || currentCycle == currentCycle
+                    .max)
                 {
-                    onShort = true;
+                    if (requestStop)
+                    {
+                        stop;
+                    }
+                    return;
+                }
+
+                currentCycle++;
+
+                if (isOneShort && !currentShort)
+                {
+                    reverse;
+                    currentShort = true;
+                }
+            }
+            else
+            {
+                if (isReverse)
+                {
+                    reverse;
                 }
             }
 
-            if (isInverse)
-            {
-                if (state == TransitionState.direct)
-                {
-                    state = TransitionState.back;
-                }
-                else if (state == TransitionState.back)
-                {
-                    state = TransitionState.direct;
-                }
-            }
-            currentFrame = firstFrame;
+            setFirstFrame;
         }
 
         onFrame;
 
         currentFrame++;
+    }
+
+    void setFirstFrame()
+    {
+        currentFrame = firstFrame;
+    }
+
+    void reverse()
+    {
+        if (state == TransitionState.direct)
+        {
+            state = TransitionState.back;
+        }
+        else if (state == TransitionState.back)
+        {
+            state = TransitionState.direct;
+        }
     }
 
     void prev(Transition newPrev)
@@ -277,6 +308,13 @@ abstract class Transition : Sprite
         }
     }
 
+    import api.core.utils.arrays: drop;
+
+    bool removeOnRun(void delegate() dg) => drop(onRun, dg);
+    bool removeOnStop(void delegate() dg) => drop(onStop, dg);
+    bool removeOnResume(void delegate() dg) => drop(onResume, dg);
+    bool removeOnEnd(void delegate() dg) => drop(onEnd, dg);
+
     override void dispose()
     {
         if (isRunning)
@@ -293,6 +331,7 @@ abstract class Transition : Sprite
         onRun = null;
         onPause = null;
         onResume = null;
+        onEnd = null;
     }
 
 }

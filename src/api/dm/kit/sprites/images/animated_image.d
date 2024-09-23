@@ -4,7 +4,7 @@ import api.dm.kit.sprites.images.image : Image;
 import api.dm.kit.sprites.sprite : Sprite;
 
 import api.math.rect2d : Rect2d;
-import api.math.interps.interpolator : Interpolator;
+import api.dm.kit.sprites.transitions.curves.interpolator : Interpolator;
 import api.dm.kit.sprites.transitions.min_max_transition : MinMaxTransition;
 import std.math.rounding : floor;
 import std.conv : to;

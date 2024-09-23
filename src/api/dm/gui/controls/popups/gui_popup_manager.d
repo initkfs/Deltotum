@@ -6,7 +6,7 @@ import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.controls.texts.text : Text;
 import api.math.rect2d : Rect2d;
-import api.dm.kit.sprites.transitions.objects.props.opacity_transition : OpacityTransition;
+import api.dm.kit.sprites.transitions.targets.props.opacity_transition : OpacityTransition;
 import api.dm.kit.sprites.transitions.pause_transition : PauseTransition;
 import api.dm.kit.sprites.transitions.transition : Transition;
 
@@ -44,20 +44,20 @@ class Popup : VBox
         super.create;
 
         auto newShowAnimation = new OpacityTransition(800);
-        newShowAnimation.addObject(this);
+        newShowAnimation.addTarget(this);
         addCreate(newShowAnimation);
         showAnimation = newShowAnimation;
 
-        newShowAnimation.onEndFrames ~= () {
+        newShowAnimation.onEnd ~= () {
             if (isAutoClose && !hideDelayAnimation.isRunning)
             {
                 hideDelayAnimation.run;
             }
         };
 
-        auto newHideAnimation = new OpacityTransition(800, isInverse:
+        auto newHideAnimation = new OpacityTransition(800, isReverse:
             true);
-        newHideAnimation.addObject(this);
+        newHideAnimation.addTarget(this);
         addCreate(newHideAnimation);
 
         hideAnimation = newHideAnimation;
@@ -67,7 +67,7 @@ class Popup : VBox
         hideDelayAnimation = new PauseTransition(_autoCloseDelayMS);
         addCreate(hideDelayAnimation);
 
-        hideDelayAnimation.onEndFrames ~= () { close; };
+        hideDelayAnimation.onEnd ~= () { close; };
 
         enableInsets;
 

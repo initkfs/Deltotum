@@ -107,7 +107,7 @@ class Expander : Control
                 clipTransition.maxValue = expandBar.height;
             }
 
-            auto labelRange = clipTransition.getFrameCount;
+            auto labelRange = clipTransition.frameCount;
             labelAngleDt = 90 / labelRange;
 
             clipTransition.run;

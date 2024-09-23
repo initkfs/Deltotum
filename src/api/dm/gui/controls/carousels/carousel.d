@@ -54,7 +54,7 @@ class Carousel : Control
     {
         super.create;
 
-        import api.math.interps.uni_interpolator : UniInterpolator;
+        import api.dm.kit.sprites.transitions.curves.uni_interpolator : UniInterpolator;
 
         animation = new MinMaxTransition!double(0.0, 1.0, 500);
         animation.interpolator.interpolateMethod = &UniInterpolator.circIn;
@@ -84,7 +84,7 @@ class Carousel : Control
             }
         };
 
-        animation.onEndFrames ~= () {
+        animation.onEnd ~= () {
 
             if (prev)
             {

@@ -64,9 +64,9 @@ class Procedural : Control
         root1.addCreate(t1);
 
         auto transition = new PauseTransition(600);
-        transition.isCycle = true;
+        transition.isInfinite = true;
         addCreate(transition);
-        transition.onEndFrames ~= () { randomTiling(t1); t1.recreate; };
+        transition.onEnd ~= () { randomTiling(t1); t1.recreate; };
 
         t1.onPointerDown ~= (ref e) {
             if (transition.isRunning)

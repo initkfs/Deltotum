@@ -9,7 +9,7 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.sprites.textures.texture : Texture;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.sprites.transitions.transition : Transition;
-import api.dm.kit.sprites.transitions.objects.value_transition : ValueTransition;
+import api.dm.kit.sprites.transitions.targets.value_transition : ValueTransition;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 
 import api.math.vector2 : Vector2;

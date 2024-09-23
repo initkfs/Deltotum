@@ -362,8 +362,8 @@ class AnalogClock : Control
         if (!clockAnimation)
         {
             clockAnimation = new PauseTransition(1000);
-            clockAnimation.isCycle = true;
-            clockAnimation.onEndFrames ~= () {
+            clockAnimation.isInfinite = true;
+            clockAnimation.onEnd ~= () {
                 import std.datetime;
 
                 auto curr = Clock.currTime();

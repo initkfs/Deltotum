@@ -8,12 +8,12 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites.shapes.rectangle : Rectangle;
 import api.dm.gui.events.action_event : ActionEvent;
 import api.dm.kit.sprites.transitions.min_max_transition : MinMaxTransition;
-import api.dm.kit.sprites.transitions.objects.value_transition : ValueTransition;
-import api.dm.kit.sprites.transitions.objects.props.opacity_transition : OpacityTransition;
+import api.dm.kit.sprites.transitions.targets.value_transition : ValueTransition;
+import api.dm.kit.sprites.transitions.targets.props.opacity_transition : OpacityTransition;
 import api.dm.kit.sprites.textures.texture : Texture;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.sprites.transitions.objects.object_transition : ObjectTransition;
+import api.dm.kit.sprites.transitions.targets.target_transition : TargetTransition;
 import api.math.vector2 : Vector2;
 import api.dm.gui.controls.texts.text : Text;
 
@@ -128,30 +128,30 @@ class ToggleSwitch : Labeled
 
         switchOnAnimationFactory = () {
             import api.math.vector2 : Vector2;
-            import api.dm.kit.sprites.transitions.objects.motions.linear_motion : LinearMotion;
-            import api.math.interps.uni_interpolator : UniInterpolator;
+            import api.dm.kit.sprites.transitions.targets.motions.linear_motion : LinearMotion;
+            import api.dm.kit.sprites.transitions.curves.uni_interpolator : UniInterpolator;
 
             auto uniInterp = new UniInterpolator;
             uniInterp.interpolateMethod = &uniInterp.quadInOut;
 
             auto end = Vector2(bounds.right - switchHandle.width, bounds.y);
             auto animation = new LinearMotion(Vector2(x, y), end, 200, uniInterp);
-            animation.addObject(switchHandle);
-            animation.isCycle = false;
+            animation.addTarget(switchHandle);
+            animation.isInfinite = false;
             return animation;
         };
 
         switchOffAnimationFactory = () {
             import api.math.vector2 : Vector2;
-            import api.dm.kit.sprites.transitions.objects.motions.linear_motion : LinearMotion;
-            import api.math.interps.uni_interpolator : UniInterpolator;
+            import api.dm.kit.sprites.transitions.targets.motions.linear_motion : LinearMotion;
+            import api.dm.kit.sprites.transitions.curves.uni_interpolator : UniInterpolator;
 
             auto start = Vector2(bounds.right - switchHandle.width, y);
             auto uniInterp = new UniInterpolator;
             uniInterp.interpolateMethod = &uniInterp.quadInOut;
             auto animation = new LinearMotion(start, Vector2(x, y), 200, uniInterp);
-            animation.addObject(switchHandle);
-            animation.isCycle = false;
+            animation.addTarget(switchHandle);
+            animation.isInfinite = false;
             return animation;
         };
 

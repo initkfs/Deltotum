@@ -1,4 +1,4 @@
-module api.math.interps.interpolator;
+module api.dm.kit.sprites.transitions.curves.interpolator;
 
 import Math = api.dm.math;
 

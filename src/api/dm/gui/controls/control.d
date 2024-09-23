@@ -10,7 +10,7 @@ import api.math.insets : Insets;
 import api.dm.gui.controls.tooltips.popup : Popup;
 
 import api.dm.kit.sprites.transitions.min_max_transition : MinMaxTransition;
-import api.dm.kit.sprites.transitions.objects.props.opacity_transition : OpacityTransition;
+import api.dm.kit.sprites.transitions.targets.props.opacity_transition : OpacityTransition;
 
 import std.typecons : Nullable;
 
@@ -223,7 +223,7 @@ class Control : Sprite
             auto pointerEffectAnimation = new OpacityTransition(50);
             assert(_pointerEffect, "Pointer effect is null");
             //TODO move to create()
-            pointerEffectAnimation.addObject(_pointerEffect);
+            pointerEffectAnimation.addTarget(_pointerEffect);
             return pointerEffectAnimation;
         };
     }
@@ -329,8 +329,8 @@ class Control : Sprite
                     _pointerEffectAnimation = onPointerEffectAnimationCreate ? onPointerEffectAnimationCreate(
                         newEffectAnimation) : newEffectAnimation;
                     _pointerEffectAnimation.isLayoutManaged = false;
-                    _pointerEffectAnimation.isCycle = false;
-                    _pointerEffectAnimation.isInverse = true;
+                    _pointerEffectAnimation.isInfinite = false;
+                    _pointerEffectAnimation.isReverse = true;
                     _pointerEffectAnimation.onStop ~= () {
                         if (_pointerEffect)
                         {

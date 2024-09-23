@@ -5,7 +5,7 @@ import api.dm.kit.sprites.layouts.hlayout : HLayout;
 import api.dm.kit.sprites.layouts.vlayout : VLayout;
 import api.dm.gui.containers.stack_box : StackBox;
 import api.dm.kit.sprites.sprite : Sprite;
-import api.dm.kit.sprites.transitions.objects.motions.linear_motion : LinearMotion;
+import api.dm.kit.sprites.transitions.targets.motions.linear_motion : LinearMotion;
 import api.dm.kit.sprites.transitions.transition : Transition;
 import api.math.vector2 : Vector2;
 import Math = api.math;
@@ -73,7 +73,7 @@ class Slider : Container
 
         motionAnimation = new LinearMotion(Vector2(0, 0), Vector2(0, 0));
         addCreate(motionAnimation);
-        motionAnimation.addObject(this);
+        motionAnimation.addTarget(this);
 
         if (position == SliderPos.left || position == SliderPos.top)
         {

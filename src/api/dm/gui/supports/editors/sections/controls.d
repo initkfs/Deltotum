@@ -520,19 +520,19 @@ class Controls : Control
         import api.dm.kit.sprites.transitions.pause_transition : PauseTransition;
 
         auto gaugeAnim1 = new PauseTransition(850);
-        gaugeAnim1.isCycle = true;
+        gaugeAnim1.isInfinite = true;
         auto gaugeAnim2 = new PauseTransition(750);
-        gaugeAnim2.isCycle = true;
+        gaugeAnim2.isInfinite = true;
         auto gaugeAnim3 = new PauseTransition(820);
-        gaugeAnim3.isCycle = true;
+        gaugeAnim3.isInfinite = true;
         auto gaugeAnim4 = new PauseTransition(910);
-        gaugeAnim4.isCycle = true;
+        gaugeAnim4.isInfinite = true;
 
         import api.math.random : Random;
 
         auto rnd = new Random;
 
-        import api.math.interps.uni_interpolator : UniInterpolator;
+        import api.dm.kit.sprites.transitions.curves.uni_interpolator : UniInterpolator;
 
         leftGauge.handTransition.interpolator.interpolateMethod = &UniInterpolator.backOut;
         topGauge.handTransition.interpolator.interpolateMethod = &UniInterpolator.elasticOut;
@@ -541,10 +541,10 @@ class Controls : Control
         bottomGauge.handTransition.interpolator.interpolateMethod = &UniInterpolator
             .smootherStepOut;
 
-        gaugeAnim1.onEndFrames ~= () => leftGauge.value = rnd.randomBetween(0.0, 1.0);
-        gaugeAnim2.onEndFrames ~= () => topGauge.value = rnd.randomBetween(0.0, 1.0);
-        gaugeAnim3.onEndFrames ~= () => rightGauge.value = rnd.randomBetween(0.0, 1.0);
-        gaugeAnim4.onEndFrames ~= () => bottomGauge.value = rnd.randomBetween(0.0, 1.0);
+        gaugeAnim1.onEnd ~= () => leftGauge.value = rnd.randomBetween(0.0, 1.0);
+        gaugeAnim2.onEnd ~= () => topGauge.value = rnd.randomBetween(0.0, 1.0);
+        gaugeAnim3.onEnd ~= () => rightGauge.value = rnd.randomBetween(0.0, 1.0);
+        gaugeAnim4.onEnd ~= () => bottomGauge.value = rnd.randomBetween(0.0, 1.0);
 
         root.addCreate([gaugeAnim1, gaugeAnim2, gaugeAnim3, gaugeAnim4]);
 

@@ -117,7 +117,7 @@ class TargetButton : ButtonBase
 
         layoutSticks;
 
-        import api.math.interps.uni_interpolator: UniInterpolator;
+        import api.dm.kit.sprites.transitions.curves.uni_interpolator: UniInterpolator;
 
         //TODO infinite?
         stickAnimation = new MinMaxTransition!double(0, 10, 800);
@@ -125,7 +125,7 @@ class TargetButton : ButtonBase
         addCreate(stickAnimation);
         stickAnimation.onOldNewValue ~= (oldValue, dt) {
 
-            if (stickAnimation.isInverse)
+            if (stickAnimation.isReverse)
             {
                 leftStick.x = leftStick.x - dt;
                 rightStick.x = rightStick.x + dt;
@@ -139,7 +139,7 @@ class TargetButton : ButtonBase
 
                 if (isLeftStop || isRightStop || isTopStop || isBottomStop)
                 {
-                    stickAnimation.isInverse = false;
+                    stickAnimation.isReverse = false;
                     stickAnimation.stop;
                 }
             }
@@ -196,7 +196,7 @@ class TargetButton : ButtonBase
                 return;
             }
 
-            stickAnimation.isInverse = true;
+            stickAnimation.isReverse = true;
             leftStick.isVisible = true;
             rightStick.isVisible = true;
             topStick.isVisible = true;

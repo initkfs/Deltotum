@@ -8,10 +8,10 @@ import Math = api.dm.math;
 import api.math.vector2 : Vector2;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
-import api.math.interps.uni_interpolator : UniInterpolator;
-import api.dm.kit.sprites.transitions.objects.motions.linear_motion : LinearMotion;
-import api.dm.kit.sprites.transitions.objects.value_transition : ValueTransition;
-import api.dm.kit.sprites.transitions.objects.props.angle_transition : AngleTransition;
+import api.dm.kit.sprites.transitions.curves.uni_interpolator : UniInterpolator;
+import api.dm.kit.sprites.transitions.targets.motions.linear_motion : LinearMotion;
+import api.dm.kit.sprites.transitions.targets.value_transition : ValueTransition;
+import api.dm.kit.sprites.transitions.targets.props.angle_transition : AngleTransition;
 
 import std.stdio;
 import std.conv : to;
@@ -81,10 +81,10 @@ class Animations : Control
         addCreate(rect);
 
         motionTransition = new LinearMotion(startPos, endPos, 1000, interpolator);
-        motionTransition.addObject(rect);
+        motionTransition.addTarget(rect);
         addCreate(motionTransition);
-        motionTransition.isCycle = true;
-        motionTransition.isInverse = true;
+        motionTransition.isInfinite = true;
+        motionTransition.isReverse = true;
 
         import api.dm.gui.containers.hbox : HBox;
 

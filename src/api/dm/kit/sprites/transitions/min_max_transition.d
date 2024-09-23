@@ -1,8 +1,8 @@
 module api.dm.kit.sprites.transitions.min_max_transition;
 
 import api.dm.kit.sprites.transitions.transition : Transition, TransitionState;
-import api.math.interps.interpolator : Interpolator;
-import api.math.interps.uni_interpolator : UniInterpolator;
+import api.dm.kit.sprites.transitions.curves.interpolator : Interpolator;
+import api.dm.kit.sprites.transitions.curves.uni_interpolator : UniInterpolator;
 import api.math.vector2 : Vector2;
 import math = api.dm.math;
 
@@ -45,9 +45,7 @@ class MinMaxTransition(T) if (isFloatingPoint!T || is(T : Vector2)) : Transition
     override void stop()
     {
         super.stop;
-
         resetLastValue;
-        onShort = false;
     }
 
     protected void resetLastValue()
@@ -162,6 +160,13 @@ class MinMaxTransition(T) if (isFloatingPoint!T || is(T : Vector2)) : Transition
         _maxValue = newValue;
     }
 
+    bool removeOnOldNewValue(void delegate(T, T) dg)
+    {
+        import api.core.utils.arrays : drop;
+
+        return drop(onOldNewValue, dg);
+    }
+
     override void dispose()
     {
         super.dispose;
@@ -183,7 +188,7 @@ unittest
 
     import std;
 
-    auto fc = tr1.getFrameCount(tr1.frameRateHz);
+    auto fc = tr1.frameCount(tr1.frameRateHz);
     enum frameCount = 6;
     assert(fc.to!int == frameCount);
     enum eps = 0.001;
@@ -212,6 +217,7 @@ unittest
                 break;
             case 6:
                 //Frame after animation stops
+                assert(tr1.isStopped);
                 assert(isClose(tr1.lastValue, 0, 0.0, eps));
                 break;
             default:

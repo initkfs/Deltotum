@@ -1,7 +1,7 @@
-module api.dm.kit.sprites.transitions.objects.motions.circular_motion;
+module api.dm.kit.sprites.transitions.targets.motions.circular_motion;
 
-import api.dm.kit.sprites.transitions.objects.value_transition : ValueTransition;
-import api.math.interps.interpolator : Interpolator;
+import api.dm.kit.sprites.transitions.targets.value_transition : ValueTransition;
+import api.dm.kit.sprites.transitions.curves.interpolator : Interpolator;
 import api.math.vector2 : Vector2;
 import math = api.dm.math;
 
@@ -26,7 +26,7 @@ class CircularMotion : ValueTransition
             const x = center.x + math.cosDeg(value) * radius;
             const y = center.y + math.sinDeg(value) * radius;
 
-            onObjects((object) { object.xy(x, y); });
+            onTargetsIsContinue((object) { object.xy(x, y); return true; });
 
             if (onPoint)
             {
