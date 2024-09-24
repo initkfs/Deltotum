@@ -82,11 +82,15 @@ class Controls : Control
         dataContainer.layout.isAlignY = true;
         rootContainer.addCreate(dataContainer);
 
-        createDataControls(dataContainer);
+        //createDataControls(dataContainer);
 
-        createTexts(dataContainer);
+        //createTexts(dataContainer);
 
-        createCharts(dataContainer);
+        auto chartContainer = new HBox(5);
+        chartContainer.layout.isAlignY = true;
+        rootContainer.addCreate(chartContainer);
+
+        createCharts(chartContainer);
 
         auto progressContainer = new HBox;
         progressContainer.layout.isAlignY = true;
@@ -381,7 +385,7 @@ class Controls : Control
     {
         import api.dm.gui.controls.charts.linear_chart : LinearChart;
 
-        auto linearChart = new LinearChart;
+        auto linearChart = new LinearChart(200,200);
         root.addCreate(linearChart);
 
         import std.range : iota;
@@ -389,8 +393,11 @@ class Controls : Control
         import std.algorithm.iteration : map;
         import std.math.trigonometry : sin;
 
-        double[] x = iota(1, 10, 0.01).array;
-        double[] y = x.map!sin.array;
+        //double[] x = iota(1, 10, 0.01).array;
+        //double[] y = x.map!sin.array;
+
+        double[] x = [0, 1, 2, 3, 7];
+        double[] y = [0, 1, 1, 3, 7];
 
         linearChart.data(x, y);
     }

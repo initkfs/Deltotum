@@ -14,6 +14,8 @@ import api.dm.kit.sprites.shapes.rectangle : Rectangle;
 import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 
+import Math = api.math;
+
 import std.conv : to;
 
 import std.stdio;
@@ -58,6 +60,8 @@ class Text : Control
 
     void delegate(ref KeyEvent) onEnter;
 
+    bool isReduceWidthHeight = true;
+
     Rectangle cursor;
 
     BitmapFont fontTexture;
@@ -83,7 +87,7 @@ class Text : Control
         this(text.to!dstring);
     }
 
-    this(dstring text = "text")
+    this(dstring text = "tminext")
     {
         this.tempText = text;
         isFocusable = true;
@@ -447,14 +451,19 @@ class Text : Control
         double glyphPosX = startRowTextX;
         double glyphPosY = startRowTextY;
 
+        double rowWidth = 0;
+
         TextRow row;
         size_t glyphCount;
         foreach (ref glyph; glyphs)
         {
             auto nextGlyphPosX = glyphPosX + glyph.geometry.width;
-            if (nextGlyphPosX <= endRowTextX && nextGlyphPosX > width)
+            if (nextGlyphPosX <= endRowTextX && nextGlyphPosX > rowWidth)
             {
-                width = width + (nextGlyphPosX - width + padding.right);
+                auto newRowWidth = rowWidth + (nextGlyphPosX - rowWidth + padding.right);
+                if(newRowWidth > rowWidth){
+                    rowWidth = newRowWidth;
+                }
             }
 
             if (glyph.isNEL)
@@ -527,12 +536,26 @@ class Text : Control
             newRows ~= row;
         }
 
+        if(rowWidth > width){
+            width = Math.min(maxWidth, rowWidth);
+        }else {
+            if(isReduceWidthHeight){
+                //TODO check minHeight;
+                width = rowWidth;
+            }
+        }
+
         auto newHeight = newRows.length * rowHeight + padding.height;
         if (newHeight > height)
         {
             import std.algorithm.comparison : min;
 
-            height = min(maxHeight, newHeight);
+            height = Math.min(maxHeight, newHeight);
+        }else {
+            if(isReduceWidthHeight){
+                //TODO check minHeight;
+                height = newHeight;
+            }
         }
 
         return newRows;
