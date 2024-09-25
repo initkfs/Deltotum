@@ -40,7 +40,9 @@ class RenderHScale : RenderScale
 
         auto count = tickCount;
 
-        assert(count > 1);
+        if(count < 1){
+            return;
+        }
 
         auto tickOffset = width / (tickCount - 1);
         double startX = !isInvert ? x : bounds.right;

@@ -7,10 +7,10 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.palettes.material_palette : MaterialPalette;
 import api.dm.gui.containers.container : Container;
 import api.dm.gui.controls.texts.text : Text;
-import api.dm.gui.containers.hbox: HBox;
-import api.dm.gui.containers.vbox: VBox;
-import api.dm.gui.controls.scales.render_hscale: RenderHScale;
-import api.dm.gui.controls.scales.render_vscale: RenderVScale;
+import api.dm.gui.containers.hbox : HBox;
+import api.dm.gui.containers.vbox : VBox;
+import api.dm.gui.controls.scales.render_hscale : RenderHScale;
+import api.dm.gui.controls.scales.render_vscale : RenderVScale;
 
 import Math = api.dm.math;
 import std.math.operations : isClose;
@@ -41,6 +41,9 @@ class LinearChart : Container
 
         double scaleX = 1;
         double scaleY = 1;
+
+        double offsetX = 0;
+        double offsetY = 0;
     }
 
     RGBA colorChartLine = RGBA.green;
@@ -102,42 +105,87 @@ class LinearChart : Container
         size_t scaleAccum;
         size_t scaleAccumFull = 3;
 
-        onPointerWheel ~= (ref e){
+        onPointerWheel ~= (ref e) {
             scaleAccum++;
-            if(scaleAccum <= scaleAccumFull){
-               return;
+            if (scaleAccum <= scaleAccumFull)
+            {
+                return;
             }
             scaleAccum = 0;
             double scaleFactor = 2;
             //up e.y = 1, down e.y = -1
-            if(e.y < 0){
+            if (e.y < 0)
+            {
                 scaleFactor = 1.0 / scaleFactor;
             }
-            auto newMaxXValue = xScale1.maxValue * scaleFactor;
+            auto newMaxXValue = xScale1.maxValue / scaleFactor;
             auto newXRange = Math.abs(newMaxXValue - xScale1.minValue);
-            if(newXRange >= xScaleRangeMinLimit && newXRange <= xScaleRangeLimit){
+            if (newXRange >= xScaleRangeMinLimit && newXRange <= xScaleRangeLimit)
+            {
                 xScale1.maxValue = newMaxXValue;
-                xScale1.valueStep = xScale1.valueStep * scaleFactor;
+                //xScale1.valueStep = xScale1.valueStep / scaleFactor;
                 xScale1.recreate;
-                scaleX = scaleFactor;
-            }else {
-                scaleX = 1;
+                scaleX = maxX / xScale1.maxValue;
+            }
+            else
+            {
+                // xScale1.maxValue = maxX;
+                // xScale1.recreate;
+                // scaleX = 1;
             }
 
-            auto newMaxYValue = yScale1.maxValue * scaleFactor;
+            auto newMaxYValue = yScale1.maxValue / scaleFactor;
             auto newYRange = Math.abs(newMaxYValue - yScale1.minValue);
-            if(newYRange >= xScaleRangeMinLimit && newYRange <= xScaleRangeLimit){
+            if (newYRange >= xScaleRangeMinLimit && newYRange <= xScaleRangeLimit)
+            {
                 yScale1.maxValue = newYRange;
-                yScale1.valueStep = yScale1.valueStep * scaleFactor;
+                //yScale1.valueStep = yScale1.valueStep * scaleFactor;
                 yScale1.recreate;
-                scaleY = scaleFactor;
-            }else {
-                scaleY = 1;
+                scaleY = maxY / yScale1.maxValue;
+            }
+            else
+            {
+                // yScale1.maxValue = maxY;
+                // yScale1.recreate;
+                // scaleY = 1;
+            }
+        };
+
+        isDraggable = true;
+
+        onDragXY = (x, y) {
+
+            auto dx = x - this.x;
+            auto dy = y - this.y;
+
+            auto tresholdX = 5;
+            auto tresholdY = tresholdX;
+
+            //move to right x > 0 
+            auto speed = (maxX - minX) / 100;
+            auto stepX = Math.sign(dx) * speed;
+            auto stepY = Math.sign(dy) * speed;
+
+            if (Math.abs(dx) > tresholdX)
+            {
+                offsetX += stepX;
+                xScale1.minValue -= stepX;
+                xScale1.maxValue -= stepX;
+                xScale1.recreate;
             }
 
-            
+            if (Math.abs(dy) > tresholdY)
+            {
+                offsetY -= stepY;
+                yScale1.minValue += stepY;
+                yScale1.maxValue += stepY;
+                yScale1.recreate;
+            }
 
+            return false;
         };
+
+        //onStopDrag = () { offsetX = 0; offsetY = 0; };
     }
 
     void data(double[] newX, double[] newY)
@@ -159,61 +207,82 @@ class LinearChart : Container
         minX = valueFilter(newX).minElement;
         maxX = valueFilter(newX).maxElement;
 
-        if(minX > 0 && maxX > 0){
+        if (minX > 0 && maxX > 0)
+        {
             minX = 0;
         }
 
         minY = valueFilter(newY).minElement;
         maxY = valueFilter(newY).maxElement;
 
-        if(minY > 0 && maxY > 0){
+        if (minY > 0 && maxY > 0)
+        {
             minY = 0;
         }
 
         xValues = newX;
         yValues = newY;
 
-        if(xScale1){
+        if (xScale1)
+        {
             xScale1.minValue = minX;
             xScale1.maxValue = maxX;
-            xScale1.valueStep = rangeX / 11.0;
-            //xScale1.valueStep = 1;
-            //xScale1.majorTickStep = 4;
+            //xScale1.valueStep = rangeX / 11.0;
+            xScale1.valueStep = 1;
+            xScale1.majorTickStep = 1;
             xScale1.recreate;
         }
 
-        if(yScale1){
+        if (yScale1)
+        {
             yScale1.minValue = minY;
             yScale1.maxValue = maxY;
-            yScale1.valueStep = rangeY / 11.0;
-            //yScale1.valueStep = 1;
-            //yScale1.majorTickStep = 4;
+            //yScale1.valueStep = rangeY / 11.0;
+            yScale1.valueStep = 1;
+            yScale1.majorTickStep = 1;
             yScale1.recreate;
         }
     }
 
-    double rangeX(){
+    double rangeX()
+    {
         return maxX - minX;
     }
 
-    double rangeY(){
+    double rangeY()
+    {
         return maxY - minY;
     }
 
-    override void drawContent(){
+    override void drawContent()
+    {
         super.drawContent;
 
-        auto charBounds = chartArea.bounds;
+        auto chartBounds = chartArea.bounds;
+
+        //TODO best clipping
+        graphics.setClip(chartBounds);
+        scope (exit)
+        {
+            graphics.removeClip;
+        }
+
+        graphics.setColor(colorChartLine);
+        scope(exit){
+            graphics.restoreColor;
+        }
 
         Vector2 prev;
         foreach (i, valueX; xValues)
         {
             const valueY = yValues[i];
-            
+
             const pos = toCharAreaPos(valueX, valueY);
 
-            if(i > 0){
-                graphics.line(prev.x, prev.y, pos.x, pos.y, colorChartLine);
+            if (i > 0)
+            {
+                graphics.line(prev.x, prev.y, pos.x, pos.y);
+                graphics.line(prev.x, prev.y - 1, pos.x, pos.y - 1);
             }
 
             prev = pos;
@@ -223,13 +292,13 @@ class LinearChart : Container
 
     protected double rangeXToWidth(double x)
     {
-        auto wX = (chartArea.width / rangeX) * (x * scaleX - minX);
+        auto wX = (chartArea.width / rangeX) * (offsetX + x * scaleX - minX);
         return wX;
     }
 
     protected double rangeYToHeight(double y)
     {
-        auto hY = (chartArea.height / rangeY) * (y * scaleY - minY);
+        auto hY = (chartArea.height / rangeY) * (offsetY + y * scaleY - minY);
         return hY;
     }
 

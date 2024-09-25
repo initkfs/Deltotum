@@ -137,6 +137,8 @@ class Sprite : EventKitTarget
     //}
 
     bool delegate(double, double) onDragXY;
+    void delegate() onStartDrag;
+    void delegate() onStopDrag;
 
     InvalidationState invalidationState;
     void delegate()[] invalidateListeners;
@@ -182,15 +184,12 @@ class Sprite : EventKitTarget
 
         double _width = 0;
         double _height = 0;
-    }
-
-    private
-    {
-        double _x = 0;
-        double _y = 0;
 
         double offsetX = 0;
         double offsetY = 0;
+
+        double _x = 0;
+        double _y = 0;
 
         bool _cached;
     }
@@ -904,6 +903,10 @@ class Sprite : EventKitTarget
         offsetX = _x - x;
         offsetY = _y - y;
         this.isDrag = true;
+
+        if(onStartDrag){
+            onStartDrag();
+        }
     }
 
     void stopDrag()
@@ -911,6 +914,10 @@ class Sprite : EventKitTarget
         offsetX = 0;
         offsetY = 0;
         this.isDrag = false;
+
+        if(onStopDrag){
+            onStopDrag();
+        }
     }
 
     //TODO remove root from children

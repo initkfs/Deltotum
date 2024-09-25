@@ -88,15 +88,17 @@ class RenderScale : Control
 
         foreach (poolLabel; labelPool)
         {
+            poolLabel.text = "--";
             poolLabel.isVisible = false;
         }
 
         size_t majorTickCount = tickCount / majorTickStep;
 
-        if (isShowFirstLastLabel)
+        if ((majorTickCount != tickCount) && isShowFirstLastLabel)
         {
             majorTickCount++;
-            if(majorTickStep % 2 != 0){
+            if (majorTickStep % 2 != 0)
+            {
                 majorTickCount++;
             }
         }
@@ -116,6 +118,10 @@ class RenderScale : Control
         labels = labelPool[0 .. majorTickCount];
         auto lastIndex = labels.length - 1;
 
+        //TODO log
+        // import std;
+        // writefln("min:%s, max:%s, c: %s, mc: %s, labels: %s", minValue, maxValue, tickCount, majorTickCount, labels.length);
+
         //TODO one loop
         foreach (i, label; labels)
         {
@@ -133,7 +139,16 @@ class RenderScale : Control
                     break;
                 }
             }
-            label.text = (i * majorTickStep * valueStep).to!dstring;
+            //TODO replace with format specifier
+            import std.math.rounding: trunc;
+            auto tickValue = minValue + i * majorTickStep * valueStep;
+            if((tickValue - tickValue.trunc) == 0){
+                label.text = tickValue.to!dstring;
+            }else {
+                import std.format: format;
+                label.text = format("%.2f"d, tickValue);
+            }
+            
         }
     }
 
