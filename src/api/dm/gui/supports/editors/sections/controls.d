@@ -400,6 +400,20 @@ class Controls : Control
         double[] y = [0, 1, 1, 1, 7];
 
         linearChart.data(x, y);
+
+        import api.dm.gui.controls.charts.pie_chart: PieChart, PieData;
+
+        auto pie1 = new PieChart;
+        root.addCreate(pie1);
+
+        PieData[] data = [
+            {"Item1 10", 10 },
+            {"Item2 20", 20},
+            {"Item3 30", 30},
+            {"Item4 40", 40}
+        ];
+
+        pie1.data(data);
     }
 
     private void createWindows(Container root)

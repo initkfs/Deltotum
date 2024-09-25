@@ -44,7 +44,7 @@ interface GraphicsContext
     void fillPreserve();
     void fillRect(double x, double y, double width, double height);
     void fillTriangle(double x1, double y1, double x2, double y2, double x3, double y3);
-    void arc(double xc,double yc, double radius, double angle1, double angle2);
+    void arc(double xc,double yc, double radius, double angle1Rad, double angle2Rad);
     void save();
     void restore();
 }
