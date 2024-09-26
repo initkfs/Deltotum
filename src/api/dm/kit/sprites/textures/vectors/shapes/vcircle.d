@@ -11,7 +11,7 @@ import Math = api.dm.math;
  */
 class VCircle : VArc
 {
-    this(double radius, GraphicStyle style)
+    this(double radius = 10, GraphicStyle style = GraphicStyle.simpleFill)
     {
         this(radius, style, radius * 2, radius * 2);
     }

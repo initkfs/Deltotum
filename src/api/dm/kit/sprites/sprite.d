@@ -128,6 +128,8 @@ class Sprite : EventKitTarget
     RGBA boundsColor = RGBA.red;
 
     bool _visible = true;
+    bool isVisibilityForChildren;
+
     bool isReceiveEvents = true;
 
     //protected
@@ -904,7 +906,8 @@ class Sprite : EventKitTarget
         offsetY = _y - y;
         this.isDrag = true;
 
-        if(onStartDrag){
+        if (onStartDrag)
+        {
             onStartDrag();
         }
     }
@@ -915,7 +918,8 @@ class Sprite : EventKitTarget
         offsetY = 0;
         this.isDrag = false;
 
-        if(onStopDrag){
+        if (onStopDrag)
+        {
             onStopDrag();
         }
     }
@@ -1266,12 +1270,12 @@ class Sprite : EventKitTarget
         y = middleY;
     }
 
-    Vector2 position() @safe pure nothrow
+    Vector2 pos() @safe pure nothrow
     {
         return Vector2(x, y);
     }
 
-    void position(Vector2 pos)
+    void pos(Vector2 pos)
     {
         x = pos.x;
         y = pos.y;
@@ -2152,6 +2156,14 @@ class Sprite : EventKitTarget
             invalidationState.visible = true;
         }
         _visible = value;
+
+        if (isVisibilityForChildren)
+        {
+            foreach (ch; children)
+            {
+                ch.isVisible = value;
+            }
+        }
     }
 
     bool isManaged() pure @safe

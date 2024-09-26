@@ -43,6 +43,11 @@ mixin template ComPtrManager(T)
         return ptr;
     }
 
+    final bool hasObject() nothrow pure @safe
+    {
+        return !isEmpty;
+    }
+
     final bool isEmpty() nothrow pure @safe
     {
         return ptr is null;

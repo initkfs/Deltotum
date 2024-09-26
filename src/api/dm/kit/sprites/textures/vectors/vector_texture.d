@@ -228,7 +228,8 @@ class VectorTexture : Texture
         }
 
         int surfHeight;
-        if(const err = comSurface.getHeight(surfHeight)){
+        if (const err = comSurface.getHeight(surfHeight))
+        {
             throw new Exception(err.toString);
         }
 
@@ -237,14 +238,15 @@ class VectorTexture : Texture
         int textureHeight = cast(int) height;
         assert((textureHeight > 0));
 
-        if(surfHeight != textureHeight){
+        if (surfHeight != textureHeight)
+        {
             import std.format : format;
 
             throw new Exception(format("Height values do not match. Texture: %s, surface: %s", textureHeight, surfHeight));
         }
-        
+
         //TODO unsafe cast to size_t, overflow, NaN;
-        size_t endBuff = cast(size_t) (pitch * textureHeight);
+        size_t endBuff = cast(size_t)(pitch * textureHeight);
         texturePixels[0 .. endBuff] = surfPixels[0 .. endBuff];
     }
 
@@ -261,7 +263,7 @@ class VectorTexture : Texture
             createMutTexture;
             return;
         }
-        
+
         int w, h;
         if (const err = texture.getSize(w, h))
         {
@@ -296,11 +298,18 @@ class VectorTexture : Texture
         return new VectorGraphicsContext(cairoContext);
     }
 
-    override void color(RGBA color)
+    override void color(RGBA newColor)
     {
         assert(isCreated);
-        auto ctx = cairoContext.getObject;
-        cairo_set_source_rgba(ctx, color.rNorm, color.gNorm, color.bNorm, color.a);
+        if (cairoContext && cairoContext.hasObject)
+        {
+            auto ctx = cairoContext.getObject;
+            assert(ctx);
+            cairo_set_source_rgba(ctx, newColor.rNorm, newColor.gNorm, newColor.bNorm, newColor.a);
+            return;
+        }
+
+        super.color(newColor);
     }
 
     void disposeContext()
