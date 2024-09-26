@@ -47,10 +47,10 @@ class Hand : VShape
     override void createTextureContent()
     {
         super.createTextureContent;
-        auto gc = gContext;
+        auto gc = canvas;
 
-        gc.setColor(style.fillColor);
-        gc.setLineWidth(style.lineWidth);
+        gc.color(style.fillColor);
+        gc.lineWidth(style.lineWidth);
 
         const centerX = startPoint.x;
         const centerY = startPoint.y;
@@ -67,7 +67,7 @@ class Hand : VShape
         gc.lineTo(centerX - halfWidth, centerY - handHeight + coneHeight);
         gc.fillPreserve;
 
-        gc.setColor(style.lineColor);
+        gc.color(style.lineColor);
         gc.stroke;
     }
 }
@@ -297,7 +297,7 @@ class RadialGauge : Control
                     auto cr = cairoContext.getObject;
 
                     const lineWidth = 6;
-                    gContext.setLineWidth(lineWidth);
+                    canvas.lineWidth(lineWidth);
 
                     auto xCenter = centerShapeW / 2;
                     auto yCenter = centerShapeH / 2;
@@ -315,9 +315,9 @@ class RadialGauge : Control
                     ];
                     foreach (i; 0 .. rangeParts)
                     {
-                        gContext.setColor(colors[i]);
-                        gContext.arc(xCenter, yCenter, xCenter - 45, Math.degToRad(startAngle), Math.degToRad(endAngle));
-                        gContext.stroke;
+                        canvas.color(colors[i]);
+                        canvas.arc(xCenter, yCenter, xCenter - 45, Math.degToRad(startAngle), Math.degToRad(endAngle));
+                        canvas.stroke;
                         
                         startAngle = endAngle;
                         endAngle += angleDiff;

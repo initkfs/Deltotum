@@ -74,6 +74,14 @@ extern (C) @nogc nothrow
 
     alias c_cairo_save = void function(cairo_t* cr);
     alias c_cairo_restore = void function(cairo_t* cr);
+
+    alias c_cairo_in_stroke = cairo_bool_t function(cairo_t* cr, double x, double y);
+    alias c_cairo_in_clip = cairo_bool_t function(cairo_t* cr, double x, double y);
+    alias c_cairo_in_fill = cairo_bool_t function(cairo_t* cr, double x, double y);
+
+    alias c_cairo_curve_to = void function(cairo_t *cr, double x1, double y1, double x2, double y2, double x3, double y3);
+
+    alias c_cairo_clip = void function(cairo_t *cr);
 }
 
 __gshared
@@ -122,6 +130,14 @@ __gshared
 
     c_cairo_save cairo_save;
     c_cairo_restore cairo_restore;
+
+    c_cairo_in_stroke cairo_in_stroke;
+    c_cairo_in_clip cairo_in_clip;
+    c_cairo_in_fill cairo_in_fill;
+
+    c_cairo_curve_to cairo_curve_to;
+
+    c_cairo_clip cairo_clip;
 }
 
 class CairoLib : SysLib
@@ -191,6 +207,13 @@ class CairoLib : SysLib
 
         bind(cast(void**)&cairo_save, "cairo_save");
         bind(cast(void**)&cairo_restore, "cairo_restore");
+
+        bind(cast(void**)&cairo_in_stroke, "cairo_in_stroke");
+        bind(cast(void**)&cairo_in_clip, "cairo_in_clip");
+        bind(cast(void**)&cairo_in_fill, "cairo_in_fill");
+
+        bind(cast(void**)&cairo_curve_to, "cairo_curve_to");
+        bind(cast(void**)&cairo_clip, "cairo_clip");
     }
 
     override protected int needVersion()

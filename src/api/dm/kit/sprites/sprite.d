@@ -2232,14 +2232,14 @@ class Sprite : EventKitTarget
         opacity = v;
     }
 
-    GraphicsContext gContext()
+    GraphicsContext canvas()
 
     out (_gContext; _gContext !is null)
     {
         return _gContext;
     }
 
-    void gContext(GraphicsContext context)
+    void canvas(GraphicsContext context)
     in (context !is null)
     {
         _gContext = context;

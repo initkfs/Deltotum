@@ -83,8 +83,8 @@ class VectorTextureMut : Texture
     void updateTextureDraw(scope void delegate(VectorGraphicsContext) onContext)
     {
         updateTexture((context) {
-            context.setColor(style.lineColor);
-            context.setLineWidth(style.lineWidth);
+            context.color = style.lineColor;
+            context.lineWidth = style.lineWidth;
 
             onContext(context);
 

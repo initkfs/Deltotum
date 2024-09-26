@@ -94,9 +94,9 @@ class RadialScale : Control
 
                 import api.dm.kit.graphics.colors.rgba: RGBA;
 
-                gContext.setColor(graphics.theme.colorAccent);
-                gContext.translate(width / 2 - tickWidth / 2, height / 2 - tickHeight / 2);
-                gContext.save;
+                canvas.color(graphics.theme.colorAccent);
+                canvas.translate(width / 2 - tickWidth / 2, height / 2 - tickHeight / 2);
+                canvas.save;
 
                 double angleDegDiff = angleRange / (ticksCount);
                 size_t endIndex = ticksCount - 1;
@@ -109,14 +109,14 @@ class RadialScale : Control
                     bool isMajorTick = (majorTickStep > 0 && ((i % majorTickStep) == 0));
 
                     if(isMajorTick){
-                        gContext.setColor(graphics.theme.colorDanger);
+                        canvas.color(graphics.theme.colorDanger);
                         tickW = tickMajorWidth;
                         tickH = tickMajorHeight;
                     }else {
-                        gContext.setColor(graphics.theme.colorAccent);
+                        canvas.color(graphics.theme.colorAccent);
                     }
 
-                    gContext.rotateRad(Math.degToRad(startAngleDeg));
+                    canvas.rotateRad(Math.degToRad(startAngleDeg));
                     auto leftTopX = width / 2 - tickW - tickOuterPadding;
                     auto leftTopY = 0;
                     
@@ -129,20 +129,20 @@ class RadialScale : Control
                     auto leftBottomX = leftTopX;
                     auto leftBottomY = rightBottomY;
 
-                    gContext.beginPath;
-                    gContext.moveTo(leftTopX, leftTopY);
-                    gContext.lineTo(rightTopX, rightTopY);
-                    gContext.lineTo(rightBottomX, rightBottomY);
-                    gContext.lineTo(leftBottomX, leftBottomY);
-                    gContext.lineTo(leftTopX, leftTopY);
-                    gContext.closePath;
-                     gContext.fill;
+                    canvas.beginPath;
+                    canvas.moveTo(leftTopX, leftTopY);
+                    canvas.lineTo(rightTopX, rightTopY);
+                    canvas.lineTo(rightBottomX, rightBottomY);
+                    canvas.lineTo(leftBottomX, leftBottomY);
+                    canvas.lineTo(leftTopX, leftTopY);
+                    canvas.closePath;
+                     canvas.fill;
                     
-                    gContext.restore;
+                    canvas.restore;
                    
-                    gContext.stroke;
+                    canvas.stroke;
                      
-                    gContext.save;
+                    canvas.save;
 
                     // if(i == 0){
                     //     break;

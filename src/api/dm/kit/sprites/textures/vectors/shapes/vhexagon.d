@@ -27,13 +27,13 @@ class VHexagon : VShape
     {
         if (style.isFill)
         {
-            gContext.setColor(style.fillColor);
+            canvas.color(style.fillColor);
         }
 
         const lineWidth = style.lineWidth;
 
         double r = width / 2 - lineWidth / 2;
-        gContext.setLineWidth(lineWidth);
+        canvas.lineWidth(lineWidth);
 
         double segments = Math.PI2 / sideCount;
 
@@ -45,23 +45,23 @@ class VHexagon : VShape
 
             if (i == 0)
             {
-                gContext.moveTo(newX, newY);
+                canvas.moveTo(newX, newY);
             }
             else
             {
-                gContext.lineTo(newX, newY);
+                canvas.lineTo(newX, newY);
             }
         }
 
-        gContext.closePath;
+        canvas.closePath;
 
         if (style.isFill)
         {
-            gContext.fillPreserve;
+            canvas.fillPreserve;
         }
 
-        gContext.setColor(style.lineColor);
-        gContext.stroke;
+        canvas.color(style.lineColor);
+        canvas.stroke;
     }
 
     override void createTextureContent()

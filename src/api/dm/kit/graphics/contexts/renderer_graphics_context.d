@@ -25,7 +25,7 @@ class RendererGraphicsContext : StateGraphicsContext
         this.graphics = graphics;
     }
 
-    void setColor(RGBA rgba)
+    void color(RGBA rgba)
     {
         graphics.setColor(rgba);
     }
@@ -35,11 +35,11 @@ class RendererGraphicsContext : StateGraphicsContext
         graphics.restoreColor;
     }
 
-    void setLineEnd(GraphicsContext.LineEnd end){
+    void lineEnd(GraphicsContext.LineEnd end){
 
     }
 
-    void setLineJoin(GraphicsContext.LineJoin join) {
+    void lineJoin(GraphicsContext.LineJoin join) {
 
     }
 
@@ -53,7 +53,7 @@ class RendererGraphicsContext : StateGraphicsContext
         lineTo(pos.x, pos.y);
     }
 
-    void setLineWidth(double width)
+    void lineWidth(double width)
     {
 
     }
@@ -84,6 +84,10 @@ class RendererGraphicsContext : StateGraphicsContext
 
     void clear(RGBA color){
         
+    }
+
+    void rect(double x, double y, double width, double height){
+        graphics.rect(Vector2(x, y), width, height);
     }
 
     void fillRect(double x, double y, double width, double height)

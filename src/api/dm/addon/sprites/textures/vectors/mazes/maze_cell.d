@@ -66,43 +66,43 @@ class MazeCell : Sprite
             {
                 import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
 
-                gContext.setLineEnd(GraphicsContext.LineEnd.round);
-                gContext.setLineWidth(style.lineWidth);
+                canvas.lineEnd(GraphicsContext.LineEnd.round);
+                canvas.lineWidth(style.lineWidth);
 
                 //TODO check if no walls
                 //TODO auto padding = style.lineWidth / 2;
                 if (topWall)
                 {
-                    gContext.moveTo(0, 0);
-                    gContext.lineTo(width, 0);
+                    canvas.moveTo(0, 0);
+                    canvas.lineTo(width, 0);
                 }
 
                 if (rightWall)
                 {
-                    gContext.moveTo(width, 0);
-                    gContext.lineTo(width, height);
+                    canvas.moveTo(width, 0);
+                    canvas.lineTo(width, height);
                 }
 
                 if (bottomWall)
                 {
-                    gContext.moveTo(width, height);
-                    gContext.lineTo(0, height);
+                    canvas.moveTo(width, height);
+                    canvas.lineTo(0, height);
                 }
 
                 if (leftWall)
                 {
-                    gContext.moveTo(0, height);
-                    gContext.lineTo(0, 0);
+                    canvas.moveTo(0, height);
+                    canvas.lineTo(0, 0);
                 }
 
                 if (style.isFill)
                 {
-                    gContext.setColor(style.fillColor);
-                    gContext.fillPreserve;
+                    canvas.color(style.fillColor);
+                    canvas.fillPreserve;
                 }
 
-                gContext.setColor(style.lineColor);
-                gContext.stroke;
+                canvas.color(style.lineColor);
+                canvas.stroke;
             }
         };
         addCreate(texture);

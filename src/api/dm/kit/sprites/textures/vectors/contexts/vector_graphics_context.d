@@ -3,7 +3,7 @@ module api.dm.kit.sprites.textures.vectors.contexts.vector_graphics_context;
 import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
 import api.dm.sys.cairo.cairo_context : CairoContext;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.math.vector2:Vector2;
+import api.math.vector2 : Vector2;
 
 //TODO remove native api
 import api.dm.sys.cairo.libs;
@@ -17,6 +17,9 @@ class VectorGraphicsContext : GraphicsContext
     {
         CairoContext context;
         cairo_t* cr;
+
+        bool isChangeColor;
+        RGBA lastColor;
     }
 
     this(CairoContext context)
@@ -32,12 +35,17 @@ class VectorGraphicsContext : GraphicsContext
         cairo_set_antialias(cr, cairo_antialias_t.CAIRO_ANTIALIAS_GOOD);
     }
 
-    void setColor(RGBA rgba)
+    void color(RGBA rgba)
     {
         cairo_set_source_rgb(cr, rgba.rNorm, rgba.gNorm, rgba.bNorm);
+        if (lastColor != rgba)
+        {
+            lastColor = rgba;
+            isChangeColor = true;
+        }
     }
 
-    void setLineEnd(GraphicsContext.LineEnd end)
+    void lineEnd(GraphicsContext.LineEnd end)
     {
         final switch (end) with (GraphicsContext.LineEnd)
         {
@@ -53,7 +61,7 @@ class VectorGraphicsContext : GraphicsContext
         }
     }
 
-    void setLineJoin(GraphicsContext.LineJoin joinType)
+    void lineJoin(GraphicsContext.LineJoin joinType)
     {
         final switch (joinType) with (GraphicsContext.LineJoin)
         {
@@ -69,14 +77,17 @@ class VectorGraphicsContext : GraphicsContext
         }
     }
 
-    void setLineWidth(double width)
+    void lineWidth(double width)
     {
         cairo_set_line_width(cr, width);
     }
 
     void restoreColor()
     {
-
+        if (isChangeColor)
+        {
+            color(lastColor);
+        }
     }
 
     void translate(double x, double y)
@@ -109,14 +120,15 @@ class VectorGraphicsContext : GraphicsContext
         cairo_move_to(cr, x, y);
     }
 
-    void moveTo(Vector2 pos){
+    void moveTo(Vector2 pos)
+    {
         moveTo(pos.x, pos.y);
     }
 
-    void clear(RGBA color)
+    void clear(RGBA newColor)
     {
         //TODO prev color
-        setColor(color);
+        color(newColor);
         cairo_paint(cr);
     }
 
@@ -130,7 +142,8 @@ class VectorGraphicsContext : GraphicsContext
         cairo_line_to(cr, endX, endY);
     }
 
-    void lineTo(Vector2 pos){
+    void lineTo(Vector2 pos)
+    {
         lineTo(pos.x, pos.y);
     }
 
@@ -154,10 +167,36 @@ class VectorGraphicsContext : GraphicsContext
         cairo_fill_preserve(cr);
     }
 
-    void fillRect(double x, double y, double width, double height)
+    void rect(double x, double y, double width, double height)
     {
         cairo_rectangle(cr, x, y, width, height);
+    }
+
+    void fillRect(double x, double y, double width, double height)
+    {
+        rect(x, y, width, height);
         fill;
+    }
+
+    void clearRect(double x, double y, double width, double height)
+    {
+        color(RGBA.transparent);
+        scope (exit)
+        {
+            restoreColor;
+        }
+        cairo_rectangle(cr, x, y, width, height);
+        fill;
+    }
+
+    bool isPointInPath(double x, double y)
+    {
+        if (cairo_in_stroke(cr, x, y) || cairo_in_fill(cr, x, y))
+        {
+            return true;
+        }
+
+        return false;
     }
 
     void fillTriangle(double x1, double y1, double x2, double y2, double x3, double y3)
@@ -179,8 +218,16 @@ class VectorGraphicsContext : GraphicsContext
         cairo_close_path(cr);
     }
 
+    void clip(){
+        cairo_clip(cr);
+    }
+
     void arc(double xc, double yc, double radius, double angle1Rad, double angle2Rad)
     {
         cairo_arc(cr, xc, yc, radius, angle1Rad, angle2Rad);
+    }
+
+    void bezierCurveTo(double x1, double y1, double x2, double y2, double x3, double y3){
+        cairo_curve_to(cr, x1, y1, x2, y2, x3, y3);
     }
 }

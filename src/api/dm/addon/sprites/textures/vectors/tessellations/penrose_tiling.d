@@ -532,28 +532,28 @@ class PenroseTiling : VShape
 
     void fill(RGBA color)
     {
-        _gContext.setColor(color);
+        _gContext.color(color);
         _gContext.fill();
     }
 
     void line()
     {
-        _gContext.setColor(RGBA.red);
-        _gContext.setLineWidth(2);
+        _gContext.color(RGBA.red);
+        _gContext.lineWidth(2);
         _gContext.stroke();
     }
 
     void line_white()
     {
-        _gContext.setColor(RGBA.white);
-        _gContext.setLineWidth(2);
+        _gContext.color(RGBA.white);
+        _gContext.lineWidth(2);
         _gContext.stroke();
     }
 
     void line_black()
     {
-        _gContext.setColor(RGBA.black);
-        _gContext.setLineWidth(2);
+        _gContext.color(RGBA.black);
+        _gContext.lineWidth(2);
         _gContext.stroke();
     }
 }

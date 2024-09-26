@@ -55,9 +55,9 @@ abstract class TimeChooser : Control
             {
                 super.createTextureContent;
                 import Math = api.dm.math;
-                auto gc = gContext;
+                auto gc = canvas;
                 gc.arc(0, 0, 2, 0, 2 * Math.PI);
-                gc.setColor(graphics.theme.colorAccent);
+                gc.color(graphics.theme.colorAccent);
                 gc.fill;
             }
         };

@@ -43,7 +43,7 @@ class PieTexture : VectorTexture
         auto centerPos = Vector2(width / 2, height / 2);
         auto radius = width / 2;
 
-        gContext.translate(centerPos.x, centerPos.y);
+        canvas.translate(centerPos.x, centerPos.y);
 
         import api.dm.kit.graphics.colors.hsv: HSV;
 
@@ -52,7 +52,7 @@ class PieTexture : VectorTexture
 
         foreach (ref PieData data; values)
         {
-            gContext.setColor(startColor.toRGBA);
+            canvas.color(startColor.toRGBA);
             startColor.hue = (startColor.hue + 100) % HSV.maxHue;
             startColor.value = HSV.maxValue;
 
@@ -62,15 +62,15 @@ class PieTexture : VectorTexture
 
             import Math = api.math;
             
-            gContext.beginPath;
-            gContext.moveTo(0, 0);
-            gContext.arc(0, 0, radius, Math.degToRad(startAngleDeg), Math.degToRad(endAngleDeg));
-            gContext.fill;
-            gContext.closePath;
+            canvas.beginPath;
+            canvas.moveTo(0, 0);
+            canvas.arc(0, 0, radius, Math.degToRad(startAngleDeg), Math.degToRad(endAngleDeg));
+            canvas.fill;
+            canvas.closePath;
             startAngleDeg = endAngleDeg;
         }
 
-        gContext.stroke;
+        canvas.stroke;
     }
 }
 

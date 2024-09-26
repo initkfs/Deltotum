@@ -48,10 +48,10 @@ class Hand : VShape
     override void createTextureContent()
     {
         super.createTextureContent;
-        auto gc = gContext;
+        auto gc = canvas;
 
-        gc.setColor(style.fillColor);
-        gc.setLineWidth(style.lineWidth);
+        gc.color(style.fillColor);
+        gc.lineWidth(style.lineWidth);
 
         const centerX = startPoint.x;
         const centerY = startPoint.y;
@@ -68,7 +68,7 @@ class Hand : VShape
         gc.lineTo(centerX - halfWidth, centerY - handHeight + coneHeight);
         gc.fillPreserve;
 
-        gc.setColor(style.lineColor);
+        gc.color(style.lineColor);
         gc.stroke;
     }
 }

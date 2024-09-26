@@ -192,7 +192,7 @@ class Voderberg : VShape
 
         if (!styleSegmentProvider)
         {
-            _gContext.setColor(style.lineColor);
+            _gContext.color(style.lineColor);
         }
 
         _gContext.translate(width / 2, height / 2);
@@ -204,7 +204,7 @@ class Voderberg : VShape
             auto complexValue = complexCoords[0][0];
             auto newX = complexValue.re * scaleX;
             auto newY = complexValue.im * scaleY;
-            gContext.moveTo(newX, newY);
+            canvas.moveTo(newX, newY);
         }
         else
         {
@@ -224,17 +224,17 @@ class Voderberg : VShape
                 {
                     if (style.isFill)
                     {
-                        _gContext.setColor(style.fillColor);
+                        _gContext.color(style.fillColor);
                         _gContext.fillPreserve;
-                        _gContext.setColor(style.lineColor);
+                        _gContext.color(style.lineColor);
                     }
                 }
                 else
                 {
                     auto style = styleSegmentProvider();
-                    _gContext.setColor(style.fillColor);
+                    _gContext.color(style.fillColor);
                     _gContext.fillPreserve;
-                    _gContext.setColor(style.lineColor);
+                    _gContext.color(style.lineColor);
                 }
 
             }

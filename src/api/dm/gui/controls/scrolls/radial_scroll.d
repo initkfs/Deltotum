@@ -69,11 +69,11 @@ class RadialScroll : BaseScroll
             {
                 super.createTextureContent;
 
-                gContext.setColor(graphics.theme.colorAccent);
+                canvas.color(graphics.theme.colorAccent);
 
                 auto pointRadius = pointerRadius - 5;
-                gContext.moveTo(0, 0);
-                gContext.translate(width / 2, height / 2);
+                canvas.moveTo(0, 0);
+                canvas.translate(width / 2, height / 2);
                 auto pos = Vector2.fromPolarDeg(fromAngleDeg, pointRadius);
 
                 import api.math.vector2: Vector2;
@@ -84,13 +84,13 @@ class RadialScroll : BaseScroll
                 auto leftTopVert = Vector2(pos.x - shapeSize, pos.y - shapeSize / 2);
                 auto leftBottomVert = Vector2(pos.x - shapeSize, pos.y + shapeSize / 2);
 
-                gContext.moveTo(rightVert);
-                gContext.lineTo(leftTopVert);
-                gContext.lineTo(leftBottomVert);
-                gContext.lineTo(rightVert);
+                canvas.moveTo(rightVert);
+                canvas.lineTo(leftTopVert);
+                canvas.lineTo(leftBottomVert);
+                canvas.lineTo(rightVert);
 
-                gContext.fill;
-                gContext.stroke;
+                canvas.fill;
+                canvas.stroke;
             }
         };
 

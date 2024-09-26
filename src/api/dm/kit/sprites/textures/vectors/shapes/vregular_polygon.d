@@ -23,53 +23,53 @@ class VRegularPolygon : VShape
     {
         if (style.isFill)
         {
-            gContext.setColor(style.fillColor);
+            canvas.color(style.fillColor);
         }
 
         const lineWidth = style.lineWidth;
-        gContext.setLineWidth(lineWidth);
+        canvas.lineWidth(lineWidth);
 
         const topLineEndX = width - cornerPadding;
         const topLineEndY = 0;
 
-        gContext.moveTo(cornerPadding, 0);
-        gContext.lineTo(topLineEndX, topLineEndY);
+        canvas.moveTo(cornerPadding, 0);
+        canvas.lineTo(topLineEndX, topLineEndY);
 
         const topRightCornerEndX = width;
         const topRightCornerEndY = cornerPadding;
-        gContext.lineTo(topRightCornerEndX, topRightCornerEndY);
+        canvas.lineTo(topRightCornerEndX, topRightCornerEndY);
 
         const rightLineEndX = width;
         const rightLineEndY = height - cornerPadding;
-        gContext.lineTo(rightLineEndX, rightLineEndY);
+        canvas.lineTo(rightLineEndX, rightLineEndY);
 
         const bottomRightCornerEndX = width - cornerPadding;
         const bottomRightCornerEndY = height;
-        gContext.lineTo(bottomRightCornerEndX, bottomRightCornerEndY);
+        canvas.lineTo(bottomRightCornerEndX, bottomRightCornerEndY);
 
         const bottomLineEndX = cornerPadding;
         const bottomLineEndY = height;
-        gContext.lineTo(bottomLineEndX, bottomLineEndY);
+        canvas.lineTo(bottomLineEndX, bottomLineEndY);
 
         const bottomLeftCornerEndX = 0;
         const bottomLeftCornerEndY = height - cornerPadding;
-        gContext.lineTo(bottomLeftCornerEndX, bottomLeftCornerEndY);
+        canvas.lineTo(bottomLeftCornerEndX, bottomLeftCornerEndY);
 
         const leftLineEndX = 0;
         const leftLineEndY = cornerPadding;
-        gContext.lineTo(leftLineEndX, leftLineEndY);
+        canvas.lineTo(leftLineEndX, leftLineEndY);
 
         const topLeftCornerEndX = cornerPadding;
         const topLeftCornerEndY = 0;
-        gContext.lineTo(topLeftCornerEndX, topLeftCornerEndY);
+        canvas.lineTo(topLeftCornerEndX, topLeftCornerEndY);
 
-        gContext.closePath;
+        canvas.closePath;
 
         if(style.isFill){
-            gContext.fillPreserve;
+            canvas.fillPreserve;
         }
 
-        gContext.setColor(style.lineColor);
-        gContext.stroke;
+        canvas.color(style.lineColor);
+        canvas.stroke;
     }
 }
