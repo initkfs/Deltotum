@@ -401,6 +401,17 @@ class Controls : Control
 
         linearChart.data(x, y);
 
+        import api.dm.gui.controls.charts.bar_chart: BarChart, BarSet;
+        auto bar1 = new BarChart;
+        root.addCreate(bar1);
+
+        BarSet[] barSets = [
+            {"set1", [{"Item1", 10}, {"Item1", 35}, {"Item1", 5}]},
+            {"set2", [{"Item1", 10}, {"Item1", 35}, {"Item1", 5}]}
+        ];
+
+        bar1.data = barSets;
+
         import api.dm.gui.controls.charts.pie_chart: PieChart, PieData;
 
         auto pie1 = new PieChart;

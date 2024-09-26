@@ -1,5 +1,6 @@
 module api.dm.gui.controls.charts.linear_chart;
 
+import api.dm.gui.controls.charts.xy_chart: XYChart;
 import api.dm.gui.controls.control : Control;
 import api.math.vector2 : Vector2;
 import api.math.insets : Insets;
@@ -58,6 +59,7 @@ class LinearChart : Container
         this.chartAreaHeight = chartAreaHeight;
 
         isBorder = true;
+        
         padding = Insets(5);
 
         import api.dm.kit.sprites.layouts.vlayout : VLayout;
@@ -277,7 +279,7 @@ class LinearChart : Container
         {
             const valueY = yValues[i];
 
-            const pos = toCharAreaPos(valueX, valueY);
+            const pos = toChartAreaPos(valueX, valueY);
 
             if (i > 0)
             {
@@ -302,7 +304,7 @@ class LinearChart : Container
         return hY;
     }
 
-    protected Vector2 toCharAreaPos(double posX, double posY)
+    protected Vector2 toChartAreaPos(double posX, double posY)
     {
         import Math = api.dm.math;
 
