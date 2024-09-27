@@ -397,7 +397,7 @@ class Controls : Control
         //double[] y = x.map!sin.array;
 
         double[] x = [0, 1, 2, 3, 7];
-        double[] y = [0, 1, 1, 1, 7];
+        double[] y = [0, 1, 2, 3, 7];
 
         linearChart.data(x, y);
 

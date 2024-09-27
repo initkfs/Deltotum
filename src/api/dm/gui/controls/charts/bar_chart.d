@@ -77,7 +77,7 @@ class BarChart : XYChart
         {
             foreach (BarData data; dataset.values)
             {
-                auto dataBlockH = Math.round(rangeYToHeight(Math.abs(data.valueY)));
+                auto dataBlockH = Math.round(rangeYToHeight(Math.abs(data.valueY), false));
                 auto posY = (data.valueY > 0) ? startPos.y - dataBlockH : startPos.y;
                 graphics.fillRect(Vector2(nextX,posY), dataBlockW, dataBlockH, data.color);
                 nextX+= dataBlockW;

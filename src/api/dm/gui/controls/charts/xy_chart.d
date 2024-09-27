@@ -184,8 +184,8 @@ class XYChart : Container
                 if (Math.abs(dx) > tresholdX)
                 {
                     offsetX += stepX;
-                    xScale1.minValue += stepX;
-                    xScale1.maxValue += stepX;
+                    xScale1.minValue -= stepX;
+                    xScale1.maxValue -= stepX;
                     xScale1.recreate;
                 }
 
@@ -205,7 +205,7 @@ class XYChart : Container
     double rangeX() => maxX - minX;
     double rangeY() => maxY - minY;
 
-    protected double rangeXToWidth(double x)
+    protected double rangeXToWidth(double x, bool isUseOffsets = true)
     {
         assert(chartArea);
 
@@ -215,18 +215,23 @@ class XYChart : Container
         }
         else if (x == 0)
         {
-            x += offsetX;
-            if (minX < 0)
+            if (minX < 0 && maxX > 0)
             {
                 x += (0 - minX);
             }
         }
+
+        if (isUseOffsets)
+        {
+            x = offsetX + x;
+        }
+
         auto wX = (chartArea.width / rangeX) * (x * scaleX);
         //Clipping here can change the shape of the curve
         return wX;
     }
 
-    protected double rangeYToHeight(double y)
+    protected double rangeYToHeight(double y, bool isUseOffsets = true)
     {
         assert(chartArea);
         if (y < 0)
@@ -235,22 +240,27 @@ class XYChart : Container
         }
         else if (y == 0)
         {
-            y += offsetY;
-            if (minY < 0)
+            if (minY < 0 && maxY > 0)
             {
                 y += (0 - minY);
             }
         }
+
+        if (isUseOffsets)
+        {
+            y = offsetY + y;
+        }
+
         auto hY = (chartArea.height / rangeY) * (y * scaleY);
         return hY;
     }
 
-    protected Vector2 toChartAreaPos(double posX, double posY)
+    protected Vector2 toChartAreaPos(double posX, double posY, bool isUseOffsets = true)
     {
         assert(chartArea);
 
-        auto wX = rangeXToWidth(posX);
-        auto hY = rangeYToHeight(posY);
+        auto wX = rangeXToWidth(posX, isUseOffsets);
+        auto hY = rangeYToHeight(posY, isUseOffsets);
 
         const newX = chartArea.x + wX;
         const newY = chartArea.bounds.bottom - hY;
@@ -262,12 +272,12 @@ class XYChart : Container
     {
         auto zeroPos = toChartAreaPos(0, 0);
 
-        if (xScale1.minValue < 0 || offsetX != 0 || scaleX != 1)
+        if (yScale1.minValue < 0 && yScale1.maxValue > 0)
         {
             graphics.line(chartArea.x, zeroPos.y, chartArea.bounds.right, zeroPos.y, xAxisColor);
         }
 
-        if (yScale1.minValue < 0 || offsetY != 0 || scaleY != 1)
+        if (xScale1.minValue < 0 && xScale1.maxValue > 0)
         {
             graphics.line(zeroPos.x, chartArea.y, zeroPos.x, chartArea.bounds.bottom, yAxisColor);
         }
