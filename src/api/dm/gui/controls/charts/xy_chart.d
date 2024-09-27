@@ -43,6 +43,9 @@ class XYChart : Container
     bool isShowXScale = true;
     bool isShowYScale = true;
 
+    RGBA xAxisColor = RGBA.green;
+    RGBA yAxisColor = RGBA.yellow;
+
     this(double chartAreaWidth = 200, double chartAreaHeight = 200)
     {
         assert(chartAreaWidth > 0);
@@ -77,9 +80,8 @@ class XYChart : Container
         yScale1.isInvert = true;
         chartContentContainer.addCreate(yScale1);
 
-        yScale1.isDrawBounds = true;
-
-        if(!isShowYScale){
+        if (!isShowYScale)
+        {
             yScale1.isVisible = false;
         }
 
@@ -92,9 +94,9 @@ class XYChart : Container
         xScale1 = new RenderHScale(chartAreaWidth, scaleAutoSize);
         xScale1.marginLeft = scaleAutoSize;
         addCreate(xScale1);
-        xScale1.isDrawBounds = true;
 
-        if(!isShowXScale){
+        if (!isShowXScale)
+        {
             xScale1.isVisible = false;
         }
 
@@ -120,33 +122,39 @@ class XYChart : Container
                     scaleFactor = 1.0 / scaleFactor;
                 }
                 auto newMaxXValue = xScale1.maxValue / scaleFactor;
-                auto newXRange = Math.abs(newMaxXValue - xScale1.minValue);
-                if (newXRange >= xScaleRangeMinLimit && newXRange <= xScaleRangeLimit)
+                if (newMaxXValue > xScale1.minValue)
                 {
-                    xScale1.maxValue = newMaxXValue;
-                    xScale1.recreate;
-                    scaleX = maxX / xScale1.maxValue;
-                }
-                else
-                {
-                    // xScale1.maxValue = maxX;
-                    // xScale1.recreate;
-                    // scaleX = 1;
+                    auto newXRange = Math.abs(newMaxXValue - xScale1.minValue);
+                    if (newXRange >= xScaleRangeMinLimit && newXRange <= xScaleRangeLimit)
+                    {
+                        xScale1.maxValue = newMaxXValue;
+                        xScale1.recreate;
+                        scaleX = maxX / xScale1.maxValue;
+                    }
+                    else
+                    {
+                        // xScale1.maxValue = maxX;
+                        // xScale1.recreate;
+                        // scaleX = 1;
+                    }
                 }
 
                 auto newMaxYValue = yScale1.maxValue / scaleFactor;
-                auto newYRange = Math.abs(newMaxYValue - yScale1.minValue);
-                if (newYRange >= xScaleRangeMinLimit && newYRange <= xScaleRangeLimit)
+                if (newMaxYValue > yScale1.minValue)
                 {
-                    yScale1.maxValue = newYRange;
-                    yScale1.recreate;
-                    scaleY = maxY / yScale1.maxValue;
-                }
-                else
-                {
-                    // yScale1.maxValue = maxY;
-                    // yScale1.recreate;
-                    // scaleY = 1;
+                    auto newYRange = Math.abs(newMaxYValue - yScale1.minValue);
+                    if (newYRange >= xScaleRangeMinLimit && newYRange <= xScaleRangeLimit)
+                    {
+                        yScale1.maxValue = newYRange;
+                        yScale1.recreate;
+                        scaleY = maxY / yScale1.maxValue;
+                    }
+                    else
+                    {
+                        // yScale1.maxValue = maxY;
+                        // yScale1.recreate;
+                        // scaleY = 1;
+                    }
                 }
             };
         }
@@ -165,17 +173,19 @@ class XYChart : Container
 
                 //move to right x > 0 
                 double speedFactor = 100;
-                auto speedX = (rangeX > 0) ? rangeX / speedFactor : 1 / 10.0;
-                auto speedY = (rangeY > 0) ? rangeY / speedFactor : 1 / 10.0;
-                
+                auto speedXFactor = scaleX == 1 ? speedFactor : speedFactor * scaleX;
+                auto speedYFactor = scaleY == 1 ? speedFactor : speedFactor * scaleY;
+                auto speedX = rangeX / speedXFactor;
+                auto speedY = rangeY / speedYFactor;
+
                 auto stepX = Math.sign(dx) * speedX;
                 auto stepY = Math.sign(dy) * speedY;
 
                 if (Math.abs(dx) > tresholdX)
                 {
                     offsetX += stepX;
-                    xScale1.minValue -= stepX;
-                    xScale1.maxValue -= stepX;
+                    xScale1.minValue += stepX;
+                    xScale1.maxValue += stepX;
                     xScale1.recreate;
                 }
 
@@ -198,7 +208,20 @@ class XYChart : Container
     protected double rangeXToWidth(double x)
     {
         assert(chartArea);
-        auto wX = (chartArea.width / rangeX) * (offsetX + x * scaleX);
+
+        if (x < 0)
+        {
+            x = -x;
+        }
+        else if (x == 0)
+        {
+            x += offsetX;
+            if (minX < 0)
+            {
+                x += (0 - minX);
+            }
+        }
+        auto wX = (chartArea.width / rangeX) * (x * scaleX);
         //Clipping here can change the shape of the curve
         return wX;
     }
@@ -206,7 +229,19 @@ class XYChart : Container
     protected double rangeYToHeight(double y)
     {
         assert(chartArea);
-        auto hY = (chartArea.height / rangeY) * (offsetY + y * scaleY);
+        if (y < 0)
+        {
+            y = -y;
+        }
+        else if (y == 0)
+        {
+            y += offsetY;
+            if (minY < 0)
+            {
+                y += (0 - minY);
+            }
+        }
+        auto hY = (chartArea.height / rangeY) * (y * scaleY);
         return hY;
     }
 
@@ -221,5 +256,20 @@ class XYChart : Container
         const newY = chartArea.bounds.bottom - hY;
 
         return Vector2(newX, newY);
+    }
+
+    void drawAxis()
+    {
+        auto zeroPos = toChartAreaPos(0, 0);
+
+        if (xScale1.minValue < 0 || offsetX != 0 || scaleX != 1)
+        {
+            graphics.line(chartArea.x, zeroPos.y, chartArea.bounds.right, zeroPos.y, xAxisColor);
+        }
+
+        if (yScale1.minValue < 0 || offsetY != 0 || scaleY != 1)
+        {
+            graphics.line(zeroPos.x, chartArea.y, zeroPos.x, chartArea.bounds.bottom, yAxisColor);
+        }
     }
 }

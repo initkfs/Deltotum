@@ -32,16 +32,19 @@ class BarChart : XYChart
 {
     BarSet[] datasets;
 
+    //TODO assert(sp < chart.w)
+    size_t datasetSpacing = 5;
+
     protected
     {
         size_t datasetItems;
     }
 
-    this(double chartAreaWidth = 100, double chartAreaHeight = 100)
+    this(double chartAreaWidth = 200, double chartAreaHeight = 200)
     {
         super(chartAreaWidth, chartAreaHeight);
 
-        isShowXScale = false;
+        //isShowXScale = false;
     }
 
     override void create()
@@ -61,23 +64,28 @@ class BarChart : XYChart
         //TODO in bounds, min\max
         auto startPos = toChartAreaPos(0, 0);
 
-        auto dataBlockW = (chartArea.width) / datasetItems;
-        double nextX = startPos.x;
+        auto dataBlockW = (chartArea.width - datasetSpacing * datasets.length) / datasetItems;
+        double nextX = startPos.x + datasetSpacing;
+
+        graphics.setClip(chartArea.bounds);
+        scope (exit)
+        {
+            graphics.removeClip;
+        }
         
         foreach (BarSet dataset; datasets)
         {
             foreach (BarData data; dataset.values)
             {
-                auto dataBlockH = rangeYToHeight(Math.abs(data.valueY));
-                auto posY = startPos.y - dataBlockH;
-                if(data.valueY < 0){
-                    
-                }
+                auto dataBlockH = Math.round(rangeYToHeight(Math.abs(data.valueY)));
+                auto posY = (data.valueY > 0) ? startPos.y - dataBlockH : startPos.y;
                 graphics.fillRect(Vector2(nextX,posY), dataBlockW, dataBlockH, data.color);
                 nextX+= dataBlockW;
             }
-            //nextX+= datasetSpacing;
+            nextX+= datasetSpacing;
         }
+
+        drawAxis;
 
     }
 
@@ -112,8 +120,8 @@ class BarChart : XYChart
 
         maxY = newMaxY;
         minY = newMinY;
-        minX = newMinY;
-        maxX = newMaxY;
+        minX = 0;
+        maxX = Math.abs(newMaxY);
 
         this.datasets = datasets;
 
