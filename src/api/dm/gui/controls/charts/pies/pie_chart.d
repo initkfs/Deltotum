@@ -1,4 +1,4 @@
-module api.dm.gui.controls.charts.pie_chart;
+module api.dm.gui.controls.charts.pies.pie_chart;
 
 import api.dm.gui.containers.container : Container;
 import api.dm.gui.controls.texts.text : Text;

@@ -1,4 +1,4 @@
-module api.dm.gui.controls.charts.bar_chart;
+module api.dm.gui.controls.charts.bars.bar_chart;
 
 import api.dm.gui.controls.charts.xy_chart : XYChart;
 import api.dm.gui.containers.container : Container;

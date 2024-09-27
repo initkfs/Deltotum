@@ -40,15 +40,28 @@ class RenderHScale : RenderScale
 
         auto count = tickCount;
 
-        if(count < 1){
+        if (count < 1)
+        {
             return;
         }
 
         auto tickOffset = width / (tickCount - 1);
-        double startX = !isInvert ? x : bounds.right;
+        double startX = !isInvertX ? x : bounds.right;
+        double startY = !isInvertY ? y : bounds.bottom;
         size_t majorTickCounter;
+        bool isDrawTick;
         foreach (i; 0 .. count)
         {
+            isDrawTick = true;
+
+            if (i == 0)
+            {
+                if (!isDrawFirstTick)
+                {
+                    isDrawTick = false;
+                }
+            }
+
             bool isMajorTick = majorTickStep > 0 && ((i % majorTickStep) == 0);
 
             if (isShowFirstLastLabel && (i == 0 || i == count - 1))
@@ -56,25 +69,40 @@ class RenderHScale : RenderScale
                 isMajorTick = true;
             }
 
-            auto tickW = isMajorTick ? tickMajorWidth : tickMinorWidth;
-            auto tickH = isMajorTick ? tickMajorHeight : tickMinorHeight;
+            if (isDrawTick)
+            {
+                auto tickW = isMajorTick ? tickMajorWidth : tickMinorWidth;
+                auto tickH = isMajorTick ? tickMajorHeight : tickMinorHeight;
 
-            auto tickX = startX - tickW / 2;
-            auto tickY = bounds.middleY - tickH / 2;
+                auto tickX = startX - tickW / 2;
+                auto tickY = startY - tickH / 2;
 
-            auto tickColor = isMajorTick ? graphics.theme.colorDanger : graphics.theme.colorAccent;
+                auto tickColor = isMajorTick ? graphics.theme.colorDanger
+                    : graphics.theme.colorAccent;
 
-            graphics.fillRect(Vector2(tickX, tickY), tickW, tickH, tickColor);
+                graphics.fillRect(Vector2(tickX, tickY), tickW, tickH, tickColor);
+            }
 
             if (isMajorTick && (majorTickCounter < labels.length))
             {
                 auto label = labels[majorTickCounter];
                 auto labelX = startX - label.bounds.halfWidth;
-                auto labelY = y;
+                auto labelY = !isInvertY ? startY + tickMajorHeight / 2 : startY - label.height - tickMajorHeight / 2;
                 label.xy(labelX, labelY);
                 if (!label.isVisible)
                 {
-                    label.isVisible = true;
+                    if (i == 0)
+                    {
+                        if (isShowFirstLabelText)
+                        {
+                            label.isVisible = true;
+                        }
+                    }
+                    else
+                    {
+                        label.isVisible = true;
+                    }
+
                 }
             }
 
@@ -83,11 +111,20 @@ class RenderHScale : RenderScale
                 majorTickCounter++;
             }
 
-             if(isInvert){
+            if (isInvertX)
+            {
                 startX -= tickOffset;
-            }else {
+            }
+            else
+            {
                 startX += tickOffset;
             }
+        }
+
+        if (isDrawAxis)
+        {
+            auto startPosY = !isInvertY ? y : bounds.bottom;
+            graphics.line(x, startPosY, bounds.right, startPosY, axisColor);
         }
     }
 }

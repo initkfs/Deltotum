@@ -41,10 +41,22 @@ class RenderVScale : RenderScale
         auto count = tickCount;
 
         auto tickOffset = height / (tickCount - 1);
-        double startY = !isInvert ? y : bounds.bottom;
+        double startY = !isInvertY ? y : bounds.bottom;
+        double startX = !isInvertX ? bounds.right : x;
         size_t majorTickCounter;
+        bool isDrawTick;
         foreach (i; 0 .. count)
         {
+            isDrawTick = true;
+
+            if (i == 0)
+            {
+                if (!isDrawFirstTick)
+                {
+                    isDrawTick = false;
+                }
+            }
+
             bool isMajorTick = majorTickStep > 0 && ((i % majorTickStep) == 0);
 
             if (isShowFirstLastLabel && (i == 0 || i == count - 1))
@@ -52,20 +64,24 @@ class RenderVScale : RenderScale
                 isMajorTick = true;
             }
 
-            auto tickW = isMajorTick ? tickMajorWidth : tickMinorWidth;
-            auto tickH = isMajorTick ? tickMajorHeight : tickMinorHeight;
+            if (isDrawTick)
+            {
+                auto tickW = isMajorTick ? tickMajorWidth : tickMinorWidth;
+                auto tickH = isMajorTick ? tickMajorHeight : tickMinorHeight;
 
-            auto tickX = bounds.right - tickW / 2;
-            auto tickY = startY - tickH / 2;
+                auto tickX = startX - tickW / 2;
+                auto tickY = startY - tickH / 2;
 
-            auto tickColor = isMajorTick ? graphics.theme.colorDanger : graphics.theme.colorAccent;
+                auto tickColor = isMajorTick ? graphics.theme.colorDanger
+                    : graphics.theme.colorAccent;
 
-            graphics.fillRect(Vector2(tickX, tickY), tickW, tickH, tickColor);
+                graphics.fillRect(Vector2(tickX, tickY), tickW, tickH, tickColor);
+            }
 
             if (isMajorTick && (majorTickCounter < labels.length))
             {
                 auto label = labels[majorTickCounter];
-                auto labelX = x;
+                auto labelX = !isInvertX ? x : bounds.right;
                 auto labelY = startY - label.bounds.halfHeight;
                 label.xy(labelX, labelY);
                 if (!label.isVisible)
@@ -79,11 +95,20 @@ class RenderVScale : RenderScale
                 majorTickCounter++;
             }
 
-            if(isInvert){
+            if (isInvertY)
+            {
                 startY -= tickOffset;
-            }else {
+            }
+            else
+            {
                 startY += tickOffset;
             }
+        }
+
+        if (isDrawAxis)
+        {
+            auto startPosX = !isInvertX ? bounds.right : x;
+            graphics.line(startPosX, y, startPosX, bounds.bottom, axisColor);
         }
     }
 }

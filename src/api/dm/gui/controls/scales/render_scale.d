@@ -32,7 +32,15 @@ class RenderScale : Control
     size_t tickMajorWidth;
     size_t tickMajorHeight;
 
-    bool isInvert;
+    bool isShowFirstLabelText = true;
+
+    bool isDrawFirstTick = true;
+
+    bool isInvertX;
+    bool isInvertY;
+    
+    bool isDrawAxis = true;
+    RGBA axisColor;
 
     protected
     {
@@ -66,6 +74,11 @@ class RenderScale : Control
     {
         super.create;
         createLabelPool;
+
+        //TODO from class field?
+        if(axisColor == RGBA.init){
+            axisColor = graphics.theme.colorDanger;
+        }
     }
 
     override void recreate()

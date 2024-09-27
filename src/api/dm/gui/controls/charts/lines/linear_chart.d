@@ -1,6 +1,6 @@
-module api.dm.gui.controls.charts.linear_chart;
+module api.dm.gui.controls.charts.lines.linear_chart;
 
-import api.dm.gui.controls.charts.xy_chart: XYChart;
+import api.dm.gui.controls.charts.xy_chart : XYChart;
 import api.dm.gui.controls.control : Control;
 import api.math.vector2 : Vector2;
 import api.math.insets : Insets;
@@ -28,20 +28,23 @@ class LinearChart : XYChart
         double[] yValues;
     }
 
-    RGBA colorChartLine = RGBA.green;
-    RGBA colorXAxis = RGBA.lightgray;
-    RGBA colorYAxis = RGBA.lightgray;
+    RGBA colorChartLine;
+
+    bool isThickLine;
 
     this(double chartAreaWidth = 100, double chartAreaHeight = 100)
     {
         super(chartAreaWidth, chartAreaHeight);
     }
 
-   
     override void create()
     {
         super.create;
 
+        if (colorChartLine == RGBA.init)
+        {
+            colorChartLine = graphics.theme.colorAccent;
+        }
     }
 
     void data(double[] newX, double[] newY)
@@ -116,7 +119,8 @@ class LinearChart : XYChart
         }
 
         graphics.setColor(colorChartLine);
-        scope(exit){
+        scope (exit)
+        {
             graphics.restoreColor;
         }
 
@@ -130,13 +134,18 @@ class LinearChart : XYChart
             if (i > 0)
             {
                 graphics.line(prev.x, prev.y, pos.x, pos.y);
-                graphics.line(prev.x, prev.y - 1, pos.x, pos.y - 1);
-                graphics.line(prev.x, prev.y + 1, pos.x, pos.y + 1);
+                if (isThickLine)
+                {
+                    graphics.line(prev.x, prev.y - 1, pos.x, pos.y - 1);
+                    graphics.line(prev.x, prev.y + 1, pos.x, pos.y + 1);
+                }
+
             }
 
             prev = pos;
         }
 
         drawAxis;
+        trackPointer;
     }
 }
