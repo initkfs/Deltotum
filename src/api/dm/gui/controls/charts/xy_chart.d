@@ -45,6 +45,7 @@ class XYChart : Container
 
     RGBA xAxisColor = RGBA.green;
     RGBA yAxisColor = RGBA.yellow;
+    RGBA gridColor = RGBA.gray;
 
     this(double chartAreaWidth = 200, double chartAreaHeight = 200)
     {
@@ -281,5 +282,28 @@ class XYChart : Container
         {
             graphics.line(zeroPos.x, chartArea.y, zeroPos.x, chartArea.bounds.bottom, yAxisColor);
         }
+    }
+
+    void drawGrid(){
+
+        auto xTicks = xScale1.tickCount;
+        auto yTicks = yScale1.tickCount;
+
+        auto tickXDiff = chartAreaWidth / (xTicks - 1);
+        double startX = 0;
+        foreach (x; 0..xTicks)
+        {
+            graphics.line(chartArea.x + startX, chartArea.y, chartArea.x + startX, chartArea.bounds.bottom, gridColor);
+            startX += tickXDiff;
+        }
+
+        auto tickYDiff = chartAreaHeight / (yTicks - 1);
+        double startY = 0;
+        foreach (y; 0..yTicks)
+        {
+            graphics.line(chartArea.x, chartArea.y + startY, chartArea.bounds.right, chartArea.y + startY, gridColor);
+            startY += tickYDiff;
+        }
+
     }
 }

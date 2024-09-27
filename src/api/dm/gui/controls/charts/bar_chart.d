@@ -67,6 +67,8 @@ class BarChart : XYChart
         auto dataBlockW = (chartArea.width - datasetSpacing * datasets.length) / datasetItems;
         double nextX = startPos.x + datasetSpacing;
 
+        drawGrid;
+
         graphics.setClip(chartArea.bounds);
         scope (exit)
         {

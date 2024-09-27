@@ -58,7 +58,7 @@ class RenderScale : Control
 
     size_t tickCount()
     {
-        size_t ticksCount = (range / valueStep).to!size_t;
+        size_t ticksCount = Math.round(range / valueStep).to!size_t;
         return ticksCount + 1;
     }
 

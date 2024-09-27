@@ -106,6 +106,8 @@ class LinearChart : XYChart
 
         auto chartBounds = chartArea.bounds;
 
+        drawGrid;
+
         //TODO best clipping
         graphics.setClip(chartBounds);
         scope (exit)
@@ -129,6 +131,7 @@ class LinearChart : XYChart
             {
                 graphics.line(prev.x, prev.y, pos.x, pos.y);
                 graphics.line(prev.x, prev.y - 1, pos.x, pos.y - 1);
+                graphics.line(prev.x, prev.y + 1, pos.x, pos.y + 1);
             }
 
             prev = pos;
