@@ -461,7 +461,8 @@ class Text : Control
             if (nextGlyphPosX <= endRowTextX && nextGlyphPosX > rowWidth)
             {
                 auto newRowWidth = rowWidth + (nextGlyphPosX - rowWidth + padding.right);
-                if(newRowWidth > rowWidth){
+                if (newRowWidth > rowWidth)
+                {
                     rowWidth = newRowWidth;
                 }
             }
@@ -536,10 +537,14 @@ class Text : Control
             newRows ~= row;
         }
 
-        if(rowWidth > width){
+        if (rowWidth > width)
+        {
             width = Math.min(maxWidth, rowWidth);
-        }else {
-            if(isReduceWidthHeight){
+        }
+        else
+        {
+            if (isReduceWidthHeight)
+            {
                 //TODO check minHeight;
                 width = rowWidth;
             }
@@ -551,8 +556,11 @@ class Text : Control
             import std.algorithm.comparison : min;
 
             height = Math.min(maxHeight, newHeight);
-        }else {
-            if(isReduceWidthHeight){
+        }
+        else
+        {
+            if (isReduceWidthHeight)
+            {
                 //TODO check minHeight;
                 height = newHeight;
             }
@@ -793,7 +801,8 @@ class Text : Control
         }
     }
 
-    double rowGlyphWidth(){
+    double rowGlyphWidth()
+    {
         double result = 0;
         foreach (TextRow row; rows)
         {
@@ -805,14 +814,16 @@ class Text : Control
         return result;
     }
 
-    double rowGlyphHeight(){
+    double rowGlyphHeight()
+    {
         double result = 0;
         foreach (TextRow row; rows)
         {
             foreach (Glyph* glyph; row.glyphs)
             {
                 auto h = glyph.geometry.height;
-                if(h > result){
+                if (h > result)
+                {
                     result = h;
                 }
             }
@@ -846,6 +857,22 @@ class Text : Control
     {
         addRows(text);
         setInvalid;
+    }
+
+    double calcTextWidth(dstring str, FontSize fontSize)
+    {
+        double sum = 0;
+        foreach (ref grapheme; str)
+        {
+            foreach (glyph; asset.fontBitmap(fontSize).glyphs)
+            {
+                if (glyph.grapheme == grapheme)
+                {
+                    sum += glyph.geometry.width;
+                }
+            }
+        }
+        return sum;
     }
 
     void text(string t)
@@ -922,15 +949,18 @@ class Text : Control
         setInvalid;
     }
 
-    void setLargeSize(){
+    void setLargeSize()
+    {
         fontSize = FontSize.large;
     }
 
-    void setMediumSize(){
+    void setMediumSize()
+    {
         fontSize = FontSize.medium;
     }
 
-    void setSmallSize(){
+    void setSmallSize()
+    {
         fontSize = FontSize.small;
     }
 }

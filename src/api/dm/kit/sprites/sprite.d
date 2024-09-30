@@ -1226,13 +1226,13 @@ class Sprite : EventKitTarget
         return bounds;
     }
 
-    void positionCenter(bool isUseParent = false)
+    void moveToCenter(bool isUseParent = false)
     {
-        positionCenterX(isUseParent);
-        positionCenterY(isUseParent);
+        moveToCenterX(isUseParent);
+        moveToCenterY(isUseParent);
     }
 
-    void positionCenterX(bool isUseParent = false)
+    void moveToCenterX(bool isUseParent = false)
     {
         Rect2d bounds = (isUseParent && parent) ? parent.bounds : graphics.renderBounds;
         if (bounds.width == 0)
@@ -1251,7 +1251,7 @@ class Sprite : EventKitTarget
         x = middleX;
     }
 
-    void positionCenterY(bool isUseParent = false)
+    void moveToCenterY(bool isUseParent = false)
     {
         Rect2d bounds = (isUseParent && parent) ? parent.bounds : graphics.renderBounds;
         if (bounds.height == 0)

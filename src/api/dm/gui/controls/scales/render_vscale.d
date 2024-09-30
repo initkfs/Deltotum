@@ -81,7 +81,7 @@ class RenderVScale : RenderScale
             if (isMajorTick && (majorTickCounter < labels.length))
             {
                 auto label = labels[majorTickCounter];
-                auto labelX = !isInvertX ? x : bounds.right;
+                auto labelX = !isInvertX ? x - tickMajorWidth -5 : bounds.right;
                 auto labelY = startY - label.bounds.halfHeight;
                 label.xy(labelX, labelY);
                 if (!label.isVisible)

@@ -44,7 +44,7 @@ class BarChart : XYChart
     {
         super(chartAreaWidth, chartAreaHeight);
 
-        //isShowXScale = false;
+        isShowXScale = false;
     }
 
     override void create()
@@ -69,6 +69,12 @@ class BarChart : XYChart
 
         drawGrid;
 
+        //TODO from xScale
+        if(!isShowXScale){
+             auto color = xScale1 ? xScale1.axisColor : xAxisColor;
+             graphics.line(chartArea.x, chartArea.bounds.bottom, chartArea.bounds.right, chartArea.bounds.bottom , color);
+        }
+
         graphics.setClip(chartArea.bounds);
         scope (exit)
         {
@@ -88,7 +94,6 @@ class BarChart : XYChart
         }
 
         drawAxis;
-
     }
 
     void data(BarSet[] datasets)
@@ -131,7 +136,7 @@ class BarChart : XYChart
         {
             yScale1.minValue = newMinY;
             yScale1.maxValue = newMaxY;
-            yScale1.valueStep = rangeY / 11.0;
+            yScale1.valueStep = rangeY / 10.0;
             yScale1.majorTickStep = 5;
             yScale1.recreate;
         }

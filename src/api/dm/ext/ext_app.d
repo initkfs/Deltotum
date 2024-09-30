@@ -147,7 +147,7 @@ extern (C) void dm_control_set_center()
 {
     assert(!controlStack.empty);
     auto node = controlStack.front;
-    node.positionCenter();
+    node.moveToCenter();
 }
 
 extern (C) void dm_control_full_screen()

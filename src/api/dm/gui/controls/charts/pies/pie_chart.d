@@ -109,7 +109,6 @@ class LabelInfo : Container
         layout.isAutoResize = true;
         layout.isAlignY = true;
         //isBackground = true;
-        isDrawBounds = true;
     }
 
     override void create()
@@ -164,7 +163,6 @@ class PieChart : Container
 
         layout = new VLayout(5);
         layout.isAutoResize = true;
-        isDrawBounds = true;
     }
 
     override void create()

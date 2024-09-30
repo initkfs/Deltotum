@@ -23,7 +23,7 @@ class RenderScale : Control
 
     double valueStep = 0.05;
 
-    size_t majorTickStep = 5;
+    size_t majorTickStep = 1;
 
     bool isShowFirstLastLabel = true;
 
@@ -38,14 +38,19 @@ class RenderScale : Control
 
     bool isInvertX;
     bool isInvertY;
-    
+
     bool isDrawAxis = true;
     RGBA axisColor;
+
+    size_t labelNumberPrecision = 2;
+    size_t prefLabelGlyphWidth = 4;
 
     protected
     {
         Text[] labelPool;
         Text[] labels;
+
+        double prefLabelWidth = 0;
     }
 
     this(double width, double height)
@@ -73,10 +78,13 @@ class RenderScale : Control
     override void create()
     {
         super.create;
+        
         createLabelPool;
+        alignLabels;
 
         //TODO from class field?
-        if(axisColor == RGBA.init){
+        if (axisColor == RGBA.init)
+        {
             axisColor = graphics.theme.colorDanger;
         }
     }
@@ -143,26 +151,55 @@ class RenderScale : Control
             {
                 if (i == 0)
                 {
-                    label.text = minValue.to!dstring;
+                    label.text = formatLabelValue(minValue);
                     continue;
                 }
                 else if (i == lastIndex)
                 {
-                    label.text = maxValue.to!dstring;
+                    label.text = formatLabelValue(maxValue);
                     break;
                 }
             }
-            //TODO replace with format specifier
-            import std.math.rounding: trunc;
             auto tickValue = minValue + i * majorTickStep * valueStep;
-            if((tickValue - tickValue.trunc) == 0){
-                label.text = tickValue.to!dstring;
-            }else {
-                import std.format: format;
-                label.text = format("%.2f"d, tickValue);
-            }
-            
+            label.text = formatLabelValue(tickValue);
         }
+    }
+
+    void alignLabels(){
+        if(labelPool.length == 0){
+            return;
+        }
+        auto proto = labelPool[0];
+
+        import std.range: repeat, take;
+        import std.array: join;
+
+        auto pattern = "0"d.repeat.take(prefLabelGlyphWidth).join;
+
+        foreach (label; labels)
+        {
+            label.width = label.calcTextWidth(pattern, label.fontSize);
+        }
+    }
+
+    dstring formatLabelValue(double value)
+    {
+        import std.conv : to;
+        import std.math.rounding : trunc;
+
+        if ((value - value.trunc) == 0)
+        {
+            return value.to!dstring;
+        }
+        import std.format : format;
+        import std.math.operations: isClose;
+
+        auto zeroPrec = 1.0 / (10 ^^ (labelNumberPrecision + 1));
+        if(isClose(value, 0.0, 0.0, zeroPrec)){
+            return "0"d;
+        }
+
+        return format("%.*f"d, labelNumberPrecision, value);
     }
 
     override void dispose()

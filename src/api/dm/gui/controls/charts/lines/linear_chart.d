@@ -57,50 +57,49 @@ class LinearChart : XYChart
                     .length));
         }
 
-        import std.algorithm.iteration : filter;
-        import std.algorithm.searching : minElement, maxElement;
-        import std.math.traits : isFinite;
-
-        auto valueFilter = (double[] arr) { return arr.filter!isFinite; };
-
-        minX = valueFilter(newX).minElement;
-        maxX = valueFilter(newX).maxElement;
-
-        if (minX > 0 && maxX > 0)
+        if (isAutoScale)
         {
-            minX = 0;
-        }
+            import std.algorithm.iteration : filter;
+            import std.algorithm.searching : minElement, maxElement;
+            import std.math.traits : isFinite;
 
-        minY = valueFilter(newY).minElement;
-        maxY = valueFilter(newY).maxElement;
+            auto valueFilter = (double[] arr) { return arr.filter!isFinite; };
 
-        if (minY > 0 && maxY > 0)
-        {
-            minY = 0;
+            minX = valueFilter(newX).minElement;
+            maxX = valueFilter(newX).maxElement;
+
+            if (minX > 0 && maxX > 0)
+            {
+                minX = 0;
+            }
+
+            minY = valueFilter(newY).minElement;
+            maxY = valueFilter(newY).maxElement;
+
+            if (minY > 0 && maxY > 0)
+            {
+                minY = 0;
+            }
+
+            if (xScale1)
+            {
+                xScale1.minValue = minX;
+                xScale1.maxValue = maxX;
+                xScale1.valueStep = rangeX / 10.0;
+                xScale1.recreate;
+            }
+
+            if (yScale1)
+            {
+                yScale1.minValue = minY;
+                yScale1.maxValue = maxY;
+                yScale1.valueStep = rangeY / 10.0;
+                yScale1.recreate;
+            }
         }
 
         xValues = newX;
         yValues = newY;
-
-        if (xScale1)
-        {
-            xScale1.minValue = minX;
-            xScale1.maxValue = maxX;
-            //xScale1.valueStep = rangeX / 11.0;
-            xScale1.valueStep = 1;
-            xScale1.majorTickStep = 1;
-            xScale1.recreate;
-        }
-
-        if (yScale1)
-        {
-            yScale1.minValue = minY;
-            yScale1.maxValue = maxY;
-            //yScale1.valueStep = rangeY / 11.0;
-            yScale1.valueStep = 1;
-            yScale1.majorTickStep = 1;
-            yScale1.recreate;
-        }
     }
 
     override void drawContent()

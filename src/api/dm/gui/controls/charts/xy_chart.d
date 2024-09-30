@@ -8,6 +8,8 @@ import api.dm.gui.controls.scales.render_vscale : RenderVScale;
 import api.dm.gui.containers.hbox : HBox;
 import api.dm.gui.containers.vbox : VBox;
 
+import api.dm.com.inputs.com_keyboard : ComKeyName;
+
 import api.math.vector2 : Vector2;
 import Math = api.math;
 
@@ -17,9 +19,11 @@ import Math = api.math;
 class XYChart : Container
 {
     double minX = 0;
-    double maxX = 0;
+    double maxX = 1;
     double minY = 0;
-    double maxY = 0;
+    double maxY = 1;
+
+    bool isAutoScale = true;
 
     RenderHScale xScale1;
     RenderVScale yScale1;
@@ -51,8 +55,14 @@ class XYChart : Container
 
     bool isTrackPointer = true;
     RGBA trackPointerColor;
+    //RCTRL
+    ComKeyName trackPointerAltKey = ComKeyName.LCTRL;
 
-    protected {
+    size_t labelNumberPrecision = 2;
+    size_t prefLabelGlyphWidth = 4;
+
+    protected
+    {
         bool isStartTrackPointer;
     }
 
@@ -63,16 +73,12 @@ class XYChart : Container
         this.chartAreaWidth = chartAreaWidth;
         this.chartAreaHeight = chartAreaHeight;
 
-        isBorder = true;
-
         padding = 5;
 
         import api.dm.kit.sprites.layouts.vlayout : VLayout;
 
         layout = new VLayout(0);
         layout.isAutoResize = true;
-
-        isDrawBounds = true;
     }
 
     override void create()
@@ -81,11 +87,13 @@ class XYChart : Container
 
         enableInsets;
 
-        if(xAxisColor == RGBA.init){
+        if (xAxisColor == RGBA.init)
+        {
             xAxisColor = graphics.theme.colorWarning;
         }
 
-        if(yAxisColor == RGBA.init){
+        if (yAxisColor == RGBA.init)
+        {
             yAxisColor = graphics.theme.colorWarning;
         }
 
@@ -97,6 +105,8 @@ class XYChart : Container
         yScale1 = new RenderVScale(scaleAutoSize, chartAreaHeight);
         yScale1.isInvertY = true;
         yScale1.isDrawFirstTick = false;
+        yScale1.labelNumberPrecision = labelNumberPrecision;
+        yScale1.prefLabelGlyphWidth = prefLabelGlyphWidth;
         chartContentContainer.addCreate(yScale1);
 
         if (!isShowYScale)
@@ -113,6 +123,8 @@ class XYChart : Container
         xScale1.marginLeft = scaleAutoSize;
         xScale1.isDrawFirstTick = false;
         xScale1.isShowFirstLabelText = false;
+        xScale1.labelNumberPrecision = labelNumberPrecision;
+        xScale1.prefLabelGlyphWidth = prefLabelGlyphWidth;
         addCreate(xScale1);
 
         if (!isShowXScale)
@@ -120,22 +132,13 @@ class XYChart : Container
             xScale1.isVisible = false;
         }
 
-        auto xScaleRangeLimit = 50;
-        auto xScaleRangeMinLimit = 0.5;
-
-        size_t scaleAccum;
-        size_t scaleAccumFull = 3;
+        //auto xScaleRangeLimit = 50;
+        //auto xScaleRangeMinLimit = 0.5;
 
         if (isScalable)
         {
             onPointerWheel ~= (ref e) {
-                scaleAccum++;
-                if (scaleAccum <= scaleAccumFull)
-                {
-                    return;
-                }
-                scaleAccum = 0;
-                double scaleFactor = 2;
+                double scaleFactor = 1.5;
                 //up e.y = 1, down e.y = -1
                 if (e.y < 0)
                 {
@@ -145,36 +148,38 @@ class XYChart : Container
                 if (newMaxXValue > xScale1.minValue)
                 {
                     auto newXRange = Math.abs(newMaxXValue - xScale1.minValue);
-                    if (newXRange >= xScaleRangeMinLimit && newXRange <= xScaleRangeLimit)
-                    {
-                        xScale1.maxValue = newMaxXValue;
-                        xScale1.recreate;
-                        scaleX = maxX / xScale1.maxValue;
-                    }
-                    else
-                    {
-                        // xScale1.maxValue = maxX;
-                        // xScale1.recreate;
-                        // scaleX = 1;
-                    }
+                    // if (newXRange >= xScaleRangeMinLimit && newXRange <= xScaleRangeLimit)
+                    // {
+                       
+                    // }
+                    // else
+                    // {
+                    //     // xScale1.maxValue = maxX;
+                    //     // xScale1.recreate;
+                    //     // scaleX = 1;
+                    // }
+                    xScale1.maxValue = newMaxXValue;
+                    xScale1.recreate;
+                    scaleX = rangeX / xScale1.range;
                 }
 
                 auto newMaxYValue = yScale1.maxValue / scaleFactor;
                 if (newMaxYValue > yScale1.minValue)
                 {
-                    auto newYRange = Math.abs(newMaxYValue - yScale1.minValue);
-                    if (newYRange >= xScaleRangeMinLimit && newYRange <= xScaleRangeLimit)
-                    {
-                        yScale1.maxValue = newYRange;
-                        yScale1.recreate;
-                        scaleY = maxY / yScale1.maxValue;
-                    }
-                    else
-                    {
-                        // yScale1.maxValue = maxY;
-                        // yScale1.recreate;
-                        // scaleY = 1;
-                    }
+                    // auto newYRange = Math.abs(newMaxYValue - yScale1.minValue);
+                    // if (newYRange >= xScaleRangeMinLimit && newYRange <= xScaleRangeLimit)
+                    // {
+                        
+                    // }
+                    // else
+                    // {
+                    //     // yScale1.maxValue = maxY;
+                    //     // yScale1.recreate;
+                    //     // scaleY = 1;
+                    // }
+                    yScale1.maxValue = newMaxYValue;
+                    yScale1.recreate;
+                    scaleY = rangeY / yScale1.range;
                 }
             };
         }
@@ -221,30 +226,29 @@ class XYChart : Container
             };
         }
 
-        if(isTrackPointer){
+        if (isTrackPointer)
+        {
 
-            if(trackPointerColor == RGBA.init){
+            if (trackPointerColor == RGBA.init)
+            {
                 trackPointerColor = graphics.theme.colorSuccess;
             }
 
             trackPointerInfo = new Text;
             trackPointerInfo.setSmallSize;
+            trackPointerInfo.isVisible = false;
             addCreate(trackPointerInfo);
 
-            chartArea.onPointerEntered ~= (ref e){
-                isStartTrackPointer = true;
-            };
+            chartArea.onPointerEntered ~= (ref e) { isStartTrackPointer = true; };
 
-            chartArea.onPointerExited ~= (ref e){
-                isStartTrackPointer = false;
-            };
+            chartArea.onPointerExited ~= (ref e) { isStartTrackPointer = false; };
         }
     }
 
     double rangeX() => maxX - minX;
     double rangeY() => maxY - minY;
 
-    protected double rangeXToWidth(double x, bool isUseOffsets = true)
+    protected double rangeXToWidth(double x, bool isUseOffsets = true, bool isUseScale = true)
     {
         assert(chartArea);
 
@@ -252,37 +256,37 @@ class XYChart : Container
         {
             x = -x;
         }
-        else if (x == 0)
-        {
-            if (minX < 0 && maxX > 0)
-            {
-                x += (0 - minX);
-            }
-        }
 
+        if (minX < 0 && maxX > 0)
+        {
+            x += (0 - minX);
+        }
+    
         if (isUseOffsets)
         {
             x = offsetX + x;
         }
 
-        auto wX = (chartArea.width / rangeX) * (x * scaleX);
+        if(isUseScale){
+            x *= scaleX;
+        }
+
+        auto wX = (chartArea.width / rangeX) * x;
         //Clipping here can change the shape of the curve
         return wX;
     }
 
-    protected double rangeYToHeight(double y, bool isUseOffsets = true)
+    protected double rangeYToHeight(double y, bool isUseOffsets = true, bool isUseScale = true)
     {
         assert(chartArea);
         if (y < 0)
         {
             y = -y;
         }
-        else if (y == 0)
+
+        if (minY < 0 && maxY > 0)
         {
-            if (minY < 0 && maxY > 0)
-            {
-                y += (0 - minY);
-            }
+            y += (0 - minY);
         }
 
         if (isUseOffsets)
@@ -290,35 +294,81 @@ class XYChart : Container
             y = offsetY + y;
         }
 
-        auto hY = (chartArea.height / rangeY) * (y * scaleY);
+        if(isUseScale){
+            y *= scaleY;
+        }
+
+        auto hY = (chartArea.height / rangeY) * y;
         return hY;
     }
 
-    double widthToX(double w){
-        if(w < 0 || w > chartAreaWidth){
+    double widthToX(double w)
+    {
+        if (w < 0 || w > chartAreaWidth)
+        {
             //TODO error?
             return 0;
         }
         return xScale1.minValue + (w * xScale1.range / chartAreaWidth);
     }
 
-    double heightToY(double h){
-        if(h < 0 || h > chartAreaHeight){
+    double heightToY(double h)
+    {
+        if (h < 0 || h > chartAreaHeight)
+        {
             //TODO error?
             return 0;
         }
         return yScale1.maxValue - (h * yScale1.range / chartAreaHeight);
     }
 
-    protected Vector2 toChartAreaPos(double posX, double posY, bool isUseOffsets = true)
+    protected Vector2 toChartAreaPos(double posX, double posY, bool isUseOffsets = true, bool isUseScale = true)
     {
         assert(chartArea);
 
-        auto wX = rangeXToWidth(posX, isUseOffsets);
-        auto hY = rangeYToHeight(posY, isUseOffsets);
+        //TODO may be negative if the chart goes beyond the boundaries
+        auto wX = rangeXToWidth(posX, isUseOffsets, isUseScale);
+        auto hY = rangeYToHeight(posY, isUseOffsets, isUseScale);
 
-        const newX = chartArea.x + wX;
-        const newY = chartArea.bounds.bottom - hY;
+        double newX = 0;
+        double newY = 0;
+
+        //TODO reference point
+        if (posX >= 0)
+        {
+            newX = chartArea.x + wX;
+        }
+        else
+        {
+            //TODO or minValue from scales?
+            if (minX < 0)
+            {
+                auto xZeroOffset = 0 - xScale1.minValue;
+                auto wZeroOffset = rangeXToWidth(xZeroOffset);
+                //TODO check negative scales
+                if(wX < 0){
+                    wX = -wX;
+                }
+                newX = chartArea.x + wZeroOffset - wX;
+            }
+        }
+
+        if (posY >= 0)
+        {
+            newY = chartArea.bounds.bottom - hY;
+        }
+        else
+        {
+            if (minY < 0)
+            {
+                auto yZeroOffset = 0 - yScale1.minValue;
+                auto hZeroOffset = rangeYToHeight(yZeroOffset);
+                if(hY < 0){
+                    hY = -hY;
+                }
+                newY = chartArea.bounds.bottom - hZeroOffset + hY;
+            }
+        }
 
         return Vector2(newX, newY);
     }
@@ -338,7 +388,8 @@ class XYChart : Container
         }
     }
 
-    void drawGrid(){
+    void drawGrid()
+    {
 
         auto xTicks = xScale1.tickCount;
         auto yTicks = yScale1.tickCount;
@@ -347,7 +398,7 @@ class XYChart : Container
         double startX = 0;
         //TODO major;
         double tickW = xScale1.tickMinorWidth / 2.0;
-        foreach (x; 0..xTicks)
+        foreach (x; 0 .. xTicks)
         {
             auto tickPos = chartArea.x + startX - tickW;
             graphics.line(tickPos, chartArea.y, tickPos, chartArea.bounds.bottom, gridColor);
@@ -357,7 +408,7 @@ class XYChart : Container
         auto tickYDiff = chartAreaHeight / (yTicks - 1);
         double startY = 0;
         double tickH = yScale1.tickMinorHeight / 2.0;
-        foreach (y; 0..yTicks)
+        foreach (y; 0 .. yTicks)
         {
             double tickPos = chartArea.y + startY - tickH;
             graphics.line(chartArea.x, tickPos, chartArea.bounds.right, tickPos, gridColor);
@@ -366,15 +417,25 @@ class XYChart : Container
 
     }
 
-    void trackPointer(){
-        if(!isStartTrackPointer){
+    void trackPointer()
+    {
+        if (!isStartTrackPointer || !input.isPressedKey(trackPointerAltKey))
+        {
+            if(trackPointerInfo.isVisible){
+                trackPointerInfo.isVisible = false;
+            }
             return;
+        }
+
+        if(!trackPointerInfo.isVisible){
+            trackPointerInfo.isVisible = true;
         }
 
         Vector2 pointerPos = input.mousePos;
         auto dx = pointerPos.x - chartArea.x;
-        auto dy = pointerPos.y -chartArea.y;
-        if(dx < 0 || dy < 0){
+        auto dy = pointerPos.y - chartArea.y;
+        if (dx < 0 || dy < 0)
+        {
             return;
         }
 
@@ -384,7 +445,8 @@ class XYChart : Container
         auto dxInfo = widthToX(dx);
         auto dyInfo = heightToY(dy);
 
-        import std.format: format;
-        trackPointerInfo.text = format("x:%.2f y:%.2f",dxInfo, dyInfo);
+        import std.format : format;
+
+        trackPointerInfo.text = format("x:%.2f y:%.2f", dxInfo, dyInfo);
     }
 }
