@@ -132,11 +132,16 @@ struct RGBA
         return c;
     }
 
+    import api.math.random : Random;
+
     static RGBA random(double alpha = maxAlpha)
     {
-        import api.math.random : Random;
-
         auto rnd = new Random;
+        return random(rnd, alpha);
+    }
+
+    static RGBA random(Random rnd, double alpha = maxAlpha)
+    {
         const min = RGBA.minColor;
         const max = RGBA.maxColor;
         RGBA newColor = {

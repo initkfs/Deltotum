@@ -20,6 +20,14 @@ class Start : Scene
     {
         super.create;
 
+        import api.dm.kit.genart.hopalongs.hopalong_generator: HopalongGenerator;
+
+        auto gen = new HopalongGenerator;
+        gen.width = 400;
+        gen.height = 400;
+        addCreate(gen);
+        gen.moveToCenter;
+
        
         createDebugger;
     }
