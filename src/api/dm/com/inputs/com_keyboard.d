@@ -39,7 +39,7 @@ struct KeyModifierInfo
     }
 }
 
-enum ComKeyName
+enum ComKeyName : int
 {
     UNKNOWN,
     RETURN,

@@ -106,7 +106,7 @@ class RadialScroll : MonoScroll
             immutable thumbBounds = thumb.bounds;
             immutable center = thumbBounds.center;
 
-            immutable angleDeg = center.angleDeg360To(input.mousePos);
+            immutable angleDeg = center.angleDeg360To(input.pointerPos);
             double da = 0;
             if (!isDragAngle)
             {

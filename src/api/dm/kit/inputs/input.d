@@ -1,6 +1,6 @@
 module api.dm.kit.inputs.input;
 
-import api.dm.kit.inputs.cursors.cursor: Cursor;
+import api.dm.kit.inputs.cursors.cursor : Cursor;
 import api.dm.kit.inputs.clipboards.clipboard : Clipboard;
 import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import api.dm.com.inputs.com_keyboard : ComKeyName;
@@ -8,20 +8,22 @@ import api.math.vector2 : Vector2;
 
 import api.math.vector2 : Vector2;
 
-import std.container.slist : SList;
-
 /**
  * Authors: initkfs
  */
 class Input
 {
-    SList!ComKeyName pressedKeys;
+    protected
+    {
+        //TODO best align
+        bool[ComKeyName.max + 1] pressedKeys;
+    }
 
-    bool justJoystickActive;
-    bool justJoystickChangeAxis;
-    bool justJoystickChangesAxisValue;
+    bool isJoystickActive;
+    bool isJoystickChangeAxis;
+    bool isJoystickChangeAxisValue;
     double joystickAxisDelta = 0;
-    bool justJoystickPressed;
+    bool isJoystickPressed;
 
     JoystickEvent lastJoystickEvent;
 
@@ -35,62 +37,49 @@ class Input
 
         assert(cursor);
         this.systemCursor = cursor;
+    }
 
-        pressedKeys = SList!ComKeyName();
+    protected size_t keyIndex(ComKeyName key)
+    {
+        return cast(size_t) key;
     }
 
     bool addPressedKey(ComKeyName keyName)
     {
-        foreach (key; pressedKeys)
+        const ki = keyIndex(keyName);
+        if (pressedKeys[ki])
         {
-            if (keyName == key)
-            {
-                return false;
-            }
+            return false;
         }
-        pressedKeys.insertFront(keyName);
+        pressedKeys[ki] = true;
         return true;
     }
 
     bool addReleasedKey(ComKeyName keyName)
     {
-        if (pressedKeys.front == keyName)
+        const ki = keyIndex(keyName);
+        if (pressedKeys[ki])
         {
-            pressedKeys.removeFront;
+            pressedKeys[ki] = false;
             return true;
-        }
-
-        import std.algorithm.searching : find;
-        import std.range : take;
-
-        auto mustBekeyNames = find(pressedKeys[], keyName);
-        if (mustBekeyNames.empty)
-        {
-            return false;
-        }
-        pressedKeys.linearRemove(take(mustBekeyNames, 1));
-        return true;
-    }
-
-    bool isPressedKey(ComKeyName keyName)
-    {
-        foreach (key; pressedKeys)
-        {
-            if (key == keyName)
-            {
-                return true;
-            }
         }
 
         return false;
     }
 
-    Vector2 mousePos()
+    bool isPressedKey(ComKeyName keyName)
+    {
+        const ki = keyIndex(keyName);
+        return pressedKeys[ki];
+    }
+
+    Vector2 pointerPos()
     {
         return systemCursor.getPos;
     }
 
-    void dispose(){
+    void dispose()
+    {
         systemCursor.dispose;
         clipboard.dispose;
     }

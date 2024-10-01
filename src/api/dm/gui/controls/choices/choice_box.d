@@ -144,7 +144,7 @@ class ChoiceBox : TypedContainer!ChoiceItem
             if (choiceList.isVisible)
             {
                 const listBounds = choiceList.bounds;
-                if (listBounds.contains(input.mousePos))
+                if (listBounds.contains(input.pointerPos))
                 {
                     return;
                 }

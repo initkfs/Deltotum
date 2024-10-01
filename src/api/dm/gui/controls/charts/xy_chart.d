@@ -431,7 +431,7 @@ class XYChart : Container
             trackPointerInfo.isVisible = true;
         }
 
-        Vector2 pointerPos = input.mousePos;
+        Vector2 pointerPos = input.pointerPos;
         auto dx = pointerPos.x - chartArea.x;
         auto dy = pointerPos.y - chartArea.y;
         if (dx < 0 || dy < 0)

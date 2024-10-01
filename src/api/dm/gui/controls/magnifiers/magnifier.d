@@ -55,19 +55,19 @@ class Magnifier : Control
         };
 
         onPointerMove ~= (ref e) {
-            auto mousePos = input.mousePos;
+            auto pointerPos = input.pointerPos;
 
             auto magnCenterX = magnifier.bounds.halfWidth;
             auto magnCenterY = magnifier.bounds.halfHeight;
 
-            auto magnPosX = mousePos.x - magnCenterX;
-            auto magnPosY = mousePos.y - magnCenterY;
+            auto magnPosX = pointerPos.x - magnCenterX;
+            auto magnPosY = pointerPos.y - magnCenterY;
 
             magnifier.x = magnPosX;
             magnifier.y = magnPosY;
 
-            auto mouseXRel = mousePos.x - x;
-            auto mouseYRel = mousePos.y - y;
+            auto mouseXRel = pointerPos.x - x;
+            auto mouseYRel = pointerPos.y - y;
 
             auto originalXRel = (_original.width * mouseXRel) / magnifier.width;
             auto originalYRel = (_original.height * mouseYRel) / magnifier.height;

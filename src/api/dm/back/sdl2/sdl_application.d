@@ -364,11 +364,11 @@ class SdlApplication : ContinuouslyApplication
 
             if (joystickEvent.event == JoystickEvent.Event.axis)
             {
-                if (_input.justJoystickActive)
+                if (_input.isJoystickActive)
                 {
-                    _input.justJoystickChangeAxis = joystickEvent.axis != _input
+                    _input.isJoystickChangeAxis = joystickEvent.axis != _input
                         .lastJoystickEvent.axis;
-                    _input.justJoystickChangesAxisValue = _input.lastJoystickEvent.axisValue != joystickEvent
+                    _input.isJoystickChangeAxisValue = _input.lastJoystickEvent.axisValue != joystickEvent
                         .axisValue;
                     _input.joystickAxisDelta = joystickEvent.axisValue - _input
                         .lastJoystickEvent.axisValue;
@@ -376,17 +376,17 @@ class SdlApplication : ContinuouslyApplication
             }
             else if (joystickEvent.event == JoystickEvent.Event.press)
             {
-                _input.justJoystickPressed = true;
+                _input.isJoystickPressed = true;
             }
             else if (joystickEvent.event == JoystickEvent.Event.release)
             {
-                _input.justJoystickPressed = false;
+                _input.isJoystickPressed = false;
             }
 
             _input.lastJoystickEvent = joystickEvent;
-            if (!_input.justJoystickActive)
+            if (!_input.isJoystickActive)
             {
-                _input.justJoystickActive = true;
+                _input.isJoystickActive = true;
             }
         };
 

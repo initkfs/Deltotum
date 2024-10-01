@@ -462,8 +462,8 @@ class Sprite : EventKitTarget
                 {
                     if (onPointerWheel.length > 0)
                     {
-                        auto mousePos = input.systemCursor.getPos;
-                        if (containsPoint(mousePos.x, mousePos.y))
+                        auto pointerPos = input.systemCursor.getPos;
+                        if (containsPoint(pointerPos.x, pointerPos.y))
                         {
                             runEventHandlers(e);
                         }

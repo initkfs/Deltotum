@@ -211,7 +211,7 @@ class MinSecChooser : TimeChooser
             immutable sliderBounds = selectionSlider.bounds;
             immutable center = minSec0to55Box.bounds.center;
 
-            immutable angleDeg = center.angleDeg360To(input.mousePos);
+            immutable angleDeg = center.angleDeg360To(input.pointerPos);
             immutable sliderPos = center.fromPolarDeg(angleDeg, innerBoxRadius);
             selectionSlider.x = center.x + sliderPos.x - sliderBounds.halfWidth;
             selectionSlider.y = center.y + sliderPos.y - sliderBounds.halfHeight;
