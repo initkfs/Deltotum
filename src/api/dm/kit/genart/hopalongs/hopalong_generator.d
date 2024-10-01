@@ -82,6 +82,9 @@ class HopalongGenerator : Control
             return true;
         };
 
+        hopalong.a = 10;
+        hopalong.b = 5;
+
         canvas = new Container;
         canvas.resize(canvasWidth, canvasHeight);
         addCreate(canvas);
@@ -114,6 +117,11 @@ class HopalongGenerator : Control
         };
 
         fieldRoot.addCreate([aCoeffStep, bCoeffStep, cCoeffStep, scaleStep]);
+
+        aCoeffStep.value = hopalong.a;
+        bCoeffStep.value = hopalong.b;
+        cCoeffStep.value = hopalong.c;
+        scaleStep.value = hopalong.scale;
 
         // aCoeff = new Text("0");
         // aCoeff.isReduceWidthHeight = false;

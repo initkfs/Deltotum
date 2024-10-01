@@ -1,7 +1,7 @@
 module api.dm.gui.controls.scrolls.vscroll;
 
 import api.dm.kit.sprites.sprite : Sprite;
-import api.dm.gui.controls.scrolls.base_scroll : BaseScroll;
+import api.dm.gui.controls.scrolls.mono_scroll : MonoScroll;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites.textures.texture : Texture;
 
@@ -15,8 +15,10 @@ import std.math.operations : isClose;
 /**
  * Authors: initkfs
  */
-class VScroll : BaseScroll
+class VScroll : MonoScroll
 {
+    double thumbHeight = 30;
+
     this(double minValue = 0, double maxValue = 1.0, double width = 20, double height = 120)
     {
         super(minValue, maxValue);
@@ -29,23 +31,8 @@ class VScroll : BaseScroll
         super.initialize;
 
         thumbFactory = () {
-
-            import api.dm.kit.sprites.shapes.regular_polygon : RegularPolygon;
-            import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-
-            //TODO remove copypaste with HScroll
-            auto style = graphics.theme.defaultStyle;
-            if(auto currStylePtr = ownOrParentStyle){
-                style = *currStylePtr;
-            }else {
-                style.lineColor = graphics.theme.colorAccent;
-                style.fillColor = graphics.theme.colorAccent;
-            }
-
-            //TODO from parent style?
-            style.isFill = true;
-
-            auto node = graphics.theme.background(width, 30, &style);
+            auto style = createThumbStyle;
+            auto node = graphics.theme.background(width, thumbHeight, &style);
             return node;
         };
     }
@@ -63,14 +50,13 @@ class VScroll : BaseScroll
             thumb.isDraggable = true;
 
             thumb.onDragXY = (x, y) {
-                auto bounds = this.bounds;
-                const minY = bounds.y;
+
                 const maxY = bounds.bottom - thumb.height;
-                if (y <= minY || y >= maxY)
+
+                if (trySetThumbY(y))
                 {
                     return false;
                 }
-                thumb.y = y;
 
                 const range = bounds.height - thumb.height;
                 auto dy = thumb.y - bounds.y;
@@ -91,24 +77,71 @@ class VScroll : BaseScroll
                 {
                     dy = -dy;
                 }
+
                 const numRange = maxValue - minValue;
-
-                double oldValue = value;
-
-                value = minValue + (numRange / range) * dy;
-
-                if (isClose(value, oldValue))
+                auto newValue = minValue + (numRange / range) * dy;
+                if (!super.value(newValue))
                 {
                     return false;
-                }
-
-                if (onValue !is null)
-                {
-                    onValue(value);
                 }
 
                 return false;
             };
         }
+    }
+
+    protected bool trySetThumbY(double y, bool isAllowClamp = true)
+    {
+        auto bounds = this.bounds;
+        const minY = bounds.y;
+        const maxY = bounds.bottom - thumb.height;
+        if (y <= minY)
+        {
+            if(thumb.y != minY && isAllowClamp){
+                thumb.y = minY;
+                return true;
+            }
+            return false;
+        }
+
+        if (y >= maxY)
+        {
+            if(thumb.y != maxY && isAllowClamp){
+                thumb.y = maxY;
+                return true;
+            }
+            return false;
+        }
+
+        thumb.y = y;
+        return true;
+    }
+
+    override protected double wheelValue(double wheelDt)
+    {
+        auto newValue = _value;
+        if (wheelDt > 0)
+        {
+            newValue -= valueStep;
+        }
+        else
+        {
+            newValue += valueStep;
+        }
+        return newValue;
+    }
+
+    alias value = MonoScroll.value;
+
+    override bool value(double v)
+    {
+        if (!super.value(v) || !thumb)
+        {
+            return false;
+        }
+
+        const rangeY = bounds.height - thumb.height;
+        auto newThumbY = y + rangeY * v / maxValue;
+        return trySetThumbY(newThumbY);
     }
 }

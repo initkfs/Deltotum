@@ -1,6 +1,6 @@
 module api.dm.gui.controls.scrolls.radial_scroll;
 
-import api.dm.gui.controls.scrolls.base_scroll : BaseScroll;
+import api.dm.gui.controls.scrolls.mono_scroll : MonoScroll;
 import api.dm.kit.sprites.layouts.center_layout : CenterLayout;
 
 import api.dm.gui.controls.scales.radial_scale : RadialScale;
@@ -12,7 +12,7 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 /**
  * Authors: initkfs
  */
-class RadialScroll : BaseScroll
+class RadialScroll : MonoScroll
 {
     double fromAngleDeg = 0;
     double toAngleDeg = 90;
@@ -76,7 +76,7 @@ class RadialScroll : BaseScroll
                 canvas.translate(width / 2, height / 2);
                 auto pos = Vector2.fromPolarDeg(fromAngleDeg, pointRadius);
 
-                import api.math.vector2: Vector2;
+                import api.math.vector2 : Vector2;
 
                 auto shapeSize = 10;
 
@@ -133,13 +133,14 @@ class RadialScroll : BaseScroll
                 auto angleRange = Math.abs(toAngleDeg - fromAngleDeg);
                 //auto angleOffset = value * (angleRange / range);
                 //auto newAngle = minAngleDeg + angleOffset;
-                
+
                 auto newValue = (range / angleRange) * newAngle;
                 newValue = Math.clamp(newValue, minValue, maxValue);
 
                 valueDelta = newValue - _value;
                 _value = newValue;
-                if(onValue){
+                if (onValue)
+                {
                     onValue(newValue);
                 }
             }
@@ -148,15 +149,35 @@ class RadialScroll : BaseScroll
         };
     }
 
-    override void value(double v){
+    override protected double wheelValue(double wheelDt)
+    {
+        auto newValue = _value;
+        if (wheelDt > 0)
+        {
+            newValue += valueStep;
+        }
+        else
+        {
+            newValue -= valueStep;
+        }
+        return newValue;
+    }
+
+    override bool value(double v)
+    {
         assert(thumb);
 
-        super.value(v);
+        if (!super.value(v))
+        {
+            return false;
+        }
 
         auto range = valueRange;
         auto angleRange = Math.abs(toAngleDeg - fromAngleDeg);
         auto angleOffset = v * (angleRange / range);
         auto newAngle = fromAngleDeg + angleOffset;
+        //TODO <= fromAngle >= toAngle
         thumb.angle = newAngle;
+        return true;
     }
 }

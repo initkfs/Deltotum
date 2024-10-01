@@ -85,6 +85,14 @@ class Theme
         return new GraphicStyle(lineThickness, colorAccent, false, colorControlBackground);
     }
 
+    GraphicStyle defaultStyle(GraphicStyle* ownStyle)
+    {
+        if(ownStyle){
+            return *ownStyle;
+        }
+        return defaultStyle();
+    }
+
     GraphicStyle defaultStyle()
     {
         GraphicStyle style = GraphicStyle(lineThickness, colorAccent, false, colorControlBackground);

@@ -1,6 +1,6 @@
 module api.dm.gui.controls.scrolls.hscroll;
 
-import api.dm.gui.controls.scrolls.base_scroll : BaseScroll;
+import api.dm.gui.controls.scrolls.mono_scroll : MonoScroll;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites.textures.texture : Texture;
@@ -10,44 +10,34 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites.layouts.managed_layout : ManagedLayout;
 import api.dm.kit.sprites.shapes.rectangle : Rectangle;
 import api.math.alignment : Alignment;
-import std.math.operations: isClose;
+import std.math.operations : isClose;
 
 /**
  * Authors: initkfs
  */
-class HScroll : BaseScroll
+class HScroll : MonoScroll
 {
+    double thumbWidth = 30;
 
     this(double minValue = 0, double maxValue = 1.0, double width = 120, double height = 20)
     {
         super(minValue, maxValue);
-        this.width = width;
-        this.height = height;
+        _width = width;
+        _height = height;
     }
 
     override void initialize()
     {
         super.initialize;
 
-        thumbFactory = () {
-
-            import api.dm.kit.sprites.shapes.regular_polygon : RegularPolygon;
-            import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-
-            auto style = graphics.theme.defaultStyle;
-            if(auto currStylePtr = ownOrParentStyle){
-                style = *currStylePtr;
-            }else {
-                style.lineColor = graphics.theme.colorAccent;
-                style.fillColor = graphics.theme.colorAccent;
-            }
-
-            //TODO from parent style?
-            style.isFill = true;
-
-            auto node = graphics.theme.background(30, height, &style);
-            return node;
-        };
+        if (!thumbFactory)
+        {
+            thumbFactory = () {
+                auto style = createThumbStyle;
+                auto node = graphics.theme.background(thumbWidth, height, &style);
+                return node;
+            };
+        }
     }
 
     override void create()
@@ -63,25 +53,27 @@ class HScroll : BaseScroll
             thumb.isDraggable = true;
 
             thumb.onDragXY = (x, y) {
-                auto bounds = this.bounds;
-                const minX = bounds.x;
+
                 const maxX = bounds.right - thumb.width;
-                if (x <= minX || x >= maxX)
+
+                //Setting after super.value freezes thumb
+                if (!trySetThumbX(x))
                 {
                     return false;
                 }
-                thumb.x = x;
 
                 const range = bounds.width - thumb.width;
                 auto dx = thumb.x - bounds.x;
 
                 enum errorDelta = 5;
-                if(dx < errorDelta){
+                if (dx < errorDelta)
+                {
                     dx = 0;
                 }
 
                 const maxXDt = maxX - thumb.x;
-                if(maxXDt < errorDelta){
+                if (maxXDt < errorDelta)
+                {
                     dx += maxXDt;
                 }
 
@@ -89,25 +81,70 @@ class HScroll : BaseScroll
                 {
                     dx = -dx;
                 }
+
                 const numRange = maxValue - minValue;
 
-                double oldValue = value;
-
-                value = minValue + (numRange / range) * dx;
-
-                valueDelta = value - oldValue;
-                if (isClose(valueDelta, 0.0, 0.0, float.epsilon))
+                auto newValue = minValue + (numRange / range) * dx;
+                if (!super.value(newValue))
                 {
                     return false;
-                }
-
-                if (onValue !is null)
-                {
-                    onValue(value);
                 }
 
                 return false;
             };
         }
+    }
+
+    protected bool trySetThumbX(double x, bool isAllowClamp = true)
+    {
+        auto bounds = this.bounds;
+        const minX = bounds.x;
+        const maxX = bounds.right - thumb.width;
+        if (x <= minX)
+        {
+            if(thumb.x != minX && isAllowClamp){
+                thumb.x = minX;
+                return true;
+            }
+            return false;
+        }
+
+        if (x >= maxX)
+        {
+            if(thumb.x != maxX && isAllowClamp){
+                thumb.x = maxX;
+                return true;
+            }
+            return false;
+        }
+        thumb.x = x;
+        return true;
+    }
+
+    override protected double wheelValue(double wheelDt){
+        auto newValue = _value;
+        if (wheelDt > 0)
+        {
+            newValue += valueStep;
+        }
+        else
+        {
+            newValue -= valueStep;
+        }
+        return newValue;
+    }
+
+    alias value = MonoScroll.value;
+
+    override bool value(double v)
+    {
+        if (!super.value(v) || !thumb)
+        {
+            return false;
+        }
+
+        const rangeX = bounds.width - thumb.width;
+        auto newThumbX = x + rangeX * v / maxValue;
+        return trySetThumbX(newThumbX);
     }
 }
