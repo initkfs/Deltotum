@@ -1226,48 +1226,52 @@ class Sprite : EventKitTarget
         return bounds;
     }
 
-    void moveToCenter(bool isUseParent = false)
+    alias move = pos;
+
+    bool moveToCenter(bool isUseParent = false)
     {
-        moveToCenterX(isUseParent);
-        moveToCenterY(isUseParent);
+        bool isMove;
+        isMove |= moveToCenterX(isUseParent);
+        isMove |= moveToCenterY(isUseParent);
+        return isMove;
     }
 
-    void moveToCenterX(bool isUseParent = false)
+    bool moveToCenterX(bool isUseParent = false)
     {
         Rect2d bounds = (isUseParent && parent) ? parent.bounds : graphics.renderBounds;
         if (bounds.width == 0)
         {
-            return;
+            return false;
         }
 
         auto middleX = bounds.middleX;
 
         if (_width > 0)
         {
-            x = middleX - _width / 2;
-            return;
+            auto newX = middleX - _width / 2;
+            return (x = newX);
         }
 
-        x = middleX;
+        return x = middleX;
     }
 
-    void moveToCenterY(bool isUseParent = false)
+    bool moveToCenterY(bool isUseParent = false)
     {
         Rect2d bounds = (isUseParent && parent) ? parent.bounds : graphics.renderBounds;
         if (bounds.height == 0)
         {
-            return;
+            return false;
         }
 
         auto middleY = bounds.middleY;
 
         if (_height > 0)
         {
-            y = middleY - _height / 2;
-            return;
+            auto newY = middleY - _height / 2;
+            return (y = newY);
         }
 
-        y = middleY;
+        return (y = middleY);
     }
 
     Vector2 pos() @safe pure nothrow
@@ -1275,10 +1279,12 @@ class Sprite : EventKitTarget
         return Vector2(x, y);
     }
 
-    void pos(Vector2 pos)
+    bool pos(Vector2 pos)
     {
-        x = pos.x;
-        y = pos.y;
+        bool isChangePos;
+        isChangePos |= (x = pos.x);
+        isChangePos |= (y = pos.y);
+        return isChangePos;
     }
 
     Vector2 center()
@@ -1286,10 +1292,12 @@ class Sprite : EventKitTarget
         return Vector2(x + (width / 2.0), y + (height / 2.0));
     }
 
-    void xy(double newX, double newY)
+    bool xy(double newX, double newY)
     {
-        x(newX);
-        y(newY);
+        bool isChangeXY;
+        isChangeXY |= x(newX);
+        isChangeXY |= y(newY);
+        return isChangeXY;
     }
 
     double x() @safe pure nothrow
@@ -1297,11 +1305,11 @@ class Sprite : EventKitTarget
         return _x;
     }
 
-    void x(double newX)
+    bool x(double newX)
     {
         if (!Math.greater(_x, newX, xChangeThreshold))
         {
-            return;
+            return false;
         }
 
         foreach (Sprite child; children)
@@ -1339,6 +1347,8 @@ class Sprite : EventKitTarget
             setInvalid;
             invalidationState.x = true;
         }
+
+        return true;
     }
 
     double y() @safe pure nothrow
@@ -1346,11 +1356,11 @@ class Sprite : EventKitTarget
         return _y;
     }
 
-    void y(double newY)
+    bool y(double newY)
     {
         if (!Math.greater(_y, newY, yChangeThreshold))
         {
-            return;
+            return false;
         }
 
         foreach (Sprite child; children)
@@ -1388,6 +1398,8 @@ class Sprite : EventKitTarget
             setInvalid;
             invalidationState.y = true;
         }
+
+        return true;
     }
 
     double width() @safe pure nothrow
