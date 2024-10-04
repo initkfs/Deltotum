@@ -139,9 +139,9 @@ class RadialScroll : MonoScroll
 
                 valueDelta = newValue - _value;
                 _value = newValue;
-                if (onValue)
+                foreach (dg; onValue)
                 {
-                    onValue(newValue);
+                    dg(newValue);
                 }
             }
 

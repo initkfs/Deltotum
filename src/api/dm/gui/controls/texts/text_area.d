@@ -81,7 +81,7 @@ class TextArea : HBox
 
         addCreate(scroll);
 
-        scroll.onValue = (value) { textView.scrollTo(value); };
+        scroll.onValue ~= (value) { textView.scrollTo(value); };
 
         //TODO isDisabled
         onTextInput ~= (ref key) {

@@ -94,7 +94,7 @@ class ScrollBox : Container
             disableScroll(vslider);
         }
 
-        vslider.onValue = (double val) {
+        vslider.onValue ~= (double val) {
             import Math = api.dm.math;
 
             if (!contentRoot)
@@ -119,7 +119,7 @@ class ScrollBox : Container
             disableScroll(hslider);
         }
 
-        hslider.onValue = (val) {
+        hslider.onValue ~= (val) {
             if (!contentRoot)
             {
                 return;

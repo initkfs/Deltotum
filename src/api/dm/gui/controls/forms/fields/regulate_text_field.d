@@ -14,6 +14,8 @@ class RegulateTextField : Control
     MonoScroll scrollField;
     Text valueField;
 
+    size_t valueFieldPrefGlyphs = 6;
+
     this(double fieldSpacing = 5)
     {
         import api.dm.kit.sprites.layouts.hlayout : HLayout;
@@ -40,6 +42,16 @@ class RegulateTextField : Control
         valueField.isReduceWidthHeight = false;
         valueField.isEditable = true;
         addCreate(valueField);
+
+        auto glyphW = valueField.calcTextWidth("0", valueField.fontSize);
+        auto newWidth = valueFieldPrefGlyphs * glyphW;
+        if(newWidth < valueField.width){
+            valueField.width = newWidth;
+        }
+
+        scrollField.onValue ~= (v){
+            valueText(v);
+        };
     }
 
     bool value(double v)

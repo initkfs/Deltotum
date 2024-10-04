@@ -18,7 +18,7 @@ abstract class MonoScroll : BaseScroll
     double valueDelta = 0;
     double valueStep = 0;
 
-    void delegate(double) onValue;
+    void delegate(double)[] onValue;
 
     Sprite delegate() thumbFactory;
 
@@ -72,9 +72,9 @@ abstract class MonoScroll : BaseScroll
             return false;
         }
 
-        if (onValue)
+        foreach (dg; onValue)
         {
-            onValue(v);
+            dg(v);
         }
         return true;
     }
@@ -134,5 +134,18 @@ abstract class MonoScroll : BaseScroll
             style.isFill = true;
         }
         return style;
+    }
+
+    import api.core.utils.arrays : drop;
+
+    bool removeOnValue(void delegate(double) dg)
+    {
+        return drop(onValue, dg);
+    }
+
+    override void dispose()
+    {
+        super.dispose;
+        onValue = null;
     }
 }
