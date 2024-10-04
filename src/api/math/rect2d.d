@@ -3,6 +3,14 @@ module api.math.rect2d;
 import api.math.vector2 : Vector2;
 import api.math.circle2d : Circle2d;
 
+//TODO template from Rect2d
+struct Rect2i {
+    int x;
+    int y;
+    int width;
+    int height;
+}
+
 /**
  * Authors: initkfs
  */

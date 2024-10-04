@@ -5,7 +5,7 @@ import api.core.utils.factories : Provider;
 
 import api.dm.com.graphics.com_renderer : ComRenderer;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.math.vector2 : Vector2;
+import api.math.vector2 : Vector2, Vector2i;
 import math = api.dm.math;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.themes.theme : Theme;
@@ -272,9 +272,9 @@ class Graphics : LoggableUnit
 
     void points(Vector2[] points)
     {
-        foreach (p; points)
-        {
-            point(p.x, p.y);
+        if(const err = renderer.drawPoints(points)){
+            //TODO log
+            throw new Exception(err.toString);
         }
     }
 
@@ -287,6 +287,20 @@ class Graphics : LoggableUnit
         }
 
         points(p);
+    }
+
+    void points(Vector2i[] p, RGBA color = defaultColor)
+    {
+        changeColor(color);
+        scope (exit)
+        {
+            restoreColor;
+        }
+
+        if(const err = renderer.drawPoints(p)){
+            //TODO log
+            throw new Exception(err.toString);
+        }
     }
 
     Vector2[] linePoints(Vector2 start, Vector2 end)
@@ -939,7 +953,8 @@ class Graphics : LoggableUnit
         return scale;
     }
 
-    Rect2d renderBounds(){
+    Rect2d renderBounds()
+    {
 
         int outputWidth;
         int outputHeight;

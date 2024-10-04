@@ -15,8 +15,10 @@ import api.dm.gui.controls.scrolls.vscroll: VScroll;
 import api.math.random : Random;
 
 import Math = api.math;
+import api.math.vector2: Vector2i;
 import api.dm.kit.graphics.colors.rgba: RGBA;
 import api.dm.kit.graphics.colors.hsv: HSV;
+import api.dm.back.sdl2.sdl_surface: SdlSurface;
 
 /**
  * Authors: initkfs
@@ -38,6 +40,12 @@ class HopalongGenerator : Control
 
     Random rnd;
 
+    SdlSurface screenSurface;
+
+    protected {
+        Vector2i[] points;
+    }
+
     this(double canvasWidth = 400, double canvasHeight = 400)
     {
         this.canvasWidth = canvasWidth;
@@ -53,6 +61,7 @@ class HopalongGenerator : Control
         isDrawBounds = true;
 
         hopalong = new Hopalong;
+        points = new Vector2i[](hopalong.iterations);
     }
 
     HSV color;
@@ -67,10 +76,17 @@ class HopalongGenerator : Control
         }
 
         hopalong.generate;
+
+        graphics.points(points);
     }
 
     override void create(){
         super.create;
+
+        screenSurface = new SdlSurface;
+        if(const err = screenSurface.createRGB(window.width, window.height)){
+            throw new Exception(err.toString);
+        }
 
         color.saturation = 0.8;
         color.value = 0.8;
@@ -86,13 +102,23 @@ class HopalongGenerator : Control
 
             import api.dm.com.graphics.com_blend_mode : ComBlendMode;
 
-            auto radius = 3;
-            graphics.changeBlendMode(ComBlendMode.blend);
-            scope(exit){
-                graphics.restoreBlendMode;
-            }
+            // if(const err = screenSurface.lock){
+
+            // }
+            // auto rgba = color.toRGBA;
+            // if(const err = screenSurface.setPixelRGBA(cast(int) newX, cast(int) newY, rgba.r, rgba.g, rgba.b, rgba.aByte)){
+
+            // }
+
+            // auto radius = 3;
+            // graphics.changeBlendMode(ComBlendMode.blend);
+            // scope(exit){
+            //     graphics.restoreBlendMode;
+            // }
             //graphics.circle(newX, newY, radius, color.toRGBA);
-            graphics.point(newX, newY, color.toRGBA);
+            points[i].x = cast(int) newX;
+            points[i].y = cast(int) newY;
+            //graphics.point(newX, newY, color.toRGBA);
             return true;
         };
 
@@ -103,8 +129,8 @@ class HopalongGenerator : Control
         auto fieldRoot = new RegulateTextPanel(5);
         addCreate(fieldRoot);
 
-        double minV = 0.1;
-        double maxV = 25;
+        double minV = 0;
+        double maxV = 500;
 
         double minScale = 0.1;
         double maxScale = 25;

@@ -14,8 +14,8 @@ import api.dm.back.sdl2.sdl_window : SdlWindow;
 import api.dm.back.sdl2.sdl_texture : SdlTexture;
 
 import api.math.flip : Flip;
-import api.math.vector2 : Vector2;
-import api.math.rect2d : Rect2d;
+import api.math.vector2 : Vector2, Vector2i;
+import api.math.rect2d : Rect2d, Rect2i;
 
 import bindbc.sdl;
 
@@ -226,6 +226,29 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         return ComResult.success;
     }
 
+    ComResult drawRects(SDL_Rect[] rects) nothrow
+    {
+        const int zeroOrErrorCode = SDL_RenderDrawRects(ptr, rects.ptr, cast(int) rects.length);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
+    }
+
+    protected SDL_Rect[] toSdlRects(Rect2d[] rects) nothrow
+    {
+        import std.algorithm.iteration : map;
+        import std.array : array;
+
+        SDL_Rect[] sdlRects = rects.map!(rect => SDL_Rect(cast(int) rect.x, cast(int) rect.y, cast(
+                int) rect.width, cast(int) rect.height)).array;
+        return sdlRects;
+    }
+
+    ComResult drawRects(Rect2d[] rects) nothrow => drawRects(toSdlRects(rects));
+    ComResult drawRects(Rect2i[] rects) nothrow => drawRects(cast(SDL_Rect[]) rects);
+
     ComResult drawPoint(int x, int y) nothrow
     {
         const int zeroOrErrorCode = SDL_RenderDrawPoint(ptr, x, y);
@@ -235,6 +258,28 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         }
         return ComResult.success;
     }
+
+    private SDL_Point[] toPoints(Vector2[] vecs) nothrow
+    {
+        import std.algorithm.iteration : map;
+        import std.array : array;
+
+        SDL_Point[] points = vecs.map!(p => SDL_Point(cast(int) p.x, cast(int) p.y)).array;
+        return points;
+    }
+
+    ComResult drawPoints(SDL_Point[] ps) nothrow
+    {
+        const int zeroOrErrorCode = SDL_RenderDrawPoints(ptr, ps.ptr, cast(int) ps.length);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
+    }
+
+    ComResult drawPoints(Vector2[] ps) nothrow => drawPoints(toPoints(ps));
+    ComResult drawPoints(Vector2i[] ps) nothrow => drawPoints(cast(SDL_Point[]) ps);
 
     ComResult drawLine(int startX, int startY, int endX, int endY) nothrow
     {
@@ -246,20 +291,26 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         return ComResult.success;
     }
 
-    ComResult drawLines(Vector2[] linePoints) nothrow
+    ComResult drawLines(SDL_Point[] linePoints) nothrow
     {
-        import std.algorithm.iteration : map;
-        import std.array : array;
-
-        SDL_Point[] points = linePoints.map!(p => SDL_Point(cast(int) p.x, cast(int) p.y)).array;
         const int zeroOrErrorCode = SDL_RenderDrawLines(ptr,
-            points.ptr,
-            cast(int) points.length);
+            linePoints.ptr,
+            cast(int) linePoints.length);
         if (zeroOrErrorCode)
         {
             return getErrorRes(zeroOrErrorCode);
         }
         return ComResult.success;
+    }
+
+    ComResult drawLines(Vector2[] linePoints) nothrow
+    {
+        return drawLines(toPoints(linePoints));
+    }
+
+    ComResult drawLines(Vector2i[] linePoints) nothrow
+    {
+        return drawLines(cast(SDL_Point[]) linePoints);
     }
 
     ComResult setViewport(SDL_Rect* rect) nothrow
@@ -287,6 +338,19 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         }
         return ComResult.success;
     }
+
+    ComResult drawFillRects(SDL_Rect[] rects) nothrow
+    {
+        const int zeroOrErrorCode = SDL_RenderFillRects(ptr, rects.ptr, cast(int) rects.length);
+        if (zeroOrErrorCode)
+        {
+            return getErrorRes(zeroOrErrorCode);
+        }
+        return ComResult.success;
+    }
+
+    ComResult drawFillRects(Rect2d[] rects) nothrow => drawFillRects(toSdlRects(rects));
+    ComResult drawFillRects(Rect2i[] rects) nothrow => drawFillRects(cast(SDL_Rect[]) rects);
 
     ComResult copyEx(SdlTexture texture, const SDL_Rect* srcRect, const SDL_Rect* destRect, double angle, const SDL_Point* center, SDL_RendererFlip flip = SDL_RendererFlip
             .SDL_FLIP_NONE) nothrow

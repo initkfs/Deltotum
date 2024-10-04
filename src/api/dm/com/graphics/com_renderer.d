@@ -5,8 +5,8 @@ import api.dm.com.graphics.com_texture : ComTexture;
 import api.dm.com.graphics.com_blend_mode : ComBlendMode;
 import api.dm.com.destroyable : Destroyable;
 
-import api.math.vector2 : Vector2;
-import api.math.rect2d : Rect2d;
+import api.math.vector2 : Vector2, Vector2i;
+import api.math.rect2d : Rect2d, Rect2i;
 
 /**
  * Authors: initkfs
@@ -28,10 +28,17 @@ nothrow:
     ComResult setBlendModeBlend();
     ComResult setBlendModeNone();
     ComResult drawPoint(int x, int y);
+    ComResult drawPoints(Vector2[] points);
+    ComResult drawPoints(Vector2i[] points);
     ComResult drawRect(int x, int y, int width, int height);
+    ComResult drawRects(Rect2d[] rects);
+    ComResult drawRects(Rect2i[] rects);
     ComResult drawFillRect(int x, int y, int width, int height);
+    ComResult drawFillRects(Rect2d[] rects);
+    ComResult drawFillRects(Rect2i[] rects);
     ComResult drawLine(int startX, int startY, int endX, int endY);
     ComResult drawLines(Vector2[] linePoints);
+    ComResult drawLines(Vector2i[] linePoints);
     ComResult getOutputSize(out int width, out int height);
     ComResult setScale(double scaleX, double scaleY);
     ComResult getScale(out double scaleX, out double scaleY);

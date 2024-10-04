@@ -9,6 +9,12 @@ import api.math.matrices.matrix : Matrix2x2, Matrix2x1;
 
 import Math = api.dm.math;
 
+//TODO template with Vector2
+struct Vector2i {
+    int x;
+    int y;
+}
+
 /**
  * Authors: initkfs
  */
@@ -400,6 +406,10 @@ struct Vector2
             return subtract(other);
         else
             static assert(0, "Operator " ~ op ~ " not implemented");
+    }
+
+    Vector2i toInt(){
+        return Vector2i(cast(int) x, cast(int) y);
     }
 
     unittest
