@@ -12,8 +12,8 @@ import api.dm.kit.sprites.transitions.transition : Transition;
 import api.dm.kit.sprites.transitions.targets.value_transition : ValueTransition;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 
-import api.math.vec2 : Vec2d;
-import api.math.rect2d : Rect2d;
+import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.rect2 : Rect2d;
 
 import Math = api.math;
 

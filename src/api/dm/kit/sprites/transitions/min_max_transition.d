@@ -3,7 +3,7 @@ module api.dm.kit.sprites.transitions.min_max_transition;
 import api.dm.kit.sprites.transitions.transition : Transition, TransitionState;
 import api.dm.kit.sprites.transitions.curves.interpolator : Interpolator;
 import api.dm.kit.sprites.transitions.curves.uni_interpolator : UniInterpolator;
-import api.math.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2d;
 import math = api.dm.math;
 
 import std.traits : isIntegral, isFloatingPoint;

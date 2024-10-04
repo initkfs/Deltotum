@@ -5,7 +5,7 @@ version(DmAddon):
 // dfmt on
 
 import api.dm.gui.controls.control : Control;
-import api.math.rect2d : Rect2d;
+import api.math.geom2.rect2 : Rect2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.palettes.material_palette : MaterialPalette;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;

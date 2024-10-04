@@ -1,4 +1,4 @@
-module api.math.vec2;
+module api.math.geom2.vec2;
 
 //TODO fast sqrt?
 import std.math.algebraic : sqrt;

@@ -9,7 +9,7 @@ import api.dm.gui.controls.scales.render_vscale : RenderVScale;
 import api.dm.gui.containers.hbox : HBox;
 import api.dm.gui.containers.vbox : VBox;
 
-import api.math.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2d;
 import Math = api.math;
 
 struct BarData

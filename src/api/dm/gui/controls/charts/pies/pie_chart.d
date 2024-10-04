@@ -4,7 +4,7 @@ import api.dm.gui.containers.container : Container;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
-import api.math.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2d;
 import Math = api.math;
 
 //TODO mutable texture
@@ -43,7 +43,7 @@ class PieTexture : VectorTexture
         double startAngleDeg = 0;
         double fullAngleDeg = 360;
 
-        import api.math.vec2 : Vec2d;
+        import api.math.geom2.vec2 : Vec2d;
 
         auto centerPos = Vec2d(width / 2, height / 2);
         auto radius = width / 2;

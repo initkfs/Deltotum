@@ -4,9 +4,9 @@ import api.dm.kit.inputs.cursors.cursor : Cursor;
 import api.dm.kit.inputs.clipboards.clipboard : Clipboard;
 import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import api.dm.com.inputs.com_keyboard : ComKeyName;
-import api.math.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2d;
 
-import api.math.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2d;
 
 /**
  * Authors: initkfs

@@ -1,8 +1,8 @@
 module api.dm.gui.controls.scales.radial_proto_scale;
 
 import api.dm.gui.controls.control : Control;
-import api.math.vec2 : Vec2d;
-import api.math.rect2d : Rect2d;
+import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.rect2 : Rect2d;
 import Math = api.math;
 
 /**

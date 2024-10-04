@@ -1,7 +1,7 @@
 module api.math.random;
 
 import api.core.components.units.services.loggable_unit : LoggableUnit;
-import api.math.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2d;
 import std.random : uniform, unpredictableSeed, StdRandom = Random;
 import std.range.primitives;
 import std.typecons : Nullable, Tuple;

@@ -2,7 +2,7 @@ module api.dm.kit.sprites.transitions.targets.motions.circular_motion;
 
 import api.dm.kit.sprites.transitions.targets.value_transition : ValueTransition;
 import api.dm.kit.sprites.transitions.curves.interpolator : Interpolator;
-import api.math.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2d;
 import math = api.dm.math;
 
 /**

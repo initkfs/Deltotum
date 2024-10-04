@@ -3,7 +3,7 @@ module api.dm.kit.sprites.textures.vectors.contexts.vector_graphics_context;
 import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
 import api.dm.sys.cairo.cairo_context : CairoContext;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.math.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2d;
 
 //TODO remove native api
 import api.dm.sys.cairo.libs;

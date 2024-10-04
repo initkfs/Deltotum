@@ -3,7 +3,7 @@ module api.dm.kit.sprites.images.animated_image;
 import api.dm.kit.sprites.images.image : Image;
 import api.dm.kit.sprites.sprite : Sprite;
 
-import api.math.rect2d : Rect2d;
+import api.math.geom2.rect2 : Rect2d;
 import api.dm.kit.sprites.transitions.curves.interpolator : Interpolator;
 import api.dm.kit.sprites.transitions.min_max_transition : MinMaxTransition;
 import std.math.rounding : floor;

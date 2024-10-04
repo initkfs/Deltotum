@@ -6,7 +6,7 @@ import api.dm.kit.sprites.layouts.center_layout : CenterLayout;
 import api.dm.gui.controls.scales.radial_scale : RadialScale;
 
 import Math = api.math;
-import api.math.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
 /**
@@ -76,7 +76,7 @@ class RadialScroll : MonoScroll
                 canvas.translate(width / 2, height / 2);
                 auto pos = Vec2d.fromPolarDeg(fromAngleDeg, pointRadius);
 
-                import api.math.vec2 : Vec2d;
+                import api.math.geom2.vec2 : Vec2d;
 
                 auto shapeSize = 10;
 

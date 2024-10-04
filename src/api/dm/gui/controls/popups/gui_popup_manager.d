@@ -5,7 +5,7 @@ import api.dm.gui.containers.container : Container;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.controls.texts.text : Text;
-import api.math.rect2d : Rect2d;
+import api.math.geom2.rect2 : Rect2d;
 import api.dm.kit.sprites.transitions.targets.props.opacity_transition : OpacityTransition;
 import api.dm.kit.sprites.transitions.pause_transition : PauseTransition;
 import api.dm.kit.sprites.transitions.transition : Transition;

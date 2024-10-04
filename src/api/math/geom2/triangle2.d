@@ -1,7 +1,7 @@
-module api.math.triangle2d;
+module api.math.geom2.triangle2;
 
-import api.math.vec2 : Vec2d;
-import api.math.line2d : Line2d;
+import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.line2 : Line2d;
 
 import Math = api.dm.math;
 

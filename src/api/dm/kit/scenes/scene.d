@@ -335,7 +335,7 @@ class Scene : EventKitTarget
     ComSurface snapshot()
     {
         assert(window.width > 0 && window.height > 0);
-        import api.math.rect2d : Rect2d;
+        import api.math.geom2.rect2 : Rect2d;
 
         auto bounds = Rect2d(
             0, 0, window.width, window.height

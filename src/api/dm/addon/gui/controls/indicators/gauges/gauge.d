@@ -54,7 +54,7 @@ class Gauge : Control
 
     void layoutSegments()
     {
-        import api.math.vec2 : Vec2d;
+        import api.math.geom2.vec2 : Vec2d;
 
         double px = x + width / 2;
         double py = y + height / 2;

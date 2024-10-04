@@ -12,7 +12,7 @@ import api.dm.com.com_native_ptr : ComNativePtr;
 import api.dm.back.sdl2.base.sdl_object_wrapper : SdlObjectWrapper;
 import api.dm.back.sdl2.sdl_window : SdlWindow;
 
-import api.math.rect2d : Rect2d;
+import api.math.geom2.rect2 : Rect2d;
 import std.typecons : Tuple;
 
 import bindbc.sdl;

@@ -3,7 +3,7 @@ module api.dm.kit.sprites.transitions.targets.motions.linear_motion;
 import api.dm.kit.sprites.transitions.targets.target_transition : TargetTransition;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.sprites.transitions.curves.interpolator : Interpolator;
-import api.math.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2d;
 
 /**
  * Authors: initkfs

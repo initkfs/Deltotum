@@ -1,7 +1,7 @@
 module api.dm.kit.graphics.contexts.state_graphics_context;
 
 import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
-import api.math.vec2: Vec2d;
+import api.math.geom2.vec2: Vec2d;
 
 /**
  * Authors: initkfs

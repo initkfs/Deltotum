@@ -5,7 +5,7 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites.shapes.shape : Shape;
 import api.dm.kit.sprites.textures.vectors.shapes.vpoints_shape : VPointsShape;
 import api.dm.kit.graphics.brushes.brush : Brush;
-import api.math.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2d;
 import api.dm.addon.fractals.lsystems.lsystem_parser : LSystemParser;
 
 import std.stdio;

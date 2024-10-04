@@ -12,7 +12,7 @@ import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 import api.dm.gui.controls.buttons.button : Button;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.math.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2d;
 
 import std.conv : to;
 import std.format : format;

@@ -1,8 +1,8 @@
 module api.dm.addon.math.triangulations.delaunay_triangulator;
 
-import api.math.vec2 : Vec2d;
-import api.math.line2d : Line2d;
-import api.math.triangle2d : Triangle2d;
+import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.line2 : Line2d;
+import api.math.geom2.triangle2 : Triangle2d;
 
 import Math = api.dm.math;
 

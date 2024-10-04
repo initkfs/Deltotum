@@ -3,7 +3,7 @@ module api.math.numericals.interp;
 /**
  * Authors: initkfs
  */
-import api.math.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2d;
 import api.dm.math : clamp01;
 
 import std.math.traits : isFinite;

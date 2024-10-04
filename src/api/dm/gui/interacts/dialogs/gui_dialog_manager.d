@@ -4,7 +4,7 @@ import api.dm.kit.interacts.dialogs.dialog_manager : DialogManager;
 import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.dm.kit.scenes.scene : Scene;
 import api.dm.kit.windows.window : Window;
-import api.math.rect2d : Rect2d;
+import api.math.geom2.rect2 : Rect2d;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.gui.containers.stack_box: StackBox;
 import api.dm.kit.interacts.interact : Interact;

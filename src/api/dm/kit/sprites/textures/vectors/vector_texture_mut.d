@@ -7,8 +7,8 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites.textures.vectors.contexts.vector_graphics_context : VectorGraphicsContext;
 
 import api.dm.com.graphics.com_surface : ComSurface;
-import api.math.rect2d : Rect2d;
-import api.math.vec2 : Vec2d;
+import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.vec2 : Vec2d;
 
 //TODO remove native api
 import api.dm.sys.cairo.cairo_surface : CairoSurface;

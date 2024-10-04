@@ -15,7 +15,7 @@ import api.dm.gui.controls.scrolls.vscroll: VScroll;
 import api.math.random : Random;
 
 import Math = api.math;
-import api.math.vec2: Vec2i;
+import api.math.geom2.vec2: Vec2i;
 import api.dm.kit.graphics.colors.rgba: RGBA;
 import api.dm.kit.graphics.colors.hsv: HSV;
 import api.dm.back.sdl2.sdl_surface: SdlSurface;

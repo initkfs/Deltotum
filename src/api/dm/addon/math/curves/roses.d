@@ -1,7 +1,7 @@
 module api.dm.addon.math.curves.roses;
 
 import api.dm.addon.math.curves.curve_maker : CurveMaker;
-import api.math.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2d;
 
 import Math = api.dm.math;
 

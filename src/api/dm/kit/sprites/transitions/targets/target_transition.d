@@ -4,7 +4,7 @@ import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.sprites.transitions.curves.interpolator : Interpolator;
 import api.dm.kit.sprites.transitions.min_max_transition : MinMaxTransition;
 
-import api.math.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2d;
 
 import std.traits : isIntegral, isFloatingPoint;
 

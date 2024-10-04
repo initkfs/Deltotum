@@ -10,7 +10,7 @@ import api.dm.gui.controls.scrolls.hscroll : HScroll;
 import api.dm.gui.controls.scrolls.vscroll : VScroll;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.math.insets : Insets;
-import api.math.rect2d : Rect2d;
+import api.math.geom2.rect2 : Rect2d;
 import api.dm.gui.controls.buttons.button : Button;
 import api.dm.gui.controls.texts.text : Text;
 

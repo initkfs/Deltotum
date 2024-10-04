@@ -1,7 +1,7 @@
 module api.dm.kit.sprites.scrolling.background_scroller;
 
 import api.dm.kit.sprites.sprite : Sprite;
-import api.math.rect2d : Rect2d;
+import api.math.geom2.rect2 : Rect2d;
 
 enum Direction
 {

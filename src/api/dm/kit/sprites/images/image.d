@@ -6,7 +6,7 @@ import api.dm.com.graphics.com_texture : ComTexture;
 import api.dm.com.graphics.com_image : ComImage;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.kit.sprites.textures.texture : Texture;
-import api.math.rect2d : Rect2d;
+import api.math.geom2.rect2 : Rect2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.flip : Flip;
 

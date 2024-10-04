@@ -2,7 +2,7 @@ module api.dm.gui.containers.scroll_box;
 
 import api.dm.gui.containers.container : Container;
 import api.dm.kit.sprites.layouts.managed_layout : ManagedLayout;
-import api.math.rect2d : Rect2d;
+import api.math.geom2.rect2 : Rect2d;
 
 import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.containers.hbox : HBox;

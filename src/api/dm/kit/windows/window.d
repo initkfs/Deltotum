@@ -3,8 +3,8 @@ module api.dm.kit.windows.window;
 import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.dm.com.com_native_ptr : ComNativePtr;
 import api.dm.com.graphics.com_window : ComWindow;
-import api.math.rect2d : Rect2d;
-import api.math.vec2 : Vec2d;
+import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.vec2 : Vec2d;
 
 import api.dm.kit.scenes.scene_manager : SceneManager;
 import api.dm.kit.windows.window_manager : WindowManager;
@@ -354,7 +354,7 @@ class Window : GraphicsComponent
 
     Rect2d bounds()
     {
-        import api.math.rect2d : Rect2d;
+        import api.math.geom2.rect2 : Rect2d;
 
         Rect2d boundsRect = {x, y, width, height};
         return boundsRect;
@@ -362,7 +362,7 @@ class Window : GraphicsComponent
 
     Rect2d boundsLocal()
     {
-        import api.math.rect2d : Rect2d;
+        import api.math.geom2.rect2 : Rect2d;
 
         Rect2d boundsRect = {0, 0, width, height};
         return boundsRect;

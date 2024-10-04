@@ -14,7 +14,7 @@ import api.dm.kit.sprites.textures.texture : Texture;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.sprites.transitions.targets.target_transition : TargetTransition;
-import api.math.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2d;
 import api.dm.gui.controls.texts.text : Text;
 
 /**
@@ -127,7 +127,7 @@ class ToggleSwitch : Labeled
         };
 
         switchOnAnimationFactory = () {
-            import api.math.vec2 : Vec2d;
+            import api.math.geom2.vec2 : Vec2d;
             import api.dm.kit.sprites.transitions.targets.motions.linear_motion : LinearMotion;
             import api.dm.kit.sprites.transitions.curves.uni_interpolator : UniInterpolator;
 
@@ -142,7 +142,7 @@ class ToggleSwitch : Labeled
         };
 
         switchOffAnimationFactory = () {
-            import api.math.vec2 : Vec2d;
+            import api.math.geom2.vec2 : Vec2d;
             import api.dm.kit.sprites.transitions.targets.motions.linear_motion : LinearMotion;
             import api.dm.kit.sprites.transitions.curves.uni_interpolator : UniInterpolator;
 

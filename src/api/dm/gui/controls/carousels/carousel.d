@@ -8,7 +8,7 @@ import api.dm.kit.sprites.layouts.vlayout : VLayout;
 import api.dm.gui.containers.container : Container;
 import api.dm.kit.sprites.transitions.transition : Transition;
 import api.dm.kit.sprites.transitions.min_max_transition : MinMaxTransition;
-import api.math.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2d;
 
 import std.conv : to;
 import api.math.numericals.interp;

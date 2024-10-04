@@ -8,7 +8,7 @@ import api.dm.kit.graphics.colors.hsv: HSV;
 import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
 
 import Math = api.dm.math;
-import api.math.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2d;
 
 import std;
 

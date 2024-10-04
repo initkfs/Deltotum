@@ -7,7 +7,7 @@ import api.dm.gui.containers.stack_box : StackBox;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.sprites.transitions.targets.motions.linear_motion : LinearMotion;
 import api.dm.kit.sprites.transitions.transition : Transition;
-import api.math.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2d;
 import Math = api.math;
 import api.math.numericals.interp;
 
@@ -225,7 +225,7 @@ class Slider : Container
 
     void setInitialPos()
     {
-        import api.math.rect2d : Rect2d;
+        import api.math.geom2.rect2 : Rect2d;
 
         double newX = 0, newY = 0;
         const Rect2d sceneBounds = graphics.renderBounds;

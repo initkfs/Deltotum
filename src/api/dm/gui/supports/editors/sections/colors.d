@@ -1,7 +1,7 @@
 module api.dm.gui.supports.editors.sections.colors;
 
 import api.dm.gui.controls.control : Control;
-import api.math.rect2d : Rect2d;
+import api.math.geom2.rect2 : Rect2d;
 import api.dm.kit.sprites.layouts.flow_layout : FlowLayout;
 
 import std.stdio;

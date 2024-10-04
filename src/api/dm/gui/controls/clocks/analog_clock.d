@@ -5,7 +5,7 @@ import api.dm.gui.containers.circle_box : CircleBox;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.math.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2d;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.sprites.textures.vectors.shapes.vcircle : VCircle;
 import api.dm.kit.sprites.textures.vectors.shapes.varc : VArc;
@@ -15,7 +15,7 @@ import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPol
 import api.dm.kit.sprites.textures.vectors.shapes.vshape : VShape;
 import api.dm.kit.sprites.transitions.pause_transition : PauseTransition;
 import api.dm.kit.sprites.textures.texture : Texture;
-import api.math.rect2d : Rect2d;
+import api.math.geom2.rect2 : Rect2d;
 import Math = api.dm.math;
 
 debug import std.stdio : writeln, writefln;

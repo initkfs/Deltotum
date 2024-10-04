@@ -1,5 +1,5 @@
 module api.dm.addon.math.curves.lissajous;
-import api.math.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2d;
 import api.dm.addon.math.curves.curve_maker : CurveMaker;
 
 import Math = api.dm.math;

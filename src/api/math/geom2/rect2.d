@@ -1,7 +1,7 @@
-module api.math.rect2d;
+module api.math.geom2.rect2;
 
-import api.math.vec2 : Vec2d;
-import api.math.circle2d : Circle2d;
+import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.circle2 : Circle2d;
 
 //TODO template from Rect2d
 struct Rect2i {

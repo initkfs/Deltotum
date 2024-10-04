@@ -8,7 +8,7 @@ import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.math.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2d;
 import api.dm.gui.containers.container: Container;
 import api.dm.gui.containers.hbox: HBox;
 

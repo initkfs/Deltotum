@@ -5,7 +5,7 @@ import api.core.utils.factories : Provider;
 
 import api.dm.com.graphics.com_renderer : ComRenderer;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.math.vec2 : Vec2d, Vec2i;
+import api.math.geom2.vec2 : Vec2d, Vec2i;
 import math = api.dm.math;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.themes.theme : Theme;
@@ -14,7 +14,7 @@ import api.dm.kit.sprites.textures.texture : Texture;
 import Math = api.dm.math;
 
 import api.math.flip : Flip;
-import api.math.rect2d : Rect2d;
+import api.math.geom2.rect2 : Rect2d;
 
 import std.logger.core : Logger;
 import std.conv : to;

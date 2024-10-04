@@ -1,7 +1,7 @@
 module api.dm.kit.graphics.colors.processing.color_processor;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.math.rect2d : Rect2d;
+import api.math.geom2.rect2 : Rect2d;
 import Math = api.dm.math;
 
 import std.stdio;

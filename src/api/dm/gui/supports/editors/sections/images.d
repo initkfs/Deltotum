@@ -236,7 +236,7 @@ class Images : Control
         bilinear.load(ColorProcessor.resizeBilinear(colorBuff, imageWidth / 2, imageHeight / 2));
         magn1.addCreate(createImageInfo("Bilinear", bilinear));
 
-        import api.math.rect2d : Rect2d;
+        import api.math.geom2.rect2 : Rect2d;
 
         auto crop = new Image(50, 50);
         build(crop);

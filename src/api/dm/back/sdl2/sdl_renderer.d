@@ -14,8 +14,8 @@ import api.dm.back.sdl2.sdl_window : SdlWindow;
 import api.dm.back.sdl2.sdl_texture : SdlTexture;
 
 import api.math.flip : Flip;
-import api.math.vec2 : Vec2d, Vec2i;
-import api.math.rect2d : Rect2d, Rect2i;
+import api.math.geom2.vec2 : Vec2d, Vec2i;
+import api.math.geom2.rect2 : Rect2d, Rect2i;
 
 import bindbc.sdl;
 

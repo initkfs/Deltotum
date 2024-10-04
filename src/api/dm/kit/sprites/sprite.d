@@ -1,8 +1,8 @@
 module api.dm.kit.sprites.sprite;
 
 import api.dm.kit.events.event_kit_target : EventKitTarget;
-import api.math.vec2 : Vec2d;
-import api.math.rect2d : Rect2d;
+import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.rect2 : Rect2d;
 import api.math.alignment : Alignment;
 import api.math.insets : Insets;
 import api.dm.kit.sprites.layouts.layout : Layout;
@@ -1755,7 +1755,7 @@ class Sprite : EventKitTarget
 
         graphics.changeColor(color);
 
-        import api.math.vec2 : Vec2d;
+        import api.math.geom2.vec2 : Vec2d;
 
         graphics.rect(Vec2d(clip.x, clip.y), clip.width, clip.height);
 
@@ -1883,7 +1883,7 @@ class Sprite : EventKitTarget
     ComSurface snapshot()
     {
         assert(width > 0 && height > 0);
-        import api.math.rect2d : Rect2d;
+        import api.math.geom2.rect2 : Rect2d;
 
         auto bounds = Rect2d(
             0, 0, width, height

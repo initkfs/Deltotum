@@ -12,8 +12,8 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 import api.dm.kit.i18n.langs.alphabets.alphabet : Alphabet;
-import api.math.rect2d : Rect2d;
-import api.math.vec2 : Vec2d;
+import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.vec2 : Vec2d;
 
 import std.string : toStringz;
 import std.uni : byGrapheme;

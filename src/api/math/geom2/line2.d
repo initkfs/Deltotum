@@ -1,6 +1,6 @@
-module api.math.line2d;
+module api.math.geom2.line2;
 
-import api.math.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2d;
 
 /**
  * Authors: initkfs
