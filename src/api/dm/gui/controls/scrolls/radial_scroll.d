@@ -6,7 +6,7 @@ import api.dm.kit.sprites.layouts.center_layout : CenterLayout;
 import api.dm.gui.controls.scales.radial_scale : RadialScale;
 
 import Math = api.math;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
 /**
@@ -74,15 +74,15 @@ class RadialScroll : MonoScroll
                 auto pointRadius = pointerRadius - 5;
                 canvas.moveTo(0, 0);
                 canvas.translate(width / 2, height / 2);
-                auto pos = Vector2.fromPolarDeg(fromAngleDeg, pointRadius);
+                auto pos = Vec2d.fromPolarDeg(fromAngleDeg, pointRadius);
 
-                import api.math.vector2 : Vector2;
+                import api.math.vec2 : Vec2d;
 
                 auto shapeSize = 10;
 
-                auto rightVert = Vector2(pos.x, pos.y);
-                auto leftTopVert = Vector2(pos.x - shapeSize, pos.y - shapeSize / 2);
-                auto leftBottomVert = Vector2(pos.x - shapeSize, pos.y + shapeSize / 2);
+                auto rightVert = Vec2d(pos.x, pos.y);
+                auto leftTopVert = Vec2d(pos.x - shapeSize, pos.y - shapeSize / 2);
+                auto leftBottomVert = Vec2d(pos.x - shapeSize, pos.y + shapeSize / 2);
 
                 canvas.moveTo(rightVert);
                 canvas.lineTo(leftTopVert);

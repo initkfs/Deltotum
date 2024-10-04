@@ -1,7 +1,7 @@
 module api.dm.kit.graphics.contexts.graphics_context;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 
 /**
  * Authors: initkfs
@@ -45,10 +45,10 @@ interface GraphicsContext
     void lineJoin(LineJoin join);
 
     void moveTo(double x, double y);
-    void moveTo(Vector2 pos);
+    void moveTo(Vec2d pos);
 
     void lineTo(double x, double y);
-    void lineTo(Vector2 pos);
+    void lineTo(Vec2d pos);
 
     void stroke();
     void strokePreserve();

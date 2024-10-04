@@ -1,7 +1,7 @@
 module api.dm.addon.math.curves.cycloidal;
 
 import api.dm.addon.math.curves.curve_maker: CurveMaker;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 
 import Math = api.dm.math;
 
@@ -11,9 +11,9 @@ import Math = api.dm.math;
 class Cycloidal : CurveMaker
 {
 
-    Vector2[] hypotrochoid(double radius1, double theta1, double radius2, double theta2, double dots = 500, double scale = 1.0)
+    Vec2d[] hypotrochoid(double radius1, double theta1, double radius2, double theta2, double dots = 500, double scale = 1.0)
     {
-        Vector2[] points;
+        Vec2d[] points;
         auto initTheta = Math.PI * 2 / dots;
         double theta = 0;
 
@@ -26,23 +26,23 @@ class Cycloidal : CurveMaker
             const y = (radius1 * Math.sin(
                     theta1 * theta) - radius2 * Math.sin(
                     theta2 * theta)) * scale;
-            points ~= Vector2(x, y);
+            points ~= Vec2d(x, y);
         }
 
         return points;
     }
 
-    Vector2[] cycloid(double radius = 10, size_t dots = 100, double step = 0.5)
+    Vec2d[] cycloid(double radius = 10, size_t dots = 100, double step = 0.5)
     {
         //TODO check is -PI<=theta<=PI
-        Vector2[] result;
+        Vec2d[] result;
 
         import Math = api.dm.math;
 
         pointsIteration(step, 0, dots, (dt) {
             const x = (radius * dt) - radius * Math.sin(dt);
             const y = radius - radius * Math.cos(dt);
-            result ~= Vector2(x, y);
+            result ~= Vec2d(x, y);
             return true;
         });
         return result;

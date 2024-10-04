@@ -8,7 +8,7 @@ import api.dm.kit.sprites.textures.vectors.contexts.vector_graphics_context : Ve
 
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.math.rect2d : Rect2d;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 
 //TODO remove native api
 import api.dm.sys.cairo.cairo_surface : CairoSurface;
@@ -24,8 +24,8 @@ class VectorTextureMut : Texture
 {
     GraphicStyle style;
     //TODO moveTo + lineTo + stroke, extract class?
-    Vector2 center;
-    Vector2 prevPoint;
+    Vec2d center;
+    Vec2d prevPoint;
 
     this(double width, double height)
     {
@@ -50,7 +50,7 @@ class VectorTextureMut : Texture
         }
     }
 
-    void updateTexture(Vector2[] points)
+    void updateTexture(Vec2d[] points)
     {
         if (points.length < 2)
         {
@@ -66,7 +66,7 @@ class VectorTextureMut : Texture
         });
     }
 
-    void updateTexture(Vector2 next)
+    void updateTexture(Vec2d next)
     {
         updateTextureDraw((context) {
             drawTo(context, next);
@@ -74,7 +74,7 @@ class VectorTextureMut : Texture
         });
     }
 
-    protected void drawTo(GraphicsContext context, Vector2 next)
+    protected void drawTo(GraphicsContext context, Vec2d next)
     {
         context.moveTo(center.x + prevPoint.x, center.y + prevPoint.y);
         context.lineTo(center.x + next.x, center.y + next.y);

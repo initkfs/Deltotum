@@ -15,7 +15,7 @@ import api.dm.gui.controls.scrolls.vscroll: VScroll;
 import api.math.random : Random;
 
 import Math = api.math;
-import api.math.vector2: Vector2i;
+import api.math.vec2: Vec2i;
 import api.dm.kit.graphics.colors.rgba: RGBA;
 import api.dm.kit.graphics.colors.hsv: HSV;
 import api.dm.back.sdl2.sdl_surface: SdlSurface;
@@ -43,7 +43,7 @@ class HopalongGenerator : Control
     SdlSurface screenSurface;
 
     protected {
-        Vector2i[] points;
+        Vec2i[] points;
     }
 
     this(double canvasWidth = 400, double canvasHeight = 400)
@@ -61,7 +61,7 @@ class HopalongGenerator : Control
         isDrawBounds = true;
 
         hopalong = new Hopalong;
-        points = new Vector2i[](hopalong.iterations);
+        points = new Vec2i[](hopalong.iterations);
     }
 
     HSV color;

@@ -6,7 +6,7 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.flip : Flip;
 
 import Math = api.dm.math;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.math.rect2d : Rect2d;
 

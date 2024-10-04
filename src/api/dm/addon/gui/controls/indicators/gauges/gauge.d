@@ -54,7 +54,7 @@ class Gauge : Control
 
     void layoutSegments()
     {
-        import api.math.vector2 : Vector2;
+        import api.math.vec2 : Vec2d;
 
         double px = x + width / 2;
         double py = y + height / 2;
@@ -64,7 +64,7 @@ class Gauge : Control
         double labelAnglePos = 135;
         foreach (label; labels)
         {
-            auto coords = Vector2.fromPolarDeg(labelAnglePos, labelRadius);
+            auto coords = Vec2d.fromPolarDeg(labelAnglePos, labelRadius);
             label.x = px + coords.x - label.width / 2;
             label.y = py + coords.y - label.height / 2;
             labelAnglePos += labelAngleDt;

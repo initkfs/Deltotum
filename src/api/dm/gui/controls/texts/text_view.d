@@ -3,7 +3,7 @@ module api.dm.gui.controls.texts.text_view;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 import api.math.rect2d : Rect2d;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 import api.math.flip : Flip;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 import api.dm.gui.controls.texts.text : Text;

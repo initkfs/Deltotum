@@ -5,7 +5,7 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites.shapes.shape : Shape;
 import api.dm.kit.sprites.textures.vectors.shapes.vpoints_shape : VPointsShape;
 import api.dm.kit.graphics.brushes.brush : Brush;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 import api.dm.addon.fractals.lsystems.lsystem_parser : LSystemParser;
 
 import std.stdio;
@@ -45,9 +45,9 @@ class LShape : VPointsShape
 
         if (!brush)
         {
-            brush = new Brush(Vector2(0, 0));
+            brush = new Brush(Vec2d(0, 0));
             brush.onDrawLineStartEnd = (start, end) {
-                Vector2[2] pp = [start, end];
+                Vec2d[2] pp = [start, end];
                 points.insert(pp[]);
             };
 

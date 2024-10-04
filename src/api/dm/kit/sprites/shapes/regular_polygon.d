@@ -90,7 +90,7 @@ class RegularPolygon : Shape
 
     private void fill()
     {
-        import api.math.vector2 : Vector2;
+        import api.math.vec2 : Vec2d;
 
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
@@ -104,22 +104,22 @@ class RegularPolygon : Shape
         graphics.fillRect(x + width - cornerPadding - style.lineWidth, y + cornerPadding, cornerPadding, height - cornerPadding * 2, fillColor);
 
         //left top corner
-        graphics.fillTriangle(Vector2(x + style.lineWidth, y + cornerPadding), Vector2(x + cornerPadding, y + style
-                .lineWidth), Vector2(
+        graphics.fillTriangle(Vec2d(x + style.lineWidth, y + cornerPadding), Vec2d(x + cornerPadding, y + style
+                .lineWidth), Vec2d(
                 x + cornerPadding, y + cornerPadding), fillColor);
 
         //left bottom corner
-        graphics.fillTriangle(Vector2(x + style.lineWidth, y + height - cornerPadding - style.lineWidth * 2),Vector2(x + cornerPadding, y + height - cornerPadding - style
-                .lineWidth * 2), Vector2(
+        graphics.fillTriangle(Vec2d(x + style.lineWidth, y + height - cornerPadding - style.lineWidth * 2),Vec2d(x + cornerPadding, y + height - cornerPadding - style
+                .lineWidth * 2), Vec2d(
                 x + cornerPadding, y + height - style.lineWidth * 2), fillColor);
 
         //right top corner
-        graphics.fillTriangle(Vector2(x + width - cornerPadding - style.lineWidth, y + style
-                .lineWidth), Vector2(x + width - style.lineWidth * 2, y + cornerPadding), Vector2(
+        graphics.fillTriangle(Vec2d(x + width - cornerPadding - style.lineWidth, y + style
+                .lineWidth), Vec2d(x + width - style.lineWidth * 2, y + cornerPadding), Vec2d(
                 x + width - cornerPadding - style.lineWidth, y + cornerPadding), fillColor);
 
         //right bottom corner
-        graphics.fillTriangle(Vector2(x + width - cornerPadding - style.lineWidth, y + height - cornerPadding - style.lineWidth * 2), Vector2(x + width - style.lineWidth, y + height - cornerPadding - style.lineWidth * 2), Vector2(
+        graphics.fillTriangle(Vec2d(x + width - cornerPadding - style.lineWidth, y + height - cornerPadding - style.lineWidth * 2), Vec2d(x + width - style.lineWidth, y + height - cornerPadding - style.lineWidth * 2), Vec2d(
                 x + width - cornerPadding - style.lineWidth, y + height - style.lineWidth * 2), fillColor);
     }
 }

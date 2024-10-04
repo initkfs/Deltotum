@@ -5,7 +5,7 @@ import api.dm.gui.containers.circle_box : CircleBox;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.sprites.textures.vectors.shapes.vcircle : VCircle;
 import api.dm.kit.sprites.textures.vectors.shapes.varc : VArc;
@@ -27,14 +27,14 @@ class Hand : VShape
     double handWidth = 0;
     double handHeight = 0;
 
-    Vector2 startPoint;
+    Vec2d startPoint;
 
     this(double textureWidth, double textureHeight, double handWidth, double handHeight, GraphicStyle style)
     {
         super(textureWidth, textureHeight, style);
         this.handWidth = handWidth;
         this.handHeight = handHeight;
-        startPoint = Vector2(width / 2, height / 2);
+        startPoint = Vec2d(width / 2, height / 2);
     }
 
     override void create()
@@ -203,7 +203,7 @@ class AnalogClock : Control
                         proto.angle = currAngle;
                     }
 
-                    auto tickPos = Vector2.fromPolarDeg(currAngle, radius - minorTickOffset);
+                    auto tickPos = Vec2d.fromPolarDeg(currAngle, radius - minorTickOffset);
                     auto tickX = radius + tickPos.x - proto.bounds.halfWidth;
                     auto tickY = radius + tickPos.y - proto.bounds.halfHeight;
 
@@ -214,7 +214,7 @@ class AnalogClock : Control
 
                     if (proto is majorTickProto)
                     {
-                        auto textPos = Vector2.fromPolarDeg(currAngle, radius - labelOffset);
+                        auto textPos = Vec2d.fromPolarDeg(currAngle, radius - labelOffset);
 
                         size_t hourNum = (i / 5 + 3) % 12;
                         if (hourNum == 0)

@@ -2,7 +2,7 @@ module api.dm.kit.inputs.cursors.cursor;
 
 import api.dm.com.inputs.com_cursor : ComCursor, ComSystemCursorType;
 
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 
 //TODO move cursor and mouse
 import api.dm.kit.sprites.sprite : Sprite;
@@ -104,7 +104,7 @@ abstract class Cursor
         return _locked;
     }
 
-    Vector2 getPos()
+    Vec2d getPos()
     {
         auto cursor = lastCursor;
         if (!cursor)
@@ -117,7 +117,7 @@ abstract class Cursor
             //TODO log
             throw new Exception(err.toString);
         }
-        return Vector2(x, y);
+        return Vec2d(x, y);
     }
 
     void show()

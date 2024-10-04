@@ -1,4 +1,4 @@
-module api.math.vector2;
+module api.math.vec2;
 
 //TODO fast sqrt?
 import std.math.algebraic : sqrt;
@@ -9,8 +9,8 @@ import api.math.matrices.matrix : Matrix2x2, Matrix2x1;
 
 import Math = api.dm.math;
 
-//TODO template with Vector2
-struct Vector2i {
+//TODO template with Vec2d
+struct Vec2i {
     int x;
     int y;
 }
@@ -19,7 +19,7 @@ struct Vector2i {
  * Authors: initkfs
  */
 //TODO template types, operator overloads
-struct Vector2
+struct Vec2d
 {
     double x = 0;
     double y = 0;
@@ -29,24 +29,24 @@ struct Vector2
     alias euclidean = distanceTo;
     alias length = magnitude;
 
-    Vector2 add(Vector2 other) const @nogc nothrow pure @safe
+    Vec2d add(Vec2d other) const @nogc nothrow pure @safe
     {
-        return Vector2(x + other.x, y + other.y);
+        return Vec2d(x + other.x, y + other.y);
     }
 
-    Vector2 subtract(Vector2 other) const @nogc nothrow pure @safe
+    Vec2d subtract(Vec2d other) const @nogc nothrow pure @safe
     {
-        return Vector2(x - other.x, y - other.y);
+        return Vec2d(x - other.x, y - other.y);
     }
 
-    Vector2 subtractAbs(Vector2 other) const @nogc nothrow pure @safe
+    Vec2d subtractAbs(Vec2d other) const @nogc nothrow pure @safe
     {
         import Math = api.dm.math;
 
-        return Vector2(Math.abs(x - other.x), Math.abs(y - other.y));
+        return Vec2d(Math.abs(x - other.x), Math.abs(y - other.y));
     }
 
-    Vector2 normalize() const @nogc nothrow pure @safe
+    Vec2d normalize() const @nogc nothrow pure @safe
     {
         const double length = magnitude;
         double normX = 0;
@@ -57,17 +57,17 @@ struct Vector2
             normY = y / length;
         }
 
-        return Vector2(normX, normY);
+        return Vec2d(normX, normY);
     }
 
-    Vector2 directionTo(Vector2 other) const @nogc nothrow pure @safe
+    Vec2d directionTo(Vec2d other) const @nogc nothrow pure @safe
     {
         return other.subtract(this).normalize;
     }
 
-    Vector2 clone() const @nogc nothrow pure @safe
+    Vec2d clone() const @nogc nothrow pure @safe
     {
-        return Vector2(x, y);
+        return Vec2d(x, y);
     }
 
     double magnitude() const @nogc nothrow pure @safe
@@ -90,126 +90,126 @@ struct Vector2
         return sqrt(magnitudeSquaredXY(x, y));
     }
 
-    double distanceTo(Vector2 other) const @nogc nothrow pure @safe
+    double distanceTo(Vec2d other) const @nogc nothrow pure @safe
     {
         const double powX = (other.x - x) ^^ 2;
         const double powY = (other.y - y) ^^ 2;
         return sqrt(powX + powY);
     }
 
-    double manhattan(Vector2 other) const @nogc nothrow pure @safe
+    double manhattan(Vec2d other) const @nogc nothrow pure @safe
     {
         import Math = api.dm.math;
 
         return Math.abs(other.x - x) + Math.abs(other.y - y);
     }
 
-    double cosineSimilarity(Vector2 other) const @nogc nothrow pure @safe
+    double cosineSimilarity(Vec2d other) const @nogc nothrow pure @safe
     {
         import Math = api.dm.math;
 
         return dotProduct(other) / (magnitude * other.magnitude);
     }
 
-    Vector2 scale(double factor) const @nogc nothrow pure @safe
+    Vec2d scale(double factor) const @nogc nothrow pure @safe
     {
-        return Vector2(x * factor, y * factor);
+        return Vec2d(x * factor, y * factor);
     }
 
-    Vector2 multiply(Vector2 other) const @nogc nothrow pure @safe
+    Vec2d multiply(Vec2d other) const @nogc nothrow pure @safe
     {
-        return Vector2(x * other.x, y * other.y);
+        return Vec2d(x * other.x, y * other.y);
     }
 
-    Vector2 div(double factor) const @nogc nothrow pure @safe
+    Vec2d div(double factor) const @nogc nothrow pure @safe
     {
         assert(factor != 0);
         const newX = x / factor;
         const newY = y / factor;
-        return Vector2(newX, newY);
+        return Vec2d(newX, newY);
     }
 
-    Vector2 inc(double value) const @nogc nothrow pure @safe
+    Vec2d inc(double value) const @nogc nothrow pure @safe
     {
-        return Vector2(x + value, y + value);
+        return Vec2d(x + value, y + value);
     }
 
-    Vector2 incXY(double xValue, double yValud) const @nogc nothrow pure @safe
+    Vec2d incXY(double xValue, double yValud) const @nogc nothrow pure @safe
     {
-        return Vector2(x + xValue, y + yValud);
+        return Vec2d(x + xValue, y + yValud);
     }
 
-    Vector2 dec(double value) const @nogc nothrow pure @safe
+    Vec2d dec(double value) const @nogc nothrow pure @safe
     {
-        return Vector2(x - value, y - value);
+        return Vec2d(x - value, y - value);
     }
 
-    Vector2 perpendicular() const @nogc nothrow pure @safe
+    Vec2d perpendicular() const @nogc nothrow pure @safe
     {
         //or y, -x to left
-        return Vector2(-y, x);
+        return Vec2d(-y, x);
     }
 
-    Vector2 translate(double tx, double ty) const @nogc nothrow pure @safe
+    Vec2d translate(double tx, double ty) const @nogc nothrow pure @safe
     {
-        return Vector2(x + tx, y + ty);
+        return Vec2d(x + tx, y + ty);
     }
 
-    Vector2 rotate(double angleDeg) const @nogc nothrow pure @safe
+    Vec2d rotate(double angleDeg) const @nogc nothrow pure @safe
     {
         immutable newX = x * Math.cosDeg(angleDeg) - y * Math.sinDeg(angleDeg);
         immutable newY = x * Math.sinDeg(angleDeg) + y * Math.cosDeg(angleDeg);
-        return Vector2(newX, newY);
+        return Vec2d(newX, newY);
     }
 
-    Vector2 shear(double sx, double sy) const @nogc nothrow pure @safe
+    Vec2d shear(double sx, double sy) const @nogc nothrow pure @safe
     {
         immutable newX = x + sx * y;
         immutable newY = y + sy * x;
-        return Vector2(newX, newY);
+        return Vec2d(newX, newY);
     }
 
-    Vector2 project(double factor) const @nogc nothrow pure @safe
+    Vec2d project(double factor) const @nogc nothrow pure @safe
     in (factor != 0.0)
     {
-        return Vector2(x / factor, y / factor);
+        return Vec2d(x / factor, y / factor);
     }
 
-    double dotProduct(Vector2 other) const @nogc nothrow pure @safe
+    double dotProduct(Vec2d other) const @nogc nothrow pure @safe
     {
         return x * other.x + y * other.y;
     }
 
-    double cross(Vector2 other) const @nogc nothrow pure @safe
+    double cross(Vec2d other) const @nogc nothrow pure @safe
     {
         return x * other.y - y * other.x;
     }
 
-    Vector2 crossVecScalar(double s) const @nogc nothrow pure @safe
+    Vec2d crossVecScalar(double s) const @nogc nothrow pure @safe
     {
-        return Vector2(s * y, -s * x);
+        return Vec2d(s * y, -s * x);
     }
 
-    Vector2 crossScalarVec(double s) const @nogc nothrow pure @safe
+    Vec2d crossScalarVec(double s) const @nogc nothrow pure @safe
     {
-        return Vector2(-s * y, s * x);
+        return Vec2d(-s * y, s * x);
     }
 
-    double angleRadTo(Vector2 other) const @nogc nothrow pure @safe
+    double angleRadTo(Vec2d other) const @nogc nothrow pure @safe
     {
         immutable direction = directionTo(other);
         immutable angle = angleRad(direction);
         return angle;
     }
 
-    double angleDegTo(Vector2 other) const @nogc nothrow pure @safe
+    double angleDegTo(Vec2d other) const @nogc nothrow pure @safe
     {
         immutable angleRad = angleRadTo(other);
         immutable anleDeg = Math.radToDeg(angleRad);
         return anleDeg;
     }
 
-    double angleDeg360To(Vector2 other) const @nogc nothrow pure @safe
+    double angleDeg360To(Vec2d other) const @nogc nothrow pure @safe
     {
         auto anleDeg = angleDegTo(other);
         if (anleDeg < 0)
@@ -220,14 +220,14 @@ struct Vector2
         return anleDeg;
     }
 
-    double angleRad(Vector2 vec) const @nogc nothrow pure @safe
+    double angleRad(Vec2d vec) const @nogc nothrow pure @safe
     {
         //clockwise 0..180, counter-clockwise 0..-180
         immutable angle = Math.atan2(vec.y, vec.x);
         return angle;
     }
 
-    double angleDeg(Vector2 vec) const @nogc nothrow pure @safe
+    double angleDeg(Vec2d vec) const @nogc nothrow pure @safe
     {
 
         immutable anleDeg = Math.radToDeg(angleRad(vec));
@@ -244,7 +244,7 @@ struct Vector2
         return angleDeg(this);
     }
 
-    double angleDegBetween(Vector2 other) const @nogc nothrow pure @safe
+    double angleDegBetween(Vec2d other) const @nogc nothrow pure @safe
     {
         const double delta = (x * other.x + y * other.y) / sqrt(
             magnitudeSquaredXY(x, y) * magnitudeSquaredXY(other.x, other.y));
@@ -262,40 +262,40 @@ struct Vector2
         return angleRad;
     }
 
-    static Vector2 fromPolarDeg(double angleDeg, double radius) @nogc nothrow pure @safe
+    static Vec2d fromPolarDeg(double angleDeg, double radius) @nogc nothrow pure @safe
     {
         return fromPolarRad(Math.degToRad(angleDeg), radius);
     }
 
-    static Vector2 fromPolarRad(double angleRad, double radius) @nogc nothrow pure @safe
+    static Vec2d fromPolarRad(double angleRad, double radius) @nogc nothrow pure @safe
     {
         immutable pX = radius * Math.cos(angleRad);
         immutable pY = radius * Math.sin(angleRad);
-        return Vector2(pX, pY);
+        return Vec2d(pX, pY);
     }
 
-    static Vector2 toPolarRad(Vector2 vec) @nogc nothrow pure @safe
+    static Vec2d toPolarRad(Vec2d vec) @nogc nothrow pure @safe
     {
         return toPolarRad(vec.x, vec.y);
     }
 
-    static Vector2 toPolarRad(double x, double y) @nogc nothrow pure @safe
+    static Vec2d toPolarRad(double x, double y) @nogc nothrow pure @safe
     {
         const radius = Math.sqrt(x * x + y * y);
         const angleRad = Math.atan2(y, x);
 
-        return Vector2(radius, angleRad);
+        return Vec2d(radius, angleRad);
     }
 
-    static Vector2 toPolarDeg(Vector2 vec) @nogc nothrow pure @safe
+    static Vec2d toPolarDeg(Vec2d vec) @nogc nothrow pure @safe
     {
         return toPolarDeg(vec.x, vec.y);
     }
 
-    static Vector2 toPolarDeg(double x, double y) @nogc nothrow pure @safe
+    static Vec2d toPolarDeg(double x, double y) @nogc nothrow pure @safe
     {
         const polarRad = toPolarRad(x, y);
-        return Vector2(polarRad.x, Math.radToDeg(polarRad.y));
+        return Vec2d(polarRad.x, Math.radToDeg(polarRad.y));
     }
 
     Matrix2x1 transpose() const pure @safe
@@ -303,53 +303,53 @@ struct Vector2
         return Matrix2x1([[x], [y]]);
     }
 
-    Vector2 linoperator(Matrix2x2 linearOpMatrix) const pure @safe
+    Vec2d linoperator(Matrix2x2 linearOpMatrix) const pure @safe
     {
         Matrix2x1 result = linearOpMatrix.multiply(transpose);
-        return Vector2(result.value(0, 0), result.value(1, 0));
+        return Vec2d(result.value(0, 0), result.value(1, 0));
     }
 
-    Vector2 reflectX() const @nogc nothrow pure @safe
+    Vec2d reflectX() const @nogc nothrow pure @safe
     {
-        return Vector2(-x, y);
+        return Vec2d(-x, y);
     }
 
-    Vector2 reflectY() const @nogc nothrow pure @safe
+    Vec2d reflectY() const @nogc nothrow pure @safe
     {
-        return Vector2(x, -y);
+        return Vec2d(x, -y);
     }
 
-    Vector2 reflect() const @nogc nothrow pure @safe
+    Vec2d reflect() const @nogc nothrow pure @safe
     {
         const newX = x == 0 ? 0 : -x;
         const newY = y == 0 ? 0 : -y;
-        return Vector2(newX, newY);
+        return Vec2d(newX, newY);
     }
 
-    Vector2 min(Vector2 other) const @nogc nothrow pure @safe
+    Vec2d min(Vec2d other) const @nogc nothrow pure @safe
     {
         const newX = Math.min(x, other.x);
         const newY = Math.min(y, other.y);
 
-        return Vector2(newX, newY);
+        return Vec2d(newX, newY);
     }
 
-    Vector2 max(Vector2 other) const @nogc nothrow pure @safe
+    Vec2d max(Vec2d other) const @nogc nothrow pure @safe
     {
         const newX = Math.max(x, other.x);
         const newY = Math.max(y, other.y);
 
-        return Vector2(newX, newY);
+        return Vec2d(newX, newY);
     }
 
-    Vector2 truncate(double maxValue) const @nogc nothrow pure @safe
+    Vec2d truncate(double maxValue) const @nogc nothrow pure @safe
     {
         double scaleFactor = maxValue / this.magnitude;
 
         import std.math.operations : cmp;
 
         scaleFactor = cmp(scaleFactor, 1.0) < 0 ? scaleFactor : 1.0;
-        Vector2 result = scale(scaleFactor);
+        Vec2d result = scale(scaleFactor);
         return result;
     }
 
@@ -391,14 +391,14 @@ struct Vector2
         throw new Exception(text("Invalid vector index: ", i));
     }
 
-    void opOpAssign(string op)(Vector2 other)
+    void opOpAssign(string op)(Vec2d other)
     {
         const otherId = __traits(identifier, other);
         mixin("x" ~ op ~ "=" ~ otherId ~ ".x;");
         mixin("y" ~ op ~ "=" ~ otherId ~ ".y;");
     }
 
-    Vector2 opBinary(string op)(Vector2 other) const @nogc nothrow pure @safe
+    Vec2d opBinary(string op)(Vec2d other) const @nogc nothrow pure @safe
     {
         static if (op == "+")
             return add(other);
@@ -408,57 +408,57 @@ struct Vector2
             static assert(0, "Operator " ~ op ~ " not implemented");
     }
 
-    Vector2i toInt(){
-        return Vector2i(cast(int) x, cast(int) y);
+    Vec2i toInt(){
+        return Vec2i(cast(int) x, cast(int) y);
     }
 
     unittest
     {
         import std.math.operations : isClose;
 
-        Vector2 v = Vector2(5, 6);
-        v += Vector2(1, 1);
+        Vec2d v = Vec2d(5, 6);
+        v += Vec2d(1, 1);
         assert(v.x == 6);
         assert(v.y == 7);
 
-        v = Vector2(3, 4);
-        v -= Vector2(1, 1);
+        v = Vec2d(3, 4);
+        v -= Vec2d(1, 1);
         assert(v.x == 2);
         assert(v.y == 3);
 
-        v = Vector2(5, 6);
+        v = Vec2d(5, 6);
         auto addV = v + v;
         assert(addV.x == 10);
         assert(addV.y == 12);
 
-        v = Vector2(5, 6);
+        v = Vec2d(5, 6);
         auto subtractV = v - v;
         assert(subtractV.x == 0);
         assert(subtractV.y == 0);
 
-        auto norm = Vector2(5, 6).normalize;
+        auto norm = Vec2d(5, 6).normalize;
         assert(isClose(norm.x, 0.640184, 1e-6));
         assert(isClose(norm.y, 0.768221, 1e-6));
 
-        auto distance = Vector2(5, 6).distanceTo(Vector2(10, 12));
+        auto distance = Vec2d(5, 6).distanceTo(Vec2d(10, 12));
         assert(isClose(distance, 7.81025, 1e-6));
 
-        Vector2 horizontalReflect = Vector2(5, 6).linoperator(Matrix2x2([
+        Vec2d horizontalReflect = Vec2d(5, 6).linoperator(Matrix2x2([
                 [-1, 0], [0, 1]
             ]));
         assert(horizontalReflect.x == -5);
         assert(horizontalReflect.y == 6);
 
-        double dot = Vector2(5, 6).dotProduct(Vector2(2, 4));
+        double dot = Vec2d(5, 6).dotProduct(Vec2d(2, 4));
         assert(dot == 34);
 
-        auto mVec1 = Vector2(23, 25);
-        auto mVec2 = Vector2(11, 2);
+        auto mVec1 = Vec2d(23, 25);
+        auto mVec2 = Vec2d(11, 2);
         auto mres = mVec1.manhattan(mVec2);
         assert(isClose(mres, 35));
 
-        auto cVec1 = Vector2(11, 12);
-        auto cVec2 = Vector2(5, 6);
+        auto cVec1 = Vec2d(11, 12);
+        auto cVec2 = Vec2d(5, 6);
         auto cres = cVec1.cosineSimilarity(cVec2);
         assert(isClose(cres, 0.998886, 1e-6));
     }

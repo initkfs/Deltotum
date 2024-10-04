@@ -28,7 +28,7 @@ class CircleLayout : ManagedLayout
         }
 
         import Math = api.dm.math;
-        import api.math.vector2 : Vector2;
+        import api.math.vec2 : Vec2d;
         import std.range.primitives : walkLength;
 
         auto children = childrenForLayout(root);
@@ -48,7 +48,7 @@ class CircleLayout : ManagedLayout
         foreach (child; children)
         {
             const childBounds = child.bounds;
-            const pos = Vector2.fromPolarDeg(nextDeg, radius);
+            const pos = Vec2d.fromPolarDeg(nextDeg, radius);
             child.x = child.margin.left + startX + pos.x - childBounds.halfWidth - child
                 .margin.right;
             child.y = child.margin.top + startY + pos.y - childBounds.halfHeight - child

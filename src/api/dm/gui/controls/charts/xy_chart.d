@@ -10,7 +10,7 @@ import api.dm.gui.containers.vbox : VBox;
 
 import api.dm.com.inputs.com_keyboard : ComKeyName;
 
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 import Math = api.math;
 
 /**
@@ -322,7 +322,7 @@ class XYChart : Container
         return yScale1.maxValue - (h * yScale1.range / chartAreaHeight);
     }
 
-    protected Vector2 toChartAreaPos(double posX, double posY, bool isUseOffsets = true, bool isUseScale = true)
+    protected Vec2d toChartAreaPos(double posX, double posY, bool isUseOffsets = true, bool isUseScale = true)
     {
         assert(chartArea);
 
@@ -370,7 +370,7 @@ class XYChart : Container
             }
         }
 
-        return Vector2(newX, newY);
+        return Vec2d(newX, newY);
     }
 
     void drawAxis()
@@ -431,7 +431,7 @@ class XYChart : Container
             trackPointerInfo.isVisible = true;
         }
 
-        Vector2 pointerPos = input.pointerPos;
+        Vec2d pointerPos = input.pointerPos;
         auto dx = pointerPos.x - chartArea.x;
         auto dy = pointerPos.y - chartArea.y;
         if (dx < 0 || dy < 0)

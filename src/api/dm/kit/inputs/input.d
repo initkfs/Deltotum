@@ -4,9 +4,9 @@ import api.dm.kit.inputs.cursors.cursor : Cursor;
 import api.dm.kit.inputs.clipboards.clipboard : Clipboard;
 import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import api.dm.com.inputs.com_keyboard : ComKeyName;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 
 /**
  * Authors: initkfs
@@ -73,7 +73,7 @@ class Input
         return pressedKeys[ki];
     }
 
-    Vector2 pointerPos()
+    Vec2d pointerPos()
     {
         return systemCursor.getPos;
     }

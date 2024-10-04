@@ -1,7 +1,7 @@
 module api.math.random;
 
 import api.core.components.units.services.loggable_unit : LoggableUnit;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 import std.random : uniform, unpredictableSeed, StdRandom = Random;
 import std.range.primitives;
 import std.typecons : Nullable, Tuple;
@@ -56,11 +56,11 @@ class Random
         return randomBetween!double(0, 1);
     }
 
-    Vector2 randomBerweenVec(Vector2 min, Vector2 max) pure @safe
+    Vec2d randomBerweenVec(Vec2d min, Vec2d max) pure @safe
     {
         const newX = randomBetween(min.x, max.x);
         const newY = randomBetween(min.y, max.y);
-        return Vector2(newX, newY);
+        return Vec2d(newX, newY);
     }
 
     Nullable!(Unqual!U) randomElement(T : U[], U)(T container) pure @safe

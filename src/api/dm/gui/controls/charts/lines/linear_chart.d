@@ -2,7 +2,7 @@ module api.dm.gui.controls.charts.lines.linear_chart;
 
 import api.dm.gui.controls.charts.xy_chart : XYChart;
 import api.dm.gui.controls.control : Control;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 import api.math.insets : Insets;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.palettes.material_palette : MaterialPalette;
@@ -123,7 +123,7 @@ class LinearChart : XYChart
             graphics.restoreColor;
         }
 
-        Vector2 prev;
+        Vec2d prev;
         foreach (i, valueX; xValues)
         {
             const valueY = yValues[i];

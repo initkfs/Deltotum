@@ -12,7 +12,7 @@ import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 import api.dm.gui.controls.buttons.button : Button;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 
 import std.conv : to;
 import std.format : format;
@@ -173,14 +173,14 @@ class HourChooser : TimeChooser
         const sliderBounds = selectionSlider.bounds;
         auto angle = ((360.0 / 12) * (v % 12) + 270) % 360;
 
-        Vector2 pos;
+        Vec2d pos;
         if (v >= 1 && v <= 12)
         {
-            pos = Vector2.fromPolarDeg(angle, innerBoxRadius);
+            pos = Vec2d.fromPolarDeg(angle, innerBoxRadius);
         }
         else
         {
-            pos = Vector2.fromPolarDeg(angle, outerBoxRadius);
+            pos = Vec2d.fromPolarDeg(angle, outerBoxRadius);
         }
 
         selectionSlider.xy(center.x + pos.x - sliderBounds.halfWidth, center.y + pos.y - sliderBounds
@@ -286,7 +286,7 @@ class MinSecChooser : TimeChooser
         const sliderBounds = selectionSlider.bounds;
 
         auto angle = ((360.0 / 60) * v + 270) % 360;
-        auto pos = Vector2.fromPolarDeg(angle, innerBoxRadius);
+        auto pos = Vec2d.fromPolarDeg(angle, innerBoxRadius);
 
         selectionSlider.xy(center.x + pos.x - sliderBounds.halfWidth, center.y + pos.y - sliderBounds
                 .halfHeight);

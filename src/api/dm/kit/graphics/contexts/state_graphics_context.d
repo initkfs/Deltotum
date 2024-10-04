@@ -1,7 +1,7 @@
 module api.dm.kit.graphics.contexts.state_graphics_context;
 
 import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
-import api.math.vector2: Vector2;
+import api.math.vec2: Vec2d;
 
 /**
  * Authors: initkfs
@@ -20,7 +20,7 @@ abstract class StateGraphicsContext : GraphicsContext
         this.y = y;
     }
 
-    void moveTo(Vector2 pos){
+    void moveTo(Vec2d pos){
         moveTo(pos.x, pos.y);
     }
 

@@ -9,7 +9,7 @@ import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
 import api.math.random : Random;
 
 import Math = api.dm.math;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 import std.conv : to;
 
 import std;

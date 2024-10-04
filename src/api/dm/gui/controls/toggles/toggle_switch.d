@@ -14,7 +14,7 @@ import api.dm.kit.sprites.textures.texture : Texture;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.sprites.transitions.targets.target_transition : TargetTransition;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 import api.dm.gui.controls.texts.text : Text;
 
 /**
@@ -43,11 +43,11 @@ class ToggleSwitch : Labeled
     Sprite switchHandle;
     Sprite delegate() switchHandleFactory;
 
-    MinMaxTransition!Vector2 switchOnAnimation;
-    MinMaxTransition!Vector2 switchOffAnimation;
+    MinMaxTransition!Vec2d switchOnAnimation;
+    MinMaxTransition!Vec2d switchOffAnimation;
 
-    MinMaxTransition!Vector2 delegate() switchOnAnimationFactory;
-    MinMaxTransition!Vector2 delegate() switchOffAnimationFactory;
+    MinMaxTransition!Vec2d delegate() switchOnAnimationFactory;
+    MinMaxTransition!Vec2d delegate() switchOffAnimationFactory;
 
     //TODO factories, settings
     Sprite handleOnEffect;
@@ -127,29 +127,29 @@ class ToggleSwitch : Labeled
         };
 
         switchOnAnimationFactory = () {
-            import api.math.vector2 : Vector2;
+            import api.math.vec2 : Vec2d;
             import api.dm.kit.sprites.transitions.targets.motions.linear_motion : LinearMotion;
             import api.dm.kit.sprites.transitions.curves.uni_interpolator : UniInterpolator;
 
             auto uniInterp = new UniInterpolator;
             uniInterp.interpolateMethod = &uniInterp.quadInOut;
 
-            auto end = Vector2(bounds.right - switchHandle.width, bounds.y);
-            auto animation = new LinearMotion(Vector2(x, y), end, 200, uniInterp);
+            auto end = Vec2d(bounds.right - switchHandle.width, bounds.y);
+            auto animation = new LinearMotion(Vec2d(x, y), end, 200, uniInterp);
             animation.addTarget(switchHandle);
             animation.isInfinite = false;
             return animation;
         };
 
         switchOffAnimationFactory = () {
-            import api.math.vector2 : Vector2;
+            import api.math.vec2 : Vec2d;
             import api.dm.kit.sprites.transitions.targets.motions.linear_motion : LinearMotion;
             import api.dm.kit.sprites.transitions.curves.uni_interpolator : UniInterpolator;
 
-            auto start = Vector2(bounds.right - switchHandle.width, y);
+            auto start = Vec2d(bounds.right - switchHandle.width, y);
             auto uniInterp = new UniInterpolator;
             uniInterp.interpolateMethod = &uniInterp.quadInOut;
-            auto animation = new LinearMotion(start, Vector2(x, y), 200, uniInterp);
+            auto animation = new LinearMotion(start, Vec2d(x, y), 200, uniInterp);
             animation.addTarget(switchHandle);
             animation.isInfinite = false;
             return animation;
@@ -258,9 +258,9 @@ class ToggleSwitch : Labeled
         if (switchOnAnimation && !switchOnAnimation.isRunning)
         {
             const b = switchContainer.bounds;
-            const minValue = Vector2(b.x + switchContainer.padding.left, b
+            const minValue = Vec2d(b.x + switchContainer.padding.left, b
                     .y);
-            const maxValue = Vector2(
+            const maxValue = Vec2d(
                 b.right - switchHandle.width - switchContainer.padding.right, b
                     .y);
             switchOnAnimation.minValue = minValue;
@@ -291,9 +291,9 @@ class ToggleSwitch : Labeled
         if (switchOffAnimation !is null && !switchOffAnimation.isRunning)
         {
             const b = switchContainer.bounds;
-            switchOffAnimation.minValue = Vector2(
+            switchOffAnimation.minValue = Vec2d(
                 b.right - switchHandle.width - switchContainer.padding.right, b.y);
-            switchOffAnimation.maxValue = Vector2(b.x + switchContainer.padding.left, b
+            switchOffAnimation.maxValue = Vec2d(b.x + switchContainer.padding.left, b
                     .y);
             switchOffAnimation.run;
         }

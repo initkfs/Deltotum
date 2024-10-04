@@ -4,7 +4,7 @@ import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.sprites.textures.texture : Texture;
 import api.dm.kit.sprites.textures.vectors.vector_texture : VectorTexture;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 import api.math.rect2d : Rect2d;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.assets.fonts.font_size : FontSize;

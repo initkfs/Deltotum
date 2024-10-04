@@ -2,7 +2,7 @@ module api.dm.kit.sprites.transitions.targets.motions.circular_motion;
 
 import api.dm.kit.sprites.transitions.targets.value_transition : ValueTransition;
 import api.dm.kit.sprites.transitions.curves.interpolator : Interpolator;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 import math = api.dm.math;
 
 /**
@@ -10,12 +10,12 @@ import math = api.dm.math;
  */
 class CircularMotion : ValueTransition
 {
-    Vector2 center;
+    Vec2d center;
     double radius = 0;
 
-    void delegate(Vector2) onPoint;
+    void delegate(Vec2d) onPoint;
 
-    this(Vector2 center = Vector2(0, 0), double radius = 100, int timeMs = 200, Interpolator interpolator = null)
+    this(Vec2d center = Vec2d(0, 0), double radius = 100, int timeMs = 200, Interpolator interpolator = null)
     {
         super(0, 360, timeMs, interpolator);
 
@@ -30,7 +30,7 @@ class CircularMotion : ValueTransition
 
             if (onPoint)
             {
-                onPoint(Vector2(x, y));
+                onPoint(Vec2d(x, y));
             }
         };
     }

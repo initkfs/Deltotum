@@ -3,7 +3,7 @@ module api.math.numericals.interp;
 /**
  * Authors: initkfs
  */
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 import api.dm.math : clamp01;
 
 import std.math.traits : isFinite;
@@ -92,10 +92,10 @@ double blerp(double c00, double c10, double c01, double c11, double tx, double t
     return lerp(lerp(c00, c10, tx, clamp), lerp(c01, c11, tx, clamp), ty);
 }
 
-Vector2 lerp(Vector2 a, Vector2 b, double t, bool clamp = true) @nogc nothrow pure @safe
+Vec2d lerp(Vec2d a, Vec2d b, double t, bool clamp = true) @nogc nothrow pure @safe
 {
     const double progress0to1 = clamp ? clamp01(t) : t;
-    return Vector2(a.x + (b.x - a.x) * progress0to1,
+    return Vec2d(a.x + (b.x - a.x) * progress0to1,
         a.y + (b.y - a.y) * progress0to1);
 }
 

@@ -1,7 +1,7 @@
 module api.dm.kit.sprites.sprite;
 
 import api.dm.kit.events.event_kit_target : EventKitTarget;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 import api.math.rect2d : Rect2d;
 import api.math.alignment : Alignment;
 import api.math.insets : Insets;
@@ -68,8 +68,8 @@ class Sprite : EventKitTarget
 
     bool isPhysicsEnabled;
 
-    Vector2 velocity;
-    Vector2 acceleration;
+    Vec2d velocity;
+    Vec2d acceleration;
 
     Sprite isCollisionProcess;
     Sprite[] targetsForCollisions;
@@ -1274,12 +1274,12 @@ class Sprite : EventKitTarget
         return (y = middleY);
     }
 
-    Vector2 pos() @safe pure nothrow
+    Vec2d pos() @safe pure nothrow
     {
-        return Vector2(x, y);
+        return Vec2d(x, y);
     }
 
-    bool pos(Vector2 pos)
+    bool pos(Vec2d pos)
     {
         bool isChangePos;
         isChangePos |= (x = pos.x);
@@ -1287,9 +1287,9 @@ class Sprite : EventKitTarget
         return isChangePos;
     }
 
-    Vector2 center()
+    Vec2d center()
     {
-        return Vector2(x + (width / 2.0), y + (height / 2.0));
+        return Vec2d(x + (width / 2.0), y + (height / 2.0));
     }
 
     bool xy(double newX, double newY)
@@ -1755,9 +1755,9 @@ class Sprite : EventKitTarget
 
         graphics.changeColor(color);
 
-        import api.math.vector2 : Vector2;
+        import api.math.vec2 : Vec2d;
 
-        graphics.rect(Vector2(clip.x, clip.y), clip.width, clip.height);
+        graphics.rect(Vec2d(clip.x, clip.y), clip.width, clip.height);
 
         graphics.restoreColor;
     }

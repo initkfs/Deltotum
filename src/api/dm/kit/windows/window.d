@@ -4,7 +4,7 @@ import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.dm.com.com_native_ptr : ComNativePtr;
 import api.dm.com.graphics.com_window : ComWindow;
 import api.math.rect2d : Rect2d;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 
 import api.dm.kit.scenes.scene_manager : SceneManager;
 import api.dm.kit.windows.window_manager : WindowManager;

@@ -12,7 +12,7 @@ import api.dm.kit.sprites.transitions.transition : Transition;
 import api.dm.kit.sprites.transitions.targets.value_transition : ValueTransition;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 import api.math.rect2d : Rect2d;
 
 import Math = api.math;
@@ -26,14 +26,14 @@ class Hand : VShape
     double handWidth = 0;
     double handHeight = 0;
 
-    Vector2 startPoint;
+    Vec2d startPoint;
 
     this(double textureWidth, double textureHeight, double handWidth, double handHeight, GraphicStyle style)
     {
         super(textureWidth, textureHeight, style);
         this.handWidth = handWidth;
         this.handHeight = handHeight;
-        startPoint = Vector2(width / 2, height / 2);
+        startPoint = Vec2d(width / 2, height / 2);
     }
 
     override void create()
@@ -209,7 +209,7 @@ class RadialGauge : Control
                 assert(endIndex < ticksCount);
                 foreach (i; 0 .. ticksCount)
                 {
-                    auto pos = Vector2.fromPolarDeg(startAngleDeg, radius - 35);
+                    auto pos = Vec2d.fromPolarDeg(startAngleDeg, radius - 35);
 
                     Texture proto = i % labelStepCount == 0 ? bigTickProto : smallTickProto;
 
@@ -225,7 +225,7 @@ class RadialGauge : Control
 
                     if (i == 0 || i == endIndex || proto is bigTickProto)
                     {
-                        auto textPos = Vector2.fromPolarDeg(startAngleDeg, radius - 15);
+                        auto textPos = Vec2d.fromPolarDeg(startAngleDeg, radius - 15);
 
                         auto labelText = (i * valueStep).to!dstring;
                         labelProto.text = labelText;

@@ -1,6 +1,6 @@
 module api.math.affine2d;
 
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 
 /**
  * Authors: initkfs
@@ -194,11 +194,11 @@ struct Affine2d
         return (m00 == 1 && m01 == 0 && m10 == 0 && m11 == 1);
     }
 
-    Vector2 transform(Vector2 point) const @nogc nothrow pure @safe
+    Vec2d transform(Vec2d point) const @nogc nothrow pure @safe
     {
         immutable newX = m00 * point.x + m01 * point.y + m02;
         immutable newY = m10 * point.x + m11 * point.y + m12;
-        return Vector2(newX, newY);
+        return Vec2d(newX, newY);
     }
 
     string toString() const

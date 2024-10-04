@@ -1,7 +1,7 @@
 module api.dm.gui.controls.scales.radial_proto_scale;
 
 import api.dm.gui.controls.control : Control;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 import api.math.rect2d : Rect2d;
 import Math = api.math;
 
@@ -127,7 +127,7 @@ class RadialProtoScale : Control
                 assert(endIndex < ticksCount);
                 foreach (i; 0 .. ticksCount)
                 {
-                    auto pos = Vector2.fromPolarDeg(startAngleDeg, radius - tickOuterPadding);
+                    auto pos = Vec2d.fromPolarDeg(startAngleDeg, radius - tickOuterPadding);
 
                     Texture proto = (majorTickStep > 0 && ((i % majorTickStep) == 0)) ? bigTickProto : smallTickProto;
 
@@ -143,7 +143,7 @@ class RadialProtoScale : Control
 
                     if ((isShowFirstLastLabel && (i == 0 || i == endIndex)) || (labelStep > 0 &&(i % labelStep == 0)))
                     {
-                        auto textPos = Vector2.fromPolarDeg(startAngleDeg, radius - labelOuterPadding);
+                        auto textPos = Vec2d.fromPolarDeg(startAngleDeg, radius - labelOuterPadding);
 
                         auto labelText = (i * valueStep).to!dstring;
                         labelProto.text = labelText;

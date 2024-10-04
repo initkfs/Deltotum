@@ -106,7 +106,7 @@ class BaseRadialProgressBar : BaseProgressBar
     {
         assert(segments.length == fillSegments.length);
 
-        import api.math.vector2 : Vector2;
+        import api.math.vec2 : Vec2d;
 
         double radius = diameter / 2 - innerPadding;
 
@@ -118,7 +118,7 @@ class BaseRadialProgressBar : BaseProgressBar
         double angle = startAngleDeg;
         foreach (i, s; segments)
         {
-            const coords = Vector2.fromPolarDeg(angle, radius);
+            const coords = Vec2d.fromPolarDeg(angle, radius);
 
             s.x = cx + coords.x - s.width / 2;
             s.y = cy + coords.y - s.height / 2;

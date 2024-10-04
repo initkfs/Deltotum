@@ -4,13 +4,13 @@ import api.dm.kit.sprites.textures.vectors.shapes.vshape : VShape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.sprites.textures.vectors.shapes.vhexagon : VHexagon;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 
 import Math = api.dm.math;
 
 struct HexagonGeometry
 {
-    Vector2 pos;
+    Vec2d pos;
     VHexagon hexagon;
 }
 
@@ -55,7 +55,7 @@ class VHexagonGrid : Sprite
     {
         auto hex = new VHexagon(hexagonSize, style);
         addCreate(hex);
-        hexagons ~= HexagonGeometry(Vector2(x, y), hex);
+        hexagons ~= HexagonGeometry(Vec2d(x, y), hex);
     }
 
     override void create()

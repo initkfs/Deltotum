@@ -4,7 +4,7 @@ import api.dm.kit.graphics.contexts.state_graphics_context : StateGraphicsContex
 import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
 import api.dm.kit.graphics.graphics : Graphics;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 
 /**
  * Authors: initkfs
@@ -49,7 +49,7 @@ class RendererGraphicsContext : StateGraphicsContext
         moveTo(endX, endY);
     }
 
-    void lineTo(Vector2 pos){
+    void lineTo(Vec2d pos){
         lineTo(pos.x, pos.y);
     }
 
@@ -87,16 +87,16 @@ class RendererGraphicsContext : StateGraphicsContext
     }
 
     void rect(double x, double y, double width, double height){
-        graphics.rect(Vector2(x, y), width, height);
+        graphics.rect(Vec2d(x, y), width, height);
     }
 
     void fillRect(double x, double y, double width, double height)
     {
-        graphics.fillRect(Vector2(x, y), width, height);
+        graphics.fillRect(Vec2d(x, y), width, height);
     }
 
     void fillTriangle(double x1, double y1, double x2, double y2, double x3, double y3){
-        graphics.fillTriangle(Vector2(x1, y1), Vector2(x2, y2), Vector2(x3, y3));
+        graphics.fillTriangle(Vec2d(x1, y1), Vec2d(x2, y2), Vec2d(x3, y3));
     }
 
     void arc(double xc,double yc, double radius, double angle1, double angle2){

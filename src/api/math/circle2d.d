@@ -1,6 +1,6 @@
 module api.math.circle2d;
 
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 
 /**
  * Authors: initkfs
@@ -19,7 +19,7 @@ struct Circle2d
         return dx * dx + dy * dy <= radius * radius;
     }
 
-    bool contains(Vector2 p) const @nogc nothrow pure @safe
+    bool contains(Vec2d p) const @nogc nothrow pure @safe
     {
         return contains(p.x, p.y);
     }

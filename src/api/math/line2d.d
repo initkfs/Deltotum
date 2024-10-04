@@ -1,12 +1,12 @@
 module api.math.line2d;
 
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 
 /**
  * Authors: initkfs
  */
 struct Line2d
 {
-    Vector2 start;
-    Vector2 end;
+    Vec2d start;
+    Vec2d end;
 }

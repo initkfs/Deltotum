@@ -13,7 +13,7 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 import api.dm.kit.i18n.langs.alphabets.alphabet : Alphabet;
 import api.math.rect2d : Rect2d;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 
 import std.string : toStringz;
 import std.uni : byGrapheme;
@@ -120,7 +120,7 @@ class BitmapFontGenerator : FontGenerator
                         isNewline = letter.among('\n', '\r',) != 0;
                     }
 
-                    auto glyph = Glyph(letter, glyphPosition, Vector2.init, alphabet, isEmpty, isNewline);
+                    auto glyph = Glyph(letter, glyphPosition, Vec2d.init, alphabet, isEmpty, isNewline);
 
                     //TODO config?
                     if (glyph.grapheme == '𑑛')

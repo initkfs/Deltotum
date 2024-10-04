@@ -4,7 +4,7 @@ import math = std.math.trigonometry;
 import mathConst = std.math.constants;
 import mathCore = core.math;
 import mathExp = std.math.exponential;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 
 /**
  * Authors: initkfs

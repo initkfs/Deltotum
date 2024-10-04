@@ -1,6 +1,6 @@
 module api.math.rect2d;
 
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 import api.math.circle2d : Circle2d;
 
 //TODO template from Rect2d
@@ -26,7 +26,7 @@ struct Rect2d
         return x >= this.x && y >= this.y && x < right && y < bottom;
     }
 
-    bool contains(Vector2 point) const @nogc nothrow pure @safe
+    bool contains(Vec2d point) const @nogc nothrow pure @safe
     {
         return contains(point.x, point.y);
     }
@@ -120,9 +120,9 @@ struct Rect2d
         return height / 2;
     }
 
-    Vector2 center() const @nogc nothrow pure @safe
+    Vec2d center() const @nogc nothrow pure @safe
     {
-        return Vector2(middleX, middleY);
+        return Vec2d(middleX, middleY);
     }
 
     double aspectRatio() const @nogc nothrow pure @safe

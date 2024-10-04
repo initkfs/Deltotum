@@ -8,7 +8,7 @@ import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 import api.dm.gui.containers.container: Container;
 import api.dm.gui.containers.hbox: HBox;
 
@@ -54,7 +54,7 @@ class Curves : Control
         return sprite;
     }
 
-    Sprite createCurveInfo(string name, Vector2[] points, bool isDrawFromCenter = true, bool isClosePath = false)
+    Sprite createCurveInfo(string name, Vec2d[] points, bool isDrawFromCenter = true, bool isClosePath = false)
     {
         import api.dm.gui.containers.vbox : VBox;
         import api.dm.gui.controls.texts.text : Text;
@@ -117,16 +117,16 @@ class Curves : Control
 
         auto planeCurveCalc = new PlaneCurve;
 
-        Vector2[] bicornPoints = planeCurveCalc.bicorn(25, 0.01, 1000, 1);
+        Vec2d[] bicornPoints = planeCurveCalc.bicorn(25, 0.01, 1000, 1);
         auto bicorn1 = createCurveInfo("Bicorn", bicornPoints);
 
-        Vector2[] cardPoints = planeCurveCalc.cardioid(6);
+        Vec2d[] cardPoints = planeCurveCalc.cardioid(6);
         auto card1 = createCurveInfo("Cardioid", cardPoints);
 
-        Vector2[] lemPoints = planeCurveCalc.lemniscateBernoulli(15);
+        Vec2d[] lemPoints = planeCurveCalc.lemniscateBernoulli(15);
         auto lem1 = createCurveInfo("Lemniscate\nBernoulli", lemPoints);
 
-        Vector2[] agnesi1Points = planeCurveCalc.witchOfAgnesi(20);
+        Vec2d[] agnesi1Points = planeCurveCalc.witchOfAgnesi(20);
         auto agnesi1 = createCurveInfo("Witch of \n Agnesi", agnesi1Points, true, false);
 
         auto tractrix1 = createCurveInfo("Tractrix", planeCurveCalc.tractrix(20));
@@ -138,7 +138,7 @@ class Curves : Control
         import api.dm.addon.math.curves.cubic_plane_curves : CubicPlaneCurves;
 
         auto cubicCurveCalc = new CubicPlaneCurves;
-        Vector2[] cub1Points = cubicCurveCalc.trisectrixMaclaurin(20);
+        Vec2d[] cub1Points = cubicCurveCalc.trisectrixMaclaurin(20);
         auto cube1 = createCurveInfo("Trisectrix of \nMaclaurin", cub1Points, true, false);
 
         planeShapeContainer.addCreate([
@@ -157,19 +157,19 @@ class Curves : Control
         auto supel1 = createCurveInfo("Superellipse\n 1, n=0.5", ellipseCuveCalc.superellipse(1, 1, 0.5, 20));
         auto supel2 = createCurveInfo("Squircle", ellipseCuveCalc.squircle(20));
 
-        Vector2[] sup1Points = ellipseCuveCalc.superformula(1, 1, 16, 0.5, 0.5, 16, 20);
+        Vec2d[] sup1Points = ellipseCuveCalc.superformula(1, 1, 16, 0.5, 0.5, 16, 20);
         auto sup1 = createCurveInfo("Superformula\n 16, 0.5, 0.5, 16", sup1Points);
 
-        Vector2[] sup2Points = ellipseCuveCalc.superformula(1, 1, 12, 15, 20, 3, 20);
+        Vec2d[] sup2Points = ellipseCuveCalc.superformula(1, 1, 12, 15, 20, 3, 20);
         auto sup2 = createCurveInfo("Superformula\n 12, 15, 20, 3", sup2Points);
 
-        Vector2[] sup3Points = ellipseCuveCalc.superformula(1, 1, 4, 0.5, 0.5, 4, 20);
+        Vec2d[] sup3Points = ellipseCuveCalc.superformula(1, 1, 4, 0.5, 0.5, 4, 20);
         auto sup3 = createCurveInfo("Superformula\n 4, 0.5, 0.5, 4", sup3Points);
 
-        Vector2[] sup4Points = ellipseCuveCalc.superformula(1, 1, 5, 2, 6, 6, 10);
+        Vec2d[] sup4Points = ellipseCuveCalc.superformula(1, 1, 5, 2, 6, 6, 10);
         auto sup4 = createCurveInfo("Superformula\n 5, 2, 6, 6", sup4Points);
 
-        Vector2[] sup5Points = ellipseCuveCalc.superformula(1, 1, 3, 5, 18, 18, 5);
+        Vec2d[] sup5Points = ellipseCuveCalc.superformula(1, 1, 3, 5, 18, 18, 5);
         auto sup5 = createCurveInfo("Superformula\n 3, 5, 18, 18", sup5Points);
 
         superellipseContainer.addCreate([

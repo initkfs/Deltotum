@@ -2,7 +2,7 @@ module api.dm.kit.sprites.textures.vectors.shapes.vpoints_shape;
 
 import api.dm.kit.sprites.textures.vectors.shapes.vshape : VShape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 
 import std.container.dlist : DList;
 
@@ -24,10 +24,10 @@ class VPointsShape : VShape
 
     // protected
     // {
-    DList!Vector2 points;
+    DList!Vec2d points;
     //}
 
-    this(Vector2[] points, double width, double height, GraphicStyle style, bool isClosePath = false, bool isDrawFromCenter = false)
+    this(Vec2d[] points, double width, double height, GraphicStyle style, bool isClosePath = false, bool isDrawFromCenter = false)
     {
         super(width, height, style);
 
@@ -35,7 +35,7 @@ class VPointsShape : VShape
         this.isClosePath = isClosePath;
         this.isDrawFromCenter = isDrawFromCenter;
 
-        this.points = DList!Vector2(points);
+        this.points = DList!Vec2d(points);
     }
 
     size_t length()

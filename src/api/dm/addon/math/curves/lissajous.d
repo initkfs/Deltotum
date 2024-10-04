@@ -1,5 +1,5 @@
 module api.dm.addon.math.curves.lissajous;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 import api.dm.addon.math.curves.curve_maker : CurveMaker;
 
 import Math = api.dm.math;
@@ -9,12 +9,12 @@ import Math = api.dm.math;
  */
 class Lissajous : CurveMaker
 {
-    Vector2[] curve(double amplitudeX = 50, double freqX = 1, double amplitudeY = 50, double freqY = 2, double phaseShift = (
+    Vec2d[] curve(double amplitudeX = 50, double freqX = 1, double amplitudeY = 50, double freqY = 2, double phaseShift = (
             Math.PI / 2), double dots = 2000, double step = 0.01)
     {
-        Vector2[] points;
+        Vec2d[] points;
         curve(amplitudeX, freqX, amplitudeY, freqY, phaseShift, dots, step, (x, y) {
-            points ~= Vector2(x, y);
+            points ~= Vec2d(x, y);
         });
         return points;
     }

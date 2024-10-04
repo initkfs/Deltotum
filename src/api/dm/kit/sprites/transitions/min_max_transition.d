@@ -3,7 +3,7 @@ module api.dm.kit.sprites.transitions.min_max_transition;
 import api.dm.kit.sprites.transitions.transition : Transition, TransitionState;
 import api.dm.kit.sprites.transitions.curves.interpolator : Interpolator;
 import api.dm.kit.sprites.transitions.curves.uni_interpolator : UniInterpolator;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 import math = api.dm.math;
 
 import std.traits : isIntegral, isFloatingPoint;
@@ -13,7 +13,7 @@ import std.stdio;
 /**
  * Authors: initkfs
  */
-class MinMaxTransition(T) if (isFloatingPoint!T || is(T : Vector2)) : Transition
+class MinMaxTransition(T) if (isFloatingPoint!T || is(T : Vec2d)) : Transition
 {
     Interpolator interpolator;
 
@@ -135,7 +135,7 @@ class MinMaxTransition(T) if (isFloatingPoint!T || is(T : Vector2)) : Transition
         {
             return Math.abs(maxValue - minValue);
         }
-        else static if (is(T : Vector2))
+        else static if (is(T : Vec2d))
         {
             return maxValue.subtractAbs(minValue);
         }

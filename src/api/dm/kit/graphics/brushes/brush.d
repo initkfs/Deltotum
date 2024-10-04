@@ -1,7 +1,7 @@
 module api.dm.kit.graphics.brushes.brush;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.math.vector2 : Vector2;
+import api.math.vec2 : Vec2d;
 import api.math.rect2d : Rect2d;
 
 import Math = api.dm.math;
@@ -12,7 +12,7 @@ private
 {
     struct BrushState
     {
-        Vector2 pos;
+        Vec2d pos;
         double angleDeg = 0;
     }
 }
@@ -27,17 +27,17 @@ class Brush
 
     private
     {
-        Vector2 _pos;
-        Vector2 _initPos;
+        Vec2d _pos;
+        Vec2d _initPos;
 
         double _angleDeg = 0;
 
         SList!BrushState _states;
     }
 
-    void delegate(Vector2, Vector2) onDrawLineStartEnd;
+    void delegate(Vec2d, Vec2d) onDrawLineStartEnd;
 
-    this(Vector2 initPos = Vector2(0, 0), double initAngleDeg = 0) pure @safe
+    this(Vec2d initPos = Vec2d(0, 0), double initAngleDeg = 0) pure @safe
     {
         _initPos = initPos;
         _pos = initPos;
@@ -60,7 +60,7 @@ class Brush
 
     bool move(double distance) @safe
     {
-        const newPos = _pos + Vector2.fromPolarDeg(_angleDeg, distance);
+        const newPos = _pos + Vec2d.fromPolarDeg(_angleDeg, distance);
 
         if (isBoundable && !bounds.contains(newPos))
         {
@@ -84,15 +84,15 @@ class Brush
 
     void pos(double x, double y) @safe
     {
-        _pos = Vector2(x, y);
+        _pos = Vec2d(x, y);
     }
 
-    void pos(Vector2 newPos) @safe
+    void pos(Vec2d newPos) @safe
     {
         _pos = newPos;
     }
 
-    Vector2 pos() @safe
+    Vec2d pos() @safe
     {
         return _pos;
     }
@@ -107,7 +107,7 @@ class Brush
         return _angleDeg;
     }
 
-    void setState(Vector2 pos, double angleDeg) @safe
+    void setState(Vec2d pos, double angleDeg) @safe
     {
         _pos = pos;
         _angleDeg = angleDeg;
@@ -135,11 +135,11 @@ class Brush
 
 unittest
 {
-    import api.math.vector2 : Vector2;
+    import api.math.vec2 : Vec2d;
     import api.math.rect2d : Rect2d;
 
     const brushBounds = Rect2d(0, 0, 100, 100);
-    auto brush = new Brush(Vector2(0, 0), 0);
+    auto brush = new Brush(Vec2d(0, 0), 0);
     brush.bounds = brushBounds;
 
     assert(brush.move(10));

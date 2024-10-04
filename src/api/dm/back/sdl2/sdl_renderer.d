@@ -14,7 +14,7 @@ import api.dm.back.sdl2.sdl_window : SdlWindow;
 import api.dm.back.sdl2.sdl_texture : SdlTexture;
 
 import api.math.flip : Flip;
-import api.math.vector2 : Vector2, Vector2i;
+import api.math.vec2 : Vec2d, Vec2i;
 import api.math.rect2d : Rect2d, Rect2i;
 
 import bindbc.sdl;
@@ -259,7 +259,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         return ComResult.success;
     }
 
-    private SDL_Point[] toPoints(Vector2[] vecs) nothrow
+    private SDL_Point[] toPoints(Vec2d[] vecs) nothrow
     {
         import std.algorithm.iteration : map;
         import std.array : array;
@@ -278,8 +278,8 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         return ComResult.success;
     }
 
-    ComResult drawPoints(Vector2[] ps) nothrow => drawPoints(toPoints(ps));
-    ComResult drawPoints(Vector2i[] ps) nothrow => drawPoints(cast(SDL_Point[]) ps);
+    ComResult drawPoints(Vec2d[] ps) nothrow => drawPoints(toPoints(ps));
+    ComResult drawPoints(Vec2i[] ps) nothrow => drawPoints(cast(SDL_Point[]) ps);
 
     ComResult drawLine(int startX, int startY, int endX, int endY) nothrow
     {
@@ -303,12 +303,12 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         return ComResult.success;
     }
 
-    ComResult drawLines(Vector2[] linePoints) nothrow
+    ComResult drawLines(Vec2d[] linePoints) nothrow
     {
         return drawLines(toPoints(linePoints));
     }
 
-    ComResult drawLines(Vector2i[] linePoints) nothrow
+    ComResult drawLines(Vec2i[] linePoints) nothrow
     {
         return drawLines(cast(SDL_Point[]) linePoints);
     }
