@@ -55,6 +55,38 @@ double clamp01(double value) @nogc nothrow pure @safe
     return clamp(value, 0.0, 1.0);
 }
 
+double wrap(double x, double min = 0.0, double max = 1.0)
+{
+    //or floor?
+    if (min == 0 && max == 1.0)
+    {
+        //return ((x mod 1.0) + 1.0) mod 1.0;
+        auto newX = x - trunc(x);
+        if (newX < 0)
+        {
+            return newX + max;
+        }
+    }
+
+    double newX = x - trunc((x - min) / (max - min)) * (max - min);
+    if (newX < 0)
+    {
+        newX = newX + max - min;
+    }
+    return newX;
+}
+
+unittest
+{
+    auto minValue = 1;
+    auto maxValue = 50;
+
+    assert(wrap(0.9, minValue, maxValue) == 0.9);
+    assert(wrap(1, minValue, maxValue) == 1);
+    assert(wrap(50, minValue, maxValue) == 1);
+    assert(wrap(55, minValue, maxValue) == 6);
+}
+
 T trunc(T)(T value) if (is(T : real))
 {
     import std.math.rounding : trunc;

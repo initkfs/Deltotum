@@ -10,7 +10,8 @@ import api.math.matrices.matrix : Matrix2x2, Matrix2x1;
 import Math = api.dm.math;
 
 //TODO template with Vec2d
-struct Vec2i {
+struct Vec2i
+{
     int x;
     int y;
 }
@@ -28,6 +29,9 @@ struct Vec2d
     alias l2norm = distanceTo;
     alias euclidean = distanceTo;
     alias length = magnitude;
+
+    static Vec2d infinity() => Vec2d(double.infinity, double.infinity);
+    bool isInfinity() => (x == double.infinity) || (y == double.infinity);
 
     Vec2d add(Vec2d other) const @nogc nothrow pure @safe
     {
@@ -408,7 +412,8 @@ struct Vec2d
             static assert(0, "Operator " ~ op ~ " not implemented");
     }
 
-    Vec2i toInt(){
+    Vec2i toInt()
+    {
         return Vec2i(cast(int) x, cast(int) y);
     }
 
@@ -445,7 +450,7 @@ struct Vec2d
 
         Vec2d horizontalReflect = Vec2d(5, 6).linoperator(Matrix2x2([
                 [-1, 0], [0, 1]
-            ]));
+        ]));
         assert(horizontalReflect.x == -5);
         assert(horizontalReflect.y == 6);
 

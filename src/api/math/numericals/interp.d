@@ -99,6 +99,14 @@ Vec2d lerp(Vec2d a, Vec2d b, double t, bool clamp = true) @nogc nothrow pure @sa
         a.y + (b.y - a.y) * progress0to1);
 }
 
+double slerp(double a, double b, double angleRad, double t) @nogc nothrow pure @safe
+{
+    import Math = api.math;
+
+    return ((Math.sin((1 - t) * angleRad) / Math.sin(angleRad)) * a) + (
+        ((Math.sin(t * angleRad)) / Math.sin(angleRad)) * b);
+}
+
 /** 
  * Catmull-Rom spline interpolation
  * Ported from http://www.mvps.org/directx/articles/catmull/
