@@ -20,9 +20,7 @@ class Start : Scene
     import api.math.geom2.triangulate;
     import api.dm.kit.sprites.textures.vectors.shapes.vtriangle;
 
-    XYZ[] points;
-    ITRIANGLE[] triangles;
-
+    Vec2d[] points;
     Triangle2d[] trigs;
 
     override void create()
@@ -34,7 +32,7 @@ class Start : Scene
         int nv = 30;
         int ntri = 0;
 
-        points = new XYZ[](nv + 3);
+        points = new Vec2d[](nv + 3);
 
         import api.math.random: Random;
 
@@ -44,32 +42,15 @@ class Start : Scene
         {
             auto x = rnd.randomBetween!int(0, window.width);
             auto y = rnd.randomBetween!int(0, window.height);
-            points[i] = XYZ(x, y, 0.0);
+            points[i] = Vec2d(x, y);
         }
 
-        import std;
+         import std;
+
         points.sort!((p1, p2) => p1.x < p2.x);
 
 
-        triangles = new ITRIANGLE[](nv * 3);
-
-        int bb = Triangulate(nv, points.ptr, triangles.ptr, &ntri);
-
-        for (auto i = 0; i < ntri; i++)
-        {
-            auto x1 = points[triangles[i].p1].x;
-            auto y1 = points[triangles[i].p1].y;
-            auto x2 = points[triangles[i].p2].x;
-            auto y2 = points[triangles[i].p2].y;
-            auto x3 = points[triangles[i].p3].x;
-            auto y3 = points[triangles[i].p3].y;
-
-            trigs ~= Triangle2d(Vec2d(x1, y1), Vec2d(x2, y2), Vec2d(x3, y3));
-
-        }
-
-        import std;
-        writeln(points);
+        trigs = triangulate(points);
 
         createDebugger;
     }
