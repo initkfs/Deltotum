@@ -22,6 +22,7 @@ class Start : Scene
 
     Vec2d[] points;
     Triangle2d[] trigs;
+    Line2d[] sites;
 
     override void create()
     {
@@ -29,28 +30,51 @@ class Start : Scene
 
         import api.math;
 
-        int nv = 30;
-        int ntri = 0;
+        // int nv = 30;
+        // int ntri = 0;
 
-        points = new Vec2d[](nv + 3);
+        // points = new Vec2d[](nv + 3);
+
+        // import api.math.random: Random;
+
+        // auto rnd = new Random;
+
+        // for (int i = 0; i < points.length; i++)
+        // {
+        //     auto x = rnd.randomBetween!int(0, window.width);
+        //     auto y = rnd.randomBetween!int(0, window.height);
+        //     points[i] = Vec2d(x, y);
+        // }
+
+        //  import std;
+
+        // points.sort!((p1, p2) => p1.x < p2.x);
+
+
+        // trigs = triangulate(points);
+
+        import api.math.geom2.voronoi.voronoi;
 
         import api.math.random: Random;
 
         auto rnd = new Random;
 
-        for (int i = 0; i < points.length; i++)
+        points = new Vec2d[](100);
+
+        onLine = (l){
+            sites ~= l;
+        };
+
+        foreach (pi; 0..100)
         {
-            auto x = rnd.randomBetween!int(0, window.width);
-            auto y = rnd.randomBetween!int(0, window.height);
-            points[i] = Vec2d(x, y);
+            Vec2d p;
+            p.x = rnd.randomBetween(0, 400);
+            p.y = rnd.randomBetween(0, 400);
+            
+            points[pi] = p;
         }
 
-         import std;
-
-        points.sort!((p1, p2) => p1.x < p2.x);
-
-
-        trigs = triangulate(points);
+        runVoronoi(points);
 
         createDebugger;
     }
@@ -61,21 +85,26 @@ class Start : Scene
 
         import api.dm.kit.graphics.colors.rgba: RGBA;
 
-        graphics.setColor(RGBA.red);
-        scope(exit){
-            graphics.restoreColor;        
-        }
+        // graphics.setColor(RGBA.red);
+        // scope(exit){
+        //     graphics.restoreColor;        
+        // }
 
         foreach (p; points)
         {
             graphics.circle(p.x, p.y, 5, RGBA.red);
         }
 
-        foreach (Triangle2d trig; trigs)
+        foreach (s; sites)
         {
-            graphics.line(trig.a, trig.b);
-            graphics.line(trig.b ,trig.c);
-            graphics.line(trig.c, trig.a);
+            graphics.line(s.start.x, s.start.y, s.end.x, s.end.y, RGBA.green);
         }
+
+        // foreach (Triangle2d trig; trigs)
+        // {
+        //     graphics.line(trig.a, trig.b);
+        //     graphics.line(trig.b ,trig.c);
+        //     graphics.line(trig.c, trig.a);
+        // }
     }
 }
