@@ -720,6 +720,19 @@ class Graphics : LoggableUnit
         }
     }
 
+    void fillRects(Rect2d[] rects, RGBA fillColor = defaultColor)
+    {
+        changeColor(fillColor);
+        scope (exit)
+        {
+            restoreColor;
+        }
+        if (const err = renderer.drawFillRects(rects))
+        {
+            logger.errorf("Fill rects error. %s", err);
+        }
+    }
+
     void rect(Vec2d pos, double width, double height, RGBA color = defaultColor)
     {
         rect(pos.x, pos.y, width, height, color);

@@ -1,17 +1,12 @@
-module api.dm.gui.controls.tooltips.popup;
+module api.dm.gui.controls.popups.pointer_popup;
 
 import api.dm.gui.controls.popups.base_popup: BasePopup;
 
 /**
  * Authors: initkfs
  */
-class Popup : BasePopup
+class PointerPopup : BasePopup
 {
-    protected
-    {
-
-    }
-
     this(dstring text = "Popup", string iconName = null, double graphicsGap = 0, bool isCreateLayout = true)
     {
         super(text, iconName, graphicsGap, isCreateLayout);
@@ -20,27 +15,26 @@ class Popup : BasePopup
     override void show()
     {
         super.show;
-        if (!parent)
-        {
-            return;
-        }
-
-        import Math = api.dm.math;
-
         const screenBounds = screen.first.bounds;
         const thisBounds = bounds;
 
-        auto newX = parent.bounds.middleX - bounds.halfWidth;
+        auto pointerPos = input.pointerPos;
+
+        enum xOffset = 10;
+        enum yOffset = 10;
+
+        auto newX = pointerPos.x + xOffset;
         if (newX < 0)
         {
             newX = 0;
         }
+
         if (newX + thisBounds.width > screenBounds.right)
         {
             newX = screenBounds.right - thisBounds.width;
         }
 
-        auto newY = parent.bounds.y - bounds.height;
+        auto newY = pointerPos.y + yOffset;
         if (newY < 0)
         {
             newY = 0;

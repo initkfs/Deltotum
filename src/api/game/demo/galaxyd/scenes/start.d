@@ -23,6 +23,17 @@ class Start : Scene
     Vec2d[] points;
     Triangle2d[] trigs;
     Line2d[] sites;
+    double[][] matrix;
+
+    import api.math.geom2.diamond_square;
+
+    DiamondSquareTerrain generator;
+
+    TerrainPixel[] terrain;
+    import api.math.geom2.rect2: Rect2d;
+    import api.dm.kit.graphics.colors.rgba: RGBA;
+    
+    Rect2d[][RGBA] terrainPoints;
 
     override void create()
     {
@@ -50,31 +61,73 @@ class Start : Scene
 
         // points.sort!((p1, p2) => p1.x < p2.x);
 
-
         // trigs = triangulate(points);
 
-        import api.math.geom2.voronoi.voronoi;
+        // import api.math.geom2.voronoi.voronoi;
 
-        import api.math.random: Random;
+        // import api.math.random: Random;
 
-        auto rnd = new Random;
+        // auto rnd = new Random;
 
-        points = new Vec2d[](100);
+        // points = new Vec2d[](100);
 
-        onLine = (l){
-            sites ~= l;
-        };
+        // onLine = (l){
+        //     sites ~= l;
+        // };
 
-        foreach (pi; 0..100)
-        {
-            Vec2d p;
-            p.x = rnd.randomBetween(0, 400);
-            p.y = rnd.randomBetween(0, 400);
+        // foreach (pi; 0..100)
+        // {
+        //     Vec2d p;
+        //     p.x = rnd.randomBetween(0, 400);
+        //     p.y = rnd.randomBetween(0, 400);
+
+        //     points[pi] = p;
+        // }
+
+        // runVoronoi(points);
+
+        generator = DiamondSquareTerrain(0, 10);
+        generator.generate;
+
+        terrain = new TerrainPixel[](generator.terrainSize);
+        
+        generator.iterateTerrain((terrainInfo, i) {
+            auto color = terrainInfo.terrain.color.toRGBA;
+            (terrainPoints[color]) ~= Rect2d(terrainInfo.x, terrainInfo.y, terrainInfo.pixelWidth, terrainInfo.pixelHeight);
             
-            points[pi] = p;
-        }
+            terrain[i] = terrainInfo;
+            return true;
+        });
 
-        runVoronoi(points);
+        import api.dm.gui.containers.stack_box : StackBox;
+        import api.dm.gui.controls.popups.pointer_popup : PointerPopup;
+
+        auto sw = generator.canvasWidth;
+        auto box = new StackBox;
+        box.width = sw;
+        box.height = sw;
+        box.isDrawBounds = true;
+        addCreate(box);
+
+        auto popup = new PointerPopup();
+        box.addCreate(popup);
+
+        box.onPointerMove ~= (ref e) {
+            auto ex = e.x;
+            auto ey = e.y;
+            auto dx = 1;
+            auto dy = 1;
+            foreach (TerrainPixel px; terrain)
+            {
+                if (Math.abs(ex - px.x) <= dx && Math.abs(ey - px.y) <= dy)
+                {
+                    auto text = px.terrain.type.name;
+                    popup.text = text;
+                    popup.show;
+                    break;
+                }
+            }
+        };
 
         createDebugger;
     }
@@ -83,22 +136,33 @@ class Start : Scene
     {
         super.draw;
 
-        import api.dm.kit.graphics.colors.rgba: RGBA;
+        import api.dm.kit.graphics.colors.rgba : RGBA;
+
+        foreach (color, rects; terrainPoints)
+        {
+            graphics.fillRects(rects, color);
+        }
+
+        // foreach (TerrainPixel terr; terrain)
+        // {
+        //     graphics.fillRect(Vec2d(terr.x, terr.y), terr.pixelWidth, terr.pixelHeight, terr
+        //             .terrain.color.toRGBA);
+        // }
 
         // graphics.setColor(RGBA.red);
         // scope(exit){
         //     graphics.restoreColor;        
         // }
 
-        foreach (p; points)
-        {
-            graphics.circle(p.x, p.y, 5, RGBA.red);
-        }
+        // foreach (p; points)
+        // {
+        //     graphics.circle(p.x, p.y, 5, RGBA.red);
+        // }
 
-        foreach (s; sites)
-        {
-            graphics.line(s.start.x, s.start.y, s.end.x, s.end.y, RGBA.green);
-        }
+        // foreach (s; sites)
+        // {
+        //     graphics.line(s.start.x, s.start.y, s.end.x, s.end.y, RGBA.green);
+        // }
 
         // foreach (Triangle2d trig; trigs)
         // {

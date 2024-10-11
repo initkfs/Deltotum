@@ -7,7 +7,7 @@ import api.dm.kit.sprites.textures.texture : Texture;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.math.alignment : Alignment;
 import api.math.insets : Insets;
-import api.dm.gui.controls.tooltips.popup : Popup;
+import api.dm.gui.controls.popups.base_popup : BasePopup;
 
 import api.dm.kit.sprites.transitions.min_max_transition : MinMaxTransition;
 import api.dm.kit.sprites.transitions.targets.props.opacity_transition : OpacityTransition;
@@ -85,7 +85,7 @@ class Control : Sprite
         size_t tooltipDelayCounter;
     }
 
-    Popup[] tooltips;
+    BasePopup[] tooltips;
     size_t tooltipDelay = 20;
 
     this()
@@ -449,7 +449,7 @@ class Control : Sprite
             applyStyle(control);
         }
 
-        if (auto tooltip = sprite.castSafe!Popup)
+        if (auto tooltip = sprite.castSafe!BasePopup)
         {
             tooltips ~= tooltip;
             if (!isTooltipListeners)
