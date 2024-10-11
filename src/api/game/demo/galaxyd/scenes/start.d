@@ -26,6 +26,7 @@ class Start : Scene
     double[][] matrix;
 
     import api.math.geom2.diamond_square;
+    import api.math.geom2.midpoint_displacement: MidpointDisplacement;
 
     DiamondSquareTerrain generator;
 
@@ -34,6 +35,7 @@ class Start : Scene
     import api.dm.kit.graphics.colors.rgba: RGBA;
     
     Rect2d[][RGBA] terrainPoints;
+    Vec2d[] dLines;
 
     override void create()
     {
@@ -86,49 +88,57 @@ class Start : Scene
 
         // runVoronoi(points);
 
-        generator = DiamondSquareTerrain(0, 10);
-        generator.generate;
+        // generator = DiamondSquareTerrain(0, 10);
+        // generator.generate;
 
-        terrain = new TerrainPixel[](generator.terrainSize);
+        // terrain = new TerrainPixel[](generator.terrainSize);
         
-        generator.iterateTerrain((terrainInfo, i) {
-            auto color = terrainInfo.terrain.color.toRGBA;
-            (terrainPoints[color]) ~= Rect2d(terrainInfo.x, terrainInfo.y, terrainInfo.pixelWidth, terrainInfo.pixelHeight);
+        // generator.iterateTerrain((terrainInfo, i) {
+        //     auto color = terrainInfo.terrain.color.toRGBA;
+        //     (terrainPoints[color]) ~= Rect2d(terrainInfo.x, terrainInfo.y, terrainInfo.pixelWidth, terrainInfo.pixelHeight);
             
-            terrain[i] = terrainInfo;
-            return true;
-        });
+        //     terrain[i] = terrainInfo;
+        //     return true;
+        // });
 
-        import api.dm.gui.containers.stack_box : StackBox;
-        import api.dm.gui.controls.popups.pointer_popup : PointerPopup;
+        // import api.dm.gui.containers.stack_box : StackBox;
+        // import api.dm.gui.controls.popups.pointer_popup : PointerPopup;
 
-        auto sw = generator.canvasWidth;
-        auto box = new StackBox;
-        box.width = sw;
-        box.height = sw;
-        box.isDrawBounds = true;
-        addCreate(box);
+        // auto sw = generator.canvasWidth;
+        // auto box = new StackBox;
+        // box.width = sw;
+        // box.height = sw;
+        // box.isDrawBounds = true;
+        // addCreate(box);
 
-        auto popup = new PointerPopup();
-        box.addCreate(popup);
+        // auto popup = new PointerPopup();
+        // box.addCreate(popup);
 
-        box.onPointerMove ~= (ref e) {
-            auto ex = e.x;
-            auto ey = e.y;
-            auto dx = 1;
-            auto dy = 1;
-            foreach (TerrainPixel px; terrain)
-            {
-                if (Math.abs(ex - px.x) <= dx && Math.abs(ey - px.y) <= dy)
-                {
-                    auto text = px.terrain.type.name;
-                    popup.text = text;
-                    popup.show;
-                    break;
-                }
-            }
-        };
+        // box.onPointerMove ~= (ref e) {
+        //     auto ex = e.x;
+        //     auto ey = e.y;
+        //     auto dx = 1;
+        //     auto dy = 1;
+        //     foreach (TerrainPixel px; terrain)
+        //     {
+        //         if (Math.abs(ex - px.x) <= dx && Math.abs(ey - px.y) <= dy)
+        //         {
+        //             auto text = px.terrain.type.name;
+        //             popup.text = text;
+        //             popup.show;
+        //             break;
+        //         }
+        //     }
+        // };
 
+        auto generator = MidpointDisplacement();
+        auto lines = generator.generate(Vec2d(0, 180), Vec2d(500, 80), 500, 500, 1.2, 50, 10);
+        dLines.reserve(lines.length * 2);
+        foreach (l; lines)
+        {
+            dLines ~= l.start;
+            dLines ~= l.end;
+        }
         createDebugger;
     }
 
@@ -138,10 +148,12 @@ class Start : Scene
 
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        foreach (color, rects; terrainPoints)
-        {
-            graphics.fillRects(rects, color);
-        }
+        graphics.lines(dLines, RGBA.red);
+
+        // foreach (color, rects; terrainPoints)
+        // {
+        //     graphics.fillRects(rects, color);
+        // }
 
         // foreach (TerrainPixel terr; terrain)
         // {
