@@ -1,7 +1,7 @@
 module api.dm.kit.graphics.contexts.renderer_graphics_context;
 
 import api.dm.kit.graphics.contexts.state_graphics_context : StateGraphicsContext;
-import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
+import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext, GradientStopPoint;
 import api.dm.kit.graphics.graphics : Graphics;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.vec2 : Vec2d;
@@ -35,11 +35,13 @@ class RendererGraphicsContext : StateGraphicsContext
         graphics.restoreColor;
     }
 
-    void lineEnd(GraphicsContext.LineEnd end){
+    void lineEnd(GraphicsContext.LineEnd end)
+    {
 
     }
 
-    void lineJoin(GraphicsContext.LineJoin join) {
+    void lineJoin(GraphicsContext.LineJoin join)
+    {
 
     }
 
@@ -49,7 +51,8 @@ class RendererGraphicsContext : StateGraphicsContext
         moveTo(endX, endY);
     }
 
-    void lineTo(Vec2d pos){
+    void lineTo(Vec2d pos)
+    {
         lineTo(pos.x, pos.y);
     }
 
@@ -68,8 +71,9 @@ class RendererGraphicsContext : StateGraphicsContext
 
     }
 
-    void beginPath(){
-        
+    void beginPath()
+    {
+
     }
 
     void closePath()
@@ -82,11 +86,13 @@ class RendererGraphicsContext : StateGraphicsContext
 
     }
 
-    void clear(RGBA color){
-        
+    void clear(RGBA color)
+    {
+
     }
 
-    void rect(double x, double y, double width, double height){
+    void rect(double x, double y, double width, double height)
+    {
         graphics.rect(Vec2d(x, y), width, height);
     }
 
@@ -95,27 +101,44 @@ class RendererGraphicsContext : StateGraphicsContext
         graphics.fillRect(Vec2d(x, y), width, height);
     }
 
-    void fillTriangle(double x1, double y1, double x2, double y2, double x3, double y3){
+    void fillTriangle(double x1, double y1, double x2, double y2, double x3, double y3)
+    {
         graphics.fillTriangle(Vec2d(x1, y1), Vec2d(x2, y2), Vec2d(x3, y3));
     }
 
-    void arc(double xc,double yc, double radius, double angle1, double angle2){
+    void arc(double xc, double yc, double radius, double angle1, double angle2)
+    {
 
     }
 
-    void scale(double sx, double sy){
+    void scale(double sx, double sy)
+    {
 
     }
 
-    void rotateRad(double angleRad){
+    void rotateRad(double angleRad)
+    {
+
+    }
+
+    void save()
+    {
+
+    }
+
+    void restore()
+    {
+
+    }
+
+    void linearGradient(Vec2d start, Vec2d end, GradientStopPoint[] stopPoints, void delegate() onPattern)
+    {
+
+    }
+
+    void radialGradient(Vec2d innerCenter, Vec2d outerCenter, double innerRadius, double outerRadius, GradientStopPoint[] stopPoints, void delegate() onPattern)
+    {
         
     }
 
-    void save(){
-
-    }
-
-    void restore(){
-
-    }
 }

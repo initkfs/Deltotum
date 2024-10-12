@@ -131,7 +131,7 @@ class Start : Scene
         //     }
         // };
 
-        generator = new MDLandscapeGenerator(600, 400);
+        generator = new MDLandscapeGenerator(800, 600);
         addCreate(generator);
 
        

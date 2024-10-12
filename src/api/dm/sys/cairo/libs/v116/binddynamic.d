@@ -82,6 +82,25 @@ extern (C) @nogc nothrow
     alias c_cairo_curve_to = void function(cairo_t *cr, double x1, double y1, double x2, double y2, double x3, double y3);
 
     alias c_cairo_clip = void function(cairo_t *cr);
+
+    alias c_cairo_pattern_destroy = void function(cairo_pattern_t*);
+    alias c_cairo_pattern_create_linear = cairo_pattern_t * function(double x0, double y0, double x1, double y1);
+    alias c_cairo_pattern_add_color_stop_rgba = void function (
+        cairo_pattern_t *pattern,
+                                   double offset0to1,
+                                   double red0to1,
+                                   double green0to1,
+                                   double blue0to1,
+                                   double alpha0to1);
+    alias c_cairo_pattern_create_radial = cairo_pattern_t * function(double cx0,
+                             double cy0,
+                             double radius0,
+                             double cx1,
+                             double cy1,
+                             double radius1);
+    alias c_cairo_set_source = void function(cairo_t *cr, cairo_pattern_t *source);
+
+    //TODO cairo_status_t cairo_pattern_status (cairo_pattern_t *pattern);
 }
 
 __gshared
@@ -138,6 +157,12 @@ __gshared
     c_cairo_curve_to cairo_curve_to;
 
     c_cairo_clip cairo_clip;
+
+    c_cairo_pattern_destroy cairo_pattern_destroy;
+    c_cairo_pattern_create_linear  cairo_pattern_create_linear;
+    c_cairo_pattern_create_radial cairo_pattern_create_radial;
+    c_cairo_pattern_add_color_stop_rgba  cairo_pattern_add_color_stop_rgba;
+    c_cairo_set_source  cairo_set_source;
 }
 
 class CairoLib : SysLib
@@ -214,6 +239,12 @@ class CairoLib : SysLib
 
         bind(cast(void**)&cairo_curve_to, "cairo_curve_to");
         bind(cast(void**)&cairo_clip, "cairo_clip");
+
+        bind(cast(void**)&cairo_pattern_destroy, "cairo_pattern_destroy");
+        bind(cast(void**)&cairo_pattern_create_linear, "cairo_pattern_create_linear");
+        bind(cast(void**)&cairo_pattern_create_radial, "cairo_pattern_create_radial");
+        bind(cast(void**)&cairo_pattern_add_color_stop_rgba, "cairo_pattern_add_color_stop_rgba");
+        bind(cast(void**)&cairo_set_source, "cairo_set_source");
     }
 
     override protected int needVersion()

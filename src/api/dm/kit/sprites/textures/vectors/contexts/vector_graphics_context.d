@@ -1,6 +1,6 @@
 module api.dm.kit.sprites.textures.vectors.contexts.vector_graphics_context;
 
-import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
+import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext, GradientStopPoint;
 import api.dm.sys.cairo.cairo_context : CairoContext;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.vec2 : Vec2d;
@@ -229,5 +229,44 @@ class VectorGraphicsContext : GraphicsContext
 
     void bezierCurveTo(double x1, double y1, double x2, double y2, double x3, double y3){
         cairo_curve_to(cr, x1, y1, x2, y2, x3, y3);
+    }
+
+    void linearGradient(Vec2d start, Vec2d end, GradientStopPoint[] stopPoints, void delegate() onPattern){
+        cairo_pattern_t * pattern = cairo_pattern_create_linear(start.x, start.y, end.x, end.y);
+        
+        foreach (stopPoint; stopPoints)
+        {
+            auto color = stopPoint.color;
+            cairo_pattern_add_color_stop_rgba(pattern, stopPoint.offset, color.rNorm, color.gNorm, color.bNorm, color.a);
+        }
+
+        cairo_set_source(cr, pattern);
+
+        assert(onPattern);
+        onPattern();
+        
+        scope(exit){
+            cairo_pattern_destroy(pattern);
+        }
+    }
+
+    void radialGradient(Vec2d innerCenter, Vec2d outerCenter, double innerRadius, double outerRadius, GradientStopPoint[] stopPoints, void delegate() onPattern){
+        
+        cairo_pattern_t * pattern = cairo_pattern_create_radial(innerCenter.x, innerCenter.y, innerRadius, outerCenter.x, outerCenter.y, outerRadius);
+        
+        foreach (stopPoint; stopPoints)
+        {
+            auto color = stopPoint.color;
+            cairo_pattern_add_color_stop_rgba(pattern, stopPoint.offset, color.rNorm, color.gNorm, color.bNorm, color.a);
+        }
+
+        cairo_set_source(cr, pattern);
+
+        assert(onPattern);
+        onPattern();
+        
+        scope(exit){
+            cairo_pattern_destroy(pattern);
+        }
     }
 }

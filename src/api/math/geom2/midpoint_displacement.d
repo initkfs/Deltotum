@@ -16,6 +16,11 @@ struct MidpointDisplacement
 
     Random rnd;
 
+    bool isVertexOnly;
+
+    Line2d[] lines;
+    Vec2d[] linePoints;
+
     Vec2d[] midpointDisplacement(
         Vec2d start,
         Vec2d end,
@@ -93,9 +98,11 @@ struct MidpointDisplacement
         return points;
     }
 
-    Line2d[] landscape(Vec2d[][] layers, double width, double height)
+    void landscape(Vec2d[][] layers, double width, double height)
     {
-        Line2d[] lines;
+        //TODO reuse
+        lines = [];
+        linePoints = [];
 
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
@@ -120,14 +127,18 @@ struct MidpointDisplacement
                 Vec2d p = layer[i];
                 sampled_layer ~= p;
 
-                if (((layer[i + 1]).x - (layer[i]).x) > 1)
+                if (!isVertexOnly)
                 {
-                    auto m = ((layer[i + 1]).y - (layer[i]).y) / ((layer[i + 1]).x - (layer[i]).x);
-                    auto n = (layer[i]).y - m * (layer[i]).x;
-                    auto r = (double x) => m * x + n;
-                    foreach (j; (cast(int)((layer[i]).x + 1)) .. (cast(int)((layer[i + 1]).x)))
+                    if (((layer[i + 1]).x - (layer[i]).x) > 1)
                     {
-                        sampled_layer ~= Vec2d(j, r(j));
+                        auto m = ((layer[i + 1]).y - (layer[i]).y) / ((layer[i + 1]).x - (layer[i])
+                                .x);
+                        auto n = (layer[i]).y - m * (layer[i]).x;
+                        auto r = (double x) => m * x + n;
+                        foreach (j; (cast(int)((layer[i]).x + 1)) .. (cast(int)((layer[i + 1]).x)))
+                        {
+                            sampled_layer ~= Vec2d(j, r(j));
+                        }
                     }
                 }
             }
@@ -138,26 +149,32 @@ struct MidpointDisplacement
             {
                 foreach (x; 0 .. (final_layer.length - 1))
                 {
-                    auto x1 = (final_layer[x]).x;
-                    auto y1 = height - (final_layer[x]).y;
-                    auto x2 = (final_layer[x]).x;
-                    auto y2 = height;
-
-                    //TODO y != 0
-                    if (y1 <= 0 || y2 <= 0)
+                    if (isVertexOnly)
                     {
-                        continue;
+                        linePoints ~= Vec2d((final_layer[x]).x, (final_layer[x]).y);
+                    }
+                    else
+                    {
+                        auto x1 = (final_layer[x]).x;
+                        auto y1 = height - (final_layer[x]).y;
+                        auto x2 = (final_layer[x]).x;
+                        auto y2 = height;
+
+                        //TODO y != 0
+                        if (y1 <= 0 || y2 <= 0)
+                        {
+                            continue;
+                        }
+
+                        lines ~= Line2d(x1, y1, x2, y2);
                     }
 
-                    lines ~= Line2d(x1, y1, x2, y2);
                 }
             }
         }
-
-        return lines;
     }
 
-    Line2d[] generate(
+    void generate(
         Vec2d start,
         Vec2d end,
         double terrainWidth,
@@ -168,14 +185,11 @@ struct MidpointDisplacement
         bool isVerticalDisplacementVariance = true)
     {
         auto layer1 = midpointDisplacement(start, end, roughness, verticalDisplacement, iterationCount, isVerticalDisplacementVariance);
-        auto lines = landscape([layer1], terrainHeight, terrainHeight);
-
+        landscape([layer1], terrainHeight, terrainHeight);
         // auto layer_1 = midpointDisplacement(Vec2d(250, 0), Vec2d(width, 200), 1.4, 20, 12);
         // auto layer_2 = midpointDisplacement(Vec2d(0, 180), Vec2d(width, 80), 1.2, 30, 12);
         // auto layer_3 = midpointDisplacement(Vec2d(0, 270), Vec2d(width, 190), 1, 120, 9);
         // auto layer_4 = midpointDisplacement(Vec2d(0, 350), Vec2d(width, 320), 0.9, 250, 8);
-
-        return lines;
     }
 }
 
@@ -191,6 +205,7 @@ class MDLandscapeGenerator : Control
     import api.math.geom2.rect2 : Rect2d;
     import api.dm.kit.sprites.sprite : Sprite;
     import api.dm.kit.sprites.textures.vectors.vector_texture : VectorTexture;
+    import api.math.geom2.voronoi.voronoi;
 
     StackBox contentContainer;
     double canvasWidth = 0;
@@ -200,7 +215,7 @@ class MDLandscapeGenerator : Control
 
     Random rnd;
 
-    Line2d[] lines;
+    Vec2d[][RGBA] linePoints;
     Vec2d[][RGBA] layerLinePoints;
 
     MidpointDisplacement generator;
@@ -225,8 +240,149 @@ class MDLandscapeGenerator : Control
     size_t layers = 3;
 
     RGBA[] colorPalette;
+    RGBA[] lightColorPalette;
+    RGBA[] backgroundColorPalette;
 
-    VectorTexture backgroundImage;
+    BackgroundImage backgroundImage;
+
+    static class BackgroundImage : VectorTexture
+    {
+        import Math = api.math;
+
+        RGBA lightColor;
+        RGBA starColor = RGBA.lightblue;
+        RGBA mainColor;
+
+        Vec2d[][RGBA] layerLinePoints;
+
+        Random rnd;
+
+        this(double canvasWidth, double canvasHeight, Random rnd)
+        {
+            super(canvasWidth, canvasHeight);
+            this.rnd = rnd;
+        }
+
+        override void createTextureContent()
+        {
+            super.createTextureContent;
+            auto ctx = canvas;
+
+            import api.dm.kit.graphics.contexts.graphics_context : GradientStopPoint;
+            import api.dm.kit.graphics.colors.hsv : HSV;
+
+            auto mainColorHSV = mainColor.toHSV;
+            auto endColor = mainColorHSV;
+
+            mainColorHSV.value= 0.25;
+            endColor.hue = HSV.maxHue - mainColorHSV.hue;
+            endColor.value = 1.0;
+            endColor.saturation = 1.0;
+
+            GradientStopPoint[] points = [
+                {0, mainColorHSV.toRGBA},
+                {1, endColor.toRGBA}
+            ];
+
+            ctx.linearGradient(Vec2d(0, 0), Vec2d(0, height), points, () {
+                ctx.fillRect(0, 0, width, height);
+            });
+
+            ctx.color = starColor;
+
+            auto starsCount = rnd.randomBetween(10, 30);
+            foreach (sc; 0 .. starsCount)
+            {
+                auto starDiameter = rnd.randomBetween(2, 5);
+                auto sx = rnd.randomBetween(starDiameter, width - starDiameter);
+                auto sy = rnd.randomBetween(starDiameter, height / 2);
+                ctx.arc(sx, sy, starDiameter / 2.0, 0, Math.PI2);
+                ctx.fill;
+            }
+
+            auto lightDiameter = 100;
+
+            auto lightColorHSV = lightColor.toHSV;
+            auto innerLightColor = lightColorHSV;
+            auto outerLightColor = lightColorHSV;
+
+            outerLightColor.value = 1;
+            outerLightColor.saturation = 1;
+            
+            //innerLightColor.value = 0.88;
+
+            GradientStopPoint[] lightPoints = [
+                {0, outerLightColor.toRGBA},
+                {1, innerLightColor.toRGBA}
+            ];
+
+            auto lightRadius = lightDiameter / 2;
+
+            auto randomX = rnd.randomBetween(lightDiameter, width - lightDiameter);
+            auto randomY = rnd.randomBetween(lightDiameter + 10, lightDiameter * 3);
+
+            ctx.color = lightColor;
+            ctx.arc(randomX, randomY, lightDiameter / 2, 0, Math.PI2);
+
+            ctx.radialGradient(Vec2d(randomX, randomY), Vec2d(randomX, randomY), lightRadius / 4, lightRadius, lightPoints, () {
+                ctx.fill;
+            });
+
+            foreach (ref color, linePoints; layerLinePoints)
+            {
+                auto startLineColor = color.toHSV;
+                auto endLineColor = startLineColor;
+
+                startLineColor.value = 1;
+                endLineColor.value = 0.25;
+
+                double maxY = 0;
+                foreach (ref p; linePoints)
+                {
+                    if (p.y > maxY && p.y < height)
+                    {
+                        maxY = p.y;
+                    }
+                }
+
+                GradientStopPoint[2] lineStops = [
+                    {0, startLineColor.toRGBA},
+                    {1, endLineColor.toRGBA}
+                ];
+
+                ctx.color = color;
+
+                auto first = linePoints[0];
+                first.y = height - first.y;
+                ctx.moveTo(0, height);
+                ctx.lineTo(first);
+
+                foreach (p; linePoints)
+                {
+                    Vec2d point = p;
+                    point.y = height - point.y;
+
+                    if (point.x > width)
+                    {
+                        point.x = width;
+                    }
+                    if (point.y > height)
+                    {
+                        point.y = height;
+                    }
+
+                    ctx.lineTo(point);
+                }
+
+                ctx.lineTo(width, height);
+                ctx.lineTo(0, height);
+               
+                ctx.linearGradient(Vec2d(0, height - maxY), Vec2d(0, height), lineStops, () {
+                   ctx.fill;
+                });
+            }
+        }
+    }
 
     this(double canvasWidth = 400, double canvasHeight = 400)
     {
@@ -247,16 +403,16 @@ class MDLandscapeGenerator : Control
     {
         super.drawContent;
 
-        graphics.setClip(Rect2d(x, y, canvasWidth, canvasHeight));
-        scope (exit)
-        {
-            graphics.removeClip;
-        }
+        // graphics.setClip(Rect2d(x, y, canvasWidth, canvasHeight));
+        // scope (exit)
+        // {
+        //     graphics.removeClip;
+        // }
 
-        foreach (ref color, linePoints; layerLinePoints)
-        {
-            graphics.lines(linePoints, linePoints.length - 2, color);
-        }
+        // foreach (ref color, linePoints; layerLinePoints)
+        // {
+        //     graphics.lines(linePoints, linePoints.length - 2, color);
+        // }
     }
 
     override void create()
@@ -264,26 +420,13 @@ class MDLandscapeGenerator : Control
         super.create;
 
         generator = MidpointDisplacement();
+        generator.isVertexOnly = true;
 
         contentContainer = new StackBox;
         contentContainer.resize(canvasWidth, canvasHeight);
         addCreate(contentContainer);
 
-        backgroundImage = new class VectorTexture
-        {
-            this()
-            {
-                super(canvasWidth, canvasHeight);
-            }
-
-            override void createTextureContent()
-            {
-                super.createTextureContent;
-                auto ctx = canvas;
-                ctx.color(RGBA.green);
-                ctx.fillRect(0, 0, width, height);
-            }
-        };
+        backgroundImage = new BackgroundImage(canvasWidth, canvasHeight, rnd);
 
         contentContainer.addCreate(backgroundImage);
         contentContainer.isDrawAfterParent = false;
@@ -294,9 +437,40 @@ class MDLandscapeGenerator : Control
         if (colorPalette.length == 0)
         {
             colorPalette = [
-                RGBA.red,
-                RGBA.green,
-                RGBA.yellow
+                RGBA.web("#9FB8C9"),
+                RGBA.web("#87B41D"),
+                RGBA.web("#B1D8D5"),
+                RGBA.web("#73B8F4"),
+                RGBA.web("#8FCF59"),
+                RGBA.web("#E9A29A"),
+                RGBA.web("#E6AD62"),
+                RGBA.web("#259889"),
+                RGBA.web("#044F59"),
+            ];
+        }
+
+        if (backgroundColorPalette.length == 0)
+        {
+            backgroundColorPalette = [
+                //dark
+                RGBA.web("#132D50"),
+                RGBA.web("#373475"),
+                RGBA.web("#2268B1"),
+                RGBA.web("#295E67"),
+                RGBA.web("#7A344B"),
+                RGBA.web("#4C397F"),
+            ];
+        }
+
+        if (lightColorPalette.length == 0)
+        {
+            lightColorPalette = [
+                RGBA.web("#F4F7F7"),
+                RGBA.web("#C2F6F6"),
+                RGBA.web("#E2C892"),
+                RGBA.web("#EDE870"),
+                RGBA.web("#D7E9F7"),
+                RGBA.web("#F0E191"),
             ];
         }
 
@@ -351,6 +525,7 @@ class MDLandscapeGenerator : Control
         foreach (ch; layout.childrenForLayout(this))
         {
             import std;
+
             writeln(ch.toString, "\n");
         }
     }
@@ -370,6 +545,8 @@ class MDLandscapeGenerator : Control
 
     void generate()
     {
+        rnd.shuffle(colorPalette);
+
         foreach (li; 0 .. layers)
         {
             //auto rndMin = rnd.randomBerweenVec(minStart, maxStart);
@@ -381,24 +558,41 @@ class MDLandscapeGenerator : Control
             //TODO if RGBA.random == colorPaletter[li]
             RGBA color = li < colorPalette.length ? colorPalette[li] : RGBA.random;
 
-            auto lines = generator.generate(start, end, canvasWidth, canvasHeight, roughness, vdisp, iters, true);
+            generator.generate(start, end, canvasWidth, canvasHeight, roughness, vdisp, iters, true);
 
             if (auto colorPtr = color in layerLinePoints)
             {
-                (*colorPtr) = [];
-                //(*colorPtr).reserve(lines.length * 2);
+                    (*colorPtr) = [];
+                    //(*colorPtr).reserve(lines.length * 2);
             }
             else
             {
                 layerLinePoints[color] = [];
             }
 
-            foreach (line; lines)
+            if (!generator.isVertexOnly)
             {
-                layerLinePoints[color] ~= line.start;
-                layerLinePoints[color] ~= line.end;
+                foreach (line; generator.lines)
+                {
+                    layerLinePoints[color] ~= line.start;
+                    layerLinePoints[color] ~= line.end;
+                }
+            }else {
+                layerLinePoints[color] = generator.linePoints;
             }
         }
+
+        backgroundImage.layerLinePoints = layerLinePoints;
+        backgroundImage.mainColor = rnd.randomElement(backgroundColorPalette).get;
+        backgroundImage.lightColor = rnd.randomElement(lightColorPalette).get;
+        RGBA starColor = rnd.randomElement(lightColorPalette).get;
+        while (starColor == backgroundImage.lightColor)
+        {
+            starColor = rnd.randomElement(lightColorPalette).get;
+        }
+        backgroundImage.starColor = starColor;
+
+        backgroundImage.recreate;
     }
 
 }
@@ -448,7 +642,8 @@ unittest
         }
     }
 
-    auto lines = gen.landscape([res1], 500, 500);
+    gen.landscape([res1], 500, 500);
+    auto lines = gen.lines;
 
     assert(lines.length == 399);
 
