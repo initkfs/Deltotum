@@ -34,6 +34,7 @@ class Popup : VBox
         isBackground = true;
         isBorder = true;
         isOpacityForChildren = true;
+        isLayoutManaged = false;
 
         //_width = 200;
         //_height = 50;
@@ -157,6 +158,10 @@ class GuiPopupManager : Container, PopupManager
     }
 
     double spacing = 5;
+
+    this(){
+        isLayoutManaged = false;
+    }
 
     override void create()
     {

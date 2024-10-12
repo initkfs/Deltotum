@@ -222,15 +222,19 @@ class Graphics : LoggableUnit
         line(startX, startY, endX, endY);
     }
 
-    void lines(Vec2d[] points)
+    void lines(Vec2d[] points) => lines(points, points.length);
+
+    void lines(Vec2d[] points, size_t count)
     {
-        if (const err = renderer.drawLines(points))
+        if (const err = renderer.drawLines(points, count))
         {
             logger.errorf("Lines drawing error. %s", err);
         }
     }
 
-    void lines(Vec2d[] points, RGBA color = defaultColor)
+    void lines(Vec2d[] points, RGBA color = defaultColor) => lines(points, points.length, color);
+    
+    void lines(Vec2d[] points, size_t count, RGBA color = defaultColor)
     {
         changeColor(color);
         scope (exit)
@@ -238,7 +242,7 @@ class Graphics : LoggableUnit
             restoreColor;
         }
 
-        lines(points);
+        lines(points, count);
     }
 
     void point(double x, double y)
@@ -272,7 +276,8 @@ class Graphics : LoggableUnit
 
     void points(Vec2d[] points)
     {
-        if(const err = renderer.drawPoints(points)){
+        if (const err = renderer.drawPoints(points))
+        {
             //TODO log
             throw new Exception(err.toString);
         }
@@ -297,7 +302,8 @@ class Graphics : LoggableUnit
             restoreColor;
         }
 
-        if(const err = renderer.drawPoints(p)){
+        if (const err = renderer.drawPoints(p))
+        {
             //TODO log
             throw new Exception(err.toString);
         }

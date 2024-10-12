@@ -38,6 +38,7 @@ nothrow:
     ComResult drawFillRects(Rect2i[] rects);
     ComResult drawLine(int startX, int startY, int endX, int endY);
     ComResult drawLines(Vec2d[] linePoints);
+    ComResult drawLines(Vec2d[] linePoints, size_t count);
     ComResult drawLines(Vec2i[] linePoints);
     ComResult getOutputSize(out int width, out int height);
     ComResult setScale(double scaleX, double scaleY);

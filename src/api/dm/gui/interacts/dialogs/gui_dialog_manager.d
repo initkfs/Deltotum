@@ -29,6 +29,7 @@ class Dialog : StackBox
         _height = 150;
         isBackground = true;
         isBorder = true;
+        isLayoutManaged = false;
     }
 
     import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
@@ -119,6 +120,7 @@ class GuiDialogManager : Sprite, DialogManager
         isVisible = false;
 
         isDrawByParent = false;
+        isLayoutManaged = false;
     }
 
     override void create()

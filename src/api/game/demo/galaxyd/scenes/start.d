@@ -26,9 +26,9 @@ class Start : Scene
     double[][] matrix;
 
     import api.math.geom2.diamond_square;
-    import api.math.geom2.midpoint_displacement: MidpointDisplacement;
+    import api.math.geom2.midpoint_displacement: MDLandscapeGenerator;
 
-    DiamondSquareTerrain generator;
+    MDLandscapeGenerator generator;
 
     TerrainPixel[] terrain;
     import api.math.geom2.rect2: Rect2d;
@@ -131,14 +131,10 @@ class Start : Scene
         //     }
         // };
 
-        auto generator = MidpointDisplacement();
-        auto lines = generator.generate(Vec2d(0, 180), Vec2d(500, 80), 500, 500, 1.2, 50, 10);
-        dLines.reserve(lines.length * 2);
-        foreach (l; lines)
-        {
-            dLines ~= l.start;
-            dLines ~= l.end;
-        }
+        generator = new MDLandscapeGenerator(600, 400);
+        addCreate(generator);
+
+       
         createDebugger;
     }
 
@@ -147,8 +143,6 @@ class Start : Scene
         super.draw;
 
         import api.dm.kit.graphics.colors.rgba : RGBA;
-
-        graphics.lines(dLines, RGBA.red);
 
         // foreach (color, rects; terrainPoints)
         // {

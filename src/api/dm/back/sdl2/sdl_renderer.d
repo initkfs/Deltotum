@@ -291,11 +291,13 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         return ComResult.success;
     }
 
-    ComResult drawLines(SDL_Point[] linePoints) nothrow
+    ComResult drawLines(SDL_Point[] linePoints) nothrow => drawLines(linePoints, linePoints.length);
+    ComResult drawLines(SDL_Point[] linePoints, size_t count) nothrow
     {
+        assert(count <= linePoints.length);
         const int zeroOrErrorCode = SDL_RenderDrawLines(ptr,
             linePoints.ptr,
-            cast(int) linePoints.length);
+            cast(int) count);
         if (zeroOrErrorCode)
         {
             return getErrorRes(zeroOrErrorCode);
@@ -303,9 +305,14 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         return ComResult.success;
     }
 
-    ComResult drawLines(Vec2d[] linePoints) nothrow
+    ComResult drawLines(Vec2d[] linePoints) nothrow => drawLines(
+        linePoints, linePoints.length);
+
+    ComResult drawLines(Vec2d[] linePoints, size_t count) nothrow
     {
-        return drawLines(toPoints(linePoints));
+        auto tp = toPoints(linePoints);
+        assert(count <= tp.length);
+        return drawLines(tp, count);
     }
 
     ComResult drawLines(Vec2i[] linePoints) nothrow

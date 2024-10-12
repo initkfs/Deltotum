@@ -35,6 +35,10 @@ struct MidpointDisplacement
 
         Vec2d[] points = [start, end];
 
+        import std : sort;
+
+        points.sort!((p1, p2) => p1.x < p2.x);
+
         size_t iteration = 1;
         while (iteration <= iterationCount)
         {
@@ -67,11 +71,9 @@ struct MidpointDisplacement
 
                 midpoint.y += yDisplacement;
 
-                import std : sort;
                 import std.array : insertInPlace;
 
-                //TODO more optimal
-                points.sort!((p1, p2) => p1.x < p2.x);
+                //TODO more optimal, std.range.SortedRange
                 size_t pos;
                 foreach (ii, p; points)
                 {
@@ -141,6 +143,12 @@ struct MidpointDisplacement
                     auto x2 = (final_layer[x]).x;
                     auto y2 = height;
 
+                    //TODO y != 0
+                    if (y1 <= 0 || y2 <= 0)
+                    {
+                        continue;
+                    }
+
                     lines ~= Line2d(x1, y1, x2, y2);
                 }
             }
@@ -150,10 +158,10 @@ struct MidpointDisplacement
     }
 
     Line2d[] generate(
-        Vec2d start, 
-        Vec2d end, 
-        double terrainWidth, 
-        double terrainHeight, 
+        Vec2d start,
+        Vec2d end,
+        double terrainWidth,
+        double terrainHeight,
         double roughness = 1.0,
         double verticalDisplacement = 10,
         size_t iterationCount = 10,
@@ -161,7 +169,7 @@ struct MidpointDisplacement
     {
         auto layer1 = midpointDisplacement(start, end, roughness, verticalDisplacement, iterationCount, isVerticalDisplacementVariance);
         auto lines = landscape([layer1], terrainHeight, terrainHeight);
-        
+
         // auto layer_1 = midpointDisplacement(Vec2d(250, 0), Vec2d(width, 200), 1.4, 20, 12);
         // auto layer_2 = midpointDisplacement(Vec2d(0, 180), Vec2d(width, 80), 1.2, 30, 12);
         // auto layer_3 = midpointDisplacement(Vec2d(0, 270), Vec2d(width, 190), 1, 120, 9);
@@ -169,6 +177,230 @@ struct MidpointDisplacement
 
         return lines;
     }
+}
+
+import api.dm.gui.controls.control : Control;
+
+class MDLandscapeGenerator : Control
+{
+    import api.dm.gui.controls.forms.fields.regulate_text_field : RegulateTextField;
+    import api.dm.gui.controls.forms.fields.regulate_text_panel : RegulateTextPanel;
+    import api.dm.gui.containers.container : Container;
+    import api.dm.gui.containers.stack_box : StackBox;
+    import api.dm.kit.graphics.colors.rgba : RGBA;
+    import api.math.geom2.rect2 : Rect2d;
+    import api.dm.kit.sprites.sprite : Sprite;
+    import api.dm.kit.sprites.textures.vectors.vector_texture : VectorTexture;
+
+    StackBox contentContainer;
+    double canvasWidth = 0;
+    double canvasHeight = 0;
+
+    VectorTexture background;
+
+    Random rnd;
+
+    Line2d[] lines;
+    Vec2d[][RGBA] layerLinePoints;
+
+    MidpointDisplacement generator;
+
+    double roughnessMin = 0.8;
+    double roughnessMax = 1.5;
+    double verticalDispMin = 20;
+    double verticalDispMax = 250;
+    size_t iterationCountMin = 3;
+    size_t iterationCountMax = 12;
+
+    RegulateTextField roughnessMinField;
+    RegulateTextField roughnessMaxField;
+    RegulateTextField verticalMinDispField;
+    RegulateTextField verticalMaxDispField;
+    RegulateTextField iterationCountMinField;
+    RegulateTextField iterationCountMaxField;
+
+    Vec2d start;
+    Vec2d end;
+
+    size_t layers = 3;
+
+    RGBA[] colorPalette;
+
+    VectorTexture backgroundImage;
+
+    this(double canvasWidth = 400, double canvasHeight = 400)
+    {
+        this.canvasWidth = canvasWidth;
+        this.canvasHeight = canvasHeight;
+
+        rnd = new Random;
+
+        import api.dm.kit.sprites.layouts.hlayout : HLayout;
+
+        layout = new HLayout(5);
+        layout.isAlignY = true;
+        layout.isAutoResize = true;
+        isDrawBounds = true;
+    }
+
+    override void drawContent()
+    {
+        super.drawContent;
+
+        graphics.setClip(Rect2d(x, y, canvasWidth, canvasHeight));
+        scope (exit)
+        {
+            graphics.removeClip;
+        }
+
+        foreach (ref color, linePoints; layerLinePoints)
+        {
+            graphics.lines(linePoints, linePoints.length - 2, color);
+        }
+    }
+
+    override void create()
+    {
+        super.create;
+
+        generator = MidpointDisplacement();
+
+        contentContainer = new StackBox;
+        contentContainer.resize(canvasWidth, canvasHeight);
+        addCreate(contentContainer);
+
+        backgroundImage = new class VectorTexture
+        {
+            this()
+            {
+                super(canvasWidth, canvasHeight);
+            }
+
+            override void createTextureContent()
+            {
+                super.createTextureContent;
+                auto ctx = canvas;
+                ctx.color(RGBA.green);
+                ctx.fillRect(0, 0, width, height);
+            }
+        };
+
+        contentContainer.addCreate(backgroundImage);
+        contentContainer.isDrawAfterParent = false;
+
+        start = Vec2d(0, 35);
+        end = Vec2d(canvasWidth, 45);
+
+        if (colorPalette.length == 0)
+        {
+            colorPalette = [
+                RGBA.red,
+                RGBA.green,
+                RGBA.yellow
+            ];
+        }
+
+        auto fieldRoot = new RegulateTextPanel(5);
+        addCreate(fieldRoot);
+
+        auto rMin = 0;
+        auto rMax = 5;
+
+        roughnessMinField = createRegField(fieldRoot, "Rough min:", rMin, rMax, (v) {
+            roughnessMin = v;
+            generate;
+        });
+
+        roughnessMinField.value = roughnessMin;
+
+        roughnessMaxField = createRegField(fieldRoot, "Rough max:", rMin, rMax, (v) {
+            roughnessMax = v;
+            generate;
+        });
+
+        roughnessMaxField.value = roughnessMax;
+
+        auto rDispMin = 0;
+        auto rDispMax = canvasHeight;
+
+        verticalMinDispField = createRegField(fieldRoot, "Vdisp min:", rDispMin, rDispMax, (
+                v) { verticalDispMin = v; generate; });
+
+        verticalMinDispField.value = verticalDispMin;
+
+        verticalMaxDispField = createRegField(fieldRoot, "Vdisp max:", rDispMin, rDispMax, (
+                v) { verticalDispMax = v; generate; });
+
+        verticalMaxDispField.value = verticalDispMax;
+
+        auto iterMin = 1;
+        auto iterMax = 15;
+
+        iterationCountMinField = createRegField(fieldRoot, "Iter min:", iterMin, iterMax, (
+                v) { iterationCountMin = cast(size_t) v; generate; });
+
+        iterationCountMinField.value = iterationCountMin;
+
+        iterationCountMaxField = createRegField(fieldRoot, "Iter max:", iterMin, iterMax, (
+                v) { iterationCountMax = cast(size_t) v; generate; });
+
+        iterationCountMaxField.value = iterationCountMax;
+
+        generate;
+
+        foreach (ch; layout.childrenForLayout(this))
+        {
+            import std;
+            writeln(ch.toString, "\n");
+        }
+    }
+
+    protected RegulateTextField createRegField(Sprite root, dstring label = "Label", double minValue = 0, double maxValue = 1, void delegate(
+            double) onScrollValue = null)
+    {
+
+        auto field = new RegulateTextField;
+        root.addCreate(field);
+        field.labelField.text = label;
+        field.scrollField.minValue = minValue;
+        field.scrollField.maxValue = maxValue;
+        field.scrollField.onValue ~= onScrollValue;
+        return field;
+    }
+
+    void generate()
+    {
+        foreach (li; 0 .. layers)
+        {
+            //auto rndMin = rnd.randomBerweenVec(minStart, maxStart);
+            //auto rndMax = rnd.randomBerweenVec(minEnd, maxEnd);
+            auto roughness = rnd.randomBetween(roughnessMin, roughnessMax);
+            auto vdisp = rnd.randomBetween(verticalDispMin, verticalDispMax);
+            auto iters = rnd.randomBetween(iterationCountMin, iterationCountMax);
+
+            //TODO if RGBA.random == colorPaletter[li]
+            RGBA color = li < colorPalette.length ? colorPalette[li] : RGBA.random;
+
+            auto lines = generator.generate(start, end, canvasWidth, canvasHeight, roughness, vdisp, iters, true);
+
+            if (auto colorPtr = color in layerLinePoints)
+            {
+                (*colorPtr) = [];
+                //(*colorPtr).reserve(lines.length * 2);
+            }
+            else
+            {
+                layerLinePoints[color] = [];
+            }
+
+            foreach (line; lines)
+            {
+                layerLinePoints[color] ~= line.start;
+                layerLinePoints[color] ~= line.end;
+            }
+        }
+    }
+
 }
 
 unittest
@@ -217,7 +449,7 @@ unittest
     }
 
     auto lines = gen.landscape([res1], 500, 500);
-    
+
     assert(lines.length == 399);
 
     double[][] expected10Lines = [
@@ -235,7 +467,7 @@ unittest
 
     double leps = 0.0000001;
 
-    auto received10Slice = lines[0..10];
+    auto received10Slice = lines[0 .. 10];
     foreach (i, line; received10Slice)
     {
         auto expectedLine = expected10Lines[i];
@@ -246,18 +478,19 @@ unittest
     }
 
     auto expectedLast10Lines = [
-        [489, 399.70576898335804, 489, 500], 
-        [490, 399.7325172575982, 490, 500], 
-        [491, 399.7592655318384, 491, 500], 
-        [492, 399.7860138060786, 492, 500], 
-        [493, 399.81276208031875, 493, 500], 
-        [494, 399.8395103545589, 494, 500], 
-        [495, 399.86625862879913, 495, 500], 
-        [496, 399.8930069030393, 496, 500], 
-        [497, 399.91975517727946, 497, 500], 
-        [498, 399.9465034515197, 498, 500]];
+        [489, 399.70576898335804, 489, 500],
+        [490, 399.7325172575982, 490, 500],
+        [491, 399.7592655318384, 491, 500],
+        [492, 399.7860138060786, 492, 500],
+        [493, 399.81276208031875, 493, 500],
+        [494, 399.8395103545589, 494, 500],
+        [495, 399.86625862879913, 495, 500],
+        [496, 399.8930069030393, 496, 500],
+        [497, 399.91975517727946, 497, 500],
+        [498, 399.9465034515197, 498, 500]
+    ];
 
-    auto receivedLast10Slice = lines[$ - 10..$];
+    auto receivedLast10Slice = lines[$ - 10 .. $];
     foreach (i, line; receivedLast10Slice)
     {
         auto expectedLine = expectedLast10Lines[i];
