@@ -189,6 +189,12 @@ struct Vec2d
         return x * other.y - y * other.x;
     }
 
+    static double cross(Vec2d p0, Vec2d p1, Vec2d p2) @nogc nothrow pure @safe
+    {
+        return (p1.x - p0.x) * (p2.y - p0.y) -
+            (p2.x - p0.x) * (p1.y - p0.y);
+    }
+
     Vec2d crossVecScalar(double s) const @nogc nothrow pure @safe
     {
         return Vec2d(s * y, -s * x);

@@ -15,6 +15,7 @@ import Math = api.dm.math;
 
 import api.math.flip : Flip;
 import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.line2 : Line2d;
 
 import std.logger.core : Logger;
 import std.conv : to;
@@ -212,6 +213,16 @@ class Graphics : LoggableUnit
         line(start.x, start.y, end.x, end.y, color);
     }
 
+    void line(Line2d ln)
+    {
+        line(ln.start, ln.end);
+    }
+
+    void line(Line2d ln, RGBA color = defaultColor)
+    {
+        line(ln.start, ln.end, color);
+    }
+
     void line(double startX, double startY, double endX, double endY, RGBA color = defaultColor)
     {
         changeColor(color);
@@ -233,7 +244,7 @@ class Graphics : LoggableUnit
     }
 
     void lines(Vec2d[] points, RGBA color = defaultColor) => lines(points, points.length, color);
-    
+
     void lines(Vec2d[] points, size_t count, RGBA color = defaultColor)
     {
         changeColor(color);
@@ -484,6 +495,10 @@ class Graphics : LoggableUnit
             point(centerX + x, centerY + y);
             angleRad += angleRadIncr;
         }
+    }
+
+    void fillCircle(double centerX, double centerY, double radius, RGBA color = defaultColor){
+        circle(centerX, centerY, radius, color, true);
     }
 
     void circle(double centerX, double centerY, double radius, RGBA color = defaultColor, bool isFill = false)

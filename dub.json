@@ -21,7 +21,7 @@
                 "linux"
             ],
             "excludedSourceFiles": [
-                "src/dm/addon/*"
+                "src/api/dm/addon/*"
             ]
         },
         {

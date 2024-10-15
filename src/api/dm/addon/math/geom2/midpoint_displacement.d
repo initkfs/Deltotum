@@ -205,7 +205,6 @@ class MDLandscapeGenerator : Control
     import api.math.geom2.rect2 : Rect2d;
     import api.dm.kit.sprites.sprite : Sprite;
     import api.dm.kit.sprites.textures.vectors.vector_texture : VectorTexture;
-    import api.math.geom2.voronoi.voronoi;
 
     StackBox contentContainer;
     double canvasWidth = 0;

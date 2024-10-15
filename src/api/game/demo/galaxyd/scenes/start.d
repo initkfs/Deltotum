@@ -5,6 +5,7 @@ import api.dm.gui.containers.vbox : VBox;
 
 import Math = api.dm.math;
 import api.dm.addon.math.triangulations.delaunay_triangulator;
+import api.math.random: Random;
 
 /**
  * Authors: initkfs
@@ -19,121 +20,43 @@ class Start : Scene
     import api.math;
     import api.dm.addon.math.geom2.triangulate;
     import api.dm.kit.sprites.textures.vectors.shapes.vtriangle;
+    import api.math.geom2.convex_hull;
 
     Vec2d[] points;
-    Triangle2d[] trigs;
-    Line2d[] sites;
-    double[][] matrix;
+    Line2d[] lines;
+    Line2d[Vec2d] clusters;
+    Vec2d[] vertex;
 
-    import api.dm.addon.math.geom2.diamond_square;
-    import api.dm.addon.math.geom2.midpoint_displacement: MDLandscapeGenerator;
+    Random rnd;
 
-    MDLandscapeGenerator generator;
-
-    TerrainPixel[] terrain;
-    import api.math.geom2.rect2: Rect2d;
-    import api.dm.kit.graphics.colors.rgba: RGBA;
-    
-    Rect2d[][RGBA] terrainPoints;
-    Vec2d[] dLines;
 
     override void create()
     {
         super.create;
 
+        rnd = new Random;
+
         import api.math;
 
-        // int nv = 30;
-        // int ntri = 0;
+        enum pCount = 100;
+        points = new Vec2d[](pCount);
 
-        // points = new Vec2d[](nv + 3);
+        foreach(pi; 0..pCount){
+            auto rx = rnd.randomBetween(0, 500);
+            auto ry = rnd.randomBetween(0, 500);
+            points[pi] = Vec2d(rx, ry);
+        }
 
-        // import api.math.random: Random;
+        vertex = grahamScan(points);
 
-        // auto rnd = new Random;
-
-        // for (int i = 0; i < points.length; i++)
-        // {
-        //     auto x = rnd.randomBetween!int(0, window.width);
-        //     auto y = rnd.randomBetween!int(0, window.height);
-        //     points[i] = Vec2d(x, y);
-        // }
-
-        //  import std;
-
-        // points.sort!((p1, p2) => p1.x < p2.x);
-
-        // trigs = triangulate(points);
-
-        // import api.math.geom2.voronoi.voronoi;
-
-        // import api.math.random: Random;
-
-        // auto rnd = new Random;
-
-        // points = new Vec2d[](100);
-
-        // onLine = (l){
-        //     sites ~= l;
-        // };
-
-        // foreach (pi; 0..100)
-        // {
-        //     Vec2d p;
-        //     p.x = rnd.randomBetween(0, 400);
-        //     p.y = rnd.randomBetween(0, 400);
-
-        //     points[pi] = p;
-        // }
-
-        // runVoronoi(points);
-
-        // generator = DiamondSquareTerrain(0, 10);
-        // generator.generate;
-
-        // terrain = new TerrainPixel[](generator.terrainSize);
         
-        // generator.iterateTerrain((terrainInfo, i) {
-        //     auto color = terrainInfo.terrain.color.toRGBA;
-        //     (terrainPoints[color]) ~= Rect2d(terrainInfo.x, terrainInfo.y, terrainInfo.pixelWidth, terrainInfo.pixelHeight);
-            
-        //     terrain[i] = terrainInfo;
-        //     return true;
-        // });
 
-        // import api.dm.gui.containers.stack_box : StackBox;
-        // import api.dm.gui.controls.popups.pointer_popup : PointerPopup;
+        // Line2d clasterStart;
 
-        // auto sw = generator.canvasWidth;
-        // auto box = new StackBox;
-        // box.width = sw;
-        // box.height = sw;
-        // box.isDrawBounds = true;
-        // addCreate(box);
-
-        // auto popup = new PointerPopup();
-        // box.addCreate(popup);
-
-        // box.onPointerMove ~= (ref e) {
-        //     auto ex = e.x;
-        //     auto ey = e.y;
-        //     auto dx = 1;
-        //     auto dy = 1;
-        //     foreach (TerrainPixel px; terrain)
-        //     {
-        //         if (Math.abs(ex - px.x) <= dx && Math.abs(ey - px.y) <= dy)
-        //         {
-        //             auto text = px.terrain.type.name;
-        //             popup.text = text;
-        //             popup.show;
-        //             break;
-        //         }
-        //     }
-        // };
-
-        generator = new MDLandscapeGenerator(800, 600);
-        addCreate(generator);
-
+        // foreach (ref Line2d line; lines)
+        // {
+        //     if(line)   
+        // }
        
         createDebugger;
     }
@@ -144,37 +67,25 @@ class Start : Scene
 
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        // foreach (color, rects; terrainPoints)
-        // {
-        //     graphics.fillRects(rects, color);
-        // }
+        graphics.changeColor(RGBA.red);
 
-        // foreach (TerrainPixel terr; terrain)
-        // {
-        //     graphics.fillRect(Vec2d(terr.x, terr.y), terr.pixelWidth, terr.pixelHeight, terr
-        //             .terrain.color.toRGBA);
-        // }
+        foreach (ref p; points)
+        {
+            graphics.fillCircle(p.x, p.y, 5);
+        }
 
-        // graphics.setColor(RGBA.red);
-        // scope(exit){
-        //     graphics.restoreColor;        
-        // }
+        graphics.restoreColor;
 
-        // foreach (p; points)
-        // {
-        //     graphics.circle(p.x, p.y, 5, RGBA.red);
-        // }
+        foreach (ref v; vertex)
+        {
+            graphics.fillCircle(v.x, v.y, 2, RGBA.yellow);
+        }
 
-        // foreach (s; sites)
-        // {
-        //     graphics.line(s.start.x, s.start.y, s.end.x, s.end.y, RGBA.green);
-        // }
+        // graphics.changeColor(RGBA.green);
 
-        // foreach (Triangle2d trig; trigs)
+        // foreach (Line2d line; lines)
         // {
-        //     graphics.line(trig.a, trig.b);
-        //     graphics.line(trig.b ,trig.c);
-        //     graphics.line(trig.c, trig.a);
+        //     graphics.line(line);
         // }
     }
 }

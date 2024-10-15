@@ -91,7 +91,7 @@ struct Polygon2
         size_t vertLength = vertices.length;
         int crossCount = 0;
 
-        foreach(i, const ref Vec2d p1; vertices)
+        foreach (i, const ref Vec2d p1; vertices)
         {
             Vec2d p2 = vertices[(i + 1) % vertLength];
 
@@ -118,6 +118,64 @@ struct Polygon2
             }
         }
         return crossCount != 0;
+    }
+
+    bool isClockwise()
+    {
+        if (vertices.length == 0)
+        {
+            return false;
+        }
+
+        double vertSum = 0;
+
+        //(x2 - x1) * (y2 + y1)
+        foreach (i, const ref current; vertices)
+        {
+            if (i == 0)
+            {
+                continue;
+            }
+
+            const Vec2d* prev = &vertices[i - 1];
+            const dx = current.x - prev.x;
+            const dy = current.y + prev.y;
+
+            vertSum += dx * dy;
+        }
+
+        return vertSum > 0;
+    }
+
+    Vec2d midpoint()
+    {
+        double xSum = 0;
+        double ySum = 0;
+        foreach (ref p; vertices)
+        {
+            xSum += p.x;
+            ySum += p.y;
+        }
+
+        return Vec2d(xSum / vertices.length, ySum / vertices.length);
+    }
+
+    //TODO https://math.stackexchange.com/questions/978642/how-to-sort-vertices-of-a-polygon-in-counter-clockwise-order
+    void changeDirection(bool isClockwise = false)
+    {
+        //Point center = findCentroid(points);
+        const mid = midpoint;
+
+        import std.algorithm.sorting : sort;
+        import Math = api.math;
+
+        vertices.sort!((p1, p2) {
+            //TODO check if xy correct for atan2(y, x) 
+            const double pm1 = (Math.radToDeg(Math.atan2(p1.x - mid.x, p1.y - mid.y)) + 360) % 360;
+            const double pm2 = (Math.radToDeg(Math.atan2(p2.x - mid.x, p2.y - mid.y)) + 360) % 360;
+            const int dm = isClockwise ? cast(int)(pm1 - pm2) : cast(int)(pm2 - pm1);
+            return dm < 0;
+        });
     }
 }
 
