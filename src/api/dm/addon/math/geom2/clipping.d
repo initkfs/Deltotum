@@ -1,4 +1,4 @@
-module api.math.geom2.clipping;
+module api.dm.addon.math.geom2.clipping;
 
 import api.math.geom2.rect2 : Rect2d;
 import api.math.geom2.line2 : Line2d;

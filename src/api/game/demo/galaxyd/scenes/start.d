@@ -17,7 +17,7 @@ class Start : Scene
     }
 
     import api.math;
-    import api.math.geom2.triangulate;
+    import api.dm.addon.math.geom2.triangulate;
     import api.dm.kit.sprites.textures.vectors.shapes.vtriangle;
 
     Vec2d[] points;
@@ -25,8 +25,8 @@ class Start : Scene
     Line2d[] sites;
     double[][] matrix;
 
-    import api.math.geom2.diamond_square;
-    import api.math.geom2.midpoint_displacement: MDLandscapeGenerator;
+    import api.dm.addon.math.geom2.diamond_square;
+    import api.dm.addon.math.geom2.midpoint_displacement: MDLandscapeGenerator;
 
     MDLandscapeGenerator generator;
 

@@ -1,4 +1,4 @@
-module api.math.geom2.diamond_square;
+module api.dm.addon.math.geom2.diamond_square;
 /**
  * Authors: initkfs
  */
@@ -22,13 +22,13 @@ struct DiamondSquare
     bool isNormalizeMatrix = true;
     bool isSquareNormalized = true;
 
+    double randomRangeMin = 20;
+    double randomRangeMax = 50;
+
     protected
     {
         size_t _matrixLength;
         double[][] matrix;
-
-        double randomRangeMin = 0;
-        double randomRangeMax = 0;
     }
 
     // invariant
@@ -383,7 +383,7 @@ struct DiamondSquareTerrain
     {
         if (percentage < 0.01 || terrains.length == 0)
         {
-            return TerrainInfo(unknownTerrain, HSV(0, 1, 1));
+            return TerrainInfo(unknownTerrain, unknownTerrain.color);
         }
 
         auto colorVariety = terrains.length;
@@ -393,7 +393,7 @@ struct DiamondSquareTerrain
             : terrains[terrains.length - 1];
 
         auto finalVariance = Math.floor(rnd.randomBetween0to1 * terrain.variance);
-        auto finalHue = (terrain.color.hue % 360) + finalVariance;
+        auto finalHue = (terrain.color.hue + finalVariance) % HSV.maxHue;
 
         return TerrainInfo(terrain, HSV(finalHue, terrain.color.saturation, terrain.color.value));
     }
@@ -428,4 +428,163 @@ struct DiamondSquareTerrain
             }
         }
     }
+}
+
+import api.dm.gui.controls.control : Control;
+
+class DiamondSquareGenerator : Control
+{
+    import api.dm.gui.controls.forms.fields.regulate_text_field : RegulateTextField;
+    import api.dm.gui.controls.forms.fields.regulate_text_panel : RegulateTextPanel;
+
+    import api.dm.gui.containers.container : Container;
+    import api.dm.gui.containers.stack_box : StackBox;
+
+    import api.dm.kit.graphics.colors.rgba : RGBA;
+    import api.math.geom2.rect2 : Rect2d;
+    import api.dm.kit.sprites.sprite : Sprite;
+    import api.dm.kit.sprites.textures.vectors.vector_texture : VectorTexture;
+    import api.dm.gui.controls.popups.pointer_popup : PointerPopup;
+
+    StackBox contentContainer;
+    double canvasWidth = 0;
+    double canvasHeight = 0;
+
+    Random rnd;
+
+    DiamondSquareTerrain generator;
+
+    TerrainPixel[] terrain;
+    Rect2d[][RGBA] terrainPoints;
+
+    double randomRangeMin = 0;
+    double randomRangeMax = 0;
+
+    RegulateTextField randomRangeMinField;
+    RegulateTextField randomRangeMaxField;
+
+    this(double canvasSize, double randomRangeMin, double randomRangeMax, Random rnd = null)
+    {
+        this.rnd = !rnd ? new Random : rnd;
+        this.randomRangeMin = randomRangeMin;
+        this.randomRangeMax = randomRangeMax;
+
+        canvasWidth = canvasSize;
+        canvasHeight = canvasSize;
+
+        import std.math.exponential : log2;
+        import std.conv : to;
+
+        assert(canvasWidth > 1);
+
+        const size_t matrixInitSize = Math.trunc(log2(canvasWidth - 1)).to!size_t;
+
+        generator = DiamondSquareTerrain(randomRangeMin, randomRangeMax, matrixInitSize, rnd);
+
+        import api.dm.kit.sprites.layouts.hlayout : HLayout;
+
+        layout = new HLayout(5);
+        layout.isAutoResize = true;
+        layout.isAlignY = true;
+    }
+
+    override void create()
+    {
+        super.create;
+
+         contentContainer = new StackBox;
+        contentContainer.width = generator.canvasWidth;
+        contentContainer.height = generator.canvasHeight;
+        addCreate(contentContainer);
+
+        auto popup = new PointerPopup();
+        contentContainer.addCreate(popup);
+
+        contentContainer.onPointerMove ~= (ref e) {
+            auto ex = e.x;
+            auto ey = e.y;
+            auto dx = 1;
+            auto dy = 1;
+            foreach (TerrainPixel px; terrain)
+            {
+                if (Math.abs(ex - px.x) <= dx && Math.abs(ey - px.y) <= dy)
+                {
+                    auto text = px.terrain.type.name;
+                    popup.text = text;
+                    popup.show;
+                    break;
+                }
+            }
+        };
+
+        auto fieldRoot = new RegulateTextPanel(5);
+        addCreate(fieldRoot);
+
+        randomRangeMinField = createRegField(fieldRoot, "Range min:", 1, 100, (v) {
+            randomRangeMin = v;
+            generator.generator.randomRangeMin = randomRangeMin;
+            generate;
+        });
+
+        randomRangeMaxField = createRegField(fieldRoot, "Range max:", 1, 100, (v) {
+            randomRangeMax = v;
+            generator.generator.randomRangeMax = randomRangeMax;
+            generate;
+        });
+
+        randomRangeMinField.value = randomRangeMin;
+        randomRangeMaxField.value = randomRangeMax;
+
+        import api.dm.gui.controls.buttons.button : Button;
+
+        auto genBtn = new Button("Generate");
+        fieldRoot.addCreate(genBtn);
+        genBtn.onAction = (ref e) { generate; };
+    }
+
+    void generate()
+    {
+
+        terrainPoints.clear;
+
+        generator.generate;
+        if (terrain.length != generator.terrainSize)
+        {
+            //TODO reuse
+            terrain = new TerrainPixel[](generator.terrainSize);
+        }
+
+        generator.iterateTerrain((terrainInfo, i) {
+            auto color = terrainInfo.terrain.color.toRGBA;
+
+            (terrainPoints[color]) ~= Rect2d(terrainInfo.x, terrainInfo.y, terrainInfo.pixelWidth, terrainInfo
+                .pixelHeight);
+
+            terrain[i] = terrainInfo;
+            return true;
+        });
+    }
+
+    protected RegulateTextField createRegField(Sprite root, dstring label = "Label", double minValue = 0, double maxValue = 1, void delegate(
+            double) onScrollValue = null)
+    {
+
+        auto field = new RegulateTextField;
+        root.addCreate(field);
+        field.labelField.text = label;
+        field.scrollField.minValue = minValue;
+        field.scrollField.maxValue = maxValue;
+        field.scrollField.onValue ~= onScrollValue;
+        return field;
+    }
+
+    override void drawContent()
+    {
+        super.drawContent;
+        foreach (color, rects; terrainPoints)
+        {
+            graphics.fillRects(rects, color);
+        }
+    }
+
 }

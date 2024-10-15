@@ -1,4 +1,4 @@
-module api.math.geom2.closest_pair;
+module api.dm.addon.math.geom2.closest_pair;
 
 import Math = api.math;
 import api.math.geom2.vec2 : Vec2d;

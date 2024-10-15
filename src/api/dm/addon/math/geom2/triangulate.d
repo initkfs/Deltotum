@@ -1,4 +1,4 @@
-module api.math.geom2.triangulate;
+module api.dm.addon.math.geom2.triangulate;
 
 import std.container.slist : SList;
 import Math = api.math;

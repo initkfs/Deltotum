@@ -1,4 +1,4 @@
-module api.math.geom2.voronoi.voronoi;
+module api.math.geom2.voronoi_fortune;
 
 /*
 * Port from source code by Steven Fortune (http://ect.bell-labs.com/who/sjf/) 
