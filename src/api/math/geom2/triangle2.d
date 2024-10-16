@@ -39,6 +39,23 @@ struct Triangle2d
         return Vec2d(x, y);
     }
 
+    //https://totologic.blogspot.com/2014/01/accurate-point-in-triangle-test.html
+    bool contains2(Vec2d p) const @nogc pure @safe
+    {
+        float denom = ((b.y - c.y) * (a.x - c.x) + (c.x - b.x) * (a.y - c.y));
+
+        float aa = ((b.y - c.y) * (p.x - c.x) + (c.x - b.x) * (p.y - c.y)) / denom;
+        float bb = ((c.y - a.y) * (p.x - c.x) + (a.x - c.x) * (p.y - c.y)) / denom;
+        float cc = 1 - aa - bb;
+
+        if (aa > 0 && aa < 1 && bb > 0 && bb < 1 && cc > 0 && cc < 1)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     bool hasVertex(Vec2d vertex) const @nogc pure @safe
     {
         if (a == vertex || b == vertex || c == vertex)

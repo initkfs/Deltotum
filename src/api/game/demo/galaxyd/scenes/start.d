@@ -47,7 +47,7 @@ class Start : Scene
             points[pi] = Vec2d(rx, ry);
         }
 
-        vertex = grahamScan(points);
+        vertex = graham(points);
 
         
 

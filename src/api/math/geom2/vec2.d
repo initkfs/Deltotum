@@ -172,6 +172,18 @@ struct Vec2d
         immutable newY = y + sy * x;
         return Vec2d(newX, newY);
     }
+    
+    Vec2d projectTo(Vec2d other) const @nogc nothrow pure @safe{
+        const norm = normalize;
+        const otherProject = norm.scale(norm.dotProduct(other));
+        return otherProject;
+    }
+
+    double project(Vec2d other)const @nogc nothrow pure @safe {
+        const dop = dotProduct(other);
+        const otherLen = other.length;
+        return dop / otherLen;
+    }
 
     Vec2d project(double factor) const @nogc nothrow pure @safe
     in (factor != 0.0)
@@ -183,6 +195,8 @@ struct Vec2d
     {
         return x * other.x + y * other.y;
     }
+
+    bool isCollinear(Vec2d other) => cross(other) == 0;
 
     double cross(Vec2d other) const @nogc nothrow pure @safe
     {
@@ -361,6 +375,32 @@ struct Vec2d
         scaleFactor = cmp(scaleFactor, 1.0) < 0 ? scaleFactor : 1.0;
         Vec2d result = scale(scaleFactor);
         return result;
+    }
+
+    void clip(double minX, double minY, double maxX, double maxY)
+    {
+        double newX = x, newY = y;
+
+        if (x < minX)
+        {
+            x = minX;
+        }
+        else if (x > maxX)
+        {
+            x = maxX;
+        }
+
+        if (y < minY)
+        {
+            y = minY;
+        }
+        else if (y > maxY)
+        {
+            y = maxY;
+        }
+
+        x = newX;
+        y = newY;
     }
 
     bool isZero() const @nogc pure @safe
