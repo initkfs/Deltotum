@@ -1,4 +1,4 @@
-module api.dm.addon.math.triangulations.delaunay_triangulator;
+module api.math.triangulations.delaunay;
 
 import api.math.geom2.vec2 : Vec2d;
 import api.math.geom2.line2 : Line2d;

@@ -37,17 +37,38 @@ class SliceTransition(T) : MinMaxTransition!double
     {
         super.initialize;
 
-        import std.math.rounding : ceil;
-
         onOldNewValue ~= (oldValue, newValue) {
-            auto delta = Math.abs(newValue - oldValue);
-            auto sliceCount = cast(size_t) ceil(range.length * delta);
+            if (range.length == 0)
+            {
+                return;
+            }
+
+            auto currCount = cast(size_t)(range.length * newValue);
+            size_t sliceCount = currCount - rangePositionStart;
+
+            if (sliceCount == 0)
+            {
+                return;
+            }
+
             auto newEnd = rangePositionStart + sliceCount;
+
+            import std;
+
+            writeln(currCount, " count: ", sliceCount, " ", rangePositionStart, "...", rangePositionEnd, " len", range
+                    .length, " end ", newEnd, "v ", newValue);
+
             if (newEnd > range.length)
             {
                 rangePositionEnd = range.length;
                 callOnSlice;
                 stop;
+                return;
+            }
+            else if (newValue == maxValue)
+            {
+                rangePositionEnd = range.length;
+                callOnSlice;
                 return;
             }
 

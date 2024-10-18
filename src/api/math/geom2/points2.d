@@ -1,7 +1,7 @@
 module api.math.geom2.points2;
 
 import api.math.geom2.vec2;
-import api.dm.addon.math.geom2.voronoi_fortune;
+import api.math.triangulations.fortune;
 
 /**
  * Authors: initkfs

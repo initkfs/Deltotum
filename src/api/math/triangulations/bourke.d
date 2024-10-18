@@ -1,11 +1,10 @@
-module api.dm.addon.math.geom2.triangulate;
+module api.math.triangulations.bourke;
 
 import std.container.slist : SList;
 import Math = api.math;
-import api.math.geom2.vec2 : Vec2d;
-import api.math.geom2.triangle2 : Triangle2d;
+import api.math.geom2.vec2: Vec2d;
 
-import core.stdc.stdlib : malloc, realloc, free;
+import core.stdc.stdlib: malloc, realloc, free;
 
 /**
  * Authors: initkfs
@@ -17,28 +16,25 @@ by Paul Bourke, January 1989
 * https://paulbourke.net/papers/triangulate/
 */
 
-private
+struct ITRIANGLE
 {
-    struct TriangTriangle
-    {
-        int p1, p2, p3;
-    }
-
-    struct TriangEdge
-    {
-        int p1, p2;
-    }
-
-    struct Point3
-    {
-        double x, y, z;
-    }
-
-    enum TRUE = 1;
-    enum FALSE = 0;
-
-    enum double EPSILON = 0.000001;
+    int p1, p2, p3;
 }
+
+struct IEDGE
+{
+    int p1, p2;
+}
+
+struct XYZ
+{
+    double x, y, z;
+}
+
+enum TRUE = 1;
+enum FALSE = 0;
+
+enum double EPSILON = 0.000001;
 
 /*
    Triangulation subroutine
@@ -49,11 +45,11 @@ private
    The vertex array pxyz must be big enough to hold 3 more points
    The vertex array must be sorted in increasing x values say
 
-   qsort(p,nv,sizeof(Point3),XYZCompare);
+   qsort(p,nv,sizeof(XYZ),XYZCompare);
       :
    int XYZCompare(void *v1,void *v2)
    {
-      Point3 *p1,*p2;
+      XYZ *p1,*p2;
       p1 = v1;
       p2 = v2;
       if (p1->x < p2->x)
@@ -64,91 +60,34 @@ private
          return(0);
    }
 */
-Triangle2d[] triangulate(Vec2d[] points, bool isNeedSort = true)
+int triangulate(int nv, XYZ* pxyz, ITRIANGLE* v, int* ntri)
 {
-    //TODO Refactor
-    import std.conv : to;
-
-    int nv = points.length.to!int;
-
-    int ntri;
-
-    Triangle2d[] result;
-
-    auto newPointLen = nv + 3;
-    auto newTriangleLen = nv * 3;
-
-    TriangTriangle* vPtr = cast(TriangTriangle*) malloc(TriangTriangle.sizeof * newTriangleLen);
-    if (!vPtr)
-    {
-        return result;
-    }
-
-    scope (exit)
-    {
-        free(vPtr);
-    }
-
-    TriangTriangle[] v = vPtr[0 .. newTriangleLen];
-
-    Vec2d* pxyzPtr = cast(Vec2d*) malloc(Vec2d.sizeof * newPointLen);
-    if (!pxyzPtr)
-    {
-        return result;
-    }
-    scope (exit)
-    {
-        free(pxyzPtr);
-    }
-
-    Vec2d[] pxyz = pxyzPtr[0 .. newPointLen];
-    pxyz[0 .. nv] = points[];
-
-    if (isNeedSort)
-    {
-        import std : sort;
-
-        (pxyz[0 .. nv]).sort!((p1, p2) => p1.x < p2.x);
-    }
-
+    int* complete = null;
+    IEDGE* edges = null;
     int nedge = 0;
-    int emax = 200;
+    int trimax, emax = 200;
+    int status = 0;
 
     int inside;
     int i, j, k;
     double xp = 0, yp = 0, x1 = 0, y1 = 0, x2 = 0, y2 = 0, x3 = 0, y3 = 0, xc = 0, yc = 0, r = 0;
-    double xmin = 0, xmax = 0, ymin = 0, ymax = 0, xmid = 0, ymid = 0;
+    double xmin, xmax, ymin, ymax, xmid, ymid;
     double dx = 0, dy = 0, dmax = 0;
 
     /* Allocate memory for the completeness list, flag for each triangle */
-    int trimax = 4 * nv;
-
-    int* completePtr = cast(int*) malloc(trimax * int.sizeof);
-    if (!completePtr)
+    trimax = 4 * nv;
+    if ((complete = cast(int*) malloc(trimax * int.sizeof)) is null)
     {
-        return result;
+        status = 1;
+        goto skip;
     }
 
-    scope (exit)
+    /* Allocate memory for the edge list */
+    if ((edges = cast(IEDGE *) malloc(emax * cast(long) IEDGE.sizeof)) is null)
     {
-        free(completePtr);
+        status = 2;
+        goto skip;
     }
-
-    int[] complete = completePtr[0 .. trimax];
-
-    immutable size_t edgesLen = emax;
-    TriangEdge* edgesPtr = cast(TriangEdge*) malloc(emax * TriangEdge.sizeof);
-    if (!edgesPtr)
-    {
-        return result;
-    }
-
-    scope (exit)
-    {
-        free(edgesPtr);
-    }
-
-    TriangEdge[] edges = edgesPtr[0 .. edgesLen];
 
     /*
       Find the maximum and minimum vertex bounds.
@@ -184,18 +123,18 @@ Triangle2d[] triangulate(Vec2d[] points, bool isNeedSort = true)
    */
     pxyz[nv + 0].x = xmid - 20 * dmax;
     pxyz[nv + 0].y = ymid - dmax;
-    //pxyz[nv + 0].z = 0.0;
+    pxyz[nv + 0].z = 0.0;
     pxyz[nv + 1].x = xmid;
     pxyz[nv + 1].y = ymid + 20 * dmax;
-    //pxyz[nv + 1].z = 0.0;
+    pxyz[nv + 1].z = 0.0;
     pxyz[nv + 2].x = xmid + 20 * dmax;
     pxyz[nv + 2].y = ymid - dmax;
-    //pxyz[nv + 2].z = 0.0;
+    pxyz[nv + 2].z = 0.0;
     v[0].p1 = nv;
     v[0].p2 = nv + 1;
     v[0].p3 = nv + 2;
     complete[0] = FALSE;
-    ntri = 1;
+    *ntri = 1;
 
     /*
       Include each point one at a time into the existing mesh
@@ -213,7 +152,7 @@ Triangle2d[] triangulate(Vec2d[] points, bool isNeedSort = true)
          three edges of that triangle are added to the edge buffer
          and that triangle is removed.
       */
-        for (j = 0; j < ntri; j++)
+        for (j = 0; j < (*ntri); j++)
         {
             if (complete[j])
                 continue;
@@ -223,7 +162,7 @@ Triangle2d[] triangulate(Vec2d[] points, bool isNeedSort = true)
             y2 = pxyz[v[j].p2].y;
             x3 = pxyz[v[j].p3].x;
             y3 = pxyz[v[j].p3].y;
-            inside = circumCircle(xp, yp, x1, y1, x2, y2, x3, y3, &xc, &yc, &r);
+            inside = CircumCircle(xp, yp, x1, y1, x2, y2, x3, y3, &xc, &yc, &r);
             if (xc < xp && ((xp - xc) * (xp - xc)) > r)
                 complete[j] = TRUE;
             if (inside)
@@ -232,15 +171,12 @@ Triangle2d[] triangulate(Vec2d[] points, bool isNeedSort = true)
                 if (nedge + 3 >= emax)
                 {
                     emax += 100;
-                    immutable size_t newEdgeLen = emax;
-                    edgesPtr = cast(TriangEdge*) realloc(edges.ptr, newEdgeLen * TriangEdge.sizeof);
-                    if (!edgesPtr)
+                    if ((edges = cast(IEDGE*) realloc(edges, emax * cast(long) IEDGE.sizeof)) is null)
                     {
-                        return result;
+                        status = 3;
+                        goto skip;
                     }
-                    edges = edgesPtr[0 .. newEdgeLen];
                 }
-
                 edges[nedge + 0].p1 = v[j].p1;
                 edges[nedge + 0].p2 = v[j].p2;
                 edges[nedge + 1].p1 = v[j].p2;
@@ -248,9 +184,9 @@ Triangle2d[] triangulate(Vec2d[] points, bool isNeedSort = true)
                 edges[nedge + 2].p1 = v[j].p3;
                 edges[nedge + 2].p2 = v[j].p1;
                 nedge += 3;
-                v[j] = v[ntri - 1];
-                complete[j] = complete[ntri - 1];
-                ntri--;
+                v[j] = v[(*ntri) - 1];
+                complete[j] = complete[(*ntri) - 1];
+                (*ntri)--;
                 j--;
             }
         }
@@ -291,15 +227,16 @@ Triangle2d[] triangulate(Vec2d[] points, bool isNeedSort = true)
         {
             if (edges[j].p1 < 0 || edges[j].p2 < 0)
                 continue;
-            if (ntri >= trimax)
+            if ((*ntri) >= trimax)
             {
-                return result;
+                status = 4;
+                goto skip;
             }
-            v[ntri].p1 = edges[j].p1;
-            v[ntri].p2 = edges[j].p2;
-            v[ntri].p3 = i;
-            complete[ntri] = FALSE;
-            ntri++;
+            v[*ntri].p1 = edges[j].p1;
+            v[*ntri].p2 = edges[j].p2;
+            v[*ntri].p3 = i;
+            complete[*ntri] = FALSE;
+            (*ntri)++;
         }
     }
 
@@ -307,31 +244,20 @@ Triangle2d[] triangulate(Vec2d[] points, bool isNeedSort = true)
       Remove triangles with supertriangle vertices
       These are triangles which have a vertex number greater than nv
    */
-    for (i = 0; i < ntri; i++)
+    for (i = 0; i < (*ntri); i++)
     {
         if (v[i].p1 >= nv || v[i].p2 >= nv || v[i].p3 >= nv)
         {
-            v[i] = v[ntri - 1];
-            ntri--;
+            v[i] = v[(*ntri) - 1];
+            (*ntri)--;
             i--;
         }
     }
 
-    result = new Triangle2d[](ntri);
-
-    for (i = 0; i < ntri; i++)
-    {
-        auto tx1 = points[v[i].p1].x;
-        auto ty1 = points[v[i].p1].y;
-        auto tx2 = points[v[i].p2].x;
-        auto ty2 = points[v[i].p2].y;
-        auto tx3 = points[v[i].p3].x;
-        auto ty3 = points[v[i].p3].y;
-
-        result ~= Triangle2d(Vec2d(tx1, ty1), Vec2d(tx2, ty2), Vec2d(tx3, ty3));
-    }
-
-    return result;
+skip:
+    free(edges);
+    free(complete);
+    return (status);
 }
 
 /*
@@ -340,13 +266,12 @@ Triangle2d[] triangulate(Vec2d[] points, bool isNeedSort = true)
    The circumcircle centre is returned in (xc,yc) and the radius r
    NOTE: A point on the edge is inside the circumcircle
 */
-int circumCircle(double xp, double yp,
+int CircumCircle(double xp, double yp,
     double x1, double y1, double x2, double y2, double x3, double y3,
     double* xc, double* yc, double* rsqr)
 {
     double m1 = 0, m2 = 0, mx1 = 0, mx2 = 0, my1 = 0, my2 = 0;
     double dx = 0, dy = 0, drsqr = 0;
-
     double fabsy1y2 = Math.abs(y1 - y2);
     double fabsy2y3 = Math.abs(y2 - y3);
 
@@ -401,9 +326,4 @@ int circumCircle(double xp, double yp,
     //return((drsqr <= *rsqr) ? TRUE : FALSE);
     // Proposed by Chuck Morris
     return ((drsqr - *rsqr) <= EPSILON ? TRUE : FALSE);
-}
-
-unittest
-{
-
 }

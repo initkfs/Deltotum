@@ -233,27 +233,36 @@ class Graphics : LoggableUnit
         line(startX, startY, endX, endY);
     }
 
-    void lines(Vec2d[] points) => lines(points, points.length);
+    void polygon(Vec2d[] points) => polygon(points, points.length);
 
-    void lines(Vec2d[] points, size_t count)
+    void polygon(Vec2d[] points, size_t count)
     {
+        if (points.length == 0)
+        {
+            return;
+        }
+
         if (const err = renderer.drawLines(points, count))
         {
             logger.errorf("Lines drawing error. %s", err);
         }
     }
 
-    void lines(Vec2d[] points, RGBA color = defaultColor) => lines(points, points.length, color);
+    void polygon(Vec2d[] points, RGBA color = defaultColor) => polygon(points, points.length, color);
 
-    void lines(Vec2d[] points, size_t count, RGBA color = defaultColor)
+    void polygon(Vec2d[] points, size_t count, RGBA color = defaultColor)
     {
+        if (points.length == 0)
+        {
+            return;
+        }
         changeColor(color);
         scope (exit)
         {
             restoreColor;
         }
 
-        lines(points, count);
+        polygon(points, count);
     }
 
     void point(double x, double y)
@@ -287,6 +296,10 @@ class Graphics : LoggableUnit
 
     void points(Vec2d[] points)
     {
+        if (points.length == 0)
+        {
+            return;
+        }
         if (const err = renderer.drawPoints(points))
         {
             //TODO log
@@ -296,6 +309,10 @@ class Graphics : LoggableUnit
 
     void points(Vec2d[] p, RGBA color = defaultColor)
     {
+        if (p.length == 0)
+        {
+            return;
+        }
         changeColor(color);
         scope (exit)
         {
@@ -307,6 +324,10 @@ class Graphics : LoggableUnit
 
     void points(Vec2i[] p, RGBA color = defaultColor)
     {
+        if (p.length == 0)
+        {
+            return;
+        }
         changeColor(color);
         scope (exit)
         {
@@ -497,7 +518,8 @@ class Graphics : LoggableUnit
         }
     }
 
-    void fillCircle(double centerX, double centerY, double radius, RGBA color = defaultColor){
+    void fillCircle(double centerX, double centerY, double radius, RGBA color = defaultColor)
+    {
         circle(centerX, centerY, radius, color, true);
     }
 
@@ -867,22 +889,6 @@ class Graphics : LoggableUnit
         Vec2d p1p2 = p1.scale(dt).add(p2.scale(t));
         Vec2d result = p0p1.scale(dt).add(p1p2.scale(t));
         return result;
-    }
-
-    void polygon(Vec2d[] vertices)
-    {
-        if (vertices.length < 3)
-        {
-            return;
-        }
-        foreach (i, v; vertices)
-        {
-            if (i < vertices.length - 1)
-            {
-                line(v, vertices[i + 1]);
-            }
-        }
-        line(vertices[$ - 1], vertices[0]);
     }
 
     bool fillPolyLines(Vec2d[] vertexStart, Vec2d[] vertexEnd, RGBA fillColor)

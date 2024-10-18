@@ -410,7 +410,7 @@ class MDLandscapeGenerator : Control
 
         // foreach (ref color, linePoints; layerLinePoints)
         // {
-        //     graphics.lines(linePoints, linePoints.length - 2, color);
+        //     graphics.polygon(linePoints, linePoints.length - 2, color);
         // }
     }
 
