@@ -195,14 +195,79 @@ struct Polygon2
         return result / 2;
     }
 
+    void onLineMidpoint(scope bool delegate(Vec2d) onMidIsContinue, bool isLastLineNeed = true)
+    {
+        onLine((line) { return onMidIsContinue(line.midpoint); }, isLastLineNeed);
+    }
+
+    void onLine(scope bool delegate(Line2d) onLineIsContinue, bool isLastLineNeed = true)
+    {
+
+        if (vertices.length < 3)
+        {
+            return;
+        }
+
+        foreach (i, ref Vec2d vert; vertices)
+        {
+            if (i == 0)
+            {
+                continue;
+            }
+            if (!onLineIsContinue(Line2d(vertices[i - 1], vert)))
+            {
+                return;
+            }
+        }
+
+        if (isLastLineNeed)
+        {
+            onLineIsContinue(Line2d(vertices[$ - 1], vertices[0]));
+        }
+    }
+
+    bool isConvex()
+    {
+        double prevCross = 0;
+        double currCross = 0;
+        foreach (i, ref point; vertices)
+        {
+            auto next1 = vertices[(i + 1) % vertices.length];
+            auto next2 = vertices[(i + 2) % vertices.length];
+
+            currCross = Vec2d.cross(point, next1, next2);
+            if (currCross != 0)
+            {
+                if (currCross * prevCross < 0)
+                {
+                    return false;
+                }
+
+                prevCross = currCross;
+            }
+        }
+        return true;
+    }
+
+    unittest
+    {
+        Vec2d[] points = [{0, 0}, {0, 5}, {5, 5}, {5, 0}];
+        assert((Polygon2(points)).isConvex);
+
+        Vec2d[] points2 = [{0, 0}, {0, 5}, {0, 0}, {5, 5}, {5, 0}];
+        assert(!(Polygon2(points2)).isConvex);
+
+    }
+
     /** 
      * https://en.wikipedia.org/wiki/Sutherland-Hodgman_algorithm
      * https://www.geeksforgeeks.org/polygon-clipping-sutherland-hodgman-algorithm/
      */
     static Vec2d[] clipSutherlandHodgman(Vec2d[] points, Vec2d x1y1, Vec2d x2y2)
     {
-        if(points.length == 0){
-            return []; 
+        if (points.length == 0)
+        {
+            return [];
         }
 
         Vec2d[] newPoints;
@@ -212,10 +277,10 @@ struct Polygon2
         double x2 = x2y2.x;
         double y2 = x2y2.y;
 
-        foreach (i; 0..points.length)
+        foreach (i; 0 .. points.length)
         {
             size_t k = (i + 1) % points.length;
-           
+
             const ix = (points[i]).x, iy = (points[i]).y;
             const kx = (points[k]).x, ky = (points[k]).y;
 
@@ -257,7 +322,7 @@ struct Polygon2
     static Vec2d[] clipSutHodg(Vec2d[] points, Vec2d[] clipperPoints)
     {
         Vec2d[] clipPoints = points.dup;
-        foreach(i; 0..clipperPoints.length)
+        foreach (i; 0 .. clipperPoints.length)
         {
             size_t k = (i + 1) % clipperPoints.length;
             clipPoints = clipSutherlandHodgman(clipPoints, clipperPoints[i], clipperPoints[k]);
@@ -271,13 +336,16 @@ struct Polygon2
 
         double eps = 0.00001;
 
-        Vec2d[] points = [Vec2d(100.0, 150), Vec2d(200.0, 250), Vec2d(300.0, 200)];
+        Vec2d[] points = [
+            Vec2d(100.0, 150), Vec2d(200.0, 250), Vec2d(300.0, 200)
+        ];
         Vec2d[] clipPoints = [
-            Vec2d(150.0, 150), Vec2d(150.0, 200), Vec2d(200.0, 200), Vec2d(200.0, 150)
+            Vec2d(150.0, 150), Vec2d(150.0, 200), Vec2d(200.0, 200),
+            Vec2d(200.0, 150)
         ];
 
         Vec2d[] result = clipSutHodg(points, clipPoints);
-        
+
         double[][] expected = [
             [150, 162.5], [150.0, 200], [200.0, 200], [200.0, 175]
         ];
