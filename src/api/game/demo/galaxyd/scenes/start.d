@@ -21,7 +21,7 @@ class Start : Scene
     import api.math.triangulations.fortune;
     import api.dm.kit.graphics.colors.rgba : RGBA;
 
-    XYZ[] points;
+    Vec2d[] points;
     Vec2d[] lines;
     Vec2d[] vertex;
     Triangle2d[] trigs;
@@ -43,33 +43,17 @@ class Start : Scene
         int ntri = 0;
 
         enum pCount = 10;
-        points = new XYZ[](pCount + 3);
-
-        ITRIANGLE[] triangles = new ITRIANGLE[]((pCount) * 3);
+        points = new Vec2d[](pCount);
 
         foreach (pi; 0 .. pCount)
         {
             auto rx = rnd.randomBetween(0, 500);
             auto ry = rnd.randomBetween(0, 500);
-            points[pi] = XYZ(rx, ry, 0);
+            points[pi] = Vec2d(rx, ry);
         }
 
-        import std;
-        points.sort!((p1, p2) => p1.x < p2.x);
 
-        triangulate(cast(int) points.length, points.ptr, triangles.ptr, &ntri);
-
-        foreach (i; 0 .. ntri)
-        {
-            auto tx1 = points[triangles[i].p1].x;
-            auto ty1 = points[triangles[i].p1].y;
-            auto tx2 = points[triangles[i].p2].x;
-            auto ty2 = points[triangles[i].p2].y;
-            auto tx3 = points[triangles[i].p3].x;
-            auto ty3 = points[triangles[i].p3].y;
-
-            trigs ~= Triangle2d(Vec2d(tx1, ty1), Vec2d(tx2, ty2), Vec2d(tx3, ty3));
-        }
+        trigs = triangulate(points);
 
         // VoronoiFortune generator = VoronoiFortune();
         // generator.triangulate = 0;

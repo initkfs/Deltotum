@@ -2,9 +2,10 @@ module api.math.triangulations.bourke;
 
 import std.container.slist : SList;
 import Math = api.math;
-import api.math.geom2.vec2: Vec2d;
+import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.triangle2 : Triangle2d;
 
-import core.stdc.stdlib: malloc, realloc, free;
+import core.stdc.stdlib : malloc, realloc, free;
 
 /**
  * Authors: initkfs
@@ -60,8 +61,10 @@ enum double EPSILON = 0.000001;
          return(0);
    }
 */
-int triangulate(int nv, XYZ* pxyz, ITRIANGLE* v, int* ntri)
+Triangle2d[] triangulate(Vec2d[] points)
 {
+    Triangle2d[] result;
+
     int* complete = null;
     IEDGE* edges = null;
     int nedge = 0;
@@ -74,19 +77,71 @@ int triangulate(int nv, XYZ* pxyz, ITRIANGLE* v, int* ntri)
     double xmin, xmax, ymin, ymax, xmid, ymid;
     double dx = 0, dy = 0, dmax = 0;
 
+    int ntriCount;
+    int* ntri = &ntriCount;
+
+    import std.conv : to;
+
+    const int nv = points.length.to!int;
+
+    const pxyzLen = nv + 3;
+
+    XYZ* pxyzPtr = cast(XYZ*) malloc(pxyzLen * XYZ.sizeof);
+    if (!pxyzPtr)
+    {
+        return result;
+    }
+
+    scope (exit)
+    {
+        free(pxyzPtr);
+    }
+
+    XYZ[] pxyz = pxyzPtr[0 .. pxyzLen];
+
+    size_t vLen = nv * 3;
+    ITRIANGLE* vPtr = cast(ITRIANGLE*) malloc(vLen * ITRIANGLE.sizeof);
+    if (!vPtr)
+    {
+        return result;
+    }
+
+    scope (exit)
+    {
+        free(vPtr);
+    }
+
+    ITRIANGLE[] v = vPtr[0 .. vLen];
+    v[] = ITRIANGLE.init;
+
+    foreach (ip, ref p; points)
+    {
+        pxyz[ip] = XYZ(p.x, p.y, 0);
+    }
+
+    import std: sort;
+
+    pxyz[0..points.length].sort!((p1, p2) => p1.x < p2.x);
+
     /* Allocate memory for the completeness list, flag for each triangle */
     trimax = 4 * nv;
     if ((complete = cast(int*) malloc(trimax * int.sizeof)) is null)
     {
-        status = 1;
-        goto skip;
+        return result;
+    }
+
+    scope(exit){
+        free(complete);
     }
 
     /* Allocate memory for the edge list */
-    if ((edges = cast(IEDGE *) malloc(emax * cast(long) IEDGE.sizeof)) is null)
+    if ((edges = cast(IEDGE*) malloc(emax * cast(long) IEDGE.sizeof)) is null)
     {
-        status = 2;
-        goto skip;
+        return result;
+    }
+    
+    scope(exit){
+        free(edges);
     }
 
     /*
@@ -173,10 +228,10 @@ int triangulate(int nv, XYZ* pxyz, ITRIANGLE* v, int* ntri)
                     emax += 100;
                     if ((edges = cast(IEDGE*) realloc(edges, emax * cast(long) IEDGE.sizeof)) is null)
                     {
-                        status = 3;
-                        goto skip;
+                        return result;
                     }
                 }
+
                 edges[nedge + 0].p1 = v[j].p1;
                 edges[nedge + 0].p2 = v[j].p2;
                 edges[nedge + 1].p1 = v[j].p2;
@@ -229,8 +284,8 @@ int triangulate(int nv, XYZ* pxyz, ITRIANGLE* v, int* ntri)
                 continue;
             if ((*ntri) >= trimax)
             {
-                status = 4;
-                goto skip;
+                //Error
+                return result;
             }
             v[*ntri].p1 = edges[j].p1;
             v[*ntri].p2 = edges[j].p2;
@@ -254,10 +309,19 @@ int triangulate(int nv, XYZ* pxyz, ITRIANGLE* v, int* ntri)
         }
     }
 
-skip:
-    free(edges);
-    free(complete);
-    return (status);
+    foreach (ti; 0 .. (*ntri))
+    {
+        auto tx1 = pxyz[v[ti].p1].x;
+        auto ty1 = pxyz[v[ti].p1].y;
+        auto tx2 = pxyz[v[ti].p2].x;
+        auto ty2 = pxyz[v[ti].p2].y;
+        auto tx3 = pxyz[v[ti].p3].x;
+        auto ty3 = pxyz[v[ti].p3].y;
+
+        result ~= Triangle2d(Vec2d(tx1, ty1), Vec2d(tx2, ty2), Vec2d(tx3, ty3));
+    }
+
+    return result;
 }
 
 /*
@@ -326,4 +390,66 @@ int CircumCircle(double xp, double yp,
     //return((drsqr <= *rsqr) ? TRUE : FALSE);
     // Proposed by Chuck Morris
     return ((drsqr - *rsqr) <= EPSILON ? TRUE : FALSE);
+}
+
+unittest
+{
+    import std.math.operations : isClose;
+
+    enum eps = 0.0000001;
+
+    Vec2d[] points = [
+        Vec2d(10, 10),
+        Vec2d(20, 15),
+        Vec2d(15, 15),
+        Vec2d(12, 12),
+        Vec2d(5, 5),
+    ];
+
+
+    Triangle2d[] resultTrigs = triangulate(points);
+
+    Triangle2d[] expected = [
+        Triangle2d(
+            Vec2d(x : 12.0000000000, y:
+                12.0000000000),
+            Vec2d(x
+                : 15.0000000000, y:
+                15.0000000000),
+            Vec2d(x : 20.0000000000, y:
+                15.0000000000)),
+
+        Triangle2d(
+            Vec2d(x : 10.0000000000, y:
+                10.0000000000),
+            Vec2d(x
+                : 12.0000000000, y:
+                12.0000000000),
+            Vec2d(x : 20.0000000000, y:
+                15.0000000000)),
+
+        Triangle2d(
+            Vec2d(x : 5.0000000000, y:
+                5.0000000000),
+            Vec2d(x
+                : 10.0000000000, y:
+                10.0000000000),
+            Vec2d(x : 20.0000000000, y:
+                15.0000000000))
+    ];
+    
+    assert(resultTrigs.length == expected.length);
+
+    foreach (i, trig; resultTrigs)
+    {
+        auto expectTrig = expected[i];
+        assert(isClose(trig.a.x, expectTrig.a.x, eps));
+        assert(isClose(trig.a.y, expectTrig.a.y, eps));
+
+        assert(isClose(trig.b.x, expectTrig.b.x, eps));
+        assert(isClose(trig.b.y, expectTrig.b.y, eps));
+
+        assert(isClose(trig.c.x, expectTrig.c.x, eps));
+        assert(isClose(trig.c.y, expectTrig.c.y, eps));
+    }
 }
