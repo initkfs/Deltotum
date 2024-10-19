@@ -11,6 +11,16 @@ struct Circle2d
     double y = 0;
     double radius = 0;
 
+    this(double x, double y, double radius){
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+    }
+
+    this(Vec2d center, double radius){
+        this(center.x, center.y, radius);
+    }
+
     bool contains(double x1, double y1) const @nogc nothrow pure @safe
     {
         //(x-centerX)^2 + (y - centerY)^2 < radius^2, or <=
@@ -62,6 +72,8 @@ struct Circle2d
 
         return radius * (math.PI * 2);
     }
+
+    Vec2d center() => Vec2d(x, y);
 
     double area() const @nogc nothrow pure @safe
     {

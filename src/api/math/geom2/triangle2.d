@@ -2,6 +2,7 @@ module api.math.geom2.triangle2;
 
 import api.math.geom2.vec2 : Vec2d;
 import api.math.geom2.line2 : Line2d;
+import api.math.geom2.circle2 : Circle2d;
 
 import Math = api.dm.math;
 
@@ -64,6 +65,54 @@ struct Triangle2d
         }
 
         return false;
+    }
+
+    size_t commonVertices(Triangle2d other)
+    {
+        const Vec2d[3] verts = [other.a, other.b, other.c];
+        size_t commonVerts;
+        foreach (otherV; verts)
+        {
+            if (a == otherV || b == otherV || c == otherV)
+            {
+                commonVerts++;
+            }
+        }
+        return commonVerts;
+    }
+
+    bool isNeighbor(Triangle2d other) => commonVertices(other) == 2;
+    bool isAdjacent(Triangle2d other) => commonVertices(other) != 0;
+    
+
+    Vec2d circumcircleCenter()
+    {
+        //https://en.wikipedia.org/wiki/Circumcircle#Circumcenter_coordinates
+        const ax = a.x;
+        const ay = a.y;
+        const bx = b.x;
+        const by = b.y;
+        const cx = c.x;
+        const cy = c.y;
+
+        const d = 2 * (ax * (by - cy) + bx * (cy - ay) + cx * (ay - by));
+
+        const centerX = 1 / d * ((ax * ax + ay * ay) * (by - cy) + (
+                bx * bx + by * by) * (
+                cy - ay) + (cx * cx + cy * cy) * (ay - by));
+
+        const centerY = 1 / d * ((ax * ax + ay * ay) * (cx - bx) + (
+                bx * bx + by * by) * (
+                ax - cx) + (cx * cx + cy * cy) * (bx - ax));
+
+        return Vec2d(centerX, centerY);
+    }
+
+    Circle2d circumcircle()
+    {
+        const center = circumcircleCenter;
+        const radius = a.subtract(center).length;
+        return Circle2d(center, radius);
     }
 
     string toString() const

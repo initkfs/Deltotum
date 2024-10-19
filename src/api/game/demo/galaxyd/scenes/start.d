@@ -27,10 +27,32 @@ class Start : Scene
     Triangle2d[] trigs;
     Line2d[] sites;
 
+    Vec2d[] voronoiCells;
+
     Random rnd;
 
     Line2d[][RGBA] clusters;
     Vec2d[] clustersLines = [Vec2d(0, 0)];
+
+    Vec2d[][Vec2d] vcells;
+
+    struct VoronoiCell
+    {
+        import api.math.geom2.polygon2 : Polygon2;
+
+        Vec2d[] points;
+
+        // double massCenter(){
+        //     doublex sumX = vertex.x;
+        //     double
+        //     foreach (Vec2d key; neighbours)
+        //     {
+
+        //     }
+        // }
+    }
+
+    VoronoiCell[] cells;
 
     override void create()
     {
@@ -42,7 +64,7 @@ class Start : Scene
 
         int ntri = 0;
 
-        enum pCount = 10;
+        enum pCount = 20;
         points = new Vec2d[](pCount);
 
         foreach (pi; 0 .. pCount)
@@ -52,8 +74,72 @@ class Start : Scene
             points[pi] = Vec2d(rx, ry);
         }
 
-
         trigs = triangulate(points);
+
+        //TODO more optimal
+        foreach (p; points)
+        {
+            Triangle2d[] allCellTrigs;
+            foreach (trig; trigs)
+            {
+                if (trig.a == p || trig.b == p || trig.c == p)
+                {
+                    allCellTrigs ~= trig;
+                }
+            }
+
+            Vec2d[] vcellCenters;
+            foreach (cellTrig; allCellTrigs)
+            {
+                vcellCenters ~= cellTrig.circumcircleCenter;
+            }
+
+        }
+
+        // import std.conv: text;
+        // assert(polygonTrigs.length == allCellTrigs.length, text(polygonTrigs.length, ":", allCellTrigs.length));
+
+        // vcells[p] = new Vec2d[](polygonTrigs.length);
+        // foreach (i, vPolygon; polygonTrigs)
+        // {
+        //     vcells[p][i] = vPolygon.circumcircleCenter;
+        // }
+        //}
+
+        //TODO more optimal than 0^2
+        foreach (trig; trigs)
+        {
+            // voronoiCells ~= trig.circumcircleCenter;
+
+            // VoronoiCell cell;
+            // cell.vertex = trig.circumcircleCenter;
+
+            // foreach (otherTrig; trigs)
+            // {
+            //     if (trig == otherTrig)
+            //     {
+            //         continue;
+            //     }
+
+            //     const commonVerts = trig.commonVertices(otherTrig);
+
+            //     if (commonVerts != 0)
+            //     {
+            //         auto cellCenter = otherTrig.circumcircleCenter;
+            //         if (commonVerts > 1)
+            //         {
+            //             cell.neighbours ~= cellCenter;
+            //         }
+            //         else
+            //         {
+            //             cell.adjacents ~= cellCenter;
+            //         }
+            //     }
+
+            // }
+
+            // cells ~= cell;
+        }
 
         // VoronoiFortune generator = VoronoiFortune();
         // generator.triangulate = 0;
@@ -126,12 +212,21 @@ class Start : Scene
         //     graphics.line(vertex[i - 1], v);
         // }
 
-        foreach (trig; trigs)
+        foreach (p, cells; vcells)
         {
-            graphics.line(trig.a, trig.b, RGBA.green);
-            graphics.line(trig.b, trig.c, RGBA.green);
-            graphics.line(trig.c, trig.a, RGBA.green);
+            graphics.circle(p.x, p.y, 2, RGBA.lightblue);
+
+            graphics.polygon(cells, RGBA.lightcoral);
         }
+
+        // foreach (c; cells)
+        // {
+        //    auto center = c.vertex;
+        //    foreach (cc; c.cell)
+        //    {
+        //        graphics.line(center, cc, RGBA.lightblue);
+        //    }
+        // }
 
         // foreach(s; sites){
         //     graphics.line(s.start, s.end, RGBA.green);
