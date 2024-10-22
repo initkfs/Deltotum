@@ -103,6 +103,14 @@ struct HSV
         RGBA result = RGBA(toRGBAColor(r), toRGBAColor(g), toRGBAColor(b));
         return result;
     }
+
+    double setMaxHue() => hue = maxHue;
+    double setMaxValue() => value = maxValue;
+    double setMaxSaturation() => saturation = maxSaturation;
+
+    double setMinHue() => hue = minHue;
+    double setMinValue() => value = minValue;
+    double setMinSaturation() => saturation = minSaturation;
 }
 
 unittest

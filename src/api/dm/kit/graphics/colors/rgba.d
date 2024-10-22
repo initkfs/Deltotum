@@ -344,6 +344,16 @@ struct RGBA
         return distance;
     }
 
+    ubyte setMaxR() => r = maxColor;
+    ubyte setMaxG() => g = maxColor;
+    ubyte setMaxB() => b = maxColor;
+    double setMaxA() => a = maxAlpha;
+
+    ubyte setMinR() => r = minColor;
+    ubyte setMinG() => g = minColor;
+    ubyte setMinB() => b = minColor;
+    double setMinA() => a = minAlpha;
+
     HSV toHSV() const @safe
     {
         const double newR = colorNorm(r);
