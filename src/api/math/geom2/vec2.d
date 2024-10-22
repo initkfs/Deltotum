@@ -30,8 +30,10 @@ struct Vec2d
     alias euclidean = distanceTo;
     alias length = magnitude;
 
-    static Vec2d infinity() => Vec2d(double.infinity, double.infinity);
-    bool isInfinity() => (x == double.infinity) || (y == double.infinity);
+    static @nogc nothrow pure @safe Vec2d zero() => Vec2d();
+    @nogc nothrow pure @safe bool isZero() const => (x == 0) && (y == 0);
+    static @nogc nothrow pure @safe Vec2d infinity() => Vec2d(double.infinity, double.infinity);
+    bool isInfinity() const => (x == double.infinity) || (y == double.infinity);
 
     Vec2d add(Vec2d other) const @nogc nothrow pure @safe
     {
@@ -172,14 +174,16 @@ struct Vec2d
         immutable newY = y + sy * x;
         return Vec2d(newX, newY);
     }
-    
-    Vec2d projectTo(Vec2d other) const @nogc nothrow pure @safe{
+
+    Vec2d projectTo(Vec2d other) const @nogc nothrow pure @safe
+    {
         const norm = normalize;
         const otherProject = norm.scale(norm.dotProduct(other));
         return otherProject;
     }
 
-    double project(Vec2d other)const @nogc nothrow pure @safe {
+    double project(Vec2d other) const @nogc nothrow pure @safe
+    {
         const dop = dotProduct(other);
         const otherLen = other.length;
         return dop / otherLen;
@@ -401,11 +405,6 @@ struct Vec2d
 
         x = newX;
         y = newY;
-    }
-
-    bool isZero() const @nogc pure @safe
-    {
-        return x == 0 && y == 0;
     }
 
     string toString() const

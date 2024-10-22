@@ -1120,6 +1120,12 @@ class Sprite : EventKitTarget
         }
     }
 
+    bool isInScreenBounds()
+    {
+        assert(graphics);
+        return graphics.renderBounds.contains(bounds);
+    }
+
     bool containsPoint(double x, double y)
     {
         return bounds.contains(x, y);
@@ -1272,11 +1278,13 @@ class Sprite : EventKitTarget
         return Vec2d(x, y);
     }
 
-    bool pos(Vec2d pos)
+    bool pos(Vec2d newPos) => pos(newPos.x, newPos.y);
+
+    bool pos(double newX, double newY)
     {
         bool isChangePos;
-        isChangePos |= (x = pos.x);
-        isChangePos |= (y = pos.y);
+        isChangePos |= (x = newX);
+        isChangePos |= (y = newY);
         return isChangePos;
     }
 
@@ -1438,7 +1446,8 @@ class Sprite : EventKitTarget
         _width = value;
     }
 
-    void forceHeight(double value){
+    void forceHeight(double value)
+    {
         _height = value;
     }
 
