@@ -1,4 +1,4 @@
-module api.math.triangulations.bourke;
+module api.dm.addon.math.geom2.triangulations.bourke;
 
 import std.container.slist : SList;
 import Math = api.math;

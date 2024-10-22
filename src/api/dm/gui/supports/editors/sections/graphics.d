@@ -137,7 +137,7 @@ class Grahpics : Control
 
         version (DmAddon)
         {
-            import Delaunay = api.math.triangulations.delaunay;
+            import Delaunay = api.dm.addon.math.geom2.triangulations.delaunay;
 
             auto res = Delaunay.triangulate(points);
 

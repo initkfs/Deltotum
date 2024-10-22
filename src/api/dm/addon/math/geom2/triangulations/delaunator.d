@@ -1,4 +1,4 @@
-module api.math.triangulations.delaunator;
+module api.dm.addon.math.geom2.triangulations.delaunator;
 /**
  * Authors: initkfs
  */

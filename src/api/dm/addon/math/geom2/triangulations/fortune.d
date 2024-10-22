@@ -1,4 +1,4 @@
-module api.math.triangulations.fortune;
+module api.dm.addon.math.geom2.triangulations.fortune;
 
 /*
 * Port from source code by Steven Fortune (http://ect.bell-labs.com/who/sjf/) 
