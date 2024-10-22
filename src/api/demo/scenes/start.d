@@ -1,4 +1,4 @@
-module api.game.demo.galaxyd.scenes.start;
+module api.demo.demo1.scenes.start;
 
 import api.dm.kit.scenes.scene : Scene;
 import api.dm.gui.containers.vbox : VBox;

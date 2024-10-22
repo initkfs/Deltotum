@@ -1,15 +1,16 @@
-module api.game.demo.galaxyd.scenes.help;
+module api.demo.demo1.scenes.settings;
 
 import api.dm.kit.scenes.scene : Scene;
+import api.dm.gui.supports.editors.guieditor: GuiEditor;
 
 /**
  * Authors: initkfs
  */
-class Help : Scene
+class Settings : GuiEditor
 {
     this()
     {
-        name = "help";
+        name = "settings";
     }
 
     override void create()

@@ -1,4 +1,4 @@
-module api.game.demo.galaxyd.scenes.about;
+module api.demo.demo1.scenes.about;
 
 import api.dm.kit.scenes.scene : Scene;
 

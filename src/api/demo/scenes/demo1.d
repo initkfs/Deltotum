@@ -1,4 +1,4 @@
-module api.game.demo.galaxyd.scenes.game;
+module api.demo.demo1.scenes.game;
 
 import api.dm.kit.scenes.scene : Scene;
 
@@ -7,7 +7,7 @@ import std.stdio;
 /**
  * Authors: initkfs
  */
-class Game : Scene
+class Demo1 : Scene
 {
     this()
     {

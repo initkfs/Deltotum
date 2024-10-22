@@ -1,4 +1,4 @@
-module api.game.main_controller;
+module api.demo.main_controller;
 
 import std;
 
@@ -44,18 +44,18 @@ class MainController
 
         application.create;
 
-        import api.game.demo.galaxyd.scenes.start : Start;
-        import api.game.demo.galaxyd.scenes.game : Game;
-        import api.game.demo.galaxyd.scenes.settings : Settings;
-        import api.game.demo.galaxyd.scenes.about : About;
-        import api.game.demo.galaxyd.scenes.help : Help;
+        import api.demo.demo1.scenes.start : Start;
+        import api.demo.demo1.scenes.game : Demo1;
+        import api.demo.demo1.scenes.settings : Settings;
+        import api.demo.demo1.scenes.about : About;
+        import api.demo.demo1.scenes.help : Help;
 
         auto startScene = new Start;
 
         import api.dm.kit.windows.window : Window;
 
         Window win1 = application.newWindow(windowTitle, gameWidth, gameHeight);
-        win1.scenes.add(startScene, new Game, new Settings, new Help, new About);
+        win1.scenes.add(startScene, new Demo1, new Settings, new Help, new About);
         win1.scenes.change(startScene);
         win1.show;
 
