@@ -15,7 +15,7 @@ class CairoContext: CairoObjectWrapper!cairo_t
         ptr = cairo_create(surface.getObject);
         if (!ptr)
         {
-            throw new Exception("Cairo context creation error.");
+            throw new Exception("Cairo context FactoryKit error.");
         }
     }
 

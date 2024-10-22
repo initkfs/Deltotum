@@ -21,8 +21,8 @@ import api.dm.kit.scenes.scene_manager : SceneManager;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 import api.core.utils.factories : Provider;
 import api.dm.kit.i18n.langs.alphabets.alphabet : Alphabet;
-import api.dm.kit.factories.creation_images : CreationImages;
-import api.dm.kit.factories.creation_shapes : CreationShapes;
+import api.dm.kit.factories.image_factory : ImageFactory;
+import api.dm.kit.factories.shape_factory : ShapeFactory;
 
 import api.dm.kit.windows.window : Window;
 import api.dm.kit.apps.loops.loop : Loop;
@@ -42,7 +42,7 @@ import api.dm.kit.platforms.platform : Platform;
 import api.dm.kit.i18n.i18n : I18n;
 import api.dm.kit.i18n.langs.lang_messages : LangMessages;
 import api.dm.kit.interacts.interact : Interact;
-import api.dm.kit.factories.creation : Creation;
+import api.dm.kit.factories.factory_kit : FactoryKit;
 
 /**
  * Authors: initkfs
@@ -227,9 +227,9 @@ abstract class GraphicApplication : CliApp
         return new CapGraphics;
     }
 
-    SceneManager newSceneManager(Logger logger, Config config, Context context, Creation creation)
+    SceneManager newSceneManager(Logger logger, Config config, Context context, FactoryKit FactoryKit)
     {
-        return new SceneManager(creation);
+        return new SceneManager(FactoryKit);
     }
 
     WindowComponent newWindowServices()
@@ -510,7 +510,7 @@ abstract class GraphicApplication : CliApp
 
         if (config.containsKey(KitConfigKeys.fontIsCreateSmall))
         {
-            logger.trace("Checking creation small font in config with key: ", KitConfigKeys
+            logger.trace("Checking FactoryKit small font in config with key: ", KitConfigKeys
                     .fontIsCreateSmall);
             const isSmallFontCreate = config.getBool(KitConfigKeys.fontIsCreateSmall);
             if (!isSmallFontCreate.isNull && isSmallFontCreate.get)
@@ -550,7 +550,7 @@ abstract class GraphicApplication : CliApp
 
         if (config.containsKey(KitConfigKeys.fontIsCreateLarge))
         {
-            logger.trace("Checking creation large font in config with key: ", KitConfigKeys
+            logger.trace("Checking FactoryKit large font in config with key: ", KitConfigKeys
                     .fontIsCreateLarge);
 
             const isLargeFontCreate = config.getBool(KitConfigKeys.fontIsCreateLarge);
@@ -585,7 +585,7 @@ abstract class GraphicApplication : CliApp
         }
         else
         {
-            logger.trace("The config does not contain the large font creation key: ", KitConfigKeys
+            logger.trace("The config does not contain the large font FactoryKit key: ", KitConfigKeys
                     .fontIsCreateLarge);
         }
 

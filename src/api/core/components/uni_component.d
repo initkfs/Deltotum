@@ -23,6 +23,8 @@ class UniComponent : SimpleUnit
     bool isAllowRebuild;
     bool isAllowRebuildServices;
 
+    bool isStrictState = true;
+
     bool isCallBeforeBuild;
     bool isCallAfterBuild;
 
@@ -55,19 +57,40 @@ class UniComponent : SimpleUnit
     void buildInit(UniComponent component)
     {
         build(component);
+        
+        if (isStrictState && !component.isBuilt)
+        {
+            throw new Exception("Component not built: " ~ component.className);
+        }
+
         initialize(component);
+
+        if (isStrictState && !component.isInitialized)
+        {
+            throw new Exception("Component not initialized: " ~ component.className);
+        }
     }
 
     void buildInitCreate(UniComponent component)
     {
         buildInit(component);
         create(component);
+
+        if (isStrictState && !component.isCreated)
+        {
+            throw new Exception("Component not created: " ~ component.className);
+        }
     }
 
     void buildInitCreateRun(UniComponent component)
     {
         buildInitCreate(component);
         run(component);
+
+        if (isStrictState && !component.isRunning)
+        {
+            throw new Exception("Component not running: " ~ component.className);
+        }
     }
 
     protected void buildFromParent(C : UniComponent)(C uniComponent, C parentComponent)

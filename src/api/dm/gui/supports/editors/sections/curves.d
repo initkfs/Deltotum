@@ -61,7 +61,7 @@ class Curves : Control
 
         auto container = new VBox;
         container.layout.isAlign = true;
-        buildCreate(container);
+        buildInitCreate(container);
 
         auto label = new Text;
         label.text = name;

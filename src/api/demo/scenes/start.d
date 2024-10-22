@@ -29,6 +29,9 @@ class Start : Scene
 
         rnd = new Random;
 
+        auto pl = f.placeholder;
+        addCreate(pl);
+
        
         createDebugger;
     }

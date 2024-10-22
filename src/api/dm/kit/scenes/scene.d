@@ -2,7 +2,7 @@ module api.dm.kit.scenes.scene;
 
 import api.dm.kit.events.event_kit_target : EventKitTarget;
 import api.dm.kit.sprites.sprite : Sprite;
-import api.dm.kit.factories.creation : Creation;
+import api.dm.kit.factories.factory_kit : FactoryKit;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.windows.window : Window;
 import api.dm.gui.supports.sceneview : SceneView;
@@ -44,7 +44,7 @@ class Scene : EventKitTarget
 
     protected
     {
-        Creation _creation;
+        FactoryKit _factory;
     }
 
     override void create()
@@ -216,16 +216,20 @@ class Scene : EventKitTarget
         if (!obj.isBuilt)
         {
             build(obj);
+            assert(obj.isBuilt);
         }
 
-        if (!obj.isInitialized)
+        if (!obj.isCreated)
         {
-            obj.initialize;
-            assert(obj.isInitialized);
-        }
+            if (!obj.isInitialized)
+            {
+                obj.initialize;
+                assert(obj.isInitialized);
+            }
 
-        obj.create;
-        assert(obj.isCreated);
+            obj.create;
+            assert(obj.isCreated);
+        }
 
         add(obj);
     }
@@ -313,23 +317,25 @@ class Scene : EventKitTarget
         return unlockSprites;
     }
 
-    final bool hasCreation() @safe pure nothrow
+    final bool hasFactory() @safe pure nothrow
     {
-        return _creation !is null;
+        return _factory !is null;
     }
 
-    final void creation(Creation creation) @safe pure
+    alias f = factory;
+
+    final void factory(FactoryKit newFactory) @safe pure
     {
         import std.exception : enforce;
 
-        enforce(creation !is null, "Creation factory must not be null");
-        _creation = creation;
+        enforce(newFactory !is null, "Engine factory must not be null");
+        _factory = newFactory;
     }
 
-    final Creation creation() @safe pure nothrow
-    out (_creation; _creation !is null)
+    final FactoryKit factory() @safe pure nothrow
+    out (_factory; _factory !is null)
     {
-        return _creation;
+        return _factory;
     }
 
     ComSurface snapshot()

@@ -70,7 +70,7 @@ class Fractals : Control
         import api.dm.gui.controls.texts.text : Text;
 
         auto container = new VBox;
-        buildCreate(container);
+        buildInitCreate(container);
 
         auto label = new Text;
         label.text = name;

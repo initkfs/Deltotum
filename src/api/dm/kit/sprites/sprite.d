@@ -212,26 +212,6 @@ class Sprite : EventKitTarget
         isConstructed = true;
     }
 
-    void buildCreate(Sprite sprite)
-    {
-        assert(sprite);
-
-        if (!sprite.isBuilt)
-        {
-            build(sprite);
-            assert(sprite.isBuilt, "Sprite not built: " ~ sprite.className);
-
-            sprite.initialize;
-            assert(sprite.isInitialized, "Sprite not initialized: " ~ sprite.className);
-        }
-
-        if (!sprite.isCreated)
-        {
-            sprite.create;
-            assert(sprite.isCreated, "Sprite not created: " ~ sprite.className);
-        }
-    }
-
     void onResume()
     {
 
@@ -702,7 +682,17 @@ class Sprite : EventKitTarget
             sprite.y = y + sprite.y;
         }
 
-        buildCreate(sprite);
+        if(!sprite.isBuilt){
+            buildInit(sprite);
+        }
+
+        if(!sprite.isCreated){
+            sprite.create;
+            if(!sprite.isCreated){
+                throw new Exception("Sprite not created: " ~ sprite.className);
+            }
+        }
+
         add(sprite, index);
     }
 
@@ -879,7 +869,7 @@ class Sprite : EventKitTarget
         if (!_cache)
         {
             _cache = new RgbaTexture(width, height);
-            buildCreate(_cache);
+            buildInitCreate(_cache);
         }
         else
         {

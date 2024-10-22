@@ -104,7 +104,7 @@ class BitmapFontGenerator : FontGenerator
 
                         if (glyphPosition.y + glyphPosition.height >= fontTextureWidth)
                         {
-                            throw new Exception("Font creation error, texture size too small");
+                            throw new Exception("Font FactoryKit error, texture size too small");
                         }
                     }
 

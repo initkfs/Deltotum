@@ -18,7 +18,7 @@ class CairoSurface : CairoObjectWrapper!cairo_surface_t
         ptr = cairo_image_surface_create_for_data(data, format, width, height, stride);
         if (!ptr)
         {
-            throw new Exception("Cairo surface creation error.");
+            throw new Exception("Cairo surface FactoryKit error.");
         }
     }
 

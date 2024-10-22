@@ -32,7 +32,7 @@ class Tab : Control
     {
         super.create;
 
-        buildCreate(label);
+        buildInitCreate(label);
 
         width = label.width;
         height = label.height;

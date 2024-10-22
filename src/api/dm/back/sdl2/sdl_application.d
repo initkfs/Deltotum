@@ -634,7 +634,7 @@ class SdlApplication : ContinuouslyApplication
             return newWindow(title, width, height, x, y, parent);
         };
 
-        //At the stage of initialization and window creation, not all services can be created
+        //At the stage of initialization and window FactoryKit, not all services can be created
         buildPartially(window);
 
         window.initialize;
@@ -721,19 +721,23 @@ class SdlApplication : ContinuouslyApplication
             });
         }
 
-        import api.dm.kit.factories.creation_images : CreationImages;
-        import api.dm.kit.factories.creation_shapes : CreationShapes;
+        import api.dm.kit.factories.image_factory : ImageFactory;
+        import api.dm.kit.factories.shape_factory : ShapeFactory;
+        import api.dm.kit.factories.texture_factory: TextureFactory;
         import api.dm.kit.scenes.scene_manager : SceneManager;
 
-        CreationImages imageFactory = new CreationImages;
+        ImageFactory imageFactory = new ImageFactory;
         windowBuilder.build(imageFactory);
-        CreationShapes shapeFactory = new CreationShapes;
+        ShapeFactory shapeFactory = new ShapeFactory;
         windowBuilder.build(shapeFactory);
+        TextureFactory textureFactory = new TextureFactory;
+        windowBuilder.build(textureFactory);
 
-        import api.dm.kit.factories.creation : Creation;
-        auto creation = new Creation(imageFactory, shapeFactory);
+        import api.dm.kit.factories.factory_kit : FactoryKit;
+        auto factoryKit = new FactoryKit(imageFactory, shapeFactory, textureFactory);
+        windowBuilder.build(factoryKit);
 
-        auto sceneManager = newSceneManager(uservices.logger, uservices.config, uservices.context, creation);
+        auto sceneManager = newSceneManager(uservices.logger, uservices.config, uservices.context, factoryKit);
         windowBuilder.build(sceneManager);
         sceneManager.initialize;
         sceneManager.create;

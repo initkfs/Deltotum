@@ -3,7 +3,7 @@ module api.dm.kit.scenes.scene_manager;
 import api.dm.kit.components.window_component : WindowComponent;
 import api.dm.kit.scenes.scene : Scene;
 
-import api.dm.kit.factories.creation : Creation;
+import api.dm.kit.factories.factory_kit : FactoryKit;
 import api.core.components.units.simple_unit : SimpleUnit;
 
 import std.stdio;
@@ -23,9 +23,9 @@ class SceneManager : Scene
         Scene _currentScene;
     }
 
-    this(Creation creation){
-        assert(creation);
-        this._creation = creation;
+    this(FactoryKit factoryKit){
+        assert(factoryKit);
+        factory = factoryKit;
     }
 
     Scene currentScene() @safe pure nothrow
@@ -64,7 +64,7 @@ class SceneManager : Scene
     {
         super.build(scene);
         scene.interact = interact;
-        scene.creation = creation;
+        scene.factory = factory;
     }
 
     alias create = SimpleUnit.create;

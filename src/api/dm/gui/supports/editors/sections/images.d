@@ -61,7 +61,7 @@ class Images : Control
         import api.dm.gui.controls.texts.text : Text;
 
         auto container = new VBox;
-        buildCreate(container);
+        buildInitCreate(container);
         container.enableInsets;
 
         auto label = new Text;

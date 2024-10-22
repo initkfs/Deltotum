@@ -1,19 +1,14 @@
-module api.dm.kit.factories.creation_images;
+module api.dm.kit.factories.image_factory;
 
-import api.dm.kit.sprites.factories.sprite_factory: SpriteFactory;
+import api.dm.kit.components.window_component: WindowComponent;
 import api.dm.kit.sprites.images.image : Image;
 import api.dm.kit.sprites.images.animated_image : AnimatedImage;
 
 /**
  * Authors: initkfs
  */
-class CreationImages : SpriteFactory!Image
+class ImageFactory : WindowComponent
 {
-    override Image createSprite(){
-        //TODO default image-placeholder
-        return null;
-    }
-
     Image[] images(string[] paths, int requestWidth = -1, int requestHeight = -1){
         Image[] newImages;
         foreach (p; paths)

@@ -95,7 +95,7 @@ class Window : GraphicsComponent
         super.create;
         if (const err = nativeWindow.create)
         {
-            const errorMessage = "Window creation error. " ~ err.toString;
+            const errorMessage = "Window FactoryKit error. " ~ err.toString;
             if (logger)
             {
                 logger.error(errorMessage);
