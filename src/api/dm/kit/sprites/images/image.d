@@ -35,8 +35,8 @@ class Image : Texture
 
     this(double width, double height)
     {
-        this.width = width;
-        this.height = height;
+        forceWidth = width;
+        forceHeight = height;
     }
 
     this(ComTexture texture)
@@ -208,8 +208,8 @@ class Image : Texture
             return false;
         }
 
-        this.width = width;
-        this.height = height;
+        forceWidth = width;
+        forceHeight = height;
 
         return true;
     }

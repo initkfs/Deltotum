@@ -4,9 +4,13 @@ import api.dm.kit.scenes.scene : Scene;
 import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.containers.hbox : HBox;
 import api.dm.gui.controls.buttons.button : Button;
+import api.dm.kit.sprites.textures.texture: Texture;
+import api.dm.kit.sprites.images.image: Image;
 
 import Math = api.dm.math;
 import api.math.random : Random;
+
+import api.dm.kit.factories;
 
 /**
  * Authors: initkfs
@@ -23,14 +27,14 @@ class Start : Scene
 
     Random rnd;
 
+    @placeholder(50, 50, true) Texture item1;
+
     override void create()
     {
         super.create;
-
         rnd = new Random;
 
-        auto pl = f.placeholder;
-        addCreate(pl);
+        
 
        
         createDebugger;

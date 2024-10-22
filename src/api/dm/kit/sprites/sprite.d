@@ -682,13 +682,16 @@ class Sprite : EventKitTarget
             sprite.y = y + sprite.y;
         }
 
-        if(!sprite.isBuilt){
+        if (!sprite.isBuilt)
+        {
             buildInit(sprite);
         }
 
-        if(!sprite.isCreated){
+        if (!sprite.isCreated)
+        {
             sprite.create;
-            if(!sprite.isCreated){
+            if (!sprite.isCreated)
+            {
                 throw new Exception("Sprite not created: " ~ sprite.className);
             }
         }
@@ -1428,6 +1431,15 @@ class Sprite : EventKitTarget
         }
 
         return setWidth(value);
+    }
+
+    void forceWidth(double value)
+    {
+        _width = value;
+    }
+
+    void forceHeight(double value){
+        _height = value;
     }
 
     bool setWidth(double value)

@@ -32,6 +32,8 @@ class Scene : EventKitTarget
 
     bool startDrawProcess;
 
+    bool isProcessUDA = true;
+
     bool isPause;
     Sprite[] unlockSprites;
 
@@ -47,10 +49,101 @@ class Scene : EventKitTarget
         FactoryKit _factory;
     }
 
+    void delegate() udaProcessor;
+
+    this(this ThisType)()
+    {
+        udaProcessor = () {
+            if (!isProcessUDA)
+            {
+                return;
+            }
+            processUDA!ThisType;
+        };
+    }
+
+    void processUDA(alias TargetType)()
+    {
+        import std.traits : hasUDA, getUDAs;
+        import api.core.utils.types : hasOverloads;
+
+        import api.dm.kit.factories;
+
+        auto thisInstance = cast(TargetType) this;
+        assert(thisInstance);
+
+        static foreach (const fieldName; __traits(allMembers, TargetType))
+        {
+            static if (!hasOverloads!(TargetType, fieldName))
+            {
+                {
+                    alias member = __traits(getMember, thisInstance, fieldName);
+                    static foreach (attr; __traits(getAttributes, member))
+                    {
+                        {
+                            static if (is(attr == placeholder))
+                            {
+                                __traits(getMember, thisInstance, fieldName) = f.placeholder;
+                            }
+
+                            static if (is(typeof(attr) == placeholder))
+                            {
+                                alias placeholderUDA = getUDAs!(member, placeholder)[0];
+                                auto isAdd = placeholderUDA.isAdd;
+                                __traits(getMember, thisInstance, fieldName) = f.placeholder(placeholderUDA.width, placeholderUDA
+                                        .height);
+                                if (isAdd)
+                                {
+                                    add(__traits(getMember, thisInstance, fieldName));
+                                }
+                            }
+
+                            static if (is(typeof(attr) == image))
+                            {
+                                alias udaAttr = getUDAs!(member, image)[0];
+                                auto isAdd = udaAttr.isAdd;
+                                __traits(getMember, thisInstance, fieldName) = f.images.image(udaAttr.path, udaAttr.width, udaAttr
+                                        .height);
+                                if (isAdd)
+                                {
+                                    add(__traits(getMember, thisInstance, fieldName));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
     override void create()
     {
         super.create;
         createHandlers;
+
+        udaProcessor();
+        // alias thisType = typeof(this);
+        // static foreach (const fieldName; __traits(allMembers, parentType))
+        // {
+        //     static if (!hasOverloads!(parentType, fieldName) && hasUDA!(__traits(getMember, parentComponent, fieldName), Service))
+        //     {
+        //         {
+        //             import std.algorithm.searching : startsWith;
+        //             import std.uni : toUpper;
+
+        //             enum fieldSetterName = (fieldName.startsWith("_") ? fieldName[1 .. $]
+        //                         : fieldName);
+        //             enum hasMethodName = "has" ~ fieldSetterName[0 .. 1].toUpper ~ fieldSetterName[1 .. $];
+        //             immutable bool hasService = __traits(getMember, uniComponent, hasMethodName)();
+        //             if (!hasService || uniComponent.isAllowRebuildServices)
+        //             {
+        //                 __traits(getMember, uniComponent, fieldSetterName) = __traits(getMember, parentComponent, fieldSetterName);
+        //             }
+        //         }
+
+        //     }
+        // }
     }
 
     void dispatchEvent(Event)(Event e)

@@ -4,6 +4,13 @@ import api.dm.kit.components.window_component: WindowComponent;
 import api.dm.kit.sprites.images.image : Image;
 import api.dm.kit.sprites.images.animated_image : AnimatedImage;
 
+struct image {
+    string path;
+    double width = -1;
+    double height = -1;
+    bool isAdd;
+}
+
 /**
  * Authors: initkfs
  */
@@ -19,15 +26,19 @@ class ImageFactory : WindowComponent
         return newImages;
     }
 
-    Image image(string path, int requestWidth = -1, int requestHeight = -1)
+    Image image(string path, double requestWidth = -1, double requestHeight = -1)
     {
+        import std.conv: to;
         auto newImage = new Image;
         build(newImage);
-        if (!newImage.load(path, requestWidth, requestHeight))
+        if (!newImage.load(path, requestWidth.to!int, requestHeight.to!int))
         {
             //TODO log, exception, placeholder, blank image?
         }
+        newImage.initialize;
+        assert(newImage.isInitialized);
         newImage.create;
+        assert(newImage.isCreated);
         return newImage;
     }
 

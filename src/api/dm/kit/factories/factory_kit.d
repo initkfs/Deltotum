@@ -5,9 +5,21 @@ import api.dm.kit.components.window_component : WindowComponent;
 import api.dm.kit.factories.image_factory : ImageFactory;
 import api.dm.kit.factories.shape_factory : ShapeFactory;
 import api.dm.kit.factories.texture_factory : TextureFactory;
+import api.dm.kit.sprites.textures.texture: Texture;
 import api.dm.kit.sprites.sprite : Sprite;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
+
+/** 
+ * UDA
+ */
+
+struct placeholder
+{
+    double width = 50;
+    double height = 50;
+    bool isAdd;
+}
 
 /**
  * Authors: initkfs
@@ -31,7 +43,7 @@ class FactoryKit : WindowComponent
         this.textures = textures;
     }
 
-    Sprite placeholder(double pWidth = 50, double pHeight = 50, RGBA color = RGBA.lightcoral)
+    Texture placeholder(double pWidth = 50, double pHeight = 50, RGBA color = RGBA.lightcoral)
     {
         return textures.texture(pWidth, pHeight, () {
             import api.math.geom2.vec2 : Vec2d;
