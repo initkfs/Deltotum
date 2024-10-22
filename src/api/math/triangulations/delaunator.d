@@ -14,49 +14,37 @@ struct Edge
 {
     Vec2d P;
     Vec2d Q;
-    int Index;
+    int index;
 
     this(int e, Vec2d p, Vec2d q)
     {
-        Index = e;
+        index = e;
         P = p;
         Q = q;
     }
 }
 
-struct Vec2d
-{
-    double X = 0;
-    double Y = 0;
-
-    this(double x, double y)
-    {
-        X = x;
-        Y = y;
-    }
-}
-
 struct Triangle
 {
-    int Index;
+    int index;
 
-    Vec2d[] Points;
+    Vec2d[] points;
 
-    this(int t, Vec2d[] points)
+    this(int t, Vec2d[] newPoints)
     {
-        Points = points;
-        Index = t;
+        points = newPoints;
+        index = t;
     }
 }
 
 struct VoronoiCell
 {
-    Vec2d[] Points;
-    int Index;
-    this(int triangleIndex, Vec2d[] points)
+    Vec2d[] points;
+    int index;
+    this(int triangleIndex, Vec2d[] newPoints)
     {
-        Points = points;
-        Index = triangleIndex;
+        points = newPoints;
+        index = triangleIndex;
     }
 }
 
@@ -64,17 +52,17 @@ class Delaunator
 {
     private
     {
-        double EPSILON = double.epsilon;
-        int[] EDGE_STACK = new int[](512);
+        double epsilon = double.epsilon;
+        int[] edgeStack = new int[](512);
 
-        Vec2d[] Points;
+        Vec2d[] points;
 
         // One value per half-edge, containing the point index of where a given half edge starts.
-        int[] Triangles;
+        int[] triangles;
         // One value per half-edge, containing the opposite half-edge in the adjacent triangle, or -1 if there is no adjacent triangle
-        int[] Halfedges;
-        /// A list of point indices that traverses the hull of the points.
-        int[] Hull;
+        int[] halfedges;
+        // A list of point indices that traverses the hull of the points.
+        int[] hull;
 
         int hashSize;
         int[] hullPrev;
@@ -91,30 +79,30 @@ class Delaunator
         int hullSize;
     }
 
-    void triangulate(Vec2d[] points)
+    void triangulate(Vec2d[] newPoints)
     {
-        if (points.length < 3)
+        if (newPoints.length < 3)
         {
-            throw new Exception("Need at least 3 points");
+            throw new Exception("Need at least 3 newPoints");
         }
 
-        Points = points;
+        points = newPoints;
 
-        coords = new double[](Points.length * 2);
+        coords = new double[](points.length * 2);
 
-        for (size_t i = 0; i < Points.length; i++)
+        for (size_t i = 0; i < points.length; i++)
         {
-            auto p = Points[i];
+            auto p = points[i];
             coords[2 * i] = p.x;
             coords[2 * i + 1] = p.y;
         }
 
-        auto n = points.length;
+        auto n = newPoints.length;
         auto maxTriangles = 2 * n - 5;
 
-        Triangles = new int[](maxTriangles * 3);
+        triangles = new int[](maxTriangles * 3);
 
-        Halfedges = new int[](maxTriangles * 3);
+        halfedges = new int[](maxTriangles * 3);
         hashSize = cast(int) Math.ceil(Math.sqrt(n));
 
         hullPrev = new int[](n);
@@ -155,7 +143,7 @@ class Delaunator
         // pick a seed point close to the center
         for (int i = 0; i < n; i++)
         {
-            auto d = Dist(cx, cy, coords[2 * i], coords[2 * i + 1]);
+            auto d = dist(cx, cy, coords[2 * i], coords[2 * i + 1]);
             if (d < minDist)
             {
                 i0 = i;
@@ -172,7 +160,7 @@ class Delaunator
         {
             if (i == i0)
                 continue;
-            auto d = Dist(i0x, i0y, coords[2 * i], coords[2 * i + 1]);
+            auto d = dist(i0x, i0y, coords[2 * i], coords[2 * i + 1]);
             if (d < minDist && d > 0)
             {
                 i1 = i;
@@ -190,7 +178,7 @@ class Delaunator
         {
             if (i == i0 || i == i1)
                 continue;
-            auto r = Circumradius(i0x, i0y, i1x, i1y, coords[2 * i], coords[2 * i + 1]);
+            auto r = circumradius(i0x, i0y, i1x, i1y, coords[2 * i], coords[2 * i + 1]);
             if (r < minRadius)
             {
                 i2 = i;
@@ -205,7 +193,7 @@ class Delaunator
             throw new Exception("No Delaunay triangulation exists for this input.");
         }
 
-        if (Orient(i0x, i0y, i1x, i1y, i2x, i2y))
+        if (orient(i0x, i0y, i1x, i1y, i2x, i2y))
         {
             auto i = i1;
             auto x = i1x;
@@ -218,18 +206,18 @@ class Delaunator
             i2y = y;
         }
 
-        auto center = Circumcenter(i0x, i0y, i1x, i1y, i2x, i2y);
+        auto center = circumcenter(i0x, i0y, i1x, i1y, i2x, i2y);
         this.cx = center.x;
         this.cy = center.y;
 
         auto dists = new double[](n);
         for (auto i = 0; i < n; i++)
         {
-            dists[i] = Dist(coords[2 * i], coords[2 * i + 1], center.x, center.y);
+            dists[i] = dist(coords[2 * i], coords[2 * i + 1], center.x, center.y);
         }
 
         // sort the points by distance from the seed triangle circumcenter
-        Quicksort(ids, dists, 0, cast(int)(n - 1));
+        quicksort(ids, dists, 0, cast(int)(n - 1));
 
         // set up the seed triangle as the starting hull
         hullStart = i0;
@@ -243,12 +231,12 @@ class Delaunator
         hullTri[i1] = 1;
         hullTri[i2] = 2;
 
-        hullHash[HashKey(i0x, i0y)] = i0;
-        hullHash[HashKey(i1x, i1y)] = i1;
-        hullHash[HashKey(i2x, i2y)] = i2;
+        hullHash[hashKey(i0x, i0y)] = i0;
+        hullHash[hashKey(i1x, i1y)] = i1;
+        hullHash[hashKey(i2x, i2y)] = i2;
 
         trianglesLen = 0;
-        AddTriangle(i0, i1, i2, -1, -1, -1);
+        addTriangle(i0, i1, i2, -1, -1, -1);
 
         double xp = 0;
         double yp = 0;
@@ -260,7 +248,7 @@ class Delaunator
             auto y = coords[2 * i + 1];
 
             // skip near-duplicate points
-            if (k > 0 && Math.abs(x - xp) <= EPSILON && Math.abs(y - yp) <= EPSILON)
+            if (k > 0 && Math.abs(x - xp) <= epsilon && Math.abs(y - yp) <= epsilon)
                 continue;
             xp = x;
             yp = y;
@@ -273,7 +261,7 @@ class Delaunator
             auto start = 0;
             for (auto j = 0; j < hashSize; j++)
             {
-                auto key = HashKey(x, y);
+                auto key = hashKey(x, y);
                 start = hullHash[(key + j) % hashSize];
                 if (start != -1 && start != hullNext[start])
                     break;
@@ -283,7 +271,7 @@ class Delaunator
             auto e = start;
             auto q = hullNext[e];
 
-            while (!Orient(x, y, coords[2 * e], coords[2 * e + 1], coords[2 * q], coords[2 * q + 1]))
+            while (!orient(x, y, coords[2 * e], coords[2 * e + 1], coords[2 * q], coords[2 * q + 1]))
             {
                 e = q;
                 if (e == start)
@@ -299,10 +287,10 @@ class Delaunator
                 continue; // likely a near-duplicate point; skip it
 
             // add the first triangle from the point
-            auto t = AddTriangle(e, i, hullNext[e], -1, -1, hullTri[e]);
+            auto t = addTriangle(e, i, hullNext[e], -1, -1, hullTri[e]);
 
             // recursively flip triangles from the point until they satisfy the Delaunay condition
-            hullTri[i] = Legalize(t + 2);
+            hullTri[i] = legalize(t + 2);
             hullTri[e] = t; // keep track of boundary triangles on the hull
             hullSize++;
 
@@ -310,10 +298,10 @@ class Delaunator
             auto next = hullNext[e];
             q = hullNext[next];
 
-            while (Orient(x, y, coords[2 * next], coords[2 * next + 1], coords[2 * q], coords[2 * q + 1]))
+            while (orient(x, y, coords[2 * next], coords[2 * next + 1], coords[2 * q], coords[2 * q + 1]))
             {
-                t = AddTriangle(next, i, q, hullTri[i], -1, hullTri[next]);
-                hullTri[i] = Legalize(t + 2);
+                t = addTriangle(next, i, q, hullTri[i], -1, hullTri[next]);
+                hullTri[i] = legalize(t + 2);
                 hullNext[next] = next; // mark as removed
                 hullSize--;
                 next = q;
@@ -326,10 +314,10 @@ class Delaunator
             {
                 q = hullPrev[e];
 
-                while (Orient(x, y, coords[2 * q], coords[2 * q + 1], coords[2 * e], coords[2 * e + 1]))
+                while (orient(x, y, coords[2 * q], coords[2 * q + 1], coords[2 * e], coords[2 * e + 1]))
                 {
-                    t = AddTriangle(q, i, e, -1, hullTri[e], hullTri[q]);
-                    Legalize(t + 2);
+                    t = addTriangle(q, i, e, -1, hullTri[e], hullTri[q]);
+                    legalize(t + 2);
                     hullTri[q] = t;
                     hullNext[e] = e; // mark as removed
                     hullSize--;
@@ -345,26 +333,26 @@ class Delaunator
             hullNext[i] = next;
 
             // save the two new edges in the hash table
-            hullHash[HashKey(x, y)] = i;
-            hullHash[HashKey(coords[2 * e], coords[2 * e + 1])] = e;
+            hullHash[hashKey(x, y)] = i;
+            hullHash[hashKey(coords[2 * e], coords[2 * e + 1])] = e;
         }
 
-        Hull = new int[](hullSize);
+        hull = new int[](hullSize);
         auto s = hullStart;
         for (size_t i = 0; i < hullSize; i++)
         {
-            Hull[i] = s;
+            hull[i] = s;
             s = hullNext[s];
         }
 
         hullPrev = hullNext = hullTri = null; // get rid of temporary arrays
 
-        //// trim typed triangle mesh arrays
-        Triangles = Triangles[0 .. trianglesLen];
-        Halfedges = Halfedges[0 .. trianglesLen];
+        /// trim typed triangle mesh arrays
+        triangles = triangles[0 .. trianglesLen];
+        halfedges = halfedges[0 .. trianglesLen];
     }
 
-    private int Legalize(int a)
+    private int legalize(int a)
     {
         auto i = 0;
         int ar;
@@ -372,7 +360,7 @@ class Delaunator
         // recursion eliminated with a fixed-size stack
         while (true)
         {
-            auto b = Halfedges[a];
+            auto b = halfedges[a];
 
             /* if the pair of triangles doesn't satisfy the Delaunay condition
                  * (p1 is inside the circumcircle of [p0, pl, pr]), flip them,
@@ -396,7 +384,7 @@ class Delaunator
             { // convex hull edge
                 if (i == 0)
                     break;
-                a = EDGE_STACK[--i];
+                a = edgeStack[--i];
                 continue;
             }
 
@@ -404,12 +392,12 @@ class Delaunator
             auto al = a0 + (a + 1) % 3;
             auto bl = b0 + (b + 2) % 3;
 
-            auto p0 = Triangles[ar];
-            auto pr = Triangles[a];
-            auto pl = Triangles[al];
-            auto p1 = Triangles[bl];
+            auto p0 = triangles[ar];
+            auto pr = triangles[a];
+            auto pl = triangles[al];
+            auto p1 = triangles[bl];
 
-            auto illegal = InCircle(
+            auto illegal = inCircle(
                 coords[2 * p0], coords[2 * p0 + 1],
                 coords[2 * pr], coords[2 * pr + 1],
                 coords[2 * pl], coords[2 * pl + 1],
@@ -417,10 +405,10 @@ class Delaunator
 
             if (illegal)
             {
-                Triangles[a] = p1;
-                Triangles[b] = p0;
+                triangles[a] = p1;
+                triangles[b] = p0;
 
-                auto hbl = Halfedges[bl];
+                auto hbl = halfedges[bl];
 
                 // edge swapped on the other side of the hull (rare); fix the halfedge reference
                 if (hbl == -1)
@@ -437,30 +425,30 @@ class Delaunator
                     }
                     while (e != hullStart);
                 }
-                Link(a, hbl);
-                Link(b, Halfedges[ar]);
-                Link(ar, bl);
+                link(a, hbl);
+                link(b, halfedges[ar]);
+                link(ar, bl);
 
                 auto br = b0 + (b + 1) % 3;
 
                 // don't worry about hitting the cap: it can only happen on extremely degenerate input
-                if (i < EDGE_STACK.length)
+                if (i < edgeStack.length)
                 {
-                    EDGE_STACK[i++] = br;
+                    edgeStack[i++] = br;
                 }
             }
             else
             {
                 if (i == 0)
                     break;
-                a = EDGE_STACK[--i];
+                a = edgeStack[--i];
             }
         }
 
         return ar;
     }
 
-    private bool InCircle(double ax, double ay, double bx, double by, double cx, double cy, double px, double py)
+    private bool inCircle(double ax, double ay, double bx, double by, double cx, double cy, double px, double py)
     {
         auto dx = ax - px;
         auto dy = ay - py;
@@ -478,38 +466,38 @@ class Delaunator
             ap * (ex * fy - ey * fx) < 0;
     }
 
-    private int AddTriangle(int i0, int i1, int i2, int a, int b, int c)
+    private int addTriangle(int i0, int i1, int i2, int a, int b, int c)
     {
         auto t = trianglesLen;
 
-        Triangles[t] = i0;
-        Triangles[t + 1] = i1;
-        Triangles[t + 2] = i2;
+        triangles[t] = i0;
+        triangles[t + 1] = i1;
+        triangles[t + 2] = i2;
 
-        Link(t, a);
-        Link(t + 1, b);
-        Link(t + 2, c);
+        link(t, a);
+        link(t + 1, b);
+        link(t + 2, c);
 
         trianglesLen += 3;
         return t;
     }
 
-    private void Link(int a, int b)
+    private void link(int a, int b)
     {
-        Halfedges[a] = b;
+        halfedges[a] = b;
         if (b != -1)
-            Halfedges[b] = a;
+            halfedges[b] = a;
     }
 
-    private int HashKey(double x, double y) => cast(int)(Math.floor(PseudoAngle(x - cx, y - cy) * hashSize) % hashSize);
+    private int hashKey(double x, double y) => cast(int)(Math.floor(pseudoAngle(x - cx, y - cy) * hashSize) % hashSize);
 
-    private double PseudoAngle(double dx, double dy)
+    private double pseudoAngle(double dx, double dy)
     {
         auto p = dx / (Math.abs(dx) + Math.abs(dy));
         return (dy > 0 ? 3 - p : 1 + p) / 4; // [0..1]
     }
 
-    private void Quicksort(int[] ids, double[] dists, int left, int right)
+    private void quicksort(int[] ids, double[] dists, int left, int right)
     {
         if (right - left <= 20)
         {
@@ -529,13 +517,13 @@ class Delaunator
             auto i = left + 1;
             auto j = right;
 
-            Swap(ids, median, i);
+            swap(ids, median, i);
             if (dists[ids[left]] > dists[ids[right]])
-                Swap(ids, left, right);
+                swap(ids, left, right);
             if (dists[ids[i]] > dists[ids[right]])
-                Swap(ids, i, right);
+                swap(ids, i, right);
             if (dists[ids[left]] > dists[ids[i]])
-                Swap(ids, left, i);
+                swap(ids, left, i);
 
             auto temp = ids[i];
             auto tempDist = dists[temp];
@@ -549,34 +537,34 @@ class Delaunator
                 while (dists[ids[j]] > tempDist);
                 if (j < i)
                     break;
-                Swap(ids, i, j);
+                swap(ids, i, j);
             }
             ids[left + 1] = ids[j];
             ids[j] = temp;
 
             if (right - i + 1 >= j - left)
             {
-                Quicksort(ids, dists, i, right);
-                Quicksort(ids, dists, left, j - 1);
+                quicksort(ids, dists, i, right);
+                quicksort(ids, dists, left, j - 1);
             }
             else
             {
-                Quicksort(ids, dists, left, j - 1);
-                Quicksort(ids, dists, i, right);
+                quicksort(ids, dists, left, j - 1);
+                quicksort(ids, dists, i, right);
             }
         }
     }
 
-    private void Swap(int[] arr, int i, int j)
+    private void swap(int[] arr, int i, int j)
     {
         auto tmp = arr[i];
         arr[i] = arr[j];
         arr[j] = tmp;
     }
 
-    private bool Orient(double px, double py, double qx, double qy, double rx, double ry) => (
+    private bool orient(double px, double py, double qx, double qy, double rx, double ry) => (
         qy - py) * (rx - qx) - (qx - px) * (ry - qy) < 0;
-    private double Circumradius(double ax, double ay, double bx, double by, double cx, double cy)
+    private double circumradius(double ax, double ay, double bx, double by, double cx, double cy)
     {
         auto dx = bx - ax;
         auto dy = by - ay;
@@ -590,7 +578,7 @@ class Delaunator
         return x * x + y * y;
     }
 
-    private Vec2d Circumcenter(double ax, double ay, double bx, double by, double cx, double cy)
+    private Vec2d circumcenter(double ax, double ay, double bx, double by, double cx, double cy)
     {
         auto dx = bx - ax;
         auto dy = by - ay;
@@ -605,69 +593,69 @@ class Delaunator
         return Vec2d(x, y);
     }
 
-    private double Dist(double ax, double ay, double bx, double by)
+    private double dist(double ax, double ay, double bx, double by)
     {
         auto dx = ax - bx;
         auto dy = ay - by;
         return dx * dx + dy * dy;
     }
 
-    Triangle[] GetTriangles()
+    Triangle[] getTriangles()
     {
         Triangle[] trigs;
-        for (auto t = 0; t < Triangles.length / 3; t++)
+        for (auto t = 0; t < triangles.length / 3; t++)
         {
-            trigs ~= Triangle(t, GetTrianglePoints(t));
+            trigs ~= Triangle(t, trianglePoints(t));
         }
         return trigs;
     }
 
-    Edge[] GetEdges()
+    Edge[] getEdges()
     {
         Edge[] edges;
-        for (auto e = 0; e < Triangles.length; e++)
+        for (auto e = 0; e < triangles.length; e++)
         {
-            if (e > Halfedges[e])
+            if (e > halfedges[e])
             {
-                auto p = Points[Triangles[e]];
-                auto q = Points[Triangles[NextHalfedge(e)]];
+                auto p = points[triangles[e]];
+                auto q = points[triangles[nextHalfedge(e)]];
                 edges ~= Edge(e, p, q);
             }
         }
         return edges;
     }
 
-    Edge[] GetVoronoiEdges(Vec2d delegate(int) triangleVerticeSelector = null)
+    Edge[] voronoiEdges(Vec2d delegate(int) triangleVerticeSelector = null)
     {
         Edge[] edges;
         if (triangleVerticeSelector == null)
-            triangleVerticeSelector = x => GetCentroid(x);
-        for (auto e = 0; e < Triangles.length; e++)
+            triangleVerticeSelector = x => centroid(x);
+        for (auto e = 0; e < triangles.length; e++)
         {
-            if (e < Halfedges[e])
+            if (e < halfedges[e])
             {
-                auto p = triangleVerticeSelector(TriangleOfEdge(e));
-                auto q = triangleVerticeSelector(TriangleOfEdge(Halfedges[e]));
+                auto p = triangleVerticeSelector(triangleOfEdge(e));
+                auto q = triangleVerticeSelector(triangleOfEdge(halfedges[e]));
                 edges ~= Edge(e, p, q);
             }
         }
         return edges;
     }
 
-    Edge[] GetVoronoiEdgesBasedOnCircumCenter() => GetVoronoiEdges(&GetTriangleCircumcenter);
-    Edge[] GetVoronoiEdgesBasedOnCentroids() => GetVoronoiEdges(&GetCentroid);
+    Edge[] voronoiEdgesOnCircumCenter() => voronoiEdges(&triangleCircumcenter);
+    Edge[] voronoiEdgesOnCentroids() => voronoiEdges(&centroid);
 
-    VoronoiCell[] GetVoronoiCells(Vec2d delegate(int) triangleVerticeSelector = null)
+    VoronoiCell[] voronoiCells(Vec2d delegate(int) triangleVerticeSelector = null)
     {
         VoronoiCell[] cells;
         if (triangleVerticeSelector == null)
-            triangleVerticeSelector = x => GetCentroid(x);
+            triangleVerticeSelector = x => centroid(x);
 
         struct HashSet
         {
             int[] set;
 
-            bool Add(int data)
+            bool add(int data)
             {
                 foreach (v; set)
                 {
@@ -685,119 +673,113 @@ class Delaunator
         HashSet seen;
         Vec2d[] vertices; // Keep it outside the loop, reuse capacity, less resizes.
 
-        for (auto e = 0; e < Triangles.length; e++)
+        for (auto e = 0; e < triangles.length; e++)
         {
-            auto pointIndex = Triangles[NextHalfedge(e)];
+            auto pointIndex = triangles[nextHalfedge(e)];
             // True if element was added, If resize the set? O(n) : O(1)
-            if (seen.Add(pointIndex))
+            if (seen.add(pointIndex))
             {
-                foreach (edge; EdgesAroundPoint(e))
+                foreach (edge; edgesAroundPoint(e))
                 {
 
                     // triangleVerticeSelector cant be null, no need to check before invoke (?.).
-                    vertices ~= triangleVerticeSelector(TriangleOfEdge(edge));
+                    vertices ~= triangleVerticeSelector(triangleOfEdge(edge));
                 }
                 cells ~= VoronoiCell(pointIndex, vertices);
                 vertices = []; // Clear elements, keep capacity
             }
         }
 
-        //TODO fix 0.0
-        // import std: filter, array;
-        // foreach (ref VoronoiCell vcell; cells)
-        // {
-        //     vcell.Points = vcell.Points.filter!((pt) => pt.x > 0 || pt.y > 0).array;
-        // }
-
         return cells;
     }
 
-    VoronoiCell[] GetVoronoiCellsBasedOnCircumcenters() => GetVoronoiCells(
-        &GetTriangleCircumcenter);
-    VoronoiCell[] GetVoronoiCellsBasedOnCentroids() => GetVoronoiCells(&GetCentroid);
+    VoronoiCell[] voronoiCellsOnCircumcenters() => voronoiCells(
+        &triangleCircumcenter);
+    VoronoiCell[] voronoiCellsOnCentroids() => voronoiCells(&centroid);
 
-    Edge[] GetHullEdges() => CreateHull(GetHullPoints());
+    Edge[] hullEdges() => createHull(hullPoints());
 
-    Vec2d[] GetHullPoints()
+    Vec2d[] hullPoints()
     {
-        Vec2d[] points;
-        foreach (x; Hull)
+        Vec2d[] newPoints;
+        foreach (x; hull)
         {
-            points ~= Points[x];
+            newPoints ~= points[x];
         }
-        return points;
+        return newPoints;
     }
 
-    Vec2d[] GetTrianglePoints(int t)
+    Vec2d[] trianglePoints(int t)
     {
-        Vec2d[] points;
-        foreach (p; PointsOfTriangle(t))
+        Vec2d[] newPoints;
+        foreach (p; pointsOfTriangle(t))
         {
-            points ~= Points[p];
+            newPoints ~= points[p];
         }
-        return points;
+        return newPoints;
     }
 
-    Vec2d[] GetRellaxedPoints()
+    Vec2d[] rellaxedPoints()
     {
-        Vec2d[] points;
-        foreach (cell; GetVoronoiCellsBasedOnCircumcenters())
+        Vec2d[] newPoints;
+        foreach (cell; voronoiCellsOnCircumcenters())
         {
-            points ~= GetCentroid(cell.Points);
+            newPoints ~= centroid(cell.points);
         }
-        return points;
+        return newPoints;
     }
 
-    Edge[] GetEdgesOfTriangle(int t)
+    Edge[] getEdgesOfTriangle(int t)
     {
         import std : map, array;
 
-        Edge[] edges = CreateHull(EdgesOfTriangle(t).map!(p => Points[p]).array);
+        Edge[] edges = createHull(edgesOfTriangle(t).map!(p => points[p]).array);
         return edges;
     }
 
-    Edge[] CreateHull(Vec2d[] points)
+    Edge[] createHull(Vec2d[] newPoints)
     {
         import std.range : zip;
         import std.array : array;
 
         Edge[] edges;
 
-        //points.Skip(1).Append(points.FirstOrDefault())
-        foreach (tup; zip(points, points[1 .. $] ~ points[0]))
+        //newPoints.Skip(1).Append(newPoints.FirstOrDefault())
+        foreach (tup; zip(newPoints, newPoints[1 .. $] ~ newPoints[0]))
         {
             edges ~= Edge(0, tup[0], tup[1]);
         }
         return edges;
     }
 
-    Vec2d GetTriangleCircumcenter(int t)
+    Vec2d triangleCircumcenter(int t)
     {
-        auto vertices = GetTrianglePoints(t);
-        return GetCircumcenter(vertices[0], vertices[1], vertices[2]);
+        auto vertices = trianglePoints(t);
+        return calcCircumcenter(vertices[0], vertices[1], vertices[2]);
     }
 
-    Vec2d GetCentroid(int t)
+    Vec2d centroid(int t)
     {
-        auto vertices = GetTrianglePoints(t);
-        return GetCentroid(vertices);
+        auto vertices = trianglePoints(t);
+        return centroid(vertices);
     }
 
-    Vec2d GetCircumcenter(Vec2d a, Vec2d b, Vec2d c) => Circumcenter(a.x, a.y, b.x, b.y, c.x, c
+    Vec2d calcCircumcenter(Vec2d a, Vec2d b, Vec2d c) => circumcenter(a.x, a.y, b.x, b.y, c.x, c
             .y);
 
-    Vec2d GetCentroid(Vec2d[] points)
+    Vec2d centroid(Vec2d[] newPoints)
     {
         double accumulatedArea = 0.0f;
         double centerX = 0.0f;
         double centerY = 0.0f;
 
-        for (int i = 0, j = cast(int)(points.length - 1); i < points.length; j = i++)
+        for (int i = 0, j = cast(int)(newPoints.length - 1); i < newPoints.length;
+            j = i++)
         {
-            auto temp = points[i].x * points[j].y - points[j].x * points[i].y;
+            auto temp = newPoints[i].x * newPoints[j].y - newPoints[j].x * newPoints[i].y;
             accumulatedArea += temp;
-            centerX += (points[i].x + points[j].x) * temp;
-            centerY += (points[i].y + points[j].y) * temp;
+            centerX += (newPoints[i].x + newPoints[j].x) * temp;
+            centerY += (newPoints[i].y + newPoints[j].y) * temp;
         }
 
         if (Math.abs(accumulatedArea) < 1E-7f)
@@ -807,115 +789,105 @@ class Delaunator
         return Vec2d(centerX / accumulatedArea, centerY / accumulatedArea);
     }
 
-    void ForEachTriangle(void delegate(Triangle) callback)
+    void eachTriangle(void delegate(Triangle) callback)
     {
-        foreach (triangle; GetTriangles())
+        foreach (triangle; getTriangles())
         {
             callback(triangle);
         }
     }
 
-    void ForEachTriangleEdge(void delegate(Edge) callback)
+    void eachTriangleEdge(void delegate(Edge) callback)
     {
-        foreach (edge; GetEdges())
+        foreach (edge; getEdges())
         {
             callback(edge);
         }
     }
 
-    void ForEachVoronoiEdge(void delegate(Edge) callback)
+    void eachVoronoiEdge(void delegate(Edge) callback)
     {
-        foreach (edge; GetVoronoiEdges())
+        foreach (edge; voronoiEdges())
         {
             callback(edge);
         }
     }
 
-    void ForEachVoronoiCellBasedOnCentroids(void delegate(VoronoiCell) callback)
+    void eachVoronoiCellOnCentroids(void delegate(VoronoiCell) callback)
     {
-        foreach (cell; GetVoronoiCellsBasedOnCentroids())
+        foreach (cell; voronoiCellsOnCentroids())
         {
             callback(cell);
         }
     }
 
-    void ForEachVoronoiCellBasedOnCircumcenters(void delegate(VoronoiCell) callback)
+    void eachVoronoiCellOnCircumcenters(void delegate(VoronoiCell) callback)
     {
-        foreach (cell; GetVoronoiCellsBasedOnCircumcenters())
+        foreach (cell; voronoiCellsOnCircumcenters())
         {
             callback(cell);
         }
     }
 
-    void ForEachVoronoiCell(void delegate(VoronoiCell) callback, Vec2d delegate(int) triangleVertexSelector = null)
+    void eachVoronoiCell(void delegate(VoronoiCell) callback, Vec2d delegate(int) triangleVertexSelector = null)
     {
-        foreach (cell; GetVoronoiCells(triangleVertexSelector))
+        foreach (cell; voronoiCells(triangleVertexSelector))
         {
             callback(cell);
         }
     }
 
-    /// <summary>
-    /// Returns the half-edges that share a start point with the given half edge, in order.
-    /// </summary>
-    int[] EdgesAroundPoint(int start)
+    // Returns the half-edges that share a start point with the given half edge, in order.
+    int[] edgesAroundPoint(int start)
     {
         int[] result;
         auto incoming = start;
         do
         {
             result ~= incoming;
-            auto outgoing = NextHalfedge(incoming);
-            incoming = Halfedges[outgoing];
+            auto outgoing = nextHalfedge(incoming);
+            incoming = halfedges[outgoing];
         }
         while (incoming != -1 && incoming != start);
         return result;
     }
 
-    /// <summary>
-    /// Returns the three point indices of a given triangle id.
-    /// </summary>
-    int[] PointsOfTriangle(int t)
+    //Returns the three point indices of a given triangle id.
+    int[] pointsOfTriangle(int t)
     {
         int[] res;
-        foreach (edge; EdgesOfTriangle(t))
+        foreach (edge; edgesOfTriangle(t))
         {
-            res ~= Triangles[edge];
+            res ~= triangles[edge];
         }
         return res;
     }
 
-    /// <summary>
-    /// Returns the triangle ids adjacent to the given triangle id.
-    /// Will return up to three values.
-    /// </summary>
-    int[] TrianglesAdjacentToTriangle(int t)
+    // Returns the triangle ids adjacent to the given triangle id.
+    // Will return up to three values.
+    int[] trianglesAdjacentToTriangle(int t)
     {
         int[] adjacentTriangles;
-        auto triangleEdges = EdgesOfTriangle(t);
+        auto triangleEdges = edgesOfTriangle(t);
         foreach (e; triangleEdges)
         {
-            auto opposite = Halfedges[e];
+            auto opposite = halfedges[e];
             if (opposite >= 0)
             {
-                adjacentTriangles ~= TriangleOfEdge(opposite);
+                adjacentTriangles ~= triangleOfEdge(opposite);
             }
         }
         return adjacentTriangles;
     }
 
-    int NextHalfedge(int e) => (e % 3 == 2) ? e - 2 : e + 1;
-    int PreviousHalfedge(int e) => (e % 3 == 0) ? e + 2 : e - 1;
+    int nextHalfedge(int e) => (e % 3 == 2) ? e - 2 : e + 1;
+    int previousHalfedge(int e) => (e % 3 == 0) ? e + 2 : e - 1;
 
-    /// <summary>
-    /// Returns the three half-edges of a given triangle id.
-    /// </summary>
-    int[] EdgesOfTriangle(int t) => [3 * t, 3 * t + 1, 3 * t + 2];
+    // Returns the three half-edges of a given triangle id.
+    int[] edgesOfTriangle(int t) => [3 * t, 3 * t + 1, 3 * t + 2];
 
-    /// <summary>
-    /// Returns the triangle id of a given half-edge.
-    /// </summary>
-    int TriangleOfEdge(int e)
+    // Returns the triangle id of a given half-edge.
+    int triangleOfEdge(int e)
     {
         return e / 3;
     }
@@ -927,7 +899,7 @@ unittest
 
     double eps = 0.0001;
 
-    Vec2d[] points = [
+    Vec2d[] newPoints = [
         Vec2d(10, 10),
         Vec2d(20, 15),
         Vec2d(15, 15),
@@ -937,7 +909,45 @@ unittest
 
     auto generator = new Delaunator;
 
-    Vec2d[][] expectedCells = [
+    generator.triangulate(newPoints);
+
+    Triangle[] expectedTriangles = [
+        Triangle(0, [
+            Vec2d(x : 12.0000000000, y:
+                12.0000000000), Vec2d(x : 20.0000000000, y:
+                15.0000000000), Vec2d(x : 10.0000000000, y:
+                10.0000000000)
+        ]),
+        Triangle(1, [
+            Vec2d(x : 12.0000000000, y:
+                12.0000000000), Vec2d(x : 15.0000000000, y:
+                15.0000000000), Vec2d(x : 20.0000000000, y:
+                15.0000000000)
+        ]),
+        Triangle(2, [
+            Vec2d(x : 20.0000000000, y:
+                15.0000000000), Vec2d(x : 5.0000000000, y:
+                5.0000000000), Vec2d(x : 10.0000000000, y:
+                10.0000000000)
+        ])
+    ];
+
+    Triangle[] receivedTrigs = generator.getTriangles;
+    assert(receivedTrigs == expectedTriangles);
+    foreach (i, trig; receivedTrigs)
+    {
+        auto expectedTrig = expectedTriangles[i];
+        assert(trig.index == expectedTrig.index);
+        assert(trig.points == expectedTrig.points);
+        foreach (pi, trigPoint; trig.points)
+        {
+            auto expPoint = expectedTrig.points[pi];
+            assert(isClose(trigPoint.x, expPoint.x, eps));
+            assert(isClose(trigPoint.y, expPoint.y, eps));
+        }
+    }
+
+     Vec2d[][] expectedCells = [
         [Vec2d(14, 12.3333)],
         [Vec2d(14, 12.3333), Vec2d(11.6667, 10)],
         [Vec2d(15.6667, 14)],
@@ -945,17 +955,16 @@ unittest
         [Vec2d(11.6667, 10)]
     ];
 
-    generator.triangulate(points);
-    auto vcells1 = generator.GetVoronoiCells;
+    auto vcells1 = generator.voronoiCells;
     assert(vcells1.length == expectedCells.length);
 
     import std.conv : text;
 
     foreach (vcell; vcells1)
     {
-        auto exCell = expectedCells[cast(size_t) vcell.Index];
-        assert(exCell.length == vcell.Points.length);
-        foreach (vi, vv; vcell.Points)
+        auto exCell = expectedCells[cast(size_t) vcell.index];
+        assert(exCell.length == vcell.points.length);
+        foreach (vi, vv; vcell.points)
         {
             assert(isClose(exCell[vi].x, vv.x, eps), text(exCell[vi].x, ":", vv.x));
             assert(isClose(exCell[vi].y, vv.y, eps), text(exCell[vi].y, ":", vv.y));
