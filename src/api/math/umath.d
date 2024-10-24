@@ -1,9 +1,13 @@
 module api.math.umath;
 
-import math = std.math.trigonometry;
+import mathTrig = std.math.trigonometry;
 import mathConst = std.math.constants;
 import mathCore = core.math;
 import mathExp = std.math.exponential;
+import StdComp = std.algorithm.comparison;
+import StdRound = std.math.rounding;
+import StdAlgebraic = std.math.algebraic;
+
 import api.math.geom2.vec2 : Vec2d;
 
 /**
@@ -26,203 +30,125 @@ enum Log2E = mathConst.LOG2E;
 enum angleFullDeg = 360.0;
 enum angleHalfDeg = 180.0;
 
-double degToRad(double deg) @nogc nothrow pure @safe
-{
-    return deg * (PI / angleHalfDeg);
-}
+alias sin = mathTrig.sin;
+alias cos = mathTrig.cos;
+alias tan = mathTrig.tan;
 
-double radToDeg(double rad) @nogc nothrow pure @safe
-{
-    return rad * (angleHalfDeg / PI);
-}
+//inverse hyperbolic cosin
+alias acosh = mathTrig.acosh;
 
-T clamp(T)(T value, T min, T max)
+//return -π/2 to π/2
+alias asin = mathTrig.asin;
+
+//return  0 to π.
+alias acos = mathTrig.acos;
+
+//inverse hyperbolic sine
+alias asinh = mathTrig.asinh;
+
+//return -π/2 to π/2
+alias atan = mathTrig.atan;
+
+//-π to π
+alias atan2 = mathTrig.atan2;
+
+//inverse hyperbolic tangent, -1..1
+alias atanh = mathTrig.atanh;
+
+//hyperbolic cosine
+alias cosh = mathTrig.cosh;
+
+//hyperbolic
+alias sinh = mathTrig.sinh;
+alias tanh = mathTrig.tanh;
+
+alias tanHyp = tanh;
+alias cosHyp = cosh;
+
+double sinDeg(double valueDeg) @nogc nothrow pure @safe => sin(degToRad(valueDeg));
+double cosDeg(double valueDeg) @nogc nothrow pure @safe => cos(degToRad(valueDeg));
+double tanDeg(double valueDeg) @nogc nothrow pure @safe => tan(degToRad(valueDeg));
+
+double csc(double x)
 {
-    if (value < min)
+    immutable sinv = sin(x);
+    if (sinv == 0)
     {
-        return min;
+        return double.nan;
     }
+    return 1.0 / sinv;
+}
 
-    if (value > max)
+double csch(double x)
+{
+    immutable sinHyp = sinh(x);
+    if (sinHyp == 0)
     {
-        return max;
+        return double.nan;
     }
-    return value;
+    return 1.0 / sinHyp;
 }
 
-double clamp01(double value) @nogc nothrow pure @safe
-{
-    return clamp(value, 0.0, 1.0);
-}
-
-double wrap(double x, double min = 0.0, double max = 1.0)
-{
-    //or floor?
-    if (min == 0 && max == 1.0)
-    {
-        //return ((x mod 1.0) + 1.0) mod 1.0;
-        auto newX = x - trunc(x);
-        if (newX < 0)
-        {
-            return newX + max;
-        }
-    }
-
-    double newX = x - trunc((x - min) / (max - min)) * (max - min);
-    if (newX < 0)
-    {
-        newX = newX + max - min;
-    }
-    return newX;
-}
-
-unittest
-{
-    auto minValue = 1;
-    auto maxValue = 50;
-
-    assert(wrap(0.9, minValue, maxValue) == 0.9);
-    assert(wrap(1, minValue, maxValue) == 1);
-    assert(wrap(50, minValue, maxValue) == 1);
-    assert(wrap(55, minValue, maxValue) == 6);
-}
-
-T trunc(T)(T value) if (is(T : real))
-{
-    import std.math.rounding : trunc;
-
-    //TODO other real?
-    return trunc(value);
-}
-
-pragma(inline, true);
-double sin(double value) @nogc nothrow pure @safe
-{
-    return math.sin(value);
-}
-
-pragma(inline, true);
-double sinDeg(double valueDeg) @nogc nothrow pure @safe
-{
-    return sin(degToRad(valueDeg));
-}
-
-pragma(inline, true);
-double cos(double value) @nogc nothrow pure @safe
-{
-    return math.cos(value);
-}
-
-pragma(inline, true);
 double sec(double value) @nogc nothrow pure @safe
 {
-    return 1.0 / cos(value);
+    auto cosv = cos(value);
+    if (cosv == 0)
+    {
+        return double.nan;
+    }
+    return 1.0 / cosv;
+}
+
+double sech(double value) @nogc nothrow pure @safe
+{
+    auto cosHyp = cosh(value);
+    if (cosHyp == 0)
+    {
+        return double.nan;
+    }
+    return 1.0 / cosHyp;
+}
+
+double acsc(double v) @nogc nothrow pure @safe => asin(1.0 / v);
+double asec(double v) @nogc nothrow pure @safe => acos(1.0 / v);
+
+alias cot = ctg;
+alias acot = actg;
+alias coth = ctgh;
+
+pragma(inline, true);
+double ctg(double x) @nogc nothrow pure @safe => 1.0 / tan(x);
+
+pragma(inline, true);
+double ctgh(double x) @nogc nothrow pure @safe => 1.0 / tanh(x);
+
+pragma(inline, true);
+double actg(double x) => atan(1.0 / x); 
+
+double actgs(double x)
+{
+    //actg(−x) = PI - actg(x)
+    return x < 0 ? (PI - actg(-x)) : actg(x);
 }
 
 pragma(inline, true);
-double cosDeg(double valueDeg) @nogc nothrow pure @safe
-{
-    return cos(degToRad(valueDeg));
-}
+double arcctg(double x) @nogc nothrow pure @safe => PI / 2.0 - atan(x);
 
-pragma(inline, true);
-double tan(double valueRad) @nogc nothrow pure @safe
-{
-    return math.tan(valueRad);
-}
+alias sqrt = mathCore.sqrt;
+alias pow = mathExp.pow;
 
-pragma(inline, true);
-double tanDeg(double valueDeg) @nogc nothrow pure @safe
-{
-    return math.tan(degToRad(valueDeg));
-}
+double degToRad(double deg) @nogc nothrow pure @safe => deg * (PI / angleHalfDeg);
+double radToDeg(double rad) @nogc nothrow pure @safe => rad * (angleHalfDeg / PI);
 
-pragma(inline, true);
-double tanHyp(double valueRad) @nogc nothrow pure @safe
-{
-    import std.math.trigonometry : tanh;
+alias min = StdComp.min;
+alias max = StdComp.max;
 
-    return tanh(valueRad);
-}
+alias round = StdRound.round;
+alias floor = StdRound.floor;
+alias ceil = StdRound.ceil;
+alias trunc = StdRound.trunc;
 
-pragma(inline, true);
-double cosHyp(double valueRad) @nogc nothrow pure @safe
-{
-    import std.math.trigonometry : cosh;
-
-    return cosh(valueRad);
-}
-
-double ctg(double x)
-{
-    return 1 / tan(x);
-}
-
-double arcctg(double x)
-{
-    return PI / 2 - math.atan(x);
-}
-
-pragma(inline, true);
-double sqrt(double value) @nogc nothrow pure @safe
-{
-    return mathCore.sqrt(value);
-}
-
-pragma(inline, true);
-double pow(double value, double base) @nogc nothrow pure @safe
-{
-    return mathExp.pow(value, base);
-}
-
-pragma(inline, true);
-double asin(double value) @nogc nothrow pure @safe
-{
-    return math.asin(value);
-}
-
-pragma(inline, true);
-double atan(double valueRad) @nogc nothrow pure @safe
-{
-    return math.atan(valueRad);
-}
-
-pragma(inline, true);
-double atan2(double y, double x) @nogc nothrow pure @safe
-{
-    return math.atan2(y, x);
-}
-
-pragma(inline, true);
-T min(T)(T x, T y) @nogc nothrow pure @safe
-{
-    import std.algorithm.comparison : min;
-
-    return min(x, y);
-}
-
-pragma(inline, true);
-T max(T)(T x, T y) @nogc nothrow pure @safe
-{
-    import std.algorithm.comparison : max;
-
-    return max(x, y);
-}
-
-real round(real x) @nogc nothrow pure @safe
-{
-    import std.math.rounding : round;
-
-    return round(x);
-}
-
-pragma(inline, true);
-T abs(T)(T value)
-{
-    import std.math.algebraic : Abs = abs;
-
-    return Abs(value);
-}
+alias abs = StdAlgebraic.abs;
 
 //TODO mixing numeric types
 pragma(inline, true);
@@ -256,45 +182,69 @@ double hypot(double a, double b) @nogc nothrow pure @safe
     return result;
 }
 
-double sign(double value)
+import StdMathTraits = std.math.traits;
+
+alias sign = StdMathTraits.sgn;
+
+bool isSameSign(double a, double b) @nogc nothrow pure @safe
 {
-    import std.math.traits : sgn;
-
-    return sgn(value);
-}
-
-bool isSameSign(double a, double b)
-{
-    import std.math.traits : sgn;
-
     return sign(a) == sign(b);
 }
 
-double toRange(double oldRangeValue, double oldMinInc, double oldMaxInc, double newMinInc, double newMaxInc)
+double toRange(double oldRangeValue, double oldMinInc, double oldMaxInc, double newMinInc, double newMaxInc) @nogc nothrow pure @safe
 {
     return (((oldRangeValue - oldMinInc) * (newMaxInc - newMinInc)) / (oldMaxInc - oldMinInc)) + newMinInc;
 }
 
-double norm(double x, double minX = 0, double maxX = 1)
+double norm(double x, double minX = 0, double maxX = 1) @nogc nothrow pure @safe
 {
     return (x - minX) / (maxX - minX);
 }
 
-double floor(double value)
+T clamp(T)(T value, T min, T max)
 {
-    import MathRounding = std.math.rounding;
+    if (value < min)
+    {
+        return min;
+    }
 
-    return MathRounding.floor(value);
+    if (value > max)
+    {
+        return max;
+    }
+    return value;
 }
 
-double ceil(double value)
-{
-    import MathRounding = std.math.rounding;
+double clamp01(double value) @nogc nothrow pure @safe => clamp(value, 0.0, 1.0);
 
-    return MathRounding.ceil(value);
+double wrap(double x, double min = 0.0, double max = 1.0)
+{
+    //or floor?
+    if (min == 0 && max == 1.0)
+    {
+        //return ((x mod 1.0) + 1.0) mod 1.0;
+        auto newX = x - trunc(x);
+        if (newX < 0)
+        {
+            return newX + max;
+        }
+    }
+
+    double newX = x - trunc((x - min) / (max - min)) * (max - min);
+    if (newX < 0)
+    {
+        newX = newX + max - min;
+    }
+    return newX;
 }
 
-double csc(double x)
+unittest
 {
-    return 1.0 / sin(x);
+    auto minValue = 1;
+    auto maxValue = 50;
+
+    assert(wrap(0.9, minValue, maxValue) == 0.9);
+    assert(wrap(1, minValue, maxValue) == 1);
+    assert(wrap(50, minValue, maxValue) == 1);
+    assert(wrap(55, minValue, maxValue) == 6);
 }

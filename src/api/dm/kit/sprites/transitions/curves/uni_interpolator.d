@@ -25,7 +25,7 @@ class UniInterpolator : Interpolator
         enum B4 = 2.5 / 2.75;
         enum B5 = 2.25 / 2.75;
         enum B6 = 2.625 / 2.75;
-        enum ELASTIC_AMPLITUDE = 1;
+        enum ELASTIC_AMPLITUDE = 1.0;
         enum ELASTIC_PERIOD = 0.4;
     }
 
