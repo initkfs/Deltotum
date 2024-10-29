@@ -1942,6 +1942,16 @@ class Sprite : EventKitTarget
         enablePadding;
     }
 
+    void disableInsets()
+    {
+        disablePadding;
+    }
+
+    void disablePadding()
+    {
+        padding(0);
+    }
+
     void enablePadding()
     {
         if (!isCanEnableInsets)
@@ -1950,11 +1960,6 @@ class Sprite : EventKitTarget
                 "Unable to enable paddings: graphic or theme is null. Perhaps the component is not built correctly");
         }
         _padding = graphics.theme.controlPadding;
-    }
-
-    void disablePadding()
-    {
-        padding(0);
     }
 
     Insets padding()

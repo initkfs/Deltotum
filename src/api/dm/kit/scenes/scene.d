@@ -35,7 +35,7 @@ class Scene : EventKitTarget
     bool isProcessUDA = true;
 
     bool isPause;
-    Sprite[] unlockSprites;
+    Sprite[] eternalSprites;
 
     void delegate(double dt)[] eternalTasks;
 
@@ -159,7 +159,8 @@ class Scene : EventKitTarget
                                     typeof(member) array = new typeof(member)(count);
                                     foreach (i; 0 .. count)
                                     {
-                                        auto newItem = f.images.animated(udaAttr.path, udaAttr.frameWidth, udaAttr.frameHeight, udaAttr.frameDelay);
+                                        auto newItem = f.images.animated(udaAttr.path, udaAttr.frameWidth, udaAttr
+                                                .frameHeight, udaAttr.frameDelay);
                                         array[i] = newItem;
                                         if (isAdd)
                                         {
@@ -183,7 +184,8 @@ class Scene : EventKitTarget
         super.create;
         createHandlers;
 
-        if(udaProcessor){
+        if (udaProcessor)
+        {
             udaProcessor();
         }
     }
@@ -246,26 +248,19 @@ class Scene : EventKitTarget
 
         worldTicks++;
 
-        if(eternalTasks.length > 0){
+        if (eternalTasks.length > 0)
+        {
             foreach (task; eternalTasks)
             {
                 task(delta);
             }
         }
 
-        if (isPause)
-        {
-            foreach (obj; unlockSprites)
-            {
-                obj.update(delta);
-                obj.validate;
-            }
-            return;
-        }
-
         size_t invalidNodesCount;
 
-        foreach (root; sprites)
+        Sprite[] roots = isPause ? eternalSprites : sprites;
+
+        foreach (root; roots)
         {
             root.update(delta);
 
@@ -273,12 +268,15 @@ class Scene : EventKitTarget
             //root.unvalidate;
         }
 
-        if (controlledSprites.length > 0)
+        if (!isPause)
         {
-            foreach (cs; controlledSprites)
+            if (controlledSprites.length > 0)
             {
-                cs.update(delta);
-                cs.validate;
+                foreach (cs; controlledSprites)
+                {
+                    cs.update(delta);
+                    cs.validate;
+                }
             }
         }
 
@@ -409,9 +407,9 @@ class Scene : EventKitTarget
                     isPause = true;
                     dialogManager.showInfo("Pause!", "Info", () {
                         isPause = false;
-                        unlockSprites = null;
+                        eternalSprites = null;
                     });
-                    unlockSprites ~= dialogManager;
+                    eternalSprites ~= dialogManager;
                 }
             };
         }
@@ -452,11 +450,11 @@ class Scene : EventKitTarget
 
     Sprite[] activeSprites()
     {
-        if (!isPause || unlockSprites.length == 0)
+        if (!isPause || eternalSprites.length == 0)
         {
             return sprites;
         }
-        return unlockSprites;
+        return eternalSprites;
     }
 
     final bool hasFactory() @safe pure nothrow
