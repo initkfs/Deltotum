@@ -30,7 +30,7 @@ class Start : Scene
 
     Random rnd;
 
-    @placeholder(50, 50, true) Texture item1;
+    @StubF(50, 50, true) Texture item1;
 
     SteeringBehavior sb;
 

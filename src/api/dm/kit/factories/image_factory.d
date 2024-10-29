@@ -1,44 +1,16 @@
 module api.dm.kit.factories.image_factory;
 
-import api.dm.kit.components.window_component: WindowComponent;
+import api.dm.kit.components.window_component : WindowComponent;
 import api.dm.kit.sprites.images.image : Image;
 import api.dm.kit.sprites.images.animated_image : AnimatedImage;
-
-struct ImageF {
-    string path;
-    double width = -1;
-    double height = -1;
-    bool isAdd;
-}
-
-struct ImagesF {
-    string path;
-    bool isAdd;
-}
-
-struct AnimImageF {
-    string path;
-    int frameWidth;
-    int frameHeight;
-    size_t frameDelay = 100;
-    bool isAdd;
-}
-
-struct AnimImagesF {
-    string path;
-    int frameWidth;
-    int frameHeight;
-    size_t frameDelay = 100;
-    size_t count = 1;
-    bool isAdd;
-}
 
 /**
  * Authors: initkfs
  */
 class ImageFactory : WindowComponent
 {
-    Image[] images(string[] paths, int requestWidth = -1, int requestHeight = -1){
+    Image[] images(string[] paths, int requestWidth = -1, int requestHeight = -1)
+    {
         Image[] newImages;
         foreach (p; paths)
         {
@@ -50,7 +22,8 @@ class ImageFactory : WindowComponent
 
     Image image(string path, double requestWidth = -1, double requestHeight = -1)
     {
-        import std.conv: to;
+        import std.conv : to;
+
         auto newImage = new Image;
         build(newImage);
         if (!newImage.load(path, requestWidth.to!int, requestHeight.to!int))

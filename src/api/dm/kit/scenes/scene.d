@@ -68,6 +68,7 @@ class Scene : EventKitTarget
     {
         import std.traits : hasUDA, getUDAs;
         import api.core.utils.types : hasOverloads;
+        import UDA = api.dm.kit.factories.uda;
 
         import api.dm.kit.factories;
 
@@ -83,14 +84,14 @@ class Scene : EventKitTarget
                     static foreach (attr; __traits(getAttributes, member))
                     {
                         {
-                            static if (is(attr == placeholder))
+                            static if (is(attr == UDA.StubF))
                             {
                                 __traits(getMember, thisInstance, fieldName) = f.placeholder;
                             }
 
-                            static if (is(typeof(attr) == placeholder))
+                            static if (is(typeof(attr) == UDA.StubF))
                             {
-                                alias placeholderUDA = getUDAs!(member, placeholder)[0];
+                                alias placeholderUDA = getUDAs!(member, UDA.StubF)[0];
                                 auto isAdd = placeholderUDA.isAdd;
                                 __traits(getMember, thisInstance, fieldName) = f.placeholder(placeholderUDA.width, placeholderUDA
                                         .height);
@@ -100,9 +101,9 @@ class Scene : EventKitTarget
                                 }
                             }
 
-                            static if (is(typeof(attr) == placeholders))
+                            static if (is(typeof(attr) == UDA.StubsF))
                             {
-                                alias udaAttr = getUDAs!(member, placeholders)[0];
+                                alias udaAttr = getUDAs!(member, UDA.StubsF)[0];
                                 auto isAdd = udaAttr.isAdd;
                                 size_t count = udaAttr.count;
                                 if (count > 0)
@@ -122,7 +123,7 @@ class Scene : EventKitTarget
                                 }
                             }
 
-                            static if (is(typeof(attr) == ImageF))
+                            static if (is(typeof(attr) == UDA.ImageF))
                             {
                                 alias udaAttr = getUDAs!(member, ImageF)[0];
                                 auto isAdd = udaAttr.isAdd;
@@ -135,7 +136,7 @@ class Scene : EventKitTarget
                                 }
                             }
 
-                            static if (is(typeof(attr) == AnimImageF))
+                            static if (is(typeof(attr) == UDA.AnimImageF))
                             {
                                 alias udaAttr = getUDAs!(member, AnimImageF)[0];
                                 auto isAdd = udaAttr.isAdd;
@@ -148,7 +149,7 @@ class Scene : EventKitTarget
                                 }
                             }
 
-                            static if (is(typeof(attr) == AnimImagesF))
+                            static if (is(typeof(attr) == UDA.AnimImagesF))
                             {
                                 alias udaAttr = getUDAs!(member, AnimImagesF)[0];
                                 size_t count = udaAttr.count;

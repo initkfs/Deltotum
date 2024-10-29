@@ -10,25 +10,6 @@ import api.dm.kit.sprites.sprite : Sprite;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
-/** 
- * UDA
- */
-
-struct placeholder
-{
-    double width = 50;
-    double height = 50;
-    bool isAdd;
-}
-
-struct placeholders
-{
-    size_t count;
-    double width = 50;
-    double height = 50;
-    bool isAdd;
-}
-
 /**
  * Authors: initkfs
  */
