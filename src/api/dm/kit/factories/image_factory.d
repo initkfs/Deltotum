@@ -2,7 +2,7 @@ module api.dm.kit.factories.image_factory;
 
 import api.dm.kit.components.window_component : WindowComponent;
 import api.dm.kit.sprites.images.image : Image;
-import api.dm.kit.sprites.images.animated_image : AnimatedImage;
+import api.dm.kit.sprites.images.anim_image : AnimImage;
 
 /**
  * Authors: initkfs
@@ -37,9 +37,9 @@ class ImageFactory : WindowComponent
         return newImage;
     }
 
-    AnimatedImage animated(string path, int frameWidth = 0, int frameHeight = 0, int frameDelay = 100, int requestWidth = -1, int requestHeight = -1)
+    AnimImage animated(string path, int frameWidth = 0, int frameHeight = 0, int frameDelay = 100, int requestWidth = -1, int requestHeight = -1)
     {
-        auto newAnimated = new AnimatedImage(frameWidth, frameHeight, frameDelay);
+        auto newAnimated = new AnimImage(frameWidth, frameHeight, frameDelay);
         build(newAnimated);
         if (!newAnimated.load(path, requestWidth, requestHeight))
         {

@@ -1,4 +1,4 @@
-module api.dm.kit.sprites.images.animated_image;
+module api.dm.kit.sprites.images.anim_image;
 
 import api.dm.kit.sprites.images.image : Image;
 import api.dm.kit.sprites.sprite : Sprite;
@@ -26,7 +26,7 @@ private
 /**
  * Authors: initkfs
  */
-class AnimatedImage : Image
+class AnimImage : Image
 {
     int frameDelay;
     double frameWidth = 0;
