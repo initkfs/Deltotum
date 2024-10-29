@@ -368,6 +368,9 @@ class Window : GraphicsComponent
         return boundsRect;
     }
 
+    int halfWidth() => width / 2;
+    int halfHeight() => height / 2;
+
     int width()
     {
         int width, height;
@@ -387,6 +390,8 @@ class Window : GraphicsComponent
         }
         return height;
     }
+
+    Vec2d pos() => Vec2d(x, y);
 
     void pos(int x, int y)
     {

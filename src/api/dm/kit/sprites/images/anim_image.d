@@ -4,23 +4,19 @@ import api.dm.kit.sprites.images.image : Image;
 import api.dm.kit.sprites.sprite : Sprite;
 
 import api.math.geom2.rect2 : Rect2d;
-import api.dm.kit.sprites.transitions.curves.interpolator : Interpolator;
-import api.dm.kit.sprites.transitions.min_max_transition : MinMaxTransition;
 import std.math.rounding : floor;
 import std.conv : to;
 import api.math.flip : Flip;
 
-private
+class ImageAnimation
 {
-    class ImageAnimation
-    {
-        string name;
-        int[] frameIndices;
-        int frameRow;
-        MinMaxTransition!double transition;
-        int frameDelay;
-        bool isLooping;
-    }
+    string name;
+    int[] frameIndices;
+    int frameRow;
+    int maxFrameRows;
+    int frameDelay;
+    bool isLooping;
+    bool isReverse;
 }
 
 /**
@@ -68,47 +64,64 @@ class AnimImage : Image
         return isLoad;
     }
 
-    void addIdle(size_t frameCount, int frameRow = 0, bool autoplay = false, int frameDelay = 0, bool isLooping = true, Interpolator interpolator = null)
+    bool addIdle(size_t frameCount, int frameRow = 0, bool autoplay = false, int frameDelay = 0, bool isLooping = true, int maxFrameRows = 1)
     {
-        add(defaultAnimation, frameCount, frameRow, autoplay, frameDelay, isLooping, interpolator);
+        return animate(defaultAnimation, frameCount, frameRow, autoplay, frameDelay, isLooping, maxFrameRows);
     }
 
-    void add(string name, size_t frameCount, int frameRow = 0, bool autoplay = false, int frameDelay = 0, bool isLooping = true, Interpolator interpolator = null)
+    bool animate(string name, size_t frameCount, int frameRow = 0, bool autoplay = false, int frameDelay = 0, bool isLooping = true, int maxFrameRows = 1)
     {
+        if (frameCount == 0)
+        {
+            return false;
+        }
+
         int[] frameIndices = new int[](frameCount);
         foreach (i; 0 .. frameCount)
         {
             frameIndices[i] = cast(int) i;
         }
-        add(name, frameIndices, frameRow, autoplay, frameDelay, isLooping, interpolator);
+        return animate(name, frameIndices, frameRow, autoplay, frameDelay, isLooping, maxFrameRows);
     }
 
-    void add(string name, int[] frameIndices, int frameRow = 0, bool autoplay = false, int frameDelay = 0, bool isLooping = true, Interpolator interpolator = null)
+    bool animate(string name, int[] frameIndices, int frameRow = 0, bool autoplay = false, int frameDelay = 0, bool isLooping = true, int maxFrameRows = 1)
     {
         assert(name.length > 0);
-        //TODO check exists;
+        assert(frameIndices.length > 0);
+
+        foreach (currAnim; animations)
+        {
+            if (name == currAnim.name)
+            {
+                return false;
+            }
+        }
+
         auto anim = new ImageAnimation;
         anim.name = name;
         anim.frameIndices = frameIndices;
         anim.frameRow = frameRow;
+        anim.maxFrameRows = maxFrameRows;
         anim.isLooping = isLooping;
         anim.frameDelay = frameDelay > 0 ? frameDelay : this.frameDelay;
-        if (interpolator !is null)
+
+        if (anim.maxFrameRows > 0)
         {
-            anim.transition = new MinMaxTransition!double(0, 1, anim.frameDelay, interpolator);
-            build(anim.transition);
+            anim.frameDelay *= anim.maxFrameRows;
         }
+
         animations ~= anim;
 
         if (autoplay)
         {
             run(name);
         }
+
+        return true;
     }
 
-    import api.core.components.units.simple_unit : SimpleUnit;
-
-    override void run(){
+    override void run()
+    {
         super.run;
     }
 
@@ -116,40 +129,29 @@ class AnimImage : Image
     {
         assert(name.length > 0);
 
-        if (currentAnimation)
+        if (isRunning)
         {
-            if (isRunning && currentAnimation.name == name)
+
+            if (currentAnimation.name == name)
             {
                 return;
             }
 
-            if (currentAnimation.transition)
-            {
-                currentAnimation.transition.stop;
-            }
-
-        }
-
-        if(isRunning){
             stop;
         }
 
         currentFlip = flip;
 
-        foreach (anim; animations)
+        auto mustBeAnim = animationUnsafe(name);
+        if (!mustBeAnim)
         {
-            if (anim.name == name)
-            {
-                currentAnimation = anim;
-                if (currentAnimation.transition !is null)
-                {
-                    currentAnimation.transition.run;
-                }
-            }
+            return;
         }
 
+        currentAnimation = mustBeAnim;
+
         currentAnimationStartTime = platform.ticks;
-        
+
         super.run;
         assert(isRunning);
     }
@@ -169,7 +171,10 @@ class AnimImage : Image
         {
             return false;
         }
-        auto newIndex = currentAnimation.frameIndices[index];
+
+        auto newIndex = !currentAnimation.isReverse ? currentAnimation
+            .frameIndices[index] : currentAnimation.frameIndices[$ - 1 - index];
+
         if (currentAnimationIndex == newIndex)
         {
             return false;
@@ -188,10 +193,10 @@ class AnimImage : Image
             .none)
     {
         Rect2d srcRect;
-        srcRect.x = cast(int)(frameWidth * frameIndex);
-        srcRect.y = cast(int)(frameHeight * rowIndex);
-        srcRect.width = cast(int) frameWidth;
-        srcRect.height = cast(int) frameHeight;
+        srcRect.x = frameWidth * frameIndex;
+        srcRect.y = frameHeight * rowIndex;
+        srcRect.width = frameWidth;
+        srcRect.height = frameHeight;
 
         assert(texture);
         Rect2d destRect = {x, y, width, height};
@@ -211,17 +216,27 @@ class AnimImage : Image
         drawFrame(frameIndex, frameRow, currentFlip);
     }
 
-    import std.typecons: Nullable;
-
-    Nullable!ImageAnimation findByName(string name){
+    ImageAnimation animationUnsafe(string name)
+    {
         foreach (anim; animations)
         {
-            if(anim.name == name){
-                return Nullable!ImageAnimation(anim);
+            if (anim.name == name)
+            {
+                return anim;
             }
         }
 
-        return Nullable!ImageAnimation.init;
+        return null;
+    }
+
+    bool hasAnimation(string name) => animationUnsafe(name) !is null;
+
+    import std.typecons : Nullable;
+
+    Nullable!ImageAnimation animation(string name)
+    {
+        auto mustBeAnim = animationUnsafe(name);
+        return mustBeAnim ? Nullable!ImageAnimation(mustBeAnim) : Nullable!ImageAnimation.init;
     }
 
     override void drawContent()
@@ -255,23 +270,22 @@ class AnimImage : Image
             return;
         }
 
-        if (currentAnimation.transition)
+        auto delay = currentAnimation.frameDelay > 0 ? currentAnimation.frameDelay : frameDelay;
+
+        auto newIndex = ((platform.ticks - currentAnimationStartTime) / delay) % animLength;
+        if (currentAnimationIndex > 0 && newIndex == 0)
         {
-            currentAnimation.transition.update(delta);
-            const progress0to1 = currentAnimation.transition.lastValue;
-            const indicesLength = currentAnimation.frameIndices.length;
-            //TODO smooth
-            int index = cast(int)(progress0to1 * indicesLength * (1 - double.epsilon));
-            if (index > 0 && index < indicesLength)
+            if (currentAnimation.maxFrameRows > 1)
             {
-                currentAnimationIndex = index;
+                auto newRow = currentAnimation.frameRow + 1;
+                if (newRow >= currentAnimation.maxFrameRows)
+                {
+                    newRow = 0;
+                }
+                currentAnimation.frameRow = newRow;
             }
         }
-        else
-        {
-            auto delay = currentAnimation.frameDelay > 0 ? currentAnimation.frameDelay : frameDelay;
-            currentAnimationIndex = ((platform.ticks - currentAnimationStartTime) / delay) % animLength;
-        }
+        currentAnimationIndex = newIndex;
     }
 
     double frameWidthHalf() => frameWidth / 2;
@@ -280,14 +294,6 @@ class AnimImage : Image
     override void dispose()
     {
         super.dispose;
-        foreach (ImageAnimation animation; animations)
-        {
-            if (animation.transition !is null)
-            {
-                animation.transition.stop;
-                animation.transition.dispose;
-            }
-        }
         animations = [];
     }
 }
