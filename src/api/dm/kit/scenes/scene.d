@@ -37,6 +37,8 @@ class Scene : EventKitTarget
     bool isPause;
     Sprite[] unlockSprites;
 
+    void delegate(double dt)[] eternalTasks;
+
     protected
     {
         Sprite[] sprites;
@@ -98,15 +100,73 @@ class Scene : EventKitTarget
                                 }
                             }
 
-                            static if (is(typeof(attr) == image))
+                            static if (is(typeof(attr) == placeholders))
                             {
-                                alias udaAttr = getUDAs!(member, image)[0];
+                                alias udaAttr = getUDAs!(member, placeholders)[0];
                                 auto isAdd = udaAttr.isAdd;
-                                __traits(getMember, thisInstance, fieldName) = f.images.image(udaAttr.path, udaAttr.width, udaAttr
+                                size_t count = udaAttr.count;
+                                if (count > 0)
+                                {
+                                    typeof(member) array = new typeof(member)(count);
+                                    foreach (i; 0 .. count)
+                                    {
+                                        auto newItem = f.placeholder(udaAttr.width, udaAttr.height);
+                                        array[i] = newItem;
+                                        if (isAdd)
+                                        {
+                                            add(newItem);
+                                        }
+                                    }
+
+                                    __traits(getMember, thisInstance, fieldName) = array;
+                                }
+                            }
+
+                            static if (is(typeof(attr) == ImageF))
+                            {
+                                alias udaAttr = getUDAs!(member, ImageF)[0];
+                                auto isAdd = udaAttr.isAdd;
+                                __traits(getMember, thisInstance, fieldName) = f.images.image(udaAttr.path, udaAttr
+                                        .width, udaAttr
                                         .height);
                                 if (isAdd)
                                 {
                                     add(__traits(getMember, thisInstance, fieldName));
+                                }
+                            }
+
+                            static if (is(typeof(attr) == AnimImageF))
+                            {
+                                alias udaAttr = getUDAs!(member, AnimImageF)[0];
+                                auto isAdd = udaAttr.isAdd;
+                                __traits(getMember, thisInstance, fieldName) = f.images.animated(udaAttr.path, udaAttr
+                                        .frameWidth, udaAttr
+                                        .frameHeight, udaAttr.frameDelay);
+                                if (isAdd)
+                                {
+                                    add(__traits(getMember, thisInstance, fieldName));
+                                }
+                            }
+
+                            static if (is(typeof(attr) == AnimImagesF))
+                            {
+                                alias udaAttr = getUDAs!(member, AnimImagesF)[0];
+                                size_t count = udaAttr.count;
+                                if (count > 0)
+                                {
+                                    auto isAdd = udaAttr.isAdd;
+                                    typeof(member) array = new typeof(member)(count);
+                                    foreach (i; 0 .. count)
+                                    {
+                                        auto newItem = f.images.animated(udaAttr.path, udaAttr.frameWidth, udaAttr.frameHeight, udaAttr.frameDelay);
+                                        array[i] = newItem;
+                                        if (isAdd)
+                                        {
+                                            add(newItem);
+                                        }
+                                    }
+
+                                    __traits(getMember, thisInstance, fieldName) = array;
                                 }
                             }
                         }
@@ -122,28 +182,9 @@ class Scene : EventKitTarget
         super.create;
         createHandlers;
 
-        udaProcessor();
-        // alias thisType = typeof(this);
-        // static foreach (const fieldName; __traits(allMembers, parentType))
-        // {
-        //     static if (!hasOverloads!(parentType, fieldName) && hasUDA!(__traits(getMember, parentComponent, fieldName), Service))
-        //     {
-        //         {
-        //             import std.algorithm.searching : startsWith;
-        //             import std.uni : toUpper;
-
-        //             enum fieldSetterName = (fieldName.startsWith("_") ? fieldName[1 .. $]
-        //                         : fieldName);
-        //             enum hasMethodName = "has" ~ fieldSetterName[0 .. 1].toUpper ~ fieldSetterName[1 .. $];
-        //             immutable bool hasService = __traits(getMember, uniComponent, hasMethodName)();
-        //             if (!hasService || uniComponent.isAllowRebuildServices)
-        //             {
-        //                 __traits(getMember, uniComponent, fieldSetterName) = __traits(getMember, parentComponent, fieldSetterName);
-        //             }
-        //         }
-
-        //     }
-        // }
+        if(udaProcessor){
+            udaProcessor();
+        }
     }
 
     void dispatchEvent(Event)(Event e)
@@ -203,6 +244,13 @@ class Scene : EventKitTarget
         }
 
         worldTicks++;
+
+        if(eternalTasks.length > 0){
+            foreach (task; eternalTasks)
+            {
+                task(delta);
+            }
+        }
 
         if (isPause)
         {

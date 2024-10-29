@@ -5,7 +5,7 @@ import api.dm.kit.components.window_component : WindowComponent;
 import api.dm.kit.factories.image_factory : ImageFactory;
 import api.dm.kit.factories.shape_factory : ShapeFactory;
 import api.dm.kit.factories.texture_factory : TextureFactory;
-import api.dm.kit.sprites.textures.texture: Texture;
+import api.dm.kit.sprites.textures.texture : Texture;
 import api.dm.kit.sprites.sprite : Sprite;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -16,6 +16,14 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 
 struct placeholder
 {
+    double width = 50;
+    double height = 50;
+    bool isAdd;
+}
+
+struct placeholders
+{
+    size_t count;
     double width = 50;
     double height = 50;
     bool isAdd;

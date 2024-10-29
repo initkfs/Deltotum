@@ -925,6 +925,7 @@ class Text : Control
         {
             fontTexture = asset.fontBitmap(fontSize).copyBitmap;
             fontTexture.color = _color;
+            fontTexture.blendModeBlend;
             asset.addFontColorBitmap(fontTexture, _color, fontSize);
             logger.tracef("Create new font with size %s, color %s", fontSize, _color);
         }
