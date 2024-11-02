@@ -1,6 +1,9 @@
 module api.dm.kit.graphics.colors.hsv;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
+import api.dm.kit.graphics.colors.hsl : HSL;
+
+import Math = api.math;
 
 /**
  * Authors: initkfs
@@ -104,6 +107,20 @@ struct HSV
         return result;
     }
 
+    /** 
+     * https://stackoverflow.com/questions/3423214/convert-hsb-hsv-color-to-hsl
+     */
+    HSL toHSL() const @safe
+    {
+        double newHue = hue;
+        double lightness = value - value * saturation / 2.0;
+
+        double m = Math.min(lightness, 1 - lightness);
+        double sat = m != 0 ? (value - lightness) / m : 0;
+
+        return HSL(newHue, sat, lightness);
+    }
+
     double setMaxHue() => hue = maxHue;
     double setMaxValue() => value = maxValue;
     double setMaxSaturation() => saturation = maxSaturation;
@@ -134,4 +151,14 @@ unittest
     assert(r5e8339.r == 94);
     assert(r5e8339.g == 131);
     assert(r5e8339.b == 57);
+}
+
+unittest
+{
+    import std.math.operations : isClose;
+
+    HSL hsl1 = HSV(60, 0.46, 0.78).toHSL;
+    assert(isClose(hsl1.hue, 60));
+    assert(isClose(hsl1.saturation, 0.4491, 0.001));
+    assert(isClose(hsl1.lightness, 0.60, 0.001));
 }

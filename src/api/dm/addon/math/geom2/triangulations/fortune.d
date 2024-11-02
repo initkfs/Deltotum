@@ -559,7 +559,7 @@ struct VoronoiFortune
     {
         freeinit(&efl, Edge.sizeof);
         nvertices = nedges = 0;
-        sqrtNsites = cast(int) Math.sqrt(nsites + 4);
+        sqrtNsites = cast(int) Math.sqrt(nsites + 4.0);
         deltay = ymax - ymin;
         deltax = xmax - xmin;
     }

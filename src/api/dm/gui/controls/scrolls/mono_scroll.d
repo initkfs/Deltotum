@@ -72,11 +72,16 @@ abstract class MonoScroll : BaseScroll
             return false;
         }
 
+        triggerListeners(v);
+        return true;
+    }
+
+    protected void triggerListeners(double v)
+    {
         foreach (dg; onValue)
         {
             dg(v);
         }
-        return true;
     }
 
     bool trySetValue(double v)
@@ -121,6 +126,24 @@ abstract class MonoScroll : BaseScroll
 
         valueDelta = v - _value;
         _value = v;
+        return true;
+    }
+
+    bool setMinValue()
+    {
+        if (!(value = minValue))
+        {
+            triggerListeners(minValue);
+        }
+        return true;
+    }
+
+    bool setMaxValue()
+    {
+        if (!(value = maxValue))
+        {
+            triggerListeners(maxValue);
+        }
         return true;
     }
 

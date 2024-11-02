@@ -134,7 +134,9 @@ double actgs(double x)
 pragma(inline, true);
 double arcctg(double x) @nogc nothrow pure @safe => PI / 2.0 - atan(x);
 
-alias sqrt = mathCore.sqrt;
+//alias sqrt = mathCore.sqrt;
+double sqrt(double v) @nogc nothrow pure @safe => mathCore.sqrt(v);
+
 alias pow = mathExp.pow;
 
 double degToRad(double deg) @nogc nothrow pure @safe => deg * (PI / angleHalfDeg);

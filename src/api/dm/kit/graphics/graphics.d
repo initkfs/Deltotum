@@ -124,17 +124,20 @@ class Graphics : LoggableUnit
         }
     }
 
-    RGBA changeColor(RGBA color = defaultColor)
+    RGBA getColor()
     {
         ubyte r, g, b, a;
         if (const err = renderer.getDrawColor(r, g, b, a))
         {
             logger.errorf("Error getting current renderer color");
-            return prevColor;
+            return RGBA.init;
         }
+        return RGBA(r, g, b, (cast(double) a) / RGBA.maxColor);
+    }
 
-        const aByte = (cast(double) a) / ubyte.max;
-        prevColor = RGBA(r, g, b, aByte);
+    RGBA changeColor(RGBA color = defaultColor)
+    {
+        prevColor = getColor;
 
         setColor(color);
 

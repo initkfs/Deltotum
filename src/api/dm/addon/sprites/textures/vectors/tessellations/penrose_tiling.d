@@ -24,7 +24,7 @@ class PenroseTiling : VShape
         super(width, height, GraphicStyle.simple);
     }
 
-    private enum double sqrt5Value = Math.sqrt(5);
+    private enum double sqrt5Value = Math.sqrt(5.0);
     enum double fi = (sqrt5Value - 1) / 2;
     enum double fb = (sqrt5Value + 1) / 2;
     enum double f3 = Math.sqrt(3 + fi);

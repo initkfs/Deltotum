@@ -45,6 +45,8 @@ class VectorGraphicsContext : GraphicsContext
         }
     }
 
+    RGBA color() => lastColor;
+
     void lineEnd(GraphicsContext.LineEnd end)
     {
         final switch (end) with (GraphicsContext.LineEnd)

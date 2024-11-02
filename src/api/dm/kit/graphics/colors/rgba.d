@@ -2,6 +2,7 @@ module api.dm.kit.graphics.colors.rgba;
 
 import api.dm.kit.graphics.colors.palettes.extended_palette : ExtendedPalette;
 import api.dm.kit.graphics.colors.hsv : HSV;
+import api.dm.kit.graphics.colors.hsl : HSL;
 
 import std.regex;
 import std.conv : to;
@@ -401,6 +402,57 @@ struct RGBA
         return HSV(hue, saturation, value);
     }
 
+    /** 
+     * https://stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion
+     */
+    HSL toHSL() const @safe
+    {
+        import Math = api.math;
+
+        double rn = rNorm;
+        double rg = gNorm;
+        double rb = bNorm;
+
+        const double max = Math.max(rn, rg, rb);
+        const double min = Math.min(rn, rg, rb);
+
+        double h = 0;
+        double s = 0;
+        double l = (max + min) / 2.0;
+
+        if (max == min)
+        {
+            h = 0;
+            s = 0;
+
+            return HSL(h, s, l);
+        }
+
+        const double dist = max - min;
+
+        s = l > 0.5 ? (dist / (2 - max - min)) : (dist / (max + min));
+
+        import std.math.operations : isClose;
+
+        if (isClose(max, rn))
+        {
+            h = (rg - rb) / dist + (rg < rb ? 6 : 0);
+        }
+        else if (isClose(max, rg))
+        {
+            h = (rb - rn) / dist + 2;
+        }
+        else if (isClose(max, rb))
+        {
+            h = (rn - rg) / dist + 4;
+        }
+
+        h /= 6;
+        h = h * 360.0;
+
+        return HSL(h, s, l);
+    }
+
     static
     {
         // static foreach (i, colorName; webColorsNames)
@@ -651,6 +703,24 @@ unittest
     assert(isClose(hsv1.hue, 88.24, 0.0001));
     assert(isClose(hsv1.saturation, 0.68, 0.0001));
     assert(isClose(hsv1.value, 0.196, 0.001));
+}
+
+unittest
+{
+    import std.math.operations : isClose;
+    import std.math.rounding : round;
+
+    HSL hsl1 = RGBA.black.toHSL;
+
+    assert(hsl1.hue == 0);
+    assert(hsl1.saturation == 0);
+    assert(hsl1.lightness == 0);
+
+    HSL hsl2 = RGBA(123, 16, 24).toHSL;
+
+    assert(isClose(hsl2.hue, 355.5, 0.1));
+    assert(isClose(hsl2.saturation, 0.7698, 0.01));
+    assert(isClose(hsl2.lightness, 0.2725, 0.01));
 }
 
 unittest

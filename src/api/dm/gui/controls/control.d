@@ -456,8 +456,10 @@ class Control : Sprite
             {
                 initTooltipListeners;
             }
-            assert(sceneProvider);
-            sceneProvider().controlledSprites ~= tooltip;
+            if (sceneProvider)
+            {
+                sceneProvider().controlledSprites ~= tooltip;
+            }
         }
     }
 
@@ -593,7 +595,8 @@ class Control : Sprite
     {
         super.onEventPhase(e, phase);
 
-        if(phase != EventKitPhase.postDispatch){
+        if (phase != EventKitPhase.postDispatch)
+        {
             return;
         }
 

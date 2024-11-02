@@ -1,7 +1,7 @@
 module api.dm.gui.controls.forms.fields.regulate_text_panel;
-import api.dm.gui.controls.forms.fields.regulate_text_field: RegulateTextField;
-import api.dm.kit.sprites.sprite: Sprite;
-import api.dm.gui.containers.container: Container;
+import api.dm.gui.controls.forms.fields.regulate_text_field : RegulateTextField;
+import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.gui.containers.container : Container;
 
 /**
  * Authors: initkfs
@@ -21,26 +21,29 @@ class RegulateTextPanel : Container
 
     override void addCreate(Sprite sprite, long index = -1)
     {
-        if(auto field = cast(RegulateTextField) sprite){
+        if (auto field = cast(RegulateTextField) sprite)
+        {
             //TODO check exists
             fields ~= field;
         }
 
-
         super.addCreate(sprite, index);
     }
 
-    void alignFields(){
+    void alignFields()
+    {
         //TODO both directions
         double maxLabelWidth = 0;
         foreach (field; fields)
         {
-            if(field.labelField.width > maxLabelWidth){
+            if (field.labelField.width > maxLabelWidth)
+            {
                 maxLabelWidth = field.labelField.width;
             }
         }
 
-        if(maxLabelWidth > 0){
+        if (maxLabelWidth > 0)
+        {
             foreach (field; fields)
             {
                 field.labelField.width = maxLabelWidth;
@@ -48,8 +51,25 @@ class RegulateTextPanel : Container
         }
     }
 
-    override void dispose(){
+    override void dispose()
+    {
         super.dispose;
         fields = null;
+    }
+
+    void setMinValue()
+    {
+        foreach (field; fields)
+        {
+            field.scrollField.setMinValue;
+        }
+    }
+
+    void setMaxValue()
+    {
+        foreach (field; fields)
+        {
+            field.scrollField.setMaxValue;
+        }
     }
 }

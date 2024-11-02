@@ -16,6 +16,24 @@ class RegulateTextField : Control
 
     size_t valueFieldPrefGlyphs = 6;
 
+    protected
+    {
+        dstring labelText;
+        double minValue = 0;
+        double maxValue = 0;
+        void delegate(double) onScroll;
+    }
+
+    this(dstring labelText, double minValue = 0, double maxValue = 1.0, void delegate(
+            double) onScroll = null, double fieldSpacing = 5)
+    {
+        this(fieldSpacing);
+        this.labelText = labelText;
+        this.minValue = minValue;
+        this.maxValue = maxValue;
+        this.onScroll = onScroll;
+    }
+
     this(double fieldSpacing = 5)
     {
         import api.dm.kit.sprites.layouts.hlayout : HLayout;
@@ -29,7 +47,7 @@ class RegulateTextField : Control
     {
         super.create;
 
-        labelField = new Text("Label");
+        labelField = new Text(labelText);
         labelField.isReduceWidthHeight = false;
         addCreate(labelField);
 
@@ -37,6 +55,9 @@ class RegulateTextField : Control
 
         scrollField = new HScroll;
         addCreate(scrollField);
+        scrollField.minValue = minValue;
+        scrollField.maxValue = maxValue;
+        scrollField.onValue ~= onScroll;
 
         valueField = new Text("Value");
         valueField.isReduceWidthHeight = false;
@@ -45,13 +66,17 @@ class RegulateTextField : Control
 
         auto glyphW = valueField.calcTextWidth("0", valueField.fontSize);
         auto newWidth = valueFieldPrefGlyphs * glyphW;
-        if(newWidth < valueField.width){
+        if (newWidth < valueField.width)
+        {
             valueField.width = newWidth;
         }
 
-        scrollField.onValue ~= (v){
-            valueText(v);
-        };
+        scrollField.onValue ~= (v) { valueText(v); };
+    }
+
+    double value(){
+        assert(scrollField);
+        return scrollField.value;
     }
 
     bool value(double v)
@@ -77,4 +102,15 @@ class RegulateTextField : Control
         return true;
     }
 
+    bool setMinValue()
+    {
+        assert(scrollField);
+        return scrollField.setMinValue;
+    }
+
+    bool setMaxValue()
+    {
+        assert(scrollField);
+        return scrollField.setMaxValue;
+    }
 }

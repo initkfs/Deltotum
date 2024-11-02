@@ -34,6 +34,7 @@ interface GraphicsContext
     bool isPointInPath(double x, double y);
 
     void color(RGBA rgba);
+    RGBA color();
     void restoreColor();
     void clear(RGBA color);
 

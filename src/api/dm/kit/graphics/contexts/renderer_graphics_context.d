@@ -30,6 +30,8 @@ class RendererGraphicsContext : StateGraphicsContext
         graphics.setColor(rgba);
     }
 
+    RGBA color() => graphics.getColor;
+
     void restoreColor()
     {
         graphics.restoreColor;

@@ -72,8 +72,8 @@ class PlaneCurve : CurveMaker
         import StdMath = std.math;
 
         pointsIteration(step, 0, Math.PI * 2, (angle) {
-            auto x = (distance * Math.sqrt(2) * Math.cos(angle)) / (1 + Math.pow(Math.sin(angle), 2));
-            auto y = (distance * Math.sqrt(2) * Math.sin(angle) * Math.cos(angle)) / (
+            auto x = (distance * Math.sqrt(2.0) * Math.cos(angle)) / (1 + Math.pow(Math.sin(angle), 2));
+            auto y = (distance * Math.sqrt(2.0) * Math.sin(angle) * Math.cos(angle)) / (
                 1 + Math.pow(Math.sin(angle), 2));
 
             result ~= Vec2d(x, y);
