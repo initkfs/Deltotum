@@ -399,7 +399,7 @@ struct RGBA
             delta / cmax) * HSV.maxSaturation;
         const double value = cmax * HSV.maxValue;
 
-        return HSV(hue, saturation, value);
+        return HSV(hue, saturation, value, a);
     }
 
     /** 
@@ -425,7 +425,7 @@ struct RGBA
             h = 0;
             s = 0;
 
-            return HSL(h, s, l);
+            return HSL(h, s, l, a);
         }
 
         const double dist = max - min;
@@ -450,7 +450,7 @@ struct RGBA
         h /= 6;
         h = h * 360.0;
 
-        return HSL(h, s, l);
+        return HSL(h, s, l, a);
     }
 
     static

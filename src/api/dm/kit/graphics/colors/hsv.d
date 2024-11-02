@@ -17,20 +17,35 @@ struct HSV
         minSaturation = 0,
         maxSaturation = 1,
         minValue = 0,
-        maxValue = 1
+        maxValue = 1,
+        minAlpha = 0,
+        maxAlpha = 1
     }
 
     double hue = 0;
     double saturation = maxSaturation;
     double value = maxValue;
-    //TODO alpha?
-    //double alpha = 0;
+    double alpha = maxAlpha;
+
+    import api.math.random : Random;
+
+    static HSV random(Random rnd, double alpha = maxAlpha)
+    {
+        return HSV(
+            rnd.randomBetween(minHue, maxHue),
+            rnd.randomBetween(minSaturation, maxSaturation),
+            rnd.randomBetween(minValue, maxValue),
+            alpha
+        );
+    }
 
     RGBA toRGBA() const pure @safe
     {
         if (value == 0)
         {
-            return RGBA.black;
+            auto color = RGBA.black;
+            color.a = alpha;
+            return color;
         }
 
         double h = hue, s = saturation, v = value;
@@ -103,7 +118,7 @@ struct HSV
         //TODO loss of precision and fractional values
         auto toRGBAColor = (double value) => to!ubyte(round(value * RGBA.maxColor));
 
-        RGBA result = RGBA(toRGBAColor(r), toRGBAColor(g), toRGBAColor(b));
+        RGBA result = RGBA(toRGBAColor(r), toRGBAColor(g), toRGBAColor(b), alpha);
         return result;
     }
 
@@ -118,7 +133,7 @@ struct HSV
         double m = Math.min(lightness, 1 - lightness);
         double sat = m != 0 ? (value - lightness) / m : 0;
 
-        return HSL(newHue, sat, lightness);
+        return HSL(newHue, sat, lightness, alpha);
     }
 
     double setMaxHue() => hue = maxHue;
