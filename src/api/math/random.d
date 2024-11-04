@@ -28,7 +28,7 @@ class Random
         rnd.seed = newSeed;
     }
 
-    T randomBetween(T)(T minValueInclusive, T maxValueInclusive) pure @safe
+    T between(T)(T minValueInclusive, T maxValueInclusive) pure @safe
             if (isNumeric!T)
     {
         if (minValueInclusive == maxValueInclusive)
@@ -46,24 +46,24 @@ class Random
         return value;
     }
 
-    T randomBetweenType(T)() pure @safe if (isNumeric!T)
+    T betweenType(T)() pure @safe if (isNumeric!T)
     {
-        return randomBetween!T(T.min, T.max);
+        return between!T(T.min, T.max);
     }
 
-    double randomBetween0to1() pure @safe
+    double between0to1() pure @safe
     {
-        return randomBetween!double(0, 1);
+        return between!double(0, 1);
     }
 
-    Vec2d randomBerweenVec(Vec2d min, Vec2d max) pure @safe
+    Vec2d betweenVec(Vec2d min, Vec2d max) pure @safe
     {
-        const newX = randomBetween(min.x, max.x);
-        const newY = randomBetween(min.y, max.y);
+        const newX = between(min.x, max.x);
+        const newY = between(min.y, max.y);
         return Vec2d(newX, newY);
     }
 
-    Nullable!(Unqual!U) randomElement(T : U[], U)(T container) pure @safe
+    Nullable!(Unqual!U) any(T : U[], U)(T container) pure @safe
     {
         Nullable!(Unqual!U) result;
         immutable containerLength = container.length;
@@ -78,7 +78,7 @@ class Random
             return result;
         }
 
-        immutable size_t index = randomBetween!size_t(0, containerLength - 1);
+        immutable size_t index = between!size_t(0, containerLength - 1);
         result = container[index];
         return result;
     }
@@ -102,13 +102,13 @@ class Random
             return 0;
         }
 
-        immutable isChance = randomBetween0to1 <= chance0to1;
+        immutable isChance = between0to1 <= chance0to1;
         return isChance;
     }
 
     double chanceAll(Tuple!(double, void delegate())[] chanceDelegates)
     {
-        const double random0to1 = randomBetween0to1;
+        const double random0to1 = between0to1;
         double accumulator = 0;
         foreach (chanceDg; chanceDelegates)
         {
@@ -130,44 +130,44 @@ unittest
     auto rnd = new Random;
 
     /*
-     * randomBetween
+     * between
      */
-    assert(rnd.randomBetween(0, 0) == 0);
-    assert(rnd.randomBetween(1, 0) == 0);
+    assert(rnd.between(0, 0) == 0);
+    assert(rnd.between(1, 0) == 0);
 
-    auto zeroOrOne = rnd.randomBetween(0, 1);
+    auto zeroOrOne = rnd.between(0, 1);
     assert(zeroOrOne == 0 || zeroOrOne == 1);
 
     foreach (i; 0 .. 10)
     {
-        auto result = rnd.randomBetween(-5, 5);
+        auto result = rnd.between(-5, 5);
         assert(result >= -5 && result <= 5);
     }
 
     /*
-     * randomBetween0to1
+     * between0to1
      */
     import std.math.operations : cmp;
 
     foreach (i; 0 .. 10)
     {
-        auto res = rnd.randomBetween0to1;
+        auto res = rnd.between0to1;
         assert((cmp(res, 0) >= 0 && (cmp(res, 1.0) <= 1.0)));
     }
 
     /*
-     * randomElement
+     * any
      */
     int[] nullArr;
-    assert(rnd.randomElement(nullArr).isNull);
+    assert(rnd.any(nullArr).isNull);
 
     int[] oneArr = [1];
-    auto oneArrRand = rnd.randomElement(oneArr);
+    auto oneArrRand = rnd.any(oneArr);
     assert(!oneArrRand.isNull);
     assert(oneArrRand.get == 1);
 
     int[] arr1 = [1, 2, 3];
-    auto arr1Rand = rnd.randomElement(arr1);
+    auto arr1Rand = rnd.any(arr1);
     assert(!arr1Rand.isNull);
 
     import std.algorithm : canFind;
@@ -175,7 +175,7 @@ unittest
     assert(arr1.canFind(arr1Rand));
 
     string abc = "abc";
-    auto res = rnd.randomElement(abc);
+    auto res = rnd.any(abc);
     assert(!res.isNull);
     assert(abc.canFind(res));
 
@@ -329,4 +329,76 @@ unittest
     assert(mersen.randu == 1605979227);
     assert(mersen.randu == 2807061239);
     assert(mersen.randu == 665605494);
+}
+
+/** 
+ * https://en.wikipedia.org/wiki/Xorshift
+ */
+struct Xorshift
+{
+    protected
+    {
+        ulong seed;
+    }
+
+    this(ulong seed)
+    {
+        assert(seed != 0);
+        this.seed = seed;
+    }
+
+    ulong randu()
+    {
+        ulong x = seed;
+        x ^= x << 7;
+        x ^= x >> 9;
+        return seed = x;
+    }
+}
+
+/** 
+ * https://en.wikipedia.org/wiki/Lehmer_random_number_generator
+ */
+struct LCG
+{
+    protected
+    {
+        uint seed;
+    }
+
+    enum
+    {
+        uint M = 0x7fffffff,
+        uint A = 48271,
+        uint Q = M / A, // 44488
+        R = M % A // 3399
+    }
+
+    this(uint seed)
+    {
+        assert(seed != 0);
+        this.seed = seed;
+    }
+
+    uint randu()
+    {
+        uint div = seed / Q; // max: M / Q = A = 48 271
+        uint rem = seed % Q; // max: Q — 1 = 44 487
+        uint s = rem * A; // max: 44,487 * 48,271 = 2,147,431,977 = 0x7fff3629
+        uint t = div * R; // max: 48,271 * 3,399 = 164,073,129
+        uint result = s - t;
+
+        if (result < 0)
+        {
+            result += M;
+        }
+
+        return seed = result;
+    }
+}
+
+uint fastBetween(Rng)(Rng rng, uint minInclusive, uint maxExclusive) {
+    uint x = rng.randu;
+    ulong m = x * cast(ulong)(maxExclusive - minInclusive);
+    return (m >> 32) + minInclusive;
 }

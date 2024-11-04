@@ -86,7 +86,7 @@ class FractalCell : Noise
 
     int draw_card(ref int[] array)
     {
-        size_t index = cast(size_t) Math.floor(rnd.randomBetween0to1 * array.length);
+        size_t index = cast(size_t) Math.floor(rnd.between0to1 * array.length);
         int result = array[index];
         import std.algorithm.mutation : remove;
 

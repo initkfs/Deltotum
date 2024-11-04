@@ -37,8 +37,8 @@ class AldousBroder : Maze
         }
 
         size_t unvisited_cells = cellCols * cellRows;
-        size_t ix = rnd.randomBetween(0, lastColIndex);
-        size_t iy = rnd.randomBetween(0, lastRowIndex);
+        size_t ix = rnd.between(0, lastColIndex);
+        size_t iy = rnd.between(0, lastRowIndex);
 
         cells[iy][ix].isVisited = true;
 
@@ -48,7 +48,7 @@ class AldousBroder : Maze
 
         while (unvisited_cells != 0)
         {
-            auto dir = dirs[rnd.randomBetween(0, 3)];
+            auto dir = dirs[rnd.between(0, 3)];
 
             if (dir == "UP")
             {

@@ -119,7 +119,7 @@ class SteeringBehavior
         Vec2d displacement = Vec2d(0, -1).scale(circle.radius);
 
         displacement = Vec2d.fromPolarDeg(angle.angleDeg, displacement.magnitude);
-        const angleDiff = rnd.randomBetween0to1 * angle.angleChange - angle.angleChange * 0.5;
+        const angleDiff = rnd.between0to1 * angle.angleChange - angle.angleChange * 0.5;
 
         auto newAngleDeg = (angle.angleDeg + angleDiff * angle.andleVariation) % 360;
 

@@ -146,9 +146,9 @@ struct RGBA
         const min = RGBA.minColor;
         const max = RGBA.maxColor;
         RGBA newColor = {
-            r: rnd.randomBetween!ubyte(min, max),
-            g: rnd.randomBetween!ubyte(min, max),
-            b: rnd.randomBetween!ubyte(min, max),
+            r: rnd.between!ubyte(min, max),
+            g: rnd.between!ubyte(min, max),
+            b: rnd.between!ubyte(min, max),
             a: alpha
         };
         return newColor;

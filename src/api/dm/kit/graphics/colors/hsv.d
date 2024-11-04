@@ -32,9 +32,9 @@ struct HSV
     static HSV random(Random rnd, double alpha = maxAlpha)
     {
         return HSV(
-            rnd.randomBetween(minHue, maxHue),
-            rnd.randomBetween(minSaturation, maxSaturation),
-            rnd.randomBetween(minValue, maxValue),
+            rnd.between(minHue, maxHue),
+            rnd.between(minSaturation, maxSaturation),
+            rnd.between(minValue, maxValue),
             alpha
         );
     }

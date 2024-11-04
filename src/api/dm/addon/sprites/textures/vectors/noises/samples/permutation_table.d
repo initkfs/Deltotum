@@ -35,7 +35,7 @@ class PermutationTable(size_t Size) if (Size > 1)
 
         foreach (i; 0 .. Size)
         {
-            table[i] = rnd.randomBetween!int(0, int.max);
+            table[i] = rnd.between!int(0, int.max);
         }
     }
 

@@ -68,7 +68,7 @@ struct DiamondSquare
     {
         assert(min <= max);
 
-        return Math.floor(rnd.randomBetween0to1 * (max - min + 1) + min);
+        return Math.floor(rnd.between0to1 * (max - min + 1) + min);
     }
 
     void createMatrix()
@@ -392,7 +392,7 @@ struct DiamondSquareTerrain
         auto terrain = terrainIndex < terrains.length ? terrains[terrainIndex]
             : terrains[terrains.length - 1];
 
-        auto finalVariance = Math.floor(rnd.randomBetween0to1 * terrain.variance);
+        auto finalVariance = Math.floor(rnd.between0to1 * terrain.variance);
         auto finalHue = (terrain.color.hue + finalVariance) % HSV.maxHue;
 
         return TerrainInfo(terrain, HSV(finalHue, terrain.color.saturation, terrain.color.value));

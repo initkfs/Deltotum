@@ -32,9 +32,9 @@ struct HSL
     static HSL random(Random rnd, double newAlpha = maxAlpha)
     {
         return HSL(
-            rnd.randomBetween(minHue, maxHue),
-            rnd.randomBetween(minSaturation, maxSaturation),
-            rnd.randomBetween(minLightness, maxLightness),
+            rnd.between(minHue, maxHue),
+            rnd.between(minSaturation, maxSaturation),
+            rnd.between(minLightness, maxLightness),
             newAlpha
         );
     }

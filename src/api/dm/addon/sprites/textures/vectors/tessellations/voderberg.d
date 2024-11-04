@@ -74,7 +74,7 @@ class Voderberg : VShape
 
     double rand()
     {
-        // return rnd.randomBetween0to1;
+        // return rnd.between0to1;
         return 0.3;
     }
 

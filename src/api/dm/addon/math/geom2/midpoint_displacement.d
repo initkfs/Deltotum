@@ -63,7 +63,7 @@ struct MidpointDisplacement
                 double yDisplacement = 0;
                 if (isVerticalDisplacementVariance)
                 {
-                    auto rndDisp = rnd.randomElement([
+                    auto rndDisp = rnd.any([
                         -verticalDisplacement, verticalDisplacement
                     ]);
                     assert(!rndDisp.isNull);
@@ -289,12 +289,12 @@ class MDLandscapeGenerator : Control
 
             ctx.color = starColor;
 
-            auto starsCount = rnd.randomBetween(10, 30);
+            auto starsCount = rnd.between(10, 30);
             foreach (sc; 0 .. starsCount)
             {
-                auto starDiameter = rnd.randomBetween(2, 5);
-                auto sx = rnd.randomBetween(starDiameter, width - starDiameter);
-                auto sy = rnd.randomBetween(starDiameter, height / 2);
+                auto starDiameter = rnd.between(2, 5);
+                auto sx = rnd.between(starDiameter, width - starDiameter);
+                auto sy = rnd.between(starDiameter, height / 2);
                 ctx.arc(sx, sy, starDiameter / 2.0, 0, Math.PI2);
                 ctx.fill;
             }
@@ -317,8 +317,8 @@ class MDLandscapeGenerator : Control
 
             auto lightRadius = lightDiameter / 2;
 
-            auto randomX = rnd.randomBetween(lightDiameter, width - lightDiameter);
-            auto randomY = rnd.randomBetween(lightDiameter + 10, lightDiameter * 3);
+            auto randomX = rnd.between(lightDiameter, width - lightDiameter);
+            auto randomY = rnd.between(lightDiameter + 10, lightDiameter * 3);
 
             ctx.color = lightColor;
             ctx.arc(randomX, randomY, lightDiameter / 2, 0, Math.PI2);
@@ -548,11 +548,11 @@ class MDLandscapeGenerator : Control
 
         foreach (li; 0 .. layers)
         {
-            //auto rndMin = rnd.randomBerweenVec(minStart, maxStart);
-            //auto rndMax = rnd.randomBerweenVec(minEnd, maxEnd);
-            auto roughness = rnd.randomBetween(roughnessMin, roughnessMax);
-            auto vdisp = rnd.randomBetween(verticalDispMin, verticalDispMax);
-            auto iters = rnd.randomBetween(iterationCountMin, iterationCountMax);
+            //auto rndMin = rnd.betweenVec(minStart, maxStart);
+            //auto rndMax = rnd.betweenVec(minEnd, maxEnd);
+            auto roughness = rnd.between(roughnessMin, roughnessMax);
+            auto vdisp = rnd.between(verticalDispMin, verticalDispMax);
+            auto iters = rnd.between(iterationCountMin, iterationCountMax);
 
             //TODO if RGBA.random == colorPaletter[li]
             RGBA color = li < colorPalette.length ? colorPalette[li] : RGBA.random;
@@ -582,12 +582,12 @@ class MDLandscapeGenerator : Control
         }
 
         backgroundImage.layerLinePoints = layerLinePoints;
-        backgroundImage.mainColor = rnd.randomElement(backgroundColorPalette).get;
-        backgroundImage.lightColor = rnd.randomElement(lightColorPalette).get;
-        RGBA starColor = rnd.randomElement(lightColorPalette).get;
+        backgroundImage.mainColor = rnd.any(backgroundColorPalette).get;
+        backgroundImage.lightColor = rnd.any(lightColorPalette).get;
+        RGBA starColor = rnd.any(lightColorPalette).get;
         while (starColor == backgroundImage.lightColor)
         {
-            starColor = rnd.randomElement(lightColorPalette).get;
+            starColor = rnd.any(lightColorPalette).get;
         }
         backgroundImage.starColor = starColor;
 

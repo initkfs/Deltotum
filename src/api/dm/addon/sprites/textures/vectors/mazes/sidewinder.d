@@ -43,7 +43,7 @@ class Sidewinder : Maze
                     }
                     else
                     {
-                        auto randCol = cast(size_t) rnd.randomBetween(setOffset, colIndex);
+                        auto randCol = cast(size_t) rnd.between(setOffset, colIndex);
                         cells[rowIndex - 1][randCol].bottomWall = false;
                         cells[rowIndex][randCol].topWall = false;
 

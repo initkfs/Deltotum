@@ -573,10 +573,10 @@ class Controls : Control
         bottomGauge.handTransition.interpolator.interpolateMethod = &UniInterpolator
             .smootherStepOut;
 
-        gaugeAnim1.onEnd ~= () => leftGauge.value = rnd.randomBetween(0.0, 1.0);
-        gaugeAnim2.onEnd ~= () => topGauge.value = rnd.randomBetween(0.0, 1.0);
-        gaugeAnim3.onEnd ~= () => rightGauge.value = rnd.randomBetween(0.0, 1.0);
-        gaugeAnim4.onEnd ~= () => bottomGauge.value = rnd.randomBetween(0.0, 1.0);
+        gaugeAnim1.onEnd ~= () => leftGauge.value = rnd.between(0.0, 1.0);
+        gaugeAnim2.onEnd ~= () => topGauge.value = rnd.between(0.0, 1.0);
+        gaugeAnim3.onEnd ~= () => rightGauge.value = rnd.between(0.0, 1.0);
+        gaugeAnim4.onEnd ~= () => bottomGauge.value = rnd.between(0.0, 1.0);
 
         root.addCreate([gaugeAnim1, gaugeAnim2, gaugeAnim3, gaugeAnim4]);
 
