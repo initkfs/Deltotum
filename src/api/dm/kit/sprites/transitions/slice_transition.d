@@ -53,10 +53,10 @@ class SliceTransition(T) : MinMaxTransition!double
 
             auto newEnd = rangePositionStart + sliceCount;
 
-            import std;
+            // import std;
 
-            writeln(currCount, " count: ", sliceCount, " ", rangePositionStart, "...", rangePositionEnd, " len", range
-                    .length, " end ", newEnd, "v ", newValue);
+            // writeln(currCount, " count: ", sliceCount, " ", rangePositionStart, "...", rangePositionEnd, " len", range
+            //         .length, " end ", newEnd, "v ", newValue);
 
             if (newEnd > range.length)
             {
