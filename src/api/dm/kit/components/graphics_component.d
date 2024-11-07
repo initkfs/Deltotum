@@ -2,7 +2,7 @@ module api.dm.kit.components.graphics_component;
 
 import api.core.components.uni_component : UniComponent;
 
-import api.core.components.attributes : Service;
+import api.core.components.uda : Service;
 
 import api.dm.kit.assets.asset : Asset;
 import api.dm.kit.media.audio.audio : Audio;

@@ -4,7 +4,7 @@ import api.dm.com.graphics.com_font : ComFontHinting, ComFont;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.kit.assets.fonts.font_generator : FontGenerator;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
-import api.core.utils.factories : Provider;
+import api.core.utils.factories : ProviderFactory;
 
 import api.dm.kit.assets.fonts.font : Font;
 import api.dm.kit.sprites.textures.texture : Texture;
@@ -25,13 +25,13 @@ import std.stdio;
  */
 class BitmapFontGenerator : FontGenerator
 {
-    Provider!ComSurface comSurfaceProvider;
+    ProviderFactory!ComSurface comSurfaceProvider;
 
     //TODO correct size?
     enum size_t defaultFontTextureWidth = 400;
     enum size_t defaultFontTextureHeight = 400;
 
-    this(Provider!ComSurface comSurfaceProvider)
+    this(ProviderFactory!ComSurface comSurfaceProvider)
     {
         this.comSurfaceProvider = comSurfaceProvider;
     }

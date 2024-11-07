@@ -1,4 +1,4 @@
-module api.core.events.processing.event_processor;
+module api.dm.kit.events.processing.event_processor;
 
 import api.core.apps.events.app_event : AppEvent;
 

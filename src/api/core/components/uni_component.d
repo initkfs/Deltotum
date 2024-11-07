@@ -1,7 +1,7 @@
 module api.core.components.uni_component;
 
 import api.core.components.units.simple_unit : SimpleUnit;
-import api.core.components.attributes : Service;
+import api.core.components.uda : Service;
 import api.core.configs.config : Config;
 import api.core.clis.cli : Cli;
 import api.core.contexts.context : Context;

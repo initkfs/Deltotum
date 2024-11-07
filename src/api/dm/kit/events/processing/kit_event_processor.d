@@ -1,6 +1,6 @@
 module api.dm.kit.events.processing.kit_event_processor;
 
-import api.core.events.processing.event_processor: EventProcessor;
+import api.dm.kit.events.processing.event_processor: EventProcessor;
 import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;
 import api.dm.kit.windows.events.window_event : WindowEvent;

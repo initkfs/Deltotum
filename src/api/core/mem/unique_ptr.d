@@ -125,7 +125,7 @@ struct UniqPtr(T,
         assert(newSizeBytes > 0);
 
         void[] reallocPtr = _ptr;
-        bool isRealloc = _reallocFunPtr(reallocPtr, newSizeBytes);
+        bool isRealloc = _reallocFunPtr(newSizeBytes, reallocPtr);
         assert(isRealloc);
         _ptr = (() @trusted => cast(T[]) reallocPtr)();
 
@@ -331,17 +331,20 @@ struct UniqPtr(T,
     {
         import core.stdc.stdlib : malloc, realloc, free;
 
-        static int[] allocate(size_t capacity = 1)
+        static bool allocate(size_t capacity, ref int[] ptr)
         {
             return (() @trusted {
                 auto sizeBytes = capacity * int.sizeof;
                 void* newPtr = malloc(sizeBytes);
-                assert(newPtr);
-                return cast(int[]) newPtr[0 .. sizeBytes];
+                if(!newPtr){
+                    return false;
+                }
+                ptr = cast(int[]) newPtr[0 .. sizeBytes];
+                return true;
             })();
         }
 
-        static bool reallocPtr(scope ref void[] ptr, size_t newBytes) @nogc nothrow @safe
+        static bool reallocPtr(size_t newBytes, scope ref void[] ptr) @nogc nothrow @safe
         {
             return (() @trusted {
                 void* newPtr = realloc(ptr.ptr, newBytes);
@@ -356,7 +359,9 @@ struct UniqPtr(T,
             return (() @trusted { free(ptr.ptr); return true; })();
         }
 
-        int[] value2 = allocate;
+        int[] value2; 
+        assert(allocate(1, value2));
+
         auto ptrV2 = UniqPtr!(int)(value2, isAutoFree:
             true, &freePtr, &reallocPtr);
         assert(ptrV2.reallcap(2));
@@ -367,7 +372,8 @@ struct UniqPtr(T,
         ptrV2[1] = 15;
         assert(ptrV2[0 .. 2] == [13, 15]);
 
-        int[] value3 = allocate;
+        int[] value3;
+        assert(allocate(1, value3));
         auto ptrV3 = UniqPtr!(int)(value3, isAutoFree:
             true, &freePtr, &reallocPtr);
         assert(ptrV3.realloc(int.sizeof * 3));
@@ -385,7 +391,8 @@ struct UniqPtr(T,
             aCl.ptr.free;
         }
 
-        int[] aClValue = allocate;
+        int[] aClValue;
+        assert(allocate(1, aClValue));
         aCl.ptr = UniqPtr!(int)(aClValue, isAutoFree:
             false, &freePtr, &reallocPtr);
         aCl.ptr = 20;

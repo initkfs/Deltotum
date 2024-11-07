@@ -19,7 +19,7 @@ import api.dm.kit.graphics.themes.theme : Theme;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
 import api.dm.kit.scenes.scene_manager : SceneManager;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
-import api.core.utils.factories : Provider;
+import api.core.utils.factories : ProviderFactory;
 import api.dm.kit.i18n.langs.alphabets.alphabet : Alphabet;
 import api.dm.kit.factories.image_factory : ImageFactory;
 import api.dm.kit.factories.shape_factory : ShapeFactory;
@@ -592,7 +592,7 @@ abstract class GraphicApplication : CliApp
         return asset;
     }
 
-    BitmapFontGenerator newFontGenerator(Provider!ComSurface comSurfaceProvider)
+    BitmapFontGenerator newFontGenerator(ProviderFactory!ComSurface comSurfaceProvider)
     {
         return new BitmapFontGenerator(comSurfaceProvider);
     }

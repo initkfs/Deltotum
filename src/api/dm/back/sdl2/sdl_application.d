@@ -7,7 +7,7 @@ version(SdlBackend):
 import api.core.configs.config : Config;
 import api.core.contexts.context : Context;
 import api.core.apps.app_init_ret : AppInitRet;
-import api.core.utils.factories : Provider;
+import api.core.utils.factories : ProviderFactory;
 import api.dm.kit.apps.continuously_application : ContinuouslyApplication;
 import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.dm.kit.events.kit_event_manager : KitEventManager;
@@ -677,17 +677,17 @@ class SdlApplication : ContinuouslyApplication
         windowBuilder.graphics = createGraphics(uservices.logger, sdlRenderer, theme);
         windowBuilder.graphics.initialize;
 
-        windowBuilder.graphics.comTextureProvider = Provider!ComTexture(
+        windowBuilder.graphics.comTextureProvider = ProviderFactory!ComTexture(
             () => newComTexture(sdlRenderer),
             (dg) => newComTextureScoped(dg, sdlRenderer)
         );
 
-        windowBuilder.graphics.comSurfaceProvider = Provider!ComSurface(
+        windowBuilder.graphics.comSurfaceProvider = ProviderFactory!ComSurface(
             &newComSurface,
             &newComSurfaceScoped
         );
 
-        windowBuilder.graphics.comImageProvider = Provider!ComImage(
+        windowBuilder.graphics.comImageProvider = ProviderFactory!ComImage(
             &newComImage,
             &newComImageScoped
         );
@@ -705,7 +705,7 @@ class SdlApplication : ContinuouslyApplication
             //TODO build and run services after all
             import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 
-            auto comSurfProvider = Provider!ComSurface(
+            auto comSurfProvider = ProviderFactory!ComSurface(
                 &newComSurface,
                 &newComSurfaceScoped
             );

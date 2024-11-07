@@ -6,9 +6,9 @@ import api.core.mem.unique_ptr : UniqPtr;
  * Authors: initkfs
  */
 
-alias AllocFuncType = void[] function(size_t sizeBytes) @nogc nothrow @safe;
+alias AllocFuncType = bool function(size_t sizeBytes, scope ref void[] ptr) @nogc nothrow @safe;
 alias FreeFuncType = bool function(scope void[] ptr) @nogc nothrow @safe;
-alias ReallocFuncType = bool function(scope ref void[], size_t newSizeBytes) @nogc nothrow @safe;
+alias ReallocFuncType = bool function(size_t newSizeBytes, scope ref void[]) @nogc nothrow @safe;
 
 mixin template MemFuncs()
 {
@@ -31,14 +31,53 @@ mixin template MemFuncs()
         }
     }
 
-    UniqPtr!T uniq(T)(size_t capacity = 1, bool isAutoFree = true)
+    UniqPtr!T uniq(T)(size_t capacity = 1, bool isAutoFree = true, bool isErrorOnFail = true)
     in (allocFunPtr)
     {
-        assert(capacity > 0);
-        auto size = capacity * T.sizeof;
-        assert((size / capacity) == T.sizeof, "Allocation size overflow");
+        if (capacity == 0)
+        {
+            enum message = "Capacity must not be zero";
+            version (D_Exceptions)
+            {
+                throw new Exception(message);
+            }
+            else
+            {
+                assert(false, message);
+            }
+        }
 
-        T[] newPtr = cast(T[]) allocFunPtr(size);
+        const size = capacity * T.sizeof;
+
+        if ((size / capacity) != T.sizeof)
+        {
+            enum message = "Allocation size overflow";
+            version (D_Exceptions)
+            {
+                throw new Exception(message);
+            }
+            else
+            {
+                assert(false, message);
+            }
+
+        }
+
+        void[] ptr;
+        if (!allocFunPtr(size, ptr) && isErrorOnFail)
+        {
+            enum message = "Allocation failed";
+            version (D_Exceptions)
+            {
+                throw new Exception(message);
+            }
+            else
+            {
+                assert(false, message);
+            }
+        }
+
+        T[] newPtr = cast(T[]) ptr;
         assert(newPtr.length == capacity);
 
         return UniqPtr!T(newPtr, isAutoFree, freeFunPtr, reallocFunPtr);

@@ -69,7 +69,7 @@ unittest
     assert(cast(B)(fk.create(Ftype.b)));
 }
 
-struct Provider(T)
+struct ProviderFactory(T)
 {
     T delegate() getNew;
     void delegate(scope void delegate(T) onT) getNewScoped;
@@ -78,7 +78,7 @@ struct Provider(T)
     {
         import std.exception : enforce;
 
-        this.getNew = enforce(getNewProvider, "Provider must not be null");
+        this.getNew = enforce(getNewProvider, "ProviderFactory must not be null");
         this.getNewScoped = enforce(getNewScopeProvider, "Scope provider must not be null");
     }
 }

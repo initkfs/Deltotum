@@ -1,7 +1,7 @@
 module api.dm.kit.events.kit_event_manager;
 
-import api.core.events.processing.event_processor : EventProcessor;
-import api.core.events.event_manager: EventManager;
+import api.dm.kit.events.processing.event_processor : EventProcessor;
+import api.dm.kit.events.event_manager: EventManager;
 import api.dm.kit.events.processing.kit_event_processor : KitEventProcessor;
 import api.dm.kit.scenes.scene_manager : SceneManager;
 

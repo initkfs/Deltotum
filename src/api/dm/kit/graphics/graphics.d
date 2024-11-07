@@ -1,7 +1,7 @@
 module api.dm.kit.graphics.graphics;
 
 import api.core.components.units.services.loggable_unit;
-import api.core.utils.factories : Provider;
+import api.core.utils.factories : ProviderFactory;
 
 import api.dm.com.graphics.com_renderer : ComRenderer;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -46,9 +46,9 @@ class Graphics : LoggableUnit
         ComRenderer renderer;
     }
 
-    Provider!ComTexture comTextureProvider;
-    Provider!ComSurface comSurfaceProvider;
-    Provider!ComImage comImageProvider;
+    ProviderFactory!ComTexture comTextureProvider;
+    ProviderFactory!ComSurface comSurfaceProvider;
+    ProviderFactory!ComImage comImageProvider;
 
     this(Logger logger, ComRenderer renderer, Theme theme)
     {

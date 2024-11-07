@@ -47,7 +47,7 @@ unittest
 
     import std.traits : hasUDA;
     import api.core.utils.types : hasOverloads;
-    import api.core.components.attributes : Service;
+    import api.core.components.uda : Service;
 
     alias componentType = typeof(nc);
     static foreach (const fieldName; __traits(allMembers, componentType))

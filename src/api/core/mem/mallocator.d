@@ -8,28 +8,41 @@ import api.core.mem.unique_ptr : UniqPtr;
 
 import core.stdc.stdlib : malloc, realloc, free;
 
-void[] allocate(size_t sizeBytes) @nogc nothrow @safe
-{
-    return (() @trusted {
-        void* newPtr = malloc(sizeBytes);
-        assert(newPtr);
-        return newPtr[0 .. sizeBytes];
-    })();
-}
+bool allocate(size_t sizeBytes, scope ref void[] ptr) @nogc nothrow @safe => allocateBytes(sizeBytes, ptr);
+bool reallocate(size_t newBytes, scope ref void[] ptr) @nogc nothrow @safe => reallocateBytes(
+    newBytes, ptr);
+bool deallocate(scope void[] ptr) @nogc nothrow @safe => deallocateBytes(ptr);
 
-bool reallocate(scope ref void[] ptr, size_t newBytes) @nogc nothrow @safe
+protected
 {
-    return (() @trusted {
+    bool allocateBytes(size_t sizeBytes, scope ref void[] ptr) @nogc nothrow @trusted
+    {
+        void* newPtr = malloc(sizeBytes);
+        if(!newPtr){
+            return false;
+        }
+        ptr = newPtr[0 .. sizeBytes];
+        return true;
+    }
+
+    bool reallocateBytes(size_t newBytes, scope ref void[] ptr) @nogc nothrow @trusted
+    {
         void* newPtr = realloc(ptr.ptr, newBytes);
-        assert(newPtr);
+        if(!newPtr){
+            return false;
+        }
         ptr = newPtr[0 .. newBytes];
         return true;
-    })();
-}
+    }
 
-static bool deallocate(scope void[] ptr) @nogc nothrow @safe
-{
-    return (() @trusted { free(ptr.ptr); return true; })();
+    bool deallocateBytes(scope void[] ptr) @nogc nothrow @trusted
+    {
+        if(!ptr){
+            return false;
+        }
+        free(ptr.ptr);
+        return true;
+    }
 }
 
 version (D_BetterC)
