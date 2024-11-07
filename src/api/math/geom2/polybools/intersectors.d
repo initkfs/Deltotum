@@ -11,14 +11,14 @@ import api.math.geom2.polybools.segments : Segment;
  * Copyright (c) 2021 Davide Menegatti (@menecats)
  * under MIT License: https://github.com/Menecats/polybool-java/blob/main/LICENSE
  */
-public class SelfIntersecter : AbstractIntersecter
+class SelfIntersecter : AbstractIntersecter
 {
-    public this(Epsilon eps)
+    this(Epsilon eps)
     {
         super(true, eps);
     }
 
-    public void addRegion(double[][] region)
+    void addRegion(double[][] region)
     {
         // regions are a list of points:
         //  [ [0, 0], [100, 0], [50, 100] ]
@@ -44,7 +44,7 @@ public class SelfIntersecter : AbstractIntersecter
         }
     }
 
-    public Segment[] calculate(bool inverted)
+    Segment[] calculate(bool inverted)
     {
         // is the polygon inverted?
         // returns segments
@@ -52,15 +52,15 @@ public class SelfIntersecter : AbstractIntersecter
     }
 }
 
-public class NonSelfIntersecter : AbstractIntersecter
+class NonSelfIntersecter : AbstractIntersecter
 {
 
-    public this(Epsilon eps)
+    this(Epsilon eps)
     {
         super(false, eps);
     }
 
-    public Segment[] calculate(Segment[] segments1, bool inverted1, Segment[] segments2, bool inverted2)
+    Segment[] calculate(Segment[] segments1, bool inverted1, Segment[] segments2, bool inverted2)
     {
         // segmentsX come from the self-intersection API, or this API
         // invertedX is whether we treat that list of segments as an inverted polygon or not
@@ -77,7 +77,7 @@ public class NonSelfIntersecter : AbstractIntersecter
     }
 }
 
-public abstract class AbstractIntersecter
+abstract class AbstractIntersecter
 {
 
     protected static class IntersecterContent
@@ -108,7 +108,7 @@ public abstract class AbstractIntersecter
 
     protected Segment segmentCopy(double[] start, double[] end, Segment seg)
     {
-        return new Segment(start, end, new Segment.SegmentFill(seg.myFill.above, seg.myFill.below));
+        return new Segment(start, end, new Segment.SegmentFill(seg.myFill));
     }
 
     private int eventCompare(bool p1_isStart, double[] p1_1, double[] p1_2,

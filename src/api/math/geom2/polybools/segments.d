@@ -18,11 +18,11 @@ import std.stdio : writeln;
 class Segment
 {
 
-    public static class SegmentFill
+    static class SegmentFill
     {
 
-        public bool above;
-        public bool below;
+        bool above;
+        bool below;
 
         bool isInitAbove;
         bool isInitBelow;
@@ -31,25 +31,35 @@ class Segment
         {
         }
 
-        public this(bool above, bool below)
+        this(SegmentFill other)
+        {
+            this.above = other.above;
+            this.below = other.below;
+            this.isInitAbove = other.isInitAbove;
+            this.isInitBelow = other.isInitBelow;
+        }
+
+        this(bool above, bool below)
         {
             this.above = above;
             this.below = below;
+            this.isInitAbove = true;
+            this.isInitBelow = true;
         }
     }
 
-    public double[] start;
-    public double[] end;
+    double[] start;
+    double[] end;
 
-    public SegmentFill myFill;
-    public SegmentFill otherFill;
+    SegmentFill myFill;
+    SegmentFill otherFill;
 
-    public this(double[] start, double[] end)
+    this(double[] start, double[] end)
     {
         this(start, end, new SegmentFill());
     }
 
-    public this(double[] start, double[] end, SegmentFill myFill)
+    this(double[] start, double[] end, SegmentFill myFill)
     {
         this.start = start;
         this.end = end;
@@ -72,12 +82,12 @@ class SegmentChainer
         bool matches_head;
         bool matches_pt1;
 
-        public this()
+        this()
         {
             this(0, false, false);
         }
 
-        public this(int index, bool matches_head, bool matches_pt1)
+        this(int index, bool matches_head, bool matches_pt1)
         {
             this.index = index;
             this.matches_head = matches_head;
@@ -92,7 +102,7 @@ class SegmentChainer
         }
     }
 
-    public static double[][][] chain(Segment[] segments, Epsilon eps)
+    static double[][][] chain(Segment[] segments, Epsilon eps)
     {
         double[][][] chains;
         double[][][] regions;
@@ -345,7 +355,7 @@ class SegmentChainer
     }
 }
 
-public class SegmentSelector
+class SegmentSelector
 {
     private static Segment[] select(Segment[] segments, int[] selection)
     {
@@ -378,7 +388,7 @@ public class SegmentSelector
         return result;
     }
 
-    public static Segment[] unions(Segment[] segments)
+    static Segment[] unions(Segment[] segments)
     {
         // above1 below1 above2 below2    Keep?               Value
         //    0      0      0      0   =>   no                  0
@@ -406,7 +416,7 @@ public class SegmentSelector
         ]);
     }
 
-    public static Segment[] intersect(Segment[] segments)
+    static Segment[] intersect(Segment[] segments)
     {
         // above1 below1 above2 below2    Keep?               Value
         //    0      0      0      0   =>   no                  0
@@ -435,7 +445,7 @@ public class SegmentSelector
         );
     }
 
-    public static Segment[] difference(Segment[] segments)
+    static Segment[] difference(Segment[] segments)
     { // primary - secondary
         // above1 below1 above2 below2    Keep?               Value
         //    0      0      0      0   =>   no                  0
@@ -464,7 +474,7 @@ public class SegmentSelector
         );
     }
 
-    public static Segment[] differenceRev(Segment[] segments)
+    static Segment[] differenceRev(Segment[] segments)
     { // secondary - primary
         // above1 below1 above2 below2    Keep?               Value
         //    0      0      0      0   =>   no                  0
@@ -492,7 +502,7 @@ public class SegmentSelector
         ]);
     }
 
-    public static Segment[] xor(Segment[] segments)
+    static Segment[] xor(Segment[] segments)
     { // primary ^ secondary
         // above1 below1 above2 below2    Keep?               Value
         //    0      0      0      0   =>   no                  0

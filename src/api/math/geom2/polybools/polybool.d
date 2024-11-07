@@ -12,7 +12,7 @@ import api.math.geom2.polybools.helpers : Epsilon;
  * Copyright (c) 2021 Davide Menegatti (@menecats)
  * under MIT License: https://github.com/Menecats/polybool-java/blob/main/LICENSE
  */
-public class Polygon
+class PolyResult
 {
 
     double[][][] regions;
@@ -24,22 +24,22 @@ public class Polygon
         this.inverted = inverted;
     }
 
-    public double[][][] getRegions()
+    double[][][] getRegions()
     {
         return regions;
     }
 
-    public void setRegions(double[][][] regions)
+    void setRegions(double[][][] regions)
     {
         this.regions = regions;
     }
 
-    public bool isInverted()
+    bool isInverted()
     {
         return inverted;
     }
 
-    public void setInverted(bool inverted)
+    void setInverted(bool inverted)
     {
         this.inverted = inverted;
     }
@@ -101,7 +101,7 @@ double[] point(double x, double y)
     return [x, y];
 }
 
-public double[][] region(double[][] points...)
+double[][] region(double[][] points...)
 {
     double[][] reg;
     foreach (double[] p; points)
@@ -111,12 +111,12 @@ public double[][] region(double[][] points...)
     return reg;
 }
 
-Polygon polygon(double[][][] regions...)
+PolyResult polygon(double[][][] regions...)
 {
     return polygon(false, regions);
 }
 
-Polygon polygon(bool inverted, double[][][] regions...)
+PolyResult polygon(bool inverted, double[][][] regions...)
 {
     double[][][] reg;
     foreach (double[][] p; regions)
@@ -124,151 +124,148 @@ Polygon polygon(bool inverted, double[][][] regions...)
         reg ~= p;
     }
 
-    return new Polygon(reg, inverted);
+    return new PolyResult(reg, inverted);
 }
 
-public class PolyBool
+class Segments
 {
-    public static class Segments
-    {
-        Segment[] segments;
-        private bool inverted;
+    Segment[] segments;
+    private bool inverted;
 
-        private this(Segment[] segments, bool inverted)
-        {
-            this.segments = segments;
-            this.inverted = inverted;
-        }
+    private this(Segment[] segments, bool inverted)
+    {
+        this.segments = segments;
+        this.inverted = inverted;
+    }
+}
+
+class Combined
+{
+    Segment[] combined;
+    private bool inverted1;
+    private bool inverted2;
+
+    private this(Segment[] combined, bool inverted1, bool inverted2)
+    {
+        this.combined = combined;
+        this.inverted1 = inverted1;
+        this.inverted2 = inverted2;
+    }
+}
+
+// Core API
+Segments segments(Epsilon epsilon, PolyResult polygon)
+{
+    SelfIntersecter i = new SelfIntersecter(epsilon);
+
+    foreach (double[][] region; polygon.getRegions())
+    {
+        i.addRegion(region);
     }
 
-    public static class Combined
-    {
-        Segment[] combined;
-        private bool inverted1;
-        private bool inverted2;
+    return new Segments(
+        i.calculate(polygon.isInverted()),
+        polygon.isInverted()
+    );
+}
 
-        private this(Segment[] combined, bool inverted1, bool inverted2)
-        {
-            this.combined = combined;
-            this.inverted1 = inverted1;
-            this.inverted2 = inverted2;
-        }
-    }
+Combined combine(Epsilon epsilon, Segments segments1, Segments segments2)
+{
+    NonSelfIntersecter i3 = new NonSelfIntersecter(epsilon);
 
-    // Core API
-    public static Segments segments(Epsilon epsilon, Polygon polygon)
-    {
-        SelfIntersecter i = new SelfIntersecter(epsilon);
+    return new Combined(
+        i3.calculate(
+            segments1.segments, segments1.inverted,
+            segments2.segments, segments2.inverted
+    ),
+    segments1.inverted,
+    segments2.inverted
+    );
+}
 
-        foreach (double[][] region; polygon.getRegions())
-        {
-            i.addRegion(region);
-        }
+Segments selectUnion(Combined combined)
+{
+    return new Segments(
+        SegmentSelector.unions(combined.combined),
+        combined.inverted1 || combined.inverted2
+    );
+}
 
-        return new Segments(
-            i.calculate(polygon.isInverted()),
-            polygon.isInverted()
-        );
-    }
+Segments selectIntersect(Combined combined)
+{
+    return new Segments(
+        SegmentSelector.intersect(combined.combined),
+        combined.inverted1 && combined.inverted2
+    );
+}
 
-    public static Combined combine(Epsilon epsilon, Segments segments1, Segments segments2)
-    {
-        NonSelfIntersecter i3 = new NonSelfIntersecter(epsilon);
+Segments selectDifference(Combined combined)
+{
+    return new Segments(
+        SegmentSelector.difference(combined.combined),
+        combined.inverted1 && !combined.inverted2
+    );
+}
 
-        return new Combined(
-            i3.calculate(
-                segments1.segments, segments1.inverted,
-                segments2.segments, segments2.inverted
-        ),
-        segments1.inverted,
-        segments2.inverted
-        );
-    }
+Segments selectDifferenceRev(Combined combined)
+{
+    return new Segments(
+        SegmentSelector.differenceRev(combined.combined),
+        !combined.inverted1 && combined.inverted2
+    );
+}
 
-    public static Segments selectUnion(Combined combined)
-    {
-        return new Segments(
-            SegmentSelector.unions(combined.combined),
-            combined.inverted1 || combined.inverted2
-        );
-    }
+Segments selectXor(Combined combined)
+{
+    return new Segments(
+        SegmentSelector.xor(combined.combined),
+        combined.inverted1 != combined.inverted2
+    );
+}
 
-    public static Segments selectIntersect(Combined combined)
-    {
-        return new Segments(
-            SegmentSelector.intersect(combined.combined),
-            combined.inverted1 && combined.inverted2
-        );
-    }
+PolyResult polygon(Epsilon epsilon, Segments segments)
+{
+    auto ch = SegmentChainer.chain(segments.segments, epsilon);
+    return new PolyResult(
+        ch,
+        segments.inverted
+    );
+}
 
-    public static Segments selectDifference(Combined combined)
-    {
-        return new Segments(
-            SegmentSelector.difference(combined.combined),
-            combined.inverted1 && !combined.inverted2
-        );
-    }
+//  API
+private PolyResult operate(Epsilon epsilon, PolyResult poly1, PolyResult poly2, Segments delegate(
+        Combined) selector)
+{
+    Segments seg1 = segments(epsilon, poly1);
+    Segments seg2 = segments(epsilon, poly2);
+    Combined comb = combine(epsilon, seg1, seg2);
+    Segments seg3 = selector(comb);
+    return polygon(epsilon, seg3);
+}
 
-    public static Segments selectDifferenceRev(Combined combined)
-    {
-        return new Segments(
-            SegmentSelector.differenceRev(combined.combined),
-            !combined.inverted1 && combined.inverted2
-        );
-    }
+PolyResult unions(Epsilon epsilon, PolyResult poly1, PolyResult poly2)
+{
+    return operate(epsilon, poly1, poly2, c => selectUnion(c));
+}
 
-    public static Segments selectXor(Combined combined)
-    {
-        return new Segments(
-            SegmentSelector.xor(combined.combined),
-            combined.inverted1 != combined.inverted2
-        );
-    }
+PolyResult intersect(Epsilon epsilon, PolyResult poly1, PolyResult poly2)
+{
+    return operate(epsilon, poly1, poly2, c => selectIntersect(c));
+}
 
-    public static Polygon polygon(Epsilon epsilon, Segments segments)
-    {
-        auto ch = SegmentChainer.chain(segments.segments, epsilon);
-        return new Polygon(
-            ch,
-            segments.inverted
-        );
-    }
+PolyResult difference(Epsilon epsilon, PolyResult poly1, PolyResult poly2)
+{
+    return operate(epsilon, poly1, poly2, c => selectDifference(c));
+}
 
-    // Public API
-    private static Polygon operate(Epsilon epsilon, Polygon poly1, Polygon poly2, Segments delegate(
-            Combined) selector)
-    {
-        Segments seg1 = segments(epsilon, poly1);
-        Segments seg2 = segments(epsilon, poly2);
-        Combined comb = combine(epsilon, seg1, seg2);
-        Segments seg3 = selector(comb);
-        return polygon(epsilon, seg3);
-    }
+PolyResult differenceRev(Epsilon epsilon, PolyResult poly1, PolyResult poly2)
+{
+    return operate(epsilon, poly1, poly2, c => selectDifferenceRev(c));
+}
 
-    public static Polygon unions(Epsilon epsilon, Polygon poly1, Polygon poly2)
-    {
-        return operate(epsilon, poly1, poly2, c => selectUnion(c));
-    }
-
-    public static Polygon intersect(Epsilon epsilon, Polygon poly1, Polygon poly2)
-    {
-        return operate(epsilon, poly1, poly2, c => selectIntersect(c));
-    }
-
-    public static Polygon difference(Epsilon epsilon, Polygon poly1, Polygon poly2)
-    {
-        return operate(epsilon, poly1, poly2, c => selectDifference(c));
-    }
-
-    public static Polygon differenceRev(Epsilon epsilon, Polygon poly1, Polygon poly2)
-    {
-        return operate(epsilon, poly1, poly2, c => selectDifferenceRev(c));
-    }
-
-    public static Polygon xor(Epsilon epsilon, Polygon poly1, Polygon poly2)
-    {
-        return operate(epsilon, poly1, poly2, c => selectXor(c));
-    }
+PolyResult xor(Epsilon epsilon, PolyResult poly1, PolyResult poly2)
+{
+    return operate(epsilon, poly1, poly2, c => selectXor(c));
 }
 
 unittest
@@ -277,7 +274,7 @@ unittest
 
     Epsilon eps = epsilon;
 
-    Polygon result = PolyBool.intersect(
+    PolyResult result = intersect(
         eps,
         polygon(
             region(
@@ -322,7 +319,7 @@ unittest
 
     Epsilon eps = epsilon;
 
-    Polygon poly1 = polygon(
+    PolyResult poly1 = polygon(
         region(
             point(52, 53),
             point(72, 53),
@@ -330,7 +327,7 @@ unittest
     )
     );
 
-    Polygon poly2 = polygon(
+    PolyResult poly2 = polygon(
         region(
             point(68, 53),
             point(100, 53),
@@ -338,7 +335,7 @@ unittest
     )
     );
 
-    Polygon resultIntersect = PolyBool.intersect(eps, poly1, poly2);
+    PolyResult resultIntersect = intersect(eps, poly1, poly2);
 
     double[][][] expectedIntersect = [
         [
@@ -350,7 +347,7 @@ unittest
     assert(!resultIntersect.isInverted);
     assert(resultIntersect.equal(expectedIntersect, 0.0001));
 
-    Polygon resultUnion = PolyBool.unions(eps, poly1, poly2);
+    PolyResult resultUnion = unions(eps, poly1, poly2);
 
     double[][][] expectedUnion = [
         [
@@ -364,7 +361,7 @@ unittest
     assert(!resultUnion.isInverted);
     assert(resultUnion.equal(expectedUnion, 0.0001));
 
-    Polygon resultDiff = PolyBool.difference(eps, poly1, poly2);
+    PolyResult resultDiff = difference(eps, poly1, poly2);
 
     double[][][] expectedDiff = [
         [
@@ -376,7 +373,7 @@ unittest
     assert(!resultDiff.isInverted);
     assert(resultDiff.equal(expectedDiff, 0.0001));
 
-    Polygon resultDiffRev = PolyBool.differenceRev(eps, poly1, poly2);
+    PolyResult resultDiffRev = differenceRev(eps, poly1, poly2);
 
     double[][][] expectedDiffRef = [
         [[64.740740, 59.170370], [72.0, 53.0], [100.0, 53.0]]
@@ -385,7 +382,7 @@ unittest
     assert(!resultDiffRev.isInverted);
     assert(resultDiffRev.equal(expectedDiffRef, 0.0001));
 
-    Polygon resultXor = PolyBool.xor(eps, poly1, poly2);
+    PolyResult resultXor = xor(eps, poly1, poly2);
 
     double[][][] expectedXor = [
         [
