@@ -30,12 +30,46 @@ class Start : Scene
 
     Random rnd;
 
-
     override void create()
     {
         super.create;
         rnd = new Random;
 
+        import api.math.geom2.polybools.polybool;
+
+        //auto eps = epsilon;
+
+        // auto intersection = intersect(
+        //     eps,
+        //     polygon(
+        //         region(
+        //         point(50, 50),
+        //         point(150, 150),
+        //         point(190, 50)
+        //     ),
+        //     region(
+        //         point(130, 50),
+        //         point(290, 150),
+        //         point(290, 50)
+        // )
+        // ),
+        // polygon(
+        //     region(
+        //         point(110, 20),
+        //         point(110, 110),
+        //         point(20, 20)
+        // ),
+        // region(
+        //     point(130, 170),
+        //     point(130, 20),
+        //     point(260, 20),
+        //     point(260, 170)
+        // )
+        // )
+        // );
+
+        // import std;
+        // writeln(intersection.regions);
 
         createDebugger;
     }
