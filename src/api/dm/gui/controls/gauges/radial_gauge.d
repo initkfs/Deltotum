@@ -142,20 +142,20 @@ class RadialGauge : Control
         handTransition.onStop ~= () { setLabel(_value); };
         addCreate(handTransition);
 
-        import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+        import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
         import api.dm.com.graphics.com_texture : ComTextureScaleMode;
 
         auto tickWidth = 2;
         auto tickHeight = 6;
 
-        auto smallTickProto = new VRegularPolygon(tickHeight, tickWidth, GraphicStyle(0, graphics.theme.colorAccent, true, graphics
+        auto smallTickProto = new VConvexPolygon(tickHeight, tickWidth, GraphicStyle(0, graphics.theme.colorAccent, true, graphics
                 .theme.colorAccent), 0);
         build(smallTickProto);
         smallTickProto.initialize;
         smallTickProto.create;
         smallTickProto.textureScaleMode = ComTextureScaleMode.quality;
 
-        auto bigTickProto = new VRegularPolygon(tickHeight * 2, tickWidth, GraphicStyle(2, graphics.theme.colorDanger, true, graphics
+        auto bigTickProto = new VConvexPolygon(tickHeight * 2, tickWidth, GraphicStyle(2, graphics.theme.colorDanger, true, graphics
                 .theme.colorDanger), 0);
         build(bigTickProto);
         bigTickProto.initialize;
@@ -261,9 +261,9 @@ class RadialGauge : Control
             hand = new Hand(width, height, 5, 45, handStyle);
             addCreate(hand);
 
-            import api.dm.kit.sprites.textures.vectors.shapes.vhexagon : VHexagon;
+            import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
 
-            VHexagon holder = new VHexagon(10, GraphicStyle(0, graphics.theme.colorDanger, true, graphics
+            VRegularPolygon holder = new VRegularPolygon(10, GraphicStyle(0, graphics.theme.colorDanger, true, graphics
                     .theme.colorDanger));
             addCreate(holder);
             handHolder = holder;

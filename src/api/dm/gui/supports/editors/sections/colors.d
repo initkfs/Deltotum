@@ -65,7 +65,7 @@ class Colors : Control
 
                 setContainer.addCreate(colorContainer);
 
-                import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+                import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
                 auto colorHex = cast(string) color;
                 auto newColor = RGBA.web(colorHex);
@@ -82,7 +82,7 @@ class Colors : Control
                 colorText.text = (cast(string) color).to!dstring;
                 colorContainer.addCreate(colorText);
 
-                auto shape = new VRegularPolygon(colorContainer.width, colorContainer.height, *style, 0);
+                auto shape = new VConvexPolygon(colorContainer.width, colorContainer.height, *style, 0);
                 colorContainer.addCreate(shape);
             }(c);
         }

@@ -355,15 +355,15 @@ class Controls : Control
         paginationRoot.layout.isAlignX = true;
         rootContainer.addCreate(paginationRoot);
 
-        import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon: VRegularPolygon;
+        import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon: VConvexPolygon;
         import api.dm.kit.graphics.styles.graphic_style: GraphicStyle;
         import api.dm.kit.graphics.colors.rgba: RGBA;
 
-        auto image1 = new VRegularPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.yellow));
-        auto image2 = new VRegularPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.green));
-        auto image3 = new VRegularPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.red));
-        auto image4 = new VRegularPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.blue));
-        auto image5 = new VRegularPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.orange));
+        auto image1 = new VConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.yellow));
+        auto image2 = new VConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.green));
+        auto image3 = new VConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.red));
+        auto image4 = new VConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.blue));
+        auto image5 = new VConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.orange));
 
         auto paginationContent = new Carousel([image1, image2, image3, image4, image5]);
         paginationRoot.addCreate(paginationContent);

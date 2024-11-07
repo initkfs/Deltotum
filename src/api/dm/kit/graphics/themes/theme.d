@@ -110,17 +110,17 @@ class Theme
         Sprite newBackground;
         if (isUseVectorGraphics)
         {
-            import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+            import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
-            newBackground = new VRegularPolygon(width, height, backgroundStyle, controlCornersBevel);
+            newBackground = new VConvexPolygon(width, height, backgroundStyle, controlCornersBevel);
         }
         else
         {
-            import api.dm.kit.sprites.shapes.regular_polygon : RegularPolygon;
+            import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
 
             backgroundStyle.lineWidth = 1.0;
 
-            newBackground = new RegularPolygon(width, height, backgroundStyle, controlCornersBevel);
+            newBackground = new ConvexPolygon(width, height, backgroundStyle, controlCornersBevel);
         }
         return newBackground;
     }

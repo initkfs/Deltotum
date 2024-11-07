@@ -1,4 +1,4 @@
-module api.dm.kit.sprites.shapes.regular_polygon;
+module api.dm.kit.sprites.shapes.convex_polygon;
 
 import api.dm.kit.sprites.shapes.shape : Shape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
@@ -7,7 +7,7 @@ import api.math.geom2.line2 : Line2d;
 /**
  * Authors: initkfs
  */
-class RegularPolygon : Shape
+class ConvexPolygon : Shape
 {
     double cornerPadding;
 

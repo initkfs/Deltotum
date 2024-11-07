@@ -57,11 +57,11 @@ class Hyperlink : Labeled
         auto tooltip = new Popup(url.to!dstring);
         addCreate(tooltip);
 
-        import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+        import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
         auto style = createDefaultStyle;
         style.isFill = true;
-        underline = new VRegularPolygon(10, 2, style, 0);
+        underline = new VConvexPolygon(10, 2, style, 0);
         underline.isResizable = true;
         underline.isHGrow = true;
         addCreate(underline);

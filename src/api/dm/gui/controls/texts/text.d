@@ -288,9 +288,9 @@ class Text : Control
 
                 GraphicStyle style = GraphicStyle(1, graphics.theme.colorFocus);
 
-                import api.dm.kit.sprites.shapes.regular_polygon : RegularPolygon;
+                import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
 
-                auto effect = new RegularPolygon(width, height, style, graphics
+                auto effect = new ConvexPolygon(width, height, style, graphics
                         .theme.controlCornersBevel);
                 //auto effect = new Rectangle(width, height, style);
                 effect.isVisible = false;

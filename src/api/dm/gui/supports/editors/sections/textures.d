@@ -139,17 +139,17 @@ class Textures : Control
             auto vTrig = new VTriangle(size, size, style);
             vContainer.addCreate(vTrig);
 
-            import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon: VRegularPolygon;
+            import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon: VConvexPolygon;
 
-            auto vReg = new VRegularPolygon(size, size, style, 10);
+            auto vReg = new VConvexPolygon(size, size, style, 10);
             vContainer.addCreate(vReg);
 
-            import api.dm.kit.sprites.textures.vectors.shapes.vhexagon : VHexagon;
-            auto vHex = new VHexagon(size, style);
+            import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+            auto vHex = new VRegularPolygon(size, style);
             vContainer.addCreate(vHex);
 
-            import api.dm.kit.sprites.textures.vectors.shapes.vhexagon_grid : VHexagonGrid;
-            auto vHexGrid = new VHexagonGrid(250, 250, 35, style);
+            import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon_grid : VRegularPolygonGrid;
+            auto vHexGrid = new VRegularPolygonGrid(250, 250, 35, style);
             vContainer.addCreate(vHexGrid);
             
         }

@@ -181,15 +181,15 @@ class SevenSegment : Control
         Sprite segment;
         if (capGraphics.isVectorGraphics)
         {
-            import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+            import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
-            segment = new VRegularPolygon(hSegmentWidth, hSegmentHeight, createSegmentStyle, segmentCornerBevel);
+            segment = new VConvexPolygon(hSegmentWidth, hSegmentHeight, createSegmentStyle, segmentCornerBevel);
         }
         else
         {
-            import api.dm.kit.sprites.shapes.regular_polygon : RegularPolygon;
+            import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
 
-            segment = new RegularPolygon(hSegmentWidth, hSegmentHeight, createSegmentStyle, segmentCornerBevel);
+            segment = new ConvexPolygon(hSegmentWidth, hSegmentHeight, createSegmentStyle, segmentCornerBevel);
         }
 
         segment.isVisible = false;
@@ -201,15 +201,15 @@ class SevenSegment : Control
         Sprite segment;
         if (capGraphics.isVectorGraphics)
         {
-            import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+            import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
-            segment = new VRegularPolygon(vSegmentWidth, vSegmentHeight, createSegmentStyle, segmentCornerBevel);
+            segment = new VConvexPolygon(vSegmentWidth, vSegmentHeight, createSegmentStyle, segmentCornerBevel);
         }
         else
         {
-            import api.dm.kit.sprites.shapes.regular_polygon : RegularPolygon;
+            import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
 
-            segment = new RegularPolygon(vSegmentWidth, vSegmentHeight, createSegmentStyle, segmentCornerBevel);
+            segment = new ConvexPolygon(vSegmentWidth, vSegmentHeight, createSegmentStyle, segmentCornerBevel);
         }
 
         segment.isVisible = false;

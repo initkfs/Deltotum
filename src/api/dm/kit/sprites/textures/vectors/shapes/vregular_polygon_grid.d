@@ -1,23 +1,23 @@
-module api.dm.kit.sprites.textures.vectors.shapes.vhexagon_grid;
+module api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon_grid;
 
 import api.dm.kit.sprites.textures.vectors.shapes.vshape : VShape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites.sprite : Sprite;
-import api.dm.kit.sprites.textures.vectors.shapes.vhexagon : VHexagon;
+import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
 import api.math.geom2.vec2 : Vec2d;
 
 import Math = api.dm.math;
 
-struct HexagonGeometry
+struct RPolygonGeometry
 {
     Vec2d pos;
-    VHexagon hexagon;
+    VRegularPolygon hexagon;
 }
 
 /**
  * Authors: initkfs
  */
-class VHexagonGrid : Sprite
+class VRegularPolygonGrid : Sprite
 {
     protected
     {
@@ -26,7 +26,7 @@ class VHexagonGrid : Sprite
         GraphicStyle style;
     }
 
-    HexagonGeometry[] hexagons;
+    RPolygonGeometry[] hexagons;
 
     this(double width, double height, double hexagonSize, GraphicStyle style, size_t sideCount = 6)
     {
@@ -51,11 +51,11 @@ class VHexagonGrid : Sprite
         }
     }
 
-    void drawHexagon(double x, double y)
+    void drawPolygon(double x, double y)
     {
-        auto hex = new VHexagon(hexagonSize, style);
+        auto hex = new VRegularPolygon(hexagonSize, style);
         addCreate(hex);
-        hexagons ~= HexagonGeometry(Vec2d(x, y), hex);
+        hexagons ~= RPolygonGeometry(Vec2d(x, y), hex);
     }
 
     override void create()
@@ -80,7 +80,7 @@ class VHexagonGrid : Sprite
             double x = radius;
             while (offsetX < width)
             {
-                drawHexagon(x, y);
+                drawPolygon(x, y);
                 offsetX = x + polarX1;
                 x += polarX1;
                 y += (-1) ^^ j++ * polarY;

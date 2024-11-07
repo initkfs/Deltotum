@@ -41,13 +41,13 @@ class TextArea : HBox
 
         backgroundFactory = (width, height) {
             import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-            import api.dm.kit.sprites.shapes.regular_polygon : RegularPolygon;
+            import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
 
             auto style = ownOrParentStyle;
 
             GraphicStyle backgroundStyle = style ? *style : GraphicStyle(1, graphics.theme.colorAccent, isBackground, graphics
                     .theme.colorPrimary);
-            auto background = new RegularPolygon(width, height, backgroundStyle, graphics
+            auto background = new ConvexPolygon(width, height, backgroundStyle, graphics
                     .theme.controlCornersBevel);
             return background;
         };

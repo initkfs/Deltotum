@@ -52,7 +52,7 @@ class Slider : Container
 
         padding = 0;
 
-        import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+        import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
         double handleWidth = 30;
@@ -64,7 +64,7 @@ class Slider : Container
             swap(handleWidth, handleHeight);
         }
 
-        _handle = new VRegularPolygon(handleWidth, handleHeight, GraphicStyle(1, graphics.theme.colorAccent, true, graphics
+        _handle = new VConvexPolygon(handleWidth, handleHeight, GraphicStyle(1, graphics.theme.colorAccent, true, graphics
                 .theme.colorAccent), 3);
         addCreate(_handle);
 

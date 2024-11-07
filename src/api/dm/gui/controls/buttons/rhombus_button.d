@@ -43,15 +43,15 @@ class RhombusButton : ButtonBase
         Sprite shape;
         if (capGraphics.isVectorGraphics)
         {
-            import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+            import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
-            shape = new VRegularPolygon(width, height, style, cornerBevel);
+            shape = new VConvexPolygon(width, height, style, cornerBevel);
         }
         else
         {
-            import api.dm.kit.sprites.shapes.regular_polygon : RegularPolygon;
+            import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
 
-            shape = new RegularPolygon(width, height, style, cornerBevel);
+            shape = new ConvexPolygon(width, height, style, cornerBevel);
         }
         return shape;
     }

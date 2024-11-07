@@ -34,12 +34,12 @@ class Physics : Control
     {
         super.create;
 
-        import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+        import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
         auto style = createDefaultStyle;
         style.fillColor = graphics.theme.colorAccent;
         style.isFill = true;
-        material = new VRegularPolygon(50, 50, style, 10);
+        material = new VConvexPolygon(50, 50, style, 10);
         material.isLayoutManaged = false;
 
         material.x = 100;

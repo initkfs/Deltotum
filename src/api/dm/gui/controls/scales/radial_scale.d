@@ -55,7 +55,7 @@ class RadialScale : Control
 
         import api.dm.kit.sprites.textures.vectors.vector_texture : VectorTexture;
         import api.dm.kit.sprites.textures.rgba_texture : RgbaTexture;
-        import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+        import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
         size_t ticksCount = ((Math.abs(maxValue - minValue)) / valueStep).to!size_t;

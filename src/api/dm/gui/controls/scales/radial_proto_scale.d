@@ -53,17 +53,17 @@ class RadialProtoScale : Control
 
         import api.dm.kit.sprites.textures.vectors.vector_texture : VectorTexture;
         import api.dm.kit.sprites.textures.rgba_texture : RgbaTexture;
-        import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+        import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
-        auto smallTickProto = new VRegularPolygon(tickHeight, tickWidth, GraphicStyle(0, graphics.theme.colorAccent, true, graphics
+        auto smallTickProto = new VConvexPolygon(tickHeight, tickWidth, GraphicStyle(0, graphics.theme.colorAccent, true, graphics
                 .theme.colorAccent), 0);
         build(smallTickProto);
         smallTickProto.initialize;
         smallTickProto.create;
         smallTickProto.bestScaleMode;
 
-        auto bigTickProto = new VRegularPolygon(tickMajorHeight, tickMajorWidth, GraphicStyle(2, graphics
+        auto bigTickProto = new VConvexPolygon(tickMajorHeight, tickMajorWidth, GraphicStyle(2, graphics
                 .theme.colorDanger, true, graphics
                 .theme.colorDanger), 0);
         build(bigTickProto);

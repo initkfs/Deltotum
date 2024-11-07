@@ -63,9 +63,9 @@ class DayContainer : Control
         return (w, h) {
             auto style = createDefaultStyle;
             //TODO caps
-            import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+            import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
-            return new VRegularPolygon(w, h, style, 0);
+            return new VConvexPolygon(w, h, style, 0);
         };
     }
 

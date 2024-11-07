@@ -64,9 +64,9 @@ class TargetButton : ButtonBase
         Sprite stick;
         if (capGraphics.isVectorGraphics)
         {
-            import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+            import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
-            stick = new VRegularPolygon(width, height, style, 0);
+            stick = new VConvexPolygon(width, height, style, 0);
         }
         else
         {

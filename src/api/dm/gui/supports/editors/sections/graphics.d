@@ -60,12 +60,12 @@ class Grahpics : Control
         auto rectFill = new Rectangle(50, 50, GraphicStyle(1, RGBA.green, true, RGBA.green));
         shapeContainer.addCreate(rectFill);
 
-        import api.dm.kit.sprites.shapes.regular_polygon : RegularPolygon;
+        import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
 
-        auto reg = new RegularPolygon(50, 50, GraphicStyle(1, RGBA.lightcoral), 10);
+        auto reg = new ConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightcoral), 10);
         shapeContainer.addCreate(reg);
 
-        auto regFill = new RegularPolygon(50, 50, GraphicStyle(1, RGBA.lightsteelblue, true, RGBA
+        auto regFill = new ConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightsteelblue, true, RGBA
                 .lightsteelblue), 10);
         shapeContainer.addCreate(regFill);
 

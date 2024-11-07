@@ -129,10 +129,10 @@ class HLinearGauge : Control
             auto style = createDefaultStyle;
             style.isFill = true;
             style.color = r.color;
-            import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+            import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
             auto rectWidth = (r.range * (width + tickWidth)) / range;
-            auto rect = new VRegularPolygon(rectWidth, 5, style, 0);
+            auto rect = new VConvexPolygon(rectWidth, 5, style, 0);
             rangeContainer.addCreate(rect);
         }
 
@@ -326,17 +326,17 @@ class HLinearGauge : Control
     {
         GraphicStyle style = createDefaultStyle;
         style.isFill = true;
-        import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+        import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
-        return new VRegularPolygon(tickWidth, 10, style, 0);
+        return new VConvexPolygon(tickWidth, 10, style, 0);
     }
 
     Sprite newMaxStepTick()
     {
         GraphicStyle style = createDefaultStyle;
         style.isFill = true;
-        import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+        import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
-        return new VRegularPolygon(tickWidth, 20, style, 0);
+        return new VConvexPolygon(tickWidth, 20, style, 0);
     }
 }

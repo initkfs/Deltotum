@@ -35,15 +35,15 @@ class Led : Control
         Sprite led;
         if (capGraphics.isVectorGraphics)
         {
-            import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+            import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
-            led = new VRegularPolygon(width, height, style, cornerBevel);
+            led = new VConvexPolygon(width, height, style, cornerBevel);
         }
         else
         {
-            import api.dm.kit.sprites.shapes.regular_polygon : RegularPolygon;
+            import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
 
-            led = new RegularPolygon(width, height, style, cornerBevel);
+            led = new ConvexPolygon(width, height, style, cornerBevel);
         }
         addCreate(led);
     }

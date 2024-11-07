@@ -1,6 +1,6 @@
 module api.math.geom2.convex_hull;
 
-import api.math.geom2.polygon2 : Polygon2;
+import api.math.geom2.polygon2 : Polygon2d;
 import api.math.geom2.vec2 : Vec2d;
 import Points = api.math.geom2.points2;
 import Math = api.math;

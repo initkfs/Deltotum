@@ -92,20 +92,20 @@ class ToggleSwitch : Labeled
 
             if (capGraphics.isVectorGraphics)
             {
-                import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+                import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
-                return new VRegularPolygon(w, h, currStyle, graphics.theme.controlCornersBevel);
+                return new VConvexPolygon(w, h, currStyle, graphics.theme.controlCornersBevel);
             }
             else
             {
-                import api.dm.kit.sprites.shapes.regular_polygon : RegularPolygon;
+                import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
 
-                return new RegularPolygon(w, h, currStyle, graphics.theme.controlCornersBevel);
+                return new ConvexPolygon(w, h, currStyle, graphics.theme.controlCornersBevel);
             }
         };
 
         switchHandleFactory = () {
-            import api.dm.kit.sprites.shapes.regular_polygon : RegularPolygon;
+            import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
 
             auto currStyle = createDefaultStyle;
             double w = width / 2;
@@ -113,15 +113,15 @@ class ToggleSwitch : Labeled
 
             if (capGraphics.isVectorGraphics)
             {
-                import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+                import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
-                return new VRegularPolygon(w, h, currStyle, graphics.theme.controlCornersBevel);
+                return new VConvexPolygon(w, h, currStyle, graphics.theme.controlCornersBevel);
             }
             else
             {
-                import api.dm.kit.sprites.shapes.regular_polygon : RegularPolygon;
+                import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
 
-                return new RegularPolygon(w, h, currStyle, graphics
+                return new ConvexPolygon(w, h, currStyle, graphics
                         .theme.controlCornersBevel);
             }
         };

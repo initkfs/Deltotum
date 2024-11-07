@@ -2,13 +2,14 @@ module api.math.geom2.polygon2;
 
 import api.math.geom2.line2 : Line2d;
 import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.rect2: Rect2d;
 
 import Math = api.math;
 
 /**
  * Authors: initkfs
  */
-struct Polygon2
+struct Polygon2d
 {
     Vec2d[] vertices;
 
@@ -252,10 +253,10 @@ struct Polygon2
     unittest
     {
         Vec2d[] points = [{0, 0}, {0, 5}, {5, 5}, {5, 0}];
-        assert((Polygon2(points)).isConvex);
+        assert((Polygon2d(points)).isConvex);
 
         Vec2d[] points2 = [{0, 0}, {0, 5}, {0, 0}, {5, 5}, {5, 0}];
-        assert(!(Polygon2(points2)).isConvex);
+        assert(!(Polygon2d(points2)).isConvex);
 
     }
 
@@ -359,12 +360,44 @@ struct Polygon2
         }
     }
 
+    Rect2d bounds() const
+    {
+        double minX = 0;
+        double maxX = 0;
+        double minY = 0;
+        double maxY = 0;
+        foreach (ref p; vertices)
+        {
+            if (p.x < minX)
+            {
+                minX = p.x;
+            }
+
+            if (p.x > maxX)
+            {
+                maxX = p.x;
+            }
+
+            if (p.y < minY)
+            {
+                minY = p.y;
+            }
+
+            if (p.y > maxY)
+            {
+                maxY = p.y;
+            }
+        }
+
+        return Rect2d(minX, minY, maxX - minX, maxY - minY);
+    }
+
 }
 
 //TODO add mixin test
 unittest
 {
-    Polygon2 poly1 = {[
+    Polygon2d poly1 = {[
         {10, 10}, {20, 10}, {20, 20}, {10, 20}
     ]};
 
@@ -383,7 +416,7 @@ unittest
 
 unittest
 {
-    Polygon2 poly1 = {[
+    Polygon2d poly1 = {[
         {10, 10}, {20, 10}, {20, 20}, {10, 20}
     ]};
 
@@ -402,7 +435,7 @@ unittest
 
 unittest
 {
-    Polygon2 poly1 = {[
+    Polygon2d poly1 = {[
         {10, 10}, {20, 10}, {20, 20}, {10, 20}
     ]};
 

@@ -166,9 +166,9 @@ class BaseRadialProgressBar : BaseProgressBar
 
     Texture createSegmentShape(GraphicStyle style)
     {
-        import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+        import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
-        auto sprite = new VRegularPolygon(segmentWidth, segmentHeight, style, 0);
+        auto sprite = new VConvexPolygon(segmentWidth, segmentHeight, style, 0);
         build(sprite);
         sprite.initialize;
         assert(sprite.isInitialized);

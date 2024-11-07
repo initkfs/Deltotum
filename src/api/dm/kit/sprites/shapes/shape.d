@@ -12,6 +12,10 @@ abstract class Shape : Sprite
     //TODO remove from shape
     GraphicStyle style;
 
+    this(){
+        
+    }
+
     this(double width, double height, GraphicStyle style)
     {
         this.width = width;

@@ -10,8 +10,8 @@ import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.sprites.textures.vectors.shapes.vcircle : VCircle;
 import api.dm.kit.sprites.textures.vectors.shapes.varc : VArc;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.kit.sprites.textures.vectors.shapes.vhexagon : VHexagon;
 import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 import api.dm.kit.sprites.textures.vectors.shapes.vshape : VShape;
 import api.dm.kit.sprites.transitions.pause_transition : PauseTransition;
 import api.dm.kit.sprites.textures.texture : Texture;
@@ -270,7 +270,7 @@ class AnalogClock : Control
         secHand = new Hand(width, height, 5, 75, secStyle);
         addCreate(secHand);
 
-        VHexagon holder = new VHexagon(15, GraphicStyle(0, graphics.theme.colorDanger, true, graphics
+        VRegularPolygon holder = new VRegularPolygon(15, GraphicStyle(0, graphics.theme.colorDanger, true, graphics
                 .theme.colorDanger));
         addCreate(holder);
         handHolder = holder;

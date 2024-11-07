@@ -64,10 +64,10 @@ class Frame : Container
     {
         if (hasBackground && label)
         {
-            import api.dm.kit.sprites.shapes.regular_polygon : RegularPolygon;
+            import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
             import api.core.utils.types: castSafe;
 
-            if (auto rp = background.get.castSafe!RegularPolygon)
+            if (auto rp = background.get.castSafe!ConvexPolygon)
             {
                 rp.topClip.start.x = label.x;
                 rp.topClip.end.x = label.bounds.right;

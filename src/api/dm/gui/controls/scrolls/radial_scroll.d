@@ -51,14 +51,14 @@ class RadialScroll : MonoScroll
         scale.labelStep = 5;
         addCreate(scale);
 
-        import api.dm.kit.sprites.textures.vectors.shapes.vhexagon : VHexagon;
+        import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
 
         double radiusBase = Math.min(width, height);
         //TODO correct offset
         radiusBase -= 60;
         auto pointerRadius = radiusBase / 2 - 10;
         auto thumbStyle = createDefaultStyle;
-        auto newThumb = new class VHexagon
+        auto newThumb = new class VRegularPolygon
         {
             this()
             {

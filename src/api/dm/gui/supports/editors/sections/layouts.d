@@ -307,16 +307,16 @@ class Layouts : Control
         import api.dm.gui.containers.vsplit_box: VSplitBox;
         import api.dm.gui.containers.hsplit_box: HSplitBox;
         import api.dm.gui.containers.vbox: VBox;
-        import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon: VRegularPolygon;
+        import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon: VConvexPolygon;
 
         auto split1 = new VSplitBox;
         pos2Container.addCreate(split1);
     
-        auto content1 = new VRegularPolygon(60, 80, GraphicStyle(1, RGBA.greenyellow, true, RGBA.greenyellow), 0);
+        auto content1 = new VConvexPolygon(60, 80, GraphicStyle(1, RGBA.greenyellow, true, RGBA.greenyellow), 0);
         buildInitCreate(content1);
-        auto content2 = new VRegularPolygon(60, 80, GraphicStyle(1, RGBA.salmon, true, RGBA.salmon), 0);
+        auto content2 = new VConvexPolygon(60, 80, GraphicStyle(1, RGBA.salmon, true, RGBA.salmon), 0);
         buildInitCreate(content2);
-        auto content3 = new VRegularPolygon(60, 80, GraphicStyle(1, RGBA.salmon, true, RGBA.salmon), 0);
+        auto content3 = new VConvexPolygon(60, 80, GraphicStyle(1, RGBA.salmon, true, RGBA.salmon), 0);
         buildInitCreate(content3);
 
         split1.addContent([content1, content2, content3]);
@@ -324,13 +324,13 @@ class Layouts : Control
         auto split2 = new HSplitBox;
         pos2Container.addCreate(split2);
     
-        auto content11 = new VRegularPolygon(60, 80, GraphicStyle(1, RGBA.greenyellow, true, RGBA.greenyellow), 0);
+        auto content11 = new VConvexPolygon(60, 80, GraphicStyle(1, RGBA.greenyellow, true, RGBA.greenyellow), 0);
         buildInitCreate(content11);
 
-        auto content22 = new VRegularPolygon(60, 80, GraphicStyle(1, RGBA.salmon, true, RGBA.salmon), 0);
+        auto content22 = new VConvexPolygon(60, 80, GraphicStyle(1, RGBA.salmon, true, RGBA.salmon), 0);
         buildInitCreate(content22);
 
-        auto content33 = new VRegularPolygon(60, 80, GraphicStyle(1, RGBA.crimson, true, RGBA.crimson), 0);
+        auto content33 = new VConvexPolygon(60, 80, GraphicStyle(1, RGBA.crimson, true, RGBA.crimson), 0);
         buildInitCreate(content33);
 
         split2.addContent([content11, content22, content33]);
@@ -340,18 +340,18 @@ class Layouts : Control
         auto splitLeft = new VSplitBox;
         splitLeft.boundsColor = RGBA.blueviolet;
         buildInitCreate(splitLeft);
-        auto contentLeftTop = new VRegularPolygon(60, 80, GraphicStyle(1, RGBA.greenyellow, true, RGBA.greenyellow), 0);
+        auto contentLeftTop = new VConvexPolygon(60, 80, GraphicStyle(1, RGBA.greenyellow, true, RGBA.greenyellow), 0);
         buildInitCreate(contentLeftTop);
-        auto contentLeftBottom = new VRegularPolygon(60, 80, GraphicStyle(1, RGBA.salmon, true, RGBA.salmon), 0);
+        auto contentLeftBottom = new VConvexPolygon(60, 80, GraphicStyle(1, RGBA.salmon, true, RGBA.salmon), 0);
         buildInitCreate(contentLeftBottom);
 
         splitLeft.addContent([contentLeftTop, contentLeftBottom]);
 
         auto splitCenter = new VSplitBox;
         buildInitCreate(splitCenter);
-        auto contentCenterTop = new VRegularPolygon(60, 80, GraphicStyle(1, RGBA.greenyellow, true, RGBA.greenyellow), 0);
+        auto contentCenterTop = new VConvexPolygon(60, 80, GraphicStyle(1, RGBA.greenyellow, true, RGBA.greenyellow), 0);
         buildInitCreate(contentCenterTop);
-        auto contentCenterBottom = new VRegularPolygon(60, 80, GraphicStyle(1, RGBA.salmon, true, RGBA.salmon), 0);
+        auto contentCenterBottom = new VConvexPolygon(60, 80, GraphicStyle(1, RGBA.salmon, true, RGBA.salmon), 0);
         buildInitCreate(contentCenterBottom);
 
         splitCenter.boundsColor = RGBA.aliceblue;
@@ -360,9 +360,9 @@ class Layouts : Control
 
         auto splitRight = new VSplitBox;
         buildInitCreate(splitRight);
-        auto contentRightTop = new VRegularPolygon(60, 80, GraphicStyle(1, RGBA.greenyellow, true, RGBA.greenyellow), 0);
+        auto contentRightTop = new VConvexPolygon(60, 80, GraphicStyle(1, RGBA.greenyellow, true, RGBA.greenyellow), 0);
         buildInitCreate(contentRightTop);
-        auto contentRightBottom = new VRegularPolygon(60, 80, GraphicStyle(1, RGBA.salmon, true, RGBA.salmon), 0);
+        auto contentRightBottom = new VConvexPolygon(60, 80, GraphicStyle(1, RGBA.salmon, true, RGBA.salmon), 0);
         buildInitCreate(contentRightBottom);
 
         splitRight.boundsColor = RGBA.fuchsia;
