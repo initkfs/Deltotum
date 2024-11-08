@@ -5,6 +5,8 @@ import api.core.components.uda : Service;
 import api.core.configs.config : Config;
 import api.core.clis.cli : Cli;
 import api.core.contexts.context : Context;
+import api.core.contexts.apps.app_context : AppContext;
+import api.core.contexts.platforms.platform_context : PlatformContext;
 import api.core.supports.support : Support;
 import api.core.resources.resource : Resource;
 import api.core.apps.caps.cap_core : CapCore;
@@ -57,7 +59,7 @@ class UniComponent : SimpleUnit
     void buildInit(UniComponent component)
     {
         build(component);
-        
+
         if (isStrictState && !component.isBuilt)
         {
             throw new Exception("Component not built: " ~ component.className);
@@ -220,9 +222,12 @@ class UniComponent : SimpleUnit
     {
         import std.exception : enforce;
 
-        enforce(context !is null, "Context must not be null");
+        enforce(context, "Context must not be null");
         _context = context;
     }
+
+    const(AppContext) appContext() pure @safe => context.appContext;
+    const(PlatformContext) platformContext() pure @safe => context.platformContext;
 
     bool hasLogger() const nothrow pure @safe
     {

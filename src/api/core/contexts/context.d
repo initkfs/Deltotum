@@ -1,12 +1,13 @@
 module api.core.contexts.context;
 
+import api.core.components.component_service: ComponentService;
 import api.core.contexts.apps.app_context : AppContext;
 import api.core.contexts.platforms.platform_context : PlatformContext;
 
 /**
  * Authors: initkfs
  */
-class Context
+class Context : ComponentService
 {
     const
     {
