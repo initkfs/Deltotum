@@ -4,7 +4,7 @@ import api.core.components.units.services.loggable_unit : LoggableUnit;
 import api.core.contexts.context : Context;
 import api.core.configs.config : Config;
 
-import std.logger.core : Logger;
+import api.core.loggers.logging : Logging;
 
 /**
  * Authors: initkfs
@@ -17,9 +17,9 @@ class ApplicationUnit : LoggableUnit
         Context _context;
     }
 
-    this(Logger logger, Config config, Context context) pure @safe
+    this(Logging logging, Config config, Context context) pure @safe
     {
-        super(logger);
+        super(logging);
         import std.exception : enforce;
 
         enforce(config, "Config must not be null");
@@ -29,9 +29,9 @@ class ApplicationUnit : LoggableUnit
         this._context = context;
     }
 
-    this(const Logger logger, const Config config, const Context context) const pure @safe
+    this(const Logging logging, const Config config, const Context context) const pure @safe
     {
-        super(logger);
+        super(logging);
         import std.exception : enforce;
 
         enforce(config, "Config for constant object must not be null");
@@ -41,9 +41,9 @@ class ApplicationUnit : LoggableUnit
         this._context = context;
     }
 
-    this(immutable Logger logger, immutable Config config, immutable Context context) immutable pure @safe
+    this(immutable Logging logging, immutable Config config, immutable Context context) immutable pure @safe
     {
-        super(logger);
+        super(logging);
         import std.exception : enforce;
 
         enforce(config, "Config for immutable object must not be null");

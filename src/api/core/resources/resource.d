@@ -2,7 +2,7 @@ module api.core.resources.resource;
 
 import api.core.components.units.services.loggable_unit : LoggableUnit;
 
-import std.logger : Logger;
+import api.core.loggers.logging : Logging;
 import std.typecons : Nullable;
 
 class Resource : LoggableUnit
@@ -16,15 +16,15 @@ class Resource : LoggableUnit
 
     string delegate(string) resourceDirPathResolver;
 
-    this(Logger logger, string resourcesDir = null) pure @safe
+    this(Logging logging, string resourcesDir = null) pure @safe
     {
-        super(logger);
+        super(logging);
         this._resourcesDir = resourcesDir;
     }
 
-    this(const Logger logger, const string resourcesDir = null) const pure @safe
+    this(const Logging logging, const string resourcesDir = null) const pure @safe
     {
-        super(logger);
+        super(logging);
         this._resourcesDir = resourcesDir;
     }
 

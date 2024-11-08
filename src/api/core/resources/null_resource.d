@@ -1,13 +1,12 @@
 module api.core.resources.null_resource;
 
 import api.core.resources.resource : Resource;
-
-import std.logger : NullLogger;
+import api.core.loggers.null_logging: NullLogging;
 
 class NullResource : Resource
 {
     this() @safe
     {
-        super(new NullLogger);
+        super(new NullLogging);
     }
 }

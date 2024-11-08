@@ -2,11 +2,13 @@ module api.core.components.uni_component;
 
 import api.core.components.units.simple_unit : SimpleUnit;
 import api.core.components.uda : Service;
-import api.core.configs.config : Config;
-import api.core.clis.cli : Cli;
 import api.core.contexts.context : Context;
 import api.core.contexts.apps.app_context : AppContext;
 import api.core.contexts.platforms.platform_context : PlatformContext;
+import api.core.loggers.logging : Logging;
+
+import api.core.configs.config : Config;
+import api.core.clis.cli : Cli;
 import api.core.supports.support : Support;
 import api.core.resources.resource : Resource;
 import api.core.apps.caps.cap_core : CapCore;
@@ -14,7 +16,7 @@ import api.core.events.bus.event_bus : EventBus;
 import api.core.locators.service_locator : ServiceLocator;
 import api.core.mem.allocator : Allocator;
 
-import std.logger.core : Logger;
+import std.logger : Logger;
 
 /**
  * Authors: initkfs
@@ -40,7 +42,7 @@ class UniComponent : SimpleUnit
     protected
     {
         @Service Context _context;
-        @Service Logger _logger;
+        @Service Logging _logging;
         @Service Config _config;
         @Service Allocator _alloc;
         @Service Cli _cli;
@@ -229,25 +231,27 @@ class UniComponent : SimpleUnit
     const(AppContext) appContext() pure @safe => context.appContext;
     const(PlatformContext) platformContext() pure @safe => context.platformContext;
 
-    bool hasLogger() const nothrow pure @safe
+    bool hasLogging() const nothrow pure @safe
     {
-        return _logger !is null;
+        return _logging !is null;
     }
 
-    inout(Logger) logger() inout nothrow pure @safe
-    out (_logger; _logger !is null)
+    inout(Logging) logging() inout nothrow pure @safe
+    out (_logging; _logging !is null)
     {
-        return _logger;
+        return _logging;
     }
 
-    void logger(Logger logger) pure @safe
+    void logging(Logging logging) pure @safe
     {
         import std.exception : enforce;
 
-        enforce(logger !is null, "Logger must not be null");
-        _logger = logger;
+        enforce(logging !is null, "Logging must not be null");
+        _logging = logging;
 
     }
+
+    inout(Logger) logger() inout nothrow pure @safe => logging.logger;
 
     bool hasConfig() const nothrow pure @safe
     {

@@ -1,6 +1,7 @@
 module api.core.components.null_uni_component;
 
 import api.core.components.uni_component : UniComponent;
+import api.core.loggers.null_logging: NullLogging;
 import api.core.contexts.null_context : NullContext;
 import api.core.configs.null_config : NullConfig;
 import api.core.clis.null_cli : NullCli;
@@ -12,7 +13,6 @@ import api.core.mem.mallocator: Mallocator;
 
 import api.core.apps.caps.cap_core : CapCore;
 
-import std.logger.nulllogger : NullLogger;
 
 /**
  * Authors: initkfs
@@ -23,7 +23,7 @@ class NullUniComponent : UniComponent
     this()
     {
         _context = new NullContext;
-        _logger = new NullLogger;
+        _logging = new NullLogging;
         _config = new NullConfig;
         //TODO NullAllocator?
         _alloc = new Mallocator;

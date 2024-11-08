@@ -7,7 +7,7 @@ import api.dm.com.graphics.com_font : ComFont, ComFontHinting;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.com.graphics.com_texture : ComTexture;
 
-import std.logger.core : Logger;
+import api.core.loggers.logging : Logging;
 import std.string : toStringz;
 
 /**
@@ -20,9 +20,9 @@ class Font : LoggableUnit
         ComFont font;
     }
 
-    this(Logger logger, ComFont font)
+    this(Logging logging, ComFont font)
     {
-        super(logger);
+        super(logging);
         this.font = font;
     }
 

@@ -17,7 +17,7 @@ import api.math.flip : Flip;
 import api.math.geom2.rect2 : Rect2d;
 import api.math.geom2.line2 : Line2d;
 
-import std.logger.core : Logger;
+import api.core.loggers.logging : Logging;
 import std.conv : to;
 
 import api.dm.com.graphics.com_texture : ComTexture;
@@ -50,9 +50,9 @@ class Graphics : LoggableUnit
     ProviderFactory!ComSurface comSurfaceProvider;
     ProviderFactory!ComImage comImageProvider;
 
-    this(Logger logger, ComRenderer renderer, Theme theme)
+    this(Logging logging, ComRenderer renderer, Theme theme)
     {
-        super(logger);
+        super(logging);
 
         import std.exception : enforce;
 

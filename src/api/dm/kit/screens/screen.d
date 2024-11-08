@@ -3,7 +3,7 @@ module api.dm.kit.screens.screen;
 import api.dm.com.graphics.com_screen : ComScreen;
 import api.dm.kit.screens.single_screen : SingleScreen;
 
-import std.logger.core : Logger;
+import api.core.loggers.logging : Logging;
 
 /**
  * Authors: initkfs
@@ -13,15 +13,15 @@ class Screen
     private
     {
         ComScreen nativeScreen;
-        Logger logger;
+        Logging logging;
     }
 
-    this(Logger logger, ComScreen screen)
+    this(Logging logging, ComScreen screen)
     {
         assert(screen);
-        assert(logger);
+        assert(logging);
         nativeScreen = screen;
-        this.logger = logger;
+        this.logging = logging;
     }
 
     size_t count()
@@ -29,7 +29,7 @@ class Screen
         size_t screenCount;
         if (const err = nativeScreen.getCount(screenCount))
         {
-            logger.error(err.toString);
+            logging.logger.error(err.toString);
             return 0;
         }
         return screenCount;
@@ -42,7 +42,7 @@ class Screen
             //TODO Nullable!?
             throw new Exception("Not found screen");
         }
-        return SingleScreen(logger, nativeScreen, 0);
+        return SingleScreen(logging, nativeScreen, 0);
     }
 
     SingleScreen[] all()
@@ -51,7 +51,7 @@ class Screen
         SingleScreen[] screens;
         foreach (i; 0 .. screenCount)
         {
-            screens ~= SingleScreen(logger, nativeScreen, i);
+            screens ~= SingleScreen(logging, nativeScreen, i);
         }
 
         return screens;

@@ -8,7 +8,7 @@ import api.core.configs.config : Config;
 
 import Mem = api.core.utils.mem;
 
-import std.logger.core : Logger;
+import api.core.loggers.logging : Logging;
 
 /**
  * Authors: initkfs
@@ -35,9 +35,9 @@ class Platform : ApplicationUnit
         }
     }
 
-    this(ComSystem system, Logger logger, Config config, Context context, ulong delegate() tickProvider) pure @safe
+    this(ComSystem system, Logging logging, Config config, Context context, ulong delegate() tickProvider) pure @safe
     {
-        super(logger, config, context);
+        super(logging, config, context);
 
         assert(system);
         this.system = system;
@@ -108,7 +108,7 @@ class Platform : ApplicationUnit
         {
             try
             {
-                assert(logger);
+                assert(logging);
                 logger.error(e);
 
             }

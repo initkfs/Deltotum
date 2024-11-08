@@ -2,7 +2,7 @@ module api.core.locators.service_locator;
 
 import api.core.components.units.services.loggable_unit : LoggableUnit;
 
-import std.logger.core : Logger;
+import api.core.loggers.logging : Logging;
 import std.variant;
 
 /**
@@ -16,9 +16,9 @@ class ServiceLocator : LoggableUnit
         Variant[string] services;
     }
 
-    this(Logger logger) pure @safe
+    this(Logging logging) pure @safe
     {
-        super(logger);
+        super(logging);
     }
 
     bool put(string key, Variant value)
@@ -72,13 +72,13 @@ class ServiceLocator : LoggableUnit
 
 unittest
 {
-    import std.logger.nulllogger;
+    import api.core.loggers.null_logging: NullLogging;
 
     import std.exception : assertThrown;
 
     string key1 = "key";
 
-    auto locator = new ServiceLocator(new NullLogger());
+    auto locator = new ServiceLocator(new NullLogging());
     Variant a;
     assertThrown(locator.put(key1, a));
     a = 5;
