@@ -9,7 +9,7 @@ import api.core.resources.null_resource : NullResource;
 import api.core.supports.null_support : NullSupport;
 import api.core.events.bus.null_event_bus : NullEventBus;
 import api.core.locators.null_service_locator : NullServiceLocator;
-import api.core.mem.mallocator: Mallocator;
+import api.core.mem.null_memory: NullMemory;
 
 import api.core.apps.caps.cap_core : CapCore;
 
@@ -26,7 +26,7 @@ class NullUniComponent : UniComponent
         _logging = new NullLogging;
         _configs = new NullConfiguration;
         //TODO NullAllocator?
-        _alloc = new Mallocator;
+        _memory = new NullMemory;
         _cli = new NullCli;
         _resource = new NullResource;
         _support = new NullSupport;

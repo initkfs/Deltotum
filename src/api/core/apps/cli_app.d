@@ -18,8 +18,9 @@ import api.core.apps.caps.cap_core : CapCore;
 import api.core.events.bus.event_bus : EventBus;
 import api.core.events.bus.core_bus_events : CoreBusEvents;
 import api.core.locators.service_locator : ServiceLocator;
-import api.core.mem.allocator : Allocator;
-import api.core.mem.mallocator : Mallocator;
+import api.core.mem.memory : Memory;
+import api.core.mem.allocs.allocator : Allocator;
+import api.core.mem.allocs.mallocator : Mallocator;
 import api.core.supports.errors.err_status : ErrStatus;
 
 import CoreEnvKeys = api.core.core_env_keys;
@@ -133,16 +134,16 @@ class CliApp : SimpleUnit
             assert(uservices.logging);
             version (EventBusCoreEvents)
             {
-                uservices.eventBus.fire(CoreBusEvents.build_logger, uservices.logging);
+                uservices.eventBus.fire(CoreBusEvents.build_logging, uservices.logging);
             }
 
-            uservices.alloc = createAllocator(uservices.logging, uservices.config, uservices
+            uservices.memory = createMemory(uservices.logging, uservices.config, uservices
                     .context);
-            assert(uservices.alloc);
-            uservices.logger.trace("Service allocator built");
+            assert(uservices.memory);
+            uservices.logger.trace("Service memory built");
             version (EventBusCoreEvents)
             {
-                uservices.eventBus.fire(CoreBusEvents.build_allocator, uservices.alloc);
+                uservices.eventBus.fire(CoreBusEvents.build_memory, uservices.alloc);
             }
 
             uservices.resource = createResource(uservices.logging, uservices.config, uservices
@@ -633,6 +634,17 @@ class CliApp : SimpleUnit
     Allocator createAllocator(Logging logging, Config config, Context context)
     {
         return newMallocator;
+    }
+
+    Memory newMemory(Allocator allocator)
+    {
+        return new Memory(allocator);
+    }
+
+    Memory createMemory(Logging logging, Config config, Context context)
+    {
+        auto alloc = createAllocator(logging, config, context);
+        return newMemory(alloc);
     }
 
     protected Cli createCli(string[] args)

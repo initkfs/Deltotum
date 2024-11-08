@@ -1,6 +1,6 @@
-module api.core.mem.mallocator;
+module api.core.mem.allocs.mallocator;
 
-import api.core.mem.unique_ptr : UniqPtr;
+import api.core.mem.ptrs.unique_ptr : UniqPtr;
 
 /**
  * Authors: initkfs
@@ -50,7 +50,7 @@ version (D_BetterC)
 }
 else
 {
-    import api.core.mem.allocator : uniq, Allocator, AllocFuncType, FreeFuncType, ReallocFuncType;
+    import api.core.mem.allocs.allocator : uniq, Allocator, AllocFuncType, FreeFuncType, ReallocFuncType;
 
     class Mallocator : Allocator
     {
@@ -65,7 +65,7 @@ else
 
 unittest
 {
-    import MemAllocator = api.core.mem.allocator;
+    import MemAllocator = api.core.mem.allocs.allocator;
 
     MemAllocator.allocFunPtr = &allocate;
     MemAllocator.reallocFunPtr = &reallocate;

@@ -1,9 +1,9 @@
 /**
  * Authors: initkfs
  */
-module api.core.mem.unique_ptr;
+module api.core.mem.ptrs.unique_ptr;
 
-import api.core.mem.allocator : FreeFuncType, ReallocFuncType;
+import api.core.mem.allocs.allocator : FreeFuncType, ReallocFuncType;
 
 struct UniqPtr(T,
     FreeFunc = FreeFuncType,

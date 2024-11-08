@@ -15,7 +15,8 @@ import api.core.resources.resource : Resource;
 import api.core.apps.caps.cap_core : CapCore;
 import api.core.events.bus.event_bus : EventBus;
 import api.core.locators.service_locator : ServiceLocator;
-import api.core.mem.allocator : Allocator;
+import api.core.mem.memory: Memory;
+import api.core.mem.allocs.allocator : Allocator;
 
 import std.logger : Logger;
 
@@ -45,7 +46,7 @@ class UniComponent : SimpleUnit
         @Service Context _context;
         @Service Logging _logging;
         @Service Configuration _configs;
-        @Service Allocator _alloc;
+        @Service Memory _memory;
         @Service Cli _cli;
         @Service Resource _resource;
         @Service Support _support;
@@ -275,24 +276,26 @@ class UniComponent : SimpleUnit
 
     inout(Config) config() inout nothrow pure @safe => configs.config;
 
-    bool hasAlloc() const nothrow pure @safe
+    bool hasMemory() const nothrow pure @safe
     {
-        return _alloc !is null;
+        return _memory !is null;
     }
 
-    inout(Allocator) alloc() inout nothrow pure @safe
-    out (_alloc; _alloc !is null)
+    inout(Memory) memory() inout nothrow pure @safe
+    out (_memory; _memory !is null)
     {
-        return _alloc;
+        return _memory;
     }
 
-    void alloc(Allocator newAlloc) pure @safe
+    void memory(Memory newMemory) pure @safe
     {
         import std.exception : enforce;
 
-        enforce(newAlloc !is null, "Service allocator must not be null");
-        _alloc = newAlloc;
+        enforce(newMemory !is null, "Service memory must not be null");
+        _memory = newMemory;
     }
+
+    inout(Allocator) alloc() inout nothrow pure @safe => memory.alloc;
 
     bool hasCli() const nothrow pure @safe
     {

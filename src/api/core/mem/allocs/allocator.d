@@ -1,6 +1,6 @@
-module api.core.mem.allocator;
+module api.core.mem.allocs.allocator;
 
-import api.core.mem.unique_ptr : UniqPtr;
+import api.core.mem.ptrs.unique_ptr : UniqPtr;
 
 /**
  * Authors: initkfs
