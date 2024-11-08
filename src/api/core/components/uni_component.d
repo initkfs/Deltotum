@@ -8,7 +8,7 @@ import api.core.contexts.platforms.platform_context : PlatformContext;
 import api.core.loggers.loggers : Logging;
 
 import api.core.configs.configs : Configuration;
-import api.core.configs.config : Config;
+import api.core.configs.keyvalues.config : Config;
 import api.core.clis.cli : Cli;
 import api.core.supports.support : Support;
 import api.core.resources.resource : Resource;

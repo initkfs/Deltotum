@@ -1,6 +1,6 @@
-module api.core.configs.aa_const_config;
+module api.core.configs.keyvalues.aa_const_config;
 
-import api.core.configs.config : Config;
+import api.core.configs.keyvalues.config : Config;
 import api.core.configs.exceptions.config_value_incorrect_exception : ConfigValueIncorrectException;
 import api.core.configs.exceptions.config_value_notfound_exception : ConfigValueNotFoundException;
 

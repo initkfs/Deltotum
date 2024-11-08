@@ -1,7 +1,7 @@
 module api.core.configs.configs;
 
 import api.core.components.component_service : ComponentService;
-import api.core.configs.config : Config;
+import api.core.configs.keyvalues.config : Config;
 
 import std.typecons : Nullable;
 
@@ -36,7 +36,7 @@ unittest
 {
     import std.traits : isMutable;
 
-    import api.core.configs.null_config : NullConfig;
+    import api.core.configs.keyvalues.null_config : NullConfig;
 
     auto conf1 = new Configuration(new NullConfig);
     assert(isMutable!(typeof(conf1.config)));

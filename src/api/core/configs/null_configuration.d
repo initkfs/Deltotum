@@ -1,7 +1,7 @@
 module api.core.configs.null_configuration;
 
 import api.core.configs.configs : Configuration;
-import api.core.configs.null_config : NullConfig;
+import api.core.configs.keyvalues.null_config : NullConfig;
 
 /**
  * Authors: initkfs

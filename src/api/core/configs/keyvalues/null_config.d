@@ -1,6 +1,6 @@
-module api.core.configs.null_config;
+module api.core.configs.keyvalues.null_config;
 
-import api.core.configs.config : Config;
+import api.core.configs.keyvalues.config : Config;
 
 import std.typecons : Nullable;
 

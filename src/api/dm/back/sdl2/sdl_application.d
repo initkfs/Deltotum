@@ -5,7 +5,7 @@ version(SdlBackend):
 // dfmt on
 
 import api.core.loggers.loggers: Logging;
-import api.core.configs.config : Config;
+import api.core.configs.keyvalues.config : Config;
 import api.core.contexts.context : Context;
 import api.core.apps.app_init_ret : AppInitRet;
 import api.core.utils.factories : ProviderFactory;

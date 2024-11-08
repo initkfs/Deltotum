@@ -2,7 +2,7 @@ module api.dm.kit.graphics.themes.factories.theme_from_config_factory;
 
 import api.core.components.units.services.application_unit : ApplicationUnit;
 import api.core.contexts.context : Context;
-import api.core.configs.config : Config;
+import api.core.configs.keyvalues.config : Config;
 import api.core.resources.resource: Resource;
 import api.dm.kit.graphics.themes.theme : Theme;
 import api.dm.kit.assets.fonts.font : Font;

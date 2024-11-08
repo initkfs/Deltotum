@@ -2,7 +2,7 @@ module api.core.components.units.services.application_unit;
 
 import api.core.components.units.services.loggable_unit : LoggableUnit;
 import api.core.contexts.context : Context;
-import api.core.configs.config : Config;
+import api.core.configs.keyvalues.config : Config;
 
 import api.core.loggers.loggers : Logging;
 

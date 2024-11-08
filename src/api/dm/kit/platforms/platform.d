@@ -4,7 +4,7 @@ import api.dm.com.platforms.com_system : ComSystem;
 import api.core.components.units.services.application_unit : ApplicationUnit;
 import api.core.components.units.services.loggable_unit : LoggableUnit;
 import api.core.contexts.context : Context;
-import api.core.configs.config : Config;
+import api.core.configs.keyvalues.config : Config;
 
 import Mem = api.core.utils.mem;
 

@@ -6,7 +6,7 @@ import api.core.apps.app_init_ret : AppInitRet;
 import api.core.components.uni_component : UniComponent;
 import api.core.loggers.loggers : Logging;
 import api.core.configs.configs : Configuration;
-import api.core.configs.config : Config;
+import api.core.configs.keyvalues.config : Config;
 import api.core.clis.cli : Cli;
 import api.core.clis.printers.cli_printer : CliPrinter;
 import api.core.contexts.platforms.platform_context : PlatformContext;
@@ -319,7 +319,7 @@ class CliApp : SimpleUnit
         import std.algorithm.searching : startsWith;
         import std.path : extension;
 
-        import api.core.configs.properties.property_config : PropertyConfig;
+        import api.core.configs.keyvalues.properties.property_config : PropertyConfig;
 
         string ext = configFile.extension;
         if (ext.startsWith(".") && ext.length > 1)
@@ -340,14 +340,14 @@ class CliApp : SimpleUnit
 
     Config newConfigAggregator(Config[] forConfigs)
     {
-        import api.core.configs.config_aggregator : ConfigAggregator;
+        import api.core.configs.keyvalues.config_aggregator : ConfigAggregator;
 
         return new ConfigAggregator(forConfigs);
     }
 
     Config newAAConstConfig()
     {
-        import api.core.configs.aa_const_config : AAConstConfig;
+        import api.core.configs.keyvalues.aa_const_config : AAConstConfig;
         import std.process : environment;
 
         auto envAA = environment.toAA;
@@ -417,8 +417,8 @@ class CliApp : SimpleUnit
             }
             else
             {
-                import api.core.configs.properties.property_config : PropertyConfig;
-                import api.core.configs.config_aggregator : ConfigAggregator;
+                import api.core.configs.keyvalues.properties.property_config : PropertyConfig;
+                import api.core.configs.keyvalues.config_aggregator : ConfigAggregator;
                 import std.file : dirEntries, SpanMode;
                 import std.algorithm.iteration : filter;
                 import std.algorithm.searching : endsWith;

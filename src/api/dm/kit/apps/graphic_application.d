@@ -1,7 +1,7 @@
 module api.dm.kit.apps.graphic_application;
 
 import api.dm.com.graphics.com_font : ComFont;
-import api.core.configs.config : Config;
+import api.core.configs.keyvalues.config : Config;
 import api.core.contexts.context : Context;
 import api.core.apps.app_init_ret : AppInitRet;
 import api.core.apps.cli_app : CliApp;

@@ -1,6 +1,6 @@
-module api.core.configs.config_aggregator;
+module api.core.configs.keyvalues.config_aggregator;
 
-import api.core.configs.config : Config;
+import api.core.configs.keyvalues.config : Config;
 import api.core.configs.exceptions.config_value_incorrect_exception : ConfigValueIncorrectException;
 import api.core.configs.exceptions.config_value_notfound_exception : ConfigValueNotFoundException;
 
@@ -266,7 +266,7 @@ unittest
     import std.exception : assertThrown;
 
     //TODO add simple implementation
-    import api.core.configs.aa_const_config : AAConstConfig;
+    import api.core.configs.keyvalues.aa_const_config : AAConstConfig;
 
     enum keyName = "key";
 

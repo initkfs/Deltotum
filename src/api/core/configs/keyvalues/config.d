@@ -1,4 +1,4 @@
-module api.core.configs.config;
+module api.core.configs.keyvalues.config;
 
 import api.core.configs.exceptions.config_value_incorrect_exception : ConfigValueIncorrectException;
 import api.core.configs.exceptions.config_value_notfound_exception : ConfigValueNotFoundException;
