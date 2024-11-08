@@ -15,14 +15,14 @@ import api.dm.kit.assets.fonts.font : Font;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.sprites.textures.texture : Texture;
-import api.core.resources.resource : Resource;
+import api.core.resources.locals.local_resources: LocalResources;
 import api.dm.kit.assets.fonts.font_cache : FontCache;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 
 /**
  * Authors: initkfs
  */
-class Asset : Resource
+class Asset : LocalResources
 {
     ComFont delegate() comFontProvider;
 
@@ -82,7 +82,7 @@ class Asset : Resource
         {
             import std.format : format;
 
-            throw new Exception(format("Not found font file %s in resource dir %s", fontFile, defaultFontResourceDir));
+            throw new Exception(format("Not found font file %s in resources dir %s", fontFile, defaultFontResourceDir));
         }
         return mustBeFontPath.get;
     }
@@ -232,7 +232,6 @@ class Asset : Resource
     override void dispose()
     {
         super.dispose;
-
         //TODO check if font\fontBitmap in fontCache
         foreach (cache; fontCaches)
         {

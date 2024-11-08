@@ -1,11 +1,11 @@
-module api.core.resources.resource;
+module api.core.resources.locals.local_resources;
 
 import api.core.components.units.services.loggable_unit : LoggableUnit;
 
 import api.core.loggers.logging : Logging;
 import std.typecons : Nullable;
 
-class Resource : LoggableUnit
+class LocalResources : LoggableUnit
 {
     protected
     {
@@ -23,6 +23,12 @@ class Resource : LoggableUnit
     }
 
     this(const Logging logging, const string resourcesDir = null) const pure @safe
+    {
+        super(logging);
+        this._resourcesDir = resourcesDir;
+    }
+
+    this(immutable Logging logging, immutable string resourcesDir = null) immutable pure @safe
     {
         super(logging);
         this._resourcesDir = resourcesDir;

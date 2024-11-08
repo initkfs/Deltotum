@@ -5,7 +5,7 @@ import api.core.configs.keyvalues.config : Config;
 import api.core.contexts.context : Context;
 import api.core.apps.app_init_ret : AppInitRet;
 import api.core.apps.cli_app : CliApp;
-import api.core.resources.resource : Resource;
+import api.core.resources.resourcing : Resourcing;
 import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.dm.kit.components.window_component : WindowComponent;
 import api.core.components.uni_component : UniComponent;
@@ -105,7 +105,7 @@ abstract class GraphicApplication : CliApp
         {
             auto newIconPack = new IconPack;
             //TODO config
-            auto mustBeIconPath = uservices.resource.fileResource("icons/packs/ionicons.txt");
+            auto mustBeIconPath = uservices.reslocal.fileResource("icons/packs/ionicons.txt");
             if (mustBeIconPath.isNull)
             {
                 throw new Exception("Not found icons");
@@ -343,7 +343,7 @@ abstract class GraphicApplication : CliApp
         return new Graphics(logging, renderer, theme);
     }
 
-    Theme createTheme(Logging logging, Config config, Context context, Resource resource)
+    Theme createTheme(Logging logging, Config config, Context context, Resourcing resources)
     {
         //TODO null?
         IconPack pack = iconPack.isNull ? null : iconPack.get;
@@ -351,7 +351,7 @@ abstract class GraphicApplication : CliApp
         import api.dm.kit.graphics.themes.theme : Theme;
         import api.dm.kit.graphics.themes.factories.theme_from_config_factory : ThemeFromConfigFactory;
 
-        auto themeLoader = new ThemeFromConfigFactory(logging, config, context, resource, pack);
+        auto themeLoader = new ThemeFromConfigFactory(logging, config, context, resources, pack);
 
         auto theme = themeLoader.createTheme;
         return theme;
@@ -367,7 +367,7 @@ abstract class GraphicApplication : CliApp
         import std.file : getcwd, exists, isDir, isFile;
         import std.path : buildPath, dirName;
 
-        auto mustBeResDir = uservices.resource.resourcesDir;
+        auto mustBeResDir = uservices.reslocal.resourcesDir;
 
         import api.dm.kit.assets.asset : Asset;
         import api.dm.kit.assets.fonts.font : Font;

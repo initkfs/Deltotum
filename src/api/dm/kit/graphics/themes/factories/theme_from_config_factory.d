@@ -3,7 +3,7 @@ module api.dm.kit.graphics.themes.factories.theme_from_config_factory;
 import api.core.components.units.services.application_unit : ApplicationUnit;
 import api.core.contexts.context : Context;
 import api.core.configs.keyvalues.config : Config;
-import api.core.resources.resource: Resource;
+import api.core.resources.resourcing: Resourcing;
 import api.dm.kit.graphics.themes.theme : Theme;
 import api.dm.kit.assets.fonts.font : Font;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -20,22 +20,22 @@ class ThemeFromConfigFactory : ApplicationUnit
     private
     {
         IconPack iconPack;
-        Resource resource;
+        Resourcing resources;
     }
-    this(Logging logging, Config config, Context context, Resource resource, IconPack iconPack) pure @safe
+    this(Logging logging, Config config, Context context, Resourcing resources, IconPack iconPack) pure @safe
     {
         super(logging, config, context);
         //TODO check null
         this.iconPack = iconPack;
-        this.resource = resource;
+        this.resources = resources;
     }
 
     Theme createTheme()
     {
         auto theme = new Theme(iconPack);
 
-        //TODO resource
-        if (!resource.resourcesDir.isNull)
+        //TODO resources
+        if (!resources.local.resourcesDir.isNull)
         {
             //TODO rewrite
             theme.colorPrimary = fromStringColor(config.getString("themeColorPrimary").get);

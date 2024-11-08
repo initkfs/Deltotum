@@ -14,7 +14,8 @@ import api.core.contexts.platforms.platform_context : PlatformContext;
 import api.core.contexts.context : Context;
 import api.core.supports.support : Support;
 import api.core.contexts.apps.app_context : AppContext;
-import api.core.resources.resource : Resource;
+import api.core.resources.locals.local_resources: LocalResources;
+import api.core.resources.resourcing : Resourcing;
 import api.core.apps.caps.cap_core : CapCore;
 import api.core.events.bus.event_bus : EventBus;
 import api.core.events.bus.core_bus_events : CoreBusEvents;
@@ -147,13 +148,13 @@ class CliApp : SimpleUnit
                 uservices.eventBus.fire(CoreBusEvents.build_memory, uservices.alloc);
             }
 
-            uservices.resource = createResource(uservices.logging, uservices.config, uservices
+            uservices.resources = createResource(uservices.logging, uservices.config, uservices
                     .context);
-            assert(uservices.resource);
+            assert(uservices.resources);
             uservices.logger.trace("Resources service built");
             version (EventBusCoreEvents)
             {
-                uservices.eventBus.fire(CoreBusEvents.build_resource, uservices.resource);
+                uservices.eventBus.fire(CoreBusEvents.build_resource, uservices.resources);
             }
 
             uservices.locator = createLocator(uservices.logging, uservices.config, uservices
@@ -543,7 +544,7 @@ class CliApp : SimpleUnit
         return new Support(errStatus);
     }
 
-    protected Resource createResource(Logging logging, Config config, Context context)
+    protected Resourcing createResource(Logging logging, Config config, Context context)
     {
         assert(logging);
         assert(config);
@@ -556,7 +557,7 @@ class CliApp : SimpleUnit
         if (mustBeResDir.length == 0)
         {
             logging.logger.infof(
-                "Resource path is empty, empty resource manager created");
+                "Resourcing path is empty, empty resources manager created");
             //WARNING return
             return newResource(logging);
         }
@@ -589,21 +590,27 @@ class CliApp : SimpleUnit
                 .isDir)
             {
                 logging.logger.warning(
-                    "Resource directory path relative to the data does not exist or is not a directory: ", mustBeResDir);
+                    "Resourcing directory path relative to the data does not exist or is not a directory: ", mustBeResDir);
                 //WARNING return
                 return newResource(logging);
             }
         }
 
-        auto resource = newResource(logging, mustBeResDir);
+        auto resources = newResource(logging, mustBeResDir);
         logging.logger.trace(
             "Create resources from directory: ", mustBeResDir);
-        return resource;
+        return resources;
     }
 
-    Resource newResource(Logging logging, string resourcesDir = null)
+    LocalResources newLocalResources(Logging logging, string resourcesDir = null)
     {
-        return new Resource(logging, resourcesDir);
+        return new LocalResources(logging, resourcesDir);
+    }
+
+    Resourcing newResource(Logging logging, string resourcesDir = null)
+    {
+        auto locals = newLocalResources(logging, resourcesDir);
+        return new Resourcing(locals);
     }
 
     protected EventBus createEventBus(Context context)

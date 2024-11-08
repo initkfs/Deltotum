@@ -5,7 +5,7 @@ import api.core.loggers.null_logging: NullLogging;
 import api.core.contexts.null_context : NullContext;
 import api.core.configs.null_configuration: NullConfiguration;
 import api.core.clis.null_cli : NullCli;
-import api.core.resources.null_resource : NullResource;
+import api.core.resources.null_resourcing : NullResourcing;
 import api.core.supports.null_support : NullSupport;
 import api.core.events.bus.null_event_bus : NullEventBus;
 import api.core.locators.null_service_locator : NullServiceLocator;
@@ -28,7 +28,7 @@ class NullUniComponent : UniComponent
         //TODO NullAllocator?
         _memory = new NullMemory;
         _cli = new NullCli;
-        _resource = new NullResource;
+        _resources = new NullResourcing;
         _support = new NullSupport;
         _capCore = new CapCore;
         _eventBus = new NullEventBus;
