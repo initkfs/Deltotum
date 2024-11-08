@@ -18,10 +18,11 @@ import api.core.resources.locals.local_resources : LocalResources;
 import api.core.resources.resourcing : Resourcing;
 import api.core.caps.cap : Cap;
 import api.core.caps.cap_core : CapCore;
-import api.core.events.event_bridge: EventBridge;
+import api.core.events.event_bridge : EventBridge;
 import api.core.events.bus.event_bus : EventBus;
 import api.core.events.bus.core_bus_events : CoreBusEvents;
-import api.core.locators.service_locator : ServiceLocator;
+import api.core.depends.dep : Dep;
+import api.core.depends.locators.service_locator : ServiceLocator;
 import api.core.mem.memory : Memory;
 import api.core.mem.allocs.allocator : Allocator;
 import api.core.mem.allocs.mallocator : Mallocator;
@@ -145,28 +146,28 @@ class CliApp : SimpleUnit
             uservices.memory = createMemory(uservices.logging, uservices.config, uservices
                     .context);
             assert(uservices.memory);
-            uservices.logger.trace("Service memory built");
+            uservices.logger.trace("Memory service built");
             version (EventBusCoreEvents)
             {
                 uservices.eventBus.fire(CoreBusEvents.build_memory, uservices.alloc);
             }
 
-            uservices.resources = createResource(uservices.logging, uservices.config, uservices
+            uservices.resources = createResourcing(uservices.logging, uservices.config, uservices
                     .context);
             assert(uservices.resources);
-            uservices.logger.trace("Resources service built");
+            uservices.logger.trace("Resourcing service built");
             version (EventBusCoreEvents)
             {
-                uservices.eventBus.fire(CoreBusEvents.build_resource, uservices.resources);
+                uservices.eventBus.fire(CoreBusEvents.build_resourcing, uservices.resources);
             }
 
-            uservices.locator = createLocator(uservices.logging, uservices.config, uservices
+            uservices.dep = createDep(uservices.logging, uservices.config, uservices
                     .context);
-            assert(uservices.locator);
-            uservices.logger.trace("Service locator built");
+            assert(uservices.dep);
+            uservices.logger.trace("Dependency service built");
             version (EventBusCoreEvents)
             {
-                uservices.eventBus.fire(CoreBusEvents.build_locator, uservices.locator);
+                uservices.eventBus.fire(CoreBusEvents.build_dep, uservices.locator);
             }
 
             uservices.isBuilt = true;
@@ -553,7 +554,7 @@ class CliApp : SimpleUnit
         return new Support(errStatus);
     }
 
-    protected Resourcing createResource(Logging logging, Config config, Context context)
+    protected Resourcing createResourcing(Logging logging, Config config, Context context)
     {
         assert(logging);
         assert(config);
@@ -652,6 +653,17 @@ class CliApp : SimpleUnit
         Logging logging)
     {
         return new ServiceLocator(logging);
+    }
+
+    Dep createDep(Logging logging, Config config, Context context)
+    {
+        auto locator = createLocator(logging, config, context);
+        return newDep(locator);
+    }
+
+    Dep newDep(ServiceLocator locator)
+    {
+        return new Dep(locator);
     }
 
     Mallocator newMallocator()

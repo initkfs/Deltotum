@@ -17,7 +17,8 @@ import api.core.caps.cap : Cap;
 import api.core.caps.cap_core : CapCore;
 import api.core.events.event_bridge : EventBridge;
 import api.core.events.bus.event_bus : EventBus;
-import api.core.locators.service_locator : ServiceLocator;
+import api.core.depends.dep : Dep;
+import api.core.depends.locators.service_locator : ServiceLocator;
 import api.core.mem.memory : Memory;
 import api.core.mem.allocs.allocator : Allocator;
 
@@ -55,7 +56,7 @@ class UniComponent : SimpleUnit
         @Service Support _support;
         @Service Cap _cap;
         @Service EventBridge _eventBridge;
-        @Service ServiceLocator _locator;
+        @Service Dep _dep;
     }
 
     void build(UniComponent uniComponent)
@@ -401,22 +402,24 @@ class UniComponent : SimpleUnit
 
     inout(EventBus) eventBus() inout nothrow pure @safe => eventBridge.eventBus;
 
-    bool hasLocator() const nothrow pure @safe
+    bool hasDep() const nothrow pure @safe
     {
-        return _locator !is null;
+        return _dep !is null;
     }
 
-    inout(ServiceLocator) locator() inout nothrow pure @safe
-    out (_locator; _locator !is null)
+    inout(Dep) dep() inout nothrow pure @safe
+    out (_dep; _dep !is null)
     {
-        return _locator;
+        return _dep;
     }
 
-    void locator(ServiceLocator locator) pure @safe
+    void dep(Dep newDep) pure @safe
     {
         import std.exception : enforce;
 
-        enforce(locator !is null, "Service locator must not be null");
-        _locator = locator;
+        enforce(newDep !is null, "Dependency service must not be null");
+        _dep = newDep;
     }
+
+    inout(ServiceLocator) locator() inout nothrow pure @safe => dep.locator;
 }

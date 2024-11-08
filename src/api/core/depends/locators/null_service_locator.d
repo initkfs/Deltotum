@@ -1,6 +1,6 @@
-module api.core.locators.null_service_locator;
+module api.core.depends.locators.null_service_locator;
 
-import api.core.locators.service_locator : ServiceLocator;
+import api.core.depends.locators.service_locator : ServiceLocator;
 import api.core.loggers.null_logging: NullLogging;
 
 /**

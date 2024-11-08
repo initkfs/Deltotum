@@ -10,9 +10,9 @@ enum CoreBusEvents {
     build_context = "build_context",
     build_configs = "build_configs",
     build_logging = "build_logging",
-    build_resource = "build_resource",
+    build_resourcing = "build_resourcing",
     build_memory = "build_memory",
-    build_locator = "build_locator",
+    build_dep = "build_dep",
 
     build_core_services = "build_core_services"
 }

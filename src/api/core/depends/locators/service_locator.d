@@ -1,4 +1,4 @@
-module api.core.locators.service_locator;
+module api.core.depends.locators.service_locator;
 
 import api.core.components.units.services.loggable_unit : LoggableUnit;
 
