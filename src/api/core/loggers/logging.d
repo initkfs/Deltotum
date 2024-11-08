@@ -1,4 +1,4 @@
-module api.core.loggers.logging;
+module api.core.loggers.loggers;
 
 import api.core.components.component_service : ComponentService;
 

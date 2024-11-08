@@ -23,8 +23,8 @@ class NullUniComponent : UniComponent
     this()
     {
         _context = new NullContext;
-        _logging = new NullLogging;
-        _configuration = new NullConfiguration;
+        _loggers = new NullLogging;
+        _configs = new NullConfiguration;
         //TODO NullAllocator?
         _alloc = new Mallocator;
         _cli = new NullCli;

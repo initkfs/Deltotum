@@ -2,7 +2,7 @@ module api.dm.kit.assets.asset;
 
 import api.core.components.units.services.loggable_unit : LoggableUnit;
 
-import api.core.loggers.logging : Logging;
+import api.core.loggers.loggers : Logging;
 
 import std.path : buildPath, dirName;
 import std.file : exists, isDir, isFile;
@@ -39,9 +39,9 @@ class Asset : Resource
     string defaultImagesResourceDir = "images";
     string defaultFontResourceDir = "fonts";
 
-    this(Logging logging, string assetsDir, ComFont delegate() comFontProvider) pure @safe
+    this(Logging loggers, string assetsDir, ComFont delegate() comFontProvider) pure @safe
     {
-        super(logging, assetsDir);
+        super(loggers, assetsDir);
         import std.exception : enforce;
 
         enforce(comFontProvider, "Font provider must not be null");
@@ -95,7 +95,7 @@ class Asset : Resource
         {
             throw new Exception(err.toString);
         }
-        Font nFont = new Font(logging, comFont);
+        Font nFont = new Font(loggers, comFont);
         nFont.initialize;
         logger.trace("Create new font from ", path);
         return nFont;

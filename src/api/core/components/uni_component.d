@@ -5,9 +5,9 @@ import api.core.components.uda : Service;
 import api.core.contexts.context : Context;
 import api.core.contexts.apps.app_context : AppContext;
 import api.core.contexts.platforms.platform_context : PlatformContext;
-import api.core.loggers.logging : Logging;
+import api.core.loggers.loggers : Logging;
 
-import api.core.configs.configuration : Configuration;
+import api.core.configs.configs : Configuration;
 import api.core.configs.config : Config;
 import api.core.clis.cli : Cli;
 import api.core.supports.support : Support;
@@ -43,8 +43,8 @@ class UniComponent : SimpleUnit
     protected
     {
         @Service Context _context;
-        @Service Logging _logging;
-        @Service Configuration _configuration;
+        @Service Logging _loggers;
+        @Service Configuration _configs;
         @Service Allocator _alloc;
         @Service Cli _cli;
         @Service Resource _resource;
@@ -232,48 +232,48 @@ class UniComponent : SimpleUnit
     const(AppContext) appContext() pure @safe => context.appContext;
     const(PlatformContext) platformContext() pure @safe => context.platformContext;
 
-    bool hasLogging() const nothrow pure @safe
+    bool hasLoggers() const nothrow pure @safe
     {
-        return _logging !is null;
+        return _loggers !is null;
     }
 
-    inout(Logging) logging() inout nothrow pure @safe
-    out (_logging; _logging !is null)
+    inout(Logging) loggers() inout nothrow pure @safe
+    out (_loggers; _loggers !is null)
     {
-        return _logging;
+        return _loggers;
     }
 
-    void logging(Logging logging) pure @safe
-    {
-        import std.exception : enforce;
-
-        enforce(logging !is null, "Logging must not be null");
-        _logging = logging;
-
-    }
-
-    inout(Logger) logger() inout nothrow pure @safe => logging.logger;
-
-    bool hasConfiguration() const nothrow pure @safe
-    {
-        return _configuration !is null;
-    }
-
-    inout(Configuration) configuration() inout nothrow pure @safe
-    out (_configuration; _configuration !is null)
-    {
-        return _configuration;
-    }
-
-    void configuration(Configuration configs) pure @safe
+    void loggers(Logging newLoggers) pure @safe
     {
         import std.exception : enforce;
 
-        enforce(configs !is null, "Configuration must not be null");
-        _configuration = configs;
+        enforce(newLoggers !is null, "Logging must not be null");
+        _loggers = newLoggers;
+
     }
 
-    inout(Config) config() inout nothrow pure @safe => configuration.config;
+    inout(Logger) logger() inout nothrow pure @safe => loggers.logger;
+
+    bool hasConfigs() const nothrow pure @safe
+    {
+        return _configs !is null;
+    }
+
+    inout(Configuration) configs() inout nothrow pure @safe
+    out (_configs; _configs !is null)
+    {
+        return _configs;
+    }
+
+    void configs(Configuration newConfigs) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(newConfigs !is null, "Configuration must not be null");
+        _configs = newConfigs;
+    }
+
+    inout(Config) config() inout nothrow pure @safe => configs.config;
 
     bool hasAlloc() const nothrow pure @safe
     {

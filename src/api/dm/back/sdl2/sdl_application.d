@@ -4,7 +4,7 @@ module api.dm.back.sdl2.sdl_application;
 version(SdlBackend):
 // dfmt on
 
-import api.core.loggers.logging: Logging;
+import api.core.loggers.loggers: Logging;
 import api.core.configs.config : Config;
 import api.core.contexts.context : Context;
 import api.core.apps.app_init_ret : AppInitRet;
@@ -287,7 +287,7 @@ class SdlApplication : ContinuouslyApplication
         import api.dm.back.sdl2.sdl_screen : SDLScreen;
 
         auto sdlScreen = new SDLScreen;
-        _screen = new Screen(uservices.logging, sdlScreen);
+        _screen = new Screen(uservices.loggers, sdlScreen);
 
         eventProcessor = new SdlEventProcessor(keyboard);
 
@@ -513,7 +513,7 @@ class SdlApplication : ContinuouslyApplication
             }
         };
 
-        windowManager = new WindowManager(uservices.logging);
+        windowManager = new WindowManager(uservices.loggers);
 
         return AppInitRet(isExit : false, isInit:
             true);
@@ -655,7 +655,7 @@ class SdlApplication : ContinuouslyApplication
 
         window.title = title;
 
-        auto asset = createAsset(uservices.logging, uservices.config, uservices.context, () {
+        auto asset = createAsset(uservices.loggers, uservices.config, uservices.context, () {
             return newComFont;
         });
         assert(asset);
@@ -664,7 +664,7 @@ class SdlApplication : ContinuouslyApplication
 
         windowBuilder.asset = asset;
 
-        auto theme = createTheme(uservices.logging, uservices.config, uservices.context, uservices
+        auto theme = createTheme(uservices.loggers, uservices.config, uservices.context, uservices
                 .resource);
         //TODO move to createTheme method
         theme.isUseVectorGraphics = gservices.capGraphics.isVectorGraphics;
@@ -675,7 +675,7 @@ class SdlApplication : ContinuouslyApplication
         import api.dm.kit.graphics.graphics : Graphics;
 
         //TODO factory method
-        windowBuilder.graphics = createGraphics(uservices.logging, sdlRenderer, theme);
+        windowBuilder.graphics = createGraphics(uservices.loggers, sdlRenderer, theme);
         windowBuilder.graphics.initialize;
 
         windowBuilder.graphics.comTextureProvider = ProviderFactory!ComTexture(
@@ -738,7 +738,7 @@ class SdlApplication : ContinuouslyApplication
         auto factoryKit = new FactoryKit(imageFactory, shapeFactory, textureFactory);
         windowBuilder.build(factoryKit);
 
-        auto sceneManager = newSceneManager(uservices.logging, uservices.config, uservices.context, factoryKit);
+        auto sceneManager = newSceneManager(uservices.loggers, uservices.config, uservices.context, factoryKit);
         windowBuilder.build(sceneManager);
         sceneManager.initialize;
         sceneManager.create;

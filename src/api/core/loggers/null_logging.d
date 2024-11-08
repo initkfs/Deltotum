@@ -1,6 +1,6 @@
 module api.core.loggers.null_logging;
 
-import api.core.loggers.logging : Logging;
+import api.core.loggers.loggers : Logging;
 
 import std.logger : NullLogger;
 

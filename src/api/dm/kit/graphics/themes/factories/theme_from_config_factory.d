@@ -10,7 +10,7 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.insets : Insets;
 import api.dm.kit.graphics.themes.icons.icon_pack : IconPack;
 
-import api.core.loggers.logging : Logging;
+import api.core.loggers.loggers : Logging;
 
 /**
  * Authors: initkfs
@@ -22,9 +22,9 @@ class ThemeFromConfigFactory : ApplicationUnit
         IconPack iconPack;
         Resource resource;
     }
-    this(Logging logging, Config config, Context context, Resource resource, IconPack iconPack) pure @safe
+    this(Logging loggers, Config config, Context context, Resource resource, IconPack iconPack) pure @safe
     {
-        super(logging, config, context);
+        super(loggers, config, context);
         //TODO check null
         this.iconPack = iconPack;
         this.resource = resource;

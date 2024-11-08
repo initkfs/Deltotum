@@ -34,7 +34,7 @@ class Clipboard
         const err = clipboard.setText(text);
         if (err)
         {
-            //logging?
+            //loggers?
             return false;
         }
         return true;

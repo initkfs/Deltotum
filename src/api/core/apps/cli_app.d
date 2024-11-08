@@ -4,8 +4,8 @@ import api.core.components.units.simple_unit : SimpleUnit;
 import api.core.apps.crashes.crash_handler : CrashHandler;
 import api.core.apps.app_init_ret : AppInitRet;
 import api.core.components.uni_component : UniComponent;
-import api.core.loggers.logging : Logging;
-import api.core.configs.configuration : Configuration;
+import api.core.loggers.loggers : Logging;
+import api.core.configs.configs : Configuration;
 import api.core.configs.config : Config;
 import api.core.clis.cli : Cli;
 import api.core.clis.printers.cli_printer : CliPrinter;
@@ -122,21 +122,21 @@ class CliApp : SimpleUnit
                 uservices.eventBus.fire(CoreBusEvents.build_event_bus, uservices.eventBus);
             }
 
-            uservices.configuration = createConfiguration(uservices.context);
+            uservices.configs = createConfiguration(uservices.context);
             assert(uservices.config);
             version (EventBusCoreEvents)
             {
                 uservices.eventBus.fire(CoreBusEvents.build_config, uservices.config);
             }
 
-            uservices.logging = createLogging(uservices.support);
-            assert(uservices.logging);
+            uservices.loggers = createLogging(uservices.support);
+            assert(uservices.loggers);
             version (EventBusCoreEvents)
             {
-                uservices.eventBus.fire(CoreBusEvents.build_logger, uservices.logging);
+                uservices.eventBus.fire(CoreBusEvents.build_logger, uservices.loggers);
             }
 
-            uservices.alloc = createAllocator(uservices.logging, uservices.config, uservices
+            uservices.alloc = createAllocator(uservices.loggers, uservices.config, uservices
                     .context);
             assert(uservices.alloc);
             uservices.logger.trace("Service allocator built");
@@ -145,7 +145,7 @@ class CliApp : SimpleUnit
                 uservices.eventBus.fire(CoreBusEvents.build_allocator, uservices.alloc);
             }
 
-            uservices.resource = createResource(uservices.logging, uservices.config, uservices
+            uservices.resource = createResource(uservices.loggers, uservices.config, uservices
                     .context);
             assert(uservices.resource);
             uservices.logger.trace("Resources service built");
@@ -154,7 +154,7 @@ class CliApp : SimpleUnit
                 uservices.eventBus.fire(CoreBusEvents.build_resource, uservices.resource);
             }
 
-            uservices.locator = createLocator(uservices.logging, uservices.config, uservices
+            uservices.locator = createLocator(uservices.loggers, uservices.config, uservices
                     .context);
             assert(uservices.locator);
             uservices.logger.trace("Service locator built");
@@ -203,7 +203,7 @@ class CliApp : SimpleUnit
         catch (Exception exFromHandler)
         {
             exFromHandler.next = ex;
-            if (uservices.logging)
+            if (uservices.loggers)
             {
                 uservices.logger.errorf("Exception from error handler: %s", exFromHandler);
             }
@@ -216,7 +216,7 @@ class CliApp : SimpleUnit
         }
         finally
         {
-            if (uservices.logging)
+            if (uservices.loggers)
             {
                 uservices.logger.errorf("Error from application. %s", ex);
             }
@@ -507,10 +507,10 @@ class CliApp : SimpleUnit
             }
         };
 
-        multiLogger.insertLogger("Error logging", errLogger);
+        multiLogger.insertLogger("Error loggers", errLogger);
 
         multiLogger.tracef(
-            "Create stdout logging, name '%s', level '%s'",
+            "Create stdout loggers, name '%s', level '%s'",
             consoleLoggerName, consoleLoggerLevel);
 
         return multiLogger;
@@ -541,9 +541,9 @@ class CliApp : SimpleUnit
         return new Support(errStatus);
     }
 
-    protected Resource createResource(Logging logging, Config config, Context context)
+    protected Resource createResource(Logging loggers, Config config, Context context)
     {
-        assert(logging);
+        assert(loggers);
         assert(config);
         assert(context);
 
@@ -553,10 +553,10 @@ class CliApp : SimpleUnit
         string mustBeResDir = defaultResourcesDir;
         if (mustBeResDir.length == 0)
         {
-            logging.logger.infof(
+            loggers.logger.infof(
                 "Resource path is empty, empty resource manager created");
             //WARNING return
-            return newResource(logging);
+            return newResource(loggers);
         }
 
         if (mustBeResDir.isAbsolute)
@@ -564,10 +564,10 @@ class CliApp : SimpleUnit
             if (!mustBeResDir.exists || !mustBeResDir
                 .isDir)
             {
-                logging.logger.error(
+                loggers.logger.error(
                     "Absolute resources directory path does not exist or not a directory: ", mustBeResDir);
                 //WARNING return
-                return newResource(logging);
+                return newResource(loggers);
             }
         }
         else
@@ -576,32 +576,32 @@ class CliApp : SimpleUnit
                 .appContext.dataDir;
             if (mustBeDataDir.isNull)
             {
-                logging.logger.infof(
+                loggers.logger.infof(
                     "Received relative path '%s', but data directory not found", mustBeResDir);
                 //WARNING return
-                return newResource(logging);
+                return newResource(loggers);
             }
 
             mustBeResDir = buildPath(mustBeDataDir.get, mustBeResDir);
             if (!mustBeResDir.exists || !mustBeResDir
                 .isDir)
             {
-                logging.logger.warning(
+                loggers.logger.warning(
                     "Resource directory path relative to the data does not exist or is not a directory: ", mustBeResDir);
                 //WARNING return
-                return newResource(logging);
+                return newResource(loggers);
             }
         }
 
-        auto resource = newResource(logging, mustBeResDir);
-        logging.logger.trace(
+        auto resource = newResource(loggers, mustBeResDir);
+        loggers.logger.trace(
             "Create resources from directory: ", mustBeResDir);
         return resource;
     }
 
-    Resource newResource(Logging logging, string resourcesDir = null)
+    Resource newResource(Logging loggers, string resourcesDir = null)
     {
-        return new Resource(logging, resourcesDir);
+        return new Resource(loggers, resourcesDir);
     }
 
     protected EventBus createEventBus(Context context)
@@ -614,15 +614,15 @@ class CliApp : SimpleUnit
         return new EventBus;
     }
 
-    protected ServiceLocator createLocator(Logging logging, Config config, Context context)
+    protected ServiceLocator createLocator(Logging loggers, Config config, Context context)
     {
-        return newServiceLocator(logging);
+        return newServiceLocator(loggers);
     }
 
     ServiceLocator newServiceLocator(
-        Logging logging)
+        Logging loggers)
     {
-        return new ServiceLocator(logging);
+        return new ServiceLocator(loggers);
     }
 
     Mallocator newMallocator()
@@ -630,7 +630,7 @@ class CliApp : SimpleUnit
         return new Mallocator;
     }
 
-    Allocator createAllocator(Logging logging, Config config, Context context)
+    Allocator createAllocator(Logging loggers, Config config, Context context)
     {
         return newMallocator;
     }

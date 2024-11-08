@@ -10,7 +10,7 @@ import api.dm.kit.scenes.scene_manager : SceneManager;
 import api.dm.kit.windows.window_manager : WindowManager;
 import api.dm.kit.screens.screen : Screen;
 
-import api.core.loggers.logging : Logging;
+import api.core.loggers.loggers : Logging;
 
 import api.dm.com.graphics.com_renderer : ComRenderer;
 
@@ -82,7 +82,7 @@ class Window : GraphicsComponent
         if (const err = nativeWindow.initialize)
         {
             const errorMessage = "Window initialization error. " ~ err.toString;
-            if (logging)
+            if (loggers)
             {
                 logger.error(errorMessage);
             }
@@ -96,7 +96,7 @@ class Window : GraphicsComponent
         if (const err = nativeWindow.create)
         {
             const errorMessage = "Window FactoryKit error. " ~ err.toString;
-            if (logging)
+            if (loggers)
             {
                 logger.error(errorMessage);
             }

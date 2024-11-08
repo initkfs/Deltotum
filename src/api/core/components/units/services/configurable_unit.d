@@ -2,7 +2,7 @@ module api.core.components.units.services.configurable_unit;
 
 import api.core.components.units.simple_unit : SimpleUnit;
 
-import api.core.configs.configuration: Configuration;
+import api.core.configs.configs: Configuration;
 import api.core.configs.config: Config;
 
 /**

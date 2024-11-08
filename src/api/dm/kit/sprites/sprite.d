@@ -667,7 +667,7 @@ class Sprite : EventKitTarget
     {
         if (sprite is null)
         {
-            //TODO logging
+            //TODO loggers
             throw new Exception("Cannot add null sprite");
         }
 

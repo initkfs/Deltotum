@@ -1,4 +1,4 @@
-module api.core.configs.configuration;
+module api.core.configs.configs;
 
 import api.core.components.component_service : ComponentService;
 import api.core.configs.config : Config;
