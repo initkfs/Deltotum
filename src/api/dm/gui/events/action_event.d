@@ -1,8 +1,8 @@
 module api.dm.gui.events.action_event;
 
 import api.core.utils.types : enumNameByIndex;
-import api.core.events.event_target : EventTarget;
-import api.core.events.event_source : EventSource;
+import api.core.events.base.event_target : EventTarget;
+import api.core.events.base.event_source : EventSource;
 
 /**
  * Authors: initkfs

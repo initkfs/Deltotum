@@ -18,6 +18,7 @@ import api.core.resources.locals.local_resources : LocalResources;
 import api.core.resources.resourcing : Resourcing;
 import api.core.caps.cap : Cap;
 import api.core.caps.cap_core : CapCore;
+import api.core.events.event_bridge: EventBridge;
 import api.core.events.bus.event_bus : EventBus;
 import api.core.events.bus.core_bus_events : CoreBusEvents;
 import api.core.locators.service_locator : ServiceLocator;
@@ -118,7 +119,8 @@ class CliApp : SimpleUnit
             uservices.context = createContext;
             assert(uservices.context);
 
-            uservices.eventBus = createEventBus(uservices.context);
+            uservices.eventBridge = createEventBridge(uservices.context);
+            assert(uservices.eventBridge);
             assert(uservices.eventBus);
             version (EventBusCoreEvents)
             {
@@ -628,6 +630,17 @@ class CliApp : SimpleUnit
     EventBus newEventBus()
     {
         return new EventBus;
+    }
+
+    protected EventBridge createEventBridge(Context context)
+    {
+        auto bus = createEventBus(context);
+        return newEventBridge(bus);
+    }
+
+    EventBridge newEventBridge(EventBus bus)
+    {
+        return new EventBridge(bus);
     }
 
     protected ServiceLocator createLocator(Logging logging, Config config, Context context)

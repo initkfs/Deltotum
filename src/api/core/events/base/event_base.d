@@ -1,12 +1,12 @@
-module api.core.events.event_base;
+module api.core.events.base.event_base;
 
 /**
  * Authors: initkfs
  */
 mixin template EventBase()
 {
-    import api.core.events.event_target : EventTarget;
-    import api.core.events.event_source : EventSource;
+    import api.core.events.base.event_target : EventTarget;
+    import api.core.events.base.event_source : EventSource;
 
     EventSource source;
     EventTarget target;
