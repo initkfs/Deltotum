@@ -9,6 +9,7 @@ import api.core.configs.configs : Configuration;
 import api.core.configs.keyvalues.config : Config;
 import api.core.clis.cli : Cli;
 import api.core.clis.printers.cli_printer : CliPrinter;
+import api.core.clis.parsers.cli_parser: CliParser;
 import api.core.contexts.platforms.platform_context : PlatformContext;
 import api.core.contexts.context : Context;
 import api.core.supports.support : Support;
@@ -77,16 +78,16 @@ class CliApp : SimpleUnit
             {
                 import std.stdio : writeln, writefln;
 
-                writeln("Received cli: ", cli.cliArgs);
+                writeln("Received cli: ", cli.parser.cliArgs);
                 writefln("Config dir: '%s', data dir: '%s', debug: %s, silent: %s, wait ms: %s",
                     cliConfigDir, cliDataDir, isDebugMode, isSilentMode, cliStartupDelayMs);
             }
 
-            cli.isSilentMode = isSilentMode;
+            cli.printer.isSilentMode = isSilentMode;
 
             if (cliResult.helpWanted)
             {
-                cli.printHelp(cliResult);
+                cli.printer.printHelp(cliResult);
                 return AppInitRet(isExit : true, isInit:
                     false);
             }
@@ -95,18 +96,18 @@ class CliApp : SimpleUnit
             {
                 import std.conv : text;
 
-                cli.printIfNotSilent(text("Startup delay: ", cliStartupDelayMs, " ms"));
+                cli.printer.printIfNotSilent(text("Startup delay: ", cliStartupDelayMs, " ms"));
 
                 import core.thread.osthread : Thread;
                 import core.time : dur;
 
                 Thread.sleep(dur!"msecs"(cliStartupDelayMs));
-                cli.printIfNotSilent("Startup delay end");
+                cli.printer.printIfNotSilent("Startup delay end");
             }
 
             if (isDebugMode)
             {
-                cli.printIfNotSilent("Debug mode active");
+                cli.printer.printIfNotSilent("Debug mode active");
             }
 
             uservices.support = createSupport;
@@ -235,7 +236,7 @@ class CliApp : SimpleUnit
 
         import std.getopt : config;
 
-        GetoptResult cliResult = cliManager.parse(
+        GetoptResult cliResult = cliManager.parser.parse(
             config.passThrough,
             "c|configdir", "Config directory", &cliConfigDir,
             "d|data", "Application data directory.", &cliDataDir,
@@ -253,18 +254,18 @@ class CliApp : SimpleUnit
         import std.file : exists, isDir, isFile;
 
         const string curDir = currentDir;
-        uservices.cli.printIfNotSilent(
+        uservices.cli.printer.printIfNotSilent(
             "Current working directory: " ~ curDir);
         string dataDirectory;
         if (cliDataDir)
         {
             dataDirectory = cliDataDir;
-            uservices.cli.printIfNotSilent(
+            uservices.cli.printer.printIfNotSilent(
                 "Received data directory from cli: " ~ dataDirectory);
             if (!dataDirectory.isAbsolute)
             {
                 dataDirectory = buildPath(curDir, dataDirectory);
-                uservices.cli.printIfNotSilent(
+                uservices.cli.printer.printIfNotSilent(
                     "Convert data directory from cli to absolute path: " ~ dataDirectory);
             }
         }
@@ -275,7 +276,7 @@ class CliApp : SimpleUnit
                 .isDir)
             {
                 dataDirectory = relDataDir;
-                uservices.cli.printIfNotSilent(
+                uservices.cli.printer.printIfNotSilent(
                     "Default data directory will be used: " ~ dataDirectory);
             }
         }
@@ -285,12 +286,12 @@ class CliApp : SimpleUnit
         if (relUserDir.exists && relUserDir.isDir)
         {
             userDir = relUserDir;
-            uservices.cli.printIfNotSilent(
+            uservices.cli.printer.printIfNotSilent(
                 "Found user directory: " ~ userDir);
         }
         else
         {
-            uservices.cli.printIfNotSilent(
+            uservices.cli.printer.printIfNotSilent(
                 "User directory not found");
         }
 
@@ -365,7 +366,7 @@ class CliApp : SimpleUnit
         string configDir = cliConfigDir;
         if (configDir)
         {
-            uservices.cli.printIfNotSilent(
+            uservices.cli.printer.printIfNotSilent(
                 "Received config directory from cli: " ~ configDir);
             if (!configDir.isAbsolute)
             {
@@ -377,7 +378,7 @@ class CliApp : SimpleUnit
                     throw new Exception("Config path directory from cli is relative, but the data directory was not found in application context");
                 }
                 configDir = buildPath(mustBeDataDir.get, configDir);
-                uservices.cli.printIfNotSilent(
+                uservices.cli.printer.printIfNotSilent(
                     "Convert config directory path from cli to absolute path: " ~ configDir);
             }
         }
@@ -389,19 +390,19 @@ class CliApp : SimpleUnit
                 !mustBeDataDir.isNull)
             {
                 configDir = buildPath(mustBeDataDir.get, defaultConfigsDir);
-                uservices.cli.printIfNotSilent(
+                uservices.cli.printer.printIfNotSilent(
                     "Default config directory will be used: " ~ configDir);
             }
             else
             {
-                uservices.cli.printIfNotSilent(
+                uservices.cli.printer.printIfNotSilent(
                     "Default config path cannot be built: data directory not found");
             }
 
         }
 
         auto envConfig = newAAConstConfig;
-        uservices.cli.printIfNotSilent("Create config from environment");
+        uservices.cli.printer.printIfNotSilent("Create config from environment");
         envConfig.isThrowOnNotExistentKey = isStrictConfigs;
         envConfig.isThrowOnSetValueNotExistentKey = isStrictConfigs;
 
@@ -413,7 +414,7 @@ class CliApp : SimpleUnit
 
             if (!configDir.exists || !configDir.isDir)
             {
-                uservices.cli.printIfNotSilent(
+                uservices.cli.printer.printIfNotSilent(
                     "Config directory does not exist or not a directory: " ~ configDir);
             }
             else
@@ -432,14 +433,14 @@ class CliApp : SimpleUnit
                     newConfig.isThrowOnNotExistentKey = isStrictConfigs;
                     newConfig.isThrowOnSetValueNotExistentKey = isStrictConfigs;
                     configs ~= newConfig;
-                    uservices.cli.printIfNotSilent(
+                    uservices.cli.printer.printIfNotSilent(
                         "Load config: " ~ configPath.name);
                 }
             }
         }
         else
         {
-            uservices.cli.printIfNotSilent(
+            uservices.cli.printer.printIfNotSilent(
                 "Path to config directory is empty");
         }
 
@@ -451,12 +452,12 @@ class CliApp : SimpleUnit
 
         if (isLoad)
         {
-            uservices.cli.printIfNotSilent(format("Load %s configs", configs
+            uservices.cli.printer.printIfNotSilent(format("Load %s configs", configs
                     .length));
         }
         else
         {
-            uservices.cli.printIfNotSilent("Configs were not loaded");
+            uservices.cli.printer.printIfNotSilent("Configs were not loaded");
         }
 
         return config;
@@ -650,7 +651,8 @@ class CliApp : SimpleUnit
     protected Cli createCli(string[] args)
     {
         auto printer = newCliPrinter;
-        auto cli = newCli(args, printer);
+        auto parser = newCliParser(args);
+        auto cli = newCli(parser, printer);
         return cli;
     }
 
@@ -659,9 +661,13 @@ class CliApp : SimpleUnit
         return new CliPrinter;
     }
 
-    Cli newCli(string[] args, CliPrinter printer)
+    CliParser newCliParser(string[] args){
+        return new CliParser(args);
+    }
+
+    Cli newCli(CliParser parser, CliPrinter printer)
     {
-        return new Cli(args, printer);
+        return new Cli(parser, printer);
     }
 
     bool isWriteCrashFile()

@@ -1,6 +1,7 @@
 module api.core.clis.cli;
 
 import api.core.clis.printers.cli_printer : CliPrinter;
+import api.core.clis.parsers.cli_parser: CliParser;
 
 import std.getopt;
 
@@ -9,90 +10,32 @@ import std.getopt;
  */
 class Cli
 {
-    string[] cliArgs;
-
     CliPrinter printer;
+    CliParser parser;
 
-    bool isSilentMode;
-
-    this(string[] args, CliPrinter cliPrinter = null, bool isSilentMode = false) pure @safe
+    this(CliParser cliParser, CliPrinter cliPrinter) pure @safe
     {
-        cliArgs = args;
-        printer = cliPrinter ? cliPrinter : new CliPrinter;
-        this.isSilentMode = isSilentMode;
+        assert(cliParser);
+        parser = cliParser;
+
+        assert(cliPrinter);
+        printer = cliPrinter;
     }
 
-    this(immutable string[] args, immutable CliPrinter cliPrinter = null, bool isSilentMode = false) immutable pure @safe
+    this(immutable CliParser cliParser, immutable CliPrinter cliPrinter) immutable pure @safe
     {
-        cliArgs = args;
-        printer = cliPrinter ? cliPrinter : new immutable CliPrinter;
-        this.isSilentMode = isSilentMode;
+        assert(cliParser);
+        parser = cliParser;
+
+        assert(cliPrinter);
+        printer = cliPrinter;
     }
 
-    GetoptResult parseSafe(T...)(T opt) const @safe
+    immutable(Cli) idup() immutable
     {
-        auto result = getopt(_cliArgs, opt);
-        return result;
-    }
-
-    GetoptResult parse(T...)(T opt) const @safe
-    {
-        string[] argsCopy = cliArgs.dup;
-        auto result = getopt(argsCopy, opt);
-        return result;
-    }
-
-    bool print(string message) const
-    {
-        printer.print(message);
-        return true;
-    }
-
-    bool printIfNotSilent(lazy string message) const
-    {
-        if (isSilentMode)
-        {
-            return false;
-        }
-
-        print(message);
-        return true;
-    }
-
-    void printOptions(string message, GetoptResult getoptResult) const
-    {
-        defaultGetoptPrinter(message, getoptResult.options);
-    }
-
-    void printHelp(GetoptResult getoptResult) const
-    {
-        printOptions("Usage:", getoptResult);
-    }
-
-    immutable(Cli) idup()
-    {
+        immutable iparser = parser.idup;
+        immutable iprinter = printer.idup;
         //TODO cli printer
-        return new immutable Cli(cliArgs.idup, null, isSilentMode);
+        return new immutable Cli(iparser, iprinter);
     }
-}
-
-unittest
-{
-    import api.core.clis.printers.cli_printer : CliPrinter;
-
-    immutable string[] args = ["bin", "-d", "data", "-b"];
-
-    auto mutCli = new Cli(args.dup, new CliPrinter);
-    mutCli.cliArgs = null;
-    assert(mutCli.cliArgs.length == 0);
-
-    immutable immCli = new immutable Cli(args, new immutable CliPrinter);
-    assert(immCli.cliArgs.length == args.length);
-    assert(typeid(immCli.cliArgs) == typeid(args));
-
-    bool bArg;
-    string strArg;
-    immCli.parse("d", &strArg, "b", &bArg);
-    assert(bArg);
-    assert(strArg == "data");
 }
