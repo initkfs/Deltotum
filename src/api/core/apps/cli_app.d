@@ -4,7 +4,8 @@ import api.core.components.units.simple_unit : SimpleUnit;
 import api.core.apps.crashes.crash_handler : CrashHandler;
 import api.core.apps.app_init_ret : AppInitRet;
 import api.core.components.uni_component : UniComponent;
-import api.core.loggers.logging: Logging;
+import api.core.loggers.logging : Logging;
+import api.core.configs.configuration : Configuration;
 import api.core.configs.config : Config;
 import api.core.clis.cli : Cli;
 import api.core.clis.printers.cli_printer : CliPrinter;
@@ -121,7 +122,7 @@ class CliApp : SimpleUnit
                 uservices.eventBus.fire(CoreBusEvents.build_event_bus, uservices.eventBus);
             }
 
-            uservices.config = createConfig(uservices.context);
+            uservices.configuration = createConfiguration(uservices.context);
             assert(uservices.config);
             version (EventBusCoreEvents)
             {
@@ -153,7 +154,8 @@ class CliApp : SimpleUnit
                 uservices.eventBus.fire(CoreBusEvents.build_resource, uservices.resource);
             }
 
-            uservices.locator = createLocator(uservices.logging, uservices.config, uservices.context);
+            uservices.locator = createLocator(uservices.logging, uservices.config, uservices
+                    .context);
             assert(uservices.locator);
             uservices.logger.trace("Service locator built");
             version (EventBusCoreEvents)
@@ -459,6 +461,18 @@ class CliApp : SimpleUnit
         return config;
     }
 
+    protected Configuration createConfiguration(Context context)
+    {
+        auto config = createConfig(context);
+        assert(config);
+        return newConfiguration(config);
+    }
+
+    protected Configuration newConfiguration(Config config)
+    {
+        return new Configuration(config);
+    }
+
     protected Logger createLogger(Support support)
     {
         assert(support);
@@ -509,7 +523,8 @@ class CliApp : SimpleUnit
         return newLogging(logger);
     }
 
-    protected Logging newLogging(Logger logger){
+    protected Logging newLogging(Logger logger)
+    {
         return new Logging(logger);
     }
 

@@ -7,6 +7,7 @@ import api.core.contexts.apps.app_context : AppContext;
 import api.core.contexts.platforms.platform_context : PlatformContext;
 import api.core.loggers.logging : Logging;
 
+import api.core.configs.configuration : Configuration;
 import api.core.configs.config : Config;
 import api.core.clis.cli : Cli;
 import api.core.supports.support : Support;
@@ -43,7 +44,7 @@ class UniComponent : SimpleUnit
     {
         @Service Context _context;
         @Service Logging _logging;
-        @Service Config _config;
+        @Service Configuration _configuration;
         @Service Allocator _alloc;
         @Service Cli _cli;
         @Service Resource _resource;
@@ -253,24 +254,26 @@ class UniComponent : SimpleUnit
 
     inout(Logger) logger() inout nothrow pure @safe => logging.logger;
 
-    bool hasConfig() const nothrow pure @safe
+    bool hasConfiguration() const nothrow pure @safe
     {
-        return _config !is null;
+        return _configuration !is null;
     }
 
-    inout(Config) config() inout nothrow pure @safe
-    out (_config; _config !is null)
+    inout(Configuration) configuration() inout nothrow pure @safe
+    out (_configuration; _configuration !is null)
     {
-        return _config;
+        return _configuration;
     }
 
-    void config(Config config) pure @safe
+    void configuration(Configuration configs) pure @safe
     {
         import std.exception : enforce;
 
-        enforce(config !is null, "Config must not be null");
-        _config = config;
+        enforce(configs !is null, "Configuration must not be null");
+        _configuration = configs;
     }
+
+    inout(Config) config() inout nothrow pure @safe => configuration.config;
 
     bool hasAlloc() const nothrow pure @safe
     {

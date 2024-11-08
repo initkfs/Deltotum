@@ -8,7 +8,7 @@ import std.variant: Variant;
 enum CoreBusEvents {
     build_event_bus = "build_event_bus",
     build_context = "build_context",
-    build_config = "build_config",
+    build_configs = "build_configs",
     build_logging = "build_logging",
     build_resource = "build_resource",
     build_allocator = "build_allocator",

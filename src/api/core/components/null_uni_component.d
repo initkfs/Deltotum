@@ -3,7 +3,7 @@ module api.core.components.null_uni_component;
 import api.core.components.uni_component : UniComponent;
 import api.core.loggers.null_logging: NullLogging;
 import api.core.contexts.null_context : NullContext;
-import api.core.configs.null_config : NullConfig;
+import api.core.configs.null_configuration: NullConfiguration;
 import api.core.clis.null_cli : NullCli;
 import api.core.resources.null_resource : NullResource;
 import api.core.supports.null_support : NullSupport;
@@ -24,7 +24,7 @@ class NullUniComponent : UniComponent
     {
         _context = new NullContext;
         _logging = new NullLogging;
-        _config = new NullConfig;
+        _configuration = new NullConfiguration;
         //TODO NullAllocator?
         _alloc = new Mallocator;
         _cli = new NullCli;
