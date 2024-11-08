@@ -5,7 +5,7 @@ import api.core.components.uda : Service;
 import api.core.contexts.context : Context;
 import api.core.contexts.apps.app_context : AppContext;
 import api.core.contexts.platforms.platform_context : PlatformContext;
-import api.core.loggers.loggers : Logging;
+import api.core.loggers.logging : Logging;
 
 import api.core.configs.configs : Configuration;
 import api.core.configs.keyvalues.config : Config;
@@ -43,7 +43,7 @@ class UniComponent : SimpleUnit
     protected
     {
         @Service Context _context;
-        @Service Logging _loggers;
+        @Service Logging _logging;
         @Service Configuration _configs;
         @Service Allocator _alloc;
         @Service Cli _cli;
@@ -232,27 +232,27 @@ class UniComponent : SimpleUnit
     const(AppContext) appContext() pure @safe => context.appContext;
     const(PlatformContext) platformContext() pure @safe => context.platformContext;
 
-    bool hasLoggers() const nothrow pure @safe
+    bool hasLogging() const nothrow pure @safe
     {
-        return _loggers !is null;
+        return _logging !is null;
     }
 
-    inout(Logging) loggers() inout nothrow pure @safe
-    out (_loggers; _loggers !is null)
+    inout(Logging) logging() inout nothrow pure @safe
+    out (_logging; _logging !is null)
     {
-        return _loggers;
+        return _logging;
     }
 
-    void loggers(Logging newLoggers) pure @safe
+    void logging(Logging newLoggers) pure @safe
     {
         import std.exception : enforce;
 
         enforce(newLoggers !is null, "Logging must not be null");
-        _loggers = newLoggers;
+        _logging = newLoggers;
 
     }
 
-    inout(Logger) logger() inout nothrow pure @safe => loggers.logger;
+    inout(Logger) logger() inout nothrow pure @safe => logging.logger;
 
     bool hasConfigs() const nothrow pure @safe
     {

@@ -32,7 +32,7 @@ import api.dm.kit.inputs.input : Input;
 import api.dm.kit.screens.screen : Screen;
 import api.dm.kit.events.kit_event_manager : KitEventManager;
 
-import api.core.loggers.loggers : Logging;
+import api.core.loggers.logging : Logging;
 import std.typecons : Nullable;
 
 import api.dm.com.graphics.com_renderer : ComRenderer;
@@ -120,7 +120,7 @@ abstract class GraphicApplication : CliApp
         _platform = newPlatform(() => ticks);
         initCreateRun(_platform);
 
-        _i18n = createI18n(uservices.loggers, uservices.config, uservices.context);
+        _i18n = createI18n(uservices.logging, uservices.config, uservices.context);
 
         return AppInitRet(isExit : false, isInit:
             true);
@@ -155,19 +155,19 @@ abstract class GraphicApplication : CliApp
 
     Platform newPlatform(ulong delegate() tickProvider)
     {
-        return new Platform(newComSystem, uservices.loggers, uservices.config, uservices.context, tickProvider);
+        return new Platform(newComSystem, uservices.logging, uservices.config, uservices.context, tickProvider);
     }
 
     I18n newI18n()
     {
-        return new I18n(uservices.loggers);
+        return new I18n(uservices.logging);
     }
 
-    I18n createI18n(Logging loggers, Config config, Context context)
+    I18n createI18n(Logging logging, Config config, Context context)
     {
         if (context.appContext.dataDir.isNull)
         {
-            loggers.logger.trace("Not found data dir, i18n not loaded");
+            logging.logger.trace("Not found data dir, i18n not loaded");
             return newI18n;
         }
 
@@ -179,7 +179,7 @@ abstract class GraphicApplication : CliApp
         auto langDir = buildPath(context.appContext.dataDir.get, "langs");
         if (!langDir.exists || !langDir.isDir)
         {
-            loggers.logger.trace("Not found language dir: ", langDir);
+            logging.logger.trace("Not found language dir: ", langDir);
             return newI18n;
         }
 
@@ -192,12 +192,12 @@ abstract class GraphicApplication : CliApp
             auto mustBeLang = config.getNotEmptyString(KitConfigKeys.i18nLang);
             if (mustBeLang.isNull)
             {
-                loggers.logger.error("Received empty language from config with key ", KitConfigKeys
+                logging.logger.error("Received empty language from config with key ", KitConfigKeys
                         .i18nLang);
             }
             else
             {
-                loggers.logger.trace("Found i18n language from config: ", mustBeLang);
+                logging.logger.trace("Found i18n language from config: ", mustBeLang);
                 lang = mustBeLang.get;
             }
         }
@@ -212,7 +212,7 @@ abstract class GraphicApplication : CliApp
         {
             auto newMessages = langLoader.loadFile(langFile);
             messages ~= new LangMessages(newMessages);
-            loggers.logger.tracef("Load for lang '%s' i18n messages: %s", lang, langFile);
+            logging.logger.tracef("Load for lang '%s' i18n messages: %s", lang, langFile);
         }
 
         auto i18n = newI18n;
@@ -227,7 +227,7 @@ abstract class GraphicApplication : CliApp
         return new CapGraphics;
     }
 
-    SceneManager newSceneManager(Logging loggers, Config config, Context context, FactoryKit FactoryKit)
+    SceneManager newSceneManager(Logging logging, Config config, Context context, FactoryKit FactoryKit)
     {
         return new SceneManager(FactoryKit);
     }
@@ -330,7 +330,7 @@ abstract class GraphicApplication : CliApp
 
     void requestExit()
     {
-        if (uservices && uservices.loggers)
+        if (uservices && uservices.logging)
         {
             uservices.logger.tracef("Request quit");
         }
@@ -338,12 +338,12 @@ abstract class GraphicApplication : CliApp
         exit;
     }
 
-    Graphics createGraphics(Logging loggers, ComRenderer renderer, Theme theme)
+    Graphics createGraphics(Logging logging, ComRenderer renderer, Theme theme)
     {
-        return new Graphics(loggers, renderer, theme);
+        return new Graphics(logging, renderer, theme);
     }
 
-    Theme createTheme(Logging loggers, Config config, Context context, Resource resource)
+    Theme createTheme(Logging logging, Config config, Context context, Resource resource)
     {
         //TODO null?
         IconPack pack = iconPack.isNull ? null : iconPack.get;
@@ -351,13 +351,13 @@ abstract class GraphicApplication : CliApp
         import api.dm.kit.graphics.themes.theme : Theme;
         import api.dm.kit.graphics.themes.factories.theme_from_config_factory : ThemeFromConfigFactory;
 
-        auto themeLoader = new ThemeFromConfigFactory(loggers, config, context, resource, pack);
+        auto themeLoader = new ThemeFromConfigFactory(logging, config, context, resource, pack);
 
         auto theme = themeLoader.createTheme;
         return theme;
     }
 
-    Asset createAsset(Logging loggers, Config config, Context context, ComFont delegate() comFontProvider)
+    Asset createAsset(Logging logging, Config config, Context context, ComFont delegate() comFontProvider)
     {
         import api.dm.kit.assets.fonts.font_size : FontSize;
 
@@ -375,7 +375,7 @@ abstract class GraphicApplication : CliApp
         //default dir?
         string assetsDir = !mustBeResDir.isNull ? mustBeResDir.get : null;
 
-        Asset asset = new Asset(uservices.loggers, assetsDir, comFontProvider);
+        Asset asset = new Asset(uservices.logging, assetsDir, comFontProvider);
 
         //TODO from config, allsystem;
         size_t fontSizeSmall = 8;
@@ -388,7 +388,7 @@ abstract class GraphicApplication : CliApp
         if (!mustBeResDir.isNull)
         {
             fontDir = buildPath(mustBeResDir.get, asset.defaultFontResourceDir);
-            loggers.logger.trace("Found font directory in resources: ", fontDir);
+            logging.logger.trace("Found font directory in resources: ", fontDir);
         }
         else
         {
@@ -405,11 +405,11 @@ abstract class GraphicApplication : CliApp
                 }
 
                 fontDir = mustBeFontDir.get;
-                loggers.logger.trace("Set font directory from config: ", fontDir);
+                logging.logger.trace("Set font directory from config: ", fontDir);
             }
             else
             {
-                loggers.logger.trace("Search font directory in system");
+                logging.logger.trace("Search font directory in system");
                 //TODO Fontconfig 
                 version (linux)
                 {
@@ -441,7 +441,7 @@ abstract class GraphicApplication : CliApp
                 {
                     static assert(false, "Not supported default fonts for platform");
                 }
-                loggers.logger.tracef("Set system font directory %s and font file %s", fontDir, fontFile);
+                logging.logger.tracef("Set system font directory %s and font file %s", fontDir, fontFile);
             }
         }
 
@@ -454,23 +454,23 @@ abstract class GraphicApplication : CliApp
 
         if (config.containsKey(KitConfigKeys.fontTTFFile))
         {
-            loggers.logger.trace("Search font file in config with key: ", KitConfigKeys.fontTTFFile);
+            logging.logger.trace("Search font file in config with key: ", KitConfigKeys.fontTTFFile);
             if (config.containsKey(KitConfigKeys.fontIsOverwriteFontFile) && config.getBool(
                     KitConfigKeys.fontIsOverwriteFontFile).get)
             {
                 fontFile = config.getNotEmptyString(KitConfigKeys.fontTTFFile).get;
-                loggers.logger.trace("Set font file from config: ", fontFile);
+                logging.logger.trace("Set font file from config: ", fontFile);
             }
             else
             {
-                loggers.logger.trace(
+                logging.logger.trace(
                     "Configuration does not allow overwriting the font file from config, config key: ", KitConfigKeys
                         .fontIsOverwriteFontFile);
             }
         }
         else
         {
-            loggers.logger.trace("Not found font file from config with key: ", KitConfigKeys.fontTTFFile);
+            logging.logger.trace("Not found font file from config with key: ", KitConfigKeys.fontTTFFile);
         }
 
         if (fontFile.length == 0)
@@ -485,32 +485,32 @@ abstract class GraphicApplication : CliApp
         }
 
         //TODO default font
-        asset = new Asset(uservices.loggers, fontDir, comFontProvider);
+        asset = new Asset(uservices.logging, fontDir, comFontProvider);
 
         auto defaultSize = fontSizeMedium;
         if (config.containsKey(KitConfigKeys.fontSizeMedium))
         {
-            loggers.logger.trace("Check font medium size in config with key: ", KitConfigKeys
+            logging.logger.trace("Check font medium size in config with key: ", KitConfigKeys
                     .fontSizeMedium);
             auto mustBeNewSize = config.getLong(KitConfigKeys.fontSizeMedium);
             if (!mustBeNewSize.isNull)
             {
                 defaultSize = mustBeNewSize.get;
-                loggers.logger.trace("Set font default medium size from config: ", defaultSize);
+                logging.logger.trace("Set font default medium size from config: ", defaultSize);
             }
         }
         else
         {
-            loggers.logger.tracef("Default font medium size is used: ", defaultSize);
+            logging.logger.tracef("Default font medium size is used: ", defaultSize);
         }
 
         Font defaultFont = asset.newFont(fontFilePath, defaultSize);
         asset.addFont(defaultFont);
-        loggers.logger.tracef("Create medium font with size %s from %s", defaultSize, fontFilePath);
+        logging.logger.tracef("Create medium font with size %s from %s", defaultSize, fontFilePath);
 
         if (config.containsKey(KitConfigKeys.fontIsCreateSmall))
         {
-            loggers.logger.trace("Checking FactoryKit small font in config with key: ", KitConfigKeys
+            logging.logger.trace("Checking FactoryKit small font in config with key: ", KitConfigKeys
                     .fontIsCreateSmall);
             const isSmallFontCreate = config.getBool(KitConfigKeys.fontIsCreateSmall);
             if (!isSmallFontCreate.isNull && isSmallFontCreate.get)
@@ -518,39 +518,39 @@ abstract class GraphicApplication : CliApp
                 size_t size = fontSizeSmall;
                 if (config.containsKey(KitConfigKeys.fontSizeSmall))
                 {
-                    loggers.logger.trace("Search small font size in config with key: ", KitConfigKeys
+                    logging.logger.trace("Search small font size in config with key: ", KitConfigKeys
                             .fontSizeSmall);
                     const mustBeSmallSize = config.getPositiveLong(KitConfigKeys.fontSizeSmall);
                     if (!mustBeSmallSize.isNull)
                     {
                         size = mustBeSmallSize.get;
-                        loggers.logger.trace("Set small font size from config: ", size);
+                        logging.logger.trace("Set small font size from config: ", size);
                     }
                 }
                 else
                 {
-                    loggers.logger.trace("Default font small size is used: ", size);
+                    logging.logger.trace("Default font small size is used: ", size);
                 }
 
                 Font fontSmall = asset.newFont(fontFilePath, size);
                 asset.addFontSmall(fontSmall);
-                loggers.logger.tracef("Create small font with size %s from file %s", size, fontFilePath);
+                logging.logger.tracef("Create small font with size %s from file %s", size, fontFilePath);
             }
             else
             {
-                loggers.logger.trace("The config does not allow creating a small font with key: ", KitConfigKeys
+                logging.logger.trace("The config does not allow creating a small font with key: ", KitConfigKeys
                         .fontIsCreateSmall);
             }
         }
         else
         {
-            loggers.logger.trace("Config does not contain small font key: ", KitConfigKeys
+            logging.logger.trace("Config does not contain small font key: ", KitConfigKeys
                     .fontIsCreateSmall);
         }
 
         if (config.containsKey(KitConfigKeys.fontIsCreateLarge))
         {
-            loggers.logger.trace("Checking FactoryKit large font in config with key: ", KitConfigKeys
+            logging.logger.trace("Checking FactoryKit large font in config with key: ", KitConfigKeys
                     .fontIsCreateLarge);
 
             const isLargeFontCreate = config.getBool(KitConfigKeys.fontIsCreateLarge);
@@ -559,33 +559,33 @@ abstract class GraphicApplication : CliApp
                 size_t size = fontSizeLarge;
                 if (config.containsKey(KitConfigKeys.fontSizeLarge))
                 {
-                    loggers.logger.trace("Search large font size in config with key: ", KitConfigKeys
+                    logging.logger.trace("Search large font size in config with key: ", KitConfigKeys
                             .fontSizeLarge);
                     const mustBeNewSize = config.getPositiveLong(KitConfigKeys.fontSizeLarge);
                     if (!mustBeNewSize.isNull)
                     {
                         size = mustBeNewSize.get;
-                        loggers.logger.trace("Set large font size from config: ", size);
+                        logging.logger.trace("Set large font size from config: ", size);
                     }
                 }
                 else
                 {
-                    loggers.logger.trace("Default font large size is used: ", size);
+                    logging.logger.trace("Default font large size is used: ", size);
                 }
 
                 Font fontLarge = asset.newFont(fontFilePath, size);
                 asset.addFontLarge(fontLarge);
-                loggers.logger.tracef("Create large font with size %s from file %s", size, fontFilePath);
+                logging.logger.tracef("Create large font with size %s from file %s", size, fontFilePath);
             }
             else
             {
-                loggers.logger.trace("The config does not allow creating a large font with key: ", KitConfigKeys
+                logging.logger.trace("The config does not allow creating a large font with key: ", KitConfigKeys
                         .fontIsCreateLarge);
             }
         }
         else
         {
-            loggers.logger.trace("The config does not contain the large font FactoryKit key: ", KitConfigKeys
+            logging.logger.trace("The config does not contain the large font FactoryKit key: ", KitConfigKeys
                     .fontIsCreateLarge);
         }
 

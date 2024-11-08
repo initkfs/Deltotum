@@ -3,7 +3,7 @@ module api.dm.kit.i18n.i18n;
 import api.core.components.units.services.loggable_unit : LoggableUnit;
 import api.dm.kit.i18n.langs.lang_messages : LangMessages;
 
-import api.core.loggers.loggers : Logging;
+import api.core.loggers.logging : Logging;
 
 /**
  * Authors: initkfs
@@ -15,9 +15,9 @@ class I18n : LoggableUnit
 
     enum errorMessage = "%i18n_error%";
 
-    this(Logging loggers) pure @safe
+    this(Logging logging) pure @safe
     {
-        super(loggers);
+        super(logging);
     }
 
     dstring getMessage(string key, dstring defaultMessage = errorMessage)

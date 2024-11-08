@@ -2,13 +2,13 @@ module api.core.locators.service_locator;
 
 import api.core.components.units.services.loggable_unit : LoggableUnit;
 
-import api.core.loggers.loggers : Logging;
+import api.core.loggers.logging : Logging;
 import std.variant;
 
 /**
  * Authors: initkfs
  */
-//TODO loggers
+//TODO logging
 class ServiceLocator : LoggableUnit
 {
     private
@@ -16,9 +16,9 @@ class ServiceLocator : LoggableUnit
         Variant[string] services;
     }
 
-    this(Logging loggers) pure @safe
+    this(Logging logging) pure @safe
     {
-        super(loggers);
+        super(logging);
     }
 
     bool put(string key, Variant value)

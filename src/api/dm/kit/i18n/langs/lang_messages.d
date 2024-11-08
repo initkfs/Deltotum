@@ -2,7 +2,7 @@ module api.dm.kit.i18n.langs.lang_messages;
 
 import api.core.components.units.services.loggable_unit : LoggableUnit;
 
-import api.core.loggers.loggers : Logging;
+import api.core.loggers.logging : Logging;
 
 /**
  * Authors: initkfs

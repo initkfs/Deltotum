@@ -17,7 +17,7 @@ import api.math.flip : Flip;
 import api.math.geom2.rect2 : Rect2d;
 import api.math.geom2.line2 : Line2d;
 
-import api.core.loggers.loggers : Logging;
+import api.core.loggers.logging : Logging;
 import std.conv : to;
 
 import api.dm.com.graphics.com_texture : ComTexture;
@@ -50,9 +50,9 @@ class Graphics : LoggableUnit
     ProviderFactory!ComSurface comSurfaceProvider;
     ProviderFactory!ComImage comImageProvider;
 
-    this(Logging loggers, ComRenderer renderer, Theme theme)
+    this(Logging logging, ComRenderer renderer, Theme theme)
     {
-        super(loggers);
+        super(logging);
 
         import std.exception : enforce;
 
@@ -932,13 +932,13 @@ class Graphics : LoggableUnit
         if (const err = renderer.setDrawColor(screenColor.r, screenColor.g, screenColor.b, screenColor
                 .aByte))
         {
-            //TODO loggers in main loop?
+            //TODO logging in main loop?
         }
         else
         {
             if (const err = renderer.clear)
             {
-                //TODO loggers in main loop?
+                //TODO logging in main loop?
             }
         }
     }

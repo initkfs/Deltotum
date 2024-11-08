@@ -3,7 +3,7 @@ module api.dm.kit.windows.window_manager;
 import api.core.components.units.services.loggable_unit : LoggableUnit;
 import api.dm.kit.windows.window : Window;
 
-import api.core.loggers.loggers : Logging;
+import api.core.loggers.logging : Logging;
 import std.typecons : Nullable;
 
 /**
@@ -18,9 +18,9 @@ class WindowManager : LoggableUnit
 
     bool isAllowDuplicateId;
 
-    this(Logging loggers) pure @safe
+    this(Logging logging) pure @safe
     {
-        super(loggers);
+        super(logging);
     }
 
     void onWindows(scope bool delegate(Window) onWindowIsContinue)
