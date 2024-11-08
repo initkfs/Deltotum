@@ -10,8 +10,7 @@ import api.core.supports.null_support : NullSupport;
 import api.core.events.bus.null_event_bus : NullEventBus;
 import api.core.locators.null_service_locator : NullServiceLocator;
 import api.core.mem.null_memory: NullMemory;
-
-import api.core.apps.caps.cap_core : CapCore;
+import api.core.caps.null_cap: NullCap;
 
 
 /**
@@ -30,7 +29,7 @@ class NullUniComponent : UniComponent
         _cli = new NullCli;
         _resources = new NullResourcing;
         _support = new NullSupport;
-        _capCore = new CapCore;
+        _cap = new NullCap;
         _eventBus = new NullEventBus;
         _locator = new NullServiceLocator;
         isBuilt = true;

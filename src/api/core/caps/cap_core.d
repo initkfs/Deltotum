@@ -1,4 +1,4 @@
-module api.core.apps.caps.cap_core;
+module api.core.caps.cap_core;
 
 /**
  * Authors: initkfs

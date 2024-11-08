@@ -11,12 +11,13 @@ import api.core.configs.configs : Configuration;
 import api.core.configs.keyvalues.config : Config;
 import api.core.clis.cli : Cli;
 import api.core.supports.support : Support;
-import api.core.resources.locals.local_resources: LocalResources;
+import api.core.resources.locals.local_resources : LocalResources;
 import api.core.resources.resourcing : Resourcing;
-import api.core.apps.caps.cap_core : CapCore;
+import api.core.caps.cap : Cap;
+import api.core.caps.cap_core : CapCore;
 import api.core.events.bus.event_bus : EventBus;
 import api.core.locators.service_locator : ServiceLocator;
-import api.core.mem.memory: Memory;
+import api.core.mem.memory : Memory;
 import api.core.mem.allocs.allocator : Allocator;
 
 import std.logger : Logger;
@@ -51,7 +52,7 @@ class UniComponent : SimpleUnit
         @Service Cli _cli;
         @Service Resourcing _resources;
         @Service Support _support;
-        @Service CapCore _capCore;
+        @Service Cap _cap;
         @Service EventBus _eventBus;
         @Service ServiceLocator _locator;
     }
@@ -357,24 +358,26 @@ class UniComponent : SimpleUnit
 
     inout(LocalResources) reslocal() inout pure @safe => resources.local;
 
-    bool hasCapCore() const nothrow pure @safe
+    bool hasCap() const nothrow pure @safe
     {
-        return _capCore !is null;
+        return _cap !is null;
     }
 
-    inout(CapCore) capCore() inout nothrow pure @safe
-    out (_capCore; _capCore !is null)
+    inout(Cap) cap() inout nothrow pure @safe
+    out (_cap; _cap !is null)
     {
-        return _capCore;
+        return _cap;
     }
 
-    void capCore(CapCore cap) pure @safe
+    void cap(Cap newCap) pure @safe
     {
         import std.exception : enforce;
 
-        enforce(cap !is null, "Core capabilities must not be null");
-        _capCore = cap;
+        enforce(newCap !is null, "Capabilities must not be null");
+        _cap = newCap;
     }
+
+    inout(CapCore) capCore() inout nothrow pure @safe => cap.capCore;
 
     bool hasEventBus() const nothrow pure @safe
     {

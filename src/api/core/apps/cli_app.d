@@ -9,14 +9,15 @@ import api.core.configs.configs : Configuration;
 import api.core.configs.keyvalues.config : Config;
 import api.core.clis.cli : Cli;
 import api.core.clis.printers.cli_printer : CliPrinter;
-import api.core.clis.parsers.cli_parser: CliParser;
+import api.core.clis.parsers.cli_parser : CliParser;
 import api.core.contexts.platforms.platform_context : PlatformContext;
 import api.core.contexts.context : Context;
 import api.core.supports.support : Support;
 import api.core.contexts.apps.app_context : AppContext;
-import api.core.resources.locals.local_resources: LocalResources;
+import api.core.resources.locals.local_resources : LocalResources;
 import api.core.resources.resourcing : Resourcing;
-import api.core.apps.caps.cap_core : CapCore;
+import api.core.caps.cap : Cap;
+import api.core.caps.cap_core : CapCore;
 import api.core.events.bus.event_bus : EventBus;
 import api.core.events.bus.core_bus_events : CoreBusEvents;
 import api.core.locators.service_locator : ServiceLocator;
@@ -68,7 +69,7 @@ class CliApp : SimpleUnit
             _uniServices = newUniServices;
             assert(_uniServices);
 
-            uservices.capCore = newCapCore;
+            uservices.cap = createCap;
 
             auto cli = createCli(args);
             assert(cli);
@@ -189,6 +190,12 @@ class CliApp : SimpleUnit
     UniComponent newUniServices() => new UniComponent;
 
     CapCore newCapCore() => new CapCore;
+
+    Cap createCap()
+    {
+        auto capCore = newCapCore;
+        return new Cap(capCore);
+    }
 
     protected void consumeThrowable(Throwable ex, bool isRethrow = true)
     {
@@ -668,7 +675,8 @@ class CliApp : SimpleUnit
         return new CliPrinter;
     }
 
-    CliParser newCliParser(string[] args){
+    CliParser newCliParser(string[] args)
+    {
         return new CliParser(args);
     }
 
