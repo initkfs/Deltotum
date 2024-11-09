@@ -10,17 +10,17 @@ import api.core.clis.printers.null_cli_printer : NullCliPrinter;
 class NullCli : Cli
 {
 
-    this() pure @safe
+    this() @safe
     {
         super(new NullCliParser, new NullCliPrinter);
     }
 
-    this() const pure @safe
+    this() const @safe
     {
         super(new const NullCliParser, new const NullCliPrinter);
     }
 
-    this() immutable pure @safe
+    this() immutable @safe
     {
         super(new immutable NullCliParser, new immutable NullCliPrinter);
     }

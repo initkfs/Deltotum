@@ -1,6 +1,6 @@
 module api.core.clis.parsers.null_cli_parser;
 
-import api.core.clis.parsers.cli_parser: CliParser;
+import api.core.clis.parsers.cli_parser : CliParser;
 
 /**
  * Authors: initkfs
@@ -8,17 +8,17 @@ import api.core.clis.parsers.cli_parser: CliParser;
 class NullCliParser : CliParser
 {
 
-    this() pure @safe
+    this() @safe
     {
         super(null);
     }
 
-    this() const pure @safe
+    this() const @safe
     {
         super(null);
     }
 
-    this() immutable pure @safe
+    this() immutable @safe
     {
         super(null);
     }

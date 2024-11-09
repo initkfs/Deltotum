@@ -1,6 +1,6 @@
 module api.core.clis.printers.null_cli_printer;
 
-import api.core.clis.printers.cli_printer: CliPrinter;
+import api.core.clis.printers.cli_printer : CliPrinter;
 
 import std.getopt;
 
@@ -9,38 +9,38 @@ import std.getopt;
  */
 class NullCliPrinter : CliPrinter
 {
-    this() pure @safe
+    this() @safe
     {
         super(false);
     }
 
-    this() const pure @safe
+    this() const @safe
     {
         super(false);
     }
 
-    this() immutable pure @safe
+    this() immutable @safe
     {
         super(false);
     }
 
     void print(S...)(S messages) const
     {
-        
+
     }
 
     override bool printIfNotSilent(lazy string message) const
     {
-       return false;
+        return false;
     }
 
     override void printOptions(string message, GetoptResult getoptResult) const
     {
-       
+
     }
 
     override void printHelp(GetoptResult getoptResult) const
     {
-        
+
     }
 }

@@ -8,9 +8,19 @@ import api.core.depends.locators.null_service_locator : NullServiceLocator;
  */
 class NullDep : Dep
 {
-    this()
+    this() @safe
     {
         super(new NullServiceLocator);
+    }
+
+    this() const @safe
+    {
+        super(new const NullServiceLocator);
+    }
+
+    this() immutable @safe
+    {
+        super(new immutable NullServiceLocator);
     }
 
 }

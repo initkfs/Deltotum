@@ -8,17 +8,17 @@ import api.core.caps.core.cap_core : CapCore;
  */
 class NullCap : Cap
 {
-    this() pure @safe
+    this() @safe
     {
         super(new CapCore);
     }
 
-    this() const pure @safe
+    this() const @safe
     {
         super(new const CapCore);
     }
 
-    this() immutable pure @safe
+    this() immutable @safe
     {
         super(new immutable CapCore);
     }

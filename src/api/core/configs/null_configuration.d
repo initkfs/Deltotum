@@ -8,18 +8,18 @@ import api.core.configs.keyvalues.null_config : NullConfig;
 */
 class NullConfiguration : Configuration
 {
-    this() pure @safe
+    this() @safe
     {
         super(new NullConfig);
     }
 
-    this() const pure @safe
+    this() const @safe
     {
         const nc = new const NullConfig;
         super(nc);
     }
 
-    this() immutable pure @safe
+    this() immutable @safe
     {
         super(new immutable NullConfig);
     }

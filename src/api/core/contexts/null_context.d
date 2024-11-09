@@ -9,7 +9,17 @@ import api.core.contexts.context : Context;
  */
 class NullContext : Context
 {
-    this() immutable pure @safe
+    this() @safe
+    {
+        super(new AppContext, new PlatformContext);
+    }
+
+    this() const @safe
+    {
+        super(new AppContext, new PlatformContext);
+    }
+
+    this() immutable @safe
     {
         super(new AppContext, new PlatformContext);
     }

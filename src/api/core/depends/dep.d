@@ -11,7 +11,19 @@ class Dep : ComponentService
 
     ServiceLocator locator;
 
-    this(ServiceLocator newLocator)
+    this(ServiceLocator newLocator) @safe
+    {
+        assert(newLocator);
+        this.locator = newLocator;
+    }
+
+    this(const ServiceLocator newLocator) const @safe
+    {
+        assert(newLocator);
+        this.locator = newLocator;
+    }
+
+    this(immutable ServiceLocator newLocator) immutable @safe
     {
         assert(newLocator);
         this.locator = newLocator;

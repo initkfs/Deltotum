@@ -12,7 +12,7 @@ class Support
 {
     ErrStatus errStatus;
 
-    this(ErrStatus errStatus)
+    this(ErrStatus errStatus) pure @safe
     {
         this.errStatus = errStatus;
     }

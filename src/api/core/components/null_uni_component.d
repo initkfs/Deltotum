@@ -19,7 +19,7 @@ import api.core.caps.null_cap: NullCap;
 class NullUniComponent : UniComponent
 {
 
-    this()
+    this() @safe
     {
         _context = new NullContext;
         _logging = new NullLogging;

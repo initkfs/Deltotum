@@ -9,7 +9,7 @@ import api.core.supports.errors.err_status : ErrStatus;
 
 class NullSupport : Support
 {
-    this()
+    this() pure @safe
     {
         super(new ErrStatus);
     }
