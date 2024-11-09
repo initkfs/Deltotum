@@ -22,6 +22,15 @@ class Cli
         printer = cliPrinter;
     }
 
+    this(const CliParser cliParser, const CliPrinter cliPrinter) const pure @safe
+    {
+        assert(cliParser);
+        parser = cliParser;
+
+        assert(cliPrinter);
+        printer = cliPrinter;
+    }
+
     this(immutable CliParser cliParser, immutable CliPrinter cliPrinter) immutable pure @safe
     {
         assert(cliParser);
@@ -35,7 +44,6 @@ class Cli
     {
         immutable iparser = parser.idup;
         immutable iprinter = printer.idup;
-        //TODO cli printer
         return new immutable Cli(iparser, iprinter);
     }
 }

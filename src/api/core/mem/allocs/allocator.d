@@ -23,12 +23,9 @@ mixin template MemFuncs()
     }
     else
     {
-        static
-        {
-            AllocFuncType allocFunPtr;
-            ReallocFuncType reallocFunPtr;
-            FreeFuncType freeFunPtr;
-        }
+        AllocFuncType allocFunPtr;
+        ReallocFuncType reallocFunPtr;
+        FreeFuncType freeFunPtr;
     }
 
     UniqPtr!T uniq(T)(size_t capacity = 1, bool isAutoFree = true, bool isErrorOnFail = true)
@@ -94,5 +91,7 @@ else
     abstract class Allocator
     {
         mixin MemFuncs;
+
+        bool canAlloc() const nothrow pure @safe => true;
     }
 }

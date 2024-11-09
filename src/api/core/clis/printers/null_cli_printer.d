@@ -14,6 +14,11 @@ class NullCliPrinter : CliPrinter
         super(false);
     }
 
+    this() const pure @safe
+    {
+        super(false);
+    }
+
     this() immutable pure @safe
     {
         super(false);

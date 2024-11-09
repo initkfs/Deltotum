@@ -21,6 +21,16 @@ class ServiceLocator : LoggableUnit
         super(logging);
     }
 
+    this(const Logging logging) const pure @safe
+    {
+        super(logging);
+    }
+
+    this(immutable Logging logging) immutable pure @safe
+    {
+        super(logging);
+    }
+
     bool put(string key, Variant value)
     {
         if (has(key))

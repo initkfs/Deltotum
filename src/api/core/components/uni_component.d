@@ -14,7 +14,7 @@ import api.core.supports.support : Support;
 import api.core.resources.locals.local_resources : LocalResources;
 import api.core.resources.resourcing : Resourcing;
 import api.core.caps.cap : Cap;
-import api.core.caps.cap_core : CapCore;
+import api.core.caps.core.cap_core : CapCore;
 import api.core.events.event_bridge : EventBridge;
 import api.core.events.bus.event_bus : EventBus;
 import api.core.depends.dep : Dep;
@@ -215,10 +215,9 @@ class UniComponent : SimpleUnit
         isComponentCreated = false;
     }
 
-    bool hasContext() const nothrow pure @safe
-    {
-        return _context !is null;
-    }
+    bool hasContext() const nothrow pure @safe => _context !is null;
+    const(AppContext) appContext() pure @safe => context.appContext;
+    const(PlatformContext) platformContext() pure @safe => context.platformContext;
 
     inout(Context) context() inout nothrow pure @safe
     out (_context; _context !is null)
@@ -234,13 +233,8 @@ class UniComponent : SimpleUnit
         _context = context;
     }
 
-    const(AppContext) appContext() pure @safe => context.appContext;
-    const(PlatformContext) platformContext() pure @safe => context.platformContext;
-
-    bool hasLogging() const nothrow pure @safe
-    {
-        return _logging !is null;
-    }
+    bool hasLogging() const nothrow pure @safe => _logging !is null;
+    inout(Logger) logger() inout nothrow pure @safe => logging.logger;
 
     inout(Logging) logging() inout nothrow pure @safe
     out (_logging; _logging !is null)
@@ -257,12 +251,8 @@ class UniComponent : SimpleUnit
 
     }
 
-    inout(Logger) logger() inout nothrow pure @safe => logging.logger;
-
-    bool hasConfigs() const nothrow pure @safe
-    {
-        return _configs !is null;
-    }
+    bool hasConfigs() const nothrow pure @safe => _configs !is null;
+    inout(Config) config() inout nothrow pure @safe => configs.config;
 
     inout(Configuration) configs() inout nothrow pure @safe
     out (_configs; _configs !is null)
@@ -278,12 +268,8 @@ class UniComponent : SimpleUnit
         _configs = newConfigs;
     }
 
-    inout(Config) config() inout nothrow pure @safe => configs.config;
-
-    bool hasMemory() const nothrow pure @safe
-    {
-        return _memory !is null;
-    }
+    bool hasMemory() const nothrow pure @safe => _memory !is null;
+    inout(Allocator) alloc() inout nothrow pure @safe => memory.alloc;
 
     inout(Memory) memory() inout nothrow pure @safe
     out (_memory; _memory !is null)
@@ -299,12 +285,7 @@ class UniComponent : SimpleUnit
         _memory = newMemory;
     }
 
-    inout(Allocator) alloc() inout nothrow pure @safe => memory.alloc;
-
-    bool hasCli() const nothrow pure @safe
-    {
-        return _cli !is null;
-    }
+    bool hasCli() const nothrow pure @safe => _cli !is null;
 
     inout(Cli) cli() inout nothrow pure @safe
     out (_cli; _cli !is null)
@@ -316,14 +297,11 @@ class UniComponent : SimpleUnit
     {
         import std.exception : enforce;
 
-        enforce(cli !is null, "Cli must not be null");
+        enforce(cli !is null, "CLI must not be null");
         _cli = cli;
     }
 
-    bool hasSupport() const nothrow pure @safe
-    {
-        return _support !is null;
-    }
+    bool hasSupport() const nothrow pure @safe => _support !is null;
 
     inout(Support) support() inout nothrow pure @safe
     out (_support; _support !is null)
@@ -339,10 +317,8 @@ class UniComponent : SimpleUnit
         _support = support;
     }
 
-    bool hasResources() const nothrow pure @safe
-    {
-        return _resources !is null;
-    }
+    bool hasResources() const nothrow pure @safe => _resources !is null;
+    inout(LocalResources) reslocal() inout pure @safe => resources.local;
 
     inout(Resourcing) resources() inout nothrow pure @safe
     out (_resources; _resources !is null)
@@ -358,12 +334,8 @@ class UniComponent : SimpleUnit
         _resources = resources;
     }
 
-    inout(LocalResources) reslocal() inout pure @safe => resources.local;
-
-    bool hasCap() const nothrow pure @safe
-    {
-        return _cap !is null;
-    }
+    bool hasCap() const nothrow pure @safe => _cap !is null;
+    inout(CapCore) capCore() inout nothrow pure @safe => cap.capCore;
 
     inout(Cap) cap() inout nothrow pure @safe
     out (_cap; _cap !is null)
@@ -379,12 +351,8 @@ class UniComponent : SimpleUnit
         _cap = newCap;
     }
 
-    inout(CapCore) capCore() inout nothrow pure @safe => cap.capCore;
-
-    bool hasEventBridge() const nothrow pure @safe
-    {
-        return _eventBridge !is null;
-    }
+    bool hasEventBridge() const nothrow pure @safe => _eventBridge !is null;
+    inout(EventBus) eventBus() inout nothrow pure @safe => eventBridge.eventBus;
 
     inout(EventBridge) eventBridge() inout nothrow pure @safe
     out (_eventBridge; _eventBridge !is null)
@@ -400,12 +368,8 @@ class UniComponent : SimpleUnit
         _eventBridge = eb;
     }
 
-    inout(EventBus) eventBus() inout nothrow pure @safe => eventBridge.eventBus;
-
-    bool hasDep() const nothrow pure @safe
-    {
-        return _dep !is null;
-    }
+    bool hasDep() const nothrow pure @safe => _dep !is null;
+    inout(ServiceLocator) locator() inout nothrow pure @safe => dep.locator;
 
     inout(Dep) dep() inout nothrow pure @safe
     out (_dep; _dep !is null)
@@ -420,6 +384,4 @@ class UniComponent : SimpleUnit
         enforce(newDep !is null, "Dependency service must not be null");
         _dep = newDep;
     }
-
-    inout(ServiceLocator) locator() inout nothrow pure @safe => dep.locator;
 }

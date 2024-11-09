@@ -9,4 +9,14 @@ class NullResourcing : Resourcing
     {
         super(new NullLocalResources);
     }
+
+    this() const @safe
+    {
+        super(new const NullLocalResources);
+    }
+
+    this() immutable @safe
+    {
+        super(new immutable NullLocalResources);
+    }
 }

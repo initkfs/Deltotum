@@ -19,6 +19,11 @@ class CliParser
         _cliArgs = args;
     }
 
+    this(const string[] args) const pure @safe
+    {
+        _cliArgs = args;
+    }
+
     this(immutable string[] args) immutable pure @safe
     {
         _cliArgs = args;

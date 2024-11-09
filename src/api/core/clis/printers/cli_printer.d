@@ -18,6 +18,7 @@ class CliPrinter
     {
         this.isSilentMode = isSilentMode;
     }
+    
 
     void print(S...)(S messages) const
     {

@@ -10,11 +10,16 @@ class NullCliParser : CliParser
 
     this() pure @safe
     {
-        super([]);
+        super(null);
+    }
+
+    this() const pure @safe
+    {
+        super(null);
     }
 
     this() immutable pure @safe
     {
-        super([]);
+        super(null);
     }
 }

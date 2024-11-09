@@ -8,7 +8,8 @@ import api.core.mem.ptrs.unique_ptr : UniqPtr;
 
 import core.stdc.stdlib : malloc, realloc, free;
 
-bool allocate(size_t sizeBytes, scope ref void[] ptr) @nogc nothrow @safe => allocateBytes(sizeBytes, ptr);
+bool allocate(size_t sizeBytes, scope ref void[] ptr) @nogc nothrow @safe => allocateBytes(
+    sizeBytes, ptr);
 bool reallocate(size_t newBytes, scope ref void[] ptr) @nogc nothrow @safe => reallocateBytes(
     newBytes, ptr);
 bool deallocate(scope void[] ptr) @nogc nothrow @safe => deallocateBytes(ptr);
@@ -18,7 +19,8 @@ protected
     bool allocateBytes(size_t sizeBytes, scope ref void[] ptr) @nogc nothrow @trusted
     {
         void* newPtr = malloc(sizeBytes);
-        if(!newPtr){
+        if (!newPtr)
+        {
             return false;
         }
         ptr = newPtr[0 .. sizeBytes];
@@ -28,7 +30,8 @@ protected
     bool reallocateBytes(size_t newBytes, scope ref void[] ptr) @nogc nothrow @trusted
     {
         void* newPtr = realloc(ptr.ptr, newBytes);
-        if(!newPtr){
+        if (!newPtr)
+        {
             return false;
         }
         ptr = newPtr[0 .. newBytes];
@@ -37,7 +40,8 @@ protected
 
     bool deallocateBytes(scope void[] ptr) @nogc nothrow @trusted
     {
-        if(!ptr){
+        if (!ptr)
+        {
             return false;
         }
         free(ptr.ptr);
@@ -54,7 +58,7 @@ else
 
     class Mallocator : Allocator
     {
-        static this()
+        this() pure nothrow @safe
         {
             allocFunPtr = &allocate;
             reallocFunPtr = &reallocate;

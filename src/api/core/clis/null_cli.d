@@ -15,10 +15,13 @@ class NullCli : Cli
         super(new NullCliParser, new NullCliPrinter);
     }
 
+    this() const pure @safe
+    {
+        super(new const NullCliParser, new const NullCliPrinter);
+    }
+
     this() immutable pure @safe
     {
-        auto iparser = new immutable NullCliParser;
-        auto iprinter = new immutable NullCliPrinter;
-        super(iparser, iprinter);
+        super(new immutable NullCliParser, new immutable NullCliPrinter);
     }
 }
