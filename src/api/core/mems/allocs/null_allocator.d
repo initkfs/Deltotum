@@ -1,6 +1,6 @@
-module api.core.mem.allocs.null_allocator;
+module api.core.mems.allocs.null_allocator;
 
-import api.core.mem.allocs.allocator : Allocator;
+import api.core.mems.allocs.allocator : Allocator;
 
 /**
  * Authors: initkfs

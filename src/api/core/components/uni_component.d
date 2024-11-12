@@ -19,8 +19,8 @@ import api.core.events.event_bridge : EventBridge;
 import api.core.events.bus.event_bus : EventBus;
 import api.core.depends.dep : Dep;
 import api.core.depends.locators.service_locator : ServiceLocator;
-import api.core.mem.memory : Memory;
-import api.core.mem.allocs.allocator : Allocator;
+import api.core.mems.memory : Memory;
+import api.core.mems.allocs.allocator : Allocator;
 
 import std.logger : Logger;
 

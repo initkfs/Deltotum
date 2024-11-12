@@ -1,7 +1,7 @@
 /**
  * Authors: initkfs
  */
-module api.core.mem.buffers.static_buffer;
+module api.core.mems.buffers.static_buffer;
 
 struct StaticBuffer(T, size_t Capacity = 256, bool isAppendableBuffer = true)
 {

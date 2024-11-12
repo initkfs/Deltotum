@@ -9,7 +9,7 @@ import api.core.resources.null_resourcing : NullResourcing;
 import api.core.supports.null_support : NullSupport;
 import api.core.events.null_event_bridge: NullEventBridge;
 import api.core.depends.null_dep: NullDep;
-import api.core.mem.null_memory: NullMemory;
+import api.core.mems.null_memory: NullMemory;
 import api.core.caps.null_cap: NullCap;
 
 

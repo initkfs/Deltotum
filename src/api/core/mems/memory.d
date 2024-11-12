@@ -1,7 +1,7 @@
-module api.core.mem.memory;
+module api.core.mems.memory;
 
 import api.core.components.component_service : ComponentService;
-import api.core.mem.allocs.allocator : Allocator;
+import api.core.mems.allocs.allocator : Allocator;
 
 /**
  * Authors: initkfs
