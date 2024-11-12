@@ -14,6 +14,12 @@ class SimpleUnit : Unitable
         UnitState _state = UnitState.none;
     }
 
+    bool isThrowInvalidState = true;
+    bool isThrowInvalidChangeState = true;
+
+    void delegate(SimpleUnit, UnitState) onInvalidNewState;
+    void delegate(SimpleUnit, UnitState) onInvalidChangeNewState;
+
     this(UnitState initState = UnitState.none) pure @safe
     {
         _state = initState;
@@ -36,10 +42,18 @@ class SimpleUnit : Unitable
     {
         if (!isNone && !isDisposed)
         {
-            import std.format : format;
+            if (onInvalidNewState)
+            {
+                onInvalidNewState(this, UnitState.initialize);
+            }
 
-            throw new IllegalUnitStateException(format("Cannot initialize component '%s' with state: %s",
-                    className, _state));
+            if (isThrowInvalidState)
+            {
+                import std.format : format;
+
+                throw new IllegalUnitStateException(format("Cannot initialize component '%s' with state: %s",
+                        className, _state));
+            }
         }
 
         _state = UnitState.initialize;
@@ -51,17 +65,36 @@ class SimpleUnit : Unitable
         assert(unit !is this, "Unit must not be this");
 
         unit.initialize;
-        assert(unit.isInitialized, "Unit not initialized: " ~ unit.className);
+        if (!unit.isInitialized)
+        {
+            if (onInvalidChangeNewState)
+            {
+                onInvalidChangeNewState(unit, UnitState.initialize);
+            }
+
+            if (isThrowInvalidChangeState)
+            {
+                throw new Exception("Unit not initialized: " ~ unit.className);
+            }
+        }
     }
 
     void create()
     {
         if (!isNone && !isInitialized)
         {
-            import std.format : format;
+            if (onInvalidNewState)
+            {
+                onInvalidNewState(this, UnitState.create);
+            }
 
-            throw new IllegalUnitStateException(format("Cannot create component '%s' with state: %s",
-                    className, _state));
+            if (isThrowInvalidState)
+            {
+                import std.format : format;
+
+                throw new IllegalUnitStateException(format("Cannot create component '%s' with state: %s",
+                        className, _state));
+            }
         }
 
         _state = UnitState.create;
@@ -73,7 +106,18 @@ class SimpleUnit : Unitable
         assert(unit !is this, "Unit must not be this");
 
         unit.create;
-        assert(unit.isCreated, "Unit not created: " ~ unit.className);
+        if (!unit.isCreated)
+        {
+            if (onInvalidChangeNewState)
+            {
+                onInvalidChangeNewState(unit, UnitState.create);
+            }
+
+            if (isThrowInvalidChangeState)
+            {
+                throw new Exception("Unit not created: " ~ unit.className);
+            }
+        }
     }
 
     void initCreate(SimpleUnit unit)
@@ -86,10 +130,18 @@ class SimpleUnit : Unitable
     {
         if (!isCreated && !isStopped && !isPaused)
         {
-            import std.format : format;
+            if (onInvalidNewState)
+            {
+                onInvalidNewState(this, UnitState.run);
+            }
 
-            throw new IllegalUnitStateException(format("Cannot run component '%s' with state: %s",
-                    className, _state));
+            if (isThrowInvalidState)
+            {
+                import std.format : format;
+
+                throw new IllegalUnitStateException(format("Cannot run component '%s' with state: %s",
+                        className, _state));
+            }
         }
 
         _state = UnitState.run;
@@ -101,7 +153,18 @@ class SimpleUnit : Unitable
         assert(unit !is this, "Unit must not be this");
 
         unit.run;
-        assert(unit.isRunning, "Unit not running: " ~ unit.className);
+        if (!unit.isRunning)
+        {
+            if (onInvalidChangeNewState)
+            {
+                onInvalidChangeNewState(unit, UnitState.run);
+            }
+
+            if (isThrowInvalidChangeState)
+            {
+                throw new Exception("Unit not running: " ~ unit.className);
+            }
+        }
     }
 
     void initCreateRun(SimpleUnit unit)
@@ -115,10 +178,18 @@ class SimpleUnit : Unitable
     {
         if (!isRunning)
         {
-            import std.format : format;
+            if (onInvalidNewState)
+            {
+                onInvalidNewState(this, UnitState.pause);
+            }
 
-            throw new IllegalUnitStateException(format("Cannot pause component '%s' with state: %s",
-                    className, _state));
+            if (isThrowInvalidState)
+            {
+                import std.format : format;
+
+                throw new IllegalUnitStateException(format("Cannot pause component '%s' with state: %s",
+                        className, _state));
+            }
         }
 
         _state = UnitState.pause;
@@ -130,17 +201,37 @@ class SimpleUnit : Unitable
         assert(unit !is this, "Unit must not be this");
 
         unit.pause;
-        assert(unit.isPaused, "Unit not paused: " ~ unit.className);
+        if (!unit.isPaused)
+        {
+            if (onInvalidChangeNewState)
+            {
+                onInvalidChangeNewState(unit, UnitState.pause);
+            }
+
+            if (isThrowInvalidChangeState)
+            {
+                throw new Exception("Unit not paused: " ~ unit.className);
+            }
+
+        }
     }
 
     void stop()
     {
         if (!isRunning && !isPaused)
         {
-            import std.format : format;
+            if (onInvalidNewState)
+            {
+                onInvalidNewState(this, UnitState.stop);
+            }
 
-            throw new IllegalUnitStateException(format("Cannot stop component '%s' with state: %s",
-                    className, _state));
+            if (isThrowInvalidState)
+            {
+                import std.format : format;
+
+                throw new IllegalUnitStateException(format("Cannot stop component '%s' with state: %s",
+                        className, _state));
+            }
         }
 
         _state = UnitState.stop;
@@ -152,7 +243,18 @@ class SimpleUnit : Unitable
         assert(unit !is this, "Unit must not be this");
 
         unit.stop;
-        assert(unit.isStopped, "Unit not stopped: " ~ unit.className);
+        if (!unit.isStopped)
+        {
+            if (onInvalidChangeNewState)
+            {
+                onInvalidChangeNewState(unit, UnitState.stop);
+            }
+
+            if (isThrowInvalidChangeState)
+            {
+                throw new Exception("Unit not stopped: " ~ unit.className);
+            }
+        }
     }
 
     void dispose()
@@ -160,10 +262,18 @@ class SimpleUnit : Unitable
         //allow dispose without running
         if (!isStopped && !isInitialized && !isCreated && !isPaused)
         {
-            import std.format : format;
+            if (onInvalidNewState)
+            {
+                onInvalidNewState(this, UnitState.dispose);
+            }
 
-            throw new IllegalUnitStateException(format("Cannot dispose component '%s' with state: %s",
-                    className, _state));
+            if (isThrowInvalidState)
+            {
+                import std.format : format;
+
+                throw new IllegalUnitStateException(format("Cannot dispose component '%s' with state: %s",
+                        className, _state));
+            }
         }
 
         _state = UnitState.dispose;
@@ -175,7 +285,18 @@ class SimpleUnit : Unitable
         assert(unit !is this, "Unit must not be this");
 
         unit.dispose;
-        assert(unit.isDisposed, "Unit not disposed: " ~ unit.className);
+        if (!unit.isDisposed)
+        {
+            if (onInvalidChangeNewState)
+            {
+                onInvalidChangeNewState(unit, UnitState.dispose);
+            }
+
+            if (isThrowInvalidChangeState)
+            {
+                throw new Exception("Unit not disposed: " ~ unit.className);
+            }
+        }
     }
 
     void stopDispose(SimpleUnit unit)
