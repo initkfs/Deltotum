@@ -27,6 +27,7 @@ import api.core.mem.memory : Memory;
 import api.core.mem.allocs.allocator : Allocator;
 import api.core.mem.allocs.mallocator : Mallocator;
 import api.core.supports.errors.err_status : ErrStatus;
+import api.core.supports.decisions.decision_system : DecisionSystem;
 
 import CoreEnvKeys = api.core.core_env_keys;
 
@@ -543,15 +544,18 @@ class CliApp : SimpleUnit
 
     protected Support createSupport()
     {
-        auto errStatus = new ErrStatus;
-
-        auto support = newSupport(errStatus);
+        auto errStatus = newErrStatus;
+        auto decision = newDecisionSystem;
+        auto support = newSupport(errStatus, decision);
         return support;
     }
 
-    Support newSupport(ErrStatus errStatus)
+    ErrStatus newErrStatus() => new ErrStatus;
+    DecisionSystem newDecisionSystem() => new DecisionSystem;
+
+    Support newSupport(ErrStatus errStatus, DecisionSystem decision)
     {
-        return new Support(errStatus);
+        return new Support(errStatus, decision);
     }
 
     protected Resourcing createResourcing(Logging logging, Config config, Context context)

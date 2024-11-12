@@ -1,6 +1,7 @@
 module api.core.supports.support;
 
 import api.core.supports.errors.err_status : ErrStatus;
+import api.core.supports.decisions.decision_system: DecisionSystem;
 
 import std.datetime.stopwatch : StopWatch, AutoStart;
 
@@ -11,10 +12,15 @@ import std.datetime.stopwatch : StopWatch, AutoStart;
 class Support
 {
     ErrStatus errStatus;
+    DecisionSystem decision;
 
-    this(ErrStatus errStatus) pure @safe
+    this(ErrStatus errStatus, DecisionSystem decision) pure @safe
     {
+        assert(errStatus);
         this.errStatus = errStatus;
+
+        assert(decision);
+        this.decision = decision;
     }
 
     StopWatch stopwatch(bool isAutoStart = true)
