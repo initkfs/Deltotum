@@ -49,7 +49,7 @@ struct RegularPolygon2d
     Vec2d[] createPoints()
     {
         Vec2d[] points = new Vec2d[](sideCount);
-        draw((i, p) { points ~= p; return true; });
+        draw((i, p) { points[i] = p; return true; });
         return points;
     }
 
