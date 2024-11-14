@@ -1,11 +1,11 @@
-module api.math.geom2.polybools.polybool;
+module api.dm.addon.math.geom2.polybools.polybool;
 /*
  * Authors: initkfs
  */
-import api.math.geom2.polybools.segments : Segment, SegmentChainer, SegmentSelector;
-import api.math.geom2.polybools.intersectors : SelfIntersecter, NonSelfIntersecter;
+import api.dm.addon.math.geom2.polybools.segments : Segment, SegmentChainer, SegmentSelector;
+import api.dm.addon.math.geom2.polybools.intersectors : SelfIntersecter, NonSelfIntersecter;
 
-import api.math.geom2.polybools.helpers : Epsilon;
+import api.dm.addon.math.geom2.polybools.helpers : Epsilon;
 
 /* 
  * D port of https://github.com/Menecats/polybool-java

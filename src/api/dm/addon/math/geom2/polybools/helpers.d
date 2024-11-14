@@ -1,4 +1,4 @@
-module api.math.geom2.polybools.helpers;
+module api.dm.addon.math.geom2.polybools.helpers;
 
 /*
  * Authors: initkfs

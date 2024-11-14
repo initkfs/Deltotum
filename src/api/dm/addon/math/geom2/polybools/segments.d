@@ -1,9 +1,9 @@
-module api.math.geom2.polybools.segments;
+module api.dm.addon.math.geom2.polybools.segments;
 /*
  * Authors: initkfs
  */
-import api.math.geom2.polybools.helpers : LinkedList, TransitionResult;
-import api.math.geom2.polybools.helpers : Epsilon;
+import api.dm.addon.math.geom2.polybools.helpers : LinkedList, TransitionResult;
+import api.dm.addon.math.geom2.polybools.helpers : Epsilon;
 
 import std.algorithm.mutation : remove;
 import std : reverse;

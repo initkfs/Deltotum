@@ -4,7 +4,6 @@ import api.math.geom2.polygon2 : Polygon2d;
 
 import api.math.geom2.vec2 : Vec2d;
 import Math = api.math;
-import api.math.geom2.polybools.polybool;
 
 /**
  * Authors: initkfs

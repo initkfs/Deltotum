@@ -35,8 +35,6 @@ class Start : Scene
         super.create;
         rnd = new Random;
 
-        import api.math.geom2.polybools.polybool;
-
         //auto eps = epsilon;
 
         // auto intersection = intersect(
