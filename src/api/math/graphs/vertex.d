@@ -6,6 +6,7 @@ module api.math.graphs.vertex;
 class Vertex
 {
     string id;
+    bool isVisited;
 
     this(string id) pure @safe
     {
@@ -32,6 +33,13 @@ class Vertex
     {
         size_t hash = id.hashOf;
         return hash;
+    }
+
+    override string toString() const
+    {
+        import std.format : format;
+
+        return format("%s(%s)", this.classinfo.name, id);
     }
 }
 

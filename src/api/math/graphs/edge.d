@@ -52,6 +52,13 @@ class Edge
         }
         return hash;
     }
+
+    override string toString() const
+    {
+        import std.format : format;
+
+        return format("%s(src: %s, dest: %s)", this.classinfo.name, src, dest);
+    }
 }
 
 unittest

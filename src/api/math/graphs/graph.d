@@ -4,7 +4,7 @@ import api.math.graphs.vertex : Vertex;
 import api.math.graphs.edge : Edge;
 
 import std.typecons : Nullable;
-import std.container.slist : SList;
+import std.container.dlist : DList;
 
 /**
  * Authors: initkfs
@@ -13,7 +13,7 @@ class Graph
 {
     private
     {
-        SList!Edge*[Vertex] graph;
+        DList!Edge*[Vertex] graph;
         size_t edgeCounter;
     }
 
@@ -33,11 +33,11 @@ class Graph
 
     bool addVertexUnsafe(Vertex vertex) @safe
     {
-        graph[vertex] = new SList!Edge;
+        graph[vertex] = new DList!Edge;
         return true;
     }
 
-    protected SList!Edge** hasVertexUnsafe(Vertex vertex) nothrow @nogc @safe
+    protected DList!Edge** hasVertexUnsafe(Vertex vertex) nothrow @nogc @safe
     {
         return (vertex in graph);
     }
@@ -50,7 +50,7 @@ class Graph
         return hasVertexUnsafe(vertex) !is null;
     }
 
-    void onEdgeForVertex(Vertex vertex, scope bool delegate(Edge) onEdgeIsContinue)
+    void onEdgeForVertex(Vertex vertex, scope bool delegate(Edge) onEdgeIsContinue, bool isReverse = false)
     {
         auto edgesPtr = hasVertexUnsafe(vertex);
         if (!edgesPtr)
@@ -58,16 +58,30 @@ class Graph
             return;
         }
 
-        foreach (edge; (**edgesPtr)[])
+        if (!isReverse)
         {
-            if (!onEdgeIsContinue(edge))
+            foreach (edge; (**edgesPtr)[])
             {
-                return;
+                if (!onEdgeIsContinue(edge))
+                {
+                    return;
+                }
             }
         }
+        else
+        {
+            foreach_reverse (edge; (**edgesPtr)[])
+            {
+                if (!onEdgeIsContinue(edge))
+                {
+                    return;
+                }
+            }
+        }
+
     }
 
-    SList!Edge* edgesForVertexUnsafe(Vertex vertex)
+    DList!Edge* edgesForVertexUnsafe(Vertex vertex)
     {
         if (auto edgesPtr = hasVertexUnsafe(vertex))
         {
@@ -76,16 +90,16 @@ class Graph
         return null;
     }
 
-    Nullable!(SList!Edge*) edgesForVertex(Vertex vertex)
+    Nullable!(DList!Edge*) edgesForVertex(Vertex vertex)
     {
         if (auto edgesPtr = hasVertexUnsafe(vertex))
         {
-            return Nullable!(SList!Edge*)(*edgesPtr);
+            return Nullable!(DList!Edge*)(*edgesPtr);
         }
-        return Nullable!(SList!Edge*).init;
+        return Nullable!(DList!Edge*).init;
     }
 
-    void onEdgesToVertex(Vertex vertex, scope bool delegate(Edge) onEdgeIsContinue)
+    void onEdgesToVertex(Vertex vertex, scope bool delegate(Edge) onEdgeIsContinue, bool isReverse = false)
     {
         onEdgeForVertex(vertex, (Edge edge) {
             if (edge.dest == vertex)
@@ -93,17 +107,17 @@ class Graph
                 return onEdgeIsContinue(edge);
             }
             return true;
-        });
+        }, isReverse);
     }
 
-    Edge[] edgesToVertex(Vertex vertex)
+    Edge[] edgesToVertex(Vertex vertex, bool isReverse = false)
     {
-        Edge[] edges;;
-        onEdgesToVertex(vertex, (Edge edge) { edges ~= edge; return true; });
+        Edge[] edges;
+        onEdgesToVertex(vertex, (Edge edge) { edges ~= edge; return true; }, isReverse);
         return edges;
     }
 
-    void onEdgesFromVertex(Vertex vertex, scope bool delegate(Edge) onEdgeIsContinue)
+    void onEdgesFromVertex(Vertex vertex, scope bool delegate(Edge) onEdgeIsContinue, bool isReverse = false)
     {
         onEdgeForVertex(vertex, (Edge edge) {
             if (edge.src == vertex)
@@ -111,14 +125,24 @@ class Graph
                 return onEdgeIsContinue(edge);
             }
             return true;
-        });
+        }, isReverse);
     }
 
-    Edge[] edgesFromVertex(Vertex vertex)
+    Edge[] edgesFromVertex(Vertex vertex, bool isReverse = false)
     {
         Edge[] edges;
-        onEdgesFromVertex(vertex, (Edge edge) { edges ~= edge; return true; });
+        onEdgesFromVertex(vertex, (Edge edge) { edges ~= edge; return true; }, isReverse);
         return edges;
+    }
+
+    bool addEdge(Edge[] edges)
+    {
+        bool isAdd;
+        foreach (e; edges)
+        {
+            isAdd |= addEdge(e);
+        }
+        return isAdd;
     }
 
     bool addEdge(Edge edge)
@@ -155,14 +179,14 @@ class Graph
 
         import std.algorithm.searching : canFind;
 
-        SList!Edge* destEdges = edgesForVertexUnsafe(destVertex);
+        DList!Edge* destEdges = edgesForVertexUnsafe(destVertex);
         if (destEdges && !((*destEdges)[].canFind(edge)))
         {
             destEdges.insert(edge);
             isEdgeAdd = true;
         }
 
-        SList!Edge* fromEdges = edgesForVertexUnsafe(fromVertex);
+        DList!Edge* fromEdges = edgesForVertexUnsafe(fromVertex);
         if (fromEdges)
         {
             if ((*fromEdges)[].canFind(edge))
@@ -190,10 +214,10 @@ class Graph
         bool isRemove;
 
         Vertex fromVertex = edge.src;
-        SList!(Edge)** mustBeFromEdgesPtr = hasVertexUnsafe(fromVertex);
+        DList!(Edge)** mustBeFromEdgesPtr = hasVertexUnsafe(fromVertex);
         if (mustBeFromEdgesPtr)
         {
-            SList!(Edge)* fromEdgesPtr = *mustBeFromEdgesPtr;
+            DList!(Edge)* fromEdgesPtr = *mustBeFromEdgesPtr;
             if ((*fromEdgesPtr)[].canFind(edge))
             {
                 if ((*fromEdgesPtr).linearRemoveElement(edge))
@@ -205,17 +229,28 @@ class Graph
         }
 
         Vertex toVertex = edge.dest;
-        SList!(Edge)** mustBeDestEdgesPtr = hasVertexUnsafe(toVertex);
+        DList!(Edge)** mustBeDestEdgesPtr = hasVertexUnsafe(toVertex);
         if (mustBeDestEdgesPtr)
         {
-            SList!(Edge)* destEdgesPtr = *mustBeDestEdgesPtr;
+            DList!(Edge)* destEdgesPtr = *mustBeDestEdgesPtr;
             if ((*destEdgesPtr)[].canFind(edge))
             {
-               (*destEdgesPtr).linearRemoveElement(edge);
+                (*destEdgesPtr).linearRemoveElement(edge);
             }
         }
 
         return isRemove;
+    }
+
+    void onVertex(scope bool delegate(Vertex, DList!Edge*) onVertexIsContinue)
+    {
+        foreach (v, edges; graph)
+        {
+            if (!onVertexIsContinue(v, edges))
+            {
+                return;
+            }
+        }
     }
 
 }
