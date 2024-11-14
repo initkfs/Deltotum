@@ -4,6 +4,7 @@ import api.math.graphs.vertex : Vertex;
 import api.math.graphs.edge : Edge;
 
 import std.typecons : Nullable;
+import std.container.slist : SList;
 
 /**
  * Authors: initkfs
@@ -12,7 +13,7 @@ class Graph
 {
     private
     {
-        Edge[][Vertex] graph;
+        SList!Edge*[Vertex] graph;
         size_t edgeCounter;
     }
 
@@ -32,11 +33,11 @@ class Graph
 
     bool addVertexUnsafe(Vertex vertex) @safe
     {
-        graph[vertex] = [];
+        graph[vertex] = new SList!Edge;
         return true;
     }
 
-    protected Edge[]* hasVertexUnsafe(Vertex vertex) nothrow @nogc @safe
+    protected SList!Edge** hasVertexUnsafe(Vertex vertex) nothrow @nogc @safe
     {
         return (vertex in graph);
     }
@@ -45,7 +46,7 @@ class Graph
     {
         import std.exception : enforce;
 
-        enforce(vertex !is null, "Vertex must not be null");
+        enforce(vertex, "Vertex must not be null");
         return hasVertexUnsafe(vertex) !is null;
     }
 
@@ -57,7 +58,7 @@ class Graph
             return;
         }
 
-        foreach (edge; *edgesPtr)
+        foreach (edge; (**edgesPtr)[])
         {
             if (!onEdgeIsContinue(edge))
             {
@@ -66,13 +67,22 @@ class Graph
         }
     }
 
-    Edge[] edgesForVertex(Vertex vertex)
+    SList!Edge* edgesForVertexUnsafe(Vertex vertex)
     {
         if (auto edgesPtr = hasVertexUnsafe(vertex))
         {
             return *edgesPtr;
         }
         return null;
+    }
+
+    Nullable!(SList!Edge*) edgesForVertex(Vertex vertex)
+    {
+        if (auto edgesPtr = hasVertexUnsafe(vertex))
+        {
+            return Nullable!(SList!Edge*)(*edgesPtr);
+        }
+        return Nullable!(SList!Edge*).init;
     }
 
     void onEdgesToVertex(Vertex vertex, scope bool delegate(Edge) onEdgeIsContinue)
@@ -88,7 +98,7 @@ class Graph
 
     Edge[] edgesToVertex(Vertex vertex)
     {
-        Edge[] edges;
+        Edge[] edges;;
         onEdgesToVertex(vertex, (Edge edge) { edges ~= edge; return true; });
         return edges;
     }
@@ -145,23 +155,27 @@ class Graph
 
         import std.algorithm.searching : canFind;
 
-        Edge[] destEdges = edgesForVertex(destVertex);
-        if (!destEdges.canFind(edge))
+        SList!Edge* destEdges = edgesForVertexUnsafe(destVertex);
+        if (destEdges && !((*destEdges)[].canFind(edge)))
         {
-            graph[destVertex] ~= edge;
+            destEdges.insert(edge);
             isEdgeAdd = true;
         }
 
-        Edge[] fromEdges = edgesForVertex(fromVertex);
-        if (fromEdges.canFind(edge))
+        SList!Edge* fromEdges = edgesForVertexUnsafe(fromVertex);
+        if (fromEdges)
         {
-            return isEdgeAdd;
+            if ((*fromEdges)[].canFind(edge))
+            {
+                return isEdgeAdd;
+            }
+
+            fromEdges.insert(edge);
+            edgeCounter++;
+
+            return true;
         }
-
-        graph[fromVertex] ~= edge;
-        edgeCounter++;
-
-        return true;
+        return false;
     }
 
     size_t countVertices() nothrow @nogc pure @safe => graph.length;
@@ -171,48 +185,33 @@ class Graph
     {
         import std.algorithm.searching : countUntil;
         import std.algorithm.mutation : remove;
+        import std.algorithm.searching : canFind;
 
         bool isRemove;
 
         Vertex fromVertex = edge.src;
-        Edge[]* fromEdgesPtr = hasVertexUnsafe(fromVertex);
-        if (fromEdgesPtr)
+        SList!(Edge)** mustBeFromEdgesPtr = hasVertexUnsafe(fromVertex);
+        if (mustBeFromEdgesPtr)
         {
-            auto fromVertexRemovePos = -1;
-            foreach (e; *fromEdgesPtr)
+            SList!(Edge)* fromEdgesPtr = *mustBeFromEdgesPtr;
+            if ((*fromEdgesPtr)[].canFind(edge))
             {
-                fromVertexRemovePos++;
-                if (edge == e)
+                if ((*fromEdgesPtr).linearRemoveElement(edge))
                 {
-                    break;
+                    isRemove = true;
+                    edgeCounter--;
                 }
-            }
-
-            if (fromVertexRemovePos != -1)
-            {
-                graph[fromVertex] = (*fromEdgesPtr).remove(fromVertexRemovePos);
-                isRemove = true;
-                edgeCounter--;
             }
         }
 
         Vertex toVertex = edge.dest;
-        Edge[]* destEdgesPtr = hasVertexUnsafe(toVertex);
-        if (destEdgesPtr)
+        SList!(Edge)** mustBeDestEdgesPtr = hasVertexUnsafe(toVertex);
+        if (mustBeDestEdgesPtr)
         {
-            auto toVertexRemovePos = -1;
-            foreach (e; *destEdgesPtr)
+            SList!(Edge)* destEdgesPtr = *mustBeDestEdgesPtr;
+            if ((*destEdgesPtr)[].canFind(edge))
             {
-                toVertexRemovePos++;
-                if (edge == e)
-                {
-                    break;
-                }
-            }
-
-            if (toVertexRemovePos != -1)
-            {
-                graph[toVertex] = (*destEdgesPtr).remove(toVertexRemovePos);
+               (*destEdgesPtr).linearRemoveElement(edge);
             }
         }
 
