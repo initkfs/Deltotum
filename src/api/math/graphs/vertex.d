@@ -5,29 +5,16 @@ module api.math.graphs.vertex;
  */
 class Vertex
 {
-    string id;
+    long id;
     bool isVisited;
 
-    this(string id) pure @safe
+    this(long id) pure @safe
     {
-        assert(id.length != 0);
-        this.id = id;
-    }
-
-    this(const(string) id) const pure @safe
-    {
-        assert(id.length != 0);
-        this.id = id;
-    }
-
-    this(string id) immutable pure @safe
-    {
-        assert(id.length != 0);
         this.id = id;
     }
 
     override bool opEquals(Object o) const => opEquals(cast(const(Vertex)) o);
-    bool opEquals(const Vertex other) const @safe nothrow pure => (other && other.id == id);
+    bool opEquals(const Vertex other) const @safe nothrow pure => (other && other.id == id && other.isVisited == isVisited);
 
     override size_t toHash() const pure nothrow
     {
@@ -39,23 +26,23 @@ class Vertex
     {
         import std.format : format;
 
-        return format("%s(%s)", this.classinfo.name, id);
+        return format("V(%s)", id);
     }
 }
 
 unittest
 {
-    auto v1 = new Vertex("1");
-    auto v11 = new Vertex("1");
+    auto v1 = new Vertex(1);
+    auto v11 = new Vertex(1);
     assert(v1 == v11);
 
-    const vc1 = new const Vertex("1");
+    const vc1 = new const Vertex(1);
     assert(v1 == vc1);
 
-    immutable vi1 = new immutable Vertex("1");
+    immutable vi1 = new immutable Vertex(1);
     assert(v1 == vi1);
 
-    auto v2 = new Vertex("2");
+    auto v2 = new Vertex(2);
     assert(v1 != v2);
     assert(vc1 != v2);
     assert(vi1 != v2);

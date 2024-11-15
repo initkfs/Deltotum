@@ -40,12 +40,13 @@ class Edge
         {
             return false;
         }
-        return other.src == src && other.dest == dest;
+        return other.src == src && other.dest == dest && other.weight == weight;
     }
 
     override size_t toHash() const pure nothrow
     {
-        size_t hash = src.toHash.hashOf;
+        size_t hash = weight.hashOf;
+        hash = src.toHash.hashOf(hash);
         if (dest)
         {
             hash = dest.toHash.hashOf(hash);
@@ -66,12 +67,12 @@ unittest
     import std.exception : assertThrown;
 
     assertThrown(new Edge(null, null));
-    assertThrown(new Edge(null, new Vertex("1")));
-    assertThrown(new Edge(new Vertex("1"), null));
-    assertThrown(new Edge(new Vertex("1"), new Vertex("1")));
+    assertThrown(new Edge(null, new Vertex(1)));
+    assertThrown(new Edge(new Vertex(1), null));
+    assertThrown(new Edge(new Vertex(1), new Vertex(1)));
 
-    auto v1 = new Vertex("1");
-    auto v2 = new Vertex("2");
+    auto v1 = new Vertex(1);
+    auto v2 = new Vertex(2);
 
     auto edgeSrcDest = new Edge(v1, v2);
     auto edgeSrcDest2 = new Edge(v1, v2);

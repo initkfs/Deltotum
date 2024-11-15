@@ -260,8 +260,8 @@ unittest
     import api.math.graphs.vertex : Vertex;
     import api.math.graphs.edge : Edge;
 
-    Vertex v1 = new Vertex("1");
-    Vertex v11 = new Vertex("1");
+    Vertex v1 = new Vertex(1);
+    Vertex v11 = new Vertex(1);
 
     Graph graph = new Graph;
 
@@ -276,7 +276,7 @@ unittest
     assert(graph.countVertices == 1);
     assert(graph.countEdges == 0);
 
-    Vertex v2 = new Vertex("2");
+    Vertex v2 = new Vertex(2);
     Edge e1 = new Edge(v1, v2);
     assert(graph.addEdge(e1));
     assert(!graph.addEdge(e1));

@@ -57,14 +57,14 @@ bool dfsSearch(Graph graph, Vertex start, Vertex target)
 
 unittest
 {
-    auto v1 = new Vertex("1");
-    auto v2 = new Vertex("2");
-    auto v3 = new Vertex("3");
-    auto v4 = new Vertex("4");
-    auto v5 = new Vertex("5");
-    auto v6 = new Vertex("6");
-    auto v7 = new Vertex("7");
-    auto v8 = new Vertex("8");
+    auto v1 = new Vertex(1);
+    auto v2 = new Vertex(2);
+    auto v3 = new Vertex(3);
+    auto v4 = new Vertex(4);
+    auto v5 = new Vertex(5);
+    auto v6 = new Vertex(6);
+    auto v7 = new Vertex(7);
+    auto v8 = new Vertex(8);
 
     auto graph = new Graph;
     graph.addEdge([
@@ -126,14 +126,14 @@ void bfs(Graph graph, Vertex start, scope bool delegate(Vertex) onVertexIsContin
 
 unittest
 {
-    auto v1 = new Vertex("1");
-    auto v2 = new Vertex("2");
-    auto v3 = new Vertex("3");
-    auto v4 = new Vertex("4");
-    auto v5 = new Vertex("5");
-    auto v6 = new Vertex("6");
-    auto v7 = new Vertex("7");
-    auto v8 = new Vertex("8");
+    auto v1 = new Vertex(1);
+    auto v2 = new Vertex(2);
+    auto v3 = new Vertex(3);
+    auto v4 = new Vertex(4);
+    auto v5 = new Vertex(5);
+    auto v6 = new Vertex(6);
+    auto v7 = new Vertex(7);
+    auto v8 = new Vertex(8);
 
     auto graph = new Graph;
     graph.addEdge([
