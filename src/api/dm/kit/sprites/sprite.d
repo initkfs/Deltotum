@@ -1408,6 +1408,8 @@ class Sprite : EventKitTarget
         return _width;
     }
 
+    double halfWidth() @safe pure nothrow => width / 2;
+
     bool canChangeWidth(double value)
     {
         if (value < minWidth || value > maxWidth)
@@ -1539,6 +1541,8 @@ class Sprite : EventKitTarget
     {
         return _height;
     }
+
+    double halfHeight() @safe pure nothrow => height / 2;
 
     bool canChangeHeight(double value)
     {

@@ -37,6 +37,9 @@ class Scene : EventKitTarget
     bool isPause;
     Sprite[] eternalSprites;
 
+    bool isDrawAfterAllSprites;
+    Sprite drawBeforeSprite;
+
     void delegate(double dt)[] eternalTasks;
 
     protected
@@ -203,7 +206,7 @@ class Scene : EventKitTarget
 
     }
 
-    void drawAll()
+    protected void drawSelf()
     {
         if (onDraw)
         {
@@ -211,9 +214,22 @@ class Scene : EventKitTarget
         }
 
         draw;
+    }
+
+    void drawAll()
+    {
+        if (!isDrawAfterAllSprites && !drawBeforeSprite)
+        {
+            drawSelf;
+        }
 
         foreach (obj; sprites)
         {
+            if (drawBeforeSprite && drawBeforeSprite is obj)
+            {
+                drawSelf;
+            }
+
             obj.draw;
             if (obj.isClipped)
             {
@@ -231,6 +247,11 @@ class Scene : EventKitTarget
                 cs.draw;
                 cs.unvalidate;
             }
+        }
+
+        if (isDrawAfterAllSprites && !drawBeforeSprite)
+        {
+            drawSelf;
         }
 
         startDrawProcess = false;

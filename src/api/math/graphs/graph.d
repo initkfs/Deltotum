@@ -135,6 +135,16 @@ class Graph
         return edges;
     }
 
+    bool addEdge(Vertex a, Vertex b) => addEdge(new Edge(a, b));
+
+    bool addEdgeBoth(Vertex a, Vertex b)
+    {
+        bool isAdd;
+        isAdd |= addEdge(a, b);
+        isAdd |= addEdge(b, a);
+        return isAdd;
+    }
+
     bool addEdge(Edge[] edges)
     {
         bool isAdd;

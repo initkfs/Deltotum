@@ -22,15 +22,16 @@ struct StubsF
 struct ImageF
 {
     string path;
+    bool isAdd;
     double width = -1;
     double height = -1;
-    bool isAdd;
 }
 
 struct ImagesF
 {
     string path;
     bool isAdd;
+    size_t count = 1;
 }
 
 struct AnimImageF

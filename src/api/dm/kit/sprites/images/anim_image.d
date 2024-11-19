@@ -17,6 +17,7 @@ class ImageAnimation
     int frameDelay;
     bool isLooping;
     bool isReverse;
+    Flip flip;
 }
 
 /**
@@ -39,8 +40,6 @@ class AnimImage : Image
         ImageAnimation currentAnimation;
         size_t currentAnimationIndex;
         size_t currentAnimationStartTime;
-
-        Flip currentFlip = Flip.none;
     }
 
     this(int frameWidth = 0, int frameHeight = 0, int frameDelay = 0)
@@ -64,12 +63,14 @@ class AnimImage : Image
         return isLoad;
     }
 
-    bool addIdle(size_t frameCount, int frameRow = 0, bool autoplay = false, int frameDelay = 0, bool isLooping = true, int maxFrameRows = 1)
+    bool addIdle(size_t frameCount, int frameRow = 0, bool autoplay = false, int frameDelay = 0, bool isLooping = true, Flip flip = Flip
+            .none, int maxFrameRows = 1)
     {
-        return animate(defaultAnimation, frameCount, frameRow, autoplay, frameDelay, isLooping, maxFrameRows);
+        return animate(defaultAnimation, frameCount, frameRow, autoplay, frameDelay, isLooping, flip, maxFrameRows);
     }
 
-    bool animate(string name, size_t frameCount, int frameRow = 0, bool autoplay = false, int frameDelay = 0, bool isLooping = true, int maxFrameRows = 1)
+    bool animate(string name, size_t frameCount, int frameRow = 0, bool autoplay = false, int frameDelay = 0, bool isLooping = true, Flip flip = Flip
+            .none, int maxFrameRows = 1)
     {
         if (frameCount == 0)
         {
@@ -81,10 +82,11 @@ class AnimImage : Image
         {
             frameIndices[i] = cast(int) i;
         }
-        return animate(name, frameIndices, frameRow, autoplay, frameDelay, isLooping, maxFrameRows);
+        return animate(name, frameIndices, frameRow, autoplay, frameDelay, isLooping, flip, maxFrameRows);
     }
 
-    bool animate(string name, int[] frameIndices, int frameRow = 0, bool autoplay = false, int frameDelay = 0, bool isLooping = true, int maxFrameRows = 1)
+    bool animate(string name, int[] frameIndices, int frameRow = 0, bool autoplay = false, int frameDelay = 0, bool isLooping = true, Flip newFlip = Flip
+            .none, int maxFrameRows = 1)
     {
         assert(name.length > 0);
         assert(frameIndices.length > 0);
@@ -104,6 +106,7 @@ class AnimImage : Image
         anim.maxFrameRows = maxFrameRows;
         anim.isLooping = isLooping;
         anim.frameDelay = frameDelay > 0 ? frameDelay : this.frameDelay;
+        anim.flip = newFlip;
 
         if (anim.maxFrameRows > 0)
         {
@@ -140,8 +143,6 @@ class AnimImage : Image
             stop;
         }
 
-        currentFlip = flip;
-
         auto mustBeAnim = animationUnsafe(name);
         if (!mustBeAnim)
         {
@@ -150,6 +151,7 @@ class AnimImage : Image
 
         currentAnimation = mustBeAnim;
 
+        currentAnimation.flip = flip;
         currentAnimationStartTime = platform.ticks;
 
         super.run;
@@ -213,7 +215,9 @@ class AnimImage : Image
         const frameIndex = currentAnimation.frameIndices[currentAnimationIndex];
         const frameRow = currentAnimation.frameRow;
 
-        drawFrame(frameIndex, frameRow, currentFlip);
+        const newFlip = this.flip != Flip.none ? flip : currentAnimation.flip;
+
+        drawFrame(frameIndex, frameRow, newFlip);
     }
 
     ImageAnimation animationUnsafe(string name)

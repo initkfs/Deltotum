@@ -1,14 +1,12 @@
-module api.dm.kit.sprites.transitions.parallel_transition;
+module api.dm.kit.sprites.transitions.joins.manager_transition;
 
 import api.dm.kit.sprites.transitions.transition : Transition;
 
 /**
  * Authors: initkfs
  */
-class ParallelTransition : Transition
+class ManagerTransition : Transition
 {
-    bool isStopOnAnyStopped;
-
     protected
     {
         Transition[] transitions;
@@ -16,61 +14,36 @@ class ParallelTransition : Transition
 
     override void onFrame()
     {
-        foreach (tr; transitions)
-        {
-            if (isStopOnAnyStopped && tr.isStopped)
-            {
-                stop;
-                break;
-            }
-        }
+
     }
 
-    override void run()
-    {
-        super.run;
-        foreach (tr; transitions)
-        {
-            tr.run;
-        }
-    }
-
-    override void pause()
-    {
-        super.pause;
-        foreach (tr; transitions)
-        {
-            tr.pause;
-        }
-    }
-
-    void resume()
-    {
-        foreach (tr; transitions)
-        {
-            tr.run;
-        }
-    }
-
-    override void stop()
-    {
-        super.stop;
-        foreach (tr; transitions)
-        {
-            if (tr.isRunning)
-            {
-                tr.stop;
-            }
-        }
-    }
-
-    void addTransition(Transition tr)
+    bool addTransition(Transition tr)
     {
         if (!tr)
         {
             throw new Exception("Transition must not be null");
         }
+
+        foreach (oldTr; transitions)
+        {
+            if (oldTr is tr)
+            {
+                return false;
+            }
+        }
+
+        if (!tr.isBuilt)
+        {
+            buildInitCreate(tr);
+        }
+
+        if (!tr.parent)
+        {
+            add(tr);
+        }
+
         transitions ~= tr;
+        return true;
     }
 
     bool removeTransition(Transition tr)

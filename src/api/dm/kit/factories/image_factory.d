@@ -26,8 +26,11 @@ class ImageFactory : WindowComponent
 
         auto newImage = new Image;
         build(newImage);
-        if (!newImage.load(path, requestWidth.to!int, requestHeight.to!int))
+        int reqWidth = requestWidth.to!int;
+        int reqHeight = requestHeight.to!int;
+        if (!newImage.load(path, reqWidth, reqHeight))
         {
+            logger.errorf("Unable to load image with width %s, height %s from path %s", reqWidth, reqHeight, path);
             //TODO log, exception, placeholder, blank image?
         }
         newImage.initialize;

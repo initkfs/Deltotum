@@ -10,7 +10,7 @@ class Edge
     Vertex src;
     Vertex dest;
 
-    long weight;
+    double weight = 0;
 
     this(Vertex src, Vertex dest) pure @safe
     {
