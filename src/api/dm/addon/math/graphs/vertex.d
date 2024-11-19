@@ -1,4 +1,4 @@
-module api.math.graphs.vertex;
+module api.dm.addon.math.graphs.vertex;
 
 /**
  * Authors: initkfs
