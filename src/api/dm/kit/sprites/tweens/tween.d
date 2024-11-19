@@ -1,10 +1,10 @@
-module api.dm.kit.sprites.transitions.transition;
+module api.dm.kit.sprites.tweens.tween;
 
 import api.dm.kit.sprites.sprite : Sprite;
 
 import std.container.dlist : DList;
 
-enum TransitionState
+enum TweenState
 {
     none,
     pause,
@@ -16,7 +16,7 @@ enum TransitionState
 /**
  * Authors: initkfs
  */
-abstract class Transition : Sprite
+abstract class Tween : Sprite
 {
     bool isReverse;
     bool isInfinite;
@@ -40,13 +40,13 @@ abstract class Transition : Sprite
         size_t currentCycle;
         bool currentShort;
 
-        TransitionState state = TransitionState.none;
-        TransitionState prevState;
+        TweenState state = TweenState.none;
+        TweenState prevState;
 
         enum firstFrame = 1;
 
-        DList!Transition prevs;
-        DList!Transition nexts;
+        DList!Tween prevs;
+        DList!Tween nexts;
     }
 
     this(size_t timeMs = 200)
@@ -121,7 +121,7 @@ abstract class Transition : Sprite
             currentFrameCount = frameCount(rate);
             currentFrame = firstFrame;
         }
-        state = TransitionState.direct;
+        state = TweenState.direct;
     }
 
     override void pause()
@@ -129,7 +129,7 @@ abstract class Transition : Sprite
         super.pause;
 
         prevState = state;
-        state = TransitionState.pause;
+        state = TweenState.pause;
 
         if (onPause.length > 0)
         {
@@ -142,14 +142,14 @@ abstract class Transition : Sprite
 
     bool isPause()
     {
-        return state == TransitionState.pause;
+        return state == TweenState.pause;
     }
 
     override void stop()
     {
         super.stop;
 
-        state = TransitionState.end;
+        state = TweenState.end;
 
         currentFrameCount = 0;
         currentFrame = 0;
@@ -180,7 +180,7 @@ abstract class Transition : Sprite
 
     protected bool isRunningState()
     {
-        return state == TransitionState.direct || state == TransitionState.back;
+        return state == TweenState.direct || state == TweenState.back;
     }
 
     override void update(double delta)
@@ -254,21 +254,21 @@ abstract class Transition : Sprite
 
     void reverse()
     {
-        if (state == TransitionState.direct)
+        if (state == TweenState.direct)
         {
-            state = TransitionState.back;
+            state = TweenState.back;
         }
-        else if (state == TransitionState.back)
+        else if (state == TweenState.back)
         {
-            state = TransitionState.direct;
+            state = TweenState.direct;
         }
     }
 
-    void prev(Transition newPrev)
+    void prev(Tween newPrev)
     {
         if (!newPrev)
         {
-            throw new Exception("Previous transition must not be null");
+            throw new Exception("Previous tween must not be null");
         }
 
         //TODO remove and clear prevs
@@ -283,7 +283,7 @@ abstract class Transition : Sprite
         prevs ~= newPrev;
     }
 
-    void prev(Transition[] newPrevs...)
+    void prev(Tween[] newPrevs...)
     {
         foreach (t; newPrevs)
         {
@@ -291,16 +291,16 @@ abstract class Transition : Sprite
         }
     }
 
-    void next(Transition newNext)
+    void next(Tween newNext)
     {
         if (!newNext)
         {
-            throw new Exception("Next transition must not be null");
+            throw new Exception("Next tween must not be null");
         }
         nexts ~= newNext;
     }
 
-    void next(Transition[] newNexts...)
+    void next(Tween[] newNexts...)
     {
         foreach (t; newNexts)
         {

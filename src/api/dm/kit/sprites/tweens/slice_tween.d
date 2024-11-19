@@ -1,7 +1,7 @@
-module api.dm.kit.sprites.transitions.slice_transition;
+module api.dm.kit.sprites.tweens.slice_tween;
 
-import api.dm.kit.sprites.transitions.min_max_transition : MinMaxTransition;
-import api.dm.kit.sprites.transitions.curves.interpolator : Interpolator;
+import api.dm.kit.sprites.tweens.min_max_tween : MinMaxTween;
+import api.dm.kit.sprites.tweens.curves.interpolator : Interpolator;
 import api.math.geom2.vec2 : Vec2d;
 
 import Math = api.dm.math;
@@ -11,7 +11,7 @@ import std.traits : isIntegral, isFloatingPoint;
 /**
  * Authors: initkfs
  */
-class SliceTransition(T) : MinMaxTransition!double
+class SliceTween(T) : MinMaxTween!double
 {
     T[] range;
 

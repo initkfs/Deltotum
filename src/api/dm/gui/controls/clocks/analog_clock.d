@@ -13,7 +13,7 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
 import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 import api.dm.kit.sprites.textures.vectors.shapes.vshape : VShape;
-import api.dm.kit.sprites.transitions.pause_transition : PauseTransition;
+import api.dm.kit.sprites.tweens.pause_tween : PauseTween;
 import api.dm.kit.sprites.textures.texture : Texture;
 import api.math.geom2.rect2 : Rect2d;
 import Math = api.dm.math;
@@ -88,7 +88,7 @@ class AnalogClock : Control
 
     Sprite handHolder;
 
-    PauseTransition clockAnimation;
+    PauseTween clockAnimation;
 
     bool isAutorun;
 
@@ -361,7 +361,7 @@ class AnalogClock : Control
 
         if (!clockAnimation)
         {
-            clockAnimation = new PauseTransition(1000);
+            clockAnimation = new PauseTween(1000);
             clockAnimation.isInfinite = true;
             clockAnimation.onEnd ~= () {
                 import std.datetime;

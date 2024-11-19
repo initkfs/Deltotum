@@ -8,8 +8,8 @@ import api.dm.gui.containers.circle_box : CircleBox;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.sprites.textures.texture : Texture;
 import api.dm.gui.controls.texts.text : Text;
-import api.dm.kit.sprites.transitions.transition : Transition;
-import api.dm.kit.sprites.transitions.targets.value_transition : ValueTransition;
+import api.dm.kit.sprites.tweens.tween : Tween;
+import api.dm.kit.sprites.tweens.targets.value_tween : ValueTween;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 
 import api.math.geom2.vec2 : Vec2d;
@@ -94,7 +94,7 @@ class RadialGauge : Control
     Sprite hand;
     Sprite handHolder;
 
-    ValueTransition handTransition;
+    ValueTween handTween;
 
     Text label;
 
@@ -135,12 +135,12 @@ class RadialGauge : Control
         const centerShapeW = width;
         const centerShapeH = height;
 
-        handTransition = new ValueTransition(0, 0, 500);
-        handTransition.onOldNewValue ~= (oldValue, value) {
+        handTween = new ValueTween(0, 0, 500);
+        handTween.onOldNewValue ~= (oldValue, value) {
             setHandAngleDeg(value);
         };
-        handTransition.onStop ~= () { setLabel(_value); };
-        addCreate(handTransition);
+        handTween.onStop ~= () { setLabel(_value); };
+        addCreate(handTween);
 
         import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
         import api.dm.com.graphics.com_texture : ComTextureScaleMode;
@@ -363,17 +363,17 @@ class RadialGauge : Control
 
         protected void setHandAngleDegAnim(double angleDeg)
         {
-            if (handTransition.isRunning)
+            if (handTween.isRunning)
             {
-                //setHandAngleDeg(handTransition.maxValue);
-                handTransition.stop;
+                //setHandAngleDeg(handTween.maxValue);
+                handTween.stop;
             }
 
             auto oldAngle = hand.angle - 90;
 
-            handTransition.minValue = oldAngle;
-            handTransition.maxValue = angleDeg;
-            handTransition.run;
+            handTween.minValue = oldAngle;
+            handTween.maxValue = angleDeg;
+            handTween.run;
         }
 
         void value(double v)

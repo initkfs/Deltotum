@@ -3,7 +3,7 @@ module api.dm.gui.controls.expanders.expander;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.containers.stack_box : StackBox;
-import api.dm.kit.sprites.transitions.min_max_transition : MinMaxTransition;
+import api.dm.kit.sprites.tweens.min_max_tween : MinMaxTween;
 
 enum ExpanderPosition
 {
@@ -30,7 +30,7 @@ class Expander : Control
     {
         Control expandBar;
         Sprite expandLabel;
-        MinMaxTransition!double clipTransition;
+        MinMaxTween!double clipTween;
         ExpanderState state = ExpanderState.opened;
         double labelAngleDt = 0;
     }
@@ -76,7 +76,7 @@ class Expander : Control
 
         expandBar.onPointerDown ~= (ref e) {
 
-            if (clipTransition.isRunning)
+            if (clipTween.isRunning)
             {
                 return;
             }
@@ -95,22 +95,22 @@ class Expander : Control
                 clip.width = width;
                 clip.height = expandBar.height;
 
-                clipTransition.minValue = expandBar.height;
-                clipTransition.maxValue = height;
+                clipTween.minValue = expandBar.height;
+                clipTween.maxValue = height;
             }
             else if (state == ExpanderState.opened)
             {
                 clip.width = width;
                 clip.height = height;
 
-                clipTransition.minValue = height;
-                clipTransition.maxValue = expandBar.height;
+                clipTween.minValue = height;
+                clipTween.maxValue = expandBar.height;
             }
 
-            auto labelRange = clipTransition.frameCount;
+            auto labelRange = clipTween.frameCount;
             labelAngleDt = 90 / labelRange;
 
-            clipTransition.run;
+            clipTween.run;
         };
 
         createExpandLabel;
@@ -178,10 +178,10 @@ class Expander : Control
                 break;
         }
 
-        clipTransition = new MinMaxTransition!double(0, 1, 250);
-        addCreate(clipTransition);
+        clipTween = new MinMaxTween!double(0, 1, 250);
+        addCreate(clipTween);
 
-        clipTransition.onOldNewValue ~= (oldValue, newValue) {
+        clipTween.onOldNewValue ~= (oldValue, newValue) {
             clip.height = newValue;
 
             if (state == ExpanderState.opened)
@@ -203,7 +203,7 @@ class Expander : Control
 
         };
 
-        clipTransition.onStop ~= () {
+        clipTween.onStop ~= () {
             if (state == ExpanderState.opened)
             {
                 contentContainer.isVisible = false;

@@ -6,8 +6,8 @@ import api.dm.gui.controls.buttons.button : Button;
 import api.dm.kit.sprites.layouts.hlayout : HLayout;
 import api.dm.kit.sprites.layouts.vlayout : VLayout;
 import api.dm.gui.containers.container : Container;
-import api.dm.kit.sprites.transitions.transition : Transition;
-import api.dm.kit.sprites.transitions.min_max_transition : MinMaxTransition;
+import api.dm.kit.sprites.tweens.tween : Tween;
+import api.dm.kit.sprites.tweens.min_max_tween : MinMaxTween;
 import api.math.geom2.vec2 : Vec2d;
 
 import std.conv : to;
@@ -31,7 +31,7 @@ class Carousel : Control
         size_t currentItemIndex;
         Container itemContainer;
 
-        MinMaxTransition!double animation;
+        MinMaxTween!double animation;
 
         CarouselDirection direction = CarouselDirection.fromRight;
 
@@ -54,9 +54,9 @@ class Carousel : Control
     {
         super.create;
 
-        import api.dm.kit.sprites.transitions.curves.uni_interpolator : UniInterpolator;
+        import api.dm.kit.sprites.tweens.curves.uni_interpolator : UniInterpolator;
 
-        animation = new MinMaxTransition!double(0.0, 1.0, 500);
+        animation = new MinMaxTween!double(0.0, 1.0, 500);
         animation.interpolator.interpolateMethod = &UniInterpolator.circIn;
         addCreate(animation);
 

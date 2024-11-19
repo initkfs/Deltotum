@@ -1,8 +1,8 @@
-module api.dm.kit.sprites.transitions.min_max_transition;
+module api.dm.kit.sprites.tweens.min_max_tween;
 
-import api.dm.kit.sprites.transitions.transition : Transition, TransitionState;
-import api.dm.kit.sprites.transitions.curves.interpolator : Interpolator;
-import api.dm.kit.sprites.transitions.curves.uni_interpolator : UniInterpolator;
+import api.dm.kit.sprites.tweens.tween : Tween, TweenState;
+import api.dm.kit.sprites.tweens.curves.interpolator : Interpolator;
+import api.dm.kit.sprites.tweens.curves.uni_interpolator : UniInterpolator;
 import api.math.geom2.vec2 : Vec2d;
 import math = api.dm.math;
 
@@ -13,7 +13,7 @@ import std.stdio;
 /**
  * Authors: initkfs
  */
-class MinMaxTransition(T) if (isFloatingPoint!T || is(T : Vec2d)) : Transition
+class MinMaxTween(T) if (isFloatingPoint!T || is(T : Vec2d)) : Tween
 {
     Interpolator interpolator;
 
@@ -66,11 +66,11 @@ class MinMaxTransition(T) if (isFloatingPoint!T || is(T : Vec2d)) : Transition
         T end;
         switch (state)
         {
-            case TransitionState.direct:
+            case TweenState.direct:
                 start = _minValue;
                 end = _maxValue;
                 break;
-            case TransitionState.back:
+            case TweenState.back:
                 start = _maxValue;
                 end = _minValue;
                 break;
@@ -180,7 +180,7 @@ unittest
     import std.math.operations : isClose;
 
     enum animationTimeMs = 100;
-    auto tr1 = new MinMaxTransition!double(0, 10, animationTimeMs);
+    auto tr1 = new MinMaxTween!double(0, 10, animationTimeMs);
     tr1.frameRateHz = 60;
     tr1.initialize;
     tr1.create;

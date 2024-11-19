@@ -1,6 +1,6 @@
-module api.dm.kit.sprites.transitions.curves.uni_interpolator;
+module api.dm.kit.sprites.tweens.curves.uni_interpolator;
 
-import api.dm.kit.sprites.transitions.curves.interpolator : Interpolator;
+import api.dm.kit.sprites.tweens.curves.interpolator : Interpolator;
 import math = api.dm.math;
 
 struct UniInterpolatorMethod {

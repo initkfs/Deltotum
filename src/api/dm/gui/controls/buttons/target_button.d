@@ -6,7 +6,7 @@ import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.transitions.min_max_transition : MinMaxTransition;
+import api.dm.kit.sprites.tweens.min_max_tween : MinMaxTween;
 import api.dm.kit.sprites.layouts.center_layout : CenterLayout;
 
 /**
@@ -46,7 +46,7 @@ class TargetButton : ButtonBase
         Sprite rightStick;
         Sprite bottomStick;
 
-        MinMaxTransition!double stickAnimation;
+        MinMaxTween!double stickAnimation;
 
         Button innerButton;
 
@@ -117,10 +117,10 @@ class TargetButton : ButtonBase
 
         layoutSticks;
 
-        import api.dm.kit.sprites.transitions.curves.uni_interpolator: UniInterpolator;
+        import api.dm.kit.sprites.tweens.curves.uni_interpolator: UniInterpolator;
 
         //TODO infinite?
-        stickAnimation = new MinMaxTransition!double(0, 10, 800);
+        stickAnimation = new MinMaxTween!double(0, 10, 800);
         stickAnimation.interpolator.interpolateMethod = &UniInterpolator.elasticInOut;
         addCreate(stickAnimation);
         stickAnimation.onOldNewValue ~= (oldValue, dt) {

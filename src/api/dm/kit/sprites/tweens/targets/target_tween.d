@@ -1,8 +1,8 @@
-module api.dm.kit.sprites.transitions.targets.target_transition;
+module api.dm.kit.sprites.tweens.targets.target_tween;
 
 import api.dm.kit.sprites.sprite : Sprite;
-import api.dm.kit.sprites.transitions.curves.interpolator : Interpolator;
-import api.dm.kit.sprites.transitions.min_max_transition : MinMaxTransition;
+import api.dm.kit.sprites.tweens.curves.interpolator : Interpolator;
+import api.dm.kit.sprites.tweens.min_max_tween : MinMaxTween;
 
 import api.math.geom2.vec2 : Vec2d;
 
@@ -11,7 +11,7 @@ import std.traits : isIntegral, isFloatingPoint;
 /**
  * Authors: initkfs
  */
-class TargetTransition(V, Target) : MinMaxTransition!V
+class TargetTween(V, Target) : MinMaxTween!V
 {
 
     protected

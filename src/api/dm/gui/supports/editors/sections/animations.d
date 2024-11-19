@@ -8,10 +8,10 @@ import Math = api.dm.math;
 import api.math.geom2.vec2 : Vec2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
-import api.dm.kit.sprites.transitions.curves.uni_interpolator : UniInterpolator;
-import api.dm.kit.sprites.transitions.targets.motions.linear_motion : LinearMotion;
-import api.dm.kit.sprites.transitions.targets.value_transition : ValueTransition;
-import api.dm.kit.sprites.transitions.targets.props.angle_transition : AngleTransition;
+import api.dm.kit.sprites.tweens.curves.uni_interpolator : UniInterpolator;
+import api.dm.kit.sprites.tweens.targets.motions.linear_motion : LinearMotion;
+import api.dm.kit.sprites.tweens.targets.value_tween : ValueTween;
+import api.dm.kit.sprites.tweens.targets.props.angle_tween : AngleTween;
 
 import std.stdio;
 import std.conv : to;
@@ -26,8 +26,8 @@ class Animations : Control
         double function(double)[dstring] animationsMap;
         UniInterpolator interpolator;
 
-        LinearMotion motionTransition;
-        AngleTransition angleTransition;
+        LinearMotion motionTween;
+        AngleTween angleTween;
     }
 
     this()
@@ -80,11 +80,11 @@ class Animations : Control
         rect.isLayoutManaged = false;
         addCreate(rect);
 
-        motionTransition = new LinearMotion(startPos, endPos, 1000, interpolator);
-        motionTransition.addTarget(rect);
-        addCreate(motionTransition);
-        motionTransition.isInfinite = true;
-        motionTransition.isReverse = true;
+        motionTween = new LinearMotion(startPos, endPos, 1000, interpolator);
+        motionTween.addTarget(rect);
+        addCreate(motionTween);
+        motionTween.isInfinite = true;
+        motionTween.isReverse = true;
 
         import api.dm.gui.containers.hbox : HBox;
 
@@ -106,12 +106,12 @@ class Animations : Control
 
         animSelect.onChoice = (oldItem, newItem) {
             auto newFunc = animationsMap[newItem];
-            motionTransition.stop;
+            motionTween.stop;
             interpolator.interpolateMethod = newFunc;
-            motionTransition.run;
+            motionTween.run;
         };
 
-        motionTransition.run;
+        motionTween.run;
 
         import std;
     }

@@ -1,15 +1,15 @@
-module api.dm.kit.sprites.transitions.joins.manager_transition;
+module api.dm.kit.sprites.tweens.joins.tween_manager;
 
-import api.dm.kit.sprites.transitions.transition : Transition;
+import api.dm.kit.sprites.tweens.tween : Tween;
 
 /**
  * Authors: initkfs
  */
-class ManagerTransition : Transition
+class TweenManager : Tween
 {
     protected
     {
-        Transition[] transitions;
+        Tween[] tweens;
     }
 
     override void onFrame()
@@ -17,14 +17,14 @@ class ManagerTransition : Transition
 
     }
 
-    bool addTransition(Transition tr)
+    bool addTween(Tween tr)
     {
         if (!tr)
         {
-            throw new Exception("Transition must not be null");
+            throw new Exception("Tween must not be null");
         }
 
-        foreach (oldTr; transitions)
+        foreach (oldTr; tweens)
         {
             if (oldTr is tr)
             {
@@ -42,25 +42,25 @@ class ManagerTransition : Transition
             add(tr);
         }
 
-        transitions ~= tr;
+        tweens ~= tr;
         return true;
     }
 
-    bool removeTransition(Transition tr)
+    bool removeTween(Tween tr)
     {
         if (!tr)
         {
-            throw new Exception("Transition must not be null");
+            throw new Exception("Tween must not be null");
         }
 
         import api.core.utils.arrays : drop;
 
-        return drop(transitions, tr);
+        return drop(tweens, tr);
     }
 
-    bool hasTransition(Transition tr)
+    bool hasTween(Tween tr)
     {
-        foreach (t; transitions)
+        foreach (t; tweens)
         {
             if (tr is t)
             {
@@ -70,14 +70,14 @@ class ManagerTransition : Transition
         return false;
     }
 
-    void clearTransitions()
+    void clearTweens()
     {
-        transitions = null;
+        tweens = null;
     }
 
     override void dispose()
     {
         super.dispose;
-        clearTransitions;
+        clearTweens;
     }
 }

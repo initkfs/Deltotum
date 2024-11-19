@@ -1,12 +1,12 @@
-module api.dm.kit.sprites.transitions.targets.props.opacity_transition;
+module api.dm.kit.sprites.tweens.targets.props.opacity_tween;
 
-import api.dm.kit.sprites.transitions.targets.value_transition : ValueTransition;
-import api.dm.kit.sprites.transitions.curves.interpolator : Interpolator;
+import api.dm.kit.sprites.tweens.targets.value_tween : ValueTween;
+import api.dm.kit.sprites.tweens.curves.interpolator : Interpolator;
 
 /**
  * Authors: initkfs
  */
-class OpacityTransition : ValueTransition
+class OpacityTween : ValueTween
 {
     this(int timeMs = 200, bool isInfinite = false, bool isReverse = false, Interpolator interpolator = null)
     {

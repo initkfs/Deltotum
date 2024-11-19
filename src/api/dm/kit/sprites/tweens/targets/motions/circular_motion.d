@@ -1,14 +1,14 @@
-module api.dm.kit.sprites.transitions.targets.motions.circular_motion;
+module api.dm.kit.sprites.tweens.targets.motions.circular_motion;
 
-import api.dm.kit.sprites.transitions.targets.value_transition : ValueTransition;
-import api.dm.kit.sprites.transitions.curves.interpolator : Interpolator;
+import api.dm.kit.sprites.tweens.targets.value_tween : ValueTween;
+import api.dm.kit.sprites.tweens.curves.interpolator : Interpolator;
 import api.math.geom2.vec2 : Vec2d;
 import math = api.dm.math;
 
 /**
  * Authors: initkfs
  */
-class CircularMotion : ValueTransition
+class CircularMotion : ValueTween
 {
     Vec2d center;
     double radius = 0;

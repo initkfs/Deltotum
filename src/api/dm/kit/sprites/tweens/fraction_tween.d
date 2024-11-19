@@ -1,12 +1,12 @@
-module api.dm.kit.sprites.transitions.fraction_transition;
+module api.dm.kit.sprites.tweens.fraction_tween;
 
-import api.dm.kit.sprites.transitions.min_max_transition : MinMaxTransition;
-import api.dm.kit.sprites.transitions.curves.interpolator : Interpolator;
+import api.dm.kit.sprites.tweens.min_max_tween : MinMaxTween;
+import api.dm.kit.sprites.tweens.curves.interpolator : Interpolator;
 
 /**
  * Authors: initkfs
  */
-class FractionTransition : MinMaxTransition!double
+class FractionTween : MinMaxTween!double
 {
     double value = 0;
 
@@ -40,7 +40,7 @@ class FractionTransition : MinMaxTransition!double
         };
     }
 
-    bool removeonOffsetOldNewValue(void delegate(double, double) dg)
+    bool removeOnOldNewFrac(void delegate(double, double) dg)
     {
         import api.core.utils.arrays : drop;
 

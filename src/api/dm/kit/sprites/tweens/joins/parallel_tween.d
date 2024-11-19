@@ -1,17 +1,17 @@
-module api.dm.kit.sprites.transitions.joins.parallel_transition;
+module api.dm.kit.sprites.tweens.joins.parallel_tween;
 
-import api.dm.kit.sprites.transitions.joins.manager_transition: ManagerTransition;
+import api.dm.kit.sprites.tweens.joins.tween_manager: TweenManager;
 
 /**
  * Authors: initkfs
  */
-class ParallelTransition : ManagerTransition
+class ParallelTween : TweenManager
 {
     bool isStopOnAnyStopped;
 
     override void onFrame()
     {
-        foreach (tr; transitions)
+        foreach (tr; tweens)
         {
             if (isStopOnAnyStopped && tr.isStopped)
             {
@@ -24,7 +24,7 @@ class ParallelTransition : ManagerTransition
     override void run()
     {
         super.run;
-        foreach (tr; transitions)
+        foreach (tr; tweens)
         {
             tr.run;
         }
@@ -33,7 +33,7 @@ class ParallelTransition : ManagerTransition
     override void pause()
     {
         super.pause;
-        foreach (tr; transitions)
+        foreach (tr; tweens)
         {
             tr.pause;
         }
@@ -41,7 +41,7 @@ class ParallelTransition : ManagerTransition
 
     void resume()
     {
-        foreach (tr; transitions)
+        foreach (tr; tweens)
         {
             tr.run;
         }
@@ -50,7 +50,7 @@ class ParallelTransition : ManagerTransition
     override void stop()
     {
         super.stop;
-        foreach (tr; transitions)
+        foreach (tr; tweens)
         {
             if (tr.isRunning)
             {

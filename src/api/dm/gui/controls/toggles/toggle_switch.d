@@ -7,13 +7,13 @@ import api.dm.kit.sprites.shapes.shape : Shape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites.shapes.rectangle : Rectangle;
 import api.dm.gui.events.action_event : ActionEvent;
-import api.dm.kit.sprites.transitions.min_max_transition : MinMaxTransition;
-import api.dm.kit.sprites.transitions.targets.value_transition : ValueTransition;
-import api.dm.kit.sprites.transitions.targets.props.opacity_transition : OpacityTransition;
+import api.dm.kit.sprites.tweens.min_max_tween : MinMaxTween;
+import api.dm.kit.sprites.tweens.targets.value_tween : ValueTween;
+import api.dm.kit.sprites.tweens.targets.props.opacity_tween : OpacityTween;
 import api.dm.kit.sprites.textures.texture : Texture;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.sprites.transitions.targets.target_transition : TargetTransition;
+import api.dm.kit.sprites.tweens.targets.target_tween : TargetTween;
 import api.math.geom2.vec2 : Vec2d;
 import api.dm.gui.controls.texts.text : Text;
 
@@ -43,11 +43,11 @@ class ToggleSwitch : Labeled
     Sprite switchHandle;
     Sprite delegate() switchHandleFactory;
 
-    MinMaxTransition!Vec2d switchOnAnimation;
-    MinMaxTransition!Vec2d switchOffAnimation;
+    MinMaxTween!Vec2d switchOnAnimation;
+    MinMaxTween!Vec2d switchOffAnimation;
 
-    MinMaxTransition!Vec2d delegate() switchOnAnimationFactory;
-    MinMaxTransition!Vec2d delegate() switchOffAnimationFactory;
+    MinMaxTween!Vec2d delegate() switchOnAnimationFactory;
+    MinMaxTween!Vec2d delegate() switchOffAnimationFactory;
 
     //TODO factories, settings
     Sprite handleOnEffect;
@@ -128,8 +128,8 @@ class ToggleSwitch : Labeled
 
         switchOnAnimationFactory = () {
             import api.math.geom2.vec2 : Vec2d;
-            import api.dm.kit.sprites.transitions.targets.motions.linear_motion : LinearMotion;
-            import api.dm.kit.sprites.transitions.curves.uni_interpolator : UniInterpolator;
+            import api.dm.kit.sprites.tweens.targets.motions.linear_motion : LinearMotion;
+            import api.dm.kit.sprites.tweens.curves.uni_interpolator : UniInterpolator;
 
             auto uniInterp = new UniInterpolator;
             uniInterp.interpolateMethod = &uniInterp.quadInOut;
@@ -143,8 +143,8 @@ class ToggleSwitch : Labeled
 
         switchOffAnimationFactory = () {
             import api.math.geom2.vec2 : Vec2d;
-            import api.dm.kit.sprites.transitions.targets.motions.linear_motion : LinearMotion;
-            import api.dm.kit.sprites.transitions.curves.uni_interpolator : UniInterpolator;
+            import api.dm.kit.sprites.tweens.targets.motions.linear_motion : LinearMotion;
+            import api.dm.kit.sprites.tweens.curves.uni_interpolator : UniInterpolator;
 
             auto start = Vec2d(bounds.right - switchHandle.width, y);
             auto uniInterp = new UniInterpolator;

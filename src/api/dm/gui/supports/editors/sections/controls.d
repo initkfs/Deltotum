@@ -549,28 +549,28 @@ class Controls : Control
         auto bottomGauge = new RadialGauge(gaugeDiameter, 0, 180);
         root.addCreate(bottomGauge);
 
-        import api.dm.kit.sprites.transitions.pause_transition : PauseTransition;
+        import api.dm.kit.sprites.tweens.pause_tween : PauseTween;
 
-        auto gaugeAnim1 = new PauseTransition(850);
+        auto gaugeAnim1 = new PauseTween(850);
         gaugeAnim1.isInfinite = true;
-        auto gaugeAnim2 = new PauseTransition(750);
+        auto gaugeAnim2 = new PauseTween(750);
         gaugeAnim2.isInfinite = true;
-        auto gaugeAnim3 = new PauseTransition(820);
+        auto gaugeAnim3 = new PauseTween(820);
         gaugeAnim3.isInfinite = true;
-        auto gaugeAnim4 = new PauseTransition(910);
+        auto gaugeAnim4 = new PauseTween(910);
         gaugeAnim4.isInfinite = true;
 
         import api.math.random : Random;
 
         auto rnd = new Random;
 
-        import api.dm.kit.sprites.transitions.curves.uni_interpolator : UniInterpolator;
+        import api.dm.kit.sprites.tweens.curves.uni_interpolator : UniInterpolator;
 
-        leftGauge.handTransition.interpolator.interpolateMethod = &UniInterpolator.backOut;
-        topGauge.handTransition.interpolator.interpolateMethod = &UniInterpolator.elasticOut;
+        leftGauge.handTween.interpolator.interpolateMethod = &UniInterpolator.backOut;
+        topGauge.handTween.interpolator.interpolateMethod = &UniInterpolator.elasticOut;
         //quartOut, smootherStepOut, elasticOut
-        rightGauge.handTransition.interpolator.interpolateMethod = &UniInterpolator.bounceInOut;
-        bottomGauge.handTransition.interpolator.interpolateMethod = &UniInterpolator
+        rightGauge.handTween.interpolator.interpolateMethod = &UniInterpolator.bounceInOut;
+        bottomGauge.handTween.interpolator.interpolateMethod = &UniInterpolator
             .smootherStepOut;
 
         gaugeAnim1.onEnd ~= () => leftGauge.value = rnd.between(0.0, 1.0);

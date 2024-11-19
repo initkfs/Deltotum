@@ -9,8 +9,8 @@ import api.math.alignment : Alignment;
 import api.math.insets : Insets;
 import api.dm.gui.controls.popups.base_popup : BasePopup;
 
-import api.dm.kit.sprites.transitions.min_max_transition : MinMaxTransition;
-import api.dm.kit.sprites.transitions.targets.props.opacity_transition : OpacityTransition;
+import api.dm.kit.sprites.tweens.min_max_tween : MinMaxTween;
+import api.dm.kit.sprites.tweens.targets.props.opacity_tween : OpacityTween;
 
 import std.typecons : Nullable;
 
@@ -63,9 +63,9 @@ class Control : Sprite
     Sprite delegate(Sprite) onPointerEffectCreate;
     void delegate(Sprite) onPointerEffectCreated;
 
-    MinMaxTransition!double delegate() pointerEffectAnimationFactory;
-    MinMaxTransition!double delegate(MinMaxTransition!double) onPointerEffectAnimationCreate;
-    void delegate(MinMaxTransition!double) onPointerEffectAnimationCreated;
+    MinMaxTween!double delegate() pointerEffectAnimationFactory;
+    MinMaxTween!double delegate(MinMaxTween!double) onPointerEffectAnimationCreate;
+    void delegate(MinMaxTween!double) onPointerEffectAnimationCreated;
 
     void delegate() onPreControlContentCreated;
     void delegate() onPostControlContentCreated;
@@ -78,7 +78,7 @@ class Control : Sprite
         Sprite _hover;
         Sprite _pointerEffect;
 
-        MinMaxTransition!double _pointerEffectAnimation;
+        MinMaxTween!double _pointerEffectAnimation;
 
         bool isTooltipDelay;
         bool isTooltipListeners;
@@ -217,10 +217,10 @@ class Control : Sprite
         };
     }
 
-    MinMaxTransition!double delegate() createPointerEffectAnimationFactory()
+    MinMaxTween!double delegate() createPointerEffectAnimationFactory()
     {
         return () {
-            auto pointerEffectAnimation = new OpacityTransition(50);
+            auto pointerEffectAnimation = new OpacityTween(50);
             assert(_pointerEffect, "Pointer effect is null");
             //TODO move to create()
             pointerEffectAnimation.addTarget(_pointerEffect);

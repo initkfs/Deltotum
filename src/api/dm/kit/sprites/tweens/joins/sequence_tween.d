@@ -1,18 +1,18 @@
-module api.dm.kit.sprites.transitions.joins.sequence_transition;
+module api.dm.kit.sprites.tweens.joins.sequence_tween;
 
-import api.dm.kit.sprites.transitions.joins.manager_transition : ManagerTransition;
-import api.dm.kit.sprites.transitions.transition : Transition;
+import api.dm.kit.sprites.tweens.joins.tween_manager : TweenManager;
+import api.dm.kit.sprites.tweens.tween : Tween;
 
 /**
  * Authors: initkfs
  */
-class SequenceTransition : ManagerTransition
+class SequenceTween : TweenManager
 {
-    Transition first;
+    Tween first;
 
     protected
     {
-        Transition _last;
+        Tween _last;
     }
 
     this()
@@ -23,7 +23,7 @@ class SequenceTransition : ManagerTransition
     override void onFrame()
     {
         bool isStopped = true;
-        foreach (tr; transitions)
+        foreach (tr; tweens)
         {
             if (!tr.isStopped)
             {
@@ -42,7 +42,7 @@ class SequenceTransition : ManagerTransition
     {
         super.run;
 
-        foreach (tr; transitions)
+        foreach (tr; tweens)
         {
             if (tr.isRunning)
             {
@@ -56,9 +56,9 @@ class SequenceTransition : ManagerTransition
         }
     }
 
-    override bool addTransition(Transition tr)
+    override bool addTween(Tween tr)
     {
-        if (!super.addTransition(tr))
+        if (!super.addTween(tr))
         {
             return false;
         }
@@ -83,7 +83,7 @@ class SequenceTransition : ManagerTransition
     override void pause()
     {
         super.pause;
-        foreach (tr; transitions)
+        foreach (tr; tweens)
         {
             if (tr.isRunning)
             {
@@ -94,7 +94,7 @@ class SequenceTransition : ManagerTransition
 
     void resume()
     {
-        foreach (tr; transitions)
+        foreach (tr; tweens)
         {
             if (tr.isPaused)
             {
@@ -103,7 +103,7 @@ class SequenceTransition : ManagerTransition
         }
     }
 
-    Transition last()
+    Tween last()
     {
         assert(_last);
         return _last;
@@ -112,7 +112,7 @@ class SequenceTransition : ManagerTransition
     override void stop()
     {
         super.stop;
-        foreach (tr; transitions)
+        foreach (tr; tweens)
         {
             if (tr.isRunning)
             {
