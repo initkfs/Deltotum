@@ -12,8 +12,7 @@
             "versions": [
                 "dev",
                 "SdlBackend",
-                "ExtensionLua",
-                "DmCtorDsl"
+                "DmLayoutCompact"
             ],
             "targetType": "executable",
             "targetName": "dm",
@@ -29,8 +28,7 @@
             "versions": [
                 "dev",
                 "SdlBackend",
-                "ExtensionLua",
-                "DmCtorDsl",
+                "DmLayoutCompact",
                 "DmAddon"
             ],
             "targetType": "executable",
@@ -44,6 +42,7 @@
             "versions": [
                 "SdlBackend",
                 "DmAddon",
+                "DmLayoutCompact",
                 "EventBusCoreEvents"
             ],
             "targetType": "executable",

@@ -1,5 +1,6 @@
 module api.dm.gui.controls.control;
 
+import DisplayLayout = api.dm.gui.display_layout;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.sprites.layouts.layout : Layout;
 import api.math.insets : Insets;
@@ -9,7 +10,7 @@ import api.math.alignment : Alignment;
 import api.math.insets : Insets;
 import api.dm.gui.controls.popups.base_popup : BasePopup;
 
-import api.dm.kit.sprites.tweens.min_max_tween : MinMaxTween;
+import api.dm.kit.sprites.tweens.tween : Tween;
 import api.dm.kit.sprites.tweens.targets.props.opacity_tween : OpacityTween;
 
 import std.typecons : Nullable;
@@ -26,16 +27,6 @@ class Control : Sprite
         idControlPointerEffect = "control_pointer_effect"
     }
 
-    enum ActionType : string
-    {
-        standard = "standard",
-        success = "success",
-        warning = "warning",
-        danger = "danger"
-    }
-
-    string actionType = ActionType.standard;
-
     GraphicStyle* userStyle;
     bool isFindStyleInParent;
 
@@ -49,7 +40,7 @@ class Control : Sprite
     bool isCreatePointerEffectFactory;
     bool isCreatePointerEffectAnimationFactory;
 
-    bool isConumeEventIfBackground = true;
+    bool isConsumeEventIfBackground = true;
 
     Sprite delegate(double, double) backgroundFactory;
     Sprite delegate(Sprite) onBackgroundCreate;
@@ -63,12 +54,22 @@ class Control : Sprite
     Sprite delegate(Sprite) onPointerEffectCreate;
     void delegate(Sprite) onPointerEffectCreated;
 
-    MinMaxTween!double delegate() pointerEffectAnimationFactory;
-    MinMaxTween!double delegate(MinMaxTween!double) onPointerEffectAnimationCreate;
-    void delegate(MinMaxTween!double) onPointerEffectAnimationCreated;
+    Tween delegate() pointerEffectAnimationFactory;
+    Tween delegate(Tween) onPointerEffectAnimationCreate;
+    void delegate(Tween) onPointerEffectAnimationCreated;
 
     void delegate() onPreControlContentCreated;
     void delegate() onPostControlContentCreated;
+
+     enum ActionType : string
+    {
+        standard = "standard",
+        success = "success",
+        warning = "warning",
+        danger = "danger"
+    }
+
+    string actionType = ActionType.standard;
 
     protected
     {
@@ -78,7 +79,7 @@ class Control : Sprite
         Sprite _hover;
         Sprite _pointerEffect;
 
-        MinMaxTween!double _pointerEffectAnimation;
+        Tween _pointerEffectAnimation;
 
         bool isTooltipDelay;
         bool isTooltipListeners;
@@ -86,7 +87,7 @@ class Control : Sprite
     }
 
     BasePopup[] tooltips;
-    size_t tooltipDelay = 20;
+    size_t tooltipDelay = DisplayLayout.displayTooltipDelayMs;
 
     this()
     {
@@ -142,6 +143,7 @@ class Control : Sprite
         {
             return;
         }
+
         onPointerEntered ~= (ref e) {
             if (tooltips.length > 0)
             {
@@ -176,7 +178,7 @@ class Control : Sprite
 
     Sprite delegate(double, double) createBackgroundFactory()
     {
-        return (w, h) { return createDefaultShape(w, h); };
+        return (w, h) => createDefaultShape(w, h);
     }
 
     Sprite delegate(double, double) createHoverFactory()
@@ -217,11 +219,11 @@ class Control : Sprite
         };
     }
 
-    MinMaxTween!double delegate() createPointerEffectAnimationFactory()
+    Tween delegate() createPointerEffectAnimationFactory()
     {
         return () {
-            auto pointerEffectAnimation = new OpacityTween(50);
-            assert(_pointerEffect, "Pointer effect is null");
+            auto pointerEffectAnimation = new OpacityTween(DisplayLayout.displayPointerEffectAnimMs);
+            assert(_pointerEffect, "Pointer effect must not be null");
             //TODO move to create()
             pointerEffectAnimation.addTarget(_pointerEffect);
             return pointerEffectAnimation;
@@ -434,7 +436,6 @@ class Control : Sprite
         {
             applyStyle(control);
         }
-
     }
 
     alias add = Sprite.add;
@@ -494,7 +495,8 @@ class Control : Sprite
         }
 
         const string iconData = mustBeIconData.get;
-        auto icon = new Image();
+        
+        auto icon = new Image;
         build(icon);
 
         import std.conv : to;
@@ -547,47 +549,6 @@ class Control : Sprite
         return null;
     }
 
-    GraphicStyle styleFromActionType()
-    {
-        import api.dm.kit.graphics.colors.rgba : RGBA;
-
-        GraphicStyle style;
-        if (auto parentStyle = ownOrParentStyle)
-        {
-            style = *parentStyle;
-        }
-        else
-        {
-            style = graphics.theme.defaultStyle;
-        }
-
-        if (actionType != ActionType.standard)
-        {
-            final switch (actionType) with (ActionType)
-            {
-                case standard:
-                    break;
-                case success:
-                    style.lineColor = graphics.theme.colorSuccess;
-                    break;
-                case warning:
-                    style.lineColor = graphics.theme.colorWarning;
-                    break;
-                case danger:
-                    style.lineColor = graphics.theme.colorDanger;
-                    break;
-            }
-
-            style.fillColor = style.lineColor;
-        }
-        style.isFill = isBackground;
-        if (!isBorder)
-        {
-            style.lineWidth = 0;
-        }
-        return style;
-    }
-
     import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
     import api.dm.kit.events.event_kit_target : EventKitPhase;
 
@@ -600,7 +561,7 @@ class Control : Sprite
             return;
         }
 
-        if (isConumeEventIfBackground && (isBackground || hasBackground))
+        if (isConsumeEventIfBackground && (isBackground || hasBackground))
         {
             if (containsPoint(e.x, e.y))
             {
@@ -657,10 +618,7 @@ class Control : Sprite
         }
     }
 
-    bool isSelected()
-    {
-        return _selected;
-    }
+    bool isSelected() => _selected;
 
     void isSelected(bool value)
     {
@@ -676,10 +634,8 @@ class Control : Sprite
         }
     }
 
-    bool hasBackground()
-    {
-        return _background !is null;
-    }
+    bool hasBackground() => _background !is null;
+    Sprite backgroundUnsafe() => _background;
 
     Nullable!Sprite background()
     {
@@ -690,15 +646,8 @@ class Control : Sprite
         return Nullable!Sprite(_background);
     }
 
-    Sprite backgroundUnsafe()
-    {
-        return _background;
-    }
-
-    bool hasHover()
-    {
-        return _hover !is null;
-    }
+    bool hasHover() =>_hover !is null;
+    Sprite hoverUnsafe() => _hover;
 
     Nullable!Sprite hover()
     {
@@ -709,10 +658,8 @@ class Control : Sprite
         return Nullable!Sprite(_hover);
     }
 
-    bool hasPointerEffect()
-    {
-        return _pointerEffect !is null;
-    }
+    bool hasPointerEffect() => _pointerEffect !is null;
+    Sprite pointerEffectUnsafe() => _pointerEffect;
 
     Nullable!Sprite pointerEffect()
     {
@@ -723,10 +670,8 @@ class Control : Sprite
         return Nullable!Sprite(_pointerEffect);
     }
 
-    bool hasPointerEffectAnimation()
-    {
-        return _pointerEffectAnimation !is null;
-    }
+    bool hasPointerEffectAnimation() => _pointerEffectAnimation !is null;
+    Sprite pointerEffectAnimUnsafe() => _pointerEffectAnimation;
 
     Nullable!Sprite pointerEffectAnimation()
     {
@@ -757,6 +702,47 @@ class Control : Sprite
                 tooltipDelayCounter++;
             }
         }
+    }
+
+    GraphicStyle styleFromActionType()
+    {
+        import api.dm.kit.graphics.colors.rgba : RGBA;
+
+        GraphicStyle style;
+        if (auto parentStyle = ownOrParentStyle)
+        {
+            style = *parentStyle;
+        }
+        else
+        {
+            style = graphics.theme.defaultStyle;
+        }
+
+        if (actionType != ActionType.standard)
+        {
+            final switch (actionType) with (ActionType)
+            {
+                case standard:
+                    break;
+                case success:
+                    style.lineColor = graphics.theme.colorSuccess;
+                    break;
+                case warning:
+                    style.lineColor = graphics.theme.colorWarning;
+                    break;
+                case danger:
+                    style.lineColor = graphics.theme.colorDanger;
+                    break;
+            }
+
+            style.fillColor = style.lineColor;
+        }
+        style.isFill = isBackground;
+        if (!isBorder)
+        {
+            style.lineWidth = 0;
+        }
+        return style;
     }
 
     override void dispose()
