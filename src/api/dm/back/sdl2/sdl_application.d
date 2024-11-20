@@ -621,7 +621,7 @@ class SdlApplication : ContinuouslyApplication
 
         if (parent)
         {
-            window.parent = parent;
+            window.window = parent;
             window.frameRate = parent.frameRate;
             window.windowManager = parent.windowManager;
         }

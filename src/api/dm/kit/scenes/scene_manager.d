@@ -1,6 +1,6 @@
 module api.dm.kit.scenes.scene_manager;
 
-import api.dm.kit.components.window_component : WindowComponent;
+import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.dm.kit.scenes.scene : Scene;
 
 import api.dm.kit.factories.factory_kit : FactoryKit;
@@ -56,9 +56,9 @@ class SceneManager : Scene
         super.create;
     }
 
-    import api.dm.kit.components.window_component : WindowComponent;
+    import api.dm.kit.components.graphics_component : GraphicsComponent;
 
-    alias build = WindowComponent.build;
+    alias build = GraphicsComponent.build;
 
     void build(Scene scene)
     {

@@ -1,6 +1,6 @@
 module api.dm.kit.factories.shape_factory;
 
-import api.dm.kit.components.window_component: WindowComponent;
+import api.dm.kit.components.graphics_component: GraphicsComponent;
 
 import api.dm.kit.sprites.shapes.shape : Shape;
 import api.dm.kit.sprites.shapes.circle : Circle;
@@ -11,7 +11,7 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 /**
  * Authors: initkfs
  */
-class ShapeFactory : WindowComponent
+class ShapeFactory : GraphicsComponent
 {
     Circle circle(double radius, GraphicStyle style)
     {

@@ -19,7 +19,6 @@ import api.dm.com.graphics.com_renderer : ComRenderer;
  */
 class Window : GraphicsComponent
 {
-    Window parent;
     Window delegate(dstring, int, int, int, int, Window) childWindowProvider;
     WindowManager windowManager;
 
@@ -559,8 +558,6 @@ class Window : GraphicsComponent
         //after window
         nativeWindow.dispose;
         logger.trace("Dispose native window with id: ", windowId);
-
-        parent = null;
 
         onCreate = null;
         onShow = null;

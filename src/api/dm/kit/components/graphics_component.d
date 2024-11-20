@@ -14,6 +14,8 @@ import api.dm.kit.events.kit_event_manager : KitEventManager;
 import api.dm.kit.apps.caps.cap_graphics : CapGraphics;
 import api.dm.kit.platforms.platform : Platform;
 import api.dm.kit.i18n.i18n : I18n;
+import api.dm.kit.windows.window : Window;
+import api.dm.kit.interacts.interact : Interact;
 
 /**
  * Authors: initkfs
@@ -31,6 +33,9 @@ class GraphicsComponent : UniComponent
         @Service CapGraphics _capGraphics;
         @Service Platform _platform;
         @Service I18n _i18n;
+
+        @Service Window _window;
+        @Service Interact _interact;
     }
 
     alias build = UniComponent.build;
@@ -230,5 +235,43 @@ class GraphicsComponent : UniComponent
 
         enforce(service, "I18n must not be null");
         _i18n = service;
+    }
+
+    bool hasWindow() const nothrow pure @safe
+    {
+        return _window !is null;
+    }
+
+    inout(Window) window() inout nothrow pure @safe
+    out (_window; _window !is null)
+    {
+        return _window;
+    }
+
+    void window(Window window) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(window !is null, "Window must not be null");
+        _window = window;
+    }
+
+    bool hasInteract() nothrow pure @safe
+    {
+        return _interact !is null;
+    }
+
+    Interact interact() nothrow pure @safe
+    out (_interact; _interact !is null)
+    {
+        return _interact;
+    }
+
+    void interact(Interact interact) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(interact !is null, "Interaction must not be null");
+        _interact = interact;
     }
 }

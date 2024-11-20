@@ -622,9 +622,9 @@ class Sprite : EventKitTarget
 
     }
 
-    import api.dm.kit.components.window_component : WindowComponent;
+    import api.dm.kit.components.graphics_component : GraphicsComponent;
 
-    alias build = WindowComponent.build;
+    alias build = GraphicsComponent.build;
 
     void build(Sprite sprite)
     {

@@ -1,6 +1,6 @@
 module api.dm.kit.factories.factory_kit;
 
-import api.dm.kit.components.window_component : WindowComponent;
+import api.dm.kit.components.graphics_component : GraphicsComponent;
 
 import api.dm.kit.factories.image_factory : ImageFactory;
 import api.dm.kit.factories.shape_factory : ShapeFactory;
@@ -13,7 +13,7 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 /**
  * Authors: initkfs
  */
-class FactoryKit : WindowComponent
+class FactoryKit : GraphicsComponent
 {
     ImageFactory images;
     ShapeFactory shapes;

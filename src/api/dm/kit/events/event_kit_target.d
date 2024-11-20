@@ -1,6 +1,6 @@
 module api.dm.kit.events.event_kit_target;
 
-import api.dm.kit.components.window_component : WindowComponent;
+import api.dm.kit.components.graphics_component: GraphicsComponent;
 import api.core.events.base.event_target : EventTarget;
 
 import api.core.apps.events.app_event : AppEvent;
@@ -46,7 +46,7 @@ mixin template EventPhaseProcesor()
 /**
  * Authors: initkfs
  */
-class EventKitTarget : WindowComponent, EventTarget
+class EventKitTarget : GraphicsComponent, EventTarget
 {
     void delegate(ref AppEvent)[] eventAppHandlers;
 

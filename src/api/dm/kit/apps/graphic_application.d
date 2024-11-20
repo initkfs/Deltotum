@@ -7,7 +7,7 @@ import api.core.apps.app_init_ret : AppInitRet;
 import api.core.apps.cli_app : CliApp;
 import api.core.resources.resourcing : Resourcing;
 import api.dm.kit.components.graphics_component : GraphicsComponent;
-import api.dm.kit.components.window_component : WindowComponent;
+import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.core.components.uni_component : UniComponent;
 import api.dm.kit.windows.window_manager : WindowManager;
 import api.dm.kit.apps.caps.cap_graphics : CapGraphics;
@@ -232,9 +232,9 @@ abstract class GraphicApplication : CliApp
         return new SceneManager(FactoryKit);
     }
 
-    WindowComponent newWindowServices()
+    GraphicsComponent newWindowServices()
     {
-        return new WindowComponent;
+        return new GraphicsComponent;
     }
 
     GraphicsComponent newGraphicServices()
