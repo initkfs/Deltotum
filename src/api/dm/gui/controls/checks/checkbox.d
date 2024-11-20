@@ -30,9 +30,9 @@ class CheckBox : Labeled
         layout.isAlignY = true;
         _labelText = text;
 
-        isCreateHoverFactory = false;
-        isCreatePointerEffectFactory = false;
-        isCreatePointerEffectAnimationFactory = false;
+        isCreateHoverEffectFactory = false;
+        isCreateActionEffectFactory = false;
+        isCreateActionEffectAnimationFactory = false;
         isCreateTextFactory = true;
         isCreateMarkerFactory = true;
 

@@ -45,9 +45,9 @@ class Labeled : Control
             this.layout.isAlignY = true;
         }
 
-        isCreateHoverFactory = true;
-        isCreatePointerEffectFactory = true;
-        isCreatePointerEffectAnimationFactory = true;
+        isCreateHoverEffectFactory = true;
+        isCreateActionEffectFactory = true;
+        isCreateActionEffectAnimationFactory = true;
         isCreateTextFactory = true;
 
         isBorder = true;

@@ -29,10 +29,10 @@ class TargetButton : ButtonBase
     )
     {
         super(text, size, size, graphicsGap, iconName);
-        isCreateHoverFactory = false;
+        isCreateHoverEffectFactory = false;
         isCreateBackgroundFactory = false;
-        isCreatePointerEffectFactory = false;
-        isCreatePointerEffectAnimationFactory = false;
+        isCreateActionEffectFactory = false;
+        isCreateActionEffectAnimationFactory = false;
         isCreateTextFactory = false;
 
         this.layout = new CenterLayout;

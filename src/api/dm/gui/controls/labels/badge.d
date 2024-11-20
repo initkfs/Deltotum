@@ -20,9 +20,9 @@ class Badge : Labeled
         import api.dm.kit.sprites.layouts.managed_layout : ManagedLayout;
 
         layout.isAutoResize = true;
-        isCreateHoverFactory = false;
-        isCreatePointerEffectFactory = false;
-        isCreatePointerEffectAnimationFactory = false;
+        isCreateHoverEffectFactory = false;
+        isCreateActionEffectFactory = false;
+        isCreateActionEffectAnimationFactory = false;
 
         isLayoutManaged = false;
 

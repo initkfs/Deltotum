@@ -56,7 +56,7 @@ class RhombusButton : ButtonBase
         return shape;
     }
 
-    override Sprite delegate(double, double) createHoverFactory()
+    override Sprite delegate(double, double) createHoverEffectFactory()
     {
         return (width, height) {
             assert(graphics.theme);
@@ -70,7 +70,7 @@ class RhombusButton : ButtonBase
             }
 
             Sprite newHover = createShape(width, height, style);
-            newHover.id = idControlHover;
+            newHover.id = idHoverShape;
             newHover.isLayoutManaged = false;
             newHover.isResizedByParent = true;
             newHover.isVisible = false;
@@ -78,7 +78,7 @@ class RhombusButton : ButtonBase
         };
     }
 
-    override Sprite delegate() createPointerEffectFactory()
+    override Sprite delegate() createActionEffectFactory()
     {
         return () {
             assert(graphics.theme);

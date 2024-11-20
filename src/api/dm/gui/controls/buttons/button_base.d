@@ -38,7 +38,7 @@ class ButtonBase : Labeled
     bool isDefault;
     void delegate() onDefault;
 
-    string idControlBackground = "btn_background";
+    string idBackground = "btn_background";
 
     enum double defaultWidth = 80;
     enum double defaultHeight = 30;
@@ -85,10 +85,10 @@ class ButtonBase : Labeled
         return (width, height) {
             assert(graphics.theme);
 
-            auto style = styleFromDefault;
+            auto style = createStyle;
             auto newBackground = graphics.theme.background(width, height, &style);
             newBackground.isLayoutManaged = false;
-            newBackground.id = idControlBackground;
+            newBackground.id = idBackground;
             return newBackground;
         };
     }

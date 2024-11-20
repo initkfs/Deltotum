@@ -76,7 +76,7 @@ class RoundButton : ButtonBase
         return (width, height) { return createShape(width, height); };
     }
 
-    override Sprite delegate(double, double) createHoverFactory()
+    override Sprite delegate(double, double) createHoverEffectFactory()
     {
         return (width, height) {
             assert(graphics.theme);
@@ -90,7 +90,7 @@ class RoundButton : ButtonBase
             }
 
             Sprite newHover = createShape(width, height, style);
-            newHover.id = idControlHover;
+            newHover.id = idHoverShape;
             newHover.isLayoutManaged = false;
             newHover.isResizedByParent = true;
             newHover.isVisible = false;
@@ -98,7 +98,7 @@ class RoundButton : ButtonBase
         };
     }
 
-    override Sprite delegate() createPointerEffectFactory()
+    override Sprite delegate() createActionEffectFactory()
     {
         return () {
             assert(graphics.theme);

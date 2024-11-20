@@ -5,5 +5,5 @@ module api.dm.gui.display_layout;
  */
  version(DmLayoutCompact){
     enum displayTooltipDelayMs = 20;
-    enum displayPointerEffectAnimMs = 20;
+    enum displayActionEffectAnimMs = 20;
  }

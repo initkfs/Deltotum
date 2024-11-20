@@ -77,7 +77,7 @@ class Colors : Control
                 auto style = GraphicStyle(1, newColor, true, newColor);
 
                 auto colorText = new Text();
-                colorText.style = style;
+                //colorText.style = style;
                 colorText.fontSize = FontSize.small;
                 colorText.text = (cast(string) color).to!dstring;
                 colorContainer.addCreate(colorText);

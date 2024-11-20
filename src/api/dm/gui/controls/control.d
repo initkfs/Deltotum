@@ -6,7 +6,7 @@ import api.dm.kit.sprites.layouts.layout : Layout;
 import api.math.insets : Insets;
 import api.dm.kit.sprites.textures.texture : Texture;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.kit.graphics.styles.default_style: DefaultStyle;
+import api.dm.kit.graphics.styles.default_style : DefaultStyle;
 import api.dm.kit.graphics.styles.default_style;
 import api.math.alignment : Alignment;
 import api.math.insets : Insets;
@@ -17,6 +17,13 @@ import api.dm.kit.sprites.tweens.targets.props.opacity_tween : OpacityTween;
 
 import std.typecons : Nullable;
 
+enum ControlStyle : string
+{
+    background = "backgroundStyle",
+    hoverEffect = "hoverEffect",
+    actionEffect = "actionEffect"
+}
+
 /**
  * Authors: initkfs
  */
@@ -24,18 +31,19 @@ class Control : Sprite
 {
     enum
     {
-        idControlBackground = "control_background",
-        idControlHover = "control_hover",
-        idControlPointerEffect = "control_pointer_effect"
+        idBackground = "control_background",
+        idHoverShape = "control_hoverEffect",
+        idActionShape = "control_action"
     }
 
     GraphicStyle style;
-    DefaultStyle defaultStyle;
-    GraphicStyle delegate() styleFactory;
-    GraphicStyle delegate(ref GraphicStyle) onStyleCreate;
-    void delegate(ref GraphicStyle) onStyleCreated;
+    GraphicStyle[string] styles;
+    string styleId;
+    GraphicStyle delegate(string id) styleFactory;
+    void delegate(string, ref GraphicStyle) onStyleIdCreated;
     bool isUseParentStyle;
     bool isStyleForChildren;
+    bool isAppendStylesForChildren = true;
 
     bool isBackground;
     bool isBorder;
@@ -44,9 +52,9 @@ class Control : Sprite
 
     bool isCreateBackgroundFactory = true;
     bool isCreateStyleFactory = true;
-    bool isCreateHoverFactory;
-    bool isCreatePointerEffectFactory;
-    bool isCreatePointerEffectAnimationFactory;
+    bool isCreateHoverEffectFactory;
+    bool isCreateActionEffectFactory;
+    bool isCreateActionEffectAnimationFactory;
 
     bool isConsumeEventIfBackground = true;
 
@@ -54,31 +62,30 @@ class Control : Sprite
     Sprite delegate(Sprite) onBackgroundCreate;
     void delegate(Sprite) onBackgroundCreated;
 
-    Sprite delegate(double, double) hoverFactory;
-    Sprite delegate(Sprite) onHoverCreate;
-    void delegate(Sprite) onHoverCreated;
+    Sprite delegate(double, double) hoverEffectFactory;
+    Sprite delegate(Sprite) onHoverEffectCreate;
+    void delegate(Sprite) onHoverEffectCreated;
 
-    Sprite delegate() pointerEffectFactory;
-    Sprite delegate(Sprite) onPointerEffectCreate;
-    void delegate(Sprite) onPointerEffectCreated;
+    Sprite delegate() actionEffectFactory;
+    Sprite delegate(Sprite) onActionEffectCreate;
+    void delegate(Sprite) onActionEffectCreated;
 
-    Tween delegate() pointerEffectAnimationFactory;
-    Tween delegate(Tween) onPointerEffectAnimationCreate;
-    void delegate(Tween) onPointerEffectAnimationCreated;
+    Tween delegate() actionEffectAnimationFactory;
+    Tween delegate(Tween) onActionEffectAnimationCreate;
+    void delegate(Tween) onActionEffectAnimationCreated;
 
     void delegate() onPreControlContentCreated;
     void delegate() onPostControlContentCreated;
-
 
     protected
     {
         bool _selected;
 
         Sprite _background;
-        Sprite _hover;
-        Sprite _pointerEffect;
-
-        Tween _pointerEffectAnimation;
+        Sprite _hoverEffect;
+        
+        Sprite _actionEffect;
+        Tween _actionEffectAnimation;
 
         bool isTooltipDelay;
         bool isTooltipListeners;
@@ -120,19 +127,19 @@ class Control : Sprite
             backgroundFactory = createBackgroundFactory;
         }
 
-        if (!hoverFactory && isCreateHoverFactory)
+        if (!hoverEffectFactory && isCreateHoverEffectFactory)
         {
-            hoverFactory = createHoverFactory;
+            hoverEffectFactory = createHoverEffectFactory;
         }
 
-        if (!pointerEffectFactory && isCreatePointerEffectFactory)
+        if (!actionEffectFactory && isCreateActionEffectFactory)
         {
-            pointerEffectFactory = createPointerEffectFactory;
+            actionEffectFactory = createActionEffectFactory;
         }
 
-        if (!pointerEffectAnimationFactory && isCreatePointerEffectAnimationFactory)
+        if (!actionEffectAnimationFactory && isCreateActionEffectAnimationFactory)
         {
-            pointerEffectAnimationFactory = createPointerEffectAnimationFactory;
+            actionEffectAnimationFactory = createActionEffectAnimationFactory;
         }
 
         if (!styleFactory && isCreateStyleFactory)
@@ -182,21 +189,33 @@ class Control : Sprite
 
     Sprite delegate(double, double) createBackgroundFactory()
     {
+        if (auto stylePtr = hasStyle(ControlStyle.background))
+        {
+            return (w, h) => createShape(w, h, *stylePtr);
+        }
         return (w, h) => createShape(w, h);
     }
 
-    Sprite delegate(double, double) createHoverFactory()
+    Sprite delegate(double, double) createHoverEffectFactory()
     {
         return (w, h) {
             assert(graphics.theme);
 
-            GraphicStyle newStyle = createStyle;
-            if (!newStyle.isNested)
+            GraphicStyle newStyle;
+            if (auto stylePtr = hasStyle(ControlStyle.hoverEffect))
             {
-                newStyle.lineColor = graphics
-                    .theme.colorHover;
-                newStyle.fillColor = graphics.theme.colorHover;
-                newStyle.isFill = true;
+                newStyle = *stylePtr;
+            }
+            else
+            {
+                newStyle = createStyle;
+                if (!newStyle.isNested)
+                {
+                    newStyle.lineColor = graphics
+                        .theme.colorHover;
+                    newStyle.fillColor = graphics.theme.colorHover;
+                    newStyle.isFill = true;
+                }
             }
 
             Sprite newHover = graphics.theme.background(w, h, &newStyle);
@@ -204,18 +223,26 @@ class Control : Sprite
         };
     }
 
-    Sprite delegate() createPointerEffectFactory()
+    Sprite delegate() createActionEffectFactory()
     {
         return () {
             assert(graphics.theme);
 
-            GraphicStyle newStyle = createStyle;
-            if (!newStyle.isNested)
+            GraphicStyle newStyle;
+            if (auto stylePtr = hasStyle(ControlStyle.actionEffect))
             {
-                newStyle.lineColor = graphics
-                    .theme.colorAccent;
-                newStyle.fillColor = graphics.theme.colorAccent;
-                newStyle.isFill = true;
+                newStyle = *stylePtr;
+            }
+            else
+            {
+                newStyle = createStyle;
+                if (!newStyle.isNested)
+                {
+                    newStyle.lineColor = graphics
+                        .theme.colorAccent;
+                    newStyle.fillColor = graphics.theme.colorAccent;
+                    newStyle.isFill = true;
+                }
             }
 
             Sprite effect = graphics.theme.background(width, height, &newStyle);
@@ -223,39 +250,87 @@ class Control : Sprite
         };
     }
 
-    Tween delegate() createPointerEffectAnimationFactory()
+    Tween delegate() createActionEffectAnimationFactory()
     {
         return () {
-            auto pointerEffectAnimation = new OpacityTween(DisplayLayout.displayPointerEffectAnimMs);
-            assert(_pointerEffect, "Pointer effect must not be null");
+            auto actionEffectAnimation = new OpacityTween(DisplayLayout.displayActionEffectAnimMs);
+            assert(_actionEffect, "Pointer effect must not be null");
             //TODO move to create()
-            pointerEffectAnimation.addTarget(_pointerEffect);
-            return pointerEffectAnimation;
+            actionEffectAnimation.addTarget(_actionEffect);
+            return actionEffectAnimation;
         };
     }
 
-    GraphicStyle delegate() createStyleFactory()
+    GraphicStyle delegate(string id) createStyleFactory()
     {
-        return () {
+        return (id) {
             assert(graphics.theme);
 
-            return GraphicStyle(graphics.theme.lineThickness, graphics.theme.colorAccent, isBackground, graphics
-                    .theme.colorControlBackground);
+            if (id.length == 0)
+            {
+                if (style != GraphicStyle.init)
+                {
+                    return style;
+                }
+
+                return createDefaultStyle;
+            }
+
+            if (auto stylePtr = hasStyle(id))
+            {
+                return *stylePtr;
+            }
+
+            GraphicStyle newStyle = createDefaultStyle;
+
+            if (styleId)
+            {
+                switch (styleId) with (DefaultStyle)
+                {
+                    case standard:
+                        break;
+                    case success:
+                        newStyle.lineColor = graphics.theme.colorSuccess;
+                        break;
+                    case warning:
+                        newStyle.lineColor = graphics.theme.colorWarning;
+                        break;
+                    case danger:
+                        newStyle.lineColor = graphics.theme.colorDanger;
+                        break;
+                    default:
+                        break;
+                }
+
+                newStyle.fillColor = newStyle.lineColor;
+            }
+
+            newStyle.isFill = isBackground;
+            if (!isBorder)
+            {
+                newStyle.lineWidth = 0;
+            }
+
+            return newStyle;
         };
+    }
+
+    GraphicStyle createDefaultStyle()
+    {
+        return GraphicStyle(graphics.theme.lineThickness, graphics.theme.colorAccent, isBackground, graphics
+                .theme.colorControlBackground);
     }
 
     protected GraphicStyle createStyle()
     {
-        if (isUseParentStyle && parent)
-        {
-            import api.core.utils.types : castSafe;
+        assert(styleFactory);
 
-            if (auto parentWidget = parent.castSafe!Control)
-            {
-                return parentWidget.style;
-            }
+        auto newStyle = styleFactory(styleId);
+        if (onStyleIdCreated)
+        {
+            onStyleIdCreated(styleId, newStyle);
         }
-        return style;
+        return newStyle;
     }
 
     protected Sprite createShape(double w, double h)
@@ -273,16 +348,6 @@ class Control : Sprite
     {
         super.create;
 
-        if (style == GraphicStyle.init && styleFactory)
-        {
-            auto newStyle = styleFactory();
-            style = onStyleCreate ? onStyleCreate(newStyle) : newStyle;
-            if (onStyleCreated)
-            {
-                onStyleCreated(style);
-            }
-        }
-
         tryCreateBackground(width, height);
 
         if (onPreControlContentCreated)
@@ -290,22 +355,22 @@ class Control : Sprite
             onPreControlContentCreated();
         }
 
-        if (hoverFactory)
+        if (hoverEffectFactory)
         {
-            auto newHover = hoverFactory(width, height);
+            auto newHover = hoverEffectFactory(width, height);
             if (newHover)
             {
-                _hover = onHoverCreate ? onHoverCreate(newHover) : newHover;
-                _hover.id = idControlHover;
-                _hover.isLayoutManaged = false;
-                _hover.isResizedByParent = true;
-                _hover.isVisible = false;
+                _hoverEffect = onHoverEffectCreate ? onHoverEffectCreate(newHover) : newHover;
+                _hoverEffect.id = idHoverShape;
+                _hoverEffect.isLayoutManaged = false;
+                _hoverEffect.isResizedByParent = true;
+                _hoverEffect.isVisible = false;
 
-                addCreate(_hover);
-                _hover.opacityLimit = graphics.theme.opacityHover;
-                if (onHoverCreated)
+                addCreate(_hoverEffect);
+                _hoverEffect.opacityLimit = graphics.theme.opacityHover;
+                if (onHoverEffectCreated)
                 {
-                    onHoverCreated(_hover);
+                    onHoverEffectCreated(_hoverEffect);
                 }
             }
             else
@@ -314,25 +379,25 @@ class Control : Sprite
             }
         }
 
-        if (pointerEffectFactory)
+        if (actionEffectFactory)
         {
-            auto newPointerEffect = pointerEffectFactory();
-            if (newPointerEffect)
+            auto newActionEffect = actionEffectFactory();
+            if (newActionEffect)
             {
-                _pointerEffect = onPointerEffectCreate ? onPointerEffectCreate(newPointerEffect)
-                    : newPointerEffect;
-                _pointerEffect.id = idControlPointerEffect;
-                _pointerEffect.isLayoutManaged = false;
-                _pointerEffect.isResizedByParent = true;
-                _pointerEffect.isVisible = false;
+                _actionEffect = onActionEffectCreate ? onActionEffectCreate(newActionEffect)
+                    : newActionEffect;
+                _actionEffect.id = idActionShape;
+                _actionEffect.isLayoutManaged = false;
+                _actionEffect.isResizedByParent = true;
+                _actionEffect.isVisible = false;
 
-                addCreate(_pointerEffect);
+                addCreate(_actionEffect);
 
-                _pointerEffect.opacity = 0;
+                _actionEffect.opacity = 0;
 
-                if (onPointerEffectCreated)
+                if (onActionEffectCreated)
                 {
-                    onPointerEffectCreated(_pointerEffect);
+                    onActionEffectCreated(_actionEffect);
                 }
             }
             else
@@ -341,30 +406,30 @@ class Control : Sprite
             }
         }
 
-        if (pointerEffectAnimationFactory)
+        if (actionEffectAnimationFactory)
         {
-            auto newEffectAnimation = pointerEffectAnimationFactory();
+            auto newEffectAnimation = actionEffectAnimationFactory();
             if (newEffectAnimation)
             {
-                if (_pointerEffect)
+                if (_actionEffect)
                 {
-                    _pointerEffectAnimation = onPointerEffectAnimationCreate ? onPointerEffectAnimationCreate(
+                    _actionEffectAnimation = onActionEffectAnimationCreate ? onActionEffectAnimationCreate(
                         newEffectAnimation) : newEffectAnimation;
-                    _pointerEffectAnimation.isLayoutManaged = false;
-                    _pointerEffectAnimation.isInfinite = false;
-                    _pointerEffectAnimation.isReverse = true;
-                    _pointerEffectAnimation.onStop ~= () {
-                        if (_pointerEffect)
+                    _actionEffectAnimation.isLayoutManaged = false;
+                    _actionEffectAnimation.isInfinite = false;
+                    _actionEffectAnimation.isReverse = true;
+                    _actionEffectAnimation.onStop ~= () {
+                        if (_actionEffect)
                         {
-                            _pointerEffect.isVisible = false;
+                            _actionEffect.isVisible = false;
                         }
                     };
 
-                    addCreate(_pointerEffectAnimation);
+                    addCreate(_actionEffectAnimation);
 
-                    if (onPointerEffectAnimationCreated)
+                    if (onActionEffectAnimationCreated)
                     {
-                        onPointerEffectAnimationCreated(_pointerEffectAnimation);
+                        onActionEffectAnimationCreated(_actionEffectAnimation);
                     }
                 }
                 else
@@ -390,7 +455,7 @@ class Control : Sprite
     void createInteractiveListeners()
     {
         //TODO remove previous
-        if (_hover)
+        if (_hoverEffect)
         {
             onPointerEntered ~= (ref e) {
 
@@ -399,9 +464,9 @@ class Control : Sprite
                     return;
                 }
 
-                if (_hover && !_hover.isVisible)
+                if (_hoverEffect && !_hoverEffect.isVisible)
                 {
-                    _hover.isVisible = true;
+                    _hoverEffect.isVisible = true;
                 }
             };
 
@@ -412,14 +477,14 @@ class Control : Sprite
                     return;
                 }
 
-                if (_hover && _hover.isVisible)
+                if (_hoverEffect && _hoverEffect.isVisible)
                 {
-                    _hover.isVisible = false;
+                    _hoverEffect.isVisible = false;
                 }
             };
         }
 
-        if (_pointerEffect || _pointerEffectAnimation)
+        if (_actionEffect || _actionEffectAnimation)
         {
             onPointerUp ~= (ref e) {
 
@@ -428,12 +493,12 @@ class Control : Sprite
                     return;
                 }
 
-                if (_pointerEffect && !_pointerEffect.isVisible)
+                if (_actionEffect && !_actionEffect.isVisible)
                 {
-                    _pointerEffect.isVisible = true;
-                    if (_pointerEffectAnimation && !_pointerEffectAnimation.isRunning)
+                    _actionEffect.isVisible = true;
+                    if (_actionEffectAnimation && !_actionEffectAnimation.isRunning)
                     {
-                        _pointerEffectAnimation.run;
+                        _actionEffectAnimation.run;
                     }
 
                 }
@@ -536,7 +601,26 @@ class Control : Sprite
 
         if (isStyleForChildren || control.isUseParentStyle)
         {
-            control.style = style;
+            control.styleFactory = styleFactory;
+            if (!isAppendStylesForChildren)
+            {
+                control.styles = styles;
+            }
+            else
+            {
+                foreach (styleId, style; styles)
+                {
+                    if (!control.hasStyle(styleId))
+                    {
+                        control.styles[styleId] = style;
+                    }
+                }
+            }
+
+            if (control.style == GraphicStyle.init)
+            {
+                control.style = style;
+            }
         }
 
         if (isStyleForChildren)
@@ -582,7 +666,7 @@ class Control : Sprite
         auto newBackground = backgroundFactory(width, height);
 
         _background = onBackgroundCreate ? onBackgroundCreate(newBackground) : newBackground;
-        _background.id = idControlBackground;
+        _background.id = idBackground;
         _background.isResizedByParent = true;
         _background.isLayoutManaged = false;
         _background.isDrawAfterParent = false;
@@ -623,9 +707,9 @@ class Control : Sprite
         //     return;
         // }
         _selected = value;
-        if (_hover)
+        if (_hoverEffect)
         {
-            _hover.isVisible = value;
+            _hoverEffect.isVisible = value;
             setInvalid;
         }
     }
@@ -642,40 +726,46 @@ class Control : Sprite
         return Nullable!Sprite(_background);
     }
 
-    bool hasHover() => _hover !is null;
-    Sprite hoverUnsafe() => _hover;
+    bool hasHoverEffect() => _hoverEffect !is null;
+    Sprite hoverEffectUnsafe() => _hoverEffect;
 
-    Nullable!Sprite hover()
+    Nullable!Sprite hoverEffect()
     {
-        if (!hasHover)
+        if (!hasHoverEffect)
         {
             return Nullable!Sprite.init;
         }
-        return Nullable!Sprite(_hover);
+        return Nullable!Sprite(_hoverEffect);
     }
 
-    bool hasPointerEffect() => _pointerEffect !is null;
-    Sprite pointerEffectUnsafe() => _pointerEffect;
+    bool hasActionEffect() => _actionEffect !is null;
+    Sprite actionEffectUnsafe() => _actionEffect;
 
-    Nullable!Sprite pointerEffect()
+    Nullable!Sprite actionEffect()
     {
-        if (!hasPointerEffect)
+        if (!hasActionEffect)
         {
             return Nullable!Sprite.init;
         }
-        return Nullable!Sprite(_pointerEffect);
+        return Nullable!Sprite(_actionEffect);
     }
 
-    bool hasPointerEffectAnimation() => _pointerEffectAnimation !is null;
-    Sprite pointerEffectAnimUnsafe() => _pointerEffectAnimation;
+    bool hasActionEffectAnimation() => _actionEffectAnimation !is null;
+    Sprite actionEffectAnimUnsafe() => _actionEffectAnimation;
 
-    Nullable!Sprite pointerEffectAnimation()
+    Nullable!Sprite actionEffectAnimation()
     {
-        if (!hasPointerEffectAnimation)
+        if (!hasActionEffectAnimation)
         {
             return Nullable!Sprite.init;
         }
-        return Nullable!Sprite(_pointerEffectAnimation);
+        return Nullable!Sprite(_actionEffectAnimation);
+    }
+
+    GraphicStyle* hasStyle(string id)
+    {
+        assert(id.length > 0);
+        return id in styles;
     }
 
     override void update(double dt)
@@ -700,41 +790,9 @@ class Control : Sprite
         }
     }
 
-    GraphicStyle styleFromDefault()
-    {
-        import api.dm.kit.graphics.colors.rgba : RGBA;
-
-        GraphicStyle newStyle = style;
-
-        if (defaultStyle != DefaultStyle.standard)
-        {
-            final switch (defaultStyle) with (DefaultStyle)
-            {
-                case standard:
-                    break;
-                case success:
-                    style.lineColor = graphics.theme.colorSuccess;
-                    break;
-                case warning:
-                    style.lineColor = graphics.theme.colorWarning;
-                    break;
-                case danger:
-                    style.lineColor = graphics.theme.colorDanger;
-                    break;
-            }
-
-            style.fillColor = style.lineColor;
-        }
-        style.isFill = isBackground;
-        if (!isBorder)
-        {
-            style.lineWidth = 0;
-        }
-        return style;
-    }
-
     override void dispose()
     {
+        styles = null;
         super.dispose;
     }
 

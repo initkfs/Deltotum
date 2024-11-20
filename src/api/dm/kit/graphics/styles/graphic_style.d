@@ -13,6 +13,7 @@ struct GraphicStyle
     bool isFill;
     RGBA fillColor = RGBA.transparent;
     bool isNested;
+    string name;
 
     static GraphicStyle simple() pure @safe
     {

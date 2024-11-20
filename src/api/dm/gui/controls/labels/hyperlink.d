@@ -28,9 +28,9 @@ class Hyperlink : Labeled
         layout = new VLayout;
         layout.isAutoResize = true;
         isBorder = false;
-        isCreateHoverFactory = false;
-        isCreatePointerEffectFactory = false;
-        isCreatePointerEffectAnimationFactory = false;
+        isCreateHoverEffectFactory = false;
+        isCreateActionEffectFactory = false;
+        isCreateActionEffectAnimationFactory = false;
     }
 
     override void initialize()
