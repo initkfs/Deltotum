@@ -61,7 +61,7 @@ class DayContainer : Control
     override Sprite delegate(double, double) createBackgroundFactory()
     {
         return (w, h) {
-            auto style = createDefaultStyle;
+            auto style = createStyle;
             //TODO caps
             import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 

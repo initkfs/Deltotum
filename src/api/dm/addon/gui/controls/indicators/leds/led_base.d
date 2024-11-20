@@ -92,7 +92,7 @@ class LedBase : Control
 
     protected GraphicStyle getLayersStyle()
     {
-        auto style = createDefaultStyle;
+        auto style = createStyle;
         style.isFill = true;
         return style;
     }

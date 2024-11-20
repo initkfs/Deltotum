@@ -82,7 +82,7 @@ class ToggleSwitch : Labeled
 
         handleOnEffectFactory = (w, h) {
 
-            auto currStyle = createDefaultStyle;
+            auto currStyle = createStyle;
             if (!currStyle.isNested)
             {
                 currStyle.lineColor = graphics.theme.colorAccent;
@@ -107,7 +107,7 @@ class ToggleSwitch : Labeled
         switchHandleFactory = () {
             import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
 
-            auto currStyle = createDefaultStyle;
+            auto currStyle = createStyle;
             double w = width / 2;
             double h = height;
 

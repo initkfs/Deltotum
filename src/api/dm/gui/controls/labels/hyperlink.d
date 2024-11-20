@@ -59,7 +59,7 @@ class Hyperlink : Labeled
 
         import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
-        auto style = createDefaultStyle;
+        auto style = createStyle;
         style.isFill = true;
         underline = new VConvexPolygon(10, 2, style, 0);
         underline.isResizable = true;

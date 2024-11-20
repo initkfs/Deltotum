@@ -33,9 +33,9 @@ class RoundButton : ButtonBase
         this.layout.isAlign = true;
     }
 
-    alias createDefaultShape = Control.createDefaultShape;
+    alias createShape = Control.createShape;
 
-    protected override Sprite createDefaultShape(double width, double height, GraphicStyle style)
+    protected override Sprite createShape(double width, double height, GraphicStyle style)
     {
         double radius = width / 2;
 
@@ -73,7 +73,7 @@ class RoundButton : ButtonBase
 
     override Sprite delegate(double, double) createBackgroundFactory()
     {
-        return (width, height) { return createDefaultShape(width, height); };
+        return (width, height) { return createShape(width, height); };
     }
 
     override Sprite delegate(double, double) createHoverFactory()
@@ -81,7 +81,7 @@ class RoundButton : ButtonBase
         return (width, height) {
             assert(graphics.theme);
 
-            GraphicStyle style = createDefaultStyle;
+            GraphicStyle style = createStyle;
             if (!style.isNested)
             {
                 style.lineColor = graphics.theme.colorHover;
@@ -89,7 +89,7 @@ class RoundButton : ButtonBase
                 style.isFill = true;
             }
 
-            Sprite newHover = createDefaultShape(width, height, style);
+            Sprite newHover = createShape(width, height, style);
             newHover.id = idControlHover;
             newHover.isLayoutManaged = false;
             newHover.isResizedByParent = true;
@@ -103,7 +103,7 @@ class RoundButton : ButtonBase
         return () {
             assert(graphics.theme);
 
-            GraphicStyle style = createDefaultStyle;
+            GraphicStyle style = createStyle;
             if (!style.isNested)
             {
                 style.lineColor = graphics
@@ -112,7 +112,7 @@ class RoundButton : ButtonBase
                 style.isFill = true;
             }
 
-            Sprite sprite = createDefaultShape(width, height, style);
+            Sprite sprite = createShape(width, height, style);
             return sprite;
         };
     }

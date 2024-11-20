@@ -309,12 +309,6 @@ class Text : Control
 
         _color = graphics.theme.colorText;
 
-        auto currStyle = ownOrParentStyle;
-        if (currStyle)
-        {
-            _color = currStyle.fillColor;
-        }
-
         setColorTexture;
 
         updateRows;

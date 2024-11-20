@@ -14,9 +14,7 @@ abstract class Separator : Control
             import api.dm.kit.sprites.shapes.rectangle : Rectangle;
             import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
-            auto currStyle = ownOrParentStyle;
-
-            GraphicStyle backgroundStyle = currStyle ? *currStyle : GraphicStyle(isBorder ? 1 : 0, graphics.theme.colorAccent, isBackground, graphics
+            GraphicStyle backgroundStyle = GraphicStyle(isBorder ? 1 : 0, graphics.theme.colorAccent, isBackground, graphics
                     .theme.colorControlBackground);
 
             auto background = new Rectangle(width, height, backgroundStyle);

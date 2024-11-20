@@ -100,7 +100,7 @@ class LedIcon : LedBase
         // auto topHsvColor = hsvColor;
         // topHsvColor.saturation = 0.1;
 
-        // auto style = createDefaultStyle;
+        // auto style = createStyle;
         // style.isFill = true;
         // style.color = bottomLayerColor;
 
@@ -109,14 +109,14 @@ class LedIcon : LedBase
         // auto bottomLayer = newLayer(style, padding * 4);
         // window.showingTasks ~= (dt) { bottomLayer.dispose; };
 
-        // auto style2 = createDefaultStyle;
+        // auto style2 = createStyle;
         // style2.isFill = true;
         // style2.color = middleLayerColor;
 
         // auto middleLayer = newLayer(style2, padding * 2);
         // window.showingTasks ~= (dt) { middleLayer.dispose; };
 
-        // auto style3 = createDefaultStyle;
+        // auto style3 = createStyle;
         // style3.isFill = true;
         // style3.color = topLayerColor;
 

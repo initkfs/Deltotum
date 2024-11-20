@@ -6,6 +6,8 @@ import api.dm.kit.sprites.layouts.layout : Layout;
 import api.math.insets : Insets;
 import api.dm.kit.sprites.textures.texture : Texture;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.graphics.styles.default_style: DefaultStyle;
+import api.dm.kit.graphics.styles.default_style;
 import api.math.alignment : Alignment;
 import api.math.insets : Insets;
 import api.dm.gui.controls.popups.base_popup : BasePopup;
@@ -27,8 +29,13 @@ class Control : Sprite
         idControlPointerEffect = "control_pointer_effect"
     }
 
-    GraphicStyle* userStyle;
-    bool isFindStyleInParent;
+    GraphicStyle style;
+    DefaultStyle defaultStyle;
+    GraphicStyle delegate() styleFactory;
+    GraphicStyle delegate(ref GraphicStyle) onStyleCreate;
+    void delegate(ref GraphicStyle) onStyleCreated;
+    bool isUseParentStyle;
+    bool isStyleForChildren;
 
     bool isBackground;
     bool isBorder;
@@ -36,6 +43,7 @@ class Control : Sprite
     bool isDisabled;
 
     bool isCreateBackgroundFactory = true;
+    bool isCreateStyleFactory = true;
     bool isCreateHoverFactory;
     bool isCreatePointerEffectFactory;
     bool isCreatePointerEffectAnimationFactory;
@@ -61,15 +69,6 @@ class Control : Sprite
     void delegate() onPreControlContentCreated;
     void delegate() onPostControlContentCreated;
 
-     enum ActionType : string
-    {
-        standard = "standard",
-        success = "success",
-        warning = "warning",
-        danger = "danger"
-    }
-
-    string actionType = ActionType.standard;
 
     protected
     {
@@ -135,6 +134,11 @@ class Control : Sprite
         {
             pointerEffectAnimationFactory = createPointerEffectAnimationFactory;
         }
+
+        if (!styleFactory && isCreateStyleFactory)
+        {
+            styleFactory = createStyleFactory;
+        }
     }
 
     void initTooltipListeners()
@@ -178,7 +182,7 @@ class Control : Sprite
 
     Sprite delegate(double, double) createBackgroundFactory()
     {
-        return (w, h) => createDefaultShape(w, h);
+        return (w, h) => createShape(w, h);
     }
 
     Sprite delegate(double, double) createHoverFactory()
@@ -186,7 +190,7 @@ class Control : Sprite
         return (w, h) {
             assert(graphics.theme);
 
-            GraphicStyle newStyle = createDefaultStyle;
+            GraphicStyle newStyle = createStyle;
             if (!newStyle.isNested)
             {
                 newStyle.lineColor = graphics
@@ -205,7 +209,7 @@ class Control : Sprite
         return () {
             assert(graphics.theme);
 
-            GraphicStyle newStyle = createDefaultStyle;
+            GraphicStyle newStyle = createStyle;
             if (!newStyle.isNested)
             {
                 newStyle.lineColor = graphics
@@ -230,30 +234,36 @@ class Control : Sprite
         };
     }
 
-    protected GraphicStyle createDefaultStyle()
+    GraphicStyle delegate() createStyleFactory()
     {
-        GraphicStyle newStyle;
-        if (auto parentPtr = ownOrParentStyle)
-        {
-            newStyle = *parentPtr;
-            newStyle.isNested = true;
-        }
-        else
-        {
-            //The method can be used for internal controls
-            //const lineThickness = isBorder ? graphics.theme.lineThickness : 0;
-            newStyle = GraphicStyle(graphics.theme.lineThickness, graphics.theme.colorAccent, isBackground, graphics
+        return () {
+            assert(graphics.theme);
+
+            return GraphicStyle(graphics.theme.lineThickness, graphics.theme.colorAccent, isBackground, graphics
                     .theme.colorControlBackground);
-        }
-        return newStyle;
+        };
     }
 
-    protected Sprite createDefaultShape(double w, double h)
+    protected GraphicStyle createStyle()
     {
-        return createDefaultShape(w, h, createDefaultStyle);
+        if (isUseParentStyle && parent)
+        {
+            import api.core.utils.types : castSafe;
+
+            if (auto parentWidget = parent.castSafe!Control)
+            {
+                return parentWidget.style;
+            }
+        }
+        return style;
     }
 
-    protected Sprite createDefaultShape(double width, double height, GraphicStyle style = GraphicStyle
+    protected Sprite createShape(double w, double h)
+    {
+        return createShape(w, h, createStyle);
+    }
+
+    protected Sprite createShape(double width, double height, GraphicStyle style = GraphicStyle
             .simple)
     {
         return graphics.theme.background(width, height, &style);
@@ -262,6 +272,16 @@ class Control : Sprite
     override void create()
     {
         super.create;
+
+        if (style == GraphicStyle.init && styleFactory)
+        {
+            auto newStyle = styleFactory();
+            style = onStyleCreate ? onStyleCreate(newStyle) : newStyle;
+            if (onStyleCreated)
+            {
+                onStyleCreated(style);
+            }
+        }
 
         tryCreateBackground(width, height);
 
@@ -495,7 +515,7 @@ class Control : Sprite
         }
 
         const string iconData = mustBeIconData.get;
-        
+
         auto icon = new Image;
         build(icon);
 
@@ -504,10 +524,6 @@ class Control : Sprite
         icon.loadRaw(iconData.to!(const(void[])), cast(int) iconSize, cast(int) iconSize);
 
         auto color = graphics.theme.colorAccent;
-        if (userStyle)
-        {
-            color = userStyle.lineColor;
-        }
 
         icon.color = color;
         icon.create;
@@ -517,36 +533,16 @@ class Control : Sprite
     void applyStyle(Control control)
     {
         assert(control);
-        if (userStyle && !control.userStyle)
-        {
-            control.userStyle = userStyle;
-        }
-    }
 
-    //TODO nullable, but it will become more difficult to use in if branches
-    GraphicStyle* ownOrParentStyle()
-    {
-        if (userStyle)
+        if (isStyleForChildren || control.isUseParentStyle)
         {
-            return userStyle;
+            control.style = style;
         }
 
-        if (isFindStyleInParent)
+        if (isStyleForChildren)
         {
-            import api.core.utils.types : castSafe;
-
-            Control currParent = parent.castSafe!Control;
-            while (currParent)
-            {
-                if (currParent.userStyle)
-                {
-                    return currParent.userStyle;
-                }
-                currParent = currParent.parent.castSafe!Control;
-            }
+            control.isStyleForChildren = isStyleForChildren;
         }
-
-        return null;
     }
 
     import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
@@ -646,7 +642,7 @@ class Control : Sprite
         return Nullable!Sprite(_background);
     }
 
-    bool hasHover() =>_hover !is null;
+    bool hasHover() => _hover !is null;
     Sprite hoverUnsafe() => _hover;
 
     Nullable!Sprite hover()
@@ -704,23 +700,15 @@ class Control : Sprite
         }
     }
 
-    GraphicStyle styleFromActionType()
+    GraphicStyle styleFromDefault()
     {
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        GraphicStyle style;
-        if (auto parentStyle = ownOrParentStyle)
-        {
-            style = *parentStyle;
-        }
-        else
-        {
-            style = graphics.theme.defaultStyle;
-        }
+        GraphicStyle newStyle = style;
 
-        if (actionType != ActionType.standard)
+        if (defaultStyle != DefaultStyle.standard)
         {
-            final switch (actionType) with (ActionType)
+            final switch (defaultStyle) with (DefaultStyle)
             {
                 case standard:
                     break;

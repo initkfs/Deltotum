@@ -120,7 +120,7 @@ class Expander : Control
     {
         import api.dm.kit.sprites.textures.vectors.shapes.vtriangle : VTriangle;
 
-        auto style = createDefaultStyle;
+        auto style = createStyle;
         style.isFill = true;
         auto label = new VTriangle(10, 10, style);
         label.id = "expand_label";

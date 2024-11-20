@@ -57,7 +57,7 @@ class RadialScroll : MonoScroll
         //TODO correct offset
         radiusBase -= 60;
         auto pointerRadius = radiusBase / 2 - 10;
-        auto thumbStyle = createDefaultStyle;
+        auto thumbStyle = createStyle;
         auto newThumb = new class VRegularPolygon
         {
             this()

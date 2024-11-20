@@ -318,7 +318,7 @@ class AnalogClock : Control
 
                     override GraphicStyle createSegmentStyle()
                     {
-                        GraphicStyle style = createDefaultStyle;
+                        GraphicStyle style = createStyle;
                         style.isFill = true;
                         style.lineWidth = 2;
                         style.lineColor = graphics.theme.colorSecondary;

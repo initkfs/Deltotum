@@ -454,9 +454,10 @@ class Controls : Control
         };
 
         import api.dm.kit.sprites.layouts.vlayout : VLayout;
+        import api.dm.kit.graphics.styles.default_style: DefaultStyle;
 
         auto winRestore = new Button("Restore", IconName.push_outline);
-        winRestore.actionType = Control.ActionType.success;
+        winRestore.defaultStyle = DefaultStyle.success;
         winRestore.layout = new VLayout(5);
         winRestore.layout.isAutoResizeAndAlignOne = true;
         winRestore.layout.isAlignX = true;
@@ -465,7 +466,7 @@ class Controls : Control
         winRestore.onAction = (ref e) { window.restore; };
 
         auto winFull = new Button("Fullscreen", IconName.expand_outline);
-        winFull.actionType = Control.ActionType.danger;
+        winFull.defaultStyle = DefaultStyle.danger;
         winFull.layout = new VLayout(5);
         winFull.layout.isAutoResizeAndAlignOne = true;
         winFull.layout.isAlignX = true;
@@ -479,7 +480,7 @@ class Controls : Control
         };
 
         auto winDec = new Button("Decoration", IconName.image_outline);
-        winDec.actionType = Control.ActionType.warning;
+        winDec.defaultStyle = DefaultStyle.warning;
         root.addCreate(winDec);
         winDec.onAction = (ref e) {
             auto oldValue = window.isDecorated;

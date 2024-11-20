@@ -41,7 +41,7 @@ abstract class TimeChooser : Control
         super.create;
         import api.dm.kit.sprites.textures.vectors.shapes.vcircle : VCircle;
 
-        auto sliderStyle = createDefaultStyle;
+        auto sliderStyle = createStyle;
         sliderStyle.isFill = true;
 
         selectionSlider = new class VCircle
@@ -202,7 +202,7 @@ class MinSecChooser : TimeChooser
     {
         super.create;
 
-        auto style = createDefaultStyle;
+        auto style = createStyle;
         style.isFill = true;
 
         selectionSlider.isDraggable = true;

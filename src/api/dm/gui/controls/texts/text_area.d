@@ -43,9 +43,7 @@ class TextArea : HBox
             import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
             import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
 
-            auto style = ownOrParentStyle;
-
-            GraphicStyle backgroundStyle = style ? *style : GraphicStyle(1, graphics.theme.colorAccent, isBackground, graphics
+            GraphicStyle backgroundStyle = GraphicStyle(1, graphics.theme.colorAccent, isBackground, graphics
                     .theme.colorPrimary);
             auto background = new ConvexPolygon(width, height, backgroundStyle, graphics
                     .theme.controlCornersBevel);

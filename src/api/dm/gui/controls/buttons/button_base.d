@@ -85,7 +85,7 @@ class ButtonBase : Labeled
         return (width, height) {
             assert(graphics.theme);
 
-            auto style = styleFromActionType;
+            auto style = styleFromDefault;
             auto newBackground = graphics.theme.background(width, height, &style);
             newBackground.isLayoutManaged = false;
             newBackground.id = idControlBackground;

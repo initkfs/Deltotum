@@ -74,15 +74,15 @@ class Colors : Control
                     input.clipboard.setText(colorHex);
                 };
 
-                auto style = new GraphicStyle(1, newColor, true, newColor);
+                auto style = GraphicStyle(1, newColor, true, newColor);
 
                 auto colorText = new Text();
-                colorText.userStyle = style;
+                colorText.style = style;
                 colorText.fontSize = FontSize.small;
                 colorText.text = (cast(string) color).to!dstring;
                 colorContainer.addCreate(colorText);
 
-                auto shape = new VConvexPolygon(colorContainer.width, colorContainer.height, *style, 0);
+                auto shape = new VConvexPolygon(colorContainer.width, colorContainer.height, style, 0);
                 colorContainer.addCreate(shape);
             }(c);
         }

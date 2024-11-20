@@ -28,15 +28,15 @@ class RhombusButton : ButtonBase
 
     override Sprite delegate(double, double) createBackgroundFactory()
     {
-        return (w, h) { return createDefaultShape(w, h); };
+        return (w, h) { return createShape(w, h); };
     }
 
-    protected override Sprite createDefaultShape(double w, double h)
+    protected override Sprite createShape(double w, double h)
     {
-        return createDefaultShape(w, h, createDefaultStyle);
+        return createShape(w, h, createStyle);
     }
 
-    protected override Sprite createDefaultShape(double width, double height, GraphicStyle style)
+    protected override Sprite createShape(double width, double height, GraphicStyle style)
     {
         double cornerBevel = width / 2;
 
@@ -61,7 +61,7 @@ class RhombusButton : ButtonBase
         return (width, height) {
             assert(graphics.theme);
 
-            GraphicStyle style = createDefaultStyle;
+            GraphicStyle style = createStyle;
             if (!style.isNested)
             {
                 style.lineColor = graphics.theme.colorHover;
@@ -69,7 +69,7 @@ class RhombusButton : ButtonBase
                 style.isFill = true;
             }
 
-            Sprite newHover = createDefaultShape(width, height, style);
+            Sprite newHover = createShape(width, height, style);
             newHover.id = idControlHover;
             newHover.isLayoutManaged = false;
             newHover.isResizedByParent = true;
@@ -83,7 +83,7 @@ class RhombusButton : ButtonBase
         return () {
             assert(graphics.theme);
 
-            GraphicStyle style = createDefaultStyle;
+            GraphicStyle style = createStyle;
             if (!style.isNested)
             {
                 style.lineColor = graphics
@@ -92,7 +92,7 @@ class RhombusButton : ButtonBase
                 style.isFill = true;
             }
 
-            Sprite sprite = createDefaultShape(width, height, style);
+            Sprite sprite = createShape(width, height, style);
             return sprite;
         };
     }

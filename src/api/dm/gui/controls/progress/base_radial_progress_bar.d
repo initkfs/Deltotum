@@ -57,7 +57,7 @@ class BaseRadialProgressBar : BaseProgressBar
 
         import std.conv : to;
 
-        auto segmentStyle = createDefaultStyle;
+        auto segmentStyle = createStyle;
         if (!segmentStyle.isNested)
         {
             segmentStyle.isFill = false;
