@@ -222,7 +222,7 @@ class GuiPopupManager : Container, PopupManager
             newPopup.isDrawByParent = false;
             addCreate(newPopup);
             popupsPool ~= newPopup;
-            window.scenes.currentScene.controlledSprites ~= newPopup;
+            window.currentScene.controlledSprites ~= newPopup;
             freePopup = newPopup;
         }
 

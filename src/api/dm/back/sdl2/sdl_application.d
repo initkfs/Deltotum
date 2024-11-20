@@ -13,7 +13,6 @@ import api.dm.kit.apps.continuously_application : ContinuouslyApplication;
 import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.dm.kit.events.kit_event_manager : KitEventManager;
 import api.dm.back.sdl2.sdl_event_processor : SdlEventProcessor;
-import api.dm.kit.scenes.scene_manager : SceneManager;
 import api.dm.kit.graphics.graphics : Graphics;
 import api.dm.kit.interacts.interact : Interact;
 import api.dm.kit.sprites.sprite : Sprite;
@@ -725,7 +724,6 @@ class SdlApplication : ContinuouslyApplication
         import api.dm.kit.factories.image_factory : ImageFactory;
         import api.dm.kit.factories.shape_factory : ShapeFactory;
         import api.dm.kit.factories.texture_factory: TextureFactory;
-        import api.dm.kit.scenes.scene_manager : SceneManager;
 
         ImageFactory imageFactory = new ImageFactory;
         windowBuilder.build(imageFactory);
@@ -738,12 +736,7 @@ class SdlApplication : ContinuouslyApplication
         auto factoryKit = new FactoryKit(imageFactory, shapeFactory, textureFactory);
         windowBuilder.build(factoryKit);
 
-        auto sceneManager = newSceneManager(uservices.logging, uservices.config, uservices.context, factoryKit);
-        windowBuilder.build(sceneManager);
-        sceneManager.initialize;
-        sceneManager.create;
-
-        window.scenes = sceneManager;
+        window.factory = factoryKit;
 
         //Rebuilding window with all services
         windowBuilder.build(window);
@@ -757,7 +750,7 @@ class SdlApplication : ContinuouslyApplication
             {
                 import api.dm.gui.supports.editors.guieditor : GuiEditor;
 
-                window.scenes.add(new GuiEditor);
+                window.add(new GuiEditor);
             }
         }
 
@@ -839,7 +832,7 @@ class SdlApplication : ContinuouslyApplication
             //FIXME stop loop after destroy
             if (!currWindow.isDisposed)
             {
-                mustBeWindow.get.scenes.currentScene.timeEventProcessingMs = 0;
+                mustBeWindow.get.currentScene.timeEventProcessingMs = 0;
             }
 
         }
@@ -855,7 +848,7 @@ class SdlApplication : ContinuouslyApplication
                 auto currWindow = mustBeWindow.get;
                 if (!currWindow.isDisposed)
                 {
-                    currWindow.scenes.currentScene.timeEventProcessingMs = endEvent - startEvent;
+                    currWindow.currentScene.timeEventProcessingMs = endEvent - startEvent;
                 }
 
             }
@@ -880,7 +873,7 @@ class SdlApplication : ContinuouslyApplication
 
         if (!mustBeWindow.isNull)
         {
-            mustBeWindow.get.scenes.currentScene.timeDrawProcessingMs = endStateTime - startStateTime;
+            mustBeWindow.get.currentScene.timeDrawProcessingMs = endStateTime - startStateTime;
         }
     }
 
@@ -902,7 +895,7 @@ class SdlApplication : ContinuouslyApplication
 
         if (!mustBeWindow.isNull)
         {
-            mustBeWindow.get.scenes.currentScene.timeUpdateProcessingMs = endStateTime - startStateTime;
+            mustBeWindow.get.currentScene.timeUpdateProcessingMs = endStateTime - startStateTime;
         }
     }
 

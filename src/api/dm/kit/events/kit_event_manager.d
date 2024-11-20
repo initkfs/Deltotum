@@ -3,7 +3,6 @@ module api.dm.kit.events.kit_event_manager;
 import api.dm.kit.events.processing.event_processor : EventProcessor;
 import api.dm.kit.events.event_manager: EventManager;
 import api.dm.kit.events.processing.kit_event_processor : KitEventProcessor;
-import api.dm.kit.scenes.scene_manager : SceneManager;
 
 import api.core.apps.events.app_event : AppEvent;
 import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
@@ -47,7 +46,7 @@ class KitEventManager : EventManager
         }
 
         Window targetWindow = mustBeTargetWindow.get;
-        Scene targetScene = targetWindow.scenes.currentScene;
+        Scene targetScene = targetWindow.currentScene;
         Sprite[] targets = targetScene.activeSprites;
 
         targetScene.runEventHandlers(e);

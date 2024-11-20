@@ -17,7 +17,6 @@ import api.dm.kit.graphics.themes.icons.icon_pack : IconPack;
 import api.dm.kit.sprites.textures.texture : Texture;
 import api.dm.kit.graphics.themes.theme : Theme;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
-import api.dm.kit.scenes.scene_manager : SceneManager;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 import api.core.utils.factories : ProviderFactory;
 import api.dm.kit.i18n.langs.alphabets.alphabet : Alphabet;
@@ -225,11 +224,6 @@ abstract class GraphicApplication : CliApp
     CapGraphics newCapability()
     {
         return new CapGraphics;
-    }
-
-    SceneManager newSceneManager(Logging logging, Config config, Context context, FactoryKit FactoryKit)
-    {
-        return new SceneManager(FactoryKit);
     }
 
     GraphicsComponent newWindowServices()

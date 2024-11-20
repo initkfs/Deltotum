@@ -64,8 +64,8 @@ extern (C) int dm_init(int argc, char** argv)
     enum gameHeight = 720;
 
     window = app.newWindow("window", gameWidth, gameHeight);
-    window.scenes.add(scene);
-    window.scenes.change(scene);
+    window.add(scene);
+    window.change(scene);
     window.show;
 
     return 0;

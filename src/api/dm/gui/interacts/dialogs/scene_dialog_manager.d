@@ -29,7 +29,7 @@ class SceneDialogManager : GuiDialogManager
                 hideDialog;
                 if (isDisableScenePause)
                 {
-                    window.scenes.currentScene.isPause = false;
+                    window.currentScene.isPause = false;
                 }
             };
         }
@@ -39,9 +39,9 @@ class SceneDialogManager : GuiDialogManager
     {
         super.createDialog(dialog);
         assert(window);
-        assert(window.scenes);
-        window.scenes.currentScene.controlledSprites ~= this;
-        window.scenes.currentScene.eternalSprites ~= this;
+        assert(window);
+        window.currentScene.controlledSprites ~= this;
+        window.currentScene.eternalSprites ~= this;
     }
 
     override protected void showDialog()
@@ -50,7 +50,7 @@ class SceneDialogManager : GuiDialogManager
 
         if (isEnableScenePause)
         {
-            window.scenes.currentScene.isPause = true;
+            window.currentScene.isPause = true;
         }
     }
 
