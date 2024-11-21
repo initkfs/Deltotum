@@ -77,7 +77,7 @@ class VSplitBox : Container
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
         auto sep = new VConvexPolygon(7, 7,
-            GraphicStyle(1, graphics.theme.colorAccent, true, graphics.theme.colorAccent), 0);
+            GraphicStyle(1, theme.colorAccent, true, theme.colorAccent), 0);
         addCreate(sep);
         sep.isResizedByParent = false;
         sep.isLayoutManaged = false;

@@ -32,7 +32,7 @@ class VScroll : MonoScroll
 
         thumbFactory = () {
             auto style = createThumbStyle;
-            auto node = graphics.theme.background(width, thumbHeight, &style);
+            auto node = theme.background(width, thumbHeight, &style);
             return node;
         };
     }

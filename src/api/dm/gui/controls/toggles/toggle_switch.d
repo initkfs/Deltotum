@@ -85,22 +85,22 @@ class ToggleSwitch : Labeled
             auto currStyle = createStyle;
             if (!currStyle.isNested)
             {
-                currStyle.lineColor = graphics.theme.colorAccent;
+                currStyle.lineColor = theme.colorAccent;
                 currStyle.isFill = true;
-                currStyle.fillColor = graphics.theme.colorAccent;
+                currStyle.fillColor = theme.colorAccent;
             }
 
             if (capGraphics.isVectorGraphics)
             {
                 import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
-                return new VConvexPolygon(w, h, currStyle, graphics.theme.controlCornersBevel);
+                return new VConvexPolygon(w, h, currStyle, theme.controlCornersBevel);
             }
             else
             {
                 import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
 
-                return new ConvexPolygon(w, h, currStyle, graphics.theme.controlCornersBevel);
+                return new ConvexPolygon(w, h, currStyle, theme.controlCornersBevel);
             }
         };
 
@@ -115,14 +115,13 @@ class ToggleSwitch : Labeled
             {
                 import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
-                return new VConvexPolygon(w, h, currStyle, graphics.theme.controlCornersBevel);
+                return new VConvexPolygon(w, h, currStyle, theme.controlCornersBevel);
             }
             else
             {
                 import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
 
-                return new ConvexPolygon(w, h, currStyle, graphics
-                        .theme.controlCornersBevel);
+                return new ConvexPolygon(w, h, currStyle, theme.controlCornersBevel);
             }
         };
 

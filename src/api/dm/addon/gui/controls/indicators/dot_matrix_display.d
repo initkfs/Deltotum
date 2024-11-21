@@ -30,7 +30,7 @@ class Led : Control
         if (!style.isNested)
         {
             style.isFill = true;
-            style.fillColor = graphics.theme.colorAccent;
+            style.fillColor = theme.colorAccent;
         }
         Sprite led;
         if (capGraphics.isVectorGraphics)

@@ -69,7 +69,7 @@ class RadialScroll : MonoScroll
             {
                 super.createTextureContent;
 
-                canvas.color(graphics.theme.colorAccent);
+                canvas.color(theme.colorAccent);
 
                 auto pointRadius = pointerRadius - 5;
                 canvas.moveTo(0, 0);

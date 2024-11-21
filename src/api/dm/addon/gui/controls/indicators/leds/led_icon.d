@@ -33,7 +33,7 @@ class LedIcon : LedBase
     override protected Sprite newLayerShape(GraphicStyle style, double layerInnerPadding, double blurSize)
     {
         const size_t iconSize = cast(size_t)(width);
-        const mustBeIconData = graphics.theme.iconData(iconName);
+        const mustBeIconData = theme.iconData(iconName);
         if (mustBeIconData.isNull)
         {
             //TODO placeholder?

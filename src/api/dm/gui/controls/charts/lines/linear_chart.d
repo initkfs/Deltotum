@@ -43,7 +43,7 @@ class LinearChart : XYChart
 
         if (colorChartLine == RGBA.init)
         {
-            colorChartLine = graphics.theme.colorAccent;
+            colorChartLine = theme.colorAccent;
         }
     }
 

@@ -149,11 +149,11 @@ abstract class MonoScroll : BaseScroll
 
     GraphicStyle createThumbStyle()
     {
-        auto style = graphics.theme.defaultStyle();
+        auto style = theme.defaultStyle();
         if (!style.isNested)
         {
-            style.lineColor = graphics.theme.colorAccent;
-            style.fillColor = graphics.theme.colorAccent;
+            style.lineColor = theme.colorAccent;
+            style.fillColor = theme.colorAccent;
             style.isFill = true;
         }
         return style;

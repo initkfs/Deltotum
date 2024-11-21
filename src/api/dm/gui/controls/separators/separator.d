@@ -14,13 +14,12 @@ abstract class Separator : Control
             import api.dm.kit.sprites.shapes.rectangle : Rectangle;
             import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
-            GraphicStyle backgroundStyle = GraphicStyle(isBorder ? 1 : 0, graphics.theme.colorAccent, isBackground, graphics
-                    .theme.colorControlBackground);
+            GraphicStyle backgroundStyle = GraphicStyle(isBorder ? 1 : 0, theme.colorAccent, isBackground, theme.colorControlBackground);
 
             auto background = new Rectangle(width, height, backgroundStyle);
             background.id = "separator_background";
 
-            background.opacity = graphics.theme.opacityControls;
+            background.opacity = theme.opacityControls;
             return background;
         };
 

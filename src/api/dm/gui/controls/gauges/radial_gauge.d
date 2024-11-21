@@ -148,15 +148,13 @@ class RadialGauge : Control
         auto tickWidth = 2;
         auto tickHeight = 6;
 
-        auto smallTickProto = new VConvexPolygon(tickHeight, tickWidth, GraphicStyle(0, graphics.theme.colorAccent, true, graphics
-                .theme.colorAccent), 0);
+        auto smallTickProto = new VConvexPolygon(tickHeight, tickWidth, GraphicStyle(0, theme.colorAccent, true, theme.colorAccent), 0);
         build(smallTickProto);
         smallTickProto.initialize;
         smallTickProto.create;
         smallTickProto.textureScaleMode = ComTextureScaleMode.quality;
 
-        auto bigTickProto = new VConvexPolygon(tickHeight * 2, tickWidth, GraphicStyle(2, graphics.theme.colorDanger, true, graphics
-                .theme.colorDanger), 0);
+        auto bigTickProto = new VConvexPolygon(tickHeight * 2, tickWidth, GraphicStyle(2, theme.colorDanger, true, theme.colorDanger), 0);
         build(bigTickProto);
         bigTickProto.initialize;
         bigTickProto.create;
@@ -255,16 +253,14 @@ class RadialGauge : Control
 
             addCreate(centerShape);
 
-            auto handStyle = GraphicStyle(1, graphics.theme.colorDanger, true, graphics
-                    .theme.colorDanger);
+            auto handStyle = GraphicStyle(1, theme.colorDanger, true, theme.colorDanger);
 
             hand = new Hand(width, height, 5, 45, handStyle);
             addCreate(hand);
 
             import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
 
-            VRegularPolygon holder = new VRegularPolygon(10, GraphicStyle(0, graphics.theme.colorDanger, true, graphics
-                    .theme.colorDanger));
+            VRegularPolygon holder = new VRegularPolygon(10, GraphicStyle(0, theme.colorDanger, true, theme.colorDanger));
             addCreate(holder);
             handHolder = holder;
 
@@ -310,8 +306,8 @@ class RadialGauge : Control
                     double endAngle = startAngle + angleDiff;
 
                     RGBA[rangeParts] colors = [
-                        graphics.theme.colorSuccess, graphics.theme.colorWarning,
-                        graphics.theme.colorDanger
+                        theme.colorSuccess, theme.colorWarning,
+                        theme.colorDanger
                     ];
                     foreach (i; 0 .. rangeParts)
                     {

@@ -1938,7 +1938,7 @@ class Sprite : EventKitTarget
 
     bool isCanEnableInsets()
     {
-        return hasGraphics && graphics.theme;
+        return false;
     }
 
     void enableInsets()
@@ -1958,12 +1958,7 @@ class Sprite : EventKitTarget
 
     void enablePadding()
     {
-        if (!isCanEnableInsets)
-        {
-            throw new Exception(
-                "Unable to enable paddings: graphic or theme is null. Perhaps the component is not built correctly");
-        }
-        _padding = graphics.theme.controlPadding;
+        
     }
 
     Insets padding()

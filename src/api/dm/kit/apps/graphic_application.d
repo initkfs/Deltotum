@@ -332,9 +332,9 @@ abstract class GraphicApplication : CliApp
         exit;
     }
 
-    Graphics createGraphics(Logging logging, ComRenderer renderer, Theme theme)
+    Graphics createGraphics(Logging logging, ComRenderer renderer)
     {
-        return new Graphics(logging, renderer, theme);
+        return new Graphics(logging, renderer);
     }
 
     Theme createTheme(Logging logging, Config config, Context context, Resourcing resources)

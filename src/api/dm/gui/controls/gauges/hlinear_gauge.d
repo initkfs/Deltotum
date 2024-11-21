@@ -250,7 +250,7 @@ class HLinearGauge : Control
     {
         auto style = createStyle;
         style.isFill = true;
-        style.color = graphics.theme.colorAccent;
+        style.color = theme.colorAccent;
         import api.dm.kit.sprites.textures.vectors.shapes.vtriangle : VTriangle;
 
         auto pointer = new VTriangle(20, 15, style);

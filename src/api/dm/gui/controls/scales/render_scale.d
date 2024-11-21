@@ -85,7 +85,7 @@ class RenderScale : Control
         //TODO from class field?
         if (axisColor == RGBA.init)
         {
-            axisColor = graphics.theme.colorDanger;
+            axisColor = theme.colorDanger;
         }
     }
 

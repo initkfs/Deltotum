@@ -77,8 +77,8 @@ class RenderHScale : RenderScale
                 auto tickX = startX - tickW / 2;
                 auto tickY = startY - tickH / 2;
 
-                auto tickColor = isMajorTick ? graphics.theme.colorDanger
-                    : graphics.theme.colorAccent;
+                auto tickColor = isMajorTick ? theme.colorDanger
+                    : theme.colorAccent;
 
                 graphics.fillRect(Vec2d(tickX, tickY), tickW, tickH, tickColor);
             }

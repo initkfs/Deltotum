@@ -105,8 +105,8 @@ class Controls : Control
 
         // auto image1 = new Image();
         // build(image1);
-        // image1.loadRaw(graphics.theme.iconData("rainy-outline"), 64, 64);
-        // image1.setColor(graphics.theme.colorAccent);
+        // image1.loadRaw(theme.iconData("rainy-outline"), 64, 64);
+        // image1.setColor(theme.colorAccent);
     }
 
     void createButtons(Container root)

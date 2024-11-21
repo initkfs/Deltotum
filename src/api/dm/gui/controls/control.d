@@ -208,7 +208,7 @@ class Control : Sprite
     Sprite delegate(double, double) createHoverEffectFactory()
     {
         return (w, h) {
-            assert(graphics.theme);
+            assert(theme);
 
             GraphicStyle newStyle;
             if (auto stylePtr = hasStyle(ControlStyle.hoverEffect))
@@ -220,14 +220,13 @@ class Control : Sprite
                 newStyle = createStyle;
                 if (!newStyle.isNested)
                 {
-                    newStyle.lineColor = graphics
-                        .theme.colorHover;
-                    newStyle.fillColor = graphics.theme.colorHover;
+                    newStyle.lineColor = theme.colorHover;
+                    newStyle.fillColor = theme.colorHover;
                     newStyle.isFill = true;
                 }
             }
 
-            Sprite newHover = graphics.theme.background(w, h, &newStyle);
+            Sprite newHover = theme.background(w, h, &newStyle);
             return newHover;
         };
     }
@@ -235,7 +234,7 @@ class Control : Sprite
     Sprite delegate() createActionEffectFactory()
     {
         return () {
-            assert(graphics.theme);
+            assert(theme);
 
             GraphicStyle newStyle;
             if (auto stylePtr = hasStyle(ControlStyle.actionEffect))
@@ -247,14 +246,13 @@ class Control : Sprite
                 newStyle = createStyle;
                 if (!newStyle.isNested)
                 {
-                    newStyle.lineColor = graphics
-                        .theme.colorAccent;
-                    newStyle.fillColor = graphics.theme.colorAccent;
+                    newStyle.lineColor = theme.colorAccent;
+                    newStyle.fillColor = theme.colorAccent;
                     newStyle.isFill = true;
                 }
             }
 
-            Sprite effect = graphics.theme.background(width, height, &newStyle);
+            Sprite effect = theme.background(width, height, &newStyle);
             return effect;
         };
     }
@@ -273,7 +271,7 @@ class Control : Sprite
     GraphicStyle delegate(string id) createStyleFactory()
     {
         return (id) {
-            assert(graphics.theme);
+            assert(theme);
 
             if (id.length == 0)
             {
@@ -299,13 +297,13 @@ class Control : Sprite
                     case standard:
                         break;
                     case success:
-                        newStyle.lineColor = graphics.theme.colorSuccess;
+                        newStyle.lineColor = theme.colorSuccess;
                         break;
                     case warning:
-                        newStyle.lineColor = graphics.theme.colorWarning;
+                        newStyle.lineColor = theme.colorWarning;
                         break;
                     case danger:
-                        newStyle.lineColor = graphics.theme.colorDanger;
+                        newStyle.lineColor = theme.colorDanger;
                         break;
                     default:
                         break;
@@ -326,8 +324,7 @@ class Control : Sprite
 
     GraphicStyle createDefaultStyle()
     {
-        return GraphicStyle(graphics.theme.lineThickness, graphics.theme.colorAccent, isBackground, graphics
-                .theme.colorControlBackground);
+        return GraphicStyle(theme.lineThickness, theme.colorAccent, isBackground, theme.colorControlBackground);
     }
 
     protected GraphicStyle createStyle()
@@ -350,7 +347,7 @@ class Control : Sprite
     protected Sprite createShape(double width, double height, GraphicStyle style = GraphicStyle
             .simple)
     {
-        return graphics.theme.background(width, height, &style);
+        return theme.background(width, height, &style);
     }
 
     override void create()
@@ -382,7 +379,7 @@ class Control : Sprite
                 _hoverEffect.isVisible = false;
 
                 addCreate(_hoverEffect);
-                _hoverEffect.opacityLimit = graphics.theme.opacityHover;
+                _hoverEffect.opacityLimit = theme.opacityHover;
                 if (onHoverEffectCreated)
                 {
                     onHoverEffectCreated(_hoverEffect);
@@ -592,9 +589,9 @@ class Control : Sprite
 
         import std.conv : to;
 
-        const iconSize = graphics.theme.iconSize;
+        const iconSize = theme.iconSize;
 
-        const mustBeIconData = graphics.theme.iconData(iconName);
+        const mustBeIconData = theme.iconData(iconName);
         if (mustBeIconData.isNull)
         {
             import api.dm.kit.sprites.shapes.rectangle : Rectangle;
@@ -615,7 +612,7 @@ class Control : Sprite
 
         icon.loadRaw(iconData.to!(const(void[])), cast(int) iconSize, cast(int) iconSize);
 
-        auto color = graphics.theme.colorAccent;
+        auto color = theme.colorAccent;
 
         icon.color = color;
         icon.create;
@@ -700,7 +697,7 @@ class Control : Sprite
 
         addCreate(_background, 0);
 
-        _background.opacityLimit = graphics.theme.opacityBackground;
+        _background.opacityLimit = theme.opacityBackground;
 
         if (onBackgroundCreated)
         {
@@ -815,6 +812,21 @@ class Control : Sprite
                 tooltipDelayCounter++;
             }
         }
+    }
+
+    override bool isCanEnableInsets()
+    {
+        return theme !is null;
+    }
+
+    override void enablePadding()
+    {
+        if (!isCanEnableInsets)
+        {
+            throw new Exception(
+                "Unable to enable paddings: graphic or theme is null. Perhaps the component is not built correctly");
+        }
+        _padding = theme.controlPadding;
     }
 
     override void dispose()

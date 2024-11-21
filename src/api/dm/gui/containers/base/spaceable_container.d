@@ -40,12 +40,12 @@ class SpaceableContainer : Container
 
     void enableSpacing()
     {
-        if (!hasGraphics || !graphics.theme)
+        if (!hasGraphics || !theme)
         {
             throw new Exception(
                 "Unable to enable spacing: graphic or theme is null. Perhaps the component is not built correctly");
         }
-        const value = graphics.theme.controlSpacing;
+        const value = theme.controlSpacing;
         spacing = value;
     }
 

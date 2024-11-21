@@ -8,7 +8,6 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.vec2 : Vec2d, Vec2i;
 import math = api.dm.math;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.kit.graphics.themes.theme : Theme;
 import api.dm.kit.sprites.textures.texture : Texture;
 
 import Math = api.dm.math;
@@ -30,9 +29,6 @@ import api.dm.com.graphics.com_blend_mode : ComBlendMode;
  */
 class Graphics : LoggableUnit
 {
-    //TODO move to gui module
-    Theme theme;
-
     //TODO remove
     static RGBA defaultColor = RGBA.red;
 
@@ -50,7 +46,7 @@ class Graphics : LoggableUnit
     ProviderFactory!ComSurface comSurfaceProvider;
     ProviderFactory!ComImage comImageProvider;
 
-    this(Logging logging, ComRenderer renderer, Theme theme)
+    this(Logging logging, ComRenderer renderer)
     {
         super(logging);
 
@@ -59,9 +55,6 @@ class Graphics : LoggableUnit
         //TODO opengl
         // enforce(renderer !is null, "Renderer must not be null");
         this.renderer = renderer;
-
-        enforce(theme !is null, "Theme must not be null");
-        this.theme = theme;
     }
 
     pragma(inline, true)

@@ -59,7 +59,7 @@ class TargetButton : ButtonBase
         if (!style.isNested)
         {
             style.isFill = true;
-            style.fillColor = graphics.theme.colorAccent;
+            style.fillColor = theme.colorAccent;
         }
         Sprite stick;
         if (capGraphics.isVectorGraphics)

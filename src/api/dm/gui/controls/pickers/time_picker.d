@@ -57,7 +57,7 @@ abstract class TimeChooser : Control
                 import Math = api.dm.math;
                 auto gc = canvas;
                 gc.arc(0, 0, 2, 0, 2 * Math.PI);
-                gc.color(graphics.theme.colorAccent);
+                gc.color(theme.colorAccent);
                 gc.fill;
             }
         };
@@ -76,7 +76,7 @@ abstract class TimeChooser : Control
         {
             auto center = bounds.center;
             auto selectCenter = selectionSlider.bounds.center;
-            auto color = graphics.theme.colorAccent;
+            auto color = theme.colorAccent;
             graphics.line(center.x, center.y, selectCenter.x, selectCenter.y, color);
         }
     }

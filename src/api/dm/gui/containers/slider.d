@@ -64,8 +64,7 @@ class Slider : Container
             swap(handleWidth, handleHeight);
         }
 
-        _handle = new VConvexPolygon(handleWidth, handleHeight, GraphicStyle(1, graphics.theme.colorAccent, true, graphics
-                .theme.colorAccent), 3);
+        _handle = new VConvexPolygon(handleWidth, handleHeight, GraphicStyle(1, theme.colorAccent, true, theme.colorAccent), 3);
         addCreate(_handle);
 
         _content = new StackBox;

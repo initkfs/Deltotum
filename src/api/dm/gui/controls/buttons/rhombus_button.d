@@ -59,13 +59,13 @@ class RhombusButton : ButtonBase
     override Sprite delegate(double, double) createHoverEffectFactory()
     {
         return (width, height) {
-            assert(graphics.theme);
+            assert(theme);
 
             GraphicStyle style = createStyle;
             if (!style.isNested)
             {
-                style.lineColor = graphics.theme.colorHover;
-                style.fillColor = graphics.theme.colorHover;
+                style.lineColor = theme.colorHover;
+                style.fillColor = theme.colorHover;
                 style.isFill = true;
             }
 
@@ -81,14 +81,13 @@ class RhombusButton : ButtonBase
     override Sprite delegate() createActionEffectFactory()
     {
         return () {
-            assert(graphics.theme);
+            assert(theme);
 
             GraphicStyle style = createStyle;
             if (!style.isNested)
             {
-                style.lineColor = graphics
-                    .theme.colorAccent;
-                style.fillColor = graphics.theme.colorAccent;
+                style.lineColor = theme.colorAccent;
+                style.fillColor = theme.colorAccent;
                 style.isFill = true;
             }
 

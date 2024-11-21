@@ -69,8 +69,7 @@ class CheckBox : Labeled
             import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
             import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
-            auto marker = new ConvexPolygon(10, 10, GraphicStyle(1, graphics.theme.colorAccent, true, graphics
-                    .theme.colorAccent), 3);
+            auto marker = new ConvexPolygon(10, 10, GraphicStyle(1, theme.colorAccent, true, theme.colorAccent), 3);
             markerContainer.addCreate(marker);
             marker.isVisible = false;
             return marker;

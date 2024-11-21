@@ -73,7 +73,7 @@ class DayContainer : Control
     {
         super.create;
 
-        dayColor = graphics.theme.colorText;
+        dayColor = theme.colorText;
 
         this.dayLabel = new Text(spacePlaceholder);
         dayLabel.isFocusable = false;

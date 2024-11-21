@@ -37,7 +37,7 @@ class Physics : Control
         import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
         auto style = createStyle;
-        style.fillColor = graphics.theme.colorAccent;
+        style.fillColor = theme.colorAccent;
         style.isFill = true;
         material = new VConvexPolygon(50, 50, style, 10);
         material.isLayoutManaged = false;

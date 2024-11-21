@@ -83,10 +83,10 @@ class ButtonBase : Labeled
     override Sprite delegate(double, double) createBackgroundFactory()
     {
         return (width, height) {
-            assert(graphics.theme);
+            assert(theme);
 
             auto style = createStyle;
-            auto newBackground = graphics.theme.background(width, height, &style);
+            auto newBackground = theme.background(width, height, &style);
             newBackground.isLayoutManaged = false;
             newBackground.id = idBackground;
             return newBackground;

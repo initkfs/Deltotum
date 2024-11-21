@@ -89,12 +89,12 @@ class XYChart : Container
 
         if (xAxisColor == RGBA.init)
         {
-            xAxisColor = graphics.theme.colorWarning;
+            xAxisColor = theme.colorWarning;
         }
 
         if (yAxisColor == RGBA.init)
         {
-            yAxisColor = graphics.theme.colorWarning;
+            yAxisColor = theme.colorWarning;
         }
 
         auto chartContentContainer = new HBox(0);
@@ -231,7 +231,7 @@ class XYChart : Container
 
             if (trackPointerColor == RGBA.init)
             {
-                trackPointerColor = graphics.theme.colorSuccess;
+                trackPointerColor = theme.colorSuccess;
             }
 
             trackPointerInfo = new Text;

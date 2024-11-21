@@ -142,14 +142,12 @@ class AnalogClock : Control
         double minorTickSize = 4;
         double majorTickSize = 6;
 
-        auto minorTickProto = new VCircle(minorTickSize, GraphicStyle(0, graphics.theme.colorAccent, true, graphics
-                .theme.colorAccent));
+        auto minorTickProto = new VCircle(minorTickSize, GraphicStyle(0, theme.colorAccent, true, theme.colorAccent));
         build(minorTickProto);
         minorTickProto.initialize;
         minorTickProto.create;
 
-        auto majorTickProto = new VCircle(majorTickSize, GraphicStyle(0, graphics.theme.colorDanger, true, graphics
-                .theme.colorDanger));
+        auto majorTickProto = new VCircle(majorTickSize, GraphicStyle(0, theme.colorDanger, true, theme.colorDanger));
         build(majorTickProto);
         majorTickProto.initialize;
         majorTickProto.create;
@@ -253,8 +251,7 @@ class AnalogClock : Control
 
         addCreate(centerShape);
 
-        auto hourStyle = GraphicStyle(3, graphics.theme.colorAccent, true, graphics
-                .theme.colorWarning);
+        auto hourStyle = GraphicStyle(3, theme.colorAccent, true, theme.colorWarning);
 
         hourHand = new Hand(width, height, 6, 55, hourStyle);
         addCreate(hourHand);
@@ -264,14 +261,12 @@ class AnalogClock : Control
         minHand = new Hand(width, height, 6, 70, minStyle);
         addCreate(minHand);
 
-        auto secStyle = GraphicStyle(1, graphics.theme.colorDanger, true, graphics
-                .theme.colorDanger);
+        auto secStyle = GraphicStyle(1, theme.colorDanger, true, theme.colorDanger);
 
         secHand = new Hand(width, height, 5, 75, secStyle);
         addCreate(secHand);
 
-        VRegularPolygon holder = new VRegularPolygon(15, GraphicStyle(0, graphics.theme.colorDanger, true, graphics
-                .theme.colorDanger));
+        VRegularPolygon holder = new VRegularPolygon(15, GraphicStyle(0, theme.colorDanger, true, theme.colorDanger));
         addCreate(holder);
         handHolder = holder;
 
@@ -281,7 +276,7 @@ class AnalogClock : Control
 
         foreach (i; 0 .. 60)
         {
-            auto segment = new VArc(radius, GraphicStyle(5, graphics.theme.colorAccent), width, width);
+            auto segment = new VArc(radius, GraphicStyle(5, theme.colorAccent), width, width);
             segment.xCenter = 0;
             segment.yCenter = 0;
 
@@ -321,8 +316,8 @@ class AnalogClock : Control
                         GraphicStyle style = createStyle;
                         style.isFill = true;
                         style.lineWidth = 2;
-                        style.lineColor = graphics.theme.colorSecondary;
-                        style.fillColor = graphics.theme.colorDanger;
+                        style.lineColor = theme.colorSecondary;
+                        style.fillColor = theme.colorDanger;
                         return style;
                     }
                 };

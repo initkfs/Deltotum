@@ -678,7 +678,7 @@ class SdlApplication : ContinuouslyApplication
         import api.dm.kit.graphics.graphics : Graphics;
 
         //TODO factory method
-        windowBuilder.graphics = createGraphics(uservices.logging, sdlRenderer, theme);
+        windowBuilder.graphics = createGraphics(uservices.logging, sdlRenderer);
         windowBuilder.graphics.initialize;
 
         windowBuilder.graphics.comTextureProvider = ProviderFactory!ComTexture(

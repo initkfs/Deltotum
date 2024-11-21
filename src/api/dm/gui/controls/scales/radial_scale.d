@@ -94,7 +94,7 @@ class RadialScale : Control
 
                 import api.dm.kit.graphics.colors.rgba: RGBA;
 
-                canvas.color(graphics.theme.colorAccent);
+                canvas.color(theme.colorAccent);
                 canvas.translate(width / 2 - tickWidth / 2, height / 2 - tickHeight / 2);
                 canvas.save;
 
@@ -109,11 +109,11 @@ class RadialScale : Control
                     bool isMajorTick = (majorTickStep > 0 && ((i % majorTickStep) == 0));
 
                     if(isMajorTick){
-                        canvas.color(graphics.theme.colorDanger);
+                        canvas.color(theme.colorDanger);
                         tickW = tickMajorWidth;
                         tickH = tickMajorHeight;
                     }else {
-                        canvas.color(graphics.theme.colorAccent);
+                        canvas.color(theme.colorAccent);
                     }
 
                     canvas.rotateRad(Math.degToRad(startAngleDeg));

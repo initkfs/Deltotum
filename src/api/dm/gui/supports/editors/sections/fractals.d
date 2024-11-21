@@ -46,7 +46,7 @@ class Fractals : Control
     {
         super.initialize;
         enablePadding;
-        shapeStyle = GraphicStyle(2, graphics.theme.colorAccent);
+        shapeStyle = GraphicStyle(2, theme.colorAccent);
     }
 
     T configureControl(T)(T sprite)

@@ -286,12 +286,11 @@ class Text : Control
                 import api.dm.kit.sprites.shapes.rectangle : Rectangle;
                 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
-                GraphicStyle style = GraphicStyle(1, graphics.theme.colorFocus);
+                GraphicStyle style = GraphicStyle(1, theme.colorFocus);
 
                 import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
 
-                auto effect = new ConvexPolygon(width, height, style, graphics
-                        .theme.controlCornersBevel);
+                auto effect = new ConvexPolygon(width, height, style, theme.controlCornersBevel);
                 //auto effect = new Rectangle(width, height, style);
                 effect.isVisible = false;
                 return effect;
@@ -307,7 +306,7 @@ class Text : Control
 
         padding = Insets(0);
 
-        _color = graphics.theme.colorText;
+        _color = theme.colorText;
 
         setColorTexture;
 
@@ -326,7 +325,7 @@ class Text : Control
 
         if (isEditable)
         {
-            const cursorColor = graphics.theme.colorAccent;
+            const cursorColor = theme.colorAccent;
 
             cursor = new Rectangle(2, 20, GraphicStyle(1, cursorColor, true, cursorColor));
             addCreate(cursor);

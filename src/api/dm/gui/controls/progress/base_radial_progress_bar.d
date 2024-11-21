@@ -61,7 +61,7 @@ class BaseRadialProgressBar : BaseProgressBar
         if (!segmentStyle.isNested)
         {
             segmentStyle.isFill = false;
-            segmentStyle.color = graphics.theme.colorAccent;
+            segmentStyle.color = theme.colorAccent;
         }
 
         auto fillStyle = segmentStyle;

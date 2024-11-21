@@ -149,7 +149,7 @@ class SevenSegment : Control
         if (!style.isNested)
         {
             style.isFill = true;
-            style.lineColor = graphics.theme.colorAccent;
+            style.lineColor = theme.colorAccent;
             style.fillColor = style.lineColor;
         }
         return style;
