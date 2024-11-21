@@ -11,6 +11,7 @@ import api.dm.kit.graphics.styles.default_style;
 import api.math.alignment : Alignment;
 import api.math.insets : Insets;
 import api.dm.gui.controls.popups.base_popup : BasePopup;
+import api.dm.kit.graphics.themes.theme : Theme;
 
 import api.dm.kit.sprites.tweens.tween : Tween;
 import api.dm.kit.sprites.tweens.targets.props.opacity_tween : OpacityTween;
@@ -77,13 +78,15 @@ class Control : Sprite
     void delegate() onPreControlContentCreated;
     void delegate() onPostControlContentCreated;
 
+    Theme theme;
+
     protected
     {
         bool _selected;
 
         Sprite _background;
         Sprite _hoverEffect;
-        
+
         Sprite _actionEffect;
         Tween _actionEffectAnimation;
 
@@ -106,6 +109,12 @@ class Control : Sprite
     override void initialize()
     {
         super.initialize;
+
+        if (!theme)
+        {
+            theme = loadTheme;
+            assert(theme, "Theme must not be null");
+        }
 
         //TODO remove listener?
         invalidateListeners ~= () {
@@ -348,6 +357,12 @@ class Control : Sprite
     {
         super.create;
 
+        if (!theme)
+        {
+            theme = loadTheme;
+            assert(theme, "Theme must not be null");
+        }
+
         tryCreateBackground(width, height);
 
         if (onPreControlContentCreated)
@@ -450,6 +465,18 @@ class Control : Sprite
         }
 
         createInteractiveListeners;
+    }
+
+    Theme loadTheme()
+    {
+        import LocatorKeys = api.dm.gui.locator_keys;
+
+        auto newTheme = cast(Theme) locator.getObject(LocatorKeys.mainTheme);
+        if (!newTheme)
+        {
+            throw new Exception("Not found service from locator");
+        }
+        return newTheme;
     }
 
     void createInteractiveListeners()

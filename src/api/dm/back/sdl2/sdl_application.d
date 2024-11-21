@@ -671,6 +671,10 @@ class SdlApplication : ContinuouslyApplication
         theme.defaultMediumFont = asset.font;
         uservices.logger.trace("Set theme font: ", theme.defaultMediumFont.fontPath);
 
+        import LocatorKeys = api.dm.gui.locator_keys;
+
+        uservices.locator.putObject(LocatorKeys.mainTheme, theme);
+
         import api.dm.kit.graphics.graphics : Graphics;
 
         //TODO factory method

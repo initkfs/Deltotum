@@ -13,7 +13,8 @@ class ServiceLocator : LoggableUnit
 {
     private
     {
-        Variant[string] services;
+        Variant[string] variants;
+        Object[string] objects;
     }
 
     this(Logging logging) pure @safe
@@ -31,9 +32,19 @@ class ServiceLocator : LoggableUnit
         super(logging);
     }
 
-    bool put(string key, Variant value)
+    inout(Variant*) hasVarPtr(string key) inout pure @safe
     {
-        if (has(key))
+        import std.exception : enforce;
+
+        enforce(key.length > 0, "Key must not be empty");
+        return (key in variants);
+    }
+
+    bool hasVar(string key) const pure @safe => hasVarPtr(key) !is null;
+
+    bool putVar(string key, Variant value)
+    {
+        if (hasVar(key))
         {
             return false;
         }
@@ -43,14 +54,25 @@ class ServiceLocator : LoggableUnit
             throw new Exception("Variant does not contain a value for key: " ~ key);
         }
 
-        services[key] = value;
+        variants[key] = value;
 
         return true;
     }
 
-    T getTo(T)(string key)
+    inout(Variant) getVar(string key) inout
     {
-        Variant service = get(key);
+        if (auto varPtr = hasVarPtr(key))
+        {
+            return *varPtr;
+
+        }
+
+        throw new Exception("Not found variant with key: " ~ key);
+    }
+
+    T getVarTo(T)(string key)
+    {
+        Variant service = getVar(key);
         if (!service.convertsTo!T)
         {
             import std.format : format;
@@ -61,28 +83,41 @@ class ServiceLocator : LoggableUnit
         return service.get!T;
     }
 
-    inout(Variant) get(string key) inout
-    {
-        if (!has(key))
-        {
-            throw new Exception("Not found service with key: " ~ key);
-        }
-
-        return services[key];
-    }
-
-    bool has(string key) const pure @safe
+    inout(Object*) hasObjectPtr(string key) inout pure @safe
     {
         import std.exception : enforce;
 
         enforce(key.length > 0, "Key must not be empty");
-        return (key in services) !is null;
+        return (key in objects);
+    }
+
+    bool hasObject(string key) const pure @safe => hasObjectPtr(key) !is null;
+
+    bool putObject(string key, Object value)
+    {
+        if (hasObject(key))
+        {
+            return false;
+        }
+
+        objects[key] = value;
+        return true;
+    }
+
+    inout(Object) getObject(string key) inout
+    {
+        if (auto objPtr = hasObjectPtr(key))
+        {
+            return *objPtr;
+        }
+        
+        throw new Exception("Not found object with key: " ~ key);
     }
 }
 
 unittest
 {
-    import api.core.loggers.null_logging: NullLogging;
+    import api.core.loggers.null_logging : NullLogging;
 
     import std.exception : assertThrown;
 
@@ -92,16 +127,16 @@ unittest
     Variant a;
     assertThrown(locator.put(key1, a));
     a = 5;
-    assert(locator.put(key1, a));
-    assert(!locator.put(key1, a));
-    assert(locator.has(key1));
-    assert(locator.getTo!int(key1) == 5);
-    assertThrown(locator.getTo!string(key1) == "5");
+    assert(locator.putVar(key1, a));
+    assert(!locator.putVar(key1, a));
+    assert(locator.hasVar(key1));
+    assert(locator.getVarTo!int(key1) == 5);
+    assertThrown(locator.getVarTo!string(key1) == "5");
 
     int delegate() factory = () => 5;
     string fkey = "fkey";
     Variant f = factory;
-    assert(locator.put(fkey, f));
-    assertThrown(locator.getTo!(string delegate())(fkey));
-    assert(locator.getTo!(int delegate())(fkey)() == 5);
+    assert(locator.putVar(fkey, f));
+    assertThrown(locator.getVarTo!(string delegate())(fkey));
+    assert(locator.getVarTo!(int delegate())(fkey)() == 5);
 }
