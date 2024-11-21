@@ -1,4 +1,4 @@
-module api.dm.kit.apps.graphic_application;
+module api.dm.kit.apps.graphic_app;
 
 import api.dm.com.graphics.com_font : ComFont;
 import api.core.loggers.logging : Logging;
@@ -46,7 +46,7 @@ import api.dm.kit.graphics.colors.rgba: RGBA;
 /**
  * Authors: initkfs
  */
-abstract class GraphicApplication : CliApp
+abstract class GraphicApp : CliApp
 {
     bool isVideoEnabled;
     bool isAudioEnabled;

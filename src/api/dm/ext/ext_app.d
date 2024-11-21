@@ -3,7 +3,7 @@ module api.dm.ext.ext_app;
 import std;
 
 import api.dm.back.sdl2.sdl_application : SdlApplication;
-import api.dm.kit.apps.graphic_application : GraphicApplication;
+import api.dm.kit.apps.graphic_app : GraphicApp;
 import api.dm.kit.scenes.scene : Scene;
 import api.dm.kit.windows.window : Window;
 

@@ -1,12 +1,12 @@
-module api.dm.kit.apps.continuously_application;
+module api.dm.kit.apps.loop_app;
 
-import api.dm.kit.apps.graphic_application : GraphicApplication;
+import api.dm.kit.apps.graphic_app : GraphicApp;
 import api.dm.kit.apps.loops.loop : Loop;
 
 /**
  * Authors: initkfs
  */
-abstract class ContinuouslyApplication : GraphicApplication
+abstract class LoopApp : GraphicApp
 {
     bool isAutoStart = true;
 

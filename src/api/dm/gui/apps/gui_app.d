@@ -5,12 +5,12 @@ import api.core.loggers.logging : Logging;
 import api.core.configs.keyvalues.config : Config;
 import api.core.contexts.context : Context;
 import api.core.resources.resourcing : Resourcing;
-import api.dm.kit.apps.continuously_application : ContinuouslyApplication;
+import api.dm.kit.apps.loop_app : LoopApp;
 import api.dm.gui.themes.theme : Theme;
 import api.dm.gui.themes.icons.icon_pack : IconPack;
 import api.dm.kit.apps.loops.loop : Loop;
 
-abstract class GuiApp : ContinuouslyApplication
+abstract class GuiApp : LoopApp
 {
     bool isIconPackEnabled;
 
