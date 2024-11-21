@@ -19,7 +19,7 @@ import api.dm.gui.controls.tabs.tab : Tab;
 import api.dm.gui.controls.tabs.tabpane : TabPane;
 import api.dm.gui.controls.checks.checkbox : CheckBox;
 
-import IconNames = api.dm.kit.graphics.themes.icons.icon_name;
+import IconNames = api.dm.gui.themes.icons.icon_name;
 
 import std.conv : to;
 
@@ -178,7 +178,7 @@ class SceneView : VBox
         auto controlSettings = new TabPane;
         addCreate(controlSettings);
 
-        import IconNames = api.dm.kit.graphics.themes.icons.icon_name;
+        import IconNames = api.dm.gui.themes.icons.icon_name;
 
         auto controlTab = new Tab("");
         controlTab.content = createControlTab;

@@ -181,7 +181,7 @@ class Controls : Control
         import api.dm.gui.controls.checks.checkbox : CheckBox;
         import api.dm.gui.controls.choices.choice_box : ChoiceBox;
 
-        import Icons = api.dm.kit.graphics.themes.icons.icon_name;
+        import Icons = api.dm.gui.themes.icons.icon_name;
 
         import api.dm.gui.controls.labels.hyperlink : Hyperlink;
 
@@ -431,7 +431,7 @@ class Controls : Control
     {
         import api.dm.gui.controls.buttons.button : Button;
         import api.dm.gui.controls.checks.checkbox : CheckBox;
-        import IconName = api.dm.kit.graphics.themes.icons.icon_name;
+        import IconName = api.dm.gui.themes.icons.icon_name;
 
         import api.dm.gui.controls.control : Control;
 

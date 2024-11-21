@@ -9,7 +9,7 @@ import api.core.configs.keyvalues.config : Config;
 import api.core.contexts.context : Context;
 import api.core.apps.app_init_ret : AppInitRet;
 import api.core.utils.factories : ProviderFactory;
-import api.dm.kit.apps.continuously_application : ContinuouslyApplication;
+import api.dm.gui.apps.gui_app : GuiApp;
 import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.dm.kit.events.kit_event_manager : KitEventManager;
 import api.dm.back.sdl2.sdl_event_processor : SdlEventProcessor;
@@ -68,7 +68,7 @@ import std.typecons : Nullable;
 /**
  * Authors: initkfs
  */
-class SdlApplication : ContinuouslyApplication
+class SdlApplication : GuiApp
 {
     uint delegate(uint flags) onSdlInitFlags;
     private
@@ -663,17 +663,8 @@ class SdlApplication : ContinuouslyApplication
 
         windowBuilder.asset = asset;
 
-        auto theme = createTheme(uservices.logging, uservices.config, uservices.context, uservices
-                .resources);
-        //TODO move to createTheme method
-        theme.isUseVectorGraphics = gservices.capGraphics.isVectorGraphics;
-
         theme.defaultMediumFont = asset.font;
         uservices.logger.trace("Set theme font: ", theme.defaultMediumFont.fontPath);
-
-        import LocatorKeys = api.dm.gui.locator_keys;
-
-        uservices.locator.putObject(LocatorKeys.mainTheme, theme);
 
         import api.dm.kit.graphics.graphics : Graphics;
 
@@ -716,7 +707,10 @@ class SdlApplication : ContinuouslyApplication
             auto fontGenerator = newFontGenerator(comSurfProvider);
             windowBuilder.build(fontGenerator);
 
-            createFontBitmaps(fontGenerator, windowBuilder.asset, theme, (bitmap) {
+            const colorText = theme.colorText;
+            const colorTextBackground = theme.colorTextBackground;
+
+            createFontBitmaps(fontGenerator, windowBuilder.asset, colorText, colorTextBackground, (bitmap) {
                 // windowBuilder.build(bitmap);
                 // bitmap.initialize;
                 // assert(bitmap.isInitialized);

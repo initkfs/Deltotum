@@ -11,7 +11,7 @@ import api.dm.kit.graphics.styles.default_style;
 import api.math.alignment : Alignment;
 import api.math.insets : Insets;
 import api.dm.gui.controls.popups.base_popup : BasePopup;
-import api.dm.kit.graphics.themes.theme : Theme;
+import api.dm.gui.themes.theme : Theme;
 
 import api.dm.kit.sprites.tweens.tween : Tween;
 import api.dm.kit.sprites.tweens.targets.props.opacity_tween : OpacityTween;
@@ -584,7 +584,7 @@ class Control : Sprite
     {
         assert(isCreated, "Sprite not created");
 
-        import api.dm.kit.graphics.themes.icons.icon_name;
+        import api.dm.gui.themes.icons.icon_name;
         import api.dm.kit.sprites.images.image : Image;
 
         import std.conv : to;

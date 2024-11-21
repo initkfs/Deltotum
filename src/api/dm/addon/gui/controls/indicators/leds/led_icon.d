@@ -10,7 +10,7 @@ import api.dm.gui.containers.hbox : HBox;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsv : HSV;
 import api.math.insets : Insets;
-import IconName = api.dm.kit.graphics.themes.icons.icon_name;
+import IconName = api.dm.gui.themes.icons.icon_name;
 import api.dm.kit.sprites.images.image : Image;
 
 import std.conv : to;

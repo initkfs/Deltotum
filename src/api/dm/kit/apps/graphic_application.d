@@ -1,11 +1,12 @@
 module api.dm.kit.apps.graphic_application;
 
 import api.dm.com.graphics.com_font : ComFont;
+import api.core.loggers.logging : Logging;
 import api.core.configs.keyvalues.config : Config;
 import api.core.contexts.context : Context;
+import api.core.resources.resourcing : Resourcing;
 import api.core.apps.app_init_ret : AppInitRet;
 import api.core.apps.cli_app : CliApp;
-import api.core.resources.resourcing : Resourcing;
 import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.core.components.uni_component : UniComponent;
@@ -13,9 +14,8 @@ import api.dm.kit.windows.window_manager : WindowManager;
 import api.dm.kit.apps.caps.cap_graphics : CapGraphics;
 import api.dm.kit.graphics.graphics : Graphics;
 import api.dm.kit.assets.asset : Asset;
-import api.dm.kit.graphics.themes.icons.icon_pack : IconPack;
+
 import api.dm.kit.sprites.textures.texture : Texture;
-import api.dm.kit.graphics.themes.theme : Theme;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 import api.core.utils.factories : ProviderFactory;
@@ -31,7 +31,6 @@ import api.dm.kit.inputs.input : Input;
 import api.dm.kit.screens.screen : Screen;
 import api.dm.kit.events.kit_event_manager : KitEventManager;
 
-import api.core.loggers.logging : Logging;
 import std.typecons : Nullable;
 
 import api.dm.com.graphics.com_renderer : ComRenderer;
@@ -42,6 +41,7 @@ import api.dm.kit.i18n.i18n : I18n;
 import api.dm.kit.i18n.langs.lang_messages : LangMessages;
 import api.dm.kit.interacts.interact : Interact;
 import api.dm.kit.factories.factory_kit : FactoryKit;
+import api.dm.kit.graphics.colors.rgba: RGBA;
 
 /**
  * Authors: initkfs
@@ -52,7 +52,6 @@ abstract class GraphicApplication : CliApp
     bool isAudioEnabled;
     bool isTimerEnabled;
     bool isJoystickEnabled;
-    bool isIconPackEnabled;
     bool isHeadless;
 
     bool isQuitOnCloseAllWindows = true;
@@ -71,9 +70,6 @@ abstract class GraphicApplication : CliApp
     private
     {
         GraphicsComponent _graphicServices;
-
-        //TODO themes, assets?
-        Nullable!IconPack iconPack;
     }
 
     WindowManager windowManager;
@@ -99,22 +95,6 @@ abstract class GraphicApplication : CliApp
         }
 
         loadSettings;
-
-        if (isIconPackEnabled)
-        {
-            auto newIconPack = new IconPack;
-            //TODO config
-            auto mustBeIconPath = uservices.reslocal.fileResource("icons/packs/ionicons.txt");
-            if (mustBeIconPath.isNull)
-            {
-                throw new Exception("Not found icons");
-            }
-            auto iconPath = mustBeIconPath.get;
-            newIconPack.load(iconPath);
-            iconPack = newIconPack;
-            gservices.capGraphics.isIconPack = true;
-            uservices.logger.trace("Load icon pack: ", iconPath);
-        }
 
         _platform = newPlatform(() => ticks);
         initCreateRun(_platform);
@@ -146,10 +126,6 @@ abstract class GraphicApplication : CliApp
         immutable isJoystickFlag = uservices.config.getBool(KitConfigKeys.backendIsJoystickEnabled);
         isJoystickEnabled = isJoystickFlag.isNull ? false : isJoystickFlag.get;
         uservices.logger.trace("Joystick enabled: ", isJoystickEnabled);
-
-        immutable isIconPackFlag = uservices.config.getBool(KitConfigKeys.backendIsIconPackEnabled);
-        isIconPackEnabled = isIconPackFlag.isNull ? true : isIconPackFlag.get;
-        uservices.logger.trace("Icon pack enabled: ", isIconPackEnabled);
     }
 
     Platform newPlatform(ulong delegate() tickProvider)
@@ -335,20 +311,6 @@ abstract class GraphicApplication : CliApp
     Graphics createGraphics(Logging logging, ComRenderer renderer)
     {
         return new Graphics(logging, renderer);
-    }
-
-    Theme createTheme(Logging logging, Config config, Context context, Resourcing resources)
-    {
-        //TODO null?
-        IconPack pack = iconPack.isNull ? null : iconPack.get;
-
-        import api.dm.kit.graphics.themes.theme : Theme;
-        import api.dm.kit.graphics.themes.factories.theme_from_config_factory : ThemeFromConfigFactory;
-
-        auto themeLoader = new ThemeFromConfigFactory(logging, config, context, resources, pack);
-
-        auto theme = themeLoader.createTheme;
-        return theme;
     }
 
     Asset createAsset(Logging logging, Config config, Context context, ComFont delegate() comFontProvider)
@@ -634,15 +596,12 @@ abstract class GraphicApplication : CliApp
     }
 
     //TODO split function
-    void createFontBitmaps(BitmapFontGenerator generator, Asset assets, Theme theme, scope void delegate(
+    void createFontBitmaps(BitmapFontGenerator generator, Asset assets, RGBA colorText, RGBA colorTextBackground, scope void delegate(
             BitmapFont) onBitmap)
     {
         //TODO from config
-        auto colorText = theme.colorText;
         assets.defaultFontColor = colorText;
         uservices.logger.trace("Set default text color to ", colorText);
-
-        auto colorTextBackground = theme.colorTextBackground;
 
         if (assets.hasFont)
         {

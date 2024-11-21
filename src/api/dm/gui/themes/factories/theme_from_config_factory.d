@@ -1,14 +1,14 @@
-module api.dm.kit.graphics.themes.factories.theme_from_config_factory;
+module api.dm.gui.themes.factories.theme_from_config_factory;
 
 import api.core.components.units.services.application_unit : ApplicationUnit;
 import api.core.contexts.context : Context;
 import api.core.configs.keyvalues.config : Config;
 import api.core.resources.resourcing: Resourcing;
-import api.dm.kit.graphics.themes.theme : Theme;
+import api.dm.gui.themes.theme : Theme;
 import api.dm.kit.assets.fonts.font : Font;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.insets : Insets;
-import api.dm.kit.graphics.themes.icons.icon_pack : IconPack;
+import api.dm.gui.themes.icons.icon_pack : IconPack;
 
 import api.core.loggers.logging : Logging;
 

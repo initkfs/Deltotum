@@ -117,7 +117,7 @@ class Indicators : Control
         ledContainer2.enableInsets;
 
         import api.dm.addon.gui.controls.indicators.leds.led_icon : LedIcon;
-        import IconNames = api.dm.kit.graphics.themes.icons.icon_name;
+        import IconNames = api.dm.gui.themes.icons.icon_name;
 
         auto ledIcon1 = new LedIcon(IconNames.flash_outline, RGBA.red);
         ledContainer2.addCreate(ledIcon1);

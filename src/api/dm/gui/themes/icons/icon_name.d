@@ -1,4 +1,4 @@
-module api.dm.kit.graphics.themes.icons.icon_name;
+module api.dm.gui.themes.icons.icon_name;
 
 /**
  * Authors: initkfs
