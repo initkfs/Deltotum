@@ -41,6 +41,7 @@ import api.dm.com.graphics.com_image : ComImage;
 import api.dm.com.platforms.com_system : ComSystem;
 
 import api.dm.kit.windows.window : Window;
+import api.dm.gui.windows.gui_window: GuiWindow;
 
 import api.dm.kit.apps.loops.integrated_loop : IntegratedLoop;
 import api.dm.kit.apps.loops.interrupted_loop : InterruptedLoop;
@@ -615,7 +616,7 @@ class SdlApplication : GuiApp
         auto windowBuilder = newWindowServices;
         buildPartially(windowBuilder);
 
-        auto window = new Window(sdlWindow);
+        auto window = new GuiWindow(sdlWindow);
         windowBuilder.window = window;
 
         if (parent)

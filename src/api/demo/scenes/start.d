@@ -1,6 +1,6 @@
 module api.demo.demo1.scenes.start;
 
-import api.dm.kit.scenes.scene : Scene;
+import api.dm.gui.scenes.gui_scene: GuiScene;
 import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.containers.hbox : HBox;
 import api.dm.gui.controls.buttons.button : Button;
@@ -18,7 +18,7 @@ import std : writeln;
 /**
  * Authors: initkfs
  */
-class Start : Scene
+class Start : GuiScene
 {
     this()
     {

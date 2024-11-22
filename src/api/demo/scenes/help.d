@@ -1,11 +1,11 @@
 module api.demo.demo1.scenes.help;
 
-import api.dm.kit.scenes.scene : Scene;
+import api.dm.gui.scenes.gui_scene: GuiScene;
 
 /**
  * Authors: initkfs
  */
-class Help : Scene
+class Help : GuiScene
 {
     this()
     {

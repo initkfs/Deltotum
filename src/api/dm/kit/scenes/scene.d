@@ -5,10 +5,7 @@ import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.factories.factory_kit : FactoryKit;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.windows.window : Window;
-import api.dm.gui.supports.sceneview : SceneView;
 import api.dm.com.graphics.com_surface : ComSurface;
-import api.dm.gui.themes.theme : Theme;
-import api.dm.gui.components.gui_component : GuiComponent;
 
 import std.stdio;
 
@@ -30,8 +27,6 @@ class Scene : EventKitTarget
 
     size_t worldTicks;
 
-    SceneView debugger;
-
     bool startDrawProcess;
 
     bool isProcessUDA = true;
@@ -43,8 +38,6 @@ class Scene : EventKitTarget
     Sprite drawBeforeSprite;
 
     void delegate(double dt)[] eternalTasks;
-
-    Theme theme;
 
     protected
     {
@@ -59,6 +52,8 @@ class Scene : EventKitTarget
     }
 
     void delegate() udaProcessor;
+
+    size_t invalidNodesCount;
 
     this(this ThisType)()
     {
@@ -281,7 +276,7 @@ class Scene : EventKitTarget
             }
         }
 
-        size_t invalidNodesCount;
+        invalidNodesCount = 0;
 
         Sprite[] roots = isPause ? eternalSprites : sprites;
 
@@ -303,22 +298,6 @@ class Scene : EventKitTarget
                     cs.validate;
                 }
             }
-        }
-
-        if (debugger && debugger.isVisible)
-        {
-            import Math = api.dm.math;
-            import std.conv : to;
-
-            debugger.invalidNodesCount.text = invalidNodesCount.to!dstring;
-            debugger.updateTimeMs.text = Math.round(timeUpdateProcessingMs).to!dstring;
-            debugger.drawTimeMs.text = Math.round(timeDrawProcessingMs).to!dstring;
-
-            import core.memory : GC;
-
-            auto stats = GC.stats;
-            auto usedSize = stats.usedSize / 1000.0;
-            debugger.gcUsedBytes.text = usedSize.to!dstring;
         }
     }
 
@@ -350,17 +329,6 @@ class Scene : EventKitTarget
         super.run;
     }
 
-    void createDebugger()
-    {
-        import api.dm.gui.containers.slider : Slider, SliderPos;
-
-        auto debugWrapper = new Slider(SliderPos.right);
-        addCreate(debugWrapper);
-        debugger = new SceneView(this);
-        debugWrapper.addContent(debugger);
-        window.showingTasks ~= (dt) { debugWrapper.setInitialPos; };
-    }
-
     override void dispose()
     {
         super.dispose;
@@ -369,16 +337,6 @@ class Scene : EventKitTarget
             obj.dispose;
         }
         sprites = null;
-    }
-
-    void addCreate(GuiComponent guiComponent)
-    {
-        if (!guiComponent.hasTheme)
-        {
-            assert(theme, "Theme must not be null");
-            guiComponent.theme = theme;
-        }
-        addCreate(cast(Sprite) guiComponent);
     }
 
     void addCreate(Sprite obj)
@@ -409,16 +367,6 @@ class Scene : EventKitTarget
         add(obj);
     }
 
-    void add(GuiComponent guiComponent)
-    {
-        if (!guiComponent.hasTheme)
-        {
-            assert(theme, "Theme must not be null");
-            guiComponent.theme = theme;
-        }
-        add(cast(Sprite) guiComponent);
-    }
-
     void add(Sprite object)
     {
         assert(object);
@@ -428,51 +376,6 @@ class Scene : EventKitTarget
             {
                 return;
             }
-        }
-
-        import api.dm.gui.controls.control: Control;
-
-        if (auto guiSprite = cast(Control) object)
-        {
-            if (!guiSprite.interact.hasDialog)
-            {
-                import api.dm.gui.interacts.dialogs.gui_dialog_manager : GuiDialogManager;
-
-                auto dialogManager = new GuiDialogManager;
-                guiSprite.addCreate(dialogManager, 0);
-                guiSprite.interact.dialog = dialogManager;
-
-                onKeyDown ~= (ref e) {
-                    import api.dm.com.inputs.com_keyboard : ComKeyName;
-
-                    //TODO toggle pause?
-                    if (e.keyName != ComKeyName.F12 || isPause)
-                    {
-                        return;
-                    }
-
-                    if (!isPause)
-                    {
-                        isPause = true;
-                        dialogManager.showInfo("Pause!", "Info", () {
-                            isPause = false;
-                            eternalSprites = null;
-                        });
-                        eternalSprites ~= dialogManager;
-                    }
-                };
-            }
-
-            if (!guiSprite.interact.hasPopup)
-            {
-                import api.dm.gui.controls.popups.gui_popup_manager : GuiPopupManager;
-
-                auto popupManager = new GuiPopupManager;
-                //TODO first, after dialogs
-                guiSprite.addCreate(popupManager, 1);
-                guiSprite.interact.popup = popupManager;
-            }
-
         }
 
         if (!object.sceneProvider)

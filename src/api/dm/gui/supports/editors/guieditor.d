@@ -1,12 +1,12 @@
 module api.dm.gui.supports.editors.guieditor;
 
-import api.dm.kit.scenes.scene : Scene;
 import api.dm.kit.graphics.colors.rgba : RGBA;
+import api.dm.gui.scenes.gui_scene: GuiScene;
 
 /**
  * Authors: initkfs
  */
-class GuiEditor : Scene
+class GuiEditor : GuiScene
 {
     this()
     {

@@ -15,8 +15,6 @@ import api.core.loggers.logging : Logging;
 
 import api.dm.com.graphics.com_renderer : ComRenderer;
 
-import api.dm.gui.themes.theme: Theme;
-
 /**
  * Authors: initkfs
  */
@@ -64,8 +62,6 @@ class Window : GraphicsComponent
     bool isFocus;
     bool isShowing;
     bool isDisposed;
-
-    Theme theme;
 
     protected
     {
@@ -160,9 +156,6 @@ class Window : GraphicsComponent
 
         assert(factory, "Scene factories must not be null");
         scene.factory = factory;
-
-        assert(theme, "Theme must not be null");
-        scene.theme = theme;
     }
 
     alias create = GraphicsComponent.create;

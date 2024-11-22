@@ -1,13 +1,13 @@
 module api.demo.demo1.scenes.game;
 
-import api.dm.kit.scenes.scene : Scene;
+import api.dm.gui.scenes.gui_scene: GuiScene;
 
 import std.stdio;
 
 /**
  * Authors: initkfs
  */
-class Demo1 : Scene
+class Demo1 : GuiScene
 {
     this()
     {
