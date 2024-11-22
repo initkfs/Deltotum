@@ -13,19 +13,6 @@ class Container : Control
         isBackground = false;
     }
 
-    alias addCreate = Sprite.addCreate;
-
-    override void addCreate(Sprite sprite, long index = -1)
-    {
-        if (layout && sprite.isLayoutManaged)
-        {
-            sprite.x = 0;
-            sprite.y = 0;
-        }
-
-        super.addCreate(sprite, index);
-    }
-
     bool isAlignX()
     {
         assert(layout);

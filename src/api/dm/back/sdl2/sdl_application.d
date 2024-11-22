@@ -666,6 +666,8 @@ class SdlApplication : GuiApp
         theme.defaultMediumFont = asset.font;
         uservices.logger.trace("Set theme font: ", theme.defaultMediumFont.fontPath);
 
+        window.theme = theme;
+
         import api.dm.kit.graphics.graphics : Graphics;
 
         //TODO factory method

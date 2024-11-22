@@ -1,6 +1,7 @@
 module api.dm.gui.controls.forms.fields.regulate_text_panel;
 import api.dm.gui.controls.forms.fields.regulate_text_field : RegulateTextField;
 import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.gui.controls.control: Control;
 import api.dm.gui.containers.container : Container;
 
 /**
@@ -19,12 +20,27 @@ class RegulateTextPanel : Container
         layout.isAlignX = true;
     }
 
+    override void addCreate(Control control, long index = -1)
+    {
+        if (auto field = cast(RegulateTextField) control)
+        {
+            //TODO check exists
+            fields ~= field;
+            addCreate(field, index);
+            return;
+        }
+
+        super.addCreate(control, index);
+    }
+
     override void addCreate(Sprite sprite, long index = -1)
     {
         if (auto field = cast(RegulateTextField) sprite)
         {
             //TODO check exists
             fields ~= field;
+            addCreate(field, index);
+            return;
         }
 
         super.addCreate(sprite, index);

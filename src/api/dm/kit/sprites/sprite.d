@@ -217,6 +217,11 @@ class Sprite : EventKitTarget
 
     }
 
+    alias initialize = EventKitTarget.initialize;
+    alias create = EventKitTarget.create;
+    alias run = EventKitTarget.run;
+    alias stop = EventKitTarget.stop;
+
     override void run()
     {
         if (isPaused)

@@ -75,8 +75,24 @@ class TabPane : Control
     {
         foreach (s; sprite)
         {
+            if(auto control = cast(Control) s){
+                addCreate(control);
+                continue;;
+            }
+
             addCreate(s);
         }
+    }
+
+    override void addCreate(Control control, long index = -1)
+    {
+        if (auto tab = cast(Tab) control)
+        {
+            createTabContent(tab);
+            return;
+        }
+
+        super.addCreate(control, index);
     }
 
     override void addCreate(Sprite sprite, long index = -1)
@@ -88,7 +104,6 @@ class TabPane : Control
             createTabContent(tab);
             return;
         }
-
         super.addCreate(sprite, index);
     }
 

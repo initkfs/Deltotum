@@ -1,6 +1,7 @@
 module api.dm.gui.controls.control;
 
 import DisplayLayout = api.dm.gui.display_layout;
+import api.dm.gui.components.gui_component : GuiComponent;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.sprites.layouts.layout : Layout;
 import api.math.insets : Insets;
@@ -28,7 +29,7 @@ enum ControlStyle : string
 /**
  * Authors: initkfs
  */
-class Control : Sprite
+class Control : GuiComponent
 {
     enum
     {
@@ -78,8 +79,6 @@ class Control : Sprite
     void delegate() onPreControlContentCreated;
     void delegate() onPostControlContentCreated;
 
-    Theme theme;
-
     protected
     {
         bool _selected;
@@ -109,12 +108,6 @@ class Control : Sprite
     override void initialize()
     {
         super.initialize;
-
-        if (!theme)
-        {
-            theme = loadTheme;
-            assert(theme, "Theme must not be null");
-        }
 
         //TODO remove listener?
         invalidateListeners ~= () {
@@ -324,7 +317,8 @@ class Control : Sprite
 
     GraphicStyle createDefaultStyle()
     {
-        return GraphicStyle(theme.lineThickness, theme.colorAccent, isBackground, theme.colorControlBackground);
+        return GraphicStyle(theme.lineThickness, theme.colorAccent, isBackground, theme
+                .colorControlBackground);
     }
 
     protected GraphicStyle createStyle()
@@ -353,12 +347,6 @@ class Control : Sprite
     override void create()
     {
         super.create;
-
-        if (!theme)
-        {
-            theme = loadTheme;
-            assert(theme, "Theme must not be null");
-        }
 
         tryCreateBackground(width, height);
 
@@ -464,18 +452,6 @@ class Control : Sprite
         createInteractiveListeners;
     }
 
-    Theme loadTheme()
-    {
-        import LocatorKeys = api.dm.gui.locator_keys;
-
-        auto newTheme = cast(Theme) locator.getObject(LocatorKeys.mainTheme);
-        if (!newTheme)
-        {
-            throw new Exception("Not found service from locator");
-        }
-        return newTheme;
-    }
-
     void createInteractiveListeners()
     {
         //TODO remove previous
@@ -531,35 +507,60 @@ class Control : Sprite
 
     }
 
-    alias build = Sprite.build;
+    alias build = GuiComponent.build;
 
-    override void build(Sprite sprite)
+    void build(Control control)
     {
-        import api.core.utils.types : castSafe;
+        applyStyle(control);
+        super.build(control);
+    }
 
-        assert(!sprite.isBuilt, "Sprite already built: " ~ sprite.className);
+    alias addCreate = GuiComponent.addCreate;
 
-        super.build(sprite);
-        //TODO may be a harmful side effect
-        if (auto control = sprite.castSafe!Control)
+    void addCreate(Control control, long index = -1)
+    {
+        if (!control.isBuilt)
         {
-            applyStyle(control);
+            build(control);
+            assert(control.isBuilt);
+            control.initialize;
+            assert(control.isInitialized);
+        }
+        super.addCreate(control, index);
+    }
+
+    override void addCreate(Sprite sprite, long index = -1)
+    {
+        if(auto control = cast(Control) sprite){
+            addCreate(control, index);
+            return;
+        }
+        super.addCreate(sprite, index);
+    }
+
+    override void addCreate(Sprite[] sprites)
+    {
+        foreach (s; sprites)
+        {
+            if(auto control = cast(Control) s){
+                addCreate(control);
+                continue;
+            }
+
+            super.addCreate(s);
         }
     }
 
-    alias add = Sprite.add;
+    alias add = GuiComponent.add;
 
-    override void add(Sprite sprite, long index = -1)
+    void add(Control control, long index = -1)
     {
-        import api.core.utils.types : castSafe;
+        super.add(control, index);
 
-        super.add(sprite, index);
-        if (auto control = sprite.castSafe!Control)
-        {
-            applyStyle(control);
-        }
+        applyStyle(control);
 
-        if (auto tooltip = sprite.castSafe!BasePopup)
+        //TODO overload
+        if (auto tooltip = cast(BasePopup) control)
         {
             tooltips ~= tooltip;
             if (!isTooltipListeners)
@@ -816,7 +817,7 @@ class Control : Sprite
 
     override bool isCanEnableInsets()
     {
-        return theme !is null;
+        return hasTheme;
     }
 
     override void enablePadding()

@@ -16,7 +16,8 @@ class Frame : Container
 
     double vspacing = 0;
 
-    private {
+    private
+    {
         dstring initText;
     }
 
@@ -45,7 +46,7 @@ class Frame : Container
 
         label.x = x + 20;
         label.y = y - label.height / 2;
-        
+
         setFrameClipping;
         // label.invalidateListeners ~= (){
         //     setFrameClipping;
@@ -65,7 +66,7 @@ class Frame : Container
         if (hasBackground && label)
         {
             import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
-            import api.core.utils.types: castSafe;
+            import api.core.utils.types : castSafe;
 
             if (auto rp = background.get.castSafe!ConvexPolygon)
             {
@@ -75,15 +76,31 @@ class Frame : Container
         }
     }
 
-    override void addCreate(Sprite[] sprites)
+    void addCreate(Control[] controls)
+    {
+        foreach (Control c; controls)
+        {
+            addCreate(c);
+        }
+    }
+
+    override void addCreate(Control control, long index = -1)
     {
         if (!container)
         {
-            super.addCreate(sprites);
+            super.addCreate(control, index);
             return;
         }
 
-        container.addCreate(sprites);
+        container.addCreate(control, index);
+    }
+
+    override void addCreate(Sprite[] sprites)
+    {
+        foreach (s; sprites)
+        {
+            addCreate(s);
+        }
     }
 
     override void addCreate(Sprite sprite, long index = -1)

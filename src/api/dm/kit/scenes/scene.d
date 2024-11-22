@@ -7,6 +7,8 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.windows.window : Window;
 import api.dm.gui.supports.sceneview : SceneView;
 import api.dm.com.graphics.com_surface : ComSurface;
+import api.dm.gui.themes.theme : Theme;
+import api.dm.gui.components.gui_component : GuiComponent;
 
 import std.stdio;
 
@@ -41,6 +43,8 @@ class Scene : EventKitTarget
     Sprite drawBeforeSprite;
 
     void delegate(double dt)[] eternalTasks;
+
+    Theme theme;
 
     protected
     {
@@ -367,6 +371,16 @@ class Scene : EventKitTarget
         sprites = null;
     }
 
+    void addCreate(GuiComponent guiComponent)
+    {
+        if (!guiComponent.hasTheme)
+        {
+            assert(theme, "Theme must not be null");
+            guiComponent.theme = theme;
+        }
+        addCreate(cast(Sprite) guiComponent);
+    }
+
     void addCreate(Sprite obj)
     {
         if (!obj.sceneProvider)
@@ -395,6 +409,16 @@ class Scene : EventKitTarget
         add(obj);
     }
 
+    void add(GuiComponent guiComponent)
+    {
+        if (!guiComponent.hasTheme)
+        {
+            assert(theme, "Theme must not be null");
+            guiComponent.theme = theme;
+        }
+        add(cast(Sprite) guiComponent);
+    }
+
     void add(Sprite object)
     {
         assert(object);
@@ -406,43 +430,49 @@ class Scene : EventKitTarget
             }
         }
 
-        if (!object.interact.hasDialog)
+        import api.dm.gui.controls.control: Control;
+
+        if (auto guiSprite = cast(Control) object)
         {
-            import api.dm.gui.interacts.dialogs.gui_dialog_manager : GuiDialogManager;
+            if (!guiSprite.interact.hasDialog)
+            {
+                import api.dm.gui.interacts.dialogs.gui_dialog_manager : GuiDialogManager;
 
-            auto dialogManager = new GuiDialogManager;
-            object.addCreate(dialogManager, 0);
-            object.interact.dialog = dialogManager;
+                auto dialogManager = new GuiDialogManager;
+                guiSprite.addCreate(dialogManager, 0);
+                guiSprite.interact.dialog = dialogManager;
 
-            onKeyDown ~= (ref e) {
-                import api.dm.com.inputs.com_keyboard : ComKeyName;
+                onKeyDown ~= (ref e) {
+                    import api.dm.com.inputs.com_keyboard : ComKeyName;
 
-                //TODO toggle pause?
-                if (e.keyName != ComKeyName.F12 || isPause)
-                {
-                    return;
-                }
+                    //TODO toggle pause?
+                    if (e.keyName != ComKeyName.F12 || isPause)
+                    {
+                        return;
+                    }
 
-                if (!isPause)
-                {
-                    isPause = true;
-                    dialogManager.showInfo("Pause!", "Info", () {
-                        isPause = false;
-                        eternalSprites = null;
-                    });
-                    eternalSprites ~= dialogManager;
-                }
-            };
-        }
+                    if (!isPause)
+                    {
+                        isPause = true;
+                        dialogManager.showInfo("Pause!", "Info", () {
+                            isPause = false;
+                            eternalSprites = null;
+                        });
+                        eternalSprites ~= dialogManager;
+                    }
+                };
+            }
 
-        if (!object.interact.hasPopup)
-        {
-            import api.dm.gui.controls.popups.gui_popup_manager : GuiPopupManager;
+            if (!guiSprite.interact.hasPopup)
+            {
+                import api.dm.gui.controls.popups.gui_popup_manager : GuiPopupManager;
 
-            auto popupManager = new GuiPopupManager;
-            //TODO first, after dialogs
-            object.addCreate(popupManager, 1);
-            object.interact.popup = popupManager;
+                auto popupManager = new GuiPopupManager;
+                //TODO first, after dialogs
+                guiSprite.addCreate(popupManager, 1);
+                guiSprite.interact.popup = popupManager;
+            }
+
         }
 
         if (!object.sceneProvider)
