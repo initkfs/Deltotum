@@ -70,8 +70,6 @@ class ThemeFromConfigFactory : ApplicationUnit
             theme.buttonWidth = config.getDouble("themeButtonWidth").get;
             theme.buttonHeight = config.getDouble("themeButtonHeight").get;
             theme.roundShapeDiameter = config.getDouble("themeRoundShapeDiameter").get;
-            theme.convexPolyShapeBevel = config.getDouble("themeConvexPolyShapeBevel").get;
-            theme.convexPolyShapeSize = config.getDouble("themeConvexPolyShapeSize").get;
             theme.regularPolyDiameter = config.getDouble("themeRegularPolyDiameter").get;
             theme.regularPolySides = config.getLong("themeRegularPolySides").get;
         }
