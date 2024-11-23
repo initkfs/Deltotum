@@ -55,7 +55,7 @@ class ToggleSwitch : Labeled
 
     this(dstring label = "Toggle", double width = 60, double height = 25, string iconName = null, double graphicsGap = 5)
     {
-        super(iconName, graphicsGap, false);
+        super(0, 0, iconName, graphicsGap, false);
         this.width = width;
         this.height = height;
 
@@ -157,11 +157,11 @@ class ToggleSwitch : Labeled
 
         if (_labelText.length == 0)
         {
-            onPreTextCreate = () { createSwitchContainer; };
+            onPreTextTryCreate = () { createSwitchContainer; };
         }
         else
         {
-            onPreIconCreate = () { createSwitchContainer; };
+            onPreIconTryCreate = () { createSwitchContainer; };
         }
 
     }

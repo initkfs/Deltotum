@@ -62,6 +62,9 @@ class ThemeFromConfigFactory : ApplicationUnit
             theme.tooltipDelayMs = config.getLong("themeTooltipDelayMs").get;
             theme.actionAnimationDelayMs = config.getLong("themeActionAnimationDelayMs").get;
             theme.hoverAnimationDelayMs = config.getLong("themeHoverAnimationDelayMs").get;
+            
+            theme.controlDefaultWidth = config.getDouble("themeControlDefaultWidth").get;
+            theme.controlDefaultHeight = config.getDouble("themeControlDefaultHeight").get;
         }
 
         return theme;

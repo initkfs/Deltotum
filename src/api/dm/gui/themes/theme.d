@@ -52,6 +52,9 @@ class Theme
     double controlCornersBevel = 8;
     GraphicStyle controlStyle = GraphicStyle.simple;
 
+    double controlDefaultWidth = 100;
+    double controlDefaultHeight = 80;
+
     bool isUseVectorGraphics;
 
     size_t actionAnimationDelayMs;

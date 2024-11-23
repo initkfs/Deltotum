@@ -58,7 +58,7 @@ class ButtonBase : Labeled
         string iconName = null
     )
     {
-        super(iconName, graphicsGap);
+        super(width, height, iconName, graphicsGap);
         this.width = width;
         this.height = height;
         //TODO private

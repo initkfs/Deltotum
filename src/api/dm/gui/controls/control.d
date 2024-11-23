@@ -91,7 +91,7 @@ class Control : GuiComponent
     Tween delegate(Tween) onActionEffectAnimationCreate;
     void delegate(Tween) onActionEffectAnimationCreated;
 
-    bool isCreateInteractiveListeners = true;
+    bool isCreateInteractiveListeners;
 
     void delegate() onPreControlContentCreated;
     void delegate() onPostControlContentCreated;

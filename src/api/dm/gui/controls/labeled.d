@@ -13,28 +13,32 @@ import std.traits : isSomeString;
  */
 class Labeled : Control
 {
-    //protected
-    //{
-        string _iconName;
-        dstring _labelText;
+    protected
+    {
         Sprite _icon;
         Text _text;
-   // }
 
+        string _iconName;
+        dstring _labelText;
+    }
+
+    void delegate() onPreIconTryCreate;
     void delegate() onPreIconCreate;
-    void delegate() onPreIconCreated;
     void delegate() onPostIconCreated;
-    void delegate() onPostIconCreate;
+    void delegate() onPostIconTryCreate;
 
+    Sprite delegate() iconFactory;
+    bool isCreateIconFactory;
+
+    void delegate() onPreTextTryCreate;
     void delegate() onPreTextCreate;
-    void delegate() onPreTextCreated;
     void delegate() onPostTextCreated;
-    void delegate() onPostTextCreate;
+    void delegate() onPostTextTryCreate;
 
     bool isCreateTextFactory;
     Text delegate() textFactory;
 
-    this(string iconName = null, double graphicsGap, bool isCreateLayout = true)
+    this(double width = 0, double height = 0, string iconName = null, double graphicsGap = 0, bool isCreateLayout = true)
     {
         this._iconName = iconName;
 
@@ -45,77 +49,72 @@ class Labeled : Control
             this.layout.isAlignY = true;
         }
 
-        isCreateHoverEffectFactory = true;
-        isCreateHoverAnimationFactory = true;
-        isCreateActionEffectFactory = true;
-        isCreateActionAnimationFactory = true;
         isCreateTextFactory = true;
+        isCreateIconFactory = true;
 
         isBorder = true;
 
-        //TODO minWidth, height?
-        width = 10;
-        height = 10;
+        this._width = width;
+        this._height = height;
     }
 
     override void initialize()
     {
         super.initialize;
 
-        //TODO move in create()
+        if (_width == 0)
+        {
+            _width = theme.controlDefaultWidth;
+        }
+
+        if (_height == 0)
+        {
+            _height = theme.controlDefaultHeight;
+        }
+
         if (isCreateTextFactory)
         {
             textFactory = createTextFactory;
+        }
+
+        if (isCreateIconFactory)
+        {
+            iconFactory = createIconFactory;
         }
     }
 
     override void create()
     {
         super.create;
-        if (onPreIconCreate)
+
+        if (onPreIconTryCreate)
         {
-            onPreIconCreate();
+            onPreIconTryCreate();
         }
+
         if (_iconName && capGraphics.isIconPack)
         {
-            if (onPreIconCreated)
-            {
-                onPreIconCreated();
-            }
-            _icon = createIcon(_iconName);
-            add(icon);
-            _iconName = null;
-            if (onPostIconCreated)
-            {
-                onPostIconCreated();
-            }
+            createLabelIcon;
         }
 
-        if (onPostIconCreate)
+        if (onPostIconTryCreate)
         {
-            onPostIconCreate();
+            onPostIconTryCreate();
         }
 
-        if (onPreTextCreate)
+        if (onPreTextTryCreate)
         {
-            onPreTextCreate();
+            onPreTextTryCreate();
         }
 
         if (textFactory)
         {
-            if (onPreTextCreated)
+            if (onPreTextCreate)
             {
-                onPreTextCreated();
+                onPreTextCreate();
             }
-            _text = textFactory();
-            if (_text)
-            {
-                addCreate(_text);
-            }
-            else
-            {
-                logger.error("Text factory did not return the object");
-            }
+
+            createLabelText;
 
             if (onPostTextCreated)
             {
@@ -123,10 +122,53 @@ class Labeled : Control
             }
         }
 
-        if (onPostTextCreate)
+        if (onPostTextTryCreate)
         {
-            onPostTextCreate();
+            onPostTextTryCreate();
         }
+    }
+
+    protected void createLabelIcon()
+    {
+        if (_iconName && capGraphics.isIconPack)
+        {
+            assert(iconFactory);
+
+            if (_icon)
+            {
+                bool isRemoved = remove(icon, isDestroy:
+                    true);
+                assert(isRemoved);
+            }
+
+            _icon = iconFactory();
+            assert(_icon);
+            addCreate(_icon);
+        }
+    }
+
+    protected void createLabelText()
+    {
+        if (_text)
+        {
+            bool isRemoved = remove(_text, isDestroy:
+                true);
+            assert(isRemoved);
+        }
+
+        _text = textFactory();
+        assert(_text);
+        addCreate(_text);
+    }
+
+    Sprite delegate() createIconFactory()
+    {
+        return () {
+            assert(_iconName.length > 0);
+            auto newIcon = createIcon(_iconName);
+            _iconName = null;
+            return newIcon;
+        };
     }
 
     Text delegate() createTextFactory()
@@ -150,7 +192,7 @@ class Labeled : Control
         return _icon;
     }
 
-    void text(T)(T s) if (isSomeString!T)
+    bool text(T)(T s) if (isSomeString!T)
     {
         dstring newText;
 
@@ -169,7 +211,7 @@ class Labeled : Control
         {
             _labelText = newText;
             setInvalid;
-            return;
+            return true;
         }
 
         _text.text = newText;
@@ -179,6 +221,7 @@ class Labeled : Control
         }
 
         setInvalid;
+        return true;
     }
 
     dstring text()
@@ -195,20 +238,22 @@ class Labeled : Control
         return _iconName;
     }
 
-    void iconName(string name)
+    bool iconName(string name)
     {
+        if (_icon)
+        {
+            //TODO recreate?
+            return false;
+        }
+
         //TODO check names
         _iconName = name;
+        return true;
     }
 
     override void dispose()
     {
         super.dispose;
-        if (_icon && !_icon.isDisposed)
-        {
-            _icon.dispose;
-        }
-        _icon = null;
         _iconName = null;
         _labelText = null;
     }
