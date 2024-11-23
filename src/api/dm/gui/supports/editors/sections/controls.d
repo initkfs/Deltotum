@@ -123,11 +123,16 @@ class Controls : Control
         circleBtn.isBackground = true;
         root.addCreate(circleBtn);
 
-        import api.dm.gui.controls.buttons.rhombus_button : RhombusButton;
+        import api.dm.gui.controls.buttons.convex_poly_button : ConvexPolyButton;
 
-        auto rhBtn = new RhombusButton("Button");
+        auto rhBtn = new ConvexPolyButton("Button");
         //rhBtn.isBackground = true;
         root.addCreate(rhBtn);
+
+        import api.dm.gui.controls.buttons.regular_poly_button : RegularPolyButton;
+
+        auto regBtn = new RegularPolyButton("Button");
+        root.addCreate(regBtn);
     }
 
     void createDialogs(Container root)

@@ -29,6 +29,7 @@ enum ButtonType
  */
 class BaseButton : Labeled
 {
+    enum defaultButtonText = "Button";
     //The listener is used very often and the array can affect performance
     void delegate(ref ActionEvent) onAction;
 
@@ -38,13 +39,19 @@ class BaseButton : Labeled
     bool isDefault;
     void delegate()[] onDefault;
 
-    this(dstring text = "Button", string iconName, bool isCreateLayout = true)
+    this(dstring text, string iconName, bool isCreateLayout = true)
     {
         this(text, 0, 0, 0, iconName, isCreateLayout);
     }
 
+    this(dstring text, void delegate(ref ActionEvent) onAction, bool isCreateLayout = true)
+    {
+        this(text, 0, 0, 0, null, isCreateLayout);
+        this.onAction = onAction;
+    }
+
     this(
-        dstring text = "Button",
+        dstring text,
         double width = 0,
         double height = 0,
         double graphicsGap = 0,

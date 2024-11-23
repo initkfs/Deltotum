@@ -8,27 +8,26 @@ import api.dm.gui.events.action_event : ActionEvent;
  */
 class Button : BaseButton
 {
-    this(dstring text = "Button", string iconName)
+    
+    this(dstring text = defaultButtonText, string iconName = null)
     {
         super(text, iconName);
     }
 
-    this(dstring text = "Button", void delegate(ref ActionEvent) onAction)
+    this(dstring text, void delegate(ref ActionEvent) onAction)
     {
-        super(text, null);
-        this.onAction = onAction;
+        super(text, onAction);
     }
 
     this(
-        dstring text = "Button",
-        double width = 0,
-        double height = 0,
+        dstring text,
+        double width,
+        double height,
         double graphicsGap = 0,
         string iconName = null,
     )
     {
-        super(text, width, height, graphicsGap, iconName, isCreateLayout:
-            true);
+        super(text, width, height, graphicsGap, iconName);
     }
 
 }

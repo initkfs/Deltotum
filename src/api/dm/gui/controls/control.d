@@ -347,7 +347,7 @@ class Control : GuiComponent
                 }
             }
 
-            Sprite newHover = theme.background(w, h, &newStyle);
+            Sprite newHover = createShape(w, h, newStyle);
             newHover.id = idHoverShape;
             newHover.isLayoutManaged = false;
             newHover.isResizedByParent = true;
@@ -402,7 +402,7 @@ class Control : GuiComponent
                 }
             }
 
-            Sprite effect = theme.background(width, height, &newStyle);
+            Sprite effect = createShape(width, height, newStyle);
             effect.id = idActionShape;
             effect.isLayoutManaged = false;
             effect.isResizedByParent = true;

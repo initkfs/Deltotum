@@ -58,6 +58,11 @@ class Theme
 
     double buttonWidth = 80;
     double buttonHeight = 30;
+    double roundShapeDiameter = 20;
+    double convexPolyShapeBevel = 30;
+    double convexPolyShapeSize = 80;
+    double regularPolyDiameter = 80;
+    size_t regularPolySides = 8;
 
     bool isUseVectorGraphics;
 
