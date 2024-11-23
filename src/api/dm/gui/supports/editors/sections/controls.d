@@ -128,12 +128,6 @@ class Controls : Control
         auto rhBtn = new RhombusButton("Button");
         //rhBtn.isBackground = true;
         root.addCreate(rhBtn);
-
-        import api.dm.gui.controls.buttons.target_button : TargetButton;
-
-        auto targetBtn = new TargetButton("Button", 100);
-        //rhBtn.isBackground = true;
-        root.addCreate(targetBtn);
     }
 
     void createDialogs(Container root)
