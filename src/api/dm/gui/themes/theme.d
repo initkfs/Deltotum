@@ -73,7 +73,8 @@ class Theme
         this.iconPack = iconPack;
     }
 
-    void defaultMediumFont(Font font){
+    void defaultMediumFont(Font font)
+    {
         assert(font);
         _defaultMediumFont = font;
     }
@@ -101,7 +102,8 @@ class Theme
 
     GraphicStyle defaultStyle(GraphicStyle* ownStyle)
     {
-        if(ownStyle){
+        if (ownStyle)
+        {
             return *ownStyle;
         }
         return defaultStyle();
@@ -137,6 +139,51 @@ class Theme
             newBackground = new ConvexPolygon(width, height, backgroundStyle, controlCornersBevel);
         }
         return newBackground;
+    }
+
+    Sprite roundShape(GraphicStyle style) => roundShape(roundShapeDiameter, style);
+
+    Sprite roundShape(double diameter, GraphicStyle style)
+    {
+        double radius = diameter / 2;
+
+        Sprite shape;
+        if (isUseVectorGraphics)
+        {
+            import api.dm.kit.sprites.textures.vectors.shapes.vcircle : VCircle;
+
+            shape = new VCircle(radius, style);
+        }
+        else
+        {
+            import api.dm.kit.sprites.shapes.circle : Circle;
+
+            shape = new Circle(radius, style);
+        }
+        return shape;
+    }
+
+    Sprite regularPolyShape(GraphicStyle style) => regularPolyShape(regularPolyDiameter, regularPolySides, style);
+
+    Sprite regularPolyShape(double size, size_t sides, GraphicStyle style)
+    {
+        Sprite shape;
+
+        import Math = api.math;
+
+        if (isUseVectorGraphics)
+        {
+            import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+
+            shape = new VRegularPolygon(size, style, sides);
+        }
+        else
+        {
+            import api.dm.kit.sprites.shapes.reqular_polygon : RegularPolygon;
+
+            shape = new RegularPolygon(size, style, sides);
+        }
+        return shape;
     }
 
 }

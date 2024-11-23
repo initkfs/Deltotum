@@ -51,21 +51,6 @@ class RoundButton : BaseRoundedButton
 
     protected override Sprite createShape(double width, double height, GraphicStyle style)
     {
-        double radius = _diameter / 2;
-
-        Sprite shape;
-        if (capGraphics.isVectorGraphics)
-        {
-            import api.dm.kit.sprites.textures.vectors.shapes.vcircle : VCircle;
-
-            shape = new VCircle(radius, style);
-        }
-        else
-        {
-            import api.dm.kit.sprites.shapes.circle : Circle;
-
-            shape = new Circle(radius, style);
-        }
-        return shape;
+        return theme.roundShape(_diameter, style);
     }
 }

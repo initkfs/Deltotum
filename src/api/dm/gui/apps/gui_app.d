@@ -53,7 +53,6 @@ abstract class GuiApp : LoopApp
                 .context, uservices
                 .resources);
         assert(theme);
-        theme.isUseVectorGraphics = gservices.capGraphics.isVectorGraphics;
         uservices.logger.trace("Theme load");
 
         return AppInitRet(isExit : false, isInit:

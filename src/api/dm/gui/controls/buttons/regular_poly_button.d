@@ -62,24 +62,10 @@ class RegularPolyButton : BaseRoundedButton
 
     protected override Sprite createShape(double width, double height, GraphicStyle style)
     {
-        Sprite shape;
-
         import Math = api.math;
 
         auto size = Math.max(width, height);
 
-        if (capGraphics.isVectorGraphics)
-        {
-            import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
-
-            shape = new VRegularPolygon(size, style, _sides);
-        }
-        else
-        {
-            import api.dm.kit.sprites.shapes.reqular_polygon: RegularPolygon;
-
-            shape = new RegularPolygon(size, style, _sides);
-        }
-        return shape;
+        return theme.regularPolyShape(size, _sides, style);
     }
 }

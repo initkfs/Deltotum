@@ -241,7 +241,11 @@ class SdlApplication : GuiApp
                     uservices.logger.error("Found using vector graphics key, but not value: ", KitConfigKeys
                             .useVectorGraphics);
                 }
+            }else {
+                gservices.capGraphics.isVectorGraphics = true;
             }
+
+            theme.isUseVectorGraphics = gservices.capGraphics.isVectorGraphics;
 
             uservices.logger.trace("Load Cairo library.");
         };
