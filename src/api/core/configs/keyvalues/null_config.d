@@ -50,6 +50,16 @@ class NullConfig : Config
         return false;
     }
 
+    override Nullable!int getInt(string key) const
+    {
+        return Nullable!int.init;
+    }
+
+    override bool setInt(string key, int value)
+    {
+        return false;
+    }
+
     override Nullable!long getLong(string key) const
     {
         return Nullable!long.init;
@@ -100,7 +110,8 @@ class NullConfig : Config
         return false;
     }
 
-    override string toText() const {
+    override string toText() const
+    {
         return "";
     }
 

@@ -54,6 +54,10 @@ class Theme
 
     bool isUseVectorGraphics;
 
+    size_t actionAnimationDelayMs;
+    size_t hoverAnimationDelayMs;
+    size_t tooltipDelayMs;
+
     this(IconPack iconPack)
     {
         this.iconPack = iconPack;

@@ -92,6 +92,9 @@ abstract class Tween : Sprite
         if (isPaused)
         {
             state = prevState;
+            if(isReverse && state == TweenState.direct){
+                state = TweenState.back;
+            }
 
             if (onResume.length > 0)
             {
@@ -121,7 +124,8 @@ abstract class Tween : Sprite
             currentFrameCount = frameCount(rate);
             currentFrame = firstFrame;
         }
-        state = TweenState.direct;
+
+        state = !isReverse ? TweenState.direct : TweenState.back;
     }
 
     override void pause()

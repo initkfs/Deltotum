@@ -182,6 +182,32 @@ class ConfigAggregator : Config
         return false;
     }
 
+    override Nullable!int getInt(string key) const
+    {
+        if (auto config = searchConfigByKey(key))
+        {
+            return config.getInt(key);
+        }
+        return Nullable!int.init;
+    }
+
+    override bool setInt(string key, int value)
+    {
+        if (auto config = searchConfigByKey(key))
+        {
+            return config.setInt(key, value);
+        }
+
+        if (isThrowOnSetValueNotExistentKey)
+        {
+            import std.conv : text;
+
+            throw new ConfigValueIncorrectException(text("Not found config for key ", key, " and int value ", value));
+        }
+
+        return false;
+    }
+
     override Nullable!long getLong(string key) const
     {
         if (auto config = searchConfigByKey(key))

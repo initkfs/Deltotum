@@ -60,8 +60,9 @@ class ToggleSwitch : Labeled
         this.height = height;
 
         isCreateHoverEffectFactory = false;
+        isCreateHoverAnimationFactory = false;
         isCreateActionEffectFactory = false;
-        isCreateActionEffectAnimationFactory = false;
+        isCreateActionAnimationFactory = false;
         isCreateTextFactory = true;
 
         import api.dm.kit.sprites.layouts.hlayout : HLayout;

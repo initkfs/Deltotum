@@ -11,6 +11,7 @@ import api.math.insets : Insets;
 import api.dm.gui.themes.icons.icon_pack : IconPack;
 
 import api.core.loggers.logging : Logging;
+import api.dm.gui.display_layout;
 
 /**
  * Authors: initkfs
@@ -57,6 +58,10 @@ class ThemeFromConfigFactory : ApplicationUnit
             theme.opacityHover = config.getDouble("themeOpacityHover").get;
             theme.controlPadding = Insets(config.getDouble("themeControlPadding").get);
             theme.controlCornersBevel = config.getDouble("themeControlCornersBevel").get;
+
+            theme.tooltipDelayMs = config.getLong("themeTooltipDelayMs").get;
+            theme.actionAnimationDelayMs = config.getLong("themeActionAnimationDelayMs").get;
+            theme.hoverAnimationDelayMs = config.getLong("themeHoverAnimationDelayMs").get;
         }
 
         return theme;

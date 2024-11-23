@@ -27,6 +27,9 @@ abstract class Config
 
         Nullable!string getString(string key) const;
         bool setString(string key, string value);
+        
+        Nullable!int getInt(string key) const;
+        bool setInt(string key, int value);
 
         Nullable!long getLong(string key) const;
         bool setLong(string key, long value);

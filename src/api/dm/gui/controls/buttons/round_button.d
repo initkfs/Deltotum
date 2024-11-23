@@ -112,6 +112,9 @@ class RoundButton : ButtonBase
             }
 
             Sprite sprite = createShape(width, height, style);
+            sprite.isLayoutManaged = false;
+            sprite.isResizedByParent = true;
+            sprite.isVisible = false;
             return sprite;
         };
     }

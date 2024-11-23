@@ -21,8 +21,9 @@ class Badge : Labeled
 
         layout.isAutoResize = true;
         isCreateHoverEffectFactory = false;
+        isCreateHoverAnimationFactory = false;
         isCreateActionEffectFactory = false;
-        isCreateActionEffectAnimationFactory = false;
+        isCreateActionAnimationFactory = false;
 
         isLayoutManaged = false;
 

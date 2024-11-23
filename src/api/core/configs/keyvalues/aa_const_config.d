@@ -119,7 +119,7 @@ class AAConstConfig(V = string) : Config
         return false;
     }
 
-    override Nullable!long getLong(string key) const
+    override Nullable!int getInt(string key) const
     {
         const valuePtr = containsPtr(key);
         if (!valuePtr)
@@ -128,6 +128,30 @@ class AAConstConfig(V = string) : Config
             {
                 throw new ConfigValueNotFoundException(
                     "Not found integer value in AA config with key: " ~ key);
+            }
+            else
+            {
+                return Nullable!int.init;
+            }
+        }
+        const int value = getValue!int(valuePtr);
+        return Nullable!int(value);
+    }
+
+    override bool setInt(string key, int value)
+    {
+        return false;
+    }
+
+    override Nullable!long getLong(string key) const
+    {
+        const valuePtr = containsPtr(key);
+        if (!valuePtr)
+        {
+            if (isThrowOnNotExistentKey)
+            {
+                throw new ConfigValueNotFoundException(
+                    "Not found long value in AA config with key: " ~ key);
             }
             else
             {

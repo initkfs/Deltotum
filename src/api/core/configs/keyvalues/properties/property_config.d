@@ -241,7 +241,7 @@ class PropertyConfig : Config
         return setValue(key, value);
     }
 
-    override Nullable!long getLong(string key) const
+    override Nullable!int getInt(string key) const
     {
         auto valuePtr = containsLinePtr(key);
         if (!valuePtr)
@@ -250,6 +250,30 @@ class PropertyConfig : Config
             {
                 throw new ConfigValueNotFoundException(
                     "Not found integer value in config with key: " ~ key);
+            }
+            else
+            {
+                return Nullable!int.init;
+            }
+        }
+        const int value = getValue!int(valuePtr);
+        return Nullable!int(value);
+    }
+
+    override bool setInt(string key, int value)
+    {
+        return setValue(key, value);
+    }
+
+    override Nullable!long getLong(string key) const
+    {
+        auto valuePtr = containsLinePtr(key);
+        if (!valuePtr)
+        {
+            if (isThrowOnNotExistentKey)
+            {
+                throw new ConfigValueNotFoundException(
+                    "Not found long value in config with key: " ~ key);
             }
             else
             {

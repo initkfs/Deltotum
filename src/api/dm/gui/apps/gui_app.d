@@ -56,9 +56,6 @@ abstract class GuiApp : LoopApp
         theme.isUseVectorGraphics = gservices.capGraphics.isVectorGraphics;
         uservices.logger.trace("Theme load");
 
-        import LocatorKeys = api.dm.gui.locator_keys;
-        uservices.locator.putObject(LocatorKeys.mainTheme, theme);
-
         return AppInitRet(isExit : false, isInit:
             true);
     }

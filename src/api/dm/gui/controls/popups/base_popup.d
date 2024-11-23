@@ -21,8 +21,9 @@ class BasePopup : Labeled
 
         isBorder = false;
         isCreateHoverEffectFactory = false;
+        isCreateHoverAnimationFactory = false;
         isCreateActionEffectFactory = false;
-        isCreateActionEffectAnimationFactory = false;
+        isCreateActionAnimationFactory = false;
 
         isVisible = false;
         isLayoutManaged = false;

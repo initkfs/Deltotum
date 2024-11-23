@@ -46,8 +46,9 @@ class Labeled : Control
         }
 
         isCreateHoverEffectFactory = true;
+        isCreateHoverAnimationFactory = true;
         isCreateActionEffectFactory = true;
-        isCreateActionEffectAnimationFactory = true;
+        isCreateActionAnimationFactory = true;
         isCreateTextFactory = true;
 
         isBorder = true;

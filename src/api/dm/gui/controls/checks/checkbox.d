@@ -31,8 +31,9 @@ class CheckBox : Labeled
         _labelText = text;
 
         isCreateHoverEffectFactory = false;
+        isCreateHoverAnimationFactory = false;
         isCreateActionEffectFactory = false;
-        isCreateActionEffectAnimationFactory = false;
+        isCreateActionAnimationFactory = false;
         isCreateTextFactory = true;
         isCreateMarkerFactory = true;
 

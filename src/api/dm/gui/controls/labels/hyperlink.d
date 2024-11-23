@@ -29,8 +29,9 @@ class Hyperlink : Labeled
         layout.isAutoResize = true;
         isBorder = false;
         isCreateHoverEffectFactory = false;
+        isCreateHoverAnimationFactory = false;
         isCreateActionEffectFactory = false;
-        isCreateActionEffectAnimationFactory = false;
+        isCreateActionAnimationFactory = false;
     }
 
     override void initialize()

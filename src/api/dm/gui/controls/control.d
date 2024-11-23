@@ -1,6 +1,5 @@
 module api.dm.gui.controls.control;
 
-import DisplayLayout = api.dm.gui.display_layout;
 import api.dm.gui.components.gui_component : GuiComponent;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.sprites.layouts.layout : Layout;
@@ -34,8 +33,10 @@ class Control : GuiComponent
     enum
     {
         idBackground = "control_background",
-        idHoverShape = "control_hoverEffect",
-        idActionShape = "control_action"
+        idHoverShape = "control_hover",
+        idHoverAnimation = "control_hover_animation",
+        idActionShape = "control_action",
+        idActionAnimation = "control_action_animation"
     }
 
     GraphicStyle style;
@@ -55,8 +56,9 @@ class Control : GuiComponent
     bool isCreateBackgroundFactory = true;
     bool isCreateStyleFactory = true;
     bool isCreateHoverEffectFactory;
+    bool isCreateHoverAnimationFactory;
     bool isCreateActionEffectFactory;
-    bool isCreateActionEffectAnimationFactory;
+    bool isCreateActionAnimationFactory;
 
     bool isConsumeEventIfBackground = true;
 
@@ -68,11 +70,19 @@ class Control : GuiComponent
     Sprite delegate(Sprite) onHoverEffectCreate;
     void delegate(Sprite) onHoverEffectCreated;
 
+    Tween delegate() hoverAnimationFactory;
+    Tween delegate(Tween) onHoverAnimationCreate;
+    void delegate(Tween) onHoverAnimationCreated;
+
+    size_t hoverAnimationDelayMs;
+
     Sprite delegate() actionEffectFactory;
     Sprite delegate(Sprite) onActionEffectCreate;
     void delegate(Sprite) onActionEffectCreated;
 
-    Tween delegate() actionEffectAnimationFactory;
+    size_t actionAnimationDelayMs;
+
+    Tween delegate(Sprite) actionEffectAnimationFactory;
     Tween delegate(Tween) onActionEffectAnimationCreate;
     void delegate(Tween) onActionEffectAnimationCreated;
 
@@ -85,6 +95,7 @@ class Control : GuiComponent
 
         Sprite _background;
         Sprite _hoverEffect;
+        Tween _hoverEffectAnimation;
 
         Sprite _actionEffect;
         Tween _actionEffectAnimation;
@@ -95,7 +106,7 @@ class Control : GuiComponent
     }
 
     BasePopup[] tooltips;
-    size_t tooltipDelay = DisplayLayout.displayTooltipDelayMs;
+    size_t tooltipDelay;
 
     this()
     {
@@ -134,12 +145,17 @@ class Control : GuiComponent
             hoverEffectFactory = createHoverEffectFactory;
         }
 
+        if (!hoverAnimationFactory && isCreateHoverAnimationFactory)
+        {
+            hoverAnimationFactory = createHoverAnimationFactory;
+        }
+
         if (!actionEffectFactory && isCreateActionEffectFactory)
         {
             actionEffectFactory = createActionEffectFactory;
         }
 
-        if (!actionEffectAnimationFactory && isCreateActionEffectAnimationFactory)
+        if (!actionEffectAnimationFactory && isCreateActionAnimationFactory)
         {
             actionEffectAnimationFactory = createActionEffectAnimationFactory;
         }
@@ -147,6 +163,21 @@ class Control : GuiComponent
         if (!styleFactory && isCreateStyleFactory)
         {
             styleFactory = createStyleFactory;
+        }
+
+        if (tooltipDelay == 0)
+        {
+            tooltipDelay = theme.tooltipDelayMs;
+        }
+
+        if (actionAnimationDelayMs == 0)
+        {
+            actionAnimationDelayMs = theme.actionAnimationDelayMs;
+        }
+
+        if (hoverAnimationDelayMs == 0)
+        {
+            hoverAnimationDelayMs = theme.hoverAnimationDelayMs;
         }
     }
 
@@ -220,7 +251,36 @@ class Control : GuiComponent
             }
 
             Sprite newHover = theme.background(w, h, &newStyle);
+            newHover.id = idHoverShape;
+            newHover.isLayoutManaged = false;
+            newHover.isResizedByParent = true;
+            newHover.isVisible = false;
+
             return newHover;
+        };
+    }
+
+    Tween delegate() createHoverAnimationFactory()
+    {
+        return () {
+            import std.conv : to;
+
+            assert(_hoverEffect, "Hover effect is null");
+
+            auto anim = new OpacityTween(hoverAnimationDelayMs.to!int);
+            anim.id = idHoverAnimation;
+            anim.addTarget(_hoverEffect);
+            anim.isLayoutManaged = false;
+            anim.onStop ~= () {
+                if (_hoverEffect)
+                {
+                    if (anim.isReverse)
+                    {
+                        _hoverEffect.isVisible = false;
+                    }
+                }
+            };
+            return anim;
         };
     }
 
@@ -246,17 +306,33 @@ class Control : GuiComponent
             }
 
             Sprite effect = theme.background(width, height, &newStyle);
+            effect.id = idActionShape;
+            effect.isLayoutManaged = false;
+            effect.isResizedByParent = true;
             return effect;
         };
     }
 
-    Tween delegate() createActionEffectAnimationFactory()
+    Tween delegate(Sprite) createActionEffectAnimationFactory()
     {
-        return () {
-            auto actionEffectAnimation = new OpacityTween(DisplayLayout.displayActionEffectAnimMs);
-            assert(_actionEffect, "Pointer effect must not be null");
-            //TODO move to create()
+        return (Sprite actionEffect) {
+            import std.conv : to;
+
+            auto actionEffectAnimation = new OpacityTween(actionAnimationDelayMs.to!int);
+            actionEffectAnimation.id = idActionAnimation;
+
+            assert(_actionEffect, "Action effect must not be null");
             actionEffectAnimation.addTarget(_actionEffect);
+
+            actionEffectAnimation.isLayoutManaged = false;
+            actionEffectAnimation.isInfinite = false;
+            actionEffectAnimation.isOneShort = true;
+            actionEffectAnimation.onStop ~= () {
+                if (_actionEffect)
+                {
+                    _actionEffect.isVisible = false;
+                }
+            };
             return actionEffectAnimation;
         };
     }
@@ -348,12 +424,12 @@ class Control : GuiComponent
     {
         super.create;
 
-        tryCreateBackground(width, height);
-
         if (onPreControlContentCreated)
         {
             onPreControlContentCreated();
         }
+
+        tryCreateBackground(width, height);
 
         if (hoverEffectFactory)
         {
@@ -361,11 +437,6 @@ class Control : GuiComponent
             if (newHover)
             {
                 _hoverEffect = onHoverEffectCreate ? onHoverEffectCreate(newHover) : newHover;
-                _hoverEffect.id = idHoverShape;
-                _hoverEffect.isLayoutManaged = false;
-                _hoverEffect.isResizedByParent = true;
-                _hoverEffect.isVisible = false;
-
                 addCreate(_hoverEffect);
                 _hoverEffect.opacityLimit = theme.opacityHover;
                 if (onHoverEffectCreated)
@@ -379,68 +450,50 @@ class Control : GuiComponent
             }
         }
 
+        if (hoverAnimationFactory)
+        {
+            auto newHoverAniimation = hoverAnimationFactory();
+            _hoverEffectAnimation = onHoverAnimationCreate ? onHoverAnimationCreate(
+                newHoverAniimation) : newHoverAniimation;
+            assert(_hoverEffectAnimation);
+
+            addCreate(_hoverEffectAnimation);
+
+            if (onHoverAnimationCreated)
+            {
+                onHoverAnimationCreated(_hoverEffectAnimation);
+            }
+        }
+
         if (actionEffectFactory)
         {
             auto newActionEffect = actionEffectFactory();
-            if (newActionEffect)
+            assert(newActionEffect);
+
+            _actionEffect = onActionEffectCreate ? onActionEffectCreate(newActionEffect)
+                : newActionEffect;
+
+            addCreate(_actionEffect);
+
+            _actionEffect.isVisible = false;
+
+            if (onActionEffectCreated)
             {
-                _actionEffect = onActionEffectCreate ? onActionEffectCreate(newActionEffect)
-                    : newActionEffect;
-                _actionEffect.id = idActionShape;
-                _actionEffect.isLayoutManaged = false;
-                _actionEffect.isResizedByParent = true;
-                _actionEffect.isVisible = false;
-
-                addCreate(_actionEffect);
-
-                _actionEffect.opacity = 0;
-
-                if (onActionEffectCreated)
-                {
-                    onActionEffectCreated(_actionEffect);
-                }
-            }
-            else
-            {
-                logger.error("Pointer effect factory did not return the object");
+                onActionEffectCreated(_actionEffect);
             }
         }
 
         if (actionEffectAnimationFactory)
         {
-            auto newEffectAnimation = actionEffectAnimationFactory();
-            if (newEffectAnimation)
+            auto newEffectAnimation = actionEffectAnimationFactory(_actionEffect);
+            _actionEffectAnimation = onActionEffectAnimationCreate ? onActionEffectAnimationCreate(
+                newEffectAnimation) : newEffectAnimation;
+
+            addCreate(_actionEffectAnimation);
+
+            if (onActionEffectAnimationCreated)
             {
-                if (_actionEffect)
-                {
-                    _actionEffectAnimation = onActionEffectAnimationCreate ? onActionEffectAnimationCreate(
-                        newEffectAnimation) : newEffectAnimation;
-                    _actionEffectAnimation.isLayoutManaged = false;
-                    _actionEffectAnimation.isInfinite = false;
-                    _actionEffectAnimation.isReverse = true;
-                    _actionEffectAnimation.onStop ~= () {
-                        if (_actionEffect)
-                        {
-                            _actionEffect.isVisible = false;
-                        }
-                    };
-
-                    addCreate(_actionEffectAnimation);
-
-                    if (onActionEffectAnimationCreated)
-                    {
-                        onActionEffectAnimationCreated(_actionEffectAnimation);
-                    }
-                }
-                else
-                {
-                    logger.error("Pointer effect is null for animation");
-                }
-
-            }
-            else
-            {
-                logger.error("Pointer animation factory did not return the object or");
+                onActionEffectAnimationCreated(_actionEffectAnimation);
             }
         }
 
@@ -467,7 +520,16 @@ class Control : GuiComponent
                 if (_hoverEffect && !_hoverEffect.isVisible)
                 {
                     _hoverEffect.isVisible = true;
+
+                    if (_hoverEffectAnimation && !_hoverEffectAnimation.isRunning)
+                    {
+                        _hoverEffectAnimation.isReverse = false;
+                        //TODO from factory?
+                        _hoverEffect.opacity = 0;
+                        _hoverEffectAnimation.run;
+                    }
                 }
+
             };
 
             onPointerExited ~= (ref e) {
@@ -479,31 +541,51 @@ class Control : GuiComponent
 
                 if (_hoverEffect && _hoverEffect.isVisible)
                 {
-                    _hoverEffect.isVisible = false;
-                }
-            };
-        }
 
-        if (_actionEffect || _actionEffectAnimation)
-        {
-            onPointerUp ~= (ref e) {
-
-                if (isDisabled || _selected)
-                {
-                    return;
-                }
-
-                if (_actionEffect && !_actionEffect.isVisible)
-                {
-                    _actionEffect.isVisible = true;
-                    if (_actionEffectAnimation && !_actionEffectAnimation.isRunning)
+                    if (_hoverEffectAnimation)
                     {
-                        _actionEffectAnimation.run;
-                    }
+                        if (_hoverEffectAnimation.isRunning && !_hoverEffectAnimation.isReverse)
+                        {
+                            _hoverEffectAnimation.stop;
+                        }
 
+                        if (!_hoverEffectAnimation.isRunning)
+                        {
+                            _hoverEffectAnimation.isReverse = true;
+                            _hoverEffectAnimation.run;
+                        }
+
+                    }
+                    else
+                    {
+                        _hoverEffect.isVisible = false;
+                    }
                 }
             };
         }
+
+        onPointerUp ~= (ref e) {
+
+            if (isDisabled || _selected)
+            {
+                return;
+            }
+
+            if (_actionEffect)
+            {
+                if (_actionEffectAnimation.isRunning)
+                {
+                    _actionEffectAnimation.stop;
+                    _actionEffect.isVisible = false;
+                }
+
+                if (!_actionEffect.isVisible)
+                {
+                     _actionEffect.isVisible = true;
+                     _actionEffectAnimation.run;
+                }
+            }
+        };
 
     }
 
@@ -531,7 +613,8 @@ class Control : GuiComponent
 
     override void addCreate(Sprite sprite, long index = -1)
     {
-        if(auto control = cast(Control) sprite){
+        if (auto control = cast(Control) sprite)
+        {
             addCreate(control, index);
             return;
         }
@@ -542,7 +625,8 @@ class Control : GuiComponent
     {
         foreach (s; sprites)
         {
-            if(auto control = cast(Control) s){
+            if (auto control = cast(Control) s)
+            {
                 addCreate(control);
                 continue;
             }
