@@ -55,7 +55,7 @@ class ToggleSwitch : Labeled
 
     this(dstring label = "Toggle", double width = 60, double height = 25, string iconName = null, double graphicsGap = 5)
     {
-        super(0, 0, iconName, graphicsGap, false);
+        super(0, 0, iconName, graphicsGap, label, false);
         this.width = width;
         this.height = height;
 
@@ -71,8 +71,6 @@ class ToggleSwitch : Labeled
         layout.isAutoResize = true;
         layout.isAlignY = true;
         this.layout = layout;
-
-        _labelText = label;
 
         isBorder = false;
     }

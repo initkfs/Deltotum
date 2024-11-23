@@ -22,7 +22,7 @@ class CheckBox : Labeled
 
     this(dstring text = "Check", string iconName = null, double graphicsGap = 5)
     {
-        super(0, 0, iconName, graphicsGap, false);
+        super(0, 0, iconName, graphicsGap, text, false);
         import api.dm.kit.sprites.layouts.hlayout : HLayout;
 
         layout = new HLayout(5);

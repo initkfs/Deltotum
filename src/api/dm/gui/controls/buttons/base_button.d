@@ -1,4 +1,4 @@
-module api.dm.gui.controls.buttons.button_base;
+module api.dm.gui.controls.buttons.base_button;
 
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.gui.controls.labeled : Labeled;
@@ -27,70 +27,58 @@ enum ButtonType
 /**
  * Authors: initkfs
  */
-class ButtonBase : Labeled
+class BaseButton : Labeled
 {
-
+    //The listener is used very often and the array can affect performance
     void delegate(ref ActionEvent) onAction;
 
     bool isCancel;
-    void delegate() onCancel;
+    void delegate()[] onCancel;
 
     bool isDefault;
-    void delegate() onDefault;
+    void delegate()[] onDefault;
 
-    string idBackground = "btn_background";
-
-    enum double defaultWidth = 80;
-    enum double defaultHeight = 30;
-    enum double defaultGraphicsGap = 5;
-
-    //TODO mixins for children
-    this(dstring text = "Button", string iconName)
+    this(dstring text = "Button", string iconName, bool isCreateLayout = true)
     {
-        this(text, defaultWidth, defaultHeight, defaultGraphicsGap, iconName);
+        this(text, 0, 0, 0, iconName, isCreateLayout);
     }
 
     this(
         dstring text = "Button",
-        double width = defaultWidth,
-        double height = defaultHeight,
-        double graphicsGap = defaultGraphicsGap,
-        string iconName = null
+        double width = 0,
+        double height = 0,
+        double graphicsGap = 0,
+        string iconName = null,
+        bool isCreateLayout = true
     )
     {
-        super(width, height, iconName, graphicsGap);
-        this.width = width;
-        this.height = height;
-        //TODO private
-        this._labelText = text;
+        super(width, height, iconName, graphicsGap, text, isCreateLayout);
+
+        isCreateHoverEffectFactory = true;
+        isCreateHoverAnimationFactory = true;
+        isCreateActionEffectFactory = true;
+        isCreateActionAnimationFactory = true;
+
+        isCreateInteractiveListeners = true;
     }
 
-    override void initialize()
+    override void loadTheme()
     {
-        super.initialize;
-
-        if (isCanEnableInsets)
-        {
-            enableInsets;
-        }
-
-        if (!textFactory && isCreateTextFactory)
-        {
-            textFactory = createTextFactory;
-        }
+        loadLabeledTheme;
+        loadBaseButtonTheme;
     }
 
-    override Sprite delegate(double, double) createBackgroundFactory()
+    void loadBaseButtonTheme()
     {
-        return (width, height) {
-            assert(hasTheme);
+        if (isSetNullWidthFromTheme && _width == 0)
+        {
+            _width = theme.buttonWidth;
+        }
 
-            auto style = createStyle;
-            auto newBackground = theme.background(width, height, &style);
-            newBackground.isLayoutManaged = false;
-            newBackground.id = idBackground;
-            return newBackground;
-        };
+        if (isSetNullHeightFromTheme && _height == 0)
+        {
+            _height = theme.buttonHeight;
+        }
     }
 
     override void create()
@@ -125,7 +113,10 @@ class ButtonBase : Labeled
                 {
                     if (onCancel)
                     {
-                        onCancel();
+                        foreach (dg; onCancel)
+                        {
+                            dg();
+                        }
                     }
                 }
             };
@@ -143,9 +134,9 @@ class ButtonBase : Labeled
 
                 if (isFocus && e.keyName == ComKeyName.RETURN)
                 {
-                    if (onDefault)
+                    foreach (dg; onDefault)
                     {
-                        onDefault();
+                        dg();
                     }
                 }
             };
@@ -158,6 +149,7 @@ class ButtonBase : Labeled
         if (_text && _text.text.length == 0)
         {
             _text.isLayoutManaged = false;
+            _text.isVisible = false;
         }
         setInvalid;
     }
@@ -165,6 +157,10 @@ class ButtonBase : Labeled
     override void dispose()
     {
         super.dispose;
+
+        onAction = null;
+        onCancel = null;
+        onDefault = null;
     }
 
 }

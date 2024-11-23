@@ -1,6 +1,6 @@
 module api.dm.gui.controls.buttons.rhombus_button;
 
-import api.dm.gui.controls.buttons.button_base : ButtonBase;
+import api.dm.gui.controls.buttons.base_button : BaseButton;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.controls.texts.text : Text;
@@ -9,7 +9,7 @@ import api.dm.gui.controls.control : Control;
 /**
  * Authors: initkfs
  */
-class RhombusButton : ButtonBase
+class RhombusButton : BaseButton
 {
     this(dstring text = "Button", string iconName)
     {
@@ -18,8 +18,8 @@ class RhombusButton : ButtonBase
 
     this(
         dstring text = "Button",
-        double size = defaultWidth,
-        double graphicsGap = defaultGraphicsGap,
+        double size = 0,
+        double graphicsGap = 0,
         string iconName = null
     )
     {

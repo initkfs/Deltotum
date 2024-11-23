@@ -54,6 +54,10 @@ class Theme
 
     double controlDefaultWidth = 100;
     double controlDefaultHeight = 80;
+    double controlGraphicsGap = 5;
+
+    double buttonWidth = 80;
+    double buttonHeight = 30;
 
     bool isUseVectorGraphics;
 

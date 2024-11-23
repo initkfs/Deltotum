@@ -115,6 +115,9 @@ class Control : GuiComponent
     BasePopup[] tooltips;
     size_t tooltipDelay;
 
+    bool isSetNullWidthFromTheme = true;
+    bool isSetNullHeightFromTheme = true;
+
     this()
     {
         isResizedByParent = true;
@@ -126,6 +129,8 @@ class Control : GuiComponent
     override void initialize()
     {
         super.initialize;
+
+        loadTheme;
 
         //TODO remove listener?
         invalidateListeners ~= () {
@@ -236,7 +241,7 @@ class Control : GuiComponent
             actionEffectBehaviour = () {
                 if (_actionEffect)
                 {
-                    if (_actionEffectAnimation.isRunning)
+                    if (_actionEffectAnimation && _actionEffectAnimation.isRunning)
                     {
                         _actionEffectAnimation.stop;
                         _actionEffect.isVisible = false;
@@ -245,10 +250,31 @@ class Control : GuiComponent
                     if (!_actionEffect.isVisible)
                     {
                         _actionEffect.isVisible = true;
-                        _actionEffectAnimation.run;
+                        if (_actionEffectAnimation)
+                        {
+                            _actionEffectAnimation.run;
+                        }
                     }
                 }
             };
+        }
+    }
+
+    void loadTheme()
+    {
+        loadControlTheme;
+    }
+
+    void loadControlTheme()
+    {
+        if (isSetNullWidthFromTheme && _width == 0)
+        {
+            _width = theme.controlDefaultWidth;
+        }
+
+        if (isSetNullHeightFromTheme && _height == 0)
+        {
+            _height = theme.controlDefaultHeight;
         }
     }
 

@@ -20,7 +20,11 @@ class Labeled : Control
 
         string _iconName;
         dstring _labelText;
+
+        double _graphicsGap = 0;
     }
+
+    bool isSetNullGapFromTheme = true;
 
     void delegate() onPreIconTryCreate;
     void delegate() onPreIconCreate;
@@ -38,9 +42,12 @@ class Labeled : Control
     bool isCreateTextFactory;
     Text delegate() textFactory;
 
-    this(double width = 0, double height = 0, string iconName = null, double graphicsGap = 0, bool isCreateLayout = true)
+    this(double width = 0, double height = 0, string iconName = null, double graphicsGap = 0, dstring labelText = null, bool isCreateLayout = true)
     {
         this._iconName = iconName;
+        this._labelText = labelText;
+
+        this._graphicsGap = graphicsGap;
 
         if (isCreateLayout)
         {
@@ -62,24 +69,33 @@ class Labeled : Control
     {
         super.initialize;
 
-        if (_width == 0)
+        if (isCanEnableInsets)
         {
-            _width = theme.controlDefaultWidth;
+            enableInsets;
         }
 
-        if (_height == 0)
-        {
-            _height = theme.controlDefaultHeight;
-        }
-
-        if (isCreateTextFactory)
+        if (!textFactory && isCreateTextFactory)
         {
             textFactory = createTextFactory;
         }
 
-        if (isCreateIconFactory)
+        if (!iconFactory && isCreateIconFactory)
         {
             iconFactory = createIconFactory;
+        }
+    }
+
+    override void loadTheme()
+    {
+        super.loadTheme;
+        loadLabeledTheme;
+    }
+
+    void loadLabeledTheme()
+    {
+        if (isSetNullGapFromTheme && _graphicsGap == 0)
+        {
+            graphicsGap = theme.controlGraphicsGap;
         }
     }
 
@@ -248,6 +264,23 @@ class Labeled : Control
 
         //TODO check names
         _iconName = name;
+        return true;
+    }
+
+    double graphicsGap() => _graphicsGap;
+
+    bool graphicsGap(double value)
+    {
+        _graphicsGap = value;
+        if (layout)
+        {
+            import api.dm.kit.sprites.layouts.spaceable_layout : SpaceableLayout;
+
+            if (auto sl = cast(SpaceableLayout) layout)
+            {
+                sl.spacing = graphicsGap;
+            }
+        }
         return true;
     }
 

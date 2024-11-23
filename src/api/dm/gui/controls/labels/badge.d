@@ -14,7 +14,7 @@ class Badge : Labeled
 
     this(dstring text = "Badge", string iconName = null, double graphicsGap = 0, bool isCreateLayout = true)
     {
-        super(0, 0, iconName, graphicsGap, isCreateLayout);
+        super(0, 0, iconName, graphicsGap, text, isCreateLayout);
         _labelText = text;
 
         import api.dm.kit.sprites.layouts.managed_layout : ManagedLayout;

@@ -1,12 +1,12 @@
 module api.dm.gui.controls.buttons.button;
 
-import api.dm.gui.controls.buttons.button_base : ButtonBase;
+import api.dm.gui.controls.buttons.base_button : BaseButton;
 import api.dm.gui.events.action_event : ActionEvent;
 
 /**
  * Authors: initkfs
  */
-class Button : ButtonBase
+class Button : BaseButton
 {
     this(dstring text = "Button", string iconName)
     {
@@ -21,13 +21,14 @@ class Button : ButtonBase
 
     this(
         dstring text = "Button",
-        double width = defaultWidth,
-        double height = defaultHeight,
-        double graphicsGap = defaultGraphicsGap,
-        string iconName = null
+        double width = 0,
+        double height = 0,
+        double graphicsGap = 0,
+        string iconName = null,
     )
     {
-        super(text, width, height, graphicsGap, iconName);
+        super(text, width, height, graphicsGap, iconName, isCreateLayout:
+            true);
     }
 
 }

@@ -65,6 +65,10 @@ class ThemeFromConfigFactory : ApplicationUnit
             
             theme.controlDefaultWidth = config.getDouble("themeControlDefaultWidth").get;
             theme.controlDefaultHeight = config.getDouble("themeControlDefaultHeight").get;
+            theme.controlGraphicsGap = config.getDouble("themeControlGraphicsGap").get;
+
+            theme.buttonWidth = config.getDouble("themeButtonWidth").get;
+            theme.buttonHeight = config.getDouble("themeButtonHeight").get;
         }
 
         return theme;

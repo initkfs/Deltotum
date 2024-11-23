@@ -14,7 +14,7 @@ class BasePopup : Labeled
 
     this(dstring text = "Popup", string iconName = null, double graphicsGap = 0, bool isCreateLayout = true)
     {
-        super(0, 0, iconName, graphicsGap, isCreateLayout);
+        super(0, 0, iconName, graphicsGap, text, isCreateLayout);
         _labelText = text;
 
         isDrawByParent = false;

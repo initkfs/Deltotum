@@ -1,7 +1,7 @@
 module api.dm.kit.sprites.layouts.vlayout;
 
 import api.dm.kit.sprites.sprite : Sprite;
-import api.dm.kit.sprites.layouts.managed_layout : ManagedLayout;
+import api.dm.kit.sprites.layouts.spaceable_layout: SpaceableLayout;
 import api.math.alignment : Alignment;
 
 import Math = api.dm.math;
@@ -9,13 +9,11 @@ import Math = api.dm.math;
 /**
  * Authors: initkfs
  */
-class VLayout : ManagedLayout
+class VLayout : SpaceableLayout
 {
-    double spacing = 0;
-
     this(double spacing = 0) pure
     {
-        this.spacing = spacing;
+        super(spacing);
     }
 
     override bool alignChildren(Sprite root)
