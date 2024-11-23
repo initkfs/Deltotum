@@ -53,8 +53,8 @@ class Control : GuiComponent
     bool isFocusable;
     bool isDisabled;
 
-    bool isCreateBackgroundFactory = true;
     bool isCreateStyleFactory = true;
+    bool isCreateBackgroundFactory = true;
     bool isCreateHoverEffectFactory;
     bool isCreateHoverAnimationFactory;
     bool isCreateActionEffectFactory;
@@ -74,17 +74,24 @@ class Control : GuiComponent
     Tween delegate(Tween) onHoverAnimationCreate;
     void delegate(Tween) onHoverAnimationCreated;
 
+    void delegate() hoverEffectEnableBehaviour;
+    void delegate() hoverEffectDisableBehaviour;
+
     size_t hoverAnimationDelayMs;
 
     Sprite delegate() actionEffectFactory;
     Sprite delegate(Sprite) onActionEffectCreate;
     void delegate(Sprite) onActionEffectCreated;
 
+    void delegate() actionEffectBehaviour;
+
     size_t actionAnimationDelayMs;
 
     Tween delegate(Sprite) actionEffectAnimationFactory;
     Tween delegate(Tween) onActionEffectAnimationCreate;
     void delegate(Tween) onActionEffectAnimationCreated;
+
+    bool isCreateInteractiveListeners = true;
 
     void delegate() onPreControlContentCreated;
     void delegate() onPostControlContentCreated;
@@ -178,6 +185,70 @@ class Control : GuiComponent
         if (hoverAnimationDelayMs == 0)
         {
             hoverAnimationDelayMs = theme.hoverAnimationDelayMs;
+        }
+
+        if (!hoverEffectEnableBehaviour)
+        {
+            hoverEffectEnableBehaviour = () {
+                if (_hoverEffect && !_hoverEffect.isVisible)
+                {
+                    _hoverEffect.isVisible = true;
+
+                    if (_hoverEffectAnimation && !_hoverEffectAnimation.isRunning)
+                    {
+                        _hoverEffectAnimation.isReverse = false;
+                        //TODO from factory?
+                        _hoverEffect.opacity = 0;
+                        _hoverEffectAnimation.run;
+                    }
+                }
+            };
+        }
+
+        if (!hoverEffectDisableBehaviour)
+        {
+            hoverEffectDisableBehaviour = () {
+                if (_hoverEffect && _hoverEffect.isVisible)
+                {
+                    if (_hoverEffectAnimation)
+                    {
+                        if (_hoverEffectAnimation.isRunning && !_hoverEffectAnimation.isReverse)
+                        {
+                            _hoverEffectAnimation.stop;
+                        }
+
+                        if (!_hoverEffectAnimation.isRunning)
+                        {
+                            _hoverEffectAnimation.isReverse = true;
+                            _hoverEffectAnimation.run;
+                        }
+                    }
+                    else
+                    {
+                        _hoverEffect.isVisible = false;
+                    }
+                }
+            };
+        }
+
+        if (!actionEffectBehaviour)
+        {
+            actionEffectBehaviour = () {
+                if (_actionEffect)
+                {
+                    if (_actionEffectAnimation.isRunning)
+                    {
+                        _actionEffectAnimation.stop;
+                        _actionEffect.isVisible = false;
+                    }
+
+                    if (!_actionEffect.isVisible)
+                    {
+                        _actionEffect.isVisible = true;
+                        _actionEffectAnimation.run;
+                    }
+                }
+            };
         }
     }
 
@@ -502,7 +573,10 @@ class Control : GuiComponent
             onPostControlContentCreated();
         }
 
-        createInteractiveListeners;
+        if (isCreateInteractiveListeners)
+        {
+            createInteractiveListeners;
+        }
     }
 
     void createInteractiveListeners()
@@ -517,19 +591,10 @@ class Control : GuiComponent
                     return;
                 }
 
-                if (_hoverEffect && !_hoverEffect.isVisible)
+                if (hoverEffectEnableBehaviour)
                 {
-                    _hoverEffect.isVisible = true;
-
-                    if (_hoverEffectAnimation && !_hoverEffectAnimation.isRunning)
-                    {
-                        _hoverEffectAnimation.isReverse = false;
-                        //TODO from factory?
-                        _hoverEffect.opacity = 0;
-                        _hoverEffectAnimation.run;
-                    }
+                    hoverEffectEnableBehaviour();
                 }
-
             };
 
             onPointerExited ~= (ref e) {
@@ -538,28 +603,9 @@ class Control : GuiComponent
                 {
                     return;
                 }
-
-                if (_hoverEffect && _hoverEffect.isVisible)
+                if (hoverEffectDisableBehaviour)
                 {
-
-                    if (_hoverEffectAnimation)
-                    {
-                        if (_hoverEffectAnimation.isRunning && !_hoverEffectAnimation.isReverse)
-                        {
-                            _hoverEffectAnimation.stop;
-                        }
-
-                        if (!_hoverEffectAnimation.isRunning)
-                        {
-                            _hoverEffectAnimation.isReverse = true;
-                            _hoverEffectAnimation.run;
-                        }
-
-                    }
-                    else
-                    {
-                        _hoverEffect.isVisible = false;
-                    }
+                    hoverEffectDisableBehaviour();
                 }
             };
         }
@@ -571,19 +617,9 @@ class Control : GuiComponent
                 return;
             }
 
-            if (_actionEffect)
+            if (actionEffectBehaviour)
             {
-                if (_actionEffectAnimation.isRunning)
-                {
-                    _actionEffectAnimation.stop;
-                    _actionEffect.isVisible = false;
-                }
-
-                if (!_actionEffect.isVisible)
-                {
-                     _actionEffect.isVisible = true;
-                     _actionEffectAnimation.run;
-                }
+                actionEffectBehaviour();
             }
         };
 
