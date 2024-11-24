@@ -341,8 +341,12 @@ class Control : GuiComponent
                 newStyle = createStyle;
                 if (!newStyle.isNested)
                 {
-                    newStyle.lineColor = theme.colorHover;
-                    newStyle.fillColor = theme.colorHover;
+                    if (!newStyle.isDefault)
+                    {
+                        newStyle.lineColor = theme.colorHover;
+                        newStyle.fillColor = theme.colorHover;
+                    }
+
                     newStyle.isFill = true;
                 }
             }
@@ -396,8 +400,12 @@ class Control : GuiComponent
                 newStyle = createStyle;
                 if (!newStyle.isNested)
                 {
-                    newStyle.lineColor = theme.colorAccent;
-                    newStyle.fillColor = theme.colorAccent;
+                    if (!newStyle.isDefault)
+                    {
+                        newStyle.lineColor = theme.colorAccent;
+                        newStyle.fillColor = theme.colorAccent;
+                    }
+
                     newStyle.isFill = true;
                 }
             }
@@ -464,18 +472,22 @@ class Control : GuiComponent
                         break;
                     case success:
                         newStyle.lineColor = theme.colorSuccess;
+                        newStyle.fillColor = newStyle.lineColor;
+                        newStyle.isDefault = true;
                         break;
                     case warning:
                         newStyle.lineColor = theme.colorWarning;
+                        newStyle.fillColor = newStyle.lineColor;
+                        newStyle.isDefault = true;
                         break;
                     case danger:
                         newStyle.lineColor = theme.colorDanger;
+                        newStyle.fillColor = newStyle.lineColor;
+                        newStyle.isDefault = true;
                         break;
                     default:
                         break;
                 }
-
-                newStyle.fillColor = newStyle.lineColor;
             }
 
             newStyle.isFill = isBackground;
@@ -556,7 +568,8 @@ class Control : GuiComponent
             return true;
         }
 
-        if(_background){
+        if (_background)
+        {
             bool isRemoved = remove(_background);
             assert(isRemoved);
             _background = null;
@@ -820,7 +833,8 @@ class Control : GuiComponent
 
         icon.loadRaw(iconData.to!(const(void[])), cast(int) iconSize, cast(int) iconSize);
 
-        auto color = theme.colorAccent;
+        auto style = createStyle;
+        auto color = style.lineColor;
 
         icon.color = color;
         icon.create;
