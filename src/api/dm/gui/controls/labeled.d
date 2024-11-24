@@ -172,6 +172,10 @@ class Labeled : Control
             assert(isRemoved);
         }
 
+        if(_labelText.length == 0){
+            return;
+        }
+
         _text = textFactory();
         assert(_text);
         addCreate(_text);

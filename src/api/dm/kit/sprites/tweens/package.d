@@ -1,5 +1,7 @@
 module api.dm.kit.sprites.tweens;
-
+/**
+ * Authors: initkfs
+ */
 public:
 
 import api.dm.kit.sprites.tweens.curves.interpolator;

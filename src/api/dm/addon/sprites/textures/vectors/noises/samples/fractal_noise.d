@@ -69,9 +69,10 @@ class FractalNoise : Texture
         drawOnTexture;
     }
 
-    override void recreate()
+    override bool recreate()
     {
         drawOnTexture;
+        return true;
     }
 
     void drawOnTexture()

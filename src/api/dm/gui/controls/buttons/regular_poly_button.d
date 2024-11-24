@@ -42,10 +42,10 @@ class RegularPolyButton : BaseRoundedButton
     override void loadTheme()
     {
         loadLabeledTheme;
-        loadRhombusButtonTheme;
+        loadRegPolyButtonTheme;
     }
 
-    void loadRhombusButtonTheme()
+    void loadRegPolyButtonTheme()
     {
         if (_sides == 0)
         {
@@ -67,5 +67,11 @@ class RegularPolyButton : BaseRoundedButton
         auto size = Math.max(width, height);
 
         return theme.regularPolyShape(size, _sides, style);
+    }
+
+    size_t sides() => _sides;
+
+    void sides(size_t v){
+        _sides = v;
     }
 }

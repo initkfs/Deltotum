@@ -62,13 +62,6 @@ class Controls : Control
         createButtons(btnContainer);
         createWindows(btnContainer);
 
-        auto infoContainer = new HBox(5);
-        infoContainer.layout.isAlignY = true;
-        rootContainer.addCreate(infoContainer);
-        infoContainer.enableInsets;
-
-        createDialogs(infoContainer);
-
         auto selectionContainer = new HBox;
         selectionContainer.layout.isAlignY = true;
         rootContainer.addCreate(selectionContainer);
@@ -112,61 +105,109 @@ class Controls : Control
     void createButtons(Container root)
     {
         import api.dm.gui.controls.control : Control;
+        import api.dm.gui.containers.frame : Frame;
+
+        auto btnFrame = new Frame("Buttons");
+        root.addCreate(btnFrame);
+        btnFrame.isVGrow = true;
+
+        import api.dm.gui.containers.vbox : VBox;
+        import api.dm.gui.containers.hbox : HBox;
+
+        auto btnRoot2 = new VBox(5);
+        btnFrame.addCreate(btnRoot2);
+        btnRoot2.layout.isDecreaseRootWidth = true;
 
         auto btn1 = new Button("Button");
-        btn1.isBackground = true;
-        root.addCreate(btn1);
+        btnRoot2.addCreate(btn1);
+
+        import api.dm.gui.controls.buttons.parallelogram_button: ParallelogramButton;
+
+        auto btn2 = new ParallelogramButton("Button");
+        btn2.isBackground = true;
+        btnRoot2.addCreate(btn2);
+
+        auto btnRoot3 = new HBox(5);
+        btnFrame.addCreate(btnRoot3);
 
         import api.dm.gui.controls.buttons.round_button : RoundButton;
 
         auto circleBtn = new RoundButton("Button");
-        circleBtn.isBackground = true;
-        root.addCreate(circleBtn);
+        btnRoot3.addCreate(circleBtn);
 
         import api.dm.gui.controls.buttons.regular_poly_button : RegularPolyButton;
 
+        import api.dm.kit.sprites.tweens: PauseTween;
+
         auto regBtn = new RegularPolyButton("Button");
-        root.addCreate(regBtn);
+        btnRoot3.addCreate(regBtn);
+
+        auto recreateTween = new PauseTween(100);
+        regBtn.addCreate(recreateTween);
+
+        size_t sides = 3;
+
+        recreateTween.onStop ~= (){
+            regBtn.sides = sides;
+            regBtn.recreate;
+            sides++;
+        };
+
+        regBtn.onAction ~= (ref e) {
+            if(!recreateTween.isRunning){
+                recreateTween.run;
+            }
+        };
     }
 
     void createDialogs(Container root)
     {
-        auto btnInfo = new Button("Info");
-        root.addCreate(btnInfo);
-        btnInfo.onAction ~= (ref e) { interact.dialog.showInfo("Info!"); };
+        import api.dm.gui.containers.frame : Frame;
+        import api.dm.gui.containers.vbox : VBox;
 
-        auto btnError = new Button("Error");
-        root.addCreate(btnError);
-        btnError.onAction ~= (ref e) { interact.dialog.showError("Error!"); };
+        auto frame = new Frame("Dialogs");
+        frame.isVGrow = true;
+        root.addCreate(frame);
 
-        auto btnQuestion = new Button("Question");
-        root.addCreate(btnQuestion);
-        btnQuestion.onAction ~= (ref e) {
-            interact.dialog.showQuestion("Question?");
-        };
+        auto root1 = new VBox(5);
+        frame.addCreate(root1);
+        auto root2 = new HBox(5);
+        root1.addCreate(root2);
+        auto root3 = new HBox(5);
+        root1.addCreate(root3);
 
-        auto popBtn = new Button("PNotify");
-        root.addCreate(popBtn);
+        auto btnInfo = new Button("Info", (ref e) {
+            interact.dialog.showInfo("Info!");
+        });
+        root2.addCreate(btnInfo);
 
-        popBtn.onAction ~= (ref e) {
+        auto btnError = new Button("Error", (ref e) {
+            interact.dialog.showError("Error!");
+        });
+        root2.addCreate(btnError);
+
+        auto btnQuestion = new Button("Question", (ref e) {
+            interact.dialog.showQuestion("Question");
+        });
+        root2.addCreate(btnQuestion);
+
+        auto popBtn = new Button("Popup", (ref e) {
             import std.conv : to;
             import std.datetime;
 
             auto curt = Clock.currTime();
             interact.popup.notify("Popup: " ~ curt.toISOExtString.to!dstring);
-        };
+        });
+        root3.addCreate(popBtn);
 
-        auto popUrgBtn = new Button("PUrgent");
-        root.addCreate(popUrgBtn);
-
-        popUrgBtn.onAction ~= (ref e) {
+        auto popUrgBtn = new Button("Urgent", (ref e) {
             import std.conv : to;
             import std.datetime;
 
             auto curt = Clock.currTime();
             interact.popup.urgent("Popup: " ~ curt.toISOExtString.to!dstring);
-        };
-
+        });
+        root3.addCreate(popUrgBtn);
     }
 
     void createSelections(Container root)
@@ -272,7 +313,7 @@ class Controls : Control
 
         import api.dm.gui.controls.scrolls.hscroll : HScroll;
         import api.dm.gui.controls.scrolls.vscroll : VScroll;
-        import api.dm.gui.controls.scrolls.radial_scroll: RadialScroll;
+        import api.dm.gui.controls.scrolls.radial_scroll : RadialScroll;
 
         auto vScrollbar = new VScroll;
         root.addCreate(vScrollbar);
@@ -338,19 +379,19 @@ class Controls : Control
         // auto time1 = new TimePicker;
         // rootContainer.addCreate(time1);
 
-        import api.dm.gui.controls.paginations.pagination: Pagination;
-        import api.dm.gui.controls.texts.text: Text;
-        import api.dm.gui.containers.vbox: VBox;
+        import api.dm.gui.controls.paginations.pagination : Pagination;
+        import api.dm.gui.controls.texts.text : Text;
+        import api.dm.gui.containers.vbox : VBox;
 
-        import api.dm.gui.controls.carousels.carousel: Carousel;
+        import api.dm.gui.controls.carousels.carousel : Carousel;
 
         auto paginationRoot = new VBox(3);
         paginationRoot.layout.isAlignX = true;
         rootContainer.addCreate(paginationRoot);
 
-        import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon: VConvexPolygon;
-        import api.dm.kit.graphics.styles.graphic_style: GraphicStyle;
-        import api.dm.kit.graphics.colors.rgba: RGBA;
+        import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+        import api.dm.kit.graphics.colors.rgba : RGBA;
 
         auto image1 = new VConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.yellow));
         auto image2 = new VConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.green));
@@ -358,14 +399,13 @@ class Controls : Control
         auto image4 = new VConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.blue));
         auto image5 = new VConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.orange));
 
-        auto paginationContent = new Carousel([image1, image2, image3, image4, image5]);
+        auto paginationContent = new Carousel([
+            image1, image2, image3, image4, image5
+        ]);
         paginationRoot.addCreate(paginationContent);
 
         auto pagination = new Pagination;
-        pagination.pageFactory = (size_t pageIndex){
-            import std.conv: to;
-            
-        };
+        pagination.pageFactory = (size_t pageIndex) { import std.conv : to; };
         paginationRoot.addCreate(pagination);
 
         import api.dm.gui.controls.clocks.analog_clock : AnalogClock;
@@ -378,7 +418,7 @@ class Controls : Control
     {
         import api.dm.gui.controls.charts.lines.linear_chart : LinearChart;
 
-        auto linearChart = new LinearChart(200,200);
+        auto linearChart = new LinearChart(200, 200);
         root.addCreate(linearChart);
 
         import std.range : iota;
@@ -394,7 +434,8 @@ class Controls : Control
 
         linearChart.data(x, y);
 
-        import api.dm.gui.controls.charts.bars.bar_chart: BarChart, BarSet;
+        import api.dm.gui.controls.charts.bars.bar_chart : BarChart, BarSet;
+
         auto bar1 = new BarChart;
         root.addCreate(bar1);
 
@@ -405,13 +446,13 @@ class Controls : Control
 
         bar1.data = barSets;
 
-        import api.dm.gui.controls.charts.pies.pie_chart: PieChart, PieData;
+        import api.dm.gui.controls.charts.pies.pie_chart : PieChart, PieData;
 
         auto pie1 = new PieChart;
         root.addCreate(pie1);
 
         PieData[] data = [
-            {"Item1 10", 10 },
+            {"Item1 10", 10},
             {"Item2 20", 20},
             {"Item3 30", 30},
             {"Item4 40", 40}
@@ -425,71 +466,85 @@ class Controls : Control
         import api.dm.gui.controls.buttons.button : Button;
         import api.dm.gui.controls.checks.checkbox : CheckBox;
         import IconName = api.dm.gui.themes.icons.icon_name;
+        import api.dm.gui.containers.frame : Frame;
 
-        import api.dm.gui.controls.control : Control;
+        auto frame = new Frame("Windows");
+        frame.isVGrow = true;
+        root.addCreate(frame);
 
-        auto winMin = new Button("Minimize", IconName.arrow_down_outline);
-        root.addCreate(winMin);
-        winMin.onAction ~= (ref e) {
-            //TODO false,false 
+        import api.dm.gui.containers.vbox : VBox;
+        import api.dm.gui.containers.hbox : HBox;
+
+        auto winRoot1 = new VBox(5);
+        frame.addCreate(winRoot1);
+        winRoot1.layout.isDecreaseRootWidth = true;
+
+        auto winMin = new Button("Min", IconName.arrow_down_outline, (ref e) {
             logger.trace("Window is minimized before request: ", window.isMinimized);
             window.minimize;
             logger.trace("Window is minimized after request: ", window.isMinimized);
-        };
+        });
+        winRoot1.addCreate(winMin);
 
-        auto winMax = new Button("Maximize", IconName.arrow_up_outline);
-        root.addCreate(winMax);
-        winMax.layout.isFillFromStartToEnd = false;
-        winMax.onAction ~= (ref e) {
+        auto winMax = new Button("Max", IconName.arrow_up_outline, (ref e) {
             logger.trace("Window is maximized before request: ", window.isMaximized);
             window.maximize;
             logger.trace("Window is maximized after request: ", window.isMaximized);
-        };
+        });
+        winRoot1.addCreate(winMax);
+        winMax.layout.isFillFromStartToEnd = false;
+
+        auto winRoot2 = new HBox(5);
+        frame.addCreate(winRoot2);
 
         import api.dm.kit.sprites.layouts.vlayout : VLayout;
-        import api.dm.kit.graphics.styles.default_style: DefaultStyle;
+        import api.dm.kit.graphics.styles.default_style : DefaultStyle;
 
-        auto winRestore = new Button("Restore", IconName.push_outline);
+        auto winRestore = new Button("Restore", IconName.push_outline, (ref e) {
+            window.restore;
+        });
         winRestore.styleId = DefaultStyle.success;
         winRestore.layout = new VLayout(5);
         winRestore.layout.isAutoResizeAndAlignOne = true;
         winRestore.layout.isAlignX = true;
 
-        root.addCreate(winRestore);
-        winRestore.onAction ~= (ref e) { window.restore; };
+        winRoot2.addCreate(winRestore);
 
-        auto winFull = new Button("Fullscreen", IconName.expand_outline);
+        auto winFull = new Button("FullScreen", IconName.expand_outline, (ref e) {
+            auto oldValue = window.isFullScreen;
+            logger.trace("Window fullscreen before request: ", oldValue);
+            window.isFullScreen = !oldValue;
+            logger.trace("Window fullscreen after request: ", window.isFullScreen);
+        });
+
         winFull.styleId = DefaultStyle.danger;
         winFull.layout = new VLayout(5);
         winFull.layout.isAutoResizeAndAlignOne = true;
         winFull.layout.isAlignX = true;
         winFull.layout.isFillFromStartToEnd = false;
-        root.addCreate(winFull);
-        winFull.onAction ~= (ref e) {
-            auto oldValue = window.isFullScreen;
-            logger.trace("Window fullscreen before request: ", oldValue);
-            window.isFullScreen = !oldValue;
-            logger.trace("Window fullscreen after request: ", window.isFullScreen);
-        };
+        winRoot2.addCreate(winFull);
 
-        auto winDec = new Button("Decoration", IconName.image_outline);
-        winDec.styleId = DefaultStyle.warning;
-        root.addCreate(winDec);
-        winDec.onAction ~= (ref e) {
+        auto winRoot3 = new VBox(5);
+        frame.addCreate(winRoot3);
+        winRoot3.layout.isDecreaseRootWidth = true;
+
+        auto winDec = new Button(null, IconName.image_outline, (ref e) {
             auto oldValue = window.isDecorated;
             logger.trace("Window decorated before request: ", oldValue);
             window.isDecorated = !oldValue;
             logger.trace("Window fullscreen after request: ", window.isDecorated);
-        };
+        });
+        winDec.styleId = DefaultStyle.warning;
+        winRoot3.addCreate(winDec);
 
-        auto winResize = new Button("Resizable", IconName.resize_outline);
-        root.addCreate(winResize);
-        winResize.onAction ~= (ref e) {
+        auto winResize = new Button(null, IconName.resize_outline, (ref e) {
             auto oldValue = window.isResizable;
             logger.trace("Window resizable before request: ", oldValue);
             window.isResizable = !oldValue;
             logger.trace("Window resizable after request: ", window.isResizable);
-        };
+        });
+        winResize.styleId = DefaultStyle.warning;
+        winRoot3.addCreate(winResize);
     }
 
     private void createTexts(Container root)

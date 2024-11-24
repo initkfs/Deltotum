@@ -12,9 +12,6 @@ import api.dm.gui.controls.texts.text : Text;
 class Frame : Container
 {
     Text label;
-    Container container;
-
-    double vspacing = 0;
 
     private
     {
@@ -23,13 +20,15 @@ class Frame : Container
 
     this(dstring labelText = "Frame", double spacing = 5)
     {
-        import std.exception : enforce;
-        import std.conv : text;
-
         initText = labelText;
-        vspacing = spacing;
 
         isBorder = true;
+
+        import api.dm.kit.sprites.layouts.hlayout : HLayout;
+
+        layout = new HLayout(spacing);
+        layout.isAutoResize = true;
+        layout.isAlignY = true;
     }
 
     override void create()
@@ -41,76 +40,35 @@ class Frame : Container
         label = new Text(initText);
         label.isLayoutManaged = false;
         label.isFocusable = false;
-        label.isBorder = true;
+        label.isBackground = true;
+        label.isResizedByParent = false;
         addCreate(label);
 
-        label.x = x + 20;
+        label.enableInsets;
+
+        enableInsets;
+
+        label.updateRows(isForce : true);
+
+        //TODO label position;
+        if (padding.top < label.height)
+        {
+            padding.top = label.height;
+        }
+
+        invalidateListeners ~= (){
+            setLabelPos;
+        };
+
+    }
+
+    void setLabelPos()
+    {
+        if (!label)
+        {
+            return;
+        }
+        label.x = x;
         label.y = y - label.height / 2;
-
-        setFrameClipping;
-        // label.invalidateListeners ~= (){
-        //     setFrameClipping;
-        // };
-
-        auto mainContainer = new Container;
-        mainContainer.y = label.bounds.bottom + vspacing;
-        mainContainer.isLayoutManaged = false;
-        mainContainer.resize(width, height - label.height / 2 - vspacing);
-        addCreate(mainContainer);
-
-        container = mainContainer;
-    }
-
-    protected void setFrameClipping()
-    {
-        if (hasBackground && label)
-        {
-            import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
-            import api.core.utils.types : castSafe;
-
-            if (auto rp = background.get.castSafe!ConvexPolygon)
-            {
-                rp.topClip.start.x = label.x;
-                rp.topClip.end.x = label.bounds.right;
-            }
-        }
-    }
-
-    void addCreate(Control[] controls)
-    {
-        foreach (Control c; controls)
-        {
-            addCreate(c);
-        }
-    }
-
-    override void addCreate(Control control, long index = -1)
-    {
-        if (!container)
-        {
-            super.addCreate(control, index);
-            return;
-        }
-
-        container.addCreate(control, index);
-    }
-
-    override void addCreate(Sprite[] sprites)
-    {
-        foreach (s; sprites)
-        {
-            addCreate(s);
-        }
-    }
-
-    override void addCreate(Sprite sprite, long index = -1)
-    {
-        if (!container)
-        {
-            super.addCreate(sprite, index);
-            return;
-        }
-
-        container.addCreate(sprite, index);
     }
 }

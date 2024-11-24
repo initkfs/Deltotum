@@ -250,18 +250,18 @@ class VectorTexture : Texture
         texturePixels[0 .. endBuff] = surfPixels[0 .. endBuff];
     }
 
-    override void recreate()
+    override bool recreate()
     {
         if (!isMutable)
         {
             createStaticTexture;
-            return;
+            return true;
         }
 
         if (!texture)
         {
             createMutTexture;
-            return;
+            return true;
         }
 
         int w, h;
@@ -274,7 +274,7 @@ class VectorTexture : Texture
         if (newWidth != w || newHeight != h)
         {
             createMutTexture;
-            return;
+            return true;
         }
 
         _gContext.clear(RGBA.transparent);
@@ -284,11 +284,13 @@ class VectorTexture : Texture
         {
             if (!onSurfaceIsContinue(comSurface))
             {
-                return;
+                return false;
             }
         }
 
         loadMutTexture;
+
+        return true;
     }
 
     override GraphicsContext newGraphicsContext()

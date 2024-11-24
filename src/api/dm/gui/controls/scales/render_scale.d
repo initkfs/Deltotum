@@ -89,10 +89,11 @@ class RenderScale : Control
         }
     }
 
-    override void recreate()
+    override bool recreate()
     {
         super.recreate;
         createLabelPool;
+        return true;
     }
 
     void rescaleMax(double value, bool isRecreate = true)

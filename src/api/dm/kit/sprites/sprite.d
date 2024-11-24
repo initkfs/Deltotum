@@ -622,9 +622,9 @@ class Sprite : EventKitTarget
         return redraw;
     }
 
-    void recreate()
+    bool recreate()
     {
-
+        return true;
     }
 
     import api.dm.kit.components.graphics_component : GraphicsComponent;
@@ -1966,7 +1966,7 @@ class Sprite : EventKitTarget
         
     }
 
-    Insets padding()
+    ref Insets padding()
     {
         return _padding;
     }

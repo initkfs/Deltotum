@@ -299,9 +299,10 @@ class Texture : Sprite
         return isResized;
     }
 
-    override void recreate()
+    override bool recreate()
     {
         create;
+        return true;
     }
 
     Texture copy()

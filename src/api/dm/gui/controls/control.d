@@ -528,6 +528,77 @@ class Control : GuiComponent
 
         tryCreateBackground(width, height);
 
+        createInteractiveEffects;
+
+        if (onPostControlContentCreated)
+        {
+            onPostControlContentCreated();
+        }
+
+        if (isCreateInteractiveListeners)
+        {
+            createInteractiveListeners;
+        }
+    }
+
+    override bool recreate()
+    {
+
+        const isSuperRecreated = super.recreate;
+        if (!isSuperRecreated)
+        {
+            return isSuperRecreated;
+        }
+
+        if (!isCreated)
+        {
+            create;
+            return true;
+        }
+
+        if(_background){
+            bool isRemoved = remove(_background);
+            assert(isRemoved);
+            _background = null;
+        }
+
+        tryCreateBackground(width, height);
+
+        if (_hoverEffect)
+        {
+            bool isRemoved = remove(_hoverEffect);
+            assert(isRemoved);
+            _hoverEffect = null;
+        }
+
+        if (_hoverEffectAnimation)
+        {
+            bool isRemoved = remove(_hoverEffectAnimation);
+            assert(isRemoved);
+            _hoverEffectAnimation = null;
+        }
+
+        if (_actionEffect)
+        {
+            bool isRemoved = remove(_actionEffect);
+            assert(isRemoved);
+            _actionEffect = null;
+        }
+
+        if (_actionEffectAnimation)
+        {
+            bool isRemoved = remove(_actionEffectAnimation);
+            assert(isRemoved);
+            _actionEffectAnimation = null;
+        }
+
+        createInteractiveEffects;
+
+        return true;
+    }
+
+    void createInteractiveEffects()
+    {
         if (hoverEffectFactory)
         {
             auto newHover = hoverEffectFactory(width, height);
@@ -592,16 +663,6 @@ class Control : GuiComponent
             {
                 onActionEffectAnimationCreated(_actionEffectAnimation);
             }
-        }
-
-        if (onPostControlContentCreated)
-        {
-            onPostControlContentCreated();
-        }
-
-        if (isCreateInteractiveListeners)
-        {
-            createInteractiveListeners;
         }
     }
 

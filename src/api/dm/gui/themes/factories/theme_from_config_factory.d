@@ -72,6 +72,7 @@ class ThemeFromConfigFactory : ApplicationUnit
             theme.roundShapeDiameter = config.getDouble("themeRoundShapeDiameter").get;
             theme.regularPolyDiameter = config.getDouble("themeRegularPolyDiameter").get;
             theme.regularPolySides = config.getLong("themeRegularPolySides").get;
+            theme.parallelogramShapeAngleDeg = config.getLong("themeParallelogramShapeAngleDeg").get;
         }
 
         return theme;

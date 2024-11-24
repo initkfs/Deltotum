@@ -14,6 +14,12 @@ class Button : BaseButton
         super(text, iconName);
     }
 
+    this(dstring text = defaultButtonText, string iconName, void delegate(ref ActionEvent) onAction)
+    {
+        this(text, iconName);
+        this.onAction ~= onAction;
+    }
+
     this(dstring text, void delegate(ref ActionEvent) onAction)
     {
         super(text, onAction);

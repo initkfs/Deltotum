@@ -61,6 +61,7 @@ class Theme
     double roundShapeDiameter = 20;
     double regularPolyDiameter = 80;
     size_t regularPolySides = 8;
+    double parallelogramShapeAngleDeg = 15;
 
     bool isUseVectorGraphics;
 
