@@ -148,6 +148,7 @@ class Controls : Control
         recreateTween.onStop ~= (){
             regBtn.sides = sides;
             regBtn.recreate;
+            regBtn.recreateContent;
             sides++;
         };
 

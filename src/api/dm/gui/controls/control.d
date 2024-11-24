@@ -568,6 +568,11 @@ class Control : GuiComponent
             return true;
         }
 
+        return true;
+    }
+
+    void recreateContent()
+    {
         if (_background)
         {
             bool isRemoved = remove(_background);
@@ -606,8 +611,6 @@ class Control : GuiComponent
         }
 
         createInteractiveEffects;
-
-        return true;
     }
 
     void createInteractiveEffects()
