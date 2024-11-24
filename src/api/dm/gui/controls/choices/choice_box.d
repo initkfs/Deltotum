@@ -34,7 +34,7 @@ class ChoiceItem : Control
         label.isHGrow = true;
         addCreate(label);
 
-        label.onAction = (ref e) {
+        label.onAction ~= (ref e) {
             if (onChoice)
             {
                 onChoice();
@@ -91,7 +91,7 @@ class ChoiceBox : TypedContainer!ChoiceItem
             prevNextContainer.setGrow;
 
             auto prevButton = new Button("▲", 10, 10);
-            prevButton.onAction = (ref e) {
+            prevButton.onAction ~= (ref e) {
                 selectPrev;
                 if (choiceList.isVisible)
                 {
@@ -102,7 +102,7 @@ class ChoiceBox : TypedContainer!ChoiceItem
             prevButton.setGrow;
 
             auto nextButton = new Button("▼", 10, 10);
-            nextButton.onAction = (ref e) {
+            nextButton.onAction ~= (ref e) {
                 selectNext;
                 if (choiceList.isVisible)
                 {
@@ -129,7 +129,7 @@ class ChoiceBox : TypedContainer!ChoiceItem
         button.setGrow;
         addCreate(button);
 
-        button.onAction = (ref e) { toggleChoiceList; };
+        button.onAction ~= (ref e) { toggleChoiceList; };
 
         choiceList = new VBox(2);
         choiceList.id = "choice_box_list";

@@ -133,22 +133,22 @@ class Controls : Control
     {
         auto btnInfo = new Button("Info");
         root.addCreate(btnInfo);
-        btnInfo.onAction = (ref e) { interact.dialog.showInfo("Info!"); };
+        btnInfo.onAction ~= (ref e) { interact.dialog.showInfo("Info!"); };
 
         auto btnError = new Button("Error");
         root.addCreate(btnError);
-        btnError.onAction = (ref e) { interact.dialog.showError("Error!"); };
+        btnError.onAction ~= (ref e) { interact.dialog.showError("Error!"); };
 
         auto btnQuestion = new Button("Question");
         root.addCreate(btnQuestion);
-        btnQuestion.onAction = (ref e) {
+        btnQuestion.onAction ~= (ref e) {
             interact.dialog.showQuestion("Question?");
         };
 
         auto popBtn = new Button("PNotify");
         root.addCreate(popBtn);
 
-        popBtn.onAction = (ref e) {
+        popBtn.onAction ~= (ref e) {
             import std.conv : to;
             import std.datetime;
 
@@ -159,7 +159,7 @@ class Controls : Control
         auto popUrgBtn = new Button("PUrgent");
         root.addCreate(popUrgBtn);
 
-        popUrgBtn.onAction = (ref e) {
+        popUrgBtn.onAction ~= (ref e) {
             import std.conv : to;
             import std.datetime;
 
@@ -430,7 +430,7 @@ class Controls : Control
 
         auto winMin = new Button("Minimize", IconName.arrow_down_outline);
         root.addCreate(winMin);
-        winMin.onAction = (ref e) {
+        winMin.onAction ~= (ref e) {
             //TODO false,false 
             logger.trace("Window is minimized before request: ", window.isMinimized);
             window.minimize;
@@ -440,7 +440,7 @@ class Controls : Control
         auto winMax = new Button("Maximize", IconName.arrow_up_outline);
         root.addCreate(winMax);
         winMax.layout.isFillFromStartToEnd = false;
-        winMax.onAction = (ref e) {
+        winMax.onAction ~= (ref e) {
             logger.trace("Window is maximized before request: ", window.isMaximized);
             window.maximize;
             logger.trace("Window is maximized after request: ", window.isMaximized);
@@ -456,7 +456,7 @@ class Controls : Control
         winRestore.layout.isAlignX = true;
 
         root.addCreate(winRestore);
-        winRestore.onAction = (ref e) { window.restore; };
+        winRestore.onAction ~= (ref e) { window.restore; };
 
         auto winFull = new Button("Fullscreen", IconName.expand_outline);
         winFull.styleId = DefaultStyle.danger;
@@ -465,7 +465,7 @@ class Controls : Control
         winFull.layout.isAlignX = true;
         winFull.layout.isFillFromStartToEnd = false;
         root.addCreate(winFull);
-        winFull.onAction = (ref e) {
+        winFull.onAction ~= (ref e) {
             auto oldValue = window.isFullScreen;
             logger.trace("Window fullscreen before request: ", oldValue);
             window.isFullScreen = !oldValue;
@@ -475,7 +475,7 @@ class Controls : Control
         auto winDec = new Button("Decoration", IconName.image_outline);
         winDec.styleId = DefaultStyle.warning;
         root.addCreate(winDec);
-        winDec.onAction = (ref e) {
+        winDec.onAction ~= (ref e) {
             auto oldValue = window.isDecorated;
             logger.trace("Window decorated before request: ", oldValue);
             window.isDecorated = !oldValue;
@@ -484,7 +484,7 @@ class Controls : Control
 
         auto winResize = new Button("Resizable", IconName.resize_outline);
         root.addCreate(winResize);
-        winResize.onAction = (ref e) {
+        winResize.onAction ~= (ref e) {
             auto oldValue = window.isResizable;
             logger.trace("Window resizable before request: ", oldValue);
             window.isResizable = !oldValue;

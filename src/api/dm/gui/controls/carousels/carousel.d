@@ -101,7 +101,7 @@ class Carousel : Control
         Button prevButton = new Button("<");
         addCreate(prevButton);
 
-        prevButton.onAction = (ref e) {
+        prevButton.onAction ~= (ref e) {
             direction = CarouselDirection.fromLeft;
             showNextItem;
         };
@@ -153,7 +153,7 @@ class Carousel : Control
         Button nextButton = new Button(">");
         addCreate(nextButton);
 
-        nextButton.onAction = (ref e) {
+        nextButton.onAction ~= (ref e) {
             direction = CarouselDirection.fromRight;
             showNextItem;
         };

@@ -59,7 +59,7 @@ class Pagination : Control
         Button prevButton = createPageButton("<");
         pageIndexContainer.addCreate(prevButton);
 
-        prevButton.onAction = (ref e) {
+        prevButton.onAction ~= (ref e) {
             if (currPageIndex == 0)
             {
                 return;
@@ -70,7 +70,7 @@ class Pagination : Control
 
         firstPage = createPageButton("1");
         pageIndexContainer.addCreate(firstPage);
-        firstPage.onAction = (ref e) { setFirstPage; };
+        firstPage.onAction ~= (ref e) { setFirstPage; };
 
         immutable dstring skipPlacelolder = ".";
 
@@ -84,7 +84,7 @@ class Pagination : Control
             activePages ~= activePage;
             pageIndexContainer.addCreate(activePage);
 
-            activePage.onAction = (ref e) {
+            activePage.onAction ~= (ref e) {
                 auto pi = i + activePagesFirstIndex;
                 assert(pageIndex(pi));
             };
@@ -95,12 +95,12 @@ class Pagination : Control
 
         endPage = createPageButton(numPages.to!dstring);
         pageIndexContainer.addCreate(endPage);
-        endPage.onAction = (ref e) { setLastPage; };
+        endPage.onAction ~= (ref e) { setLastPage; };
 
         Button nextButton = createPageButton(">");
         pageIndexContainer.addCreate(nextButton);
 
-        nextButton.onAction = (ref e) {
+        nextButton.onAction ~= (ref e) {
             auto newIndex = currPageIndex + 1;
             if (newIndex >= numPages)
             {

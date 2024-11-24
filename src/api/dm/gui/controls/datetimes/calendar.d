@@ -257,7 +257,7 @@ class Calendar : Control
         const prevNextButtonSize = 20;
 
         Button prevMonth = new Button("◀", prevNextButtonSize, prevNextButtonSize);
-        prevMonth.onAction = (ref e) {
+        prevMonth.onAction ~= (ref e) {
             currentDate.month = onNewMonth((Month month) {
                 if (month <= Month.min)
                 {
@@ -273,7 +273,7 @@ class Calendar : Control
         monthLabel.isFocusable = false;
 
         Button nextMonth = new Button("▶", prevNextButtonSize, prevNextButtonSize);
-        nextMonth.onAction = (ref e) {
+        nextMonth.onAction ~= (ref e) {
             currentDate.month = onNewMonth((Month month) {
                 auto newMonthNum = (cast(int) month) + 1;
                 if (newMonthNum >= Month.max)
@@ -287,7 +287,7 @@ class Calendar : Control
         };
 
         Button prevYear = new Button("◀", prevNextButtonSize, prevNextButtonSize);
-        prevYear.onAction = (ref e) { decYear; load; };
+        prevYear.onAction ~= (ref e) { decYear; load; };
 
         yearLabel = new Text(year.to!dstring);
         yearLabel.isEditable = true;
@@ -311,7 +311,7 @@ class Calendar : Control
         };
 
         Button nextYear = new Button("▶", prevNextButtonSize, prevNextButtonSize);
-        nextYear.onAction = (ref e) { incYear; load; };
+        nextYear.onAction ~= (ref e) { incYear; load; };
 
         dateChangeContainer.addCreate([
             prevMonth, monthLabel, nextMonth, prevYear, yearLabel, nextYear
@@ -430,10 +430,10 @@ class Calendar : Control
         btnContainer.enableInsets;
 
         todayButton = new Button(i18n.getMessage(KitI18nKeys.dateToday, "Today"));
-        todayButton.onAction = (ref e) { loadToday; };
+        todayButton.onAction ~= (ref e) { loadToday; };
 
         resetButton = new Button(i18n.getMessage(KitI18nKeys.uiReset, "Reset"));
-        resetButton.onAction = (ref e) { reset; load; };
+        resetButton.onAction ~= (ref e) { reset; load; };
 
         btnContainer.addCreate([todayButton, resetButton]);
 

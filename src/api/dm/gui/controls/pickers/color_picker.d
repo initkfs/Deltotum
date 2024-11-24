@@ -56,7 +56,7 @@ class ColorPicker : Control
         colorShowChooser.setGrow;
         addCreate(colorShowChooser);
 
-        colorShowChooser.onAction = (ref e) { toggleChooser; };
+        colorShowChooser.onAction ~= (ref e) { toggleChooser; };
 
         colorChooser = new VBox(0);
         colorChooser.isLayoutManaged = false;

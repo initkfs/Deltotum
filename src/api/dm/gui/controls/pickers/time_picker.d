@@ -510,10 +510,10 @@ class TimePicker : Control
         //TODO best size?
         enum size = 15;
         auto up = new Button("▲", 5, 5);
-        up.onAction = (ref e) { onUp(); };
+        up.onAction ~= (ref e) { onUp(); };
         up.height = size;
         auto down = new Button("▼", 5, 5);
-        down.onAction = (ref e) { onDown(); };
+        down.onAction ~= (ref e) { onDown(); };
         down.height = size;
         label.invalidateListeners ~= () {
             if (label.width <= 0 || label.height <= 0)

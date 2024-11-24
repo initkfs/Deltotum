@@ -55,7 +55,7 @@ class Layouts : Control
     Button createButtonInc10()
     {
         auto button = createButton("w+=10");
-        button.onAction = (ref e){
+        button.onAction ~= (ref e){
             button.width = button.width + 10;
         };
         return button;
@@ -64,7 +64,7 @@ class Layouts : Control
     Button createButtonDec10()
     {
         auto button = createButton("w-=10");
-        button.onAction = (ref e){
+        button.onAction ~= (ref e){
             button.width = button.width - 10;
         };
         return button;

@@ -30,8 +30,7 @@ enum ButtonType
 class BaseButton : Labeled
 {
     enum defaultButtonText = "Button";
-    //The listener is used very often and the array can affect performance
-    void delegate(ref ActionEvent) onAction;
+    void delegate(ref ActionEvent)[] onAction;
 
     bool isCancel;
     void delegate()[] onCancel;
@@ -47,7 +46,7 @@ class BaseButton : Labeled
     this(dstring text, void delegate(ref ActionEvent) onAction, bool isCreateLayout = true)
     {
         this(text, 0, 0, 0, null, isCreateLayout);
-        this.onAction = onAction;
+        this.onAction ~= onAction;
     }
 
     this(
@@ -99,10 +98,17 @@ class BaseButton : Labeled
                 return;
             }
 
-            if (onAction)
+            if (onAction.length > 0)
             {
                 auto ea = ActionEvent(e.ownerId, e.x, e.y, e.button);
-                onAction(ea);
+                foreach (dg; onAction)
+                {
+                    dg(ea);
+                    if (ea.isConsumed)
+                    {
+                        break;
+                    }
+                }
             }
         };
 
@@ -118,12 +124,9 @@ class BaseButton : Labeled
 
                 if (isFocus && e.keyName == ComKeyName.ESCAPE)
                 {
-                    if (onCancel)
+                    foreach (dg; onCancel)
                     {
-                        foreach (dg; onCancel)
-                        {
-                            dg();
-                        }
+                        dg();
                     }
                 }
             };

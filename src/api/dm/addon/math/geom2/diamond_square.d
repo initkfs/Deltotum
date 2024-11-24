@@ -539,7 +539,7 @@ class DiamondSquareGenerator : Control
 
         auto genBtn = new Button("Generate");
         fieldRoot.addCreate(genBtn);
-        genBtn.onAction = (ref e) { generate; };
+        genBtn.onAction ~= (ref e) { generate; };
     }
 
     void generate()

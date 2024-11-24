@@ -24,7 +24,7 @@ class BaseRoundedButton : BaseButton
     this(dstring text, void delegate(ref ActionEvent) onAction)
     {
         this(text, 0, 0, null);
-        this.onAction = onAction;
+        this.onAction ~= onAction;
     }
 
     this(

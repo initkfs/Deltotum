@@ -162,12 +162,12 @@ class SceneView : VBox
         tb.text = "";
 
         auto fillStruct = new Button("");
-        fillStruct.onAction = (ref e) { fillStructure; };
+        fillStruct.onAction ~= (ref e) { fillStructure; };
         btnContainer.addCreate(fillStruct);
         fillStruct.addCreateIcon(IconNames.enter_outline);
 
         auto fillScene = new Button("Scene");
-        fillScene.onAction = (ref e) { fillFullScene; };
+        fillScene.onAction ~= (ref e) { fillFullScene; };
         btnContainer.addCreate(fillScene);
 
         controlStructure = new TreeListView!Sprite;
@@ -369,7 +369,7 @@ class SceneView : VBox
         }
 
         auto invalidBtn = new Button("");
-        invalidBtn.onAction = (ref e) {
+        invalidBtn.onAction ~= (ref e) {
             if (objectOnDebug)
             {
                 objectOnDebug.setInvalid;
@@ -379,7 +379,7 @@ class SceneView : VBox
         invalidBtn.addCreateIcon(IconNames.copy_outline);
 
         auto updateBtn = new Button("Update");
-        updateBtn.onAction = (ref e) {
+        updateBtn.onAction ~= (ref e) {
             if (objectOnDebug)
             {
                 fillDebugInfo(objectOnDebug);

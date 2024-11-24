@@ -178,7 +178,7 @@ class GuiDialog : Container
             onButtonCreate(buttonOk);
         }
 
-        buttonOk.onAction = (ref e) {
+        buttonOk.onAction ~= (ref e) {
             if (onAction)
             {
                 onAction();
