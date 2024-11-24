@@ -16,14 +16,19 @@ class ParallelogramButton : BaseButton
 
     this(dstring text = defaultButtonText, double angleDeg = 0)
     {
-        super(text);
-        this.angleDeg = angleDeg;
+        this(text, 0, 0, 0, iconName, angleDeg);
+    }
+
+    this(dstring text = defaultButtonText, string iconName, void delegate(ref ActionEvent) onAction, double angleDeg = 0)
+    {
+        this(text, 0, 0, 0, iconName, angleDeg);
+        this.onAction ~= onAction;
     }
 
     this(dstring text, void delegate(ref ActionEvent) onAction, double angleDeg = 0)
     {
-        super(text, onAction);
-        this.angleDeg = angleDeg;
+        this(text, 0, 0, 0, null, angleDeg);
+        this.onAction ~= onAction;
     }
 
     this(

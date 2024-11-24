@@ -121,9 +121,7 @@ class Controls : Control
         auto btn1 = new Button("Button");
         btnRoot2.addCreate(btn1);
 
-        import api.dm.gui.controls.buttons.parallelogram_button: ParallelogramButton;
-
-        auto btn2 = new ParallelogramButton("Button");
+        auto btn2 = new Button("Button");
         btn2.isBackground = true;
         btnRoot2.addCreate(btn2);
 
@@ -464,6 +462,7 @@ class Controls : Control
     private void createWindows(Container root)
     {
         import api.dm.gui.controls.buttons.button : Button;
+        import api.dm.gui.controls.buttons.parallelogram_button: ParallelogramButton;
         import api.dm.gui.controls.checks.checkbox : CheckBox;
         import IconName = api.dm.gui.themes.icons.icon_name;
         import api.dm.gui.containers.frame : Frame;
@@ -479,14 +478,14 @@ class Controls : Control
         frame.addCreate(winRoot1);
         winRoot1.layout.isDecreaseRootWidth = true;
 
-        auto winMin = new Button("Min", IconName.arrow_down_outline, (ref e) {
+        auto winMin = new ParallelogramButton("Min", IconName.arrow_down_outline, (ref e) {
             logger.trace("Window is minimized before request: ", window.isMinimized);
             window.minimize;
             logger.trace("Window is minimized after request: ", window.isMinimized);
         });
         winRoot1.addCreate(winMin);
 
-        auto winMax = new Button("Max", IconName.arrow_up_outline, (ref e) {
+        auto winMax = new ParallelogramButton("Max", IconName.arrow_up_outline, (ref e) {
             logger.trace("Window is maximized before request: ", window.isMaximized);
             window.maximize;
             logger.trace("Window is maximized after request: ", window.isMaximized);
@@ -528,7 +527,7 @@ class Controls : Control
         frame.addCreate(winRoot3);
         winRoot3.layout.isDecreaseRootWidth = true;
 
-        auto winDec = new Button(null, IconName.image_outline, (ref e) {
+        auto winDec = new ParallelogramButton(null, IconName.image_outline, (ref e) {
             auto oldValue = window.isDecorated;
             logger.trace("Window decorated before request: ", oldValue);
             window.isDecorated = !oldValue;
@@ -537,7 +536,7 @@ class Controls : Control
         winDec.styleId = DefaultStyle.warning;
         winRoot3.addCreate(winDec);
 
-        auto winResize = new Button(null, IconName.resize_outline, (ref e) {
+        auto winResize = new ParallelogramButton(null, IconName.resize_outline, (ref e) {
             auto oldValue = window.isResizable;
             logger.trace("Window resizable before request: ", oldValue);
             window.isResizable = !oldValue;
