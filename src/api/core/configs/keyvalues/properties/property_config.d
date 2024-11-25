@@ -139,7 +139,7 @@ class PropertyConfig : Config
         return true;
     }
 
-    override bool containsKey(string key) const
+    override bool hasKey(string key) const
     {
         return (key in keyIndex) !is null;
     }
@@ -438,10 +438,10 @@ value4=true";
 
     assert(config.toString == configText, text("==>", toStringResult, "<=="));
 
-    assert(config.containsKey("value1"));
-    assert(config.containsKey("value2"));
-    assert(config.containsKey("value3"));
-    assert(config.containsKey("value4"));
+    assert(config.hasKey("value1"));
+    assert(config.hasKey("value2"));
+    assert(config.hasKey("value3"));
+    assert(config.hasKey("value4"));
 
     auto val1 = config.getLong("value1");
     assert(!val1.isNull);
@@ -475,7 +475,7 @@ value4=true";
     assert(bV4 == false);
 
     immutable immConfig = config.idup;
-    assert(immConfig.containsKey("value1"));
+    assert(immConfig.hasKey("value1"));
 
     auto immVal1 = config.getLong("value1");
     assert(!immVal1.isNull);

@@ -52,7 +52,7 @@ class Text : Control
     int spaceWidth = 5;
     int rowHeight = 0;
 
-    RGBA _color = RGBA.white;
+    RGBA _color;
     FontSize fontSize = FontSize.medium;
 
     Sprite focusEffect;
@@ -100,6 +100,8 @@ class Text : Control
     override void initialize()
     {
         super.initialize;
+
+        loadTheme;
 
         invalidateListeners ~= () { updateRows; };
 
@@ -298,6 +300,20 @@ class Text : Control
         }
     }
 
+    override void loadTheme()
+    {
+        super.loadTheme;
+        loadTextTheme;
+    }
+
+    void loadTextTheme()
+    {
+        if (_color == RGBA.init)
+        {
+            _color = theme.colorText;
+        }
+    }
+
     override void create()
     {
         super.create;
@@ -305,8 +321,6 @@ class Text : Control
         import api.math.insets : Insets;
 
         padding = Insets(0);
-
-        _color = theme.colorText;
 
         setColorTexture;
 

@@ -100,11 +100,11 @@ class ConfigAggregator : Config
         return _configs.length;
     }
 
-    override bool containsKey(string key) const
+    override bool hasKey(string key) const
     {
         foreach (config; _configs)
         {
-            if (config.containsKey(key))
+            if (config.hasKey(key))
             {
                 return true;
             }
@@ -116,7 +116,7 @@ class ConfigAggregator : Config
     {
         foreach (config; _configs)
         {
-            if (config.containsKey(key))
+            if (config.hasKey(key))
             {
                 return config;
             }
@@ -297,7 +297,7 @@ unittest
     enum keyName = "key";
 
     immutable ca = new immutable ConfigAggregator([]);
-    assert(!ca.containsKey(keyName));
+    assert(!ca.hasKey(keyName));
     assertThrown(ca.getNotEmptyString(keyName));
 
     auto cMut = new ConfigAggregator([]);

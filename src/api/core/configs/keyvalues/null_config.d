@@ -25,7 +25,7 @@ class NullConfig : Config
         return false;
     }
 
-    override bool containsKey(const string key) const
+    override bool hasKey(const string key) const
     {
         return false;
     }
@@ -130,7 +130,7 @@ unittest
     assert(!nc.load);
     assert(!nc.save);
     assert(!nc.clear);
-    assert(!nc.containsKey(key));
+    assert(!nc.hasKey(key));
 
     assert(nc.getBool(key).isNull);
     assert(!nc.setBool(key, true));

@@ -45,7 +45,7 @@ class AAConstConfig(V = string) : Config
         return false;
     }
 
-    override bool containsKey(string key) const
+    override bool hasKey(string key) const
     {
         return containsPtr(key) !is null;
     }

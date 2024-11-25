@@ -230,7 +230,7 @@ class Window : GraphicsComponent
         //TODO check in scenes
         import ConfigKeys = api.dm.kit.kit_config_keys;
 
-        if (config.containsKey(ConfigKeys.sceneNameCurrent))
+        if (config.hasKey(ConfigKeys.sceneNameCurrent))
         {
             const sceneName = config.getNotEmptyString(ConfigKeys.sceneNameCurrent);
             if (!sceneName.isNull && changeByName(sceneName.get))

@@ -156,10 +156,10 @@ class BaseButton : Labeled
     override void addCreateIcon(string iconName)
     {
         super.addCreateIcon(iconName);
-        if (_text && _text.text.length == 0)
+        if (_label && _label.text.length == 0)
         {
-            _text.isLayoutManaged = false;
-            _text.isVisible = false;
+            _label.isLayoutManaged = false;
+            _label.isVisible = false;
         }
         setInvalid;
     }

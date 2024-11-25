@@ -20,7 +20,7 @@ abstract class Config
         bool clear();
         string toText() const;
 
-        bool containsKey(const string key) const;
+        bool hasKey(const string key) const;
 
         Nullable!bool getBool(string key) const;
         bool setBool(string key, bool value);

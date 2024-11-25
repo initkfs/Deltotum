@@ -16,7 +16,7 @@ class Labeled : Control
     protected
     {
         Sprite _icon;
-        Text _text;
+        Text _label;
 
         string _iconName;
         dstring _labelText;
@@ -165,20 +165,21 @@ class Labeled : Control
 
     protected void createLabelText()
     {
-        if (_text)
+        if (_label)
         {
-            bool isRemoved = remove(_text, isDestroy:
+            bool isRemoved = remove(_label, isDestroy:
                 true);
             assert(isRemoved);
         }
 
-        if(_labelText.length == 0){
+        if (_labelText.length == 0)
+        {
             return;
         }
 
-        _text = textFactory();
-        assert(_text);
-        addCreate(_text);
+        _label = textFactory();
+        assert(_label);
+        addCreate(_label);
     }
 
     Sprite delegate() createIconFactory()
@@ -195,7 +196,13 @@ class Labeled : Control
     {
         return () {
             auto text = new Text();
-            build(text);
+            buildInit(text);
+
+            auto style = createStyle;
+            if(style.isDefault){
+                text.color = style.lineColor;
+                text.setInvalid;
+            }
             //String can be forced to be empty
             //if (_labelText.length > 0)
             //{
@@ -227,28 +234,40 @@ class Labeled : Control
             newText = s;
         }
 
-        if (!_text)
+        if (!_label)
         {
             _labelText = newText;
             setInvalid;
             return true;
         }
 
-        _text.text = newText;
-        if (!_text.isLayoutManaged)
+        _label.text = newText;
+        if (!_label.isLayoutManaged)
         {
-            _text.isLayoutManaged = true;
+            _label.isLayoutManaged = true;
         }
 
         setInvalid;
         return true;
     }
 
+    Text label()
+    {
+        assert(_label);
+        return _label;
+    }
+
+    Sprite icon()
+    {
+        assert(_icon);
+        return _icon;
+    }
+
     dstring text()
     {
-        if (_text)
+        if (_label)
         {
-            return _text.text;
+            return _label.text;
         }
         return _labelText;
     }

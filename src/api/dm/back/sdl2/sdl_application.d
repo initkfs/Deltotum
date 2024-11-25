@@ -226,7 +226,7 @@ class SdlApplication : GuiApp
 
             import KitConfigKeys = api.dm.kit.kit_config_keys;
 
-            if (uservices.config.containsKey(KitConfigKeys.useVectorGraphics))
+            if (uservices.config.hasKey(KitConfigKeys.useVectorGraphics))
             {
                 const mustBeIsUseVector = uservices.config.getBool(
                     KitConfigKeys.useVectorGraphics);
@@ -714,8 +714,12 @@ class SdlApplication : GuiApp
             auto fontGenerator = newFontGenerator(comSurfProvider);
             windowBuilder.build(fontGenerator);
 
-            const colorText = theme.colorText;
-            const colorTextBackground = theme.colorTextBackground;
+            import api.dm.kit.graphics.colors.rgba: RGBA;
+
+            const isColorless = isFontTextureIsColorless(uservices.config, uservices.context);
+
+            const colorText = isColorless ? RGBA.white : theme.colorText;
+            const colorTextBackground = isColorless ? RGBA.black : theme.colorTextBackground;
 
             createFontBitmaps(fontGenerator, windowBuilder.asset, colorText, colorTextBackground, (bitmap) {
                 // windowBuilder.build(bitmap);
@@ -748,7 +752,7 @@ class SdlApplication : GuiApp
 
         import KitConfigKeys = api.dm.kit.kit_config_keys;
 
-        if (uservices.config.containsKey(KitConfigKeys.debugScene))
+        if (uservices.config.hasKey(KitConfigKeys.debugScene))
         {
             auto mustBeDebug = uservices.config.getBool(KitConfigKeys.debugScene);
             if (!mustBeDebug.isNull && mustBeDebug.get)

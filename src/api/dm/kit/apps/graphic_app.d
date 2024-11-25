@@ -41,7 +41,7 @@ import api.dm.kit.i18n.i18n : I18n;
 import api.dm.kit.i18n.langs.lang_messages : LangMessages;
 import api.dm.kit.interacts.interact : Interact;
 import api.dm.kit.factories.factory_kit : FactoryKit;
-import api.dm.kit.graphics.colors.rgba: RGBA;
+import api.dm.kit.graphics.colors.rgba : RGBA;
 
 /**
  * Authors: initkfs
@@ -162,7 +162,7 @@ abstract class GraphicApp : CliApp
         import KitConfigKeys = api.dm.kit.kit_config_keys;
 
         string lang = "en_EN";
-        if (config.containsKey(KitConfigKeys.i18nLang))
+        if (config.hasKey(KitConfigKeys.i18nLang))
         {
             auto mustBeLang = config.getNotEmptyString(KitConfigKeys.i18nLang);
             if (mustBeLang.isNull)
@@ -350,7 +350,7 @@ abstract class GraphicApp : CliApp
         {
             uservices.logger.trace("Resources directory not found");
 
-            if (config.containsKey(KitConfigKeys.fontDir))
+            if (config.hasKey(KitConfigKeys.fontDir))
             {
                 auto mustBeFontDir = config.getNotEmptyString(KitConfigKeys.fontDir);
                 if (mustBeFontDir.isNull)
@@ -408,10 +408,10 @@ abstract class GraphicApp : CliApp
                 "Font directory does not exist or is not a directory: " ~ fontDir);
         }
 
-        if (config.containsKey(KitConfigKeys.fontTTFFile))
+        if (config.hasKey(KitConfigKeys.fontTTFFile))
         {
             logging.logger.trace("Search font file in config with key: ", KitConfigKeys.fontTTFFile);
-            if (config.containsKey(KitConfigKeys.fontIsOverwriteFontFile) && config.getBool(
+            if (config.hasKey(KitConfigKeys.fontIsOverwriteFontFile) && config.getBool(
                     KitConfigKeys.fontIsOverwriteFontFile).get)
             {
                 fontFile = config.getNotEmptyString(KitConfigKeys.fontTTFFile).get;
@@ -426,7 +426,8 @@ abstract class GraphicApp : CliApp
         }
         else
         {
-            logging.logger.trace("Not found font file from config with key: ", KitConfigKeys.fontTTFFile);
+            logging.logger.trace("Not found font file from config with key: ", KitConfigKeys
+                    .fontTTFFile);
         }
 
         if (fontFile.length == 0)
@@ -444,7 +445,7 @@ abstract class GraphicApp : CliApp
         asset = new Asset(uservices.logging, fontDir, comFontProvider);
 
         auto defaultSize = fontSizeMedium;
-        if (config.containsKey(KitConfigKeys.fontSizeMedium))
+        if (config.hasKey(KitConfigKeys.fontSizeMedium))
         {
             logging.logger.trace("Check font medium size in config with key: ", KitConfigKeys
                     .fontSizeMedium);
@@ -464,7 +465,7 @@ abstract class GraphicApp : CliApp
         asset.addFont(defaultFont);
         logging.logger.tracef("Create medium font with size %s from %s", defaultSize, fontFilePath);
 
-        if (config.containsKey(KitConfigKeys.fontIsCreateSmall))
+        if (config.hasKey(KitConfigKeys.fontIsCreateSmall))
         {
             logging.logger.trace("Checking FactoryKit small font in config with key: ", KitConfigKeys
                     .fontIsCreateSmall);
@@ -472,7 +473,7 @@ abstract class GraphicApp : CliApp
             if (!isSmallFontCreate.isNull && isSmallFontCreate.get)
             {
                 size_t size = fontSizeSmall;
-                if (config.containsKey(KitConfigKeys.fontSizeSmall))
+                if (config.hasKey(KitConfigKeys.fontSizeSmall))
                 {
                     logging.logger.trace("Search small font size in config with key: ", KitConfigKeys
                             .fontSizeSmall);
@@ -504,7 +505,7 @@ abstract class GraphicApp : CliApp
                     .fontIsCreateSmall);
         }
 
-        if (config.containsKey(KitConfigKeys.fontIsCreateLarge))
+        if (config.hasKey(KitConfigKeys.fontIsCreateLarge))
         {
             logging.logger.trace("Checking FactoryKit large font in config with key: ", KitConfigKeys
                     .fontIsCreateLarge);
@@ -513,7 +514,7 @@ abstract class GraphicApp : CliApp
             if (!isLargeFontCreate.isNull && isLargeFontCreate.get)
             {
                 size_t size = fontSizeLarge;
-                if (config.containsKey(KitConfigKeys.fontSizeLarge))
+                if (config.hasKey(KitConfigKeys.fontSizeLarge))
                 {
                     logging.logger.trace("Search large font size in config with key: ", KitConfigKeys
                             .fontSizeLarge);
@@ -593,6 +594,19 @@ abstract class GraphicApp : CliApp
             new LightSpecialAlphabet,
         ];
         return alphabets;
+    }
+
+    bool isFontTextureIsColorless(Config config, Context context)
+    {
+        import KitConfigKeys = api.dm.kit.kit_config_keys;
+
+        if (config.hasKey(KitConfigKeys.fontDefaultTextureIsColorless))
+        {
+            auto mustBeValue = config.getBool(KitConfigKeys.fontDefaultTextureIsColorless);
+            return !mustBeValue.isNull ? mustBeValue.get : false;
+        }
+
+        return false;
     }
 
     //TODO split function

@@ -24,3 +24,4 @@ enum fontIsCreateLarge = "fontIsCreateLarge";
 enum fontSizeMedium = "fontSizeMedium";
 enum fontSizeLarge = "fontSizeLarge";
 enum fontSizeSmall = "fontSizeSmall";
+enum fontDefaultTextureIsColorless = "fontDefaultTextureIsColorless";
