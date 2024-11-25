@@ -262,7 +262,7 @@ class Control : GuiComponent
 
     void loadTheme()
     {
-        loadControlTheme;
+        
     }
 
     void loadControlTheme()

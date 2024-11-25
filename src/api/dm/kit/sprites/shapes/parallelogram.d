@@ -12,15 +12,17 @@ import api.math.geom2.parallelogram2 : Parallelogram2d;
 class Parallelogram : Shape
 {
     double angleDeg;
+    bool isInverted;
 
     protected {
         Parallelogram2d shape;
     }
 
-    this(double width, double height, double angleDeg ,GraphicStyle style)
+    this(double width, double height, double angleDeg, bool isInverted, GraphicStyle style)
     {
         super(width, height, style);
         this.angleDeg = angleDeg;
+        this.isInverted = isInverted;
     }
 
     override void drawContent()
@@ -41,7 +43,7 @@ class Parallelogram : Shape
         double firstX;
         double firstY;
 
-        shape.draw(width, height, angleDeg, (i, p) {
+        shape.draw(width, height, angleDeg, isInverted, (i, p) {
             double endX = x + p.x;
             double endY = y + p.y;
             if (i == 0)

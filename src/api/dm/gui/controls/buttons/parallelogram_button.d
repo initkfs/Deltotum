@@ -13,6 +13,7 @@ import api.dm.gui.controls.control : Control;
 class ParallelogramButton : BaseButton
 {
     double angleDeg = 0;
+    bool isInverted;
 
     this(dstring text = defaultButtonText, double angleDeg = 0)
     {
@@ -65,14 +66,14 @@ class ParallelogramButton : BaseButton
         
         if(capGraphics.isVectorGraphics){
             import api.dm.kit.sprites.textures.vectors.shapes.vparallelogram: VParallelogram;
-            auto vShape = new VParallelogram(width, height, angleDeg, style);
+            auto vShape = new VParallelogram(width, height, angleDeg, isInverted, style);
             return vShape;
         }
 
         import api.math.geom2.parallelogram2 : Parallelogram2d;
         import api.dm.kit.sprites.shapes.parallelogram : Parallelogram;
 
-        auto pShape = new Parallelogram(width, height, angleDeg, style);
+        auto pShape = new Parallelogram(width, height, angleDeg, isInverted, style);
 
         return pShape;
     }

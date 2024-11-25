@@ -535,6 +535,7 @@ class Controls : Control
             logger.trace("Window fullscreen after request: ", window.isDecorated);
         });
         winDec.styleId = DefaultStyle.warning;
+        winDec.isInverted = true;
         winRoot3.addCreate(winDec);
 
         auto winResize = new ParallelogramButton(null, IconName.resize_outline, (ref e) {
@@ -544,6 +545,7 @@ class Controls : Control
             logger.trace("Window resizable after request: ", window.isResizable);
         });
         winResize.styleId = DefaultStyle.warning;
+        winResize.isInverted = true;
         winRoot3.addCreate(winResize);
     }
 

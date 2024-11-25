@@ -11,7 +11,7 @@ import Math = api.dm.math;
 struct Parallelogram2d
 {
 
-    void draw(double width, double height, double angleDeg, scope bool delegate(size_t, Vec2d) onVertexIsContinue)
+    void draw(double width, double height, double angleDeg, bool isInverted, scope bool delegate(size_t, Vec2d) onVertexIsContinue)
     {
         size_t vertexIndex;
         //h = a * sin(angle)
@@ -19,7 +19,7 @@ struct Parallelogram2d
 
         auto offset = Math.sqrt((a ^^ 2) - (height ^^ 2));
 
-        Vec2d leftTop = Vec2d(offset, 0);
+        Vec2d leftTop = !isInverted ? Vec2d(offset, 0) :  Vec2d(0, 0);
         if (!onVertexIsContinue(vertexIndex, leftTop))
         {
             return;
@@ -27,7 +27,7 @@ struct Parallelogram2d
 
         vertexIndex++;
 
-        Vec2d rightTop = Vec2d(width, 0);
+        Vec2d rightTop = !isInverted ? Vec2d(width, 0) : Vec2d(width - offset, 0);
         if (!onVertexIsContinue(vertexIndex, rightTop))
         {
             return;
@@ -35,7 +35,7 @@ struct Parallelogram2d
 
         vertexIndex++;
 
-        Vec2d rightBottom = Vec2d(width - offset, height);
+        Vec2d rightBottom = !isInverted ? Vec2d(width - offset, height) : Vec2d(width, height);
         if (!onVertexIsContinue(vertexIndex, rightBottom))
         {
             return;
@@ -43,7 +43,7 @@ struct Parallelogram2d
 
         vertexIndex++;
 
-        Vec2d leftBottom = Vec2d(0, height);
+        Vec2d leftBottom = !isInverted ? Vec2d(0, height) : Vec2d(offset, height);
         onVertexIsContinue(vertexIndex, leftBottom);
     }
 

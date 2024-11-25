@@ -12,16 +12,18 @@ import api.math.geom2.vec2: Vec2d;
 class VParallelogram : VShape
 {
     double angleDeg;
+    bool isInverted;
 
     protected
     {
         Parallelogram2d shape;
     }
 
-    this(double width, double height, double angleDeg, GraphicStyle style)
+    this(double width, double height, double angleDeg, bool isInverted, GraphicStyle style)
     {
         super(width, height, style);
         this.angleDeg = angleDeg;
+        this.isInverted = isInverted;
     }
 
     override void createTextureContent()
@@ -35,7 +37,7 @@ class VParallelogram : VShape
 
         import api.dm.kit.graphics.contexts.graphics_context: GraphicsContext;
 
-        shape.draw(width, height, angleDeg, (i, p) {
+        shape.draw(width, height, angleDeg, isInverted, (i, p) {
 
             if (i == 0)
             {
