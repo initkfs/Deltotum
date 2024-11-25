@@ -90,7 +90,6 @@ class Text : Control
     this(dstring text = "tminext")
     {
         this.tempText = text;
-        isFocusable = true;
 
         import api.dm.kit.sprites.layouts.managed_layout : ManagedLayout;
 
