@@ -8,6 +8,7 @@ import api.dm.gui.themes.icons.icon_pack : IconPack;
 import api.dm.kit.sprites.images.image : Image;
 import api.dm.kit.sprites.shapes.shape : Shape;
 import api.dm.kit.sprites.sprite : Sprite;
+import api.core.configs.uda: ConfigKey;
 
 import std.typecons : Nullable;
 
@@ -22,29 +23,47 @@ class Theme
         IconPack iconPack;
     }
 
+    @ConfigKey
     RGBA colorPrimary = RGBA.black;
+    @ConfigKey
     RGBA colorSecondary = RGBA.green;
+    @ConfigKey
     RGBA colorAccent = RGBA.white;
 
+    @ConfigKey
     RGBA colorFocus = RGBA.red;
+    @ConfigKey
     RGBA colorText = RGBA.white;
+    @ConfigKey
     RGBA colorTextBackground = RGBA.black;
+    @ConfigKey
     RGBA colorHover = RGBA.white;
 
+    @ConfigKey
     RGBA colorSuccess = RGBA(72, 199, 116);
+    @ConfigKey
     RGBA colorDanger = RGBA(255, 56, 96);
+    @ConfigKey
     RGBA colorWarning = RGBA(255, 221, 87);
 
+    @ConfigKey
     RGBA colorControlBackground = RGBA.black;
+    @ConfigKey
     RGBA colorContainerBackground = RGBA.black;
 
+    @ConfigKey
     double opacityContainers = 1;
+    @ConfigKey
     double opacityControls = 1;
+    @ConfigKey
     double opacityBackground = 0.85;
+    @ConfigKey
     double opacityHover = 1;
 
+    @ConfigKey
     size_t iconSize = 24;
 
+    @ConfigKey
     int lineThickness = 3;
 
     Insets controlPadding = Insets(5, 5, 5, 5);
@@ -52,21 +71,33 @@ class Theme
     double controlCornersBevel = 8;
     GraphicStyle controlStyle = GraphicStyle.simple;
 
+    @ConfigKey
     double controlDefaultWidth = 100;
+    @ConfigKey
     double controlDefaultHeight = 80;
+    @ConfigKey
     double controlGraphicsGap = 5;
 
+    @ConfigKey
     double buttonWidth = 80;
+    @ConfigKey
     double buttonHeight = 30;
+    @ConfigKey
     double roundShapeDiameter = 20;
+    @ConfigKey
     double regularPolyDiameter = 80;
+    @ConfigKey
     size_t regularPolySides = 8;
+    @ConfigKey
     double parallelogramShapeAngleDeg = 15;
 
     bool isUseVectorGraphics;
 
+    @ConfigKey
     size_t actionAnimationDelayMs;
+    @ConfigKey
     size_t hoverAnimationDelayMs;
+    @ConfigKey
     size_t tooltipDelayMs;
 
     this(IconPack iconPack)

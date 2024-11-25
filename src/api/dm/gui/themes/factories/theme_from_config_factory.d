@@ -3,7 +3,7 @@ module api.dm.gui.themes.factories.theme_from_config_factory;
 import api.core.components.units.services.application_unit : ApplicationUnit;
 import api.core.contexts.context : Context;
 import api.core.configs.keyvalues.config : Config;
-import api.core.resources.resourcing: Resourcing;
+import api.core.resources.resourcing : Resourcing;
 import api.dm.gui.themes.theme : Theme;
 import api.dm.kit.assets.fonts.font : Font;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -31,48 +31,86 @@ class ThemeFromConfigFactory : ApplicationUnit
         this.resources = resources;
     }
 
+    protected void loadThemeFromConfig(T : Theme)(T newTheme, Config config)
+    {
+        import api.core.configs.uda : ConfigKey;
+        import api.dm.kit.graphics.colors.rgba : RGBA;
+
+        import std.traits : hasUDA;
+        import api.core.utils.types : hasOverloads;
+        import std.typecons : Nullable;
+
+        static foreach (const fieldName; __traits(allMembers, T))
+        {
+            static if (!hasOverloads!(T, fieldName) && hasUDA!(__traits(getMember, newTheme, fieldName), ConfigKey))
+            {
+                {
+                    import std.ascii : toUpper;
+
+                    enum themeConfigKey = "theme" ~ fieldName[0].toUpper ~ fieldName[1 .. $];
+                    if (!config.hasKey(themeConfigKey))
+                    {
+                        throw new Exception(
+                            "Not found value for theme config key: " ~ themeConfigKey);
+                    }
+                    alias fieldType = typeof(__traits(getMember, T, fieldName));
+
+                    static if (is(fieldType == double))
+                    {
+                        auto value = config.getDouble(themeConfigKey);
+                    }
+                    else static if (is(fieldType == long) || is(fieldType == ulong))
+                    {
+                        auto value = config.getLong(themeConfigKey);
+                    }
+                    else static if (is(fieldType == int))
+                    {
+                        auto value = config.getInt(themeConfigKey);
+                    }
+                    else static if (is(fieldType : RGBA) || is(fieldType : string))
+                    {
+                        auto value = config.getNotEmptyString(themeConfigKey);
+                    }
+                    else
+                    {
+                        import std.conv : text;
+
+                        static assert(false, text("Not found type ", fieldType.stringof, " in theme with config key", themeConfigKey));
+                    }
+
+                    if (value.isNull)
+                    {
+                        throw new Exception(
+                            "Received empty value for theme config key: " ~ themeConfigKey);
+                    }
+
+                    static if (is(fieldType : RGBA))
+                    {
+                        __traits(getMember, newTheme, fieldName) = RGBA.web(value.get);
+                    }
+                    else static if (is(fieldType == ulong))
+                    {
+                        import std.conv : to;
+
+                        __traits(getMember, newTheme, fieldName) = value.get.to!ulong;
+                    }
+                    else
+                    {
+                        __traits(getMember, newTheme, fieldName) = value.get;
+                    }
+                }
+
+            }
+        }
+    }
+
     Theme createTheme()
     {
         auto theme = new Theme(iconPack);
 
-        //TODO resources
         if (!resources.local.resourcesDir.isNull)
         {
-            //TODO rewrite
-            theme.colorPrimary = fromStringColor(config.getString("themeColorPrimary").get);
-            theme.colorSecondary = fromStringColor(config.getString("themeColorSecondary").get);
-            theme.colorAccent = fromStringColor(config.getString("themeColorAccent").get);
-
-            theme.colorFocus = fromStringColor(config.getString("themeColorFocus").get);
-            theme.colorText = fromStringColor(config.getString("themeColorText").get);
-            theme.colorTextBackground = fromStringColor(config.getString("colorTextBackground").get);
-            theme.colorHover = fromStringColor(config.getString("themeColorHover").get);
-
-            theme.colorControlBackground = fromStringColor(
-                config.getString("themeColorControlBackground").get);
-            theme.colorContainerBackground = fromStringColor(
-                config.getString("themeColorContainerBackground").get);
-
-            theme.opacityContainers = config.getDouble("themeOpacityContainers").get;
-            theme.opacityControls = config.getDouble("themeOpacityControls").get;
-            theme.opacityHover = config.getDouble("themeOpacityHover").get;
-            theme.controlPadding = Insets(config.getDouble("themeControlPadding").get);
-            theme.controlCornersBevel = config.getDouble("themeControlCornersBevel").get;
-
-            theme.tooltipDelayMs = config.getLong("themeTooltipDelayMs").get;
-            theme.actionAnimationDelayMs = config.getLong("themeActionAnimationDelayMs").get;
-            theme.hoverAnimationDelayMs = config.getLong("themeHoverAnimationDelayMs").get;
-            
-            theme.controlDefaultWidth = config.getDouble("themeControlDefaultWidth").get;
-            theme.controlDefaultHeight = config.getDouble("themeControlDefaultHeight").get;
-            theme.controlGraphicsGap = config.getDouble("themeControlGraphicsGap").get;
-
-            theme.buttonWidth = config.getDouble("themeButtonWidth").get;
-            theme.buttonHeight = config.getDouble("themeButtonHeight").get;
-            theme.roundShapeDiameter = config.getDouble("themeRoundShapeDiameter").get;
-            theme.regularPolyDiameter = config.getDouble("themeRegularPolyDiameter").get;
-            theme.regularPolySides = config.getLong("themeRegularPolySides").get;
-            theme.parallelogramShapeAngleDeg = config.getLong("themeParallelogramShapeAngleDeg").get;
+            loadThemeFromConfig(theme, config);
         }
 
         return theme;
