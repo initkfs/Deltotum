@@ -5,7 +5,7 @@ module api.dm.gui.controls.buttons;
 public:
 
 import api.dm.gui.controls.buttons.base_button;
-import api.dm.gui.controls.buttons.base_rounded_button;
+import api.dm.gui.controls.buttons.base_round_button;
 import api.dm.gui.controls.buttons.button;
 import api.dm.gui.controls.buttons.parallelogram_button;
 import api.dm.gui.controls.buttons.poly_button;

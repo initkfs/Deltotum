@@ -1,4 +1,4 @@
-module api.dm.gui.controls.buttons.base_rounded_button;
+module api.dm.gui.controls.buttons.base_round_button;
 
 import api.dm.gui.controls.buttons.base_button : BaseButton;
 import api.dm.kit.sprites.sprite : Sprite;
@@ -9,7 +9,7 @@ import api.dm.gui.controls.control : Control;
 /**
  * Authors: initkfs
  */
-class BaseRoundedButton : BaseButton
+class BaseRoundButton : BaseButton
 {
     protected
     {
