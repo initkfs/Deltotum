@@ -3,7 +3,7 @@ module api.dm.gui.supports.sceneview;
 import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.containers.hbox : HBox;
 import api.dm.gui.containers.stack_box : StackBox;
-import api.dm.gui.controls.toggles.toggle_switch : ToggleSwitch;
+import api.dm.gui.controls.toggles.switches.toggle_switch : ToggleSwitch;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.texts.textfield : TextField;
 import api.dm.kit.scenes.scene : Scene;
@@ -17,7 +17,7 @@ import api.math.insets : Insets;
 import api.dm.gui.containers.scroll_box : ScrollBox;
 import api.dm.gui.controls.tabs.tab : Tab;
 import api.dm.gui.controls.tabs.tabpane : TabPane;
-import api.dm.gui.controls.checks.check : Check;
+import api.dm.gui.controls.toggles.checks.check : Check;
 
 import IconNames = api.dm.gui.themes.icons.icon_name;
 
@@ -137,25 +137,30 @@ class SceneView : VBox
         auto tb = new ToggleSwitch;
         btnContainer.addCreate(tb);
 
-        tb.onSwitchOn = () {
-            if (onEnableDebug !is null)
+        tb.onOldNewValue ~= (oldValue, newValue) {
+            if (newValue)
             {
-                onEnableDebug();
+                if (onEnableDebug !is null)
+                {
+                    onEnableDebug();
+                }
+                isDebug = true;
             }
-            isDebug = true;
-        };
-        tb.onSwitchOff = () {
-            if (onDisableDebug !is null)
+            else
             {
-                onDisableDebug();
+                if (onDisableDebug !is null)
+                {
+                    onDisableDebug();
+                }
+
+                isDebug = false;
+                if (objectOnDebug)
+                {
+                    removeDebugInfo(objectOnDebug);
+                    objectOnDebug = null;
+                }
             }
 
-            isDebug = false;
-            if (objectOnDebug)
-            {
-                removeDebugInfo(objectOnDebug);
-                objectOnDebug = null;
-            }
         };
 
         tb.addCreateIcon(IconNames.locate_outline);
@@ -258,17 +263,13 @@ class SceneView : VBox
         h1.enableInsets;
         wInfo = new TextField("0");
         wInfo.onEnter = (ref e) {
-            onObjectDebug((object){
-                object.width = wInfo.text.to!double;
-            });
+            onObjectDebug((object) { object.width = wInfo.text.to!double; });
         };
         wInfo.width = textWidth;
 
         hInfo = new TextField("0");
         hInfo.onEnter = (ref e) {
-            onObjectDebug((object){
-                object.height = hInfo.text.to!double;
-            });
+            onObjectDebug((object) { object.height = hInfo.text.to!double; });
         };
         hInfo.width = textWidth;
 

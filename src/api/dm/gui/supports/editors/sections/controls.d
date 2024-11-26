@@ -211,37 +211,40 @@ class Controls : Control
 
     void createSelections(Container root)
     {
-        import api.dm.gui.controls.checks.check_group : CheckGroup;
-        import api.dm.gui.controls.checks.check : Check;
+        import api.dm.gui.controls.toggles.toggle_group : ToggleGroup;
+        import api.dm.gui.controls.toggles.checks.check : Check;
         import api.dm.gui.controls.choices.choice_box : ChoiceBox;
         import Icons = api.dm.gui.themes.icons.icon_name;
         import api.dm.kit.sprites.layouts.vlayout : VLayout;
 
-        auto checkBoxContainer = new CheckGroup;
+        auto checkBoxContainer = new ToggleGroup;
         checkBoxContainer.layout = new VLayout(5);
+        checkBoxContainer.layout.isAutoResize = true;
         root.addCreate(checkBoxContainer);
 
         auto check1 = new Check("Check1", Icons.bug_outline);
         checkBoxContainer.addCreate(check1);
 
         auto check2 = new Check("Check2", Icons.bug_outline);
+        check2.isBorder = true;
         checkBoxContainer.addCreate(check2);
         check2.layout.isFillFromStartToEnd = false;
         check2.isOn = true;
 
-        // auto toggleContainer = new VBox(5);
-        // root.addCreate(toggleContainer);
+        auto toggleContainer = new ToggleGroup;
+        toggleContainer.layout = new VLayout(5);
+        toggleContainer.layout.isAutoResize = true;
+        root.addCreate(toggleContainer);
 
-        // import api.dm.gui.controls.toggles.toggle_switch : ToggleSwitch;
+        import api.dm.gui.controls.toggles.switches.toggle_switch : ToggleSwitch;
 
-        // auto switch1 = new ToggleSwitch("Toggle");
-        // toggleContainer.addCreate(switch1);
+        auto switch1 = new ToggleSwitch("Toggle");
+        toggleContainer.addCreate(switch1);
+        switch1.isOn = true;
 
-        // auto switch2 = new ToggleSwitch;
-        // switch2.iconName = Icons.flash_outline;
-        // switch2.isCreateTextFactory = false;
-        // toggleContainer.addCreate(switch2);
-        // switch2.setSwitch(true);
+        auto switch2 = new ToggleSwitch(null, Icons.flash_outline);
+        switch2.isBorder = true;
+        toggleContainer.addCreate(switch2);
 
         // import api.dm.gui.controls.choices.choice_box : ChoiceBox;
 
@@ -449,7 +452,7 @@ class Controls : Control
     {
         import api.dm.gui.controls.buttons.button : Button;
         import api.dm.gui.controls.buttons.parallelogram_button : ParallelogramButton;
-        import api.dm.gui.controls.checks.check : Check;
+        import api.dm.gui.controls.toggles.checks.check : Check;
         import IconName = api.dm.gui.themes.icons.icon_name;
         import api.dm.gui.containers.frame : Frame;
 

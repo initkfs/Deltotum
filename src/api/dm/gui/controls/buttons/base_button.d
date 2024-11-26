@@ -66,6 +66,8 @@ class BaseButton : Labeled
         isCreateActionAnimationFactory = true;
 
         isCreateInteractiveListeners = true;
+
+        isBorder = true;
     }
 
     override void loadTheme()

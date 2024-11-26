@@ -1,13 +1,13 @@
-module api.dm.gui.controls.checks.check_group;
+module api.dm.gui.controls.toggles.toggle_group;
 
 import api.dm.gui.containers.container : Container;
 import api.dm.kit.sprites.sprite : Sprite;
-import api.dm.gui.controls.checks.check : Check;
+import api.dm.gui.controls.toggles.base_bitoggle : BaseBitoggle;
 
 /**
  * Authors: initkfs
  */
-class CheckGroup : Container
+class ToggleGroup : Container
 {
     alias add = Container.add;
 
@@ -15,20 +15,20 @@ class CheckGroup : Container
     {
         super.add(sprite, index);
 
-        if (auto check = cast(Check) sprite)
+        if (auto toggle = cast(BaseBitoggle) sprite)
         {
             //TODO delete repeated calls
-            check.onOldNewValue ~= (oldState, newState) {
+            toggle.onOldNewValue ~= (oldState, newState) {
                 if (!newState)
                 {
                     return;
                 }
-                toggle(check);
+                toggleStates(toggle);
             };
         }
     }
 
-    void toggle(Check control)
+    void toggleStates(BaseBitoggle control)
     {
         foreach (sprite; children)
         {
@@ -37,11 +37,11 @@ class CheckGroup : Container
                 continue;
             }
 
-            if (auto check = cast(Check) sprite)
+            if (auto toggle = cast(BaseBitoggle) sprite)
             {
-                if (control.isOn && check.isOn)
+                if (control.isOn && toggle.isOn)
                 {
-                    check.isOn = false;
+                    toggle.isOn = false;
                 }
             }
 

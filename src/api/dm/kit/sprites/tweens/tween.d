@@ -57,8 +57,8 @@ abstract class Tween : Sprite
 
         this.timeMs = timeMs.to!double;
 
-        isManaged = false;
-        isVisible = false;
+        isManaged = true;
+        //isVisible = false;
         isLayoutManaged = false;
         isManagedByScene = true;
     }

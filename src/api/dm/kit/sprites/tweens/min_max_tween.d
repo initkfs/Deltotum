@@ -117,9 +117,9 @@ class MinMaxTween(T) if (isFloatingPoint!T || is(T : Vec2d)) : Tween
         return _minValue;
     }
 
-    void minValue(T newValue)
+    void minValue(T newValue, bool isStop = true)
     {
-        if (isRunning)
+        if (isStop && isRunning)
         {
             //TODO log.
             stop;
@@ -150,9 +150,9 @@ class MinMaxTween(T) if (isFloatingPoint!T || is(T : Vec2d)) : Tween
         return _maxValue;
     }
 
-    void maxValue(T newValue)
+    void maxValue(T newValue, bool isStop = true)
     {
-        if (isRunning)
+        if (isStop && isRunning)
         {
             stop;
             //TODO log

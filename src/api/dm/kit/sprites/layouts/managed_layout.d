@@ -180,6 +180,11 @@ class ManagedLayout : Layout
     void resizeRootWidth(Sprite root)
     {
         double newWidth = childrenWidth(root);
+        if (newWidth == 0)
+        {
+            return;
+        }
+
         if (root.padding.width > 0)
         {
             newWidth += root.padding.width;
@@ -218,6 +223,11 @@ class ManagedLayout : Layout
     void resizeRootHeight(Sprite root)
     {
         double newHeight = childrenHeight(root);
+        if (newHeight == 0)
+        {
+            return;
+        }
+
         if (root.padding.height > 0)
         {
             newHeight += root.padding.height;
@@ -362,36 +372,12 @@ class ManagedLayout : Layout
 
     override double childrenWidth(Sprite root)
     {
-        if (root.children.length == 0)
-        {
-            return 0;
-        }
-
-        auto targetChildren = childrenForLayout(root);
-        double childrendWidth = 0;
-        foreach (child; targetChildren)
-        {
-            childrendWidth += child.width + child.margin.width;
-        }
-
-        return childrendWidth;
+        return 0;
     }
 
     override double childrenHeight(Sprite root)
     {
-        if (root.children.length == 0)
-        {
-            return 0;
-        }
-
-        auto targetChildren = childrenForLayout(root);
-        double childrendHeight = 0;
-        foreach (child; targetChildren)
-        {
-            childrendHeight += child.height + child.margin.height;
-        }
-
-        return childrendHeight;
+        return 0;
     }
 
 }

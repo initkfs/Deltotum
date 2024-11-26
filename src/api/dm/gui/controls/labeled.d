@@ -59,8 +59,6 @@ class Labeled : Control
         isCreateTextFactory = true;
         isCreateIconFactory = true;
 
-        isBorder = true;
-
         this._width = width;
         this._height = height;
     }
@@ -103,28 +101,28 @@ class Labeled : Control
     {
         super.create;
 
-        if (onPreIconTryCreate)
-        {
-            onPreIconTryCreate();
-        }
-
         if (_iconName && capGraphics.isIconPack)
         {
+            if (onPreIconTryCreate)
+            {
+                onPreIconTryCreate();
+            }
+
             createLabelIcon;
-        }
 
-        if (onPostIconTryCreate)
-        {
-            onPostIconTryCreate();
-        }
-
-        if (onPreTextTryCreate)
-        {
-            onPreTextTryCreate();
+            if (onPostIconTryCreate)
+            {
+                onPostIconTryCreate();
+            }
         }
 
         if (textFactory)
         {
+            if (onPreTextTryCreate)
+            {
+                onPreTextTryCreate();
+            }
+
             if (onPreTextCreate)
             {
                 onPreTextCreate();
@@ -136,11 +134,11 @@ class Labeled : Control
             {
                 onPostTextCreated();
             }
-        }
 
-        if (onPostTextTryCreate)
-        {
-            onPostTextTryCreate();
+            if (onPostTextTryCreate)
+            {
+                onPostTextTryCreate();
+            }
         }
     }
 
@@ -199,7 +197,8 @@ class Labeled : Control
             buildInit(text);
 
             auto style = createStyle;
-            if(style.isDefault){
+            if (style.isDefault)
+            {
                 text.color = style.lineColor;
                 text.setInvalid;
             }

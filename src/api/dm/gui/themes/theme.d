@@ -105,6 +105,11 @@ class Theme
     @ConfigKey
     double checkMarkerHeight = 30;
 
+    @ConfigKey
+    double toggleSwitchMarkerWidth = 30;
+    @ConfigKey
+    double toggleSwitchMarkerHeight = 30;
+
     this(IconPack iconPack)
     {
         this.iconPack = iconPack;
@@ -176,6 +181,24 @@ class Theme
             newBackground = new ConvexPolygon(width, height, backgroundStyle, controlCornersBevel);
         }
         return newBackground;
+    }
+
+    Sprite shape(double width, double height, GraphicStyle style)
+    {
+        if (isUseVectorGraphics)
+        {
+            import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+
+            auto newShape = new VConvexPolygon(width, height, style, controlCornersBevel);
+            return newShape;
+        }
+        else
+        {
+            import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
+
+            auto newShape = new ConvexPolygon(width, height, style, controlCornersBevel);
+            return newShape;
+        }
     }
 
     Sprite roundShape(GraphicStyle style) => roundShape(roundShapeDiameter, style);

@@ -1,18 +1,17 @@
-module api.dm.gui.controls.checks.check;
+module api.dm.gui.controls.toggles.checks.check;
 
-import api.dm.gui.controls.labeled : Labeled;
+import api.dm.gui.controls.toggles.base_bitoggle : BaseBitoggle;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites.sprite : Sprite;
 
 /**
  * Authors: initkfs
  */
-class Check : Labeled
+class Check : BaseBitoggle
 {
     protected
     {
         Sprite marker;
-        bool _state;
     }
 
     bool isCreateMarkerFactory;
@@ -34,8 +33,6 @@ class Check : Labeled
 
         isCreateTextFactory = true;
         isCreateMarkerFactory = true;
-
-        isBorder = true;
     }
 
     this(dstring text = "Check", string iconName = null, double graphicsGap = 5)
@@ -98,7 +95,7 @@ class Check : Labeled
                     marker.isVisible = value;
                 }
             };
-            
+
             markerContainer.isBorder = true;
             buildInitCreate(markerContainer);
 
@@ -121,7 +118,7 @@ class Check : Labeled
                 onMarkerCreated(marker);
             }
 
-            markerState(_state);
+            markerState(isOn);
         }
 
         if (isCreateMarkerListeners)
@@ -142,35 +139,16 @@ class Check : Labeled
         return true;
     }
 
-    void toggle()
+    override bool isOn() => super.isOn;
+
+    override bool isOn(bool value, bool isRunListeners = true)
     {
-        isOn(!_state);
-    }
-
-    bool isOff() => !isOn;
-
-    bool isOn() => _state;
-
-    void isOn(bool value)
-    {
-        if (value == _state)
-        {
-            return;
-        }
-
-        const bool oldValue = _state;
-        _state = value;
-        if (marker)
+        bool isSetState = super.isOn(value, isRunListeners);
+        if (isSetState && marker)
         {
             markerState = _state;
         }
 
-        if (onOldNewValue.length > 0)
-        {
-            foreach (dg; onOldNewValue)
-            {
-                dg(oldValue, _state);
-            }
-        }
+        return isSetState;
     }
 }
