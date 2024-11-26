@@ -58,15 +58,13 @@ class DayContainer : Control
         };
     }
 
-    override Sprite delegate(double, double) newBackgroundFactory()
+    override Sprite newBackground(double w, double h)
     {
-        return (w, h) {
-            auto style = createStyle;
-            //TODO caps
-            import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+        auto style = createStyle;
+        //TODO caps
+        import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
-            return new VConvexPolygon(w, h, style, 0);
-        };
+        return new VConvexPolygon(w, h, style, 0);
     }
 
     override void create()
@@ -240,7 +238,7 @@ class Calendar : Control
     {
         super.create;
 
-        import api.dm.kit.graphics.colors.palettes.material_palette: MaterialPalette;
+        import api.dm.kit.graphics.colors.palettes.material_palette : MaterialPalette;
 
         holidayColor = RGBA.web(MaterialPalette.redA200);
 

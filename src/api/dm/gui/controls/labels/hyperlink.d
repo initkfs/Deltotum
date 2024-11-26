@@ -28,10 +28,10 @@ class Hyperlink : Labeled
         layout = new VLayout;
         layout.isAutoResize = true;
         isBorder = false;
-        isInitHoverEffectFactory = false;
-        isInitHoverAnimationFactory = false;
-        isInitActionEffectFactory = false;
-        isInitActionAnimationFactory = false;
+        isCreateHover = false;
+        isCreateHoverAnimation = false;
+        isCreateActionEffect = false;
+        isCreateActionAnimation = false;
     }
 
     override void initialize()

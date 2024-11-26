@@ -14,8 +14,7 @@ class Check : BaseBitoggle
         Sprite marker;
     }
 
-    bool isInitMarkerFactory;
-    Sprite delegate() markerFactory;
+    bool isCreateMarker;
     Sprite delegate(Sprite) onMarkerCreate;
     void delegate(Sprite) onMarkerCreated;
 
@@ -31,8 +30,8 @@ class Check : BaseBitoggle
         super(width, height, iconName, graphicsGap, text, isCreateLayout:
             true);
 
-        isInitTextFactory = true;
-        isInitMarkerFactory = true;
+        isCreateLabelText = true;
+        isCreateMarker = true;
     }
 
     this(dstring text = "Check", string iconName = null, double graphicsGap = 5)
@@ -43,11 +42,6 @@ class Check : BaseBitoggle
     override void initialize()
     {
         super.initialize;
-
-        if (!markerFactory && isInitMarkerFactory)
-        {
-            markerFactory = newMarkerFactory;
-        }
     }
 
     override void loadTheme()
@@ -68,49 +62,47 @@ class Check : BaseBitoggle
         }
     }
 
-    Sprite delegate() newMarkerFactory()
+    Sprite newMarker()
     {
-        return () {
-            import api.dm.gui.containers.stack_box : StackBox;
+        import api.dm.gui.containers.stack_box : StackBox;
 
-            import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
-            import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-            import api.dm.gui.containers.stack_box : StackBox;
+        import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
+        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+        import api.dm.gui.containers.stack_box : StackBox;
 
-            assert(markerWidth > 0);
-            assert(markerHeight > 0);
+        assert(markerWidth > 0);
+        assert(markerHeight > 0);
 
-            auto marker = new ConvexPolygon(markerWidth / 2, markerHeight / 2, GraphicStyle(1, theme.colorAccent, true, theme
-                    .colorAccent), 3);
+        auto marker = new ConvexPolygon(markerWidth / 2, markerHeight / 2, GraphicStyle(1, theme.colorAccent, true, theme
+                .colorAccent), 3);
 
-            auto markerContainer = new class StackBox
+        auto markerContainer = new class StackBox
+        {
+            this()
             {
-                this()
-                {
-                    super(markerWidth, markerHeight);
-                }
+                super(markerWidth, markerHeight);
+            }
 
-                override void isVisible(bool value)
-                {
-                    marker.isVisible = value;
-                }
-            };
-
-            markerContainer.isBorder = true;
-            buildInitCreate(markerContainer);
-
-            markerContainer.addCreate(marker);
-            return markerContainer;
+            override void isVisible(bool value)
+            {
+                marker.isVisible = value;
+            }
         };
+
+        markerContainer.isBorder = true;
+        buildInitCreate(markerContainer);
+
+        markerContainer.addCreate(marker);
+        return markerContainer;
     }
 
     override void create()
     {
         super.create;
 
-        if (markerFactory)
+        if (isCreateMarker)
         {
-            auto newMarker = markerFactory();
+            auto newMarker = newMarker();
             marker = onMarkerCreate ? onMarkerCreate(newMarker) : newMarker;
             addCreate(marker);
             if (onMarkerCreated)

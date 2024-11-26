@@ -26,17 +26,15 @@ class Labeled : Control
 
     bool isSetNullGapFromTheme = true;
 
+    bool isCreateLabelIcon;
+
     void delegate() onPreIconCreate;
     void delegate() onPostIconCreated;
 
-    Sprite delegate() iconFactory;
-    bool isInitIconFactory;
+    bool isCreateLabelText;
 
     void delegate() onPreTextCreate;
     void delegate() onPostTextCreated;
-
-    bool isInitTextFactory;
-    Text delegate() textFactory;
 
     this(double width = 0, double height = 0, string iconName = null, double graphicsGap = 0, dstring labelText = null, bool isCreateLayout = true)
     {
@@ -52,8 +50,8 @@ class Labeled : Control
             this.layout.isAlignY = true;
         }
 
-        isInitTextFactory = true;
-        isInitIconFactory = true;
+        isCreateLabelText = true;
+        isCreateLabelIcon = true;
 
         this._width = width;
         this._height = height;
@@ -66,16 +64,6 @@ class Labeled : Control
         if (isCanEnableInsets)
         {
             enableInsets;
-        }
-
-        if (!textFactory && isInitTextFactory)
-        {
-            textFactory = newTextFactory;
-        }
-
-        if (!iconFactory && isInitIconFactory)
-        {
-            iconFactory = newIconFactory;
         }
     }
 
@@ -97,7 +85,7 @@ class Labeled : Control
     {
         super.create;
 
-        if (_iconName && capGraphics.isIconPack)
+        if (isCreateLabelIcon && _iconName && capGraphics.isIconPack)
         {
             if (onPreIconCreate)
             {
@@ -112,7 +100,7 @@ class Labeled : Control
             }
         }
 
-        if (textFactory)
+        if (isCreateLabelText)
         {
             if (onPreTextCreate)
             {
@@ -137,8 +125,6 @@ class Labeled : Control
     {
         if (_iconName && capGraphics.isIconPack)
         {
-            assert(iconFactory);
-
             if (_icon)
             {
                 bool isRemoved = remove(icon, isDestroy:
@@ -146,7 +132,7 @@ class Labeled : Control
                 assert(isRemoved);
             }
 
-            _icon = iconFactory();
+            _icon = newLabelIcon;
             assert(_icon);
             addCreate(_icon);
         }
@@ -166,41 +152,37 @@ class Labeled : Control
             return;
         }
 
-        _label = textFactory();
+        _label = newLabelText();
         assert(_label);
         addCreate(_label);
     }
 
-    Sprite delegate() newIconFactory()
+    Sprite newLabelIcon()
     {
-        return () {
-            assert(_iconName.length > 0);
-            auto newIcon = createIcon(_iconName);
-            _iconName = null;
-            return newIcon;
-        };
+        assert(_iconName.length > 0);
+        auto newIcon = createIcon(_iconName);
+        _iconName = null;
+        return newIcon;
     }
 
-    Text delegate() newTextFactory()
+    Text newLabelText()
     {
-        return () {
-            auto text = new Text();
-            buildInit(text);
+        auto text = new Text();
+        buildInit(text);
 
-            auto style = createStyle;
-            if (style.isDefault)
-            {
-                text.color = style.lineColor;
-                text.setInvalid;
-            }
-            //String can be forced to be empty
-            //if (_labelText.length > 0)
-            //{
-            text.text = _labelText;
-            //}
+        auto style = createStyle;
+        if (style.isDefault)
+        {
+            text.color = style.lineColor;
+            text.setInvalid;
+        }
+        //String can be forced to be empty
+        //if (_labelText.length > 0)
+        //{
+        text.text = _labelText;
+        //}
 
-            return text;
-        };
+        return text;
     }
 
     inout(Sprite) icon() inout

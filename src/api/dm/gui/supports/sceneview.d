@@ -31,7 +31,7 @@ private
         override void initialize()
         {
             super.initialize;
-            backgroundFactory = null;
+            isBackground = false;
         }
 
     }

@@ -20,10 +20,10 @@ class BasePopup : Labeled
         isDrawByParent = false;
 
         isBorder = false;
-        isInitHoverEffectFactory = false;
-        isInitHoverAnimationFactory = false;
-        isInitActionEffectFactory = false;
-        isInitActionAnimationFactory = false;
+        isCreateHover = false;
+        isCreateHoverAnimation = false;
+        isCreateActionEffect = false;
+        isCreateActionAnimation = false;
 
         isVisible = false;
         isLayoutManaged = false;

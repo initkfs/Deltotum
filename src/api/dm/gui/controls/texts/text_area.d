@@ -3,6 +3,7 @@ module api.dm.gui.controls.texts.text_area;
 import api.dm.gui.controls.texts.text_view : TextView;
 import api.dm.gui.controls.scrolls.vscroll : VScroll;
 import api.dm.gui.controls.control : Control;
+import api.dm.kit.sprites.sprite: Sprite;
 import api.dm.gui.containers.hbox : HBox;
 import api.dm.kit.sprites.layouts.hlayout : HLayout;
 
@@ -38,15 +39,18 @@ class TextArea : HBox
         padding = Insets(0);
         spacing = 0;
         isBackground = true;
+    }
 
-        backgroundFactory = (width, height) {
-            import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-            import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
+    override Sprite newBackground(double width, double height)
+    {
+        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+        import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
 
-            GraphicStyle backgroundStyle = GraphicStyle(1, theme.colorAccent, isBackground, theme.colorPrimary);
-            auto background = new ConvexPolygon(width, height, backgroundStyle, theme.controlCornersBevel);
-            return background;
-        };
+        GraphicStyle backgroundStyle = GraphicStyle(1, theme.colorAccent, isBackground, theme
+                .colorPrimary);
+        auto background = new ConvexPolygon(width, height, backgroundStyle, theme
+                .controlCornersBevel);
+        return background;
     }
 
     override void create()

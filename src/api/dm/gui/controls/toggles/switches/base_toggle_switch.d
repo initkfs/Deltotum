@@ -8,6 +8,7 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites.shapes.rectangle : Rectangle;
 import api.dm.gui.events.action_event : ActionEvent;
 import api.dm.kit.sprites.tweens.min_max_tween : MinMaxTween;
+import api.dm.kit.sprites.tweens.tween: Tween;
 import api.dm.kit.sprites.tweens.targets.value_tween : ValueTween;
 import api.dm.kit.sprites.tweens.targets.props.opacity_tween : OpacityTween;
 import api.dm.kit.sprites.textures.texture : Texture;
@@ -28,8 +29,7 @@ class BaseToggleSwitch : BaseBitoggle
         Sprite handleContainer;
     }
 
-    bool isInitHandleContainerFactory = true;
-    Sprite delegate() handleContainerFactory;
+    bool isCreateHandleContainer = true;
     Sprite delegate(Sprite) onHandleContainerCreate;
     void delegate(Sprite) onHandleContainerCreated;
 
@@ -37,21 +37,20 @@ class BaseToggleSwitch : BaseBitoggle
     double handleHeight = 0;
 
     Sprite handle;
-    bool isInitHandleFactory = true;
-    Sprite delegate() handleFactory;
+    bool isCreateHandle = true;
 
     Sprite handleOnEffect;
-    bool isInitHandleOnEffectFactory = true;
-    Sprite delegate(double, double) handleOnEffectFactory;
+    bool isCreateHandleOnEffect = true;
+
     Sprite handleOffEffect;
-    bool isInitHandleOffEffectFactory;
+    bool isCreateHandleOffEffect;
     Sprite delegate(double, double) handleOffEffectFactory;
 
-    MinMaxTween!Vec2d switchOnAnimation;
-    MinMaxTween!Vec2d delegate() switchOnAnimationFactory;
+    MinMaxTween!Vec2d handleOnAnimation;
+    bool isCreateHandleOnAnimation = true;
 
-    MinMaxTween!Vec2d switchOffAnimation;
-    MinMaxTween!Vec2d delegate() switchOffAnimationFactory;
+    MinMaxTween!Vec2d handleOffAnimation;
+    bool isCreateHandleOffAnimation = true;
 
     this(dstring label, double width, double height, string iconName = null, double graphicsGap = 5, bool isCreateLayout = true)
     {
@@ -61,87 +60,6 @@ class BaseToggleSwitch : BaseBitoggle
     this(dstring label = "Toggle", string iconName = null, double graphicsGap = 5)
     {
         this(label, 0, 0, iconName, graphicsGap);
-    }
-
-    override void initialize()
-    {
-        super.initialize;
-
-        if (isInitHandleFactory)
-        {
-            handleFactory = () {
-
-                auto size = handleSize;
-
-                auto style = createStyle;
-                if (!style.isNested && !style.isDefault)
-                {
-                    style.isFill = false;
-                }
-
-                auto shape = theme.shape(size.x, size.y, style);
-                // import api.dm.kit.sprites.layouts.center_layout : CenterLayout;
-
-                // shape.layout = new CenterLayout;
-                return shape;
-            };
-        }
-
-        if (!handleOnEffectFactory && isInitHandleOnEffectFactory)
-        {
-            handleOnEffectFactory = (w, h) {
-
-                auto currStyle = createStyle;
-                if (!currStyle.isNested)
-                {
-                    currStyle.isFill = true;
-                    currStyle.fillColor = theme.colorAccent;
-                }
-
-                return theme.shape(w, h, currStyle);
-            };
-        }
-
-        switchOnAnimationFactory = () {
-            import api.dm.kit.sprites.tweens.targets.motions.linear_motion : LinearMotion;
-            import api.dm.kit.sprites.tweens.curves.uni_interpolator : UniInterpolator;
-
-            auto uniInterp = new UniInterpolator;
-            uniInterp.interpolateMethod = &uniInterp.quadInOut;
-            auto animation = new LinearMotion(Vec2d.zero, Vec2d.zero, 200, uniInterp);
-            animation.addTarget(handle);
-            return animation;
-        };
-
-        if (!handleOffEffectFactory && isInitHandleOffEffectFactory)
-        {
-            handleOffEffectFactory = (w, h) {
-
-                auto currStyle = createStyle;
-                if (!currStyle.isNested)
-                {
-                    currStyle.isFill = false;
-                }
-
-                return theme.shape(w, h, currStyle);
-            };
-
-        }
-        switchOffAnimationFactory = () {
-            import api.dm.kit.sprites.tweens.targets.motions.linear_motion : LinearMotion;
-            import api.dm.kit.sprites.tweens.curves.uni_interpolator : UniInterpolator;
-
-            auto uniInterp = new UniInterpolator;
-            uniInterp.interpolateMethod = &uniInterp.quadInOut;
-            auto animation = new LinearMotion(Vec2d.zero, Vec2d.zero, 200, uniInterp);
-            animation.addTarget(handle);
-            return animation;
-        };
-
-        if (!handleContainerFactory && isInitHandleContainerFactory)
-        {
-            handleContainerFactory = newHandleContainerFactory;
-        }
     }
 
     Vec2d handleSize() => Vec2d(handleWidth, handleHeight);
@@ -169,9 +87,9 @@ class BaseToggleSwitch : BaseBitoggle
     {
         super.create;
 
-        if (handleContainerFactory)
+        if (!handleContainer && isCreateHandleContainer)
         {
-            auto newContainer = handleContainerFactory();
+            auto newContainer = newHandleContainer;
             handleContainer = onHandleContainerCreate ? onHandleContainerCreate(newContainer)
                 : newContainer;
             addCreate(handleContainer);
@@ -183,38 +101,38 @@ class BaseToggleSwitch : BaseBitoggle
 
         assert(handleContainer);
 
-        if (handleFactory)
+        if (!handle && isCreateHandle)
         {
-            handle = handleFactory();
+            handle = newHandle;
             handleContainer.addCreate(handle);
         }
 
-        if (handleOffEffectFactory && handle)
+        if (!handleOffEffect && isCreateHandleOffEffect && handle)
         {
-            handleOffEffect = handleOffEffectFactory(handle.width, handle
+            handleOffEffect = newHandleOffEffect(handle.width, handle
                     .height);
             handleOffEffect.isVisible = false;
             handleContainer.addCreate(handleOffEffect);
         }
 
-        if (handleOnEffectFactory && handle)
+        if (!handleOnEffect && isCreateHandleOnEffect && handle)
         {
-            handleOnEffect = handleOnEffectFactory(handle.width, handle
+            handleOnEffect = newHandleOnEffect(handle.width, handle
                     .height);
             handleOnEffect.isVisible = false;
             handle.addCreate(handleOnEffect);
         }
 
-        if (switchOnAnimationFactory)
+        if (!handleOnAnimation && isCreateHandleOnAnimation)
         {
-            switchOnAnimation = switchOnAnimationFactory();
-            handleContainer.addCreate(switchOnAnimation);
+            handleOnAnimation = newHandleOnAnimation;
+            handleContainer.addCreate(handleOnAnimation);
         }
 
-        if (switchOffAnimationFactory)
+        if (!handleOffAnimation && isCreateHandleOffAnimation)
         {
-            switchOffAnimation = switchOffAnimationFactory();
-            handleContainer.addCreate(switchOffAnimation);
+            handleOffAnimation = newHandleOffAnimation;
+            handleContainer.addCreate(handleOffAnimation);
         }
 
         onPointerUp ~= (ref e) { toggle; };
@@ -222,31 +140,91 @@ class BaseToggleSwitch : BaseBitoggle
         invalidateListeners ~= () { setSwitchAnimation; };
         window.showingTasks ~= (double dt) {
             setSwitchAnimation;
-            if (isOn)
-            {
-                changeToggleState(isOn);
-            }
+            changeToggleState(isOn);
         };
     }
 
-    protected Sprite delegate() newHandleContainerFactory()
+    Sprite newHandle()
     {
-        return () {
-            import api.dm.gui.containers.container;
-            import api.dm.kit.sprites.layouts.managed_layout : ManagedLayout;
+        auto size = handleSize;
 
-            auto handleContainer = new Container;
+        auto style = createStyle;
+        if (!style.isNested && !style.isDefault)
+        {
+            style.isFill = false;
+        }
 
-            auto size = handleContainerSize;
-            handleContainer.resize(size.x, size.y);
-            handleContainer.isBorder = true;
+        auto shape = theme.shape(size.x, size.y, style);
+        // import api.dm.kit.sprites.layouts.center_layout : CenterLayout;
 
-            handleContainer.layout = new ManagedLayout;
-            return handleContainer;
-        };
+        // shape.layout = new CenterLayout;
+        return shape;
+    }
+
+    protected Sprite newHandleContainer()
+    {
+        import api.dm.gui.containers.container;
+        import api.dm.kit.sprites.layouts.managed_layout : ManagedLayout;
+
+        auto handleContainer = new Container;
+
+        auto size = handleContainerSize;
+        handleContainer.resize(size.x, size.y);
+        handleContainer.isBorder = true;
+
+        handleContainer.layout = new ManagedLayout;
+        return handleContainer;
+
     }
 
     Vec2d handleContainerSize() => Vec2d(handleWidth * 2, handleHeight);
+
+    Sprite newHandleOnEffect(double w, double h)
+    {
+        auto currStyle = createStyle;
+        if (!currStyle.isNested)
+        {
+            currStyle.isFill = true;
+            currStyle.fillColor = theme.colorAccent;
+        }
+
+        return theme.shape(w, h, currStyle);
+    }
+
+    MinMaxTween!Vec2d newHandleOnAnimation()
+    {
+        import api.dm.kit.sprites.tweens.targets.motions.linear_motion : LinearMotion;
+        import api.dm.kit.sprites.tweens.curves.uni_interpolator : UniInterpolator;
+
+        auto uniInterp = new UniInterpolator;
+        uniInterp.interpolateMethod = &uniInterp.quadInOut;
+        auto animation = new LinearMotion(Vec2d.zero, Vec2d.zero, 200, uniInterp);
+        animation.addTarget(handle);
+        return animation;
+    }
+
+    Sprite newHandleOffEffect(double w, double h)
+    {
+        auto currStyle = createStyle;
+        if (!currStyle.isNested)
+        {
+            currStyle.isFill = false;
+        }
+
+        return theme.shape(w, h, currStyle);
+    }
+
+    MinMaxTween!Vec2d newHandleOffAnimation()
+    {
+        import api.dm.kit.sprites.tweens.targets.motions.linear_motion : LinearMotion;
+        import api.dm.kit.sprites.tweens.curves.uni_interpolator : UniInterpolator;
+
+        auto uniInterp = new UniInterpolator;
+        uniInterp.interpolateMethod = &uniInterp.quadInOut;
+        auto animation = new LinearMotion(Vec2d.zero, Vec2d.zero, 200, uniInterp);
+        animation.addTarget(handle);
+        return animation;
+    }
 
     protected void setSwitchAnimation()
     {
@@ -256,30 +234,30 @@ class BaseToggleSwitch : BaseBitoggle
 
     protected void setSwitchOnAnimation()
     {
-        if (!switchOnAnimation || !handle)
+        if (!handleOnAnimation || !handle)
         {
             return;
         }
 
         const minValue = handleOnAnimationMinValue;
         const maxValue = handleOnAnimationMaxValue;
-        switchOnAnimation.minValue(minValue, isStop:
+        handleOnAnimation.minValue(minValue, isStop:
             false);
-        switchOnAnimation.maxValue(maxValue, isStop:
+        handleOnAnimation.maxValue(maxValue, isStop:
             false);
     }
 
     protected void setSwitchOffAnimation()
     {
-        if (!switchOffAnimation || !handle)
+        if (!handleOffAnimation || !handle)
         {
             return;
         }
         const minValue = handleOffAnimationMinValue;
         const maxValue = handleOffAnimationMaxValue;
-        switchOffAnimation.minValue(minValue, isStop:
+        handleOffAnimation.minValue(minValue, isStop:
             false);
-        switchOffAnimation.maxValue(maxValue, isStop:
+        handleOffAnimation.maxValue(maxValue, isStop:
             false);
     }
 
@@ -315,14 +293,14 @@ class BaseToggleSwitch : BaseBitoggle
         if (stateValue)
         {
             //Switch on
-            if (switchOffAnimation && switchOffAnimation.isRunning)
+            if (handleOffAnimation && handleOffAnimation.isRunning)
             {
-                switchOffAnimation.stop;
+                handleOffAnimation.stop;
             }
 
-            if (switchOnAnimation && !switchOnAnimation.isRunning)
+            if (handleOnAnimation && !handleOnAnimation.isRunning)
             {
-                switchOnAnimation.run;
+                handleOnAnimation.run;
             }
 
             if (handleOnEffect)
@@ -338,14 +316,14 @@ class BaseToggleSwitch : BaseBitoggle
         else
         {
             //Switch off
-            if (switchOnAnimation && switchOnAnimation.isRunning)
+            if (handleOnAnimation && handleOnAnimation.isRunning)
             {
-                switchOnAnimation.stop;
+                handleOnAnimation.stop;
             }
 
-            if (switchOffAnimation && !switchOffAnimation.isRunning)
+            if (handleOffAnimation && !handleOffAnimation.isRunning)
             {
-                switchOffAnimation.run;
+                handleOffAnimation.run;
             }
 
             if (handleOnEffect)
