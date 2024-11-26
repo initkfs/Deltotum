@@ -65,7 +65,7 @@ abstract class GuiApp : LoopApp
 
         import KitConfigKeys = api.dm.kit.kit_config_keys;
 
-        immutable isIconPackFlag = uservices.config.getBool(KitConfigKeys.backendIsIconPackEnabled);
+        immutable isIconPackFlag = uservices.config.getBool(KitConfigKeys.graphicsIsIconPack);
         isIconPackEnabled = isIconPackFlag.isNull ? true : isIconPackFlag.get;
         uservices.logger.trace("Icon pack enabled: ", isIconPackEnabled);
     }

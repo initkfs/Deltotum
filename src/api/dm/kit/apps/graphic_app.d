@@ -111,19 +111,19 @@ abstract class GraphicApp : CliApp
     {
         import KitConfigKeys = api.dm.kit.kit_config_keys;
 
-        immutable isVideoFlag = uservices.config.getBool(KitConfigKeys.backendIsVideoEnabled);
+        immutable isVideoFlag = uservices.config.getBool(KitConfigKeys.backendIsVideo);
         isVideoEnabled = isVideoFlag.isNull ? true : isVideoFlag.get;
         uservices.logger.trace("Video enabled: ", isVideoEnabled);
 
-        immutable isAudioFlag = uservices.config.getBool(KitConfigKeys.backendIsAudioEnabled);
+        immutable isAudioFlag = uservices.config.getBool(KitConfigKeys.backendIsAudio);
         isAudioEnabled = isAudioFlag.isNull ? false : isAudioFlag.get;
         uservices.logger.trace("Audio enabled: ", isAudioEnabled);
 
-        immutable isTimerFlag = uservices.config.getBool(KitConfigKeys.backendIsTimerEnabled);
+        immutable isTimerFlag = uservices.config.getBool(KitConfigKeys.backendIsTimer);
         isTimerEnabled = isTimerFlag.isNull ? false : isTimerFlag.get;
         uservices.logger.trace("Timer enabled: ", isTimerEnabled);
 
-        immutable isJoystickFlag = uservices.config.getBool(KitConfigKeys.backendIsJoystickEnabled);
+        immutable isJoystickFlag = uservices.config.getBool(KitConfigKeys.backendIsJoystick);
         isJoystickEnabled = isJoystickFlag.isNull ? false : isJoystickFlag.get;
         uservices.logger.trace("Joystick enabled: ", isJoystickEnabled);
     }

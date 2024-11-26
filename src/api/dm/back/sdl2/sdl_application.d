@@ -226,10 +226,10 @@ class SdlApplication : GuiApp
 
             import KitConfigKeys = api.dm.kit.kit_config_keys;
 
-            if (uservices.config.hasKey(KitConfigKeys.useVectorGraphics))
+            if (uservices.config.hasKey(KitConfigKeys.graphicsUseVector))
             {
                 const mustBeIsUseVector = uservices.config.getBool(
-                    KitConfigKeys.useVectorGraphics);
+                    KitConfigKeys.graphicsUseVector);
                 if (!mustBeIsUseVector.isNull)
                 {
                     const bool isUseVector = mustBeIsUseVector.get;
@@ -239,7 +239,7 @@ class SdlApplication : GuiApp
                 else
                 {
                     uservices.logger.error("Found using vector graphics key, but not value: ", KitConfigKeys
-                            .useVectorGraphics);
+                            .graphicsUseVector);
                 }
             }else {
                 gservices.capGraphics.isVectorGraphics = true;
@@ -752,9 +752,9 @@ class SdlApplication : GuiApp
 
         import KitConfigKeys = api.dm.kit.kit_config_keys;
 
-        if (uservices.config.hasKey(KitConfigKeys.debugScene))
+        if (uservices.config.hasKey(KitConfigKeys.sceneIsDebug))
         {
-            auto mustBeDebug = uservices.config.getBool(KitConfigKeys.debugScene);
+            auto mustBeDebug = uservices.config.getBool(KitConfigKeys.sceneIsDebug);
             if (!mustBeDebug.isNull && mustBeDebug.get)
             {
                 import api.dm.gui.supports.editors.guieditor : GuiEditor;

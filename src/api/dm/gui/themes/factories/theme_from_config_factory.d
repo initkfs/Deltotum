@@ -11,7 +11,6 @@ import api.math.insets : Insets;
 import api.dm.gui.themes.icons.icon_pack : IconPack;
 
 import api.core.loggers.logging : Logging;
-import api.dm.gui.display_layout;
 
 /**
  * Authors: initkfs

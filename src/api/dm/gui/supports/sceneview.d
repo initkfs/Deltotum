@@ -214,7 +214,7 @@ class SceneView : VBox
             setDebugInfo(objectOnDebug);
         };
 
-        debugScene;
+        sceneIsDebug;
     }
 
     Container createLayoutTab()
@@ -410,7 +410,7 @@ class SceneView : VBox
         }
     }
 
-    void debugScene()
+    void sceneIsDebug()
     {
         if (!scene)
         {

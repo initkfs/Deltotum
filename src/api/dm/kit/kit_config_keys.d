@@ -4,24 +4,28 @@ module api.dm.kit.kit_config_keys;
  * Authors: initkfs
  */
 
-enum string i18nLang = "i18nLang";
+immutable:
 
-enum sceneNameCurrent = "sceneNameCurrent";
-enum backendIsVideoEnabled = "backendIsVideoEnabled";
-enum backendIsAudioEnabled = "backendIsAudioEnabled";
-enum backendIsTimerEnabled = "backendIsTimerEnabled";
-enum backendIsJoystickEnabled = "backendIsJoystickEnabled";
-enum backendIsIconPackEnabled = "backendIsIconPackEnabled";
+string i18nLang = "i18nLang";
 
-enum debugScene = "debugScene";
-enum useVectorGraphics = "useVectorGraphics";
+string sceneNameCurrent = "sceneNameCurrent";
+string sceneIsDebug = "sceneIsDebug";
 
-enum fontDir = "fontDir";
-enum fontTTFFile = "fontTTFFile";
-enum fontIsOverwriteFontFile="fontIsOverwriteFontFile";
-enum fontIsCreateSmall = "fontIsCreateSmall";
-enum fontIsCreateLarge = "fontIsCreateLarge";
-enum fontSizeMedium = "fontSizeMedium";
-enum fontSizeLarge = "fontSizeLarge";
-enum fontSizeSmall = "fontSizeSmall";
-enum fontDefaultTextureIsColorless = "fontDefaultTextureIsColorless";
+string backendIsVideo = "backendIsVideo";
+string backendIsAudio = "backendIsAudio";
+string backendIsTimer = "backendIsTimer";
+string backendIsJoystick = "backendIsJoystick";
+
+string graphicsUseVector = "graphicsUseVector";
+string graphicsIsIconPack = "graphicsIsIconPack";
+
+string fontDir = "fontDir";
+string fontTTFFile = "fontTTFFile";
+string fontIsOverwriteFontFile = "fontIsOverwriteFontFile";
+string fontDefaultTextureIsColorless = "fontDefaultTextureIsColorless";
+string fontIsCreateSmall = "fontIsCreateSmall";
+string fontIsCreateLarge = "fontIsCreateLarge";
+string fontSizeMedium = "fontSizeMedium";
+string fontSizeLarge = "fontSizeLarge";
+string fontSizeSmall = "fontSizeSmall";
+

@@ -7,7 +7,7 @@ import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.buttons.button : Button;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import KitI18nKeys = api.dm.kit.kit_i18n_keys;
+import KitI18nKeys = api.dm.gui.gui_i18n_keys;
 
 import std.datetime;
 import std.conv : to;
@@ -590,7 +590,7 @@ class Calendar : Control
 
     private dstring getMonthName(Month month)
     {
-        import KitI18nKeys = api.dm.kit.kit_i18n_keys;
+        import KitI18nKeys = api.dm.gui.gui_i18n_keys;
 
         final switch (month) with (Month)
         {
