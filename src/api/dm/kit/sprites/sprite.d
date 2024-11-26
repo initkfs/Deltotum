@@ -2187,6 +2187,7 @@ class Sprite : EventKitTarget
             setInvalid;
             invalidationState.visible = true;
         }
+        
         _visible = value;
 
         if (isVisibilityForChildren)

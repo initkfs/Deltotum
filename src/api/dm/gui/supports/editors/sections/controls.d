@@ -62,35 +62,34 @@ class Controls : Control
         createButtons(btnContainer);
         createWindows(btnContainer);
 
-        auto selectionContainer = new HBox;
+        auto selectionContainer = new HBox(5);
         selectionContainer.layout.isAlignY = true;
         rootContainer.addCreate(selectionContainer);
-        selectionContainer.enableInsets;
 
         createSelections(selectionContainer);
 
-        createSeparators(selectionContainer);
+        // createSeparators(selectionContainer);
 
-        auto dataContainer = new HBox(5);
-        dataContainer.layout.isAlignY = true;
-        rootContainer.addCreate(dataContainer);
+        // auto dataContainer = new HBox(5);
+        // dataContainer.layout.isAlignY = true;
+        // rootContainer.addCreate(dataContainer);
 
         //createDataControls(dataContainer);
 
         //createTexts(dataContainer);
 
-        auto chartContainer = new HBox(5);
-        chartContainer.layout.isAlignY = true;
-        rootContainer.addCreate(chartContainer);
+        // auto chartContainer = new HBox(5);
+        // chartContainer.layout.isAlignY = true;
+        // rootContainer.addCreate(chartContainer);
 
-        createCharts(chartContainer);
+        // createCharts(chartContainer);
 
-        auto progressContainer = new HBox;
-        progressContainer.layout.isAlignY = true;
-        rootContainer.addCreate(progressContainer);
-        progressContainer.enableInsets;
+        // auto progressContainer = new HBox;
+        // progressContainer.layout.isAlignY = true;
+        // rootContainer.addCreate(progressContainer);
+        // progressContainer.enableInsets;
 
-        createProgressBars(progressContainer);
+        // createProgressBars(progressContainer);
 
         // iconsContainer.isBackground = false;
 
@@ -135,7 +134,7 @@ class Controls : Control
 
         import api.dm.gui.controls.buttons.poly_button : PolyButton;
 
-        import api.dm.kit.sprites.tweens: PauseTween;
+        import api.dm.kit.sprites.tweens : PauseTween;
 
         auto regBtn = new PolyButton("Button");
         btnRoot3.addCreate(regBtn);
@@ -145,7 +144,7 @@ class Controls : Control
 
         size_t sides = 3;
 
-        recreateTween.onStop ~= (){
+        recreateTween.onStop ~= () {
             regBtn.sides = sides;
             regBtn.recreate;
             regBtn.recreateContent;
@@ -153,7 +152,8 @@ class Controls : Control
         };
 
         regBtn.onAction ~= (ref e) {
-            if(!recreateTween.isRunning){
+            if (!recreateTween.isRunning)
+            {
                 recreateTween.run;
             }
         };
@@ -211,95 +211,80 @@ class Controls : Control
 
     void createSelections(Container root)
     {
-        import api.dm.gui.controls.checks.checkbox : CheckBox;
+        import api.dm.gui.controls.checks.check_group : CheckGroup;
+        import api.dm.gui.controls.checks.check : Check;
         import api.dm.gui.controls.choices.choice_box : ChoiceBox;
-
         import Icons = api.dm.gui.themes.icons.icon_name;
+        import api.dm.kit.sprites.layouts.vlayout : VLayout;
 
-        import api.dm.gui.controls.labels.hyperlink : Hyperlink;
-
-        auto container1 = new VBox(5);
-        root.addCreate(container1);
-
-        auto hyper1 = new Hyperlink;
-        container1.addCreate(hyper1);
-
-        import api.dm.gui.controls.labels.badge : Badge;
-        import api.dm.gui.controls.texts.text : Text;
-
-        auto tb1 = new Text("Badge");
-        container1.addCreate(tb1);
-        auto b1 = new Badge("10");
-        tb1.addCreate(b1);
-
-        auto checkBoxContainer = new VBox(5);
+        auto checkBoxContainer = new CheckGroup;
+        checkBoxContainer.layout = new VLayout(5);
         root.addCreate(checkBoxContainer);
 
-        auto check1 = new CheckBox("Check", Icons.bug_outline);
+        auto check1 = new Check("Check1", Icons.bug_outline);
         checkBoxContainer.addCreate(check1);
-        check1.isCheck = true;
 
-        auto check2 = new CheckBox("Check", Icons.bug_outline);
+        auto check2 = new Check("Check2", Icons.bug_outline);
         checkBoxContainer.addCreate(check2);
         check2.layout.isFillFromStartToEnd = false;
-        check2.isCheck = true;
+        check2.isOn = true;
 
-        auto toggleContainer = new VBox(5);
-        root.addCreate(toggleContainer);
+        // auto toggleContainer = new VBox(5);
+        // root.addCreate(toggleContainer);
 
-        import api.dm.gui.controls.toggles.toggle_switch : ToggleSwitch;
+        // import api.dm.gui.controls.toggles.toggle_switch : ToggleSwitch;
 
-        auto switch1 = new ToggleSwitch("Toggle");
-        toggleContainer.addCreate(switch1);
+        // auto switch1 = new ToggleSwitch("Toggle");
+        // toggleContainer.addCreate(switch1);
 
-        auto switch2 = new ToggleSwitch;
-        switch2.iconName = Icons.flash_outline;
-        switch2.isCreateTextFactory = false;
-        toggleContainer.addCreate(switch2);
-        switch2.setSwitch(true);
+        // auto switch2 = new ToggleSwitch;
+        // switch2.iconName = Icons.flash_outline;
+        // switch2.isCreateTextFactory = false;
+        // toggleContainer.addCreate(switch2);
+        // switch2.setSwitch(true);
 
-        import api.dm.gui.controls.choices.choice_box : ChoiceBox;
+        // import api.dm.gui.controls.choices.choice_box : ChoiceBox;
 
-        dstring[] choiceItems = [
-            "label1", "label2", "string1", "string2"
-        ];
+        // dstring[] choiceItems = [
+        //     "label1", "label2", "string1", "string2"
+        // ];
 
-        auto chContainer1 = new VBox;
-        root.addCreate(chContainer1);
-        chContainer1.enableInsets;
+        // auto chContainer1 = new VBox;
+        // root.addCreate(chContainer1);
+        // chContainer1.enableInsets;
 
-        auto choice1 = new ChoiceBox;
-        chContainer1.addCreate(choice1);
-        choice1.fill(choiceItems);
+        // auto choice1 = new ChoiceBox;
+        // chContainer1.addCreate(choice1);
+        // choice1.fill(choiceItems);
 
-        auto choice22 = new ChoiceBox;
-        choice22.layout.isFillFromStartToEnd = false;
-        chContainer1.addCreate(choice22);
-        choice22.fill(choiceItems);
+        // auto choice22 = new ChoiceBox;
+        // choice22.layout.isFillFromStartToEnd = false;
+        // chContainer1.addCreate(choice22);
+        // choice22.fill(choiceItems);
 
-        auto choice2 = new ChoiceBox;
-        choice2.isCreateStepSelection = true;
-        root.addCreate(choice2);
-        choice2.fill(choiceItems);
+        // auto choice2 = new ChoiceBox;
+        // choice2.isCreateStepSelection = true;
+        // root.addCreate(choice2);
+        // choice2.fill(choiceItems);
 
-        auto choice3 = new ChoiceBox;
-        auto vlayout = new VLayout(2);
-        vlayout.isAutoResize = true;
-        vlayout.isAlignX = true;
-        choice3.layout = vlayout;
-        choice3.isCreateStepSelection = true;
-        root.addCreate(choice3);
-        choice3.fill(choiceItems);
+        // auto choice3 = new ChoiceBox;
+        // auto vlayout = new VLayout(2);
+        // vlayout.isAutoResize = true;
+        // vlayout.isAlignX = true;
+        // choice3.layout = vlayout;
+        // choice3.isCreateStepSelection = true;
+        // root.addCreate(choice3);
+        // choice3.fill(choiceItems);
 
-        import api.dm.gui.controls.spinners.spinner : Spinner;
+        // import api.dm.gui.controls.spinners.spinner : Spinner;
 
-        auto spinner1 = new Spinner!int;
-        root.addCreate(spinner1);
+        // auto spinner1 = new Spinner!int;
+        // root.addCreate(spinner1);
 
-        import api.dm.gui.controls.pickers.color_picker : ColorPicker;
+        // import api.dm.gui.controls.pickers.color_picker : ColorPicker;
 
-        auto colorPicker = new ColorPicker;
-        root.addCreate(colorPicker);
+        // auto colorPicker = new ColorPicker;
+        // root.addCreate(colorPicker);
     }
 
     void createSeparators(Container root)
@@ -463,8 +448,8 @@ class Controls : Control
     private void createWindows(Container root)
     {
         import api.dm.gui.controls.buttons.button : Button;
-        import api.dm.gui.controls.buttons.parallelogram_button: ParallelogramButton;
-        import api.dm.gui.controls.checks.checkbox : CheckBox;
+        import api.dm.gui.controls.buttons.parallelogram_button : ParallelogramButton;
+        import api.dm.gui.controls.checks.check : Check;
         import IconName = api.dm.gui.themes.icons.icon_name;
         import api.dm.gui.containers.frame : Frame;
 

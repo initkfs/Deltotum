@@ -17,7 +17,7 @@ import api.math.insets : Insets;
 import api.dm.gui.containers.scroll_box : ScrollBox;
 import api.dm.gui.controls.tabs.tab : Tab;
 import api.dm.gui.controls.tabs.tabpane : TabPane;
-import api.dm.gui.controls.checks.checkbox : CheckBox;
+import api.dm.gui.controls.checks.check : Check;
 
 import IconNames = api.dm.gui.themes.icons.icon_name;
 
@@ -71,7 +71,7 @@ class SceneView : VBox
 
     Text gcUsedBytes;
 
-    CheckBox isDrag;
+    Check isDrag;
 
     private
     {
@@ -387,8 +387,8 @@ class SceneView : VBox
         };
         controlInfo.addCreate(updateBtn);
 
-        isDrag = new CheckBox("IsDrag");
-        isDrag.onToggleOldNewValue = (old, newValue) {
+        isDrag = new Check("IsDrag");
+        isDrag.onOldNewValue ~= (old, newValue) {
             onObjectDebug((object) { object.isDraggable = newValue; });
         };
         controlInfo.addCreate(isDrag);
@@ -558,7 +558,7 @@ class SceneView : VBox
         paddingBottom.text = obj.padding.bottom.to!string;
         paddingLeft.text = obj.padding.left.to!string;
 
-        isDrag.isCheck = obj.isDraggable;
+        isDrag.isOn = obj.isDraggable;
 
         if (objectFullInfo && objectFullInfo.isCreated)
         {

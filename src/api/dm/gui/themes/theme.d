@@ -100,6 +100,11 @@ class Theme
     @ConfigKey
     size_t tooltipDelayMs;
 
+    @ConfigKey
+    double checkMarkerWidth = 30;
+    @ConfigKey
+    double checkMarkerHeight = 30;
+
     this(IconPack iconPack)
     {
         this.iconPack = iconPack;

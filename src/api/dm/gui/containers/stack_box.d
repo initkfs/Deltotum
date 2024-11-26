@@ -8,8 +8,10 @@ import api.dm.kit.sprites.layouts.center_layout : CenterLayout;
  */
 class StackBox : Container
 {
-    this()
+    this(double width = 0, double height = 0)
     {
+        _width = width;
+        _height = height;
         layout = new CenterLayout;
         layout.isAutoResize = true;
     }
