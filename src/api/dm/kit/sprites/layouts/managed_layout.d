@@ -372,12 +372,32 @@ class ManagedLayout : Layout
 
     override double childrenWidth(Sprite root)
     {
-        return 0;
+        double maxW = 0;
+        foreach (child; childrenForLayout(root))
+        {
+            const childW = child.width;
+            if (childW > maxW)
+            {
+                maxW = childW;
+            }
+        }
+
+        return maxW;
     }
 
     override double childrenHeight(Sprite root)
     {
-        return 0;
+        double maxH = 0;
+        foreach (child; childrenForLayout(root))
+        {
+            const childH = child.height;
+            if (childH > maxH)
+            {
+                maxH = childH;
+            }
+        }
+
+        return maxH;
     }
 
 }
