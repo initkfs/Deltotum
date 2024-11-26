@@ -3,7 +3,7 @@ module api.dm.gui.supports.sceneview;
 import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.containers.hbox : HBox;
 import api.dm.gui.containers.stack_box : StackBox;
-import api.dm.gui.controls.toggles.switches.toggle_switch : ToggleSwitch;
+import api.dm.gui.controls.toggles.switches.htoggle_switch : HToggleSwitch;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.texts.textfield : TextField;
 import api.dm.kit.scenes.scene : Scene;
@@ -134,7 +134,7 @@ class SceneView : VBox
         btnContainer.layout.isAlignY = true;
         addCreate(btnContainer);
 
-        auto tb = new ToggleSwitch;
+        auto tb = new HToggleSwitch;
         btnContainer.addCreate(tb);
 
         tb.onOldNewValue ~= (oldValue, newValue) {

@@ -1,4 +1,4 @@
-module api.dm.gui.controls.toggles.switches.toggle_switch;
+module api.dm.gui.controls.toggles.switches.base_toggle_switch;
 
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.gui.controls.toggles.base_bitoggle : BaseBitoggle;
@@ -21,12 +21,17 @@ import api.dm.gui.controls.labeled : Labeled;
 /**
  * Authors: initkfs
  */
-class ToggleSwitch : BaseBitoggle
+class BaseToggleSwitch : BaseBitoggle
 {
     protected
     {
-        Control handleContainer;
+        Sprite handleContainer;
     }
+
+    bool isCreateHandleContainerFactory = true;
+    Sprite delegate() handleContainerFactory;
+    Sprite delegate(Sprite) onHandleContainerCreate;
+    void delegate(Sprite) onHandleContainerCreated;
 
     double handleWidth = 0;
     double handleHeight = 0;
@@ -48,10 +53,9 @@ class ToggleSwitch : BaseBitoggle
     MinMaxTween!Vec2d switchOffAnimation;
     MinMaxTween!Vec2d delegate() switchOffAnimationFactory;
 
-    this(dstring label, double width, double height, string iconName = null, double graphicsGap = 5)
+    this(dstring label, double width, double height, string iconName = null, double graphicsGap = 5, bool isCreateLayout = true)
     {
-        super(width, height, iconName, graphicsGap, label, isCreateLayout:
-            true);
+        super(width, height, iconName, graphicsGap, label, isCreateLayout);
     }
 
     this(dstring label = "Toggle", string iconName = null, double graphicsGap = 5)
@@ -67,8 +71,7 @@ class ToggleSwitch : BaseBitoggle
         {
             handleFactory = () {
 
-                assert(handleWidth > 0);
-                assert(handleHeight > 0);
+                auto size = handleSize;
 
                 auto style = createStyle;
                 if (!style.isNested && !style.isDefault)
@@ -76,7 +79,7 @@ class ToggleSwitch : BaseBitoggle
                     style.isFill = false;
                 }
 
-                auto shape = theme.shape(handleWidth, handleHeight, style);
+                auto shape = theme.shape(size.x, size.y, style);
                 // import api.dm.kit.sprites.layouts.center_layout : CenterLayout;
 
                 // shape.layout = new CenterLayout;
@@ -135,16 +138,13 @@ class ToggleSwitch : BaseBitoggle
             return animation;
         };
 
-        if (_labelText.length == 0)
+        if (!handleContainerFactory && isCreateHandleContainerFactory)
         {
-            onPreIconTryCreate = () { createHandleContainer; };
+            handleContainerFactory = createHandleContainerFactory;
         }
-        else
-        {
-            onPreTextTryCreate = () { createHandleContainer; };
-        }
-
     }
+
+    Vec2d handleSize() => Vec2d(handleWidth, handleHeight);
 
     override void loadTheme()
     {
@@ -169,17 +169,24 @@ class ToggleSwitch : BaseBitoggle
     {
         super.create;
 
+        if (handleContainerFactory)
+        {
+            auto newContainer = handleContainerFactory();
+            handleContainer = onHandleContainerCreate ? onHandleContainerCreate(newContainer)
+                : newContainer;
+            addCreate(handleContainer);
+            if (onHandleContainerCreated)
+            {
+                onHandleContainerCreated(handleContainer);
+            }
+        }
+
+        assert(handleContainer);
+
         if (handleFactory)
         {
             handle = handleFactory();
             handleContainer.addCreate(handle);
-
-            const maxContainerWidth = handleWidth * 2;
-            if (maxContainerWidth > handleContainer.width)
-            {
-                handleContainer.width = handleContainer.width + (
-                    maxContainerWidth - handleContainer.width);
-            }
         }
 
         if (handleOffEffectFactory && handle)
@@ -222,21 +229,36 @@ class ToggleSwitch : BaseBitoggle
         };
     }
 
-    void createHandleContainer()
+    // protected void createHandlerContainerFactory()
+    // {
+    //     if (_labelText.length == 0)
+    //     {
+    //         onPreIconTryCreate = () { createHandleContainer; };
+    //     }
+    //     else
+    //     {
+    //         onPreTextTryCreate = () { createHandleContainer; };
+    //     }
+    // }
+
+    protected Sprite delegate() createHandleContainerFactory()
     {
-        import api.dm.gui.containers.container;
-        import api.dm.kit.sprites.layouts.managed_layout : ManagedLayout;
+        return () {
+            import api.dm.gui.containers.container;
+            import api.dm.kit.sprites.layouts.managed_layout : ManagedLayout;
 
-        handleContainer = new Container;
+            auto handleContainer = new Container;
 
-        auto hWidth = handleWidth * 2;
-        auto hHeight = handleHeight;
-        handleContainer.resize(hWidth, hHeight);
-        handleContainer.isBorder = true;
+            auto size = handleContainerSize;
+            handleContainer.resize(size.x, size.y);
+            handleContainer.isBorder = true;
 
-        handleContainer.layout = new ManagedLayout;
-        addCreate(handleContainer);
+            handleContainer.layout = new ManagedLayout;
+            return handleContainer;
+        };
     }
+
+    Vec2d handleContainerSize() => Vec2d(handleWidth * 2, handleHeight);
 
     protected void setSwitchAnimation()
     {
@@ -251,14 +273,8 @@ class ToggleSwitch : BaseBitoggle
             return;
         }
 
-        const b = handleContainer.bounds;
-        const minValue = Vec2d(b.x + handleContainer.padding.left, b
-                .y + handleContainer.padding.top);
-        const maxValue = Vec2d(
-            b.right - handle.width - handleContainer.padding.right, b
-                .y + handleContainer.padding.top);
-        //auto start = Vec2d(x, y);
-        //auto end = Vec2d(bounds.right - handle.width, bounds.y);
+        const minValue = handleOnAnimationMinValue;
+        const maxValue = handleOnAnimationMaxValue;
         switchOnAnimation.minValue(minValue, isStop:
             false);
         switchOnAnimation.maxValue(maxValue, isStop:
@@ -271,18 +287,20 @@ class ToggleSwitch : BaseBitoggle
         {
             return;
         }
-        const b = handleContainer.bounds;
-        const minValue = Vec2d(
-            b.right - handle.width - handleContainer.padding.right, b.y + handleContainer
-                .padding.top);
-        const maxValue = Vec2d(b.x + handleContainer.padding.left, b
-                .y + handleContainer.padding.top);
-        //auto start = Vec2d(bounds.right - handle.width, y);
-        //auto end = Vec2d(x, y);
+        const minValue = handleOffAnimationMinValue;
+        const maxValue = handleOffAnimationMaxValue;
         switchOffAnimation.minValue(minValue, isStop:
             false);
         switchOffAnimation.maxValue(maxValue, isStop:
             false);
+    }
+
+    abstract
+    {
+        Vec2d handleOnAnimationMinValue();
+        Vec2d handleOnAnimationMaxValue();
+        Vec2d handleOffAnimationMinValue();
+        Vec2d handleOffAnimationMaxValue();
     }
 
     override bool isOn() => super.isOn;
