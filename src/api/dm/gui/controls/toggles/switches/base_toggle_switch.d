@@ -28,7 +28,7 @@ class BaseToggleSwitch : BaseBitoggle
         Sprite handleContainer;
     }
 
-    bool isCreateHandleContainerFactory = true;
+    bool isInitHandleContainerFactory = true;
     Sprite delegate() handleContainerFactory;
     Sprite delegate(Sprite) onHandleContainerCreate;
     void delegate(Sprite) onHandleContainerCreated;
@@ -37,14 +37,14 @@ class BaseToggleSwitch : BaseBitoggle
     double handleHeight = 0;
 
     Sprite handle;
-    bool isCreateHandleFactory = true;
+    bool isInitHandleFactory = true;
     Sprite delegate() handleFactory;
 
     Sprite handleOnEffect;
-    bool isCreateHandleOnEffectFactory = true;
+    bool isInitHandleOnEffectFactory = true;
     Sprite delegate(double, double) handleOnEffectFactory;
     Sprite handleOffEffect;
-    bool isCreateHandleOffEffectFactory;
+    bool isInitHandleOffEffectFactory;
     Sprite delegate(double, double) handleOffEffectFactory;
 
     MinMaxTween!Vec2d switchOnAnimation;
@@ -67,7 +67,7 @@ class BaseToggleSwitch : BaseBitoggle
     {
         super.initialize;
 
-        if (isCreateHandleFactory)
+        if (isInitHandleFactory)
         {
             handleFactory = () {
 
@@ -87,7 +87,7 @@ class BaseToggleSwitch : BaseBitoggle
             };
         }
 
-        if (!handleOnEffectFactory && isCreateHandleOnEffectFactory)
+        if (!handleOnEffectFactory && isInitHandleOnEffectFactory)
         {
             handleOnEffectFactory = (w, h) {
 
@@ -113,7 +113,7 @@ class BaseToggleSwitch : BaseBitoggle
             return animation;
         };
 
-        if (!handleOffEffectFactory && isCreateHandleOffEffectFactory)
+        if (!handleOffEffectFactory && isInitHandleOffEffectFactory)
         {
             handleOffEffectFactory = (w, h) {
 
@@ -138,9 +138,9 @@ class BaseToggleSwitch : BaseBitoggle
             return animation;
         };
 
-        if (!handleContainerFactory && isCreateHandleContainerFactory)
+        if (!handleContainerFactory && isInitHandleContainerFactory)
         {
-            handleContainerFactory = createHandleContainerFactory;
+            handleContainerFactory = newHandleContainerFactory;
         }
     }
 
@@ -229,19 +229,7 @@ class BaseToggleSwitch : BaseBitoggle
         };
     }
 
-    // protected void createHandlerContainerFactory()
-    // {
-    //     if (_labelText.length == 0)
-    //     {
-    //         onPreIconTryCreate = () { createHandleContainer; };
-    //     }
-    //     else
-    //     {
-    //         onPreTextTryCreate = () { createHandleContainer; };
-    //     }
-    // }
-
-    protected Sprite delegate() createHandleContainerFactory()
+    protected Sprite delegate() newHandleContainerFactory()
     {
         return () {
             import api.dm.gui.containers.container;

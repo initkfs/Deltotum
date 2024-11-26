@@ -26,20 +26,16 @@ class Labeled : Control
 
     bool isSetNullGapFromTheme = true;
 
-    void delegate() onPreIconTryCreate;
     void delegate() onPreIconCreate;
     void delegate() onPostIconCreated;
-    void delegate() onPostIconTryCreate;
 
     Sprite delegate() iconFactory;
-    bool isCreateIconFactory;
+    bool isInitIconFactory;
 
-    void delegate() onPreTextTryCreate;
     void delegate() onPreTextCreate;
     void delegate() onPostTextCreated;
-    void delegate() onPostTextTryCreate;
 
-    bool isCreateTextFactory;
+    bool isInitTextFactory;
     Text delegate() textFactory;
 
     this(double width = 0, double height = 0, string iconName = null, double graphicsGap = 0, dstring labelText = null, bool isCreateLayout = true)
@@ -56,8 +52,8 @@ class Labeled : Control
             this.layout.isAlignY = true;
         }
 
-        isCreateTextFactory = true;
-        isCreateIconFactory = true;
+        isInitTextFactory = true;
+        isInitIconFactory = true;
 
         this._width = width;
         this._height = height;
@@ -72,14 +68,14 @@ class Labeled : Control
             enableInsets;
         }
 
-        if (!textFactory && isCreateTextFactory)
+        if (!textFactory && isInitTextFactory)
         {
-            textFactory = createTextFactory;
+            textFactory = newTextFactory;
         }
 
-        if (!iconFactory && isCreateIconFactory)
+        if (!iconFactory && isInitIconFactory)
         {
-            iconFactory = createIconFactory;
+            iconFactory = newIconFactory;
         }
     }
 
@@ -103,24 +99,24 @@ class Labeled : Control
 
         if (_iconName && capGraphics.isIconPack)
         {
-            if (onPreIconTryCreate)
+            if (onPreIconCreate)
             {
-                onPreIconTryCreate();
+                onPreIconCreate();
             }
 
             createLabelIcon;
 
-            if (onPostIconTryCreate)
+            if (onPostIconCreated)
             {
-                onPostIconTryCreate();
+                onPostIconCreated();
             }
         }
 
         if (textFactory)
         {
-            if (onPreTextTryCreate)
+            if (onPreTextCreate)
             {
-                onPreTextTryCreate();
+                onPreTextCreate();
             }
 
             if (onPreTextCreate)
@@ -133,11 +129,6 @@ class Labeled : Control
             if (onPostTextCreated)
             {
                 onPostTextCreated();
-            }
-
-            if (onPostTextTryCreate)
-            {
-                onPostTextTryCreate();
             }
         }
     }
@@ -180,7 +171,7 @@ class Labeled : Control
         addCreate(_label);
     }
 
-    Sprite delegate() createIconFactory()
+    Sprite delegate() newIconFactory()
     {
         return () {
             assert(_iconName.length > 0);
@@ -190,7 +181,7 @@ class Labeled : Control
         };
     }
 
-    Text delegate() createTextFactory()
+    Text delegate() newTextFactory()
     {
         return () {
             auto text = new Text();

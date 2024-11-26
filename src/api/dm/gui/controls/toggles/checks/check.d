@@ -14,7 +14,7 @@ class Check : BaseBitoggle
         Sprite marker;
     }
 
-    bool isCreateMarkerFactory;
+    bool isInitMarkerFactory;
     Sprite delegate() markerFactory;
     Sprite delegate(Sprite) onMarkerCreate;
     void delegate(Sprite) onMarkerCreated;
@@ -31,8 +31,8 @@ class Check : BaseBitoggle
         super(width, height, iconName, graphicsGap, text, isCreateLayout:
             true);
 
-        isCreateTextFactory = true;
-        isCreateMarkerFactory = true;
+        isInitTextFactory = true;
+        isInitMarkerFactory = true;
     }
 
     this(dstring text = "Check", string iconName = null, double graphicsGap = 5)
@@ -44,9 +44,9 @@ class Check : BaseBitoggle
     {
         super.initialize;
 
-        if (!markerFactory && isCreateMarkerFactory)
+        if (!markerFactory && isInitMarkerFactory)
         {
-            markerFactory = createMarkerFactory;
+            markerFactory = newMarkerFactory;
         }
     }
 
@@ -68,7 +68,7 @@ class Check : BaseBitoggle
         }
     }
 
-    Sprite delegate() createMarkerFactory()
+    Sprite delegate() newMarkerFactory()
     {
         return () {
             import api.dm.gui.containers.stack_box : StackBox;

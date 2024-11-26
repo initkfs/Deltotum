@@ -58,7 +58,7 @@ class DayContainer : Control
         };
     }
 
-    override Sprite delegate(double, double) createBackgroundFactory()
+    override Sprite delegate(double, double) newBackgroundFactory()
     {
         return (w, h) {
             auto style = createStyle;

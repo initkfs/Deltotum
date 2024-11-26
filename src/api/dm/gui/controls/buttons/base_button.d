@@ -60,10 +60,10 @@ class BaseButton : Labeled
     {
         super(width, height, iconName, graphicsGap, text, isCreateLayout);
 
-        isCreateHoverEffectFactory = true;
-        isCreateHoverAnimationFactory = true;
-        isCreateActionEffectFactory = true;
-        isCreateActionAnimationFactory = true;
+        isInitHoverEffectFactory = true;
+        isInitHoverAnimationFactory = true;
+        isInitActionEffectFactory = true;
+        isInitActionAnimationFactory = true;
 
         isCreateInteractiveListeners = true;
 

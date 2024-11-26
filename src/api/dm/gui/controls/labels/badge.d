@@ -20,14 +20,14 @@ class Badge : Labeled
         import api.dm.kit.sprites.layouts.managed_layout : ManagedLayout;
 
         layout.isAutoResize = true;
-        isCreateHoverEffectFactory = false;
-        isCreateHoverAnimationFactory = false;
-        isCreateActionEffectFactory = false;
-        isCreateActionAnimationFactory = false;
+        isInitHoverEffectFactory = false;
+        isInitHoverAnimationFactory = false;
+        isInitActionEffectFactory = false;
+        isInitActionAnimationFactory = false;
 
         isLayoutManaged = false;
 
-        //isCreateBackgroundFactory = true;
+        //isInitBackgroundFactory = true;
         isBorder = false;
         //isBackground = true;
     }

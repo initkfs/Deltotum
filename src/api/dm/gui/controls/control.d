@@ -53,12 +53,12 @@ class Control : GuiComponent
     bool isFocusable;
     bool isDisabled;
 
-    bool isCreateStyleFactory = true;
-    bool isCreateBackgroundFactory = true;
-    bool isCreateHoverEffectFactory;
-    bool isCreateHoverAnimationFactory;
-    bool isCreateActionEffectFactory;
-    bool isCreateActionAnimationFactory;
+    bool isInitStyleFactory = true;
+    bool isInitBackgroundFactory = true;
+    bool isInitHoverEffectFactory;
+    bool isInitHoverAnimationFactory;
+    bool isInitActionEffectFactory;
+    bool isInitActionAnimationFactory;
 
     bool isConsumeEventIfBackground = true;
 
@@ -147,34 +147,34 @@ class Control : GuiComponent
             initTooltipListeners;
         }
 
-        if (!backgroundFactory && isCreateBackgroundFactory)
+        if (!backgroundFactory && isInitBackgroundFactory)
         {
-            backgroundFactory = createBackgroundFactory;
+            backgroundFactory = newBackgroundFactory;
         }
 
-        if (!hoverEffectFactory && isCreateHoverEffectFactory)
+        if (!hoverEffectFactory && isInitHoverEffectFactory)
         {
-            hoverEffectFactory = createHoverEffectFactory;
+            hoverEffectFactory = newHoverEffectFactory;
         }
 
-        if (!hoverAnimationFactory && isCreateHoverAnimationFactory)
+        if (!hoverAnimationFactory && isInitHoverAnimationFactory)
         {
-            hoverAnimationFactory = createHoverAnimationFactory;
+            hoverAnimationFactory = newHoverAnimationFactory;
         }
 
-        if (!actionEffectFactory && isCreateActionEffectFactory)
+        if (!actionEffectFactory && isInitActionEffectFactory)
         {
-            actionEffectFactory = createActionEffectFactory;
+            actionEffectFactory = newActionEffectFactory;
         }
 
-        if (!actionEffectAnimationFactory && isCreateActionAnimationFactory)
+        if (!actionEffectAnimationFactory && isInitActionAnimationFactory)
         {
-            actionEffectAnimationFactory = createActionEffectAnimationFactory;
+            actionEffectAnimationFactory = newActionEffectAnimationFactory;
         }
 
-        if (!styleFactory && isCreateStyleFactory)
+        if (!styleFactory && isInitStyleFactory)
         {
-            styleFactory = createStyleFactory;
+            styleFactory = newStyleFactory;
         }
 
         if (tooltipDelay == 0)
@@ -317,7 +317,7 @@ class Control : GuiComponent
         isTooltipListeners = true;
     }
 
-    Sprite delegate(double, double) createBackgroundFactory()
+    Sprite delegate(double, double) newBackgroundFactory()
     {
         if (auto stylePtr = hasStyle(ControlStyle.background))
         {
@@ -326,7 +326,7 @@ class Control : GuiComponent
         return (w, h) => createShape(w, h);
     }
 
-    Sprite delegate(double, double) createHoverEffectFactory()
+    Sprite delegate(double, double) newHoverEffectFactory()
     {
         return (w, h) {
             assert(theme);
@@ -361,7 +361,7 @@ class Control : GuiComponent
         };
     }
 
-    Tween delegate() createHoverAnimationFactory()
+    Tween delegate() newHoverAnimationFactory()
     {
         return () {
             import std.conv : to;
@@ -385,7 +385,7 @@ class Control : GuiComponent
         };
     }
 
-    Sprite delegate() createActionEffectFactory()
+    Sprite delegate() newActionEffectFactory()
     {
         return () {
             assert(theme);
@@ -418,7 +418,7 @@ class Control : GuiComponent
         };
     }
 
-    Tween delegate(Sprite) createActionEffectAnimationFactory()
+    Tween delegate(Sprite) newActionEffectAnimationFactory()
     {
         return (Sprite actionEffect) {
             import std.conv : to;
@@ -442,7 +442,7 @@ class Control : GuiComponent
         };
     }
 
-    GraphicStyle delegate(string id) createStyleFactory()
+    GraphicStyle delegate(string id) newStyleFactory()
     {
         return (id) {
             assert(theme);
