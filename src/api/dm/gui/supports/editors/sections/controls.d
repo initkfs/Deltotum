@@ -133,11 +133,11 @@ class Controls : Control
         auto circleBtn = new RoundButton("Button");
         btnRoot3.addCreate(circleBtn);
 
-        import api.dm.gui.controls.buttons.regular_poly_button : RegularPolyButton;
+        import api.dm.gui.controls.buttons.poly_button : PolyButton;
 
         import api.dm.kit.sprites.tweens: PauseTween;
 
-        auto regBtn = new RegularPolyButton("Button");
+        auto regBtn = new PolyButton("Button");
         btnRoot3.addCreate(regBtn);
 
         auto recreateTween = new PauseTween(100);

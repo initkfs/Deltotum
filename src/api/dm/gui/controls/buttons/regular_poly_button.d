@@ -1,4 +1,4 @@
-module api.dm.gui.controls.buttons.regular_poly_button;
+module api.dm.gui.controls.buttons.poly_button;
 
 import api.dm.gui.controls.buttons.base_rounded_button : BaseRoundedButton;
 import api.dm.kit.sprites.sprite : Sprite;
@@ -9,7 +9,7 @@ import api.dm.gui.controls.control : Control;
 /**
  * Authors: initkfs
  */
-class RegularPolyButton : BaseRoundedButton
+class PolyButton : BaseRoundedButton
 {
     protected
     {
