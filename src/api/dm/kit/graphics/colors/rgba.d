@@ -1,6 +1,6 @@
 module api.dm.kit.graphics.colors.rgba;
 
-import api.dm.kit.graphics.colors.palettes.extended_palette : ExtendedPalette;
+import ExtendedPalette = api.dm.kit.graphics.colors.palettes.extended_palette;
 import api.dm.kit.graphics.colors.hsv : HSV;
 import api.dm.kit.graphics.colors.hsl : HSL;
 
@@ -17,11 +17,6 @@ private
     {
         enum hexRegexCt = ctRegex!(`^(0x|#)([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$`);
     }
-
-    immutable webColorsNames = __traits(allMembers, ExtendedPalette);
-    immutable string[webColorsNames.length] webColorsValues = [
-        EnumMembers!ExtendedPalette
-    ];
 }
 
 /**
@@ -60,13 +55,15 @@ struct RGBA
         }
         else
         {
-            foreach (i, colorName; webColorsNames)
+            static foreach (colorName; __traits(allMembers, ExtendedPalette))
             {
-                //TODO check cmp\icmp perfomance
-                if (sicmp(colorName, colorString) == 0)
+                //TODO filter object
+                static if (!__traits(isModule, __traits(getMember, ExtendedPalette, colorName)))
                 {
-                    mustBeColor = webColorsValues[i];
-                    break;
+                    if (sicmp(colorName, colorString) == 0)
+                    {
+                        mustBeColor = __traits(getMember, ExtendedPalette, colorName);
+                    }
                 }
             }
 
@@ -455,15 +452,6 @@ struct RGBA
 
     static
     {
-        // static foreach (i, colorName; webColorsNames)
-        // {
-        //     mixin(
-        //         "typeof(this) ", colorName, "() nothrow pure @safe { ",
-        //         "return ", "typeof(this)", ".web(\"", webColorsValues[i], "\");",
-        //         "}"
-        //     );
-        // }
-
         RGBA transparent() nothrow pure @safe => RGBA(0, 0, 0, 0);
 
         RGBA aliceblue() nothrow pure @safe => RGBA(240, 248, 255);

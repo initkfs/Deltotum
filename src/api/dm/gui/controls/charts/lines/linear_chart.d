@@ -5,7 +5,7 @@ import api.dm.gui.controls.control : Control;
 import api.math.geom2.vec2 : Vec2d;
 import api.math.insets : Insets;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.graphics.colors.palettes.material_palette : MaterialPalette;
+import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
 import api.dm.gui.containers.container : Container;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.containers.hbox : HBox;

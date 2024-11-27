@@ -9,7 +9,7 @@ import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.buttons.button : Button;
 import api.dm.kit.sprites.shapes.circle : Circle;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.graphics.colors.palettes.material_palette : MaterialPalette;
+import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
 import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.containers.hbox : HBox;
 
@@ -65,39 +65,38 @@ class ColorPicker : Control
 
         colorChooser.isVisible = false;
         import api.dm.kit.sprites.shapes.rectangle : Rectangle;
-        import std.traits : EnumMembers;
 
         enum colorContainerSize = 15;
         enum colorTonesCount = 14;
 
         HBox colorContainer;
 
-        foreach (i, hexColor; EnumMembers!MaterialPalette)
-        {
-            if (i % colorTonesCount == 0)
-            {
-                colorContainer = new HBox(0);
-                colorContainer.id = "color_picker_tone_container";
-                //TODO remove paddings from initialization;
-                // colorContainer.padding = Insets(0);
-                colorChooser.addCreate(colorContainer);
-                colorContainer.padding = Insets(0);
-            }
+        // foreach (i, hexColor; EnumMembers!MaterialPalette)
+        // {
+        //     if (i % colorTonesCount == 0)
+        //     {
+        //         colorContainer = new HBox(0);
+        //         colorContainer.id = "color_picker_tone_container";
+        //         //TODO remove paddings from initialization;
+        //         // colorContainer.padding = Insets(0);
+        //         colorChooser.addCreate(colorContainer);
+        //         colorContainer.padding = Insets(0);
+        //     }
 
-            RGBA rgba = RGBA.web(hexColor);
-            const size = colorContainerSize;
-            auto rect = new Rectangle(size, size);
-            rect.onPointerEntered ~= (ref e) { rect.style.lineColor = RGBA.white; };
-            rect.onPointerExited ~= (ref e) { rect.style.lineColor = rgba; };
-            rect.onPointerDown ~= (ref e) {
-                colorIndicator.style.fillColor = rgba;
-                colorIndicator.style.lineColor = rgba;
-                colorText.text = hexColor;
-                toggleChooser;
-            };
-            rect.style = GraphicStyle(1, rgba, true, rgba);
-            colorContainer.addCreate(rect);
-        }
+        //     RGBA rgba = RGBA.web(hexColor);
+        //     const size = colorContainerSize;
+        //     auto rect = new Rectangle(size, size);
+        //     rect.onPointerEntered ~= (ref e) { rect.style.lineColor = RGBA.white; };
+        //     rect.onPointerExited ~= (ref e) { rect.style.lineColor = rgba; };
+        //     rect.onPointerDown ~= (ref e) {
+        //         colorIndicator.style.fillColor = rgba;
+        //         colorIndicator.style.lineColor = rgba;
+        //         colorText.text = hexColor;
+        //         toggleChooser;
+        //     };
+        //     rect.style = GraphicStyle(1, rgba, true, rgba);
+        //     colorContainer.addCreate(rect);
+        // }
 
     }
 

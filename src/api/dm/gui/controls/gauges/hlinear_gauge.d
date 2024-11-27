@@ -11,7 +11,7 @@ import api.dm.kit.sprites.layouts.hlayout : HLayout;
 
 import api.dm.gui.containers.hbox : HBox;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.graphics.colors.palettes.material_palette : MaterialPalette;
+import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
 
 struct RangeInfo
 {

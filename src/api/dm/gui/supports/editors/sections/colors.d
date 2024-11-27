@@ -38,7 +38,7 @@ class Colors : Control
         flowLayout.flowWidth = window.width;
 
         import api.dm.kit.graphics.colors.rgba : RGBA;
-        import api.dm.kit.graphics.colors.palettes.material_palette : MaterialPalette;
+        import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
         import std.traits : EnumMembers;
         import std.range : chunks;
 
@@ -49,42 +49,42 @@ class Colors : Control
         import api.dm.kit.assets.fonts.font_size : FontSize;
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
-        auto colorSets = [EnumMembers!MaterialPalette].chunks(14);
-        foreach (colorSet; colorSets)
-        {
-            auto setContainer = new VBox;
-            addCreate(setContainer);
+        // auto colorSets = [EnumMembers!MaterialPalette].chunks(14);
+        // foreach (colorSet; colorSets)
+        // {
+        //     auto setContainer = new VBox;
+        //     addCreate(setContainer);
 
-            foreach (c; colorSet)
-                (color) {
-                auto colorContainer = new VBox;
-                colorContainer.isAlignX = true;
-                colorContainer.isBackground = false;
-                colorContainer.width = 65;
-                colorContainer.height = 30;
+        //     foreach (c; colorSet)
+        //         (color) {
+        //         auto colorContainer = new VBox;
+        //         colorContainer.isAlignX = true;
+        //         colorContainer.isBackground = false;
+        //         colorContainer.width = 65;
+        //         colorContainer.height = 30;
 
-                setContainer.addCreate(colorContainer);
+        //         setContainer.addCreate(colorContainer);
 
-                import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+        //         import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
-                auto colorHex = cast(string) color;
-                auto newColor = RGBA.web(colorHex);
+        //         auto colorHex = cast(string) color;
+        //         auto newColor = RGBA.web(colorHex);
 
-                colorContainer.onPointerDown ~= (ref e) {
-                    input.clipboard.setText(colorHex);
-                };
+        //         colorContainer.onPointerDown ~= (ref e) {
+        //             input.clipboard.setText(colorHex);
+        //         };
 
-                auto style = GraphicStyle(1, newColor, true, newColor);
+        //         auto style = GraphicStyle(1, newColor, true, newColor);
 
-                auto colorText = new Text();
-                //colorText.style = style;
-                colorText.fontSize = FontSize.small;
-                colorText.text = (cast(string) color).to!dstring;
-                colorContainer.addCreate(colorText);
+        //         auto colorText = new Text();
+        //         //colorText.style = style;
+        //         colorText.fontSize = FontSize.small;
+        //         colorText.text = (cast(string) color).to!dstring;
+        //         colorContainer.addCreate(colorText);
 
-                auto shape = new VConvexPolygon(colorContainer.width, colorContainer.height, style, 0);
-                colorContainer.addCreate(shape);
-            }(c);
-        }
+        //         auto shape = new VConvexPolygon(colorContainer.width, colorContainer.height, style, 0);
+        //         colorContainer.addCreate(shape);
+        //     }(c);
+        // }
     }
 }

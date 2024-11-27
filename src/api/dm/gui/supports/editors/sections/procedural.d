@@ -7,7 +7,7 @@ version(DmAddon):
 import api.dm.gui.controls.control : Control;
 import api.math.geom2.rect2 : Rect2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.graphics.colors.palettes.material_palette : MaterialPalette;
+import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites.tweens.pause_tween : PauseTween;
 import api.math.random : Random;

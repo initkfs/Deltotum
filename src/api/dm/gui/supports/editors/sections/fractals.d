@@ -118,7 +118,7 @@ class Fractals : Control
         fracGen.height = shapeSize;
         build(fracGen);
 
-        import api.dm.kit.graphics.colors.palettes.material_palette : MaterialPalette;
+        import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
 
         enum lineWidth = 2;
         fracGen.style = GraphicStyle(lineWidth, RGBA.web(MaterialPalette.limeA400));

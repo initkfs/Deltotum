@@ -238,7 +238,7 @@ class Calendar : Control
     {
         super.create;
 
-        import api.dm.kit.graphics.colors.palettes.material_palette : MaterialPalette;
+        import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
 
         holidayColor = RGBA.web(MaterialPalette.redA200);
 
