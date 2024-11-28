@@ -3,63 +3,30 @@ module api.dm.gui.controls.switches.toggle_buttons.base_toggle_button;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.gui.controls.switches.base_biswitch : BaseBiswitch;
 import api.dm.gui.controls.labeled : Labeled;
-import api.dm.kit.sprites.shapes.shape : Shape;
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.kit.sprites.shapes.rectangle : Rectangle;
-import api.dm.gui.events.action_event : ActionEvent;
-import api.dm.gui.controls.texts.text : Text;
-import api.dm.kit.sprites.textures.texture : Texture;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-
-import std.traits : isSomeString;
-
-enum ButtonType
-{
-    normal,
-    cancel,
-    close,
-    next,
-    no,
-    ok,
-    previous,
-    yes
-}
+import api.dm.kit.sprites.textures.texture : Texture;
+import api.dm.gui.controls.texts.text : Text;
 
 /**
  * Authors: initkfs
  */
 class BaseToggleButton : BaseBiswitch
 {
-    enum defaultButtonText = "Button";
-    void delegate(ref ActionEvent)[] onAction;
-
-    bool isCancel;
-    void delegate()[] onCancel;
-
-    bool isDefault;
-    void delegate()[] onDefault;
-
-    this(dstring text, string iconName, bool isCreateLayout = true)
+    protected
     {
-        this(text, 0, 0, 0, iconName, isCreateLayout);
-    }
-
-    this(dstring text, void delegate(ref ActionEvent) onAction, bool isCreateLayout = true)
-    {
-        this(text, 0, 0, 0, null, isCreateLayout);
-        this.onAction ~= onAction;
+        RGBA lastLabelColor;
     }
 
     this(
         dstring text,
         double width = 0,
         double height = 0,
-        double graphicsGap = 0,
         string iconName = null,
+        double graphicsGap = 0,
         bool isCreateLayout = true
     )
     {
-        super(width, height, iconName, graphicsGap, text, isCreateLayout);
+        super(width, height, text, iconName, graphicsGap, isCreateLayout);
 
         isCreateHover = true;
         isCreateHoverAnimation = true;
@@ -68,16 +35,21 @@ class BaseToggleButton : BaseBiswitch
 
         isCreateInteractiveListeners = true;
 
+        if (layout)
+        {
+            layout.isDecreaseRootSize = true;
+        }
+
         isBorder = true;
     }
 
     override void loadTheme()
     {
         loadLabeledTheme;
-        loadBaseButtonTheme;
+        loadToggleButtonTheme;
     }
 
-    void loadBaseButtonTheme()
+    void loadToggleButtonTheme()
     {
         if (isSetNullWidthFromTheme && _width == 0)
         {
@@ -93,67 +65,6 @@ class BaseToggleButton : BaseBiswitch
     override void create()
     {
         super.create;
-
-        onPointerUp ~= (ref e) {
-
-            if (isDisabled || _selected)
-            {
-                return;
-            }
-
-            if (onAction.length > 0)
-            {
-                auto ea = ActionEvent(e.ownerId, e.x, e.y, e.button);
-                foreach (dg; onAction)
-                {
-                    dg(ea);
-                    if (ea.isConsumed)
-                    {
-                        break;
-                    }
-                }
-            }
-        };
-
-        if (isCancel)
-        {
-            import api.dm.com.inputs.com_keyboard : ComKeyName;
-
-            onKeyDown ~= (ref e) {
-                if (isDisabled)
-                {
-                    return;
-                }
-
-                if (isFocus && e.keyName == ComKeyName.ESCAPE)
-                {
-                    foreach (dg; onCancel)
-                    {
-                        dg();
-                    }
-                }
-            };
-        }
-
-        if (isDefault)
-        {
-            import api.dm.com.inputs.com_keyboard : ComKeyName;
-
-            onKeyDown ~= (ref e) {
-                if (isDisabled)
-                {
-                    return;
-                }
-
-                if (isFocus && e.keyName == ComKeyName.RETURN)
-                {
-                    foreach (dg; onDefault)
-                    {
-                        dg();
-                    }
-                }
-            };
-        }
     }
 
     import api.dm.kit.sprites.tweens : Tween;
@@ -161,11 +72,6 @@ class BaseToggleButton : BaseBiswitch
     override Tween newActionEffectAnimation()
     {
         auto anim = super.newActionEffectAnimation;
-        if (!isFixed)
-        {
-            return anim;
-        }
-
         if (anim.isOneShort)
         {
             anim.isOneShort = false;
@@ -186,61 +92,87 @@ class BaseToggleButton : BaseBiswitch
 
     override void delegate() newActionEffectBehaviour()
     {
-        return () {
-
-            if (!isOn)
-            {
-                isOn = true;
-
-                if (_actionEffect)
-                {
-                    if (_actionEffectAnimation && _actionEffectAnimation.isRunning)
-                    {
-                        _actionEffectAnimation.stop;
-                    }
-
-                    _actionEffect.opacity = 0;
-                    _actionEffectAnimation.run;
-                }
-
-            }
-            else
-            {
-                isOn = false;
-
-                if (_actionEffect)
-                {
-                    if (_actionEffectAnimation && _actionEffectAnimation.isRunning)
-                    {
-                        _actionEffectAnimation.stop;
-                    }
-
-                    _actionEffectAnimation.isReverse = true;
-                    _actionEffectAnimation.run;
-                }
-            }
-
-        };
+        return () { toggle; };
     }
 
-    override void addCreateIcon(string iconName)
+    override protected void switchContentState(bool oldState, bool newState)
     {
-        super.addCreateIcon(iconName);
-        if (_label && _label.text.length == 0)
+        super.switchContentState(oldState, newState);
+
+        if (hasIcon)
         {
-            _label.isLayoutManaged = false;
-            _label.isVisible = false;
+            if (auto iconTexture = cast(Texture) icon)
+            {
+                //TODO bool flag, sync?
+                if (lastLabelColor == RGBA.init)
+                {
+                    lastLabelColor = iconTexture.color;
+                }
+
+                if (newState)
+                {
+                    iconTexture.color = newOnEffectIconColor(lastLabelColor);
+                }
+                else
+                {
+                    iconTexture.color = lastLabelColor;
+                }
+                iconTexture.setInvalid;
+            }
         }
-        setInvalid;
+
+        if (newState)
+        {
+            if (_actionEffectAnimation)
+            {
+                if (_actionEffectAnimation.isRunning)
+                {
+                    _actionEffectAnimation.stop;
+                }
+
+                if (_actionEffect)
+                {
+                    _actionEffect.opacity = 0;
+                }
+
+                _actionEffectAnimation.run;
+            }
+
+        }
+        else
+        {
+            if (_actionEffectAnimation)
+            {
+                if (_actionEffectAnimation.isRunning)
+                {
+                    _actionEffectAnimation.stop;
+                }
+                _actionEffectAnimation.isReverse = true;
+                _actionEffectAnimation.run;
+            }
+        }
+    }
+
+    RGBA newOnEffectIconColor(RGBA originalColor)
+    {
+        originalColor.contrast(80);
+        return originalColor;
+    }
+
+    override Text newLabelText()
+    {
+        auto text = super.newLabelText;
+        //TODO from theme
+        if (!text.isBackground)
+        {
+            text.isBackground = true;
+        }
+        return text;
     }
 
     override void dispose()
     {
         super.dispose;
-
-        onAction = null;
-        onCancel = null;
-        onDefault = null;
     }
 
 }

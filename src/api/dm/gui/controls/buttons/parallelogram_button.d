@@ -6,7 +6,6 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.events.action_event : ActionEvent;
 import api.dm.gui.controls.control : Control;
 
-
 /**
  * Authors: initkfs
  */
@@ -17,18 +16,18 @@ class ParallelogramButton : BaseButton
 
     this(dstring text = defaultButtonText, double angleDeg = 0)
     {
-        this(text, 0, 0, 0, iconName, angleDeg);
+        this(text, 0, 0, iconName, 0, angleDeg);
     }
 
     this(dstring text = defaultButtonText, string iconName, void delegate(ref ActionEvent) onAction, double angleDeg = 0)
     {
-        this(text, 0, 0, 0, iconName, angleDeg);
+        this(text, 0, 0, iconName, 0, angleDeg);
         this.onAction ~= onAction;
     }
 
     this(dstring text, void delegate(ref ActionEvent) onAction, double angleDeg = 0)
     {
-        this(text, 0, 0, 0, null, angleDeg);
+        this(text, 0, 0, null, 0, angleDeg);
         this.onAction ~= onAction;
     }
 
@@ -36,12 +35,12 @@ class ParallelogramButton : BaseButton
         dstring text,
         double width = 0,
         double height = 0,
-        double graphicsGap = 0,
         string iconName = null,
+        double graphicsGap = 0,
         double angleDeg = 0
     )
     {
-        super(text, width, height, graphicsGap, iconName);
+        super(text, width, height, iconName, graphicsGap);
         this.angleDeg = angleDeg;
     }
 
@@ -63,9 +62,11 @@ class ParallelogramButton : BaseButton
 
     protected override Sprite createShape(double width, double height, GraphicStyle style)
     {
-        
-        if(capGraphics.isVectorGraphics){
-            import api.dm.kit.sprites.textures.vectors.shapes.vparallelogram: VParallelogram;
+
+        if (capGraphics.isVectorGraphics)
+        {
+            import api.dm.kit.sprites.textures.vectors.shapes.vparallelogram : VParallelogram;
+
             auto vShape = new VParallelogram(width, height, angleDeg, isInverted, style);
             return vShape;
         }

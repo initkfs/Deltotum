@@ -54,7 +54,7 @@ class BaseToggleSwitch : BaseBiswitch
 
     this(dstring label, double width, double height, string iconName = null, double graphicsGap = 5, bool isCreateLayout = true)
     {
-        super(width, height, iconName, graphicsGap, label, isCreateLayout);
+        super(width, height, label, iconName, graphicsGap, isCreateLayout);
     }
 
     this(dstring label = "Toggle", string iconName = null, double graphicsGap = 5)
@@ -336,5 +336,9 @@ class BaseToggleSwitch : BaseBiswitch
                 handleOffEffect.isVisible = true;
             }
         }
+    }
+
+    override void switchContentState(bool oldState, bool newState){
+        
     }
 }

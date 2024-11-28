@@ -30,11 +30,11 @@ class PolyButton : BaseRoundButton
         dstring text,
         size_t sides = 0,
         double diameter = 0,
-        double graphicsGap = 0,
         string iconName = null,
+        double graphicsGap = 0,
     )
     {
-        super(text, diameter, graphicsGap, iconName);
+        super(text, diameter, iconName, graphicsGap);
 
         this._sides = sides;
     }
@@ -71,7 +71,8 @@ class PolyButton : BaseRoundButton
 
     size_t sides() => _sides;
 
-    void sides(size_t v){
+    void sides(size_t v)
+    {
         _sides = v;
     }
 }

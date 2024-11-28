@@ -218,6 +218,23 @@ class Controls : Control
         import Icons = api.dm.gui.themes.icons.icon_name;
         import api.dm.kit.sprites.layouts.vlayout : VLayout;
         import api.dm.kit.sprites.layouts.hlayout: HLayout;
+        import api.dm.gui.controls.switches.toggle_buttons.toggle_button: ToggleButton;
+
+        auto toggleBtnContainer = new SwitchGroup;
+        toggleBtnContainer.layout = new VLayout(5);
+        toggleBtnContainer.layout.isAutoResize = true;
+        root.addCreate(toggleBtnContainer);
+
+        import api.dm.kit.graphics.styles.default_style : DefaultStyle;
+
+        auto tbtn1 = new ToggleButton(null, Icons.close_outline);
+        tbtn1.styleId = DefaultStyle.warning;
+        toggleBtnContainer.addCreate(tbtn1);
+
+        auto tbtn2 = new ToggleButton(null, Icons.apps_outline);
+        tbtn2.isOn = true;
+        tbtn2.styleId = DefaultStyle.danger;
+        toggleBtnContainer.addCreate(tbtn2);
 
         auto checkBoxContainer = new SwitchGroup;
         checkBoxContainer.layout = new VLayout(5);

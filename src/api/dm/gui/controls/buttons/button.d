@@ -29,11 +29,11 @@ class Button : BaseButton
         dstring text,
         double width,
         double height,
-        double graphicsGap = 0,
         string iconName = null,
+        double graphicsGap = 0,
     )
     {
-        super(text, width, height, graphicsGap, iconName);
+        super(text, width, height, iconName, graphicsGap);
     }
 
 }

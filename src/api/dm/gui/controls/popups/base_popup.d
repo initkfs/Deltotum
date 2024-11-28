@@ -14,7 +14,7 @@ class BasePopup : Labeled
 
     this(dstring text = "Popup", string iconName = null, double graphicsGap = 0, bool isCreateLayout = true)
     {
-        super(0, 0, iconName, graphicsGap, text, isCreateLayout);
+        super(0, 0, text, iconName, graphicsGap, isCreateLayout);
         _labelText = text;
 
         isDrawByParent = false;
@@ -31,7 +31,8 @@ class BasePopup : Labeled
         isBackground = true;
     }
 
-    override void create(){
+    override void create()
+    {
         super.create;
         enableInsets;
     }

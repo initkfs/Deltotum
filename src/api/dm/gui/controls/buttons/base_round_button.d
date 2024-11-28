@@ -18,23 +18,23 @@ class BaseRoundButton : BaseButton
 
     this(dstring text = defaultButtonText)
     {
-        this(text, 0, 0, null);
+        this(text, 0, null, 0);
     }
 
     this(dstring text, void delegate(ref ActionEvent) onAction)
     {
-        this(text, 0, 0, null);
+        this(text, 0, null, 0);
         this.onAction ~= onAction;
     }
 
     this(
         dstring text,
         double diameter = 0,
-        double graphicsGap = 0,
         string iconName = null,
+        double graphicsGap = 0,
     )
     {
-        super(text, diameter, diameter, graphicsGap, iconName, isCreateLayout:
+        super(text, diameter, diameter, iconName, graphicsGap, isCreateLayout:
             false);
 
         this._diameter = diameter;
@@ -45,7 +45,7 @@ class BaseRoundButton : BaseButton
         this.layout.isAutoResizeAndAlignOne = true;
         this.layout.isAlign = true;
     }
-    
+
     override bool containsPoint(double x, double y)
     {
         if (hasBackground)

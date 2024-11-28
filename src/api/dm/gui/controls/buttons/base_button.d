@@ -38,12 +38,12 @@ class BaseButton : Labeled
 
     this(dstring text, string iconName, bool isCreateLayout = true)
     {
-        this(text, 0, 0, 0, iconName, isCreateLayout);
+        this(text, 0, 0, iconName, 0, isCreateLayout);
     }
 
     this(dstring text, void delegate(ref ActionEvent) onAction, bool isCreateLayout = true)
     {
-        this(text, 0, 0, 0, null, isCreateLayout);
+        this(text, 0, 0, null, 0, isCreateLayout);
         this.onAction ~= onAction;
     }
 
@@ -51,12 +51,12 @@ class BaseButton : Labeled
         dstring text,
         double width = 0,
         double height = 0,
-        double graphicsGap = 0,
         string iconName = null,
+        double graphicsGap = 0,
         bool isCreateLayout = true
     )
     {
-        super(width, height, iconName, graphicsGap, text, isCreateLayout);
+        super(width, height, text, iconName, graphicsGap, isCreateLayout);
 
         isCreateHover = true;
         isCreateHoverAnimation = true;

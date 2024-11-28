@@ -27,7 +27,7 @@ class Check : BaseBiswitch
 
     this(dstring text = "Check", double width, double height, string iconName = null, double graphicsGap = 5)
     {
-        super(width, height, iconName, graphicsGap, text, isCreateLayout:
+        super(width, height, text, iconName, graphicsGap, isCreateLayout:
             true);
 
         isCreateLabelText = true;

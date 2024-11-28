@@ -2,9 +2,9 @@ module api.dm.gui.controls.labels.hyperlink;
 
 import api.dm.gui.controls.labeled : Labeled;
 import api.dm.kit.sprites.sprite : Sprite;
-import api.dm.gui.controls.tooltips.popup: Popup;
+import api.dm.gui.controls.tooltips.popup : Popup;
 
-import std.conv: to;
+import std.conv : to;
 
 /**
  * Authors: initkfs
@@ -20,7 +20,7 @@ class Hyperlink : Labeled
 
     this(dstring text = "Hyperlink", string iconName = null, double graphicsGap = 0, bool isCreateLayout = true)
     {
-        super(0, 0, iconName, graphicsGap, text, isCreateLayout);
+        super(0, 0, text, iconName, graphicsGap, isCreateLayout);
         _labelText = text;
 
         import api.dm.kit.sprites.layouts.vlayout : VLayout;
