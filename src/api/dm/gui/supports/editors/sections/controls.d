@@ -212,12 +212,12 @@ class Controls : Control
     void createSelections(Container root)
     {
         import api.dm.gui.controls.switches.switch_group : SwitchGroup;
-        import api.dm.gui.controls.switches.checks.check : Check;
+        import api.dm.gui.controls.switches.checks.check_switch : CheckSwitch;
         import api.dm.gui.controls.choices.choice_box : ChoiceBox;
         import Icons = api.dm.gui.themes.icons.icon_name;
         import api.dm.kit.sprites.layouts.vlayout : VLayout;
         import api.dm.kit.sprites.layouts.hlayout : HLayout;
-        import api.dm.gui.controls.switches.buttons.toggle_button : ToggleButton;
+        import api.dm.gui.controls.switches.locks.lock_switch : LockSwitch;
 
         auto toggleBtnContainer = new SwitchGroup;
         toggleBtnContainer.layout = new VLayout(5);
@@ -226,12 +226,12 @@ class Controls : Control
 
         import api.dm.kit.graphics.styles.default_style : DefaultStyle;
 
-        auto tbtn1 = new ToggleButton(null, Icons.close_outline);
+        auto tbtn1 = new LockSwitch(null, Icons.close_outline);
         tbtn1.styleId = DefaultStyle.warning;
         tbtn1.isOn = true;
         toggleBtnContainer.addCreate(tbtn1);
 
-        auto tbtn2 = new ToggleButton(null, Icons.apps_outline);
+        auto tbtn2 = new LockSwitch(null, Icons.apps_outline);
         tbtn2.styleId = DefaultStyle.danger;
         toggleBtnContainer.addCreate(tbtn2);
 
@@ -240,10 +240,10 @@ class Controls : Control
         checkBoxContainer.layout.isAutoResize = true;
         root.addCreate(checkBoxContainer);
 
-        auto check1 = new Check("Check1", Icons.bug_outline);
+        auto check1 = new CheckSwitch("Check1", Icons.bug_outline);
         checkBoxContainer.addCreate(check1);
 
-        auto check2 = new Check("Check2", Icons.bug_outline);
+        auto check2 = new CheckSwitch("Check2", Icons.bug_outline);
         check2.isBorder = true;
         checkBoxContainer.addCreate(check2);
         check2.layout.isFillFromStartToEnd = false;
@@ -485,7 +485,7 @@ class Controls : Control
     {
         import api.dm.gui.controls.buttons.button : Button;
         import api.dm.gui.controls.buttons.parallelogram_button : ParallelogramButton;
-        import api.dm.gui.controls.switches.checks.check : Check;
+        import api.dm.gui.controls.switches.checks.check_switch : CheckSwitch;
         import IconName = api.dm.gui.themes.icons.icon_name;
         import api.dm.gui.containers.frame : Frame;
 

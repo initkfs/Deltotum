@@ -1,4 +1,4 @@
-module api.dm.gui.controls.switches.checks.check;
+module api.dm.gui.controls.switches.checks.check_switch;
 
 import api.dm.gui.controls.switches.base_biswitch : BaseBiswitch;
 import api.dm.gui.controls.control : Control;
@@ -7,7 +7,7 @@ import api.dm.kit.sprites.sprite : Sprite;
 /**
  * Authors: initkfs
  */
-class Check : BaseBiswitch
+class CheckSwitch : BaseBiswitch
 {
     protected
     {
@@ -25,7 +25,7 @@ class Check : BaseBiswitch
 
     bool isCreateMarkerListeners = true;
 
-    this(dstring text = "Check", double width, double height, string iconName = null, double graphicsGap = 5)
+    this(dstring text = "CheckSwitch", double width, double height, string iconName = null, double graphicsGap = 5)
     {
         super(width, height, text, iconName, graphicsGap, isCreateLayout:
             true);
@@ -34,7 +34,7 @@ class Check : BaseBiswitch
         isCreateMarker = true;
     }
 
-    this(dstring text = "Check", string iconName = null, double graphicsGap = 5)
+    this(dstring text = "CheckSwitch", string iconName = null, double graphicsGap = 5)
     {
         this(text, 0, 0, iconName, graphicsGap);
     }

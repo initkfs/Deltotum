@@ -1,7 +1,7 @@
 module api.dm.gui.controls.tabs.tab;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.gui.controls.switches.buttons.toggle_button: ToggleButton;
+import api.dm.gui.controls.switches.locks.lock_switch: LockSwitch;
 import api.dm.kit.sprites.sprite : Sprite;
 
 /**
@@ -9,7 +9,7 @@ import api.dm.kit.sprites.sprite : Sprite;
  */
 class Tab : Control
 {
-    ToggleButton label;
+    LockSwitch label;
 
     Sprite content;
 
@@ -17,7 +17,7 @@ class Tab : Control
 
     this(dstring text = "Tab")
     {
-        label = new ToggleButton(text);
+        label = new LockSwitch(text);
         label.isBorder = false;
 
         import api.dm.kit.sprites.layouts.center_layout: CenterLayout;

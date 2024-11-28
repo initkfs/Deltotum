@@ -1,4 +1,4 @@
-module api.dm.gui.controls.switches.buttons.base_toggle_button;
+module api.dm.gui.controls.switches.locks.base_lock_switch;
 
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.gui.controls.switches.base_biswitch : BaseBiswitch;
@@ -7,7 +7,7 @@ import api.dm.gui.controls.labeled : Labeled;
 /**
  * Authors: initkfs
  */
-class BaseToggleButton : BaseBiswitch
+class BaseLockSwitch : BaseBiswitch
 {
     this(
         dstring text,
@@ -40,10 +40,10 @@ class BaseToggleButton : BaseBiswitch
     override void loadTheme()
     {
         loadLabeledTheme;
-        loadToggleButtonTheme;
+        loadLockButtonTheme;
     }
 
-    void loadToggleButtonTheme()
+    void loadLockButtonTheme()
     {
         if (isSetNullWidthFromTheme && _width == 0)
         {

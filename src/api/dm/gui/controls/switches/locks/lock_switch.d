@@ -1,11 +1,11 @@
-module api.dm.gui.controls.switches.buttons.toggle_button;
+module api.dm.gui.controls.switches.locks.lock_switch;
 
-import api.dm.gui.controls.switches.buttons.base_toggle_button : BaseToggleButton;
+import api.dm.gui.controls.switches.locks.base_lock_switch : BaseLockSwitch;
 
 /**
  * Authors: initkfs
  */
-class ToggleButton : BaseToggleButton
+class LockSwitch : BaseLockSwitch
 {
 
     this(dstring text, string iconName)
