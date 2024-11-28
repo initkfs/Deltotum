@@ -4,7 +4,7 @@ import api.dm.gui.controls.control : Control;
 import api.dm.gui.containers.hbox : HBox;
 import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.controls.texts.text : Text;
-import api.dm.gui.controls.switches.buttons.button : Button;
+import api.dm.gui.controls.buttons.button : Button;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import KitI18nKeys = api.dm.gui.gui_i18n_keys;

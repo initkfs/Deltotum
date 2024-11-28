@@ -8,7 +8,7 @@ import api.dm.kit.scenes.scene : Scene;
 import api.dm.kit.windows.window : Window;
 
 import api.dm.gui.containers.vbox : VBox;
-import api.dm.gui.controls.switches.buttons.button : Button;
+import api.dm.gui.controls.buttons.button : Button;
 import api.dm.gui.containers.container : Container;
 import api.dm.gui.controls.control : Control;
 

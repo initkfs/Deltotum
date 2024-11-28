@@ -535,7 +535,7 @@ class DiamondSquareGenerator : Control
         randomRangeMinField.value = randomRangeMin;
         randomRangeMaxField.value = randomRangeMax;
 
-        import api.dm.gui.controls.switches.buttons.button : Button;
+        import api.dm.gui.controls.buttons.button : Button;
 
         auto genBtn = new Button("Generate");
         fieldRoot.addCreate(genBtn);

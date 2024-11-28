@@ -6,7 +6,7 @@ import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.controls.trees.tree_item : TreeItem;
-import api.dm.gui.controls.switches.buttons.button : Button;
+import api.dm.gui.controls.buttons.button : Button;
 import api.dm.gui.containers.hbox : HBox;
 import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.containers.frame : Frame;
@@ -128,12 +128,12 @@ class Controls : Control
         auto btnRoot3 = new HBox(5);
         btnFrame.addCreate(btnRoot3);
 
-        import api.dm.gui.controls.switches.buttons.round_button : RoundButton;
+        import api.dm.gui.controls.buttons.round_button : RoundButton;
 
         auto circleBtn = new RoundButton("Button");
         btnRoot3.addCreate(circleBtn);
 
-        import api.dm.gui.controls.switches.buttons.poly_button : PolyButton;
+        import api.dm.gui.controls.buttons.poly_button : PolyButton;
 
         import api.dm.kit.sprites.tweens : PauseTween;
 
@@ -465,8 +465,8 @@ class Controls : Control
 
     private void createWindows(Container root)
     {
-        import api.dm.gui.controls.switches.buttons.button : Button;
-        import api.dm.gui.controls.switches.buttons.parallelogram_button : ParallelogramButton;
+        import api.dm.gui.controls.buttons.button : Button;
+        import api.dm.gui.controls.buttons.parallelogram_button : ParallelogramButton;
         import api.dm.gui.controls.toggles.checks.check : Check;
         import IconName = api.dm.gui.themes.icons.icon_name;
         import api.dm.gui.containers.frame : Frame;

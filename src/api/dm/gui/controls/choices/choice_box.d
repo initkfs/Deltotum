@@ -3,7 +3,7 @@ module api.dm.gui.controls.choices.choice_box;
 import api.dm.gui.controls.control: Control;
 import api.dm.kit.sprites.sprite: Sprite;
 import api.dm.gui.controls.control : Control;
-import api.dm.gui.controls.switches.buttons.button : Button;
+import api.dm.gui.controls.buttons.button : Button;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.containers.base.typed_container : TypedContainer;
 import api.dm.gui.controls.texts.text_area : TextArea;

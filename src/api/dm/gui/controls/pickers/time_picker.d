@@ -10,7 +10,7 @@ import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.containers.stack_box : StackBox;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.assets.fonts.font_size : FontSize;
-import api.dm.gui.controls.switches.buttons.button : Button;
+import api.dm.gui.controls.buttons.button : Button;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.vec2 : Vec2d;
 

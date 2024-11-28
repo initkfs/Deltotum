@@ -1,6 +1,6 @@
-module api.dm.gui.controls.switches.buttons.button;
+module api.dm.gui.controls.buttons.button;
 
-import api.dm.gui.controls.switches.buttons.base_button : BaseButton;
+import api.dm.gui.controls.buttons.base_button : BaseButton;
 import api.dm.gui.events.action_event : ActionEvent;
 
 /**

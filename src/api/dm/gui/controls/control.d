@@ -409,7 +409,7 @@ class Control : GuiComponent
         {
             actionEffectAnimation.onStop ~= newOnEnd;
         }
-        
+
         return actionEffectAnimation;
     }
 
@@ -428,19 +428,17 @@ class Control : GuiComponent
         return (id) {
             assert(theme);
 
-            if (id.length == 0)
+            if (style != GraphicStyle.init)
             {
-                if (style != GraphicStyle.init)
-                {
-                    return style;
-                }
-
-                return createDefaultStyle;
+                return style;
             }
 
-            if (auto stylePtr = hasStyle(id))
+            if (id.length > 0)
             {
-                return *stylePtr;
+                if (auto stylePtr = hasStyle(id))
+                {
+                    return *stylePtr;
+                }
             }
 
             GraphicStyle newStyle = createDefaultStyle;

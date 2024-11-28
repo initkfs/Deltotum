@@ -2,7 +2,7 @@ module api.dm.gui.interacts.dialogs.gui_dialog;
 
 import api.dm.gui.containers.container : Container;
 import api.dm.gui.controls.texts.text : Text;
-import api.dm.gui.controls.switches.buttons.button : Button;
+import api.dm.gui.controls.buttons.button : Button;
 import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import api.dm.kit.events.event_kit_target : EventKitPhase;
 import api.dm.gui.containers.vbox : VBox;

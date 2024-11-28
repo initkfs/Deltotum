@@ -229,6 +229,8 @@ class Labeled : Control
         return _label;
     }
 
+    bool hasIcon() => _icon !is null;
+
     Sprite icon()
     {
         assert(_icon);
@@ -277,6 +279,17 @@ class Labeled : Control
             }
         }
         return true;
+    }
+
+    override void addCreateIcon(string iconName)
+    {
+        super.addCreateIcon(iconName);
+        if (_label && _label.text.length == 0)
+        {
+            _label.isLayoutManaged = false;
+            _label.isVisible = false;
+            setInvalid;
+        }
     }
 
     override void dispose()

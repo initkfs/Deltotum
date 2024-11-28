@@ -11,7 +11,7 @@ import api.dm.gui.controls.scrolls.vscroll : VScroll;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.math.insets : Insets;
 import api.math.geom2.rect2 : Rect2d;
-import api.dm.gui.controls.switches.buttons.button : Button;
+import api.dm.gui.controls.buttons.button : Button;
 import api.dm.gui.controls.texts.text : Text;
 
 import api.dm.gui.controls.trees.tree_item : TreeItem;

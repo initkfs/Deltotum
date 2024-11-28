@@ -1,6 +1,6 @@
-module api.dm.gui.controls.switches.buttons.base_round_button;
+module api.dm.gui.controls.buttons.base_round_button;
 
-import api.dm.gui.controls.switches.buttons.base_button : BaseButton;
+import api.dm.gui.controls.buttons.base_button : BaseButton;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.events.action_event : ActionEvent;
