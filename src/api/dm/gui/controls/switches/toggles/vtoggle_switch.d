@@ -1,6 +1,6 @@
-module api.dm.gui.controls.toggles.switches.vtoggle_switch;
+module api.dm.gui.controls.switches.toggles.vtoggle_switch;
 
-import api.dm.gui.controls.toggles.switches.base_toggle_switch : BaseToggleSwitch;
+import api.dm.gui.controls.switches.toggles.base_toggle_switch : BaseToggleSwitch;
 import api.dm.gui.controls.control : Control;
 import api.math.geom2.vec2 : Vec2d;
 

@@ -1,4 +1,4 @@
-module api.dm.gui.controls.toggles.switches.base_toggle_switch;
+module api.dm.gui.controls.switches.toggles.base_toggle_switch;
 
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.gui.controls.switches.base_biswitch : BaseBiswitch;

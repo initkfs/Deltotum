@@ -1,4 +1,4 @@
-module api.dm.gui.controls.toggles.checks.check;
+module api.dm.gui.controls.switches.checks.check;
 
 import api.dm.gui.controls.switches.base_biswitch : BaseBiswitch;
 import api.dm.gui.controls.control : Control;

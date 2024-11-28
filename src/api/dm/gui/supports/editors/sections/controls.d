@@ -12,7 +12,7 @@ import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.containers.frame : Frame;
 import api.dm.kit.sprites.layouts.vlayout : VLayout;
 import api.dm.gui.controls.carousels.carousel;
-import api.dm.gui.controls.toggles.switches.vtoggle_switch;
+import api.dm.gui.controls.switches.toggles.vtoggle_switch;
 
 /**
  * Authors: initkfs
@@ -213,7 +213,7 @@ class Controls : Control
     void createSelections(Container root)
     {
         import api.dm.gui.controls.switches.switch_group : SwitchGroup;
-        import api.dm.gui.controls.toggles.checks.check : Check;
+        import api.dm.gui.controls.switches.checks.check : Check;
         import api.dm.gui.controls.choices.choice_box : ChoiceBox;
         import Icons = api.dm.gui.themes.icons.icon_name;
         import api.dm.kit.sprites.layouts.vlayout : VLayout;
@@ -229,10 +229,10 @@ class Controls : Control
 
         auto tbtn1 = new ToggleButton(null, Icons.close_outline);
         tbtn1.styleId = DefaultStyle.warning;
+        tbtn1.isOn = true;
         toggleBtnContainer.addCreate(tbtn1);
 
         auto tbtn2 = new ToggleButton(null, Icons.apps_outline);
-        tbtn2.isOn = true;
         tbtn2.styleId = DefaultStyle.danger;
         toggleBtnContainer.addCreate(tbtn2);
 
@@ -255,8 +255,8 @@ class Controls : Control
         toggleContainer.layout.isAutoResize = true;
         root.addCreate(toggleContainer);
 
-        import api.dm.gui.controls.toggles.switches.htoggle_switch : HToggleSwitch;
-        import api.dm.gui.controls.toggles.switches.vtoggle_switch : VToggleSwitch;
+        import api.dm.gui.controls.switches.toggles.htoggle_switch : HToggleSwitch;
+        import api.dm.gui.controls.switches.toggles.vtoggle_switch : VToggleSwitch;
 
         auto switch1 = new HToggleSwitch("Toggle");
         toggleContainer.addCreate(switch1);
@@ -484,7 +484,7 @@ class Controls : Control
     {
         import api.dm.gui.controls.buttons.button : Button;
         import api.dm.gui.controls.buttons.parallelogram_button : ParallelogramButton;
-        import api.dm.gui.controls.toggles.checks.check : Check;
+        import api.dm.gui.controls.switches.checks.check : Check;
         import IconName = api.dm.gui.themes.icons.icon_name;
         import api.dm.gui.containers.frame : Frame;
 

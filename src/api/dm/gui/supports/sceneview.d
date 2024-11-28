@@ -3,7 +3,7 @@ module api.dm.gui.supports.sceneview;
 import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.containers.hbox : HBox;
 import api.dm.gui.containers.stack_box : StackBox;
-import api.dm.gui.controls.toggles.switches.htoggle_switch : HToggleSwitch;
+import api.dm.gui.controls.switches.toggles.htoggle_switch : HToggleSwitch;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.texts.textfield : TextField;
 import api.dm.kit.scenes.scene : Scene;
@@ -17,7 +17,7 @@ import api.math.insets : Insets;
 import api.dm.gui.containers.scroll_box : ScrollBox;
 import api.dm.gui.controls.tabs.tab : Tab;
 import api.dm.gui.controls.tabs.tabpane : TabPane;
-import api.dm.gui.controls.toggles.checks.check : Check;
+import api.dm.gui.controls.switches.checks.check : Check;
 
 import IconNames = api.dm.gui.themes.icons.icon_name;
 
