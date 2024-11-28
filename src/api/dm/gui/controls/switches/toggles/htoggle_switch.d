@@ -31,19 +31,16 @@ class HToggleSwitch : BaseToggleSwitch
         };
     }
 
-    override Vec2d handleOnAnimationMinValue(){
+    override Vec2d handleAnimationMinValue(){
         const hb = handleContainer.bounds;
         return Vec2d(hb.x + handleContainer.padding.left, hb
                 .y + handleContainer.padding.top);
     }
 
-    override Vec2d handleOnAnimationMaxValue(){
+    override Vec2d handleAnimationMaxValue(){
         const hb = handleContainer.bounds;
         return Vec2d(
             hb.right - handle.width - handleContainer.padding.right, hb
                 .y + handleContainer.padding.top);
     }
-
-    override Vec2d handleOffAnimationMinValue() => handleOnAnimationMaxValue;
-    override Vec2d handleOffAnimationMaxValue() => handleOnAnimationMinValue;
 }

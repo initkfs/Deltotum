@@ -27,23 +27,15 @@ class VToggleSwitch : BaseToggleSwitch
     override Vec2d handleSize() => Vec2d(handleHeight, handleWidth);
     override Vec2d handleContainerSize() => Vec2d(handleHeight, handleWidth * 2);
 
-    override Vec2d handleOnAnimationMinValue(){
+    override Vec2d handleAnimationMinValue(){
         const hb = handleContainer.bounds;
         return Vec2d(hb.x + handleContainer.padding.left, hb
                 .bottom - handleContainer.padding.bottom - handle.height);
     }
 
-    override Vec2d handleOnAnimationMaxValue(){
+    override Vec2d handleAnimationMaxValue(){
         const hb = handleContainer.bounds;
         return Vec2d(hb.x + handleContainer.padding.left, hb
                 .y - handleContainer.padding.top);
-    }
-
-    override Vec2d handleOffAnimationMinValue(){
-        return handleOnAnimationMaxValue;
-    }
-
-    override Vec2d handleOffAnimationMaxValue(){
-        return handleOnAnimationMinValue;
     }
 }

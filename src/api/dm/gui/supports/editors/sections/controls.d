@@ -274,8 +274,10 @@ class Controls : Control
         auto switch1h = new VToggleSwitch(null, Icons.analytics_outline);
         htoggleContainer.addCreate(switch1h);
         switch1h.isOn = true;
+        switch1h.isSwitchContent = true;
 
         auto switch2h = new VToggleSwitch(null, Icons.apps_outline);
+        switch2h.isSwitchContent = true;
         htoggleContainer.addCreate(switch2h);
 
         // import api.dm.gui.controls.choices.choice_box : ChoiceBox;

@@ -3,20 +3,12 @@ module api.dm.gui.controls.switches.toggle_buttons.base_toggle_button;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.gui.controls.switches.base_biswitch : BaseBiswitch;
 import api.dm.gui.controls.labeled : Labeled;
-import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.sprites.textures.texture : Texture;
-import api.dm.gui.controls.texts.text : Text;
 
 /**
  * Authors: initkfs
  */
 class BaseToggleButton : BaseBiswitch
 {
-    protected
-    {
-        RGBA lastLabelColor;
-    }
-
     this(
         dstring text,
         double width = 0,
@@ -41,6 +33,9 @@ class BaseToggleButton : BaseBiswitch
         }
 
         isBorder = true;
+
+        isSwitchIcon = true;
+        isSwitchLabel = true;
     }
 
     override void loadTheme()
@@ -99,28 +94,6 @@ class BaseToggleButton : BaseBiswitch
     {
         super.switchContentState(oldState, newState);
 
-        if (hasIcon)
-        {
-            if (auto iconTexture = cast(Texture) icon)
-            {
-                //TODO bool flag, sync?
-                if (lastLabelColor == RGBA.init)
-                {
-                    lastLabelColor = iconTexture.color;
-                }
-
-                if (newState)
-                {
-                    iconTexture.color = newOnEffectIconColor(lastLabelColor);
-                }
-                else
-                {
-                    iconTexture.color = lastLabelColor;
-                }
-                iconTexture.setInvalid;
-            }
-        }
-
         if (newState)
         {
             if (_actionEffectAnimation)
@@ -151,23 +124,6 @@ class BaseToggleButton : BaseBiswitch
                 _actionEffectAnimation.run;
             }
         }
-    }
-
-    RGBA newOnEffectIconColor(RGBA originalColor)
-    {
-        originalColor.contrast(80);
-        return originalColor;
-    }
-
-    override Text newLabelText()
-    {
-        auto text = super.newLabelText;
-        //TODO from theme
-        if (!text.isBackground)
-        {
-            text.isBackground = true;
-        }
-        return text;
     }
 
     override void dispose()

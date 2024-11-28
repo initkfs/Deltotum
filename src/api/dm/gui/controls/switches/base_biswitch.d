@@ -4,6 +4,10 @@ import api.dm.gui.controls.labeled : Labeled;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites.sprite : Sprite;
 
+import api.dm.kit.graphics.colors.rgba : RGBA;
+import api.dm.kit.sprites.textures.texture : Texture;
+import api.dm.gui.controls.texts.text : Text;
+
 /**
  * Authors: initkfs
  */
@@ -11,9 +15,13 @@ class BaseBiswitch : Labeled
 {
     void delegate(bool, bool)[] onOldNewValue;
 
+    bool isSwitchIcon;
+    bool isSwitchLabel;
+
     protected
     {
         bool _state;
+        RGBA lastLabelColor;
     }
 
     this(double width = 0, double height = 0, dstring labelText = null, string iconName = null, double graphicsGap = 0, bool isCreateLayout = true)
@@ -57,8 +65,50 @@ class BaseBiswitch : Labeled
         return true;
     }
 
-    void switchContentState(bool oldState, bool newState) {
+    void switchContentState(bool oldState, bool newState)
+    {
+        if (isSwitchIcon && hasIcon)
+        {
+            if (auto iconTexture = cast(Texture) icon)
+            {
+                //TODO bool flag, sync?
+                if (lastLabelColor == RGBA.init)
+                {
+                    lastLabelColor = iconTexture.color;
+                }
 
+                if (newState)
+                {
+                    iconTexture.color = newOnEffectIconColor(lastLabelColor);
+                }
+                else
+                {
+                    iconTexture.color = lastLabelColor;
+                }
+                iconTexture.setInvalid;
+            }
+        }
+    }
+
+    RGBA newOnEffectIconColor(RGBA originalColor)
+    {
+        originalColor.contrast(80);
+        return originalColor;
+    }
+
+    override Text newLabelText()
+    {
+        auto text = super.newLabelText;
+        if (!isSwitchLabel)
+        {
+            return text;
+        }
+        //TODO from theme
+        if (!text.isBackground)
+        {
+            text.isBackground = true;
+        }
+        return text;
     }
 
     void runSwitchListeners(bool oldValue, bool newValue)
@@ -70,5 +120,11 @@ class BaseBiswitch : Labeled
                 dg(oldValue, newValue);
             }
         }
+    }
+
+    void isSwitchContent(bool value)
+    {
+        isSwitchIcon = value;
+        isSwitchLabel = value;
     }
 }

@@ -300,7 +300,7 @@ class Control : GuiComponent
         {
             return createShape(w, h, *stylePtr);
         }
-        return createShape(w, h);
+        return createShape(w, h, createThisStyle);
     }
 
     Sprite newHoverEffect(double w, double h)
@@ -469,12 +469,6 @@ class Control : GuiComponent
                 }
             }
 
-            newStyle.isFill = isBackground;
-            if (!isBorder)
-            {
-                newStyle.lineWidth = 0;
-            }
-
             return newStyle;
         };
     }
@@ -494,6 +488,19 @@ class Control : GuiComponent
         {
             onStyleIdCreated(styleId, newStyle);
         }
+        return newStyle;
+    }
+
+    protected GraphicStyle createThisStyle()
+    {
+        auto newStyle = createStyle;
+
+        newStyle.isFill = isBackground;
+        if (!isBorder)
+        {
+            newStyle.lineWidth = 0;
+        }
+
         return newStyle;
     }
 
