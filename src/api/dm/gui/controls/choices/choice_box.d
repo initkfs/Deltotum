@@ -188,20 +188,20 @@ class ChoiceBox : TypedContainer!ChoiceItem
 
         foreach (item; items)
         {
-            if (item.label.isSelected)
-            {
-                item.label.isSelected = false;
-            }
+            // if (item.label.isSelected)
+            // {
+            //     item.label.isSelected = false;
+            // }
         }
 
         if (selected)
         {
             foreach (item; items)
             {
-                if (selected is item)
-                {
-                    item.label.isSelected = true;
-                }
+                // if (selected is item)
+                // {
+                //     item.label.isSelected = true;
+                // }
             }
         }
 

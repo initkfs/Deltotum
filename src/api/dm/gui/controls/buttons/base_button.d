@@ -93,7 +93,7 @@ class BaseButton : Labeled
 
         onPointerUp ~= (ref e) {
 
-            if (isDisabled || _selected)
+            if (isDisabled)
             {
                 return;
             }

@@ -217,7 +217,7 @@ class Controls : Control
         import Icons = api.dm.gui.themes.icons.icon_name;
         import api.dm.kit.sprites.layouts.vlayout : VLayout;
         import api.dm.kit.sprites.layouts.hlayout : HLayout;
-        import api.dm.gui.controls.switches.toggle_buttons.toggle_button : ToggleButton;
+        import api.dm.gui.controls.switches.buttons.toggle_button : ToggleButton;
 
         auto toggleBtnContainer = new SwitchGroup;
         toggleBtnContainer.layout = new VLayout(5);

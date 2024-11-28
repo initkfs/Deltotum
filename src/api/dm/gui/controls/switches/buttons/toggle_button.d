@@ -1,6 +1,6 @@
-module api.dm.gui.controls.switches.toggle_buttons.toggle_button;
+module api.dm.gui.controls.switches.buttons.toggle_button;
 
-import api.dm.gui.controls.switches.toggle_buttons.base_toggle_button : BaseToggleButton;
+import api.dm.gui.controls.switches.buttons.base_toggle_button : BaseToggleButton;
 
 /**
  * Authors: initkfs

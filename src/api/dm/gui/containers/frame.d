@@ -41,6 +41,7 @@ class Frame : Container
         label.isLayoutManaged = false;
         label.isFocusable = false;
         label.isBackground = true;
+        label.isBorder = true;
         label.isResizedByParent = false;
         addCreate(label);
 

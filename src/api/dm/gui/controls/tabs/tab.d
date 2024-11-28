@@ -1,7 +1,7 @@
 module api.dm.gui.controls.tabs.tab;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.gui.controls.buttons.button : Button;
+import api.dm.gui.controls.switches.buttons.toggle_button: ToggleButton;
 import api.dm.kit.sprites.sprite : Sprite;
 
 /**
@@ -9,7 +9,7 @@ import api.dm.kit.sprites.sprite : Sprite;
  */
 class Tab : Control
 {
-    Button label;
+    ToggleButton label;
 
     Sprite content;
 
@@ -17,7 +17,7 @@ class Tab : Control
 
     this(dstring text = "Tab")
     {
-        label = new Button(text);
+        label = new ToggleButton(text);
         label.isBorder = false;
 
         import api.dm.kit.sprites.layouts.center_layout: CenterLayout;
@@ -39,15 +39,17 @@ class Tab : Control
 
         add(label);
 
-        label.onAction ~= (ref e) {
-            if (onAction)
+        label.onOldNewValue ~= (bool oldv, bool newv) {
+            if (newv && onAction)
             {
                 onAction();
             }
         };
     }
 
-    override void isSelected(bool isSelected){
-        label.isSelected(isSelected);
+    void isSelected(bool isSelected){
+        if(label){
+            label.isOn = isSelected;
+        }
     }
 }

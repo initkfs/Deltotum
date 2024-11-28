@@ -1,4 +1,4 @@
-module api.dm.gui.controls.switches.toggle_buttons.base_toggle_button;
+module api.dm.gui.controls.switches.buttons.base_toggle_button;
 
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.gui.controls.switches.base_biswitch : BaseBiswitch;
@@ -35,7 +35,6 @@ class BaseToggleButton : BaseBiswitch
         isBorder = true;
 
         isSwitchIcon = true;
-        isSwitchLabel = true;
     }
 
     override void loadTheme()

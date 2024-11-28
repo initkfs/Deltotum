@@ -2,7 +2,7 @@ module api.dm.gui.controls.paginations.pagination;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites.sprite : Sprite;
-import api.dm.gui.controls.buttons.button : Button;
+import api.dm.gui.controls.switches.buttons.toggle_button: ToggleButton;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.containers.container : Container;
 import api.dm.kit.sprites.layouts.hlayout : HLayout;
@@ -26,10 +26,10 @@ class Pagination : Control
 
     Container pageIndexContainer;
     Text pageCurrentLabel;
-    Button endPage;
-    Button firstPage;
-    Button currentPage;
-    Button[] activePages;
+    ToggleButton endPage;
+    ToggleButton firstPage;
+    ToggleButton currentPage;
+    ToggleButton[] activePages;
     Text currentPageField;
 
     size_t activePageCount = 3;
@@ -56,21 +56,21 @@ class Pagination : Control
         pageIndexContainer.layout.isAlignX = true;
         addCreate(pageIndexContainer);
 
-        Button prevButton = createPageButton("<");
+        ToggleButton prevButton = createPageButton("<");
         pageIndexContainer.addCreate(prevButton);
 
-        prevButton.onAction ~= (ref e) {
-            if (currPageIndex == 0)
-            {
-                return;
-            }
-            auto newIndex = currPageIndex - 1;
-            assert(pageIndex(newIndex));
-        };
+        // prevButton.onAction ~= (ref e) {
+        //     if (currPageIndex == 0)
+        //     {
+        //         return;
+        //     }
+        //     auto newIndex = currPageIndex - 1;
+        //     assert(pageIndex(newIndex));
+        // };
 
         firstPage = createPageButton("1");
         pageIndexContainer.addCreate(firstPage);
-        firstPage.onAction ~= (ref e) { setFirstPage; };
+        //firstPage.onAction ~= (ref e) { setFirstPage; };
 
         immutable dstring skipPlacelolder = ".";
 
@@ -84,10 +84,10 @@ class Pagination : Control
             activePages ~= activePage;
             pageIndexContainer.addCreate(activePage);
 
-            activePage.onAction ~= (ref e) {
-                auto pi = i + activePagesFirstIndex;
-                assert(pageIndex(pi));
-            };
+            // activePage.onAction ~= (ref e) {
+            //     auto pi = i + activePagesFirstIndex;
+            //     assert(pageIndex(pi));
+            // };
 
         }(_i);
 
@@ -95,19 +95,23 @@ class Pagination : Control
 
         endPage = createPageButton(numPages.to!dstring);
         pageIndexContainer.addCreate(endPage);
-        endPage.onAction ~= (ref e) { setLastPage; };
+        endPage.onOldNewValue ~= (bool oldv, bool newv) { 
+            if(newv){
+                setLastPage; 
+            }
+        };
 
-        Button nextButton = createPageButton(">");
+        ToggleButton nextButton = createPageButton(">");
         pageIndexContainer.addCreate(nextButton);
 
-        nextButton.onAction ~= (ref e) {
-            auto newIndex = currPageIndex + 1;
-            if (newIndex >= numPages)
-            {
-                return;
-            }
-            assert(pageIndex(newIndex));
-        };
+        // nextButton.onAction ~= (ref e) {
+        //     auto newIndex = currPageIndex + 1;
+        //     if (newIndex >= numPages)
+        //     {
+        //         return;
+        //     }
+        //     assert(pageIndex(newIndex));
+        // };
 
         import api.dm.gui.containers.hbox : HBox;
 
@@ -174,12 +178,12 @@ class Pagination : Control
         pageIndex(newIndex);
     }
 
-    protected Button createPageButton(dstring text)
+    protected ToggleButton createPageButton(dstring text)
     {
-        auto button = new Button(text);
-        button.width = 20;
-        button.height = 20;
-        return button;
+        auto ToggleButton = new ToggleButton(text);
+        ToggleButton.width = 20;
+        ToggleButton.height = 20;
+        return ToggleButton;
     }
 
     bool pageIndex(size_t index)
@@ -212,18 +216,18 @@ class Pagination : Control
 
         if (index == 0)
         {
-            firstPage.isSelected = true;
+            firstPage.isOn = true;
         }
         else if (index == numPages - 1)
         {
-            endPage.isSelected = true;
+            endPage.isOn = true;
 
             auto lastActiveButtonIndex = activePagesFirstIndex + (activePages.length - 1);
             if (lastActiveButtonIndex >= (numPages - 1))
             {
                 auto rest = lastActiveButtonIndex - (numPages - 1);
                 auto lastBtns = activePages[$ - rest - 1 .. $];
-                foreach (Button lastBtn; lastBtns)
+                foreach (ToggleButton lastBtn; lastBtns)
                 {
                     if (lastBtn.isVisible)
                     {
@@ -255,7 +259,7 @@ class Pagination : Control
 
             updateActiveButtons;
 
-            activePages[activeIndex].isSelected = true;
+            activePages[activeIndex].isOn = true;
         }
 
         return true;
@@ -263,7 +267,7 @@ class Pagination : Control
 
     protected void updateActiveButtons()
     {
-        foreach (i, Button btn; activePages)
+        foreach (i, ToggleButton btn; activePages)
         {
             auto btnIndex = i + activePagesFirstIndex;
             if (btnIndex >= (numPages - 1))
@@ -280,12 +284,12 @@ class Pagination : Control
     {
         assert(firstPage);
         assert(endPage);
-        firstPage.isSelected = false;
-        endPage.isSelected = false;
+        firstPage.isOn = false;
+        endPage.isOn = false;
 
-        foreach (Button btn; activePages)
+        foreach (ToggleButton btn; activePages)
         {
-            btn.isSelected = false;
+            btn.isOn = false;
             if (!btn.isVisible)
             {
                 btn.isVisible = true;

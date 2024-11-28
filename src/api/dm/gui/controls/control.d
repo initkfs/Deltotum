@@ -95,8 +95,6 @@ class Control : GuiComponent
 
     protected
     {
-        bool _selected;
-
         Sprite _background;
         Sprite _hoverEffect;
         Tween _hoverEffectAnimation;
@@ -671,7 +669,7 @@ class Control : GuiComponent
         {
             onPointerEntered ~= (ref e) {
 
-                if (isDisabled || _selected)
+                if (isDisabled)
                 {
                     return;
                 }
@@ -684,7 +682,7 @@ class Control : GuiComponent
 
             onPointerExited ~= (ref e) {
 
-                if (isDisabled || _selected)
+                if (isDisabled)
                 {
                     return;
                 }
@@ -697,7 +695,7 @@ class Control : GuiComponent
 
         onPointerUp ~= (ref e) {
 
-            if (isDisabled || _selected)
+            if (isDisabled)
             {
                 return;
             }
@@ -925,22 +923,6 @@ class Control : GuiComponent
         if (!_background && width > 0 && height > 0)
         {
             tryCreateBackground(width, height);
-        }
-    }
-
-    bool isSelected() => _selected;
-
-    void isSelected(bool value)
-    {
-        // if (isDisabled)
-        // {
-        //     return;
-        // }
-        _selected = value;
-        if (_hoverEffect)
-        {
-            _hoverEffect.isVisible = value;
-            setInvalid;
         }
     }
 
