@@ -12,7 +12,6 @@ import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.containers.frame : Frame;
 import api.dm.kit.sprites.layouts.vlayout : VLayout;
 import api.dm.gui.controls.carousels.carousel;
-import api.dm.gui.controls.switches.toggles.vtoggle_switch;
 
 /**
  * Authors: initkfs
@@ -217,8 +216,8 @@ class Controls : Control
         import api.dm.gui.controls.choices.choice_box : ChoiceBox;
         import Icons = api.dm.gui.themes.icons.icon_name;
         import api.dm.kit.sprites.layouts.vlayout : VLayout;
-        import api.dm.kit.sprites.layouts.hlayout: HLayout;
-        import api.dm.gui.controls.switches.toggle_buttons.toggle_button: ToggleButton;
+        import api.dm.kit.sprites.layouts.hlayout : HLayout;
+        import api.dm.gui.controls.switches.toggle_buttons.toggle_button : ToggleButton;
 
         auto toggleBtnContainer = new SwitchGroup;
         toggleBtnContainer.layout = new VLayout(5);
@@ -255,14 +254,14 @@ class Controls : Control
         toggleContainer.layout.isAutoResize = true;
         root.addCreate(toggleContainer);
 
-        import api.dm.gui.controls.switches.toggles.htoggle_switch : HToggleSwitch;
-        import api.dm.gui.controls.switches.toggles.vtoggle_switch : VToggleSwitch;
+        import api.dm.gui.controls.switches.toggles.toggle_switch : ToggleSwitch;
+        import api.math.orientation : Orientation;
 
-        auto switch1 = new HToggleSwitch("Toggle");
+        auto switch1 = new ToggleSwitch("Toggle");
         toggleContainer.addCreate(switch1);
         switch1.isOn = true;
 
-        auto switch2 = new HToggleSwitch(null, Icons.flash_outline);
+        auto switch2 = new ToggleSwitch(null, Icons.flash_outline);
         switch2.isBorder = true;
         toggleContainer.addCreate(switch2);
 
@@ -271,12 +270,12 @@ class Controls : Control
         htoggleContainer.layout.isAutoResize = true;
         root.addCreate(htoggleContainer);
 
-        auto switch1h = new VToggleSwitch(null, Icons.analytics_outline);
+        auto switch1h = new ToggleSwitch(null, Icons.analytics_outline, Orientation.vertical);
         htoggleContainer.addCreate(switch1h);
         switch1h.isOn = true;
         switch1h.isSwitchContent = true;
 
-        auto switch2h = new VToggleSwitch(null, Icons.apps_outline);
+        auto switch2h = new ToggleSwitch(null, Icons.apps_outline, Orientation.vertical);
         switch2h.isSwitchContent = true;
         htoggleContainer.addCreate(switch2h);
 
