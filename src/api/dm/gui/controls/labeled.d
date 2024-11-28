@@ -281,9 +281,9 @@ class Labeled : Control
         return true;
     }
 
-    override void addCreateIcon(string iconName)
+    override void addCreateIcon(string iconName, long index = -1)
     {
-        super.addCreateIcon(iconName);
+        super.addCreateIcon(iconName, index);
         if (_label && _label.text.length == 0)
         {
             _label.isLayoutManaged = false;

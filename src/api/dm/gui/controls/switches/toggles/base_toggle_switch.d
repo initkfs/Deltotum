@@ -45,6 +45,8 @@ class BaseToggleSwitch : BaseBiswitch
     MinMaxTween!Vec2d handleEffectAnimation;
     bool isCreateHandleEffectAnimation = true;
 
+    bool isCreatePointerListeners = true;
+
     this(dstring label, double width, double height, string iconName = null, double graphicsGap = 5, bool isCreateLayout = true)
     {
         super(width, height, label, iconName, graphicsGap, isCreateLayout);
@@ -113,7 +115,9 @@ class BaseToggleSwitch : BaseBiswitch
             handleContainer.addCreate(handleEffectAnimation);
         }
 
-        onPointerUp ~= (ref e) { toggle; };
+        if(isCreatePointerListeners){
+            onPointerUp ~= (ref e) { toggle; };
+        }
 
         invalidateListeners ~= () { setHandleEffectAnimation; };
         window.showingTasks ~= (double dt) {

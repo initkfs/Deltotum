@@ -1,6 +1,6 @@
 module api.dm.gui.controls.switches.toggles.toggle_switch;
 
-import api.dm.gui.controls.switches.toggles.base_toggle_switch : BaseToggleSwitch;
+import api.dm.gui.controls.switches.toggles.base_orient_toggle_switch: BaseOrientToggleSwitch;
 import api.math.geom2.vec2 : Vec2d;
 import api.math.orientation : Orientation;
 import api.math.geom2.points2;
@@ -8,30 +8,11 @@ import api.math.geom2.points2;
 /**
  * Authors: initkfs
  */
-class ToggleSwitch : BaseToggleSwitch
+class ToggleSwitch : BaseOrientToggleSwitch
 {
-    Orientation orientation = Orientation.horizontal;
-
     this(dstring label, double width, double height, string iconName = null, Orientation orientation, double graphicsGap = 5)
     {
-        super(label, width, height, iconName, graphicsGap, isCreateLayout:
-            false);
-        this.orientation = orientation;
-        if (orientation == Orientation.vertical)
-        {
-            import api.dm.kit.sprites.layouts.vlayout : VLayout;
-
-            layout = new VLayout(5);
-        }
-        else
-        {
-            import api.dm.kit.sprites.layouts.hlayout : HLayout;
-
-            layout = new HLayout(5);
-        }
-
-        layout.isAutoResize = true;
-        layout.isAlignX = true;
+        super(label, width, height, iconName, orientation, graphicsGap);
     }
 
     this(dstring label = "Toggle", string iconName = null, Orientation orientation = Orientation.horizontal, double graphicsGap = 5)
@@ -102,6 +83,4 @@ class ToggleSwitch : BaseToggleSwitch
             hb.right - handle.width - handleContainer.padding.right, hb
                 .y + handleContainer.padding.top);
     }
-
-    bool isVertical() => orientation == Orientation.vertical;
 }

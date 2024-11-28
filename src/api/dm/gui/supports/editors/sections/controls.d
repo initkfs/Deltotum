@@ -257,7 +257,7 @@ class Controls : Control
         import api.dm.gui.controls.switches.toggles.toggle_switch : ToggleSwitch;
         import api.math.orientation : Orientation;
 
-        auto switch1 = new ToggleSwitch("Toggle");
+        auto switch1 = new ToggleSwitch(null, Icons.flash_outline);
         toggleContainer.addCreate(switch1);
         switch1.isOn = true;
 

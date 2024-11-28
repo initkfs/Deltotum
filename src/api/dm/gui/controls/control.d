@@ -779,10 +779,10 @@ class Control : GuiComponent
         }
     }
 
-    void addCreateIcon(string iconName)
+    void addCreateIcon(string iconName, long index = -1)
     {
         auto icon = createIcon(iconName);
-        addCreate(icon);
+        addCreate(icon, index);
     }
 
     //TODO or move to scene factory?
