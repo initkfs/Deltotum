@@ -1,13 +1,13 @@
 module api.dm.gui.controls.toggles.checks.check;
 
-import api.dm.gui.controls.toggles.base_bitoggle : BaseBitoggle;
+import api.dm.gui.controls.switches.base_biswitch : BaseBiswitch;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites.sprite : Sprite;
 
 /**
  * Authors: initkfs
  */
-class Check : BaseBitoggle
+class Check : BaseBiswitch
 {
     protected
     {

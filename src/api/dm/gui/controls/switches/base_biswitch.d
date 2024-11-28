@@ -1,4 +1,4 @@
-module api.dm.gui.controls.toggles.base_bitoggle;
+module api.dm.gui.controls.switches.base_biswitch;
 
 import api.dm.gui.controls.labeled : Labeled;
 import api.dm.gui.controls.control : Control;
@@ -7,7 +7,7 @@ import api.dm.kit.sprites.sprite : Sprite;
 /**
  * Authors: initkfs
  */
-class BaseBitoggle : Labeled
+class BaseBiswitch : Labeled
 {
     protected
     {
@@ -39,13 +39,13 @@ class BaseBitoggle : Labeled
 
         if (isCreated && isRunListeners)
         {
-            runToggleListeners(oldValue, _state);
+            runSwitchListeners(oldValue, _state);
         }
 
         return true;
     }
 
-    void runToggleListeners(bool oldValue, bool newValue)
+    void runSwitchListeners(bool oldValue, bool newValue)
     {
         if (onOldNewValue.length > 0)
         {

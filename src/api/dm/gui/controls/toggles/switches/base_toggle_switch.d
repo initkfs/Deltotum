@@ -1,7 +1,7 @@
 module api.dm.gui.controls.toggles.switches.base_toggle_switch;
 
 import api.dm.kit.sprites.sprite : Sprite;
-import api.dm.gui.controls.toggles.base_bitoggle : BaseBitoggle;
+import api.dm.gui.controls.switches.base_biswitch : BaseBiswitch;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites.shapes.shape : Shape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
@@ -22,7 +22,7 @@ import api.dm.gui.controls.labeled : Labeled;
 /**
  * Authors: initkfs
  */
-class BaseToggleSwitch : BaseBitoggle
+class BaseToggleSwitch : BaseBiswitch
 {
     protected
     {

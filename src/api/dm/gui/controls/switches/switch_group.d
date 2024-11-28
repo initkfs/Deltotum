@@ -1,13 +1,13 @@
-module api.dm.gui.controls.toggles.toggle_group;
+module api.dm.gui.controls.switches.switch_group;
 
 import api.dm.gui.containers.container : Container;
 import api.dm.kit.sprites.sprite : Sprite;
-import api.dm.gui.controls.toggles.base_bitoggle : BaseBitoggle;
+import api.dm.gui.controls.switches.base_biswitch : BaseBiswitch;
 
 /**
  * Authors: initkfs
  */
-class ToggleGroup : Container
+class SwitchGroup : Container
 {
     alias add = Container.add;
 
@@ -15,7 +15,7 @@ class ToggleGroup : Container
     {
         super.add(sprite, index);
 
-        if (auto toggle = cast(BaseBitoggle) sprite)
+        if (auto toggle = cast(BaseBiswitch) sprite)
         {
             //TODO delete repeated calls
             toggle.onOldNewValue ~= (oldState, newState) {
@@ -28,7 +28,7 @@ class ToggleGroup : Container
         }
     }
 
-    void toggleStates(BaseBitoggle control)
+    void toggleStates(BaseBiswitch control)
     {
         foreach (sprite; children)
         {
@@ -37,7 +37,7 @@ class ToggleGroup : Container
                 continue;
             }
 
-            if (auto toggle = cast(BaseBitoggle) sprite)
+            if (auto toggle = cast(BaseBiswitch) sprite)
             {
                 if (control.isOn && toggle.isOn)
                 {

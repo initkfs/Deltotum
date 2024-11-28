@@ -2,7 +2,7 @@ module api.dm.gui.controls.spinners.spinner;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.expanders.expander : Expander, ExpanderPosition;
-import api.dm.gui.controls.buttons.button : Button;
+import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.controls.texts.textfield : TextField;
 
 import api.dm.gui.containers.hbox: HBox;

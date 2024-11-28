@@ -210,26 +210,31 @@ class Control : GuiComponent
 
         if (!actionEffectBehaviour)
         {
-            actionEffectBehaviour = () {
-                if (_actionEffect)
-                {
-                    if (_actionEffectAnimation && _actionEffectAnimation.isRunning)
-                    {
-                        _actionEffectAnimation.stop;
-                        _actionEffect.isVisible = false;
-                    }
+            actionEffectBehaviour = newActionEffectBehaviour;
+        }
+    }
 
-                    if (!_actionEffect.isVisible)
+    void delegate() newActionEffectBehaviour()
+    {
+        return () {
+            if (_actionEffect)
+            {
+                if (_actionEffectAnimation && _actionEffectAnimation.isRunning)
+                {
+                    _actionEffectAnimation.stop;
+                    _actionEffect.isVisible = false;
+                }
+
+                if (!_actionEffect.isVisible)
+                {
+                    _actionEffect.isVisible = true;
+                    if (_actionEffectAnimation)
                     {
-                        _actionEffect.isVisible = true;
-                        if (_actionEffectAnimation)
-                        {
-                            _actionEffectAnimation.run;
-                        }
+                        _actionEffectAnimation.run;
                     }
                 }
-            };
-        }
+            }
+        };
     }
 
     void loadTheme()
@@ -381,6 +386,7 @@ class Control : GuiComponent
         effect.id = idActionShape;
         effect.isLayoutManaged = false;
         effect.isResizedByParent = true;
+        effect.isVisible = false;
         return effect;
     }
 
@@ -397,13 +403,24 @@ class Control : GuiComponent
         actionEffectAnimation.isLayoutManaged = false;
         actionEffectAnimation.isInfinite = false;
         actionEffectAnimation.isOneShort = true;
-        actionEffectAnimation.onStop ~= () {
+
+        auto newOnEnd = newOnEndActionEffectAnimation;
+        if (newOnEnd)
+        {
+            actionEffectAnimation.onStop ~= newOnEnd;
+        }
+        
+        return actionEffectAnimation;
+    }
+
+    void delegate() newOnEndActionEffectAnimation()
+    {
+        return () {
             if (_actionEffect)
             {
                 _actionEffect.isVisible = false;
             }
         };
-        return actionEffectAnimation;
     }
 
     GraphicStyle delegate(string id) newStyleFactory()
@@ -617,12 +634,9 @@ class Control : GuiComponent
             auto effect = newActionEffect();
             assert(effect);
 
-            _actionEffect = onActionEffectCreate ? onActionEffectCreate(effect)
-                : effect;
+            _actionEffect = onActionEffectCreate ? onActionEffectCreate(effect) : effect;
 
             addCreate(_actionEffect);
-
-            _actionEffect.isVisible = false;
 
             if (onActionEffectCreated)
             {

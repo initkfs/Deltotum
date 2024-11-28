@@ -3,7 +3,7 @@ module api.demo.demo1.scenes.start;
 import api.dm.gui.scenes.gui_scene: GuiScene;
 import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.containers.hbox : HBox;
-import api.dm.gui.controls.buttons.button : Button;
+import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.kit.sprites.textures.texture : Texture;
 import api.dm.kit.sprites.images.image : Image;
 

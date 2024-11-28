@@ -1,6 +1,7 @@
-module api.dm.gui.controls.buttons.base_button;
+module api.dm.gui.controls.switches.buttons.base_button;
 
 import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.gui.controls.switches.base_biswitch : BaseBiswitch;
 import api.dm.gui.controls.labeled : Labeled;
 import api.dm.kit.sprites.shapes.shape : Shape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
@@ -27,7 +28,7 @@ enum ButtonType
 /**
  * Authors: initkfs
  */
-class BaseButton : Labeled
+class BaseButton : BaseBiswitch
 {
     enum defaultButtonText = "Button";
     void delegate(ref ActionEvent)[] onAction;
@@ -37,6 +38,8 @@ class BaseButton : Labeled
 
     bool isDefault;
     void delegate()[] onDefault;
+
+    bool isFixed = true;
 
     this(dstring text, string iconName, bool isCreateLayout = true)
     {
@@ -153,6 +156,73 @@ class BaseButton : Labeled
                 }
             };
         }
+    }
+
+    import api.dm.kit.sprites.tweens : Tween;
+
+    override Tween newActionEffectAnimation()
+    {
+        auto anim = super.newActionEffectAnimation;
+        if (!isFixed)
+        {
+            return anim;
+        }
+
+        if (anim.isOneShort)
+        {
+            anim.isOneShort = false;
+        }
+        return anim;
+    }
+
+    override void delegate() newOnEndActionEffectAnimation()
+    {
+        return () {
+            if (_actionEffect)
+            {
+                _actionEffectAnimation.isReverse = false;
+                _actionEffect.isVisible = isOn;
+            }
+        };
+    }
+
+    override void delegate() newActionEffectBehaviour()
+    {
+        return () {
+
+            if (!isOn)
+            {
+                isOn = true;
+
+                if (_actionEffect)
+                {
+                    if (_actionEffectAnimation && _actionEffectAnimation.isRunning)
+                    {
+                        _actionEffectAnimation.stop;
+                    }
+
+                    _actionEffect.opacity = 0;
+                    _actionEffectAnimation.run;
+                }
+
+            }
+            else
+            {
+                isOn = false;
+
+                if (_actionEffect)
+                {
+                    if (_actionEffectAnimation && _actionEffectAnimation.isRunning)
+                    {
+                        _actionEffectAnimation.stop;
+                    }
+
+                    _actionEffectAnimation.isReverse = true;
+                    _actionEffectAnimation.run;
+                }
+            }
+
+        };
     }
 
     override void addCreateIcon(string iconName)

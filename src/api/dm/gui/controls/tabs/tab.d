@@ -1,7 +1,7 @@
 module api.dm.gui.controls.tabs.tab;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.gui.controls.buttons.button : Button;
+import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.kit.sprites.sprite : Sprite;
 
 /**

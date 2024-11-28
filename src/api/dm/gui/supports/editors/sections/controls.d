@@ -6,7 +6,7 @@ import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.controls.trees.tree_item : TreeItem;
-import api.dm.gui.controls.buttons.button : Button;
+import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.containers.hbox : HBox;
 import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.containers.frame : Frame;
@@ -128,12 +128,12 @@ class Controls : Control
         auto btnRoot3 = new HBox(5);
         btnFrame.addCreate(btnRoot3);
 
-        import api.dm.gui.controls.buttons.round_button : RoundButton;
+        import api.dm.gui.controls.switches.buttons.round_button : RoundButton;
 
         auto circleBtn = new RoundButton("Button");
         btnRoot3.addCreate(circleBtn);
 
-        import api.dm.gui.controls.buttons.poly_button : PolyButton;
+        import api.dm.gui.controls.switches.buttons.poly_button : PolyButton;
 
         import api.dm.kit.sprites.tweens : PauseTween;
 
@@ -212,14 +212,14 @@ class Controls : Control
 
     void createSelections(Container root)
     {
-        import api.dm.gui.controls.toggles.toggle_group : ToggleGroup;
+        import api.dm.gui.controls.switches.switch_group : SwitchGroup;
         import api.dm.gui.controls.toggles.checks.check : Check;
         import api.dm.gui.controls.choices.choice_box : ChoiceBox;
         import Icons = api.dm.gui.themes.icons.icon_name;
         import api.dm.kit.sprites.layouts.vlayout : VLayout;
         import api.dm.kit.sprites.layouts.hlayout: HLayout;
 
-        auto checkBoxContainer = new ToggleGroup;
+        auto checkBoxContainer = new SwitchGroup;
         checkBoxContainer.layout = new VLayout(5);
         checkBoxContainer.layout.isAutoResize = true;
         root.addCreate(checkBoxContainer);
@@ -233,7 +233,7 @@ class Controls : Control
         check2.layout.isFillFromStartToEnd = false;
         check2.isOn = true;
 
-        auto toggleContainer = new ToggleGroup;
+        auto toggleContainer = new SwitchGroup;
         toggleContainer.layout = new VLayout(5);
         toggleContainer.layout.isAutoResize = true;
         root.addCreate(toggleContainer);
@@ -249,7 +249,7 @@ class Controls : Control
         switch2.isBorder = true;
         toggleContainer.addCreate(switch2);
 
-        auto htoggleContainer = new ToggleGroup;
+        auto htoggleContainer = new SwitchGroup;
         htoggleContainer.layout = new HLayout(5);
         htoggleContainer.layout.isAutoResize = true;
         root.addCreate(htoggleContainer);
@@ -465,8 +465,8 @@ class Controls : Control
 
     private void createWindows(Container root)
     {
-        import api.dm.gui.controls.buttons.button : Button;
-        import api.dm.gui.controls.buttons.parallelogram_button : ParallelogramButton;
+        import api.dm.gui.controls.switches.buttons.button : Button;
+        import api.dm.gui.controls.switches.buttons.parallelogram_button : ParallelogramButton;
         import api.dm.gui.controls.toggles.checks.check : Check;
         import IconName = api.dm.gui.themes.icons.icon_name;
         import api.dm.gui.containers.frame : Frame;
