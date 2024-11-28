@@ -3,6 +3,7 @@ module api.dm.gui.controls.switches.locks.base_lock_switch;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.gui.controls.switches.base_biswitch : BaseBiswitch;
 import api.dm.gui.controls.labeled : Labeled;
+import api.dm.kit.sprites.tweens : Tween;
 
 /**
  * Authors: initkfs
@@ -60,8 +61,6 @@ class BaseLockSwitch : BaseBiswitch
     {
         super.create;
     }
-
-    import api.dm.kit.sprites.tweens : Tween;
 
     override Tween newActionEffectAnimation()
     {

@@ -1,12 +1,13 @@
-module api.dm.gui.controls.buttons.base_button;
+module api.dm.gui.controls.switches.buttons.base_button;
 
 import api.dm.kit.sprites.sprite : Sprite;
-import api.dm.gui.controls.labeled : Labeled;
+import api.dm.gui.controls.switches.base_biswitch : BaseBiswitch;
 import api.dm.kit.sprites.shapes.shape : Shape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites.shapes.rectangle : Rectangle;
 import api.dm.gui.events.action_event : ActionEvent;
 import api.dm.gui.controls.texts.text : Text;
+import api.dm.kit.sprites.tweens : Tween;
 
 import std.traits : isSomeString;
 
@@ -25,7 +26,7 @@ enum ButtonType
 /**
  * Authors: initkfs
  */
-class BaseButton : Labeled
+class BaseButton : BaseBiswitch
 {
     enum defaultButtonText = "Button";
     void delegate(ref ActionEvent)[] onAction;
@@ -98,6 +99,8 @@ class BaseButton : Labeled
                 return;
             }
 
+            isOn = true;
+
             if (onAction.length > 0)
             {
                 auto ea = ActionEvent(e.ownerId, e.x, e.y, e.button);
@@ -150,6 +153,63 @@ class BaseButton : Labeled
                     }
                 }
             };
+        }
+    }
+
+    override void delegate() newOnEndActionEffectAnimation()
+    {
+        return () {
+            if (_actionEffect)
+            {
+                _actionEffect.isVisible = false;
+            }
+
+            isOn = false;
+        };
+    }
+
+    override void delegate() newActionEffectBehaviour()
+    {
+        return () { isOn = true; };
+    }
+
+    override void runSwitchListeners(bool oldValue, bool newValue)
+    {
+        super.runSwitchListeners(oldValue, newValue);
+    }
+
+    override protected void switchContentState(bool oldState, bool newState)
+    {
+        super.switchContentState(oldState, newState);
+
+        if (newState)
+        {
+            if (_actionEffect)
+            {
+                _actionEffect.isVisible = true;
+            }
+
+            if (_actionEffectAnimation)
+            {
+                if (_actionEffectAnimation.isRunning)
+                {
+                    _actionEffectAnimation.stop;
+                }
+
+                if (_actionEffect)
+                {
+                    _actionEffect.opacity = 0;
+                }
+
+                _actionEffectAnimation.run;
+            }
+        }
+        else
+        {
+            if (_actionEffect && !_actionEffectAnimation)
+            {
+                _actionEffect.isVisible = false;
+            }
         }
     }
 

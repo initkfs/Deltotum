@@ -7,7 +7,7 @@ import api.dm.gui.controls.switches.toggles.toggle_switch : ToggleSwitch;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.texts.textfield : TextField;
 import api.dm.kit.scenes.scene : Scene;
-import api.dm.gui.controls.buttons.button : Button;
+import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.gui.containers.container : Container;
 import api.dm.gui.controls.texts.text_area : TextArea;

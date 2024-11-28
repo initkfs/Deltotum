@@ -2,7 +2,7 @@ module api.dm.gui.controls.carousels.carousel;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites.sprite : Sprite;
-import api.dm.gui.controls.buttons.button : Button;
+import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.kit.sprites.layouts.hlayout : HLayout;
 import api.dm.kit.sprites.layouts.vlayout : VLayout;
 import api.dm.gui.containers.container : Container;

@@ -6,7 +6,7 @@ import api.math.insets : Insets;
 import api.dm.kit.sprites.textures.texture : Texture;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.controls.texts.text : Text;
-import api.dm.gui.controls.buttons.button : Button;
+import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.kit.sprites.shapes.circle : Circle;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
