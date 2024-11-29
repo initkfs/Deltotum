@@ -4,6 +4,7 @@ import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.gui.controls.switches.base_biswitch : BaseBiswitch;
 import api.dm.kit.sprites.shapes.shape : Shape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import api.dm.kit.sprites.shapes.rectangle : Rectangle;
 import api.dm.gui.events.action_event : ActionEvent;
 import api.dm.gui.controls.texts.text : Text;
@@ -38,7 +39,7 @@ class BaseButton : BaseBiswitch
     void delegate()[] onDefault;
 
     bool isFixedButton;
-    bool isLongPressButton = true;
+    bool isLongPressButton;
 
     this(dstring text, string iconName, bool isCreateLayout = true)
     {
@@ -48,7 +49,10 @@ class BaseButton : BaseBiswitch
     this(dstring text, void delegate(ref ActionEvent) onAction, bool isCreateLayout = true)
     {
         this(text, 0, 0, null, 0, isCreateLayout);
-        this.onAction ~= onAction;
+        if (onAction)
+        {
+            this.onAction ~= onAction;
+        }
     }
 
     this(
@@ -120,19 +124,6 @@ class BaseButton : BaseBiswitch
             {
                 isOn = false;
             }
-
-            if (onAction.length > 0)
-            {
-                auto ea = ActionEvent(e.ownerId, e.x, e.y, e.button);
-                foreach (dg; onAction)
-                {
-                    dg(ea);
-                    if (ea.isConsumed)
-                    {
-                        break;
-                    }
-                }
-            }
         };
 
         if (isCancel)
@@ -178,6 +169,7 @@ class BaseButton : BaseBiswitch
 
     override void delegate() newOnEndActionEffectAnimation()
     {
+        //Autorelease buttons
         if (!isFixedButton && !isLongPressButton)
         {
             return () {
@@ -190,7 +182,7 @@ class BaseButton : BaseBiswitch
             };
         }
 
-        //Fixed and autorelease
+        //Fixed and long press
         return () {
             if (_actionEffect)
             {
@@ -216,24 +208,56 @@ class BaseButton : BaseBiswitch
         return anim;
     }
 
-    override void delegate() newActionEffectBehaviour()
+    override void delegate(ref PointerEvent) newActionEffectBehaviour()
     {
+        //Simple autoreleased buttons
         if (!isFixedButton || isLongPressButton)
         {
-            return () {
+            return (ref e) {
                 if (!isOn)
                 {
+                    //hysteresis
+                    if (_actionEffectAnimation && _actionEffectAnimation.isRunning)
+                    {
+                        return;
+                    }
                     isOn = true;
+                    runActionListeners(e);
                 }
             };
         }
 
-        return () { toggle; };
+        return (ref e) {
+            if (!isOn)
+            {
+                runActionListeners(e);
+            }
+            toggle;
+        };
     }
 
     override void runSwitchListeners(bool oldValue, bool newValue)
     {
         super.runSwitchListeners(oldValue, newValue);
+    }
+
+    void runActionListeners(ref PointerEvent e)
+    {
+        if (onAction.length > 0)
+        {
+            auto ea = ActionEvent(e.ownerId, e.x, e.y, e.button);
+            foreach (dg; onAction)
+            {
+                if (dg)
+                {
+                    dg(ea);
+                    if (ea.isConsumed)
+                    {
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     override protected void switchContentState(bool oldState, bool newState)
@@ -289,8 +313,6 @@ class BaseButton : BaseBiswitch
 
         if (newState)
         {
-            import std;
-            writeln("SWITCH TRUE");
             if (_actionEffectAnimation)
             {
                 if (_actionEffectAnimation.isRunning)
@@ -309,8 +331,6 @@ class BaseButton : BaseBiswitch
         }
         else
         {
-            import std;
-            writeln("SWITCH FALSE");
             if (_actionEffectAnimation)
             {
                 if (_actionEffectAnimation.isRunning)

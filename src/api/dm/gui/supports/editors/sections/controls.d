@@ -217,7 +217,7 @@ class Controls : Control
         import Icons = api.dm.gui.themes.icons.icon_name;
         import api.dm.kit.sprites.layouts.vlayout : VLayout;
         import api.dm.kit.sprites.layouts.hlayout : HLayout;
-        import api.dm.gui.controls.switches.locks.lock_switch : LockSwitch;
+        import api.dm.gui.controls.switches.buttons.parallelogram_button: ParallelogramButton;
 
         auto toggleBtnContainer = new SwitchGroup;
         toggleBtnContainer.layout = new VLayout(5);
@@ -226,12 +226,14 @@ class Controls : Control
 
         import api.dm.kit.graphics.styles.default_style : DefaultStyle;
 
-        auto tbtn1 = new LockSwitch(null, Icons.close_outline);
+        auto tbtn1 = new ParallelogramButton(null, Icons.close_outline, null);
         tbtn1.styleId = DefaultStyle.warning;
+        tbtn1.isFixedButton = true;
         tbtn1.isOn = true;
         toggleBtnContainer.addCreate(tbtn1);
 
-        auto tbtn2 = new LockSwitch(null, Icons.apps_outline);
+        auto tbtn2 = new ParallelogramButton(null, Icons.apps_outline, null);
+        tbtn2.isFixedButton = true;
         tbtn2.styleId = DefaultStyle.danger;
         toggleBtnContainer.addCreate(tbtn2);
 

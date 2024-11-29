@@ -8,6 +8,7 @@ import api.dm.kit.sprites.textures.texture : Texture;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.styles.default_style : DefaultStyle;
 import api.dm.kit.graphics.styles.default_style;
+import api.dm.kit.inputs.pointers.events.pointer_event: PointerEvent;
 import api.math.alignment : Alignment;
 import api.math.insets : Insets;
 import api.dm.gui.controls.popups.base_popup : BasePopup;
@@ -80,7 +81,7 @@ class Control : GuiComponent
     Sprite delegate(Sprite) onActionEffectCreate;
     void delegate(Sprite) onActionEffectCreated;
 
-    void delegate() actionEffectBehaviour;
+    void delegate(ref PointerEvent) actionEffectBehaviour;
 
     size_t actionAnimationDelayMs;
 
@@ -212,9 +213,9 @@ class Control : GuiComponent
         }
     }
 
-    void delegate() newActionEffectBehaviour()
+    void delegate(ref PointerEvent) newActionEffectBehaviour()
     {
-        return () {
+        return (ref e) {
             if (_actionEffect)
             {
                 if (_actionEffectAnimation && _actionEffectAnimation.isRunning)
@@ -702,7 +703,7 @@ class Control : GuiComponent
 
             if (actionEffectBehaviour)
             {
-                actionEffectBehaviour();
+                actionEffectBehaviour(e);
             }
         };
 

@@ -24,7 +24,9 @@ class BaseRoundButton : BaseButton
     this(dstring text, void delegate(ref ActionEvent) onAction)
     {
         this(text, 0, null, 0);
-        this.onAction ~= onAction;
+        if(onAction){
+            this.onAction ~= onAction;
+        }
     }
 
     this(

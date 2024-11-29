@@ -2,7 +2,7 @@ module api.dm.gui.controls.paginations.pagination;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites.sprite : Sprite;
-import api.dm.gui.controls.switches.locks.lock_switch: LockSwitch;
+import api.dm.gui.controls.switches.buttons.button: Button;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.containers.container : Container;
 import api.dm.kit.sprites.layouts.hlayout : HLayout;
@@ -26,10 +26,10 @@ class Pagination : Control
 
     Container pageIndexContainer;
     Text pageCurrentLabel;
-    LockSwitch endPage;
-    LockSwitch firstPage;
-    LockSwitch currentPage;
-    LockSwitch[] activePages;
+    Button endPage;
+    Button firstPage;
+    Button currentPage;
+    Button[] activePages;
     Text currentPageField;
 
     size_t activePageCount = 3;
@@ -56,7 +56,7 @@ class Pagination : Control
         pageIndexContainer.layout.isAlignX = true;
         addCreate(pageIndexContainer);
 
-        LockSwitch prevButton = createPageButton("<");
+        Button prevButton = createPageButton("<");
         pageIndexContainer.addCreate(prevButton);
 
         // prevButton.onAction ~= (ref e) {
@@ -101,7 +101,7 @@ class Pagination : Control
             }
         };
 
-        LockSwitch nextButton = createPageButton(">");
+        Button nextButton = createPageButton(">");
         pageIndexContainer.addCreate(nextButton);
 
         // nextButton.onAction ~= (ref e) {
@@ -178,12 +178,13 @@ class Pagination : Control
         pageIndex(newIndex);
     }
 
-    protected LockSwitch createPageButton(dstring text)
+    protected Button createPageButton(dstring text)
     {
-        auto LockSwitch = new LockSwitch(text);
-        LockSwitch.width = 20;
-        LockSwitch.height = 20;
-        return LockSwitch;
+        auto btn = new Button(text);
+        btn.width = 20;
+        btn.height = 20;
+        btn.isFixedButton = true;
+        return btn;
     }
 
     bool pageIndex(size_t index)
@@ -227,7 +228,7 @@ class Pagination : Control
             {
                 auto rest = lastActiveButtonIndex - (numPages - 1);
                 auto lastBtns = activePages[$ - rest - 1 .. $];
-                foreach (LockSwitch lastBtn; lastBtns)
+                foreach (Button lastBtn; lastBtns)
                 {
                     if (lastBtn.isVisible)
                     {
@@ -267,7 +268,7 @@ class Pagination : Control
 
     protected void updateActiveButtons()
     {
-        foreach (i, LockSwitch btn; activePages)
+        foreach (i, Button btn; activePages)
         {
             auto btnIndex = i + activePagesFirstIndex;
             if (btnIndex >= (numPages - 1))
@@ -287,7 +288,7 @@ class Pagination : Control
         firstPage.isOn = false;
         endPage.isOn = false;
 
-        foreach (LockSwitch btn; activePages)
+        foreach (Button btn; activePages)
         {
             btn.isOn = false;
             if (!btn.isVisible)
