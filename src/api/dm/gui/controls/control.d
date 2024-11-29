@@ -693,7 +693,7 @@ class Control : GuiComponent
             };
         }
 
-        onPointerUp ~= (ref e) {
+        onPointerDown ~= (ref e) {
 
             if (isDisabled)
             {

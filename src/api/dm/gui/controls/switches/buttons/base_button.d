@@ -37,6 +37,9 @@ class BaseButton : BaseBiswitch
     bool isDefault;
     void delegate()[] onDefault;
 
+    bool isFixedButton;
+    bool isLongPressButton = true;
+
     this(dstring text, string iconName, bool isCreateLayout = true)
     {
         this(text, 0, 0, iconName, 0, isCreateLayout);
@@ -69,6 +72,20 @@ class BaseButton : BaseBiswitch
         isBorder = true;
     }
 
+    override void initialize()
+    {
+        super.initialize;
+
+        if (isFixedButton)
+        {
+            // if (layout)
+            // {
+            //     layout.isDecreaseRootSize = true;
+            // }
+            isSwitchIcon = true;
+        }
+    }
+
     override void loadTheme()
     {
         loadLabeledTheme;
@@ -99,7 +116,10 @@ class BaseButton : BaseBiswitch
                 return;
             }
 
-            isOn = true;
+            if (isLongPressButton && isOn)
+            {
+                isOn = false;
+            }
 
             if (onAction.length > 0)
             {
@@ -158,19 +178,57 @@ class BaseButton : BaseBiswitch
 
     override void delegate() newOnEndActionEffectAnimation()
     {
+        if (!isFixedButton && !isLongPressButton)
+        {
+            return () {
+                if (_actionEffect)
+                {
+                    _actionEffect.isVisible = false;
+                }
+
+                isOn = false;
+            };
+        }
+
+        //Fixed and autorelease
         return () {
             if (_actionEffect)
             {
-                _actionEffect.isVisible = false;
+                _actionEffectAnimation.isReverse = false;
+                _actionEffect.isVisible = isOn;
             }
-
-            isOn = false;
         };
+
+    }
+
+    override Tween newActionEffectAnimation()
+    {
+        auto anim = super.newActionEffectAnimation;
+        if (!isFixedButton && !isLongPressButton)
+        {
+            return anim;
+        }
+
+        if (anim.isOneShort)
+        {
+            anim.isOneShort = false;
+        }
+        return anim;
     }
 
     override void delegate() newActionEffectBehaviour()
     {
-        return () { isOn = true; };
+        if (!isFixedButton || isLongPressButton)
+        {
+            return () {
+                if (!isOn)
+                {
+                    isOn = true;
+                }
+            };
+        }
+
+        return () { toggle; };
     }
 
     override void runSwitchListeners(bool oldValue, bool newValue)
@@ -179,6 +237,18 @@ class BaseButton : BaseBiswitch
     }
 
     override protected void switchContentState(bool oldState, bool newState)
+    {
+        if (isFixedButton || isLongPressButton)
+        {
+            switchFixedContentState(oldState, newState);
+        }
+        else
+        {
+            switchNonFixedContentState(oldState, newState);
+        }
+    }
+
+    protected void switchNonFixedContentState(bool oldState, bool newState)
     {
         super.switchContentState(oldState, newState);
 
@@ -209,6 +279,46 @@ class BaseButton : BaseBiswitch
             if (_actionEffect && !_actionEffectAnimation)
             {
                 _actionEffect.isVisible = false;
+            }
+        }
+    }
+
+    protected void switchFixedContentState(bool oldState, bool newState)
+    {
+        super.switchContentState(oldState, newState);
+
+        if (newState)
+        {
+            import std;
+            writeln("SWITCH TRUE");
+            if (_actionEffectAnimation)
+            {
+                if (_actionEffectAnimation.isRunning)
+                {
+                    _actionEffectAnimation.stop;
+                }
+
+                if (_actionEffect)
+                {
+                    _actionEffect.opacity = 0;
+                }
+
+                _actionEffectAnimation.run;
+            }
+
+        }
+        else
+        {
+            import std;
+            writeln("SWITCH FALSE");
+            if (_actionEffectAnimation)
+            {
+                if (_actionEffectAnimation.isRunning)
+                {
+                    _actionEffectAnimation.stop;
+                }
+                _actionEffectAnimation.isReverse = true;
+                _actionEffectAnimation.run;
             }
         }
     }
