@@ -187,7 +187,7 @@ class WeekContainer : Control
     {
         import api.dm.kit.sprites.layouts.hlayout : HLayout;
 
-        this.layout = new HLayout(5);
+        this.layout = new HLayout;
         this.layout.isAutoResize = true;
     }
 

@@ -69,7 +69,7 @@ class ChoiceBox : TypedContainer!ChoiceItem
     {
         import api.dm.kit.sprites.layouts.hlayout : HLayout;
 
-        layout = new HLayout(5);
+        layout = new HLayout;
         layout.isAutoResize(true);
         layout.isAlignY = true;
         isBorder = true;

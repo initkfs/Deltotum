@@ -105,7 +105,7 @@ class LabelInfo : Container
     this()
     {
         isVisibilityForChildren = true;
-        layout = new HLayout(5);
+        layout = new HLayout;
         layout.isAutoResize = true;
         layout.isAlignY = true;
         //isBackground = true;
@@ -161,7 +161,7 @@ class PieChart : Container
 
         import api.dm.kit.sprites.layouts.vlayout : VLayout;
 
-        layout = new VLayout(5);
+        layout = new VLayout;
         layout.isAutoResize = true;
     }
 

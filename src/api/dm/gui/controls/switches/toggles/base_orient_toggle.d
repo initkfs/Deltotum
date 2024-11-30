@@ -20,13 +20,13 @@ class BaseOrientToggle : BaseToggle
         {
             import api.dm.kit.sprites.layouts.vlayout : VLayout;
 
-            layout = new VLayout(5);
+            layout = new VLayout;
         }
         else
         {
             import api.dm.kit.sprites.layouts.hlayout : HLayout;
 
-            layout = new HLayout(5);
+            layout = new HLayout;
         }
 
         layout.isAutoResize = true;

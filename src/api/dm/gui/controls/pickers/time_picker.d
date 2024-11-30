@@ -331,7 +331,7 @@ class TimePicker : Control
     {
         import api.dm.kit.sprites.layouts.vlayout : VLayout;
 
-        this.layout = new VLayout(5);
+        this.layout = new VLayout;
         this.layout.isAutoResize = true;
         this.layout.isAlignX = true;
 

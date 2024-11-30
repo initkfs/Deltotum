@@ -30,7 +30,7 @@ class ColorPicker : Control
     {
         import api.dm.kit.sprites.layouts.hlayout : HLayout;
 
-        auto layout = new HLayout(5);
+        auto layout = new HLayout;
         layout.isAutoResize = true;
         layout.isAlignY = true;
         this.layout = layout;

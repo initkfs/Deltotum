@@ -26,7 +26,7 @@ class Procedural : Control
     {
         import api.dm.kit.sprites.layouts.hlayout : HLayout;
 
-        layout = new HLayout(5);
+        layout = new HLayout;
         layout.isAutoResize = true;
         isBackground = false;
         layout.isAlignY = false;

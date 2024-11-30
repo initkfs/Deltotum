@@ -24,7 +24,7 @@ class Controls : Control
 
         import api.dm.kit.sprites.layouts.vlayout : VLayout;
 
-        layout = new VLayout(5);
+        layout = new VLayout;
         layout.isAutoResize = true;
         isBackground = false;
     }
@@ -251,7 +251,7 @@ class Controls : Control
         tbtn2.icon.marginTop = -labelMargin;
 
         auto checkBoxContainer = new SwitchGroup;
-        checkBoxContainer.layout = new VLayout(5);
+        checkBoxContainer.layout = new VLayout;
         checkBoxContainer.layout.isAutoResize = true;
         root.addCreate(checkBoxContainer);
 
@@ -271,7 +271,7 @@ class Controls : Control
         check2.isOn = true;
 
         auto toggleContainer = new SwitchGroup;
-        toggleContainer.layout = new VLayout(5);
+        toggleContainer.layout = new VLayout;
         toggleContainer.layout.isAutoResize = true;
         root.addCreate(toggleContainer);
 
@@ -287,7 +287,7 @@ class Controls : Control
         toggleContainer.addCreate(switch2);
 
         auto htoggleContainer = new SwitchGroup;
-        htoggleContainer.layout = new HLayout(5);
+        htoggleContainer.layout = new HLayout;
         htoggleContainer.layout.isAutoResize = true;
         root.addCreate(htoggleContainer);
 
@@ -546,7 +546,7 @@ class Controls : Control
             window.restore;
         });
         winRestore.styleId = DefaultStyle.success;
-        winRestore.layout = new VLayout(5);
+        winRestore.layout = new VLayout;
         winRestore.layout.isAutoResizeAndAlignOne = true;
         winRestore.layout.isAlignX = true;
 
@@ -560,7 +560,7 @@ class Controls : Control
         });
 
         winFull.styleId = DefaultStyle.danger;
-        winFull.layout = new VLayout(5);
+        winFull.layout = new VLayout;
         winFull.layout.isAutoResizeAndAlignOne = true;
         winFull.layout.isAlignX = true;
         winFull.layout.isFillFromStartToEnd = false;

@@ -51,7 +51,7 @@ class Pagination : Control
         super.create;
 
         pageIndexContainer = new Container;
-        pageIndexContainer.layout = new HLayout(5);
+        pageIndexContainer.layout = new HLayout;
         pageIndexContainer.layout.isAutoResize = true;
         pageIndexContainer.layout.isAlignX = true;
         addCreate(pageIndexContainer);

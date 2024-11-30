@@ -21,7 +21,7 @@ class Indicators : Control
 
         import api.dm.kit.sprites.layouts.vlayout : VLayout;
 
-        layout = new VLayout(5);
+        layout = new VLayout;
         layout.isAutoResize = true;
         isBackground = false;
     }

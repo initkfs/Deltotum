@@ -45,7 +45,7 @@ class Carousel : Control
     {
         this._items = newItems;
 
-        layout = new HLayout(5);
+        layout = new HLayout;
         layout.isAlignY = true;
         layout.isAutoResize = true;
     }
