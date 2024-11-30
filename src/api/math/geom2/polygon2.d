@@ -6,6 +6,37 @@ import api.math.geom2.rect2: Rect2d;
 
 import Math = api.math;
 
+struct Quadrilateral2d
+{
+    Vec2d leftTop;
+    Vec2d rightTop;
+    Vec2d rightBottom;
+    Vec2d leftBottom;
+
+    this(double x, double y, double width, double height)
+    {
+        leftTop = Vec2d(x, y);
+        rightTop = Vec2d(leftTop.x + width, leftTop.y);
+        rightBottom = Vec2d(rightTop.x, rightTop.y + height);
+        leftBottom = Vec2d(leftTop.x, rightBottom.y);
+    }
+
+    Vec2d middleLeft() const @nogc nothrow pure @safe => leftBottom.add(leftTop).div(2.0);
+    Vec2d middleRight() const @nogc nothrow pure @safe => rightBottom.add(rightTop).div(2.0);
+    Vec2d middleTop() const @nogc nothrow pure @safe => rightTop.add(leftTop).div(2.0);
+    Vec2d middleBottom() const @nogc nothrow pure @safe => rightBottom.add(
+        leftBottom).div(2.0);
+
+    Vec2d center() const nothrow pure @safe
+    {
+        import api.math.geom2.polygon2 : Polygon2d;
+
+        Vec2d[4] vertx = [leftTop, rightTop, rightBottom, leftBottom];
+        const poly = Polygon2d(vertx[]);
+        return poly.midpoint;
+    }
+}
+
 /**
  * Authors: initkfs
  */
@@ -148,7 +179,7 @@ struct Polygon2d
         return vertSum > 0;
     }
 
-    Vec2d midpoint()
+    Vec2d midpoint() scope const nothrow pure @safe
     {
         double xSum = 0;
         double ySum = 0;

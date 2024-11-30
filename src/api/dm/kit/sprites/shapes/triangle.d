@@ -32,12 +32,12 @@ class Triangle : Shape
             graphics.restoreColor;
         }
 
-        const b = bounds;
+        const b = boundsAll;
 
-        verts[0] = Vec2d(b.x, b.bottom);
-        verts[1] = Vec2d(b.middleX, b.y);
-        verts[2] = Vec2d(b.right, b.bottom);
-
+        verts[0] = b.leftBottom;
+        verts[1] = b.middleTop;
+        verts[2] = b.rightBottom;
+        
         if(!style.isFill){
             graphics.polygon(verts[]);
         }else {

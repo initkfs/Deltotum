@@ -4,7 +4,8 @@ import api.math.geom2.vec2 : Vec2d;
 import api.math.geom2.circle2 : Circle2d;
 
 //TODO template from Rect2d
-struct Rect2i {
+struct Rect2i
+{
     int x;
     int y;
     int width;
@@ -70,10 +71,10 @@ struct Rect2d
         double circleDistanceY = Math.abs(circle.y - y);
 
         const double halfWidth = width / 2.0;
-        const double halfHeight = height / 2.0; 
+        const double halfHeight = height / 2.0;
 
-        if (circleDistanceX > (halfWidth + circle.radius) || 
-        circleDistanceY > (halfHeight + circle.radius))
+        if (circleDistanceX > (halfWidth + circle.radius) ||
+            circleDistanceY > (halfHeight + circle.radius))
         {
             return false;
         }

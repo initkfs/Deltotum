@@ -238,7 +238,7 @@ class Controls : Control
 
         auto tbtn2 = new TriangleButton(null, polySize, polySize, Icons.arrow_down_outline);
         tbtn2.isFixedButton = true;
-        tbtn2.angle = 180;
+        tbtn2.angle = 45;
         tbtn2.styleId = DefaultStyle.danger;
         //tbtn2.isDrawBounds = true;
         toggleBtnContainer.addCreate(tbtn2);

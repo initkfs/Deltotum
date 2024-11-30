@@ -242,6 +242,16 @@ class Graphics : LoggableUnit
         {
             logger.errorf("Lines drawing error. %s", err);
         }
+
+        if (points.length >= 3)
+        {
+            const last = points[$ - 1];
+            const first = points[0];
+            if (const err = renderer.drawLine(cast(int) last.x, cast(int) last.y, cast(int) first.x, cast(int) first.y))
+            {
+                logger.errorf("Lines drawing error. %s", err);
+            }
+        }
     }
 
     void polygon(Vec2d[] points, RGBA color = defaultColor) => polygon(points, points.length, color);

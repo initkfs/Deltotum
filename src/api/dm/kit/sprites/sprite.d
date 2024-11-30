@@ -3,6 +3,7 @@ module api.dm.kit.sprites.sprite;
 import api.dm.kit.events.event_kit_target : EventKitTarget;
 import api.math.geom2.vec2 : Vec2d;
 import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.polygon2 : Quadrilateral2d;
 import api.math.alignment : Alignment;
 import api.math.insets : Insets;
 import api.dm.kit.sprites.layouts.layout : Layout;
@@ -1191,11 +1192,7 @@ class Sprite : EventKitTarget
         }
     }
 
-    Rect2d bounds()
-    {
-        const Rect2d bounds = {x, y, _width, _height};
-        return bounds;
-    }
+    Rect2d bounds() => Rect2d(x, y, _width, _height);
 
     Rect2d boundsInParent()
     {
@@ -1203,8 +1200,70 @@ class Sprite : EventKitTarget
         {
             return bounds;
         }
+
         const Rect2d pBounds = {x - parent.x, y - parent.y, _width, _height};
         return pBounds;
+    }
+
+    Quadrilateral2d boundsAll()
+    {
+        Quadrilateral2d bounds = Quadrilateral2d(x, y, _width, _height);
+        if (_angle == 0)
+        {
+            return bounds;
+        }
+
+        rotateBounds(bounds, _angle);
+
+        return bounds;
+    }
+
+    Quadrilateral2d boundsAllInParent()
+    {
+        if (!parent)
+        {
+            return boundsAll;
+        }
+
+        Quadrilateral2d bounds = Quadrilateral2d(x - parent.x, y - parent.y, _width, _height);
+        if (_angle == 0)
+        {
+            return bounds;
+        }
+
+        rotateBounds(bounds, _angle);
+
+        return bounds;
+    }
+
+    void rotateBounds(ref Quadrilateral2d bounds, double angle)
+    {
+        import api.math.matrices.matrix : Matrix2x2, Matrix2x1, toVec2d, fromVec2d;
+
+        import Math = api.math;
+
+        //TODO affine 2d
+        Matrix2x2 rotM;
+        rotM[0][0] = Math.cosDeg(angle);
+        rotM[0][1] = -Math.sinDeg(angle);
+        rotM[1][0] = Math.sinDeg(angle);
+        rotM[1][1] = Math.cosDeg(angle);
+
+        Matrix2x1 vecm;
+
+        Vec2d pivot = bounds.center;
+
+        fromVec2d(vecm, bounds.leftTop.subtract(pivot));
+        bounds.leftTop = rotM.multiply(vecm).toVec2d.add(pivot);
+
+        fromVec2d(vecm, bounds.rightTop.subtract(pivot));
+        bounds.rightTop = rotM.multiply(vecm).toVec2d.add(pivot);
+
+        fromVec2d(vecm, bounds.rightBottom.subtract(pivot));
+        bounds.rightBottom = rotM.multiply(vecm).toVec2d.add(pivot);
+
+        fromVec2d(vecm, bounds.leftBottom.subtract(pivot));
+        bounds.leftBottom = rotM.multiply(vecm).toVec2d.add(pivot);
     }
 
     Rect2d paddingBounds()
@@ -2296,7 +2355,8 @@ class Sprite : EventKitTarget
 
     void angle(double value)
     {
-        if(_angle == value){
+        if (_angle == value)
+        {
             return;
         }
 
