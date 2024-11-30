@@ -20,7 +20,8 @@ class TriangleButton : BaseButton
     this(dstring text = defaultButtonText, string iconName, void delegate(ref ActionEvent) onAction)
     {
         this(text, 0, 0, iconName, 0);
-        if(onAction){
+        if (onAction)
+        {
             this.onAction ~= onAction;
         }
     }
@@ -28,7 +29,8 @@ class TriangleButton : BaseButton
     this(dstring text, void delegate(ref ActionEvent) onAction)
     {
         this(text, 0, 0, null, 0);
-        if(onAction){
+        if (onAction)
+        {
             this.onAction ~= onAction;
         }
     }
@@ -54,22 +56,24 @@ class TriangleButton : BaseButton
 
     protected override Sprite createShape(double width, double height, double angle, GraphicStyle style)
     {
+        Sprite shape;
 
-        // if (capGraphics.isVectorGraphics)
-        // {
-        //     import api.dm.kit.sprites.textures.vectors.shapes.vtriangle : VTriangle;
+        if (capGraphics.isVectorGraphics)
+        {
+            import api.dm.kit.sprites.textures.vectors.shapes.vtriangle : VTriangle;
 
-        //     auto vShape = new VTriangle(width, height, style);
-        //     vShape.angle = angle;
-        //     return vShape;
-        // }
+            shape = new VTriangle(width, height, style);
+        }
+        else
+        {
+            import api.dm.kit.sprites.shapes.triangle : Triangle;
 
-        import api.math.geom2.parallelogram2 : Parallelogram2d;
-        import api.dm.kit.sprites.shapes.triangle : Triangle;
+            shape = new Triangle(width, height, style);
+        }
 
-        auto pShape = new Triangle(width, height, style);
-        pShape.angle = angle;
+        assert(shape);
+        shape.angle = angle;
 
-        return pShape;
+        return shape;
     }
 }

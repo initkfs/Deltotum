@@ -1205,7 +1205,7 @@ class Sprite : EventKitTarget
         return pBounds;
     }
 
-    Quadrilateral2d boundsAll()
+    Quadrilateral2d boundsPoly()
     {
         Quadrilateral2d bounds = Quadrilateral2d(x, y, _width, _height);
         if (_angle == 0)
@@ -1218,11 +1218,11 @@ class Sprite : EventKitTarget
         return bounds;
     }
 
-    Quadrilateral2d boundsAllInParent()
+    Quadrilateral2d boundsPolyInParent()
     {
         if (!parent)
         {
-            return boundsAll;
+            return boundsPoly;
         }
 
         Quadrilateral2d bounds = Quadrilateral2d(x - parent.x, y - parent.y, _width, _height);

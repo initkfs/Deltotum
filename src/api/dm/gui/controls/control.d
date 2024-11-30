@@ -911,8 +911,7 @@ class Control : GuiComponent
         _background.isResizedByParent = true;
         _background.isLayoutManaged = false;
         _background.isDrawAfterParent = false;
-        _background.isDrawBounds = true;
-
+        
         addCreate(_background, 0);
 
         _background.opacityLimit = theme.opacityBackground;

@@ -130,6 +130,7 @@ class Controls : Control
         import api.dm.gui.controls.switches.buttons.round_button : RoundButton;
 
         auto circleBtn = new RoundButton("Button");
+        circleBtn.isLongPressButton = true;
         btnRoot3.addCreate(circleBtn);
 
         import api.dm.gui.controls.switches.buttons.poly_button : PolyButton;
@@ -227,7 +228,7 @@ class Controls : Control
 
         import api.dm.kit.graphics.styles.default_style : DefaultStyle;
 
-        const double polySize = 50;
+        const double polySize = 40;
 
         auto tbtn1 = new TriangleButton(null, polySize, polySize, Icons.arrow_up_outline);
         tbtn1.styleId = DefaultStyle.warning;
@@ -236,12 +237,18 @@ class Controls : Control
         //.isDrawBounds = true;
         toggleBtnContainer.addCreate(tbtn1);
 
+        auto labelMargin = 5;
+
+        tbtn1.icon.marginTop = labelMargin;
+
         auto tbtn2 = new TriangleButton(null, polySize, polySize, Icons.arrow_down_outline);
         tbtn2.isFixedButton = true;
-        tbtn2.angle = 45;
+        tbtn2.angle = 180;
         tbtn2.styleId = DefaultStyle.danger;
         //tbtn2.isDrawBounds = true;
         toggleBtnContainer.addCreate(tbtn2);
+
+        tbtn2.icon.marginTop = -labelMargin;
 
         auto checkBoxContainer = new SwitchGroup;
         checkBoxContainer.layout = new VLayout(5);

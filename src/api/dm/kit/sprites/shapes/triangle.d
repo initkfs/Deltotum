@@ -32,7 +32,7 @@ class Triangle : Shape
             graphics.restoreColor;
         }
 
-        const b = boundsAll;
+        const b = boundsPoly;
 
         verts[0] = b.leftBottom;
         verts[1] = b.middleTop;
