@@ -33,7 +33,7 @@ class HSplitBox : Container
             foreach (sepData; separators)
             {
                 Sprite left = sepData.prev;
-                sepData.sep.x = left.rectBounds.right - sepData.sep.rectBounds.halfWidth;
+                sepData.sep.x = left.boundsRect.right - sepData.sep.boundsRect.halfWidth;
             }
 
         };
@@ -99,9 +99,9 @@ class HSplitBox : Container
             auto prev = sepData.prev;
             auto next = sepData.next;
             
-            //auto bounds = this.rectBounds;
+            //auto bounds = this.boundsRect;
             const minX = prev.x;
-            const maxX = next.rectBounds.right - sep.width;
+            const maxX = next.boundsRect.right - sep.width;
             if (x <= minX || x >= maxX)
             {
                 return false;

@@ -145,7 +145,7 @@ Triangle2d[] triangulate(Vec2d[] points)
     }
 
     /*
-      Find the maximum and minimum vertex rectBounds.
+      Find the maximum and minimum vertex boundsRect.
       This is to allow calculation of the bounding triangle
    */
     xmin = pxyz[0].x;

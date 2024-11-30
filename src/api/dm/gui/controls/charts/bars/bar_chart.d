@@ -72,10 +72,10 @@ class BarChart : XYChart
         //TODO from xScale
         if(!isShowXScale){
              auto color = xScale1 ? xScale1.axisColor : xAxisColor;
-             graphics.line(chartArea.x, chartArea.rectBounds.bottom, chartArea.rectBounds.right, chartArea.rectBounds.bottom , color);
+             graphics.line(chartArea.x, chartArea.boundsRect.bottom, chartArea.boundsRect.right, chartArea.boundsRect.bottom , color);
         }
 
-        graphics.setClip(chartArea.rectBounds);
+        graphics.setClip(chartArea.boundsRect);
         scope (exit)
         {
             graphics.removeClip;

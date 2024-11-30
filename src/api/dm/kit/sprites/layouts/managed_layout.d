@@ -63,9 +63,9 @@ class ManagedLayout : Layout
         {
             return false;
         }
-        const rootBounds = root.rectBounds;
-        //TODO target.rectLayoutBounds
-        const targetBounds = target.rectBounds;
+        const rootBounds = root.boundsRect;
+        //TODO target.boundsRectLayout
+        const targetBounds = target.boundsRect;
 
         if (rootBounds.width == 0 || targetBounds.width == 0)
         {
@@ -90,8 +90,8 @@ class ManagedLayout : Layout
         {
             return false;
         }
-        const rootBounds = root.rectBounds;
-        const targetBounds = target.rectBounds;
+        const rootBounds = root.boundsRect;
+        const targetBounds = target.boundsRect;
 
         if (rootBounds.height == 0 || targetBounds.height == 0)
         {

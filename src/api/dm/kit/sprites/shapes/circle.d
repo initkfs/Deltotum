@@ -43,7 +43,7 @@ class Circle : Shape
         }
         else if (auto rect = cast(Rectangle) other)
         {
-            return other.rectBounds.intersect(shape);
+            return other.boundsRect.intersect(shape);
         }
 
         return super.intersect(other);

@@ -355,7 +355,7 @@ class XYChart : Container
 
         if (posY >= 0)
         {
-            newY = chartArea.rectBounds.bottom - hY;
+            newY = chartArea.boundsRect.bottom - hY;
         }
         else
         {
@@ -366,7 +366,7 @@ class XYChart : Container
                 if(hY < 0){
                     hY = -hY;
                 }
-                newY = chartArea.rectBounds.bottom - hZeroOffset + hY;
+                newY = chartArea.boundsRect.bottom - hZeroOffset + hY;
             }
         }
 
@@ -379,12 +379,12 @@ class XYChart : Container
 
         if (yScale1.minValue < 0 && yScale1.maxValue > 0)
         {
-            graphics.line(chartArea.x, zeroPos.y, chartArea.rectBounds.right, zeroPos.y, xAxisColor);
+            graphics.line(chartArea.x, zeroPos.y, chartArea.boundsRect.right, zeroPos.y, xAxisColor);
         }
 
         if (xScale1.minValue < 0 && xScale1.maxValue > 0)
         {
-            graphics.line(zeroPos.x, chartArea.y, zeroPos.x, chartArea.rectBounds.bottom, yAxisColor);
+            graphics.line(zeroPos.x, chartArea.y, zeroPos.x, chartArea.boundsRect.bottom, yAxisColor);
         }
     }
 
@@ -401,7 +401,7 @@ class XYChart : Container
         foreach (x; 0 .. xTicks)
         {
             auto tickPos = chartArea.x + startX - tickW;
-            graphics.line(tickPos, chartArea.y, tickPos, chartArea.rectBounds.bottom, gridColor);
+            graphics.line(tickPos, chartArea.y, tickPos, chartArea.boundsRect.bottom, gridColor);
             startX += tickXDiff;
         }
 
@@ -411,7 +411,7 @@ class XYChart : Container
         foreach (y; 0 .. yTicks)
         {
             double tickPos = chartArea.y + startY - tickH;
-            graphics.line(chartArea.x, tickPos, chartArea.rectBounds.right, tickPos, gridColor);
+            graphics.line(chartArea.x, tickPos, chartArea.boundsRect.right, tickPos, gridColor);
             startY += tickYDiff;
         }
 
@@ -439,8 +439,8 @@ class XYChart : Container
             return;
         }
 
-        graphics.line(chartArea.x + dx, chartArea.y, chartArea.x + dx, chartArea.rectBounds.bottom, trackPointerColor);
-        graphics.line(chartArea.x, chartArea.y + dy, chartArea.rectBounds.right, chartArea.y + dy, trackPointerColor);
+        graphics.line(chartArea.x + dx, chartArea.y, chartArea.x + dx, chartArea.boundsRect.bottom, trackPointerColor);
+        graphics.line(chartArea.x, chartArea.y + dy, chartArea.boundsRect.right, chartArea.y + dy, trackPointerColor);
 
         auto dxInfo = widthToX(dx);
         auto dyInfo = heightToY(dy);

@@ -503,8 +503,8 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         //SDL_Rect bounds = window.getScaleBounds;
 
         SDL_Rect destRect;
-        destRect.x = cast(int)(destBounds.x); // + rectBounds.x);
-        destRect.y = cast(int)(destBounds.y); // + rectBounds.y);
+        destRect.x = cast(int)(destBounds.x); // + boundsRect.x);
+        destRect.y = cast(int)(destBounds.y); // + boundsRect.y);
         destRect.w = cast(int) destBounds.width;
         destRect.h = cast(int) destBounds.height;
 

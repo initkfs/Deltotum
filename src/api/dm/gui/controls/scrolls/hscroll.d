@@ -54,7 +54,7 @@ class HScroll : MonoScroll
 
             thumb.onDragXY = (x, y) {
 
-                const maxX = rectBounds.right - thumb.width;
+                const maxX = boundsRect.right - thumb.width;
 
                 //Setting after super.value freezes thumb
                 if (!trySetThumbX(x))
@@ -62,8 +62,8 @@ class HScroll : MonoScroll
                     return false;
                 }
 
-                const range = rectBounds.width - thumb.width;
-                auto dx = thumb.x - rectBounds.x;
+                const range = boundsRect.width - thumb.width;
+                auto dx = thumb.x - boundsRect.x;
 
                 enum errorDelta = 5;
                 if (dx < errorDelta)
@@ -97,9 +97,9 @@ class HScroll : MonoScroll
 
     protected bool trySetThumbX(double x, bool isAllowClamp = true)
     {
-        auto bounds = this.rectBounds;
-        const minX = rectBounds.x;
-        const maxX = rectBounds.right - thumb.width;
+        auto bounds = this.boundsRect;
+        const minX = boundsRect.x;
+        const maxX = boundsRect.right - thumb.width;
         if (x <= minX)
         {
             if(thumb.x != minX && isAllowClamp){
@@ -143,7 +143,7 @@ class HScroll : MonoScroll
             return false;
         }
 
-        const rangeX = rectBounds.width - thumb.width;
+        const rangeX = boundsRect.width - thumb.width;
         auto newThumbX = x + rangeX * v / maxValue;
         return trySetThumbX(newThumbX);
     }

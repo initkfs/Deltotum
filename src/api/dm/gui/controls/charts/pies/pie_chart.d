@@ -212,24 +212,24 @@ class PieChart : Container
                 (label.endAngleDeg - label.startAngleDeg) / 2);
 
             auto outerPos = Vec2d.fromPolarDeg(middleAngleDeg, radius);
-            auto outerCenterPos = rectBounds.center.add(outerPos);
+            auto outerCenterPos = boundsRect.center.add(outerPos);
 
             double labelX = outerCenterPos.x;
             double labelY = outerCenterPos.y;
 
             if (middleAngleDeg >= 0 && middleAngleDeg <= 90)
             {
-                //label.y = labelY - label.rectBounds.halfHeight;
+                //label.y = labelY - label.boundsRect.halfHeight;
                 label.layout.isFillFromStartToEnd = true;
             }
             else if (middleAngleDeg > 90 && middleAngleDeg <= 270)
             {
-                labelX -= label.rectBounds.width;
+                labelX -= label.boundsRect.width;
                 label.layout.isFillFromStartToEnd = false;
             }
             else if (middleAngleDeg > 270 && middleAngleDeg < 360)
             {
-                labelY -= label.rectBounds.height;
+                labelY -= label.boundsRect.height;
                 label.layout.isFillFromStartToEnd = true;
             }
 
@@ -239,8 +239,8 @@ class PieChart : Container
             label.isVisible = true;
 
             auto pointerStartPos = Vec2d.fromPolarDeg(middleAngleDeg, label.radius).add(
-                rectBounds.center);
-            auto pointerEndPos = label.colorLabel.rectBounds.center;
+                boundsRect.center);
+            auto pointerEndPos = label.colorLabel.boundsRect.center;
 
             graphics.line(pointerStartPos, pointerEndPos, label.color);
         }

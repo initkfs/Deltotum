@@ -102,7 +102,7 @@ class ColorPicker : Control
 
     void toggleChooser()
     {
-        const b = rectBounds;
+        const b = boundsRect;
         colorChooser.x = b.x;
         colorChooser.y = b.bottom;
 

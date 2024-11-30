@@ -72,29 +72,29 @@ class SevenSegment : Control
 
     protected void layoutSegments()
     {
-        segmentA.x = rectBounds.middleX - segmentA.rectBounds.halfWidth;
-        segmentA.y = rectBounds.y + padding.top;
+        segmentA.x = boundsRect.middleX - segmentA.boundsRect.halfWidth;
+        segmentA.y = boundsRect.y + padding.top;
 
-        segmentB.x = segmentA.rectBounds.right - segmentCornerBevel + segmentSpacing;
-        segmentB.y = segmentA.rectBounds.middleY + segmentSpacing;
+        segmentB.x = segmentA.boundsRect.right - segmentCornerBevel + segmentSpacing;
+        segmentB.y = segmentA.boundsRect.middleY + segmentSpacing;
 
-        segmentC.x = segmentB.rectBounds.x;
-        segmentC.y = segmentB.rectBounds.bottom + segmentSpacing;
+        segmentC.x = segmentB.boundsRect.x;
+        segmentC.y = segmentB.boundsRect.bottom + segmentSpacing;
 
         segmentD.x = segmentC.x + segmentCornerBevel - segmentSpacing - segmentD.width;
-        segmentD.y = segmentC.rectBounds.bottom + segmentSpacing - segmentCornerBevel;
+        segmentD.y = segmentC.boundsRect.bottom + segmentSpacing - segmentCornerBevel;
 
-        segmentE.x = segmentD.x - segmentSpacing - segmentE.rectBounds.halfWidth;
+        segmentE.x = segmentD.x - segmentSpacing - segmentE.boundsRect.halfWidth;
         segmentE.y = segmentD.y + segmentCornerBevel - segmentSpacing - segmentE.height;
 
         segmentF.x = segmentE.x;
         segmentF.y = segmentE.y - segmentSpacing - segmentF.height;
 
-        segmentG.x = segmentE.rectBounds.middleX + segmentSpacing;
-        segmentG.y = segmentE.y - segmentSpacing / 2 - segmentG.rectBounds.halfHeight;
+        segmentG.x = segmentE.boundsRect.middleX + segmentSpacing;
+        segmentG.y = segmentE.y - segmentSpacing / 2 - segmentG.boundsRect.halfHeight;
 
-        segmentLeftBottomDot.x = segmentC.rectBounds.right + dotPadding - segmentCornerBevel;
-        segmentLeftBottomDot.y = segmentD.rectBounds.middleY - segmentLeftBottomDot.rectBounds.halfHeight;
+        segmentLeftBottomDot.x = segmentC.boundsRect.right + dotPadding - segmentCornerBevel;
+        segmentLeftBottomDot.y = segmentD.boundsRect.middleY - segmentLeftBottomDot.boundsRect.halfHeight;
     }
 
     void setUpSegment(Sprite segment)

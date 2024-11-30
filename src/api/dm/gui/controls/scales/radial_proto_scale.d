@@ -130,8 +130,8 @@ class RadialProtoScale : Control
 
                     proto.angle = startAngleDeg;
 
-                    auto tickX = radius + pos.x - proto.rectBounds.halfWidth;
-                    auto tickY = radius + pos.y - proto.rectBounds.halfHeight;
+                    auto tickX = radius + pos.x - proto.boundsRect.halfWidth;
+                    auto tickY = radius + pos.y - proto.boundsRect.halfHeight;
 
                     auto tickBoundsW = proto.width;
                     auto tickBoundsH = proto.height;

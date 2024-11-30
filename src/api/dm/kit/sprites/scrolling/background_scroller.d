@@ -80,7 +80,7 @@ class BackgroundScroller : Sprite
         auto worldBounds = worldBoundsProvider();
 
         //TODO all directions
-        if (direction == Direction.down && _current.rectBounds.y >= worldBounds.bottom)
+        if (direction == Direction.down && _current.boundsRect.y >= worldBounds.bottom)
         {
             auto mustBePrev = _current;
             _current = _next;

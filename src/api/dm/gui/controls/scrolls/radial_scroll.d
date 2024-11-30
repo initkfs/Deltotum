@@ -103,7 +103,7 @@ class RadialScroll : MonoScroll
         newThumb.isDraggable = true;
         newThumb.onDragXY = (ddx, ddy) {
 
-            immutable thumbBounds = thumb.rectBounds;
+            immutable thumbBounds = thumb.boundsRect;
             immutable center = thumbBounds.center;
 
             immutable angleDeg = center.angleDeg360To(input.pointerPos);

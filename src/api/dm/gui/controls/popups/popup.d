@@ -28,9 +28,9 @@ class Popup : BasePopup
         import Math = api.dm.math;
 
         const screenBounds = screen.first.bounds;
-        const thisBounds = rectBounds;
+        const thisBounds = boundsRect;
 
-        auto newX = parent.rectBounds.middleX - rectBounds.halfWidth;
+        auto newX = parent.boundsRect.middleX - boundsRect.halfWidth;
         if (newX < 0)
         {
             newX = 0;
@@ -40,7 +40,7 @@ class Popup : BasePopup
             newX = screenBounds.right - thisBounds.width;
         }
 
-        auto newY = parent.rectBounds.y - rectBounds.height;
+        auto newY = parent.boundsRect.y - boundsRect.height;
         if (newY < 0)
         {
             newY = 0;

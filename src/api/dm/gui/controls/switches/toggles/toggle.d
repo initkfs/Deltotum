@@ -57,7 +57,7 @@ class Toggle : BaseOrientToggle
 
     override Vec2d handleAnimationMinValue()
     {
-        const hb = handleContainer.rectBounds;
+        const hb = handleContainer.boundsRect;
 
         if (isVertical)
         {
@@ -71,7 +71,7 @@ class Toggle : BaseOrientToggle
 
     override Vec2d handleAnimationMaxValue()
     {
-        const hb = handleContainer.rectBounds;
+        const hb = handleContainer.boundsRect;
 
         if (isVertical)
         {

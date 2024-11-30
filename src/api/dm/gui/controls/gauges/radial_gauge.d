@@ -213,8 +213,8 @@ class RadialGauge : Control
 
                     proto.angle = startAngleDeg;
 
-                    auto tickX = radius + pos.x - proto.rectBounds.halfWidth;
-                    auto tickY = radius + pos.y - proto.rectBounds.halfHeight;
+                    auto tickX = radius + pos.x - proto.boundsRect.halfWidth;
+                    auto tickY = radius + pos.y - proto.boundsRect.halfHeight;
 
                     auto tickBoundsW = proto.width;
                     auto tickBoundsH = proto.height;
@@ -330,8 +330,8 @@ class RadialGauge : Control
         override void applyLayout()
         {
             super.applyLayout;
-            label.x = rectBounds.middleX - label.rectBounds.halfWidth;
-            label.y = rectBounds.middleY + label.rectBounds.height;
+            label.x = boundsRect.middleX - label.boundsRect.halfWidth;
+            label.y = boundsRect.middleY + label.boundsRect.height;
         }
 
         protected void setHandAngleDeg(double angleDeg)

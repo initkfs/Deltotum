@@ -40,14 +40,14 @@ class CircleLayout : ManagedLayout
 
         const double angleDegStep = 360.0 / childCount;
 
-        const rootBounds = root.rectBounds;
+        const rootBounds = root.boundsRect;
         const startX = rootBounds.center.x;
         const startY = rootBounds.center.y;
 
         double nextDeg = startAngle;
         foreach (child; children)
         {
-            const childBounds = child.rectBounds;
+            const childBounds = child.boundsRect;
             const pos = Vec2d.fromPolarDeg(nextDeg, radius);
             child.x = child.margin.left + startX + pos.x - childBounds.halfWidth - child
                 .margin.right;
@@ -70,9 +70,9 @@ class CircleLayout : ManagedLayout
                 minX = child.x;
             }
 
-            if (maxX == 0 || child.rectBounds.right > maxX)
+            if (maxX == 0 || child.boundsRect.right > maxX)
             {
-                maxX = child.rectBounds.right;
+                maxX = child.boundsRect.right;
             }
         }
 
@@ -86,7 +86,7 @@ class CircleLayout : ManagedLayout
 
     override double childrenHeight(Sprite root)
     {
-        const rootBounds = root.rectBounds;
+        const rootBounds = root.boundsRect;
 
         double minY = 0;
         double maxY = 0;
@@ -97,9 +97,9 @@ class CircleLayout : ManagedLayout
                 minY = child.y;
             }
 
-            if (maxY == 0 || child.rectBounds.bottom > maxY)
+            if (maxY == 0 || child.boundsRect.bottom > maxY)
             {
-                maxY = child.rectBounds.bottom;
+                maxY = child.boundsRect.bottom;
             }
         }
 

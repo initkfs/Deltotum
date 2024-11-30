@@ -34,7 +34,7 @@ class PointsShape : Shape
 
         const double firstX = points[0].x, firstY = points[0].y;
 
-        const thisBounds = rectBounds;
+        const thisBounds = boundsRect;
 
         double offsetX = thisBounds.x, offsetY = thisBounds.y;
         if (isDrawFromCenter)

@@ -47,7 +47,7 @@ class RegularPolygon : Shape
 
     void drawPolygon()
     {
-        auto center = rectBounds.center;
+        auto center = boundsRect.center;
         double firstX;
         double firstY;
         double prevX;

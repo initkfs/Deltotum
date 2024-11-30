@@ -38,8 +38,8 @@ class Badge : Labeled
 
         assert(parent);
         enum margin = 5;
-        auto newX = parent.rectBounds.right + margin;
-        auto newY = parent.rectBounds.y - rectBounds.halfWidth + margin;
+        auto newX = parent.boundsRect.right + margin;
+        auto newY = parent.boundsRect.y - boundsRect.halfWidth + margin;
         x = newX;
         y = newY;
     }

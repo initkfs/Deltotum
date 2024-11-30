@@ -57,8 +57,8 @@ class Magnifier : Control
         onPointerMove ~= (ref e) {
             auto pointerPos = input.pointerPos;
 
-            auto magnCenterX = magnifier.rectBounds.halfWidth;
-            auto magnCenterY = magnifier.rectBounds.halfHeight;
+            auto magnCenterX = magnifier.boundsRect.halfWidth;
+            auto magnCenterY = magnifier.boundsRect.halfHeight;
 
             auto magnPosX = pointerPos.x - magnCenterX;
             auto magnPosY = pointerPos.y - magnCenterY;
@@ -72,8 +72,8 @@ class Magnifier : Control
             auto originalXRel = (_original.width * mouseXRel) / magnifier.width;
             auto originalYRel = (_original.height * mouseYRel) / magnifier.height;
 
-            auto originalBoundsX = originalXRel + magnifier.rectBounds.halfWidth;
-            auto originalBoundsY = originalYRel + magnifier.rectBounds.halfHeight;
+            auto originalBoundsX = originalXRel + magnifier.boundsRect.halfWidth;
+            auto originalBoundsY = originalYRel + magnifier.boundsRect.halfHeight;
 
             Rect2d textureBounds = {
                 originalBoundsX, originalBoundsY, magnifier.width, magnifier.height};

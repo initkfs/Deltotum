@@ -144,7 +144,7 @@ class ChoiceBox : TypedContainer!ChoiceItem
         onFocusOut ~= (ref e) {
             if (choiceList.isVisible)
             {
-                const listBounds = choiceList.rectBounds;
+                const listBounds = choiceList.boundsRect;
                 if (listBounds.contains(input.pointerPos))
                 {
                     return;
@@ -184,7 +184,7 @@ class ChoiceBox : TypedContainer!ChoiceItem
             choiceList.width = width;
         }
         choiceList.x = x + (width - choiceList.width) / 2;
-        choiceList.y = rectBounds.bottom;
+        choiceList.y = boundsRect.bottom;
 
         foreach (item; items)
         {

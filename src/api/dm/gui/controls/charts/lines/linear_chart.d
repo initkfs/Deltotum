@@ -106,7 +106,7 @@ class LinearChart : XYChart
     {
         super.drawContent;
 
-        auto chartBounds = chartArea.rectBounds;
+        auto chartBounds = chartArea.boundsRect;
 
         drawGrid;
 

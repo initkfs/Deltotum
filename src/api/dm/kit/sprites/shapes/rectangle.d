@@ -38,7 +38,7 @@ class Rectangle : Shape
         //TODO unsafe cast, but fast
         if (auto circle = cast(Circle) other)
         {
-            return rectBounds.intersect(circle.shape);
+            return boundsRect.intersect(circle.shape);
         }
 
         return super.intersect(other);
