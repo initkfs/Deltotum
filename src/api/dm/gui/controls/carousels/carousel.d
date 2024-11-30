@@ -203,7 +203,7 @@ class Carousel : Control
 
             currentItemIndex--;
             current = _items[currentItemIndex];
-            current.x = itemContainer.x - current.bounds.width;
+            current.x = itemContainer.x - current.rectBounds.width;
             current.y = itemContainer.y;
         }
         else if (direction == CarouselDirection.fromRight)
@@ -222,7 +222,7 @@ class Carousel : Control
             currentItemIndex = newIndex;
             current = _items[currentItemIndex];
 
-            current.x = itemContainer.bounds.right;
+            current.x = itemContainer.rectBounds.right;
             current.y = itemContainer.y;
         }
 

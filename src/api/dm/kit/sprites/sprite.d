@@ -261,7 +261,7 @@ class Sprite : EventKitTarget
 
             if (e.event == PointerEvent.Event.down)
             {
-                if (isDraggable && bounds.contains(e.x, e.y))
+                if (isDraggable && rectBounds.contains(e.x, e.y))
                 {
                     startDrag(e.x, e.y);
                 }
@@ -463,7 +463,7 @@ class Sprite : EventKitTarget
                 }
             }
 
-            // if (e.event == PointerEvent.Event.move && (isDrag || bounds.contains(e.x, e
+            // if (e.event == PointerEvent.Event.move && (isDrag || rectBounds.contains(e.x, e
             //         .y)))
             // {
             //     runEventHandlers(e);
@@ -1072,7 +1072,7 @@ class Sprite : EventKitTarget
 
             if (inScreenBounds)
             {
-                auto thisBounds = bounds;
+                auto thisBounds = rectBounds;
                 thisBounds.x = _x + dx;
                 thisBounds.y = _y + dy;
 
@@ -1131,17 +1131,17 @@ class Sprite : EventKitTarget
     bool isInScreenBounds()
     {
         assert(graphics);
-        return graphics.renderBounds.contains(bounds);
+        return graphics.renderBounds.contains(rectBounds);
     }
 
     bool containsPoint(double x, double y)
     {
-        return bounds.contains(x, y);
+        return rectBounds.contains(x, y);
     }
 
     bool intersectBounds(Sprite other)
     {
-        return bounds.intersect(other.bounds);
+        return rectBounds.intersect(other.rectBounds);
     }
 
     bool intersect(Sprite other)
@@ -1192,13 +1192,13 @@ class Sprite : EventKitTarget
         }
     }
 
-    Rect2d bounds() => Rect2d(x, y, _width, _height);
+    Rect2d rectBounds() => Rect2d(x, y, _width, _height);
 
-    Rect2d boundsInParent()
+    Rect2d rectBoundsInParent()
     {
         if (!parent)
         {
-            return bounds;
+            return rectBounds;
         }
 
         const Rect2d pBounds = {x - parent.x, y - parent.y, _width, _height};
@@ -1266,15 +1266,15 @@ class Sprite : EventKitTarget
         bounds.leftBottom = rotM.multiply(vecm).toVec2d.add(pivot);
     }
 
-    Rect2d paddingBounds()
+    Rect2d rectPaddingBounds()
     {
-        const b = bounds;
+        const b = rectBounds;
         const pBounds = Rect2d(b.x + padding.left, b.y + padding.top, b.width - padding.width, b.height - padding
                 .height);
         return pBounds;
     }
 
-    Rect2d layoutBounds()
+    Rect2d rectLayoutBounds()
     {
         Rect2d bounds = Rect2d(
             x - margin.left,
@@ -1285,7 +1285,7 @@ class Sprite : EventKitTarget
         return bounds;
     }
 
-    Rect2d geometryBounds()
+    Rect2d rectGeomBounds()
     {
         const Rect2d bounds = {0, 0, _width, _height};
         return bounds;
@@ -1303,13 +1303,13 @@ class Sprite : EventKitTarget
 
     bool moveToCenterX(bool isUseParent = false)
     {
-        Rect2d bounds = (isUseParent && parent) ? parent.bounds : graphics.renderBounds;
-        if (bounds.width == 0)
+        Rect2d bounds = (isUseParent && parent) ? parent.rectBounds : graphics.renderBounds;
+        if (rectBounds.width == 0)
         {
             return false;
         }
 
-        auto middleX = bounds.middleX;
+        auto middleX = rectBounds.middleX;
 
         if (_width > 0)
         {
@@ -1322,13 +1322,13 @@ class Sprite : EventKitTarget
 
     bool moveToCenterY(bool isUseParent = false)
     {
-        Rect2d bounds = (isUseParent && parent) ? parent.bounds : graphics.renderBounds;
-        if (bounds.height == 0)
+        Rect2d bounds = (isUseParent && parent) ? parent.rectBounds : graphics.renderBounds;
+        if (rectBounds.height == 0)
         {
             return false;
         }
 
-        auto middleY = bounds.middleY;
+        auto middleY = rectBounds.middleY;
 
         if (_height > 0)
         {
@@ -1806,7 +1806,7 @@ class Sprite : EventKitTarget
 
         graphics.changeColor(debugColor);
 
-        const b = bounds;
+        const b = rectBounds;
         //graphics.rect(b.x, b.y, b.width, b.height, GraphicStyle(1, RGBA.red));
         const double leftTopX = b.x, leftTopY = b.y;
 

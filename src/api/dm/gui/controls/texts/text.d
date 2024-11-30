@@ -577,7 +577,7 @@ class Text : Control
 
     protected CursorPos coordsToRowPos(double x, double y)
     {
-        const thisBounds = bounds;
+        const thisBounds = rectBounds;
         //TODO row height
         foreach (ri, row; rows)
         {
@@ -777,7 +777,7 @@ class Text : Control
             return;
         }
 
-        const thisBounds = bounds;
+        const thisBounds = rectBounds;
 
         foreach (TextRow row; rows)
         {

@@ -16,7 +16,7 @@ class PointerPopup : BasePopup
     {
         super.show;
         const screenBounds = screen.first.bounds;
-        const thisBounds = bounds;
+        const thisBounds = rectBounds;
 
         auto pointerPos = input.pointerPos;
 

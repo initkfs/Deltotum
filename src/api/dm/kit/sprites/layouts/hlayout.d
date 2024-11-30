@@ -18,7 +18,7 @@ class HLayout : SpaceableLayout
 
     override bool alignChildren(Sprite root)
     {
-        auto bounds = root.bounds;
+        auto bounds = root.rectBounds;
         double nextX = 0;
         if (isFillFromStartToEnd)
         {
@@ -35,7 +35,7 @@ class HLayout : SpaceableLayout
             {
                 continue;
             }
-            auto childBounds = child.bounds;
+            auto childBounds = child.rectBounds;
 
             if (isFillFromStartToEnd)
             {

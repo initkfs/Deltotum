@@ -27,7 +27,7 @@ class FlowLayout : ManagedLayout
     //TODO check paddng, margins, etc
     override bool alignChildren(Sprite root)
     {
-        const rootBounds = root.bounds;
+        const rootBounds = root.rectBounds;
 
         double nextX = 0;
         double nextY = 0;
@@ -50,7 +50,7 @@ class FlowLayout : ManagedLayout
                 continue;
             }
 
-            const childBounds = child.bounds;
+            const childBounds = child.rectBounds;
 
             const childHeight = childBounds.height + child.margin.height;
 
@@ -81,7 +81,7 @@ class FlowLayout : ManagedLayout
                     child.y = nextY;
                 }
 
-                nextX += child.bounds.width + hgap + child.margin.right;
+                nextX += child.rectBounds.width + hgap + child.margin.right;
             }
             else
             {
@@ -89,7 +89,7 @@ class FlowLayout : ManagedLayout
                 const newChildX = nextX - childBounds.width - child.margin.right;
                 if (newChildX < rootLeftX)
                 {
-                    const rootEndX = isUseFlowWidth ? root.bounds.x + flowWidth : root.bounds.right - root.padding.right;
+                    const rootEndX = isUseFlowWidth ? root.rectBounds.x + flowWidth : root.rectBounds.right - root.padding.right;
                     nextX = rootEndX - childBounds.width;
                     //TODO line height
                     nextY -= vgap + childHeight;
@@ -110,7 +110,7 @@ class FlowLayout : ManagedLayout
                     child.y = newChildY;
                 }
 
-                nextX = child.bounds.x - hgap - child.margin.left;
+                nextX = child.rectBounds.x - hgap - child.margin.left;
             }
         }
         return true;

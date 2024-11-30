@@ -57,10 +57,10 @@ bool clipLiangBarsky(const Line2d line, const Rect2d bounds, out Line2d clipped)
     double x2 = line.end.x;
     double y2 = line.end.y;
 
-    double xmin = bounds.x;
-    double ymin = bounds.y;
-    double xmax = bounds.right;
-    double ymax = bounds.bottom;
+    double xmin = rectBounds.x;
+    double ymin = rectBounds.y;
+    double xmax = rectBounds.right;
+    double ymax = rectBounds.bottom;
 
     double p1 = -(x2 - x1);
     double p2 = -p1;
@@ -169,10 +169,10 @@ enum ClipPosCS : ubyte
 
 bool clipCohenSutherland(const Line2d line, const Rect2d bounds, out Line2d clipped)
 {
-    double xMin = bounds.x;
-    double xMax = bounds.right;
-    double yMin = bounds.y;
-    double yMax = bounds.bottom;
+    double xMin = rectBounds.x;
+    double xMax = rectBounds.right;
+    double yMin = rectBounds.y;
+    double yMax = rectBounds.bottom;
 
     int checkPointPos(double x, double y)
     {

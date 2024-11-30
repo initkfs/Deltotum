@@ -110,8 +110,8 @@ class BaseRadialProgressBar : BaseProgressBar
 
         double radius = diameter / 2 - innerPadding;
 
-        const cx = bounds.middleX;
-        const cy = bounds.middleY;
+        const cx = rectBounds.middleX;
+        const cy = rectBounds.middleY;
 
         double angleRange = Math.abs(endAngleDeg - startAngleDeg);
         double angleDt = (360.0 - angleRange) / segments.length;

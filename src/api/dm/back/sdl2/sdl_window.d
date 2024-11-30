@@ -371,15 +371,15 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
     //     if (w > width)
     //     {
     //         const widthBar = (w - width) / 2;
-    //         bounds.x = widthBar;
-    //         bounds.w = w - widthBar;
+    //         rectBounds.x = widthBar;
+    //         rectBounds.w = w - widthBar;
     //     }
 
     //     if (h > height)
     //     {
     //         const heightBar = (h - height) / 2;
-    //         bounds.y = heightBar;
-    //         bounds.h = h - heightBar;
+    //         rectBounds.y = heightBar;
+    //         rectBounds.h = h - heightBar;
     //     }
 
     //     return bounds;

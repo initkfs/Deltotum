@@ -51,15 +51,15 @@ class VScroll : MonoScroll
 
             thumb.onDragXY = (x, y) {
 
-                const maxY = bounds.bottom - thumb.height;
+                const maxY = rectBounds.bottom - thumb.height;
 
                 if (trySetThumbY(y))
                 {
                     return false;
                 }
 
-                const range = bounds.height - thumb.height;
-                auto dy = thumb.y - bounds.y;
+                const range = rectBounds.height - thumb.height;
+                auto dy = thumb.y - rectBounds.y;
 
                 enum errorDelta = 5;
                 if (dy < errorDelta)
@@ -92,9 +92,9 @@ class VScroll : MonoScroll
 
     protected bool trySetThumbY(double y, bool isAllowClamp = true)
     {
-        auto bounds = this.bounds;
-        const minY = bounds.y;
-        const maxY = bounds.bottom - thumb.height;
+        auto bounds = this.rectBounds;
+        const minY = rectBounds.y;
+        const maxY = rectBounds.bottom - thumb.height;
         if (y <= minY)
         {
             if(thumb.y != minY && isAllowClamp){
@@ -140,7 +140,7 @@ class VScroll : MonoScroll
             return false;
         }
 
-        const rangeY = bounds.height - thumb.height;
+        const rangeY = rectBounds.height - thumb.height;
         auto newThumbY = y + rangeY * v / maxValue;
         return trySetThumbY(newThumbY);
     }

@@ -62,7 +62,7 @@ class Physics : Control
             return;
         }
 
-        if (!screen.first.bounds.contains(material.bounds))
+        if (!screen.first.bounds.contains(material.rectBounds))
         {
             material.velocity = material.velocity.reflect;
         }

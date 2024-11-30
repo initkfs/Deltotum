@@ -34,7 +34,7 @@ class VSplitBox : Container
             foreach (sepData; separators)
             {
                 Sprite prev = sepData.prev;
-                sepData.sep.y = prev.bounds.bottom - sepData.sep.bounds.halfHeight;
+                sepData.sep.y = prev.rectBounds.bottom - sepData.sep.rectBounds.halfHeight;
             }
 
         };
@@ -100,9 +100,9 @@ class VSplitBox : Container
             auto prev = sepData.prev;
             auto next = sepData.next;
 
-            //auto bounds = this.bounds;
+            //auto bounds = this.rectBounds;
             const minY = prev.y;
-            const maxY = next.bounds.bottom - sep.height;
+            const maxY = next.rectBounds.bottom - sep.height;
             if (y <= minY || y >= maxY)
             {
                 return false;

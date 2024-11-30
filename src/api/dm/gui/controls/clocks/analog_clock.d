@@ -202,8 +202,8 @@ class AnalogClock : Control
                     }
 
                     auto tickPos = Vec2d.fromPolarDeg(currAngle, radius - minorTickOffset);
-                    auto tickX = radius + tickPos.x - proto.bounds.halfWidth;
-                    auto tickY = radius + tickPos.y - proto.bounds.halfHeight;
+                    auto tickX = radius + tickPos.x - proto.rectBounds.halfWidth;
+                    auto tickY = radius + tickPos.y - proto.rectBounds.halfHeight;
 
                     auto tickBoundsW = proto.width;
                     auto tickBoundsH = proto.height;

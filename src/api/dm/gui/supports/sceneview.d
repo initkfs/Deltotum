@@ -441,7 +441,7 @@ class SceneView : VBox
                         return true;
                     }
 
-                    if (child.bounds.contains(e.x, e.y) && child !is nextForDebug)
+                    if (child.rectBounds.contains(e.x, e.y) && child !is nextForDebug)
                     {
                         if (inBoundsChildCount > objectOnDebugSceneIndex || !nextForDebug)
                         {
@@ -506,7 +506,7 @@ class SceneView : VBox
         import api.dm.gui.controls.texts.text : Text;
         import std.format : format;
 
-        // auto sizeInfo = new TextField(format("%s, p: %s", obj.bounds, obj.padding));
+        // auto sizeInfo = new TextField(format("%s, p: %s", obj.rectBounds, obj.padding));
 
         // container.addCreate(sizeInfo);
 
@@ -545,7 +545,7 @@ class SceneView : VBox
         xInfo.text = Math.trunc(obj.x).to!string;
         yInfo.text = Math.trunc(obj.y).to!string;
 
-        auto parentBounds = obj.boundsInParent;
+        auto parentBounds = obj.rectBoundsInParent;
 
         xpInfo.text = Math.trunc(parentBounds.x).to!string;
         ypInfo.text = Math.trunc(parentBounds.y).to!string;

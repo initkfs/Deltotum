@@ -28,7 +28,7 @@ class AnchorLayout : ManagedLayout
             return false;
         }
 
-        const parentBounds = root.bounds;
+        const parentBounds = root.rectBounds;
 
         foreach (child; children)
         {

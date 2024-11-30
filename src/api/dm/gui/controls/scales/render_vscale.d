@@ -41,8 +41,8 @@ class RenderVScale : RenderScale
         auto count = tickCount;
 
         auto tickOffset = height / (tickCount - 1);
-        double startY = !isInvertY ? y : bounds.bottom;
-        double startX = !isInvertX ? bounds.right : x;
+        double startY = !isInvertY ? y : rectBounds.bottom;
+        double startX = !isInvertX ? rectBounds.right : x;
         size_t majorTickCounter;
         bool isDrawTick;
         foreach (i; 0 .. count)
@@ -81,8 +81,8 @@ class RenderVScale : RenderScale
             if (isMajorTick && (majorTickCounter < labels.length))
             {
                 auto label = labels[majorTickCounter];
-                auto labelX = !isInvertX ? x - tickMajorWidth -5 : bounds.right;
-                auto labelY = startY - label.bounds.halfHeight;
+                auto labelX = !isInvertX ? x - tickMajorWidth -5 : rectBounds.right;
+                auto labelY = startY - label.rectBounds.halfHeight;
                 label.xy(labelX, labelY);
                 if (!label.isVisible)
                 {
@@ -107,8 +107,8 @@ class RenderVScale : RenderScale
 
         if (isDrawAxis)
         {
-            auto startPosX = !isInvertX ? bounds.right : x;
-            graphics.line(startPosX, y, startPosX, bounds.bottom, axisColor);
+            auto startPosX = !isInvertX ? rectBounds.right : x;
+            graphics.line(startPosX, y, startPosX, rectBounds.bottom, axisColor);
         }
     }
 }

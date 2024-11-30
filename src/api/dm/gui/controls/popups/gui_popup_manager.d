@@ -192,8 +192,8 @@ class GuiPopupManager : Container, PopupManager
             double nextY = middleBounds.middleY;
             foreach (Popup popup; activeUrgentPopups[])
             {
-                popup.x = nextX - popup.bounds.halfWidth;
-                popup.y = nextY - popup.bounds.halfHeight;
+                popup.x = nextX - popup.rectBounds.halfWidth;
+                popup.y = nextY - popup.rectBounds.halfHeight;
 
                 nextY += popup.height;
                 nextY += popupSpacing;

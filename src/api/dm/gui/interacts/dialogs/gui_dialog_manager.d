@@ -71,8 +71,8 @@ class GuiDialogManager : Container, DialogManager
         }
 
         const sceneBounds = graphics.renderBounds;
-        mainDialog.x = sceneBounds.middleX - mainDialog.bounds.halfWidth;
-        mainDialog.y = sceneBounds.middleY - mainDialog.bounds.halfHeight;
+        mainDialog.x = sceneBounds.middleX - mainDialog.rectBounds.halfWidth;
+        mainDialog.y = sceneBounds.middleY - mainDialog.rectBounds.halfHeight;
 
         mainDialog.isVisible = true;
     }

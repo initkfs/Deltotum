@@ -191,9 +191,9 @@ class HLinearGauge : Control
             auto label = new Text(text);
             label.isLayoutManaged = false;
             label.fontSize = FontSize.small;
-            label.x = tickInfo.tick.boundsInParent.x;
+            label.x = tickInfo.tick.rectBoundsInParent.x;
             labelContainer.addCreate(label);
-            label.x = tickInfo.tick.boundsInParent.x - label.bounds.halfWidth;
+            label.x = tickInfo.tick.rectBoundsInParent.x - label.rectBounds.halfWidth;
         }
 
         layoutPointers;
@@ -221,20 +221,20 @@ class HLinearGauge : Control
         size_t lastPointerIndex = pointers.length - 1;
 
         auto firstPointer = pointers[firstPointerIndex];
-        firstPointer.x = tickContainer.bounds.x - firstPointer.bounds.halfWidth;
+        firstPointer.x = tickContainer.rectBounds.x - firstPointer.rectBounds.halfWidth;
 
         if (firstPointerIndex != lastPointerIndex)
         {
             auto lastPointer = pointers[lastPointerIndex];
-            lastPointer.x = tickContainer.bounds.right - lastPointer.bounds.halfWidth;
+            lastPointer.x = tickContainer.rectBounds.right - lastPointer.rectBounds.halfWidth;
 
             auto mediumPointers = pointers.length - 2;
             if (mediumPointers > 0)
             {
-                auto freeSpace = tickContainer.width - firstPointer.bounds.width - lastPointer
-                    .bounds.width;
+                auto freeSpace = tickContainer.width - firstPointer.rectBounds.width - lastPointer
+                    .rectBounds.width;
                 auto dtX = Math.trunc(freeSpace / mediumPointers);
-                double nextX = firstPointer.bounds.right;
+                double nextX = firstPointer.rectBounds.right;
 
                 foreach (i; (firstPointerIndex + 1) .. lastPointerIndex)
                 {
@@ -272,7 +272,7 @@ class HLinearGauge : Control
             lastUsedPointer = pointer;
         }
 
-        auto bounds = tickContainer.bounds;
+        auto bounds = tickContainer.rectBounds;
 
         const pointerIndex = pointerIndex(pointer);
         if (pointerIndex == -1)
@@ -281,8 +281,8 @@ class HLinearGauge : Control
             return;
         }
 
-        double minX = bounds.x - pointer.width / 2;
-        double maxX = bounds.right - pointer.width / 2;
+        double minX = rectBounds.x - pointer.width / 2;
+        double maxX = rectBounds.right - pointer.width / 2;
 
         if (pointers.length > 1)
         {
@@ -290,7 +290,7 @@ class HLinearGauge : Control
             {
                 const leftPointerIndex = pointerIndex - 1;
                 auto leftPointer = pointers[leftPointerIndex];
-                minX = leftPointer.bounds.right;
+                minX = leftPointer.rectBounds.right;
             }
 
             //TODO overflow
@@ -298,7 +298,7 @@ class HLinearGauge : Control
             if (nextIndex < pointers.length)
             {
                 auto nextPointer = pointers[pointerIndex + 1];
-                maxX = nextPointer.bounds.x - pointer.bounds.width;
+                maxX = nextPointer.rectBounds.x - pointer.rectBounds.width;
             }
 
         }
@@ -310,8 +310,8 @@ class HLinearGauge : Control
 
         pointer.x = x;
 
-        const pointerX = pointer.bounds.middleX;
-        const pointerTickX = pointerX - tickContainer.bounds.x;
+        const pointerX = pointer.rectBounds.middleX;
+        const pointerTickX = pointerX - tickContainer.rectBounds.x;
 
         auto value = (Math.abs(maxValue - minValue) * pointerTickX) / width;
         value = Math.clamp(value, minValue, maxValue);

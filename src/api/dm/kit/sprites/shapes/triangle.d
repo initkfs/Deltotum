@@ -50,7 +50,7 @@ class Triangle : Shape
         //TODO unsafe cast, but fast
         if (auto circle = cast(Circle) other)
         {
-            return bounds.intersect(circle.shape);
+            return rectBounds.intersect(circle.shape);
         }
 
         return super.intersect(other);

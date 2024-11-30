@@ -74,8 +74,8 @@ abstract class TimeChooser : Control
         super.drawContent;
         if (selectionSlider && selectionSlider.isVisible)
         {
-            auto center = bounds.center;
-            auto selectCenter = selectionSlider.bounds.center;
+            auto center = rectBounds.center;
+            auto selectCenter = selectionSlider.rectBounds.center;
             auto color = theme.colorAccent;
             graphics.line(center.x, center.y, selectCenter.x, selectCenter.y, color);
         }
@@ -135,8 +135,8 @@ class HourChooser : TimeChooser
                     onNumValue(j);
                 }
 
-                selectionSlider.xy(button.center.x - selectionSlider.bounds.halfWidth, button.center.y - selectionSlider
-                        .bounds.halfHeight);
+                selectionSlider.xy(button.center.x - selectionSlider.rectBounds.halfWidth, button.center.y - selectionSlider
+                        .rectBounds.halfHeight);
             };
         }(i);
 
@@ -159,8 +159,8 @@ class HourChooser : TimeChooser
                     onNumValue(button.text.to!int);
                 }
 
-                selectionSlider.xy(button.center.x - selectionSlider.bounds.halfWidth, button.center.y - selectionSlider
-                        .bounds.halfHeight);
+                selectionSlider.xy(button.center.x - selectionSlider.rectBounds.halfWidth, button.center.y - selectionSlider
+                        .rectBounds.halfHeight);
             };
             button.isBorder = false;
             button.isBackground = false;
@@ -170,7 +170,7 @@ class HourChooser : TimeChooser
 
     override void setValue(int v)
     {
-        const sliderBounds = selectionSlider.bounds;
+        const sliderBounds = selectionSlider.rectBounds;
         auto angle = ((360.0 / 12) * (v % 12) + 270) % 360;
 
         Vec2d pos;
@@ -208,8 +208,8 @@ class MinSecChooser : TimeChooser
         selectionSlider.isDraggable = true;
         selectionSlider.onDragXY = (ddx, ddy) {
 
-            immutable sliderBounds = selectionSlider.bounds;
-            immutable center = minSec0to55Box.bounds.center;
+            immutable sliderBounds = selectionSlider.rectBounds;
+            immutable center = minSec0to55Box.rectBounds.center;
 
             immutable angleDeg = center.angleDeg360To(input.pointerPos);
             immutable sliderPos = center.fromPolarDeg(angleDeg, innerBoxRadius);
@@ -272,8 +272,8 @@ class MinSecChooser : TimeChooser
 
                 if (!selectionSlider.isDrag)
                 {
-                    selectionSlider.x = button.bounds.middleX - selectionSlider.bounds.halfWidth;
-                    selectionSlider.y = button.bounds.middleY - selectionSlider.bounds.halfHeight;
+                    selectionSlider.x = button.rectBounds.middleX - selectionSlider.rectBounds.halfWidth;
+                    selectionSlider.y = button.rectBounds.middleY - selectionSlider.rectBounds.halfHeight;
                     selectionSlider.isVisible = true;
                 }
             };
@@ -283,7 +283,7 @@ class MinSecChooser : TimeChooser
 
     override void setValue(int v)
     {
-        const sliderBounds = selectionSlider.bounds;
+        const sliderBounds = selectionSlider.rectBounds;
 
         auto angle = ((360.0 / 60) * v + 270) % 360;
         auto pos = Vec2d.fromPolarDeg(angle, innerBoxRadius);
