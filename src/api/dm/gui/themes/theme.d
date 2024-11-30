@@ -79,6 +79,9 @@ class Theme
     double controlGraphicsGap = 5;
 
     @ConfigKey
+    double layoutIndent = 0;
+
+    @ConfigKey
     double buttonWidth = 80;
     @ConfigKey
     double buttonHeight = 30;

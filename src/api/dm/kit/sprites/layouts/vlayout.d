@@ -11,7 +11,7 @@ import Math = api.dm.math;
  */
 class VLayout : SpaceableLayout
 {
-    this(double spacing = 0) pure
+    this(double spacing = SpaceableLayout.DefaultSpacing) pure
     {
         super(spacing);
     }

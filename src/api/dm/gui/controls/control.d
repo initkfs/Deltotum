@@ -94,6 +94,8 @@ class Control : GuiComponent
     void delegate() onPreControlContentCreated;
     void delegate() onPostControlContentCreated;
 
+    bool isLayoutSpacingFromTheme = true;
+
     protected
     {
         Sprite _background;
@@ -239,7 +241,23 @@ class Control : GuiComponent
 
     void loadTheme()
     {
+        loadLayoutTheme;
+    }
 
+    void loadLayoutTheme()
+    {
+        if (layout)
+        {
+            import api.dm.kit.sprites.layouts.spaceable_layout : SpaceableLayout;
+
+            if (auto slayout = cast(SpaceableLayout) layout)
+            {
+                if (slayout.spacing == SpaceableLayout.DefaultSpacing)
+                {
+                    slayout.spacing = theme.layoutIndent;
+                }
+            }
+        }
     }
 
     void loadControlTheme()
@@ -911,7 +929,7 @@ class Control : GuiComponent
         _background.isResizedByParent = true;
         _background.isLayoutManaged = false;
         _background.isDrawAfterParent = false;
-        
+
         addCreate(_background, 0);
 
         _background.opacityLimit = theme.opacityBackground;

@@ -7,9 +7,11 @@ import api.dm.kit.sprites.layouts.managed_layout : ManagedLayout;
  */
 class SpaceableLayout : ManagedLayout
 {
+    enum DefaultSpacing = -1;
+
     double spacing = 0;
 
-    this(double spacing = 0) pure
+    this(double spacing = DefaultSpacing) pure
     {
         this.spacing = spacing;
     }

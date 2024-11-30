@@ -221,7 +221,7 @@ class Controls : Control
         import api.dm.gui.controls.switches.buttons.triangle_button: TriangleButton;
 
         auto toggleBtnContainer = new SwitchGroup;
-        toggleBtnContainer.layout = new VLayout();
+        toggleBtnContainer.layout = new VLayout(0);
         toggleBtnContainer.layout.isAutoResize = true;
         toggleBtnContainer.layout.isAlignX = true;
         root.addCreate(toggleBtnContainer);
