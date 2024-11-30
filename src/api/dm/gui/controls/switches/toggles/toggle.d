@@ -1,6 +1,6 @@
-module api.dm.gui.controls.switches.toggles.toggle_switch;
+module api.dm.gui.controls.switches.toggles.toggle;
 
-import api.dm.gui.controls.switches.toggles.base_orient_toggle_switch: BaseOrientToggleSwitch;
+import api.dm.gui.controls.switches.toggles.base_orient_toggle: BaseOrientToggle;
 import api.math.geom2.vec2 : Vec2d;
 import api.math.orientation : Orientation;
 import api.math.geom2.points2;
@@ -8,7 +8,7 @@ import api.math.geom2.points2;
 /**
  * Authors: initkfs
  */
-class ToggleSwitch : BaseOrientToggleSwitch
+class Toggle : BaseOrientToggle
 {
     this(dstring label, double width, double height, string iconName = null, Orientation orientation, double graphicsGap = 5)
     {

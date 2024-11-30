@@ -1,13 +1,13 @@
-module api.dm.gui.controls.switches.toggles.base_orient_toggle_switch;
+module api.dm.gui.controls.switches.toggles.base_orient_toggle;
 
-import api.dm.gui.controls.switches.toggles.base_toggle_switch : BaseToggleSwitch;
+import api.dm.gui.controls.switches.toggles.base_toggle : BaseToggle;
 import api.math.geom2.vec2 : Vec2d;
 import api.math.orientation : Orientation;
 
 /**
  * Authors: initkfs
  */
-class BaseOrientToggleSwitch : BaseToggleSwitch
+class BaseOrientToggle : BaseToggle
 {
     Orientation orientation = Orientation.horizontal;
 

@@ -58,6 +58,8 @@ class Sprite : EventKitTarget
         double _angle = 0;
     }
 
+    bool isAngleForChildren = true;
+
     double scale = 1;
     double mass = 1;
     double speed = 0;
@@ -1702,6 +1704,8 @@ class Sprite : EventKitTarget
         return resize(newW, newH);
     }
 
+    bool rescale(double factor) => rescale(factor, factor);
+
     void setValid(bool value) @safe pure nothrow
     {
         isValid = value;
@@ -1963,7 +1967,7 @@ class Sprite : EventKitTarget
 
     void enablePadding()
     {
-        
+
     }
 
     ref Insets padding()
@@ -2187,7 +2191,7 @@ class Sprite : EventKitTarget
             setInvalid;
             invalidationState.visible = true;
         }
-        
+
         _visible = value;
 
         if (isVisibilityForChildren)
@@ -2292,7 +2296,20 @@ class Sprite : EventKitTarget
 
     void angle(double value)
     {
+        if(_angle == value){
+            return;
+        }
+
         _angle = value;
+
+        if (isAngleForChildren)
+        {
+            foreach (ch; children)
+            {
+                ch.angle = angle;
+            }
+        }
+
         setInvalid;
     }
 

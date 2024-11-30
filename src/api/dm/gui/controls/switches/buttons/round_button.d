@@ -31,25 +31,9 @@ class RoundButton : BaseRoundButton
         super(text, diameter, iconName, graphicsGap);
     }
 
-    override void loadTheme()
-    {
-        loadLabeledTheme;
-        loadRoundButtonTheme;
-    }
-
-    void loadRoundButtonTheme()
-    {
-        if (_diameter == 0)
-        {
-            _diameter = theme.roundShapeDiameter;
-            _width = _diameter;
-            _height = _diameter;
-        }
-    }
-
     alias createShape = Control.createShape;
 
-    protected override Sprite createShape(double width, double height, GraphicStyle style)
+    protected override Sprite createShape(double width, double height, double angle, GraphicStyle style)
     {
         return theme.roundShape(_diameter, style);
     }

@@ -34,7 +34,7 @@ class HScroll : MonoScroll
         {
             thumbFactory = () {
                 auto style = createThumbStyle;
-                auto node = theme.background(thumbWidth, height, &style);
+                auto node = theme.background(thumbWidth, height, angle, &style);
                 return node;
             };
         }

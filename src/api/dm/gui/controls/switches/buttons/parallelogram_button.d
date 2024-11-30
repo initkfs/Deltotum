@@ -64,7 +64,7 @@ class ParallelogramButton : BaseButton
 
     alias createShape = Control.createShape;
 
-    protected override Sprite createShape(double width, double height, GraphicStyle style)
+    protected override Sprite createShape(double width, double height, double angle, GraphicStyle style)
     {
 
         if (capGraphics.isVectorGraphics)
@@ -79,6 +79,7 @@ class ParallelogramButton : BaseButton
         import api.dm.kit.sprites.shapes.parallelogram : Parallelogram;
 
         auto pShape = new Parallelogram(width, height, angleDeg, isInverted, style);
+        pShape.angle = angle;
 
         return pShape;
     }

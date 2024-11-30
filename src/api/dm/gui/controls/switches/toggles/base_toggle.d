@@ -1,4 +1,4 @@
-module api.dm.gui.controls.switches.toggles.base_toggle_switch;
+module api.dm.gui.controls.switches.toggles.base_toggle;
 
 import api.dm.kit.sprites.sprite : Sprite;
 import api.dm.gui.controls.switches.base_biswitch : BaseBiswitch;
@@ -22,7 +22,7 @@ import api.dm.gui.controls.labeled : Labeled;
 /**
  * Authors: initkfs
  */
-class BaseToggleSwitch : BaseBiswitch
+class BaseToggle : BaseBiswitch
 {
     protected
     {
@@ -136,7 +136,7 @@ class BaseToggleSwitch : BaseBiswitch
             style.isFill = false;
         }
 
-        auto shape = theme.shape(size.x, size.y, style);
+        auto shape = theme.shape(size.x, size.y, angle, style);
         // import api.dm.kit.sprites.layouts.center_layout : CenterLayout;
 
         // shape.layout = new CenterLayout;
@@ -170,7 +170,7 @@ class BaseToggleSwitch : BaseBiswitch
             currStyle.fillColor = theme.colorAccent;
         }
 
-        auto shape = theme.shape(w, h, currStyle);
+        auto shape = theme.shape(w, h, angle, currStyle);
         shape.isVisible = false;
         return shape;
     }

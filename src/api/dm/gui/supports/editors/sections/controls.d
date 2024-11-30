@@ -212,29 +212,35 @@ class Controls : Control
     void createSelections(Container root)
     {
         import api.dm.gui.controls.switches.switch_group : SwitchGroup;
-        import api.dm.gui.controls.switches.checks.check_switch : CheckSwitch;
+        import api.dm.gui.controls.switches.checks.check : Check;
         import api.dm.gui.controls.choices.choice_box : ChoiceBox;
         import Icons = api.dm.gui.themes.icons.icon_name;
         import api.dm.kit.sprites.layouts.vlayout : VLayout;
         import api.dm.kit.sprites.layouts.hlayout : HLayout;
-        import api.dm.gui.controls.switches.buttons.parallelogram_button: ParallelogramButton;
+        import api.dm.gui.controls.switches.buttons.triangle_button: TriangleButton;
 
         auto toggleBtnContainer = new SwitchGroup;
-        toggleBtnContainer.layout = new VLayout(5);
+        toggleBtnContainer.layout = new VLayout();
         toggleBtnContainer.layout.isAutoResize = true;
+        toggleBtnContainer.layout.isAlignX = true;
         root.addCreate(toggleBtnContainer);
 
         import api.dm.kit.graphics.styles.default_style : DefaultStyle;
 
-        auto tbtn1 = new ParallelogramButton(null, Icons.close_outline, null);
+        const double polySize = 50;
+
+        auto tbtn1 = new TriangleButton(null, polySize, polySize, Icons.arrow_up_outline);
         tbtn1.styleId = DefaultStyle.warning;
         tbtn1.isFixedButton = true;
         tbtn1.isOn = true;
+        //.isDrawBounds = true;
         toggleBtnContainer.addCreate(tbtn1);
 
-        auto tbtn2 = new ParallelogramButton(null, Icons.apps_outline, null);
+        auto tbtn2 = new TriangleButton(null, polySize, polySize, Icons.arrow_down_outline);
         tbtn2.isFixedButton = true;
+        tbtn2.angle = 180;
         tbtn2.styleId = DefaultStyle.danger;
+        //tbtn2.isDrawBounds = true;
         toggleBtnContainer.addCreate(tbtn2);
 
         auto checkBoxContainer = new SwitchGroup;
@@ -242,10 +248,16 @@ class Controls : Control
         checkBoxContainer.layout.isAutoResize = true;
         root.addCreate(checkBoxContainer);
 
-        auto check1 = new CheckSwitch("Check1", Icons.bug_outline);
+        auto check1 = new Check("Check1", Icons.bug_outline);
+        check1.isCreateIndeterminate = true;
         checkBoxContainer.addCreate(check1);
+        check1.onPointerUp ~= (ref e){
+            if(e.button == 3){
+                check1.isIndeterminate = true;
+            }
+        };
 
-        auto check2 = new CheckSwitch("Check2", Icons.bug_outline);
+        auto check2 = new Check("Check2", Icons.bug_outline);
         check2.isBorder = true;
         checkBoxContainer.addCreate(check2);
         check2.layout.isFillFromStartToEnd = false;
@@ -256,14 +268,14 @@ class Controls : Control
         toggleContainer.layout.isAutoResize = true;
         root.addCreate(toggleContainer);
 
-        import api.dm.gui.controls.switches.toggles.toggle_switch : ToggleSwitch;
+        import api.dm.gui.controls.switches.toggles.toggle : Toggle;
         import api.math.orientation : Orientation;
 
-        auto switch1 = new ToggleSwitch(null, Icons.flash_outline);
+        auto switch1 = new Toggle(null, Icons.flash_outline);
         toggleContainer.addCreate(switch1);
         switch1.isOn = true;
 
-        auto switch2 = new ToggleSwitch(null, Icons.flash_outline);
+        auto switch2 = new Toggle(null, Icons.flash_outline);
         switch2.isBorder = true;
         toggleContainer.addCreate(switch2);
 
@@ -272,12 +284,12 @@ class Controls : Control
         htoggleContainer.layout.isAutoResize = true;
         root.addCreate(htoggleContainer);
 
-        auto switch1h = new ToggleSwitch(null, Icons.analytics_outline, Orientation.vertical);
+        auto switch1h = new Toggle(null, Icons.analytics_outline, Orientation.vertical);
         htoggleContainer.addCreate(switch1h);
         switch1h.isOn = true;
         switch1h.isSwitchContent = true;
 
-        auto switch2h = new ToggleSwitch(null, Icons.apps_outline, Orientation.vertical);
+        auto switch2h = new Toggle(null, Icons.apps_outline, Orientation.vertical);
         switch2h.isSwitchContent = true;
         htoggleContainer.addCreate(switch2h);
 
@@ -487,7 +499,7 @@ class Controls : Control
     {
         import api.dm.gui.controls.switches.buttons.button : Button;
         import api.dm.gui.controls.switches.buttons.parallelogram_button : ParallelogramButton;
-        import api.dm.gui.controls.switches.checks.check_switch : CheckSwitch;
+        import api.dm.gui.controls.switches.checks.check : Check;
         import IconName = api.dm.gui.themes.icons.icon_name;
         import api.dm.gui.containers.frame : Frame;
 

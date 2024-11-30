@@ -8,7 +8,7 @@ import api.dm.kit.sprites.textures.texture : Texture;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.styles.default_style : DefaultStyle;
 import api.dm.kit.graphics.styles.default_style;
-import api.dm.kit.inputs.pointers.events.pointer_event: PointerEvent;
+import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import api.math.alignment : Alignment;
 import api.math.insets : Insets;
 import api.dm.gui.controls.popups.base_popup : BasePopup;
@@ -120,6 +120,7 @@ class Control : GuiComponent
         isResizable = true;
         isLayoutManaged = true;
         isResizeChildren = true;
+        isScalable = true;
     }
 
     override void initialize()
@@ -295,11 +296,17 @@ class Control : GuiComponent
 
     Sprite newBackground(double w, double h)
     {
+        Sprite shape;
         if (auto stylePtr = hasStyle(ControlStyle.background))
         {
-            return createShape(w, h, *stylePtr);
+            shape = createShape(w, h, angle, *stylePtr);
         }
-        return createShape(w, h, createThisStyle);
+        else
+        {
+            shape = createShape(w, h, angle, createThisStyle);
+        }
+        assert(shape);
+        return shape;
     }
 
     Sprite newHoverEffect(double w, double h)
@@ -326,11 +333,13 @@ class Control : GuiComponent
             }
         }
 
-        Sprite newHover = createShape(w, h, newStyle);
+        Sprite newHover = createShape(w, h, angle, newStyle);
         newHover.id = idHoverShape;
         newHover.isLayoutManaged = false;
         newHover.isResizedByParent = true;
         newHover.isVisible = false;
+
+        newHover.angle = angle;
 
         return newHover;
     }
@@ -381,11 +390,14 @@ class Control : GuiComponent
             }
         }
 
-        Sprite effect = createShape(width, height, newStyle);
+        Sprite effect = createShape(width, height, angle, newStyle);
         effect.id = idActionShape;
         effect.isLayoutManaged = false;
         effect.isResizedByParent = true;
         effect.isVisible = false;
+
+        effect.angle = angle;
+
         return effect;
     }
 
@@ -503,15 +515,15 @@ class Control : GuiComponent
         return newStyle;
     }
 
-    protected Sprite createShape(double w, double h)
+    protected Sprite createShape(double w, double h, double angle = 0)
     {
-        return createShape(w, h, createStyle);
+        return createShape(w, h, angle, createStyle);
     }
 
-    protected Sprite createShape(double width, double height, GraphicStyle style = GraphicStyle
+    protected Sprite createShape(double width, double height, double angle = 0, GraphicStyle style = GraphicStyle
             .simple)
     {
-        return theme.background(width, height, &style);
+        return theme.background(width, height, angle, &style);
     }
 
     override void create()
@@ -899,6 +911,7 @@ class Control : GuiComponent
         _background.isResizedByParent = true;
         _background.isLayoutManaged = false;
         _background.isDrawAfterParent = false;
+        _background.isDrawBounds = true;
 
         addCreate(_background, 0);
 

@@ -1,4 +1,4 @@
-module api.dm.gui.controls.switches.checks.check_switch;
+module api.dm.gui.controls.switches.checks.check;
 
 import api.dm.gui.controls.switches.base_biswitch : BaseBiswitch;
 import api.dm.gui.controls.control : Control;
@@ -7,7 +7,7 @@ import api.dm.kit.sprites.sprite : Sprite;
 /**
  * Authors: initkfs
  */
-class CheckSwitch : BaseBiswitch
+class Check : BaseBiswitch
 {
     protected
     {
@@ -20,7 +20,7 @@ class CheckSwitch : BaseBiswitch
     Sprite delegate(Sprite) onMarkerCreate;
     void delegate(Sprite) onMarkerCreated;
 
-    bool isCreateIndeterminate = true;
+    bool isCreateIndeterminate;
     Sprite delegate(Sprite) onIndeterminateCreate;
     void delegate(Sprite) onIndeterminateCreated;
 
@@ -31,7 +31,7 @@ class CheckSwitch : BaseBiswitch
 
     bool isCreateMarkerListeners = true;
 
-    this(dstring text = "CheckSwitch", double width, double height, string iconName = null, double graphicsGap = 5)
+    this(dstring text = "Check", double width, double height, string iconName = null, double graphicsGap = 5)
     {
         super(width, height, text, iconName, graphicsGap, isCreateLayout:
             true);
@@ -40,7 +40,7 @@ class CheckSwitch : BaseBiswitch
         isCreateMarker = true;
     }
 
-    this(dstring text = "CheckSwitch", string iconName = null, double graphicsGap = 5)
+    this(dstring text = "Check", string iconName = null, double graphicsGap = 5)
     {
         this(text, 0, 0, iconName, graphicsGap);
     }
@@ -169,6 +169,10 @@ class CheckSwitch : BaseBiswitch
         if (!indeterminate)
         {
             return false;
+        }
+
+        if(value && marker && marker.isVisible){
+            marker.isVisible = false;
         }
 
         indeterminate.isVisible = value;

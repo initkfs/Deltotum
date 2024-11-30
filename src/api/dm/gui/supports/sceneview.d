@@ -3,7 +3,7 @@ module api.dm.gui.supports.sceneview;
 import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.containers.hbox : HBox;
 import api.dm.gui.containers.stack_box : StackBox;
-import api.dm.gui.controls.switches.toggles.toggle_switch : ToggleSwitch;
+import api.dm.gui.controls.switches.toggles.toggle : Toggle;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.texts.textfield : TextField;
 import api.dm.kit.scenes.scene : Scene;
@@ -17,7 +17,7 @@ import api.math.insets : Insets;
 import api.dm.gui.containers.scroll_box : ScrollBox;
 import api.dm.gui.controls.tabs.tab : Tab;
 import api.dm.gui.controls.tabs.tabpane : TabPane;
-import api.dm.gui.controls.switches.checks.check_switch : CheckSwitch;
+import api.dm.gui.controls.switches.checks.check : Check;
 
 import IconNames = api.dm.gui.themes.icons.icon_name;
 
@@ -71,7 +71,7 @@ class SceneView : VBox
 
     Text gcUsedBytes;
 
-    CheckSwitch isDrag;
+    Check isDrag;
 
     private
     {
@@ -134,7 +134,7 @@ class SceneView : VBox
         btnContainer.layout.isAlignY = true;
         addCreate(btnContainer);
 
-        auto tb = new ToggleSwitch;
+        auto tb = new Toggle;
         btnContainer.addCreate(tb);
 
         tb.onOldNewValue ~= (oldValue, newValue) {
@@ -388,7 +388,7 @@ class SceneView : VBox
         };
         controlInfo.addCreate(updateBtn);
 
-        isDrag = new CheckSwitch("IsDrag");
+        isDrag = new Check("IsDrag");
         isDrag.onOldNewValue ~= (old, newValue) {
             onObjectDebug((object) { object.isDraggable = newValue; });
         };

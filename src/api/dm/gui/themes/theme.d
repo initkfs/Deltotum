@@ -8,7 +8,7 @@ import api.dm.gui.themes.icons.icon_pack : IconPack;
 import api.dm.kit.sprites.images.image : Image;
 import api.dm.kit.sprites.shapes.shape : Shape;
 import api.dm.kit.sprites.sprite : Sprite;
-import api.core.configs.uda: ConfigKey;
+import api.core.configs.uda : ConfigKey;
 
 import std.typecons : Nullable;
 
@@ -158,7 +158,7 @@ class Theme
     }
 
     //TODO @safe
-    Sprite background(double width, double height, scope GraphicStyle* parentStyle = null)
+    Sprite background(double width, double height, double angle, scope GraphicStyle* parentStyle = null)
     {
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
@@ -180,25 +180,30 @@ class Theme
 
             newBackground = new ConvexPolygon(width, height, backgroundStyle, controlCornersBevel);
         }
+
+        newBackground.angle = angle;
+
         return newBackground;
     }
 
-    Sprite shape(double width, double height, GraphicStyle style)
+    Sprite shape(double width, double height, double angle, GraphicStyle style)
     {
+        Sprite newShape;
         if (isUseVectorGraphics)
         {
             import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
-            auto newShape = new VConvexPolygon(width, height, style, controlCornersBevel);
-            return newShape;
+            newShape = new VConvexPolygon(width, height, style, controlCornersBevel);
         }
         else
         {
             import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
 
-            auto newShape = new ConvexPolygon(width, height, style, controlCornersBevel);
-            return newShape;
+            newShape = new ConvexPolygon(width, height, style, controlCornersBevel);
         }
+
+        newShape.angle = angle;
+        return newShape;
     }
 
     Sprite roundShape(GraphicStyle style) => roundShape(roundShapeDiameter, style);
@@ -223,9 +228,10 @@ class Theme
         return shape;
     }
 
-    Sprite regularPolyShape(GraphicStyle style) => regularPolyShape(regularPolyDiameter, regularPolySides, style);
+    Sprite regularPolyShape(double angle, GraphicStyle style) => regularPolyShape(
+        regularPolyDiameter, regularPolySides, angle, style);
 
-    Sprite regularPolyShape(double size, size_t sides, GraphicStyle style)
+    Sprite regularPolyShape(double size, size_t sides, double angle, GraphicStyle style)
     {
         Sprite shape;
 
@@ -243,6 +249,9 @@ class Theme
 
             shape = new RegularPolygon(size, style, sides);
         }
+
+        shape.angle = angle;
+
         return shape;
     }
 

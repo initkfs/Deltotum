@@ -24,7 +24,8 @@ class BaseRoundButton : BaseButton
     this(dstring text, void delegate(ref ActionEvent) onAction)
     {
         this(text, 0, null, 0);
-        if(onAction){
+        if (onAction)
+        {
             this.onAction ~= onAction;
         }
     }
@@ -48,6 +49,23 @@ class BaseRoundButton : BaseButton
         this.layout.isAlign = true;
     }
 
+    override void loadTheme()
+    {
+        loadLabeledTheme;
+        loadBaseRoundButtonTheme;
+    }
+
+    void loadBaseRoundButtonTheme()
+    {
+        if (_diameter == 0)
+        {
+            _diameter = theme.roundShapeDiameter;
+        }
+
+        _width = _diameter;
+        _height = _diameter;
+    }
+
     override bool containsPoint(double x, double y)
     {
         if (hasBackground)
@@ -65,5 +83,18 @@ class BaseRoundButton : BaseButton
             return background.get.intersectBounds(other);
         }
         return super.intersectBounds(other);
+    }
+
+    double diameter() => _diameter;
+
+    bool diameter(double v)
+    {
+        if (_diameter == v)
+        {
+            return false;
+        }
+        _diameter = v;
+        setInvalid;
+        return true;
     }
 }

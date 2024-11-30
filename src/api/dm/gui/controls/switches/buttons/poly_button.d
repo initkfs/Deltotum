@@ -16,14 +16,23 @@ class PolyButton : BaseRoundButton
         size_t _sides = 0;
     }
 
-    this(dstring text = defaultButtonText)
+    this(dstring text = defaultButtonText, size_t sides)
     {
-        super(text);
+        this(text, sides, 0, null, 0);
     }
 
-    this(dstring text, void delegate(ref ActionEvent) onAction)
+    this(dstring text = defaultButtonText, string iconName, size_t sides)
     {
-        super(text, onAction);
+        this(text, sides, 0, iconName, 0);
+    }
+
+    this(dstring text, void delegate(ref ActionEvent) onAction, size_t sides = 0)
+    {
+        this(text, sides, 0, null, 0);
+        if (onAction)
+        {
+            this.onAction ~= onAction;
+        }
     }
 
     this(
@@ -55,18 +64,19 @@ class PolyButton : BaseRoundButton
         if (_diameter == 0)
         {
             _diameter = theme.regularPolyDiameter;
-            _width = _diameter;
-            _height = _diameter;
         }
+
+        _width = _diameter;
+        _height = _diameter;
     }
 
-    protected override Sprite createShape(double width, double height, GraphicStyle style)
+    protected override Sprite createShape(double w, double h, double angle, GraphicStyle style)
     {
         import Math = api.math;
 
-        auto size = Math.max(width, height);
+        auto size = (w == h) ? w : Math.max(w, h);
 
-        return theme.regularPolyShape(size, _sides, style);
+        return theme.regularPolyShape(size, _sides, angle, style);
     }
 
     size_t sides() => _sides;
