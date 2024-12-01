@@ -15,8 +15,8 @@ import api.math.insets : Insets;
 import api.dm.gui.controls.popups.base_popup : BasePopup;
 import api.dm.gui.themes.theme : Theme;
 
-import api.dm.kit.sprites.sprites2d.tweens.tween2d : Tween2d;
-import api.dm.kit.sprites.sprites2d.tweens.targets.props.opacity_tween : OpacityTween;
+import api.dm.kit.sprites.sprites2d.tweens2.tween2d : Tween2d;
+import api.dm.kit.sprites.sprites2d.tweens2.targets.props.opacity_tween : OpacityTween;
 
 import std.typecons : Nullable;
 

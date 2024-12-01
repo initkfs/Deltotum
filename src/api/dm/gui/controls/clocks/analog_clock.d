@@ -13,7 +13,7 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
 import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vshape2d : VShape;
-import api.dm.kit.sprites.sprites2d.tweens.pause_tween2d : PauseTween2d;
+import api.dm.kit.sprites.sprites2d.tweens2.pause_tween2d : PauseTween2d;
 import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 import api.math.geom2.rect2 : Rect2d;
 import Math = api.dm.math;

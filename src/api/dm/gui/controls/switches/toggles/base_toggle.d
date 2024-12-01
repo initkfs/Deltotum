@@ -7,14 +7,14 @@ import api.dm.kit.sprites.sprites2d.shapes.shape2d : Shape2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites.sprites2d.shapes.rectangle : Rectangle;
 import api.dm.gui.events.action_event : ActionEvent;
-import api.dm.kit.sprites.sprites2d.tweens.min_max_tween2d : MinMaxTween2d;
-import api.dm.kit.sprites.sprites2d.tweens.tween2d : Tween2d;
-import api.dm.kit.sprites.sprites2d.tweens.targets.value_tween : ValueTween;
-import api.dm.kit.sprites.sprites2d.tweens.targets.props.opacity_tween : OpacityTween;
+import api.dm.kit.sprites.sprites2d.tweens2.min_max_tween2d : MinMaxTween2d;
+import api.dm.kit.sprites.sprites2d.tweens2.tween2d : Tween2d;
+import api.dm.kit.sprites.sprites2d.tweens2.targets.value_tween : ValueTween;
+import api.dm.kit.sprites.sprites2d.tweens2.targets.props.opacity_tween : OpacityTween;
 import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.sprites.sprites2d.tweens.targets.target_tween : TargetTween;
+import api.dm.kit.sprites.sprites2d.tweens2.targets.target_tween : TargetTween;
 import api.math.geom2.vec2 : Vec2d;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.labeled : Labeled;
@@ -177,8 +177,8 @@ class BaseToggle : BaseBiswitch
 
     MinMaxTween2d!Vec2d newHandleEffectAnimation()
     {
-        import api.dm.kit.sprites.sprites2d.tweens.targets.motions.linear_motion : LinearMotion;
-        import api.dm.kit.sprites.sprites2d.tweens.curves.uni_interpolator : UniInterpolator;
+        import api.dm.kit.sprites.sprites2d.tweens2.targets.motions.linear_motion : LinearMotion;
+        import api.dm.kit.tweens.curves.uni_interpolator : UniInterpolator;
 
         auto uniInterp = new UniInterpolator;
         uniInterp.interpolateMethod = &uniInterp.quadInOut;

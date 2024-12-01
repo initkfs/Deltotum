@@ -1,6 +1,6 @@
-module api.dm.kit.sprites.sprites2d.tweens.tween2d;
+module api.dm.kit.tweens.tween;
 
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.components.graphics_component: GraphicsComponent;
 
 import std.container.dlist : DList;
 
@@ -16,7 +16,7 @@ enum TweenState
 /**
  * Authors: initkfs
  */
-abstract class Tween2d : Sprite2d
+abstract class Tween : GraphicsComponent
 {
     bool isReverse;
     bool isInfinite;
@@ -47,8 +47,8 @@ abstract class Tween2d : Sprite2d
 
         enum firstFrame = 1;
 
-        DList!Tween2d prevs;
-        DList!Tween2d nexts;
+        DList!Tween prevs;
+        DList!Tween nexts;
     }
 
     this(size_t timeMs = 200)
@@ -58,11 +58,6 @@ abstract class Tween2d : Sprite2d
         import std.conv : to;
 
         this.timeMs = timeMs.to!double;
-
-        isManaged = true;
-        //isVisible = false;
-        isLayoutManaged = false;
-        isManagedByScene = true;
     }
 
     abstract void onFrame();
@@ -195,14 +190,12 @@ abstract class Tween2d : Sprite2d
         return state == TweenState.direct || state == TweenState.back;
     }
 
-    override void update(double delta)
+    void update(double delta)
     {
         if (!isRunning || !isRunningState)
         {
             return;
         }
-
-        super.update(delta);
 
         if (currentFrame > currentFrameCount)
         {
@@ -276,7 +269,7 @@ abstract class Tween2d : Sprite2d
         }
     }
 
-    void prev(Tween2d newPrev)
+    void prev(Tween newPrev)
     {
         if (!newPrev)
         {
@@ -295,7 +288,7 @@ abstract class Tween2d : Sprite2d
         prevs ~= newPrev;
     }
 
-    void prev(Tween2d[] newPrevs...)
+    void prev(Tween[] newPrevs...)
     {
         foreach (t; newPrevs)
         {
@@ -303,7 +296,7 @@ abstract class Tween2d : Sprite2d
         }
     }
 
-    void next(Tween2d newNext)
+    void next(Tween newNext)
     {
         if (!newNext)
         {
@@ -312,7 +305,7 @@ abstract class Tween2d : Sprite2d
         nexts ~= newNext;
     }
 
-    void next(Tween2d[] newNexts...)
+    void next(Tween[] newNexts...)
     {
         foreach (t; newNexts)
         {
@@ -345,5 +338,4 @@ abstract class Tween2d : Sprite2d
         onResume = null;
         onEnd = null;
     }
-
 }

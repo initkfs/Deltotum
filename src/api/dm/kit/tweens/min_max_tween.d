@@ -1,8 +1,8 @@
-module api.dm.kit.sprites.sprites2d.tweens.min_max_tween2d;
+module api.dm.kit.tweens.min_max_tween;
 
-import api.dm.kit.sprites.sprites2d.tweens.tween2d : Tween2d, TweenState;
-import api.dm.kit.sprites.sprites2d.tweens.curves.interpolator : Interpolator;
-import api.dm.kit.sprites.sprites2d.tweens.curves.uni_interpolator : UniInterpolator;
+import api.dm.kit.tweens.tween : Tween, TweenState;
+import api.dm.kit.tweens.curves.interpolator : Interpolator;
+import api.dm.kit.tweens.curves.uni_interpolator : UniInterpolator;
 import api.math.geom2.vec2 : Vec2d;
 import math = api.dm.math;
 
@@ -13,7 +13,7 @@ import std.stdio;
 /**
  * Authors: initkfs
  */
-class MinMaxTween2d(T) if (isFloatingPoint!T || is(T : Vec2d)) : Tween2d
+class MinMaxTween(T) if (isFloatingPoint!T || is(T : Vec2d)) : Tween
 {
     Interpolator interpolator;
 
@@ -180,7 +180,7 @@ unittest
     import std.math.operations : isClose;
 
     enum animationTimeMs = 100;
-    auto tr1 = new MinMaxTween2d!double(0, 10, animationTimeMs);
+    auto tr1 = new MinMaxTween!double(0, 10, animationTimeMs);
     tr1.frameRateHz = 60;
     tr1.initialize;
     tr1.create;

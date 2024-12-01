@@ -1,8 +1,8 @@
-module api.dm.kit.sprites.sprites2d.tweens.targets.motions.linear_motion;
+module api.dm.kit.sprites.sprites2d.tweens2.targets.motions.linear_motion;
 
-import api.dm.kit.sprites.sprites2d.tweens.targets.target_tween : TargetTween;
+import api.dm.kit.sprites.sprites2d.tweens2.targets.target_tween : TargetTween;
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.sprites.sprites2d.tweens.curves.interpolator : Interpolator;
+import api.dm.kit.tweens.curves.interpolator : Interpolator;
 import api.math.geom2.vec2 : Vec2d;
 
 /**

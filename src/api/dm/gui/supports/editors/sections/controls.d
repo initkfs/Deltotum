@@ -135,7 +135,7 @@ class Controls : Control
 
         import api.dm.gui.controls.switches.buttons.poly_button : PolyButton;
 
-        import api.dm.kit.sprites.sprites2d.tweens : PauseTween2d;
+        import api.dm.kit.sprites.sprites2d.tweens2.pause_tween2d : PauseTween2d;
 
         auto regBtn = new PolyButton("Button");
         btnRoot3.addCreate(regBtn);
@@ -642,7 +642,7 @@ class Controls : Control
         auto bottomGauge = new RadialGauge(gaugeDiameter, 0, 180);
         root.addCreate(bottomGauge);
 
-        import api.dm.kit.sprites.sprites2d.tweens.pause_tween2d : PauseTween2d;
+        import api.dm.kit.sprites.sprites2d.tweens2.pause_tween2d : PauseTween2d;
 
         auto gaugeAnim1 = new PauseTween2d(850);
         gaugeAnim1.isInfinite = true;
@@ -657,7 +657,7 @@ class Controls : Control
 
         auto rnd = new Random;
 
-        import api.dm.kit.sprites.sprites2d.tweens.curves.uni_interpolator : UniInterpolator;
+        import api.dm.kit.tweens.curves.uni_interpolator : UniInterpolator;
 
         leftGauge.handTween.interpolator.interpolateMethod = &UniInterpolator.backOut;
         topGauge.handTween.interpolator.interpolateMethod = &UniInterpolator.elasticOut;

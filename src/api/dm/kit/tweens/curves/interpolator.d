@@ -1,4 +1,4 @@
-module api.dm.kit.sprites.sprites2d.tweens.curves.interpolator;
+module api.dm.kit.tweens.curves.interpolator;
 
 import Math = api.dm.math;
 

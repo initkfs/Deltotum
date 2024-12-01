@@ -1,8 +1,8 @@
-module api.dm.kit.sprites.sprites2d.tweens.targets.value_tween;
+module api.dm.kit.sprites.sprites2d.tweens2.targets.value_tween;
 
 import api.dm.kit.sprites.sprites2d.sprite2d: Sprite2d;
-import api.dm.kit.sprites.sprites2d.tweens.curves.interpolator : Interpolator;
-import api.dm.kit.sprites.sprites2d.tweens.targets.target_tween : TargetTween;
+import api.dm.kit.tweens.curves.interpolator : Interpolator;
+import api.dm.kit.sprites.sprites2d.tweens2.targets.target_tween : TargetTween;
 
 /**
  * Authors: initkfs

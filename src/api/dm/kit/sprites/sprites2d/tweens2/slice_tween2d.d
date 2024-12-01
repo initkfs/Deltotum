@@ -1,7 +1,7 @@
-module api.dm.kit.sprites.sprites2d.tweens.slice_tween2d;
+module api.dm.kit.sprites.sprites2d.tweens2.slice_tween2d;
 
-import api.dm.kit.sprites.sprites2d.tweens.min_max_tween2d : MinMaxTween2d;
-import api.dm.kit.sprites.sprites2d.tweens.curves.interpolator : Interpolator;
+import api.dm.kit.sprites.sprites2d.tweens2.min_max_tween2d : MinMaxTween2d;
+import api.dm.kit.tweens.curves.interpolator : Interpolator;
 import api.math.geom2.vec2 : Vec2d;
 
 import Math = api.dm.math;

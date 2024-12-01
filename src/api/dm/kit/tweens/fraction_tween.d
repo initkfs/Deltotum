@@ -1,12 +1,12 @@
-module api.dm.kit.sprites.sprites2d.tweens.fraction_tween2d;
+module api.dm.kit.tweens.fraction_tween;
 
-import api.dm.kit.sprites.sprites2d.tweens.min_max_tween2d : MinMaxTween2d;
-import api.dm.kit.sprites.sprites2d.tweens.curves.interpolator : Interpolator;
+import api.dm.kit.tweens.min_max_tween : MinMaxTween;
+import api.dm.kit.tweens.curves.interpolator : Interpolator;
 
 /**
  * Authors: initkfs
  */
-class FractionTween2d : MinMaxTween2d!double
+class FractionTween : MinMaxTween!double
 {
     double value = 0;
 

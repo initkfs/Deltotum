@@ -1,7 +1,7 @@
-module api.dm.kit.sprites.sprites2d.tweens.targets.props.angle_tween;
+module api.dm.kit.sprites.sprites2d.tweens2.targets.props.angle_tween;
 
-import api.dm.kit.sprites.sprites2d.tweens.targets.value_tween : ValueTween;
-import api.dm.kit.sprites.sprites2d.tweens.curves.interpolator : Interpolator;
+import api.dm.kit.sprites.sprites2d.tweens2.targets.value_tween : ValueTween;
+import api.dm.kit.tweens.curves.interpolator : Interpolator;
 
 /**
  * Authors: initkfs

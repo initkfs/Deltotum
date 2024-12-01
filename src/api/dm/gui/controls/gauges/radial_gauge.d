@@ -8,8 +8,8 @@ import api.dm.gui.containers.circle_box : CircleBox;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 import api.dm.gui.controls.texts.text : Text;
-import api.dm.kit.sprites.sprites2d.tweens.tween2d : Tween2d;
-import api.dm.kit.sprites.sprites2d.tweens.targets.value_tween : ValueTween;
+import api.dm.kit.sprites.sprites2d.tweens2.tween2d : Tween2d;
+import api.dm.kit.sprites.sprites2d.tweens2.targets.value_tween : ValueTween;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 
 import api.math.geom2.vec2 : Vec2d;
