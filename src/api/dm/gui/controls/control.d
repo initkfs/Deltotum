@@ -79,6 +79,9 @@ class Control : GuiComponent
     Sprite delegate(Sprite) onBackgroundCreate;
     void delegate(Sprite) onBackgroundCreated;
 
+    bool isProcessHover;
+    bool isProcessAction;
+
     bool isCreateHoverEffect;
     Sprite delegate(Sprite) onHoverEffectCreate;
     void delegate(Sprite) onHoverEffectCreated;
@@ -469,10 +472,7 @@ class Control : GuiComponent
                         return;
                     }
 
-                    if (hoverEffectStartBehaviour)
-                    {
-                        hoverEffectStartBehaviour();
-                    }
+                    startHover;
                 };
             }
         }
@@ -487,10 +487,7 @@ class Control : GuiComponent
                     {
                         return;
                     }
-                    if (hoverEffectEndBehaviour)
-                    {
-                        hoverEffectEndBehaviour();
-                    }
+                    endHover;
                 };
             }
         }
@@ -506,11 +503,8 @@ class Control : GuiComponent
                         return;
                     }
 
-                    if (actionEffectStartBehaviour)
-                    {
-                        auto ea = ActionEvent(e.ownerId, e.x, e.y, e.button);
-                        actionEffectStartBehaviour(ea);
-                    }
+                    auto ea = ActionEvent(e.ownerId, e.x, e.y, e.button);
+                    startAction(ea);
                 };
             }
         }
@@ -526,15 +520,65 @@ class Control : GuiComponent
                         return;
                     }
 
-                    if (actionEffectEndBehaviour)
+                    auto ea = ActionEvent(e.ownerId, e.x, e.y, e.button);
+                    endAction(ea);
+                };
+
+                onPointerOutBounds ~= (ref e) {
+                    import api.dm.kit.inputs.pointers.events.pointer_event: PointerEvent;
+
+                    if(e.event != PointerEvent.Event.up){
+                        return;
+                    }
+
+                    if (isProcessAction)
                     {
                         auto ea = ActionEvent(e.ownerId, e.x, e.y, e.button);
-                        actionEffectEndBehaviour(ea);
+                        ea.isInBounds = false;
+                        endAction(ea);
                     }
                 };
             }
         }
 
+    }
+
+    void startHover()
+    {
+        //if(isProcessHover)?
+        isProcessHover = true;
+
+        if (hoverEffectStartBehaviour)
+        {
+            hoverEffectStartBehaviour();
+        }
+    }
+
+    void endHover()
+    {
+        isProcessHover = false;
+        if (hoverEffectEndBehaviour)
+        {
+            hoverEffectEndBehaviour();
+        }
+    }
+
+    void startAction(ref ActionEvent e)
+    {
+        isProcessAction = true;
+        if (actionEffectStartBehaviour)
+        {
+            actionEffectStartBehaviour(e);
+        }
+    }
+
+    void endAction(ref ActionEvent e)
+    {
+        isProcessAction = false;
+        if (actionEffectEndBehaviour)
+        {
+            actionEffectEndBehaviour(e);
+        }
     }
 
     Sprite newBackground(double w, double h)

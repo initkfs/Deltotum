@@ -159,6 +159,9 @@ class Sprite : EventKitTarget
 
     Scene delegate() sceneProvider;
 
+    void delegate(ref PointerEvent)[] onPointerInBounds;
+    void delegate(ref PointerEvent)[] onPointerOutBounds;
+
     version (SdlBackend)
     {
         //TODO correct max size
@@ -372,6 +375,14 @@ class Sprite : EventKitTarget
 
             if (containsPoint(e.x, e.y))
             {
+                if (onPointerInBounds.length > 0)
+                {
+                    foreach (dg; onPointerInBounds)
+                    {
+                        dg(e);
+                    }
+                }
+
                 if (e.event == PointerEvent.Event.move)
                 {
                     if (!isMouseOver)
@@ -418,6 +429,14 @@ class Sprite : EventKitTarget
             }
             else
             {
+                if (onPointerOutBounds.length > 0)
+                {
+                    foreach (dg; onPointerOutBounds)
+                    {
+                        dg(e);
+                    }
+                }
+
                 if (e.event == PointerEvent.Event.move)
                 {
                     if (isMouseOver)

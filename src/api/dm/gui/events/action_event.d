@@ -31,6 +31,8 @@ struct ActionEvent
 
     int ownerId;
 
+    bool isInBounds = true;
+
     this(int ownerId, double x, double y, int button)
     {
         this.event = Event.action;
