@@ -31,7 +31,7 @@ class Hyperlink : Labeled
         isCreateHover = false;
         isCreateHoverAnimation = false;
         isCreateActionEffect = false;
-        isCreateActionAnimation = false;
+        isCreateActionEffectAnimation = false;
     }
 
     override void initialize()

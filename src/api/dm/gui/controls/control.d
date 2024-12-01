@@ -2,6 +2,7 @@ module api.dm.gui.controls.control;
 
 import api.dm.gui.components.gui_component : GuiComponent;
 import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.gui.events.action_event : ActionEvent;
 import api.dm.kit.sprites.layouts.layout : Layout;
 import api.math.insets : Insets;
 import api.dm.kit.sprites.textures.texture : Texture;
@@ -21,7 +22,7 @@ import std.typecons : Nullable;
 
 enum ControlStyle : string
 {
-    background = "backgroundStyle",
+    background = "background",
     hoverEffect = "hoverEffect",
     actionEffect = "actionEffect"
 }
@@ -40,62 +41,6 @@ class Control : GuiComponent
         idActionAnimation = "control_action_animation"
     }
 
-    GraphicStyle style;
-    GraphicStyle[string] styles;
-    string styleId;
-    GraphicStyle delegate(string id) styleFactory;
-    void delegate(string, ref GraphicStyle) onStyleIdCreated;
-    bool isUseParentStyle;
-    bool isStyleForChildren;
-    bool isAppendStylesForChildren = true;
-
-    bool isBackground;
-    bool isBorder;
-    bool isFocusable;
-    bool isDisabled;
-
-    bool isInitStyleFactory = true;
-
-    bool isCreateHover;
-    bool isCreateHoverAnimation;
-    bool isCreateActionEffect;
-    bool isCreateActionAnimation;
-
-    bool isConsumeEventIfBackground = true;
-
-    Sprite delegate(Sprite) onBackgroundCreate;
-    void delegate(Sprite) onBackgroundCreated;
-
-    Sprite delegate(Sprite) onHoverEffectCreate;
-    void delegate(Sprite) onHoverEffectCreated;
-
-    Tween delegate(Tween) onHoverAnimationCreate;
-    void delegate(Tween) onHoverAnimationCreated;
-
-    void delegate() hoverEffectEnableBehaviour;
-    void delegate() hoverEffectDisableBehaviour;
-
-    size_t hoverAnimationDelayMs;
-
-    Sprite delegate() actionEffectFactory;
-    Sprite delegate(Sprite) onActionEffectCreate;
-    void delegate(Sprite) onActionEffectCreated;
-
-    void delegate(ref PointerEvent) actionEffectBehaviour;
-
-    size_t actionAnimationDelayMs;
-
-    Tween delegate(Sprite) actionEffectAnimationFactory;
-    Tween delegate(Tween) onActionEffectAnimationCreate;
-    void delegate(Tween) onActionEffectAnimationCreated;
-
-    bool isCreateInteractiveListeners;
-
-    void delegate() onPreControlContentCreated;
-    void delegate() onPostControlContentCreated;
-
-    bool isLayoutSpacingFromTheme = true;
-
     protected
     {
         Sprite _background;
@@ -110,6 +55,64 @@ class Control : GuiComponent
         size_t tooltipDelayCounter;
     }
 
+    bool isInitStyleFactory = true;
+
+    GraphicStyle style;
+    string styleId;
+    GraphicStyle[string] styles;
+    GraphicStyle delegate(string id) styleFactory;
+    void delegate(string, ref GraphicStyle) onIdStyleCreated;
+    bool isStyleUseParent;
+    bool isStyleForChild;
+    bool isStyleAppendForChild = true;
+
+    bool isBackground;
+    bool isBorder;
+    bool isFocusable;
+    bool isDisabled;
+
+    bool isConsumeEventIfBackground = true;
+    bool isConsumeEventAfterChildren;
+
+    Sprite delegate(Sprite) onBackgroundCreate;
+    void delegate(Sprite) onBackgroundCreated;
+
+    bool isCreateHover;
+    Sprite delegate(Sprite) onHoverEffectCreate;
+    void delegate(Sprite) onHoverEffectCreated;
+
+    size_t hoverAnimationDelayMs;
+
+    bool isCreateHoverAnimation;
+    Tween delegate(Tween) onHoverAnimationCreate;
+    void delegate(Tween) onHoverAnimationCreated;
+
+    void delegate() hoverEffectStartBehaviour;
+    void delegate() hoverEffectEndBehaviour;
+
+    bool isCreateActionEffect;
+    Sprite delegate() actionEffectFactory;
+    Sprite delegate(Sprite) onActionEffectCreate;
+    void delegate(Sprite) onActionEffectCreated;
+
+    void delegate(ref ActionEvent) actionEffectStartBehaviour;
+    void delegate(ref ActionEvent) actionEffectEndBehaviour;
+
+    size_t actionEffectAnimationDelayMs;
+
+    bool isCreateActionEffectAnimation;
+    Tween delegate(Sprite) actionEffectAnimationFactory;
+    Tween delegate(Tween) onActionEffectAnimationCreate;
+    void delegate(Tween) onActionEffectAnimationCreated;
+
+    bool isCreateInteractiveListeners;
+
+    void delegate() onPreControlContentCreated;
+    void delegate() onPostControlContentCreated;
+
+    bool isLayoutSpacingFromTheme = true;
+
+    bool isCreateTooltip;
     BasePopup[] tooltips;
     size_t tooltipDelay;
 
@@ -131,17 +134,19 @@ class Control : GuiComponent
 
         loadTheme;
 
-        //TODO remove listener?
-        invalidateListeners ~= () {
-            if (!isCreated)
-            {
-                return;
-            }
+        if (isBackground || isBorder)
+        {
+            invalidateListeners ~= () {
+                if (!isCreated)
+                {
+                    return;
+                }
 
-            adjustOrCreateBackground;
-        };
+                adjustOrCreateBackground;
+            };
+        }
 
-        if (tooltips.length > 0)
+        if (isCreateTooltip)
         {
             initTooltipListeners;
         }
@@ -151,97 +156,48 @@ class Control : GuiComponent
             styleFactory = newStyleFactory;
         }
 
-        if (tooltipDelay == 0)
+        if (!hoverEffectStartBehaviour)
         {
-            tooltipDelay = theme.tooltipDelayMs;
-        }
-
-        if (actionAnimationDelayMs == 0)
-        {
-            actionAnimationDelayMs = theme.actionAnimationDelayMs;
-        }
-
-        if (hoverAnimationDelayMs == 0)
-        {
-            hoverAnimationDelayMs = theme.hoverAnimationDelayMs;
-        }
-
-        if (!hoverEffectEnableBehaviour)
-        {
-            hoverEffectEnableBehaviour = () {
-                if (_hoverEffect && !_hoverEffect.isVisible)
-                {
-                    _hoverEffect.isVisible = true;
-
-                    if (_hoverEffectAnimation && !_hoverEffectAnimation.isRunning)
-                    {
-                        _hoverEffectAnimation.isReverse = false;
-                        //TODO from factory?
-                        _hoverEffect.opacity = 0;
-                        _hoverEffectAnimation.run;
-                    }
-                }
-            };
-        }
-
-        if (!hoverEffectDisableBehaviour)
-        {
-            hoverEffectDisableBehaviour = () {
-                if (_hoverEffect && _hoverEffect.isVisible)
-                {
-                    if (_hoverEffectAnimation)
-                    {
-                        if (_hoverEffectAnimation.isRunning && !_hoverEffectAnimation.isReverse)
-                        {
-                            _hoverEffectAnimation.stop;
-                        }
-
-                        if (!_hoverEffectAnimation.isRunning)
-                        {
-                            _hoverEffectAnimation.isReverse = true;
-                            _hoverEffectAnimation.run;
-                        }
-                    }
-                    else
-                    {
-                        _hoverEffect.isVisible = false;
-                    }
-                }
-            };
-        }
-
-        if (!actionEffectBehaviour)
-        {
-            actionEffectBehaviour = newActionEffectBehaviour;
-        }
-    }
-
-    void delegate(ref PointerEvent) newActionEffectBehaviour()
-    {
-        return (ref e) {
-            if (_actionEffect)
+            auto newBehaviour = newHoverEffectEnableBehaviour;
+            if (newBehaviour)
             {
-                if (_actionEffectAnimation && _actionEffectAnimation.isRunning)
-                {
-                    _actionEffectAnimation.stop;
-                    _actionEffect.isVisible = false;
-                }
-
-                if (!_actionEffect.isVisible)
-                {
-                    _actionEffect.isVisible = true;
-                    if (_actionEffectAnimation)
-                    {
-                        _actionEffectAnimation.run;
-                    }
-                }
+                hoverEffectStartBehaviour = newBehaviour;
             }
-        };
+        }
+
+        if (!hoverEffectEndBehaviour)
+        {
+            auto newBehaviour = hoverEffectEndBehaviour = newHoverEffectDisableBehaviour;
+            if (newBehaviour)
+            {
+                hoverEffectEndBehaviour = newBehaviour;
+            }
+        }
+
+        if (!actionEffectStartBehaviour)
+        {
+            auto newBehaviour = newActionEffectStartBehaviour;
+            if (newBehaviour)
+            {
+                actionEffectStartBehaviour = newBehaviour;
+            }
+        }
+
+        if (!actionEffectEndBehaviour)
+        {
+            auto newBehaviour = newActionEffectEndBehaviour;
+            if (newBehaviour)
+            {
+                actionEffectEndBehaviour = newBehaviour;
+            }
+        }
     }
 
     void loadTheme()
     {
         loadLayoutTheme;
+        loadTooltipTheme;
+        loadAnimationTheme;
     }
 
     void loadLayoutTheme()
@@ -260,6 +216,27 @@ class Control : GuiComponent
         }
     }
 
+    void loadTooltipTheme()
+    {
+        if (isCreateTooltip && tooltipDelay == 0)
+        {
+            tooltipDelay = theme.tooltipDelayMs;
+        }
+    }
+
+    void loadAnimationTheme()
+    {
+        if (isCreateActionEffectAnimation && actionEffectAnimationDelayMs == 0)
+        {
+            actionEffectAnimationDelayMs = theme.actionEffectAnimationDelayMs;
+        }
+
+        if (isCreateHoverAnimation && hoverAnimationDelayMs == 0)
+        {
+            hoverAnimationDelayMs = theme.hoverAnimationDelayMs;
+        }
+    }
+
     void loadControlTheme()
     {
         if (isSetNullWidthFromTheme && _width == 0)
@@ -275,41 +252,281 @@ class Control : GuiComponent
 
     void initTooltipListeners()
     {
-        if (isTooltipListeners)
+        if (!isCreateTooltip || isTooltipListeners)
         {
             return;
         }
 
-        onPointerEntered ~= (ref e) {
-            if (tooltips.length > 0)
-            {
-                isTooltipDelay = true;
-            }
-        };
-
-        onPointerMove ~= (ref e) {
-            if (isTooltipDelay && tooltipDelayCounter != 0)
-            {
-                tooltipDelayCounter = 0;
-            }
-        };
-
-        onPointerExited ~= (ref e) {
-            if (tooltips.length > 0)
-            {
-                isTooltipDelay = false;
+        if (capGraphics.isPointer)
+        {
+            onPointerEntered ~= (ref e) {
                 if (tooltips.length > 0)
                 {
-                    foreach (tooltip; tooltips)
-                    {
-                        tooltip.hide;
-                    }
+                    isTooltipDelay = true;
                 }
+            };
 
+            onPointerMove ~= (ref e) {
+                if (isTooltipDelay && tooltipDelayCounter != 0)
+                {
+                    tooltipDelayCounter = 0;
+                }
+            };
+
+            onPointerExited ~= (ref e) {
+                if (tooltips.length > 0)
+                {
+                    isTooltipDelay = false;
+                    if (tooltips.length > 0)
+                    {
+                        foreach (tooltip; tooltips)
+                        {
+                            tooltip.hide;
+                        }
+                    }
+
+                }
+            };
+
+            isTooltipListeners = true;
+        }
+
+    }
+
+    override void create()
+    {
+        super.create;
+
+        if (onPreControlContentCreated)
+        {
+            onPreControlContentCreated();
+        }
+
+        tryCreateBackground(width, height);
+
+        createInteractiveEffects;
+
+        if (isCreateInteractiveListeners)
+        {
+            createInteractiveListeners;
+        }
+
+        if (onPostControlContentCreated)
+        {
+            onPostControlContentCreated();
+        }
+    }
+
+    override bool recreate()
+    {
+        const isSuperRecreated = super.recreate;
+        if (!isSuperRecreated)
+        {
+            return isSuperRecreated;
+        }
+
+        if (!isCreated)
+        {
+            create;
+            return true;
+        }
+
+        return isSuperRecreated;
+    }
+
+    void recreateContent()
+    {
+        if (_background)
+        {
+            bool isRemoved = remove(_background);
+            assert(isRemoved);
+            _background = null;
+        }
+
+        tryCreateBackground(width, height);
+
+        if (_hoverEffect)
+        {
+            bool isRemoved = remove(_hoverEffect);
+            assert(isRemoved);
+            _hoverEffect = null;
+        }
+
+        if (_hoverEffectAnimation)
+        {
+            bool isRemoved = remove(_hoverEffectAnimation);
+            assert(isRemoved);
+            _hoverEffectAnimation = null;
+        }
+
+        if (_actionEffect)
+        {
+            bool isRemoved = remove(_actionEffect);
+            assert(isRemoved);
+            _actionEffect = null;
+        }
+
+        if (_actionEffectAnimation)
+        {
+            bool isRemoved = remove(_actionEffectAnimation);
+            assert(isRemoved);
+            _actionEffectAnimation = null;
+        }
+
+        createInteractiveEffects;
+    }
+
+    void createInteractiveEffects()
+    {
+        if (!_hoverEffect && isCreateHover)
+        {
+            auto newHover = newHoverEffect(width, height);
+            assert(newHover);
+
+            _hoverEffect = onHoverEffectCreate ? onHoverEffectCreate(newHover) : newHover;
+            assert(_hoverEffect);
+            addCreate(_hoverEffect);
+
+            assert(hasTheme);
+
+            _hoverEffect.opacityLimit = theme.opacityHover;
+
+            if (onHoverEffectCreated)
+            {
+                onHoverEffectCreated(_hoverEffect);
             }
-        };
+        }
 
-        isTooltipListeners = true;
+        if (!_hoverEffectAnimation && isCreateHoverAnimation)
+        {
+            auto newHoverAnim = newHoverAnimation();
+            assert(newHoverAnim);
+
+            _hoverEffectAnimation = onHoverAnimationCreate ? onHoverAnimationCreate(
+                newHoverAnim) : newHoverAnim;
+            assert(_hoverEffectAnimation);
+
+            addCreate(_hoverEffectAnimation);
+
+            if (onHoverAnimationCreated)
+            {
+                onHoverAnimationCreated(_hoverEffectAnimation);
+            }
+        }
+
+        if (!_actionEffect && isCreateActionEffect)
+        {
+            auto effect = newActionEffect();
+            assert(effect);
+
+            _actionEffect = onActionEffectCreate ? onActionEffectCreate(effect) : effect;
+            assert(_actionEffect);
+            addCreate(_actionEffect);
+
+            if (onActionEffectCreated)
+            {
+                onActionEffectCreated(_actionEffect);
+            }
+        }
+
+        if (!_actionEffectAnimation && isCreateActionEffectAnimation)
+        {
+            auto newEffectAnimation = newActionEffectAnimation;
+            assert(newEffectAnimation);
+
+            _actionEffectAnimation = onActionEffectAnimationCreate ? onActionEffectAnimationCreate(
+                newEffectAnimation) : newEffectAnimation;
+
+            assert(_actionEffectAnimation);
+            addCreate(_actionEffectAnimation);
+
+            if (onActionEffectAnimationCreated)
+            {
+                onActionEffectAnimationCreated(_actionEffectAnimation);
+            }
+        }
+    }
+
+    void createInteractiveListeners()
+    {
+        //TODO remove previous
+        if (hoverEffectStartBehaviour)
+        {
+            if (capGraphics.isPointer)
+            {
+                onPointerEntered ~= (ref e) {
+
+                    if (isDisabled)
+                    {
+                        return;
+                    }
+
+                    if (hoverEffectStartBehaviour)
+                    {
+                        hoverEffectStartBehaviour();
+                    }
+                };
+            }
+        }
+
+        if (hoverEffectEndBehaviour)
+        {
+            if (capGraphics.isPointer)
+            {
+                onPointerExited ~= (ref e) {
+
+                    if (isDisabled)
+                    {
+                        return;
+                    }
+                    if (hoverEffectEndBehaviour)
+                    {
+                        hoverEffectEndBehaviour();
+                    }
+                };
+            }
+        }
+
+        if (actionEffectStartBehaviour)
+        {
+            if (capGraphics.isPointer)
+            {
+                onPointerDown ~= (ref e) {
+
+                    if (isDisabled)
+                    {
+                        return;
+                    }
+
+                    if (actionEffectStartBehaviour)
+                    {
+                        auto ea = ActionEvent(e.ownerId, e.x, e.y, e.button);
+                        actionEffectStartBehaviour(ea);
+                    }
+                };
+            }
+        }
+
+        if (actionEffectEndBehaviour)
+        {
+            if (capGraphics.isPointer)
+            {
+                onPointerUp ~= (ref e) {
+
+                    if (isDisabled)
+                    {
+                        return;
+                    }
+
+                    if (actionEffectEndBehaviour)
+                    {
+                        auto ea = ActionEvent(e.ownerId, e.x, e.y, e.button);
+                        actionEffectEndBehaviour(ea);
+                    }
+                };
+            }
+        }
+
     }
 
     Sprite newBackground(double w, double h)
@@ -357,8 +574,6 @@ class Control : GuiComponent
         newHover.isResizedByParent = true;
         newHover.isVisible = false;
 
-        newHover.angle = angle;
-
         return newHover;
     }
 
@@ -372,16 +587,72 @@ class Control : GuiComponent
         anim.id = idHoverAnimation;
         anim.addTarget(_hoverEffect);
         anim.isLayoutManaged = false;
-        anim.onStop ~= () {
-            if (_hoverEffect)
+
+        auto newOnEnd = newOnStopHoverAnimation;
+        if (newOnEnd)
+        {
+            anim.onStop ~= newOnEnd;
+        }
+        return anim;
+    }
+
+    void delegate() newOnStopHoverAnimation()
+    {
+        return () {
+            assert(_hoverEffect);
+
+            if (_hoverEffect && _hoverEffectAnimation)
             {
-                if (anim.isReverse)
+                if (_hoverEffectAnimation.isReverse)
                 {
                     _hoverEffect.isVisible = false;
                 }
             }
         };
-        return anim;
+    }
+
+    void delegate() newHoverEffectEnableBehaviour()
+    {
+        return () {
+            if (_hoverEffect && !_hoverEffect.isVisible)
+            {
+                _hoverEffect.isVisible = true;
+
+                if (_hoverEffectAnimation && !_hoverEffectAnimation.isRunning)
+                {
+                    _hoverEffectAnimation.isReverse = false;
+                    //TODO from factory?
+                    _hoverEffect.opacity = 0;
+                    _hoverEffectAnimation.run;
+                }
+            }
+        };
+    }
+
+    void delegate() newHoverEffectDisableBehaviour()
+    {
+        return () {
+            if (_hoverEffect && _hoverEffect.isVisible)
+            {
+                if (_hoverEffectAnimation)
+                {
+                    if (_hoverEffectAnimation.isRunning && !_hoverEffectAnimation.isReverse)
+                    {
+                        _hoverEffectAnimation.stop;
+                    }
+
+                    if (!_hoverEffectAnimation.isRunning)
+                    {
+                        _hoverEffectAnimation.isReverse = true;
+                        _hoverEffectAnimation.run;
+                    }
+                }
+                else
+                {
+                    _hoverEffect.isVisible = false;
+                }
+            }
+        };
     }
 
     Sprite newActionEffect()
@@ -414,8 +685,6 @@ class Control : GuiComponent
         effect.isResizedByParent = true;
         effect.isVisible = false;
 
-        effect.angle = angle;
-
         return effect;
     }
 
@@ -423,7 +692,7 @@ class Control : GuiComponent
     {
         import std.conv : to;
 
-        auto actionEffectAnimation = new OpacityTween(actionAnimationDelayMs.to!int);
+        auto actionEffectAnimation = new OpacityTween(actionEffectAnimationDelayMs.to!int);
         actionEffectAnimation.id = idActionAnimation;
 
         assert(_actionEffect, "Action effect must not be null");
@@ -433,7 +702,7 @@ class Control : GuiComponent
         actionEffectAnimation.isInfinite = false;
         actionEffectAnimation.isOneShort = true;
 
-        auto newOnEnd = newOnEndActionEffectAnimation;
+        auto newOnEnd = newOnStopActionEffectAnimation;
         if (newOnEnd)
         {
             actionEffectAnimation.onStop ~= newOnEnd;
@@ -442,7 +711,7 @@ class Control : GuiComponent
         return actionEffectAnimation;
     }
 
-    void delegate() newOnEndActionEffectAnimation()
+    void delegate() newOnStopActionEffectAnimation()
     {
         return () {
             if (_actionEffect)
@@ -450,6 +719,34 @@ class Control : GuiComponent
                 _actionEffect.isVisible = false;
             }
         };
+    }
+
+    void delegate(ref ActionEvent) newActionEffectStartBehaviour()
+    {
+        return (ref e) {
+            if (_actionEffect)
+            {
+                if (_actionEffectAnimation && _actionEffectAnimation.isRunning)
+                {
+                    _actionEffectAnimation.stop;
+                    _actionEffect.isVisible = false;
+                }
+
+                if (!_actionEffect.isVisible)
+                {
+                    _actionEffect.isVisible = true;
+                    if (_actionEffectAnimation)
+                    {
+                        _actionEffectAnimation.run;
+                    }
+                }
+            }
+        };
+    }
+
+    void delegate(ref ActionEvent) newActionEffectEndBehaviour()
+    {
+        return null;
     }
 
     GraphicStyle delegate(string id) newStyleFactory()
@@ -513,9 +810,9 @@ class Control : GuiComponent
         assert(styleFactory);
 
         auto newStyle = styleFactory(styleId);
-        if (onStyleIdCreated)
+        if (onIdStyleCreated)
         {
-            onStyleIdCreated(styleId, newStyle);
+            onIdStyleCreated(styleId, newStyle);
         }
         return newStyle;
     }
@@ -544,205 +841,11 @@ class Control : GuiComponent
         return theme.background(width, height, angle, &style);
     }
 
-    override void create()
-    {
-        super.create;
-
-        if (onPreControlContentCreated)
-        {
-            onPreControlContentCreated();
-        }
-
-        tryCreateBackground(width, height);
-
-        createInteractiveEffects;
-
-        if (isCreateInteractiveListeners)
-        {
-            createInteractiveListeners;
-        }
-
-        if (onPostControlContentCreated)
-        {
-            onPostControlContentCreated();
-        }
-    }
-
-    override bool recreate()
-    {
-        const isSuperRecreated = super.recreate;
-        if (!isSuperRecreated)
-        {
-            return isSuperRecreated;
-        }
-
-        if (!isCreated)
-        {
-            create;
-            return true;
-        }
-
-        return true;
-    }
-
-    void recreateContent()
-    {
-        if (_background)
-        {
-            bool isRemoved = remove(_background);
-            assert(isRemoved);
-            _background = null;
-        }
-
-        tryCreateBackground(width, height);
-
-        if (_hoverEffect)
-        {
-            bool isRemoved = remove(_hoverEffect);
-            assert(isRemoved);
-            _hoverEffect = null;
-        }
-
-        if (_hoverEffectAnimation)
-        {
-            bool isRemoved = remove(_hoverEffectAnimation);
-            assert(isRemoved);
-            _hoverEffectAnimation = null;
-        }
-
-        if (_actionEffect)
-        {
-            bool isRemoved = remove(_actionEffect);
-            assert(isRemoved);
-            _actionEffect = null;
-        }
-
-        if (_actionEffectAnimation)
-        {
-            bool isRemoved = remove(_actionEffectAnimation);
-            assert(isRemoved);
-            _actionEffectAnimation = null;
-        }
-
-        createInteractiveEffects;
-    }
-
-    void createInteractiveEffects()
-    {
-        if (!_hoverEffect && isCreateHover)
-        {
-            auto newHover = newHoverEffect(width, height);
-            if (newHover)
-            {
-                _hoverEffect = onHoverEffectCreate ? onHoverEffectCreate(newHover) : newHover;
-                addCreate(_hoverEffect);
-                _hoverEffect.opacityLimit = theme.opacityHover;
-                if (onHoverEffectCreated)
-                {
-                    onHoverEffectCreated(_hoverEffect);
-                }
-            }
-            else
-            {
-                logger.error("Hover factory did not return the object");
-            }
-        }
-
-        if (!_hoverEffectAnimation && isCreateHoverAnimation)
-        {
-            auto newHoverAnim = newHoverAnimation();
-            _hoverEffectAnimation = onHoverAnimationCreate ? onHoverAnimationCreate(
-                newHoverAnim) : newHoverAnim;
-            assert(_hoverEffectAnimation);
-
-            addCreate(_hoverEffectAnimation);
-
-            if (onHoverAnimationCreated)
-            {
-                onHoverAnimationCreated(_hoverEffectAnimation);
-            }
-        }
-
-        if (!_actionEffect && isCreateActionEffect)
-        {
-            auto effect = newActionEffect();
-            assert(effect);
-
-            _actionEffect = onActionEffectCreate ? onActionEffectCreate(effect) : effect;
-
-            addCreate(_actionEffect);
-
-            if (onActionEffectCreated)
-            {
-                onActionEffectCreated(_actionEffect);
-            }
-        }
-
-        if (!_actionEffectAnimation && isCreateActionAnimation)
-        {
-            auto newEffectAnimation = newActionEffectAnimation;
-            _actionEffectAnimation = onActionEffectAnimationCreate ? onActionEffectAnimationCreate(
-                newEffectAnimation) : newEffectAnimation;
-
-            addCreate(_actionEffectAnimation);
-
-            if (onActionEffectAnimationCreated)
-            {
-                onActionEffectAnimationCreated(_actionEffectAnimation);
-            }
-        }
-    }
-
-    void createInteractiveListeners()
-    {
-        //TODO remove previous
-        if (_hoverEffect)
-        {
-            onPointerEntered ~= (ref e) {
-
-                if (isDisabled)
-                {
-                    return;
-                }
-
-                if (hoverEffectEnableBehaviour)
-                {
-                    hoverEffectEnableBehaviour();
-                }
-            };
-
-            onPointerExited ~= (ref e) {
-
-                if (isDisabled)
-                {
-                    return;
-                }
-                if (hoverEffectDisableBehaviour)
-                {
-                    hoverEffectDisableBehaviour();
-                }
-            };
-        }
-
-        onPointerDown ~= (ref e) {
-
-            if (isDisabled)
-            {
-                return;
-            }
-
-            if (actionEffectBehaviour)
-            {
-                actionEffectBehaviour(e);
-            }
-        };
-
-    }
-
     alias build = GuiComponent.build;
 
     void build(Control control)
     {
+        assert(control);
         applyStyle(control);
         super.build(control);
     }
@@ -859,10 +962,10 @@ class Control : GuiComponent
     {
         assert(control);
 
-        if (isStyleForChildren || control.isUseParentStyle)
+        if (isStyleForChild || control.isStyleUseParent)
         {
             control.styleFactory = styleFactory;
-            if (!isAppendStylesForChildren)
+            if (!isStyleAppendForChild)
             {
                 control.styles = styles;
             }
@@ -883,9 +986,9 @@ class Control : GuiComponent
             }
         }
 
-        if (isStyleForChildren)
+        if (isStyleForChild)
         {
-            control.isStyleForChildren = isStyleForChildren;
+            control.isStyleForChild = isStyleForChild;
         }
     }
 
@@ -901,14 +1004,12 @@ class Control : GuiComponent
             return;
         }
 
-        if (isConsumeEventIfBackground && (isBackground || hasBackground))
+        if (isConsumeEventAfterChildren &&
+            (isConsumeEventIfBackground && (isBackground || hasBackground) && containsPoint(
+                e.x, e.y)))
         {
-            if (containsPoint(e.x, e.y))
-            {
-                e.isConsumed = true;
-            }
+            e.isConsumed = true;
         }
-
     }
 
     protected bool tryCreateBackground(double width, double height)
@@ -1050,7 +1151,6 @@ class Control : GuiComponent
 
     override void dispose()
     {
-        styles = null;
         super.dispose;
     }
 

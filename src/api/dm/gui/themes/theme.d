@@ -97,7 +97,7 @@ class Theme
     bool isUseVectorGraphics;
 
     @ConfigKey
-    size_t actionAnimationDelayMs;
+    size_t actionEffectAnimationDelayMs;
     @ConfigKey
     size_t hoverAnimationDelayMs;
     @ConfigKey

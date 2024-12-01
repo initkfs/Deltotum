@@ -7,6 +7,7 @@ class CapGraphics
     bool isTimer;
     bool isJoystick;
     bool isIconPack;
+    bool isPointer = true;
     
     bool isVectorGraphics;
     bool isImageProcessing;

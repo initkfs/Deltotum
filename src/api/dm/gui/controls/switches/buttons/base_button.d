@@ -69,7 +69,7 @@ class BaseButton : BaseBiswitch
         isCreateHover = true;
         isCreateHoverAnimation = true;
         isCreateActionEffect = true;
-        isCreateActionAnimation = true;
+        isCreateActionEffectAnimation = true;
 
         isCreateInteractiveListeners = true;
 
@@ -167,7 +167,7 @@ class BaseButton : BaseBiswitch
         }
     }
 
-    override void delegate() newOnEndActionEffectAnimation()
+    override void delegate() newOnStopActionEffectAnimation()
     {
         //Autorelease buttons
         if (!isFixedButton && !isLongPressButton)
@@ -208,7 +208,7 @@ class BaseButton : BaseBiswitch
         return anim;
     }
 
-    override void delegate(ref PointerEvent) newActionEffectBehaviour()
+    override void delegate(ref ActionEvent) newActionEffectStartBehaviour()
     {
         //Simple autoreleased buttons
         if (!isFixedButton || isLongPressButton)
@@ -241,11 +241,10 @@ class BaseButton : BaseBiswitch
         super.runSwitchListeners(oldValue, newValue);
     }
 
-    void runActionListeners(ref PointerEvent e)
+    void runActionListeners(ref ActionEvent ea)
     {
         if (onAction.length > 0)
         {
-            auto ea = ActionEvent(e.ownerId, e.x, e.y, e.button);
             foreach (dg; onAction)
             {
                 if (dg)

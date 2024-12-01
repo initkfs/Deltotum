@@ -23,7 +23,7 @@ class Badge : Labeled
         isCreateHover = false;
         isCreateHoverAnimation = false;
         isCreateActionEffect = false;
-        isCreateActionAnimation = false;
+        isCreateActionEffectAnimation = false;
 
         isLayoutManaged = false;
 

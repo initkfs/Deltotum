@@ -23,7 +23,7 @@ class BasePopup : Labeled
         isCreateHover = false;
         isCreateHoverAnimation = false;
         isCreateActionEffect = false;
-        isCreateActionAnimation = false;
+        isCreateActionEffectAnimation = false;
 
         isVisible = false;
         isLayoutManaged = false;
