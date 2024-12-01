@@ -66,8 +66,8 @@ class BaseButton : BaseBiswitch
     {
         super(width, height, text, iconName, graphicsGap, isCreateLayout);
 
-        isCreateHover = true;
-        isCreateHoverAnimation = true;
+        isCreateHoverEffect = true;
+        isCreateHoverEffectAnimation = true;
         isCreateActionEffect = true;
         isCreateActionEffectAnimation = true;
 
@@ -92,7 +92,7 @@ class BaseButton : BaseBiswitch
 
     override void loadTheme()
     {
-        loadLabeledTheme;
+        super.loadTheme;
         loadBaseButtonTheme;
     }
 
@@ -113,18 +113,18 @@ class BaseButton : BaseBiswitch
     {
         super.create;
 
-        onPointerUp ~= (ref e) {
+        // onPointerUp ~= (ref e) {
 
-            if (isDisabled)
-            {
-                return;
-            }
+        //     if (isDisabled)
+        //     {
+        //         return;
+        //     }
 
-            if (isLongPressButton && isOn)
-            {
-                isOn = false;
-            }
-        };
+        //     if (isLongPressButton && isOn)
+        //     {
+        //         isOn = false;
+        //     }
+        // };
 
         if (isCancel)
         {
@@ -233,6 +233,22 @@ class BaseButton : BaseBiswitch
                 runActionListeners(e);
             }
             toggle;
+        };
+    }
+
+    override void delegate(ref ActionEvent e) newActionEffectEndBehaviour()
+    {
+        return (ref e) {
+
+            if (isDisabled)
+            {
+                return;
+            }
+
+            if (isLongPressButton && isOn)
+            {
+                isOn = false;
+            }
         };
     }
 

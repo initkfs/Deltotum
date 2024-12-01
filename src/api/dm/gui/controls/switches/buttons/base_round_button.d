@@ -51,7 +51,7 @@ class BaseRoundButton : BaseButton
 
     override void loadTheme()
     {
-        loadLabeledTheme;
+        super.loadTheme;
         loadBaseRoundButtonTheme;
     }
 

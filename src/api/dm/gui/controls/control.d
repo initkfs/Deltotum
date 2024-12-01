@@ -74,16 +74,18 @@ class Control : GuiComponent
     bool isConsumeEventIfBackground = true;
     bool isConsumeEventAfterChildren;
 
+    bool isThrowInvalidAnimationTime = true;
+
     Sprite delegate(Sprite) onBackgroundCreate;
     void delegate(Sprite) onBackgroundCreated;
 
-    bool isCreateHover;
+    bool isCreateHoverEffect;
     Sprite delegate(Sprite) onHoverEffectCreate;
     void delegate(Sprite) onHoverEffectCreated;
 
     size_t hoverAnimationDelayMs;
 
-    bool isCreateHoverAnimation;
+    bool isCreateHoverEffectAnimation;
     Tween delegate(Tween) onHoverAnimationCreate;
     void delegate(Tween) onHoverAnimationCreated;
 
@@ -132,6 +134,7 @@ class Control : GuiComponent
     {
         super.initialize;
 
+        initTheme;
         loadTheme;
 
         if (isBackground || isBorder)
@@ -158,7 +161,7 @@ class Control : GuiComponent
 
         if (!hoverEffectStartBehaviour)
         {
-            auto newBehaviour = newHoverEffectEnableBehaviour;
+            auto newBehaviour = newHoverEffectStartBehaviour;
             if (newBehaviour)
             {
                 hoverEffectStartBehaviour = newBehaviour;
@@ -167,7 +170,7 @@ class Control : GuiComponent
 
         if (!hoverEffectEndBehaviour)
         {
-            auto newBehaviour = hoverEffectEndBehaviour = newHoverEffectDisableBehaviour;
+            auto newBehaviour = newHoverEffectEndBehaviour;
             if (newBehaviour)
             {
                 hoverEffectEndBehaviour = newBehaviour;
@@ -193,11 +196,16 @@ class Control : GuiComponent
         }
     }
 
+    //initTheme and loadTheme can be combined, but animation duration checks throw errors. It is very, very easy to make a mistake when overriding loadTheme() by a child
+    void initTheme()
+    {
+        loadTooltipTheme;
+        loadAnimationTheme;
+    }
+
     void loadTheme()
     {
         loadLayoutTheme;
-        loadTooltipTheme;
-        loadAnimationTheme;
     }
 
     void loadLayoutTheme()
@@ -226,12 +234,12 @@ class Control : GuiComponent
 
     void loadAnimationTheme()
     {
-        if (isCreateActionEffectAnimation && actionEffectAnimationDelayMs == 0)
+        if (actionEffectAnimationDelayMs == 0)
         {
             actionEffectAnimationDelayMs = theme.actionEffectAnimationDelayMs;
         }
 
-        if (isCreateHoverAnimation && hoverAnimationDelayMs == 0)
+        if (hoverAnimationDelayMs == 0)
         {
             hoverAnimationDelayMs = theme.hoverAnimationDelayMs;
         }
@@ -378,7 +386,7 @@ class Control : GuiComponent
 
     void createInteractiveEffects()
     {
-        if (!_hoverEffect && isCreateHover)
+        if (!_hoverEffect && isCreateHoverEffect)
         {
             auto newHover = newHoverEffect(width, height);
             assert(newHover);
@@ -397,7 +405,7 @@ class Control : GuiComponent
             }
         }
 
-        if (!_hoverEffectAnimation && isCreateHoverAnimation)
+        if (!_hoverEffectAnimation && isCreateHoverEffectAnimation)
         {
             auto newHoverAnim = newHoverAnimation();
             assert(newHoverAnim);
@@ -584,6 +592,7 @@ class Control : GuiComponent
         assert(_hoverEffect, "Hover effect is null");
 
         auto anim = new OpacityTween(hoverAnimationDelayMs.to!int);
+        anim.isThrowInvalidTime = isThrowInvalidAnimationTime;
         anim.id = idHoverAnimation;
         anim.addTarget(_hoverEffect);
         anim.isLayoutManaged = false;
@@ -599,8 +608,6 @@ class Control : GuiComponent
     void delegate() newOnStopHoverAnimation()
     {
         return () {
-            assert(_hoverEffect);
-
             if (_hoverEffect && _hoverEffectAnimation)
             {
                 if (_hoverEffectAnimation.isReverse)
@@ -611,7 +618,7 @@ class Control : GuiComponent
         };
     }
 
-    void delegate() newHoverEffectEnableBehaviour()
+    void delegate() newHoverEffectStartBehaviour()
     {
         return () {
             if (_hoverEffect && !_hoverEffect.isVisible)
@@ -625,11 +632,12 @@ class Control : GuiComponent
                     _hoverEffect.opacity = 0;
                     _hoverEffectAnimation.run;
                 }
+
             }
         };
     }
 
-    void delegate() newHoverEffectDisableBehaviour()
+    void delegate() newHoverEffectEndBehaviour()
     {
         return () {
             if (_hoverEffect && _hoverEffect.isVisible)
@@ -694,6 +702,8 @@ class Control : GuiComponent
 
         auto actionEffectAnimation = new OpacityTween(actionEffectAnimationDelayMs.to!int);
         actionEffectAnimation.id = idActionAnimation;
+
+        actionEffectAnimation.isThrowInvalidTime = isThrowInvalidAnimationTime;
 
         assert(_actionEffect, "Action effect must not be null");
         actionEffectAnimation.addTarget(_actionEffect);

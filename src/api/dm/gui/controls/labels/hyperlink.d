@@ -28,8 +28,8 @@ class Hyperlink : Labeled
         layout = new VLayout;
         layout.isAutoResize = true;
         isBorder = false;
-        isCreateHover = false;
-        isCreateHoverAnimation = false;
+        isCreateHoverEffect = false;
+        isCreateHoverEffectAnimation = false;
         isCreateActionEffect = false;
         isCreateActionEffectAnimation = false;
     }

@@ -33,6 +33,8 @@ abstract class Tween : Sprite
     double frameRateHz = 0;
     double timeMs = 0;
 
+    bool isThrowInvalidTime;
+
     protected
     {
         double currentFrameCount = 0;
@@ -89,10 +91,16 @@ abstract class Tween : Sprite
 
     override void run()
     {
+        if (isThrowInvalidTime && timeMs == 0)
+        {
+            throw new Exception("Animation duration is zero.");
+        }
+
         if (isPaused)
         {
             state = prevState;
-            if(isReverse && state == TweenState.direct){
+            if (isReverse && state == TweenState.direct)
+            {
                 state = TweenState.back;
             }
 
@@ -312,7 +320,7 @@ abstract class Tween : Sprite
         }
     }
 
-    import api.core.utils.arrays: drop;
+    import api.core.utils.arrays : drop;
 
     bool removeOnRun(void delegate() dg) => drop(onRun, dg);
     bool removeOnStop(void delegate() dg) => drop(onStop, dg);

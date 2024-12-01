@@ -20,8 +20,8 @@ class Badge : Labeled
         import api.dm.kit.sprites.layouts.managed_layout : ManagedLayout;
 
         layout.isAutoResize = true;
-        isCreateHover = false;
-        isCreateHoverAnimation = false;
+        isCreateHoverEffect = false;
+        isCreateHoverEffectAnimation = false;
         isCreateActionEffect = false;
         isCreateActionEffectAnimation = false;
 
