@@ -2,7 +2,7 @@ module api.dm.kit.sprites.sprites2d.tweens.targets.target_tween;
 
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites.sprites2d.tweens.curves.interpolator : Interpolator;
-import api.dm.kit.sprites.sprites2d.tweens.min_max_tween : MinMaxTween;
+import api.dm.kit.sprites.sprites2d.tweens.min_max_tween2d : MinMaxTween2d;
 
 import api.math.geom2.vec2 : Vec2d;
 
@@ -11,7 +11,7 @@ import std.traits : isIntegral, isFloatingPoint;
 /**
  * Authors: initkfs
  */
-class TargetTween(V, Target) : MinMaxTween!V
+class TargetTween(V, Target) : MinMaxTween2d!V
 {
 
     protected

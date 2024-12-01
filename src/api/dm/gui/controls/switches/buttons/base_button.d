@@ -8,7 +8,7 @@ import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import api.dm.kit.sprites.sprites2d.shapes.rectangle : Rectangle;
 import api.dm.gui.events.action_event : ActionEvent;
 import api.dm.gui.controls.texts.text : Text;
-import api.dm.kit.sprites.sprites2d.tweens : Tween;
+import api.dm.kit.sprites.sprites2d.tweens : Tween2d;
 
 import std.traits : isSomeString;
 
@@ -134,7 +134,7 @@ class BaseButton : BaseBiswitch
 
     }
 
-    override Tween newActionEffectAnimation()
+    override Tween2d newActionEffectAnimation()
     {
         auto anim = super.newActionEffectAnimation;
         if (!isFixedButton && !isLongPressButton)

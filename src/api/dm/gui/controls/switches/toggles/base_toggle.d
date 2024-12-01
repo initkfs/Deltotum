@@ -7,8 +7,8 @@ import api.dm.kit.sprites.sprites2d.shapes.shape2d : Shape2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites.sprites2d.shapes.rectangle : Rectangle;
 import api.dm.gui.events.action_event : ActionEvent;
-import api.dm.kit.sprites.sprites2d.tweens.min_max_tween : MinMaxTween;
-import api.dm.kit.sprites.sprites2d.tweens.tween : Tween;
+import api.dm.kit.sprites.sprites2d.tweens.min_max_tween2d : MinMaxTween2d;
+import api.dm.kit.sprites.sprites2d.tweens.tween2d : Tween2d;
 import api.dm.kit.sprites.sprites2d.tweens.targets.value_tween : ValueTween;
 import api.dm.kit.sprites.sprites2d.tweens.targets.props.opacity_tween : OpacityTween;
 import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
@@ -42,7 +42,7 @@ class BaseToggle : BaseBiswitch
     Sprite2d handleEffect;
     bool isCreateHandleEffect = true;
 
-    MinMaxTween!Vec2d handleEffectAnimation;
+    MinMaxTween2d!Vec2d handleEffectAnimation;
     bool isCreateHandleEffectAnimation = true;
 
     bool isCreatePointerListeners = true;
@@ -175,7 +175,7 @@ class BaseToggle : BaseBiswitch
         return shape;
     }
 
-    MinMaxTween!Vec2d newHandleEffectAnimation()
+    MinMaxTween2d!Vec2d newHandleEffectAnimation()
     {
         import api.dm.kit.sprites.sprites2d.tweens.targets.motions.linear_motion : LinearMotion;
         import api.dm.kit.sprites.sprites2d.tweens.curves.uni_interpolator : UniInterpolator;

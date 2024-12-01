@@ -7,8 +7,8 @@ import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.controls.texts.text : Text;
 import api.math.geom2.rect2 : Rect2d;
 import api.dm.kit.sprites.sprites2d.tweens.targets.props.opacity_tween : OpacityTween;
-import api.dm.kit.sprites.sprites2d.tweens.pause_tween : PauseTween;
-import api.dm.kit.sprites.sprites2d.tweens.tween : Tween;
+import api.dm.kit.sprites.sprites2d.tweens.pause_tween2d : PauseTween2d;
+import api.dm.kit.sprites.sprites2d.tweens.tween2d : Tween2d;
 
 class Popup : VBox
 {
@@ -16,9 +16,9 @@ class Popup : VBox
 
     void delegate() onClose;
 
-    Tween showAnimation;
-    Tween hideAnimation;
-    PauseTween hideDelayAnimation;
+    Tween2d showAnimation;
+    Tween2d hideAnimation;
+    PauseTween2d hideDelayAnimation;
 
     bool isAutoClose;
 
@@ -65,7 +65,7 @@ class Popup : VBox
 
         //lazy
         assert(_autoCloseDelayMS > 0);
-        hideDelayAnimation = new PauseTween(_autoCloseDelayMS);
+        hideDelayAnimation = new PauseTween2d(_autoCloseDelayMS);
         addCreate(hideDelayAnimation);
 
         hideDelayAnimation.onEnd ~= () { close; };

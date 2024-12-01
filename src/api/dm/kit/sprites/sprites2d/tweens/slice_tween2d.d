@@ -1,6 +1,6 @@
-module api.dm.kit.sprites.sprites2d.tweens.slice_tween;
+module api.dm.kit.sprites.sprites2d.tweens.slice_tween2d;
 
-import api.dm.kit.sprites.sprites2d.tweens.min_max_tween : MinMaxTween;
+import api.dm.kit.sprites.sprites2d.tweens.min_max_tween2d : MinMaxTween2d;
 import api.dm.kit.sprites.sprites2d.tweens.curves.interpolator : Interpolator;
 import api.math.geom2.vec2 : Vec2d;
 
@@ -11,7 +11,7 @@ import std.traits : isIntegral, isFloatingPoint;
 /**
  * Authors: initkfs
  */
-class SliceTween(T) : MinMaxTween!double
+class SliceTween2d(T) : MinMaxTween2d!double
 {
     T[] range;
 

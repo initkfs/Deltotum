@@ -15,7 +15,7 @@ import api.math.insets : Insets;
 import api.dm.gui.controls.popups.base_popup : BasePopup;
 import api.dm.gui.themes.theme : Theme;
 
-import api.dm.kit.sprites.sprites2d.tweens.tween : Tween;
+import api.dm.kit.sprites.sprites2d.tweens.tween2d : Tween2d;
 import api.dm.kit.sprites.sprites2d.tweens.targets.props.opacity_tween : OpacityTween;
 
 import std.typecons : Nullable;
@@ -45,10 +45,10 @@ class Control : GuiComponent
     {
         Sprite2d _background;
         Sprite2d _hoverEffect;
-        Tween _hoverEffectAnimation;
+        Tween2d _hoverEffectAnimation;
 
         Sprite2d _actionEffect;
-        Tween _actionEffectAnimation;
+        Tween2d _actionEffectAnimation;
 
         bool isTooltipDelay;
         bool isTooltipListeners;
@@ -89,8 +89,8 @@ class Control : GuiComponent
     size_t hoverAnimationDelayMs;
 
     bool isCreateHoverEffectAnimation;
-    Tween delegate(Tween) onHoverAnimationCreate;
-    void delegate(Tween) onHoverAnimationCreated;
+    Tween2d delegate(Tween2d) onHoverAnimationCreate;
+    void delegate(Tween2d) onHoverAnimationCreated;
 
     void delegate() hoverEffectStartBehaviour;
     void delegate() hoverEffectEndBehaviour;
@@ -106,9 +106,9 @@ class Control : GuiComponent
     size_t actionEffectAnimationDelayMs;
 
     bool isCreateActionEffectAnimation;
-    Tween delegate(Sprite2d) actionEffectAnimationFactory;
-    Tween delegate(Tween) onActionEffectAnimationCreate;
-    void delegate(Tween) onActionEffectAnimationCreated;
+    Tween2d delegate(Sprite2d) actionEffectAnimationFactory;
+    Tween2d delegate(Tween2d) onActionEffectAnimationCreate;
+    void delegate(Tween2d) onActionEffectAnimationCreated;
 
     bool isCreateInteractiveListeners;
 
@@ -629,7 +629,7 @@ class Control : GuiComponent
         return newHover;
     }
 
-    Tween newHoverAnimation()
+    Tween2d newHoverAnimation()
     {
         import std.conv : to;
 
@@ -740,7 +740,7 @@ class Control : GuiComponent
         return effect;
     }
 
-    Tween newActionEffectAnimation()
+    Tween2d newActionEffectAnimation()
     {
         import std.conv : to;
 

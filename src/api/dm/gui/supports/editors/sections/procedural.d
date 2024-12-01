@@ -9,7 +9,7 @@ import api.math.geom2.rect2 : Rect2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.kit.sprites.sprites2d.tweens.pause_tween : PauseTween;
+import api.dm.kit.sprites.sprites2d.tweens.pause_tween2d : PauseTween2d;
 import api.math.random : Random;
 import api.dm.addon.sprites.textures.vectors.tessellations.penrose_tiling : PenroseTiling;
 import api.dm.gui.containers.hbox : HBox;
@@ -63,7 +63,7 @@ class Procedural : Control
         randomTiling(t1);
         root1.addCreate(t1);
 
-        auto tween = new PauseTween(600);
+        auto tween = new PauseTween2d(600);
         tween.isInfinite = true;
         addCreate(tween);
         tween.onEnd ~= () { randomTiling(t1); t1.recreate; };
@@ -117,7 +117,7 @@ class Procedural : Control
 
         import api.dm.addon.sprites.textures.vectors.noises.perlin : Perlin;
         import api.dm.addon.sprites.textures.vectors.noises.open_simplex : OpenSimplex;
-        import api.dm.kit.sprites.sprites2d.tweens.pause_tween : PauseTween;
+        import api.dm.kit.sprites.sprites2d.tweens.pause_tween2d : PauseTween2d;
         import api.math.random : Random;
 
         // enum w = 100;
