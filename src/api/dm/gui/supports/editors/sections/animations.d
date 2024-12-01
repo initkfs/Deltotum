@@ -9,9 +9,9 @@ import api.math.geom2.vec2 : Vec2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
 import api.dm.kit.tweens.curves.uni_interpolator : UniInterpolator;
-import api.dm.kit.sprites.sprites2d.tweens2.targets.motions.linear_motion : LinearMotion;
-import api.dm.kit.sprites.sprites2d.tweens2.targets.value_tween : ValueTween;
-import api.dm.kit.sprites.sprites2d.tweens2.targets.props.angle_tween : AngleTween;
+import api.dm.kit.sprites.sprites2d.tweens.targets.motions.linear_motion2d : LinearMotion2d;
+import api.dm.kit.sprites.sprites2d.tweens.targets.value_tween2d : ValueTween2d;
+import api.dm.kit.sprites.sprites2d.tweens.targets.props.angle_tween2d : AngleTween2d;
 
 import std.stdio;
 import std.conv : to;
@@ -26,8 +26,8 @@ class Animations : Control
         double function(double)[dstring] animationsMap;
         UniInterpolator interpolator;
 
-        LinearMotion motionTween;
-        AngleTween angleTween;
+        LinearMotion2d motionTween;
+        AngleTween2d angleTween;
     }
 
     this()
@@ -80,7 +80,7 @@ class Animations : Control
         rect.isLayoutManaged = false;
         addCreate(rect);
 
-        motionTween = new LinearMotion(startPos, endPos, 1000, interpolator);
+        motionTween = new LinearMotion2d(startPos, endPos, 1000, interpolator);
         motionTween.addTarget(rect);
         addCreate(motionTween);
         motionTween.isInfinite = true;

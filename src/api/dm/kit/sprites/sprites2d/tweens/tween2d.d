@@ -1,4 +1,4 @@
-module api.dm.kit.sprites.sprites2d.tweens2.tween2d;
+module api.dm.kit.sprites.sprites2d.tweens.tween2d;
 
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.tweens.tween : Tween, TweenState;

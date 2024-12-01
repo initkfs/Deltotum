@@ -1,6 +1,6 @@
-module api.dm.kit.sprites.sprites2d.tweens2.pause_tween2d;
+module api.dm.kit.sprites.sprites2d.tweens.pause_tween2d;
 
-import api.dm.kit.sprites.sprites2d.tweens2.min_max_tween2d: MinMaxTween2d;
+import api.dm.kit.sprites.sprites2d.tweens.min_max_tween2d: MinMaxTween2d;
 import api.dm.kit.tweens.curves.interpolator : Interpolator;
 
 /**

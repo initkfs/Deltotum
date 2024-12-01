@@ -3,7 +3,7 @@ module api.dm.gui.controls.expanders.expander;
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.containers.stack_box : StackBox;
-import api.dm.kit.sprites.sprites2d.tweens2.min_max_tween2d : MinMaxTween2d;
+import api.dm.kit.sprites.sprites2d.tweens.min_max_tween2d : MinMaxTween2d;
 
 enum ExpanderPosition
 {

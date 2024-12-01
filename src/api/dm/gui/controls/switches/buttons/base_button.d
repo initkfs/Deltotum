@@ -8,7 +8,7 @@ import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import api.dm.kit.sprites.sprites2d.shapes.rectangle : Rectangle;
 import api.dm.gui.events.action_event : ActionEvent;
 import api.dm.gui.controls.texts.text : Text;
-import api.dm.kit.sprites.sprites2d.tweens2.tween2d : Tween2d;
+import api.dm.kit.sprites.sprites2d.tweens.tween2d : Tween2d;
 
 import std.traits : isSomeString;
 

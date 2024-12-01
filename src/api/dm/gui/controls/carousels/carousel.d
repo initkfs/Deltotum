@@ -6,8 +6,8 @@ import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
 import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
 import api.dm.gui.containers.container : Container;
-import api.dm.kit.sprites.sprites2d.tweens2.tween2d : Tween2d;
-import api.dm.kit.sprites.sprites2d.tweens2.min_max_tween2d : MinMaxTween2d;
+import api.dm.kit.sprites.sprites2d.tweens.tween2d : Tween2d;
+import api.dm.kit.sprites.sprites2d.tweens.min_max_tween2d : MinMaxTween2d;
 import api.math.geom2.vec2 : Vec2d;
 
 import std.conv : to;

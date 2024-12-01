@@ -5,8 +5,8 @@ import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
 import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
 import api.dm.gui.containers.stack_box : StackBox;
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.sprites.sprites2d.tweens2.targets.motions.linear_motion : LinearMotion;
-import api.dm.kit.sprites.sprites2d.tweens2.tween2d : Tween2d;
+import api.dm.kit.sprites.sprites2d.tweens.targets.motions.linear_motion2d : LinearMotion2d;
+import api.dm.kit.sprites.sprites2d.tweens.tween2d : Tween2d;
 import api.math.geom2.vec2 : Vec2d;
 import Math = api.math;
 import api.math.numericals.interp;
@@ -29,7 +29,7 @@ class Slider : Container
         SliderPos position;
         Sprite2d _handle;
         StackBox _content;
-        LinearMotion motionAnimation;
+        LinearMotion2d motionAnimation;
         bool _expanded;
     }
 
@@ -70,7 +70,7 @@ class Slider : Container
         _content = new StackBox;
         addCreate(_content);
 
-        motionAnimation = new LinearMotion(Vec2d(0, 0), Vec2d(0, 0));
+        motionAnimation = new LinearMotion2d(Vec2d(0, 0), Vec2d(0, 0));
         addCreate(motionAnimation);
         motionAnimation.addTarget(this);
 

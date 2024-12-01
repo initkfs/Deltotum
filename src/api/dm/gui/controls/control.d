@@ -15,8 +15,8 @@ import api.math.insets : Insets;
 import api.dm.gui.controls.popups.base_popup : BasePopup;
 import api.dm.gui.themes.theme : Theme;
 
-import api.dm.kit.sprites.sprites2d.tweens2.tween2d : Tween2d;
-import api.dm.kit.sprites.sprites2d.tweens2.targets.props.opacity_tween : OpacityTween;
+import api.dm.kit.sprites.sprites2d.tweens.tween2d : Tween2d;
+import api.dm.kit.sprites.sprites2d.tweens.targets.props.opacity_tween2d : OpacityTween2d;
 
 import std.typecons : Nullable;
 
@@ -635,7 +635,7 @@ class Control : GuiComponent
 
         assert(_hoverEffect, "Hover effect is null");
 
-        auto anim = new OpacityTween(hoverAnimationDelayMs.to!int);
+        auto anim = new OpacityTween2d(hoverAnimationDelayMs.to!int);
         anim.isThrowInvalidTime = isThrowInvalidAnimationTime;
         anim.id = idHoverAnimation;
         anim.addTarget(_hoverEffect);
@@ -744,7 +744,7 @@ class Control : GuiComponent
     {
         import std.conv : to;
 
-        auto actionEffectAnimation = new OpacityTween(actionEffectAnimationDelayMs.to!int);
+        auto actionEffectAnimation = new OpacityTween2d(actionEffectAnimationDelayMs.to!int);
         actionEffectAnimation.id = idActionAnimation;
 
         actionEffectAnimation.isThrowInvalidTime = isThrowInvalidAnimationTime;
