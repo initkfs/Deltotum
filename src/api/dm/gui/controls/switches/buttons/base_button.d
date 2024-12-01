@@ -32,12 +32,6 @@ class BaseButton : BaseBiswitch
     enum defaultButtonText = "Button";
     void delegate(ref ActionEvent)[] onAction;
 
-    bool isCancel;
-    void delegate()[] onCancel;
-
-    bool isDefault;
-    void delegate()[] onDefault;
-
     bool isFixedButton;
     bool isLongPressButton;
 
@@ -112,59 +106,6 @@ class BaseButton : BaseBiswitch
     override void create()
     {
         super.create;
-
-        // onPointerUp ~= (ref e) {
-
-        //     if (isDisabled)
-        //     {
-        //         return;
-        //     }
-
-        //     if (isLongPressButton && isOn)
-        //     {
-        //         isOn = false;
-        //     }
-        // };
-
-        if (isCancel)
-        {
-            import api.dm.com.inputs.com_keyboard : ComKeyName;
-
-            onKeyDown ~= (ref e) {
-                if (isDisabled)
-                {
-                    return;
-                }
-
-                if (isFocus && e.keyName == ComKeyName.ESCAPE)
-                {
-                    foreach (dg; onCancel)
-                    {
-                        dg();
-                    }
-                }
-            };
-        }
-
-        if (isDefault)
-        {
-            import api.dm.com.inputs.com_keyboard : ComKeyName;
-
-            onKeyDown ~= (ref e) {
-                if (isDisabled)
-                {
-                    return;
-                }
-
-                if (isFocus && e.keyName == ComKeyName.RETURN)
-                {
-                    foreach (dg; onDefault)
-                    {
-                        dg();
-                    }
-                }
-            };
-        }
     }
 
     override void delegate() newOnStopActionEffectAnimation()
@@ -363,8 +304,6 @@ class BaseButton : BaseBiswitch
         super.dispose;
 
         onAction = null;
-        onCancel = null;
-        onDefault = null;
     }
 
 }
