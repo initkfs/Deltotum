@@ -1,10 +1,10 @@
 module api.dm.gui.controls.magnifiers.magnifier;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.sprite : Sprite;
-import api.dm.kit.sprites.textures.texture : Texture;
-import api.dm.kit.sprites.layouts.layout : Layout;
-import api.dm.kit.sprites.layouts.hlayout : HLayout;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites.sprites2d.layouts.layout2d : Layout2d;
+import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
 import api.dm.gui.controls.texts.text : Text;
 import api.math.geom2.rect2 : Rect2d;
 import Math = api.dm.math;
@@ -23,8 +23,8 @@ class Magnifier : Control
     protected
     {
         //TODO container
-        Texture magnifier;
-        Sprite _original;
+        Texture2d magnifier;
+        Sprite2d _original;
     }
 
     Source source = Source.screen;
@@ -35,7 +35,7 @@ class Magnifier : Control
 
     this()
     {
-        import api.dm.kit.sprites.layouts.center_layout : CenterLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
 
         this.layout = new CenterLayout;
         layout.isAutoResize = true;
@@ -87,9 +87,9 @@ class Magnifier : Control
                         magnifier.unlock;
                         break;
                     case texture:
-                        import api.dm.kit.sprites.textures.texture : Texture;
+                        import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 
-                        Texture originalTexture = cast(Texture) _original;
+                        Texture2d originalTexture = cast(Texture2d) _original;
                         assert(originalTexture, "Source is not a texture");
                         magnifier.setRendererTarget;
                         textureBounds = Rect2d(originalBoundsX, originalBoundsY, magnifier.width, magnifier
@@ -111,7 +111,7 @@ class Magnifier : Control
         {
             super.create;
 
-            magnifier = new Texture(defaultWidth * scale, defaultHeight * scale);
+            magnifier = new Texture2d(defaultWidth * scale, defaultHeight * scale);
             build(magnifier);
             magnifier.isLayoutManaged = false;
             magnifier.isVisible = false;
@@ -128,7 +128,7 @@ class Magnifier : Control
             addCreate(magnifier);
         }
 
-        void original(Sprite sprite)
+        void original(Sprite2d sprite)
         {
             assert(magnifier, "Magnifier not created");
             _original = sprite;

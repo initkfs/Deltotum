@@ -3,7 +3,7 @@ module api.dm.gui.interacts.dialogs.gui_dialog_manager;
 import api.dm.gui.interacts.dialogs.gui_dialog : GuiDialog;
 import api.dm.kit.interacts.dialogs.dialog_manager : DialogManager;
 import api.dm.kit.components.graphics_component : GraphicsComponent;
-import api.dm.kit.scenes.scene : Scene;
+import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.kit.windows.window : Window;
 import api.math.geom2.rect2 : Rect2d;
 import api.dm.gui.containers.container : Container;

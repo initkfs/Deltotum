@@ -36,7 +36,7 @@ class RegulateTextField : Control
 
     this(double fieldSpacing = 5)
     {
-        import api.dm.kit.sprites.layouts.hlayout : HLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
 
         layout = new HLayout(fieldSpacing);
         layout.isAutoResize = true;

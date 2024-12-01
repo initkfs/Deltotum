@@ -8,7 +8,7 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.vec2 : Vec2d, Vec2i;
 import math = api.dm.math;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.kit.sprites.textures.texture : Texture;
+import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 
 import Math = api.dm.math;
 

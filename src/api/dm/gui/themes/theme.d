@@ -5,9 +5,9 @@ import api.dm.kit.assets.fonts.font : Font;
 import api.math.insets : Insets;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.themes.icons.icon_pack : IconPack;
-import api.dm.kit.sprites.images.image : Image;
-import api.dm.kit.sprites.shapes.shape : Shape;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.images.image : Image;
+import api.dm.kit.sprites.sprites2d.shapes.shape2d : Shape2d;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.core.configs.uda : ConfigKey;
 
 import std.typecons : Nullable;
@@ -161,23 +161,23 @@ class Theme
     }
 
     //TODO @safe
-    Sprite background(double width, double height, double angle, scope GraphicStyle* parentStyle = null)
+    Sprite2d background(double width, double height, double angle, scope GraphicStyle* parentStyle = null)
     {
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
         GraphicStyle backgroundStyle = parentStyle ? *parentStyle : GraphicStyle(
             lineThickness, colorAccent, true, colorControlBackground);
 
-        Sprite newBackground;
+        Sprite2d newBackground;
         if (isUseVectorGraphics)
         {
-            import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
             newBackground = new VConvexPolygon(width, height, backgroundStyle, controlCornersBevel);
         }
         else
         {
-            import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
+            import api.dm.kit.sprites.sprites2d.shapes.convex_polygon : ConvexPolygon;
 
             backgroundStyle.lineWidth = 1.0;
 
@@ -189,18 +189,18 @@ class Theme
         return newBackground;
     }
 
-    Sprite shape(double width, double height, double angle, GraphicStyle style)
+    Sprite2d shape(double width, double height, double angle, GraphicStyle style)
     {
-        Sprite newShape;
+        Sprite2d newShape;
         if (isUseVectorGraphics)
         {
-            import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
             newShape = new VConvexPolygon(width, height, style, controlCornersBevel);
         }
         else
         {
-            import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
+            import api.dm.kit.sprites.sprites2d.shapes.convex_polygon : ConvexPolygon;
 
             newShape = new ConvexPolygon(width, height, style, controlCornersBevel);
         }
@@ -209,46 +209,46 @@ class Theme
         return newShape;
     }
 
-    Sprite roundShape(GraphicStyle style) => roundShape(roundShapeDiameter, style);
+    Sprite2d roundShape(GraphicStyle style) => roundShape(roundShapeDiameter, style);
 
-    Sprite roundShape(double diameter, GraphicStyle style)
+    Sprite2d roundShape(double diameter, GraphicStyle style)
     {
         double radius = diameter / 2;
 
-        Sprite shape;
+        Sprite2d shape;
         if (isUseVectorGraphics)
         {
-            import api.dm.kit.sprites.textures.vectors.shapes.vcircle : VCircle;
+            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vcircle : VCircle;
 
             shape = new VCircle(radius, style);
         }
         else
         {
-            import api.dm.kit.sprites.shapes.circle : Circle;
+            import api.dm.kit.sprites.sprites2d.shapes.circle : Circle;
 
             shape = new Circle(radius, style);
         }
         return shape;
     }
 
-    Sprite regularPolyShape(double angle, GraphicStyle style) => regularPolyShape(
+    Sprite2d regularPolyShape(double angle, GraphicStyle style) => regularPolyShape(
         regularPolyDiameter, regularPolySides, angle, style);
 
-    Sprite regularPolyShape(double size, size_t sides, double angle, GraphicStyle style)
+    Sprite2d regularPolyShape(double size, size_t sides, double angle, GraphicStyle style)
     {
-        Sprite shape;
+        Sprite2d shape;
 
         import Math = api.math;
 
         if (isUseVectorGraphics)
         {
-            import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
 
             shape = new VRegularPolygon(size, style, sides);
         }
         else
         {
-            import api.dm.kit.sprites.shapes.reqular_polygon : RegularPolygon;
+            import api.dm.kit.sprites.sprites2d.shapes.reqular_polygon : RegularPolygon;
 
             shape = new RegularPolygon(size, style, sides);
         }

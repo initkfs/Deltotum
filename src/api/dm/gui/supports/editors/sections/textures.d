@@ -1,7 +1,7 @@
 module api.dm.gui.supports.editors.sections.textures;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.flip : Flip;
 
@@ -43,7 +43,7 @@ class Textures : Control
         root.addCreate(container1);
         container1.enableInsets;
 
-        import api.dm.kit.sprites.textures.rgba_texture : RgbaTexture;
+        import api.dm.kit.sprites.sprites2d.textures.rgba_texture : RgbaTexture;
 
         class TestRgbaTexture : RgbaTexture
         {
@@ -125,7 +125,7 @@ class Textures : Control
         root.addCreate(vContainer);
 
         if(capGraphics.isVectorGraphics){
-            import api.dm.kit.sprites.textures.vectors.shapes.vcircle: VCircle;
+            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vcircle: VCircle;
 
             auto style = GraphicStyle(3.0, RGBA.red, true, RGBA.green);
 
@@ -134,21 +134,21 @@ class Textures : Control
             auto vCircle = new VCircle(size / 2, style);
             vContainer.addCreate(vCircle);
 
-            import api.dm.kit.sprites.textures.vectors.shapes.vtriangle: VTriangle;
+            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vtriangle: VTriangle;
 
             auto vTrig = new VTriangle(size, size, style);
             vContainer.addCreate(vTrig);
 
-            import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon: VConvexPolygon;
+            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon: VConvexPolygon;
 
             auto vReg = new VConvexPolygon(size, size, style, 10);
             vContainer.addCreate(vReg);
 
-            import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
             auto vHex = new VRegularPolygon(size, style);
             vContainer.addCreate(vHex);
 
-            import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon_grid : VRegularPolygonGrid;
+            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vregular_polygon_grid : VRegularPolygonGrid;
             auto vHexGrid = new VRegularPolygonGrid(250, 250, 35, style);
             vContainer.addCreate(vHexGrid);
             

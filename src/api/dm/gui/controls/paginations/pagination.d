@@ -1,12 +1,12 @@
 module api.dm.gui.controls.paginations.pagination;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.switches.buttons.button: Button;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.containers.container : Container;
-import api.dm.kit.sprites.layouts.hlayout : HLayout;
-import api.dm.kit.sprites.layouts.vlayout : VLayout;
+import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
+import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
 
 import std.conv : to;
 
@@ -39,7 +39,7 @@ class Pagination : Control
     {
         this.numPages = numPages;
 
-        import api.dm.kit.sprites.layouts.hlayout : HLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
 
         this.layout = new VLayout(2);
         layout.isAlignX = true;

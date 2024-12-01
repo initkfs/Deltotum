@@ -44,7 +44,7 @@ class RadialScale : Control
         this.minAngleDeg = minAngleDeg;
         this.maxAngleDeg = maxAngleDeg;
 
-        import api.dm.kit.sprites.layouts.center_layout : CenterLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
 
         this.layout = new CenterLayout;
     }
@@ -53,9 +53,9 @@ class RadialScale : Control
     {
         super.create;
 
-        import api.dm.kit.sprites.textures.vectors.vector_texture : VectorTexture;
-        import api.dm.kit.sprites.textures.rgba_texture : RgbaTexture;
-        import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+        import api.dm.kit.sprites.sprites2d.textures.vectors.vector_texture : VectorTexture;
+        import api.dm.kit.sprites.sprites2d.textures.rgba_texture : RgbaTexture;
+        import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
         size_t ticksCount = ((Math.abs(maxValue - minValue)) / valueStep).to!size_t;
@@ -63,7 +63,7 @@ class RadialScale : Control
         const centerShapeW = width;
         const centerShapeH = height;
 
-        import api.dm.kit.sprites.textures.vectors.vector_texture: VectorTexture;
+        import api.dm.kit.sprites.sprites2d.textures.vectors.vector_texture: VectorTexture;
 
         auto centerShapeProto = new class VectorTexture
         {
@@ -162,7 +162,7 @@ class RadialScale : Control
 
         import api.dm.gui.controls.texts.text : Text;
         import api.dm.kit.assets.fonts.font_size : FontSize;
-        import api.dm.kit.sprites.textures.texture : Texture;
+        import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 
         import std.conv: to;
 

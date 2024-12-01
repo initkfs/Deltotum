@@ -1,13 +1,13 @@
 module api.dm.gui.controls.carousels.carousel;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.switches.buttons.button : Button;
-import api.dm.kit.sprites.layouts.hlayout : HLayout;
-import api.dm.kit.sprites.layouts.vlayout : VLayout;
+import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
+import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
 import api.dm.gui.containers.container : Container;
-import api.dm.kit.sprites.tweens.tween : Tween;
-import api.dm.kit.sprites.tweens.min_max_tween : MinMaxTween;
+import api.dm.kit.sprites.sprites2d.tweens.tween : Tween;
+import api.dm.kit.sprites.sprites2d.tweens.min_max_tween : MinMaxTween;
 import api.math.geom2.vec2 : Vec2d;
 
 import std.conv : to;
@@ -27,7 +27,7 @@ class Carousel : Control
 {
     protected
     {
-        Sprite[] _items;
+        Sprite2d[] _items;
         size_t currentItemIndex;
         Container itemContainer;
 
@@ -35,13 +35,13 @@ class Carousel : Control
 
         CarouselDirection direction = CarouselDirection.fromRight;
 
-        Sprite current;
-        Sprite prev;
+        Sprite2d current;
+        Sprite2d prev;
     }
 
     bool isInfinite = true;
 
-    this(Sprite[] newItems)
+    this(Sprite2d[] newItems)
     {
         this._items = newItems;
 
@@ -54,7 +54,7 @@ class Carousel : Control
     {
         super.create;
 
-        import api.dm.kit.sprites.tweens.curves.uni_interpolator : UniInterpolator;
+        import api.dm.kit.sprites.sprites2d.tweens.curves.uni_interpolator : UniInterpolator;
 
         animation = new MinMaxTween!double(0.0, 1.0, 500);
         animation.interpolator.interpolateMethod = &UniInterpolator.circIn;
@@ -110,7 +110,7 @@ class Carousel : Control
         double maxItemHeight = height;
         if (_items.length > 0)
         {
-            foreach (Sprite item; _items)
+            foreach (Sprite2d item; _items)
             {
                 if (item.isLayoutManaged)
                 {
@@ -234,7 +234,7 @@ class Carousel : Control
         animation.run;
     }
 
-    Sprite currentItem()
+    Sprite2d currentItem()
     {
         assert(_items.length > 0);
         return _items[currentItemIndex];

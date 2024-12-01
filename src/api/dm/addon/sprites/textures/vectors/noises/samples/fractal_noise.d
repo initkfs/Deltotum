@@ -1,6 +1,6 @@
 module api.dm.addon.sprites.textures.vectors.noises.samples.fractal_noise;
 
-import api.dm.kit.sprites.textures.texture : Texture;
+import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 import api.dm.addon.sprites.textures.vectors.noises.noise : Noise;
 import api.dm.addon.sprites.textures.vectors.noises.samples.sample_noise : SampleNoise;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -14,7 +14,7 @@ import Math = api.dm.math;
  * Ported from https://github.com/Scrawk/Procedural-Noise
  * Copyright (c) 2017 Justin Hawkins, under MIT license https://github.com/Scrawk/Procedural-Noise/blob/master/LICENSE
  */
-class FractalNoise : Texture
+class FractalNoise : Texture2d
 {
     int octaves;
     float frequency = 0;

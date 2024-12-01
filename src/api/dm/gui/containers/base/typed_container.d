@@ -1,7 +1,7 @@
 module api.dm.gui.containers.base.typed_container;
 
 import api.dm.gui.containers.container: Container;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 
 /**
  * Authors: initkfs

@@ -1,7 +1,7 @@
 module api.dm.gui.containers.container;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 
 /**
  * Authors: initkfs
@@ -82,9 +82,9 @@ class Container : Control
 unittest
 {
 
-    import api.dm.kit.sprites.sprite : Sprite;
+    import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 
-    auto sp1 = new Sprite;
+    auto sp1 = new Sprite2d;
     sp1.width = 100;
     sp1.height = 200;
 

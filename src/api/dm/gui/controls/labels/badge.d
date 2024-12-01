@@ -1,7 +1,7 @@
 module api.dm.gui.controls.labels.badge;
 
 import api.dm.gui.controls.labeled : Labeled;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.tooltips.popup : Popup;
 
 import std.conv : to;
@@ -17,7 +17,7 @@ class Badge : Labeled
         super(0, 0, text, iconName, graphicsGap, isCreateLayout);
         _labelText = text;
 
-        import api.dm.kit.sprites.layouts.managed_layout : ManagedLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.managed_layout : ManagedLayout;
 
         layout.isAutoResize = true;
         isCreateHoverEffect = false;

@@ -2,8 +2,8 @@ module api.dm.gui.containers.frame;
 
 import api.dm.gui.containers.container : Container;
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.layouts.vlayout : VLayout;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.texts.text : Text;
 
 /**
@@ -24,7 +24,7 @@ class Frame : Container
 
         isBorder = true;
 
-        import api.dm.kit.sprites.layouts.hlayout : HLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
 
         layout = new HLayout(spacing);
         layout.isAutoResize = true;

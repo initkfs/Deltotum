@@ -1,7 +1,7 @@
 module api.dm.gui.controls.switches.buttons.poly_button;
 
 import api.dm.gui.controls.switches.buttons.base_round_button : BaseRoundButton;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.events.action_event : ActionEvent;
 import api.dm.gui.controls.control : Control;
@@ -70,7 +70,7 @@ class PolyButton : BaseRoundButton
         _height = _diameter;
     }
 
-    protected override Sprite createShape(double w, double h, double angle, GraphicStyle style)
+    protected override Sprite2d createShape(double w, double h, double angle, GraphicStyle style)
     {
         import Math = api.math;
 

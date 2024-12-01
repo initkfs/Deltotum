@@ -1,6 +1,6 @@
 module api.dm.kit.windows.window;
 
-import api.dm.kit.scenes.scene : Scene;
+import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.kit.factories.factory_kit : FactoryKit;
 import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.dm.com.com_native_ptr : ComNativePtr;
@@ -22,14 +22,14 @@ class Window : GraphicsComponent
 {
     protected
     {
-        Scene[] _scenes;
+        Scene2d[] _scenes;
     }
 
     FactoryKit factory;
 
     private
     {
-        Scene _currentScene;
+        Scene2d _currentScene;
     }
 
     Window delegate(dstring, int, int, int, int, Window) childWindowProvider;
@@ -125,17 +125,17 @@ class Window : GraphicsComponent
         }
     }
 
-    Scene currentScene() @safe pure nothrow
+    Scene2d currentScene() @safe pure nothrow
     out (_currentScene; _currentScene !is null)
     {
         return _currentScene;
     }
 
-    void currentScene(Scene scene) @safe pure
+    void currentScene(Scene2d scene) @safe pure
     {
         import std.exception : enforce;
 
-        enforce(scene !is null, "Scene must not be null");
+        enforce(scene !is null, "Scene2d must not be null");
 
         foreach (currScene; _scenes)
         {
@@ -145,26 +145,26 @@ class Window : GraphicsComponent
                 return;
             }
         }
-        throw new Exception("Scene not found in scene list: " ~ scene.name);
+        throw new Exception("Scene2d not found in scene list: " ~ scene.name);
     }
 
     alias build = GraphicsComponent.build;
 
-    void build(Scene scene)
+    void build(Scene2d scene)
     {
         super.build(scene);
 
-        assert(factory, "Scene factories must not be null");
+        assert(factory, "Scene2d factories must not be null");
         scene.factory = factory;
     }
 
     alias create = GraphicsComponent.create;
 
-    void create(Scene scene)
+    void create(Scene2d scene)
     {
         import std.exception : enforce;
 
-        enforce(scene !is null, "Scene must not be null");
+        enforce(scene !is null, "Scene2d must not be null");
 
         if (!scene.isBuilt)
         {
@@ -179,27 +179,27 @@ class Window : GraphicsComponent
         assert(scene.isCreated);
     }
 
-    bool addCreate(Scene scene)
+    bool addCreate(Scene2d scene)
     {
         create(scene);
         return add(scene);
     }
 
-    bool add(Scene[] scenes...)
+    bool add(Scene2d[] scenes...)
     {
         bool isAdd = true;
-        foreach (Scene scene; scenes)
+        foreach (Scene2d scene; scenes)
         {
             isAdd &= add(scene);
         }
         return isAdd;
     }
 
-    bool add(Scene scene)
+    bool add(Scene2d scene)
     {
         import std.exception : enforce;
 
-        enforce(scene !is null, "Scene must not be null");
+        enforce(scene !is null, "Scene2d must not be null");
 
         foreach (sc; _scenes)
         {
@@ -225,7 +225,7 @@ class Window : GraphicsComponent
         return false;
     }
 
-    void change(Scene scene)
+    void change(Scene2d scene)
     {
         //TODO check in scenes
         import ConfigKeys = api.dm.kit.kit_config_keys;
@@ -242,7 +242,7 @@ class Window : GraphicsComponent
         setCurrent(scene);
     }
 
-    protected void setCurrent(Scene scene)
+    protected void setCurrent(Scene2d scene)
     {
         assert(scene);
 
@@ -356,7 +356,7 @@ class Window : GraphicsComponent
         if (isDestroyScenes)
         {
             logger.trace("Start dispose all scenes");
-            foreach (Scene scene; _scenes)
+            foreach (Scene2d scene; _scenes)
             {
                 const sceneName = scene.name;
                 if (scene.isComponentCreated)
@@ -374,7 +374,7 @@ class Window : GraphicsComponent
                 }
                 else
                 {
-                    logger.trace("Scene not created, disposing skipped: ", sceneName);
+                    logger.trace("Scene2d not created, disposing skipped: ", sceneName);
                 }
             }
         }

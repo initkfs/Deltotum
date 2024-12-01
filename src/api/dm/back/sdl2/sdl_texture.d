@@ -107,7 +107,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     {
         if (!ptr)
         {
-            return ComResult.error("Texture query error: texture ponter is null");
+            return ComResult.error("Texture2d query error: texture ponter is null");
         }
         const int zeroOrErrorCode = SDL_QueryTexture(ptr, format, access, width, height);
         if (zeroOrErrorCode)
@@ -287,7 +287,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     {
         if (!locked)
         {
-            return ComResult.error("Texture not locked for pitch");
+            return ComResult.error("Texture2d not locked for pitch");
         }
         pitch = this.pitch;
         return ComResult.success;
@@ -297,7 +297,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     {
         if (!locked)
         {
-            return ComResult.error("Texture not locked for pixels");
+            return ComResult.error("Texture2d not locked for pixels");
         }
         pixels = cast(void*) pixelPtr;
         return ComResult.success;
@@ -307,7 +307,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     {
         if (!locked)
         {
-            return ComResult.error("Texture not locked for update");
+            return ComResult.error("Texture2d not locked for update");
         }
         SDL_Rect bounds = {0, 0, cast(int) rect.width, cast(int) rect.height};
         const zeroOrErrorCode = SDL_UpdateTexture(ptr,
@@ -702,7 +702,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     {
         if (!ptr)
         {
-            return ComResult.error("Texture opacity change error: texture is null");
+            return ComResult.error("Texture2d opacity change error: texture is null");
         }
 
         _opacity = opacity;

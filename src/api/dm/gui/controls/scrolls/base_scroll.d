@@ -15,7 +15,7 @@ abstract class BaseScroll : Control
         this.minValue = minValue;
         this.maxValue = maxValue;
 
-        import api.dm.kit.sprites.layouts.managed_layout: ManagedLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.managed_layout: ManagedLayout;
 
         this.layout = new ManagedLayout;
     }

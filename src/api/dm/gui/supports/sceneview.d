@@ -6,9 +6,9 @@ import api.dm.gui.containers.stack_box : StackBox;
 import api.dm.gui.controls.switches.toggles.toggle : Toggle;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.texts.textfield : TextField;
-import api.dm.kit.scenes.scene : Scene;
+import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.gui.controls.switches.buttons.button : Button;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.containers.container : Container;
 import api.dm.gui.controls.texts.text_area : TextArea;
 import api.dm.gui.controls.trees.tree_item : TreeItem;
@@ -42,7 +42,7 @@ private
  */
 class SceneView : VBox
 {
-    Scene scene;
+    Scene2d scene;
 
     void delegate() onEnableDebug;
     void delegate() onDisableDebug;
@@ -75,14 +75,14 @@ class SceneView : VBox
 
     private
     {
-        TreeListView!Sprite controlStructure;
-        Sprite objectOnDebug;
+        TreeListView!Sprite2d controlStructure;
+        Sprite2d objectOnDebug;
         size_t objectOnDebugSceneIndex;
         bool isDebug;
         TextArea objectFullInfo;
     }
 
-    this(Scene scene)
+    this(Scene2d scene)
     {
         super(5);
         this.scene = scene;
@@ -171,11 +171,11 @@ class SceneView : VBox
         btnContainer.addCreate(fillStruct);
         fillStruct.addCreateIcon(IconNames.enter_outline);
 
-        auto fillScene = new Button("Scene");
+        auto fillScene = new Button("Scene2d");
         fillScene.onAction ~= (ref e) { fillFullScene; };
         btnContainer.addCreate(fillScene);
 
-        controlStructure = new TreeListView!Sprite;
+        controlStructure = new TreeListView!Sprite2d;
         controlStructure.width = width - padding.width;
         controlStructure.height = 200;
         addCreate(controlStructure);
@@ -403,7 +403,7 @@ class SceneView : VBox
         return controlInfoContainer;
     }
 
-    void onObjectDebug(scope void delegate(Sprite) onObject)
+    void onObjectDebug(scope void delegate(Sprite2d) onObject)
     {
         if (objectOnDebug)
         {
@@ -431,7 +431,7 @@ class SceneView : VBox
                     return;
                 }
 
-                Sprite nextForDebug = objectOnDebug;
+                Sprite2d nextForDebug = objectOnDebug;
 
                 size_t inBoundsChildCount = 0;
                 obj.onChildrenRec((child) {
@@ -475,10 +475,10 @@ class SceneView : VBox
         }
     }
 
-    private DebugInfo createDebugInfo(Sprite obj)
+    private DebugInfo createDebugInfo(Sprite2d obj)
     {
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-        import api.dm.kit.sprites.shapes.rectangle : Rectangle;
+        import api.dm.kit.sprites.sprites2d.shapes.rectangle : Rectangle;
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
         auto container = new DebugInfo;
@@ -513,7 +513,7 @@ class SceneView : VBox
         return container;
     }
 
-    private void setDebugInfo(Sprite obj)
+    private void setDebugInfo(Sprite2d obj)
     {
         if (obj is null)
         {
@@ -529,7 +529,7 @@ class SceneView : VBox
         fillDebugInfo(obj);
     }
 
-    private void fillDebugInfo(Sprite obj)
+    private void fillDebugInfo(Sprite2d obj)
     {
         if (objectFullInfo is null)
         {
@@ -597,10 +597,10 @@ class SceneView : VBox
         controlStructure.fill(treeRootNode);
     }
 
-    private TreeItem!Sprite buildSpriteTree(Sprite root)
+    private TreeItem!Sprite2d buildSpriteTree(Sprite2d root)
     {
 
-        auto node = new TreeItem!Sprite(root);
+        auto node = new TreeItem!Sprite2d(root);
 
         foreach (ch; root.children)
         {
@@ -611,7 +611,7 @@ class SceneView : VBox
         return node;
     }
 
-    private void removeDebugInfo(Sprite obj)
+    private void removeDebugInfo(Sprite2d obj)
     {
         if (obj is null)
         {

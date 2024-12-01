@@ -18,13 +18,13 @@ class BaseOrientToggle : BaseToggle
         this.orientation = orientation;
         if (orientation == Orientation.vertical)
         {
-            import api.dm.kit.sprites.layouts.vlayout : VLayout;
+            import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
 
             layout = new VLayout;
         }
         else
         {
-            import api.dm.kit.sprites.layouts.hlayout : HLayout;
+            import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
 
             layout = new HLayout;
         }

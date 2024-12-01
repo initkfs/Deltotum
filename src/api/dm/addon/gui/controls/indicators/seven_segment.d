@@ -1,6 +1,6 @@
 module api.dm.addon.gui.controls.indicators.seven_segment;
 
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
@@ -12,16 +12,16 @@ class SevenSegment : Control
 {
     protected
     {
-        Sprite segmentA;
-        Sprite segmentB;
-        Sprite segmentC;
-        Sprite segmentD;
-        Sprite segmentE;
-        Sprite segmentF;
-        Sprite segmentG;
-        Sprite segmentLeftBottomDot;
+        Sprite2d segmentA;
+        Sprite2d segmentB;
+        Sprite2d segmentC;
+        Sprite2d segmentD;
+        Sprite2d segmentE;
+        Sprite2d segmentF;
+        Sprite2d segmentG;
+        Sprite2d segmentLeftBottomDot;
 
-        Sprite[] segments;
+        Sprite2d[] segments;
     }
 
     double hSegmentWidth = 30;
@@ -97,48 +97,48 @@ class SevenSegment : Control
         segmentLeftBottomDot.y = segmentD.boundsRect.middleY - segmentLeftBottomDot.boundsRect.halfHeight;
     }
 
-    void setUpSegment(Sprite segment)
+    void setUpSegment(Sprite2d segment)
     {
         addCreate(segment);
         segments ~= segment;
     }
 
-    Sprite createSegmentA()
+    Sprite2d createSegmentA()
     {
         return createHSegment;
     }
 
-    Sprite createSegmentB()
+    Sprite2d createSegmentB()
     {
         return createVSegment;
     }
 
-    Sprite createSegmentC()
+    Sprite2d createSegmentC()
     {
         return createVSegment;
     }
 
-    Sprite createSegmentD()
+    Sprite2d createSegmentD()
     {
         return createHSegment;
     }
 
-    Sprite createSegmentE()
+    Sprite2d createSegmentE()
     {
         return createVSegment;
     }
 
-    Sprite createSegmentF()
+    Sprite2d createSegmentF()
     {
         return createVSegment;
     }
 
-    Sprite createSegmentG()
+    Sprite2d createSegmentG()
     {
         return createHSegment;
     }
 
-    Sprite createDot()
+    Sprite2d createDot()
     {
         return createDotSegment;
     }
@@ -155,19 +155,19 @@ class SevenSegment : Control
         return style;
     }
 
-    protected Sprite createDotSegment()
+    protected Sprite2d createDotSegment()
     {
-        Sprite segment;
+        Sprite2d segment;
         const double radius = dotDiameter / 2;
         if (capGraphics.isVectorGraphics)
         {
-            import api.dm.kit.sprites.textures.vectors.shapes.vcircle : VCircle;
+            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vcircle : VCircle;
 
             segment = new VCircle(radius, createSegmentStyle);
         }
         else
         {
-            import api.dm.kit.sprites.shapes.circle : Circle;
+            import api.dm.kit.sprites.sprites2d.shapes.circle : Circle;
 
             segment = new Circle(radius, createSegmentStyle);
         }
@@ -176,18 +176,18 @@ class SevenSegment : Control
         return segment;
     }
 
-    protected Sprite createHSegment()
+    protected Sprite2d createHSegment()
     {
-        Sprite segment;
+        Sprite2d segment;
         if (capGraphics.isVectorGraphics)
         {
-            import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
             segment = new VConvexPolygon(hSegmentWidth, hSegmentHeight, createSegmentStyle, segmentCornerBevel);
         }
         else
         {
-            import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
+            import api.dm.kit.sprites.sprites2d.shapes.convex_polygon : ConvexPolygon;
 
             segment = new ConvexPolygon(hSegmentWidth, hSegmentHeight, createSegmentStyle, segmentCornerBevel);
         }
@@ -196,18 +196,18 @@ class SevenSegment : Control
         return segment;
     }
 
-    protected Sprite createVSegment()
+    protected Sprite2d createVSegment()
     {
-        Sprite segment;
+        Sprite2d segment;
         if (capGraphics.isVectorGraphics)
         {
-            import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
             segment = new VConvexPolygon(vSegmentWidth, vSegmentHeight, createSegmentStyle, segmentCornerBevel);
         }
         else
         {
-            import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
+            import api.dm.kit.sprites.sprites2d.shapes.convex_polygon : ConvexPolygon;
 
             segment = new ConvexPolygon(vSegmentWidth, vSegmentHeight, createSegmentStyle, segmentCornerBevel);
         }
@@ -224,7 +224,7 @@ class SevenSegment : Control
         }
     }
 
-    protected void showSegment(Sprite segment)
+    protected void showSegment(Sprite2d segment)
     {
         segment.isVisible = true;
     }

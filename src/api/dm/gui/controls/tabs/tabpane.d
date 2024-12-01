@@ -1,6 +1,6 @@
 module api.dm.gui.controls.tabs.tabpane;
 
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.containers.hbox : HBox;
@@ -9,7 +9,7 @@ import api.dm.gui.containers.stack_box : StackBox;
 import api.dm.gui.containers.container : Container;
 import api.dm.gui.controls.tabs.tab : Tab;
 import api.dm.gui.controls.tabs.tab_header : TabHeader;
-import api.dm.kit.sprites.layouts.vlayout : VLayout;
+import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
 
 /**
  * Authors: initkfs
@@ -71,7 +71,7 @@ class TabPane : Control
         }
     }
 
-    override void addCreate(Sprite[] sprite)
+    override void addCreate(Sprite2d[] sprite)
     {
         foreach (s; sprite)
         {
@@ -95,7 +95,7 @@ class TabPane : Control
         super.addCreate(control, index);
     }
 
-    override void addCreate(Sprite sprite, long index = -1)
+    override void addCreate(Sprite2d sprite, long index = -1)
     {
         import api.core.utils.types : castSafe;
 

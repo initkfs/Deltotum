@@ -1,7 +1,7 @@
 module api.dm.gui.controls.switches.buttons.round_button;
 
 import api.dm.gui.controls.switches.buttons.base_round_button : BaseRoundButton;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.events.action_event : ActionEvent;
 import api.dm.gui.controls.control : Control;
@@ -33,7 +33,7 @@ class RoundButton : BaseRoundButton
 
     alias createShape = Control.createShape;
 
-    protected override Sprite createShape(double width, double height, double angle, GraphicStyle style)
+    protected override Sprite2d createShape(double width, double height, double angle, GraphicStyle style)
     {
         return theme.roundShape(_diameter, style);
     }

@@ -1,7 +1,7 @@
 module api.dm.gui.controls.choices.choice_box;
 
 import api.dm.gui.controls.control: Control;
-import api.dm.kit.sprites.sprite: Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d: Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.controls.texts.text : Text;
@@ -18,7 +18,7 @@ class ChoiceItem : Control
 
     this()
     {
-        import api.dm.kit.sprites.layouts.hlayout : HLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
 
         layout = new HLayout(0);
         layout.isAutoResize(true);
@@ -67,7 +67,7 @@ class ChoiceBox : TypedContainer!ChoiceItem
 
     this()
     {
-        import api.dm.kit.sprites.layouts.hlayout : HLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
 
         layout = new HLayout;
         layout.isAutoResize(true);
@@ -258,7 +258,7 @@ class ChoiceBox : TypedContainer!ChoiceItem
     {
         import api.core.utils.types : castSafe;
 
-        scope Sprite[] removed;
+        scope Sprite2d[] removed;
         foreach (oldItem; choiceList.children)
         {
             if (oldItem.castSafe!ChoiceItem)

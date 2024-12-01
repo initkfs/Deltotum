@@ -1,22 +1,22 @@
 module api.dm.gui.scenes.gui_scene;
 
-import api.dm.kit.scenes.scene : Scene;
+import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.gui.themes.theme : Theme;
 import api.dm.gui.supports.sceneview : SceneView;
 import api.dm.gui.components.gui_component : GuiComponent;
-import api.dm.kit.sprites.sprite: Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d: Sprite2d;
 import api.dm.gui.controls.control: Control;
 
 /**
  * Authors: initkfs
  */
-class GuiScene : Scene
+class GuiScene : Scene2d
 {
     Theme theme;
 
     SceneView debugger;
 
-    alias addCreate = Scene.addCreate;
+    alias addCreate = Scene2d.addCreate;
 
     void addCreate(GuiComponent guiComponent)
     {
@@ -35,10 +35,10 @@ class GuiScene : Scene
             assert(theme, "Theme must not be null");
             guiComponent.theme = theme;
         }
-        add(cast(Sprite) guiComponent);
+        add(cast(Sprite2d) guiComponent);
     }
 
-    override void add(Sprite object)
+    override void add(Sprite2d object)
     {
         super.add(object);
 

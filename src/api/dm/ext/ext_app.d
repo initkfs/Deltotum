@@ -4,7 +4,7 @@ import std;
 
 import api.dm.back.sdl2.sdl_application : SdlApplication;
 import api.dm.kit.apps.graphic_app : GraphicApp;
-import api.dm.kit.scenes.scene : Scene;
+import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.kit.windows.window : Window;
 
 import api.dm.gui.containers.vbox : VBox;
@@ -22,7 +22,7 @@ private
 {
     SdlApplication app;
     Window window;
-    Scene scene;
+    Scene2d scene;
     extern (C) void function() drawPtr;
 
     SList!Control controlStack;
@@ -58,7 +58,7 @@ extern (C) int dm_init(int argc, char** argv)
 
     app.create;
 
-    scene = new Scene;
+    scene = new Scene2d;
 
     enum gameWidth = 1280;
     enum gameHeight = 720;

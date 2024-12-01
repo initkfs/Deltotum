@@ -1,6 +1,6 @@
 module api.dm.addon.sprites.textures.vectors.mazes.maze_cell;
 
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsv : HSV;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
@@ -8,9 +8,9 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 /**
  * Authors: initkfs
  */
-class MazeCell : Sprite
+class MazeCell : Sprite2d
 {
-    Sprite texture;
+    Sprite2d texture;
 
     GraphicStyle style = GraphicStyle.simple;
 
@@ -53,7 +53,7 @@ class MazeCell : Sprite
         auto w = width;
         auto h = height;
 
-        import api.dm.kit.sprites.textures.vectors.vector_texture : VectorTexture;
+        import api.dm.kit.sprites.sprites2d.textures.vectors.vector_texture : VectorTexture;
 
         texture = new class VectorTexture
         {

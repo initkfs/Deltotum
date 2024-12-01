@@ -1,14 +1,14 @@
 module api.dm.gui.containers.hsplit_box;
 
 import api.dm.gui.containers.container : Container;
-import api.dm.kit.sprites.layouts.hlayout : HLayout;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 
 struct SeparatorData
 {
-    Sprite prev;
-    Sprite next;
-    Sprite sep;
+    Sprite2d prev;
+    Sprite2d next;
+    Sprite2d sep;
 }
 
 /**
@@ -22,7 +22,7 @@ class HSplitBox : Container
         layout.isAutoResize = true;
     }
 
-    Sprite[] contents;
+    Sprite2d[] contents;
     SeparatorData[] separators;
 
     override void create()
@@ -32,7 +32,7 @@ class HSplitBox : Container
         window.showingTasks ~= (dt) {
             foreach (sepData; separators)
             {
-                Sprite left = sepData.prev;
+                Sprite2d left = sepData.prev;
                 sepData.sep.x = left.boundsRect.right - sepData.sep.boundsRect.halfWidth;
             }
 
@@ -52,7 +52,7 @@ class HSplitBox : Container
         }
     }
 
-    void addContent(Sprite[] roots)
+    void addContent(Sprite2d[] roots)
     {
         foreach (root; roots)
         {
@@ -67,12 +67,12 @@ class HSplitBox : Container
         }
     }
 
-    void createSeparator(Sprite prev, Sprite next)
+    void createSeparator(Sprite2d prev, Sprite2d next)
     {
         assert(prev);
         assert(next);
 
-        import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+        import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
         auto sep = new VConvexPolygon(7, 7,
@@ -158,7 +158,7 @@ class HSplitBox : Container
         };
     }
 
-    protected ref SeparatorData findSepData(Sprite sep)
+    protected ref SeparatorData findSepData(Sprite2d sep)
     {
         foreach (ref sd; separators)
         {

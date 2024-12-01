@@ -1,6 +1,6 @@
 module api.dm.gui.controls.trees.tree_row;
 
-import api.dm.kit.sprites.sprite: Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d: Sprite2d;
 import api.dm.gui.containers.container : Container;
 import api.dm.gui.controls.texts.text: Text;
 
@@ -32,7 +32,7 @@ class TreeRow(T) : Container
 
     this(TreeItem!T item, bool isExpand = false, size_t treeLevel = 0)
     {
-        import api.dm.kit.sprites.layouts.hlayout : HLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
 
         layout = new HLayout;
         layout.isAutoResize = true;
@@ -131,7 +131,7 @@ class TreeRow(T) : Container
             string text = item.item;
         }
         //TODO for debug
-        else static if (is(T : Sprite))
+        else static if (is(T : Sprite2d))
         {
             auto sprite = item.item;
             string text = sprite.id.length > 0 ? sprite.id : sprite.classNameShort;

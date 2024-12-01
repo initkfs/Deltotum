@@ -1,6 +1,6 @@
 module api.dm.addon.gui.controls.indicators.dot_matrix_display;
 
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.containers.vbox : VBox;
@@ -18,7 +18,7 @@ class Led : Control
         this.width = width;
         this.height = height;
 
-        import api.dm.kit.sprites.layouts.center_layout : CenterLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
 
         layout = new CenterLayout;
     }
@@ -32,16 +32,16 @@ class Led : Control
             style.isFill = true;
             style.fillColor = theme.colorAccent;
         }
-        Sprite led;
+        Sprite2d led;
         if (capGraphics.isVectorGraphics)
         {
-            import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
             led = new VConvexPolygon(width, height, style, cornerBevel);
         }
         else
         {
-            import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
+            import api.dm.kit.sprites.sprites2d.shapes.convex_polygon : ConvexPolygon;
 
             led = new ConvexPolygon(width, height, style, cornerBevel);
         }

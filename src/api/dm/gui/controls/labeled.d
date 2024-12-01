@@ -1,9 +1,9 @@
 module api.dm.gui.controls.labeled;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.sprite : Sprite;
-import api.dm.kit.sprites.layouts.layout : Layout;
-import api.dm.kit.sprites.layouts.hlayout : HLayout;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites.sprites2d.layouts.layout2d : Layout2d;
+import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
 import api.dm.gui.controls.texts.text : Text;
 
 import std.traits : isSomeString;
@@ -15,7 +15,7 @@ class Labeled : Control
 {
     protected
     {
-        Sprite _icon;
+        Sprite2d _icon;
         Text _label;
 
         string _iconName;
@@ -157,7 +157,7 @@ class Labeled : Control
         addCreate(_label);
     }
 
-    Sprite newLabelIcon()
+    Sprite2d newLabelIcon()
     {
         assert(_iconName.length > 0);
         auto newIcon = createIcon(_iconName);
@@ -185,7 +185,7 @@ class Labeled : Control
         return text;
     }
 
-    inout(Sprite) icon() inout
+    inout(Sprite2d) icon() inout
     out (_icon; _icon !is null)
     {
         return _icon;
@@ -231,7 +231,7 @@ class Labeled : Control
 
     bool hasIcon() => _icon !is null;
 
-    Sprite icon()
+    Sprite2d icon()
     {
         assert(_icon);
         return _icon;
@@ -271,7 +271,7 @@ class Labeled : Control
         _graphicsGap = value;
         if (layout)
         {
-            import api.dm.kit.sprites.layouts.spaceable_layout : SpaceableLayout;
+            import api.dm.kit.sprites.sprites2d.layouts.spaceable_layout : SpaceableLayout;
 
             if (auto sl = cast(SpaceableLayout) layout)
             {

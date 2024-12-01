@@ -1,7 +1,7 @@
 module api.dm.addon.sprites.textures.vectors.mazes.maze;
 
 import api.dm.addon.sprites.textures.vectors.mazes.maze_cell : MazeCell;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsv : HSV;
@@ -17,7 +17,7 @@ import std.random : unpredictableSeed;
 /**
  * Authors: initkfs
  */
-abstract class Maze : Sprite
+abstract class Maze : Sprite2d
 {
     size_t cellWidth;
     size_t cellHeight;

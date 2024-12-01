@@ -1,13 +1,13 @@
 module api.dm.gui.controls.pickers.color_picker;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.layouts.layout : Layout;
+import api.dm.kit.sprites.sprites2d.layouts.layout2d : Layout2d;
 import api.math.insets : Insets;
-import api.dm.kit.sprites.textures.texture : Texture;
+import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.switches.buttons.button : Button;
-import api.dm.kit.sprites.shapes.circle : Circle;
+import api.dm.kit.sprites.sprites2d.shapes.circle : Circle;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
 import api.dm.gui.containers.vbox : VBox;
@@ -28,7 +28,7 @@ class ColorPicker : Control
 
     this()
     {
-        import api.dm.kit.sprites.layouts.hlayout : HLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
 
         auto layout = new HLayout;
         layout.isAutoResize = true;
@@ -64,7 +64,7 @@ class ColorPicker : Control
         addCreate(colorChooser);
 
         colorChooser.isVisible = false;
-        import api.dm.kit.sprites.shapes.rectangle : Rectangle;
+        import api.dm.kit.sprites.sprites2d.shapes.rectangle : Rectangle;
 
         enum colorContainerSize = 15;
         enum colorTonesCount = 14;

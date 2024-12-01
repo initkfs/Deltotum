@@ -1,8 +1,8 @@
 module api.dm.gui.containers.border_box;
 
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.containers.container : Container;
-import api.dm.kit.sprites.layouts.vlayout : VLayout;
+import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
 import api.dm.gui.containers.stack_box : StackBox;
 import api.math.insets : Insets;
 import api.dm.gui.containers.hbox : HBox;

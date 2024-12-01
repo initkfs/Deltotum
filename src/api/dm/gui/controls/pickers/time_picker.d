@@ -1,9 +1,9 @@
 module api.dm.gui.controls.pickers.time_picker;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.sprite : Sprite;
-import api.dm.kit.sprites.layouts.layout : Layout;
-import api.dm.kit.sprites.layouts.hlayout : HLayout;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites.sprites2d.layouts.layout2d : Layout2d;
+import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
 import api.dm.gui.containers.hbox : HBox;
 import api.dm.gui.containers.circle_box : CircleBox;
 import api.dm.gui.containers.vbox : VBox;
@@ -23,11 +23,11 @@ abstract class TimeChooser : Control
     void delegate(dstring) onStrValue;
     void delegate(int) onNumValue;
 
-    Sprite selectionSlider;
+    Sprite2d selectionSlider;
 
     this()
     {
-        import api.dm.kit.sprites.layouts.center_layout : CenterLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
 
         this.layout = new CenterLayout;
         this.layout.isAutoResize = true;
@@ -39,7 +39,7 @@ abstract class TimeChooser : Control
     override void create()
     {
         super.create;
-        import api.dm.kit.sprites.textures.vectors.shapes.vcircle : VCircle;
+        import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vcircle : VCircle;
 
         auto sliderStyle = createStyle;
         sliderStyle.isFill = true;
@@ -192,7 +192,7 @@ class MinSecChooser : TimeChooser
 {
     CircleBox minSec0to55Box;
     CircleBox labelBox;
-    Sprite textLabels;
+    Sprite2d textLabels;
 
     enum innerBoxRadius = 80;
     enum startAngle = 270;
@@ -320,7 +320,7 @@ class TimePicker : Control
     MinSecChooser minChooser;
     MinSecChooser secChooser;
 
-    Sprite chooserContainer;
+    Sprite2d chooserContainer;
 
     protected
     {
@@ -329,7 +329,7 @@ class TimePicker : Control
 
     this()
     {
-        import api.dm.kit.sprites.layouts.vlayout : VLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
 
         this.layout = new VLayout;
         this.layout.isAutoResize = true;

@@ -1,20 +1,20 @@
 module api.dm.gui.controls.switches.toggles.base_toggle;
 
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.switches.base_biswitch : BaseBiswitch;
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.shapes.shape : Shape;
+import api.dm.kit.sprites.sprites2d.shapes.shape2d : Shape2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.kit.sprites.shapes.rectangle : Rectangle;
+import api.dm.kit.sprites.sprites2d.shapes.rectangle : Rectangle;
 import api.dm.gui.events.action_event : ActionEvent;
-import api.dm.kit.sprites.tweens.min_max_tween : MinMaxTween;
-import api.dm.kit.sprites.tweens.tween : Tween;
-import api.dm.kit.sprites.tweens.targets.value_tween : ValueTween;
-import api.dm.kit.sprites.tweens.targets.props.opacity_tween : OpacityTween;
-import api.dm.kit.sprites.textures.texture : Texture;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.tweens.min_max_tween : MinMaxTween;
+import api.dm.kit.sprites.sprites2d.tweens.tween : Tween;
+import api.dm.kit.sprites.sprites2d.tweens.targets.value_tween : ValueTween;
+import api.dm.kit.sprites.sprites2d.tweens.targets.props.opacity_tween : OpacityTween;
+import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.sprites.tweens.targets.target_tween : TargetTween;
+import api.dm.kit.sprites.sprites2d.tweens.targets.target_tween : TargetTween;
 import api.math.geom2.vec2 : Vec2d;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.labeled : Labeled;
@@ -26,20 +26,20 @@ class BaseToggle : BaseBiswitch
 {
     protected
     {
-        Sprite handleContainer;
+        Sprite2d handleContainer;
     }
 
     bool isCreateHandleContainer = true;
-    Sprite delegate(Sprite) onHandleContainerCreate;
-    void delegate(Sprite) onHandleContainerCreated;
+    Sprite2d delegate(Sprite2d) onHandleContainerCreate;
+    void delegate(Sprite2d) onHandleContainerCreated;
 
     double handleWidth = 0;
     double handleHeight = 0;
 
-    Sprite handle;
+    Sprite2d handle;
     bool isCreateHandle = true;
 
-    Sprite handleEffect;
+    Sprite2d handleEffect;
     bool isCreateHandleEffect = true;
 
     MinMaxTween!Vec2d handleEffectAnimation;
@@ -126,7 +126,7 @@ class BaseToggle : BaseBiswitch
         };
     }
 
-    Sprite newHandle()
+    Sprite2d newHandle()
     {
         auto size = handleSize;
 
@@ -137,16 +137,16 @@ class BaseToggle : BaseBiswitch
         }
 
         auto shape = theme.shape(size.x, size.y, angle, style);
-        // import api.dm.kit.sprites.layouts.center_layout : CenterLayout;
+        // import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
 
         // shape.layout = new CenterLayout;
         return shape;
     }
 
-    protected Sprite newHandleContainer()
+    protected Sprite2d newHandleContainer()
     {
         import api.dm.gui.containers.container;
-        import api.dm.kit.sprites.layouts.managed_layout : ManagedLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.managed_layout : ManagedLayout;
 
         auto handleContainer = new Container;
 
@@ -161,7 +161,7 @@ class BaseToggle : BaseBiswitch
 
     Vec2d handleContainerSize() => Vec2d(handleWidth * 2, handleHeight);
 
-    Sprite newHandleEffect(double w, double h)
+    Sprite2d newHandleEffect(double w, double h)
     {
         auto currStyle = createStyle;
         if (!currStyle.isNested)
@@ -177,8 +177,8 @@ class BaseToggle : BaseBiswitch
 
     MinMaxTween!Vec2d newHandleEffectAnimation()
     {
-        import api.dm.kit.sprites.tweens.targets.motions.linear_motion : LinearMotion;
-        import api.dm.kit.sprites.tweens.curves.uni_interpolator : UniInterpolator;
+        import api.dm.kit.sprites.sprites2d.tweens.targets.motions.linear_motion : LinearMotion;
+        import api.dm.kit.sprites.sprites2d.tweens.curves.uni_interpolator : UniInterpolator;
 
         auto uniInterp = new UniInterpolator;
         uniInterp.interpolateMethod = &uniInterp.quadInOut;

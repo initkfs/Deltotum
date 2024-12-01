@@ -1,13 +1,13 @@
 module api.dm.gui.controls.gauges.hlinear_gauge;
 
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.containers.container : Container;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import Math = api.dm.math;
 
-import api.dm.kit.sprites.layouts.vlayout : VLayout;
-import api.dm.kit.sprites.layouts.hlayout : HLayout;
+import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
+import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
 
 import api.dm.gui.containers.hbox : HBox;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -22,7 +22,7 @@ struct RangeInfo
 struct TickInfo
 {
     double value;
-    Sprite tick;
+    Sprite2d tick;
 }
 
 /**
@@ -37,20 +37,20 @@ class HLinearGauge : Control
 
     double tickWidth = 2;
 
-    Sprite[] ticks;
+    Sprite2d[] ticks;
 
     Container tickContainer;
     Container pointerContainer;
     HBox labelContainer;
 
-    Sprite[] pointers;
+    Sprite2d[] pointers;
     TickInfo[] measureTicks;
 
     size_t pointerCount = 4;
 
     RangeInfo[] rangeInfo;
 
-    Sprite lastUsedPointer;
+    Sprite2d lastUsedPointer;
 
     double mouseWheelDeltaX = 2;
 
@@ -129,7 +129,7 @@ class HLinearGauge : Control
             auto style = createStyle;
             style.isFill = true;
             style.color = r.color;
-            import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
             auto rectWidth = (r.range * (width + tickWidth)) / range;
             auto rect = new VConvexPolygon(rectWidth, 5, style, 0);
@@ -199,7 +199,7 @@ class HLinearGauge : Control
         layoutPointers;
     }
 
-    private size_t pointerIndex(Sprite pointer)
+    private size_t pointerIndex(Sprite2d pointer)
     {
         foreach (i, p; pointers)
         {
@@ -246,12 +246,12 @@ class HLinearGauge : Control
         }
     }
 
-    Sprite newPointer()
+    Sprite2d newPointer()
     {
         auto style = createStyle;
         style.isFill = true;
         style.color = theme.colorAccent;
-        import api.dm.kit.sprites.textures.vectors.shapes.vtriangle : VTriangle;
+        import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vtriangle : VTriangle;
 
         auto pointer = new VTriangle(20, 15, style);
         pointer.isDraggable = true;
@@ -263,7 +263,7 @@ class HLinearGauge : Control
         return pointer;
     }
 
-    protected void movePointer(Sprite pointer, double x, double y)
+    protected void movePointer(Sprite2d pointer, double x, double y)
     {
         import std.math.operations : isClose;
 
@@ -322,20 +322,20 @@ class HLinearGauge : Control
         }
     }
 
-    Sprite newMinStepTick()
+    Sprite2d newMinStepTick()
     {
         GraphicStyle style = createStyle;
         style.isFill = true;
-        import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+        import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
         return new VConvexPolygon(tickWidth, 10, style, 0);
     }
 
-    Sprite newMaxStepTick()
+    Sprite2d newMaxStepTick()
     {
         GraphicStyle style = createStyle;
         style.isFill = true;
-        import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+        import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
         return new VConvexPolygon(tickWidth, 20, style, 0);
     }

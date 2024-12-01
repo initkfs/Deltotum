@@ -1,23 +1,23 @@
 module api.dm.gui.components.gui_component;
 
 import api.core.components.uda : Service;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.themes.theme : Theme;
 
 /**
  * Authors: initkfs
  */
-class GuiComponent : Sprite
+class GuiComponent : Sprite2d
 {
     protected
     {
         @Service Theme _theme;
     }
 
-    alias build = Sprite.build;
-    alias buildInit = Sprite.buildInit;
-    alias buildInitCreate = Sprite.buildInitCreate;
-    alias buildInitCreateRun = Sprite.buildInitCreateRun;
+    alias build = Sprite2d.build;
+    alias buildInit = Sprite2d.buildInit;
+    alias buildInitCreate = Sprite2d.buildInitCreate;
+    alias buildInitCreateRun = Sprite2d.buildInitCreateRun;
 
     void build(GuiComponent gComponent)
     {

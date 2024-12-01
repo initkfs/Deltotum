@@ -1,6 +1,6 @@
 module api.dm.phys.steerings.steering_behavior;
 
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.math.geom2.vec2 : Vec2d;
 import api.math.random : Random;
 
@@ -189,7 +189,7 @@ class SteeringBehavior
         return force;
     }
 
-    Vec2d alignmentForce(Sprite sprite, Sprite[] neighbors, double distance = 30, double maxVelocity = defaultMaxVelocity)
+    Vec2d alignmentForce(Sprite2d sprite, Sprite2d[] neighbors, double distance = 30, double maxVelocity = defaultMaxVelocity)
     {
         size_t neighborCount;
 
@@ -220,7 +220,7 @@ class SteeringBehavior
         return force;
     }
 
-    Vec2d cohesionForce(Sprite sprite, Sprite[] neighbors, double distance = 30, double maxCohesion)
+    Vec2d cohesionForce(Sprite2d sprite, Sprite2d[] neighbors, double distance = 30, double maxCohesion)
     {
         size_t neighborCount;
 
@@ -251,7 +251,7 @@ class SteeringBehavior
         return force;
     }
 
-    Vec2d separationForce(Sprite sprite, Sprite[] neighbors, double distance = 30, double maxSeparation = 50)
+    Vec2d separationForce(Sprite2d sprite, Sprite2d[] neighbors, double distance = 30, double maxSeparation = 50)
     {
         size_t neighborCount;
         Vec2d force;
@@ -284,7 +284,7 @@ class SteeringBehavior
         return force;
     }
 
-    Vec2d acs(Sprite sprite, Sprite[] neighbors, double distance = 30, double maxSeparation = 100, double maxVelocity = 100, double alignmentWeight = 1, double cohesionWeight = 1, double separationWeight = 1)
+    Vec2d acs(Sprite2d sprite, Sprite2d[] neighbors, double distance = 30, double maxSeparation = 100, double maxVelocity = 100, double alignmentWeight = 1, double cohesionWeight = 1, double separationWeight = 1)
     {
         const alignment = alignmentForce(sprite, neighbors, distance, maxVelocity);
         const cohesion = cohesionForce(sprite, neighbors, distance, maxSeparation);

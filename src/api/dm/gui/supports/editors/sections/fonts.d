@@ -12,7 +12,7 @@ class Fonts : Control
 {
     this()
     {
-        import api.dm.kit.sprites.layouts.hlayout : HLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
 
         layout = new HLayout;
         layout.isAutoResize = true;

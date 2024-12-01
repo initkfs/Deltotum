@@ -1,6 +1,6 @@
 module api.dm.gui.controls.scrolls.mono_scroll;
 
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.scrolls.base_scroll : BaseScroll;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
@@ -20,11 +20,11 @@ abstract class MonoScroll : BaseScroll
 
     void delegate(double)[] onValue;
 
-    Sprite delegate() thumbFactory;
+    Sprite2d delegate() thumbFactory;
 
     protected
     {
-        Sprite thumb;
+        Sprite2d thumb;
     }
 
     this(double minValue = 0, double maxValue = 1.0)

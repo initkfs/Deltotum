@@ -1,8 +1,8 @@
 module api.dm.gui.containers.flow_box;
 
 import api.dm.gui.containers.container : Container;
-import api.dm.kit.sprites.layouts.flow_layout: FlowLayout;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.layouts.flow_layout: FlowLayout;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 
 /**
  * Authors: initkfs

@@ -1,14 +1,14 @@
 module api.dm.gui.controls.scrolls.hscroll;
 
 import api.dm.gui.controls.scrolls.mono_scroll : MonoScroll;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.textures.texture : Texture;
+import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 
-import api.dm.kit.sprites.shapes.shape : Shape;
+import api.dm.kit.sprites.sprites2d.shapes.shape2d : Shape2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.kit.sprites.layouts.managed_layout : ManagedLayout;
-import api.dm.kit.sprites.shapes.rectangle : Rectangle;
+import api.dm.kit.sprites.sprites2d.layouts.managed_layout : ManagedLayout;
+import api.dm.kit.sprites.sprites2d.shapes.rectangle : Rectangle;
 import api.math.alignment : Alignment;
 import std.math.operations : isClose;
 

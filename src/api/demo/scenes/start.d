@@ -4,8 +4,8 @@ import api.dm.gui.scenes.gui_scene: GuiScene;
 import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.containers.hbox : HBox;
 import api.dm.gui.controls.switches.buttons.button : Button;
-import api.dm.kit.sprites.textures.texture : Texture;
-import api.dm.kit.sprites.images.image : Image;
+import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites.sprites2d.images.image : Image;
 
 import Math = api.dm.math;
 import api.math.random : Random;

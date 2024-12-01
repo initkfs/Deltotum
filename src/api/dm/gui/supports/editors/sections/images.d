@@ -1,11 +1,11 @@
 module api.dm.gui.supports.editors.sections.images;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.kit.sprites.images.image : Image;
-import api.dm.kit.sprites.images.image : Image;
+import api.dm.kit.sprites.sprites2d.images.image : Image;
+import api.dm.kit.sprites.sprites2d.images.image : Image;
 import std.string : toStringz;
 
 import ColorProcessor = api.dm.kit.graphics.colors.processing.color_processor;
@@ -32,7 +32,7 @@ class Images : Control
     {
         id = "deltotum_gui_editor_section_images";
 
-        import api.dm.kit.sprites.layouts.vlayout : VLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
 
         layout = new VLayout;
         layout.isAutoResize = true;
@@ -55,7 +55,7 @@ class Images : Control
         return sprite;
     }
 
-    Sprite createImageInfo(string name, Sprite image)
+    Sprite2d createImageInfo(string name, Sprite2d image)
     {
         import api.dm.gui.containers.vbox : VBox;
         import api.dm.gui.controls.texts.text : Text;

@@ -1,15 +1,15 @@
 module api.dm.gui.containers.vsplit_box;
 
 import api.dm.gui.containers.container : Container;
-import api.dm.kit.sprites.layouts.vlayout : VLayout;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 
 //TODO remove duplication with HSplitBox
 struct SeparatorData
 {
-    Sprite prev;
-    Sprite next;
-    Sprite sep;
+    Sprite2d prev;
+    Sprite2d next;
+    Sprite2d sep;
 }
 
 /**
@@ -23,7 +23,7 @@ class VSplitBox : Container
         layout.isAutoResize = true;
     }
 
-    Sprite[] contents;
+    Sprite2d[] contents;
     SeparatorData[] separators;
 
     override void create()
@@ -33,7 +33,7 @@ class VSplitBox : Container
         window.showingTasks ~= (dt) {
             foreach (sepData; separators)
             {
-                Sprite prev = sepData.prev;
+                Sprite2d prev = sepData.prev;
                 sepData.sep.y = prev.boundsRect.bottom - sepData.sep.boundsRect.halfHeight;
             }
 
@@ -53,7 +53,7 @@ class VSplitBox : Container
         }
     }
 
-    void addContent(Sprite[] roots)
+    void addContent(Sprite2d[] roots)
     {
         foreach (root; roots)
         {
@@ -68,12 +68,12 @@ class VSplitBox : Container
         }
     }
 
-    void createSeparator(Sprite prev, Sprite next)
+    void createSeparator(Sprite2d prev, Sprite2d next)
     {
         assert(prev);
         assert(next);
 
-        import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+        import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
         auto sep = new VConvexPolygon(7, 7,
@@ -157,7 +157,7 @@ class VSplitBox : Container
         };
     }
 
-    protected ref SeparatorData findSepData(Sprite sep)
+    protected ref SeparatorData findSepData(Sprite2d sep)
     {
         foreach (ref sd; separators)
         {

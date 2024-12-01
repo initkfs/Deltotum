@@ -1,6 +1,6 @@
 module api.dm.addon.sprites.images.fractals.complex_fractal_image;
 
-import api.dm.kit.sprites.images.image : Image;
+import api.dm.kit.sprites.sprites2d.images.image : Image;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import Math = api.dm.math;
 

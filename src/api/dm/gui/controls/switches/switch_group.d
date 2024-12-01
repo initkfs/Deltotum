@@ -1,7 +1,7 @@
 module api.dm.gui.controls.switches.switch_group;
 
 import api.dm.gui.containers.container : Container;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.switches.base_biswitch : BaseBiswitch;
 
 /**
@@ -11,7 +11,7 @@ class SwitchGroup : Container
 {
     alias add = Container.add;
 
-    override void add(Sprite sprite, long index = -1)
+    override void add(Sprite2d sprite, long index = -1)
     {
         super.add(sprite, index);
 

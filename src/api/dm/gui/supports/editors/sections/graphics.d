@@ -1,7 +1,7 @@
 module api.dm.gui.supports.editors.sections.graphics;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
 import Math = api.dm.math;
@@ -44,7 +44,7 @@ class Grahpics : Control
         root.addCreate(shapeContainer);
         shapeContainer.enableInsets;
 
-        import api.dm.kit.sprites.shapes.circle : Circle;
+        import api.dm.kit.sprites.sprites2d.shapes.circle : Circle;
 
         auto circle = new Circle(20, GraphicStyle(1, RGBA.red));
         shapeContainer.addCreate(circle);
@@ -52,7 +52,7 @@ class Grahpics : Control
         auto circleFill = new Circle(20, GraphicStyle(1, RGBA.blue, true, RGBA.blue));
         shapeContainer.addCreate(circleFill);
 
-        import api.dm.kit.sprites.shapes.rectangle : Rectangle;
+        import api.dm.kit.sprites.sprites2d.shapes.rectangle : Rectangle;
 
         auto rect = new Rectangle(50, 50, GraphicStyle(1, RGBA.yellow));
         shapeContainer.addCreate(rect);
@@ -60,7 +60,7 @@ class Grahpics : Control
         auto rectFill = new Rectangle(50, 50, GraphicStyle(1, RGBA.green, true, RGBA.green));
         shapeContainer.addCreate(rectFill);
 
-        import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
+        import api.dm.kit.sprites.sprites2d.shapes.convex_polygon : ConvexPolygon;
 
         auto reg = new ConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightcoral), 10);
         shapeContainer.addCreate(reg);

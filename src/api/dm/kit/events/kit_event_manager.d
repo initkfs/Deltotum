@@ -12,8 +12,8 @@ import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import api.dm.kit.windows.events.window_event : WindowEvent;
 
 import api.dm.kit.windows.window : Window;
-import api.dm.kit.scenes.scene : Scene;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.scenes.scene2d : Scene2d;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import std.container : DList;
 import std.typecons : Nullable;
 
@@ -46,8 +46,8 @@ class KitEventManager : EventManager
         }
 
         Window targetWindow = mustBeTargetWindow.get;
-        Scene targetScene = targetWindow.currentScene;
-        Sprite[] targets = targetScene.activeSprites;
+        Scene2d targetScene = targetWindow.currentScene;
+        Sprite2d[] targets = targetScene.activeSprites;
 
         targetScene.runEventHandlers(e);
         if (e.isConsumed)
@@ -55,7 +55,7 @@ class KitEventManager : EventManager
             return;
         }
 
-        foreach (Sprite target; targets)
+        foreach (Sprite2d target; targets)
         {
             target.dispatchEvent(e);
             if(e.isConsumed){

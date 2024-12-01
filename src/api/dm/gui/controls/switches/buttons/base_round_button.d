@@ -1,7 +1,7 @@
 module api.dm.gui.controls.switches.buttons.base_round_button;
 
 import api.dm.gui.controls.switches.buttons.base_button : BaseButton;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.events.action_event : ActionEvent;
 import api.dm.gui.controls.control : Control;
@@ -42,7 +42,7 @@ class BaseRoundButton : BaseButton
 
         this._diameter = diameter;
 
-        import api.dm.kit.sprites.layouts.center_layout : CenterLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
 
         this.layout = new CenterLayout;
         this.layout.isAutoResizeAndAlignOne = true;
@@ -76,7 +76,7 @@ class BaseRoundButton : BaseButton
         return super.containsPoint(x, y);
     }
 
-    override bool intersectBounds(Sprite other)
+    override bool intersectBounds(Sprite2d other)
     {
         if (hasBackground)
         {

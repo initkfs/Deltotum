@@ -1,7 +1,7 @@
 module api.dm.gui.containers.scroll_box;
 
 import api.dm.gui.containers.container : Container;
-import api.dm.kit.sprites.layouts.managed_layout : ManagedLayout;
+import api.dm.kit.sprites.sprites2d.layouts.managed_layout : ManagedLayout;
 import api.math.geom2.rect2 : Rect2d;
 
 import api.dm.gui.containers.vbox : VBox;
@@ -9,7 +9,7 @@ import api.dm.gui.containers.hbox : HBox;
 import api.dm.gui.containers.stack_box : StackBox;
 import api.dm.gui.controls.scrolls.hscroll : HScroll;
 import api.dm.gui.controls.scrolls.vscroll : VScroll;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.math.insets : Insets;
 
 enum ScrollBarPolicy
@@ -30,7 +30,7 @@ class ScrollBox : Container
         HScroll hslider;
         Container content;
         Container contentContainer;
-        Sprite contentRoot;
+        Sprite2d contentRoot;
 
         enum {
             idVscroll = "scb_scroll_v",
@@ -46,7 +46,7 @@ class ScrollBox : Container
         this.width = width;
         this.height = height;
 
-        import api.dm.kit.sprites.layouts.vlayout : VLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
 
         isBorder = true;
         layout = new VLayout(0);
@@ -178,14 +178,14 @@ class ScrollBox : Container
         }
     }
 
-    protected void disableScroll(Sprite scroll)
+    protected void disableScroll(Sprite2d scroll)
     {
         scroll.isVisible = false;
         scroll.isLayoutManaged = false;
         scroll.isResizedByParent = false;
     }
 
-    protected void enableScroll(Sprite scroll)
+    protected void enableScroll(Sprite2d scroll)
     {
         scroll.isVisible = true;
         scroll.isLayoutManaged = true;
@@ -201,7 +201,7 @@ class ScrollBox : Container
         content.isResizeClip = true;
     }
 
-    protected void clipChildren(Sprite root)
+    protected void clipChildren(Sprite2d root)
     {
         root.onChildrenRec = (child) {
             child.clip = clip;
@@ -211,7 +211,7 @@ class ScrollBox : Container
         };
     }
 
-    void setContent(Sprite root)
+    void setContent(Sprite2d root)
     {
         assert(content);
 

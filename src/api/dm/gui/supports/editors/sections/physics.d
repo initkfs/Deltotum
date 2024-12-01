@@ -1,7 +1,7 @@
 module api.dm.gui.supports.editors.sections.physics;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.flip : Flip;
 
@@ -17,7 +17,7 @@ import std.stdio;
  */
 class Physics : Control
 {
-    Sprite material;
+    Sprite2d material;
 
     this()
     {
@@ -34,7 +34,7 @@ class Physics : Control
     {
         super.create;
 
-        import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+        import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
         auto style = createStyle;
         style.fillColor = theme.colorAccent;

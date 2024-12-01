@@ -5,7 +5,7 @@ import api.dm.gui.containers.hbox : HBox;
 import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.switches.buttons.button : Button;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import KitI18nKeys = api.dm.gui.gui_i18n_keys;
 
@@ -43,7 +43,7 @@ class DayContainer : Control
         super();
         this.spacePlaceholder = spacePlaceholder;
 
-        import api.dm.kit.sprites.layouts.center_layout : CenterLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
 
         this.layout = new CenterLayout;
         this.layout.isAutoResize = true;
@@ -58,11 +58,11 @@ class DayContainer : Control
         };
     }
 
-    override Sprite newBackground(double w, double h)
+    override Sprite2d newBackground(double w, double h)
     {
         auto style = createStyle;
         //TODO caps
-        import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+        import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
         return new VConvexPolygon(w, h, style, 0);
     }
@@ -185,7 +185,7 @@ class WeekContainer : Control
 
     this()
     {
-        import api.dm.kit.sprites.layouts.hlayout : HLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
 
         this.layout = new HLayout;
         this.layout.isAutoResize = true;
@@ -226,7 +226,7 @@ class Calendar : Control
     override void initialize()
     {
         super.initialize;
-        import api.dm.kit.sprites.layouts.vlayout : VLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
 
         this.layout = new VLayout;
         this.layout.isAutoResize = true;

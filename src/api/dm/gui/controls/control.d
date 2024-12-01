@@ -1,11 +1,11 @@
 module api.dm.gui.controls.control;
 
 import api.dm.gui.components.gui_component : GuiComponent;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.events.action_event : ActionEvent;
-import api.dm.kit.sprites.layouts.layout : Layout;
+import api.dm.kit.sprites.sprites2d.layouts.layout2d : Layout2d;
 import api.math.insets : Insets;
-import api.dm.kit.sprites.textures.texture : Texture;
+import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.styles.default_style : DefaultStyle;
 import api.dm.kit.graphics.styles.default_style;
@@ -15,8 +15,8 @@ import api.math.insets : Insets;
 import api.dm.gui.controls.popups.base_popup : BasePopup;
 import api.dm.gui.themes.theme : Theme;
 
-import api.dm.kit.sprites.tweens.tween : Tween;
-import api.dm.kit.sprites.tweens.targets.props.opacity_tween : OpacityTween;
+import api.dm.kit.sprites.sprites2d.tweens.tween : Tween;
+import api.dm.kit.sprites.sprites2d.tweens.targets.props.opacity_tween : OpacityTween;
 
 import std.typecons : Nullable;
 
@@ -43,11 +43,11 @@ class Control : GuiComponent
 
     protected
     {
-        Sprite _background;
-        Sprite _hoverEffect;
+        Sprite2d _background;
+        Sprite2d _hoverEffect;
         Tween _hoverEffectAnimation;
 
-        Sprite _actionEffect;
+        Sprite2d _actionEffect;
         Tween _actionEffectAnimation;
 
         bool isTooltipDelay;
@@ -76,15 +76,15 @@ class Control : GuiComponent
 
     bool isThrowInvalidAnimationTime = true;
 
-    Sprite delegate(Sprite) onBackgroundCreate;
-    void delegate(Sprite) onBackgroundCreated;
+    Sprite2d delegate(Sprite2d) onBackgroundCreate;
+    void delegate(Sprite2d) onBackgroundCreated;
 
     bool isProcessHover;
     bool isProcessAction;
 
     bool isCreateHoverEffect;
-    Sprite delegate(Sprite) onHoverEffectCreate;
-    void delegate(Sprite) onHoverEffectCreated;
+    Sprite2d delegate(Sprite2d) onHoverEffectCreate;
+    void delegate(Sprite2d) onHoverEffectCreated;
 
     size_t hoverAnimationDelayMs;
 
@@ -96,9 +96,9 @@ class Control : GuiComponent
     void delegate() hoverEffectEndBehaviour;
 
     bool isCreateActionEffect;
-    Sprite delegate() actionEffectFactory;
-    Sprite delegate(Sprite) onActionEffectCreate;
-    void delegate(Sprite) onActionEffectCreated;
+    Sprite2d delegate() actionEffectFactory;
+    Sprite2d delegate(Sprite2d) onActionEffectCreate;
+    void delegate(Sprite2d) onActionEffectCreated;
 
     void delegate(ref ActionEvent) actionEffectStartBehaviour;
     void delegate(ref ActionEvent) actionEffectEndBehaviour;
@@ -106,7 +106,7 @@ class Control : GuiComponent
     size_t actionEffectAnimationDelayMs;
 
     bool isCreateActionEffectAnimation;
-    Tween delegate(Sprite) actionEffectAnimationFactory;
+    Tween delegate(Sprite2d) actionEffectAnimationFactory;
     Tween delegate(Tween) onActionEffectAnimationCreate;
     void delegate(Tween) onActionEffectAnimationCreated;
 
@@ -215,7 +215,7 @@ class Control : GuiComponent
     {
         if (layout)
         {
-            import api.dm.kit.sprites.layouts.spaceable_layout : SpaceableLayout;
+            import api.dm.kit.sprites.sprites2d.layouts.spaceable_layout : SpaceableLayout;
 
             if (auto slayout = cast(SpaceableLayout) layout)
             {
@@ -581,9 +581,9 @@ class Control : GuiComponent
         }
     }
 
-    Sprite newBackground(double w, double h)
+    Sprite2d newBackground(double w, double h)
     {
-        Sprite shape;
+        Sprite2d shape;
         if (auto stylePtr = hasStyle(ControlStyle.background))
         {
             shape = createShape(w, h, angle, *stylePtr);
@@ -596,7 +596,7 @@ class Control : GuiComponent
         return shape;
     }
 
-    Sprite newHoverEffect(double w, double h)
+    Sprite2d newHoverEffect(double w, double h)
     {
         assert(theme);
 
@@ -620,7 +620,7 @@ class Control : GuiComponent
             }
         }
 
-        Sprite newHover = createShape(w, h, angle, newStyle);
+        Sprite2d newHover = createShape(w, h, angle, newStyle);
         newHover.id = idHoverShape;
         newHover.isLayoutManaged = false;
         newHover.isResizedByParent = true;
@@ -707,7 +707,7 @@ class Control : GuiComponent
         };
     }
 
-    Sprite newActionEffect()
+    Sprite2d newActionEffect()
     {
         assert(theme);
 
@@ -731,7 +731,7 @@ class Control : GuiComponent
             }
         }
 
-        Sprite effect = createShape(width, height, angle, newStyle);
+        Sprite2d effect = createShape(width, height, angle, newStyle);
         effect.id = idActionShape;
         effect.isLayoutManaged = false;
         effect.isResizedByParent = true;
@@ -884,12 +884,12 @@ class Control : GuiComponent
         return newStyle;
     }
 
-    protected Sprite createShape(double w, double h, double angle = 0)
+    protected Sprite2d createShape(double w, double h, double angle = 0)
     {
         return createShape(w, h, angle, createStyle);
     }
 
-    protected Sprite createShape(double width, double height, double angle = 0, GraphicStyle style = GraphicStyle
+    protected Sprite2d createShape(double width, double height, double angle = 0, GraphicStyle style = GraphicStyle
             .simple)
     {
         return theme.background(width, height, angle, &style);
@@ -918,7 +918,7 @@ class Control : GuiComponent
         super.addCreate(control, index);
     }
 
-    override void addCreate(Sprite sprite, long index = -1)
+    override void addCreate(Sprite2d sprite, long index = -1)
     {
         if (auto control = cast(Control) sprite)
         {
@@ -928,7 +928,7 @@ class Control : GuiComponent
         super.addCreate(sprite, index);
     }
 
-    override void addCreate(Sprite[] sprites)
+    override void addCreate(Sprite2d[] sprites)
     {
         foreach (s; sprites)
         {
@@ -972,12 +972,12 @@ class Control : GuiComponent
     }
 
     //TODO or move to scene factory?
-    Sprite createIcon(string iconName)
+    Sprite2d createIcon(string iconName)
     {
-        assert(isCreated, "Sprite not created");
+        assert(isCreated, "Sprite2d not created");
 
         import api.dm.gui.themes.icons.icon_name;
-        import api.dm.kit.sprites.images.image : Image;
+        import api.dm.kit.sprites.sprites2d.images.image : Image;
 
         import std.conv : to;
 
@@ -986,7 +986,7 @@ class Control : GuiComponent
         const mustBeIconData = theme.iconData(iconName);
         if (mustBeIconData.isNull)
         {
-            import api.dm.kit.sprites.shapes.rectangle : Rectangle;
+            import api.dm.kit.sprites.sprites2d.shapes.rectangle : Rectangle;
             import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
             import api.dm.kit.graphics.colors.rgba : RGBA;
 
@@ -1113,51 +1113,51 @@ class Control : GuiComponent
     }
 
     bool hasBackground() => _background !is null;
-    Sprite backgroundUnsafe() => _background;
+    Sprite2d backgroundUnsafe() => _background;
 
-    Nullable!Sprite background()
+    Nullable!Sprite2d background()
     {
         if (!hasBackground)
         {
-            return Nullable!Sprite.init;
+            return Nullable!Sprite2d.init;
         }
-        return Nullable!Sprite(_background);
+        return Nullable!Sprite2d(_background);
     }
 
     bool hasHoverEffect() => _hoverEffect !is null;
-    Sprite hoverEffectUnsafe() => _hoverEffect;
+    Sprite2d hoverEffectUnsafe() => _hoverEffect;
 
-    Nullable!Sprite hoverEffect()
+    Nullable!Sprite2d hoverEffect()
     {
         if (!hasHoverEffect)
         {
-            return Nullable!Sprite.init;
+            return Nullable!Sprite2d.init;
         }
-        return Nullable!Sprite(_hoverEffect);
+        return Nullable!Sprite2d(_hoverEffect);
     }
 
     bool hasActionEffect() => _actionEffect !is null;
-    Sprite actionEffectUnsafe() => _actionEffect;
+    Sprite2d actionEffectUnsafe() => _actionEffect;
 
-    Nullable!Sprite actionEffect()
+    Nullable!Sprite2d actionEffect()
     {
         if (!hasActionEffect)
         {
-            return Nullable!Sprite.init;
+            return Nullable!Sprite2d.init;
         }
-        return Nullable!Sprite(_actionEffect);
+        return Nullable!Sprite2d(_actionEffect);
     }
 
     bool hasActionEffectAnimation() => _actionEffectAnimation !is null;
-    Sprite actionEffectAnimUnsafe() => _actionEffectAnimation;
+    Sprite2d actionEffectAnimUnsafe() => _actionEffectAnimation;
 
-    Nullable!Sprite actionEffectAnimation()
+    Nullable!Sprite2d actionEffectAnimation()
     {
         if (!hasActionEffectAnimation)
         {
-            return Nullable!Sprite.init;
+            return Nullable!Sprite2d.init;
         }
-        return Nullable!Sprite(_actionEffectAnimation);
+        return Nullable!Sprite2d(_actionEffectAnimation);
     }
 
     GraphicStyle* hasStyle(string id)

@@ -2,10 +2,10 @@ module api.dm.gui.controls.switches.base_biswitch;
 
 import api.dm.gui.controls.labeled : Labeled;
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.sprites.textures.texture : Texture;
+import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 import api.dm.gui.controls.texts.text : Text;
 
 /**
@@ -69,7 +69,7 @@ class BaseBiswitch : Labeled
     {
         if (isSwitchIcon && hasIcon)
         {
-            if (auto iconTexture = cast(Texture) icon)
+            if (auto iconTexture = cast(Texture2d) icon)
             {
                 //TODO bool flag, sync?
                 if (lastLabelColor == RGBA.init)

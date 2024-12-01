@@ -1,8 +1,8 @@
 module api.dm.kit.factories.image_factory;
 
 import api.dm.kit.components.graphics_component : GraphicsComponent;
-import api.dm.kit.sprites.images.image : Image;
-import api.dm.kit.sprites.images.anim_image : AnimImage;
+import api.dm.kit.sprites.sprites2d.images.image : Image;
+import api.dm.kit.sprites.sprites2d.images.anim_image : AnimImage;
 
 /**
  * Authors: initkfs

@@ -1,9 +1,9 @@
 module api.dm.gui.controls.scales.render_scale;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.sprite : Sprite;
-import api.dm.kit.sprites.textures.texture : Texture;
-import api.dm.kit.sprites.textures.vectors.vector_texture : VectorTexture;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites.sprites2d.textures.vectors.vector_texture : VectorTexture;
 import api.math.geom2.vec2 : Vec2d;
 import api.math.geom2.rect2 : Rect2d;
 import api.dm.gui.controls.texts.text : Text;
@@ -58,7 +58,7 @@ class RenderScale : Control
         this._width = width;
         this._height = height;
 
-        import api.dm.kit.sprites.layouts.center_layout : CenterLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
 
         this.layout = new CenterLayout;
     }

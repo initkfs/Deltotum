@@ -1,6 +1,6 @@
 module api.dm.gui.controls.texts.text;
 
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 import api.math.geom2.rect2 : Rect2d;
@@ -8,9 +8,9 @@ import api.math.geom2.vec2 : Vec2d;
 import api.math.flip : Flip;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.sprites.textures.texture : Texture;
+import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 import api.math.insets : Insets;
-import api.dm.kit.sprites.shapes.rectangle : Rectangle;
+import api.dm.kit.sprites.sprites2d.shapes.rectangle : Rectangle;
 import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 
@@ -55,8 +55,8 @@ class Text : Control
     RGBA _color;
     FontSize fontSize = FontSize.medium;
 
-    Sprite focusEffect;
-    Sprite delegate() focusEffectFactory;
+    Sprite2d focusEffect;
+    Sprite2d delegate() focusEffectFactory;
 
     void delegate(ref KeyEvent) onEnter;
 
@@ -91,7 +91,7 @@ class Text : Control
     {
         this.tempText = text;
 
-        import api.dm.kit.sprites.layouts.managed_layout : ManagedLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.managed_layout : ManagedLayout;
 
         this.layout = new ManagedLayout;
     }
@@ -284,12 +284,12 @@ class Text : Control
         if (isFocusable)
         {
             focusEffectFactory = () {
-                import api.dm.kit.sprites.shapes.rectangle : Rectangle;
+                import api.dm.kit.sprites.sprites2d.shapes.rectangle : Rectangle;
                 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
                 GraphicStyle style = GraphicStyle(1, theme.colorFocus);
 
-                import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
+                import api.dm.kit.sprites.sprites2d.shapes.convex_polygon : ConvexPolygon;
 
                 auto effect = new ConvexPolygon(width, height, style, theme.controlCornersBevel);
                 //auto effect = new Rectangle(width, height, style);
@@ -793,7 +793,7 @@ class Text : Control
         }
     }
 
-    void onFontTexture(scope bool delegate(Texture, const(Glyph*) glyph) onTextureIsContinue)
+    void onFontTexture(scope bool delegate(Texture2d, const(Glyph*) glyph) onTextureIsContinue)
     {
         foreach (TextRow row; rows)
         {
@@ -837,7 +837,7 @@ class Text : Control
         return result;
     }
 
-    void copyTo(Texture texture, Rect2d destBounds)
+    void copyTo(Texture2d texture, Rect2d destBounds)
     {
         assert(texture);
 

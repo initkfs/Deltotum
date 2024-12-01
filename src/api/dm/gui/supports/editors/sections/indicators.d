@@ -19,7 +19,7 @@ class Indicators : Control
     {
         id = "deltotum_gui_editor_section_indicators";
 
-        import api.dm.kit.sprites.layouts.vlayout : VLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
 
         layout = new VLayout;
         layout.isAutoResize = true;
@@ -91,7 +91,7 @@ class Indicators : Control
         root.addCreate(g1);
 
         import api.dm.addon.gui.controls.indicators.leds.led : Led;
-        import api.dm.kit.sprites.tweens.curves.uni_interpolator : UniInterpolator;
+        import api.dm.kit.sprites.sprites2d.tweens.curves.uni_interpolator : UniInterpolator;
 
         auto ledContainer = new VBox;
         root.addCreate(ledContainer);

@@ -2,9 +2,9 @@ module api.dm.gui.controls.progress.base_radial_progress_bar;
 
 import api.dm.gui.controls.progress.base_progress_bar : BaseProgressBar;
 import api.dm.com.graphics.com_texture : ComTextureScaleMode;
-import api.dm.kit.sprites.textures.texture : Texture;
+import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.math.geom2.rect2 : Rect2d;
 
 import Math = api.dm.math;
@@ -19,8 +19,8 @@ class BaseRadialProgressBar : BaseProgressBar
     {
         double diameter = 0;
 
-        Sprite[] segments;
-        Sprite[] fillSegments;
+        Sprite2d[] segments;
+        Sprite2d[] fillSegments;
     }
 
     double segmentCount = 10;
@@ -136,9 +136,9 @@ class BaseRadialProgressBar : BaseProgressBar
         }
     }
 
-    Sprite createSegment(Texture segmentShape)
+    Sprite2d createSegment(Texture2d segmentShape)
     {
-        import api.dm.kit.sprites.textures.rgba_texture : RgbaTexture;
+        import api.dm.kit.sprites.sprites2d.textures.rgba_texture : RgbaTexture;
 
         //TODO instability at small sizes, possible artifacts
         auto rotateDiameter = Math.round(Math.sqrt((segmentWidth ^^ 2) + (segmentHeight ^^ 2)));
@@ -164,9 +164,9 @@ class BaseRadialProgressBar : BaseProgressBar
         return segment;
     }
 
-    Texture createSegmentShape(GraphicStyle style)
+    Texture2d createSegmentShape(GraphicStyle style)
     {
-        import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+        import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
         auto sprite = new VConvexPolygon(segmentWidth, segmentHeight, style, 0);
         build(sprite);
@@ -177,7 +177,7 @@ class BaseRadialProgressBar : BaseProgressBar
         return sprite;
     }
 
-    Texture createFillSegmentShape(GraphicStyle style)
+    Texture2d createFillSegmentShape(GraphicStyle style)
     {
         return createSegmentShape(style);
     }

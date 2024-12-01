@@ -2,7 +2,7 @@ module api.dm.gui.controls.switches.checks.check;
 
 import api.dm.gui.controls.switches.base_biswitch : BaseBiswitch;
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 
 /**
  * Authors: initkfs
@@ -11,18 +11,18 @@ class Check : BaseBiswitch
 {
     protected
     {
-        Sprite marker;
-        Sprite markerContainer;
-        Sprite indeterminate;
+        Sprite2d marker;
+        Sprite2d markerContainer;
+        Sprite2d indeterminate;
     }
 
     bool isCreateMarker;
-    Sprite delegate(Sprite) onMarkerCreate;
-    void delegate(Sprite) onMarkerCreated;
+    Sprite2d delegate(Sprite2d) onMarkerCreate;
+    void delegate(Sprite2d) onMarkerCreated;
 
     bool isCreateIndeterminate;
-    Sprite delegate(Sprite) onIndeterminateCreate;
-    void delegate(Sprite) onIndeterminateCreated;
+    Sprite2d delegate(Sprite2d) onIndeterminateCreate;
+    void delegate(Sprite2d) onIndeterminateCreated;
 
     double markerWidth = 0;
     double markerHeight = 0;
@@ -68,7 +68,7 @@ class Check : BaseBiswitch
         }
     }
 
-    Sprite newMarkerContainer()
+    Sprite2d newMarkerContainer()
     {
         import api.dm.gui.containers.stack_box : StackBox;
 
@@ -78,9 +78,9 @@ class Check : BaseBiswitch
         return markerContainer;
     }
 
-    Sprite newMarker()
+    Sprite2d newMarker()
     {
-        import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
+        import api.dm.kit.sprites.sprites2d.shapes.convex_polygon : ConvexPolygon;
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
         assert(markerWidth > 0);
@@ -91,9 +91,9 @@ class Check : BaseBiswitch
         return marker;
     }
 
-    Sprite newIndeterminateMarker()
+    Sprite2d newIndeterminateMarker()
     {
-        import api.dm.kit.sprites.shapes.rectangle : Rectangle;
+        import api.dm.kit.sprites.sprites2d.shapes.rectangle : Rectangle;
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
         assert(markerWidth > 0);

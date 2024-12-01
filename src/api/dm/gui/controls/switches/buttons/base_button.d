@@ -1,14 +1,14 @@
 module api.dm.gui.controls.switches.buttons.base_button;
 
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.switches.base_biswitch : BaseBiswitch;
-import api.dm.kit.sprites.shapes.shape : Shape;
+import api.dm.kit.sprites.sprites2d.shapes.shape2d : Shape2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
-import api.dm.kit.sprites.shapes.rectangle : Rectangle;
+import api.dm.kit.sprites.sprites2d.shapes.rectangle : Rectangle;
 import api.dm.gui.events.action_event : ActionEvent;
 import api.dm.gui.controls.texts.text : Text;
-import api.dm.kit.sprites.tweens : Tween;
+import api.dm.kit.sprites.sprites2d.tweens : Tween;
 
 import std.traits : isSomeString;
 

@@ -5,7 +5,7 @@ import api.dm.com.inputs.com_cursor : ComCursor, ComSystemCursorType;
 import api.math.geom2.vec2 : Vec2d;
 
 //TODO move cursor and mouse
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 
 /**
  * Authors: initkfs
@@ -20,7 +20,7 @@ abstract class Cursor
         ComCursor defaultCursor;
         ComCursor lastCursor;
         bool _locked;
-        Sprite _cursorOwner;
+        Sprite2d _cursorOwner;
     }
 
     void change(ComSystemCursorType type)
@@ -72,7 +72,7 @@ abstract class Cursor
         return true;
     }
 
-    bool unlock(Sprite owner)
+    bool unlock(Sprite2d owner)
     {
         if (_locked && (owner !is null && _cursorOwner is owner))
         {
@@ -83,7 +83,7 @@ abstract class Cursor
         return false;
     }
 
-    bool lock(Sprite owner)
+    bool lock(Sprite2d owner)
     {
         if (!defaultCursor)
         {

@@ -1,7 +1,7 @@
 module api.dm.gui.controls.scrolls.radial_scroll;
 
 import api.dm.gui.controls.scrolls.mono_scroll : MonoScroll;
-import api.dm.kit.sprites.layouts.center_layout : CenterLayout;
+import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
 
 import api.dm.gui.controls.scales.radial_scale : RadialScale;
 
@@ -51,7 +51,7 @@ class RadialScroll : MonoScroll
         scale.labelStep = 5;
         addCreate(scale);
 
-        import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+        import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
 
         double radiusBase = Math.min(width, height);
         //TODO correct offset

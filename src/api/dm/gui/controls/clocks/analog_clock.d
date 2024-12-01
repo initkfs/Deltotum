@@ -6,15 +6,15 @@ import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.vec2 : Vec2d;
-import api.dm.kit.sprites.sprite : Sprite;
-import api.dm.kit.sprites.textures.vectors.shapes.vcircle : VCircle;
-import api.dm.kit.sprites.textures.vectors.shapes.varc : VArc;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vcircle : VCircle;
+import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.varc : VArc;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
-import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
-import api.dm.kit.sprites.textures.vectors.shapes.vshape : VShape;
-import api.dm.kit.sprites.tweens.pause_tween : PauseTween;
-import api.dm.kit.sprites.textures.texture : Texture;
+import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vshape2d : VShape;
+import api.dm.kit.sprites.sprites2d.tweens.pause_tween : PauseTween;
+import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 import api.math.geom2.rect2 : Rect2d;
 import Math = api.dm.math;
 
@@ -82,17 +82,17 @@ class AnalogClock : Control
 
     bool isPreciseMinSecLabels;
 
-    Sprite hourHand;
-    Sprite minHand;
-    Sprite secHand;
+    Sprite2d hourHand;
+    Sprite2d minHand;
+    Sprite2d secHand;
 
-    Sprite handHolder;
+    Sprite2d handHolder;
 
     PauseTween clockAnimation;
 
     bool isAutorun;
 
-    Sprite[] secIndicatorSegments;
+    Sprite2d[] secIndicatorSegments;
 
     private
     {
@@ -119,7 +119,7 @@ class AnalogClock : Control
         this.width = diameter;
         this.height = diameter;
 
-        import api.dm.kit.sprites.layouts.center_layout : CenterLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
 
         this.layout = new CenterLayout;
         if (diameter == defaultDiameter)
@@ -166,7 +166,7 @@ class AnalogClock : Control
             labelProto.dispose;
         }
 
-        import api.dm.kit.sprites.textures.rgba_texture : RgbaTexture;
+        import api.dm.kit.sprites.sprites2d.textures.rgba_texture : RgbaTexture;
 
         const centerShapeW = width;
         const centerShapeH = height;
@@ -194,7 +194,7 @@ class AnalogClock : Control
                     //     currAngle = endAngle;
                     // }
 
-                    Texture proto = ((i % 5) == 0) ? majorTickProto : minorTickProto;
+                    Texture2d proto = ((i % 5) == 0) ? majorTickProto : minorTickProto;
 
                     if (!cast(VCircle) proto)
                     {
@@ -427,7 +427,7 @@ class AnalogClock : Control
 
         if (sec == 0)
         {
-            foreach (Sprite s; secIndicatorSegments)
+            foreach (Sprite2d s; secIndicatorSegments)
             {
                 s.isVisible = false;
             }

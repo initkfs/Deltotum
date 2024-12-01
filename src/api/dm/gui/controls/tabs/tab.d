@@ -2,7 +2,7 @@ module api.dm.gui.controls.tabs.tab;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.switches.buttons.button: Button;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 
 /**
  * Authors: initkfs
@@ -11,7 +11,7 @@ class Tab : Control
 {
     Button label;
 
-    Sprite content;
+    Sprite2d content;
 
     void delegate() onAction;
 
@@ -21,7 +21,7 @@ class Tab : Control
         label.isFixedButton = true;
         label.isBorder = false;
 
-        import api.dm.kit.sprites.layouts.center_layout: CenterLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.center_layout: CenterLayout;
         layout = new CenterLayout;
         layout.isAutoResize = true;
 

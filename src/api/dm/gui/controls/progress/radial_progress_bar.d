@@ -28,7 +28,7 @@ class RadialProgressBar : BaseRadialProgressBar
     {
         super(minValue, maxValue, diameter);
 
-        import api.dm.kit.sprites.layouts.center_layout : CenterLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
 
         this.layout = new CenterLayout;
     }

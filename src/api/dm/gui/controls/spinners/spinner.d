@@ -24,7 +24,7 @@ class Spinner(T) : Control
 
     this()
     {
-        import api.dm.kit.sprites.layouts.hlayout: HLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.hlayout: HLayout;
 
         this.layout = new HLayout(2);
         layout.isAlignY = true;

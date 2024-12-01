@@ -42,7 +42,7 @@ class RadialProtoScale : Control
         this.minAngleDeg = minAngleDeg;
         this.maxAngleDeg = maxAngleDeg;
 
-        import api.dm.kit.sprites.layouts.center_layout : CenterLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
 
         this.layout = new CenterLayout;
     }
@@ -51,9 +51,9 @@ class RadialProtoScale : Control
     {
         super.create;
 
-        import api.dm.kit.sprites.textures.vectors.vector_texture : VectorTexture;
-        import api.dm.kit.sprites.textures.rgba_texture : RgbaTexture;
-        import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+        import api.dm.kit.sprites.sprites2d.textures.vectors.vector_texture : VectorTexture;
+        import api.dm.kit.sprites.sprites2d.textures.rgba_texture : RgbaTexture;
+        import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
         auto smallTickProto = new VConvexPolygon(tickHeight, tickWidth, GraphicStyle(0, theme.colorAccent, true, theme.colorAccent), 0);
@@ -70,7 +70,7 @@ class RadialProtoScale : Control
 
         import api.dm.gui.controls.texts.text : Text;
         import api.dm.kit.assets.fonts.font_size : FontSize;
-        import api.dm.kit.sprites.textures.texture : Texture;
+        import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 
         import std.conv: to;
 
@@ -126,7 +126,7 @@ class RadialProtoScale : Control
                 {
                     auto pos = Vec2d.fromPolarDeg(startAngleDeg, radius - tickOuterPadding);
 
-                    Texture proto = (majorTickStep > 0 && ((i % majorTickStep) == 0)) ? bigTickProto : smallTickProto;
+                    Texture2d proto = (majorTickStep > 0 && ((i % majorTickStep) == 0)) ? bigTickProto : smallTickProto;
 
                     proto.angle = startAngleDeg;
 

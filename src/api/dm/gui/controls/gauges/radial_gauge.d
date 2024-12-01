@@ -1,15 +1,15 @@
 module api.dm.gui.controls.gauges.radial_gauge;
 
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.textures.vectors.shapes.vshape : VShape;
+import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vshape2d : VShape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.containers.circle_box : CircleBox;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.sprites.textures.texture : Texture;
+import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 import api.dm.gui.controls.texts.text : Text;
-import api.dm.kit.sprites.tweens.tween : Tween;
-import api.dm.kit.sprites.tweens.targets.value_tween : ValueTween;
+import api.dm.kit.sprites.sprites2d.tweens.tween : Tween;
+import api.dm.kit.sprites.sprites2d.tweens.targets.value_tween : ValueTween;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 
 import api.math.geom2.vec2 : Vec2d;
@@ -91,8 +91,8 @@ class RadialGauge : Control
     double valueStep = 0.05;
     size_t labelStepCount = 5;
 
-    Sprite hand;
-    Sprite handHolder;
+    Sprite2d hand;
+    Sprite2d handHolder;
 
     ValueTween handTween;
 
@@ -116,7 +116,7 @@ class RadialGauge : Control
         this.minAngleDeg = minAngleDeg;
         this.maxAngleDeg = maxAngleDeg;
 
-        import api.dm.kit.sprites.layouts.center_layout : CenterLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
 
         this.layout = new CenterLayout;
 
@@ -129,8 +129,8 @@ class RadialGauge : Control
 
         size_t radius = (_diameter / 2).to!size_t;
 
-        import api.dm.kit.sprites.textures.vectors.vector_texture : VectorTexture;
-        import api.dm.kit.sprites.textures.rgba_texture : RgbaTexture;
+        import api.dm.kit.sprites.sprites2d.textures.vectors.vector_texture : VectorTexture;
+        import api.dm.kit.sprites.sprites2d.textures.rgba_texture : RgbaTexture;
 
         const centerShapeW = width;
         const centerShapeH = height;
@@ -142,7 +142,7 @@ class RadialGauge : Control
         handTween.onStop ~= () { setLabel(_value); };
         addCreate(handTween);
 
-        import api.dm.kit.sprites.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+        import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
         import api.dm.com.graphics.com_texture : ComTextureScaleMode;
 
         auto tickWidth = 2;
@@ -209,7 +209,7 @@ class RadialGauge : Control
                 {
                     auto pos = Vec2d.fromPolarDeg(startAngleDeg, radius - 35);
 
-                    Texture proto = i % labelStepCount == 0 ? bigTickProto : smallTickProto;
+                    Texture2d proto = i % labelStepCount == 0 ? bigTickProto : smallTickProto;
 
                     proto.angle = startAngleDeg;
 
@@ -258,7 +258,7 @@ class RadialGauge : Control
             hand = new Hand(width, height, 5, 45, handStyle);
             addCreate(hand);
 
-            import api.dm.kit.sprites.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
 
             VRegularPolygon holder = new VRegularPolygon(10, GraphicStyle(0, theme.colorDanger, true, theme.colorDanger));
             addCreate(holder);
@@ -274,7 +274,7 @@ class RadialGauge : Control
 
             setLabel(minValue);
 
-            import api.dm.kit.sprites.textures.vectors.vector_texture : VectorTexture;
+            import api.dm.kit.sprites.sprites2d.textures.vectors.vector_texture : VectorTexture;
 
             auto zoneShape = new class VectorTexture
             {

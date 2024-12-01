@@ -1,7 +1,7 @@
 module api.dm.gui.controls.switches.buttons.triangle_button;
 
 import api.dm.gui.controls.switches.buttons.base_button : BaseButton;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.events.action_event : ActionEvent;
 import api.dm.gui.controls.control : Control;
@@ -54,19 +54,19 @@ class TriangleButton : BaseButton
 
     alias createShape = Control.createShape;
 
-    protected override Sprite createShape(double width, double height, double angle, GraphicStyle style)
+    protected override Sprite2d createShape(double width, double height, double angle, GraphicStyle style)
     {
-        Sprite shape;
+        Sprite2d shape;
 
         if (capGraphics.isVectorGraphics)
         {
-            import api.dm.kit.sprites.textures.vectors.shapes.vtriangle : VTriangle;
+            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vtriangle : VTriangle;
 
             shape = new VTriangle(width, height, style);
         }
         else
         {
-            import api.dm.kit.sprites.shapes.triangle : Triangle;
+            import api.dm.kit.sprites.sprites2d.shapes.triangle : Triangle;
 
             shape = new Triangle(width, height, style);
         }

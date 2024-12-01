@@ -1,9 +1,9 @@
 module api.dm.addon.gui.controls.indicators.leds.led_base;
 
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.kit.sprites.textures.texture : Texture;
+import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.containers.hbox : HBox;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -24,7 +24,7 @@ class LedBase : Control
         this.width = width;
         this.height = height;
 
-        import api.dm.kit.sprites.layouts.center_layout : CenterLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
 
         layout = new CenterLayout;
         this.colorHue = colorHue;
@@ -32,8 +32,8 @@ class LedBase : Control
         isOpacityForChildren = true;
     }
 
-    abstract Sprite newLayerShape(GraphicStyle style, double layerInnerPadding, double blurSize);
-    abstract Sprite createLedLayer();
+    abstract Sprite2d newLayerShape(GraphicStyle style, double layerInnerPadding, double blurSize);
+    abstract Sprite2d createLedLayer();
 
     double calcLayerPadding()
     {
@@ -118,7 +118,7 @@ class LedBase : Control
         return style;
     }
 
-    protected Sprite createLayer(GraphicStyle style, double layerInnerPadding, double blurSize)
+    protected Sprite2d createLayer(GraphicStyle style, double layerInnerPadding, double blurSize)
     {
         auto shape = newLayerShape(style, layerInnerPadding, blurSize);
         if (!shape.isCreated)
@@ -138,9 +138,9 @@ class LedBase : Control
         return shape;
     }
 
-    Texture composeLayers(Sprite[] layers)
+    Texture2d composeLayers(Sprite2d[] layers)
     {
-        auto texture = new Texture(width, height);
+        auto texture = new Texture2d(width, height);
         build(texture);
         texture.createTargetRGBA32;
 

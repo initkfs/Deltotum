@@ -3,9 +3,9 @@ module api.dm.gui.controls.texts.text_area;
 import api.dm.gui.controls.texts.text_view : TextView;
 import api.dm.gui.controls.scrolls.vscroll : VScroll;
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.sprite: Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d: Sprite2d;
 import api.dm.gui.containers.hbox : HBox;
-import api.dm.kit.sprites.layouts.hlayout : HLayout;
+import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
 
 import std.stdio;
 
@@ -41,10 +41,10 @@ class TextArea : HBox
         isBackground = true;
     }
 
-    override Sprite newBackground(double width, double height)
+    override Sprite2d newBackground(double width, double height)
     {
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-        import api.dm.kit.sprites.shapes.convex_polygon : ConvexPolygon;
+        import api.dm.kit.sprites.sprites2d.shapes.convex_polygon : ConvexPolygon;
 
         GraphicStyle backgroundStyle = GraphicStyle(1, theme.colorAccent, isBackground, theme
                 .colorPrimary);

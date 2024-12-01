@@ -5,7 +5,7 @@ import api.dm.addon.fractals.hopalongs.hopalong : Hopalong, HopalongType;
 import api.dm.gui.controls.forms.fields.regulate_text_field : RegulateTextField;
 import api.dm.gui.controls.forms.fields.regulate_text_panel : RegulateTextPanel;
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.sprite : Sprite;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.containers.container : Container;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.containers.hbox : HBox;
@@ -58,7 +58,7 @@ class HopalongGenerator : Control
 
         rnd = new Random;
 
-        import api.dm.kit.sprites.layouts.hlayout : HLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
 
         layout = new HLayout(5);
         layout.isAlignY = true;
@@ -222,7 +222,7 @@ class HopalongGenerator : Control
         dCoeffField.value = 0;
     }
 
-    protected RegulateTextField createRegField(Sprite root, dstring label = "Label", double minValue = 0, double maxValue = 1, void delegate(
+    protected RegulateTextField createRegField(Sprite2d root, dstring label = "Label", double minValue = 0, double maxValue = 1, void delegate(
             double) onScrollValue = null)
     {
 

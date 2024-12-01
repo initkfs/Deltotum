@@ -442,8 +442,8 @@ class DiamondSquareGenerator : Control
 
     import api.dm.kit.graphics.colors.rgba : RGBA;
     import api.math.geom2.rect2 : Rect2d;
-    import api.dm.kit.sprites.sprite : Sprite;
-    import api.dm.kit.sprites.textures.vectors.vector_texture : VectorTexture;
+    import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+    import api.dm.kit.sprites.sprites2d.textures.vectors.vector_texture : VectorTexture;
     import api.dm.gui.controls.popups.pointer_popup : PointerPopup;
 
     StackBox contentContainer;
@@ -481,7 +481,7 @@ class DiamondSquareGenerator : Control
 
         generator = DiamondSquareTerrain(randomRangeMin, randomRangeMax, matrixInitSize, rnd);
 
-        import api.dm.kit.sprites.layouts.hlayout : HLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
 
         layout = new HLayout(5);
         layout.isAutoResize = true;
@@ -565,7 +565,7 @@ class DiamondSquareGenerator : Control
         });
     }
 
-    protected RegulateTextField createRegField(Sprite root, dstring label = "Label", double minValue = 0, double maxValue = 1, void delegate(
+    protected RegulateTextField createRegField(Sprite2d root, dstring label = "Label", double minValue = 0, double maxValue = 1, void delegate(
             double) onScrollValue = null)
     {
 
