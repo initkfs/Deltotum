@@ -114,10 +114,10 @@ class SdlEventProcessor : KitEventProcessor!(SDL_Event*)
         switch (event.type)
         {
         case SDL_KEYDOWN:
-            type = KeyEvent.Event.keyDown;
+            type = KeyEvent.Event.press;
             break;
         case SDL_KEYUP:
-            type = KeyEvent.Event.keyUp;
+            type = KeyEvent.Event.release;
             break;
         default:
             break;
@@ -177,7 +177,7 @@ class SdlEventProcessor : KitEventProcessor!(SDL_Event*)
             break;
         case SDL_MOUSEBUTTONDOWN:
             SDL_CaptureMouse(SDL_TRUE);
-            type = PointerEvent.Event.down;
+            type = PointerEvent.Event.press;
             // - 1
             button = event.button.button;
             x = event.button.x;
@@ -185,7 +185,7 @@ class SdlEventProcessor : KitEventProcessor!(SDL_Event*)
             break;
         case SDL_MOUSEBUTTONUP:
             SDL_CaptureMouse(SDL_FALSE);
-            type = PointerEvent.Event.up;
+            type = PointerEvent.Event.release;
             button = event.button.button;
             x = event.button.x;
             y = event.button.y;

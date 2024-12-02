@@ -527,7 +527,7 @@ class Control : GuiComponent
                 onPointerOutBounds ~= (ref e) {
                     import api.dm.kit.inputs.pointers.events.pointer_event: PointerEvent;
 
-                    if(e.event != PointerEvent.Event.up){
+                    if(e.event != PointerEvent.Event.release){
                         return;
                     }
 

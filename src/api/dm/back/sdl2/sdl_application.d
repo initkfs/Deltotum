@@ -356,10 +356,10 @@ class SdlApplication : GuiApp
             {
                 case none:
                     break;
-                case keyDown:
+                case press:
                     _input.addPressedKey(key.keyName);
                     break;
-                case keyUp:
+                case release:
                     _input.addReleasedKey(key.keyName);
                     break;
             }

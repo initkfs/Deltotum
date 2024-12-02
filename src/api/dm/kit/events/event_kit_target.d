@@ -1,6 +1,6 @@
 module api.dm.kit.events.event_kit_target;
 
-import api.dm.kit.components.graphics_component: GraphicsComponent;
+import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.core.events.base.event_target : EventTarget;
 
 import api.core.apps.events.app_event : AppEvent;
@@ -17,7 +17,8 @@ import std.meta : AliasSeq;
 
 alias AllAppEvents = AliasSeq!(AppEvent, FocusEvent, KeyEvent, PointerEvent, TextInputEvent, JoystickEvent, WindowEvent);
 
-enum EventKitPhase {
+enum EventKitPhase
+{
     preDispatch,
     preDispatchChildren,
     postDispatchChildren,
@@ -35,7 +36,7 @@ mixin template EventPhaseProcesor()
     import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
     import api.dm.kit.windows.events.window_event : WindowEvent;
     import api.dm.kit.events.event_kit_target : AllAppEvents, EventKitPhase;
-    import std.conv: text;
+    import std.conv : text;
 
     static foreach (e; AllAppEvents)
     {
@@ -54,6 +55,7 @@ class EventKitTarget : GraphicsComponent, EventTarget
 
     void delegate(ref PointerEvent)[] eventPointerHandlers;
 
+    void delegate(ref PointerEvent)[] onPointerCancel;
     void delegate(ref PointerEvent)[] onPointerPress;
     void delegate(ref PointerEvent)[] onPointerRelease;
     void delegate(ref PointerEvent)[] onPointerMove;
@@ -197,10 +199,13 @@ class EventKitTarget : GraphicsComponent, EventTarget
         {
             case none:
                 break;
-            case down:
+            case cancel:
+                runDelegates(e, onPointerCancel);
+                break;
+            case press:
                 runDelegates(e, onPointerPress);
                 break;
-            case up:
+            case release:
                 runDelegates(e, onPointerRelease);
                 break;
             case move:
@@ -209,10 +214,10 @@ class EventKitTarget : GraphicsComponent, EventTarget
             case wheel:
                 runDelegates(e, onPointerWheel);
                 break;
-            case entered:
+            case enter:
                 runDelegates(e, onPointerEnter);
                 break;
-            case exited:
+            case exit:
                 runDelegates(e, onPointerExit);
                 break;
         }
@@ -224,10 +229,10 @@ class EventKitTarget : GraphicsComponent, EventTarget
         {
             case none:
                 break;
-            case keyUp:
+            case release:
                 runDelegates(keyEvent, onKeyRelease);
                 break;
-            case keyDown:
+            case press:
                 runDelegates(keyEvent, onKeyPress);
                 break;
         }
@@ -272,10 +277,10 @@ class EventKitTarget : GraphicsComponent, EventTarget
         {
             case none:
                 break;
-            case focusIn:
+            case enter:
                 runDelegates(focusEvent, onFocusEnter);
                 break;
-            case focusOut:
+            case exit:
                 runDelegates(focusEvent, onFocusExit);
                 break;
         }

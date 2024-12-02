@@ -262,7 +262,7 @@ class Sprite2d : EventKitTarget
                 return;
             }
 
-            if (e.event == PointerEvent.Event.down)
+            if (e.event == PointerEvent.Event.press)
             {
                 if (isDraggable && boundsRect.contains(e.x, e.y))
                 {
@@ -296,7 +296,7 @@ class Sprite2d : EventKitTarget
                     }
                 }
             }
-            else if (e.event == PointerEvent.Event.up)
+            else if (e.event == PointerEvent.Event.release)
             {
                 if (isDraggable && isDrag)
                 {
@@ -391,19 +391,19 @@ class Sprite2d : EventKitTarget
                         if (onPointerEnter.length > 0 || eventPointerHandlers
                             .length > 0)
                         {
-                            auto enteredEvent = PointerEvent(PointerEvent.Event.entered, e
+                            auto enterEvent = PointerEvent(PointerEvent.Event.enter, e
                                     .ownerId, e
                                     .x, e.y, e
                                     .button, e.movementX, e.movementY);
-                            enteredEvent.isSynthetic = true;
-                            fireEvent(enteredEvent);
+                            enterEvent.isSynthetic = true;
+                            fireEvent(enterEvent);
                         }
 
                     }
 
                     runEventHandlers(e);
                 }
-                else if (e.event == PointerEvent.Event.down)
+                else if (e.event == PointerEvent.Event.press)
                 {
                     if (!isFocus)
                     {
@@ -413,7 +413,7 @@ class Sprite2d : EventKitTarget
                         {
                             import api.dm.kit.events.focus.focus_event : FocusEvent;
 
-                            auto focusEvent = FocusEvent(FocusEvent.Event.focusIn, e
+                            auto focusEvent = FocusEvent(FocusEvent.Event.enter, e
                                     .ownerId, e.x, e.y);
                             focusEvent.isSynthetic = true;
                             fireEvent(focusEvent);
@@ -442,24 +442,24 @@ class Sprite2d : EventKitTarget
                     if (isMouseOver)
                     {
                         isMouseOver = false;
-                        auto exitedEvent = PointerEvent(PointerEvent.Event.exited, e
+                        auto exitEvent = PointerEvent(PointerEvent.Event.exit, e
                                 .ownerId, e
                                 .x, e.y, e
                                 .button, e.movementX, e.movementY);
-                        exitedEvent.isSynthetic = true;
-                        fireEvent(exitedEvent);
+                        exitEvent.isSynthetic = true;
+                        fireEvent(exitEvent);
                     }
 
                     runEventHandlers(e);
                 }
-                else if (e.event == PointerEvent.Event.down)
+                else if (e.event == PointerEvent.Event.press)
                 {
                     if (isFocus && (onFocusExit.length > 0 || eventFocusHandlers.length > 0))
                     {
                         isFocus = false;
                         import api.dm.kit.events.focus.focus_event : FocusEvent;
 
-                        auto focusEvent = FocusEvent(FocusEvent.Event.focusOut, e
+                        auto focusEvent = FocusEvent(FocusEvent.Event.exit, e
                                 .ownerId, e.x, e.y);
                         focusEvent.isSynthetic = true;
                         fireEvent(focusEvent);

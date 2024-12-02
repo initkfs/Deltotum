@@ -15,10 +15,11 @@ struct PointerEvent
     enum Event
     {
         none,
-        down,
-        up,
-        entered,
-        exited,
+        cancel,
+        press,
+        release,
+        enter,
+        exit,
         move,
         wheel
     }
@@ -32,6 +33,8 @@ struct PointerEvent
 
     double movementX;
     double movementY;
+
+    bool isPrimary = true;
 
     this(Event event, int ownerId = 0, double x = 0, double y = 0, int button = 0, double movementX = 0, double movementY = 0)
     {

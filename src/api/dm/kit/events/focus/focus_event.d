@@ -13,8 +13,8 @@ struct FocusEvent
     enum Event
     {
         none,
-        focusIn,
-        focusOut
+        enter,
+        exit
     }
 
     Event event;

@@ -16,8 +16,8 @@ struct KeyEvent
     enum Event
     {
         none,
-        keyDown,
-        keyUp
+        press,
+        release
     }
 
     Event event;

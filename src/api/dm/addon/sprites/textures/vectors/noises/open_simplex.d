@@ -1472,7 +1472,7 @@ class OpenSimplex : Noise
      * 2D OpenSimplex2S/SuperSimplex noise, with Y pointing down the main diagonal.
      * Might be better for a 2D sandbox style game, where Y is vertical.
      * Probably slightly less optimal for heightmaps or continent maps,
-     * unless your map is centered around an equator. It's a slight
+     * unless your map is center around an equator. It's a slight
      * difference, but the option is here to make it easy.
      */
     public static float noise2_ImproveX(long seed, double x, double y)
