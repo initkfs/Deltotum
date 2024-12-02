@@ -78,8 +78,8 @@ class Popup : VBox
 
         opacity = 0;
 
-        //not onPointerDown, prevent accidental click on element under.
-        onPointerUp ~= (ref e) {
+        //not onPointerPress, prevent accidental click on element under.
+        onPointerRelease ~= (ref e) {
 
             if (showAnimation.isRunning)
             {

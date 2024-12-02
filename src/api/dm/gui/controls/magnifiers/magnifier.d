@@ -45,7 +45,7 @@ class Magnifier : Control
     {
         super.initialize;
 
-        onPointerEntered ~= (ref e) {
+        onPointerEnter ~= (ref e) {
             if (magnifier && !isLastIndex(magnifier))
             {
                 changeIndexToLast(magnifier);
@@ -101,7 +101,7 @@ class Magnifier : Control
                 }
             };
 
-            onPointerExited ~= (ref e) {
+            onPointerExit ~= (ref e) {
                 magnifier.isVisible = false;
                 input.systemCursor.show;
             };

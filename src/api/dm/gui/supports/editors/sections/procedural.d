@@ -68,7 +68,7 @@ class Procedural : Control
         addCreate(tween);
         tween.onEnd ~= () { randomTiling(t1); t1.recreate; };
 
-        t1.onPointerDown ~= (ref e) {
+        t1.onPointerPress ~= (ref e) {
             if (tween.isRunning)
             {
                 tween.stop;

@@ -85,13 +85,13 @@ class VSplitBox : Container
 
         separators ~= SeparatorData(prev, next, sep);
 
-        sep.onPointerEntered ~= (ref e) {
+        sep.onPointerEnter ~= (ref e) {
             import api.dm.com.inputs.com_cursor : ComSystemCursorType;
 
             input.systemCursor.change(ComSystemCursorType.hand);
         };
 
-        sep.onPointerExited ~= (ref e) { input.systemCursor.restore; };
+        sep.onPointerExit ~= (ref e) { input.systemCursor.restore; };
 
         sep.onDragXY = (x, y) {
 

@@ -124,7 +124,7 @@ class HourChooser : TimeChooser
             button.isBorder = false;
             button.isBackground = false;
             hour1to12Box.addCreate(button);
-            button.onPointerDown ~= (ref e) {
+            button.onPointerPress ~= (ref e) {
                 if (onStrValue)
                 {
                     onStrValue(button.text);
@@ -148,7 +148,7 @@ class HourChooser : TimeChooser
             dstring valueStr = j == 24 ? "00" : j.to!dstring;
             auto button = new Text(valueStr);
             button.isFocusable = false;
-            button.onPointerDown ~= (ref e) {
+            button.onPointerPress ~= (ref e) {
                 if (onStrValue)
                 {
                     onStrValue(button.text);
@@ -259,7 +259,7 @@ class MinSecChooser : TimeChooser
             button.isBackground = false;
             minSec0to55Box.addCreate(button);
 
-            button.onPointerDown ~= (ref e) {
+            button.onPointerPress ~= (ref e) {
                 if (onStrValue)
                 {
                     onStrValue(button.text);
@@ -356,7 +356,7 @@ class TimePicker : Control
 
         hoursLabel = newTextLabel;
         hoursLabel.isFocusable = false;
-        hoursLabel.onPointerDown ~= (ref e) {
+        hoursLabel.onPointerPress ~= (ref e) {
 
             hoursLabel.backgroundUnsafe.isVisible = true;
             minutesLabel.backgroundUnsafe.isVisible = false;
@@ -369,7 +369,7 @@ class TimePicker : Control
         };
         minutesLabel = newTextLabel;
         minutesLabel.isFocusable = false;
-        minutesLabel.onPointerDown ~= (ref e) {
+        minutesLabel.onPointerPress ~= (ref e) {
 
             hoursLabel.backgroundUnsafe.isVisible = false;
             minutesLabel.backgroundUnsafe.isVisible = true;
@@ -384,7 +384,7 @@ class TimePicker : Control
         };
 
         secsLabel = newTextLabel;
-        secsLabel.onPointerDown ~= (ref e) {
+        secsLabel.onPointerPress ~= (ref e) {
 
             hoursLabel.backgroundUnsafe.isVisible = false;
             minutesLabel.backgroundUnsafe.isVisible = false;

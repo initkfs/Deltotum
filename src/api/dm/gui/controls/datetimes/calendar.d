@@ -80,7 +80,7 @@ class DayContainer : Control
 
         if (canMark)
         {
-            onPointerDown ~= (ref e) {
+            onPointerPress ~= (ref e) {
                 if (!canMark)
                 {
                     return;
@@ -290,7 +290,7 @@ class Calendar : Control
         yearLabel = new Text(year.to!dstring);
         yearLabel.isEditable = true;
 
-        yearLabel.onKeyDown ~= (ref e) {
+        yearLabel.onKeyPress ~= (ref e) {
             import api.dm.com.inputs.com_keyboard : ComKeyName;
 
             if (e.keyName == ComKeyName.RETURN)

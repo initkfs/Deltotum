@@ -46,7 +46,7 @@ class Physics : Control
         material.y = 50;
         addCreate(material);
 
-        material.onPointerDown ~= (ref e) {
+        material.onPointerPress ~= (ref e) {
             material.velocity.x = 10;
             material.velocity.y = 10;
             material.isPhysicsEnabled = true;

@@ -74,7 +74,7 @@ class Expander : Control
         expandBar.isBorder = true;
         addCreate(expandBar);
 
-        expandBar.onPointerDown ~= (ref e) {
+        expandBar.onPointerPress ~= (ref e) {
 
             if (clipTween.isRunning)
             {

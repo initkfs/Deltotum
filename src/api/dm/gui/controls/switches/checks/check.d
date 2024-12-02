@@ -158,7 +158,7 @@ class Check : BaseBiswitch
         if (isCreateMarkerListeners)
         {
             assert(marker);
-            onPointerUp ~= (ref e) { toggle; };
+            onPointerRelease ~= (ref e) { toggle; };
         }
     }
 

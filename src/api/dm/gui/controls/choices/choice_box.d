@@ -134,14 +134,14 @@ class ChoiceBox : TypedContainer!ChoiceItem
         choiceList = new VBox(2);
         choiceList.id = "choice_box_list";
         choiceList.isAlignX = true;
-        choiceList.onFocusOut ~= (ref e) {
+        choiceList.onFocusExit ~= (ref e) {
             if (choiceList.isVisible)
             {
                 choiceList.isVisible = false;
             }
         };
 
-        onFocusOut ~= (ref e) {
+        onFocusExit ~= (ref e) {
             if (choiceList.isVisible)
             {
                 const listBounds = choiceList.boundsRect;
@@ -173,7 +173,7 @@ class ChoiceBox : TypedContainer!ChoiceItem
         //TODO hack
         searchField.textView.maxWidth = double.max;
 
-        searchField.onKeyDown ~= (ref e) { fillItemList; choiceList.applyLayout; };
+        searchField.onKeyPress ~= (ref e) { fillItemList; choiceList.applyLayout; };
 
     }
 

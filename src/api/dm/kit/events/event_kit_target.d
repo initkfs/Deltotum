@@ -54,19 +54,19 @@ class EventKitTarget : GraphicsComponent, EventTarget
 
     void delegate(ref PointerEvent)[] eventPointerHandlers;
 
-    void delegate(ref PointerEvent)[] onPointerDown;
-    void delegate(ref PointerEvent)[] onPointerUp;
+    void delegate(ref PointerEvent)[] onPointerPress;
+    void delegate(ref PointerEvent)[] onPointerRelease;
     void delegate(ref PointerEvent)[] onPointerMove;
     void delegate(ref PointerEvent)[] onPointerWheel;
 
     bool isMouseOver;
-    void delegate(ref PointerEvent)[] onPointerEntered;
-    void delegate(ref PointerEvent)[] onPointerExited;
+    void delegate(ref PointerEvent)[] onPointerEnter;
+    void delegate(ref PointerEvent)[] onPointerExit;
 
     void delegate(ref KeyEvent)[] eventKeyHandlers;
 
-    void delegate(ref KeyEvent)[] onKeyUp;
-    void delegate(ref KeyEvent)[] onKeyDown;
+    void delegate(ref KeyEvent)[] onKeyRelease;
+    void delegate(ref KeyEvent)[] onKeyPress;
 
     void delegate(ref TextInputEvent)[] eventTextInputHandlers;
 
@@ -74,8 +74,8 @@ class EventKitTarget : GraphicsComponent, EventTarget
 
     void delegate(ref FocusEvent)[] eventFocusHandlers;
 
-    void delegate(ref FocusEvent)[] onFocusIn;
-    void delegate(ref FocusEvent)[] onFocusOut;
+    void delegate(ref FocusEvent)[] onFocusEnter;
+    void delegate(ref FocusEvent)[] onFocusExit;
 
     void delegate(ref JoystickEvent)[] eventJoystickHandlers;
 
@@ -198,10 +198,10 @@ class EventKitTarget : GraphicsComponent, EventTarget
             case none:
                 break;
             case down:
-                runDelegates(e, onPointerDown);
+                runDelegates(e, onPointerPress);
                 break;
             case up:
-                runDelegates(e, onPointerUp);
+                runDelegates(e, onPointerRelease);
                 break;
             case move:
                 runDelegates(e, onPointerMove);
@@ -210,10 +210,10 @@ class EventKitTarget : GraphicsComponent, EventTarget
                 runDelegates(e, onPointerWheel);
                 break;
             case entered:
-                runDelegates(e, onPointerEntered);
+                runDelegates(e, onPointerEnter);
                 break;
             case exited:
-                runDelegates(e, onPointerExited);
+                runDelegates(e, onPointerExit);
                 break;
         }
     }
@@ -225,10 +225,10 @@ class EventKitTarget : GraphicsComponent, EventTarget
             case none:
                 break;
             case keyUp:
-                runDelegates(keyEvent, onKeyUp);
+                runDelegates(keyEvent, onKeyRelease);
                 break;
             case keyDown:
-                runDelegates(keyEvent, onKeyDown);
+                runDelegates(keyEvent, onKeyPress);
                 break;
         }
     }
@@ -273,10 +273,10 @@ class EventKitTarget : GraphicsComponent, EventTarget
             case none:
                 break;
             case focusIn:
-                runDelegates(focusEvent, onFocusIn);
+                runDelegates(focusEvent, onFocusEnter);
                 break;
             case focusOut:
-                runDelegates(focusEvent, onFocusOut);
+                runDelegates(focusEvent, onFocusExit);
                 break;
         }
     }
@@ -308,12 +308,12 @@ class EventKitTarget : GraphicsComponent, EventTarget
 
     bool removeOnPointerDown(void delegate(ref PointerEvent) dg)
     {
-        return drop(onPointerDown, dg);
+        return drop(onPointerPress, dg);
     }
 
-    bool removeOnPointerUp(void delegate(ref PointerEvent) dg)
+    bool removeOnPointerReleased(void delegate(ref PointerEvent) dg)
     {
-        return drop(onPointerUp, dg);
+        return drop(onPointerRelease, dg);
     }
 
     bool removeOnPointerMove(void delegate(ref PointerEvent) dg)
@@ -328,12 +328,12 @@ class EventKitTarget : GraphicsComponent, EventTarget
 
     bool removeOnPointerEntered(void delegate(ref PointerEvent) dg)
     {
-        return drop(onPointerEntered, dg);
+        return drop(onPointerEnter, dg);
     }
 
     bool removeOnPointerExited(void delegate(ref PointerEvent) dg)
     {
-        return drop(onPointerExited, dg);
+        return drop(onPointerExit, dg);
     }
 
     bool removeHandler(void delegate(ref KeyEvent) dg)
@@ -343,12 +343,12 @@ class EventKitTarget : GraphicsComponent, EventTarget
 
     bool removeOnKeyUp(void delegate(ref KeyEvent) dg)
     {
-        return drop(onKeyUp, dg);
+        return drop(onKeyRelease, dg);
     }
 
     bool removeOnKeyDown(void delegate(ref KeyEvent) dg)
     {
-        return drop(onKeyUp, dg);
+        return drop(onKeyRelease, dg);
     }
 
     bool removeHandler(void delegate(ref TextInputEvent) dg)
@@ -368,12 +368,12 @@ class EventKitTarget : GraphicsComponent, EventTarget
 
     bool removeOnFocusIn(void delegate(ref FocusEvent) dg)
     {
-        return drop(onFocusIn, dg);
+        return drop(onFocusEnter, dg);
     }
 
     bool removeOnFocusOut(void delegate(ref FocusEvent) dg)
     {
-        return drop(onFocusOut, dg);
+        return drop(onFocusExit, dg);
     }
 
     bool removeHandler(void delegate(ref JoystickEvent) dg)
@@ -411,18 +411,18 @@ class EventKitTarget : GraphicsComponent, EventTarget
 
         eventPointerHandlers = null;
 
-        onPointerDown = null;
-        onPointerUp = null;
+        onPointerPress = null;
+        onPointerRelease = null;
         onPointerMove = null;
         onPointerWheel = null;
 
-        onPointerEntered = null;
-        onPointerExited = null;
+        onPointerEnter = null;
+        onPointerExit = null;
 
         eventKeyHandlers = null;
 
-        onKeyUp = null;
-        onKeyDown = null;
+        onKeyRelease = null;
+        onKeyPress = null;
 
         eventTextInputHandlers = null;
 
@@ -430,8 +430,8 @@ class EventKitTarget : GraphicsComponent, EventTarget
 
         eventFocusHandlers = null;
 
-        onFocusIn = null;
-        onFocusOut = null;
+        onFocusEnter = null;
+        onFocusExit = null;
 
         eventJoystickHandlers = null;
 

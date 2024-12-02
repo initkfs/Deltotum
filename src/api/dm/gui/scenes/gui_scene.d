@@ -52,7 +52,7 @@ class GuiScene : Scene2d
                 guiSprite.addCreate(dialogManager, 0);
                 guiSprite.interact.dialog = dialogManager;
 
-                onKeyDown ~= (ref e) {
+                onKeyPress ~= (ref e) {
                     import api.dm.com.inputs.com_keyboard : ComKeyName;
 
                     //TODO toggle pause?

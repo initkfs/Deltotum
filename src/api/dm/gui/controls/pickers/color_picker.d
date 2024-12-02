@@ -86,9 +86,9 @@ class ColorPicker : Control
         //     RGBA rgba = RGBA.web(hexColor);
         //     const size = colorContainerSize;
         //     auto rect = new Rectangle(size, size);
-        //     rect.onPointerEntered ~= (ref e) { rect.style.lineColor = RGBA.white; };
-        //     rect.onPointerExited ~= (ref e) { rect.style.lineColor = rgba; };
-        //     rect.onPointerDown ~= (ref e) {
+        //     rect.onPointerEnter ~= (ref e) { rect.style.lineColor = RGBA.white; };
+        //     rect.onPointerExit ~= (ref e) { rect.style.lineColor = rgba; };
+        //     rect.onPointerPress ~= (ref e) {
         //         colorIndicator.style.fillColor = rgba;
         //         colorIndicator.style.lineColor = rgba;
         //         colorText.text = hexColor;

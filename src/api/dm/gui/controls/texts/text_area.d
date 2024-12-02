@@ -62,13 +62,13 @@ class TextArea : HBox
         textView = new TextView;
         textView.isEditable = true;
 
-        textView.onPointerEntered ~= (ref e) {
+        textView.onPointerEnter ~= (ref e) {
             import api.dm.com.inputs.com_cursor : ComSystemCursorType;
 
             input.systemCursor.change(ComSystemCursorType.ibeam);
         };
 
-        textView.onPointerExited ~= (ref e) { input.systemCursor.restore; };
+        textView.onPointerExit ~= (ref e) { input.systemCursor.restore; };
 
         addCreate(textView);
 
@@ -94,7 +94,7 @@ class TextArea : HBox
             }
         };
 
-        onKeyDown ~= (ref key) {
+        onKeyPress ~= (ref key) {
             import api.dm.com.inputs.com_keyboard : ComKeyName;
 
             if (key.keyName == ComKeyName.BACKSPACE && textView.text.length > 0)

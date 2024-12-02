@@ -79,7 +79,7 @@ class Slider : Container
             layout.isFillFromStartToEnd = false;
         }
 
-        _handle.onPointerDown ~= (ref e) {
+        _handle.onPointerPress ~= (ref e) {
             if (motionAnimation && motionAnimation.isRunning)
             {
                return;

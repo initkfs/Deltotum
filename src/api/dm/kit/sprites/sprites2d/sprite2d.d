@@ -388,7 +388,7 @@ class Sprite2d : EventKitTarget
                     if (!isMouseOver)
                     {
                         isMouseOver = true;
-                        if (onPointerEntered.length > 0 || eventPointerHandlers
+                        if (onPointerEnter.length > 0 || eventPointerHandlers
                             .length > 0)
                         {
                             auto enteredEvent = PointerEvent(PointerEvent.Event.entered, e
@@ -409,7 +409,7 @@ class Sprite2d : EventKitTarget
                     {
                         isFocus = true;
 
-                        if (onFocusIn.length > 0 || eventFocusHandlers.length > 0)
+                        if (onFocusEnter.length > 0 || eventFocusHandlers.length > 0)
                         {
                             import api.dm.kit.events.focus.focus_event : FocusEvent;
 
@@ -454,7 +454,7 @@ class Sprite2d : EventKitTarget
                 }
                 else if (e.event == PointerEvent.Event.down)
                 {
-                    if (isFocus && (onFocusOut.length > 0 || eventFocusHandlers.length > 0))
+                    if (isFocus && (onFocusExit.length > 0 || eventFocusHandlers.length > 0))
                     {
                         isFocus = false;
                         import api.dm.kit.events.focus.focus_event : FocusEvent;

@@ -270,7 +270,7 @@ class Control : GuiComponent
 
         if (capGraphics.isPointer)
         {
-            onPointerEntered ~= (ref e) {
+            onPointerEnter ~= (ref e) {
                 if (tooltips.length > 0)
                 {
                     isTooltipDelay = true;
@@ -284,7 +284,7 @@ class Control : GuiComponent
                 }
             };
 
-            onPointerExited ~= (ref e) {
+            onPointerExit ~= (ref e) {
                 if (tooltips.length > 0)
                 {
                     isTooltipDelay = false;
@@ -465,7 +465,7 @@ class Control : GuiComponent
         {
             if (capGraphics.isPointer)
             {
-                onPointerEntered ~= (ref e) {
+                onPointerEnter ~= (ref e) {
 
                     if (isDisabled)
                     {
@@ -481,7 +481,7 @@ class Control : GuiComponent
         {
             if (capGraphics.isPointer)
             {
-                onPointerExited ~= (ref e) {
+                onPointerExit ~= (ref e) {
 
                     if (isDisabled)
                     {
@@ -496,7 +496,7 @@ class Control : GuiComponent
         {
             if (capGraphics.isPointer)
             {
-                onPointerDown ~= (ref e) {
+                onPointerPress ~= (ref e) {
 
                     if (isDisabled)
                     {
@@ -513,7 +513,7 @@ class Control : GuiComponent
         {
             if (capGraphics.isPointer)
             {
-                onPointerUp ~= (ref e) {
+                onPointerRelease ~= (ref e) {
 
                     if (isDisabled)
                     {

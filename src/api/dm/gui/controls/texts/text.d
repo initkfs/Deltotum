@@ -106,14 +106,14 @@ class Text : Control
 
         if (isFocusable)
         {
-            onFocusIn ~= (ref e) {
+            onFocusEnter ~= (ref e) {
                 if (focusEffect !is null)
                 {
                     focusEffect.isVisible = true;
                 }
             };
 
-            onFocusOut ~= (ref e) {
+            onFocusExit ~= (ref e) {
                 if (focusEffect !is null && focusEffect.isVisible)
                 {
                     focusEffect.isVisible = false;
@@ -127,7 +127,7 @@ class Text : Control
 
         if (isEditable)
         {
-            onPointerDown ~= (ref e) {
+            onPointerPress ~= (ref e) {
                 const mouseX = e.x;
                 const mouseY = e.y;
 
@@ -172,7 +172,7 @@ class Text : Control
                 cursor.isVisible = true;
             };
 
-            onKeyDown ~= (ref e) {
+            onKeyPress ~= (ref e) {
                 import api.dm.com.inputs.com_keyboard : ComKeyName;
 
                 if (!cursor.isVisible)

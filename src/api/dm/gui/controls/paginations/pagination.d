@@ -125,7 +125,7 @@ class Pagination : Control
         infoContainer.addCreate(currentPageField);
         currentPageField.enableInsets;
 
-        currentPageField.onKeyDown ~= (ref e) {
+        currentPageField.onKeyPress ~= (ref e) {
             import api.dm.com.inputs.com_keyboard : ComKeyName;
 
             if (e.keyName == ComKeyName.RETURN)

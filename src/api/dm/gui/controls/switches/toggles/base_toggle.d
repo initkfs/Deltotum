@@ -116,7 +116,7 @@ class BaseToggle : BaseBiswitch
         }
 
         if(isCreatePointerListeners){
-            onPointerUp ~= (ref e) { toggle; };
+            onPointerRelease ~= (ref e) { toggle; };
         }
 
         invalidateListeners ~= () { setHandleEffectAnimation; };

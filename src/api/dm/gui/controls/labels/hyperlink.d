@@ -38,11 +38,11 @@ class Hyperlink : Labeled
     {
         super.initialize;
 
-        onPointerEntered ~= (ref e) { underline.isVisible = false; };
+        onPointerEnter ~= (ref e) { underline.isVisible = false; };
 
-        onPointerExited ~= (ref e) { underline.isVisible = true; };
+        onPointerExit ~= (ref e) { underline.isVisible = true; };
 
-        onPointerDown ~= (ref e) {
+        onPointerPress ~= (ref e) {
             if (url.length == 0)
             {
                 return;

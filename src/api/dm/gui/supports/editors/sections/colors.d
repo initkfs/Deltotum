@@ -70,7 +70,7 @@ class Colors : Control
         //         auto colorHex = cast(string) color;
         //         auto newColor = RGBA.web(colorHex);
 
-        //         colorContainer.onPointerDown ~= (ref e) {
+        //         colorContainer.onPointerPress ~= (ref e) {
         //             input.clipboard.setText(colorHex);
         //         };
 

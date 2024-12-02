@@ -39,7 +39,7 @@ class Spinner(T) : Control
         auto minWidthField = 50;
 
         auto decButton = new Button("-", 15, 15);
-        decButton.onPointerDown ~= (ref e){
+        decButton.onPointerPress ~= (ref e){
             const newValue = value - decValue;
             valueText.text = newValue.to!dstring;
         };
@@ -71,7 +71,7 @@ class Spinner(T) : Control
         decTextExpander.contentContainer.addCreate(decText);
 
         auto incButton = new Button("+", 15, 15);
-        incButton.onPointerDown ~= (ref e){
+        incButton.onPointerPress ~= (ref e){
             const newValue = value + incValue;
             valueText.text = newValue.to!dstring;
         };

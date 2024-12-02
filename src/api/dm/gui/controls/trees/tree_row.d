@@ -81,7 +81,7 @@ class TreeRow(T) : Container
 
         //TODO recreate
 
-        onPointerDown ~= (ref e) {
+        onPointerPress ~= (ref e) {
             if (onSelected)
             {
                 onSelected();
@@ -116,7 +116,7 @@ class TreeRow(T) : Container
             expandButton.isFocusable = false;
             addCreate(expandButton);
             expandButton.padding = Insets(0);
-            expandButton.onPointerDown ~= (ref e) {
+            expandButton.onPointerPress ~= (ref e) {
                 this.isExpand = !isExpand;
                 setButtonText;
                 foreach (ch; children)

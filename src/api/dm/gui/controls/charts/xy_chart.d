@@ -239,9 +239,9 @@ class XYChart : Container
             trackPointerInfo.isVisible = false;
             addCreate(trackPointerInfo);
 
-            chartArea.onPointerEntered ~= (ref e) { isStartTrackPointer = true; };
+            chartArea.onPointerEnter ~= (ref e) { isStartTrackPointer = true; };
 
-            chartArea.onPointerExited ~= (ref e) { isStartTrackPointer = false; };
+            chartArea.onPointerExit ~= (ref e) { isStartTrackPointer = false; };
         }
     }
 

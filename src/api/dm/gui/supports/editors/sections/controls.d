@@ -258,7 +258,7 @@ class Controls : Control
         auto check1 = new Check("Check1", Icons.bug_outline);
         check1.isCreateIndeterminate = true;
         checkBoxContainer.addCreate(check1);
-        check1.onPointerUp ~= (ref e){
+        check1.onPointerRelease ~= (ref e){
             if(e.button == 3){
                 check1.isIndeterminate = true;
             }
