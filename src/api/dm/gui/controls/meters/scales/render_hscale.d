@@ -1,6 +1,6 @@
-module api.dm.gui.controls.scales.render_vscale;
+module api.dm.gui.controls.meters.scales.render_hscale;
 
-import api.dm.gui.controls.scales.render_scale : RenderScale;
+import api.dm.gui.controls.meters.scales.render_scale : RenderScale;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
@@ -17,16 +17,16 @@ import std.conv : to;
 /**
  * Authors: initkfs
  */
-class RenderVScale : RenderScale
+class RenderHScale : RenderScale
 {
     this(double width, double height)
     {
         super(width, height);
 
-        tickMinorWidth = 6;
-        tickMinorHeight = 2;
-        tickMajorWidth = 12;
-        tickMajorHeight = 2;
+        tickMinorWidth = 2;
+        tickMinorHeight = 6;
+        tickMajorWidth = 2;
+        tickMajorHeight = 12;
     }
 
     override void drawContent()
@@ -40,9 +40,14 @@ class RenderVScale : RenderScale
 
         auto count = tickCount;
 
-        auto tickOffset = height / (tickCount - 1);
+        if (count < 1)
+        {
+            return;
+        }
+
+        auto tickOffset = width / (tickCount - 1);
+        double startX = !isInvertX ? x : boundsRect.right;
         double startY = !isInvertY ? y : boundsRect.bottom;
-        double startX = !isInvertX ? boundsRect.right : x;
         size_t majorTickCounter;
         bool isDrawTick;
         foreach (i; 0 .. count)
@@ -81,12 +86,23 @@ class RenderVScale : RenderScale
             if (isMajorTick && (majorTickCounter < labels.length))
             {
                 auto label = labels[majorTickCounter];
-                auto labelX = !isInvertX ? x - tickMajorWidth -5 : boundsRect.right;
-                auto labelY = startY - label.boundsRect.halfHeight;
+                auto labelX = startX - label.boundsRect.halfWidth;
+                auto labelY = !isInvertY ? startY + tickMajorHeight / 2 : startY - label.height - tickMajorHeight / 2;
                 label.xy(labelX, labelY);
                 if (!label.isVisible)
                 {
-                    label.isVisible = true;
+                    if (i == 0)
+                    {
+                        if (isShowFirstLabelText)
+                        {
+                            label.isVisible = true;
+                        }
+                    }
+                    else
+                    {
+                        label.isVisible = true;
+                    }
+
                 }
             }
 
@@ -95,20 +111,20 @@ class RenderVScale : RenderScale
                 majorTickCounter++;
             }
 
-            if (isInvertY)
+            if (isInvertX)
             {
-                startY -= tickOffset;
+                startX -= tickOffset;
             }
             else
             {
-                startY += tickOffset;
+                startX += tickOffset;
             }
         }
 
         if (isDrawAxis)
         {
-            auto startPosX = !isInvertX ? boundsRect.right : x;
-            graphics.line(startPosX, y, startPosX, boundsRect.bottom, axisColor);
+            auto startPosY = !isInvertY ? y : boundsRect.bottom;
+            graphics.line(x, startPosY, boundsRect.right, startPosY, axisColor);
         }
     }
 }

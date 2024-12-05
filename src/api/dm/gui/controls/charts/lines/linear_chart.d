@@ -10,8 +10,8 @@ import api.dm.gui.containers.container : Container;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.containers.hbox : HBox;
 import api.dm.gui.containers.vbox : VBox;
-import api.dm.gui.controls.scales.render_hscale : RenderHScale;
-import api.dm.gui.controls.scales.render_vscale : RenderVScale;
+import api.dm.gui.controls.meters.scales.render_hscale : RenderHScale;
+import api.dm.gui.controls.meters.scales.render_vscale : RenderVScale;
 
 import Math = api.dm.math;
 import std.math.operations : isClose;

@@ -1,4 +1,4 @@
-module api.dm.gui.controls.scales.render_scale;
+module api.dm.gui.controls.meters.scales.render_scale;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;

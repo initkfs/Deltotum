@@ -5,7 +5,7 @@ import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
-import api.dm.gui.controls.scales.radial_scale : RadialScale;
+import api.dm.gui.controls.meters.scales.radial_scale : RadialScale;
 
 import Math = api.math;
 import api.math.geom2.vec2 : Vec2d;
