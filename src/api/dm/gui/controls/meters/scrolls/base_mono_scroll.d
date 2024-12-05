@@ -20,9 +20,6 @@ abstract class BaseMonoScroll : BaseScroll
 
     void delegate(double)[] onValue;
 
-    double thumbWidth = 0;
-    double thumbHeigth = 0;
-
     bool isCreateThumb = true;
     Sprite2d delegate(Sprite2d) onThumbCreate;
     void delegate(Sprite2d) onThumbCreated;
@@ -61,33 +58,7 @@ abstract class BaseMonoScroll : BaseScroll
         };
     }
 
-    override void loadTheme()
-    {
-        super.loadTheme;
-        loadMonoScrollTheme;
-    }
-
-    void loadMonoScrollTheme()
-    {
-        if (thumbWidth == 0)
-        {
-            thumbWidth = theme.meterThumbWidth;
-        }
-
-        if (thumbHeigth == 0)
-        {
-            thumbHeigth = theme.meterThumbHeight;
-        }
-    }
-
-    abstract Sprite2d newThumbShape(double w, double h, double angle, GraphicStyle style);
-
-    Sprite2d newThumb()
-    {
-        auto style = createFillStyle;
-        auto shape = newThumbShape(thumbWidth, thumbHeigth, angle, style);
-        return shape;
-    }
+    abstract Sprite2d newThumb();
 
     protected double wheelValue(double wheelDt) => _value;
 

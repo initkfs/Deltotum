@@ -1,7 +1,7 @@
 module api.dm.gui.controls.meters.scrolls.vscroll;
 
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
-import api.dm.gui.controls.meters.scrolls.base_labeled_scroll : BaseLabeledScroll;
+import api.dm.gui.controls.meters.scrolls.base_regular_mono_scroll: BaseRegularMonoScroll;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 
@@ -15,7 +15,7 @@ import std.math.operations : isClose;
 /**
  * Authors: initkfs
  */
-class VScroll : BaseLabeledScroll
+class VScroll : BaseRegularMonoScroll
 {
     this(double minValue = 0, double maxValue = 1.0)
     {
@@ -130,7 +130,7 @@ class VScroll : BaseLabeledScroll
         return newValue;
     }
 
-    alias value = BaseLabeledScroll.value;
+    alias value = BaseRegularMonoScroll.value;
 
     override bool value(double v, bool isTriggerListeners = true)
     {

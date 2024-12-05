@@ -899,7 +899,18 @@ class Sprite2d : EventKitTarget
     {
         if (!_cache)
         {
-            _cache = new RgbaTexture(width, height);
+            _cache = new class RgbaTexture
+            {
+                this()
+                {
+                    super(width, height);
+                }
+
+                override void createTextureContent()
+                {
+
+                }
+            };
             buildInitCreate(_cache);
         }
         else

@@ -138,13 +138,13 @@ class BaseRadialProgressBar : BaseProgressBar
 
     Sprite2d createSegment(Texture2d segmentShape)
     {
-        import api.dm.kit.sprites.sprites2d.textures.rgba_texture : RgbaTexture;
+        import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 
         //TODO instability at small sizes, possible artifacts
         auto rotateDiameter = Math.round(Math.sqrt((segmentWidth ^^ 2) + (segmentHeight ^^ 2)));
         auto segmentSize = rotateDiameter * 3;
 
-        auto segment = new RgbaTexture(segmentSize, segmentSize);
+        auto segment = new Texture2d(segmentSize, segmentSize);
         segment.isResizable = false;
 
         auto srcRect = Rect2d(0, 0, segmentWidth, segmentHeight);

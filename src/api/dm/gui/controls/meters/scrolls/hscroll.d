@@ -1,6 +1,6 @@
 module api.dm.gui.controls.meters.scrolls.hscroll;
 
-import api.dm.gui.controls.meters.scrolls.base_labeled_scroll : BaseLabeledScroll;
+import api.dm.gui.controls.meters.scrolls.base_regular_mono_scroll: BaseRegularMonoScroll;
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
@@ -8,7 +8,7 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 /**
  * Authors: initkfs
  */
-class HScroll : BaseLabeledScroll
+class HScroll : BaseRegularMonoScroll
 {
     this(double minValue = 0, double maxValue = 1.0)
     {
@@ -124,7 +124,7 @@ class HScroll : BaseLabeledScroll
         return newValue;
     }
 
-    alias value = BaseLabeledScroll.value;
+    alias value = BaseRegularMonoScroll.value;
 
     override bool value(double v, bool isTriggerListeners = true)
     {

@@ -120,6 +120,8 @@ class Theme
     double meterThumbWidth=30;
     @ConfigKey
     double meterThumbHeight=30;
+    @ConfigKey
+    double meterThumbDiameter=60;
 
     this(IconPack iconPack)
     {

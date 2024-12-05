@@ -7,7 +7,7 @@ import api.math.geom2.rect2 : Rect2d;
 /**
  * Authors: initkfs
  */
-class RgbaTexture : Texture2d
+abstract class RgbaTexture : Texture2d
 {
     this(double width = 100, double height = 100)
     {
@@ -16,10 +16,7 @@ class RgbaTexture : Texture2d
         this.height = height;
     }
 
-    void createTextureContent()
-    {
-
-    }
+    abstract void createTextureContent();
 
     override void create()
     {

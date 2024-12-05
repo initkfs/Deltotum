@@ -1,9 +1,9 @@
 module api.dm.gui.controls.meters.scrolls.rscroll;
 
-import api.dm.gui.controls.meters.scrolls.base_mono_scroll : BaseMonoScroll;
+import api.dm.gui.controls.meters.scrolls.base_radial_mono_scroll : BaseRadialMonoScroll;
 import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
-import api.dm.kit.sprites.sprites2d.sprite2d: Sprite2d;
-import api.dm.kit.graphics.styles.graphic_style: GraphicStyle;
+import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
 import api.dm.gui.controls.scales.radial_scale : RadialScale;
 
@@ -14,12 +14,14 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 /**
  * Authors: initkfs
  */
-class RScroll : BaseMonoScroll
+class RScroll : BaseRadialMonoScroll
 {
     double fromAngleDeg = 0;
     double toAngleDeg = 90;
 
     RadialScale scale;
+
+    double thumbPadding = 10;
 
     this(double minValue = 0, double maxValue = 1.0, double width = 200, double height = 200)
     {
@@ -36,14 +38,18 @@ class RScroll : BaseMonoScroll
         double lastDragAngle = 0;
     }
 
-    override void initialize()
-    {
-        super.initialize;
-    }
-
     override void create()
     {
         super.create;
+
+        assert(thumb);
+
+        import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
+
+        if (auto shapeTexture = cast(Texture2d) thumb)
+        {
+            shapeTexture.bestScaleMode;
+        }
 
         scale = new RadialScale(width - 10, fromAngleDeg, toAngleDeg);
         //scale.tickOuterPadding *= 2;
@@ -52,59 +58,74 @@ class RScroll : BaseMonoScroll
         //scale.tickMajorWidth = 2;
         scale.labelStep = 5;
         addCreate(scale);
+    }
 
-        import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+    Sprite2d newThumbRadialShape(double diameter, double angle, GraphicStyle style)
+    {
+        auto shape = theme.regularPolyShape(diameter, thumbSides, angle, style);
+        return shape;
+    }
 
-        double radiusBase = Math.min(width, height);
-        //TODO correct offset
-        radiusBase -= 60;
-        auto pointerRadius = radiusBase / 2 - 10;
-        auto thumbStyle = createStyle;
-        auto newThumb = new class VRegularPolygon
+    override Sprite2d newThumb()
+    {
+        assert(thumbDiameter > 0);
+
+        auto style = createStyle;
+        auto thumbShape = newThumbRadialShape(thumbDiameter, angle, style);
+        if (!thumbShape.isBuilt || !thumbShape.isCreated)
         {
-            this()
-            {
-                super(pointerRadius * 1.95, thumbStyle, 10);
-            }
+            buildInitCreate(thumbShape);
+        }
 
-            override void createTextureContent()
-            {
-                super.createTextureContent;
+        scope (exit)
+        {
+            thumbShape.dispose;
+        }
 
-                canvas.color(theme.colorAccent);
+        import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
+        import api.dm.kit.graphics.colors.rgba : RGBA;
 
-                auto pointRadius = pointerRadius - 5;
-                canvas.moveTo(0, 0);
-                canvas.translate(width / 2, height / 2);
-                auto pos = Vec2d.fromPolarDeg(fromAngleDeg, pointRadius);
+        auto thumb = new Texture2d(thumbDiameter, thumbDiameter);
+        build(thumb);
 
-                import api.math.geom2.vec2 : Vec2d;
+        thumb.createTargetRGBA32;
+        thumb.bestScaleMode;
 
-                auto shapeSize = 10;
+        thumb.setRendererTarget;
 
-                auto rightVert = Vec2d(pos.x, pos.y);
-                auto leftTopVert = Vec2d(pos.x - shapeSize, pos.y - shapeSize / 2);
-                auto leftBottomVert = Vec2d(pos.x - shapeSize, pos.y + shapeSize / 2);
+        graphics.fillRect(0, 0, thumbDiameter, thumbDiameter, RGBA.black);
 
-                canvas.moveTo(rightVert);
-                canvas.lineTo(leftTopVert);
-                canvas.lineTo(leftBottomVert);
-                canvas.lineTo(rightVert);
+        thumbShape.draw;
 
-                canvas.fill;
-                canvas.stroke;
-            }
-        };
+        import api.math.geom2.vec2 : Vec2d;
 
-        thumb = newThumb;
+        auto pointerSize = thumbDiameter / 5;
+        auto pointerRadius = thumbDiameter / 2;
+        
+        auto pointerPos = Vec2d.fromPolarDeg(fromAngleDeg, pointerRadius);
 
-        addCreate(newThumb);
+        auto thumbPx = thumb.halfWidth - thumbPadding;
+        auto thumbPy = thumb.halfHeight;
 
-        newThumb.bestScaleMode;
+        auto rightVert = Vec2d(thumbPx + pointerPos.x, thumbPy + pointerPos.y);
+        auto leftTopVert = Vec2d(thumbPx + pointerPos.x - pointerSize, thumbPy + pointerPos.y - pointerSize / 2);
+        auto leftBottomVert = Vec2d(thumbPx + pointerPos.x - pointerSize, thumbPy + pointerPos.y + pointerSize / 2);
 
-        newThumb.isDraggable = true;
-        newThumb.onDragXY = (ddx, ddy) {
+        graphics.fillTriangle(rightVert, leftTopVert, leftBottomVert, theme.colorAccent);
 
+        thumb.resetRendererTarget;
+
+        thumb.initialize;
+        assert(thumb.isInitialized);
+        thumb.create;
+        assert(thumb.isCreated);
+
+        return thumb;
+    }
+
+    override bool delegate(double, double) newOnThumbDragXY()
+    {
+        return (ddx, ddy) {
             immutable thumbBounds = thumb.boundsRect;
             immutable center = thumbBounds.center;
 
@@ -141,19 +162,12 @@ class RScroll : BaseMonoScroll
 
                 valueDelta = newValue - _value;
                 _value = newValue;
-                foreach (dg; onValue)
-                {
-                    dg(newValue);
-                }
+                //TODO value = newValue
+                triggerListeners(newValue);
             }
 
             return false;
         };
-    }
-
-    override Sprite2d newThumbShape(double w, double h, double angle, GraphicStyle style)
-    {
-        return theme.shape(w, h, angle, style);
     }
 
     override protected double wheelValue(double wheelDt)
