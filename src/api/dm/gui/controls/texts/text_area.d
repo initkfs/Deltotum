@@ -1,7 +1,7 @@
 module api.dm.gui.controls.texts.text_area;
 
 import api.dm.gui.controls.texts.text_view : TextView;
-import api.dm.gui.controls.scrolls.vscroll : VScroll;
+import api.dm.gui.controls.meters.scrolls.vscroll : VScroll;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites.sprites2d.sprite2d: Sprite2d;
 import api.dm.gui.containers.hbox : HBox;
@@ -57,7 +57,7 @@ class TextArea : HBox
     {
         super.create;
 
-        scroll = new VScroll(0, 1.0, 20, height);
+        scroll = new VScroll(0, 1.0);
 
         textView = new TextView;
         textView.isEditable = true;

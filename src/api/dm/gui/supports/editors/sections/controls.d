@@ -48,13 +48,13 @@ class Controls : Control
     {
         super.create;
 
-        auto rootContainer = new VBox;
+        auto rootContainer = new VBox(5);
         rootContainer.width = 500;
         rootContainer.height = 400;
         rootContainer.layout.isAlignY = true;
         addCreate(rootContainer);
 
-        auto btnContainer = new HBox(5);
+        auto btnContainer = new HBox;
         btnContainer.layout.isAlignY = true;
         rootContainer.addCreate(btnContainer);
         btnContainer.enableInsets;
@@ -70,11 +70,17 @@ class Controls : Control
 
         rootContainer.addCreate(new HSeparator);
 
-        auto selectionContainer = new HBox(5);
+        auto selectionContainer = new HBox;
         selectionContainer.layout.isAlignY = true;
         rootContainer.addCreate(selectionContainer);
 
         createSelections(selectionContainer);
+
+        auto metersContainer = new HBox;
+        metersContainer.layout.isAlignY = true;
+        rootContainer.addCreate(metersContainer);
+
+        createMeters(metersContainer);
 
         // createSeparators(selectionContainer);
 
@@ -354,6 +360,25 @@ class Controls : Control
         // root.addCreate(colorPicker);
     }
 
+    void createMeters(Container root){
+        import api.dm.gui.controls.meters.scrolls.hscroll: HScroll;
+        import api.dm.gui.controls.meters.scrolls.vscroll: VScroll;
+        import api.dm.gui.controls.meters.scrolls.radial_scroll: RadialScroll;
+
+        auto scrollContainer = new VBox;
+        scrollContainer.layout.isAlignX = true;
+        root.addCreate(scrollContainer);
+
+        auto hs = new HScroll;
+        scrollContainer.addCreate(hs);
+
+        auto rs = new RadialScroll;
+        scrollContainer.addCreate(rs);
+
+        auto vs = new VScroll;
+        root.addCreate(vs);
+    }
+
     void createSeparators(Container root)
     {
         import api.dm.gui.controls.separators.vseparator : VSeparator;
@@ -362,9 +387,9 @@ class Controls : Control
         vsep.height = 100;
         root.addCreate(vsep);
 
-        import api.dm.gui.controls.scrolls.hscroll : HScroll;
-        import api.dm.gui.controls.scrolls.vscroll : VScroll;
-        import api.dm.gui.controls.scrolls.radial_scroll : RadialScroll;
+        import api.dm.gui.controls.meters.scrolls.hscroll : HScroll;
+        import api.dm.gui.controls.meters.scrolls.vscroll : VScroll;
+        import api.dm.gui.controls.meters.scrolls.radial_scroll : RadialScroll;
 
         auto vScrollbar = new VScroll;
         root.addCreate(vScrollbar);

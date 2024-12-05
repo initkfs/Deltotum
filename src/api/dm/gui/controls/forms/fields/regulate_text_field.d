@@ -1,6 +1,6 @@
 module api.dm.gui.controls.forms.fields.regulate_text_field;
 
-import api.dm.gui.controls.scrolls.mono_scroll : MonoScroll;
+import api.dm.gui.controls.meters.scrolls.mono_scroll : MonoScroll;
 import api.dm.gui.controls.texts.text : Text;
 
 import api.dm.gui.controls.control : Control;
@@ -51,7 +51,7 @@ class RegulateTextField : Control
         labelField.isReduceWidthHeight = false;
         addCreate(labelField);
 
-        import api.dm.gui.controls.scrolls.hscroll : HScroll;
+        import api.dm.gui.controls.meters.scrolls.hscroll : HScroll;
 
         scrollField = new HScroll;
         addCreate(scrollField);

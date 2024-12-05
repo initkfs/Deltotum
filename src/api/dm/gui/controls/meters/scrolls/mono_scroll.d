@@ -1,7 +1,7 @@
-module api.dm.gui.controls.scrolls.mono_scroll;
+module api.dm.gui.controls.meters.scrolls.mono_scroll;
 
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
-import api.dm.gui.controls.scrolls.base_scroll : BaseScroll;
+import api.dm.gui.controls.meters.scrolls.base_scroll : BaseScroll;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
 /**
@@ -20,7 +20,14 @@ abstract class MonoScroll : BaseScroll
 
     void delegate(double)[] onValue;
 
-    Sprite2d delegate() thumbFactory;
+    double thumbWidth = 0;
+    double thumbHeigth = 0;
+
+    bool isCreateThumb = true;
+    Sprite2d delegate(Sprite2d) onThumbCreate;
+    void delegate(Sprite2d) onThumbCreated;
+
+    bool isCreateOnPointerWheel = true;
 
     protected
     {
@@ -30,8 +37,6 @@ abstract class MonoScroll : BaseScroll
     this(double minValue = 0, double maxValue = 1.0)
     {
         super(minValue, maxValue);
-
-        isBorder = true;
     }
 
     override void initialize()
@@ -49,30 +54,69 @@ abstract class MonoScroll : BaseScroll
         };
     }
 
-    protected double wheelValue(double wheelDt)
+    override void loadTheme()
     {
-        return _value;
+        super.loadTheme;
+        loadMonoScrollTheme;
     }
+
+    void loadMonoScrollTheme()
+    {
+        if (thumbWidth == 0)
+        {
+            thumbWidth = theme.meterThumbWidth;
+        }
+
+        if (thumbHeigth == 0)
+        {
+            thumbHeigth = theme.meterThumbHeight;
+        }
+    }
+
+    Sprite2d newThumb(double w, double h, double angle, GraphicStyle style)
+    {
+        return theme.shape(w, h, angle, style);
+    }
+
+    Sprite2d createThumb()
+    {
+        auto style = createFillStyle;
+        auto shape = newThumb(thumbWidth, thumbHeigth, angle, style);
+        return shape;
+    }
+
+    protected double wheelValue(double wheelDt) => _value;
 
     override void create()
     {
         super.create;
+
+        if (!thumb && isCreateThumb)
+        {
+            auto th = createThumb;
+            thumb = onThumbCreate ? onThumbCreate(th) : th;
+            addCreate(thumb);
+            if (onThumbCreated)
+            {
+                onThumbCreated(thumb);
+            }
+        }
     }
 
-    double value()
-    {
-        return _value;
-    }
+    double value() => _value;
 
-    bool value(double v)
+    bool value(double v, bool isTriggerListeners = true)
     {
-
         if (!trySetValue(v))
         {
             return false;
         }
 
-        triggerListeners(v);
+        if (isTriggerListeners)
+        {
+            triggerListeners(v);
+        }
+
         return true;
     }
 
@@ -129,35 +173,8 @@ abstract class MonoScroll : BaseScroll
         return true;
     }
 
-    bool setMinValue()
-    {
-        if (!(value = minValue))
-        {
-            triggerListeners(minValue);
-        }
-        return true;
-    }
-
-    bool setMaxValue()
-    {
-        if (!(value = maxValue))
-        {
-            triggerListeners(maxValue);
-        }
-        return true;
-    }
-
-    GraphicStyle createThumbStyle()
-    {
-        auto style = theme.defaultStyle();
-        if (!style.isNested)
-        {
-            style.lineColor = theme.colorAccent;
-            style.fillColor = theme.colorAccent;
-            style.isFill = true;
-        }
-        return style;
-    }
+    bool setMinValue() => value = minValue;
+    bool setMaxValue() => value = maxValue;
 
     import api.core.utils.arrays : drop;
 

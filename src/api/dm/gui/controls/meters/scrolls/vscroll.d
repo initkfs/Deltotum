@@ -1,7 +1,7 @@
-module api.dm.gui.controls.scrolls.vscroll;
+module api.dm.gui.controls.meters.scrolls.vscroll;
 
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
-import api.dm.gui.controls.scrolls.mono_scroll : MonoScroll;
+import api.dm.gui.controls.meters.scrolls.mono_scroll : MonoScroll;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 
@@ -17,77 +17,65 @@ import std.math.operations : isClose;
  */
 class VScroll : MonoScroll
 {
-    double thumbHeight = 30;
-
-    this(double minValue = 0, double maxValue = 1.0, double width = 20, double height = 120)
+    this(double minValue = 0, double maxValue = 1.0)
     {
         super(minValue, maxValue);
-        this.width = width;
-        this.height = height;
     }
 
     override void initialize()
     {
         super.initialize;
+    }
 
-        thumbFactory = () {
-            auto style = createThumbStyle;
-            auto node = theme.background(width, thumbHeight, angle, &style);
-            return node;
-        };
+    override Sprite2d newThumb(double w, double h, double angle, GraphicStyle style)
+    {
+        return theme.shape(h, w, angle, style);
     }
 
     override void create()
     {
         super.create;
 
-        if (thumbFactory)
-        {
-            thumb = thumbFactory();
+        thumb.isDraggable = true;
 
-            addCreate(thumb);
+        thumb.onDragXY = (x, y) {
 
-            thumb.isDraggable = true;
+            const maxY = boundsRect.bottom - thumb.height;
 
-            thumb.onDragXY = (x, y) {
-
-                const maxY = boundsRect.bottom - thumb.height;
-
-                if (trySetThumbY(y))
-                {
-                    return false;
-                }
-
-                const range = boundsRect.height - thumb.height;
-                auto dy = thumb.y - boundsRect.y;
-
-                enum errorDelta = 5;
-                if (dy < errorDelta)
-                {
-                    dy = 0;
-                }
-
-                const maxYDt = maxY - thumb.y;
-                if (maxYDt < errorDelta)
-                {
-                    dy += maxYDt;
-                }
-
-                if (dy < 0)
-                {
-                    dy = -dy;
-                }
-
-                const numRange = maxValue - minValue;
-                auto newValue = minValue + (numRange / range) * dy;
-                if (!super.value(newValue))
-                {
-                    return false;
-                }
-
+            if (trySetThumbY(y))
+            {
                 return false;
-            };
-        }
+            }
+
+            const range = boundsRect.height - thumb.height;
+            auto dy = thumb.y - boundsRect.y;
+
+            enum errorDelta = 5;
+            if (dy < errorDelta)
+            {
+                dy = 0;
+            }
+
+            const maxYDt = maxY - thumb.y;
+            if (maxYDt < errorDelta)
+            {
+                dy += maxYDt;
+            }
+
+            if (dy < 0)
+            {
+                dy = -dy;
+            }
+
+            const numRange = maxValue - minValue;
+            auto newValue = minValue + (numRange / range) * dy;
+            if (!super.value(newValue))
+            {
+                return false;
+            }
+
+            return false;
+        };
     }
 
     protected bool trySetThumbY(double y, bool isAllowClamp = true)
@@ -97,7 +85,8 @@ class VScroll : MonoScroll
         const maxY = boundsRect.bottom - thumb.height;
         if (y <= minY)
         {
-            if(thumb.y != minY && isAllowClamp){
+            if (thumb.y != minY && isAllowClamp)
+            {
                 thumb.y = minY;
                 return true;
             }
@@ -106,7 +95,8 @@ class VScroll : MonoScroll
 
         if (y >= maxY)
         {
-            if(thumb.y != maxY && isAllowClamp){
+            if (thumb.y != maxY && isAllowClamp)
+            {
                 thumb.y = maxY;
                 return true;
             }
@@ -133,9 +123,9 @@ class VScroll : MonoScroll
 
     alias value = MonoScroll.value;
 
-    override bool value(double v)
+    override bool value(double v, bool isTriggerListeners = true)
     {
-        if (!super.value(v) || !thumb)
+        if (!super.value(v, isTriggerListeners) || !thumb)
         {
             return false;
         }

@@ -10,8 +10,8 @@ import api.dm.gui.containers.container : Container;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.containers.hbox : HBox;
 import api.dm.gui.containers.vbox : VBox;
-import api.dm.gui.controls.scrolls.hscroll : HScroll;
-import api.dm.gui.controls.scrolls.vscroll : VScroll;
+import api.dm.gui.controls.meters.scrolls.hscroll : HScroll;
+import api.dm.gui.controls.meters.scrolls.vscroll : VScroll;
 import api.dm.gui.controls.choices.choice_box : ChoiceBox;
 import api.math.random : Random;
 

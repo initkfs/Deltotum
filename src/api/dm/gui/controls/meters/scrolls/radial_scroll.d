@@ -1,6 +1,6 @@
-module api.dm.gui.controls.scrolls.radial_scroll;
+module api.dm.gui.controls.meters.scrolls.radial_scroll;
 
-import api.dm.gui.controls.scrolls.mono_scroll : MonoScroll;
+import api.dm.gui.controls.meters.scrolls.mono_scroll : MonoScroll;
 import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
 
 import api.dm.gui.controls.scales.radial_scale : RadialScale;
@@ -163,11 +163,11 @@ class RadialScroll : MonoScroll
         return newValue;
     }
 
-    override bool value(double v)
+    override bool value(double v, bool isTriggerListeners = true)
     {
         assert(thumb);
 
-        if (!super.value(v))
+        if (!super.value(v, isTriggerListeners))
         {
             return false;
         }

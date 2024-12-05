@@ -1,6 +1,6 @@
-module api.dm.gui.controls.scrolls.hscroll;
+module api.dm.gui.controls.meters.scrolls.hscroll;
 
-import api.dm.gui.controls.scrolls.mono_scroll : MonoScroll;
+import api.dm.gui.controls.meters.scrolls.mono_scroll : MonoScroll;
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
@@ -26,73 +26,52 @@ class HScroll : MonoScroll
         _height = height;
     }
 
-    override void initialize()
-    {
-        super.initialize;
-
-        if (!thumbFactory)
-        {
-            thumbFactory = () {
-                auto style = createThumbStyle;
-                auto node = theme.background(thumbWidth, height, angle, &style);
-                return node;
-            };
-        }
-    }
-
     override void create()
     {
         super.create;
 
-        if (thumbFactory)
-        {
-            thumb = thumbFactory();
+        thumb.isDraggable = true;
 
-            addCreate(thumb);
+        thumb.onDragXY = (x, y) {
 
-            thumb.isDraggable = true;
+            const maxX = boundsRect.right - thumb.width;
 
-            thumb.onDragXY = (x, y) {
-
-                const maxX = boundsRect.right - thumb.width;
-
-                //Setting after super.value freezes thumb
-                if (!trySetThumbX(x))
-                {
-                    return false;
-                }
-
-                const range = boundsRect.width - thumb.width;
-                auto dx = thumb.x - boundsRect.x;
-
-                enum errorDelta = 5;
-                if (dx < errorDelta)
-                {
-                    dx = 0;
-                }
-
-                const maxXDt = maxX - thumb.x;
-                if (maxXDt < errorDelta)
-                {
-                    dx += maxXDt;
-                }
-
-                if (dx < 0)
-                {
-                    dx = -dx;
-                }
-
-                const numRange = maxValue - minValue;
-
-                auto newValue = minValue + (numRange / range) * dx;
-                if (!super.value(newValue))
-                {
-                    return false;
-                }
-
+            //Setting after super.value freezes thumb
+            if (!trySetThumbX(x))
+            {
                 return false;
-            };
-        }
+            }
+
+            const range = boundsRect.width - thumb.width;
+            auto dx = thumb.x - boundsRect.x;
+
+            enum errorDelta = 5;
+            if (dx < errorDelta)
+            {
+                dx = 0;
+            }
+
+            const maxXDt = maxX - thumb.x;
+            if (maxXDt < errorDelta)
+            {
+                dx += maxXDt;
+            }
+
+            if (dx < 0)
+            {
+                dx = -dx;
+            }
+
+            const numRange = maxValue - minValue;
+
+            auto newValue = minValue + (numRange / range) * dx;
+            if (!super.value(newValue))
+            {
+                return false;
+            }
+
+            return false;
+        };
     }
 
     protected bool trySetThumbX(double x, bool isAllowClamp = true)
@@ -102,7 +81,8 @@ class HScroll : MonoScroll
         const maxX = boundsRect.right - thumb.width;
         if (x <= minX)
         {
-            if(thumb.x != minX && isAllowClamp){
+            if (thumb.x != minX && isAllowClamp)
+            {
                 thumb.x = minX;
                 return true;
             }
@@ -111,7 +91,8 @@ class HScroll : MonoScroll
 
         if (x >= maxX)
         {
-            if(thumb.x != maxX && isAllowClamp){
+            if (thumb.x != maxX && isAllowClamp)
+            {
                 thumb.x = maxX;
                 return true;
             }
@@ -121,7 +102,8 @@ class HScroll : MonoScroll
         return true;
     }
 
-    override protected double wheelValue(double wheelDt){
+    override protected double wheelValue(double wheelDt)
+    {
         auto newValue = _value;
         if (wheelDt > 0)
         {
@@ -136,9 +118,9 @@ class HScroll : MonoScroll
 
     alias value = MonoScroll.value;
 
-    override bool value(double v)
+    override bool value(double v, bool isTriggerListeners = true)
     {
-        if (!super.value(v) || !thumb)
+        if (!super.value(v, isTriggerListeners) || !thumb)
         {
             return false;
         }

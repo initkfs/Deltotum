@@ -116,6 +116,11 @@ class Theme
     @ConfigKey
     double separatorHeight = 5;
 
+    @ConfigKey
+    double meterThumbWidth=30;
+    @ConfigKey
+    double meterThumbHeight=30;
+
     this(IconPack iconPack)
     {
         this.iconPack = iconPack;
