@@ -249,7 +249,7 @@ class Control : GuiComponent
         }
     }
 
-    void loadControlTheme()
+    void loadControlSizeTheme()
     {
         if (isSetNullWidthFromTheme && _width == 0)
         {

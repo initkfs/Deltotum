@@ -1,7 +1,9 @@
-module api.dm.gui.controls.meters.scrolls.radial_scroll;
+module api.dm.gui.controls.meters.scrolls.rscroll;
 
-import api.dm.gui.controls.meters.scrolls.mono_scroll : MonoScroll;
+import api.dm.gui.controls.meters.scrolls.base_mono_scroll : BaseMonoScroll;
 import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
+import api.dm.kit.sprites.sprites2d.sprite2d: Sprite2d;
+import api.dm.kit.graphics.styles.graphic_style: GraphicStyle;
 
 import api.dm.gui.controls.scales.radial_scale : RadialScale;
 
@@ -12,7 +14,7 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 /**
  * Authors: initkfs
  */
-class RadialScroll : MonoScroll
+class RScroll : BaseMonoScroll
 {
     double fromAngleDeg = 0;
     double toAngleDeg = 90;
@@ -147,6 +149,11 @@ class RadialScroll : MonoScroll
 
             return false;
         };
+    }
+
+    override Sprite2d newThumbShape(double w, double h, double angle, GraphicStyle style)
+    {
+        return theme.shape(w, h, angle, style);
     }
 
     override protected double wheelValue(double wheelDt)

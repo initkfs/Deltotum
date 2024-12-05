@@ -10,11 +10,5 @@ abstract class BaseScroll : MinValueMeter!double
     this(double minValue = 0, double maxValue = 1.0)
     {
         super(minValue, maxValue);
-
-        import api.dm.kit.sprites.sprites2d.layouts.managed_layout : ManagedLayout;
-
-        this.layout = new ManagedLayout;
-
-        isBorder = true;
     }
 }

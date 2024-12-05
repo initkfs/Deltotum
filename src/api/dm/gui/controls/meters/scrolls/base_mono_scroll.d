@@ -1,4 +1,4 @@
-module api.dm.gui.controls.meters.scrolls.mono_scroll;
+module api.dm.gui.controls.meters.scrolls.base_mono_scroll;
 
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.meters.scrolls.base_scroll : BaseScroll;
@@ -8,7 +8,7 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
  * Authors: initkfs
  * TODO remove duplication with slider after testing 
  */
-abstract class MonoScroll : BaseScroll
+abstract class BaseMonoScroll : BaseScroll
 {
     protected
     {
@@ -37,6 +37,13 @@ abstract class MonoScroll : BaseScroll
     this(double minValue = 0, double maxValue = 1.0)
     {
         super(minValue, maxValue);
+
+        import api.dm.kit.sprites.sprites2d.layouts.managed_layout : ManagedLayout;
+
+        layout = new ManagedLayout;
+        layout.isAutoResize = true;
+
+        isBorder = true;
     }
 
     override void initialize()
@@ -73,15 +80,12 @@ abstract class MonoScroll : BaseScroll
         }
     }
 
-    Sprite2d newThumb(double w, double h, double angle, GraphicStyle style)
-    {
-        return theme.shape(w, h, angle, style);
-    }
+    abstract Sprite2d newThumbShape(double w, double h, double angle, GraphicStyle style);
 
-    Sprite2d createThumb()
+    Sprite2d newThumb()
     {
         auto style = createFillStyle;
-        auto shape = newThumb(thumbWidth, thumbHeigth, angle, style);
+        auto shape = newThumbShape(thumbWidth, thumbHeigth, angle, style);
         return shape;
     }
 
@@ -93,14 +97,26 @@ abstract class MonoScroll : BaseScroll
 
         if (!thumb && isCreateThumb)
         {
-            auto th = createThumb;
+            auto th = newThumb;
             thumb = onThumbCreate ? onThumbCreate(th) : th;
             addCreate(thumb);
             if (onThumbCreated)
             {
                 onThumbCreated(thumb);
             }
+
+            auto dragListener = newOnThumbDragXY;
+            if (dragListener)
+            {
+                thumb.isDraggable = true;
+                thumb.onDragXY = dragListener;
+            }
         }
+    }
+
+    bool delegate(double, double) newOnThumbDragXY()
+    {
+        return (x, y) { return false; };
     }
 
     double value() => _value;

@@ -4,15 +4,15 @@ module api.math.position;
  */
 enum Position
 {
-    TopLeft,
-    TopCenter,
-    TopRight,
+    topLeft,
+    topCenter,
+    topRight,
 
-    CenterLeft,
-    Center,
-    CenterRight,
+    centerLeft,
+    center,
+    centerRight,
 
-    BottomLeft,
-    BottomCenter,
-    BottomRight
+    bottomLeft,
+    bottomCenter,
+    bottomRight
 }

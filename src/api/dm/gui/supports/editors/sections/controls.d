@@ -363,19 +363,25 @@ class Controls : Control
     void createMeters(Container root){
         import api.dm.gui.controls.meters.scrolls.hscroll: HScroll;
         import api.dm.gui.controls.meters.scrolls.vscroll: VScroll;
-        import api.dm.gui.controls.meters.scrolls.radial_scroll: RadialScroll;
+        import api.dm.gui.controls.meters.scrolls.rscroll: RScroll;
 
         auto scrollContainer = new VBox;
         scrollContainer.layout.isAlignX = true;
         root.addCreate(scrollContainer);
 
+        import api.math.position: Position;
+
         auto hs = new HScroll;
+        hs.labelPos = Position.bottomCenter;
+        hs.isCreateLabel = true;
         scrollContainer.addCreate(hs);
 
-        auto rs = new RadialScroll;
+        auto rs = new RScroll;
         scrollContainer.addCreate(rs);
 
         auto vs = new VScroll;
+        vs.labelPos = Position.centerRight;
+        vs.isCreateLabel = true;
         root.addCreate(vs);
     }
 
@@ -389,7 +395,7 @@ class Controls : Control
 
         import api.dm.gui.controls.meters.scrolls.hscroll : HScroll;
         import api.dm.gui.controls.meters.scrolls.vscroll : VScroll;
-        import api.dm.gui.controls.meters.scrolls.radial_scroll : RadialScroll;
+        import api.dm.gui.controls.meters.scrolls.rscroll : RScroll;
 
         auto vScrollbar = new VScroll;
         root.addCreate(vScrollbar);
@@ -397,7 +403,7 @@ class Controls : Control
         auto hScrollbar = new HScroll;
         root.addCreate(hScrollbar);
 
-        auto rScroll = new RadialScroll;
+        auto rScroll = new RScroll;
         root.addCreate(rScroll);
 
         import api.dm.gui.controls.separators.hseparator : HSeparator;

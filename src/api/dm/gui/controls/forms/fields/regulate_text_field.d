@@ -1,6 +1,6 @@
 module api.dm.gui.controls.forms.fields.regulate_text_field;
 
-import api.dm.gui.controls.meters.scrolls.mono_scroll : MonoScroll;
+import api.dm.gui.controls.meters.scrolls.base_mono_scroll : BaseMonoScroll;
 import api.dm.gui.controls.texts.text : Text;
 
 import api.dm.gui.controls.control : Control;
@@ -11,7 +11,7 @@ import api.dm.gui.controls.control : Control;
 class RegulateTextField : Control
 {
     Text labelField;
-    MonoScroll scrollField;
+    BaseMonoScroll scrollField;
     Text valueField;
 
     size_t valueFieldPrefGlyphs = 6;

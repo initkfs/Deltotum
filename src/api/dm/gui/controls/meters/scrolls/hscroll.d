@@ -1,40 +1,44 @@
 module api.dm.gui.controls.meters.scrolls.hscroll;
 
-import api.dm.gui.controls.meters.scrolls.mono_scroll : MonoScroll;
+import api.dm.gui.controls.meters.scrolls.base_labeled_scroll : BaseLabeledScroll;
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
-
-import api.dm.kit.sprites.sprites2d.shapes.shape2d : Shape2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.kit.sprites.sprites2d.layouts.managed_layout : ManagedLayout;
-import api.dm.kit.sprites.sprites2d.shapes.rectangle : Rectangle;
-import api.math.alignment : Alignment;
-import std.math.operations : isClose;
 
 /**
  * Authors: initkfs
  */
-class HScroll : MonoScroll
+class HScroll : BaseLabeledScroll
 {
-    double thumbWidth = 30;
-
-    this(double minValue = 0, double maxValue = 1.0, double width = 120, double height = 20)
+    this(double minValue = 0, double maxValue = 1.0)
     {
         super(minValue, maxValue);
-        _width = width;
-        _height = height;
+
+        isHGrow = true;
     }
 
-    override void create()
+    override void loadTheme()
     {
-        super.create;
+        super.loadTheme;
+        loadHScrollTheme;
+    }
 
-        thumb.isDraggable = true;
+    void loadHScrollTheme()
+    {
+        if (_width == 0)
+        {
+            _width = theme.controlDefaultWidth;
+        }
+    }
 
-        thumb.onDragXY = (x, y) {
+    override Sprite2d newThumbShape(double w, double h, double angle, GraphicStyle style)
+    {
+        return theme.shape(w, h, angle, style);
+    }
 
-            const maxX = boundsRect.right - thumb.width;
+    override bool delegate(double, double) newOnThumbDragXY()
+    {
+        return (x, y) {
 
             //Setting after super.value freezes thumb
             if (!trySetThumbX(x))
@@ -42,8 +46,12 @@ class HScroll : MonoScroll
                 return false;
             }
 
-            const range = boundsRect.width - thumb.width;
-            auto dx = thumb.x - boundsRect.x;
+            const bounds = boundsRect;
+
+            const maxX = bounds.right - thumb.width;
+
+            const range = bounds.width - thumb.width;
+            auto dx = thumb.x - bounds.x;
 
             enum errorDelta = 5;
             if (dx < errorDelta)
@@ -77,8 +85,8 @@ class HScroll : MonoScroll
     protected bool trySetThumbX(double x, bool isAllowClamp = true)
     {
         auto bounds = this.boundsRect;
-        const minX = boundsRect.x;
-        const maxX = boundsRect.right - thumb.width;
+        const minX = bounds.x;
+        const maxX = bounds.right - thumb.width;
         if (x <= minX)
         {
             if (thumb.x != minX && isAllowClamp)
@@ -116,7 +124,7 @@ class HScroll : MonoScroll
         return newValue;
     }
 
-    alias value = MonoScroll.value;
+    alias value = BaseLabeledScroll.value;
 
     override bool value(double v, bool isTriggerListeners = true)
     {
