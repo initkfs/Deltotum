@@ -14,9 +14,9 @@ abstract class BaseSeparator : Control
         isBackground = true;
     }
 
-    override Sprite2d newBackground(double w, double h)
+    override Sprite2d newBackground()
     {
-        auto shape = theme.rectShape(w, h, angle, createThisStyle);
+        auto shape = theme.rectShape(width, height, angle, createThisStyle);
         return shape;
     }
 

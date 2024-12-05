@@ -41,15 +41,14 @@ class TextArea : HBox
         isBackground = true;
     }
 
-    override Sprite2d newBackground(double width, double height)
+    override Sprite2d newBackground()
     {
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
         import api.dm.kit.sprites.sprites2d.shapes.convex_polygon : ConvexPolygon;
 
         GraphicStyle backgroundStyle = GraphicStyle(1, theme.colorAccent, isBackground, theme
                 .colorPrimary);
-        auto background = new ConvexPolygon(width, height, backgroundStyle, theme
-                .controlCornersBevel);
+        auto background = super.newBackground(width, height, angle, backgroundStyle);
         return background;
     }
 

@@ -314,7 +314,7 @@ class Control : GuiComponent
             onPreControlContentCreated();
         }
 
-        tryCreateBackground(width, height);
+        tryCreateBackground;
 
         createInteractiveEffects;
 
@@ -355,7 +355,7 @@ class Control : GuiComponent
             _background = null;
         }
 
-        tryCreateBackground(width, height);
+        tryCreateBackground;
 
         if (_hoverEffect)
         {
@@ -583,7 +583,7 @@ class Control : GuiComponent
         }
     }
 
-    Sprite2d newBackground(double w, double h)
+    Sprite2d newBackground(double w, double h, double angle, GraphicStyle style)
     {
         Sprite2d shape;
         if (auto stylePtr = hasStyle(ControlStyle.background))
@@ -592,10 +592,19 @@ class Control : GuiComponent
         }
         else
         {
-            shape = createShape(w, h, angle, createThisStyle);
+            shape = createShape(w, h, angle, style);
         }
         assert(shape);
+        shape.id = idBackground;
+        shape.isResizedByParent = true;
+        shape.isLayoutManaged = false;
+        shape.isDrawAfterParent = false;
         return shape;
+    }
+
+    Sprite2d newBackground()
+    {
+        return newBackground(width, height, angle, createThisStyle);
     }
 
     Sprite2d newHoverEffect(double w, double h)
@@ -1081,7 +1090,7 @@ class Control : GuiComponent
         }
     }
 
-    protected bool tryCreateBackground(double width, double height)
+    protected bool tryCreateBackground()
     {
         if (
             _background ||
@@ -1092,13 +1101,9 @@ class Control : GuiComponent
             return false;
         }
 
-        auto newBackground = newBackground(width, height);
+        auto newBackground = newBackground;
 
         _background = onBackgroundCreate ? onBackgroundCreate(newBackground) : newBackground;
-        _background.id = idBackground;
-        _background.isResizedByParent = true;
-        _background.isLayoutManaged = false;
-        _background.isDrawAfterParent = false;
 
         addCreate(_background, 0);
 
@@ -1123,7 +1128,7 @@ class Control : GuiComponent
 
         if (!_background && width > 0 && height > 0)
         {
-            tryCreateBackground(width, height);
+            tryCreateBackground;
         }
     }
 

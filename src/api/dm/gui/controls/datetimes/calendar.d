@@ -58,13 +58,13 @@ class DayContainer : Control
         };
     }
 
-    override Sprite2d newBackground(double w, double h)
+    override Sprite2d newBackground()
     {
         auto style = createStyle;
         //TODO caps
         import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
-        return new VConvexPolygon(w, h, style, 0);
+        return new VConvexPolygon(width, height, style, 0);
     }
 
     override void create()
