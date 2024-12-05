@@ -927,15 +927,19 @@ class Control : GuiComponent
         return newStyle;
     }
 
-    protected Sprite2d createShape(double w, double h, double angle = 0)
+    protected Sprite2d createThisShape(double w, double h)
+    {
+        return createShape(w, h, angle, createThisStyle);
+    }
+
+    protected Sprite2d createShape(double w, double h)
     {
         return createShape(w, h, angle, createStyle);
     }
 
-    protected Sprite2d createShape(double width, double height, double angle = 0, GraphicStyle style = GraphicStyle
-            .simple)
+    protected Sprite2d createShape(double w, double h, double angle, GraphicStyle style)
     {
-        return theme.background(width, height, angle, &style);
+        return theme.background(w, h, angle, &style);
     }
 
     alias build = GuiComponent.build;
