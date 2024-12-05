@@ -392,7 +392,7 @@ class Control : GuiComponent
     {
         if (!_hoverEffect && isCreateHoverEffect)
         {
-            auto newHover = newHoverEffect(width, height);
+            auto newHover = newHoverEffect;
             assert(newHover);
 
             _hoverEffect = onHoverEffectCreate ? onHoverEffectCreate(newHover) : newHover;
@@ -607,7 +607,22 @@ class Control : GuiComponent
         return newBackground(width, height, angle, createThisStyle);
     }
 
-    Sprite2d newHoverEffect(double w, double h)
+    Sprite2d newHoverEffectShape(double w, double h, double angle, GraphicStyle style)
+    {
+        return createShape(w, h, angle, style);
+    }
+
+    Sprite2d newHoverEffect(double w, double h, double angle, GraphicStyle style)
+    {
+        Sprite2d newHover = newHoverEffectShape(w, h, angle, style);
+        newHover.id = idHoverShape;
+        newHover.isLayoutManaged = false;
+        newHover.isResizedByParent = true;
+        newHover.isVisible = false;
+        return newHover;
+    }
+
+    Sprite2d newHoverEffect()
     {
         assert(theme);
 
@@ -631,13 +646,7 @@ class Control : GuiComponent
             }
         }
 
-        Sprite2d newHover = createShape(w, h, angle, newStyle);
-        newHover.id = idHoverShape;
-        newHover.isLayoutManaged = false;
-        newHover.isResizedByParent = true;
-        newHover.isVisible = false;
-
-        return newHover;
+        return newHoverEffect(width, height, angle, newStyle);
     }
 
     Tween2d newHoverAnimation()
@@ -718,6 +727,21 @@ class Control : GuiComponent
         };
     }
 
+    Sprite2d newActionEffectShape(double w, double h, double angle, GraphicStyle style)
+    {
+        return createShape(w, h, angle, style);
+    }
+
+    Sprite2d newActionEffect(double w, double h, double angle, GraphicStyle style)
+    {
+        Sprite2d effect = newActionEffectShape(w, h, angle, style);
+        effect.id = idActionShape;
+        effect.isLayoutManaged = false;
+        effect.isResizedByParent = true;
+        effect.isVisible = false;
+        return effect;
+    }
+
     Sprite2d newActionEffect()
     {
         assert(theme);
@@ -742,12 +766,7 @@ class Control : GuiComponent
             }
         }
 
-        Sprite2d effect = createShape(width, height, angle, newStyle);
-        effect.id = idActionShape;
-        effect.isLayoutManaged = false;
-        effect.isResizedByParent = true;
-        effect.isVisible = false;
-
+        Sprite2d effect = newActionEffect(width, height, angle, newStyle);
         return effect;
     }
 
