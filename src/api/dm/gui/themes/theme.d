@@ -113,6 +113,9 @@ class Theme
     @ConfigKey
     double toggleSwitchMarkerHeight = 30;
 
+    @ConfigKey
+    double separatorHeight = 5;
+
     this(IconPack iconPack)
     {
         this.iconPack = iconPack;

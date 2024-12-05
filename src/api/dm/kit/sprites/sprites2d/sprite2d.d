@@ -109,7 +109,8 @@ class Sprite2d : EventKitTarget
     bool isResizeChildrenIfNotResizable;
     bool isResizeChildrenAlways;
 
-    bool isResizedByParent;
+    bool isResizedWidthByParent;
+    bool isResizedHeigthByParent;
 
     bool isManagedByScene;
 
@@ -1587,11 +1588,11 @@ class Sprite2d : EventKitTarget
                     incChildWidth(child, dw);
                 }
                 else if (isResizeChildrenIfNotLManaged && !child.isLayoutManaged && child
-                    .isResizedByParent)
+                    .isResizedWidthByParent)
                 {
                     incChildWidth(child, dw);
                 }
-                else if (isResizeChildrenAlways && child.isResizedByParent)
+                else if (isResizeChildrenAlways && child.isResizedWidthByParent)
                 {
                     incChildWidth(child, dw);
                 }
@@ -1710,11 +1711,11 @@ class Sprite2d : EventKitTarget
                     incChildHeight(child, dh);
                 }
                 else if (isResizeChildrenIfNotLManaged && !child.isLayoutManaged && child
-                    .isResizedByParent)
+                    .isResizedHeigthByParent)
                 {
                     incChildHeight(child, dh);
                 }
-                else if (isResizeChildrenAlways && child.isResizedByParent)
+                else if (isResizeChildrenAlways && child.isResizedHeigthByParent)
                 {
                     incChildHeight(child, dh);
                 }
@@ -2434,6 +2435,12 @@ class Sprite2d : EventKitTarget
     bool isGrow()
     {
         return isHGrow && isVGrow;
+    }
+
+    void isResizedByParent(bool v)
+    {
+        isResizedWidthByParent = v;
+        isResizedHeigthByParent = v;
     }
 
     RGBA[][] surfaceToBuffer(ComSurface surf)

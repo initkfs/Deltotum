@@ -1,19 +1,33 @@
 module api.dm.gui.controls.separators.vseparator;
 
-import api.dm.gui.controls.separators.separator: Separator;
+import api.dm.gui.controls.separators.base_separator : BaseSeparator;
 
 /**
  * Authors: initkfs
  */
-class VSeparator : Separator
+class VSeparator : BaseSeparator
 {
-    this(double width = 2)
+    this()
     {
-        this.width = width;
-
-        isBorder = false;
-        isBackground = true;
         isVGrow = true;
+        isResizedByParent = true;
+    }
+
+    override void loadTheme()
+    {
+        super.loadTheme;
+
+        if (_width == 0)
+        {
+            _width = theme.separatorHeight;
+        }
+
+        assert(_width > 0);
+
+        if (_height == 0)
+        {
+            _height = 1;
+        }
     }
 
 }

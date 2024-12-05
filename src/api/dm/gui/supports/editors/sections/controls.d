@@ -60,7 +60,15 @@ class Controls : Control
         btnContainer.enableInsets;
 
         createSwitches(btnContainer);
+
+        import api.dm.gui.controls.separators.vseparator: VSeparator;
+        import api.dm.gui.controls.separators.hseparator: HSeparator;
+
+        btnContainer.addCreate(new VSeparator);
+
         createWindows(btnContainer);
+
+        rootContainer.addCreate(new HSeparator);
 
         auto selectionContainer = new HBox(5);
         selectionContainer.layout.isAlignY = true;
