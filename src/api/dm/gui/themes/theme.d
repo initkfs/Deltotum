@@ -191,22 +191,32 @@ class Theme
 
     Sprite2d shape(double width, double height, double angle, GraphicStyle style)
     {
+        return convexPolyShape(width, height, angle, controlCornersBevel, style);
+    }
+
+    Sprite2d convexPolyShape(double width, double height, double angle, double cornerBevel, GraphicStyle style)
+    {
         Sprite2d newShape;
         if (isUseVectorGraphics)
         {
             import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
-            newShape = new VConvexPolygon(width, height, style, controlCornersBevel);
+            newShape = new VConvexPolygon(width, height, style, cornerBevel);
         }
         else
         {
             import api.dm.kit.sprites.sprites2d.shapes.convex_polygon : ConvexPolygon;
 
-            newShape = new ConvexPolygon(width, height, style, controlCornersBevel);
+            newShape = new ConvexPolygon(width, height, style, cornerBevel);
         }
 
         newShape.angle = angle;
         return newShape;
+    }
+
+    Sprite2d rectShape(double width, double height, double angle, GraphicStyle style)
+    {
+        return convexPolyShape(width, height, angle, 0, style);
     }
 
     Sprite2d roundShape(GraphicStyle style) => roundShape(roundShapeDiameter, style);
@@ -255,6 +265,29 @@ class Theme
 
         shape.angle = angle;
 
+        return shape;
+    }
+
+    Sprite2d triangleShape(double width, double height, double angleDeg, GraphicStyle style)
+    {
+
+        Sprite2d shape;
+
+        if (isUseVectorGraphics)
+        {
+            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vtriangle : VTriangle;
+
+            shape = new VTriangle(width, height, style);
+        }
+        else
+        {
+            import api.dm.kit.sprites.sprites2d.shapes.triangle : Triangle;
+
+            shape = new Triangle(width, height, style);
+        }
+
+        assert(shape);
+        shape.angle = angleDeg;
         return shape;
     }
 

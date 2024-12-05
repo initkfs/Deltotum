@@ -86,8 +86,14 @@ class Check : BaseBiswitch
         assert(markerWidth > 0);
         assert(markerHeight > 0);
 
-        auto marker = new ConvexPolygon(markerWidth / 2, markerHeight / 2, GraphicStyle(1, theme.colorAccent, true, theme
-                .colorAccent), 3);
+        auto markerStyle = createFillStyle;
+
+        import Math = api.math;
+
+        auto diameter = Math.max(markerWidth / 2, markerHeight / 2);
+
+        auto marker = theme.roundShape(diameter, markerStyle);
+        //auto marker = theme.shape(markerWidth / 2, markerHeight / 2, angle, markerStyle);
         return marker;
     }
 
@@ -99,8 +105,9 @@ class Check : BaseBiswitch
         assert(markerWidth > 0);
         assert(markerHeight > 0);
 
-        auto marker = new Rectangle(markerWidth / 2, 5, GraphicStyle(1, theme.colorAccent, true, theme
-                .colorAccent));
+        const style = createFillStyle;
+
+        auto marker = theme.rectShape(markerWidth / 2, markerHeight / 4, angle, style);
         return marker;
     }
 
@@ -171,7 +178,8 @@ class Check : BaseBiswitch
             return false;
         }
 
-        if(value && marker && marker.isVisible){
+        if (value && marker && marker.isVisible)
+        {
             marker.isVisible = false;
         }
 
@@ -197,7 +205,8 @@ class Check : BaseBiswitch
         bool isSetState = super.isOn(value, isRunListeners);
         if (isSetState)
         {
-            if(isIndeterminate){
+            if (isIndeterminate)
+            {
                 isIndeterminate = false;
             }
 

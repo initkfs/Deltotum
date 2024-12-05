@@ -12,18 +12,6 @@ import api.dm.kit.sprites.sprites2d.tweens.tween2d : Tween2d;
 
 import std.traits : isSomeString;
 
-enum ButtonType
-{
-    normal,
-    cancel,
-    close,
-    next,
-    no,
-    ok,
-    previous,
-    yes
-}
-
 /**
  * Authors: initkfs
  */
@@ -302,8 +290,6 @@ class BaseButton : BaseBiswitch
     override void dispose()
     {
         super.dispose;
-
-        onAction = null;
     }
 
 }

@@ -56,24 +56,7 @@ class TriangleButton : BaseButton
 
     protected override Sprite2d createShape(double width, double height, double angle, GraphicStyle style)
     {
-        Sprite2d shape;
-
-        if (capGraphics.isVectorGraphics)
-        {
-            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vtriangle : VTriangle;
-
-            shape = new VTriangle(width, height, style);
-        }
-        else
-        {
-            import api.dm.kit.sprites.sprites2d.shapes.triangle : Triangle;
-
-            shape = new Triangle(width, height, style);
-        }
-
-        assert(shape);
-        shape.angle = angle;
-
+        Sprite2d shape = theme.triangleShape(width, height, angle, style);
         return shape;
     }
 }

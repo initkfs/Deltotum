@@ -26,8 +26,11 @@ struct GraphicStyle
         return GraphicStyle(1.0, RGBA.lightcyan, true, RGBA.red);
     }
 
-    void color(RGBA color){
+    void color(RGBA color)
+    {
         fillColor = color;
         lineColor = color;
     }
+
+    bool isPreset() => isDefault || isNested;
 }

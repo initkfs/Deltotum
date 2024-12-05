@@ -29,31 +29,21 @@ class VArc : VShape
 
     override void createTextureContent()
     {
-        import Math = api.dm.math;
+        auto ctx = canvas;
 
-        //TODO remove native api
-        import api.dm.sys.cairo.libs;
+        ctx.translate(radius, radius);
 
-        auto cr = cairoContext.getObject;
-
-        cairo_translate(cr, radius, radius);
+        ctx.arc(xCenter, yCenter, radius - style.lineWidth / 2, fromAngleRad, toAngleRad);
 
         if (style.isFill)
         {
-            cairo_set_source_rgba(cr, style.fillColor.rNorm, style.fillColor.gNorm, style
-                    .fillColor.bNorm, style.fillColor.a);
+            ctx.color = style.fillColor;
+            ctx.fillPreserve;
         }
 
-        cairo_arc(cr, xCenter, yCenter, radius - style.lineWidth / 2, fromAngleRad, toAngleRad);
-        
-        if(style.isFill){
-            cairo_fill_preserve(cr);
-        }
+        ctx.lineWidth = style.lineWidth;
+        ctx.color = style.lineColor;
 
-        cairo_set_line_width(cr, style.lineWidth);
-        cairo_set_source_rgba(cr, style.lineColor.rNorm, style.lineColor.gNorm, style
-                .lineColor.bNorm, style.lineColor.a);
-
-        cairo_stroke(cr);
+        ctx.stroke;
     }
 }

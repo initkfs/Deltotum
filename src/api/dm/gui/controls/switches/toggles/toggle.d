@@ -20,24 +20,24 @@ class Toggle : BaseOrientToggle
         this(label, 0, 0, iconName, orientation, graphicsGap);
     }
 
-    override Vec2d handleSize()
+    override Vec2d thumbSize()
     {
         if (isVertical)
         {
-            return Vec2d(handleHeight, handleWidth);
+            return Vec2d(thumbHeight, thumbWidth);
         }
 
-        return Vec2d(handleWidth, handleHeight);
+        return Vec2d(thumbWidth, thumbHeight);
     }
 
-    override Vec2d handleContainerSize()
+    override Vec2d thumbContainerSize()
     {
         if (isVertical)
         {
-            return Vec2d(handleHeight, handleWidth * 2);
+            return Vec2d(thumbHeight, thumbWidth * 2);
         }
 
-        return Vec2d(handleWidth * 2, handleHeight);
+        return Vec2d(thumbWidth * 2, thumbHeight);
     }
 
     override void initialize()
@@ -46,41 +46,41 @@ class Toggle : BaseOrientToggle
 
         if (!isVertical)
         {
-            onHandleContainerCreated = (handleContainer) {
-                auto isRemove = remove(handleContainer, isDestroy:
+            onThumbContainerCreated = (thumbContainer) {
+                auto isRemove = remove(thumbContainer, isDestroy:
                     false);
                 assert(isRemove);
-                add(handleContainer, 0);
+                add(thumbContainer, 0);
             };
         }
     }
 
-    override Vec2d handleAnimationMinValue()
+    override Vec2d thumbAnimationMinValue()
     {
-        const hb = handleContainer.boundsRect;
+        const hb = thumbContainer.boundsRect;
 
         if (isVertical)
         {
-            return Vec2d(hb.x + handleContainer.padding.left, hb
-                    .bottom - handleContainer.padding.bottom - handle.height);
+            return Vec2d(hb.x + thumbContainer.padding.left, hb
+                    .bottom - thumbContainer.padding.bottom - thumb.height);
         }
 
-        return Vec2d(hb.x + handleContainer.padding.left, hb
-                .y + handleContainer.padding.top);
+        return Vec2d(hb.x + thumbContainer.padding.left, hb
+                .y + thumbContainer.padding.top);
     }
 
-    override Vec2d handleAnimationMaxValue()
+    override Vec2d thumbAnimationMaxValue()
     {
-        const hb = handleContainer.boundsRect;
+        const hb = thumbContainer.boundsRect;
 
         if (isVertical)
         {
-            return Vec2d(hb.x + handleContainer.padding.left, hb
-                    .y - handleContainer.padding.top);
+            return Vec2d(hb.x + thumbContainer.padding.left, hb
+                    .y - thumbContainer.padding.top);
         }
 
         return Vec2d(
-            hb.right - handle.width - handleContainer.padding.right, hb
-                .y + handleContainer.padding.top);
+            hb.right - thumb.width - thumbContainer.padding.right, hb
+                .y + thumbContainer.padding.top);
     }
 }

@@ -13,6 +13,7 @@ import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import api.math.alignment : Alignment;
 import api.math.insets : Insets;
 import api.dm.gui.controls.popups.base_popup : BasePopup;
+import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.themes.theme : Theme;
 
 import api.dm.kit.sprites.sprites2d.tweens.tween2d : Tween2d;
@@ -525,9 +526,10 @@ class Control : GuiComponent
                 };
 
                 onPointerOutBounds ~= (ref e) {
-                    import api.dm.kit.inputs.pointers.events.pointer_event: PointerEvent;
+                    import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 
-                    if(e.event != PointerEvent.Event.release){
+                    if (e.event != PointerEvent.Event.release)
+                    {
                         return;
                     }
 
@@ -867,6 +869,19 @@ class Control : GuiComponent
         if (onIdStyleCreated)
         {
             onIdStyleCreated(styleId, newStyle);
+        }
+        return newStyle;
+    }
+
+    protected GraphicStyle createFillStyle(RGBA fillColor = RGBA.init)
+    {
+        assert(styleFactory);
+
+        auto newStyle = createStyle;
+        if (!newStyle.isPreset)
+        {
+            newStyle.isFill = true;
+            newStyle.fillColor = fillColor != RGBA.init ? fillColor : theme.colorAccent;
         }
         return newStyle;
     }

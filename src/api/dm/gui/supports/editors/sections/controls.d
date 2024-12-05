@@ -59,7 +59,7 @@ class Controls : Control
         rootContainer.addCreate(btnContainer);
         btnContainer.enableInsets;
 
-        createButtons(btnContainer);
+        createSwitches(btnContainer);
         createWindows(btnContainer);
 
         auto selectionContainer = new HBox(5);
@@ -101,20 +101,20 @@ class Controls : Control
         // image1.setColor(theme.colorAccent);
     }
 
-    void createButtons(Container root)
+    void createSwitches(Container root)
     {
         import api.dm.gui.controls.control : Control;
         import api.dm.gui.containers.frame : Frame;
 
-        auto btnFrame = new Frame("Buttons");
-        root.addCreate(btnFrame);
-        btnFrame.isVGrow = true;
+        auto switchFrame = new Frame("Switches");
+        root.addCreate(switchFrame);
+        switchFrame.isVGrow = true;
 
         import api.dm.gui.containers.vbox : VBox;
         import api.dm.gui.containers.hbox : HBox;
 
         auto btnRoot2 = new VBox(5);
-        btnFrame.addCreate(btnRoot2);
+        switchFrame.addCreate(btnRoot2);
         btnRoot2.layout.isDecreaseRootWidth = true;
 
         auto btn1 = new Button("Button");
@@ -125,7 +125,7 @@ class Controls : Control
         btnRoot2.addCreate(btn2);
 
         auto btnRoot3 = new HBox(5);
-        btnFrame.addCreate(btnRoot3);
+        switchFrame.addCreate(btnRoot3);
 
         import api.dm.gui.controls.switches.buttons.round_button : RoundButton;
 
@@ -158,6 +158,94 @@ class Controls : Control
                 recreateTween.run;
             }
         };
+
+        import api.dm.gui.controls.switches.switch_group : SwitchGroup;
+        import api.dm.gui.controls.switches.checks.check : Check;
+        import api.dm.gui.controls.choices.choice_box : ChoiceBox;
+        import Icons = api.dm.gui.themes.icons.icon_name;
+        import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
+        import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
+        import api.dm.gui.controls.switches.buttons.triangle_button: TriangleButton;
+
+        auto toggleBtnContainer = new SwitchGroup;
+        toggleBtnContainer.layout = new VLayout(0);
+        toggleBtnContainer.layout.isAutoResize = true;
+        toggleBtnContainer.layout.isAlignX = true;
+        switchFrame.addCreate(toggleBtnContainer);
+
+        import api.dm.kit.graphics.styles.default_style : DefaultStyle;
+
+        const double polySize = 40;
+
+        auto tbtn1 = new TriangleButton(null, polySize, polySize, Icons.arrow_up_outline);
+        tbtn1.styleId = DefaultStyle.warning;
+        tbtn1.isFixedButton = true;
+        tbtn1.isOn = true;
+        //.isDrawBounds = true;
+        toggleBtnContainer.addCreate(tbtn1);
+
+        auto labelMargin = 5;
+
+        tbtn1.icon.marginTop = labelMargin;
+
+        auto tbtn2 = new TriangleButton(null, polySize, polySize, Icons.arrow_down_outline);
+        tbtn2.isFixedButton = true;
+        tbtn2.angle = 180;
+        tbtn2.styleId = DefaultStyle.danger;
+        //tbtn2.isDrawBounds = true;
+        toggleBtnContainer.addCreate(tbtn2);
+
+        tbtn2.icon.marginTop = -labelMargin;
+
+        auto checkBoxContainer = new SwitchGroup;
+        checkBoxContainer.layout = new VLayout;
+        checkBoxContainer.layout.isAutoResize = true;
+        switchFrame.addCreate(checkBoxContainer);
+
+        auto check1 = new Check("Check1", Icons.bug_outline);
+        check1.isCreateIndeterminate = true;
+        checkBoxContainer.addCreate(check1);
+        check1.onPointerRelease ~= (ref e){
+            if(e.button == 3){
+                check1.isIndeterminate = true;
+            }
+        };
+
+        auto check2 = new Check("Check2", Icons.bug_outline);
+        check2.isBorder = true;
+        checkBoxContainer.addCreate(check2);
+        check2.layout.isFillFromStartToEnd = false;
+        check2.isOn = true;
+
+        auto toggleContainer = new SwitchGroup;
+        toggleContainer.layout = new VLayout;
+        toggleContainer.layout.isAutoResize = true;
+        switchFrame.addCreate(toggleContainer);
+
+        import api.dm.gui.controls.switches.toggles.toggle : Toggle;
+        import api.math.orientation : Orientation;
+
+        auto switch1 = new Toggle(null, Icons.flash_outline);
+        toggleContainer.addCreate(switch1);
+        switch1.isOn = true;
+
+        auto switch2 = new Toggle(null, Icons.flash_outline);
+        switch2.isBorder = true;
+        toggleContainer.addCreate(switch2);
+
+        auto htoggleContainer = new SwitchGroup;
+        htoggleContainer.layout = new HLayout;
+        htoggleContainer.layout.isAutoResize = true;
+        switchFrame.addCreate(htoggleContainer);
+
+        auto switch1h = new Toggle(null, Icons.analytics_outline, Orientation.vertical);
+        htoggleContainer.addCreate(switch1h);
+        switch1h.isOn = true;
+        switch1h.isSwitchContent = true;
+
+        auto switch2h = new Toggle(null, Icons.apps_outline, Orientation.vertical);
+        switch2h.isSwitchContent = true;
+        htoggleContainer.addCreate(switch2h);
     }
 
     void createDialogs(Container root)
@@ -212,93 +300,7 @@ class Controls : Control
 
     void createSelections(Container root)
     {
-        import api.dm.gui.controls.switches.switch_group : SwitchGroup;
-        import api.dm.gui.controls.switches.checks.check : Check;
-        import api.dm.gui.controls.choices.choice_box : ChoiceBox;
-        import Icons = api.dm.gui.themes.icons.icon_name;
-        import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
-        import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
-        import api.dm.gui.controls.switches.buttons.triangle_button: TriangleButton;
-
-        auto toggleBtnContainer = new SwitchGroup;
-        toggleBtnContainer.layout = new VLayout(0);
-        toggleBtnContainer.layout.isAutoResize = true;
-        toggleBtnContainer.layout.isAlignX = true;
-        root.addCreate(toggleBtnContainer);
-
-        import api.dm.kit.graphics.styles.default_style : DefaultStyle;
-
-        const double polySize = 40;
-
-        auto tbtn1 = new TriangleButton(null, polySize, polySize, Icons.arrow_up_outline);
-        tbtn1.styleId = DefaultStyle.warning;
-        tbtn1.isFixedButton = true;
-        tbtn1.isOn = true;
-        //.isDrawBounds = true;
-        toggleBtnContainer.addCreate(tbtn1);
-
-        auto labelMargin = 5;
-
-        tbtn1.icon.marginTop = labelMargin;
-
-        auto tbtn2 = new TriangleButton(null, polySize, polySize, Icons.arrow_down_outline);
-        tbtn2.isFixedButton = true;
-        tbtn2.angle = 180;
-        tbtn2.styleId = DefaultStyle.danger;
-        //tbtn2.isDrawBounds = true;
-        toggleBtnContainer.addCreate(tbtn2);
-
-        tbtn2.icon.marginTop = -labelMargin;
-
-        auto checkBoxContainer = new SwitchGroup;
-        checkBoxContainer.layout = new VLayout;
-        checkBoxContainer.layout.isAutoResize = true;
-        root.addCreate(checkBoxContainer);
-
-        auto check1 = new Check("Check1", Icons.bug_outline);
-        check1.isCreateIndeterminate = true;
-        checkBoxContainer.addCreate(check1);
-        check1.onPointerRelease ~= (ref e){
-            if(e.button == 3){
-                check1.isIndeterminate = true;
-            }
-        };
-
-        auto check2 = new Check("Check2", Icons.bug_outline);
-        check2.isBorder = true;
-        checkBoxContainer.addCreate(check2);
-        check2.layout.isFillFromStartToEnd = false;
-        check2.isOn = true;
-
-        auto toggleContainer = new SwitchGroup;
-        toggleContainer.layout = new VLayout;
-        toggleContainer.layout.isAutoResize = true;
-        root.addCreate(toggleContainer);
-
-        import api.dm.gui.controls.switches.toggles.toggle : Toggle;
-        import api.math.orientation : Orientation;
-
-        auto switch1 = new Toggle(null, Icons.flash_outline);
-        toggleContainer.addCreate(switch1);
-        switch1.isOn = true;
-
-        auto switch2 = new Toggle(null, Icons.flash_outline);
-        switch2.isBorder = true;
-        toggleContainer.addCreate(switch2);
-
-        auto htoggleContainer = new SwitchGroup;
-        htoggleContainer.layout = new HLayout;
-        htoggleContainer.layout.isAutoResize = true;
-        root.addCreate(htoggleContainer);
-
-        auto switch1h = new Toggle(null, Icons.analytics_outline, Orientation.vertical);
-        htoggleContainer.addCreate(switch1h);
-        switch1h.isOn = true;
-        switch1h.isSwitchContent = true;
-
-        auto switch2h = new Toggle(null, Icons.apps_outline, Orientation.vertical);
-        switch2h.isSwitchContent = true;
-        htoggleContainer.addCreate(switch2h);
+        
 
         // import api.dm.gui.controls.choices.choice_box : ChoiceBox;
 

@@ -26,24 +26,24 @@ class BaseToggle : BaseBiswitch
 {
     protected
     {
-        Sprite2d handleContainer;
+        Sprite2d thumbContainer;
     }
 
-    bool isCreateHandleContainer = true;
-    Sprite2d delegate(Sprite2d) onHandleContainerCreate;
-    void delegate(Sprite2d) onHandleContainerCreated;
+    bool isCreateThumbContainer = true;
+    Sprite2d delegate(Sprite2d) onThumbContainerCreate;
+    void delegate(Sprite2d) onThumbContainerCreated;
 
-    double handleWidth = 0;
-    double handleHeight = 0;
+    double thumbWidth = 0;
+    double thumbHeight = 0;
 
-    Sprite2d handle;
-    bool isCreateHandle = true;
+    Sprite2d thumb;
+    bool isCreateThumb = true;
 
-    Sprite2d handleEffect;
-    bool isCreateHandleEffect = true;
+    Sprite2d thumbEffect;
+    bool isCreateThumbEffect = true;
 
-    MinMaxTween2d!Vec2d handleEffectAnimation;
-    bool isCreateHandleEffectAnimation = true;
+    MinMaxTween2d!Vec2d thumbEffectAnimation;
+    bool isCreateThumbEffectAnimation = true;
 
     bool isCreatePointerListeners = true;
 
@@ -57,7 +57,7 @@ class BaseToggle : BaseBiswitch
         this(label, 0, 0, iconName, graphicsGap);
     }
 
-    Vec2d handleSize() => Vec2d(handleWidth, handleHeight);
+    Vec2d thumbSize() => Vec2d(thumbWidth, thumbHeight);
 
     override void loadTheme()
     {
@@ -67,14 +67,14 @@ class BaseToggle : BaseBiswitch
 
     void loadToggleSwitchTheme()
     {
-        if (handleWidth == 0)
+        if (thumbWidth == 0)
         {
-            handleWidth = theme.toggleSwitchMarkerWidth;
+            thumbWidth = theme.toggleSwitchMarkerWidth;
         }
 
-        if (handleHeight == 0)
+        if (thumbHeight == 0)
         {
-            handleHeight = theme.toggleSwitchMarkerHeight;
+            thumbHeight = theme.toggleSwitchMarkerHeight;
         }
     }
 
@@ -82,53 +82,53 @@ class BaseToggle : BaseBiswitch
     {
         super.create;
 
-        if (!handleContainer && isCreateHandleContainer)
+        if (!thumbContainer && isCreateThumbContainer)
         {
-            auto newContainer = newHandleContainer;
-            handleContainer = onHandleContainerCreate ? onHandleContainerCreate(newContainer)
+            auto newContainer = newThumbContainer;
+            thumbContainer = onThumbContainerCreate ? onThumbContainerCreate(newContainer)
                 : newContainer;
-            addCreate(handleContainer);
-            if (onHandleContainerCreated)
+            addCreate(thumbContainer);
+            if (onThumbContainerCreated)
             {
-                onHandleContainerCreated(handleContainer);
+                onThumbContainerCreated(thumbContainer);
             }
         }
 
-        assert(handleContainer);
+        assert(thumbContainer);
 
-        if (!handle && isCreateHandle)
+        if (!thumb && isCreateThumb)
         {
-            handle = newHandle;
-            handleContainer.addCreate(handle);
+            thumb = newThumb;
+            thumbContainer.addCreate(thumb);
         }
 
-        if (!handleEffect && isCreateHandleEffect && handle)
+        if (!thumbEffect && isCreateThumbEffect && thumb)
         {
-            handleEffect = newHandleEffect(handle.width, handle
+            thumbEffect = newThumbEffect(thumb.width, thumb
                     .height);
-            handle.addCreate(handleEffect);
+            thumb.addCreate(thumbEffect);
         }
 
-        if (!handleEffectAnimation && isCreateHandleEffectAnimation)
+        if (!thumbEffectAnimation && isCreateThumbEffectAnimation)
         {
-            handleEffectAnimation = newHandleEffectAnimation;
-            handleContainer.addCreate(handleEffectAnimation);
+            thumbEffectAnimation = newThumbEffectAnimation;
+            thumbContainer.addCreate(thumbEffectAnimation);
         }
 
         if(isCreatePointerListeners){
             onPointerRelease ~= (ref e) { toggle; };
         }
 
-        invalidateListeners ~= () { setHandleEffectAnimation; };
+        invalidateListeners ~= () { setThumbEffectAnimation; };
         window.showingTasks ~= (double dt) {
-            setHandleEffectAnimation;
+            setThumbEffectAnimation;
             switchContentState(isOn, isOn);
         };
     }
 
-    Sprite2d newHandle()
+    Sprite2d newThumb()
     {
-        auto size = handleSize;
+        auto size = thumbSize;
 
         auto style = createStyle;
         if (!style.isNested && !style.isDefault)
@@ -143,25 +143,25 @@ class BaseToggle : BaseBiswitch
         return shape;
     }
 
-    protected Sprite2d newHandleContainer()
+    protected Sprite2d newThumbContainer()
     {
         import api.dm.gui.containers.container;
         import api.dm.kit.sprites.sprites2d.layouts.managed_layout : ManagedLayout;
 
-        auto handleContainer = new Container;
+        auto thumbContainer = new Container;
 
-        auto size = handleContainerSize;
-        handleContainer.resize(size.x, size.y);
-        handleContainer.isBorder = true;
+        auto size = thumbContainerSize;
+        thumbContainer.resize(size.x, size.y);
+        thumbContainer.isBorder = true;
 
-        handleContainer.layout = new ManagedLayout;
-        return handleContainer;
+        thumbContainer.layout = new ManagedLayout;
+        return thumbContainer;
 
     }
 
-    Vec2d handleContainerSize() => Vec2d(handleWidth * 2, handleHeight);
+    Vec2d thumbContainerSize() => Vec2d(thumbWidth * 2, thumbHeight);
 
-    Sprite2d newHandleEffect(double w, double h)
+    Sprite2d newThumbEffect(double w, double h)
     {
         auto currStyle = createStyle;
         if (!currStyle.isNested)
@@ -175,7 +175,7 @@ class BaseToggle : BaseBiswitch
         return shape;
     }
 
-    MinMaxTween2d!Vec2d newHandleEffectAnimation()
+    MinMaxTween2d!Vec2d newThumbEffectAnimation()
     {
         import api.dm.kit.sprites.sprites2d.tweens.targets.motions.linear_motion2d : LinearMotion2d;
         import api.dm.kit.tweens.curves.uni_interpolator : UniInterpolator;
@@ -183,56 +183,56 @@ class BaseToggle : BaseBiswitch
         auto uniInterp = new UniInterpolator;
         uniInterp.interpolateMethod = &uniInterp.quadInOut;
         auto animation = new LinearMotion2d(Vec2d.zero, Vec2d.zero, 200, uniInterp);
-        animation.addTarget(handle);
-        animation.onEnd ~= newOnEndHandleEffectAnimation;
+        animation.addTarget(thumb);
+        animation.onEnd ~= newOnEndThumbEffectAnimation;
         return animation;
     }
 
-    void delegate() newOnEndHandleEffectAnimation()
+    void delegate() newOnEndThumbEffectAnimation()
     {
         return () {
-            if(handleEffectAnimation){
-                handleEffectAnimation.isReverse = false;
+            if(thumbEffectAnimation){
+                thumbEffectAnimation.isReverse = false;
             }
         };
     }
 
-    protected void setHandleEffectAnimation()
+    protected void setThumbEffectAnimation()
     {
-        const minValue = handleAnimationMinValue;
-        const maxValue = handleAnimationMaxValue;
-        handleEffectAnimation.minValue(minValue, isStop:
+        const minValue = thumbAnimationMinValue;
+        const maxValue = thumbAnimationMaxValue;
+        thumbEffectAnimation.minValue(minValue, isStop:
             false);
-        handleEffectAnimation.maxValue(maxValue, isStop:
+        thumbEffectAnimation.maxValue(maxValue, isStop:
             false);
     }
 
     abstract
     {
-        Vec2d handleAnimationMinValue();
-        Vec2d handleAnimationMaxValue();
+        Vec2d thumbAnimationMinValue();
+        Vec2d thumbAnimationMaxValue();
     }
 
     override protected void switchContentState(bool oldState, bool newState)
     {
         super.switchContentState(oldState, newState);
 
-        if(handleEffect){
-            handleEffect.isVisible = newState;
+        if(thumbEffect){
+            thumbEffect.isVisible = newState;
         }
 
-        if (handleEffectAnimation)
+        if (thumbEffectAnimation)
         {
-            if (handleEffectAnimation.isRunning)
+            if (thumbEffectAnimation.isRunning)
             {
-                handleEffectAnimation.stop;
+                thumbEffectAnimation.stop;
             }
 
             if(!newState){
-                handleEffectAnimation.isReverse = true;
+                thumbEffectAnimation.isReverse = true;
             }
 
-            handleEffectAnimation.run;
+            thumbEffectAnimation.run;
         }
     }
 }
