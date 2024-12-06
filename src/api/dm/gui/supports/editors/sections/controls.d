@@ -76,7 +76,7 @@ class Controls : Control
 
         createSelections(selectionContainer);
 
-        auto metersContainer = new HBox;
+        auto metersContainer = new HBox(10);
         metersContainer.layout.isAlignY = true;
         rootContainer.addCreate(metersContainer);
 
@@ -361,6 +361,7 @@ class Controls : Control
     }
 
     void createMeters(Container root){
+        
         import api.dm.gui.controls.meters.scrolls.hscroll: HScroll;
         import api.dm.gui.controls.meters.scrolls.vscroll: VScroll;
         import api.dm.gui.controls.meters.scrolls.rscroll: RScroll;
@@ -369,6 +370,12 @@ class Controls : Control
         scrollContainer.layout.isAlignX = true;
         root.addCreate(scrollContainer);
 
+        import api.dm.gui.controls.meters.scales.dynamics.hscale_dynamic: HScaleDynamic;
+
+        auto hscaleDyn = new HScaleDynamic(200);
+        hscaleDyn.isHGrow = true;
+        scrollContainer.addCreate(hscaleDyn);
+
         import api.math.position: Position;
 
         auto hs = new HScroll;
@@ -376,13 +383,31 @@ class Controls : Control
         hs.isCreateLabel = true;
         scrollContainer.addCreate(hs);
 
-        auto rs = new RScroll;
-        scrollContainer.addCreate(rs);
+        auto hscaleDyn2 = new HScaleDynamic(150);
+        hscaleDyn2.isInvertX = true;
+        hscaleDyn2.isInvertY = true;
+        hscaleDyn2.isHGrow = true;
+        scrollContainer.addCreate(hscaleDyn2);
+
+        // auto rs = new RScroll;
+        // scrollContainer.addCreate(rs);
+
+        import api.dm.gui.controls.meters.scales.dynamics.vscale_dynamic: VScaleDynamic;
+
+        auto vscaleDyn = new VScaleDynamic(0, 150);
+        vscaleDyn.isVGrow = true;
+        root.addCreate(vscaleDyn);
 
         auto vs = new VScroll;
         vs.labelPos = Position.centerRight;
         vs.isCreateLabel = true;
         root.addCreate(vs);
+
+        auto vscaleDyn2 = new VScaleDynamic;
+        vscaleDyn2.isVGrow = true;
+        vscaleDyn2.isInvertX = true;
+        vscaleDyn2.isInvertY = true;
+        root.addCreate(vscaleDyn2);
     }
 
     void createSeparators(Container root)

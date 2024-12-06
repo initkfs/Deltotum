@@ -1,14 +1,16 @@
-module api.dm.gui.controls.meters.scales.radial_proto_scale;
+module api.dm.gui.controls.meters.scales.statics.rscale_static;
 
 import api.dm.gui.controls.control : Control;
 import api.math.geom2.vec2 : Vec2d;
 import api.math.geom2.rect2 : Rect2d;
 import Math = api.math;
 
+import std.conv: to;
+
 /**
  * Authors: initkfs
  */
-class RadialProtoScale : Control
+class RScaleStatic : Control
 {
     double minAngleDeg = 0;
     double maxAngleDeg = 0;
@@ -23,13 +25,13 @@ class RadialProtoScale : Control
 
     double _diameter = 0;
 
-    size_t tickWidth = 2;
-    size_t tickHeight = 6;
-    size_t tickMajorWidth = 2;
-    size_t tickMajorHeight = 12;
+    size_t tickWidth = 8;
+    size_t tickHeight = 2;
+    size_t tickMajorWidth = 10;
+    size_t tickMajorHeight = 2;
 
-    size_t tickOuterPadding = 10;
-    size_t labelOuterPadding = 2;
+    size_t tickOuterPadding = 20;
+    size_t labelOuterPadding = 5;
 
     this(double diameter = 50, double minAngleDeg = 0, double maxAngleDeg = 360)
     {
@@ -56,17 +58,107 @@ class RadialProtoScale : Control
         import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
-        auto smallTickProto = new VConvexPolygon(tickHeight, tickWidth, GraphicStyle(0, theme.colorAccent, true, theme.colorAccent), 0);
-        build(smallTickProto);
-        smallTickProto.initialize;
-        smallTickProto.create;
-        smallTickProto.bestScaleMode;
+        size_t ticksCount = ((Math.abs(maxValue - minValue)) / valueStep).to!size_t;
 
-        auto bigTickProto = new VConvexPolygon(tickMajorHeight, tickMajorWidth, GraphicStyle(2, theme.colorDanger, true, theme.colorDanger), 0);
-        build(bigTickProto);
-        bigTickProto.initialize;
-        bigTickProto.create;
-        bigTickProto.bestScaleMode;
+        const centerShapeW = width;
+        const centerShapeH = height;
+
+        import api.dm.kit.sprites.sprites2d.textures.vectors.vector_texture: VectorTexture;
+
+        auto centerShapeProto = new class VectorTexture
+        {
+            this()
+            {
+                super(centerShapeW, centerShapeH);
+            }
+
+            override void createTextureContent()
+            {
+                auto radius = _diameter / 2;
+
+                auto valueRange = maxValue - minValue;
+                assert(valueRange > 0);
+
+                auto startAngleDeg = minAngleDeg;
+                auto endAngleDeg = maxAngleDeg;
+
+                double angleRange = Math.abs(startAngleDeg - endAngleDeg);
+
+                size_t ticksCount = (valueRange / valueStep).to!size_t;
+                assert(ticksCount >= 2);
+
+                if (minValue == 0)
+                {
+                    ticksCount++;
+                }
+
+                import api.dm.kit.graphics.colors.rgba: RGBA;
+
+                canvas.color(theme.colorAccent);
+                canvas.translate(width / 2 - tickWidth / 2, height / 2 - tickHeight / 2);
+                canvas.save;
+
+                double angleDegDiff = angleRange / (ticksCount);
+                size_t endIndex = ticksCount - 1;
+                assert(endIndex < ticksCount);
+                foreach (i; 0 .. ticksCount)
+                {
+                    auto tickW = tickWidth;
+                    auto tickH = tickHeight;
+
+                    bool isMajorTick = (majorTickStep > 0 && ((i % majorTickStep) == 0));
+
+                    if(isMajorTick){
+                        canvas.color(theme.colorDanger);
+                        tickW = tickMajorWidth;
+                        tickH = tickMajorHeight;
+                    }else {
+                        canvas.color(theme.colorAccent);
+                    }
+
+                    canvas.rotateRad(Math.degToRad(startAngleDeg));
+                    auto leftTopX = width / 2 - tickW - tickOuterPadding;
+                    auto leftTopY = 0;
+                    
+                    auto rightTopX = leftTopX + tickW;
+                    auto rightTopY = leftTopY;
+
+                    auto rightBottomX = rightTopX;
+                    auto rightBottomY = rightTopY + tickH;
+
+                    auto leftBottomX = leftTopX;
+                    auto leftBottomY = rightBottomY;
+
+                    canvas.beginPath;
+                    canvas.moveTo(leftTopX, leftTopY);
+                    canvas.lineTo(rightTopX, rightTopY);
+                    canvas.lineTo(rightBottomX, rightBottomY);
+                    canvas.lineTo(leftBottomX, leftBottomY);
+                    canvas.lineTo(leftTopX, leftTopY);
+                    canvas.closePath;
+                     canvas.fill;
+                    
+                    canvas.restore;
+                   
+                    canvas.stroke;
+                     
+                    canvas.save;
+
+                    // if(i == 0){
+                    //     break;
+                    // }
+                    
+
+                    startAngleDeg = (startAngleDeg + angleDegDiff) % 360;
+                }
+            }
+        };
+
+        scope(exit){
+            centerShapeProto.dispose;
+        }
+
+        buildInitCreate(centerShapeProto);
 
         import api.dm.gui.controls.texts.text : Text;
         import api.dm.kit.assets.fonts.font_size : FontSize;
@@ -80,17 +172,9 @@ class RadialProtoScale : Control
         labelProto.initialize;
         labelProto.create;
 
-        scope (exit)
-        {
-            smallTickProto.dispose;
-            bigTickProto.dispose;
+        scope(exit){
             labelProto.dispose;
         }
-
-        size_t ticksCount = ((Math.abs(maxValue - minValue)) / valueStep).to!size_t;
-
-        const centerShapeW = width;
-        const centerShapeH = height;
 
         auto centerShape = new class RgbaTexture
         {
@@ -126,18 +210,6 @@ class RadialProtoScale : Control
                 {
                     auto pos = Vec2d.fromPolarDeg(startAngleDeg, radius - tickOuterPadding);
 
-                    Texture2d proto = (majorTickStep > 0 && ((i % majorTickStep) == 0)) ? bigTickProto : smallTickProto;
-
-                    proto.angle = startAngleDeg;
-
-                    auto tickX = radius + pos.x - proto.boundsRect.halfWidth;
-                    auto tickY = radius + pos.y - proto.boundsRect.halfHeight;
-
-                    auto tickBoundsW = proto.width;
-                    auto tickBoundsH = proto.height;
-
-                    copyFrom(proto, Rect2d(0, 0, proto.width, proto.height), Rect2d(tickX, tickY, tickBoundsW, tickBoundsH));
-
                     if ((isShowFirstLastLabel && (i == 0 || i == endIndex)) || (labelStep > 0 &&(i % labelStep == 0)))
                     {
                         auto textPos = Vec2d.fromPolarDeg(startAngleDeg, radius - labelOuterPadding);
@@ -170,5 +242,7 @@ class RadialProtoScale : Control
         };
 
         addCreate(centerShape);
+
+        centerShape.copyFrom(centerShapeProto);
     }
 }

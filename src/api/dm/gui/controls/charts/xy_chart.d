@@ -3,8 +3,8 @@ module api.dm.gui.controls.charts.xy_chart;
 import api.dm.gui.containers.container : Container;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.gui.controls.meters.scales.render_hscale : RenderHScale;
-import api.dm.gui.controls.meters.scales.render_vscale : RenderVScale;
+import api.dm.gui.controls.meters.scales.dynamics.hscale_dynamic : HScaleDynamic;
+import api.dm.gui.controls.meters.scales.dynamics.vscale_dynamic : VScaleDynamic;
 import api.dm.gui.containers.hbox : HBox;
 import api.dm.gui.containers.vbox : VBox;
 
@@ -25,8 +25,8 @@ class XYChart : Container
 
     bool isAutoScale = true;
 
-    RenderHScale xScale1;
-    RenderVScale yScale1;
+    HScaleDynamic xScale1;
+    VScaleDynamic yScale1;
 
     double chartAreaWidth = 0;
     double chartAreaHeight = 0;
@@ -102,7 +102,7 @@ class XYChart : Container
         chartContentContainer.layout.isResizeChildren = false;
         addCreate(chartContentContainer);
 
-        yScale1 = new RenderVScale(scaleAutoSize, chartAreaHeight);
+        yScale1 = new VScaleDynamic(scaleAutoSize, chartAreaHeight);
         yScale1.isInvertY = true;
         yScale1.isDrawFirstTick = false;
         yScale1.labelNumberPrecision = labelNumberPrecision;
@@ -119,7 +119,7 @@ class XYChart : Container
         chartArea.height = chartAreaHeight;
         chartContentContainer.addCreate(chartArea);
 
-        xScale1 = new RenderHScale(chartAreaWidth, scaleAutoSize);
+        xScale1 = new HScaleDynamic(chartAreaWidth, scaleAutoSize);
         xScale1.marginLeft = scaleAutoSize;
         xScale1.isDrawFirstTick = false;
         xScale1.isShowFirstLabelText = false;

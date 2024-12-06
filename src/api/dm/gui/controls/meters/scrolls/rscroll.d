@@ -5,7 +5,7 @@ import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
-import api.dm.gui.controls.meters.scales.radial_scale : RadialScale;
+import api.dm.gui.controls.meters.scales.statics.rscale_static : RScaleStatic;
 
 import Math = api.math;
 import api.math.geom2.vec2 : Vec2d;
@@ -19,7 +19,7 @@ class RScroll : BaseRadialMonoScroll
     double fromAngleDeg = 0;
     double toAngleDeg = 90;
 
-    RadialScale scale;
+    RScaleStatic scale;
 
     double thumbPadding = 10;
 
@@ -51,7 +51,7 @@ class RScroll : BaseRadialMonoScroll
             shapeTexture.bestScaleMode;
         }
 
-        scale = new RadialScale(width - 10, fromAngleDeg, toAngleDeg);
+        scale = new RScaleStatic(width - 10, fromAngleDeg, toAngleDeg);
         //scale.tickOuterPadding *= 2;
         scale.labelOuterPadding *= 2;
         //scale.tickWidth = 2;

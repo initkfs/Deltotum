@@ -117,11 +117,20 @@ class Theme
     double separatorHeight = 5;
 
     @ConfigKey
-    double meterThumbWidth=30;
+    double meterThumbWidth = 30;
     @ConfigKey
-    double meterThumbHeight=30;
+    double meterThumbHeight = 30;
     @ConfigKey
-    double meterThumbDiameter=60;
+    double meterThumbDiameter = 60;
+
+    @ConfigKey
+    double meterTickMinorWidth = 2;
+    @ConfigKey
+    double meterTickMinorHeight = 3;
+    @ConfigKey
+    double meterTickMajorWidth = 2;
+    @ConfigKey
+    double meterTickMajorHeight = 5;
 
     this(IconPack iconPack)
     {
