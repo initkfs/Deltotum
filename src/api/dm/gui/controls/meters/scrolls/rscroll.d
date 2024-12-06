@@ -28,9 +28,13 @@ class RScroll : BaseRadialMonoScroll
         super(minValue, maxValue);
         this._width = width;
         this._height = height;
-        
+
         isBorder = false;
-        isDrawBounds = true;
+
+        import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
+
+        layout = new CenterLayout;
+        layout.isAutoResize = true;
     }
 
     protected
@@ -52,7 +56,8 @@ class RScroll : BaseRadialMonoScroll
             shapeTexture.bestScaleMode;
         }
 
-        auto rscaleDiameter = thumbDiameter * 1.05 + Math.max(theme.meterTickMajorHeight, theme.meterTickMinorHeight);
+        auto rscaleDiameter = thumbDiameter * 1.025 + Math.max(theme.meterTickMajorHeight, theme
+                .meterTickMinorHeight);
 
         scale = new RScaleStatic(rscaleDiameter, fromAngleDeg, toAngleDeg);
         addCreate(scale);
@@ -87,11 +92,14 @@ class RScroll : BaseRadialMonoScroll
         auto thumb = new Texture2d(thumbDiameter, thumbDiameter);
         build(thumb);
 
+        thumb.isResizedByParent = false;
+
         thumb.createTargetRGBA32;
         thumb.blendModeBlend;
         thumb.bestScaleMode;
 
-        if(auto shapeTexture = cast(Texture2d) thumbShape){
+        if (auto shapeTexture = cast(Texture2d) thumbShape)
+        {
             shapeTexture.blendModeBlend;
         }
 
@@ -105,7 +113,7 @@ class RScroll : BaseRadialMonoScroll
 
         auto pointerSize = thumbDiameter / 5;
         auto pointerRadius = thumbDiameter / 2;
-        
+
         auto pointerPos = Vec2d.fromPolarDeg(fromAngleDeg, pointerRadius);
 
         auto thumbPx = thumb.halfWidth - thumbPadding;
@@ -124,34 +132,27 @@ class RScroll : BaseRadialMonoScroll
         thumb.create;
         assert(thumb.isCreated);
 
+        thumb.onPointerPress ~= (ref e) {
+           lastDragAngle = thumb.boundsRect.center.angleDeg360To(input.pointerPos);
+        };
+
         return thumb;
     }
 
     override bool delegate(double, double) newOnThumbDragXY()
     {
         return (ddx, ddy) {
+            
             immutable thumbBounds = thumb.boundsRect;
             immutable center = thumbBounds.center;
 
             immutable angleDeg = center.angleDeg360To(input.pointerPos);
-            double da = 0;
-            if (!isDragAngle)
-            {
-                isDragAngle = true;
-                lastDragAngle = angleDeg;
-                return false;
-            }
-            else
-            {
-                da = angleDeg - lastDragAngle;
-                if (da == 0)
-                {
-                    return false;
-                }
-                lastDragAngle = angleDeg;
-            }
+            double da = angleDeg - lastDragAngle;
+            
+            lastDragAngle = angleDeg;
 
-            auto newAngle = thumb.angle + da;
+            auto newAngle = (thumb.angle + da) % 360;
+            
             if (newAngle > fromAngleDeg && newAngle < toAngleDeg)
             {
                 thumb.angle = newAngle;

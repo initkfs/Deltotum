@@ -1,9 +1,9 @@
 module api.dm.gui.controls.meters.scales.statics.base_radial_scale_static;
 
 import api.dm.gui.controls.meters.scales.base_minmax_scale : BaseMinMaxScale;
-import api.dm.kit.sprites.sprites2d.textures.texture2d: Texture2d;
+import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 import api.math.geom2.vec2 : Vec2d;
-import api.dm.kit.graphics.colors.rgba: RGBA;
+import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.rect2 : Rect2d;
 import Math = api.math;
 
@@ -19,15 +19,9 @@ class BaseRadialScaleStatic : BaseMinMaxScale
 
     double _diameter = 0;
 
-    size_t tickOuterPadding = 10;
-    size_t labelOuterPadding = 2;
-
     this(double diameter, double minAngleDeg = 0, double maxAngleDeg = 360)
     {
         this._diameter = diameter;
-
-        this._width = diameter;
-        this._height = diameter;
 
         this.minAngleDeg = minAngleDeg;
         this.maxAngleDeg = maxAngleDeg;
@@ -46,12 +40,12 @@ class BaseRadialScaleStatic : BaseMinMaxScale
 
         if (_width == 0)
         {
-            _width = _diameter;
+            _width = _diameter * 1.8;
         }
 
         if (_height == 0)
         {
-            _height = _diameter;
+            _height = _diameter * 1.8;
         }
     }
 
@@ -96,8 +90,6 @@ class BaseRadialScaleStatic : BaseMinMaxScale
             labelProto.dispose;
         }
 
-        size_t ticksCount = ((Math.abs(maxValue - minValue)) / valueStep).to!size_t;
-
         const centerShapeW = width;
         const centerShapeH = height;
 
@@ -110,38 +102,41 @@ class BaseRadialScaleStatic : BaseMinMaxScale
 
             override void createTextureContent()
             {
+                bestScaleMode;
+
                 auto radius = _diameter / 2;
 
-                auto valueRange = maxValue - minValue;
-                assert(valueRange > 0);
+                Vec2d center = Vec2d(width / 2, height / 2);
+
+                auto valueRange = range;
 
                 auto startAngleDeg = minAngleDeg;
                 auto endAngleDeg = maxAngleDeg;
 
-                double angleRange = Math.abs(startAngleDeg - endAngleDeg);
+                double angleRange = Math.abs(endAngleDeg - startAngleDeg);
 
-                size_t ticksCount = (valueRange / valueStep).to!size_t;
-                assert(ticksCount >= 2);
-
-                if (minValue == 0)
-                {
-                    ticksCount++;
-                }
+                auto ticksCount = tickCount;
 
                 double angleDegDiff = angleRange / (ticksCount - 1);
+
                 size_t endIndex = ticksCount - 1;
                 assert(endIndex < ticksCount);
                 foreach (i; 0 .. ticksCount)
                 {
-                    auto pos = Vec2d.fromPolarDeg(startAngleDeg, radius - tickOuterPadding);
+                    auto pos = Vec2d.fromPolarDeg(startAngleDeg, radius);
 
                     Texture2d proto = (majorTickStep > 0 && ((i % majorTickStep) == 0)) ? bigTickProto
                         : smallTickProto;
 
                     proto.angle = startAngleDeg;
 
-                    auto tickX = radius + pos.x - proto.boundsRect.halfWidth;
-                    auto tickY = radius + pos.y - proto.boundsRect.halfHeight;
+                    if (i == endIndex)
+                    {
+                        proto.angle = maxAngleDeg;
+                    }
+
+                    auto tickX = center.x + pos.x - proto.boundsRect.halfWidth;
+                    auto tickY = center.y + pos.y - proto.boundsRect.halfHeight;
 
                     auto tickBoundsW = proto.width;
                     auto tickBoundsH = proto.height;
@@ -151,14 +146,17 @@ class BaseRadialScaleStatic : BaseMinMaxScale
                     if ((isShowFirstLastLabel && (i == 0 || i == endIndex)) || (labelStep > 0 && (
                             i % labelStep == 0)))
                     {
-                        auto textPos = Vec2d.fromPolarDeg(startAngleDeg, radius - labelOuterPadding);
 
                         auto labelText = (i * valueStep).to!dstring;
                         labelProto.text = labelText;
                         labelProto.updateRows(isForce : true);
 
-                        auto textX = radius + textPos.x - labelProto.rowGlyphWidth / 2;
-                        auto textY = radius + textPos.y - labelProto.rowGlyphHeight / 2;
+                        const labelProtoBounds = labelProto.boundsRect;
+
+                        auto textPos = Vec2d.fromPolarDeg(startAngleDeg, radius + tickBoundsW);
+
+                        auto textX = center.x + textPos.x- labelProto.boundsRect.halfWidth;
+                        auto textY = center.y + textPos.y - labelProto.boundsRect.halfHeight;
 
                         double nextX = textX;
 
