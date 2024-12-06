@@ -156,7 +156,8 @@ class Texture2d : Sprite2d
         }
     }
 
-    void bestScaleMode(){
+    void bestScaleMode()
+    {
         textureScaleMode(ComTextureScaleMode.quality);
     }
 
@@ -486,6 +487,15 @@ class Texture2d : Sprite2d
         return super.opacity;
     }
 
+    void alphaMod(double alpha)
+    {
+        assert(texture);
+        if (const err = texture.setAlphaMod(cast(ubyte) (alpha * ubyte.max)))
+        {
+            logger.error(err.toString);
+        }
+    }
+
     override bool opacity(double value)
     {
         assert(texture);
@@ -506,6 +516,7 @@ class Texture2d : Sprite2d
 
     void setRendererTarget()
     {
+        assert(texture);
         if (const err = texture.setRendererTarget)
         {
             logger.error(err.toString);
@@ -514,6 +525,7 @@ class Texture2d : Sprite2d
 
     void resetRendererTarget()
     {
+        assert(texture);
         if (const err = texture.resetRendererTarget)
         {
             logger.error(err.toString);

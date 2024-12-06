@@ -1,7 +1,9 @@
 module api.dm.gui.controls.meters.scales.statics.base_radial_scale_static;
 
-import api.dm.gui.controls.meters.scales.base_minmax_scale: BaseMinMaxScale;
+import api.dm.gui.controls.meters.scales.base_minmax_scale : BaseMinMaxScale;
+import api.dm.kit.sprites.sprites2d.textures.texture2d: Texture2d;
 import api.math.geom2.vec2 : Vec2d;
+import api.dm.kit.graphics.colors.rgba: RGBA;
 import api.math.geom2.rect2 : Rect2d;
 import Math = api.math;
 
@@ -14,7 +16,7 @@ class BaseRadialScaleStatic : BaseMinMaxScale
     double maxAngleDeg = 0;
 
     size_t labelStep = 5;
-    
+
     double _diameter = 0;
 
     size_t tickOuterPadding = 10;
@@ -23,17 +25,34 @@ class BaseRadialScaleStatic : BaseMinMaxScale
     this(double diameter, double minAngleDeg = 0, double maxAngleDeg = 360)
     {
         this._diameter = diameter;
-        assert(_diameter > 0);
 
         this._width = diameter;
         this._height = diameter;
 
         this.minAngleDeg = minAngleDeg;
         this.maxAngleDeg = maxAngleDeg;
+    }
 
-        import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
+    override void loadTheme()
+    {
+        super.loadTheme;
 
-        this.layout = new CenterLayout;
+        if (_diameter == 0)
+        {
+            _diameter = theme.meterThumbDiameter * 2;
+        }
+
+        assert(_diameter);
+
+        if (_width == 0)
+        {
+            _width = _diameter;
+        }
+
+        if (_height == 0)
+        {
+            _height = _diameter;
+        }
     }
 
     override void create()
@@ -45,13 +64,15 @@ class BaseRadialScaleStatic : BaseMinMaxScale
         import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
-        auto smallTickProto = new VConvexPolygon(tickMinorHeight, tickMinorWidth, GraphicStyle(0, theme.colorAccent, true, theme.colorAccent), 0);
+        auto smallTickProto = new VConvexPolygon(tickMinorHeight, tickMinorWidth, GraphicStyle(0, theme.colorAccent, true, theme
+                .colorAccent), 0);
         build(smallTickProto);
         smallTickProto.initialize;
         smallTickProto.create;
         smallTickProto.bestScaleMode;
 
-        auto bigTickProto = new VConvexPolygon(tickMajorHeight, tickMajorWidth, GraphicStyle(2, theme.colorDanger, true, theme.colorDanger), 0);
+        auto bigTickProto = new VConvexPolygon(tickMajorHeight, tickMajorWidth, GraphicStyle(2, theme.colorDanger, true, theme
+                .colorDanger), 0);
         build(bigTickProto);
         bigTickProto.initialize;
         bigTickProto.create;
@@ -59,9 +80,8 @@ class BaseRadialScaleStatic : BaseMinMaxScale
 
         import api.dm.gui.controls.texts.text : Text;
         import api.dm.kit.assets.fonts.font_size : FontSize;
-        import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 
-        import std.conv: to;
+        import std.conv : to;
 
         auto labelProto = new Text("!");
         build(labelProto);
@@ -115,7 +135,8 @@ class BaseRadialScaleStatic : BaseMinMaxScale
                 {
                     auto pos = Vec2d.fromPolarDeg(startAngleDeg, radius - tickOuterPadding);
 
-                    Texture2d proto = (majorTickStep > 0 && ((i % majorTickStep) == 0)) ? bigTickProto : smallTickProto;
+                    Texture2d proto = (majorTickStep > 0 && ((i % majorTickStep) == 0)) ? bigTickProto
+                        : smallTickProto;
 
                     proto.angle = startAngleDeg;
 
@@ -127,7 +148,8 @@ class BaseRadialScaleStatic : BaseMinMaxScale
 
                     copyFrom(proto, Rect2d(0, 0, proto.width, proto.height), Rect2d(tickX, tickY, tickBoundsW, tickBoundsH));
 
-                    if ((isShowFirstLastLabel && (i == 0 || i == endIndex)) || (labelStep > 0 &&(i % labelStep == 0)))
+                    if ((isShowFirstLastLabel && (i == 0 || i == endIndex)) || (labelStep > 0 && (
+                            i % labelStep == 0)))
                     {
                         auto textPos = Vec2d.fromPolarDeg(startAngleDeg, radius - labelOuterPadding);
 

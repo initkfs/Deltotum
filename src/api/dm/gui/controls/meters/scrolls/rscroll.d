@@ -23,13 +23,14 @@ class RScroll : BaseRadialMonoScroll
 
     double thumbPadding = 10;
 
-    this(double minValue = 0, double maxValue = 1.0, double width = 200, double height = 200)
+    this(double minValue = 0, double maxValue = 1.0, double width = 0, double height = 0)
     {
         super(minValue, maxValue);
-        this.width = width;
-        this.height = height;
+        this._width = width;
+        this._height = height;
+        
         isBorder = false;
-        layout = new CenterLayout;
+        isDrawBounds = true;
     }
 
     protected
@@ -51,12 +52,9 @@ class RScroll : BaseRadialMonoScroll
             shapeTexture.bestScaleMode;
         }
 
-        scale = new RScaleStatic(width - 10, fromAngleDeg, toAngleDeg);
-        //scale.tickOuterPadding *= 2;
-        scale.labelOuterPadding *= 2;
-        //scale.tickWidth = 2;
-        //scale.tickMajorWidth = 2;
-        scale.labelStep = 5;
+        auto rscaleDiameter = thumbDiameter * 1.05 + Math.max(theme.meterTickMajorHeight, theme.meterTickMinorHeight);
+
+        scale = new RScaleStatic(rscaleDiameter, fromAngleDeg, toAngleDeg);
         addCreate(scale);
     }
 
@@ -83,17 +81,23 @@ class RScroll : BaseRadialMonoScroll
         }
 
         import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
+        import api.dm.kit.sprites.sprites2d.textures.rgba_texture : RgbaTexture;
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
         auto thumb = new Texture2d(thumbDiameter, thumbDiameter);
         build(thumb);
 
         thumb.createTargetRGBA32;
+        thumb.blendModeBlend;
         thumb.bestScaleMode;
+
+        if(auto shapeTexture = cast(Texture2d) thumbShape){
+            shapeTexture.blendModeBlend;
+        }
 
         thumb.setRendererTarget;
 
-        graphics.fillRect(0, 0, thumbDiameter, thumbDiameter, RGBA.black);
+        graphics.clearScreen(RGBA.transparent);
 
         thumbShape.draw;
 

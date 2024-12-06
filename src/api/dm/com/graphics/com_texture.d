@@ -51,6 +51,7 @@ nothrow:
     ComResult setBlendMode(ComBlendMode mode);
     ComResult setBlendModeBlend();
     ComResult setBlendModeNone();
+    ComResult setAlphaMod(ubyte alpha);
     ComResult resize(double newWidth, double newHeight);
     ComResult draw(ComTexture other, Rect2d textureBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
             .none);

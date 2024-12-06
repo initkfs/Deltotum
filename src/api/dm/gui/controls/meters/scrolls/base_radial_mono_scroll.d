@@ -5,6 +5,8 @@ import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.meters.scrolls.base_scroll : BaseScroll;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
+import Math = api.math;
+
 /**
  * Authors: initkfs
  */
@@ -33,12 +35,12 @@ abstract class BaseRadialMonoScroll : BaseLabeledScroll
 
         if (_width == 0)
         {
-            _width = thumbDiameter;
+            _width = thumbDiameter * 1.5;
         }
 
         if (_height == 0)
         {
-            _height = thumbDiameter;
+            _height = thumbDiameter * 1.5;
         }
     }
 }

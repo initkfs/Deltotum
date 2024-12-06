@@ -247,7 +247,8 @@ class Graphics : LoggableUnit
         {
             const last = points[$ - 1];
             const first = points[0];
-            if (const err = renderer.drawLine(cast(int) last.x, cast(int) last.y, cast(int) first.x, cast(int) first.y))
+            if (const err = renderer.drawLine(cast(int) last.x, cast(int) last.y, cast(int) first.x, cast(
+                    int) first.y))
             {
                 logger.errorf("Lines drawing error. %s", err);
             }
@@ -929,20 +930,21 @@ class Graphics : LoggableUnit
         }
     }
 
-    void clearScreen()
+    void clearScreen(){
+        clearScreen(screenColor);
+    }
+
+    void clearScreen(RGBA color)
     {
-        //isClearingInCycle
-        if (const err = renderer.setDrawColor(screenColor.r, screenColor.g, screenColor.b, screenColor
-                .aByte))
+        changeColor(color);
+        scope (exit)
+        {
+            restoreColor;
+        }
+
+        if (const err = renderer.clear)
         {
             //TODO logging in main loop?
-        }
-        else
-        {
-            if (const err = renderer.clear)
-            {
-                //TODO logging in main loop?
-            }
         }
     }
 

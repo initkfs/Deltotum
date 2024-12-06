@@ -389,9 +389,6 @@ class Controls : Control
         hscaleDyn2.isHGrow = true;
         scrollContainer.addCreate(hscaleDyn2);
 
-        // auto rs = new RScroll;
-        // scrollContainer.addCreate(rs);
-
         import api.dm.gui.controls.meters.scales.dynamics.vscale_dynamic: VScaleDynamic;
 
         auto vscaleDyn = new VScaleDynamic(0, 150);
@@ -408,6 +405,9 @@ class Controls : Control
         vscaleDyn2.isInvertX = true;
         vscaleDyn2.isInvertY = true;
         root.addCreate(vscaleDyn2);
+
+        auto rscroll1 = new RScroll;
+        root.addCreate(rscroll1);
     }
 
     void createSeparators(Container root)
