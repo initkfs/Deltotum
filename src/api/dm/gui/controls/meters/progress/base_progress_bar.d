@@ -1,4 +1,4 @@
-module api.dm.gui.controls.progress.base_progress_bar;
+module api.dm.gui.controls.meters.progress.base_progress_bar;
 
 import api.dm.gui.controls.control : Control;
 

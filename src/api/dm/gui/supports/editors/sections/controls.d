@@ -531,7 +531,7 @@ class Controls : Control
         pagination.pageFactory = (size_t pageIndex) { import std.conv : to; };
         paginationRoot.addCreate(pagination);
 
-        import api.dm.gui.controls.clocks.analog_clock : AnalogClock;
+        import api.dm.gui.controls.meters.clocks.analog_clock : AnalogClock;
 
         auto clock1 = new AnalogClock;
         rootContainer.addCreate(clock1);
@@ -696,7 +696,7 @@ class Controls : Control
 
     private void createProgressBars(Container root)
     {
-        import api.dm.gui.controls.progress.radial_progress_bar : RadialProgressBar;
+        import api.dm.gui.controls.meters.progress.radial_progress_bar : RadialProgressBar;
 
         // auto rb1 = new RadialProgressBar;
         // rb1.isPercentMode = true;

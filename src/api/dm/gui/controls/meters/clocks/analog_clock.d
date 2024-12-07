@@ -1,4 +1,4 @@
-module api.dm.gui.controls.clocks.analog_clock;
+module api.dm.gui.controls.meters.clocks.analog_clock;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.containers.circle_box : CircleBox;

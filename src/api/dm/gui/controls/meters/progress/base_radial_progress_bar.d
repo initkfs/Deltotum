@@ -1,6 +1,6 @@
-module api.dm.gui.controls.progress.base_radial_progress_bar;
+module api.dm.gui.controls.meters.progress.base_radial_progress_bar;
 
-import api.dm.gui.controls.progress.base_progress_bar : BaseProgressBar;
+import api.dm.gui.controls.meters.progress.base_progress_bar : BaseProgressBar;
 import api.dm.com.graphics.com_texture : ComTextureScaleMode;
 import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;

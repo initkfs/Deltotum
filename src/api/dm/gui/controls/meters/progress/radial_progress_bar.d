@@ -1,6 +1,6 @@
-module api.dm.gui.controls.progress.radial_progress_bar;
+module api.dm.gui.controls.meters.progress.radial_progress_bar;
 
-import api.dm.gui.controls.progress.base_radial_progress_bar : BaseRadialProgressBar;
+import api.dm.gui.controls.meters.progress.base_radial_progress_bar : BaseRadialProgressBar;
 import api.dm.gui.controls.texts.text : Text;
 
 import std.conv : to, text;
