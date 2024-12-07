@@ -59,7 +59,7 @@ class VScaleDynamic : BaseScaleDynamic
 
     override double tickOffset() => height / (tickCount - 1);
 
-    override Vec2d tickStep(double startX, double startY, double tickOffset)
+    override Vec2d tickStep(size_t i, double startX, double startY, double tickOffset)
     {
         if (isInvertY)
         {
@@ -72,7 +72,7 @@ class VScaleDynamic : BaseScaleDynamic
         return Vec2d(startX, startY);
     }
 
-    override Vec2d labelXY(double startX, double startY, Text label, double tickWidth, double tickHeight)
+    override Vec2d labelXY(size_t i, double startX, double startY, Text label, double tickWidth, double tickHeight)
     {
         auto labelX = !isInvertX ? boundsRect.x + tickWidth
             : boundsRect.right - tickWidth - label.width;

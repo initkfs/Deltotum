@@ -57,7 +57,7 @@ class HScaleDynamic : BaseScaleDynamic
         return width / (tickCount - 1);
     }
 
-    override Vec2d tickStep(double startX, double startY, double tickOffset)
+    override Vec2d tickStep(size_t i, double startX, double startY, double tickOffset)
     {
         if (isInvertX)
         {
@@ -70,7 +70,7 @@ class HScaleDynamic : BaseScaleDynamic
         return Vec2d(startX, startY);
     }
 
-    override Vec2d labelXY(double startX, double startY, Text label, double tickWidth, double tickHeight)
+    override Vec2d labelXY(size_t i, double startX, double startY, Text label, double tickWidth, double tickHeight)
     {
         auto labelX = startX - label.boundsRect.halfWidth;
         auto labelY = !isInvertY ? startY + tickHeight / 2 : startY - label.height - tickHeight / 2;
@@ -89,7 +89,8 @@ class HScaleDynamic : BaseScaleDynamic
         return Vec2d(boundsRect.right, startPosY);
     }
 
-    override  Vec2d meterStartPos(){
+    override Vec2d meterStartPos()
+    {
         double startX = !isInvertX ? x : boundsRect.right;
         double startY = !isInvertY ? y : boundsRect.bottom;
         return Vec2d(startX, startY);

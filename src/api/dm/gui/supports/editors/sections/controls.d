@@ -366,7 +366,7 @@ class Controls : Control
         import api.dm.gui.controls.meters.scrolls.vscroll: VScroll;
         import api.dm.gui.controls.meters.scrolls.rscroll: RScroll;
 
-        auto scrollContainer = new VBox;
+        auto scrollContainer = new VBox(15);
         scrollContainer.layout.isAlignX = true;
         root.addCreate(scrollContainer);
 
@@ -389,8 +389,14 @@ class Controls : Control
         hscaleDyn2.isHGrow = true;
         scrollContainer.addCreate(hscaleDyn2);
 
-        auto rscroll1 = new RScroll;
-        scrollContainer.addCreate(rscroll1);
+        // auto rscroll1 = new RScroll;
+        // scrollContainer.addCreate(rscroll1);
+
+        import api.dm.gui.controls.meters.scales.dynamics.rscale_dynamic: RScaleDynamic;
+
+        auto rscale1 = new RScaleDynamic;
+        rscale1.isDrawBounds = true;
+        scrollContainer.addCreate(rscale1);
 
         import api.dm.gui.controls.meters.scales.dynamics.vscale_dynamic: VScaleDynamic;
 

@@ -143,14 +143,22 @@ abstract class BaseScaleDynamic : BaseMinMaxScale
     }
 
     abstract double tickOffset();
-    abstract Vec2d tickStep(double startX, double startY, double offsetTick);
+    abstract Vec2d tickStep(size_t i, double startX, double startY, double offsetTick);
 
-    abstract Vec2d labelXY(double startX, double startY, Text label, double tickWidth, double tickHeight);
+    abstract Vec2d labelXY(size_t i, double startX, double startY, Text label, double tickWidth, double tickHeight);
 
     abstract Vec2d axisStartPos();
-    abstract Vec2d axisEndPos(); 
-    
+    abstract Vec2d axisEndPos();
+
     abstract Vec2d meterStartPos();
+
+    void drawTick(size_t i, double startX, double startY, double w, double h, RGBA color)
+    {
+        auto tickX = startX - w / 2;
+        auto tickY = startY - h / 2;
+
+        graphics.fillRect(tickX, tickY, w, h, color);
+    }
 
     override void drawContent()
     {
@@ -208,19 +216,16 @@ abstract class BaseScaleDynamic : BaseMinMaxScale
                 auto tickW = isMajorTick ? tickMajorWidth : tickMinorWidth;
                 auto tickH = isMajorTick ? tickMajorHeight : tickMinorHeight;
 
-                auto tickX = startX - tickW / 2;
-                auto tickY = startY - tickH / 2;
-
                 auto tickColor = isMajorTick ? theme.colorDanger : theme.colorAccent;
 
-                graphics.fillRect(Vec2d(tickX, tickY), tickW, tickH, tickColor);
+                drawTick(i, startX, startY, tickW, tickH, tickColor);
             }
 
             if (isMajorTick && (majorTickCounter < labels.length))
             {
                 auto label = labels[majorTickCounter];
 
-                const labelPos = labelXY(startX, startY, label, tickMajorWidth, tickMajorHeight);
+                const labelPos = labelXY(i, startX, startY, label, tickMajorWidth, tickMajorHeight);
 
                 auto labelX = labelPos.x;
                 auto labelY = labelPos.y;
@@ -249,7 +254,7 @@ abstract class BaseScaleDynamic : BaseMinMaxScale
                 majorTickCounter++;
             }
 
-            const stepValue = tickStep(startX, startY, tickOffsetValue);
+            const stepValue = tickStep(i, startX, startY, tickOffsetValue);
             startX = stepValue.x;
             startY = stepValue.y;
         }
