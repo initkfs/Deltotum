@@ -1,7 +1,7 @@
 module api.dm.gui.controls.meters.scales.dynamics.base_scale_dynamic;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.gui.controls.meters.scales.base_minmax_scale : BaseMinMaxScale;
+import api.dm.gui.controls.meters.scales.base_drawable_scale : BaseDrawableScale;
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.sprites.sprites2d.textures.vectors.vector_texture : VectorTexture;
@@ -18,7 +18,7 @@ import std.conv : to;
 /**
  * Authors: initkfs
  */
-abstract class BaseScaleDynamic : BaseMinMaxScale
+abstract class BaseScaleDynamic : BaseDrawableScale
 {
     protected
     {
@@ -30,8 +30,7 @@ abstract class BaseScaleDynamic : BaseMinMaxScale
 
     this(double width = 0, double height = 0)
     {
-        this._width = width;
-        this.height = height;
+        super(width, height);
     }
 
     override void create()
@@ -40,12 +39,6 @@ abstract class BaseScaleDynamic : BaseMinMaxScale
 
         createLabelPool;
         alignLabels;
-
-        //TODO from class field?
-        if (axisColor == RGBA.init)
-        {
-            axisColor = theme.colorDanger;
-        }
     }
 
     override bool recreate()
@@ -143,122 +136,29 @@ abstract class BaseScaleDynamic : BaseMinMaxScale
         }
     }
 
-    abstract
+    void showLabelIsNeed(size_t i, Text label)
     {
-        Line2d axisPos();
-
-        Vec2d tickStartPos();
-        double tickOffset();
-        Vec2d tickStep(size_t i, double startX, double startY, double offsetTick);
-        
-        Vec2d labelPos(size_t i, double startX, double startY, Text label, double tickWidth, double tickHeight);
-    }
-
-    void drawTick(size_t i, double startX, double startY, double w, double h, RGBA color)
-    {
-        auto tickX = startX - w / 2;
-        auto tickY = startY - h / 2;
-
-        graphics.fillRect(tickX, tickY, w, h, color);
+        if (!label.isVisible)
+        {
+            if (i == 0)
+            {
+                if (isShowFirstLabelText)
+                {
+                    label.isVisible = true;
+                }
+            }
+            else
+            {
+                label.isVisible = true;
+            }
+        }
     }
 
     override void drawContent()
     {
         super.drawContent;
 
-        if (!isCreated)
-        {
-            return;
-        }
-
-        if (isDrawAxis)
-        {
-            const Line2d pos = axisPos;
-            graphics.line(pos.start, pos.end, axisColor);
-        }
-
-        auto count = tickCount;
-
-        if (count < 1)
-        {
-            return;
-        }
-
-        auto tickOffsetValue = tickOffset;
-
-        const startPosV = tickStartPos;
-
-        double startX = startPosV.x;
-        double startY = startPosV.y;
-
-        size_t majorTickCounter;
-        bool isDrawTick;
-        foreach (i; 0 .. count)
-        {
-            isDrawTick = true;
-
-            if (i == 0)
-            {
-                if (!isDrawFirstTick)
-                {
-                    isDrawTick = false;
-                }
-            }
-
-            bool isMajorTick = majorTickStep > 0 && ((i % majorTickStep) == 0);
-
-            if (isShowFirstLastLabel && (i == 0 || i == count - 1))
-            {
-                isMajorTick = true;
-            }
-
-            if (isDrawTick)
-            {
-                auto tickW = isMajorTick ? tickMajorWidth : tickMinorWidth;
-                auto tickH = isMajorTick ? tickMajorHeight : tickMinorHeight;
-
-                auto tickColor = isMajorTick ? theme.colorDanger : theme.colorAccent;
-
-                drawTick(i, startX, startY, tickW, tickH, tickColor);
-            }
-
-            if (isMajorTick && (majorTickCounter < labels.length))
-            {
-                auto label = labels[majorTickCounter];
-
-                const labelPos = labelPos(i, startX, startY, label, tickMajorWidth, tickMajorHeight);
-
-                auto labelX = labelPos.x;
-                auto labelY = labelPos.y;
-
-                label.xy(labelX, labelY);
-
-                if (!label.isVisible)
-                {
-                    if (i == 0)
-                    {
-                        if (isShowFirstLabelText)
-                        {
-                            label.isVisible = true;
-                        }
-                    }
-                    else
-                    {
-                        label.isVisible = true;
-                    }
-
-                }
-            }
-
-            if (isMajorTick)
-            {
-                majorTickCounter++;
-            }
-
-            const stepValue = tickStep(i, startX, startY, tickOffsetValue);
-            startX = stepValue.x;
-            startY = stepValue.y;
-        }
+        drawScale;
     }
 
 }

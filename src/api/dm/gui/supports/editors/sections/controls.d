@@ -394,7 +394,7 @@ class Controls : Control
 
         import api.dm.gui.controls.meters.scales.dynamics.rscale_dynamic: RScaleDynamic;
 
-        auto rscale1 = new RScaleDynamic;
+        auto rscale1 = new RScaleDynamic(300);
         rscale1.isDrawBounds = true;
         scrollContainer.addCreate(rscale1);
 

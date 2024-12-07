@@ -58,24 +58,42 @@ class HScaleDynamic : BaseScaleDynamic
         return width / (tickCount - 1);
     }
 
-    override Vec2d tickStep(size_t i, double startX, double startY, double tickOffset)
+    override Vec2d tickStep(size_t i, Vec2d pos, double tickOffset)
     {
         if (isInvertX)
         {
-            startX -= tickOffset;
+            pos.x -= tickOffset;
         }
         else
         {
-            startX += tickOffset;
+            pos.x += tickOffset;
         }
-        return Vec2d(startX, startY);
+        return pos;
     }
 
-    override Vec2d labelPos(size_t i, double startX, double startY, Text label, double tickWidth, double tickHeight)
+    override bool drawLabel(size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, double offsetTick)
     {
-        auto labelX = startX - label.boundsRect.halfWidth;
-        auto labelY = !isInvertY ? startY + tickHeight / 2 : startY - label.height - tickHeight / 2;
-        return Vec2d(labelX, labelY);
+        if (!isMajorTick || labelIndex >= labels.length)
+        {
+            return false;
+        }
+
+        auto label = labels[labelIndex];
+
+        auto tickHeight = tickMajorHeight;
+
+        auto labelX = pos.x - label.boundsRect.halfWidth;
+        auto labelY = !isInvertY ? pos.y + tickHeight / 2 : pos.y - label.height - tickHeight / 2;
+        label.xy(labelX, labelY);
+        showLabelIsNeed(labelIndex, label);
+        return true;
+    }
+
+    override Vec2d tickXY(Vec2d pos, double tickWidth, double tickHeight, bool isMajorTick)
+    {
+        auto tickX = pos.x;
+        auto tickY = pos.y - tickHeight / 2;
+        return Vec2d(tickX, tickY);
     }
 
     override Line2d axisPos()

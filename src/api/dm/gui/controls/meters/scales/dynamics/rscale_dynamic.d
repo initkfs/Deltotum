@@ -79,22 +79,41 @@ class RScaleDynamic : BaseScaleDynamic
         return angleDegDiff;
     }
 
-    override Vec2d tickStep(size_t i, double startX, double startY, double tickOffset)
+    override Vec2d tickStep(size_t i, Vec2d startPos, double tickOffset)
     {
         return boundsRect.center.add(Vec2d.fromPolarDeg((i + 1) * (tickOffset), radius));
     }
 
-    override void drawTick(size_t i, double startX, double startY, double w, double h, RGBA color)
+    override bool drawTick(size_t i, Vec2d pos, bool isMajorTick, double offsetTick)
     {
-        const start = Vec2d(startX, startY);
-        const end = Vec2d.fromPolarDeg(i * tickOffset, h);
-        graphics.line(start.x, start.y, start.x + end.x, start.y + end.y, color);
+        auto tickW = isMajorTick ? tickMajorWidth : tickMinorWidth;
+        auto tickH = isMajorTick ? tickMajorHeight : tickMinorHeight;
+
+        auto tickX = pos.x - tickW / 2;
+        auto tickY = pos.y - tickH / 2;
+
+        auto tickColor = isMajorTick ? theme.colorDanger : theme.colorAccent;
+
+        const end = pos.add(Vec2d.fromPolarDeg(i * tickOffset, tickH));
+        graphics.line(pos, end, tickColor);
+        return true;
     }
 
-    override Vec2d labelPos(size_t i, double startX, double startY, Text label, double tickWidth, double tickHeight)
+    override bool drawLabel(size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, double offsetTick)
     {
-        const pos = Vec2d.fromPolarDeg(i * tickOffset, tickMajorHeight).add(Vec2d(startX, startY));
-        return pos;
+        if (!isMajorTick || labelIndex >= labels.length)
+        {
+            return false;
+        }
+
+        auto label = labels[labelIndex];
+        
+        auto tickH = tickMajorHeight;
+
+        const labelPos = pos.add(Vec2d.fromPolarDeg(tickIndex * tickOffset, tickH));
+        label.xy(labelPos);
+        showLabelIsNeed(labelIndex, label);
+        return true;
     }
 
     override Line2d axisPos()

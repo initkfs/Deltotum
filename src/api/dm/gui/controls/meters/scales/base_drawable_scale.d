@@ -44,20 +44,26 @@ abstract class BaseDrawableScale : BaseMinMaxScale
         double tickOffset();
         Vec2d tickStep(size_t i, Vec2d pos, double offsetTick);
 
-        bool drawLabel(size_t i, Vec2d pos, double tickWidth, double tickHeight, bool isMajorTick);
+        bool drawLabel(size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, double offsetTick);
     }
 
-    bool drawTick(size_t i, Vec2d pos, bool isMajorTick)
+    Vec2d tickXY(Vec2d pos, double tickWidth, double tickHeight, bool isMajorTick)
+    {
+        auto tickX = pos.x - tickWidth / 2;
+        auto tickY = pos.y - tickHeight / 2;
+        return Vec2d(tickX, tickY);
+    }
+
+    bool drawTick(size_t i, Vec2d pos, bool isMajorTick, double offsetTick)
     {
         auto tickW = isMajorTick ? tickMajorWidth : tickMinorWidth;
         auto tickH = isMajorTick ? tickMajorHeight : tickMinorHeight;
 
-        auto tickX = pos.x - tickW / 2;
-        auto tickY = pos.y - tickH / 2;
+        auto tickPos = tickXY(pos, tickW, tickH, isMajorTick);
 
         auto tickColor = isMajorTick ? theme.colorDanger : theme.colorAccent;
 
-        graphics.fillRect(tickX, tickY, tickW, tickH, tickColor);
+        graphics.fillRect(tickPos.x, tickPos.y, tickW, tickH, tickColor);
         return true;
     }
 
@@ -113,10 +119,10 @@ abstract class BaseDrawableScale : BaseMinMaxScale
 
             if (isDrawTick)
             {
-                drawTick(i, startPos, isMajorTick);
+                drawTick(i, startPos, isMajorTick, offset);
             }
 
-            bool isLabel = drawLabel(labelCounter, startPos, tickMajorWidth, tickMajorHeight, isMajorTick);
+            bool isLabel = drawLabel(labelCounter, i, startPos, isMajorTick, offset);
 
             if (isLabel)
             {
