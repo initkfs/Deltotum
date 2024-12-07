@@ -262,7 +262,7 @@ class Scene2d : EventKitTarget
     {
         if (!startDrawProcess)
         {
-            graphics.clearScreen;
+            graphics.clear;
             startDrawProcess = true;
         }
 

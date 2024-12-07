@@ -930,11 +930,17 @@ class Graphics : LoggableUnit
         }
     }
 
-    void clearScreen(){
-        clearScreen(screenColor);
+    void clear()
+    {
+        clear(screenColor);
     }
 
-    void clearScreen(RGBA color)
+    void clearTransparent()
+    {
+        clear(RGBA.transparent);
+    }
+
+    void clear(RGBA color)
     {
         changeColor(color);
         scope (exit)

@@ -105,7 +105,7 @@ class RScroll : BaseRadialMonoScroll
 
         thumb.setRendererTarget;
 
-        graphics.clearScreen(RGBA.transparent);
+        graphics.clear(RGBA.transparent);
 
         thumbShape.draw;
 

@@ -45,7 +45,7 @@ abstract class RgbaTexture : Texture2d
 
             if (isClear && _width > 0 && _height > 0)
             {
-                graphics.clearScreen(RGBA.transparent);
+                graphics.clear(RGBA.transparent);
             }
 
             createTextureContent;

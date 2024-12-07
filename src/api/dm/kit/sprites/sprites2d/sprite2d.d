@@ -187,7 +187,6 @@ class Sprite2d : EventKitTarget
 
     protected
     {
-        RgbaTexture _cache;
         Sprite2d _hitbox;
         GraphicsContext _gContext;
 
@@ -199,8 +198,6 @@ class Sprite2d : EventKitTarget
 
         double _x = 0;
         double _y = 0;
-
-        bool _cached;
     }
 
     bool isDrag;
@@ -248,11 +245,6 @@ class Sprite2d : EventKitTarget
         }
 
         super.create;
-
-        if (isCached)
-        {
-            recreateCache;
-        }
 
         super.createHandlers;
 
@@ -593,15 +585,8 @@ class Sprite2d : EventKitTarget
 
         if (isRedraw)
         {
-            if (isCached && _cache)
-            {
-                _cache.draw;
-            }
-            else
-            {
-                drawContent;
-                redraw = true;
-            }
+            drawContent;
+            redraw = true;
         }
 
         foreach (Sprite2d obj; children)
@@ -893,42 +878,6 @@ class Sprite2d : EventKitTarget
         children = children.remove(mustBeIndex);
         setInvalid;
         return true;
-    }
-
-    protected void recreateCache()
-    {
-        if (!_cache)
-        {
-            _cache = new class RgbaTexture
-            {
-                this()
-                {
-                    super(width, height);
-                }
-
-                override void createTextureContent()
-                {
-
-                }
-            };
-            buildInitCreate(_cache);
-        }
-        else
-        {
-            _cache.width = width;
-            _cache.height = height;
-        }
-
-        //TODO remove hack;
-        double oldX = x, oldY = y;
-        x = 0;
-        y = 0;
-        _cache.captureRenderer(() { drawContent; });
-        x = oldX;
-        y = oldY;
-
-        _cache.x = x;
-        _cache.y = y;
     }
 
     void startDrag(double x, double y)
@@ -1435,11 +1384,6 @@ class Sprite2d : EventKitTarget
 
         _x = newX;
 
-        if (_cache)
-        {
-            _cache.x = _x;
-        }
-
         if (!isInvalidationProcess)
         {
             setInvalid;
@@ -1485,11 +1429,6 @@ class Sprite2d : EventKitTarget
         }
 
         _y = newY;
-
-        if (_cache)
-        {
-            _cache.y = _y;
-        }
 
         if (!isInvalidationProcess)
         {
@@ -1571,11 +1510,6 @@ class Sprite2d : EventKitTarget
         if (!isCreated)
         {
             return isResized;
-        }
-
-        if (_cache)
-        {
-            recreateCache;
         }
 
         if (isResizeClip && (clip.width > 0 || clip.height > 0))
@@ -1694,11 +1628,6 @@ class Sprite2d : EventKitTarget
         if (!isCreated)
         {
             return isResized;
-        }
-
-        if (_cache)
-        {
-            recreateCache;
         }
 
         if (isResizeClip && (clip.width > 0 || clip.height > 0))
@@ -1994,6 +1923,48 @@ class Sprite2d : EventKitTarget
         return Nullable!Sprite2d.init;
     }
 
+    import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
+
+    Texture2d toTexture(Texture2d delegate() newTextureProvider = null)
+    {
+        auto texture = newTextureProvider ? newTextureProvider() : new Texture2d(width, height);
+        toTexture(texture);
+        return texture;
+    }
+
+    void toTexture(Texture2d dest)
+    {
+        assert(dest);
+
+        if (width > 0 && dest.width != width)
+        {
+            dest.width = width;
+        }
+
+        if (height > 0 && dest.height != height)
+        {
+            dest.height = height;
+        }
+
+        dest.setRendererTarget;
+        scope (exit)
+        {
+            dest.restoreRendererTarget;
+        }
+
+        graphics.clearTransparent;
+
+        bool isVisibleTemp = isVisible;
+        if (!isVisibleTemp)
+        {
+            isVisible = true;
+        }
+
+        draw;
+
+        isVisible = isVisibleTemp;
+    }
+
     ComSurface snapshot()
     {
         assert(width > 0 && height > 0);
@@ -2171,11 +2142,6 @@ class Sprite2d : EventKitTarget
 
         super.dispose;
 
-        if (_cache)
-        {
-            _cache.dispose;
-        }
-
         if (_hitbox)
         {
             _hitbox.dispose;
@@ -2194,16 +2160,6 @@ class Sprite2d : EventKitTarget
         }
 
         invalidateListeners = null;
-    }
-
-    bool isCached()
-    {
-        return _cached;
-    }
-
-    void isCached(bool value)
-    {
-        _cached = value;
     }
 
     bool canExpandW(double value)
