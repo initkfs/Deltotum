@@ -424,6 +424,16 @@ class Controls : Control
         auto radGauge = new RadialGauge(200, 0, 180);
         radGauge.isDrawBounds = true;
         gaugeContainer.addCreate(radGauge);
+
+        import api.dm.gui.controls.meters.clocks.analog_clock: AnalogClock;
+
+        auto anClock = new AnalogClock;
+        root.addCreate(anClock);
+
+        import api.dm.gui.controls.meters.progress.radial_progress_bar: RadialProgressBar;
+
+        // auto rProgress1 = new RadialProgressBar;
+        // root.addCreate(rProgress1);
     }
 
     void createSeparators(Container root)

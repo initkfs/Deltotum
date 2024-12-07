@@ -1,5 +1,8 @@
 module api.dm.gui.controls.meters.gauges.hlinear_gauge;
 
+import api.dm.gui.controls.meters.min_value_meter: MinValueMeter;
+import api.dm.gui.controls.meters.scales.dynamics.base_scale_dynamic: BaseScaleDynamic;
+
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.containers.container : Container;
@@ -28,10 +31,10 @@ struct TickInfo
 /**
  * Authors: initkfs
  */
-class HLinearGauge : Control
+class HLinearGauge : MinValueMeter!double
 {
-    double minValue = 0;
-    double maxValue = 0;
+    BaseScaleDynamic scale;
+
     double step = 0;
     double measurementUnitStep = 5;
 
@@ -56,26 +59,15 @@ class HLinearGauge : Control
 
     void delegate(double newValue, size_t pointerIndex)[] onPointerMove;
 
-    this(
-        double minValue = 0,
-        double maxValue = 1,
-        double step = 0.05,
-        double width = 150,
-        double height = 50)
+    this(double minValue = 0, double maxValue = 1, double width = 0, double height = 0)
     {
-        assert(width > 0);
-        this.width = width;
+        super(minValue, maxValue);
 
-        assert(height > 0);
-        this.height = height;
-
-        assert(minValue < maxValue);
+        this._width = width;
+        this._height = height;
 
         this.minValue = minValue;
         this.maxValue = maxValue;
-
-        assert(step > 0);
-        this.step = step;
 
         layout = new VLayout;
         layout.isAlignX = true;
@@ -99,104 +91,108 @@ class HLinearGauge : Control
         };
     }
 
+    override void loadTheme(){
+        super.loadTheme;
+    }
+
     override void create()
     {
         super.create;
 
-        const range = Math.abs(maxValue - minValue);
+        // const range = Math.abs(maxValue - minValue);
 
-        labelContainer = new HBox;
-        labelContainer.width = width;
-        //TODO from font?
-        labelContainer.height = 15;
-        addCreate(labelContainer);
+        // labelContainer = new HBox;
+        // labelContainer.width = width;
+        // //TODO from font?
+        // labelContainer.height = 15;
+        // addCreate(labelContainer);
 
-        auto rangeContainer = new HBox;
-        rangeContainer.width = width;
-        addCreate(rangeContainer);
+        // auto rangeContainer = new HBox;
+        // rangeContainer.width = width;
+        // addCreate(rangeContainer);
 
-        auto colorStep = range / 4;
-        //TODO from settings
-        rangeInfo = [
-            RangeInfo(RGBA.web(MaterialPalette.redA700), colorStep),
-            RangeInfo(RGBA.web(MaterialPalette.orangeA700), colorStep),
-            RangeInfo(RGBA.web(MaterialPalette.yellowA700), colorStep),
-            RangeInfo(RGBA.web(MaterialPalette.greenA700), colorStep)
-        ];
+        // auto colorStep = range / 4;
+        // //TODO from settings
+        // rangeInfo = [
+        //     RangeInfo(RGBA.web(MaterialPalette.redA700), colorStep),
+        //     RangeInfo(RGBA.web(MaterialPalette.orangeA700), colorStep),
+        //     RangeInfo(RGBA.web(MaterialPalette.yellowA700), colorStep),
+        //     RangeInfo(RGBA.web(MaterialPalette.greenA700), colorStep)
+        // ];
 
-        foreach (r; rangeInfo)
-        {
-            auto style = createStyle;
-            style.isFill = true;
-            style.color = r.color;
-            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+        // foreach (r; rangeInfo)
+        // {
+        //     auto style = createStyle;
+        //     style.isFill = true;
+        //     style.color = r.color;
+        //     import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
-            auto rectWidth = (r.range * (width + tickWidth)) / range;
-            auto rect = new VConvexPolygon(rectWidth, 5, style, 0);
-            rangeContainer.addCreate(rect);
-        }
+        //     auto rectWidth = (r.range * (width + tickWidth)) / range;
+        //     auto rect = new VConvexPolygon(rectWidth, 5, style, 0);
+        //     rangeContainer.addCreate(rect);
+        // }
 
-        const ticksCount = Math.trunc(range / step);
+        // const ticksCount = Math.trunc(range / step);
 
-        const tickSpace = Math.round(width - ticksCount * tickWidth) / ticksCount;
-        tickContainer = new HBox(tickSpace);
-        tickContainer.width = width;
-        tickContainer.layout.isAlignY = true;
-        addCreate(tickContainer);
+        // const tickSpace = Math.round(width - ticksCount * tickWidth) / ticksCount;
+        // tickContainer = new HBox(tickSpace);
+        // tickContainer.width = width;
+        // tickContainer.layout.isAlignY = true;
+        // addCreate(tickContainer);
 
-        //+1 0-tick
-        foreach (i; 0 .. ticksCount + 1)
-        {
-            bool isMeasureUnit = (i == 0 || i % measurementUnitStep == 0);
-            auto tick = isMeasureUnit ? newMaxStepTick : newMinStepTick;
-            tickContainer.addCreate(tick);
-            if (isMeasureUnit)
-            {
-                double value = (i * maxValue) / ticksCount;
-                measureTicks ~= TickInfo(value, tick);
-            }
-            ticks ~= tick;
-        }
+        // //+1 0-tick
+        // foreach (i; 0 .. ticksCount + 1)
+        // {
+        //     bool isMeasureUnit = (i == 0 || i % measurementUnitStep == 0);
+        //     auto tick = isMeasureUnit ? newMaxStepTick : newMinStepTick;
+        //     tickContainer.addCreate(tick);
+        //     if (isMeasureUnit)
+        //     {
+        //         double value = (i * maxValue) / ticksCount;
+        //         measureTicks ~= TickInfo(value, tick);
+        //     }
+        //     ticks ~= tick;
+        // }
 
-        pointerContainer = new HBox;
-        pointerContainer.width = tickContainer.width;
-        addCreate(pointerContainer);
+        // pointerContainer = new HBox;
+        // pointerContainer.width = tickContainer.width;
+        // addCreate(pointerContainer);
 
-        double maxHeight = 0;
-        foreach (i; 0 .. pointerCount)
-        {
-            auto pointer = newPointer;
-            if(pointer.height > maxHeight){
-                maxHeight = pointer.height;
-            }
-            pointer.isLayoutManaged = false;
-            pointerContainer.addCreate(pointer);
-            pointers ~= pointer;
-        }
-        pointerContainer.height = maxHeight;
+        // double maxHeight = 0;
+        // foreach (i; 0 .. pointerCount)
+        // {
+        //     auto pointer = newPointer;
+        //     if(pointer.height > maxHeight){
+        //         maxHeight = pointer.height;
+        //     }
+        //     pointer.isLayoutManaged = false;
+        //     pointerContainer.addCreate(pointer);
+        //     pointers ~= pointer;
+        // }
+        // pointerContainer.height = maxHeight;
 
-        const tickInfoSpace = width / measureTicks.length;
-        labelContainer.spacing = tickInfoSpace;
+        // const tickInfoSpace = width / measureTicks.length;
+        // labelContainer.spacing = tickInfoSpace;
 
-        tickContainer.applyLayout;
+        // tickContainer.applyLayout;
 
-        foreach (tickInfo; measureTicks)
-        {
-            import api.dm.gui.controls.texts.text : Text;
-            import api.dm.kit.assets.fonts.font_size : FontSize;
+        // foreach (tickInfo; measureTicks)
+        // {
+        //     import api.dm.gui.controls.texts.text : Text;
+        //     import api.dm.kit.assets.fonts.font_size : FontSize;
 
-            import std.conv : to;
+        //     import std.conv : to;
 
-            dstring text = tickInfo.value.to!dstring;
-            auto label = new Text(text);
-            label.isLayoutManaged = false;
-            label.fontSize = FontSize.small;
-            label.x = tickInfo.tick.boundsRectInParent.x;
-            labelContainer.addCreate(label);
-            label.x = tickInfo.tick.boundsRectInParent.x - label.boundsRect.halfWidth;
-        }
+        //     dstring text = tickInfo.value.to!dstring;
+        //     auto label = new Text(text);
+        //     label.isLayoutManaged = false;
+        //     label.fontSize = FontSize.small;
+        //     label.x = tickInfo.tick.boundsRectInParent.x;
+        //     labelContainer.addCreate(label);
+        //     label.x = tickInfo.tick.boundsRectInParent.x - label.boundsRect.halfWidth;
+        // }
 
-        layoutPointers;
+        // layoutPointers;
     }
 
     private size_t pointerIndex(Sprite2d pointer)

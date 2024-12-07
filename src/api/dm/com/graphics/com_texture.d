@@ -34,7 +34,7 @@ nothrow:
     ComResult recreatePtr(void* newPtr);
     ComResult getSize(out int width, out int height);
     ComResult setRendererTarget();
-    ComResult resetRendererTarget();
+    ComResult restoreRendererTarget();
     ComResult getColor(out ubyte r, out ubyte g, out ubyte b, out ubyte a);
     ComResult setColor(ubyte r, ubyte g, ubyte b, ubyte a);
     ComResult lock();

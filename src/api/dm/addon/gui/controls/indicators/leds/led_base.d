@@ -151,7 +151,7 @@ class LedBase : Control
         texture.setRendererTarget;
         scope (exit)
         {
-            texture.resetRendererTarget;
+            texture.restoreRendererTarget;
         }
 
         foreach (layer; layers)

@@ -125,7 +125,7 @@ class RScroll : BaseRadialMonoScroll
 
         graphics.fillTriangle(rightVert, leftTopVert, leftBottomVert, theme.colorAccent);
 
-        thumb.resetRendererTarget;
+        thumb.restoreRendererTarget;
 
         thumb.initialize;
         assert(thumb.isInitialized);

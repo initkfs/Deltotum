@@ -1,16 +1,19 @@
 module api.dm.gui.controls.meters.scales.statics.base_radial_scale_static;
 
-import api.dm.gui.controls.meters.scales.base_minmax_scale : BaseMinMaxScale;
+import api.dm.gui.controls.meters.scales.statics.base_scale_static : BaseScaleStatic;
 import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites.sprites2d.textures.rgba_texture : RgbaTexture;
 import api.math.geom2.vec2 : Vec2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.rect2 : Rect2d;
 import Math = api.math;
 
+import std.conv: to;
+
 /**
  * Authors: initkfs
  */
-class BaseRadialScaleStatic : BaseMinMaxScale
+class BaseRadialScaleStatic : BaseScaleStatic
 {
     double minAngleDeg = 0;
     double maxAngleDeg = 0;
@@ -53,43 +56,6 @@ class BaseRadialScaleStatic : BaseMinMaxScale
     {
         super.create;
 
-        import api.dm.kit.sprites.sprites2d.textures.vectors.vector_texture : VectorTexture;
-        import api.dm.kit.sprites.sprites2d.textures.rgba_texture : RgbaTexture;
-        import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
-        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-
-        auto smallTickProto = new VConvexPolygon(tickMinorHeight, tickMinorWidth, GraphicStyle(0, theme.colorAccent, true, theme
-                .colorAccent), 0);
-        build(smallTickProto);
-        smallTickProto.initialize;
-        smallTickProto.create;
-        smallTickProto.bestScaleMode;
-
-        auto bigTickProto = new VConvexPolygon(tickMajorHeight, tickMajorWidth, GraphicStyle(2, theme.colorDanger, true, theme
-                .colorDanger), 0);
-        build(bigTickProto);
-        bigTickProto.initialize;
-        bigTickProto.create;
-        bigTickProto.bestScaleMode;
-
-        import api.dm.gui.controls.texts.text : Text;
-        import api.dm.kit.assets.fonts.font_size : FontSize;
-
-        import std.conv : to;
-
-        auto labelProto = new Text("!");
-        build(labelProto);
-        labelProto.fontSize = FontSize.small;
-        labelProto.initialize;
-        labelProto.create;
-
-        scope (exit)
-        {
-            smallTickProto.dispose;
-            bigTickProto.dispose;
-            labelProto.dispose;
-        }
-
         const centerShapeW = width;
         const centerShapeH = height;
 
@@ -102,8 +68,6 @@ class BaseRadialScaleStatic : BaseMinMaxScale
 
             override void createTextureContent()
             {
-                bestScaleMode;
-
                 auto radius = _diameter / 2;
 
                 Vec2d center = Vec2d(width / 2, height / 2);
@@ -125,8 +89,8 @@ class BaseRadialScaleStatic : BaseMinMaxScale
                 {
                     auto pos = Vec2d.fromPolarDeg(startAngleDeg, radius);
 
-                    Texture2d proto = (majorTickStep > 0 && ((i % majorTickStep) == 0)) ? bigTickProto
-                        : smallTickProto;
+                    auto proto = (majorTickStep > 0 && ((i % majorTickStep) == 0)) ? majorTickProto
+                        : minorTickProto;
 
                     proto.angle = startAngleDeg;
 
@@ -135,13 +99,18 @@ class BaseRadialScaleStatic : BaseMinMaxScale
                         proto.angle = maxAngleDeg;
                     }
 
+                    proto.angle = (proto.angle + 90) % 360;
+
                     auto tickX = center.x + pos.x - proto.boundsRect.halfWidth;
                     auto tickY = center.y + pos.y - proto.boundsRect.halfHeight;
 
-                    auto tickBoundsW = proto.width;
-                    auto tickBoundsH = proto.height;
+                    auto tickBoundsW = proto.height;
+                    auto tickBoundsH = proto.width;
 
-                    copyFrom(proto, Rect2d(0, 0, proto.width, proto.height), Rect2d(tickX, tickY, tickBoundsW, tickBoundsH));
+                    // copyFrom(proto, Rect2d(0, 0, proto.width, proto.height), Rect2d(tickX, tickY, tickBoundsW, tickBoundsH));
+                    proto.xy(tickX, tickY);
+
+                    proto.draw;
 
                     if ((isShowFirstLastLabel && (i == 0 || i == endIndex)) || (labelStep > 0 && (
                             i % labelStep == 0)))
@@ -155,8 +124,8 @@ class BaseRadialScaleStatic : BaseMinMaxScale
 
                         auto textPos = Vec2d.fromPolarDeg(startAngleDeg, radius + tickBoundsW);
 
-                        auto textX = center.x + textPos.x- labelProto.boundsRect.halfWidth;
-                        auto textY = center.y + textPos.y - labelProto.boundsRect.halfHeight;
+                        auto textX = center.x + textPos.x - labelProto.boundsRect.halfHeight;
+                        auto textY = center.y + textPos.y - labelProto.boundsRect.halfWidth;
 
                         double nextX = textX;
 

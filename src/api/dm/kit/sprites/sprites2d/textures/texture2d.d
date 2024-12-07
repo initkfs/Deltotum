@@ -523,10 +523,10 @@ class Texture2d : Sprite2d
         }
     }
 
-    void resetRendererTarget()
+    void restoreRendererTarget()
     {
         assert(texture);
-        if (const err = texture.resetRendererTarget)
+        if (const err = texture.restoreRendererTarget)
         {
             logger.error(err.toString);
         }

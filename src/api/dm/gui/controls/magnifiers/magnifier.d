@@ -96,7 +96,7 @@ class Magnifier : Control
                                 .height);
                         auto destBounds = Rect2d(0, 0, magnifier.width, magnifier.height);
                         originalTexture.drawTexture(textureBounds, destBounds);
-                        magnifier.resetRendererTarget;
+                        magnifier.restoreRendererTarget;
                         break;
                 }
             };

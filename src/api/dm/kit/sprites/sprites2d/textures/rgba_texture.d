@@ -64,7 +64,7 @@ abstract class RgbaTexture : Texture2d
             throw new Exception(err.toString);
         }
         onRenderer();
-        if (const err = texture.resetRendererTarget)
+        if (const err = texture.restoreRendererTarget)
         {
             throw new Exception(err.toString);
         }

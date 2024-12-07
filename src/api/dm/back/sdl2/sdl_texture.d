@@ -33,6 +33,8 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         //pitch == length row of pixels in bytes
         int pitch;
         uint* pixelPtr;
+
+        SDL_Texture* lastRendererTarget;
     }
 
     protected
@@ -144,8 +146,20 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return query(&width, &height, null, null);
     }
 
+    ComResult getRendererTarget(ref SDL_Texture* target) nothrow
+    {
+        target = SDL_GetRenderTarget(renderer.getObject);
+        return ComResult.success;
+    }
+
     ComResult setRendererTarget() nothrow
     {
+        assert(!lastRendererTarget, "Last renderer target must be null");
+        if (const err = getRendererTarget(lastRendererTarget))
+        {
+            return err;
+        }
+
         const zeroOrErrorCode = SDL_SetRenderTarget(renderer.getObject, ptr);
         if (zeroOrErrorCode)
         {
@@ -154,9 +168,16 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    ComResult resetRendererTarget() nothrow
+    ComResult restoreRendererTarget() nothrow
     {
-        const zeroOrErrorCode = SDL_SetRenderTarget(renderer.getObject, null);
+        SDL_Texture* target = null;
+        if (lastRendererTarget)
+        {
+            target = lastRendererTarget;
+            lastRendererTarget = null;
+        }
+
+        const zeroOrErrorCode = SDL_SetRenderTarget(renderer.getObject, target);
         if (zeroOrErrorCode)
         {
             return getErrorRes(zeroOrErrorCode);
@@ -466,7 +487,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             return getErrorRes(zeroOrErrorRead);
         }
 
-        if (const err = resetRendererTarget)
+        if (const err = restoreRendererTarget)
         {
             return err;
         }
@@ -527,7 +548,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
                 break;
                 sdlFlip = SDL_RendererFlip.SDL_FLIP_VERTICAL | SDL_RendererFlip.SDL_FLIP_HORIZONTAL;
             case Flip.both:
-            break;
+                break;
         }
 
         //https://discourse.libsdl.org/t/1st-frame-sdl-renderer-software-sdl-flip-horizontal-ubuntu-wrong-display-is-it-a-bug-of-sdl-rendercopyex/25924
@@ -588,7 +609,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             return err;
         }
 
-        if (const err = resetRendererTarget)
+        if (const err = restoreRendererTarget)
         {
             return err;
         }
@@ -614,7 +635,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             return err;
         }
 
-        if (const err = resetRendererTarget)
+        if (const err = restoreRendererTarget)
         {
             return err;
         }
