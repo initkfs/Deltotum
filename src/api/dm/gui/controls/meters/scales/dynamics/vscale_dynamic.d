@@ -4,6 +4,7 @@ import api.dm.gui.controls.meters.scales.dynamics.base_scale_dynamic : BaseScale
 import api.math.geom2.vec2 : Vec2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.controls.texts.text : Text;
+import api.math.geom2.line2 : Line2d;
 
 /**
  * Authors: initkfs
@@ -72,7 +73,7 @@ class VScaleDynamic : BaseScaleDynamic
         return Vec2d(startX, startY);
     }
 
-    override Vec2d labelXY(size_t i, double startX, double startY, Text label, double tickWidth, double tickHeight)
+    override Vec2d labelPos(size_t i, double startX, double startY, Text label, double tickWidth, double tickHeight)
     {
         auto labelX = !isInvertX ? boundsRect.x + tickWidth
             : boundsRect.right - tickWidth - label.width;
@@ -80,19 +81,15 @@ class VScaleDynamic : BaseScaleDynamic
         return Vec2d(labelX, labelY);
     }
 
-    override Vec2d axisStartPos()
+    override Line2d axisPos()
     {
         auto startPosX = isInvertX ? boundsRect.right : x;
-        return Vec2d(startPosX, y);
+        const start = Vec2d(startPosX, y);
+        const end = Vec2d(startPosX, boundsRect.bottom);
+        return Line2d(start, end);
     }
 
-    override Vec2d axisEndPos()
-    {
-        auto startPosX = isInvertX ? boundsRect.right : x;
-        return Vec2d(startPosX, boundsRect.bottom);
-    }
-
-    override Vec2d meterStartPos()
+    override Vec2d tickStartPos()
     {
         double startX = !isInvertX ? x : boundsRect.right;
         double startY = !isInvertY ? boundsRect.bottom : y;

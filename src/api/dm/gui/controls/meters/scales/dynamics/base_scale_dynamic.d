@@ -10,6 +10,7 @@ import api.math.geom2.rect2 : Rect2d;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 import api.dm.kit.graphics.colors.rgba : RGBA;
+import api.math.geom2.line2 : Line2d;
 import Math = api.math;
 
 import std.conv : to;
@@ -142,15 +143,16 @@ abstract class BaseScaleDynamic : BaseMinMaxScale
         }
     }
 
-    abstract double tickOffset();
-    abstract Vec2d tickStep(size_t i, double startX, double startY, double offsetTick);
+    abstract
+    {
+        Line2d axisPos();
 
-    abstract Vec2d labelXY(size_t i, double startX, double startY, Text label, double tickWidth, double tickHeight);
-
-    abstract Vec2d axisStartPos();
-    abstract Vec2d axisEndPos();
-
-    abstract Vec2d meterStartPos();
+        Vec2d tickStartPos();
+        double tickOffset();
+        Vec2d tickStep(size_t i, double startX, double startY, double offsetTick);
+        
+        Vec2d labelPos(size_t i, double startX, double startY, Text label, double tickWidth, double tickHeight);
+    }
 
     void drawTick(size_t i, double startX, double startY, double w, double h, RGBA color)
     {
@@ -171,9 +173,8 @@ abstract class BaseScaleDynamic : BaseMinMaxScale
 
         if (isDrawAxis)
         {
-            Vec2d startPos = axisStartPos;
-            Vec2d endPos = axisEndPos;
-            graphics.line(startPos, endPos, axisColor);
+            const Line2d pos = axisPos;
+            graphics.line(pos.start, pos.end, axisColor);
         }
 
         auto count = tickCount;
@@ -185,7 +186,7 @@ abstract class BaseScaleDynamic : BaseMinMaxScale
 
         auto tickOffsetValue = tickOffset;
 
-        const startPosV = meterStartPos;
+        const startPosV = tickStartPos;
 
         double startX = startPosV.x;
         double startY = startPosV.y;
@@ -225,7 +226,7 @@ abstract class BaseScaleDynamic : BaseMinMaxScale
             {
                 auto label = labels[majorTickCounter];
 
-                const labelPos = labelXY(i, startX, startY, label, tickMajorWidth, tickMajorHeight);
+                const labelPos = labelPos(i, startX, startY, label, tickMajorWidth, tickMajorHeight);
 
                 auto labelX = labelPos.x;
                 auto labelY = labelPos.y;

@@ -5,6 +5,7 @@ import api.math.geom2.vec2 : Vec2d;
 import api.math.geom2.rect2 : Rect2d;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.graphics.colors.rgba : RGBA;
+import api.math.geom2.line2 : Line2d;
 
 import Math = api.math;
 
@@ -90,25 +91,21 @@ class RScaleDynamic : BaseScaleDynamic
         graphics.line(start.x, start.y, start.x + end.x, start.y + end.y, color);
     }
 
-    override Vec2d labelXY(size_t i, double startX, double startY, Text label, double tickWidth, double tickHeight)
+    override Vec2d labelPos(size_t i, double startX, double startY, Text label, double tickWidth, double tickHeight)
     {
         const pos = Vec2d.fromPolarDeg(i * tickOffset, tickMajorHeight).add(Vec2d(startX, startY));
         return pos;
     }
 
-    override Vec2d axisStartPos()
+    override Line2d axisPos()
     {
         const bounds = boundsRect;
-        return Vec2d(bounds.middleX, bounds.y);
+        const start = Vec2d(bounds.middleX, bounds.y);
+        const end = Vec2d(bounds.middleX, bounds.bottom);
+        return Line2d(start, end);
     }
 
-    override Vec2d axisEndPos()
-    {
-        const bounds = boundsRect;
-        return Vec2d(bounds.middleX, bounds.bottom);
-    }
-
-    override Vec2d meterStartPos()
+    override Vec2d tickStartPos()
     {
         const bounds = boundsRect;
         return Vec2d.fromPolarDeg(minAngleDeg, radius).add(bounds.center);
