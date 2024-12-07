@@ -2,6 +2,7 @@ module api.dm.gui.containers.frame;
 
 import api.dm.gui.containers.container : Container;
 import api.dm.gui.controls.control : Control;
+import api.dm.kit.sprites.sprites2d.layouts.spaceable_layout : SpaceableLayout;
 import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.texts.text : Text;
@@ -18,7 +19,7 @@ class Frame : Container
         dstring initText;
     }
 
-    this(dstring labelText = "Frame", double spacing = 5)
+    this(dstring labelText = "Frame", double spacing = SpaceableLayout.DefaultSpacing)
     {
         initText = labelText;
 

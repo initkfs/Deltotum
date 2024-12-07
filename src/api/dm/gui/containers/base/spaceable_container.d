@@ -1,5 +1,7 @@
 module api.dm.gui.containers.base.spaceable_container;
 
+import api.dm.kit.sprites.sprites2d.layouts.spaceable_layout : SpaceableLayout;
+
 import api.dm.gui.containers.container : Container;
 
 /**
@@ -12,12 +14,8 @@ class SpaceableContainer : Container
         double _spacing;
     }
 
-    this(double spacing = 0)
-    {
-        import std.exception : enforce;
-        import std.conv : text;
-
-        enforce(spacing >= 0, text("Spacing must be positive value or 0: ", spacing));
+    this(double spacing = SpaceableLayout.DefaultSpacing)
+    {        
         this._spacing = spacing;
     }
 

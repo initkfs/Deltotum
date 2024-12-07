@@ -1,6 +1,7 @@
 module api.dm.gui.containers.hbox;
 
 import api.dm.gui.containers.base.spaceable_container : SpaceableContainer;
+import api.dm.kit.sprites.sprites2d.layouts.spaceable_layout : SpaceableLayout;
 import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 
@@ -9,7 +10,7 @@ import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
  */
 class HBox : SpaceableContainer
 {
-    this(double spacing = 0)
+    this(double spacing = SpaceableLayout.DefaultSpacing)
     {
         super(spacing);
 

@@ -389,6 +389,9 @@ class Controls : Control
         hscaleDyn2.isHGrow = true;
         scrollContainer.addCreate(hscaleDyn2);
 
+        auto rscroll1 = new RScroll;
+        scrollContainer.addCreate(rscroll1);
+
         import api.dm.gui.controls.meters.scales.dynamics.vscale_dynamic: VScaleDynamic;
 
         auto vscaleDyn = new VScaleDynamic(0, 150);
@@ -406,8 +409,21 @@ class Controls : Control
         vscaleDyn2.isInvertY = true;
         root.addCreate(vscaleDyn2);
 
-        auto rscroll1 = new RScroll;
-        root.addCreate(rscroll1);
+        auto gaugeContainer = new VBox;
+        gaugeContainer.layout.isAlignX = true;
+        root.addCreate(gaugeContainer);
+
+        import api.dm.gui.controls.meters.gauges.radial_gauge: RadialGauge;
+
+        import api.dm.gui.controls.meters.gauges.hlinear_gauge: HLinearGauge;
+
+        auto hLinGauge = new HLinearGauge;
+        hLinGauge.isDrawBounds = true;
+        gaugeContainer.addCreate(hLinGauge);
+
+        auto radGauge = new RadialGauge(200, 0, 180);
+        radGauge.isDrawBounds = true;
+        gaugeContainer.addCreate(radGauge);
     }
 
     void createSeparators(Container root)
@@ -687,13 +703,13 @@ class Controls : Control
         // root.addCreate(rb1);
         // rb1.progress = 0.6;
 
-        // import api.dm.gui.controls.gauges.hlinear_gauge : HLinearGauge;
+        // import api.dm.gui.controls.meters.gauges.hlinear_gauge : HLinearGauge;
 
         // auto ling1 = new HLinearGauge;
         // //ling1.isBorder = true;
         // root.addCreate(ling1);
 
-        import api.dm.gui.controls.gauges.radial_gauge : RadialGauge;
+        import api.dm.gui.controls.meters.gauges.radial_gauge : RadialGauge;
 
         enum gaugeDiameter = 200;
         auto leftGauge = new RadialGauge(gaugeDiameter, 90, 270);

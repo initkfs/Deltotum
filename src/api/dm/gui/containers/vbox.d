@@ -1,6 +1,7 @@
 module api.dm.gui.containers.vbox;
 
 import api.dm.gui.containers.base.spaceable_container: SpaceableContainer;
+import api.dm.kit.sprites.sprites2d.layouts.spaceable_layout : SpaceableLayout;
 import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
 
 /**
@@ -8,7 +9,7 @@ import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
  */
 class VBox : SpaceableContainer
 {
-    this(double spacing = 0)
+    this(double spacing = SpaceableLayout.DefaultSpacing)
     {
         super(spacing);
 

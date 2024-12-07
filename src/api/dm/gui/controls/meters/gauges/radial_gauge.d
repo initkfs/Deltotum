@@ -1,4 +1,4 @@
-module api.dm.gui.controls.gauges.radial_gauge;
+module api.dm.gui.controls.meters.gauges.radial_gauge;
 
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
