@@ -1,7 +1,7 @@
 module api.dm.gui.controls.meters.scales.statics.base_scale_static;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.gui.controls.meters.scales.base_minmax_scale : BaseMinMaxScale;
+import api.dm.gui.controls.meters.scales.base_drawable_scale: BaseDrawableScale;
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.sprites.sprites2d.textures.vectors.vector_texture : VectorTexture;
@@ -18,7 +18,7 @@ import std.conv : to;
 /**
  * Authors: initkfs
  */
-abstract class BaseScaleStatic : BaseMinMaxScale
+abstract class BaseScaleStatic : BaseDrawableScale
 {
     double prefLabelWidth = 0;
 

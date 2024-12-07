@@ -389,14 +389,18 @@ class Controls : Control
         hscaleDyn2.isHGrow = true;
         scrollContainer.addCreate(hscaleDyn2);
 
-        // auto rscroll1 = new RScroll;
-        // scrollContainer.addCreate(rscroll1);
+        auto vb1 = new VBox(10);
+        scrollContainer.addCreate(vb1);
+
+        auto rscroll1 = new RScroll;
+        rscroll1.isDrawBounds = true;
 
         import api.dm.gui.controls.meters.scales.dynamics.rscale_dynamic: RScaleDynamic;
 
-        auto rscale1 = new RScaleDynamic(300);
+        auto rscale1 = new RScaleDynamic;
         rscale1.isDrawBounds = true;
-        scrollContainer.addCreate(rscale1);
+        
+        vb1.addCreate([rscale1, rscroll1]);
 
         import api.dm.gui.controls.meters.scales.dynamics.vscale_dynamic: VScaleDynamic;
 

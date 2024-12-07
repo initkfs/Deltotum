@@ -5,10 +5,12 @@ import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.sprites.sprites2d.textures.rgba_texture : RgbaTexture;
 import api.math.geom2.vec2 : Vec2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
+import api.dm.gui.controls.texts.text : Text;
 import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.line2 : Line2d;
 import Math = api.math;
 
-import std.conv: to;
+import std.conv : to;
 
 /**
  * Authors: initkfs
@@ -22,12 +24,21 @@ class BaseRadialScaleStatic : BaseScaleStatic
 
     double _diameter = 0;
 
+    Texture2d scaleShape;
+
+    protected
+    {
+        double radius = 0;
+    }
+
     this(double diameter, double minAngleDeg = 0, double maxAngleDeg = 360)
     {
         this._diameter = diameter;
 
         this.minAngleDeg = minAngleDeg;
         this.maxAngleDeg = maxAngleDeg;
+
+        isDrawAxis = false;
     }
 
     override void loadTheme()
@@ -50,103 +61,108 @@ class BaseRadialScaleStatic : BaseScaleStatic
         {
             _height = _diameter * 1.8;
         }
+
+        radius = _diameter / 2;
     }
 
     override void create()
     {
         super.create;
 
-        const centerShapeW = width;
-        const centerShapeH = height;
+        scaleShape = new Texture2d(width, height);
+        buildInitCreate(scaleShape);
 
-        auto centerShape = new class RgbaTexture
+        scaleShape.createTargetRGBA32;
+        scaleShape.blendModeBlend;
+
+        scaleShape.setRendererTarget;
+        scope (exit)
         {
-            this()
-            {
-                super(centerShapeW, centerShapeH);
-            }
+            scaleShape.restoreRendererTarget;
+        }
 
-            override void createTextureContent()
-            {
-                auto radius = _diameter / 2;
+        graphics.clearTransparent;
 
-                Vec2d center = Vec2d(width / 2, height / 2);
+        drawScale;
 
-                auto valueRange = range;
+        addCreate(scaleShape);
+    }
 
-                auto startAngleDeg = minAngleDeg;
-                auto endAngleDeg = maxAngleDeg;
+    override Line2d axisPos()
+    {
+        const bounds = boundsRect;
+        const start = Vec2d(bounds.middleX, bounds.y);
+        const end = Vec2d(bounds.middleX, bounds.bottom);
+        return Line2d(start, end);
+    }
 
-                double angleRange = Math.abs(endAngleDeg - startAngleDeg);
+    override Vec2d tickStartPos()
+    {
+        const bounds = boundsRect;
+        return Vec2d.fromPolarDeg(minAngleDeg, radius).add(bounds.center);
+    }
 
-                auto ticksCount = tickCount;
+    override double tickOffset()
+    {
+        const angleRange = Math.abs(maxAngleDeg - minAngleDeg);
+        const angleDegDiff = angleRange / (tickCount - 1);
+        return angleDegDiff;
+    }
 
-                double angleDegDiff = angleRange / (ticksCount - 1);
+    override Vec2d tickStep(size_t i, Vec2d pos, double offsetTick)
+    {
+        return scaleShape.boundsRect.center.add(Vec2d.fromPolarDeg((i + 1) * (tickOffset), radius));
+    }
 
-                size_t endIndex = ticksCount - 1;
-                assert(endIndex < ticksCount);
-                foreach (i; 0 .. ticksCount)
-                {
-                    auto pos = Vec2d.fromPolarDeg(startAngleDeg, radius);
+    override bool drawTick(size_t i, Vec2d pos, bool isMajorTick, double offsetTick)
+    {
+        auto proto = isMajorTick ? majorTickProto : minorTickProto;
 
-                    auto proto = (majorTickStep > 0 && ((i % majorTickStep) == 0)) ? majorTickProto
-                        : minorTickProto;
+        auto tickX = pos.x - proto.boundsRect.halfWidth;
+        auto tickY = pos.y - proto.boundsRect.halfHeight;
 
-                    proto.angle = startAngleDeg;
+        proto.xy = Vec2d(tickX, tickY);
 
-                    if (i == endIndex)
-                    {
-                        proto.angle = maxAngleDeg;
-                    }
+        proto.angle = i * tickOffset;
+        proto.angle = (proto.angle + 90) % 360;
 
-                    proto.angle = (proto.angle + 90) % 360;
+        proto.draw;
+        return true;
+    }
 
-                    auto tickX = center.x + pos.x - proto.boundsRect.halfWidth;
-                    auto tickY = center.y + pos.y - proto.boundsRect.halfHeight;
+    override bool drawLabel(size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, double offsetTick)
+    {
+        if (!isMajorTick)
+        {
+            return false;
+        }
 
-                    auto tickBoundsW = proto.height;
-                    auto tickBoundsH = proto.width;
+        const center = scaleShape.boundsRect.center;
 
-                    // copyFrom(proto, Rect2d(0, 0, proto.width, proto.height), Rect2d(tickX, tickY, tickBoundsW, tickBoundsH));
-                    proto.xy(tickX, tickY);
+        import std.conv : to;
 
-                    proto.draw;
+        auto labelText = (tickIndex * valueStep).to!dstring;
+        labelProto.text = labelText;
+        labelProto.updateRows(isForce : true);
 
-                    if ((isShowFirstLastLabel && (i == 0 || i == endIndex)) || (labelStep > 0 && (
-                            i % labelStep == 0)))
-                    {
+        const tickBoundsW = majorTickProto.boundsRect.height;
 
-                        auto labelText = (i * valueStep).to!dstring;
-                        labelProto.text = labelText;
-                        labelProto.updateRows(isForce : true);
+        auto textPos = Vec2d.fromPolarDeg(tickIndex * offsetTick, radius + tickBoundsW);
 
-                        const labelProtoBounds = labelProto.boundsRect;
+        auto textX = center.x + textPos.x - labelProto.boundsRect.halfHeight;
+        auto textY = center.y + textPos.y - labelProto.boundsRect.halfWidth;
 
-                        auto textPos = Vec2d.fromPolarDeg(startAngleDeg, radius + tickBoundsW);
+        double nextX = textX;
 
-                        auto textX = center.x + textPos.x - labelProto.boundsRect.halfHeight;
-                        auto textY = center.y + textPos.y - labelProto.boundsRect.halfWidth;
+        labelProto.onFontTexture((fontTexture, const glyphPtr) {
 
-                        double nextX = textX;
+            Rect2d textDest =
+            {nextX, textY, glyphPtr.geometry.width, glyphPtr.geometry.height};
 
-                        labelProto.onFontTexture((fontTexture, const glyphPtr) {
-
-                            Rect2d textDest =
-                            {
-                                nextX, textY, glyphPtr.geometry.width, glyphPtr.geometry.height
-                            };
-
-                            copyFrom(fontTexture, glyphPtr.geometry, textDest);
-                            nextX += glyphPtr.geometry.width;
-                            return true;
-                        });
-                    }
-
-                    startAngleDeg = (startAngleDeg + angleDegDiff) % 360;
-                }
-            }
-        };
-
-        addCreate(centerShape);
+            scaleShape.copyFrom(fontTexture, glyphPtr.geometry, textDest);
+            nextX += glyphPtr.geometry.width;
+            return true;
+        });
+        return true;
     }
 }
