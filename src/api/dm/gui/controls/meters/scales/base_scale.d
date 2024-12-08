@@ -3,6 +3,8 @@ module api.dm.gui.controls.meters.scales.base_scale;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
+import Math = api.math;
+
 /**
  * Authors: initkfs
  */
@@ -101,5 +103,11 @@ abstract class BaseScale : Control
 
         return format("%.*f"d, labelNumberPrecision, value);
     }
+
+    double tickMinWidth() => Math.min(tickMinorWidth, tickMajorWidth); 
+    double tickMaxWidth() => Math.max(tickMinorWidth, tickMajorWidth); 
+
+    double tickMinHeight() => Math.min(tickMinorHeight, tickMajorHeight); 
+    double tickMaxHeight() => Math.max(tickMinorHeight, tickMajorHeight); 
 
 }

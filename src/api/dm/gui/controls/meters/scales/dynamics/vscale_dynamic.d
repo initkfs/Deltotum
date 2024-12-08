@@ -6,6 +6,8 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.controls.texts.text : Text;
 import api.math.geom2.line2 : Line2d;
 
+import Math = api.math;
+
 /**
  * Authors: initkfs
  */
@@ -14,6 +16,7 @@ class VScaleDynamic : BaseScaleDynamic
     this(double width = 0, double height = 0)
     {
         super(width, height);
+        isDrawBounds = true;
     }
 
     override void loadTheme()
@@ -24,18 +27,15 @@ class VScaleDynamic : BaseScaleDynamic
 
     void loadVScaleDynamicSizeTheme()
     {
-        if (_width == 0)
-        {
-            import Math = api.math;
-
-            const maxW = Math.max(tickMinorHeight, tickMajorHeight);
-            _width = maxW;
-        }
-
         import std : swap;
 
         swap(tickMinorWidth, tickMinorHeight);
         swap(tickMajorWidth, tickMajorHeight);
+
+        if (_width == 0)
+        {
+            _width = tickMaxWidth;
+        }
     }
 
     override void createLabelPool()
@@ -53,7 +53,7 @@ class VScaleDynamic : BaseScaleDynamic
 
         if (maxW > 0)
         {
-            auto newWidth = width + maxW;
+            auto newWidth = tickMaxWidth + maxW;
             width = newWidth;
         }
     }
@@ -75,8 +75,9 @@ class VScaleDynamic : BaseScaleDynamic
 
     override Vec2d tickXY(Vec2d pos, double tickWidth, double tickHeight, bool isMajorTick)
     {
-        auto tickX = pos.x - tickWidth / 2;
-        auto tickY = pos.y;
+        auto tickX = isMajorTick ? pos.x : pos.x + tickWidth / 2;
+
+        auto tickY = pos.y - tickHeight / 2;
         return Vec2d(tickX, tickY);
     }
 
@@ -94,6 +95,33 @@ class VScaleDynamic : BaseScaleDynamic
         auto labelX = !isInvertX ? boundsRect.x + tickWidth
             : boundsRect.right - tickWidth - label.width;
         auto labelY = pos.y - label.boundsRect.halfHeight;
+
+        if (tickIndex == 0)
+        {
+            if (!isInvertY)
+            {
+                labelY -= label.boundsRect.halfHeight;
+            }
+            else
+            {
+                labelY += label.boundsRect.halfHeight;
+            }
+        }
+        else
+        {
+            if (tickCount > 1 && (tickCount - 1) == tickIndex)
+            {
+                if (!isInvertY)
+                {
+                    labelY += label.boundsRect.halfHeight;
+                }
+                else
+                {
+                    labelY -= label.boundsRect.halfHeight;
+                }
+            }
+        }
+
         label.xy(labelX, labelY);
         showLabelIsNeed(labelIndex, label);
         return true;
@@ -101,7 +129,8 @@ class VScaleDynamic : BaseScaleDynamic
 
     override Line2d axisPos()
     {
-        auto startPosX = isInvertX ? boundsRect.right : x;
+        const tickHalfMaxW = tickMaxWidth / 2;
+        auto startPosX = isInvertX ? boundsRect.right - tickHalfMaxW : x + tickHalfMaxW;
         const start = Vec2d(startPosX, y);
         const end = Vec2d(startPosX, boundsRect.bottom);
         return Line2d(start, end);
@@ -109,8 +138,9 @@ class VScaleDynamic : BaseScaleDynamic
 
     override Vec2d tickStartPos()
     {
-        double startX = !isInvertX ? x : boundsRect.right;
+        double startX = !isInvertX ? x : boundsRect.right - tickMaxWidth;
         double startY = !isInvertY ? boundsRect.bottom : y;
+
         return Vec2d(startX, startY);
     }
 }

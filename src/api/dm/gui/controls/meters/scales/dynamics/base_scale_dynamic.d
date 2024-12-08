@@ -26,6 +26,9 @@ abstract class BaseScaleDynamic : BaseDrawableScale
         Text[] labels;
 
         double prefLabelWidth = 0;
+
+        double maxLabelWidth = 0;
+        double maxLabelHeight = 0;
     }
 
     this(double width = 0, double height = 0)
@@ -84,6 +87,10 @@ abstract class BaseScaleDynamic : BaseDrawableScale
             label.fontSize = FontSize.small;
             label.isLayoutManaged = false;
             label.isVisible = false;
+
+            label.boundsColor = RGBA.yellow;
+            label.isDrawBounds = true;
+
             addCreate(label);
             labelPool ~= label;
         }
@@ -96,6 +103,8 @@ abstract class BaseScaleDynamic : BaseDrawableScale
         // writefln("min:%s, max:%s, c: %s, mc: %s, labels: %s", minValue, maxValue, tickCount, majorTickCount, labels.length);
 
         //TODO one loop
+        double maxW = 0;
+        double maxH = 0;
         foreach (i, label; labels)
         {
             //TODO cache
@@ -114,7 +123,20 @@ abstract class BaseScaleDynamic : BaseDrawableScale
             }
             auto tickValue = minValue + i * majorTickStep * valueStep;
             label.text = formatLabelValue(tickValue);
+            label.updateRows(isForce : true);
+
+            const bounds = label.boundsRect;
+            if(bounds.width > maxW){
+                maxW = bounds.width;
+            }
+
+            if(bounds.height > maxH){
+                maxH = bounds.height;
+            }
         }
+
+        maxLabelWidth = maxW;
+        maxLabelHeight = maxH;
     }
 
     void alignLabels()

@@ -1927,9 +1927,17 @@ class Sprite2d : EventKitTarget
 
     import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 
-    Texture2d toTexture(Texture2d delegate() newTextureProvider = null)
+    Texture2d toTexture(double scaleX = 1, double scaleY = 1, Texture2d delegate() newTextureProvider = null)
     {
         auto texture = newTextureProvider ? newTextureProvider() : new Texture2d(width, height);
+        if(!texture.isCreated){
+            buildInitCreate(texture);
+            texture.createTargetRGBA32;
+        }
+
+        texture.width = width * scaleX;
+        texture.height = height * scaleY;
+
         toTexture(texture);
         return texture;
     }

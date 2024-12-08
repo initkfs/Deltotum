@@ -427,7 +427,7 @@ class Controls : Control
 
         import api.dm.gui.controls.meters.gauges.hlinear_gauge: HLinearGauge;
 
-        auto hLinGauge = new HLinearGauge;
+        auto hLinGauge = new HLinearGauge(0, 1, 150, 0);
         hLinGauge.isDrawBounds = true;
         gaugeContainer.addCreate(hLinGauge);
 
