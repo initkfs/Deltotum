@@ -16,7 +16,6 @@ class HScaleDynamic : BaseScaleDynamic
     this(double width = 0, double height = 0)
     {
         super(width, height);
-        isDrawBounds = true;
     }
 
     override void loadTheme()
@@ -37,19 +36,9 @@ class HScaleDynamic : BaseScaleDynamic
     {
         super.createLabelPool;
 
-        double maxH = 0;
-        foreach (label; labelPool)
+        if (maxLabelHeight > 0)
         {
-            if (label.boundsRect.height > maxH)
-            {
-                maxH = label.boundsRect.height;
-            }
-        }
-
-        if (maxH > 0)
-        {
-            auto newHeight = tickMaxHeight + maxH;
-            height = newHeight;
+            height = height + maxLabelHeight;
         }
     }
 
@@ -95,7 +84,7 @@ class HScaleDynamic : BaseScaleDynamic
         {
             if (tickCount > 1 && (tickCount - 1) == tickIndex)
             {
-                if (!isInvertY)
+                if (!isInvertX)
                 {
                     labelX -= label.boundsRect.halfWidth;
                 }

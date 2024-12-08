@@ -141,16 +141,22 @@ class HLinearGauge : MinValueMeter!double
         {
             import api.dm.gui.controls.meters.scales.dynamics.hscale_dynamic : HScaleDynamic;
 
-            auto dynScale = new HScaleDynamic(width, height - thumbHeight);
+            auto dynScale = new HScaleDynamic(width);
+            dynScale.isInvertY = true;
             buildInitCreate(dynScale);
 
-            dynScale.isInvertY = true;
-
             auto scaleTexture = dynScale.toTexture;
+            scaleTexture.isResizedByParent = false;
 
             scale = !onScaleCreate ? scaleTexture : onScaleCreate(scaleTexture);
             auto root = scaleContainer ? scaleContainer : this;
             root.addCreate(scale);
+
+            if (root.width < scale.width)
+            {
+                root.width = scale.width;
+            }
+
             if (onScaleCreated)
             {
                 onScaleCreated(scale);
@@ -171,7 +177,7 @@ class HLinearGauge : MinValueMeter!double
         }
 
         foreach (i; 0 .. thumbsCount)
-        {
+            (ii) {
             auto thumb = newThumb;
 
             thumb.isLayoutManaged = false;
@@ -182,7 +188,9 @@ class HLinearGauge : MinValueMeter!double
 
             thumbContainer.addCreate(thumb);
             thumbs ~= thumb;
-        }
+        }(i);
+
+        layoutThumbs;
 
         // const range = Math.abs(maxValue - minValue);
 
@@ -234,7 +242,10 @@ class HLinearGauge : MinValueMeter!double
     {
         super.applyLayout;
 
-        layoutThumbs;
+        foreach (thumb; thumbs)
+        {
+            thumb.y = thumbContainer.boundsRect.bottom;
+        }
     }
 
     void layoutThumbs()
@@ -246,8 +257,6 @@ class HLinearGauge : MinValueMeter!double
 
         size_t firstThumbIndex = 0;
         size_t lastThumbIndex = thumbs.length - 1;
-
-        auto thumbContainer = scaleContainer ? scaleContainer : this;
 
         auto firstThumb = thumbs[firstThumbIndex];
         firstThumb.x = thumbContainer.boundsRect.x - firstThumb.boundsRect.halfWidth;
@@ -295,15 +304,15 @@ class HLinearGauge : MinValueMeter!double
 
         auto bounds = thumbContainer.boundsRect;
 
-        const thumbIndex = thumbIndex(thumb);
+        const thumbIndex = thumbIndex(lastUsedThumb);
         if (thumbIndex == -1)
         {
-            logger.error("Not found thumb index for thumb: ", thumb.toString);
+            logger.error("Not found thumb index for thumb: ", lastUsedThumb.toString);
             return;
         }
 
-        double minX = bounds.x - thumb.width / 2;
-        double maxX = bounds.right - thumb.width / 2;
+        double minX = bounds.x - lastUsedThumb.width / 2;
+        double maxX = bounds.right - lastUsedThumb.width / 2;
 
         if (thumbs.length > 1)
         {
@@ -329,9 +338,9 @@ class HLinearGauge : MinValueMeter!double
             return;
         }
 
-        thumb.x = x;
+        lastUsedThumb.x = x;
 
-        const pointerX = thumb.boundsRect.middleX;
+        const pointerX = lastUsedThumb.boundsRect.middleX;
         const pointerTickX = pointerX - thumbContainer.boundsRect.x;
 
         auto value = (Math.abs(maxValue - minValue) * pointerTickX) / width;

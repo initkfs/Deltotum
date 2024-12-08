@@ -16,7 +16,6 @@ class VScaleDynamic : BaseScaleDynamic
     this(double width = 0, double height = 0)
     {
         super(width, height);
-        isDrawBounds = true;
     }
 
     override void loadTheme()
@@ -42,19 +41,9 @@ class VScaleDynamic : BaseScaleDynamic
     {
         super.createLabelPool;
 
-        double maxW = 0;
-        foreach (label; labelPool)
+        if (maxLabelWidth > 0)
         {
-            if (label.boundsRect.width > maxW)
-            {
-                maxW = label.boundsRect.width;
-            }
-        }
-
-        if (maxW > 0)
-        {
-            auto newWidth = tickMaxWidth + maxW;
-            width = newWidth;
+            width = width + maxLabelWidth;
         }
     }
 

@@ -110,7 +110,7 @@ class Sprite2d : EventKitTarget
     bool isResizeChildrenAlways;
 
     bool isResizedWidthByParent;
-    bool isResizedHeigthByParent;
+    bool isResizedHeightByParent;
 
     bool isManagedByScene;
 
@@ -1530,20 +1530,24 @@ class Sprite2d : EventKitTarget
             //Branch expanded for easier debugging
             foreach (child; children)
             {
-                if (isResizeChildrenIfNoLayout && !layout)
+                if (isResizeChildrenAlways)
                 {
                     incChildWidth(child, dw);
+                    continue;
                 }
-                else if (isResizeChildrenIfNotLManaged && !child.isLayoutManaged && child
-                    .isResizedWidthByParent)
+
+                if (!child.isResizedWidthByParent)
                 {
-                    incChildWidth(child, dw);
+
+                    if (isResizeChildrenIfNotResizable)
+                    {
+                        incChildWidth(child, dw);
+                    }
+
+                    continue;
                 }
-                else if (isResizeChildrenAlways && child.isResizedWidthByParent)
-                {
-                    incChildWidth(child, dw);
-                }
-                else if (isResizeChildrenIfNotResizable)
+
+                if ((isResizeChildrenIfNoLayout && !layout) || (isResizeChildrenIfNotLManaged && !child.isLayoutManaged))
                 {
                     incChildWidth(child, dw);
                 }
@@ -1647,21 +1651,23 @@ class Sprite2d : EventKitTarget
             const dh = _height - oldHeight;
             foreach (child; children)
             {
-                //Branch expanded for easier debugging
-                if (isResizeChildrenIfNoLayout && !layout)
+                if (isResizeChildrenAlways)
                 {
                     incChildHeight(child, dh);
+                    continue;
                 }
-                else if (isResizeChildrenIfNotLManaged && !child.isLayoutManaged && child
-                    .isResizedHeigthByParent)
+
+                if (!child.isResizedHeightByParent)
                 {
-                    incChildHeight(child, dh);
+                    if (isResizeChildrenIfNotResizable)
+                    {
+                        incChildHeight(child, dh);
+                    }
+
+                    continue;
                 }
-                else if (isResizeChildrenAlways && child.isResizedHeigthByParent)
-                {
-                    incChildHeight(child, dh);
-                }
-                else if (isResizeChildrenIfNotResizable)
+
+                if ((isResizeChildrenIfNoLayout && !layout) || (isResizeChildrenIfNotLManaged && !child.isLayoutManaged))
                 {
                     incChildHeight(child, dh);
                 }
@@ -1929,14 +1935,18 @@ class Sprite2d : EventKitTarget
 
     Texture2d toTexture(double scaleX = 1, double scaleY = 1, Texture2d delegate() newTextureProvider = null)
     {
-        auto texture = newTextureProvider ? newTextureProvider() : new Texture2d(width, height);
-        if(!texture.isCreated){
+        assert(width > 0);
+        assert(height > 0);
+
+        auto tW = width * scaleX;
+        auto tH = height * scaleY;
+
+        auto texture = newTextureProvider ? newTextureProvider() : new Texture2d(tW, tH);
+        if (!texture.isCreated)
+        {
             buildInitCreate(texture);
             texture.createTargetRGBA32;
         }
-
-        texture.width = width * scaleX;
-        texture.height = height * scaleY;
 
         toTexture(texture);
         return texture;
@@ -1945,16 +1955,6 @@ class Sprite2d : EventKitTarget
     void toTexture(Texture2d dest)
     {
         assert(dest);
-
-        if (width > 0 && dest.width != width)
-        {
-            dest.width = width;
-        }
-
-        if (height > 0 && dest.height != height)
-        {
-            dest.height = height;
-        }
 
         dest.setRendererTarget;
         scope (exit)
@@ -2417,7 +2417,7 @@ class Sprite2d : EventKitTarget
     void isResizedByParent(bool v)
     {
         isResizedWidthByParent = v;
-        isResizedHeigthByParent = v;
+        isResizedHeightByParent = v;
     }
 
     RGBA[][] surfaceToBuffer(ComSurface surf)

@@ -11,7 +11,7 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 abstract class BaseRegularMonoScroll : BaseLabeledScroll
 {
     double thumbWidth = 0;
-    double thumbHeigth = 0;
+    double thumbHeight = 0;
 
     this(double minValue = 0, double maxValue = 1.0)
     {
@@ -31,9 +31,9 @@ abstract class BaseRegularMonoScroll : BaseLabeledScroll
             thumbWidth = theme.meterThumbWidth;
         }
 
-        if (thumbHeigth == 0)
+        if (thumbHeight == 0)
         {
-            thumbHeigth = theme.meterThumbHeight;
+            thumbHeight = theme.meterThumbHeight;
         }
     }
 
@@ -44,7 +44,7 @@ abstract class BaseRegularMonoScroll : BaseLabeledScroll
     override Sprite2d newThumb()
     {
         auto style = createFillStyle;
-        auto shape = newThumbShape(thumbWidth, thumbHeigth, angle, style);
+        auto shape = newThumbShape(thumbWidth, thumbHeight, angle, style);
         return shape;
     }
 }

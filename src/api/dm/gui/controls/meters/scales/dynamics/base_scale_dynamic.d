@@ -34,6 +34,8 @@ abstract class BaseScaleDynamic : BaseDrawableScale
     this(double width = 0, double height = 0)
     {
         super(width, height);
+
+        isResizeChildrenIfNoLayout = false;
     }
 
     override void create()
@@ -41,7 +43,6 @@ abstract class BaseScaleDynamic : BaseDrawableScale
         super.create;
 
         createLabelPool;
-        alignLabels;
     }
 
     override bool recreate()
@@ -87,9 +88,10 @@ abstract class BaseScaleDynamic : BaseDrawableScale
             label.fontSize = FontSize.small;
             label.isLayoutManaged = false;
             label.isVisible = false;
+            label.isResizedByParent = false;
 
-            label.boundsColor = RGBA.yellow;
-            label.isDrawBounds = true;
+            // label.boundsColor = RGBA.yellow;
+            // label.isDrawBounds = true;
 
             addCreate(label);
             labelPool ~= label;
@@ -141,7 +143,6 @@ abstract class BaseScaleDynamic : BaseDrawableScale
 
     void alignLabels()
     {
-
         if (labelPool.length == 0)
         {
             return;

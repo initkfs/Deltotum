@@ -604,12 +604,12 @@ class Window : GraphicsComponent
         import std.math.operations : isClose;
 
         double factorWidth = isClose(lastChangedWidth, newWidth) ? 1 : newWidth / lastChangedWidth;
-        double factorHeigth = isClose(lastChangedHeight, newHeight) ? 1 : newHeight / lastChangedHeight;
+        double factorHeight = isClose(lastChangedHeight, newHeight) ? 1 : newHeight / lastChangedHeight;
 
         lastChangedWidth = newWidth;
         lastChangedHeight = newHeight;
 
-        currentScene.rescale(factorWidth, factorHeigth);
+        currentScene.rescale(factorWidth, factorHeight);
     }
 
     Rect2d bounds()
