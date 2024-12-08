@@ -2,7 +2,7 @@ module api.dm.gui.controls.meters.gauges.hlinear_gauge;
 
 import api.dm.gui.controls.meters.min_value_meter : MinValueMeter;
 import api.dm.gui.controls.meters.scales.dynamics.base_scale_dynamic : BaseScaleDynamic;
-import api.dm.gui.controls.meters.range_bars.color_range_bar : ColorRangeBar;
+import api.dm.gui.controls.indicators.range_bars.color_range_bar : ColorRangeBar;
 import api.dm.gui.containers.container : Container;
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 
@@ -115,9 +115,9 @@ class HLinearGauge : MinValueMeter!double
 
     Container newScaleContainer()
     {
-        import api.dm.gui.containers.stack_box : StackBox;
+        import api.dm.gui.containers.vbox: VBox;
 
-        auto container = new StackBox;
+        auto container = new VBox(0);
         return container;
     }
 
@@ -137,6 +137,19 @@ class HLinearGauge : MinValueMeter!double
             }
         }
 
+        if (!colorRangeBar && isCreateColorBar)
+        {
+            auto newBar = new ColorRangeBar(width, theme.meterTickMinorHeight);
+
+            colorRangeBar = !onColorBarCreate ? newBar : onColorBarCreate(newBar);
+            auto root = scaleContainer ? scaleContainer : this;
+            root.addCreate(colorRangeBar);
+            if (onColorBarCreated)
+            {
+                onColorBarCreated(colorRangeBar);
+            }
+        }
+
         if (!scale && isCreateScale)
         {
             import api.dm.gui.controls.meters.scales.dynamics.hscale_dynamic : HScaleDynamic;
@@ -144,6 +157,9 @@ class HLinearGauge : MinValueMeter!double
             auto dynScale = new HScaleDynamic(width);
             dynScale.isInvertY = true;
             buildInitCreate(dynScale);
+            scope(exit){
+                dynScale.dispose;
+            }
 
             auto scaleTexture = dynScale.toTexture;
             scaleTexture.isResizedByParent = false;
@@ -163,19 +179,6 @@ class HLinearGauge : MinValueMeter!double
             }
         }
 
-        if (!colorRangeBar && isCreateColorBar)
-        {
-            auto newBar = new ColorRangeBar(minValue, maxValue);
-
-            colorRangeBar = !onColorBarCreate ? newBar : onColorBarCreate(newBar);
-            auto root = scaleContainer ? scaleContainer : this;
-            root.addCreate(colorRangeBar);
-            if (onColorBarCreated)
-            {
-                onColorBarCreated(colorRangeBar);
-            }
-        }
-
         foreach (i; 0 .. thumbsCount)
             (ii) {
             auto thumb = newThumb;
@@ -191,39 +194,6 @@ class HLinearGauge : MinValueMeter!double
         }(i);
 
         layoutThumbs;
-
-        // const range = Math.abs(maxValue - minValue);
-
-        // labelContainer = new HBox;
-        // labelContainer.width = width;
-        // //TODO from font?
-        // labelContainer.height = 15;
-        // addCreate(labelContainer);
-
-        // auto rangeContainer = new HBox;
-        // rangeContainer.width = width;
-        // addCreate(rangeContainer);
-
-        // auto colorStep = range / 4;
-        // //TODO from settings
-        // rangeInfo = [
-        //     RangeInfo(RGBA.web(MaterialPalette.redA700), colorStep),
-        //     RangeInfo(RGBA.web(MaterialPalette.orangeA700), colorStep),
-        //     RangeInfo(RGBA.web(MaterialPalette.yellowA700), colorStep),
-        //     RangeInfo(RGBA.web(MaterialPalette.greenA700), colorStep)
-        // ];
-
-        // foreach (r; rangeInfo)
-        // {
-        //     auto style = createStyle;
-        //     style.isFill = true;
-        //     style.color = r.color;
-        //     import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
-
-        //     auto rectWidth = (r.range * (width + tickWidth)) / range;
-        //     auto rect = new VConvexPolygon(rectWidth, 5, style, 0);
-        //     rangeContainer.addCreate(rect);
-        // }
     }
 
     private size_t thumbIndex(Sprite2d th)
