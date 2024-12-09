@@ -2237,20 +2237,13 @@ class Sprite2d : EventKitTarget
     {
         import Math = api.math;
 
-        auto newH = width * Math.abs(Math.sinDeg(angleDeg)) + height * Math.abs(
-            Math.cosDeg(angleDeg));
-        auto newW = width * Math.abs(Math.cosDeg(angleDeg)) + height * Math.abs(
-            Math.sinDeg(angleDeg));
-        return Rect2d(x, y, newW, newH);
+        Rect2d box = boundsRect.boundingBox(angleDeg);
+        box.x = x;
+        box.y = y;
+        return box;
     }
 
-    Rect2d boundingBoxMax()
-    {
-        import Math = api.math;
-
-        auto diag = boundsRect.diagonal;
-        return Rect2d(x, y, diag, diag);
-    }
+    Rect2d boundingBoxMax() => boundsRect.boundingBoxMax;
 
     void setGrow(bool isGrow = true)
     {

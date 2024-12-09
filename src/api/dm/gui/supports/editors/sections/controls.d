@@ -435,6 +435,13 @@ class Controls : Control
         radGauge.isDrawBounds = true;
         gaugeContainer.addCreate(radGauge);
 
+        radGauge.onPointerPress ~= (ref e){
+            import api.math.geom2.vec2: Vec2d;
+
+            auto pointerPos = radGauge.boundsRect.center.angleDeg360To(input.pointerPos);
+            radGauge.valueAngle = pointerPos;
+        };
+
         import api.dm.gui.controls.meters.clocks.analog_clock: AnalogClock;
 
         auto anClock = new AnalogClock;

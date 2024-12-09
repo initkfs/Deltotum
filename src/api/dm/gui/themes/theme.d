@@ -132,6 +132,8 @@ class Theme
     double meterTickMajorWidth = 2;
     @ConfigKey
     double meterTickMajorHeight = 5;
+    @ConfigKey
+    double meterHandWidth = 5;
 
     this(IconPack iconPack)
     {

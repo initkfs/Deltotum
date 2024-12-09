@@ -133,4 +133,76 @@ abstract class BaseDrawableScale : BaseMinMaxScale
         }
     }
 
+    void drawScale(
+        scope void delegate(Vec2d, Vec2d, RGBA) onDrawAxis,
+        scope bool delegate(size_t i, Vec2d pos, bool isMajorTick, double offsetTick) onDrawTick,
+        scope bool delegate(size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, double offsetTick) onDrawLabel,
+        scope Vec2d delegate(size_t i, Vec2d pos, double offsetTick) onTickStep
+    )
+    {
+        if (!isCreated)
+        {
+            return;
+        }
+
+        if (isDrawAxis && onDrawAxis)
+        {
+            const Line2d pos = axisPos;
+            onDrawAxis(pos.start, pos.end, axisColor);
+        }
+
+        auto count = tickCount;
+
+        if (count < 1)
+        {
+            return;
+        }
+
+        auto offset = tickOffset;
+
+        Vec2d startPos = tickStartPos;
+
+        size_t labelCounter;
+        bool isDrawTick;
+        foreach (i; 0 .. count)
+        {
+            isDrawTick = true;
+
+            if (i == 0)
+            {
+                if (!isDrawFirstTick)
+                {
+                    isDrawTick = false;
+                }
+            }
+
+            bool isMajorTick = majorTickStep > 0 && ((i % majorTickStep) == 0);
+
+            if (isShowFirstLastLabel && (i == 0 || i == count - 1))
+            {
+                isMajorTick = true;
+            }
+
+            if (isDrawTick && onDrawTick)
+            {
+                onDrawTick(i, startPos, isMajorTick, offset);
+            }
+
+            if (onDrawLabel)
+            {
+                bool isLabel = onDrawLabel(labelCounter, i, startPos, isMajorTick, offset);
+
+                if (isLabel)
+                {
+                    labelCounter++;
+                }
+            }
+
+            if (onTickStep)
+            {
+                startPos = onTickStep(i, startPos, offset);
+            }
+        }
+    }
+
 }

@@ -24,14 +24,17 @@ abstract class BaseScaleStatic : BaseDrawableScale
 
     Texture2d scaleShape;
 
+    bool isCreateMinorTickProto = true;
     Sprite2d minorTickProto;
     Sprite2d delegate(Sprite2d) onMinorTickProtoCreate;
     void delegate(Sprite2d) onMinorTickProtoCreated;
 
+    bool isCreateMajorTickProto = true;
     Sprite2d majorTickProto;
     Sprite2d delegate(Sprite2d) onMajorTickProtoCreate;
     void delegate(Sprite2d) onMajorTickProtoCreated;
 
+    bool isCreateLabelProto = true;
     Text labelProto;
     Text delegate(Text) onLabelProtoCreate;
     void delegate(Text) onLabelProtoCreated;
@@ -51,7 +54,7 @@ abstract class BaseScaleStatic : BaseDrawableScale
             axisColor = theme.colorDanger;
         }
 
-        if (!minorTickProto)
+        if (!minorTickProto && isCreateMinorTickProto)
         {
             auto newProto = newMinorTickProto;
             minorTickProto = onMinorTickProtoCreate ? onMinorTickProtoCreate(newProto) : newProto;
@@ -59,12 +62,14 @@ abstract class BaseScaleStatic : BaseDrawableScale
             {
                 buildInitCreate(minorTickProto);
             }
-            addCreate(minorTickProto);
+
             if (auto texture = cast(Texture2d) minorTickProto)
             {
                 texture.bestScaleMode;
                 texture.blendModeBlend;
             }
+
+            minorTickProto.isResizedByParent = false;
 
             if (onMinorTickProtoCreated)
             {
@@ -72,7 +77,7 @@ abstract class BaseScaleStatic : BaseDrawableScale
             }
         }
 
-        if (!majorTickProto)
+        if (!majorTickProto && isCreateMajorTickProto)
         {
             auto newProto = newMajorTickProto;
             majorTickProto = onMajorTickProtoCreate ? onMajorTickProtoCreate(newProto) : newProto;
@@ -80,12 +85,14 @@ abstract class BaseScaleStatic : BaseDrawableScale
             {
                 buildInitCreate(majorTickProto);
             }
-            addCreate(majorTickProto);
+
             if (auto texture = cast(Texture2d) majorTickProto)
             {
                 texture.bestScaleMode;
                 texture.blendModeBlend;
             }
+
+            majorTickProto.isResizedByParent = false;
 
             if (onMajorTickProtoCreated)
             {
@@ -93,15 +100,7 @@ abstract class BaseScaleStatic : BaseDrawableScale
             }
         }
 
-        minorTickProto.isResizable = false;
-        minorTickProto.isResizedByParent = false;
-        minorTickProto.rescale(10, 10);
-
-        majorTickProto.isResizable = false;
-        majorTickProto.isResizedByParent = false;
-        majorTickProto.rescale(10, 10);
-
-        if (!labelProto)
+        if (!labelProto && isCreateLabelProto)
         {
             auto newProto = newLabelProto;
             labelProto = onLabelProtoCreate ? onLabelProtoCreate(newProto) : newProto;
@@ -197,7 +196,7 @@ abstract class BaseScaleStatic : BaseDrawableScale
             majorTickProto.dispose;
         }
 
-        if (labelProto && !minorTickProto.isDisposed)
+        if (labelProto && !labelProto.isDisposed)
         {
             labelProto.dispose;
         }

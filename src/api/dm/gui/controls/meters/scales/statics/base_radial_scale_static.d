@@ -24,6 +24,8 @@ class BaseRadialScaleStatic : BaseScaleStatic
 
     Texture2d scaleShape;
 
+    bool isUseTickProtos;
+
     protected
     {
         double radius = 0;
@@ -52,12 +54,12 @@ class BaseRadialScaleStatic : BaseScaleStatic
 
         if (_width == 0)
         {
-            _width = _diameter * 1.8;
+            _width = !isUseTickProtos ? _diameter * 1.8 : _diameter;
         }
 
         if (_height == 0)
         {
-            _height = _diameter * 1.8;
+            _height = !isUseTickProtos ? _diameter * 1.8 : _diameter;
         }
 
         radius = _diameter / 2;
@@ -65,23 +67,142 @@ class BaseRadialScaleStatic : BaseScaleStatic
 
     override void create()
     {
-        super.create;
-
-        scaleShape = new Texture2d(width, height);
-        buildInitCreate(scaleShape);
-
-        scaleShape.createTargetRGBA32;
-        scaleShape.blendModeBlend;
-
-        scaleShape.setRendererTarget;
-        scope (exit)
+        if (isUseTickProtos || !capGraphics.isVectorGraphics)
         {
-            scaleShape.restoreRendererTarget;
+
+            super.create;
+
+            scaleShape = new Texture2d(width, height);
+            buildInitCreate(scaleShape);
+
+            scaleShape.createTargetRGBA32;
+            scaleShape.blendModeBlend;
+
+            scaleShape.setRendererTarget;
+            scope (exit)
+            {
+                scaleShape.restoreRendererTarget;
+            }
+
+            graphics.clearTransparent;
+
+            drawScale;
         }
+        else
+        {
+            isCreateMinorTickProto = false;
+            isCreateMajorTickProto = false;
+            isCreateLabelProto = true;
 
-        graphics.clearTransparent;
+            super.create;
 
-        drawScale;
+            const centerShapeW = width;
+            const centerShapeH = height;
+
+            import api.dm.kit.sprites.sprites2d.textures.vectors.vector_texture : VectorTexture;
+
+            auto tickShape = new class VectorTexture
+            {
+                this()
+                {
+                    super(centerShapeW, centerShapeH);
+                }
+
+                override void createTextureContent()
+                {
+                    auto currAngleDeg = minAngleDeg;
+
+                    canvas.color(theme.colorAccent);
+                    canvas.translate(width / 2, height / 2);
+                    canvas.save;
+
+                    double angleDegDiff = angleRange / tickCount;
+
+                    drawScale(
+                onDrawAxis : null,
+                        (size_t i, Vec2d pos, bool isMajorTick, double offsetTick) {
+
+                        auto tickW = tickMinorHeight;
+                        auto tickH = tickMinorWidth;
+
+                        if (isMajorTick)
+                        {
+                            canvas.color(theme.colorDanger);
+                            tickW = tickMajorHeight;
+                            tickH = tickMajorWidth;
+                        }
+                        else
+                        {
+                            canvas.color(theme.colorAccent);
+                        }
+
+                        canvas.rotateRad(Math.degToRad(currAngleDeg));
+                        auto leftTopX = radius - tickW / 2;
+                        auto leftTopY = 0;
+
+                        auto rightTopX = leftTopX + tickW;
+                        auto rightTopY = leftTopY;
+
+                        auto rightBottomX = rightTopX;
+                        auto rightBottomY = rightTopY + tickH;
+
+                        auto leftBottomX = leftTopX;
+                        auto leftBottomY = rightBottomY;
+
+                        canvas.beginPath;
+                        canvas.moveTo(leftTopX, leftTopY);
+                        canvas.lineTo(rightTopX, rightTopY);
+                        canvas.lineTo(rightBottomX, rightBottomY);
+                        canvas.lineTo(leftBottomX, leftBottomY);
+                        canvas.lineTo(leftTopX, leftTopY);
+                        canvas.closePath;
+                        canvas.fill;
+
+                        canvas.restore;
+
+                        canvas.stroke;
+                        canvas.save;
+
+                        currAngleDeg = (currAngleDeg + angleDegDiff) % 360;
+                        return true;
+                    },
+                onDrawLabel:
+                        null,
+                onTickStep:
+                        null);
+                }
+            };
+
+            scope(exit){
+                tickShape.dispose;
+            }
+
+            buildInitCreate(tickShape);
+
+            scaleShape = new Texture2d(width, height);
+            buildInitCreate(scaleShape);
+
+            scaleShape.createTargetRGBA32;
+            scaleShape.blendModeBlend;
+
+            scaleShape.setRendererTarget;
+            scope(exit){
+                scaleShape.restoreRendererTarget;
+            }
+
+            scaleShape.copyFrom(tickShape);
+
+
+            drawScale(
+                onDrawAxis : null,
+                onDrawTick : null,
+                (size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, double offsetTick){
+                    return drawLabel(labelIndex, tickIndex, pos, isMajorTick, offsetTick);
+                },
+                (size_t i, Vec2d pos, double offsetTick){
+                    return tickStep(i, pos, offsetTick);
+                });
+        }
 
         addCreate(scaleShape);
     }
@@ -116,6 +237,11 @@ class BaseRadialScaleStatic : BaseScaleStatic
     {
         auto proto = isMajorTick ? majorTickProto : minorTickProto;
 
+        if (!proto)
+        {
+            return false;
+        }
+
         auto tickX = pos.x - proto.boundsRect.halfWidth;
         auto tickY = pos.y - proto.boundsRect.halfHeight;
 
@@ -130,7 +256,7 @@ class BaseRadialScaleStatic : BaseScaleStatic
 
     override bool drawLabel(size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, double offsetTick)
     {
-        if (!isMajorTick)
+        if (!isMajorTick || !labelProto)
         {
             return false;
         }
@@ -143,7 +269,7 @@ class BaseRadialScaleStatic : BaseScaleStatic
         labelProto.text = labelText;
         labelProto.updateRows(isForce : true);
 
-        const tickBoundsW = majorTickProto.boundsRect.height;
+        const tickBoundsW = majorTickProto ? majorTickProto.boundsRect.height : tickMajorHeight;
 
         double angleDeg = tickIndex * offsetTick;
 
@@ -186,4 +312,7 @@ class BaseRadialScaleStatic : BaseScaleStatic
         });
         return true;
     }
+
+    double angleRange() => minAngleDeg < maxAngleDeg ? (maxAngleDeg - minAngleDeg) : (
+        minAngleDeg - maxAngleDeg);
 }

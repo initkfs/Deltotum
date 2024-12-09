@@ -147,6 +147,23 @@ struct Rect2d
         return v;
     }
 
+    Rect2d boundingBoxMax()
+    {
+        const diag = diagonal;
+        return Rect2d(x, y, diag, diag);
+    }
+
+    Rect2d boundingBox(double angleDeg)
+    {
+        import Math = api.math;
+
+        auto newH = width * Math.abs(Math.sinDeg(angleDeg)) + height * Math.abs(
+            Math.cosDeg(angleDeg));
+        auto newW = width * Math.abs(Math.cosDeg(angleDeg)) + height * Math.abs(
+            Math.sinDeg(angleDeg));
+        return Rect2d(0, 0, newW, newH);
+    }
+
     string toString() const
     {
         import std.format : format;

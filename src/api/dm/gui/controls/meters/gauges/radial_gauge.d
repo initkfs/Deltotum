@@ -1,7 +1,7 @@
 module api.dm.gui.controls.meters.gauges.radial_gauge;
 
 import api.dm.gui.controls.meters.radial_min_value_meter : RadialMinValueMeter;
-import api.dm.gui.controls.meters.scales.statics.rscale_static: RScaleStatic;
+import api.dm.gui.controls.meters.scales.statics.rscale_static : RScaleStatic;
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -17,64 +17,10 @@ import api.math.geom2.rect2 : Rect2d;
 import Math = api.math;
 
 import std.conv : to;
+
 debug import std.stdio : writeln, writefln;
 
 import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vshape2d : VShape;
-
-class VHand : VShape
-{
-    double handWidth = 0;
-    double handHeight = 0;
-    enum coneHeight = 5;
-
-    Vec2d startPoint;
-
-    this(double textureWidth, double textureHeight, double handWidth, double handHeight, GraphicStyle style)
-    {
-        super(textureWidth, textureHeight, style);
-        this.handWidth = handWidth;
-        this.handHeight = handHeight;
-        startPoint = Vec2d(width / 2, height / 2);
-    }
-
-    override void create()
-    {
-        super.create;
-        import api.dm.com.graphics.com_texture : ComTextureScaleMode;
-
-        textureScaleMode = ComTextureScaleMode.quality;
-    }
-
-    override void createTextureContent()
-    {
-        super.createTextureContent;
-        auto ctx = canvas;
-
-        ctx.color(style.fillColor);
-        ctx.lineWidth(style.lineWidth);
-
-        const centerX = startPoint.x;
-        const centerY = startPoint.y;
-
-        const double halfWidth = handWidth / 2.0;
-
-        ctx.moveTo(centerX - halfWidth, centerY - handHeight + coneHeight);
-        ctx.lineTo(centerX, centerY - handHeight);
-        ctx.lineTo(centerX + halfWidth, centerY - handHeight + coneHeight);
-        ctx.lineTo(centerX + halfWidth, centerY);
-        ctx.lineTo(centerX - halfWidth, centerY);
-        ctx.lineTo(centerX - halfWidth, centerY - handHeight + coneHeight);
-
-        if (style.isFill)
-        {
-            ctx.color = style.fillColor;
-            ctx.fillPreserve;
-        }
-
-        ctx.color(style.lineColor);
-        ctx.stroke;
-    }
-}
 
 struct ZoneColor
 {
@@ -102,7 +48,7 @@ class RadialGauge : RadialMinValueMeter!double
     Sprite2d handHolder;
 
     bool isCreateHandHolder = true;
-    ;
+
     Sprite2d delegate(Sprite2d) onHandHolderCreate;
     void delegate(Sprite2d) onHandHolderCreated;
 
@@ -122,7 +68,7 @@ class RadialGauge : RadialMinValueMeter!double
         double _value;
     }
 
-    this(double diameter = 0, double minAngleDeg = 0, double maxAngleDeg = 350, double minValue = 0, double maxValue = 1)
+    this(double diameter = 0, double minAngleDeg = 0, double maxAngleDeg = 270, double minValue = 0, double maxValue = 1)
     {
         super(diameter, minValue, maxValue, minAngleDeg, maxAngleDeg);
 
@@ -148,15 +94,29 @@ class RadialGauge : RadialMinValueMeter!double
 
     Sprite2d newHand()
     {
+        import api.dm.gui.controls.meters.hands.meter_hand_factory : MeterHandFactory;
+
         auto handStyle = createFillStyle;
         if (!handStyle.isPreset)
         {
             handStyle.fillColor = theme.colorDanger;
-            handStyle.lineColor = theme.colorDanger;
+            handStyle.lineColor = theme.colorAccent;
         }
 
-        auto hand = theme.rectShape(100, 20, 0, handStyle);
-        //auto hand = new Hand(width, height, 5, 45, handStyle);
+        import api.math.geom2.rect2 : Rect2d;
+
+        auto handShapeSize = radius * 0.7;
+
+        auto maxBounds = (Rect2d(0, 0, handShapeSize, handShapeSize)).boundingBoxMax;
+
+        auto factory = new MeterHandFactory;
+        buildInitCreate(factory);
+        scope (exit)
+        {
+            factory.dispose;
+        }
+
+        auto hand = factory.createHand(maxBounds.width, maxBounds.height, 0, handStyle);
         return hand;
     }
 
@@ -177,7 +137,8 @@ class RadialGauge : RadialMinValueMeter!double
         return new Text("0");
     }
 
-    RScaleStatic newScale(){
+    RScaleStatic newScale()
+    {
         auto scale = new RScaleStatic(diameter * 0.6, minAngleDeg, maxAngleDeg);
         scale.valueStep = 0.01;
         scale.majorTickStep = 5;
@@ -188,11 +149,13 @@ class RadialGauge : RadialMinValueMeter!double
     {
         super.create;
 
-        if(!scale && isCreateScale){
+        if (!scale && isCreateScale)
+        {
             auto s = newScale;
             scale = onScaleCreate ? onScaleCreate(s) : s;
             addCreate(scale);
-            if(onScaleCreated){
+            if (onScaleCreated)
+            {
                 onScaleCreated(scale);
             }
         }
@@ -222,9 +185,7 @@ class RadialGauge : RadialMinValueMeter!double
         if (!handTween && isCreateHandTween)
         {
             auto newTween = newHandTween;
-            newTween.onOldNewValue ~= (oldValue, value) {
-                handAngleDeg(value);
-            };
+            newTween.onOldNewValue ~= (oldValue, value) { handAngleDeg(value); };
             newTween.onStop ~= () { labelText(_value); };
             handTween = onHandTweenCreate ? onHandTweenCreate(newTween) : newTween;
             addCreate(handTween);
@@ -346,6 +307,22 @@ class RadialGauge : RadialMinValueMeter!double
         handTween.minValue = oldAngle;
         handTween.maxValue = angleDeg;
         handTween.run;
+    }
+
+    bool valueAngle(double angleDeg)
+    {
+
+        if (angleDeg < minAngleDeg || angleDeg > maxAngleDeg)
+        {
+            return false;
+        }
+
+        auto range = Math.abs(maxValue - minValue);
+        auto angleRange = Math.abs(minAngleDeg - maxAngleDeg);
+        auto value = angleDeg / (angleRange / range);
+        handAngleDegAnim(angleDeg);
+        _value = value;
+        return true;
     }
 
     void value(double v)
