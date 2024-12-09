@@ -20,8 +20,6 @@ class BaseRadialScaleStatic : BaseScaleStatic
     double minAngleDeg = 0;
     double maxAngleDeg = 0;
 
-    size_t labelStep = 5;
-
     double _diameter = 0;
 
     Texture2d scaleShape;
@@ -147,10 +145,33 @@ class BaseRadialScaleStatic : BaseScaleStatic
 
         const tickBoundsW = majorTickProto.boundsRect.height;
 
-        auto textPos = Vec2d.fromPolarDeg(tickIndex * offsetTick, radius + tickBoundsW);
+        double angleDeg = tickIndex * offsetTick;
 
-        auto textX = center.x + textPos.x - labelProto.boundsRect.halfHeight;
-        auto textY = center.y + textPos.y - labelProto.boundsRect.halfWidth;
+        auto textPos = Vec2d.fromPolarDeg(angleDeg, radius + tickBoundsW);
+
+        double textX = 0;
+        double textY = 0;
+
+        if ((angleDeg >= 0 && angleDeg < 90) || (angleDeg > 270 && angleDeg <= 360))
+        {
+            textX = center.x + textPos.x;
+            textY = center.y + textPos.y - labelProto.boundsRect.halfHeight;
+        }
+        else if (angleDeg == 90 || angleDeg == 270)
+        {
+            textX = center.x + textPos.x - labelProto.boundsRect.halfWidth;
+            textY = center.y + textPos.y - labelProto.boundsRect.halfHeight;
+        }
+        else if (angleDeg > 90 && angleDeg <= 270)
+        {
+            textX = center.x + textPos.x - labelProto.boundsRect.width;
+            textY = center.y + textPos.y - labelProto.boundsRect.halfHeight;
+        }
+        else
+        {
+            textX = center.x + textPos.x - labelProto.boundsRect.halfWidth;
+            textY = center.y + textPos.y - labelProto.boundsRect.halfHeight;
+        }
 
         double nextX = textX;
 

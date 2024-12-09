@@ -138,6 +138,15 @@ struct Rect2d
         return width / height;
     }
 
+    double diagonal() const @nogc nothrow pure @safe
+    {
+        import Math = api.math;
+
+        //sqrt(a²+b²)
+        auto v = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
+        return v;
+    }
+
     string toString() const
     {
         import std.format : format;

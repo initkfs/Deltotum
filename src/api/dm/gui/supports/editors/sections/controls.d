@@ -431,7 +431,7 @@ class Controls : Control
         //hLinGauge.isDrawBounds = true;
         gaugeContainer.addCreate(hLinGauge);
 
-        auto radGauge = new RadialGauge(200, 0, 180);
+        auto radGauge = new RadialGauge(200);
         radGauge.isDrawBounds = true;
         gaugeContainer.addCreate(radGauge);
 

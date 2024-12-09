@@ -11,6 +11,7 @@ import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.core.configs.uda : ConfigKey;
 
 import std.typecons : Nullable;
+import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vrectangle;
 
 /**
  * Authors: initkfs
@@ -235,7 +236,19 @@ class Theme
 
     Sprite2d rectShape(double width, double height, double angle, GraphicStyle style)
     {
-        return convexPolyShape(width, height, angle, 0, style);
+        Sprite2d shape;
+        if (isUseVectorGraphics)
+        {
+            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vrectangle: VRectangle;
+
+            shape = new VRectangle(width, height, style);
+        }else {
+            import api.dm.kit.sprites.sprites2d.shapes.rectangle: Rectangle;
+
+            shape = new Rectangle(width, height, style);
+        }
+        shape.angle = angle;
+        return shape;
     }
 
     Sprite2d roundShape(GraphicStyle style) => roundShape(roundShapeDiameter, style);

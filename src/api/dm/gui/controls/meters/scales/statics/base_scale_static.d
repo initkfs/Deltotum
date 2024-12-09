@@ -1,7 +1,7 @@
 module api.dm.gui.controls.meters.scales.statics.base_scale_static;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.gui.controls.meters.scales.base_drawable_scale: BaseDrawableScale;
+import api.dm.gui.controls.meters.scales.base_drawable_scale : BaseDrawableScale;
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.sprites.sprites2d.textures.vectors.vector_texture : VectorTexture;
@@ -55,10 +55,15 @@ abstract class BaseScaleStatic : BaseDrawableScale
         {
             auto newProto = newMinorTickProto;
             minorTickProto = onMinorTickProtoCreate ? onMinorTickProtoCreate(newProto) : newProto;
-            buildInitCreate(minorTickProto);
+            if (!minorTickProto.isBuilt)
+            {
+                buildInitCreate(minorTickProto);
+            }
+            addCreate(minorTickProto);
             if (auto texture = cast(Texture2d) minorTickProto)
             {
                 texture.bestScaleMode;
+                texture.blendModeBlend;
             }
 
             if (onMinorTickProtoCreated)
@@ -71,10 +76,15 @@ abstract class BaseScaleStatic : BaseDrawableScale
         {
             auto newProto = newMajorTickProto;
             majorTickProto = onMajorTickProtoCreate ? onMajorTickProtoCreate(newProto) : newProto;
-            buildInitCreate(majorTickProto);
+            if (!majorTickProto.isBuilt)
+            {
+                buildInitCreate(majorTickProto);
+            }
+            addCreate(majorTickProto);
             if (auto texture = cast(Texture2d) majorTickProto)
             {
                 texture.bestScaleMode;
+                texture.blendModeBlend;
             }
 
             if (onMajorTickProtoCreated)
@@ -82,6 +92,14 @@ abstract class BaseScaleStatic : BaseDrawableScale
                 onMajorTickProtoCreated(majorTickProto);
             }
         }
+
+        minorTickProto.isResizable = false;
+        minorTickProto.isResizedByParent = false;
+        minorTickProto.rescale(10, 10);
+
+        majorTickProto.isResizable = false;
+        majorTickProto.isResizedByParent = false;
+        majorTickProto.rescale(10, 10);
 
         if (!labelProto)
         {
@@ -98,12 +116,42 @@ abstract class BaseScaleStatic : BaseDrawableScale
 
     Sprite2d newMinorTickProtoShape(double width, double height, double angle, GraphicStyle style)
     {
-        return theme.rectShape(width, height, angle, style);
+        auto shapeProto = theme.rectShape(width, height, angle, style);
+        buildInitCreate(shapeProto);
+
+        if (auto shapeTexture = cast(Texture2d) shapeProto)
+        {
+            auto maxBox = shapeTexture.boundingBoxMax;
+
+            auto shape = shapeTexture.copyTo(maxBox.width, maxBox.height, isToCenter:
+                true);
+            shape.bestScaleMode;
+
+            shapeProto.dispose;
+
+            return shape;
+        }
+
+        return shapeProto;
     }
 
     Sprite2d newMajorTickProtoShape(double width, double height, double angle, GraphicStyle style)
     {
-        return newMinorTickProtoShape(width, height, angle, style);
+        auto shape = newMinorTickProtoShape(width, height, angle, style);
+
+        if (auto shapeTexture = cast(Texture2d) shape)
+        {
+            auto maxBox = shape.boundingBoxMax;
+            auto newShape = shapeTexture.copyTo(maxBox.width, maxBox.height, isToCenter:
+                true);
+            newShape.bestScaleMode;
+
+            shape.dispose;
+
+            return newShape;
+        }
+
+        return shape;
     }
 
     Sprite2d newMinorTickProto()
@@ -116,7 +164,6 @@ abstract class BaseScaleStatic : BaseDrawableScale
 
     Sprite2d newMajorTickProto()
     {
-
         auto majorTickProtoStyle = createFillStyle;
         if (!majorTickProtoStyle.isPreset)
         {
@@ -140,17 +187,17 @@ abstract class BaseScaleStatic : BaseDrawableScale
     {
         super.dispose;
 
-        if (minorTickProto)
+        if (minorTickProto && !minorTickProto.isDisposed)
         {
             minorTickProto.dispose;
         }
 
-        if (majorTickProto)
+        if (majorTickProto && !minorTickProto.isDisposed)
         {
             majorTickProto.dispose;
         }
 
-        if (labelProto)
+        if (labelProto && !minorTickProto.isDisposed)
         {
             labelProto.dispose;
         }

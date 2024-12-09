@@ -321,10 +321,35 @@ class Texture2d : Sprite2d
         return toTexture;
     }
 
-    void copyFrom(Texture2d other)
+    Texture2d copyTo(double toWidth, double toHeight, bool isToCenter = false)
     {
+        auto newTexture = new Texture2d(toWidth, toHeight);
+        buildInitCreate(newTexture);
+
+        newTexture.createTargetRGBA32;
+        newTexture.setRendererTarget;
+        scope (exit)
+        {
+            newTexture.restoreRendererTarget;
+        }
+        graphics.clearTransparent;
+
+        copyTo(newTexture, isToCenter);
+        return newTexture;
+    }
+
+    void copyTo(Texture2d other, bool isToCenter = false)
+    {
+        other.copyFrom(this, isToCenter);
+    }
+
+    void copyFrom(Texture2d other, bool isToCenter = false)
+    {
+        //TODO check bounds;
         Rect2d srcRect = {0, 0, other.width, other.height};
-        Rect2d destRect = {0, 0, width, height};
+        Rect2d destRect = !isToCenter ? Rect2d(0, 0, other.width, other.height) : Rect2d(width / 2 - other.width / 2, height / 2 - other
+                .height / 2, other.width, other.height);
+
         copyFrom(other, srcRect, destRect);
     }
 
@@ -490,7 +515,7 @@ class Texture2d : Sprite2d
     void alphaMod(double alpha)
     {
         assert(texture);
-        if (const err = texture.setAlphaMod(cast(ubyte) (alpha * ubyte.max)))
+        if (const err = texture.setAlphaMod(cast(ubyte)(alpha * ubyte.max)))
         {
             logger.error(err.toString);
         }

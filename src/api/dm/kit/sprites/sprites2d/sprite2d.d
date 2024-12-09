@@ -1547,7 +1547,8 @@ class Sprite2d : EventKitTarget
                     continue;
                 }
 
-                if ((isResizeChildrenIfNoLayout && !layout) || (isResizeChildrenIfNotLManaged && !child.isLayoutManaged))
+                if ((isResizeChildrenIfNoLayout && !layout) || (isResizeChildrenIfNotLManaged && !child
+                        .isLayoutManaged))
                 {
                     incChildWidth(child, dw);
                 }
@@ -1667,7 +1668,8 @@ class Sprite2d : EventKitTarget
                     continue;
                 }
 
-                if ((isResizeChildrenIfNoLayout && !layout) || (isResizeChildrenIfNotLManaged && !child.isLayoutManaged))
+                if ((isResizeChildrenIfNoLayout && !layout) || (isResizeChildrenIfNotLManaged && !child
+                        .isLayoutManaged))
                 {
                     incChildHeight(child, dh);
                 }
@@ -2227,6 +2229,27 @@ class Sprite2d : EventKitTarget
     Sprite2d hitbox()
     {
         return _hitbox;
+    }
+
+    Rect2d boundingBox() => boundingBox(angle);
+
+    Rect2d boundingBox(double angleDeg)
+    {
+        import Math = api.math;
+
+        auto newH = width * Math.abs(Math.sinDeg(angleDeg)) + height * Math.abs(
+            Math.cosDeg(angleDeg));
+        auto newW = width * Math.abs(Math.cosDeg(angleDeg)) + height * Math.abs(
+            Math.sinDeg(angleDeg));
+        return Rect2d(x, y, newW, newH);
+    }
+
+    Rect2d boundingBoxMax()
+    {
+        import Math = api.math;
+
+        auto diag = boundsRect.diagonal;
+        return Rect2d(x, y, diag, diag);
     }
 
     void setGrow(bool isGrow = true)
