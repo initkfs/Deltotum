@@ -2,6 +2,7 @@ module api.dm.gui.controls.meters.gauges.radial_gauge;
 
 import api.dm.gui.controls.meters.radial_min_value_meter : RadialMinValueMeter;
 import api.dm.gui.controls.meters.scales.statics.rscale_static : RScaleStatic;
+import api.dm.gui.controls.indicators.range_bars.radial_color_range_bar: RadialColorRangeBar;
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -62,6 +63,8 @@ class RadialGauge : RadialMinValueMeter!double
     bool isCreateLabel = true;
     Text delegate(Text) onLabelCreate;
     void delegate(Text) onLabelCreated;
+
+    RadialColorRangeBar colorBar;
 
     protected
     {
@@ -213,54 +216,8 @@ class RadialGauge : RadialMinValueMeter!double
         handAngleDeg(minAngleDeg);
         labelText(minValue);
 
-        // auto zoneShape = new class VectorTexture
-        // {
-        //     this()
-        //     {
-        //         super(centerShapeW, centerShapeH);
-        //     }
-
-        //     override void createTextureContent()
-        //     {
-        //         import Math = api.dm.math;
-
-        //         //TODO remove native api
-        //         import api.dm.sys.cairo.libs;
-
-        //         auto cr = cairoContext.getObject;
-
-        //         const lineWidth = 6;
-        //         canvas.lineWidth(lineWidth);
-
-        //         auto xCenter = centerShapeW / 2;
-        //         auto yCenter = centerShapeH / 2;
-
-        //         enum rangeParts = 3;
-
-        //         const double angleDiff = Math.abs(maxAngleDeg - minAngleDeg) / rangeParts;
-
-        //         double startAngle = minAngleDeg;
-        //         double endAngle = startAngle + angleDiff;
-
-        //         RGBA[rangeParts] colors = [
-        //             theme.colorSuccess, theme.colorWarning,
-        //             theme.colorDanger
-        //         ];
-        //         foreach (i; 0 .. rangeParts)
-        //         {
-        //             canvas.color(colors[i]);
-        //             canvas.arc(xCenter, yCenter, xCenter - 45, Math.degToRad(startAngle), Math.degToRad(
-        //                     endAngle));
-        //             canvas.stroke;
-
-        //             startAngle = endAngle;
-        //             endAngle += angleDiff;
-        //         }
-
-        //     }
-        // };
-
-        // addCreate(zoneShape);
+        colorBar = new RadialColorRangeBar(radius * 0.7, 0, 360);
+        addCreate(colorBar);
     }
 
     override void applyLayout()

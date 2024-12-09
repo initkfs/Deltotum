@@ -1,50 +1,22 @@
 module api.dm.gui.controls.indicators.range_bars.color_range_bar;
 
-import api.dm.gui.controls.control: Control;
+import api.dm.gui.controls.indicators.range_bars.base_color_range_bar: BaseColorRangeBar;
 import api.dm.kit.graphics.colors.rgba : RGBA;
+import api.dm.gui.controls.indicators.range_bars.color_range: ColorRange;
 import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 
 /**
  * Authors: initkfs
  */
-struct RangeData
-{
-    double value = 0;
-    RGBA color;
-}
 
-class ColorRangeBar : Control
+class ColorRangeBar : BaseColorRangeBar
 {
-
     Sprite2d bar;
-
-    RangeData[] rangeData;
 
     this(double width = 0, double height = 0)
     {
-        this._width = width;
-        this._height = height;
-
-        import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
-
-        layout = new CenterLayout;
-    }
-
-    override void loadTheme()
-    {
-        super.loadTheme;
-        loadControlSizeTheme;
-
-        if (rangeData.length == 0)
-        {
-            auto step = 100 / 3;
-            rangeData = [
-                RangeData(step, theme.colorSuccess),
-                RangeData(step, theme.colorWarning),
-                RangeData(step, theme.colorDanger),
-            ];
-        }
+        super(width, height);
     }
 
     override void create()
