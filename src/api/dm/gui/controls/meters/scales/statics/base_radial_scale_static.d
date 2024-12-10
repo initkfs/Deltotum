@@ -234,8 +234,6 @@ class BaseRadialScaleStatic : BaseScaleStatic
             graphics.clearTransparent;
 
             scaleShape.copyFrom(tickShape);
-            scaleShape.isDrawBounds = true;
-
             drawScale(
         onDrawAxis : null,
         onDrawTick:

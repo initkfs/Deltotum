@@ -450,8 +450,9 @@ class Controls : Control
 
         import api.dm.gui.controls.meters.progress.radial_progress_bar: RadialProgressBar;
 
-        // auto rProgress1 = new RadialProgressBar;
-        // root.addCreate(rProgress1);
+        auto rProgress1 = new RadialProgressBar;
+        rProgress1.isDrawBounds = true;
+        root.addCreate(rProgress1);
     }
 
     void createSeparators(Container root)

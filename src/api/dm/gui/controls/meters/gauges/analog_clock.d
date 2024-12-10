@@ -3,6 +3,7 @@ module api.dm.gui.controls.meters.gauges.analog_clock;
 import api.dm.gui.controls.meters.radial_min_value_meter : RadialMinValueMeter;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.meters.hands.meter_hand_factory : MeterHandFactory;
+import api.dm.gui.controls.indicators.segments.radial_segment_bar: RadialSegmentBar;
 
 import api.dm.kit.sprites.sprites2d.tweens.pause_tween2d : PauseTween2d;
 import api.dm.kit.sprites.sprites2d.tweens.tween2d : Tween2d;
@@ -34,6 +35,7 @@ import std.conv : to;
  */
 class AnalogClock : RadialMinValueMeter!double
 {
+    RadialSegmentBar progressBar;
 
     RScaleStatic clockScale;
     bool isCreateClockScale = true;
@@ -151,8 +153,6 @@ class AnalogClock : RadialMinValueMeter!double
 
         auto handBox = handBoundingBox(handHeight);
         auto newHand = handFactory.createHand(handBox.width, handBox.height, 0, handStyle);
-        newHand.isDrawCenterBounds = true;
-        newHand.boundsCenterColor = RGBA.green;
         return newHand;
     }
 
@@ -164,7 +164,8 @@ class AnalogClock : RadialMinValueMeter!double
     Sprite2d newHandHolder()
     {
         auto style = createFillStyle;
-        if(!style.isPreset){
+        if (!style.isPreset)
+        {
             style.fillColor = theme.colorDanger;
             style.lineColor = theme.colorDanger;
         }
@@ -175,19 +176,19 @@ class AnalogClock : RadialMinValueMeter!double
 
     RScaleStatic newClockScale()
     {
-        auto size = diameter;
+        auto size = diameter * 0.9;
         auto scale = new RScaleStatic(size, minAngleDeg, maxAngleDeg);
         scale.isLastTickMajorTick = false;
-        scale.isDrawCenterBounds = true;
-        scale.onVTickIsContinue = (ctx, Rect2d tickBounds, bool isMajorTick){
+        scale.onVTickIsContinue = (ctx, Rect2d tickBounds, bool isMajorTick) {
             auto style = createFillStyle;
             ctx.color = style.fillColor;
 
-            if(!style.isPreset && isMajorTick){
+            if (!style.isPreset && isMajorTick)
+            {
                 ctx.color = theme.colorDanger;
             }
 
-            auto tickRadius = isMajorTick ? scale.tickMajorHeight / 2 : scale.tickMinorHeight /2;
+            auto tickRadius = isMajorTick ? scale.tickMajorHeight / 2 : scale.tickMinorHeight / 2;
             const center = tickBounds.center;
             ctx.beginPath;
             ctx.arc(center.x, center.y, tickRadius, 0, 360);
@@ -233,6 +234,17 @@ class AnalogClock : RadialMinValueMeter!double
             }
         }
 
+        auto progressStyle = createFillStyle;
+        if(!progressStyle.isPreset && clockScale){
+            progressStyle.lineWidth = clockScale.tickMinorHeight;
+        }
+
+        progressBar = new RadialSegmentBar(diameter, 0, 360);
+        progressBar.segmentsCount = 60;
+        progressBar.segmentStyle = progressStyle;
+
+        addCreate(progressBar);
+
         if (!hourHand && isCreateHourHand)
         {
             auto newHand = newHourHand;
@@ -271,52 +283,17 @@ class AnalogClock : RadialMinValueMeter!double
             auto newHolder = newHandHolder;
             handHolder = !onHandHolderCreate ? newHolder : onHandHolderCreate(newHolder);
             addCreate(handHolder);
-            
-            if(auto holderTexture = cast(Texture2d) handHolder){
+
+            if (auto holderTexture = cast(Texture2d) handHolder)
+            {
                 holderTexture.bestScaleMode;
             }
-            
+
             if (onHandHolderCreated)
             {
                 onHandHolderCreated(handHolder);
             }
         }
-
-        const ticksCount = 60;
-        const angleOffset = 360.0 / ticksCount;
-        //Texture2d proto = ((i % 5) == 0) ? majorTickProto : minorTickProto;
-
-        // size_t hourNum = (i / 5 + 3) % 12;
-        // if (hourNum == 0)
-        // {
-        //     hourNum = 12;
-        // }
-
-        //auto labelText = (hourNum).to!dstring;
-
-        //double endAngle = 360;
-
-        // addCreate(centerShape);
-
-        // auto hourStyle = GraphicStyle(3, theme.colorAccent, true, theme.colorWarning);
-
-        // hourHand = new Hand(width, height, 6, 55, hourStyle);
-        // addCreate(hourHand);
-
-        // auto minStyle = hourStyle;
-
-        // minHand = new Hand(width, height, 6, 70, minStyle);
-        // addCreate(minHand);
-
-        // auto secStyle = GraphicStyle(1, theme.colorDanger, true, theme.colorDanger);
-
-        // secHand = new Hand(width, height, 5, 75, secStyle);
-        // addCreate(secHand);
-
-        // VRegularPolygon holder = new VRegularPolygon(15, GraphicStyle(0, theme.colorDanger, true, theme
-        //         .colorDanger));
-        // addCreate(holder);
-        // handHolder = holder;
 
         // version (DmAddon)
         // {
@@ -458,55 +435,47 @@ class AnalogClock : RadialMinValueMeter!double
         //     }
         // }
 
-        // assert(secIndicatorSegments.length == 60);
+        if (progressBar)
+        {
+            assert(progressBar.segments.length == 60);
 
-        // if (sec == 0)
-        // {
-        //     foreach (Sprite2d s; secIndicatorSegments)
-        //     {
-        //         s.isVisible = false;
-        //     }
-        // }
+            if (sec == 0)
+            {
+                progressBar.hideSegments;
+            }
 
-        // auto index = sec % secIndicatorSegments.length;
-        // if (sec == 0)
-        // {
-        //     index = secIndicatorSegments.length - 1;
-        // }
-        // else
-        // {
-        //     index--;
-        // }
+            auto index = sec % progressBar.segments.length;
 
-        // if (isCheckFillSecs)
-        // {
-        //     auto nextIndex = lastSecIndex + 1;
-        //     if (nextIndex < index)
-        //     {
-        //         foreach (i; nextIndex .. index)
-        //         {
-        //             secIndicatorSegments[i].isVisible = true;
-        //         }
-        //     }
-        //     else
-        //     {
-        //         //TODO bounds
-        //         foreach (i; (index + 1) .. secIndicatorSegments.length)
-        //         {
-        //             secIndicatorSegments[i].isVisible = false;
-        //         }
+            if (isCheckFillSecs)
+            {
+                auto nextIndex = lastSecIndex + 1;
+                if (nextIndex < index)
+                {
+                    foreach (i; nextIndex .. index)
+                    {
+                        progressBar.segments[i].isVisible = true;
+                    }
+                }
+                else
+                {
+                    //TODO bounds
+                    foreach (i; (index + 1) .. progressBar.segments.length)
+                    {
+                        progressBar.segments[i].isVisible = false;
+                    }
 
-        //         foreach (i; 0 .. index)
-        //         {
-        //             secIndicatorSegments[i].isVisible = true;
-        //         }
-        //     }
-        //     isCheckFillSecs = false;
-        // }
+                    foreach (i; 0 .. index)
+                    {
+                        progressBar.segments[i].isVisible = true;
+                    }
+                }
+                isCheckFillSecs = false;
+            }
 
-        // secIndicatorSegments[index].isVisible = true;
+            progressBar.segments[index].isVisible = true;
 
-        // lastSecIndex = index;
+            lastSecIndex = index;
+        }
 
         //assert(hour >= 1 && hour <= 12);
 

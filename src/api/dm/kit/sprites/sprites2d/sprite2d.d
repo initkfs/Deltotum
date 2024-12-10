@@ -112,7 +112,7 @@ class Sprite2d : EventKitTarget
     bool isResizedWidthByParent;
     bool isResizedHeightByParent;
 
-    bool isManagedByScene;
+    bool isManagedByScene = true;
 
     Insets _padding;
     Insets _margin;

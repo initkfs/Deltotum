@@ -1,6 +1,6 @@
 module api.dm.gui.controls.meters.progress.base_radial_progress_bar;
 
-import api.dm.gui.controls.meters.progress.base_progress_bar : BaseProgressBar;
+import api.dm.gui.controls.meters.radial_min_value_meter: RadialMinValueMeter;
 import api.dm.com.graphics.com_texture : ComTextureScaleMode;
 import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
@@ -12,247 +12,227 @@ import Math = api.dm.math;
 /**
  * Authors: initkfs
  */
-class BaseRadialProgressBar : BaseProgressBar
+class BaseRadialProgressBar : RadialMinValueMeter!double
 {
-    double innerPadding = 10;
-    protected
+    
+    this(double diameter = 0, double minValue = 0, double maxValue = 1.0, double minAngleDeg = 0, double maxAngleDeg = 360)
     {
-        double diameter = 0;
-
-        Sprite2d[] segments;
-        Sprite2d[] fillSegments;
+        super(diameter, minValue, maxValue, minAngleDeg, maxAngleDeg);
     }
 
-    double segmentCount = 10;
-    double segmentWidth = 5;
-    double segmentHeight = 20;
-    double startAngleDeg = 180;
-    double endAngleDeg = 180;
+    // override void initialize()
+    // {
+    //     super.initialize;
+    // }
 
-    this(double minValue = 0, double maxValue = 1.0, double diameter = 100)
-    {
-        super(minValue, maxValue);
+    // override loadTheme(){
+    //     super.loadTheme;
 
-        if (diameter <= 0)
-        {
-            import std.conv : text;
 
-            throw new Exception(text("Diameter must be a positive value, but recieved: ", diameter));
-        }
+    // }
 
-        this.diameter = diameter;
+    // override void create()
+    // {
+    //     super.create;
 
-        this.width = diameter;
-        this.height = diameter;
-    }
+    //     import std.conv : to;
 
-    override void initialize()
-    {
-        super.initialize;
-    }
+    //     auto segmentStyle = createStyle;
+    //     if (!segmentStyle.isNested)
+    //     {
+    //         segmentStyle.isFill = false;
+    //         segmentStyle.color = theme.colorAccent;
+    //     }
 
-    override void create()
-    {
-        super.create;
+    //     auto fillStyle = segmentStyle;
+    //     if (!fillStyle.isNested)
+    //     {
+    //         fillStyle.isFill = true;
+    //     }
 
-        import std.conv : to;
+    //     foreach (i; 0 .. segmentCount)
+    //     {
+    //         auto newSegmentShape = createSegmentShape(segmentStyle);
+    //         scope (exit)
+    //         {
+    //             newSegmentShape.dispose;
+    //         }
 
-        auto segmentStyle = createStyle;
-        if (!segmentStyle.isNested)
-        {
-            segmentStyle.isFill = false;
-            segmentStyle.color = theme.colorAccent;
-        }
+    //         auto segment = createSegment(newSegmentShape);
+    //         add(segment);
+    //         segments ~= segment;
 
-        auto fillStyle = segmentStyle;
-        if (!fillStyle.isNested)
-        {
-            fillStyle.isFill = true;
-        }
+    //         auto newSegmentFillShape = createFillSegmentShape(fillStyle);
+    //         scope (exit)
+    //         {
+    //             newSegmentFillShape.dispose;
+    //         }
 
-        foreach (i; 0 .. segmentCount)
-        {
-            auto newSegmentShape = createSegmentShape(segmentStyle);
-            scope (exit)
-            {
-                newSegmentShape.dispose;
-            }
+    //         auto fillSegment = createSegment(newSegmentFillShape);
+    //         fillSegment.isVisible = false;
+    //         add(fillSegment);
+    //         fillSegments ~= fillSegment;
+    //     }
 
-            auto segment = createSegment(newSegmentShape);
-            add(segment);
-            segments ~= segment;
+    //     layoutChildren;
 
-            auto newSegmentFillShape = createFillSegmentShape(fillStyle);
-            scope (exit)
-            {
-                newSegmentFillShape.dispose;
-            }
+    //     if (progress != minValue)
+    //     {
+    //         fillProgress(progress);
+    //     }
+    // }
 
-            auto fillSegment = createSegment(newSegmentFillShape);
-            fillSegment.isVisible = false;
-            add(fillSegment);
-            fillSegments ~= fillSegment;
-        }
+    // void layoutChildren()
+    // {
+    //     assert(segments.length == fillSegments.length);
 
-        layoutChildren;
+    //     import api.math.geom2.vec2 : Vec2d;
 
-        if (progress != minValue)
-        {
-            fillProgress(progress);
-        }
-    }
+    //     double radius = diameter / 2 - innerPadding;
 
-    void layoutChildren()
-    {
-        assert(segments.length == fillSegments.length);
+    //     const cx = boundsRect.middleX;
+    //     const cy = boundsRect.middleY;
 
-        import api.math.geom2.vec2 : Vec2d;
+    //     double angleRange = Math.abs(endAngleDeg - startAngleDeg);
+    //     double angleDt = (360.0 - angleRange) / segments.length;
+    //     double angle = startAngleDeg;
+    //     foreach (i, s; segments)
+    //     {
+    //         const coords = Vec2d.fromPolarDeg(angle, radius);
 
-        double radius = diameter / 2 - innerPadding;
+    //         s.x = cx + coords.x - s.width / 2;
+    //         s.y = cy + coords.y - s.height / 2;
+    //         s.angle = angle;
 
-        const cx = boundsRect.middleX;
-        const cy = boundsRect.middleY;
+    //         angle += angleDt;
+    //         // if(angle > 360){
+    //         //     angle = 0;
+    //         // }
 
-        double angleRange = Math.abs(endAngleDeg - startAngleDeg);
-        double angleDt = (360.0 - angleRange) / segments.length;
-        double angle = startAngleDeg;
-        foreach (i, s; segments)
-        {
-            const coords = Vec2d.fromPolarDeg(angle, radius);
+    //         auto fillSegment = fillSegments[i];
+    //         fillSegment.x = s.x;
+    //         fillSegment.y = s.y;
+    //         fillSegment.angle = s.angle;
+    //     }
+    // }
 
-            s.x = cx + coords.x - s.width / 2;
-            s.y = cy + coords.y - s.height / 2;
-            s.angle = angle;
+    // Sprite2d createSegment(Texture2d segmentShape)
+    // {
+    //     import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
 
-            angle += angleDt;
-            // if(angle > 360){
-            //     angle = 0;
-            // }
+    //     //TODO instability at small sizes, possible artifacts
+    //     auto rotateDiameter = Math.round(Math.sqrt((segmentWidth ^^ 2) + (segmentHeight ^^ 2)));
+    //     auto segmentSize = rotateDiameter * 3;
 
-            auto fillSegment = fillSegments[i];
-            fillSegment.x = s.x;
-            fillSegment.y = s.y;
-            fillSegment.angle = s.angle;
-        }
-    }
+    //     auto segment = new Texture2d(segmentSize, segmentSize);
+    //     segment.isResizable = false;
 
-    Sprite2d createSegment(Texture2d segmentShape)
-    {
-        import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
+    //     auto srcRect = Rect2d(0, 0, segmentWidth, segmentHeight);
+    //     auto destRect = Rect2d(segment.width / 2 - segmentWidth / 2, segment.height / 2 - segmentHeight / 2, segmentWidth, segmentHeight);
 
-        //TODO instability at small sizes, possible artifacts
-        auto rotateDiameter = Math.round(Math.sqrt((segmentWidth ^^ 2) + (segmentHeight ^^ 2)));
-        auto segmentSize = rotateDiameter * 3;
+    //     build(segment);
+    //     segment.initialize;
+    //     assert(segment.isInitialized);
+    //     segment.create;
+    //     assert(segment.isCreated);
 
-        auto segment = new Texture2d(segmentSize, segmentSize);
-        segment.isResizable = false;
+    //     segment.copyFrom(segmentShape, srcRect, destRect);
 
-        auto srcRect = Rect2d(0, 0, segmentWidth, segmentHeight);
-        auto destRect = Rect2d(segment.width / 2 - segmentWidth / 2, segment.height / 2 - segmentHeight / 2, segmentWidth, segmentHeight);
+    //     segment.isLayoutManaged = false;
+    //     segment.textureScaleMode = ComTextureScaleMode.balance;
 
-        build(segment);
-        segment.initialize;
-        assert(segment.isInitialized);
-        segment.create;
-        assert(segment.isCreated);
+    //     return segment;
+    // }
 
-        segment.copyFrom(segmentShape, srcRect, destRect);
+    // Texture2d createSegmentShape(GraphicStyle style)
+    // {
+    //     import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
-        segment.isLayoutManaged = false;
-        segment.textureScaleMode = ComTextureScaleMode.balance;
+    //     auto sprite = new VConvexPolygon(segmentWidth, segmentHeight, style, 0);
+    //     build(sprite);
+    //     sprite.initialize;
+    //     assert(sprite.isInitialized);
+    //     sprite.create;
+    //     assert(sprite.isCreated);
+    //     return sprite;
+    // }
 
-        return segment;
-    }
+    // Texture2d createFillSegmentShape(GraphicStyle style)
+    // {
+    //     return createSegmentShape(style);
+    // }
 
-    Texture2d createSegmentShape(GraphicStyle style)
-    {
-        import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+    // void reset()
+    // {
+    //     foreach (s; fillSegments)
+    //     {
+    //         s.isVisible = false;
+    //     }
+    // }
 
-        auto sprite = new VConvexPolygon(segmentWidth, segmentHeight, style, 0);
-        build(sprite);
-        sprite.initialize;
-        assert(sprite.isInitialized);
-        sprite.create;
-        assert(sprite.isCreated);
-        return sprite;
-    }
+    // alias progress = BaseProgressBar.progress;
 
-    Texture2d createFillSegmentShape(GraphicStyle style)
-    {
-        return createSegmentShape(style);
-    }
+    // override bool progress(double newValue)
+    // {
+    //     const isChange = super.progress(newValue);
+    //     if (!isChange)
+    //     {
+    //         return isChange;
+    //     }
 
-    void reset()
-    {
-        foreach (s; fillSegments)
-        {
-            s.isVisible = false;
-        }
-    }
+    //     fillProgress(value);
 
-    alias progress = BaseProgressBar.progress;
+    //     return isChange;
+    // }
 
-    override bool progress(double newValue)
-    {
-        const isChange = super.progress(newValue);
-        if (!isChange)
-        {
-            return isChange;
-        }
+    // protected void fillProgress(double progressValue)
+    // {
+    //     reset;
 
-        fillProgress(value);
+    //     import std.math.operations : isClose;
 
-        return isChange;
-    }
+    //     if (isClose(progressValue, maxValue))
+    //     {
+    //         fill;
+    //     }
+    //     else if (isClose(progressValue, minValue))
+    //     {
+    //         reset;
+    //     }
+    //     else
+    //     {
+    //         import std.conv : to;
 
-    protected void fillProgress(double progressValue)
-    {
-        reset;
+    //         auto range = maxValue - minValue;
 
-        import std.math.operations : isClose;
+    //         auto count = Math.round((progressValue * fillSegments.length) / range).to!size_t;
+    //         if (count > fillSegments.length)
+    //         {
+    //             count = fillSegments.length;
+    //         }
 
-        if (isClose(progressValue, maxValue))
-        {
-            fill;
-        }
-        else if (isClose(progressValue, minValue))
-        {
-            reset;
-        }
-        else
-        {
-            import std.conv : to;
+    //         fill(count);
+    //     }
+    // }
 
-            auto range = maxValue - minValue;
+    // protected void fill()
+    // {
+    //     fill(fillSegments.length);
+    // }
 
-            auto count = Math.round((progressValue * fillSegments.length) / range).to!size_t;
-            if (count > fillSegments.length)
-            {
-                count = fillSegments.length;
-            }
+    // protected void fill(size_t count)
+    // {
+    //     if (count > fillSegments.length)
+    //     {
+    //         import std.format : format;
 
-            fill(count);
-        }
-    }
+    //         throw new Exception(format("Filled segments %s exceeds their count %s", count, fillSegments
+    //                 .length));
+    //     }
 
-    protected void fill()
-    {
-        fill(fillSegments.length);
-    }
-
-    protected void fill(size_t count)
-    {
-        if (count > fillSegments.length)
-        {
-            import std.format : format;
-
-            throw new Exception(format("Filled segments %s exceeds their count %s", count, fillSegments
-                    .length));
-        }
-
-        foreach (s; fillSegments[0 .. count])
-        {
-            s.isVisible = true;
-        }
-    }
+    //     foreach (s; fillSegments[0 .. count])
+    //     {
+    //         s.isVisible = true;
+    //     }
+    // }
 }
