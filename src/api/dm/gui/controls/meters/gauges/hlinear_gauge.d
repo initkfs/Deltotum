@@ -2,7 +2,7 @@ module api.dm.gui.controls.meters.gauges.hlinear_gauge;
 
 import api.dm.gui.controls.meters.min_value_meter : MinValueMeter;
 import api.dm.gui.controls.meters.scales.dynamics.base_scale_dynamic : BaseScaleDynamic;
-import api.dm.gui.controls.indicators.range_bars.color_range_bar : ColorRangeBar;
+import api.dm.gui.controls.indicators.color_bars.color_bar : ColorBar;
 import api.dm.gui.containers.container : Container;
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 
@@ -36,15 +36,15 @@ struct TickInfo
 class HLinearGauge : MinValueMeter!double
 {
     Sprite2d scale;
-    ColorRangeBar colorRangeBar;
+    ColorBar colorRangeBar;
 
     bool isCreateScale = true;
     Sprite2d delegate(Sprite2d) onScaleCreate;
     void delegate(Sprite2d) onScaleCreated;
 
     bool isCreateColorBar = true;
-    ColorRangeBar delegate(ColorRangeBar) onColorBarCreate;
-    void delegate(ColorRangeBar) onColorBarCreated;
+    ColorBar delegate(ColorBar) onColorBarCreate;
+    void delegate(ColorBar) onColorBarCreated;
 
     Container scaleContainer;
 
@@ -139,7 +139,7 @@ class HLinearGauge : MinValueMeter!double
 
         if (!colorRangeBar && isCreateColorBar)
         {
-            auto newBar = new ColorRangeBar(width, theme.meterTickMinorHeight);
+            auto newBar = new ColorBar(width, theme.meterTickMinorHeight);
 
             colorRangeBar = !onColorBarCreate ? newBar : onColorBarCreate(newBar);
             auto root = scaleContainer ? scaleContainer : this;

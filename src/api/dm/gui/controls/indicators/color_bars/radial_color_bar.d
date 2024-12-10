@@ -1,8 +1,8 @@
-module api.dm.gui.controls.indicators.range_bars.radial_color_range_bar;
+module api.dm.gui.controls.indicators.color_bars.radial_color_bar;
 
-import api.dm.gui.controls.indicators.range_bars.base_color_range_bar: BaseColorRangeBar;
+import api.dm.gui.controls.indicators.color_bars.base_color_bar: BaseColorBar;
 import api.dm.gui.controls.control : Control;
-import api.dm.gui.controls.indicators.range_bars.color_range: ColorRange;
+import api.dm.gui.controls.indicators.color_bars.color_bar_value: ColorBarValue;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
@@ -22,7 +22,7 @@ private
         double minAngleDeg = 0;
         double maxAngleDeg = 0;
         
-        ColorRange[] data;
+        ColorBarValue[] data;
 
         this(double width, double height, GraphicStyle style)
         {
@@ -69,7 +69,7 @@ private
 
 }
 
-class RadialColorRangeBar : BaseColorRangeBar
+class RadialColorBar : BaseColorBar
 {
     Sprite2d bar;
 
@@ -97,9 +97,9 @@ class RadialColorRangeBar : BaseColorRangeBar
         {
             auto step = 100 / 3;
             rangeData = [
-                ColorRange(step, theme.colorSuccess),
-                ColorRange(step, theme.colorWarning),
-                ColorRange(step, theme.colorDanger),
+                ColorBarValue(step, theme.colorSuccess),
+                ColorBarValue(step, theme.colorWarning),
+                ColorBarValue(step, theme.colorDanger),
             ];
         }
     }

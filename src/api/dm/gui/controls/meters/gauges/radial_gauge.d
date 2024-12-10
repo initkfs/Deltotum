@@ -2,7 +2,7 @@ module api.dm.gui.controls.meters.gauges.radial_gauge;
 
 import api.dm.gui.controls.meters.radial_min_value_meter : RadialMinValueMeter;
 import api.dm.gui.controls.meters.scales.statics.rscale_static : RScaleStatic;
-import api.dm.gui.controls.indicators.range_bars.radial_color_range_bar: RadialColorRangeBar;
+import api.dm.gui.controls.indicators.color_bars.radial_color_bar: RadialColorBar;
 import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -64,7 +64,7 @@ class RadialGauge : RadialMinValueMeter!double
     Text delegate(Text) onLabelCreate;
     void delegate(Text) onLabelCreated;
 
-    RadialColorRangeBar colorBar;
+    RadialColorBar colorBar;
 
     protected
     {
@@ -211,7 +211,7 @@ class RadialGauge : RadialMinValueMeter!double
         handAngleDeg(minAngleDeg);
         labelText(minValue);
 
-        colorBar = new RadialColorRangeBar(radius * 0.7, 0, 360);
+        colorBar = new RadialColorBar(radius * 0.7, 0, 360);
         addCreate(colorBar);
     }
 
