@@ -1,7 +1,7 @@
 module api.dm.gui.controls.switches.buttons.parallelogram_button;
 
 import api.dm.gui.controls.switches.buttons.base_button : BaseButton;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.events.action_event : ActionEvent;
 import api.dm.gui.controls.control : Control;
@@ -69,14 +69,14 @@ class ParallelogramButton : BaseButton
 
         if (capGraphics.isVectorGraphics)
         {
-            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vparallelogram : VParallelogram;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.vparallelogram : VParallelogram;
 
             auto vShape = new VParallelogram(width, height, angleDeg, isInverted, style);
             return vShape;
         }
 
         import api.math.geom2.parallelogram2 : Parallelogram2d;
-        import api.dm.kit.sprites.sprites2d.shapes.parallelogram : Parallelogram;
+        import api.dm.kit.sprites2d.shapes.parallelogram : Parallelogram;
 
         auto pShape = new Parallelogram(width, height, angleDeg, isInverted, style);
         pShape.angle = angle;

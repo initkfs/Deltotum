@@ -1,6 +1,6 @@
 module api.dm.addon.sprites.textures.vectors.noises.samples.fractal_noise;
 
-import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.addon.sprites.textures.vectors.noises.noise : Noise;
 import api.dm.addon.sprites.textures.vectors.noises.samples.sample_noise : SampleNoise;
 import api.dm.kit.graphics.colors.rgba : RGBA;

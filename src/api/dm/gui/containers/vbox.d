@@ -1,8 +1,8 @@
 module api.dm.gui.containers.vbox;
 
 import api.dm.gui.containers.base.spaceable_container: SpaceableContainer;
-import api.dm.kit.sprites.sprites2d.layouts.spaceable_layout : SpaceableLayout;
-import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
+import api.dm.kit.sprites2d.layouts.spaceable_layout : SpaceableLayout;
+import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
 /**
  * Authors: initkfs
@@ -33,7 +33,7 @@ class VBox : SpaceableContainer
 
 unittest
 {
-    import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+    import api.dm.kit.sprites2d.sprite2d : Sprite2d;
     import api.math.insets : Insets;
 
     auto sp1 = new Sprite2d;

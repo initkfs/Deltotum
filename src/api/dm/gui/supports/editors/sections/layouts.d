@@ -1,7 +1,7 @@
 module api.dm.gui.supports.editors.sections.layouts;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.insets : Insets;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
@@ -23,7 +23,7 @@ class Layouts : Control
     {
         id = "deltotum_gui_editor_section_layouts";
 
-        import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
+        import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
         layout = new VLayout;
         layout.isAutoResize = true;
@@ -307,7 +307,7 @@ class Layouts : Control
         import api.dm.gui.containers.vsplit_box: VSplitBox;
         import api.dm.gui.containers.hsplit_box: HSplitBox;
         import api.dm.gui.containers.vbox: VBox;
-        import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon: VConvexPolygon;
+        import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon: VConvexPolygon;
 
         auto split1 = new VSplitBox;
         pos2Container.addCreate(split1);

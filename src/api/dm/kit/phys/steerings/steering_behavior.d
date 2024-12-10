@@ -1,6 +1,6 @@
 module api.dm.phys.steerings.steering_behavior;
 
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.math.geom2.vec2 : Vec2d;
 import api.math.random : Random;
 

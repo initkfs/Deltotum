@@ -1,6 +1,6 @@
 module api.dm.addon.sprites.textures.vectors.noises.noise;
 
-import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsv: HSV;
 

@@ -4,7 +4,7 @@ import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.gui.themes.theme : Theme;
 import api.dm.gui.supports.sceneview : SceneView;
 import api.dm.gui.components.gui_component : GuiComponent;
-import api.dm.kit.sprites.sprites2d.sprite2d: Sprite2d;
+import api.dm.kit.sprites2d.sprite2d: Sprite2d;
 import api.dm.gui.controls.control: Control;
 
 /**

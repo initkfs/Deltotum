@@ -8,7 +8,7 @@ import api.math.geom2.vec2 : Vec2d;
 import Math = api.math;
 
 //TODO mutable texture
-import api.dm.kit.sprites.sprites2d.textures.vectors.vector_texture : VectorTexture;
+import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
 import api.math.angle;
 
 struct PieData
@@ -90,9 +90,9 @@ class PieTexture : VectorTexture
 
 class LabelInfo : Container
 {
-    import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
-    import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
-    import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vcircle : VCircle;
+    import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
+    import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+    import api.dm.kit.sprites2d.textures.vectors.shapes.vcircle : VCircle;
 
     Text textLabel;
     Texture2d colorLabel;
@@ -159,7 +159,7 @@ class PieChart : Container
         _width = chartAreaWidth;
         _height = chartAreaHeight;
 
-        import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
+        import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
         layout = new VLayout;
         layout.isAutoResize = true;

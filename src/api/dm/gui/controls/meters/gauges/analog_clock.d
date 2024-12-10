@@ -5,8 +5,8 @@ import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.meters.hands.meter_hand_factory : MeterHandFactory;
 import api.dm.gui.controls.indicators.segments.radial_segment_bar: RadialSegmentBar;
 
-import api.dm.kit.sprites.sprites2d.tweens.pause_tween2d : PauseTween2d;
-import api.dm.kit.sprites.sprites2d.tweens.tween2d : Tween2d;
+import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
+import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
 import api.dm.gui.controls.meters.scales.statics.rscale_static : RScaleStatic;
 
 import api.dm.gui.containers.circle_box : CircleBox;
@@ -14,15 +14,15 @@ import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.vec2 : Vec2d;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vcircle : VCircle;
-import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.varc : VArc;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.textures.vectors.shapes.vcircle : VCircle;
+import api.dm.kit.sprites2d.textures.vectors.shapes.varc : VArc;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
-import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
-import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vshape2d : VShape;
-import api.dm.kit.sprites.sprites2d.tweens.pause_tween2d : PauseTween2d;
-import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
+import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
+import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.math.geom2.rect2 : Rect2d;
 import Math = api.dm.math;
 
@@ -81,7 +81,7 @@ class AnalogClock : RadialMinValueMeter!double
     {
         super(diameter, 0, 60, 0, 360);
 
-        import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
+        import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
 
         this.layout = new CenterLayout;
     }

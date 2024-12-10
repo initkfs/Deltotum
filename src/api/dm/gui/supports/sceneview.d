@@ -8,7 +8,7 @@ import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.texts.textfield : TextField;
 import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.gui.controls.switches.buttons.button : Button;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.containers.container : Container;
 import api.dm.gui.controls.texts.text_area : TextArea;
 import api.dm.gui.controls.trees.tree_item : TreeItem;
@@ -478,7 +478,7 @@ class SceneView : VBox
     private DebugInfo createDebugInfo(Sprite2d obj)
     {
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-        import api.dm.kit.sprites.sprites2d.shapes.rectangle : Rectangle;
+        import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
         auto container = new DebugInfo;

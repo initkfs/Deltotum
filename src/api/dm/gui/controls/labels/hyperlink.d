@@ -1,7 +1,7 @@
 module api.dm.gui.controls.labels.hyperlink;
 
 import api.dm.gui.controls.labeled : Labeled;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.tooltips.popup : Popup;
 
 import std.conv : to;
@@ -23,7 +23,7 @@ class Hyperlink : Labeled
         super(0, 0, text, iconName, graphicsGap, isCreateLayout);
         _labelText = text;
 
-        import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
+        import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
         layout = new VLayout;
         layout.isAutoResize = true;
@@ -58,7 +58,7 @@ class Hyperlink : Labeled
         auto tooltip = new Popup(url.to!dstring);
         addCreate(tooltip);
 
-        import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+        import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
         auto style = createStyle;
         style.isFill = true;

@@ -1,9 +1,9 @@
 module api.dm.gui.controls.pickers.time_picker;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.sprites.sprites2d.layouts.layout2d : Layout2d;
-import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.layouts.layout2d : Layout2d;
+import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 import api.dm.gui.containers.hbox : HBox;
 import api.dm.gui.containers.circle_box : CircleBox;
 import api.dm.gui.containers.vbox : VBox;
@@ -27,7 +27,7 @@ abstract class TimeChooser : Control
 
     this()
     {
-        import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
+        import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
 
         this.layout = new CenterLayout;
         this.layout.isAutoResize = true;
@@ -39,7 +39,7 @@ abstract class TimeChooser : Control
     override void create()
     {
         super.create;
-        import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vcircle : VCircle;
+        import api.dm.kit.sprites2d.textures.vectors.shapes.vcircle : VCircle;
 
         auto sliderStyle = createStyle;
         sliderStyle.isFill = true;
@@ -329,7 +329,7 @@ class TimePicker : Control
 
     this()
     {
-        import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
+        import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
         this.layout = new VLayout;
         this.layout.isAutoResize = true;

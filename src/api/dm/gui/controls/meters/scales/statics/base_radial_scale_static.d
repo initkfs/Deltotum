@@ -2,8 +2,8 @@ module api.dm.gui.controls.meters.scales.statics.base_radial_scale_static;
 
 import api.dm.gui.controls.meters.scales.statics.base_scale_static : BaseScaleStatic;
 import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
-import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
-import api.dm.kit.sprites.sprites2d.textures.rgba_texture : RgbaTexture;
+import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.rgba_texture : RgbaTexture;
 import api.math.geom2.vec2 : Vec2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.controls.texts.text : Text;
@@ -121,7 +121,7 @@ class BaseRadialScaleStatic : BaseScaleStatic
             const centerShapeW = width;
             const centerShapeH = height;
 
-            import api.dm.kit.sprites.sprites2d.textures.vectors.vector_texture : VectorTexture;
+            import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
 
             auto tickShape = new class VectorTexture
             {

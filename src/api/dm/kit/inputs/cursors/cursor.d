@@ -5,7 +5,7 @@ import api.dm.com.inputs.com_cursor : ComCursor, ComSystemCursorType;
 import api.math.geom2.vec2 : Vec2d;
 
 //TODO move cursor and mouse
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
 /**
  * Authors: initkfs

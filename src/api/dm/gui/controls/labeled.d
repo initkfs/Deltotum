@@ -1,9 +1,9 @@
 module api.dm.gui.controls.labeled;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.sprites.sprites2d.layouts.layout2d : Layout2d;
-import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.layouts.layout2d : Layout2d;
+import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 import api.dm.gui.controls.texts.text : Text;
 
 import std.traits : isSomeString;
@@ -271,7 +271,7 @@ class Labeled : Control
         _graphicsGap = value;
         if (layout)
         {
-            import api.dm.kit.sprites.sprites2d.layouts.spaceable_layout : SpaceableLayout;
+            import api.dm.kit.sprites2d.layouts.spaceable_layout : SpaceableLayout;
 
             if (auto sl = cast(SpaceableLayout) layout)
             {

@@ -19,7 +19,7 @@ class Indicators : Control
     {
         id = "deltotum_gui_editor_section_indicators";
 
-        import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
+        import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
         layout = new VLayout;
         layout.isAutoResize = true;

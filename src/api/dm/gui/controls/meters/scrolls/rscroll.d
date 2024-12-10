@@ -1,8 +1,8 @@
 module api.dm.gui.controls.meters.scrolls.rscroll;
 
 import api.dm.gui.controls.meters.scrolls.base_radial_mono_scroll : BaseRadialMonoScroll;
-import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
 import api.dm.gui.controls.meters.scales.statics.rscale_static : RScaleStatic;
@@ -31,7 +31,7 @@ class RScroll : BaseRadialMonoScroll
 
         isBorder = false;
 
-        import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
+        import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
 
         layout = new CenterLayout;
         layout.isAutoResize = true;
@@ -49,7 +49,7 @@ class RScroll : BaseRadialMonoScroll
 
         assert(thumb);
 
-        import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
+        import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 
         if (auto shapeTexture = cast(Texture2d) thumb)
         {
@@ -85,8 +85,8 @@ class RScroll : BaseRadialMonoScroll
             thumbShape.dispose;
         }
 
-        import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
-        import api.dm.kit.sprites.sprites2d.textures.rgba_texture : RgbaTexture;
+        import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+        import api.dm.kit.sprites2d.textures.rgba_texture : RgbaTexture;
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
         auto thumb = new Texture2d(thumbDiameter, thumbDiameter);

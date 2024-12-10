@@ -1,12 +1,12 @@
 module api.dm.gui.containers.slider;
 
 import api.dm.gui.containers.container : Container;
-import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
-import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
+import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
+import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 import api.dm.gui.containers.stack_box : StackBox;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.sprites.sprites2d.tweens.targets.motions.linear_motion2d : LinearMotion2d;
-import api.dm.kit.sprites.sprites2d.tweens.tween2d : Tween2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.tweens.targets.motions.linear_motion2d : LinearMotion2d;
+import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
 import api.math.geom2.vec2 : Vec2d;
 import Math = api.math;
 import api.math.numericals.interp;
@@ -52,7 +52,7 @@ class Slider : Container
 
         padding = 0;
 
-        import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+        import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
         double handleWidth = 30;

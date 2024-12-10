@@ -3,8 +3,8 @@ module api.dm.gui.controls.indicators.color_bars.color_bar;
 import api.dm.gui.controls.indicators.color_bars.base_color_bar: BaseColorBar;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.controls.indicators.color_bars.color_bar_value: ColorBarValue;
-import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
 /**
  * Authors: initkfs

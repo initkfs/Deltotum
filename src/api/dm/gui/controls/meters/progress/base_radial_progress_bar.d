@@ -2,9 +2,9 @@ module api.dm.gui.controls.meters.progress.base_radial_progress_bar;
 
 import api.dm.gui.controls.meters.radial_min_value_meter: RadialMinValueMeter;
 import api.dm.com.graphics.com_texture : ComTextureScaleMode;
-import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.math.geom2.rect2 : Rect2d;
 
 import Math = api.dm.math;
@@ -118,7 +118,7 @@ class BaseRadialProgressBar : RadialMinValueMeter!double
 
     // Sprite2d createSegment(Texture2d segmentShape)
     // {
-    //     import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
+    //     import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 
     //     //TODO instability at small sizes, possible artifacts
     //     auto rotateDiameter = Math.round(Math.sqrt((segmentWidth ^^ 2) + (segmentHeight ^^ 2)));
@@ -146,7 +146,7 @@ class BaseRadialProgressBar : RadialMinValueMeter!double
 
     // Texture2d createSegmentShape(GraphicStyle style)
     // {
-    //     import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+    //     import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
     //     auto sprite = new VConvexPolygon(segmentWidth, segmentHeight, style, 0);
     //     build(sprite);

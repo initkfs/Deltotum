@@ -5,13 +5,13 @@ import api.dm.kit.assets.fonts.font : Font;
 import api.math.insets : Insets;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.themes.icons.icon_pack : IconPack;
-import api.dm.kit.sprites.sprites2d.images.image : Image;
-import api.dm.kit.sprites.sprites2d.shapes.shape2d : Shape2d;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.images.image : Image;
+import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.core.configs.uda : ConfigKey;
 
 import std.typecons : Nullable;
-import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vrectangle;
+import api.dm.kit.sprites2d.textures.vectors.shapes.vrectangle;
 
 /**
  * Authors: initkfs
@@ -193,13 +193,13 @@ class Theme
         Sprite2d newBackground;
         if (isUseVectorGraphics)
         {
-            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
             newBackground = new VConvexPolygon(width, height, backgroundStyle, controlCornersBevel);
         }
         else
         {
-            import api.dm.kit.sprites.sprites2d.shapes.convex_polygon : ConvexPolygon;
+            import api.dm.kit.sprites2d.shapes.convex_polygon : ConvexPolygon;
 
             backgroundStyle.lineWidth = 1.0;
 
@@ -221,13 +221,13 @@ class Theme
         Sprite2d newShape;
         if (isUseVectorGraphics)
         {
-            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
             newShape = new VConvexPolygon(width, height, style, cornerBevel);
         }
         else
         {
-            import api.dm.kit.sprites.sprites2d.shapes.convex_polygon : ConvexPolygon;
+            import api.dm.kit.sprites2d.shapes.convex_polygon : ConvexPolygon;
 
             newShape = new ConvexPolygon(width, height, style, cornerBevel);
         }
@@ -241,11 +241,11 @@ class Theme
         Sprite2d shape;
         if (isUseVectorGraphics)
         {
-            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vrectangle: VRectangle;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.vrectangle: VRectangle;
 
             shape = new VRectangle(width, height, style);
         }else {
-            import api.dm.kit.sprites.sprites2d.shapes.rectangle: Rectangle;
+            import api.dm.kit.sprites2d.shapes.rectangle: Rectangle;
 
             shape = new Rectangle(width, height, style);
         }
@@ -262,13 +262,13 @@ class Theme
         Sprite2d shape;
         if (isUseVectorGraphics)
         {
-            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vcircle : VCircle;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.vcircle : VCircle;
 
             shape = new VCircle(radius, style);
         }
         else
         {
-            import api.dm.kit.sprites.sprites2d.shapes.circle : Circle;
+            import api.dm.kit.sprites2d.shapes.circle : Circle;
 
             shape = new Circle(radius, style);
         }
@@ -286,13 +286,13 @@ class Theme
 
         if (isUseVectorGraphics)
         {
-            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
 
             shape = new VRegularPolygon(size, style, sides);
         }
         else
         {
-            import api.dm.kit.sprites.sprites2d.shapes.reqular_polygon : RegularPolygon;
+            import api.dm.kit.sprites2d.shapes.reqular_polygon : RegularPolygon;
 
             shape = new RegularPolygon(size, style, sides);
         }
@@ -309,13 +309,13 @@ class Theme
 
         if (isUseVectorGraphics)
         {
-            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vtriangle : VTriangle;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.vtriangle : VTriangle;
 
             shape = new VTriangle(width, height, style);
         }
         else
         {
-            import api.dm.kit.sprites.sprites2d.shapes.triangle : Triangle;
+            import api.dm.kit.sprites2d.shapes.triangle : Triangle;
 
             shape = new Triangle(width, height, style);
         }

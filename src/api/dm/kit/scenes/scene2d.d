@@ -1,7 +1,7 @@
 module api.dm.kit.scenes.scene2d;
 
 import api.dm.kit.events.event_kit_target : EventKitTarget;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.factories.factory_kit : FactoryKit;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.windows.window : Window;
@@ -458,7 +458,7 @@ class Scene2d : EventKitTarget
             surf.dispose;
         }
 
-        import api.dm.kit.sprites.sprites2d.images.image : Image;
+        import api.dm.kit.sprites2d.images.image : Image;
 
         auto im = new Image;
         build(im);

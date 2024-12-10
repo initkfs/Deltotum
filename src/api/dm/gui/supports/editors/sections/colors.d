@@ -2,7 +2,7 @@ module api.dm.gui.supports.editors.sections.colors;
 
 import api.dm.gui.controls.control : Control;
 import api.math.geom2.rect2 : Rect2d;
-import api.dm.kit.sprites.sprites2d.layouts.flow_layout : FlowLayout;
+import api.dm.kit.sprites2d.layouts.flow_layout : FlowLayout;
 
 import std.stdio;
 import std.conv : to;
@@ -65,7 +65,7 @@ class Colors : Control
 
         //         setContainer.addCreate(colorContainer);
 
-        //         import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+        //         import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
         //         auto colorHex = cast(string) color;
         //         auto newColor = RGBA.web(colorHex);

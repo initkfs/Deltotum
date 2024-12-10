@@ -1,6 +1,6 @@
 module api.dm.kit.assets.fonts.bitmap.bitmap_font;
 
-import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 import api.dm.com.graphics.com_texture: ComTexture;
 

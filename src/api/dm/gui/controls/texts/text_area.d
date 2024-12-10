@@ -3,9 +3,9 @@ module api.dm.gui.controls.texts.text_area;
 import api.dm.gui.controls.texts.text_view : TextView;
 import api.dm.gui.controls.meters.scrolls.vscroll : VScroll;
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.sprites2d.sprite2d: Sprite2d;
+import api.dm.kit.sprites2d.sprite2d: Sprite2d;
 import api.dm.gui.containers.hbox : HBox;
-import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
+import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 
 import std.stdio;
 
@@ -44,7 +44,7 @@ class TextArea : HBox
     override Sprite2d newBackground()
     {
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-        import api.dm.kit.sprites.sprites2d.shapes.convex_polygon : ConvexPolygon;
+        import api.dm.kit.sprites2d.shapes.convex_polygon : ConvexPolygon;
 
         GraphicStyle backgroundStyle = GraphicStyle(1, theme.colorAccent, isBackground, theme
                 .colorPrimary);

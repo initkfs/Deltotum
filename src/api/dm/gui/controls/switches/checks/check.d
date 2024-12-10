@@ -2,7 +2,7 @@ module api.dm.gui.controls.switches.checks.check;
 
 import api.dm.gui.controls.switches.base_biswitch : BaseBiswitch;
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
 /**
  * Authors: initkfs
@@ -80,7 +80,7 @@ class Check : BaseBiswitch
 
     Sprite2d newMarker()
     {
-        import api.dm.kit.sprites.sprites2d.shapes.convex_polygon : ConvexPolygon;
+        import api.dm.kit.sprites2d.shapes.convex_polygon : ConvexPolygon;
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
         assert(markerWidth > 0);
@@ -99,7 +99,7 @@ class Check : BaseBiswitch
 
     Sprite2d newIndeterminateMarker()
     {
-        import api.dm.kit.sprites.sprites2d.shapes.rectangle : Rectangle;
+        import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
         assert(markerWidth > 0);

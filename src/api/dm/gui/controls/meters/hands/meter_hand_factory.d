@@ -3,12 +3,12 @@ module api.dm.gui.controls.meters.hands.meter_hand_factory;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 
 private
 {
-    import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vshape2d : VShape;
+    import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
     import api.math.geom2.vec2 : Vec2d;
     import Math = api.math;
 

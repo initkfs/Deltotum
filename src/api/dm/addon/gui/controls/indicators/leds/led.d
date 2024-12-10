@@ -1,10 +1,10 @@
 module api.dm.addon.gui.controls.indicators.leds.led;
 
 import api.dm.addon.gui.controls.indicators.leds.led_base : LedBase;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.containers.hbox : HBox;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -27,7 +27,7 @@ class Led : LedBase
 
     override protected Sprite2d newLayerShape(GraphicStyle style, double layerInnerPadding, double blurSize)
     {
-        import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vcircle : VCircle;
+        import api.dm.kit.sprites2d.textures.vectors.shapes.vcircle : VCircle;
 
         auto shape = new VCircle(width / 2 - layerInnerPadding, style, width, height);
         setColorProcessing(shape, blurSize);

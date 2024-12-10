@@ -1,20 +1,20 @@
 module api.dm.gui.controls.switches.toggles.base_toggle;
 
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.switches.base_biswitch : BaseBiswitch;
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.sprites2d.shapes.shape2d : Shape2d;
+import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.kit.sprites.sprites2d.shapes.rectangle : Rectangle;
+import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
 import api.dm.gui.events.action_event : ActionEvent;
-import api.dm.kit.sprites.sprites2d.tweens.min_max_tween2d : MinMaxTween2d;
-import api.dm.kit.sprites.sprites2d.tweens.tween2d : Tween2d;
-import api.dm.kit.sprites.sprites2d.tweens.targets.value_tween2d : ValueTween2d;
-import api.dm.kit.sprites.sprites2d.tweens.targets.props.opacity_tween2d : OpacityTween2d;
-import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.tweens.min_max_tween2d : MinMaxTween2d;
+import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
+import api.dm.kit.sprites2d.tweens.targets.value_tween2d : ValueTween2d;
+import api.dm.kit.sprites2d.tweens.targets.props.opacity_tween2d : OpacityTween2d;
+import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.sprites.sprites2d.tweens.targets.target_tween2d : TargetTween2d;
+import api.dm.kit.sprites2d.tweens.targets.target_tween2d : TargetTween2d;
 import api.math.geom2.vec2 : Vec2d;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.labeled : Labeled;
@@ -137,7 +137,7 @@ class BaseToggle : BaseBiswitch
         }
 
         auto shape = theme.shape(size.x, size.y, angle, style);
-        // import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
+        // import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
 
         // shape.layout = new CenterLayout;
         return shape;
@@ -146,7 +146,7 @@ class BaseToggle : BaseBiswitch
     protected Sprite2d newThumbContainer()
     {
         import api.dm.gui.containers.container;
-        import api.dm.kit.sprites.sprites2d.layouts.managed_layout : ManagedLayout;
+        import api.dm.kit.sprites2d.layouts.managed_layout : ManagedLayout;
 
         auto thumbContainer = new Container;
 
@@ -177,7 +177,7 @@ class BaseToggle : BaseBiswitch
 
     MinMaxTween2d!Vec2d newThumbEffectAnimation()
     {
-        import api.dm.kit.sprites.sprites2d.tweens.targets.motions.linear_motion2d : LinearMotion2d;
+        import api.dm.kit.sprites2d.tweens.targets.motions.linear_motion2d : LinearMotion2d;
         import api.dm.kit.tweens.curves.uni_interpolator : UniInterpolator;
 
         auto uniInterp = new UniInterpolator;

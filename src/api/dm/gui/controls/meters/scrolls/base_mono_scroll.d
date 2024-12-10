@@ -1,6 +1,6 @@
 module api.dm.gui.controls.meters.scrolls.base_mono_scroll;
 
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.meters.scrolls.base_scroll : BaseScroll;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
@@ -35,7 +35,7 @@ abstract class BaseMonoScroll : BaseScroll
     {
         super(minValue, maxValue);
 
-        import api.dm.kit.sprites.sprites2d.layouts.managed_layout : ManagedLayout;
+        import api.dm.kit.sprites2d.layouts.managed_layout : ManagedLayout;
 
         layout = new ManagedLayout;
         layout.isAutoResize = true;

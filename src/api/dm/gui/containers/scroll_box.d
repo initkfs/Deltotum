@@ -1,7 +1,7 @@
 module api.dm.gui.containers.scroll_box;
 
 import api.dm.gui.containers.container : Container;
-import api.dm.kit.sprites.sprites2d.layouts.managed_layout : ManagedLayout;
+import api.dm.kit.sprites2d.layouts.managed_layout : ManagedLayout;
 import api.math.geom2.rect2 : Rect2d;
 
 import api.dm.gui.containers.vbox : VBox;
@@ -9,7 +9,7 @@ import api.dm.gui.containers.hbox : HBox;
 import api.dm.gui.containers.stack_box : StackBox;
 import api.dm.gui.controls.meters.scrolls.hscroll : HScroll;
 import api.dm.gui.controls.meters.scrolls.vscroll : VScroll;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.math.insets : Insets;
 
 enum ScrollBarPolicy
@@ -46,7 +46,7 @@ class ScrollBox : Container
         this.width = width;
         this.height = height;
 
-        import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
+        import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
         isBorder = true;
         layout = new VLayout(0);

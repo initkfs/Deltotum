@@ -15,7 +15,7 @@ import api.dm.kit.apps.caps.cap_graphics : CapGraphics;
 import api.dm.kit.graphics.graphics : Graphics;
 import api.dm.kit.assets.asset : Asset;
 
-import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 import api.core.utils.factories : ProviderFactory;

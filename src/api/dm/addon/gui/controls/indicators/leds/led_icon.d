@@ -1,17 +1,17 @@
 module api.dm.addon.gui.controls.indicators.leds.led_icon;
 
 import api.dm.addon.gui.controls.indicators.leds.led_base : LedBase;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.containers.hbox : HBox;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsv : HSV;
 import api.math.insets : Insets;
 import IconName = api.dm.gui.themes.icons.icon_name;
-import api.dm.kit.sprites.sprites2d.images.image : Image;
+import api.dm.kit.sprites2d.images.image : Image;
 
 import std.conv : to;
 

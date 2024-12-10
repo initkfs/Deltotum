@@ -1,7 +1,7 @@
 module api.dm.gui.controls.switches.switch_group;
 
 import api.dm.gui.containers.container : Container;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.switches.base_biswitch : BaseBiswitch;
 
 /**

@@ -3,13 +3,13 @@ module api.dm.gui.controls.meters.gauges.radial_gauge;
 import api.dm.gui.controls.meters.radial_min_value_meter : RadialMinValueMeter;
 import api.dm.gui.controls.meters.scales.statics.rscale_static : RScaleStatic;
 import api.dm.gui.controls.indicators.color_bars.radial_color_bar: RadialColorBar;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.gui.controls.texts.text : Text;
-import api.dm.kit.sprites.sprites2d.tweens.tween2d : Tween2d;
-import api.dm.kit.sprites.sprites2d.tweens.targets.value_tween2d : ValueTween2d;
+import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
+import api.dm.kit.sprites2d.tweens.targets.value_tween2d : ValueTween2d;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 
 import api.math.geom2.vec2 : Vec2d;
@@ -21,7 +21,7 @@ import std.conv : to;
 
 debug import std.stdio : writeln, writefln;
 
-import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vshape2d : VShape;
+import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
 
 struct ZoneColor
 {
@@ -75,7 +75,7 @@ class RadialGauge : RadialMinValueMeter!double
     {
         super(diameter, minValue, maxValue, minAngleDeg, maxAngleDeg);
 
-        import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
+        import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
 
         this.layout = new CenterLayout;
         isDrawBounds = true;

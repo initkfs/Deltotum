@@ -5,7 +5,7 @@ version(DmAddon):
 // dfmt on
 
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.math.geom2.vec2 : Vec2d;
@@ -31,7 +31,7 @@ class Curves : Control
     {
         id = "dm_gui_editor_section_curves";
 
-        import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
+        import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
         layout = new VLayout;
         layout.isAutoResize = true;
@@ -70,13 +70,13 @@ class Curves : Control
         Sprite2d shape;
         if (capGraphics.isVectorGraphics)
         {
-            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vpoints_shape: VPointsShape;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.vpoints_shape: VPointsShape;
 
             shape = new VPointsShape(points, shapeSize, shapeSize, shapeStyle, isClosePath, isDrawFromCenter);
         }
         else
         {
-            import api.dm.kit.sprites.sprites2d.shapes.points_shape : PointsShape;
+            import api.dm.kit.sprites2d.shapes.points_shape : PointsShape;
 
             shape = new PointsShape(shapeSize, shapeSize, shapeStyle, points, isClosePath, isDrawFromCenter);
         }

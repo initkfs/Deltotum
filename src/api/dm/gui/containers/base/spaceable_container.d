@@ -1,6 +1,6 @@
 module api.dm.gui.containers.base.spaceable_container;
 
-import api.dm.kit.sprites.sprites2d.layouts.spaceable_layout : SpaceableLayout;
+import api.dm.kit.sprites2d.layouts.spaceable_layout : SpaceableLayout;
 
 import api.dm.gui.containers.container : Container;
 

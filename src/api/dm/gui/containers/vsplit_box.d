@@ -1,8 +1,8 @@
 module api.dm.gui.containers.vsplit_box;
 
 import api.dm.gui.containers.container : Container;
-import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
 //TODO remove duplication with HSplitBox
 struct SeparatorData
@@ -73,7 +73,7 @@ class VSplitBox : Container
         assert(prev);
         assert(next);
 
-        import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+        import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
         auto sep = new VConvexPolygon(7, 7,

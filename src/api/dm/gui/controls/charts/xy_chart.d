@@ -75,7 +75,7 @@ class XYChart : Container
 
         padding = 5;
 
-        import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
+        import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
         layout = new VLayout(0);
         layout.isAutoResize = true;

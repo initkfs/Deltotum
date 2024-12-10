@@ -4,15 +4,15 @@ import api.dm.gui.controls.meters.min_value_meter : MinValueMeter;
 import api.dm.gui.controls.meters.scales.dynamics.base_scale_dynamic : BaseScaleDynamic;
 import api.dm.gui.controls.indicators.color_bars.color_bar : ColorBar;
 import api.dm.gui.containers.container : Container;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.containers.container : Container;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import Math = api.dm.math;
 
-import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
-import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
+import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
+import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 
 import api.dm.gui.containers.hbox : HBox;
 import api.dm.kit.graphics.colors.rgba : RGBA;

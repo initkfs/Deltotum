@@ -7,7 +7,7 @@ import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 import api.core.utils.factories : ProviderFactory;
 
 import api.dm.kit.assets.fonts.font : Font;
-import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;

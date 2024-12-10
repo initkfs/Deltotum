@@ -5,7 +5,7 @@ import api.dm.addon.fractals.hopalongs.hopalong : Hopalong, HopalongType;
 import api.dm.gui.controls.forms.fields.regulate_text_field : RegulateTextField;
 import api.dm.gui.controls.forms.fields.regulate_text_panel : RegulateTextPanel;
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.containers.container : Container;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.containers.hbox : HBox;
@@ -58,7 +58,7 @@ class HopalongGenerator : Control
 
         rnd = new Random;
 
-        import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
+        import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 
         layout = new HLayout(5);
         layout.isAlignY = true;

@@ -2,9 +2,9 @@ module api.dm.gui.controls.meters.scales.statics.base_scale_static;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.meters.scales.base_drawable_scale : BaseDrawableScale;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
-import api.dm.kit.sprites.sprites2d.textures.vectors.vector_texture : VectorTexture;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.math.geom2.vec2 : Vec2d;
 import api.math.geom2.rect2 : Rect2d;

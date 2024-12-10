@@ -1,7 +1,7 @@
 module api.dm.gui.supports.editors.sections.animations;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
 import Math = api.dm.math;
@@ -9,9 +9,9 @@ import api.math.geom2.vec2 : Vec2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
 import api.dm.kit.tweens.curves.uni_interpolator : UniInterpolator;
-import api.dm.kit.sprites.sprites2d.tweens.targets.motions.linear_motion2d : LinearMotion2d;
-import api.dm.kit.sprites.sprites2d.tweens.targets.value_tween2d : ValueTween2d;
-import api.dm.kit.sprites.sprites2d.tweens.targets.props.angle_tween2d : AngleTween2d;
+import api.dm.kit.sprites2d.tweens.targets.motions.linear_motion2d : LinearMotion2d;
+import api.dm.kit.sprites2d.tweens.targets.value_tween2d : ValueTween2d;
+import api.dm.kit.sprites2d.tweens.targets.props.angle_tween2d : AngleTween2d;
 
 import std.stdio;
 import std.conv : to;
@@ -63,7 +63,7 @@ class Animations : Control
             }
         }
 
-        import api.dm.kit.sprites.sprites2d.shapes.rectangle : Rectangle;
+        import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
         import api.dm.kit.graphics.colors.rgba : RGBA;
 

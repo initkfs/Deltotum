@@ -203,8 +203,8 @@ class MDLandscapeGenerator : Control
     import api.dm.gui.containers.stack_box : StackBox;
     import api.dm.kit.graphics.colors.rgba : RGBA;
     import api.math.geom2.rect2 : Rect2d;
-    import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
-    import api.dm.kit.sprites.sprites2d.textures.vectors.vector_texture : VectorTexture;
+    import api.dm.kit.sprites2d.sprite2d : Sprite2d;
+    import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
 
     StackBox contentContainer;
     double canvasWidth = 0;
@@ -390,7 +390,7 @@ class MDLandscapeGenerator : Control
 
         rnd = new Random;
 
-        import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
+        import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 
         layout = new HLayout(5);
         layout.isAlignY = true;

@@ -1,6 +1,6 @@
 module api.dm.addon.gui.controls.indicators.gauges.gauge;
 
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.controls.texts.text : Text;
@@ -42,7 +42,7 @@ class Gauge : Control
         this.width = diameter;
         this.height = diameter;
 
-        import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
+        import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
 
         this.layout = new CenterLayout();
         layout.isAutoResize = true;
@@ -82,7 +82,7 @@ class Gauge : Control
             faceStyle.isFill = false;
         }
 
-        import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.varc: VArc;
+        import api.dm.kit.sprites2d.textures.vectors.shapes.varc: VArc;
 
         auto newOuterFace = new VArc(radius, faceStyle);
         newOuterFace.fromAngleRad = (3 * Math.PI) / 4;

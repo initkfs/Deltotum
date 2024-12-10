@@ -1,11 +1,11 @@
 module api.dm.gui.controls.control;
 
 import api.dm.gui.components.gui_component : GuiComponent;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.events.action_event : ActionEvent;
-import api.dm.kit.sprites.sprites2d.layouts.layout2d : Layout2d;
+import api.dm.kit.sprites2d.layouts.layout2d : Layout2d;
 import api.math.insets : Insets;
-import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.styles.default_style : DefaultStyle;
 import api.dm.kit.graphics.styles.default_style;
@@ -16,8 +16,8 @@ import api.dm.gui.controls.popups.base_popup : BasePopup;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.themes.theme : Theme;
 
-import api.dm.kit.sprites.sprites2d.tweens.tween2d : Tween2d;
-import api.dm.kit.sprites.sprites2d.tweens.targets.props.opacity_tween2d : OpacityTween2d;
+import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
+import api.dm.kit.sprites2d.tweens.targets.props.opacity_tween2d : OpacityTween2d;
 
 import std.typecons : Nullable;
 
@@ -216,7 +216,7 @@ class Control : GuiComponent
     {
         if (layout)
         {
-            import api.dm.kit.sprites.sprites2d.layouts.spaceable_layout : SpaceableLayout;
+            import api.dm.kit.sprites2d.layouts.spaceable_layout : SpaceableLayout;
 
             if (auto slayout = cast(SpaceableLayout) layout)
             {
@@ -1024,7 +1024,7 @@ class Control : GuiComponent
         assert(isCreated, "Sprite2d not created");
 
         import api.dm.gui.themes.icons.icon_name;
-        import api.dm.kit.sprites.sprites2d.images.image : Image;
+        import api.dm.kit.sprites2d.images.image : Image;
 
         import std.conv : to;
 
@@ -1033,7 +1033,7 @@ class Control : GuiComponent
         const mustBeIconData = theme.iconData(iconName);
         if (mustBeIconData.isNull)
         {
-            import api.dm.kit.sprites.sprites2d.shapes.rectangle : Rectangle;
+            import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
             import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
             import api.dm.kit.graphics.colors.rgba : RGBA;
 

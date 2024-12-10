@@ -15,7 +15,7 @@ import api.dm.kit.events.kit_event_manager : KitEventManager;
 import api.dm.back.sdl2.sdl_event_processor : SdlEventProcessor;
 import api.dm.kit.graphics.graphics : Graphics;
 import api.dm.kit.interacts.interact : Interact;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.assets.asset : Asset;
 import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;

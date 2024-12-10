@@ -1,7 +1,7 @@
 module api.dm.gui.controls.meters.progress.radial_progress_bar;
 
 import api.dm.gui.controls.meters.progress.base_radial_progress_bar : BaseRadialProgressBar;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.styles.graphic_style: GraphicStyle;
 import api.dm.gui.controls.texts.text : Text;
 
@@ -28,7 +28,7 @@ class RadialProgressBar : BaseRadialProgressBar
     {
         super(diameter, minValue, maxValue, minAngleDeg, maxAngleDeg);
 
-        import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
+        import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
 
         this.layout = new CenterLayout;
     }
@@ -58,7 +58,7 @@ class RadialProgressBar : BaseRadialProgressBar
 
         if (capGraphics.isVectorGraphics)
         {
-            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.varc : VArc;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.varc : VArc;
 
             auto style = segmentStyle == GraphicStyle.init ? createFillStyle : segmentStyle;
 
@@ -178,7 +178,7 @@ class RadialProgressBar : BaseRadialProgressBar
 //     {
 //         super(diameter, minValue, maxValue, 0, 0);
 
-//         import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
+//         import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
 
 //         this.layout = new CenterLayout;
 //     }

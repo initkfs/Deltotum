@@ -5,8 +5,8 @@ import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.indicators.color_bars.color_bar_value: ColorBarValue;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
 import Math = api.dm.math;
 
@@ -15,7 +15,7 @@ import Math = api.dm.math;
  */
 private
 {
-    import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vshape2d : VShape;
+    import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
 
     class ColorBarShape : VShape
     {
@@ -83,7 +83,7 @@ class RadialColorBar : BaseColorBar
         this.minAngleDeg = minAngleDeg;
         this.maxAngleDeg = maxAngleDeg;
 
-        import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
+        import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
 
         layout = new CenterLayout;
     }

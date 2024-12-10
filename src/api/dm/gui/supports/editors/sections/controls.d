@@ -2,7 +2,7 @@ module api.dm.gui.supports.editors.sections.controls;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.containers.container : Container;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.controls.trees.tree_item : TreeItem;
@@ -10,7 +10,7 @@ import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.containers.hbox : HBox;
 import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.containers.frame : Frame;
-import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
+import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 import api.dm.gui.controls.carousels.carousel;
 
 /**
@@ -22,7 +22,7 @@ class Controls : Control
     {
         id = "deltotum_gui_editor_section_controls";
 
-        import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
+        import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
         layout = new VLayout;
         layout.isAutoResize = true;
@@ -107,7 +107,7 @@ class Controls : Control
 
         // iconsContainer.isBackground = false;
 
-        // import api.dm.kit.sprites.sprites2d.images.image : Image;
+        // import api.dm.kit.sprites2d.images.image : Image;
 
         // auto image1 = new Image();
         // build(image1);
@@ -149,7 +149,7 @@ class Controls : Control
 
         import api.dm.gui.controls.switches.buttons.poly_button : PolyButton;
 
-        import api.dm.kit.sprites.sprites2d.tweens.pause_tween2d : PauseTween2d;
+        import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
 
         auto regBtn = new PolyButton("Button");
         btnRoot3.addCreate(regBtn);
@@ -177,8 +177,8 @@ class Controls : Control
         import api.dm.gui.controls.switches.checks.check : Check;
         import api.dm.gui.controls.choices.choice_box : ChoiceBox;
         import Icons = api.dm.gui.themes.icons.icon_name;
-        import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
-        import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
+        import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
+        import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
         import api.dm.gui.controls.switches.buttons.triangle_button: TriangleButton;
 
         auto toggleBtnContainer = new SwitchGroup;
@@ -541,7 +541,7 @@ class Controls : Control
         paginationRoot.layout.isAlignX = true;
         rootContainer.addCreate(paginationRoot);
 
-        import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+        import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
@@ -650,7 +650,7 @@ class Controls : Control
         auto winRoot2 = new HBox(5);
         frame.addCreate(winRoot2);
 
-        import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
+        import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
         import api.dm.kit.graphics.styles.default_style : DefaultStyle;
 
         auto winRestore = new Button("Restore", IconName.push_outline, (ref e) {
@@ -753,7 +753,7 @@ class Controls : Control
         auto bottomGauge = new RadialGauge(gaugeDiameter, 0, 180);
         root.addCreate(bottomGauge);
 
-        import api.dm.kit.sprites.sprites2d.tweens.pause_tween2d : PauseTween2d;
+        import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
 
         auto gaugeAnim1 = new PauseTween2d(850);
         gaugeAnim1.isInfinite = true;

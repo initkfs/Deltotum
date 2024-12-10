@@ -1,7 +1,7 @@
 module api.dm.addon.vecfields.vec_field_gen;
 
 import api.dm.addon.vecfields.vec_field : VecField;
-import api.dm.kit.sprites.sprites2d.textures.vectors.vector_texture : VectorTexture;
+import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
 
 import api.dm.gui.containers.container : Container;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -37,7 +37,7 @@ class VecFieldGen : Container
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
 
-        import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
+        import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 
         layout = new HLayout(5);
         layout.isAutoResize = true;

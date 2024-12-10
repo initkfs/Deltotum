@@ -1,10 +1,10 @@
 module api.dm.gui.controls.magnifiers.magnifier;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
-import api.dm.kit.sprites.sprites2d.layouts.layout2d : Layout2d;
-import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.layouts.layout2d : Layout2d;
+import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 import api.dm.gui.controls.texts.text : Text;
 import api.math.geom2.rect2 : Rect2d;
 import Math = api.dm.math;
@@ -35,7 +35,7 @@ class Magnifier : Control
 
     this()
     {
-        import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
+        import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
 
         this.layout = new CenterLayout;
         layout.isAutoResize = true;
@@ -87,7 +87,7 @@ class Magnifier : Control
                         magnifier.unlock;
                         break;
                     case texture:
-                        import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
+                        import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 
                         Texture2d originalTexture = cast(Texture2d) _original;
                         assert(originalTexture, "Source is not a texture");

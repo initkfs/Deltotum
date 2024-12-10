@@ -1,6 +1,6 @@
 module api.dm.addon.gui.controls.indicators.seven_segment;
 
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
@@ -161,13 +161,13 @@ class SevenSegment : Control
         const double radius = dotDiameter / 2;
         if (capGraphics.isVectorGraphics)
         {
-            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vcircle : VCircle;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.vcircle : VCircle;
 
             segment = new VCircle(radius, createSegmentStyle);
         }
         else
         {
-            import api.dm.kit.sprites.sprites2d.shapes.circle : Circle;
+            import api.dm.kit.sprites2d.shapes.circle : Circle;
 
             segment = new Circle(radius, createSegmentStyle);
         }
@@ -181,13 +181,13 @@ class SevenSegment : Control
         Sprite2d segment;
         if (capGraphics.isVectorGraphics)
         {
-            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
             segment = new VConvexPolygon(hSegmentWidth, hSegmentHeight, createSegmentStyle, segmentCornerBevel);
         }
         else
         {
-            import api.dm.kit.sprites.sprites2d.shapes.convex_polygon : ConvexPolygon;
+            import api.dm.kit.sprites2d.shapes.convex_polygon : ConvexPolygon;
 
             segment = new ConvexPolygon(hSegmentWidth, hSegmentHeight, createSegmentStyle, segmentCornerBevel);
         }
@@ -201,13 +201,13 @@ class SevenSegment : Control
         Sprite2d segment;
         if (capGraphics.isVectorGraphics)
         {
-            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
 
             segment = new VConvexPolygon(vSegmentWidth, vSegmentHeight, createSegmentStyle, segmentCornerBevel);
         }
         else
         {
-            import api.dm.kit.sprites.sprites2d.shapes.convex_polygon : ConvexPolygon;
+            import api.dm.kit.sprites2d.shapes.convex_polygon : ConvexPolygon;
 
             segment = new ConvexPolygon(vSegmentWidth, vSegmentHeight, createSegmentStyle, segmentCornerBevel);
         }

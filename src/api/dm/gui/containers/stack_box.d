@@ -1,7 +1,7 @@
 module api.dm.gui.containers.stack_box;
 
 import api.dm.gui.containers.container : Container;
-import api.dm.kit.sprites.sprites2d.layouts.center_layout : CenterLayout;
+import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
 
 /**
  * Authors: initkfs
@@ -19,7 +19,7 @@ class StackBox : Container
 
 unittest
 {
-    import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+    import api.dm.kit.sprites2d.sprite2d : Sprite2d;
     import api.math.insets : Insets;
 
     auto sp1 = new Sprite2d;

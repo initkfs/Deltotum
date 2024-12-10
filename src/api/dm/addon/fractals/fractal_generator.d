@@ -1,6 +1,6 @@
 module api.dm.addon.fractals.fractal_generator;
 
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.addon.fractals.lshape : LShape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 

@@ -1,7 +1,7 @@
 module api.dm.gui.controls.indicators.segments.radial_segment_bar;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
 import Math = api.math;
@@ -51,7 +51,7 @@ class RadialSegmentBar : Control
 
         if (capGraphics.isVectorGraphics)
         {
-            import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.varc : VArc;
+            import api.dm.kit.sprites2d.textures.vectors.shapes.varc : VArc;
 
             auto style = segmentStyle == GraphicStyle.init ? createFillStyle : segmentStyle;
 

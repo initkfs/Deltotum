@@ -1,6 +1,6 @@
 module api.dm.gui.controls.forms.fields.regulate_text_panel;
 import api.dm.gui.controls.forms.fields.regulate_text_field : RegulateTextField;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control: Control;
 import api.dm.gui.containers.container : Container;
 
@@ -13,7 +13,7 @@ class RegulateTextPanel : Container
 
     this(double fieldSpacing = 5)
     {
-        import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
+        import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
         layout = new VLayout(fieldSpacing);
         layout.isAutoResize = true;

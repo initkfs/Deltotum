@@ -5,8 +5,8 @@ import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.dm.kit.factories.image_factory : ImageFactory;
 import api.dm.kit.factories.shape_factory : ShapeFactory;
 import api.dm.kit.factories.texture_factory : TextureFactory;
-import api.dm.kit.sprites.sprites2d.textures.texture2d : Texture2d;
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
 

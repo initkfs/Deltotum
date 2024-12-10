@@ -1,9 +1,9 @@
 module api.dm.gui.controls.expanders.expander;
 
-import api.dm.kit.sprites.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.containers.stack_box : StackBox;
-import api.dm.kit.sprites.sprites2d.tweens.min_max_tween2d : MinMaxTween2d;
+import api.dm.kit.sprites2d.tweens.min_max_tween2d : MinMaxTween2d;
 
 enum ExpanderPosition
 {
@@ -46,7 +46,7 @@ class Expander : Control
 
     protected void createHLayout()
     {
-        import api.dm.kit.sprites.sprites2d.layouts.hlayout : HLayout;
+        import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 
         this.layout = new HLayout;
         layout.isParentSizeReduce = true;
@@ -55,7 +55,7 @@ class Expander : Control
 
     protected void createVLayout()
     {
-        import api.dm.kit.sprites.sprites2d.layouts.vlayout : VLayout;
+        import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
         this.layout = new VLayout;
         layout.isParentSizeReduce = true;
@@ -118,7 +118,7 @@ class Expander : Control
 
     protected void createExpandLabel()
     {
-        import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vtriangle : VTriangle;
+        import api.dm.kit.sprites2d.textures.vectors.shapes.vtriangle : VTriangle;
 
         auto style = createStyle;
         style.isFill = true;
