@@ -129,7 +129,9 @@ class Sprite2d : EventKitTarget
     bool isDrawClip;
 
     bool isDrawBounds;
+    bool isDrawCenterBounds;
     RGBA boundsColor = RGBA.red;
+    RGBA boundsCenterColor = RGBA.yellow;
 
     bool _visible = true;
     bool isVisibilityForChildren;
@@ -614,6 +616,10 @@ class Sprite2d : EventKitTarget
         if (isDrawBounds)
         {
             drawBounds;
+        }
+
+        if(isDrawCenterBounds){
+            drawCenterBounds;
         }
 
         if (isDrawClip)
@@ -1792,6 +1798,26 @@ class Sprite2d : EventKitTarget
         graphics.line(leftBottomX, leftBottomY, leftTopX, leftTopY);
 
         graphics.restoreColor;
+    }
+
+    void drawCenterBounds()
+    {
+        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+        import api.dm.kit.graphics.colors.rgba : RGBA;
+
+        if (width == 0 || height == 0)
+        {
+            return;
+        }
+
+        graphics.changeColor(boundsCenterColor);
+        scope(exit){
+            graphics.restoreColor;
+        }
+
+        const thisBounds = boundsRect;
+        graphics.line(thisBounds.middleX, thisBounds.y, thisBounds.middleX, thisBounds.bottom);
+        graphics.line(thisBounds.x, thisBounds.middleY, thisBounds.right, thisBounds.middleY);
     }
 
     void drawClip()

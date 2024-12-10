@@ -79,58 +79,18 @@ abstract class BaseDrawableScale : BaseMinMaxScale
             return;
         }
 
-        if (isDrawAxis)
-        {
-            const Line2d pos = axisPos;
-            drawAxis(pos.start, pos.end, axisColor);
+        drawScale(
+            (Vec2d start, Vec2d end, RGBA) { drawAxis(start, end, axisColor); },
+            (size_t i, Vec2d pos, bool isMajorTick, double offsetTick) {
+            return drawTick(i, pos, isMajorTick, offsetTick);
+        },
+            (size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, double offsetTick) {
+            return drawLabel(labelIndex, tickIndex, pos, isMajorTick, offsetTick);
+        },
+            (size_t i, Vec2d pos, double offsetTick) {
+            return tickStep(i, pos, offsetTick);
         }
-
-        auto count = tickCount;
-
-        if (count < 1)
-        {
-            return;
-        }
-
-        auto offset = tickOffset;
-
-        Vec2d startPos = tickStartPos;
-
-        size_t labelCounter;
-        bool isDrawTick;
-        foreach (i; 0 .. count)
-        {
-            isDrawTick = true;
-
-            if (i == 0)
-            {
-                if (!isDrawFirstTick)
-                {
-                    isDrawTick = false;
-                }
-            }
-
-            bool isMajorTick = majorTickStep > 0 && ((i % majorTickStep) == 0);
-
-            if (isShowFirstLastLabel && (i == 0 || i == count - 1))
-            {
-                isMajorTick = true;
-            }
-
-            if (isDrawTick)
-            {
-                drawTick(i, startPos, isMajorTick, offset);
-            }
-
-            bool isLabel = drawLabel(labelCounter, i, startPos, isMajorTick, offset);
-
-            if (isLabel)
-            {
-                labelCounter++;
-            }
-
-            startPos = tickStep(i, startPos, offset);
-        }
+        );
     }
 
     void drawScale(
@@ -153,10 +113,12 @@ abstract class BaseDrawableScale : BaseMinMaxScale
 
         auto count = tickCount;
 
-        if (count < 1)
+        if (count < 2)
         {
             return;
         }
+
+        const lastIndex = count - 1;
 
         auto offset = tickOffset;
 
@@ -168,19 +130,22 @@ abstract class BaseDrawableScale : BaseMinMaxScale
         {
             isDrawTick = true;
 
-            if (i == 0)
-            {
-                if (!isDrawFirstTick)
-                {
-                    isDrawTick = false;
-                }
-            }
-
             bool isMajorTick = majorTickStep > 0 && ((i % majorTickStep) == 0);
 
             if (isShowFirstLastLabel && (i == 0 || i == count - 1))
             {
                 isMajorTick = true;
+            }
+
+            if (i == 0)
+            {
+                isDrawTick = isDrawFirstTick;
+                isMajorTick = isFirstTickMajorTick;
+            }
+            else if (i == lastIndex)
+            {
+                isDrawTick = isDrawLastTick;
+                isMajorTick = isLastTickMajorTick;
             }
 
             if (isDrawTick && onDrawTick)

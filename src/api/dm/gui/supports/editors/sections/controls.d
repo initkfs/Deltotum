@@ -442,9 +442,10 @@ class Controls : Control
             radGauge.valueAngle = pointerPos;
         };
 
-        import api.dm.gui.controls.meters.clocks.analog_clock: AnalogClock;
+        import api.dm.gui.controls.meters.gauges.analog_clock: AnalogClock;
 
-        auto anClock = new AnalogClock;
+        auto anClock = new AnalogClock(200);
+        anClock.isAutorun = true;
         root.addCreate(anClock);
 
         import api.dm.gui.controls.meters.progress.radial_progress_bar: RadialProgressBar;
@@ -558,7 +559,7 @@ class Controls : Control
         pagination.pageFactory = (size_t pageIndex) { import std.conv : to; };
         paginationRoot.addCreate(pagination);
 
-        import api.dm.gui.controls.meters.clocks.analog_clock : AnalogClock;
+        import api.dm.gui.controls.meters.gauges.analog_clock : AnalogClock;
 
         auto clock1 = new AnalogClock;
         rootContainer.addCreate(clock1);

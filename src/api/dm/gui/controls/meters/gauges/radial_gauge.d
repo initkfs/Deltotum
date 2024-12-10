@@ -99,18 +99,13 @@ class RadialGauge : RadialMinValueMeter!double
     {
         import api.dm.gui.controls.meters.hands.meter_hand_factory : MeterHandFactory;
 
-        auto handStyle = createFillStyle;
-        if (!handStyle.isPreset)
-        {
-            handStyle.fillColor = theme.colorDanger;
-            handStyle.lineColor = theme.colorAccent;
-        }
+        auto handStyle = createHandStyle;
 
         import api.math.geom2.rect2 : Rect2d;
 
         auto handShapeSize = radius * 0.7;
 
-        auto maxBounds = (Rect2d(0, 0, handShapeSize, handShapeSize)).boundingBoxMax;
+        auto maxBounds = handBoundingBox(handShapeSize);
 
         auto factory = new MeterHandFactory;
         buildInitCreate(factory);

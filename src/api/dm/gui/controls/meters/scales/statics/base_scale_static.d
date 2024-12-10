@@ -39,6 +39,12 @@ abstract class BaseScaleStatic : BaseDrawableScale
     Text delegate(Text) onLabelProtoCreate;
     void delegate(Text) onLabelProtoCreated;
 
+    protected
+    {
+        Vec2d minorProtoDsize;
+        Vec2d majorProtoDsize;
+    }
+
     this(double width = 0, double height = 0)
     {
         this._width = width;
@@ -117,6 +123,8 @@ abstract class BaseScaleStatic : BaseDrawableScale
     {
         auto shapeProto = theme.rectShape(width, height, angle, style);
         buildInitCreate(shapeProto);
+        shapeProto.isResizable = false;
+        shapeProto.isResizedByParent = false;
 
         if (auto shapeTexture = cast(Texture2d) shapeProto)
         {
@@ -125,6 +133,13 @@ abstract class BaseScaleStatic : BaseDrawableScale
             auto shape = shapeTexture.copyTo(maxBox.width, maxBox.height, isToCenter:
                 true);
             shape.bestScaleMode;
+            shape.isResizable = false;
+            shape.isResizedByParent = false;
+
+            const dw = shape.width - shapeTexture.width;
+            const dh = shape.height - shapeTexture.height;
+
+            minorProtoDsize = Vec2d(dw, dh);
 
             shapeProto.dispose;
 
@@ -137,6 +152,8 @@ abstract class BaseScaleStatic : BaseDrawableScale
     Sprite2d newMajorTickProtoShape(double width, double height, double angle, GraphicStyle style)
     {
         auto shape = newMinorTickProtoShape(width, height, angle, style);
+        shape.isResizable = false;
+        shape.isResizedByParent = false;
 
         if (auto shapeTexture = cast(Texture2d) shape)
         {
@@ -144,6 +161,13 @@ abstract class BaseScaleStatic : BaseDrawableScale
             auto newShape = shapeTexture.copyTo(maxBox.width, maxBox.height, isToCenter:
                 true);
             newShape.bestScaleMode;
+            newShape.isResizable = false;
+            newShape.isResizedByParent = false;
+
+            const dw = newShape.width - shapeTexture.width;
+            const dh = newShape.height - shapeTexture.height;
+
+            majorProtoDsize = Vec2d(dw, dh);
 
             shape.dispose;
 
@@ -166,6 +190,7 @@ abstract class BaseScaleStatic : BaseDrawableScale
         auto majorTickProtoStyle = createFillStyle;
         if (!majorTickProtoStyle.isPreset)
         {
+            majorTickProtoStyle.lineColor = theme.colorDanger;
             majorTickProtoStyle.fillColor = theme.colorDanger;
         }
 
@@ -191,7 +216,7 @@ abstract class BaseScaleStatic : BaseDrawableScale
             minorTickProto.dispose;
         }
 
-        if (majorTickProto && !minorTickProto.isDisposed)
+        if (majorTickProto && !majorTickProto.isDisposed)
         {
             majorTickProto.dispose;
         }

@@ -18,6 +18,10 @@ abstract class BaseScale : Control
     size_t majorTickStep = 5;
 
     bool isDrawFirstTick = true;
+    bool isDrawLastTick = true;
+
+    bool isFirstTickMajorTick = true;
+    bool isLastTickMajorTick = true;
 
     bool isShowFirstLastLabel = true;
     bool isShowFirstLabelText = true;
@@ -104,10 +108,10 @@ abstract class BaseScale : Control
         return format("%.*f"d, labelNumberPrecision, value);
     }
 
-    double tickMinWidth() => Math.min(tickMinorWidth, tickMajorWidth); 
-    double tickMaxWidth() => Math.max(tickMinorWidth, tickMajorWidth); 
+    double tickMinWidth() => Math.min(tickMinorWidth, tickMajorWidth);
+    double tickMaxWidth() => Math.max(tickMinorWidth, tickMajorWidth);
 
-    double tickMinHeight() => Math.min(tickMinorHeight, tickMajorHeight); 
-    double tickMaxHeight() => Math.max(tickMinorHeight, tickMajorHeight); 
+    double tickMinHeight() => Math.min(tickMinorHeight, tickMajorHeight);
+    double tickMaxHeight() => Math.max(tickMinorHeight, tickMajorHeight);
 
 }

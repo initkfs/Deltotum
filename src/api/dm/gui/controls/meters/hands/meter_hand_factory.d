@@ -10,6 +10,7 @@ private
 {
     import api.dm.kit.sprites.sprites2d.textures.vectors.shapes.vshape2d : VShape;
     import api.math.geom2.vec2 : Vec2d;
+    import Math = api.math;
 
     class VHand : VShape
     {
@@ -48,13 +49,13 @@ private
 
             ctx.lineWidth(style.lineWidth);
 
+            const halfWidth = handWidth / 2;
+
             const centerX = startPoint.x;
             const centerY = startPoint.y;
 
-            const double halfWidth = handWidth / 2.0;
-
             ctx.moveTo(centerX - halfWidth, centerY - handHeight + coneHeight);
-            ctx.lineTo(centerX, centerY - handHeight);
+            ctx.lineTo(centerX, centerY - handHeight + style.lineWidth);
             ctx.lineTo(centerX + halfWidth, centerY - handHeight + coneHeight);
             ctx.lineTo(centerX + halfWidth, centerY);
             ctx.lineTo(centerX - halfWidth, centerY);
@@ -66,7 +67,6 @@ private
                 ctx.fillPreserve;
             }
 
-            
             ctx.color(style.lineColor);
             ctx.stroke;
         }
@@ -97,7 +97,7 @@ class MeterHandFactory : Control
 
         if (capGraphics.isVectorGraphics)
         {
-            double newConeHeight = coneHeight == 0 ? handW : coneHeight;
+            double newConeHeight = coneHeight == 0 ? handW * 2 : coneHeight;
             
             auto newHand = new VHand(width, height, handW, handH, newConeHeight, handStyle);
             hand = newHand;
@@ -127,9 +127,7 @@ class MeterHandFactory : Control
             graphics.fillRect(center.x - handW / 2, center.y - handH, handW, handH, handStyle
                     .fillColor);
         }
-
-        hand.isDrawBounds = true;
-
+        
         return hand;
     }
 

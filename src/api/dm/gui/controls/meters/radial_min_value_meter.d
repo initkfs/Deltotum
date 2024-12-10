@@ -1,6 +1,8 @@
 module api.dm.gui.controls.meters.radial_min_value_meter;
 
 import api.dm.gui.controls.meters.min_value_meter : MinValueMeter;
+import api.dm.kit.graphics.styles.graphic_style: GraphicStyle;
+import api.math.geom2.rect2: Rect2d;
 
 /**
  * Authors: initkfs
@@ -25,6 +27,20 @@ abstract class RadialMinValueMeter(ValueType) : MinValueMeter!ValueType
 
         this.minAngleDeg = minAngleDeg;
         this.maxAngleDeg = maxAngleDeg;
+    }
+
+    GraphicStyle createHandStyle(){
+        auto handStyle = createFillStyle;
+        if (!handStyle.isPreset)
+        {
+            handStyle.fillColor = theme.colorDanger;
+            handStyle.lineColor = theme.colorAccent;
+        }
+        return handStyle;
+    }
+
+    Rect2d handBoundingBox(double handSize){
+        return (Rect2d(0, 0, handSize, handSize)).boundingBoxMax;
     }
 
     ValueType angleRange()
