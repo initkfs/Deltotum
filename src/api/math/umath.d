@@ -123,7 +123,7 @@ pragma(inline, true);
 double ctgh(double x) @nogc nothrow pure @safe => 1.0 / tanh(x);
 
 pragma(inline, true);
-double actg(double x) => atan(1.0 / x); 
+double actg(double x) => atan(1.0 / x);
 
 double actgs(double x)
 {
@@ -249,4 +249,11 @@ unittest
     assert(wrap(1, minValue, maxValue) == 1);
     assert(wrap(50, minValue, maxValue) == 1);
     assert(wrap(55, minValue, maxValue) == 6);
+}
+
+double roundEven(double v)
+{
+    return round(v * 0.5) * 2.0;
+    //import std.math.rounding : nearbyint;
+    //return nearbyint(v * 0.5) * 2.0;
 }

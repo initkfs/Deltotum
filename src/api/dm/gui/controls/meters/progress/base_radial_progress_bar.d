@@ -20,35 +20,12 @@ class BaseRadialProgressBar : RadialMinValueMeter!double
         super(diameter, minValue, maxValue, minAngleDeg, maxAngleDeg);
     }
 
-    // override void initialize()
-    // {
-    //     super.initialize;
-    // }
-
-    // override loadTheme(){
-    //     super.loadTheme;
-
-
-    // }
 
     // override void create()
     // {
     //     super.create;
 
-    //     import std.conv : to;
 
-    //     auto segmentStyle = createStyle;
-    //     if (!segmentStyle.isNested)
-    //     {
-    //         segmentStyle.isFill = false;
-    //         segmentStyle.color = theme.colorAccent;
-    //     }
-
-    //     auto fillStyle = segmentStyle;
-    //     if (!fillStyle.isNested)
-    //     {
-    //         fillStyle.isFill = true;
-    //     }
 
     //     foreach (i; 0 .. segmentCount)
     //     {
@@ -81,96 +58,6 @@ class BaseRadialProgressBar : RadialMinValueMeter!double
     //         fillProgress(progress);
     //     }
     // }
-
-    // void layoutChildren()
-    // {
-    //     assert(segments.length == fillSegments.length);
-
-    //     import api.math.geom2.vec2 : Vec2d;
-
-    //     double radius = diameter / 2 - innerPadding;
-
-    //     const cx = boundsRect.middleX;
-    //     const cy = boundsRect.middleY;
-
-    //     double angleRange = Math.abs(endAngleDeg - startAngleDeg);
-    //     double angleDt = (360.0 - angleRange) / segments.length;
-    //     double angle = startAngleDeg;
-    //     foreach (i, s; segments)
-    //     {
-    //         const coords = Vec2d.fromPolarDeg(angle, radius);
-
-    //         s.x = cx + coords.x - s.width / 2;
-    //         s.y = cy + coords.y - s.height / 2;
-    //         s.angle = angle;
-
-    //         angle += angleDt;
-    //         // if(angle > 360){
-    //         //     angle = 0;
-    //         // }
-
-    //         auto fillSegment = fillSegments[i];
-    //         fillSegment.x = s.x;
-    //         fillSegment.y = s.y;
-    //         fillSegment.angle = s.angle;
-    //     }
-    // }
-
-    // Sprite2d createSegment(Texture2d segmentShape)
-    // {
-    //     import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
-
-    //     //TODO instability at small sizes, possible artifacts
-    //     auto rotateDiameter = Math.round(Math.sqrt((segmentWidth ^^ 2) + (segmentHeight ^^ 2)));
-    //     auto segmentSize = rotateDiameter * 3;
-
-    //     auto segment = new Texture2d(segmentSize, segmentSize);
-    //     segment.isResizable = false;
-
-    //     auto srcRect = Rect2d(0, 0, segmentWidth, segmentHeight);
-    //     auto destRect = Rect2d(segment.width / 2 - segmentWidth / 2, segment.height / 2 - segmentHeight / 2, segmentWidth, segmentHeight);
-
-    //     build(segment);
-    //     segment.initialize;
-    //     assert(segment.isInitialized);
-    //     segment.create;
-    //     assert(segment.isCreated);
-
-    //     segment.copyFrom(segmentShape, srcRect, destRect);
-
-    //     segment.isLayoutManaged = false;
-    //     segment.textureScaleMode = ComTextureScaleMode.balance;
-
-    //     return segment;
-    // }
-
-    // Texture2d createSegmentShape(GraphicStyle style)
-    // {
-    //     import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
-
-    //     auto sprite = new VConvexPolygon(segmentWidth, segmentHeight, style, 0);
-    //     build(sprite);
-    //     sprite.initialize;
-    //     assert(sprite.isInitialized);
-    //     sprite.create;
-    //     assert(sprite.isCreated);
-    //     return sprite;
-    // }
-
-    // Texture2d createFillSegmentShape(GraphicStyle style)
-    // {
-    //     return createSegmentShape(style);
-    // }
-
-    // void reset()
-    // {
-    //     foreach (s; fillSegments)
-    //     {
-    //         s.isVisible = false;
-    //     }
-    // }
-
-    // alias progress = BaseProgressBar.progress;
 
     // override bool progress(double newValue)
     // {

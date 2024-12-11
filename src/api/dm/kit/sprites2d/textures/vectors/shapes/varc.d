@@ -35,12 +35,6 @@ class VArc : VShape
 
         ctx.arc(xCenter, yCenter, radius - style.lineWidth / 2, fromAngleRad, toAngleRad);
 
-        if (style.isFill)
-        {
-            ctx.color = style.fillColor;
-            ctx.fillPreserve;
-        }
-
         ctx.lineWidth = style.lineWidth;
         ctx.color = style.lineColor;
 

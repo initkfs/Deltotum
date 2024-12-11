@@ -103,9 +103,8 @@ class RadialGauge : RadialMinValueMeter!double
 
         import api.math.geom2.rect2 : Rect2d;
 
-        auto handShapeSize = radius * 0.7;
-
-        auto maxBounds = handBoundingBox(handShapeSize);
+        auto handShapeHeight = radius * 0.7;
+        auto handShapeWidth = theme.meterHandWidth;
 
         auto factory = new MeterHandFactory;
         buildInitCreate(factory);
@@ -114,7 +113,7 @@ class RadialGauge : RadialMinValueMeter!double
             factory.dispose;
         }
 
-        auto hand = factory.createHand(maxBounds.width, maxBounds.height, 0, handStyle);
+        auto hand = factory.createHand(handShapeWidth, handShapeHeight, handStyle);
         return hand;
     }
 

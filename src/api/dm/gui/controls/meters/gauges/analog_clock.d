@@ -3,7 +3,7 @@ module api.dm.gui.controls.meters.gauges.analog_clock;
 import api.dm.gui.controls.meters.radial_min_value_meter : RadialMinValueMeter;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.meters.hands.meter_hand_factory : MeterHandFactory;
-import api.dm.gui.controls.indicators.segments.radial_segment_bar: RadialSegmentBar;
+import api.dm.gui.controls.indicators.segments.radial_segment_bar : RadialSegmentBar;
 
 import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
 import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
@@ -67,6 +67,8 @@ class AnalogClock : RadialMinValueMeter!double
     Tween2d delegate(Tween2d) onClockAnimationCreate;
     void delegate(Tween2d) onClockAnimationCreated;
 
+    double handWidth = 0;
+
     bool isAutorun;
 
     protected
@@ -100,16 +102,27 @@ class AnalogClock : RadialMinValueMeter!double
             _radius = _diameter / 2;
         }
 
+        if (handWidth == 0)
+        {
+            handWidth = theme.meterHandWidth * 2;
+            assert(handWidth > 0);
+        }
+
         assert(_diameter > 0);
         _width = _diameter;
         _height = _diameter;
+    }
+
+    protected Vec2d handCone(double handWidth)
+    {
+        return Vec2d(handWidth * 2.5, handWidth * 1.5);
     }
 
     Sprite2d newHourHand()
     {
         assert(handFactory);
 
-        auto handHeight = diameter * 0.4;
+        auto handHeight = diameter * 0.27;
 
         auto handStyle = createHandStyle;
         if (!handStyle.isPreset)
@@ -117,8 +130,10 @@ class AnalogClock : RadialMinValueMeter!double
             handStyle.fillColor = theme.colorWarning;
         }
 
-        auto handBox = handBoundingBox(handHeight);
-        auto newHand = handFactory.createHand(handBox.width, handBox.height, 0, handStyle);
+        auto cone = handCone(handWidth);
+        cone.x *= 1.5;
+        cone.y = handWidth * 3;
+        auto newHand = handFactory.createHand(handWidth, handHeight, handStyle, cone.x, cone.y);
         return newHand;
     }
 
@@ -126,7 +141,7 @@ class AnalogClock : RadialMinValueMeter!double
     {
         assert(handFactory);
 
-        auto handHeight = diameter * 0.5;
+        auto handHeight = diameter * 0.32;
         auto handStyle = createHandStyle;
 
         if (!handStyle.isPreset)
@@ -134,8 +149,9 @@ class AnalogClock : RadialMinValueMeter!double
             handStyle.fillColor = theme.colorWarning;
         }
 
-        auto handBox = handBoundingBox(handHeight);
-        auto newHand = handFactory.createHand(handBox.width, handBox.height, 0, handStyle);
+        auto cone = handCone(handWidth);
+        cone.y = handWidth * 3;
+        auto newHand = handFactory.createHand(handWidth, handHeight, handStyle, cone.x, cone.y);
         return newHand;
     }
 
@@ -143,16 +159,17 @@ class AnalogClock : RadialMinValueMeter!double
     {
         assert(handFactory);
 
-        auto handHeight = diameter * 0.5;
+        auto handHeight = diameter * 0.35;
         auto handStyle = createHandStyle;
         if (!handStyle.isPreset)
         {
-            handStyle.fillColor = theme.colorDanger;
+            handStyle.fillColor = theme.colorSuccess;
             handStyle.lineColor = theme.colorDanger;
         }
 
-        auto handBox = handBoundingBox(handHeight);
-        auto newHand = handFactory.createHand(handBox.width, handBox.height, 0, handStyle);
+        auto cone = handCone(handWidth);
+        cone.x = 0;
+        auto newHand = handFactory.createHand(handWidth, handHeight, handStyle, cone.x, cone.y);
         return newHand;
     }
 
@@ -235,7 +252,8 @@ class AnalogClock : RadialMinValueMeter!double
         }
 
         auto progressStyle = createFillStyle;
-        if(!progressStyle.isPreset && clockScale){
+        if (!progressStyle.isPreset && clockScale)
+        {
             progressStyle.lineWidth = clockScale.tickMinorHeight;
         }
 
