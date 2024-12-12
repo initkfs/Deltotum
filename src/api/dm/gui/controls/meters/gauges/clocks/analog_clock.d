@@ -1,6 +1,6 @@
 module api.dm.gui.controls.meters.gauges.clocks.analog_clock;
 
-import api.dm.gui.controls.meters.radial_min_value_meter : RadialMinValueMeter;
+import api.dm.gui.controls.meters.gauges.base_radial_gauge: BaseRadialGauge;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.meters.hands.meter_hand_factory : MeterHandFactory;
 import api.dm.gui.controls.indicators.segments.radial_segment_bar : RadialSegmentBar;
@@ -9,21 +9,12 @@ import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
 import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
 import api.dm.gui.controls.meters.scales.statics.rscale_static : RScaleStatic;
 
-import api.dm.gui.containers.circle_box : CircleBox;
-import api.dm.gui.controls.texts.text : Text;
-import api.dm.kit.assets.fonts.font_size : FontSize;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.vec2 : Vec2d;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.sprites2d.textures.vectors.shapes.vcircle : VCircle;
-import api.dm.kit.sprites2d.textures.vectors.shapes.varc : VArc;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.kit.sprites2d.textures.vectors.shapes.vregular_polygon : VRegularPolygon;
-import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
-import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
-import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.math.geom2.rect2 : Rect2d;
+
 import Math = api.dm.math;
 
 debug import std.stdio : writeln, writefln;
@@ -33,14 +24,9 @@ import std.conv : to;
 /**
  * Authors: initkfs
  */
-class AnalogClock : RadialMinValueMeter!double
+class AnalogClock : BaseRadialGauge
 {
     RadialSegmentBar progressBar;
-
-    RScaleStatic clockScale;
-    bool isCreateClockScale = true;
-    RScaleStatic delegate(RScaleStatic) onClockScaleCreate;
-    void delegate(RScaleStatic) onClockScaleCreated;
 
     Sprite2d hourHand;
     bool isCreateHourHand = true;
@@ -82,10 +68,6 @@ class AnalogClock : RadialMinValueMeter!double
     this(double diameter = 0)
     {
         super(diameter, 0, 60, 0, 360);
-
-        import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
-
-        this.layout = new CenterLayout;
     }
 
     override void loadTheme()
@@ -96,21 +78,11 @@ class AnalogClock : RadialMinValueMeter!double
 
     void loadAnalogClockTheme()
     {
-        if (_diameter == 0)
-        {
-            _diameter = theme.meterThumbDiameter;
-            _radius = _diameter / 2;
-        }
-
         if (handWidth == 0)
         {
             handWidth = theme.meterHandWidth * 2;
             assert(handWidth > 0);
         }
-
-        assert(_diameter > 0);
-        _width = _diameter;
-        _height = _diameter;
     }
 
     protected Vec2d handCone(double size)
@@ -190,7 +162,7 @@ class AnalogClock : RadialMinValueMeter!double
         return theme.regularPolyShape(size, 6, angle, style);
     }
 
-    RScaleStatic newClockScale()
+    override RScaleStatic newScale()
     {
         auto size = diameter * 0.9;
         auto scale = new RScaleStatic(size, minAngleDeg, maxAngleDeg);
@@ -204,7 +176,7 @@ class AnalogClock : RadialMinValueMeter!double
                 ctx.color = theme.colorDanger;
             }
 
-            auto tickRadius = isMajorTick ? scale.tickMajorHeight / 2 : scale.tickMinorHeight / 2;
+            auto tickRadius = isMajorTick ? scale.tickMajorHeight / 2.5 : scale.tickMinorHeight / 2.5;
             const center = tickBounds.center;
             ctx.beginPath;
             ctx.arc(center.x, center.y, tickRadius, 0, 360);
@@ -239,21 +211,10 @@ class AnalogClock : RadialMinValueMeter!double
         handFactory = new MeterHandFactory;
         buildInitCreate(handFactory);
 
-        if (!clockScale && isCreateClockScale)
-        {
-            auto newScale = newClockScale;
-            clockScale = !onClockScaleCreate ? newScale : onClockScaleCreate(newScale);
-            addCreate(newScale);
-            if (onClockScaleCreated)
-            {
-                onClockScaleCreated(newScale);
-            }
-        }
-
         auto progressStyle = createFillStyle;
-        if (!progressStyle.isPreset && clockScale)
+        if (!progressStyle.isPreset && scale)
         {
-            progressStyle.lineWidth = clockScale.tickMinorHeight;
+            progressStyle.lineWidth = scale.tickMinorHeight;
         }
 
         progressBar = new RadialSegmentBar(diameter, 0, 360);
@@ -300,6 +261,8 @@ class AnalogClock : RadialMinValueMeter!double
             auto newHolder = newHandHolder;
             handHolder = !onHandHolderCreate ? newHolder : onHandHolderCreate(newHolder);
             addCreate(handHolder);
+
+            import api.dm.kit.sprites2d.textures.texture2d: Texture2d;
 
             if (auto holderTexture = cast(Texture2d) handHolder)
             {
@@ -500,9 +463,12 @@ class AnalogClock : RadialMinValueMeter!double
         // auto minDeg = 6.0 * min;
         // auto secDeg = 6.0 * sec;
 
-        const secDeg = ((sec / 60.0) * 360.0);
-        const minDeg = ((min / 60.0) * 360.0) + ((sec / 60.0) * 6.0);
-        const hourDeg = ((hour / 12.0) * 360.0) + ((min / 60.0) * 30.0);
+        enum double minSecInHour = 60.0;
+        enum double fullAngle = 360.0;
+
+        const secDeg = ((sec / minSecInHour) * fullAngle);
+        const minDeg = ((min / minSecInHour) * fullAngle) + ((sec / minSecInHour) * 6.0);
+        const hourDeg = ((hour / 12.0) * fullAngle) + ((min / minSecInHour) * 30.0);
 
         hourHand.angle = hourDeg;
         minHand.angle = minDeg;

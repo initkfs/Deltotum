@@ -1,16 +1,14 @@
 module api.dm.gui.controls.meters.gauges.radial_gauge;
 
-import api.dm.gui.controls.meters.radial_min_value_meter : RadialMinValueMeter;
+import api.dm.gui.controls.meters.gauges.base_radial_gauge : BaseRadialGauge;
 import api.dm.gui.controls.meters.scales.statics.rscale_static : RScaleStatic;
-import api.dm.gui.controls.indicators.color_bars.radial_color_bar: RadialColorBar;
+import api.dm.gui.controls.indicators.color_bars.radial_color_bar : RadialColorBar;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
 import api.dm.kit.sprites2d.tweens.targets.value_tween2d : ValueTween2d;
-import api.dm.kit.assets.fonts.font_size : FontSize;
 
 import api.math.geom2.vec2 : Vec2d;
 import api.math.geom2.rect2 : Rect2d;
@@ -21,25 +19,11 @@ import std.conv : to;
 
 debug import std.stdio : writeln, writefln;
 
-import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
-
-struct ZoneColor
-{
-    double percentTo = 0;
-    RGBA color;
-}
-
 /**
  * Authors: initkfs
  */
-class RadialGauge : RadialMinValueMeter!double
+class RadialGauge : BaseRadialGauge
 {
-
-    RScaleStatic scale;
-    bool isCreateScale = true;
-    RScaleStatic delegate(RScaleStatic) onScaleCreate;
-    void delegate(RScaleStatic) onScaleCreated;
-
     Sprite2d hand;
 
     bool isCreateHand = true;
@@ -66,33 +50,18 @@ class RadialGauge : RadialMinValueMeter!double
 
     RadialColorBar colorBar;
 
+    bool isCreateColorBar = true;
+    RadialColorBar delegate(RadialColorBar) onColorBarCreate;
+    void delegate(RadialColorBar) onColorBarCreated;
+
     protected
     {
         double _value;
     }
 
-    this(double diameter = 0, double minAngleDeg = 0, double maxAngleDeg = 270, double minValue = 0, double maxValue = 1)
+    this(double diameter = 0, double minAngleDeg = 0, double maxAngleDeg = 180, double minValue = 0, double maxValue = 1)
     {
         super(diameter, minValue, maxValue, minAngleDeg, maxAngleDeg);
-
-        import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
-
-        this.layout = new CenterLayout;
-        isDrawBounds = true;
-    }
-
-    override void loadTheme()
-    {
-        super.loadTheme;
-
-        if (diameter == 0)
-        {
-            diameter = theme.meterThumbDiameter;
-        }
-
-        assert(diameter > 0);
-        _width = diameter;
-        _height = diameter;
     }
 
     Sprite2d newHand()
@@ -101,9 +70,11 @@ class RadialGauge : RadialMinValueMeter!double
 
         auto handStyle = createHandStyle;
 
-        import api.math.geom2.rect2 : Rect2d;
-
-        auto handShapeHeight = radius * 0.7;
+        auto handShapeHeight = radius;
+        if(scale){
+            handShapeHeight -= scale.tickMaxHeight;
+            handShapeHeight *= 0.9;
+        }
         auto handShapeWidth = theme.meterHandWidth;
 
         auto factory = new MeterHandFactory;
@@ -117,16 +88,17 @@ class RadialGauge : RadialMinValueMeter!double
         return hand;
     }
 
-    Sprite2d newHandHalder()
+    Sprite2d newHandHolder()
     {
         auto style = createFillStyle;
-        auto holder = theme.regularPolyShape(10, 10, 0, style);
+        auto size = radius * 0.2;
+        auto holder = theme.regularPolyShape(size, 5, angle, style);
         return holder;
     }
 
     ValueTween2d newHandTween()
     {
-        return new ValueTween2d(0, 0, 500);
+        return new ValueTween2d(0, 0, 350);
     }
 
     Text newLabel()
@@ -134,26 +106,25 @@ class RadialGauge : RadialMinValueMeter!double
         return new Text("0");
     }
 
-    RScaleStatic newScale()
+    RadialColorBar newColorBar()
     {
-        auto scale = new RScaleStatic(diameter * 0.6, minAngleDeg, maxAngleDeg);
-        scale.valueStep = 0.01;
-        scale.majorTickStep = 5;
-        return scale;
+        return new RadialColorBar(diameter * 0.7, minAngleDeg, maxAngleDeg);
     }
 
     override void create()
     {
         super.create;
 
-        if (!scale && isCreateScale)
+        assert(scale);
+
+        if (!colorBar && isCreateColorBar)
         {
-            auto s = newScale;
-            scale = onScaleCreate ? onScaleCreate(s) : s;
-            addCreate(scale);
-            if (onScaleCreated)
+            auto newBar = newColorBar;
+            colorBar = !onColorBarCreate ? newBar : onColorBarCreate(newBar);
+            addCreate(colorBar);
+            if (onColorBarCreated)
             {
-                onScaleCreated(scale);
+                onColorBarCreated(colorBar);
             }
         }
 
@@ -170,7 +141,7 @@ class RadialGauge : RadialMinValueMeter!double
 
         if (!handHolder && isCreateHandHolder)
         {
-            auto holder = newHandHalder;
+            auto holder = newHandHolder;
             handHolder = onHandHolderCreate ? onHandHolderCreate(holder) : holder;
             addCreate(handHolder);
             if (onHandHolderCreated)
@@ -196,11 +167,11 @@ class RadialGauge : RadialMinValueMeter!double
         {
             auto text = newLabel;
 
-            text.isLayoutManaged = false;
-            text.fontSize = FontSize.small;
+            text.setSmallSize;
 
             label = onLabelCreate ? onLabelCreate(text) : text;
             addCreate(label);
+
             if (onLabelCreated)
             {
                 onLabelCreated(label);
@@ -209,17 +180,6 @@ class RadialGauge : RadialMinValueMeter!double
 
         handAngleDeg(minAngleDeg);
         labelText(minValue);
-
-        colorBar = new RadialColorBar(radius * 0.7, 0, 360);
-        addCreate(colorBar);
-    }
-
-    override void applyLayout()
-    {
-        super.applyLayout;
-
-        label.x = boundsRect.middleX - label.boundsRect.halfWidth;
-        label.y = boundsRect.middleY + label.boundsRect.height;
     }
 
     protected void handAngleDeg(double angleDeg)
@@ -262,7 +222,6 @@ class RadialGauge : RadialMinValueMeter!double
 
     bool valueAngle(double angleDeg)
     {
-
         if (angleDeg < minAngleDeg || angleDeg > maxAngleDeg)
         {
             return false;

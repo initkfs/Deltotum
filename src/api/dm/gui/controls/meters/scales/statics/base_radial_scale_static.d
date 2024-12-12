@@ -319,7 +319,7 @@ class BaseRadialScaleStatic : BaseScaleStatic
 
         double angleDeg = tickIndex * offsetTick;
 
-        double textPosRadius = isOuterLabel ? radius + Math.max(tickMinorHeight, tickMajorHeight) : radius - Math.max(tickMinorHeight, tickMajorHeight) * 1.5;
+        double textPosRadius = isOuterLabel ? radius + Math.max(tickMinorHeight, tickMajorHeight) / 2 : radius - Math.max(tickMinorHeight, tickMajorHeight) * 1.5;
 
         auto textPos = Vec2d.fromPolarDeg(angleDeg, textPosRadius);
 

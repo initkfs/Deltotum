@@ -431,8 +431,11 @@ class Controls : Control
         //hLinGauge.isDrawBounds = true;
         gaugeContainer.addCreate(hLinGauge);
 
-        auto radGauge = new RadialGauge(200);
-        radGauge.isDrawBounds = true;
+        auto radGauge = new RadialGauge;
+        radGauge.onLabelCreated = (label){
+            label.updateRows;
+            label.paddingBottom = label.height * 2;
+        };
         gaugeContainer.addCreate(radGauge);
 
         radGauge.onPointerPress ~= (ref e){
