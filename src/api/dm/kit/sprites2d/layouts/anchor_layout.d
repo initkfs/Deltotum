@@ -46,12 +46,12 @@ class AnchorLayout : ManagedLayout
         return true;
     }
 
-    override double childrenWidth(Sprite2d root)
+    override double calcChildrenWidth(Sprite2d root)
     {
         return root.width;
     }
 
-    override double childrenHeight(Sprite2d root)
+    override double calcChildrenHeight(Sprite2d root)
     {
         return root.height;
     }

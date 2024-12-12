@@ -73,36 +73,36 @@ class VLayout : SpaceableLayout
         return true;
     }
 
-    override double childrenWidth(Sprite2d root)
+    override double calcChildrenWidth(Sprite2d root)
     {
-        double childrenWidth = 0;
+        double calcChildrenWidth = 0;
         foreach (child; childrenForLayout(root))
         {
             const chWidth = child.width + child.margin.width;
-            if (chWidth > childrenWidth)
+            if (chWidth > calcChildrenWidth)
             {
-                childrenWidth = chWidth;
+                calcChildrenWidth = chWidth;
             }
         }
 
-        return childrenWidth;
+        return calcChildrenWidth;
     }
 
-    override double childrenHeight(Sprite2d root)
+    override double calcChildrenHeight(Sprite2d root)
     {
-        double childrenHeight = 0;
+        double calcChildrenHeight = 0;
         size_t childCount;
         foreach (child; childrenForLayout(root))
         {
-            childrenHeight += child.height + child.margin.height;
+            calcChildrenHeight += child.height + child.margin.height;
             childCount++;
         }
 
         if (spacing > 0 && childCount > 1)
         {
-            childrenHeight += spacing * (childCount - 1);
+            calcChildrenHeight += spacing * (childCount - 1);
         }
-        return childrenHeight;
+        return calcChildrenHeight;
     }
 
     override double freeWidth(Sprite2d root, Sprite2d child)
@@ -112,7 +112,7 @@ class VLayout : SpaceableLayout
 
     override double freeHeight(Sprite2d root, Sprite2d child)
     {
-        return root.height - childrenHeight(root) - root.padding.height;
+        return root.height - calcChildrenHeight(root) - root.padding.height;
     }
 
 }

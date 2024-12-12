@@ -59,7 +59,7 @@ class CircleLayout : ManagedLayout
     }
 
     //FIXME padding is not always calculated correctly, check on an odd number
-    override double childrenWidth(Sprite2d root)
+    override double calcChildrenWidth(Sprite2d root)
     {
         double minX = 0;
         double maxX = 0;
@@ -84,7 +84,7 @@ class CircleLayout : ManagedLayout
         return 0;
     }
 
-    override double childrenHeight(Sprite2d root)
+    override double calcChildrenHeight(Sprite2d root)
     {
         const rootBounds = root.boundsRect;
 

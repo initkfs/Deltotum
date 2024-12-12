@@ -1,7 +1,7 @@
 module api.dm.kit.sprites2d.layouts.hlayout;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.sprites2d.layouts.spaceable_layout: SpaceableLayout;
+import api.dm.kit.sprites2d.layouts.spaceable_layout : SpaceableLayout;
 import api.math.alignment : Alignment;
 
 import Math = api.dm.math;
@@ -73,41 +73,46 @@ class HLayout : SpaceableLayout
         return true;
     }
 
-    override double childrenWidth(Sprite2d root)
+    override double calcChildrenWidth(Sprite2d root)
     {
-        double childrenWidth = 0;
+        if (childrenWidthProvider)
+        {
+            return childrenWidthProvider(root);
+        }
+
+        double calcChildrenWidth = 0;
         size_t childCount;
         foreach (child; childrenForLayout(root))
         {
-            childrenWidth += child.width + child.margin.width;
+            calcChildrenWidth += child.width + child.margin.width;
             childCount++;
         }
 
         if (spacing > 0 && childCount > 1)
         {
-            childrenWidth += spacing * (childCount - 1);
+            calcChildrenWidth += spacing * (childCount - 1);
         }
-        return childrenWidth;
+        return calcChildrenWidth;
     }
 
-    override double childrenHeight(Sprite2d root)
+    override double calcChildrenHeight(Sprite2d root)
     {
-        double childrenHeight = 0;
+        double calcChildrenHeight = 0;
         foreach (child; childrenForLayout(root))
         {
             const childH = child.height + child.margin.height;
-            if (childH > childrenHeight)
+            if (childH > calcChildrenHeight)
             {
-                childrenHeight = childH;
+                calcChildrenHeight = childH;
             }
         }
 
-        return childrenHeight;
+        return calcChildrenHeight;
     }
 
     override double freeWidth(Sprite2d root, Sprite2d child)
     {
-        return root.width - childrenWidth(root) - root.padding.width;
+        return root.width - calcChildrenWidth(root) - root.padding.width;
     }
 
     override double freeHeight(Sprite2d root, Sprite2d child)

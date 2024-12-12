@@ -61,8 +61,8 @@ class Controls : Control
 
         createSwitches(btnContainer);
 
-        import api.dm.gui.controls.separators.vseparator: VSeparator;
-        import api.dm.gui.controls.separators.hseparator: HSeparator;
+        import api.dm.gui.controls.separators.vseparator : VSeparator;
+        import api.dm.gui.controls.separators.hseparator : HSeparator;
 
         btnContainer.addCreate(new VSeparator);
 
@@ -76,7 +76,7 @@ class Controls : Control
 
         createSelections(selectionContainer);
 
-        auto metersContainer = new HBox(10);
+        auto metersContainer = new HBox;
         metersContainer.layout.isAlignY = true;
         rootContainer.addCreate(metersContainer);
 
@@ -118,32 +118,34 @@ class Controls : Control
     void createSwitches(Container root)
     {
         import api.dm.gui.controls.control : Control;
-        import api.dm.gui.containers.frame : Frame;
 
-        auto switchFrame = new Frame("Switches");
+        auto switchFrame = new HBox;
+        switchFrame.isAlignY = true;
         root.addCreate(switchFrame);
         switchFrame.isVGrow = true;
 
         import api.dm.gui.containers.vbox : VBox;
         import api.dm.gui.containers.hbox : HBox;
 
-        auto btnRoot2 = new VBox(5);
+        auto btnRoot2 = new VBox;
         switchFrame.addCreate(btnRoot2);
         btnRoot2.layout.isDecreaseRootWidth = true;
 
-        auto btn1 = new Button("Button");
+        import api.dm.gui.controls.switches.buttons.parallelogram_button : ParallelogramButton;
+
+        auto btn1 = new ParallelogramButton("Btn");
         btnRoot2.addCreate(btn1);
 
-        auto btn2 = new Button("Button");
+        auto btn2 = new ParallelogramButton("Btn");
         btn2.isBackground = true;
         btnRoot2.addCreate(btn2);
 
-        auto btnRoot3 = new HBox(5);
+        auto btnRoot3 = new HBox;
         switchFrame.addCreate(btnRoot3);
 
         import api.dm.gui.controls.switches.buttons.round_button : RoundButton;
 
-        auto circleBtn = new RoundButton("Button");
+        auto circleBtn = new RoundButton("Btn");
         circleBtn.isLongPressButton = true;
         btnRoot3.addCreate(circleBtn);
 
@@ -151,7 +153,7 @@ class Controls : Control
 
         import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
 
-        auto regBtn = new PolyButton("Button");
+        auto regBtn = new PolyButton("Btn");
         btnRoot3.addCreate(regBtn);
 
         auto recreateTween = new PauseTween2d(100);
@@ -179,7 +181,7 @@ class Controls : Control
         import Icons = api.dm.gui.themes.icons.icon_name;
         import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
         import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
-        import api.dm.gui.controls.switches.buttons.triangle_button: TriangleButton;
+        import api.dm.gui.controls.switches.buttons.triangle_button : TriangleButton;
 
         auto toggleBtnContainer = new SwitchGroup;
         toggleBtnContainer.layout = new VLayout(0);
@@ -219,8 +221,9 @@ class Controls : Control
         auto check1 = new Check("Check1", Icons.bug_outline);
         check1.isCreateIndeterminate = true;
         checkBoxContainer.addCreate(check1);
-        check1.onPointerRelease ~= (ref e){
-            if(e.button == 3){
+        check1.onPointerRelease ~= (ref e) {
+            if (e.button == 3)
+            {
                 check1.isIndeterminate = true;
             }
         };
@@ -314,7 +317,6 @@ class Controls : Control
 
     void createSelections(Container root)
     {
-        
 
         // import api.dm.gui.controls.choices.choice_box : ChoiceBox;
 
@@ -360,51 +362,42 @@ class Controls : Control
         // root.addCreate(colorPicker);
     }
 
-    void createMeters(Container root){
-        
-        import api.dm.gui.controls.meters.scrolls.hscroll: HScroll;
-        import api.dm.gui.controls.meters.scrolls.vscroll: VScroll;
-        import api.dm.gui.controls.meters.scrolls.rscroll: RScroll;
+    void createMeters(Container root)
+    {
 
-        auto scrollContainer = new VBox(15);
-        scrollContainer.layout.isAlignX = true;
-        root.addCreate(scrollContainer);
+        import api.dm.gui.controls.meters.scrolls.hscroll : HScroll;
+        import api.dm.gui.controls.meters.scrolls.vscroll : VScroll;
+        import api.dm.gui.controls.meters.scrolls.rscroll : RScroll;
 
-        import api.dm.gui.controls.meters.scales.dynamics.hscale_dynamic: HScaleDynamic;
+        auto spacing = 10;
 
-        auto hscaleDyn = new HScaleDynamic(200);
+        auto container1 = new VBox(spacing);
+        container1.layout.isAlignX = true;
+        root.addCreate(container1);
+
+        import api.dm.gui.controls.meters.scales.dynamics.hscale_dynamic : HScaleDynamic;
+
+        auto hscaleDyn = new HScaleDynamic;
         hscaleDyn.isHGrow = true;
-        scrollContainer.addCreate(hscaleDyn);
+        container1.addCreate(hscaleDyn);
 
-        import api.math.position: Position;
+        import api.math.position : Position;
 
         auto hs = new HScroll;
         hs.labelPos = Position.bottomCenter;
         hs.isCreateLabel = true;
-        scrollContainer.addCreate(hs);
+        container1.addCreate(hs);
+        hs.width = hs.width * 1.5;
 
-        auto hscaleDyn2 = new HScaleDynamic(150);
+        auto hscaleDyn2 = new HScaleDynamic;
         hscaleDyn2.isInvertX = true;
         hscaleDyn2.isInvertY = true;
         hscaleDyn2.isHGrow = true;
-        scrollContainer.addCreate(hscaleDyn2);
+        container1.addCreate(hscaleDyn2);
 
-        auto vb1 = new VBox(10);
-        scrollContainer.addCreate(vb1);
+        import api.dm.gui.controls.meters.scales.dynamics.vscale_dynamic : VScaleDynamic;
 
-        auto rscroll1 = new RScroll;
-        rscroll1.isDrawBounds = true;
-
-        import api.dm.gui.controls.meters.scales.dynamics.rscale_dynamic: RScaleDynamic;
-
-        auto rscale1 = new RScaleDynamic;
-        rscale1.isDrawBounds = true;
-        
-        vb1.addCreate([rscale1, rscroll1]);
-
-        import api.dm.gui.controls.meters.scales.dynamics.vscale_dynamic: VScaleDynamic;
-
-        auto vscaleDyn = new VScaleDynamic(0, 150);
+        auto vscaleDyn = new VScaleDynamic;
         vscaleDyn.isVGrow = true;
         root.addCreate(vscaleDyn);
 
@@ -419,35 +412,46 @@ class Controls : Control
         vscaleDyn2.isInvertY = true;
         root.addCreate(vscaleDyn2);
 
-        auto gaugeContainer = new VBox;
-        gaugeContainer.layout.isAlignX = true;
-        root.addCreate(gaugeContainer);
+        auto rscroll1 = new RScroll;
+        rscroll1.isDrawBounds = true;
+        root.addCreate(rscroll1);
 
-        import api.dm.gui.controls.meters.gauges.radial_gauge: RadialGauge;
+        auto gaugeContainer = new VBox;
+        gaugeContainer.layout.isDecreaseRootHeight = true;
+        gaugeContainer.isAlignX = true;
+        root.addCreate(gaugeContainer);
 
         import api.dm.gui.controls.meters.gauges.hlinear_gauge: HLinearGauge;
 
-        auto hLinGauge = new HLinearGauge(0, 1, 250, 0);
-        //hLinGauge.isDrawBounds = true;
+        auto hLinGauge = new HLinearGauge;
+        hLinGauge.isHGrow = true;
         gaugeContainer.addCreate(hLinGauge);
 
+        gaugeContainer.spacing = -hLinGauge.height;
+
+        import api.dm.gui.controls.meters.gauges.radial_gauge : RadialGauge;
+
         auto radGauge = new RadialGauge;
-        radGauge.onLabelCreated = (label){
+        radGauge.onLabelCreated = (label) {
             label.updateRows;
             label.paddingBottom = label.height * 2;
         };
         gaugeContainer.addCreate(radGauge);
 
-        radGauge.onPointerPress ~= (ref e){
-            import api.math.geom2.vec2: Vec2d;
+        gaugeContainer.layout.childrenHeightProvider = (root){
+            return radGauge.height;
+        };
+
+        radGauge.onPointerPress ~= (ref e) {
+            import api.math.geom2.vec2 : Vec2d;
 
             auto pointerPos = radGauge.boundsRect.center.angleDeg360To(input.pointerPos);
             radGauge.valueAngle = pointerPos;
         };
 
-        import api.dm.gui.controls.meters.gauges.clocks.analog_clock: AnalogClock;
+        import api.dm.gui.controls.meters.gauges.clocks.analog_clock : AnalogClock;
 
-        auto anClock = new AnalogClock(200);
+        auto anClock = new AnalogClock;
         anClock.isAutorun = true;
         root.addCreate(anClock);
 

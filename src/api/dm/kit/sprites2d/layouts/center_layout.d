@@ -18,7 +18,7 @@ class CenterLayout : ManagedLayout
         return isAlign;
     }
 
-    override double childrenWidth(Sprite2d root)
+    override double calcChildrenWidth(Sprite2d root)
     {
         double maxWidth = 0;
         foreach (child; childrenForLayout(root))
@@ -33,7 +33,7 @@ class CenterLayout : ManagedLayout
         return maxWidth;
     }
 
-    override double childrenHeight(Sprite2d root)
+    override double calcChildrenHeight(Sprite2d root)
     {
         double maxHeight = 0;
         foreach (child; childrenForLayout(root))

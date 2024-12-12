@@ -116,37 +116,37 @@ class FlowLayout : ManagedLayout
         return true;
     }
 
-    override double childrenWidth(Sprite2d root)
+    override double calcChildrenWidth(Sprite2d root)
     {
-        double childrenWidth = 0;
+        double calcChildrenWidth = 0;
         size_t childCount;
         foreach (child; childrenForLayout(root))
         {
-            childrenWidth += child.width + child.margin.width;
+            calcChildrenWidth += child.width + child.margin.width;
             childCount++;
         }
 
         if (hgap > 0 && childCount > 1)
         {
-            childrenWidth += hgap * (childCount - 1);
+            calcChildrenWidth += hgap * (childCount - 1);
         }
-        return childrenWidth;
+        return calcChildrenWidth;
     }
 
-    override double childrenHeight(Sprite2d root)
+    override double calcChildrenHeight(Sprite2d root)
     {
-        double childrenHeight = 0;
+        double calcChildrenHeight = 0;
         size_t childCount;
         foreach (child; childrenForLayout(root))
         {
-            childrenHeight += child.height + child.margin.height;
+            calcChildrenHeight += child.height + child.margin.height;
             childCount++;
         }
 
         if (vgap > 0 && childCount > 1)
         {
-            childrenHeight += vgap * (childCount - 1);
+            calcChildrenHeight += vgap * (childCount - 1);
         }
-        return childrenHeight;
+        return calcChildrenHeight;
     }
 }

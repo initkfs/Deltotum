@@ -29,12 +29,33 @@ abstract class Layout2d
 
     double sizeChangeDelta = 0.15;
 
+    double delegate(Sprite2d) childrenWidthProvider;
+    double delegate(Sprite2d) childrenHeightProvider;
+
     abstract
     {
         void applyLayout(Sprite2d root);
 
-        double childrenWidth(Sprite2d root);
-        double childrenHeight(Sprite2d root);
+        double calcChildrenWidth(Sprite2d root);
+        double calcChildrenHeight(Sprite2d root);
+    }
+
+    double childrenWidth(Sprite2d root)
+    {
+        if (childrenWidthProvider)
+        {
+            return childrenWidthProvider(root);
+        }
+        return calcChildrenWidth(root);
+    }
+
+    double childrenHeight(Sprite2d root)
+    {
+        if (childrenHeightProvider)
+        {
+            return childrenHeightProvider(root);
+        }
+        return calcChildrenHeight(root);
     }
 
     double freeMaxWidth(Sprite2d root)
@@ -108,7 +129,7 @@ abstract class Layout2d
 
     bool isResizeChildren() const pure nothrow @safe
     {
-        return isIncreaseChildrenSize || isDecreaseChildrenSize ;
+        return isIncreaseChildrenSize || isDecreaseChildrenSize;
     }
 
     void isResizeChildren(bool value) pure nothrow @safe

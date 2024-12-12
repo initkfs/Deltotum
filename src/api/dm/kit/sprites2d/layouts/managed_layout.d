@@ -370,7 +370,7 @@ class ManagedLayout : Layout2d
         }
     }
 
-    override double childrenWidth(Sprite2d root)
+    override double calcChildrenWidth(Sprite2d root)
     {
         double maxW = 0;
         foreach (child; childrenForLayout(root))
@@ -385,7 +385,7 @@ class ManagedLayout : Layout2d
         return maxW;
     }
 
-    override double childrenHeight(Sprite2d root)
+    override double calcChildrenHeight(Sprite2d root)
     {
         double maxH = 0;
         foreach (child; childrenForLayout(root))
