@@ -138,9 +138,6 @@ class Control : GuiComponent
     {
         super.initialize;
 
-        initTheme;
-        loadTheme;
-
         if (isBackground || isBorder)
         {
             invalidateListeners ~= () {
@@ -198,6 +195,9 @@ class Control : GuiComponent
                 actionEffectEndBehaviour = newBehaviour;
             }
         }
+
+        initTheme;
+        loadTheme;
     }
 
     //initTheme and loadTheme can be combined, but animation duration checks throw errors. It is very, very easy to make a mistake when overriding loadTheme() by a child

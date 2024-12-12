@@ -18,6 +18,9 @@ enum PI2 = PI * 2;
 enum PIOver2 = mathConst.PI_2;
 enum PIOver4 = mathConst.PI_4;
 
+enum double goldUnitFrac = 0.62;
+enum double goldRounded = 1.62;
+
 alias Tau = PI2;
 
 //2.718281...
@@ -256,4 +259,41 @@ double roundEven(double v)
     return round(v * 0.5) * 2.0;
     //import std.math.rounding : nearbyint;
     //return nearbyint(v * 0.5) * 2.0;
+}
+
+double angleDegDiff(double startAngleDeg, double endAngleDeg) @nogc nothrow pure @safe
+{
+    if (startAngleDeg < endAngleDeg)
+    {
+        return endAngleDeg - startAngleDeg;
+    }
+
+    return angleFullDeg - (startAngleDeg - endAngleDeg);
+}
+
+double angleDegMiddle(double startAngleDeg, double endAngleDeg) @nogc nothrow pure @safe
+{
+    auto angleMiddle = angleDegDiff(startAngleDeg, endAngleDeg) / 2;
+    return startAngleDeg + angleMiddle;
+}
+
+struct GoldenResult
+{
+    double longest = 0;
+    double shortest = 0;
+}
+
+GoldenResult goldenDiv(double value) @nogc nothrow pure @safe
+{
+    if (value == 0)
+    {
+        return GoldenResult.init;
+    }
+    if (value < 0)
+    {
+        value = -value;
+    }
+    auto a = value * goldUnitFrac;
+    auto b = value - a;
+    return GoldenResult(a, b);
 }

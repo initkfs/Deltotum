@@ -1544,7 +1544,6 @@ class Sprite2d : EventKitTarget
 
                 if (!child.isResizedWidthByParent)
                 {
-
                     if (isResizeChildrenIfNotResizable)
                     {
                         incChildWidth(child, dw);

@@ -113,9 +113,10 @@ class AnalogClock : RadialMinValueMeter!double
         _height = _diameter;
     }
 
-    protected Vec2d handCone(double handWidth)
+    protected Vec2d handCone(double size)
     {
-        return Vec2d(handWidth * 2.5, handWidth * 1.5);
+        const goldenRes = Math.goldenDiv(size);
+        return Vec2d(goldenRes.shortest, goldenRes.longest);
     }
 
     Sprite2d newHourHand()
@@ -130,9 +131,7 @@ class AnalogClock : RadialMinValueMeter!double
             handStyle.fillColor = theme.colorWarning;
         }
 
-        auto cone = handCone(handWidth);
-        cone.x *= 1.5;
-        cone.y = handWidth * 3;
+        auto cone = handCone(handHeight);
         auto newHand = handFactory.createHand(handWidth, handHeight, handStyle, cone.x, cone.y);
         return newHand;
     }
@@ -149,8 +148,8 @@ class AnalogClock : RadialMinValueMeter!double
             handStyle.fillColor = theme.colorWarning;
         }
 
-        auto cone = handCone(handWidth);
-        cone.y = handWidth * 3;
+        auto cone = handCone(handHeight);
+        cone.x /= 2;
         auto newHand = handFactory.createHand(handWidth, handHeight, handStyle, cone.x, cone.y);
         return newHand;
     }
@@ -167,7 +166,7 @@ class AnalogClock : RadialMinValueMeter!double
             handStyle.lineColor = theme.colorDanger;
         }
 
-        auto cone = handCone(handWidth);
+        auto cone = handCone(handHeight);
         cone.x = 0;
         auto newHand = handFactory.createHand(handWidth, handHeight, handStyle, cone.x, cone.y);
         return newHand;
