@@ -442,7 +442,7 @@ class Controls : Control
             radGauge.valueAngle = pointerPos;
         };
 
-        import api.dm.gui.controls.meters.gauges.analog_clock: AnalogClock;
+        import api.dm.gui.controls.meters.gauges.clocks.analog_clock: AnalogClock;
 
         auto anClock = new AnalogClock(200);
         anClock.isAutorun = true;
@@ -560,7 +560,7 @@ class Controls : Control
         pagination.pageFactory = (size_t pageIndex) { import std.conv : to; };
         paginationRoot.addCreate(pagination);
 
-        import api.dm.gui.controls.meters.gauges.analog_clock : AnalogClock;
+        import api.dm.gui.controls.meters.gauges.clocks.analog_clock : AnalogClock;
 
         auto clock1 = new AnalogClock;
         rootContainer.addCreate(clock1);

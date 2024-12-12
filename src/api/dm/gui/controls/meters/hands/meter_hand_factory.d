@@ -115,8 +115,6 @@ class MeterHandFactory : Control
 
         import api.math.geom2.rect2 : Rect2d;
 
-
-
         auto handBox = Rect2d(0, 0, width, height).boundingBoxMax;
 
         auto newWidth = Math.roundEven(handBox.width);

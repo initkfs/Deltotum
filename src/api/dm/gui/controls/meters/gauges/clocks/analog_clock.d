@@ -1,4 +1,4 @@
-module api.dm.gui.controls.meters.gauges.analog_clock;
+module api.dm.gui.controls.meters.gauges.clocks.analog_clock;
 
 import api.dm.gui.controls.meters.radial_min_value_meter : RadialMinValueMeter;
 import api.dm.gui.controls.control : Control;

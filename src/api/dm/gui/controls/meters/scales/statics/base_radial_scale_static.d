@@ -297,14 +297,6 @@ class BaseRadialScaleStatic : BaseScaleStatic
         return true;
     }
 
-    protected bool nearAngle(double angleDeg, double targetAngle, double delta = 5)
-    {
-        auto startAngle = targetAngle > delta ? (targetAngle - delta) : (360 - (delta - targetAngle));
-        auto endAngle = (targetAngle + delta) % 360;
-
-        return angleDeg >= startAngle && angleDeg <= endAngle;
-    }
-
     override bool drawLabel(size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, double offsetTick)
     {
         if (!isMajorTick || !labelProto)
@@ -336,7 +328,7 @@ class BaseRadialScaleStatic : BaseScaleStatic
 
         auto truncAngle = Math.trunc(angleDeg);
 
-        if (nearAngle(truncAngle, 90))
+        if (Math.nearAngleDeg(truncAngle, 90))
         {
             textX = center.x + textPos.x - labelProto.boundsRect.halfWidth + tickBoundsH / 2;
             if (isOuterLabel)
@@ -345,10 +337,10 @@ class BaseRadialScaleStatic : BaseScaleStatic
             }
             else
             {
-                textY = center.y + textPos.y - labelProto.height;
+                textY = center.y + textPos.y - labelProto.height / 2;
             }
         }
-        else if (nearAngle(truncAngle, 270))
+        else if (Math.nearAngleDeg(truncAngle, 270))
         {
             textX = center.x + textPos.x - labelProto.boundsRect.halfWidth + tickBoundsH / 2;
             textY = center.y + textPos.y - labelProto.boundsRect.halfHeight;

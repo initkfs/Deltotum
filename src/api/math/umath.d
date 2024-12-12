@@ -277,6 +277,14 @@ double angleDegMiddle(double startAngleDeg, double endAngleDeg) @nogc nothrow pu
     return startAngleDeg + angleMiddle;
 }
 
+bool nearAngleDeg(double angleDeg, double targetAngle, double delta = 3) @nogc nothrow pure @safe
+{
+    const startAngle = targetAngle > delta ? (targetAngle - delta) : (angleFullDeg - (delta - targetAngle));
+    const endAngle = targetAngle + delta;
+
+    return angleDeg >= startAngle && angleDeg <= endAngle;
+}
+
 struct GoldenResult
 {
     double longest = 0;

@@ -19,7 +19,11 @@ class RadialSegmentBar : Control
     }
 
     GraphicStyle segmentStyle;
-    GraphicStyle segmentFillStyle;
+
+    protected
+    {
+        GraphicStyle segmentOffStyle;
+    }
 
     double diameter = 0;
     double minAngleDeg = 0;
@@ -49,19 +53,9 @@ class RadialSegmentBar : Control
         _width = diameter;
         _height = diameter;
 
-        if (segmentFillStyle == GraphicStyle.init)
-        {
-            segmentFillStyle = createFillStyle;
-        }
-
         if (segmentStyle == GraphicStyle.init)
         {
-            segmentStyle = segmentFillStyle;
-        }
-
-        if (!segmentStyle.isPreset)
-        {
-            segmentStyle.lineColor = offSegmentColor(segmentStyle.lineColor);
+            segmentStyle = createFillStyle;
         }
     }
 
@@ -76,9 +70,16 @@ class RadialSegmentBar : Control
     {
         super.create;
 
+        segmentOffStyle = segmentStyle;
+        if (!segmentOffStyle.isPreset)
+        {
+            segmentOffStyle.lineColor = offSegmentColor(segmentStyle.lineColor);
+            segmentOffStyle.isFill = false;
+        }
+
         segmentsOn.reserve(segmentsCount);
 
-        if (!capGraphics.isVectorGraphics)
+        if (capGraphics.isVectorGraphics)
         {
             import api.dm.kit.sprites2d.textures.vectors.shapes.varc : VArc;
             import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
@@ -92,7 +93,7 @@ class RadialSegmentBar : Control
             {
                 this()
                 {
-                    super(textureWidth, textureHeight, segmentStyle);
+                    super(textureWidth, textureHeight, segmentOffStyle);
                 }
 
                 override void createTextureContent()
@@ -124,7 +125,7 @@ class RadialSegmentBar : Control
 
             drawSegment((i, startAngleDeg, endAngleDeg, angleOffset) {
 
-                auto segment = new VArc(radius, segmentFillStyle);
+                auto segment = new VArc(radius, segmentStyle);
                 segment.xCenter = 0;
                 segment.yCenter = 0;
                 segment.fromAngleRad = Math.degToRad(startAngleDeg);
@@ -156,7 +157,7 @@ class RadialSegmentBar : Control
                 addCreate(segment);
                 segmentsOff ~= segment;
 
-                auto fillSegment = new Circle(segmentSize, segmentFillStyle);
+                auto fillSegment = new Circle(segmentSize, segmentStyle);
                 fillSegment.isResizedByParent = false;
                 addCreate(fillSegment);
                 fillSegment.isVisible = false;
