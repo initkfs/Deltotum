@@ -13,6 +13,7 @@ class BitmapFont : Texture2d
     Glyph[] glyphs;
 
     Glyph placeholder;
+    Glyph e0;
 
     this(ComTexture texture, Glyph[] glyphs = null)
     {

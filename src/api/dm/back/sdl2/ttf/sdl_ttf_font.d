@@ -25,6 +25,7 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
     {
         string _fontPath;
         size_t _fontSize;
+        double _maxHeight = 1;
     }
 
     ComResult load(string fontFilePath, size_t fontSize = 12) nothrow
@@ -52,6 +53,8 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
         {
             return getErrorRes("Unable to load ttf font from " ~ fontFilePath);
         }
+
+        _maxHeight = TTF_FontHeight(ptr);
 
         return ComResult.success;
     }
@@ -132,6 +135,12 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
                 break;
         }
         TTF_SetFontHinting(ptr, sdlHinting);
+        return ComResult.success;
+    }
+
+    ComResult getMaxHeight(out double size)
+    {
+        size = _maxHeight;
         return ComResult.success;
     }
 

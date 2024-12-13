@@ -23,6 +23,7 @@ class Font : LoggableUnit
     this(Logging logging, ComFont font)
     {
         super(logging);
+        assert(font);
         this.font = font;
     }
 
@@ -80,6 +81,16 @@ class Font : LoggableUnit
         {
             logger.error("Hinting error. ", err);
         }
+    }
+
+    double maxHeight()
+    {
+        double result = 1;
+        if (const err = font.getMaxHeight(result))
+        {
+            logger.error("Font max height error: ", err);
+        }
+        return result;
     }
 
     override void dispose()

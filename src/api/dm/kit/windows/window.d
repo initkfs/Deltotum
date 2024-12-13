@@ -762,6 +762,29 @@ class Window : GraphicsComponent
         return newWindow;
     }
 
+    import api.math.geom2.vec2 : Vec2d;
+
+    Vec2d dpiRatio()
+    {
+        int winWidth, winHeight;
+        if (const err = nativeWindow.getSize(winWidth, winHeight))
+        {
+            logger.error("Getting window size error. ", err.toString);
+            return Vec2d.init;
+        }
+
+        auto renderBounds = graphics.renderBounds;
+        if (renderBounds.width == 0 || renderBounds.height == 0)
+        {
+            return Vec2d.init;
+        }
+
+        double hRatio = renderBounds.width / winWidth;
+        double vRatio = renderBounds.height / winHeight;
+
+        return Vec2d(hRatio, vRatio);
+    }
+
     void nativePtr(out ComNativePtr ptr)
     {
         if (const err = nativeWindow.nativePtr(ptr))

@@ -30,5 +30,6 @@ nothrow:
     ComResult getFontPath(out string path);
     ComResult getFontSize(out size_t size);
     ComResult setHinting(ComFontHinting hinting);
+    ComResult getMaxHeight(out double size);
 
 }

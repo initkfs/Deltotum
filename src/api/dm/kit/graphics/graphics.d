@@ -988,25 +988,6 @@ class Graphics : LoggableUnit
         }
     }
 
-    double scaleFactorFor(long width, long height)
-    {
-        int outputWidth;
-        int outputHeight;
-
-        if (const err = renderer.getOutputSize(outputWidth, outputHeight))
-        {
-            logger.error("Error getting renderer size: ", err.toString);
-            return 0;
-        }
-
-        long windowWidth = width;
-        long windowHeight = height;
-
-        //TODO height
-        double scale = (cast(double)(outputWidth)) / windowWidth;
-        return scale;
-    }
-
     Rect2d renderBounds()
     {
 

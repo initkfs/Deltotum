@@ -71,7 +71,7 @@ class BaseRadialScaleStatic : BaseScaleStatic
             //TODO label size
             if (isOuterLabel)
             {
-                _width *= 1.2;
+                _width += asset.rem.x * 5;
             }
         }
 
@@ -80,7 +80,7 @@ class BaseRadialScaleStatic : BaseScaleStatic
             _height = _diameter;
             if (isOuterLabel)
             {
-                _height *= 1.2;
+                _height += asset.rem.y * 2;
             }
         }
 
@@ -319,7 +319,8 @@ class BaseRadialScaleStatic : BaseScaleStatic
 
         double angleDeg = tickIndex * offsetTick;
 
-        double textPosRadius = isOuterLabel ? radius + Math.max(tickMinorHeight, tickMajorHeight) / 2 : radius - Math.max(tickMinorHeight, tickMajorHeight) * 1.5;
+        double textPosRadius = isOuterLabel ? radius + Math.max(tickMinorHeight, tickMajorHeight) / 2 : radius - Math.max(
+            tickMinorHeight, tickMajorHeight) * 1.5;
 
         auto textPos = Vec2d.fromPolarDeg(angleDeg, textPosRadius);
 

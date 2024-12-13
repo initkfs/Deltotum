@@ -15,7 +15,7 @@ import api.dm.kit.assets.fonts.font : Font;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
-import api.core.resources.locals.local_resources: LocalResources;
+import api.core.resources.locals.local_resources : LocalResources;
 import api.dm.kit.assets.fonts.font_cache : FontCache;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 
@@ -29,7 +29,6 @@ class Asset : LocalResources
     enum defaultFontName = "DMDefaultFont";
 
     RGBA defaultFontColor;
-    BitmapFont defaultFontBitmap;
 
     protected
     {
@@ -101,7 +100,7 @@ class Asset : LocalResources
         return nFont;
     }
 
-    bool hasFont(string name = defaultFontName, size_t size = FontSize.medium)
+    bool hasFont(size_t size = FontSize.medium, string name = defaultFontName)
     {
         if (auto fontCachePtr = name in fontCaches)
         {
@@ -111,8 +110,8 @@ class Asset : LocalResources
         return false;
     }
 
-    bool hasLargeFont(string name = defaultFontName) => hasFont(name, FontSize.large);
-    bool hasSmallFont(string name = defaultFontName) => hasFont(name, FontSize.small);
+    bool hasLargeFont(string name = defaultFontName) => hasFont(FontSize.large, name);
+    bool hasSmallFont(string name = defaultFontName) => hasFont(FontSize.small, name);
 
     void addFont(Font font, size_t size = FontSize.medium, string name = defaultFontName)
     {
@@ -177,10 +176,19 @@ class Asset : LocalResources
         addFontColorBitmap(fontTexture, defaultFontColor, FontSize.small);
     }
 
+    inout(BitmapFont*) hasColorBitmapUnsafe(RGBA color, size_t size = FontSize.medium, string name = defaultFontName) inout
+    {
+        inout(FontCache)* ptr = name in fontCaches;
+        if (!ptr)
+        {
+            return null;
+        }
+        return (*ptr).hasBitmap(size, color);
+    }
+
     bool hasColorBitmap(RGBA color, size_t size = FontSize.medium, string name = defaultFontName)
     {
-        auto fontCache = fontCaches[name];
-        return fontCache.hasBitmap(size, color) !is null;
+        return hasColorBitmapUnsafe(color, size, name) !is null;
     }
 
     BitmapFont fontColorBitmap(RGBA color, size_t size = FontSize.medium, string name = defaultFontName)
@@ -227,6 +235,39 @@ class Asset : LocalResources
     BitmapFont fontColorBitmapSmall(RGBA color)
     {
         return fontColorBitmap(color, FontSize.small);
+    }
+
+    double fontMaxHeight(string name = defaultFontName, size_t size = FontSize.medium)
+    {
+        if (!hasFont(size, name))
+        {
+            return 1;
+        }
+        auto currFont = font(size, name);
+        return currFont.maxHeight;
+    }
+
+    import api.math.geom2.vec2 : Vec2d;
+
+    Vec2d rem(size_t size = FontSize.medium, string name = defaultFontName)
+    {
+        return rem(defaultFontColor, size, name);
+    }
+
+    Vec2d rem(RGBA color, size_t size = FontSize.medium, string name = defaultFontName)
+    {
+        enum defaultSize = 1;
+        auto bitmapPtr = hasColorBitmapUnsafe(color, size, name);
+        if (!bitmapPtr)
+        {
+            return Vec2d(defaultSize, defaultSize);
+        }
+        double glyphW = (*bitmapPtr).e0.geometry.width;
+        double glyphH = (*bitmapPtr).e0.geometry.height;
+        double eW = glyphW != 0 ? glyphW : defaultSize;
+        double eH = glyphH != 0 ? glyphH : defaultSize;
+
+        return Vec2d(eW, eH);
     }
 
     override void dispose()

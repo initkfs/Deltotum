@@ -128,6 +128,10 @@ class BitmapFontGenerator : FontGenerator
                         bitmapFont.placeholder = glyph;
                     }
 
+                    if(glyph.grapheme == '0'){
+                        bitmapFont.e0 = glyph;
+                    }
+
                     glyphs ~= glyph;
 
                     if (const err = glyphRepresentation.blit(fontMapSurface, glyphPosition))
