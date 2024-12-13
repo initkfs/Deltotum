@@ -417,7 +417,6 @@ class Controls : Control
         root.addCreate(rscroll1);
 
         auto gaugeContainer = new VBox;
-        gaugeContainer.layout.isDecreaseRootHeight = true;
         gaugeContainer.isAlignX = true;
         root.addCreate(gaugeContainer);
 
@@ -438,9 +437,7 @@ class Controls : Control
         };
         gaugeContainer.addCreate(radGauge);
 
-        gaugeContainer.layout.childrenHeightProvider = (root){
-            return radGauge.height;
-        };
+        gaugeContainer.isDrawBounds = true;
 
         radGauge.onPointerPress ~= (ref e) {
             import api.math.geom2.vec2 : Vec2d;

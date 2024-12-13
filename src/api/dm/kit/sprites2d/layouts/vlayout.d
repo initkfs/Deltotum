@@ -98,10 +98,10 @@ class VLayout : SpaceableLayout
             childCount++;
         }
 
-        if (spacing > 0 && childCount > 1)
-        {
+        if(childCount > 1){
             calcChildrenHeight += spacing * (childCount - 1);
         }
+        
         return calcChildrenHeight;
     }
 

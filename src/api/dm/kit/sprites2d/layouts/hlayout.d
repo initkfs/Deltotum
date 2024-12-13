@@ -88,7 +88,7 @@ class HLayout : SpaceableLayout
             childCount++;
         }
 
-        if (spacing > 0 && childCount > 1)
+        if (childCount > 1)
         {
             calcChildrenWidth += spacing * (childCount - 1);
         }
