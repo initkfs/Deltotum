@@ -17,11 +17,11 @@ class Check : BaseBiswitch
     }
 
     bool isCreateMarker;
-    Sprite2d delegate(Sprite2d) onMarkerCreate;
+    Sprite2d delegate(Sprite2d) onNewMarker;
     void delegate(Sprite2d) onMarkerCreated;
 
     bool isCreateIndeterminate;
-    Sprite2d delegate(Sprite2d) onIndeterminateCreate;
+    Sprite2d delegate(Sprite2d) onNewIndeterminate;
     void delegate(Sprite2d) onIndeterminateCreated;
 
     double markerWidth = 0;
@@ -121,7 +121,7 @@ class Check : BaseBiswitch
         if (isCreateMarker)
         {
             auto newMarker = newMarker();
-            marker = onMarkerCreate ? onMarkerCreate(newMarker) : newMarker;
+            marker = onNewMarker ? onNewMarker(newMarker) : newMarker;
             if (markerContainer)
             {
                 markerContainer.addCreate(marker);
@@ -139,7 +139,7 @@ class Check : BaseBiswitch
         if (isCreateIndeterminate)
         {
             auto newMarker = newIndeterminateMarker();
-            indeterminate = onIndeterminateCreate ? onIndeterminateCreate(newMarker) : newMarker;
+            indeterminate = onNewIndeterminate ? onNewIndeterminate(newMarker) : newMarker;
             if (markerContainer)
             {
                 markerContainer.addCreate(indeterminate);

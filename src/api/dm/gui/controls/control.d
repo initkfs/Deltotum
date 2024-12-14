@@ -77,20 +77,20 @@ class Control : GuiComponent
 
     bool isThrowInvalidAnimationTime = true;
 
-    Sprite2d delegate(Sprite2d) onBackgroundCreate;
+    Sprite2d delegate(Sprite2d) onNewBackground;
     void delegate(Sprite2d) onBackgroundCreated;
 
     bool isProcessHover;
     bool isProcessAction;
 
     bool isCreateHoverEffect;
-    Sprite2d delegate(Sprite2d) onHoverEffectCreate;
+    Sprite2d delegate(Sprite2d) onNewHoverEffect;
     void delegate(Sprite2d) onHoverEffectCreated;
 
     size_t hoverAnimationDelayMs;
 
     bool isCreateHoverEffectAnimation;
-    Tween2d delegate(Tween2d) onHoverAnimationCreate;
+    Tween2d delegate(Tween2d) onNewHoverAnimation;
     void delegate(Tween2d) onHoverAnimationCreated;
 
     void delegate() hoverEffectStartBehaviour;
@@ -98,7 +98,7 @@ class Control : GuiComponent
 
     bool isCreateActionEffect;
     Sprite2d delegate() actionEffectFactory;
-    Sprite2d delegate(Sprite2d) onActionEffectCreate;
+    Sprite2d delegate(Sprite2d) onNewActionEffect;
     void delegate(Sprite2d) onActionEffectCreated;
 
     void delegate(ref ActionEvent) actionEffectStartBehaviour;
@@ -108,7 +108,7 @@ class Control : GuiComponent
 
     bool isCreateActionEffectAnimation;
     Tween2d delegate(Sprite2d) actionEffectAnimationFactory;
-    Tween2d delegate(Tween2d) onActionEffectAnimationCreate;
+    Tween2d delegate(Tween2d) onNewActionEffectAnimation;
     void delegate(Tween2d) onActionEffectAnimationCreated;
 
     bool isCreateInteractiveListeners;
@@ -395,7 +395,7 @@ class Control : GuiComponent
             auto newHover = newHoverEffect;
             assert(newHover);
 
-            _hoverEffect = onHoverEffectCreate ? onHoverEffectCreate(newHover) : newHover;
+            _hoverEffect = onNewHoverEffect ? onNewHoverEffect(newHover) : newHover;
             assert(_hoverEffect);
             addCreate(_hoverEffect);
 
@@ -414,7 +414,7 @@ class Control : GuiComponent
             auto newHoverAnim = newHoverAnimation();
             assert(newHoverAnim);
 
-            _hoverEffectAnimation = onHoverAnimationCreate ? onHoverAnimationCreate(
+            _hoverEffectAnimation = onNewHoverAnimation ? onNewHoverAnimation(
                 newHoverAnim) : newHoverAnim;
             assert(_hoverEffectAnimation);
 
@@ -431,7 +431,7 @@ class Control : GuiComponent
             auto effect = newActionEffect();
             assert(effect);
 
-            _actionEffect = onActionEffectCreate ? onActionEffectCreate(effect) : effect;
+            _actionEffect = onNewActionEffect ? onNewActionEffect(effect) : effect;
             assert(_actionEffect);
             addCreate(_actionEffect);
 
@@ -446,7 +446,7 @@ class Control : GuiComponent
             auto newEffectAnimation = newActionEffectAnimation;
             assert(newEffectAnimation);
 
-            _actionEffectAnimation = onActionEffectAnimationCreate ? onActionEffectAnimationCreate(
+            _actionEffectAnimation = onNewActionEffectAnimation ? onNewActionEffectAnimation(
                 newEffectAnimation) : newEffectAnimation;
 
             assert(_actionEffectAnimation);
@@ -1126,7 +1126,7 @@ class Control : GuiComponent
 
         auto newBackground = newBackground;
 
-        _background = onBackgroundCreate ? onBackgroundCreate(newBackground) : newBackground;
+        _background = onNewBackground ? onNewBackground(newBackground) : newBackground;
 
         addCreate(_background, 0);
 

@@ -19,7 +19,7 @@ abstract class BaseLabeledScroll : BaseMonoScroll
     Position labelPos = Position.topCenter;
 
     bool isCreateLabel;
-    Text delegate(Text) onLabelCreate;
+    Text delegate(Text) onNewLabel;
     void delegate(Text) onLabelCreated;
 
     this(double minValue = 0, double maxValue = 1.0)
@@ -42,7 +42,7 @@ abstract class BaseLabeledScroll : BaseMonoScroll
         if (!label && isCreateLabel)
         {
             auto l = newLabel;
-            label = onLabelCreate ? onLabelCreate(l) : l;
+            label = onNewLabel ? onNewLabel(l) : l;
             addCreate(label);
             if (onLabelCreated)
             {

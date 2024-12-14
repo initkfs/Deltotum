@@ -28,22 +28,22 @@ class HLinearGauge : MinMaxValueMeter!double
     ColorBar colorRangeBar;
 
     bool isCreateScale = true;
-    Sprite2d delegate(Sprite2d) onScaleCreate;
+    Sprite2d delegate(Sprite2d) onNewScale;
     void delegate(Sprite2d) onScaleCreated;
 
     bool isCreateColorBar = true;
-    ColorBar delegate(ColorBar) onColorBarCreate;
+    ColorBar delegate(ColorBar) onNewColorBar;
     void delegate(ColorBar) onColorBarCreated;
 
     Container scaleContainer;
 
     bool isCreateScaleContainer = true;
-    Container delegate(Container) onScaleContainerCreate;
+    Container delegate(Container) onNewScaleContainer;
     void delegate(Container) onScaleContainerCreated;
 
     Text label;
     bool isCreateLabel = true;
-    Text delegate(Text) onLabelCreate;
+    Text delegate(Text) onNewLabel;
     void delegate(Text) onLabelCreated;
 
     double thumbWidth = 0;
@@ -122,7 +122,7 @@ class HLinearGauge : MinMaxValueMeter!double
         if (!scaleContainer && isCreateScaleContainer)
         {
             auto newContainer = newScaleContainer;
-            scaleContainer = !onScaleContainerCreate ? newScaleContainer : onScaleContainerCreate(
+            scaleContainer = !onNewScaleContainer ? newScaleContainer : onNewScaleContainer(
                 newContainer);
             addCreate(scaleContainer);
             if (onScaleContainerCreated)
@@ -135,7 +135,7 @@ class HLinearGauge : MinMaxValueMeter!double
         {
             auto newBar = new ColorBar(width, theme.meterTickMinorHeight);
 
-            colorRangeBar = !onColorBarCreate ? newBar : onColorBarCreate(newBar);
+            colorRangeBar = !onNewColorBar ? newBar : onNewColorBar(newBar);
             auto root = scaleContainer ? scaleContainer : this;
             root.addCreate(colorRangeBar);
             if (onColorBarCreated)
@@ -159,7 +159,7 @@ class HLinearGauge : MinMaxValueMeter!double
             auto scaleTexture = dynScale.toTexture;
             scaleTexture.isResizedByParent = false;
 
-            scale = !onScaleCreate ? scaleTexture : onScaleCreate(scaleTexture);
+            scale = !onNewScale ? scaleTexture : onNewScale(scaleTexture);
             auto root = scaleContainer ? scaleContainer : this;
             root.addCreate(scale);
 
@@ -191,7 +191,7 @@ class HLinearGauge : MinMaxValueMeter!double
         if (!label && isCreateLabel)
         {
             auto nl = newLabel;
-            label = !onLabelCreate ? nl : onLabelCreate(nl);
+            label = !onNewLabel ? nl : onNewLabel(nl);
 
             label.isLayoutManaged = false;
             label.isVisible = false;

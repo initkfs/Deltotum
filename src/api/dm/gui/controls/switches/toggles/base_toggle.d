@@ -30,7 +30,7 @@ class BaseToggle : BaseBiswitch
     }
 
     bool isCreateThumbContainer = true;
-    Sprite2d delegate(Sprite2d) onThumbContainerCreate;
+    Sprite2d delegate(Sprite2d) onNewThumbContainer;
     void delegate(Sprite2d) onThumbContainerCreated;
 
     double thumbWidth = 0;
@@ -85,7 +85,7 @@ class BaseToggle : BaseBiswitch
         if (!thumbContainer && isCreateThumbContainer)
         {
             auto newContainer = newThumbContainer;
-            thumbContainer = onThumbContainerCreate ? onThumbContainerCreate(newContainer)
+            thumbContainer = onNewThumbContainer ? onNewThumbContainer(newContainer)
                 : newContainer;
             addCreate(thumbContainer);
             if (onThumbContainerCreated)

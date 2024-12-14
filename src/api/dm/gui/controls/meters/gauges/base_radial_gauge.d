@@ -13,7 +13,7 @@ abstract class BaseRadialGauge : RadialMinMaxValueMeter!double
 {
     RScaleStatic scale;
     bool isCreateScale = true;
-    RScaleStatic delegate(RScaleStatic) onScaleCreate;
+    RScaleStatic delegate(RScaleStatic) onNewScale;
     void delegate(RScaleStatic) onScaleCreated;
 
     this(double diameter = 0, double minValue = 0, double maxValue = 1, double minAngleDeg = 0, double maxAngleDeg = 180)
@@ -54,7 +54,7 @@ abstract class BaseRadialGauge : RadialMinMaxValueMeter!double
         if (!scale && isCreateScale)
         {
             auto s = newScale;
-            scale = onScaleCreate ? onScaleCreate(s) : s;
+            scale = onNewScale ? onNewScale(s) : s;
             addCreate(scale);
             if (onScaleCreated)
             {

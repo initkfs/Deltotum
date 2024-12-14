@@ -26,17 +26,17 @@ abstract class BaseScaleStatic : BaseDrawableScale
 
     bool isCreateMinorTickProto = true;
     Sprite2d minorTickProto;
-    Sprite2d delegate(Sprite2d) onMinorTickProtoCreate;
+    Sprite2d delegate(Sprite2d) onNewMinorTickProto;
     void delegate(Sprite2d) onMinorTickProtoCreated;
 
     bool isCreateMajorTickProto = true;
     Sprite2d majorTickProto;
-    Sprite2d delegate(Sprite2d) onMajorTickProtoCreate;
+    Sprite2d delegate(Sprite2d) onNewMajorTickProto;
     void delegate(Sprite2d) onMajorTickProtoCreated;
 
     bool isCreateLabelProto = true;
     Text labelProto;
-    Text delegate(Text) onLabelProtoCreate;
+    Text delegate(Text) onNewLabelProto;
     void delegate(Text) onLabelProtoCreated;
 
     protected
@@ -63,7 +63,7 @@ abstract class BaseScaleStatic : BaseDrawableScale
         if (!minorTickProto && isCreateMinorTickProto)
         {
             auto newProto = newMinorTickProto;
-            minorTickProto = onMinorTickProtoCreate ? onMinorTickProtoCreate(newProto) : newProto;
+            minorTickProto = onNewMinorTickProto ? onNewMinorTickProto(newProto) : newProto;
             if (!minorTickProto.isBuilt)
             {
                 buildInitCreate(minorTickProto);
@@ -86,7 +86,7 @@ abstract class BaseScaleStatic : BaseDrawableScale
         if (!majorTickProto && isCreateMajorTickProto)
         {
             auto newProto = newMajorTickProto;
-            majorTickProto = onMajorTickProtoCreate ? onMajorTickProtoCreate(newProto) : newProto;
+            majorTickProto = onNewMajorTickProto ? onNewMajorTickProto(newProto) : newProto;
             if (!majorTickProto.isBuilt)
             {
                 buildInitCreate(majorTickProto);
@@ -109,7 +109,7 @@ abstract class BaseScaleStatic : BaseDrawableScale
         if (!labelProto && isCreateLabelProto)
         {
             auto newProto = newLabelProto;
-            labelProto = onLabelProtoCreate ? onLabelProtoCreate(newProto) : newProto;
+            labelProto = onNewLabelProto ? onNewLabelProto(newProto) : newProto;
             buildInitCreate(labelProto);
 
             if (onLabelProtoCreated)

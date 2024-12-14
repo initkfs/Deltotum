@@ -27,31 +27,31 @@ class RadialGauge : BaseRadialGauge
     Sprite2d hand;
 
     bool isCreateHand = true;
-    Sprite2d delegate(Sprite2d) onHandCreate;
+    Sprite2d delegate(Sprite2d) onNewHand;
     void delegate(Sprite2d) onHandCreated;
 
     Sprite2d handHolder;
 
     bool isCreateHandHolder = true;
 
-    Sprite2d delegate(Sprite2d) onHandHolderCreate;
+    Sprite2d delegate(Sprite2d) onNewHandHolder;
     void delegate(Sprite2d) onHandHolderCreated;
 
     ValueTween2d handTween;
     bool isCreateHandTween = true;
-    ValueTween2d delegate(ValueTween2d) onHandTweenCreate;
+    ValueTween2d delegate(ValueTween2d) onNewHandTween;
     void delegate(ValueTween2d) onHandTweenCreated;
 
     Text label;
 
     bool isCreateLabel = true;
-    Text delegate(Text) onLabelCreate;
+    Text delegate(Text) onNewLabel;
     void delegate(Text) onLabelCreated;
 
     RadialColorBar colorBar;
 
     bool isCreateColorBar = true;
-    RadialColorBar delegate(RadialColorBar) onColorBarCreate;
+    RadialColorBar delegate(RadialColorBar) onNewColorBar;
     void delegate(RadialColorBar) onColorBarCreated;
 
     protected
@@ -122,7 +122,7 @@ class RadialGauge : BaseRadialGauge
         if (!colorBar && isCreateColorBar)
         {
             auto newBar = newColorBar;
-            colorBar = !onColorBarCreate ? newBar : onColorBarCreate(newBar);
+            colorBar = !onNewColorBar ? newBar : onNewColorBar(newBar);
             addCreate(colorBar);
             if (onColorBarCreated)
             {
@@ -133,7 +133,7 @@ class RadialGauge : BaseRadialGauge
         if (!hand && isCreateHand)
         {
             auto h = newHand;
-            hand = onHandCreate ? onHandCreate(h) : h;
+            hand = onNewHand ? onNewHand(h) : h;
             addCreate(hand);
             if (onHandCreated)
             {
@@ -144,7 +144,7 @@ class RadialGauge : BaseRadialGauge
         if (!handHolder && isCreateHandHolder)
         {
             auto holder = newHandHolder;
-            handHolder = onHandHolderCreate ? onHandHolderCreate(holder) : holder;
+            handHolder = onNewHandHolder ? onNewHandHolder(holder) : holder;
             addCreate(handHolder);
             if (onHandHolderCreated)
             {
@@ -157,7 +157,7 @@ class RadialGauge : BaseRadialGauge
             auto newTween = newHandTween;
             newTween.onOldNewValue ~= (oldValue, value) { handAngleDeg(value); };
             newTween.onStop ~= () { labelText(_value); };
-            handTween = onHandTweenCreate ? onHandTweenCreate(newTween) : newTween;
+            handTween = onNewHandTween ? onNewHandTween(newTween) : newTween;
             addCreate(handTween);
             if (onHandTweenCreated)
             {
@@ -171,7 +171,7 @@ class RadialGauge : BaseRadialGauge
 
             text.setSmallSize;
 
-            label = onLabelCreate ? onLabelCreate(text) : text;
+            label = onNewLabel ? onNewLabel(text) : text;
             addCreate(label);
 
             if (onLabelCreated)

@@ -413,7 +413,7 @@ class Controls : Control
         root.addCreate(vscaleDyn2);
 
         auto rscroll1 = new RScroll;
-        rscroll1.onScaleCreate = (scale) {
+        rscroll1.onNewScale = (scale) {
             scale.multiplyInitWidth = 1.2;
             return scale;
         };
