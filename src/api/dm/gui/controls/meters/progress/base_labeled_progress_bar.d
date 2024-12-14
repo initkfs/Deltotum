@@ -14,7 +14,7 @@ abstract class BaseLabeledProgressBar : BaseProgressBar
     Text delegate(Text) onLabelCreate;
     void delegate(Text) onLabelCreated;
 
-    bool isPercentMode;
+    bool isPercentMode = true;
 
     this(double minValue = 0, double maxValue = 1.0)
     {
@@ -55,7 +55,7 @@ abstract class BaseLabeledProgressBar : BaseProgressBar
 
         import std.format : format;
 
-        if (isPercentMode)
+        if (!isPercentMode)
         {
             label.text = format("%.2f", newV);
             return;

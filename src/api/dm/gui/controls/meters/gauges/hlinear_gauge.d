@@ -5,6 +5,7 @@ import api.dm.gui.controls.meters.scales.dynamics.base_scale_dynamic : BaseScale
 import api.dm.gui.controls.indicators.color_bars.color_bar : ColorBar;
 import api.dm.gui.containers.container : Container;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
+import api.dm.gui.controls.texts.text : Text;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.containers.container : Container;
@@ -17,18 +18,6 @@ import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 import api.dm.gui.containers.hbox : HBox;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
-
-struct RangeInfo
-{
-    RGBA color;
-    double range;
-}
-
-struct TickInfo
-{
-    double value;
-    Sprite2d tick;
-}
 
 /**
  * Authors: initkfs
@@ -51,6 +40,11 @@ class HLinearGauge : MinMaxValueMeter!double
     bool isCreateScaleContainer = true;
     Container delegate(Container) onScaleContainerCreate;
     void delegate(Container) onScaleContainerCreated;
+
+    Text label;
+    bool isCreateLabel = true;
+    Text delegate(Text) onLabelCreate;
+    void delegate(Text) onLabelCreated;
 
     double thumbWidth = 0;
     double thumbHeight = 0;
@@ -115,7 +109,7 @@ class HLinearGauge : MinMaxValueMeter!double
 
     Container newScaleContainer()
     {
-        import api.dm.gui.containers.vbox: VBox;
+        import api.dm.gui.containers.vbox : VBox;
 
         auto container = new VBox(0);
         return container;
@@ -157,7 +151,8 @@ class HLinearGauge : MinMaxValueMeter!double
             auto dynScale = new HScaleDynamic(width);
             dynScale.isInvertY = true;
             buildInitCreate(dynScale);
-            scope(exit){
+            scope (exit)
+            {
                 dynScale.dispose;
             }
 
@@ -193,6 +188,21 @@ class HLinearGauge : MinMaxValueMeter!double
             thumbs ~= thumb;
         }(i);
 
+        if (!label && isCreateLabel)
+        {
+            auto nl = newLabel;
+            label = !onLabelCreate ? nl : onLabelCreate(nl);
+
+            label.isLayoutManaged = false;
+            label.isVisible = false;
+
+            addCreate(label);
+            if (onLabelCreated)
+            {
+                onLabelCreated(label);
+            }
+        }
+
         layoutThumbs;
     }
 
@@ -215,6 +225,12 @@ class HLinearGauge : MinMaxValueMeter!double
         foreach (thumb; thumbs)
         {
             thumb.y = thumbContainer.boundsRect.bottom;
+        }
+
+        if (label && lastUsedThumb)
+        {
+            const thumbBounds = lastUsedThumb.boundsRect;
+            label.xy(thumbBounds.middleX - label.halfWidth, thumbBounds.bottom);
         }
     }
 
@@ -320,5 +336,31 @@ class HLinearGauge : MinMaxValueMeter!double
         {
             dg(value, thumbIndex);
         }
+
+        setLabelValue(value);
+    }
+
+    void setLabelValue(double newValue)
+    {
+        if (!label)
+        {
+            return;
+        }
+
+        if (!label.isVisible)
+        {
+            label.isVisible = true;
+        }
+
+        import std.format : format;
+
+        label.text = format("%.2f", newValue);
+    }
+
+    Text newLabel()
+    {
+        auto label = new Text("0");
+        label.setSmallSize;
+        return label;
     }
 }

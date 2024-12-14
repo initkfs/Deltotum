@@ -84,7 +84,9 @@ class RadialGauge : BaseRadialGauge
             factory.dispose;
         }
 
-        auto hand = factory.createHand(handShapeWidth, handShapeHeight, handStyle);
+        import Math = api.math;
+        auto coneHeight = handShapeWidth * Math.goldRounded; 
+        auto hand = factory.createHand(handShapeWidth, handShapeHeight, handStyle, 0, coneHeight);
         return hand;
     }
 
