@@ -1,64 +1,61 @@
 module api.dm.gui.controls.meters.progress.base_progress_bar;
 
 import api.dm.gui.controls.control : Control;
+import api.dm.gui.controls.meters.min_max_value_meter: MinMaxValueMeter;
+
+import Math = api.math;
 
 /**
  * Authors: initkfs
  */
-abstract class BaseProgressBar : Control
+abstract class BaseProgressBar : MinMaxValueMeter!double
 {
-    double minValue;
-    double maxValue;
-
     protected
     {
-        double value = 0;
+        double _value = 0;
     }
 
-    void delegate(double) onValue;
+    double progressStep = 0.1;
+
+    void delegate(double oldV, double newV)[] onOldNewValue;
 
     this(double minValue = 0, double maxValue = 1.0)
     {
-        super();
-        if (minValue > maxValue)
-        {
-            import std.format : format;
+        super(minValue, maxValue);
+        _value = minValue;
+    }
 
-            throw new Exception(format("The minimum value '%s' must be less than the maximum value '%s'", minValue, maxValue));
+    void triggerListeners(double oldV, double newV)
+    {
+        if (onOldNewValue.length > 0)
+        {
+            foreach (dg; onOldNewValue)
+            {
+                assert(dg);
+                dg(oldV, newV);
+            }
+        }
+    }
+
+    abstract protected void setProgressData(double oldV, double newV);
+
+    double value() => _value;
+
+    bool value(double newValue, bool isTriggerListeners = true)
+    {
+        if (_value == newValue)
+        {
+            return false;
+        }
+        double oldValue = _value;
+        _value = Math.clamp(newValue, minValue, maxValue);
+        if (isTriggerListeners)
+        {
+            triggerListeners(oldValue, _value);
         }
 
-        this.minValue = minValue;
-        this.maxValue = maxValue;
+        setProgressData(oldValue, _value);
 
-        this.value = minValue;
-    }
-
-    double progress()
-    {
-        return value;
-    }
-
-    bool progress(double v)
-    {
-        import Math = api.dm.math;
-
-        auto newValue = Math.clamp(v, minValue, maxValue);
-        if (value != newValue)
-        {
-            value = newValue;
-            return true;
-        }
-
-        return false;
-    }
-
-    void setMin()
-    {
-        progress = minValue;
-    }
-
-    void setMax()
-    {
-        progress = maxValue;
+        return true;
     }
 }

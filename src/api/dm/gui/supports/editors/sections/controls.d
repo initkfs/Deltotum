@@ -455,31 +455,44 @@ class Controls : Control
         anClock.isAutorun = true;
         root.addCreate(anClock);
 
+        auto progressContainer = new VBox;
+        progressContainer.isAlignX = true;
+        root.addCreate(progressContainer);
+
+        import api.dm.gui.controls.meters.progress.linear_progress_bar : LinearProgressBar;
+
+        auto linProgress1 = new LinearProgressBar;
+        progressContainer.addCreate(linProgress1);
+        linProgress1.value = 0.5;
+
         import api.dm.gui.controls.meters.progress.radial_progress_bar : RadialProgressBar;
 
         auto rProgress1 = new RadialProgressBar;
-        root.addCreate(rProgress1);
+        progressContainer.addCreate(rProgress1);
         rProgress1.value = 0.5;
 
-        import api.dm.kit.sprites2d.tweens.pause_tween2d: PauseTween2d;
+        import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
 
         auto pTween = new PauseTween2d(200);
-        addCreate(pTween);
+        progressContainer.addCreate(pTween);
         pTween.cycleCount = 11;
         pTween.onEnd ~= () {
             rProgress1.value = rProgress1.value + 0.1;
+            linProgress1.value = linProgress1.value + 0.1;
         };
-        pTween.onStop ~= (){
-            rProgress1.value = 0;
-        };
+        pTween.onStop ~= () { rProgress1.value = 0; linProgress1.value = 0; };
 
-        rProgress1.onPointerPress ~= (ref e) {
+        auto runProgress = () {
             if (!pTween.isRunning)
             {
                 rProgress1.value = 0;
+                linProgress1.value = 0;
                 pTween.run;
             }
         };
+
+        rProgress1.onPointerPress ~= (ref e) { runProgress(); };
+        linProgress1.onPointerPress ~= (ref e) { runProgress(); };
     }
 
     void createSeparators(Container root)

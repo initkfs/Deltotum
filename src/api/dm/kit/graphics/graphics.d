@@ -764,6 +764,11 @@ class Graphics : LoggableUnit
         {
             restoreColor;
         }
+        fillRect(x, y, width, height);
+    }
+
+    void fillRect(double x, double y, double width, double height)
+    {
         if (const err = renderer.drawFillRect(toInt(x), toInt(y), toInt(width), toInt(height)))
         {
             logger.errorf("Fill rect error. %s", err);
