@@ -26,9 +26,9 @@ class HScaleDynamic : BaseScaleDynamic
 
     void loadHScaleDynamicSizeTheme()
     {
-        if (_height == 0)
+        if (height == 0)
         {
-            _height = tickMaxHeight;
+            initHeight = tickMaxHeight;
         }
     }
 

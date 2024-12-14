@@ -33,14 +33,6 @@ abstract class BaseRadialMonoScroll : BaseLabeledScroll
             thumbDiameter = theme.meterThumbDiameter;
         }
 
-        if (_width == 0)
-        {
-            _width = thumbDiameter * 1.5;
-        }
-
-        if (_height == 0)
-        {
-            _height = thumbDiameter * 1.5;
-        }
+        initSizeForce(thumbDiameter, thumbDiameter);
     }
 }

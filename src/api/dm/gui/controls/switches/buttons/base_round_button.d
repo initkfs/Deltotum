@@ -62,8 +62,7 @@ class BaseRoundButton : BaseButton
             _diameter = theme.roundShapeDiameter;
         }
 
-        _width = _diameter;
-        _height = _diameter;
+        initSize(_diameter, _diameter);
     }
 
     override bool containsPoint(double x, double y)

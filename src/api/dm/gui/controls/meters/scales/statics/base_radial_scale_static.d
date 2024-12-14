@@ -65,23 +65,27 @@ class BaseRadialScaleStatic : BaseScaleStatic
 
         assert(_diameter);
 
-        if (_width == 0)
+        if (width == 0)
         {
-            _width = _diameter;
+            auto newWidth = _diameter;
             //TODO label size
             if (isOuterLabel)
             {
-                _width += asset.rem.x * 5;
+                newWidth += asset.rem.x * 5;
             }
+
+            initWidth(newWidth);
         }
 
-        if (_height == 0)
+        if (height == 0)
         {
-            _height = _diameter;
+            auto newHeight = _diameter;
             if (isOuterLabel)
             {
-                _height += asset.rem.y * 2;
+                newHeight += asset.rem.y * 2;
             }
+
+            initHeight(newHeight);
         }
 
         radius = _diameter / 2;

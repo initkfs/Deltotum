@@ -36,8 +36,7 @@ abstract class BaseRadialGauge : RadialMinValueMeter!double
         }
 
         assert(diameter > 0);
-        _width = diameter;
-        _height = diameter;
+        initSize(diameter, diameter);
     }
 
     RScaleStatic newScale()

@@ -48,8 +48,7 @@ class RadialProgressBar : BaseRadialProgressBar
         }
 
         assert(diameter > 0);
-        _width = diameter;
-        _height = diameter;
+        initSize(diameter, diameter);
     }
 
     override void create()

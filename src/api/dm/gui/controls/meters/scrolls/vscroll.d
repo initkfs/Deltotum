@@ -32,9 +32,9 @@ class VScroll : BaseRegularMonoScroll
 
     void loadVScrollTheme()
     {
-        if (_height == 0)
+        if (height == 0)
         {
-            _height = theme.controlDefaultHeight;
+            initHeight = theme.controlDefaultHeight;
         }
     }
 

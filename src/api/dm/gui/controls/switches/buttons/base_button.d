@@ -80,14 +80,14 @@ class BaseButton : BaseBiswitch
 
     void loadBaseButtonTheme()
     {
-        if (isSetNullWidthFromTheme && _width == 0)
+        if (isSetNullWidthFromTheme && width == 0)
         {
-            _width = theme.buttonWidth;
+            initWidth = theme.buttonWidth;
         }
 
-        if (isSetNullHeightFromTheme && _height == 0)
+        if (isSetNullHeightFromTheme && height == 0)
         {
-            _height = theme.buttonHeight;
+            initHeight = theme.buttonHeight;
         }
     }
 

@@ -21,6 +21,10 @@ class RScroll : BaseRadialMonoScroll
 
     RScaleStatic scale;
 
+    bool isCreateScale = true;
+    RScaleStatic delegate(RScaleStatic) onScaleCreate;
+    void delegate(RScaleStatic) onScaleCreated;
+
     double thumbPadding = 10;
 
     this(double minValue = 0, double maxValue = 1.0, double width = 0, double height = 0)
@@ -56,11 +60,23 @@ class RScroll : BaseRadialMonoScroll
             shapeTexture.bestScaleMode;
         }
 
-        auto rscaleDiameter = thumbDiameter * 1.025 + Math.max(theme.meterTickMajorHeight, theme
-                .meterTickMinorHeight);
+        if (!scale && isCreateScale)
+        {
+            auto ns = newScale;
+            scale = !onScaleCreate ? ns : onScaleCreate(ns);
+            addCreate(scale);
+            if (onScaleCreated)
+            {
+                onScaleCreated(scale);
+            }
+        }
+    }
 
-        scale = new RScaleStatic(rscaleDiameter, fromAngleDeg, toAngleDeg);
-        addCreate(scale);
+    RScaleStatic newScale()
+    {
+        auto rscaleDiameter = thumbDiameter * 1.2 + Math.max(theme.meterTickMajorHeight, theme
+                .meterTickMinorHeight);
+        return new RScaleStatic(rscaleDiameter, fromAngleDeg, toAngleDeg);
     }
 
     Sprite2d newThumbRadialShape(double diameter, double angle, GraphicStyle style)
@@ -133,7 +149,7 @@ class RScroll : BaseRadialMonoScroll
         assert(thumb.isCreated);
 
         thumb.onPointerPress ~= (ref e) {
-           lastDragAngle = thumb.boundsRect.center.angleDeg360To(input.pointerPos);
+            lastDragAngle = thumb.boundsRect.center.angleDeg360To(input.pointerPos);
         };
 
         return thumb;
@@ -142,17 +158,17 @@ class RScroll : BaseRadialMonoScroll
     override bool delegate(double, double) newOnThumbDragXY()
     {
         return (ddx, ddy) {
-            
+
             immutable thumbBounds = thumb.boundsRect;
             immutable center = thumbBounds.center;
 
             immutable angleDeg = center.angleDeg360To(input.pointerPos);
             double da = angleDeg - lastDragAngle;
-            
+
             lastDragAngle = angleDeg;
 
             auto newAngle = (thumb.angle + da) % 360;
-            
+
             if (newAngle > fromAngleDeg && newAngle < toAngleDeg)
             {
                 thumb.angle = newAngle;

@@ -413,7 +413,10 @@ class Controls : Control
         root.addCreate(vscaleDyn2);
 
         auto rscroll1 = new RScroll;
-        rscroll1.isDrawBounds = true;
+        rscroll1.onScaleCreate = (scale){
+            scale.multiplyInitWidth = 1.2;
+            return scale;
+        };
         root.addCreate(rscroll1);
 
         auto gaugeContainer = new VBox;

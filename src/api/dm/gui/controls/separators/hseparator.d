@@ -17,16 +17,14 @@ class HSeparator : BaseSeparator
     {
         super.loadTheme;
 
-        if (_height == 0)
+        if (height == 0)
         {
-            _height = theme.separatorHeight;
+            initHeight = theme.separatorHeight;
         }
 
-        assert(_height > 0);
-
-        if (_width == 0)
+        if (width == 0)
         {
-            _width = 1;
+            initWidth = 1.0;
         }
     }
 

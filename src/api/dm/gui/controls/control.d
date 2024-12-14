@@ -251,14 +251,14 @@ class Control : GuiComponent
 
     void loadControlSizeTheme()
     {
-        if (isSetNullWidthFromTheme && _width == 0)
+        if (isSetNullWidthFromTheme && width == 0)
         {
-            _width = theme.controlDefaultWidth;
+            initWidth = theme.controlDefaultWidth;
         }
 
-        if (isSetNullHeightFromTheme && _height == 0)
+        if (isSetNullHeightFromTheme && height == 0)
         {
-            _height = theme.controlDefaultHeight;
+            initHeight = theme.controlDefaultHeight;
         }
     }
 

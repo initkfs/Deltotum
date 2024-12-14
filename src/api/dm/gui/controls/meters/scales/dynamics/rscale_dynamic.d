@@ -48,14 +48,14 @@ class RScaleDynamic : BaseScaleDynamic
             _diameter = theme.meterThumbDiameter;
         }
 
-        if (_width == 0)
+        if (width == 0)
         {
-            _width = _diameter * 1.8;
+            initWidth = _diameter * 1.8;
         }
 
-        if (_height == 0)
+        if (height == 0)
         {
-            _height = _diameter * 1.8;
+            initHeight = _diameter * 1.8;
         }
     }
 

@@ -66,8 +66,7 @@ class PolyButton : BaseRoundButton
             _diameter = theme.regularPolyDiameter;
         }
 
-        _width = _diameter;
-        _height = _diameter;
+        initSize(_diameter, _diameter);
     }
 
     protected override Sprite2d createShape(double w, double h, double angle, GraphicStyle style)

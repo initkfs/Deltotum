@@ -50,8 +50,7 @@ class RadialSegmentBar : Control
         }
 
         assert(diameter > 0);
-        _width = diameter;
-        _height = diameter;
+        initSize(diameter, diameter);
 
         if (segmentStyle == GraphicStyle.init)
         {

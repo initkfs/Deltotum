@@ -160,6 +160,9 @@ class Sprite2d : EventKitTarget
     double minWidth = 1.0;
     double minHeight = 1.0;
 
+    double multiplyInitWidth = 1.0;
+    double multiplyInitHeight = 1.0;
+
     Scene2d delegate() sceneProvider;
 
     void delegate(ref PointerEvent)[] onPointerInBounds;
@@ -618,7 +621,8 @@ class Sprite2d : EventKitTarget
             drawBounds;
         }
 
-        if(isDrawCenterBounds){
+        if (isDrawCenterBounds)
+        {
             drawCenterBounds;
         }
 
@@ -1447,6 +1451,31 @@ class Sprite2d : EventKitTarget
         return true;
     }
 
+    bool initWidth(double newWidth) => width = newWidth * multiplyInitWidth;
+    bool initHeight(double newHeight) => height = newHeight * multiplyInitHeight;
+    void initWidthForce(double newWidth)
+    {
+        _width = newWidth * multiplyInitWidth;
+    }
+
+    void initHeightForce(double newHeight)
+    {
+        _height = newHeight * multiplyInitHeight;
+    }
+
+    protected bool initSize(double newWidth, double newHeight)
+    {
+        bool isWidth = initWidth(newWidth);
+        bool isHeight = initHeight(newHeight);
+        return isWidth || isHeight;
+    }
+
+    protected void initSizeForce(double newWidth, double newHeight)
+    {
+        initWidthForce(newWidth);
+        initHeightForce(newHeight);
+    }
+
     double width() @safe pure nothrow
     {
         return _width;
@@ -1810,7 +1839,8 @@ class Sprite2d : EventKitTarget
         }
 
         graphics.changeColor(boundsCenterColor);
-        scope(exit){
+        scope (exit)
+        {
             graphics.restoreColor;
         }
 

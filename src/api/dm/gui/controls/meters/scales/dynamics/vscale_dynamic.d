@@ -31,9 +31,9 @@ class VScaleDynamic : BaseScaleDynamic
         swap(tickMinorWidth, tickMinorHeight);
         swap(tickMajorWidth, tickMajorHeight);
 
-        if (_width == 0)
+        if (width == 0)
         {
-            _width = tickMaxWidth;
+            initWidth = tickMaxWidth;
         }
     }
 

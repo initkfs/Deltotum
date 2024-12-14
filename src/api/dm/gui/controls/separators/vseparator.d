@@ -17,16 +17,14 @@ class VSeparator : BaseSeparator
     {
         super.loadTheme;
 
-        if (_width == 0)
+        if (width == 0)
         {
-            _width = theme.separatorHeight;
+            initWidth = theme.separatorHeight;
         }
 
-        assert(_width > 0);
-
-        if (_height == 0)
+        if (height == 0)
         {
-            _height = 1;
+            initHeight = 1.0;
         }
     }
 

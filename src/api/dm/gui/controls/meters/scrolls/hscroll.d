@@ -25,9 +25,9 @@ class HScroll : BaseRegularMonoScroll
 
     void loadHScrollTheme()
     {
-        if (_width == 0)
+        if (width == 0)
         {
-            _width = theme.controlDefaultWidth;
+            initWidth = theme.controlDefaultWidth;
         }
     }
 
