@@ -25,6 +25,15 @@ class SimpleUnit : Unitable
         _state = initState;
     }
 
+    bool isTriggerListeners = true;
+
+    void delegate()[] onInitialize;
+    void delegate()[] onCreate;
+    void delegate()[] onRun;
+    void delegate()[] onPause;
+    void delegate()[] onStop;
+    void delegate()[] onDispose;
+
     const nothrow pure @safe
     {
         UnitState state() => _state;
@@ -57,6 +66,20 @@ class SimpleUnit : Unitable
         }
 
         _state = UnitState.initialize;
+
+        triggerListeners(onInitialize);
+    }
+
+    protected void triggerListeners(ref void delegate()[] listeners)
+    {
+        if (listeners.length > 0 && isTriggerListeners)
+        {
+            foreach (dg; listeners)
+            {
+                assert(dg);
+                dg();
+            }
+        }
     }
 
     void initialize(SimpleUnit unit)
@@ -98,6 +121,8 @@ class SimpleUnit : Unitable
         }
 
         _state = UnitState.create;
+
+        triggerListeners(onCreate);
     }
 
     void create(SimpleUnit unit)
@@ -145,6 +170,8 @@ class SimpleUnit : Unitable
         }
 
         _state = UnitState.run;
+
+        triggerListeners(onRun);
     }
 
     void run(SimpleUnit unit)
@@ -193,6 +220,8 @@ class SimpleUnit : Unitable
         }
 
         _state = UnitState.pause;
+
+        triggerListeners(onPause);
     }
 
     void pause(SimpleUnit unit)
@@ -235,6 +264,8 @@ class SimpleUnit : Unitable
         }
 
         _state = UnitState.stop;
+
+        triggerListeners(onStop);
     }
 
     void stop(SimpleUnit unit)
@@ -277,6 +308,15 @@ class SimpleUnit : Unitable
         }
 
         _state = UnitState.dispose;
+
+        triggerListeners(onDispose);
+
+        onInitialize = null;
+        onCreate = null;
+        onRun = null;
+        onStop = null;
+        onPause = null;
+        onDispose = null;
     }
 
     void dispose(SimpleUnit unit)
@@ -317,6 +357,15 @@ class SimpleUnit : Unitable
             dispose(unit);
         }
     }
+
+    import api.core.utils.arrays : drop;
+
+    bool removeOnInitialize(void delegate() dg) => drop(onInitialize, dg);
+    bool removeOnCreate(void delegate() dg) => drop(onCreate, dg);
+    bool removeOnRun(void delegate() dg) => drop(onRun, dg);
+    bool removeOnPause(void delegate() dg) => drop(onPause, dg);
+    bool removeOnStop(void delegate() dg) => drop(onStop, dg);
+    bool removeOnDispose(void delegate() dg) => drop(onDispose, dg);
 
     unittest
     {

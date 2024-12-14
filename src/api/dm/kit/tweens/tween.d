@@ -24,9 +24,6 @@ abstract class Tween : GraphicsComponent
 
     size_t cycleCount;
 
-    void delegate()[] onRun;
-    void delegate()[] onStop;
-    void delegate()[] onPause;
     void delegate()[] onResume;
     void delegate()[] onEnd;
 
@@ -112,14 +109,6 @@ abstract class Tween : GraphicsComponent
 
         super.run;
 
-        if (onRun.length > 0)
-        {
-            foreach (dg; onRun)
-            {
-                dg();
-            }
-        }
-
         const double rate = frameRate;
         //TODO error if <= 0
         if (rate > 0)
@@ -137,14 +126,6 @@ abstract class Tween : GraphicsComponent
 
         prevState = state;
         state = TweenState.pause;
-
-        if (onPause.length > 0)
-        {
-            foreach (dg; onPause)
-            {
-                dg();
-            }
-        }
     }
 
     bool isPause()
@@ -162,14 +143,6 @@ abstract class Tween : GraphicsComponent
         currentFrame = 0;
         currentCycle = 0;
         currentShort = false;
-
-        if (onStop.length > 0)
-        {
-            foreach (dg; onStop)
-            {
-                dg();
-            }
-        }
 
         if (!nexts.empty)
         {
@@ -315,8 +288,6 @@ abstract class Tween : GraphicsComponent
 
     import api.core.utils.arrays : drop;
 
-    bool removeOnRun(void delegate() dg) => drop(onRun, dg);
-    bool removeOnStop(void delegate() dg) => drop(onStop, dg);
     bool removeOnResume(void delegate() dg) => drop(onResume, dg);
     bool removeOnEnd(void delegate() dg) => drop(onEnd, dg);
 
@@ -332,9 +303,6 @@ abstract class Tween : GraphicsComponent
         prevs.clear;
         nexts.clear;
 
-        onStop = null;
-        onRun = null;
-        onPause = null;
         onResume = null;
         onEnd = null;
     }

@@ -148,8 +148,6 @@ abstract class Tween2d : Sprite2d
         }
     }
 
-    bool removeOnRun(void delegate() dg) => tween.removeOnRun(dg);
-    bool removeOnStop(void delegate() dg) => tween.removeOnStop(dg);
     bool removeOnResume(void delegate() dg) => tween.removeOnResume(dg);
     bool removeOnEnd(void delegate() dg) =>tween.removeOnEnd(dg);
 

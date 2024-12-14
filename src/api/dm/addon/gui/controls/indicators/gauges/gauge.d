@@ -93,7 +93,7 @@ class Gauge : Control
         auto segmentWidth = 5;
         auto segmentHeight = 10;
         auto segmentCount = 20;
-        progressBar = new BaseRadialProgressBar(0, 1.0, radius * 2);
+        //progressBar = new BaseRadialProgressBar(0, 1.0, radius * 2);
         progressBar.innerPadding = 7;
         progressBar.segmentWidth = segmentWidth;
         progressBar.segmentHeight = segmentHeight;
