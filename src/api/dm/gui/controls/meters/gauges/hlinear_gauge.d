@@ -29,22 +29,22 @@ class HLinearGauge : MinMaxValueMeter!double
 
     bool isCreateScale = true;
     Sprite2d delegate(Sprite2d) onNewScale;
-    void delegate(Sprite2d) onScaleCreated;
+    void delegate(Sprite2d) onCreatedScale;
 
     bool isCreateColorBar = true;
     ColorBar delegate(ColorBar) onNewColorBar;
-    void delegate(ColorBar) onColorBarCreated;
+    void delegate(ColorBar) onCreatedColorBar;
 
     Container scaleContainer;
 
     bool isCreateScaleContainer = true;
     Container delegate(Container) onNewScaleContainer;
-    void delegate(Container) onScaleContainerCreated;
+    void delegate(Container) onCreatedScaleContainer;
 
     Text label;
     bool isCreateLabel = true;
     Text delegate(Text) onNewLabel;
-    void delegate(Text) onLabelCreated;
+    void delegate(Text) onCreatedLabel;
 
     double thumbWidth = 0;
     double thumbHeight = 0;
@@ -125,9 +125,9 @@ class HLinearGauge : MinMaxValueMeter!double
             scaleContainer = !onNewScaleContainer ? newScaleContainer : onNewScaleContainer(
                 newContainer);
             addCreate(scaleContainer);
-            if (onScaleContainerCreated)
+            if (onCreatedScaleContainer)
             {
-                onScaleContainerCreated(scaleContainer);
+                onCreatedScaleContainer(scaleContainer);
             }
         }
 
@@ -138,9 +138,9 @@ class HLinearGauge : MinMaxValueMeter!double
             colorRangeBar = !onNewColorBar ? newBar : onNewColorBar(newBar);
             auto root = scaleContainer ? scaleContainer : this;
             root.addCreate(colorRangeBar);
-            if (onColorBarCreated)
+            if (onCreatedColorBar)
             {
-                onColorBarCreated(colorRangeBar);
+                onCreatedColorBar(colorRangeBar);
             }
         }
 
@@ -168,9 +168,9 @@ class HLinearGauge : MinMaxValueMeter!double
                 root.width = scale.width;
             }
 
-            if (onScaleCreated)
+            if (onCreatedScale)
             {
-                onScaleCreated(scale);
+                onCreatedScale(scale);
             }
         }
 
@@ -197,9 +197,9 @@ class HLinearGauge : MinMaxValueMeter!double
             label.isVisible = false;
 
             addCreate(label);
-            if (onLabelCreated)
+            if (onCreatedLabel)
             {
-                onLabelCreated(label);
+                onCreatedLabel(label);
             }
         }
 

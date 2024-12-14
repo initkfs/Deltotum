@@ -22,7 +22,7 @@ abstract class BaseMonoScroll : BaseScroll
 
     bool isCreateThumb = true;
     Sprite2d delegate(Sprite2d) onNewThumb;
-    void delegate(Sprite2d) onThumbCreated;
+    void delegate(Sprite2d) onCreatedThumb;
 
     bool isCreateOnPointerWheel = true;
 
@@ -71,9 +71,9 @@ abstract class BaseMonoScroll : BaseScroll
             auto th = newThumb;
             thumb = onNewThumb ? onNewThumb(th) : th;
             addCreate(thumb);
-            if (onThumbCreated)
+            if (onCreatedThumb)
             {
-                onThumbCreated(thumb);
+                onCreatedThumb(thumb);
             }
 
             auto dragListener = newOnThumbDragXY;

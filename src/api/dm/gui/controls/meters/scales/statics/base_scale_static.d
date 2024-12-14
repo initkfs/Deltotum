@@ -27,17 +27,17 @@ abstract class BaseScaleStatic : BaseDrawableScale
     bool isCreateMinorTickProto = true;
     Sprite2d minorTickProto;
     Sprite2d delegate(Sprite2d) onNewMinorTickProto;
-    void delegate(Sprite2d) onMinorTickProtoCreated;
+    void delegate(Sprite2d) onCreatedMinorTickProto;
 
     bool isCreateMajorTickProto = true;
     Sprite2d majorTickProto;
     Sprite2d delegate(Sprite2d) onNewMajorTickProto;
-    void delegate(Sprite2d) onMajorTickProtoCreated;
+    void delegate(Sprite2d) onCreatedMajorTickProto;
 
     bool isCreateLabelProto = true;
     Text labelProto;
     Text delegate(Text) onNewLabelProto;
-    void delegate(Text) onLabelProtoCreated;
+    void delegate(Text) onCreatedLabelProto;
 
     protected
     {
@@ -77,9 +77,9 @@ abstract class BaseScaleStatic : BaseDrawableScale
 
             minorTickProto.isResizedByParent = false;
 
-            if (onMinorTickProtoCreated)
+            if (onCreatedMinorTickProto)
             {
-                onMinorTickProtoCreated(minorTickProto);
+                onCreatedMinorTickProto(minorTickProto);
             }
         }
 
@@ -100,9 +100,9 @@ abstract class BaseScaleStatic : BaseDrawableScale
 
             majorTickProto.isResizedByParent = false;
 
-            if (onMajorTickProtoCreated)
+            if (onCreatedMajorTickProto)
             {
-                onMajorTickProtoCreated(majorTickProto);
+                onCreatedMajorTickProto(majorTickProto);
             }
         }
 
@@ -112,9 +112,9 @@ abstract class BaseScaleStatic : BaseDrawableScale
             labelProto = onNewLabelProto ? onNewLabelProto(newProto) : newProto;
             buildInitCreate(labelProto);
 
-            if (onLabelProtoCreated)
+            if (onCreatedLabelProto)
             {
-                onLabelProtoCreated(labelProto);
+                onCreatedLabelProto(labelProto);
             }
         }
     }

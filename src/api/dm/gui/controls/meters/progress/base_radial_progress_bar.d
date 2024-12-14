@@ -23,7 +23,7 @@ class BaseRadialProgressBar : BaseLabeledProgressBar
 
     bool isCreateSegmentBar = true;
     RadialSegmentBar delegate(RadialSegmentBar) onNewSegmentBar;
-    void delegate(RadialSegmentBar) onSegmentBarCreated;
+    void delegate(RadialSegmentBar) onCreatedSegmentBar;
 
     this(double diameter = 0, double minValue = 0, double maxValue = 1.0, double minAngleDeg = 0, double maxAngleDeg = 360)
     {
@@ -65,9 +65,9 @@ class BaseRadialProgressBar : BaseLabeledProgressBar
             auto newBar = newSegmentBar;
             segmentBar = !onNewSegmentBar ? newBar : onNewSegmentBar(newBar);
             addCreate(segmentBar);
-            if (onSegmentBarCreated)
+            if (onCreatedSegmentBar)
             {
-                onSegmentBarCreated(segmentBar);
+                onCreatedSegmentBar(segmentBar);
             }
         }
 

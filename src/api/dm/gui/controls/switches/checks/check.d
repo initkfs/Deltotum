@@ -18,11 +18,11 @@ class Check : BaseBiswitch
 
     bool isCreateMarker;
     Sprite2d delegate(Sprite2d) onNewMarker;
-    void delegate(Sprite2d) onMarkerCreated;
+    void delegate(Sprite2d) onCreatedMarker;
 
     bool isCreateIndeterminate;
     Sprite2d delegate(Sprite2d) onNewIndeterminate;
-    void delegate(Sprite2d) onIndeterminateCreated;
+    void delegate(Sprite2d) onCreatedIndeterminate;
 
     double markerWidth = 0;
     double markerHeight = 0;
@@ -130,9 +130,9 @@ class Check : BaseBiswitch
             {
                 addCreate(marker);
             }
-            if (onMarkerCreated)
+            if (onCreatedMarker)
             {
-                onMarkerCreated(marker);
+                onCreatedMarker(marker);
             }
         }
 
@@ -148,9 +148,9 @@ class Check : BaseBiswitch
             {
                 addCreate(indeterminate);
             }
-            if (onIndeterminateCreated)
+            if (onCreatedIndeterminate)
             {
-                onIndeterminateCreated(indeterminate);
+                onCreatedIndeterminate(indeterminate);
             }
         }
 

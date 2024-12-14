@@ -540,7 +540,7 @@ class TimePicker : Control
     {
         auto t = newText(text);
         t.isBackground = true;
-        t.onBackgroundCreated = (bg) {
+        t.onCreatedBackground = (bg) {
             //TODO remove hack
             if (t is hoursLabel)
             {

@@ -12,7 +12,7 @@ abstract class BaseLabeledProgressBar : BaseProgressBar
 
     bool isCreateLabel = true;
     Text delegate(Text) onNewLabel;
-    void delegate(Text) onLabelCreated;
+    void delegate(Text) onCreatedLabel;
 
     bool isPercentMode = true;
 
@@ -30,9 +30,9 @@ abstract class BaseLabeledProgressBar : BaseProgressBar
             auto nl = newLabel;
             label = !onNewLabel ? nl : onNewLabel(nl);
             addCreate(label);
-            if (onLabelCreated)
+            if (onCreatedLabel)
             {
-                onLabelCreated(label);
+                onCreatedLabel(label);
             }
         }
     }

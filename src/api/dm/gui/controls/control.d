@@ -78,20 +78,20 @@ class Control : GuiComponent
     bool isThrowInvalidAnimationTime = true;
 
     Sprite2d delegate(Sprite2d) onNewBackground;
-    void delegate(Sprite2d) onBackgroundCreated;
+    void delegate(Sprite2d) onCreatedBackground;
 
     bool isProcessHover;
     bool isProcessAction;
 
     bool isCreateHoverEffect;
     Sprite2d delegate(Sprite2d) onNewHoverEffect;
-    void delegate(Sprite2d) onHoverEffectCreated;
+    void delegate(Sprite2d) onCreatedHoverEffect;
 
     size_t hoverAnimationDelayMs;
 
     bool isCreateHoverEffectAnimation;
     Tween2d delegate(Tween2d) onNewHoverAnimation;
-    void delegate(Tween2d) onHoverAnimationCreated;
+    void delegate(Tween2d) onCreatedHoverAnimation;
 
     void delegate() hoverEffectStartBehaviour;
     void delegate() hoverEffectEndBehaviour;
@@ -99,7 +99,7 @@ class Control : GuiComponent
     bool isCreateActionEffect;
     Sprite2d delegate() actionEffectFactory;
     Sprite2d delegate(Sprite2d) onNewActionEffect;
-    void delegate(Sprite2d) onActionEffectCreated;
+    void delegate(Sprite2d) onCreatedActionEffect;
 
     void delegate(ref ActionEvent) actionEffectStartBehaviour;
     void delegate(ref ActionEvent) actionEffectEndBehaviour;
@@ -109,7 +109,7 @@ class Control : GuiComponent
     bool isCreateActionEffectAnimation;
     Tween2d delegate(Sprite2d) actionEffectAnimationFactory;
     Tween2d delegate(Tween2d) onNewActionEffectAnimation;
-    void delegate(Tween2d) onActionEffectAnimationCreated;
+    void delegate(Tween2d) onCreatedActionEffectAnimation;
 
     bool isCreateInteractiveListeners;
 
@@ -403,9 +403,9 @@ class Control : GuiComponent
 
             _hoverEffect.opacityLimit = theme.opacityHover;
 
-            if (onHoverEffectCreated)
+            if (onCreatedHoverEffect)
             {
-                onHoverEffectCreated(_hoverEffect);
+                onCreatedHoverEffect(_hoverEffect);
             }
         }
 
@@ -420,9 +420,9 @@ class Control : GuiComponent
 
             addCreate(_hoverEffectAnimation);
 
-            if (onHoverAnimationCreated)
+            if (onCreatedHoverAnimation)
             {
-                onHoverAnimationCreated(_hoverEffectAnimation);
+                onCreatedHoverAnimation(_hoverEffectAnimation);
             }
         }
 
@@ -435,9 +435,9 @@ class Control : GuiComponent
             assert(_actionEffect);
             addCreate(_actionEffect);
 
-            if (onActionEffectCreated)
+            if (onCreatedActionEffect)
             {
-                onActionEffectCreated(_actionEffect);
+                onCreatedActionEffect(_actionEffect);
             }
         }
 
@@ -452,9 +452,9 @@ class Control : GuiComponent
             assert(_actionEffectAnimation);
             addCreate(_actionEffectAnimation);
 
-            if (onActionEffectAnimationCreated)
+            if (onCreatedActionEffectAnimation)
             {
-                onActionEffectAnimationCreated(_actionEffectAnimation);
+                onCreatedActionEffectAnimation(_actionEffectAnimation);
             }
         }
     }
@@ -1132,9 +1132,9 @@ class Control : GuiComponent
 
         _background.opacityLimit = theme.opacityBackground;
 
-        if (onBackgroundCreated)
+        if (onCreatedBackground)
         {
-            onBackgroundCreated(_background);
+            onCreatedBackground(_background);
         }
 
         return true;

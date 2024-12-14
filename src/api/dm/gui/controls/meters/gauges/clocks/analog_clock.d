@@ -31,27 +31,27 @@ class AnalogClock : BaseRadialGauge
     Sprite2d hourHand;
     bool isCreateHourHand = true;
     Sprite2d delegate(Sprite2d) onNewHourHand;
-    void delegate(Sprite2d) onHourHandCreated;
+    void delegate(Sprite2d) onCreatedHourHand;
 
     Sprite2d minHand;
     bool isCreateMinHand = true;
     Sprite2d delegate(Sprite2d) onNewMinHand;
-    void delegate(Sprite2d) onMinHandCreated;
+    void delegate(Sprite2d) onCreatedMinHand;
 
     Sprite2d secHand;
     bool isCreateSecHand = true;
     Sprite2d delegate(Sprite2d) onNewSecHand;
-    void delegate(Sprite2d) onSecHandCreated;
+    void delegate(Sprite2d) onCreatedSecHand;
 
     Sprite2d handHolder;
     bool isCreateHandHolder = true;
     Sprite2d delegate(Sprite2d) onNewHandHolder;
-    void delegate(Sprite2d) onHandHolderCreated;
+    void delegate(Sprite2d) onCreatedHandHolder;
 
     Tween2d clockAnimation;
     bool isCreateClockAnimation = true;
     Tween2d delegate(Tween2d) onNewClockAnimation;
-    void delegate(Tween2d) onClockAnimationCreated;
+    void delegate(Tween2d) onCreatedClockAnimation;
 
     double handWidth = 0;
 
@@ -228,9 +228,9 @@ class AnalogClock : BaseRadialGauge
             auto newHand = newHourHand;
             hourHand = !onNewHourHand ? newHand : onNewHourHand(newHand);
             addCreate(hourHand);
-            if (onHourHandCreated)
+            if (onCreatedHourHand)
             {
-                onHourHandCreated(hourHand);
+                onCreatedHourHand(hourHand);
             }
         }
 
@@ -239,9 +239,9 @@ class AnalogClock : BaseRadialGauge
             auto newHand = newMinHand;
             minHand = !onNewMinHand ? newHand : onNewMinHand(newHand);
             addCreate(minHand);
-            if (onMinHandCreated)
+            if (onCreatedMinHand)
             {
-                onMinHandCreated(minHand);
+                onCreatedMinHand(minHand);
             }
         }
 
@@ -250,9 +250,9 @@ class AnalogClock : BaseRadialGauge
             auto newHand = newSecHand;
             secHand = !onNewSecHand ? newHand : onNewSecHand(newHand);
             addCreate(secHand);
-            if (onSecHandCreated)
+            if (onCreatedSecHand)
             {
-                onSecHandCreated(secHand);
+                onCreatedSecHand(secHand);
             }
         }
 
@@ -269,9 +269,9 @@ class AnalogClock : BaseRadialGauge
                 holderTexture.bestScaleMode;
             }
 
-            if (onHandHolderCreated)
+            if (onCreatedHandHolder)
             {
-                onHandHolderCreated(handHolder);
+                onCreatedHandHolder(handHolder);
             }
         }
 

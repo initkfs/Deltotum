@@ -434,7 +434,7 @@ class Controls : Control
         import api.dm.gui.controls.meters.gauges.radial_gauge : RadialGauge;
 
         auto radGauge = new RadialGauge;
-        radGauge.onLabelCreated = (label) {
+        radGauge.onCreatedLabel = (label) {
             label.updateRows;
             label.paddingBottom = label.height * 2;
         };

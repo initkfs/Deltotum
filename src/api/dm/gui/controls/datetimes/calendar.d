@@ -50,7 +50,7 @@ class DayContainer : Control
 
         isBackground = true;
 
-        onBackgroundCreated = (newBackgound) {
+        onCreatedBackground = (newBackgound) {
             if (!_mark && hasBackground)
             {
                 background.get.isVisible = false;

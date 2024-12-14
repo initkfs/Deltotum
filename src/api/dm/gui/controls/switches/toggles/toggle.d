@@ -46,7 +46,7 @@ class Toggle : BaseOrientToggle
 
         if (!isVertical)
         {
-            onThumbContainerCreated = (thumbContainer) {
+            onCreatedThumbContainer = (thumbContainer) {
                 auto isRemove = remove(thumbContainer, isDestroy:
                     false);
                 assert(isRemove);
