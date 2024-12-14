@@ -459,40 +459,61 @@ class Controls : Control
         progressContainer.isAlignX = true;
         root.addCreate(progressContainer);
 
+        import api.dm.gui.controls.meters.progress.base_progress_bar : BaseProgressBar;
         import api.dm.gui.controls.meters.progress.linear_progress_bar : LinearProgressBar;
 
-        auto linProgress1 = new LinearProgressBar;
-        progressContainer.addCreate(linProgress1);
-        linProgress1.value = 0.5;
+        auto linProgressH = new LinearProgressBar;
+        progressContainer.addCreate(linProgressH);
+        linProgressH.value = 0.5;
 
         import api.dm.gui.controls.meters.progress.radial_progress_bar : RadialProgressBar;
 
-        auto rProgress1 = new RadialProgressBar;
-        progressContainer.addCreate(rProgress1);
-        rProgress1.value = 0.5;
+        auto rProgress = new RadialProgressBar;
+        progressContainer.addCreate(rProgress);
+        rProgress.value = 0.5;
+
+        import api.math.orientation : Orientation;
+
+        auto linProgressV = new LinearProgressBar(0, 1.0, Orientation.vertical);
+        root.addCreate(linProgressV);
+        linProgressV.value = 0.5;
 
         import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
+
+        BaseProgressBar[3] progBars = [
+            linProgressH, linProgressV, rProgress
+        ];
 
         auto pTween = new PauseTween2d(200);
         progressContainer.addCreate(pTween);
         pTween.cycleCount = 11;
         pTween.onEnd ~= () {
-            rProgress1.value = rProgress1.value + 0.1;
-            linProgress1.value = linProgress1.value + 0.1;
+            foreach (bar; progBars)
+            {
+                bar.value = bar.value + 0.1;
+            }
         };
-        pTween.onStop ~= () { rProgress1.value = 0; linProgress1.value = 0; };
+        pTween.onStop ~= () {
+            foreach (bar; progBars)
+            {
+                bar.value = 0.5;
+            }
+        };
 
         auto runProgress = () {
             if (!pTween.isRunning)
             {
-                rProgress1.value = 0;
-                linProgress1.value = 0;
+                foreach (bar; progBars)
+                {
+                    bar.value = 0;
+                }
                 pTween.run;
             }
         };
 
-        rProgress1.onPointerPress ~= (ref e) { runProgress(); };
-        linProgress1.onPointerPress ~= (ref e) { runProgress(); };
+        rProgress.onPointerPress ~= (ref e) { runProgress(); };
+        linProgressH.onPointerPress ~= (ref e) { runProgress(); };
+        linProgressV.onPointerPress ~= (ref e) { runProgress(); };
     }
 
     void createSeparators(Container root)

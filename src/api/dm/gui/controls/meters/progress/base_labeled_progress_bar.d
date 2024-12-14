@@ -44,11 +44,15 @@ abstract class BaseLabeledProgressBar : BaseProgressBar
 
     override protected void setProgressData(double oldV, double newV)
     {
-        setLabelText(oldV, newV);
+        if(label){
+            setLabelText(oldV, newV);
+        }
     }
 
     protected void setLabelText(double oldV, double newV)
     {
+        assert(label);
+
         import std.format : format;
 
         if (isPercentMode)
