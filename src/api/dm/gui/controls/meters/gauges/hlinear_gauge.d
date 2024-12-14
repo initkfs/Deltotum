@@ -1,6 +1,6 @@
 module api.dm.gui.controls.meters.gauges.hlinear_gauge;
 
-import api.dm.gui.controls.meters.min_value_meter : MinValueMeter;
+import api.dm.gui.controls.meters.min_max_value_meter : MinMaxValueMeter;
 import api.dm.gui.controls.meters.scales.dynamics.base_scale_dynamic : BaseScaleDynamic;
 import api.dm.gui.controls.indicators.color_bars.color_bar : ColorBar;
 import api.dm.gui.containers.container : Container;
@@ -33,7 +33,7 @@ struct TickInfo
 /**
  * Authors: initkfs
  */
-class HLinearGauge : MinValueMeter!double
+class HLinearGauge : MinMaxValueMeter!double
 {
     Sprite2d scale;
     ColorBar colorRangeBar;

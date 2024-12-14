@@ -29,7 +29,7 @@ class RadialSegmentBar : Control
     double minAngleDeg = 0;
     double maxAngleDeg = 0;
 
-    double angleOffset = 90;
+    double angleOffset = -90;
 
     this(double diameter = 0, double minAngleDeg = 0, double maxAngleDeg = 180)
     {
@@ -165,11 +165,14 @@ class RadialSegmentBar : Control
         }
     }
 
+    double segmentAngle() => 360.0 / segmentsCount;
+    double segmentAngleMiddleOffset() => segmentAngle / 2;
+
     void drawSegment(scope bool delegate(size_t i, double startAngleDeg, double endAngleDeg, double angleOffset) onAngleDegIsContinue)
     {
         assert(onAngleDegIsContinue);
 
-        double angleDiff = 360 / segmentsCount;
+        double angleDiff = segmentAngle;
         double angleMiddleOffset = angleDiff / 2;
 
         foreach (i; 0 .. segmentsCount)
@@ -177,7 +180,7 @@ class RadialSegmentBar : Control
             auto startAngle = angleDiff * i - angleMiddleOffset;
             if (startAngle > angleOffset)
             {
-                startAngle -= angleOffset;
+                startAngle += angleOffset;
             }
             else
             {
@@ -236,6 +239,17 @@ class RadialSegmentBar : Control
         foreach (s; segmentsOn)
         {
             s.isVisible = true;
+        }
+    }
+
+    void showSegments(size_t countFrom1)
+    {
+        foreach (i, s; segmentsOn)
+        {
+            s.isVisible = true;
+            if((i + 1) >= countFrom1){
+                break;
+            }
         }
     }
 

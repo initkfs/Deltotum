@@ -1,11 +1,11 @@
-module api.dm.gui.controls.meters.min_value_meter;
+module api.dm.gui.controls.meters.min_max_value_meter;
 
 import api.dm.gui.controls.control : Control;
 
 /**
  * Authors: initkfs
  */
-abstract class MinValueMeter(ValueType) : Control
+abstract class MinMaxValueMeter(ValueType) : Control
 {
     ValueType minValue;
     ValueType maxValue;

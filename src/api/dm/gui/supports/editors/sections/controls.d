@@ -413,7 +413,7 @@ class Controls : Control
         root.addCreate(vscaleDyn2);
 
         auto rscroll1 = new RScroll;
-        rscroll1.onScaleCreate = (scale){
+        rscroll1.onScaleCreate = (scale) {
             scale.multiplyInitWidth = 1.2;
             return scale;
         };
@@ -423,7 +423,7 @@ class Controls : Control
         gaugeContainer.isAlignX = true;
         root.addCreate(gaugeContainer);
 
-        import api.dm.gui.controls.meters.gauges.hlinear_gauge: HLinearGauge;
+        import api.dm.gui.controls.meters.gauges.hlinear_gauge : HLinearGauge;
 
         auto hLinGauge = new HLinearGauge;
         hLinGauge.isHGrow = true;
@@ -455,11 +455,31 @@ class Controls : Control
         anClock.isAutorun = true;
         root.addCreate(anClock);
 
-        import api.dm.gui.controls.meters.progress.radial_progress_bar: RadialProgressBar;
+        import api.dm.gui.controls.meters.progress.radial_progress_bar : RadialProgressBar;
 
         auto rProgress1 = new RadialProgressBar;
-        rProgress1.isDrawBounds = true;
         root.addCreate(rProgress1);
+        rProgress1.value = 0.5;
+
+        import api.dm.kit.sprites2d.tweens.pause_tween2d: PauseTween2d;
+
+        auto pTween = new PauseTween2d(200);
+        addCreate(pTween);
+        pTween.cycleCount = 11;
+        pTween.onEnd ~= () {
+            rProgress1.value = rProgress1.value + 0.1;
+        };
+        pTween.onStop ~= (){
+            rProgress1.value = 0;
+        };
+
+        rProgress1.onPointerPress ~= (ref e) {
+            if (!pTween.isRunning)
+            {
+                rProgress1.value = 0;
+                pTween.run;
+            }
+        };
     }
 
     void createSeparators(Container root)

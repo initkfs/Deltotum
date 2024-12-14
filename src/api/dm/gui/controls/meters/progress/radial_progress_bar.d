@@ -1,109 +1,18 @@
 module api.dm.gui.controls.meters.progress.radial_progress_bar;
 
-import api.dm.gui.controls.meters.progress.base_radial_progress_bar : BaseRadialProgressBar;
-import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.graphics.styles.graphic_style: GraphicStyle;
-import api.dm.gui.controls.texts.text : Text;
+import api.dm.gui.controls.meters.progress.base_radial_progress_bar: BaseRadialProgressBar;
 
-import std.conv : to, text;
-
-import Math = api.dm.math;
 
 /**
  * Authors: initkfs
  */
 class RadialProgressBar : BaseRadialProgressBar
 {
-    Sprite2d[] segments;
-    size_t segmentsCount = 5;
-
-    GraphicStyle segmentStyle;
-
-    protected
-    {
-        Text label;
-    }
-
     this(double diameter = 0, double minValue = 0, double maxValue = 1.0, double minAngleDeg = 0, double maxAngleDeg = 180)
     {
         super(diameter, minValue, maxValue, minAngleDeg, maxAngleDeg);
-
-        import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
-
-        this.layout = new CenterLayout;
     }
-
-    override void initialize()
-    {
-        super.initialize;
-    }
-
-    override void loadTheme()
-    {
-        super.loadTheme;
-
-        if (diameter == 0)
-        {
-            diameter = theme.meterThumbDiameter;
-        }
-
-        assert(diameter > 0);
-        initSize(diameter, diameter);
-    }
-
-    override void create()
-    {
-        super.create;
-
-        if (capGraphics.isVectorGraphics)
-        {
-            import api.dm.kit.sprites2d.textures.vectors.shapes.varc : VArc;
-
-            auto style = segmentStyle == GraphicStyle.init ? createFillStyle : segmentStyle;
-
-            double angleDiff = 360 / segmentsCount;
-            double angleOffset = angleDiff / 2;
-
-            foreach (i; 0 .. segmentsCount)
-            {
-                auto segment = new VArc(radius, style);
-
-                segment.xCenter = 0;
-                segment.yCenter = 0;
-                auto stAngle = angleDiff * i - angleOffset - 90;
-                auto endAngle = stAngle + angleDiff;
-                segment.fromAngleRad = Math.degToRad(stAngle);
-                segment.toAngleRad = Math.degToRad(endAngle);
-                addCreate(segment);
-                segment.isVisible = false;
-                segments ~= segment;
-            }
-        }
-    }
-
-    void hideSegments()
-    {
-        foreach (s; segments)
-        {
-            s.isVisible = false;
-        }
-    }
-
-    void showSegments()
-    {
-        foreach (s; segments)
-        {
-            s.isVisible = true;
-        }
-    }
-
-    Sprite2d segmentByIndex(size_t v)
-    {
-        assert(segments.length > 0);
-        auto index = v % segments.length;
-        return segments[index];
-    }
-
+    
     // protected void setText()
     // {
     //     if (!label)
