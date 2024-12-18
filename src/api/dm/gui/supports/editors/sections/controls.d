@@ -317,6 +317,27 @@ class Controls : Control
 
     void createSelections(Container root)
     {
+        import api.dm.gui.controls.selects.trees.tree_view: TreeView;
+        import api.dm.gui.controls.selects.trees.tree_item: TreeItem;
+
+        auto tree1 = new TreeView!string;
+        root.addCreate(tree1);
+
+        auto rootItem = new TreeItem!string("root");
+        
+        auto child = new TreeItem!string("child1");
+        auto child2 = new TreeItem!string("child2");
+
+        child.childrenItems ~= child2;
+        rootItem.childrenItems ~= child;
+
+        import std.conv : to;
+
+        foreach (i; 0 .. 11)
+        {
+            rootItem.childrenItems ~= new TreeItem!string(i.to!string);
+        }
+        tree1.fill(rootItem);
 
         // import api.dm.gui.controls.choices.choice_box : ChoiceBox;
 
@@ -439,8 +460,6 @@ class Controls : Control
             label.paddingBottom = label.height * 2;
         };
         gaugeContainer.addCreate(radGauge);
-
-        gaugeContainer.isDrawBounds = true;
 
         radGauge.onPointerPress ~= (ref e) {
             import api.math.geom2.vec2 : Vec2d;
