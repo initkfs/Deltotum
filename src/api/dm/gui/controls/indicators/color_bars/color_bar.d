@@ -6,6 +6,8 @@ import api.dm.gui.controls.indicators.color_bars.color_bar_value: ColorBarValue;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
+import Math = api.math;
+
 /**
  * Authors: initkfs
  */
@@ -38,7 +40,7 @@ class ColorBar : BaseColorBar
         double nextX = x;
         foreach (r; rangeData)
         {
-            const rangeWidth = r.value * width / rangeSum;
+            const rangeWidth = Math.round(r.value * width / rangeSum);
             graphics.fillRect(nextX, 0, rangeWidth, height, r.color);
             nextX += rangeWidth;
         }
