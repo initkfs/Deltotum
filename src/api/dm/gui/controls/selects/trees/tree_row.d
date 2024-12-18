@@ -2,9 +2,101 @@ module api.dm.gui.controls.selects.trees.tree_row;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.containers.container : Container;
+import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.texts.text : Text;
 
 import api.dm.gui.controls.selects.trees.tree_item : TreeItem;
+import api.math.geom2.vec2 : Vec2d;
+
+class TreeRowLevelGraphics : Control
+{
+    size_t level;
+    bool isLastRow;
+
+    double graphicsGap = 0;
+
+    // this(){
+    //     isDrawBounds = true;
+    // }
+
+    override void initialize()
+    {
+        super.initialize;
+
+        if (width == 0)
+        {
+            assert(graphicsGap > 0);
+            initWidth = level > 0 ? ((level + 1) * graphicsGap) : (graphicsGap * 2);
+        }
+    }
+
+    override void loadTheme()
+    {
+        super.loadTheme;
+
+        if (graphicsGap == 0)
+        {
+            graphicsGap = theme.controlGraphicsGap * 2;
+        }
+    }
+
+    override void drawContent()
+    {
+        super.drawContent;
+
+        const b = boundsRect;
+
+        graphics.changeColor(theme.colorAccent);
+        scope (exit)
+        {
+            graphics.restoreColor;
+        }
+
+        double nextX = b.x + graphicsGap;
+        if (level == 0)
+        {
+            if (!isLastRow)
+            {
+                graphics.line(Vec2d(nextX, b.y), Vec2d(nextX, b.bottom));
+                graphics.line(Vec2d(nextX, b.middleY), Vec2d(nextX + graphicsGap, b.middleY));
+            }
+        }
+        else
+        {
+            auto lastLevel = level - 1;
+            //TODO paddings
+            foreach (l; 0 .. level)
+            {
+                if (l == lastLevel)
+                {
+                    if (!isLastRow)
+                    {
+                        graphics.line(Vec2d(nextX, b.y), Vec2d(nextX, b.bottom));
+                        graphics.line(Vec2d(nextX, b.middleY), Vec2d(nextX + graphicsGap, b.middleY));
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    graphics.line(Vec2d(nextX, b.y), Vec2d(nextX, b.bottom));
+                }
+
+                nextX += graphicsGap * 1.5;
+            }
+        }
+
+        if (isLastRow)
+        {
+            graphics.line(Vec2d(nextX, b.y), Vec2d(nextX, b.middleY));
+            graphics.line(Vec2d(nextX, b.middleY), Vec2d(nextX + graphicsGap, b
+                    .middleY));
+            return;
+        }
+    }
+}
 
 /**
  * Authors: initkfs
@@ -45,10 +137,10 @@ class TreeRow(T) : Container
 
     dstring delegate(T) itemTextProvider;
 
-    Text levelGraphics;
+    TreeRowLevelGraphics levelGraphics;
     bool isCreateLevelGraphics = true;
-    Text delegate(Text) onNewLevelGraphics;
-    void delegate(Text) onCreatedLevelGraphics;
+    TreeRowLevelGraphics delegate(TreeRowLevelGraphics) onNewLevelGraphics;
+    void delegate(TreeRowLevelGraphics) onCreatedLevelGraphics;
 
     Text expandGraphics;
     bool isCreateExpandGraphics = true;
@@ -115,15 +207,14 @@ class TreeRow(T) : Container
             auto nlg = newLevelGraphics;
             levelGraphics = !onNewLevelGraphics ? nlg : onNewLevelGraphics(nlg);
 
-            levelGraphics.padding = Insets(0);
+            levelGraphics.height = height;
+            levelGraphics.level = treeLevel;
 
             addCreate(levelGraphics);
             if (onCreatedLevelGraphics)
             {
                 onCreatedLevelGraphics(levelGraphics);
             }
-
-            setTreeLevel(levelGraphics);
         }
 
         //TODO child !is null
@@ -174,9 +265,9 @@ class TreeRow(T) : Container
         onPointerPress ~= (ref e) { toggleSelected; };
     }
 
-    Text newLevelGraphics()
+    TreeRowLevelGraphics newLevelGraphics()
     {
-        return new Text("");
+        return new TreeRowLevelGraphics;
     }
 
     Text newExpandGraphics()
@@ -201,19 +292,6 @@ class TreeRow(T) : Container
         isVisible = value;
         isManaged = value;
         isLayoutManaged = value;
-    }
-
-    protected void setTreeLevel(Text label)
-    {
-        auto level = treeLevel;
-        if (level > 0)
-        {
-            foreach (l; 0 .. level - 1)
-            {
-                label.text = levelGraphics.text ~ "│";
-            }
-        }
-        label.text = levelGraphics.text ~ "├";
     }
 
     protected void setExpandGraphics()
@@ -255,7 +333,6 @@ class TreeRow(T) : Container
         }
     }
 
-    //TODO hack, remove duplication
     void setLastRowLabel()
     {
         if (!levelGraphics)
@@ -263,16 +340,6 @@ class TreeRow(T) : Container
             return;
         }
 
-        dstring levelSymbol = "└";
-        dstring text = levelSymbol;
-        if (treeLevel > 0)
-        {
-            foreach (l; 0 .. treeLevel - 1)
-            {
-                text ~= levelSymbol;
-            }
-        }
-
-        levelGraphics.text = text;
+        levelGraphics.isLastRow = true;
     }
 }
