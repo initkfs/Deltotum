@@ -12,6 +12,7 @@ import api.dm.gui.containers.vbox : VBox;
 import api.dm.gui.containers.frame : Frame;
 import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 import api.dm.gui.controls.carousels.carousel;
+import api.dm.gui.controls.selects.tables.trees.tree_item;
 
 /**
  * Authors: initkfs
@@ -317,6 +318,11 @@ class Controls : Control
 
     void createSelections(Container root)
     {
+        import api.dm.gui.containers.hbox: HBox;
+
+        auto tableRoot = new HBox;
+        root.addCreate(tableRoot);
+
         import api.dm.gui.controls.selects.tables.virtuals.virtual_table: VirtualTable;
         import api.dm.gui.controls.selects.tables.virtuals.virtual_row : VirtualRow;
 
@@ -330,9 +336,25 @@ class Controls : Control
         }
 
         auto virtTable = new VirtualTable!(string, VirtualRow!string);
-        addCreate(virtTable);
+        tableRoot.addCreate(virtTable);
 
         virtTable.fill(virtItems);
+
+        import api.dm.gui.controls.selects.tables.trees.tree_item: TreeItem;
+        import api.dm.gui.controls.selects.tables.trees.tree_table: TreeTable;
+
+        auto treeTable = new TreeTable!(string);
+        tableRoot.addCreate(treeTable);
+
+        auto rootItem = new TreeItem!string("root");
+
+        foreach(i; 0..11){
+            import std.conv: to;
+            auto ni = new TreeItem!string(i.to!string);
+            rootItem.childrenItems ~= ni;
+        }
+
+        treeTable.fill(rootItem);
 
         // import api.dm.gui.controls.choices.choice_box : ChoiceBox;
 

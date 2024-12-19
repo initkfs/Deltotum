@@ -32,7 +32,8 @@ class ScrollBox : Container
         Container contentContainer;
         Sprite2d contentRoot;
 
-        enum {
+        enum
+        {
             idVscroll = "scb_scroll_v",
             idHscroll = "scb_scroll_h"
         }
@@ -155,6 +156,14 @@ class ScrollBox : Container
         onClipResize = (clipPtr) { clipChildren(contentRoot); };
 
         onClipMove = (clipPtr) { clipChildren(contentRoot); };
+
+        onPointerWheel ~= (ref e) {
+            if (vslider)
+            {
+                vslider.fireEvent(e);
+                e.isConsumed = true;
+            }
+        };
     }
 
     protected void checkScrolls()
@@ -164,7 +173,7 @@ class ScrollBox : Container
             assert(content);
             if (contentRoot && contentRoot.width > content.width)
             {
-                 enableScroll(hslider);
+                enableScroll(hslider);
             }
         }
 
@@ -173,7 +182,7 @@ class ScrollBox : Container
             assert(content);
             if (contentRoot && contentRoot.height > content.height)
             {
-                 enableScroll(vslider);
+                enableScroll(vslider);
             }
         }
     }
@@ -213,6 +222,7 @@ class ScrollBox : Container
 
     void setContent(Sprite2d root)
     {
+        assert(root);
         assert(content);
 
         if (root.isLayoutManaged)
@@ -229,6 +239,7 @@ class ScrollBox : Container
         }
 
         contentRoot = root;
+
         if (!contentRoot.isCreated)
         {
             content.addCreate(contentRoot);
@@ -241,7 +252,8 @@ class ScrollBox : Container
         checkScrolls;
     }
 
-    override void dispose(){
+    override void dispose()
+    {
         if (contentRoot)
         {
             content.remove(contentRoot, false);

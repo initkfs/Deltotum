@@ -46,21 +46,11 @@ class VirtualTable(T, TR : VirtualRow!T) : BaseTable
     override void loadTheme()
     {
         super.loadTheme;
-        loadTreeViewTheme;
+        loadVirtualTableTheme;
     }
 
-    void loadTreeViewTheme()
+    void loadVirtualTableTheme()
     {
-        if (width == 0)
-        {
-            initWidth = theme.controlDefaultWidth * 2;
-        }
-
-        if (height == 0)
-        {
-            initHeight = theme.controlDefaultHeight * 4;
-        }
-
         if (maxRowHeight == 0)
         {
             maxRowHeight = theme.controlDefaultHeight / 2;

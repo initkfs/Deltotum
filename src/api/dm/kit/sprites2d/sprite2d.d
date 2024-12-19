@@ -1964,6 +1964,18 @@ class Sprite2d : EventKitTarget
         return index == children.length - 1;
     }
 
+    Sprite2d findChildUnsafe(Sprite2d child)
+    {
+        foreach (Sprite2d ch; children)
+        {
+            if (ch is child)
+            {
+                return ch;
+            }
+        }
+        return null;
+    }
+
     Nullable!Sprite2d findChild(Sprite2d child)
     {
         foreach (Sprite2d ch; children)
