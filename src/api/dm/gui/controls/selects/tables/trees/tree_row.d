@@ -1,11 +1,11 @@
-module api.dm.gui.controls.selects.trees.tree_row;
+module api.dm.gui.controls.selects.tables.trees.tree_row;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.containers.container : Container;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.texts.text : Text;
 
-import api.dm.gui.controls.selects.trees.tree_item : TreeItem;
+import api.dm.gui.controls.selects.tables.trees.tree_item : TreeItem;
 import api.math.geom2.vec2 : Vec2d;
 
 class TreeRowLevelGraphics : Control
@@ -272,7 +272,7 @@ class TreeRow(T) : Container
 
     Text newExpandGraphics()
     {
-        return new Text("");
+        return new Text(">");
     }
 
     Text newItemText(dstring text)
@@ -280,11 +280,8 @@ class TreeRow(T) : Container
         return new Text(text);
     }
 
-    bool expand() => isExpand;
-
-    void expand(bool value)
+    protected void setExpand(bool value)
     {
-        //TODO remove overwriting
         isExpand = value;
 
         setExpandGraphics;
@@ -292,6 +289,37 @@ class TreeRow(T) : Container
         isVisible = value;
         isManaged = value;
         isLayoutManaged = value;
+    }
+
+    bool expand() => isExpand;
+
+    void expand(bool value)
+    {
+        //TODO remove overwriting
+        if (isExpand == value)
+        {
+            return;
+        }
+        bool oldValue = isExpand;
+        setExpand(value);
+
+        if(onExpandOldNewValue)
+        {
+            onExpandOldNewValue(oldValue, value);
+        }
+    }
+
+    size_t countExpandChildren()
+    {
+        size_t counter;
+        foreach (row; childrenRows)
+        {
+            if (row.expand)
+            {
+                counter++;
+            }
+        }
+        return counter;
     }
 
     protected void setExpandGraphics()

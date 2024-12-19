@@ -1,16 +1,18 @@
-module api.dm.gui.controls.selects.trees.tree_item;
+module api.dm.gui.controls.selects.tables.trees.tree_item;
+
+import api.dm.gui.controls.selects.tables.base_table_item : BaseTableItem;
+
 /**
  * Authors: initkfs
  */
-class TreeItem(T)
+class TreeItem(T) : BaseTableItem!T
 {
-    T item;
     TreeItem!T parentItem;
     TreeItem!T[] childrenItems;
 
     this(T item, TreeItem parent = null, TreeItem!T[] children = null)
     {
-        this.item = item;
+        super(item);
         this.parentItem = parent;
         this.childrenItems = children;
     }

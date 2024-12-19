@@ -317,27 +317,22 @@ class Controls : Control
 
     void createSelections(Container root)
     {
-        import api.dm.gui.controls.selects.trees.tree_view: TreeView;
-        import api.dm.gui.controls.selects.trees.tree_item: TreeItem;
+        import api.dm.gui.controls.selects.tables.virtuals.virtual_table: VirtualTable;
+        import api.dm.gui.controls.selects.tables.virtuals.virtual_row : VirtualRow;
 
-        auto tree1 = new TreeView!string;
-        root.addCreate(tree1);
-
-        auto rootItem = new TreeItem!string("root");
-        
-        auto child = new TreeItem!string("child1");
-        auto child2 = new TreeItem!string("child2");
-
-        child.childrenItems ~= child2;
-        rootItem.childrenItems ~= child;
+        string[] virtItems;
 
         import std.conv : to;
 
-        foreach (i; 0 .. 11)
+        foreach (i; 0 .. 100)
         {
-            rootItem.childrenItems ~= new TreeItem!string(i.to!string);
+            virtItems ~= i.to!string;
         }
-        tree1.fill(rootItem);
+
+        auto virtTable = new VirtualTable!(string, VirtualRow!string);
+        addCreate(virtTable);
+
+        virtTable.fill(virtItems);
 
         // import api.dm.gui.controls.choices.choice_box : ChoiceBox;
 
