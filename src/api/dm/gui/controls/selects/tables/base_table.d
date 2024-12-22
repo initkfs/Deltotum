@@ -20,7 +20,7 @@ class BaseTable : Control
     {
         import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 
-        layout = new HLayout;
+        layout = new HLayout(0);
         layout.isAutoResize = true;
     }
 

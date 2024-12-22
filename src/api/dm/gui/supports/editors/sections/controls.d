@@ -323,19 +323,19 @@ class Controls : Control
         auto tableRoot = new HBox;
         root.addCreate(tableRoot);
 
-        import api.dm.gui.controls.selects.tables.virtuals.virtual_table: VirtualTable;
+        import api.dm.gui.controls.selects.tables.virtuals.circular_virtual_table: CircularVirtualTable;
         import api.dm.gui.controls.selects.tables.virtuals.virtual_row : VirtualRow;
 
         string[] virtItems;
 
         import std.conv : to;
 
-        foreach (i; 0 .. 100)
+        foreach (i; 0 .. 51)
         {
             virtItems ~= i.to!string;
         }
 
-        auto virtTable = new VirtualTable!(string, VirtualRow!string);
+        auto virtTable = new CircularVirtualTable!(string, VirtualRow!string);
         tableRoot.addCreate(virtTable);
 
         virtTable.fill(virtItems);

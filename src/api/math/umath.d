@@ -220,6 +220,15 @@ T clamp(T)(T value, T min, T max)
     return value;
 }
 
+T clampAbs(T)(T value, T min, T max)
+{
+    if (value >= min)
+    {
+        return clamp(value, min, max);
+    }
+    return clamp(value, -max, min);
+}
+
 double clamp01(double value) @nogc nothrow pure @safe => clamp(value, 0.0, 1.0);
 
 double wrap(double x, double min = 0.0, double max = 1.0)
@@ -279,7 +288,8 @@ double angleDegMiddle(double startAngleDeg, double endAngleDeg) @nogc nothrow pu
 
 bool nearAngleDeg(double angleDeg, double targetAngle, double delta = 3) @nogc nothrow pure @safe
 {
-    const startAngle = targetAngle > delta ? (targetAngle - delta) : (angleFullDeg - (delta - targetAngle));
+    const startAngle = targetAngle > delta ? (targetAngle - delta) : (
+        angleFullDeg - (delta - targetAngle));
     const endAngle = targetAngle + delta;
 
     return angleDeg >= startAngle && angleDeg <= endAngle;

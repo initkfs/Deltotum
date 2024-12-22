@@ -1,4 +1,4 @@
-module api.dm.gui.controls.selects.tables.virtuals.virtual_table;
+module api.dm.gui.controls.selects.tables.virtuals.circular_virtual_table;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.containers.container : Container;
@@ -9,7 +9,7 @@ import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.selects.tables.base_table_row : BaseTableRow;
 import api.dm.gui.controls.selects.tables.base_table_item : BaseTableItem;
 import api.dm.gui.controls.selects.tables.virtuals.virtual_row : VirtualRow;
-import api.dm.gui.controls.selects.tables.base_table: BaseTable;
+import api.dm.gui.controls.selects.tables.base_table : BaseTable;
 
 import api.dm.gui.controls.meters.scrolls.vscroll : VScroll;
 
@@ -17,11 +17,13 @@ import api.math.insets : Insets;
 import Math = api.math;
 
 import std.container.dlist : DList;
+import std.container.slist : SList;
 
 /**
  * Authors: initkfs
  */
-class VirtualTable(T, TR : VirtualRow!T) : BaseTable
+class CircularVirtualTable(T, TR:
+    VirtualRow!T) : BaseTable
 {
     protected
     {
@@ -68,14 +70,13 @@ class VirtualTable(T, TR : VirtualRow!T) : BaseTable
         vScroll = new VScroll;
         vScroll.isVGrow = true;
         addCreate(vScroll);
-        vScroll.isVisible = true;
 
         double lastScrollValue = vScroll.value;
 
         vScroll.onValue ~= (v) {
             auto dt = v - lastScrollValue;
 
-            if (items.length == 0 || dt == 0 || !rowContainer)
+            if (items.length == 0 || !rowContainer)
             {
                 return;
             }
@@ -83,12 +84,17 @@ class VirtualTable(T, TR : VirtualRow!T) : BaseTable
             auto rowRelViewport = rowRelativeViewport;
             auto rowOffsetH = rowRelViewport.height * dt;
 
-            auto endIndex = items.length - 1;
+            if (rowOffsetH > maxRowHeight)
+            {
+                logger.warningf("Scroll offset %s is greater than max line height %s", rowOffsetH, maxRowHeight);
+            }
+
+            auto endItemIndex = items.length - 1;
 
             //scroll down
             if (dt > 0)
             {
-                if (endVisibleRowIndex == endIndex)
+                if (endVisibleRowIndex == endItemIndex)
                 {
                     auto lastRow = visibleRows.back;
                     if (lastRow.boundsRect.bottom <= rowContainer.boundsRect.bottom)
@@ -189,11 +195,9 @@ class VirtualTable(T, TR : VirtualRow!T) : BaseTable
     Rect2d rowRelativeViewport()
     {
         auto needRows = needViewportRows;
-        if (needRows >= items.length)
-        {
-            return Rect2d(0, 0, width, 0);
-        }
-        auto fullHeight = (items.length - needRows) * maxRowHeight;
+        auto itemRows = (needRows >= items.length) ? needRows - items.length
+            : items.length - needRows;
+        auto fullHeight = itemRows * maxRowHeight;
         return Rect2d(0, 0, width, fullHeight);
     }
 
@@ -208,7 +212,7 @@ class VirtualTable(T, TR : VirtualRow!T) : BaseTable
     size_t needVisibleRows()
     {
         size_t fullRows = needViewportRows;
-        //+1 last row
+        // +1 last row
         fullRows++;
         return fullRows;
     }
@@ -216,7 +220,8 @@ class VirtualTable(T, TR : VirtualRow!T) : BaseTable
     void createVisibleRows()
     {
         size_t fullRows = needVisibleRows;
-        if(fullRows > visibleRowsLength){
+        if (fullRows > visibleRowsLength)
+        {
             fullRows = fullRows - visibleRowsLength;
         }
 
@@ -235,8 +240,11 @@ class VirtualTable(T, TR : VirtualRow!T) : BaseTable
             auto row = newRow;
             rowContainer.addCreate(row);
 
-            auto item = items[ri];
-            row.rowItem = item;
+            if (ri < items.length)
+            {
+                auto item = items[ri];
+                row.rowItem = item;
+            }
 
             row.isVisible = true;
             visibleRows.insertBack(row);
@@ -247,6 +255,16 @@ class VirtualTable(T, TR : VirtualRow!T) : BaseTable
         endVisibleRowIndex = visibleRowsLength - 1;
 
         alignVisibleRows;
+
+        if (vScroll)
+        {
+            auto minHeightDy = maxRowHeight / 2;
+            vScroll.valueStep = minHeightDy / rowRelativeViewport.height;
+
+            assert(vScroll.thumb);
+            vScroll.maxDragY = minHeightDy * ((minHeightDy / rowRelativeViewport.height) * (
+                    vScroll.height - vScroll.thumb.height));
+        }
     }
 
     void alignVisibleRows()
@@ -264,11 +282,9 @@ class VirtualTable(T, TR : VirtualRow!T) : BaseTable
     {
         auto row = new TR;
 
-        import api.dm.kit.graphics.colors.rgba: RGBA;
+        import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        row.boundsColor = RGBA.blue;
-        row.isDrawBounds = true;
-        row.isVisible = false;
+        row.isBorder = true;
 
         row.height = maxRowHeight;
         row.maxHeight = maxRowHeight;
@@ -280,13 +296,12 @@ class VirtualTable(T, TR : VirtualRow!T) : BaseTable
         return row;
     }
 
-
     void fill(T[] items)
     {
         clear;
 
         this.items = items;
-        
+
         createVisibleRows;
     }
 }

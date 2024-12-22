@@ -1,7 +1,7 @@
 module api.dm.gui.controls.meters.scrolls.vscroll;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.gui.controls.meters.scrolls.base_regular_mono_scroll: BaseRegularMonoScroll;
+import api.dm.gui.controls.meters.scrolls.base_regular_mono_scroll : BaseRegularMonoScroll;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 
@@ -12,11 +12,15 @@ import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
 import api.math.alignment : Alignment;
 import std.math.operations : isClose;
 
+import Math = api.math;
+
 /**
  * Authors: initkfs
  */
 class VScroll : BaseRegularMonoScroll
 {
+    double maxDragY = 0;
+
     this(double minValue = 0, double maxValue = 1.0)
     {
         super(minValue, maxValue);
@@ -47,28 +51,48 @@ class VScroll : BaseRegularMonoScroll
     {
         return (x, y) {
 
+            assert(thumb);
+
+            if (maxDragY != 0)
+            {
+                assert(maxDragY > 0);
+                auto currDy = thumb.y - y;
+                auto absDy = Math.abs(currDy);
+                if (absDy > maxDragY)
+                {
+                    auto diffY = absDy - maxDragY;
+                    if (currDy > 0)
+                    {
+                        diffY = -diffY;
+                    }
+                    y -= diffY;
+                }
+            }
+
             if (!trySetThumbY(y))
             {
                 return false;
             }
 
             const bounds = boundsRect;
-
-            const maxY = bounds.bottom - thumb.height;
-
-            const range = bounds.height - thumb.height;
             auto dy = thumb.y - bounds.y;
 
-            enum errorDelta = 5;
-            if (dy < errorDelta)
-            {
-                dy = 0;
-            }
+            const maxY = bounds.bottom - thumb.height;
+            const range = bounds.height - thumb.height;
 
-            const maxYDt = maxY - thumb.y;
-            if (maxYDt < errorDelta)
+            if (maxDragY == 0)
             {
-                dy += maxYDt;
+                const errorDelta = maxDragY == 0 ? 5 : 1;
+                if (dy < errorDelta)
+                {
+                    dy = 0;
+                }
+
+                const maxYDt = maxY - thumb.y;
+                if (maxYDt < errorDelta)
+                {
+                    dy += maxYDt;
+                }
             }
 
             if (dy < 0)

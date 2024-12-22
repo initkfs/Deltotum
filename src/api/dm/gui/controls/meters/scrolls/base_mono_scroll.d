@@ -4,6 +4,8 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.meters.scrolls.base_scroll : BaseScroll;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
+import api.math.geom2.vec2 : Vec2d;
+
 /**
  * Authors: initkfs
  * TODO remove duplication with slider after testing 
@@ -18,6 +20,10 @@ abstract class BaseMonoScroll : BaseScroll
     double valueDelta = 0;
     double valueStep = 0;
 
+    double delegate(double) onNewWheelDY;
+    double delegate(double) onNewThumbX;
+    double delegate(double) onNewThumbY;
+
     void delegate(double)[] onValue;
 
     bool isCreateThumb = true;
@@ -26,10 +32,7 @@ abstract class BaseMonoScroll : BaseScroll
 
     bool isCreateOnPointerWheel = true;
 
-    protected
-    {
-        Sprite2d thumb;
-    }
+    Sprite2d thumb;
 
     this(double minValue = 0, double maxValue = 1.0)
     {
@@ -53,7 +56,8 @@ abstract class BaseMonoScroll : BaseScroll
         }
 
         onPointerWheel ~= (ref e) {
-            auto newValue = wheelValue(e.y);
+            double dy = !onNewWheelDY ? e.y : onNewWheelDY(e.y);
+            auto newValue = wheelValue(dy);
             value(newValue);
         };
     }
@@ -80,7 +84,11 @@ abstract class BaseMonoScroll : BaseScroll
             if (dragListener)
             {
                 thumb.isDraggable = true;
-                thumb.onDragXY = dragListener;
+                thumb.onDragXY = (x, y) {
+                    double newX = !onNewThumbX ? x : onNewThumbX(x);
+                    double newY = !onNewThumbY ? y : onNewThumbY(y);
+                    return dragListener(newX, newY);
+                };
             }
         }
     }

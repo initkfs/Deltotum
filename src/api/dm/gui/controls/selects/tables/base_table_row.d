@@ -39,6 +39,21 @@ class BaseTableRow(TI) : Container
         layout.isAutoResize = true;
     }
 
+    override void loadTheme(){
+        super.loadTheme;
+        loadBaseTableRowTheme;
+    }
+
+    void loadBaseTableRowTheme(){
+        if(padding.left == 0){
+            padding.left = theme.controlPadding.left;
+        }
+
+        if(padding.right == 0){
+            padding.right = theme.controlPadding.right;
+        }
+    }
+
     override void initialize()
     {
         super.initialize;
@@ -52,6 +67,15 @@ class BaseTableRow(TI) : Container
             };
         }
     }
+
+    // import api.dm.kit.sprites2d.sprite2d: Sprite2d;
+    // import api.dm.kit.graphics.styles.graphic_style: GraphicStyle;
+
+    // override Sprite2d newBackground(double w, double h, double angle, GraphicStyle style)
+    // {
+    //     import api.dm.kit.graphics.colors.rgba: RGBA;
+    //     return theme.rectShape(w, h, angle, style);
+    // }
 
     void createItemText()
     {

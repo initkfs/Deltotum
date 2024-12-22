@@ -48,6 +48,10 @@ class TreeTable(T) : BaseTable
         import api.dm.gui.containers.vbox : VBox;
 
         itemContainer = new VBox(0);
+        //import api.dm.kit.graphics.colors.rgba: RGBA;
+        //itemContainer.boundsColor = RGBA.lightpink;
+        //itemContainer.isDrawBounds = true;
+        itemContainer.layout.isDecreaseRootHeight = true;
 
         if (auto scrollContainer = cast(ScrollBox) rowContainer)
         {
@@ -74,6 +78,12 @@ class TreeTable(T) : BaseTable
         const canExpand = item.childrenItems.length > 0;
 
         auto row = new TreeRow!T(item, canExpand, treeLevel);
+
+        row.onExpandOldNewValue = (oldv,newv){
+            if(rowContainer){
+                rowContainer.setInvalid;
+            }
+        };
 
         import api.dm.kit.graphics.colors.rgba : RGBA;
 

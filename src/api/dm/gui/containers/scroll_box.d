@@ -53,6 +53,7 @@ class ScrollBox : Container
         layout = new VLayout(0);
         layout.isAlignX = false;
         layout.isAutoResize = true;
+        layout.isDecreaseRootSize = true;
     }
 
     override void initialize()
@@ -76,11 +77,13 @@ class ScrollBox : Container
         padding = Insets(0);
 
         contentContainer = new HBox(0);
+        contentContainer.layout.isDecreaseRootSize = true;
         contentContainer.isGrow = true;
         addCreate(contentContainer);
         contentContainer.padding = Insets(0);
 
         content = new StackBox;
+        content.layout.isDecreaseRootSize = true;
         content.isGrow = true;
         contentContainer.addCreate(content);
         content.padding = Insets(0);
@@ -168,21 +171,27 @@ class ScrollBox : Container
 
     protected void checkScrolls()
     {
-        if (_hScrollPolicy == ScrollBarPolicy.ifneed && !hslider.isVisible)
+        if (_hScrollPolicy == ScrollBarPolicy.ifneed && content)
         {
             assert(content);
             if (contentRoot && contentRoot.width > content.width)
             {
                 enableScroll(hslider);
             }
+            else
+            {
+                disableScroll(hslider);
+            }
         }
 
-        if (_vScrollPolicy == ScrollBarPolicy.ifneed && !vslider.isVisible)
+        if (_vScrollPolicy == ScrollBarPolicy.ifneed && content)
         {
             assert(content);
             if (contentRoot && contentRoot.height > content.height)
             {
                 enableScroll(vslider);
+            }else {
+                disableScroll(vslider);
             }
         }
     }
