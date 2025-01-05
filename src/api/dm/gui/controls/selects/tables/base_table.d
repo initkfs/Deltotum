@@ -34,12 +34,12 @@ class BaseTable : Control
     {
         if (width == 0)
         {
-            initWidth = theme.controlDefaultWidth * 2;
+            initWidth = theme.controlDefaultWidth;
         }
 
         if (height == 0)
         {
-            initHeight = theme.controlDefaultHeight * 4;
+            initHeight = theme.controlDefaultHeight * 3;
         }
     }
 

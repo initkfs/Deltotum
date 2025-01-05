@@ -9,16 +9,18 @@ import api.dm.gui.controls.texts.text : Text;
 /**
  * Authors: initkfs
  */
-class BaseTableRow(TI) : Container
+class BaseTableRow(TItem, TCol : BaseTableColumn!TItem) : Container
 {
     protected
     {
-        BaseTableColumn!TI[] columns;
+        TCol[] columns;
     }
+
+    void delegate(bool oldValue, bool newValue) onSelectedOldNewValue;
 
     bool isSelectable = true;
 
-    dstring delegate(TI) itemTextProvider;
+    dstring delegate(TItem) itemTextProvider;
 
     protected
     {
@@ -61,7 +63,7 @@ class BaseTableRow(TI) : Container
 
         if (!itemTextProvider)
         {
-            itemTextProvider = (TI item) {
+            itemTextProvider = (TItem item) {
                 import std.conv : to;
 
                 return item.to!dstring;
@@ -72,13 +74,18 @@ class BaseTableRow(TI) : Container
     bool createColumn()
     {
         assert(isCreated);
-        auto col = new BaseTableColumn!TI;
+        auto col = new TCol;
         columns ~= col;
 
         col.itemTextProvider = itemTextProvider;
 
         auto w = (width - padding.width) / columns.length;
         auto h = height - padding.height; 
+
+        foreach (oldCol; columns)
+        {
+            oldCol.resize(w, h);
+        }
 
         col.resize(w, h);
         addCreate(col);
@@ -96,9 +103,9 @@ class BaseTableRow(TI) : Container
     //     return theme.rectShape(w, h, angle, style);
     // }
 
-    void onColumn(scope bool delegate(BaseTableColumn!TI) onColIsContinue)
+    void onColumn(scope bool delegate(TCol) onColIsContinue)
     {
-        foreach (BaseTableColumn!TI col; columns)
+        foreach (col; columns)
         {
             if (!onColIsContinue(col))
             {
@@ -127,7 +134,7 @@ class BaseTableRow(TI) : Container
         setEmpty(_empty);
     }
 
-    BaseTableColumn!TI column(size_t index)
+    BaseTableColumn!TItem column(size_t index)
     {
         if (index >= columns.length)
         {
@@ -139,14 +146,14 @@ class BaseTableRow(TI) : Container
         return columns[index];
     }
 
-    TI item(size_t colIndex)
+    TItem item(size_t colIndex)
     {
         auto col = column(colIndex);
         assert(col.item);
         return col.item;
     }
 
-    void item(size_t colIndex, TI newItem)
+    void item(size_t colIndex, TItem newItem)
     {
         auto col = column(colIndex);
         //assert(col.item);

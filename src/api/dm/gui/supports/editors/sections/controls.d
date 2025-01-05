@@ -323,38 +323,53 @@ class Controls : Control
         auto tableRoot = new HBox;
         root.addCreate(tableRoot);
 
-        import api.dm.gui.controls.selects.tables.virtuals.circular_virtual_table: CircularVirtualTable;
-        import api.dm.gui.controls.selects.tables.virtuals.virtual_row : VirtualRow;
+        import api.dm.gui.controls.selects.tables.virtuals.circular_virtual_list;
 
-        string[] virtItems;
+        string[] virtListItems;
 
         import std.conv : to;
 
         foreach (i; 0 .. 51)
         {
-            virtItems ~= i.to!string;
+            virtListItems ~= i.to!string;
         }
 
-        auto virtTable = new CircularVirtualTable!(string, VirtualRow!string);
+        auto virtList = newCircularVirtualList!string;
+        tableRoot.addCreate(virtList);
+
+        virtList.fill(virtListItems);
+
+        import api.dm.gui.controls.selects.tables.virtuals.circular_virtual_table;
+
+        string[][] virtTableItems;
+
+        import std.conv : to;
+
+        foreach (i; 0 .. 10)
+        {
+            virtTableItems ~= [i.to!string, i.to!string];
+        }
+
+        auto virtTable = newCircularVirtualTable!string(2);
         tableRoot.addCreate(virtTable);
 
-        virtTable.fill(virtItems);
+        virtTable.fill(virtTableItems);
 
-        import api.dm.gui.controls.selects.tables.trees.tree_item: TreeItem;
-        import api.dm.gui.controls.selects.tables.trees.tree_table: TreeTable;
+        // import api.dm.gui.controls.selects.tables.trees.tree_item: TreeItem;
+        // import api.dm.gui.controls.selects.tables.trees.tree_table: TreeTable;
 
-        auto treeTable = new TreeTable!(string);
-        tableRoot.addCreate(treeTable);
+        // auto treeTable = new TreeTable!(string);
+        // tableRoot.addCreate(treeTable);
 
-        auto rootItem = new TreeItem!string("root");
+        // auto rootItem = new TreeItem!string("root");
 
-        foreach(i; 0..11){
-            import std.conv: to;
-            auto ni = new TreeItem!string(i.to!string);
-            rootItem.childrenItems ~= ni;
-        }
+        // foreach(i; 0..11){
+        //     import std.conv: to;
+        //     auto ni = new TreeItem!string(i.to!string);
+        //     rootItem.childrenItems ~= ni;
+        // }
 
-        treeTable.fill(rootItem);
+        // treeTable.fill(rootItem);
 
         // import api.dm.gui.controls.choices.choice_box : ChoiceBox;
 
