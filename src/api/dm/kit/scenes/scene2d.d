@@ -55,15 +55,28 @@ class Scene2d : EventKitTarget
 
     size_t invalidNodesCount;
 
-    this(this ThisType)()
+    this(this ThisType)(bool isInitUDAProcessor = true)
     {
+        initProcessUDA!(ThisType)(isInitUDAProcessor);
+    }
+
+    bool initProcessUDA(Type)(bool isInitUDAProcessor)
+    {
+        if (!isInitUDAProcessor)
+        {
+            return false;
+        }
+
+        assert(!udaProcessor, "Scene UDA processor already exists.");
+
         udaProcessor = () {
             if (!isProcessUDA)
             {
                 return;
             }
-            processUDA!ThisType;
+            processUDA!Type;
         };
+        return true;
     }
 
     void processUDA(alias TargetType)()
@@ -128,11 +141,10 @@ class Scene2d : EventKitTarget
                             static if (is(typeof(attr) == UDA.ImageF))
                             {
                                 alias udaAttr = getUDAs!(member, ImageF)[0];
-                                auto isAdd = udaAttr.isAdd;
                                 __traits(getMember, thisInstance, fieldName) = f.images.image(udaAttr.path, udaAttr
                                         .width, udaAttr
                                         .height);
-                                if (isAdd)
+                                static if (udaAttr.isAdd)
                                 {
                                     add(__traits(getMember, thisInstance, fieldName));
                                 }
@@ -142,9 +154,12 @@ class Scene2d : EventKitTarget
                             {
                                 alias udaAttr = getUDAs!(member, AnimImageF)[0];
                                 auto isAdd = udaAttr.isAdd;
-                                __traits(getMember, thisInstance, fieldName) = f.images.animated(udaAttr.path, udaAttr
-                                        .frameWidth, udaAttr
-                                        .frameHeight, udaAttr.frameDelay);
+                                __traits(getMember, thisInstance, fieldName) = f.images.animated(udaAttr.path,
+                                    udaAttr.frameCols,
+                                    udaAttr.frameRows,
+                                    udaAttr.frameWidth,
+                                    udaAttr.frameHeight,
+                                    udaAttr.frameDelay);
                                 if (isAdd)
                                 {
                                     add(__traits(getMember, thisInstance, fieldName));

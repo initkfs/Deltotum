@@ -14,10 +14,12 @@ class ImageAnimation
     int[] frameIndices;
     int frameRow;
     int maxFrameRows;
+    bool isLoopRow;
     int frameDelay;
     bool isLooping;
     bool isReverse;
     Flip flip;
+    void delegate() onEndFrames;
 }
 
 /**
@@ -26,8 +28,18 @@ class ImageAnimation
 class AnimImage : Image
 {
     int frameDelay;
+
+    size_t frameCols;
+    size_t frameRows;
+
     double frameWidth = 0;
     double frameHeight = 0;
+
+    protected
+    {
+        double _textureWidth = 0;
+        double _textureHeight = 0;
+    }
 
     enum defaultAnimation = "idle";
 
@@ -42,12 +54,15 @@ class AnimImage : Image
         size_t currentAnimationStartTime;
     }
 
-    this(int frameWidth = 0, int frameHeight = 0, int frameDelay = 0)
+    this(size_t frameCols, size_t frameRows, int frameWidth = 0, int frameHeight = 0, int frameDelay = 0)
     {
-        this.frameDelay = frameDelay;
+        this.frameCols = frameCols;
+        this.frameRows = frameRows;
 
         this.frameWidth = frameWidth;
         this.frameHeight = frameHeight;
+
+        this.frameDelay = frameDelay;
 
         isDrawTexture = false;
     }
@@ -55,22 +70,55 @@ class AnimImage : Image
     override bool load(string path, int requestWidth = -1, int requestHeight = -1)
     {
         const isLoad = super.load(path, requestWidth, requestHeight);
-        if (isLoad && frameWidth > 0 && frameHeight > 0)
+
+        if (isLoad)
         {
+            if (frameWidth == 0)
+            {
+                if (frameCols == 0)
+                {
+                    throw new Exception("Cannot set frame width: number of columns is zero");
+                }
+
+                if (width == 0)
+                {
+                    throw new Exception("Cannot set frame width: texture width is zero");
+                }
+                frameWidth = width / frameCols;
+            }
+
+            if (frameHeight == 0)
+            {
+                if (frameRows == 0)
+                {
+                    throw new Exception("Cannot set frame height: number of rows is zero");
+                }
+
+                if (height == 0)
+                {
+                    throw new Exception("Cannot set frame height: texture height is zero");
+                }
+                frameHeight = height / frameRows;
+            }
+
+            _textureWidth = width;
+            _textureHeight = height;
+
             width = frameWidth * scale;
             height = frameHeight * scale;
         }
+
         return isLoad;
     }
 
     bool addIdle(size_t frameCount, int frameRow = 0, bool autoplay = false, int frameDelay = 0, bool isLooping = true, Flip flip = Flip
-            .none, int maxFrameRows = 1)
+            .none, int maxFrameRows = 1, bool isLoopRow = true)
     {
-        return animate(defaultAnimation, frameCount, frameRow, autoplay, frameDelay, isLooping, flip, maxFrameRows);
+        return animate(defaultAnimation, frameCount, frameRow, autoplay, frameDelay, isLooping, flip, maxFrameRows, isLoopRow);
     }
 
     bool animate(string name, size_t frameCount, int frameRow = 0, bool autoplay = false, int frameDelay = 0, bool isLooping = true, Flip flip = Flip
-            .none, int maxFrameRows = 1)
+            .none, int maxFrameRows = 1, bool isLoopRow = true)
     {
         if (frameCount == 0)
         {
@@ -82,11 +130,11 @@ class AnimImage : Image
         {
             frameIndices[i] = cast(int) i;
         }
-        return animate(name, frameIndices, frameRow, autoplay, frameDelay, isLooping, flip, maxFrameRows);
+        return animate(name, frameIndices, frameRow, autoplay, frameDelay, isLooping, flip, maxFrameRows, isLoopRow);
     }
 
     bool animate(string name, int[] frameIndices, int frameRow = 0, bool autoplay = false, int frameDelay = 0, bool isLooping = true, Flip newFlip = Flip
-            .none, int maxFrameRows = 1)
+            .none, int maxFrameRows = 1, bool isLoopRow = true)
     {
         assert(name.length > 0);
         assert(frameIndices.length > 0);
@@ -104,14 +152,10 @@ class AnimImage : Image
         anim.frameIndices = frameIndices;
         anim.frameRow = frameRow;
         anim.maxFrameRows = maxFrameRows;
+        anim.isLoopRow = isLoopRow;
         anim.isLooping = isLooping;
         anim.frameDelay = frameDelay > 0 ? frameDelay : this.frameDelay;
         anim.flip = newFlip;
-
-        if (anim.maxFrameRows > 0)
-        {
-            anim.frameDelay *= anim.maxFrameRows;
-        }
 
         animations ~= anim;
 
@@ -120,6 +164,17 @@ class AnimImage : Image
             run(name);
         }
 
+        return true;
+    }
+
+    bool addOnEndFrame(string name, void delegate() dg)
+    {
+        auto anim = animationUnsafe(name);
+        if (!anim)
+        {
+            return false;
+        }
+        anim.onEndFrames = dg;
         return true;
     }
 
@@ -151,7 +206,11 @@ class AnimImage : Image
 
         currentAnimation = mustBeAnim;
 
-        currentAnimation.flip = flip;
+        if (currentAnimation.flip == Flip.none && flip != Flip.none)
+        {
+            currentAnimation.flip = flip;
+        }
+
         currentAnimationStartTime = platform.ticks;
 
         super.run;
@@ -200,9 +259,11 @@ class AnimImage : Image
         srcRect.width = frameWidth;
         srcRect.height = frameHeight;
 
+        Flip animFlip = (currentAnimation && currentAnimation.flip != Flip.none) ? currentAnimation.flip : flip;
+
         assert(texture);
         Rect2d destRect = {x, y, width, height};
-        drawTexture(texture, srcRect, destRect, angle, flip);
+        drawTexture(texture, srcRect, destRect, angle, animFlip);
     }
 
     void drawFrames()
@@ -264,14 +325,24 @@ class AnimImage : Image
             return;
         }
 
-        if (!currentAnimation.isLooping && currentAnimationIndex >= currentAnimation.frameIndices.length - 1)
+        if (currentAnimationIndex >= currentAnimation.frameIndices.length - 1)
         {
+            if (currentAnimation.onEndFrames)
+            {
+                currentAnimation.onEndFrames();
+            }
+
             foreach (dg; onEndFrames)
             {
                 dg();
             }
-            stop;
-            return;
+
+            if (!currentAnimation.isLooping)
+            {
+                stop;
+                return;
+            }
+
         }
 
         auto delay = currentAnimation.frameDelay > 0 ? currentAnimation.frameDelay : frameDelay;
@@ -279,7 +350,7 @@ class AnimImage : Image
         auto newIndex = ((platform.ticks - currentAnimationStartTime) / delay) % animLength;
         if (currentAnimationIndex > 0 && newIndex == 0)
         {
-            if (currentAnimation.maxFrameRows > 1)
+            if (currentAnimation.isLoopRow && currentAnimation.maxFrameRows > 1)
             {
                 auto newRow = currentAnimation.frameRow + 1;
                 if (newRow >= currentAnimation.maxFrameRows)
@@ -289,6 +360,7 @@ class AnimImage : Image
                 currentAnimation.frameRow = newRow;
             }
         }
+
         currentAnimationIndex = newIndex;
     }
 

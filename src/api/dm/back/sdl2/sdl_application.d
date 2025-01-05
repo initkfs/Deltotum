@@ -604,11 +604,11 @@ class SdlApplication : GuiApp
     }
 
     Window newWindow(
-        dstring title,
-        int width,
-        int height,
-        int x,
-        int y,
+        dstring title = "Window",
+        int width = Window.defaultWidth,
+        int height = Window.defaultHeight,
+        int x = Window.defaultPosX,
+        int y = Window.defaultPosY,
         Window parent = null,
         SdlWindowMode mode = SdlWindowMode.none)
     {
@@ -649,8 +649,8 @@ class SdlApplication : GuiApp
 
         window.resize(width, height);
 
-        const int newX = (x == -1) ? SDL_WINDOWPOS_UNDEFINED : x;
-        const int newY = (y == -1) ? SDL_WINDOWPOS_UNDEFINED : y;
+        const int newX = (x == Window.defaultPosX) ? SDL_WINDOWPOS_UNDEFINED : x;
+        const int newY = (y == Window.defaultPosY) ? SDL_WINDOWPOS_UNDEFINED : y;
 
         window.pos(newX, newY);
 
@@ -778,17 +778,6 @@ class SdlApplication : GuiApp
         windowManager.add(window);
 
         return window;
-    }
-
-    Window newWindow(
-        dstring title = "New window",
-        int width = 400,
-        int height = 300,
-        int x = -1,
-        int y = -1,
-        Window parent = null)
-    {
-        return newWindow(title, width, height, x, y, parent, SdlWindowMode.none);
     }
 
     void clearErrors()

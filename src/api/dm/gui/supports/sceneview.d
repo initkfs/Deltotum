@@ -520,12 +520,12 @@ class SceneView : VBox
             return;
         }
 
-        if (auto debugData = cast(DebugInfo) obj.userData.get(debugUserDataKey, null))
-        {
-            return;
-        }
+        // if (auto debugData = cast(DebugInfo) obj.userData.get(debugUserDataKey, null))
+        // {
+        //     return;
+        // }
 
-        obj.userData[debugUserDataKey] = createDebugInfo(obj);
+        // obj.userData[debugUserDataKey] = createDebugInfo(obj);
         fillDebugInfo(obj);
     }
 
@@ -618,11 +618,11 @@ class SceneView : VBox
             return;
         }
 
-        if (auto debugData = cast(DebugInfo) obj.userData.get(debugUserDataKey, null))
-        {
-            obj.remove(debugData);
-            obj.userData = null;
-        }
+        // if (auto debugData = cast(DebugInfo) obj.userData.get(debugUserDataKey, null))
+        // {
+        //     obj.remove(debugData);
+        //     obj.userData = null;
+        // }
     }
 
     override void update(double delta)

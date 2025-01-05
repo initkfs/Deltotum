@@ -19,6 +19,9 @@ class MinMaxTween(T) if (isFloatingPoint!T || is(T : Vec2d)) : Tween
 
     void delegate(T, T)[] onOldNewValue;
 
+    //enum x = 10; tween.onDeltaValue ~= (dv) { sprite.x += x * dv; }
+    void delegate(T)[] onDeltaValue;
+
     T lastValue;
 
     T _minValue;
@@ -98,6 +101,15 @@ class MinMaxTween(T) if (isFloatingPoint!T || is(T : Vec2d)) : Tween
             foreach (dg; onOldNewValue)
             {
                 dg(oldValue, newValue);
+            }
+        }
+
+        if (onDeltaValue.length > 0)
+        {
+            const dv = newValue - oldValue;
+            foreach (dg; onDeltaValue)
+            {
+                dg(dv);
             }
         }
     }

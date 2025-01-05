@@ -37,10 +37,12 @@ struct ImagesF
 struct AnimImageF
 {
     string path;
-    int frameWidth;
-    int frameHeight;
+    size_t frameCols;
+    size_t frameRows;
     size_t frameDelay = 100;
     bool isAdd;
+    int frameWidth;
+    int frameHeight;
 }
 
 struct AnimImagesF

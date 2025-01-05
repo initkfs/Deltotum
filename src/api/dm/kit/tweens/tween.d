@@ -230,6 +230,9 @@ abstract class Tween : GraphicsComponent
         currentFrame = firstFrame;
     }
 
+    bool isDirect() => state == TweenState.direct;
+    bool isBack() => state == TweenState.back;
+
     void reverse()
     {
         if (state == TweenState.direct)

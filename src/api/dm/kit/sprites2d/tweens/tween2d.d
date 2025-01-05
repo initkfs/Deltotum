@@ -23,6 +23,9 @@ abstract class Tween2d : Sprite2d
     bool isOneShort() => tween.isOneShort;
     bool isOneShort(bool v) => tween.isOneShort = v;
 
+    bool isDirect() => tween.isDirect;
+    bool isBack() => tween.isBack;
+
     size_t cycleCount() => tween.cycleCount;
     void cycleCount(size_t v){
         tween.cycleCount = v;

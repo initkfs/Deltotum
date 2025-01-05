@@ -24,6 +24,7 @@ import std.math.operations : isClose;
 import std.stdio;
 import std.math.algebraic : abs;
 import std.typecons : Nullable;
+import std.variant : Variant;
 
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -188,7 +189,7 @@ class Sprite2d : EventKitTarget
 
     bool isValid = true;
 
-    Object[string] userData;
+    Variant[string] userData;
 
     protected
     {
@@ -2210,6 +2211,24 @@ class Sprite2d : EventKitTarget
 
         onAllChildren((child) { child.onSceneResume; }, isForRoot:
             false);
+    }
+
+    void setUserData(T)(string key, T data)
+    {
+        //TODO remove qualifiers from value types
+        Variant v = data;
+        userData[key] = v;
+    }
+
+    T getUserData(T)(string key)
+    {
+        if (auto keyPtr = key in userData)
+        {
+            Variant v = *keyPtr;
+            return v.get!T;
+        }
+
+        throw new Exception("Not found user data for key " ~ key);
     }
 
     override void dispose()

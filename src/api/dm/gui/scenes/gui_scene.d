@@ -18,6 +18,12 @@ class GuiScene : Scene2d
 
     alias addCreate = Scene2d.addCreate;
 
+    this(this ThisType)(bool isInitUDAProcessor = true)
+    {
+        super(isInitUDAProcessor : false);
+        initProcessUDA!ThisType(isInitUDAProcessor);
+    }
+
     void addCreate(GuiComponent guiComponent)
     {
         if (!guiComponent.hasTheme)

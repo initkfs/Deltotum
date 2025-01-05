@@ -140,9 +140,14 @@ struct Vec2d
         return Vec2d(x + value, y + value);
     }
 
-    Vec2d incXY(double xValue, double yValud) const @nogc nothrow pure @safe
+    Vec2d incXY(double xValue, double yValue) const @nogc nothrow pure @safe
     {
-        return Vec2d(x + xValue, y + yValud);
+        return Vec2d(x + xValue, y + yValue);
+    }
+
+    Vec2d decXY(double xValue, double yValue) const @nogc nothrow pure @safe
+    {
+        return Vec2d(x - xValue, y - yValue);
     }
 
     Vec2d dec(double value) const @nogc nothrow pure @safe

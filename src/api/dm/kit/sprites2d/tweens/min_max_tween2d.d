@@ -14,6 +14,7 @@ import std.stdio;
 class MinMaxTween2d(T) if (isFloatingPoint!T || is(T : Vec2d)) : Tween2d
 {
     ref void delegate(T, T)[] onOldNewValue() => mTween.onOldNewValue;
+    ref void delegate(T)[] onDeltaValue() => mTween.onDeltaValue;
 
     protected
     {

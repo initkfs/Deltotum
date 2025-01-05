@@ -20,6 +20,14 @@ import api.dm.com.graphics.com_renderer : ComRenderer;
  */
 class Window : GraphicsComponent
 {
+    enum : int
+    {
+        defaultWidth = 400,
+        defaultHeight = 400,
+        defaultPosX = -1,
+        defaultPosY = -1
+    }
+
     protected
     {
         Scene2d[] _scenes;

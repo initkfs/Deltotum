@@ -40,9 +40,9 @@ class ImageFactory : GraphicsComponent
         return newImage;
     }
 
-    AnimImage animated(string path, int frameWidth = 0, int frameHeight = 0, int frameDelay = 100, int requestWidth = -1, int requestHeight = -1)
+    AnimImage animated(string path, size_t frameCols, size_t frameRows, int frameWidth = 0, int frameHeight = 0, int frameDelay = 100, int requestWidth = -1, int requestHeight = -1)
     {
-        auto newAnimated = new AnimImage(frameWidth, frameHeight, frameDelay);
+        auto newAnimated = new AnimImage(frameCols, frameRows, frameWidth, frameHeight, frameDelay);
         build(newAnimated);
         if (!newAnimated.load(path, requestWidth, requestHeight))
         {
