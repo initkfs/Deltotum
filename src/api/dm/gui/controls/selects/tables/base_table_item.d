@@ -5,10 +5,10 @@ module api.dm.gui.controls.selects.tables.base_table_item;
  */
 class BaseTableItem(T)
 {
-    T item;
+    T data;
 
-    this(T item) pure @safe
+    this(T data) pure @safe
     {
-        this.item = item;
+        this.data = data;
     }
 }

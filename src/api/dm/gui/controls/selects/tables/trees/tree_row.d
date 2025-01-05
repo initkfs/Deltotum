@@ -130,11 +130,6 @@ class TreeRow(T) : Container
 
     bool isExpandable = true;
 
-    Text itemText;
-    bool isCreateItemText = true;
-    Text delegate(Text) onNewItemText;
-    void delegate(Text) onCreatedItemText;
-
     dstring delegate(T) itemTextProvider;
 
     TreeRowLevelGraphics levelGraphics;
@@ -239,22 +234,6 @@ class TreeRow(T) : Container
                     toggleTreeBranch(ch, isExpand);
                 }
             };
-        }
-
-        if (!itemText && isCreateItemText)
-        {
-            assert(itemTextProvider);
-            auto text = itemTextProvider(rowItem.item);
-            auto it = newItemText(text);
-            itemText = !onNewItemText ? it : onNewItemText(it);
-
-            itemText.padding = Insets(0);
-
-            addCreate(itemText);
-            if (onCreatedItemText)
-            {
-                onCreatedItemText(itemText);
-            }
         }
 
         if (rowItem.childrenItems.length > 0)

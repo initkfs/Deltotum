@@ -7,6 +7,7 @@ import api.math.geom2.rect2 : Rect2d;
 import api.dm.gui.controls.texts.text : Text;
 
 import api.dm.gui.controls.selects.tables.base_table_row : BaseTableRow;
+import api.dm.gui.controls.selects.tables.base_table_column: BaseTableColumn;
 import api.dm.gui.controls.selects.tables.base_table_item : BaseTableItem;
 import api.dm.gui.controls.selects.tables.virtuals.virtual_row : VirtualRow;
 import api.dm.gui.controls.selects.tables.base_table : BaseTable;
@@ -123,7 +124,7 @@ class CircularVirtualTable(T, TR:
                     auto newLastY = lastRow.boundsRect.bottom;
 
                     auto newRowItem = items[endVisibleRowIndex];
-                    firstRow.rowItem = newRowItem;
+                    firstRow.item(0, newRowItem);
 
                     firstRow.y = newLastY;
                     visibleRows.insertBack(firstRow);
@@ -156,7 +157,7 @@ class CircularVirtualTable(T, TR:
                         auto firstRow = visibleRows.front;
 
                         auto newRowItem = items[startVisibleRowIndex];
-                        lastRow.rowItem = newRowItem;
+                        lastRow.item(0, newRowItem);
 
                         lastRow.y = firstRow.y - maxRowHeight;
                         visibleRows.insertFront(lastRow);
@@ -240,10 +241,12 @@ class CircularVirtualTable(T, TR:
             auto row = newRow;
             rowContainer.addCreate(row);
 
+            row.createColumn;
+
             if (ri < items.length)
             {
                 auto item = items[ri];
-                row.rowItem = item;
+                row.item(0, item);
             }
 
             row.isVisible = true;

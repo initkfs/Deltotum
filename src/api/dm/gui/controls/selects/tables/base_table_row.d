@@ -1,7 +1,9 @@
 module api.dm.gui.controls.selects.tables.base_table_row;
 
 import api.dm.gui.controls.selects.tables.base_table_item : BaseTableItem;
+import api.dm.gui.controls.selects.tables.base_table_column : BaseTableColumn;
 import api.dm.gui.containers.container : Container;
+import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.texts.text : Text;
 
 /**
@@ -11,15 +13,10 @@ class BaseTableRow(TI) : Container
 {
     protected
     {
-        TI _rowItem;
+        BaseTableColumn!TI[] columns;
     }
 
     bool isSelectable = true;
-
-    Text itemText;
-    bool isCreateItemText = true;
-    Text delegate(Text) onNewItemText;
-    void delegate(Text) onCreatedItemText;
 
     dstring delegate(TI) itemTextProvider;
 
@@ -39,17 +36,21 @@ class BaseTableRow(TI) : Container
         layout.isAutoResize = true;
     }
 
-    override void loadTheme(){
+    override void loadTheme()
+    {
         super.loadTheme;
         loadBaseTableRowTheme;
     }
 
-    void loadBaseTableRowTheme(){
-        if(padding.left == 0){
+    void loadBaseTableRowTheme()
+    {
+        if (padding.left == 0)
+        {
             padding.left = theme.controlPadding.left;
         }
 
-        if(padding.right == 0){
+        if (padding.right == 0)
+        {
             padding.right = theme.controlPadding.right;
         }
     }
@@ -68,6 +69,24 @@ class BaseTableRow(TI) : Container
         }
     }
 
+    bool createColumn()
+    {
+        assert(isCreated);
+        auto col = new BaseTableColumn!TI;
+        columns ~= col;
+
+        col.itemTextProvider = itemTextProvider;
+
+        auto w = (width - padding.width) / columns.length;
+        auto h = height - padding.height; 
+
+        col.resize(w, h);
+        addCreate(col);
+        col.padding = 0;
+        
+        return true;
+    }
+
     // import api.dm.kit.sprites2d.sprite2d: Sprite2d;
     // import api.dm.kit.graphics.styles.graphic_style: GraphicStyle;
 
@@ -77,34 +96,22 @@ class BaseTableRow(TI) : Container
     //     return theme.rectShape(w, h, angle, style);
     // }
 
-    void createItemText()
+    void onColumn(scope bool delegate(BaseTableColumn!TI) onColIsContinue)
     {
-        if (!itemText && isCreateItemText)
+        foreach (BaseTableColumn!TI col; columns)
         {
-            assert(itemTextProvider);
-            auto it = newItemText;
-            itemText = !onNewItemText ? it : onNewItemText(it);
-
-            addCreate(itemText);
-            if (onCreatedItemText)
+            if (!onColIsContinue(col))
             {
-                onCreatedItemText(itemText);
+                break;
             }
-
-            setText;
         }
-    }
-
-    Text newItemText()
-    {
-        return new Text;
     }
 
     protected void setEmpty(bool newValue)
     {
-        if (newValue && itemText)
+        if (newValue)
         {
-            itemText.text = "";
+            onColumn((col) { col.setEmpty(true); return true; });
         }
     }
 
@@ -120,24 +127,30 @@ class BaseTableRow(TI) : Container
         setEmpty(_empty);
     }
 
-    TI rowItem() => _rowItem;
-
-    void rowItem(TI item)
+    BaseTableColumn!TI column(size_t index)
     {
-        _rowItem = item;
-        setText;
+        if (index >= columns.length)
+        {
+            import std.format : format;
+
+            throw new Exception(format("Column index must be less than the columns length %s, but received %s", columns
+                    .length, index));
+        }
+        return columns[index];
     }
 
-    protected bool setText() => setText(rowItem);
-
-    protected bool setText(TI item)
+    TI item(size_t colIndex)
     {
-        if (!itemText)
-        {
-            return false;
-        }
-        auto text = itemTextProvider(item);
-        itemText.text = text;
-        return true;
+        auto col = column(colIndex);
+        assert(col.item);
+        return col.item;
+    }
+
+    void item(size_t colIndex, TI newItem)
+    {
+        auto col = column(colIndex);
+        //assert(col.item);
+        col.item = newItem;
+        col.setInvalid;
     }
 }

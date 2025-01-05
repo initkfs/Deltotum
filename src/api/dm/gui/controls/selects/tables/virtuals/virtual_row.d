@@ -22,7 +22,5 @@ class VirtualRow(T) : BaseTableRow!T
     override void create()
     {
         super.create;
-
-        createItemText;
     }
 }
