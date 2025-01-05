@@ -26,12 +26,23 @@ class BaseTableColumn(TI) : Container
     {
         import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 
-        layout = new HLayout;
+        layout = new HLayout(0);
         layout.isAutoResize = true;
     }
 
-    override void loadTheme(){
+    override void loadTheme()
+    {
         super.loadTheme;
+
+        if (padding.left == 0)
+        {
+            padding.left = theme.controlPadding.left;
+        }
+
+        if (padding.right == 0)
+        {
+            padding.right = theme.controlPadding.right;
+        }
     }
 
     override void initialize()
@@ -47,7 +58,7 @@ class BaseTableColumn(TI) : Container
             assert(itemTextProvider);
             auto it = newItemText;
             itemText = !onNewItemText ? it : onNewItemText(it);
-
+            
             addCreate(itemText);
             if (onCreatedItemText)
             {

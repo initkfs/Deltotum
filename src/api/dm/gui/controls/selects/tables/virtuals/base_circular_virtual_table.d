@@ -38,8 +38,6 @@ abstract class BaseCircularVirtualTable(T, TCol:
 
         DList!TR visibleRows;
         size_t visibleRowsLength;
-
-        size_t columnCount;
     }
 
     double maxRowHeight = 0;
@@ -48,8 +46,7 @@ abstract class BaseCircularVirtualTable(T, TCol:
 
     this(size_t columnCount)
     {
-        assert(columnCount > 0);
-        this.columnCount = columnCount;
+        super(columnCount);
     }
 
     override void initialize()
@@ -75,13 +72,32 @@ abstract class BaseCircularVirtualTable(T, TCol:
     {
         super.create;
 
+        if (header)
+        {
+            header.onMoveSep = (sepData) {
+                auto prevCol = sepData.prev;
+                auto nextCol = sepData.next;
+                assert(prevCol);
+                assert(nextCol);
+
+                import api.dm.gui.controls.selects.tables.base_table: TableHeader;
+
+                auto prevIndex = prevCol.getUserData!size_t(TableHeader.indexKey);
+                auto nextIndex = nextCol.getUserData!size_t(TableHeader.indexKey);
+
+                resizeColumn(prevIndex, prevCol.width);
+                resizeColumn(nextIndex, nextCol.width);
+            };
+        }
+
         tryCreateRowContainer;
 
         assert(rowContainer);
 
         vScroll = new VScroll;
         vScroll.isVGrow = true;
-        addCreate(vScroll);
+
+        contentContainerOrThis.addCreate(vScroll);
 
         double lastScrollValue = vScroll.value;
 
@@ -267,7 +283,8 @@ abstract class BaseCircularVirtualTable(T, TCol:
             {
                 foreach (ci; 0 .. columnCount)
                 {
-                    row.createColumn;
+                    auto colW = columnWidth(ci);
+                    row.createColumn(colW);
                     auto item = rowItem(ri, ci);
                     row.item(ci, item);
                 }
@@ -294,6 +311,20 @@ abstract class BaseCircularVirtualTable(T, TCol:
         }
     }
 
+    protected double columnWidth(size_t index)
+    {
+        assert(columnCount > 0);
+        return width / columnCount;
+    }
+
+    protected void resizeColumn(size_t index, double newWidth)
+    {
+        foreach (row; visibleRows)
+        {
+            row.column(index).width = newWidth;
+        }
+    }
+
     void alignVisibleRows()
     {
         assert(rowContainer);
@@ -302,6 +333,20 @@ abstract class BaseCircularVirtualTable(T, TCol:
         {
             vrow.y = nextY;
             nextY += maxRowHeight;
+        }
+
+        alignHeaderColumns;
+    }
+
+    void alignHeaderColumns()
+    {
+        if (header)
+        {
+            foreach (ci; 0 .. columnCount)
+            {
+                auto colW = columnWidth(ci);
+                header.columnLabelWidth(ci, colW);
+            }
         }
     }
 

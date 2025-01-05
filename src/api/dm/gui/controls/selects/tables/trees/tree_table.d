@@ -28,6 +28,11 @@ class TreeTable(T) : BaseTable
         Container itemContainer;
     }
 
+    this(size_t columnCount)
+    {
+        super(columnCount);
+    }
+
     override void initialize()
     {
         super.initialize;
@@ -79,8 +84,9 @@ class TreeTable(T) : BaseTable
 
         auto row = new TreeRow!T(item, canExpand, treeLevel);
 
-        row.onExpandOldNewValue = (oldv,newv){
-            if(rowContainer){
+        row.onExpandOldNewValue = (oldv, newv) {
+            if (rowContainer)
+            {
                 rowContainer.setInvalid;
             }
         };

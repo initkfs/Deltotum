@@ -22,6 +22,7 @@ class CircularVirtualList(T, TCol:
     this()
     {
         super(1);
+        isCreateHeader = false;
     }
 
     override

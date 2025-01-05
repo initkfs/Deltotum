@@ -25,6 +25,13 @@ class HSplitBox : Container
     Sprite2d[] contents;
     SeparatorData[] separators;
 
+    protected
+    {
+        
+    }
+
+    void delegate(SeparatorData) onMoveSep;
+
     override void create()
     {
         super.create;
@@ -86,11 +93,12 @@ class HSplitBox : Container
 
         sep.onPointerEnter ~= (ref e) {
             import api.dm.com.inputs.com_cursor : ComSystemCursorType;
-
             input.systemCursor.change(ComSystemCursorType.hand);
         };
 
-        sep.onPointerExit ~= (ref e) { input.systemCursor.restore; };
+        sep.onPointerExit ~= (ref e) {
+            input.systemCursor.restore;
+        };
 
         sep.onDragXY = (x, y) {
 
@@ -98,7 +106,7 @@ class HSplitBox : Container
 
             auto prev = sepData.prev;
             auto next = sepData.next;
-            
+
             //auto bounds = this.boundsRect;
             const minX = prev.x;
             const maxX = next.boundsRect.right - sep.width;
@@ -153,6 +161,10 @@ class HSplitBox : Container
 
             prev.width = prev.width - dx;
             next.width = next.width + dx;
+
+            if(onMoveSep){
+                onMoveSep(sepData);
+            }
 
             return false;
         };

@@ -34,7 +34,7 @@ class BaseTableRow(TItem, TCol : BaseTableColumn!TItem) : Container
     {
         import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 
-        layout = new HLayout;
+        layout = new HLayout(0);
         layout.isAutoResize = true;
     }
 
@@ -46,15 +46,7 @@ class BaseTableRow(TItem, TCol : BaseTableColumn!TItem) : Container
 
     void loadBaseTableRowTheme()
     {
-        if (padding.left == 0)
-        {
-            padding.left = theme.controlPadding.left;
-        }
-
-        if (padding.right == 0)
-        {
-            padding.right = theme.controlPadding.right;
-        }
+       
     }
 
     override void initialize()
@@ -73,21 +65,20 @@ class BaseTableRow(TItem, TCol : BaseTableColumn!TItem) : Container
 
     bool createColumn()
     {
+        return createColumn(width);
+    }
+
+    bool createColumn(double colWidth)
+    {
         assert(isCreated);
         auto col = new TCol;
+        col.isBorder = true;
         columns ~= col;
 
         col.itemTextProvider = itemTextProvider;
-
-        auto w = (width - padding.width) / columns.length;
         auto h = height - padding.height; 
 
-        foreach (oldCol; columns)
-        {
-            oldCol.resize(w, h);
-        }
-
-        col.resize(w, h);
+        col.resize(colWidth, h);
         addCreate(col);
         col.padding = 0;
         
