@@ -1,5 +1,6 @@
 module api.dm.gui.controls.selects.tables.base_table_column;
 
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.selects.tables.base_table_item : BaseTableItem;
 import api.dm.gui.containers.container : Container;
 import api.dm.gui.controls.texts.text : Text;
@@ -22,8 +23,25 @@ class BaseTableColumn(TI) : Container
 
     dstring delegate(TI) itemTextProvider;
 
-    this()
+    Sprite2d leftBorder;
+
+    double dividerSize = 0;
+
+    bool isCreateLeftBorder;
+    Sprite2d delegate(Sprite2d) onNewLeftBorder;
+    void delegate(Sprite2d) onCreatedLeftBorder;
+
+    this(TI initItem, double dividerSize)
     {
+        this(dividerSize);
+        _item = initItem;
+    }
+
+    this(double dividerSize)
+    {
+        assert(dividerSize > 0);
+        this.dividerSize = dividerSize;
+
         import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 
         layout = new HLayout(0);
@@ -58,7 +76,7 @@ class BaseTableColumn(TI) : Container
             assert(itemTextProvider);
             auto it = newItemText;
             itemText = !onNewItemText ? it : onNewItemText(it);
-            
+
             addCreate(itemText);
             if (onCreatedItemText)
             {
@@ -67,11 +85,45 @@ class BaseTableColumn(TI) : Container
 
             setText;
         }
+
+        if (!leftBorder && isCreateLeftBorder)
+        {
+            auto lb = newLeftBorder;
+            leftBorder = !onNewLeftBorder ? lb : onNewLeftBorder(lb);
+
+            leftBorder.isLayoutManaged = false;
+            leftBorder.isResizedByParent = false;
+
+            addCreate(leftBorder);
+            if (onCreatedLeftBorder)
+            {
+                onCreatedLeftBorder(leftBorder);
+            }
+        }
+
+        if (_item != TI.init)
+        {
+            text = _item;
+        }
+    }
+
+    override void applyLayout()
+    {
+        super.applyLayout;
+        if (leftBorder && !leftBorder.isLayoutManaged)
+        {
+            leftBorder.x = x - leftBorder.halfWidth;
+        }
     }
 
     Text newItemText()
     {
         return new Text;
+    }
+
+    Sprite2d newLeftBorder()
+    {
+        return theme.rectShape(dividerSize, height, angle, createFillStyle);
     }
 
     void setEmpty(bool newValue)

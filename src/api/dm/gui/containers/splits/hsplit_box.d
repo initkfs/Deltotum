@@ -78,6 +78,13 @@ class HSplitBox : BaseSplitBox
                 return false;
             }
 
+            auto newPrevWidth = prev.width - dx;
+            auto newNextWidth = next.width + dx;
+
+            if(!prev.canChangeWidth(newPrevWidth) || !next.canChangeWidth(newNextWidth)){
+                return false;
+            }
+
             sep.x = x;
 
             prev.isResizeChildren = true;
@@ -116,8 +123,9 @@ class HSplitBox : BaseSplitBox
                 }
             }
 
-            prev.width = prev.width - dx;
-            next.width = next.width + dx;
+
+            prev.width = newPrevWidth;
+            next.width = newNextWidth;
 
             if (onMoveDivider)
             {

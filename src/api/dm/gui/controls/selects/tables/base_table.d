@@ -2,6 +2,7 @@ module api.dm.gui.controls.selects.tables.base_table;
 
 import api.dm.gui.controls.selects.tables.base_table_row : BaseTableRow;
 import api.dm.gui.controls.selects.tables.base_table_item : BaseTableItem;
+import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.containers.container : Container;
 import api.dm.gui.controls.control : Control;
 
@@ -23,7 +24,10 @@ class TableHeader : HSplitBox
 
     this(size_t colCount)
     {
+        assert(colCount > 0);
         this.columnCount = colCount;
+
+        isBorder = true;
     }
 
     override void create()
@@ -39,7 +43,7 @@ class TableHeader : HSplitBox
         {
             auto label = new Text("Col");
             label.setUserData(indexKey, ci);
-            label.isBorder = true;
+            label.padding.left = theme.controlPadding.left;
             label.isReduceWidthHeight = false;
             labels ~= label;
         }
@@ -48,6 +52,20 @@ class TableHeader : HSplitBox
         {
             addContent(cast(Sprite2d[]) labels);
         }
+    }
+
+    import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+
+    override Sprite2d newDividerShape(double w, double h, double angle, GraphicStyle style)
+    {
+        auto newW = w * 5;
+        auto shape = theme.convexPolyShape(newW, h, angle, newW / 2, style);
+        return shape; 
+    }
+
+    override Sprite2d newBackground(double w, double h, double angle, GraphicStyle style)
+    {
+        return theme.rectShape(w, h, angle, style);
     }
 
     Text columnLabel(size_t colIndex)
@@ -96,6 +114,8 @@ class BaseTable : Control
         size_t columnCount;
     }
 
+    double dividerSize = 0;
+
     this(size_t columnCount)
     {
         assert(columnCount > 0);
@@ -105,6 +125,8 @@ class BaseTable : Control
 
         layout = new VLayout(0);
         layout.isAutoResize = true;
+
+        isBorder = true;
     }
 
     override void loadTheme()
@@ -124,6 +146,11 @@ class BaseTable : Control
         {
             initHeight = theme.controlDefaultHeight * 3;
         }
+
+        if (dividerSize == 0)
+        {
+            dividerSize = theme.dividerSize / 3;
+        }
     }
 
     override void create()
@@ -134,6 +161,10 @@ class BaseTable : Control
         {
             auto h = newHeader;
             header = !onNewHeader ? h : onNewHeader(h);
+
+            h.width = width;
+            h.dividerSize = dividerSize;
+            h.isHGrow = true;
 
             addCreate(header);
             if (onCreatedHeader)
@@ -154,12 +185,14 @@ class BaseTable : Control
         }
     }
 
+    override Sprite2d newBackground(double w, double h, double angle, GraphicStyle style)
+    {
+        return theme.rectShape(w, h, angle, style);
+    }
+
     TableHeader newHeader()
     {
         auto h = new TableHeader(columnCount);
-        h.isBorder = true;
-        h.width = width;
-        h.isHGrow = true;
         return h;
     }
 
@@ -172,7 +205,13 @@ class BaseTable : Control
 
     Container newRowContainer()
     {
-        return new Container;
+        return new class Container
+        {
+            override Sprite2d newBackground(double w, double h, double angle, GraphicStyle style)
+            {
+                return theme.rectShape(w, h, angle, style);
+            }
+        };
     }
 
     void tryCreateRowContainer()
@@ -197,12 +236,9 @@ class BaseTable : Control
             auto nc = newRowContainer;
             rowContainer = !onNewRowContainer ? nc : onNewRowContainer(nc);
 
-            rowContainer.isDrawBounds = true;
+            //rowContainer.isBorder = true;
 
-            import api.dm.kit.graphics.colors.rgba : RGBA;
             import api.math.geom2.rect2 : Rect2d;
-
-            rowContainer.boundsColor = RGBA.yellow;
 
             if (isClipping)
             {

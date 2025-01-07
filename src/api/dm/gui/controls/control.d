@@ -134,7 +134,8 @@ class Control : GuiComponent
         isScalable = true;
     }
 
-    final void isCreateInteractions(bool value){
+    final void isCreateInteractions(bool value)
+    {
         isCreateHoverEffect = value;
         isCreateHoverEffectAnimation = value;
         isCreateActionEffect = value;
@@ -603,10 +604,6 @@ class Control : GuiComponent
             shape = createShape(w, h, angle, style);
         }
         assert(shape);
-        shape.id = idBackground;
-        shape.isResizedByParent = true;
-        shape.isLayoutManaged = false;
-        shape.isDrawAfterParent = false;
         return shape;
     }
 
@@ -1132,9 +1129,14 @@ class Control : GuiComponent
             return false;
         }
 
-        auto newBackground = newBackground;
+        auto back = newBackground;
 
-        _background = onNewBackground ? onNewBackground(newBackground) : newBackground;
+        _background = onNewBackground ? onNewBackground(back) : back;
+
+        _background.id = idBackground;
+        _background.isResizedByParent = true;
+        _background.isLayoutManaged = false;
+        _background.isDrawAfterParent = false;
 
         addCreate(_background, 0);
 

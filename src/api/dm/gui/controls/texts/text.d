@@ -74,6 +74,11 @@ class Text : Control
     //{
     TextRow[] rows;
 
+    protected
+    {
+        double rowWidth = 0;
+    }
+
     dstring tempText;
 
     Glyph[] _text;
@@ -319,7 +324,7 @@ class Text : Control
 
         import api.math.insets : Insets;
 
-        padding = Insets(0);
+        //padding = Insets(0);
 
         setColorTexture;
 
@@ -457,7 +462,7 @@ class Text : Control
         double glyphPosX = startRowTextX;
         double glyphPosY = startRowTextY;
 
-        double rowWidth = 0;
+        rowWidth = 0;
 
         TextRow row;
         size_t glyphCount;
@@ -768,6 +773,15 @@ class Text : Control
         auto glyphs = textToGlyphs(text);
         _text ~= glyphs;
         this.rows ~= glyphsToRows(glyphs);
+    }
+
+    override bool canChangeWidth(double value)
+    {
+        if (rowWidth > 0 && value < (rowWidth + padding.width))
+        {
+            return false;
+        }
+        return super.canChangeWidth(value);
     }
 
     protected void renderText(TextRow[] rows)

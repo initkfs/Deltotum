@@ -30,6 +30,8 @@ class BaseTableRow(TItem, TCol:
     Container delegate(Container) onNewColumnContainer;
     void delegate(Container) onCreatedColumnContainer;
 
+    double dividerSize = 0;
+
     Sprite2d bottomBorder;
 
     bool isCreateBottomBorder = true;
@@ -44,8 +46,11 @@ class BaseTableRow(TItem, TCol:
         bool _empty;
     }
 
-    this()
+    this(double dividerSize)
     {
+        assert(dividerSize > 0);
+        this.dividerSize = dividerSize;
+
         import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
         layout = new VLayout(0);
@@ -131,9 +136,8 @@ class BaseTableRow(TItem, TCol:
     Sprite2d newBottomBorder()
     {
         auto borderStyle = createFillStyle;
-        auto borderSize = theme.dividerSize / 2;
         auto borderWidth = width == 0 ? 1 : width;
-        auto shape = theme.rectShape(borderWidth, borderSize, angle, borderStyle);
+        auto shape = theme.rectShape(borderWidth, dividerSize, angle, borderStyle);
         return shape;
     }
 
@@ -145,7 +149,12 @@ class BaseTableRow(TItem, TCol:
     bool createColumn(double colWidth)
     {
         assert(isCreated);
-        auto col = new TCol;
+        auto col = new TCol(dividerSize);
+
+        if(columns.length > 0){
+            col.isCreateLeftBorder = true;
+        }
+
         columns ~= col;
 
         col.itemTextProvider = itemTextProvider;
@@ -154,7 +163,6 @@ class BaseTableRow(TItem, TCol:
         col.resize(colWidth, h);
         auto root = colContainer ? colContainer : this;
         root.addCreate(col);
-        col.padding = 0;
 
         return true;
     }

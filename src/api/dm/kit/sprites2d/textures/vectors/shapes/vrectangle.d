@@ -19,12 +19,20 @@ class VRectangle : VShape
     {
         import Math = api.dm.math;
 
-        auto halfLine = style.lineWidth / 2;
-
         auto ctx = canvas;
-        ctx.rect(halfLine, halfLine, width - halfLine, height - halfLine);
-        
-        if(style.isFill){
+
+        if (!isInnerStroke)
+        {
+            ctx.rect(0, 0, width, height);
+        }
+        else
+        {
+            auto halfLine = style.lineWidth / 2;
+            ctx.rect(halfLine, halfLine, width - halfLine, height - halfLine);
+        }
+
+        if (style.isFill)
+        {
             ctx.color = style.fillColor;
             ctx.fillPreserve;
         }

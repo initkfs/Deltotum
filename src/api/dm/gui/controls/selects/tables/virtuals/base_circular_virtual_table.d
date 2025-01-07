@@ -80,7 +80,7 @@ abstract class BaseCircularVirtualTable(T, TCol:
                 assert(prevCol);
                 assert(nextCol);
 
-                import api.dm.gui.controls.selects.tables.base_table: TableHeader;
+                import api.dm.gui.controls.selects.tables.base_table : TableHeader;
 
                 auto prevIndex = prevCol.getUserData!size_t(TableHeader.indexKey);
                 auto nextIndex = nextCol.getUserData!size_t(TableHeader.indexKey);
@@ -158,6 +158,13 @@ abstract class BaseCircularVirtualTable(T, TCol:
 
                     firstRow.y = newLastY;
                     visibleRows.insertBack(firstRow);
+
+                    //FIXME exited hack
+                    if (firstRow.isMouseOver)
+                    {
+                        firstRow.isMouseOver = false;
+                        firstRow.endHover;
+                    }
                 }
 
                 moveVisibleRowsY(-rowOffsetH);
@@ -194,6 +201,13 @@ abstract class BaseCircularVirtualTable(T, TCol:
 
                         lastRow.y = firstRow.y - maxRowHeight;
                         visibleRows.insertFront(lastRow);
+
+                        //FIXME exited hack
+                        if (lastRow.isMouseOver)
+                        {
+                            lastRow.isMouseOver = false;
+                            lastRow.endHover;
+                        }
                     }
                 }
 
@@ -352,10 +366,10 @@ abstract class BaseCircularVirtualTable(T, TCol:
 
     protected TR newRow()
     {
-        auto row = new TR;
+        auto row = new TR(dividerSize);
 
         import api.dm.kit.graphics.colors.rgba : RGBA;
-        
+
         row.height = maxRowHeight;
         row.maxHeight = maxRowHeight;
 

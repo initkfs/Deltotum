@@ -10,6 +10,8 @@ import api.dm.kit.sprites2d.textures.vectors.contexts.vector_graphics_context : 
  */
 class VShape : VectorTexture
 {
+    bool isInnerStroke;
+    
     //TODO remove from shape
     GraphicStyle style;
 
