@@ -92,7 +92,8 @@ class BaseTableColumn(TI) : Container
             leftBorder = !onNewLeftBorder ? lb : onNewLeftBorder(lb);
 
             leftBorder.isLayoutManaged = false;
-            leftBorder.isResizedByParent = false;
+            leftBorder.isResizedWidthByParent = false;
+            leftBorder.isResizedHeightByParent = true;
 
             addCreate(leftBorder);
             if (onCreatedLeftBorder)

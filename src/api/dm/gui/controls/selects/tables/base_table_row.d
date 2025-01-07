@@ -108,6 +108,8 @@ class BaseTableRow(TItem, TCol:
             bottomBorder = !onNewBottomBorder ? bb : onNewBottomBorder(bb);
 
             bottomBorder.isLayoutManaged = false;
+            bottomBorder.isResizedWidthByParent = true;
+            bottomBorder.isResizedHeightByParent = false;
 
             addCreate(bottomBorder);
             if (onCreatedBottomBorder)

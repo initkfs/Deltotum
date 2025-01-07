@@ -323,22 +323,6 @@ class Controls : Control
         auto tableRoot = new HBox;
         root.addCreate(tableRoot);
 
-        import api.dm.gui.controls.selects.tables.virtuals.circular_virtual_list;
-
-        string[] virtListItems;
-
-        import std.conv : to;
-
-        foreach (i; 0 .. 51)
-        {
-            virtListItems ~= i.to!string;
-        }
-
-        auto virtList = newCircularVirtualList!string;
-        tableRoot.addCreate(virtList);
-
-        virtList.fill(virtListItems);
-
         import api.dm.gui.controls.selects.tables.virtuals.circular_virtual_table;
 
         string[][] virtTableItems;
@@ -354,6 +338,16 @@ class Controls : Control
         tableRoot.addCreate(virtTable);
 
         virtTable.fill(virtTableItems);
+
+        import api.dm.gui.controls.selects.tables.clipped.clipped_table: ClippedTable, newClippedTable;
+
+        string[][] clipItems = [
+            ["1", "1\n2"], ["2", "3"], ["3", "4\n5\n6"], ["4", "7"], ["5", "8\n9"], ["6", "10"]
+        ];
+
+        auto clipTable = newClippedTable!string(2);
+        tableRoot.addCreate(clipTable);
+        clipTable.fill(clipItems);
 
         // import api.dm.gui.controls.selects.tables.trees.tree_item: TreeItem;
         // import api.dm.gui.controls.selects.tables.trees.tree_table: TreeTable;

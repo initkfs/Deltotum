@@ -17,7 +17,6 @@ import api.math.insets : Insets;
 import Math = api.math;
 
 import std.container.dlist : DList;
-import std.container.slist : SList;
 
 // auto newCircularVirtualTable(T)()
 // {

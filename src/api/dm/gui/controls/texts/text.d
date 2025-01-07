@@ -69,6 +69,7 @@ class Text : Control
     CursorPos cursorPos;
 
     bool isEditable;
+    bool isShowNewLineGlyph;
 
     //protected
     //{
@@ -484,6 +485,10 @@ class Text : Control
                 row = TextRow();
                 glyphPosX = startRowTextX;
                 glyphPosY += rowHeight;
+
+                if(!isShowNewLineGlyph){
+                    continue;
+                }
             }
             else if (nextGlyphPosX > endRowTextX)
             {
@@ -532,16 +537,16 @@ class Text : Control
             glyphPosX += glyph.geometry.width;
         }
 
-        debug
-        {
-            if (glyphCount != glyphs.length)
-            {
-                import std.format : format;
+        // debug
+        // {
+        //     if (glyphCount != glyphs.length)
+        //     {
+        //         import std.format : format;
 
-                throw new Exception(format("Glyph count %s, but text count is %s", glyphCount, glyphs
-                        .length));
-            }
-        }
+        //         throw new Exception(format("Glyph count %s, but text count is %s", glyphCount, glyphs
+        //                 .length));
+        //     }
+        // }
 
         if (row.glyphs.length > 0)
         {
