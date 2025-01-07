@@ -304,8 +304,8 @@ class Layouts : Control
             circleBox1.addCreate(btn);
         }
 
-        import api.dm.gui.containers.vsplit_box: VSplitBox;
-        import api.dm.gui.containers.hsplit_box: HSplitBox;
+        import api.dm.gui.containers.splits.vsplit_box: VSplitBox;
+        import api.dm.gui.containers.splits.hsplit_box: HSplitBox;
         import api.dm.gui.containers.vbox: VBox;
         import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon: VConvexPolygon;
 

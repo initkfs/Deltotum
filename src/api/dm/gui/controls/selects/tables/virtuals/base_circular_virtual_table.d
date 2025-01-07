@@ -74,7 +74,7 @@ abstract class BaseCircularVirtualTable(T, TCol:
 
         if (header)
         {
-            header.onMoveSep = (sepData) {
+            header.onMoveDivider = (sepData) {
                 auto prevCol = sepData.prev;
                 auto nextCol = sepData.next;
                 assert(prevCol);

@@ -5,7 +5,7 @@ import api.dm.gui.controls.selects.tables.base_table_item : BaseTableItem;
 import api.dm.gui.containers.container : Container;
 import api.dm.gui.controls.control : Control;
 
-import api.dm.gui.containers.hsplit_box : HSplitBox;
+import api.dm.gui.containers.splits.hsplit_box : HSplitBox;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 

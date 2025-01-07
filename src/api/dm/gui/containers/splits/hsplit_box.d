@@ -1,48 +1,36 @@
-module api.dm.gui.containers.hsplit_box;
+module api.dm.gui.containers.splits.hsplit_box;
 
+import api.dm.gui.containers.splits.base_split_box : BaseSplitBox, DividerData;
 import api.dm.gui.containers.container : Container;
 import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
-struct SeparatorData
-{
-    Sprite2d prev;
-    Sprite2d next;
-    Sprite2d sep;
-}
-
 /**
  * Authors: initkfs
  */
-class HSplitBox : Container
+class HSplitBox : BaseSplitBox
 {
     this()
     {
-        layout = new HLayout;
+        layout = new HLayout(0);
         layout.isAutoResize = true;
     }
 
-    Sprite2d[] contents;
-    SeparatorData[] separators;
-
     protected
     {
-        
-    }
 
-    void delegate(SeparatorData) onMoveSep;
+    }
 
     override void create()
     {
         super.create;
 
         window.showingTasks ~= (dt) {
-            foreach (sepData; separators)
+            foreach (sepData; dividers)
             {
                 Sprite2d left = sepData.prev;
                 sepData.sep.x = left.boundsRect.right - sepData.sep.boundsRect.halfWidth;
             }
-
         };
     }
 
@@ -50,7 +38,7 @@ class HSplitBox : Container
     {
         super.applyLayout;
 
-        foreach (sdata; separators)
+        foreach (sdata; dividers)
         {
             if (sdata.sep.height != height)
             {
@@ -59,50 +47,19 @@ class HSplitBox : Container
         }
     }
 
-    void addContent(Sprite2d[] roots)
-    {
-        foreach (root; roots)
-        {
-            addCreate(root);
+    override double dividerWidth() => dividerSize;
+    override double dividerHeight() => height - padding.height;
 
-            if (contents.length > 0)
+    override bool delegate(double, double) newOnSepDragXY(Sprite2d sep)
+    {
+        return (x, y) {
+
+            auto sepData = findDividerUnsafe(sep);
+            if (!sepData)
             {
-                createSeparator(contents[$ - 1], root);
+                //TODO log?
+                return false;
             }
-
-            contents ~= root;
-        }
-    }
-
-    void createSeparator(Sprite2d prev, Sprite2d next)
-    {
-        assert(prev);
-        assert(next);
-
-        import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
-        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-
-        auto sep = new VConvexPolygon(7, 7,
-            GraphicStyle(1, theme.colorAccent, true, theme.colorAccent), 0);
-        addCreate(sep);
-        sep.isLayoutManaged = false;
-        sep.isDraggable = true;
-        sep.isResizedByParent = false;
-
-        separators ~= SeparatorData(prev, next, sep);
-
-        sep.onPointerEnter ~= (ref e) {
-            import api.dm.com.inputs.com_cursor : ComSystemCursorType;
-            input.systemCursor.change(ComSystemCursorType.hand);
-        };
-
-        sep.onPointerExit ~= (ref e) {
-            input.systemCursor.restore;
-        };
-
-        sep.onDragXY = (x, y) {
-
-            auto sepData = findSepData(sep);
 
             auto prev = sepData.prev;
             auto next = sepData.next;
@@ -162,24 +119,12 @@ class HSplitBox : Container
             prev.width = prev.width - dx;
             next.width = next.width + dx;
 
-            if(onMoveSep){
-                onMoveSep(sepData);
+            if (onMoveDivider)
+            {
+                onMoveDivider(*sepData);
             }
 
             return false;
         };
     }
-
-    protected ref SeparatorData findSepData(Sprite2d sep)
-    {
-        foreach (ref sd; separators)
-        {
-            if (sd.sep is sep)
-            {
-                return sd;
-            }
-        }
-        assert(false);
-    }
-
 }
