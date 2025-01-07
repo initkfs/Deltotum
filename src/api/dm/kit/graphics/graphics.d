@@ -73,7 +73,7 @@ class Graphics : LoggableUnit
         return clip;
     }
 
-    void setClip(Rect2d clipRect)
+    void clip(Rect2d clipRect)
     {
         if (const err = renderer.setClipRect(clipRect))
         {

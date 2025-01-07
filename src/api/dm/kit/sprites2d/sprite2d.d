@@ -85,8 +85,6 @@ class Sprite2d : EventKitTarget
     bool isResizeClip;
     void delegate(Rect2d* clip) onClipResize;
     void delegate(Rect2d* clip) onClipMove;
-    //TODO remove
-    bool isClipped;
 
     bool inScreenBounds;
     bool delegate() onScreenBoundsIsStop;
@@ -365,14 +363,9 @@ class Sprite2d : EventKitTarget
 
         static if (is(Event : PointerEvent))
         {
-            //isClipped
-            if ((clip.width > 0 || clip.height > 0) && !clip.contains(e.x, e.y))
-            {
-                //Forwarding to children can be dangerous. Children may not have clipping
-                return;
-            }
+            bool inCurClipBounds = inClipBounds(e.x, e.y);
 
-            if (containsPoint(e.x, e.y))
+            if (inCurClipBounds && containsPoint(e.x, e.y))
             {
                 if (onPointerInBounds.length > 0)
                 {
@@ -480,37 +473,13 @@ class Sprite2d : EventKitTarget
                     runEventHandlers(e);
                 }
             }
-
-            // if (e.event == PointerEvent.Event.move && (isDrag || boundsRect.contains(e.x, e
-            //         .y)))
-            // {
-            //     runEventHandlers(e);
-            // }
-        }
-
-        static if (is(Event : KeyEvent) || is(Event : TextInputEvent))
-        {
-            if (isFocus)
-            {
-                runEventHandlers(e);
-            }
-        }
-
-        static if (is(Event : JoystickEvent))
-        {
-            runEventHandlers(e);
         }
 
         static if (is(Event : FocusEvent))
         {
-            if ((clip.width > 0 || clip.height > 0) && !clip.contains(e.x, e.y))
-            {
-                return;
-            }
-
             if (!e.isSynthetic)
             {
-                if (containsPoint(e.x, e.y))
+                if (inClipBounds(e.x, e.y) && containsPoint(e.x, e.y))
                 {
                     if (!isFocus && e.event == FocusEvent.Event.focusIn)
                     {
@@ -532,15 +501,62 @@ class Sprite2d : EventKitTarget
             }
         }
 
+        static if (is(Event : KeyEvent) || is(Event : TextInputEvent))
+        {
+            if (isFocus)
+            {
+                runEventHandlers(e);
+            }
+        }
+
+        static if (is(Event : JoystickEvent))
+        {
+            if (isFocus)
+            {
+                runEventHandlers(e);
+            }
+        }
+
         if (isForwardEventsToChildren && children.length > 0)
         {
             onEventPhase(e, EventKitPhase.preDispatchChildren);
+
             foreach (Sprite2d child; children)
             {
-                child.dispatchEvent(e);
+                if (!isClipped)
+                {
+                    child.dispatchEvent(e);
+                }
+                else
+                {
+                    if (clip.contains(child.boundsRect))
+                    {
+                        child.dispatchEvent(e);
+                    }
+                    else
+                    {
+                        //TODO specify the events being forwarded
+                        static if (is(Event : PointerEvent))
+                        {
+                            if (child.isMouseOver && e.event == PointerEvent.Event.move)
+                            {
+                                child.dispatchEvent(e);
+                            }
+                        }
+                        else static if (is(Event : FocusEvent))
+                        {
+                            if (child.isFocus && e.event == FocusEvent
+                                .Event.focusOut)
+                            {
+                                child.dispatchEvent(e);
+                            }
+                        }
+                    }
+                }
+
                 if (e.isConsumed)
                 {
-                    return;
+                    break;
                 }
             }
             onEventPhase(e, EventKitPhase.postDispatchChildren);
@@ -947,7 +963,16 @@ class Sprite2d : EventKitTarget
         }
     }
 
-    void clipBounds()
+    bool inClipBounds(double x, double y)
+    {
+        if (!isClipped)
+        {
+            return true;
+        }
+        return clip.contains(x, y);
+    }
+
+    void setClipFromBounds()
     {
         clip = Rect2d(x, y, width, height);
         isMoveClip = true;
@@ -956,15 +981,15 @@ class Sprite2d : EventKitTarget
 
     void enableClipping()
     {
-        graphics.setClip(clip);
-        isClipped = true;
+        graphics.clip(clip);
     }
 
     void disableClipping()
     {
         graphics.removeClip;
-        isClipped = false;
     }
+
+    bool isClipped() => clip.width > 0 || clip.height > 0;
 
     void applyLayout()
     {
@@ -1124,6 +1149,8 @@ class Sprite2d : EventKitTarget
         assert(graphics);
         return graphics.renderBounds.contains(boundsRect);
     }
+
+    bool isClipSet() => clip.width > 0 || clip.height > 0;
 
     bool containsPoint(double x, double y)
     {

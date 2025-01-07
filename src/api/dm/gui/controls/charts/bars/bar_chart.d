@@ -75,7 +75,7 @@ class BarChart : XYChart
              graphics.line(chartArea.x, chartArea.boundsRect.bottom, chartArea.boundsRect.right, chartArea.boundsRect.bottom , color);
         }
 
-        graphics.setClip(chartArea.boundsRect);
+        graphics.clip(chartArea.boundsRect);
         scope (exit)
         {
             graphics.removeClip;

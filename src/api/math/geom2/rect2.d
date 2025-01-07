@@ -41,8 +41,8 @@ struct Rect2d
 
     bool contains(Rect2d rect) const @nogc nothrow pure @safe
     {
-        return ((rect.x > x && rect.x < right) && (rect.right > x && rect.right < right))
-            && ((rect.y > y && rect.y < bottom) && (rect.bottom > y && rect.bottom < bottom));
+        return ((rect.x >= x && rect.x <= right) && (rect.right >= x && rect.right <= right))
+            && ((rect.y >= y && rect.y <= bottom) && (rect.bottom >= y && rect.bottom <= bottom));
     }
 
     bool intersect(Rect2d other)

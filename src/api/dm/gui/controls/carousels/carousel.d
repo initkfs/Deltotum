@@ -141,7 +141,7 @@ class Carousel : Control
         assert(itemContainer.width = maxItemWidth);
         assert(itemContainer.height = maxItemHeight);
 
-        itemContainer.clipBounds;
+        itemContainer.setClipFromBounds;
 
         addCreate(itemContainer);
 

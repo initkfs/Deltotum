@@ -355,9 +355,7 @@ abstract class BaseCircularVirtualTable(T, TCol:
         auto row = new TR;
 
         import api.dm.kit.graphics.colors.rgba : RGBA;
-
-        row.isBorder = true;
-
+        
         row.height = maxRowHeight;
         row.maxHeight = maxRowHeight;
 

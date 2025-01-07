@@ -134,6 +134,14 @@ class Control : GuiComponent
         isScalable = true;
     }
 
+    final void isCreateInteractions(bool value){
+        isCreateHoverEffect = value;
+        isCreateHoverEffectAnimation = value;
+        isCreateActionEffect = value;
+        isCreateActionEffectAnimation = value;
+        isCreateInteractiveListeners = true;
+    }
+
     override void initialize()
     {
         super.initialize;

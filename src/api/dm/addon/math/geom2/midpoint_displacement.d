@@ -402,7 +402,7 @@ class MDLandscapeGenerator : Control
     {
         super.drawContent;
 
-        // graphics.setClip(Rect2d(x, y, canvasWidth, canvasHeight));
+        // graphics.clip(Rect2d(x, y, canvasWidth, canvasHeight));
         // scope (exit)
         // {
         //     graphics.removeClip;

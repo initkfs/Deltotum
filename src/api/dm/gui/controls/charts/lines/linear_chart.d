@@ -111,7 +111,7 @@ class LinearChart : XYChart
         drawGrid;
 
         //TODO best clipping
-        graphics.setClip(chartBounds);
+        graphics.clip(chartBounds);
         scope (exit)
         {
             graphics.removeClip;

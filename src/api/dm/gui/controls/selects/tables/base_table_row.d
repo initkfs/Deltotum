@@ -3,13 +3,15 @@ module api.dm.gui.controls.selects.tables.base_table_row;
 import api.dm.gui.controls.selects.tables.base_table_item : BaseTableItem;
 import api.dm.gui.controls.selects.tables.base_table_column : BaseTableColumn;
 import api.dm.gui.containers.container : Container;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.texts.text : Text;
 
 /**
  * Authors: initkfs
  */
-class BaseTableRow(TItem, TCol : BaseTableColumn!TItem) : Container
+class BaseTableRow(TItem, TCol:
+    BaseTableColumn!TItem) : Container
 {
     protected
     {
@@ -22,6 +24,18 @@ class BaseTableRow(TItem, TCol : BaseTableColumn!TItem) : Container
 
     dstring delegate(TItem) itemTextProvider;
 
+    Container colContainer;
+
+    bool isCreateColumnContainer = true;
+    Container delegate(Container) onNewColumnContainer;
+    void delegate(Container) onCreatedColumnContainer;
+
+    Sprite2d bottomBorder;
+
+    bool isCreateBottomBorder = true;
+    Container delegate(Sprite2d) onNewBottomBorder;
+    void delegate(Sprite2d) onCreatedBottomBorder;
+
     protected
     {
         bool _selected;
@@ -32,10 +46,15 @@ class BaseTableRow(TItem, TCol : BaseTableColumn!TItem) : Container
 
     this()
     {
-        import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
+        import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
-        layout = new HLayout(0);
+        layout = new VLayout(0);
         layout.isAutoResize = true;
+        layout.isAlignY = true;
+
+        isCreateInteractions = true;
+
+        id = "base_table_row";
     }
 
     override void loadTheme()
@@ -46,7 +65,7 @@ class BaseTableRow(TItem, TCol : BaseTableColumn!TItem) : Container
 
     void loadBaseTableRowTheme()
     {
-       
+
     }
 
     override void initialize()
@@ -63,6 +82,61 @@ class BaseTableRow(TItem, TCol : BaseTableColumn!TItem) : Container
         }
     }
 
+    override void create()
+    {
+        super.create;
+
+        if (isCreateColumnContainer)
+        {
+            auto newContainer = newColumnContainer;
+            colContainer = !onNewColumnContainer ? newContainer : onNewColumnContainer(newContainer);
+            addCreate(colContainer);
+            if (onCreatedColumnContainer)
+            {
+                onCreatedColumnContainer(colContainer);
+            }
+        }
+
+        if (isCreateBottomBorder)
+        {
+            auto bb = newBottomBorder;
+            bottomBorder = !onNewBottomBorder ? bb : onNewBottomBorder(bb);
+
+            bottomBorder.isLayoutManaged = false;
+
+            addCreate(bottomBorder);
+            if (onCreatedBottomBorder)
+            {
+                onCreatedBottomBorder(colContainer);
+            }
+        }
+    }
+
+    override void applyLayout()
+    {
+        super.applyLayout;
+        if (bottomBorder && !bottomBorder.isLayoutManaged)
+        {
+            bottomBorder.y = boundsRect.bottom - bottomBorder.halfHeight;
+        }
+    }
+
+    Container newColumnContainer()
+    {
+        import api.dm.gui.containers.hbox : HBox;
+
+        return new HBox(0);
+    }
+
+    Sprite2d newBottomBorder()
+    {
+        auto borderStyle = createFillStyle;
+        auto borderSize = theme.dividerSize / 2;
+        auto borderWidth = width == 0 ? 1 : width;
+        auto shape = theme.rectShape(borderWidth, borderSize, angle, borderStyle);
+        return shape;
+    }
+
     bool createColumn()
     {
         return createColumn(width);
@@ -72,27 +146,18 @@ class BaseTableRow(TItem, TCol : BaseTableColumn!TItem) : Container
     {
         assert(isCreated);
         auto col = new TCol;
-        col.isBorder = true;
         columns ~= col;
 
         col.itemTextProvider = itemTextProvider;
-        auto h = height - padding.height; 
+        auto h = height - padding.height;
 
         col.resize(colWidth, h);
-        addCreate(col);
+        auto root = colContainer ? colContainer : this;
+        root.addCreate(col);
         col.padding = 0;
-        
+
         return true;
     }
-
-    // import api.dm.kit.sprites2d.sprite2d: Sprite2d;
-    // import api.dm.kit.graphics.styles.graphic_style: GraphicStyle;
-
-    // override Sprite2d newBackground(double w, double h, double angle, GraphicStyle style)
-    // {
-    //     import api.dm.kit.graphics.colors.rgba: RGBA;
-    //     return theme.rectShape(w, h, angle, style);
-    // }
 
     void onColumn(scope bool delegate(TCol) onColIsContinue)
     {
