@@ -43,6 +43,7 @@ class BaseTreeTable(T, TCol:
         auto row = new TRow(item, canExpand, treeLevel, dividerSize);
         
         row.isResizedByParent = false;
+        row.itemTextProvider = itemTextProvider;
         
         assert(rowContainer);
         if (auto scrollBox = cast(ScrollBox) rowContainer)

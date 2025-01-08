@@ -11,8 +11,8 @@ import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.texts.text_area : TextArea;
-import api.dm.gui.controls.trees.tree_item : TreeItem;
-import api.dm.gui.controls.trees.tree_list_view : TreeListView;
+import api.dm.gui.controls.selects.tables.clipped.trees.tree_item : TreeItem;
+import api.dm.gui.controls.selects.tables.clipped.trees.tree_list : TreeList, newTreeList;
 import api.math.insets : Insets;
 import api.dm.gui.controls.containers.scroll_box : ScrollBox;
 import api.dm.gui.controls.tabs.tab : Tab;
@@ -75,7 +75,15 @@ class SceneView : VBox
 
     private
     {
-        TreeListView!Sprite2d controlStructure;
+        //TODO remove templates
+        import api.dm.gui.controls.selects.tables.clipped.trees.base_tree_table : BaseTreeTable;
+        import api.dm.gui.controls.selects.tables.base_table_column : BaseTableColumn;
+        import api.dm.gui.controls.selects.tables.base_table_row : BaseTableRow;
+        import api.dm.gui.controls.selects.tables.clipped.trees.tree_item : TreeItem;
+        import api.dm.gui.controls.selects.tables.clipped.trees.tree_row : TreeRow;
+
+        TreeList!(Sprite2d, BaseTableColumn!Sprite2d, TreeRow!Sprite2d) controlStructure;
+        
         Sprite2d objectOnDebug;
         size_t objectOnDebugSceneIndex;
         bool isDebug;
@@ -175,7 +183,14 @@ class SceneView : VBox
         fillScene.onAction ~= (ref e) { fillFullScene; };
         btnContainer.addCreate(fillScene);
 
-        controlStructure = new TreeListView!Sprite2d;
+        controlStructure = newTreeList!Sprite2d;
+        controlStructure.itemTextProvider = (Sprite2d item){
+            if(!item){
+                return "null"d;
+            }
+            import std.conv: to;
+            return (item.id.length) > 0 ? item.id.to!dstring : item.classNameShort.to!dstring;
+        };
         controlStructure.width = width - padding.width;
         controlStructure.height = 200;
         addCreate(controlStructure);
@@ -202,22 +217,22 @@ class SceneView : VBox
 
         controlSettings.changeTab(controlTab);
 
-        controlStructure.onSelectedOldNew = (oldSprite, newSprite) {
-            import std;
+        // controlStructure.onSelectedOldNew = (oldSprite, newSprite) {
+        //     import std;
 
-            if (newSprite is objectOnDebug)
-            {
-                return;
-            }
+        //     if (newSprite is objectOnDebug)
+        //     {
+        //         return;
+        //     }
 
-            if (objectOnDebug)
-            {
-                removeDebugInfo(objectOnDebug);
-            }
+        //     if (objectOnDebug)
+        //     {
+        //         removeDebugInfo(objectOnDebug);
+        //     }
 
-            objectOnDebug = newSprite;
-            setDebugInfo(objectOnDebug);
-        };
+        //     objectOnDebug = newSprite;
+        //     setDebugInfo(objectOnDebug);
+        // };
 
         sceneIsDebug;
     }
@@ -605,7 +620,7 @@ class SceneView : VBox
         foreach (ch; root.children)
         {
             auto childNode = buildSpriteTree(ch);
-            node.children ~= childNode;
+            node.childrenItems ~= childNode;
         }
 
         return node;

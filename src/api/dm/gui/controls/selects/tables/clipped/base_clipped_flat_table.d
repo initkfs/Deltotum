@@ -58,6 +58,7 @@ abstract class BaseClippedFlatTable(T, TCol:
     TRow newRow()
     {
         auto row = new TRow(dividerSize);
+        row.itemTextProvider = itemTextProvider;
 
         //FIXME 
         if (rowContainer)

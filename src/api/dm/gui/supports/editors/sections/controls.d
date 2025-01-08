@@ -5,7 +5,6 @@ import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.gui.controls.trees.tree_item : TreeItem;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.gui.controls.containers.vbox : VBox;
@@ -613,32 +612,6 @@ class Controls : Control
         sb1.setContent(sbt);
         sbt.text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
-        import api.dm.gui.controls.trees.tree_list_view : TreeListView;
-        import api.dm.gui.controls.trees.tree_item : TreeItem;
-
-        auto list1 = new TreeListView!string;
-        rootContainer.addCreate(list1);
-        list1.fill(["Item 1", "Item 2", "Item 3", "Item 4", "Item 5"]);
-
-        auto tree1 = new TreeListView!string;
-        rootContainer.addCreate(tree1);
-
-        tree1.resize(150, 150);
-        auto root = new TreeItem!string("root");
-        auto child = new TreeItem!string("child1");
-        auto child2 = new TreeItem!string("child2");
-
-        child.children ~= child2;
-        root.children ~= child;
-
-        import std.conv : to;
-
-        foreach (i; 0 .. 10)
-        {
-            root.children ~= new TreeItem!string(i.to!string);
-        }
-        tree1.fill(root);
-
         // import api.dm.gui.controls.datetimes.calendar : Calendar;
 
         // auto cal1 = new Calendar;
@@ -916,7 +889,7 @@ class Controls : Control
         foreach (ch; root.children)
         {
             auto childNode = buildSpriteTree(ch);
-            node.children ~= childNode;
+            node.childrenItems ~= childNode;
         }
 
         return node;

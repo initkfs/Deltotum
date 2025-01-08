@@ -22,6 +22,8 @@ abstract class BaseClippedTable(T, TCol:
         Container itemContainer;
     }
 
+    dstring delegate(T) itemTextProvider;
+
     this(size_t columnCount)
     {
         super(columnCount);

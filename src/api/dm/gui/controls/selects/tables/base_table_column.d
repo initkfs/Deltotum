@@ -108,9 +108,19 @@ class BaseTableColumn(TI) : Container
             }
         }
 
-        if (_item != TI.init)
+        static if (__traits(compiles, TI.init is null))
         {
-            text = _item;
+            if (_item !is TI.init)
+            {
+                text = _item;
+            }
+        }
+        else
+        {
+            if (_item != TI.init)
+            {
+                text = _item;
+            }
         }
     }
 

@@ -152,8 +152,6 @@ class TreeRow(T) : BaseTableRow!(T, BaseTableColumn!T)
 
     bool isExpandable = true;
 
-    dstring delegate(T) itemTextProvider;
-
     TreeRowLevelGraphics levelGraphics;
     bool isCreateLevelGraphics = true;
     TreeRowLevelGraphics delegate(TreeRowLevelGraphics) onNewLevelGraphics;
