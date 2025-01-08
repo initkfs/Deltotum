@@ -5,9 +5,9 @@ version(DmAddon):
 // dfmt on
 
 import api.dm.gui.controls.control : Control;
-import api.dm.gui.containers.container : Container;
-import api.dm.gui.containers.hbox : HBox;
-import api.dm.gui.containers.vbox : VBox;
+import api.dm.gui.controls.containers.container : Container;
+import api.dm.gui.controls.containers.hbox : HBox;
+import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.kit.graphics.colors.rgba: RGBA;
 
 /**
@@ -42,7 +42,7 @@ class Indicators : Control
         rootContainer.layout.isAlignY = true;
         addCreate(rootContainer);
 
-        import api.dm.gui.containers.hbox : HBox;
+        import api.dm.gui.controls.containers.hbox : HBox;
 
         auto indicatorContainer = new HBox;
         indicatorContainer.layout.isAlignY = true;

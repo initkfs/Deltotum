@@ -277,7 +277,7 @@ class AnalogClock : BaseRadialGauge
 
         // version (DmAddon)
         // {
-        //     import api.dm.gui.containers.hbox : HBox;
+        //     import api.dm.gui.controls.containers.hbox : HBox;
 
         //     auto segmentLayout = new HBox(2);
         //     segmentLayout.margin.top = 20;

@@ -1,7 +1,7 @@
 module api.dm.gui.controls.selects.tables.virtuals.circular_virtual_table;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.gui.containers.container : Container;
+import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.math.geom2.rect2 : Rect2d;
 import api.dm.gui.controls.texts.text : Text;

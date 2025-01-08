@@ -1,7 +1,7 @@
 module api.dm.gui.controls.trees.tree_row;
 
 import api.dm.kit.sprites2d.sprite2d: Sprite2d;
-import api.dm.gui.containers.container : Container;
+import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.texts.text: Text;
 
 import api.dm.gui.controls.trees.tree_item: TreeItem;

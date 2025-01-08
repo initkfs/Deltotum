@@ -1,6 +1,6 @@
-module api.dm.gui.containers.vbox;
+module api.dm.gui.controls.containers.vbox;
 
-import api.dm.gui.containers.base.spaceable_container: SpaceableContainer;
+import api.dm.gui.controls.containers.base.spaceable_container: SpaceableContainer;
 import api.dm.kit.sprites2d.layouts.spaceable_layout : SpaceableLayout;
 import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 

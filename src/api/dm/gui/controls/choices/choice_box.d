@@ -5,10 +5,10 @@ import api.dm.kit.sprites2d.sprite2d: Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.controls.texts.text : Text;
-import api.dm.gui.containers.base.typed_container : TypedContainer;
+import api.dm.gui.controls.containers.base.typed_container : TypedContainer;
 import api.dm.gui.controls.texts.text_area : TextArea;
 
-import api.dm.gui.containers.vbox : VBox;
+import api.dm.gui.controls.containers.vbox : VBox;
 
 class ChoiceItem : Control
 {
@@ -82,7 +82,7 @@ class ChoiceBox : TypedContainer!ChoiceItem
 
         enableInsets;
 
-        import api.dm.gui.containers.vbox : VBox;
+        import api.dm.gui.controls.containers.vbox : VBox;
 
         if (isCreateStepSelection)
         {
@@ -226,7 +226,7 @@ class ChoiceBox : TypedContainer!ChoiceItem
 
         foreach (s; list)
             (dstring s) {
-            import api.dm.gui.containers.hbox : HBox;
+            import api.dm.gui.controls.containers.hbox : HBox;
 
             auto choiceListRow = new ChoiceItem;
             choiceListRow.width = choiceList.width - choiceList.padding.width;

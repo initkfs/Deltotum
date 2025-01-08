@@ -12,8 +12,8 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
 import api.math.random : Random;
 import api.dm.addon.sprites.textures.vectors.tessellations.penrose_tiling : PenroseTiling;
-import api.dm.gui.containers.hbox : HBox;
-import api.dm.gui.containers.vbox : VBox;
+import api.dm.gui.controls.containers.hbox : HBox;
+import api.dm.gui.controls.containers.vbox : VBox;
 
 import std.stdio;
 

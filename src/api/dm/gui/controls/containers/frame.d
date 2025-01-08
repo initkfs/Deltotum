@@ -1,6 +1,6 @@
-module api.dm.gui.containers.frame;
+module api.dm.gui.controls.containers.frame;
 
-import api.dm.gui.containers.container : Container;
+import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.layouts.spaceable_layout : SpaceableLayout;
 import api.dm.kit.sprites2d.layouts.vlayout : VLayout;

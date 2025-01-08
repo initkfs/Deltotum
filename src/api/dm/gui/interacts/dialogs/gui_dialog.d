@@ -1,11 +1,11 @@
 module api.dm.gui.interacts.dialogs.gui_dialog;
 
-import api.dm.gui.containers.container : Container;
+import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import api.dm.kit.events.event_kit_target : EventKitPhase;
-import api.dm.gui.containers.vbox : VBox;
+import api.dm.gui.controls.containers.vbox : VBox;
 
 enum DialogButton
 {
@@ -87,7 +87,7 @@ class GuiDialog : Container
         if (!buttonPanelFactory)
         {
             buttonPanelFactory = () {
-                import api.dm.gui.containers.hbox : HBox;
+                import api.dm.gui.controls.containers.hbox : HBox;
 
                 auto panel = new HBox(5);
                 return panel;

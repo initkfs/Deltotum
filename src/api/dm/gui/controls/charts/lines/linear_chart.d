@@ -6,10 +6,10 @@ import api.math.geom2.vec2 : Vec2d;
 import api.math.insets : Insets;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
-import api.dm.gui.containers.container : Container;
+import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.texts.text : Text;
-import api.dm.gui.containers.hbox : HBox;
-import api.dm.gui.containers.vbox : VBox;
+import api.dm.gui.controls.containers.hbox : HBox;
+import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.gui.controls.meters.scales.dynamics.hscale_dynamic : HScaleDynamic;
 import api.dm.gui.controls.meters.scales.dynamics.vscale_dynamic : VScaleDynamic;
 

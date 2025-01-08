@@ -3,8 +3,8 @@ module api.dm.addon.gui.controls.indicators.dot_matrix_display;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.gui.containers.vbox : VBox;
-import api.dm.gui.containers.hbox : HBox;
+import api.dm.gui.controls.containers.vbox : VBox;
+import api.dm.gui.controls.containers.hbox : HBox;
 
 /**
  * Authors: initkfs

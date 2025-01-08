@@ -4,10 +4,10 @@ import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites2d.layouts.layout2d : Layout2d;
 import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
-import api.dm.gui.containers.hbox : HBox;
-import api.dm.gui.containers.circle_box : CircleBox;
-import api.dm.gui.containers.vbox : VBox;
-import api.dm.gui.containers.stack_box : StackBox;
+import api.dm.gui.controls.containers.hbox : HBox;
+import api.dm.gui.controls.containers.circle_box : CircleBox;
+import api.dm.gui.controls.containers.vbox : VBox;
+import api.dm.gui.controls.containers.stack_box : StackBox;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 import api.dm.gui.controls.switches.buttons.button : Button;
@@ -112,7 +112,7 @@ class HourChooser : TimeChooser
     {
         super.create;
 
-        import api.dm.gui.containers.circle_box : CircleBox;
+        import api.dm.gui.controls.containers.circle_box : CircleBox;
 
         auto hour1to12Box = new CircleBox(innerBoxRadius, startAngle);
         addCreate(hour1to12Box);

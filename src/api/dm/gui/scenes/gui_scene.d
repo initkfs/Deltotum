@@ -94,7 +94,7 @@ class GuiScene : Scene2d
 
     void createDebugger()
     {
-        import api.dm.gui.containers.slider : Slider, SliderPos;
+        import api.dm.gui.controls.containers.slider : Slider, SliderPos;
 
         auto debugWrapper = new Slider(SliderPos.right);
         addCreate(debugWrapper);

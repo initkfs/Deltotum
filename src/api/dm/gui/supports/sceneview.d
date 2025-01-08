@@ -1,20 +1,20 @@
 module api.dm.gui.supports.sceneview;
 
-import api.dm.gui.containers.vbox : VBox;
-import api.dm.gui.containers.hbox : HBox;
-import api.dm.gui.containers.stack_box : StackBox;
+import api.dm.gui.controls.containers.vbox : VBox;
+import api.dm.gui.controls.containers.hbox : HBox;
+import api.dm.gui.controls.containers.stack_box : StackBox;
 import api.dm.gui.controls.switches.toggles.toggle : Toggle;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.texts.textfield : TextField;
 import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.gui.containers.container : Container;
+import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.texts.text_area : TextArea;
 import api.dm.gui.controls.trees.tree_item : TreeItem;
 import api.dm.gui.controls.trees.tree_list_view : TreeListView;
 import api.math.insets : Insets;
-import api.dm.gui.containers.scroll_box : ScrollBox;
+import api.dm.gui.controls.containers.scroll_box : ScrollBox;
 import api.dm.gui.controls.tabs.tab : Tab;
 import api.dm.gui.controls.tabs.tabpane : TabPane;
 import api.dm.gui.controls.switches.checks.check : Check;

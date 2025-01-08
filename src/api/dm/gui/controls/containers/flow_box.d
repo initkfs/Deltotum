@@ -1,6 +1,6 @@
-module api.dm.gui.containers.flow_box;
+module api.dm.gui.controls.containers.flow_box;
 
-import api.dm.gui.containers.container : Container;
+import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.layouts.flow_layout: FlowLayout;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 

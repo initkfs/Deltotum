@@ -86,7 +86,7 @@ class Animations : Control
         motionTween.isInfinite = true;
         motionTween.isReverse = true;
 
-        import api.dm.gui.containers.hbox : HBox;
+        import api.dm.gui.controls.containers.hbox : HBox;
 
         auto guiContainer = new HBox;
         addCreate(guiContainer);

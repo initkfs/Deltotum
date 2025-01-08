@@ -5,8 +5,8 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsv : HSV;
-import api.dm.gui.containers.hbox : HBox;
-import api.dm.gui.containers.vbox : VBox;
+import api.dm.gui.controls.containers.hbox : HBox;
+import api.dm.gui.controls.containers.vbox : VBox;
 
 import Math = api.dm.math;
 import api.math.random : Random;

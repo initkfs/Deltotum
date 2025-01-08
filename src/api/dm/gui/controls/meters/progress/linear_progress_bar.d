@@ -2,7 +2,7 @@ module api.dm.gui.controls.meters.progress.linear_progress_bar;
 
 import api.dm.gui.controls.meters.progress.base_labeled_progress_bar : BaseLabeledProgressBar;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.gui.containers.container : Container;
+import api.dm.gui.controls.containers.container : Container;
 import api.math.orientation : Orientation;
 
 /**

@@ -145,7 +145,7 @@ class BaseToggle : BaseBiswitch
 
     protected Sprite2d newThumbContainer()
     {
-        import api.dm.gui.containers.container;
+        import api.dm.gui.controls.containers.container;
         import api.dm.kit.sprites2d.layouts.managed_layout : ManagedLayout;
 
         auto thumbContainer = new Container;

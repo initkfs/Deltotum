@@ -1,15 +1,15 @@
 module api.dm.gui.supports.editors.sections.controls;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.gui.containers.container : Container;
+import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.controls.trees.tree_item : TreeItem;
 import api.dm.gui.controls.switches.buttons.button : Button;
-import api.dm.gui.containers.hbox : HBox;
-import api.dm.gui.containers.vbox : VBox;
-import api.dm.gui.containers.frame : Frame;
+import api.dm.gui.controls.containers.hbox : HBox;
+import api.dm.gui.controls.containers.vbox : VBox;
+import api.dm.gui.controls.containers.frame : Frame;
 import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 import api.dm.gui.controls.carousels.carousel;
 import api.dm.gui.controls.selects.tables.trees.tree_item;
@@ -125,8 +125,8 @@ class Controls : Control
         root.addCreate(switchFrame);
         switchFrame.isVGrow = true;
 
-        import api.dm.gui.containers.vbox : VBox;
-        import api.dm.gui.containers.hbox : HBox;
+        import api.dm.gui.controls.containers.vbox : VBox;
+        import api.dm.gui.controls.containers.hbox : HBox;
 
         auto btnRoot2 = new VBox;
         switchFrame.addCreate(btnRoot2);
@@ -268,8 +268,8 @@ class Controls : Control
 
     void createDialogs(Container root)
     {
-        import api.dm.gui.containers.frame : Frame;
-        import api.dm.gui.containers.vbox : VBox;
+        import api.dm.gui.controls.containers.frame : Frame;
+        import api.dm.gui.controls.containers.vbox : VBox;
 
         auto frame = new Frame("Dialogs");
         frame.isVGrow = true;
@@ -318,7 +318,7 @@ class Controls : Control
 
     void createSelections(Container root)
     {
-        import api.dm.gui.containers.hbox: HBox;
+        import api.dm.gui.controls.containers.hbox: HBox;
 
         auto tableRoot = new HBox;
         root.addCreate(tableRoot);
@@ -591,7 +591,7 @@ class Controls : Control
 
     void createDataControls(Container rootContainer)
     {
-        import api.dm.gui.containers.scroll_box : ScrollBox;
+        import api.dm.gui.controls.containers.scroll_box : ScrollBox;
         import api.dm.gui.controls.texts.text : Text;
 
         auto sb1 = new ScrollBox(100, 100);
@@ -639,7 +639,7 @@ class Controls : Control
 
         import api.dm.gui.controls.paginations.pagination : Pagination;
         import api.dm.gui.controls.texts.text : Text;
-        import api.dm.gui.containers.vbox : VBox;
+        import api.dm.gui.controls.containers.vbox : VBox;
 
         import api.dm.gui.controls.carousels.carousel : Carousel;
 
@@ -725,14 +725,14 @@ class Controls : Control
         import api.dm.gui.controls.switches.buttons.parallelogram_button : ParallelogramButton;
         import api.dm.gui.controls.switches.checks.check : Check;
         import IconName = api.dm.gui.themes.icons.icon_name;
-        import api.dm.gui.containers.frame : Frame;
+        import api.dm.gui.controls.containers.frame : Frame;
 
         auto frame = new Frame("Windows");
         frame.isVGrow = true;
         root.addCreate(frame);
 
-        import api.dm.gui.containers.vbox : VBox;
-        import api.dm.gui.containers.hbox : HBox;
+        import api.dm.gui.controls.containers.vbox : VBox;
+        import api.dm.gui.controls.containers.hbox : HBox;
 
         auto winRoot1 = new VBox(5);
         frame.addCreate(winRoot1);

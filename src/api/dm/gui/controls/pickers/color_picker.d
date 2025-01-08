@@ -10,8 +10,8 @@ import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.kit.sprites2d.shapes.circle : Circle;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
-import api.dm.gui.containers.vbox : VBox;
-import api.dm.gui.containers.hbox : HBox;
+import api.dm.gui.controls.containers.vbox : VBox;
+import api.dm.gui.controls.containers.hbox : HBox;
 
 /**
  * Authors: initkfs

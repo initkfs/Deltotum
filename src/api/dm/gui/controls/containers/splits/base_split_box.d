@@ -1,6 +1,6 @@
-module api.dm.gui.containers.splits.base_split_box;
+module api.dm.gui.controls.containers.splits.base_split_box;
 
-import api.dm.gui.containers.container : Container;
+import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;

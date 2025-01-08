@@ -1,6 +1,6 @@
-module api.dm.gui.containers.base.typed_container;
+module api.dm.gui.controls.containers.base.typed_container;
 
-import api.dm.gui.containers.container: Container;
+import api.dm.gui.controls.containers.container: Container;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
 /**

@@ -70,7 +70,7 @@ class Check : BaseBiswitch
 
     Sprite2d newMarkerContainer()
     {
-        import api.dm.gui.containers.stack_box : StackBox;
+        import api.dm.gui.controls.containers.stack_box : StackBox;
 
         auto markerContainer = new StackBox;
         markerContainer.resize(markerWidth, markerHeight);

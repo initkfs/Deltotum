@@ -30,7 +30,7 @@ class Grahpics : Control
     {
         super.create;
 
-        import api.dm.gui.containers.vbox : VBox;
+        import api.dm.gui.controls.containers.vbox : VBox;
 
         auto root = new VBox;
         root.isLayoutManaged = false;
@@ -38,7 +38,7 @@ class Grahpics : Control
         addCreate(root);
         root.enableInsets;
 
-        import api.dm.gui.containers.hbox : HBox;
+        import api.dm.gui.controls.containers.hbox : HBox;
 
         auto shapeContainer = new HBox;
         root.addCreate(shapeContainer);

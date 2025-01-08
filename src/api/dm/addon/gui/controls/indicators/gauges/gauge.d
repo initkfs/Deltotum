@@ -6,7 +6,7 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.addon.gui.controls.indicators.seven_segment : SevenSegment;
 import api.dm.gui.controls.meters.progress.base_radial_progress_bar: BaseRadialProgressBar;
-import api.dm.gui.containers.hbox : HBox;
+import api.dm.gui.controls.containers.hbox : HBox;
 
 import Math = api.dm.math;
 

@@ -1,8 +1,8 @@
 module api.dm.gui.controls.datetimes.calendar;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.gui.containers.hbox : HBox;
-import api.dm.gui.containers.vbox : VBox;
+import api.dm.gui.controls.containers.hbox : HBox;
+import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
@@ -420,8 +420,8 @@ class Calendar : Control
             week.enableInsets;
         }
 
-        import api.dm.gui.containers.hbox : HBox;
-        import api.dm.gui.containers.container : Container;
+        import api.dm.gui.controls.containers.hbox : HBox;
+        import api.dm.gui.controls.containers.container : Container;
 
         auto btnContainer = new HBox;
         addCreate(btnContainer);

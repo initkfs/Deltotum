@@ -3,19 +3,19 @@ module api.dm.gui.controls.meters.gauges.hlinear_gauge;
 import api.dm.gui.controls.meters.min_max_value_meter : MinMaxValueMeter;
 import api.dm.gui.controls.meters.scales.dynamics.base_scale_dynamic : BaseScaleDynamic;
 import api.dm.gui.controls.indicators.color_bars.color_bar : ColorBar;
-import api.dm.gui.containers.container : Container;
+import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.texts.text : Text;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.gui.containers.container : Container;
+import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import Math = api.dm.math;
 
 import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 
-import api.dm.gui.containers.hbox : HBox;
+import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
 
@@ -109,7 +109,7 @@ class HLinearGauge : MinMaxValueMeter!double
 
     Container newScaleContainer()
     {
-        import api.dm.gui.containers.vbox : VBox;
+        import api.dm.gui.controls.containers.vbox : VBox;
 
         auto container = new VBox(0);
         return container;

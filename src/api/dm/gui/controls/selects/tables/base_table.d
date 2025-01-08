@@ -3,10 +3,10 @@ module api.dm.gui.controls.selects.tables.base_table;
 import api.dm.gui.controls.selects.tables.base_table_row : BaseTableRow;
 import api.dm.gui.controls.selects.tables.base_table_item : BaseTableItem;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.gui.containers.container : Container;
+import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.control : Control;
 
-import api.dm.gui.containers.splits.hsplit_box : HSplitBox;
+import api.dm.gui.controls.containers.splits.hsplit_box : HSplitBox;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
@@ -198,7 +198,7 @@ class BaseTable : Control
 
     Container newContentContainer()
     {
-        import api.dm.gui.containers.hbox : HBox;
+        import api.dm.gui.controls.containers.hbox : HBox;
 
         return new HBox(0);
     }

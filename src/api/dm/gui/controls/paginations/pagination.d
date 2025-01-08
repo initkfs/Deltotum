@@ -4,7 +4,7 @@ import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.switches.buttons.button: Button;
 import api.dm.gui.controls.texts.text : Text;
-import api.dm.gui.containers.container : Container;
+import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
@@ -113,7 +113,7 @@ class Pagination : Control
         //     assert(pageIndex(newIndex));
         // };
 
-        import api.dm.gui.containers.hbox : HBox;
+        import api.dm.gui.controls.containers.hbox : HBox;
 
         auto infoContainer = new HBox(3);
         infoContainer.layout.isAlignY = true;

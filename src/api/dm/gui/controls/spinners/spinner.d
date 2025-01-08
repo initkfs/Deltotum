@@ -5,8 +5,8 @@ import api.dm.gui.controls.expanders.expander : Expander, ExpanderPosition;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.controls.texts.textfield : TextField;
 
-import api.dm.gui.containers.hbox: HBox;
-import api.dm.gui.containers.vbox: VBox;
+import api.dm.gui.controls.containers.hbox: HBox;
+import api.dm.gui.controls.containers.vbox: VBox;
 
 import std.conv : to;
 

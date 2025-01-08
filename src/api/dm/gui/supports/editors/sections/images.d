@@ -57,7 +57,7 @@ class Images : Control
 
     Sprite2d createImageInfo(string name, Sprite2d image)
     {
-        import api.dm.gui.containers.vbox : VBox;
+        import api.dm.gui.controls.containers.vbox : VBox;
         import api.dm.gui.controls.texts.text : Text;
 
         auto container = new VBox;
@@ -77,11 +77,11 @@ class Images : Control
     {
         super.create;
 
-        import api.dm.gui.containers.container : Container;
-        import api.dm.gui.containers.hbox : HBox;
-        import api.dm.gui.containers.vbox : VBox;
-        import api.dm.gui.containers.container : Container;
-        import api.dm.gui.containers.stack_box : StackBox;
+        import api.dm.gui.controls.containers.container : Container;
+        import api.dm.gui.controls.containers.hbox : HBox;
+        import api.dm.gui.controls.containers.vbox : VBox;
+        import api.dm.gui.controls.containers.container : Container;
+        import api.dm.gui.controls.containers.stack_box : StackBox;
         import api.math.insets : Insets;
 
         auto container = new HBox;

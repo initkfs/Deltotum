@@ -1,8 +1,8 @@
 module api.demo.demo1.scenes.start;
 
 import api.dm.gui.scenes.gui_scene : GuiScene;
-import api.dm.gui.containers.vbox : VBox;
-import api.dm.gui.containers.hbox : HBox;
+import api.dm.gui.controls.containers.vbox : VBox;
+import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;

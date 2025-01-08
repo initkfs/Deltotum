@@ -437,8 +437,8 @@ class DiamondSquareGenerator : Control
     import api.dm.gui.controls.forms.fields.regulate_text_field : RegulateTextField;
     import api.dm.gui.controls.forms.fields.regulate_text_panel : RegulateTextPanel;
 
-    import api.dm.gui.containers.container : Container;
-    import api.dm.gui.containers.stack_box : StackBox;
+    import api.dm.gui.controls.containers.container : Container;
+    import api.dm.gui.controls.containers.stack_box : StackBox;
 
     import api.dm.kit.graphics.colors.rgba : RGBA;
     import api.math.geom2.rect2 : Rect2d;

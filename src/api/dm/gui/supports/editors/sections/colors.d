@@ -42,9 +42,9 @@ class Colors : Control
         import std.traits : EnumMembers;
         import std.range : chunks;
 
-        import api.dm.gui.containers.vbox : VBox;
-        import api.dm.gui.containers.stack_box : StackBox;
-        import api.dm.gui.containers.container : Container;
+        import api.dm.gui.controls.containers.vbox : VBox;
+        import api.dm.gui.controls.containers.stack_box : StackBox;
+        import api.dm.gui.controls.containers.container : Container;
         import api.dm.gui.controls.texts.text : Text;
         import api.dm.kit.assets.fonts.font_size : FontSize;
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;

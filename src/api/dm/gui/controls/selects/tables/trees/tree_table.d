@@ -1,9 +1,9 @@
 module api.dm.gui.controls.selects.tables.trees.tree_table;
 
 import api.dm.gui.controls.selects.tables.base_table : BaseTable;
-import api.dm.gui.containers.scroll_box : ScrollBox;
+import api.dm.gui.controls.containers.scroll_box : ScrollBox;
 import api.dm.gui.controls.control : Control;
-import api.dm.gui.containers.container : Container;
+import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.math.geom2.rect2 : Rect2d;
 import api.dm.gui.controls.texts.text : Text;
@@ -50,7 +50,7 @@ class TreeTable(T) : BaseTable
         tryCreateRowContainer(this, isClipping:
             false);
 
-        import api.dm.gui.containers.vbox : VBox;
+        import api.dm.gui.controls.containers.vbox : VBox;
 
         itemContainer = new VBox(0);
         //import api.dm.kit.graphics.colors.rgba: RGBA;

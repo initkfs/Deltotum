@@ -1,6 +1,6 @@
-module api.dm.gui.containers.stack_box;
+module api.dm.gui.controls.containers.stack_box;
 
-import api.dm.gui.containers.container : Container;
+import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
 
 /**

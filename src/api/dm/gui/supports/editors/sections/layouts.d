@@ -6,9 +6,9 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.insets : Insets;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
-import api.dm.gui.containers.container : Container;
-import api.dm.gui.containers.hbox : HBox;
-import api.dm.gui.containers.vbox : VBox;
+import api.dm.gui.controls.containers.container : Container;
+import api.dm.gui.controls.containers.hbox : HBox;
+import api.dm.gui.controls.containers.vbox : VBox;
 
 import api.dm.gui.controls.switches.buttons.button : Button;
 
@@ -215,7 +215,7 @@ class Layouts : Control
         testHContainers;
         auto posVContainer = testVContainers;
 
-        import api.dm.gui.containers.stack_box : StackBox;
+        import api.dm.gui.controls.containers.stack_box : StackBox;
 
         auto stackContainer = configureControl(new StackBox);
         posVContainer.addCreate(stackContainer);
@@ -235,7 +235,7 @@ class Layouts : Control
 
         s2.addCreate(stBtn1);
 
-        import api.dm.gui.containers.border_box : BorderBox;
+        import api.dm.gui.controls.containers.border_box : BorderBox;
 
         auto bBox = configureControl(new BorderBox);
         posVContainer.addCreate(bBox);
@@ -258,7 +258,7 @@ class Layouts : Control
         bottom.isHGrow = true;
         bBox.bottomPane.addCreate(bottom);
 
-        import api.dm.gui.containers.flow_box : FlowBox;
+        import api.dm.gui.controls.containers.flow_box : FlowBox;
 
         auto flowBox1 = configureControl(new FlowBox(5, 5));
         flowBox1.width = 200;
@@ -291,7 +291,7 @@ class Layouts : Control
         auto pos2Container = configureControl(new HBox(5));
         addCreate(pos2Container);
 
-        import api.dm.gui.containers.circle_box : CircleBox;
+        import api.dm.gui.controls.containers.circle_box : CircleBox;
 
         auto circleBox1 = configureControl(new CircleBox);
         pos2Container.addCreate(circleBox1);
@@ -304,9 +304,9 @@ class Layouts : Control
             circleBox1.addCreate(btn);
         }
 
-        import api.dm.gui.containers.splits.vsplit_box: VSplitBox;
-        import api.dm.gui.containers.splits.hsplit_box: HSplitBox;
-        import api.dm.gui.containers.vbox: VBox;
+        import api.dm.gui.controls.containers.splits.vsplit_box: VSplitBox;
+        import api.dm.gui.controls.containers.splits.hsplit_box: HSplitBox;
+        import api.dm.gui.controls.containers.vbox: VBox;
         import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon: VConvexPolygon;
 
         auto split1 = new VSplitBox;

@@ -3,7 +3,7 @@ module api.dm.addon.vecfields.vec_field_gen;
 import api.dm.addon.vecfields.vec_field : VecField;
 import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
 
-import api.dm.gui.containers.container : Container;
+import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.rect2 : Rect2d;
 import api.math.geom2.vec2 : Vec2d;

@@ -10,8 +10,8 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.math.geom2.vec2 : Vec2d;
 import api.math.random : Random;
-import api.dm.gui.containers.container: Container;
-import api.dm.gui.containers.hbox: HBox;
+import api.dm.gui.controls.containers.container: Container;
+import api.dm.gui.controls.containers.hbox: HBox;
 
 import Math = api.dm.math;
 
@@ -66,7 +66,7 @@ class Fractals : Control
 
     Sprite2d createFractalInfo(string name, Sprite2d fractal, bool isDrawFromCenter = true, double translateX = 0, double translateY = 0, double rotateAngleDeg = 0)
     {
-        import api.dm.gui.containers.vbox : VBox;
+        import api.dm.gui.controls.containers.vbox : VBox;
         import api.dm.gui.controls.texts.text : Text;
 
         auto container = new VBox;
@@ -100,7 +100,7 @@ class Fractals : Control
     {
         super.create;
 
-        import api.dm.gui.containers.stack_box : StackBox;
+        import api.dm.gui.controls.containers.stack_box : StackBox;
         import api.math.insets : Insets;
 
         auto container = newHContainer;

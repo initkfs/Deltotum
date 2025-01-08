@@ -1,25 +1,23 @@
-module api.dm.gui.containers.splits.hsplit_box;
+module api.dm.gui.controls.containers.splits.vsplit_box;
 
-import api.dm.gui.containers.splits.base_split_box : BaseSplitBox, DividerData;
-import api.dm.gui.containers.container : Container;
-import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
+import api.dm.gui.controls.containers.splits.base_split_box : BaseSplitBox, DividerData;
+import api.dm.gui.controls.containers.container : Container;
+import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
 /**
  * Authors: initkfs
  */
-class HSplitBox : BaseSplitBox
+class VSplitBox : BaseSplitBox
 {
     this()
     {
-        layout = new HLayout(0);
+        layout = new VLayout(0);
         layout.isAutoResize = true;
     }
 
-    protected
-    {
-
-    }
+    override double dividerWidth() => width - padding.width;
+    override double dividerHeight() => dividerSize;
 
     override void create()
     {
@@ -28,9 +26,10 @@ class HSplitBox : BaseSplitBox
         window.showingTasks ~= (dt) {
             foreach (sepData; dividers)
             {
-                Sprite2d left = sepData.prev;
-                sepData.sep.x = left.boundsRect.right - sepData.sep.boundsRect.halfWidth;
+                Sprite2d prev = sepData.prev;
+                sepData.sep.y = prev.boundsRect.bottom - sepData.sep.boundsRect.halfHeight;
             }
+
         };
     }
 
@@ -40,15 +39,12 @@ class HSplitBox : BaseSplitBox
 
         foreach (sdata; dividers)
         {
-            if (sdata.sep.height != height)
+            if (sdata.sep.width != width)
             {
-                sdata.sep.height = height;
+                sdata.sep.width = width;
             }
         }
     }
-
-    override double dividerWidth() => dividerSize;
-    override double dividerHeight() => height - padding.height;
 
     override bool delegate(double, double) newOnSepDragXY(Sprite2d sep)
     {
@@ -65,34 +61,25 @@ class HSplitBox : BaseSplitBox
             auto next = sepData.next;
 
             //auto bounds = this.boundsRect;
-            const minX = prev.x;
-            const maxX = next.boundsRect.right - sep.width;
-            if (x <= minX || x >= maxX)
+            const minY = prev.y;
+            const maxY = next.boundsRect.bottom - sep.height;
+            if (y <= minY || y >= maxY)
             {
                 return false;
             }
 
-            auto dx = sep.x - x;
-            if (dx == 0)
+            auto dy = sep.y - y;
+            if (dy == 0)
             {
                 return false;
             }
 
-            auto newPrevWidth = prev.width - dx;
-            auto newNextWidth = next.width + dx;
-
-            if(!prev.canChangeWidth(newPrevWidth) || !next.canChangeWidth(newNextWidth)){
-                return false;
-            }
-
-            sep.x = x;
+            sep.y = y;
 
             prev.isResizeChildren = true;
-            prev.isResizeChildrenAlways = true;
             next.isResizeChildren = true;
-            next.isResizeChildrenAlways = true;
 
-            if (dx > 0)
+            if (dy > 0)
             {
                 //to left
                 if (prev.layout)
@@ -123,9 +110,8 @@ class HSplitBox : BaseSplitBox
                 }
             }
 
-
-            prev.width = newPrevWidth;
-            next.width = newNextWidth;
+            prev.height = prev.height - dy;
+            next.height = next.height + dy;
 
             if (onMoveDivider)
             {

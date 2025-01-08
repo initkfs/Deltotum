@@ -7,9 +7,9 @@ import api.dm.kit.apps.graphic_app : GraphicApp;
 import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.kit.windows.window : Window;
 
-import api.dm.gui.containers.vbox : VBox;
+import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.gui.controls.switches.buttons.button : Button;
-import api.dm.gui.containers.container : Container;
+import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.control : Control;
 
 import std.container.slist : SList;

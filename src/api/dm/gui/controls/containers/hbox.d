@@ -1,6 +1,6 @@
-module api.dm.gui.containers.hbox;
+module api.dm.gui.controls.containers.hbox;
 
-import api.dm.gui.containers.base.spaceable_container : SpaceableContainer;
+import api.dm.gui.controls.containers.base.spaceable_container : SpaceableContainer;
 import api.dm.kit.sprites2d.layouts.spaceable_layout : SpaceableLayout;
 import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;

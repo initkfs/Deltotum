@@ -1,6 +1,6 @@
 module api.dm.gui.controls.charts.pies.pie_chart;
 
-import api.dm.gui.containers.container : Container;
+import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 

@@ -1,14 +1,14 @@
 module api.dm.gui.controls.selects.tables.clipped.base_clipped_table;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.gui.containers.container : Container;
+import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
 import api.dm.gui.controls.selects.tables.base_table_row : BaseTableRow;
 import api.dm.gui.controls.selects.tables.base_table_column : BaseTableColumn;
 import api.dm.gui.controls.selects.tables.base_table_item : BaseTableItem;
 import api.dm.gui.controls.selects.tables.base_table : BaseTable;
-import api.dm.gui.containers.scroll_box : ScrollBox;
+import api.dm.gui.controls.containers.scroll_box : ScrollBox;
 
 import Math = api.math;
 
@@ -48,7 +48,7 @@ abstract class BaseClippedTable(T, TCol:
         tryCreateRowContainer(this, isClipping:
             false);
 
-        import api.dm.gui.containers.vbox : VBox;
+        import api.dm.gui.controls.containers.vbox : VBox;
 
         itemContainer = new VBox(0);
         itemContainer.layout.isDecreaseRootHeight = true;

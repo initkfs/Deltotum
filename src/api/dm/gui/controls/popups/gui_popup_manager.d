@@ -1,9 +1,9 @@
 module api.dm.gui.controls.popups.gui_popup_manager;
 
 import api.dm.kit.interacts.popups.popup_manager : PopupManager;
-import api.dm.gui.containers.container : Container;
+import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.gui.containers.vbox : VBox;
+import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.gui.controls.texts.text : Text;
 import api.math.geom2.rect2 : Rect2d;
 import api.dm.kit.sprites2d.tweens.targets.props.opacity_tween2d : OpacityTween2d;
@@ -126,7 +126,7 @@ class Popup : VBox
 
 }
 
-import api.dm.gui.containers.base.typed_container : TypedContainer;
+import api.dm.gui.controls.containers.base.typed_container : TypedContainer;
 import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 import api.core.utils.arrays : drop;
 

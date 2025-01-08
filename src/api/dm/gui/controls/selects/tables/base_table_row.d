@@ -2,7 +2,7 @@ module api.dm.gui.controls.selects.tables.base_table_row;
 
 import api.dm.gui.controls.selects.tables.base_table_item : BaseTableItem;
 import api.dm.gui.controls.selects.tables.base_table_column : BaseTableColumn;
-import api.dm.gui.containers.container : Container;
+import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.texts.text : Text;
@@ -130,7 +130,7 @@ class BaseTableRow(TItem, TCol:
 
     Container newColumnContainer()
     {
-        import api.dm.gui.containers.hbox : HBox;
+        import api.dm.gui.controls.containers.hbox : HBox;
 
         return new HBox(0);
     }

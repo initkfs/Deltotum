@@ -9,8 +9,8 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.math.geom2.vec2 : Vec2d;
-import api.dm.gui.containers.container: Container;
-import api.dm.gui.containers.hbox: HBox;
+import api.dm.gui.controls.containers.container: Container;
+import api.dm.gui.controls.containers.hbox: HBox;
 
 import Math = api.dm.math;
 
@@ -56,7 +56,7 @@ class Curves : Control
 
     Sprite2d createCurveInfo(string name, Vec2d[] points, bool isDrawFromCenter = true, bool isClosePath = false)
     {
-        import api.dm.gui.containers.vbox : VBox;
+        import api.dm.gui.controls.containers.vbox : VBox;
         import api.dm.gui.controls.texts.text : Text;
 
         auto container = new VBox;
@@ -95,11 +95,11 @@ class Curves : Control
     {
         super.create;
 
-        import api.dm.gui.containers.container : Container;
-        import api.dm.gui.containers.hbox : HBox;
-        import api.dm.gui.containers.vbox : VBox;
-        import api.dm.gui.containers.container : Container;
-        import api.dm.gui.containers.stack_box : StackBox;
+        import api.dm.gui.controls.containers.container : Container;
+        import api.dm.gui.controls.containers.hbox : HBox;
+        import api.dm.gui.controls.containers.vbox : VBox;
+        import api.dm.gui.controls.containers.container : Container;
+        import api.dm.gui.controls.containers.stack_box : StackBox;
         import api.math.insets : Insets;
 
         auto planeShapeContainer = newHContainer;
