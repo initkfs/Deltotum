@@ -23,23 +23,13 @@ class BaseTextPopup : BasePopup
 
     this(dstring text = "Popup", string iconName = null, double graphicsGap = 0, bool isCreateLayout = true)
     {
+        super(isCreateLayout);
+
         _labelText = text;
         _iconName = iconName;
         _graphicsGap = graphicsGap;
 
-        isDrawByParent = false;
-
-        isVisible = false;
-        isLayoutManaged = false;
         isBackground = true;
-
-        import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
-
-        if (isCreateLayout)
-        {
-            layout = new CenterLayout;
-            layout.isAutoResize = true;
-        }
     }
 
     override void create()
@@ -64,7 +54,9 @@ class BaseTextPopup : BasePopup
 
     Labeled newLabel(double width = 0, double height = 0, dstring labelText = null, string iconName = null, double graphicsGap = 0)
     {
-        return new Labeled(width, height, labelText, iconName, graphicsGap);
+        auto label = new Labeled(labelText, iconName, graphicsGap);
+        label.resize(width, height);
+        return label;
     }
 
 }

@@ -46,7 +46,10 @@ class BaseButton : BaseBiswitch
         bool isCreateLayout = true
     )
     {
-        super(width, height, text, iconName, graphicsGap, isCreateLayout);
+        super(text, iconName, graphicsGap, isCreateLayout);
+
+        initWidth = width;
+        initHeight = height;
 
         isCreateHoverEffect = true;
         isCreateHoverEffectAnimation = true;

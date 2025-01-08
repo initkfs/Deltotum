@@ -33,8 +33,10 @@ class Check : BaseBiswitch
 
     this(dstring text = "Check", double width, double height, string iconName = null, double graphicsGap = 5)
     {
-        super(width, height, text, iconName, graphicsGap, isCreateLayout:
+        super(text, iconName, graphicsGap, isCreateLayout:
             true);
+
+        initSize(width, height);
 
         isCreateLabelText = true;
         isCreateMarker = true;

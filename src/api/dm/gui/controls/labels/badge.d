@@ -1,47 +1,38 @@
 module api.dm.gui.controls.labels.badge;
 
-import api.dm.gui.controls.labeled : Labeled;
+import api.dm.gui.controls.labels.label: Label;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.gui.controls.tooltips.text_popup : Popup;
+import api.dm.gui.controls.popups.text_popup : TextPopup;
 
 import std.conv : to;
 
 /**
  * Authors: initkfs
  */
-class Badge : Labeled
+class Badge : Label
 {
-
-    this(dstring text = "Badge", string iconName = null, double graphicsGap = 0, bool isCreateLayout = true)
+    this(dstring text = "Badge", string iconName = null, double graphicsGap = 0)
     {
-        super(0, 0, text, iconName, graphicsGap, isCreateLayout);
-        _labelText = text;
-
-        import api.dm.kit.sprites2d.layouts.managed_layout : ManagedLayout;
-
-        layout.isAutoResize = true;
-        isCreateHoverEffect = false;
-        isCreateHoverEffectAnimation = false;
-        isCreateActionEffect = false;
-        isCreateActionEffectAnimation = false;
+        super(text, iconName, graphicsGap);
 
         isLayoutManaged = false;
-
-        //isCreateBackground = true;
+        isResizedByParent = false;
         isBorder = false;
-        //isBackground = true;
     }
 
     override void applyLayout()
     {
         super.applyLayout;
 
-        assert(parent);
-        enum margin = 5;
-        auto newX = parent.boundsRect.right + margin;
-        auto newY = parent.boundsRect.y - boundsRect.halfWidth + margin;
-        x = newX;
-        y = newY;
+        if (parent)
+        {
+            const thisBounds = boundsRect;
+            auto newX = parent.boundsRect.right - thisBounds.halfWidth;
+            auto newY = parent.boundsRect.y - thisBounds.halfHeight;
+            x = newX;
+            y = newY;
+        }
+
     }
 
     override void initialize()

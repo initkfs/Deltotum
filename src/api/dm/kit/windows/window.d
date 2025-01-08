@@ -620,7 +620,7 @@ class Window : GraphicsComponent
         currentScene.rescale(factorWidth, factorHeight);
     }
 
-    Rect2d bounds()
+    Rect2d boundsScreen()
     {
         import api.math.geom2.rect2 : Rect2d;
 

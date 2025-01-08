@@ -102,7 +102,7 @@ class Theme
     @ConfigKey
     size_t hoverAnimationDelayMs;
     @ConfigKey
-    size_t tooltipDelayMs;
+    size_t popupDelayMs;
 
     @ConfigKey
     double checkMarkerWidth = 30;

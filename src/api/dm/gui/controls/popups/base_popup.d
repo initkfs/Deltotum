@@ -7,19 +7,25 @@ import api.dm.gui.controls.control : Control;
  */
 class BasePopup : Control
 {
-    this()
+    this(bool isCreateLayout = true)
     {
+        isDrawByParent = false;
 
-    }
+        isVisible = false;
+        isLayoutManaged = false;
+        isResizedByParent = false;
 
-    override void create()
-    {
+        if (isCreateLayout)
+        {
+            import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
 
+            layout = new CenterLayout;
+            layout.isAutoResize = true;
+        }
     }
 
     override void show()
     {
-
         super.show;
 
         auto pointerPos = input.pointerPos;
@@ -28,7 +34,7 @@ class BasePopup : Control
 
     void show(double x, double y)
     {
-        const screenBounds = screen.first.bounds;
+        const windowBounds = window.boundsLocal;
         const thisBounds = boundsRect;
 
         auto newX = x;
@@ -37,20 +43,20 @@ class BasePopup : Control
             newX = 0;
         }
 
-        if (newX + thisBounds.width > screenBounds.right)
+        if (newX + thisBounds.width > windowBounds.right)
         {
-            newX = screenBounds.right - thisBounds.width;
+            newX = windowBounds.right - thisBounds.width;
         }
 
-        auto newY = y;
+        auto newY = y - thisBounds.height;
         if (newY < 0)
         {
             newY = 0;
         }
 
-        if (newY + thisBounds.height > screenBounds.height)
+        if (newY + thisBounds.height > windowBounds.bottom)
         {
-            newY = screenBounds.height - thisBounds.height;
+            newY = windowBounds.bottom - thisBounds.height;
         }
 
         this.x = newX;

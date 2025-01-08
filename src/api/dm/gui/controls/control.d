@@ -51,9 +51,9 @@ class Control : GuiComponent
         Sprite2d _actionEffect;
         Tween2d _actionEffectAnimation;
 
-        bool isTooltipDelay;
-        bool isTooltipListeners;
-        size_t tooltipDelayCounter;
+        bool isPopupDelay;
+        bool isPopupListeners;
+        size_t popupDelayCounter;
     }
 
     bool isInitStyleFactory = true;
@@ -118,9 +118,8 @@ class Control : GuiComponent
 
     bool isLayoutSpacingFromTheme = true;
 
-    bool isCreateTooltip;
-    BasePopup[] tooltips;
-    size_t tooltipDelay;
+    BasePopup[] popups;
+    size_t popupDelay;
 
     bool isSetNullWidthFromTheme = true;
     bool isSetNullHeightFromTheme = true;
@@ -157,11 +156,6 @@ class Control : GuiComponent
 
                 adjustOrCreateBackground;
             };
-        }
-
-        if (isCreateTooltip)
-        {
-            initTooltipListeners;
         }
 
         if (!styleFactory && isInitStyleFactory)
@@ -212,7 +206,6 @@ class Control : GuiComponent
     //initTheme and loadTheme can be combined, but animation duration checks throw errors. It is very, very easy to make a mistake when overriding loadTheme() by a child
     void initTheme()
     {
-        loadTooltipTheme;
         loadAnimationTheme;
     }
 
@@ -237,11 +230,12 @@ class Control : GuiComponent
         }
     }
 
-    void loadTooltipTheme()
+    void loadPopupTheme()
     {
-        if (isCreateTooltip && tooltipDelay == 0)
+        if (popupDelay == 0)
         {
-            tooltipDelay = theme.tooltipDelayMs;
+            assert(window);
+            popupDelay = cast(size_t) (theme.popupDelayMs / (1000 / window.frameRate));
         }
     }
 
@@ -271,9 +265,9 @@ class Control : GuiComponent
         }
     }
 
-    void initTooltipListeners()
+    void initPopupListeners()
     {
-        if (!isCreateTooltip || isTooltipListeners)
+        if (isPopupListeners)
         {
             return;
         }
@@ -281,35 +275,35 @@ class Control : GuiComponent
         if (capGraphics.isPointer)
         {
             onPointerEnter ~= (ref e) {
-                if (tooltips.length > 0)
+                if (popups.length > 0)
                 {
-                    isTooltipDelay = true;
+                    isPopupDelay = true;
                 }
             };
 
             onPointerMove ~= (ref e) {
-                if (isTooltipDelay && tooltipDelayCounter != 0)
+                if (isPopupDelay && popupDelayCounter != 0)
                 {
-                    tooltipDelayCounter = 0;
+                    popupDelayCounter = 0;
                 }
             };
 
             onPointerExit ~= (ref e) {
-                if (tooltips.length > 0)
+                if (popups.length > 0)
                 {
-                    isTooltipDelay = false;
-                    if (tooltips.length > 0)
+                    isPopupDelay = false;
+                    if (popups.length > 0)
                     {
-                        foreach (tooltip; tooltips)
+                        foreach (popup; popups)
                         {
-                            tooltip.hide;
+                            popup.hide;
                         }
                     }
 
                 }
             };
 
-            isTooltipListeners = true;
+            isPopupListeners = true;
         }
 
     }
@@ -956,6 +950,8 @@ class Control : GuiComponent
         assert(control);
         applyStyle(control);
         super.build(control);
+        //TODO from sprite?
+        trySetParentProps(control);
     }
 
     alias addCreate = GuiComponent.addCreate;
@@ -1001,21 +997,29 @@ class Control : GuiComponent
     void add(Control control, long index = -1)
     {
         super.add(control, index);
-
         applyStyle(control);
+    }
 
-        //TODO overload
-        if (auto tooltip = cast(BasePopup) control)
+    void installPopup(BasePopup popup)
+    {
+        popups ~= popup;
+        if (!isPopupListeners)
         {
-            tooltips ~= tooltip;
-            if (!isTooltipListeners)
-            {
-                initTooltipListeners;
-            }
-            if (sceneProvider)
-            {
-                sceneProvider().controlledSprites ~= tooltip;
-            }
+            initPopupListeners;
+        }
+
+        if (popupDelay == 0)
+        {
+            loadPopupTheme;
+        }
+        
+        if (sceneProvider)
+        {
+            sceneProvider().controlledSprites ~= popup;
+        }
+        else
+        {
+            assert(popup.isDrawByParent);
         }
     }
 
@@ -1225,20 +1229,20 @@ class Control : GuiComponent
     {
         super.update(dt);
 
-        if (isTooltipDelay)
+        if (isPopupDelay)
         {
-            if (tooltipDelayCounter >= tooltipDelay)
+            if (popupDelayCounter >= popupDelay)
             {
-                tooltipDelayCounter = 0;
-                isTooltipDelay = false;
-                foreach (t; tooltips)
+                popupDelayCounter = 0;
+                isPopupDelay = false;
+                foreach (t; popups)
                 {
                     t.show;
                 }
             }
             else
             {
-                tooltipDelayCounter++;
+                popupDelayCounter++;
             }
         }
     }

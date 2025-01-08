@@ -49,7 +49,8 @@ class BaseToggle : BaseBiswitch
 
     this(dstring label, double width, double height, string iconName = null, double graphicsGap = 5, bool isCreateLayout = true)
     {
-        super(width, height, label, iconName, graphicsGap, isCreateLayout);
+        super(label, iconName, graphicsGap, isCreateLayout);
+        initSize(width, height);
     }
 
     this(dstring label = "Toggle", string iconName = null, double graphicsGap = 5)

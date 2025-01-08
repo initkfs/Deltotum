@@ -693,8 +693,15 @@ class Sprite2d : EventKitTarget
             isSet = true;
         }
 
-        if (sceneProvider && !sprite.sceneProvider)
+        if (!sprite.sceneProvider)
         {
+            // if (!sceneProvider)
+            // {
+            //     import std.format : format;
+
+            //     throw new Exception(format("Scene provider not installed on %s, parent: %s with scene provider: %s", classInfo, parent, (parent ? parent.sceneProvider : null)));
+            // }
+
             sprite.sceneProvider = sceneProvider;
             isSet |= true;
         }
@@ -1218,6 +1225,7 @@ class Sprite2d : EventKitTarget
     }
 
     Rect2d boundsRect() => Rect2d(x, y, _width, _height);
+    Rect2d boundsLocal() => Rect2d(0, 0, _width, _height);
 
     Rect2d boundsRectInParent()
     {
@@ -2613,6 +2621,13 @@ class Sprite2d : EventKitTarget
         import api.core.utils.arrays : drop;
 
         return drop(invalidateListeners, dg);
+    }
+
+    string classInfo(){
+        if(id.length > 0){
+            return id;
+        }
+        return className;
     }
 
     override string toString()

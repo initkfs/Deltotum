@@ -36,7 +36,7 @@ class Labeled : Control
     void delegate() onPreTextCreate;
     void delegate() onPostTextCreated;
 
-    this(double width = 0, double height = 0, dstring labelText = null, string iconName = null, double graphicsGap = 0, bool isCreateLayout = true)
+    this(dstring labelText = null, string iconName = null, double graphicsGap = 0, bool isCreateLayout = true)
     {
         this._iconName = iconName;
         this._labelText = labelText;
@@ -52,9 +52,6 @@ class Labeled : Control
 
         isCreateLabelText = true;
         isCreateLabelIcon = true;
-
-        this._width = width;
-        this._height = height;
     }
 
     override void initialize()

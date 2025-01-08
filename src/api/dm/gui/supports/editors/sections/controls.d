@@ -68,6 +68,10 @@ class Controls : Control
 
         createWindows(btnContainer);
 
+        btnContainer.addCreate(new VSeparator);
+
+        createLabels(btnContainer);
+
         rootContainer.addCreate(new HSeparator);
 
         auto selectionContainer = new HBox;
@@ -791,6 +795,25 @@ class Controls : Control
         winResize.styleId = DefaultStyle.warning;
         winResize.isInverted = true;
         winRoot3.addCreate(winResize);
+    }
+
+    void createLabels(Container root){
+        auto labelRoot = new VBox;
+        labelRoot.isAlignX = true;
+        root.addCreate(labelRoot);
+
+        import api.dm.gui.controls.labels.label: Label;
+        import api.dm.gui.controls.labels.badge: Badge;
+
+        auto label1 = new Label;
+        labelRoot.addCreate(label1);
+        label1.addCreate(new Badge);
+
+        import api.dm.gui.controls.labels.hyperlink: Hyperlink;
+
+        auto h1 = new Hyperlink;
+        h1.url = "https://google.com";
+        labelRoot.addCreate(h1);
     }
 
     private void createTexts(Container root)
