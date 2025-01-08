@@ -65,16 +65,21 @@ class Texture2d : Sprite2d
         this.texture = texture;
     }
 
+    override void create()
+    {
+        super.create;
+        if (texture)
+        {
+            texture.setNotEmptyId(id);
+        }
+    }
+
     void loadFromSurface(ComSurface surface)
     {
         auto newTexture = texture;
         if (!newTexture)
         {
             newTexture = graphics.comTextureProvider.getNew();
-        }
-        else
-        {
-            texture = null;
         }
 
         if (const err = newTexture.createFromSurface(surface))

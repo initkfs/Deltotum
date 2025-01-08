@@ -35,6 +35,8 @@ class VectorTexture : Texture2d
         this.height = height;
         isResizable = true;
         isResizedByParent = true;
+
+        this.id = "vector_texture";
     }
 
     void createTextureContent()

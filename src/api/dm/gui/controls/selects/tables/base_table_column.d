@@ -17,6 +17,7 @@ class BaseTableColumn(TI) : Container
     }
 
     Text itemText;
+    string itemTextId = "item_text";
     bool isCreateItemText = true;
     Text delegate(Text) onNewItemText;
     void delegate(Text) onCreatedItemText;
@@ -24,6 +25,7 @@ class BaseTableColumn(TI) : Container
     dstring delegate(TI) itemTextProvider;
 
     Sprite2d leftBorder;
+    string leftBorderId = "left_border";
 
     double dividerSize = 0;
 
@@ -35,6 +37,8 @@ class BaseTableColumn(TI) : Container
     {
         this(dividerSize);
         _item = initItem;
+
+        id = "base_table_column";
     }
 
     this(double dividerSize)
@@ -75,6 +79,7 @@ class BaseTableColumn(TI) : Container
         {
             assert(itemTextProvider);
             auto it = newItemText;
+            it.id = itemTextId;
             itemText = !onNewItemText ? it : onNewItemText(it);
 
             addCreate(itemText);
@@ -89,6 +94,7 @@ class BaseTableColumn(TI) : Container
         if (!leftBorder && isCreateLeftBorder)
         {
             auto lb = newLeftBorder;
+            lb.id = leftBorderId;
             leftBorder = !onNewLeftBorder ? lb : onNewLeftBorder(lb);
 
             leftBorder.isLayoutManaged = false;

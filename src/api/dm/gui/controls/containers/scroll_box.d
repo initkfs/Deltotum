@@ -263,11 +263,11 @@ class ScrollBox : Container
 
     override void dispose()
     {
-        if (contentRoot)
-        {
-            content.remove(contentRoot, false);
-        }
-        contentRoot = null;
+        // if (contentRoot)
+        // {
+        //     content.remove(contentRoot, false);
+        // }
+        //contentRoot = null;
         super.dispose;
     }
 

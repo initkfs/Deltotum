@@ -1,5 +1,6 @@
 module api.dm.com.graphics.com_texture;
 
+import api.dm.com.platforms.objects.com_objectable: ComObjectable;
 import api.dm.com.platforms.results.com_result : ComResult;
 import api.dm.com.graphics.com_blend_mode : ComBlendMode;
 import api.dm.com.com_native_ptr: ComNativePtr;
@@ -19,7 +20,7 @@ enum ComTextureScaleMode
 /**
  * Authors: initkfs
  */
-interface ComTexture : Destroyable
+interface ComTexture : ComObjectable, Destroyable
 {
 nothrow:
 

@@ -32,7 +32,17 @@ mixin template ComPtrManager(T)
         {
             import std.stdio : stderr;
 
-            stderr.writefln("Warning! Undestroyed common native object %s", typeof(this).stringof);
+            static if (__traits(compiles, this.id))
+            {
+                stderr.writefln("Warning! Undestroyed common native object %s, with id: %s", typeof(
+                        this).stringof, id);
+            }
+            else
+            {
+                stderr.writefln("Warning! Undestroyed common native object %s", typeof(
+                        this).stringof);
+            }
+
             dispose;
         }
     }

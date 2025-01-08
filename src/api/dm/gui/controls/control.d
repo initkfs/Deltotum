@@ -404,6 +404,11 @@ class Control : GuiComponent
             auto newHover = newHoverEffect;
             assert(newHover);
 
+            newHover.id = idHoverShape;
+            newHover.isLayoutManaged = false;
+            newHover.isResizedByParent = true;
+            newHover.isVisible = false;
+
             _hoverEffect = onNewHoverEffect ? onNewHoverEffect(newHover) : newHover;
             assert(_hoverEffect);
             addCreate(_hoverEffect);
@@ -439,6 +444,11 @@ class Control : GuiComponent
         {
             auto effect = newActionEffect();
             assert(effect);
+
+            effect.id = idActionShape;
+            effect.isLayoutManaged = false;
+            effect.isResizedByParent = true;
+            effect.isVisible = false;
 
             _actionEffect = onNewActionEffect ? onNewActionEffect(effect) : effect;
             assert(_actionEffect);
@@ -620,10 +630,6 @@ class Control : GuiComponent
     Sprite2d newHoverEffect(double w, double h, double angle, GraphicStyle style)
     {
         Sprite2d newHover = newHoverEffectShape(w, h, angle, style);
-        newHover.id = idHoverShape;
-        newHover.isLayoutManaged = false;
-        newHover.isResizedByParent = true;
-        newHover.isVisible = false;
         return newHover;
     }
 
@@ -740,10 +746,6 @@ class Control : GuiComponent
     Sprite2d newActionEffect(double w, double h, double angle, GraphicStyle style)
     {
         Sprite2d effect = newActionEffectShape(w, h, angle, style);
-        effect.id = idActionShape;
-        effect.isLayoutManaged = false;
-        effect.isResizedByParent = true;
-        effect.isVisible = false;
         return effect;
     }
 
@@ -1131,12 +1133,12 @@ class Control : GuiComponent
 
         auto back = newBackground;
 
-        _background = onNewBackground ? onNewBackground(back) : back;
+        back.id = idBackground;
+        back.isResizedByParent = true;
+        back.isLayoutManaged = false;
+        back.isDrawAfterParent = false;
 
-        _background.id = idBackground;
-        _background.isResizedByParent = true;
-        _background.isLayoutManaged = false;
-        _background.isDrawAfterParent = false;
+        _background = onNewBackground ? onNewBackground(back) : back;
 
         addCreate(_background, 0);
 

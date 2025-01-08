@@ -15,6 +15,8 @@ abstract class RgbaTexture : Texture2d
         super();
         this.width = width;
         this.height = height;
+
+        this.id = "rgba_texture";
     }
 
     bool isClear = true;

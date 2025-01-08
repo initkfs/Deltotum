@@ -43,16 +43,18 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         int depth = 32;
     }
 
-    this(SdlRenderer renderer) pure
+    this(SdlRenderer renderer, string id = "sdl_texture") pure
     {
         assert(renderer);
         this.renderer = renderer;
+        setNotEmptyId(id);
     }
 
-    protected this(SDL_Texture* ptr, SdlRenderer renderer)
+    protected this(SDL_Texture* ptr, SdlRenderer renderer, string id = "sdl_texture")
     {
         super(ptr);
         this.renderer = renderer;
+        setNotEmptyId(id);
     }
 
     ComResult createFromSurface(ComSurface surface) nothrow

@@ -1,21 +1,21 @@
-module api.dm.gui.controls.selects.tables.virtuals.circular_virtual_list;
+module api.dm.gui.controls.selects.tables.circulars.circular_list;
 
-import api.dm.gui.controls.selects.tables.virtuals.base_circular_virtual_table : BaseCircularVirtualTable;
+import api.dm.gui.controls.selects.tables.circulars.base_circular_table : BaseCircularTable;
 import api.dm.gui.controls.selects.tables.base_table_row : BaseTableRow;
 import api.dm.gui.controls.selects.tables.base_table_column : BaseTableColumn;
 import api.dm.gui.controls.selects.tables.base_table_item : BaseTableItem;
 
-auto newCircularVirtualList(T)()
+auto newCircularList(T)()
 {
-    return new CircularVirtualList!(T, BaseTableColumn!T, BaseTableRow!(T, BaseTableColumn!T));
+    return new CircularList!(T, BaseTableColumn!T, BaseTableRow!(T, BaseTableColumn!T));
 }
 
 /**
  * Authors: initkfs
  */
-class CircularVirtualList(T, TCol:
+class CircularList(T, TCol:
     BaseTableColumn!T, TR:
-    BaseTableRow!(T, TCol)) : BaseCircularVirtualTable!(T, TCol, TR)
+    BaseTableRow!(T, TCol)) : BaseCircularTable!(T, TCol, TR)
 {
     T[] items;
 

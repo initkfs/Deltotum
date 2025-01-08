@@ -1,4 +1,4 @@
-module api.dm.gui.controls.selects.tables.virtuals.base_circular_virtual_table;
+module api.dm.gui.controls.selects.tables.circulars.base_circular_table;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.containers.container : Container;
@@ -18,15 +18,10 @@ import Math = api.math;
 
 import std.container.dlist : DList;
 
-// auto newCircularVirtualTable(T)()
-// {
-//     return new CircularVirtualTable!(T, BaseTableColumn!T, BaseTableRow!(T, BaseTableColumn!T));
-// }
-
 /**
  * Authors: initkfs
  */
-abstract class BaseCircularVirtualTable(T, TCol:
+abstract class BaseCircularTable(T, TCol:
     BaseTableColumn!T, TR:
     BaseTableRow!(T, TCol)) : BaseTable
 {

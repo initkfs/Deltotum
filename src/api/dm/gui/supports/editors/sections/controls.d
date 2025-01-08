@@ -323,7 +323,7 @@ class Controls : Control
         auto tableRoot = new HBox;
         root.addCreate(tableRoot);
 
-        import api.dm.gui.controls.selects.tables.virtuals.circular_virtual_table;
+        import api.dm.gui.controls.selects.tables.circulars.circular_table;
 
         string[][] virtTableItems;
 
@@ -334,7 +334,7 @@ class Controls : Control
             virtTableItems ~= [i.to!string, i.to!string];
         }
 
-        auto virtTable = newCircularVirtualTable!string(2);
+        auto virtTable = newCircularTable!string(2);
         tableRoot.addCreate(virtTable);
 
         virtTable.fill(virtTableItems);

@@ -33,6 +33,7 @@ class BaseTableRow(TItem, TCol:
     double dividerSize = 0;
 
     Sprite2d bottomBorder;
+    string bottomBorderId = "bottom_border";
 
     bool isCreateBottomBorder = true;
     Container delegate(Sprite2d) onNewBottomBorder;
@@ -105,11 +106,13 @@ class BaseTableRow(TItem, TCol:
         if (isCreateBottomBorder)
         {
             auto bb = newBottomBorder;
-            bottomBorder = !onNewBottomBorder ? bb : onNewBottomBorder(bb);
+           
+            bb.id = bottomBorderId;
+            bb.isLayoutManaged = false;
+            bb.isResizedWidthByParent = true;
+            bb.isResizedHeightByParent = false;
 
-            bottomBorder.isLayoutManaged = false;
-            bottomBorder.isResizedWidthByParent = true;
-            bottomBorder.isResizedHeightByParent = false;
+            bottomBorder = !onNewBottomBorder ? bb : onNewBottomBorder(bb);
 
             addCreate(bottomBorder);
             if (onCreatedBottomBorder)
