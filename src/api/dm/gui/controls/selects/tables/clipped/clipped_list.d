@@ -1,6 +1,6 @@
 module api.dm.gui.controls.selects.tables.clipped.clipped_list;
 
-import api.dm.gui.controls.selects.tables.clipped.base_clipped_table: BaseClippedTable;
+import api.dm.gui.controls.selects.tables.clipped.base_clipped_flat_table: BaseClippedFlatTable;
 
 import api.dm.gui.controls.selects.tables.base_table_row : BaseTableRow;
 import api.dm.gui.controls.selects.tables.base_table_column : BaseTableColumn;
@@ -17,7 +17,7 @@ auto newClippedList(T)()
  */
 class ClippedList(T, TCol:
     BaseTableColumn!T, TR:
-    BaseTableRow!(T, TCol)) : BaseClippedTable!(T, TCol, TR)
+    BaseTableRow!(T, TCol)) : BaseClippedFlatTable!(T, TCol, TR)
 {
 
     T[] items;

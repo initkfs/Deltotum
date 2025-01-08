@@ -12,7 +12,7 @@ import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.gui.controls.containers.frame : Frame;
 import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 import api.dm.gui.controls.carousels.carousel;
-import api.dm.gui.controls.selects.tables.trees.tree_item;
+import api.dm.gui.controls.selects.tables.clipped.trees.tree_item;
 
 /**
  * Authors: initkfs
@@ -349,21 +349,33 @@ class Controls : Control
         tableRoot.addCreate(clipTable);
         clipTable.fill(clipItems);
 
-        // import api.dm.gui.controls.selects.tables.trees.tree_item: TreeItem;
-        // import api.dm.gui.controls.selects.tables.trees.tree_table: TreeTable;
+        import api.dm.gui.controls.selects.tables.clipped.trees.tree_item: TreeItem;
+        import api.dm.gui.controls.selects.tables.clipped.trees.tree_list: TreeList, newTreeList;
 
-        // auto treeTable = new TreeTable!(string);
-        // tableRoot.addCreate(treeTable);
+        auto treeTable = newTreeList!string;
+        tableRoot.addCreate(treeTable);
 
-        // auto rootItem = new TreeItem!string("root");
+        auto rootItem = new TreeItem!string("root1");
 
-        // foreach(i; 0..11){
-        //     import std.conv: to;
-        //     auto ni = new TreeItem!string(i.to!string);
-        //     rootItem.childrenItems ~= ni;
-        // }
+        auto rootItem2 = new TreeItem!string("root2");
+        rootItem.childrenItems ~= rootItem2;
+        rootItem2.childrenItems ~= [new TreeItem!string("1".to!string), new TreeItem!string("2".to!string)];
 
-        // treeTable.fill(rootItem);
+        auto rootItem3 = new TreeItem!string("root3");
+        rootItem2.childrenItems ~= rootItem3;
+
+        foreach(i; 0..11){
+            import std.conv: to;
+            auto ni = new TreeItem!string(i.to!string);
+            rootItem3.childrenItems ~= ni;
+        }
+
+        auto rootItem4 = new TreeItem!string("root4");
+        rootItem.childrenItems ~= rootItem4;
+        rootItem4.childrenItems ~= [new TreeItem!string("1".to!string), new TreeItem!string("2".to!string)];
+
+
+        treeTable.fill(rootItem);
 
         // import api.dm.gui.controls.choices.choice_box : ChoiceBox;
 

@@ -42,6 +42,9 @@ class ScrollBox : Container
         ScrollBarPolicy _hScrollPolicy = ScrollBarPolicy.ifneed;
     }
 
+    double clipErrorDelta = 1;
+    double clipPadding = 0;
+
     this(double width = 100, double height = 100)
     {
         this.width = width;
@@ -151,14 +154,15 @@ class ScrollBox : Container
             contentHeight -= hslider.height;
         }
         content.resize(contentWidth, contentHeight);
+        //content.isDrawClip = true;
 
         checkScrolls;
 
         updateClip;
 
-        onClipResize = (clipPtr) { clipChildren(contentRoot); };
+        onClipResize = (clipPtr) { updateClip; };
 
-        onClipMove = (clipPtr) { clipChildren(contentRoot); };
+        onClipMove = (clipPtr) { updateClip; };
 
         onPointerWheel ~= (ref e) {
             if (vslider)
@@ -167,6 +171,15 @@ class ScrollBox : Container
                 e.isConsumed = true;
             }
         };
+    }
+
+    double contentWidth()
+    {
+        if (!content)
+        {
+            return 0;
+        }
+        return content.width;
     }
 
     protected void checkScrolls()
@@ -190,7 +203,9 @@ class ScrollBox : Container
             if (contentRoot && contentRoot.height > content.height)
             {
                 enableScroll(vslider);
-            }else {
+            }
+            else
+            {
                 disableScroll(vslider);
             }
         }
@@ -212,21 +227,23 @@ class ScrollBox : Container
 
     protected void updateClip()
     {
-        enum clipPadding = 3;
-        content.clip = Rect2d(content.x + clipPadding, content.y + clipPadding, content.width - clipPadding, content
-                .height - clipPadding);
+        content.clip = Rect2d(
+            (content.x - clipErrorDelta) + clipPadding,
+            content.y - clipErrorDelta + clipPadding,
+            content.width - clipPadding + clipErrorDelta * 2, content
+                .height + clipErrorDelta * 2 - clipPadding);
         content.isMoveClip = true;
         content.isResizeClip = true;
-    }
 
-    protected void clipChildren(Sprite2d root)
-    {
-        root.onChildrenRec = (child) {
-            child.clip = clip;
-            child.isMoveClip = false;
-            child.isResizeClip = false;
-            return true;
-        };
+        if (contentRoot)
+        {
+            contentRoot.onChildrenRec = (child) {
+                child.clip = content.clip;
+                child.isMoveClip = false;
+                child.isResizeClip = false;
+                return true;
+            };
+        }
     }
 
     void setContent(Sprite2d root)
@@ -238,13 +255,12 @@ class ScrollBox : Container
         {
             root.isLayoutManaged = false;
             //TODO hack for process events
-            clipChildren(root);
         }
 
         if (contentRoot)
         {
             //TODO destroy?
-            content.remove(contentRoot, false);
+            content.remove(contentRoot, true);
         }
 
         contentRoot = root;

@@ -1,4 +1,4 @@
-module api.dm.gui.controls.selects.tables.trees.tree_item;
+module api.dm.gui.controls.selects.tables.clipped.trees.tree_item;
 
 import api.dm.gui.controls.selects.tables.base_table_item : BaseTableItem;
 

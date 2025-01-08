@@ -85,6 +85,7 @@ class Sprite2d : EventKitTarget
     bool isResizeClip;
     void delegate(Rect2d* clip) onClipResize;
     void delegate(Rect2d* clip) onClipMove;
+    bool isOutClipForwardEvents;
 
     bool inScreenBounds;
     bool delegate() onScreenBoundsIsStop;
@@ -529,27 +530,33 @@ class Sprite2d : EventKitTarget
                 }
                 else
                 {
-                    if (clip.contains(child.boundsRect))
+                    if (isOutClipForwardEvents)
                     {
                         child.dispatchEvent(e);
                     }
                     else
                     {
                         //TODO specify the events being forwarded
-                        static if (is(Event : PointerEvent))
+                        static if (__traits(compiles, (e.x == e.y)))
                         {
-                            if (child.isMouseOver && e.event == PointerEvent.Event.move)
+                            if (clip.contains(e.x, e.y))
                             {
                                 child.dispatchEvent(e);
+                            }
+                            else
+                            {
+                                static if (is(Event : PointerEvent))
+                                {
+                                    if (e.event == PointerEvent.Event.move)
+                                    {
+                                        child.dispatchEvent(e);
+                                    }
+                                }
                             }
                         }
-                        else static if (is(Event : FocusEvent))
+                        else
                         {
-                            if (child.isFocus && e.event == FocusEvent
-                                .Event.focusOut)
-                            {
-                                child.dispatchEvent(e);
-                            }
+                            child.dispatchEvent(e);
                         }
                     }
                 }

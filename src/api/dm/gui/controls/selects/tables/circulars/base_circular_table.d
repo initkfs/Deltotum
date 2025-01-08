@@ -319,13 +319,7 @@ abstract class BaseCircularTable(T, TCol:
         }
     }
 
-    protected double columnWidth(size_t index)
-    {
-        assert(columnCount > 0);
-        return width / columnCount;
-    }
-
-    protected void resizeColumn(size_t index, double newWidth)
+    override protected void resizeColumn(size_t index, double newWidth)
     {
         foreach (row; visibleRows)
         {
@@ -344,18 +338,6 @@ abstract class BaseCircularTable(T, TCol:
         }
 
         alignHeaderColumns;
-    }
-
-    void alignHeaderColumns()
-    {
-        if (header)
-        {
-            foreach (ci; 0 .. columnCount)
-            {
-                auto colW = columnWidth(ci);
-                header.columnLabelWidth(ci, colW);
-            }
-        }
     }
 
     protected TR newRow()

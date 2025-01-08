@@ -60,7 +60,7 @@ class TableHeader : HSplitBox
     {
         auto newW = w * 5;
         auto shape = theme.convexPolyShape(newW, h, angle, newW / 2, style);
-        return shape; 
+        return shape;
     }
 
     override Sprite2d newBackground(double w, double h, double angle, GraphicStyle style)
@@ -166,6 +166,21 @@ class BaseTable : Control
             h.dividerSize = dividerSize;
             h.isHGrow = true;
 
+            header.onMoveDivider = (sepData) {
+                auto prevCol = sepData.prev;
+                auto nextCol = sepData.next;
+                assert(prevCol);
+                assert(nextCol);
+
+                import api.dm.gui.controls.selects.tables.base_table : TableHeader;
+
+                auto prevIndex = prevCol.getUserData!size_t(TableHeader.indexKey);
+                auto nextIndex = nextCol.getUserData!size_t(TableHeader.indexKey);
+
+                resizeColumn(prevIndex, prevCol.width);
+                resizeColumn(nextIndex, nextCol.width);
+            };
+
             addCreate(header);
             if (onCreatedHeader)
             {
@@ -183,6 +198,29 @@ class BaseTable : Control
                 onCreatedContentContainer(contentContainer);
             }
         }
+    }
+
+    protected void resizeColumn(size_t index, double newWidth)
+    {
+        
+    }
+
+    void alignHeaderColumns()
+    {
+        if (header)
+        {
+            foreach (ci; 0 .. columnCount)
+            {
+                auto colW = columnWidth(ci);
+                header.columnLabelWidth(ci, colW);
+            }
+        }
+    }
+
+    protected double columnWidth(size_t index)
+    {
+        assert(columnCount > 0);
+        return width / columnCount;
     }
 
     override Sprite2d newBackground(double w, double h, double angle, GraphicStyle style)

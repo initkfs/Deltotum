@@ -229,4 +229,9 @@ class BaseTableRow(TItem, TCol:
         col.item = newItem;
         col.setInvalid;
     }
+
+    bool isSelected() => _selected;
+    void isSelected(bool v) {
+        _selected = v;
+    }
 }

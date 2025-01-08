@@ -1,23 +1,27 @@
-module api.dm.gui.controls.selects.tables.trees.tree_row;
+module api.dm.gui.controls.selects.tables.clipped.trees.tree_row;
 
+import api.dm.gui.controls.selects.tables.base_table_row : BaseTableRow;
+import api.dm.gui.controls.selects.tables.base_table_column : BaseTableColumn;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.texts.text : Text;
 
-import api.dm.gui.controls.selects.tables.trees.tree_item : TreeItem;
+import api.dm.gui.controls.selects.tables.clipped.trees.tree_item : TreeItem;
 import api.math.geom2.vec2 : Vec2d;
 
 class TreeRowLevelGraphics : Control
 {
     size_t level;
+    bool isLastLevelRow;
     bool isLastRow;
 
     double graphicsGap = 0;
 
-    // this(){
-    //     isDrawBounds = true;
-    // }
+    this()
+    {
+        //isDrawBounds = true;
+    }
 
     override void initialize()
     {
@@ -55,7 +59,7 @@ class TreeRowLevelGraphics : Control
         double nextX = b.x + graphicsGap;
         if (level == 0)
         {
-            if (!isLastRow)
+            if (!isLastLevelRow)
             {
                 graphics.line(Vec2d(nextX, b.y), Vec2d(nextX, b.bottom));
                 graphics.line(Vec2d(nextX, b.middleY), Vec2d(nextX + graphicsGap, b.middleY));
@@ -69,7 +73,7 @@ class TreeRowLevelGraphics : Control
             {
                 if (l == lastLevel)
                 {
-                    if (!isLastRow)
+                    if (!isLastLevelRow)
                     {
                         graphics.line(Vec2d(nextX, b.y), Vec2d(nextX, b.bottom));
                         graphics.line(Vec2d(nextX, b.middleY), Vec2d(nextX + graphicsGap, b.middleY));
@@ -81,16 +85,39 @@ class TreeRowLevelGraphics : Control
                 }
                 else
                 {
-                    graphics.line(Vec2d(nextX, b.y), Vec2d(nextX, b.bottom));
+                    if (!isLastLevelRow)
+                    {
+                        graphics.line(Vec2d(nextX, b.y), Vec2d(nextX, b.bottom));
+                    }
+                    else
+                    {
+                        // if (level > 0 && !isLastRow)
+                        // {
+                        //     graphics.line(Vec2d(nextX, b.y), Vec2d(nextX, b.bottom));
+                        // }
+                        // else
+                        // {
+                            graphics.line(Vec2d(nextX, b.y), Vec2d(nextX, b.middleY));
+                        //}
+                        graphics.line(Vec2d(nextX, b.middleY), Vec2d(b.right, b
+                                .middleY));
+                    }
                 }
 
                 nextX += graphicsGap * 1.5;
             }
         }
 
-        if (isLastRow)
+        if (isLastLevelRow)
         {
-            graphics.line(Vec2d(nextX, b.y), Vec2d(nextX, b.middleY));
+            // if (level > 0 && !isLastRow)
+            // {
+            //     graphics.line(Vec2d(nextX, b.y), Vec2d(nextX, b.bottom));
+            // }
+            // else
+            // {
+                graphics.line(Vec2d(nextX, b.y), Vec2d(nextX, b.middleY));
+            //}
             graphics.line(Vec2d(nextX, b.middleY), Vec2d(nextX + graphicsGap, b
                     .middleY));
             return;
@@ -101,7 +128,7 @@ class TreeRowLevelGraphics : Control
 /**
  * Authors: initkfs
  */
-class TreeRow(T) : Container
+class TreeRow(T) : BaseTableRow!(T, BaseTableColumn!T)
 {
     TreeItem!T rowItem;
 
@@ -111,16 +138,11 @@ class TreeRow(T) : Container
     void delegate(bool oldValue, bool newValue) onSelectedOldNewValue;
     void delegate(bool oldValue, bool newValue) onExpandOldNewValue;
 
-    bool isSelectable = true;
-
     size_t treeLevel;
 
     protected
     {
-        bool isSelected;
         bool isExpand;
-        bool isFirst;
-        bool isLast;
     }
 
     import GuiSymbols = api.dm.gui.gui_text_symbols;
@@ -142,12 +164,20 @@ class TreeRow(T) : Container
     Text delegate(Text) onNewExpandGraphics;
     void delegate(Text) onCreatedExpandGraphics;
 
-    this(TreeItem!T rowItem, bool isExpand = false, size_t treeLevel = 0)
+    this(TreeItem!T rowItem, bool isExpand = false, size_t treeLevel = 0, double dividerSize = 0)
     {
+        super(dividerSize);
+
         import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 
         layout = new HLayout;
         layout.isAutoResize = true;
+
+        if (isExpand)
+        {
+            isCreateActionEffect = false;
+            isCreateActionEffectAnimation = false;
+        }
 
         this.rowItem = rowItem;
         this.treeLevel = treeLevel;
@@ -157,15 +187,6 @@ class TreeRow(T) : Container
     override void initialize()
     {
         super.initialize;
-
-        if (!itemTextProvider)
-        {
-            itemTextProvider = (T item) {
-                import std.conv : to;
-
-                return item.to!dstring;
-            };
-        }
     }
 
     override void loadTheme()
@@ -193,7 +214,6 @@ class TreeRow(T) : Container
 
     override void create()
     {
-        super.create;
         import api.dm.gui.controls.texts.text : Text;
         import api.math.insets : Insets;
 
@@ -204,6 +224,7 @@ class TreeRow(T) : Container
 
             levelGraphics.height = height;
             levelGraphics.level = treeLevel;
+            levelGraphics.isVGrow = true;
 
             addCreate(levelGraphics);
             if (onCreatedLevelGraphics)
@@ -219,6 +240,7 @@ class TreeRow(T) : Container
             expandGraphics = !onNewExpandGraphics ? eg : onNewExpandGraphics(eg);
 
             expandGraphics.padding = Insets(0);
+            expandGraphics.text = isExpand ? expandSymbol : hidingSymbol;
 
             addCreate(expandGraphics);
             if (onCreatedExpandGraphics)
@@ -226,7 +248,8 @@ class TreeRow(T) : Container
                 onCreatedExpandGraphics(expandGraphics);
             }
 
-            expandGraphics.onPointerPress ~= (ref e) {
+            //TODO reuse
+            onPointerPress ~= (ref e) {
                 this.isExpand = !isExpand;
                 setExpandGraphics;
                 foreach (ch; childrenRows)
@@ -234,14 +257,19 @@ class TreeRow(T) : Container
                     toggleTreeBranch(ch, isExpand);
                 }
             };
+
+            setExpandGraphics;
         }
 
-        if (rowItem.childrenItems.length > 0)
+        super.create;
+    }
+
+    void setItem()
+    {
+        foreach (ci, col; columns)
         {
-            expand(isExpand);
+            col.item = rowItem.data;
         }
-
-        onPointerPress ~= (ref e) { toggleSelected; };
     }
 
     TreeRowLevelGraphics newLevelGraphics()
@@ -259,8 +287,11 @@ class TreeRow(T) : Container
         return new Text(text);
     }
 
-    protected void setExpand(bool value)
+    bool expand() => isExpand;
+
+    void expand(bool value, bool isTriggerListeners = true)
     {
+        bool oldValue = isExpand;
         isExpand = value;
 
         setExpandGraphics;
@@ -268,24 +299,12 @@ class TreeRow(T) : Container
         isVisible = value;
         isManaged = value;
         isLayoutManaged = value;
-    }
 
-    bool expand() => isExpand;
-
-    void expand(bool value)
-    {
-        //TODO remove overwriting
-        if (isExpand == value)
-        {
-            return;
-        }
-        bool oldValue = isExpand;
-        setExpand(value);
-
-        if(onExpandOldNewValue)
+        if (isTriggerListeners && onExpandOldNewValue)
         {
             onExpandOldNewValue(oldValue, value);
         }
+
     }
 
     size_t countExpandChildren()
@@ -340,13 +359,29 @@ class TreeRow(T) : Container
         }
     }
 
-    void setLastRowLabel()
+    void isLastRow(bool v){
+        if(levelGraphics){
+            levelGraphics.isLastRow = v;
+        }
+    }
+
+    bool isLastLevel() => _last;
+    void isLastLevel(bool v)
+    {
+        if (v && !_last)
+        {
+            setLastRowLabel;
+        }
+        _last = v;
+    }
+
+    protected void setLastRowLabel()
     {
         if (!levelGraphics)
         {
             return;
         }
 
-        levelGraphics.isLastRow = true;
+        levelGraphics.isLastLevelRow = true;
     }
 }
