@@ -2,7 +2,7 @@ module api.dm.gui.controls.labels.badge;
 
 import api.dm.gui.controls.labeled : Labeled;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.gui.controls.tooltips.popup : Popup;
+import api.dm.gui.controls.tooltips.text_popup : Popup;
 
 import std.conv : to;
 
