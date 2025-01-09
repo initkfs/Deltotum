@@ -174,10 +174,10 @@ class Choice(T) : BaseSelector!T
 
                 prevButton.onAction ~= (ref e) {
                     selectPrev;
-                    // if (popupMenu && popupMenu.isVisible)
-                    // {
-                    //     popupMenu.hide;
-                    // }
+                    if (popupMenu && popupMenu.isVisible)
+                    {
+                        popupMenu.hide;
+                    }
                 };
 
                 prevNextContainer.addCreate(prevButton);
@@ -194,10 +194,10 @@ class Choice(T) : BaseSelector!T
 
                 nextButton.onAction ~= (ref e) {
                     selectNext;
-                    // if (popupMenu && popupMenu.isVisible)
-                    // {
-                    //     popupMenu.hide;
-                    // }
+                    if (popupMenu && popupMenu.isVisible)
+                    {
+                        popupMenu.hide;
+                    }
                 };
 
                 prevNextContainer.addCreate(nextButton);
