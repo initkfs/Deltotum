@@ -7,15 +7,7 @@ import api.dm.gui.controls.texts.text : Text, CursorState, CursorPos;
  */
 class TextField : Text
 {
-    this(string text)
-    {
-        import std.conv : to;
-
-        this(text.to!dstring);
-        isEditable = true;
-    }
-
-    this(dstring text)
+    this(dstring text = "")
     {
         super(text);
         isBorder = true;

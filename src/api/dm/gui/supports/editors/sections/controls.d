@@ -78,7 +78,7 @@ class Controls : Control
         selectionContainer.layout.isAlignY = true;
         rootContainer.addCreate(selectionContainer);
 
-        createSelections(selectionContainer);
+        createSelects(selectionContainer);
 
         auto metersContainer = new HBox;
         metersContainer.layout.isAlignY = true;
@@ -319,7 +319,7 @@ class Controls : Control
         root3.addCreate(popUrgBtn);
     }
 
-    void createSelections(Container root)
+    void createSelects(Container root)
     {
         import api.dm.gui.controls.containers.hbox: HBox;
 
@@ -396,29 +396,11 @@ class Controls : Control
         choiceRoot1.addCreate(choice1);
         choice1.fill(choiceItems);
 
-        // auto choice2 = new Choice;
-        // choice2.isCreateSelectButtons = true;
-        // root.addCreate(choice2);
-        // choice2.fill(choiceItems);
+        import api.dm.gui.controls.selects.spinners.spinner : Spinner;
 
-        // auto choice3 = new Choice;
-        // auto vlayout = new VLayout(2);
-        // vlayout.isAutoResize = true;
-        // vlayout.isAlignX = true;
-        // choice3.layout = vlayout;
-        // choice3.isCreateSelectButtons = true;
-        // root.addCreate(choice3);
-        // choice3.fill(choiceItems);
-
-        // import api.dm.gui.controls.spinners.spinner : Spinner;
-
-        // auto spinner1 = new Spinner!int;
-        // root.addCreate(spinner1);
-
-        // import api.dm.gui.controls.pickers.color_picker : ColorPicker;
-
-        // auto colorPicker = new ColorPicker;
-        // root.addCreate(colorPicker);
+        auto spinner1 = new Spinner!int(5, 1, 1);
+        spinner1.isCreateIncDec = true;
+        choiceRoot1.addCreate(spinner1);;
     }
 
     void createMeters(Container root)
