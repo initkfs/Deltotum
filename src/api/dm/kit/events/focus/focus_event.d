@@ -19,14 +19,9 @@ struct FocusEvent
 
     Event event;
 
-    double x = 0;
-    double y = 0;
-
-    this(Event event, int ownerId, double x, double y)
+    this(Event event, int ownerId)
     {
         this.event = event;
         this.ownerId = ownerId;
-        this.x  = x;
-        this.y = y;
     }
 }

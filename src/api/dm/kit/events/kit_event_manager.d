@@ -1,7 +1,7 @@
 module api.dm.kit.events.kit_event_manager;
 
 import api.dm.kit.events.processing.event_processor : EventProcessor;
-import api.dm.kit.events.event_manager: EventManager;
+import api.dm.kit.events.event_manager : EventManager;
 import api.dm.kit.events.processing.kit_event_processor : KitEventProcessor;
 
 import api.core.apps.events.app_event : AppEvent;
@@ -55,13 +55,39 @@ class KitEventManager : EventManager
             return;
         }
 
+        if (targetScene.controlledSprites.length > 0)
+        {
+            foreach (Sprite2d cs; targetScene.controlledSprites)
+            {
+                cs.dispatchEvent(e);
+                cs.isReceiveEvents = false;
+
+                if (e.isConsumed)
+                {
+                    resetSpriteEvent(targetScene.controlledSprites);
+                    return;
+                }
+            }
+        }
+
         foreach (Sprite2d target; targets)
         {
             target.dispatchEvent(e);
-            if(e.isConsumed){
+            if (e.isConsumed)
+            {
+                resetSpriteEvent(targetScene.controlledSprites);
                 return;
             }
         }
-        
+
+        resetSpriteEvent(targetScene.controlledSprites);
+    }
+
+    protected void resetSpriteEvent(Sprite2d[] sprites)
+    {
+        foreach (sp; sprites)
+        {
+            sp.isReceiveEvents = true;
+        }
     }
 }

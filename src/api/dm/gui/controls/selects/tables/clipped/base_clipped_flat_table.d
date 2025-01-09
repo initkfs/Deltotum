@@ -1,6 +1,6 @@
 module api.dm.gui.controls.selects.tables.clipped.base_clipped_flat_table;
 
-import api.dm.gui.controls.selects.tables.clipped.base_clipped_table: BaseClippedTable;
+import api.dm.gui.controls.selects.tables.clipped.base_clipped_table : BaseClippedTable;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.containers.container : Container;
 
@@ -15,7 +15,7 @@ abstract class BaseClippedFlatTable(T, TCol:
     BaseTableColumn!T, TRow:
     BaseTableRow!(T, TCol)) : BaseClippedTable!(T, TCol, TRow)
 {
-    
+
     TRow[] rows;
 
     this(size_t columnCount)
@@ -60,6 +60,11 @@ abstract class BaseClippedFlatTable(T, TCol:
         auto row = new TRow(dividerSize);
         row.itemTextProvider = itemTextProvider;
 
+        if (isSelectable)
+        {
+            row.onPointerPress ~= (ref e) { select(row); };
+        }
+
         //FIXME 
         if (rowContainer)
         {
@@ -83,6 +88,30 @@ abstract class BaseClippedFlatTable(T, TCol:
         foreach (row; rows)
         {
             row.column(index).width = newWidth;
+        }
+    }
+
+    bool selectByIndex(size_t index, bool isTriggerListeners = true)
+    {
+        if (index >= rows.length)
+        {
+            import std.format : format;
+
+            throw new Exception(format("Row index must be less than rows length %s, but received %s", rows.length, index));
+        }
+
+        auto row = rows[index];
+        return select(row, isTriggerListeners);
+    }
+
+    void onRow(bool delegate(TRow) onRowIsContinue)
+    {
+        foreach (row; rows)
+        {
+            if (!onRowIsContinue(row))
+            {
+                return;
+            }
         }
     }
 }

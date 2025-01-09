@@ -1,5 +1,6 @@
 module api.dm.gui.controls.selects.tables.base_table_row;
 
+import api.dm.gui.controls.selects.selectable : Selectable;
 import api.dm.gui.controls.selects.tables.base_table_item : BaseTableItem;
 import api.dm.gui.controls.selects.tables.base_table_column : BaseTableColumn;
 import api.dm.gui.controls.containers.container : Container;
@@ -11,7 +12,7 @@ import api.dm.gui.controls.texts.text : Text;
  * Authors: initkfs
  */
 class BaseTableRow(TItem, TCol:
-    BaseTableColumn!TItem) : Container
+    BaseTableColumn!TItem) : Container, Selectable
 {
     protected
     {
@@ -96,7 +97,27 @@ class BaseTableRow(TItem, TCol:
         {
             auto newContainer = newColumnContainer;
             colContainer = !onNewColumnContainer ? newContainer : onNewColumnContainer(newContainer);
+
+            if (colContainer.isBackground)
+            {
+                if (colContainer.width == 0)
+                {
+                    colContainer.width = 1;
+                }
+                if (colContainer.height == 0)
+                {
+                    colContainer.height = 1;
+                }
+            }
+
             addCreate(colContainer);
+
+            //TODO side effect
+            if (isSelectable && colContainer.hasBackground)
+            {
+                colContainer.backgroundUnsafe.isVisible = false;
+            }
+
             if (onCreatedColumnContainer)
             {
                 onCreatedColumnContainer(colContainer);
@@ -106,7 +127,7 @@ class BaseTableRow(TItem, TCol:
         if (isCreateBottomBorder)
         {
             auto bb = newBottomBorder;
-           
+
             bb.id = bottomBorderId;
             bb.isLayoutManaged = false;
             bb.isResizedWidthByParent = true;
@@ -131,11 +152,43 @@ class BaseTableRow(TItem, TCol:
         }
     }
 
+    Sprite2d newSelectEffect()
+    {
+        return theme.shape(width, height, angle, createFillStyle);
+    }
+
     Container newColumnContainer()
     {
         import api.dm.gui.controls.containers.hbox : HBox;
 
-        return new HBox(0);
+        auto container = new class HBox
+        {
+            this()
+            {
+                super(0);
+            }
+
+            import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+
+            override Sprite2d newBackground()
+            {
+                auto style = createFillStyle;
+                if (!style.isPreset)
+                {
+                    style.lineWidth = 0;
+                    style.fillColor = theme.colorSecondary;
+                }
+                return super.newBackground(width, height, angle, style);
+            }
+
+            override Sprite2d createShape(double w, double h, double angle, GraphicStyle style)
+            {
+                return theme.rectShape(w, h, angle, style);
+            }
+        };
+        container.isBackground = true;
+        container.isConsumeEventIfBackground = false;
+        return container;
     }
 
     Sprite2d newBottomBorder()
@@ -156,7 +209,8 @@ class BaseTableRow(TItem, TCol:
         assert(isCreated);
         auto col = new TCol(dividerSize);
 
-        if(columns.length > 0){
+        if (columns.length > 0)
+        {
             col.isCreateLeftBorder = true;
         }
 
@@ -215,6 +269,11 @@ class BaseTableRow(TItem, TCol:
         return columns[index];
     }
 
+    TItem item()
+    {
+        return item(0);
+    }
+
     TItem item(size_t colIndex)
     {
         auto col = column(colIndex);
@@ -231,7 +290,12 @@ class BaseTableRow(TItem, TCol:
     }
 
     bool isSelected() => _selected;
-    void isSelected(bool v) {
+    void isSelected(bool v)
+    {
         _selected = v;
+        if (colContainer && colContainer.hasBackground)
+        {
+            colContainer.backgroundUnsafe.isVisible = v;
+        }
     }
 }

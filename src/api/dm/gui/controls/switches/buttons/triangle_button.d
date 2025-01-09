@@ -5,7 +5,6 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.events.action_event : ActionEvent;
 import api.dm.gui.controls.control : Control;
-import api.dm.addon.math.geom2.triangulations.delaunator;
 
 /**
  * Authors: initkfs

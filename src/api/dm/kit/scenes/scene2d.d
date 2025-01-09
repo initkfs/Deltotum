@@ -426,6 +426,13 @@ class Scene2d : EventKitTarget
         return eternalSprites;
     }
 
+    import api.core.utils.arrays : drop;
+
+    bool removeControlled(Sprite2d sprite)
+    {
+        return drop(controlledSprites, sprite);
+    }
+
     final bool hasFactory() @safe pure nothrow
     {
         return _factory !is null;

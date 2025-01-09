@@ -93,7 +93,7 @@ class Text : Control
         this(text.to!dstring);
     }
 
-    this(dstring text = "tminext")
+    this(dstring text = "")
     {
         this.tempText = text;
 

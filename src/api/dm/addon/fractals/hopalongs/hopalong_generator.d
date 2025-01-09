@@ -12,7 +12,7 @@ import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.gui.controls.meters.scrolls.hscroll : HScroll;
 import api.dm.gui.controls.meters.scrolls.vscroll : VScroll;
-import api.dm.gui.controls.choices.choice_box : ChoiceBox;
+import api.dm.gui.controls.selects.choices.choice : Choice;
 import api.math.random : Random;
 
 import Math = api.math;
@@ -34,7 +34,7 @@ class HopalongGenerator : Control
     RegulateTextField cCoeffField;
     RegulateTextField dCoeffField;
 
-    ChoiceBox fractalType;
+    Choice fractalType;
 
     Container canvas;
     double canvasWidth;
@@ -188,7 +188,7 @@ class HopalongGenerator : Control
 
         fieldRoot.alignFields;
 
-        fractalType = new ChoiceBox;
+        fractalType = new Choice;
         fieldRoot.addCreate(fractalType);
 
         dstring[] types;

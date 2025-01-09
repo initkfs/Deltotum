@@ -181,7 +181,7 @@ class Controls : Control
 
         import api.dm.gui.controls.switches.switch_group : SwitchGroup;
         import api.dm.gui.controls.switches.checks.check : Check;
-        import api.dm.gui.controls.choices.choice_box : ChoiceBox;
+        import api.dm.gui.controls.selects.choices.choice : Choice;
         import Icons = api.dm.gui.themes.icons.icon_name;
         import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
         import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
@@ -380,36 +380,33 @@ class Controls : Control
 
         treeTable.fill(rootItem);
 
-        // import api.dm.gui.controls.choices.choice_box : ChoiceBox;
+        import api.dm.gui.controls.selects.choices.choice : Choice;
 
-        // dstring[] choiceItems = [
-        //     "label1", "label2", "string1", "string2"
-        // ];
+        dstring[] choiceItems;
 
-        // auto chContainer1 = new VBox;
-        // root.addCreate(chContainer1);
-        // chContainer1.enableInsets;
+        foreach (ci; 0..11)
+        {
+            choiceItems ~= "label" ~ ci.to!dstring;
+        }
 
-        // auto choice1 = new ChoiceBox;
-        // chContainer1.addCreate(choice1);
-        // choice1.fill(choiceItems);
+        auto choiceRoot1 = new VBox;
+        root.addCreate(choiceRoot1);
 
-        // auto choice22 = new ChoiceBox;
-        // choice22.layout.isFillFromStartToEnd = false;
-        // chContainer1.addCreate(choice22);
-        // choice22.fill(choiceItems);
+        auto choice1 = new Choice!dstring;
+        choiceRoot1.addCreate(choice1);
+        choice1.fill(choiceItems);
 
-        // auto choice2 = new ChoiceBox;
-        // choice2.isCreateStepSelection = true;
+        // auto choice2 = new Choice;
+        // choice2.isCreateSelectButtons = true;
         // root.addCreate(choice2);
         // choice2.fill(choiceItems);
 
-        // auto choice3 = new ChoiceBox;
+        // auto choice3 = new Choice;
         // auto vlayout = new VLayout(2);
         // vlayout.isAutoResize = true;
         // vlayout.isAlignX = true;
         // choice3.layout = vlayout;
-        // choice3.isCreateStepSelection = true;
+        // choice3.isCreateSelectButtons = true;
         // root.addCreate(choice3);
         // choice3.fill(choiceItems);
 

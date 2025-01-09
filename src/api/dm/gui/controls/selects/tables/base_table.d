@@ -1,10 +1,14 @@
 module api.dm.gui.controls.selects.tables.base_table;
 
-import api.dm.gui.controls.selects.tables.base_table_row : BaseTableRow;
-import api.dm.gui.controls.selects.tables.base_table_item : BaseTableItem;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.control : Control;
+import api.dm.gui.controls.selects.base_selector: BaseSelector;
+
+import api.dm.gui.controls.selects.tables.base_table_item : BaseTableItem;
+import api.dm.gui.controls.selects.tables.base_table_row : BaseTableRow;
+import api.dm.gui.controls.selects.tables.base_table_column : BaseTableColumn;
+import api.dm.gui.controls.selects.tables.base_table_item : BaseTableItem;
 
 import api.dm.gui.controls.containers.splits.hsplit_box : HSplitBox;
 import api.dm.gui.controls.texts.text : Text;
@@ -89,7 +93,9 @@ class TableHeader : HSplitBox
 /**
  * Authors: initkfs
  */
-class BaseTable : Control
+class BaseTable(T, TCol:
+    BaseTableColumn!T, TR:
+    BaseTableRow!(T, TCol)) : BaseSelector!TR
 {
     Container rowContainer;
 
@@ -202,7 +208,7 @@ class BaseTable : Control
 
     protected void resizeColumn(size_t index, double newWidth)
     {
-        
+
     }
 
     void alignHeaderColumns()

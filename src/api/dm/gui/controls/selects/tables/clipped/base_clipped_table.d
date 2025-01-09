@@ -14,8 +14,8 @@ import api.dm.gui.controls.containers.scroll_box : ScrollBox;
  * Authors: initkfs
  */
 abstract class BaseClippedTable(T, TCol:
-    BaseTableColumn!T, TR:
-    BaseTableRow!(T, TCol)) : BaseTable
+    BaseTableColumn!T, TRow:
+    BaseTableRow!(T, TCol)) : BaseTable!(T, TCol, TRow)
 {
     protected
     {

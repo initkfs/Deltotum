@@ -8,11 +8,11 @@ import api.dm.gui.controls.texts.text : Text;
 /**
  * Authors: initkfs
  */
-class BaseTableColumn(TI) : Container
+class BaseTableColumn(TItem) : Container
 {
     protected
     {
-        TI _item;
+        TItem _item;
         bool _empty;
     }
 
@@ -22,7 +22,7 @@ class BaseTableColumn(TI) : Container
     Text delegate(Text) onNewItemText;
     void delegate(Text) onCreatedItemText;
 
-    dstring delegate(TI) itemTextProvider;
+    dstring delegate(TItem) itemTextProvider;
 
     Sprite2d leftBorder;
     string leftBorderId = "left_border";
@@ -33,7 +33,7 @@ class BaseTableColumn(TI) : Container
     Sprite2d delegate(Sprite2d) onNewLeftBorder;
     void delegate(Sprite2d) onCreatedLeftBorder;
 
-    this(TI initItem, double dividerSize)
+    this(TItem initItem, double dividerSize)
     {
         this(dividerSize);
         _item = initItem;
@@ -108,16 +108,16 @@ class BaseTableColumn(TI) : Container
             }
         }
 
-        static if (__traits(compiles, TI.init is null))
+        static if (__traits(compiles, TItem.init is null))
         {
-            if (_item !is TI.init)
+            if (_item !is TItem.init)
             {
                 text = _item;
             }
         }
         else
         {
-            if (_item != TI.init)
+            if (_item != TItem.init)
             {
                 text = _item;
             }
@@ -163,9 +163,9 @@ class BaseTableColumn(TI) : Container
         setEmpty(_empty);
     }
 
-    TI item() => _item;
+    TItem item() => _item;
 
-    void item(TI item)
+    void item(TItem item)
     {
         _item = item;
         assert(itemText);
@@ -175,7 +175,7 @@ class BaseTableColumn(TI) : Container
 
     protected bool setText() => text(item);
 
-    bool text(TI item)
+    bool text(TItem item)
     {
         if (!itemText || !itemTextProvider)
         {

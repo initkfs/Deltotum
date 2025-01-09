@@ -400,17 +400,7 @@ class Sprite2d : EventKitTarget
                 {
                     if (!isFocus)
                     {
-                        isFocus = true;
-
-                        if (onFocusEnter.length > 0 || eventFocusHandlers.length > 0)
-                        {
-                            import api.dm.kit.events.focus.focus_event : FocusEvent;
-
-                            auto focusEvent = FocusEvent(FocusEvent.Event.enter, e
-                                    .ownerId, e.x, e.y);
-                            focusEvent.isSynthetic = true;
-                            fireEvent(focusEvent);
-                        }
+                        focus(e.ownerId);
                     }
 
                     runEventHandlers(e);
@@ -449,13 +439,7 @@ class Sprite2d : EventKitTarget
                 {
                     if (isFocus && (onFocusExit.length > 0 || eventFocusHandlers.length > 0))
                     {
-                        isFocus = false;
-                        import api.dm.kit.events.focus.focus_event : FocusEvent;
-
-                        auto focusEvent = FocusEvent(FocusEvent.Event.exit, e
-                                .ownerId, e.x, e.y);
-                        focusEvent.isSynthetic = true;
-                        fireEvent(focusEvent);
+                        unfocus(e.ownerId);
                     }
                 }
                 else if (e.event == PointerEvent.Event.wheel)
@@ -842,11 +826,14 @@ class Sprite2d : EventKitTarget
 
         foreach (ch; children)
         {
+            ch.onRemoveFromParent;
+
             if (isDestroy && !ch.isDisposed)
             {
-                ch.dispose;
+                stopDisposeSafe(ch);
             }
         }
+
         children = null;
         setInvalid;
 
@@ -879,46 +866,50 @@ class Sprite2d : EventKitTarget
 
     bool remove(Sprite2d[] sprites, bool isDestroy = true)
     {
-        if (isDestroy)
+        bool isAnyRemove;
+        foreach (sprite; sprites)
         {
-            foreach (sprite; sprites)
-            {
-                if (!sprite.isDisposed)
-                {
-                    sprite.dispose;
-                }
-            }
+            isAnyRemove |= remove(sprite, isDestroy);
         }
+        return isAnyRemove;
+    }
 
-        import std.algorithm.mutation : remove;
-        import std.algorithm.searching : canFind;
+    void onRemoveFromParent()
+    {
 
-        children = children.remove!(s => sprites.canFind(s));
-        setInvalid;
-        return true;
     }
 
     bool remove(Sprite2d obj, bool isDestroy = true)
     {
-        import std.algorithm.searching : countUntil;
-        import std.algorithm.mutation : remove;
+        import api.core.utils.arrays : drop;
 
-        auto mustBeIndex = children.countUntil(obj);
-        if (mustBeIndex < 0)
+        if (!hasDirect(obj))
         {
             return false;
         }
 
-        auto sprite = children[mustBeIndex];
+        obj.onRemoveFromParent;
 
-        if (isDestroy && !sprite.isDisposed)
+        if (isDestroy && !obj.isDisposed)
         {
-            sprite.dispose;
+            if (obj.isRunning)
+            {
+                obj.stop;
+            }
+            obj.dispose;
         }
 
-        children = children.remove(mustBeIndex);
+        auto isRemove = drop(children, obj);
+        if (!isRemove)
+        {
+            import std.format : format;
+
+            throw new Exception(format("The child %s has not been removed from %s", obj, this));
+        }
+
         setInvalid;
-        return true;
+
+        return isRemove;
     }
 
     void startDrag(double x, double y)
@@ -2475,6 +2466,42 @@ class Sprite2d : EventKitTarget
         return true;
     }
 
+    void focus(int eventOwnerId = 0)
+    {
+        if(isFocus){
+            return;
+        }
+
+        isFocus = true;
+
+        if (onFocusEnter.length > 0 || eventFocusHandlers.length > 0)
+        {
+            import api.dm.kit.events.focus.focus_event : FocusEvent;
+
+            auto focusEvent = FocusEvent(FocusEvent.Event.enter, eventOwnerId);
+            focusEvent.isSynthetic = true;
+            fireEvent(focusEvent);
+        }
+    }
+
+    void unfocus(int eventOwnerId = 0)
+    {
+        if(!isFocus){
+            return;
+        }
+
+        isFocus = false;
+        
+        if (onFocusExit.length > 0 || eventFocusHandlers.length > 0)
+        {
+            import api.dm.kit.events.focus.focus_event : FocusEvent;
+
+            auto focusEvent = FocusEvent(FocusEvent.Event.exit, eventOwnerId);
+            focusEvent.isSynthetic = true;
+            fireEvent(focusEvent);
+        }
+    }
+
     void opacityLimit(double v)
     {
         maxOpacity = v;
@@ -2623,8 +2650,10 @@ class Sprite2d : EventKitTarget
         return drop(invalidateListeners, dg);
     }
 
-    string classInfo(){
-        if(id.length > 0){
+    string classInfo()
+    {
+        if (id.length > 0)
+        {
             return id;
         }
         return className;

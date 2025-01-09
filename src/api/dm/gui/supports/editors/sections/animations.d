@@ -91,25 +91,25 @@ class Animations : Control
         auto guiContainer = new HBox;
         addCreate(guiContainer);
 
-        import api.dm.gui.controls.choices.choice_box : ChoiceBox;
+        import api.dm.gui.controls.selects.choices.choice : Choice;
 
-        auto animSelect = new ChoiceBox;
+        // auto animSelect = new Choice;
 
-        import std.conv : to;
+        // import std.conv : to;
 
-        dstring[] choiceItems = animationsMap.keys.to!(dstring[]);
-        guiContainer.addCreate(animSelect);
+        // dstring[] choiceItems = animationsMap.keys.to!(dstring[]);
+        // guiContainer.addCreate(animSelect);
 
-        animSelect.fill(choiceItems);
+        // animSelect.fill(choiceItems);
 
-        animSelect.selectFirst;
+        // animSelect.selectFirst;
 
-        animSelect.onChoice = (oldItem, newItem) {
-            auto newFunc = animationsMap[newItem];
-            motionTween.stop;
-            interpolator.interpolateMethod = newFunc;
-            motionTween.run;
-        };
+        // animSelect.onChoice = (oldItem, newItem) {
+        //     auto newFunc = animationsMap[newItem];
+        //     motionTween.stop;
+        //     interpolator.interpolateMethod = newFunc;
+        //     motionTween.run;
+        // };
 
         motionTween.run;
 

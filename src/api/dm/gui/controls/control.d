@@ -73,7 +73,6 @@ class Control : GuiComponent
     bool isDisabled;
 
     bool isConsumeEventIfBackground = true;
-    bool isConsumeEventAfterChildren;
 
     bool isThrowInvalidAnimationTime = true;
 
@@ -235,7 +234,7 @@ class Control : GuiComponent
         if (popupDelay == 0)
         {
             assert(window);
-            popupDelay = cast(size_t) (theme.popupDelayMs / (1000 / window.frameRate));
+            popupDelay = cast(size_t)(theme.popupDelayMs / (1000 / window.frameRate));
         }
     }
 
@@ -1012,7 +1011,7 @@ class Control : GuiComponent
         {
             loadPopupTheme;
         }
-        
+
         if (sceneProvider)
         {
             sceneProvider().controlledSprites ~= popup;
@@ -1020,6 +1019,18 @@ class Control : GuiComponent
         else
         {
             assert(popup.isDrawByParent);
+        }
+    }
+
+    override void onRemoveFromParent()
+    {
+        if (popups.length > 0 && sceneProvider)
+        {
+            auto scene = sceneProvider();
+            foreach (popup; popups)
+            {
+                scene.removeControlled(popup);
+            }
         }
     }
 
@@ -1116,9 +1127,8 @@ class Control : GuiComponent
             return;
         }
 
-        if (isConsumeEventAfterChildren &&
-            (isConsumeEventIfBackground && (isBackground || hasBackground) && containsPoint(
-                e.x, e.y)))
+        if (isConsumeEventIfBackground && (isBackground || hasBackground) && containsPoint(
+                e.x, e.y))
         {
             e.isConsumed = true;
         }
@@ -1237,7 +1247,7 @@ class Control : GuiComponent
                 isPopupDelay = false;
                 foreach (t; popups)
                 {
-                    t.show;
+                    t.showForPointer;
                 }
             }
             else

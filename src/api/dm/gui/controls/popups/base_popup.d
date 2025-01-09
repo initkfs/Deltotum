@@ -15,6 +15,8 @@ class BasePopup : Control
         isLayoutManaged = false;
         isResizedByParent = false;
 
+        isBackground = true;
+
         if (isCreateLayout)
         {
             import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
@@ -24,7 +26,7 @@ class BasePopup : Control
         }
     }
 
-    override void show()
+    void showForPointer()
     {
         super.show;
 
@@ -48,7 +50,7 @@ class BasePopup : Control
             newX = windowBounds.right - thisBounds.width;
         }
 
-        auto newY = y - thisBounds.height;
+        auto newY = y;
         if (newY < 0)
         {
             newY = 0;

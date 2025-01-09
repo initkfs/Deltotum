@@ -66,7 +66,7 @@ class Theme
 
     @ConfigKey
     int lineThickness = 3;
-
+    
     Insets controlPadding = Insets(5, 5, 5, 5);
     double controlSpacing = 5;
     double controlCornersBevel = 8;

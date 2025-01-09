@@ -22,15 +22,15 @@ import std.container.dlist : DList;
  * Authors: initkfs
  */
 abstract class BaseCircularTable(T, TCol:
-    BaseTableColumn!T, TR:
-    BaseTableRow!(T, TCol)) : BaseTable
+    BaseTableColumn!T, TRow:
+    BaseTableRow!(T, TCol)) : BaseTable!(T, TCol, TRow)
 {
     protected
     {
         size_t startVisibleRowIndex;
         size_t endVisibleRowIndex;
 
-        DList!TR visibleRows;
+        DList!TRow visibleRows;
         size_t visibleRowsLength;
     }
 
@@ -340,9 +340,9 @@ abstract class BaseCircularTable(T, TCol:
         alignHeaderColumns;
     }
 
-    protected TR newRow()
+    protected TRow newRow()
     {
-        auto row = new TR(dividerSize);
+        auto row = new TRow(dividerSize);
 
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
