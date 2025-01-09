@@ -803,13 +803,13 @@ class Controls : Control
         root.addCreate(labelRoot);
 
         import api.dm.gui.controls.labels.label: Label;
-        import api.dm.gui.controls.labels.badge: Badge;
+        import api.dm.gui.controls.labels.badges.badge: Badge;
 
         auto label1 = new Label;
         labelRoot.addCreate(label1);
         label1.addCreate(new Badge);
 
-        import api.dm.gui.controls.labels.hyperlink: Hyperlink;
+        import api.dm.gui.controls.labels.hyperlinks.hyperlink: Hyperlink;
 
         auto h1 = new Hyperlink;
         h1.url = "https://google.com";

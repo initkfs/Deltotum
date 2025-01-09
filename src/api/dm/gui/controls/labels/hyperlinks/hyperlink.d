@@ -1,4 +1,4 @@
-module api.dm.gui.controls.labels.hyperlink;
+module api.dm.gui.controls.labels.hyperlinks.hyperlink;
 
 import api.dm.gui.controls.labeled : Labeled;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;

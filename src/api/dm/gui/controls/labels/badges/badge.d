@@ -1,4 +1,4 @@
-module api.dm.gui.controls.labels.badge;
+module api.dm.gui.controls.labels.badges.badge;
 
 import api.dm.gui.controls.labels.label: Label;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
