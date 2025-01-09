@@ -40,7 +40,8 @@ class Spinner(T) : BaseSelector!T
 
     double textWidth = 0;
 
-    protected {
+    protected
+    {
         T initInc;
         T initDec;
         T initValue;
@@ -93,9 +94,7 @@ class Spinner(T) : BaseSelector!T
 
             decButton.onPointerPress ~= (ref e) {
                 const newValue = value - decValue;
-                import std.conv : to;
-
-                valueLabel.text = newValue.to!dstring;
+                value = newValue;
             };
 
             addCreate(decButton);
@@ -120,6 +119,11 @@ class Spinner(T) : BaseSelector!T
             auto newLabel = newIncLabel;
             incLabel = !onNewIncLabel ? newLabel : onNewIncLabel(newLabel);
             incTextExpander.contentContainer.addCreate(incLabel);
+            
+            window.showingTasks ~= (double dt){
+                incTextExpander.close;
+            };
+
             if (onCreatedIncLabel)
             {
                 onCreatedIncLabel(incLabel);
@@ -147,6 +151,11 @@ class Spinner(T) : BaseSelector!T
             auto newLabel = newDecLabel;
             decLabel = !onNewDecLabel ? newLabel : onNewDecLabel(newLabel);
             decTextExpander.contentContainer.addCreate(decLabel);
+
+            window.showingTasks ~= (double dt){
+                decTextExpander.close;
+            };
+
             if (onCreatedDecLabel)
             {
                 onCreatedDecLabel(decLabel);
@@ -160,10 +169,8 @@ class Spinner(T) : BaseSelector!T
             incButton = !onNewIncButton ? b : onNewIncButton(b);
 
             incButton.onPointerPress ~= (ref e) {
-                import std.conv : to;
-
                 const newValue = value + incValue;
-                valueLabel.text = newValue.to!dstring;
+                value = newValue;
             };
 
             addCreate(incButton);
@@ -172,6 +179,9 @@ class Spinner(T) : BaseSelector!T
                 onCreatedIncButton(incButton);
             }
         }
+
+        value(initValue, isTriggerListeners:
+            false);
     }
 
     protected TextField setText(TextField text)
@@ -218,9 +228,14 @@ class Spinner(T) : BaseSelector!T
         return decLabel.text.to!T;
     }
 
-    void value(T newValue)
+    protected void value(T newValue, bool isTriggerListeners = true)
     {
-        valueLabel.text = newValue.to!dstring;
+        import std.conv : to;
+
+        if (auto isSelected = select(newValue, isTriggerListeners))
+        {
+            valueLabel.text = newValue.to!dstring;
+        }
     }
 
     T value()
