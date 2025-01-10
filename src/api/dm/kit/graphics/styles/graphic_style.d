@@ -16,20 +16,31 @@ struct GraphicStyle
     bool isDefault;
     string name;
 
-    static GraphicStyle simple() pure @safe
+    static pure @safe
     {
-        return GraphicStyle(1.0, RGBA.white, false, RGBA.transparent);
-    }
-
-    static GraphicStyle simpleFill() pure @safe
-    {
-        return GraphicStyle(1.0, RGBA.lightcyan, true, RGBA.red);
+        GraphicStyle simple() => GraphicStyle(1, RGBA.lightcyan, false, RGBA.transparent);
+        GraphicStyle simpleFill() => GraphicStyle(1, RGBA.lightcyan, true, RGBA.red);
+        GraphicStyle transparentFill() => GraphicStyle(1, RGBA.transparent, true, RGBA.transparent);
     }
 
     void color(RGBA color)
     {
         fillColor = color;
         lineColor = color;
+    }
+
+    GraphicStyle copyOfColor(RGBA color)
+    {
+        auto copy = this;
+        copy.lineColor = color;
+        return copy;
+    }
+
+    GraphicStyle copyOfFillColor(RGBA color)
+    {
+        auto copy = this;
+        copy.fillColor = color;
+        return copy;
     }
 
     bool isPreset() => isDefault || isNested;

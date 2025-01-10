@@ -10,7 +10,7 @@ import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.gui.controls.containers.frame : Frame;
 import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
-import api.dm.gui.controls.carousels.carousel;
+import api.dm.gui.controls.selects.carousels.carousel;
 import api.dm.gui.controls.selects.tables.clipped.trees.tree_item;
 
 /**
@@ -420,21 +420,20 @@ class Controls : Control
         pagination.pageFactory = (size_t pageIndex) {  };
         choiceRootSliders.addCreate(pagination);
 
-        // import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-        // import api.dm.kit.graphics.colors.rgba : RGBA;
+        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+        import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        // auto image1 = new VConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.yellow));
-        // auto image2 = new VConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.green));
-        // auto image3 = new VConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.red));
-        // auto image4 = new VConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.blue));
-        // auto image5 = new VConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.orange));
+        const imageSize = 35;
+        auto style = GraphicStyle.transparentFill;
 
-        // auto paginationContent = new Carousel([
-        //     image1, image2, image3, image4, image5
-        // ]);
-        // paginationRoot.addCreate(paginationContent);
+        auto carousel1 = new Carousel([
+            theme.rectShape(imageSize, imageSize, 0, style.copyOfFillColor(RGBA.red)),
+            theme.rectShape(imageSize, imageSize, 0, style.copyOfFillColor(RGBA.yellow)),
+            theme.rectShape(imageSize, imageSize, 0, style.copyOfFillColor(RGBA.green)),
+            theme.rectShape(imageSize, imageSize, 0, style.copyOfFillColor(RGBA.blue)),
+        ]);
 
-        
+        choiceRootSliders.addCreate(carousel1);
     }
 
     void createMeters(Container root)
@@ -643,7 +642,7 @@ class Controls : Control
         import api.dm.gui.controls.texts.text : Text;
         import api.dm.gui.controls.containers.vbox : VBox;
 
-        import api.dm.gui.controls.carousels.carousel : Carousel;
+        import api.dm.gui.controls.selects.carousels.carousel : Carousel;
         
 
         import api.dm.gui.controls.meters.gauges.clocks.analog_clock : AnalogClock;
