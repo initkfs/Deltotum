@@ -113,11 +113,11 @@ class Pagination : BaseSelector!size_t
             prevButton = !onNewPrevButton ? pb : onNewPrevButton(pb);
 
             prevButton.onAction ~= (ref e) {
-                if (selected == 0)
+                if (current == 0)
                 {
                     return;
                 }
-                auto newIndex = selected - 1;
+                auto newIndex = current - 1;
                 pageIndex(newIndex);
             };
 
@@ -194,7 +194,7 @@ class Pagination : BaseSelector!size_t
             nextButton = !onNewNextButton ? newNext : onNewNextButton(newNext);
 
             nextButton.onAction ~= (ref e) {
-                auto newIndex = selected + 1;
+                auto newIndex = current + 1;
                 if (newIndex >= numPages)
                 {
                     return;
@@ -400,19 +400,19 @@ class Pagination : BaseSelector!size_t
             return false;
         }
 
-        if (index == selected && !isAllowReplace)
+        if (index == current && !isAllowReplace)
         {
             return false;
         }
 
-        selectForce(index, isTriggerListeners);
+        currentForce(index, isTriggerListeners);
 
         if (selectNewPage)
         {
-            selectNewPage.text = (selected + 1).to!dstring;
+            selectNewPage.text = (current + 1).to!dstring;
         }
 
-        if (selected == 0)
+        if (current == 0)
         {
             if (firstButton)
             {
@@ -425,7 +425,7 @@ class Pagination : BaseSelector!size_t
                 endButton.isOn = false;
             }
         }
-        else if (selected == numPages - 1)
+        else if (current == numPages - 1)
         {
             if (endButton)
             {
@@ -473,9 +473,9 @@ class Pagination : BaseSelector!size_t
 
             resetSelectedPages;
 
-            if (selected >= activePageFirstIndex)
+            if (current >= activePageFirstIndex)
             {
-                activeIndex = selected - activePageFirstIndex;
+                activeIndex = current - activePageFirstIndex;
 
                 if (activeIndex >= activePageButtons.length)
                 {

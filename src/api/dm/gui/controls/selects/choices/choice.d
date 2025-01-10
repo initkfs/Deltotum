@@ -143,7 +143,7 @@ class Choice(T) : BaseSelector!T
 
             addCreate(popupMenu);
 
-            popupMenu.menuList.onSelectOldNew ~= (oldRow, newRow) {
+            popupMenu.menuList.onChangeOldNew ~= (oldRow, newRow) {
                 assert(newRow);
                 auto newItem = newRow.item;
                 setSelected(newItem);
@@ -397,23 +397,23 @@ class Choice(T) : BaseSelector!T
             return false;
         }
 
-        select(newItem, isTriggerListeners);
-        setSelectedText(selected);
+        current(newItem, isTriggerListeners);
+        setSelectedText(current);
         return true;
     }
 
     bool setSelected(T newItem, bool isTriggerListeners = true)
     {
-        static if (__traits(compiles, newItem is selected))
+        static if (__traits(compiles, newItem is current))
         {
-            if (newItem is selected)
+            if (newItem is current)
             {
                 return false;
             }
         }
         else
         {
-            if (newItem == selected)
+            if (newItem == current)
             {
                 return false;
             }
@@ -480,7 +480,7 @@ class Choice(T) : BaseSelector!T
     {
         if (popupMenu && index < items.length)
         {
-            if (auto isSelected = popupMenu.menuList.selectByIndex(index, isTriggerListeners:
+            if (auto isChange = popupMenu.menuList.selectByIndex(index, isTriggerListeners:
                     false))
             {
                 return true;

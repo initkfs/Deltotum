@@ -91,16 +91,16 @@ class Carousel : BaseSelector!Sprite2d
                 double dx = 0;
                 if (direction == CarouselDirection.fromRight)
                 {
-                    dx = -((selected.x - itemRoot.x) * newValue);
+                    dx = -((current.x - itemRoot.x) * newValue);
                 }
                 else if (direction == CarouselDirection.fromLeft)
                 {
-                    dx = (itemRoot.x - selected.x) * newValue;
+                    dx = (itemRoot.x - current.x) * newValue;
                 }
 
-                if (selected)
+                if (current)
                 {
-                    selected.x = selected.x + dx;
+                    current.x = current.x + dx;
                 }
 
                 if (_prev)
@@ -119,9 +119,9 @@ class Carousel : BaseSelector!Sprite2d
                     _prev = null;
                 }
 
-                if (isPreciseMove && selected.x != itemRoot.x)
+                if (isPreciseMove && current.x != itemRoot.x)
                 {
-                    selected.x = itemRoot.x;
+                    current.x = itemRoot.x;
                 }
             };
 
@@ -305,14 +305,14 @@ class Carousel : BaseSelector!Sprite2d
 
         auto newItem = _items[currentItemIndex];
 
-        if (!select(newItem))
+        if (!current(newItem))
         {
             return;
         }
 
-        selected.x = itemRoot.x;
-        selected.y = itemRoot.y;
-        selected.isVisible = true;
+        current.x = itemRoot.x;
+        current.y = itemRoot.y;
+        current.isVisible = true;
 
         _prev = null;
     }
@@ -324,9 +324,9 @@ class Carousel : BaseSelector!Sprite2d
             return;
         }
 
-        if (selected)
+        if (current)
         {
-            _prev = selected;
+            _prev = current;
         }
 
         auto itemRoot = itemRootContainer;
@@ -345,10 +345,10 @@ class Carousel : BaseSelector!Sprite2d
 
             currentItemIndex--;
             auto newItem = _items[currentItemIndex];
-            if (select(newItem))
+            if (current(newItem))
             {
-                selected.x = itemRoot.x - selected.boundsRect.width;
-                selected.y = itemRoot.y;
+                current.x = itemRoot.x - current.boundsRect.width;
+                current.y = itemRoot.y;
             }
         }
         else if (direction == CarouselDirection.fromRight)
@@ -367,16 +367,16 @@ class Carousel : BaseSelector!Sprite2d
 
             currentItemIndex = newIndex;
             auto newItem = _items[currentItemIndex];
-            if (select(newItem))
+            if (current(newItem))
             {
-                selected.x = itemRoot.boundsRect.right;
-                selected.y = itemRoot.y;
+                current.x = itemRoot.boundsRect.right;
+                current.y = itemRoot.y;
             }
         }
 
-        if (selected && !selected.isVisible)
+        if (current && !current.isVisible)
         {
-            selected.isVisible = true;
+            current.isVisible = true;
         }
 
         itemChangeAnimation.run;
@@ -388,7 +388,7 @@ class Carousel : BaseSelector!Sprite2d
     {
         assert(_items.length > 0);
         auto item = _items[currentItemIndex];
-        assert(item == selected);
+        assert(item == current);
         return item;
     }
 }

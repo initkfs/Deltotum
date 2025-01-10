@@ -62,7 +62,7 @@ abstract class BaseClippedFlatTable(T, TCol:
 
         if (isSelectable)
         {
-            row.onPointerPress ~= (ref e) { select(row); };
+            row.onPointerPress ~= (ref e) { current(row); };
         }
 
         //FIXME 
@@ -101,7 +101,7 @@ abstract class BaseClippedFlatTable(T, TCol:
         }
 
         auto row = rows[index];
-        return select(row, isTriggerListeners);
+        return current(row, isTriggerListeners);
     }
 
     void onRow(bool delegate(TRow) onRowIsContinue)

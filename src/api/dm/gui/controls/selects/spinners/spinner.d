@@ -232,7 +232,7 @@ class Spinner(T) : BaseSelector!T
     {
         import std.conv : to;
 
-        if (auto isSelected = select(newValue, isTriggerListeners))
+        if (auto isChange = current(newValue, isTriggerListeners))
         {
             valueLabel.text = newValue.to!dstring;
         }

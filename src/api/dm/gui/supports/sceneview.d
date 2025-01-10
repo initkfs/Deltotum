@@ -217,7 +217,7 @@ class SceneView : VBox
 
         controlSettings.changeTab(controlTab);
 
-        // controlStructure.onSelectOldNew = (oldSprite, newSprite) {
+        // controlStructure.onChangeOldNew = (oldSprite, newSprite) {
         //     import std;
 
         //     if (newSprite is objectOnDebug)

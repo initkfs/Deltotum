@@ -10,31 +10,34 @@ class BaseSelector(T) : Control
 {
     bool isSelectable = true;
 
-    T selected;
+    protected
+    {
+        T _current;
+    }
 
-    void delegate(T, T)[] onSelectOldNew;
+    void delegate(T, T)[] onChangeOldNew;
 
-    bool select(T item, bool isTriggerListeners = true)
+    bool current(T item, bool isTriggerListeners = true)
     {
         static if (__traits(compiles, item is item))
         {
-            if (item is selected)
+            if (item is _current)
             {
                 return false;
             }
         }
         else
         {
-            if (item == selected)
+            if (item == _current)
             {
                 return false;
             }
         }
 
-        return selectForce(item, isTriggerListeners);
+        return currentForce(item, isTriggerListeners);
     }
 
-    bool selectForce(T item, bool isTriggerListeners = true)
+    bool currentForce(T item, bool isTriggerListeners = true)
     {
         static if (is(T : Selectable))
         {
@@ -43,28 +46,30 @@ class BaseSelector(T) : Control
                 item.isSelected = true;
             }
 
-            if (selected)
+            if (_current)
             {
-                selected.isSelected = false;
+                _current.isSelected = false;
             }
         }
 
-        if (isTriggerListeners && onSelectOldNew.length > 0)
+        if (isTriggerListeners && onChangeOldNew.length > 0)
         {
-            //selected may be null
-            foreach (dg; onSelectOldNew)
+            //_current may be null
+            foreach (dg; onChangeOldNew)
             {
                 assert(dg);
-                dg(selected, item);
+                dg(_current, item);
             }
         }
 
-        selected = item;
+        _current = item;
 
         return true;
     }
 
     import api.core.utils.arrays : drop;
 
-    bool removeOnSelectOnNew(void delegate(T, T) dg) => onSelectOldNew.drop(dg);
+    bool removeOnChangeOnNew(void delegate(T, T) dg) => onChangeOldNew.drop(dg);
+
+    inout(T) current() inout => _current;
 }
