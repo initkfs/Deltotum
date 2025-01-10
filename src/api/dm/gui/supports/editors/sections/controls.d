@@ -321,7 +321,7 @@ class Controls : Control
 
     void createSelects(Container root)
     {
-        import api.dm.gui.controls.containers.hbox: HBox;
+        import api.dm.gui.controls.containers.hbox : HBox;
 
         auto tableRoot = new HBox;
         root.addCreate(tableRoot);
@@ -342,18 +342,20 @@ class Controls : Control
 
         virtTable.fill(virtTableItems);
 
-        import api.dm.gui.controls.selects.tables.clipped.clipped_table: ClippedTable, newClippedTable;
+        import api.dm.gui.controls.selects.tables.clipped.clipped_table : ClippedTable, newClippedTable;
 
         string[][] clipItems = [
-            ["1", "1\n2"], ["2", "3"], ["3", "4\n5\n6"], ["4", "7"], ["5", "8\n9"], ["6", "10"]
+            ["1", "1\n2"], ["2", "3"], ["3", "4\n5\n6"], ["4", "7"], [
+                "5", "8\n9"
+            ], ["6", "10"]
         ];
 
         auto clipTable = newClippedTable!string(2);
         tableRoot.addCreate(clipTable);
         clipTable.fill(clipItems);
 
-        import api.dm.gui.controls.selects.tables.clipped.trees.tree_item: TreeItem;
-        import api.dm.gui.controls.selects.tables.clipped.trees.tree_list: TreeList, newTreeList;
+        import api.dm.gui.controls.selects.tables.clipped.trees.tree_item : TreeItem;
+        import api.dm.gui.controls.selects.tables.clipped.trees.tree_list : TreeList, newTreeList;
 
         auto treeTable = newTreeList!string;
         tableRoot.addCreate(treeTable);
@@ -362,21 +364,28 @@ class Controls : Control
 
         auto rootItem2 = new TreeItem!string("root2");
         rootItem.childrenItems ~= rootItem2;
-        rootItem2.childrenItems ~= [new TreeItem!string("1".to!string), new TreeItem!string("2".to!string)];
+        rootItem2.childrenItems ~= [
+            new TreeItem!string("1".to!string),
+            new TreeItem!string("2".to!string)
+        ];
 
         auto rootItem3 = new TreeItem!string("root3");
         rootItem2.childrenItems ~= rootItem3;
 
-        foreach(i; 0..11){
-            import std.conv: to;
+        foreach (i; 0 .. 11)
+        {
+            import std.conv : to;
+
             auto ni = new TreeItem!string(i.to!string);
             rootItem3.childrenItems ~= ni;
         }
 
         auto rootItem4 = new TreeItem!string("root4");
         rootItem.childrenItems ~= rootItem4;
-        rootItem4.childrenItems ~= [new TreeItem!string("1".to!string), new TreeItem!string("2".to!string)];
-
+        rootItem4.childrenItems ~= [
+            new TreeItem!string("1".to!string),
+            new TreeItem!string("2".to!string)
+        ];
 
         treeTable.fill(rootItem);
 
@@ -384,7 +393,7 @@ class Controls : Control
 
         dstring[] choiceItems;
 
-        foreach (ci; 0..11)
+        foreach (ci; 0 .. 11)
         {
             choiceItems ~= "label" ~ ci.to!dstring;
         }
@@ -400,7 +409,32 @@ class Controls : Control
 
         auto spinner1 = new Spinner!int(5, 1, 1);
         spinner1.isCreateIncDec = true;
-        choiceRoot1.addCreate(spinner1);;
+        choiceRoot1.addCreate(spinner1);
+
+        auto choiceRootSliders = new VBox;
+        root.addCreate(choiceRootSliders);
+
+        import api.dm.gui.controls.selects.paginations.pagination : Pagination;
+
+        auto pagination = new Pagination;
+        pagination.pageFactory = (size_t pageIndex) {  };
+        choiceRootSliders.addCreate(pagination);
+
+        // import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+        // import api.dm.kit.graphics.colors.rgba : RGBA;
+
+        // auto image1 = new VConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.yellow));
+        // auto image2 = new VConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.green));
+        // auto image3 = new VConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.red));
+        // auto image4 = new VConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.blue));
+        // auto image5 = new VConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.orange));
+
+        // auto paginationContent = new Carousel([
+        //     image1, image2, image3, image4, image5
+        // ]);
+        // paginationRoot.addCreate(paginationContent);
+
+        
     }
 
     void createMeters(Container root)
@@ -605,34 +639,12 @@ class Controls : Control
         // auto time1 = new TimePicker;
         // rootContainer.addCreate(time1);
 
-        import api.dm.gui.controls.paginations.pagination : Pagination;
+        import api.dm.gui.controls.selects.paginations.pagination : Pagination;
         import api.dm.gui.controls.texts.text : Text;
         import api.dm.gui.controls.containers.vbox : VBox;
 
         import api.dm.gui.controls.carousels.carousel : Carousel;
-
-        auto paginationRoot = new VBox(3);
-        paginationRoot.layout.isAlignX = true;
-        rootContainer.addCreate(paginationRoot);
-
-        import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
-        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-        import api.dm.kit.graphics.colors.rgba : RGBA;
-
-        auto image1 = new VConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.yellow));
-        auto image2 = new VConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.green));
-        auto image3 = new VConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.red));
-        auto image4 = new VConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.blue));
-        auto image5 = new VConvexPolygon(50, 50, GraphicStyle(1, RGBA.lightblue, true, RGBA.orange));
-
-        auto paginationContent = new Carousel([
-            image1, image2, image3, image4, image5
-        ]);
-        paginationRoot.addCreate(paginationContent);
-
-        auto pagination = new Pagination;
-        pagination.pageFactory = (size_t pageIndex) { import std.conv : to; };
-        paginationRoot.addCreate(pagination);
+        
 
         import api.dm.gui.controls.meters.gauges.clocks.analog_clock : AnalogClock;
 
@@ -776,19 +788,20 @@ class Controls : Control
         winRoot3.addCreate(winResize);
     }
 
-    void createLabels(Container root){
+    void createLabels(Container root)
+    {
         auto labelRoot = new VBox;
         labelRoot.isAlignX = true;
         root.addCreate(labelRoot);
 
-        import api.dm.gui.controls.labels.label: Label;
-        import api.dm.gui.controls.labels.badges.badge: Badge;
+        import api.dm.gui.controls.labels.label : Label;
+        import api.dm.gui.controls.labels.badges.badge : Badge;
 
         auto label1 = new Label;
         labelRoot.addCreate(label1);
         label1.addCreate(new Badge);
 
-        import api.dm.gui.controls.labels.hyperlinks.hyperlink: Hyperlink;
+        import api.dm.gui.controls.labels.hyperlinks.hyperlink : Hyperlink;
 
         auto h1 = new Hyperlink;
         h1.url = "https://google.com";

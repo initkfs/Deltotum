@@ -1802,6 +1802,8 @@ class Sprite2d : EventKitTarget
     }
 
     bool rescale(double factor) => rescale(factor, factor);
+    bool rescale2() => rescale(2, 2);
+    bool rescale05() => rescale(0.5, 0.5);
 
     void setValid(bool value) @safe pure nothrow
     {

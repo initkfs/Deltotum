@@ -21,6 +21,7 @@ class BaseButton : BaseBiswitch
     void delegate(ref ActionEvent)[] onAction;
 
     bool isFixedButton;
+    bool isAutolockButton;
     bool isLongPressButton;
 
     this(dstring text, string iconName, bool isCreateLayout = true)
@@ -116,6 +117,11 @@ class BaseButton : BaseBiswitch
 
         //Fixed and long press
         return () {
+
+            if(_actionEffect.isVisible && isOn && isAutolockButton){
+                return;
+            }
+
             if (_actionEffect)
             {
                 _actionEffectAnimation.isReverse = false;
@@ -160,20 +166,30 @@ class BaseButton : BaseBiswitch
         }
 
         return (ref e) {
-            if (!isOn)
+            
+            if(isAutolockButton && isOn){
+                return;
+            }
+            
+            auto prevState = isOn;
+            toggle;
+            //Listeners may change state
+            if (!prevState)
             {
                 runActionListeners(e);
             }
-            toggle;
         };
     }
 
     override void delegate(ref ActionEvent e) newActionEffectEndBehaviour()
     {
         return (ref e) {
-
             if (isDisabled)
             {
+                return;
+            }
+
+            if(isAutolockButton && isOn){
                 return;
             }
 
@@ -221,6 +237,10 @@ class BaseButton : BaseBiswitch
 
     protected void switchNonFixedContentState(bool oldState, bool newState)
     {
+        if(id == "first_button"){
+            import std;
+            writeln("STATE: ", oldState," ", newState);
+        }
         super.switchContentState(oldState, newState);
 
         if (newState)
@@ -243,6 +263,8 @@ class BaseButton : BaseBiswitch
                 }
 
                 _actionEffectAnimation.run;
+            }else {
+                _actionEffect.opacity = 1;
             }
         }
         else

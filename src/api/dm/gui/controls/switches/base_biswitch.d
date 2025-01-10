@@ -33,7 +33,7 @@ class BaseBiswitch : Labeled
     {
         super.create;
 
-        switchContentState(_state, _state);
+        isOn = _state;
     }
 
     bool toggle(bool isRunListeners = true) => isOn(!_state, isRunListeners);
@@ -65,7 +65,7 @@ class BaseBiswitch : Labeled
         return true;
     }
 
-    void switchContentState(bool oldState, bool newState)
+    protected void switchContentState(bool oldState, bool newState)
     {
         if (isSwitchIcon && hasIcon)
         {

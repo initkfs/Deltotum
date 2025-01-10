@@ -40,6 +40,14 @@ class NavigateButton : Button
         super(text, width, height, iconName, graphicsGap);
     }
 
+    static
+    {
+        NavigateButton newHPrevButton() => new NavigateButton(NavigateDirection.toLeft);
+        NavigateButton newHNextButton() => new NavigateButton(NavigateDirection.toRight);
+        NavigateButton newVPrevButton() => new NavigateButton(NavigateDirection.toBottom);
+        NavigateButton newVNextButton() => new NavigateButton(NavigateDirection.toTop);
+    }
+
     override void loadTheme()
     {
         loadNavigateButtonTheme;
@@ -64,7 +72,7 @@ class NavigateButton : Button
         if (!style.isPreset)
         {
             style.isFill = true;
-            style.fillColor= style.lineColor;
+            style.fillColor = style.lineColor;
         }
         Sprite2d shape = theme.triangleShape(buttonSize, buttonSize, 0, style);
 
