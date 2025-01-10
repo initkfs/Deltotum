@@ -143,7 +143,7 @@ class Choice(T) : BaseSelector!T
 
             addCreate(popupMenu);
 
-            popupMenu.menuList.onSelectOldNew = (oldRow, newRow) {
+            popupMenu.menuList.onSelectOldNew ~= (oldRow, newRow) {
                 assert(newRow);
                 auto newItem = newRow.item;
                 setSelected(newItem);

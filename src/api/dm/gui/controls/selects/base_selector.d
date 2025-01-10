@@ -12,7 +12,7 @@ class BaseSelector(T) : Control
 
     T selected;
 
-    void delegate(T, T) onSelectOldNew;
+    void delegate(T, T)[] onSelectOldNew;
 
     bool select(T item, bool isTriggerListeners = true)
     {
@@ -31,6 +31,11 @@ class BaseSelector(T) : Control
             }
         }
 
+        return selectForce(item, isTriggerListeners);
+    }
+
+    bool selectForce(T item, bool isTriggerListeners = true)
+    {
         static if (is(T : Selectable))
         {
             if (!item.isSelected)
@@ -44,14 +49,22 @@ class BaseSelector(T) : Control
             }
         }
 
-        if (isTriggerListeners && onSelectOldNew)
+        if (isTriggerListeners && onSelectOldNew.length > 0)
         {
             //selected may be null
-            onSelectOldNew(selected, item);
+            foreach (dg; onSelectOldNew)
+            {
+                assert(dg);
+                dg(selected, item);
+            }
         }
 
         selected = item;
 
         return true;
     }
+
+    import api.core.utils.arrays : drop;
+
+    bool removeOnSelectOnNew(void delegate(T, T) dg) => onSelectOldNew.drop(dg);
 }

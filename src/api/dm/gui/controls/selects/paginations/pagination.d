@@ -2,6 +2,7 @@ module api.dm.gui.controls.selects.paginations.pagination;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
+import api.dm.gui.controls.selects.base_selector: BaseSelector;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.controls.switches.buttons.navigate_button : NavigateButton, NavigateDirection;
@@ -12,14 +13,13 @@ import std.conv : to;
 /**
  * Authors: initkfs
  */
-class Pagination : Control
+class Pagination : BaseSelector!size_t
 {
     void delegate(size_t) pageFactory;
 
     protected
     {
         size_t numPages;
-        size_t currPageIndex;
         size_t activePageFirstIndex;
     }
 
@@ -113,11 +113,11 @@ class Pagination : Control
             prevButton = !onNewPrevButton ? pb : onNewPrevButton(pb);
 
             prevButton.onAction ~= (ref e) {
-                if (currPageIndex == 0)
+                if (selected == 0)
                 {
                     return;
                 }
-                auto newIndex = currPageIndex - 1;
+                auto newIndex = selected - 1;
                 pageIndex(newIndex);
             };
 
@@ -194,7 +194,7 @@ class Pagination : Control
             nextButton = !onNewNextButton ? newNext : onNewNextButton(newNext);
 
             nextButton.onAction ~= (ref e) {
-                auto newIndex = currPageIndex + 1;
+                auto newIndex = selected + 1;
                 if (newIndex >= numPages)
                 {
                     return;
@@ -286,7 +286,7 @@ class Pagination : Control
         }
 
         pageIndex(0, isAllowReplace:
-            true);
+            true, isTriggerListeners: false);
 
         if (infoPageCurrent)
         {
@@ -393,30 +393,26 @@ class Pagination : Control
         }
     }
 
-    bool pageIndex(size_t index, bool isAllowReplace = false)
+    bool pageIndex(size_t index, bool isAllowReplace = false, bool isTriggerListeners = true)
     {
         if (numPages == 0 || index >= numPages)
         {
             return false;
         }
 
-        if (index == currPageIndex && !isAllowReplace)
+        if (index == selected && !isAllowReplace)
         {
             return false;
         }
 
-        currPageIndex = index;
-        if (pageFactory)
-        {
-            pageFactory(currPageIndex);
-        }
+        selectForce(index, isTriggerListeners);
 
         if (selectNewPage)
         {
-            selectNewPage.text = (currPageIndex + 1).to!dstring;
+            selectNewPage.text = (selected + 1).to!dstring;
         }
 
-        if (index == 0)
+        if (selected == 0)
         {
             if (firstButton)
             {
@@ -429,7 +425,7 @@ class Pagination : Control
                 endButton.isOn = false;
             }
         }
-        else if (index == numPages - 1)
+        else if (selected == numPages - 1)
         {
             if (endButton)
             {
@@ -477,9 +473,9 @@ class Pagination : Control
 
             resetSelectedPages;
 
-            if (index >= activePageFirstIndex)
+            if (selected >= activePageFirstIndex)
             {
-                activeIndex = index - activePageFirstIndex;
+                activeIndex = selected - activePageFirstIndex;
 
                 if (activeIndex >= activePageButtons.length)
                 {
