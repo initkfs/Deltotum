@@ -1,6 +1,7 @@
 module api.dm.gui.controls.selects.carousels.carousel;
 
 import api.dm.gui.controls.control : Control;
+import api.dm.gui.controls.selects.base_selector : BaseSelector;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.controls.switches.buttons.navigate_button : NavigateButton;
@@ -24,7 +25,7 @@ enum CarouselDirection
 /**
  * Authors: initkfs
  */
-class Carousel : Control
+class Carousel : BaseSelector!Sprite2d
 {
     size_t itemChangeDuration = 500;
     MinMaxTween2d!double itemChangeAnimation;
@@ -50,10 +51,11 @@ class Carousel : Control
     double itemWidth = 0;
     double itemHeight = 0;
 
+    bool isPreciseMove;
+
     protected
     {
         Sprite2d[] _items;
-        Sprite2d _current;
         Sprite2d _prev;
 
         size_t currentItemIndex;
@@ -89,16 +91,16 @@ class Carousel : Control
                 double dx = 0;
                 if (direction == CarouselDirection.fromRight)
                 {
-                    dx = -((_current.x - itemRoot.x) * newValue);
+                    dx = -((selected.x - itemRoot.x) * newValue);
                 }
                 else if (direction == CarouselDirection.fromLeft)
                 {
-                    dx = (itemRoot.x - _current.x) * newValue;
+                    dx = (itemRoot.x - selected.x) * newValue;
                 }
 
-                if (_current)
+                if (selected)
                 {
-                    _current.x = _current.x + dx;
+                    selected.x = selected.x + dx;
                 }
 
                 if (_prev)
@@ -117,9 +119,9 @@ class Carousel : Control
                     _prev = null;
                 }
 
-                if (_current.x != itemRoot.x)
+                if (isPreciseMove && selected.x != itemRoot.x)
                 {
-                    _current.x = itemRoot.x;
+                    selected.x = itemRoot.x;
                 }
             };
 
@@ -295,17 +297,22 @@ class Carousel : Control
 
     protected void showItem(size_t index = 0)
     {
-
         assert(index < _items.length);
 
         currentItemIndex = index;
 
         auto itemRoot = itemRootContainer;
 
-        _current = _items[currentItemIndex];
-        _current.x = itemRoot.x;
-        _current.y = itemRoot.y;
-        _current.isVisible = true;
+        auto newItem = _items[currentItemIndex];
+
+        if (!select(newItem))
+        {
+            return;
+        }
+
+        selected.x = itemRoot.x;
+        selected.y = itemRoot.y;
+        selected.isVisible = true;
 
         _prev = null;
     }
@@ -317,9 +324,9 @@ class Carousel : Control
             return;
         }
 
-        if (_current)
+        if (selected)
         {
-            _prev = _current;
+            _prev = selected;
         }
 
         auto itemRoot = itemRootContainer;
@@ -337,9 +344,12 @@ class Carousel : Control
             }
 
             currentItemIndex--;
-            _current = _items[currentItemIndex];
-            _current.x = itemRoot.x - _current.boundsRect.width;
-            _current.y = itemRoot.y;
+            auto newItem = _items[currentItemIndex];
+            if (select(newItem))
+            {
+                selected.x = itemRoot.x - selected.boundsRect.width;
+                selected.y = itemRoot.y;
+            }
         }
         else if (direction == CarouselDirection.fromRight)
         {
@@ -356,15 +366,17 @@ class Carousel : Control
             }
 
             currentItemIndex = newIndex;
-            _current = _items[currentItemIndex];
-
-            _current.x = itemRoot.boundsRect.right;
-            _current.y = itemRoot.y;
+            auto newItem = _items[currentItemIndex];
+            if (select(newItem))
+            {
+                selected.x = itemRoot.boundsRect.right;
+                selected.y = itemRoot.y;
+            }
         }
 
-        if (!_current.isVisible)
+        if (selected && !selected.isVisible)
         {
-            _current.isVisible = true;
+            selected.isVisible = true;
         }
 
         itemChangeAnimation.run;
@@ -375,6 +387,8 @@ class Carousel : Control
     Sprite2d currentItem()
     {
         assert(_items.length > 0);
-        return _items[currentItemIndex];
+        auto item = _items[currentItemIndex];
+        assert(item == selected);
+        return item;
     }
 }
