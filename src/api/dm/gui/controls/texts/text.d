@@ -884,6 +884,11 @@ class Text : Control
         setInvalid;
     }
 
+    double calcTextWidth(dstring str)
+    {
+        return calcTextWidth(str, fontSize);
+    }
+
     double calcTextWidth(dstring str, FontSize fontSize)
     {
         double sum = 0;

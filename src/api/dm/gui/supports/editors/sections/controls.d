@@ -443,6 +443,10 @@ class Controls : Control
         auto pagination = new Pagination;
         pagination.pageFactory = (size_t pageIndex) {  };
         choiceRoot1.addCreate(pagination);
+
+        import api.dm.gui.controls.selects.calendars.calendar: Calendar;
+        auto cal1 = new Calendar;
+        root.addCreate(cal1);
     }
 
     void createMeters(Container root)
@@ -637,7 +641,7 @@ class Controls : Control
         sb1.setContent(sbt);
         sbt.text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
-        // import api.dm.gui.controls.datetimes.calendar : Calendar;
+        // import api.dm.gui.controls.selects.calendars.calendar : Calendar;
 
         // auto cal1 = new Calendar;
         // rootContainer.addCreate(cal1);
