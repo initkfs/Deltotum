@@ -37,7 +37,7 @@ class Choice(T) : BaseSelector!T
     dstring delegate(T) itemToTextConverter;
 
     Text searchField;
-    bool isCreateSearchField = true;
+    bool isCreateSearchField;
     Text delegate(Text) onNewSearchField;
     void delegate(Text) onCreatedSearchField;
 

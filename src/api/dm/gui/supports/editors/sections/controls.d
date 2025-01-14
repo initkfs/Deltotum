@@ -323,8 +323,13 @@ class Controls : Control
     {
         import api.dm.gui.controls.containers.hbox : HBox;
 
+        auto rroot = new VBox;
+        rroot.isAlignX = true;
+        root.addCreate(rroot);
+
         auto tableRoot = new HBox;
-        root.addCreate(tableRoot);
+        tableRoot.isAlignY = true;
+        rroot.addCreate(tableRoot);
 
         import api.dm.gui.controls.selects.tables.circulars.circular_table;
 
@@ -399,26 +404,24 @@ class Controls : Control
         }
 
         auto choiceRoot1 = new VBox;
-        root.addCreate(choiceRoot1);
+        choiceRoot1.isAlignX = true;
+        choiceRoot1.layout.isDecreaseRootHeight = true;
+        rroot.addCreate(choiceRoot1);
+        
+        auto choiceHRoot1 = new HBox;
+        choiceHRoot1.isAlignY = true;
+        choiceHRoot1.layout.isDecreaseRootHeight = true;
+        choiceRoot1.addCreate(choiceHRoot1);
 
         auto choice1 = new Choice!dstring;
-        choiceRoot1.addCreate(choice1);
+        choiceHRoot1.addCreate(choice1);
         choice1.fill(choiceItems);
 
         import api.dm.gui.controls.selects.spinners.spinner : Spinner;
 
         auto spinner1 = new Spinner!int(5, 1, 1);
         spinner1.isCreateIncDec = true;
-        choiceRoot1.addCreate(spinner1);
-
-        auto choiceRootSliders = new VBox;
-        root.addCreate(choiceRootSliders);
-
-        import api.dm.gui.controls.selects.paginations.pagination : Pagination;
-
-        auto pagination = new Pagination;
-        pagination.pageFactory = (size_t pageIndex) {  };
-        choiceRootSliders.addCreate(pagination);
+        choiceHRoot1.addCreate(spinner1);
 
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
         import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -433,7 +436,13 @@ class Controls : Control
             theme.rectShape(imageSize, imageSize, 0, style.copyOfFillColor(RGBA.blue)),
         ]);
 
-        choiceRootSliders.addCreate(carousel1);
+        choiceHRoot1.addCreate(carousel1);
+
+        import api.dm.gui.controls.selects.paginations.pagination : Pagination;
+
+        auto pagination = new Pagination;
+        pagination.pageFactory = (size_t pageIndex) {  };
+        choiceRoot1.addCreate(pagination);
     }
 
     void createMeters(Container root)
