@@ -74,17 +74,23 @@ class Controls : Control
 
         rootContainer.addCreate(new HSeparator);
 
+        auto metersContainer = new HBox;
+        metersContainer.layout.isAlignY = true;
+        rootContainer.addCreate(metersContainer);
+
+        createMeters(metersContainer);
+
         auto selectionContainer = new HBox;
         selectionContainer.layout.isAlignY = true;
         rootContainer.addCreate(selectionContainer);
 
         createSelects(selectionContainer);
 
-        auto metersContainer = new HBox;
-        metersContainer.layout.isAlignY = true;
-        rootContainer.addCreate(metersContainer);
+        auto selectionContainer2 = new HBox;
+        selectionContainer2.layout.isAlignY = true;
+        rootContainer.addCreate(selectionContainer2);
 
-        createMeters(metersContainer);
+        createPickers(selectionContainer2);
 
         // createSeparators(selectionContainer);
 
@@ -323,13 +329,9 @@ class Controls : Control
     {
         import api.dm.gui.controls.containers.hbox : HBox;
 
-        auto rroot = new VBox;
-        rroot.isAlignX = true;
-        root.addCreate(rroot);
-
         auto tableRoot = new HBox;
         tableRoot.isAlignY = true;
-        rroot.addCreate(tableRoot);
+        root.addCreate(tableRoot);
 
         import api.dm.gui.controls.selects.tables.circulars.circular_table;
 
@@ -406,8 +408,8 @@ class Controls : Control
         auto choiceRoot1 = new VBox;
         choiceRoot1.isAlignX = true;
         choiceRoot1.layout.isDecreaseRootHeight = true;
-        rroot.addCreate(choiceRoot1);
-        
+        root.addCreate(choiceRoot1);
+
         auto choiceHRoot1 = new HBox;
         choiceHRoot1.isAlignY = true;
         choiceHRoot1.layout.isDecreaseRootHeight = true;
@@ -441,10 +443,19 @@ class Controls : Control
         import api.dm.gui.controls.selects.paginations.pagination : Pagination;
 
         auto pagination = new Pagination;
-        pagination.pageFactory = (size_t pageIndex) {  };
+        pagination.pageFactory = (size_t pageIndex) {};
         choiceRoot1.addCreate(pagination);
 
-        import api.dm.gui.controls.selects.calendars.calendar: Calendar;
+        import api.dm.gui.controls.selects.time_pickers.time_picker: TimePicker;
+
+        auto timePick1 = new TimePicker;
+        root.addCreate(timePick1);
+    }
+
+    void createPickers(Container root)
+    {
+        import api.dm.gui.controls.selects.calendars.calendar : Calendar;
+
         auto cal1 = new Calendar;
         root.addCreate(cal1);
     }
@@ -498,13 +509,6 @@ class Controls : Control
         vscaleDyn2.isInvertX = true;
         vscaleDyn2.isInvertY = true;
         root.addCreate(vscaleDyn2);
-
-        auto rscroll1 = new RScroll;
-        rscroll1.onNewScale = (scale) {
-            scale.multiplyInitWidth = 1.2;
-            return scale;
-        };
-        root.addCreate(rscroll1);
 
         auto gaugeContainer = new VBox;
         gaugeContainer.isAlignX = true;
@@ -599,6 +603,13 @@ class Controls : Control
         rProgress.onPointerPress ~= (ref e) { runProgress(); };
         linProgressH.onPointerPress ~= (ref e) { runProgress(); };
         linProgressV.onPointerPress ~= (ref e) { runProgress(); };
+
+        auto rscroll1 = new RScroll;
+        rscroll1.onNewScale = (scale) {
+            scale.multiplyInitWidth = 1.2;
+            return scale;
+        };
+        root.addCreate(rscroll1);
     }
 
     void createSeparators(Container root)
@@ -646,7 +657,7 @@ class Controls : Control
         // auto cal1 = new Calendar;
         // rootContainer.addCreate(cal1);
 
-        // import api.dm.gui.controls.pickers.time_picker : TimePicker;
+        // import api.dm.gui.controls.selects.time_pickers.time_picker : TimePicker;
 
         // auto time1 = new TimePicker;
         // rootContainer.addCreate(time1);
@@ -656,7 +667,6 @@ class Controls : Control
         import api.dm.gui.controls.containers.vbox : VBox;
 
         import api.dm.gui.controls.selects.carousels.carousel : Carousel;
-        
 
         import api.dm.gui.controls.meters.gauges.clocks.analog_clock : AnalogClock;
 
