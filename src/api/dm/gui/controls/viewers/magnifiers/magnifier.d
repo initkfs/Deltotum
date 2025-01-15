@@ -1,4 +1,4 @@
-module api.dm.gui.controls.magnifiers.magnifier;
+module api.dm.gui.controls.viewers.magnifiers.magnifier;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;

@@ -16,8 +16,8 @@ class GuiEditor : GuiScene
     override void create()
     {
         super.create;
-        import api.dm.gui.controls.tabs.tab : Tab;
-        import api.dm.gui.controls.tabs.tabpane : TabPane;
+        import api.dm.gui.controls.containers.tabs.tab : Tab;
+        import api.dm.gui.controls.containers.tabs.tabpane : TabPane;
 
         auto root = new TabPane;
         root.width = window.width;

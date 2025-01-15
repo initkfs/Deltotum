@@ -225,7 +225,7 @@ class Images : Control
         rotate45.load(ColorProcessor.rotate(colorBuff, 45));
         container2.addCreate(createImageInfo("Rotate 45", rotate45));
 
-        import api.dm.gui.controls.magnifiers.magnifier : Magnifier, Source;
+        import api.dm.gui.controls.viewers.magnifiers.magnifier : Magnifier, Source;
         auto magn1 = new Magnifier;
         container2.addCreate(magn1);
         magn1.source = Source.screen;

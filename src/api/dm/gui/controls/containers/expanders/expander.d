@@ -1,4 +1,4 @@
-module api.dm.gui.controls.expanders.expander;
+module api.dm.gui.controls.containers.expanders.expander;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;

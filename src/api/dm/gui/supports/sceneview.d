@@ -15,8 +15,8 @@ import api.dm.gui.controls.selects.tables.clipped.trees.tree_item : TreeItem;
 import api.dm.gui.controls.selects.tables.clipped.trees.tree_list : TreeList, newTreeList;
 import api.math.insets : Insets;
 import api.dm.gui.controls.containers.scroll_box : ScrollBox;
-import api.dm.gui.controls.tabs.tab : Tab;
-import api.dm.gui.controls.tabs.tabpane : TabPane;
+import api.dm.gui.controls.containers.tabs.tab : Tab;
+import api.dm.gui.controls.containers.tabs.tabpane : TabPane;
 import api.dm.gui.controls.switches.checks.check : Check;
 
 import IconNames = api.dm.gui.themes.icons.icon_name;

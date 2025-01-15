@@ -1,9 +1,9 @@
-module api.dm.gui.controls.tabs.tab_header;
+module api.dm.gui.controls.containers.tabs.tab_header;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
-import api.dm.gui.controls.tabs.tab : Tab;
+import api.dm.gui.controls.containers.tabs.tab : Tab;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
 /**

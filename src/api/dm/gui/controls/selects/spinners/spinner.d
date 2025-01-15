@@ -1,7 +1,7 @@
 module api.dm.gui.controls.selects.spinners.spinner;
 
 import api.dm.gui.controls.selects.base_selector : BaseSelector;
-import api.dm.gui.controls.expanders.expander : Expander, ExpanderPosition;
+import api.dm.gui.controls.containers.expanders.expander : Expander, ExpanderPosition;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.controls.switches.buttons.navigate_button : NavigateButton, NavigateDirection;
 import api.dm.gui.controls.texts.textfield : TextField;

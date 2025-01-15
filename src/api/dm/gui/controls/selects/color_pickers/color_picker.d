@@ -1,4 +1,4 @@
-module api.dm.gui.controls.pickers.color_picker;
+module api.dm.gui.controls.selects.color_pickers.color_picker;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.layouts.layout2d : Layout2d;

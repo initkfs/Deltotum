@@ -1,4 +1,4 @@
-module api.dm.gui.controls.tabs.tabpane;
+module api.dm.gui.controls.containers.tabs.tabpane;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
@@ -7,8 +7,8 @@ import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.gui.controls.containers.stack_box : StackBox;
 import api.dm.gui.controls.containers.container : Container;
-import api.dm.gui.controls.tabs.tab : Tab;
-import api.dm.gui.controls.tabs.tab_header : TabHeader;
+import api.dm.gui.controls.containers.tabs.tab : Tab;
+import api.dm.gui.controls.containers.tabs.tab_header : TabHeader;
 import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
 /**

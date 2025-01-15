@@ -1,4 +1,4 @@
-module api.dm.gui.controls.tabs.tab;
+module api.dm.gui.controls.containers.tabs.tab;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.switches.buttons.button: Button;

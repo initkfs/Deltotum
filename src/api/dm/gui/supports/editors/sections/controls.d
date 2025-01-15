@@ -446,10 +446,9 @@ class Controls : Control
         pagination.pageFactory = (size_t pageIndex) {};
         choiceRoot1.addCreate(pagination);
 
-        import api.dm.gui.controls.selects.time_pickers.time_picker: TimePicker;
-
-        auto timePick1 = new TimePicker;
-        root.addCreate(timePick1);
+        import api.dm.gui.controls.selects.color_pickers.color_picker: ColorPicker;
+        auto colorPicker1 = new ColorPicker;
+        root.addCreate(colorPicker1);
     }
 
     void createPickers(Container root)
@@ -458,6 +457,11 @@ class Controls : Control
 
         auto cal1 = new Calendar;
         root.addCreate(cal1);
+
+        import api.dm.gui.controls.selects.time_pickers.time_picker: TimePicker;
+
+        auto timePick1 = new TimePicker;
+        root.addCreate(timePick1);
     }
 
     void createMeters(Container root)
@@ -836,7 +840,7 @@ class Controls : Control
         import api.dm.gui.controls.texts.text_view : TextView;
         import api.dm.gui.controls.texts.text_area : TextArea;
 
-        import api.dm.gui.controls.expanders.expander : Expander, ExpanderPosition;
+        import api.dm.gui.controls.containers.expanders.expander : Expander, ExpanderPosition;
 
         auto exp = new Expander;
         exp.expandPosition = ExpanderPosition.top;
