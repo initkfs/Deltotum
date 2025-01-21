@@ -17,9 +17,9 @@ class GuiEditor : GuiScene
     {
         super.create;
         import api.dm.gui.controls.containers.tabs.tab : Tab;
-        import api.dm.gui.controls.containers.tabs.tabpane : TabPane;
+        import api.dm.gui.controls.containers.tabs.tabbox : TabBox;
 
-        auto root = new TabPane;
+        auto root = new TabBox;
         root.width = window.width;
         root.height = window.height;
 

@@ -84,6 +84,7 @@ class Magnifier : Control
                         magnifier.lock;
                         graphics.readPixels(textureBounds, magnifier.format, magnifier.pitch, magnifier
                                 .pixels);
+                        //InvalidPointerError@src/etc/linux/memoryerror.d(325)
                         magnifier.unlock;
                         break;
                     case texture:

@@ -1,17 +1,11 @@
 module api.dm.gui.controls.selects.color_pickers.color_picker;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.kit.sprites2d.layouts.layout2d : Layout2d;
-import api.math.insets : Insets;
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.gui.controls.texts.text : Text;
-import api.dm.gui.controls.switches.buttons.button : Button;
-import api.dm.kit.sprites2d.shapes.circle : Circle;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
-import api.dm.gui.controls.containers.vbox : VBox;
-import api.dm.gui.controls.containers.hbox : HBox;
+import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.gui.controls.containers.tabs.tabbox: TabBox;
+
 
 /**
  * Authors: initkfs
@@ -20,56 +14,52 @@ class ColorPicker : Control
 {
     protected
     {
-        Circle colorIndicator;
-        Text colorText;
-        Button colorShowChooser;
-        VBox colorChooser;
+        // Circle colorIndicator;
+        // Text colorText;
+        // Button colorShowChooser;
+        // VBox colorChooser;
     }
 
     this()
     {
         import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 
-        auto layout = new HLayout;
+        layout = new HLayout;
         layout.isAutoResize = true;
-        layout.isAlignY = true;
-        this.layout = layout;
-
-        isBorder = true;
     }
 
     override void create()
     {
         super.create;
 
-        enableInsets;
+        // enableInsets;
 
-        RGBA startColor = RGBA.white;
+        // RGBA startColor = RGBA.white;
 
-        colorIndicator = new Circle(10, GraphicStyle(1, startColor, true, startColor));
-        addCreate(colorIndicator);
+        // colorIndicator = new Circle(10, GraphicStyle(1, startColor, true, startColor));
+        // addCreate(colorIndicator);
 
-        colorText = new Text(startColor.toWebHex);
-        addCreate(colorText);
+        // colorText = new Text(startColor.toWebHex);
+        // addCreate(colorText);
 
-        colorShowChooser = new Button("▼", 10, 10);
-        colorShowChooser.setGrow;
-        addCreate(colorShowChooser);
+        // colorShowChooser = new Button("▼", 10, 10);
+        // colorShowChooser.setGrow;
+        // addCreate(colorShowChooser);
 
-        colorShowChooser.onAction ~= (ref e) { toggleChooser; };
+        // colorShowChooser.onAction ~= (ref e) { toggleChooser; };
 
-        colorChooser = new VBox(0);
-        colorChooser.isLayoutManaged = false;
+        // colorChooser = new VBox(0);
+        // colorChooser.isLayoutManaged = false;
 
-        addCreate(colorChooser);
+        // addCreate(colorChooser);
 
-        colorChooser.isVisible = false;
-        import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
+        // colorChooser.isVisible = false;
+        // import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
 
-        enum colorContainerSize = 15;
-        enum colorTonesCount = 14;
+        // enum colorContainerSize = 15;
+        // enum colorTonesCount = 14;
 
-        HBox colorContainer;
+        // HBox colorContainer;
 
         // foreach (i, hexColor; EnumMembers!MaterialPalette)
         // {
@@ -102,11 +92,11 @@ class ColorPicker : Control
 
     void toggleChooser()
     {
-        const b = boundsRect;
-        colorChooser.x = b.x;
-        colorChooser.y = b.bottom;
+        // const b = boundsRect;
+        // colorChooser.x = b.x;
+        // colorChooser.y = b.bottom;
 
-        colorChooser.isVisible = !colorChooser.isVisible;
+        // colorChooser.isVisible = !colorChooser.isVisible;
     }
 
 }

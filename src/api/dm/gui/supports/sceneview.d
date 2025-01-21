@@ -16,7 +16,7 @@ import api.dm.gui.controls.selects.tables.clipped.trees.tree_list : TreeList, ne
 import api.math.insets : Insets;
 import api.dm.gui.controls.containers.scroll_box : ScrollBox;
 import api.dm.gui.controls.containers.tabs.tab : Tab;
-import api.dm.gui.controls.containers.tabs.tabpane : TabPane;
+import api.dm.gui.controls.containers.tabs.tabbox : TabBox;
 import api.dm.gui.controls.switches.checks.check : Check;
 
 import IconNames = api.dm.gui.themes.icons.icon_name;
@@ -195,25 +195,22 @@ class SceneView : VBox
         controlStructure.height = 200;
         addCreate(controlStructure);
 
-        auto controlSettings = new TabPane;
+        auto controlSettings = new TabBox;
         addCreate(controlSettings);
 
         import IconNames = api.dm.gui.themes.icons.icon_name;
 
-        auto controlTab = new Tab("");
+        auto controlTab = new Tab("", IconNames.options_outline);
         controlTab.content = createControlTab;
         controlSettings.addCreate(controlTab);
-        controlTab.label.addCreateIcon(IconNames.options_outline);
 
-        auto layoutTab = new Tab("");
+        auto layoutTab = new Tab("", IconNames.grid_outline);
         layoutTab.content = createLayoutTab;
         controlSettings.addCreate(layoutTab);
-        layoutTab.label.addCreateIcon(IconNames.grid_outline);
 
-        auto dumpTab = new Tab("");
+        auto dumpTab = new Tab("", IconNames.construct_outline);
         dumpTab.content = createDumpTab;
         controlSettings.addCreate(dumpTab);
-        dumpTab.label.addCreateIcon(IconNames.construct_outline);
 
         controlSettings.changeTab(controlTab);
 

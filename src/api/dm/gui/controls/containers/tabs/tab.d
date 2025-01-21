@@ -1,27 +1,48 @@
 module api.dm.gui.controls.containers.tabs.tab;
 
-import api.dm.gui.controls.control : Control;
-import api.dm.gui.controls.switches.buttons.button: Button;
+import api.dm.gui.controls.containers.container : Container;
+import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
 /**
  * Authors: initkfs
  */
-class Tab : Control
+class Tab : Container
 {
-    Button label;
+    Button labelButton;
+    bool isCreateLabelButton = true;
+    Button delegate(Button) onNewLabelButton;
+    void delegate(Button) onCreatedLabelButton;
+
+    protected
+    {
+        dstring labelButtonText;
+        string labelButtonIconName;
+    }
 
     Sprite2d content;
 
     void delegate() onAction;
 
-    this(dstring text = "Tab")
+    this(dstring text)
     {
-        label = new Button(text);
-        label.isFixedButton = true;
-        label.isBorder = false;
+       this(text, null, null);
+    }
 
-        import api.dm.kit.sprites2d.layouts.center_layout: CenterLayout;
+    this(dstring text, string iconName)
+    {
+       this(text, null, iconName);
+    }
+
+    this(dstring text = "Tab", Sprite2d content = null, string iconName = null)
+    {
+        labelButtonText = text;
+        labelButtonIconName = iconName;
+
+        this.content = content;
+
+        import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
+
         layout = new CenterLayout;
         layout.isAutoResize = true;
 
@@ -33,24 +54,39 @@ class Tab : Control
     {
         super.create;
 
-        buildInitCreate(label);
+        if (!labelButton && isCreateLabelButton)
+        {
+            auto lb = newLabelButton(labelButtonText, labelButtonIconName);
+            labelButtonText = null;
+            labelButton = !onNewLabelButton ? lb : onNewLabelButton(lb);
 
-        width = label.width;
-        height = label.height;
+            labelButton.isFixedButton = true;
+            labelButton.isBorder = false;
+            labelButton.width = width;
+            labelButton.height = height;
 
-        add(label);
+            labelButton.onOldNewValue ~= (bool oldv, bool newv) {
+                if (newv && onAction)
+                {
+                    onAction();
+                }
+            };
 
-        label.onOldNewValue ~= (bool oldv, bool newv) {
-            if (newv && onAction)
+            addCreate(labelButton);
+            if (onCreatedLabelButton)
             {
-                onAction();
+                onCreatedLabelButton(labelButton);
             }
-        };
+        }
     }
 
-    void isSelected(bool isSelected){
-        if(label){
-            label.isOn = isSelected;
+    Button newLabelButton(dstring text, string iconName) => new Button(text, iconName);
+
+    void isSelected(bool isSelected, bool isTriggerListeners = true)
+    {
+        if (labelButton)
+        {
+            labelButton.isOn(isSelected, isTriggerListeners);
         }
     }
 }
