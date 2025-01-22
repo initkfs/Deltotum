@@ -9,8 +9,8 @@ import api.math.geom2.rect2 : Rect2d;
 import api.math.geom2.vec2 : Vec2d;
 import api.math.random : Random;
 
-import api.dm.gui.controls.forms.fields.regulate_text_panel : RegulateTextPanel;
-import api.dm.gui.controls.forms.fields.regulate_text_field : RegulateTextField;
+import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
+import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
 
 import Math = api.math;
 

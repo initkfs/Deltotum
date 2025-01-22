@@ -24,6 +24,8 @@ class Tab : Container
 
     void delegate() onAction;
 
+    void delegate() onActivate;
+
     this(dstring text)
     {
        this(text, null, null);
@@ -61,6 +63,7 @@ class Tab : Container
             labelButton = !onNewLabelButton ? lb : onNewLabelButton(lb);
 
             labelButton.isFixedButton = true;
+            labelButton.isAutolockButton = true;
             labelButton.isBorder = false;
             labelButton.width = width;
             labelButton.height = height;

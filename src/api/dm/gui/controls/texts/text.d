@@ -905,14 +905,14 @@ class Text : Control
         return sum;
     }
 
-    void text(string t)
+    void text(string t,  bool isTriggerListeners = true)
     {
         import std.conv : to;
 
         this.text(t.to!dstring);
     }
 
-    void text(dstring t)
+    void text(dstring t,  bool isTriggerListeners = true)
     {
         if (!isBuilt || !isCreated)
         {

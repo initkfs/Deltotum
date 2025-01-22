@@ -114,7 +114,8 @@ class ManagedLayout : Layout2d
         bool isAlign;
         foreach (child; root.children)
         {
-            isAlign |= alignment(root, child);
+            auto isAlignChild = alignment(root, child);
+            isAlign |= isAlignChild;
         }
         return isAlign;
     }

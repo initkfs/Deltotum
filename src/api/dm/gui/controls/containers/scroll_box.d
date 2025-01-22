@@ -246,7 +246,7 @@ class ScrollBox : Container
         }
     }
 
-    void setContent(Sprite2d root)
+    void setContent(Sprite2d root, double newWidth = 0, double newHeight = 0)
     {
         assert(root);
         assert(content);
@@ -272,6 +272,14 @@ class ScrollBox : Container
         else
         {
             content.add(contentRoot);
+        }
+
+        if(newWidth > 0){
+            content.width = newWidth;
+        }
+
+        if(newHeight > 0){
+            content.height = newHeight;
         }
 
         checkScrolls;

@@ -727,6 +727,11 @@ class Sprite2d : EventKitTarget
 
         if (!sprite.isCreated)
         {
+            if (!sprite.isInitialized)
+            {
+                initialize(sprite);
+            }
+
             sprite.create;
             if (!sprite.isCreated)
             {
@@ -2470,7 +2475,8 @@ class Sprite2d : EventKitTarget
 
     void focus(int eventOwnerId = 0)
     {
-        if(isFocus){
+        if (isFocus)
+        {
             return;
         }
 
@@ -2488,12 +2494,13 @@ class Sprite2d : EventKitTarget
 
     void unfocus(int eventOwnerId = 0)
     {
-        if(!isFocus){
+        if (!isFocus)
+        {
             return;
         }
 
         isFocus = false;
-        
+
         if (onFocusExit.length > 0 || eventFocusHandlers.length > 0)
         {
             import api.dm.kit.events.focus.focus_event : FocusEvent;

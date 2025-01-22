@@ -446,7 +446,7 @@ class Controls : Control
         pagination.pageFactory = (size_t pageIndex) {};
         choiceRoot1.addCreate(pagination);
 
-        import api.dm.gui.controls.selects.color_pickers.color_picker: ColorPicker;
+        import  api.dm.gui.controls.selects.color_pickers.color_picker: ColorPicker;
         auto colorPicker1 = new ColorPicker;
         root.addCreate(colorPicker1);
     }

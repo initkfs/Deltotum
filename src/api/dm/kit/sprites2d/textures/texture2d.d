@@ -492,6 +492,12 @@ class Texture2d : Sprite2d
         }
     }
 
+    RGBA pixelColor(double x, double y)
+    {
+        import std.conv: to;
+        return pixelColor(x.to!uint, y.to!uint);
+    }
+
     RGBA pixelColor(uint x, uint y)
     {
         assert(texture);

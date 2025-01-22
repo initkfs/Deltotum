@@ -2,8 +2,8 @@ module api.dm.addon.fractals.hopalongs.hopalong_generator;
 
 import api.dm.addon.fractals.hopalongs.hopalong : Hopalong, HopalongType;
 
-import api.dm.gui.controls.forms.fields.regulate_text_field : RegulateTextField;
-import api.dm.gui.controls.forms.fields.regulate_text_panel : RegulateTextPanel;
+import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
+import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.containers.container : Container;

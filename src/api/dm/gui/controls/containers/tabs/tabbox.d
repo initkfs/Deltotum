@@ -29,6 +29,8 @@ class TabBox : Container
     Container delegate(Container) onNewContentContainer;
     void delegate(Container) onCreatedContentContainer;
 
+    bool isDisposeContent = true;
+
     protected
     {
         Tab _currentTab;
@@ -41,6 +43,7 @@ class TabBox : Container
         import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
         layout = new VLayout(0);
+        layout.isAutoResize = true;
         layout.isAlignX = false;
     }
 
@@ -116,7 +119,7 @@ class TabBox : Container
     }
 
     //TODO events
-    bool changeTab(Tab newTab)
+    bool changeTab(Tab newTab, bool isTriggerListeners = true)
     {
         if (!has(newTab) || newTab is _currentTab)
         {
@@ -128,6 +131,7 @@ class TabBox : Container
             if (_currentTab.content)
             {
                 _currentTab.content.isVisible = false;
+                _currentTab.content.stop;
             }
 
             _currentTab.isSelected = false;
@@ -138,8 +142,11 @@ class TabBox : Container
 
         if (_currentTab.content)
         {
-            if (!contentContainer.hasDirect(_currentTab.content))
+            if (contentContainer && !contentContainer.hasDirect(_currentTab.content))
             {
+                auto containerBounds = contentContainer.boundsRect;
+                _currentTab.content.x = containerBounds.x - contentContainer.padding.left;
+                _currentTab.content.y = containerBounds.y - contentContainer.padding.top;
                 if (!_currentTab.content.isCreated)
                 {
                     contentContainer.addCreate(newTab.content);
@@ -151,6 +158,11 @@ class TabBox : Container
             }
 
             _currentTab.content.isVisible = true;
+            _currentTab.content.run;
+
+            if(_currentTab.onActivate){
+                _currentTab.onActivate();
+            }
         }
 
         return true;
@@ -173,7 +185,8 @@ class TabBox : Container
     {
         tab.onAction = () {
 
-            if(_currentTab is tab){
+            if (_currentTab is tab)
+            {
                 return;
             }
 
@@ -211,6 +224,27 @@ class TabBox : Container
         container.layout = new ManagedLayout;
         container.layout.isAutoResize = true;
         return container;
+    }
+
+    bool selectFirstTab(bool isTriggerListeners = true)
+    {
+        if (!header || header.tabs.length == 0)
+        {
+            return false;
+        }
+        return changeTab(header.tabs[0], isTriggerListeners);
+    }
+
+    override void dispose(){
+        super.dispose;
+        if(isDisposeContent && header){
+            foreach (tab; header.tabs)
+            {
+                if(tab.content && !tab.content.isNone && !tab.content.isDisposed){
+                    stopDisposeSafe(tab.content);
+                }
+            }
+        }
     }
 
 }

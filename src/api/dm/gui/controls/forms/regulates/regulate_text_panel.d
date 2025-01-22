@@ -1,7 +1,7 @@
-module api.dm.gui.controls.forms.fields.regulate_text_panel;
-import api.dm.gui.controls.forms.fields.regulate_text_field : RegulateTextField;
+module api.dm.gui.controls.forms.regulates.regulate_text_panel;
+import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.gui.controls.control: Control;
+import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.containers.container : Container;
 
 /**
@@ -11,39 +11,36 @@ class RegulateTextPanel : Container
 {
     RegulateTextField[] fields;
 
-    this(double fieldSpacing = 5)
+    bool isInsets = true;
+
+    import api.dm.kit.sprites2d.layouts.spaceable_layout : SpaceableLayout;
+
+    this(double fieldSpacing = SpaceableLayout.DefaultSpacing)
     {
         import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
         layout = new VLayout(fieldSpacing);
         layout.isAutoResize = true;
-        layout.isAlignX = true;
     }
 
-    override void addCreate(Control control, long index = -1)
-    {
-        if (auto field = cast(RegulateTextField) control)
-        {
-            //TODO check exists
-            fields ~= field;
-            addCreate(field, index);
-            return;
-        }
+    override void create(){
+        super.create;
 
-        super.addCreate(control, index);
+        if(isInsets){
+            enableInsets;
+        }
     }
 
-    override void addCreate(Sprite2d sprite, long index = -1)
-    {
-        if (auto field = cast(RegulateTextField) sprite)
-        {
-            //TODO check exists
-            fields ~= field;
-            addCreate(field, index);
-            return;
-        }
+    alias add = Container.add;
 
-        super.addCreate(sprite, index);
+    override void add(Sprite2d obj, long index = -1)
+    {
+        super.add(obj, index);
+
+        if (auto field = cast(RegulateTextField) obj)
+        {
+            fields ~= field;
+        }
     }
 
     void alignFields()

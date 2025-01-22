@@ -1,102 +1,172 @@
 module api.dm.gui.controls.selects.color_pickers.color_picker;
 
 import api.dm.gui.controls.control : Control;
+import api.dm.kit.sprites2d.sprite2d : Sprite2d;
+import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
-import api.dm.gui.controls.containers.tabs.tabbox: TabBox;
-
+import api.dm.gui.controls.selects.color_pickers.dialogs.color_picker_dialog : ColorPickerDialog;
+import api.dm.gui.controls.texts.text : Text;
+import api.dm.kit.sprites2d.layouts.vlayout;
 
 /**
  * Authors: initkfs
  */
 class ColorPicker : Control
 {
+    Container colorValueContainer;
+
+    double colorCanvasSize = 0;
+    Sprite2d colorCanvas;
+
+    Text colorHexField;
+
+    ColorPickerDialog dialog;
+    bool isCreateDialog = true;
+    ColorPickerDialog delegate(ColorPickerDialog) onNewDialog;
+    void delegate(ColorPickerDialog) onCreatedDialog;
+
     protected
     {
-        // Circle colorIndicator;
-        // Text colorText;
-        // Button colorShowChooser;
-        // VBox colorChooser;
+        RGBA _lastColor;
     }
 
     this()
     {
-        import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
+        import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
-        layout = new HLayout;
+        layout = new VLayout(0);
         layout.isAutoResize = true;
+
+        isBorder = true;
+    }
+
+    override void loadTheme()
+    {
+        super.loadTheme;
+        loadColorPickerTheme;
+    }
+
+    void loadColorPickerTheme()
+    {
+        if (colorCanvasSize == 0)
+        {
+            colorCanvasSize = theme.iconSize;
+        }
     }
 
     override void create()
     {
         super.create;
 
-        // enableInsets;
+        colorValueContainer = newColorValueContainer;
+        addCreate(colorValueContainer);
 
-        // RGBA startColor = RGBA.white;
+        colorValueContainer.enableInsets;
 
-        // colorIndicator = new Circle(10, GraphicStyle(1, startColor, true, startColor));
-        // addCreate(colorIndicator);
+        colorCanvas = newColorCanvas;
 
-        // colorText = new Text(startColor.toWebHex);
-        // addCreate(colorText);
+        colorCanvas.width = colorCanvasSize;
+        colorCanvas.height = colorCanvasSize;
 
-        // colorShowChooser = new Button("▼", 10, 10);
-        // colorShowChooser.setGrow;
-        // addCreate(colorShowChooser);
+        colorValueContainer.addCreate(colorCanvas);
 
-        // colorShowChooser.onAction ~= (ref e) { toggleChooser; };
+        colorHexField = newColorHexField;
 
-        // colorChooser = new VBox(0);
-        // colorChooser.isLayoutManaged = false;
+        colorHexField.isReduceWidthHeight = false;
 
-        // addCreate(colorChooser);
+        colorValueContainer.addCreate(colorHexField);
 
-        // colorChooser.isVisible = false;
-        // import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
+        auto colorHexWidth = colorHexField.calcTextWidth("#") * 7;
+        if (colorHexWidth > colorHexField.width)
+        {
+            colorHexField.width = colorHexWidth;
+        }
 
-        // enum colorContainerSize = 15;
-        // enum colorTonesCount = 14;
+        if (!dialog && isCreateDialog)
+        {
+            auto d = newDialog;
+            dialog = !onNewDialog ? d : onNewDialog(d);
 
-        // HBox colorContainer;
+            dialog.onChangeOldNew = (oldColor, newColor) {
+                updateColor(newColor);
+            };
 
-        // foreach (i, hexColor; EnumMembers!MaterialPalette)
-        // {
-        //     if (i % colorTonesCount == 0)
-        //     {
-        //         colorContainer = new HBox(0);
-        //         colorContainer.id = "color_picker_tone_container";
-        //         //TODO remove paddings from initialization;
-        //         // colorContainer.padding = Insets(0);
-        //         colorChooser.addCreate(colorContainer);
-        //         colorContainer.padding = Insets(0);
-        //     }
+            addCreate(dialog);
+            if (onCreatedDialog)
+            {
+                onCreatedDialog(dialog);
+            }
+        }
 
-        //     RGBA rgba = RGBA.web(hexColor);
-        //     const size = colorContainerSize;
-        //     auto rect = new Rectangle(size, size);
-        //     rect.onPointerEnter ~= (ref e) { rect.style.lineColor = RGBA.white; };
-        //     rect.onPointerExit ~= (ref e) { rect.style.lineColor = rgba; };
-        //     rect.onPointerPress ~= (ref e) {
-        //         colorIndicator.style.fillColor = rgba;
-        //         colorIndicator.style.lineColor = rgba;
-        //         colorText.text = hexColor;
-        //         toggleChooser;
-        //     };
-        //     rect.style = GraphicStyle(1, rgba, true, rgba);
-        //     colorContainer.addCreate(rect);
-        // }
-
+        color(RGBA.red, isTriggerListeners:
+            false);
     }
 
-    void toggleChooser()
+    override void drawContent()
     {
-        // const b = boundsRect;
-        // colorChooser.x = b.x;
-        // colorChooser.y = b.bottom;
+        super.drawContent;
+        if (colorCanvas && colorCanvas.isVisible)
+        {
+            graphics.changeColor(_lastColor);
+            scope (exit)
+            {
+                graphics.restoreColor;
+            }
+            graphics.fillRect(colorCanvas.boundsRect);
+        }
+    }
 
-        // colorChooser.isVisible = !colorChooser.isVisible;
+    protected bool updateColor(RGBA newColor,  bool isTriggerListeners = true, bool isReplaceForce = false)
+    {
+        if (_lastColor == newColor && !isReplaceForce)
+        {
+            return false;
+        }
+
+        _lastColor = newColor;
+
+        if (colorHexField)
+        {
+            import std.conv : to;
+
+            colorHexField.text = newColor.toWebHex.to!dstring;
+        }
+
+        return true;
+    }
+
+    bool color(RGBA newColor, bool isTriggerListeners = true, bool isReplaceForce = false)
+    {
+        if(!updateColor(newColor, isTriggerListeners, isReplaceForce)){
+            return false;
+        }
+
+        if (dialog)
+        {
+            dialog.color(newColor);
+        }
+
+        return true;
+    }
+
+    ColorPickerDialog newDialog() => new ColorPickerDialog;
+
+    Container newColorValueContainer()
+    {
+        import api.dm.gui.controls.containers.hbox : HBox;
+
+        return new HBox;
+    }
+
+    Sprite2d newColorCanvas()
+    {
+        return new Sprite2d;
+    }
+
+    Text newColorHexField()
+    {
+        return new Text;
     }
 
 }

@@ -74,6 +74,9 @@ abstract class BaseMonoScroll : BaseScroll
         {
             auto th = newThumb;
             thumb = onNewThumb ? onNewThumb(th) : th;
+            
+            thumb.isResizedByParent = false;
+
             addCreate(thumb);
             if (onCreatedThumb)
             {
