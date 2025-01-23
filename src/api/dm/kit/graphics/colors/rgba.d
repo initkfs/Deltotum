@@ -683,19 +683,19 @@ unittest
 
     HSVA hsv0 = RGBA.black.toHSVA;
 
-    assert(hsv0.hue == 0);
-    assert(hsv0.saturation == 0);
-    assert(hsv0.value == 0);
+    assert(hsv0.h == 0);
+    assert(hsv0.s == 0);
+    assert(hsv0.v == 0);
 
     HSVA hsv255 = RGBA.white.toHSVA;
-    assert(hsv255.hue == 0);
-    assert(hsv255.saturation == 0);
-    assert(hsv255.value == 1);
+    assert(hsv255.h == 0);
+    assert(hsv255.s == 0);
+    assert(hsv255.v == 1);
 
     HSVA hsv1 = RGBA(34, 50, 16).toHSVA;
-    assert(isClose(hsv1.hue, 88.24, 0.0001));
-    assert(isClose(hsv1.saturation, 0.68, 0.0001));
-    assert(isClose(hsv1.value, 0.196, 0.001));
+    assert(isClose(hsv1.h, 88.24, 0.0001));
+    assert(isClose(hsv1.s, 0.68, 0.0001));
+    assert(isClose(hsv1.v, 0.196, 0.001));
 }
 
 unittest
@@ -705,15 +705,15 @@ unittest
 
     HSLA hsl1 = RGBA.black.toHSLA;
 
-    assert(hsl1.hue == 0);
-    assert(hsl1.saturation == 0);
-    assert(hsl1.lightness == 0);
+    assert(hsl1.h == 0);
+    assert(hsl1.s == 0);
+    assert(hsl1.l == 0);
 
     HSLA hsl2 = RGBA(123, 16, 24).toHSLA;
 
-    assert(isClose(hsl2.hue, 355.5, 0.1));
-    assert(isClose(hsl2.saturation, 0.7698, 0.01));
-    assert(isClose(hsl2.lightness, 0.2725, 0.01));
+    assert(isClose(hsl2.h, 355.5, 0.1));
+    assert(isClose(hsl2.s, 0.7698, 0.01));
+    assert(isClose(hsl2.l, 0.2725, 0.01));
 }
 
 unittest

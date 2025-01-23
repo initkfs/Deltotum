@@ -23,10 +23,10 @@ struct HSLA
         maxAlpha = Color.maxAlpha
     }
 
-    double hue = 0;
-    double saturation = maxSaturation;
-    double lightness = maxLightness;
-    double alpha = maxAlpha;
+    double h = 0;
+    double s = maxSaturation;
+    double l = maxLightness;
+    double a = maxAlpha;
 
     import api.math.random : Random;
 
@@ -45,17 +45,17 @@ struct HSLA
      */
     RGBA toRGBA()
     {
-        const double hueNorm = hue / maxHue;
+        const double hueNorm = h / maxHue;
 
         double r = 0;
         double g = 0;
         double b = 0;
 
-        if (saturation == 0)
+        if (s == 0)
         {
-            r = lightness;
-            g = lightness;
-            b = lightness;
+            r = l;
+            g = l;
+            b = l;
         }
         else
         {
@@ -89,9 +89,9 @@ struct HSLA
                 return p;
             }
 
-            const double q = (lightness < 0.5) ? (lightness * (1 + saturation)) : (
-                lightness + saturation - lightness * saturation);
-            const double p = 2 * lightness - q;
+            const double q = (l < 0.5) ? (l * (1 + s)) : (
+                l + s - l * s);
+            const double p = 2 * l - q;
 
             r = convertHue(p, q, hueNorm + 1 / 3.0);
             g = convertHue(p, q, hueNorm);
@@ -104,7 +104,7 @@ struct HSLA
         const newG = cast(ubyte) Math.round(g * RGBA.maxColor);
         const newB = cast(ubyte) Math.round(b * RGBA.maxColor);
 
-        return RGBA(newR, newG, newB, alpha);
+        return RGBA(newR, newG, newB, a);
     }
 
     /** 
@@ -112,21 +112,21 @@ struct HSLA
      */
     HSVA toHSVA() const @safe
     {
-        double newHue = hue;
-        double newValue = saturation * Math.min(lightness, 1 - lightness) + lightness;
+        double newHue = h;
+        double newValue = s * Math.min(l, 1 - l) + l;
 
-        double newSaturation = newValue != 0 ? (2.0 - 2 * lightness / newValue) : 0;
+        double newSaturation = newValue != 0 ? (2.0 - 2 * l / newValue) : 0;
 
-        return HSVA(newHue, newSaturation, newValue, alpha);
+        return HSVA(newHue, newSaturation, newValue, a);
     }
 
-    double setMaxHue() => hue = maxHue;
-    double setMaxLightness() => lightness = maxLightness;
-    double setMaxSaturation() => saturation = maxSaturation;
+    double setMaxHue() => h = maxHue;
+    double setMaxLightness() => l = maxLightness;
+    double setMaxSaturation() => s = maxSaturation;
 
-    double setMinHue() => hue = minHue;
-    double setMinLightness() => lightness = minLightness;
-    double setMinSaturation() => saturation = minSaturation;
+    double setMinHue() => h = minHue;
+    double setMinLightness() => l = minLightness;
+    double setMinSaturation() => s = minSaturation;
 }
 
 unittest
@@ -148,8 +148,8 @@ unittest
 
     auto hsv1 = HSLA(123, 0.43, 0.56).toHSVA;
 
-    assert(isClose(hsv1.hue, 123));
-    assert(isClose(hsv1.saturation, 0.5050, 0.001));
-    assert(isClose(hsv1.value, 0.7492, 0.001));
-    assert(isClose(hsv1.alpha, 1));
+    assert(isClose(hsv1.h, 123));
+    assert(isClose(hsv1.s, 0.5050, 0.001));
+    assert(isClose(hsv1.v, 0.7492, 0.001));
+    assert(isClose(hsv1.a, 1));
 }

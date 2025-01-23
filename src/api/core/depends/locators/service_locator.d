@@ -125,7 +125,7 @@ unittest
 
     auto locator = new ServiceLocator(new NullLogging());
     Variant a;
-    assertThrown(locator.put(key1, a));
+    assertThrown(locator.putVar(key1, a));
     a = 5;
     assert(locator.putVar(key1, a));
     assert(!locator.putVar(key1, a));

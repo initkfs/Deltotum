@@ -23,10 +23,10 @@ struct HSVA
         maxAlpha = Color.maxAlpha
     }
 
-    double hue = 0;
-    double saturation = maxSaturation;
-    double value = maxValue;
-    double alpha = maxAlpha;
+    double h = 0;
+    double s = maxSaturation;
+    double v = maxValue;
+    double a= maxAlpha;
 
     import api.math.random : Random;
 
@@ -42,72 +42,72 @@ struct HSVA
 
     RGBA toRGBA() const pure @safe
     {
-        if (value == 0)
+        if (v == 0)
         {
             auto color = RGBA.black;
-            color.a = alpha;
+            color.a = a;
             return color;
         }
 
-        double h = hue, s = saturation, v = value;
+        double hue = h, sat = s, value = v;
         double r = 0, g = 0, b = 0;
         double f = 0, p = 0, q = 0, t = 0;
         int i;
 
-        if (saturation == 0)
+        if (s == 0)
         {
-            r = v;
-            g = v;
-            b = v;
+            r = value;
+            g = value;
+            b = value;
         }
         else
         {
-            h = (h == maxHue) ? 0 : h / 60.0;
-            i = cast(int) h;
-            f = h - i;
+            hue = (hue == maxHue) ? 0 : hue / 60.0;
+            i = cast(int) hue;
+            f = hue - i;
 
             // s *= 0.01;
             // v *= 0.01;
             enum double maxValue = 1.0;
 
-            p = v * (maxValue - s);
-            q = v * (maxValue - (s * f));
-            t = v * (maxValue - (s * (maxValue - f)));
+            p = value * (maxValue - sat);
+            q = value * (maxValue - (sat * f));
+            t = value * (maxValue - (sat * (maxValue - f)));
 
             switch (i)
             {
                 case 0:
-                    r = v;
+                    r = value;
                     g = t;
                     b = p;
                     break;
                 case 1:
                     r = q;
-                    g = v;
+                    g = value;
                     b = p;
                     break;
                 case 2:
                     r = p;
-                    g = v;
+                    g = value;
                     b = t;
                     break;
                 case 3:
                     r = p;
                     g = q;
-                    b = v;
+                    b = value;
                     break;
                 case 4:
                     r = t;
                     g = p;
-                    b = v;
+                    b = value;
                     break;
                 case 5:
-                    r = v;
+                    r = value;
                     g = p;
                     b = q;
                     break;
                 default:
-                    r = v;
+                    r = value;
                     g = p;
                     b = q;
             }
@@ -117,9 +117,9 @@ struct HSVA
         import std.conv : to;
 
         //TODO loss of precision and fractional values
-        auto toRGBAColor = (double value) => to!ubyte(round(value * RGBA.maxColor));
+        ubyte toRGBAColor(double value) => to!ubyte(round(value * RGBA.maxColor));
 
-        RGBA result = RGBA(toRGBAColor(r), toRGBAColor(g), toRGBAColor(b), alpha);
+        RGBA result = RGBA(toRGBAColor(r), toRGBAColor(g), toRGBAColor(b), a);
         return result;
     }
 
@@ -128,22 +128,22 @@ struct HSVA
      */
     HSLA toHSLA() const @safe
     {
-        double newHue = hue;
-        double lightness = value - value * saturation / 2.0;
+        double newHue = h;
+        double lightness = v - v * s / 2.0;
 
         double m = Math.min(lightness, 1 - lightness);
-        double sat = m != 0 ? (value - lightness) / m : 0;
+        double sat = m != 0 ? (v - lightness) / m : 0;
 
-        return HSLA(newHue, sat, lightness, alpha);
+        return HSLA(newHue, sat, lightness, a);
     }
 
-    double setMaxHue() => hue = maxHue;
-    double setMaxValue() => value = maxValue;
-    double setMaxSaturation() => saturation = maxSaturation;
+    double setMaxHue() => h = maxHue;
+    double setMaxValue() => v = maxValue;
+    double setMaxSaturation() => s = maxSaturation;
 
-    double setMinHue() => hue = minHue;
-    double setMinValue() => value = minValue;
-    double setMinSaturation() => saturation = minSaturation;
+    double setMinHue() => h = minHue;
+    double setMinValue() => v = minValue;
+    double setMinSaturation() => s = minSaturation;
 }
 
 unittest
@@ -174,7 +174,7 @@ unittest
     import std.math.operations : isClose;
 
     HSLA hsl1 = HSVA(60, 0.46, 0.78).toHSLA;
-    assert(isClose(hsl1.hue, 60));
-    assert(isClose(hsl1.saturation, 0.4491, 0.001));
-    assert(isClose(hsl1.lightness, 0.60, 0.001));
+    assert(isClose(hsl1.h, 60));
+    assert(isClose(hsl1.s, 0.4491, 0.001));
+    assert(isClose(hsl1.l, 0.60, 0.001));
 }

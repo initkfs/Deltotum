@@ -378,16 +378,16 @@ class ColorPickerDialog : Control
     protected void setColorHSL(HSLA newColor)
     {
         assert(hslHField);
-        hslHField.value = newColor.hue;
+        hslHField.value = newColor.h;
 
         assert(hslSField);
-        hslSField.value = newColor.saturation;
+        hslSField.value = newColor.s;
 
         assert(hslLField);
-        hslLField.value = newColor.lightness;
+        hslLField.value = newColor.l;
 
         assert(alphaField);
-        alphaField.value(newColor.alpha, isTriggerListeners:
+        alphaField.value(newColor.a, isTriggerListeners:
             false);
     }
 

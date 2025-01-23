@@ -140,7 +140,7 @@ unittest
 
     const brushBounds = Rect2d(0, 0, 100, 100);
     auto brush = new Brush(Vec2d(0, 0), 0);
-    brush.boundsRect = brushBounds;
+    brush.bounds = brushBounds;
 
     assert(brush.move(10));
     assert(brush.pos.x == 10);
