@@ -17,18 +17,18 @@ class BaseSelector(T) : Control
 
     void delegate(T, T)[] onChangeOldNew;
 
-    bool current(T item, bool isTriggerListeners = true)
+    bool current(T item, bool isTriggerListeners = true, bool isReplaceForce = false)
     {
         static if (__traits(compiles, item is item))
         {
-            if (item is _current)
+            if (item is _current && !isReplaceForce)
             {
                 return false;
             }
         }
         else
         {
-            if (item == _current)
+            if (item == _current && !isReplaceForce)
             {
                 return false;
             }

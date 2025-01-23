@@ -10,7 +10,7 @@ import api.dm.gui.controls.popups.popup : Popup;
  */
 class BaseDropDownSelector(T) : BaseSelector!T
 {
-    bool isDropDownDialog = true;
+    bool isDropDownDialog;
 
     BasePopup popup;
     BasePopup delegate(BasePopup) onNewPopup;

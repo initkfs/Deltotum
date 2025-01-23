@@ -26,14 +26,11 @@ class ColorPicker : BaseDropDownSelector!RGBA
     ColorPickerDialog delegate(ColorPickerDialog) onNewDialog;
     void delegate(ColorPickerDialog) onCreatedDialog;
 
-    protected
-    {
-        RGBA _lastColor;
-    }
-
     this()
     {
         isBorder = true;
+
+        isDropDownDialog = true;
     }
 
     override void loadTheme()
@@ -113,7 +110,7 @@ class ColorPicker : BaseDropDownSelector!RGBA
         super.drawContent;
         if (colorCanvas && colorCanvas.isVisible)
         {
-            graphics.changeColor(_lastColor);
+            graphics.changeColor(current);
             scope (exit)
             {
                 graphics.restoreColor;
@@ -124,12 +121,10 @@ class ColorPicker : BaseDropDownSelector!RGBA
 
     protected bool updateColor(RGBA newColor, bool isTriggerListeners = true, bool isReplaceForce = false)
     {
-        if (_lastColor == newColor && !isReplaceForce)
+        if (!current(newColor, isTriggerListeners, isReplaceForce))
         {
             return false;
         }
-
-        _lastColor = newColor;
 
         if (colorHexField)
         {

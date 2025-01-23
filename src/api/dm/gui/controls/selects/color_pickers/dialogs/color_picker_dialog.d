@@ -38,6 +38,8 @@ class ColorPickerDialog : Control
 
     void delegate(RGBA, RGBA) onChangeOldNew;
 
+    size_t paletteColorSize = 14;
+
     protected
     {
         RGBA _lastColor;
@@ -202,7 +204,7 @@ class ColorPickerDialog : Control
     {
         assert(contentContainer);
 
-        auto hslTab = newTab("HSLA");
+        auto hslTab = newTab("HSL");
         hslTab.id = "color_picker_hsl_tab";
 
         hslTab.onActivate = () { setColorHSL(_lastColor.toHSLA); };
@@ -268,6 +270,7 @@ class ColorPickerDialog : Control
         import api.dm.gui.controls.containers.scroll_box : ScrollBox, ScrollBarPolicy;
 
         auto container = new ScrollBox;
+        container.isBorder = false;
         buildInitCreate(container);
 
         import api.dm.kit.sprites2d.textures.rgba_texture : RgbaTexture;
@@ -275,10 +278,11 @@ class ColorPickerDialog : Control
         import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
 
         size_t colorInRow = MaterialPalette.maxToneCount;
-        double colorProbeSize = 10;
+        
+        assert(paletteColorSize > 0);
 
-        auto colorTextureW = colorInRow * colorProbeSize;
-        auto colorTextureH = MaterialPalette.colorCount * colorProbeSize;
+        auto colorTextureW = colorInRow * paletteColorSize;
+        auto colorTextureH = MaterialPalette.colorCount * paletteColorSize;
 
         container.width = colorTextureW;
         container.height = colorTextureH;
@@ -304,19 +308,19 @@ class ColorPickerDialog : Control
                     static if (is(typeof(__traits(getMember, MaterialPalette, color)) : string))
                     {
                         graphics.changeColor(RGBA.web(__traits(getMember, MaterialPalette, color)));
-                        graphics.fillRect(nextX, nextY, colorProbeSize, colorProbeSize);
+                        graphics.fillRect(nextX, nextY, paletteColorSize, paletteColorSize);
 
-                        colorPixels[pixelCounter] = ColorInfo(Rect2d(nextX, nextY, colorProbeSize, colorProbeSize),graphics.getColor);
+                        colorPixels[pixelCounter] = ColorInfo(Rect2d(nextX, nextY, paletteColorSize, paletteColorSize),graphics.getColor);
                         pixelCounter++;
 
-                        nextX += colorProbeSize;
+                        nextX += paletteColorSize;
                         colIndex++;
                         
                         if (colIndex >= colorInRow)
                         {
                             colIndex = 0;
                             nextX = 0;
-                            nextY += colorProbeSize;
+                            nextY += paletteColorSize;
                         }
                     }
                 }

@@ -448,6 +448,7 @@ class Controls : Control
 
         import  api.dm.gui.controls.selects.color_pickers.color_picker: ColorPicker;
         auto colorPicker1 = new ColorPicker;
+        colorPicker1.isDropDownDialog = false;
         root.addCreate(colorPicker1);
     }
 
