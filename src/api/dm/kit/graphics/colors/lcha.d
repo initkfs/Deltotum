@@ -50,7 +50,7 @@ struct LCHA
         const r = rgb255(b1(x * 3.021973625 - y * 1.617392459 - z * 0.404875592));
         const g = rgb255(b1(x * -0.943766287 + y * 1.916279586 + z * 0.027607165));
         const b = rgb255(b1(x * 0.069407491 - y * 0.22898585 + z * 1.159737864));
-        return RGBA(r, g, b);
+        return RGBA(r, g, b, a);
     }
 
     void fromRGBA(RGBA rgba)
@@ -67,6 +67,7 @@ struct LCHA
         this.h = h < 0 ? (h + 360) : h;
         this.c = (Math.sqrt(l * l + q * q)) / 100.0;
         this.l = (116 * y - 16) / 100.0;
+        this.a = rgba.a;
     }
 
 }
