@@ -60,7 +60,7 @@ class RadialSegmentBar : Control
 
     protected RGBA offSegmentColor(RGBA color)
     {
-        auto newColor = color.toHSL;
+        auto newColor = color.toHSLA;
         newColor.lightness /= 5;
         return newColor.toRGBA;
     }

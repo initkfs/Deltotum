@@ -50,10 +50,10 @@ class PieTexture : VectorTexture
 
         canvas.translate(centerPos.x, centerPos.y);
 
-        import api.dm.kit.graphics.colors.hsv : HSV;
+        import api.dm.kit.graphics.colors.hsva : HSVA;
 
-        auto startColor = RGBA.random.toHSV;
-        startColor.saturation = HSV.maxSaturation;
+        auto startColor = RGBA.random.toHSVA;
+        startColor.saturation = HSVA.maxSaturation;
 
         foreach (i, ref PieData data; values)
         {
@@ -61,8 +61,8 @@ class PieTexture : VectorTexture
 
             canvas.color(color);
 
-            startColor.hue = (startColor.hue + 100) % HSV.maxHue;
-            startColor.value = HSV.maxValue;
+            startColor.hue = (startColor.hue + 100) % HSVA.maxHue;
+            startColor.value = HSVA.maxValue;
 
             double v = data.value;
             double dataAngleDeg = (v * fullAngleDeg) / totalValue;

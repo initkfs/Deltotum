@@ -2,7 +2,7 @@ module api.dm.addon.math.geom2.diamond_square;
 /**
  * Authors: initkfs
  */
-import api.dm.kit.graphics.colors.hsv : HSV;
+import api.dm.kit.graphics.colors.hsva : HSVA;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
 import Math = api.math;
@@ -306,14 +306,14 @@ struct DiamondSquare
 struct TerrainType
 {
     string name;
-    HSV color;
+    HSVA color;
     double variance = 0;
 }
 
 struct TerrainInfo
 {
     TerrainType type;
-    HSV color;
+    HSVA color;
 }
 
 struct TerrainPixel
@@ -341,18 +341,18 @@ struct DiamondSquareTerrain
 
     TerrainType unknownTerrain =
     {name: "unknown",
-    color: HSV(0, 1, 1),
+    color: HSVA(0, 1, 1),
     variance: 1};
 
     TerrainType[] terrains = [
         {name: "mountain",
-    color: HSV(30, 0.5, 0.5),
+    color: HSVA(30, 0.5, 0.5),
     variance: 20},
         {name: "plain",
-    color: HSV(100, 0.5, 0.7),
+    color: HSVA(100, 0.5, 0.7),
     variance: 20},
         {name: "water",
-    color: HSV(200, 0.9, 0.67),
+    color: HSVA(200, 0.9, 0.67),
     variance: 10}
     ];
 
@@ -393,9 +393,9 @@ struct DiamondSquareTerrain
             : terrains[terrains.length - 1];
 
         auto finalVariance = Math.floor(rnd.between0to1 * terrain.variance);
-        auto finalHue = (terrain.color.hue + finalVariance) % HSV.maxHue;
+        auto finalHue = (terrain.color.hue + finalVariance) % HSVA.maxHue;
 
-        return TerrainInfo(terrain, HSV(finalHue, terrain.color.saturation, terrain.color.value));
+        return TerrainInfo(terrain, HSVA(finalHue, terrain.color.saturation, terrain.color.value));
     }
 
     void generate()

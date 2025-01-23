@@ -268,13 +268,13 @@ class MDLandscapeGenerator : Control
             auto ctx = canvas;
 
             import api.dm.kit.graphics.contexts.graphics_context : GradientStopPoint;
-            import api.dm.kit.graphics.colors.hsv : HSV;
+            import api.dm.kit.graphics.colors.hsva : HSVA;
 
-            auto mainColorHSV = mainColor.toHSV;
+            auto mainColorHSV = mainColor.toHSVA;
             auto endColor = mainColorHSV;
 
             mainColorHSV.value= 0.25;
-            endColor.hue = HSV.maxHue - mainColorHSV.hue;
+            endColor.hue = HSVA.maxHue - mainColorHSV.hue;
             endColor.value = 1.0;
             endColor.saturation = 1.0;
 
@@ -301,7 +301,7 @@ class MDLandscapeGenerator : Control
 
             auto lightDiameter = 100;
 
-            auto lightColorHSV = lightColor.toHSV;
+            auto lightColorHSV = lightColor.toHSVA;
             auto innerLightColor = lightColorHSV;
             auto outerLightColor = lightColorHSV;
 
@@ -329,7 +329,7 @@ class MDLandscapeGenerator : Control
 
             foreach (ref color, linePoints; layerLinePoints)
             {
-                auto startLineColor = color.toHSV;
+                auto startLineColor = color.toHSVA;
                 auto endLineColor = startLineColor;
 
                 startLineColor.value = 1;

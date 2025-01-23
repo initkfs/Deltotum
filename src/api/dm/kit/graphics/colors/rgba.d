@@ -1,8 +1,9 @@
 module api.dm.kit.graphics.colors.rgba;
 
+import Color = api.dm.kit.graphics.colors.color;
 import ExtendedPalette = api.dm.kit.graphics.colors.palettes.extended_palette;
-import api.dm.kit.graphics.colors.hsv : HSV;
-import api.dm.kit.graphics.colors.hsl : HSL;
+import api.dm.kit.graphics.colors.hsva : HSVA;
+import api.dm.kit.graphics.colors.hsla : HSLA;
 
 import std.regex;
 import std.conv : to;
@@ -33,8 +34,8 @@ struct RGBA
     {
         minColor = 0,
         maxColor = 255,
-        minAlpha = 0,
-        maxAlpha = 1
+        minAlpha = Color.minAlpha,
+        maxAlpha = Color.maxAlpha
     }
 
     static RGBA web(string colorString, double a = maxAlpha) pure @safe
@@ -275,14 +276,16 @@ struct RGBA
 
     void brightness(double factor) pure @safe
     {
-        //or convert to HSV, and scale V.
+        //or convert to HSVA, and scale V.
         assert(factor > 0);
         import std.conv : to;
 
         import Math = api.dm.math;
 
-        scope ubyte delegate(ubyte) pure @safe calc = (color) => cast(ubyte) Math.min(
-            Math.round(color * factor), maxColor);
+        pure @safe ubyte calc(ubyte color)
+        {
+            return cast(ubyte) Math.min(Math.round(color * factor), maxColor);
+        }
 
         r = calc(r);
         g = calc(g);
@@ -302,10 +305,11 @@ struct RGBA
         const double correctFactor = (maxCoeffFactor * (factor + maxColor)) / (
             maxColor * (maxCoeffFactor - factor));
 
-        scope ubyte delegate(ubyte) pure @safe calc = (color) {
+        pure @safe ubyte calc(ubyte color)
+        {
             const newValue = correctFactor * (color - halfColor) + halfColor;
             return cast(ubyte) Math.min(Math.abs(newValue), RGBA.maxColor);
-        };
+        }
 
         r = calc(r);
         g = calc(g);
@@ -322,10 +326,11 @@ struct RGBA
         enum maxColor = RGBA.maxColor;
         double correctFactor = 1.0 / value;
 
-        scope ubyte delegate(double) pure @safe calc = (colorNorm) {
+        pure @safe ubyte calc(double colorNorm)
+        {
             const newValue = maxColor * (colorNorm ^^ correctFactor);
             return cast(ubyte) Math.min(newValue, maxColor);
-        };
+        }
 
         r = calc(rNorm);
         g = calc(gNorm);
@@ -352,7 +357,7 @@ struct RGBA
     ubyte setMinB() => b = minColor;
     double setMinA() => a = minAlpha;
 
-    HSV toHSV() const @safe
+    HSVA toHSVA() const @safe
     {
         const double newR = colorNorm(r);
         const double newG = colorNorm(g);
@@ -376,16 +381,16 @@ struct RGBA
         }
         else if (isClose(cmax, newR))
         {
-            hue = fmod(hueStartAngle * ((newG - newB) / delta) + HSV.maxHue, HSV
+            hue = fmod(hueStartAngle * ((newG - newB) / delta) + HSVA.maxHue, HSVA
                     .maxHue);
         }
         else if (isClose(cmax, newG))
         {
-            hue = fmod(hueStartAngle * ((newB - newR) / delta) + 120, HSV.maxHue);
+            hue = fmod(hueStartAngle * ((newB - newR) / delta) + 120, HSVA.maxHue);
         }
         else if (isClose(cmax, newB))
         {
-            hue = fmod(hueStartAngle * ((newR - newG) / delta) + 240, HSV.maxHue);
+            hue = fmod(hueStartAngle * ((newR - newG) / delta) + 240, HSVA.maxHue);
         }
         else
         {
@@ -393,16 +398,16 @@ struct RGBA
         }
 
         const double saturation = isClose(cmax, 0) ? 0 : (
-            delta / cmax) * HSV.maxSaturation;
-        const double value = cmax * HSV.maxValue;
+            delta / cmax) * HSVA.maxSaturation;
+        const double value = cmax * HSVA.maxValue;
 
-        return HSV(hue, saturation, value, a);
+        return HSVA(hue, saturation, value, a);
     }
 
     /** 
      * https://stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion
      */
-    HSL toHSL() const @safe
+    HSLA toHSLA() const @safe
     {
         import Math = api.math;
 
@@ -422,7 +427,7 @@ struct RGBA
             h = 0;
             s = 0;
 
-            return HSL(h, s, l, a);
+            return HSLA(h, s, l, a);
         }
 
         const double dist = max - min;
@@ -447,7 +452,7 @@ struct RGBA
         h /= 6;
         h = h * 360.0;
 
-        return HSL(h, s, l, a);
+        return HSLA(h, s, l, a);
     }
 
     static
@@ -676,18 +681,18 @@ unittest
     import std.math.operations : isClose;
     import std.math.rounding : round;
 
-    HSV hsv0 = RGBA.black.toHSV;
+    HSVA hsv0 = RGBA.black.toHSVA;
 
     assert(hsv0.hue == 0);
     assert(hsv0.saturation == 0);
     assert(hsv0.value == 0);
 
-    HSV hsv255 = RGBA.white.toHSV;
+    HSVA hsv255 = RGBA.white.toHSVA;
     assert(hsv255.hue == 0);
     assert(hsv255.saturation == 0);
     assert(hsv255.value == 1);
 
-    HSV hsv1 = RGBA(34, 50, 16).toHSV;
+    HSVA hsv1 = RGBA(34, 50, 16).toHSVA;
     assert(isClose(hsv1.hue, 88.24, 0.0001));
     assert(isClose(hsv1.saturation, 0.68, 0.0001));
     assert(isClose(hsv1.value, 0.196, 0.001));
@@ -698,13 +703,13 @@ unittest
     import std.math.operations : isClose;
     import std.math.rounding : round;
 
-    HSL hsl1 = RGBA.black.toHSL;
+    HSLA hsl1 = RGBA.black.toHSLA;
 
     assert(hsl1.hue == 0);
     assert(hsl1.saturation == 0);
     assert(hsl1.lightness == 0);
 
-    HSL hsl2 = RGBA(123, 16, 24).toHSL;
+    HSLA hsl2 = RGBA(123, 16, 24).toHSLA;
 
     assert(isClose(hsl2.hue, 355.5, 0.1));
     assert(isClose(hsl2.saturation, 0.7698, 0.01));

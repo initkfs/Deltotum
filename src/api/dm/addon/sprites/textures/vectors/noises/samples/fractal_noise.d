@@ -4,7 +4,7 @@ import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.addon.sprites.textures.vectors.noises.noise : Noise;
 import api.dm.addon.sprites.textures.vectors.noises.samples.sample_noise : SampleNoise;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.graphics.colors.hsv : HSV;
+import api.dm.kit.graphics.colors.hsva : HSVA;
 
 import Math = api.dm.math;
 
@@ -23,7 +23,7 @@ class FractalNoise : Texture2d
     float offsetY = 0;
     float offsetZ = 0;
 
-    HSV noiseColor = HSV(0, 0.3, 1);
+    HSVA noiseColor = HSVA(0, 0.3, 1);
     float valueScale = 1;
 
     //The rate at which the amplitude changes.
@@ -118,7 +118,7 @@ class FractalNoise : Texture2d
             {
                 float n = noiseValues[y][x];
                 //ubyte b = cast(ubyte)(n * ubyte.max);
-                newColor.value = Math.clamp(n * valueScale, HSV.minValue, HSV.maxValue);
+                newColor.value = Math.clamp(n * valueScale, HSVA.minValue, HSVA.maxValue);
                 color = newColor.toRGBA;
                 if (const err = texture.setPixelColor(x, y, color.r, color.g, color.b, color.aByte))
                 {

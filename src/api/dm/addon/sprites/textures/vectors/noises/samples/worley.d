@@ -5,7 +5,7 @@ import api.dm.addon.sprites.textures.vectors.noises.samples.voronoi: VoronoiDist
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.graphics.colors.hsv : HSV;
+import api.dm.kit.graphics.colors.hsva : HSVA;
 import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
 import api.dm.addon.sprites.textures.vectors.noises.samples.permutation_table : PermutationTable;
 

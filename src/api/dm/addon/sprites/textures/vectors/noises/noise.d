@@ -2,14 +2,14 @@ module api.dm.addon.sprites.textures.vectors.noises.noise;
 
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.graphics.colors.hsv: HSV;
+import api.dm.kit.graphics.colors.hsva: HSVA;
 
 /**
  * Authors: initkfs
  */
 abstract class Noise : Texture2d
 {
-    HSV noiseColor;
+    HSVA noiseColor;
 
     this(double width = 100, double height = 100)
     {

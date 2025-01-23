@@ -18,7 +18,7 @@ import api.math.random : Random;
 import Math = api.math;
 import api.math.geom2.vec2 : Vec2i;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.graphics.colors.hsv : HSV;
+import api.dm.kit.graphics.colors.hsva : HSVA;
 import api.dm.back.sdl2.sdl_surface : SdlSurface;
 
 /**
@@ -69,7 +69,7 @@ class HopalongGenerator : Control
         points = new Vec2i[](hopalong.iterations);
     }
 
-    HSV color;
+    HSVA color;
 
     override void drawContent()
     {

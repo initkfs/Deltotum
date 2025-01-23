@@ -1,14 +1,15 @@
-module api.dm.kit.graphics.colors.hsv;
+module api.dm.kit.graphics.colors.hsva;
 
+import Color = api.dm.kit.graphics.colors.color;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.graphics.colors.hsl : HSL;
+import api.dm.kit.graphics.colors.hsla : HSLA;
 
 import Math = api.math;
 
 /**
  * Authors: initkfs
  */
-struct HSV
+struct HSVA
 {
     static enum : double
     {
@@ -18,8 +19,8 @@ struct HSV
         maxSaturation = 1,
         minValue = 0,
         maxValue = 1,
-        minAlpha = 0,
-        maxAlpha = 1
+        minAlpha = Color.minAlpha,
+        maxAlpha = Color.maxAlpha
     }
 
     double hue = 0;
@@ -29,9 +30,9 @@ struct HSV
 
     import api.math.random : Random;
 
-    static HSV random(Random rnd, double alpha = maxAlpha)
+    static HSVA random(Random rnd, double alpha = maxAlpha)
     {
-        return HSV(
+        return HSVA(
             rnd.between(minHue, maxHue),
             rnd.between(minSaturation, maxSaturation),
             rnd.between(minValue, maxValue),
@@ -125,7 +126,7 @@ struct HSV
     /** 
      * https://stackoverflow.com/questions/3423214/convert-hsb-hsv-color-to-hsl
      */
-    HSL toHSL() const @safe
+    HSLA toHSLA() const @safe
     {
         double newHue = hue;
         double lightness = value - value * saturation / 2.0;
@@ -133,7 +134,7 @@ struct HSV
         double m = Math.min(lightness, 1 - lightness);
         double sat = m != 0 ? (value - lightness) / m : 0;
 
-        return HSL(newHue, sat, lightness, alpha);
+        return HSLA(newHue, sat, lightness, alpha);
     }
 
     double setMaxHue() => hue = maxHue;
@@ -148,21 +149,21 @@ struct HSV
 unittest
 {
 
-    RGBA r0 = HSV(0, 0, 0).toRGBA;
+    RGBA r0 = HSVA(0, 0, 0).toRGBA;
     assert(r0 == RGBA.black);
 
-    RGBA r02 = HSV(360, 1, 0).toRGBA;
+    RGBA r02 = HSVA(360, 1, 0).toRGBA;
     assert(r02 == RGBA.black);
 
-    RGBA r03 = HSV(360, 0, 0).toRGBA;
+    RGBA r03 = HSVA(360, 0, 0).toRGBA;
     assert(r03 == RGBA.black);
 
-    RGBA rFF0004 = HSV(360, 1, 1).toRGBA;
+    RGBA rFF0004 = HSVA(360, 1, 1).toRGBA;
     assert(rFF0004.r == 255);
     assert(rFF0004.g == 0);
     assert(rFF0004.b == 0);
 
-    RGBA r5e8339 = HSV(90.0, 0.564, 0.513).toRGBA;
+    RGBA r5e8339 = HSVA(90.0, 0.564, 0.513).toRGBA;
     assert(r5e8339.r == 94);
     assert(r5e8339.g == 131);
     assert(r5e8339.b == 57);
@@ -172,7 +173,7 @@ unittest
 {
     import std.math.operations : isClose;
 
-    HSL hsl1 = HSV(60, 0.46, 0.78).toHSL;
+    HSLA hsl1 = HSVA(60, 0.46, 0.78).toHSLA;
     assert(isClose(hsl1.hue, 60));
     assert(isClose(hsl1.saturation, 0.4491, 0.001));
     assert(isClose(hsl1.lightness, 0.60, 0.001));

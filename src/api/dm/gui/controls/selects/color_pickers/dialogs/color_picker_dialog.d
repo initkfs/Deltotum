@@ -10,8 +10,8 @@ import api.dm.gui.controls.containers.tabs.tab : Tab;
 import api.dm.gui.controls.forms.regulates.regulate_text_field;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.graphics.colors.hsv : HSV;
-import api.dm.kit.graphics.colors.hsl : HSL;
+import api.dm.kit.graphics.colors.hsva : HSVA;
+import api.dm.kit.graphics.colors.hsla : HSLA;
 
 import api.math.geom2.rect2: Rect2d;
 import Math = api.math;
@@ -101,10 +101,10 @@ class ColorPickerDialog : Control
             createRGBTab;
             createPalTab;
 
-            // auto hsvTab = new Tab("HSV");
+            // auto hsvTab = new Tab("HSVA");
             // contentContainer.addCreate(hsvTab);
 
-            // auto hslTab = new Tab("HSL");
+            // auto hslTab = new Tab("HSLA");
             // contentContainer.addCreate(hslTab);
 
             // auto paletteTab = new Tab("Pal");
@@ -202,10 +202,10 @@ class ColorPickerDialog : Control
     {
         assert(contentContainer);
 
-        auto hslTab = newTab("HSL");
+        auto hslTab = newTab("HSLA");
         hslTab.id = "color_picker_hsl_tab";
 
-        hslTab.onActivate = () { setColorHSL(_lastColor.toHSL); };
+        hslTab.onActivate = () { setColorHSL(_lastColor.toHSLA); };
 
         hslTab.content = createHSLTabContent;
 
@@ -220,17 +220,17 @@ class ColorPickerDialog : Control
         auto form = new RegulateTextPanel;
         buildInitCreate(form);
 
-        hslHField = new RegulateTextField("H", HSL.minHue, HSL.maxHue, (v) {
+        hslHField = new RegulateTextField("H", HSLA.minHue, HSLA.maxHue, (v) {
             updateColorHSL;
         });
         form.addCreate(hslHField);
 
-        hslSField = new RegulateTextField("S", HSL.minSaturation, HSL.maxSaturation, (v) {
+        hslSField = new RegulateTextField("S", HSLA.minSaturation, HSLA.maxSaturation, (v) {
             updateColorHSL;
         });
         form.addCreate(hslSField);
 
-        hslLField = new RegulateTextField("L", HSL.minLightness, HSL.maxLightness, (v) {
+        hslLField = new RegulateTextField("L", HSLA.minLightness, HSLA.maxLightness, (v) {
             updateColorHSL;
         });
         form.addCreate(hslLField);
@@ -245,12 +245,12 @@ class ColorPickerDialog : Control
         updateColor(colorHSL.toRGBA, isTriggerListeners);
     }
 
-    HSL colorHSL()
+    HSLA colorHSL()
     {
-        auto h = Math.clamp(HSL.minHue, hslHField.value, HSL.maxHue);
-        auto s = Math.clamp(HSL.minSaturation, hslSField.value, HSL.maxSaturation);
-        auto l = Math.clamp(HSL.minLightness, hslLField.value, HSL.maxLightness);
-        return HSL(h, s, l, alpha);
+        auto h = Math.clamp(HSLA.minHue, hslHField.value, HSLA.maxHue);
+        auto s = Math.clamp(HSLA.minSaturation, hslSField.value, HSLA.maxSaturation);
+        auto l = Math.clamp(HSLA.minLightness, hslLField.value, HSLA.maxLightness);
+        return HSLA(h, s, l, alpha);
     }
 
     protected void createPalTab()
@@ -345,7 +345,7 @@ class ColorPickerDialog : Control
     double alpha()
     {
         assert(alphaField);
-        //TODO HSV min\max value?
+        //TODO HSVA min\max value?
         return Math.clamp(RGBA.minAlpha, alphaField.value, RGBA.maxAlpha);
     }
 
@@ -356,7 +356,7 @@ class ColorPickerDialog : Control
 
         //TODO is tab active
         setColorRGBA(newColor);
-        setColorHSL(newColor.toHSL);
+        setColorHSL(newColor.toHSLA);
 
         return true;
     }
@@ -375,7 +375,7 @@ class ColorPickerDialog : Control
             false);
     }
 
-    protected void setColorHSL(HSL newColor)
+    protected void setColorHSL(HSLA newColor)
     {
         assert(hslHField);
         hslHField.value = newColor.hue;

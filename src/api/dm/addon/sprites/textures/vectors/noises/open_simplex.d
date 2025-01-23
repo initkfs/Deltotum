@@ -1444,11 +1444,11 @@ class OpenSimplex : Noise
 
     override RGBA drawNoise(int x, int y)
     {
-        import api.dm.kit.graphics.colors.hsv: HSV;
+        import api.dm.kit.graphics.colors.hsva: HSVA;
 
         double value = noise3_ImproveXY(SEED, x * FREQUENCY, y * FREQUENCY, 0.0);
         auto newColor = noiseColor;
-        newColor.value = Math.clamp(value, HSV.minValue, HSV.maxValue);
+        newColor.value = Math.clamp(value, HSVA.minValue, HSVA.maxValue);
         return newColor.toRGBA;
         // int rgb = 0x010101 * cast(int)((value + 1) * 127.5);
         // RGBA color = RGBA.fromUint(cast(uint) rgb);

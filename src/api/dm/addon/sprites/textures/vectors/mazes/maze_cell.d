@@ -2,7 +2,7 @@ module api.dm.addon.sprites.textures.vectors.mazes.maze_cell;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.graphics.colors.hsv : HSV;
+import api.dm.kit.graphics.colors.hsva : HSVA;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
 /**

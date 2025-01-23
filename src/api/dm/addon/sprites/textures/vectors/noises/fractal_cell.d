@@ -4,7 +4,7 @@ import api.dm.addon.sprites.textures.vectors.noises.noise : Noise;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.graphics.colors.hsv : HSV;
+import api.dm.kit.graphics.colors.hsva : HSVA;
 import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
 import api.math.random : Random;
 
@@ -48,9 +48,9 @@ class FractalCell : Noise
         auto value = cell_noise_xy(x, y, w, h, 6, 10, 6, 0.2, 2, 4);
         //ubyte ucolor = cast(ubyte)(ubyte.max * value);
         auto newColor = noiseColor;
-        newColor.value = Math.clamp(value, HSV.minValue, HSV.maxValue);
+        newColor.value = Math.clamp(value, HSVA.minValue, HSVA.maxValue);
         return newColor.toRGBA;
-        //RGBA color = HSV(198, 0.5, Math.clamp01(Math.abs(value))).toRGBA;
+        //RGBA color = HSVA(198, 0.5, Math.clamp01(Math.abs(value))).toRGBA;
     }
 
     override void create()

@@ -8,7 +8,7 @@ import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.graphics.colors.hsv : HSV;
+import api.dm.kit.graphics.colors.hsva : HSVA;
 import api.math.insets : Insets;
 import IconName = api.dm.gui.themes.icons.icon_name;
 import api.dm.kit.sprites2d.images.image : Image;
@@ -89,7 +89,7 @@ class LedIcon : LedBase
     {
         super.create;
 
-        // auto hsvColor = colorHue.toHSV;
+        // auto hsvColor = colorHue.toHSVA;
         // hsvColor.saturation = 1;
         // hsvColor.value = 1;
 

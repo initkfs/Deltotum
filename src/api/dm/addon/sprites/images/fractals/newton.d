@@ -2,7 +2,7 @@ module api.dm.addon.sprites.images.fractals.newton;
 
 import api.dm.addon.sprites.images.fractals.complex_fractal_image : ComplexFractalImage;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.graphics.colors.hsv : HSV;
+import api.dm.kit.graphics.colors.hsva : HSVA;
 
 import Math = api.dm.math;
 
@@ -51,7 +51,7 @@ class Newton : ComplexFractalImage
                 {
                     import std;
 
-                    RGBA color = HSV(i * 15 % HSV.maxHue, HSV.maxSaturation, HSV.maxValue * (
+                    RGBA color = HSVA(i * 15 % HSVA.maxHue, HSVA.maxSaturation, HSVA.maxValue * (
                             (i < iterations) ? 1 : 0)).toRGBA;
                     return color;
                 }

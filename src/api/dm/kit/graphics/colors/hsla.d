@@ -1,14 +1,15 @@
-module api.dm.kit.graphics.colors.hsl;
+module api.dm.kit.graphics.colors.hsla;
 
+import Color = api.dm.kit.graphics.colors.color;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.graphics.colors.hsv : HSV;
+import api.dm.kit.graphics.colors.hsva : HSVA;
 
 import Math = api.math;
 
 /**
  * Authors: initkfs
  */
-struct HSL
+struct HSLA
 {
     static enum : double
     {
@@ -18,8 +19,8 @@ struct HSL
         maxSaturation = 1,
         minLightness = 0,
         maxLightness = 1,
-        minAlpha = 0,
-        maxAlpha = 1
+        minAlpha = Color.minAlpha,
+        maxAlpha = Color.maxAlpha
     }
 
     double hue = 0;
@@ -29,9 +30,9 @@ struct HSL
 
     import api.math.random : Random;
 
-    static HSL random(Random rnd, double newAlpha = maxAlpha)
+    static HSLA random(Random rnd, double newAlpha = maxAlpha)
     {
-        return HSL(
+        return HSLA(
             rnd.between(minHue, maxHue),
             rnd.between(minSaturation, maxSaturation),
             rnd.between(minLightness, maxLightness),
@@ -109,14 +110,14 @@ struct HSL
     /** 
      * https://stackoverflow.com/questions/3423214/convert-hsb-hsv-color-to-hsl
      */
-    HSV toHSV() const @safe
+    HSVA toHSVA() const @safe
     {
         double newHue = hue;
         double newValue = saturation * Math.min(lightness, 1 - lightness) + lightness;
 
         double newSaturation = newValue != 0 ? (2.0 - 2 * lightness / newValue) : 0;
 
-        return HSV(newHue, newSaturation, newValue, alpha);
+        return HSVA(newHue, newSaturation, newValue, alpha);
     }
 
     double setMaxHue() => hue = maxHue;
@@ -132,7 +133,7 @@ unittest
 {
     import std.math.operations : isClose;
 
-    auto rgba1 = HSL(123, 0.43, 0.56).toRGBA;
+    auto rgba1 = HSLA(123, 0.43, 0.56).toRGBA;
 
     assert(rgba1.r == 95);
     assert(rgba1.g == 191);
@@ -145,7 +146,7 @@ unittest
 {
     import std.math.operations : isClose;
 
-    auto hsv1 = HSL(123, 0.43, 0.56).toHSV;
+    auto hsv1 = HSLA(123, 0.43, 0.56).toHSVA;
 
     assert(isClose(hsv1.hue, 123));
     assert(isClose(hsv1.saturation, 0.5050, 0.001));

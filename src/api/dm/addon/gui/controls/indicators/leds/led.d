@@ -8,7 +8,7 @@ import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.graphics.colors.hsv : HSV;
+import api.dm.kit.graphics.colors.hsva : HSVA;
 import api.math.insets : Insets;
 
 import ColorProcessor = api.dm.kit.graphics.colors.processing.color_processor;

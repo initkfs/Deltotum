@@ -61,10 +61,10 @@ class Julia : ComplexFractalImage
             }
         }
 
-        import api.dm.kit.graphics.colors.hsv : HSV;
+        import api.dm.kit.graphics.colors.hsva : HSVA;
 
         //or iter step? iter/max
-        RGBA color = HSV((i * 2) % HSV.maxHue, HSV.maxSaturation, HSV.maxValue * ((i < iterations) ? 1 : 0)).toRGBA;
+        RGBA color = HSVA((i * 2) % HSVA.maxHue, HSVA.maxSaturation, HSVA.maxValue * ((i < iterations) ? 1 : 0)).toRGBA;
         return color;
     }
 }

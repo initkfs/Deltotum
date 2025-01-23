@@ -7,7 +7,7 @@ import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.graphics.colors.hsv : HSV;
+import api.dm.kit.graphics.colors.hsva : HSVA;
 import api.math.insets : Insets;
 
 import ColorProcessor = api.dm.kit.graphics.colors.processing.color_processor;
@@ -65,26 +65,26 @@ class LedBase : Control
         };
     }
 
-    HSV getLayersColorHSV()
+    HSVA getLayersColorHSV()
     {
-        auto hsvColor = colorHue.toHSV;
+        auto hsvColor = colorHue.toHSVA;
         hsvColor.saturation = 1;
         hsvColor.value = 1;
         return hsvColor;
     }
 
-    HSV getBottomColorHSV(HSV color)
+    HSVA getBottomColorHSV(HSVA color)
     {
         color.value = 0.8;
         return color;
     }
 
-    HSV getMiddleColorHSV(HSV color)
+    HSVA getMiddleColorHSV(HSVA color)
     {
         return color;
     }
 
-    HSV getTopColorHSV(HSV color)
+    HSVA getTopColorHSV(HSVA color)
     {
         color.saturation = 0.5;
         return color;
@@ -97,21 +97,21 @@ class LedBase : Control
         return style;
     }
 
-    GraphicStyle getBottomLayerStyle(HSV color)
+    GraphicStyle getBottomLayerStyle(HSVA color)
     {
         auto style = getLayersStyle;
         style.color = getBottomColorHSV(color).toRGBA;
         return style;
     }
 
-    GraphicStyle getMiddleLayerStyle(HSV color)
+    GraphicStyle getMiddleLayerStyle(HSVA color)
     {
         auto style = getLayersStyle;
         style.color = getMiddleColorHSV(color).toRGBA;
         return style;
     }
 
-    GraphicStyle getTopLayerStyle(HSV color)
+    GraphicStyle getTopLayerStyle(HSVA color)
     {
         auto style = getLayersStyle;
         style.color = getTopColorHSV(color).toRGBA;
