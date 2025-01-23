@@ -8,9 +8,14 @@ import api.dm.gui.controls.popups.popup : Popup;
 /**
  * Authors: initkfs
  */
-class BaseDropDownSelector(T) : BaseSelector!T
+class BaseDropDownSelector(D, T) : BaseSelector!T
 {
     bool isDropDownDialog;
+
+    D dialog;
+    bool isCreateDialog = true;
+    D delegate(D) onNewDialog;
+    void delegate(D) onCreatedDialog;
 
     BasePopup popup;
     BasePopup delegate(BasePopup) onNewPopup;
@@ -21,6 +26,40 @@ class BaseDropDownSelector(T) : BaseSelector!T
 
         layout = new VLayout(0);
         layout.isAutoResize = true;
+    }
+
+    abstract D newDialog();
+
+    void createDialog(scope void delegate(D) onDialog)
+    {
+        if (!dialog && isCreateDialog)
+        {
+            auto d = newDialog;
+            dialog = !onNewDialog ? d : onNewDialog(d);
+
+            if(onDialog){
+                onDialog(dialog);
+            }
+
+            if (!isDropDownDialog)
+            {
+                addCreate(dialog);
+                if(layout){
+                    layout.isDecreaseRootSize = true;
+                }
+            }
+            else
+            {
+                createPopup;
+                assert(popup);
+                popup.addCreate(dialog);
+            }
+
+            if (onCreatedDialog)
+            {
+                onCreatedDialog(dialog);
+            }
+        }
     }
 
     void createPopup()

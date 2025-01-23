@@ -12,7 +12,7 @@ import api.dm.gui.controls.texts.text : Text;
 /**
  * Authors: initkfs
  */
-class ColorPicker : BaseDropDownSelector!RGBA
+class ColorPicker : BaseDropDownSelector!(ColorPickerDialog, RGBA)
 {
     Container colorValueContainer;
 
@@ -20,11 +20,6 @@ class ColorPicker : BaseDropDownSelector!RGBA
     Sprite2d colorCanvas;
 
     Text colorHexField;
-
-    ColorPickerDialog dialog;
-    bool isCreateDialog = true;
-    ColorPickerDialog delegate(ColorPickerDialog) onNewDialog;
-    void delegate(ColorPickerDialog) onCreatedDialog;
 
     this()
     {
@@ -87,6 +82,9 @@ class ColorPicker : BaseDropDownSelector!RGBA
             if (!isDropDownDialog)
             {
                 addCreate(dialog);
+                if(layout){
+                    layout.isDecreaseRootSize = true;
+                }
             }
             else
             {
@@ -151,7 +149,7 @@ class ColorPicker : BaseDropDownSelector!RGBA
         return true;
     }
 
-    ColorPickerDialog newDialog() => new ColorPickerDialog;
+    override ColorPickerDialog newDialog() => new ColorPickerDialog;
 
     Container newColorValueContainer()
     {

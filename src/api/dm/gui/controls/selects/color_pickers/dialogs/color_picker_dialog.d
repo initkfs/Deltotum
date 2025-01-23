@@ -12,8 +12,9 @@ import api.dm.gui.controls.forms.regulates.regulate_text_field;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsva : HSVA;
 import api.dm.kit.graphics.colors.hsla : HSLA;
+import api.dm.kit.graphics.colors.lcha : LCHA;
 
-import api.math.geom2.rect2: Rect2d;
+import api.math.geom2.rect2 : Rect2d;
 import Math = api.math;
 
 /**
@@ -36,6 +37,10 @@ class ColorPickerDialog : Control
     RegulateTextField hslSField;
     RegulateTextField hslLField;
 
+    RegulateTextField lchHField;
+    RegulateTextField lchCField;
+    RegulateTextField lchLField;
+
     void delegate(RGBA, RGBA) onChangeOldNew;
 
     size_t paletteColorSize = 14;
@@ -45,8 +50,9 @@ class ColorPickerDialog : Control
         RGBA _lastColor;
 
         //TODO hack, SDL_RenderReadPixels in SDl3
-        ColorInfo[14 * 19] colorPixels; 
-        struct ColorInfo {
+        ColorInfo[14 * 19] colorPixels;
+        struct ColorInfo
+        {
             Rect2d bounds;
             RGBA color;
         }
@@ -100,6 +106,7 @@ class ColorPickerDialog : Control
             }
 
             createHSLTab;
+            createLCHTab;
             createRGBTab;
             createPalTab;
 
@@ -255,6 +262,63 @@ class ColorPickerDialog : Control
         return HSLA(h, s, l, alpha);
     }
 
+    protected void createLCHTab()
+    {
+        assert(contentContainer);
+
+        auto lchTab = newTab("LCH");
+        lchTab.id = "color_picker_lch_tab";
+
+        lchTab.onActivate = () {
+            LCHA lch;
+            lch.fromRGBA(_lastColor);
+            setColorLCH(lch);
+        };
+        lchTab.content = createLCHTabContent;
+        contentContainer.addCreate(lchTab);
+    }
+
+    Sprite2d createLCHTabContent()
+    {
+        import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
+        import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
+
+        auto form = new RegulateTextPanel;
+        buildInitCreate(form);
+
+        lchHField = new RegulateTextField("H", LCHA.minHue, LCHA.maxHue, (v) {
+            updateColorLCH;
+        });
+        form.addCreate(lchHField);
+
+        lchCField = new RegulateTextField("C", LCHA.minChroma, LCHA.maxChroma, (v) {
+            updateColorLCH;
+        });
+        form.addCreate(lchCField);
+
+        lchLField = new RegulateTextField("L", LCHA.minLightness, LCHA.maxLightness, (v) {
+            updateColorLCH;
+        });
+        form.addCreate(lchLField);
+
+        form.alignFields;
+
+        return form;
+    }
+
+    void updateColorLCH(bool isTriggerListeners = true)
+    {
+        updateColor(colorLCH.toRGBA, isTriggerListeners);
+    }
+
+    LCHA colorLCH()
+    {
+        auto h = Math.clamp(LCHA.minHue, lchHField.value, LCHA.maxHue);
+        auto c = Math.clamp(LCHA.minChroma, lchCField.value, LCHA.maxChroma);
+        auto l = Math.clamp(LCHA.minLightness, lchLField.value, LCHA.maxLightness);
+        return LCHA(l, c, h, alpha);
+    }
+
     protected void createPalTab()
     {
         assert(contentContainer);
@@ -278,7 +342,7 @@ class ColorPickerDialog : Control
         import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
 
         size_t colorInRow = MaterialPalette.maxToneCount;
-        
+
         assert(paletteColorSize > 0);
 
         auto colorTextureW = colorInRow * paletteColorSize;
@@ -288,7 +352,7 @@ class ColorPickerDialog : Control
         container.height = colorTextureH;
 
         auto colorTexture = new class RgbaTexture
-        { 
+        {
             this()
             {
                 super(colorTextureW, colorTextureH);
@@ -310,12 +374,13 @@ class ColorPickerDialog : Control
                         graphics.changeColor(RGBA.web(__traits(getMember, MaterialPalette, color)));
                         graphics.fillRect(nextX, nextY, paletteColorSize, paletteColorSize);
 
-                        colorPixels[pixelCounter] = ColorInfo(Rect2d(nextX, nextY, paletteColorSize, paletteColorSize),graphics.getColor);
+                        colorPixels[pixelCounter] = ColorInfo(Rect2d(nextX, nextY, paletteColorSize, paletteColorSize), graphics
+                                .getColor);
                         pixelCounter++;
 
                         nextX += paletteColorSize;
                         colIndex++;
-                        
+
                         if (colIndex >= colorInRow)
                         {
                             colIndex = 0;
@@ -332,12 +397,15 @@ class ColorPickerDialog : Control
 
         container.setContent(colorTexture, colorTextureW, height);
 
-        colorTexture.onPointerPress ~= (ref e){
-            import api.math.geom2.vec2: Vec2d;
+        colorTexture.onPointerPress ~= (ref e) {
+            import api.math.geom2.vec2 : Vec2d;
+
             //binary search
             auto rawPoint = Vec2d(e.x, e.y).subtract(colorTexture.pos);
-            foreach(ref colorInfo; colorPixels){
-                if(colorInfo.bounds.contains(rawPoint)){
+            foreach (ref colorInfo; colorPixels)
+            {
+                if (colorInfo.bounds.contains(rawPoint))
+                {
                     updateColor(colorInfo.color);
                 }
             }
@@ -358,7 +426,11 @@ class ColorPickerDialog : Control
         updateColor(newColor, isTriggerListeners:
             false);
 
-        //TODO is tab active
+        LCHA lch;
+        lch.fromRGBA(newColor);
+        setColorLCH(lch);
+
+        //TODO is tab active + alpha
         setColorRGBA(newColor);
         setColorHSL(newColor.toHSLA);
 
@@ -389,6 +461,22 @@ class ColorPickerDialog : Control
 
         assert(hslLField);
         hslLField.value = newColor.l;
+
+        assert(alphaField);
+        alphaField.value(newColor.a, isTriggerListeners:
+            false);
+    }
+
+    protected void setColorLCH(LCHA newColor)
+    {
+        assert(lchHField);
+        lchHField.value = newColor.h;
+
+        assert(lchCField);
+        lchCField.value = newColor.c;
+
+        assert(lchLField);
+        lchLField.value = newColor.l;
 
         assert(alphaField);
         alphaField.value(newColor.a, isTriggerListeners:
