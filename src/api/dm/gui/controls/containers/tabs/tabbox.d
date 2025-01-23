@@ -44,6 +44,7 @@ class TabBox : Container
 
         layout = new VLayout(0);
         layout.isAutoResize = true;
+        layout.isDecreaseRootSize = true;
         layout.isAlignX = false;
     }
 
@@ -86,8 +87,8 @@ class TabBox : Container
             auto c = newContentContainer;
             contentContainer = !onNewContentContainer ? c : onNewContentContainer(c);
 
-            contentContainer.isVGrow = true;
-            contentContainer.isHGrow = true;
+            //contentContainer.isVGrow = true;
+            //contentContainer.isHGrow = true;
 
             addCreate(contentContainer);
             if (onCreatedContentContainer)
@@ -131,6 +132,7 @@ class TabBox : Container
             if (_currentTab.content)
             {
                 _currentTab.content.isVisible = false;
+                _currentTab.content.isLayoutManaged = false;
                 _currentTab.content.stop;
             }
 
@@ -158,6 +160,7 @@ class TabBox : Container
             }
 
             _currentTab.content.isVisible = true;
+            _currentTab.content.isLayoutManaged = true;
             _currentTab.content.run;
 
             if(_currentTab.onActivate){
@@ -223,6 +226,7 @@ class TabBox : Container
 
         container.layout = new ManagedLayout;
         container.layout.isAutoResize = true;
+        container.layout.isDecreaseRootSize = true;
         return container;
     }
 

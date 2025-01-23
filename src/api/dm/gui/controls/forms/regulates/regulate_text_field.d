@@ -56,6 +56,7 @@ class RegulateTextField : Control
 
         layout = new HLayout(fieldSpacing);
         layout.isAutoResize = true;
+        layout.isDecreaseRootSize = true;
         layout.isAlignY = true;
     }
 

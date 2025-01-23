@@ -21,6 +21,7 @@ class RegulateTextPanel : Container
 
         layout = new VLayout(fieldSpacing);
         layout.isAutoResize = true;
+        layout.isDecreaseRootSize = true;
     }
 
     override void create(){

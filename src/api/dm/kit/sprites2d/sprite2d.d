@@ -2600,6 +2600,8 @@ class Sprite2d : EventKitTarget
         isResizedHeightByParent = v;
     }
 
+    bool isResizedByParent() => isResizedWidthByParent ||  isResizedHeightByParent;
+
     RGBA[][] surfaceToBuffer(ComSurface surf)
     {
         assert(surf);

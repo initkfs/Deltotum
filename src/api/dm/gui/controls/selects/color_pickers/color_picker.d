@@ -5,14 +5,14 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.colors.rgba : RGBA;
+import api.dm.gui.controls.selects.base_dropdown_selector: BaseDropDownSelector;
 import api.dm.gui.controls.selects.color_pickers.dialogs.color_picker_dialog : ColorPickerDialog;
 import api.dm.gui.controls.texts.text : Text;
-import api.dm.kit.sprites2d.layouts.vlayout;
 
 /**
  * Authors: initkfs
  */
-class ColorPicker : Control
+class ColorPicker : BaseDropDownSelector!RGBA
 {
     Container colorValueContainer;
 
@@ -33,11 +33,6 @@ class ColorPicker : Control
 
     this()
     {
-        import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
-
-        layout = new VLayout(0);
-        layout.isAutoResize = true;
-
         isBorder = true;
     }
 
@@ -66,7 +61,7 @@ class ColorPicker : Control
 
         colorCanvas = newColorCanvas;
 
-        colorCanvas.width = colorCanvasSize;
+        colorCanvas.width = colorCanvasSize * 2;
         colorCanvas.height = colorCanvasSize;
 
         colorValueContainer.addCreate(colorCanvas);
@@ -92,7 +87,17 @@ class ColorPicker : Control
                 updateColor(newColor);
             };
 
-            addCreate(dialog);
+            if (!isDropDownDialog)
+            {
+                addCreate(dialog);
+            }
+            else
+            {
+                createPopup;
+                assert(popup);
+                popup.addCreate(dialog);
+            }
+
             if (onCreatedDialog)
             {
                 onCreatedDialog(dialog);
@@ -117,7 +122,7 @@ class ColorPicker : Control
         }
     }
 
-    protected bool updateColor(RGBA newColor,  bool isTriggerListeners = true, bool isReplaceForce = false)
+    protected bool updateColor(RGBA newColor, bool isTriggerListeners = true, bool isReplaceForce = false)
     {
         if (_lastColor == newColor && !isReplaceForce)
         {
@@ -138,7 +143,8 @@ class ColorPicker : Control
 
     bool color(RGBA newColor, bool isTriggerListeners = true, bool isReplaceForce = false)
     {
-        if(!updateColor(newColor, isTriggerListeners, isReplaceForce)){
+        if (!updateColor(newColor, isTriggerListeners, isReplaceForce))
+        {
             return false;
         }
 

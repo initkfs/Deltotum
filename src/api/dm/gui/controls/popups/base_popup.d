@@ -23,6 +23,7 @@ class BasePopup : Control
 
             layout = new CenterLayout;
             layout.isAutoResize = true;
+            layout.isDecreaseRootSize = true;
         }
     }
 

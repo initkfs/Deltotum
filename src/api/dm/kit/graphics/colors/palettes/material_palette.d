@@ -3,6 +3,10 @@ module api.dm.kit.graphics.colors.palettes.material_palette;
 /**
  * Authors: initkfs
  */
+
+enum size_t colorCount = 19; 
+enum size_t maxToneCount = 14;
+
 immutable:
 
 string red50 = "#ffebee";

@@ -2,8 +2,8 @@ module api.dm.gui.controls.labels.hyperlinks.hyperlink;
 
 import api.dm.gui.controls.labeled : Labeled;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.gui.controls.popups.base_popup: BasePopup;
-import api.dm.gui.controls.popups.text_popup : TextPopup;
+import api.dm.gui.controls.popups.tooltips.base_tooltip: BaseTooltip;
+import api.dm.gui.controls.popups.tooltips.text_tooltip : TextTooltip;
 
 import std.conv : to;
 
@@ -23,10 +23,10 @@ class Hyperlink : Labeled
     Sprite2d delegate(Sprite2d) onNewUnderline;
     void delegate(Sprite2d) onCreatedUnderline;
 
-    BasePopup urlPopup;
-    bool isCreateUrlPopup = true;
-    BasePopup delegate(BasePopup) onNewUrlPopup;
-    void delegate(BasePopup) onCreatedUrlPopup;
+    BaseTooltip urlTooltip;
+    bool isCreateUrlTooltip = true;
+    BaseTooltip delegate(BaseTooltip) onNewUrlTooltip;
+    void delegate(BaseTooltip) onCreatedUrlTooltip;
 
     this(dstring text = "Hyperlink", string iconName = null, double graphicsGap = 0, bool isCreateLayout = true)
     {
@@ -81,17 +81,17 @@ class Hyperlink : Labeled
     {
         super.create;
 
-        if (!urlPopup && isCreateUrlPopup)
+        if (!urlTooltip && isCreateUrlTooltip)
         {
-            auto p = newUrlPopup(url.to!dstring);
-            urlPopup = !onNewUrlPopup ? p : onNewUrlPopup(p);
-            addCreate(urlPopup);
+            auto p = newUrlTooltip(url.to!dstring);
+            urlTooltip = !onNewUrlTooltip ? p : onNewUrlTooltip(p);
+            addCreate(urlTooltip);
 
-            installPopup(urlPopup);
+            installTooltip(urlTooltip);
 
-            if (onCreatedUrlPopup)
+            if (onCreatedUrlTooltip)
             {
-                onCreatedUrlPopup(urlPopup);
+                onCreatedUrlTooltip(urlTooltip);
             }
         }
 
@@ -120,9 +120,9 @@ class Hyperlink : Labeled
         return shape;
     }
 
-    BasePopup newUrlPopup(dstring text)
+    BaseTooltip newUrlTooltip(dstring text)
     {
-        return new TextPopup(text);
+        return new TextTooltip(text);
     }
 
 }

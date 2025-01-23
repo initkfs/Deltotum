@@ -12,7 +12,7 @@ import api.dm.kit.graphics.styles.default_style;
 import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import api.math.alignment : Alignment;
 import api.math.insets : Insets;
-import api.dm.gui.controls.popups.base_popup : BasePopup;
+import api.dm.gui.controls.popups.tooltips.base_tooltip: BaseTooltip;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.themes.theme : Theme;
 
@@ -51,9 +51,9 @@ class Control : GuiComponent
         Sprite2d _actionEffect;
         Tween2d _actionEffectAnimation;
 
-        bool isPopupDelay;
-        bool isPopupListeners;
-        size_t popupDelayCounter;
+        bool isTooltipDelay;
+        bool isTooltipListeners;
+        size_t tooltipDelayCounter;
     }
 
     bool isInitStyleFactory = true;
@@ -117,8 +117,8 @@ class Control : GuiComponent
 
     bool isLayoutSpacingFromTheme = true;
 
-    BasePopup[] popups;
-    size_t popupDelay;
+    BaseTooltip[] tooltips;
+    size_t tooltipDelay;
 
     bool isSetNullWidthFromTheme = true;
     bool isSetNullHeightFromTheme = true;
@@ -229,12 +229,12 @@ class Control : GuiComponent
         }
     }
 
-    void loadPopupTheme()
+    void loadTooltipTheme()
     {
-        if (popupDelay == 0)
+        if (tooltipDelay == 0)
         {
             assert(window);
-            popupDelay = cast(size_t)(theme.popupDelayMs / (1000 / window.frameRate));
+            tooltipDelay = cast(size_t)(theme.popupDelayMs / (1000 / window.frameRate));
         }
     }
 
@@ -264,9 +264,9 @@ class Control : GuiComponent
         }
     }
 
-    void initPopupListeners()
+    void initTooltipListeners()
     {
-        if (isPopupListeners)
+        if (isTooltipListeners)
         {
             return;
         }
@@ -274,35 +274,35 @@ class Control : GuiComponent
         if (capGraphics.isPointer)
         {
             onPointerEnter ~= (ref e) {
-                if (popups.length > 0)
+                if (tooltips.length > 0)
                 {
-                    isPopupDelay = true;
+                    isTooltipDelay = true;
                 }
             };
 
             onPointerMove ~= (ref e) {
-                if (isPopupDelay && popupDelayCounter != 0)
+                if (isTooltipDelay && tooltipDelayCounter != 0)
                 {
-                    popupDelayCounter = 0;
+                    tooltipDelayCounter = 0;
                 }
             };
 
             onPointerExit ~= (ref e) {
-                if (popups.length > 0)
+                if (tooltips.length > 0)
                 {
-                    isPopupDelay = false;
-                    if (popups.length > 0)
+                    isTooltipDelay = false;
+                    if (tooltips.length > 0)
                     {
-                        foreach (popup; popups)
+                        foreach (tooltip; tooltips)
                         {
-                            popup.hide;
+                            tooltip.hide;
                         }
                     }
 
                 }
             };
 
-            isPopupListeners = true;
+            isTooltipListeners = true;
         }
 
     }
@@ -999,37 +999,37 @@ class Control : GuiComponent
         applyStyle(control);
     }
 
-    void installPopup(BasePopup popup)
+    void installTooltip(BaseTooltip tooltip)
     {
-        popups ~= popup;
-        if (!isPopupListeners)
+        tooltips ~= tooltip;
+        if (!isTooltipListeners)
         {
-            initPopupListeners;
+            initTooltipListeners;
         }
 
-        if (popupDelay == 0)
+        if (tooltipDelay == 0)
         {
-            loadPopupTheme;
+            loadTooltipTheme;
         }
 
         if (sceneProvider)
         {
-            sceneProvider().controlledSprites ~= popup;
+            sceneProvider().controlledSprites ~= tooltip;
         }
         else
         {
-            assert(popup.isDrawByParent);
+            assert(tooltip.isDrawByParent);
         }
     }
 
     override void onRemoveFromParent()
     {
-        if (popups.length > 0 && sceneProvider)
+        if (tooltips.length > 0 && sceneProvider)
         {
             auto scene = sceneProvider();
-            foreach (popup; popups)
+            foreach (tooltip; tooltips)
             {
-                scene.removeControlled(popup);
+                scene.removeControlled(tooltip);
             }
         }
     }
@@ -1239,20 +1239,20 @@ class Control : GuiComponent
     {
         super.update(dt);
 
-        if (isPopupDelay)
+        if (isTooltipDelay)
         {
-            if (popupDelayCounter >= popupDelay)
+            if (tooltipDelayCounter >= tooltipDelay)
             {
-                popupDelayCounter = 0;
-                isPopupDelay = false;
-                foreach (t; popups)
+                tooltipDelayCounter = 0;
+                isTooltipDelay = false;
+                foreach (t; tooltips)
                 {
                     t.showForPointer;
                 }
             }
             else
             {
-                popupDelayCounter++;
+                tooltipDelayCounter++;
             }
         }
     }

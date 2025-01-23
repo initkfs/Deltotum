@@ -37,10 +37,10 @@ class ScrollBox : Container
             idVscroll = "scb_scroll_v",
             idHscroll = "scb_scroll_h"
         }
-
-        ScrollBarPolicy _vScrollPolicy = ScrollBarPolicy.ifneed;
-        ScrollBarPolicy _hScrollPolicy = ScrollBarPolicy.ifneed;
     }
+
+    ScrollBarPolicy vScrollPolicy = ScrollBarPolicy.ifneed;
+    ScrollBarPolicy hScrollPolicy = ScrollBarPolicy.ifneed;
 
     double clipErrorDelta = 1;
     double clipPadding = 0;
@@ -96,7 +96,7 @@ class ScrollBox : Container
         vslider.isVGrow = true;
         contentContainer.addCreate(vslider);
 
-        if (_vScrollPolicy != ScrollBarPolicy.always)
+        if (vScrollPolicy != ScrollBarPolicy.always)
         {
             disableScroll(vslider);
         }
@@ -121,7 +121,7 @@ class ScrollBox : Container
         hslider.isHGrow = true;
         addCreate(hslider);
 
-        if (_hScrollPolicy != ScrollBarPolicy.always)
+        if (hScrollPolicy != ScrollBarPolicy.always)
         {
             disableScroll(hslider);
         }
@@ -143,13 +143,13 @@ class ScrollBox : Container
 
         //TODO slider if layout managed = false
         double contentWidth = width - spacing - padding.width;
-        if (_hScrollPolicy != ScrollBarPolicy.never)
+        if (hScrollPolicy != ScrollBarPolicy.never)
         {
             contentWidth -= vslider.width;
         }
 
         double contentHeight = height - padding.height;
-        if (_vScrollPolicy != ScrollBarPolicy.never)
+        if (vScrollPolicy != ScrollBarPolicy.never)
         {
             contentHeight -= hslider.height;
         }
@@ -184,10 +184,11 @@ class ScrollBox : Container
 
     protected void checkScrolls()
     {
-        if (_hScrollPolicy == ScrollBarPolicy.ifneed && content)
+        double errorDelta = 1;
+        if (hScrollPolicy == ScrollBarPolicy.ifneed && content)
         {
             assert(content);
-            if (contentRoot && contentRoot.width > content.width)
+            if (contentRoot && (contentRoot.width - errorDelta) > content.width)
             {
                 enableScroll(hslider);
             }
@@ -197,10 +198,10 @@ class ScrollBox : Container
             }
         }
 
-        if (_vScrollPolicy == ScrollBarPolicy.ifneed && content)
+        if (vScrollPolicy == ScrollBarPolicy.ifneed && content)
         {
             assert(content);
-            if (contentRoot && contentRoot.height > content.height)
+            if (contentRoot && (contentRoot.height - errorDelta) > content.height)
             {
                 enableScroll(vslider);
             }
@@ -257,6 +258,10 @@ class ScrollBox : Container
             //TODO hack for process events
         }
 
+        if(root.isResizedByParent){
+            root.isResizedByParent = false;
+        }
+
         if (contentRoot)
         {
             //TODO destroy?
@@ -274,11 +279,13 @@ class ScrollBox : Container
             content.add(contentRoot);
         }
 
-        if(newWidth > 0){
+        if (newWidth > 0)
+        {
             content.width = newWidth;
         }
 
-        if(newHeight > 0){
+        if (newHeight > 0)
+        {
             content.height = newHeight;
         }
 

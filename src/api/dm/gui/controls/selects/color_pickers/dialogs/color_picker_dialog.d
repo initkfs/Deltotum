@@ -56,6 +56,7 @@ class ColorPickerDialog : Control
 
         layout = new VLayout;
         layout.isAutoResize = true;
+        layout.isDecreaseRootSize = true;
 
         isBorder = true;
     }
@@ -273,14 +274,14 @@ class ColorPickerDialog : Control
 
         import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
 
-        size_t colorInRow = 14;
+        size_t colorInRow = MaterialPalette.maxToneCount;
         double colorProbeSize = 10;
 
         auto colorTextureW = colorInRow * colorProbeSize;
-        auto colorTextureH = 19 * colorProbeSize;
+        auto colorTextureH = MaterialPalette.colorCount * colorProbeSize;
 
         container.width = colorTextureW;
-        container.height = 100;
+        container.height = colorTextureH;
 
         auto colorTexture = new class RgbaTexture
         { 
@@ -291,8 +292,8 @@ class ColorPickerDialog : Control
 
             override void createTextureContent()
             {
-                double nextX = x;
-                double nextY = y;
+                double nextX = 0;
+                double nextY = 0;
                 size_t colIndex;
                 auto oldColor = graphics.getColor;
 
@@ -311,7 +312,7 @@ class ColorPickerDialog : Control
                         nextX += colorProbeSize;
                         colIndex++;
                         
-                        if (colIndex > colorInRow)
+                        if (colIndex >= colorInRow)
                         {
                             colIndex = 0;
                             nextX = 0;
@@ -325,7 +326,7 @@ class ColorPickerDialog : Control
             }
         };
 
-        container.setContent(colorTexture, colorTextureW + colorProbeSize);
+        container.setContent(colorTexture, colorTextureW, height);
 
         colorTexture.onPointerPress ~= (ref e){
             import api.math.geom2.vec2: Vec2d;
@@ -355,6 +356,7 @@ class ColorPickerDialog : Control
 
         //TODO is tab active
         setColorRGBA(newColor);
+        setColorHSL(newColor.toHSL);
 
         return true;
     }
