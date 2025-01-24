@@ -106,7 +106,6 @@ class ColorPickerDialog : Control
             }
 
             createHSLTab;
-            createLCHTab;
             createRGBTab;
             createPalTab;
 
@@ -262,63 +261,6 @@ class ColorPickerDialog : Control
         return HSLA(h, s, l, alpha);
     }
 
-    protected void createLCHTab()
-    {
-        assert(contentContainer);
-
-        auto lchTab = newTab("LCH");
-        lchTab.id = "color_picker_lch_tab";
-
-        lchTab.onActivate = () {
-            LCHA lch;
-            lch.fromRGBA(_lastColor);
-            setColorLCH(lch);
-        };
-        lchTab.content = createLCHTabContent;
-        contentContainer.addCreate(lchTab);
-    }
-
-    Sprite2d createLCHTabContent()
-    {
-        import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
-        import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
-
-        auto form = new RegulateTextPanel;
-        buildInitCreate(form);
-
-        lchHField = new RegulateTextField("H", LCHA.minHue, LCHA.maxHue, (v) {
-            updateColorLCH;
-        });
-        form.addCreate(lchHField);
-
-        lchCField = new RegulateTextField("C", LCHA.minChroma, LCHA.maxChroma, (v) {
-            updateColorLCH;
-        });
-        form.addCreate(lchCField);
-
-        lchLField = new RegulateTextField("L", LCHA.minLightness, LCHA.maxLightness, (v) {
-            updateColorLCH;
-        });
-        form.addCreate(lchLField);
-
-        form.alignFields;
-
-        return form;
-    }
-
-    void updateColorLCH(bool isTriggerListeners = true)
-    {
-        updateColor(colorLCH.toRGBA, isTriggerListeners);
-    }
-
-    LCHA colorLCH()
-    {
-        auto h = Math.clamp(LCHA.minHue, lchHField.value, LCHA.maxHue);
-        auto c = Math.clamp(LCHA.minChroma, lchCField.value, LCHA.maxChroma);
-        auto l = Math.clamp(LCHA.minLightness, lchLField.value, LCHA.maxLightness);
-        return LCHA(l, c, h, alpha);
-    }
-
     protected void createPalTab()
     {
         assert(contentContainer);
@@ -426,14 +368,10 @@ class ColorPickerDialog : Control
         updateColor(newColor, isTriggerListeners:
             false);
 
-        LCHA lch;
-        lch.fromRGBA(newColor);
-        setColorLCH(lch);
-
         //TODO is tab active + alpha
-        setColorRGBA(newColor);
         setColorHSL(newColor.toHSLA);
-
+        setColorRGBA(newColor);
+        
         return true;
     }
 
@@ -461,22 +399,6 @@ class ColorPickerDialog : Control
 
         assert(hslLField);
         hslLField.value = newColor.l;
-
-        assert(alphaField);
-        alphaField.value(newColor.a, isTriggerListeners:
-            false);
-    }
-
-    protected void setColorLCH(LCHA newColor)
-    {
-        assert(lchHField);
-        lchHField.value = newColor.h;
-
-        assert(lchCField);
-        lchCField.value = newColor.c;
-
-        assert(lchLField);
-        lchLField.value = newColor.l;
 
         assert(alphaField);
         alphaField.value(newColor.a, isTriggerListeners:
