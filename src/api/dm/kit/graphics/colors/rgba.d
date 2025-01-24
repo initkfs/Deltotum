@@ -180,7 +180,7 @@ struct RGBA
     {
         import std.format : format;
 
-        return format("#%X%X%X", r, g, b);
+        return format("#%02X%02X%02X", r, g, b);
     }
 
     string toString() const pure @safe

@@ -5,9 +5,11 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.gui.controls.selects.base_dropdown_selector: BaseDropDownSelector;
+import api.dm.gui.controls.selects.base_dropdown_selector : BaseDropDownSelector;
 import api.dm.gui.controls.selects.color_pickers.dialogs.color_picker_dialog : ColorPickerDialog;
 import api.dm.gui.controls.texts.text : Text;
+
+import Math = api.math;
 
 /**
  * Authors: initkfs
@@ -15,6 +17,7 @@ import api.dm.gui.controls.texts.text : Text;
 class ColorPicker : BaseDropDownSelector!(ColorPickerDialog, RGBA)
 {
     Container colorValueContainer;
+    Sprite2d colorCanvasSample;
 
     double colorCanvasSize = 0;
     Sprite2d colorCanvas;
@@ -47,6 +50,7 @@ class ColorPicker : BaseDropDownSelector!(ColorPickerDialog, RGBA)
         super.create;
 
         colorValueContainer = newColorValueContainer;
+        colorValueContainer.isDrawAfterParent = false;
         addCreate(colorValueContainer);
 
         colorValueContainer.enableInsets;
@@ -55,8 +59,15 @@ class ColorPicker : BaseDropDownSelector!(ColorPickerDialog, RGBA)
 
         colorCanvas.width = colorCanvasSize * 2;
         colorCanvas.height = colorCanvasSize;
+        colorCanvas.isResizedByParent = false;
+        colorCanvas.isRoundEvenXY = true;
+        colorCanvas.isRoundEvenChildXY = true;
 
         colorValueContainer.addCreate(colorCanvas);
+
+        colorCanvasSample = newColorValueSample(colorCanvas.width, colorCanvas.height);
+        colorCanvas.addCreate(colorCanvasSample);
+        colorCanvasSample.isRoundEvenXY = true;
 
         colorHexField = newColorHexField;
 
@@ -82,7 +93,8 @@ class ColorPicker : BaseDropDownSelector!(ColorPickerDialog, RGBA)
             if (!isDropDownDialog)
             {
                 addCreate(dialog);
-                if(layout){
+                if (layout)
+                {
                     layout.isDecreaseRootSize = true;
                 }
             }
@@ -156,6 +168,48 @@ class ColorPicker : BaseDropDownSelector!(ColorPickerDialog, RGBA)
         import api.dm.gui.controls.containers.hbox : HBox;
 
         return new HBox;
+    }
+
+    Sprite2d newColorValueSample(double newWidth, double newHeight)
+    {
+        import Math = api.math;
+
+        size_t probeCount = 6;
+        double probeWSize = Math.round(newWidth / probeCount);
+        double probeHSize = Math.round(newHeight / probeCount);
+
+        import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+
+        auto texture = new Texture2d(newWidth, newHeight);
+        buildInitCreate(texture);
+        texture.isResizedByParent = false;
+        texture.createTargetRGBA32;
+
+        texture.setRendererTarget;
+        scope (exit)
+        {
+            texture.restoreRendererTarget;
+        }
+
+        graphics.clearTransparent;
+
+        RGBA color1 = RGBA(200, 200, 200);
+        RGBA color2 = RGBA.white;
+
+        double nextX = 0;
+        double nextY = 0;
+        foreach (ri; 0 .. probeCount)
+        {
+            foreach (ci; 0 .. probeCount)
+            {
+                auto color = (ci + ri) % 2 == 0 ? color1 : color2;
+                graphics.fillRect(nextX, nextY, probeWSize, probeHSize, color);
+                nextX += probeWSize;
+            }
+            nextY += probeHSize;
+            nextX = 0;
+        }
+        return texture;
     }
 
     Sprite2d newColorCanvas()

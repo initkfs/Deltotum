@@ -163,7 +163,8 @@ class TabBox : Container
             _currentTab.content.isLayoutManaged = true;
             _currentTab.content.run;
 
-            if(_currentTab.onActivate){
+            if (_currentTab.onActivate)
+            {
                 _currentTab.onActivate();
             }
         }
@@ -239,12 +240,17 @@ class TabBox : Container
         return changeTab(header.tabs[0], isTriggerListeners);
     }
 
-    override void dispose(){
+    Tab currentTabUnsafe() => _currentTab;
+
+    override void dispose()
+    {
         super.dispose;
-        if(isDisposeContent && header){
+        if (isDisposeContent && header)
+        {
             foreach (tab; header.tabs)
             {
-                if(tab.content && !tab.content.isNone && !tab.content.isDisposed){
+                if (tab.content && !tab.content.isNone && !tab.content.isDisposed)
+                {
                     stopDisposeSafe(tab.content);
                 }
             }

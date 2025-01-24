@@ -56,6 +56,10 @@ class ColorPickerDialog : Control
             Rect2d bounds;
             RGBA color;
         }
+
+        Tab rgbTab;
+        Tab hslTab;
+        Tab palTab;
     }
 
     this()
@@ -108,23 +112,11 @@ class ColorPickerDialog : Control
             createHSLTab;
             createRGBTab;
             createPalTab;
-
-            // auto hsvTab = new Tab("HSVA");
-            // contentContainer.addCreate(hsvTab);
-
-            // auto hslTab = new Tab("HSLA");
-            // contentContainer.addCreate(hslTab);
-
-            // auto paletteTab = new Tab("Pal");
-            // contentContainer.addCreate(paletteTab);
         }
 
         alphaField = new RegulateTextField("A", RGBA.minAlpha, RGBA.maxAlpha, (v) {
-            //TODO multiple sets
-            setColorRGBA(colorRGBA);
-            setColorHSL(colorHSL);
-
-            updateColor(colorRGBA);
+            _lastColor.a = alpha;
+            updateColor(_lastColor);
         });
         addCreate(alphaField);
         alphaField.enableInsets;
@@ -150,7 +142,7 @@ class ColorPickerDialog : Control
     {
         assert(contentContainer);
 
-        auto rgbTab = newTab("RGB");
+        rgbTab = newRGBTab("RGB");
         rgbTab.id = "color_picker_rgb_tab";
 
         rgbTab.onActivate = () { setColorRGBA(_lastColor); };
@@ -210,7 +202,7 @@ class ColorPickerDialog : Control
     {
         assert(contentContainer);
 
-        auto hslTab = newTab("HSL");
+        hslTab = newHSLTab("HSL");
         hslTab.id = "color_picker_hsl_tab";
 
         hslTab.onActivate = () { setColorHSL(_lastColor.toHSLA); };
@@ -232,6 +224,9 @@ class ColorPickerDialog : Control
             updateColorHSL;
         });
         form.addCreate(hslHField);
+
+        assert(hslHField.scrollField);
+        hslHField.scrollField.valueStep = 5;
 
         hslSField = new RegulateTextField("S", HSLA.minSaturation, HSLA.maxSaturation, (v) {
             updateColorHSL;
@@ -265,7 +260,7 @@ class ColorPickerDialog : Control
     {
         assert(contentContainer);
 
-        auto palTab = newTab("Pal");
+        palTab = newPalTab("Pal");
         palTab.id = "color_picker_pal_tab";
         palTab.content = createPalTabContent;
         contentContainer.addCreate(palTab);
@@ -371,7 +366,7 @@ class ColorPickerDialog : Control
         //TODO is tab active + alpha
         setColorHSL(newColor.toHSLA);
         setColorRGBA(newColor);
-        
+
         return true;
     }
 
@@ -406,6 +401,40 @@ class ColorPickerDialog : Control
     }
 
     Tab newTab(dstring text) => new Tab(text);
+
+    Tab newRGBTab(dstring text) => newTab(text);
+    Tab newHSLTab(dstring text) => newTab(text);
+
+    Tab newPalTab(dstring text)
+    {
+        auto tab = newTab(null);
+        buildInitCreate(tab);
+
+        assert(tab.labelButton);
+        import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
+
+        tab.labelButton.layout = new CenterLayout;
+        tab.labelButton.layout.isAutoResize = true;
+
+        import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+
+        auto colorSize = theme.iconSize / 2;
+
+        auto palTabColor = new Texture2d(colorSize, colorSize);
+        buildInitCreate(palTabColor);
+        palTabColor.createTargetRGBA32;
+        palTabColor.setRendererTarget;
+        scope (exit)
+        {
+            palTabColor.restoreRendererTarget;
+        }
+
+        graphics.clearTransparent;
+
+        graphics.fillRect(0, 0, colorSize, colorSize, RGBA.web("#CC00FF"));
+        tab.addCreate(palTabColor);
+        return tab;
+    }
 
     TabBox newContentContainer()
     {

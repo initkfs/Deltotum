@@ -168,6 +168,12 @@ class Sprite2d : EventKitTarget
     void delegate(ref PointerEvent)[] onPointerInBounds;
     void delegate(ref PointerEvent)[] onPointerOutBounds;
 
+    bool isRoundEvenX;
+    bool isRoundEvenY;
+
+    bool isRoundEvenChildX;
+    bool isRoundEvenChildY;
+
     version (SdlBackend)
     {
         //TODO correct max size
@@ -1405,6 +1411,11 @@ class Sprite2d : EventKitTarget
 
     bool x(double newX)
     {
+        if (isRoundEvenX)
+        {
+            newX = Math.roundEven(newX);
+        }
+
         if (!Math.greater(_x, newX, xChangeThreshold))
         {
             return false;
@@ -1415,7 +1426,8 @@ class Sprite2d : EventKitTarget
             if (child.isManaged)
             {
                 double dx = newX - _x;
-                child.x = child.x + dx;
+                double newChildX = child.x + dx;
+                child.x = !isRoundEvenChildX ? newChildX : Math.roundEven(newChildX);
             }
         }
 
@@ -1451,6 +1463,11 @@ class Sprite2d : EventKitTarget
 
     bool y(double newY)
     {
+        if (isRoundEvenY)
+        {
+            newY = Math.roundEven(newY);
+        }
+
         if (!Math.greater(_y, newY, yChangeThreshold))
         {
             return false;
@@ -1461,7 +1478,8 @@ class Sprite2d : EventKitTarget
             if (child.isManaged)
             {
                 double dy = newY - _y;
-                child.y = child.y + dy;
+                double newChildY = child.y + dy;
+                child.y = !isRoundEvenChildY ? newChildY : Math.roundEven(newChildY);
             }
         }
 
@@ -1488,6 +1506,18 @@ class Sprite2d : EventKitTarget
         }
 
         return true;
+    }
+
+    void isRoundEvenXY(bool isRound)
+    {
+        isRoundEvenX = isRound;
+        isRoundEvenY = isRound;
+    }
+
+    void isRoundEvenChildXY(bool isRound)
+    {
+        isRoundEvenChildX = isRound;
+        isRoundEvenChildY = isRound;
     }
 
     bool initWidth(double newWidth) => width = newWidth * multiplyInitWidth;
@@ -2600,7 +2630,7 @@ class Sprite2d : EventKitTarget
         isResizedHeightByParent = v;
     }
 
-    bool isResizedByParent() => isResizedWidthByParent ||  isResizedHeightByParent;
+    bool isResizedByParent() => isResizedWidthByParent || isResizedHeightByParent;
 
     RGBA[][] surfaceToBuffer(ComSurface surf)
     {
