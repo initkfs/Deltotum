@@ -20,6 +20,15 @@ abstract class BaseRadialMonoScroll : BaseLabeledScroll
         super(minValue, maxValue);
     }
 
+    override void create()
+    {
+        super.create;
+        if (thumb && !thumb.isLayoutMovable)
+        {
+            thumb.isLayoutMovable = true;
+        }
+    }
+
     override void loadTheme()
     {
         super.loadTheme;

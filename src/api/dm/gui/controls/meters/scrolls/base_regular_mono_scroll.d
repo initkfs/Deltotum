@@ -13,6 +13,8 @@ abstract class BaseRegularMonoScroll : BaseLabeledScroll
     double thumbWidth = 0;
     double thumbHeight = 0;
 
+    GraphicStyle thumbStyle;
+
     this(double minValue = 0, double maxValue = 1.0)
     {
         super(minValue, maxValue);
@@ -43,7 +45,8 @@ abstract class BaseRegularMonoScroll : BaseLabeledScroll
 
     override Sprite2d newThumb()
     {
-        auto style = createFillStyle;
+        auto style = thumbStyle == GraphicStyle.init ? createFillStyle : thumbStyle;
+
         auto shape = newThumbShape(thumbWidth, thumbHeight, angle, style);
         return shape;
     }

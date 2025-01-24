@@ -127,7 +127,7 @@ class ManagedLayout : Layout2d
             import std.range.primitives : walkLength, front;
 
             //TODO children count cache?
-            auto children = childrenForLayout(root);
+            auto children = childrenForAlign(root);
             auto childCount = children.walkLength;
 
             if (childCount == 1)

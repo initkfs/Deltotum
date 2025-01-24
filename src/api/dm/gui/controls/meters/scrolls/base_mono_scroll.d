@@ -38,9 +38,9 @@ abstract class BaseMonoScroll : BaseScroll
     {
         super(minValue, maxValue);
 
-        import api.dm.kit.sprites2d.layouts.managed_layout : ManagedLayout;
+        import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
 
-        layout = new ManagedLayout;
+        layout = new CenterLayout;
         layout.isAutoResize = true;
 
         isBorder = true;
@@ -73,9 +73,11 @@ abstract class BaseMonoScroll : BaseScroll
         if (!thumb && isCreateThumb)
         {
             auto th = newThumb;
-            thumb = onNewThumb ? onNewThumb(th) : th;
             
-            thumb.isResizedByParent = false;
+            th.isResizedByParent = false;
+            th.isLayoutMovable = false;
+            
+            thumb = onNewThumb ? onNewThumb(th) : th;
 
             addCreate(thumb);
             if (onCreatedThumb)

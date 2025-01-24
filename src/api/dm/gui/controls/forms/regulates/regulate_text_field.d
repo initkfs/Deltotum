@@ -1,7 +1,7 @@
 module api.dm.gui.controls.forms.regulates.regulate_text_field;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.gui.controls.meters.scrolls.base_mono_scroll : BaseMonoScroll;
+import api.dm.gui.controls.meters.scrolls.base_regular_mono_scroll : BaseRegularMonoScroll;
 import api.dm.gui.controls.texts.text : Text;
 
 /**
@@ -14,10 +14,10 @@ class RegulateTextField : Control
     Text delegate(Text) onNewLabelField;
     void delegate(Text) onCreatedLabelField;
 
-    BaseMonoScroll scrollField;
+    BaseRegularMonoScroll scrollField;
     bool isCreateScrollField = true;
-    BaseMonoScroll delegate(BaseMonoScroll) onNewScrollField;
-    void delegate(BaseMonoScroll) onCreatedScrollField;
+    BaseRegularMonoScroll delegate(BaseRegularMonoScroll) onNewScrollField;
+    void delegate(BaseRegularMonoScroll) onCreatedScrollField;
 
     Text valueField;
     bool isCreateValueField = true;
@@ -132,7 +132,7 @@ class RegulateTextField : Control
     Text newLabelField(dstring text) => new Text(text);
     Text newValueField(dstring text) => new Text(text);
 
-    BaseMonoScroll newScrollField()
+    BaseRegularMonoScroll newScrollField()
     {
         import api.dm.gui.controls.meters.scrolls.hscroll : HScroll;
 

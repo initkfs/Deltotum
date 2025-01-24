@@ -82,6 +82,14 @@ abstract class Layout2d
         return maxH - childrenH;
     }
 
+    auto childrenForAlign(Sprite2d root)
+    {
+        import std.algorithm.iteration : filter;
+
+        //TODO return root.children.filter!(ch => ch.isVisible && ch.isLayoutManaged);
+        return root.children.filter!(ch => ch.isLayoutManaged && ch.isLayoutMovable);
+    }
+
     auto childrenForLayout(Sprite2d root)
     {
         import std.algorithm.iteration : filter;

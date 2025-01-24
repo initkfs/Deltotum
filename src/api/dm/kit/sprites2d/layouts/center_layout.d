@@ -11,7 +11,7 @@ class CenterLayout : ManagedLayout
     override bool alignChildren(Sprite2d root)
     {
         bool isAlign;
-        foreach (child; root.children)
+        foreach (child; childrenForAlign(root))
         {
             isAlign |= alignXY(root, child);
         }

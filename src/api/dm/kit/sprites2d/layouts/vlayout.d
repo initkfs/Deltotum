@@ -31,7 +31,7 @@ class VLayout : SpaceableLayout
 
         foreach (child; root.children)
         {
-            if (!child.isLayoutManaged)
+            if (!child.isLayoutManaged || !child.isLayoutMovable)
             {
                 continue;
             }

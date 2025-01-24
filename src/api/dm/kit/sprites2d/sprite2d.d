@@ -102,6 +102,7 @@ class Sprite2d : EventKitTarget
 
     Layout2d layout;
     bool _layoutManaged = true;
+    bool _layoutMovable = true;
 
     bool isResizeChildren;
     bool isResizeChildrenIfNoLayout = true;
@@ -2460,6 +2461,22 @@ class Sprite2d : EventKitTarget
         }
 
         _layoutManaged = value;
+    }
+
+    bool isLayoutMovable() pure @safe
+    {
+        return _layoutMovable;
+    }
+
+    void isLayoutMovable(bool value) pure @safe
+    {
+        if (_layoutMovable != value)
+        {
+            setInvalid;
+            invalidationState.layout = true;
+        }
+
+        _layoutMovable = value;
     }
 
     double invMass() pure @safe nothrow

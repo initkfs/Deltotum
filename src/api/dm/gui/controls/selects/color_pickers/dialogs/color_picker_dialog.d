@@ -223,7 +223,87 @@ class ColorPickerDialog : Control
         hslHField = new RegulateTextField("H", HSLA.minHue, HSLA.maxHue, (v) {
             updateColorHSL;
         });
+        hslHField.onNewScrollField = (scroll) {
+            auto thumbStyle = createStyle;
+            thumbStyle.isFill = false;
+            scroll.thumbStyle = thumbStyle;
+            return scroll;
+        };
+
+        hslHField.onCreatedScrollField = (scroll) {
+            if (scroll.thumb)
+            {
+                import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
+
+                scroll.thumb.layout = new CenterLayout;
+
+                import api.dm.gui.controls.separators.vseparator : VSeparator;
+
+                auto pointer = new VSeparator;
+                pointer.width = 2;
+                pointer.height = scroll.thumb.height;
+                pointer.isVGrow = true;
+                buildInitCreate(pointer);
+                scroll.thumb.add(pointer);
+            }
+        };
+
         form.addCreate(hslHField);
+
+        assert(hslHField.scrollField);
+        auto scroll = hslHField.scrollField;
+        import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
+
+        auto colorBarW = scroll.width;
+        if (scroll.thumb && colorBarW > scroll.thumb.width)
+        {
+            colorBarW -= scroll.thumb.width;
+        }
+        auto colorBarH = scroll.height > 0 ? scroll.height / 2 : 10;
+
+        auto colorBar = new class VectorTexture
+        {
+            this()
+            {
+                super(colorBarW, colorBarH);
+            }
+
+            override void createTextureContent()
+            {
+                auto ctx = canvas;
+
+                import api.dm.kit.graphics.contexts.graphics_context : GradientStopPoint;
+                import api.math.geom2.vec2 : Vec2d;
+
+                enum pointsCount = 10;
+                double offsetDelta = 1.0 / pointsCount;
+
+                GradientStopPoint[pointsCount] points;
+
+                HSLA currentColor = HSLA(0, 1, 0.5, 1);
+                double currentOffset = 0;
+                double hueDelta = 360 / pointsCount;
+
+                ctx.color = currentColor.toRGBA;
+
+                foreach (pi, ref p; points)
+                {
+                    p = GradientStopPoint(currentOffset, currentColor.toRGBA);
+                    currentOffset += offsetDelta;
+                    currentColor.h += hueDelta;
+                }
+
+                points[$ - 1].offset = 1;
+
+                ctx.linearGradient(Vec2d(0, 0), Vec2d(colorBarW, 0), points, () {
+                    ctx.fillRect(0, 0, colorBarW, colorBarH);
+                });
+
+                ctx.stroke;
+            }
+        };
+        colorBar.isResizedByParent = false;
+        scroll.addCreate(colorBar, 0);
 
         assert(hslHField.scrollField);
         hslHField.scrollField.valueStep = 5;
