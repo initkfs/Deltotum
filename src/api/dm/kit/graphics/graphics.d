@@ -525,9 +525,19 @@ class Graphics : LoggableUnit
         }
     }
 
+    void fillCircle(double centerX, double centerY, double radius)
+    {
+        circle(centerX, centerY, radius, true);
+    }
+
     void fillCircle(double centerX, double centerY, double radius, RGBA color = defaultColor)
     {
         circle(centerX, centerY, radius, color, true);
+    }
+
+    void circle(double centerX, double centerY, double radius, bool isFill = false)
+    {
+        ellipse(Vec2d(centerX, centerY), Vec2d(radius, radius), isFill, isFill);
     }
 
     void circle(double centerX, double centerY, double radius, RGBA color = defaultColor, bool isFill = false)
@@ -548,6 +558,11 @@ class Graphics : LoggableUnit
         {
             restoreColor;
         }
+        ellipse(centerPos, radiusXY, isFillTop, isFillBottom);
+    }
+
+    void ellipse(Vec2d centerPos, Vec2d radiusXY, bool isFillTop = false, bool isFillBottom = false)
+    {
         ellipse(centerPos, radiusXY,
             (p1, p2) {
             point(p1);
