@@ -2,7 +2,7 @@ module api.dm.gui.controls.labels.hyperlinks.hyperlink;
 
 import api.dm.gui.controls.labeled : Labeled;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.gui.controls.popups.tooltips.base_tooltip: BaseTooltip;
+import api.dm.gui.controls.popups.tooltips.base_tooltip : BaseTooltip;
 import api.dm.gui.controls.popups.tooltips.text_tooltip : TextTooltip;
 
 import std.conv : to;
@@ -21,11 +21,13 @@ class Hyperlink : Labeled
 
     bool isCreateUnderline = true;
     Sprite2d delegate(Sprite2d) onNewUnderline;
+    void delegate(Sprite2d) onConfiguredUnderline;
     void delegate(Sprite2d) onCreatedUnderline;
 
     BaseTooltip urlTooltip;
     bool isCreateUrlTooltip = true;
     BaseTooltip delegate(BaseTooltip) onNewUrlTooltip;
+    void delegate(BaseTooltip) onConfiguredUrlTooltip;
     void delegate(BaseTooltip) onCreatedUrlTooltip;
 
     this(dstring text = "Hyperlink", string iconName = null, double graphicsGap = 0, bool isCreateLayout = true)
@@ -66,13 +68,16 @@ class Hyperlink : Labeled
         };
     }
 
-    override void loadTheme(){
+    override void loadTheme()
+    {
         super.loadTheme;
         loadHyperlinkTheme;
     }
 
-    void loadHyperlinkTheme(){
-        if(underlineHeight == 0){
+    void loadHyperlinkTheme()
+    {
+        if (underlineHeight == 0)
+        {
             underlineHeight = theme.dividerSize / 2;
         }
     }
@@ -85,6 +90,12 @@ class Hyperlink : Labeled
         {
             auto p = newUrlTooltip(url.to!dstring);
             urlTooltip = !onNewUrlTooltip ? p : onNewUrlTooltip(p);
+
+            if (onConfiguredUrlTooltip)
+            {
+                onConfiguredUrlTooltip(urlTooltip);
+            }
+
             addCreate(urlTooltip);
 
             installTooltip(urlTooltip);
@@ -105,6 +116,11 @@ class Hyperlink : Labeled
 
             assert(underlineHeight > 0);
             underline.height = underlineHeight;
+
+            if (onConfiguredUnderline)
+            {
+                onConfiguredUnderline(underline);
+            }
 
             addCreate(underline);
             if (onCreatedUnderline)

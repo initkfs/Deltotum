@@ -29,21 +29,25 @@ class HLinearGauge : MinMaxValueMeter!double
 
     bool isCreateScale = true;
     Sprite2d delegate(Sprite2d) onNewScale;
+    void delegate(Sprite2d) onConfiguredScale;
     void delegate(Sprite2d) onCreatedScale;
 
     bool isCreateColorBar = true;
     ColorBar delegate(ColorBar) onNewColorBar;
+    void delegate(ColorBar) onConfiguredColorBar;
     void delegate(ColorBar) onCreatedColorBar;
 
     Container scaleContainer;
 
     bool isCreateScaleContainer = true;
     Container delegate(Container) onNewScaleContainer;
+    void delegate(Container) onConfiguredScaleContainer;
     void delegate(Container) onCreatedScaleContainer;
 
     Text label;
     bool isCreateLabel = true;
     Text delegate(Text) onNewLabel;
+    void delegate(Text) onConfiguredLabel;
     void delegate(Text) onCreatedLabel;
 
     double thumbWidth = 0;
@@ -124,7 +128,14 @@ class HLinearGauge : MinMaxValueMeter!double
             auto newContainer = newScaleContainer;
             scaleContainer = !onNewScaleContainer ? newScaleContainer : onNewScaleContainer(
                 newContainer);
+
+            if (onConfiguredScaleContainer)
+            {
+                onConfiguredScale(scaleContainer);
+            }
+
             addCreate(scaleContainer);
+
             if (onCreatedScaleContainer)
             {
                 onCreatedScaleContainer(scaleContainer);
@@ -137,7 +148,14 @@ class HLinearGauge : MinMaxValueMeter!double
 
             colorRangeBar = !onNewColorBar ? newBar : onNewColorBar(newBar);
             auto root = scaleContainer ? scaleContainer : this;
+
+            if (onConfiguredColorBar)
+            {
+                onConfiguredColorBar(colorRangeBar);
+            }
+
             root.addCreate(colorRangeBar);
+
             if (onCreatedColorBar)
             {
                 onCreatedColorBar(colorRangeBar);
@@ -161,6 +179,12 @@ class HLinearGauge : MinMaxValueMeter!double
 
             scale = !onNewScale ? scaleTexture : onNewScale(scaleTexture);
             auto root = scaleContainer ? scaleContainer : this;
+
+            if (onConfiguredScale)
+            {
+                onConfiguredScale(scale);
+            }
+
             root.addCreate(scale);
 
             if (root.width < scale.width)
@@ -196,7 +220,13 @@ class HLinearGauge : MinMaxValueMeter!double
             label.isLayoutManaged = false;
             label.isVisible = false;
 
+            if (onConfiguredLabel)
+            {
+                onConfiguredLabel(label);
+            }
+
             addCreate(label);
+
             if (onCreatedLabel)
             {
                 onCreatedLabel(label);

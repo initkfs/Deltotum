@@ -22,6 +22,7 @@ class DayContainer : Control
     Text dayLabel;
     bool isCreateDayLabel = true;
     Text delegate(Text) onNewDayLabel;
+    void delegate(Text) onConfiguredDayLabel;
     void delegate(Text) onCreatedDayLabel;
 
     bool canMark = true;
@@ -77,7 +78,13 @@ class DayContainer : Control
             dayLabel.isFocusable = false;
             dayLabel.color = dayColor;
 
+            if (onConfiguredDayLabel)
+            {
+                onConfiguredDayLabel(dayLabel);
+            }
+
             addCreate(dayLabel);
+
             if (onCreatedDayLabel)
             {
                 onCreatedDayLabel(dayLabel);

@@ -15,13 +15,16 @@ class BaseDropDownSelector(D, T) : BaseSelector!T
     D dialog;
     bool isCreateDialog = true;
     D delegate(D) onNewDialog;
+    void delegate(D) onConfiguredDialog;
     void delegate(D) onCreatedDialog;
 
     BasePopup popup;
     BasePopup delegate(BasePopup) onNewPopup;
+    void delegate(BasePopup) onConfiguredPopup;
     void delegate(BasePopup) onCreatedPopup;
 
-    this(){
+    this()
+    {
         import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
         layout = new VLayout(0);
@@ -37,14 +40,21 @@ class BaseDropDownSelector(D, T) : BaseSelector!T
             auto d = newDialog;
             dialog = !onNewDialog ? d : onNewDialog(d);
 
-            if(onDialog){
+            if (onDialog)
+            {
                 onDialog(dialog);
+            }
+
+            if (onConfiguredDialog)
+            {
+                onConfiguredDialog(dialog);
             }
 
             if (!isDropDownDialog)
             {
                 addCreate(dialog);
-                if(layout){
+                if (layout)
+                {
                     layout.isDecreaseRootSize = true;
                 }
             }
@@ -77,13 +87,18 @@ class BaseDropDownSelector(D, T) : BaseSelector!T
             }
         };
 
+        if (onConfiguredPopup)
+        {
+            onConfiguredPopup(popup);
+        }
+
         addCreate(popup);
         if (onCreatedPopup)
         {
             onCreatedPopup(popup);
         }
 
-        onPointerPress ~= (ref e) {showPopup;};
+        onPointerPress ~= (ref e) { showPopup; };
     }
 
     void togglePopup()

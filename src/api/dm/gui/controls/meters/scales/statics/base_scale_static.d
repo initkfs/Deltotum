@@ -27,16 +27,19 @@ abstract class BaseScaleStatic : BaseDrawableScale
     bool isCreateMinorTickProto = true;
     Sprite2d minorTickProto;
     Sprite2d delegate(Sprite2d) onNewMinorTickProto;
+    void delegate(Sprite2d) onConfiguredMinorTickProto;
     void delegate(Sprite2d) onCreatedMinorTickProto;
 
     bool isCreateMajorTickProto = true;
     Sprite2d majorTickProto;
     Sprite2d delegate(Sprite2d) onNewMajorTickProto;
+    void delegate(Sprite2d) onConfiguredMajorTickProto;
     void delegate(Sprite2d) onCreatedMajorTickProto;
 
     bool isCreateLabelProto = true;
     Text labelProto;
     Text delegate(Text) onNewLabelProto;
+    void delegate(Sprite2d) onConfiguredLabelProto;
     void delegate(Text) onCreatedLabelProto;
 
     protected
@@ -64,6 +67,14 @@ abstract class BaseScaleStatic : BaseDrawableScale
         {
             auto newProto = newMinorTickProto;
             minorTickProto = onNewMinorTickProto ? onNewMinorTickProto(newProto) : newProto;
+
+            minorTickProto.isResizedByParent = false;
+
+            if (onConfiguredMinorTickProto)
+            {
+                onConfiguredMinorTickProto(minorTickProto);
+            }
+
             if (!minorTickProto.isBuilt)
             {
                 buildInitCreate(minorTickProto);
@@ -75,8 +86,6 @@ abstract class BaseScaleStatic : BaseDrawableScale
                 texture.blendModeBlend;
             }
 
-            minorTickProto.isResizedByParent = false;
-
             if (onCreatedMinorTickProto)
             {
                 onCreatedMinorTickProto(minorTickProto);
@@ -87,6 +96,14 @@ abstract class BaseScaleStatic : BaseDrawableScale
         {
             auto newProto = newMajorTickProto;
             majorTickProto = onNewMajorTickProto ? onNewMajorTickProto(newProto) : newProto;
+
+            majorTickProto.isResizedByParent = false;
+
+            if (onConfiguredMajorTickProto)
+            {
+                onConfiguredMajorTickProto(majorTickProto);
+            }
+
             if (!majorTickProto.isBuilt)
             {
                 buildInitCreate(majorTickProto);
@@ -98,8 +115,6 @@ abstract class BaseScaleStatic : BaseDrawableScale
                 texture.blendModeBlend;
             }
 
-            majorTickProto.isResizedByParent = false;
-
             if (onCreatedMajorTickProto)
             {
                 onCreatedMajorTickProto(majorTickProto);
@@ -110,6 +125,12 @@ abstract class BaseScaleStatic : BaseDrawableScale
         {
             auto newProto = newLabelProto;
             labelProto = onNewLabelProto ? onNewLabelProto(newProto) : newProto;
+
+            if (onConfiguredLabelProto)
+            {
+                onConfiguredLabelProto(labelProto);
+            }
+
             buildInitCreate(labelProto);
 
             if (onCreatedLabelProto)

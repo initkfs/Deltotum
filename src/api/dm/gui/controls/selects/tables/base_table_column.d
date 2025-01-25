@@ -20,6 +20,7 @@ class BaseTableColumn(TItem) : Container
     string itemTextId = "item_text";
     bool isCreateItemText = true;
     Text delegate(Text) onNewItemText;
+    void delegate(Text) onConfiguredItemText;
     void delegate(Text) onCreatedItemText;
 
     dstring delegate(TItem) itemTextProvider;
@@ -31,6 +32,7 @@ class BaseTableColumn(TItem) : Container
 
     bool isCreateLeftBorder;
     Sprite2d delegate(Sprite2d) onNewLeftBorder;
+    void delegate(Sprite2d) onConfiguredLeftBorder;
     void delegate(Sprite2d) onCreatedLeftBorder;
 
     this(TItem initItem, double dividerSize)
@@ -82,7 +84,13 @@ class BaseTableColumn(TItem) : Container
             it.id = itemTextId;
             itemText = !onNewItemText ? it : onNewItemText(it);
 
+            if (onConfiguredItemText)
+            {
+                onConfiguredItemText(itemText);
+            }
+
             addCreate(itemText);
+
             if (onCreatedItemText)
             {
                 onCreatedItemText(itemText);
@@ -101,7 +109,13 @@ class BaseTableColumn(TItem) : Container
             leftBorder.isResizedWidthByParent = false;
             leftBorder.isResizedHeightByParent = true;
 
+            if (onConfiguredLeftBorder)
+            {
+                onConfiguredLeftBorder(leftBorder);
+            }
+
             addCreate(leftBorder);
+            
             if (onCreatedLeftBorder)
             {
                 onCreatedLeftBorder(leftBorder);

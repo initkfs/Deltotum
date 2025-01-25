@@ -2,7 +2,7 @@ module api.dm.gui.controls.selects.paginations.pagination;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
-import api.dm.gui.controls.selects.base_selector: BaseSelector;
+import api.dm.gui.controls.selects.base_selector : BaseSelector;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.controls.switches.buttons.navigate_button : NavigateButton, NavigateDirection;
@@ -26,57 +26,68 @@ class Pagination : BaseSelector!size_t
     Control pageContainer;
     bool isCreatePageContainer = true;
     Control delegate(Control) onNewPageContainer;
+    void delegate(Control) onConfiguredPageContainer;
     void delegate(Control) onCreatedPageContainer;
 
     Button prevButton;
     bool isCreatePrevButton = true;
     Button delegate(Button) onNewPrevButton;
+    void delegate(Button) onConfiguredPrevButton;
     void delegate(Button) onCreatedPrevButton;
 
     Button nextButton;
     bool isCreateNextButton = true;
     Button delegate(Button) onNewNextButton;
+    void delegate(Button) onConfiguredNextButton;
     void delegate(Button) onCreatedNextButton;
 
     Button firstButton;
     bool isCreateFirstButton = true;
     Button delegate(Button) onNewFirstButton;
+    void delegate(Button) onConfiguredFirstButton;
     void delegate(Button) onCreatedFirstButton;
 
     Button endButton;
     bool isCreateEndButton = true;
     Button delegate(Button) onNewEndButton;
+    void delegate(Button) onConfiguredEndButton;
     void delegate(Button) onCreatedEndButton;
 
     Button currentButton;
     bool isCreateCurrentButton = true;
     Button delegate(Button) onNewCurrentButton;
+    void delegate(Button) onConfiguredCurrentButton;
     void delegate(Button) onCreatedCurrentButton;
 
     Text[] skipPagesPlaceholders;
     dstring skipPagePlaceholderText = ".";
     bool isCreateSkipPagePlaceholders = true;
     Text delegate(Text) onNewSkipPagePlaceholder;
+    void delegate(Text) onConfiguredSkipPagePlaceholder;
     void delegate(Text) onCreatedSkipPagePlaceholder;
 
     Button[] activePageButtons;
     bool isCreateActivePageButtons = true;
     Button delegate(Button) onNewActivePageButton;
+    void delegate(Button) onConfiguredActivePageButton;
     void delegate(Button) onCreatedActivePageButton;
 
     Container infoContainer;
     bool isCreateInfoContainer = true;
     Container delegate(Container) onNewInfoContainer;
+    void delegate(Container) onConfiguredInfoContainer;
     void delegate(Container) onCreatedInfoContainer;
 
     Text infoPageCurrent;
     bool isCreateInfoPageCurrent = true;
     Text delegate(Text) onNewInfoPageCurrent;
+    void delegate(Text) onConfiguredInfoPageCurrent;
     void delegate(Text) onCreatedInfoPageCurrent;
 
     Text selectNewPage;
     bool isCreateSelectNewPage = true;
     Text delegate(Text) onNewSelectNewPage;
+    void delegate(Text) onConfiguredSelectNewPage;
     void delegate(Text) onCreatedSelectNewPage;
 
     size_t activePageCount = 3;
@@ -100,7 +111,14 @@ class Pagination : BaseSelector!size_t
         {
             auto container = newPageContainer;
             pageContainer = !onNewPageContainer ? container : onNewPageContainer(container);
+
+            if (onConfiguredPageContainer)
+            {
+                onConfiguredPageContainer(pageContainer);
+            }
+
             addCreate(pageContainer);
+
             if (onCreatedPageContainer)
             {
                 onCreatedPageContainer(container);
@@ -121,7 +139,13 @@ class Pagination : BaseSelector!size_t
                 pageIndex(newIndex);
             };
 
+            if (onConfiguredPrevButton)
+            {
+                onConfiguredPrevButton(prevButton);
+            }
+
             pageRoot.addCreate(prevButton);
+
             if (onCreatedPrevButton)
             {
                 onCreatedPrevButton(prevButton);
@@ -136,7 +160,13 @@ class Pagination : BaseSelector!size_t
 
             firstButton.onAction ~= (ref e) { setFirstPage; };
 
+            if (onConfiguredFirstButton)
+            {
+                onConfiguredFirstButton(firstButton);
+            }
+
             pageRoot.addCreate(fb);
+
             if (onCreatedFirstButton)
             {
                 onCreatedFirstButton(firstButton);
@@ -154,12 +184,18 @@ class Pagination : BaseSelector!size_t
                 auto newButton = newPageButton((i + activePageFirstIndex + 1).to!dstring);
                 auto activePage = !onNewActivePageButton ? newButton : onNewActivePageButton(
                     newButton);
-                pageRoot.addCreate(activePage);
 
                 activePage.onAction ~= (ref e) {
                     auto pi = i + activePageFirstIndex;
                     pageIndex(pi);
                 };
+
+                if (onConfiguredActivePageButton)
+                {
+                    onConfiguredActivePageButton(activePage);
+                }
+
+                pageRoot.addCreate(activePage);
 
                 if (onCreatedActivePageButton)
                 {
@@ -179,6 +215,11 @@ class Pagination : BaseSelector!size_t
             endButton = !onNewEndButton ? newEnd : onNewEndButton(newEnd);
 
             endButton.onAction ~= (ref e) { setLastPage; };
+
+            if (onConfiguredEndButton)
+            {
+                onConfiguredEndButton(endButton);
+            }
 
             pageRoot.addCreate(endButton);
 
@@ -202,7 +243,13 @@ class Pagination : BaseSelector!size_t
                 pageIndex(newIndex);
             };
 
+            if (onConfiguredNextButton)
+            {
+                onConfiguredNextButton(nextButton);
+            }
+
             pageRoot.addCreate(nextButton);
+
             if (onCreatedNextButton)
             {
                 onCreatedNextButton(nextButton);
@@ -213,7 +260,14 @@ class Pagination : BaseSelector!size_t
         {
             auto ic = newInfoContainer;
             infoContainer = !onNewInfoContainer ? ic : onNewInfoContainer(ic);
+
+            if (onConfiguredInfoContainer)
+            {
+                onConfiguredInfoContainer(infoContainer);
+            }
+
             addCreate(infoContainer);
+
             if (onCreatedInfoContainer)
             {
                 onCreatedInfoContainer(infoContainer);
@@ -263,6 +317,11 @@ class Pagination : BaseSelector!size_t
                 }
             };
 
+            if (onConfiguredSelectNewPage)
+            {
+                onConfiguredSelectNewPage(selectNewPage);
+            }
+
             infoRoot.addCreate(selectNewPage);
 
             selectNewPage.enableInsets;
@@ -278,7 +337,14 @@ class Pagination : BaseSelector!size_t
             auto infoCurrent = newInfoPageCurrent;
             infoPageCurrent = !onNewInfoPageCurrent ? infoCurrent : onNewInfoPageCurrent(
                 infoCurrent);
+
+            if (onConfiguredInfoPageCurrent)
+            {
+                onConfiguredInfoPageCurrent(infoPageCurrent);
+            }
+
             infoRoot.addCreate(infoPageCurrent);
+
             if (onCreatedInfoPageCurrent)
             {
                 onCreatedInfoPageCurrent(infoPageCurrent);
@@ -286,7 +352,8 @@ class Pagination : BaseSelector!size_t
         }
 
         pageIndex(0, isAllowReplace:
-            true, isTriggerListeners: false);
+            true, isTriggerListeners:
+            false);
 
         if (infoPageCurrent)
         {
@@ -305,7 +372,14 @@ class Pagination : BaseSelector!size_t
 
         auto pl = newSkipPagePlaceholder;
         auto placeholder = !onNewSkipPagePlaceholder ? pl : onNewSkipPagePlaceholder(pl);
+
+        if (onConfiguredSkipPagePlaceholder)
+        {
+            onConfiguredSkipPagePlaceholder(placeholder);
+        }
+
         root.addCreate(placeholder);
+
         if (onCreatedSkipPagePlaceholder)
         {
             onCreatedSkipPagePlaceholder(placeholder);

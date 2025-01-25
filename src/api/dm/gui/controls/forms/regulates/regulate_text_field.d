@@ -12,16 +12,19 @@ class RegulateTextField : Control
     Text labelField;
     bool isCreateLabelField = true;
     Text delegate(Text) onNewLabelField;
+    void delegate(Text) onConfiguredLabelField;
     void delegate(Text) onCreatedLabelField;
 
     BaseRegularMonoScroll scrollField;
     bool isCreateScrollField = true;
     BaseRegularMonoScroll delegate(BaseRegularMonoScroll) onNewScrollField;
+    void delegate(BaseRegularMonoScroll) onConfiguredScrollField;
     void delegate(BaseRegularMonoScroll) onCreatedScrollField;
 
     Text valueField;
     bool isCreateValueField = true;
     Text delegate(Text) onNewValueField;
+    void delegate(Text) onConfiguredValueField;
     void delegate(Text) onCreatedValueField;
 
     dstring valueFieldInitSymbol = "0";
@@ -71,6 +74,11 @@ class RegulateTextField : Control
 
             labelField.isReduceWidthHeight = false;
 
+            if (onConfiguredLabelField)
+            {
+                onConfiguredLabelField(labelField);
+            }
+
             addCreate(labelField);
             if (onCreatedLabelField)
             {
@@ -97,6 +105,11 @@ class RegulateTextField : Control
                 }
             };
 
+            if (onConfiguredScrollField)
+            {
+                onConfiguredScrollField(scrollField);
+            }
+
             addCreate(scrollField);
             if (onCreatedScrollField)
             {
@@ -111,6 +124,11 @@ class RegulateTextField : Control
 
             valueField.isReduceWidthHeight = false;
             valueField.isEditable = true;
+
+            if (onConfiguredValueField)
+            {
+                onConfiguredValueField(valueField);
+            }
 
             addCreate(valueField);
 

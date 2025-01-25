@@ -28,6 +28,7 @@ abstract class BaseMonoScroll : BaseScroll
 
     bool isCreateThumb = true;
     Sprite2d delegate(Sprite2d) onNewThumb;
+    void delegate(Sprite2d) onConfiguredThumb;
     void delegate(Sprite2d) onCreatedThumb;
 
     bool isCreateOnPointerWheel = true;
@@ -73,13 +74,18 @@ abstract class BaseMonoScroll : BaseScroll
         if (!thumb && isCreateThumb)
         {
             auto th = newThumb;
-            
-            th.isResizedByParent = false;
-            th.isLayoutMovable = false;
-            
             thumb = onNewThumb ? onNewThumb(th) : th;
 
+            thumb.isResizedByParent = false;
+            thumb.isLayoutMovable = false;
+
+            if (onConfiguredThumb)
+            {
+                onConfiguredThumb(thumb);
+            }
+
             addCreate(thumb);
+            
             if (onCreatedThumb)
             {
                 onCreatedThumb(thumb);

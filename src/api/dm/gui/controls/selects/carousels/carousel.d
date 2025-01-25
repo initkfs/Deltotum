@@ -31,21 +31,25 @@ class Carousel : BaseSelector!Sprite2d
     MinMaxTween2d!double itemChangeAnimation;
     bool isCreateItemChangeAnimation = true;
     MinMaxTween2d!double delegate(MinMaxTween2d!double) onNewItemChangeAnimation;
+    void delegate(MinMaxTween2d!double) onConfiguredItemChangeAnimation;
     void delegate(MinMaxTween2d!double) onCreatedItemChangeAnimation;
 
     Button prevButton;
     bool isCreatePrevButton = true;
     Button delegate(Button) onNewPrevButton;
+    void delegate(Button) onConfiguredPrevButton;
     void delegate(Button) onCreatedPrevButton;
 
     Button nextButton;
     bool isCreateNextButton = true;
     Button delegate(Button) onNewNextButton;
+    void delegate(Button) onConfiguredNextButton;
     void delegate(Button) onCreatedNextButton;
 
     Container itemContainer;
     bool isCreateItemContainer = true;
     Container delegate(Container) onNewItemContainer;
+    void delegate(Container) onConfiguredItemContainer;
     void delegate(Container) onCreatedItemContainer;
 
     double itemWidth = 0;
@@ -125,7 +129,13 @@ class Carousel : BaseSelector!Sprite2d
                 }
             };
 
+            if (onConfiguredItemChangeAnimation)
+            {
+                onConfiguredItemChangeAnimation(itemChangeAnimation);
+            }
+
             addCreate(itemChangeAnimation);
+
             if (onCreatedItemChangeAnimation)
             {
                 onCreatedItemChangeAnimation(itemChangeAnimation);
@@ -141,6 +151,11 @@ class Carousel : BaseSelector!Sprite2d
                 direction = CarouselDirection.fromLeft;
                 showNextItem;
             };
+
+            if (onConfiguredPrevButton)
+            {
+                onConfiguredPrevButton(prevButton);
+            }
 
             addCreate(prevButton);
             if (onCreatedPrevButton)
@@ -185,7 +200,13 @@ class Carousel : BaseSelector!Sprite2d
 
             itemContainer.setClipFromBounds;
 
+            if (onConfiguredItemContainer)
+            {
+                onConfiguredItemContainer(itemContainer);
+            }
+
             addCreate(itemContainer);
+
             if (onCreatedItemContainer)
             {
                 onCreatedItemContainer(itemContainer);
@@ -202,7 +223,13 @@ class Carousel : BaseSelector!Sprite2d
                 showNextItem;
             };
 
+            if (onConfiguredNextButton)
+            {
+                onConfiguredNextButton(nextButton);
+            }
+
             addCreate(nextButton);
+            
             if (onCreatedNextButton)
             {
                 onCreatedNextButton(nextButton);

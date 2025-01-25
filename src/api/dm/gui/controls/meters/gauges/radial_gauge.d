@@ -28,6 +28,7 @@ class RadialGauge : BaseRadialGauge
 
     bool isCreateHand = true;
     Sprite2d delegate(Sprite2d) onNewHand;
+    void delegate(Sprite2d) onConfiguredHand;
     void delegate(Sprite2d) onCreatedHand;
 
     Sprite2d handHolder;
@@ -35,23 +36,27 @@ class RadialGauge : BaseRadialGauge
     bool isCreateHandHolder = true;
 
     Sprite2d delegate(Sprite2d) onNewHandHolder;
+    void delegate(Sprite2d) onConfiguredHandHolder;
     void delegate(Sprite2d) onCreatedHandHolder;
 
     ValueTween2d handTween;
     bool isCreateHandTween = true;
     ValueTween2d delegate(ValueTween2d) onNewHandTween;
+    void delegate(ValueTween2d) onConfiguredHandTween;
     void delegate(ValueTween2d) onCreatedHandTween;
 
     Text label;
 
     bool isCreateLabel = true;
     Text delegate(Text) onNewLabel;
+    void delegate(Text) onConfiguredLabel;
     void delegate(Text) onCreatedLabel;
 
     RadialColorBar colorBar;
 
     bool isCreateColorBar = true;
     RadialColorBar delegate(RadialColorBar) onNewColorBar;
+    void delegate(RadialColorBar) onConfiguredColorBar;
     void delegate(RadialColorBar) onCreatedColorBar;
 
     protected
@@ -71,7 +76,8 @@ class RadialGauge : BaseRadialGauge
         auto handStyle = createHandStyle;
 
         auto handShapeHeight = radius;
-        if(scale){
+        if (scale)
+        {
             handShapeHeight -= scale.tickMaxHeight;
             handShapeHeight *= 0.9;
         }
@@ -85,7 +91,8 @@ class RadialGauge : BaseRadialGauge
         }
 
         import Math = api.math;
-        auto coneHeight = handShapeWidth * Math.goldRounded; 
+
+        auto coneHeight = handShapeWidth * Math.goldRounded;
         auto hand = factory.createHand(handShapeWidth, handShapeHeight, handStyle, 0, coneHeight);
         return hand;
     }
@@ -123,7 +130,14 @@ class RadialGauge : BaseRadialGauge
         {
             auto newBar = newColorBar;
             colorBar = !onNewColorBar ? newBar : onNewColorBar(newBar);
+
+            if (onConfiguredColorBar)
+            {
+                onConfiguredColorBar(colorBar);
+            }
+
             addCreate(colorBar);
+
             if (onCreatedColorBar)
             {
                 onCreatedColorBar(colorBar);
@@ -134,7 +148,14 @@ class RadialGauge : BaseRadialGauge
         {
             auto h = newHand;
             hand = onNewHand ? onNewHand(h) : h;
+
+            if (onConfiguredHand)
+            {
+                onConfiguredHand(hand);
+            }
+
             addCreate(hand);
+
             if (onCreatedHand)
             {
                 onCreatedHand(hand);
@@ -145,7 +166,14 @@ class RadialGauge : BaseRadialGauge
         {
             auto holder = newHandHolder;
             handHolder = onNewHandHolder ? onNewHandHolder(holder) : holder;
+
+            if (onConfiguredHandHolder)
+            {
+                onConfiguredHandHolder(handHolder);
+            }
+
             addCreate(handHolder);
+
             if (onCreatedHandHolder)
             {
                 onCreatedHandHolder(handHolder);
@@ -158,7 +186,14 @@ class RadialGauge : BaseRadialGauge
             newTween.onOldNewValue ~= (oldValue, value) { handAngleDeg(value); };
             newTween.onStop ~= () { labelText(_value); };
             handTween = onNewHandTween ? onNewHandTween(newTween) : newTween;
+
+            if (onConfiguredHandTween)
+            {
+                onConfiguredHandTween(handTween);
+            }
+
             addCreate(handTween);
+
             if (onCreatedHandTween)
             {
                 onCreatedHandTween(handTween);
@@ -172,6 +207,12 @@ class RadialGauge : BaseRadialGauge
             text.setSmallSize;
 
             label = onNewLabel ? onNewLabel(text) : text;
+
+            if (onConfiguredLabel)
+            {
+                onConfiguredLabel(label);
+            }
+
             addCreate(label);
 
             if (onCreatedLabel)

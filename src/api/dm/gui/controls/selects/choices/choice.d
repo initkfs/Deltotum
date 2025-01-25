@@ -21,17 +21,20 @@ class Choice(T) : BaseSelector!T
 
     bool isCreatePrevButton = true;
     Button delegate(Button) onNewPrevButton;
+    void delegate(Button) onConfiguredPrevButton;
     void delegate(Button) onCreatedPrevButton;
 
     Button nextButton;
 
     bool isCreateNextButton = true;
     Button delegate(Button) onNewNextButton;
+    void delegate(Button) onConfiguredNextButton;
     void delegate(Button) onCreatedNextButton;
 
     Text label;
     bool isCreateLabel = true;
     Text delegate(Text) onNewLabel;
+    void delegate(Text) onConfiguredLabel;
     void delegate(Text) onCreatedLabel;
 
     dstring delegate(T) itemToTextConverter;
@@ -39,12 +42,14 @@ class Choice(T) : BaseSelector!T
     Text searchField;
     bool isCreateSearchField;
     Text delegate(Text) onNewSearchField;
+    void delegate(Text) onConfiguredSearchField;
     void delegate(Text) onCreatedSearchField;
 
     PopupMenu!T popupMenu;
 
     bool isCreatePopupMenu = true;
     PopupMenu!T delegate(PopupMenu!T) onNewPopupMenu;
+    void delegate(PopupMenu!T) onConfiguredPopupMenu;
     void delegate(PopupMenu!T) onCreatedPopupMenu;
 
     protected
@@ -141,6 +146,11 @@ class Choice(T) : BaseSelector!T
                 }
             };
 
+            if (onConfiguredPopupMenu)
+            {
+                onConfiguredPopupMenu(popupMenu);
+            }
+
             addCreate(popupMenu);
 
             popupMenu.menuList.onChangeOldNew ~= (oldRow, newRow) {
@@ -180,7 +190,13 @@ class Choice(T) : BaseSelector!T
                     }
                 };
 
+                if (onConfiguredPrevButton)
+                {
+                    onConfiguredPrevButton(prevButton);
+                }
+
                 prevNextContainer.addCreate(prevButton);
+
                 if (onCreatedPrevButton)
                 {
                     onCreatedPrevButton(prevButton);
@@ -200,7 +216,13 @@ class Choice(T) : BaseSelector!T
                     }
                 };
 
+                if (onConfiguredNextButton)
+                {
+                    onConfiguredNextButton(nextButton);
+                }
+
                 prevNextContainer.addCreate(nextButton);
+
                 if (onCreatedNextButton)
                 {
                     onCreatedNextButton(nextButton);
@@ -213,7 +235,14 @@ class Choice(T) : BaseSelector!T
         {
             auto l = newLabel;
             label = !onNewLabel ? l : onNewLabel(l);
+
+            if (onConfiguredLabel)
+            {
+                onConfiguredLabel(label);
+            }
+
             addCreate(label);
+
             if (onCreatedLabel)
             {
                 onCreatedLabel(label);
@@ -264,6 +293,11 @@ class Choice(T) : BaseSelector!T
                     return true;
                 });
             };
+
+            if (onConfiguredSearchField)
+            {
+                onConfiguredSearchField(searchField);
+            }
 
             popupMenu.addCreate(searchField, 0);
 

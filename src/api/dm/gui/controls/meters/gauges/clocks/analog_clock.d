@@ -1,6 +1,6 @@
 module api.dm.gui.controls.meters.gauges.clocks.analog_clock;
 
-import api.dm.gui.controls.meters.gauges.base_radial_gauge: BaseRadialGauge;
+import api.dm.gui.controls.meters.gauges.base_radial_gauge : BaseRadialGauge;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.meters.hands.meter_hand_factory : MeterHandFactory;
 import api.dm.gui.controls.indicators.segments.radial_segment_bar : RadialSegmentBar;
@@ -31,26 +31,31 @@ class AnalogClock : BaseRadialGauge
     Sprite2d hourHand;
     bool isCreateHourHand = true;
     Sprite2d delegate(Sprite2d) onNewHourHand;
+    void delegate(Sprite2d) onConfiguredHourHand;
     void delegate(Sprite2d) onCreatedHourHand;
 
     Sprite2d minHand;
     bool isCreateMinHand = true;
     Sprite2d delegate(Sprite2d) onNewMinHand;
+    void delegate(Sprite2d) onConfiguredMinHand;
     void delegate(Sprite2d) onCreatedMinHand;
 
     Sprite2d secHand;
     bool isCreateSecHand = true;
     Sprite2d delegate(Sprite2d) onNewSecHand;
+    void delegate(Sprite2d) onConfiguredSecHand;
     void delegate(Sprite2d) onCreatedSecHand;
 
     Sprite2d handHolder;
     bool isCreateHandHolder = true;
     Sprite2d delegate(Sprite2d) onNewHandHolder;
+    void delegate(Sprite2d) onConfiguredHandHolder;
     void delegate(Sprite2d) onCreatedHandHolder;
 
     Tween2d clockAnimation;
     bool isCreateClockAnimation = true;
     Tween2d delegate(Tween2d) onNewClockAnimation;
+    void delegate(Sprite2d) onConfiguredClockAnimation;
     void delegate(Tween2d) onCreatedClockAnimation;
 
     double handWidth = 0;
@@ -227,7 +232,14 @@ class AnalogClock : BaseRadialGauge
         {
             auto newHand = newHourHand;
             hourHand = !onNewHourHand ? newHand : onNewHourHand(newHand);
+
+            if (onConfiguredHourHand)
+            {
+                onConfiguredHourHand(hourHand);
+            }
+
             addCreate(hourHand);
+
             if (onCreatedHourHand)
             {
                 onCreatedHourHand(hourHand);
@@ -238,7 +250,14 @@ class AnalogClock : BaseRadialGauge
         {
             auto newHand = newMinHand;
             minHand = !onNewMinHand ? newHand : onNewMinHand(newHand);
+
+            if (onConfiguredMinHand)
+            {
+                onConfiguredMinHand(minHand);
+            }
+
             addCreate(minHand);
+
             if (onCreatedMinHand)
             {
                 onCreatedMinHand(minHand);
@@ -249,7 +268,14 @@ class AnalogClock : BaseRadialGauge
         {
             auto newHand = newSecHand;
             secHand = !onNewSecHand ? newHand : onNewSecHand(newHand);
+
+            if (onConfiguredSecHand)
+            {
+                onConfiguredHourHand(secHand);
+            }
+
             addCreate(secHand);
+
             if (onCreatedSecHand)
             {
                 onCreatedSecHand(secHand);
@@ -260,9 +286,15 @@ class AnalogClock : BaseRadialGauge
         {
             auto newHolder = newHandHolder;
             handHolder = !onNewHandHolder ? newHolder : onNewHandHolder(newHolder);
+
+            if (onConfiguredHandHolder)
+            {
+                onConfiguredHandHolder(handHolder);
+            }
+
             addCreate(handHolder);
 
-            import api.dm.kit.sprites2d.textures.texture2d: Texture2d;
+            import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 
             if (auto holderTexture = cast(Texture2d) handHolder)
             {

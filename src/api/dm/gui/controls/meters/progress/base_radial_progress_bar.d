@@ -1,6 +1,6 @@
 module api.dm.gui.controls.meters.progress.base_radial_progress_bar;
 
-import api.dm.gui.controls.meters.progress.base_labeled_progress_bar: BaseLabeledProgressBar;
+import api.dm.gui.controls.meters.progress.base_labeled_progress_bar : BaseLabeledProgressBar;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.controls.indicators.segments.radial_segment_bar : RadialSegmentBar;
@@ -23,6 +23,7 @@ class BaseRadialProgressBar : BaseLabeledProgressBar
 
     bool isCreateSegmentBar = true;
     RadialSegmentBar delegate(RadialSegmentBar) onNewSegmentBar;
+    void delegate(RadialSegmentBar) onConfiguredSegmentBar;
     void delegate(RadialSegmentBar) onCreatedSegmentBar;
 
     this(double diameter = 0, double minValue = 0, double maxValue = 1.0, double minAngleDeg = 0, double maxAngleDeg = 360)
@@ -64,7 +65,20 @@ class BaseRadialProgressBar : BaseLabeledProgressBar
         {
             auto newBar = newSegmentBar;
             segmentBar = !onNewSegmentBar ? newBar : onNewSegmentBar(newBar);
+
+            assert(progressStep > 0);
+
+            import std.conv : to;
+
+            segmentBar.segmentsCount = (maxValue / progressStep).to!size_t;
+
+            if (onConfiguredSegmentBar)
+            {
+                onConfiguredSegmentBar(segmentBar);
+            }
+
             addCreate(segmentBar);
+
             if (onCreatedSegmentBar)
             {
                 onCreatedSegmentBar(segmentBar);
@@ -79,14 +93,7 @@ class BaseRadialProgressBar : BaseLabeledProgressBar
     RadialSegmentBar newSegmentBar()
     {
         auto bar = new RadialSegmentBar(diameter, minAngleDeg, maxAngleDeg);
-
-        assert(progressStep > 0);
-
-        import std.conv : to;
-
-        bar.segmentsCount = (maxValue / progressStep).to!size_t;
         bar.angleOffset += bar.segmentAngleMiddleOffset;
-
         return bar;
     }
 
@@ -112,5 +119,4 @@ class BaseRadialProgressBar : BaseLabeledProgressBar
         segmentBar.showSegments(needSegments);
     }
 
-    
 }

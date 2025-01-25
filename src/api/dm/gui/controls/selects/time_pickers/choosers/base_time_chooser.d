@@ -18,9 +18,11 @@ abstract class BaseTimeChooser : Control
     Sprite2d thumb;
     bool isCreateThumb = true;
     Sprite2d delegate(Sprite2d) onNewThumb;
+    void delegate(Sprite2d) onConfiguredThumb;
     void delegate(Sprite2d) onCreatedThumb;
 
     Text delegate(Text) onNewTextLabel;
+    void delegate(Text) onConfiguredTextLabel;
     void delegate(Text) onCreatedTextLabel;
 
     this()
@@ -63,6 +65,11 @@ abstract class BaseTimeChooser : Control
             thumb.isLayoutManaged = false;
             thumb.isResizedByParent = false;
             thumb.isVisible = false;
+
+            if (onConfiguredThumb)
+            {
+                onConfiguredThumb(thumb);
+            }
 
             addCreate(thumb);
 
@@ -122,6 +129,11 @@ abstract class BaseTimeChooser : Control
                         .boundsRect.halfHeight);
             }
         };
+
+        if (onConfiguredTextLabel)
+        {
+            onConfiguredTextLabel(label);
+        }
 
         auto labelRoot = root ? root : this;
 

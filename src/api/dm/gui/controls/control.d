@@ -12,7 +12,7 @@ import api.dm.kit.graphics.styles.default_style;
 import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import api.math.alignment : Alignment;
 import api.math.insets : Insets;
-import api.dm.gui.controls.popups.tooltips.base_tooltip: BaseTooltip;
+import api.dm.gui.controls.popups.tooltips.base_tooltip : BaseTooltip;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.themes.theme : Theme;
 
@@ -84,12 +84,14 @@ class Control : GuiComponent
 
     bool isCreateHoverEffect;
     Sprite2d delegate(Sprite2d) onNewHoverEffect;
+    void delegate(Sprite2d) onConfiguredHoverEffect;
     void delegate(Sprite2d) onCreatedHoverEffect;
 
     size_t hoverAnimationDelayMs;
 
     bool isCreateHoverEffectAnimation;
     Tween2d delegate(Tween2d) onNewHoverAnimation;
+    void delegate(Sprite2d) onConfiguredHoverEffectAnimation;
     void delegate(Tween2d) onCreatedHoverAnimation;
 
     void delegate() hoverEffectStartBehaviour;
@@ -98,6 +100,7 @@ class Control : GuiComponent
     bool isCreateActionEffect;
     Sprite2d delegate() actionEffectFactory;
     Sprite2d delegate(Sprite2d) onNewActionEffect;
+    void delegate(Sprite2d) onConfiguredActionEffect;
     void delegate(Sprite2d) onCreatedActionEffect;
 
     void delegate(ref ActionEvent) actionEffectStartBehaviour;
@@ -108,6 +111,7 @@ class Control : GuiComponent
     bool isCreateActionEffectAnimation;
     Tween2d delegate(Sprite2d) actionEffectAnimationFactory;
     Tween2d delegate(Tween2d) onNewActionEffectAnimation;
+    void delegate(Sprite2d) onConfiguredActionEffectAnimation;
     void delegate(Tween2d) onCreatedActionEffectAnimation;
 
     bool isCreateInteractiveListeners;
@@ -395,15 +399,19 @@ class Control : GuiComponent
         if (!_hoverEffect && isCreateHoverEffect)
         {
             auto newHover = newHoverEffect;
-            assert(newHover);
-
-            newHover.id = idHoverShape;
-            newHover.isLayoutManaged = false;
-            newHover.isResizedByParent = true;
-            newHover.isVisible = false;
-
             _hoverEffect = onNewHoverEffect ? onNewHoverEffect(newHover) : newHover;
             assert(_hoverEffect);
+
+            _hoverEffect.id = idHoverShape;
+            _hoverEffect.isLayoutManaged = false;
+            _hoverEffect.isResizedByParent = true;
+            _hoverEffect.isVisible = false;
+
+            if (onConfiguredHoverEffect)
+            {
+                onConfiguredHoverEffect(_hoverEffect);
+            }
+
             addCreate(_hoverEffect);
 
             assert(hasTheme);
@@ -425,6 +433,11 @@ class Control : GuiComponent
                 newHoverAnim) : newHoverAnim;
             assert(_hoverEffectAnimation);
 
+            if (onConfiguredHoverEffectAnimation)
+            {
+                onConfiguredHoverEffectAnimation(_hoverEffectAnimation);
+            }
+
             addCreate(_hoverEffectAnimation);
 
             if (onCreatedHoverAnimation)
@@ -438,13 +451,19 @@ class Control : GuiComponent
             auto effect = newActionEffect();
             assert(effect);
 
-            effect.id = idActionShape;
-            effect.isLayoutManaged = false;
-            effect.isResizedByParent = true;
-            effect.isVisible = false;
-
             _actionEffect = onNewActionEffect ? onNewActionEffect(effect) : effect;
             assert(_actionEffect);
+
+            _actionEffect.id = idActionShape;
+            _actionEffect.isLayoutManaged = false;
+            _actionEffect.isResizedByParent = true;
+            _actionEffect.isVisible = false;
+
+            if (onConfiguredActionEffect)
+            {
+                onConfiguredActionEffect(_actionEffect);
+            }
+
             addCreate(_actionEffect);
 
             if (onCreatedActionEffect)
@@ -462,6 +481,12 @@ class Control : GuiComponent
                 newEffectAnimation) : newEffectAnimation;
 
             assert(_actionEffectAnimation);
+
+            if (onConfiguredActionEffectAnimation)
+            {
+                onConfiguredActionEffectAnimation(_actionEffectAnimation);
+            }
+
             addCreate(_actionEffectAnimation);
 
             if (onCreatedActionEffectAnimation)

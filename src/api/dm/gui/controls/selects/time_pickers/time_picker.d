@@ -28,31 +28,37 @@ class TimePicker : Control
     Container timeContainer;
     bool isCreateTimeContainer = true;
     Container delegate(Container) onNewTimeContainer;
+    void delegate(Container) onConfiguredTimeContainer;
     void delegate(Container) onCreatedTimeContainer;
 
     Text hoursLabel;
     bool isCreateHoursLabel = true;
     Text delegate(Text) onNewHoursLabel;
+    void delegate(Text) onConfiguredHoursLabel;
     void delegate(Text) onCreatedHoursLabel;
 
     Text minutesLabel;
     bool isCreateMinutesLabel = true;
     Text delegate(Text) onNewMinutesLabel;
+    void delegate(Text) onConfiguredMinutesLabel;
     void delegate(Text) onCreatedMinutesLabel;
 
     Text secsLabel;
     bool isCreateSecsLabel = true;
     Text delegate(Text) onNewSecsLabel;
+    void delegate(Text) onConfiguredSecsLabel;
     void delegate(Text) onCreatedSecsLabel;
 
     Button hourUp;
     bool isCreateHourUpButton = true;
     Button delegate(Button) onNewHourUpButton;
+    void delegate(Button) onConfiguredHourUpButton;
     void delegate(Button) onCreatedHourUpButton;
 
     Button hourDown;
     bool isCreateHourDownButton = true;
     Button delegate(Button) onNewHourDownButton;
+    void delegate(Button) onConfiguredHourDownButton;
     void delegate(Button) onCreatedHourDownButton;
 
     FontSize timeFontSize = timeFontSize.large;
@@ -114,6 +120,10 @@ class TimePicker : Control
             auto container = newTimeContainer;
             timeContainer = !onNewTimeContainer ? container : onNewTimeContainer(container);
 
+            if(onConfiguredTimeContainer){
+                onConfiguredTimeContainer(timeContainer);
+            }
+
             addCreate(timeContainer);
 
             timeContainer.enableInsets;
@@ -146,6 +156,10 @@ class TimePicker : Control
                 assert(secChooser);
                 secChooser.hideForLayout;
             };
+
+            if(onConfiguredHoursLabel){
+                onConfiguredHoursLabel(hoursLabel);
+            }
         }
 
         if (!minutesLabel && isCreateMinutesLabel)
@@ -169,6 +183,10 @@ class TimePicker : Control
                 assert(secChooser);
                 secChooser.hideForLayout;
             };
+
+            if(onConfiguredMinutesLabel){
+                onConfiguredMinutesLabel(minutesLabel);
+            }
         }
 
         if (!secsLabel && isCreateSecsLabel)
@@ -192,6 +210,10 @@ class TimePicker : Control
                 assert(minChooser);
                 minChooser.hideForLayout;
             };
+
+            if(onConfiguredSecsLabel){
+                onConfiguredSecsLabel(secsLabel);
+            }
         }
 
         if (timeContainer)
@@ -200,7 +222,7 @@ class TimePicker : Control
 
             double spacing = 0;
 
-            auto hoursContainer = new VBox(spacing);
+            auto hoursContainer = new VBox(spacing);            
             timeContainer.addCreate(hoursContainer);
 
             enum hourMaxValue = 23;

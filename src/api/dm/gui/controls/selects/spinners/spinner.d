@@ -16,26 +16,31 @@ class Spinner(T) : BaseSelector!T
     TextField incLabel;
     bool isCreateIncLabel;
     TextField delegate(TextField) onNewIncLabel;
+    void delegate(TextField) onConfiguredIncLabel;
     void delegate(TextField) onCreatedIncLabel;
 
     Button incButton;
     bool isCreateIncButton;
     Button delegate(Button) onNewIncButton;
+    void delegate(Button) onConfiguredIncButton;
     void delegate(Button) onCreatedIncButton;
 
     TextField valueLabel;
     bool isCreateValueLabel = true;
     TextField delegate(TextField) onNewValueLabel;
+    void delegate(TextField) onConfiguredValueLabel;
     void delegate(TextField) onCreatedValueLabel;
 
     TextField decLabel;
     bool isCreateDecLabel;
     TextField delegate(TextField) onNewDecLabel;
+    void delegate(TextField) onConfiguredDecLabel;
     void delegate(TextField) onCreatedDecLabel;
 
     Button decButton;
     bool isCreateDecButton;
     Button delegate(Button) onNewDecButton;
+    void delegate(Button) onConfiguredDecButton;
     void delegate(Button) onCreatedDecButton;
 
     double textWidth = 0;
@@ -97,6 +102,11 @@ class Spinner(T) : BaseSelector!T
                 value = newValue;
             };
 
+            if (onConfiguredDecButton)
+            {
+                onConfiguredDecButton(decButton);
+            }
+
             addCreate(decButton);
             if (onCreatedDecButton)
             {
@@ -118,11 +128,15 @@ class Spinner(T) : BaseSelector!T
 
             auto newLabel = newIncLabel;
             incLabel = !onNewIncLabel ? newLabel : onNewIncLabel(newLabel);
+
+            if (onConfiguredIncLabel)
+            {
+                onConfiguredIncLabel(incLabel);
+            }
+
             incTextExpander.contentContainer.addCreate(incLabel);
-            
-            window.showingTasks ~= (double dt){
-                incTextExpander.close;
-            };
+
+            window.showingTasks ~= (double dt) { incTextExpander.close; };
 
             if (onCreatedIncLabel)
             {
@@ -135,7 +149,13 @@ class Spinner(T) : BaseSelector!T
             auto newLabel = newValueLabel;
             valueLabel = !onNewValueLabel ? newLabel : onNewValueLabel(newLabel);
 
+            if (onConfiguredValueLabel)
+            {
+                onConfiguredValueLabel(valueLabel);
+            }
+
             valueContainer.addCreate(valueLabel);
+
             if (onCreatedValueLabel)
             {
                 onCreatedValueLabel(valueLabel);
@@ -150,11 +170,15 @@ class Spinner(T) : BaseSelector!T
 
             auto newLabel = newDecLabel;
             decLabel = !onNewDecLabel ? newLabel : onNewDecLabel(newLabel);
+
+            if (onConfiguredDecLabel)
+            {
+                onConfiguredDecLabel(decLabel);
+            }
+
             decTextExpander.contentContainer.addCreate(decLabel);
 
-            window.showingTasks ~= (double dt){
-                decTextExpander.close;
-            };
+            window.showingTasks ~= (double dt) { decTextExpander.close; };
 
             if (onCreatedDecLabel)
             {
@@ -173,7 +197,13 @@ class Spinner(T) : BaseSelector!T
                 value = newValue;
             };
 
+            if (onConfiguredIncButton)
+            {
+                onConfiguredIncButton(incButton);
+            }
+
             addCreate(incButton);
+
             if (onCreatedIncButton)
             {
                 onCreatedIncButton(incButton);

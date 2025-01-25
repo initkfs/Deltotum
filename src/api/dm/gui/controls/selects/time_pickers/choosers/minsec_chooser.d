@@ -21,12 +21,14 @@ class MinSecChooser : BaseCircularTimeChooser
     Container minSec0to55Box;
     bool isCreateMinSec0to55Box = true;
     Container delegate(Container) onNewMinSec0to55Box;
+    void delegate(Container) onConfiguredMinSec0to55Box;
     void delegate(Container) onCreatedMinSec0to55Box;
 
     double labelSize = 0;
     Sprite2d labelBox;
     bool isCreateLabelBox = true;
     Sprite2d delegate(Sprite2d) onNewLabelBox;
+    void delegate(Sprite2d) onConfiguredLabelBox;
     void delegate(Sprite2d) onCreatedLabelBox;
 
     Sprite2d textLabels;
@@ -49,7 +51,8 @@ class MinSecChooser : BaseCircularTimeChooser
             startAngleDeg = 270;
         }
 
-        if(radius == 0){
+        if (radius == 0)
+        {
             radius = theme.meterThumbDiameter * 1.5;
         }
     }
@@ -107,6 +110,11 @@ class MinSecChooser : BaseCircularTimeChooser
             auto newLabelBox = new Texture2d(boxSize, boxSize);
             labelBox = newLabelBox;
 
+            if (onConfiguredLabelBox)
+            {
+                onConfiguredLabelBox(newLabelBox);
+            }
+
             addCreate(newLabelBox);
             if (onCreatedLabelBox)
             {
@@ -154,7 +162,14 @@ class MinSecChooser : BaseCircularTimeChooser
         {
             auto box = newCircleBox(radius, startAngleDeg);
             minSec0to55Box = !onNewMinSec0to55Box ? box : onNewMinSec0to55Box(box);
+
+            if (onConfiguredMinSec0to55Box)
+            {
+                onConfiguredMinSec0to55Box(minSec0to55Box);
+            }
+
             addCreate(minSec0to55Box);
+
             if (onCreatedMinSec0to55Box)
             {
                 onCreatedMinSec0to55Box(minSec0to55Box);

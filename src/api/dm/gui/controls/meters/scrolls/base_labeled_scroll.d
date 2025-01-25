@@ -20,6 +20,7 @@ abstract class BaseLabeledScroll : BaseMonoScroll
 
     bool isCreateLabel;
     Text delegate(Text) onNewLabel;
+    void delegate(Text) onConfiguredLabel;
     void delegate(Text) onCreatedLabel;
 
     this(double minValue = 0, double maxValue = 1.0)
@@ -43,7 +44,14 @@ abstract class BaseLabeledScroll : BaseMonoScroll
         {
             auto l = newLabel;
             label = onNewLabel ? onNewLabel(l) : l;
+
+            if (onConfiguredLabel)
+            {
+                onConfiguredLabel(label);
+            }
+
             addCreate(label);
+
             if (onCreatedLabel)
             {
                 onCreatedLabel(label);

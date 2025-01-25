@@ -25,6 +25,7 @@ class ColorPickerDialog : Control
     TabBox contentContainer;
     bool isCreateContentContainer = true;
     TabBox delegate(TabBox) onNewContentContainer;
+    void delegate(TabBox) onConfiguredContentContainer;
     void delegate(TabBox) onCreatedContentContainer;
 
     RegulateTextField alphaField;
@@ -103,7 +104,13 @@ class ColorPickerDialog : Control
 
             contentContainer.isGrow = true;
 
+            if (onConfiguredContentContainer)
+            {
+                onConfiguredContentContainer(contentContainer);
+            }
+
             addCreate(contentContainer);
+
             if (onCreatedContentContainer)
             {
                 onCreatedContentContainer(container);

@@ -29,6 +29,7 @@ class BaseTableRow(TItem, TCol:
 
     bool isCreateColumnContainer = true;
     Container delegate(Container) onNewColumnContainer;
+    void delegate(Container) onConfiguredColumnContainer;
     void delegate(Container) onCreatedColumnContainer;
 
     double dividerSize = 0;
@@ -38,6 +39,7 @@ class BaseTableRow(TItem, TCol:
 
     bool isCreateBottomBorder = true;
     Container delegate(Sprite2d) onNewBottomBorder;
+    void delegate(Sprite2d) onConfiguredBottomBorder;
     void delegate(Sprite2d) onCreatedBottomBorder;
 
     protected
@@ -110,6 +112,11 @@ class BaseTableRow(TItem, TCol:
                 }
             }
 
+            if (onConfiguredColumnContainer)
+            {
+                onConfiguredColumnContainer(colContainer);
+            }
+
             addCreate(colContainer);
 
             //TODO side effect
@@ -135,7 +142,13 @@ class BaseTableRow(TItem, TCol:
 
             bottomBorder = !onNewBottomBorder ? bb : onNewBottomBorder(bb);
 
+            if (onConfiguredBottomBorder)
+            {
+                onConfiguredBottomBorder(bottomBorder);
+            }
+
             addCreate(bottomBorder);
+
             if (onCreatedBottomBorder)
             {
                 onCreatedBottomBorder(colContainer);

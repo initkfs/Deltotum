@@ -13,13 +13,14 @@ class PopupMenu(T) : BasePopup
 
     bool isCreateMenuList = true;
     SimpleClippedList!T delegate(SimpleClippedList!T) onNewMenuList;
+    void delegate(SimpleClippedList!T) onConfiguredMenuList;
     void delegate(SimpleClippedList!T) onCreatedMenuList;
 
     this()
     {
         super(isCreateLayout : false);
 
-        import api.dm.kit.sprites2d.layouts.vlayout: VLayout;
+        import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
         layout = new VLayout;
         layout.isAutoResize = true;
@@ -34,7 +35,12 @@ class PopupMenu(T) : BasePopup
         {
             auto list = newMenuList;
             menuList = !onNewMenuList ? list : onNewMenuList(list);
-            
+
+            if (onConfiguredMenuList)
+            {
+                onConfiguredMenuList(menuList);
+            }
+
             addCreate(menuList);
 
             if (onCreatedMenuList)

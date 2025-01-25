@@ -31,6 +31,7 @@ class BaseToggle : BaseBiswitch
 
     bool isCreateThumbContainer = true;
     Sprite2d delegate(Sprite2d) onNewThumbContainer;
+    void delegate(Sprite2d) onCongifuredThumbContainer;
     void delegate(Sprite2d) onCreatedThumbContainer;
 
     double thumbWidth = 0;
@@ -86,9 +87,15 @@ class BaseToggle : BaseBiswitch
         if (!thumbContainer && isCreateThumbContainer)
         {
             auto newContainer = newThumbContainer;
-            thumbContainer = onNewThumbContainer ? onNewThumbContainer(newContainer)
-                : newContainer;
+            thumbContainer = onNewThumbContainer ? onNewThumbContainer(newContainer) : newContainer;
+
+            if (onCongifuredThumbContainer)
+            {
+                onCongifuredThumbContainer(thumbContainer);
+            }
+
             addCreate(thumbContainer);
+
             if (onCreatedThumbContainer)
             {
                 onCreatedThumbContainer(thumbContainer);
@@ -116,7 +123,8 @@ class BaseToggle : BaseBiswitch
             thumbContainer.addCreate(thumbEffectAnimation);
         }
 
-        if(isCreatePointerListeners){
+        if (isCreatePointerListeners)
+        {
             onPointerRelease ~= (ref e) { toggle; };
         }
 
@@ -192,7 +200,8 @@ class BaseToggle : BaseBiswitch
     void delegate() newOnEndThumbEffectAnimation()
     {
         return () {
-            if(thumbEffectAnimation){
+            if (thumbEffectAnimation)
+            {
                 thumbEffectAnimation.isReverse = false;
             }
         };
@@ -218,7 +227,8 @@ class BaseToggle : BaseBiswitch
     {
         super.switchContentState(oldState, newState);
 
-        if(thumbEffect){
+        if (thumbEffect)
+        {
             thumbEffect.isVisible = newState;
         }
 
@@ -229,7 +239,8 @@ class BaseToggle : BaseBiswitch
                 thumbEffectAnimation.stop;
             }
 
-            if(!newState){
+            if (!newState)
+            {
                 thumbEffectAnimation.isReverse = true;
             }
 

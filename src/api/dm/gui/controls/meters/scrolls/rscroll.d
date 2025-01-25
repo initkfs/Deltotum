@@ -23,6 +23,7 @@ class RScroll : BaseRadialMonoScroll
 
     bool isCreateScale = true;
     RScaleStatic delegate(RScaleStatic) onNewScale;
+    void delegate(RScaleStatic) onConfiguredScale;
     void delegate(RScaleStatic) onCreatedScale;
 
     double thumbPadding = 10;
@@ -64,7 +65,14 @@ class RScroll : BaseRadialMonoScroll
         {
             auto ns = newScale;
             scale = !onNewScale ? ns : onNewScale(ns);
+
+            if (onConfiguredScale)
+            {
+                onConfiguredScale(scale);
+            }
+
             addCreate(scale);
+
             if (onCreatedScale)
             {
                 onCreatedScale(scale);

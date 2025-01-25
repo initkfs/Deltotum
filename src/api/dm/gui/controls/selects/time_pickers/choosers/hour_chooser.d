@@ -19,11 +19,13 @@ class HourChooser : BaseCircularTimeChooser
     Container hour1to12Box;
     bool isCreateHour1To12Box = true;
     Container delegate(Container) onNewHour1to12Box;
+    void delegate(Container) onConfiguredHour1to12Box;
     void delegate(Container) onCreatedHour1to12Box;
 
     Container hour12to23Box;
     bool isCreateHour12to23Box = true;
     Container delegate(Container) onNewHour12to23Box;
+    void delegate(Container) onConfiguredHour12to23Box;
     void delegate(Container) onCreatedHour12to23Box;
 
     override void initialize()
@@ -49,6 +51,12 @@ class HourChooser : BaseCircularTimeChooser
         {
             auto box = newCircleBox(radius, startAngleDeg);
             hour1to12Box = !onNewHour1to12Box ? box : onNewHour1to12Box(box);
+
+            if (onConfiguredHour1to12Box)
+            {
+                onConfiguredHour1to12Box(hour1to12Box);
+            }
+
             addCreate(hour1to12Box);
 
             if (onCreatedHour1to12Box)
@@ -71,6 +79,12 @@ class HourChooser : BaseCircularTimeChooser
         {
             auto box = newCircleBox(outerBoxRadius, startAngleDeg);
             hour12to23Box = !onNewHour12to23Box ? box : onNewHour12to23Box(box);
+
+            if (onConfiguredHour12to23Box)
+            {
+                onConfiguredHour12to23Box(hour12to23Box);
+            }
+
             addCreate(hour12to23Box);
 
             if (onCreatedHour12to23Box)
@@ -96,7 +110,8 @@ class HourChooser : BaseCircularTimeChooser
             return;
         }
 
-        if(!thumb.isVisible){
+        if (!thumb.isVisible)
+        {
             showThumb;
         }
 

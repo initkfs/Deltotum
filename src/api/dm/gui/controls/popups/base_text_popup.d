@@ -18,6 +18,7 @@ class BaseTextPopup : BasePopup
 
         bool isCreateLabel = true;
         Labeled delegate(Labeled) onNewLabel;
+        void delegate(Labeled) onConfiguredLabel;
         void delegate(Labeled) onCreatedLabel;
     }
 
@@ -40,7 +41,12 @@ class BaseTextPopup : BasePopup
         {
             auto l = newLabel(width, height, _labelText, _iconName, _graphicsGap);
             label = !onNewLabel ? l : onNewLabel(l);
-            
+
+            if (onConfiguredLabel)
+            {
+                onConfiguredLabel(label);
+            }
+
             addCreate(label);
 
             if (onCreatedLabel)

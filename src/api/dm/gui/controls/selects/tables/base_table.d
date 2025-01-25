@@ -3,7 +3,7 @@ module api.dm.gui.controls.selects.tables.base_table;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.control : Control;
-import api.dm.gui.controls.selects.base_selector: BaseSelector;
+import api.dm.gui.controls.selects.base_selector : BaseSelector;
 
 import api.dm.gui.controls.selects.tables.base_table_item : BaseTableItem;
 import api.dm.gui.controls.selects.tables.base_table_row : BaseTableRow;
@@ -101,16 +101,19 @@ class BaseTable(T, TCol:
 
     bool isCreateContentContainer = true;
     Container delegate(Container) onNewContentContainer;
+    void delegate(Container) onConfiguredContentContainer;
     void delegate(Container) onCreatedContentContainer;
 
     Container contentContainer;
 
     bool isCreateRowContainer = true;
     Container delegate(Container) onNewRowContainer;
+    void delegate(Container) onConfiguredRowContainer;
     void delegate(Container) onCreatedRowContainer;
 
     bool isCreateHeader = true;
     TableHeader delegate(TableHeader) onNewHeader;
+    void delegate(Container) onConfiguredHeader;
     void delegate(TableHeader) onCreatedHeader;
 
     TableHeader header;
@@ -187,7 +190,13 @@ class BaseTable(T, TCol:
                 resizeColumn(nextIndex, nextCol.width);
             };
 
+            if (onConfiguredHeader)
+            {
+                onConfiguredHeader(header);
+            }
+
             addCreate(header);
+
             if (onCreatedHeader)
             {
                 onCreatedHeader(header);
@@ -198,7 +207,14 @@ class BaseTable(T, TCol:
         {
             auto c = newContentContainer;
             contentContainer = !onNewContentContainer ? c : onNewContentContainer(c);
+
+            if (onConfiguredContentContainer)
+            {
+                onConfiguredContentContainer(contentContainer);
+            }
+
             addCreate(contentContainer);
+
             if (onCreatedContentContainer)
             {
                 onCreatedContentContainer(contentContainer);
@@ -296,7 +312,13 @@ class BaseTable(T, TCol:
 
             rowContainer.resize(width, height);
 
+            if (onConfiguredRowContainer)
+            {
+                onConfiguredRowContainer(rowContainer);
+            }
+
             root.addCreate(rowContainer);
+
             if (onCreatedRowContainer)
             {
                 onCreatedRowContainer(rowContainer);

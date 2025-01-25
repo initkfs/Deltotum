@@ -38,6 +38,7 @@ class Calendar : Control
     Container dateChangeContainer;
     bool isCreateDateChangeContainer = true;
     Container delegate(Container) onNewDateChangeContainer;
+    void delegate(Container) onConfiguredDateChangeContainer;
     void delegate(Container) onCreatedDateChangeContainer;
 
     Button prevMonthButton;
@@ -47,39 +48,48 @@ class Calendar : Control
 
     Button delegate(Button) onNewDatePrevNextButton;
     void delegate(Button) onCreatedDatePrevNextButton;
+    void delegate(Button) onConfiguredDatePrevNextButton;
 
     Text monthLabel;
     Text delegate(Text) onNewMonthLabel;
+    void delegate(Text) onConfiguredMonthLabel;
     void delegate(Text) onCreatedMonthLabel;
 
     Text yearLabel;
     Text delegate(Text) onNewYearLabel;
+    void delegate(Text) onConfiguredYearLabel;
     void delegate(Text) onCreatedYearLabel;
 
     WeekContainer weekDayNameContainer;
     bool isCreateWeekDayNameContainer = true;
     WeekContainer delegate(WeekContainer) onNewWeekDayNameContainer;
+    void delegate(WeekContainer) onConfiguredWeekDayNameContainer;
     void delegate(WeekContainer) onCreatedWeekDayNameContainer;
 
     WeekContainer delegate(WeekContainer) onNewWeekContainer;
+    void delegate(WeekContainer) onConfiguredWeekContainer;
     void delegate(WeekContainer) onCreatedWeekContainer;
 
     DayContainer delegate(DayContainer) onNewDayContainer;
+    void delegate(DayContainer) onConfiguredDayContainer;
     void delegate(DayContainer) onCreatedDayContainer;
 
     Container buttonContainer;
     bool isCreateButtonContainer;
     Container delegate(Container) onNewButtonContainer;
+    void delegate(Container) onConfiguredButtonContainer;
     void delegate(Container) onCreatedButtonContainer;
 
     Button dayResetButton;
     bool isCreateDayResetButton = true;
     Button delegate(Button) onNewDayResetButton;
+    void delegate(Button) onConfiguredDayResetButton;
     void delegate(Button) onCreatedDayResetButton;
 
     Button todayButton;
     bool isCreateTodayButton = true;
     Button delegate(Button) onNewTodayButton;
+    void delegate(Button) onConfiguredTodayButton;
     void delegate(Button) onCreatedTodayButton;
 
     this()
@@ -130,6 +140,11 @@ class Calendar : Control
                 auto dc = newDateChangeContainer;
                 dateChangeContainer = !onNewDateChangeContainer ? dc : onNewDateChangeContainer(dc);
 
+                if (onConfiguredDateChangeContainer)
+                {
+                    onConfiguredDateChangeContainer(dateChangeContainer);
+                }
+
                 addCreate(dateChangeContainer);
 
                 dateChangeContainer.enableInsets;
@@ -164,6 +179,11 @@ class Calendar : Control
 
                     monthLabel.isFocusable = false;
                     monthLabel.isReduceWidthHeight = false;
+
+                    if (onConfiguredMonthLabel)
+                    {
+                        onConfiguredMonthLabel(monthLabel);
+                    }
 
                     assert(dateChangeContainer);
                     dateChangeContainer.addCreate(monthLabel);
@@ -228,8 +248,12 @@ class Calendar : Control
                                 logger.trace("Error setting year from text field", e);
                             }
                         }
-
                     };
+
+                    if (onConfiguredYearLabel)
+                    {
+                        onConfiguredYearLabel(yearLabel);
+                    }
 
                     assert(dateChangeContainer);
                     dateChangeContainer.addCreate(yearLabel);
@@ -254,6 +278,11 @@ class Calendar : Control
 
             weekDayNameContainer.isDateRangeContainer = false;
             weekContainers ~= weekDayNameContainer;
+
+            if (onConfiguredWeekDayNameContainer)
+            {
+                onConfiguredWeekDayNameContainer(weekDayNameContainer);
+            }
 
             addCreate(weekDayNameContainer);
 
@@ -281,6 +310,11 @@ class Calendar : Control
             auto weekContainer = !onNewWeekContainer ? wc : onNewWeekContainer(wc);
             weekContainer.isDateRangeContainer = true;
             weekContainers ~= weekContainer;
+
+            if (onConfiguredWeekContainer)
+            {
+                onConfiguredWeekContainer(weekContainer);
+            }
 
             addCreate(weekContainer);
             if (onCreatedWeekContainer)
@@ -368,6 +402,11 @@ class Calendar : Control
 
                 weekContainer.days ~= dayContainer;
 
+                if (onConfiguredDayContainer)
+                {
+                    onConfiguredDayContainer(dayContainer);
+                }
+
                 weekContainer.addCreate(dayContainer);
                 if (onCreatedDayContainer)
                 {
@@ -385,6 +424,12 @@ class Calendar : Control
         {
             auto bc = newButtonContainer;
             buttonContainer = !onNewButtonContainer ? bc : onNewButtonContainer(bc);
+
+            if (onConfiguredButtonContainer)
+            {
+                onConfiguredButtonContainer(buttonContainer);
+            }
+
             addCreate(buttonContainer);
 
             buttonContainer.enableInsets;
@@ -399,7 +444,13 @@ class Calendar : Control
         {
             auto tb = newTodayButton(i18n.getMessage(KitI18nKeys.dateToday, "Today"));
             todayButton = !onNewTodayButton ? tb : onNewTodayButton(tb);
+
             todayButton.onAction ~= (ref e) { loadToday; };
+
+            if (onConfiguredTodayButton)
+            {
+                onConfiguredTodayButton(todayButton);
+            }
 
             assert(buttonContainer);
             buttonContainer.addCreate(todayButton);
@@ -413,7 +464,13 @@ class Calendar : Control
         {
             auto tb = newDayResetButton(i18n.getMessage(KitI18nKeys.uiReset, "Reset"));
             dayResetButton = !onNewDayResetButton ? tb : onNewDayResetButton(tb);
+
             dayResetButton.onAction ~= (ref e) { reset; load; };
+
+            if (onConfiguredDayResetButton)
+            {
+                onConfiguredDayResetButton(dayResetButton);
+            }
 
             assert(buttonContainer);
             buttonContainer.addCreate(dayResetButton);
@@ -438,6 +495,11 @@ class Calendar : Control
         if (onPreCreate)
         {
             onPreCreate(prevNextButton);
+        }
+
+        if (onConfiguredDatePrevNextButton)
+        {
+            onConfiguredDatePrevNextButton(prevNextButton);
         }
 
         root.addCreate(prevNextButton);
