@@ -1,9 +1,9 @@
-module api.dm.gui.controls.selects.time_pickers.choosers.hour_chooser;
+module api.dm.gui.controls.selects.time_pickers.dialogs.choosers.hour_chooser;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.containers.container : Container;
-import api.dm.gui.controls.selects.time_pickers.choosers.base_circular_time_chooser : BaseCircularTimeChooser;
+import api.dm.gui.controls.selects.time_pickers.dialogs.choosers.base_circular_time_chooser : BaseCircularTimeChooser;
 import api.dm.gui.controls.texts.text : Text;
 import api.math.geom2.vec2 : Vec2d;
 

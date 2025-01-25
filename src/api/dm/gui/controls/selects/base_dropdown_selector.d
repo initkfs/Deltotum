@@ -23,6 +23,8 @@ class BaseDropDownSelector(D, T) : BaseSelector!T
     void delegate(BasePopup) onConfiguredPopup;
     void delegate(BasePopup) onCreatedPopup;
 
+    void delegate() onShowPopup;
+
     this()
     {
         import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
@@ -39,11 +41,6 @@ class BaseDropDownSelector(D, T) : BaseSelector!T
         {
             auto d = newDialog;
             dialog = !onNewDialog ? d : onNewDialog(d);
-
-            if (onDialog)
-            {
-                onDialog(dialog);
-            }
 
             if (onConfiguredDialog)
             {
@@ -65,6 +62,11 @@ class BaseDropDownSelector(D, T) : BaseSelector!T
                 popup.addCreate(dialog);
             }
 
+            if (onDialog)
+            {
+                onDialog(dialog);
+            }
+
             if (onCreatedDialog)
             {
                 onCreatedDialog(dialog);
@@ -76,6 +78,13 @@ class BaseDropDownSelector(D, T) : BaseSelector!T
     {
         auto pp = newPopup;
         popup = !onNewPopup ? pp : onNewPopup(pp);
+
+        if(!popup.layout){
+            import api.dm.kit.sprites2d.layouts.managed_layout: ManagedLayout;
+            popup.layout = new ManagedLayout;
+        }
+
+        popup.layout.isAutoResize = true;
 
         assert(sceneProvider);
         sceneProvider().controlledSprites ~= popup;
@@ -133,6 +142,10 @@ class BaseDropDownSelector(D, T) : BaseSelector!T
             if (!popup.isFocus)
             {
                 popup.focus;
+            }
+
+            if(onShowPopup){
+                onShowPopup();
             }
         }
     }

@@ -81,35 +81,11 @@ class ColorPicker : BaseDropDownSelector!(ColorPickerDialog, RGBA)
             colorHexField.width = colorHexWidth;
         }
 
-        if (!dialog && isCreateDialog)
-        {
-            auto d = newDialog;
-            dialog = !onNewDialog ? d : onNewDialog(d);
-
+        createDialog((dialog) {
             dialog.onChangeOldNew = (oldColor, newColor) {
                 updateColor(newColor);
             };
-
-            if (!isDropDownDialog)
-            {
-                addCreate(dialog);
-                if (layout)
-                {
-                    layout.isDecreaseRootSize = true;
-                }
-            }
-            else
-            {
-                createPopup;
-                assert(popup);
-                popup.addCreate(dialog);
-            }
-
-            if (onCreatedDialog)
-            {
-                onCreatedDialog(dialog);
-            }
-        }
+        });
 
         color(RGBA.red, isTriggerListeners:
             false);

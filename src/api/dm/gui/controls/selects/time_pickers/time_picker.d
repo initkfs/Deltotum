@@ -3,10 +3,9 @@ module api.dm.gui.controls.selects.time_pickers.time_picker;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.containers.container : Container;
-
-import api.dm.gui.controls.selects.time_pickers.choosers.base_time_chooser : BaseTimeChooser;
-import api.dm.gui.controls.selects.time_pickers.choosers.hour_chooser : HourChooser;
-import api.dm.gui.controls.selects.time_pickers.choosers.minsec_chooser : MinSecChooser;
+import api.dm.gui.controls.selects.time_pickers.dialogs.time_picker_dialog : TimePickerDialog;
+import api.dm.gui.controls.selects.base_dropdown_selector : BaseDropDownSelector;
+import api.dm.gui.controls.selects.time_pickers.dialogs.choosers.base_time_chooser : BaseTimeChooser;
 
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.assets.fonts.font_size : FontSize;
@@ -18,12 +17,13 @@ import api.math.geom2.vec2 : Vec2d;
 
 import std.conv : to;
 import std.format : format;
+import std.datetime : TimeOfDay;
 import Math = api.dm.math;
 
 /**
  * Authors: initkfs
  */
-class TimePicker : Control
+class TimePicker : BaseDropDownSelector!(TimePickerDialog, TimeOfDay)
 {
     Container timeContainer;
     bool isCreateTimeContainer = true;
@@ -61,13 +61,7 @@ class TimePicker : Control
     void delegate(Button) onConfiguredHourDownButton;
     void delegate(Button) onCreatedHourDownButton;
 
-    FontSize timeFontSize = timeFontSize.large;
-
-    HourChooser hourChooser;
-    MinSecChooser minChooser;
-    MinSecChooser secChooser;
-
-    Sprite2d chooserContainer;
+    FontSize timeFontSize = timeFontSize.medium;
 
     protected
     {
@@ -83,6 +77,7 @@ class TimePicker : Control
         this.layout.isAlignX = true;
 
         isBorder = true;
+        isDropDownDialog = true;
     }
 
     override void initialize()
@@ -120,7 +115,8 @@ class TimePicker : Control
             auto container = newTimeContainer;
             timeContainer = !onNewTimeContainer ? container : onNewTimeContainer(container);
 
-            if(onConfiguredTimeContainer){
+            if (onConfiguredTimeContainer)
+            {
                 onConfiguredTimeContainer(timeContainer);
             }
 
@@ -146,18 +142,19 @@ class TimePicker : Control
                 unselectTextLabel(minutesLabel);
                 unselectTextLabel(secsLabel);
 
-                assert(hourChooser);
-                hourChooser.showForLayout;
-                hourChooser.value(hoursLabel.text.to!int);
+                assert(dialog.hourChooser);
+                dialog.hourChooser.showForLayout;
+                dialog.hourChooser.value(hoursLabel.text.to!int);
 
-                assert(minChooser);
-                minChooser.hideForLayout;
+                assert(dialog.minChooser);
+                dialog.minChooser.hideForLayout;
 
-                assert(secChooser);
-                secChooser.hideForLayout;
+                assert(dialog.secChooser);
+                dialog.secChooser.hideForLayout;
             };
 
-            if(onConfiguredHoursLabel){
+            if (onConfiguredHoursLabel)
+            {
                 onConfiguredHoursLabel(hoursLabel);
             }
         }
@@ -174,17 +171,18 @@ class TimePicker : Control
                 unselectTextLabel(hoursLabel);
                 unselectTextLabel(secsLabel);
 
-                assert(minChooser);
-                minChooser.showForLayout;
-                minChooser.value(minutesLabel.text.to!int);
+                assert(dialog.minChooser);
+                dialog.minChooser.showForLayout;
+                dialog.minChooser.value(minutesLabel.text.to!int);
 
-                assert(hourChooser);
-                hourChooser.hideForLayout;
-                assert(secChooser);
-                secChooser.hideForLayout;
+                assert(dialog.hourChooser);
+                dialog.hourChooser.hideForLayout;
+                assert(dialog.secChooser);
+                dialog.secChooser.hideForLayout;
             };
 
-            if(onConfiguredMinutesLabel){
+            if (onConfiguredMinutesLabel)
+            {
                 onConfiguredMinutesLabel(minutesLabel);
             }
         }
@@ -201,17 +199,18 @@ class TimePicker : Control
                 unselectTextLabel(hoursLabel);
                 unselectTextLabel(minutesLabel);
 
-                assert(secChooser);
-                secChooser.showForLayout;
-                secChooser.value(secsLabel.text.to!int);
+                assert(dialog.secChooser);
+                dialog.secChooser.showForLayout;
+                dialog.secChooser.value(secsLabel.text.to!int);
 
-                assert(hourChooser);
-                hourChooser.hideForLayout;
-                assert(minChooser);
-                minChooser.hideForLayout;
+                assert(dialog.hourChooser);
+                dialog.hourChooser.hideForLayout;
+                assert(dialog.minChooser);
+                dialog.minChooser.hideForLayout;
             };
 
-            if(onConfiguredSecsLabel){
+            if (onConfiguredSecsLabel)
+            {
                 onConfiguredSecsLabel(secsLabel);
             }
         }
@@ -222,15 +221,17 @@ class TimePicker : Control
 
             double spacing = 0;
 
-            auto hoursContainer = new VBox(spacing);            
+            auto hoursContainer = new VBox(spacing);
             timeContainer.addCreate(hoursContainer);
 
             enum hourMaxValue = 23;
             enum hourMinValue = 0;
             setUpDownButtons(hoursContainer, hoursLabel, onCreatedHoursLabel, () {
-                incValueWrap(hoursLabel, hourMinValue, hourMaxValue, hourChooser);
+                dialog.showOnlyHours;
+                incValueWrap(hoursLabel, hourMinValue, hourMaxValue, dialog.hourChooser);
             }, () {
-                decValueWrap(hoursLabel, hourMinValue, hourMaxValue, hourChooser);
+                dialog.showOnlyHours;
+                decValueWrap(hoursLabel, hourMinValue, hourMaxValue, dialog.hourChooser);
             });
 
             timeContainer.addCreate(newText(":"));
@@ -242,9 +243,11 @@ class TimePicker : Control
             enum minSecMaxValue = 59;
 
             setUpDownButtons(minContainer, minutesLabel, onCreatedMinutesLabel, () {
-                incValueWrap(minutesLabel, minSecMinValue, minSecMaxValue, minChooser);
+                dialog.showOnlyMins;
+                incValueWrap(minutesLabel, minSecMinValue, minSecMaxValue, dialog.minChooser);
             }, () {
-                decValueWrap(minutesLabel, minSecMinValue, minSecMaxValue, minChooser);
+                dialog.showOnlyMins;
+                decValueWrap(minutesLabel, minSecMinValue, minSecMaxValue, dialog.minChooser);
             });
 
             timeContainer.addCreate(newText(":"));
@@ -253,49 +256,47 @@ class TimePicker : Control
             timeContainer.addCreate(secContainer);
 
             setUpDownButtons(secContainer, secsLabel, onCreatedSecsLabel, () {
-                incValueWrap(secsLabel, minSecMinValue, minSecMaxValue, secChooser);
+                dialog.showOnlySecs;
+                incValueWrap(secsLabel, minSecMinValue, minSecMaxValue, dialog.secChooser);
             }, () {
-                decValueWrap(secsLabel, minSecMinValue, minSecMaxValue, secChooser);
+                dialog.showOnlySecs;
+                decValueWrap(secsLabel, minSecMinValue, minSecMaxValue, dialog.secChooser);
             });
-
         }
 
-        import api.dm.gui.controls.containers.stack_box : StackBox;
+        createDialog((dialog) {
+            dialog.onHourValue = (value) { setHourValue(value); };
 
-        chooserContainer = new StackBox;
-        addCreate(chooserContainer);
+            dialog.onMinValue = (value) { setMinValue(value); };
 
-        hourChooser = new HourChooser;
-        chooserContainer.addCreate(hourChooser);
-        hourChooser.onNumValue = (hourValue) {
-            hoursLabel.text = formatTimeValue(hourValue);
-        };
+            dialog.onSecValue = (value) { setSecValue(value); };
 
-        minChooser = new MinSecChooser;
-        chooserContainer.addCreate(minChooser);
+            onShowPopup = (){
+                reloadDialogTime;
+            };
 
-        minChooser.onNumValue = (numValue) {
-            minutesLabel.text = formatTimeValue(numValue);
-        };
-
-        secChooser = new MinSecChooser;
-        chooserContainer.addCreate(secChooser);
-
-        secChooser.onNumValue = (numValue) {
-            secsLabel.text = formatTimeValue(numValue);
-        };
-
-        window.showingTasks ~= (dt) {
-            hourChooser.value(0);
-            selectTextLabel(hoursLabel);
-        };
-
-        hourChooser.showForLayout;
-        minChooser.hideForLayout;
-        secChooser.hideForLayout;
+            window.showingTasks ~= (dt) {
+                dialog.showOnlyHours;
+                selectTextLabel(hoursLabel);
+            };
+        });
 
         reset;
+    }
 
+    void setHourValue(int value)
+    {
+        hoursLabel.text = formatTimeValue(value);
+    }
+
+    void setMinValue(int value)
+    {
+        minutesLabel.text = formatTimeValue(value);
+    }
+
+    void setSecValue(int value)
+    {
+        secsLabel.text = formatTimeValue(value);
     }
 
     void selectTextLabel(Text label)
@@ -349,6 +350,8 @@ class TimePicker : Control
             chooser.value(value);
         }
     }
+
+    override TimePickerDialog newDialog() => new TimePickerDialog;
 
     Button newUpButton() => NavigateButton.newVNextButton;
     Button newDownButton() => NavigateButton.newVPrevButton;
@@ -425,5 +428,50 @@ class TimePicker : Control
         hoursLabel.text = zeroTimeValueStr;
         minutesLabel.text = zeroTimeValueStr;
         secsLabel.text = zeroTimeValueStr;
+    }
+
+    protected void reloadTime(){
+        setTime(current);
+    }
+
+    protected void reloadDialogTime(){
+        setDialogTime(current);
+    }
+
+    void setCurrentTime(bool isTriggerListeners = true)
+    {
+        assert(dialog);
+        import std.datetime : Clock;
+
+        time(cast(TimeOfDay) Clock.currTime, isTriggerListeners);
+    }
+
+    void setTime(TimeOfDay newTime)
+    {
+        setHourValue(newTime.hour);
+        setMinValue(newTime.minute);
+        setSecValue(newTime.second);
+
+        setDialogTime(newTime);
+    }
+
+    void time(TimeOfDay newTime, bool isTriggerListeners = true)
+    {
+        if (!current(newTime, isTriggerListeners))
+        {
+            return;
+        }
+
+        setTime(newTime);
+    }
+
+    protected bool setDialogTime(TimeOfDay newTime)
+    {
+        if (!dialog)
+        {
+            return false;
+        }
+        dialog.time(newTime);
+        return true;
     }
 }

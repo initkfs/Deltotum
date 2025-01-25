@@ -446,10 +446,21 @@ class Controls : Control
         pagination.pageFactory = (size_t pageIndex) {};
         choiceRoot1.addCreate(pagination);
 
-        import  api.dm.gui.controls.selects.color_pickers.color_picker: ColorPicker;
-        auto colorPicker1 = new ColorPicker;
-        colorPicker1.isDropDownDialog = false;
-        root.addCreate(colorPicker1);
+        // import  api.dm.gui.controls.selects.color_pickers.color_picker: ColorPicker;
+        // auto colorPicker1 = new ColorPicker;
+        // colorPicker1.isDropDownDialog = false;
+        // root.addCreate(colorPicker1);
+
+        import api.dm.gui.controls.selects.calendars.calendar : Calendar;
+
+        auto cal1 = new Calendar;
+        root.addCreate(cal1);
+
+        import api.dm.gui.controls.selects.time_pickers.time_picker: TimePicker;
+
+        auto timePick1 = new TimePicker;
+        root.addCreate(timePick1);
+        timePick1.setCurrentTime;
     }
 
     void createPickers(Container root)
