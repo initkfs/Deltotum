@@ -17,6 +17,8 @@ class BaseSelector(T) : Control
 
     void delegate(T, T)[] onChangeOldNew;
 
+    inout(T) current() inout => _current;
+
     bool current(T item, bool isTriggerListeners = true, bool isReplaceForce = false)
     {
         static if (__traits(compiles, item is item))
@@ -70,6 +72,4 @@ class BaseSelector(T) : Control
     import api.core.utils.arrays : drop;
 
     bool removeOnChangeOnNew(void delegate(T, T) dg) => onChangeOldNew.drop(dg);
-
-    inout(T) current() inout => _current;
 }

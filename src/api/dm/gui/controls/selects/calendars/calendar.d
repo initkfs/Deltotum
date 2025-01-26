@@ -4,10 +4,10 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.containers.container : Container;
-import api.dm.gui.controls.selects.calendars.day_container : DayContainer;
-import api.dm.gui.controls.selects.calendars.week_container : WeekContainer;
 import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.gui.controls.switches.buttons.navigate_button : NavigateButton;
+import api.dm.gui.controls.selects.calendars.dialogs.calendar_dialog : CalendarDialog;
+import api.dm.gui.controls.selects.base_dropdown_selector : BaseDropDownSelector;
 
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.switches.buttons.button : Button;
@@ -21,20 +21,8 @@ import std.algorithm.searching : canFind;
 /**
  * Authors: initkfs
  */
-class Calendar : Control
+class Calendar : BaseDropDownSelector!(CalendarDialog, Date)
 {
-    Date currentDate;
-
-    WeekContainer[] weekContainers;
-    DayContainer[] selected;
-    DayContainer startSelected;
-
-    RGBA dayColor;
-    RGBA holidayColor;
-
-    dstring[] weekDayNames;
-    size_t weekCount = 5 + 1;
-
     Container dateChangeContainer;
     bool isCreateDateChangeContainer = true;
     Container delegate(Container) onNewDateChangeContainer;
@@ -50,6 +38,11 @@ class Calendar : Control
     void delegate(Button) onCreatedDatePrevNextButton;
     void delegate(Button) onConfiguredDatePrevNextButton;
 
+    Text dayLabel;
+    Text delegate(Text) onNewDayLabel;
+    void delegate(Text) onConfiguredDayLabel;
+    void delegate(Text) onCreatedDayLabel;
+
     Text monthLabel;
     Text delegate(Text) onNewMonthLabel;
     void delegate(Text) onConfiguredMonthLabel;
@@ -60,37 +53,10 @@ class Calendar : Control
     void delegate(Text) onConfiguredYearLabel;
     void delegate(Text) onCreatedYearLabel;
 
-    WeekContainer weekDayNameContainer;
-    bool isCreateWeekDayNameContainer = true;
-    WeekContainer delegate(WeekContainer) onNewWeekDayNameContainer;
-    void delegate(WeekContainer) onConfiguredWeekDayNameContainer;
-    void delegate(WeekContainer) onCreatedWeekDayNameContainer;
+    RGBA dayColor;
+    RGBA holidayColor;
 
-    WeekContainer delegate(WeekContainer) onNewWeekContainer;
-    void delegate(WeekContainer) onConfiguredWeekContainer;
-    void delegate(WeekContainer) onCreatedWeekContainer;
-
-    DayContainer delegate(DayContainer) onNewDayContainer;
-    void delegate(DayContainer) onConfiguredDayContainer;
-    void delegate(DayContainer) onCreatedDayContainer;
-
-    Container buttonContainer;
-    bool isCreateButtonContainer;
-    Container delegate(Container) onNewButtonContainer;
-    void delegate(Container) onConfiguredButtonContainer;
-    void delegate(Container) onCreatedButtonContainer;
-
-    Button dayResetButton;
-    bool isCreateDayResetButton = true;
-    Button delegate(Button) onNewDayResetButton;
-    void delegate(Button) onConfiguredDayResetButton;
-    void delegate(Button) onCreatedDayResetButton;
-
-    Button todayButton;
-    bool isCreateTodayButton = true;
-    Button delegate(Button) onNewTodayButton;
-    void delegate(Button) onConfiguredTodayButton;
-    void delegate(Button) onCreatedTodayButton;
+    bool isHighlightCurrentDayEachMonth;
 
     this()
     {
@@ -101,15 +67,18 @@ class Calendar : Control
         this.layout.isAlignX = true;
 
         isBorder = true;
+        isDropDownDialog = true;
     }
+
+    override CalendarDialog newDialog() => new CalendarDialog;
 
     override void loadTheme()
     {
         super.loadTheme;
-        loadDayContainerTheme;
+        loadCalendarTheme;
     }
 
-    void loadDayContainerTheme()
+    void loadCalendarTheme()
     {
         if (dayColor == RGBA.init)
         {
@@ -154,20 +123,45 @@ class Calendar : Control
                     onCreatedDateChangeContainer(dateChangeContainer);
                 }
 
+                if(!dayLabel){
+                    auto dl = newDayLabel("00");
+                    dayLabel = !onNewDayLabel ? dl : onNewDayLabel(dl);
+
+                    dayLabel.isFocusable = false;
+                    dayLabel.isReduceWidthHeight = false;
+
+                    if (onConfiguredDayLabel)
+                    {
+                        onConfiguredDayLabel(dayLabel);
+                    }
+
+                    assert(dateChangeContainer);
+                    dateChangeContainer.addCreate(dayLabel);
+                }
+
                 if (!prevMonthButton)
                 {
                     prevMonthButton = createPrevNextButton(newPrevMonthButton, dateChangeContainer, (
                             btn) {
                         btn.onAction ~= (ref e) {
-                            currentDate.month = onNewMonth((Month month) {
-                                if (month <= Month.min)
-                                {
-                                    decYear;
-                                    return Month.max;
-                                }
-                                return (month - 1).to!Month;
-                            });
-                            load;
+
+                            auto currMonth = current.month;
+
+                            Month newMonth;
+                            if (currMonth <= Month.min)
+                            {
+                                //TODO min year
+                                decYear(isTriggerListeners : false);
+                                newMonth = Month.max;
+                            }
+                            else
+                            {
+                                newMonth = ((cast(int) currMonth) - 1).to!Month;
+                            }
+
+                            auto newDate = current;
+                            newDate.month = newMonth;
+                            current(newDate);
                         };
                     });
                 }
@@ -205,16 +199,20 @@ class Calendar : Control
                     nextMonthButton = createPrevNextButton(newNextMonthButton, dateChangeContainer, (
                             btn) {
                         btn.onAction ~= (ref e) {
-                            currentDate.month = onNewMonth((Month month) {
-                                auto newMonthNum = (cast(int) month) + 1;
-                                if (newMonthNum >= Month.max)
-                                {
-                                    incYear;
-                                    return Month.min;
-                                }
-                                return newMonthNum.to!Month;
-                            });
-                            load;
+                            auto currMonth = current.month;
+                            Month newMonth;
+                            if (currMonth >= Month.max)
+                            {
+                                incYear(isTriggerListeners : false);
+                                newMonth = Month.min;
+                            }
+                            else
+                            {
+                                newMonth = ((cast(int) currMonth) + 1).to!Month;
+                            }
+                            auto newDate = current;
+                            newDate.month = newMonth;
+                            current(newDate);
                         };
                     });
                 }
@@ -222,7 +220,7 @@ class Calendar : Control
                 if (!prevYearButton)
                 {
                     prevYearButton = createPrevNextButton(newPrevYearButton, dateChangeContainer, (
-                            btn) { btn.onAction ~= (ref e) { decYear; load; }; });
+                            btn) { btn.onAction ~= (ref e) { decYear; }; });
                 }
 
                 if (!yearLabel)
@@ -241,7 +239,9 @@ class Calendar : Control
                             //TODO validate
                             try
                             {
-                                currentDate.year = yearLabel.text.to!int;
+                                auto newDate = current;
+                                newDate.year = yearLabel.text.to!int;
+                                current = newDate;
                             }
                             catch (Exception e)
                             {
@@ -266,221 +266,28 @@ class Calendar : Control
                 if (!nextYearButton)
                 {
                     nextYearButton = createPrevNextButton(newNextYearButton, dateChangeContainer, (
-                            btn) { btn.onAction ~= (ref e) { incYear; load; }; });
+                            btn) { btn.onAction ~= (ref e) { incYear; }; });
                 }
             }
         }
 
-        if (!weekDayNameContainer && isCreateWeekDayNameContainer)
-        {
-            auto wc = newWeekDayNameContainer;
-            weekDayNameContainer = !onNewWeekDayNameContainer ? wc : onNewWeekDayNameContainer(wc);
+        onNewDialog = (dialog) {
+            dialog.dayColor = dayColor;
+            dialog.holidayColor = holidayColor;
+            return dialog;
+        };
 
-            weekDayNameContainer.isDateRangeContainer = false;
-            weekContainers ~= weekDayNameContainer;
+        createDialog((dialog) {
+            dialog.onSelectToday = () { setToday; };
+            dialog.onReset = () { reload; };
+            dialog.onSelectedDay = (dc){
+                auto date = current;
+                date.day = dc.dayDate.day;
+                current(date, true, false);
+            };
+        });
 
-            if (onConfiguredWeekDayNameContainer)
-            {
-                onConfiguredWeekDayNameContainer(weekDayNameContainer);
-            }
-
-            addCreate(weekDayNameContainer);
-
-            if (onCreatedWeekDayNameContainer)
-            {
-                onCreatedWeekDayNameContainer(weekDayNameContainer);
-            }
-        }
-
-        weekDayNames = getWeekDayNames;
-        foreach (weekName; weekDayNames)
-        {
-            auto weekDay = new DayContainer;
-            weekDay.canMark = false;
-            if (weekDayNameContainer)
-            {
-                weekDayNameContainer.addCreate(weekDay);
-            }
-            weekDay.dayLabel.text = weekName;
-        }
-
-        foreach (wi; 0 .. weekCount)
-        {
-            auto wc = newWeekContainer;
-            auto weekContainer = !onNewWeekContainer ? wc : onNewWeekContainer(wc);
-            weekContainer.isDateRangeContainer = true;
-            weekContainers ~= weekContainer;
-
-            if (onConfiguredWeekContainer)
-            {
-                onConfiguredWeekContainer(weekContainer);
-            }
-
-            addCreate(weekContainer);
-            if (onCreatedWeekContainer)
-            {
-                onCreatedWeekContainer(weekContainer);
-            }
-
-            foreach (_di; 0 .. weekDayNames.length)
-                (size_t di) {
-
-                auto dc = newDayContainer;
-                auto dayContainer = !onNewDayContainer ? dc : onNewDayContainer(dc);
-
-                dayContainer.dayColor = dayColor;
-                dayContainer.holidayColor = holidayColor;
-
-                dayContainer.onMarkNewValue = (bool isMark) {
-                    import std.algorithm.searching : canFind;
-
-                    import api.dm.com.inputs.com_keyboard : ComKeyName;
-
-                    const isShift = input.isPressedKey(ComKeyName.LSHIFT) || input.isPressedKey(
-                        ComKeyName.RSHIFT);
-
-                    //TODO not mark for current date
-
-                    if (!isMark)
-                    {
-                        import std.algorithm.searching : countUntil;
-                        import std.algorithm.mutation : remove;
-
-                        auto pos = selected.countUntil(dayContainer);
-                        if (pos == -1)
-                        {
-                            logger.trace("Not found day container in selected: ", dayContainer);
-                            return;
-                        }
-                        selected = selected.remove(pos);
-                        logger.trace("Remove day container from selected: ", dayContainer);
-                        return;
-                    }
-
-                    if (isShift && startSelected && (startSelected !is dayContainer))
-                    {
-                        Date startDate;
-                        Date endDate;
-                        if (startSelected.dayDate < dayContainer.dayDate)
-                        {
-                            startDate = startSelected.dayDate;
-                            endDate = dayContainer.dayDate;
-                        }
-                        else
-                        {
-                            startDate = dayContainer.dayDate;
-                            endDate = startSelected.dayDate;
-                        }
-
-                        logger.tracef("Found dates for selected, start %s, end %s", startDate, endDate);
-
-                        //TODO best selection
-                        foreach (week; weekContainers)
-                        {
-                            if (week.isDateRangeContainer)
-                            {
-                                foreach (day; week.days)
-                                {
-                                    if (day.isEmpty)
-                                    {
-                                        continue;
-                                    }
-                                    const dayDate = day.dayDate;
-                                    if (dayDate > startDate && dayDate < endDate)
-                                    {
-                                        day.setMark;
-                                        addSelected(day);
-                                    }
-                                }
-                            }
-                        }
-
-                    }
-
-                    addSelected(dayContainer);
-                };
-
-                weekContainer.days ~= dayContainer;
-
-                if (onConfiguredDayContainer)
-                {
-                    onConfiguredDayContainer(dayContainer);
-                }
-
-                weekContainer.addCreate(dayContainer);
-                if (onCreatedDayContainer)
-                {
-                    onCreatedDayContainer(dayContainer);
-                }
-            }(_di);
-        }
-
-        foreach (week; weekContainers)
-        {
-            week.enableInsets;
-        }
-
-        if (!buttonContainer && isCreateButtonContainer)
-        {
-            auto bc = newButtonContainer;
-            buttonContainer = !onNewButtonContainer ? bc : onNewButtonContainer(bc);
-
-            if (onConfiguredButtonContainer)
-            {
-                onConfiguredButtonContainer(buttonContainer);
-            }
-
-            addCreate(buttonContainer);
-
-            buttonContainer.enableInsets;
-
-            if (onCreatedButtonContainer)
-            {
-                onCreatedButtonContainer(buttonContainer);
-            }
-        }
-
-        if (!todayButton && isCreateTodayButton && isCreateButtonContainer)
-        {
-            auto tb = newTodayButton(i18n.getMessage(KitI18nKeys.dateToday, "Today"));
-            todayButton = !onNewTodayButton ? tb : onNewTodayButton(tb);
-
-            todayButton.onAction ~= (ref e) { loadToday; };
-
-            if (onConfiguredTodayButton)
-            {
-                onConfiguredTodayButton(todayButton);
-            }
-
-            assert(buttonContainer);
-            buttonContainer.addCreate(todayButton);
-            if (onCreatedTodayButton)
-            {
-                onCreatedTodayButton(todayButton);
-            }
-        }
-
-        if (!dayResetButton && isCreateDayResetButton && isCreateButtonContainer)
-        {
-            auto tb = newDayResetButton(i18n.getMessage(KitI18nKeys.uiReset, "Reset"));
-            dayResetButton = !onNewDayResetButton ? tb : onNewDayResetButton(tb);
-
-            dayResetButton.onAction ~= (ref e) { reset; load; };
-
-            if (onConfiguredDayResetButton)
-            {
-                onConfiguredDayResetButton(dayResetButton);
-            }
-
-            assert(buttonContainer);
-            buttonContainer.addCreate(dayResetButton);
-            if (onCreatedDayResetButton)
-            {
-                onCreatedDayResetButton(dayResetButton);
-            }
-        }
-
-        load(getCurrentDate);
+        setToday;
     }
 
     protected Button createPrevNextButton(Button newButton, Sprite2d root, scope void delegate(
@@ -518,173 +325,100 @@ class Calendar : Control
         return container;
     }
 
-    Container newButtonContainer()
-    {
-        auto container = new HBox;
-        container.layout.isAlignY = true;
-        return container;
-    }
-
     Button newPrevMonthButton() => NavigateButton.newHPrevButton;
     Button newNextMonthButton() => NavigateButton.newHNextButton;
     Button newPrevYearButton() => NavigateButton.newHPrevButton;
     Button newNextYearButton() => NavigateButton.newHNextButton;
     Text newMonthLabel(dstring text) => new Text(text);
     Text newYearLabel(dstring text) => new Text(text);
-    WeekContainer newWeekDayNameContainer() => new WeekContainer;
-    WeekContainer newWeekContainer() => new WeekContainer;
-    DayContainer newDayContainer() => new DayContainer;
-    Button newTodayButton(dstring text) => new Button(text);
-    Button newDayResetButton(dstring text) => new Button(text);
+    Text newDayLabel(dstring text) => new Text(text);
 
-    //TODO i18n
-    protected bool isHoliday(Date date)
+    void setToday()
     {
-        return date.dayOfWeek == DayOfWeek.sat || date.dayOfWeek == DayOfWeek.sun;
+        current(getCurrentDate);
     }
 
-    protected bool addSelected(DayContainer container)
+    protected void setDialogDate(Date date, Date currDate)
     {
-        assert(container);
-        if (selected.canFind(container))
-        {
-            logger.trace("Day container already added: ", container);
+        assert(dialog);
+        dialog.reset;
+        dialog.load(date, currDate);
+    }
+
+    bool reload(){
+        return current(current);
+    }
+
+    override inout(Date) current() inout => super.current;
+
+    override bool current(Date date, bool isTriggerListeners = true, bool isSetDialog = true)
+    {
+        assert(monthLabel);
+        assert(yearLabel);
+        assert(dayLabel);
+
+        if(!super.current(date, isTriggerListeners)){
             return false;
         }
+        
+        //TODO converters
+        monthLabel.text = getMonthName(date.month);
+        yearLabel.text = date.year.to!dstring;
+        dayLabel.text = formatDay(date);
+        
+        if(isSetDialog){
 
-        logger.trace("Add day container to selected: ", container);
-        startSelected = container;
-        selected ~= container;
+            auto currDate = getCurrentDate;
+            if(isHighlightCurrentDayEachMonth && currDate != date){
+                currDate = date;
+            }
+
+            setDialogDate(date, currDate);
+        }
         return true;
     }
 
-    void loadToday()
+    void incYear(bool isTriggerListeners = true)
     {
-        load(getCurrentDate);
-    }
-
-    void load()
-    {
-        load(currentDate);
-    }
-
-    void load(Date date)
-    {
-        const currDate = getCurrentDate;
-        reset;
-        auto monthDates = getRangeDatesByWeek(date);
-        //TODO check weekname index == 0
-        size_t weekIndex = 1;
-        foreach (monthWeek; monthDates)
-        {
-            if (weekIndex >= weekContainers.length)
-            {
-                throw new Exception(
-                    "Out of bounds week container with index: " ~ weekIndex.to!string);
-            }
-
-            auto weekContainer = weekContainers[weekIndex];
-            foreach (monthDate; monthWeek)
-            {
-                auto dayWeekIndex = dayOfWeekToWeekDayIndex(monthDate.dayOfWeek);
-                assert(dayWeekIndex < weekContainer.days.length);
-                auto day = weekContainer.days[dayWeekIndex];
-                assert(day);
-                assert(day.dayLabel.text);
-                day.dayLabel.text = monthDate.day.to!dstring;
-                day.dayDate = monthDate;
-                day.isEmpty = false;
-
-                if (isHoliday(monthDate))
-                {
-                    day.setHoliday;
-                }
-
-                if (currDate == monthDate)
-                {
-                    day.setMark;
-                }
-            }
-            weekIndex++;
-        }
-
-        currentDate = date;
-        monthLabel.text = getMonthName(currentDate.month);
-        yearLabel.text = currentDate.year.to!dstring;
-    }
-
-    void incYear()
-    {
-        const year = currentDate.year;
-        if (year == currentDate.year.max)
+        const year = current.year;
+        if (year == current.year.max)
         {
             return;
         }
 
-        currentDate.year = year + 1;
+        auto newDate = current;
+        newDate.year = year + 1;
+        current(newDate, isTriggerListeners);
     }
 
-    void decYear()
+    void decYear(bool isTriggerListeners = true)
     {
-        const year = currentDate.year;
-        if (year == 0 || year == currentDate.year.min)
+        const year = current.year;
+        if (year == 0 || year == current.year.min)
         {
             return;
         }
 
-        currentDate.year = year - 1;
+        auto newDate = current;
+        newDate.year = year - 1;
+        current(newDate, isTriggerListeners);
     }
 
     void updateDate()
     {
-        currentDate = getCurrentDate;
+        current(getCurrentDate);
     }
 
     private Month onNewMonth(scope Month delegate(Month) onMonth)
     {
-        auto month = currentDate.month;
+        auto month = current.month;
         return onMonth(month);
     }
 
     private int onNewYear(scope int delegate(int) onYear)
     {
-        auto year = currentDate.year;
+        auto year = current.year;
         return onYear(year);
-    }
-
-    auto getRangeDatesByWeek(Date date, DayOfWeek startWeekDay = DayOfWeek.mon, DayOfWeek endWeekDay = DayOfWeek
-            .sun)
-    {
-        auto datesMonth = datesInMonth(date);
-        auto monthDates = datesByWeek(datesMonth, startWeekDay, endWeekDay);
-        return monthDates;
-    }
-
-    size_t dayOfWeekToWeekDayIndex(DayOfWeek day)
-    {
-        assert(weekDayNames.length > 0);
-
-        int dayWeekIndex = day.to!int - 1;
-        if (dayWeekIndex < 0)
-        {
-            dayWeekIndex = weekDayNames.length.to!int - 1;
-        }
-        return dayWeekIndex.to!size_t;
-    }
-
-    private dstring[] getWeekDayNames()
-    {
-        //TODO delegate onWeekDay
-        dstring[] weekNames = [
-            i18n.getMessage(KitI18nKeys.dateWeekMo, "Mo"),
-            i18n.getMessage(KitI18nKeys.dateWeekTu, "Tu"),
-            i18n.getMessage(KitI18nKeys.dateWeekWe, "We"),
-            i18n.getMessage(KitI18nKeys.dateWeekTh, "Th"),
-            i18n.getMessage(KitI18nKeys.dateWeekFr, "Fr"),
-            i18n.getMessage(KitI18nKeys.dateWeekSa, "Sa"),
-            i18n.getMessage(KitI18nKeys.dateWeekSu, "Su")
-        ];
-        return weekNames;
     }
 
     private dstring getMonthName(Month month)
@@ -732,6 +466,11 @@ class Calendar : Control
         }
     }
 
+    protected dstring formatDay(Date date){
+        import std.conv: to;
+        return date.day.to!dstring;
+    }
+
     protected double getMaxMonthNameWidth(Text label)
     {
         import std.traits : EnumMembers;
@@ -753,52 +492,4 @@ class Calendar : Control
         Date date = cast(Date) Clock.currTime();
         return date;
     }
-
-    private auto datesInMonth(Date date) pure
-    {
-        import std;
-
-        auto endDate = date.endOfMonth;
-        return Date(date.year, date.month, 1)
-            .recurrence!((a, n) => a[n - 1] + 1.days)
-            .until!(a => a > endDate);
-    }
-
-    auto datesByWeek(Range)(Range dates, DayOfWeek startDay, DayOfWeek endDay)
-    {
-        import std;
-
-        static struct DatesByWeek
-        {
-            Range r;
-            DayOfWeek startDayWeek;
-            DayOfWeek endDayWeek;
-
-            bool empty() => r.empty;
-            auto front() => until!((Date d) => d.dayOfWeek == endDayWeek)(r, OpenRight.no);
-
-            void popFront()
-            {
-                assert(!r.empty());
-                r.popFront();
-                while (!r.empty && r.front.dayOfWeek != startDayWeek)
-                {
-                    r.popFront();
-                }
-            }
-        }
-
-        return DatesByWeek(dates, startDay, endDay);
-    }
-
-    void reset()
-    {
-        startSelected = null;
-        selected = null;
-        foreach (week; weekContainers)
-        {
-            week.reset;
-        }
-    }
-
 }

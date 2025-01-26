@@ -23,6 +23,8 @@ class BaseDropDownSelector(D, T) : BaseSelector!T
     void delegate(BasePopup) onConfiguredPopup;
     void delegate(BasePopup) onCreatedPopup;
 
+    bool isIncreasePopupWidth;
+
     void delegate() onShowPopup;
 
     this()
@@ -129,7 +131,7 @@ class BaseDropDownSelector(D, T) : BaseSelector!T
     {
         if (popup && !popup.isVisible)
         {
-            if (popup.width < width)
+            if (isIncreasePopupWidth && popup.width < width)
             {
                 popup.width = width;
             }
