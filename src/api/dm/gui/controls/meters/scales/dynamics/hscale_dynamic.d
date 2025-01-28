@@ -28,8 +28,12 @@ class HScaleDynamic : BaseScaleDynamic
     {
         if (height == 0)
         {
-            initHeight = tickMaxHeight;
+            setInitHeight;
         }
+    }
+
+    protected void setInitHeight(){
+        initHeight = tickMaxHeight;
     }
 
     override void createLabelPool()
@@ -38,6 +42,7 @@ class HScaleDynamic : BaseScaleDynamic
 
         if (maxLabelHeight > 0)
         {
+            setInitHeight;
             height = height + maxLabelHeight;
         }
     }

@@ -40,7 +40,7 @@ class BarChart : XYChart
         size_t datasetItems;
     }
 
-    this(double chartAreaWidth = 200, double chartAreaHeight = 200)
+    this(double chartAreaWidth = 0, double chartAreaHeight = 0)
     {
         super(chartAreaWidth, chartAreaHeight);
 

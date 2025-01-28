@@ -1,12 +1,10 @@
 module api.dm.gui.controls.charts.xy_chart;
 
 import api.dm.gui.controls.containers.container : Container;
-import api.dm.gui.controls.texts.text : Text;
-import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.controls.meters.scales.dynamics.hscale_dynamic : HScaleDynamic;
 import api.dm.gui.controls.meters.scales.dynamics.vscale_dynamic : VScaleDynamic;
-import api.dm.gui.controls.containers.hbox : HBox;
-import api.dm.gui.controls.containers.vbox : VBox;
+import api.dm.gui.controls.texts.text : Text;
+import api.dm.kit.graphics.colors.rgba : RGBA;
 
 import api.dm.com.inputs.com_keyboard : ComKeyName;
 
@@ -26,14 +24,25 @@ class XYChart : Container
     bool isAutoScale = true;
 
     HScaleDynamic xScale1;
+    bool isCreateXScale1 = true;
+    HScaleDynamic delegate(HScaleDynamic) onNewXScale1;
+    void delegate(HScaleDynamic) onConfiguredXScale1;
+    void delegate(HScaleDynamic) onCreatedXScale1;
+
     VScaleDynamic yScale1;
+    bool isCreateYScale1 = true;
+    VScaleDynamic delegate(VScaleDynamic) onNewYScale1;
+    void delegate(VScaleDynamic) onConfiguredYScale1;
+    void delegate(VScaleDynamic) onCreatedYScale1;
 
     double chartAreaWidth = 0;
     double chartAreaHeight = 0;
 
     Container chartArea;
-
-    double scaleAutoSize = 20;
+    bool isCreateChartArea = true;
+    Container delegate(Container) onNewChartArea;
+    void delegate(Container) onConfiguredChartArea;
+    void delegate(Container) onCreatedChartArea;
 
     bool isScalable = true;
     bool isDraggableChart = true;
@@ -52,6 +61,10 @@ class XYChart : Container
     RGBA gridColor = RGBA(35, 35, 35);
 
     Text trackPointerInfo;
+    bool isCreateTrackPointerInfo = true;
+    Text delegate(Text) onTrackPointerInfo;
+    void delegate(Text) onConfiguredTrackPointerInfo;
+    void delegate(Text) onCreatedTrackPointerInfo;
 
     bool isTrackPointer = true;
     RGBA trackPointerColor;
@@ -66,14 +79,10 @@ class XYChart : Container
         bool isStartTrackPointer;
     }
 
-    this(double chartAreaWidth = 200, double chartAreaHeight = 200)
+    this(double chartAreaWidth = 0, double chartAreaHeight = 0)
     {
-        assert(chartAreaWidth > 0);
-        assert(chartAreaHeight > 0);
         this.chartAreaWidth = chartAreaWidth;
         this.chartAreaHeight = chartAreaHeight;
-
-        padding = 5;
 
         import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
@@ -81,11 +90,24 @@ class XYChart : Container
         layout.isAutoResize = true;
     }
 
-    override void create()
+    override void loadTheme()
     {
-        super.create;
+        super.loadTheme;
+        loadXYChartTheme;
+    }
 
-        enableInsets;
+    void loadXYChartTheme()
+    {
+        auto chartSize = theme.controlDefaultHeight * 2;
+        if (chartAreaWidth == 0)
+        {
+            chartAreaWidth = chartSize;
+        }
+
+        if (chartAreaHeight == 0)
+        {
+            chartAreaHeight = chartSize;
+        }
 
         if (xAxisColor == RGBA.init)
         {
@@ -97,39 +119,104 @@ class XYChart : Container
             yAxisColor = theme.colorWarning;
         }
 
+        padding = theme.controlPadding;
+    }
+
+    override void create()
+    {
+        super.create;
+
+        //TODO factory?
+        import api.dm.gui.controls.containers.hbox : HBox;
+
         auto chartContentContainer = new HBox(0);
+        //chartContentContainer.isDrawBounds = true;
         chartContentContainer.isResizeChildren = false;
         chartContentContainer.layout.isResizeChildren = false;
         addCreate(chartContentContainer);
 
-        yScale1 = new VScaleDynamic(scaleAutoSize, chartAreaHeight);
-        yScale1.isInvertY = true;
-        yScale1.isDrawFirstTick = false;
-        yScale1.labelNumberPrecision = labelNumberPrecision;
-        yScale1.prefLabelGlyphWidth = prefLabelGlyphWidth;
-        chartContentContainer.addCreate(yScale1);
-
-        if (!isShowYScale)
+        if (!yScale1 && isCreateYScale1)
         {
-            yScale1.isVisible = false;
+            auto ns = newYScale1(0, chartAreaHeight);
+            yScale1 = !onNewYScale1 ? ns : onNewYScale1(ns);
+
+            yScale1.isInvertY = true;
+            yScale1.isInvertX = true;
+            yScale1.isDrawFirstTick = false;
+            yScale1.labelNumberPrecision = labelNumberPrecision;
+            yScale1.isResizedByParent = false;
+            yScale1.prefLabelGlyphWidth = prefLabelGlyphWidth;
+
+            if (onConfiguredYScale1)
+            {
+                onConfiguredYScale1(yScale1);
+            }
+
+            if (!isShowYScale)
+            {
+                yScale1.isVisible = false;
+            }
+
+            chartContentContainer.addCreate(yScale1);
+
+            if (onCreatedYScale1)
+            {
+                onCreatedYScale1(yScale1);
+            }
+
         }
 
-        chartArea = new Container;
-        chartArea.width = chartAreaWidth;
-        chartArea.height = chartAreaHeight;
-        chartContentContainer.addCreate(chartArea);
-
-        xScale1 = new HScaleDynamic(chartAreaWidth, scaleAutoSize);
-        xScale1.marginLeft = scaleAutoSize;
-        xScale1.isDrawFirstTick = false;
-        xScale1.isShowFirstLabelText = false;
-        xScale1.labelNumberPrecision = labelNumberPrecision;
-        xScale1.prefLabelGlyphWidth = prefLabelGlyphWidth;
-        addCreate(xScale1);
-
-        if (!isShowXScale)
+        if (!chartArea && isCreateChartArea)
         {
-            xScale1.isVisible = false;
+            auto cha = newChartArea;
+            chartArea = !onNewChartArea ? cha : onNewChartArea(cha);
+
+            chartArea.isResizedByParent = false;
+            
+            chartArea.width = chartAreaWidth;
+            chartArea.height = chartAreaHeight;
+
+            if (onConfiguredChartArea)
+            {
+                onConfiguredChartArea(chartArea);
+            }
+
+            chartContentContainer.addCreate(chartArea);
+
+            if (onCreatedChartArea)
+            {
+                onCreatedChartArea(chartArea);
+            }
+
+        }
+
+        if (!xScale1 && isCreateXScale1)
+        {
+            auto nsx = newXScale1(chartAreaWidth, 0);
+            xScale1 = !onNewXScale1 ? nsx : onNewXScale1(nsx);
+
+            xScale1.marginLeft = yScale1 ? yScale1.width : 0;
+            xScale1.isDrawFirstTick = false;
+            xScale1.isShowFirstLabelText = false;
+            xScale1.labelNumberPrecision = labelNumberPrecision;
+            xScale1.prefLabelGlyphWidth = prefLabelGlyphWidth;
+
+            if (!isShowXScale)
+            {
+                xScale1.isVisible = false;
+            }
+
+            if (onConfiguredXScale1)
+            {
+                onConfiguredXScale1(xScale1);
+            }
+
+            addCreate(xScale1);
+
+            if(onCreatedXScale1){
+                onCreatedXScale1(xScale1);
+            }
+
         }
 
         //auto xScaleRangeLimit = 50;
@@ -150,7 +237,7 @@ class XYChart : Container
                     auto newXRange = Math.abs(newMaxXValue - xScale1.minValue);
                     // if (newXRange >= xScaleRangeMinLimit && newXRange <= xScaleRangeLimit)
                     // {
-                       
+
                     // }
                     // else
                     // {
@@ -169,7 +256,7 @@ class XYChart : Container
                     // auto newYRange = Math.abs(newMaxYValue - yScale1.minValue);
                     // if (newYRange >= xScaleRangeMinLimit && newYRange <= xScaleRangeLimit)
                     // {
-                        
+
                     // }
                     // else
                     // {
@@ -261,13 +348,14 @@ class XYChart : Container
         {
             x += (0 - minX);
         }
-    
+
         if (isUseOffsets)
         {
             x = offsetX + x;
         }
 
-        if(isUseScale){
+        if (isUseScale)
+        {
             x *= scaleX;
         }
 
@@ -294,7 +382,8 @@ class XYChart : Container
             y = offsetY + y;
         }
 
-        if(isUseScale){
+        if (isUseScale)
+        {
             y *= scaleY;
         }
 
@@ -346,7 +435,8 @@ class XYChart : Container
                 auto xZeroOffset = 0 - xScale1.minValue;
                 auto wZeroOffset = rangeXToWidth(xZeroOffset);
                 //TODO check negative scales
-                if(wX < 0){
+                if (wX < 0)
+                {
                     wX = -wX;
                 }
                 newX = chartArea.x + wZeroOffset - wX;
@@ -363,7 +453,8 @@ class XYChart : Container
             {
                 auto yZeroOffset = 0 - yScale1.minValue;
                 auto hZeroOffset = rangeYToHeight(yZeroOffset);
-                if(hY < 0){
+                if (hY < 0)
+                {
                     hY = -hY;
                 }
                 newY = chartArea.boundsRect.bottom - hZeroOffset + hY;
@@ -421,13 +512,15 @@ class XYChart : Container
     {
         if (!isStartTrackPointer || !input.isPressedKey(trackPointerAltKey))
         {
-            if(trackPointerInfo.isVisible){
+            if (trackPointerInfo.isVisible)
+            {
                 trackPointerInfo.isVisible = false;
             }
             return;
         }
 
-        if(!trackPointerInfo.isVisible){
+        if (!trackPointerInfo.isVisible)
+        {
             trackPointerInfo.isVisible = true;
         }
 
@@ -448,5 +541,20 @@ class XYChart : Container
         import std.format : format;
 
         trackPointerInfo.text = format("x:%.2f y:%.2f", dxInfo, dyInfo);
+    }
+
+    Container newChartArea()
+    {
+        return new Container;
+    }
+
+    HScaleDynamic newXScale1(double w, double h)
+    {
+        return new HScaleDynamic(w, h);
+    }
+
+    VScaleDynamic newYScale1(double w, double h)
+    {
+        return new VScaleDynamic(w, h);
     }
 }

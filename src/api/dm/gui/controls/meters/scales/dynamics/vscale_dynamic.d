@@ -33,8 +33,12 @@ class VScaleDynamic : BaseScaleDynamic
 
         if (width == 0)
         {
-            initWidth = tickMaxWidth;
+            setInitWidth;
         }
+    }
+
+    protected void setInitWidth(){
+        initWidth = tickMaxWidth;
     }
 
     override void createLabelPool()
@@ -43,6 +47,7 @@ class VScaleDynamic : BaseScaleDynamic
 
         if (maxLabelWidth > 0)
         {
+            setInitWidth;
             width = width + maxLabelWidth;
         }
     }

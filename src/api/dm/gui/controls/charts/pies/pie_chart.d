@@ -147,6 +147,10 @@ class PieChart : Container
         double chartAreaHeight;
 
         PieTexture texture;
+        bool isCreateTexture = true;
+        PieTexture delegate(PieTexture) onNewTexture;
+        void delegate(PieTexture) onConfiguredTexture;
+        void delegate(PieTexture) onCreatedTexture;
 
         size_t labelsCount;
     }
@@ -169,30 +173,49 @@ class PieChart : Container
     {
         super.create;
 
-        texture = new PieTexture(chartAreaWidth, chartAreaHeight);
-        addCreate(texture);
+        if (!texture && isCreateTexture)
+        {
+            auto t = newTexture(chartAreaWidth, chartAreaHeight);
+            texture = !onNewTexture ? t : onNewTexture(t);
 
-        texture.onColorRadiusAnglesDeg = (i, color, radius, angles) {
-            assert(i < values.length);
-            auto data = values[i];
+            texture.onColorRadiusAnglesDeg = (i, color, radius, angles) {
+                assert(i < values.length);
+                auto data = values[i];
 
-            assert(i < labels.length);
-            auto label = labels[i];
+                assert(i < labels.length);
+                auto label = labels[i];
 
-            auto percent = data.value / totalValue * 100;
+                auto percent = data.value / totalValue * 100;
 
-            import std.format: format;
+                import std.format : format;
 
-            label.textLabel.text = format("%s (%s%%)", data.name, percent);
-            
-            label.colorLabel.color = color;
-            //TODO from texture?
-            label.color = color;
+                label.textLabel.text = format("%s (%s%%)", data.name, percent);
 
-            label.startAngleDeg = angles.x;
-            label.endAngleDeg = angles.y;
-            label.radius = radius;
-        };
+                label.colorLabel.color = color;
+                //TODO from texture?
+                label.color = color;
+
+                label.startAngleDeg = angles.x;
+                label.endAngleDeg = angles.y;
+                label.radius = radius;
+            };
+
+            if (onConfiguredTexture)
+            {
+                onConfiguredTexture(texture);
+            }
+
+            addCreate(texture);
+            if (onCreatedTexture)
+            {
+                onCreatedTexture(texture);
+            }
+        }
+    }
+
+    PieTexture newTexture(double w, double h)
+    {
+        return new PieTexture(w, h);
     }
 
     override void applyLayout()

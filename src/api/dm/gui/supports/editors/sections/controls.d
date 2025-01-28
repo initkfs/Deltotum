@@ -74,55 +74,25 @@ class Controls : Control
 
         rootContainer.addCreate(new HSeparator);
 
-        auto metersContainer = new HBox;
-        metersContainer.layout.isAlignY = true;
-        rootContainer.addCreate(metersContainer);
-
-        createMeters(metersContainer);
-
         auto selectionContainer = new HBox;
         selectionContainer.layout.isAlignY = true;
         rootContainer.addCreate(selectionContainer);
 
         createSelects(selectionContainer);
 
-        auto selectionContainer2 = new HBox;
-        selectionContainer2.layout.isAlignY = true;
-        rootContainer.addCreate(selectionContainer2);
+        createPickers(selectionContainer);
 
-        createPickers(selectionContainer2);
+        auto metersContainer = new HBox;
+        metersContainer.layout.isAlignY = true;
+        rootContainer.addCreate(metersContainer);
 
-        // createSeparators(selectionContainer);
+        createMeters(metersContainer);
 
-        // auto dataContainer = new HBox(5);
-        // dataContainer.layout.isAlignY = true;
-        // rootContainer.addCreate(dataContainer);
+        auto dataContainer = new HBox(5);
+        dataContainer.layout.isAlignY = true;
+        rootContainer.addCreate(dataContainer);
 
-        //createDataControls(dataContainer);
-
-        //createTexts(dataContainer);
-
-        // auto chartContainer = new HBox(5);
-        // chartContainer.layout.isAlignY = true;
-        // rootContainer.addCreate(chartContainer);
-
-        // createCharts(chartContainer);
-
-        // auto progressContainer = new HBox;
-        // progressContainer.layout.isAlignY = true;
-        // rootContainer.addCreate(progressContainer);
-        // progressContainer.enableInsets;
-
-        // createProgressBars(progressContainer);
-
-        // iconsContainer.isBackground = false;
-
-        // import api.dm.kit.sprites2d.images.image : Image;
-
-        // auto image1 = new Image();
-        // build(image1);
-        // image1.loadRaw(theme.iconData("rainy-outline"), 64, 64);
-        // image1.setColor(theme.colorAccent);
+        createCharts(dataContainer);
     }
 
     void createSwitches(Container root)
@@ -445,35 +415,35 @@ class Controls : Control
         auto pagination = new Pagination;
         pagination.pageFactory = (size_t pageIndex) {};
         choiceRoot1.addCreate(pagination);
-
-        // import  api.dm.gui.controls.selects.color_pickers.color_picker: ColorPicker;
-        // auto colorPicker1 = new ColorPicker;
-        // colorPicker1.isDropDownDialog = false;
-        // root.addCreate(colorPicker1);
-
-        import api.dm.gui.controls.selects.calendars.calendar : Calendar;
-
-        auto cal1 = new Calendar;
-        root.addCreate(cal1);
-
-        import api.dm.gui.controls.selects.time_pickers.time_picker: TimePicker;
-
-        auto timePick1 = new TimePicker;
-        root.addCreate(timePick1);
-        timePick1.setCurrentTime;
     }
 
     void createPickers(Container root)
     {
+        auto pickersRoot = new VBox;
+        pickersRoot.isAlignX = true;
+        root.addCreate(pickersRoot);
+
         import api.dm.gui.controls.selects.calendars.calendar : Calendar;
 
         auto cal1 = new Calendar;
-        root.addCreate(cal1);
+        pickersRoot.addCreate(cal1);
+
+        auto root2 = new HBox;
+        root2.isAlignY = true;
+        pickersRoot.addCreate(root2);
+
+        import api.dm.gui.controls.selects.time_pickers.time_picker: TimePicker;
 
         import api.dm.gui.controls.selects.time_pickers.time_picker: TimePicker;
 
         auto timePick1 = new TimePicker;
-        root.addCreate(timePick1);
+        root2.addCreate(timePick1);
+        timePick1.setCurrentTime;
+        
+        import api.dm.gui.controls.selects.color_pickers.color_picker: ColorPicker;
+
+        auto colorPick2 = new ColorPicker;
+        root2.addCreate(colorPick2);
     }
 
     void createMeters(Container root)
@@ -694,7 +664,7 @@ class Controls : Control
     {
         import api.dm.gui.controls.charts.lines.linear_chart : LinearChart;
 
-        auto linearChart = new LinearChart(200, 200);
+        auto linearChart = new LinearChart;
         root.addCreate(linearChart);
 
         import std.range : iota;

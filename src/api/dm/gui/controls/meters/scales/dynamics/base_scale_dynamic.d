@@ -36,6 +36,7 @@ abstract class BaseScaleDynamic : BaseDrawableScale
         super(width, height);
 
         isResizeChildrenIfNoLayout = false;
+        isResizedByParent = false;
     }
 
     override void create()
@@ -125,6 +126,7 @@ abstract class BaseScaleDynamic : BaseDrawableScale
             }
             auto tickValue = minValue + i * majorTickStep * valueStep;
             label.text = formatLabelValue(tickValue);
+            
             label.updateRows(isForce : true);
 
             const bounds = label.boundsRect;
