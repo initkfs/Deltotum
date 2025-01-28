@@ -7,6 +7,7 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.gui.controls.containers.tabs.tabbox : TabBox;
 import api.dm.gui.controls.containers.tabs.tab : Tab;
+import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.forms.regulates.regulate_text_field;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -42,6 +43,11 @@ class ColorPickerDialog : Control
     RegulateTextField lchCField;
     RegulateTextField lchLField;
 
+    Text palNameText;
+    Text delegate(Text) onNewPalNameText;
+    void delegate(Text) onConfiguredPalNameText;
+    void delegate(Text) onCreatedPalNameText;
+
     void delegate(RGBA, RGBA) onChangeOldNew;
 
     size_t paletteColorSize = 14;
@@ -56,6 +62,7 @@ class ColorPickerDialog : Control
         {
             Rect2d bounds;
             RGBA color;
+            string name;
         }
 
         Tab rgbTab;
@@ -356,10 +363,14 @@ class ColorPickerDialog : Control
     Sprite2d createPalTabContent()
     {
         import api.dm.gui.controls.containers.scroll_box : ScrollBox, ScrollBarPolicy;
+        import api.dm.gui.controls.containers.hbox : HBox;
+
+        HBox contentRoot = new HBox;
+        buildInitCreate(contentRoot);
 
         auto container = new ScrollBox;
         container.isBorder = false;
-        buildInitCreate(container);
+        contentRoot.addCreate(container);
 
         import api.dm.kit.sprites2d.textures.rgba_texture : RgbaTexture;
 
@@ -399,7 +410,7 @@ class ColorPickerDialog : Control
                         graphics.fillRect(nextX, nextY, paletteColorSize, paletteColorSize);
 
                         colorPixels[pixelCounter] = ColorInfo(Rect2d(nextX, nextY, paletteColorSize, paletteColorSize), graphics
-                                .getColor);
+                                .getColor, color);
                         pixelCounter++;
 
                         nextX += paletteColorSize;
@@ -433,9 +444,32 @@ class ColorPickerDialog : Control
                     auto color = colorInfo.color;
                     color.a = alpha;
                     updateColor(color);
+                    if(palNameText){
+                        palNameText.text = colorInfo.name;
+                    }
                 }
             }
         };
+
+        if (!palNameText)
+        {
+            auto t = newPalNameText("color");
+            palNameText = !onNewPalNameText ? t : onNewPalNameText(t);
+
+            if (onConfiguredPalNameText)
+            {
+                onConfiguredPalNameText(palNameText);
+            }
+
+            container.addCreate(palNameText);
+
+            palNameText.enableInsets;
+
+            if (onCreatedPalNameText)
+            {
+                onCreatedPalNameText(palNameText);
+            }
+        }
 
         return container;
     }
@@ -493,6 +527,8 @@ class ColorPickerDialog : Control
 
     Tab newRGBTab(dstring text) => newTab(text);
     Tab newHSLTab(dstring text) => newTab(text);
+
+    Text newPalNameText(dstring text) => new Text(text);
 
     Tab newPalTab(dstring text)
     {
