@@ -71,7 +71,7 @@ class ColorPickerDialog : Control
         layout.isAutoResize = true;
         layout.isDecreaseRootSize = true;
 
-        isBorder = true;
+        //isBorder = true;
     }
 
     override void loadTheme()
@@ -430,7 +430,9 @@ class ColorPickerDialog : Control
             {
                 if (colorInfo.bounds.contains(rawPoint))
                 {
-                    updateColor(colorInfo.color);
+                    auto color = colorInfo.color;
+                    color.a = alpha;
+                    updateColor(color);
                 }
             }
         };
