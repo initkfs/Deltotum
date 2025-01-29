@@ -1,8 +1,8 @@
-module api.dm.gui.controls.indicators.color_bars.radial_color_bar;
+module api.dm.gui.controls.indicators.colorbars.radial_colorbar;
 
-import api.dm.gui.controls.indicators.color_bars.base_color_bar: BaseColorBar;
+import api.dm.gui.controls.indicators.colorbars.base_mono_colorbar : BaseMonoColorBar;
 import api.dm.gui.controls.control : Control;
-import api.dm.gui.controls.indicators.color_bars.color_bar_value: ColorBarValue;
+import api.dm.gui.controls.indicators.colorbars.colorbar_data : ColorBarData;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
@@ -21,8 +21,8 @@ private
     {
         double minAngleDeg = 0;
         double maxAngleDeg = 0;
-        
-        ColorBarValue[] data;
+
+        ColorBarData[] data;
 
         this(double width, double height, GraphicStyle style)
         {
@@ -50,7 +50,8 @@ private
 
             auto radius = Math.max(width, height) / 2 - style.lineWidth;
 
-            const angleRange = minAngleDeg < maxAngleDeg ? maxAngleDeg - minAngleDeg : minAngleDeg - maxAngleDeg;
+            const angleRange = minAngleDeg < maxAngleDeg ? maxAngleDeg - minAngleDeg
+                : minAngleDeg - maxAngleDeg;
             const rangeDt = angleRange / sum;
 
             foreach (ref rangeData; data)
@@ -65,18 +66,16 @@ private
             }
 
         }
-    };
+    }
 
 }
 
-class RadialColorBar : BaseColorBar
+class RadialColorBar : BaseMonoColorBar
 {
-    Sprite2d bar;
-
     double minAngleDeg = 0;
     double maxAngleDeg = 0;
 
-    this(double diameter = 0, double minAngleDeg = 0, double maxAngleDeg = 90)
+    this(double diameter = 0, double minAngleDeg = 0, double maxAngleDeg = 360)
     {
         super(diameter, diameter);
 
@@ -91,46 +90,45 @@ class RadialColorBar : BaseColorBar
     override void loadTheme()
     {
         super.loadTheme;
-        loadControlSizeTheme;
+        loadRadialColorBarTheme;
+    }
 
-        if (rangeData.length == 0)
+    void loadRadialColorBarTheme()
+    {
+        auto barSize = theme.controlDefaultWidth / 2;
+        if (width == 0)
         {
-            auto step = 100 / 3;
-            rangeData = [
-                ColorBarValue(step, theme.colorSuccess),
-                ColorBarValue(step, theme.colorWarning),
-                ColorBarValue(step, theme.colorDanger),
-            ];
+            initWidth = barSize;
+        }
+
+        if (height == 0)
+        {
+            initHeight = barSize;
         }
     }
 
-    override void create()
+    override void createColorBar(Sprite2d bar)
     {
-        super.create;
 
-        //TODO placeholder
-        if(!capGraphics.isVectorGraphics){
-            return;
-        }
+    }
 
+    override Sprite2d newBar()
+    {
         auto style = createStyle;
+
+        if (!capGraphics.isVectorGraphics)
+        {
+            import api.dm.kit.sprites2d.shapes.circle : Circle;
+
+            auto placeholder = new Circle(Math.max(width, height), style);
+            return placeholder;
+        }
 
         auto shape = new ColorBarShape(width, height, style);
         shape.data = rangeData;
         shape.minAngleDeg = minAngleDeg;
         shape.maxAngleDeg = maxAngleDeg;
-
-        addCreate(shape);
-    }
-
-    double colorRangeSum()
-    {
-        double sum = 0;
-        foreach (r; rangeData)
-        {
-            sum += r.value;
-        }
-        return sum;
+        return shape;
     }
 
 }

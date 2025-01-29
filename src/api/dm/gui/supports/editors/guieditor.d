@@ -31,16 +31,6 @@ class GuiEditor : GuiScene
         controlsTab.content = new Controls;
         root.addCreate(controlsTab);
 
-        version (DmAddon)
-        {
-            import api.dm.gui.supports.editors.sections.indicators : Indicators;
-
-            auto indicatorsTab = new Tab("Indicators");
-            indicatorsTab.content = new Indicators;
-            root.addCreate(indicatorsTab);
-
-        }
-
         import api.dm.gui.supports.editors.sections.layouts : Layouts;
 
         auto layoutTab = new Tab("Layouts");

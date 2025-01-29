@@ -1,4 +1,4 @@
-module api.dm.gui.controls.indicators.segments.radial_segment_bar;
+module api.dm.gui.controls.indicators.segmentbars.radial_segmentbar;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;

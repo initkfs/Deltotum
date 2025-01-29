@@ -2,7 +2,7 @@ module api.dm.gui.controls.meters.gauges.hlinear_gauge;
 
 import api.dm.gui.controls.meters.min_max_value_meter : MinMaxValueMeter;
 import api.dm.gui.controls.meters.scales.dynamics.base_scale_dynamic : BaseScaleDynamic;
-import api.dm.gui.controls.indicators.color_bars.color_bar : ColorBar;
+import api.dm.gui.controls.indicators.colorbars.colorbar : ColorBar;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.texts.text : Text;

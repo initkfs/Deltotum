@@ -1,7 +1,7 @@
-module api.dm.gui.controls.indicators.color_bars.base_color_bar;
+module api.dm.gui.controls.indicators.colorbars.base_colorbar;
 
-import api.dm.gui.controls.control: Control;
-import api.dm.gui.controls.indicators.color_bars.color_bar_value: ColorBarValue;
+import api.dm.gui.controls.control : Control;
+import api.dm.gui.controls.indicators.colorbars.colorbar_data : ColorBarData;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
 /**
@@ -10,7 +10,7 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 
 class BaseColorBar : Control
 {
-    ColorBarValue[] rangeData;
+    ColorBarData[] rangeData;
 
     this(double width = 0, double height = 0)
     {
@@ -21,15 +21,18 @@ class BaseColorBar : Control
     override void loadTheme()
     {
         super.loadTheme;
-        loadControlSizeTheme;
+        loadBaseColorBarTheme;
+    }
 
+    void loadBaseColorBarTheme()
+    {
         if (rangeData.length == 0)
         {
-            auto step = 100 / 3;
+            auto step = 100.0 / 3;
             rangeData = [
-                ColorBarValue(step, theme.colorSuccess),
-                ColorBarValue(step, theme.colorWarning),
-                ColorBarValue(step, theme.colorDanger),
+                ColorBarData(step, theme.colorSuccess),
+                ColorBarData(step, theme.colorWarning),
+                ColorBarData(step, theme.colorDanger),
             ];
         }
     }

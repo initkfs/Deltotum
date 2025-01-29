@@ -1,6 +1,6 @@
-module api.dm.addon.gui.controls.indicators.leds.led;
+module api.dm.gui.controls.indicators.leds.led;
 
-import api.dm.addon.gui.controls.indicators.leds.led_base : LedBase;
+import api.dm.gui.controls.indicators.leds.led_base : LedBase;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;

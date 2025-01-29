@@ -2,7 +2,7 @@ module api.dm.gui.controls.meters.gauges.radial_gauge;
 
 import api.dm.gui.controls.meters.gauges.base_radial_gauge : BaseRadialGauge;
 import api.dm.gui.controls.meters.scales.statics.rscale_static : RScaleStatic;
-import api.dm.gui.controls.indicators.color_bars.radial_color_bar : RadialColorBar;
+import api.dm.gui.controls.indicators.colorbars.radial_colorbar : RadialColorBar;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.colors.rgba : RGBA;

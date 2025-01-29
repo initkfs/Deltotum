@@ -1,4 +1,4 @@
-module api.dm.addon.gui.controls.indicators.seven_segment;
+module api.dm.gui.controls.indicators.sevsegments.seven_segment;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;

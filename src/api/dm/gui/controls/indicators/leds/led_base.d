@@ -1,4 +1,4 @@
-module api.dm.addon.gui.controls.indicators.leds.led_base;
+module api.dm.gui.controls.indicators.leds.led_base;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
@@ -68,14 +68,14 @@ class LedBase : Control
     HSVA getLayersColorHSV()
     {
         auto hsvColor = colorHue.toHSVA;
-        hsvColor.saturation = 1;
-        hsvColor.value = 1;
+        hsvColor.s = 1;
+        hsvColor.v = 1;
         return hsvColor;
     }
 
     HSVA getBottomColorHSV(HSVA color)
     {
-        color.value = 0.8;
+        color.v = 0.8;
         return color;
     }
 
@@ -86,7 +86,7 @@ class LedBase : Control
 
     HSVA getTopColorHSV(HSVA color)
     {
-        color.saturation = 0.5;
+        color.s = 0.5;
         return color;
     }
 

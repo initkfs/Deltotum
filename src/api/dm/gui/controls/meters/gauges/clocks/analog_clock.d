@@ -3,7 +3,7 @@ module api.dm.gui.controls.meters.gauges.clocks.analog_clock;
 import api.dm.gui.controls.meters.gauges.base_radial_gauge : BaseRadialGauge;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.meters.hands.meter_hand_factory : MeterHandFactory;
-import api.dm.gui.controls.indicators.segments.radial_segment_bar : RadialSegmentBar;
+import api.dm.gui.controls.indicators.segmentbars.radial_segmentbar : RadialSegmentBar;
 
 import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
 import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
