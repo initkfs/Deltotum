@@ -747,6 +747,7 @@ class Controls : Control
         import api.dm.gui.controls.indicators.dotmatrix.dotmatrix_display : DotMatrixDisplay;
 
         auto dm1 = new DotMatrixDisplay!(7, 5);
+        dm1.isBorder = true;
         root.addCreate(dm1);
         //dfmt off
         int[5][7] matrix = [
@@ -759,7 +760,7 @@ class Controls : Control
             [1, 0, 0, 0, 1]
         ];
         //dfmt on
-        dm1.draw(matrix);
+        dm1.fromIntMatrix(matrix);
 
         import api.dm.gui.controls.indicators.leds.led : Led;
         import api.dm.kit.tweens.curves.uni_interpolator : UniInterpolator;

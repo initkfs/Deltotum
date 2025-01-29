@@ -123,7 +123,8 @@ class Calendar : BaseDropDownSelector!(CalendarDialog, Date)
                     onCreatedDateChangeContainer(dateChangeContainer);
                 }
 
-                if(!dayLabel){
+                if (!dayLabel)
+                {
                     auto dl = newDayLabel("00");
                     dayLabel = !onNewDayLabel ? dl : onNewDayLabel(dl);
 
@@ -147,21 +148,20 @@ class Calendar : BaseDropDownSelector!(CalendarDialog, Date)
 
                             auto currMonth = current.month;
 
-                            Month newMonth;
                             if (currMonth <= Month.min)
                             {
                                 //TODO min year
                                 decYear(isTriggerListeners : false);
-                                newMonth = Month.max;
+                                auto newDate = current;
+                                newDate.month = Month.max;
+                                current(newDate);
                             }
                             else
                             {
-                                newMonth = ((cast(int) currMonth) - 1).to!Month;
+                                auto newDate = current;
+                                newDate.roll!"months"(-1);
+                                current(newDate);
                             }
-
-                            auto newDate = current;
-                            newDate.month = newMonth;
-                            current(newDate);
                         };
                     });
                 }
@@ -204,15 +204,17 @@ class Calendar : BaseDropDownSelector!(CalendarDialog, Date)
                             if (currMonth >= Month.max)
                             {
                                 incYear(isTriggerListeners : false);
-                                newMonth = Month.min;
+                                auto newDate = current;
+                                newDate.month = Month.min;
+                                current(newDate);
                             }
                             else
                             {
                                 newMonth = ((cast(int) currMonth) + 1).to!Month;
+                                auto newDate = current;
+                                newDate.roll!"months"(1);
+                                current(newDate);
                             }
-                            auto newDate = current;
-                            newDate.month = newMonth;
-                            current(newDate);
                         };
                     });
                 }
@@ -280,7 +282,7 @@ class Calendar : BaseDropDownSelector!(CalendarDialog, Date)
         createDialog((dialog) {
             dialog.onSelectToday = () { setToday; };
             dialog.onReset = () { reload; };
-            dialog.onSelectedDay = (dc){
+            dialog.onSelectedDay = (dc) {
                 auto date = current;
                 date.day = dc.dayDate.day;
                 current(date, true, false);
@@ -345,7 +347,8 @@ class Calendar : BaseDropDownSelector!(CalendarDialog, Date)
         dialog.load(date, currDate);
     }
 
-    bool reload(){
+    bool reload()
+    {
         return current(current);
     }
 
@@ -357,19 +360,21 @@ class Calendar : BaseDropDownSelector!(CalendarDialog, Date)
         assert(yearLabel);
         assert(dayLabel);
 
-        if(!super.current(date, isTriggerListeners)){
+        if (!super.current(date, isTriggerListeners))
+        {
             return false;
         }
-        
+
         //TODO converters
         monthLabel.text = getMonthName(date.month);
         yearLabel.text = date.year.to!dstring;
         dayLabel.text = formatDay(date);
-        
-        if(isSetDialog){
 
+        if (isSetDialog)
+        {
             auto currDate = getCurrentDate;
-            if(isHighlightCurrentDayEachMonth && currDate != date){
+            if (isHighlightCurrentDayEachMonth && currDate != date)
+            {
                 currDate = date;
             }
 
@@ -466,8 +471,10 @@ class Calendar : BaseDropDownSelector!(CalendarDialog, Date)
         }
     }
 
-    protected dstring formatDay(Date date){
-        import std.conv: to;
+    protected dstring formatDay(Date date)
+    {
+        import std.conv : to;
+
         return date.day.to!dstring;
     }
 

@@ -34,7 +34,7 @@ class VRectangle : VShape
         if (style.isFill)
         {
             ctx.color = style.fillColor;
-            ctx.fillPreserve;
+            ctx.fill;
         }
 
         ctx.lineWidth = style.lineWidth;
