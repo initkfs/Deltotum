@@ -224,7 +224,7 @@ class AnalogClock : BaseRadialGauge
 
         progressBar = new RadialSegmentBar(diameter, 0, 360);
         progressBar.segmentsCount = 60;
-        progressBar.segmentStyle = progressStyle;
+        progressBar.segmentStyleOn = progressStyle;
 
         addCreate(progressBar);
 

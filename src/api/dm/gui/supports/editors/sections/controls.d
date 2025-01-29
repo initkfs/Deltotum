@@ -728,6 +728,7 @@ class Controls : Control
 
         auto radSBar1 = new RadialSegmentBar;
         root.addCreate(radSBar1);
+        radSBar1.showSegments(3);
 
         import api.dm.gui.controls.indicators.sevsegments.seven_segment : SevenSegment;
 

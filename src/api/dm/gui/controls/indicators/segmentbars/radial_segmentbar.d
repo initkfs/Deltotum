@@ -14,16 +14,12 @@ class RadialSegmentBar : Control
 
     protected
     {
-        Sprite2d[] segmentsOff;
-        Sprite2d[] segmentsOn;
+        Sprite2d[] _segmentsOff;
+        Sprite2d[] _segmentsOn;
     }
 
-    GraphicStyle segmentStyle;
-
-    protected
-    {
-        GraphicStyle segmentOffStyle;
-    }
+    GraphicStyle segmentStyleOn;
+    GraphicStyle segmentStyleOff;
 
     double diameter = 0;
     double minAngleDeg = 0;
@@ -43,7 +39,11 @@ class RadialSegmentBar : Control
     override void loadTheme()
     {
         super.loadTheme;
+        loadRadialSegmentBarTheme;
+    }
 
+    void loadRadialSegmentBarTheme()
+    {
         if (diameter == 0)
         {
             diameter = theme.meterThumbDiameter;
@@ -52,31 +52,29 @@ class RadialSegmentBar : Control
         assert(diameter > 0);
         initSize(diameter, diameter);
 
-        if (segmentStyle == GraphicStyle.init)
+        if (segmentStyleOn == GraphicStyle.init)
         {
-            segmentStyle = createFillStyle;
+            segmentStyleOn = createFillStyle;
+            if(!segmentStyleOn.isPreset){
+                segmentStyleOn.isFill = false;
+                segmentStyleOn.lineColor = segmentStyleOn.fillColor;
+            }
         }
-    }
-
-    protected RGBA offSegmentColor(RGBA color)
-    {
-        auto newColor = color.toHSLA;
-        newColor.l /= 5;
-        return newColor.toRGBA;
     }
 
     override void create()
     {
         super.create;
 
-        segmentOffStyle = segmentStyle;
-        if (!segmentOffStyle.isPreset)
+        segmentStyleOff = segmentStyleOn;
+        if (!segmentStyleOff.isPreset)
         {
-            segmentOffStyle.lineColor = offSegmentColor(segmentStyle.lineColor);
-            segmentOffStyle.isFill = false;
+            segmentStyleOff.lineColor = segmentColorOff(segmentStyleOn.lineColor);
+            segmentStyleOff.isFill = false;
+            segmentStyleOff.fillColor = segmentStyleOff.lineColor;
         }
 
-        segmentsOn.reserve(segmentsCount);
+        _segmentsOn.reserve(segmentsCount);
 
         if (capGraphics.isVectorGraphics)
         {
@@ -92,7 +90,7 @@ class RadialSegmentBar : Control
             {
                 this()
                 {
-                    super(textureWidth, textureHeight, segmentOffStyle);
+                    super(textureWidth, textureHeight, segmentStyleOff);
                 }
 
                 override void createTextureContent()
@@ -104,15 +102,29 @@ class RadialSegmentBar : Control
                     ctx.translate(radius, radius);
                     Vec2d center = Vec2d(0, 0);
 
-                    drawSegment((i, startAngleDeg, endAngleDeg, angleOffset) {
-                        ctx.beginPath;
-                        ctx.arc(0, 0, radius - style.lineWidth / 2, Math.degToRad(startAngleDeg), Math.degToRad(
-                            endAngleDeg));
-                        ctx.closePath;
-                        ctx.strokePreserve;
+                    auto arcRadius = radius - style.lineWidth / 2;
 
+                    drawSegment((i, startAngleDeg, endAngleDeg, angleOffset) {
+                        if(style.isFill){
+                            ctx.beginPath;
+                        }
+                        
+                        ctx.arc(center.x, center.y, arcRadius, Math.degToRad(startAngleDeg), Math.degToRad(
+                            endAngleDeg));
+                        
+                        if(style.isFill){
+                            ctx.closePath;
+                            ctx.fillPreserve;
+                        }
+                        
+                        ctx.strokePreserve;
                         return true;
                     });
+
+                    if (style.isFill)
+                    {
+                        ctx.fill;
+                    }
 
                     ctx.stroke;
                 }
@@ -124,14 +136,14 @@ class RadialSegmentBar : Control
 
             drawSegment((i, startAngleDeg, endAngleDeg, angleOffset) {
 
-                auto segment = new VArc(radius, segmentStyle);
+                auto segment = new VArc(radius, segmentStyleOn);
                 segment.xCenter = 0;
                 segment.yCenter = 0;
                 segment.fromAngleRad = Math.degToRad(startAngleDeg);
                 segment.toAngleRad = Math.degToRad(endAngleDeg);
                 addCreate(segment);
                 segment.isVisible = false;
-                segmentsOn ~= segment;
+                _segmentsOn ~= segment;
                 return true;
             });
         }
@@ -139,30 +151,37 @@ class RadialSegmentBar : Control
         {
             import api.dm.kit.sprites2d.shapes.circle : Circle;
 
-            segmentsOff.reserve(segmentsCount);
+            _segmentsOff.reserve(segmentsCount);
 
-            auto segmentOffStyle = segmentStyle;
-            if (!segmentOffStyle.isPreset)
+            auto segmentStyleOff = segmentStyleOn;
+            if (!segmentStyleOff.isPreset)
             {
-                segmentOffStyle.isFill = false;
+                segmentStyleOff.isFill = false;
             }
 
             const segmentSize = 360 / segmentsCount / 2;
 
             foreach (i; 0 .. segmentsCount)
             {
-                auto segment = new Circle(segmentSize, segmentOffStyle);
+                auto segment = new Circle(segmentSize, segmentStyleOff);
                 segment.isResizedByParent = false;
                 addCreate(segment);
-                segmentsOff ~= segment;
+                _segmentsOff ~= segment;
 
-                auto fillSegment = new Circle(segmentSize, segmentStyle);
+                auto fillSegment = new Circle(segmentSize, segmentStyleOn);
                 fillSegment.isResizedByParent = false;
                 addCreate(fillSegment);
                 fillSegment.isVisible = false;
-                segmentsOn ~= fillSegment;
+                _segmentsOn ~= fillSegment;
             }
         }
+    }
+
+    protected RGBA segmentColorOff(RGBA color)
+    {
+        auto newColor = color.toHSLA;
+        newColor.l /= 5;
+        return newColor.toRGBA;
     }
 
     double segmentAngle() => 360.0 / segmentsCount;
@@ -202,19 +221,19 @@ class RadialSegmentBar : Control
     {
         super.applyLayout;
 
-        if (segmentsOff.length == 0 || segmentsOn.length == 0)
+        if (_segmentsOff.length == 0 || _segmentsOn.length == 0)
         {
             return;
         }
 
-        assert(segmentsCount == segmentsOff.length);
-        assert(segmentsCount == segmentsOn.length);
+        assert(segmentsCount == _segmentsOff.length);
+        assert(segmentsCount == _segmentsOn.length);
 
         const currPos = boundsRect.center;
 
         drawSegment((size_t i, double startAngleDeg, double endAngleDeg, double angleOffset) {
-            auto segmentOff = segmentsOff[i];
-            auto segmentOn = segmentsOn[i];
+            auto segmentOff = _segmentsOff[i];
+            auto segmentOn = _segmentsOn[i];
             auto angleMiddle = Math.angleDegMiddle(startAngleDeg, endAngleDeg);
             auto polarPos = Vec2d.fromPolarDeg(angleMiddle, radius);
 
@@ -228,7 +247,7 @@ class RadialSegmentBar : Control
 
     void hideSegments()
     {
-        foreach (s; segmentsOn)
+        foreach (s; _segmentsOn)
         {
             s.isVisible = false;
         }
@@ -236,7 +255,7 @@ class RadialSegmentBar : Control
 
     void showSegments()
     {
-        foreach (s; segmentsOn)
+        foreach (s; _segmentsOn)
         {
             s.isVisible = true;
         }
@@ -244,10 +263,11 @@ class RadialSegmentBar : Control
 
     void showSegments(size_t countFrom1)
     {
-        foreach (i, s; segmentsOn)
+        foreach (i, s; _segmentsOn)
         {
             s.isVisible = true;
-            if((i + 1) >= countFrom1){
+            if ((i + 1) >= countFrom1)
+            {
                 break;
             }
         }
@@ -255,14 +275,14 @@ class RadialSegmentBar : Control
 
     inout(Sprite2d[]) segments() inout
     {
-        return segmentsOn;
+        return _segmentsOn;
     }
 
     Sprite2d segmentByIndex(size_t v)
     {
-        assert(segmentsOn.length > 0);
-        auto index = v % segmentsOn.length;
-        return segmentsOn[index];
+        assert(_segmentsOn.length > 0);
+        auto index = v % _segmentsOn.length;
+        return _segmentsOn[index];
     }
 
 }
