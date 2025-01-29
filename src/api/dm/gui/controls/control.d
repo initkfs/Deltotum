@@ -1065,8 +1065,10 @@ class Control : GuiComponent
         addCreate(icon, index);
     }
 
+    import api.dm.kit.sprites2d.images.image: Image;
+
     //TODO or move to scene factory?
-    Sprite2d createIcon(string iconName)
+    Sprite2d createIcon(string iconName, double newIconSize = 0,  RGBA delegate(int x, int y, RGBA color) colorProcessor = null)
     {
         assert(isCreated, "Sprite2d not created");
 
@@ -1075,7 +1077,8 @@ class Control : GuiComponent
 
         import std.conv : to;
 
-        const iconSize = theme.iconSize;
+        const iconSize = newIconSize == 0 ? theme.iconSize : newIconSize;
+        assert(iconSize > 0);
 
         const mustBeIconData = theme.iconData(iconName);
         if (mustBeIconData.isNull)
@@ -1093,6 +1096,10 @@ class Control : GuiComponent
 
         auto icon = new Image;
         build(icon);
+
+        if(colorProcessor){
+            icon.colorProcessor = colorProcessor;
+        }
 
         import std.conv : to;
 

@@ -125,7 +125,7 @@ class MinSecChooser : BaseCircularTimeChooser
             newLabelBox.blendModeBlend;
 
             const halfLabelSize = labelSize / 2;
-            auto proto = theme.roundShape(labelSize, createFillStyle);
+            auto proto = theme.circleShape(labelSize, createFillStyle);
             scope (exit)
             {
                 proto.dispose;

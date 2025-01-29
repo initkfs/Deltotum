@@ -35,6 +35,6 @@ class RoundButton : BaseRoundButton
 
     protected override Sprite2d createShape(double width, double height, double angle, GraphicStyle style)
     {
-        return theme.roundShape(_diameter, style);
+        return theme.circleShape(_diameter, style);
     }
 }

@@ -1,6 +1,6 @@
 module api.dm.gui.controls.indicators.leds.led_icon;
 
-import api.dm.gui.controls.indicators.leds.led_base : LedBase;
+import api.dm.gui.controls.indicators.leds.base_led : BaseLed;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
@@ -20,68 +20,86 @@ import ColorProcessor = api.dm.kit.graphics.colors.processing.color_processor;
 /**
  * Authors: initkfs
  */
-class LedIcon : LedBase
+class LedIcon : BaseLed
 {
     string iconName;
 
-    this(string iconName, RGBA colorHue = RGBA.red, double width = 35, double height = 35)
+    this(string iconName, RGBA colorHue = RGBA.red, double width = 0, double height = 0)
     {
         super(colorHue, width, height);
         this.iconName = iconName;
     }
 
-    override protected Sprite2d newLayerShape(GraphicStyle style, double layerInnerPadding, double blurSize)
+    override void loadTheme()
     {
-        const size_t iconSize = cast(size_t)(width);
-        const mustBeIconData = theme.iconData(iconName);
-        if (mustBeIconData.isNull)
+        super.loadTheme;
+        loadLedIconTheme;
+    }
+
+    void loadLedIconTheme()
+    {
+        auto ledSize = theme.iconSize * 2;
+        if (width == 0)
         {
-            //TODO placeholder?
-            throw new Exception("Not found icon data for icon: ", iconName);
+            initWidth = ledSize;
         }
 
-        const string iconData = mustBeIconData.get;
+        if (height == 0)
+        {
+            initHeight = ledSize;
+        }
+    }
 
-        auto icon = new Image();
-        build(icon);
-        icon.initialize;
+    override protected Sprite2d newLayerShape(GraphicStyle style, double iconSize, double blurSize)
+    {
+        auto buffSize = iconSize.to!size_t;
+        RGBA[][] buff = new RGBA[][](buffSize, buffSize);
 
-        RGBA[][] buff = new RGBA[][](iconSize, iconSize);
-        icon.colorProcessor = (x, y, color) {
+        auto icon = createIcon(iconName, iconSize, (x, y, color) {
             color.r = style.fillColor.r;
             color.g = style.fillColor.g;
             color.b = style.fillColor.b;
             buff[y][x] = color;
             return color;
-        };
+        });
 
-        icon.loadRaw(iconData.to!(const(void[])), cast(int) iconSize, cast(int) iconSize);
+        import api.dm.kit.sprites2d.images.image : Image;
 
-        auto blurBuff = ColorProcessor.boxblur(buff, blurSize.to!size_t);
-        icon.load(blurBuff);
-        icon.blendModeBlend;
+        if (auto image = cast(Image) icon)
+        {
+            auto blurBuff = ColorProcessor.boxblur(buff, blurSize.to!size_t);
+            image.load(blurBuff);
+            image.blendModeBlend;
+        }
+        else
+        {
+            logger.error("Invalid icon received, expected image: " ~ icon.toString);
+        }
 
         return icon;
     }
 
     override Sprite2d createLedLayer()
     {
-        const hsvColor = getLayersColorHSV;
-        const padding = calcLayerPadding;
+        auto color = layersColor;
+        const bottomPadding = width * 0.8;
+        const topPadding = width * 0.65;
 
-        auto bottomLayerStyle = getBottomLayerStyle(hsvColor);
-        auto bottomLayer = createLayer(bottomLayerStyle, padding, padding * 4);
-        window.showingTasks ~= (dt) { bottomLayer.dispose; };
+        auto bottomLayerStyle = bottomLayerStyle(color);
+        auto bottomLayer = createLayer(bottomLayerStyle, bottomPadding, 6);
+        //bottomLayer.opacity = bottomLayerOpacity;
+        scope(exit){
+            bottomLayer.dispose;
+        }
 
-        auto middleLayerStyle = getMiddleLayerStyle(hsvColor);
-        auto middleLayer = createLayer(middleLayerStyle, padding, padding * 2);
-        window.showingTasks ~= (dt) { middleLayer.dispose; };
+        auto topLayerStyle = middleLayerStyle(color);
+        auto topLayer = createLayer(topLayerStyle, topPadding, 2);
+        // topLayer.opacity = 0.5;
+        scope(exit){
+            topLayer.dispose;
+        }
 
-        auto topLayerStyle = getTopLayerStyle(hsvColor);
-        auto topLayer = createLayer(topLayerStyle, padding, padding);
-        window.showingTasks ~= (dt) { topLayer.dispose; };
-
-        auto ledTexture = composeLayers([bottomLayer, middleLayer, topLayer]);
+        auto ledTexture = composeLayers([bottomLayer, topLayer]);
         return ledTexture;
     }
 

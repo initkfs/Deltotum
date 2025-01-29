@@ -1395,6 +1395,13 @@ class Sprite2d : EventKitTarget
         return Vec2d(x + (width / 2.0), y + (height / 2.0));
     }
 
+    void centering(Sprite2d child)
+    {
+        assert(child);
+        auto childPos = center.subtract(Vec2d(child.halfWidth, child.halfHeight));
+        child.xy(childPos);
+    }
+
     bool xy(Vec2d newXY) => xy(newXY.x, newXY.y);
 
     bool xy(double newX, double newY)

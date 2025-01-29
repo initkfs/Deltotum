@@ -766,6 +766,7 @@ class Controls : Control
         import api.dm.kit.tweens.curves.uni_interpolator : UniInterpolator;
 
         auto ledContainer = new VBox;
+        ledContainer.isAlignX = true;
         root.addCreate(ledContainer);
         ledContainer.enableInsets;
 

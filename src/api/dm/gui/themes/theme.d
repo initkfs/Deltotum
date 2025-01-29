@@ -256,9 +256,9 @@ class Theme
         return shape;
     }
 
-    Sprite2d roundShape(GraphicStyle style) => roundShape(roundShapeDiameter, style);
+    Sprite2d circleShape(GraphicStyle style) => circleShape(roundShapeDiameter, style);
 
-    Sprite2d roundShape(double diameter, GraphicStyle style)
+    Sprite2d circleShape(double diameter, GraphicStyle style)
     {
         double radius = diameter / 2;
 

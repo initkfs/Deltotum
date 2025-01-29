@@ -1,4 +1,4 @@
-module api.dm.gui.controls.indicators.leds.led_base;
+module api.dm.gui.controls.indicators.leds.base_led;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
@@ -7,7 +7,7 @@ import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.graphics.colors.hsva : HSVA;
+import api.dm.kit.graphics.colors.hsla : HSLA;
 import api.math.insets : Insets;
 
 import ColorProcessor = api.dm.kit.graphics.colors.processing.color_processor;
@@ -15,31 +15,30 @@ import ColorProcessor = api.dm.kit.graphics.colors.processing.color_processor;
 /**
  * Authors: initkfs
  */
-class LedBase : Control
+class BaseLed : Control
 {
     RGBA colorHue;
 
-    this(RGBA colorHue, double width, double height)
+    this(RGBA colorHue, double width = 0, double height = 0)
     {
         this.width = width;
         this.height = height;
 
+        this.colorHue = colorHue;
+
         import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
 
         layout = new CenterLayout;
-        this.colorHue = colorHue;
-
         isOpacityForChildren = true;
+    }
+
+    override void loadTheme()
+    {
+        super.loadTheme;
     }
 
     abstract Sprite2d newLayerShape(GraphicStyle style, double layerInnerPadding, double blurSize);
     abstract Sprite2d createLedLayer();
-
-    double calcLayerPadding()
-    {
-        const padding = (width * 3) / 35;
-        return padding;
-    }
 
     protected void setColorProcessing(T)(T shape, double blurSize)
     {
@@ -57,7 +56,8 @@ class LedBase : Control
                 color[3] = buffColor.aByte;
                 return true;
             });
-            if(err){
+            if (err)
+            {
                 logger.error(err.toString);
             }
 
@@ -65,72 +65,73 @@ class LedBase : Control
         };
     }
 
-    HSVA getLayersColorHSV()
+    HSLA layersColor()
     {
-        auto hsvColor = colorHue.toHSVA;
+        auto hsvColor = colorHue.toHSLA;
         hsvColor.s = 1;
-        hsvColor.v = 1;
+        hsvColor.l = 0.5;
         return hsvColor;
     }
 
-    HSVA getBottomColorHSV(HSVA color)
+    HSLA bottomColor(HSLA color)
     {
-        color.v = 0.8;
+        color.l = 0.35;
         return color;
     }
 
-    HSVA getMiddleColorHSV(HSVA color)
+    HSLA middleColor(HSLA color)
     {
         return color;
     }
 
-    HSVA getTopColorHSV(HSVA color)
+    HSLA topColor(HSLA color)
     {
-        color.s = 0.5;
+        color.l = 0.95;
         return color;
     }
 
-    protected GraphicStyle getLayersStyle()
+    double bottomLayerOpacity() => 1;
+    double middleLayerOpacity() => 0.8;
+    double topLayerOpacity() => 0.2;
+
+    protected GraphicStyle layersStyle()
     {
         auto style = createStyle;
         style.isFill = true;
         return style;
     }
 
-    GraphicStyle getBottomLayerStyle(HSVA color)
+    GraphicStyle bottomLayerStyle(HSLA color)
     {
-        auto style = getLayersStyle;
-        style.color = getBottomColorHSV(color).toRGBA;
+        auto style = layersStyle;
+        style.color = bottomColor(color).toRGBA;
         return style;
     }
 
-    GraphicStyle getMiddleLayerStyle(HSVA color)
+    GraphicStyle middleLayerStyle(HSLA color)
     {
-        auto style = getLayersStyle;
-        style.color = getMiddleColorHSV(color).toRGBA;
+        auto style = layersStyle;
+        style.color = middleColor(color).toRGBA;
         return style;
     }
 
-    GraphicStyle getTopLayerStyle(HSVA color)
+    GraphicStyle topLayerStyle(HSLA color)
     {
-        auto style = getLayersStyle;
-        style.color = getTopColorHSV(color).toRGBA;
+        auto style = layersStyle;
+        style.color = topColor(color).toRGBA;
         return style;
     }
 
-    protected Sprite2d createLayer(GraphicStyle style, double layerInnerPadding, double blurSize)
+    protected Sprite2d createLayer(GraphicStyle style, double layerSize, double blurSize)
     {
-        auto shape = newLayerShape(style, layerInnerPadding, blurSize);
+        auto shape = newLayerShape(style, layerSize, blurSize);
+        if (!shape.isBuilt)
+        {
+            buildInit(shape);
+        }
+
         if (!shape.isCreated)
         {
-            if (!shape.isBuilt)
-            {
-                build(shape);
-
-                shape.initialize;
-                assert(shape.isInitialized);
-            }
-
             shape.create;
             assert(shape.isCreated);
         }
@@ -141,23 +142,24 @@ class LedBase : Control
     Texture2d composeLayers(Sprite2d[] layers)
     {
         auto texture = new Texture2d(width, height);
-        build(texture);
+        buildInitCreate(texture);
+
         texture.createTargetRGBA32;
-
-        import api.dm.com.graphics.com_blend_mode : ComBlendMode;
-
-        texture.blendMode = ComBlendMode.blend;
-
+        texture.blendModeBlend;
         texture.setRendererTarget;
         scope (exit)
         {
             texture.restoreRendererTarget;
         }
 
+        graphics.clearTransparent;
+
         foreach (layer; layers)
         {
+            texture.centering(layer);
             layer.draw;
         }
+
         return texture;
     }
 

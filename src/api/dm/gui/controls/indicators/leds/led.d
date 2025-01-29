@@ -1,12 +1,10 @@
 module api.dm.gui.controls.indicators.leds.led;
 
-import api.dm.gui.controls.indicators.leds.led_base : LedBase;
+import api.dm.gui.controls.indicators.leds.base_led : BaseLed;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
-import api.dm.gui.controls.containers.vbox : VBox;
-import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsva : HSVA;
 import api.math.insets : Insets;
@@ -18,40 +16,81 @@ import std.conv : to;
 /**
  * Authors: initkfs
  */
-class Led : LedBase
+class Led : BaseLed
 {
-    this(RGBA colorHue = RGBA.red, double width = 35, double height = 35)
+    this(RGBA colorHue = RGBA.red, double width = 0, double height = 0)
     {
         super(colorHue, width, height);
     }
 
     override protected Sprite2d newLayerShape(GraphicStyle style, double layerInnerPadding, double blurSize)
     {
+        auto diameter = layerInnerPadding;
+
+        if (!capGraphics.isVectorGraphics)
+        {
+            return theme.circleShape(diameter, style);
+        }
+
         import api.dm.kit.sprites2d.textures.vectors.shapes.vcircle : VCircle;
 
-        auto shape = new VCircle(width / 2 - layerInnerPadding, style, width, height);
+        auto shape = new VCircle(diameter / 2.0, style);
         setColorProcessing(shape, blurSize);
         return shape;
     }
 
+    override void loadTheme()
+    {
+        super.loadTheme;
+        loadLedTheme;
+    }
+
+    void loadLedTheme()
+    {
+        auto ledSize = theme.iconSize * 1.5;
+        if (width == 0)
+        {
+            initWidth = ledSize;
+        }
+
+        if (height == 0)
+        {
+            initHeight = ledSize;
+        }
+    }
+
     override Sprite2d createLedLayer()
     {
-        const hsvColor = getLayersColorHSV;
-        const padding = calcLayerPadding;
+        const hsvColor = layersColor;
+        const bottomPadding = width * 0.8;
+        const middlePadding = bottomPadding * 0.7;
+        const topPadding = middlePadding * 0.6;
 
-        auto bottomLayerStyle = getBottomLayerStyle(hsvColor);
-        auto bottomLayer = createLayer(bottomLayerStyle, padding, padding * 2);
-        window.showingTasks ~= (dt) { bottomLayer.dispose; };
+        auto bottomLayerStyle = bottomLayerStyle(hsvColor);
+        auto bottomLayer = createLayer(bottomLayerStyle, bottomPadding, 8);
+        bottomLayer.opacity = bottomLayerOpacity;
+        scope (exit)
+        {
+            bottomLayer.dispose;
+        }
 
-        auto middleLayerStyle = getMiddleLayerStyle(hsvColor);
-        auto middleLayer = createLayer(middleLayerStyle, padding * 2, padding * 4);
-        window.showingTasks ~= (dt) { middleLayer.dispose; };
+        auto middleLayerStyle = middleLayerStyle(hsvColor);
+        auto middleLayer = createLayer(middleLayerStyle, middlePadding, 4);
+        middleLayer.opacity = middleLayerOpacity;
+        scope(exit){
+            middleLayer.dispose;
+        }
 
-        auto topLayerStyle = getTopLayerStyle(hsvColor);
-        auto topLayer = createLayer(topLayerStyle, padding * 3, padding * 4);
-        window.showingTasks ~= (dt) { topLayer.dispose; };
+        auto topLayerStyle = topLayerStyle(hsvColor);
+        auto topLayer = createLayer(topLayerStyle, topPadding, 3);
+        topLayer.opacity = topLayerOpacity;
+        scope(exit){
+            topLayer.dispose;
+        }
 
-        auto ledTexture = composeLayers([bottomLayer, middleLayer, topLayer]);
+        Sprite2d[3] layers = [bottomLayer, middleLayer, topLayer];
+
+        auto ledTexture = composeLayers(layers[]);
         return ledTexture;
     }
 }

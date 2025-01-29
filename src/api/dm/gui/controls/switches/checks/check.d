@@ -96,7 +96,7 @@ class Check : BaseBiswitch
 
         auto diameter = Math.max(markerWidth / 2, markerHeight / 2);
 
-        auto marker = theme.roundShape(diameter, markerStyle);
+        auto marker = theme.circleShape(diameter, markerStyle);
         //auto marker = theme.shape(markerWidth / 2, markerHeight / 2, angle, markerStyle);
         return marker;
     }

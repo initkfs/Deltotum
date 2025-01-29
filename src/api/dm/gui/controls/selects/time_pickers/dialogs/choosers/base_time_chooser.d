@@ -90,7 +90,7 @@ abstract class BaseTimeChooser : Control
         {
             style.isFill = true;
         }
-        auto shape = theme.roundShape(thumbSize, style);
+        auto shape = theme.circleShape(thumbSize, style);
         return shape;
     }
 
