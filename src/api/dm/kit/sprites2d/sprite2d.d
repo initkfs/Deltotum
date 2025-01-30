@@ -1402,6 +1402,8 @@ class Sprite2d : EventKitTarget
         child.xy(childPos);
     }
 
+    Vec2d xy() => Vec2d(x, y);
+
     bool xy(Vec2d newXY) => xy(newXY.x, newXY.y);
 
     bool xy(double newX, double newY)

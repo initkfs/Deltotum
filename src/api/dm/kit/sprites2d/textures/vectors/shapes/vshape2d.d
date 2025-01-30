@@ -15,6 +15,8 @@ class VShape : VectorTexture
     //TODO remove from shape
     GraphicStyle style;
 
+    double shapeAngleDeg = 0;
+
     this(double width, double height, GraphicStyle style)
     {
         super(width, height);

@@ -66,7 +66,8 @@ class VConvexPolygon : VShape
         canvas.closePath;
 
         if(style.isFill){
-            canvas.fillPreserve;
+            canvas.color = style.fillColor;
+            canvas.fill;
         }
 
         canvas.color(style.lineColor);

@@ -3,6 +3,10 @@ module api.dm.gui.controls.indicators.sevsegments.seven_segment;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.vec2 : Vec2d;
+
+import Math = api.math;
 
 /**
  * Authors: initkfs
@@ -22,41 +26,110 @@ class SevenSegment : Control
         Sprite2d segmentLeftBottomDot;
 
         Sprite2d[] segments;
+
+        double segmentVAngleXOffset = 0;
     }
 
-    double hSegmentWidth = 30;
-    double hSegmentHeight = 10;
-    double vSegmentWidth = 10;
-    double vSegmentHeight = 30;
-    double segmentCornerBevel = 5;
-    double segmentSpacing = 2;
+    double hSegmentWidth = 0;
+    double hSegmentHeight = 0;
+    double vSegmentWidth = 0;
+    double vSegmentHeight = 0;
+    double segmentCornerBevel = 0;
+    double segmentSpacing = 0;
 
-    double dotDiameter = 10;
-    double dotPadding = 5;
+    double dotDiameter = 0;
+    double dotPadding = 0;
 
-    this(double width = 70, double height = 85)
+    double segmentAngle = 0;
+
+    this(double width = 0, double height = 0)
     {
         this.width = width;
         this.height = height;
-        isBorder = false;
+    }
+
+    override void loadTheme()
+    {
+        super.loadTheme;
+        loadSevenSegmentTheme;
+    }
+
+    void loadSevenSegmentTheme()
+    {
+        if (width == 0)
+        {
+            initWidth = theme.controlDefaultHeight;
+        }
+
+        if (height == 0)
+        {
+            initHeight = theme.controlDefaultWidth;
+        }
+
+        if (segmentSpacing == 0)
+        {
+            segmentSpacing = 0;
+        }
+
+        if (segmentAngle == 0)
+        {
+            segmentAngle = 15;
+        }
+
+        if (hSegmentWidth == 0)
+        {
+            hSegmentWidth = width;
+        }
+
+        if (hSegmentHeight == 0)
+        {
+            hSegmentHeight = height * 0.1;
+        }
+
+        if (vSegmentWidth == 0)
+        {
+            vSegmentWidth = hSegmentHeight;
+        }
+
+        if (vSegmentHeight == 0)
+        {
+            vSegmentHeight = hSegmentWidth;
+        }
+
+        if (segmentCornerBevel == 0)
+        {
+            segmentCornerBevel = hSegmentHeight / 2;
+        }
+
+        if(dotDiameter == 0){
+            dotDiameter = hSegmentHeight * 1.5;
+        }
     }
 
     override void create()
     {
         super.create;
 
+        segmentVAngleXOffset = vSegmentHeight / 2 * Math.cosDeg(segmentAngle);
+        
         segmentA = createSegmentA;
         setUpSegment(segmentA);
+
         segmentB = createSegmentB;
         setUpSegment(segmentB);
+
         segmentC = createSegmentC;
         setUpSegment(segmentC);
+
         segmentD = createSegmentD;
         setUpSegment(segmentD);
+        
         segmentE = createSegmentE;
         setUpSegment(segmentE);
+        
         segmentF = createSegmentF;
         setUpSegment(segmentF);
+        
         segmentG = createSegmentG;
         setUpSegment(segmentG);
 
@@ -65,41 +138,64 @@ class SevenSegment : Control
 
         layoutSegments;
 
-        invalidateListeners ~= (){
-            layoutSegments;
-        };
+        auto rightTop = Vec2d(segmentB.boundsRect.right, segmentB.y);
+        auto dw = rightTop.x - x;
+        if(dw > width){
+            width = dw;
+        }
+
+        auto topY = segmentA.y;
+        auto dh = boundsRect.bottom - topY;
+        if(dh > height){
+            height = dh;
+        }
+
+        invalidateListeners ~= () { layoutSegments; };
     }
 
     protected void layoutSegments()
     {
-        segmentA.x = boundsRect.middleX - segmentA.boundsRect.halfWidth;
-        segmentA.y = boundsRect.y + padding.top;
+        //auto widthOffset = segmentA.width - segmentVAngleXOffset;
 
-        segmentB.x = segmentA.boundsRect.right - segmentCornerBevel + segmentSpacing;
-        segmentB.y = segmentA.boundsRect.middleY + segmentSpacing;
+        segmentD.x = x + vSegmentWidth;
+        segmentD.y = y + height - segmentD.height;
 
-        segmentC.x = segmentB.boundsRect.x;
-        segmentC.y = segmentB.boundsRect.bottom + segmentSpacing;
+        segmentE.x = segmentD.x - segmentCornerBevel;
+        segmentE.y = segmentD.y - segmentE.height + segmentCornerBevel;
 
-        segmentD.x = segmentC.x + segmentCornerBevel - segmentSpacing - segmentD.width;
-        segmentD.y = segmentC.boundsRect.bottom + segmentSpacing - segmentCornerBevel;
+        segmentC.x = segmentD.boundsRect.right- segmentCornerBevel;
+        segmentC.y = segmentD.y - segmentC.height + segmentCornerBevel;
 
-        segmentE.x = segmentD.x - segmentSpacing - segmentE.boundsRect.halfWidth;
-        segmentE.y = segmentD.y + segmentCornerBevel - segmentSpacing - segmentE.height;
+        segmentG.x = segmentE.boundsRect.right - segmentCornerBevel;
+        segmentG.y = segmentE.y - segmentCornerBevel;
 
-        segmentF.x = segmentE.x;
-        segmentF.y = segmentE.y - segmentSpacing - segmentF.height;
+        segmentB.x = segmentG.boundsRect.right- segmentCornerBevel;
+        segmentB.y = segmentG.y - segmentB.height + segmentCornerBevel;
 
-        segmentG.x = segmentE.boundsRect.middleX + segmentSpacing;
-        segmentG.y = segmentE.y - segmentSpacing / 2 - segmentG.boundsRect.halfHeight;
+        segmentF.x = segmentG.x- segmentCornerBevel;
+        segmentF.y = segmentG.y- segmentF.height + segmentCornerBevel;
 
-        segmentLeftBottomDot.x = segmentC.boundsRect.right + dotPadding - segmentCornerBevel;
-        segmentLeftBottomDot.y = segmentD.boundsRect.middleY - segmentLeftBottomDot.boundsRect.halfHeight;
+        segmentA.x = segmentF.boundsRect.right - segmentCornerBevel;
+        segmentA.y = segmentF.y- segmentCornerBevel;
+
+        segmentLeftBottomDot.x = segmentD.boundsRect.right + segmentCornerBevel;
+        segmentLeftBottomDot.y = segmentD.boundsRect.middleY - segmentLeftBottomDot.halfHeight;
     }
 
     void setUpSegment(Sprite2d segment)
     {
+        segment.isResizedByParent = false;
+        segment.isLayoutManaged = false;
+        segment.isManaged = false;
         addCreate(segment);
+
+        import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+
+        if (auto texture = cast(Texture2d) segment)
+        {
+            texture.bestScaleMode;
+        }
+
         segments ~= segment;
     }
 
@@ -157,76 +253,106 @@ class SevenSegment : Control
 
     protected Sprite2d createDotSegment()
     {
-        Sprite2d segment;
         const double radius = dotDiameter / 2;
-        if (capGraphics.isVectorGraphics)
-        {
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vcircle : VCircle;
 
-            segment = new VCircle(radius, createSegmentStyle);
-        }
-        else
-        {
-            import api.dm.kit.sprites2d.shapes.circle : Circle;
+        Rect2d box = Rect2d(0, 0, dotDiameter, dotDiameter).boundingBox(segmentAngle);
+        auto segment = createVShapeSegment(box, segmentAngle, dotDiameter / 2, createSegmentStyle);
 
-            segment = new Circle(radius, createSegmentStyle);
-        }
-
-        segment.isVisible = false;
         return segment;
     }
 
     protected Sprite2d createHSegment()
     {
-        Sprite2d segment;
-        if (capGraphics.isVectorGraphics)
-        {
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
-
-            segment = new VConvexPolygon(hSegmentWidth, hSegmentHeight, createSegmentStyle, segmentCornerBevel);
-        }
-        else
-        {
-            import api.dm.kit.sprites2d.shapes.convex_polygon : ConvexPolygon;
-
-            segment = new ConvexPolygon(hSegmentWidth, hSegmentHeight, createSegmentStyle, segmentCornerBevel);
-        }
-
-        segment.isVisible = false;
+        Sprite2d segment = theme.convexPolyShape(hSegmentWidth, hSegmentHeight, angle, segmentCornerBevel, createSegmentStyle);
         return segment;
     }
 
     protected Sprite2d createVSegment()
     {
-        Sprite2d segment;
-        if (capGraphics.isVectorGraphics)
-        {
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon : VConvexPolygon;
+        assert(vSegmentWidth > 0);
+        assert(vSegmentHeight > 0);
 
-            segment = new VConvexPolygon(vSegmentWidth, vSegmentHeight, createSegmentStyle, segmentCornerBevel);
-        }
-        else
-        {
-            import api.dm.kit.sprites2d.shapes.convex_polygon : ConvexPolygon;
+        auto segmentStyle = createSegmentStyle;
 
-            segment = new ConvexPolygon(vSegmentWidth, vSegmentHeight, createSegmentStyle, segmentCornerBevel);
+        if (!capGraphics.isVectorGraphics)
+        {
+            return theme.rectShape(vSegmentWidth, vSegmentHeight, segmentAngle, segmentStyle);
         }
 
-        segment.isVisible = false;
+        import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
+
+        Rect2d box = Rect2d(0, 0, vSegmentWidth, vSegmentHeight).boundingBox(segmentAngle);
+
+        auto segment = createVShapeSegment(box, segmentAngle, segmentCornerBevel, segmentStyle);
+
+        return segment;
+    }
+
+    protected Sprite2d createVShapeSegment(Rect2d box, double angle, double cornerBevel, GraphicStyle segmentStyle)
+    {
+        import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
+
+        auto segment = new class VShape
+        {
+            this()
+            {
+                super(box.width, box.height, segmentStyle);
+            }
+
+            override void createTextureContent()
+            {
+                auto ctx = canvas;
+                auto thisStyle = segmentStyle;
+
+                auto thisHeight = box.height;
+                auto thisWidth = box.width;
+
+                auto halfLineW = thisStyle.lineWidth / 2;
+
+                ctx.translate(thisWidth / 2, thisHeight / 2);
+                ctx.rotateRad(Math.degToRad(segmentAngle));
+
+                auto halfW = thisWidth / 2;
+                auto halfH = thisHeight / 2;
+
+                ctx.moveTo(0, halfH - halfLineW);
+                ctx.lineTo(-cornerBevel, halfH - cornerBevel - halfLineW);
+                ctx.lineTo(-cornerBevel, -halfH + cornerBevel + halfLineW);
+                ctx.lineTo(0, -halfH + halfLineW);
+                ctx.lineTo(cornerBevel, -halfH + cornerBevel + halfLineW);
+                ctx.lineTo(cornerBevel, halfH - cornerBevel - halfLineW);
+                ctx.lineTo(0, halfH - halfLineW);
+
+                if(thisStyle.isFill){
+                    ctx.color = thisStyle.fillColor;
+                    ctx.fill;
+                }
+
+                ctx.color = thisStyle.lineColor;
+                ctx.lineWidth = thisStyle.lineWidth;
+                ctx.stroke;
+            }
+        };
+
         return segment;
     }
 
     void reset()
     {
-        foreach (segment; segments)
-        {
-            segment.isVisible = false;
-        }
+        // foreach (segment; segments)
+        // {
+        //     segment.isVisible = false;
+        // }
     }
 
-    protected void showSegment(Sprite2d segment)
+    protected bool showSegment(Sprite2d segment)
     {
-        segment.isVisible = true;
+        if (!segment)
+        {
+            return false;
+        }
+        isVisible = true;
+        return true;
     }
 
     void showErr()
@@ -296,12 +422,12 @@ class SevenSegment : Control
         }
     }
 
-    void showSegmentA() => showSegment(segmentA);
-    void showSegmentB() => showSegment(segmentB);
-    void showSegmentC() => showSegment(segmentC);
-    void showSegmentD() => showSegment(segmentD);
-    void showSegmentE() => showSegment(segmentE);
-    void showSegmentF() => showSegment(segmentF);
-    void showSegmentG() => showSegment(segmentG);
-    void showSegmentLeftBottomDot() => showSegment(segmentLeftBottomDot);
+    bool showSegmentA() => showSegment(segmentA);
+    bool showSegmentB() => showSegment(segmentB);
+    bool showSegmentC() => showSegment(segmentC);
+    bool showSegmentD() => showSegment(segmentD);
+    bool showSegmentE() => showSegment(segmentE);
+    bool showSegmentF() => showSegment(segmentF);
+    bool showSegmentG() => showSegment(segmentG);
+    bool showSegmentLeftBottomDot() => showSegment(segmentLeftBottomDot);
 }
