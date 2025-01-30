@@ -73,7 +73,7 @@ class SevenSegment : Control
 
         if (segmentAngle == 0)
         {
-            segmentAngle = 15;
+            segmentAngle = 10;
         }
 
         if (hSegmentWidth == 0)
@@ -339,10 +339,14 @@ class SevenSegment : Control
 
     void reset()
     {
-        // foreach (segment; segments)
-        // {
-        //     segment.isVisible = false;
-        // }
+        foreach (segment; segments)
+        {
+            segment.isVisible = false;
+        }
+
+        if(segmentLeftBottomDot && segmentLeftBottomDot.isVisible){
+            segmentLeftBottomDot.isVisible = false;
+        }
     }
 
     protected bool showSegment(Sprite2d segment)
@@ -351,7 +355,7 @@ class SevenSegment : Control
         {
             return false;
         }
-        isVisible = true;
+        segment.isVisible = true;
         return true;
     }
 

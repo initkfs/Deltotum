@@ -740,66 +740,66 @@ class Controls : Control
         ss1.show0to9(8);
         ss1.showSegmentLeftBottomDot;
 
-        // auto ss2 = new SevenSegment;
-        // ssContainer.addCreate(ss2);
-        // ss2.show0to9(9);
+        auto ss2 = new SevenSegment;
+        ssContainer.addCreate(ss2);
+        ss2.show0to9(9);
 
-        // import api.dm.gui.controls.indicators.dotmatrix.dotmatrix_display : DotMatrixDisplay;
+        import api.dm.gui.controls.indicators.dotmatrix.dotmatrix_display : DotMatrixDisplay;
 
-        // auto dm1 = new DotMatrixDisplay!(7, 5);
-        // dm1.isBorder = true;
-        // root.addCreate(dm1);
-        // //dfmt off
-        // int[5][7] matrix = [
-        //     [1, 0, 0, 0, 1],
-        //     [1, 1, 0, 1, 1],
-        //     [1, 0, 1, 0, 1],
-        //     [1, 0, 0, 0, 1],
-        //     [1, 0, 0, 0, 1],
-        //     [1, 0, 0, 0, 1],
-        //     [1, 0, 0, 0, 1]
-        // ];
-        // //dfmt on
-        // dm1.fromIntMatrix(matrix);
+        auto dm1 = new DotMatrixDisplay!(7, 5);
+        dm1.isBorder = true;
+        root.addCreate(dm1);
+        //dfmt off
+        int[5][7] matrix = [
+            [1, 0, 0, 0, 1],
+            [1, 1, 0, 1, 1],
+            [1, 0, 1, 0, 1],
+            [1, 0, 0, 0, 1],
+            [1, 0, 0, 0, 1],
+            [1, 0, 0, 0, 1],
+            [1, 0, 0, 0, 1]
+        ];
+        //dfmt on
+        dm1.fromIntMatrix(matrix);
 
-        // import api.dm.gui.controls.indicators.leds.led : Led;
-        // import api.dm.kit.tweens.curves.uni_interpolator : UniInterpolator;
+        import api.dm.gui.controls.indicators.leds.led : Led;
+        import api.dm.kit.tweens.curves.uni_interpolator : UniInterpolator;
 
-        // auto ledContainer = new VBox;
-        // ledContainer.isAlignX = true;
-        // root.addCreate(ledContainer);
-        // ledContainer.enableInsets;
+        auto ledContainer = new VBox;
+        ledContainer.isAlignX = true;
+        root.addCreate(ledContainer);
+        ledContainer.enableInsets;
 
-        // auto ledContainer1 = new HBox;
-        // ledContainer1.layout.isAlignY = true;
-        // ledContainer.addCreate(ledContainer1);
-        // ledContainer1.enableInsets;
+        auto ledContainer1 = new HBox;
+        ledContainer1.layout.isAlignY = true;
+        ledContainer.addCreate(ledContainer1);
+        ledContainer1.enableInsets;
 
-        // auto led1 = new Led(RGBA.red);
-        // ledContainer1.addCreate(led1);
+        auto led1 = new Led(RGBA.red);
+        ledContainer1.addCreate(led1);
 
-        // auto led2 = new Led(RGBA.yellow);
-        // ledContainer1.addCreate(led2);
+        auto led2 = new Led(RGBA.yellow);
+        ledContainer1.addCreate(led2);
 
-        // auto led3 = new Led(RGBA.green);
-        // ledContainer1.addCreate(led3);
+        auto led3 = new Led(RGBA.green);
+        ledContainer1.addCreate(led3);
 
-        // auto ledContainer2 = new HBox;
-        // ledContainer2.layout.isAlignY = true;
-        // ledContainer.addCreate(ledContainer2);
-        // ledContainer2.enableInsets;
+        auto ledContainer2 = new HBox;
+        ledContainer2.layout.isAlignY = true;
+        ledContainer.addCreate(ledContainer2);
+        ledContainer2.enableInsets;
 
-        // import api.dm.gui.controls.indicators.leds.led_icon : LedIcon;
-        // import IconNames = api.dm.gui.themes.icons.icon_name;
+        import api.dm.gui.controls.indicators.leds.led_icon : LedIcon;
+        import IconNames = api.dm.gui.themes.icons.icon_name;
 
-        // auto ledIcon1 = new LedIcon(IconNames.flash_outline, RGBA.red);
-        // ledContainer2.addCreate(ledIcon1);
+        auto ledIcon1 = new LedIcon(IconNames.flash_outline, RGBA.red);
+        ledContainer2.addCreate(ledIcon1);
 
-        // auto ledIcon2 = new LedIcon(IconNames.battery_charging_outline, RGBA.yellow);
-        // ledContainer2.addCreate(ledIcon2);
+        auto ledIcon2 = new LedIcon(IconNames.battery_charging_outline, RGBA.yellow);
+        ledContainer2.addCreate(ledIcon2);
 
-        // auto ledIcon3 = new LedIcon(IconNames.thermometer_outline, RGBA.green);
-        // ledContainer2.addCreate(ledIcon3);
+        auto ledIcon3 = new LedIcon(IconNames.thermometer_outline, RGBA.green);
+        ledContainer2.addCreate(ledIcon3);
     }
 
     private void createWindows(Container root)
