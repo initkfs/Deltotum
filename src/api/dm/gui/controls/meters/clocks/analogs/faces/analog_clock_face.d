@@ -1,12 +1,10 @@
-module api.dm.gui.controls.meters.gauges.clocks.analog_clock;
+module api.dm.gui.controls.meters.clocks.analogs.faces.analog_clock_face;
 
 import api.dm.gui.controls.meters.gauges.base_radial_gauge : BaseRadialGauge;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.meters.hands.meter_hand_factory : MeterHandFactory;
 import api.dm.gui.controls.indicators.segmentbars.radial_segmentbar : RadialSegmentBar;
 
-import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
-import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
 import api.dm.gui.controls.meters.scales.statics.rscale_static : RScaleStatic;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -24,7 +22,7 @@ import std.conv : to;
 /**
  * Authors: initkfs
  */
-class AnalogClock : BaseRadialGauge
+class AnalogClockFace : BaseRadialGauge
 {
     RadialSegmentBar progressBar;
 
@@ -52,15 +50,7 @@ class AnalogClock : BaseRadialGauge
     void delegate(Sprite2d) onConfiguredHandHolder;
     void delegate(Sprite2d) onCreatedHandHolder;
 
-    Tween2d clockAnimation;
-    bool isCreateClockAnimation = true;
-    Tween2d delegate(Tween2d) onNewClockAnimation;
-    void delegate(Sprite2d) onConfiguredClockAnimation;
-    void delegate(Tween2d) onCreatedClockAnimation;
-
     double handWidth = 0;
-
-    bool isAutorun;
 
     protected
     {
@@ -147,11 +137,6 @@ class AnalogClock : BaseRadialGauge
         cone.x = 0;
         auto newHand = handFactory.createHand(handWidth, handHeight, handStyle, cone.x, cone.y);
         return newHand;
-    }
-
-    Tween2d newClockAnimation()
-    {
-        return new PauseTween2d(1000);
     }
 
     Sprite2d newHandHolder()
@@ -306,84 +291,6 @@ class AnalogClock : BaseRadialGauge
                 onCreatedHandHolder(handHolder);
             }
         }
-
-        // version (DmAddon)
-        // {
-        //     import api.dm.gui.controls.containers.hbox : HBox;
-
-        //     auto segmentLayout = new HBox(2);
-        //     segmentLayout.margin.top = 20;
-        //     addCreate(segmentLayout);
-
-        //     enum sWidgh = 15;
-        //     enum sHeight = 25;
-
-        //     SevenSegment createSegment()
-        //     {
-        //         auto s = new class SevenSegment
-        //         {
-        //             this()
-        //             {
-        //                 super(sWidgh, sHeight);
-        //             }
-
-        //             override GraphicStyle createSegmentStyle()
-        //             {
-        //                 GraphicStyle style = createStyle;
-        //                 style.isFill = true;
-        //                 style.lineWidth = 2;
-        //                 style.lineColor = theme.colorSecondary;
-        //                 style.fillColor = theme.colorDanger;
-        //                 return style;
-        //             }
-        //         };
-        //         //s.isDrawBounds = true;
-        //         s.hSegmentWidth = 8;
-        //         s.hSegmentHeight = 3;
-        //         s.vSegmentWidth = 3;
-        //         s.vSegmentHeight = 8;
-        //         s.segmentCornerBevel = 2;
-        //         s.segmentSpacing = 2;
-        //         return s;
-        //     }
-
-        //     hour1 = createSegment;
-        //     hour2 = createSegment;
-
-        //     segmentLayout.addCreate(hour1);
-        //     segmentLayout.addCreate(hour2);
-
-        //     segmentLayout.addCreate(new Text(":"));
-
-        //     min1 = createSegment;
-        //     min2 = createSegment;
-
-        //     segmentLayout.addCreate(min1);
-        //     segmentLayout.addCreate(min2);
-        //     segmentLayout.addCreate(new Text(":"));
-
-        //     sec1 = createSegment;
-        //     sec2 = createSegment;
-
-        //     segmentLayout.addCreate(sec1);
-        //     segmentLayout.addCreate(sec2);
-
-        // }
-
-        if (!clockAnimation)
-        {
-            clockAnimation = new PauseTween2d(1000);
-            clockAnimation.isInfinite = true;
-            clockAnimation.onEnd ~= () { setTime; };
-            addCreate(clockAnimation);
-        }
-
-        if (isAutorun)
-        {
-            clockAnimation.run;
-        }
-
-        run;
     }
 
     override void pause()
@@ -392,60 +299,11 @@ class AnalogClock : BaseRadialGauge
         isCheckFillSecs = true;
     }
 
-    import std.datetime.systime : Clock, SysTime;
-
-    void setTime()
-    {
-        auto currTime = Clock.currTime;
-        setTime(currTime);
-    }
-
-    void setTime(ref SysTime time)
-    {
-        setTime(time.hour, time.minute, time.second);
-    }
-
-    void setTime(ubyte hour, ubyte min, ubyte sec)
+    bool setTime(ubyte hour, ubyte min, ubyte sec)
     {
         assert(hourHand);
         assert(minHand);
         assert(secHand);
-
-        // version (DmAddon)
-        // {
-        //     if (hour >= 10)
-        //     {
-        //         hour1.show0to9(hour / 10);
-        //         hour2.show0to9(hour % 10);
-        //     }
-        //     else
-        //     {
-        //         hour1.show0to9(0);
-        //         hour2.show0to9(hour % 10);
-        //     }
-
-        //     if (min >= 10)
-        //     {
-        //         min1.show0to9(min / 10);
-        //         min2.show0to9(min % 10);
-        //     }
-        //     else
-        //     {
-        //         min1.show0to9(0);
-        //         min2.show0to9(min % 10);
-        //     }
-
-        //     if (sec >= 10)
-        //     {
-        //         sec1.show0to9(sec / 10);
-        //         sec2.show0to9(sec % 10);
-        //     }
-        //     else
-        //     {
-        //         sec1.show0to9(0);
-        //         sec2.show0to9(sec % 10);
-        //     }
-        // }
 
         if (progressBar)
         {
@@ -506,5 +364,7 @@ class AnalogClock : BaseRadialGauge
         minHand.angle = minDeg;
         secHand.angle = secDeg;
         handHolder.angle = secDeg;
+
+        return true;
     }
 }

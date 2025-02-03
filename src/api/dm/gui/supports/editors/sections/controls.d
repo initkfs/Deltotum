@@ -526,11 +526,20 @@ class Controls : Control
             radGauge.valueAngle = pointerPos;
         };
 
-        import api.dm.gui.controls.meters.gauges.clocks.analog_clock : AnalogClock;
+        auto clockBox = new VBox;
+        root.addCreate(clockBox);
+
+        import api.dm.gui.controls.meters.clocks.analogs.analog_clock : AnalogClock;
 
         auto anClock = new AnalogClock;
         anClock.isAutorun = true;
-        root.addCreate(anClock);
+        clockBox.addCreate(anClock);
+
+        import api.dm.gui.controls.meters.clocks.digitals.digital_clock : DigitalClock;
+
+        auto digClock = new DigitalClock;
+        digClock.isAutorun = true;
+        clockBox.addCreate(digClock);
 
         auto progressContainer = new VBox;
         progressContainer.isAlignX = true;
@@ -656,7 +665,7 @@ class Controls : Control
 
         import api.dm.gui.controls.selects.carousels.carousel : Carousel;
 
-        import api.dm.gui.controls.meters.gauges.clocks.analog_clock : AnalogClock;
+        import api.dm.gui.controls.meters.clocks.analogs.analog_clock : AnalogClock;
 
         auto clock1 = new AnalogClock;
         rootContainer.addCreate(clock1);

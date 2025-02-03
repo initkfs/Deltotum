@@ -525,6 +525,11 @@ class Graphics : LoggableUnit
         }
     }
 
+    void fillCircle(Vec2d center, double radius)
+    {
+        circle(center.x, center.y, radius, true);
+    }
+
     void fillCircle(double centerX, double centerY, double radius)
     {
         circle(centerX, centerY, radius, true);
