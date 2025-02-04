@@ -18,27 +18,40 @@ class DigitalClockFace : Control
     double minHourSeparatorHeight = 0;
 
     SevenSegment hour1;
+    SevenSegment delegate(SevenSegment) onNewHour1Segment;
+    void delegate(SevenSegment) onConfiguredHour1Segment;
+    void delegate(SevenSegment) onCreatedHour1Segment;
+
     SevenSegment hour2;
+    SevenSegment delegate(SevenSegment) onNewHour2Segment;
+    void delegate(SevenSegment) onConfiguredHour2Segment;
+    void delegate(SevenSegment) onCreatedHour2Segment;
 
     double hourSegmentWidth = 0;
     double hourSegmentHeight = 0;
 
-    SevenSegment delegate(SevenSegment) onNewHourSegment;
-    void delegate(SevenSegment) onConfiguredHourSegment;
-    void delegate(SevenSegment) onCreatedHourSegment;
-
     SevenSegment min1;
+    SevenSegment delegate(SevenSegment) onNewMin1Segment;
+    void delegate(SevenSegment) onConfiguredMin1Segment;
+    void delegate(SevenSegment) onCreatedMin1Segment;
+
     SevenSegment min2;
+    SevenSegment delegate(SevenSegment) onNewMin2Segment;
+    void delegate(SevenSegment) onConfiguredMin2Segment;
+    void delegate(SevenSegment) onCreatedMin2Segment;
 
     double minSegmentWidth = 0;
     double minSegmentHeight = 0;
 
-    SevenSegment delegate(SevenSegment) onNewMinSegment;
-    void delegate(SevenSegment) onConfiguredMinSegment;
-    void delegate(SevenSegment) onCreatedMinSegment;
-
     SevenSegment sec1;
+    SevenSegment delegate(SevenSegment) onNewSec1Segment;
+    void delegate(SevenSegment) onConfiguredSec1Segment;
+    void delegate(SevenSegment) onCreatedSec1Segment;
+
     SevenSegment sec2;
+    SevenSegment delegate(SevenSegment) onNewSec2Segment;
+    void delegate(SevenSegment) onConfiguredSec2Segment;
+    void delegate(SevenSegment) onCreatedSec2Segment;
 
     double secSegmentWidth = 0;
     double secSegmentHeight = 0;
@@ -122,12 +135,32 @@ class DigitalClockFace : Control
 
         if (!hour1)
         {
-            hour1 = createSegment(newHourSegment(hourSegmentWidth, hourSegmentHeight), this, onNewHourSegment, onConfiguredHourSegment, onCreatedHourSegment);
+            auto h1 = newHourSegment(hourSegmentWidth, hourSegmentHeight);
+            hour1 = !onNewHour1Segment ? h1 : onNewHour1Segment(h1);
+            if (onConfiguredHour1Segment)
+            {
+                onConfiguredHour1Segment(hour1);
+            }
+            addCreate(hour1);
+            if (onCreatedHour1Segment)
+            {
+                onCreatedHour1Segment(hour1);
+            }
         }
 
         if (!hour2)
         {
-            hour2 = createSegment(newHourSegment(hourSegmentWidth, hourSegmentHeight), this, onNewHourSegment, onConfiguredHourSegment, onCreatedHourSegment);
+            auto h2 = newHourSegment(hourSegmentWidth, hourSegmentHeight);
+            hour2 = !onNewHour2Segment ? h2 : onNewHour2Segment(h2);
+            if (onConfiguredHour2Segment)
+            {
+                onConfiguredHour2Segment(hour2);
+            }
+            addCreate(hour2);
+            if (onCreatedHour2Segment)
+            {
+                onCreatedHour2Segment(hour2);
+            }
         }
 
         if (!minHourSeparator)
@@ -150,44 +183,69 @@ class DigitalClockFace : Control
 
         if (!min1)
         {
-            min1 = createSegment(newMinSegment(minSegmentWidth, minSegmentHeight), this, onNewMinSegment, onConfiguredMinSegment, onCreatedMinSegment);
+            auto m1 = newMinSegment(minSegmentWidth, minSegmentHeight);
+            min1 = !onNewMin1Segment ? m1 : onNewMin1Segment(m1);
+            if (onConfiguredMin1Segment)
+            {
+                onConfiguredMin1Segment(min1);
+            }
+            addCreate(min1);
+            if (onCreatedMin1Segment)
+            {
+                onCreatedMin1Segment(min1);
+            }
         }
 
         if (!min2)
         {
-            min2 = createSegment(newMinSegment(minSegmentWidth, minSegmentHeight), this, onNewMinSegment, onConfiguredMinSegment, onCreatedMinSegment);
+            auto m2 = newMinSegment(minSegmentWidth, minSegmentHeight);
+            min2 = !onNewMin2Segment ? m2 : onNewMin2Segment(m2);
+            if (onConfiguredMin2Segment)
+            {
+                onConfiguredMin2Segment(min2);
+            }
+            addCreate(min2);
+            if (onCreatedMin2Segment)
+            {
+                onCreatedMin2Segment(min2);
+            }
         }
 
         if (!sec1)
         {
-            sec1 = createSegment(newSecSegment(secSegmentWidth, secSegmentHeight), this, onNewSecSegment, onConfiguredSecSegment, onCreatedSecSegment);
+            auto s1 = newSecSegment(secSegmentWidth, secSegmentHeight);
+            sec1 = !onNewSec1Segment ? s1 : onNewSec1Segment(s1);
+            
+            sec1.isLayoutInvertY = true;
+            
+            if (onConfiguredSec1Segment)
+            {
+                onConfiguredSec1Segment(sec1);
+            }
+            addCreate(sec1);
+            if (onCreatedSec1Segment)
+            {
+                onCreatedSec1Segment(sec1);
+            }
         }
 
         if (!sec2)
         {
-            sec2 = createSegment(newSecSegment(secSegmentWidth, secSegmentHeight), this, onNewSecSegment, onConfiguredSecSegment, onCreatedSecSegment);
+            auto s2 = newSecSegment(secSegmentWidth, secSegmentHeight);
+            sec2 = !onNewSec2Segment ? s2 : onNewSec2Segment(s2);
+            
+            sec2.isLayoutInvertY = true;
+            
+            if (onConfiguredSec2Segment)
+            {
+                onConfiguredSec2Segment(sec2);
+            }
+            addCreate(sec2);
+            if (onCreatedSec2Segment)
+            {
+                onCreatedSec2Segment(sec2);
+            }
         }
-    }
-
-    protected SevenSegment createSegment(SevenSegment segment, Control root, SevenSegment delegate(SevenSegment) onNew, void delegate(
-            SevenSegment) onConfigured, void delegate(SevenSegment) onCreated)
-    {
-        assert(segment);
-        assert(root);
-
-        auto newSegment = !onNew ? segment : onNew(segment);
-
-        if (onConfigured)
-        {
-            onConfigured(newSegment);
-        }
-
-        root.addCreate(newSegment);
-        if (onCreated)
-        {
-            onCreated(newSegment);
-        }
-        return newSegment;
     }
 
     SevenSegment newHourSegment(double w, double h) => new SevenSegment(w, h);

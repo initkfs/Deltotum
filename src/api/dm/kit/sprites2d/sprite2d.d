@@ -123,6 +123,9 @@ class Sprite2d : EventKitTarget
     Alignment alignment = Alignment.none;
     ScaleMode scaleMode = ScaleMode.none;
 
+    bool isLayoutInvertX;
+    bool isLayoutInvertY;
+
     bool isCreated;
     bool isFocus;
     bool isDraggable;

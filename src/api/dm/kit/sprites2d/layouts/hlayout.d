@@ -11,6 +11,8 @@ import Math = api.dm.math;
  */
 class HLayout : SpaceableLayout
 {
+    bool isInvertY;
+
     this(double spacing = SpaceableLayout.DefaultSpacing) pure
     {
         super(spacing);
@@ -63,7 +65,7 @@ class HLayout : SpaceableLayout
             }
             else
             {
-                const newChildY = root.y + root.padding.top + child.margin.top;
+                const newChildY = (isInvertY || child.isLayoutInvertY) ? (root.boundsRect.bottom - root.padding.bottom - child.margin.bottom - child.height) : (root.y + root.padding.top + child.margin.top);
                 if (Math.abs(child.y - newChildY) >= sizeChangeDelta)
                 {
                     child.y = newChildY;

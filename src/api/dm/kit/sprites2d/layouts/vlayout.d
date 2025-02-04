@@ -1,7 +1,7 @@
 module api.dm.kit.sprites2d.layouts.vlayout;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.sprites2d.layouts.spaceable_layout: SpaceableLayout;
+import api.dm.kit.sprites2d.layouts.spaceable_layout : SpaceableLayout;
 import api.math.alignment : Alignment;
 
 import Math = api.dm.math;
@@ -11,6 +11,8 @@ import Math = api.dm.math;
  */
 class VLayout : SpaceableLayout
 {
+    bool isInvertX;
+
     this(double spacing = SpaceableLayout.DefaultSpacing) pure
     {
         super(spacing);
@@ -63,7 +65,8 @@ class VLayout : SpaceableLayout
             }
             else
             {
-                const newChildX = root.x + root.padding.left + child.margin.left;
+                const newChildX = (isInvertX || child.isLayoutInvertX) ? (
+                    root.boundsRect.right - root.padding.right - child.margin.right - child.width) :  (root.x + root.padding.left + child.margin.left);
                 if (Math.abs(newChildX - child.x) > sizeChangeDelta)
                 {
                     child.x = newChildX;
@@ -98,10 +101,11 @@ class VLayout : SpaceableLayout
             childCount++;
         }
 
-        if(childCount > 1){
+        if (childCount > 1)
+        {
             calcChildrenHeight += spacing * (childCount - 1);
         }
-        
+
         return calcChildrenHeight;
     }
 
