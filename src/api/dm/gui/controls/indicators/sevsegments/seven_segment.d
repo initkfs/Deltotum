@@ -58,12 +58,12 @@ class SevenSegment : Control
     {
         if (width == 0)
         {
-            initWidth = theme.controlDefaultHeight;
+            initWidth = theme.controlDefaultHeight / 2;
         }
 
         if (height == 0)
         {
-            initHeight = theme.controlDefaultWidth;
+            initHeight = theme.controlDefaultWidth / 2;
         }
 
         if (segmentSpacing == 0)

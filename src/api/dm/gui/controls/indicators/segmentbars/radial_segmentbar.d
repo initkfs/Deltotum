@@ -27,6 +27,8 @@ class RadialSegmentBar : Control
 
     double angleOffset = -90;
 
+    bool isUseMiddleAngleOffset;
+
     this(double diameter = 0, double minAngleDeg = 0, double maxAngleDeg = 180)
     {
         this.diameter = diameter;
@@ -192,19 +194,12 @@ class RadialSegmentBar : Control
         assert(onAngleDegIsContinue);
 
         double angleDiff = segmentAngle;
-        double angleMiddleOffset = angleDiff / 2;
+        double angleMiddleOffset = isUseMiddleAngleOffset ? angleDiff / 2 : 0;
 
         foreach (i; 0 .. segmentsCount)
         {
             auto startAngle = angleDiff * i - angleMiddleOffset;
-            if (startAngle > angleOffset)
-            {
-                startAngle += angleOffset;
-            }
-            else
-            {
-                startAngle = 360 - (angleOffset - startAngle);
-            }
+            startAngle += angleOffset;
 
             auto endAngle = startAngle + angleDiff;
 

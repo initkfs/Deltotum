@@ -48,29 +48,26 @@ class Controls : Control
     {
         super.create;
 
-        auto rootContainer = new VBox(5);
-        rootContainer.width = 500;
-        rootContainer.height = 400;
+        auto rootContainer = new VBox;
         rootContainer.layout.isAlignY = true;
         addCreate(rootContainer);
 
-        auto btnContainer = new HBox;
-        btnContainer.layout.isAlignY = true;
-        rootContainer.addCreate(btnContainer);
-        btnContainer.enableInsets;
+        auto switchRoot = new HBox;
+        switchRoot.layout.isAlignY = true;
+        rootContainer.addCreate(switchRoot);
 
-        createSwitches(btnContainer);
+        createSwitches(switchRoot);
 
         import api.dm.gui.controls.separators.vseparator : VSeparator;
         import api.dm.gui.controls.separators.hseparator : HSeparator;
 
-        btnContainer.addCreate(new VSeparator);
+        switchRoot.addCreate(new VSeparator);
 
-        createWindows(btnContainer);
+        createWindows(switchRoot);
 
-        btnContainer.addCreate(new VSeparator);
+        switchRoot.addCreate(new VSeparator);
 
-        createLabels(btnContainer);
+        createLabels(switchRoot);
 
         rootContainer.addCreate(new HSeparator);
 
@@ -100,17 +97,11 @@ class Controls : Control
     void createSwitches(Container root)
     {
         import api.dm.gui.controls.control : Control;
-
-        auto switchFrame = new HBox;
-        switchFrame.isAlignY = true;
-        root.addCreate(switchFrame);
-        switchFrame.isVGrow = true;
-
         import api.dm.gui.controls.containers.vbox : VBox;
         import api.dm.gui.controls.containers.hbox : HBox;
 
         auto btnRoot2 = new VBox;
-        switchFrame.addCreate(btnRoot2);
+        root.addCreate(btnRoot2);
         btnRoot2.layout.isDecreaseRootWidth = true;
 
         import api.dm.gui.controls.switches.buttons.parallelogram_button : ParallelogramButton;
@@ -123,7 +114,7 @@ class Controls : Control
         btnRoot2.addCreate(btn2);
 
         auto btnRoot3 = new HBox;
-        switchFrame.addCreate(btnRoot3);
+        root.addCreate(btnRoot3);
 
         import api.dm.gui.controls.switches.buttons.round_button : RoundButton;
 
@@ -169,36 +160,32 @@ class Controls : Control
         toggleBtnContainer.layout = new VLayout(0);
         toggleBtnContainer.layout.isAutoResize = true;
         toggleBtnContainer.layout.isAlignX = true;
-        switchFrame.addCreate(toggleBtnContainer);
+        root.addCreate(toggleBtnContainer);
 
         import api.dm.kit.graphics.styles.default_style : DefaultStyle;
 
-        const double polySize = 40;
+        auto tbtn1 = new TriangleButton(null, Icons.arrow_up_outline, (ref e){
 
-        auto tbtn1 = new TriangleButton(null, polySize, polySize, Icons.arrow_up_outline);
+        });
         tbtn1.styleId = DefaultStyle.warning;
         tbtn1.isFixedButton = true;
         tbtn1.isOn = true;
         //.isDrawBounds = true;
         toggleBtnContainer.addCreate(tbtn1);
 
-        auto labelMargin = 5;
+        auto tbtn2 = new TriangleButton(null, Icons.arrow_down_outline, (ref e){
 
-        tbtn1.icon.marginTop = labelMargin;
-
-        auto tbtn2 = new TriangleButton(null, polySize, polySize, Icons.arrow_down_outline);
+        });
         tbtn2.isFixedButton = true;
         tbtn2.angle = 180;
         tbtn2.styleId = DefaultStyle.danger;
         //tbtn2.isDrawBounds = true;
         toggleBtnContainer.addCreate(tbtn2);
 
-        tbtn2.icon.marginTop = -labelMargin;
-
         auto checkBoxContainer = new SwitchGroup;
         checkBoxContainer.layout = new VLayout;
         checkBoxContainer.layout.isAutoResize = true;
-        switchFrame.addCreate(checkBoxContainer);
+        root.addCreate(checkBoxContainer);
 
         auto check1 = new Check("Check1", Icons.bug_outline);
         check1.isCreateIndeterminate = true;
@@ -219,7 +206,7 @@ class Controls : Control
         auto toggleContainer = new SwitchGroup;
         toggleContainer.layout = new VLayout;
         toggleContainer.layout.isAutoResize = true;
-        switchFrame.addCreate(toggleContainer);
+        root.addCreate(toggleContainer);
 
         import api.dm.gui.controls.switches.toggles.toggle : Toggle;
         import api.math.orientation : Orientation;
@@ -235,7 +222,7 @@ class Controls : Control
         auto htoggleContainer = new SwitchGroup;
         htoggleContainer.layout = new HLayout;
         htoggleContainer.layout.isAutoResize = true;
-        switchFrame.addCreate(htoggleContainer);
+        root.addCreate(htoggleContainer);
 
         auto switch1h = new Toggle(null, Icons.analytics_outline, Orientation.vertical);
         htoggleContainer.addCreate(switch1h);
@@ -526,7 +513,8 @@ class Controls : Control
             radGauge.valueAngle = pointerPos;
         };
 
-        auto clockBox = new VBox;
+        auto clockBox = new VBox(0);
+        clockBox.layout.isAlignX = true;
         root.addCreate(clockBox);
 
         import api.dm.gui.controls.meters.clocks.analogs.analog_clock : AnalogClock;
@@ -729,14 +717,19 @@ class Controls : Control
         auto colorBar1 = new ColorBar;
         barsRoot1.addCreate(colorBar1);
 
+        import api.dm.gui.controls.containers.stack_box: StackBox;
+
+        auto barsStackRoot = new StackBox;
+        barsRoot1.addCreate(barsStackRoot);
+
         import api.dm.gui.controls.indicators.colorbars.radial_colorbar: RadialColorBar;
         auto radialBar1 = new RadialColorBar;
-        barsRoot1.addCreate(radialBar1);
+        barsStackRoot.addCreate(radialBar1);
 
         import api.dm.gui.controls.indicators.segmentbars.radial_segmentbar: RadialSegmentBar;
 
         auto radSBar1 = new RadialSegmentBar;
-        root.addCreate(radSBar1);
+        barsStackRoot.addCreate(radSBar1);
         radSBar1.showSegments(3);
 
         import api.dm.gui.controls.indicators.sevsegments.seven_segment : SevenSegment;
@@ -817,17 +810,12 @@ class Controls : Control
         import api.dm.gui.controls.switches.buttons.parallelogram_button : ParallelogramButton;
         import api.dm.gui.controls.switches.checks.check : Check;
         import IconName = api.dm.gui.themes.icons.icon_name;
-        import api.dm.gui.controls.containers.frame : Frame;
-
-        auto frame = new Frame("Windows");
-        frame.isVGrow = true;
-        root.addCreate(frame);
 
         import api.dm.gui.controls.containers.vbox : VBox;
         import api.dm.gui.controls.containers.hbox : HBox;
 
-        auto winRoot1 = new VBox(5);
-        frame.addCreate(winRoot1);
+        auto winRoot1 = new VBox;
+        root.addCreate(winRoot1);
         winRoot1.layout.isDecreaseRootWidth = true;
 
         auto winMin = new ParallelogramButton("Min", IconName.arrow_down_outline, (ref e) {
@@ -846,7 +834,7 @@ class Controls : Control
         winMax.layout.isFillFromStartToEnd = false;
 
         auto winRoot2 = new HBox(5);
-        frame.addCreate(winRoot2);
+        root.addCreate(winRoot2);
 
         import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
         import api.dm.kit.graphics.styles.default_style : DefaultStyle;
@@ -875,8 +863,8 @@ class Controls : Control
         winFull.layout.isFillFromStartToEnd = false;
         winRoot2.addCreate(winFull);
 
-        auto winRoot3 = new VBox(5);
-        frame.addCreate(winRoot3);
+        auto winRoot3 = new VBox;
+        root.addCreate(winRoot3);
         winRoot3.layout.isDecreaseRootWidth = true;
 
         auto winDec = new ParallelogramButton(null, IconName.image_outline, (ref e) {

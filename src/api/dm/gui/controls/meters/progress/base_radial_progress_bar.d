@@ -93,7 +93,7 @@ class BaseRadialProgressBar : BaseLabeledProgressBar
     RadialSegmentBar newSegmentBar()
     {
         auto bar = new RadialSegmentBar(diameter, minAngleDeg, maxAngleDeg);
-        bar.angleOffset += bar.segmentAngleMiddleOffset;
+        //bar.angleOffset += bar.segmentAngleMiddleOffset;
         return bar;
     }
 
