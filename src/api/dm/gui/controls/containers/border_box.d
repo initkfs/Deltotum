@@ -3,7 +3,7 @@ module api.dm.gui.controls.containers.border_box;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
-import api.dm.gui.controls.containers.stack_box : StackBox;
+import api.dm.gui.controls.containers.center_box : CenterBox;
 import api.math.insets : Insets;
 import api.dm.gui.controls.containers.hbox : HBox;
 
@@ -14,11 +14,11 @@ class BorderBox : Container
 {
     protected
     {
-        StackBox _top;
-        StackBox _left;
-        StackBox _center;
-        StackBox _right;
-        StackBox _bottom;
+        CenterBox _top;
+        CenterBox _left;
+        CenterBox _center;
+        CenterBox _right;
+        CenterBox _bottom;
 
         HBox _centerBox;
     }
@@ -29,9 +29,9 @@ class BorderBox : Container
         layout.isAutoResize = true;
     }
 
-    protected StackBox createBox()
+    protected CenterBox createBox()
     {
-        auto box = new StackBox;
+        auto box = new CenterBox;
         box.isHGrow = true;
         box.isVGrow = true;
         box.layout.isAutoResize = true;
@@ -67,27 +67,27 @@ class BorderBox : Container
         addCreate(_bottom);
     }
 
-    StackBox topPane()
+    CenterBox topPane()
     {
         return _top;
     }
 
-    StackBox leftPane()
+    CenterBox leftPane()
     {
         return _left;
     }
 
-    StackBox centerPane()
+    CenterBox centerPane()
     {
         return _center;
     }
 
-    StackBox rightPane()
+    CenterBox rightPane()
     {
         return _right;
     }
 
-    StackBox bottomPane()
+    CenterBox bottomPane()
     {
         return _bottom;
     }

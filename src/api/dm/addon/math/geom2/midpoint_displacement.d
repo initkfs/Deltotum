@@ -200,13 +200,13 @@ class MDLandscapeGenerator : Control
     import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
     import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
     import api.dm.gui.controls.containers.container : Container;
-    import api.dm.gui.controls.containers.stack_box : StackBox;
+    import api.dm.gui.controls.containers.center_box : CenterBox;
     import api.dm.kit.graphics.colors.rgba : RGBA;
     import api.math.geom2.rect2 : Rect2d;
     import api.dm.kit.sprites2d.sprite2d : Sprite2d;
     import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
 
-    StackBox contentContainer;
+    CenterBox contentContainer;
     double canvasWidth = 0;
     double canvasHeight = 0;
 
@@ -421,7 +421,7 @@ class MDLandscapeGenerator : Control
         generator = MidpointDisplacement();
         generator.isVertexOnly = true;
 
-        contentContainer = new StackBox;
+        contentContainer = new CenterBox;
         contentContainer.resize(canvasWidth, canvasHeight);
         addCreate(contentContainer);
 

@@ -32,7 +32,7 @@ class FlowLayout : ManagedLayout
         double nextX = 0;
         double nextY = 0;
 
-        if (isFillFromStartToEnd)
+        if (isFillStartToEnd)
         {
             nextX = rootBounds.x + root.padding.left;
             nextY = rootBounds.y + root.padding.top;
@@ -54,7 +54,7 @@ class FlowLayout : ManagedLayout
 
             const childHeight = childBounds.height + child.margin.height;
 
-            if (isFillFromStartToEnd)
+            if (isFillStartToEnd)
             {
                 const rootRightEndX = isUseFlowWidth ? rootBounds.x + flowWidth : rootBounds.right - root.padding.right;
                 const newChildX = nextX + child.margin.left;

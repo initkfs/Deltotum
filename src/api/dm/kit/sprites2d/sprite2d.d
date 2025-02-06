@@ -1077,11 +1077,11 @@ class Sprite2d : EventKitTarget
         }
     }
 
-    void applyAllLayouts()
+    void applyAllContainers()
     {
         foreach (ch; children)
         {
-            ch.applyAllLayouts;
+            ch.applyAllContainers;
         }
 
         applyLayout;
@@ -2176,22 +2176,12 @@ class Sprite2d : EventKitTarget
 
     void enableInsets()
     {
-        enablePadding;
+
     }
 
     void disableInsets()
     {
-        disablePadding;
-    }
-
-    void disablePadding()
-    {
         padding(0);
-    }
-
-    void enablePadding()
-    {
-
     }
 
     ref Insets padding()
@@ -2254,25 +2244,17 @@ class Sprite2d : EventKitTarget
         _margin = Insets(top, right, bottom, left);
     }
 
-    void marginTop(double value)
-    {
-        _margin.top = value;
-    }
+    double marginTop() => _margin.top;
+    double marginTop(double value) => _margin.top = value;
 
-    void marginBottom(double value)
-    {
-        _margin.bottom = value;
-    }
+    double marginBottom() => _margin.bottom;
+    double marginBottom(double value) => _margin.bottom = value;
 
-    void marginRight(double value)
-    {
-        _margin.right = value;
-    }
+    double marginRight() => _margin.right;
+    double marginRight(double value) => _margin.right = value;
 
-    void marginLeft(double value)
-    {
-        _margin.left = value;
-    }
+    double marginLeft() => _margin.left;
+    double marginLeft(double value) => _margin.left = value;
 
     void onScenePause()
     {

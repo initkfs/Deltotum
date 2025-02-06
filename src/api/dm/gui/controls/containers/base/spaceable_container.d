@@ -11,22 +11,24 @@ class SpaceableContainer : Container
 {
     private
     {
-        double _spacing;
+        double _spacing = 0;
     }
 
     this(double spacing = SpaceableLayout.DefaultSpacing)
-    {        
+    {
         this._spacing = spacing;
     }
 
-    double spacing()
-    {
-        return _spacing;
-    }
+    double spacing() => _spacing;
 
     void spacing(double value)
     {
         _spacing = value;
+
+        if (auto spaceLayout = cast(SpaceableLayout) layout)
+        {
+            spaceLayout.spacing = _spacing;
+        }
     }
 
     override void enableInsets()
@@ -36,15 +38,25 @@ class SpaceableContainer : Container
         enableSpacing;
     }
 
-    void enableSpacing()
+    bool enableSpacing()
     {
-        if (!hasGraphics || !theme)
+        debug
         {
-            throw new Exception(
-                "Unable to enable spacing: graphic or theme is null. Perhaps the component is not built correctly");
+            if (!hasGraphics || !theme)
+            {
+                throw new Exception(
+                    "Unable to enable spacing: graphic or theme is null. Perhaps the component is not built correctly");
+            }
         }
-        const value = theme.controlSpacing;
-        spacing = value;
+
+        if (theme)
+        {
+            const value = theme.controlSpacing;
+            spacing = value;
+            return true;
+        }
+
+        return false;
     }
 
 }

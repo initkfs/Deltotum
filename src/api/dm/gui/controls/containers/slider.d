@@ -3,7 +3,7 @@ module api.dm.gui.controls.containers.slider;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
-import api.dm.gui.controls.containers.stack_box : StackBox;
+import api.dm.gui.controls.containers.center_box : CenterBox;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites2d.tweens.targets.motions.linear_motion2d : LinearMotion2d;
 import api.dm.kit.sprites2d.tweens.tween2d : Tween2d;
@@ -28,7 +28,7 @@ class Slider : Container
     {
         SliderPos position;
         Sprite2d _handle;
-        StackBox _content;
+        CenterBox _content;
         LinearMotion2d motionAnimation;
         bool _expanded;
     }
@@ -67,7 +67,7 @@ class Slider : Container
         _handle = new VConvexPolygon(handleWidth, handleHeight, GraphicStyle(1, theme.colorAccent, true, theme.colorAccent), 3);
         addCreate(_handle);
 
-        _content = new StackBox;
+        _content = new CenterBox;
         addCreate(_content);
 
         motionAnimation = new LinearMotion2d(Vec2d(0, 0), Vec2d(0, 0));
@@ -76,7 +76,7 @@ class Slider : Container
 
         if (position == SliderPos.left || position == SliderPos.top)
         {
-            layout.isFillFromStartToEnd = false;
+            layout.isFillStartToEnd = false;
         }
 
         _handle.onPointerPress ~= (ref e) {

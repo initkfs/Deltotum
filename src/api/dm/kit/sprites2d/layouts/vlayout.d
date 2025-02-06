@@ -22,7 +22,7 @@ class VLayout : SpaceableLayout
     {
         auto bounds = root.boundsRect;
         double nextY = 0;
-        if (isFillFromStartToEnd)
+        if (isFillStartToEnd)
         {
             nextY = bounds.y + root.padding.top;
         }
@@ -40,7 +40,7 @@ class VLayout : SpaceableLayout
 
             auto childBounds = child.boundsRect;
 
-            if (isFillFromStartToEnd)
+            if (isFillStartToEnd)
             {
                 const newChildY = nextY + child.margin.top;
                 if (Math.abs(child.y - newChildY) > sizeChangeDelta)

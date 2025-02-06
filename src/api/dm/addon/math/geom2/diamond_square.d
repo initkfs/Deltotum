@@ -438,7 +438,7 @@ class DiamondSquareGenerator : Control
     import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
 
     import api.dm.gui.controls.containers.container : Container;
-    import api.dm.gui.controls.containers.stack_box : StackBox;
+    import api.dm.gui.controls.containers.center_box : CenterBox;
 
     import api.dm.kit.graphics.colors.rgba : RGBA;
     import api.math.geom2.rect2 : Rect2d;
@@ -446,7 +446,7 @@ class DiamondSquareGenerator : Control
     import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
     import api.dm.gui.controls.popups.pointer_popup : PointerPopup;
 
-    StackBox contentContainer;
+    CenterBox contentContainer;
     double canvasWidth = 0;
     double canvasHeight = 0;
 
@@ -492,7 +492,7 @@ class DiamondSquareGenerator : Control
     {
         super.create;
 
-         contentContainer = new StackBox;
+         contentContainer = new CenterBox;
         contentContainer.width = generator.canvasWidth;
         contentContainer.height = generator.canvasHeight;
         addCreate(contentContainer);

@@ -9,103 +9,117 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 class Container : Control
 {
 
-    this(){
-        isBackground = false;
+    this()
+    {
+
     }
 
     bool isAlignX()
     {
-        assert(layout);
+        if (!layout)
+        {
+            return false;
+        }
+
         return layout.isAlignX;
     }
 
-    void isAlignX(bool value)
+    bool isAlignX(bool value)
     {
-        assert(layout);
+        if (!layout)
+        {
+            return false;
+        }
+
         layout.isAlignX = value;
         setInvalid;
+        return true;
     }
 
     bool isAlignY()
     {
-        assert(layout);
+        if (!layout)
+        {
+            return false;
+        }
+
         return layout.isAlignY;
     }
 
-    void isAlignY(bool value)
+    bool isAlignY(bool value)
     {
-        assert(layout);
+        if (!layout)
+        {
+            return false;
+        }
+
         layout.isAlignY = value;
         setInvalid;
+        return true;
     }
 
-    bool isFillFromStartToEnd()
+    bool isFillStartToEnd()
     {
-        assert(layout);
-        return layout.isFillFromStartToEnd;
+        if (!layout)
+        {
+            return false;
+        }
+
+        return layout.isFillStartToEnd;
     }
 
-    void isFillFromStartToEnd(bool isFill)
+    bool isFillStartToEnd(bool isFill)
     {
-        assert(layout);
-        layout.isFillFromStartToEnd = isFill;
+        if (!layout)
+        {
+            return false;
+        }
+
+        layout.isFillStartToEnd = isFill;
         setInvalid;
+        return true;
     }
 
     bool isLayoutResizeChildren()
     {
-        assert(layout);
+        if (!layout)
+        {
+            return false;
+        }
         return layout.isResizeChildren;
     }
 
-    void isLayoutResizeChildren(bool value)
+    bool isLayoutResizeChildren(bool value)
     {
-        assert(layout);
+        if (!layout)
+        {
+            return false;
+        }
+
         layout.isResizeChildren = value;
         setInvalid;
+        return true;
     }
 
     bool isResizeRoot()
     {
-        assert(layout);
+        if (!layout)
+        {
+            return false;
+        }
+
         return layout.isResizeRoot;
     }
 
-    void isResizeRoot(bool value)
+    bool isResizeRoot(bool value)
     {
-        assert(layout);
+        if (!layout)
+        {
+            return false;
+        }
+
         layout.isIncreaseRootSize = value;
         setInvalid;
+        return true;
     }
-}
-
-unittest
-{
-
-    import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-
-    auto sp1 = new Sprite2d;
-    sp1.width = 100;
-    sp1.height = 200;
-
-    auto container1 = new Container;
-    container1.add(sp1);
-    container1.update(0);
-
-    // assert(container1.width == sp1.width);
-    // assert(container1.height == sp1.height);
-
-    // import api.math.insets : Insets;
-
-    // container1.padding = Insets(5);
-    // container1.setInvalid;
-    // container1.update(0);
-
-    // assert(container1.width == (sp1.width + container1.padding.width));
-    // assert(container1.height == (sp1.height + container1.padding.height));
-
-    // sp1.width = sp1.width * 2;
-    // sp1.update(0);
-
-    //assert(container1.width == (sp1.width + container1.padding.width));
 }

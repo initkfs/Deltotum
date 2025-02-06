@@ -37,9 +37,9 @@ class TimePickerDialog : Control
     {
         super.create;
 
-        import api.dm.gui.controls.containers.stack_box : StackBox;
+        import api.dm.gui.controls.containers.center_box : CenterBox;
 
-        chooserContainer = new StackBox;
+        chooserContainer = new CenterBox;
         addCreate(chooserContainer);
 
         hourChooser = new HourChooser;

@@ -2,7 +2,7 @@ module api.dm.gui.controls.containers.expanders.expander;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
-import api.dm.gui.controls.containers.stack_box : StackBox;
+import api.dm.gui.controls.containers.center_box : CenterBox;
 import api.dm.kit.sprites2d.tweens.min_max_tween2d : MinMaxTween2d;
 
 enum ExpanderPosition
@@ -131,7 +131,7 @@ class Expander : Control
 
     protected void createContentBar()
     {
-        contentContainer = new StackBox;
+        contentContainer = new CenterBox;
         addCreate(contentContainer);
     }
 

@@ -35,7 +35,7 @@ class Procedural : Control
     override void initialize()
     {
         super.initialize;
-        enablePadding;
+        enableInsets;
     }
 
     size_t[] modes = [0, 1, 2, 6, 7, 8, 10, 11];

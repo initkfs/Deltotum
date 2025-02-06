@@ -6,7 +6,7 @@ import api.math.geom2.rect2 : Rect2d;
 
 import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.gui.controls.containers.hbox : HBox;
-import api.dm.gui.controls.containers.stack_box : StackBox;
+import api.dm.gui.controls.containers.center_box : CenterBox;
 import api.dm.gui.controls.meters.scrolls.hscroll : HScroll;
 import api.dm.gui.controls.meters.scrolls.vscroll : VScroll;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
@@ -85,7 +85,7 @@ class ScrollBox : Container
         addCreate(contentContainer);
         contentContainer.padding = Insets(0);
 
-        content = new StackBox;
+        content = new CenterBox;
         content.layout.isDecreaseRootSize = true;
         content.isGrow = true;
         contentContainer.addCreate(content);

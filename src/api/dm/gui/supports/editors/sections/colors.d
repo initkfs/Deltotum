@@ -28,7 +28,7 @@ class Colors : Control
     override void initialize()
     {
         super.initialize;
-        enablePadding;
+        enableInsets;
     }
 
     override void create()
@@ -43,7 +43,7 @@ class Colors : Control
         import std.range : chunks;
 
         import api.dm.gui.controls.containers.vbox : VBox;
-        import api.dm.gui.controls.containers.stack_box : StackBox;
+        import api.dm.gui.controls.containers.center_box : CenterBox;
         import api.dm.gui.controls.containers.container : Container;
         import api.dm.gui.controls.texts.text : Text;
         import api.dm.kit.assets.fonts.font_size : FontSize;

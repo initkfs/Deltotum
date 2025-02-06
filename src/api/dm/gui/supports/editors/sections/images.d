@@ -43,7 +43,7 @@ class Images : Control
     override void initialize()
     {
         super.initialize;
-        enablePadding;
+        enableInsets;
     }
 
     T configureControl(T)(T sprite)
@@ -81,7 +81,7 @@ class Images : Control
         import api.dm.gui.controls.containers.hbox : HBox;
         import api.dm.gui.controls.containers.vbox : VBox;
         import api.dm.gui.controls.containers.container : Container;
-        import api.dm.gui.controls.containers.stack_box : StackBox;
+        import api.dm.gui.controls.containers.center_box : CenterBox;
         import api.math.insets : Insets;
 
         auto container = new HBox;

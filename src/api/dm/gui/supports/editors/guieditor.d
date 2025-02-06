@@ -31,11 +31,11 @@ class GuiEditor : GuiScene
         controlsTab.content = new Controls;
         root.addCreate(controlsTab);
 
-        import api.dm.gui.supports.editors.sections.layouts : Layouts;
+        import api.dm.gui.supports.editors.sections.containers : Containers;
 
-        auto layoutTab = new Tab("Layouts");
-        layoutTab.content = new Layouts;
-        root.addCreate(layoutTab);
+        auto containerTab = new Tab("Containers");
+        containerTab.content = new Containers;
+        root.addCreate(containerTab);
 
         import api.dm.gui.supports.editors.sections.graphics : Grahpics;
 

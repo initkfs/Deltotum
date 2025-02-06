@@ -22,7 +22,7 @@ class HLayout : SpaceableLayout
     {
         auto bounds = root.boundsRect;
         double nextX = 0;
-        if (isFillFromStartToEnd)
+        if (isFillStartToEnd)
         {
             nextX = bounds.x + root.padding.left;
         }
@@ -39,7 +39,7 @@ class HLayout : SpaceableLayout
             }
             auto childBounds = child.boundsRect;
 
-            if (isFillFromStartToEnd)
+            if (isFillStartToEnd)
             {
                 const childX = nextX + child.margin.left;
                 if (Math.abs(child.x - childX) >= sizeChangeDelta)

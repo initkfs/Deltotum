@@ -7,7 +7,7 @@ import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.kit.windows.window : Window;
 import api.math.geom2.rect2 : Rect2d;
 import api.dm.gui.controls.containers.container : Container;
-import api.dm.gui.controls.containers.stack_box : StackBox;
+import api.dm.gui.controls.containers.center_box : CenterBox;
 import api.dm.kit.interacts.interact : Interact;
 import api.dm.kit.interacts.dialogs.dialog_manager : DialogManager;
 

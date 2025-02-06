@@ -25,7 +25,7 @@ class Textures : Control
     override void initialize()
     {
         super.initialize;
-        enablePadding;
+        enableInsets;
     }
 
     override void create()

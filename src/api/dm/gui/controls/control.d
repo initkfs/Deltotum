@@ -1294,7 +1294,7 @@ class Control : GuiComponent
         return hasTheme;
     }
 
-    override void enablePadding()
+    override void enableInsets()
     {
         if (!isCanEnableInsets)
         {

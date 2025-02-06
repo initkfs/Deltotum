@@ -219,7 +219,7 @@ class TabBox : Container
 
     Container newContentContainer()
     {
-        import api.dm.gui.controls.containers.stack_box : StackBox;
+        import api.dm.gui.controls.containers.center_box : CenterBox;
 
         auto container = new Container;
 

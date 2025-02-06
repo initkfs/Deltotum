@@ -2,7 +2,7 @@ module api.dm.gui.supports.sceneview;
 
 import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.gui.controls.containers.hbox : HBox;
-import api.dm.gui.controls.containers.stack_box : StackBox;
+import api.dm.gui.controls.containers.center_box : CenterBox;
 import api.dm.gui.controls.switches.toggles.toggle : Toggle;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.texts.textfield : TextField;

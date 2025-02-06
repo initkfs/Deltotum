@@ -45,7 +45,7 @@ class Fractals : Control
     override void initialize()
     {
         super.initialize;
-        enablePadding;
+        enableInsets;
         shapeStyle = GraphicStyle(2, theme.colorAccent);
     }
 
@@ -100,7 +100,7 @@ class Fractals : Control
     {
         super.create;
 
-        import api.dm.gui.controls.containers.stack_box : StackBox;
+        import api.dm.gui.controls.containers.center_box : CenterBox;
         import api.math.insets : Insets;
 
         auto container = newHContainer;

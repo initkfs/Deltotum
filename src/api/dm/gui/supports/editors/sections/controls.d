@@ -32,7 +32,7 @@ class Controls : Control
     override void initialize()
     {
         super.initialize;
-        enablePadding;
+        enableInsets;
     }
 
     T configureControl(T)(T sprite)
@@ -200,7 +200,7 @@ class Controls : Control
         auto check2 = new Check("Check2", Icons.bug_outline);
         check2.isBorder = true;
         checkBoxContainer.addCreate(check2);
-        check2.layout.isFillFromStartToEnd = false;
+        check2.layout.isFillStartToEnd = false;
         check2.isOn = true;
 
         auto toggleContainer = new SwitchGroup;
@@ -717,9 +717,9 @@ class Controls : Control
         auto colorBar1 = new ColorBar;
         barsRoot1.addCreate(colorBar1);
 
-        import api.dm.gui.controls.containers.stack_box: StackBox;
+        import api.dm.gui.controls.containers.center_box: CenterBox;
 
-        auto barsStackRoot = new StackBox;
+        auto barsStackRoot = new CenterBox;
         barsRoot1.addCreate(barsStackRoot);
 
         import api.dm.gui.controls.indicators.colorbars.radial_colorbar: RadialColorBar;
@@ -831,7 +831,7 @@ class Controls : Control
             logger.trace("Window is maximized after request: ", window.isMaximized);
         });
         winRoot1.addCreate(winMax);
-        winMax.layout.isFillFromStartToEnd = false;
+        winMax.layout.isFillStartToEnd = false;
 
         auto winRoot2 = new HBox(5);
         root.addCreate(winRoot2);
@@ -860,7 +860,7 @@ class Controls : Control
         winFull.layout = new VLayout;
         winFull.layout.isAutoResizeAndAlignOne = true;
         winFull.layout.isAlignX = true;
-        winFull.layout.isFillFromStartToEnd = false;
+        winFull.layout.isFillStartToEnd = false;
         winRoot2.addCreate(winFull);
 
         auto winRoot3 = new VBox;

@@ -29,8 +29,6 @@ class Check : BaseBiswitch
     double markerWidth = 0;
     double markerHeight = 0;
 
-    void delegate(bool, bool)[] onOldNewValue;
-
     bool isCreateMarkerListeners = true;
 
     this(dstring text = "Check", double width, double height, string iconName = null, double graphicsGap = 5)
@@ -74,9 +72,9 @@ class Check : BaseBiswitch
 
     Sprite2d newMarkerContainer()
     {
-        import api.dm.gui.controls.containers.stack_box : StackBox;
+        import api.dm.gui.controls.containers.center_box : CenterBox;
 
-        auto markerContainer = new StackBox;
+        auto markerContainer = new CenterBox;
         markerContainer.resize(markerWidth, markerHeight);
         markerContainer.isBorder = true;
         return markerContainer;
