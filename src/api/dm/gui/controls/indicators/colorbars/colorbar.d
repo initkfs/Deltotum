@@ -58,6 +58,8 @@ class ColorBar : BaseMonoColorBar
                 texture.restoreRendererTarget;
             }
 
+            graphics.clearTransparent;
+
             drawBar;
 
             return;

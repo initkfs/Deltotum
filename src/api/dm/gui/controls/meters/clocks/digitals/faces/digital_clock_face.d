@@ -320,6 +320,7 @@ class DigitalClockFace : Control
         if (hour1)
         {
             //TODO angle?
+            sepTexture.bestScaleMode;
             sepTexture.angle = hour1.segmentAngle;
         }
 
