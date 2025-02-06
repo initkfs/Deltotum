@@ -56,5 +56,4 @@ class Screen
 
         return screens;
     }
-
 }

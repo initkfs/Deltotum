@@ -23,8 +23,8 @@ class MainController
 
     int run(string[] args)
     {
-        enum gameWidth = 1024;
-        enum gameHeight = 768;
+        enum gameWidth = 1280;
+        enum gameHeight = 720;
 
         application = new SdlApplication();
         application.isStrictConfigs = false;

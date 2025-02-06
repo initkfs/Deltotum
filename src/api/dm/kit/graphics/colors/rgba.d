@@ -619,7 +619,7 @@ unittest
     assert(rgba1.a == colorMin);
 
     assert(rgba1.toString == "rgba(0,0,0,0.0)");
-    assert(rgba1.toWebHex == "#000");
+    assert(rgba1.toWebHex == "#000000");
 
     enum colorMax = 255;
     enum alphaMax = 1;
