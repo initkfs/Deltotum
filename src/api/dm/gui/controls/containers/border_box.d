@@ -1,95 +1,205 @@
 module api.dm.gui.controls.containers.border_box;
 
-import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.containers.container : Container;
-import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
-import api.dm.gui.controls.containers.center_box : CenterBox;
-import api.math.insets : Insets;
-import api.dm.gui.controls.containers.hbox : HBox;
 
 /**
  * Authors: initkfs
  */
 class BorderBox : Container
 {
-    protected
-    {
-        CenterBox _top;
-        CenterBox _left;
-        CenterBox _center;
-        CenterBox _right;
-        CenterBox _bottom;
+    Container _top;
+    bool isCreateTop = true;
+    Container delegate(Container) onNewTop;
+    void delegate(Container) onConfiguredTop;
+    void delegate(Container) onCreatedTop;
 
-        HBox _centerBox;
-    }
+    Container _left;
+    bool isCreateLeft = true;
+    Container delegate(Container) onNewLeft;
+    void delegate(Container) onConfiguredLeft;
+    void delegate(Container) onCreatedLeft;
+
+    Container _center;
+    bool isCreateCenter = true;
+    Container delegate(Container) onNewCenter;
+    void delegate(Container) onConfiguredCenter;
+    void delegate(Container) onCreatedCenter;
+
+    Container _right;
+    bool isCreateRight = true;
+    Container delegate(Container) onNewRight;
+    void delegate(Container) onConfiguredRight;
+    void delegate(Container) onCreatedRight;
+
+    Container _bottom;
+    bool isCreateBottom = true;
+    Container delegate(Container) onNewBottom;
+    void delegate(Container) onConfiguredBottom;
+    void delegate(Container) onCreatedBottom;
+
+    Container _centerContainer;
+    Container delegate(Container) onNewCenterContainer;
+    void delegate(Container) onConfiguredCenterContainer;
+    void delegate(Container) onCreatedCenterContainer;
 
     this()
     {
-        this.layout = new VLayout;
+        import api.dm.kit.sprites2d.layouts.vlayout: VLayout;
+        
+        layout = new VLayout(0);
         layout.isAutoResize = true;
-    }
-
-    protected CenterBox createBox()
-    {
-        auto box = new CenterBox;
-        box.isHGrow = true;
-        box.isVGrow = true;
-        box.layout.isAutoResize = true;
-        return box;
+        layout.isAlignX = true;
     }
 
     override void create()
     {
         super.create;
 
-        //TODO lazy?
-        _top = createBox;
-        addCreate(_top);
+        if (!_top && isCreateTop)
+        {
+            auto container = newTop;
+            _top = !onNewTop ? container : onNewTop(container);
+            if (onConfiguredTop)
+            {
+                onConfiguredTop(_top);
+            }
 
-        _centerBox = new HBox;
-        _centerBox.layout.isAutoResize = true;
-        _centerBox.isHGrow = true;
-        _centerBox.isVGrow = true;
-        addCreate(_centerBox);
-        _centerBox.spacing = 0;
-        _centerBox.padding = Insets(0, 0, 0, 0);
+            addCreate(_top);
 
-        _left = createBox;
-        _centerBox.addCreate(_left);
+            if (onCreatedTop)
+            {
+                onCreatedTop(_top);
+            }
+        }
 
-        _center = createBox;
-        _centerBox.addCreate(_center);
+        if (!_centerContainer)
+        {
+            auto container = newCenterContainer;
+            _centerContainer = !onNewCenterContainer ? container : onNewCenterContainer(container);
 
-        _right = createBox;
-        _centerBox.addCreate(_right);
+            if (_centerContainer.layout)
+            {
+                _centerContainer.layout.isAutoResize = true;
+                _centerContainer.layout.isAlignY = true;
+            }
 
-        _bottom = createBox;
-        addCreate(_bottom);
+            if (onConfiguredCenterContainer)
+            {
+                onConfiguredCenterContainer(_centerContainer);
+            }
+
+            addCreate(_centerContainer);
+            if (onCreatedCenterContainer)
+            {
+                onCreatedCenterContainer(_centerContainer);
+            }
+        }
+
+        if (!_left && isCreateLeft)
+        {
+            auto container = newLeft;
+            _left = !onNewLeft ? container : onNewLeft(container);
+            if (onConfiguredLeft)
+            {
+                onConfiguredLeft(_left);
+            }
+
+            _centerContainer.addCreate(_left);
+
+            if (onCreatedLeft)
+            {
+                onCreatedLeft(_left);
+            }
+        }
+
+        if (!_center && isCreateCenter)
+        {
+            auto container = newCenter;
+            _center = !onNewCenter ? container : onNewCenter(container);
+            if (onConfiguredCenter)
+            {
+                onConfiguredCenter(_center);
+            }
+
+            _centerContainer.addCreate(_center);
+
+            if (onCreatedCenter)
+            {
+                onCreatedCenter(_center);
+            }
+        }
+
+        if (!_right && isCreateRight)
+        {
+            auto container = newRight;
+            _right = !onNewRight ? container : onNewRight(container);
+            if (onConfiguredRight)
+            {
+                onConfiguredRight(_right);
+            }
+
+            _centerContainer.addCreate(_right);
+
+            if (onCreatedRight)
+            {
+                onCreatedRight(_right);
+            }
+        }
+
+        if (!_bottom && isCreateBottom)
+        {
+            auto container = newBottom;
+            _bottom = !onNewBottom ? container : onNewBottom(container);
+            if (onConfiguredBottom)
+            {
+                onConfiguredBottom(_bottom);
+            }
+
+            addCreate(_bottom);
+
+            if (onCreatedBottom)
+            {
+                onCreatedBottom(_bottom);
+            }
+        }
     }
 
-    CenterBox topPane()
+    Container topBox()
+    out (_top; _top !is null) => _top;
+
+    Container rightBox()
+    out (_right; _right !is null) => _right;
+
+    Container centerBox()
+    out (_center; _center !is null) => _center;
+
+    Container bottomBox()
+    out (_bottom; _bottom !is null) => _bottom;
+
+    Container leftBox()
+    out (_left; _left !is null) => _left;
+
+    protected Container newContainer()
     {
-        return _top;
+        auto container = new Container;
+
+        import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
+
+        container.layout = new CenterLayout;
+        container.layout.isAutoResize = true;
+        return container;
     }
 
-    CenterBox leftPane()
+    Container newCenterContainer()
     {
-        return _left;
+        import api.dm.gui.controls.containers.hbox : HBox;
+
+        return new HBox(0);
     }
 
-    CenterBox centerPane()
-    {
-        return _center;
-    }
-
-    CenterBox rightPane()
-    {
-        return _right;
-    }
-
-    CenterBox bottomPane()
-    {
-        return _bottom;
-    }
-
+    Container newTop() => newContainer;
+    Container newCenter() => newContainer;
+    Container newLeft() => newContainer;
+    Container newBottom() => newContainer;
+    Container newRight() => newContainer;
 }

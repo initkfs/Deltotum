@@ -12,9 +12,11 @@ class CircleLayout : ManagedLayout
     double radius = 0;
     double startAngle = 0;
 
-    this(double radius = 0) pure
+    this(double radius = 0, double startAngle = 0) pure
     {
         this.radius = radius;
+        this.startAngle = startAngle;
+
         isAlignBeforeResize = true;
         isAlignAfterResize = false;
     }
@@ -38,13 +40,15 @@ class CircleLayout : ManagedLayout
             return false;
         }
 
-        const double angleDegStep = 360.0 / childCount;
+        const double fullAngle = 360.0;
+
+        const double angleDegStep = fullAngle / childCount;
 
         const rootBounds = root.boundsRect;
         const startX = rootBounds.center.x;
         const startY = rootBounds.center.y;
 
-        double nextDeg = startAngle;
+        double nextDeg = isFillStartToEnd ? startAngle : (fullAngle - startAngle);
         foreach (child; children)
         {
             const childBounds = child.boundsRect;
@@ -53,7 +57,15 @@ class CircleLayout : ManagedLayout
                 .margin.right;
             child.y = child.margin.top + startY + pos.y - childBounds.halfHeight - child
                 .margin.bottom;
-            nextDeg += angleDegStep;
+
+            if (isFillStartToEnd)
+            {
+                nextDeg += angleDegStep;
+            }
+            else
+            {
+                nextDeg -= angleDegStep;
+            }
         }
         return true;
     }

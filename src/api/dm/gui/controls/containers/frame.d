@@ -5,64 +5,80 @@ import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.layouts.spaceable_layout : SpaceableLayout;
 import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.gui.controls.texts.text : Text;
+import api.dm.gui.controls.switches.buttons.base_button : BaseButton;
+import api.dm.gui.controls.switches.buttons.button : Button;
 
 /**
  * Authors: initkfs
  */
 class Frame : Container
 {
-    Text label;
+    BaseButton label;
+
+    bool isCreateLabel = true;
+    BaseButton delegate(BaseButton) onNewLabel;
+    void delegate(BaseButton) onConfiguredLabel;
+    void delegate(BaseButton) onCreatedLabel;
 
     private
     {
         dstring initText;
     }
 
-    this(dstring labelText = "Frame", double spacing = SpaceableLayout.DefaultSpacing)
+    this(dstring labelText = "Frame")
     {
         initText = labelText;
 
-        isBorder = true;
+        import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
 
-        import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
-
-        layout = new HLayout(spacing);
+        layout = new CenterLayout;
         layout.isAutoResize = true;
-        layout.isAlignY = true;
+
+        isBorder = true;
     }
 
     override void create()
     {
         super.create;
 
-        import api.dm.gui.controls.texts.text : Text;
+        if (!label && isCreateLabel)
+        {
+            auto l = newLabel(initText);
+            label = !onNewLabel ? l : onNewLabel(l);
 
-        label = new Text(initText);
-        label.isLayoutManaged = false;
-        label.isFocusable = false;
-        label.isBackground = true;
-        label.isBorder = true;
-        label.isResizedByParent = false;
-        addCreate(label);
+            label.isLayoutManaged = false;
+            label.isBackground = true;
+            label.isBorder = true;
+            label.isResizedByParent = false;
 
-        label.enableInsets;
+            if (onConfiguredLabel)
+            {
+                onConfiguredLabel(l);
+            }
+
+            addCreate(label);
+
+            label.enableInsets;
+
+            if (onCreatedLabel)
+            {
+                onCreatedLabel(label);
+            }
+        }
 
         enableInsets;
-
-        label.updateRows(isForce : true);
 
         //TODO label position;
         if (padding.top < label.height)
         {
             padding.top = label.height;
+            marginTop = label.halfHeight;
         }
 
-        invalidateListeners ~= (){
-            setLabelPos;
-        };
-
+        invalidateListeners ~= () { setLabelPos; };
     }
+
+    BaseButton newLabel(dstring text) => new Button(text);
 
     void setLabelPos()
     {
@@ -70,6 +86,8 @@ class Frame : Container
         {
             return;
         }
+
+        //TODO corrent height
         label.x = x;
         label.y = y - label.height / 2;
     }

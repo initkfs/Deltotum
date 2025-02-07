@@ -9,6 +9,9 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.gui.controls.containers.vbox : VBox;
+import api.dm.gui.controls.containers.frame : Frame;
+import api.dm.gui.controls.containers.center_box : CenterBox;
+import api.dm.gui.controls.containers.border_box : BorderBox;
 
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.controls.switches.checks.check : Check;
@@ -39,7 +42,42 @@ class Containers : Control
     {
         super.create;
 
-        testHBox(this);
+        auto hboxRoot = new HBox;
+        hboxRoot.isBorder = true;
+        hboxRoot.isAlignY = true;
+        addCreate(hboxRoot);
+        hboxRoot.enableInsets;
+
+        testHBox(hboxRoot);
+
+        auto vboxRoot = new HBox;
+        vboxRoot.isBorder = true;
+        vboxRoot.isAlignY = true;
+        addCreate(vboxRoot);
+        vboxRoot.enableInsets;
+
+        testVBox(vboxRoot);
+
+        auto frame = new Frame("Frame");
+        frame.height = 100;
+        //TODO bug
+        //frame.isVGrow = true;
+        vboxRoot.addCreate(frame);
+
+        auto cb = new CenterBox;
+        cb.isBorder = true;
+        frame.addCreate(cb);
+        cb.enableInsets;
+
+        auto cbBtn = configureControl(new Button("Btn"));
+        cbBtn.isGrow = true;
+        cb.addCreate(cbBtn);
+
+        testBorderBox(vboxRoot);
+
+        testCircleBox(vboxRoot);
+
+        testFlowBox(vboxRoot);
 
         // testHContainers;
         // auto posVContainer = testVContainers;
@@ -66,72 +104,8 @@ class Containers : Control
 
         // import api.dm.gui.controls.containers.border_box : BorderBox;
 
-        // auto bBox = configureControl(new BorderBox);
-        // posVContainer.addCreate(bBox);
-
-        // auto top = createButton("top");
-        // top.isHGrow = true;
-        // bBox.topPane.addCreate(top);
-
-        // auto left = createButton("left");
-        // bBox.leftPane.addCreate(left);
-
-        // auto center = createButton("center");
-        // bBox.centerPane.addCreate(center);
-
-        // auto rigth = createButton("right");
-        // bBox.rightPane.addCreate(rigth);
-
-        // auto bottom = createButton("bottom");
-        // bottom.width = 100;
-        // bottom.isHGrow = true;
-        // bBox.bottomPane.addCreate(bottom);
-
-        // import api.dm.gui.controls.containers.flow_box : FlowBox;
-
-        // auto flowBox1 = configureControl(new FlowBox(5, 5));
-        // flowBox1.width = 200;
-        // flowBox1.height = 200;
-        // posVContainer.addCreate(flowBox1);
-
-        // foreach (i; 1 .. 6)
-        // {
-        //     import std.conv : to;
-
-        //     auto btn = createButton(i.to!dstring);
-        //     flowBox1.addCreate(btn);
-        // }
-
-        // auto fbox2 = new FlowBox(5, 5);
-        // fbox2.layout.isFillStartToEnd = false;
-        // auto flowBoxEndToStart = configureControl(fbox2);
-        // flowBoxEndToStart.width = 200;
-        // flowBoxEndToStart.height = 200;
-        // posVContainer.addCreate(flowBoxEndToStart);
-
-        // foreach (i; 1 .. 6)
-        // {
-        //     import std.conv : to;
-
-        //     auto btn = createButton(i.to!dstring);
-        //     flowBoxEndToStart.addCreate(btn);
-        // }
-
         // auto pos2Container = configureControl(new HBox(5));
         // addCreate(pos2Container);
-
-        // import api.dm.gui.controls.containers.circle_box : CircleBox;
-
-        // auto circleBox1 = configureControl(new CircleBox);
-        // pos2Container.addCreate(circleBox1);
-
-        // foreach (i; 1 .. 7)
-        // {
-        //     import std.conv : to;
-
-        //     auto btn = createButton(i.to!dstring);
-        //     circleBox1.addCreate(btn);
-        // }
 
         // import api.dm.gui.controls.containers.splits.vsplit_box: VSplitBox;
         // import api.dm.gui.controls.containers.splits.hsplit_box: HSplitBox;
@@ -206,36 +180,34 @@ class Containers : Control
     void testHBox(Control root)
     {
         auto hbox1 = configureControl(new HBox);
+        hbox1.isAlignY = true;
+        hbox1.layout.isDecreaseRootSize = true;
+
         root.addCreate(hbox1);
         hbox1.enableInsets;
-
-        auto hboxInc10 = configureControl(createButtonInc10);
-        hbox1.addCreate(hboxInc10);
-
-        auto hboxDec10 = configureControl(createButtonDec10);
-        hbox1.addCreate(hboxDec10);
-
-        auto hboxMarginTop10 = configureControl(new Button("MT10"));
-        hboxMarginTop10.marginTop = 10;
-        hbox1.addCreate(hboxMarginTop10);
-
-        auto hboxMarginBottom10 = configureControl(new Button("MB10"));
-        hboxMarginBottom10.marginBottom = 10;
-        hbox1.addCreate(hboxMarginBottom10);
-
-        auto hboxMarginLeft20 = configureControl(new Button("MLR15"));
-        hboxMarginLeft20.marginLeft = 15;
-        hboxMarginLeft20.marginRight = hboxMarginLeft20.marginLeft;
-        hbox1.addCreate(hboxMarginLeft20);
 
         auto checkFill = configureControl(new Check("StoE"));
         hbox1.addCreate(checkFill);
         checkFill.isOn = true;
         checkFill.onOldNewValue ~= (oldv, newv) { hbox1.isFillStartToEnd = newv; };
 
+        auto hboxInc10 = configureControl(createButtonInc10("MT10+=10"));
+        hboxInc10.marginTop = 10;
+        hbox1.addCreate(hboxInc10);
+
+        auto hboxDec10 = configureControl(createButtonDec10("MB10-=10", hboxInc10));
+        hbox1.addCreate(hboxDec10);
+
+        auto hboxMarginLeft15 = configureControl(new Check("AlignY,MLR15"));
+        hboxMarginLeft15.marginLeft = 15;
+        hboxMarginLeft15.marginRight = hboxMarginLeft15.marginLeft;
+        hboxMarginLeft15.isOn = false;
+        hboxMarginLeft15.onOldNewValue ~= (oldv, newv) { hbox1.isAlignY = newv; };
+        hbox1.addCreate(hboxMarginLeft15);
+
         auto hboxGrow1Child = configureControl(new HBox);
         hboxGrow1Child.width = 200;
-        hbox1.addCreate(hboxGrow1Child);
+        root.addCreate(hboxGrow1Child);
         hboxGrow1Child.enableInsets;
 
         auto growChild = configureControl(new Button("HG"));
@@ -244,16 +216,26 @@ class Containers : Control
         hboxGrow1Child.addCreate(growChild);
 
         auto hboxGrowChild = configureControl(new HBox);
+
         hboxGrowChild.width = 400;
-        hbox1.addCreate(hboxGrowChild);
+        hboxGrowChild.isAlignY = true;
+        hboxGrowChild.layout.isDecreaseRootSize = true;
+
+        root.addCreate(hboxGrowChild);
         hboxGrowChild.enableInsets;
 
-        auto hboxGrowChild1 = configureControl(new Button("HG1"));
+        auto hboxGrowChild1 = configureControl(new Button("HG1,v+=10"));
+        hboxGrowChild1.onAction ~= (ref e) {
+            hboxGrowChild1.height = hboxGrowChild1.height + 10;
+        };
         hboxGrowChild1.isHGrow = true;
         hboxGrowChild1.isBackground = true;
         hboxGrowChild.addCreate(hboxGrowChild1);
 
-        auto hboxGrowChild2 = configureControl(new Button("Btn"));
+        auto hboxGrowChild2 = configureControl(new Button("Btn,v-=10"));
+        hboxGrowChild2.onAction ~= (ref e) {
+            hboxGrowChild1.height = hboxGrowChild1.height - 10;
+        };
         hboxGrowChild.addCreate(hboxGrowChild2);
 
         auto hboxGrowChild3 = configureControl(new Button("HG2"));
@@ -262,13 +244,149 @@ class Containers : Control
         hboxGrowChild.addCreate(hboxGrowChild3);
     }
 
-    void testvBox(Control root)
+    void testVBox(Control root)
     {
-        auto vboxRoot = new HBox;
-        root.addCreate(vboxRoot);
+        auto vbox1 = configureControl(new VBox);
 
-        auto vbox = configureControl(new VBox);
-        
+        //TODO alignX + margin exceeding container border 
+        //vbox1.isAlignX = true;
+
+        vbox1.layout.isDecreaseRootSize = true;
+
+        root.addCreate(vbox1);
+        vbox1.enableInsets;
+
+        auto checkFill = configureControl(new Check("StoE"));
+        vbox1.addCreate(checkFill);
+        checkFill.isOn = true;
+        checkFill.onOldNewValue ~= (oldv, newv) { vbox1.isFillStartToEnd = newv; };
+
+        auto vboxInc10 = configureControl(createButtonInc10("ML10+=10"));
+        vboxInc10.marginLeft = 10;
+        vbox1.addCreate(vboxInc10);
+
+        auto vboxDec10 = configureControl(createButtonDec10("ML20-=10", vboxInc10));
+        vboxDec10.marginLeft = 20;
+        vbox1.addCreate(vboxDec10);
+
+        auto vboxGrow1Child = configureControl(new VBox);
+        vboxGrow1Child.height = 150;
+        vboxGrow1Child.layout.isDecreaseRootSize = true;
+        root.addCreate(vboxGrow1Child);
+        vboxGrow1Child.enableInsets;
+
+        auto growChild = configureControl(new Button("VG"));
+        growChild.isGrow = true;
+        growChild.isBackground = true;
+        vboxGrow1Child.addCreate(growChild);
+
+        auto vboxGrowChild = configureControl(new VBox);
+
+        vboxGrowChild.height = 250;
+        vboxGrowChild.isAlignX = true;
+        vboxGrowChild.layout.isDecreaseRootSize = true;
+
+        root.addCreate(vboxGrowChild);
+        vboxGrowChild.enableInsets;
+
+        auto vboxGrowChild1 = configureControl(new Button("G1,w+=10"));
+        vboxGrowChild1.onAction ~= (ref e) {
+            vboxGrowChild1.width = vboxGrowChild1.width + 10;
+        };
+
+        vboxGrowChild1.isGrow = true;
+        vboxGrowChild1.isBackground = true;
+        vboxGrowChild.addCreate(vboxGrowChild1);
+
+        auto cboxGrowChild2 = configureControl(new Button("G2,w-=10"));
+
+        cboxGrowChild2.isGrow = true;
+        cboxGrowChild2.isBackground = true;
+        cboxGrowChild2.onAction ~= (ref e) {
+            vboxGrowChild1.width = vboxGrowChild1.width - 10;
+        };
+
+        vboxGrowChild.addCreate(cboxGrowChild2);
+    }
+
+    void testBorderBox(Container root)
+    {
+
+        auto bBox = configureControl(new BorderBox);
+        root.addCreate(bBox);
+
+        auto top = createButton("top");
+        top.isHGrow = true;
+        bBox.topBox.addCreate(top);
+
+        auto left = createButton("left");
+        left.isHGrow = true;
+        bBox.leftBox.addCreate(left);
+
+        auto center = createButton("center");
+        center.isHGrow = true;
+        bBox.centerBox.addCreate(center);
+
+        auto right = createButton("right");
+        right.isHGrow = true;
+        bBox.rightBox.addCreate(right);
+
+        auto bottom = createButton("bottom");
+        bottom.isHGrow = true;
+        bBox.bottomBox.addCreate(bottom);
+    }
+
+    void testCircleBox(Container root)
+    {
+        import api.dm.gui.controls.containers.circle_box : CircleBox;
+        import api.dm.gui.controls.texts.text : Text;
+
+        auto circleBox1 = new CircleBox;
+        circleBox1.isBorder = true;
+        root.addCreate(circleBox1);
+
+        foreach (i; 1 .. 7)
+        {
+            import std.conv : to;
+
+            auto btn = createButton(i.to!dstring);
+            circleBox1.addCreate(btn);
+            btn.rescale(0.5, 0.5);
+        }
+    }
+
+    void testFlowBox(Container root)
+    {
+        import api.dm.gui.controls.containers.flow_box : FlowBox;
+
+        auto flowBox1 = new FlowBox(5, 5);
+        flowBox1.isBorder = true;
+        flowBox1.width = 150;
+        flowBox1.height = 150;
+        root.addCreate(flowBox1);
+
+        foreach (i; 1 .. 6)
+        {
+            import std.conv : to;
+
+            auto btn = createButton(i.to!dstring);
+            flowBox1.addCreate(btn);
+        }
+
+        auto fbox2 = new FlowBox(5, 5);
+        fbox2.isBorder = true;
+        fbox2.layout.isFillStartToEnd = false;
+        fbox2.width = 150;
+        fbox2.height = 150;
+        root.addCreate(fbox2);
+
+        foreach (i; 1 .. 6)
+        {
+            import std.conv : to;
+
+            auto btn = createButton(i.to!dstring);
+            fbox2.addCreate(btn);
+        }
     }
 
     T configureControl(T)(T sprite)
@@ -286,17 +404,19 @@ class Containers : Control
         return button;
     }
 
-    Button createButtonInc10()
+    Button createButtonInc10(dstring text = null, Control targetRoot = null)
     {
-        auto button = createButton("w+=10");
-        button.onAction ~= (ref e) { button.width = button.width + 10; };
+        auto button = createButton(text);
+        auto target = targetRoot ? targetRoot : button;
+        button.onAction ~= (ref e) { target.width = target.width + 10; };
         return button;
     }
 
-    Button createButtonDec10()
+    Button createButtonDec10(dstring text = null, Control targetRoot = null)
     {
-        auto button = createButton("w-=10");
-        button.onAction ~= (ref e) { button.width = button.width - 10; };
+        auto button = createButton(text);
+        auto target = targetRoot ? targetRoot : button;
+        button.onAction ~= (ref e) { target.width = target.width - 10; };
         return button;
     }
 
