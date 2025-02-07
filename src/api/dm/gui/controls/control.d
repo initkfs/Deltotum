@@ -129,9 +129,9 @@ class Control : GuiComponent
 
     this()
     {
-        isResizedByParent = true;
-        isResizable = true;
         isLayoutManaged = true;
+
+        isResizable = true;
         isResizeChildren = true;
         isScalable = true;
     }
