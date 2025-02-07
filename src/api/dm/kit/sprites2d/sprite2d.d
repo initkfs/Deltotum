@@ -104,6 +104,9 @@ class Sprite2d : EventKitTarget
     bool _layoutManaged = true;
     bool _layoutMovable = true;
 
+    bool isLayoutOnInvalid;
+    bool isLayoutOnInvalidForChildren = true;
+
     bool isResizeChildren;
     bool isResizeChildrenIfNoLayout = true;
     bool isResizeChildrenIfNotLManaged = true;
@@ -700,6 +703,11 @@ class Sprite2d : EventKitTarget
             isSet |= true;
         }
 
+        if (isLayoutOnInvalidForChildren)
+        {
+            sprite.isLayoutOnInvalid = isLayoutOnInvalid;
+        }
+
         return isSet;
     }
 
@@ -1013,8 +1021,13 @@ class Sprite2d : EventKitTarget
 
     void applyLayout()
     {
-        if (layout !is null)
+        if (layout)
         {
+            if (isLayoutOnInvalid && isValid)
+            {
+                return;
+            }
+
             layout.applyLayout(this);
         }
     }
@@ -2169,12 +2182,12 @@ class Sprite2d : EventKitTarget
         im.savePNG(surf, path);
     }
 
-    bool isCanEnableInsets()
+    bool canEnablePadding()
     {
         return false;
     }
 
-    void enableInsets()
+    void enablePadding()
     {
 
     }

@@ -1065,10 +1065,10 @@ class Control : GuiComponent
         addCreate(icon, index);
     }
 
-    import api.dm.kit.sprites2d.images.image: Image;
+    import api.dm.kit.sprites2d.images.image : Image;
 
     //TODO or move to scene factory?
-    Sprite2d createIcon(string iconName, double newIconSize = 0,  RGBA delegate(int x, int y, RGBA color) colorProcessor = null)
+    Sprite2d createIcon(string iconName, double newIconSize = 0, RGBA delegate(int x, int y, RGBA color) colorProcessor = null)
     {
         assert(isCreated, "Sprite2d not created");
 
@@ -1097,7 +1097,8 @@ class Control : GuiComponent
         auto icon = new Image;
         build(icon);
 
-        if(colorProcessor){
+        if (colorProcessor)
+        {
             icon.colorProcessor = colorProcessor;
         }
 
@@ -1289,19 +1290,26 @@ class Control : GuiComponent
         }
     }
 
-    override bool isCanEnableInsets()
+    override bool canEnablePadding()
     {
         return hasTheme;
     }
 
-    override void enableInsets()
+    override void enablePadding()
     {
-        if (!isCanEnableInsets)
+        debug
         {
-            throw new Exception(
-                "Unable to enable paddings: graphic or theme is null. Perhaps the component is not built correctly");
+            if (!canEnablePadding)
+            {
+                throw new Exception(
+                    "Unable to enable paddings: graphic or theme is null. Perhaps the component is not built correctly");
+            }
         }
-        _padding = theme.controlPadding;
+
+        if (theme)
+        {
+            _padding = theme.controlPadding;
+        }
     }
 
     override void dispose()

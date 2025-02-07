@@ -46,7 +46,7 @@ class Containers : Control
         hboxRoot.isBorder = true;
         hboxRoot.isAlignY = true;
         addCreate(hboxRoot);
-        hboxRoot.enableInsets;
+        hboxRoot.enablePadding;
 
         testHBox(hboxRoot);
 
@@ -54,7 +54,7 @@ class Containers : Control
         vboxRoot.isBorder = true;
         vboxRoot.isAlignY = true;
         addCreate(vboxRoot);
-        vboxRoot.enableInsets;
+        vboxRoot.enablePadding;
 
         testVBox(vboxRoot);
 
@@ -67,7 +67,7 @@ class Containers : Control
         auto cb = new CenterBox;
         cb.isBorder = true;
         frame.addCreate(cb);
-        cb.enableInsets;
+        cb.enablePadding;
 
         auto cbBtn = configureControl(new Button("Btn"));
         cbBtn.isGrow = true;
@@ -184,7 +184,7 @@ class Containers : Control
         hbox1.layout.isDecreaseRootSize = true;
 
         root.addCreate(hbox1);
-        hbox1.enableInsets;
+        hbox1.enablePadding;
 
         auto checkFill = configureControl(new Check("StoE"));
         hbox1.addCreate(checkFill);
@@ -208,7 +208,7 @@ class Containers : Control
         auto hboxGrow1Child = configureControl(new HBox);
         hboxGrow1Child.width = 200;
         root.addCreate(hboxGrow1Child);
-        hboxGrow1Child.enableInsets;
+        hboxGrow1Child.enablePadding;
 
         auto growChild = configureControl(new Button("HG"));
         growChild.isHGrow = true;
@@ -222,7 +222,7 @@ class Containers : Control
         hboxGrowChild.layout.isDecreaseRootSize = true;
 
         root.addCreate(hboxGrowChild);
-        hboxGrowChild.enableInsets;
+        hboxGrowChild.enablePadding;
 
         auto hboxGrowChild1 = configureControl(new Button("HG1,v+=10"));
         hboxGrowChild1.onAction ~= (ref e) {
@@ -254,7 +254,7 @@ class Containers : Control
         vbox1.layout.isDecreaseRootSize = true;
 
         root.addCreate(vbox1);
-        vbox1.enableInsets;
+        vbox1.enablePadding;
 
         auto checkFill = configureControl(new Check("StoE"));
         vbox1.addCreate(checkFill);
@@ -273,7 +273,7 @@ class Containers : Control
         vboxGrow1Child.height = 150;
         vboxGrow1Child.layout.isDecreaseRootSize = true;
         root.addCreate(vboxGrow1Child);
-        vboxGrow1Child.enableInsets;
+        vboxGrow1Child.enablePadding;
 
         auto growChild = configureControl(new Button("VG"));
         growChild.isGrow = true;
@@ -287,7 +287,7 @@ class Containers : Control
         vboxGrowChild.layout.isDecreaseRootSize = true;
 
         root.addCreate(vboxGrowChild);
-        vboxGrowChild.enableInsets;
+        vboxGrowChild.enablePadding;
 
         auto vboxGrowChild1 = configureControl(new Button("G1,w+=10"));
         vboxGrowChild1.onAction ~= (ref e) {

@@ -28,7 +28,7 @@ class RegulateTextPanel : Container
         super.create;
 
         if(isInsets){
-            enableInsets;
+            enablePadding;
         }
     }
 

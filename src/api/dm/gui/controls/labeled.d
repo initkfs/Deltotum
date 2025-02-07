@@ -58,9 +58,9 @@ class Labeled : Control
     {
         super.initialize;
 
-        if (isCanEnableInsets)
+        if (canEnablePadding)
         {
-            enableInsets;
+            enablePadding;
         }
     }
 

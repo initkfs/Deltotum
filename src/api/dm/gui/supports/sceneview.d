@@ -102,7 +102,7 @@ class SceneView : VBox
     {
         super.create;
 
-        enableInsets;
+        enablePadding;
 
         //TODO autosize
         width = 300;
@@ -119,7 +119,7 @@ class SceneView : VBox
         auto infoContainer = new HBox;
         infoContainer.layout.isAlignY = true;
         addCreate(infoContainer);
-        infoContainer.enableInsets;
+        infoContainer.enablePadding;
 
         updateTimeMs = new Text("");
         infoContainer.addCreate([new Text("Ums:"), updateTimeMs]);
@@ -133,7 +133,7 @@ class SceneView : VBox
         auto infoContainer2 = new HBox;
         infoContainer2.layout.isAlignY = true;
         addCreate(infoContainer2);
-        infoContainer2.enableInsets;
+        infoContainer2.enablePadding;
 
         gcUsedBytes = new Text("");
         infoContainer2.addCreate([new Text("GCu(KB):"), gcUsedBytes]);
@@ -262,7 +262,7 @@ class SceneView : VBox
         VBox controlInfo = new VBox;
         controlInfo.isHGrow = true;
         controlInfoContainer.addCreate(controlInfo);
-        controlInfo.enableInsets;
+        controlInfo.enablePadding;
 
         shortInfo = new TextField("");
         controlInfo.addCreate(shortInfo);
@@ -272,7 +272,7 @@ class SceneView : VBox
         HBox h1 = new HBox();
         h1.layout.isAlignY = true;
         controlInfo.addCreate(h1);
-        h1.enableInsets;
+        h1.enablePadding;
         wInfo = new TextField("0");
         wInfo.onEnter = (ref e) {
             onObjectDebug((object) { object.width = wInfo.text.to!double; });
@@ -298,7 +298,7 @@ class SceneView : VBox
         HBox h2 = new HBox();
         h2.layout.isAlignY = true;
         controlInfo.addCreate(h2);
-        h2.enableInsets;
+        h2.enablePadding;
         xInfo = new TextField("0");
         xInfo.onEnter = (ref e) {
             if (objectOnDebug)
@@ -324,7 +324,7 @@ class SceneView : VBox
         HBox coordsParent = new HBox();
         coordsParent.layout.isAlignY = true;
         controlInfo.addCreate(coordsParent);
-        coordsParent.enableInsets;
+        coordsParent.enablePadding;
         xpInfo = new TextField("0");
         xpInfo.width = textWidth;
         ypInfo = new TextField("0");
@@ -334,7 +334,7 @@ class SceneView : VBox
         auto paddingContainer = new HBox;
         paddingContainer.layout.isAlignY = true;
         controlInfo.addCreate(paddingContainer);
-        paddingContainer.enableInsets;
+        paddingContainer.enablePadding;
 
         paddingContainer.addCreate(new Text("p:"));
 

@@ -115,7 +115,7 @@ class LabelInfo : Container
     {
         super.create;
 
-        enableInsets;
+        enablePadding;
 
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 

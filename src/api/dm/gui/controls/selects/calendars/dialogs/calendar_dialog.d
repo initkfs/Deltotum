@@ -237,7 +237,7 @@ class CalendarDialog : Control
 
         foreach (week; weekContainers)
         {
-            week.enableInsets;
+            week.enablePadding;
         }
 
         if (!buttonContainer && isCreateButtonContainer)
@@ -252,7 +252,7 @@ class CalendarDialog : Control
 
             addCreate(buttonContainer);
 
-            buttonContainer.enableInsets;
+            buttonContainer.enablePadding;
 
             if (onCreatedButtonContainer)
             {

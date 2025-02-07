@@ -116,7 +116,7 @@ class Calendar : BaseDropDownSelector!(CalendarDialog, Date)
 
                 addCreate(dateChangeContainer);
 
-                dateChangeContainer.enableInsets;
+                dateChangeContainer.enablePadding;
 
                 if (onCreatedDateChangeContainer)
                 {

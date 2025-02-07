@@ -25,7 +25,7 @@ class Textures : Control
     override void initialize()
     {
         super.initialize;
-        enableInsets;
+        enablePadding;
     }
 
     override void create()
@@ -37,11 +37,11 @@ class Textures : Control
 
         auto root = new VBox;
         addCreate(root);
-        root.enableInsets;
+        root.enablePadding;
 
         auto container1 = new HBox;
         root.addCreate(container1);
-        container1.enableInsets;
+        container1.enablePadding;
 
         import api.dm.kit.sprites2d.textures.rgba_texture : RgbaTexture;
 

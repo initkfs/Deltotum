@@ -55,7 +55,7 @@ class BaseTextPopup : BasePopup
             }
         }
 
-        enableInsets;
+        enablePadding;
     }
 
     Labeled newLabel(double width = 0, double height = 0, dstring labelText = null, string iconName = null, double graphicsGap = 0)

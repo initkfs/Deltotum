@@ -31,10 +31,10 @@ class SpaceableContainer : Container
         }
     }
 
-    override void enableInsets()
+    override void enablePadding()
     {
         //TODO lazy flag
-        super.enableInsets;
+        super.enablePadding;
         enableSpacing;
     }
 

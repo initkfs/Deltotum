@@ -133,7 +133,7 @@ class ColorPickerDialog : Control
             updateColor(_lastColor);
         });
         addCreate(alphaField);
-        alphaField.enableInsets;
+        alphaField.enablePadding;
 
         if (contentContainer)
         {
@@ -463,7 +463,7 @@ class ColorPickerDialog : Control
 
             container.addCreate(palNameText);
 
-            palNameText.enableInsets;
+            palNameText.enablePadding;
 
             if (onCreatedPalNameText)
             {

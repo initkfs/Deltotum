@@ -58,7 +58,7 @@ class Frame : Container
 
             addCreate(label);
 
-            label.enableInsets;
+            label.enablePadding;
 
             if (onCreatedLabel)
             {
@@ -66,7 +66,7 @@ class Frame : Container
             }
         }
 
-        enableInsets;
+        enablePadding;
 
         //TODO label position;
         if (padding.top < label.height)

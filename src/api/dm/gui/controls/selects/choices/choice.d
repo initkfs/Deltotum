@@ -301,7 +301,7 @@ class Choice(T) : BaseSelector!T
 
             popupMenu.addCreate(searchField, 0);
 
-            searchField.enableInsets;
+            searchField.enablePadding;
 
             if (onCreatedSearchField)
             {

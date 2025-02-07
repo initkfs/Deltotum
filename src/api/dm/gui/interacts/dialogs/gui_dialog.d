@@ -126,7 +126,7 @@ class GuiDialog : Container
     {
         super.create;
 
-        enableInsets;
+        enablePadding;
 
         assert(contentFactory);
         auto root = contentFactory();
@@ -134,7 +134,7 @@ class GuiDialog : Container
         addCreate(root);
 
         //TODO how disable it?
-        root.enableInsets;
+        root.enablePadding;
         root.layout.isAlignX = true;
 
         if (onContentCreate)

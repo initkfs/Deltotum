@@ -32,7 +32,7 @@ class Controls : Control
     override void initialize()
     {
         super.initialize;
-        enableInsets;
+        enablePadding;
     }
 
     T configureControl(T)(T sprite)
@@ -770,12 +770,12 @@ class Controls : Control
         auto ledContainer = new VBox;
         ledContainer.isAlignX = true;
         root.addCreate(ledContainer);
-        ledContainer.enableInsets;
+        ledContainer.enablePadding;
 
         auto ledContainer1 = new HBox;
         ledContainer1.layout.isAlignY = true;
         ledContainer.addCreate(ledContainer1);
-        ledContainer1.enableInsets;
+        ledContainer1.enablePadding;
 
         auto led1 = new Led(RGBA.red);
         ledContainer1.addCreate(led1);
@@ -789,7 +789,7 @@ class Controls : Control
         auto ledContainer2 = new HBox;
         ledContainer2.layout.isAlignY = true;
         ledContainer.addCreate(ledContainer2);
-        ledContainer2.enableInsets;
+        ledContainer2.enablePadding;
 
         import api.dm.gui.controls.indicators.leds.led_icon : LedIcon;
         import IconNames = api.dm.gui.themes.icons.icon_name;
@@ -926,7 +926,7 @@ class Controls : Control
         t1.maxWidth = 350;
         t1.isBorder = true;
         exp.contentContainer.addCreate(t1);
-        t1.enableInsets;
+        t1.enablePadding;
     }
 
     private void createProgressBars(Container root)

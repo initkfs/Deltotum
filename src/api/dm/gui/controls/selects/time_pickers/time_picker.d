@@ -122,7 +122,7 @@ class TimePicker : BaseDropDownSelector!(TimePickerDialog, TimeOfDay)
 
             addCreate(timeContainer);
 
-            timeContainer.enableInsets;
+            timeContainer.enablePadding;
 
             if (onCreatedTimeContainer)
             {

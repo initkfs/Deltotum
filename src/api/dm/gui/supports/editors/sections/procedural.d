@@ -35,7 +35,7 @@ class Procedural : Control
     override void initialize()
     {
         super.initialize;
-        enableInsets;
+        enablePadding;
     }
 
     size_t[] modes = [0, 1, 2, 6, 7, 8, 10, 11];
@@ -50,11 +50,11 @@ class Procedural : Control
 
         auto root = new VBox(5);
         addCreate(root);
-        root.enableInsets;
+        root.enablePadding;
 
         auto root1 = new HBox(5);
         root.addCreate(root1);
-        root1.enableInsets;
+        root1.enablePadding;
 
         auto t1 = new PenroseTiling(400, 200);
         t1.isMutable = true;
@@ -79,11 +79,11 @@ class Procedural : Control
 
         auto vodRoot = new VBox(5);
         root1.addCreate(vodRoot);
-        vodRoot.enableInsets;
+        vodRoot.enablePadding;
 
         auto vodRoot1 = new HBox(5);
         vodRoot.addCreate(vodRoot1);
-        vodRoot1.enableInsets;
+        vodRoot1.enablePadding;
 
         import api.dm.addon.sprites.textures.vectors.tessellations.voderberg : Voderberg, ShapeType;
 
@@ -113,7 +113,7 @@ class Procedural : Control
 
         auto noiseRoot1 = new HBox(5);
         root.addCreate(noiseRoot1);
-        noiseRoot1.enableInsets;
+        noiseRoot1.enablePadding;
 
         import api.dm.addon.sprites.textures.vectors.noises.perlin : Perlin;
         import api.dm.addon.sprites.textures.vectors.noises.open_simplex : OpenSimplex;
@@ -161,7 +161,7 @@ class Procedural : Control
 
         // auto noiseRoot2 = new HBox(5);
         // root.addCreate(noiseRoot2);
-        // noiseRoot2.enableInsets;
+        // noiseRoot2.enablePadding;
 
         // auto perlin = new Perlin(w, h);
         // perlin.noiseColor.hue = hue;
@@ -178,7 +178,7 @@ class Procedural : Control
 
         auto mazeRoot = new HBox(5);
         root.addCreate(mazeRoot);
-        mazeRoot.enableInsets;
+        mazeRoot.enablePadding;
 
         import api.dm.addon.sprites.textures.vectors.mazes.binary_tree : BinaryTree;
 

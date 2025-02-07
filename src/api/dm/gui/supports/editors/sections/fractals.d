@@ -45,7 +45,7 @@ class Fractals : Control
     override void initialize()
     {
         super.initialize;
-        enableInsets;
+        enablePadding;
         shapeStyle = GraphicStyle(2, theme.colorAccent);
     }
 

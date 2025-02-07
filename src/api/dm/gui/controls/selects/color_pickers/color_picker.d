@@ -53,7 +53,7 @@ class ColorPicker : BaseDropDownSelector!(ColorPickerDialog, RGBA)
         colorValueContainer.isDrawAfterParent = false;
         addCreate(colorValueContainer);
 
-        colorValueContainer.enableInsets;
+        colorValueContainer.enablePadding;
 
         colorCanvas = newColorCanvas;
 

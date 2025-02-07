@@ -23,7 +23,7 @@ class Grahpics : Control
     override void initialize()
     {
         super.initialize;
-        enableInsets;
+        enablePadding;
     }
 
     override void create()
@@ -36,13 +36,13 @@ class Grahpics : Control
         root.isLayoutManaged = false;
         root.y = 350;
         addCreate(root);
-        root.enableInsets;
+        root.enablePadding;
 
         import api.dm.gui.controls.containers.hbox : HBox;
 
         auto shapeContainer = new HBox;
         root.addCreate(shapeContainer);
-        shapeContainer.enableInsets;
+        shapeContainer.enablePadding;
 
         import api.dm.kit.sprites2d.shapes.circle : Circle;
 

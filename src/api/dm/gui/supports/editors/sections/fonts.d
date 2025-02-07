@@ -23,7 +23,7 @@ class Fonts : Control
     override void initialize()
     {
         super.initialize;
-        enableInsets;
+        enablePadding;
     }
 
     override void create()

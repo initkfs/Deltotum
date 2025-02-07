@@ -244,7 +244,7 @@ class Carousel : BaseSelector!Sprite2d
             }
         }
 
-        enableInsets;
+        enablePadding;
 
         showItem;
     }

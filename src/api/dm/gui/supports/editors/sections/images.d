@@ -43,7 +43,7 @@ class Images : Control
     override void initialize()
     {
         super.initialize;
-        enableInsets;
+        enablePadding;
     }
 
     T configureControl(T)(T sprite)
@@ -62,7 +62,7 @@ class Images : Control
 
         auto container = new VBox;
         buildInitCreate(container);
-        container.enableInsets;
+        container.enablePadding;
 
         auto label = new Text;
         label.text = name;
@@ -86,7 +86,7 @@ class Images : Control
 
         auto container = new HBox;
         addCreate(container);
-        container.enableInsets;
+        container.enablePadding;
 
         auto original = new Image;
         build(original);

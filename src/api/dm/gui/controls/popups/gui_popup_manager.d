@@ -70,7 +70,7 @@ class Popup : VBox
 
         hideDelayAnimation.onEnd ~= () { close; };
 
-        enableInsets;
+        enablePadding;
 
         text = new Text;
         text.isFocusable = false;
