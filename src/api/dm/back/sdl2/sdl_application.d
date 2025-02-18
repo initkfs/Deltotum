@@ -108,6 +108,8 @@ class SdlApplication : GuiApp
             return initRes;
         }
 
+        uservices.logger.trace("CLI app initialized, starting backend");
+
         if (isHeadless)
         {
             import std.process : environment;
