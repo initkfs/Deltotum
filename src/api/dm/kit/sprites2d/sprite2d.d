@@ -129,6 +129,8 @@ class Sprite2d : EventKitTarget
     bool isLayoutInvertX;
     bool isLayoutInvertY;
 
+    bool isDisableRecreate;
+
     bool isCreated;
     bool isFocus;
     bool isDraggable;

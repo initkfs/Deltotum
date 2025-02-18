@@ -639,6 +639,18 @@ class Window : GraphicsComponent
     int halfWidth() => width / 2;
     int halfHeight() => height / 2;
 
+    double frameCount(double delayMsec)
+    {
+        import Math = api.math;
+
+        if (frameRate == 0)
+        {
+            return 0;
+        }
+
+        return Math.round(delayMsec / (1000 / frameRate));
+    }
+
     int width()
     {
         int width, height;

@@ -97,6 +97,7 @@ class VectorTexture : Texture2d
     override void create()
     {
         super.create;
+
         if (isMutable)
         {
             createMutTexture;

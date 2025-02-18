@@ -37,7 +37,7 @@ class VectorGraphicsContext : GraphicsContext
 
     void color(RGBA rgba)
     {
-        cairo_set_source_rgb(cr, rgba.rNorm, rgba.gNorm, rgba.bNorm);
+        cairo_set_source_rgba(cr, rgba.rNorm, rgba.gNorm, rgba.bNorm, rgba.a);
         if (lastColor != rgba)
         {
             lastColor = rgba;

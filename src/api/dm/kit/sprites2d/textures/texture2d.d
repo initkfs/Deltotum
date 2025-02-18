@@ -261,13 +261,17 @@ class Texture2d : Sprite2d
                 logger.error(err.toString);
             }
 
-            if (isTextureCreated && Math.abs(oldChangedWidth - value) > changeSizeDelta)
+            if (!isTextureCreated && Math.abs(oldChangedWidth - value) > changeSizeDelta)
             {
-                if (onPreRecreateWidthOldNew)
+                if (!isDisableRecreate)
                 {
-                    onPreRecreateWidthOldNew(oldChangedWidth, width);
+                    if (onPreRecreateWidthOldNew)
+                    {
+                        onPreRecreateWidthOldNew(oldChangedWidth, width);
+                    }
+                    recreate;
                 }
-                recreate;
+
                 oldChangedWidth = width;
 
                 return true;
@@ -293,11 +297,14 @@ class Texture2d : Sprite2d
 
         if (texture && Math.abs(oldChangedHeight - value) > changeSizeDelta)
         {
-            if (onPreRecreateHeightOldNew)
+            if (!isDisableRecreate)
             {
-                onPreRecreateHeightOldNew(oldChangedHeight, value);
+                if (onPreRecreateHeightOldNew)
+                {
+                    onPreRecreateHeightOldNew(oldChangedHeight, value);
+                }
+                recreate;
             }
-            recreate;
             oldChangedHeight = value;
             return true;
         }
@@ -307,8 +314,7 @@ class Texture2d : Sprite2d
 
     override bool recreate()
     {
-        create;
-        return true;
+        return false;
     }
 
     Texture2d copy()
@@ -494,7 +500,8 @@ class Texture2d : Sprite2d
 
     RGBA pixelColor(double x, double y)
     {
-        import std.conv: to;
+        import std.conv : to;
+
         return pixelColor(x.to!uint, y.to!uint);
     }
 

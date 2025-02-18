@@ -1,6 +1,6 @@
 module api.dm.kit.tweens.tween;
 
-import api.dm.kit.components.graphics_component: GraphicsComponent;
+import api.dm.kit.components.graphics_component : GraphicsComponent;
 
 import std.container.dlist : DList;
 
@@ -28,12 +28,12 @@ abstract class Tween : GraphicsComponent
     void delegate()[] onEnd;
 
     double frameRateHz = 0;
-    double timeMs = 0;
-
     bool isThrowInvalidTime;
 
     protected
     {
+        double _timeMs = 0;
+
         double currentFrameCount = 0;
         long currentFrame;
         size_t currentCycle;
@@ -54,7 +54,7 @@ abstract class Tween : GraphicsComponent
 
         import std.conv : to;
 
-        this.timeMs = timeMs.to!double;
+        _timeMs = timeMs.to!double;
     }
 
     abstract void onFrame();
@@ -67,7 +67,7 @@ abstract class Tween : GraphicsComponent
 
     double frameCount(double frameRateHz)
     {
-        immutable double frames = (timeMs * frameRateHz) / 1000;
+        immutable double frames = (_timeMs * frameRateHz) / 1000;
         return frames;
     }
 
@@ -83,7 +83,7 @@ abstract class Tween : GraphicsComponent
 
     override void run()
     {
-        if (isThrowInvalidTime && timeMs == 0)
+        if (isThrowInvalidTime && _timeMs == 0)
         {
             throw new Exception("Animation duration is zero.");
         }
@@ -109,15 +109,22 @@ abstract class Tween : GraphicsComponent
 
         super.run;
 
-        const double rate = frameRate;
-        //TODO error if <= 0
-        if (rate > 0)
-        {
-            currentFrameCount = frameCount(rate);
-            currentFrame = firstFrame;
-        }
+        initFrameCount;
+        currentFrame = firstFrame;
 
         state = !isReverse ? TweenState.direct : TweenState.back;
+    }
+
+    protected bool initFrameCount()
+    {
+        const double rate = frameRate;
+        if (rate <= 0)
+        {
+            return false;
+        }
+
+        currentFrameCount = frameCount(rate);
+        return true;
     }
 
     override void pause()
@@ -228,6 +235,13 @@ abstract class Tween : GraphicsComponent
     void setFirstFrame()
     {
         currentFrame = firstFrame;
+    }
+
+    double timeMs() => _timeMs;
+    void timeMs(double v)
+    {
+        _timeMs = v;
+        initFrameCount;
     }
 
     bool isDirect() => state == TweenState.direct;
