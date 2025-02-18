@@ -35,6 +35,8 @@ struct ScreenResolution
 
 unittest
 {
+    import std.math.operations: isClose;
+    
     auto res1 = ScreenResolution.fromHeight(720);
     assert(isClose(res1.width, 1280));
     assert(isClose(res1.height, 720));

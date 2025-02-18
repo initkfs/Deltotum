@@ -492,13 +492,43 @@ class CliApp : SimpleUnit
         assert(support);
 
         import std.logger : MultiLogger, FileLogger, LogLevel, Logger;
+        import CoreConfigKeys = api.core.core_config_keys;
 
         auto multiLogger = new MultiLogger(
             LogLevel.trace);
         import std.stdio : stdout;
 
         enum consoleLoggerLevel = LogLevel.trace;
-        auto consoleLogger = new FileLogger(stdout, consoleLoggerLevel);
+        FileLogger consoleLogger;
+        if (!CoreConfigKeys.loggerIsShowMemory)
+        {
+            consoleLogger = new FileLogger(stdout, consoleLoggerLevel);
+        }
+        else
+        {
+            consoleLogger = new class FileLogger
+            {
+                this()
+                {
+                    super(stdout, consoleLoggerLevel);
+                }
+
+                override protected void logMsgPart(scope const(char)[] msg)
+                {
+                    if(CoreConfigKeys.loggerIsShowMemory){
+                        import Mem = api.core.utils.mem;
+                        auto memSize = Mem.memBytes;
+                        if(memSize > 0){
+                            import std.format: format;
+                            msg ~= format("[%s]", Mem.formatBytes(memSize));
+                        }
+                    }
+                    
+                    super.logMsgPart(msg);
+                }
+            };
+        }
+
         const string consoleLoggerName = "logger_stdout";
         multiLogger.insertLogger(consoleLoggerName, consoleLogger);
 
