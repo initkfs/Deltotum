@@ -64,117 +64,18 @@ class Containers : Control
         //frame.isVGrow = true;
         vboxRoot.addCreate(frame);
 
-        auto cb = new CenterBox;
-        cb.isBorder = true;
-        frame.addCreate(cb);
-        cb.enablePadding;
-
-        auto cbBtn = configureControl(new Button("Btn"));
-        cbBtn.isGrow = true;
-        cb.addCreate(cbBtn);
-
+        testCenterBox(vboxRoot);
         testBorderBox(vboxRoot);
-
         testCircleBox(vboxRoot);
-
         testFlowBox(vboxRoot);
 
-        // testHContainers;
-        // auto posVContainer = testVContainers;
+        auto root2 = new HBox;
+        root2.isBorder = true;
+        root2.isAlignY = true;
+        addCreate(root2);
 
-        // import api.dm.gui.controls.containers.center_box : CenterBox;
-
-        // auto stackContainer = configureControl(new CenterBox);
-        // posVContainer.addCreate(stackContainer);
-
-        // auto s1 = configureControl(new CenterBox);
-        // s1.width = 120;
-        // s1.height = 120;
-        // stackContainer.addCreate(s1);
-        // auto s2 = configureControl(new CenterBox);
-        // s2.width = 100;
-        // s2.height = 100;
-        // stackContainer.addCreate(s2);
-
-        // auto stBtn1 = createButton("ExpHV");
-        // stBtn1.isHGrow = true;
-        // stBtn1.isVGrow = true;
-
-        // s2.addCreate(stBtn1);
-
-        // import api.dm.gui.controls.containers.border_box : BorderBox;
-
-        // auto pos2Container = configureControl(new HBox(5));
-        // addCreate(pos2Container);
-
-        // import api.dm.gui.controls.containers.splits.vsplit_box: VSplitBox;
-        // import api.dm.gui.controls.containers.splits.hsplit_box: HSplitBox;
-        // import api.dm.gui.controls.containers.vbox: VBox;
-        // import api.dm.kit.sprites2d.textures.vectors.shapes.vconvex_polygon: VConvexPolygon;
-
-        // auto split1 = new VSplitBox;
-        // pos2Container.addCreate(split1);
-
-        // auto content1 = new VConvexPolygon(60, 80, GraphicStyle(1, RGBA.greenyellow, true, RGBA.greenyellow), 0);
-        // buildInitCreate(content1);
-        // auto content2 = new VConvexPolygon(60, 80, GraphicStyle(1, RGBA.salmon, true, RGBA.salmon), 0);
-        // buildInitCreate(content2);
-        // auto content3 = new VConvexPolygon(60, 80, GraphicStyle(1, RGBA.salmon, true, RGBA.salmon), 0);
-        // buildInitCreate(content3);
-
-        // split1.addContent([content1, content2, content3]);
-
-        // auto split2 = new HSplitBox;
-        // pos2Container.addCreate(split2);
-
-        // auto content11 = new VConvexPolygon(60, 80, GraphicStyle(1, RGBA.greenyellow, true, RGBA.greenyellow), 0);
-        // buildInitCreate(content11);
-
-        // auto content22 = new VConvexPolygon(60, 80, GraphicStyle(1, RGBA.salmon, true, RGBA.salmon), 0);
-        // buildInitCreate(content22);
-
-        // auto content33 = new VConvexPolygon(60, 80, GraphicStyle(1, RGBA.crimson, true, RGBA.crimson), 0);
-        // buildInitCreate(content33);
-
-        // split2.addContent([content11, content22, content33]);
-
-        // //Complex splitting
-
-        // auto splitLeft = new VSplitBox;
-        // splitLeft.boundsColor = RGBA.blueviolet;
-        // buildInitCreate(splitLeft);
-        // auto contentLeftTop = new VConvexPolygon(60, 80, GraphicStyle(1, RGBA.greenyellow, true, RGBA.greenyellow), 0);
-        // buildInitCreate(contentLeftTop);
-        // auto contentLeftBottom = new VConvexPolygon(60, 80, GraphicStyle(1, RGBA.salmon, true, RGBA.salmon), 0);
-        // buildInitCreate(contentLeftBottom);
-
-        // splitLeft.addContent([contentLeftTop, contentLeftBottom]);
-
-        // auto splitCenter = new VSplitBox;
-        // buildInitCreate(splitCenter);
-        // auto contentCenterTop = new VConvexPolygon(60, 80, GraphicStyle(1, RGBA.greenyellow, true, RGBA.greenyellow), 0);
-        // buildInitCreate(contentCenterTop);
-        // auto contentCenterBottom = new VConvexPolygon(60, 80, GraphicStyle(1, RGBA.salmon, true, RGBA.salmon), 0);
-        // buildInitCreate(contentCenterBottom);
-
-        // splitCenter.boundsColor = RGBA.aliceblue;
-
-        // splitCenter.addContent([contentCenterTop, contentCenterBottom]);
-
-        // auto splitRight = new VSplitBox;
-        // buildInitCreate(splitRight);
-        // auto contentRightTop = new VConvexPolygon(60, 80, GraphicStyle(1, RGBA.greenyellow, true, RGBA.greenyellow), 0);
-        // buildInitCreate(contentRightTop);
-        // auto contentRightBottom = new VConvexPolygon(60, 80, GraphicStyle(1, RGBA.salmon, true, RGBA.salmon), 0);
-        // buildInitCreate(contentRightBottom);
-
-        // splitRight.boundsColor = RGBA.fuchsia;
-
-        // splitRight.addContent([contentRightTop, contentRightBottom]);
-
-        // auto splitMain = new HSplitBox;
-        // pos2Container.addCreate(splitMain);
-        // splitMain.addContent([splitLeft, splitCenter, splitRight]);
+        testScrollBox(root2);
+        testSplitBox(root2);
     }
 
     void testHBox(Control root)
@@ -309,6 +210,18 @@ class Containers : Control
         vboxGrowChild.addCreate(cboxGrowChild2);
     }
 
+    void testCenterBox(Container root)
+    {
+        auto cb = new CenterBox;
+        cb.isBorder = true;
+        root.addCreate(cb);
+        cb.enablePadding;
+
+        auto cbBtn = configureControl(new Button("Btn"));
+        cbBtn.isGrow = true;
+        cb.addCreate(cbBtn);
+    }
+
     void testBorderBox(Container root)
     {
 
@@ -387,6 +300,102 @@ class Containers : Control
             auto btn = createButton(i.to!dstring);
             fbox2.addCreate(btn);
         }
+    }
+
+    void testScrollBox(Container root){
+        import api.dm.gui.controls.containers.scroll_box: ScrollBox;
+
+        auto box = new ScrollBox;
+        box.resize(100, 100);
+        root.addCreate(box);
+
+        auto content = theme.circleShape(200, GraphicStyle(1, RGBA.lightblue, true, RGBA.yellowgreen));
+        box.setContent(content);
+    }
+
+    void testSplitBox(Container root)
+    {
+
+        import api.dm.gui.controls.containers.splits.vsplit_box : VSplitBox;
+        import api.dm.gui.controls.containers.splits.hsplit_box : HSplitBox;
+        import api.dm.gui.controls.containers.vbox : VBox;
+
+        auto split1 = new VSplitBox;
+        root.addCreate(split1);
+
+        const double rectW = 60;
+        const double rectH = 80;
+
+        auto content1 = theme.rectShape(rectW, rectH, 0, GraphicStyle(1, RGBA.greenyellow, true, RGBA
+                .greenyellow));
+        buildInitCreate(content1);
+        auto content2 = theme.rectShape(rectW, rectH, 0, GraphicStyle(1, RGBA.salmon, true, RGBA
+                .salmon));
+        buildInitCreate(content2);
+        auto content3 = theme.rectShape(rectW, rectH, 0, GraphicStyle(1, RGBA.salmon, true, RGBA
+                .salmon));
+        buildInitCreate(content3);
+
+        split1.addContent([content1, content2, content3]);
+
+        auto split2 = new HSplitBox;
+        root.addCreate(split2);
+
+        auto content11 = theme.rectShape(rectW, rectH, 0, GraphicStyle(1, RGBA.greenyellow, true, RGBA
+                .greenyellow));
+        buildInitCreate(content11);
+        auto content22 = theme.rectShape(rectW, rectH, 0, GraphicStyle(1, RGBA.salmon, true, RGBA
+                .salmon));
+        buildInitCreate(content22);
+        auto content33 = theme.rectShape(rectW, rectH, 0, GraphicStyle(1, RGBA.crimson, true, RGBA
+                .crimson));
+        buildInitCreate(content33);
+
+        split2.addContent([content11, content22, content33]);
+
+        //Complex splitting
+
+        auto splitLeft = new VSplitBox;
+        splitLeft.boundsColor = RGBA.blueviolet;
+        buildInitCreate(splitLeft);
+        auto contentLeftTop = theme.rectShape(rectW, rectH, 0, GraphicStyle(1, RGBA.greenyellow, true, RGBA
+                .greenyellow));
+        buildInitCreate(contentLeftTop);
+        auto contentLeftBottom = theme.rectShape(rectW, rectH, 0, GraphicStyle(1, RGBA.salmon, true, RGBA
+                .salmon));
+        buildInitCreate(contentLeftBottom);
+
+        splitLeft.addContent([contentLeftTop, contentLeftBottom]);
+
+        auto splitCenter = new VSplitBox;
+        buildInitCreate(splitCenter);
+        auto contentCenterTop = theme.rectShape(rectW, rectH, 0, GraphicStyle(1, RGBA.greenyellow, true, RGBA
+                .greenyellow));
+        buildInitCreate(contentCenterTop);
+        auto contentCenterBottom = theme.rectShape(rectW, rectH, 0, GraphicStyle(1, RGBA.salmon, true, RGBA
+                .salmon));
+        buildInitCreate(contentCenterBottom);
+
+        splitCenter.boundsColor = RGBA.aliceblue;
+
+        splitCenter.addContent([contentCenterTop, contentCenterBottom]);
+
+        auto splitRight = new VSplitBox;
+        buildInitCreate(splitRight);
+        auto contentRightTop = theme.rectShape(rectW, rectH, 0, GraphicStyle(1, RGBA.greenyellow, true, RGBA
+                .greenyellow));
+        buildInitCreate(contentRightTop);
+        auto contentRightBottom = theme.rectShape(rectW, rectH, 0,GraphicStyle(1, RGBA.salmon, true, RGBA
+                .salmon));
+        buildInitCreate(contentRightBottom);
+
+        splitRight.boundsColor = RGBA.fuchsia;
+
+        splitRight.addContent([contentRightTop, contentRightBottom]);
+
+        auto splitMain = new HSplitBox;
+        root.addCreate(splitMain);
+        splitMain.addContent([splitLeft, splitCenter, splitRight]);
     }
 
     T configureControl(T)(T sprite)
