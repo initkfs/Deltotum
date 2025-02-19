@@ -28,7 +28,7 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
         double _maxHeight = 1;
     }
 
-    ComResult load(string fontFilePath, size_t fontSize = 12) nothrow
+    ComResult load(string fontFilePath, float fontSize = 12) nothrow
     {
         if (ptr)
         {
@@ -48,13 +48,13 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
         this._fontPath = fontFilePath;
         this._fontSize = fontSize;
 
-        ptr = TTF_OpenFont(_fontPath.toStringz, cast(int) _fontSize);
+        ptr = TTF_OpenFont(_fontPath.toStringz, _fontSize);
         if (!ptr)
         {
             return getErrorRes("Unable to load ttf font from " ~ fontFilePath);
         }
 
-        _maxHeight = TTF_FontHeight(ptr);
+        _maxHeight = TTF_GetFontHeight(ptr);
 
         return ComResult.success;
     }
@@ -85,7 +85,7 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
 
         assert(textPtr);
 
-        SDL_Surface* fontSurfacePtr = TTF_RenderUTF8_Blended(ptr, textPtr, color);
+        SDL_Surface* fontSurfacePtr = TTF_RenderText_Blended(ptr, textPtr, color);
         if (!fontSurfacePtr)
         {
             return getErrorRes("Unable to render text");
