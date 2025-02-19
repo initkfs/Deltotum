@@ -17,13 +17,15 @@ class SDLScreen : SdlObject, ComScreen
 {
     ComResult getCount(out size_t count) nothrow
     {
-        const int screenCountOrNegErr = SDL_GetNumVideoDisplays();
-        if (screenCountOrNegErr < 0)
+        int dcount;
+        SDL_DisplayID* displays = SDL_GetDisplays(&dcount);
+        
+        if (!displays)
         {
-            return getErrorRes(screenCountOrNegErr);
+            return getErrorRes;
         }
 
-        count = screenCountOrNegErr;
+        count = dcount;
 
         return ComResult.success;
     }
@@ -32,10 +34,9 @@ class SDLScreen : SdlObject, ComScreen
         out int width, out int height) nothrow
     {
         SDL_Rect bounds;
-        const zeroOrErrorCode = SDL_GetDisplayBounds(index, &bounds);
-        if (zeroOrErrorCode)
+        if (!SDL_GetDisplayBounds(index, &bounds))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
 
         x = bounds.x;
@@ -49,10 +50,9 @@ class SDLScreen : SdlObject, ComScreen
         out int width, out int height) nothrow
     {
         SDL_Rect bounds;
-        const zeroOrErrorCode = SDL_GetDisplayUsableBounds(index, &bounds);
-        if (zeroOrErrorCode)
+        if (!SDL_GetDisplayUsableBounds(index, &bounds))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
 
         x = bounds.x;
@@ -84,34 +84,20 @@ class SDLScreen : SdlObject, ComScreen
 
     ComResult getMode(int index, out ComScreenMode mode) nothrow
     {
-        SDL_DisplayMode m;
-        const zeroOrError = SDL_GetCurrentDisplayMode(index, &m);
-        if (zeroOrError != 0)
+        SDL_DisplayMode* mode = SDL_GetCurrentDisplayMode(index);
+        if (!mode)
         {
-            return getErrorRes(zeroOrError);
+            return getErrorRes;
         }
-        mode = ComScreenMode(m.w, m.h, m.refresh_rate);
-        return ComResult.success;
-    }
 
-    ComResult getDPI(int index, out ComScreenDpi screenDPI) nothrow
-    {
-        ComScreenDpi dpi;
-        float diagDpi, horizDpi, vertDpi;
-        const zeroOrError = SDL_GetDisplayDPI(index, &diagDpi, &horizDpi, &vertDpi);
-        if (zeroOrError != 0)
-        {
-            return getErrorRes(zeroOrError);
-        }
-        dpi = ComScreenDpi(diagDpi, horizDpi, vertDpi);
-        screenDPI = dpi;
+        mode = ComScreenMode(m.w, m.h, m.refresh_rate);
         return ComResult.success;
     }
 
     ComResult getOrientation(int index, out ComScreenOrientation result) nothrow
     {
         const orientation = SDL_GetCurrentDisplayOrientation(index);
-        final switch (orientation) with (SDL_DisplayOrientation)
+        final switch (orientation)
         {
             case SDL_ORIENTATION_UNKNOWN:
                 result = ComScreenOrientation.none;

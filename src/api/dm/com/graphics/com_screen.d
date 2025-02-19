@@ -16,7 +16,7 @@ struct ComScreenMode
 {
     int width;
     int height;
-    int rateHz;
+    float rateHz;
 }
 
 struct ComScreenDpi
@@ -39,7 +39,6 @@ nothrow:
     ComResult getUsableBounds(int index, out int x, out int y, out int width, out int height);
     ComResult getName(int index, out dstring name);
     ComResult getMode(int index, out ComScreenMode mode);
-    ComResult getDPI(int index, out ComScreenDpi screenDPI);
     ComResult getOrientation(int index, out ComScreenOrientation result);
 
 }

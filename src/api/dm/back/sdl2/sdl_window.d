@@ -435,6 +435,21 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         return ComResult.success;
     }
 
+    ComResult getDPI(out float dpi, float factor = 96) nothrow
+    {
+        //SDL_GetDisplayDPI() - not reliable across platforms, approximately replaced by multiplying SDL_GetWindowDisplayScale() times 160 on iPhone and Android, and 96 on other platforms.
+
+        float scale = SDL_GetWindowDisplayScale();
+        if (scale == 0)
+        {
+            return getErrorRes;
+        }
+
+        dpi = factor * scale;
+
+        return ComResult.success;
+    }
+
     ComResult nativePtr(out ComNativePtr ptrInfo) nothrow
     {
         if (!ptr && isDisposed)

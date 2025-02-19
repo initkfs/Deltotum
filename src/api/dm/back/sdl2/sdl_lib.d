@@ -77,7 +77,7 @@ class SdlLib : SdlObject
     {
         import std.conv : text;
 
-        int ver = SDL_GetVersion();
+        //int ver = SDL_GetVersion();
         int major, minor, patch;
 
         SDL_VERSIONNUM(major, minor, patch);
