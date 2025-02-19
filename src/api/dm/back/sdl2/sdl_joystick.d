@@ -18,7 +18,7 @@ class SdlJoystick : SdlObjectWrapper!SDL_Joystick
         super(ptr);
     }
 
-    this(int deviceIndex = 0)
+    this(SDL_JoystickID deviceIndex = 0)
     {
         super();
         ptr = SDL_OpenJoystick(deviceIndex);
@@ -35,19 +35,18 @@ class SdlJoystick : SdlObjectWrapper!SDL_Joystick
 
     static SdlJoystick fromDevices()
     {
-        const int joystickCount = SDL_NumJoysticks();
-        if (joystickCount == 0)
+        int joystickNums;
+        SDL_JoystickID* joysticks = SDL_GetJoysticks(&joystickNums);
+        if (!joysticks)
         {
             return null;
         }
 
-        if (joystickCount > 1)
-        {
-            //TODO index devices
+        if(joystickNums == 0){
             return null;
         }
 
-        return new SdlJoystick(0);
+        return new SdlJoystick(*joysticks);
     }
 
     override protected bool disposePtr() nothrow
