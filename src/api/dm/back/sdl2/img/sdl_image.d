@@ -72,7 +72,7 @@ class SdlImage : SdlSurface, ComImage
 
         rwBuffer = rw;
 
-        SDL_Surface* surfPtr = IMG_Load_RW(rw, 1);
+        SDL_Surface* surfPtr = IMG_Load_IO(rw, 1);
         if (!surfPtr)
         {
             return getErrorRes("Error loading image from buffer");
