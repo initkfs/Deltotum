@@ -14,16 +14,5 @@ import api.dm.back.sdl3.externs.csdl3;
  */
 class SdlMixObject : SdlObject
 {
-
-    override string getError() const nothrow
-    {
-        const char* errPtr = Mix_GetError();
-        const error = ptrToStr(errPtr);
-        return error;
-    }
-
-    override bool clearError() const nothrow
-    {
-        return false;
-    }
+    
 }

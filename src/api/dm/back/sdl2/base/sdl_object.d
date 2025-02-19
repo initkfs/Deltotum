@@ -32,7 +32,7 @@ class SdlObject : ComObject
         assert(typeConverter !is null);
     }
 
-    ComResult getErrorRes(int code) const nothrow
+    ComResult getErrorRes(int code = -1) const nothrow
     {
         return ComResult.error(code, null, getError);
     }

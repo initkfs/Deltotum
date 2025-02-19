@@ -52,10 +52,10 @@ class SdlMixMusic : SdlMixObject
         {
             return ComResult.error("Sound not loaded");
         }
-        const int zeroOrErrorCode = Mix_PlayMusic(ptr, loops);
-        if (zeroOrErrorCode)
+        const result = Mix_PlayMusic(ptr, loops);
+        if (!result)
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
         return ComResult.success;
     }
@@ -67,12 +67,7 @@ class SdlMixMusic : SdlMixObject
             return ComResult.error("Sound not loaded");
         }
 
-        const int alwaysZero = Mix_HaltMusic();
-        if (alwaysZero != 0)
-        {
-            return getErrorRes(alwaysZero);
-        }
-
+        Mix_HaltMusic();
         return ComResult.success;
     }
 
