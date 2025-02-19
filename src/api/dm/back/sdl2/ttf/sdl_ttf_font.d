@@ -12,7 +12,7 @@ import api.dm.com.graphics.com_surface : ComSurface;
 
 import std.conv : to;
 
-import bindbc.sdl;
+import api.dm.back.sdl3.externs.csdl3;
 
 import std.string : toStringz;
 

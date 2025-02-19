@@ -8,7 +8,7 @@ import api.dm.com.platforms.objects.com_object : ComObject;
 import api.dm.com.graphics.com_blend_mode : ComBlendMode;
 import api.dm.com.platforms.types.com_type_convertor : ComTypeConvertor;
 
-import bindbc.sdl;
+import api.dm.back.sdl3.externs.csdl3;
 
 /**
  * Authors: initkfs

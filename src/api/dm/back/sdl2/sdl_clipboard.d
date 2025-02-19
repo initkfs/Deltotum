@@ -8,7 +8,7 @@ import api.dm.com.inputs.com_clipboard : ComClipboard;
 import api.dm.back.sdl2.base.sdl_object : SdlObject;
 import api.dm.com.platforms.results.com_result : ComResult;
 
-import bindbc.sdl;
+import api.dm.back.sdl3.externs.csdl3;
 
 /**
  * Authors: initkfs

@@ -7,7 +7,7 @@ version(SdlBackend):
 import api.dm.com.platforms.results.com_result : ComResult;
 import api.dm.back.sdl2.mix.base.sdl_mix_object : SdlMixObject;
 
-import bindbc.sdl;
+import api.dm.back.sdl3.externs.csdl3;
 
 /**
  * Authors: initkfs

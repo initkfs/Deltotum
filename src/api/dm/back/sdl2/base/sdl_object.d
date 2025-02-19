@@ -10,7 +10,7 @@ import api.dm.back.sdl2.base.sdl_type_converter : SdlTypeConverter;
 
 import std.string : toStringz, fromStringz;
 
-import bindbc.sdl;
+import api.dm.back.sdl3.externs.csdl3;
 
 /**
  * Authors: initkfs

@@ -7,7 +7,7 @@ version(SdlBackend):
 import api.dm.back.sdl2.base.sdl_object : SdlObject;
 import api.dm.com.inputs.com_keyboard : ComKeyName;
 
-import bindbc.sdl;
+import api.dm.back.sdl3.externs.csdl3;
 
 /**
  * Authors: initkfs

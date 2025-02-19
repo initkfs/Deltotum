@@ -6,7 +6,7 @@ version(SdlBackend):
 
 import api.dm.back.sdl2.ttf.base.sdl_ttf_object : SdlTTFObject;
 
-import bindbc.sdl;
+import api.dm.back.sdl3.externs.csdl3;
 
 /**
  * Authors: initkfs

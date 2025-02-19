@@ -6,7 +6,7 @@ version(SdlBackend):
 
 import api.dm.back.sdl2.img.base.sdl_image_object : SdlImageObject;
 
-import bindbc.sdl;
+import api.dm.back.sdl3.externs.csdl3;
 
 /**
  * Authors: initkfs

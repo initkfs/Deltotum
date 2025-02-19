@@ -6,7 +6,7 @@ version(SdlBackend):
 
 import api.dm.back.sdl2.base.sdl_object_wrapper : SdlObjectWrapper;
 
-import bindbc.sdl;
+import api.dm.back.sdl3.externs.csdl3;
 
 /**
  * Authors: initkfs

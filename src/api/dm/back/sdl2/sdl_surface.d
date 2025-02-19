@@ -15,7 +15,7 @@ import api.dm.back.sdl2.sdl_window : SdlWindow;
 import api.math.geom2.rect2 : Rect2d;
 import std.typecons : Tuple;
 
-import bindbc.sdl;
+import api.dm.back.sdl3.externs.csdl3;
 
 /**
  * Authors: initkfs

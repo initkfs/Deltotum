@@ -63,7 +63,7 @@ import api.dm.sys.cairo.libs : CairoLib;
 
 //import api.dm.sys.chipmunk.libs : ChipmLib;
 
-import bindbc.sdl;
+import api.dm.back.sdl3.externs.csdl3;
 import std.typecons : Nullable;
 
 /**

@@ -6,7 +6,7 @@ version(SdlBackend):
 
 import std.string : toStringz, fromStringz;
 
-import bindbc.sdl;
+import api.dm.back.sdl3.externs.csdl3;
 import bindbcConfig = bindbc.sdl.config;
 
 import api.dm.back.sdl2.base.sdl_object : SdlObject;

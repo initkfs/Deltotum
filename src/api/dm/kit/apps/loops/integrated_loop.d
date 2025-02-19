@@ -2,7 +2,7 @@ module api.dm.kit.apps.loops.integrated_loop;
 
 import api.dm.kit.apps.loops.loop : Loop;
 
-import bindbc.sdl;
+import api.dm.back.sdl3.externs.csdl3;
 
 /**
  * Authors: initkfs

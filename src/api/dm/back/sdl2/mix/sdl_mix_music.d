@@ -9,7 +9,7 @@ import api.dm.back.sdl2.mix.base.sdl_mix_object : SdlMixObject;
 import api.dm.com.platforms.objects.com_ptr_manager : ComPtrManager;
 
 import std.string : toStringz, fromStringz;
-import bindbc.sdl;
+import api.dm.back.sdl3.externs.csdl3;
 
 class SdlMixMusic : SdlMixObject
 {

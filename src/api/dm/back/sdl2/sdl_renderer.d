@@ -17,7 +17,7 @@ import api.math.flip : Flip;
 import api.math.geom2.vec2 : Vec2d, Vec2i;
 import api.math.geom2.rect2 : Rect2d, Rect2i;
 
-import bindbc.sdl;
+import api.dm.back.sdl3.externs.csdl3;
 
 /**
  * Authors: initkfs
