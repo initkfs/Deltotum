@@ -36,8 +36,11 @@ class SdlClipboard : SdlObject, ComClipboard
 
     ComResult hasText(out bool isHasText) nothrow
     {
-        const sdlbool result = SDL_HasClipboardText();
-        isHasText = typeConverter.toBool(result);
+        if (SDL_HasClipboardText())
+        {
+            isHasText = typeConverter.toBool(result);
+        }
+
         return ComResult.success;
     }
 
@@ -45,10 +48,9 @@ class SdlClipboard : SdlObject, ComClipboard
     {
         import std.string : toStringz;
 
-        const zeroOrErrorCode = SDL_SetClipboardText(text.toStringz);
-        if (zeroOrErrorCode)
+        if (!SDL_SetClipboardText(text.toStringz))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
         return ComResult.success;
     }
