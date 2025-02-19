@@ -94,16 +94,18 @@
         "./src"
     ],
     "importPaths": [
-        "./src"
+        "./src",
+        "./libs/sdl3"
     ],
     "dependencies": {
-        "bindbc-sdl": "~>1.2.1"
+        "bindbc-loader": "~>1.0.3"
     },
     "dflags": [
         "-dip1000",
         "-preview=in",
         "-preview=fixAliasThis",
-        "-J=./data"
+        "-J=./data",
+        "-P=-I./libs/sdl3/SDL_lib"
     ],
     "versions": [
         "SDL_Image",
