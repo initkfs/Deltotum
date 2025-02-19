@@ -152,7 +152,7 @@ class SdlApplication : GuiApp
         uservices.logger.trace("SDL ", sdlLib.getSdlVersionInfo);
 
         //TODO move to hal layer
-        SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_WARN);
+        SDL_SetLogPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_WARN);
 
         //https://discourse.libsdl.org/t/graphic-artifacts-when-using-render-scale-quality/20320/3
         //SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
@@ -839,9 +839,9 @@ class SdlApplication : GuiApp
 
         while (isProcessEvents && SDL_PollEvent(&event))
         {
-            const startEvent = SDL_GetTicks64();
+            const startEvent = SDL_GetTicks();
             handleEvent(&event);
-            const endEvent = SDL_GetTicks64();
+            const endEvent = SDL_GetTicks();
 
             if (!mustBeWindow.isNull)
             {
@@ -857,7 +857,7 @@ class SdlApplication : GuiApp
 
     void updateRender(double accumMsRest)
     {
-        const startStateTime = SDL_GetTicks64();
+        const startStateTime = SDL_GetTicks();
         windowManager.onWindows((window) {
             //focus may not be on the window
             if (window.isShowing)
@@ -867,7 +867,7 @@ class SdlApplication : GuiApp
             return true;
         });
 
-        const endStateTime = SDL_GetTicks64();
+        const endStateTime = SDL_GetTicks();
 
         auto mustBeWindow = windowManager.current;
 
@@ -879,7 +879,7 @@ class SdlApplication : GuiApp
 
     void updateFreqLoopDelta(double delta)
     {
-        const startStateTime = SDL_GetTicks64();
+        const startStateTime = SDL_GetTicks();
         windowManager.onWindows((window) {
             //focus may not be on the window
             if (window.isShowing)
@@ -889,7 +889,7 @@ class SdlApplication : GuiApp
             return true;
         });
 
-        const endStateTime = SDL_GetTicks64();
+        const endStateTime = SDL_GetTicks();
 
         auto mustBeWindow = windowManager.current;
 
@@ -904,7 +904,7 @@ class SdlApplication : GuiApp
         eventProcessor.process(event);
 
         //Ctrl + C
-        if (event.type == SDL_QUIT)
+        if (event.type == SDL_EVENT_QUIT)
         {
             windowManager.destroyAll;
             requestExit;

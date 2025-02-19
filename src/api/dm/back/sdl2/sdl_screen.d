@@ -110,7 +110,7 @@ class SDLScreen : SdlObject, ComScreen
 
     ComResult getOrientation(int index, out ComScreenOrientation result) nothrow
     {
-        const orientation = SDL_GetDisplayOrientation(index);
+        const orientation = SDL_GetCurrentDisplayOrientation(index);
         final switch (orientation) with (SDL_DisplayOrientation)
         {
             case SDL_ORIENTATION_UNKNOWN:

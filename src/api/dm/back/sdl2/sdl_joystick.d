@@ -21,7 +21,7 @@ class SdlJoystick : SdlObjectWrapper!SDL_Joystick
     this(int deviceIndex = 0)
     {
         super();
-        ptr = SDL_JoystickOpen(deviceIndex);
+        ptr = SDL_OpenJoystick(deviceIndex);
         if (!ptr)
         {
             string error = "Failed to open joystick";
@@ -54,7 +54,7 @@ class SdlJoystick : SdlObjectWrapper!SDL_Joystick
     {
         if (ptr)
         {
-            SDL_JoystickClose(ptr);
+            SDL_CloseJoystick(ptr);
             return true;
         }
         return false;

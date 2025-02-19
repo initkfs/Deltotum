@@ -36,7 +36,7 @@ class SdlClipboard : SdlObject, ComClipboard
 
     ComResult hasText(out bool isHasText) nothrow
     {
-        const SDL_bool result = SDL_HasClipboardText();
+        const sdlbool result = SDL_HasClipboardText();
         isHasText = typeConverter.toBool(result);
         return ComResult.success;
     }

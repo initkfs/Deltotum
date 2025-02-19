@@ -21,7 +21,7 @@ class SdlImage : SdlSurface, ComImage
 {
     private
     {
-        SDL_RWops* rwBuffer;
+        SDL_IOStream* rwBuffer;
     }
 
     this()
@@ -63,7 +63,7 @@ class SdlImage : SdlSurface, ComImage
             disposePtr;
         }
 
-        SDL_RWops* rw = SDL_RWFromConstMem(content.ptr, cast(int) content
+        SDL_IOStream* rw = SDL_IOFromConstMem(content.ptr, cast(int) content
                 .length);
         if (!rw)
         {
@@ -121,7 +121,7 @@ class SdlImage : SdlSurface, ComImage
     {
         if (rwBuffer)
         {
-            // SDL_RWclose(rwBuffer);
+            // SDL_CloseIO(rwBuffer);
             // rwBuffer = null;
         }
         return super.disposePtr;

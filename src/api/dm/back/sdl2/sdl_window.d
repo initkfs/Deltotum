@@ -62,7 +62,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
                 break;
         }
 
-        //flags |= SDL_WINDOW_ALLOW_HIGHDPI;
+        //flags |= SDL_WINDOW_HIGH_PIXEL_DENSITY;
 
         ptr = SDL_CreateWindow(
             null,
@@ -222,7 +222,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult setResizable(bool isResizable) nothrow
     {
-        SDL_bool isSdlResizable = typeConverter.fromBool(isResizable);
+        sdlbool isSdlResizable = typeConverter.fromBool(isResizable);
         SDL_SetWindowResizable(ptr, isSdlResizable);
         return ComResult.success;
     }
@@ -393,7 +393,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult getScreenIndex(out size_t index) nothrow
     {
-        const indexOrNegError = SDL_GetWindowDisplayIndex(ptr);
+        const indexOrNegError = SDL_GetDisplayForWindow(ptr);
         if (indexOrNegError < 0)
         {
             return getErrorRes(indexOrNegError);

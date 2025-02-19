@@ -49,7 +49,7 @@ class SdlLib : SdlObject
 
     ulong getTicks()
     {
-        return SDL_GetTicks64();
+        return SDL_GetTicks();
     }
 
     void delay(uint ms)
@@ -79,7 +79,7 @@ class SdlLib : SdlObject
 
     bool isScreenSaverEnabled() const nothrow
     {
-        auto isEnabled = SDL_IsScreenSaverEnabled();
+        auto isEnabled = SDL_ScreenSaverEnabled();
         return typeConverter.toBool(isEnabled);
     }
 
@@ -114,7 +114,7 @@ class SdlLib : SdlObject
         import std.string : toStringz;
 
         //TODO string loss due to garbage collector?
-        SDL_bool isSet = SDL_SetHint(name.toStringz,
+        sdlbool isSet = SDL_SetHint(name.toStringz,
             value.toStringz);
         return typeConverter.toBool(isSet);
     }

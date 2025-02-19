@@ -44,8 +44,8 @@ class SDLSystem : SdlObject, ComSystem
 
     ComResult removeTimer(int timerId)
     {
-        SDL_bool isRemove = SDL_RemoveTimer(timerId);
-        if (isRemove == SDL_bool.SDL_FALSE)
+        sdlbool isRemove = SDL_RemoveTimer(timerId);
+        if (isRemove == sdlbool.false)
         {
             return getErrorRes("Timer not removed");
         }

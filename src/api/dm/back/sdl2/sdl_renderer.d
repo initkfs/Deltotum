@@ -52,7 +52,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         }
 
         this.window = window;
-        //SDL_RenderSetLogicalSize(ptr, w, h);
+        //SDL_SetRenderLogicalPresentation(ptr, w, h);
     }
 
     ComResult setDrawColor(ubyte r, ubyte g, ubyte b, ubyte a) nothrow
@@ -119,7 +119,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
             }
             //TODO unsafe
             SDL_Texture* sdlPtr = nPtr.castSafe!(SDL_Texture*);
-            const int zeroOrErrorCode = SDL_RenderCopy(ptr, sdlPtr, null, null);
+            const int zeroOrErrorCode = SDL_RenderTexture(ptr, sdlPtr, null, null);
             if (zeroOrErrorCode)
             {
                 return getErrorRes(zeroOrErrorCode);
@@ -135,7 +135,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         rect.y = cast(int) clip.y;
         rect.w = cast(int) clip.width;
         rect.h = cast(int) clip.height;
-        const zeroOrErrorCode = SDL_RenderSetClipRect(ptr, &rect);
+        const zeroOrErrorCode = SDL_SetRenderClipRect(ptr, &rect);
         if (zeroOrErrorCode)
         {
             return getErrorRes(zeroOrErrorCode);
@@ -146,14 +146,14 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
     ComResult getClipRect(out Rect2d clip) nothrow
     {
         SDL_Rect rect;
-        SDL_RenderGetClipRect(ptr, &rect);
+        SDL_GetRenderClipRect(ptr, &rect);
         clip = Rect2d(rect.x, rect.y, rect.w, rect.h);
         return ComResult.success;
     }
 
     ComResult removeClipRect() nothrow
     {
-        const zeroOrErrorCode = SDL_RenderSetClipRect(ptr, null);
+        const zeroOrErrorCode = SDL_SetRenderClipRect(ptr, null);
         if (zeroOrErrorCode)
         {
             return getErrorRes(zeroOrErrorCode);
@@ -218,7 +218,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
 
     ComResult drawRect(const SDL_Rect* r) nothrow
     {
-        const int zeroOrErrorCode = SDL_RenderDrawRect(ptr, r);
+        const int zeroOrErrorCode = SDL_RenderRect(ptr, r);
         if (zeroOrErrorCode)
         {
             return getErrorRes(zeroOrErrorCode);
@@ -228,7 +228,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
 
     ComResult drawRects(SDL_Rect[] rects) nothrow
     {
-        const int zeroOrErrorCode = SDL_RenderDrawRects(ptr, rects.ptr, cast(int) rects.length);
+        const int zeroOrErrorCode = SDL_RenderRects(ptr, rects.ptr, cast(int) rects.length);
         if (zeroOrErrorCode)
         {
             return getErrorRes(zeroOrErrorCode);
@@ -251,7 +251,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
 
     ComResult drawPoint(int x, int y) nothrow
     {
-        const int zeroOrErrorCode = SDL_RenderDrawPoint(ptr, x, y);
+        const int zeroOrErrorCode = SDL_RenderPoint(ptr, x, y);
         if (zeroOrErrorCode)
         {
             return getErrorRes(zeroOrErrorCode);
@@ -270,7 +270,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
 
     ComResult drawPoints(SDL_Point[] ps) nothrow
     {
-        const int zeroOrErrorCode = SDL_RenderDrawPoints(ptr, ps.ptr, cast(int) ps.length);
+        const int zeroOrErrorCode = SDL_RenderPoints(ptr, ps.ptr, cast(int) ps.length);
         if (zeroOrErrorCode)
         {
             return getErrorRes(zeroOrErrorCode);
@@ -283,7 +283,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
 
     ComResult drawLine(int startX, int startY, int endX, int endY) nothrow
     {
-        const int zeroOrErrorCode = SDL_RenderDrawLine(ptr, startX, startY, endX, endY);
+        const int zeroOrErrorCode = SDL_RenderLine(ptr, startX, startY, endX, endY);
         if (zeroOrErrorCode)
         {
             return getErrorRes(zeroOrErrorCode);
@@ -295,7 +295,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
     ComResult drawLines(SDL_Point[] linePoints, size_t count) nothrow
     {
         assert(count <= linePoints.length);
-        const int zeroOrErrorCode = SDL_RenderDrawLines(ptr,
+        const int zeroOrErrorCode = SDL_RenderLines(ptr,
             linePoints.ptr,
             cast(int) count);
         if (zeroOrErrorCode)
@@ -322,7 +322,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
 
     ComResult setViewport(SDL_Rect* rect) nothrow
     {
-        const int zeroOrErrorCode = SDL_RenderSetViewport(ptr, rect);
+        const int zeroOrErrorCode = SDL_SetRenderViewport(ptr, rect);
         if (zeroOrErrorCode)
         {
             return getErrorRes(zeroOrErrorCode);
@@ -359,10 +359,10 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
     ComResult drawFillRects(Rect2d[] rects) nothrow => drawFillRects(toSdlRects(rects));
     ComResult drawFillRects(Rect2i[] rects) nothrow => drawFillRects(cast(SDL_Rect[]) rects);
 
-    ComResult copyEx(SdlTexture texture, const SDL_Rect* srcRect, const SDL_Rect* destRect, double angle, const SDL_Point* center, SDL_RendererFlip flip = SDL_RendererFlip
+    ComResult copyEx(SdlTexture texture, const SDL_Rect* srcRect, const SDL_Rect* destRect, double angle, const SDL_Point* center, SDL_FlipMode flip = SDL_FlipMode
             .SDL_FLIP_NONE) nothrow
     {
-        const int zeroOrErrorCode = SDL_RenderCopyEx(ptr, texture.getObject, srcRect, destRect, angle, center, flip);
+        const int zeroOrErrorCode = SDL_RenderTextureRotated(ptr, texture.getObject, srcRect, destRect, angle, center, flip);
         if (zeroOrErrorCode)
         {
             return getErrorRes(zeroOrErrorCode);
@@ -373,7 +373,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
     ComResult getOutputSize(out int width, out int height) nothrow
     {
         int w, h;
-        const int zeroOrErrorCode = SDL_GetRendererOutputSize(ptr, &w, &h);
+        const int zeroOrErrorCode = SDL_GetCurrentRenderOutputSize(ptr, &w, &h);
         if (zeroOrErrorCode)
         {
             return getErrorRes(zeroOrErrorCode);
@@ -389,7 +389,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         import std.conv : to;
 
         float sX = scaleX.to!float, sY = scaleY.to!float;
-        const int zeroOrErrorCode = SDL_RenderSetScale(ptr, sX, sY);
+        const int zeroOrErrorCode = SDL_SetRenderScale(ptr, sX, sY);
         if (zeroOrErrorCode)
         {
             return getErrorRes(zeroOrErrorCode);
@@ -400,7 +400,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
     ComResult getScale(out double scaleX, out double scaleY)
     {
         float sX = 0, sY = 0;
-        SDL_RenderGetScale(ptr, &sX, &sY);
+        SDL_GetRenderScale(ptr, &sX, &sY);
         scaleX = sX;
         scaleY = sY;
         return ComResult.success;
@@ -414,7 +414,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
             w: cast(int) viewport.width,
             h: cast(int) viewport.height
         };
-        const zeroOrErrorCode = SDL_RenderSetViewport(ptr, &rect);
+        const zeroOrErrorCode = SDL_SetRenderViewport(ptr, &rect);
         if (zeroOrErrorCode)
         {
             return getErrorRes(zeroOrErrorCode);
@@ -425,7 +425,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
     ComResult getViewport(out Rect2d viewport)
     {
         SDL_Rect rect;
-        SDL_RenderGetViewport(ptr, &rect);
+        SDL_GetRenderViewport(ptr, &rect);
         viewport = Rect2d(rect.x, rect.y, rect.w, rect.h);
 
         return ComResult.success;
@@ -433,7 +433,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
 
     ComResult setLogicalSize(int w, int h)
     {
-        const zeroOrErrorCode = SDL_RenderSetLogicalSize(ptr, w, h);
+        const zeroOrErrorCode = SDL_SetRenderLogicalPresentation(ptr, w, h);
         if (zeroOrErrorCode)
         {
             return getErrorRes(zeroOrErrorCode);
@@ -443,7 +443,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
 
     ComResult getLogicalSize(out int w, out int h)
     {
-        SDL_RenderGetLogicalSize(ptr, &w, &h);
+        SDL_GetRenderLogicalPresentation(ptr, &w, &h);
         return ComResult.success;
     }
 

@@ -151,7 +151,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     protected ComResult scaleToPtr(SDL_Surface* destPtr, SDL_Rect* bounds) nothrow
     {
-        const int zeroOrErrorCode = SDL_BlitScaled(ptr, null, destPtr, bounds);
+        const int zeroOrErrorCode = SDL_BlitSurfaceScaled(ptr, null, destPtr, bounds);
         if (zeroOrErrorCode)
         {
             return getErrorRes(zeroOrErrorCode);
@@ -317,8 +317,8 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     ComResult setPixelIsTransparent(bool isTransparent, ubyte r, ubyte g, ubyte b, ubyte a) nothrow
     {
-        const colorKey = isTransparent ? SDL_TRUE : SDL_FALSE;
-        const int zeroOrErrorCode = SDL_SetColorKey(ptr, colorKey, SDL_MapRGBA(
+        const colorKey = isTransparent ? true : false;
+        const int zeroOrErrorCode = SDL_SetSurfaceColorKey(ptr, colorKey, SDL_MapRGBA(
                 ptr.format, r, g, b, a));
         if (zeroOrErrorCode)
         {
@@ -552,7 +552,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
     {
         if (ptr)
         {
-            SDL_FreeSurface(ptr);
+            SDL_DestroySurface(ptr);
             ptr = null;
             return true;
         }

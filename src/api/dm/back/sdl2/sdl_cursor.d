@@ -30,44 +30,44 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor, ComCursor
 
     ComResult createFromType(ComSystemCursorType type) nothrow
     {
-        SDL_SystemCursor sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_ARROW;
+        SDL_SystemCursor sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_DEFAULT;
         final switch (type) with (ComSystemCursorType)
         {
             case none, arrow:
-                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_ARROW;
+                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_DEFAULT;
                 break;
             case crossHair:
                 sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_CROSSHAIR;
                 break;
             case ibeam:
-                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_IBEAM;
+                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_TEXT;
                 break;
             case no:
-                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_NO;
+                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_NOT_ALLOWED;
                 break;
             case sizeNorthWestSouthEast:
-                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_SIZENWSE;
+                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_NWSE_RESIZE;
                 break;
             case sizeNorthEastSouthWest:
-                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_SIZENESW;
+                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_NESW_RESIZE;
                 break;
             case sizeWestEast:
-                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_SIZEWE;
+                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_EW_RESIZE;
                 break;
             case sizeNorthSouth:
-                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_SIZENS;
+                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_NS_RESIZE;
                 break;
             case sizeAll:
-                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_SIZEALL;
+                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_MOVE;
                 break;
             case hand:
-                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_HAND;
+                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_POINTER;
                 break;
             case wait:
                 sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_WAIT;
                 break;
             case waitArrow:
-                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_WAITARROW;
+                sdlType = SDL_SystemCursor.SDL_SYSTEM_CURSOR_PROGRESS;
                 break;
         }
 
@@ -150,7 +150,7 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor, ComCursor
     {
         if (ptr)
         {
-            SDL_FreeCursor(ptr);
+            SDL_DestroyCursor(ptr);
             return true;
         }
         return false;

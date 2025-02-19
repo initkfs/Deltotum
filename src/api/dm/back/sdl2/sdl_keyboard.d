@@ -34,7 +34,7 @@ class SdlKeyboard : SdlObject
             return ComKeyName.SPACE;
         case SDLK_EXCLAIM:
             return ComKeyName.EXCLAIM;
-        case SDLK_QUOTEDBL:
+        case SDLK_DBLAPOSTROPHE:
             return ComKeyName.QUOTEDBL;
         case SDLK_HASH:
             return ComKeyName.HASH;
@@ -44,7 +44,7 @@ class SdlKeyboard : SdlObject
             return ComKeyName.DOLLAR;
         case SDLK_AMPERSAND:
             return ComKeyName.AMPERSAND;
-        case SDLK_QUOTE:
+        case SDLK_APOSTROPHE:
             return ComKeyName.QUOTE;
         case SDLK_LEFTPAREN:
             return ComKeyName.LEFTPAREN;
@@ -106,59 +106,59 @@ class SdlKeyboard : SdlObject
             return ComKeyName.CARET;
         case SDLK_UNDERSCORE:
             return ComKeyName.UNDERSCORE;
-        case SDLK_BACKQUOTE:
+        case SDLK_GRAVE:
             return ComKeyName.BACKQUOTE;
-        case SDLK_a:
+        case SDLK_A:
             return ComKeyName.a;
-        case SDLK_b:
+        case SDLK_B:
             return ComKeyName.b;
-        case SDLK_c:
+        case SDLK_C:
             return ComKeyName.c;
-        case SDLK_d:
+        case SDLK_D:
             return ComKeyName.d;
-        case SDLK_e:
+        case SDLK_E:
             return ComKeyName.e;
-        case SDLK_f:
+        case SDLK_F:
             return ComKeyName.f;
-        case SDLK_g:
+        case SDLK_G:
             return ComKeyName.g;
-        case SDLK_h:
+        case SDLK_H:
             return ComKeyName.h;
-        case SDLK_i:
+        case SDLK_I:
             return ComKeyName.i;
-        case SDLK_j:
+        case SDLK_J:
             return ComKeyName.j;
-        case SDLK_k:
+        case SDLK_K:
             return ComKeyName.k;
-        case SDLK_l:
+        case SDLK_L:
             return ComKeyName.l;
-        case SDLK_m:
+        case SDLK_M:
             return ComKeyName.m;
-        case SDLK_n:
+        case SDLK_N:
             return ComKeyName.n;
-        case SDLK_o:
+        case SDLK_O:
             return ComKeyName.o;
-        case SDLK_p:
+        case SDLK_P:
             return ComKeyName.p;
-        case SDLK_q:
+        case SDLK_Q:
             return ComKeyName.q;
-        case SDLK_r:
+        case SDLK_R:
             return ComKeyName.r;
-        case SDLK_s:
+        case SDLK_S:
             return ComKeyName.s;
-        case SDLK_t:
+        case SDLK_T:
             return ComKeyName.t;
-        case SDLK_u:
+        case SDLK_U:
             return ComKeyName.u;
-        case SDLK_v:
+        case SDLK_V:
             return ComKeyName.v;
-        case SDLK_w:
+        case SDLK_W:
             return ComKeyName.w;
-        case SDLK_x:
+        case SDLK_X:
             return ComKeyName.x;
-        case SDLK_y:
+        case SDLK_Y:
             return ComKeyName.y;
-        case SDLK_z:
+        case SDLK_Z:
             return ComKeyName.z;
         case SDLK_CAPSLOCK:
             return ComKeyName.CAPSLOCK;
@@ -442,17 +442,17 @@ class SdlKeyboard : SdlObject
             return ComKeyName.RGUI;
         case SDLK_MODE:
             return ComKeyName.MODE;
-        case SDLK_AUDIONEXT:
+        case SDLK_MEDIA_NEXT_TRACK:
             return ComKeyName.AUDIONEXT;
-        case SDLK_AUDIOPREV:
+        case SDLK_MEDIA_PREVIOUS_TRACK:
             return ComKeyName.AUDIOPREV;
-        case SDLK_AUDIOSTOP:
+        case SDLK_MEDIA_STOP:
             return ComKeyName.AUDIOSTOP;
-        case SDLK_AUDIOPLAY:
+        case SDLK_MEDIA_PLAY:
             return ComKeyName.AUDIOPLAY;
-        case SDLK_AUDIOMUTE:
+        case SDLK_MUTE:
             return ComKeyName.AUDIOMUTE;
-        case SDLK_MEDIASELECT:
+        case SDLK_MEDIA_SELECT:
             return ComKeyName.MEDIASELECT;
         case SDLK_WWW:
             return ComKeyName.WWW;
@@ -488,7 +488,7 @@ class SdlKeyboard : SdlObject
             return ComKeyName.KBDILLUMDOWN;
         case SDLK_KBDILLUMUP:
             return ComKeyName.KBDILLUMUP;
-        case SDLK_EJECT:
+        case SDLK_MEDIA_EJECT:
             return ComKeyName.EJECT;
         case SDLK_SLEEP:
             return ComKeyName.SLEEP;

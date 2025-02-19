@@ -139,7 +139,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         {
             return err;
         }
-        format = SDL_AllocFormat(formatPtr);
+        format = SDL_GetPixelFormatDetails(formatPtr);
         return ComResult.success;
     }
 
@@ -366,7 +366,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         }
 
         //TODO class field or SDL global cache?
-        SDL_PixelFormat* format = SDL_AllocFormat(formatValue);
+        SDL_PixelFormat* format = SDL_GetPixelFormatDetails(formatValue);
         if (!format)
         {
             return ComResult.error(getError);
@@ -464,7 +464,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         }
         scope (exit)
         {
-            SDL_FreeSurface(tempSrc);
+            SDL_DestroySurface(tempSrc);
         }
 
         auto tempDst = SDL_CreateRGBSurfaceWithFormat(0, dstRect.w, dstRect.h, depth, format);
@@ -475,7 +475,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
         scope (exit)
         {
-            SDL_FreeSurface(tempDst);
+            SDL_DestroySurface(tempDst);
         }
 
         if (const err = setRendererTarget)
@@ -494,7 +494,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             return err;
         }
 
-        const int zeroOrErrorCode = SDL_BlitScaled(tempSrc, &srcRect, tempDst, &dstRect);
+        const int zeroOrErrorCode = SDL_BlitSurfaceScaled(tempSrc, &srcRect, tempDst, &dstRect);
         if (zeroOrErrorCode)
         {
             return getErrorRes(zeroOrErrorCode);
@@ -536,19 +536,19 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         //double newH = height * abs(math.cosDeg(angle)) + width * abs(math.sinDeg(angle));
 
         //TODO move to helper
-        SDL_RendererFlip sdlFlip;
+        SDL_FlipMode sdlFlip;
         final switch (flip)
         {
             case Flip.none:
-                sdlFlip = SDL_RendererFlip.SDL_FLIP_NONE;
+                sdlFlip = SDL_FlipMode.SDL_FLIP_NONE;
                 break;
             case Flip.horizontal:
-                sdlFlip = SDL_RendererFlip.SDL_FLIP_HORIZONTAL;
+                sdlFlip = SDL_FlipMode.SDL_FLIP_HORIZONTAL;
                 break;
             case Flip.vertical:
-                sdlFlip = SDL_RendererFlip.SDL_FLIP_VERTICAL;
+                sdlFlip = SDL_FlipMode.SDL_FLIP_VERTICAL;
                 break;
-                sdlFlip = SDL_RendererFlip.SDL_FLIP_VERTICAL | SDL_RendererFlip.SDL_FLIP_HORIZONTAL;
+                sdlFlip = SDL_FlipMode.SDL_FLIP_VERTICAL | SDL_FlipMode.SDL_FLIP_HORIZONTAL;
             case Flip.both:
                 break;
         }
@@ -650,9 +650,9 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     {
         final switch (m) with (SDL_ScaleMode)
         {
-            case SDL_ScaleModeNearest:
+            case SDL_SCALEMODE_NEAREST:
                 return ComTextureScaleMode.speed;
-            case SDL_ScaleModeLinear:
+            case SDL_SCALEMODE_LINEAR:
                 return ComTextureScaleMode.balance;
             case SDL_ScaleModeBest:
                 return ComTextureScaleMode.quality;
@@ -665,9 +665,9 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         final switch (m) with (ComTextureScaleMode)
         {
             case speed:
-                return SDL_ScaleMode.SDL_ScaleModeNearest;
+                return SDL_ScaleMode.SDL_SCALEMODE_NEAREST;
             case balance:
-                return SDL_ScaleMode.SDL_ScaleModeLinear;
+                return SDL_ScaleMode.SDL_SCALEMODE_LINEAR;
             case quality:
                 return SDL_ScaleMode.SDL_ScaleModeBest;
         }
