@@ -52,8 +52,8 @@ class SdlMixMusic : SdlMixObject
         {
             return ComResult.error("Sound not loaded");
         }
-        const result = Mix_PlayMusic(ptr, loops);
-        if (!result)
+
+        if (!Mix_PlayMusic(ptr, loops))
         {
             return getErrorRes;
         }

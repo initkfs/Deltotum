@@ -109,10 +109,9 @@ class SdlImage : SdlSurface, ComImage
         SDL_Surface* surfPtr = nativePtr.castSafe!(SDL_Surface*);
 
         //TODO unsafe
-        const zeroOrErrorCode = IMG_SavePNG(surfPtr, path.toStringz);
-        if (zeroOrErrorCode != 0)
+        if (!IMG_SavePNG(surfPtr, path.toStringz))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
         return ComResult.success;
     }

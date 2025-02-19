@@ -18,22 +18,6 @@ class SdlMixLib : SdlMixObject
     //https://stackoverflow.com/questions/55442738/sdl-mixer-2-0-4-mp3-support-not-available-even-though-libmpg123-is-installed
     void initialize(int flags = 0) const
     {
-        auto loadResult = loadSDLMixer();
-        if (loadResult != sdlMixerSupport)
-        {
-            string error = "Unable to load SDL mixer.";
-            if (loadResult == SDLMixerSupport.noLibrary)
-            {
-                error ~= " The SDL mixer shared library failed to load.";
-            }
-            else if (loadResult == SDLMixerSupport.badLibrary)
-            {
-                error ~= " One or more symbols in SDL mixer failed to load.";
-            }
-
-            throw new Exception(error);
-        }
-
         int initResult = Mix_Init(flags);
         if ((initResult & flags) != flags)
         {
@@ -48,14 +32,13 @@ class SdlMixLib : SdlMixObject
 
     ComResult openAudio(int frequency, ushort audioFormat, int channels, int chunksize)
     {
-        const int zeroOrErrorCode = Mix_OpenAudio(frequency, audioFormat, channels, chunksize);
-        if (zeroOrErrorCode)
+        if (!Mix_OpenAudio(frequency, audioFormat, channels, chunksize))
         {
             import std.format : format;
 
             immutable errMessage = format(
                 "Error opening audio with frequency %s, format %s, channels %s, chunksize %s", frequency, audioFormat, channels, chunksize);
-            return getErrorRes(zeroOrErrorCode, errMessage);
+            return getErrorRes(errMessage);
         }
         return ComResult.success;
     }
