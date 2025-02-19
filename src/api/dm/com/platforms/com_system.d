@@ -11,6 +11,6 @@ interface ComSystem
 {
 nothrow:
     ComResult openURL(string link) nothrow;
-    ComResult addTimerMT(out int timerId, int intervalMs, RetNextIntervalCallback callback, void* param);
+    ComResult addTimerMT(out int timerId, uint intervalMs, RetNextIntervalCallback callback, void* param);
     ComResult removeTimer(int timerId);
 }

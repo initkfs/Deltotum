@@ -18,7 +18,7 @@ class SdlKeyboard : SdlObject
     {
         //Generated automatically
         //final switch
-        switch (code) with (SDL_Keycode)
+        switch (code)
         {
         case SDLK_UNKNOWN:
             return ComKeyName.UNKNOWN;

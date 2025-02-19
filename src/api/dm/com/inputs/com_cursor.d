@@ -33,6 +33,6 @@ nothrow:
     ComResult hide();
     ComResult set();
     ComResult redraw();
-    ComResult getPos(out int x, out int y);
+    ComResult getPos(out float x, out float y);
 
 }

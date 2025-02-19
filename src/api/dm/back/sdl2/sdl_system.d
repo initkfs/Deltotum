@@ -23,15 +23,14 @@ class SDLSystem : SdlObject, ComSystem
             return ComResult.error("URL must not be empty");
         }
 
-        const zeroOrNegErr = SDL_OpenURL(link.toStringz);
-        if (zeroOrNegErr != 0)
+        if (!SDL_OpenURL(link.toStringz))
         {
-            return getErrorRes(zeroOrNegErr);
+            return getErrorRes;
         }
         return ComResult.success;
     }
 
-    ComResult addTimerMT(out int timerId, int intervalMs, RetNextIntervalCallback callback, void* param)
+    ComResult addTimerMT(out int timerId, uint intervalMs, RetNextIntervalCallback callback, void* param)
     {
         const timerIdOrZeroErr = SDL_AddTimer(intervalMs, callback, param);
         if (timerIdOrZeroErr == 0)
@@ -44,8 +43,7 @@ class SDLSystem : SdlObject, ComSystem
 
     ComResult removeTimer(int timerId)
     {
-        sdlbool isRemove = SDL_RemoveTimer(timerId);
-        if (isRemove == sdlbool.false)
+        if (!SDL_RemoveTimer(timerId))
         {
             return getErrorRes("Timer not removed");
         }

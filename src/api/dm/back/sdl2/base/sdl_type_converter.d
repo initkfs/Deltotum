@@ -69,6 +69,8 @@ class SdlTypeConverter : ComTypeConvertor
             case SDL_BLENDMODE_NONE, SDL_BLENDMODE_BLEND_PREMULTIPLIED, SDL_BLENDMODE_ADD_PREMULTIPLIED, SDL_BLENDMODE_INVALID:
                 newMode = ComBlendMode.none;
                 break;
+            default:
+                break;
         }
         return newMode;
     }

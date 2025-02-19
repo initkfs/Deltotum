@@ -38,7 +38,7 @@ class SdlClipboard : SdlObject, ComClipboard
     {
         if (SDL_HasClipboardText())
         {
-            isHasText = typeConverter.toBool(result);
+            isHasText = true;
         }
 
         return ComResult.success;

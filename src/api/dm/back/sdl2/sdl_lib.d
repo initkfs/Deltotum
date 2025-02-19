@@ -7,8 +7,7 @@ version(SdlBackend):
 import std.string : toStringz, fromStringz;
 
 import api.dm.back.sdl3.externs.csdl3;
-import bindbcConfig = bindbc.sdl.config;
-
+import api.dm.com.platforms.results.com_result : ComResult;
 import api.dm.back.sdl2.base.sdl_object : SdlObject;
 
 /**
@@ -18,24 +17,7 @@ class SdlLib : SdlObject
 {
     void initialize(uint flags) const
     {
-        SDLSupport loadResult = loadSDL();
-        if (loadResult != bindbcConfig.sdlSupport)
-        {
-            string error = "Unable to load sdl.";
-            if (loadResult == SDLSupport.noLibrary)
-            {
-                error ~= " The SDL shared library failed to load.";
-            }
-            else if (loadResult == SDLSupport.badLibrary)
-            {
-                error ~= " One or more SDL symbols failed to load.";
-            }
-
-            throw new Exception(error);
-        }
-
-        const result = SDL_Init(flags);
-        if (result != 0)
+        if (!SDL_Init(flags))
         {
             string initError = "Unable to initialize sdl subsystems.";
             if (auto error = getError)
@@ -57,7 +39,7 @@ class SdlLib : SdlObject
         SDL_Delay(ms);
     }
 
-    uint wasInit(uint flags) const nothrow
+    SDL_InitFlags wasInit(SDL_InitFlags flags) const nothrow
     {
         return SDL_WasInit(flags);
     }
@@ -67,14 +49,22 @@ class SdlLib : SdlObject
         SDL_Quit();
     }
 
-    void enableScreenSaver(bool isEnable = true) const nothrow
+    ComResult enableScreenSaver(bool isEnable = true) const nothrow
     {
         if (isEnable)
         {
-            SDL_EnableScreenSaver();
-            return;
+            if (!SDL_EnableScreenSaver())
+            {
+                return getErrorRes;
+            }
+            return ComResult.success;
         }
-        SDL_DisableScreenSaver();
+
+        if (!SDL_DisableScreenSaver())
+        {
+            return getErrorRes;
+        }
+        return ComResult.success;
     }
 
     bool isScreenSaverEnabled() const nothrow
@@ -87,10 +77,13 @@ class SdlLib : SdlObject
     {
         import std.conv : text;
 
-        SDL_version ver;
-        SDL_GetVersion(&ver);
+        int ver = SDL_GetVersion();
+        int major, minor, patch;
+
+        SDL_VERSIONNUM(major, minor, patch);
+
         //format is not nothrow
-        return text(ver.major, ".", ver.minor, ".", ver.patch);
+        return text(major, ".", minor, ".", patch);
     }
 
     string getHint(string name) const nothrow
@@ -106,7 +99,7 @@ class SdlLib : SdlObject
 
     void clearHints() const nothrow
     {
-        SDL_ClearHints();
+        SDL_ResetHints();
     }
 
     bool setHint(string name, string value) const nothrow

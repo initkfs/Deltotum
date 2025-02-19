@@ -111,7 +111,6 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
     ComResult getFontSize(out size_t size) nothrow
     {
         assert(ptr, "Font not loaded");
-        ;
         size = _fontSize;
         return ComResult.success;
     }
