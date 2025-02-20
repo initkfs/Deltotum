@@ -9,7 +9,7 @@ import api.dm.kit.events.processing.kit_event_processor : KitEventProcessor;
 import api.core.apps.events.app_event : AppEvent;
 import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;
-import api.dm.kit.inputs.keyboards.events.text_input_event: TextInputEvent;
+import api.dm.kit.inputs.keyboards.events.text_input_event : TextInputEvent;
 import api.dm.kit.windows.events.window_event : WindowEvent;
 import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import api.dm.back.sdl2.sdl_keyboard : SdlKeyboard;
@@ -40,28 +40,31 @@ class SdlEventProcessor : KitEventProcessor!(SDL_Event*)
             return false;
         }
 
+        if (event.type >= SDL_EVENT_WINDOW_FIRST && event.type <= SDL_EVENT_WINDOW_LAST)
+        {
+            handleWindowEvent(event);
+            return true;
+        }
+
         switch (event.type)
         {
-        case SDL_EVENT_KEY_DOWN, SDL_EVENT_KEY_UP:
-            handleKeyEvent(event);
-            break;
-        case SDL_EVENT_TEXT_INPUT:
-            handleTextInputEvent(event);
-            break;
-        case SDL_EVENT_MOUSE_MOTION, SDL_EVENT_MOUSE_BUTTON_DOWN, SDL_EVENT_MOUSE_BUTTON_UP, SDL_EVENT_MOUSE_WHEEL:
-            handleMouseEvent(event);
-            break;
-        case SDL_EVENT_JOYSTICK_AXIS_MOTION, SDL_EVENT_JOYSTICK_BUTTON_DOWN, SDL_EVENT_JOYSTICK_BUTTON_UP:
-            handleJoystickEvent(event);
-            break;
-        case SDL_EVENT_QUIT:
-            handleQuit(event);
-            break;
-        case SDL_WINDOWEVENT:
-            handleWindowEvent(event);
-            break;
-        default:
-            return false;
+            case SDL_EVENT_KEY_DOWN, SDL_EVENT_KEY_UP:
+                handleKeyEvent(event);
+                break;
+            case SDL_EVENT_TEXT_INPUT:
+                handleTextInputEvent(event);
+                break;
+            case SDL_EVENT_MOUSE_MOTION, SDL_EVENT_MOUSE_BUTTON_DOWN, SDL_EVENT_MOUSE_BUTTON_UP, SDL_EVENT_MOUSE_WHEEL:
+                handleMouseEvent(event);
+                break;
+            case SDL_EVENT_JOYSTICK_AXIS_MOTION, SDL_EVENT_JOYSTICK_BUTTON_DOWN, SDL_EVENT_JOYSTICK_BUTTON_UP:
+                handleJoystickEvent(event);
+                break;
+            case SDL_EVENT_QUIT:
+                handleQuit(event);
+                break;
+            default:
+                return false;
         }
 
         return true;
@@ -86,17 +89,11 @@ class SdlEventProcessor : KitEventProcessor!(SDL_Event*)
 
         auto type = TextInputEvent.Event.input;
 
-        enum letterSize = dchar.sizeof;
-        if (event.text.text.length < letterSize)
-        {
-            return;
-        }
-
         import std.conv : to;
-        import std.string: fromStringz;
+        import std.string : fromStringz;
 
         //TODO full string?
-        dchar firstLetter = event.text.text[0 .. (letterSize + 1)].fromStringz.to!dchar;
+        dchar firstLetter = event.text.text.fromStringz.to!dchar;
 
         const ownerId = event.key.windowID;
         auto keyEvent = TextInputEvent(type, ownerId, firstLetter);
@@ -113,38 +110,38 @@ class SdlEventProcessor : KitEventProcessor!(SDL_Event*)
         auto type = KeyEvent.Event.none;
         switch (event.type)
         {
-        case SDL_EVENT_KEY_DOWN:
-            type = KeyEvent.Event.press;
-            break;
-        case SDL_EVENT_KEY_UP:
-            type = KeyEvent.Event.release;
-            break;
-        default:
-            break;
+            case SDL_EVENT_KEY_DOWN:
+                type = KeyEvent.Event.press;
+                break;
+            case SDL_EVENT_KEY_UP:
+                type = KeyEvent.Event.release;
+                break;
+            default:
+                break;
         }
 
         import api.dm.com.inputs.com_keyboard : ComKeyName;
 
-        const SDL_Keycode keyCode = event.key.keysym.sym;
+        const SDL_Keycode keyCode = event.key.key;
         const keyName = keyboard.keyCodeToKeyName(keyCode);
 
-        const mod = event.key.keysym.mod;
+        const mod = event.key.mod;
 
         import api.dm.com.inputs.com_keyboard : KeyModifierInfo;
 
         KeyModifierInfo modInfo = KeyModifierInfo(
-            (mod & SDL_Keymod.SDL_KMOD_LSHIFT) == SDL_Keymod.SDL_KMOD_LSHIFT,
-            (mod & SDL_Keymod.SDL_KMOD_RSHIFT) == SDL_Keymod.SDL_KMOD_RSHIFT,
-            (mod & SDL_Keymod.SDL_KMOD_LCTRL) == SDL_Keymod.SDL_KMOD_LCTRL,
-            (mod & SDL_Keymod.SDL_KMOD_RCTRL) == SDL_Keymod.SDL_KMOD_RCTRL,
-            (mod & SDL_Keymod.SDL_KMOD_LALT) == SDL_Keymod.SDL_KMOD_LALT,
-            (mod & SDL_Keymod.SDL_KMOD_RALT) == SDL_Keymod.SDL_KMOD_RALT,
-            (mod & SDL_Keymod.SDL_KMOD_LGUI) == SDL_Keymod.SDL_KMOD_LGUI,
-            (mod & SDL_Keymod.SDL_KMOD_RGUI) == SDL_Keymod.SDL_KMOD_RGUI,
-            (mod & SDL_Keymod.SDL_KMOD_NUM) == SDL_Keymod.SDL_KMOD_NUM,
-            (mod & SDL_Keymod.SDL_KMOD_CAPS) == SDL_Keymod.SDL_KMOD_CAPS,
-            (mod & SDL_Keymod.SDL_KMOD_MODE) == SDL_Keymod.SDL_KMOD_MODE,
-            (mod & SDL_Keymod.SDL_KMOD_SCROLL) == SDL_Keymod.SDL_KMOD_SCROLL,
+            (mod & SDL_KMOD_LSHIFT) == SDL_KMOD_LSHIFT,
+            (mod & SDL_KMOD_RSHIFT) == SDL_KMOD_RSHIFT,
+            (mod & SDL_KMOD_LCTRL) == SDL_KMOD_LCTRL,
+            (mod & SDL_KMOD_RCTRL) == SDL_KMOD_RCTRL,
+            (mod & SDL_KMOD_LALT) == SDL_KMOD_LALT,
+            (mod & SDL_KMOD_RALT) == SDL_KMOD_RALT,
+            (mod & SDL_KMOD_LGUI) == SDL_KMOD_LGUI,
+            (mod & SDL_KMOD_RGUI) == SDL_KMOD_RGUI,
+            (mod & SDL_KMOD_NUM) == SDL_KMOD_NUM,
+            (mod & SDL_KMOD_CAPS) == SDL_KMOD_CAPS,
+            (mod & SDL_KMOD_MODE) == SDL_KMOD_MODE,
+            (mod & SDL_KMOD_SCROLL) == SDL_KMOD_SCROLL,
         );
 
         const ownerId = event.key.windowID;
@@ -168,43 +165,43 @@ class SdlEventProcessor : KitEventProcessor!(SDL_Event*)
 
         switch (event.type)
         {
-        case SDL_EVENT_MOUSE_MOTION:
-            type = PointerEvent.Event.move;
-            x = event.motion.x;
-            y = event.motion.y;
-            movementX = event.motion.xrel;
-            movementY = event.motion.yrel;
-            break;
-        case SDL_EVENT_MOUSE_BUTTON_DOWN:
-            SDL_CaptureMouse(true);
-            type = PointerEvent.Event.press;
-            // - 1
-            button = event.button.button;
-            x = event.button.x;
-            y = event.button.y;
-            break;
-        case SDL_EVENT_MOUSE_BUTTON_UP:
-            SDL_CaptureMouse(false);
-            type = PointerEvent.Event.release;
-            button = event.button.button;
-            x = event.button.x;
-            y = event.button.y;
-            break;
-        case SDL_EVENT_MOUSE_WHEEL:
-            type = PointerEvent.Event.wheel;
-            if (event.wheel.direction == SDL_MouseWheelDirection.SDL_MOUSEWHEEL_FLIPPED)
-            {
-                x = -event.wheel.x;
-                y = -event.wheel.y;
-            }
-            else
-            {
-                x = event.wheel.x;
-                y = event.wheel.y;
-            }
-            break;
-        default:
-            break;
+            case SDL_EVENT_MOUSE_MOTION:
+                type = PointerEvent.Event.move;
+                x = event.motion.x;
+                y = event.motion.y;
+                movementX = event.motion.xrel;
+                movementY = event.motion.yrel;
+                break;
+            case SDL_EVENT_MOUSE_BUTTON_DOWN:
+                SDL_CaptureMouse(true);
+                type = PointerEvent.Event.press;
+                // - 1
+                button = event.button.button;
+                x = event.button.x;
+                y = event.button.y;
+                break;
+            case SDL_EVENT_MOUSE_BUTTON_UP:
+                SDL_CaptureMouse(false);
+                type = PointerEvent.Event.release;
+                button = event.button.button;
+                x = event.button.x;
+                y = event.button.y;
+                break;
+            case SDL_EVENT_MOUSE_WHEEL:
+                type = PointerEvent.Event.wheel;
+                if (event.wheel.direction == SDL_MouseWheelDirection.SDL_MOUSEWHEEL_FLIPPED)
+                {
+                    x = -event.wheel.x;
+                    y = -event.wheel.y;
+                }
+                else
+                {
+                    x = event.wheel.x;
+                    y = event.wheel.y;
+                }
+                break;
+            default:
+                break;
         }
 
         auto mouseEvent = PointerEvent(type, event.window.windowID, x, y, button, movementX, movementY);
@@ -221,17 +218,17 @@ class SdlEventProcessor : KitEventProcessor!(SDL_Event*)
         JoystickEvent.Event type = JoystickEvent.Event.none;
         switch (event.type)
         {
-        case SDL_EVENT_JOYSTICK_AXIS_MOTION:
-            type = JoystickEvent.Event.axis;
-            break;
-        case SDL_EVENT_JOYSTICK_BUTTON_DOWN:
-            type = JoystickEvent.Event.press;
-            break;
-        case SDL_EVENT_JOYSTICK_BUTTON_UP:
-            type = JoystickEvent.Event.release;
-            break;
-        default:
-            break;
+            case SDL_EVENT_JOYSTICK_AXIS_MOTION:
+                type = JoystickEvent.Event.axis;
+                break;
+            case SDL_EVENT_JOYSTICK_BUTTON_DOWN:
+                type = JoystickEvent.Event.press;
+                break;
+            case SDL_EVENT_JOYSTICK_BUTTON_UP:
+                type = JoystickEvent.Event.release;
+                break;
+            default:
+                break;
         }
         auto joystickEvent = JoystickEvent(
             type, event.window.windowID, event.jbutton.button, event
@@ -251,53 +248,53 @@ class SdlEventProcessor : KitEventProcessor!(SDL_Event*)
         long y = 0;
         long width = 0;
         long height = 0;
-        switch (event.window.event)
+        switch (event.window.type)
         {
-        case SDL_WindowEventID.SDL_EVENT_WINDOW_SHOWN:
-            type = WindowEvent.Event.show;
-            break;
-        case SDL_WindowEventID.SDL_EVENT_WINDOW_HIDDEN:
-            type = WindowEvent.Event.hide;
-            break;
-        case SDL_WindowEventID.SDL_EVENT_WINDOW_EXPOSED:
-            type = WindowEvent.Event.expose;
-            break;
-        case SDL_WindowEventID.SDL_EVENT_WINDOW_MOUSE_ENTER:
-            type = WindowEvent.Event.enter;
-            break;
-        case SDL_WindowEventID.SDL_EVENT_WINDOW_CLOSE_REQUESTED:
-            type = WindowEvent.Event.close;
-            break;
-        case SDL_WindowEventID.SDL_EVENT_WINDOW_FOCUS_GAINED:
-            type = WindowEvent.Event.focusIn;
-            break;
-        case SDL_WindowEventID.SDL_EVENT_WINDOW_MOUSE_LEAVE:
-            type = WindowEvent.Event.leave;
-            break;
-        case SDL_WindowEventID.SDL_EVENT_WINDOW_FOCUS_LOST:
-            type = WindowEvent.Event.focusOut;
-            break;
-        case SDL_WindowEventID.SDL_EVENT_WINDOW_MINIMIZED:
-            type = WindowEvent.Event.minimize;
-            break;
-        case SDL_WindowEventID.SDL_EVENT_WINDOW_MAXIMIZED:
-            type = WindowEvent.Event.maximize;
-            break;
-        case SDL_WindowEventID.SDL_EVENT_WINDOW_MOVED:
-            type = WindowEvent.Event.move;
-            x = event.window.data1;
-            y = event.window.data2;
-            break;
-        case SDL_WindowEventID.SDL_EVENT_WINDOW_RESIZED:
-            type = WindowEvent.Event.resize;
-            width = event.window.data1;
-            height = event.window.data2;
-            break;
-        case SDL_WindowEventID.SDL_EVENT_WINDOW_RESTORED:
-            type = WindowEvent.Event.restore;
-            break;
-        default:
-            break;
+            case SDL_EVENT_WINDOW_SHOWN:
+                type = WindowEvent.Event.show;
+                break;
+            case SDL_EVENT_WINDOW_HIDDEN:
+                type = WindowEvent.Event.hide;
+                break;
+            case SDL_EVENT_WINDOW_EXPOSED:
+                type = WindowEvent.Event.expose;
+                break;
+            case SDL_EVENT_WINDOW_MOUSE_ENTER:
+                type = WindowEvent.Event.enter;
+                break;
+            case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
+                type = WindowEvent.Event.close;
+                break;
+            case SDL_EVENT_WINDOW_FOCUS_GAINED:
+                type = WindowEvent.Event.focusIn;
+                break;
+            case SDL_EVENT_WINDOW_MOUSE_LEAVE:
+                type = WindowEvent.Event.leave;
+                break;
+            case SDL_EVENT_WINDOW_FOCUS_LOST:
+                type = WindowEvent.Event.focusOut;
+                break;
+            case SDL_EVENT_WINDOW_MINIMIZED:
+                type = WindowEvent.Event.minimize;
+                break;
+            case SDL_EVENT_WINDOW_MAXIMIZED:
+                type = WindowEvent.Event.maximize;
+                break;
+            case SDL_EVENT_WINDOW_MOVED:
+                type = WindowEvent.Event.move;
+                x = event.window.data1;
+                y = event.window.data2;
+                break;
+            case SDL_EVENT_WINDOW_RESIZED:
+                type = WindowEvent.Event.resize;
+                width = event.window.data1;
+                height = event.window.data2;
+                break;
+            case SDL_EVENT_WINDOW_RESTORED:
+                type = WindowEvent.Event.restore;
+                break;
+            default:
+                break;
         }
 
         auto windowEvent = WindowEvent(type, event.window.windowID, width, height, x, y);
