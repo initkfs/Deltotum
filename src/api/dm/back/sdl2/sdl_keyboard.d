@@ -450,18 +450,11 @@ class SdlKeyboard : SdlObject
             return ComKeyName.AUDIOSTOP;
         case SDLK_MEDIA_PLAY:
             return ComKeyName.AUDIOPLAY;
-        case SDLK_MUTE:
-            return ComKeyName.AUDIOMUTE;
+        //FIXME
+        // case SDLK_MUTE:
+        //     return ComKeyName.AUDIOMUTE;
         case SDLK_MEDIA_SELECT:
             return ComKeyName.MEDIASELECT;
-        case SDLK_WWW:
-            return ComKeyName.WWW;
-        case SDLK_MAIL:
-            return ComKeyName.MAIL;
-        case SDLK_CALCULATOR:
-            return ComKeyName.CALCULATOR;
-        case SDLK_COMPUTER:
-            return ComKeyName.COMPUTER;
         case SDLK_AC_SEARCH:
             return ComKeyName.AC_SEARCH;
         case SDLK_AC_HOME:
@@ -476,24 +469,12 @@ class SdlKeyboard : SdlObject
             return ComKeyName.AC_REFRESH;
         case SDLK_AC_BOOKMARKS:
             return ComKeyName.AC_BOOKMARKS;
-        case SDLK_BRIGHTNESSDOWN:
-            return ComKeyName.BRIGHTNESSDOWN;
-        case SDLK_BRIGHTNESSUP:
-            return ComKeyName.BRIGHTNESSUP;
-        case SDLK_DISPLAYSWITCH:
-            return ComKeyName.DISPLAYSWITCH;
-        case SDLK_KBDILLUMTOGGLE:
-            return ComKeyName.KBDILLUMTOGGLE;
-        case SDLK_KBDILLUMDOWN:
-            return ComKeyName.KBDILLUMDOWN;
-        case SDLK_KBDILLUMUP:
-            return ComKeyName.KBDILLUMUP;
         case SDLK_MEDIA_EJECT:
             return ComKeyName.EJECT;
         case SDLK_SLEEP:
             return ComKeyName.SLEEP;
         default:
-            return ComKeyName.EXTENDED;
+            return ComKeyName.UNKNOWN;
         }
     }
 }

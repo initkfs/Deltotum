@@ -268,10 +268,6 @@ enum ComKeyName : int
     AUDIOPLAY,
     AUDIOMUTE,
     MEDIASELECT,
-    WWW,
-    MAIL,
-    CALCULATOR,
-    COMPUTER,
     AC_SEARCH,
     AC_HOME,
     AC_BACK,
@@ -279,13 +275,7 @@ enum ComKeyName : int
     AC_STOP,
     AC_REFRESH,
     AC_BOOKMARKS,
-
-    BRIGHTNESSDOWN,
-    BRIGHTNESSUP,
-    DISPLAYSWITCH,
-    KBDILLUMTOGGLE,
-    KBDILLUMDOWN,
-    KBDILLUMUP,
+    
     EJECT,
     SLEEP,
 
