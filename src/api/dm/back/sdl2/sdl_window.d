@@ -64,13 +64,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
         //flags |= SDL_WINDOW_HIGH_PIXEL_DENSITY;
 
-        ptr = SDL_CreateWindow(
-            null,
-            0,
-            0,
-            0,
-            0,
-            flags);
+        ptr = SDL_CreateWindow(null,0,0,flags);
 
         if (!ptr)
         {
@@ -105,7 +99,10 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult show() nothrow
     {
-        SDL_ShowWindow(ptr);
+        if (!SDL_ShowWindow(ptr))
+        {
+            return getErrorRes;
+        }
         return ComResult.success;
     }
 
@@ -122,7 +119,10 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult hide() nothrow
     {
-        SDL_HideWindow(ptr);
+        if (!SDL_HideWindow(ptr))
+        {
+            return getErrorRes;
+        }
         return ComResult.success;
     }
 
@@ -134,19 +134,28 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult focusRequest() nothrow
     {
-        SDL_RaiseWindow(ptr);
+        if (!SDL_RaiseWindow(ptr))
+        {
+            return getErrorRes;
+        }
         return ComResult.success;
     }
 
     ComResult getPos(out int x, out int y) nothrow
     {
-        SDL_GetWindowPosition(ptr, &x, &y);
+        if (!SDL_GetWindowPosition(ptr, &x, &y))
+        {
+            return getErrorRes;
+        }
         return ComResult.success;
     }
 
     ComResult setPos(int x, int y) nothrow
     {
-        SDL_SetWindowPosition(ptr, x, y);
+        if (!SDL_SetWindowPosition(ptr, x, y))
+        {
+            return getErrorRes;
+        }
         return ComResult.success;
     }
 
@@ -164,7 +173,10 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult setMinimized() nothrow
     {
-        SDL_MinimizeWindow(ptr);
+        if (!SDL_MinimizeWindow(ptr))
+        {
+            return getErrorRes;
+        }
         return ComResult.success;
     }
 
@@ -182,7 +194,10 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult setMaximized() nothrow
     {
-        SDL_MaximizeWindow(ptr);
+        if (!SDL_MaximizeWindow(ptr))
+        {
+            return getErrorRes;
+        }
         return ComResult.success;
     }
 
@@ -205,7 +220,10 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult setDecorated(bool isDecorated) nothrow
     {
-        SDL_SetWindowBordered(ptr, typeConverter.fromBool(isDecorated));
+        if (!SDL_SetWindowBordered(ptr, isDecorated))
+        {
+            return getErrorRes;
+        }
         return ComResult.success;
     }
 
@@ -222,8 +240,10 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult setResizable(bool isResizable) nothrow
     {
-        sdlbool isSdlResizable = typeConverter.fromBool(isResizable);
-        SDL_SetWindowResizable(ptr, isSdlResizable);
+        if (!SDL_SetWindowResizable(ptr, isResizable))
+        {
+            return getErrorRes;
+        }
         return ComResult.success;
     }
 
@@ -245,8 +265,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
             return ComResult.error("Opacity value must be in the range from 0 to 1.0");
         }
 
-        const zeroOrErrorCode = SDL_SetWindowOpacity(ptr, cast(float) value0to1);
-        if (zeroOrErrorCode)
+        if (!SDL_SetWindowOpacity(ptr, cast(float) value0to1))
         {
             return getErrorRes(zeroOrErrorCode);
         }
@@ -255,22 +274,21 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult getOpacity(out double value0to1) nothrow
     {
-        float opValue;
-        const zeroOrErrorCode = SDL_GetWindowOpacity(ptr, &opValue);
-        if (zeroOrErrorCode)
+        const result = SDL_GetWindowOpacity(ptr);
+        if (result == -1f)
         {
             return getErrorRes(zeroOrErrorCode);
         }
 
         import std.math.traits : isFinite;
 
-        if (isFinite(opValue))
+        if (isFinite(result) && (result >= 0 && result <= 1.0))
         {
-            value0to1 = opValue;
+            value0to1 = result;
         }
         else
         {
-            return getErrorRes("Received non finite opacity");
+            return getErrorRes("Received invalid opacity");
         }
 
         return ComResult.success;
@@ -278,9 +296,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult setFullScreen(bool isFullScreen) nothrow
     {
-        const uint flags = isFullScreen ? SDL_WINDOW_FULLSCREEN : 0;
-        const zeroOrErrorCode = SDL_SetWindowFullscreen(ptr, flags);
-        if (zeroOrErrorCode)
+        if (!SDL_SetWindowFullscreen(ptr, isFullScreen))
         {
             return getErrorRes(zeroOrErrorCode);
         }
@@ -300,13 +316,19 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult getSize(out int width, out int height) nothrow
     {
-        SDL_GetWindowSize(ptr, &width, &height);
+        if (!SDL_GetWindowSize(ptr, &width, &height))
+        {
+            return getErrorRes;
+        }
         return ComResult.success;
     }
 
     ComResult setSize(int width, int height) nothrow
     {
-        SDL_SetWindowSize(ptr, width, height);
+        if (!SDL_SetWindowSize(ptr, width, height))
+        {
+            return getErrorRes;
+        }
         return ComResult.success;
     }
 
@@ -335,7 +357,10 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         {
             const(char*) titlePtr = title.toUTFz!(const(char*));
 
-            SDL_SetWindowTitle(ptr, titlePtr);
+            if (!SDL_SetWindowTitle(ptr, titlePtr))
+            {
+                return getErrorRes;
+            }
         }
         catch (Exception e)
         {
@@ -346,13 +371,19 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult setMaxSize(int w, int h) nothrow
     {
-        SDL_SetWindowMaximumSize(ptr, w, h);
+        if (!SDL_SetWindowMaximumSize(ptr, w, h))
+        {
+            return getErrorRes;
+        }
         return ComResult.success;
     }
 
     ComResult setMinSize(int w, int h) nothrow
     {
-        SDL_SetWindowMinimumSize(ptr, w, h);
+        if (!SDL_SetWindowMinimumSize(ptr, w, h))
+        {
+            return getErrorRes;
+        }
         return ComResult.success;
     }
 
@@ -387,18 +418,24 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult restore() nothrow
     {
-        SDL_RestoreWindow(ptr);
+        // If an immediate change is required, call SDL_SyncWindow() to block until the changes have taken effect.
+        //https://wiki.libsdl.org/SDL3/SDL_RestoreWindow
+        if (!SDL_RestoreWindow(ptr))
+        {
+            return getErrorRes;
+        }
         return ComResult.success;
     }
 
     ComResult getScreenIndex(out size_t index) nothrow
     {
-        const indexOrNegError = SDL_GetDisplayForWindow(ptr);
-        if (indexOrNegError < 0)
+        const indexOrZeroError = SDL_GetDisplayForWindow(ptr);
+        if (indexOrZeroError <= 0)
         {
             return getErrorRes(indexOrNegError);
         }
-        index = indexOrNegError;
+
+        index = indexOrZeroError;
 
         return ComResult.success;
     }
@@ -412,11 +449,18 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
             return err;
         }
         auto parentPtr = nPtr.castSafe!(SDL_Window*);
-        const zeroOrErrorCode = SDL_SetWindowModalFor(ptr, parentPtr);
-        if (zeroOrErrorCode)
+
+        if (!SDL_SetWindowParent(ptr, parentPtr))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
+
+        //TODO ptr or parentPtr?
+        if (!SDL_SetWindowModal(ptr, true))
+        {
+            return getErrorRes;
+        }
+
         return ComResult.success;
     }
 
@@ -430,7 +474,10 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
             return err;
         }
         SDL_Surface* surfPtr = nPtr.castSafe!(SDL_Surface*);
-        SDL_SetWindowIcon(ptr, surfPtr);
+        if (!SDL_SetWindowIcon(ptr, surfPtr))
+        {
+            return getErrorRes;
+        }
 
         return ComResult.success;
     }

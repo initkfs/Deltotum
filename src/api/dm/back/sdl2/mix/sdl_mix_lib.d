@@ -32,14 +32,14 @@ class SdlMixLib : SdlMixObject
 
     ComResult openAudio(int frequency, ushort audioFormat, int channels, int chunksize)
     {
-        if (!Mix_OpenAudio(frequency, audioFormat, channels, chunksize))
-        {
-            import std.format : format;
+        // if (!Mix_OpenAudio(frequency, audioFormat, channels, chunksize))
+        // {
+        //     import std.format : format;
 
-            immutable errMessage = format(
-                "Error opening audio with frequency %s, format %s, channels %s, chunksize %s", frequency, audioFormat, channels, chunksize);
-            return getErrorRes(errMessage);
-        }
+        //     immutable errMessage = format(
+        //         "Error opening audio with frequency %s, format %s, channels %s, chunksize %s", frequency, audioFormat, channels, chunksize);
+        //     return getErrorRes(errMessage);
+        // }
         return ComResult.success;
     }
 
