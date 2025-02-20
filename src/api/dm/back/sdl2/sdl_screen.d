@@ -84,13 +84,13 @@ class SDLScreen : SdlObject, ComScreen
 
     ComResult getMode(int index, out ComScreenMode mode) nothrow
     {
-        SDL_DisplayMode* mode = SDL_GetCurrentDisplayMode(index);
-        if (!mode)
+        SDL_DisplayMode* screenMode = SDL_GetCurrentDisplayMode(index);
+        if (!screenMode)
         {
             return getErrorRes;
         }
 
-        mode = ComScreenMode(m.w, m.h, m.refresh_rate);
+        mode = ComScreenMode(screenMode.w, screenMode.h, screenMode.refresh_rate);
         return ComResult.success;
     }
 

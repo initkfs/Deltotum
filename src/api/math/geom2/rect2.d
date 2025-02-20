@@ -12,6 +12,14 @@ struct Rect2i
     int height;
 }
 
+struct Rect2f
+{
+    float x;
+    float y;
+    float width;
+    float height;
+}
+
 /**
  * Authors: initkfs
  */

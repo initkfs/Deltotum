@@ -16,6 +16,12 @@ struct Vec2i
     int y;
 }
 
+struct Vec2f
+{
+    float x;
+    float y;
+}
+
 /**
  * Authors: initkfs
  */
