@@ -49,7 +49,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult create() nothrow
     {
-        uint flags = SDL_WINDOW_HIDDEN;
+        ulong flags = SDL_WINDOW_HIDDEN;
         final switch (mode) with (SdlWindowMode)
         {
             case opengl:
@@ -64,7 +64,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
         //flags |= SDL_WINDOW_HIGH_PIXEL_DENSITY;
 
-        ptr = SDL_CreateWindow(null,0,0,flags);
+        ptr = SDL_CreateWindow(null, 0, 0, flags);
 
         if (!ptr)
         {
@@ -88,12 +88,12 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult isShown(out bool value) nothrow
     {
-        uint flags;
-        if (const err = getFlags(flags))
+        bool hidden;
+        if (const err = isHidden(hidden))
         {
             return err;
         }
-        value = (flags & SDL_WINDOW_SHOWN) != 0;
+        value = !hidden;
         return ComResult.success;
     }
 
@@ -108,7 +108,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult isHidden(out bool value) nothrow
     {
-        uint flags;
+        ulong flags;
         if (const err = getFlags(flags))
         {
             return err;
@@ -161,7 +161,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult getMinimized(out bool value) nothrow
     {
-        uint flags;
+        ulong flags;
         if (const err = getFlags(flags))
         {
             return err;
@@ -182,7 +182,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult getMaximized(out bool value) nothrow
     {
-        uint flags;
+        ulong flags;
         if (const err = getFlags(flags))
         {
             return err;
@@ -201,7 +201,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         return ComResult.success;
     }
 
-    ComResult getFlags(out uint flags) nothrow
+    ComResult getFlags(out ulong flags) nothrow
     {
         flags = SDL_GetWindowFlags(ptr);
         return ComResult.success;
@@ -209,7 +209,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult getBorderless(out bool isBorderless) nothrow
     {
-        uint flags;
+        ulong flags;
         if (const err = getFlags(flags))
         {
             return err;
@@ -249,7 +249,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult getResizable(out bool isResizable) nothrow
     {
-        uint flags;
+        ulong flags;
         if (const err = getFlags(flags))
         {
             return err;
@@ -267,7 +267,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
         if (!SDL_SetWindowOpacity(ptr, cast(float) value0to1))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
         return ComResult.success;
     }
@@ -277,7 +277,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         const result = SDL_GetWindowOpacity(ptr);
         if (result == -1f)
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
 
         import std.math.traits : isFinite;
@@ -298,14 +298,14 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
     {
         if (!SDL_SetWindowFullscreen(ptr, isFullScreen))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
         return ComResult.success;
     }
 
     ComResult getFullScreen(out bool isFullScreen) nothrow
     {
-        uint flags;
+        ulong flags;
         if (const err = getFlags(flags))
         {
             return err;
@@ -432,7 +432,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         const indexOrZeroError = SDL_GetDisplayForWindow(ptr);
         if (indexOrZeroError <= 0)
         {
-            return getErrorRes(indexOrNegError);
+            return getErrorRes;
         }
 
         index = indexOrZeroError;
@@ -486,7 +486,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
     {
         //SDL_GetDisplayDPI() - not reliable across platforms, approximately replaced by multiplying SDL_GetWindowDisplayScale() times 160 on iPhone and Android, and 96 on other platforms.
 
-        float scale = SDL_GetWindowDisplayScale();
+        float scale = SDL_GetWindowDisplayScale(ptr);
         if (scale == 0)
         {
             return getErrorRes;
