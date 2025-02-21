@@ -5,7 +5,7 @@ import api.core.utils.factories : ProviderFactory;
 
 import api.dm.com.graphics.com_renderer : ComRenderer;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.math.geom2.vec2 : Vec2d, Vec2i;
+import api.math.geom2.vec2 : Vec2d, Vec2i, Vec2f;
 import math = api.dm.math;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
@@ -13,7 +13,7 @@ import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import Math = api.dm.math;
 
 import api.math.flip : Flip;
-import api.math.geom2.rect2 : Rect2d;
+import api.math.geom2.rect2 : Rect2d, Rect2f;
 import api.math.geom2.line2 : Line2d;
 
 import api.core.loggers.logging : Logging;
@@ -89,29 +89,9 @@ class Graphics : LoggableUnit
         }
     }
 
-    void readPixels(Rect2d bounds, ComSurface surface)
+    void readPixelsToBuffer(Rect2d bounds, ComSurface pixelBuffer)
     {
-        uint format;
-        if (const err = surface.getFormat(format))
-        {
-            logger.error(err.toString);
-        }
-        int pitch;
-        if (const err = surface.getPitch(pitch))
-        {
-            logger.error(err.toString);
-        }
-        void* pixels;
-        if (const err = surface.getPixels(pixels))
-        {
-            logger.error(err.toString);
-        }
-        readPixels(bounds, format, pitch, pixels);
-    }
-
-    void readPixels(Rect2d bounds, uint format, int pitch, void* pixelBuffer)
-    {
-        if (const err = renderer.readPixels(bounds, format, pitch, pixelBuffer))
+        if (const err = renderer.readPixels(bounds, pixelBuffer))
         {
             throw new Exception(err.toString);
         }
@@ -329,7 +309,7 @@ class Graphics : LoggableUnit
         points(p);
     }
 
-    void points(Vec2i[] p, RGBA color = defaultColor)
+    void points(Vec2f[] p, RGBA color = defaultColor)
     {
         if (p.length == 0)
         {

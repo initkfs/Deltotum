@@ -30,7 +30,7 @@ class Platform : ApplicationUnit
         struct TimerParam
         {
             int timerId = -1;
-            int delegate() dg;
+            nothrow @nogc int delegate() dg;
             Platform thisPtr;
         }
     }
@@ -78,10 +78,10 @@ class Platform : ApplicationUnit
 
     private static extern (C)
     {
-        uint timer_callback(uint interval, void* param) nothrow
+        uint timer_callback(void* userdata, uint timerID, uint interval) nothrow @nogc
         {
-            assert(param);
-            TimerParam* timerParam = cast(TimerParam*) param;
+            assert(userdata);
+            TimerParam* timerParam = cast(TimerParam*) userdata;
             Platform thisPtr = timerParam.thisPtr;
             assert(thisPtr);
             if (timerParam.timerId != -1)
@@ -93,34 +93,18 @@ class Platform : ApplicationUnit
         }
     }
 
-    private int callTimer(int timerId) nothrow
+    private int callTimer(int timerId) nothrow @nogc
     {
-        try
+        if (auto paramPtr = timerId in timers)
         {
-            if (auto paramPtr = timerId in timers)
-            {
-                auto dg = (*paramPtr).dg;
-                assert(dg);
-                return dg();
-            }
-        }
-        catch (Exception e)
-        {
-            try
-            {
-                assert(logging);
-                logger.error(e);
-
-            }
-            catch (Exception e)
-            {
-                throw new Error("Logging error from timer", e);
-            }
+            auto dg = (*paramPtr).dg;
+            assert(dg);
+            return dg();
         }
         return 0;
     }
 
-    int addTimerMT(int intervalMs, int delegate() onTimer)
+    int addTimerMT(int intervalMs, int delegate() nothrow @nogc onTimer)
     {
         TimerParam* param = new TimerParam;
         param.dg = onTimer;

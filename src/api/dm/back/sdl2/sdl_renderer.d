@@ -438,8 +438,9 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         return ComResult.success;
     }
 
-    ComResult setLogicalSize(int w, int h, uint mode = SDL_LOGICAL_PRESENTATION_DISABLED)
+    ComResult setLogicalSize(int w, int h)
     {
+        uint mode = SDL_LOGICAL_PRESENTATION_DISABLED;
         if (!SDL_SetRenderLogicalPresentation(ptr, w, h, cast(SDL_RendererLogicalPresentation) mode))
         {
             return getErrorRes;

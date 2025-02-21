@@ -111,7 +111,7 @@ abstract class Cursor
         {
             cursor = defaultCursor;
         }
-        int x, y;
+        float x, y;
         if (const err = cursor.getPos(x, y))
         {
             //TODO log

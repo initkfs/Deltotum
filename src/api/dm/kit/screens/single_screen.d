@@ -62,15 +62,15 @@ struct SingleScreen
         return ComScreenMode(m.width, m.height, m.rateHz);
     }
 
-    ComScreenDpi dpi()
-    {
-        ComScreenDpi dpi;
-        if (const err = nativeScreen.getDPI(cast(int) index, dpi))
-        {
-            logging.logger.errorf("Error getting screen dpi, index %s: %s", index, err.toString);
-        }
-        return dpi;
-    }
+    // ComScreenDpi dpi()
+    // {
+    //     ComScreenDpi dpi;
+    //     if (const err = nativeScreen.getDPI(cast(int) index, dpi))
+    //     {
+    //         logging.logger.errorf("Error getting screen dpi, index %s: %s", index, err.toString);
+    //     }
+    //     return dpi;
+    // }
 
     ComScreenOrientation orientation()
     {

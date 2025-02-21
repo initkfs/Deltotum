@@ -2157,7 +2157,7 @@ class Sprite2d : EventKitTarget
         {
             throw new Exception(err.toString);
         }
-        graphics.readPixels(bounds, surf);
+        graphics.readPixelsToBuffer(bounds, surf);
         return surf;
     }
 
