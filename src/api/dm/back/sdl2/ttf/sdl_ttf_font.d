@@ -24,11 +24,11 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
     private
     {
         string _fontPath;
-        size_t _fontSize;
+        double _fontSize;
         double _maxHeight = 1;
     }
 
-    ComResult load(string fontFilePath, float fontSize = 12) nothrow
+    ComResult load(string fontFilePath, double fontSize = 12) nothrow
     {
         if (ptr)
         {
@@ -48,7 +48,7 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
         this._fontPath = fontFilePath;
         this._fontSize = fontSize;
 
-        ptr = TTF_OpenFont(_fontPath.toStringz, _fontSize);
+        ptr = TTF_OpenFont(_fontPath.toStringz, cast(float) _fontSize);
         if (!ptr)
         {
             return getErrorRes("Unable to load ttf font from " ~ fontFilePath);
@@ -85,7 +85,7 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
 
         assert(textPtr);
 
-        SDL_Surface* fontSurfacePtr = TTF_RenderText_Blended(ptr, textPtr, color);
+        SDL_Surface* fontSurfacePtr = TTF_RenderText_Blended(ptr, textPtr, 0, color);
         if (!fontSurfacePtr)
         {
             return getErrorRes("Unable to render text");
@@ -108,7 +108,7 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
         return ComResult.success;
     }
 
-    ComResult getFontSize(out size_t size) nothrow
+    ComResult getFontSize(out double size) nothrow
     {
         assert(ptr, "Font not loaded");
         size = _fontSize;
@@ -117,7 +117,7 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
 
     ComResult setHinting(ComFontHinting hinting)
     {
-        int sdlHinting;
+        TTF_HintingFlags sdlHinting;
         final switch (hinting) with (ComFontHinting)
         {
             case none:
