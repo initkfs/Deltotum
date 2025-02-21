@@ -168,10 +168,6 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     ComResult getRendererTarget(ref SDL_Texture* target) nothrow
     {
         auto t = SDL_GetRenderTarget(renderer.getObject);
-        if (!t)
-        {
-            return getErrorRes;
-        }
         target = t;
         return ComResult.success;
     }
@@ -186,7 +182,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
         if (!SDL_SetRenderTarget(renderer.getObject, ptr))
         {
-            return getErrorRes;
+            return getErrorRes("Fail set rendered target");
         }
         return ComResult.success;
     }
@@ -595,6 +591,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         {
             return err;
         }
+
         if (const err = newTexture.createTargetRGBA32(width, height))
         {
             return err;

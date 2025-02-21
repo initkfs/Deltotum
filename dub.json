@@ -107,11 +107,12 @@
         "-J=./data",
         "-P=-I./libs/sdl3/SDL_lib"
     ],
+    "lflags": [
+        "-L./libs/sdl3",
+        "-rpath=./libs/sdl3"
+    ],
+    "libs": ["SDL3", "SDL3_image", "SDL3_mixer", "SDL3_ttf"],
     "versions": [
-        "SDL_Image",
-        "SDL_TTF",
-        "SDL_2020",
-        "SDL_Mixer_202",
         "Cairo116"
     ]
 }

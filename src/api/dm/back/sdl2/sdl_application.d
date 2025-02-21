@@ -572,7 +572,7 @@ class SdlApplication : GuiApp
 
         //flags |= SDL_RENDERER_TARGETTEXTURE;
         //flags |= SDL_RENDERER_PRESENTVSYNC;
-        auto sdlRenderer = new SdlRenderer(window, "default_renderer");
+        auto sdlRenderer = new SdlRenderer(window, null);
         return sdlRenderer;
     }
 

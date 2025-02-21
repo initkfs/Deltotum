@@ -291,7 +291,6 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
             return err;
         }
         assert(details);
-        assert(palette);
 
         if (!SDL_SetSurfaceColorKey(ptr, colorKey, SDL_MapRGBA(
                 details, palette, r, g, b, a)))
