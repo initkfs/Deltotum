@@ -14,7 +14,7 @@ import api.dm.back.sdl3.externs.csdl3;
 class SdlImgLib : SdlImageObject
 {
 
-    void initialize(int flags) const
+    void initialize() const
     {
         
     }

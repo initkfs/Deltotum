@@ -4,7 +4,7 @@ module api.dm.back.sdl2.sdl_application;
 version(SdlBackend):
 // dfmt on
 
-import api.core.loggers.logging: Logging;
+import api.core.loggers.logging : Logging;
 import api.core.configs.keyvalues.config : Config;
 import api.core.contexts.context : Context;
 import api.core.apps.app_init_ret : AppInitRet;
@@ -41,7 +41,7 @@ import api.dm.com.graphics.com_image : ComImage;
 import api.dm.com.platforms.com_system : ComSystem;
 
 import api.dm.kit.windows.window : Window;
-import api.dm.gui.windows.gui_window: GuiWindow;
+import api.dm.gui.windows.gui_window : GuiWindow;
 
 import api.dm.kit.apps.loops.integrated_loop : IntegratedLoop;
 import api.dm.kit.apps.loops.interrupted_loop : InterruptedLoop;
@@ -133,7 +133,7 @@ class SdlApplication : GuiApp
 
         if (isTimerEnabled)
         {
-            flags |= SDL_INIT_TIMER;
+            // flags |= SDL_INIT_TIMER;
             gservices.capGraphics.isTimer = true;
         }
 
@@ -243,7 +243,9 @@ class SdlApplication : GuiApp
                     uservices.logger.error("Found using vector graphics key, but not value: ", KitConfigKeys
                             .graphicsUseVector);
                 }
-            }else {
+            }
+            else
+            {
                 gservices.capGraphics.isVectorGraphics = true;
             }
 
@@ -287,8 +289,14 @@ class SdlApplication : GuiApp
 
         // physLibForLoad.load;
 
-        sdlLib.enableScreenSaver(isScreenSaverEnabled);
-        uservices.logger.trace("Screensaver: ", sdlLib.isScreenSaverEnabled);
+        if (const err = sdlLib.enableScreenSaver(isScreenSaverEnabled))
+        {
+            uservices.logger.errorf("Error screensaver: " ~ err.toString);
+        }
+        else
+        {
+            uservices.logger.trace("Screensaver: ", sdlLib.isScreenSaverEnabled);
+        }
 
         import api.dm.back.sdl2.sdl_screen : SDLScreen;
 
@@ -559,11 +567,12 @@ class SdlApplication : GuiApp
         uint flags;
         if (!isHeadless)
         {
-            flags |= SDL_RENDERER_ACCELERATED;
+            //flags |= SDL_RENDERER_ACCELERATED;
         }
-        flags |= SDL_RENDERER_TARGETTEXTURE;
-        flags |= SDL_RENDERER_PRESENTVSYNC;
-        auto sdlRenderer = new SdlRenderer(window, flags);
+
+        //flags |= SDL_RENDERER_TARGETTEXTURE;
+        //flags |= SDL_RENDERER_PRESENTVSYNC;
+        auto sdlRenderer = new SdlRenderer(window, "default_renderer");
         return sdlRenderer;
     }
 
@@ -716,14 +725,15 @@ class SdlApplication : GuiApp
             auto fontGenerator = newFontGenerator(comSurfProvider);
             windowBuilder.build(fontGenerator);
 
-            import api.dm.kit.graphics.colors.rgba: RGBA;
+            import api.dm.kit.graphics.colors.rgba : RGBA;
 
             const isColorless = isFontTextureIsColorless(uservices.config, uservices.context);
 
             const colorText = isColorless ? RGBA.white : theme.colorText;
             const colorTextBackground = isColorless ? RGBA.black : theme.colorTextBackground;
 
-            createFontBitmaps(fontGenerator, windowBuilder.asset, colorText, colorTextBackground, (bitmap) {
+            createFontBitmaps(fontGenerator, windowBuilder.asset, colorText, colorTextBackground, (
+                    bitmap) {
                 // windowBuilder.build(bitmap);
                 // bitmap.initialize;
                 // assert(bitmap.isInitialized);
@@ -734,7 +744,7 @@ class SdlApplication : GuiApp
 
         import api.dm.kit.factories.image_factory : ImageFactory;
         import api.dm.kit.factories.shape_factory : ShapeFactory;
-        import api.dm.kit.factories.texture_factory: TextureFactory;
+        import api.dm.kit.factories.texture_factory : TextureFactory;
 
         ImageFactory imageFactory = new ImageFactory;
         windowBuilder.build(imageFactory);
@@ -744,6 +754,7 @@ class SdlApplication : GuiApp
         windowBuilder.build(textureFactory);
 
         import api.dm.kit.factories.factory_kit : FactoryKit;
+
         auto factoryKit = new FactoryKit(imageFactory, shapeFactory, textureFactory);
         windowBuilder.build(factoryKit);
 
