@@ -13,7 +13,6 @@ import api.dm.com.graphics.com_surface : ComSurface;
 enum ComTextureScaleMode
 {
     speed,
-    balance,
     quality
 }
 

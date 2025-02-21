@@ -317,10 +317,6 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         assert(ptr);
 
         SDL_Palette* palettePtr = SDL_GetSurfacePalette(ptr);
-        if (!palettePtr)
-        {
-            return getErrorRes;
-        }
         palette = palettePtr;
 
         return ComResult.success;

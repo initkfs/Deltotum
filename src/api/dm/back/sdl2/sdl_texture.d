@@ -87,10 +87,9 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             return getErrorRes("Unable create texture from renderer and surface.");
         }
         //TODO side effect 
-        const zeroOrErrorCode = SDL_SetTextureBlendMode(ptr, SDL_BLENDMODE_BLEND);
-        if (zeroOrErrorCode)
+        if (!SDL_SetTextureBlendMode(ptr, SDL_BLENDMODE_BLEND))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
         return ComResult.success;
     }
@@ -107,39 +106,57 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    protected ComResult query(int* width, int* height, uint* format, SDL_TextureAccess* access) nothrow
+    protected ComResult query(int* width, int* height, uint* format, uint* access) nothrow
     {
         if (!ptr)
         {
             return ComResult.error("Texture2d query error: texture ponter is null");
         }
-        const int zeroOrErrorCode = SDL_QueryTexture(ptr, format, access, width, height);
-        if (zeroOrErrorCode)
+
+        SDL_PropertiesID propId = SDL_GetTextureProperties(ptr);
+        if (propId == 0)
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
+
+        if (format)
+        {
+            *format = cast(uint) SDL_GetNumberProperty(propId, SDL_PROP_TEXTURE_FORMAT_NUMBER.ptr, 0);
+        }
+        if (access)
+        {
+            *access = cast(uint) SDL_GetNumberProperty(propId, SDL_PROP_TEXTURE_ACCESS_NUMBER.ptr, 0);
+        }
+        if (width)
+        {
+            *width = cast(int) SDL_GetNumberProperty(propId, SDL_PROP_TEXTURE_WIDTH_NUMBER.ptr, 0);
+        }
+
+        if (height)
+        {
+            *height = cast(int) SDL_GetNumberProperty(propId, SDL_PROP_TEXTURE_HEIGHT_NUMBER.ptr, 0);
+        }
+
         return ComResult.success;
     }
 
     ComResult getFormat(out uint format) nothrow
     {
-        SDL_PixelFormat* fullFormat;
-        if (const err = getFormat(fullFormat))
+        if (const err = query(null, null, &format, null))
         {
             return err;
         }
-        format = fullFormat.format;
         return ComResult.success;
     }
 
-    protected ComResult getFormat(out SDL_PixelFormat* format) nothrow
+    protected ComResult getDetails(SDL_PixelFormat format, out SDL_PixelFormatDetails* details) nothrow
     {
-        uint formatPtr;
-        if (const err = query(null, null, &formatPtr, null))
+        SDL_PixelFormatDetails* detailsPtr = SDL_GetPixelFormatDetails(format);
+        if (!detailsPtr)
         {
-            return err;
+            return getErrorRes;
         }
-        format = SDL_GetPixelFormatDetails(formatPtr);
+        details = detailsPtr;
         return ComResult.success;
     }
 
@@ -150,7 +167,12 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult getRendererTarget(ref SDL_Texture* target) nothrow
     {
-        target = SDL_GetRenderTarget(renderer.getObject);
+        auto t = SDL_GetRenderTarget(renderer.getObject);
+        if (!t)
+        {
+            return getErrorRes;
+        }
+        target = t;
         return ComResult.success;
     }
 
@@ -162,10 +184,9 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             return err;
         }
 
-        const zeroOrErrorCode = SDL_SetRenderTarget(renderer.getObject, ptr);
-        if (zeroOrErrorCode)
+        if (!SDL_SetRenderTarget(renderer.getObject, ptr))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
         return ComResult.success;
     }
@@ -179,15 +200,14 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             lastRendererTarget = null;
         }
 
-        const zeroOrErrorCode = SDL_SetRenderTarget(renderer.getObject, target);
-        if (zeroOrErrorCode)
+        if (!SDL_SetRenderTarget(renderer.getObject, target))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
         return ComResult.success;
     }
 
-    protected ComResult create(uint format,
+    protected ComResult create(SDL_PixelFormat format,
         SDL_TextureAccess access, int w,
         int h) nothrow
     {
@@ -207,40 +227,36 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     protected ComResult getAlphaMod(out ubyte alpha) nothrow
     {
-        const int zeroOrErrorCode = SDL_GetTextureAlphaMod(ptr, &alpha);
-        if (zeroOrErrorCode)
+        if (!SDL_GetTextureAlphaMod(ptr, &alpha))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
         return ComResult.success;
     }
 
     protected ComResult setAlphaMod(ubyte alpha) nothrow
     {
-        const int zeroOrErrorCode = SDL_SetTextureAlphaMod(ptr, alpha);
-        if (zeroOrErrorCode)
+        if (!SDL_SetTextureAlphaMod(ptr, alpha))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
         return ComResult.success;
     }
 
     ComResult getColor(out ubyte r, out ubyte g, out ubyte b, out ubyte a) nothrow
     {
-        const int zeroOrErrorCode = SDL_GetTextureColorMod(ptr, &r, &g, &b);
-        if (zeroOrErrorCode)
+        if (!SDL_GetTextureColorMod(ptr, &r, &g, &b))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
         return getAlphaMod(a);
     }
 
     ComResult setColor(ubyte r, ubyte g, ubyte b, ubyte a) nothrow
     {
-        const int zeroOrErrorCode = SDL_SetTextureColorMod(ptr, r, g, b);
-        if (zeroOrErrorCode)
+        if (!SDL_SetTextureColorMod(ptr, r, g, b))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
         return setAlphaMod(a);
     }
@@ -285,10 +301,9 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     {
         assert(ptr);
         assert(!locked);
-        const zeroOrErrorCode = SDL_LockTexture(ptr, null, cast(void**)&pixelPtr, &pitch);
-        if (zeroOrErrorCode)
+        if (!SDL_LockTexture(ptr, null, cast(void**)&pixelPtr, &pitch))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
 
         locked = true;
@@ -300,6 +315,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         assert(locked);
         assert(ptr);
         SDL_UnlockTexture(ptr);
+        //TODO check unlock?
         locked = false;
         pixelPtr = null;
         pitch = 0;
@@ -333,11 +349,11 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             return ComResult.error("Texture2d not locked for update");
         }
         SDL_Rect bounds = {0, 0, cast(int) rect.width, cast(int) rect.height};
-        const zeroOrErrorCode = SDL_UpdateTexture(ptr,
+        const isUpdate = SDL_UpdateTexture(ptr,
             &bounds, cast(void*) pixelPtr, pitch);
-        if (zeroOrErrorCode)
+        if (!isUpdate)
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
         return ComResult.success;
     }
@@ -365,14 +381,13 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             return err;
         }
 
-        //TODO class field or SDL global cache?
-        SDL_PixelFormat* format = SDL_GetPixelFormatDetails(formatValue);
-        if (!format)
+        SDL_PixelFormatDetails* details;
+        if (const err = getDetails(cast(SDL_PixelFormat) formatValue, details))
         {
-            return ComResult.error(getError);
+            return err;
         }
 
-        Uint32 color = SDL_MapRGBA(format, r, g, b, a);
+        Uint32 color = SDL_MapRGBA(details, null, r, g, b, a);
         const pixelPosition = (y * (pitch / pitch.sizeof) + x);
 
         pixelPtr[pixelPosition] = color;
@@ -382,13 +397,20 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult setPixelColor(uint* ptr, ubyte r, ubyte g, ubyte b, ubyte aByte) nothrow
     {
-        SDL_PixelFormat* format;
+        uint format;
         if (const formatErr = getFormat(format))
         {
             return formatErr;
         }
-        const newColor = SDL_MapRGBA(format, r, g, b, aByte);
-        *ptr = newColor;
+
+        SDL_PixelFormatDetails* details;
+        if (const err = getDetails(cast(SDL_PixelFormat) format, details))
+        {
+            return err;
+        }
+
+        Uint32 color = SDL_MapRGBA(details, null, r, g, b, aByte);
+        *ptr = color;
         return ComResult.success;
     }
 
@@ -404,22 +426,28 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult getPixelColor(uint* ptr, out ubyte r, out ubyte g, out ubyte b, out ubyte aByte) nothrow
     {
-        SDL_PixelFormat* format;
+        uint format;
         if (const formatErr = getFormat(format))
         {
             return formatErr;
         }
-        SDL_GetRGBA(*ptr, format, &r, &g, &b, &aByte);
+
+        SDL_PixelFormatDetails* details;
+        if (const err = getDetails(cast(SDL_PixelFormat)format, details))
+        {
+            return err;
+        }
+
+        SDL_GetRGBA(*ptr, details,null,  &r, &g, &b, &aByte);
         return ComResult.success;
     }
 
     ComResult setBlendMode(ComBlendMode mode) nothrow
     {
         SDL_BlendMode newMode = typeConverter.toNativeBlendMode(mode);
-        const int zeroOrErrorCode = SDL_SetTextureBlendMode(ptr, newMode);
-        if (zeroOrErrorCode)
+        if (!SDL_SetTextureBlendMode(ptr, newMode))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
         return ComResult.success;
     }
@@ -446,8 +474,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
         int textureWidth, textureHeight;
         uint format;
-        SDL_TextureAccess access;
-        if (const err = query(&textureWidth, &textureHeight, &format, &access))
+        if (const err = query(&textureWidth, &textureHeight, &format, null))
         {
             return err;
         }
@@ -457,17 +484,13 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         srcRect.w = textureWidth;
         srcRect.h = textureHeight;
 
-        auto tempSrc = SDL_CreateRGBSurfaceWithFormat(0, srcRect.w, srcRect.h, depth, format);
-        if (!tempSrc)
-        {
-            return getErrorRes("Source surface is null for format");
-        }
+        auto tempSrc = SDL_RenderReadPixels(renderer.getObject, &srcRect);
         scope (exit)
         {
             SDL_DestroySurface(tempSrc);
         }
 
-        auto tempDst = SDL_CreateRGBSurfaceWithFormat(0, dstRect.w, dstRect.h, depth, format);
+        auto tempDst = SDL_CreateSurface(dstRect.w, dstRect.h, tempSrc.format);
         if (!tempDst)
         {
             return getErrorRes("Temp surface is null for format");
@@ -482,22 +505,17 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         {
             return err;
         }
-        const int zeroOrErrorRead = SDL_RenderReadPixels(renderer.getObject, &srcRect, format, tempSrc.pixels, tempSrc
-                .pitch);
-        if (zeroOrErrorRead)
-        {
-            return getErrorRes(zeroOrErrorRead);
-        }
-
+       
         if (const err = restoreRendererTarget)
         {
             return err;
         }
 
-        const int zeroOrErrorCode = SDL_BlitSurfaceScaled(tempSrc, &srcRect, tempDst, &dstRect);
-        if (zeroOrErrorCode)
+        SDL_ScaleMode scaleMode = SDL_SCALEMODE_LINEAR;
+        const isScaled = SDL_BlitSurfaceScaled(tempSrc, &srcRect, tempDst, &dstRect, scaleMode);
+        if (!isScaled)
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
 
         if (const err = fromSurfacePtr(tempDst))
@@ -517,19 +535,19 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     ComResult draw(ComTexture other, Rect2d srcBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
             .none)
     {
-        SDL_Rect srcRect;
-        srcRect.x = cast(int) srcBounds.x;
-        srcRect.y = cast(int) srcBounds.y;
-        srcRect.w = cast(int) srcBounds.width;
-        srcRect.h = cast(int) srcBounds.height;
+        SDL_FRect srcRect;
+        srcRect.x = cast(float) srcBounds.x;
+        srcRect.y = cast(float) srcBounds.y;
+        srcRect.w = cast(float) srcBounds.width;
+        srcRect.h = cast(float) srcBounds.height;
 
         //SDL_Rect bounds = window.getScaleBounds;
 
-        SDL_Rect destRect;
-        destRect.x = cast(int)(destBounds.x); // + boundsRect.x);
-        destRect.y = cast(int)(destBounds.y); // + boundsRect.y);
-        destRect.w = cast(int) destBounds.width;
-        destRect.h = cast(int) destBounds.height;
+        SDL_FRect destRect;
+        destRect.x = cast(float)(destBounds.x); // + boundsRect.x);
+        destRect.y = cast(float)(destBounds.y); // + boundsRect.y);
+        destRect.w = cast(float) destBounds.width;
+        destRect.h = cast(float) destBounds.height;
 
         //FIXME some texture sizes can crash when changing the angle
         //double newW = height * abs(math.sinDeg(angle)) + width * abs(math.cosDeg(angle));
@@ -556,7 +574,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         //https://discourse.libsdl.org/t/1st-frame-sdl-renderer-software-sdl-flip-horizontal-ubuntu-wrong-display-is-it-a-bug-of-sdl-rendercopyex/25924
         SdlTexture t = cast(SdlTexture) other;
         assert(t);
-        SDL_Point* rotateCenter = null;
+        SDL_FPoint* rotateCenter = null;
         return renderer.copyEx(t, &srcRect, &destRect, angle, rotateCenter, sdlFlip);
     }
 
@@ -648,13 +666,13 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     //TODO type converter
     private ComTextureScaleMode fromSdlMode(SDL_ScaleMode m) nothrow
     {
-        final switch (m) with (SDL_ScaleMode)
+        final switch (m)
         {
             case SDL_SCALEMODE_NEAREST:
                 return ComTextureScaleMode.speed;
+            // case SDL_SCALEMODE_LINEAR:
+            //     return ComTextureScaleMode.balance;
             case SDL_SCALEMODE_LINEAR:
-                return ComTextureScaleMode.balance;
-            case SDL_ScaleModeBest:
                 return ComTextureScaleMode.quality;
         }
     }
@@ -665,21 +683,18 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         final switch (m) with (ComTextureScaleMode)
         {
             case speed:
-                return SDL_ScaleMode.SDL_SCALEMODE_NEAREST;
-            case balance:
-                return SDL_ScaleMode.SDL_SCALEMODE_LINEAR;
+                return SDL_SCALEMODE_NEAREST;
             case quality:
-                return SDL_ScaleMode.SDL_ScaleModeBest;
+                return SDL_SCALEMODE_LINEAR;
         }
     }
 
     ComResult setScaleMode(ComTextureScaleMode mode) nothrow
     {
         const nativeMode = toSdlMode(mode);
-        const zeroOrErrorCode = SDL_SetTextureScaleMode(ptr, nativeMode);
-        if (zeroOrErrorCode)
+        if (!SDL_SetTextureScaleMode(ptr, nativeMode))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
         return ComResult.success;
     }
@@ -687,10 +702,9 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     ComResult getScaleMode(out ComTextureScaleMode mode) nothrow
     {
         SDL_ScaleMode oldMode;
-        const zeroOrErrorCode = SDL_GetTextureScaleMode(ptr, &oldMode);
-        if (zeroOrErrorCode)
+        if (!SDL_GetTextureScaleMode(ptr, &oldMode))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
         mode = fromSdlMode(oldMode);
         return ComResult.success;
@@ -730,10 +744,9 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
         _opacity = opacity;
         //TODO setColor with alpha
-        const int zeroOrErrorCode = SDL_SetTextureAlphaMod(ptr, cast(ubyte)(255 * opacity));
-        if (zeroOrErrorCode)
+        if (!SDL_SetTextureAlphaMod(ptr, cast(ubyte)(255 * opacity)))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
         return ComResult.success;
     }
