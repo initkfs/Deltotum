@@ -25,10 +25,8 @@ interface ComSurface : Destroyable
 nothrow:
 
     ComResult createRGB(int width, int height);
-    ComResult createRGB(uint flags, int width, int height, int depth = 32,
-        uint rmask = 0, uint gmask = 0, uint bmask = 0, uint amask = 0);
-    ComResult createRGB(void* pixels, int width, int height, int depth, int pitch,
-        uint rmask, uint gmask, uint bmask, uint amask);
+    ComResult createRGB(int width, int height, uint format);
+    ComResult createRGB(void* pixels, int width, int height, uint format, int pitch);
     ComResult createFromPtr(void* ptr) nothrow;
     ComResult resize(int newWidth, int newHeight, out bool isResized);
     ComResult lock();

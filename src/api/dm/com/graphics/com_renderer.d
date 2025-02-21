@@ -48,5 +48,5 @@ nothrow:
     ComResult getViewport(out Rect2d viewport);
     ComResult setLogicalSize(int w, int h, uint mode);
     ComResult getLogicalSize(out int w, out int h, out uint mode);
-    ComResult readPixels(Rect2d rect, out ComSurface surface);
+    ComResult readPixels(Rect2d rect, ComSurface buffer);
 }

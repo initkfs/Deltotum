@@ -165,7 +165,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
     }
 
     //it should be called after rendering and before SDL_RenderPresent().
-    ComResult readPixels(Rect2d rect, out ComSurface buffer) nothrow
+    ComResult readPixels(Rect2d rect, ComSurface buffer) nothrow
     {
         SDL_Rect bounds;
         bounds.x = cast(int) rect.x;
@@ -183,7 +183,8 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
 
             import api.dm.back.sdl2.sdl_surface : SdlSurface;
 
-            buffer = new SdlSurface(surface);
+            auto sdlBuffer = cast(SdlSurface) buffer;
+            sdlBuffer.updateObject(surface);
         }
         catch (Exception e)
         {

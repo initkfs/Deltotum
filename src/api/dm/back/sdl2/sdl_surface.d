@@ -4,7 +4,7 @@ module api.dm.back.sdl2.sdl_surface;
 version(SdlBackend):
 // dfmt on
 
-import api.dm.com.com_native_ptr: ComNativePtr;
+import api.dm.com.com_native_ptr : ComNativePtr;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.com.graphics.com_blend_mode : ComBlendMode;
 import api.dm.com.platforms.results.com_result : ComResult;
@@ -38,46 +38,23 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         {
             disposePtr;
         }
-        //TODO or SDL_BYTEORDER?
-        version (BigEndian)
+
+        if (const createErr = createRGB(width, height, SDL_PIXELFORMAT_RGBA32))
         {
-            if (const createErr = createRGB(
-                    0,
-                    width,
-                    height,
-                    32,
-                    0x0000FF00,
-                    0x00FF0000,
-                    0xFF000000,
-                    0x000000FF))
-            {
-                return createErr;
-            }
+            return createErr;
         }
 
-        version (LittleEndian)
-        {
-            if (const createErr = createRGB(0, width, height, 32,
-                    0x00ff0000,
-                    0x0000ff00,
-                    0x000000ff,
-                    0xff000000))
-            {
-                return createErr;
-            }
-        }
         assert(this.ptr);
         return ComResult.success;
     }
 
-    ComResult createRGB(uint flags = 0, int width = 10, int height = 10, int depth = 32,
-        uint rmask = 0, uint gmask = 0, uint bmask = 0, uint amask = 0) nothrow
+    ComResult createRGB(int width, int height, uint format) nothrow
     {
         if (ptr)
         {
             disposePtr;
         }
-        ptr = createRGBSurfacePtr(flags, width, height, depth, rmask, gmask, bmask, amask);
+        ptr = createRGBSurfacePtr(width, height, format);
         if (!ptr)
         {
             return getErrorRes("Cannot create rgb surface");
@@ -85,8 +62,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult createRGB(void* pixels, int width, int height, int depth, int pitch,
-        uint rmask, uint gmask, uint bmask, uint amask) nothrow
+    ComResult createRGB(void* pixels, int width, int height, uint format, int pitch) nothrow
     {
         assert(pixels);
 
@@ -94,7 +70,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         {
             disposePtr;
         }
-        ptr = SDL_CreateRGBSurfaceFrom(pixels, width, height, depth, pitch, rmask, gmask, bmask, amask);
+        ptr = SDL_CreateSurfaceFrom(width, height, cast(SDL_PixelFormat) format, pixels, pitch);
         if (!ptr)
         {
             return getErrorRes("Cannot create rgb surface from pixels.");
@@ -102,18 +78,9 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    SDL_Surface* createRGBSurfacePtr(uint flags, int width, int height, int depth,
-        uint rmask, uint gmask, uint bmask, uint amask) nothrow
+    SDL_Surface* createRGBSurfacePtr(int width, int height, uint format) nothrow
     {
-        auto newPtr = SDL_CreateRGBSurface(
-            flags,
-            width,
-            height,
-            depth,
-            rmask,
-            gmask,
-            bmask,
-            amask);
+        auto newPtr = SDL_CreateSurface(width, height, cast(SDL_PixelFormat) format);
         return newPtr;
     }
 
@@ -138,9 +105,9 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return new SdlSurface(ptr);
     }
 
-    ComResult convertSurfacePtr(SDL_Surface* src, out SDL_Surface* dest, SDL_PixelFormat* format, uint flags = 0) const nothrow
+    ComResult convertSurfacePtr(SDL_Surface* src, out SDL_Surface* dest, SDL_PixelFormat format) const nothrow
     {
-        SDL_Surface* ptr = SDL_ConvertSurface(src, format, flags);
+        SDL_Surface* ptr = SDL_ConvertSurface(src, format);
         if (!ptr)
         {
             return getErrorRes("New surface сonverted pointer is null.");
@@ -151,10 +118,10 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     protected ComResult scaleToPtr(SDL_Surface* destPtr, SDL_Rect* bounds) nothrow
     {
-        const int zeroOrErrorCode = SDL_BlitSurfaceScaled(ptr, null, destPtr, bounds);
-        if (zeroOrErrorCode)
+        SDL_ScaleMode scaleMode = SDL_SCALEMODE_LINEAR;
+        if (!SDL_BlitSurfaceScaled(ptr, null, destPtr, bounds, scaleMode))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
         return ComResult.success;
     }
@@ -194,9 +161,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         dest.w = newWidth;
         dest.h = newHeight;
 
-        auto newSurfacePtr = createRGBSurfacePtr(getObject.flags, dest.w, dest.h,
-            getPixelFormat.BitsPerPixel, getPixelFormat.Rmask,
-            getPixelFormat.Gmask, getPixelFormat.Bmask, getPixelFormat.Amask);
+        auto newSurfacePtr = createRGBSurfacePtr(dest.w, dest.h, getPixelFormat);
 
         if (!newSurfacePtr)
         {
@@ -249,20 +214,18 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         assert(sdlDstPtr);
 
         //TODO check is locked
-        const int zeroOrErrorCode = SDL_BlitSurface(ptr, srcRect, sdlDstPtr, dstRect);
-        if (zeroOrErrorCode)
+        if (!SDL_BlitSurface(ptr, srcRect, sdlDstPtr, dstRect))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
         return ComResult.success;
     }
 
     ComResult blitPtr(SDL_Rect* srcRect, SDL_Surface* dst, SDL_Rect* dstRect) nothrow
     {
-        const int zeroOrErrorCode = SDL_BlitSurface(ptr, srcRect, dst, dstRect);
-        if (zeroOrErrorCode)
+        if (!SDL_BlitSurface(ptr, srcRect, dst, dstRect))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
         return ComResult.success;
     }
@@ -270,10 +233,9 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
     ComResult getBlitAlphaMod(out int mod) nothrow
     {
         ubyte oldMod;
-        const int zeroOrErrorCode = SDL_GetSurfaceAlphaMod(ptr, &oldMod);
-        if (zeroOrErrorCode)
+        if (!SDL_GetSurfaceAlphaMod(ptr, &oldMod))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
 
         mod = oldMod;
@@ -283,21 +245,18 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
     ComResult setBlitAlhpaMod(int alpha) nothrow
     {
         //srcA = srcA * (alpha / 255)
-        const int zeroOrErrorCode = SDL_SetSurfaceAlphaMod(ptr, cast(ubyte) alpha);
-        if (zeroOrErrorCode)
+        if (!SDL_SetSurfaceAlphaMod(ptr, cast(ubyte) alpha))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
         return ComResult.success;
     }
 
     ComResult setBlendMode(ComBlendMode mode) nothrow
     {
-        const int zeroOrErrorCode = SDL_SetSurfaceBlendMode(ptr, typeConverter.toNativeBlendMode(
-                mode));
-        if (zeroOrErrorCode)
+        if (!SDL_SetSurfaceBlendMode(ptr, typeConverter.toNativeBlendMode(mode)))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
         return ComResult.success;
     }
@@ -305,10 +264,9 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
     ComResult getBlendMode(out ComBlendMode mode) nothrow
     {
         SDL_BlendMode sdlMode;
-        const int zeroOrErrorCode = SDL_GetSurfaceBlendMode(ptr, &sdlMode);
-        if (zeroOrErrorCode)
+        if (!SDL_GetSurfaceBlendMode(ptr, &sdlMode))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
 
         mode = typeConverter.fromNativeBlendMode(sdlMode);
@@ -317,23 +275,64 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     ComResult setPixelIsTransparent(bool isTransparent, ubyte r, ubyte g, ubyte b, ubyte a) nothrow
     {
-        const colorKey = isTransparent ? true : false;
-        const int zeroOrErrorCode = SDL_SetSurfaceColorKey(ptr, colorKey, SDL_MapRGBA(
-                ptr.format, r, g, b, a));
-        if (zeroOrErrorCode)
+        sdlbool colorKey = isTransparent ? true : false;
+
+        auto format = ptr.format;
+        SDL_PixelFormatDetails* details;
+        SDL_Palette* palette;
+
+        if (const err = getFormatDetails(format, details))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return err;
         }
+
+        if (const err = getPalette(palette))
+        {
+            return err;
+        }
+        assert(details);
+        assert(palette);
+
+        if (!SDL_SetSurfaceColorKey(ptr, colorKey, SDL_MapRGBA(
+                details, palette, r, g, b, a)))
+        {
+            return getErrorRes;
+        }
+        return ComResult.success;
+    }
+
+    protected ComResult getFormatDetails(SDL_PixelFormat format, out SDL_PixelFormatDetails* details) nothrow
+    {
+        SDL_PixelFormatDetails* detailsPtr = SDL_GetPixelFormatDetails(format);
+        if (!detailsPtr)
+        {
+            return getErrorRes;
+        }
+        details = detailsPtr;
+        return ComResult.success;
+    }
+
+    protected ComResult getPalette(out SDL_Palette* palette) nothrow
+    {
+        assert(ptr);
+
+        SDL_Palette* palettePtr = SDL_GetSurfacePalette(ptr);
+        if (!palettePtr)
+        {
+            return getErrorRes;
+        }
+        palette = palettePtr;
+
         return ComResult.success;
     }
 
     ComResult lock() nothrow
     {
         assert(ptr);
-        const int zeroOrErrorCode = SDL_LockSurface(ptr);
-        if (zeroOrErrorCode)
+        //TODO  SDL_MUSTLOCK(surface)
+        if (!SDL_LockSurface(ptr))
         {
-            return getErrorRes(zeroOrErrorCode);
+            return getErrorRes;
         }
         return ComResult.success;
     }
@@ -341,8 +340,8 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
     ComResult unlock() nothrow
     {
         assert(ptr);
-        //void???
         SDL_UnlockSurface(ptr);
+
         return ComResult.success;
     }
 
@@ -355,10 +354,17 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     ComResult getPixel(int x, int y, out uint* pixel) nothrow
     {
+        assert(ptr);
+        //TODO cache
+        SDL_PixelFormatDetails* details;
+        if (const err = getFormatDetails(ptr.format, details))
+        {
+            return err;
+        }
         //TODO check bounds
         pixel = cast(Uint32*)(
             cast(
-                Uint8*) ptr.pixels + y * ptr.pitch + x * ptr.format.BytesPerPixel);
+                Uint8*) ptr.pixels + y * ptr.pitch + x * details.bytes_per_pixel);
         return ComResult.success;
     }
 
@@ -374,13 +380,35 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     ComResult getPixelRGBA(uint* pixel, out ubyte r, out ubyte g, out ubyte b, out ubyte a) nothrow
     {
-        SDL_GetRGBA(*pixel, ptr.format, &r, &g, &b, &a);
+        SDL_PixelFormatDetails* details;
+        if (const err = getFormatDetails(ptr.format, details))
+        {
+            return err;
+        }
+        SDL_Palette* palette;
+        if (const err = getPalette(palette))
+        {
+            return err;
+        }
+
+        SDL_GetRGBA(*pixel, details,palette,  &r, &g, &b, &a);
         return ComResult.success;
     }
 
     ComResult setPixelRGBA(uint* pixel, ubyte r, ubyte g, ubyte b, ubyte a) nothrow
     {
-        Uint32 color = SDL_MapRGBA(ptr.format, r, g, b, a);
+        SDL_PixelFormatDetails* details;
+        if (const err = getFormatDetails(ptr.format, details))
+        {
+            return err;
+        }
+        SDL_Palette* palette;
+        if (const err = getPalette(palette))
+        {
+            return err;
+        }
+
+        Uint32 color = SDL_MapRGBA(details, palette, r, g, b, a);
         *pixel = color;
         return ComResult.success;
     }
@@ -517,11 +545,11 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
     ComResult getFormat(out uint value) nothrow
     {
         assert(ptr);
-        value = ptr.format.format;
+        value = ptr.format;
         return ComResult.success;
     }
 
-    inout(SDL_PixelFormat*) getPixelFormat() inout nothrow
+    SDL_PixelFormat getPixelFormat() inout nothrow
     {
         assert(ptr);
         return ptr.format;
