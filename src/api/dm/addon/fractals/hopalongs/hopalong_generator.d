@@ -19,7 +19,7 @@ import Math = api.math;
 import api.math.geom2.vec2 : Vec2i;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsva : HSVA;
-import api.dm.back.sdl2.sdl_surface : SdlSurface;
+import api.dm.back.sdl3.sdl_surface : SdlSurface;
 
 /**
  * Authors: initkfs

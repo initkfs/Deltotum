@@ -1,6 +1,6 @@
 module api.dm.kit.media.audio.audio;
 
-import api.dm.back.sdl2.mix.sdl_mix_lib : SdlMixLib;
+import api.dm.back.sdl3.mix.sdl_mix_lib : SdlMixLib;
 
 import api.dm.back.sdl3.externs.csdl3;
 

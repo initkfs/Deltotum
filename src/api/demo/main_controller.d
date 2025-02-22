@@ -2,7 +2,7 @@ module api.demo.main_controller;
 
 import std;
 
-import api.dm.back.sdl2.sdl_app : SdlApp;
+import api.dm.back.sdl3.sdl_app : SdlApp;
 
 /**
  * Authors: initkfs
