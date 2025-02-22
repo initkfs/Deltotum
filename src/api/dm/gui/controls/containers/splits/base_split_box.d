@@ -124,9 +124,9 @@ class BaseSplitBox : Container
         dividers ~= DividerData(prev, next, sep);
 
         sep.onPointerEnter ~= (ref e) {
-            import api.dm.com.inputs.com_cursor : ComSystemCursorType;
+            import api.dm.com.inputs.com_cursor : ComPlatformCursorType;
 
-            input.systemCursor.change(ComSystemCursorType.hand);
+            input.systemCursor.change(ComPlatformCursorType.hand);
         };
 
         sep.onPointerExit ~= (ref e) { input.systemCursor.restore; };

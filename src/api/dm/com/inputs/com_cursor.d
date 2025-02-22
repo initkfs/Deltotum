@@ -3,7 +3,7 @@ module api.dm.com.inputs.com_cursor;
 import api.dm.com.platforms.results.com_result : ComResult;
 import api.dm.com.destroyable : Destroyable;
 
-enum ComSystemCursorType
+enum ComPlatformCursorType
 {
     none,
     arrow,
@@ -27,7 +27,7 @@ interface ComCursor : Destroyable
 {
 nothrow:
 
-    ComResult createFromType(ComSystemCursorType type);
+    ComResult createFromType(ComPlatformCursorType type);
     ComResult createDefault();
     ComResult show();
     ComResult hide();

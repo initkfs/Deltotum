@@ -1,6 +1,6 @@
 module api.dm.kit.inputs.cursors.cursor;
 
-import api.dm.com.inputs.com_cursor : ComCursor, ComSystemCursorType;
+import api.dm.com.inputs.com_cursor : ComCursor, ComPlatformCursorType;
 
 import api.math.geom2.vec2 : Vec2d;
 
@@ -16,14 +16,14 @@ abstract class Cursor
 
     protected
     {
-        ComCursor[ComSystemCursorType] cursors;
+        ComCursor[ComPlatformCursorType] cursors;
         ComCursor defaultCursor;
         ComCursor lastCursor;
         bool _locked;
         Sprite2d _cursorOwner;
     }
 
-    void change(ComSystemCursorType type)
+    void change(ComPlatformCursorType type)
     {
         if (!defaultCursor || _locked)
         {

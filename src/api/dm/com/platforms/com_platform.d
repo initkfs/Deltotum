@@ -1,4 +1,4 @@
-module api.dm.com.platforms.com_system;
+module api.dm.com.platforms.com_platform;
 
 import api.dm.com.platforms.results.com_result : ComResult;
 
@@ -7,10 +7,10 @@ extern (C) alias RetNextIntervalCallback = uint function(void* userdata, uint ti
 /**
  * Authors: initkfs
  */
-interface ComSystem
+interface ComPlatform
 {
 nothrow:
     ComResult openURL(string link) nothrow;
-    ComResult addTimerMT(out int timerId, uint intervalMs, RetNextIntervalCallback callback, void* param);
+    ComResult addTimer(out int timerId, uint intervalMs, RetNextIntervalCallback callback, void* param);
     ComResult removeTimer(int timerId);
 }

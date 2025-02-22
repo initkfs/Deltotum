@@ -10,7 +10,7 @@ import api.dm.com.platforms.results.com_result : ComResult;
 import api.dm.com.com_native_ptr : ComNativePtr;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
-import api.dm.com.inputs.com_cursor : ComCursor, ComSystemCursorType;
+import api.dm.com.inputs.com_cursor : ComCursor, ComPlatformCursorType;
 
 import api.dm.back.sdl3.sdl_surface : SdlSurface;
 

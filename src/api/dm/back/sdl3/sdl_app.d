@@ -41,7 +41,7 @@ import api.dm.com.graphics.com_texture : ComTexture;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.com.graphics.com_font : ComFont;
 import api.dm.com.graphics.com_image : ComImage;
-import api.dm.com.platforms.com_system : ComSystem;
+import api.dm.com.platforms.com_platform : ComPlatform;
 
 import api.dm.kit.windows.window : Window;
 import api.dm.gui.windows.gui_window : GuiWindow;
@@ -662,11 +662,11 @@ class SdlApp : GuiApp
                 .isRunning);
     }
 
-    override ComSystem newComSystem()
+    override ComPlatform newComPlatform()
     {
-        import api.dm.back.sdl3.sdl_system : SDLSystem;
+        import api.dm.back.sdl3.sdl_platform : SDLPlatform;
 
-        return new SDLSystem;
+        return new SDLPlatform;
     }
 
     SdlRenderer newRenderer(SdlWindow window)

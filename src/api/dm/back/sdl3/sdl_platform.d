@@ -1,10 +1,10 @@
-module api.dm.back.sdl3.sdl_system;
+module api.dm.back.sdl3.sdl_platform;
 
 // dfmt off
 version(SdlBackend):
 // dfmt on
 import api.dm.back.sdl3.base.sdl_object : SdlObject;
-import api.dm.com.platforms.com_system : ComSystem, RetNextIntervalCallback;
+import api.dm.com.platforms.com_platform : ComPlatform, RetNextIntervalCallback;
 import api.dm.com.platforms.results.com_result : ComResult;
 
 import api.dm.back.sdl3.externs.csdl3;
@@ -12,7 +12,7 @@ import api.dm.back.sdl3.externs.csdl3;
 /**
  * Authors: initkfs
  */
-class SDLSystem : SdlObject, ComSystem
+class SDLPlatform : SdlObject, ComPlatform
 {
     ComResult openURL(string link) nothrow
     {
@@ -30,7 +30,7 @@ class SDLSystem : SdlObject, ComSystem
         return ComResult.success;
     }
 
-    ComResult addTimerMT(out int timerId, uint intervalMs, RetNextIntervalCallback callback, void* param)
+    ComResult addTimer(out int timerId, uint intervalMs, RetNextIntervalCallback callback, void* param)
     {
         const timerIdOrZeroErr = SDL_AddTimer(intervalMs, callback, param);
         if (timerIdOrZeroErr == 0)

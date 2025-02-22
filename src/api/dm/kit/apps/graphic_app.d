@@ -35,7 +35,7 @@ import std.typecons : Nullable;
 
 import api.dm.com.graphics.com_renderer : ComRenderer;
 import api.dm.com.graphics.com_surface : ComSurface;
-import api.dm.com.platforms.com_system : ComSystem;
+import api.dm.com.platforms.com_platform : ComPlatform;
 import api.dm.kit.platforms.platform : Platform;
 import api.dm.kit.i18n.i18n : I18n;
 import api.dm.kit.i18n.langs.lang_messages : LangMessages;
@@ -73,7 +73,7 @@ abstract class GraphicApp : CliApp
 
     WindowManager windowManager;
 
-    abstract ComSystem newComSystem();
+    abstract ComPlatform newComPlatform();
 
     override AppInitRet initialize(string[] args)
     {
@@ -121,7 +121,7 @@ abstract class GraphicApp : CliApp
 
     Platform newPlatform(ulong delegate() tickProvider)
     {
-        return new Platform(newComSystem, uservices.logging, uservices.config, uservices.context, tickProvider);
+        return new Platform(newComPlatform, uservices.logging, uservices.config, uservices.context, tickProvider);
     }
 
     I18n newI18n()

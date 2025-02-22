@@ -1,6 +1,6 @@
 module api.dm.kit.platforms.platform;
 
-import api.dm.com.platforms.com_system : ComSystem;
+import api.dm.com.platforms.com_platform : ComPlatform;
 import api.core.components.units.services.application_unit : ApplicationUnit;
 import api.core.components.units.services.loggable_unit : LoggableUnit;
 import api.core.contexts.context : Context;
@@ -17,7 +17,7 @@ class Platform : ApplicationUnit
 {
     protected
     {
-        ComSystem system;
+        ComPlatform system;
     }
 
     ulong delegate() platformTicksProvider;
@@ -35,7 +35,7 @@ class Platform : ApplicationUnit
         }
     }
 
-    this(ComSystem system, Logging logging, Config config, Context context, ulong delegate() tickProvider) pure @safe
+    this(ComPlatform system, Logging logging, Config config, Context context, ulong delegate() tickProvider) pure @safe
     {
         super(logging, config, context);
 
@@ -104,7 +104,7 @@ class Platform : ApplicationUnit
         return 0;
     }
 
-    int addTimerMT(int intervalMs, int delegate() nothrow @nogc onTimer)
+    int addTimer(int intervalMs, int delegate() nothrow @nogc onTimer)
     {
         TimerParam* param = new TimerParam;
         param.dg = onTimer;
@@ -115,7 +115,7 @@ class Platform : ApplicationUnit
         Mem.addRootSafe(paramPtr);
 
         int timerId;
-        if (const err = system.addTimerMT(timerId, intervalMs, &timer_callback, paramPtr))
+        if (const err = system.addTimer(timerId, intervalMs, &timer_callback, paramPtr))
         {
             logger.error(err);
             Mem.removeRootSafe(paramPtr);

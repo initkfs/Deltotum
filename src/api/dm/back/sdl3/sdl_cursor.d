@@ -4,7 +4,7 @@ module api.dm.back.sdl3.sdl_cursor;
 version(SdlBackend):
 // dfmt on
 
-import api.dm.com.inputs.com_cursor : ComCursor, ComSystemCursorType;
+import api.dm.com.inputs.com_cursor : ComCursor, ComPlatformCursorType;
 
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
 import api.dm.com.platforms.results.com_result : ComResult;
@@ -28,10 +28,10 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor, ComCursor
         super(ptr);
     }
 
-    ComResult createFromType(ComSystemCursorType type) nothrow
+    ComResult createFromType(ComPlatformCursorType type) nothrow
     {
         SDL_SystemCursor sdlType = SDL_SYSTEM_CURSOR_DEFAULT;
-        final switch (type) with (ComSystemCursorType)
+        final switch (type) with (ComPlatformCursorType)
         {
             case none, arrow:
                 sdlType = SDL_SYSTEM_CURSOR_DEFAULT;
