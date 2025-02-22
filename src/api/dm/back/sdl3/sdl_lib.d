@@ -7,6 +7,7 @@ version(SdlBackend):
 import std.string : toStringz, fromStringz;
 
 import api.dm.back.sdl3.externs.csdl3;
+
 import api.dm.com.platforms.results.com_result : ComResult;
 import api.dm.back.sdl3.base.sdl_object : SdlObject;
 
@@ -15,100 +16,135 @@ import api.dm.back.sdl3.base.sdl_object : SdlObject;
  */
 class SdlLib : SdlObject
 {
-    void initialize(uint flags) const
+    ComResult initialize(uint flags) @trusted nothrow
     {
         if (!SDL_Init(flags))
         {
-            string initError = "Unable to initialize sdl subsystems.";
-            if (auto error = getError)
-            {
-                initError ~= error;
-            }
+            import std.conv : text;
 
-            throw new Exception(initError);
+            return ComResult.error(text("Unable to initialize SDL: ", getError));
         }
+        return ComResult.success;
     }
 
-    ulong getTicks()
-    {
-        return SDL_GetTicks();
-    }
+    SDL_InitFlags wasInit(SDL_InitFlags flags) @trusted nothrow => SDL_WasInit(flags);
 
-    void delay(uint ms)
-    {
-        SDL_Delay(ms);
-    }
-
-    SDL_InitFlags wasInit(SDL_InitFlags flags) const nothrow
-    {
-        return SDL_WasInit(flags);
-    }
-
-    void quit() const nothrow
+    void quit() @trusted nothrow
     {
         SDL_Quit();
     }
 
-    ComResult enableScreenSaver(bool isEnable = true) const nothrow
+    string stringFromVersion(int ver) @trusted nothrow
+    {
+        import std.conv : text;
+
+        auto major = SDL_VERSIONNUM_MAJOR(ver);
+        int minor = SDL_VERSIONNUM_MINOR(ver);
+        int patch = SDL_VERSIONNUM_MICRO(ver);
+
+        //format is not nothrow
+        immutable sep = ".";
+        return text(major, sep, minor, sep, patch);
+    }
+
+    alias versionString = linkedVersionString;
+
+    string linkedVersionString() @trusted nothrow => stringFromVersion(SDL_GetVersion());
+
+    /** 
+     * SDL_timer.h
+     */
+
+    ulong ticksMs() @trusted nothrow => SDL_GetTicks();
+    ulong ticksNs() @trusted nothrow => SDL_GetTicksNS();
+
+    void delayMs(uint ms)
+    {
+        SDL_Delay(ms);
+    }
+
+    void delayNs(ulong ms)
+    {
+        SDL_DelayNS(ms);
+    }
+
+    /** 
+     * SDL_hints.h
+     */
+
+    ComResult getHint(string name, out string value) @trusted nothrow
+    {
+        const(char)* hintPtr = SDL_GetHint(name.toStringz);
+        if (!hintPtr)
+        {
+            import std.conv : text;
+
+            return ComResult.error(text("Error of obtaining a hint with name ", name, ". ", getError));
+        }
+
+        value = hintPtr.fromStringz.idup;
+        return ComResult.success;
+    }
+
+    void clearHints() @trusted nothrow
+    {
+        SDL_ResetHints();
+    }
+
+    ComResult setHint(string name, string value) @trusted nothrow
+    {
+        import std.string : toStringz;
+
+        return setHint(name.toStringz, value.toStringz);
+    }
+
+    ComResult setHint(const(char*) name, string value) @trusted nothrow
+    {
+        import std.string : toStringz;
+
+        return setHint(name, value.toStringz);
+    }
+
+    ComResult setHint(const(char*) name, const(char*) value) @trusted nothrow
+    {
+        //TODO string loss due to garbage collector?
+        if (!SDL_SetHint(name, value))
+        {
+            import std.conv : text;
+            import std.string : fromStringz;
+
+            return ComResult.error(text("Error setting hint with name ", name.fromStringz.idup, " value ", value
+                    .fromStringz.idup, ". ", getError));
+        }
+
+        return ComResult.success;
+    }
+
+    /** 
+     * SDL_video.h
+     */
+
+    ComResult setEnableScreenSaver(bool isEnable = true) @trusted nothrow
     {
         if (isEnable)
         {
             if (!SDL_EnableScreenSaver())
             {
-                return getErrorRes;
+                return getErrorRes("Error enabling screensaver");
             }
             return ComResult.success;
         }
 
         if (!SDL_DisableScreenSaver())
         {
-            return getErrorRes;
+            return getErrorRes("Error disabling screensaver");
         }
         return ComResult.success;
     }
 
-    bool isScreenSaverEnabled() const nothrow
+    bool isScreenSaverEnabled() @trusted nothrow
     {
         auto isEnabled = SDL_ScreenSaverEnabled();
-        return typeConverter.toBool(isEnabled);
-    }
-
-    string getSdlVersionInfo() const nothrow
-    {
-        import std.conv : text;
-
-        //int ver = SDL_GetVersion();
-        int major, minor, patch;
-
-        SDL_VERSIONNUM(major, minor, patch);
-
-        //format is not nothrow
-        return text(major, ".", minor, ".", patch);
-    }
-
-    string getHint(string name) const nothrow
-    {
-        const(char)* hintPtr = SDL_GetHint(name.toStringz);
-        if (hintPtr is null)
-        {
-            return null;
-        }
-        immutable hintValue = hintPtr.fromStringz.idup;
-        return hintValue;
-    }
-
-    void clearHints() const nothrow
-    {
-        SDL_ResetHints();
-    }
-
-    bool setHint(string name, string value) const nothrow
-    {
-        import std.string : toStringz;
-
-        //TODO string loss due to garbage collector?
-        sdlbool isSet = SDL_SetHint(name.toStringz,
-            value.toStringz);
-        return typeConverter.toBool(isSet);
+        return isEnabled;
     }
 }

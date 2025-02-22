@@ -48,7 +48,7 @@ extern (C) int dm_init(int argc, char** argv)
 
     controlStack = SList!Control();
 
-    app = new SdlApp();
+    app = new SdlApp("ext_app");
     app.isStrictConfigs = false;
     if (auto isExit = app.initialize(args))
     {

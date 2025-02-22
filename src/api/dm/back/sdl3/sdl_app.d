@@ -85,16 +85,27 @@ class SdlApp : GuiApp
         CairoLib cairoLib;
     }
 
+    protected
+    {
+        string name;
+        string id;
+    }
+
     SdlEventProcessor eventProcessor;
     bool isScreenSaverEnabled = true;
 
-    this(SdlLib lib = null,
+    this(string name, string id = null,
+        SdlLib lib = null,
         SdlImgLib sdlImage = null,
         SdlMixLib sdlAudio = null,
         SdlTTFLib sdlFont = null,
         Loop mainLoop = null)
     {
         super(mainLoop ? mainLoop : new IntegratedLoop);
+
+        this.name = name;
+        this.id = id.length > 0 ? id : name;
+
         this.sdlLib = lib is null ? new SdlLib : lib;
         this.sdlImage = sdlImage is null ? new SdlImgLib : sdlImage;
         this.sdlAudio = sdlAudio is null ? new SdlMixLib : sdlAudio;
@@ -149,8 +160,21 @@ class SdlApp : GuiApp
             flags = onSdlInitFlags(flags);
         }
 
-        sdlLib.initialize(flags);
-        uservices.logger.trace("SDL ", sdlLib.getSdlVersionInfo);
+        if (const err = sdlLib.setHint(SDL_HINT_APP_NAME.ptr, name))
+        {
+            throw new Exception(err.toString);
+        }
+
+        if (const err = sdlLib.setHint(SDL_HINT_APP_ID.ptr, id))
+        {
+            throw new Exception(err.toString);
+        }
+
+        if (const err = sdlLib.initialize(flags))
+        {
+            throw new Exception(err.toString);
+        }
+        uservices.logger.trace("SDL ", sdlLib.linkedVersionString);
 
         //TODO move to hal layer
         SDL_SetLogPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_WARN);
@@ -293,7 +317,7 @@ class SdlApp : GuiApp
 
         // physLibForLoad.load;
 
-        if (const err = sdlLib.enableScreenSaver(isScreenSaverEnabled))
+        if (const err = sdlLib.setEnableScreenSaver(isScreenSaverEnabled))
         {
             uservices.logger.errorf("Error screensaver: " ~ err.toString);
         }
@@ -540,15 +564,15 @@ class SdlApp : GuiApp
     override ulong ticks()
     {
         assert(sdlLib);
-        return sdlLib.getTicks;
+        return sdlLib.ticksMs;
     }
 
     protected void initLoop(Loop loop)
     {
         loop.onExit = () => exit;
         loop.timestampMsProvider = () => ticks;
-        loop.onDelay = () => sdlLib.delay(10);
-        loop.onDelayTimeRestMs = (restMs) => sdlLib.delay(cast(uint) restMs);
+        loop.onDelay = () => sdlLib.delayMs(10);
+        loop.onDelayTimeRestMs = (restMs) => sdlLib.delayMs(cast(uint) restMs);
         loop.onLoopUpdateMs = (timestamp) => updateLoopMs(timestamp);
         loop.onRender = (accumMsRest) => updateRender(accumMsRest);
         loop.onFreqLoopUpdateDelta = (delta) => updateFreqLoopDelta(delta);

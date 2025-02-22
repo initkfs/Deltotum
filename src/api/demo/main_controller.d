@@ -26,7 +26,7 @@ class MainController
         enum gameWidth = 1280;
         enum gameHeight = 720;
 
-        application = new SdlApp();
+        application = new SdlApp("SdlApp");
         application.isStrictConfigs = false;
         auto initRes = application.initialize(args);
         if (!initRes)
