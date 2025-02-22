@@ -2,7 +2,7 @@ module api.demo.main_controller;
 
 import std;
 
-import api.dm.back.sdl2.sdl_application : SdlApplication;
+import api.dm.back.sdl2.sdl_app : SdlApp;
 
 /**
  * Authors: initkfs
@@ -13,7 +13,7 @@ class MainController
     private
     {
         dstring windowTitle = "SDL Application";
-        SdlApplication application;
+        SdlApp application;
     }
 
     static extern (C) void err(int code, const(char)* err) nothrow
@@ -26,7 +26,7 @@ class MainController
         enum gameWidth = 1280;
         enum gameHeight = 720;
 
-        application = new SdlApplication();
+        application = new SdlApp();
         application.isStrictConfigs = false;
         auto initRes = application.initialize(args);
         if (!initRes)

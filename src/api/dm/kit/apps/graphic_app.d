@@ -319,7 +319,7 @@ abstract class GraphicApp : CliApp
 
         import KitConfigKeys = api.dm.kit.kit_config_keys;
 
-        //TODO move to config, duplication with SdlApplication
+        //TODO move to config, duplication with SdlApp
         import std.file : getcwd, exists, isDir, isFile;
         import std.path : buildPath, dirName;
 

@@ -2,7 +2,7 @@ module api.dm.ext.ext_app;
 
 import std;
 
-import api.dm.back.sdl2.sdl_application : SdlApplication;
+import api.dm.back.sdl2.sdl_app : SdlApp;
 import api.dm.kit.apps.graphic_app : GraphicApp;
 import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.kit.windows.window : Window;
@@ -20,7 +20,7 @@ import std.container.slist : SList;
 
 private
 {
-    SdlApplication app;
+    SdlApp app;
     Window window;
     Scene2d scene;
     extern (C) void function() drawPtr;
@@ -48,7 +48,7 @@ extern (C) int dm_init(int argc, char** argv)
 
     controlStack = SList!Control();
 
-    app = new SdlApplication();
+    app = new SdlApp();
     app.isStrictConfigs = false;
     if (auto isExit = app.initialize(args))
     {

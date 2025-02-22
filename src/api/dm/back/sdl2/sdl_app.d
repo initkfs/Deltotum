@@ -1,4 +1,4 @@
-module api.dm.back.sdl2.sdl_application;
+module api.dm.back.sdl2.sdl_app;
 
 // dfmt off
 version(SdlBackend):
@@ -69,35 +69,36 @@ import std.typecons : Nullable;
 /**
  * Authors: initkfs
  */
-class SdlApplication : GuiApp
+class SdlApp : GuiApp
 {
     uint delegate(uint flags) onSdlInitFlags;
     private
     {
         SdlLib sdlLib;
-        SdlMixLib audioMixLib;
-        SdlImgLib imgLib;
-        SdlTTFLib fontLib;
-        Nullable!SdlJoystick joystick;
+
+        SdlImgLib sdlImage;
+        SdlTTFLib sdlFont;
+
+        Nullable!SdlMixLib sdlAudio;
+        Nullable!SdlJoystick sdlJoystick;
 
         CairoLib cairoLib;
-        //ChipmLib chipmLib;
     }
 
     SdlEventProcessor eventProcessor;
     bool isScreenSaverEnabled = true;
 
     this(SdlLib lib = null,
-        SdlImgLib imgLib = null,
-        SdlMixLib audioMixLib = null,
-        SdlTTFLib fontLib = null,
+        SdlImgLib sdlImage = null,
+        SdlMixLib sdlAudio = null,
+        SdlTTFLib sdlFont = null,
         Loop mainLoop = null)
     {
         super(mainLoop ? mainLoop : new IntegratedLoop);
         this.sdlLib = lib is null ? new SdlLib : lib;
-        this.imgLib = imgLib is null ? new SdlImgLib : imgLib;
-        this.audioMixLib = audioMixLib is null ? new SdlMixLib : audioMixLib;
-        this.fontLib = fontLib is null ? new SdlTTFLib : fontLib;
+        this.sdlImage = sdlImage is null ? new SdlImgLib : sdlImage;
+        this.sdlAudio = sdlAudio is null ? new SdlMixLib : sdlAudio;
+        this.sdlFont = sdlFont is null ? new SdlTTFLib : sdlFont;
     }
 
     override AppInitRet initialize(string[] args)
@@ -157,13 +158,16 @@ class SdlApplication : GuiApp
         //https://discourse.libsdl.org/t/graphic-artifacts-when-using-render-scale-quality/20320/3
         //SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
-        imgLib.initialize;
-        audioMixLib.initialize;
-        fontLib.initialize;
+        sdlImage.initialize;
+        if (!sdlAudio.isNull)
+        {
+            sdlAudio.get.initialize;
+        }
+        sdlFont.initialize;
 
         if (gservices.capGraphics.isJoystick)
         {
-            joystick = SdlJoystick.fromDevices;
+            sdlJoystick = SdlJoystick.fromDevices;
         }
 
         initLoop(mainLoop);
@@ -218,7 +222,7 @@ class SdlApplication : GuiApp
         }
 
         _input = new Input(clipboard, cursor);
-        _audio = new Audio(audioMixLib);
+        _audio = new Audio(!sdlAudio.isNull ? sdlAudio.get : null);
 
         //TODO lazy load with config value
         auto cairoLibForLoad = new CairoLib;
@@ -817,16 +821,19 @@ class SdlApplication : GuiApp
             });
         }
 
-        if (!joystick.isNull)
+        if (!sdlJoystick.isNull)
         {
-            joystick.get.dispose;
+            sdlJoystick.get.dispose;
         }
 
         //TODO process EXIT event
-        audioMixLib.quit;
-        imgLib.quit;
+        if (!sdlAudio.isNull)
+        {
+            sdlAudio.get.quit;
+        }
+        sdlImage.quit;
 
-        fontLib.quit;
+        sdlFont.quit;
 
         sdlLib.quit;
     }
