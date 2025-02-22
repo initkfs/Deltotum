@@ -1,39 +1,26 @@
-module api.dm.back.sdl3.sdl_joystick;
+module api.dm.back.sdl3.joysticks.sdl_joystick_lib;
 
 // dfmt off
 version(SdlBackend):
 // dfmt on
 
-import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
+import api.dm.com.platforms.results.com_result : ComResult;
+import api.dm.back.sdl3.base.sdl_object : SdlObject;
+import api.dm.back.sdl3.joysticks.sdl_joystick: SdlJoystick;
 
 import api.dm.back.sdl3.externs.csdl3;
 
 /**
  * Authors: initkfs
  */
-class SdlJoystick : SdlObjectWrapper!SDL_Joystick
+class SdlJoystickLib : SdlObject
 {
-    this(SDL_Joystick* ptr)
+    ComResult initialize() @trusted nothrow
     {
-        super(ptr);
+        return ComResult.success;
     }
 
-    this(SDL_JoystickID deviceIndex = 0)
-    {
-        super();
-        ptr = SDL_OpenJoystick(deviceIndex);
-        if (!ptr)
-        {
-            string error = "Failed to open joystick";
-            if (const err = getError)
-            {
-                error ~= err;
-            }
-            throw new Exception(error);
-        }
-    }
-
-    static SdlJoystick fromDevices()
+    SdlJoystick currentJoystick()
     {
         int joystickNums;
         SDL_JoystickID* joysticks = SDL_GetJoysticks(&joystickNums);
@@ -54,20 +41,16 @@ class SdlJoystick : SdlObjectWrapper!SDL_Joystick
         //     SDL_free(joysticks);
         // }
 
-        if(joystickNums == 0){
+        if (joystickNums == 0)
+        {
             return null;
         }
 
         return new SdlJoystick(*joysticks);
     }
 
-    override protected bool disposePtr() nothrow
+    void quit() @trusted nothrow
     {
-        if (ptr)
-        {
-            SDL_CloseJoystick(ptr);
-            return true;
-        }
-        return false;
+
     }
 }

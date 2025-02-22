@@ -4,6 +4,7 @@ module api.dm.back.sdl3.sdl_app;
 version(SdlBackend):
 // dfmt on
 
+import api.dm.com.platforms.results.com_result : ComResult;
 import api.core.loggers.logging : Logging;
 import api.core.configs.keyvalues.config : Config;
 import api.core.contexts.context : Context;
@@ -27,7 +28,9 @@ import api.dm.back.sdl3.ttf.sdl_ttf_lib : SdlTTFLib;
 import api.dm.back.sdl3.sdl_window : SdlWindow;
 import api.dm.back.sdl3.sdl_window : SdlWindowMode;
 import api.dm.back.sdl3.sdl_renderer : SdlRenderer;
-import api.dm.back.sdl3.sdl_joystick : SdlJoystick;
+
+import api.dm.back.sdl3.joysticks.sdl_joystick_lib : SdlJoystickLib;
+import api.dm.back.sdl3.joysticks.sdl_joystick : SdlJoystick;
 import api.dm.kit.windows.events.window_event : WindowEvent;
 import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import api.dm.back.sdl3.sdl_texture : SdlTexture;
@@ -71,7 +74,10 @@ import std.typecons : Nullable;
  */
 class SdlApp : GuiApp
 {
-    uint delegate(uint flags) onSdlInitFlags;
+    uint delegate(uint flags) onCreatedInitFlags;
+    void delegate() onCreatedSystems;
+    void delegate() onInitializedSystems;
+
     private
     {
         SdlLib sdlLib;
@@ -80,7 +86,9 @@ class SdlApp : GuiApp
         SdlTTFLib sdlFont;
 
         Nullable!SdlMixLib sdlAudio;
-        Nullable!SdlJoystick sdlJoystick;
+        Nullable!SdlJoystickLib sdlJoystick;
+
+        Nullable!SdlJoystick sdlCurrentJoystick;
 
         CairoLib cairoLib;
     }
@@ -94,22 +102,12 @@ class SdlApp : GuiApp
     SdlEventProcessor eventProcessor;
     bool isScreenSaverEnabled = true;
 
-    this(string name, string id = null,
-        SdlLib lib = null,
-        SdlImgLib sdlImage = null,
-        SdlMixLib sdlAudio = null,
-        SdlTTFLib sdlFont = null,
-        Loop mainLoop = null)
+    this(string name, string id = null, Loop loop = null)
     {
-        super(mainLoop ? mainLoop : new IntegratedLoop);
+        super(loop ? loop : newMainLoop);
 
         this.name = name;
         this.id = id.length > 0 ? id : name;
-
-        this.sdlLib = lib is null ? new SdlLib : lib;
-        this.sdlImage = sdlImage is null ? new SdlImgLib : sdlImage;
-        this.sdlAudio = sdlAudio is null ? new SdlMixLib : sdlAudio;
-        this.sdlFont = sdlFont is null ? new SdlTTFLib : sdlFont;
     }
 
     override AppInitRet initialize(string[] args)
@@ -120,7 +118,7 @@ class SdlApp : GuiApp
             return initRes;
         }
 
-        uservices.logger.trace("CLI app initialized, starting backend");
+        uservices.logger.trace("Graphics app initialized, starting backend");
 
         if (isHeadless)
         {
@@ -130,70 +128,57 @@ class SdlApp : GuiApp
             uservices.logger.trace("Headless mode enabled");
         }
 
-        uint flags;
-        if (isVideoEnabled)
-        {
-            flags |= SDL_INIT_VIDEO;
-            gservices.capGraphics.isVideo = true;
-        }
+        uint flags = 0;
+
+        flags |= SDL_INIT_VIDEO;
+        uservices.logger.trace("Video enabled");
 
         if (isAudioEnabled)
         {
             flags |= SDL_INIT_AUDIO;
             gservices.capGraphics.isAudio = true;
-        }
-
-        if (isTimerEnabled)
-        {
-            // flags |= SDL_INIT_TIMER;
-            gservices.capGraphics.isTimer = true;
+            uservices.logger.trace("Audio enabled");
         }
 
         if (isJoystickEnabled)
         {
             flags |= SDL_INIT_JOYSTICK;
             gservices.capGraphics.isJoystick = true;
+            uservices.logger.trace("Joystick enabled");
         }
 
-        if (onSdlInitFlags)
+        if (onCreatedInitFlags)
         {
-            flags = onSdlInitFlags(flags);
+            flags = onCreatedInitFlags(flags);
         }
 
-        if (const err = sdlLib.setHint(SDL_HINT_APP_NAME.ptr, name))
+        if (const err = createSystems(gservices.capGraphics))
         {
-            throw new Exception(err.toString);
+            uservices.logger.errorf("SDL systems creation error: " ~ err.toString);
+            return initRes;
         }
 
-        if (const err = sdlLib.setHint(SDL_HINT_APP_ID.ptr, id))
+        uservices.logger.trace("SDL systems created");
+
+        if (onCreatedSystems)
         {
-            throw new Exception(err.toString);
+            onCreatedSystems();
         }
 
-        if (const err = sdlLib.initialize(flags))
+        if (const err = initializeSystems(flags, gservices.capGraphics))
         {
-            throw new Exception(err.toString);
+            uservices.logger.errorf("SDL systems initialization error: " ~ err.toString);
+            return initRes;
         }
-        uservices.logger.trace("SDL ", sdlLib.linkedVersionString);
 
-        //TODO move to hal layer
-        SDL_SetLogPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_WARN);
+        uservices.logger.trace("SDL systems initialized");
 
-        //https://discourse.libsdl.org/t/graphic-artifacts-when-using-render-scale-quality/20320/3
-        //SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
-
-        sdlImage.initialize;
-        if (!sdlAudio.isNull)
+        if (onInitializedSystems)
         {
-            sdlAudio.get.initialize;
-        }
-        sdlFont.initialize;
-
-        if (gservices.capGraphics.isJoystick)
-        {
-            sdlJoystick = SdlJoystick.fromDevices;
+            onInitializedSystems();
         }
 
+        assert(mainLoop);
         initLoop(mainLoop);
 
         //TODO extract dependency
@@ -561,6 +546,100 @@ class SdlApp : GuiApp
             true);
     }
 
+    ComResult createSystems(CapGraphics caps)
+    {
+        if (!sdlLib)
+        {
+            sdlLib = newSdlLib;
+        }
+
+        if (!sdlImage)
+        {
+            sdlImage = newSdlImage;
+        }
+
+        if (!sdlFont)
+        {
+            sdlFont = newSdlFont;
+        }
+
+        if (sdlAudio.isNull && caps.isAudio)
+        {
+            sdlAudio = newSdlAudio;
+        }
+
+        if (sdlJoystick.isNull && caps.isJoystick)
+        {
+            sdlJoystick = newSdlJoystick;
+        }
+
+        return ComResult.success;
+    }
+
+    ComResult initializeSystems(uint flags, CapGraphics caps)
+    {
+        assert(sdlLib);
+
+        if (const err = sdlLib.setHint(SDL_HINT_APP_NAME.ptr, name))
+        {
+            throw new Exception(err.toString);
+        }
+
+        if (const err = sdlLib.setHint(SDL_HINT_APP_ID.ptr, id))
+        {
+            throw new Exception(err.toString);
+        }
+
+        if (const err = sdlLib.initialize(flags))
+        {
+            throw new Exception(err.toString);
+        }
+        uservices.logger.trace("SDL ", sdlLib.linkedVersionString);
+
+        //TODO move to hal layer
+        SDL_SetLogPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_WARN);
+
+        assert(sdlImage);
+        if (const err = sdlImage.initialize)
+        {
+            return err;
+        }
+
+        assert(sdlFont);
+        if (const err = sdlFont.initialize)
+        {
+            return err;
+        }
+
+        if (!sdlAudio.isNull)
+        {
+            if (const err = sdlAudio.get.initialize)
+            {
+                return err;
+            }
+        }
+
+        if (gservices.capGraphics.isJoystick)
+        {
+            assert(!sdlJoystick.isNull);
+            if (const err = sdlJoystick.get.initialize)
+            {
+                return err;
+            }
+
+            sdlCurrentJoystick = sdlJoystick.get.currentJoystick;
+        }
+
+        return ComResult.success;
+    }
+
+    Loop newMainLoop() => new IntegratedLoop;
+    SdlLib newSdlLib() => new SdlLib;
+    SdlImgLib newSdlImage() => new SdlImgLib;
+    SdlMixLib newSdlAudio() => new SdlMixLib;
+    SdlTTFLib newSdlFont() => new SdlTTFLib;
+    SdlJoystickLib newSdlJoystick() => new SdlJoystickLib;
+
     override ulong ticks()
     {
         assert(sdlLib);
@@ -847,7 +926,12 @@ class SdlApp : GuiApp
 
         if (!sdlJoystick.isNull)
         {
-            sdlJoystick.get.dispose;
+            sdlJoystick.get.quit;
+        }
+
+        if (!sdlCurrentJoystick.isNull)
+        {
+            sdlCurrentJoystick.get.dispose;
         }
 
         //TODO process EXIT event
@@ -855,10 +939,9 @@ class SdlApp : GuiApp
         {
             sdlAudio.get.quit;
         }
+
         sdlImage.quit;
-
         sdlFont.quit;
-
         sdlLib.quit;
     }
 

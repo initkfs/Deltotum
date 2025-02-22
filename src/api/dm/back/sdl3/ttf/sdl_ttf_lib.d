@@ -4,6 +4,7 @@ module api.dm.back.sdl3.ttf.sdl_ttf_lib;
 version(SdlBackend):
 // dfmt on
 
+import api.dm.com.platforms.results.com_result : ComResult;
 import api.dm.back.sdl3.ttf.base.sdl_ttf_object : SdlTTFObject;
 
 import api.dm.back.sdl3.externs.csdl3;
@@ -14,17 +15,13 @@ import api.dm.back.sdl3.externs.csdl3;
 class SdlTTFLib : SdlTTFObject
 {
 
-    void initialize() const
+    ComResult initialize() const
     {
         if (!TTF_Init())
         {
-            string error = "Unable to initialize SDL_ttf library.";
-            if (const err = getError)
-            {
-                error ~= err;
-            }
-            throw new Exception(error);
+            return getErrorRes("Unable to initialize SDL_ttf library.");
         }
+        return ComResult.success;
     }
 
     void quit() const nothrow

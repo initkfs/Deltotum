@@ -48,10 +48,9 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
  */
 abstract class GraphicApp : CliApp
 {
-    bool isVideoEnabled;
     bool isAudioEnabled;
-    bool isTimerEnabled;
     bool isJoystickEnabled;
+
     bool isHeadless;
 
     bool isQuitOnCloseAllWindows = true;
@@ -111,17 +110,9 @@ abstract class GraphicApp : CliApp
     {
         import KitConfigKeys = api.dm.kit.kit_config_keys;
 
-        immutable isVideoFlag = uservices.config.getBool(KitConfigKeys.backendIsVideo);
-        isVideoEnabled = isVideoFlag.isNull ? true : isVideoFlag.get;
-        uservices.logger.trace("Video enabled: ", isVideoEnabled);
-
         immutable isAudioFlag = uservices.config.getBool(KitConfigKeys.backendIsAudio);
         isAudioEnabled = isAudioFlag.isNull ? false : isAudioFlag.get;
         uservices.logger.trace("Audio enabled: ", isAudioEnabled);
-
-        immutable isTimerFlag = uservices.config.getBool(KitConfigKeys.backendIsTimer);
-        isTimerEnabled = isTimerFlag.isNull ? false : isTimerFlag.get;
-        uservices.logger.trace("Timer enabled: ", isTimerEnabled);
 
         immutable isJoystickFlag = uservices.config.getBool(KitConfigKeys.backendIsJoystick);
         isJoystickEnabled = isJoystickFlag.isNull ? false : isJoystickFlag.get;

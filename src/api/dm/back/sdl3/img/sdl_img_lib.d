@@ -6,6 +6,7 @@ version(SdlBackend):
 
 import api.dm.back.sdl3.img.base.sdl_image_object : SdlImageObject;
 
+import api.dm.com.platforms.results.com_result : ComResult;
 import api.dm.back.sdl3.externs.csdl3;
 
 /**
@@ -14,9 +15,9 @@ import api.dm.back.sdl3.externs.csdl3;
 class SdlImgLib : SdlImageObject
 {
 
-    void initialize() const
+    ComResult initialize() const
     {
-        
+        return ComResult.success;
     }
 
     void quit() const nothrow

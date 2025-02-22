@@ -11,9 +11,7 @@ string i18nLang = "i18nLang";
 string sceneNameCurrent = "sceneNameCurrent";
 string sceneIsDebug = "sceneIsDebug";
 
-string backendIsVideo = "backendIsVideo";
 string backendIsAudio = "backendIsAudio";
-string backendIsTimer = "backendIsTimer";
 string backendIsJoystick = "backendIsJoystick";
 
 string graphicsUseVector = "graphicsUseVector";
