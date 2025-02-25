@@ -27,11 +27,13 @@ class SdlLib : SdlObject
         return ComResult.success;
     }
 
-    SDL_InitFlags wasInit(SDL_InitFlags flags) @trusted nothrow => SDL_WasInit(flags);
+    SDL_InitFlags isInit(SDL_InitFlags flags) @trusted nothrow => SDL_WasInit(flags);
 
-    void quit() @trusted nothrow
+    ComResult quit() @trusted nothrow
     {
         SDL_Quit();
+        
+        return ComResult.success;
     }
 
     string stringFromVersion(int ver) @trusted nothrow
@@ -79,7 +81,7 @@ class SdlLib : SdlObject
         {
             import std.conv : text;
 
-            return ComResult.error(text("Error of obtaining a hint with name ", name, ". ", getError));
+            return getErrorRes(text("Error of obtaining a hint with name ", name));
         }
 
         value = hintPtr.fromStringz.idup;
@@ -113,8 +115,8 @@ class SdlLib : SdlObject
             import std.conv : text;
             import std.string : fromStringz;
 
-            return ComResult.error(text("Error setting hint with name ", name.fromStringz.idup, " value ", value
-                    .fromStringz.idup, ". ", getError));
+            return getErrorRes(text("Error setting hint with name ", name.fromStringz.idup, " value ", value
+                    .fromStringz.idup, ". "));
         }
 
         return ComResult.success;
@@ -132,6 +134,7 @@ class SdlLib : SdlObject
             {
                 return getErrorRes("Error enabling screensaver");
             }
+
             return ComResult.success;
         }
 

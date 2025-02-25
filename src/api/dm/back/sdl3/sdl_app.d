@@ -942,7 +942,10 @@ class SdlApp : GuiApp
 
         sdlImage.quit;
         sdlFont.quit;
-        sdlLib.quit;
+        
+        if(const err = sdlLib.quit){
+            uservices.logger.error("Unable to quit");
+        }
     }
 
     void updateLoopMs(size_t timestamp)
