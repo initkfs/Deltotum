@@ -10,12 +10,14 @@ import api.dm.com.platforms.results.com_result : ComResult;
 
 import api.dm.back.sdl3.externs.csdl3;
 
+import std.string : toStringz, fromStringz;
+
 /**
  * Authors: initkfs
  */
 class SdlClipboard : SdlObject, ComClipboard
 {
-    ComResult getText(out string newText) nothrow
+    ComResult getText(out string newText) @trusted nothrow
     {
         const(char*) text = SDL_GetClipboardText();
         if (!text)
@@ -25,16 +27,14 @@ class SdlClipboard : SdlObject, ComClipboard
 
         scope (exit)
         {
-            SDL_free(cast(void*) text);
+            freeSdlPtr(cast(void*) text);
         }
-
-        import std.string : fromStringz;
 
         newText = text.fromStringz.idup;
         return ComResult.success;
     }
 
-    ComResult hasText(out bool isHasText) nothrow
+    ComResult hasText(out bool isHasText) @trusted nothrow
     {
         if (SDL_HasClipboardText())
         {
@@ -44,34 +44,84 @@ class SdlClipboard : SdlObject, ComClipboard
         return ComResult.success;
     }
 
-    ComResult setText(const(char)[] text) nothrow
+    ComResult setText(const(char)[] text) @trusted nothrow
     {
-        import std.string : toStringz;
-
         if (!SDL_SetClipboardText(text.toStringz))
         {
-            return getErrorRes;
+            return getErrorRes("Error setting clipboard text");
         }
         return ComResult.success;
     }
 
-    // ComResult getPrimarySelection(out string text) nothrow
-    // {
-    //     auto textPtr = SDL_GetPrimarySelectionText();
-    //     if (!textPtr)
-    //     {
-    //         text = null;
-    //     }
-    //     import std.string : fromStringz;
+    ComResult hasData(string dataType, out bool isHasData) @trusted nothrow
+    {
+        isHasData = SDL_HasClipboardData(dataType.toStringz);
+        return ComResult.success;
+    }
 
-    //     text = textPtr.fromStringz.idup;
-    //     SDL_Free(textPtr);
-    //     if (text.length == 0)
+    ComResult getData(string dataType, scope void delegate(void* data, size_t dataLength) nothrow onData) @trusted nothrow
+    {
+        assert(onData);
+
+        size_t dataLen;
+        void* dataPtr = SDL_GetClipboardData(dataType.toStringz, &dataLen);
+        if (!dataPtr)
+        {
+            return getErrorRes("Error getting data from clipboard");
+        }
+
+        scope (exit)
+        {
+            freeSdlPtr(dataPtr);
+        }
+        //TODO dataLen == 0?
+        onData(dataPtr, dataLen);
+        return ComResult.success;
+    }
+
+    // ComResult clear()
+    // {
+    //     if (!SDL_ClearClipboardData)
     //     {
-    //         return ComResult.error(getError);
+    //         return getErrorRes("Error clearing clipboard");
     //     }
-    //     return ComResult.success;
     // }
+
+    ComResult getPrimarySelectionText(out string newText) @trusted nothrow
+    {
+        const(char*) text = SDL_GetPrimarySelectionText();
+        if (!text)
+        {
+            return getErrorRes("Error getting primary selection text from clipboard.");
+        }
+
+        scope (exit)
+        {
+            freeSdlPtr(cast(void*) text);
+        }
+
+        newText = text.fromStringz.idup;
+        return ComResult.success;
+    }
+
+    ComResult setPrimarySelectionText(const(char)[] text) @trusted nothrow
+    {
+        if (!SDL_SetPrimarySelectionText(text.toStringz))
+        {
+            return getErrorRes("Error setting primary selection text");
+        }
+        return ComResult.success;
+    }
+
+    ComResult hasPrimarySelectionText(out bool isHasText) @trusted nothrow
+    {
+        if (SDL_HasPrimarySelectionText())
+        {
+            isHasText = true;
+        }
+
+        return ComResult.success;
+    }
 
     bool isDisposed() nothrow pure @safe
     {

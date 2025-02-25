@@ -64,6 +64,11 @@ class SdlObject : ComObject
         return error;
     }
 
+    protected void freeSdlPtr(void * ptr) nothrow
+    {
+        SDL_free(ptr);
+    }
+
     bool clearError() const nothrow
     {
         SDL_ClearError();
