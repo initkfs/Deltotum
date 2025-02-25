@@ -50,7 +50,7 @@ class BitmapFontGenerator : FontGenerator
         
         //The size can be very large to create on a stack
         ComSurface fontMapSurface = comSurfaceProvider.getNew();
-        if (const err = fontMapSurface.createRGB(fontTextureWidth, fontTextureHeight))
+        if (const err = fontMapSurface.createRGBA32(fontTextureWidth, fontTextureHeight))
         {
             throw new Exception(err.toString);
         }
@@ -134,7 +134,7 @@ class BitmapFontGenerator : FontGenerator
 
                     glyphs ~= glyph;
 
-                    if (const err = glyphRepresentation.blit(fontMapSurface, glyphPosition))
+                    if (const err = glyphRepresentation.copyTo(fontMapSurface, glyphPosition))
                     {
                         throw new Exception(err.toString);
                     }

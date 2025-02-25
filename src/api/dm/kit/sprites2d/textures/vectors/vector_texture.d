@@ -53,7 +53,7 @@ class VectorTexture : Texture2d
 
         import api.dm.com.platforms.results.com_result : ComResult;
 
-        if (const createErr = comSurface.createRGB(cast(int) width, cast(int) height))
+        if (const createErr = comSurface.createRGBA32(cast(int) width, cast(int) height))
         {
             throw new Exception(createErr.toString);
         }
@@ -81,7 +81,7 @@ class VectorTexture : Texture2d
             throw new Exception(err.toString);
         }
         int pitch;
-        if (const err = comSurface.getPitch(pitch))
+        if (const err = comSurface.getPixelRowLenBytes(pitch))
         {
             throw new Exception(err.toString);
         }
@@ -206,7 +206,7 @@ class VectorTexture : Texture2d
         }
 
         int pitch;
-        if (const err = texture.getPitch(pitch))
+        if (const err = texture.getPixelRowLenBytes(pitch))
         {
             throw new Exception(err.toString);
         }
@@ -218,7 +218,7 @@ class VectorTexture : Texture2d
         }
 
         int surfacePitch;
-        if (const err = comSurface.getPitch(surfacePitch))
+        if (const err = comSurface.getPixelRowLenBytes(surfacePitch))
         {
             throw new Exception(err.toString);
         }

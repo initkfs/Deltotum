@@ -318,7 +318,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    ComResult getPitch(out int pitch) nothrow
+    ComResult getPixelRowLenBytes(out int pitch) nothrow
     {
         if (!locked)
         {

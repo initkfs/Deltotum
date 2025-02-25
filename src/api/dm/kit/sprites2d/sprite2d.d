@@ -2152,7 +2152,7 @@ class Sprite2d : EventKitTarget
             0, 0, width, height
         );
         auto surf = graphics.comSurfaceProvider.getNew();
-        auto err = surf.createRGB(cast(int) width, cast(int) height);
+        auto err = surf.createRGBA32(cast(int) width, cast(int) height);
         if (err)
         {
             throw new Exception(err.toString);

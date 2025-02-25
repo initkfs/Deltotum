@@ -40,7 +40,7 @@ nothrow:
     ComResult lock();
     ComResult unlock();
     ComResult getFormat(out uint format);
-    ComResult getPitch(out int pitch);
+    ComResult getPixelRowLenBytes(out int pitch);
     ComResult getPixels(out void* pixels);
     ComResult update(Rect2d rect, void* pixels, int pitch);
     ComResult getPixel(uint x, uint y, out uint* pixel);

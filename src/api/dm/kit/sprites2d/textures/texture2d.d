@@ -423,7 +423,7 @@ class Texture2d : Sprite2d
         assert(texture);
         assert(isLocked);
         int pitch;
-        if (const err = texture.getPitch(pitch))
+        if (const err = texture.getPixelRowLenBytes(pitch))
         {
             throw new Exception(err.toString);
         }
