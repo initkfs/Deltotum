@@ -6,13 +6,14 @@ import api.dm.com.platforms.results.com_result;
 version(SdlBackend):
 // dfmt on
 
-import api.dm.com.graphics.com_window : ComWindow;
+import api.dm.com.graphics.com_window : ComWindow, ComWindowTheme;
 
 import api.dm.com.platforms.results.com_result : ComResult;
 import api.dm.com.com_native_ptr : ComNativePtr;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
 import api.dm.com.inputs.com_cursor : ComCursor, ComPlatformCursorType;
+import api.dm.com.graphics.com_screen : ComScreenId;
 
 import api.dm.back.sdl3.sdl_surface : SdlSurface;
 
@@ -443,16 +444,45 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         return ComResult.success;
     }
 
-    ComResult getScreenIndex(out size_t index) nothrow
+    ComResult getSafeBounds(out Rect2d bounds) nothrow
     {
-        const indexOrZeroError = SDL_GetDisplayForWindow(ptr);
-        if (indexOrZeroError <= 0)
+        assert(ptr);
+        SDL_Rect rect;
+        if (!SDL_GetWindowSafeArea(ptr, &rect))
         {
-            return getErrorRes;
+            return getErrorRes("Error getting windows safe bounds");
+        }
+        bounds = Rect2d(rect.x, rect.y, rect.w, rect.h);
+        return ComResult.success;
+    }
+
+    ComResult getSystemTheme(out ComWindowTheme theme) nothrow
+    {
+        SDL_SystemTheme currentTheme = SDL_GetSystemTheme;
+        final switch (currentTheme) with (SDL_SystemTheme)
+        {
+            case SDL_SYSTEM_THEME_UNKNOWN:
+                theme = ComWindowTheme.none;
+                break;
+            case SDL_SYSTEM_THEME_LIGHT:
+                theme = ComWindowTheme.light;
+                break;
+            case SDL_SYSTEM_THEME_DARK:
+                theme = ComWindowTheme.dark;
+                break;
+        }
+        return ComResult.success;
+    }
+
+    ComResult getScreenId(out ComScreenId id) nothrow
+    {
+        const idOrZeroErr = SDL_GetDisplayForWindow(ptr);
+        if (idOrZeroErr <= 0)
+        {
+            return getErrorRes("Error getting screen id for window");
         }
 
-        index = indexOrZeroError;
-
+        id = idOrZeroErr;
         return ComResult.success;
     }
 

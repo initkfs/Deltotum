@@ -4,8 +4,15 @@ import api.dm.com.platforms.results.com_result : ComResult;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.com.com_native_ptr : ComNativePtr;
 import api.dm.com.destroyable : Destroyable;
+import api.dm.com.graphics.com_screen: ComScreenId;
 
 import api.math.geom2.rect2 : Rect2d;
+
+enum ComWindowTheme {
+    none,
+    dark,
+    light
+}
 
 /**
  * Authors: initkfs
@@ -45,7 +52,7 @@ nothrow:
     ComResult setMinSize(int w, int h);
     ComResult getTitle(out dstring title);
     ComResult setTitle(const(dchar[]) title);
-    ComResult getScreenIndex(out size_t index);
+    ComResult getScreenId(out ComScreenId index);
     ComResult setModalFor(ComWindow parent);
     ComResult setIcon(ComSurface surf);
 
@@ -54,6 +61,10 @@ nothrow:
     ComResult setTextInputStop();
     ComResult setTextInputArea(Rect2d area, int cursor);
     ComResult getIsTextInputActive(out bool isActive);
+
+    ComResult getSafeBounds(out Rect2d bounds);
+
+    ComResult getSystemTheme(out ComWindowTheme theme);
 
     ComResult nativePtr(out ComNativePtr ptr);
 

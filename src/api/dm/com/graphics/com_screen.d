@@ -43,6 +43,7 @@ nothrow:
     ComResult getBounds(ComScreenId id, out int x, out int y, out int width, out int height);
     ComResult getUsableBounds(ComScreenId id, out int x, out int y, out int width, out int height);
     ComResult getName(ComScreenId id, out string name);
+    ComResult getVideoDriverName(out string name);
     ComResult getMode(ComScreenId id, out ComScreenMode mode);
     ComResult getScreenForWindow(ComWindow window, out ComScreenId id);
     ComResult getOrientation(ComScreenId id, out ComScreenOrientation result);

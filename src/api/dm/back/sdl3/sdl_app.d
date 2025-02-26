@@ -774,8 +774,8 @@ class SdlApp : GuiApp
 
         window.screen = _screening.screen(screenId);
         const screenMode = window.screen.mode;
-        uservices.logger.tracef("Screen id '%s', %sx%s, rate %s, density %s for window id %s, title %s", window.screen.id, screenMode.width, screenMode
-                .height, screenMode.rateHz, screenMode.density, window.id, window.title);
+        uservices.logger.tracef("Screen id %s, %sx%s, rate %s, density %s, driver %s for window id %s, title '%s'", window.screen.id, screenMode.width, screenMode
+                .height, screenMode.rateHz, screenMode.density, _screening.videoDriverName, window.id, window.title);
 
         window.setNormalWindow;
 

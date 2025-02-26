@@ -118,6 +118,21 @@ class SDLScreen : SdlObject, ComScreen
         return ComResult.success;
     }
 
+    ComResult getVideoDriverName(out string name) nothrow
+    {
+        const char* namePtr = SDL_GetCurrentVideoDriver();
+        if (!namePtr)
+        {
+            name = "null";
+            return ComResult.success;
+        }
+
+        import std.string : fromStringz;
+
+        name = namePtr.fromStringz.idup;
+        return ComResult.success;
+    }
+
     ComResult getMode(ComScreenId id, out ComScreenMode mode) nothrow
     {
         SDL_DisplayMode* screenMode = SDL_GetCurrentDisplayMode(id);

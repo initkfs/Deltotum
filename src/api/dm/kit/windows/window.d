@@ -1,7 +1,7 @@
 module api.dm.kit.windows.window;
 
 import api.dm.kit.scenes.scene2d : Scene2d;
-import api.dm.com.graphics.com_screen: ComScreenId;
+import api.dm.com.graphics.com_screen : ComScreenId;
 import api.dm.kit.factories.factory_kit : FactoryKit;
 import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.dm.com.com_native_ptr : ComNativePtr;
@@ -9,7 +9,7 @@ import api.dm.com.graphics.com_window : ComWindow;
 import api.math.geom2.rect2 : Rect2d;
 import api.math.geom2.vec2 : Vec2d;
 
-import api.dm.kit.screens.single_screen: SingleScreen;
+import api.dm.kit.screens.single_screen : SingleScreen;
 
 import api.core.loggers.logging : Logging;
 
@@ -76,7 +76,7 @@ class Window : GraphicsComponent
 
     protected
     {
-        ComWindow nativeWindow;
+        ComWindow comWindow;
 
         bool isClosing;
     }
@@ -94,13 +94,13 @@ class Window : GraphicsComponent
         import std.exception : enforce;
 
         enforce(window, "Window must not be null");
-        this.nativeWindow = window;
+        this.comWindow = window;
     }
 
     override void initialize()
     {
         super.initialize;
-        if (const err = nativeWindow.initialize)
+        if (const err = comWindow.initialize)
         {
             const errorMessage = "Window initialization error. " ~ err.toString;
             if (logging)
@@ -115,7 +115,7 @@ class Window : GraphicsComponent
     {
         super.create;
 
-        if (const err = nativeWindow.create)
+        if (const err = comWindow.create)
         {
             const errorMessage = "Window FactoryKit error. " ~ err.toString;
             if (logging)
@@ -273,7 +273,7 @@ class Window : GraphicsComponent
     int id()
     {
         int winId;
-        if (const err = nativeWindow.getId(winId))
+        if (const err = comWindow.getId(winId))
         {
             logger.error("Error obtain window id", err.toString);
         }
@@ -283,7 +283,7 @@ class Window : GraphicsComponent
     bool isShown()
     {
         bool value;
-        if (const err = nativeWindow.isShown(value))
+        if (const err = comWindow.isShown(value))
         {
             logger.error("Error reading window shown state. ", err.toString);
         }
@@ -298,7 +298,7 @@ class Window : GraphicsComponent
             return;
         }
 
-        if (const err = nativeWindow.show)
+        if (const err = comWindow.show)
         {
             logger.error("Error showing window. ", err.toString);
             //WARNING return
@@ -315,7 +315,7 @@ class Window : GraphicsComponent
     bool isHidden()
     {
         bool value;
-        if (const err = nativeWindow.isHidden(value))
+        if (const err = comWindow.isHidden(value))
         {
             logger.error("Error reading window hidden state. ", err.toString);
         }
@@ -349,7 +349,7 @@ class Window : GraphicsComponent
             }
         }
 
-        if (const err = nativeWindow.close)
+        if (const err = comWindow.close)
         {
             logger.error("Window closing error. ", err.toString);
             //WARNING return
@@ -391,7 +391,7 @@ class Window : GraphicsComponent
         }
 
         //after window
-        nativeWindow.dispose;
+        comWindow.dispose;
         logger.trace("Dispose native window with id: ", windowId);
 
         onCreate = null;
@@ -457,7 +457,7 @@ class Window : GraphicsComponent
             return;
         }
 
-        if (const err = nativeWindow.hide)
+        if (const err = comWindow.hide)
         {
             logger.error("Error hiding window. ", err.toString);
             //WARNING return
@@ -487,7 +487,7 @@ class Window : GraphicsComponent
 
     void focusRequest()
     {
-        if (const err = nativeWindow.focusRequest)
+        if (const err = comWindow.focusRequest)
         {
             logger.error("Request focus error in window. ", err.toString);
         }
@@ -496,7 +496,7 @@ class Window : GraphicsComponent
     bool isMinimized()
     {
         bool value;
-        if (const err = nativeWindow.getMinimized(value))
+        if (const err = comWindow.getMinimized(value))
         {
             logger.error("Error reading window minimized property.. ", err.toString);
         }
@@ -505,7 +505,7 @@ class Window : GraphicsComponent
 
     void minimize()
     {
-        if (const err = nativeWindow.setMinimized)
+        if (const err = comWindow.setMinimized)
         {
             logger.error("Window minimizing error. ", err.toString);
         }
@@ -514,7 +514,7 @@ class Window : GraphicsComponent
     bool isMaximized()
     {
         bool value;
-        if (const err = nativeWindow.getMaximized(value))
+        if (const err = comWindow.getMaximized(value))
         {
             logger.error("Error reading window maximized property.. ", err.toString);
         }
@@ -523,7 +523,7 @@ class Window : GraphicsComponent
 
     void maximize()
     {
-        if (const err = nativeWindow.setMaximized)
+        if (const err = comWindow.setMaximized)
         {
             logger.error("Window maximizing error. ", err.toString);
         }
@@ -531,7 +531,7 @@ class Window : GraphicsComponent
 
     void isFullScreen(bool value)
     {
-        if (const err = nativeWindow.setFullScreen(value))
+        if (const err = comWindow.setFullScreen(value))
         {
             logger.error("Window fullscreen error. ", err.toString);
         }
@@ -540,7 +540,7 @@ class Window : GraphicsComponent
     bool isFullScreen()
     {
         bool value;
-        if (const err = nativeWindow.getFullScreen(value))
+        if (const err = comWindow.getFullScreen(value))
         {
             logger.error("Error reading window fullscreen state. ", err.toString);
         }
@@ -549,7 +549,7 @@ class Window : GraphicsComponent
 
     void restore()
     {
-        if (const err = nativeWindow.restore)
+        if (const err = comWindow.restore)
         {
             logger.error("Window restoring error. ", err.toString);
         }
@@ -557,7 +557,7 @@ class Window : GraphicsComponent
 
     void isDecorated(bool isDecorated)
     {
-        if (const err = nativeWindow.setDecorated(isDecorated))
+        if (const err = comWindow.setDecorated(isDecorated))
         {
             logger.error("Error changing window decoration property. ", err.toString);
         }
@@ -566,7 +566,7 @@ class Window : GraphicsComponent
     bool isDecorated()
     {
         bool decorated;
-        if (const err = nativeWindow.getDecorated(decorated))
+        if (const err = comWindow.getDecorated(decorated))
         {
             logger.error("Error changing window decoration property. ", err.toString);
         }
@@ -575,7 +575,7 @@ class Window : GraphicsComponent
 
     void isResizable(bool isResizable)
     {
-        if (const err = nativeWindow.setResizable(isResizable))
+        if (const err = comWindow.setResizable(isResizable))
         {
             logger.error("Window resizable property change error. ", err.toString);
         }
@@ -584,7 +584,7 @@ class Window : GraphicsComponent
     bool isResizable()
     {
         bool resizable;
-        if (const err = nativeWindow.getResizable(resizable))
+        if (const err = comWindow.getResizable(resizable))
         {
             logger.error("Error reading window resizable property. ", err.toString);
         }
@@ -593,7 +593,7 @@ class Window : GraphicsComponent
 
     void resize(double newWidth, double newHeight)
     {
-        if (const err = nativeWindow.setSize(cast(int) newWidth, cast(int) newHeight))
+        if (const err = comWindow.setSize(cast(int) newWidth, cast(int) newHeight))
         {
             logger.errorf("Resizing window error, new width %s, height %s, current width %s, height %s", newWidth, newHeight, width, height);
             return;
@@ -639,6 +639,17 @@ class Window : GraphicsComponent
         return boundsRect;
     }
 
+    Rect2d boundsSafe()
+    {
+        Rect2d bounds;
+        if (const err = comWindow.getSafeBounds(bounds))
+        {
+            logger.error(err.toString);
+            return Rect2d();
+        }
+        return bounds;
+    }
+
     int halfWidth() => width / 2;
     int halfHeight() => height / 2;
 
@@ -657,7 +668,7 @@ class Window : GraphicsComponent
     int width()
     {
         int width, height;
-        if (const err = nativeWindow.getSize(width, height))
+        if (const err = comWindow.getSize(width, height))
         {
             logger.error("Getting window size error for width. ", err.toString);
         }
@@ -667,7 +678,7 @@ class Window : GraphicsComponent
     int height()
     {
         int width, height;
-        if (const err = nativeWindow.getSize(width, height))
+        if (const err = comWindow.getSize(width, height))
         {
             logger.error("Getting window size error for height. ", err.toString);
         }
@@ -678,7 +689,7 @@ class Window : GraphicsComponent
 
     void pos(int x, int y)
     {
-        if (const err = nativeWindow.setPos(x, y))
+        if (const err = comWindow.setPos(x, y))
         {
             logger.errorf("Window coordinate setting error, x: %s, y: %s. %s", x, y, err.toString);
         }
@@ -687,7 +698,7 @@ class Window : GraphicsComponent
     int x()
     {
         int x, y;
-        if (const err = nativeWindow.getPos(x, y))
+        if (const err = comWindow.getPos(x, y))
         {
             logger.tracef("Error getting window position 'x'. ", err.toString);
         }
@@ -697,7 +708,7 @@ class Window : GraphicsComponent
     int y()
     {
         int x, y;
-        if (const err = nativeWindow.getPos(x, y))
+        if (const err = comWindow.getPos(x, y))
         {
             logger.tracef("Error getting window position 'y'. ", err.toString);
         }
@@ -707,7 +718,7 @@ class Window : GraphicsComponent
     dstring title()
     {
         dstring winTitle;
-        if (const err = nativeWindow.getTitle(winTitle))
+        if (const err = comWindow.getTitle(winTitle))
         {
             logger.tracef("Error getting window title. ", err.toString);
         }
@@ -720,7 +731,7 @@ class Window : GraphicsComponent
         import std.conv : to;
 
         //TODO dup\copy?
-        if (const err = nativeWindow.setTitle(title))
+        if (const err = comWindow.setTitle(title))
         {
             logger.error("Error setting window title: ", err.toString);
         }
@@ -732,18 +743,15 @@ class Window : GraphicsComponent
         isResizable(true);
     }
 
-    int getScreenIndex()
+    ComScreenId screenId()
     {
-        size_t index;
-        if (const err = nativeWindow.getScreenIndex(index))
+        ComScreenId id;
+        if (const err = comWindow.getScreenId(id))
         {
             logger.error("Error getting screen from window: ", err.toString);
-            return -1;
+            return 0;
         }
-        import std.conv : to;
-
-        //not cast(int) for overflow detection
-        return index.to!int;
+        return id;
     }
 
     void update(double delta)
@@ -790,7 +798,7 @@ class Window : GraphicsComponent
     Vec2d dpiRatio()
     {
         int winWidth, winHeight;
-        if (const err = nativeWindow.getSize(winWidth, winHeight))
+        if (const err = comWindow.getSize(winWidth, winHeight))
         {
             logger.error("Getting window size error. ", err.toString);
             return Vec2d.init;
@@ -810,7 +818,7 @@ class Window : GraphicsComponent
 
     void nativePtr(out ComNativePtr ptr)
     {
-        if (const err = nativeWindow.nativePtr(ptr))
+        if (const err = comWindow.nativePtr(ptr))
         {
             logger.error("Native window pointer is invalid");
         }

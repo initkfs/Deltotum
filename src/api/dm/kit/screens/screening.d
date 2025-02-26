@@ -75,6 +75,16 @@ class Screening
         return screenName;
     }
 
+    string videoDriverName()
+    {
+        string name;
+        if (const err = comScreen.getVideoDriverName(name))
+        {
+            logging.logger.error("Error getting screen videodriver: ", err.toString);
+        }
+        return name;
+    }
+
     ComScreenMode mode(ComScreenId id)
     {
         import api.dm.com.graphics.com_screen : ComScreenMode, ComScreenDpi;
