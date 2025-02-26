@@ -96,14 +96,14 @@ class TextArea : HBox
         onKeyPress ~= (ref key) {
             import api.dm.com.inputs.com_keyboard : ComKeyName;
 
-            if (key.keyName == ComKeyName.backspace && textView.text.length > 0)
+            if (key.keyName == ComKeyName.key_backspace && textView.text.length > 0)
             {
                 textView.text = textView.text[0 .. $ - 1];
                 key.isConsumed = true;
                 return;
             }
 
-            if (key.keyName == ComKeyName.return_)
+            if (key.keyName == ComKeyName.key_return)
             {
                 if (key.keyMod.isCtrl && onCaret !is null)
                 {
@@ -115,7 +115,7 @@ class TextArea : HBox
                 textView.text = textView.text ~ '\n';
             }
 
-            if (key.keyMod.isCtrl && key.keyName == ComKeyName.c)
+            if (key.keyMod.isCtrl && key.keyName == ComKeyName.key_c)
             {
                 import std.conv : to;
 
@@ -125,7 +125,7 @@ class TextArea : HBox
                 }
             }
 
-            if (key.keyMod.isCtrl && key.keyName == ComKeyName.v)
+            if (key.keyMod.isCtrl && key.keyName == ComKeyName.key_v)
             {
                 import std.conv : to;
 

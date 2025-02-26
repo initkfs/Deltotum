@@ -62,7 +62,7 @@ class GuiScene : Scene2d
                     import api.dm.com.inputs.com_keyboard : ComKeyName;
 
                     //TODO toggle pause?
-                    if (e.keyName != ComKeyName.f12 || isPause)
+                    if (e.keyName != ComKeyName.key_f12 || isPause)
                     {
                         return;
                     }

@@ -35,8 +35,6 @@ void main(string[] args)
     string[] keysComments;
     keysComments.reserve(minKeysCount);
 
-    auto keyMapping = ["return": "return_", "delete": "delete_", "out": "out_"];
-
     foreach (keyCodeLine; keyCodeFile.byLine)
     {
         if (keyCodeLine.canFind(keyCodeDefine) && keyCodeLine.canFind(keyCodePrefix) && keyCodeLine.canFind(
@@ -54,22 +52,7 @@ void main(string[] args)
                 sdlkKeys ~= sdlkKey;
 
                 auto comKey = sdlkKey.chompPrefix(keyCodePrefix).toLower;
-                foreach (k, v; keyMapping)
-                {
-                    if (comKey == k)
-                    {
-                        comKey = v;
-                        break;
-                    }
-                }
-
-                auto firstKeyLetter = comKey[0];
-                if (firstKeyLetter.isDigit)
-                {
-                    comKey = "num" ~ comKey;
-                }
-
-                comKeys ~= comKey;
+                comKeys ~= "key_" ~ comKey;
 
                 const commentPos = keyCodeLine.indexOf("/**");
                 if(commentPos != -1){

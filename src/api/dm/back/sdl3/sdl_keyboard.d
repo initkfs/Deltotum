@@ -14,524 +14,534 @@ import api.dm.back.sdl3.externs.csdl3;
  */
 class SdlKeyboard : SdlObject
 {
+    ComKeyName scanCodeToKeyName(SDL_Scancode scanCode, SDL_Keymod mods)
+    {
+        SDL_Keycode code = SDL_GetKeyFromScancode(scanCode, mods, false);
+        return keyCodeToKeyName(code);
+    }
+
+    SDL_Scancode keyToScanCode(SDL_Keycode key, SDL_Keymod* mods)
+    {
+        SDL_Scancode code = SDL_GetScancodeFromKey(key, mods);
+        return code;
+    }
 
     ComKeyName keyCodeToKeyName(SDL_Keycode code)
     {
-        //Generated automatically
         final switch (code)
         {
             case SDLK_UNKNOWN:
-                return ComKeyName.unknown;
+                return ComKeyName.key_unknown;
             case SDLK_RETURN:
-                return ComKeyName.return_;
+                return ComKeyName.key_return;
             case SDLK_ESCAPE:
-                return ComKeyName.escape;
+                return ComKeyName.key_escape;
             case SDLK_BACKSPACE:
-                return ComKeyName.backspace;
+                return ComKeyName.key_backspace;
             case SDLK_TAB:
-                return ComKeyName.tab;
+                return ComKeyName.key_tab;
             case SDLK_SPACE:
-                return ComKeyName.space;
+                return ComKeyName.key_space;
             case SDLK_EXCLAIM:
-                return ComKeyName.exclaim;
+                return ComKeyName.key_exclaim;
             case SDLK_DBLAPOSTROPHE:
-                return ComKeyName.dblapostrophe;
+                return ComKeyName.key_dblapostrophe;
             case SDLK_HASH:
-                return ComKeyName.hash;
+                return ComKeyName.key_hash;
             case SDLK_DOLLAR:
-                return ComKeyName.dollar;
+                return ComKeyName.key_dollar;
             case SDLK_PERCENT:
-                return ComKeyName.percent;
+                return ComKeyName.key_percent;
             case SDLK_AMPERSAND:
-                return ComKeyName.ampersand;
+                return ComKeyName.key_ampersand;
             case SDLK_APOSTROPHE:
-                return ComKeyName.apostrophe;
+                return ComKeyName.key_apostrophe;
             case SDLK_LEFTPAREN:
-                return ComKeyName.leftparen;
+                return ComKeyName.key_leftparen;
             case SDLK_RIGHTPAREN:
-                return ComKeyName.rightparen;
+                return ComKeyName.key_rightparen;
             case SDLK_ASTERISK:
-                return ComKeyName.asterisk;
+                return ComKeyName.key_asterisk;
             case SDLK_PLUS:
-                return ComKeyName.plus;
+                return ComKeyName.key_plus;
             case SDLK_COMMA:
-                return ComKeyName.comma;
+                return ComKeyName.key_comma;
             case SDLK_MINUS:
-                return ComKeyName.minus;
+                return ComKeyName.key_minus;
             case SDLK_PERIOD:
-                return ComKeyName.period;
+                return ComKeyName.key_period;
             case SDLK_SLASH:
-                return ComKeyName.slash;
+                return ComKeyName.key_slash;
             case SDLK_0:
-                return ComKeyName.num0;
+                return ComKeyName.key_0;
             case SDLK_1:
-                return ComKeyName.num1;
+                return ComKeyName.key_1;
             case SDLK_2:
-                return ComKeyName.num2;
+                return ComKeyName.key_2;
             case SDLK_3:
-                return ComKeyName.num3;
+                return ComKeyName.key_3;
             case SDLK_4:
-                return ComKeyName.num4;
+                return ComKeyName.key_4;
             case SDLK_5:
-                return ComKeyName.num5;
+                return ComKeyName.key_5;
             case SDLK_6:
-                return ComKeyName.num6;
+                return ComKeyName.key_6;
             case SDLK_7:
-                return ComKeyName.num7;
+                return ComKeyName.key_7;
             case SDLK_8:
-                return ComKeyName.num8;
+                return ComKeyName.key_8;
             case SDLK_9:
-                return ComKeyName.num9;
+                return ComKeyName.key_9;
             case SDLK_COLON:
-                return ComKeyName.colon;
+                return ComKeyName.key_colon;
             case SDLK_SEMICOLON:
-                return ComKeyName.semicolon;
+                return ComKeyName.key_semicolon;
             case SDLK_LESS:
-                return ComKeyName.less;
+                return ComKeyName.key_less;
             case SDLK_EQUALS:
-                return ComKeyName.equals;
+                return ComKeyName.key_equals;
             case SDLK_GREATER:
-                return ComKeyName.greater;
+                return ComKeyName.key_greater;
             case SDLK_QUESTION:
-                return ComKeyName.question;
+                return ComKeyName.key_question;
             case SDLK_AT:
-                return ComKeyName.at;
+                return ComKeyName.key_at;
             case SDLK_LEFTBRACKET:
-                return ComKeyName.leftbracket;
+                return ComKeyName.key_leftbracket;
             case SDLK_BACKSLASH:
-                return ComKeyName.backslash;
+                return ComKeyName.key_backslash;
             case SDLK_RIGHTBRACKET:
-                return ComKeyName.rightbracket;
+                return ComKeyName.key_rightbracket;
             case SDLK_CARET:
-                return ComKeyName.caret;
+                return ComKeyName.key_caret;
             case SDLK_UNDERSCORE:
-                return ComKeyName.underscore;
+                return ComKeyName.key_underscore;
             case SDLK_GRAVE:
-                return ComKeyName.grave;
+                return ComKeyName.key_grave;
             case SDLK_A:
-                return ComKeyName.a;
+                return ComKeyName.key_a;
             case SDLK_B:
-                return ComKeyName.b;
+                return ComKeyName.key_b;
             case SDLK_C:
-                return ComKeyName.c;
+                return ComKeyName.key_c;
             case SDLK_D:
-                return ComKeyName.d;
+                return ComKeyName.key_d;
             case SDLK_E:
-                return ComKeyName.e;
+                return ComKeyName.key_e;
             case SDLK_F:
-                return ComKeyName.f;
+                return ComKeyName.key_f;
             case SDLK_G:
-                return ComKeyName.g;
+                return ComKeyName.key_g;
             case SDLK_H:
-                return ComKeyName.h;
+                return ComKeyName.key_h;
             case SDLK_I:
-                return ComKeyName.i;
+                return ComKeyName.key_i;
             case SDLK_J:
-                return ComKeyName.j;
+                return ComKeyName.key_j;
             case SDLK_K:
-                return ComKeyName.k;
+                return ComKeyName.key_k;
             case SDLK_L:
-                return ComKeyName.l;
+                return ComKeyName.key_l;
             case SDLK_M:
-                return ComKeyName.m;
+                return ComKeyName.key_m;
             case SDLK_N:
-                return ComKeyName.n;
+                return ComKeyName.key_n;
             case SDLK_O:
-                return ComKeyName.o;
+                return ComKeyName.key_o;
             case SDLK_P:
-                return ComKeyName.p;
+                return ComKeyName.key_p;
             case SDLK_Q:
-                return ComKeyName.q;
+                return ComKeyName.key_q;
             case SDLK_R:
-                return ComKeyName.r;
+                return ComKeyName.key_r;
             case SDLK_S:
-                return ComKeyName.s;
+                return ComKeyName.key_s;
             case SDLK_T:
-                return ComKeyName.t;
+                return ComKeyName.key_t;
             case SDLK_U:
-                return ComKeyName.u;
+                return ComKeyName.key_u;
             case SDLK_V:
-                return ComKeyName.v;
+                return ComKeyName.key_v;
             case SDLK_W:
-                return ComKeyName.w;
+                return ComKeyName.key_w;
             case SDLK_X:
-                return ComKeyName.x;
+                return ComKeyName.key_x;
             case SDLK_Y:
-                return ComKeyName.y;
+                return ComKeyName.key_y;
             case SDLK_Z:
-                return ComKeyName.z;
+                return ComKeyName.key_z;
             case SDLK_LEFTBRACE:
-                return ComKeyName.leftbrace;
+                return ComKeyName.key_leftbrace;
             case SDLK_PIPE:
-                return ComKeyName.pipe;
+                return ComKeyName.key_pipe;
             case SDLK_RIGHTBRACE:
-                return ComKeyName.rightbrace;
+                return ComKeyName.key_rightbrace;
             case SDLK_TILDE:
-                return ComKeyName.tilde;
+                return ComKeyName.key_tilde;
             case SDLK_DELETE:
-                return ComKeyName.delete_;
+                return ComKeyName.key_delete;
             case SDLK_PLUSMINUS:
-                return ComKeyName.plusminus;
+                return ComKeyName.key_plusminus;
             case SDLK_CAPSLOCK:
-                return ComKeyName.capslock;
+                return ComKeyName.key_capslock;
             case SDLK_F1:
-                return ComKeyName.f1;
+                return ComKeyName.key_f1;
             case SDLK_F2:
-                return ComKeyName.f2;
+                return ComKeyName.key_f2;
             case SDLK_F3:
-                return ComKeyName.f3;
+                return ComKeyName.key_f3;
             case SDLK_F4:
-                return ComKeyName.f4;
+                return ComKeyName.key_f4;
             case SDLK_F5:
-                return ComKeyName.f5;
+                return ComKeyName.key_f5;
             case SDLK_F6:
-                return ComKeyName.f6;
+                return ComKeyName.key_f6;
             case SDLK_F7:
-                return ComKeyName.f7;
+                return ComKeyName.key_f7;
             case SDLK_F8:
-                return ComKeyName.f8;
+                return ComKeyName.key_f8;
             case SDLK_F9:
-                return ComKeyName.f9;
+                return ComKeyName.key_f9;
             case SDLK_F10:
-                return ComKeyName.f10;
+                return ComKeyName.key_f10;
             case SDLK_F11:
-                return ComKeyName.f11;
+                return ComKeyName.key_f11;
             case SDLK_F12:
-                return ComKeyName.f12;
+                return ComKeyName.key_f12;
             case SDLK_PRINTSCREEN:
-                return ComKeyName.printscreen;
+                return ComKeyName.key_printscreen;
             case SDLK_SCROLLLOCK:
-                return ComKeyName.scrolllock;
+                return ComKeyName.key_scrolllock;
             case SDLK_PAUSE:
-                return ComKeyName.pause;
+                return ComKeyName.key_pause;
             case SDLK_INSERT:
-                return ComKeyName.insert;
+                return ComKeyName.key_insert;
             case SDLK_HOME:
-                return ComKeyName.home;
+                return ComKeyName.key_home;
             case SDLK_PAGEUP:
-                return ComKeyName.pageup;
+                return ComKeyName.key_pageup;
             case SDLK_END:
-                return ComKeyName.end;
+                return ComKeyName.key_end;
             case SDLK_PAGEDOWN:
-                return ComKeyName.pagedown;
+                return ComKeyName.key_pagedown;
             case SDLK_RIGHT:
-                return ComKeyName.right;
+                return ComKeyName.key_right;
             case SDLK_LEFT:
-                return ComKeyName.left;
+                return ComKeyName.key_left;
             case SDLK_DOWN:
-                return ComKeyName.down;
+                return ComKeyName.key_down;
             case SDLK_UP:
-                return ComKeyName.up;
+                return ComKeyName.key_up;
             case SDLK_NUMLOCKCLEAR:
-                return ComKeyName.numlockclear;
+                return ComKeyName.key_numlockclear;
             case SDLK_KP_DIVIDE:
-                return ComKeyName.kp_divide;
+                return ComKeyName.key_kp_divide;
             case SDLK_KP_MULTIPLY:
-                return ComKeyName.kp_multiply;
+                return ComKeyName.key_kp_multiply;
             case SDLK_KP_MINUS:
-                return ComKeyName.kp_minus;
+                return ComKeyName.key_kp_minus;
             case SDLK_KP_PLUS:
-                return ComKeyName.kp_plus;
+                return ComKeyName.key_kp_plus;
             case SDLK_KP_ENTER:
-                return ComKeyName.kp_enter;
+                return ComKeyName.key_kp_enter;
             case SDLK_KP_1:
-                return ComKeyName.kp_1;
+                return ComKeyName.key_kp_1;
             case SDLK_KP_2:
-                return ComKeyName.kp_2;
+                return ComKeyName.key_kp_2;
             case SDLK_KP_3:
-                return ComKeyName.kp_3;
+                return ComKeyName.key_kp_3;
             case SDLK_KP_4:
-                return ComKeyName.kp_4;
+                return ComKeyName.key_kp_4;
             case SDLK_KP_5:
-                return ComKeyName.kp_5;
+                return ComKeyName.key_kp_5;
             case SDLK_KP_6:
-                return ComKeyName.kp_6;
+                return ComKeyName.key_kp_6;
             case SDLK_KP_7:
-                return ComKeyName.kp_7;
+                return ComKeyName.key_kp_7;
             case SDLK_KP_8:
-                return ComKeyName.kp_8;
+                return ComKeyName.key_kp_8;
             case SDLK_KP_9:
-                return ComKeyName.kp_9;
+                return ComKeyName.key_kp_9;
             case SDLK_KP_0:
-                return ComKeyName.kp_0;
+                return ComKeyName.key_kp_0;
             case SDLK_KP_PERIOD:
-                return ComKeyName.kp_period;
+                return ComKeyName.key_kp_period;
             case SDLK_APPLICATION:
-                return ComKeyName.application;
+                return ComKeyName.key_application;
             case SDLK_POWER:
-                return ComKeyName.power;
+                return ComKeyName.key_power;
             case SDLK_KP_EQUALS:
-                return ComKeyName.kp_equals;
+                return ComKeyName.key_kp_equals;
             case SDLK_F13:
-                return ComKeyName.f13;
+                return ComKeyName.key_f13;
             case SDLK_F14:
-                return ComKeyName.f14;
+                return ComKeyName.key_f14;
             case SDLK_F15:
-                return ComKeyName.f15;
+                return ComKeyName.key_f15;
             case SDLK_F16:
-                return ComKeyName.f16;
+                return ComKeyName.key_f16;
             case SDLK_F17:
-                return ComKeyName.f17;
+                return ComKeyName.key_f17;
             case SDLK_F18:
-                return ComKeyName.f18;
+                return ComKeyName.key_f18;
             case SDLK_F19:
-                return ComKeyName.f19;
+                return ComKeyName.key_f19;
             case SDLK_F20:
-                return ComKeyName.f20;
+                return ComKeyName.key_f20;
             case SDLK_F21:
-                return ComKeyName.f21;
+                return ComKeyName.key_f21;
             case SDLK_F22:
-                return ComKeyName.f22;
+                return ComKeyName.key_f22;
             case SDLK_F23:
-                return ComKeyName.f23;
+                return ComKeyName.key_f23;
             case SDLK_F24:
-                return ComKeyName.f24;
+                return ComKeyName.key_f24;
             case SDLK_EXECUTE:
-                return ComKeyName.execute;
+                return ComKeyName.key_execute;
             case SDLK_HELP:
-                return ComKeyName.help;
+                return ComKeyName.key_help;
             case SDLK_MENU:
-                return ComKeyName.menu;
+                return ComKeyName.key_menu;
             case SDLK_SELECT:
-                return ComKeyName.select;
+                return ComKeyName.key_select;
             case SDLK_STOP:
-                return ComKeyName.stop;
+                return ComKeyName.key_stop;
             case SDLK_AGAIN:
-                return ComKeyName.again;
+                return ComKeyName.key_again;
             case SDLK_UNDO:
-                return ComKeyName.undo;
+                return ComKeyName.key_undo;
             case SDLK_CUT:
-                return ComKeyName.cut;
+                return ComKeyName.key_cut;
             case SDLK_COPY:
-                return ComKeyName.copy;
+                return ComKeyName.key_copy;
             case SDLK_PASTE:
-                return ComKeyName.paste;
+                return ComKeyName.key_paste;
             case SDLK_FIND:
-                return ComKeyName.find;
+                return ComKeyName.key_find;
             case SDLK_MUTE:
-                return ComKeyName.mute;
+                return ComKeyName.key_mute;
             case SDLK_VOLUMEUP:
-                return ComKeyName.volumeup;
+                return ComKeyName.key_volumeup;
             case SDLK_VOLUMEDOWN:
-                return ComKeyName.volumedown;
+                return ComKeyName.key_volumedown;
             case SDLK_KP_COMMA:
-                return ComKeyName.kp_comma;
+                return ComKeyName.key_kp_comma;
             case SDLK_KP_EQUALSAS400:
-                return ComKeyName.kp_equalsas400;
+                return ComKeyName.key_kp_equalsas400;
             case SDLK_ALTERASE:
-                return ComKeyName.alterase;
+                return ComKeyName.key_alterase;
             case SDLK_SYSREQ:
-                return ComKeyName.sysreq;
+                return ComKeyName.key_sysreq;
             case SDLK_CANCEL:
-                return ComKeyName.cancel;
+                return ComKeyName.key_cancel;
             case SDLK_CLEAR:
-                return ComKeyName.clear;
+                return ComKeyName.key_clear;
             case SDLK_PRIOR:
-                return ComKeyName.prior;
+                return ComKeyName.key_prior;
             case SDLK_RETURN2:
-                return ComKeyName.return2;
+                return ComKeyName.key_return2;
             case SDLK_SEPARATOR:
-                return ComKeyName.separator;
+                return ComKeyName.key_separator;
             case SDLK_OUT:
-                return ComKeyName.out_;
+                return ComKeyName.key_out;
             case SDLK_OPER:
-                return ComKeyName.oper;
+                return ComKeyName.key_oper;
             case SDLK_CLEARAGAIN:
-                return ComKeyName.clearagain;
+                return ComKeyName.key_clearagain;
             case SDLK_CRSEL:
-                return ComKeyName.crsel;
+                return ComKeyName.key_crsel;
             case SDLK_EXSEL:
-                return ComKeyName.exsel;
+                return ComKeyName.key_exsel;
             case SDLK_KP_00:
-                return ComKeyName.kp_00;
+                return ComKeyName.key_kp_00;
             case SDLK_KP_000:
-                return ComKeyName.kp_000;
+                return ComKeyName.key_kp_000;
             case SDLK_THOUSANDSSEPARATOR:
-                return ComKeyName.thousandsseparator;
+                return ComKeyName.key_thousandsseparator;
             case SDLK_DECIMALSEPARATOR:
-                return ComKeyName.decimalseparator;
+                return ComKeyName.key_decimalseparator;
             case SDLK_CURRENCYUNIT:
-                return ComKeyName.currencyunit;
+                return ComKeyName.key_currencyunit;
             case SDLK_CURRENCYSUBUNIT:
-                return ComKeyName.currencysubunit;
+                return ComKeyName.key_currencysubunit;
             case SDLK_KP_LEFTPAREN:
-                return ComKeyName.kp_leftparen;
+                return ComKeyName.key_kp_leftparen;
             case SDLK_KP_RIGHTPAREN:
-                return ComKeyName.kp_rightparen;
+                return ComKeyName.key_kp_rightparen;
             case SDLK_KP_LEFTBRACE:
-                return ComKeyName.kp_leftbrace;
+                return ComKeyName.key_kp_leftbrace;
             case SDLK_KP_RIGHTBRACE:
-                return ComKeyName.kp_rightbrace;
+                return ComKeyName.key_kp_rightbrace;
             case SDLK_KP_TAB:
-                return ComKeyName.kp_tab;
+                return ComKeyName.key_kp_tab;
             case SDLK_KP_BACKSPACE:
-                return ComKeyName.kp_backspace;
+                return ComKeyName.key_kp_backspace;
             case SDLK_KP_A:
-                return ComKeyName.kp_a;
+                return ComKeyName.key_kp_a;
             case SDLK_KP_B:
-                return ComKeyName.kp_b;
+                return ComKeyName.key_kp_b;
             case SDLK_KP_C:
-                return ComKeyName.kp_c;
+                return ComKeyName.key_kp_c;
             case SDLK_KP_D:
-                return ComKeyName.kp_d;
+                return ComKeyName.key_kp_d;
             case SDLK_KP_E:
-                return ComKeyName.kp_e;
+                return ComKeyName.key_kp_e;
             case SDLK_KP_F:
-                return ComKeyName.kp_f;
+                return ComKeyName.key_kp_f;
             case SDLK_KP_XOR:
-                return ComKeyName.kp_xor;
+                return ComKeyName.key_kp_xor;
             case SDLK_KP_POWER:
-                return ComKeyName.kp_power;
+                return ComKeyName.key_kp_power;
             case SDLK_KP_PERCENT:
-                return ComKeyName.kp_percent;
+                return ComKeyName.key_kp_percent;
             case SDLK_KP_LESS:
-                return ComKeyName.kp_less;
+                return ComKeyName.key_kp_less;
             case SDLK_KP_GREATER:
-                return ComKeyName.kp_greater;
+                return ComKeyName.key_kp_greater;
             case SDLK_KP_AMPERSAND:
-                return ComKeyName.kp_ampersand;
+                return ComKeyName.key_kp_ampersand;
             case SDLK_KP_DBLAMPERSAND:
-                return ComKeyName.kp_dblampersand;
+                return ComKeyName.key_kp_dblampersand;
             case SDLK_KP_VERTICALBAR:
-                return ComKeyName.kp_verticalbar;
+                return ComKeyName.key_kp_verticalbar;
             case SDLK_KP_DBLVERTICALBAR:
-                return ComKeyName.kp_dblverticalbar;
+                return ComKeyName.key_kp_dblverticalbar;
             case SDLK_KP_COLON:
-                return ComKeyName.kp_colon;
+                return ComKeyName.key_kp_colon;
             case SDLK_KP_HASH:
-                return ComKeyName.kp_hash;
+                return ComKeyName.key_kp_hash;
             case SDLK_KP_SPACE:
-                return ComKeyName.kp_space;
+                return ComKeyName.key_kp_space;
             case SDLK_KP_AT:
-                return ComKeyName.kp_at;
+                return ComKeyName.key_kp_at;
             case SDLK_KP_EXCLAM:
-                return ComKeyName.kp_exclam;
+                return ComKeyName.key_kp_exclam;
             case SDLK_KP_MEMSTORE:
-                return ComKeyName.kp_memstore;
+                return ComKeyName.key_kp_memstore;
             case SDLK_KP_MEMRECALL:
-                return ComKeyName.kp_memrecall;
+                return ComKeyName.key_kp_memrecall;
             case SDLK_KP_MEMCLEAR:
-                return ComKeyName.kp_memclear;
+                return ComKeyName.key_kp_memclear;
             case SDLK_KP_MEMADD:
-                return ComKeyName.kp_memadd;
+                return ComKeyName.key_kp_memadd;
             case SDLK_KP_MEMSUBTRACT:
-                return ComKeyName.kp_memsubtract;
+                return ComKeyName.key_kp_memsubtract;
             case SDLK_KP_MEMMULTIPLY:
-                return ComKeyName.kp_memmultiply;
+                return ComKeyName.key_kp_memmultiply;
             case SDLK_KP_MEMDIVIDE:
-                return ComKeyName.kp_memdivide;
+                return ComKeyName.key_kp_memdivide;
             case SDLK_KP_PLUSMINUS:
-                return ComKeyName.kp_plusminus;
+                return ComKeyName.key_kp_plusminus;
             case SDLK_KP_CLEAR:
-                return ComKeyName.kp_clear;
+                return ComKeyName.key_kp_clear;
             case SDLK_KP_CLEARENTRY:
-                return ComKeyName.kp_clearentry;
+                return ComKeyName.key_kp_clearentry;
             case SDLK_KP_BINARY:
-                return ComKeyName.kp_binary;
+                return ComKeyName.key_kp_binary;
             case SDLK_KP_OCTAL:
-                return ComKeyName.kp_octal;
+                return ComKeyName.key_kp_octal;
             case SDLK_KP_DECIMAL:
-                return ComKeyName.kp_decimal;
+                return ComKeyName.key_kp_decimal;
             case SDLK_KP_HEXADECIMAL:
-                return ComKeyName.kp_hexadecimal;
+                return ComKeyName.key_kp_hexadecimal;
             case SDLK_LCTRL:
-                return ComKeyName.lctrl;
+                return ComKeyName.key_lctrl;
             case SDLK_LSHIFT:
-                return ComKeyName.lshift;
+                return ComKeyName.key_lshift;
             case SDLK_LALT:
-                return ComKeyName.lalt;
+                return ComKeyName.key_lalt;
             case SDLK_LGUI:
-                return ComKeyName.lgui;
+                return ComKeyName.key_lgui;
             case SDLK_RCTRL:
-                return ComKeyName.rctrl;
+                return ComKeyName.key_rctrl;
             case SDLK_RSHIFT:
-                return ComKeyName.rshift;
+                return ComKeyName.key_rshift;
             case SDLK_RALT:
-                return ComKeyName.ralt;
+                return ComKeyName.key_ralt;
             case SDLK_RGUI:
-                return ComKeyName.rgui;
+                return ComKeyName.key_rgui;
             case SDLK_MODE:
-                return ComKeyName.mode;
+                return ComKeyName.key_mode;
             case SDLK_SLEEP:
-                return ComKeyName.sleep;
+                return ComKeyName.key_sleep;
             case SDLK_WAKE:
-                return ComKeyName.wake;
+                return ComKeyName.key_wake;
             case SDLK_CHANNEL_INCREMENT:
-                return ComKeyName.channel_increment;
+                return ComKeyName.key_channel_increment;
             case SDLK_CHANNEL_DECREMENT:
-                return ComKeyName.channel_decrement;
+                return ComKeyName.key_channel_decrement;
             case SDLK_MEDIA_PLAY:
-                return ComKeyName.media_play;
+                return ComKeyName.key_media_play;
             case SDLK_MEDIA_PAUSE:
-                return ComKeyName.media_pause;
+                return ComKeyName.key_media_pause;
             case SDLK_MEDIA_RECORD:
-                return ComKeyName.media_record;
+                return ComKeyName.key_media_record;
             case SDLK_MEDIA_FAST_FORWARD:
-                return ComKeyName.media_fast_forward;
+                return ComKeyName.key_media_fast_forward;
             case SDLK_MEDIA_REWIND:
-                return ComKeyName.media_rewind;
+                return ComKeyName.key_media_rewind;
             case SDLK_MEDIA_NEXT_TRACK:
-                return ComKeyName.media_next_track;
+                return ComKeyName.key_media_next_track;
             case SDLK_MEDIA_PREVIOUS_TRACK:
-                return ComKeyName.media_previous_track;
+                return ComKeyName.key_media_previous_track;
             case SDLK_MEDIA_STOP:
-                return ComKeyName.media_stop;
+                return ComKeyName.key_media_stop;
             case SDLK_MEDIA_EJECT:
-                return ComKeyName.media_eject;
+                return ComKeyName.key_media_eject;
             case SDLK_MEDIA_PLAY_PAUSE:
-                return ComKeyName.media_play_pause;
+                return ComKeyName.key_media_play_pause;
             case SDLK_MEDIA_SELECT:
-                return ComKeyName.media_select;
+                return ComKeyName.key_media_select;
             case SDLK_AC_NEW:
-                return ComKeyName.ac_new;
+                return ComKeyName.key_ac_new;
             case SDLK_AC_OPEN:
-                return ComKeyName.ac_open;
+                return ComKeyName.key_ac_open;
             case SDLK_AC_CLOSE:
-                return ComKeyName.ac_close;
+                return ComKeyName.key_ac_close;
             case SDLK_AC_EXIT:
-                return ComKeyName.ac_exit;
+                return ComKeyName.key_ac_exit;
             case SDLK_AC_SAVE:
-                return ComKeyName.ac_save;
+                return ComKeyName.key_ac_save;
             case SDLK_AC_PRINT:
-                return ComKeyName.ac_print;
+                return ComKeyName.key_ac_print;
             case SDLK_AC_PROPERTIES:
-                return ComKeyName.ac_properties;
+                return ComKeyName.key_ac_properties;
             case SDLK_AC_SEARCH:
-                return ComKeyName.ac_search;
+                return ComKeyName.key_ac_search;
             case SDLK_AC_HOME:
-                return ComKeyName.ac_home;
+                return ComKeyName.key_ac_home;
             case SDLK_AC_BACK:
-                return ComKeyName.ac_back;
+                return ComKeyName.key_ac_back;
             case SDLK_AC_FORWARD:
-                return ComKeyName.ac_forward;
+                return ComKeyName.key_ac_forward;
             case SDLK_AC_STOP:
-                return ComKeyName.ac_stop;
+                return ComKeyName.key_ac_stop;
             case SDLK_AC_REFRESH:
-                return ComKeyName.ac_refresh;
+                return ComKeyName.key_ac_refresh;
             case SDLK_AC_BOOKMARKS:
-                return ComKeyName.ac_bookmarks;
+                return ComKeyName.key_ac_bookmarks;
             case SDLK_SOFTLEFT:
-                return ComKeyName.softleft;
+                return ComKeyName.key_softleft;
             case SDLK_SOFTRIGHT:
-                return ComKeyName.softright;
+                return ComKeyName.key_softright;
             case SDLK_CALL:
-                return ComKeyName.call;
+                return ComKeyName.key_call;
             case SDLK_ENDCALL:
-                return ComKeyName.endcall;
+                return ComKeyName.key_endcall;
             case SDLK_LEFT_TAB:
-                return ComKeyName.left_tab;
+                return ComKeyName.key_left_tab;
             case SDLK_LEVEL5_SHIFT:
-                return ComKeyName.level5_shift;
+                return ComKeyName.key_level5_shift;
             case SDLK_MULTI_KEY_COMPOSE:
-                return ComKeyName.multi_key_compose;
+                return ComKeyName.key_multi_key_compose;
             case SDLK_LMETA:
-                return ComKeyName.lmeta;
+                return ComKeyName.key_lmeta;
             case SDLK_RMETA:
-                return ComKeyName.rmeta;
+                return ComKeyName.key_rmeta;
             case SDLK_LHYPER:
-                return ComKeyName.lhyper;
+                return ComKeyName.key_lhyper;
             case SDLK_RHYPER:
-                return ComKeyName.rhyper;
+                return ComKeyName.key_rhyper;
         }
     }
 }

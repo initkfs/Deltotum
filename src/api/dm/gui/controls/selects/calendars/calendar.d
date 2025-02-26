@@ -236,7 +236,7 @@ class Calendar : BaseDropDownSelector!(CalendarDialog, Date)
                     yearLabel.onKeyPress ~= (ref e) {
                         import api.dm.com.inputs.com_keyboard : ComKeyName;
 
-                        if (e.keyName == ComKeyName.return_)
+                        if (e.keyName == ComKeyName.key_return)
                         {
                             //TODO validate
                             try

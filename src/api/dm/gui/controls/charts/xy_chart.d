@@ -69,7 +69,7 @@ class XYChart : Container
     bool isTrackPointer = true;
     RGBA trackPointerColor;
     //RCTRL
-    ComKeyName trackPointerAltKey = ComKeyName.lctrl;
+    ComKeyName trackPointerAltKey = ComKeyName.key_lctrl;
 
     size_t labelNumberPrecision = 2;
     size_t prefLabelGlyphWidth = 4;
