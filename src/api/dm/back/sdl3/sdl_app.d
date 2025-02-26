@@ -325,6 +325,10 @@ class SdlApp : GuiApp
 
         _screening = new Screening(comScreen, uservices.logging);
 
+        import api.dm.kit.windows.windowing: Windowing;
+
+        _windowing = new Windowing;
+
         eventProcessor = new SdlEventProcessor(sdlKeyboard);
 
         eventManager = new KitEventManager;
@@ -739,11 +743,12 @@ class SdlApp : GuiApp
         buildPartially(windowBuilder);
 
         auto window = new GuiWindow(sdlWindow);
-        windowBuilder.window = window;
+        assert(windowBuilder.windowing);
+        windowBuilder.windowing.main = window;
 
         if (parent)
         {
-            window.window = parent;
+            window.parent = parent;
             window.frameRate = parent.frameRate;
             window.windowManager = parent.windowManager;
         }

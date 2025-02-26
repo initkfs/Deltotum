@@ -9,6 +9,7 @@ import api.dm.kit.media.audio.audio : Audio;
 import api.dm.kit.graphics.graphics : Graphics;
 import api.dm.kit.inputs.input : Input;
 import api.dm.kit.windows.window : Window;
+import api.dm.kit.windows.windowing : Windowing;
 import api.dm.kit.screens.screening : Screening;
 import api.dm.kit.screens.single_screen : SingleScreen;
 import api.dm.kit.events.kit_event_manager : KitEventManager;
@@ -35,7 +36,7 @@ class GraphicsComponent : UniComponent
         @Service Platform _platform;
         @Service I18n _i18n;
 
-        @Service Window _window;
+        @Service Windowing _windowing;
         @Service Interact _interact;
     }
 
@@ -164,8 +165,7 @@ class GraphicsComponent : UniComponent
 
     inout(SingleScreen) screen() inout nothrow pure @safe
     {
-        assert(_window);
-        return _window.screen;
+        return window.screen;
     }
 
     bool hasEventManager() const nothrow pure @safe
@@ -244,23 +244,34 @@ class GraphicsComponent : UniComponent
         _i18n = service;
     }
 
+    bool hasWindowing() const nothrow pure @safe
+    {
+        return _windowing !is null;
+    }
+
+    inout(Windowing) windowing() inout nothrow pure @safe
+    out (_windowing; _windowing !is null)
+    {
+        return _windowing;
+    }
+
+    void windowing(Windowing windows) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(windows, "Windowing must not be null");
+        _windowing = windows;
+    }
+
     bool hasWindow() const nothrow pure @safe
     {
-        return _window !is null;
+        return hasWindowing && _windowing.main !is null;
     }
 
     inout(Window) window() inout nothrow pure @safe
     out (_window; _window !is null)
     {
-        return _window;
-    }
-
-    void window(Window window) pure @safe
-    {
-        import std.exception : enforce;
-
-        enforce(window !is null, "Window must not be null");
-        _window = window;
+        return _windowing.main;
     }
 
     bool hasInteract() nothrow pure @safe

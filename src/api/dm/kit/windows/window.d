@@ -30,6 +30,8 @@ class Window : GraphicsComponent
         defaultPosY = -1
     }
 
+    Window parent;
+
     SingleScreen screen;
 
     protected

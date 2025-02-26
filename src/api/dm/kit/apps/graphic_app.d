@@ -41,6 +41,7 @@ import api.dm.kit.i18n.i18n : I18n;
 import api.dm.kit.i18n.langs.lang_messages : LangMessages;
 import api.dm.kit.interacts.interact : Interact;
 import api.dm.kit.factories.factory_kit : FactoryKit;
+import api.dm.kit.windows.windowing: Windowing;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
 /**
@@ -61,6 +62,7 @@ abstract class GraphicApp : CliApp
         Input _input;
         Screening _screening;
         Platform _platform;
+        Windowing _windowing;
         I18n _i18n;
 
         KitEventManager eventManager;
@@ -223,6 +225,7 @@ abstract class GraphicApp : CliApp
         component.i18n = _i18n;
         component.capGraphics = gservices.capGraphics;
         component.eventManager = eventManager;
+        component.windowing = _windowing;
     }
 
     override void build(UniComponent component)
