@@ -4,7 +4,7 @@ import api.core.events.base.event_base : EventBase;
 import api.core.utils.types : enumNameByIndex;
 
 import api.dm.com.inputs.com_keyboard : ComKeyName;
-import api.dm.com.inputs.com_keyboard : KeyModifier;
+import api.dm.com.inputs.com_keyboard : ComKeyModifier;
 
 /**
  * Authors: initkfs
@@ -23,15 +23,17 @@ struct KeyEvent
     Event event;
 
     ComKeyName keyName;
-    KeyModifier keyMod;
+    ComKeyModifier keyMod;
     int keyCode;
+    int scanCode;
 
-    this(Event event, int ownerId, ComKeyName keyName, KeyModifier keyModInfo, int keyCode)
+    this(Event event, int ownerId, ComKeyName keyName, ComKeyModifier keyModInfo, int keyCode, int scanCode)
     {
         this.event = event;
         this.ownerId = ownerId;
         this.keyName = keyName;
         this.keyMod = keyModInfo;
         this.keyCode = keyCode;
+        this.scanCode = scanCode;
     }
 }

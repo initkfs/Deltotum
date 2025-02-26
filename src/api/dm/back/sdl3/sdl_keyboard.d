@@ -4,29 +4,78 @@ module api.dm.back.sdl3.sdl_keyboard;
 version(SdlBackend):
 // dfmt on
 
+import api.dm.com.inputs.com_keyboard : ComKeyName, ComKeyboard, ComKeyModifier;
 import api.dm.back.sdl3.base.sdl_object : SdlObject;
-import api.dm.com.inputs.com_keyboard : ComKeyName;
+import api.dm.com.platforms.results.com_result : ComResult;
+import api.dm.com.com_native_ptr : ComNativePtr;
+import api.dm.com.graphics.com_window : ComWindow;
 
 import api.dm.back.sdl3.externs.csdl3;
 
 /**
  * Authors: initkfs
  */
-class SdlKeyboard : SdlObject
+class SdlKeyboard : SdlObject, ComKeyboard
 {
-    ComKeyName scanCodeToKeyName(SDL_Scancode scanCode, SDL_Keymod mods)
+    ComResult getKeyModifier(out ComKeyModifier comKeyMod) @trusted nothrow
     {
-        SDL_Keycode code = SDL_GetKeyFromScancode(scanCode, mods, false);
-        return keyCodeToKeyName(code);
+        comKeyMod = keyModToComKeyMod(keyMod);
+        return ComResult.success;
     }
 
-    SDL_Scancode keyToScanCode(SDL_Keycode key, SDL_Keymod* mods)
+    ComKeyModifier keyModifier() @trusted nothrow => keyModToComKeyMod(keyMod);
+
+    ComKeyModifier keyModToComKeyMod(SDL_Keymod mod) @trusted nothrow
+    {
+        return ComKeyModifier(
+            (mod & SDL_KMOD_LSHIFT) == SDL_KMOD_LSHIFT,
+            (mod & SDL_KMOD_RSHIFT) == SDL_KMOD_RSHIFT,
+            (mod & SDL_KMOD_LCTRL) == SDL_KMOD_LCTRL,
+            (mod & SDL_KMOD_RCTRL) == SDL_KMOD_RCTRL,
+            (mod & SDL_KMOD_LALT) == SDL_KMOD_LALT,
+            (mod & SDL_KMOD_RALT) == SDL_KMOD_RALT,
+            (mod & SDL_KMOD_LGUI) == SDL_KMOD_LGUI,
+            (mod & SDL_KMOD_RGUI) == SDL_KMOD_RGUI,
+            (mod & SDL_KMOD_NUM) == SDL_KMOD_NUM,
+            (mod & SDL_KMOD_CAPS) == SDL_KMOD_CAPS,
+            (mod & SDL_KMOD_MODE) == SDL_KMOD_MODE,
+            (mod & SDL_KMOD_SCROLL) == SDL_KMOD_SCROLL,
+        );
+    }
+
+    SDL_Keymod keyMod() @trusted nothrow => SDL_GetModState();
+
+    void setModState(SDL_Keymod state) @trusted nothrow
+    {
+        SDL_SetModState(state);
+    }
+
+    bool hasKeyboard() @trusted nothrow => SDL_HasKeyboard();
+    bool hasScreenKeyboardSupport() @trusted nothrow => SDL_HasScreenKeyboardSupport();
+
+    void reset() @trusted nothrow
+    {
+        SDL_ResetKeyboard();
+    }
+
+    bool isScreenBoardShown(SDL_Window* window) @trusted nothrow
+    {
+        return SDL_ScreenKeyboardShown(window);
+    }
+
+    SDL_Scancode keyCodeToScanCode(SDL_Keycode key, SDL_Keymod* mods) @trusted nothrow
     {
         SDL_Scancode code = SDL_GetScancodeFromKey(key, mods);
         return code;
     }
 
-    ComKeyName keyCodeToKeyName(SDL_Keycode code)
+    ComKeyName scanCodeToKeyName(SDL_Scancode scanCode, SDL_Keymod mods) @trusted nothrow
+    {
+        SDL_Keycode code = SDL_GetKeyFromScancode(scanCode, mods, false);
+        return keyCodeToKeyName(code);
+    }
+
+    ComKeyName keyCodeToKeyName(SDL_Keycode code) @trusted nothrow
     {
         final switch (code)
         {

@@ -3,8 +3,18 @@ module api.dm.com.inputs.com_keyboard;
 /**
  * Authors: initkfs
  */
+import api.dm.com.platforms.results.com_result : ComResult;
+import api.dm.com.graphics.com_window: ComWindow;
 
-struct KeyModifier
+interface ComKeyboard
+{
+@trusted nothrow:
+
+    ComResult getKeyModifier(out ComKeyModifier mod);
+    ComKeyModifier keyModifier() @trusted nothrow;
+}
+
+struct ComKeyModifier
 {
     bool isLeftShift;
     bool isRightShift;
@@ -298,4 +308,9 @@ enum ComKeyName : int
     key_rmeta,                /**< Extended key Right Meta */
     key_lhyper,               /**< Extended key Left Hyper */
     key_rhyper,               /**< Extended key Right Hyper */
+
+
+
+
+
 }

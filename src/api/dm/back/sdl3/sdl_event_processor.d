@@ -125,11 +125,13 @@ class SdlEventProcessor : KitEventProcessor!(SDL_Event*)
         const SDL_Keycode keyCode = event.key.key;
         const keyName = keyboard.keyCodeToKeyName(keyCode);
 
+        const SDL_Scancode scanCode = event.key.scancode;
+
         const mod = event.key.mod;
 
-        import api.dm.com.inputs.com_keyboard : KeyModifier;
+        import api.dm.com.inputs.com_keyboard : ComKeyModifier;
 
-        KeyModifier modInfo = KeyModifier(
+        ComKeyModifier modInfo = ComKeyModifier(
             (mod & SDL_KMOD_LSHIFT) == SDL_KMOD_LSHIFT,
             (mod & SDL_KMOD_RSHIFT) == SDL_KMOD_RSHIFT,
             (mod & SDL_KMOD_LCTRL) == SDL_KMOD_LCTRL,
@@ -145,7 +147,7 @@ class SdlEventProcessor : KitEventProcessor!(SDL_Event*)
         );
 
         const ownerId = event.key.windowID;
-        auto keyEvent = KeyEvent(type, ownerId, keyName, modInfo, keyCode);
+        auto keyEvent = KeyEvent(type, ownerId, keyName, modInfo, keyCode, scanCode);
         onKey(keyEvent);
     }
 

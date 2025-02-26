@@ -5,6 +5,8 @@ import api.dm.com.graphics.com_surface: ComSurface;
 import api.dm.com.com_native_ptr: ComNativePtr;
 import api.dm.com.destroyable : Destroyable;
 
+import api.math.geom2.rect2: Rect2d;
+
 /**
  * Authors: initkfs
  */
@@ -45,6 +47,10 @@ nothrow:
     ComResult getScreenIndex(out size_t index);
     ComResult setModalFor(ComWindow parent);
     ComResult setIcon(ComSurface surf);
+    ComResult setTextInputStart();
+    ComResult setTextInputStop();
+    ComResult setTextInputArea(Rect2d area, int cursor);
+    ComResult getIsTextInputActive(out bool isActive);
     ComResult nativePtr(out ComNativePtr ptr);
 
 }

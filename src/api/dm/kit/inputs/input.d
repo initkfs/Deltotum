@@ -4,6 +4,7 @@ import api.dm.kit.inputs.cursors.cursor : Cursor;
 import api.dm.kit.inputs.clipboards.clipboard : Clipboard;
 import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import api.dm.com.inputs.com_keyboard : ComKeyName;
+import api.dm.kit.inputs.keyboards.keyboard: Keyboard;
 import api.math.geom2.vec2 : Vec2d;
 
 import api.math.geom2.vec2 : Vec2d;
@@ -29,8 +30,9 @@ class Input
 
     Clipboard clipboard;
     Cursor systemCursor;
+    Keyboard keyboard;
 
-    this(Clipboard clipboard, Cursor cursor)
+    this(Keyboard keyboard, Clipboard clipboard, Cursor cursor)
     {
         assert(clipboard);
         this.clipboard = clipboard;

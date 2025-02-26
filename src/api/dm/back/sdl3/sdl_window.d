@@ -14,6 +14,8 @@ import api.dm.com.inputs.com_cursor : ComCursor, ComPlatformCursorType;
 
 import api.dm.back.sdl3.sdl_surface : SdlSurface;
 
+import api.math.geom2.rect2 : Rect2d;
+
 import std.string : toStringz, fromStringz;
 
 import api.dm.back.sdl3.externs.csdl3;
@@ -479,6 +481,48 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
             return getErrorRes;
         }
 
+        return ComResult.success;
+    }
+
+    ComResult setTextInputArea(Rect2d area, int cursor = 0) nothrow
+    {
+        assert(ptr);
+
+        SDL_Rect rect = {
+            cast(int) area.x, cast(int) area.y, cast(int) area.width, cast(int) area.height
+        };
+
+        if (!SDL_SetTextInputArea(ptr, &rect, cursor))
+        {
+            return getErrorRes("Cannot set text input text area");
+        }
+        return ComResult.success;
+    }
+
+    ComResult getIsTextInputActive(out bool isActive) nothrow
+    {
+        assert(ptr);
+        isActive = SDL_TextInputActive(ptr);
+        return ComResult.success;
+    }
+
+    ComResult setTextInputStart() nothrow
+    {
+        assert(ptr);
+        if (!SDL_StartTextInput(ptr))
+        {
+            return getErrorRes("Cannot start text input for window");
+        }
+        return ComResult.success;
+    }
+
+    ComResult setTextInputStop()
+    {
+        assert(ptr);
+        if (!SDL_StopTextInput(ptr))
+        {
+            return getErrorRes("Cannot stop text input for window");
+        }
         return ComResult.success;
     }
 

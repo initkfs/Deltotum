@@ -28,6 +28,7 @@ import api.dm.back.sdl3.ttf.sdl_ttf_lib : SdlTTFLib;
 import api.dm.back.sdl3.sdl_window : SdlWindow;
 import api.dm.back.sdl3.sdl_window : SdlWindowMode;
 import api.dm.back.sdl3.sdl_renderer : SdlRenderer;
+import api.dm.kit.inputs.keyboards.keyboard: Keyboard;
 
 import api.dm.back.sdl3.joysticks.sdl_joystick_lib : SdlJoystickLib;
 import api.dm.back.sdl3.joysticks.sdl_joystick : SdlJoystick;
@@ -184,7 +185,9 @@ class SdlApp : GuiApp
         //TODO extract dependency
         import api.dm.back.sdl3.sdl_keyboard : SdlKeyboard;
 
-        auto keyboard = new SdlKeyboard;
+        auto sdlKeyboard = new SdlKeyboard;
+
+        auto keyboard = new Keyboard(sdlKeyboard);
 
         import api.dm.kit.inputs.clipboards.clipboard : Clipboard;
         import api.dm.back.sdl3.sdl_clipboard;
@@ -230,7 +233,7 @@ class SdlApp : GuiApp
             cursor = new EmptyCursor;
         }
 
-        _input = new Input(clipboard, cursor);
+        _input = new Input(keyboard, clipboard, cursor);
         _audio = new Audio(!sdlAudio.isNull ? sdlAudio.get : null);
 
         //TODO lazy load with config value
@@ -316,7 +319,7 @@ class SdlApp : GuiApp
         auto sdlScreen = new SDLScreen;
         _screen = new Screen(uservices.logging, sdlScreen);
 
-        eventProcessor = new SdlEventProcessor(keyboard);
+        eventProcessor = new SdlEventProcessor(sdlKeyboard);
 
         eventManager = new KitEventManager;
 
