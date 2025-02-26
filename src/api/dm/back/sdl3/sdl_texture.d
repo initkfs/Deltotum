@@ -440,7 +440,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult setBlendMode(ComBlendMode mode) nothrow
     {
-        SDL_BlendMode newMode = typeConverter.toNativeBlendMode(mode);
+        SDL_BlendMode newMode = toNativeBlendMode(mode);
         if (!SDL_SetTextureBlendMode(ptr, newMode))
         {
             return getErrorRes;

@@ -304,7 +304,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
     {
         assert(ptr);
 
-        if (!SDL_SetSurfaceBlendMode(ptr, typeConverter.toNativeBlendMode(mode)))
+        if (!SDL_SetSurfaceBlendMode(ptr, toNativeBlendMode(mode)))
         {
             return getErrorRes("Error setting surface blend mode");
         }
@@ -321,7 +321,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
             return getErrorRes("Error getting surface blend mode");
         }
 
-        mode = typeConverter.fromNativeBlendMode(sdlMode);
+        mode = fromNativeBlendMode(sdlMode);
         return ComResult.success;
     }
 

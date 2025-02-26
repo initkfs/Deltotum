@@ -196,7 +196,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
 
     ComResult setBlendMode(ComBlendMode mode) nothrow
     {
-        SDL_BlendMode newMode = typeConverter.toNativeBlendMode(mode);
+        SDL_BlendMode newMode = toNativeBlendMode(mode);
         if (!SDL_SetRenderDrawBlendMode(ptr, newMode))
         {
             return getErrorRes;
@@ -211,7 +211,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         {
             return getErrorRes;
         }
-        mode = typeConverter.fromNativeBlendMode(oldMode);
+        mode = fromNativeBlendMode(oldMode);
         return ComResult.success;
     }
 
