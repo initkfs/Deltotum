@@ -10,5 +10,6 @@ struct SingleScreen
     ComScreenId id;
     string name;
     Rect2d bounds;
+    Rect2d usableBounds;
     ComScreenMode mode;
 }

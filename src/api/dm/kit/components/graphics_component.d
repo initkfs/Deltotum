@@ -9,7 +9,8 @@ import api.dm.kit.media.audio.audio : Audio;
 import api.dm.kit.graphics.graphics : Graphics;
 import api.dm.kit.inputs.input : Input;
 import api.dm.kit.windows.window : Window;
-import api.dm.kit.screens.screen : Screen;
+import api.dm.kit.screens.screening : Screening;
+import api.dm.kit.screens.single_screen : SingleScreen;
 import api.dm.kit.events.kit_event_manager : KitEventManager;
 import api.dm.kit.apps.caps.cap_graphics : CapGraphics;
 import api.dm.kit.platforms.platform : Platform;
@@ -28,7 +29,7 @@ class GraphicsComponent : UniComponent
         @Service Asset _asset;
         @Service Graphics _graphics;
         @Service Input _input;
-        @Service Screen _screen;
+        @Service Screening _screening;
         @Service KitEventManager _eventManager;
         @Service CapGraphics _capGraphics;
         @Service Platform _platform;
@@ -142,23 +143,29 @@ class GraphicsComponent : UniComponent
         _graphics = graphics;
     }
 
-    bool hasScreen() const nothrow pure @safe
+    bool hasScreening() const nothrow pure @safe
     {
-        return _screen !is null;
+        return _screening !is null;
     }
 
-    inout(Screen) screen() inout nothrow pure @safe
-    out (_screen; _screen !is null)
+    inout(Screening) screening() inout nothrow pure @safe
+    out (_screening; _screening !is null)
     {
-        return _screen;
+        return _screening;
     }
 
-    void screen(Screen screen) pure @safe
+    void screening(Screening screen) pure @safe
     {
         import std.exception : enforce;
 
-        enforce(screen, "Screen must not be null");
-        _screen = screen;
+        enforce(screen, "Screening must not be null");
+        _screening = screen;
+    }
+
+    inout(SingleScreen) screen() inout nothrow pure @safe
+    {
+        assert(_window);
+        return _window.screen;
     }
 
     bool hasEventManager() const nothrow pure @safe

@@ -28,7 +28,7 @@ import api.dm.kit.apps.loops.loop : Loop;
 
 import api.dm.kit.media.audio.audio : Audio;
 import api.dm.kit.inputs.input : Input;
-import api.dm.kit.screens.screen : Screen;
+import api.dm.kit.screens.screening : Screening;
 import api.dm.kit.events.kit_event_manager : KitEventManager;
 
 import std.typecons : Nullable;
@@ -59,7 +59,7 @@ abstract class GraphicApp : CliApp
     {
         Audio _audio;
         Input _input;
-        Screen _screen;
+        Screening _screening;
         Platform _platform;
         I18n _i18n;
 
@@ -218,7 +218,7 @@ abstract class GraphicApp : CliApp
         component.isBuilt = false;
         component.audio = _audio;
         component.input = _input;
-        component.screen = _screen;
+        component.screening = _screening;
         component.platform = _platform;
         component.i18n = _i18n;
         component.capGraphics = gservices.capGraphics;

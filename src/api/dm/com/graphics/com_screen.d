@@ -17,7 +17,7 @@ enum ComScreenOrientation
 
 struct ComScreenMode
 {
-    int id;
+    ComScreenId id;
     int width;
     int height;
     double rateHz;

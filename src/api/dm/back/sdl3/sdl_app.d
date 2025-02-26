@@ -63,7 +63,7 @@ import std.typecons : Nullable;
 
 import api.dm.kit.media.audio.audio : Audio;
 import api.dm.kit.inputs.input : Input;
-import api.dm.kit.screens.screen : Screen;
+import api.dm.kit.screens.screening : Screening;
 
 import std.logger : Logger, MultiLogger, FileLogger, LogLevel, sharedLog;
 import std.stdio;
@@ -98,7 +98,7 @@ class SdlApp : GuiApp
 
         CairoLib cairoLib;
 
-        SDLScreen nativeScreen;
+        SDLScreen comScreen;
     }
 
     protected
@@ -321,9 +321,9 @@ class SdlApp : GuiApp
             uservices.logger.trace("Screensaver: ", sdlLib.isScreenSaverEnabled);
         }
 
-        nativeScreen = new SDLScreen;
+        comScreen = new SDLScreen;
 
-        _screen = new Screen(nativeScreen, uservices.logging);
+        _screening = new Screening(comScreen, uservices.logging);
 
         eventProcessor = new SdlEventProcessor(sdlKeyboard);
 
@@ -763,14 +763,14 @@ class SdlApp : GuiApp
         window.initialize;
         window.create;
 
-        assert(nativeScreen);
+        assert(comScreen);
         ComScreenId screenId;
-        if (const err = nativeScreen.getScreenForWindow(sdlWindow, screenId))
+        if (const err = comScreen.getScreenForWindow(sdlWindow, screenId))
         {
             uservices.logger.error("Error getting display for window: ", window.title);
         }
 
-        window.screen = _screen.screen(screenId);
+        window.screen = _screening.screen(screenId);
         const screenMode = window.screen.mode;
         uservices.logger.tracef("Screen id '%s', %sx%s, rate %s, density %s for window id %s, title %s", window.screen.id, screenMode.width, screenMode
                 .height, screenMode.rateHz, screenMode.density, window.id, window.title);

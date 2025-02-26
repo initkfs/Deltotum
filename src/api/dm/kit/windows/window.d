@@ -10,7 +10,7 @@ import api.math.geom2.rect2 : Rect2d;
 import api.math.geom2.vec2 : Vec2d;
 
 import api.dm.kit.windows.window_manager : WindowManager;
-import api.dm.kit.screens.screen : Screen;
+import api.dm.kit.screens.screening : Screening;
 import api.dm.kit.screens.single_screen: SingleScreen;
 
 import api.core.loggers.logging : Logging;
