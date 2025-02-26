@@ -1,6 +1,7 @@
 module api.dm.kit.windows.window;
 
 import api.dm.kit.scenes.scene2d : Scene2d;
+import api.dm.com.graphics.com_screen: ComScreenId;
 import api.dm.kit.factories.factory_kit : FactoryKit;
 import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.dm.com.com_native_ptr : ComNativePtr;
@@ -10,6 +11,7 @@ import api.math.geom2.vec2 : Vec2d;
 
 import api.dm.kit.windows.window_manager : WindowManager;
 import api.dm.kit.screens.screen : Screen;
+import api.dm.kit.screens.single_screen: SingleScreen;
 
 import api.core.loggers.logging : Logging;
 
@@ -27,6 +29,8 @@ class Window : GraphicsComponent
         defaultPosX = -1,
         defaultPosY = -1
     }
+
+    SingleScreen screen;
 
     protected
     {

@@ -1,12 +1,17 @@
 module api.dm.back.sdl3.sdl_screen;
 
+import api.dm.com.platforms.results.com_result;
+
 // dfmt off
 version(SdlBackend):
 // dfmt on
 
-import api.dm.com.graphics.com_screen : ComScreen, ComScreenMode, ComScreenOrientation, ComScreenDpi;
+import api.dm.com.graphics.com_screen : ComScreenId, ComScreen, ComScreenMode, ComScreenOrientation, ComScreenDpi;
 import api.dm.com.platforms.results.com_result : ComResult;
+import api.dm.com.graphics.com_window : ComWindow;
 import api.dm.back.sdl3.base.sdl_object : SdlObject;
+
+import api.math.geom2.rect2 : Rect2d;
 
 import api.dm.back.sdl3.externs.csdl3;
 
@@ -15,28 +20,65 @@ import api.dm.back.sdl3.externs.csdl3;
  */
 class SDLScreen : SdlObject, ComScreen
 {
-    ComResult getCount(out size_t count) nothrow
+    ComResult onScreens(scope bool delegate(ComScreenId) nothrow onScreenIdIsContinue) @trusted nothrow
     {
-        int dcount;
-        SDL_DisplayID* displays = SDL_GetDisplays(&dcount);
-        
+        int count;
+        SDL_DisplayID* displays = SDL_GetDisplays(&count);
         if (!displays)
         {
-            return getErrorRes;
+            return getErrorRes("Error getting screens array");
         }
 
-        count = dcount;
-
+        foreach (i; 0 .. count)
+        {
+            SDL_DisplayID id = displays[i];
+            if (!onScreenIdIsContinue(id))
+            {
+                break;
+            }
+        }
         return ComResult.success;
     }
 
-    ComResult getBounds(int index, out int x, out int y,
-        out int width, out int height) nothrow
+    ComResult getScreenForWindow(ComWindow window, out ComScreenId id) @trusted nothrow
+    {
+        import api.dm.com.com_native_ptr : ComNativePtr;
+
+        ComNativePtr winPtr;
+        if (const err = window.nativePtr(winPtr))
+        {
+            return err;
+        }
+
+        SDL_Window* ptr = winPtr.castSafe!(SDL_Window*);
+
+        SDL_DisplayID sdlId;
+        if (const err = getScreenForWindow(ptr, sdlId))
+        {
+            return err;
+        }
+        id = sdlId;
+        return ComResult.success;
+    }
+
+    ComResult getScreenForWindow(SDL_Window* window, out SDL_DisplayID id) @trusted nothrow
+    {
+        auto newId = SDL_GetDisplayForWindow(window);
+        if (newId == 0)
+        {
+            return getErrorRes("Error getting display for window");
+        }
+        id = newId;
+        return ComResult.success;
+    }
+
+    ComResult getBounds(ComScreenId id, out int x, out int y,
+        out int width, out int height) @trusted nothrow
     {
         SDL_Rect bounds;
-        if (!SDL_GetDisplayBounds(index, &bounds))
+        if (!SDL_GetDisplayBounds(id, &bounds))
         {
-            return getErrorRes;
+            return getErrorRes("Error getting display bounds");
         }
 
         x = bounds.x;
@@ -46,13 +88,13 @@ class SDLScreen : SdlObject, ComScreen
         return ComResult.success;
     }
 
-    ComResult getUsableBounds(int index, out int x, out int y,
-        out int width, out int height) nothrow
+    ComResult getUsableBounds(ComScreenId id, out int x, out int y,
+        out int width, out int height) @trusted nothrow
     {
         SDL_Rect bounds;
-        if (!SDL_GetDisplayUsableBounds(index, &bounds))
+        if (!SDL_GetDisplayUsableBounds(id, &bounds))
         {
-            return getErrorRes;
+            return getErrorRes("Error getting display usable bounds");
         }
 
         x = bounds.x;
@@ -62,41 +104,36 @@ class SDLScreen : SdlObject, ComScreen
         return ComResult.success;
     }
 
-    ComResult getName(int index, out dstring name) nothrow
+    ComResult getName(ComScreenId id, out string name) @trusted nothrow
     {
-        const namePtr = SDL_GetDisplayName(index);
+        const namePtr = SDL_GetDisplayName(id);
         if (!namePtr)
         {
-            return getErrorRes("Screen name not found");
+            return getErrorRes("Error getting display name");
         }
-        import std.conv : to;
 
-        try
-        {
-            name = namePtr.to!dstring;
-        }
-        catch (Exception e)
-        {
-            return ComResult.error(e.msg);
-        }
+        import std.string : fromStringz;
+
+        name = namePtr.fromStringz.idup;
         return ComResult.success;
     }
 
-    ComResult getMode(int index, out ComScreenMode mode) nothrow
+    ComResult getMode(ComScreenId id, out ComScreenMode mode) @trusted nothrow
     {
-        SDL_DisplayMode* screenMode = SDL_GetCurrentDisplayMode(index);
+        SDL_DisplayMode* screenMode = SDL_GetCurrentDisplayMode(id);
         if (!screenMode)
         {
-            return getErrorRes;
+            return getErrorRes("Error getting screen mode");
         }
 
-        mode = ComScreenMode(screenMode.w, screenMode.h, screenMode.refresh_rate);
+        mode = ComScreenMode(id, screenMode.w, screenMode.h, screenMode.refresh_rate, screenMode
+                .pixel_density);
         return ComResult.success;
     }
 
-    ComResult getOrientation(int index, out ComScreenOrientation result) nothrow
+    ComResult getOrientation(ComScreenId id, out ComScreenOrientation result) @trusted nothrow
     {
-        const orientation = SDL_GetCurrentDisplayOrientation(index);
+        const orientation = SDL_GetCurrentDisplayOrientation(id);
         final switch (orientation)
         {
             case SDL_ORIENTATION_UNKNOWN:

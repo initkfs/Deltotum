@@ -36,6 +36,8 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 {
     SdlWindowMode mode;
 
+    SDL_Renderer* renderer;
+
     this()
     {
         super();
@@ -76,14 +78,14 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
                 break;
         }
 
-        //flags |= SDL_WINDOW_HIGH_PIXEL_DENSITY;
-
-        ptr = SDL_CreateWindow(null, 0, 0, flags);
-
-        if (!ptr)
+        if (!SDL_CreateWindowAndRenderer(null, 0, 0, flags, &ptr, &renderer))
         {
             return getErrorRes("Unable to create SDL window");
         }
+
+        assert(ptr);
+        assert(renderer);
+
         return ComResult.success;
     }
 

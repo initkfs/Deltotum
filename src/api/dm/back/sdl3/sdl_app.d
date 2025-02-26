@@ -1,5 +1,7 @@
 module api.dm.back.sdl3.sdl_app;
 
+import api.dm.com.graphics.com_screen;
+
 // dfmt off
 version(SdlBackend):
 // dfmt on
@@ -18,6 +20,7 @@ import api.dm.kit.graphics.graphics : Graphics;
 import api.dm.kit.interacts.interact : Interact;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.assets.asset : Asset;
+import api.dm.back.sdl3.sdl_screen : SDLScreen;
 import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;
 import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
@@ -28,7 +31,8 @@ import api.dm.back.sdl3.ttf.sdl_ttf_lib : SdlTTFLib;
 import api.dm.back.sdl3.sdl_window : SdlWindow;
 import api.dm.back.sdl3.sdl_window : SdlWindowMode;
 import api.dm.back.sdl3.sdl_renderer : SdlRenderer;
-import api.dm.kit.inputs.keyboards.keyboard: Keyboard;
+import api.dm.kit.inputs.keyboards.keyboard : Keyboard;
+import api.dm.kit.screens.single_screen : SingleScreen;
 
 import api.dm.back.sdl3.joysticks.sdl_joystick_lib : SdlJoystickLib;
 import api.dm.back.sdl3.joysticks.sdl_joystick : SdlJoystick;
@@ -40,6 +44,7 @@ import api.dm.back.sdl3.ttf.sdl_ttf_font : SdlTTFFont;
 import api.dm.back.sdl3.img.sdl_image : SdlImage;
 import api.dm.com.graphics.com_texture : ComTexture;
 import api.dm.com.graphics.com_surface : ComSurface;
+import api.dm.com.graphics.com_screen : ComScreenId;
 import api.dm.com.graphics.com_font : ComFont;
 import api.dm.com.graphics.com_image : ComImage;
 import api.dm.com.platforms.com_platform : ComPlatform;
@@ -92,6 +97,8 @@ class SdlApp : GuiApp
         Nullable!SdlJoystick sdlCurrentJoystick;
 
         CairoLib cairoLib;
+
+        SDLScreen nativeScreen;
     }
 
     protected
@@ -314,10 +321,9 @@ class SdlApp : GuiApp
             uservices.logger.trace("Screensaver: ", sdlLib.isScreenSaverEnabled);
         }
 
-        import api.dm.back.sdl3.sdl_screen : SDLScreen;
+        nativeScreen = new SDLScreen;
 
-        auto sdlScreen = new SDLScreen;
-        _screen = new Screen(uservices.logging, sdlScreen);
+        _screen = new Screen(nativeScreen, uservices.logging);
 
         eventProcessor = new SdlEventProcessor(sdlKeyboard);
 
@@ -672,18 +678,9 @@ class SdlApp : GuiApp
         return new SDLPlatform;
     }
 
-    SdlRenderer newRenderer(SdlWindow window)
+    SdlRenderer newRenderer(SDL_Renderer* ptr)
     {
-        uint flags;
-        if (!isHeadless)
-        {
-            //flags |= SDL_RENDERER_ACCELERATED;
-        }
-
-        //flags |= SDL_RENDERER_TARGETTEXTURE;
-        //flags |= SDL_RENDERER_PRESENTVSYNC;
-        auto sdlRenderer = new SdlRenderer(window, null);
-        return sdlRenderer;
+        return new SdlRenderer(ptr);
     }
 
     ComTexture newComTexture(SdlRenderer renderer)
@@ -766,6 +763,18 @@ class SdlApp : GuiApp
         window.initialize;
         window.create;
 
+        assert(nativeScreen);
+        ComScreenId screenId;
+        if (const err = nativeScreen.getScreenForWindow(sdlWindow, screenId))
+        {
+            uservices.logger.error("Error getting display for window: ", window.title);
+        }
+
+        window.screen = _screen.screen(screenId);
+        const screenMode = window.screen.mode;
+        uservices.logger.tracef("Screen id '%s', %sx%s, rate %s, density %s for window id %s, title %s", window.screen.id, screenMode.width, screenMode
+                .height, screenMode.rateHz, screenMode.density, window.id, window.title);
+
         window.setNormalWindow;
 
         window.resize(width, height);
@@ -775,7 +784,7 @@ class SdlApp : GuiApp
 
         window.pos(newX, newY);
 
-        SdlRenderer sdlRenderer = newRenderer(sdlWindow);
+        SdlRenderer sdlRenderer = newRenderer(sdlWindow.renderer);
         window.renderer = sdlRenderer;
 
         window.title = title;
@@ -945,8 +954,9 @@ class SdlApp : GuiApp
 
         sdlImage.quit;
         sdlFont.quit;
-        
-        if(const err = sdlLib.quit){
+
+        if (const err = sdlLib.quit)
+        {
             uservices.logger.error("Unable to quit");
         }
     }

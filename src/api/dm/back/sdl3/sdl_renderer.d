@@ -25,38 +25,9 @@ import api.dm.back.sdl3.externs.csdl3;
  */
 class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
 {
-    SdlWindow window;
-
     this(SDL_Renderer* ptr)
     {
         super(ptr);
-    }
-
-    this(SdlWindow window, string name = null)
-    {
-        super();
-
-        import std.exception : enforce;
-
-        enforce(window !is null, "Window must not be null");
-
-        import std.string : toStringz;
-
-        const char* namePtr = name ? name.toStringz : null;
-
-        ptr = SDL_CreateRenderer(window.getObject, namePtr);
-        if (!ptr)
-        {
-            string msg = "Cannot initialize renderer.";
-            if (const err = getError)
-            {
-                msg ~= err;
-            }
-            throw new Exception(msg);
-        }
-
-        this.window = window;
-        //SDL_SetRenderLogicalPresentation(ptr, w, h);
     }
 
     ComResult setDrawColor(ubyte r, ubyte g, ubyte b, ubyte a) nothrow

@@ -1,7 +1,10 @@
 module api.dm.kit.screens.screen;
 
-import api.dm.com.graphics.com_screen : ComScreen;
+import api.dm.com.graphics.com_screen : ComScreenId, ComScreen;
+import api.dm.com.graphics.com_screen : ComScreenId, ComScreen, ComScreenMode, ComScreenDpi, ComScreenOrientation;
 import api.dm.kit.screens.single_screen : SingleScreen;
+
+import api.math.geom2.rect2 : Rect2d;
 
 import api.core.loggers.logging : Logging;
 
@@ -10,50 +13,78 @@ import api.core.loggers.logging : Logging;
  */
 class Screen
 {
-    private
+    protected
     {
         ComScreen nativeScreen;
         Logging logging;
     }
 
-    this(Logging logging, ComScreen screen)
+    this(ComScreen nativeScreen, Logging logging)
     {
-        assert(screen);
+        assert(nativeScreen);
         assert(logging);
-        nativeScreen = screen;
+
         this.logging = logging;
+        this.nativeScreen = nativeScreen;
     }
 
-    size_t count()
+    SingleScreen screen(ComScreenId id)
     {
-        size_t screenCount;
-        if (const err = nativeScreen.getCount(screenCount))
+        string screenName = name(id);
+        Rect2d screenBounds = bounds(id);
+        ComScreenMode screenMode = mode(id);
+        return SingleScreen(id, screenName, screenBounds, screenMode);
+    }
+
+    void onScreens(scope bool delegate(ComScreenId) nothrow onScreenIdIsContinue)
+    {
+        if (const err = nativeScreen.onScreens(onScreenIdIsContinue))
         {
             logging.logger.error(err.toString);
-            return 0;
         }
-        return screenCount;
     }
 
-    SingleScreen first()
+    Rect2d bounds(ComScreenId id)
     {
-        auto screenCount = count;
-        if(screenCount == 0){
-            //TODO Nullable!?
-            throw new Exception("Not found screen");
-        }
-        return SingleScreen(logging, nativeScreen, 0);
-    }
-
-    SingleScreen[] all()
-    {
-        auto screenCount = count;
-        SingleScreen[] screens;
-        foreach (i; 0 .. screenCount)
+        int x, y, width, height;
+        if (const err = nativeScreen.getBounds(id, x, y, width, height))
         {
-            screens ~= SingleScreen(logging, nativeScreen, i);
+            logging.logger.errorf("Error getting screen bounds with id %s: %s", id, err.toString);
+        }
+        return Rect2d(x, y, width, height);
+    }
+
+    string name(ComScreenId id)
+    {
+        string screenName;
+        if (const err = nativeScreen.getName(id, screenName))
+        {
+            logging.logger.errorf("Error getting screen name with id %s: %s", id, err.toString);
+        }
+        return screenName;
+    }
+
+    ComScreenMode mode(ComScreenId id)
+    {
+        import api.dm.com.graphics.com_screen : ComScreenMode, ComScreenDpi;
+
+        ComScreenMode mode;
+        if (const err = nativeScreen.getMode(id, mode))
+        {
+            logging.logger.errorf("Error getting screen mode with id %s: %s", id, err.toString);
         }
 
-        return screens;
+        return mode;
+    }
+
+    ComScreenOrientation orientation(ComScreenId id)
+    {
+        ComScreenOrientation result;
+        if (const err = nativeScreen.getOrientation(id, result))
+        {
+            logging.logger.errorf("Error getting screen orientation with index %s: %s", id, err
+                    .toString);
+        }
+        return result;
     }
 }
