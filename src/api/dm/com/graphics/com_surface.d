@@ -22,7 +22,7 @@ interface ComSurface : Destroyable
         scope bool delegate(size_t, size_t, out Tuple!(ubyte, ubyte, ubyte, ubyte)) onXYRGBAIsContinue
     ) @trusted;
 
-@trusted nothrow:
+nothrow:
 
     ComResult createRGBA32(int width, int height);
     ComResult createABGR32(int width, int height);
@@ -39,7 +39,7 @@ interface ComSurface : Destroyable
     ComResult copyTo(ComSurface dst);
     ComResult copyTo(ComSurface dst, Rect2d dstRect);
     ComResult copyTo(Rect2d srcRect, ComSurface dst, Rect2d dstRect);
-    
+
     ComResult getCopyAlphaMod(out int mod);
     ComResult setCopyAlphaMod(int mod);
 

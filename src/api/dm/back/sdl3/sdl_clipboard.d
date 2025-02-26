@@ -17,7 +17,7 @@ import std.string : toStringz, fromStringz;
  */
 class SdlClipboard : SdlObject, ComClipboard
 {
-    ComResult getText(out string newText) @trusted nothrow
+    ComResult getText(out string newText) nothrow
     {
         const(char*) text = SDL_GetClipboardText();
         if (!text)
@@ -34,7 +34,7 @@ class SdlClipboard : SdlObject, ComClipboard
         return ComResult.success;
     }
 
-    ComResult hasText(out bool isHasText) @trusted nothrow
+    ComResult hasText(out bool isHasText) nothrow
     {
         if (SDL_HasClipboardText())
         {
@@ -44,7 +44,7 @@ class SdlClipboard : SdlObject, ComClipboard
         return ComResult.success;
     }
 
-    ComResult setText(const(char)[] text) @trusted nothrow
+    ComResult setText(const(char)[] text) nothrow
     {
         if (!SDL_SetClipboardText(text.toStringz))
         {
@@ -53,13 +53,13 @@ class SdlClipboard : SdlObject, ComClipboard
         return ComResult.success;
     }
 
-    ComResult hasData(string dataType, out bool isHasData) @trusted nothrow
+    ComResult hasData(string dataType, out bool isHasData) nothrow
     {
         isHasData = SDL_HasClipboardData(dataType.toStringz);
         return ComResult.success;
     }
 
-    ComResult getData(string dataType, scope void delegate(void* data, size_t dataLength) nothrow onData) @trusted nothrow
+    ComResult getData(string dataType, scope void delegate(void* data, size_t dataLength) nothrow onData) nothrow
     {
         assert(onData);
 
@@ -87,7 +87,7 @@ class SdlClipboard : SdlObject, ComClipboard
     //     }
     // }
 
-    ComResult getPrimarySelectionText(out string newText) @trusted nothrow
+    ComResult getPrimarySelectionText(out string newText) nothrow
     {
         const(char*) text = SDL_GetPrimarySelectionText();
         if (!text)
@@ -104,7 +104,7 @@ class SdlClipboard : SdlObject, ComClipboard
         return ComResult.success;
     }
 
-    ComResult setPrimarySelectionText(const(char)[] text) @trusted nothrow
+    ComResult setPrimarySelectionText(const(char)[] text) nothrow
     {
         if (!SDL_SetPrimarySelectionText(text.toStringz))
         {
@@ -113,7 +113,7 @@ class SdlClipboard : SdlObject, ComClipboard
         return ComResult.success;
     }
 
-    ComResult hasPrimarySelectionText(out bool isHasText) @trusted nothrow
+    ComResult hasPrimarySelectionText(out bool isHasText) nothrow
     {
         if (SDL_HasPrimarySelectionText())
         {

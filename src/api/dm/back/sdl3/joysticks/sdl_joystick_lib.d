@@ -15,7 +15,7 @@ import api.dm.back.sdl3.externs.csdl3;
  */
 class SdlJoystickLib : SdlObject
 {
-    ComResult initialize() @trusted nothrow
+    ComResult initialize() nothrow
     {
         return ComResult.success;
     }
@@ -49,7 +49,7 @@ class SdlJoystickLib : SdlObject
         return new SdlJoystick(*joysticks);
     }
 
-    void quit() @trusted nothrow
+    void quit() nothrow
     {
 
     }

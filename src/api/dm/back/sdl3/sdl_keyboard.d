@@ -17,15 +17,15 @@ import api.dm.back.sdl3.externs.csdl3;
  */
 class SdlKeyboard : SdlObject, ComKeyboard
 {
-    ComResult getKeyModifier(out ComKeyModifier comKeyMod) @trusted nothrow
+    ComResult getKeyModifier(out ComKeyModifier comKeyMod) nothrow
     {
         comKeyMod = keyModToComKeyMod(keyMod);
         return ComResult.success;
     }
 
-    ComKeyModifier keyModifier() @trusted nothrow => keyModToComKeyMod(keyMod);
+    ComKeyModifier keyModifier() nothrow => keyModToComKeyMod(keyMod);
 
-    ComKeyModifier keyModToComKeyMod(SDL_Keymod mod) @trusted nothrow
+    ComKeyModifier keyModToComKeyMod(SDL_Keymod mod) nothrow
     {
         return ComKeyModifier(
             (mod & SDL_KMOD_LSHIFT) == SDL_KMOD_LSHIFT,
@@ -43,39 +43,39 @@ class SdlKeyboard : SdlObject, ComKeyboard
         );
     }
 
-    SDL_Keymod keyMod() @trusted nothrow => SDL_GetModState();
+    SDL_Keymod keyMod() nothrow => SDL_GetModState();
 
-    void setModState(SDL_Keymod state) @trusted nothrow
+    void setModState(SDL_Keymod state) nothrow
     {
         SDL_SetModState(state);
     }
 
-    bool hasKeyboard() @trusted nothrow => SDL_HasKeyboard();
-    bool hasScreenKeyboardSupport() @trusted nothrow => SDL_HasScreenKeyboardSupport();
+    bool hasKeyboard() nothrow => SDL_HasKeyboard();
+    bool hasScreenKeyboardSupport() nothrow => SDL_HasScreenKeyboardSupport();
 
-    void reset() @trusted nothrow
+    void reset() nothrow
     {
         SDL_ResetKeyboard();
     }
 
-    bool isScreenBoardShown(SDL_Window* window) @trusted nothrow
+    bool isScreenBoardShown(SDL_Window* window) nothrow
     {
         return SDL_ScreenKeyboardShown(window);
     }
 
-    SDL_Scancode keyCodeToScanCode(SDL_Keycode key, SDL_Keymod* mods) @trusted nothrow
+    SDL_Scancode keyCodeToScanCode(SDL_Keycode key, SDL_Keymod* mods) nothrow
     {
         SDL_Scancode code = SDL_GetScancodeFromKey(key, mods);
         return code;
     }
 
-    ComKeyName scanCodeToKeyName(SDL_Scancode scanCode, SDL_Keymod mods) @trusted nothrow
+    ComKeyName scanCodeToKeyName(SDL_Scancode scanCode, SDL_Keymod mods) nothrow
     {
         SDL_Keycode code = SDL_GetKeyFromScancode(scanCode, mods, false);
         return keyCodeToKeyName(code);
     }
 
-    ComKeyName keyCodeToKeyName(SDL_Keycode code) @trusted nothrow
+    ComKeyName keyCodeToKeyName(SDL_Keycode code) nothrow
     {
         final switch (code)
         {

@@ -8,7 +8,7 @@ import api.dm.com.destroyable : Destroyable;
  */
 interface ComClipboard : Destroyable
 {
-@trusted nothrow:
+nothrow:
 
     ComResult hasText(out bool isHasText);
     ComResult getText(out string newText);

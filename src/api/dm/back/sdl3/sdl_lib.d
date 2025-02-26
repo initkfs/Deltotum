@@ -16,7 +16,7 @@ import api.dm.back.sdl3.base.sdl_object : SdlObject;
  */
 class SdlLib : SdlObject
 {
-    ComResult initialize(uint flags) @trusted nothrow
+    ComResult initialize(uint flags) nothrow
     {
         if (!SDL_Init(flags))
         {
@@ -27,16 +27,16 @@ class SdlLib : SdlObject
         return ComResult.success;
     }
 
-    SDL_InitFlags isInit(SDL_InitFlags flags) @trusted nothrow => SDL_WasInit(flags);
+    SDL_InitFlags isInit(SDL_InitFlags flags) nothrow => SDL_WasInit(flags);
 
-    ComResult quit() @trusted nothrow
+    ComResult quit() nothrow
     {
         SDL_Quit();
         
         return ComResult.success;
     }
 
-    string stringFromVersion(int ver) @trusted nothrow
+    string stringFromVersion(int ver) nothrow
     {
         import std.conv : text;
 
@@ -51,14 +51,14 @@ class SdlLib : SdlObject
 
     alias versionString = linkedVersionString;
 
-    string linkedVersionString() @trusted nothrow => stringFromVersion(SDL_GetVersion());
+    string linkedVersionString() nothrow => stringFromVersion(SDL_GetVersion());
 
     /** 
      * SDL_timer.h
      */
 
-    ulong ticksMs() @trusted nothrow => SDL_GetTicks();
-    ulong ticksNs() @trusted nothrow => SDL_GetTicksNS();
+    ulong ticksMs() nothrow => SDL_GetTicks();
+    ulong ticksNs() nothrow => SDL_GetTicksNS();
 
     void delayMs(uint ms)
     {
@@ -74,7 +74,7 @@ class SdlLib : SdlObject
      * SDL_hints.h
      */
 
-    ComResult getHint(string name, out string value) @trusted nothrow
+    ComResult getHint(string name, out string value) nothrow
     {
         const(char)* hintPtr = SDL_GetHint(name.toStringz);
         if (!hintPtr)
@@ -88,26 +88,26 @@ class SdlLib : SdlObject
         return ComResult.success;
     }
 
-    void clearHints() @trusted nothrow
+    void clearHints() nothrow
     {
         SDL_ResetHints();
     }
 
-    ComResult setHint(string name, string value) @trusted nothrow
+    ComResult setHint(string name, string value) nothrow
     {
         import std.string : toStringz;
 
         return setHint(name.toStringz, value.toStringz);
     }
 
-    ComResult setHint(const(char*) name, string value) @trusted nothrow
+    ComResult setHint(const(char*) name, string value) nothrow
     {
         import std.string : toStringz;
 
         return setHint(name, value.toStringz);
     }
 
-    ComResult setHint(const(char*) name, const(char*) value) @trusted nothrow
+    ComResult setHint(const(char*) name, const(char*) value) nothrow
     {
         //TODO string loss due to garbage collector?
         if (!SDL_SetHint(name, value))
@@ -126,7 +126,7 @@ class SdlLib : SdlObject
      * SDL_video.h
      */
 
-    ComResult setEnableScreenSaver(bool isEnable = true) @trusted nothrow
+    ComResult setEnableScreenSaver(bool isEnable = true) nothrow
     {
         if (isEnable)
         {
@@ -145,7 +145,7 @@ class SdlLib : SdlObject
         return ComResult.success;
     }
 
-    bool isScreenSaverEnabled() @trusted nothrow
+    bool isScreenSaverEnabled() nothrow
     {
         auto isEnabled = SDL_ScreenSaverEnabled();
         return isEnabled;

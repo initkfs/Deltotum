@@ -20,7 +20,7 @@ import api.dm.back.sdl3.externs.csdl3;
  */
 class SDLScreen : SdlObject, ComScreen
 {
-    ComResult onScreens(scope bool delegate(ComScreenId) nothrow onScreenIdIsContinue) @trusted nothrow
+    ComResult onScreens(scope bool delegate(ComScreenId) nothrow onScreenIdIsContinue) nothrow
     {
         int count;
         SDL_DisplayID* displays = SDL_GetDisplays(&count);
@@ -40,7 +40,7 @@ class SDLScreen : SdlObject, ComScreen
         return ComResult.success;
     }
 
-    ComResult getScreenForWindow(ComWindow window, out ComScreenId id) @trusted nothrow
+    ComResult getScreenForWindow(ComWindow window, out ComScreenId id) nothrow
     {
         import api.dm.com.com_native_ptr : ComNativePtr;
 
@@ -61,7 +61,7 @@ class SDLScreen : SdlObject, ComScreen
         return ComResult.success;
     }
 
-    ComResult getScreenForWindow(SDL_Window* window, out SDL_DisplayID id) @trusted nothrow
+    ComResult getScreenForWindow(SDL_Window* window, out SDL_DisplayID id) nothrow
     {
         auto newId = SDL_GetDisplayForWindow(window);
         if (newId == 0)
@@ -73,7 +73,7 @@ class SDLScreen : SdlObject, ComScreen
     }
 
     ComResult getBounds(ComScreenId id, out int x, out int y,
-        out int width, out int height) @trusted nothrow
+        out int width, out int height) nothrow
     {
         SDL_Rect bounds;
         if (!SDL_GetDisplayBounds(id, &bounds))
@@ -89,7 +89,7 @@ class SDLScreen : SdlObject, ComScreen
     }
 
     ComResult getUsableBounds(ComScreenId id, out int x, out int y,
-        out int width, out int height) @trusted nothrow
+        out int width, out int height) nothrow
     {
         SDL_Rect bounds;
         if (!SDL_GetDisplayUsableBounds(id, &bounds))
@@ -104,7 +104,7 @@ class SDLScreen : SdlObject, ComScreen
         return ComResult.success;
     }
 
-    ComResult getName(ComScreenId id, out string name) @trusted nothrow
+    ComResult getName(ComScreenId id, out string name) nothrow
     {
         const namePtr = SDL_GetDisplayName(id);
         if (!namePtr)
@@ -118,7 +118,7 @@ class SDLScreen : SdlObject, ComScreen
         return ComResult.success;
     }
 
-    ComResult getMode(ComScreenId id, out ComScreenMode mode) @trusted nothrow
+    ComResult getMode(ComScreenId id, out ComScreenMode mode) nothrow
     {
         SDL_DisplayMode* screenMode = SDL_GetCurrentDisplayMode(id);
         if (!screenMode)
@@ -131,7 +131,7 @@ class SDLScreen : SdlObject, ComScreen
         return ComResult.success;
     }
 
-    ComResult getOrientation(ComScreenId id, out ComScreenOrientation result) @trusted nothrow
+    ComResult getOrientation(ComScreenId id, out ComScreenOrientation result) nothrow
     {
         const orientation = SDL_GetCurrentDisplayOrientation(id);
         final switch (orientation)

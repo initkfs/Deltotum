@@ -32,17 +32,17 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         super(ptr);
     }
 
-    ComResult createRGBA32(int width, int height) @trusted nothrow
+    ComResult createRGBA32(int width, int height) nothrow
     {
         return create(width, height, SDL_PIXELFORMAT_RGBA32);
     }
 
-    ComResult createABGR32(int width, int height) @trusted nothrow
+    ComResult createABGR32(int width, int height) nothrow
     {
         return create(width, height, SDL_PIXELFORMAT_ABGR32);
     }
 
-    ComResult create(int newWidth, int newHeight, uint format) @trusted nothrow
+    ComResult create(int newWidth, int newHeight, uint format) nothrow
     {
         if (ptr)
         {
@@ -68,7 +68,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult create(void* pixels, int newWidth, int newHeight, uint format, int pitch) @trusted nothrow
+    ComResult create(void* pixels, int newWidth, int newHeight, uint format, int pitch) nothrow
     {
         assert(pixels);
         assert(pitch >= 0);
@@ -98,7 +98,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult createFromPtr(void* newPtr) @trusted nothrow
+    ComResult createFromPtr(void* newPtr) nothrow
     {
         assert(newPtr);
         if (ptr)
@@ -109,13 +109,13 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    SDL_Surface* createPtr(int width, int height, uint format) @trusted nothrow
+    SDL_Surface* createPtr(int width, int height, uint format) nothrow
     {
         auto newPtr = SDL_CreateSurface(width, height, cast(SDL_PixelFormat) format);
         return newPtr;
     }
 
-    static ComResult getWindowSurface(SdlWindow window, SdlSurface surfaceForPtr) @trusted nothrow
+    static ComResult getWindowSurface(SdlWindow window, SdlSurface surfaceForPtr) nothrow
     {
         assert(window);
         assert(surfaceForPtr);
@@ -129,7 +129,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult convert(SDL_Surface* src, out SDL_Surface* dest, SDL_PixelFormat format) @trusted nothrow
+    ComResult convert(SDL_Surface* src, out SDL_Surface* dest, SDL_PixelFormat format) nothrow
     {
         assert(src);
 
@@ -143,17 +143,17 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult scaleTo(SdlSurface dest, SDL_Rect* destRect) @trusted nothrow
+    ComResult scaleTo(SdlSurface dest, SDL_Rect* destRect) nothrow
     {
         return scaleTo(dest.getObject, destRect);
     }
 
-    protected ComResult scaleTo(SDL_Surface* destPtr, SDL_Rect* dstRect) @trusted nothrow
+    protected ComResult scaleTo(SDL_Surface* destPtr, SDL_Rect* dstRect) nothrow
     {
         return scaleTo(destPtr, null, dstRect);
     }
 
-    protected ComResult scaleTo(SDL_Surface* destPtr, SDL_Rect* srcRect, SDL_Rect* dstRect) @trusted nothrow
+    protected ComResult scaleTo(SDL_Surface* destPtr, SDL_Rect* srcRect, SDL_Rect* dstRect) nothrow
     {
         assert(ptr);
         assert(destPtr);
@@ -166,7 +166,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult resize(int newWidth, int newHeight, out bool isResized) @trusted nothrow
+    ComResult resize(int newWidth, int newHeight, out bool isResized) nothrow
     {
         assert(ptr);
         //https://stackoverflow.com/questions/40850196/sdl2-resize-a-surface
@@ -206,7 +206,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult copyTo(ComSurface dst) @trusted nothrow
+    ComResult copyTo(ComSurface dst) nothrow
     {
         assert(ptr);
         assert(dst);
@@ -224,7 +224,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult copyTo(ComSurface dst, Rect2d dstRect) @trusted nothrow
+    ComResult copyTo(ComSurface dst, Rect2d dstRect) nothrow
     {
         SDL_Rect sdlDstRect = {
             cast(int) dstRect.x, cast(int) dstRect.y, cast(int) dstRect.width, cast(int) dstRect
@@ -233,7 +233,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return copyTo(null, dst, &sdlDstRect);
     }
 
-    ComResult copyTo(Rect2d srcRect, ComSurface dst, Rect2d dstRect) @trusted nothrow
+    ComResult copyTo(Rect2d srcRect, ComSurface dst, Rect2d dstRect) nothrow
     {
         SDL_Rect sdlSrcRect = {
             cast(int) srcRect.x, cast(int) srcRect.y, cast(int) srcRect.width, cast(int) srcRect
@@ -248,7 +248,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
     }
 
     //https://discourse.libsdl.org/t/sdl-blitsurface-doesnt-work-in-sdl-2-0/19288/3
-    ComResult copyTo(SDL_Rect* srcRect, ComSurface dst, SDL_Rect* dstRect) @trusted nothrow
+    ComResult copyTo(SDL_Rect* srcRect, ComSurface dst, SDL_Rect* dstRect) nothrow
     {
         ComNativePtr dstPtr;
 
@@ -264,7 +264,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return copyTo(srcRect, sdlDstPtr, dstRect);
     }
 
-    ComResult copyTo(SDL_Rect* srcRect, SDL_Surface* dst, SDL_Rect* dstRect) @trusted nothrow
+    ComResult copyTo(SDL_Rect* srcRect, SDL_Surface* dst, SDL_Rect* dstRect) nothrow
     {
         assert(ptr);
         if (!SDL_BlitSurface(ptr, srcRect, dst, dstRect))
@@ -274,7 +274,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult getCopyAlphaMod(out int mod) @trusted nothrow
+    ComResult getCopyAlphaMod(out int mod) nothrow
     {
         assert(ptr);
 
@@ -288,7 +288,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult setCopyAlphaMod(int alpha) @trusted nothrow
+    ComResult setCopyAlphaMod(int alpha) nothrow
     {
         assert(ptr);
 
@@ -300,7 +300,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult setBlendMode(ComBlendMode mode) @trusted nothrow
+    ComResult setBlendMode(ComBlendMode mode) nothrow
     {
         assert(ptr);
 
@@ -311,7 +311,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult getBlendMode(out ComBlendMode mode) @trusted nothrow
+    ComResult getBlendMode(out ComBlendMode mode) nothrow
     {
         assert(ptr);
 
@@ -325,7 +325,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult setPixelIsTransparent(bool isTransparent, ubyte r, ubyte g, ubyte b, ubyte a) @trusted nothrow
+    ComResult setPixelIsTransparent(bool isTransparent, ubyte r, ubyte g, ubyte b, ubyte a) nothrow
     {
         sdlbool colorKey = isTransparent;
 
@@ -353,7 +353,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult getFormatDetails(SDL_PixelFormat format, out SDL_PixelFormatDetails* details) @trusted nothrow
+    ComResult getFormatDetails(SDL_PixelFormat format, out SDL_PixelFormatDetails* details) nothrow
     {
         SDL_PixelFormatDetails* detailsPtr = SDL_GetPixelFormatDetails(format);
         if (!detailsPtr)
@@ -364,7 +364,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult getPalette(out SDL_Palette* palette) @trusted nothrow
+    ComResult getPalette(out SDL_Palette* palette) nothrow
     {
         assert(ptr);
 
@@ -374,7 +374,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult lock() @trusted nothrow
+    ComResult lock() nothrow
     {
         assert(ptr);
         //TODO  SDL_MUSTLOCK(surface)
@@ -385,7 +385,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult unlock() @trusted nothrow
+    ComResult unlock() nothrow
     {
         assert(ptr);
         SDL_UnlockSurface(ptr);
@@ -393,7 +393,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult getPixels(out void* pixPtr) @trusted nothrow
+    ComResult getPixels(out void* pixPtr) nothrow
     {
         assert(ptr);
         pixPtr = ptr.pixels;
@@ -404,7 +404,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult getPixel(int x, int y, out uint* pixel) @trusted nothrow
+    ComResult getPixel(int x, int y, out uint* pixel) nothrow
     {
         assert(ptr);
         //TODO cache
@@ -421,7 +421,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult setPixelRGBA(int x, int y, ubyte r, ubyte g, ubyte b, ubyte a) @trusted nothrow
+    ComResult setPixelRGBA(int x, int y, ubyte r, ubyte g, ubyte b, ubyte a) nothrow
     {
         uint* pixelPtr;
         if (auto err = getPixel(x, y, pixelPtr))
@@ -431,7 +431,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return setPixelRGBA(pixelPtr, r, g, b, a);
     }
 
-    ComResult getPixelRGBA(uint* pixel, out ubyte r, out ubyte g, out ubyte b, out ubyte a) @trusted nothrow
+    ComResult getPixelRGBA(uint* pixel, out ubyte r, out ubyte g, out ubyte b, out ubyte a) nothrow
     {
         SDL_PixelFormatDetails* details;
         if (const err = getFormatDetails(ptr.format, details))
@@ -449,7 +449,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult setPixelRGBA(uint* pixel, ubyte r, ubyte g, ubyte b, ubyte a) @trusted nothrow
+    ComResult setPixelRGBA(uint* pixel, ubyte r, ubyte g, ubyte b, ubyte a) nothrow
     {
         SDL_PixelFormatDetails* details;
         if (const err = getFormatDetails(ptr.format, details))
@@ -502,7 +502,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult getPixels(Tuple!(ubyte, ubyte, ubyte, ubyte)[][] buff) @trusted nothrow
+    ComResult getPixels(Tuple!(ubyte, ubyte, ubyte, ubyte)[][] buff) nothrow
     {
         try
         {
@@ -523,7 +523,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         }
     }
 
-    ComResult getPixels(out Tuple!(ubyte, ubyte, ubyte, ubyte)[][] buff) @trusted nothrow
+    ComResult getPixels(out Tuple!(ubyte, ubyte, ubyte, ubyte)[][] buff) nothrow
     {
         int w, h;
         if (auto err = getWidth(w))
@@ -576,7 +576,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult setPixels(Tuple!(ubyte, ubyte, ubyte, ubyte)[][] buff) @trusted nothrow
+    ComResult setPixels(Tuple!(ubyte, ubyte, ubyte, ubyte)[][] buff) nothrow
     {
         try
         {
@@ -589,7 +589,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         }
     }
 
-    ComResult fill(ubyte r, ubyte g, ubyte b, ubyte a) @trusted nothrow
+    ComResult fill(ubyte r, ubyte g, ubyte b, ubyte a) nothrow
     {
         assert(ptr);
         const float maxValue = ubyte.max;
@@ -600,49 +600,49 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult getPixelRowLenBytes(out int value) @trusted nothrow
+    ComResult getPixelRowLenBytes(out int value) nothrow
     {
         value = pitch;
         return ComResult.success;
     }
 
-    ComResult getFormat(out uint value) @trusted nothrow
+    ComResult getFormat(out uint value) nothrow
     {
         value = pixelFormat;
         return ComResult.success;
     }
 
-    int pitch() @trusted nothrow
+    int pitch() nothrow
     {
         assert(ptr);
         return ptr.pitch;
     }
 
-    SDL_PixelFormat pixelFormat() @trusted nothrow
+    SDL_PixelFormat pixelFormat() nothrow
     {
         assert(ptr);
         return ptr.format;
     }
 
-    int width() @trusted nothrow
+    int width() nothrow
     {
         assert(ptr);
         return ptr.w;
     }
 
-    ComResult getWidth(out int w) @trusted nothrow
+    ComResult getWidth(out int w) nothrow
     {
         w = width;
         return ComResult.success;
     }
 
-    int height() @trusted nothrow
+    int height() nothrow
     {
         assert(ptr);
         return ptr.h;
     }
 
-    ComResult getHeight(out int h) @trusted nothrow
+    ComResult getHeight(out int h) nothrow
     {
         h = height;
         return ComResult.success;

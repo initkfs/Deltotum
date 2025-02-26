@@ -8,10 +8,10 @@ import api.dm.com.graphics.com_window: ComWindow;
 
 interface ComKeyboard
 {
-@trusted nothrow:
+nothrow:
 
     ComResult getKeyModifier(out ComKeyModifier mod);
-    ComKeyModifier keyModifier() @trusted nothrow;
+    ComKeyModifier keyModifier() nothrow;
 }
 
 struct ComKeyModifier

@@ -37,7 +37,7 @@ struct ComScreenDpi
 interface ComScreen : Destroyable
 {
 
-@trusted nothrow:
+nothrow:
 
     ComResult onScreens(scope bool delegate(ComScreenId) nothrow onScreenIdIsContinue);
     ComResult getBounds(ComScreenId id, out int x, out int y, out int width, out int height);
