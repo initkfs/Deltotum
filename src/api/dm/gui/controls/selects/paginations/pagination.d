@@ -287,7 +287,7 @@ class Pagination : BaseSelector!size_t
             selectNewPage.onKeyPress ~= (ref e) {
                 import api.dm.com.inputs.com_keyboard : ComKeyName;
 
-                if (e.keyName == ComKeyName.RETURN)
+                if (e.keyName == ComKeyName.return_)
                 {
                     auto newPage = selectNewPage.text.to!size_t;
                     if (newPage == 0 && newPage >= numPages)

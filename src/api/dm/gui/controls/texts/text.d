@@ -186,7 +186,7 @@ class Text : Control
                     return;
                 }
 
-                if (e.keyName == ComKeyName.RETURN && onEnter)
+                if (e.keyName == ComKeyName.return_ && onEnter)
                 {
                     onEnter(e);
                     return;
@@ -194,19 +194,19 @@ class Text : Control
 
                 switch (e.keyName) with (ComKeyName)
                 {
-                    case LEFT:
+                    case left:
                         moveCursorLeft;
                         break;
-                    case RIGHT:
+                    case right:
                         moveCursorRight;
                         break;
-                    case DOWN:
+                    case down:
                         moveCursorDown;
                         break;
-                    case UP:
+                    case up:
                         moveCursorUp;
                         break;
-                    case BACKSPACE:
+                    case backspace:
 
                         if (!cursorPos.isValid)
                         {

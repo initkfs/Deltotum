@@ -12,3 +12,5 @@
 /libjulia.so
 /libdm.so
 /*.groovy
+/tools/*.out
+/tools/*.txt

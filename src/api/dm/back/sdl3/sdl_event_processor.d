@@ -127,9 +127,9 @@ class SdlEventProcessor : KitEventProcessor!(SDL_Event*)
 
         const mod = event.key.mod;
 
-        import api.dm.com.inputs.com_keyboard : KeyModifierInfo;
+        import api.dm.com.inputs.com_keyboard : KeyModifier;
 
-        KeyModifierInfo modInfo = KeyModifierInfo(
+        KeyModifier modInfo = KeyModifier(
             (mod & SDL_KMOD_LSHIFT) == SDL_KMOD_LSHIFT,
             (mod & SDL_KMOD_RSHIFT) == SDL_KMOD_RSHIFT,
             (mod & SDL_KMOD_LCTRL) == SDL_KMOD_LCTRL,

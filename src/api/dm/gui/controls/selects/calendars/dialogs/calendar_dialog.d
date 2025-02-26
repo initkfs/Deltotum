@@ -145,8 +145,8 @@ class CalendarDialog : Control
 
                     import api.dm.com.inputs.com_keyboard : ComKeyName;
 
-                    const isShift = input.isPressedKey(ComKeyName.LSHIFT) || input.isPressedKey(
-                        ComKeyName.RSHIFT);
+                    const isShift = input.isPressedKey(ComKeyName.lshift) || input.isPressedKey(
+                        ComKeyName.rshift);
 
                     //TODO not mark for current date
 
