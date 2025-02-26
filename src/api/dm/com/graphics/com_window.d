@@ -16,6 +16,7 @@ nothrow:
 
     ComResult initialize();
     ComResult create();
+    ComResult create(ComNativePtr newPtr);
     ComResult getId(out int id);
     ComResult isShown(out bool value);
     ComResult show();
@@ -47,10 +48,13 @@ nothrow:
     ComResult getScreenIndex(out size_t index);
     ComResult setModalFor(ComWindow parent);
     ComResult setIcon(ComSurface surf);
+    
+    //https://wiki.libsdl.org/SDL3/BestKeyboardPractices
     ComResult setTextInputStart();
     ComResult setTextInputStop();
     ComResult setTextInputArea(Rect2d area, int cursor);
     ComResult getIsTextInputActive(out bool isActive);
+   
     ComResult nativePtr(out ComNativePtr ptr);
 
 }

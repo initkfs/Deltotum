@@ -8,6 +8,7 @@ import api.dm.com.inputs.com_cursor : ComCursor, ComPlatformCursorType;
 
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
 import api.dm.com.platforms.results.com_result : ComResult;
+import api.dm.com.graphics.com_window : ComWindow;
 
 import api.dm.back.sdl3.externs.csdl3;
 
@@ -149,6 +150,24 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor, ComCursor
             return getErrorRes;
         }
         return ComResult.success;
+    }
+
+    ComResult isVisible(out bool isVisible) nothrow
+    {
+        isVisible = SDL_CursorVisible;
+        return ComResult.success;
+    }
+
+    ComResult getCursorFocus(ComWindow buffer) nothrow
+    {
+        import api.dm.com.com_native_ptr : ComNativePtr;
+
+        SDL_Window* window = SDL_GetMouseFocus();
+        if (!window)
+        {
+            return ComResult.error("Not found window with mouse focus");
+        }
+        return buffer.create(ComNativePtr(window));
     }
 
     override protected bool disposePtr() nothrow

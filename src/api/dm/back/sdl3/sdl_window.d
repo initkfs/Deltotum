@@ -1,5 +1,7 @@
 module api.dm.back.sdl3.sdl_window;
 
+import api.dm.com.platforms.results.com_result;
+
 // dfmt off
 version(SdlBackend):
 // dfmt on
@@ -46,6 +48,16 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult initialize() nothrow
     {
+        return ComResult.success;
+    }
+
+    ComResult create(ComNativePtr newPtr) nothrow
+    {
+        if (ptr)
+        {
+            disposePtr;
+        }
+        ptr = newPtr.castSafe!(SDL_Window*);
         return ComResult.success;
     }
 
