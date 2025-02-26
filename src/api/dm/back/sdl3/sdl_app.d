@@ -55,7 +55,6 @@ import api.dm.gui.windows.gui_window : GuiWindow;
 import api.dm.kit.apps.loops.integrated_loop : IntegratedLoop;
 import api.dm.kit.apps.loops.interrupted_loop : InterruptedLoop;
 import api.dm.kit.apps.loops.loop : Loop;
-import api.dm.kit.windows.window_manager : WindowManager;
 import api.dm.kit.apps.caps.cap_graphics : CapGraphics;
 import api.dm.kit.events.processing.kit_event_processor : KitEventProcessor;
 
@@ -327,14 +326,14 @@ class SdlApp : GuiApp
 
         import api.dm.kit.windows.windowing: Windowing;
 
-        _windowing = new Windowing;
+        _windowing = new Windowing(uservices.logging);
 
         eventProcessor = new SdlEventProcessor(sdlKeyboard);
 
         eventManager = new KitEventManager;
 
         eventManager.windowProviderById = (windowId) {
-            auto mustBeCurrentWindow = windowManager.byFirstId(windowId);
+            auto mustBeCurrentWindow = windowing.byFirstId(windowId);
             if (mustBeCurrentWindow.isNull)
             {
                 return Nullable!(Window).init;
@@ -435,7 +434,7 @@ class SdlApp : GuiApp
             switch (e.event) with (WindowEvent.Event)
             {
                 case focusIn:
-                    windowManager.onWindowsById(e.ownerId, (win) {
+                    windowing.onWindowsById(e.ownerId, (win) {
                         win.isFocus = true;
                         e.isConsumed = true;
                         uservices.logger.tracef("Window focus on window '%s' with id %d", win.title, win
@@ -444,7 +443,7 @@ class SdlApp : GuiApp
                     });
                     break;
                 case focusOut:
-                    windowManager.onWindowsById(e.ownerId, (win) {
+                    windowing.onWindowsById(e.ownerId, (win) {
                         win.isFocus = false;
                         e.isConsumed = true;
                         uservices.logger.tracef("Window focus out on window '%s' with id %d", win.title, win
@@ -453,7 +452,7 @@ class SdlApp : GuiApp
                     });
                     break;
                 case show:
-                    windowManager.onWindowsById(e.ownerId, (win) {
+                    windowing.onWindowsById(e.ownerId, (win) {
                         win.isShowing = true;
                         e.isConsumed = true;
                         if (win.onShow.length > 0)
@@ -473,7 +472,7 @@ class SdlApp : GuiApp
                     });
                     break;
                 case hide:
-                    windowManager.onWindowsById(e.ownerId, (win) {
+                    windowing.onWindowsById(e.ownerId, (win) {
                         win.isShowing = false;
                         if (win.onHide.length > 0)
                         {
@@ -492,14 +491,14 @@ class SdlApp : GuiApp
                     });
                     break;
                 case resize:
-                    windowManager.onWindowsById(e.ownerId, (win) {
+                    windowing.onWindowsById(e.ownerId, (win) {
                         win.confirmResize(e.width, e.height);
                         e.isConsumed = true;
                         return true;
                     });
                     break;
                 case minimize:
-                    windowManager.onWindowsById(e.ownerId, (win) {
+                    windowing.onWindowsById(e.ownerId, (win) {
                         if (win.onMinimize.length > 0)
                         {
                             foreach (dg; win.onMinimize)
@@ -513,7 +512,7 @@ class SdlApp : GuiApp
                     });
                     break;
                 case maximize:
-                    windowManager.onWindowsById(e.ownerId, (win) {
+                    windowing.onWindowsById(e.ownerId, (win) {
                         if (win.onMaximize.length > 0)
                         {
                             foreach (dg; win.onMaximize)
@@ -527,7 +526,7 @@ class SdlApp : GuiApp
                     });
                     break;
                 case close:
-                    windowManager.onWindowsById(e.ownerId, (win) {
+                    windowing.onWindowsById(e.ownerId, (win) {
                         if (win.onClose.length > 0)
                         {
                             foreach (dg; win.onClose)
@@ -538,10 +537,10 @@ class SdlApp : GuiApp
                         return true;
                     });
                     auto winId = e.ownerId;
-                    windowManager.destroyWindowById(winId);
-                    if (windowManager.count == 0)
+                    windowing.destroyWindowById(winId);
+                    if (windowing.count == 0)
                     {
-                        if (windowManager.count == 0 && isQuitOnCloseAllWindows)
+                        if (windowing.count == 0 && isQuitOnCloseAllWindows)
                         {
                             uservices.logger.tracef("All windows are closed, exit request");
                             requestExit;
@@ -552,8 +551,6 @@ class SdlApp : GuiApp
                     break;
             }
         };
-
-        windowManager = new WindowManager(uservices.logging);
 
         return AppInitRet(isExit : false, isInit:
             true);
@@ -750,12 +747,12 @@ class SdlApp : GuiApp
         {
             window.parent = parent;
             window.frameRate = parent.frameRate;
-            window.windowManager = parent.windowManager;
+            window.windowing = parent.windowing;
         }
         else
         {
             window.frameRate = mainLoop.frameRate;
-            window.windowManager = windowManager;
+            window.windowing = windowing;
         }
 
         window.childWindowProvider = (title, width, height, x, y, parent) {
@@ -912,7 +909,7 @@ class SdlApp : GuiApp
             window.graphics.dispose;
         };
 
-        windowManager.add(window);
+        windowing.add(window);
 
         return window;
     }
@@ -928,9 +925,9 @@ class SdlApp : GuiApp
 
         clearErrors;
 
-        if (windowManager)
+        if (windowing)
         {
-            windowManager.onWindows((win) {
+            windowing.onWindows((win) {
                 if (win.isRunning)
                 {
                     win.stop;
@@ -970,7 +967,7 @@ class SdlApp : GuiApp
     {
         SDL_Event event;
 
-        auto mustBeWindow = windowManager.current;
+        auto mustBeWindow = windowing.current;
 
         if (!mustBeWindow.isNull)
         {
@@ -1004,7 +1001,7 @@ class SdlApp : GuiApp
     void updateRender(double accumMsRest)
     {
         const startStateTime = SDL_GetTicks();
-        windowManager.onWindows((window) {
+        windowing.onWindows((window) {
             //focus may not be on the window
             if (window.isShowing)
             {
@@ -1015,7 +1012,7 @@ class SdlApp : GuiApp
 
         const endStateTime = SDL_GetTicks();
 
-        auto mustBeWindow = windowManager.current;
+        auto mustBeWindow = windowing.current;
 
         if (!mustBeWindow.isNull)
         {
@@ -1026,7 +1023,7 @@ class SdlApp : GuiApp
     void updateFreqLoopDelta(double delta)
     {
         const startStateTime = SDL_GetTicks();
-        windowManager.onWindows((window) {
+        windowing.onWindows((window) {
             //focus may not be on the window
             if (window.isShowing)
             {
@@ -1037,7 +1034,7 @@ class SdlApp : GuiApp
 
         const endStateTime = SDL_GetTicks();
 
-        auto mustBeWindow = windowManager.current;
+        auto mustBeWindow = windowing.current;
 
         if (!mustBeWindow.isNull)
         {
@@ -1052,7 +1049,7 @@ class SdlApp : GuiApp
         //Ctrl + C
         if (event.type == SDL_EVENT_QUIT)
         {
-            windowManager.destroyAll;
+            windowing.destroyAll;
             requestExit;
         }
     }

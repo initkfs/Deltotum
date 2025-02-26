@@ -10,7 +10,6 @@ import api.core.apps.cli_app : CliApp;
 import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.core.components.uni_component : UniComponent;
-import api.dm.kit.windows.window_manager : WindowManager;
 import api.dm.kit.apps.caps.cap_graphics : CapGraphics;
 import api.dm.kit.graphics.graphics : Graphics;
 import api.dm.kit.assets.asset : Asset;
@@ -41,7 +40,7 @@ import api.dm.kit.i18n.i18n : I18n;
 import api.dm.kit.i18n.langs.lang_messages : LangMessages;
 import api.dm.kit.interacts.interact : Interact;
 import api.dm.kit.factories.factory_kit : FactoryKit;
-import api.dm.kit.windows.windowing: Windowing;
+import api.dm.kit.windows.windowing : Windowing;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
 /**
@@ -72,8 +71,6 @@ abstract class GraphicApp : CliApp
     {
         GraphicsComponent _graphicServices;
     }
-
-    WindowManager windowManager;
 
     abstract ComPlatform newComPlatform();
 
@@ -225,7 +222,7 @@ abstract class GraphicApp : CliApp
         component.i18n = _i18n;
         component.capGraphics = gservices.capGraphics;
         component.eventManager = eventManager;
-        component.windowing = _windowing;
+        component.windowing = windowing;
     }
 
     override void build(UniComponent component)
@@ -236,17 +233,13 @@ abstract class GraphicApp : CliApp
     override void run()
     {
         super.run;
-        windowManager.onWindows((win) {
-            win.run;
-            assert(win.isRunning);
-            return true;
-        });
+        windowing.onWindows((win) { win.run; assert(win.isRunning); return true; });
     }
 
     override void stop()
     {
         super.stop;
-        windowManager.onWindows((win) {
+        windowing.onWindows((win) {
             if (!win.isDisposed && !win.isStopped)
             {
                 win.stop;
@@ -654,5 +647,11 @@ abstract class GraphicApp : CliApp
 
         enforce(services !is null, "Graphics services must not be null");
         _graphicServices = services;
+    }
+
+    Windowing windowing()
+    {
+        assert(_windowing);
+        return _windowing;
     }
 }

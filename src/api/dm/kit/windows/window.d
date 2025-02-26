@@ -9,8 +9,6 @@ import api.dm.com.graphics.com_window : ComWindow;
 import api.math.geom2.rect2 : Rect2d;
 import api.math.geom2.vec2 : Vec2d;
 
-import api.dm.kit.windows.window_manager : WindowManager;
-import api.dm.kit.screens.screening : Screening;
 import api.dm.kit.screens.single_screen: SingleScreen;
 
 import api.core.loggers.logging : Logging;
@@ -47,7 +45,6 @@ class Window : GraphicsComponent
     }
 
     Window delegate(dstring, int, int, int, int, Window) childWindowProvider;
-    WindowManager windowManager;
 
     //import std.container : DList;
     //DList!(void delegate())
