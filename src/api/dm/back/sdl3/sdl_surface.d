@@ -33,6 +33,11 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         super(ptr);
     }
 
+    ComResult createUnsafe(void* ptr) nothrow
+    {
+        return setWithDispose(cast(SDL_Surface*) ptr);
+    }
+
     ComResult createRGBA32(int width, int height) nothrow
     {
         return create(width, height, SDL_PIXELFORMAT_RGBA32);

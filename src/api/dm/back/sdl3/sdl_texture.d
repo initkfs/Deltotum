@@ -503,11 +503,52 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
+    ComResult lockToSurface(SDL_Rect* bounds, SDL_Surface* surface) nothrow
+    {
+        assert(ptr);
+        assert(!locked);
+
+        if (!SDL_LockTextureToSurface(ptr, bounds, &surface))
+        {
+            return getErrorRes("Error locking texuture to surface");
+        }
+
+        locked = true;
+        return ComResult.success;
+    }
+
+    ComResult lockToSurface(Rect2d src, ComSurface surf) nothrow
+    {
+        assert(surf);
+        SDL_Rect bounds = toSdlRect(src);
+        SDL_Surface* newSurfPtr;
+        if (const err = lockToSurface(&bounds, newSurfPtr))
+        {
+            return err;
+        }
+        assert(newSurfPtr);
+        return surf.create(ComNativePtr(newSurfPtr));
+    }
+
+    ComResult lockToSurface(ComSurface surf) nothrow
+    {
+        assert(surf);
+        SDL_Surface* newSurfPtr;
+        if (const err = lockToSurface(null, newSurfPtr))
+        {
+            return err;
+        }
+        assert(newSurfPtr);
+        return surf.create(ComNativePtr(newSurfPtr));
+    }
+
     ComResult unlock() nothrow
     {
-        assert(locked);
         assert(ptr);
+        assert(locked);
+
         SDL_UnlockTexture(ptr);
+
         //TODO check unlock?
         locked = false;
         pixelPtr = null;

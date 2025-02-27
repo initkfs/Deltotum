@@ -61,6 +61,8 @@ nothrow:
     ComResult setColor(ubyte r, ubyte g, ubyte b, ubyte a);
 
     ComResult lock();
+    ComResult lockToSurface(ComSurface buffer);
+    ComResult lockToSurface(Rect2d src, ComSurface buffer);
     ComResult unlock();
     ComResult isLocked(out bool locked);
 
