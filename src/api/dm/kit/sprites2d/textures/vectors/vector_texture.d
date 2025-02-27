@@ -141,7 +141,7 @@ class VectorTexture : Texture2d
         assert(texture);
         assert(comSurface);
 
-        const createErr = texture.createFromSurface(comSurface);
+        const createErr = texture.create(comSurface);
         if (createErr)
         {
             throw new Exception(createErr.toString);

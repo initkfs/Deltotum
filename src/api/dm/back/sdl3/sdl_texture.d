@@ -26,21 +26,14 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     //TODO move to RgbaTexture
     private
     {
-        double _opacity = 0;
         SdlRenderer renderer;
 
+        double _opacity = 0;
         bool locked;
-        //pitch == length row of pixels in bytes
         int pitch;
         uint* pixelPtr;
 
         SDL_Texture* lastRendererTarget;
-    }
-
-    protected
-    {
-        //TODO getDepth?
-        int depth = 32;
     }
 
     this(SdlRenderer renderer, string id = "sdl_texture") pure
@@ -57,75 +50,146 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         setNotEmptyId(id);
     }
 
-    ComResult createFromSurface(ComSurface surface) nothrow
+    ComResult createUnsafe(void* newPtr) nothrow
     {
-        assert(surface, "Surface must not be null");
-        if (ptr)
+        return create(cast(SDL_Texture*) newPtr);
+    }
+
+    ComResult create(SDL_Texture* texture) nothrow => setWithDispose(texture);
+
+    ComResult create(SDL_PixelFormat format, SDL_TextureAccess access, int w, int h) nothrow
+    {
+        assert(renderer);
+
+        auto newPtr = SDL_CreateTexture(renderer.getObject, format, access, w, h);
+        if (!newPtr)
         {
-            disposePtr;
+            return getErrorRes("Error creating new SDL texture");
         }
+
+        return setWithDispose(newPtr);
+    }
+
+    ComResult createRGBA32(int width, int height) nothrow
+    {
+        //alias SDL_PIXELFORMAT_RGBA32 = SDL_PIXELFORMAT_ABGR8888;
+        return create(SDL_PIXELFORMAT_RGBA32,
+            SDL_TextureAccess.SDL_TEXTUREACCESS_STATIC, width,
+            height);
+    }
+
+    ComResult createABGR32(int width, int height) nothrow
+    {
+        return create(SDL_PIXELFORMAT_ABGR32,
+            SDL_TextureAccess.SDL_TEXTUREACCESS_STATIC, width,
+            height);
+    }
+
+    ComResult createARGB32(int width, int height) nothrow
+    {
+        return create(SDL_PIXELFORMAT_ARGB32,
+            SDL_TextureAccess.SDL_TEXTUREACCESS_STATIC, width,
+            height);
+    }
+
+    ComResult createMutRGBA32(int width, int height) nothrow
+    {
+        return create(SDL_PIXELFORMAT_RGBA32,
+            SDL_TextureAccess.SDL_TEXTUREACCESS_STREAMING, width,
+            height);
+    }
+
+    ComResult createMutABGR32(int width, int height) nothrow
+    {
+        return create(SDL_PIXELFORMAT_ABGR32,
+            SDL_TextureAccess.SDL_TEXTUREACCESS_STREAMING, width,
+            height);
+    }
+
+    ComResult createMutBGRA32(int width, int height) nothrow
+    {
+        return create(SDL_PIXELFORMAT_BGRA32,
+            SDL_TextureAccess.SDL_TEXTUREACCESS_STREAMING, width,
+            height);
+    }
+
+    ComResult createMutARGB32(int width, int height) nothrow
+    {
+        return create(SDL_PIXELFORMAT_ARGB32,
+            SDL_TextureAccess.SDL_TEXTUREACCESS_STREAMING, width,
+            height);
+    }
+
+    ComResult createTargetRGBA32(int width, int height) nothrow
+    {
+        return create(SDL_PIXELFORMAT_RGBA32,
+            SDL_TextureAccess.SDL_TEXTUREACCESS_TARGET, width,
+            height);
+    }
+
+    ComResult create(ComSurface surface) nothrow
+    {
+        assert(surface, "Surface for new SDL texture must not be null");
         ComNativePtr newPtr;
         if (const err = surface.nativePtr(newPtr))
         {
             return err;
         }
+
         SDL_Surface* surfPtr = newPtr.castSafe!(SDL_Surface*);
-        return fromSurfacePtr(surfPtr);
+        return create(surfPtr);
     }
 
-    ComResult fromSurfacePtr(SDL_Surface* surface) nothrow
+    ComResult create(SDL_Surface* surface) nothrow
     {
-        assert(surface, "Surface ptr must not be null");
-        if (ptr)
+        assert(surface, "Surface ptr for new SDL texture must not be null");
+        assert(renderer);
+
+        auto newPtr = SDL_CreateTextureFromSurface(renderer.getObject, surface);
+        if (!newPtr)
         {
-            disposePtr;
+            return getErrorRes("Unable create SDL texture from renderer and surface.");
         }
 
-        ptr = SDL_CreateTextureFromSurface(renderer.getObject, surface);
-        if (!ptr)
+        if (const err = setWithDispose(newPtr))
         {
-            return getErrorRes("Unable create texture from renderer and surface.");
+            return err;
         }
+
         //TODO side effect 
         if (!SDL_SetTextureBlendMode(ptr, SDL_BLENDMODE_BLEND))
         {
-            return getErrorRes;
+            return getErrorRes("Error setting blend mode on new SDL texture from surface");
         }
         return ComResult.success;
     }
 
-    ComResult recreatePtr(void* newPtr) nothrow
+    ComResult isCreated(out bool created) nothrow
     {
-        assert(newPtr);
-
-        if (ptr)
-        {
-            disposePtr;
-        }
-        ptr = cast(SDL_Texture*) newPtr;
+        created = ptr !is null;
         return ComResult.success;
     }
 
-    protected ComResult query(int* width, int* height, uint* format, uint* access) nothrow
+    protected ComResult query(int* width, int* height, SDL_PixelFormat* format, SDL_TextureAccess* access) nothrow
     {
         if (!ptr)
         {
-            return ComResult.error("Texture2d query error: texture ponter is null");
+            return ComResult.error("SDL texture query error: texture ponter is null");
         }
 
         SDL_PropertiesID propId = SDL_GetTextureProperties(ptr);
         if (propId == 0)
         {
-            return getErrorRes;
+            return getErrorRes("Error getting SDL texture properties for query");
         }
 
         if (format)
         {
-            *format = cast(uint) SDL_GetNumberProperty(propId, SDL_PROP_TEXTURE_FORMAT_NUMBER.ptr, 0);
+            *format = cast(SDL_PixelFormat) SDL_GetNumberProperty(propId, SDL_PROP_TEXTURE_FORMAT_NUMBER.ptr, 0);
         }
         if (access)
         {
-            *access = cast(uint) SDL_GetNumberProperty(propId, SDL_PROP_TEXTURE_ACCESS_NUMBER.ptr, 0);
+            *access = cast(SDL_TextureAccess) SDL_GetNumberProperty(propId, SDL_PROP_TEXTURE_ACCESS_NUMBER.ptr, 0);
         }
         if (width)
         {
@@ -140,41 +204,63 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
+    SDL_PixelFormat getPixelFormat() nothrow
+    {
+        assert(ptr);
+        return ptr.format;
+    }
+
     ComResult getFormat(out uint format) nothrow
     {
-        if (const err = query(null, null, &format, null))
+        format = getPixelFormat;
+        return ComResult.success;
+    }
+
+    ComResult getPixelRowLenBytes(out int pitch) nothrow
+    {
+        if (!locked)
         {
-            return err;
+            return ComResult.error("SDL texture not locked for pitch");
+        }
+        pitch = this.pitch;
+        return ComResult.success;
+    }
+
+    SDL_PixelFormatDetails* getPixelFormatDetails(SDL_PixelFormat format) nothrow
+    {
+        assert(ptr);
+        return SDL_GetPixelFormatDetails(format);
+    }
+
+    ComResult getFormatDetails(SDL_PixelFormat format, out SDL_PixelFormatDetails* details) nothrow
+    {
+        assert(ptr);
+
+        details = getPixelFormatDetails(format);
+        if (!details)
+        {
+            return getErrorRes("Error getting pixel format details from SDL texture");
         }
         return ComResult.success;
     }
 
-    protected ComResult getDetails(SDL_PixelFormat format, out SDL_PixelFormatDetails* details) nothrow
+    ComResult getRendererTarget(out SDL_Texture* target) nothrow
     {
-        SDL_PixelFormatDetails* detailsPtr = SDL_GetPixelFormatDetails(format);
-        if (!detailsPtr)
-        {
-            return getErrorRes;
-        }
-        details = detailsPtr;
-        return ComResult.success;
-    }
-
-    ComResult getSize(out int width, out int height) nothrow
-    {
-        return query(&width, &height, null, null);
-    }
-
-    ComResult getRendererTarget(ref SDL_Texture* target) nothrow
-    {
-        auto t = SDL_GetRenderTarget(renderer.getObject);
-        target = t;
+        assert(renderer);
+        target = SDL_GetRenderTarget(renderer.getObject);
         return ComResult.success;
     }
 
     ComResult setRendererTarget() nothrow
     {
-        assert(!lastRendererTarget, "Last renderer target must be null");
+        assert(ptr);
+        assert(renderer);
+
+        if (lastRendererTarget)
+        {
+            return ComResult.error("Error setting renderer target: last target not null");
+        }
+
         if (const err = getRendererTarget(lastRendererTarget))
         {
             return err;
@@ -182,14 +268,16 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
         if (!SDL_SetRenderTarget(renderer.getObject, ptr))
         {
-            return getErrorRes("Fail set rendered target");
+            return getErrorRes("Error setting render target SDL texture");
         }
         return ComResult.success;
     }
 
     ComResult restoreRendererTarget() nothrow
     {
-        SDL_Texture* target = null;
+        assert(renderer);
+
+        SDL_Texture* target;
         if (lastRendererTarget)
         {
             target = lastRendererTarget;
@@ -198,99 +286,208 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
         if (!SDL_SetRenderTarget(renderer.getObject, target))
         {
-            return getErrorRes;
+            return getErrorRes("Error restore renderer target for SDL texture");
         }
         return ComResult.success;
     }
 
-    protected ComResult create(SDL_PixelFormat format,
-        SDL_TextureAccess access, int w,
-        int h) nothrow
+    ComResult getSize(out int width, out int height) nothrow
     {
-        if (ptr)
+        assert(ptr);
+
+        width = ptr.w;
+        height = ptr.h;
+
+        return ComResult.success;
+    }
+
+    ComResult setSize(int newWidth, int newHeight) nothrow
+    {
+        assert(ptr);
+        assert(renderer);
+
+        if (newWidth <= 0)
         {
-            disposePtr;
+            return ComResult.error("SDL texture new width must be positive number");
         }
 
-        ptr = SDL_CreateTexture(renderer.getObject, format, access, w, h);
-        if (!ptr)
+        if (newHeight <= 0)
         {
-            return getErrorRes("Unable create texture.");
+            return ComResult.error("SDL texture new height must be positive number");
+        }
+        //TODO remove duplication
+        SDL_Rect srcRect, dstRect;
+
+        dstRect.x = 0;
+        dstRect.y = 0;
+        dstRect.w = newWidth;
+        dstRect.h = newHeight;
+
+        int textureWidth, textureHeight;
+        SDL_PixelFormat format;
+        if (const err = query(&textureWidth, &textureHeight, &format, null))
+        {
+            return err;
+        }
+
+        srcRect.x = 0;
+        srcRect.y = 0;
+        srcRect.w = textureWidth;
+        srcRect.h = textureHeight;
+
+        auto tempSrc = SDL_RenderReadPixels(renderer.getObject, &srcRect);
+        scope (exit)
+        {
+            SDL_DestroySurface(tempSrc);
+        }
+
+        auto tempDst = SDL_CreateSurface(dstRect.w, dstRect.h, tempSrc.format);
+        if (!tempDst)
+        {
+            return getErrorRes("Error creating temp SDL surface for resizing");
+        }
+
+        scope (exit)
+        {
+            SDL_DestroySurface(tempDst);
+        }
+
+        if (const err = setRendererTarget)
+        {
+            return err;
+        }
+
+        if (const err = restoreRendererTarget)
+        {
+            return err;
+        }
+
+        SDL_ScaleMode scaleMode = SDL_SCALEMODE_LINEAR;
+        const isScaled = SDL_BlitSurfaceScaled(tempSrc, &srcRect, tempDst, &dstRect, scaleMode);
+        if (!isScaled)
+        {
+            return getErrorRes("Error blitting SDL surface for resizing SDL texture");
+        }
+
+        if (const err = create(tempDst))
+        {
+            return err;
         }
 
         return ComResult.success;
     }
 
-    protected ComResult getAlphaMod(out ubyte alpha) nothrow
+    ComResult getAlphaMod(out ubyte alpha) nothrow
     {
+        assert(ptr);
+
         if (!SDL_GetTextureAlphaMod(ptr, &alpha))
         {
-            return getErrorRes;
+            return getErrorRes("Error getting SDL texture alpha mod");
         }
         return ComResult.success;
     }
 
     protected ComResult setAlphaMod(ubyte alpha) nothrow
     {
+        assert(ptr);
+
         if (!SDL_SetTextureAlphaMod(ptr, alpha))
         {
-            return getErrorRes;
+            return getErrorRes("Error setting SDL texture alpha mod");
+        }
+        return ComResult.success;
+    }
+
+    ComResult setBlendMode(ComBlendMode mode) nothrow
+    {
+        assert(ptr);
+
+        SDL_BlendMode newMode = toNativeBlendMode(mode);
+        if (!SDL_SetTextureBlendMode(ptr, newMode))
+        {
+            return getErrorRes("Error setting SDL texture blend mode");
+        }
+        return ComResult.success;
+    }
+
+    ComResult setBlendModeBlend() nothrow => setBlendMode(ComBlendMode.blend);
+    ComResult setBlendModeNone() nothrow => setBlendMode(ComBlendMode.none);
+
+    ComResult getOpacity(out double value) nothrow
+    {
+        assert(ptr);
+
+        if (_opacity != 0)
+        {
+            value = _opacity;
+            return ComResult.success;
+        }
+        ubyte alphaMod;
+        if (const err = getAlphaMod(alphaMod))
+        {
+            return err;
+        }
+        value = (cast(double) alphaMod) / ubyte.max;
+        return ComResult.success;
+    }
+
+    ComResult setOpacity(double opacity) nothrow
+    {
+        if (!ptr)
+        {
+            return ComResult.error("Error setting SDL texture opacity: texture is null");
+        }
+
+        _opacity = opacity;
+        return setAlphaMod(cast(ubyte)(ubyte.max * opacity));
+    }
+
+    ComResult getScaleMode(out ComTextureScaleMode mode) nothrow
+    {
+        assert(ptr);
+
+        SDL_ScaleMode oldMode;
+        if (!SDL_GetTextureScaleMode(ptr, &oldMode))
+        {
+            return getErrorRes("Error getting SDL texture scale mode");
+        }
+        mode = fromSdlMode(oldMode);
+        return ComResult.success;
+    }
+
+    ComResult setScaleMode(ComTextureScaleMode mode) nothrow
+    {
+        assert(ptr);
+
+        const nativeMode = toSdlMode(mode);
+        if (!SDL_SetTextureScaleMode(ptr, nativeMode))
+        {
+            return getErrorRes("Error setting SDL texture scale mode");
         }
         return ComResult.success;
     }
 
     ComResult getColor(out ubyte r, out ubyte g, out ubyte b, out ubyte a) nothrow
     {
+        assert(ptr);
+
         if (!SDL_GetTextureColorMod(ptr, &r, &g, &b))
         {
-            return getErrorRes;
+            return getErrorRes("Error getting SDL texture color mod");
         }
         return getAlphaMod(a);
     }
 
     ComResult setColor(ubyte r, ubyte g, ubyte b, ubyte a) nothrow
     {
+        assert(ptr);
+
         if (!SDL_SetTextureColorMod(ptr, r, g, b))
         {
-            return getErrorRes;
+            return getErrorRes("Error setting SDL texture color mod");
         }
         return setAlphaMod(a);
-    }
-
-    ComResult createMutARGB8888(int width, int height)
-    {
-        return create(SDL_PIXELFORMAT_ARGB8888,
-            SDL_TextureAccess.SDL_TEXTUREACCESS_STREAMING, width,
-            height);
-    }
-
-    ComResult createMutRGBA32(int width, int height)
-    {
-        //alias SDL_PIXELFORMAT_RGBA32 = SDL_PIXELFORMAT_ABGR8888;
-        return create(SDL_PIXELFORMAT_RGBA32,
-            SDL_TextureAccess.SDL_TEXTUREACCESS_STREAMING, width,
-            height);
-    }
-
-    ComResult createMutARGB32(int width, int height)
-    {
-        return create(SDL_PIXELFORMAT_ARGB8888,
-            SDL_TextureAccess.SDL_TEXTUREACCESS_STREAMING, width,
-            height);
-    }
-
-    ComResult createImmutRGBA32(int width, int height)
-    {
-        return create(SDL_PIXELFORMAT_RGBA32,
-            SDL_TextureAccess.SDL_TEXTUREACCESS_STATIC, width,
-            height);
-    }
-
-    ComResult createTargetRGBA32(int width, int height)
-    {
-        return create(SDL_PIXELFORMAT_RGBA32,
-            SDL_TextureAccess.SDL_TEXTUREACCESS_TARGET, width,
-            height);
     }
 
     ComResult lock() nothrow
@@ -299,7 +496,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         assert(!locked);
         if (!SDL_LockTexture(ptr, null, cast(void**)&pixelPtr, &pitch))
         {
-            return getErrorRes;
+            return getErrorRes("Error lock SDL texture");
         }
 
         locked = true;
@@ -318,44 +515,42 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    ComResult getPixelRowLenBytes(out int pitch) nothrow
+    ComResult update(Rect2d rect, void* pixels, int pitch) nothrow
     {
+        assert(ptr);
+
         if (!locked)
         {
-            return ComResult.error("Texture2d not locked for pitch");
+            return ComResult.error("SDL texture not locked for update");
         }
-        pitch = this.pitch;
+
+        SDL_Rect bounds = {0, 0, cast(int) rect.width, cast(int) rect.height};
+
+        const isUpdate = SDL_UpdateTexture(ptr,
+            &bounds, cast(void*) pixelPtr, pitch);
+        if (!isUpdate)
+        {
+            return getErrorRes("Error updating SDL texture");
+        }
         return ComResult.success;
     }
 
     ComResult getPixels(out void* pixels)
     {
+        assert(ptr);
+        assert(pixels);
+
         if (!locked)
         {
-            return ComResult.error("Texture2d not locked for pixels");
+            return ComResult.error("SDL texture not locked for getting pixels");
         }
         pixels = cast(void*) pixelPtr;
         return ComResult.success;
     }
 
-    ComResult update(Rect2d rect, void* pixels, int pitch) nothrow
-    {
-        if (!locked)
-        {
-            return ComResult.error("Texture2d not locked for update");
-        }
-        SDL_Rect bounds = {0, 0, cast(int) rect.width, cast(int) rect.height};
-        const isUpdate = SDL_UpdateTexture(ptr,
-            &bounds, cast(void*) pixelPtr, pitch);
-        if (!isUpdate)
-        {
-            return getErrorRes;
-        }
-        return ComResult.success;
-    }
-
     ComResult getPixel(uint x, uint y, out uint* pixel) nothrow
     {
+        assert(ptr);
         assert(locked);
         assert(pitch > 0);
         assert(pixelPtr);
@@ -371,14 +566,10 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         assert(pixelPtr);
         assert(pitch > 0);
         //TODO pass format as a parameter?
-        uint formatValue;
-        if (const err = query(null, null, &formatValue, null))
-        {
-            return err;
-        }
+        SDL_PixelFormat formatValue = getPixelFormat;
 
         SDL_PixelFormatDetails* details;
-        if (const err = getDetails(cast(SDL_PixelFormat) formatValue, details))
+        if (const err = getFormatDetails(cast(SDL_PixelFormat) formatValue, details))
         {
             return err;
         }
@@ -393,14 +584,10 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult setPixelColor(uint* ptr, ubyte r, ubyte g, ubyte b, ubyte aByte) nothrow
     {
-        uint format;
-        if (const formatErr = getFormat(format))
-        {
-            return formatErr;
-        }
+        SDL_PixelFormat format = getPixelFormat;
 
         SDL_PixelFormatDetails* details;
-        if (const err = getDetails(cast(SDL_PixelFormat) format, details))
+        if (const err = getFormatDetails(format, details))
         {
             return err;
         }
@@ -422,103 +609,14 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
     ComResult getPixelColor(uint* ptr, out ubyte r, out ubyte g, out ubyte b, out ubyte aByte) nothrow
     {
-        uint format;
-        if (const formatErr = getFormat(format))
-        {
-            return formatErr;
-        }
-
+        SDL_PixelFormat format = getPixelFormat;
         SDL_PixelFormatDetails* details;
-        if (const err = getDetails(cast(SDL_PixelFormat)format, details))
+        if (const err = getFormatDetails(format, details))
         {
             return err;
         }
 
-        SDL_GetRGBA(*ptr, details,null,  &r, &g, &b, &aByte);
-        return ComResult.success;
-    }
-
-    ComResult setBlendMode(ComBlendMode mode) nothrow
-    {
-        SDL_BlendMode newMode = toNativeBlendMode(mode);
-        if (!SDL_SetTextureBlendMode(ptr, newMode))
-        {
-            return getErrorRes;
-        }
-        return ComResult.success;
-    }
-
-    ComResult setBlendModeBlend() nothrow
-    {
-        return setBlendMode(ComBlendMode.blend);
-    }
-
-    ComResult setBlendModeNone() nothrow
-    {
-        return setBlendMode(ComBlendMode.none);
-    }
-
-    ComResult resize(double newWidth, double newHeight) nothrow
-    {
-        //TODO remove duplication
-        SDL_Rect srcRect, dstRect;
-
-        dstRect.x = 0;
-        dstRect.y = 0;
-        dstRect.w = cast(int) newWidth;
-        dstRect.h = cast(int) newHeight;
-
-        int textureWidth, textureHeight;
-        uint format;
-        if (const err = query(&textureWidth, &textureHeight, &format, null))
-        {
-            return err;
-        }
-
-        srcRect.x = 0;
-        srcRect.y = 0;
-        srcRect.w = textureWidth;
-        srcRect.h = textureHeight;
-
-        auto tempSrc = SDL_RenderReadPixels(renderer.getObject, &srcRect);
-        scope (exit)
-        {
-            SDL_DestroySurface(tempSrc);
-        }
-
-        auto tempDst = SDL_CreateSurface(dstRect.w, dstRect.h, tempSrc.format);
-        if (!tempDst)
-        {
-            return getErrorRes("Temp surface is null for format");
-        }
-
-        scope (exit)
-        {
-            SDL_DestroySurface(tempDst);
-        }
-
-        if (const err = setRendererTarget)
-        {
-            return err;
-        }
-       
-        if (const err = restoreRendererTarget)
-        {
-            return err;
-        }
-
-        SDL_ScaleMode scaleMode = SDL_SCALEMODE_LINEAR;
-        const isScaled = SDL_BlitSurfaceScaled(tempSrc, &srcRect, tempDst, &dstRect, scaleMode);
-        if (!isScaled)
-        {
-            return getErrorRes;
-        }
-
-        if (const err = fromSurfacePtr(tempDst))
-        {
-            return err;
-        }
-
+        SDL_GetRGBA(*ptr, details, null, &r, &g, &b, &aByte);
         return ComResult.success;
     }
 
@@ -574,9 +672,11 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return renderer.renderTextureEx(t, &srcRect, &destRect, angle, rotateCenter, sdlFlip);
     }
 
-    ComResult copy(out ComTexture toTexture)
+    ComResult copyToNew(out ComTexture toTexture)
     {
-        ComTexture newTexture;
+        assert(ptr);
+
+        SdlTexture newTexture;
         try
         {
             newTexture = new SdlTexture(renderer);
@@ -592,7 +692,9 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             return err;
         }
 
-        if (const err = newTexture.createTargetRGBA32(width, height))
+        auto format = getPixelFormat;
+
+        if (const err = newTexture.create(format, SDL_TEXTUREACCESS_TARGET, width, height))
         {
             return err;
         }
@@ -667,8 +769,8 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         {
             case SDL_SCALEMODE_NEAREST:
                 return ComTextureScaleMode.speed;
-            // case SDL_SCALEMODE_LINEAR:
-            //     return ComTextureScaleMode.balance;
+                // case SDL_SCALEMODE_LINEAR:
+                //     return ComTextureScaleMode.balance;
             case SDL_SCALEMODE_LINEAR:
                 return ComTextureScaleMode.quality;
         }
@@ -686,65 +788,16 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         }
     }
 
-    ComResult setScaleMode(ComTextureScaleMode mode) nothrow
-    {
-        const nativeMode = toSdlMode(mode);
-        if (!SDL_SetTextureScaleMode(ptr, nativeMode))
-        {
-            return getErrorRes;
-        }
-        return ComResult.success;
-    }
-
-    ComResult getScaleMode(out ComTextureScaleMode mode) nothrow
-    {
-        SDL_ScaleMode oldMode;
-        if (!SDL_GetTextureScaleMode(ptr, &oldMode))
-        {
-            return getErrorRes;
-        }
-        mode = fromSdlMode(oldMode);
-        return ComResult.success;
-    }
-
     ComResult nativePtr(out ComNativePtr nptr) nothrow
     {
-        assert(this.ptr);
+        assert(ptr);
         nptr = ComNativePtr(ptr);
-        return ComResult.success;
-    }
-
-    ComResult isCreated(out bool created) nothrow
-    {
-        created = ptr !is null;
         return ComResult.success;
     }
 
     ComResult isLocked(out bool value) nothrow
     {
         value = locked;
-        return ComResult.success;
-    }
-
-    ComResult getOpacity(out double value) @safe pure nothrow
-    {
-        value = _opacity;
-        return ComResult.success;
-    }
-
-    ComResult setOpacity(double opacity) nothrow
-    {
-        if (!ptr)
-        {
-            return ComResult.error("Texture2d opacity change error: texture is null");
-        }
-
-        _opacity = opacity;
-        //TODO setColor with alpha
-        if (!SDL_SetTextureAlphaMod(ptr, cast(ubyte)(255 * opacity)))
-        {
-            return getErrorRes;
-        }
         return ComResult.success;
     }
 

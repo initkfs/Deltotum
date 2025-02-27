@@ -194,7 +194,7 @@ class Image : Texture2d
             texture = graphics.comTextureProvider.getNew();
         }
 
-        if (const err = texture.createFromSurface(image))
+        if (const err = texture.create(image))
         {
             throw new Exception(err.toString);
         }

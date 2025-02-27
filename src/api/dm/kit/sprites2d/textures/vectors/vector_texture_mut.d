@@ -39,7 +39,7 @@ class VectorTextureMut : Texture2d
         super.create;
         texture = graphics.comTextureProvider.getNew();
 
-        if (const err = texture.createMutARGB8888(cast(int) width, cast(int) height))
+        if (const err = texture.createMutARGB32(cast(int) width, cast(int) height))
         {
             throw new Exception(err.toString);
         }

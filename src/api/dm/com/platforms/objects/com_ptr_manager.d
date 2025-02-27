@@ -5,6 +5,8 @@ module api.dm.com.platforms.objects.com_ptr_manager;
  */
 mixin template ComPtrManager(T)
 {
+    import api.dm.com.platforms.results.com_result : ComResult;
+    
     protected
     {
         T* ptr;
@@ -45,6 +47,24 @@ mixin template ComPtrManager(T)
 
             dispose;
         }
+    }
+
+    ComResult setWithDispose(T* newPtr) nothrow
+    {
+        if (!newPtr)
+        {
+            return ComResult.error("Error setting with dispose, new pointer is null");
+        }
+        if (ptr)
+        {
+            if (!disposePtr)
+            {
+                return ComResult.error(
+                    "Error setting with dispose, previous pointer is not disposed");
+            }
+        }
+        ptr = newPtr;
+        return ComResult.success;
     }
 
     final inout(T*) getObject() inout nothrow @safe

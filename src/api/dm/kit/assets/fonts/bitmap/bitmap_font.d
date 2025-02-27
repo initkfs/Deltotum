@@ -30,7 +30,7 @@ class BitmapFont : Texture2d
     {
         assert(texture);
         ComTexture newTexture;
-        if (const err = texture.copy(newTexture))
+        if (const err = texture.copyToNew(newTexture))
         {
             throw new Exception(err.toString);
         }

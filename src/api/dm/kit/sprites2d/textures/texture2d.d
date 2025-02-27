@@ -82,7 +82,7 @@ class Texture2d : Sprite2d
             newTexture = graphics.comTextureProvider.getNew();
         }
 
-        if (const err = newTexture.createFromSurface(surface))
+        if (const err = newTexture.create(surface))
         {
             throw new Exception(err.toString);
         }
@@ -321,7 +321,7 @@ class Texture2d : Sprite2d
     {
         assert(texture);
         ComTexture newTexture;
-        if (const err = texture.copy(newTexture))
+        if (const err = texture.copyToNew(newTexture))
         {
             throw new Exception(err.toString);
         }
@@ -528,15 +528,6 @@ class Texture2d : Sprite2d
     override double opacity()
     {
         return super.opacity;
-    }
-
-    void alphaMod(double alpha)
-    {
-        assert(texture);
-        if (const err = texture.setAlphaMod(cast(ubyte)(alpha * ubyte.max)))
-        {
-            logger.error(err.toString);
-        }
     }
 
     override bool opacity(double value)
