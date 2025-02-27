@@ -786,7 +786,7 @@ class SdlApp : GuiApp
 
         window.pos(newX, newY);
 
-        SdlRenderer sdlRenderer = newRenderer(sdlWindow.renderer);
+        SdlRenderer sdlRenderer = newRenderer(sdlWindow.renderer.get);
         window.renderer = sdlRenderer;
 
         window.title = title;

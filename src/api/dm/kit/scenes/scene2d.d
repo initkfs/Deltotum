@@ -463,7 +463,7 @@ class Scene2d : EventKitTarget
             0, 0, window.width, window.height
         );
         auto surf = graphics.comSurfaceProvider.getNew();
-        auto err = surf.createRGBA32(window.width, window.height);
+        auto err = surf.createRGBA32(cast(int) window.width, cast(int) window.height);
         if (err)
         {
             throw new Exception(err.toString);

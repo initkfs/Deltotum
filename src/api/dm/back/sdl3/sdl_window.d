@@ -6,20 +6,20 @@ import api.dm.com.platforms.results.com_result;
 version(SdlBackend):
 // dfmt on
 
-import api.dm.com.graphics.com_window : ComWindow, ComWindowTheme;
-
-import api.dm.com.platforms.results.com_result : ComResult;
+import api.dm.com.graphics.com_window : ComWindowId, ComWindow, ComWindowTheme;
 import api.dm.com.com_native_ptr : ComNativePtr;
-import api.dm.com.graphics.com_surface : ComSurface;
-import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
-import api.dm.com.inputs.com_cursor : ComCursor, ComPlatformCursorType;
+import api.dm.com.platforms.results.com_result : ComResult;
 import api.dm.com.graphics.com_screen : ComScreenId;
+import api.dm.com.graphics.com_surface : ComSurface;
+import api.dm.com.inputs.com_cursor : ComCursor, ComPlatformCursorType;
 
+import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
 import api.dm.back.sdl3.sdl_surface : SdlSurface;
 
 import api.math.geom2.rect2 : Rect2d;
 
 import std.string : toStringz, fromStringz;
+import std.typecons : Nullable;
 
 import api.dm.back.sdl3.externs.csdl3;
 
@@ -37,7 +37,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 {
     SdlWindowMode mode;
 
-    SDL_Renderer* renderer;
+    Nullable!(SDL_Renderer*) renderer;
 
     this()
     {
@@ -49,24 +49,27 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         super(ptr);
     }
 
-    ComResult initialize() nothrow
-    {
-        return ComResult.success;
-    }
-
     ComResult create(ComNativePtr newPtr) nothrow
     {
-        if (ptr)
-        {
-            disposePtr;
-        }
+        assert(!ptr);
+        //TODO renderer?
         ptr = newPtr.castSafe!(SDL_Window*);
         return ComResult.success;
     }
 
-    ComResult create() nothrow
+    ComResult create() nothrow => create(0, 0, 0);
+
+    ComResult create(int width, int height, ulong flags) nothrow
     {
-        ulong flags = SDL_WINDOW_HIDDEN;
+        if (width < 0)
+        {
+            return ComResult.error("SDL window width must be positive number or 0");
+        }
+
+        if (height < 0)
+        {
+            return ComResult.error("SDL Window height must be positive number or 0");
+        }
         final switch (mode) with (SdlWindowMode)
         {
             case opengl:
@@ -79,27 +82,94 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
                 break;
         }
 
-        if (!SDL_CreateWindowAndRenderer(null, 0, 0, flags, &ptr, &renderer))
+        assert(!ptr);
+        assert(renderer.isNull);
+
+        SDL_Renderer* mustBeRenderer;
+
+        if (!SDL_CreateWindowAndRenderer(null, width, height, flags, &ptr, &mustBeRenderer))
         {
-            return getErrorRes("Unable to create SDL window");
+            return getErrorRes("Error creating SDL window");
         }
 
         assert(ptr);
-        assert(renderer);
+        assert(mustBeRenderer);
+
+        renderer = mustBeRenderer;
 
         return ComResult.success;
     }
 
-    ComResult getId(out int id) nothrow
+    ComResult show() nothrow
     {
-        const idOrZeroError = SDL_GetWindowID(ptr);
-        if (idOrZeroError == 0)
+        assert(ptr);
+
+        if (!SDL_ShowWindow(ptr))
         {
-            return getErrorRes("Error getting window id");
+            return getErrorRes("Error showing SDL window");
+        }
+        return ComResult.success;
+    }
+
+    ComResult hide() nothrow
+    {
+        assert(ptr);
+
+        if (!SDL_HideWindow(ptr))
+        {
+            return getErrorRes("Error hiding SDL window");
+        }
+        return ComResult.success;
+    }
+
+    ComResult close() nothrow
+    {
+        assert(ptr);
+
+        dispose;
+        return ComResult.success;
+    }
+
+    ComResult restore() nothrow
+    {
+        assert(ptr);
+        // If an immediate change is required, call SDL_SyncWindow() to block until the changes have taken effect.
+        //https://wiki.libsdl.org/SDL3/SDL_RestoreWindow
+        if (!SDL_RestoreWindow(ptr))
+        {
+            return getErrorRes("Error restoring SDL window");
+        }
+        return ComResult.success;
+    }
+
+    ComResult setParent(ComWindow parent) nothrow
+    {
+        assert(ptr);
+        assert(parent);
+
+        ComNativePtr parentPtr;
+        if (const err = parent.nativePtr(parentPtr))
+        {
+            return err;
+        }
+        SDL_Window* parentWinPtr = parentPtr.castSafe!(SDL_Window*);
+
+        if (!SDL_SetWindowParent(ptr, parentWinPtr))
+        {
+            return getErrorRes("Error setting parent for SDL window");
         }
 
-        id = idOrZeroError;
+        return ComResult.success;
+    }
 
+    ComResult setModal(bool value) nothrow
+    {
+        assert(ptr);
+
+        if (!SDL_SetWindowModal(ptr, value))
+        {
+            return getErrorRes("Error setting window modal value");
+        }
         return ComResult.success;
     }
 
@@ -110,16 +180,9 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         {
             return err;
         }
-        value = !hidden;
-        return ComResult.success;
-    }
 
-    ComResult show() nothrow
-    {
-        if (!SDL_ShowWindow(ptr))
-        {
-            return getErrorRes;
-        }
+        value = !hidden;
+
         return ComResult.success;
     }
 
@@ -130,49 +193,81 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         {
             return err;
         }
-        value = (flags & SDL_WINDOW_HIDDEN) != 0;
-        return ComResult.success;
-    }
 
-    ComResult hide() nothrow
-    {
-        if (!SDL_HideWindow(ptr))
+        if (flags & SDL_WINDOW_HIDDEN)
         {
-            return getErrorRes;
+            value = true;
         }
         return ComResult.success;
     }
 
-    ComResult close() nothrow
+    ComResult getId(out ComWindowId id) nothrow
     {
-        dispose;
+        assert(ptr);
+
+        const idOrZeroError = SDL_GetWindowID(ptr);
+        if (idOrZeroError == 0)
+        {
+            return getErrorRes("Error getting SDL window id");
+        }
+
+        id = idOrZeroError;
+
+        return ComResult.success;
+    }
+
+    ComResult getScreenId(out ComScreenId id) nothrow
+    {
+        assert(ptr);
+
+        const idOrZeroErr = SDL_GetDisplayForWindow(ptr);
+        if (idOrZeroErr <= 0)
+        {
+            return getErrorRes("Error getting screen id from SDL window");
+        }
+
+        id = idOrZeroErr;
         return ComResult.success;
     }
 
     ComResult focusRequest() nothrow
     {
+        assert(ptr);
+
         if (!SDL_RaiseWindow(ptr))
         {
-            return getErrorRes;
+            return getErrorRes("Error raising SDL window");
         }
         return ComResult.success;
     }
 
     ComResult getPos(out int x, out int y) nothrow
     {
+        assert(ptr);
+
         if (!SDL_GetWindowPosition(ptr, &x, &y))
         {
-            return getErrorRes;
+            return getErrorRes("Error getting SDL window position");
         }
         return ComResult.success;
     }
 
     ComResult setPos(int x, int y) nothrow
     {
+        assert(ptr);
+
         if (!SDL_SetWindowPosition(ptr, x, y))
         {
-            return getErrorRes;
+            return getErrorRes("Error setting SDL window position");
         }
+        return ComResult.success;
+    }
+
+    ComResult getFlags(out ulong flags) nothrow
+    {
+        assert(ptr);
+
+        flags = SDL_GetWindowFlags(ptr);
         return ComResult.success;
     }
 
@@ -184,15 +279,21 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
             return err;
         }
 
-        value = (flags & SDL_WINDOW_MINIMIZED) != 0;
+        if (flags & SDL_WINDOW_MINIMIZED)
+        {
+            value = true;
+        }
+
         return ComResult.success;
     }
 
     ComResult setMinimized() nothrow
     {
+        assert(ptr);
+
         if (!SDL_MinimizeWindow(ptr))
         {
-            return getErrorRes;
+            return getErrorRes("Error minimize SDL window");
         }
         return ComResult.success;
     }
@@ -205,41 +306,33 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
             return err;
         }
 
-        value = (flags & SDL_WINDOW_MAXIMIZED) != 0;
+        if (flags & SDL_WINDOW_MAXIMIZED)
+        {
+            value = true;
+        }
+
         return ComResult.success;
     }
 
     ComResult setMaximized() nothrow
     {
+        assert(ptr);
+
         if (!SDL_MaximizeWindow(ptr))
         {
-            return getErrorRes;
+            return getErrorRes("Error maximize SDL window");
         }
-        return ComResult.success;
-    }
 
-    ComResult getFlags(out ulong flags) nothrow
-    {
-        flags = SDL_GetWindowFlags(ptr);
-        return ComResult.success;
-    }
-
-    ComResult getBorderless(out bool isBorderless) nothrow
-    {
-        ulong flags;
-        if (const err = getFlags(flags))
-        {
-            return err;
-        }
-        isBorderless = (flags & SDL_WINDOW_BORDERLESS) != 0;
         return ComResult.success;
     }
 
     ComResult setDecorated(bool isDecorated) nothrow
     {
+        assert(ptr);
+
         if (!SDL_SetWindowBordered(ptr, isDecorated))
         {
-            return getErrorRes;
+            return getErrorRes("Error setting bordered SDL window");
         }
         return ComResult.success;
     }
@@ -255,11 +348,29 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         return ComResult.success;
     }
 
+    ComResult getBorderless(out bool isBorderless) nothrow
+    {
+        ulong flags;
+        if (const err = getFlags(flags))
+        {
+            return err;
+        }
+
+        if (flags & SDL_WINDOW_BORDERLESS)
+        {
+            isBorderless = true;
+        }
+
+        return ComResult.success;
+    }
+
     ComResult setResizable(bool isResizable) nothrow
     {
+        assert(ptr);
+
         if (!SDL_SetWindowResizable(ptr, isResizable))
         {
-            return getErrorRes;
+            return getErrorRes("Error setting SDL window resizable");
         }
         return ComResult.success;
     }
@@ -271,30 +382,39 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         {
             return err;
         }
-        isResizable = (flags & SDL_WINDOW_RESIZABLE) != 0;
+
+        if (flags & SDL_WINDOW_RESIZABLE)
+        {
+            isResizable = true;
+        }
         return ComResult.success;
     }
 
     ComResult setOpacity(double value0to1) nothrow
     {
+        assert(ptr);
+
         if (value0to1 < 0.0 || value0to1 > 1.0)
         {
-            return ComResult.error("Opacity value must be in the range from 0 to 1.0");
+            return ComResult.error("SDL window opacity must be in the range from 0 to 1.0");
         }
 
         if (!SDL_SetWindowOpacity(ptr, cast(float) value0to1))
         {
-            return getErrorRes;
+            return getErrorRes("Error setting SDL window opacity");
         }
+
         return ComResult.success;
     }
 
     ComResult getOpacity(out double value0to1) nothrow
     {
+        assert(ptr);
+
         const result = SDL_GetWindowOpacity(ptr);
         if (result == -1f)
         {
-            return getErrorRes;
+            return getErrorRes("Error getting SDL window opacity");
         }
 
         import std.math.traits : isFinite;
@@ -305,7 +425,16 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         }
         else
         {
-            return getErrorRes("Received invalid opacity");
+            import std.conv : text;
+
+            try
+            {
+                return getErrorRes(text("Received invalid opacity from SDL window: ", result));
+            }
+            catch (Exception e)
+            {
+                return ComResult.error(e.msg);
+            }
         }
 
         return ComResult.success;
@@ -313,9 +442,11 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult setFullScreen(bool isFullScreen) nothrow
     {
+        assert(ptr);
+
         if (!SDL_SetWindowFullscreen(ptr, isFullScreen))
         {
-            return getErrorRes;
+            return getErrorRes("Error setting SDL window fullscreen");
         }
         return ComResult.success;
     }
@@ -327,30 +458,55 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         {
             return err;
         }
-        isFullScreen = flags & SDL_WINDOW_FULLSCREEN;
+
+        if (flags & SDL_WINDOW_FULLSCREEN)
+        {
+            isFullScreen = true;
+        }
         return ComResult.success;
     }
 
     ComResult getSize(out int width, out int height) nothrow
     {
-        if (!SDL_GetWindowSize(ptr, &width, &height))
+        return getRawWindowSize(&width, &height);
+    }
+
+    ComResult getWidth(out int width) nothrow
+    {
+        return getRawWindowSize(&width, null);
+    }
+
+    ComResult getHeight(out int height) nothrow
+    {
+        return getRawWindowSize(null, &height);
+    }
+
+    protected ComResult getRawWindowSize(int* width, int* height) nothrow
+    {
+        assert(ptr);
+
+        if (!SDL_GetWindowSize(ptr, width, height))
         {
-            return getErrorRes;
+            return getErrorRes("Error getting SDL window size");
         }
         return ComResult.success;
     }
 
     ComResult setSize(int width, int height) nothrow
     {
+        assert(ptr);
+
         if (!SDL_SetWindowSize(ptr, width, height))
         {
-            return getErrorRes;
+            return getErrorRes("Error setting SDL window size");
         }
         return ComResult.success;
     }
 
     ComResult getTitle(out dstring title) nothrow
     {
+        assert(ptr);
+
         import std.conv : to;
 
         //UTF-8
@@ -362,11 +518,14 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         {
             return ComResult.error(e.msg);
         }
+
         return ComResult.success;
     }
 
     ComResult setTitle(const(dchar[]) title) nothrow
     {
+        assert(ptr);
+
         import std.utf : toUTFz;
 
         //TODO reference
@@ -376,7 +535,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
             if (!SDL_SetWindowTitle(ptr, titlePtr))
             {
-                return getErrorRes;
+                return getErrorRes("Error setting SDL window title");
             }
         }
         catch (Exception e)
@@ -388,58 +547,42 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     ComResult setMaxSize(int w, int h) nothrow
     {
+        assert(ptr);
+
+        if (w <= 0)
+        {
+            return ComResult.error("SDL window maximum width must be positive number");
+        }
+
+        if (h <= 0)
+        {
+            return ComResult.error("SDL window maximum height must be positive number");
+        }
+
         if (!SDL_SetWindowMaximumSize(ptr, w, h))
         {
-            return getErrorRes;
+            return getErrorRes("Error setting SDL window max size");
         }
         return ComResult.success;
     }
 
     ComResult setMinSize(int w, int h) nothrow
     {
+        assert(ptr);
+
+        if (w <= 0)
+        {
+            return ComResult.error("SDL window minimum width must be positive number");
+        }
+
+        if (h <= 0)
+        {
+            return ComResult.error("SDL window minimum height must be positive number");
+        }
+
         if (!SDL_SetWindowMinimumSize(ptr, w, h))
         {
-            return getErrorRes;
-        }
-        return ComResult.success;
-    }
-
-    // ComResult modalForParent(SdlWindow parent)
-    // {
-    //     const result = SDL_SetWindowModalFor(ptr, parent.getObject);
-    //     return result != 0 ? ComResult(result, getError) : ComResult.success;
-    // }
-
-    // SDL_Rect getScaleBounds()nothrow
-    // {
-    //     int w, h;
-    //     getSize(&w, &h);
-
-    //     SDL_Rect bounds;
-    //     if (w > width)
-    //     {
-    //         const widthBar = (w - width) / 2;
-    //         boundsRect.x = widthBar;
-    //         boundsRect.w = w - widthBar;
-    //     }
-
-    //     if (h > height)
-    //     {
-    //         const heightBar = (h - height) / 2;
-    //         boundsRect.y = heightBar;
-    //         boundsRect.h = h - heightBar;
-    //     }
-
-    //     return bounds;
-    // }
-
-    ComResult restore() nothrow
-    {
-        // If an immediate change is required, call SDL_SyncWindow() to block until the changes have taken effect.
-        //https://wiki.libsdl.org/SDL3/SDL_RestoreWindow
-        if (!SDL_RestoreWindow(ptr))
-        {
-            return getErrorRes;
+            return getErrorRes("Error setting SDL window minimum size");
         }
         return ComResult.success;
     }
@@ -474,43 +617,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         return ComResult.success;
     }
 
-    ComResult getScreenId(out ComScreenId id) nothrow
-    {
-        const idOrZeroErr = SDL_GetDisplayForWindow(ptr);
-        if (idOrZeroErr <= 0)
-        {
-            return getErrorRes("Error getting screen id for window");
-        }
-
-        id = idOrZeroErr;
-        return ComResult.success;
-    }
-
-    ComResult setModalFor(ComWindow parent)
-    {
-        assert(parent);
-        ComNativePtr nPtr;
-        if (const err = parent.nativePtr(nPtr))
-        {
-            return err;
-        }
-        auto parentPtr = nPtr.castSafe!(SDL_Window*);
-
-        if (!SDL_SetWindowParent(ptr, parentPtr))
-        {
-            return getErrorRes;
-        }
-
-        //TODO ptr or parentPtr?
-        if (!SDL_SetWindowModal(ptr, true))
-        {
-            return getErrorRes;
-        }
-
-        return ComResult.success;
-    }
-
-    ComResult setIcon(ComSurface icon)
+    ComResult setIcon(ComSurface icon) nothrow
     {
         assert(icon);
 
@@ -522,7 +629,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         SDL_Surface* surfPtr = nPtr.castSafe!(SDL_Surface*);
         if (!SDL_SetWindowIcon(ptr, surfPtr))
         {
-            return getErrorRes;
+            return getErrorRes("Error setting window icon");
         }
 
         return ComResult.success;
@@ -560,7 +667,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         return ComResult.success;
     }
 
-    ComResult setTextInputStop()
+    ComResult setTextInputStop() nothrow
     {
         assert(ptr);
         if (!SDL_StopTextInput(ptr))

@@ -5,15 +5,16 @@ import api.dm.com.graphics.com_screen : ComScreenId;
 import api.dm.kit.factories.factory_kit : FactoryKit;
 import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.dm.com.com_native_ptr : ComNativePtr;
-import api.dm.com.graphics.com_window : ComWindow;
+import api.dm.com.graphics.com_window : ComWindowId, ComWindow;
 import api.math.geom2.rect2 : Rect2d;
-import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec2 : Vec2d, Vec2i;
 
 import api.dm.kit.screens.single_screen : SingleScreen;
 
 import api.core.loggers.logging : Logging;
 
 import api.dm.com.graphics.com_renderer : ComRenderer;
+import api.dm.gui.themes.icons.icon_name;
 
 /**
  * Authors: initkfs
@@ -28,26 +29,29 @@ class Window : GraphicsComponent
         defaultPosY = -1
     }
 
-    Window parent;
-
-    SingleScreen screen;
-
     protected
     {
         Scene2d[] _scenes;
-    }
-
-    FactoryKit factory;
-
-    private
-    {
         Scene2d _currentScene;
+
+        ComWindow comWindow;
+
+        bool isClosing;
+
+        double lastChangedWidth = 0;
+        double lastChangedHeight = 0;
+
+        size_t lastShowingTick = 0;
     }
+
+    Window parent;
+    SingleScreen screen;
+    FactoryKit factory;
+    ComRenderer renderer;
 
     Window delegate(dstring, int, int, int, int, Window) childWindowProvider;
+    void delegate(double, double, double, double)[] onResizeOldNewWidthHeight;
 
-    //import std.container : DList;
-    //DList!(void delegate())
     void delegate(double)[] showingTasks;
     size_t showingTaskDelayTicks = 1;
 
@@ -61,10 +65,6 @@ class Window : GraphicsComponent
     void delegate()[] onBeforeDestroy;
     void delegate()[] onAfterDestroy;
 
-    void delegate(double, double, double, double)[] onResizeOldNewWidthHeight;
-
-    ComRenderer renderer;
-
     double frameRate = 0;
 
     bool isDestroyScenes = true;
@@ -74,21 +74,6 @@ class Window : GraphicsComponent
     bool isShowing;
     bool isDisposed;
 
-    protected
-    {
-        ComWindow comWindow;
-
-        bool isClosing;
-    }
-
-    private
-    {
-        double lastChangedWidth = 0;
-        double lastChangedHeight = 0;
-
-        size_t lastShowingTick = 0;
-    }
-
     this(ComWindow window)
     {
         import std.exception : enforce;
@@ -97,32 +82,13 @@ class Window : GraphicsComponent
         this.comWindow = window;
     }
 
-    override void initialize()
-    {
-        super.initialize;
-        if (const err = comWindow.initialize)
-        {
-            const errorMessage = "Window initialization error. " ~ err.toString;
-            if (logging)
-            {
-                logger.error(errorMessage);
-            }
-            throw new Exception(errorMessage);
-        }
-    }
-
     override void create()
     {
         super.create;
 
         if (const err = comWindow.create)
         {
-            const errorMessage = "Window FactoryKit error. " ~ err.toString;
-            if (logging)
-            {
-                logger.error(errorMessage);
-            }
-            throw new Exception(errorMessage);
+            throw new Exception(err.toString);
         }
 
         logger.tracef("Create window '%s' with id %d", title, id);
@@ -146,7 +112,7 @@ class Window : GraphicsComponent
     {
         import std.exception : enforce;
 
-        enforce(scene !is null, "Scene2d must not be null");
+        enforce(scene, "Scene must not be null");
 
         foreach (currScene; _scenes)
         {
@@ -156,7 +122,8 @@ class Window : GraphicsComponent
                 return;
             }
         }
-        throw new Exception("Scene2d not found in scene list: " ~ scene.name);
+
+        throw new Exception("Scene not found in scene list: " ~ scene.name);
     }
 
     alias build = GraphicsComponent.build;
@@ -165,7 +132,7 @@ class Window : GraphicsComponent
     {
         super.build(scene);
 
-        assert(factory, "Scene2d factories must not be null");
+        assert(factory, "Scene factories must not be null");
         scene.factory = factory;
     }
 
@@ -175,7 +142,7 @@ class Window : GraphicsComponent
     {
         import std.exception : enforce;
 
-        enforce(scene !is null, "Scene2d must not be null");
+        enforce(scene, "Scene must not be null");
 
         if (!scene.isBuilt)
         {
@@ -210,7 +177,7 @@ class Window : GraphicsComponent
     {
         import std.exception : enforce;
 
-        enforce(scene !is null, "Scene2d must not be null");
+        enforce(scene !is null, "Scene must not be null");
 
         foreach (sc; _scenes)
         {
@@ -236,7 +203,7 @@ class Window : GraphicsComponent
         return false;
     }
 
-    void change(Scene2d scene)
+    bool change(Scene2d scene)
     {
         //TODO check in scenes
         import ConfigKeys = api.dm.kit.kit_config_keys;
@@ -244,18 +211,23 @@ class Window : GraphicsComponent
         if (config.hasKey(ConfigKeys.sceneNameCurrent))
         {
             const sceneName = config.getNotEmptyString(ConfigKeys.sceneNameCurrent);
-            if (!sceneName.isNull && changeByName(sceneName.get))
+            if (!sceneName.isNull)
             {
-                return;
+                return changeByName(sceneName.get);
             }
         }
 
-        setCurrent(scene);
+        return setCurrent(scene);
     }
 
-    protected void setCurrent(Scene2d scene)
+    protected bool setCurrent(Scene2d scene)
     {
         assert(scene);
+
+        if (_currentScene is scene)
+        {
+            return false;
+        }
 
         if (_currentScene && _currentScene.isDestructible)
         {
@@ -264,18 +236,20 @@ class Window : GraphicsComponent
 
         if (!scene.isBuilt || scene.isDestructible)
         {
+            //TODO initialization
             create(scene);
         }
 
         _currentScene = scene;
+        return true;
     }
 
-    int id()
+    ComWindowId id()
     {
-        int winId;
+        ComWindowId winId;
         if (const err = comWindow.getId(winId))
         {
-            logger.error("Error obtain window id", err.toString);
+            logger.error(err.toString);
         }
         return winId;
     }
@@ -285,24 +259,23 @@ class Window : GraphicsComponent
         bool value;
         if (const err = comWindow.isShown(value))
         {
-            logger.error("Error reading window shown state. ", err.toString);
+            logger.error(err.toString);
         }
         return value;
     }
 
-    void show()
+    bool show()
     {
         if (isShowing)
         {
             //WARNING return
-            return;
+            return false;
         }
 
         if (const err = comWindow.show)
         {
-            logger.error("Error showing window. ", err.toString);
-            //WARNING return
-            return;
+            logger.error(err.toString);
+            return false;
         }
 
         isShowing = true;
@@ -310,6 +283,7 @@ class Window : GraphicsComponent
         focusRequest;
 
         logger.tracef("Show window '%s' with id %d", title, id);
+        return true;
     }
 
     bool isHidden()
@@ -317,7 +291,7 @@ class Window : GraphicsComponent
         bool value;
         if (const err = comWindow.isHidden(value))
         {
-            logger.error("Error reading window hidden state. ", err.toString);
+            logger.error(err.toString);
         }
         return value;
     }
@@ -394,14 +368,15 @@ class Window : GraphicsComponent
         comWindow.dispose;
         logger.trace("Dispose native window with id: ", windowId);
 
-        onCreate = null;
-        onShow = null;
-        onHide = null;
-        onClose = null;
-        onMinimize = null;
-        onMaximize = null;
-        onBeforeDestroy = null;
-        onResizeOldNewWidthHeight = null;
+        //TODO all fields
+        // onCreate = null;
+        // onShow = null;
+        // onHide = null;
+        // onClose = null;
+        // onMinimize = null;
+        // onMaximize = null;
+        // onBeforeDestroy = null;
+        // onResizeOldNewWidthHeight = null;
 
         isDisposed = true;
 
@@ -449,32 +424,31 @@ class Window : GraphicsComponent
         }
     }
 
-    void hide()
+    bool hide()
     {
         if (!isShowing)
         {
-            //WARNING return
-            return;
+            return false;
         }
 
         if (const err = comWindow.hide)
         {
-            logger.error("Error hiding window. ", err.toString);
-            //WARNING return
-            return;
+            logger.error(err.toString);
+            return false;
         }
 
         isShowing = false;
 
         logger.tracef("Hide window '%s' with id %d", title, id);
+        return true;
     }
 
-    void close()
+    bool close()
     {
         if (isClosing)
         {
             //WARNING return
-            return;
+            return false;
         }
 
         isClosing = true;
@@ -483,14 +457,17 @@ class Window : GraphicsComponent
         logger.tracef("Close window '%s' with id %d", title, id);
 
         dispose;
+        return true;
     }
 
-    void focusRequest()
+    bool focusRequest()
     {
         if (const err = comWindow.focusRequest)
         {
-            logger.error("Request focus error in window. ", err.toString);
+            logger.error(err.toString);
+            return false;
         }
+        return true;
     }
 
     bool isMinimized()
@@ -498,17 +475,19 @@ class Window : GraphicsComponent
         bool value;
         if (const err = comWindow.getMinimized(value))
         {
-            logger.error("Error reading window minimized property.. ", err.toString);
+            logger.error(err.toString);
         }
         return value;
     }
 
-    void minimize()
+    bool minimize()
     {
         if (const err = comWindow.setMinimized)
         {
-            logger.error("Window minimizing error. ", err.toString);
+            logger.error(err.toString);
+            return false;
         }
+        return true;
     }
 
     bool isMaximized()
@@ -516,25 +495,29 @@ class Window : GraphicsComponent
         bool value;
         if (const err = comWindow.getMaximized(value))
         {
-            logger.error("Error reading window maximized property.. ", err.toString);
+            logger.error(err.toString);
         }
         return value;
     }
 
-    void maximize()
+    bool maximize()
     {
         if (const err = comWindow.setMaximized)
         {
-            logger.error("Window maximizing error. ", err.toString);
+            logger.error(err.toString);
+            return false;
         }
+        return true;
     }
 
-    void isFullScreen(bool value)
+    bool isFullScreen(bool value)
     {
         if (const err = comWindow.setFullScreen(value))
         {
-            logger.error("Window fullscreen error. ", err.toString);
+            logger.error(err.toString);
+            return false;
         }
+        return true;
     }
 
     bool isFullScreen()
@@ -542,25 +525,29 @@ class Window : GraphicsComponent
         bool value;
         if (const err = comWindow.getFullScreen(value))
         {
-            logger.error("Error reading window fullscreen state. ", err.toString);
+            logger.error(err.toString);
         }
         return value;
     }
 
-    void restore()
+    bool restore()
     {
         if (const err = comWindow.restore)
         {
-            logger.error("Window restoring error. ", err.toString);
+            logger.error(err.toString);
+            return false;
         }
+        return true;
     }
 
-    void isDecorated(bool isDecorated)
+    bool isDecorated(bool isDecorated)
     {
         if (const err = comWindow.setDecorated(isDecorated))
         {
-            logger.error("Error changing window decoration property. ", err.toString);
+            logger.error(err.toString);
+            return false;
         }
+        return true;
     }
 
     bool isDecorated()
@@ -568,17 +555,19 @@ class Window : GraphicsComponent
         bool decorated;
         if (const err = comWindow.getDecorated(decorated))
         {
-            logger.error("Error changing window decoration property. ", err.toString);
+            logger.error(err.toString);
         }
         return decorated;
     }
 
-    void isResizable(bool isResizable)
+    bool isResizable(bool isResizable)
     {
         if (const err = comWindow.setResizable(isResizable))
         {
-            logger.error("Window resizable property change error. ", err.toString);
+            logger.error(err.toString);
+            return false;
         }
+        return true;
     }
 
     bool isResizable()
@@ -586,20 +575,21 @@ class Window : GraphicsComponent
         bool resizable;
         if (const err = comWindow.getResizable(resizable))
         {
-            logger.error("Error reading window resizable property. ", err.toString);
+            logger.error(err.toString);
         }
         return resizable;
     }
 
-    void resize(double newWidth, double newHeight)
+    bool resize(double newWidth, double newHeight)
     {
         if (const err = comWindow.setSize(cast(int) newWidth, cast(int) newHeight))
         {
-            logger.errorf("Resizing window error, new width %s, height %s, current width %s, height %s", newWidth, newHeight, width, height);
-            return;
+            logger.errorf("Resizing window error, new width %s, height %s, current width %s, height %s: %s", newWidth, newHeight, width, height, err);
+            return false;
         }
         lastChangedWidth = width;
         lastChangedHeight = height;
+        return true;
     }
 
     void confirmResize(double newWidth, double newHeight)
@@ -623,20 +613,18 @@ class Window : GraphicsComponent
         currentScene.rescale(factorWidth, factorHeight);
     }
 
-    Rect2d boundsScreen()
+    Rect2d boundsInScreen()
     {
-        import api.math.geom2.rect2 : Rect2d;
+        const Vec2d winPos = pos;
+        const Vec2d winSize = size;
 
-        Rect2d boundsRect = {x, y, width, height};
-        return boundsRect;
+        return Rect2d(winPos.x, winPos.y, winSize.x, winSize.y);
     }
 
     Rect2d boundsLocal()
     {
-        import api.math.geom2.rect2 : Rect2d;
-
-        Rect2d boundsRect = {0, 0, width, height};
-        return boundsRect;
+        const Vec2d winSize = size;
+        return Rect2d(0, 0, winSize.x, winSize.y);
     }
 
     Rect2d boundsSafe()
@@ -645,13 +633,12 @@ class Window : GraphicsComponent
         if (const err = comWindow.getSafeBounds(bounds))
         {
             logger.error(err.toString);
-            return Rect2d();
         }
         return bounds;
     }
 
-    int halfWidth() => width / 2;
-    int halfHeight() => height / 2;
+    double halfWidth() => width / 2;
+    double halfHeight() => height / 2;
 
     double frameCount(double delayMsec)
     {
@@ -665,67 +652,75 @@ class Window : GraphicsComponent
         return Math.round(delayMsec / (1000 / frameRate));
     }
 
-    int width()
+    double width()
     {
-        int width, height;
-        if (const err = comWindow.getSize(width, height))
+        int width;
+        if (const err = comWindow.getWidth(width))
         {
-            logger.error("Getting window size error for width. ", err.toString);
+            logger.error(err.toString);
         }
         return width;
     }
 
-    int height()
+    double height()
     {
-        int width, height;
-        if (const err = comWindow.getSize(width, height))
+        int height;
+        if (const err = comWindow.getHeight(height))
         {
-            logger.error("Getting window size error for height. ", err.toString);
+            logger.error(err.toString);
         }
         return height;
     }
 
-    Vec2d pos() => Vec2d(x, y);
-
-    void pos(int x, int y)
+    Vec2d size()
     {
-        if (const err = comWindow.setPos(x, y))
+        int width, height;
+        if (const err = comWindow.getSize(width, height))
+        {
+            logger.error(err.toString);
+        }
+        return Vec2d(width, height);
+    }
+
+    Vec2d pos()
+    {
+        int x, y;
+        if (const err = comWindow.getPos(x, y))
+        {
+            logger.trace(err.toString);
+        }
+        return Vec2d(x, y);
+    }
+
+    bool pos(Vec2d newPos)
+    {
+        return pos(newPos.x, newPos.y);
+    }
+
+    bool pos(double x, double y)
+    {
+        if (const err = comWindow.setPos(cast(int) x, cast(int) y))
         {
             logger.errorf("Window coordinate setting error, x: %s, y: %s. %s", x, y, err.toString);
+            return false;
         }
+        return true;
     }
 
-    int x()
-    {
-        int x, y;
-        if (const err = comWindow.getPos(x, y))
-        {
-            logger.tracef("Error getting window position 'x'. ", err.toString);
-        }
-        return x;
-    }
-
-    int y()
-    {
-        int x, y;
-        if (const err = comWindow.getPos(x, y))
-        {
-            logger.tracef("Error getting window position 'y'. ", err.toString);
-        }
-        return y;
-    }
+    double x() => pos.x;
+    double y() => pos.y;
 
     dstring title()
     {
         dstring winTitle;
         if (const err = comWindow.getTitle(winTitle))
         {
-            logger.tracef("Error getting window title. ", err.toString);
+            logger.error(err.toString);
         }
         return winTitle;
     }
 
-    void title(dstring title)
+    bool title(dstring title)
     {
         import std.string : toStringz;
         import std.conv : to;
@@ -733,14 +728,15 @@ class Window : GraphicsComponent
         //TODO dup\copy?
         if (const err = comWindow.setTitle(title))
         {
-            logger.error("Error setting window title: ", err.toString);
+            logger.error(err.toString);
+            return false;
         }
+        return true;
     }
 
-    void setNormalWindow()
+    bool setNormalWindow()
     {
-        isDecorated(true);
-        isResizable(true);
+        return isDecorated(true) && isResizable(true);
     }
 
     ComScreenId screenId()
@@ -748,7 +744,7 @@ class Window : GraphicsComponent
         ComScreenId id;
         if (const err = comWindow.getScreenId(id))
         {
-            logger.error("Error getting screen from window: ", err.toString);
+            logger.error(err.toString);
             return 0;
         }
         return id;
@@ -797,12 +793,10 @@ class Window : GraphicsComponent
 
     Vec2d dpiRatio()
     {
-        int winWidth, winHeight;
-        if (const err = comWindow.getSize(winWidth, winHeight))
-        {
-            logger.error("Getting window size error. ", err.toString);
-            return Vec2d.init;
-        }
+        const winSize = size;
+
+        double winWidth = winSize.x;
+        double winHeight = winSize.y;
 
         auto renderBounds = graphics.renderBounds;
         if (renderBounds.width == 0 || renderBounds.height == 0)
@@ -816,11 +810,13 @@ class Window : GraphicsComponent
         return Vec2d(hRatio, vRatio);
     }
 
-    void nativePtr(out ComNativePtr ptr)
+    bool nativePtr(out ComNativePtr ptr)
     {
         if (const err = comWindow.nativePtr(ptr))
         {
             logger.error("Native window pointer is invalid");
+            return false;
         }
+        return true;
     }
 }
