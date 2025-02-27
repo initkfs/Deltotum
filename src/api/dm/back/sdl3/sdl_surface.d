@@ -11,6 +11,7 @@ import api.dm.com.platforms.results.com_result : ComResult;
 import api.dm.com.com_native_ptr : ComNativePtr;
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
 import api.dm.back.sdl3.sdl_window : SdlWindow;
+import api.dm.com.com_native_ptr : ComNativePtr;
 
 import api.math.geom2.rect2 : Rect2d;
 import std.typecons : Tuple;
@@ -98,14 +99,17 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult createFromPtr(void* newPtr) nothrow
+    ComResult create(ComNativePtr newPtr) nothrow
     {
-        assert(newPtr);
+        SDL_Surface* newSdlPtr = newPtr.castSafe!(SDL_Surface*);
+        assert(newSdlPtr);
+
         if (ptr)
         {
             disposePtr;
         }
-        this.ptr = cast(SDL_Surface*) newPtr;
+
+        this.ptr = newSdlPtr;
         return ComResult.success;
     }
 
@@ -217,7 +221,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
             return getErrorRes("Cannot duplicate surface");
         }
 
-        if (const err = dst.createFromPtr(newSurfacePtr))
+        if (const err = dst.create(ComNativePtr(newSurfacePtr)))
         {
             return err;
         }

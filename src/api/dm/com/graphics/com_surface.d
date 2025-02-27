@@ -26,7 +26,7 @@ nothrow:
 
     ComResult createRGBA32(int width, int height);
     ComResult createABGR32(int width, int height);
-    ComResult createFromPtr(void* ptr) nothrow;
+    ComResult create(ComNativePtr ptr) nothrow;
 
     //pitch = image-width × bytes-per-pixel + padding-between-rows
     ComResult getPixelRowLenBytes(out int pitch);

@@ -91,8 +91,10 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
             return getErrorRes("Unable to render text");
         }
 
+        import api.dm.com.com_native_ptr: ComNativePtr;
+
         //TODO unsafe
-        if (const err = targetSurface.createFromPtr(cast(void*) fontSurfacePtr))
+        if (const err = targetSurface.create(ComNativePtr(fontSurfacePtr)))
         {
             return err;
         }
