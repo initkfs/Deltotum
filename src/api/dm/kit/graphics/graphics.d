@@ -209,16 +209,14 @@ class Graphics : LoggableUnit
         line(startX, startY, endX, endY);
     }
 
-    void polygon(Vec2d[] points) => polygon(points, points.length);
-
-    void polygon(Vec2d[] points, size_t count)
+    void polygon(Vec2d[] points)
     {
         if (points.length == 0)
         {
             return;
         }
 
-        if (const err = renderer.drawLines(points, count))
+        if (const err = renderer.drawLines(points))
         {
             logger.errorf("Lines drawing error. %s", err);
         }
@@ -963,7 +961,7 @@ class Graphics : LoggableUnit
             restoreColor;
         }
 
-        if (const err = renderer.clear)
+        if (const err = renderer.clearAndFill)
         {
             //TODO logging in main loop?
         }
@@ -995,13 +993,13 @@ class Graphics : LoggableUnit
         }
     }
 
-    void logicalSize(int width, int height)
-    {
-        if (const err = renderer.setLogicalSize(width, height))
-        {
-            logger.error(err);
-        }
-    }
+    // void logicalSize(int width, int height)
+    // {
+    //     if (const err = renderer.setLogicalSize(width, height))
+    //     {
+    //         logger.error(err);
+    //     }
+    // }
 
     Rect2d renderBounds()
     {

@@ -571,7 +571,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         SdlTexture t = cast(SdlTexture) other;
         assert(t);
         SDL_FPoint* rotateCenter = null;
-        return renderer.copyEx(t, &srcRect, &destRect, angle, rotateCenter, sdlFlip);
+        return renderer.renderTextureEx(t, &srcRect, &destRect, angle, rotateCenter, sdlFlip);
     }
 
     ComResult copy(out ComTexture toTexture)

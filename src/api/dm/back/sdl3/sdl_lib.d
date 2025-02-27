@@ -32,7 +32,7 @@ class SdlLib : SdlObject
     ComResult quit() nothrow
     {
         SDL_Quit();
-        
+
         return ComResult.success;
     }
 
@@ -149,5 +149,29 @@ class SdlLib : SdlObject
     {
         auto isEnabled = SDL_ScreenSaverEnabled();
         return isEnabled;
+    }
+
+    ComResult onRendererDriver(scope bool delegate(const(char*)) onDriverIsContinue)
+    {
+        int numDrivers = SDL_GetNumRenderDrivers;
+        if (numDrivers == 0)
+        {
+            return ComResult.success;
+        }
+
+        foreach (int i; 0 .. numDrivers)
+        {
+            const char* name = SDL_GetRenderDriver(i);
+            if (!name)
+            {
+                return getErrorRes("Error getting SDL renderer driver name");
+            }
+            if (!onDriverIsContinue(name))
+            {
+                break;
+            }
+        }
+
+        return ComResult.success;
     }
 }

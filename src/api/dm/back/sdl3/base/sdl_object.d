@@ -1,12 +1,16 @@
 module api.dm.back.sdl3.base.sdl_object;
 
+import api.math.geom2.rect2;
+
 // dfmt off
 version(SdlBackend):
 // dfmt on
 
 import api.dm.com.platforms.objects.com_object : ComObject;
 import api.dm.com.platforms.results.com_result : ComResult;
-import api.dm.com.graphics.com_blend_mode: ComBlendMode;
+import api.dm.com.graphics.com_blend_mode : ComBlendMode;
+
+import api.math.geom2.rect2 : Rect2d;
 
 import std.string : toStringz, fromStringz;
 
@@ -81,6 +85,17 @@ class SdlObject : ComObject
                 break;
         }
         return newMode;
+    }
+
+    SDL_Rect toSdlRect(Rect2d rect) pure nothrow
+    {
+        return SDL_Rect(cast(int) rect.x, cast(int) rect.y, cast(int) rect.width, cast(int) rect
+                .height);
+    }
+
+    Rect2d fromSdlRect(SDL_Rect rect) pure nothrow
+    {
+        return Rect2d(rect.x, rect.y, rect.w, rect.h);
     }
 
     ComBlendMode fromNativeBlendMode(SDL_BlendMode mode) const nothrow @safe
