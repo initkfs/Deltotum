@@ -9,6 +9,7 @@ enum size_t maxToneCount = 14;
 
 immutable:
 
+//Start colors
 string red50 = "#ffebee";
 string red100 = "#ffcdd2";
 string red200 = "#ef9a9a";

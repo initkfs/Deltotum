@@ -1,8 +1,6 @@
 module api.core.configs.keyvalues.aa_const_config;
 
 import api.core.configs.keyvalues.config : Config;
-import api.core.configs.exceptions.config_value_incorrect_exception : ConfigValueIncorrectException;
-import api.core.configs.exceptions.config_value_notfound_exception : ConfigValueNotFoundException;
 
 import std.typecons : Nullable;
 import std.conv : to;
@@ -77,7 +75,7 @@ class AAConstConfig(V = string) : Config
         {
             if (isThrowOnNotExistentKey)
             {
-                throw new ConfigValueNotFoundException(
+                throw new Exception(
                     "Not found boolean value in AA config with key: " ~ key);
             }
             else
@@ -101,7 +99,7 @@ class AAConstConfig(V = string) : Config
         {
             if (isThrowOnNotExistentKey)
             {
-                throw new ConfigValueNotFoundException(
+                throw new Exception(
                     "Not found string value in AA config with key: " ~ key);
             }
             else
@@ -126,7 +124,7 @@ class AAConstConfig(V = string) : Config
         {
             if (isThrowOnNotExistentKey)
             {
-                throw new ConfigValueNotFoundException(
+                throw new Exception(
                     "Not found integer value in AA config with key: " ~ key);
             }
             else
@@ -150,7 +148,7 @@ class AAConstConfig(V = string) : Config
         {
             if (isThrowOnNotExistentKey)
             {
-                throw new ConfigValueNotFoundException(
+                throw new Exception(
                     "Not found long value in AA config with key: " ~ key);
             }
             else
@@ -174,7 +172,7 @@ class AAConstConfig(V = string) : Config
         {
             if (isThrowOnNotExistentKey)
             {
-                throw new ConfigValueNotFoundException(
+                throw new Exception(
                     "Not found double value in AA config with key: " ~ key);
             }
             else

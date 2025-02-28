@@ -1,8 +1,6 @@
 module api.core.configs.keyvalues.config_aggregator;
 
 import api.core.configs.keyvalues.config : Config;
-import api.core.configs.exceptions.config_value_incorrect_exception : ConfigValueIncorrectException;
-import api.core.configs.exceptions.config_value_notfound_exception : ConfigValueNotFoundException;
 
 import std.typecons : Nullable;
 
@@ -124,7 +122,7 @@ class ConfigAggregator : Config
 
         if (isThrowOnNotExistentKey)
         {
-            throw new ConfigValueNotFoundException("Not found config for key: " ~ key);
+            throw new Exception("Not found config for key: " ~ key);
         }
 
         return null;
@@ -150,7 +148,7 @@ class ConfigAggregator : Config
         {
             import std.conv : text;
 
-            throw new ConfigValueIncorrectException(text("Not found config for key ", key, " and bool value ", value));
+            throw new Exception(text("Not found config for key ", key, " and bool value ", value));
         }
 
         return false;
@@ -176,7 +174,7 @@ class ConfigAggregator : Config
         {
             import std.conv : text;
 
-            throw new ConfigValueIncorrectException(text("Not found config for key ", key, " and string value ", value));
+            throw new Exception(text("Not found config for key ", key, " and string value ", value));
         }
 
         return false;
@@ -202,7 +200,7 @@ class ConfigAggregator : Config
         {
             import std.conv : text;
 
-            throw new ConfigValueIncorrectException(text("Not found config for key ", key, " and int value ", value));
+            throw new Exception(text("Not found config for key ", key, " and int value ", value));
         }
 
         return false;
@@ -228,7 +226,7 @@ class ConfigAggregator : Config
         {
             import std.conv : text;
 
-            throw new ConfigValueIncorrectException(text("Not found config for key ", key, " and long value ", value));
+            throw new Exception(text("Not found config for key ", key, " and long value ", value));
         }
 
         return false;
@@ -253,7 +251,7 @@ class ConfigAggregator : Config
         {
             import std.conv : text;
 
-            throw new ConfigValueIncorrectException(text("Not found config for key ", key, " and double value ", value));
+            throw new Exception(text("Not found config for key ", key, " and double value ", value));
         }
 
         return false;

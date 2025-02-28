@@ -1,8 +1,5 @@
 module api.core.configs.keyvalues.config;
 
-import api.core.configs.exceptions.config_value_incorrect_exception : ConfigValueIncorrectException;
-import api.core.configs.exceptions.config_value_notfound_exception : ConfigValueNotFoundException;
-
 import std.typecons : Nullable;
 
 /**
@@ -51,7 +48,7 @@ abstract class Config
             {
                 import std.format : format;
 
-                throw new ConfigValueIncorrectException(format(
+                throw new Exception(format(
                         "Expected positive long value from config with key '%s', but received %s", key, value));
             }
         }
@@ -65,7 +62,7 @@ abstract class Config
         {
             import std.format : format;
 
-            throw new ConfigValueIncorrectException(format(
+            throw new Exception(format(
                     "Expected positive long value for config with key '%s', but received %s", key, value));
         }
         return setLong(key, value);
@@ -84,7 +81,7 @@ abstract class Config
             {
                 import std.format : format;
 
-                throw new ConfigValueIncorrectException(format(
+                throw new Exception(format(
                         "Expected finite double from config with key '%s', but received %s", key, val));
             }
         }
@@ -100,7 +97,7 @@ abstract class Config
         {
             import std.format : format;
 
-            throw new ConfigValueIncorrectException(format(
+            throw new Exception(format(
                     "Expected finite double for config with key '%s', but received %s", key, value));
         }
         return setDouble(key, value);
@@ -114,7 +111,7 @@ abstract class Config
             const string value = mustBeString.get;
             if (value.length == 0)
             {
-                throw new ConfigValueIncorrectException(
+                throw new Exception(
                     "Received empty string value from config with key: " ~ key);
             }
         }
@@ -127,7 +124,7 @@ abstract class Config
 
         if (value.strip.length == 0)
         {
-            throw new ConfigValueIncorrectException(
+            throw new Exception(
                 "String must not be empty for config with key: " ~ key);
         }
         return setString(key, value);

@@ -1,7 +1,6 @@
 module api.core.components.units.simple_unit;
 
 import api.core.components.units.unitable : Unitable;
-import api.core.components.units.states.illegal_unit_state_exception : IllegalUnitStateException;
 import api.core.components.units.states.unit_state : UnitState;
 
 /**
@@ -60,7 +59,7 @@ class SimpleUnit : Unitable
             {
                 import std.format : format;
 
-                throw new IllegalUnitStateException(format("Cannot initialize component '%s' with state: %s",
+                throw new Exception(format("Cannot initialize component '%s' with state: %s",
                         className, _state));
             }
         }
@@ -115,7 +114,7 @@ class SimpleUnit : Unitable
             {
                 import std.format : format;
 
-                throw new IllegalUnitStateException(format("Cannot create component '%s' with state: %s",
+                throw new Exception(format("Cannot create component '%s' with state: %s",
                         className, _state));
             }
         }
@@ -164,7 +163,7 @@ class SimpleUnit : Unitable
             {
                 import std.format : format;
 
-                throw new IllegalUnitStateException(format("Cannot run component '%s' with state: %s",
+                throw new Exception(format("Cannot run component '%s' with state: %s",
                         className, _state));
             }
         }
@@ -214,7 +213,7 @@ class SimpleUnit : Unitable
             {
                 import std.format : format;
 
-                throw new IllegalUnitStateException(format("Cannot pause component '%s' with state: %s",
+                throw new Exception(format("Cannot pause component '%s' with state: %s",
                         className, _state));
             }
         }
@@ -258,7 +257,7 @@ class SimpleUnit : Unitable
             {
                 import std.format : format;
 
-                throw new IllegalUnitStateException(format("Cannot stop component '%s' with state: %s",
+                throw new Exception(format("Cannot stop component '%s' with state: %s",
                         className, _state));
             }
         }
@@ -302,7 +301,7 @@ class SimpleUnit : Unitable
             {
                 import std.format : format;
 
-                throw new IllegalUnitStateException(format("Cannot dispose component '%s' with state: %s",
+                throw new Exception(format("Cannot dispose component '%s' with state: %s",
                         className, _state));
             }
         }
