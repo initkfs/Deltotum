@@ -48,6 +48,9 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return create(width, height, SDL_PIXELFORMAT_ABGR32);
     }
 
+    ComResult createARGB32(int width, int height) nothrow => create(width, height, SDL_PIXELFORMAT_ARGB32);
+    ComResult createBGRA32(int width, int height) nothrow => create(width, height, SDL_PIXELFORMAT_BGRA32);
+
     ComResult create(int newWidth, int newHeight, uint format) nothrow
     {
         if (ptr)

@@ -136,8 +136,14 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             return err;
         }
 
-        SDL_Surface* surfPtr = newPtr.castSafe!(SDL_Surface*);
-        return create(surfPtr);
+        ComNativePtr surfPtr;
+        if (const err = surface.nativePtr(surfPtr))
+        {
+            return err;
+        }
+
+        SDL_Surface* sptr = surfPtr.castSafe!(SDL_Surface*);
+        return create(sptr);
     }
 
     ComResult create(SDL_Surface* surface) nothrow

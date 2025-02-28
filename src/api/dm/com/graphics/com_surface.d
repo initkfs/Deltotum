@@ -25,7 +25,9 @@ interface ComSurface : Destroyable
 nothrow:
 
     ComResult createRGBA32(int width, int height);
+    ComResult createARGB32(int width, int height);
     ComResult createABGR32(int width, int height);
+    ComResult createBGRA32(int width, int height);
     ComResult createUnsafe(void* ptr) nothrow;
     ComResult create(ComNativePtr ptr) nothrow;
 

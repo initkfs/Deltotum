@@ -53,7 +53,7 @@ class VectorTexture : Texture2d
 
         import api.dm.com.platforms.results.com_result : ComResult;
 
-        if (const createErr = comSurface.createRGBA32(cast(int) width, cast(int) height))
+        if (const createErr = comSurface.createBGRA32(cast(int) width, cast(int) height))
         {
             throw new Exception(createErr.toString);
         }
