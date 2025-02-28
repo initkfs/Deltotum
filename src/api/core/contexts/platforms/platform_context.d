@@ -1,7 +1,5 @@
 module api.core.contexts.platforms.platform_context;
 
-import std.typecons : Nullable;
-
 /**
  * Authors: initkfs
  */

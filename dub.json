@@ -74,15 +74,15 @@
             "platforms": [
                 "linux"
             ],
-            "dflags-ldc": [
-                "--ftime-trace",
-                "--ftime-trace-file=$PACKAGE_DIR/trace.json"
+            "dflags": [
+                "-ftime-trace",
+                "-ftime-trace-file=$PACKAGE_DIR/trace.json"
             ],
             "postBuildCommands": [
                 "timetrace2txt $PACKAGE_DIR/trace.json --tsv $PACKAGE_DIR/trace.tsv -o $PACKAGE_DIR/trace.txt"
             ],
             "excludedSourceFiles": [
-                "src/dm/addon/*"
+                "src/api/dm/addon/*"
             ]
         }
     ],

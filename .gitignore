@@ -9,6 +9,7 @@
 /src/app/game
 /build.sh
 /trace.*
+/*.tsv
 /libjulia.so
 /libdm.so
 /*.groovy

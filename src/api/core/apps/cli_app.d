@@ -385,11 +385,11 @@ class CliApp : SimpleUnit
                 const mustBeDataDir = context
                     .appContext.dataDir;
                 if (
-                    mustBeDataDir.isNull)
+                    mustBeDataDir.length == 0)
                 {
                     throw new Exception("Config path directory from cli is relative, but the data directory was not found in application context");
                 }
-                configDir = buildPath(mustBeDataDir.get, configDir);
+                configDir = buildPath(mustBeDataDir, configDir);
                 uservices.cli.printer.printIfNotSilent(
                     "Convert config directory path from cli to absolute path: " ~ configDir);
             }
@@ -398,10 +398,9 @@ class CliApp : SimpleUnit
         {
             const mustBeDataDir = context
                 .appContext.dataDir;
-            if (
-                !mustBeDataDir.isNull)
+            if (mustBeDataDir.length > 0)
             {
-                configDir = buildPath(mustBeDataDir.get, defaultConfigsDir);
+                configDir = buildPath(mustBeDataDir, defaultConfigsDir);
                 uservices.cli.printer.printIfNotSilent(
                     "Default config directory will be used: " ~ configDir);
             }
@@ -619,9 +618,8 @@ class CliApp : SimpleUnit
         }
         else
         {
-            const mustBeDataDir = context
-                .appContext.dataDir;
-            if (mustBeDataDir.isNull)
+            const mustBeDataDir = context.appContext.dataDir;
+            if (mustBeDataDir.length == 0)
             {
                 logging.logger.infof(
                     "Received relative path '%s', but data directory not found", mustBeResDir);
@@ -629,7 +627,7 @@ class CliApp : SimpleUnit
                 return newResource(logging);
             }
 
-            mustBeResDir = buildPath(mustBeDataDir.get, mustBeResDir);
+            mustBeResDir = buildPath(mustBeDataDir, mustBeResDir);
             if (!mustBeResDir.exists || !mustBeResDir
                 .isDir)
             {

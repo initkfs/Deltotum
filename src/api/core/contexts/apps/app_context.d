@@ -1,7 +1,5 @@
 module api.core.contexts.apps.app_context;
 
-import std.typecons : Nullable;
-
 /**
  * Authors: initkfs
  */
@@ -35,19 +33,11 @@ class AppContext
         this.isSilent = isSilent;
     }
 
-    Nullable!string workDir() const nothrow pure @safe
+    const nothrow pure @safe
     {
-        return _workDir ? Nullable!string(_workDir) : Nullable!string.init;
-    }
-
-    Nullable!string dataDir() const nothrow pure @safe
-    {
-        return _dataDir ? Nullable!string(_dataDir) : Nullable!string.init;
-    }
-
-    Nullable!string userDir() const nothrow pure @safe
-    {
-        return _userDir ? Nullable!string(_userDir) : Nullable!string.init;
+        string workDir() => _workDir;
+        string dataDir() => _dataDir;
+        string userDir() => _userDir;
     }
 
     immutable(AppContext) idup() immutable
@@ -67,7 +57,7 @@ unittest
 {
     immutable context = new immutable AppContext;
 
-    assert(context.dataDir.isNull);
-    assert(context.userDir.isNull);
-    assert(context.workDir.isNull);
+    assert(context.dataDir.length == 0);
+    assert(context.userDir.length == 0);
+    assert(context.workDir.length == 0);
 }

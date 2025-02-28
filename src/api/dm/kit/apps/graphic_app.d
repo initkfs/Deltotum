@@ -130,7 +130,8 @@ abstract class GraphicApp : CliApp
 
     I18n createI18n(Logging logging, Config config, Context context)
     {
-        if (context.appContext.dataDir.isNull)
+        const dataDir = context.appContext.dataDir;
+        if (dataDir.length == 0)
         {
             logging.logger.trace("Not found data dir, i18n not loaded");
             return newI18n;
@@ -141,7 +142,7 @@ abstract class GraphicApp : CliApp
         import std.algorithm.iteration : filter;
 
         //TODO from config;
-        auto langDir = buildPath(context.appContext.dataDir.get, "langs");
+        auto langDir = buildPath(dataDir, "langs");
         if (!langDir.exists || !langDir.isDir)
         {
             logging.logger.trace("Not found language dir: ", langDir);
