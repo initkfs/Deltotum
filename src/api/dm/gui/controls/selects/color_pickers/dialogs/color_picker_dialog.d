@@ -400,30 +400,48 @@ class ColorPickerDialog : Control
                 size_t colIndex;
                 auto oldColor = graphics.getColor;
 
-                size_t pixelCounter;
+                MaterialPalette.onColor((color, i) {
+                    graphics.changeColor(RGBA.web(color));
+                    graphics.fillRect(nextX, nextY, paletteColorSize, paletteColorSize);
 
-                static foreach (color; __traits(allMembers, MaterialPalette))
-                {
-                    static if (is(typeof(__traits(getMember, MaterialPalette, color)) : string))
+                    colorPixels[i] = ColorInfo(Rect2d(nextX, nextY, paletteColorSize, paletteColorSize), graphics
+                        .getColor, color);
+
+                    nextX += paletteColorSize;
+                    colIndex++;
+
+                    if (colIndex >= colorInRow)
                     {
-                        graphics.changeColor(RGBA.web(__traits(getMember, MaterialPalette, color)));
-                        graphics.fillRect(nextX, nextY, paletteColorSize, paletteColorSize);
-
-                        colorPixels[pixelCounter] = ColorInfo(Rect2d(nextX, nextY, paletteColorSize, paletteColorSize), graphics
-                                .getColor, color);
-                        pixelCounter++;
-
-                        nextX += paletteColorSize;
-                        colIndex++;
-
-                        if (colIndex >= colorInRow)
-                        {
-                            colIndex = 0;
-                            nextX = 0;
-                            nextY += paletteColorSize;
-                        }
+                        colIndex = 0;
+                        nextX = 0;
+                        nextY += paletteColorSize;
                     }
-                }
+
+                    return true;
+                });
+
+                // static foreach (color; __traits(allMembers, MaterialPalette))
+                // {
+                //     static if (is(typeof(__traits(getMember, MaterialPalette, color)) : string))
+                //     {
+                //         graphics.changeColor(RGBA.web(__traits(getMember, MaterialPalette, color)));
+                //         graphics.fillRect(nextX, nextY, paletteColorSize, paletteColorSize);
+
+                //         colorPixels[pixelCounter] = ColorInfo(Rect2d(nextX, nextY, paletteColorSize, paletteColorSize), graphics
+                //                 .getColor, color);
+                //         pixelCounter++;
+
+                //         nextX += paletteColorSize;
+                //         colIndex++;
+
+                //         if (colIndex >= colorInRow)
+                //         {
+                //             colIndex = 0;
+                //             nextX = 0;
+                //             nextY += paletteColorSize;
+                //         }
+                //     }
+                // }
 
                 //assert(pixelCounter == colorPixels.length);
                 graphics.setColor(oldColor);
@@ -444,7 +462,8 @@ class ColorPickerDialog : Control
                     auto color = colorInfo.color;
                     color.a = alpha;
                     updateColor(color);
-                    if(palNameText){
+                    if (palNameText)
+                    {
                         palNameText.text = colorInfo.name;
                     }
                 }

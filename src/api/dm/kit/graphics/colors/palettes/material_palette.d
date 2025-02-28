@@ -4,7 +4,7 @@ module api.dm.kit.graphics.colors.palettes.material_palette;
  * Authors: initkfs
  */
 
-enum size_t colorCount = 19; 
+enum size_t colorCount = 19;
 enum size_t maxToneCount = 14;
 
 immutable:
@@ -282,3 +282,516 @@ string bluegrey600 = "#546e7a";
 string bluegrey700 = "#455a64";
 string bluegrey800 = "#37474f";
 string bluegrey900 = "#263238";
+
+void onColor(scope bool delegate(string color, size_t colorIndex) onColorIsContinue)
+{
+    size_t colorIndex;
+    if (!onColorIsContinue(red50, colorIndex++))
+        return;
+    if (!onColorIsContinue(red100, colorIndex++))
+        return;
+    if (!onColorIsContinue(red200, colorIndex++))
+        return;
+    if (!onColorIsContinue(red300, colorIndex++))
+        return;
+    if (!onColorIsContinue(red400, colorIndex++))
+        return;
+    if (!onColorIsContinue(red500, colorIndex++))
+        return;
+    if (!onColorIsContinue(red600, colorIndex++))
+        return;
+    if (!onColorIsContinue(red700, colorIndex++))
+        return;
+    if (!onColorIsContinue(red800, colorIndex++))
+        return;
+    if (!onColorIsContinue(red900, colorIndex++))
+        return;
+    if (!onColorIsContinue(redA100, colorIndex++))
+        return;
+    if (!onColorIsContinue(redA200, colorIndex++))
+        return;
+    if (!onColorIsContinue(redA400, colorIndex++))
+        return;
+    if (!onColorIsContinue(redA700, colorIndex++))
+        return;
+    if (!onColorIsContinue(pink50, colorIndex++))
+        return;
+    if (!onColorIsContinue(pink100, colorIndex++))
+        return;
+    if (!onColorIsContinue(pink200, colorIndex++))
+        return;
+    if (!onColorIsContinue(pink300, colorIndex++))
+        return;
+    if (!onColorIsContinue(pink400, colorIndex++))
+        return;
+    if (!onColorIsContinue(pink500, colorIndex++))
+        return;
+    if (!onColorIsContinue(pink600, colorIndex++))
+        return;
+    if (!onColorIsContinue(pink700, colorIndex++))
+        return;
+    if (!onColorIsContinue(pink800, colorIndex++))
+        return;
+    if (!onColorIsContinue(pink900, colorIndex++))
+        return;
+    if (!onColorIsContinue(pinkA100, colorIndex++))
+        return;
+    if (!onColorIsContinue(pinkA200, colorIndex++))
+        return;
+    if (!onColorIsContinue(pinkA400, colorIndex++))
+        return;
+    if (!onColorIsContinue(pinkA700, colorIndex++))
+        return;
+    if (!onColorIsContinue(purple50, colorIndex++))
+        return;
+    if (!onColorIsContinue(purple100, colorIndex++))
+        return;
+    if (!onColorIsContinue(purple200, colorIndex++))
+        return;
+    if (!onColorIsContinue(purple300, colorIndex++))
+        return;
+    if (!onColorIsContinue(purple400, colorIndex++))
+        return;
+    if (!onColorIsContinue(purple500, colorIndex++))
+        return;
+    if (!onColorIsContinue(purple600, colorIndex++))
+        return;
+    if (!onColorIsContinue(purple700, colorIndex++))
+        return;
+    if (!onColorIsContinue(purple800, colorIndex++))
+        return;
+    if (!onColorIsContinue(purple900, colorIndex++))
+        return;
+    if (!onColorIsContinue(purpleA100, colorIndex++))
+        return;
+    if (!onColorIsContinue(purpleA200, colorIndex++))
+        return;
+    if (!onColorIsContinue(purpleA400, colorIndex++))
+        return;
+    if (!onColorIsContinue(purpleA700, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeppurple50, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeppurple100, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeppurple200, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeppurple300, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeppurple400, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeppurple500, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeppurple600, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeppurple700, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeppurple800, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeppurple900, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeppurpleA100, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeppurpleA200, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeppurpleA400, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeppurpleA700, colorIndex++))
+        return;
+    if (!onColorIsContinue(indigo50, colorIndex++))
+        return;
+    if (!onColorIsContinue(indigo100, colorIndex++))
+        return;
+    if (!onColorIsContinue(indigo200, colorIndex++))
+        return;
+    if (!onColorIsContinue(indigo300, colorIndex++))
+        return;
+    if (!onColorIsContinue(indigo400, colorIndex++))
+        return;
+    if (!onColorIsContinue(indigo500, colorIndex++))
+        return;
+    if (!onColorIsContinue(indigo600, colorIndex++))
+        return;
+    if (!onColorIsContinue(indigo700, colorIndex++))
+        return;
+    if (!onColorIsContinue(indigo800, colorIndex++))
+        return;
+    if (!onColorIsContinue(indigo900, colorIndex++))
+        return;
+    if (!onColorIsContinue(indigoA100, colorIndex++))
+        return;
+    if (!onColorIsContinue(indigoA200, colorIndex++))
+        return;
+    if (!onColorIsContinue(indigoA400, colorIndex++))
+        return;
+    if (!onColorIsContinue(indigoA700, colorIndex++))
+        return;
+    if (!onColorIsContinue(blue50, colorIndex++))
+        return;
+    if (!onColorIsContinue(blue100, colorIndex++))
+        return;
+    if (!onColorIsContinue(blue200, colorIndex++))
+        return;
+    if (!onColorIsContinue(blue300, colorIndex++))
+        return;
+    if (!onColorIsContinue(blue400, colorIndex++))
+        return;
+    if (!onColorIsContinue(blue500, colorIndex++))
+        return;
+    if (!onColorIsContinue(blue600, colorIndex++))
+        return;
+    if (!onColorIsContinue(blue700, colorIndex++))
+        return;
+    if (!onColorIsContinue(blue800, colorIndex++))
+        return;
+    if (!onColorIsContinue(blue900, colorIndex++))
+        return;
+    if (!onColorIsContinue(blueA100, colorIndex++))
+        return;
+    if (!onColorIsContinue(blueA200, colorIndex++))
+        return;
+    if (!onColorIsContinue(blueA400, colorIndex++))
+        return;
+    if (!onColorIsContinue(blueA700, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightblue50, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightblue100, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightblue200, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightblue300, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightblue400, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightblue500, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightblue600, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightblue700, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightblue800, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightblue900, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightblueA100, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightblueA200, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightblueA400, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightblueA700, colorIndex++))
+        return;
+    if (!onColorIsContinue(cyan50, colorIndex++))
+        return;
+    if (!onColorIsContinue(cyan100, colorIndex++))
+        return;
+    if (!onColorIsContinue(cyan200, colorIndex++))
+        return;
+    if (!onColorIsContinue(cyan300, colorIndex++))
+        return;
+    if (!onColorIsContinue(cyan400, colorIndex++))
+        return;
+    if (!onColorIsContinue(cyan500, colorIndex++))
+        return;
+    if (!onColorIsContinue(cyan600, colorIndex++))
+        return;
+    if (!onColorIsContinue(cyan700, colorIndex++))
+        return;
+    if (!onColorIsContinue(cyan800, colorIndex++))
+        return;
+    if (!onColorIsContinue(cyan900, colorIndex++))
+        return;
+    if (!onColorIsContinue(cyanA100, colorIndex++))
+        return;
+    if (!onColorIsContinue(cyanA200, colorIndex++))
+        return;
+    if (!onColorIsContinue(cyanA400, colorIndex++))
+        return;
+    if (!onColorIsContinue(cyanA700, colorIndex++))
+        return;
+    if (!onColorIsContinue(teal50, colorIndex++))
+        return;
+    if (!onColorIsContinue(teal100, colorIndex++))
+        return;
+    if (!onColorIsContinue(teal200, colorIndex++))
+        return;
+    if (!onColorIsContinue(teal300, colorIndex++))
+        return;
+    if (!onColorIsContinue(teal400, colorIndex++))
+        return;
+    if (!onColorIsContinue(teal500, colorIndex++))
+        return;
+    if (!onColorIsContinue(teal600, colorIndex++))
+        return;
+    if (!onColorIsContinue(teal700, colorIndex++))
+        return;
+    if (!onColorIsContinue(teal800, colorIndex++))
+        return;
+    if (!onColorIsContinue(teal900, colorIndex++))
+        return;
+    if (!onColorIsContinue(tealA100, colorIndex++))
+        return;
+    if (!onColorIsContinue(tealA200, colorIndex++))
+        return;
+    if (!onColorIsContinue(tealA400, colorIndex++))
+        return;
+    if (!onColorIsContinue(tealA700, colorIndex++))
+        return;
+    if (!onColorIsContinue(green50, colorIndex++))
+        return;
+    if (!onColorIsContinue(green100, colorIndex++))
+        return;
+    if (!onColorIsContinue(green200, colorIndex++))
+        return;
+    if (!onColorIsContinue(green300, colorIndex++))
+        return;
+    if (!onColorIsContinue(green400, colorIndex++))
+        return;
+    if (!onColorIsContinue(green500, colorIndex++))
+        return;
+    if (!onColorIsContinue(green600, colorIndex++))
+        return;
+    if (!onColorIsContinue(green700, colorIndex++))
+        return;
+    if (!onColorIsContinue(green800, colorIndex++))
+        return;
+    if (!onColorIsContinue(green900, colorIndex++))
+        return;
+    if (!onColorIsContinue(greenA100, colorIndex++))
+        return;
+    if (!onColorIsContinue(greenA200, colorIndex++))
+        return;
+    if (!onColorIsContinue(greenA400, colorIndex++))
+        return;
+    if (!onColorIsContinue(greenA700, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightgreen50, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightgreen100, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightgreen200, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightgreen300, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightgreen400, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightgreen500, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightgreen600, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightgreen700, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightgreen800, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightgreen900, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightgreenA100, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightgreenA200, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightgreenA400, colorIndex++))
+        return;
+    if (!onColorIsContinue(lightgreenA700, colorIndex++))
+        return;
+    if (!onColorIsContinue(lime50, colorIndex++))
+        return;
+    if (!onColorIsContinue(lime100, colorIndex++))
+        return;
+    if (!onColorIsContinue(lime200, colorIndex++))
+        return;
+    if (!onColorIsContinue(lime300, colorIndex++))
+        return;
+    if (!onColorIsContinue(lime400, colorIndex++))
+        return;
+    if (!onColorIsContinue(lime500, colorIndex++))
+        return;
+    if (!onColorIsContinue(lime600, colorIndex++))
+        return;
+    if (!onColorIsContinue(lime700, colorIndex++))
+        return;
+    if (!onColorIsContinue(lime800, colorIndex++))
+        return;
+    if (!onColorIsContinue(lime900, colorIndex++))
+        return;
+    if (!onColorIsContinue(limeA100, colorIndex++))
+        return;
+    if (!onColorIsContinue(limeA200, colorIndex++))
+        return;
+    if (!onColorIsContinue(limeA400, colorIndex++))
+        return;
+    if (!onColorIsContinue(limeA700, colorIndex++))
+        return;
+    if (!onColorIsContinue(yellow50, colorIndex++))
+        return;
+    if (!onColorIsContinue(yellow100, colorIndex++))
+        return;
+    if (!onColorIsContinue(yellow200, colorIndex++))
+        return;
+    if (!onColorIsContinue(yellow300, colorIndex++))
+        return;
+    if (!onColorIsContinue(yellow400, colorIndex++))
+        return;
+    if (!onColorIsContinue(yellow500, colorIndex++))
+        return;
+    if (!onColorIsContinue(yellow600, colorIndex++))
+        return;
+    if (!onColorIsContinue(yellow700, colorIndex++))
+        return;
+    if (!onColorIsContinue(yellow800, colorIndex++))
+        return;
+    if (!onColorIsContinue(yellow900, colorIndex++))
+        return;
+    if (!onColorIsContinue(yellowA100, colorIndex++))
+        return;
+    if (!onColorIsContinue(yellowA200, colorIndex++))
+        return;
+    if (!onColorIsContinue(yellowA400, colorIndex++))
+        return;
+    if (!onColorIsContinue(yellowA700, colorIndex++))
+        return;
+    if (!onColorIsContinue(amber50, colorIndex++))
+        return;
+    if (!onColorIsContinue(amber100, colorIndex++))
+        return;
+    if (!onColorIsContinue(amber200, colorIndex++))
+        return;
+    if (!onColorIsContinue(amber300, colorIndex++))
+        return;
+    if (!onColorIsContinue(amber400, colorIndex++))
+        return;
+    if (!onColorIsContinue(amber500, colorIndex++))
+        return;
+    if (!onColorIsContinue(amber600, colorIndex++))
+        return;
+    if (!onColorIsContinue(amber700, colorIndex++))
+        return;
+    if (!onColorIsContinue(amber800, colorIndex++))
+        return;
+    if (!onColorIsContinue(amber900, colorIndex++))
+        return;
+    if (!onColorIsContinue(amberA100, colorIndex++))
+        return;
+    if (!onColorIsContinue(amberA200, colorIndex++))
+        return;
+    if (!onColorIsContinue(amberA400, colorIndex++))
+        return;
+    if (!onColorIsContinue(amberA700, colorIndex++))
+        return;
+    if (!onColorIsContinue(orange50, colorIndex++))
+        return;
+    if (!onColorIsContinue(orange100, colorIndex++))
+        return;
+    if (!onColorIsContinue(orange200, colorIndex++))
+        return;
+    if (!onColorIsContinue(orange300, colorIndex++))
+        return;
+    if (!onColorIsContinue(orange400, colorIndex++))
+        return;
+    if (!onColorIsContinue(orange500, colorIndex++))
+        return;
+    if (!onColorIsContinue(orange600, colorIndex++))
+        return;
+    if (!onColorIsContinue(orange700, colorIndex++))
+        return;
+    if (!onColorIsContinue(orange800, colorIndex++))
+        return;
+    if (!onColorIsContinue(orange900, colorIndex++))
+        return;
+    if (!onColorIsContinue(orangeA100, colorIndex++))
+        return;
+    if (!onColorIsContinue(orangeA200, colorIndex++))
+        return;
+    if (!onColorIsContinue(orangeA400, colorIndex++))
+        return;
+    if (!onColorIsContinue(orangeA700, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeporange50, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeporange100, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeporange200, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeporange300, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeporange400, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeporange500, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeporange600, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeporange700, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeporange800, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeporange900, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeporangeA100, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeporangeA200, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeporangeA400, colorIndex++))
+        return;
+    if (!onColorIsContinue(deeporangeA700, colorIndex++))
+        return;
+    if (!onColorIsContinue(brown50, colorIndex++))
+        return;
+    if (!onColorIsContinue(brown100, colorIndex++))
+        return;
+    if (!onColorIsContinue(brown200, colorIndex++))
+        return;
+    if (!onColorIsContinue(brown300, colorIndex++))
+        return;
+    if (!onColorIsContinue(brown400, colorIndex++))
+        return;
+    if (!onColorIsContinue(brown500, colorIndex++))
+        return;
+    if (!onColorIsContinue(brown600, colorIndex++))
+        return;
+    if (!onColorIsContinue(brown700, colorIndex++))
+        return;
+    if (!onColorIsContinue(brown800, colorIndex++))
+        return;
+    if (!onColorIsContinue(brown900, colorIndex++))
+        return;
+    if (!onColorIsContinue(grey50, colorIndex++))
+        return;
+    if (!onColorIsContinue(grey100, colorIndex++))
+        return;
+    if (!onColorIsContinue(grey200, colorIndex++))
+        return;
+    if (!onColorIsContinue(grey300, colorIndex++))
+        return;
+    if (!onColorIsContinue(grey400, colorIndex++))
+        return;
+    if (!onColorIsContinue(grey500, colorIndex++))
+        return;
+    if (!onColorIsContinue(grey600, colorIndex++))
+        return;
+    if (!onColorIsContinue(grey700, colorIndex++))
+        return;
+    if (!onColorIsContinue(grey800, colorIndex++))
+        return;
+    if (!onColorIsContinue(grey900, colorIndex++))
+        return;
+    if (!onColorIsContinue(bluegrey50, colorIndex++))
+        return;
+    if (!onColorIsContinue(bluegrey100, colorIndex++))
+        return;
+    if (!onColorIsContinue(bluegrey200, colorIndex++))
+        return;
+    if (!onColorIsContinue(bluegrey300, colorIndex++))
+        return;
+    if (!onColorIsContinue(bluegrey400, colorIndex++))
+        return;
+    if (!onColorIsContinue(bluegrey500, colorIndex++))
+        return;
+    if (!onColorIsContinue(bluegrey600, colorIndex++))
+        return;
+    if (!onColorIsContinue(bluegrey700, colorIndex++))
+        return;
+    if (!onColorIsContinue(bluegrey800, colorIndex++))
+        return;
+    if (!onColorIsContinue(bluegrey900, colorIndex++))
+        return;
+}
