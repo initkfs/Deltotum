@@ -9,6 +9,4 @@ import core.attribute : mustuse;
 {
     bool isExit;
     bool isInit;
-    
-    alias isInit this;
 }

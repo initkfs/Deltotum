@@ -50,7 +50,8 @@ extern (C) int dm_init(int argc, char** argv)
 
     app = new SdlApp("ext_app");
     app.isStrictConfigs = false;
-    if (auto isExit = app.initialize(args))
+    auto initRes = app.initialize(args);
+    if (initRes.isExit && !initRes.isInit)
     {
         writeln("Exit on initialization!");
         return -1;

@@ -29,7 +29,7 @@ class MainController
         application = new SdlApp("SdlApp");
         application.isStrictConfigs = false;
         auto initRes = application.initialize(args);
-        if (!initRes)
+        if (!initRes.isInit)
         {
             import std.stdio: stderr;
 

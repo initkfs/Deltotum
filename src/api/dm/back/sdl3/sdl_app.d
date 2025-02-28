@@ -120,7 +120,7 @@ class SdlApp : GuiApp
     override AppInitRet initialize(string[] args)
     {
         const initRes = super.initialize(args);
-        if (!initRes || initRes.isExit)
+        if (!initRes.isInit || initRes.isExit)
         {
             return initRes;
         }
