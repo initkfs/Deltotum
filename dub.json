@@ -104,6 +104,7 @@
         "-dip1000",
         "-preview=in",
         "-preview=fixAliasThis",
+        "-Xcc=-fuse-ld=lld",
         "-J=./data",
         "-P=-I./libs/sdl3/SDL_lib"
     ],
