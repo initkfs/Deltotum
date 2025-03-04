@@ -140,9 +140,8 @@ class XYChart : Container
             auto ns = newYScale1(0, chartAreaHeight);
             yScale1 = !onNewYScale1 ? ns : onNewYScale1(ns);
 
-            yScale1.isInvertY = true;
             yScale1.isInvertX = true;
-            yScale1.isDrawFirstTick = false;
+            //yScale1.isDrawFirstTick = false;
             yScale1.labelNumberPrecision = labelNumberPrecision;
             yScale1.isResizedByParent = false;
             yScale1.prefLabelGlyphWidth = prefLabelGlyphWidth;

@@ -16,7 +16,7 @@ struct BarData
 {
     dstring label;
     double valueY = 0;
-    RGBA color = RGBA.red;
+    RGBA color = RGBA.darkorchid;
 }
 
 struct BarSet
