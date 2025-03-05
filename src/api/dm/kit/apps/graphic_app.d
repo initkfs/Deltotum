@@ -25,7 +25,7 @@ import api.dm.kit.factories.shape_factory : ShapeFactory;
 import api.dm.kit.windows.window : Window;
 import api.dm.kit.apps.loops.loop : Loop;
 
-import api.dm.kit.media.audio.audio : Audio;
+import api.dm.kit.media.multimedia: MultiMedia;
 import api.dm.kit.inputs.input : Input;
 import api.dm.kit.screens.screening : Screening;
 import api.dm.kit.events.kit_event_manager : KitEventManager;
@@ -57,7 +57,7 @@ abstract class GraphicApp : CliApp
 
     protected
     {
-        Audio _audio;
+        MultiMedia _media;
         Input _input;
         Screening _screening;
         Platform _platform;
@@ -216,7 +216,7 @@ abstract class GraphicApp : CliApp
         super.build(component.castSafe!UniComponent);
 
         component.isBuilt = false;
-        component.audio = _audio;
+        component.media = _media;
         component.input = _input;
         component.screening = _screening;
         component.platform = _platform;
@@ -252,9 +252,9 @@ abstract class GraphicApp : CliApp
 
     override void exit(int code = 0)
     {
-        if (_audio)
+        if (_media)
         {
-            _audio.dispose;
+            _media.dispose;
             uservices.logger.trace("Dispose audio");
         }
 

@@ -26,7 +26,7 @@ import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;
 import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import api.dm.back.sdl3.sdl_lib : SdlLib;
 import api.dm.back.sdl3.img.sdl_img_lib : SdlImgLib;
-import api.dm.back.sdl3.mix.sdl_mix_lib : SdlMixLib;
+import api.dm.back.sdl3.mixer.sdl_mixer_lib : SdlMixerLib;
 import api.dm.back.sdl3.ttf.sdl_ttf_lib : SdlTTFLib;
 import api.dm.back.sdl3.sdl_window : SdlWindow;
 import api.dm.back.sdl3.sdl_window : SdlWindowMode;
@@ -60,7 +60,8 @@ import api.dm.kit.events.processing.kit_event_processor : KitEventProcessor;
 
 import std.typecons : Nullable;
 
-import api.dm.kit.media.audio.audio : Audio;
+import api.dm.kit.media.multimedia : MultiMedia;
+import api.dm.kit.media.audioclips.audio_clip : AudioClip;
 import api.dm.kit.inputs.input : Input;
 import api.dm.kit.screens.screening : Screening;
 
@@ -90,7 +91,7 @@ class SdlApp : GuiApp
         SdlImgLib sdlImage;
         SdlTTFLib sdlFont;
 
-        Nullable!SdlMixLib sdlAudio;
+        Nullable!SdlMixerLib sdlAudio;
         Nullable!SdlJoystickLib sdlJoystick;
 
         Nullable!SdlJoystick sdlCurrentJoystick;
@@ -240,7 +241,11 @@ class SdlApp : GuiApp
         }
 
         _input = new Input(keyboard, clipboard, cursor);
-        _audio = new Audio(!sdlAudio.isNull ? sdlAudio.get : null);
+
+        auto audioClip = new AudioClip(sdlAudio.get);
+
+        _media = new MultiMedia(audioClip);
+        _media.initialize;
 
         //TODO lazy load with config value
         auto cairoLibForLoad = new CairoLib;
@@ -324,7 +329,7 @@ class SdlApp : GuiApp
 
         _screening = new Screening(comScreen, uservices.logging);
 
-        import api.dm.kit.windows.windowing: Windowing;
+        import api.dm.kit.windows.windowing : Windowing;
 
         _windowing = new Windowing(uservices.logging);
 
@@ -623,10 +628,31 @@ class SdlApp : GuiApp
 
         if (!sdlAudio.isNull)
         {
-            if (const err = sdlAudio.get.initialize)
+            auto audio = sdlAudio.get;
+            if (const err = audio.initialize)
             {
                 return err;
             }
+            if (const err = audio.openAudio)
+            {
+                return err;
+            }
+            
+            string chunkDecoders;
+            if (const err = audio.chunkDecoders(chunkDecoders))
+            {
+                return err;
+            }
+
+            import api.dm.com.audio.com_audio_mixer: ComAudioSpec;
+
+            ComAudioSpec spec;
+            if(const err = audio.query(spec)){
+                return err;
+            }
+
+            string mixerVersion = audio.versionString;
+            uservices.logger.tracef("Init SDL mixer %s, audio: %s, decoders: %s", mixerVersion, spec, chunkDecoders);
         }
 
         if (gservices.capGraphics.isJoystick)
@@ -646,7 +672,7 @@ class SdlApp : GuiApp
     Loop newMainLoop() => new IntegratedLoop;
     SdlLib newSdlLib() => new SdlLib;
     SdlImgLib newSdlImage() => new SdlImgLib;
-    SdlMixLib newSdlAudio() => new SdlMixLib;
+    SdlMixerLib newSdlAudio() => new SdlMixerLib;
     SdlTTFLib newSdlFont() => new SdlTTFLib;
     SdlJoystickLib newSdlJoystick() => new SdlJoystickLib;
 
@@ -775,7 +801,8 @@ class SdlApp : GuiApp
         window.screen = _screening.screen(screenId);
         const screenMode = window.screen.mode;
         uservices.logger.tracef("Screen id %s, %sx%s, rate %s, density %s, driver %s for window id %s, title '%s'", window.screen.id, screenMode.width, screenMode
-                .height, screenMode.rateHz, screenMode.density, _screening.videoDriverName, window.id, window.title);
+                .height, screenMode.rateHz, screenMode.density, _screening.videoDriverName, window.id, window
+                .title);
 
         window.setNormalWindow;
 

@@ -1,4 +1,4 @@
-module api.dm.back.sdl3.mix.base.sdl_mix_object;
+module api.dm.back.sdl3.mixer.sdl_mixer_object;
 
 // dfmt off
 version(SdlBackend):
@@ -7,12 +7,10 @@ version(SdlBackend):
 import api.dm.back.sdl3.base.sdl_object : SdlObject;
 import std.string : fromStringz, toStringz;
 
-import api.dm.back.sdl3.externs.csdl3;
-
 /**
  * Authors: initkfs
  */
-class SdlMixObject : SdlObject
+class SdlMixerObject : SdlObject
 {
-    
+    //#define Mix_GetError SDL_GetError
 }

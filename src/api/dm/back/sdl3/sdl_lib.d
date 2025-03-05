@@ -36,23 +36,6 @@ class SdlLib : SdlObject
         return ComResult.success;
     }
 
-    string stringFromVersion(int ver) nothrow
-    {
-        import std.conv : text;
-
-        auto major = SDL_VERSIONNUM_MAJOR(ver);
-        int minor = SDL_VERSIONNUM_MINOR(ver);
-        int patch = SDL_VERSIONNUM_MICRO(ver);
-
-        //format is not nothrow
-        immutable sep = ".";
-        return text(major, sep, minor, sep, patch);
-    }
-
-    alias versionString = linkedVersionString;
-
-    string linkedVersionString() nothrow => stringFromVersion(SDL_GetVersion());
-
     /** 
      * SDL_timer.h
      */

@@ -1,20 +1,20 @@
-module api.dm.kit.media.audio.audio;
+module api.dm.kit.media.audioclips.audio_clip;
 
-import api.dm.back.sdl3.mix.sdl_mix_lib : SdlMixLib;
+import api.dm.back.sdl3.mixer.sdl_mixer_lib : SdlMixerLib;
 
 import api.dm.back.sdl3.externs.csdl3;
 
-class Audio
+class AudioClip
 {
 
     bool isEnabled;
 
     private
     {
-        SdlMixLib audioLib;
+        SdlMixerLib audioLib;
     }
 
-    this(SdlMixLib audioLib)
+    this(SdlMixerLib audioLib)
     {
         this.audioLib = audioLib;
         if (audioLib)
@@ -26,14 +26,4 @@ class Audio
         //     throw new Exception(err.toString);
         // }
     }
-
-    void dispose()
-    {
-        if (audioLib)
-        {
-            audioLib.closeAudio;
-        }
-
-    }
-
 }

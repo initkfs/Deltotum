@@ -5,7 +5,7 @@ import api.core.components.uni_component : UniComponent;
 import api.core.components.uda : Service;
 
 import api.dm.kit.assets.asset : Asset;
-import api.dm.kit.media.audio.audio : Audio;
+import api.dm.kit.media.multimedia : MultiMedia;
 import api.dm.kit.graphics.graphics : Graphics;
 import api.dm.kit.inputs.input : Input;
 import api.dm.kit.windows.window : Window;
@@ -26,7 +26,7 @@ class GraphicsComponent : UniComponent
 {
     private
     {
-        @Service Audio _audio;
+        @Service MultiMedia _media;
         @Service Asset _asset;
         @Service Graphics _graphics;
         @Service Input _input;
@@ -106,23 +106,23 @@ class GraphicsComponent : UniComponent
         _input = input;
     }
 
-    bool hasAudio() const nothrow pure @safe
+    bool hasMedia() const nothrow pure @safe
     {
-        return _audio !is null;
+        return _media !is null;
     }
 
-    inout(Audio) audio() inout nothrow pure @safe
-    out (_audio; _audio !is null)
+    inout(MultiMedia) media() inout nothrow pure @safe
+    out (_media; _media !is null)
     {
-        return _audio;
+        return _media;
     }
 
-    void audio(Audio audio) pure @safe
+    void media(MultiMedia newMedia) pure @safe
     {
         import std.exception : enforce;
 
-        enforce(audio, "Audio must not be null");
-        _audio = audio;
+        enforce(newMedia, "Multimedia system must not be null");
+        _media = newMedia;
     }
 
     bool hasGraphics() const nothrow pure @safe
