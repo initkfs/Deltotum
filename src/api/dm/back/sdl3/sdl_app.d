@@ -61,7 +61,7 @@ import api.dm.kit.events.processing.kit_event_processor : KitEventProcessor;
 import std.typecons : Nullable;
 
 import api.dm.kit.media.multimedia : MultiMedia;
-import api.dm.kit.media.audioclips.audio_clip : AudioClip;
+import api.dm.kit.media.mixers.audio_mixer : AudioMixer;
 import api.dm.kit.inputs.input : Input;
 import api.dm.kit.screens.screening : Screening;
 
@@ -242,7 +242,7 @@ class SdlApp : GuiApp
 
         _input = new Input(keyboard, clipboard, cursor);
 
-        auto audioClip = new AudioClip(sdlAudio.get);
+        auto audioClip = new AudioMixer(sdlAudio.get);
 
         _media = new MultiMedia(audioClip);
         _media.initialize;

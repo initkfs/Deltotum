@@ -932,6 +932,8 @@ class Text : Control
         return text.to!T;
     }
 
+    string textString() => textTo!string;
+
     dstring text()
     {
         if ((!isBuilt || !isCreated) && tempText)

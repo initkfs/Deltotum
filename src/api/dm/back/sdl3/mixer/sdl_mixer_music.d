@@ -8,15 +8,14 @@ version(SdlBackend):
 
 import api.dm.com.platforms.results.com_result : ComResult;
 import api.dm.back.sdl3.mixer.sdl_mixer_object : SdlMixerObject;
-import api.dm.com.platforms.objects.com_ptr_manager : ComPtrManager;
+import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
+import api.dm.com.audio.com_audio_clip : ComAudioClip;
 
 import std.string : toStringz, fromStringz;
 import api.dm.back.sdl3.externs.csdl3;
 
-class SdlMixerMusic : SdlMixerObject
+class SdlMixerMusic : SdlObjectWrapper!(Mix_Music), ComAudioClip
 {
-    mixin ComPtrManager!(Mix_Music);
-
     protected
     {
         enum msInSec = 1000;
@@ -145,7 +144,7 @@ class SdlMixerMusic : SdlMixerObject
         return ComResult.success;
     }
 
-    bool disposePtr()
+    override protected bool disposePtr() nothrow
     {
         if (ptr)
         {

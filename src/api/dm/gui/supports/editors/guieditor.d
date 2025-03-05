@@ -43,6 +43,12 @@ class GuiEditor : GuiScene
         graphicsTab.content = new Grahpics;
         root.addCreate(graphicsTab);
 
+        import api.dm.gui.supports.editors.sections.audio: Audio;
+
+        auto audioTab = new Tab("Audio");
+        audioTab.content = new Audio;
+        root.addCreate(audioTab);
+
         import api.dm.gui.supports.editors.sections.colors : Colors;
 
         auto colorsTab = new Tab("Colors");
@@ -100,7 +106,7 @@ class GuiEditor : GuiScene
             root.addCreate(fractalsTab);
         }
 
-        root.changeTab(controlsTab);
+        root.changeTab(audioTab);
 
         //import std;
         createDebugger;

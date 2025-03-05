@@ -1,6 +1,7 @@
 module api.dm.com.audio.com_audio_mixer;
 
 import api.dm.com.platforms.results.com_result : ComResult;
+import api.dm.com.audio.com_audio_clip: ComAudioClip;
 
 alias TrackFinishedCallback = extern(C) void function(int trackNum) nothrow @nogc;
 
@@ -24,6 +25,8 @@ interface ComAudioMixer
 nothrow:
 
     void close();
+
+    ComResult newHeapMusic(string path, out ComAudioClip clip);
 
     ComResult getTracks(out int tracksCount);
     ComResult setTracks(int tracksCount);

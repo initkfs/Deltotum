@@ -1,7 +1,7 @@
 module api.dm.kit.media.multimedia;
 
 import api.core.components.units.simple_unit : SimpleUnit;
-import api.dm.kit.media.audioclips.audio_clip : AudioClip;
+import api.dm.kit.media.mixers.audio_mixer : AudioMixer;
 
 /**
  * Authors: initkfs
@@ -9,12 +9,12 @@ import api.dm.kit.media.audioclips.audio_clip : AudioClip;
 class MultiMedia : SimpleUnit
 {
 
-    AudioClip audioclip;
+    AudioMixer mixer;
 
-    this(AudioClip clip)
+    this(AudioMixer mixer)
     {
-        assert(clip);
+        assert(mixer);
 
-        this.audioclip = clip;
+        this.mixer = mixer;
     }
 }
