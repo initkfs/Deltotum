@@ -6,10 +6,10 @@ import api.dm.com.audio.com_audio_clip : ComAudioClip;
 class AudioMixer
 {
 
-    private
-    {
+    //private
+   // {
         ComAudioMixer mixer;
-    }
+    //}
 
     this(ComAudioMixer mixer)
     {

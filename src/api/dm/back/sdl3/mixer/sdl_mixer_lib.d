@@ -5,7 +5,7 @@ version(SdlBackend):
 // dfmt on
 
 import api.dm.com.platforms.results.com_result : ComResult;
-import api.dm.com.audio.com_audio_clip: ComAudioClip;
+import api.dm.com.audio.com_audio_clip : ComAudioClip;
 import api.dm.com.audio.com_audio_mixer;
 import api.dm.back.sdl3.mixer.sdl_mixer_object : SdlMixerObject;
 import api.dm.back.sdl3.mixer.sdl_mixer_music : SdlMixerMusic;
@@ -34,6 +34,7 @@ class SdlMixerLib : SdlMixerObject, ComAudioMixer
     {
         //apt-get install libasound2-dev libpulse-dev
         //https://stackoverflow.com/questions/10465202/initializing-sdl-mixer-gives-error-no-available-audio-device
+        //https://discourse.libsdl.org/t/couldnt-open-audio-device-no-available-audio-device/18499/13
         return Mix_OpenAudio(id, spec);
     }
 
@@ -53,6 +54,12 @@ class SdlMixerLib : SdlMixerObject, ComAudioMixer
     {
         ComAudioSpec spec;
         return openAudio(spec);
+    }
+
+    ComResult setPostCallback(MixerCallback callback, void* userdata) nothrow
+    {
+        Mix_SetPostMix(callback, userdata);
+        return ComResult.success;
     }
 
     ComResult chunkDecoders(out string decoders) nothrow
@@ -171,6 +178,7 @@ class SdlMixerLib : SdlMixerObject, ComAudioMixer
 
     void close() nothrow
     {
+        //SDL_PauseAudio(1);
         Mix_CloseAudio();
     }
 
