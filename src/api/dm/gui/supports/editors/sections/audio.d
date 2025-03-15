@@ -14,6 +14,8 @@ import api.dm.com.audio.com_audio_mixer;
 import core.sync.mutex;
 import core.sync.semaphore;
 
+import std.math.traits : isPowerOf2;
+
 import std;
 
 /**
@@ -43,21 +45,16 @@ class Audio : Control
     {
         //pow 2 for FFT
         enum double sampleFreq = 44100;
-        enum sampleBufferSize = 2048;
+        enum sampleBufferStep = 2048;
+        enum sampleBufferSize = 4096;
         enum sampleBufferHalfSize = sampleBufferSize / 2;
 
         enum numBands = 10; // Number of frequency bands
-        enum double bandWidth = sampleBufferHalfSize / cast(double) numBands;
+        enum double bandWidth = sampleBufferStep / 2 / cast(double) numBands;
 
-        short[sampleBufferSize] sampleBuffer1;
-        short[sampleBufferSize] sampleBuffer2;
-
-        short[] currentBuffer;
-        short[] nextBuffer;
-
-        size_t bufferWriteIndex = 0;
-
-        bool isBufferFull;
+        short[sampleBufferSize] sampleBuffer;
+        size_t sampleWriteIndex = 0;
+        bool isSampleBufferFull;
     }
 
     struct SignalData
@@ -66,6 +63,9 @@ class Audio : Control
         double amp = 0;
     }
 
+    short[sampleBufferSize] localSampleBuffer;
+    size_t localSampleWriteIndex = 0;
+
     SignalData[sampleBufferHalfSize] fftBuffer;
 
     alias Sint16 = short;
@@ -73,49 +73,68 @@ class Audio : Control
 
     RGBA[numBands] bandColors;
 
-    static shared Mutex mutexRead;
+    static shared Mutex sampleBufferMutex;
     static shared Mutex mutexWrite;
     static shared Mutex mutexSwap;
 
     bool needSwap;
 
+    bool isRedrawLocalBuffer;
+
     static extern (C) void audio_callback(void* userdata, ubyte* stream, int len) nothrow @nogc
     {
-        assert(nextBuffer.length > 0);
+        assert(sampleBuffer.length > 0);
+
+        //debug writeln(len);
+
+        if (len == 0)
+        {
+            return;
+        }
 
         try
         {
-            synchronized (mutexWrite)
+            synchronized (sampleBufferMutex)
             {
-                if (isBufferFull)
+                if (isSampleBufferFull)
                 {
                     return;
                 }
 
-                if (len == 0)
+                size_t rest = sampleWriteIndex == 0 ? sampleBuffer.length
+                    : sampleBuffer.length - sampleWriteIndex;
+                if (rest > 0)
                 {
+                    rest--;
+                }
+
+                if (rest == 0)
+                {
+                    if (!isSampleBufferFull)
+                    {
+                        isSampleBufferFull = true;
+                    }
+
                     return;
                 }
 
-                size_t rest = bufferWriteIndex == 0 ? nextBuffer.length - 1 : nextBuffer.length - bufferWriteIndex - 1;
-
-                if (rest == 0 && !isBufferFull)
+                size_t buffLen = len / short.sizeof;
+                size_t lostElems;
+                if (buffLen > rest)
                 {
-                    isBufferFull = true;
-                    return;
+                    lostElems = buffLen - rest;
+                    debug writeln("Lost elements: ", lostElems);
+                    buffLen = rest;
                 }
-
-                size_t mustBeBuffLen = len / short.sizeof;
-                size_t buffLen = mustBeBuffLen > rest ? rest : mustBeBuffLen;
 
                 short[] buffStream = cast(short[]) stream[0 .. buffLen * short.sizeof];
 
-                size_t endIndex = bufferWriteIndex + buffLen;
+                size_t endIndex = sampleWriteIndex + buffLen;
 
-                //debug writefln("Prep buffer from %s to %s, mustlen %s, len %s, rest %s", bufferWriteIndex, endIndex, mustBeBuffLen, buffLen, rest);
+                //debug writefln("Write to buffer from %s to %s, mustlen %s, len %s, rest %s", sampleWriteIndex, endIndex, mustBeBuffLen, buffLen, rest);
 
-                nextBuffer[bufferWriteIndex .. endIndex] = buffStream[0 .. buffLen];
-                bufferWriteIndex = endIndex;
+                sampleBuffer[sampleWriteIndex .. endIndex] = buffStream[0 .. buffLen];
+                sampleWriteIndex = endIndex;
             }
         }
         catch (Exception e)
@@ -131,12 +150,7 @@ class Audio : Control
     {
         super.create;
 
-        mutexWrite = new shared Mutex();
-        mutexRead = new shared Mutex();
-        mutexSwap = new shared Mutex();
-
-        currentBuffer = sampleBuffer1;
-        nextBuffer = sampleBuffer2;
+        sampleBufferMutex = new shared Mutex();
 
         foreach (ref bandColor; bandColors)
         {
@@ -156,7 +170,7 @@ class Audio : Control
 
         import api.dm.gui.controls.texts.text : Text;
 
-        auto musicFile = new Text("");
+        auto musicFile = new Text("/home/user/sdl-music/neocrey - System Shock.mp3");
         musicContainer.addCreate(musicFile);
 
         import api.dm.gui.controls.switches.buttons.button : Button;
@@ -196,10 +210,33 @@ class Audio : Control
             return;
         }
 
-        synchronized (mutexRead)
+        synchronized (sampleBufferMutex)
+        {
+            if (isSampleBufferFull)
+            {
+                localSampleBuffer[] = sampleBuffer;
+                isSampleBufferFull = false;
+                sampleWriteIndex = 0;
+                isRedrawLocalBuffer = true;
+            }
+            else if (sampleWriteIndex > sampleBufferStep)
+            {
+                localSampleBuffer[0 .. sampleBufferStep] = sampleBuffer[0 .. sampleBufferStep];
+
+                copy(sampleBuffer[sampleBufferStep .. sampleWriteIndex], sampleBuffer[0 .. (
+                        sampleWriteIndex - sampleBufferStep)]);
+
+                import core.atomic : atomicOp;
+
+                atomicOp!"-="(sampleWriteIndex, sampleBufferStep);
+                isRedrawLocalBuffer = true;
+            }
+        }
+
+        if (isRedrawLocalBuffer)
         {
             //S16
-            short[] data = cast(short[]) currentBuffer[];
+            short[] data = cast(short[]) localSampleBuffer[0 .. sampleBufferStep];
             apply_hann_window(data);
 
             //auto complexData = data.map(v => complex(cast(double) v, 0)).array;
@@ -208,67 +245,54 @@ class Audio : Control
 
             const fftResLen = fftRes.length;
 
-            foreach (i; 0 .. sampleBufferHalfSize)
+            foreach (i; 0 .. sampleBufferStep / 2)
             {
                 auto fftVal = fftRes[i];
                 double magnitude = sqrt(fftVal.re * fftVal.re + fftVal.im * fftVal.im);
+                //magnitude = magnitued / (sampleBufferStep / 2)
                 double freq = i * (sampleFreq / fftResLen);
                 fftBuffer[i] = SignalData(freq, magnitude);
             }
-
-            double[numBands] bands = 0;
-
-            foreach (i, ref double v; bands)
-            {
-                size_t start = cast(size_t)(i * bandWidth);
-                size_t end = cast(size_t)((i + 1) * bandWidth);
-
-                foreach (j; start .. end)
-                {
-                    v += fftBuffer[j].amp;
-                }
-
-                //writeln(i, " ", v, " ", v, " ", bandWidth, " ", start, " ", end);
-                v /= bandWidth;
-            }
-
-            auto x = 200;
-            auto y = 300;
-            auto bandW = 30;
-
-            foreach (i; 0 .. numBands)
-            {
-                auto amp = bands[i];
-                auto dBAmp = 20 * log10(amp == 0 ? double.epsilon : amp);
-
-                graphics.changeColor(bandColors[i]);
-                scope (exit)
-                {
-                    graphics.restoreColor;
-                }
-                auto v = dBAmp;
-                graphics.fillRect(x, y - v, bandW, v);
-                x += bandW;
-
-                //printf("\n");
-            }
+            isRedrawLocalBuffer = false;
         }
 
-        synchronized (mutexWrite)
+        double[numBands] bands = 0;
+
+        foreach (i, ref double v; bands)
         {
-            if (isBufferFull)
+            size_t start = cast(size_t)(i * bandWidth);
+            size_t end = cast(size_t)((i + 1) * bandWidth);
+
+            foreach (j; start .. end)
             {
-                synchronized (mutexRead)
-                {
-                    synchronized (mutexSwap)
-                    {
-                        swap(currentBuffer, nextBuffer);
-                    }
-                }
-                isBufferFull = false;
-                bufferWriteIndex = 0;
+                v += fftBuffer[j].amp;
             }
+
+            //writeln(i, " ", v, " ", v, " ", bandWidth, " ", start, " ", end);
+            v /= bandWidth;
         }
+
+        auto x = 200;
+        auto y = 300;
+        auto bandW = 30;
+
+        foreach (i; 0 .. numBands)
+        {
+            auto amp = bands[i];
+            auto dBAmp = 20 * log10(amp == 0 ? double.epsilon : amp);
+
+            graphics.changeColor(bandColors[i]);
+            scope (exit)
+            {
+                graphics.restoreColor;
+            }
+            auto v = dBAmp;
+            graphics.fillRect(x, y - v, bandW, v);
+            x += bandW;
+
+            //printf("\n");
+        }
+
     }
 
     uint prevPower2(uint x)
