@@ -18,6 +18,90 @@ import std.math.traits : isPowerOf2;
 
 import std;
 
+class DspArrayBuffer(BufferType, size_t BufferSize)
+{
+    protected shared
+    {
+        BufferType[BufferSize] sampleBuffer;
+        size_t sampleWriteIndex = 0;
+        bool isSampleBufferFull;
+    }
+
+    void isFull()
+    {
+
+    }
+
+    synchronized void put(ubyte[] stream) @nogc nothrow
+    {
+        if (isSampleBufferFull)
+        {
+            return;
+        }
+
+        size_t rest = sampleWriteIndex == 0 ? sampleBuffer.length
+            : sampleBuffer.length - sampleWriteIndex;
+        if (rest > 0)
+        {
+            rest--;
+        }
+
+        if (rest == 0)
+        {
+            if (!isSampleBufferFull)
+            {
+                isSampleBufferFull = true;
+            }
+
+            return;
+        }
+
+        size_t buffLen = stream.length / BufferSize.sizeof;
+        size_t lostElems;
+        if (buffLen > rest)
+        {
+            lostElems = buffLen - rest;
+            debug writeln("Warn. Dsp buffer lost elements: ", lostElems);
+            buffLen = rest;
+        }
+
+        short[] buffStream = cast(BufferType[]) stream[0 .. buffLen * short.sizeof];
+
+        size_t endIndex = sampleWriteIndex + buffLen;
+
+        //debug writefln("Write to buffer from %s to %s, mustlen %s, len %s, rest %s", sampleWriteIndex, endIndex, mustBeBuffLen, buffLen, rest);
+
+        sampleBuffer[sampleWriteIndex .. endIndex] = buffStream[0 .. buffLen];
+        sampleWriteIndex = endIndex;
+    }
+
+    synchronized bool copyTo(BufferType[] outBuffer, size_t sizeStep)
+    {
+        if (isSampleBufferFull)
+        {
+            outBuffer[] = sampleBuffer;
+            isSampleBufferFull = false;
+            sampleWriteIndex = 0;
+            return true;
+        }
+
+        if (sampleWriteIndex > sizeStep)
+        {
+            outBuffer[0 .. sizeStep] = sampleBuffer[0 .. sizeStep];
+
+            copy(sampleBuffer[sizeStep .. sampleWriteIndex], sampleBuffer[0 .. (
+                    sampleWriteIndex - sizeStep)]);
+
+            import core.atomic : atomicOp;
+
+            atomicOp!"-="(sampleWriteIndex, sizeStep);
+            return true;
+        }
+
+        return false;
+    }
+}
+
 /**
  * Authors: initkfs
  */
@@ -43,10 +127,14 @@ class Audio : Control
 
     shared static
     {
-        //pow 2 for FFT
         enum double sampleFreq = 44100;
         enum sampleBufferStep = 2048;
         enum sampleBufferSize = 4096;
+
+        DspArrayBuffer!(short, sampleBufferSize) dspBuffer;
+
+        //pow 2 for FFT
+
         enum sampleBufferHalfSize = sampleBufferSize / 2;
 
         enum numBands = 10; // Number of frequency bands
@@ -83,8 +171,6 @@ class Audio : Control
 
     static extern (C) void audio_callback(void* userdata, ubyte* stream, int len) nothrow @nogc
     {
-        assert(sampleBuffer.length > 0);
-
         //debug writeln(len);
 
         if (len == 0)
@@ -92,56 +178,11 @@ class Audio : Control
             return;
         }
 
-        try
-        {
-            synchronized (sampleBufferMutex)
-            {
-                if (isSampleBufferFull)
-                {
-                    return;
-                }
+        auto dspBuffer = cast(shared DspArrayBuffer!(short, sampleBufferSize)) userdata;
+        assert(dspBuffer);
 
-                size_t rest = sampleWriteIndex == 0 ? sampleBuffer.length
-                    : sampleBuffer.length - sampleWriteIndex;
-                if (rest > 0)
-                {
-                    rest--;
-                }
-
-                if (rest == 0)
-                {
-                    if (!isSampleBufferFull)
-                    {
-                        isSampleBufferFull = true;
-                    }
-
-                    return;
-                }
-
-                size_t buffLen = len / short.sizeof;
-                size_t lostElems;
-                if (buffLen > rest)
-                {
-                    lostElems = buffLen - rest;
-                    debug writeln("Lost elements: ", lostElems);
-                    buffLen = rest;
-                }
-
-                short[] buffStream = cast(short[]) stream[0 .. buffLen * short.sizeof];
-
-                size_t endIndex = sampleWriteIndex + buffLen;
-
-                //debug writefln("Write to buffer from %s to %s, mustlen %s, len %s, rest %s", sampleWriteIndex, endIndex, mustBeBuffLen, buffLen, rest);
-
-                sampleBuffer[sampleWriteIndex .. endIndex] = buffStream[0 .. buffLen];
-                sampleWriteIndex = endIndex;
-            }
-        }
-        catch (Exception e)
-        {
-
-        }
-
+        ubyte[] streamSlice = stream[0 .. len];
+        dspBuffer.put(streamSlice);
     }
 
     size_t frameCount;
@@ -149,6 +190,8 @@ class Audio : Control
     override void create()
     {
         super.create;
+
+        dspBuffer = new DspArrayBuffer!(short, sampleBufferSize);
 
         sampleBufferMutex = new shared Mutex();
 
@@ -193,7 +236,8 @@ class Audio : Control
         };
         addCreate(play);
 
-        if (const err = media.mixer.mixer.setPostCallback(&audio_callback, null))
+        assert(dspBuffer);
+        if (const err = media.mixer.mixer.setPostCallback(&audio_callback, cast(void*) dspBuffer))
         {
             throw new Exception(err.toString);
         }
@@ -210,30 +254,7 @@ class Audio : Control
             return;
         }
 
-        synchronized (sampleBufferMutex)
-        {
-            if (isSampleBufferFull)
-            {
-                localSampleBuffer[] = sampleBuffer;
-                isSampleBufferFull = false;
-                sampleWriteIndex = 0;
-                isRedrawLocalBuffer = true;
-            }
-            else if (sampleWriteIndex > sampleBufferStep)
-            {
-                localSampleBuffer[0 .. sampleBufferStep] = sampleBuffer[0 .. sampleBufferStep];
-
-                copy(sampleBuffer[sampleBufferStep .. sampleWriteIndex], sampleBuffer[0 .. (
-                        sampleWriteIndex - sampleBufferStep)]);
-
-                import core.atomic : atomicOp;
-
-                atomicOp!"-="(sampleWriteIndex, sampleBufferStep);
-                isRedrawLocalBuffer = true;
-            }
-        }
-
-        if (isRedrawLocalBuffer)
+        if (dspBuffer.copyTo(localSampleBuffer, sampleBufferStep))
         {
             //S16
             short[] data = cast(short[]) localSampleBuffer[0 .. sampleBufferStep];
