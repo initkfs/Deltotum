@@ -3,6 +3,7 @@ module api.dm.gui.supports.editors.sections.audio;
 import api.dm.gui.controls.control : Control;
 import api.dm.com.audio.com_audio_mixer : ComAudioMixer;
 import api.dm.com.audio.com_audio_clip : ComAudioClip;
+import api.dm.com.audio.com_audio_chunk: ComAudioChunk;
 import api.math.geom2.rect2 : Rect2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
@@ -13,11 +14,11 @@ import api.dm.com.audio.com_audio_mixer;
 
 import core.sync.mutex;
 import core.sync.semaphore;
-import api.core.utils.structs.rings.ring_buffer : RingBuffer;
+import api.dm.kit.media.dsp.analysis.analog_signal_analyzer: AnalogSignalAnalyzer;
 import std.math.traits : isPowerOf2;
 
 import api.dm.kit.media.dsp.dsp_processor : DspProcessor;
-import api.dm.kit.media.dsp.equalizers.rect_equalizer: RectEqualizer;
+import api.dm.kit.media.dsp.equalizers.rect_equalizer : RectEqualizer;
 
 import std;
 
@@ -64,8 +65,6 @@ class Audio : Control
     alias Sint16 = short;
     alias Uint8 = ubyte;
 
-   
-
     static shared Mutex sampleBufferMutex;
     static shared Mutex mutexWrite;
     static shared Mutex mutexSwap;
@@ -82,17 +81,15 @@ class Audio : Control
 
         sampleBufferMutex = new shared Mutex();
 
-        dspProcessor = new typeof(dspProcessor)(sampleBufferMutex, sampleFreq, sampleWindowSize, logging);
+        dspProcessor = new typeof(dspProcessor)(sampleBufferMutex, new AnalogSignalAnalyzer, sampleFreq, sampleWindowSize, logging);
         dspProcessor.dspBuffer.lock;
 
-        equalizer1 = new RectEqualizer(sampleWindowSize, (fftIndex){
+        equalizer1 = new RectEqualizer(sampleWindowSize, (fftIndex) {
             return dspProcessor.fftBuffer[fftIndex].amp;
         });
         addCreate(equalizer1);
 
-        dspProcessor.onUpdateFTBuffer = (){
-            equalizer1.updateBands;
-        };
+        dspProcessor.onUpdateFTBuffer = () { equalizer1.updateBands; };
 
         import api.dm.gui.controls.containers.vbox : VBox;
         import api.dm.gui.controls.containers.hbox : HBox;
@@ -130,7 +127,8 @@ class Audio : Control
 
         addCreate(play);
 
-        if (const err = media.mixer.mixer.setPostCallback(&typeof(dspProcessor).signal_callback, cast(void*)&dspProcessor
+        if (const err = media.mixer.mixer.setPostCallback(&typeof(dspProcessor)
+                .signal_callback, cast(void*)&dspProcessor
                 .dspBuffer))
         {
             throw new Exception(err.toString);

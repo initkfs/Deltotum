@@ -6,6 +6,7 @@ version(SdlBackend):
 
 import api.dm.com.platforms.results.com_result : ComResult;
 import api.dm.com.audio.com_audio_clip : ComAudioClip;
+import api.dm.com.audio.com_audio_chunk : ComAudioChunk;
 import api.dm.com.audio.com_audio_mixer;
 import api.dm.back.sdl3.mixer.sdl_mixer_object : SdlMixerObject;
 import api.dm.back.sdl3.mixer.sdl_mixer_music : SdlMixerMusic;
@@ -217,6 +218,23 @@ class SdlMixerLib : SdlMixerObject, ComAudioMixer
                 break;
         }
         return format;
+    }
+
+    ComResult newHeapWav(string path, out ComAudioChunk buffer) nothrow
+    {
+        assert(buffer);
+
+        import std.string : toStringz;
+
+        Mix_Chunk* chunkPtr = Mix_LoadWAV(path.toStringz);
+        if (!chunkPtr)
+        {
+            return getErrorRes("Error loading WAV file from path");
+        }
+        import api.dm.back.sdl3.mixer.sdl_mixer_chunk : SdlMixerChunk;
+
+        buffer = new SdlMixerChunk(chunkPtr);
+        return ComResult.success;
     }
 
     ComAudioFormat fromSdlFormat(SDL_AudioFormat format) nothrow

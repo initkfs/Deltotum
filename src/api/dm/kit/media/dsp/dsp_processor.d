@@ -3,6 +3,9 @@ module api.dm.kit.media.dsp.dsp_processor;
 import api.core.utils.structs.rings.ring_buffer : RingBuffer;
 import api.core.components.units.services.loggable_unit : LoggableUnit;
 
+import api.dm.kit.media.dsp.signals.analog_signal : AnalogSignal;
+import api.dm.kit.media.dsp.analysis.analog_signal_analyzer : AnalogSignalAnalyzer;
+
 import core.sync.mutex : Mutex;
 import api.core.loggers.logging : Logging;
 
@@ -10,32 +13,30 @@ import DspWinFunc = api.dm.kit.media.dsp.window_funcs;
 
 import Math = api.math;
 
-struct SignalData
-{
-    double freq = 0;
-    double amp = 0;
-}
-
 /**
  * Authors: initkfs
  */
 class DspProcessor(SignalType, size_t SignalBufferSize) : LoggableUnit
 {
+    AnalogSignalAnalyzer signalAnalyzer;
 
     RingBuffer!(SignalType, SignalBufferSize) dspBuffer;
 
     size_t sampleWindowSize;
     SignalType[SignalBufferSize] localSampleBuffer;
 
-    SignalData[SignalBufferSize / 2] fftBuffer;
+    AnalogSignal[SignalBufferSize / 2] fftBuffer;
 
     double sampleFreq = 0;
 
     void delegate() onUpdateFTBuffer;
 
-    this(shared Mutex m, double sampleFreq, size_t sampleWindowSize, Logging logger)
+    this(shared Mutex m, AnalogSignalAnalyzer signalAnalyzer, double sampleFreq, size_t sampleWindowSize, Logging logger)
     {
         super(logger);
+
+        assert(signalAnalyzer);
+        this.signalAnalyzer = signalAnalyzer;
 
         assert(sampleFreq > 0);
         this.sampleFreq = sampleFreq;
@@ -107,20 +108,7 @@ class DspProcessor(SignalType, size_t SignalBufferSize) : LoggableUnit
             SignalType[] data = cast(SignalType[]) localSampleBuffer[0 .. sampleWindowSize];
             DspWinFunc.hann(data);
 
-            import std.numeric : fft;
-
-            auto fftRes = fft(data);
-
-            const fftResLen = fftRes.length;
-
-            foreach (i; 0 .. sampleWindowSize / 2)
-            {
-                auto fftVal = fftRes[i];
-                double magnitude = Math.sqrt(fftVal.re * fftVal.re + fftVal.im * fftVal.im);
-                //magnitude = magnitued / (sampleWindowSize / 2)
-                double freq = i * (sampleFreq / fftResLen);
-                fftBuffer[i] = SignalData(freq, magnitude);
-            }
+            signalAnalyzer.fft(sampleWindowSize, sampleFreq, data, fftBuffer);
 
             if (onUpdateFTBuffer)
             {
