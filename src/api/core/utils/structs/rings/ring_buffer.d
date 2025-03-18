@@ -111,6 +111,19 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true)
             }
         }
 
+        ContainerResult readifNoLockedSync(BufferType[] elements, size_t count) @nogc @safe
+        {
+            synchronized (mutex)
+            {
+                if (_lock)
+                {
+                    return ContainerResult.success;
+                }
+
+                return read(elements, count);
+            }
+        }
+
         ContainerResult readSync(BufferType[] elements, size_t count) @nogc @safe
         {
             synchronized (mutex)

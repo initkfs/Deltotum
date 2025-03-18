@@ -16,6 +16,8 @@ import core.sync.semaphore;
 import api.core.utils.structs.rings.ring_buffer : RingBuffer;
 import std.math.traits : isPowerOf2;
 
+import api.dm.kit.media.dsp.dsp_processor : DspProcessor;
+
 import std;
 
 /**
@@ -41,12 +43,14 @@ class Audio : Control
         enablePadding;
     }
 
-    RingBuffer!(short, sampleBufferSize) dspBuffer;
+    alias SignalType = short;
+
+    DspProcessor!(SignalType, sampleBufferSize) dspProcessor;
 
     shared static
     {
         enum double sampleFreq = 44100;
-        enum sampleBufferStep = 2048;
+        enum sampleWindowSize = 2048;
         enum sampleBufferSize = 8192;
 
         //pow 2 for FFT
@@ -54,23 +58,8 @@ class Audio : Control
         enum sampleBufferHalfSize = sampleBufferSize / 2;
 
         enum numBands = 10; // Number of frequency bands
-        enum double bandWidth = sampleBufferStep / 2 / cast(double) numBands;
-
-        short[sampleBufferSize] sampleBuffer;
-        size_t sampleWriteIndex = 0;
-        bool isSampleBufferFull;
+        enum double bandWidth = sampleWindowSize / 2 / cast(double) numBands;
     }
-
-    struct SignalData
-    {
-        double freq = 0;
-        double amp = 0;
-    }
-
-    short[sampleBufferSize] localSampleBuffer;
-    size_t localSampleWriteIndex = 0;
-
-    SignalData[sampleBufferHalfSize] fftBuffer;
 
     alias Sint16 = short;
     alias Uint8 = ubyte;
@@ -85,41 +74,6 @@ class Audio : Control
 
     bool isRedrawLocalBuffer;
 
-    static extern (C) void audio_callback(void* userdata, ubyte* stream, int len) nothrow @nogc
-    {
-        //debug writeln(len);
-
-        if (len == 0)
-        {
-            return;
-        }
-
-        auto dspBuffer = cast(RingBuffer!(short, sampleBufferSize)*) userdata;
-        assert(dspBuffer);
-
-        short[] streamSlice = cast(short[]) stream[0 .. len];
-        try
-        {
-            const writeRes = dspBuffer.writeIfNoLockedSync(streamSlice);
-            if (!writeRes)
-            {
-                debug writefln("Warn, audiobuffer data loss: %s, reason: %s", len, writeRes);
-            }
-            else
-            {
-                // debug writefln("Write %s data to buffer, ri %s, wi %s, size: %s, result %s", len, dspBuffer.readIndex, dspBuffer
-                //         .writeIndex, dspBuffer.size, writeRes);
-            }
-        }
-        catch (Exception e)
-        {
-            import std.stdio : stderr;
-
-            debug stderr.writeln("Exception from audio thread: ", e.msg);
-            //throw new Error("Exception from audio thread", e);
-        }
-    }
-
     size_t frameCount;
 
     override void create()
@@ -128,8 +82,8 @@ class Audio : Control
 
         sampleBufferMutex = new shared Mutex();
 
-        dspBuffer = RingBuffer!(short, sampleBufferSize)(sampleBufferMutex);
-        dspBuffer.lock;
+        dspProcessor = new typeof(dspProcessor)(sampleBufferMutex, sampleFreq, sampleWindowSize, logging);
+        dspProcessor.dspBuffer.lock;
 
         foreach (ref bandColor; bandColors)
         {
@@ -164,7 +118,7 @@ class Audio : Control
                 return;
             }
 
-            dspBuffer.unlock;
+            dspProcessor.unlock;
 
             clip = media.mixer.newClip(path);
             if (const err = clip.play)
@@ -174,7 +128,8 @@ class Audio : Control
         };
         addCreate(play);
 
-        if (const err = media.mixer.mixer.setPostCallback(&audio_callback, cast(void*)&dspBuffer))
+        if (const err = media.mixer.mixer.setPostCallback(&typeof(dspProcessor).signal_callback, cast(void*)&dspProcessor
+                .dspBuffer))
         {
             throw new Exception(err.toString);
         }
@@ -185,7 +140,7 @@ class Audio : Control
     override void pause()
     {
         super.pause;
-        dspBuffer.lockSync;
+        dspProcessor.lock;
     }
 
     override void run()
@@ -193,7 +148,7 @@ class Audio : Control
         super.run;
         if (clip)
         {
-            dspBuffer.unlock;
+            dspProcessor.unlock;
         }
     }
 
@@ -206,38 +161,7 @@ class Audio : Control
             return;
         }
 
-        const readDspRes = dspBuffer.readSync(localSampleBuffer[], sampleBufferStep);
-
-        if (readDspRes)
-        {
-            // debug writefln("Receive data from buffer, ri %s, wi %s, size: %s", dspBuffer.readIndex, dspBuffer
-            //         .writeIndex, dspBuffer.size);
-            //S16
-            short[] data = cast(short[]) localSampleBuffer[0 .. sampleBufferStep];
-            apply_hann_window(data);
-
-            //auto complexData = data.map(v => complex(cast(double) v, 0)).array;
-
-            auto fftRes = fft(data);
-
-            const fftResLen = fftRes.length;
-
-            foreach (i; 0 .. sampleBufferStep / 2)
-            {
-                auto fftVal = fftRes[i];
-                double magnitude = sqrt(fftVal.re * fftVal.re + fftVal.im * fftVal.im);
-                //magnitude = magnitued / (sampleBufferStep / 2)
-                double freq = i * (sampleFreq / fftResLen);
-                fftBuffer[i] = SignalData(freq, magnitude);
-            }
-        }
-        else
-        {
-            if (!readDspRes.isNoFilled && !readDspRes.isLocked && !readDspRes.isEmpty)
-            {
-                logger.warning("Warn. Cannot read from dsp buffer, reason: ", readDspRes);
-            }
-        }
+        dspProcessor.step;
 
         double[numBands] bands = 0;
 
@@ -248,7 +172,7 @@ class Audio : Control
 
             foreach (j; start .. end)
             {
-                v += fftBuffer[j].amp;
+                v += dspProcessor.fftBuffer[j].amp;
             }
 
             //writeln(i, " ", v, " ", v, " ", bandWidth, " ", start, " ", end);
@@ -276,41 +200,5 @@ class Audio : Control
             //printf("\n");
         }
 
-    }
-
-    uint prevPower2(uint x)
-    {
-        x = x | (x >> 1);
-        x = x | (x >> 2);
-        x = x | (x >> 4);
-        x = x | (x >> 8);
-        x = x | (x >> 16);
-        return x - (x >> 1);
-    }
-
-    //https://stackoverflow.com/questions/364985/algorithm-for-finding-the-smallest-power-of-two-thats-greater-or-equal-to-a-giv
-    int pow2roundup(int x)
-    {
-        if (x < 0)
-            return 0;
-        --x;
-        x |= x >> 1;
-        x |= x >> 2;
-        x |= x >> 4;
-        x |= x >> 8;
-        x |= x >> 16;
-        return x + 1;
-    }
-
-    void apply_hann_window(short[] data)
-    {
-        import Math = std.math;
-
-        auto size = data.length;
-        foreach (i, v; data)
-        {
-            double window_value = 0.5 * (1 - Math.cos(2 * Math.PI * i / (size - 1)));
-            data[i] = cast(short)(data[i] * window_value);
-        }
     }
 }
