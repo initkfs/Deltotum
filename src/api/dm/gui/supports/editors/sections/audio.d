@@ -13,94 +13,10 @@ import api.dm.com.audio.com_audio_mixer;
 
 import core.sync.mutex;
 import core.sync.semaphore;
-
+import api.core.utils.structs.rings.ring_buffer : RingBuffer;
 import std.math.traits : isPowerOf2;
 
 import std;
-
-class DspArrayBuffer(BufferType, size_t BufferSize)
-{
-    protected shared
-    {
-        BufferType[BufferSize] sampleBuffer;
-        size_t sampleWriteIndex = 0;
-        bool isSampleBufferFull;
-    }
-
-    void isFull()
-    {
-
-    }
-
-    synchronized void put(ubyte[] stream) @nogc nothrow
-    {
-        if (isSampleBufferFull)
-        {
-            return;
-        }
-
-        size_t rest = sampleWriteIndex == 0 ? sampleBuffer.length
-            : sampleBuffer.length - sampleWriteIndex;
-        if (rest > 0)
-        {
-            rest--;
-        }
-
-        if (rest == 0)
-        {
-            if (!isSampleBufferFull)
-            {
-                isSampleBufferFull = true;
-            }
-
-            return;
-        }
-
-        size_t buffLen = stream.length / BufferSize.sizeof;
-        size_t lostElems;
-        if (buffLen > rest)
-        {
-            lostElems = buffLen - rest;
-            debug writeln("Warn. Dsp buffer lost elements: ", lostElems);
-            buffLen = rest;
-        }
-
-        short[] buffStream = cast(BufferType[]) stream[0 .. buffLen * short.sizeof];
-
-        size_t endIndex = sampleWriteIndex + buffLen;
-
-        //debug writefln("Write to buffer from %s to %s, mustlen %s, len %s, rest %s", sampleWriteIndex, endIndex, mustBeBuffLen, buffLen, rest);
-
-        sampleBuffer[sampleWriteIndex .. endIndex] = buffStream[0 .. buffLen];
-        sampleWriteIndex = endIndex;
-    }
-
-    synchronized bool copyTo(BufferType[] outBuffer, size_t sizeStep)
-    {
-        if (isSampleBufferFull)
-        {
-            outBuffer[] = sampleBuffer;
-            isSampleBufferFull = false;
-            sampleWriteIndex = 0;
-            return true;
-        }
-
-        if (sampleWriteIndex > sizeStep)
-        {
-            outBuffer[0 .. sizeStep] = sampleBuffer[0 .. sizeStep];
-
-            copy(sampleBuffer[sizeStep .. sampleWriteIndex], sampleBuffer[0 .. (
-                    sampleWriteIndex - sizeStep)]);
-
-            import core.atomic : atomicOp;
-
-            atomicOp!"-="(sampleWriteIndex, sizeStep);
-            return true;
-        }
-
-        return false;
-    }
-}
 
 /**
  * Authors: initkfs
@@ -125,13 +41,13 @@ class Audio : Control
         enablePadding;
     }
 
+    RingBuffer!(short, sampleBufferSize) dspBuffer;
+
     shared static
     {
         enum double sampleFreq = 44100;
         enum sampleBufferStep = 2048;
-        enum sampleBufferSize = 4096;
-
-        DspArrayBuffer!(short, sampleBufferSize) dspBuffer;
+        enum sampleBufferSize = 8192;
 
         //pow 2 for FFT
 
@@ -178,11 +94,30 @@ class Audio : Control
             return;
         }
 
-        auto dspBuffer = cast(shared DspArrayBuffer!(short, sampleBufferSize)) userdata;
+        auto dspBuffer = cast(RingBuffer!(short, sampleBufferSize)*) userdata;
         assert(dspBuffer);
 
-        ubyte[] streamSlice = stream[0 .. len];
-        dspBuffer.put(streamSlice);
+        short[] streamSlice = cast(short[]) stream[0 .. len];
+        try
+        {
+            const writeRes = dspBuffer.writeIfNoLockedSync(streamSlice);
+            if (!writeRes)
+            {
+                debug writefln("Warn, audiobuffer data loss: %s, reason: %s", len, writeRes);
+            }
+            else
+            {
+                // debug writefln("Write %s data to buffer, ri %s, wi %s, size: %s, result %s", len, dspBuffer.readIndex, dspBuffer
+                //         .writeIndex, dspBuffer.size, writeRes);
+            }
+        }
+        catch (Exception e)
+        {
+            import std.stdio : stderr;
+
+            debug stderr.writeln("Exception from audio thread: ", e.msg);
+            //throw new Error("Exception from audio thread", e);
+        }
     }
 
     size_t frameCount;
@@ -191,9 +126,10 @@ class Audio : Control
     {
         super.create;
 
-        dspBuffer = new DspArrayBuffer!(short, sampleBufferSize);
-
         sampleBufferMutex = new shared Mutex();
+
+        dspBuffer = RingBuffer!(short, sampleBufferSize)(sampleBufferMutex);
+        dspBuffer.lock;
 
         foreach (ref bandColor; bandColors)
         {
@@ -213,7 +149,7 @@ class Audio : Control
 
         import api.dm.gui.controls.texts.text : Text;
 
-        auto musicFile = new Text("/home/user/sdl-music/neocrey - System Shock.mp3");
+        auto musicFile = new Text("/home/user/sdl-music/rectangle_120sec_1hz.wav");
         musicContainer.addCreate(musicFile);
 
         import api.dm.gui.controls.switches.buttons.button : Button;
@@ -228,6 +164,8 @@ class Audio : Control
                 return;
             }
 
+            dspBuffer.unlock;
+
             clip = media.mixer.newClip(path);
             if (const err = clip.play)
             {
@@ -236,13 +174,27 @@ class Audio : Control
         };
         addCreate(play);
 
-        assert(dspBuffer);
-        if (const err = media.mixer.mixer.setPostCallback(&audio_callback, cast(void*) dspBuffer))
+        if (const err = media.mixer.mixer.setPostCallback(&audio_callback, cast(void*)&dspBuffer))
         {
             throw new Exception(err.toString);
         }
 
         debug writeln("Main tid ", thisTid);
+    }
+
+    override void pause()
+    {
+        super.pause;
+        dspBuffer.lockSync;
+    }
+
+    override void run()
+    {
+        super.run;
+        if (clip)
+        {
+            dspBuffer.unlock;
+        }
     }
 
     override void update(double delta)
@@ -254,8 +206,12 @@ class Audio : Control
             return;
         }
 
-        if (dspBuffer.copyTo(localSampleBuffer, sampleBufferStep))
+        const readDspRes = dspBuffer.readSync(localSampleBuffer[], sampleBufferStep);
+
+        if (readDspRes)
         {
+            // debug writefln("Receive data from buffer, ri %s, wi %s, size: %s", dspBuffer.readIndex, dspBuffer
+            //         .writeIndex, dspBuffer.size);
             //S16
             short[] data = cast(short[]) localSampleBuffer[0 .. sampleBufferStep];
             apply_hann_window(data);
@@ -274,7 +230,13 @@ class Audio : Control
                 double freq = i * (sampleFreq / fftResLen);
                 fftBuffer[i] = SignalData(freq, magnitude);
             }
-            isRedrawLocalBuffer = false;
+        }
+        else
+        {
+            if (!readDspRes.isNoFilled && !readDspRes.isLocked && !readDspRes.isEmpty)
+            {
+                logger.warning("Warn. Cannot read from dsp buffer, reason: ", readDspRes);
+            }
         }
 
         double[numBands] bands = 0;
