@@ -17,6 +17,7 @@ import api.core.utils.structs.rings.ring_buffer : RingBuffer;
 import std.math.traits : isPowerOf2;
 
 import api.dm.kit.media.dsp.dsp_processor : DspProcessor;
+import api.dm.kit.media.dsp.equalizers.rect_equalizer: RectEqualizer;
 
 import std;
 
@@ -26,6 +27,8 @@ import std;
 class Audio : Control
 {
     ComAudioClip clip;
+
+    RectEqualizer equalizer1;
 
     this()
     {
@@ -56,15 +59,12 @@ class Audio : Control
         //pow 2 for FFT
 
         enum sampleBufferHalfSize = sampleBufferSize / 2;
-
-        enum numBands = 10; // Number of frequency bands
-        enum double bandWidth = sampleWindowSize / 2 / cast(double) numBands;
     }
 
     alias Sint16 = short;
     alias Uint8 = ubyte;
 
-    RGBA[numBands] bandColors;
+   
 
     static shared Mutex sampleBufferMutex;
     static shared Mutex mutexWrite;
@@ -85,13 +85,14 @@ class Audio : Control
         dspProcessor = new typeof(dspProcessor)(sampleBufferMutex, sampleFreq, sampleWindowSize, logging);
         dspProcessor.dspBuffer.lock;
 
-        foreach (ref bandColor; bandColors)
-        {
-            auto color = RGBA.random.toHSLA;
-            color.l = 0.8;
-            color.s = 0.6;
-            bandColor = color.toRGBA;
-        }
+        equalizer1 = new RectEqualizer(sampleWindowSize, (fftIndex){
+            return dspProcessor.fftBuffer[fftIndex].amp;
+        });
+        addCreate(equalizer1);
+
+        dspProcessor.onUpdateFTBuffer = (){
+            equalizer1.updateBands;
+        };
 
         import api.dm.gui.controls.containers.vbox : VBox;
         import api.dm.gui.controls.containers.hbox : HBox;
@@ -126,6 +127,7 @@ class Audio : Control
                 throw new Exception(err.toString);
             }
         };
+
         addCreate(play);
 
         if (const err = media.mixer.mixer.setPostCallback(&typeof(dspProcessor).signal_callback, cast(void*)&dspProcessor
@@ -133,8 +135,6 @@ class Audio : Control
         {
             throw new Exception(err.toString);
         }
-
-        debug writeln("Main tid ", thisTid);
     }
 
     override void pause()
@@ -162,43 +162,5 @@ class Audio : Control
         }
 
         dspProcessor.step;
-
-        double[numBands] bands = 0;
-
-        foreach (i, ref double v; bands)
-        {
-            size_t start = cast(size_t)(i * bandWidth);
-            size_t end = cast(size_t)((i + 1) * bandWidth);
-
-            foreach (j; start .. end)
-            {
-                v += dspProcessor.fftBuffer[j].amp;
-            }
-
-            //writeln(i, " ", v, " ", v, " ", bandWidth, " ", start, " ", end);
-            v /= bandWidth;
-        }
-
-        auto x = 200;
-        auto y = 300;
-        auto bandW = 30;
-
-        foreach (i; 0 .. numBands)
-        {
-            auto amp = bands[i];
-            auto dBAmp = 20 * log10(amp == 0 ? double.epsilon : amp);
-
-            graphics.changeColor(bandColors[i]);
-            scope (exit)
-            {
-                graphics.restoreColor;
-            }
-            auto v = dBAmp;
-            graphics.fillRect(x, y - v, bandW, v);
-            x += bandW;
-
-            //printf("\n");
-        }
-
     }
 }

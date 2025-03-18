@@ -31,6 +31,8 @@ class DspProcessor(SignalType, size_t SignalBufferSize) : LoggableUnit
 
     double sampleFreq = 0;
 
+    void delegate() onUpdateFTBuffer;
+
     this(shared Mutex m, double sampleFreq, size_t sampleWindowSize, Logging logger)
     {
         super(logger);
@@ -118,6 +120,11 @@ class DspProcessor(SignalType, size_t SignalBufferSize) : LoggableUnit
                 //magnitude = magnitued / (sampleWindowSize / 2)
                 double freq = i * (sampleFreq / fftResLen);
                 fftBuffer[i] = SignalData(freq, magnitude);
+            }
+
+            if (onUpdateFTBuffer)
+            {
+                onUpdateFTBuffer();
             }
         }
         else
