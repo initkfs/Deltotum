@@ -4,6 +4,7 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.meters.scales.dynamics.vscale_dynamic : VScaleDynamic;
+import api.dm.kit.media.dsp.signals.analog_signal : AnalogSignal;
 import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.gui.controls.texts.text : Text;
@@ -23,24 +24,23 @@ class RectEqualizer : Control
 
     RGBA[] bandColors;
 
+    void delegate() onUpdateStart;
+    void delegate(AnalogSignal) onUpdate;
+    void delegate() onUpdateEnd;
+
     protected
     {
         double[] bandValues;
     }
 
-    double delegate(size_t fftIndex) magnitudeProvider;
-    double delegate(size_t fftIndex) freqProvider;
+    AnalogSignal delegate(size_t fftIndex) signalProvider;
 
-    this(double sampleWindowSize, double delegate(size_t fftIndex) magnitudeProvider, double delegate(
-            size_t fftIndex) freqProvider)
+    this(double sampleWindowSize, AnalogSignal delegate(size_t fftIndex) signalProvider)
     {
         bandWidth = (sampleWindowSize / 2) / cast(double) numFreqBands;
 
-        assert(magnitudeProvider);
-        this.magnitudeProvider = magnitudeProvider;
-
-        assert(freqProvider);
-        this.freqProvider = freqProvider;
+        assert(signalProvider);
+        this.signalProvider = signalProvider;
     }
 
     void loadRectEqualizerTheme()
@@ -67,8 +67,6 @@ class RectEqualizer : Control
         bandValues = new double[](numFreqBands);
         bandValues[] = 0;
 
-        assert(freqProvider);
-
         foreach (i, ref double v; bandValues)
         {
             auto text = new Text("");
@@ -84,6 +82,10 @@ class RectEqualizer : Control
     {
         bandValues[] = 0;
 
+        if(onUpdateStart){
+            onUpdateStart();
+        }
+
         foreach (i, ref double v; bandValues)
         {
             size_t start = cast(size_t)(i * bandWidth);
@@ -91,15 +93,22 @@ class RectEqualizer : Control
 
             foreach (j; start .. end)
             {
-                auto magn = magnitudeProvider(j);
+                auto signal = signalProvider(j);
+                auto magn = signal.magn;
+
+                if (onUpdate)
+                {
+                    onUpdate(signal);
+                }
+
                 v += magn;
             }
 
             import std.format : format;
             import Math = api.math;
 
-            auto startFreq = freqProvider(start);
-            auto endFreq = freqProvider(end);
+            auto startFreq = signalProvider(start).freqHz;
+            auto endFreq = signalProvider(end).freqHz;
             auto label = labels[i];
             label.text = format("%s\n%s", Math.round(startFreq), Math.round(endFreq));
 
@@ -108,6 +117,10 @@ class RectEqualizer : Control
             // import std;
             // writeln(v);
             //v = Math.clamp(v, 0, 1.0);
+        }
+
+        if(onUpdateEnd){
+            onUpdateEnd();
         }
 
         // foreach (i, ref double v; bandValues)

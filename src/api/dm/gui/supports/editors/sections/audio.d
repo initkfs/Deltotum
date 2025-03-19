@@ -76,6 +76,8 @@ class Audio : Control
 
     size_t frameCount;
 
+    double magn1 = 0;
+
     override void create()
     {
         super.create;
@@ -86,9 +88,30 @@ class Audio : Control
         dspProcessor.dspBuffer.lock;
 
         equalizer1 = new RectEqualizer(sampleWindowSize, (fftIndex) {
-            return dspProcessor.fftBuffer[fftIndex].magn;
-        }, (fftIndex) { return dspProcessor.fftBuffer[fftIndex].freqHz; });
+            return dspProcessor.fftBuffer[fftIndex]; });
         addCreate(equalizer1);
+
+        size_t count;
+
+        equalizer1.onUpdateEnd = (){
+            magn1 /= count;
+            count = 0;
+        };
+
+        equalizer1.onUpdateStart = (){
+            magn1 = 0;
+            count = 0;
+        };
+
+        equalizer1.onUpdate = (signal) {
+            auto freq = signal.freqHz;
+            if (freq >= 20700 && freq <= 21000)
+            {
+                magn1 += signal.magn;
+                count++;
+               // writeln(freq);
+            }
+        };
 
         dspProcessor.onUpdateFTBuffer = () { equalizer1.updateBands; };
 
@@ -151,6 +174,23 @@ class Audio : Control
         {
             dspProcessor.unlock;
         }
+    }
+
+    override void drawContent(){
+        super.drawContent;
+
+        graphics.changeColor(RGBA.red);
+        scope(exit){
+            graphics.restoreColor;
+        }
+
+        auto xx = 100;
+        auto yy = 400;
+
+        auto level = magn1 * 100;
+
+        graphics.fillRect(xx, yy - level, 20, level);
+
     }
 
     override void update(double delta)
