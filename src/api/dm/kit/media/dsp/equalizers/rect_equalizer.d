@@ -1,6 +1,12 @@
 module api.dm.kit.media.dsp.equalizers.rect_equalizer;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
+import api.dm.gui.controls.control : Control;
+import api.dm.gui.controls.containers.container : Container;
+import api.dm.gui.controls.meters.scales.dynamics.vscale_dynamic : VScaleDynamic;
+import api.dm.gui.controls.containers.hbox : HBox;
+import api.dm.gui.controls.containers.vbox : VBox;
+import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
 import Math = api.math;
@@ -8,9 +14,11 @@ import Math = api.math;
 /**
  * Authors: initkfs
  */
-class RectEqualizer : Sprite2d
+class RectEqualizer : Control
 {
-    size_t numFreqBands = 10;
+    Text[] labels;
+
+    size_t numFreqBands = 30;
     double bandWidth = 0;
 
     RGBA[] bandColors;
@@ -20,14 +28,19 @@ class RectEqualizer : Sprite2d
         double[] bandValues;
     }
 
-    double delegate(size_t fftIndex) amplitudeProvider;
+    double delegate(size_t fftIndex) magnitudeProvider;
+    double delegate(size_t fftIndex) freqProvider;
 
-    this(double sampleWindowSize, double delegate(size_t fftIndex) amplitudeProvider)
+    this(double sampleWindowSize, double delegate(size_t fftIndex) magnitudeProvider, double delegate(
+            size_t fftIndex) freqProvider)
     {
-        bandWidth = sampleWindowSize / 2 / cast(double) numFreqBands;
+        bandWidth = (sampleWindowSize / 2) / cast(double) numFreqBands;
 
-        assert(amplitudeProvider);
-        this.amplitudeProvider = amplitudeProvider;
+        assert(magnitudeProvider);
+        this.magnitudeProvider = magnitudeProvider;
+
+        assert(freqProvider);
+        this.freqProvider = freqProvider;
     }
 
     void loadRectEqualizerTheme()
@@ -53,6 +66,18 @@ class RectEqualizer : Sprite2d
 
         bandValues = new double[](numFreqBands);
         bandValues[] = 0;
+
+        assert(freqProvider);
+
+        foreach (i, ref double v; bandValues)
+        {
+            auto text = new Text("");
+            text.setSmallSize;
+            text.isLayoutManaged = false;
+            addCreate(text);
+            labels ~= text;
+        }
+
     }
 
     void updateBands()
@@ -66,12 +91,29 @@ class RectEqualizer : Sprite2d
 
             foreach (j; start .. end)
             {
-                v += amplitudeProvider(j);
+                auto magn = magnitudeProvider(j);
+                v += magn;
             }
+
+            import std.format : format;
+            import Math = api.math;
+
+            auto startFreq = freqProvider(start);
+            auto endFreq = freqProvider(end);
+            auto label = labels[i];
+            label.text = format("%s\n%s", Math.round(startFreq), Math.round(endFreq));
 
             //writeln(i, " ", v, " ", v, " ", bandWidth, " ", start, " ", end);
             v /= bandWidth;
+            // import std;
+            // writeln(v);
+            //v = Math.clamp(v, 0, 1.0);
         }
+
+        // foreach (i, ref double v; bandValues)
+        // {
+        //     v /= ampMax;
+        // }
     }
 
     double ampToDb(double amp)
@@ -85,16 +127,16 @@ class RectEqualizer : Sprite2d
     {
         super.drawContent;
 
-        auto x = 200;
+        auto x = 0;
         auto y = 300;
-        auto bandW = 30;
+        auto bandW = 40;
+        auto bandH = 100;
 
         import std.math : log10;
 
         foreach (i; 0 .. numFreqBands)
         {
-            auto amp = bandValues[i];
-            auto dBAmp = ampToDb(amp);
+            auto level = bandValues[i] * bandH;
 
             graphics.changeColor(bandColors[i]);
             scope (exit)
@@ -102,7 +144,10 @@ class RectEqualizer : Sprite2d
                 graphics.restoreColor;
             }
 
-            auto level = dBAmp;
+            auto label = labels[i];
+            label.x = x + bandW / 2 - label.halfWidth;
+            label.y = y;
+
             graphics.fillRect(x, y - level, bandW, level);
             x += bandW;
 

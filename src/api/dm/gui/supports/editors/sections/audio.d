@@ -3,7 +3,8 @@ module api.dm.gui.supports.editors.sections.audio;
 import api.dm.gui.controls.control : Control;
 import api.dm.com.audio.com_audio_mixer : ComAudioMixer;
 import api.dm.com.audio.com_audio_clip : ComAudioClip;
-import api.dm.com.audio.com_audio_chunk: ComAudioChunk;
+import api.dm.com.audio.com_audio_chunk : ComAudioChunk;
+import api.dm.kit.media.dsp.signals.analog_signal : AnalogSignal;
 import api.math.geom2.rect2 : Rect2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
@@ -14,7 +15,7 @@ import api.dm.com.audio.com_audio_mixer;
 
 import core.sync.mutex;
 import core.sync.semaphore;
-import api.dm.kit.media.dsp.analysis.analog_signal_analyzer: AnalogSignalAnalyzer;
+import api.dm.kit.media.dsp.analysis.analog_signal_analyzer : AnalogSignalAnalyzer;
 import std.math.traits : isPowerOf2;
 
 import api.dm.kit.media.dsp.dsp_processor : DspProcessor;
@@ -54,8 +55,8 @@ class Audio : Control
     shared static
     {
         enum double sampleFreq = 44100;
-        enum sampleWindowSize = 2048;
-        enum sampleBufferSize = 8192;
+        enum sampleWindowSize = 8192;
+        enum sampleBufferSize = 40960;
 
         //pow 2 for FFT
 
@@ -85,8 +86,8 @@ class Audio : Control
         dspProcessor.dspBuffer.lock;
 
         equalizer1 = new RectEqualizer(sampleWindowSize, (fftIndex) {
-            return dspProcessor.fftBuffer[fftIndex].amp;
-        });
+            return dspProcessor.fftBuffer[fftIndex].magn;
+        }, (fftIndex) { return dspProcessor.fftBuffer[fftIndex].freqHz; });
         addCreate(equalizer1);
 
         dspProcessor.onUpdateFTBuffer = () { equalizer1.updateBands; };
@@ -101,7 +102,8 @@ class Audio : Control
 
         import api.dm.gui.controls.texts.text : Text;
 
-        auto musicFile = new Text("/home/user/sdl-music/rectangle_120sec_1hz.wav");
+        auto musicFile = new Text(
+            "");
         musicContainer.addCreate(musicFile);
 
         import api.dm.gui.controls.switches.buttons.button : Button;
@@ -116,6 +118,13 @@ class Audio : Control
                 return;
             }
 
+            if (const err = media.mixer.mixer.setPostCallback(&typeof(dspProcessor)
+                    .signal_callback, cast(void*)&dspProcessor
+                    .dspBuffer))
+            {
+                throw new Exception(err.toString);
+            }
+
             dspProcessor.unlock;
 
             clip = media.mixer.newClip(path);
@@ -127,12 +136,6 @@ class Audio : Control
 
         addCreate(play);
 
-        if (const err = media.mixer.mixer.setPostCallback(&typeof(dspProcessor)
-                .signal_callback, cast(void*)&dspProcessor
-                .dspBuffer))
-        {
-            throw new Exception(err.toString);
-        }
     }
 
     override void pause()

@@ -9,14 +9,23 @@ import core.sync.mutex : Mutex;
 /**
  * Authors: initkfs
  */
-struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true)
+struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool isStaticArray = false)
 {
     private
     {
-        BufferType[BufferSize] _buffer;
+        static if (isStaticArray)
+        {
+            BufferType[BufferSize] _buffer;
+        }
+        else
+        {
+            BufferType[] _buffer;
+        }
+
         size_t _readIndex; //remove
         size_t _writeIndex; //add
         size_t _size;
+
         bool _lock;
     }
 
@@ -24,10 +33,40 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true)
     {
         shared Mutex mutex;
 
-        this(shared Mutex m) pure @safe @nogc nothrow
+        this(shared Mutex m) pure @safe nothrow
         {
             assert(m);
             mutex = m;
+            initialize;
+        }
+    }
+
+    bool initialize() pure @safe nothrow
+    {
+        static if (!isStaticArray)
+        {
+            if (_buffer.length == BufferSize)
+            {
+                return false;
+            }
+
+            _buffer = new BufferType[](BufferSize);
+        }
+
+        fillInit;
+
+        return true;
+    }
+
+    void fillInit() @nogc nothrow @safe
+    {
+        static if (__traits(isFloating, BufferType))
+        {
+            _buffer[] = 0;
+        }
+        else
+        {
+            _buffer[] = BufferType.init;
         }
     }
 
@@ -133,6 +172,11 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true)
         }
     }
 
+    bool isIndexOverlap(size_t index)
+    {
+        return _readIndex > 0 && (_writeIndex <= _readIndex) && index >= _readIndex;
+    }
+
     ContainerResult write(const BufferType[] items) nothrow @safe
     {
         if (_lock)
@@ -152,6 +196,11 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true)
             return ContainerResult.full;
         }
 
+        if (itemsLen > capacity)
+        {
+            return ContainerResult.noenoughspace;
+        }
+
         size_t rest = _writeIndex == 0 ? BufferSize : BufferSize - _writeIndex;
 
         size_t buffLen = itemsLen;
@@ -159,14 +208,21 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true)
         if (buffLen <= rest)
         {
             size_t endIndex = _writeIndex + buffLen;
+
             _buffer[writeIndex .. endIndex] = items;
+
             _writeIndex = endIndex;
+
             if (_writeIndex >= BufferSize)
             {
                 _writeIndex = 0;
             }
             //atomicOp!"+="(_size, buffLen);
             _size += buffLen;
+
+            //import std;
+            //debug stderr.writefln("Write %s, ri %s, end %s, size %s", buffLen, _writeIndex, endIndex, size);
+
             return ContainerResult.success;
         }
 
@@ -174,6 +230,11 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true)
         size_t remainElems = buffLen - lastElems;
 
         size_t endIndex = _writeIndex + lastElems;
+
+        if (isIndexOverlap(endIndex) || isIndexOverlap(remainElems))
+        {
+            return ContainerResult.dataoverwriting;
+        }
 
         _buffer[writeIndex .. endIndex] = items[0 .. lastElems];
         _buffer[0 .. remainElems] = items[lastElems .. $];
@@ -183,8 +244,11 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true)
         {
             _writeIndex = 0;
         }
-        //atomicOp!"+="(_size, lastElems);
-        _size += lastElems;
+        //atomicOp!"+="(_size, buffLen);
+        _size += buffLen;
+
+        //import std;
+        //debug stderr.writefln("Write rest %s, ri %s, end %s, size %s", buffLen, _writeIndex, endIndex, size);
 
         return ContainerResult.success;
     }
@@ -209,17 +273,24 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true)
         const endIndex = _readIndex + count;
         if (endIndex > BufferSize)
         {
-            return ContainerResult.fail;
+            //the number of elements is not a multiple of the container
+            return ContainerResult.failread;
         }
 
         elements[0 .. count] = _buffer[_readIndex .. endIndex];
+
         _readIndex = endIndex;
         if (_readIndex >= BufferSize)
         {
             _readIndex = 0;
         }
+
         //atomicOp!"-="(_size, count);
         _size -= count;
+
+        //import std;
+        //debug stderr.writefln("Read %s, ri %s, end %s, size %s", count, _readIndex, endIndex, size);
+
         return ContainerResult.success;
     }
 
@@ -227,8 +298,8 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true)
     {
         _writeIndex = 0;
         _readIndex = 0;
-        _buffer = BufferType.init;
         _size = 0;
+        fillInit;
     }
 
     void onItem(scope bool delegate(BufferType) onItemIsContinue)
@@ -249,6 +320,8 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true)
 @safe unittest
 {
     auto buff = RingBuffer!(int, 5, false).init;
+    buff.initialize;
+
     assert(buff.write([1, 2, 3]));
     assert(buff.size == 3);
     assert(buff.writeIndex == 3);
@@ -278,6 +351,8 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true)
 @safe unittest
 {
     auto buff = RingBuffer!(int, 5, false).init;
+    buff.initialize;
+
     assert(buff.write([1, 2, 3, 4, 5]));
     assert(buff.isFull);
 
@@ -299,6 +374,8 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true)
 @safe unittest
 {
     auto buff = RingBuffer!(int, 6, false).init;
+    buff.initialize;
+
     assert(buff.write([1, 2, 3, 4, 5, 6]));
     assert(buff.isFull);
 

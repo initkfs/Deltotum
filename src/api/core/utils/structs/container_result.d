@@ -15,7 +15,10 @@ import core.attribute : mustuse;
         nostate = "nostate",
 
         success = "success",
+
         fail = "fail",
+        failread = "failread",
+        failwrite = "failwrite",
 
         locked = "locked",
         empty = "empty",
@@ -23,6 +26,9 @@ import core.attribute : mustuse;
 
         noitems = "noitems",
         nofilled = "nofilled",
+        noenoughspace = "not enough space",
+
+        dataoverwriting = "data overwriting",
     }
 
     alias isSuccess this;
@@ -30,13 +36,18 @@ import core.attribute : mustuse;
     const pure @nogc nothrow @safe
     {
         bool isFail() => !isSuccess;
-        
+        bool isFailRead() => state == State.failread;
+        bool isFailWrite() => state == State.failwrite;
+
         bool isLocked() => state == State.locked;
         bool isEmpty() => state == State.empty;
         bool isFull() => state == State.full;
 
         bool isNoItems() => state == State.noitems;
         bool isNoFilled() => state == State.nofilled;
+        bool isNoSpace() => state == State.noenoughspace;
+
+        bool isDataOverwriting() => state == State.dataoverwriting;
 
         string toString() => state;
     }
@@ -44,7 +55,10 @@ import core.attribute : mustuse;
     static pure @nogc nothrow @safe
     {
         ContainerResult success() => ContainerResult(State.success, true);
+
         ContainerResult fail() => ContainerResult(State.fail);
+        ContainerResult failread() => ContainerResult(State.failread);
+        ContainerResult failwrite() => ContainerResult(State.failwrite);
 
         ContainerResult locked() => ContainerResult(State.locked);
         ContainerResult empty() => ContainerResult(State.empty);
@@ -52,5 +66,8 @@ import core.attribute : mustuse;
 
         ContainerResult noitems() => ContainerResult(State.noitems);
         ContainerResult nofilled() => ContainerResult(State.nofilled);
+        ContainerResult noenoughspace() => ContainerResult(State.noenoughspace);
+
+        ContainerResult dataoverwriting() => ContainerResult(State.dataoverwriting);
     }
 }

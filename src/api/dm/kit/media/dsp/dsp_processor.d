@@ -9,8 +9,6 @@ import api.dm.kit.media.dsp.analysis.analog_signal_analyzer : AnalogSignalAnalyz
 import core.sync.mutex : Mutex;
 import api.core.loggers.logging : Logging;
 
-import DspWinFunc = api.dm.kit.media.dsp.window_funcs;
-
 import Math = api.math;
 
 /**
@@ -60,14 +58,15 @@ class DspProcessor(SignalType, size_t SignalBufferSize) : LoggableUnit
         assert(dspBuffer);
 
         short[] streamSlice = cast(short[]) stream[0 .. len];
+
         try
         {
-            import std.stdio : writefln;
+            import std.stdio : stderr, writefln;
 
             const writeRes = dspBuffer.writeIfNoLockedSync(streamSlice);
             if (!writeRes)
             {
-                debug writefln("Warn, dsp buffer data loss: %s, reason: %s", len, writeRes);
+                debug stderr.writefln("Warn, dsp buffer data loss: %s, reason: %s", len, writeRes);
             }
             else
             {
@@ -106,9 +105,8 @@ class DspProcessor(SignalType, size_t SignalBufferSize) : LoggableUnit
             //         .writeIndex, dspBuffer.size);
 
             SignalType[] data = cast(SignalType[]) localSampleBuffer[0 .. sampleWindowSize];
-            DspWinFunc.hann(data);
 
-            signalAnalyzer.fft(sampleWindowSize, sampleFreq, data, fftBuffer);
+            signalAnalyzer.fftFull(sampleWindowSize, sampleFreq, data, fftBuffer);
 
             if (onUpdateFTBuffer)
             {

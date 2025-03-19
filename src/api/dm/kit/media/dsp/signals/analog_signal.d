@@ -6,5 +6,5 @@ module api.dm.kit.media.dsp.signals.analog_signal;
 struct AnalogSignal
 {
     double freqHz = 0;
-    double amp = 0;
+    double magn = 0;
 }

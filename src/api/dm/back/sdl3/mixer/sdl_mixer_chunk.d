@@ -39,7 +39,8 @@ class SdlMixerChunk : SdlObjectWrapper!Mix_Chunk, ComAudioChunk
 
     ubyte[] buffer() nothrow
     {
-        return buffStart[0 .. allocated];
+        assert(length > 0);
+        return buffStart[0 .. length];
     }
 
     int allocated() @nogc nothrow @safe

@@ -222,8 +222,6 @@ class SdlMixerLib : SdlMixerObject, ComAudioMixer
 
     ComResult newHeapWav(string path, out ComAudioChunk buffer) nothrow
     {
-        assert(buffer);
-
         import std.string : toStringz;
 
         Mix_Chunk* chunkPtr = Mix_LoadWAV(path.toStringz);
