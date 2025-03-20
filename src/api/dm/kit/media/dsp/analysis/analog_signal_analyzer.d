@@ -37,7 +37,7 @@ class AnalogSignalAnalyzer
 
     bool fftFull(SignalType)(size_t windowSize, double signalFreq, SignalType[] samples, AnalogSignal[] outBuffer)
     {
-        //DspWinFunc.hann(samples);
+        DspWinFunc.hann(samples);
         return fft(windowSize, signalFreq, samples, outBuffer);
     }
 
@@ -82,7 +82,7 @@ class AnalogSignalAnalyzer
             }
 
             //magnitude = magnitude / (sampleWindowSize / 2)
-            double freq = i * (signalFreq / fftResLen);
+            double freq = i * signalFreq / fftResLen;
             outBuffer[i] = AnalogSignal(freq, magnitude);
         }
 

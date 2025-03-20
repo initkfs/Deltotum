@@ -150,7 +150,7 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
             }
         }
 
-        ContainerResult readifNoLockedSync(BufferType[] elements, size_t count) @nogc @safe
+        ContainerResult readIfNoLockedSync(BufferType[] elements, size_t count) @nogc @safe
         {
             synchronized (mutex)
             {

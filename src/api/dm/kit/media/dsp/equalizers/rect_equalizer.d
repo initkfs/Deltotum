@@ -19,7 +19,7 @@ class RectEqualizer : Control
 {
     Text[] labels;
 
-    size_t numFreqBands = 30;
+    size_t numFreqBands = 10;
     double bandWidth = 0;
 
     RGBA[] bandColors;
@@ -108,7 +108,7 @@ class RectEqualizer : Control
             import Math = api.math;
 
             auto startFreq = signalProvider(start).freqHz;
-            auto endFreq = signalProvider(end).freqHz;
+            auto endFreq = signalProvider(end - 1).freqHz;
             auto label = labels[i];
             label.text = format("%s\n%s", Math.round(startFreq), Math.round(endFreq));
 
@@ -143,7 +143,7 @@ class RectEqualizer : Control
         auto x = 0;
         auto y = 300;
         auto bandW = 40;
-        auto bandH = 100;
+        auto bandH = 200;
 
         import std.math : log10;
 

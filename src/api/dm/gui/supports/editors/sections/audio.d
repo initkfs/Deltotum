@@ -88,28 +88,25 @@ class Audio : Control
         dspProcessor.dspBuffer.lock;
 
         equalizer1 = new RectEqualizer(sampleWindowSize, (fftIndex) {
-            return dspProcessor.fftBuffer[fftIndex]; });
+            return dspProcessor.fftBuffer[fftIndex];
+        });
         addCreate(equalizer1);
 
         size_t count;
 
-        equalizer1.onUpdateEnd = (){
-            magn1 /= count;
-            count = 0;
-        };
+        equalizer1.onUpdateEnd = () { magn1 /= count; count = 0; };
 
-        equalizer1.onUpdateStart = (){
-            magn1 = 0;
-            count = 0;
-        };
+        equalizer1.onUpdateStart = () { magn1 = 0; count = 0; };
 
         equalizer1.onUpdate = (signal) {
             auto freq = signal.freqHz;
-            if (freq >= 20700 && freq <= 21000)
+
+            if (freq >= 1970 && freq <= 2100)
             {
+
                 magn1 += signal.magn;
                 count++;
-               // writeln(freq);
+                // writeln(freq);
             }
         };
 
@@ -126,7 +123,7 @@ class Audio : Control
         import api.dm.gui.controls.texts.text : Text;
 
         auto musicFile = new Text(
-            "");
+            "/home/user/sdl-music/November snow.mp3");
         musicContainer.addCreate(musicFile);
 
         import api.dm.gui.controls.switches.buttons.button : Button;
@@ -176,11 +173,13 @@ class Audio : Control
         }
     }
 
-    override void drawContent(){
+    override void drawContent()
+    {
         super.drawContent;
 
         graphics.changeColor(RGBA.red);
-        scope(exit){
+        scope (exit)
+        {
             graphics.restoreColor;
         }
 

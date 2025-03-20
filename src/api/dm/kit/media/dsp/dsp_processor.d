@@ -21,9 +21,9 @@ class DspProcessor(SignalType, size_t SignalBufferSize) : LoggableUnit
     RingBuffer!(SignalType, SignalBufferSize) dspBuffer;
 
     size_t sampleWindowSize;
-    SignalType[SignalBufferSize] localSampleBuffer;
+    SignalType[] localSampleBuffer;
 
-    AnalogSignal[SignalBufferSize / 2] fftBuffer;
+    AnalogSignal[] fftBuffer;
 
     double sampleFreq = 0;
 
@@ -43,6 +43,9 @@ class DspProcessor(SignalType, size_t SignalBufferSize) : LoggableUnit
         this.sampleWindowSize = sampleWindowSize;
 
         dspBuffer = newDspBuffer(m);
+
+        localSampleBuffer = new SignalType[](sampleWindowSize);
+        fftBuffer = new AnalogSignal[](sampleWindowSize / 2);
     }
 
     typeof(dspBuffer) newDspBuffer(shared Mutex m) => typeof(dspBuffer)(m);
@@ -57,7 +60,7 @@ class DspProcessor(SignalType, size_t SignalBufferSize) : LoggableUnit
         auto dspBuffer = cast(typeof(dspBuffer)*) userdata;
         assert(dspBuffer);
 
-        short[] streamSlice = cast(short[]) stream[0 .. len];
+        SignalType[] streamSlice = cast(SignalType[]) stream[0 .. len];
 
         try
         {
@@ -95,7 +98,7 @@ class DspProcessor(SignalType, size_t SignalBufferSize) : LoggableUnit
 
     void step()
     {
-        const readDspRes = dspBuffer.readifNoLockedSync(localSampleBuffer[], sampleWindowSize);
+        const readDspRes = dspBuffer.readIfNoLockedSync(localSampleBuffer[], sampleWindowSize);
 
         if (readDspRes)
         {
