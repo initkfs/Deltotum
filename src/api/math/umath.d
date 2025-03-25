@@ -339,3 +339,7 @@ int pow2roundup(int x)
     x |= x >> 16;
     return x + 1;
 }
+
+//TODO negative values
+T incmod(T)(T value, T inc, T mod) => (value + inc) % mod;
+T decmod(T)(T value, T dec, T mod) => (value - dec + mod) % mod;

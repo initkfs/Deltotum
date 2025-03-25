@@ -83,6 +83,23 @@ class Random
         return result;
     }
 
+    U anyUnsafe(T : U[], U)(T container) pure @safe
+    {
+        immutable containerLength = container.length;
+        if (containerLength == 0)
+        {
+            return U.init;
+        }
+
+        if (containerLength == 1)
+        {
+            return container[0];
+        }
+
+        immutable size_t index = between!size_t(0, containerLength - 1);
+        return container[index];
+    }
+
     void shuffle(R)(R range) pure @safe if (isRandomAccessRange!R)
     {
         import std.random : randomShuffle;
@@ -397,7 +414,8 @@ struct LCG
     }
 }
 
-uint fastBetween(Rng)(Rng rng, uint minInclusive, uint maxExclusive) {
+uint fastBetween(Rng)(Rng rng, uint minInclusive, uint maxExclusive)
+{
     uint x = rng.randu;
     ulong m = x * cast(ulong)(maxExclusive - minInclusive);
     return (m >> 32) + minInclusive;

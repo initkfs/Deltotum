@@ -1,4 +1,4 @@
-module api.dm.addon.fractals.lsystems.lsystem;
+module api.math.lsystems.lsystem;
 
 /**
  * Authors: initkfs

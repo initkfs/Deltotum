@@ -37,7 +37,7 @@ class Texture2d : Sprite2d
     this()
     {
         isResizable = true;
-        isResizedByParent = true;
+        //isResizedByParent = true;
     }
 
     this(double width, double height)

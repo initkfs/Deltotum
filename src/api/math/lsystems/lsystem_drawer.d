@@ -1,25 +1,18 @@
-module api.dm.addon.fractals.lshape;
+module api.math.lsystems.lsystem_drawer;
 
-import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-
-import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
-import api.dm.kit.sprites2d.textures.vectors.shapes.vpoints_shape : VPointsShape;
 import api.dm.kit.graphics.brushes.brush : Brush;
-import api.math.geom2.vec2 : Vec2d;
 import api.math.lsystems.lsystem_parser : LSystemParser;
 
-import std.stdio;
+import api.math.geom2.vec2 : Vec2d;
 
 /**
  * Authors: initkfs
  */
-class LShape : VPointsShape
+class LSystemDrawer
 {
-    protected
-    {
-        LSystemParser lparser;
-        Brush brush;
-    }
+
+    LSystemParser lparser;
+    Brush brush;
 
     double step = 2;
     double angleDeg = 90;
@@ -27,17 +20,20 @@ class LShape : VPointsShape
     dstring[dchar] rules;
     size_t generations = 10;
 
-    this(double width = 100, double height = 100, GraphicStyle style = GraphicStyle
-            .simple, dstring[dchar] rules = null, bool isClosePath = false, bool isDrawFromCenter = true)
-    {
-        super(null, width, height, style, isClosePath, isDrawFromCenter);
+    bool isDrawFromCenter;
+    bool isClosePath;
 
+    void delegate(Vec2d, Vec2d) onLineStartEnd;
+
+    this(dstring[dchar] rules = null, bool isClosePath = false, bool isDrawFromCenter = true)
+    {
         this.rules = rules;
+        this.isClosePath = isClosePath;
+        this.isDrawFromCenter = isDrawFromCenter;
     }
 
-    override void initialize()
+    void create()
     {
-        super.initialize;
         if (!lparser)
         {
             lparser = new LSystemParser;
@@ -47,8 +43,10 @@ class LShape : VPointsShape
         {
             brush = new Brush(Vec2d(0, 0));
             brush.onDrawLineStartEnd = (start, end) {
-                Vec2d[2] pp = [start, end];
-                points.insert(pp[]);
+                if (onLineStartEnd)
+                {
+                    onLineStartEnd(start, end);
+                }
             };
 
             lparser.onMoveDraw = () { brush.moveDraw(step); };
@@ -60,15 +58,10 @@ class LShape : VPointsShape
         }
     }
 
-    void parse()
+    void draw()
     {
         assert(lparser);
         lparser.parse(startAxiom, rules, generations);
     }
 
-    override void createTextureContent()
-    {
-        parse;
-        super.createTextureContent;
-    }
 }

@@ -44,14 +44,14 @@ unittest
     nc1.buildInitCreateRun(nc);
     assert(nc.isBuilt);
 
-    import std.traits : hasUDA;
+    import std.traits : hasUDA, hasStaticMember;
     import api.core.utils.types : hasOverloads;
     import api.core.components.uda : Service;
 
     alias componentType = typeof(nc);
     static foreach (const fieldName; __traits(allMembers, componentType))
     {
-        static if (!hasOverloads!(componentType, fieldName) && hasUDA!(__traits(getMember, componentType, fieldName), Service))
+        static if (!hasOverloads!(componentType, fieldName) && hasUDA!(__traits(getMember, componentType, fieldName), Service) && !hasStaticMember!(TargetType, fieldName))
         {
             {
                 auto value = __traits(getMember, nc, fieldName);

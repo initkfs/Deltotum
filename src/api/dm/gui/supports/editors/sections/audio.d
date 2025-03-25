@@ -123,7 +123,7 @@ class Audio : Control
         import api.dm.gui.controls.texts.text : Text;
 
         auto musicFile = new Text(
-            "/home/user/sdl-music/November snow.mp3");
+            "");
         musicContainer.addCreate(musicFile);
 
         import api.dm.gui.controls.switches.buttons.button : Button;

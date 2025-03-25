@@ -33,7 +33,7 @@ struct StarPolygon2d
 
         foreach (i; 0 .. (2 * spikeCount))
         {
-            const radius = ((i % 2) == 0) ? outerRadius : innerRadius;
+            const radius = ((i % 2) != 0) ? outerRadius : innerRadius;
             const polarPos = Vec2d.fromPolarRad(i * angleRad, radius);
             if (!onIndexVertexIsContinue(i, polarPos))
             {

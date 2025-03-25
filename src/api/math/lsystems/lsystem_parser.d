@@ -1,6 +1,6 @@
-module api.dm.addon.fractals.lsystems.lsystem_parser;
+module api.math.lsystems.lsystem_parser;
 
-import api.dm.addon.fractals.lsystems.lsystem : LSystem;
+import api.math.lsystems.lsystem : LSystem;
 
 /**
  * Authors: initkfs

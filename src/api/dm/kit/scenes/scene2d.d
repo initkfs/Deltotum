@@ -81,7 +81,7 @@ class Scene2d : EventKitTarget
 
     void processUDA(alias TargetType)()
     {
-        import std.traits : hasUDA, getUDAs;
+        import std.traits : hasUDA, getUDAs, hasStaticMember;
         import api.core.utils.types : hasOverloads;
         import UDA = api.dm.kit.factories.uda;
 
@@ -92,7 +92,7 @@ class Scene2d : EventKitTarget
 
         static foreach (const fieldName; __traits(allMembers, TargetType))
         {
-            static if (!hasOverloads!(TargetType, fieldName))
+            static if (!hasOverloads!(TargetType, fieldName) && !hasStaticMember!(TargetType, fieldName))
             {
                 {
                     alias member = __traits(getMember, thisInstance, fieldName);
