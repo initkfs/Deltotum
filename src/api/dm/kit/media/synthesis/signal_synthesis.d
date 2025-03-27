@@ -6,7 +6,7 @@ import Math = api.math;
  * Authors: initkfs
  */
 
-protected void onBuffer(T)(T[] buffer, double sampleRateHz, double amplitude0to1 = 1.0, size_t channels, scope double delegate(
+void onBuffer(T)(T[] buffer, double sampleRateHz, double amplitude0to1 = 1.0, size_t channels, scope double delegate(
         size_t, double) onIndexTimeStep)
 {
     for (size_t i = 0; i < buffer.length; i++)

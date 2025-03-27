@@ -157,8 +157,10 @@ class Audio : Control
                 chunk.dispose;
             }
 
-            chunk = media.newHeapChunk!short(1000);
-            chunk.onBuffer((data, spec) { triangle(data, spec.freqHz, 1, spec.channels); });
+            import api.dm.kit.media.music.genres.ambient;
+
+            chunk = media.newHeapChunk!short(4000);
+            chunk.onBuffer((data, spec) { drone(data, 100, spec.freqHz, 1, spec.channels); });
 
             import api.dm.kit.media.dsp.formats.wav_writer: WavWriter;
 
