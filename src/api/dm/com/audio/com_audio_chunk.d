@@ -11,4 +11,6 @@ interface ComAudioChunk : Destroyable
 nothrow:
 
     ubyte[] buffer();
+
+    ComResult play(int loops, int ticks);
 }

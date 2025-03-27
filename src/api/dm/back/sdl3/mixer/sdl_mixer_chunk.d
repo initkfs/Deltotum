@@ -37,6 +37,17 @@ class SdlMixerChunk : SdlObjectWrapper!Mix_Chunk, ComAudioChunk
         this.ptr = ptr;
     }
 
+    //The audio data MUST be in the exact same format as the audio device.
+    this(ubyte[] buffer)
+    {
+        Mix_Chunk* newPtr = Mix_QuickLoad_RAW(cast(Uint8*) buffer, cast(Uint32) buffer.length);
+        if (!newPtr)
+        {
+            throw new Exception(getErrorRes("Error loading mixer chunk from buffer").toString);
+        }
+        this.ptr = newPtr;
+    }
+
     ubyte[] buffer() nothrow
     {
         assert(length > 0);
@@ -77,6 +88,19 @@ class SdlMixerChunk : SdlObjectWrapper!Mix_Chunk, ComAudioChunk
     {
         assert(ptr);
         return Mix_VolumeChunk(ptr, value);
+    }
+
+    ComResult play(int loops = -1, int ticks = -1)
+    {
+        assert(ptr);
+
+        int channel = -1;
+        int isPlay = Mix_PlayChannelTimed(channel, ptr, loops, ticks);
+        if (isPlay == -1)
+        {
+            return getErrorRes("Error playing mix chunk");
+        }
+        return ComResult.success;
     }
 
     override bool disposePtr()

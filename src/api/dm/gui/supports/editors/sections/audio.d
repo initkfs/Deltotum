@@ -19,7 +19,10 @@ import api.dm.kit.media.dsp.analysis.analog_signal_analyzer : AnalogSignalAnalyz
 import std.math.traits : isPowerOf2;
 
 import api.dm.kit.media.dsp.dsp_processor : DspProcessor;
-import api.dm.kit.media.dsp.equalizers.rect_equalizer : RectEqualizer;
+import api.dm.kit.media.dsp.equalizers.band_equalizer : BandEqualizer;
+import api.dm.gui.controls.meters.levels.rect_level : RectLevel;
+
+import Math = api.math;
 
 import std;
 
@@ -30,7 +33,8 @@ class Audio : Control
 {
     ComAudioClip clip;
 
-    RectEqualizer equalizer1;
+    BandEqualizer equalizer;
+    RectLevel level;
 
     this()
     {
@@ -87,30 +91,35 @@ class Audio : Control
         dspProcessor = new typeof(dspProcessor)(sampleBufferMutex, new AnalogSignalAnalyzer, sampleFreq, sampleWindowSize, logging);
         dspProcessor.dspBuffer.lock;
 
-        equalizer1 = new RectEqualizer(sampleWindowSize, (fftIndex) {
+        equalizer = new BandEqualizer(sampleWindowSize, (fftIndex) {
             return dspProcessor.fftBuffer[fftIndex];
-        });
-        addCreate(equalizer1);
+        }, 50);
 
-        size_t count;
-
-        equalizer1.onUpdateEnd = () { magn1 /= count; count = 0; };
-
-        equalizer1.onUpdateStart = () { magn1 = 0; count = 0; };
-
-        equalizer1.onUpdate = (signal) {
-            auto freq = signal.freqHz;
-
-            if (freq >= 1970 && freq <= 2100)
+        level = new RectLevel((i) {
+            if (i < equalizer.bandValues.length)
             {
-
-                magn1 += signal.magn;
-                count++;
-                // writeln(freq);
+                return equalizer.bandValues[i] * 2;
             }
+            return 0;
+        }, () { return 1; });
+        level.levels = 50;
+
+        equalizer.onUpdateIndexFreqStartEnd = (band, startFreq, endFreq) {
+            import std.format : format;
+
+            auto label = format("%s\n%s", Math.round(startFreq), Math.round(endFreq));
+            level.labels[band].text = label;
         };
 
-        dspProcessor.onUpdateFTBuffer = () { equalizer1.updateBands; };
+        addCreate(level);
+
+        equalizer.onUpdateEnd = () {};
+
+        equalizer.onUpdateStart = () {};
+
+        equalizer.onUpdate = (signal) {};
+
+        dspProcessor.onUpdateFTBuffer = () { equalizer.update; };
 
         import api.dm.gui.controls.containers.vbox : VBox;
         import api.dm.gui.controls.containers.hbox : HBox;
@@ -122,21 +131,14 @@ class Audio : Control
 
         import api.dm.gui.controls.texts.text : Text;
 
-        auto musicFile = new Text(
-            "");
-        musicContainer.addCreate(musicFile);
+        // auto musicFile = new Text(
+        //     "/home/user/sdl-music/November snow.mp3");
+        // musicContainer.addCreate(musicFile);
 
         import api.dm.gui.controls.switches.buttons.button : Button;
 
         auto play = new Button("Play");
-        play.onAction ~= (ref e) {
-
-            auto path = musicFile.textString;
-
-            if (clip)
-            {
-                return;
-            }
+        level.onPointerPress ~= (ref e) {
 
             if (const err = media.mixer.mixer.setPostCallback(&typeof(dspProcessor)
                     .signal_callback, cast(void*)&dspProcessor
@@ -147,15 +149,58 @@ class Audio : Control
 
             dspProcessor.unlock;
 
-            clip = media.mixer.newClip(path);
-            if (const err = clip.play)
-            {
-                throw new Exception(err.toString);
-            }
+            playSound;
+
+            // auto path = musicFile.textString;
+
+            // if (clip)
+            // {
+            //     return;
+            // }
+
+            // clip = media.mixer.newClip(path);
+            // if (const err = clip.play)
+            // {
+            //     throw new Exception(err.toString);
+            // }
         };
 
-        addCreate(play);
+        //addCreate(play);
 
+    }
+
+    void playSound()
+    {
+        enum DURATION = 2;
+        enum SAMPLE_RATE = 44100.0;
+
+        import api.dm.back.sdl3.mixer.sdl_mixer_chunk : SdlMixerChunk;
+
+        size_t buffLen = cast(size_t)(DURATION * SAMPLE_RATE);
+        short[] buffer = new short[](buffLen);
+        sine(buffer);
+
+        auto chunk = new SdlMixerChunk(cast(ubyte[]) buffer);
+
+        if (const err = chunk.play(1))
+        {
+            throw new Exception(err.toString);
+        }
+    }
+
+    void sine(T)(T[] buffer)
+    {
+        enum SAMPLE_RATE = 44100.0;
+        enum FREQUENCY = 440.0; // Частота тона (A4 нота)
+
+        enum AMPLITUDE = 0.5; // Громкость (0.0 - 1.0)
+
+        foreach (i, ref v; buffer)
+        {
+            double time = i / SAMPLE_RATE;
+            double value = Math.sin(2.0 * Math.PI * FREQUENCY * time) * AMPLITUDE;
+            v = cast(T)(value * T.max);
+        }
     }
 
     override void pause()
@@ -176,20 +221,6 @@ class Audio : Control
     override void drawContent()
     {
         super.drawContent;
-
-        graphics.changeColor(RGBA.red);
-        scope (exit)
-        {
-            graphics.restoreColor;
-        }
-
-        auto xx = 100;
-        auto yy = 400;
-
-        auto level = magn1 * 100;
-
-        graphics.fillRect(xx, yy - level, 20, level);
-
     }
 
     override void update(double delta)
