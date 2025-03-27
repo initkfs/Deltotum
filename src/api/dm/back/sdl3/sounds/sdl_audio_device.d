@@ -115,12 +115,16 @@ class SdlAudioDevice : SdlObject, ComAudioDevice
 
     SDL_AudioSpec toSdlSpec(ComAudioSpec spec) pure nothrow
     {
-        return SDL_AudioSpec(toSdlFormat(spec.format), spec.channels, spec.freq);
+
+        return SDL_AudioSpec(toSdlFormat(spec.format), cast(int) spec.channels, spec.freqHz);
     }
 
     ComAudioSpec fromSdlSpec(SDL_AudioSpec spec) pure nothrow
     {
-        return ComAudioSpec(fromSdlFormat(spec.format), spec.channels, spec.freq);
+        import std.conv : to;
+
+        //TODO channels == -1, signed -> unsigned?
+        return ComAudioSpec(fromSdlFormat(spec.format), spec.freq, cast(size_t) spec.channels);
     }
 
 }

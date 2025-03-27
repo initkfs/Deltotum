@@ -32,7 +32,7 @@ class SdlMixerLib : SdlMixerObject, ComAudioMixer
 
     override string linkedVersionString() nothrow => stringFromVersion(Mix_Version());
 
-    bool openAudio(SDL_AudioDeviceID id, SDL_AudioSpec* spec) nothrow
+    bool open(SDL_AudioDeviceID id, SDL_AudioSpec* spec) nothrow
     {
         //apt-get install libasound2-dev libpulse-dev
         //https://stackoverflow.com/questions/10465202/initializing-sdl-mixer-gives-error-no-available-audio-device
@@ -40,22 +40,14 @@ class SdlMixerLib : SdlMixerObject, ComAudioMixer
         return Mix_OpenAudio(id, spec);
     }
 
-    ComResult openAudio(ComAudioDeviceId id, ComAudioSpec spec) nothrow
+    ComResult open(ComAudioDeviceId id, ComAudioSpec spec) nothrow
     {
         SDL_AudioSpec sdlSpec = toSdlSpec(spec);
-        if (!openAudio(id, &sdlSpec))
+        if (!open(id, &sdlSpec))
         {
-            return getErrorRes("Error open SDL audio");
+            return getErrorRes("Error open SDL mixer audio");
         }
         return ComResult.success;
-    }
-
-    ComResult openAudio(ComAudioSpec spec) nothrow => openAudio(0, spec);
-
-    ComResult openAudio() nothrow
-    {
-        ComAudioSpec spec;
-        return openAudio(spec);
     }
 
     ComResult setPostCallback(MixerCallback callback, void* userdata) nothrow
@@ -149,7 +141,7 @@ class SdlMixerLib : SdlMixerObject, ComAudioMixer
         {
             return getErrorRes("Error getting query audio spec");
         }
-        spec = ComAudioSpec(fromSdlFormat(format), channels, frequency);
+        spec = ComAudioSpec(fromSdlFormat(format), frequency, channels);
         return ComResult.success;
     }
 
@@ -260,7 +252,7 @@ class SdlMixerLib : SdlMixerObject, ComAudioMixer
     SDL_AudioSpec toSdlSpec(ComAudioSpec spec) nothrow
     {
         SDL_AudioFormat format = toSdlFormat(spec.format);
-        return SDL_AudioSpec(format, spec.channels, spec.freq);
+        return SDL_AudioSpec(format, cast(int) spec.channels, spec.freqHz);
     }
 
 }

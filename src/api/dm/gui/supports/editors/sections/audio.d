@@ -21,6 +21,7 @@ import std.math.traits : isPowerOf2;
 import api.dm.kit.media.dsp.dsp_processor : DspProcessor;
 import api.dm.kit.media.dsp.equalizers.band_equalizer : BandEqualizer;
 import api.dm.gui.controls.meters.levels.rect_level : RectLevel;
+import api.dm.kit.media.synthesis.signal_synthesis;
 
 import Math = api.math;
 
@@ -38,9 +39,9 @@ class Audio : Control
 
     this()
     {
-        import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
+        import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
-        layout = new HLayout;
+        layout = new VLayout;
         layout.isAutoResize = true;
         isBackground = false;
         layout.isAlignY = false;
@@ -81,6 +82,9 @@ class Audio : Control
     size_t frameCount;
 
     double magn1 = 0;
+
+    import api.dm.kit.media.dsp.chunks.audio_chunk : AudioChunk;
+    AudioChunk!short chunk;
 
     override void create()
     {
@@ -135,72 +139,40 @@ class Audio : Control
         //     "/home/user/sdl-music/November snow.mp3");
         // musicContainer.addCreate(musicFile);
 
+        if (const err = media.mixer.mixer.setPostCallback(&typeof(dspProcessor)
+                .signal_callback, cast(void*)&dspProcessor
+                .dspBuffer))
+        {
+            throw new Exception(err.toString);
+        }
+
         import api.dm.gui.controls.switches.buttons.button : Button;
 
-        auto play = new Button("Play");
-        level.onPointerPress ~= (ref e) {
-
-            if (const err = media.mixer.mixer.setPostCallback(&typeof(dspProcessor)
-                    .signal_callback, cast(void*)&dspProcessor
-                    .dspBuffer))
-            {
-                throw new Exception(err.toString);
-            }
-
+        auto sineBtn = new Button("sine");
+        musicContainer.addCreate(sineBtn);
+        sineBtn.onPointerPress ~= (ref e) {
             dspProcessor.unlock;
 
-            playSound;
+            if(chunk){
+                chunk.dispose;
+            }
 
-            // auto path = musicFile.textString;
+            chunk = media.newHeapChunk!short(1000);
+            chunk.onBuffer((data, spec) { triangle(data, spec.freqHz, 1, spec.channels); });
 
-            // if (clip)
-            // {
-            //     return;
-            // }
+            import api.dm.kit.media.dsp.formats.wav_writer: WavWriter;
 
-            // clip = media.mixer.newClip(path);
-            // if (const err = clip.play)
-            // {
-            //     throw new Exception(err.toString);
-            // }
+            auto writer = new WavWriter;
+            writer.save("/home/user/sdl-music/out.wav", chunk.data.buffer, chunk.spec);
+
+            chunk.play;
+            ///dspProcessor.lock;
         };
-
-        //addCreate(play);
-
     }
 
     void playSound()
     {
-        enum DURATION = 2;
-        enum SAMPLE_RATE = 44100.0;
 
-        import api.dm.back.sdl3.mixer.sdl_mixer_chunk : SdlMixerChunk;
-
-        size_t buffLen = cast(size_t)(DURATION * SAMPLE_RATE);
-        short[] buffer = new short[](buffLen);
-        sine(buffer);
-
-        auto chunk = new SdlMixerChunk(cast(ubyte[]) buffer);
-
-        if (const err = chunk.play(1))
-        {
-            throw new Exception(err.toString);
-        }
-    }
-
-    void sine(T)(T[] buffer)
-    {
-        enum SAMPLE_RATE = 44100.0;
-        enum FREQUENCY = 440.0; // Частота тона (A4 нота)
-
-        enum AMPLITUDE = 0.5; // Громкость (0.0 - 1.0)
-
-        foreach (i, ref v; buffer)
-        {
-            double time = i / SAMPLE_RATE;
-            double value = Math.sin(2.0 * Math.PI * FREQUENCY * time) * AMPLITUDE;
-            v = cast(T)(value * T.max);
-        }
     }
 
     override void pause()
@@ -212,10 +184,7 @@ class Audio : Control
     override void run()
     {
         super.run;
-        if (clip)
-        {
-            dspProcessor.unlock;
-        }
+        dspProcessor.unlock;
     }
 
     override void drawContent()
@@ -227,10 +196,10 @@ class Audio : Control
     {
         super.update(delta);
 
-        if (!clip)
-        {
-            return;
-        }
+        // if (!clip)
+        // {
+        //     return;
+        // }
 
         dspProcessor.step;
     }

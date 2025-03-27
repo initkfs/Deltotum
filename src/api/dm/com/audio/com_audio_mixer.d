@@ -21,12 +21,11 @@ nothrow:
     ComResult newHeapMusic(string path, out ComAudioClip clip);
     ComResult newHeapWav(string path, out ComAudioChunk buffer);
 
-    ComResult openAudio(ComAudioDeviceId id, ComAudioSpec spec);
+    ComResult open(ComAudioDeviceId id, ComAudioSpec spec);
 
     ComResult getTracks(out int tracksCount);
     ComResult setTracks(int tracksCount);
 
     ComResult setPostCallback(MixerCallback callback, void* userdata);
-
     ComResult setOnTrackFinished(TrackFinishedCallback callback);
 }

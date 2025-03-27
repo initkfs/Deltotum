@@ -44,6 +44,7 @@ import api.dm.back.sdl3.sdl_texture : SdlTexture;
 import api.dm.back.sdl3.sdl_surface : SdlSurface;
 import api.dm.back.sdl3.ttf.sdl_ttf_font : SdlTTFFont;
 import api.dm.back.sdl3.img.sdl_image : SdlImage;
+import api.dm.back.sdl3.mixer.sdl_mixer_chunk: SdlMixerChunk;
 import api.dm.com.graphics.com_texture : ComTexture;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.com.graphics.com_screen : ComScreenId;
@@ -248,6 +249,7 @@ class SdlApp : GuiApp
         auto audioClip = new AudioMixer(sdlAudioMixer.get);
 
         _media = new MultiMedia(audioClip, audioOut.get);
+        _media.chunkFromBufferProvider = (buff) { return new SdlMixerChunk(buff); };
         _media.initialize;
 
         //TODO lazy load with config value
@@ -655,7 +657,7 @@ class SdlApp : GuiApp
                     return err;
                 }
 
-                if (const err = mixer.openAudio(audio.id, audio.spec))
+                if (const err = mixer.open(audio.id, audio.spec))
                 {
                     return err;
                 }
