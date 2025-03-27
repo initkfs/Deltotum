@@ -8,6 +8,7 @@ import api.dm.com.platforms.results.com_result : ComResult;
 import api.dm.com.audio.com_audio_clip : ComAudioClip;
 import api.dm.com.audio.com_audio_chunk : ComAudioChunk;
 import api.dm.com.audio.com_audio_mixer;
+import api.dm.com.audio.com_audio_device;
 import api.dm.back.sdl3.mixer.sdl_mixer_object : SdlMixerObject;
 import api.dm.back.sdl3.mixer.sdl_mixer_music : SdlMixerMusic;
 

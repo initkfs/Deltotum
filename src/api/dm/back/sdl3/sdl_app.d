@@ -27,6 +27,8 @@ import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import api.dm.back.sdl3.sdl_lib : SdlLib;
 import api.dm.back.sdl3.img.sdl_img_lib : SdlImgLib;
 import api.dm.back.sdl3.mixer.sdl_mixer_lib : SdlMixerLib;
+import api.dm.com.audio.com_audio_device;
+import api.dm.back.sdl3.sounds.sdl_audio_device : SdlAudioDevice;
 import api.dm.back.sdl3.ttf.sdl_ttf_lib : SdlTTFLib;
 import api.dm.back.sdl3.sdl_window : SdlWindow;
 import api.dm.back.sdl3.sdl_window : SdlWindowMode;
@@ -91,7 +93,8 @@ class SdlApp : GuiApp
         SdlImgLib sdlImage;
         SdlTTFLib sdlFont;
 
-        Nullable!SdlMixerLib sdlAudio;
+        Nullable!SdlAudioDevice audioOut;
+        Nullable!SdlMixerLib sdlAudioMixer;
         Nullable!SdlJoystickLib sdlJoystick;
 
         Nullable!SdlJoystick sdlCurrentJoystick;
@@ -242,9 +245,9 @@ class SdlApp : GuiApp
 
         _input = new Input(keyboard, clipboard, cursor);
 
-        auto audioClip = new AudioMixer(sdlAudio.get);
+        auto audioClip = new AudioMixer(sdlAudioMixer.get);
 
-        _media = new MultiMedia(audioClip);
+        _media = new MultiMedia(audioClip, audioOut.get);
         _media.initialize;
 
         //TODO lazy load with config value
@@ -578,9 +581,17 @@ class SdlApp : GuiApp
             sdlFont = newSdlFont;
         }
 
-        if (sdlAudio.isNull && caps.isAudio)
+        if (caps.isAudio)
         {
-            sdlAudio = newSdlAudio;
+            if (audioOut.isNull)
+            {
+                audioOut = newSdlAudio;
+            }
+
+            if (sdlAudioMixer.isNull)
+            {
+                sdlAudioMixer = newSdlAudioMixer;
+            }
         }
 
         if (sdlJoystick.isNull && caps.isJoystick)
@@ -626,33 +637,44 @@ class SdlApp : GuiApp
             return err;
         }
 
-        if (!sdlAudio.isNull)
+        if (!audioOut.isNull)
         {
-            auto audio = sdlAudio.get;
-            if (const err = audio.initialize)
+            auto audio = audioOut.get;
+
+            if (const err = audio.open)
             {
                 return err;
             }
-            if (const err = audio.openAudio)
+            uservices.logger.tracef("Open audio %s", audio.spec);
+
+            if (!sdlAudioMixer.isNull)
             {
-                return err;
-            }
-            
-            string chunkDecoders;
-            if (const err = audio.chunkDecoders(chunkDecoders))
-            {
-                return err;
-            }
+                auto mixer = sdlAudioMixer.get;
+                if (const err = mixer.initialize)
+                {
+                    return err;
+                }
 
-            import api.dm.com.audio.com_audio_mixer: ComAudioSpec;
+                if (const err = mixer.openAudio(audio.id, audio.spec))
+                {
+                    return err;
+                }
 
-            ComAudioSpec spec;
-            if(const err = audio.query(spec)){
-                return err;
+                string chunkDecoders;
+                if (const err = mixer.chunkDecoders(chunkDecoders))
+                {
+                    return err;
+                }
+
+                ComAudioSpec spec;
+                if (const err = mixer.query(spec))
+                {
+                    return err;
+                }
+
+                string mixerVersion = mixer.versionString;
+                uservices.logger.tracef("Init SDL mixer %s, audio: %s, decoders: %s", mixerVersion, spec, chunkDecoders);
             }
-
-            string mixerVersion = audio.versionString;
-            uservices.logger.tracef("Init SDL mixer %s, audio: %s, decoders: %s", mixerVersion, spec, chunkDecoders);
         }
 
         if (gservices.capGraphics.isJoystick)
@@ -672,7 +694,8 @@ class SdlApp : GuiApp
     Loop newMainLoop() => new IntegratedLoop;
     SdlLib newSdlLib() => new SdlLib;
     SdlImgLib newSdlImage() => new SdlImgLib;
-    SdlMixerLib newSdlAudio() => new SdlMixerLib;
+    SdlAudioDevice newSdlAudio() => new SdlAudioDevice;
+    SdlMixerLib newSdlAudioMixer() => new SdlMixerLib;
     SdlTTFLib newSdlFont() => new SdlTTFLib;
     SdlJoystickLib newSdlJoystick() => new SdlJoystickLib;
 
@@ -976,9 +999,9 @@ class SdlApp : GuiApp
         }
 
         //TODO process EXIT event
-        if (!sdlAudio.isNull)
+        if (!sdlAudioMixer.isNull)
         {
-            sdlAudio.get.quit;
+            sdlAudioMixer.get.quit;
         }
 
         sdlImage.quit;
