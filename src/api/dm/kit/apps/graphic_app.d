@@ -252,10 +252,10 @@ abstract class GraphicApp : CliApp
 
     override void exit(int code = 0)
     {
-        if (_media)
+        if (_media && !_media.isDisposed)
         {
             _media.dispose;
-            uservices.logger.trace("Dispose audio");
+            uservices.logger.trace("Dispose media");
         }
 
         if (_input)

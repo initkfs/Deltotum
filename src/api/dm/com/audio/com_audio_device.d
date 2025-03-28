@@ -29,11 +29,10 @@ interface ComAudioDevice
 nothrow:
 
     ComResult open(const ComAudioSpec* requestSpec = null);
+    ComResult close();
+
     ComResult getSpec(out ComAudioSpec requestSpec);
 
     ComAudioDeviceId id();
     ComAudioSpec spec();
-
-    void close();
-
 }

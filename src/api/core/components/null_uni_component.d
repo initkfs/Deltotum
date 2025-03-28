@@ -51,7 +51,7 @@ unittest
     alias componentType = typeof(nc);
     static foreach (const fieldName; __traits(allMembers, componentType))
     {
-        static if (!hasOverloads!(componentType, fieldName) && hasUDA!(__traits(getMember, componentType, fieldName), Service) && !hasStaticMember!(TargetType, fieldName))
+        static if (!hasOverloads!(componentType, fieldName) && hasUDA!(__traits(getMember, componentType, fieldName), Service) && !hasStaticMember!(componentType, fieldName))
         {
             {
                 auto value = __traits(getMember, nc, fieldName);

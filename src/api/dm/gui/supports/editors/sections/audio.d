@@ -22,6 +22,7 @@ import api.dm.kit.media.dsp.dsp_processor : DspProcessor;
 import api.dm.kit.media.dsp.equalizers.band_equalizer : BandEqualizer;
 import api.dm.gui.controls.meters.levels.rect_level : RectLevel;
 import api.dm.kit.media.synthesis.signal_synthesis;
+import api.dm.kit.media.synthesis.synthesizers.sound_synthesizer;
 
 import Math = api.math;
 
@@ -84,7 +85,12 @@ class Audio : Control
     double magn1 = 0;
 
     import api.dm.kit.media.dsp.chunks.audio_chunk : AudioChunk;
+
     AudioChunk!short chunk;
+
+    short[] buffer;
+
+    SoundSynthesizer!short synt;
 
     override void create()
     {
@@ -148,26 +154,35 @@ class Audio : Control
 
         import api.dm.gui.controls.switches.buttons.button : Button;
 
-        auto sineBtn = new Button("sine");
+        synt = new SoundSynthesizer!short;
+
+        auto sineBtn = new Button("Play");
         musicContainer.addCreate(sineBtn);
         sineBtn.onPointerPress ~= (ref e) {
             dspProcessor.unlock;
 
-            if(chunk){
+            if (chunk)
+            {
                 chunk.dispose;
             }
 
             import api.dm.kit.media.music.genres.ambient;
+            import api.dm.kit.media.synthesis.chord_synthesis;
+            import api.dm.kit.media.synthesis.notes;
 
-            chunk = media.newHeapChunk!short(4000);
-            chunk.onBuffer((data, spec) { drone(data, 100, spec.freqHz, 1, spec.channels); });
+            
+
+            chunk.play;
+
+            // chunk = media.newHeapChunk!short(200);
+            // chunk.onBuffer((data, spec) { chord(data,  spec.freqHz, 1); });
 
             import api.dm.kit.media.dsp.formats.wav_writer: WavWriter;
 
             auto writer = new WavWriter;
             writer.save("/home/user/sdl-music/out.wav", chunk.data.buffer, chunk.spec);
 
-            chunk.play;
+            // chunk.play;
             ///dspProcessor.lock;
         };
     }

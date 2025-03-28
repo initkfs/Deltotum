@@ -44,7 +44,7 @@ import api.dm.back.sdl3.sdl_texture : SdlTexture;
 import api.dm.back.sdl3.sdl_surface : SdlSurface;
 import api.dm.back.sdl3.ttf.sdl_ttf_font : SdlTTFFont;
 import api.dm.back.sdl3.img.sdl_image : SdlImage;
-import api.dm.back.sdl3.mixer.sdl_mixer_chunk: SdlMixerChunk;
+import api.dm.back.sdl3.mixer.sdl_mixer_chunk : SdlMixerChunk;
 import api.dm.com.graphics.com_texture : ComTexture;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.com.graphics.com_screen : ComScreenId;
@@ -1004,6 +1004,14 @@ class SdlApp : GuiApp
         if (!sdlAudioMixer.isNull)
         {
             sdlAudioMixer.get.quit;
+        }
+
+        if (!audioOut.isNull)
+        {
+            if (const err = (audioOut.get).close)
+            {
+                uservices.logger.error(err.toString);
+            }
         }
 
         sdlImage.quit;

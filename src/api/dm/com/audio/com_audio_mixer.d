@@ -8,6 +8,7 @@ import api.dm.com.audio.com_audio_device;
 alias TrackFinishedCallback = extern (C) void function(int trackNum) nothrow @nogc;
 
 alias MixerCallback = extern (C) void function(void* udata, ubyte* stream, int len) nothrow @nogc;
+alias MixerChannelFinishedCallback = extern (C) void function(int channel) nothrow @nogc;
 
 /**
  * Authors: initkfs
@@ -27,5 +28,6 @@ nothrow:
     ComResult setTracks(int tracksCount);
 
     ComResult setPostCallback(MixerCallback callback, void* userdata);
+    ComResult setChannelCallback(MixerChannelFinishedCallback callback);
     ComResult setOnTrackFinished(TrackFinishedCallback callback);
 }

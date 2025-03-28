@@ -1,5 +1,6 @@
 module api.dm.kit.media.synthesis.chord_synthesis;
 
+import api.dm.kit.media.synthesis.signal_synthesis;
 import api.dm.kit.media.synthesis.effect_synthesis;
 
 import Math = api.math;
@@ -9,26 +10,23 @@ import Math = api.math;
  */
 
 //(C4, E4, G4)
-double[3] chord_frequencies = [261.63f, 329.63f, 392.00f];
+double[3] chord_frequencies = [261.63, 329.63, 392.00];
 
-void chord(T)(T[] buffer, double sampleRate = 44100, double amplitude0to1 = 0.3)
+void chord(T)(T[] buffer, double sampleRateHz = 44100, double amplitude0to1 = 0.3, size_t channels = 2)
 {
-    foreach (i, rev v; buffer)
-    {
-        float sample = 0.0f;
-        float time = cast(float) i / sampleRate;
+    onBuffer(buffer, sampleRateHz, amplitude0to1, channels, (i, time) {
+        
+        double sample = 0.0;
 
-        for (int n = 0; n < chord_frequencies.length; n++)
+        foreach (freq; chord_frequencies)
         {
             //sample += Math.sin(2.0f * Math.PI * chord_frequencies[n] * time) * adsr(time, durationSec) * amplitude0to1;
-            sample += Math.sin(2.0f * Math.PI * chord_frequencies[n] * time) * amplitude0to1;
+            sample += Math.sin(Math.PI2 * freq * time);
         }
 
-        v = cast(T)(sample * T.max);
-    }
+        return sample;
+    });
 }
-
-
 
 double piano(double time, double freq, double duration)
 {

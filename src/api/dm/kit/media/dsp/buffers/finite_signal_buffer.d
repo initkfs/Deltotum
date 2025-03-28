@@ -44,6 +44,15 @@ struct FiniteSignalBuffer(T)
         assert(buffPtr);
 
         _buffer = (cast(T*) buffPtr)[0 .. buffLen];
+
+        // static if (__traits(isFloating, T))
+        // {
+        //     _buffer[] = 0;
+        // }
+        // else
+        // {
+        //     _buffer[] = T.init;
+        // }
     }
 
     void dispose()

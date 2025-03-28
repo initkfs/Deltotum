@@ -56,6 +56,12 @@ class SdlMixerLib : SdlMixerObject, ComAudioMixer
         return ComResult.success;
     }
 
+    ComResult setChannelCallback(MixerChannelFinishedCallback callback) nothrow
+    {
+        Mix_ChannelFinished(callback);
+        return ComResult.success;
+    }
+
     ComResult chunkDecoders(out string decoders) nothrow
     {
         import std.string : fromStringz;

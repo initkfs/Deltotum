@@ -8,22 +8,29 @@ import Math = api.math;
 
 double adsr(double time, double duration)
 {
-    double attack = 0.1, decay = 0.1, sustain = 0.7, release = 0.2;
+    //sample * adsr(..)
+    double attack = 0.05; //5%
+    double decay = 0.1; //10%
+    double sustain = 0.7; //70
+    double release = 0.2; //30
 
+    //Attack
     if (time < attack)
     {
         return time / attack;
     }
-    else if (time < attack + decay)
+    //Decay
+    else if (time < (attack + decay))
     {
-        return 1.0 - (1.0 - sustain) * ((time - attack) / decay);
+        return (1.0 - (1.0 - sustain) * ((time - attack) / decay));
     }
-    else if (time < duration - release)
+    //Release
+    else if (time > (duration - release))
     {
-        return sustain;
+        return sustain * (1.0 - ((time - (duration - release)) / release));
     }
 
-    return sustain * (1.0 - (time - (duration - release)) / release);
+    return sustain;
 }
 
 double arpeggio(double time, double sample)
@@ -34,8 +41,49 @@ double arpeggio(double time, double sample)
         sample += Math.sin(2 * Math.PI * 329.63f * time) * 0.3f; // E4
     else
         sample += Math.sin(2 * Math.PI * 392.00f * time) * 0.3f; // G4
-    
+
     return sample;
+}
+
+void fadeout(T)(T[] buffer, size_t samples, size_t channels)
+{
+    assert(buffer.length > 0);
+    assert(samples * channels < buffer.length);
+
+    size_t start = buffer.length - samples * channels;
+
+    for (auto i = start; i < buffer.length; i += channels)
+    {
+        double factor = 1.0 - (((cast(double) i) - start) / channels) / samples;
+
+        for (size_t ch = 0; ch < channels; ch++)
+        {
+            auto buffIndex = i + ch;
+            if (buffIndex >= buffer.length)
+            {
+                break;
+            }
+            buffer[buffIndex] = cast(T)(buffer[buffIndex] * factor);
+        }
+    }
+}
+
+void fadein(T)(T[] buffer, size_t samples, size_t channels = 2)
+{
+    for (auto i = 0; i < samples * channels; i += channels)
+    {
+        double factor = ((cast(double) i) / channels) / samples;
+
+        for (auto ch = 0; ch < channels; ch++)
+        {
+            size_t buffIndex = i + ch;
+            if (buffIndex >= buffer.length)
+            {
+                break;
+            }
+            buffer[buffIndex] = cast(T)(buffer[buffIndex] * factor);
+        }
+    }
 }
 
 double tremolo(T)(T[] buffer, double sampleRate, double depth0to1 = 0.5, double rateHz = 5)
@@ -86,18 +134,14 @@ void lowpass(T)(T[] buffer, double sampleRate, double cutoffFreq)
     }
 }
 
-void overtones(T)(T[] buffer, double sampleRate, double baseFreq)
+double overtones(double time, double freq, double phase)
 {
-    foreach (i, ref v; buffer)
-    {
-        double time = cast(double) i / sampleRate;
-        double sample = 0.0;
-        // + 2 overtones
-        sample += Math.sin(2.0 * Math.PI * baseFreq * time) * 0.5;
-        sample += Math.sin(2.0 * Math.PI * 2.0 * baseFreq * time) * 0.3;
-        sample += Math.sin(2.0 * Math.PI * 3.0 * baseFreq * time) * 0.2;
-        v = cast(T)(sample * T.max);
-    }
+    double sample = 0.0;
+    sample += Math.sin(Math.PI2 * freq * time + phase) * 0.6;
+    sample += Math.sin(Math.PI2 * 2.0 * freq * time + 2 * phase) * 0.3;
+    sample += Math.sin(Math.PI2 * 3.0 * freq * time + 3 * phase) * 0.1;
+    sample += Math.sin(Math.PI2 * 4.0 * freq * time + 4 * phase) * 0.05;
+    return sample;
 }
 
 void echo(T)(T[] buffer, double sampleRate, double delaySec, double decay)

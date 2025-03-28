@@ -68,9 +68,10 @@ class SdlAudioDevice : SdlObject, ComAudioDevice
         return ComResult.success;
     }
 
-    void close() nothrow
+    ComResult close() nothrow
     {
         SDL_CloseAudioDevice(id);
+        return ComResult.success;
     }
 
     ComAudioFormat fromSdlFormat(SDL_AudioFormat format) pure nothrow
