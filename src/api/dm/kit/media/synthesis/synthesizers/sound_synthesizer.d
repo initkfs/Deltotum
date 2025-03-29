@@ -54,17 +54,34 @@ class SoundSynthesizer(T)
 
         double phase = 0.0;
 
-        import std.math: fmod;
+        import std.math : fmod;
 
         foreach (n; notes)
         {
             auto time = noteTimeMs(bpm, n.type);
             auto noteBuff = FiniteSignalBuffer!T(sampleRate, time, channels);
-            note(noteBuff.buffer, n.freqHz, phase, time, sampleRate, 0.9, channels);
+
+            double prevAmp = 0;
+            size_t maxLastSamples = 50;
+            if (buffIndex > 0 && buffIndex >= maxLastSamples)
+            {
+                foreach_reverse (i; (buffIndex - maxLastSamples) .. buffIndex)
+                {
+                    auto val = seqBuff.buffer[i];
+                    if (val != 0)
+                    {
+                        prevAmp = ((cast(double) val) / T.max);
+                        break;
+                    }
+                }
+            }
+
+            note(noteBuff.buffer, n.freqHz, phase, time, prevAmp, sampleRate, 0.9, channels);
             auto endIndex = buffIndex + noteBuff.buffer.length;
             seqBuff.buffer[buffIndex .. endIndex][] = noteBuff.buffer;
 
-            phase = fmod(Math.PI2 * n.freqHz * (noteBuff.buffer.length / sampleRate) + phase, Math.PI2);
+            phase = fmod(Math.PI2 * n.freqHz * (noteBuff.buffer.length / sampleRate) + phase, Math
+                    .PI2);
 
             //crossfade
             // if (buffIndex > 0 && buffIndex > overlap / 2)
@@ -96,11 +113,11 @@ class SoundSynthesizer(T)
         onScopeBufferTime(seqBuff.buffer, fullTimeMs);
     }
 
-    void note(T)(T[] buffer, double freqNoteHz, double phase, double durationMs, double sampleRateHz, double amplitude0to1 = 1.0, size_t channels = 2)
+    void note(T)(T[] buffer, double freqNoteHz, double phase, double durationMs, double prevAmp, double sampleRateHz, double amplitude0to1 = 1.0, size_t channels = 2)
     {
         onBuffer(buffer, sampleRateHz, amplitude0to1, channels, (i, time) {
             //durationMs / 1000;* adsr(time, durationMs)
-            auto sample = overtones(time, freqNoteHz, phase);
+            auto sample = overtones(time, freqNoteHz, phase) * adsr(time, durationMs, prevAmp);
             return sample;
         });
     }

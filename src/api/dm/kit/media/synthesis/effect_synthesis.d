@@ -6,31 +6,41 @@ import Math = api.math;
  * Authors: initkfs
  */
 
-double adsr(double time, double duration)
+double adsr(double time, double duration, double prevAmp)
 {
     //sample * adsr(..)
-    double attack = 0.05; //5%
-    double decay = 0.1; //10%
-    double sustain = 0.7; //70
-    double release = 0.2; //30
+    double attack = 0.1;
+    double decay = 0.2;
+    double sustain = 0.7;
+    double release = 0.2;
+
+    const double releaseTime = 1 - release;
 
     //Attack
     if (time < attack)
     {
         return time / attack;
+        //return Math.sin((Math.PI / 2.0) * (time / attack));
     }
     //Decay
     else if (time < (attack + decay))
     {
-        return (1.0 - (1.0 - sustain) * ((time - attack) / decay));
+        //return 1.0 - (1.0 - sustain) * (attack / decay);
+        return 1.0 - (1.0 - sustain) * Math.pow((time - attack) / decay, 0.5);
     }
     //Release
-    else if (time > (duration - release))
+    else if (time > releaseTime)
     {
-        return sustain * (1.0 - ((time - (duration - release)) / release));
+        return sustain * (1 - ((time - releaseTime) / release));
+        //return sustain * ((time - (1 - release)) / release);
     }
 
     return sustain;
+}
+
+double lpf(double sample, double prev, double cutoff)
+{
+    return prev + cutoff * (sample - prev); // cutoff ~0.1-0.3
 }
 
 double arpeggio(double time, double sample)

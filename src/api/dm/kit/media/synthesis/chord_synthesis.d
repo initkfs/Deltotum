@@ -28,17 +28,17 @@ void chord(T)(T[] buffer, double sampleRateHz = 44100, double amplitude0to1 = 0.
     });
 }
 
-double piano(double time, double freq, double duration)
-{
-    double sample = Math.sin(2 * Math.PI * freq * time) * 0.5;
-    sample += Math.sin(2 * Math.PI * 2 * freq * time) * 0.3;
-    sample += Math.sin(2 * Math.PI * 3 * freq * time) * 0.2;
+// double piano(double time, double freq, double duration)
+// {
+//     double sample = Math.sin(2 * Math.PI * freq * time) * 0.5;
+//     sample += Math.sin(2 * Math.PI * 2 * freq * time) * 0.3;
+//     sample += Math.sin(2 * Math.PI * 3 * freq * time) * 0.2;
 
-    sample *= adsr(time, duration);
+//     sample *= adsr(time, duration);
 
-    //sample = lowpassFilter(sample, 0.2);
+//     //sample = lowpassFilter(sample, 0.2);
 
-    //if (time < 0.01) sample += (rand() % 2000 - 1000) / 32768.0f;
+//     //if (time < 0.01) sample += (rand() % 2000 - 1000) / 32768.0f;
 
-    return sample;
-}
+//     return sample;
+// }

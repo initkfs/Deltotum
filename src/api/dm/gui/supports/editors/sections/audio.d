@@ -170,7 +170,14 @@ class Audio : Control
             import api.dm.kit.media.synthesis.chord_synthesis;
             import api.dm.kit.media.synthesis.notes;
 
-            
+            MusicNote[] notes = [
+                {Note.C4}, {Note.C4}, {Note.D4}, {Note.C4}, {Note.F4}, {Note.E4},
+                {Note.C4}, {Note.C4}, {Note.D4}, {Note.C4}, {Note.G4}, {Note.F4},
+            ];
+            synt.sequence(notes, 44100, (short[] buff, double time) {
+                chunk = media.newHeapChunk!short(time);
+                chunk.data.buffer[] = buff;
+            }, 120, 2);
 
             chunk.play;
 
