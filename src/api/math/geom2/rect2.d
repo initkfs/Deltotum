@@ -155,6 +155,10 @@ struct Rect2d
         return v;
     }
 
+    Rect2d withPadding(double value){
+        return Rect2d(x + value, y + value, width - value, height - value);
+    }
+
     Rect2d boundingBoxMax()
     {
         const diag = diagonal;

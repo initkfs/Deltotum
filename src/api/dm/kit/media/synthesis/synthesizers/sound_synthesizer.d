@@ -1,7 +1,7 @@
 module api.dm.kit.media.synthesis.synthesizers.sound_synthesizer;
 
 import api.dm.kit.media.dsp.buffers.finite_signal_buffer;
-import api.dm.kit.media.synthesis.notes;
+import api.dm.kit.media.synthesis.music_notes;
 import api.dm.kit.media.synthesis.effect_synthesis;
 import api.dm.kit.media.synthesis.signal_synthesis;
 
