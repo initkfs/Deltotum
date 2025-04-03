@@ -113,7 +113,25 @@ class SoundSynthesizer(T)
         onScopeBufferTime(seqBuff.buffer, fullTimeMs);
     }
 
-    void note(T)(T[] buffer, double freqNoteHz, double phase, double durationMs, double prevAmp, double sampleRateHz, double amplitude0to1 = 1.0, size_t channels = 2)
+    void noteOnce(MusicNote n, double sampleRateHz,  scope void delegate(T[], double) onScopeBufferTime, double bpm = 120, double amplitude0to1 = 0.9, size_t channels = 2)
+    {
+        auto time = noteTimeMs(bpm, n.type);
+        auto noteBuff = FiniteSignalBuffer!T(sampleRateHz, time, channels);
+        scope(exit){
+            noteBuff.dispose;
+        }
+
+        note(noteBuff.buffer, n.freqHz, 0, time, 0, sampleRateHz, amplitude0to1, channels);
+
+        //≥10 мс
+        size_t samples = cast(size_t)(10.0 / 1000 * sampleRateHz);
+        fadein(noteBuff.buffer, samples, channels);
+        fadeout(noteBuff.buffer, samples, channels);
+
+        onScopeBufferTime(noteBuff.buffer, time);
+    }
+
+    void note(T)(T[] buffer, double freqNoteHz, double phase, double durationMs, double prevAmp, double sampleRateHz, double amplitude0to1 = 0.9, size_t channels = 2)
     {
         onBuffer(buffer, sampleRateHz, amplitude0to1, channels, (i, time) {
             //durationMs / 1000;* adsr(time, durationMs)

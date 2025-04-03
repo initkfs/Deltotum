@@ -37,6 +37,12 @@ class AudioChunk(T)
         }
     }
 
+    int lastChannel()
+    {
+        assert(comChunk);
+        return comChunk.lastChannel;
+    }
+
     void onBuffer(scope void delegate(T[] buff, ComAudioSpec) onBuff)
     {
         onBuff(data.buffer, spec);

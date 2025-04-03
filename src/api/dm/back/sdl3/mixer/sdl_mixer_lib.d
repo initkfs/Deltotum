@@ -50,6 +50,21 @@ class SdlMixerLib : SdlMixerObject, ComAudioMixer
         return ComResult.success;
     }
 
+    ComResult allocChannels(size_t count) nothrow
+    {
+        if (count == 0)
+        {
+            return ComResult.error("Channels must not be 0");
+        }
+
+        auto res = Mix_AllocateChannels(cast(int) count);
+        if (res != count)
+        {
+            return getErrorRes("Error channels allocating");
+        }
+        return ComResult.success;
+    }
+
     ComResult setPostCallback(MixerCallback callback, void* userdata) nothrow
     {
         Mix_SetPostMix(callback, userdata);
@@ -138,6 +153,12 @@ class SdlMixerLib : SdlMixerObject, ComAudioMixer
         return Mix_VolumeMusic(-1);
     }
 
+    bool fadeOut(int channel, int ms) nothrow
+    {
+        auto chans = Mix_FadeOutChannel(channel, ms);
+        return chans == 1;
+    }
+
     ComResult query(out ComAudioSpec spec) nothrow
     {
         int frequency;
@@ -156,9 +177,24 @@ class SdlMixerLib : SdlMixerObject, ComAudioMixer
         return Mix_QuerySpec(frequency, format, channels);
     }
 
+    bool isPlaying(int channel) nothrow
+    {
+        if (channel < 0)
+        {
+            return false;
+        }
+        auto chanNum = Mix_Playing(channel);
+        return chanNum != 0;
+    }
+
     bool isPlaying() nothrow
     {
         return Mix_PlayingMusic();
+    }
+
+    void stopChannel(int chan) nothrow
+    {
+        Mix_HaltChannel(chan);
     }
 
     void stop() nothrow

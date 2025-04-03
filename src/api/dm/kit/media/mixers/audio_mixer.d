@@ -7,14 +7,20 @@ class AudioMixer
 {
 
     //private
-   // {
-        ComAudioMixer mixer;
+    // {
+    ComAudioMixer mixer;
     //}
 
     this(ComAudioMixer mixer)
     {
         assert(mixer);
         this.mixer = mixer;
+    }
+
+    bool isPlaying(int channel)
+    {
+        assert(mixer);
+        return mixer.isPlaying(channel);
     }
 
     ComAudioClip newClip(string path)

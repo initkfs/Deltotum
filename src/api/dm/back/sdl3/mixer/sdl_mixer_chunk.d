@@ -24,6 +24,8 @@ class SdlMixerChunk : SdlObjectWrapper!Mix_Chunk, ComAudioChunk
     {
         enum msInSec = 1000;
         enum double doubleErr = -1;
+
+        int _lastChannel = -1;
     }
 
     this()
@@ -90,18 +92,33 @@ class SdlMixerChunk : SdlObjectWrapper!Mix_Chunk, ComAudioChunk
         return Mix_VolumeChunk(ptr, value);
     }
 
+    ComResult playFadeIn(int ms = 10, int loops = 0, int ticks = -1) nothrow
+    {
+        assert(ptr);
+        int targetChannel = _lastChannel >= 0 ? _lastChannel : -1;
+        int channel = Mix_FadeInChannelTimed(targetChannel, ptr, loops, ms, ticks);
+        if(channel == -1){
+            return getErrorRes("Error fading chunk");
+        }
+        _lastChannel = channel;
+        return ComResult.success;
+    }
+        
+
     ComResult play(int loops = -1, int ticks = -1)
     {
         assert(ptr);
 
         int channel = -1;
-        int isPlay = Mix_PlayChannelTimed(channel, ptr, loops, ticks);
-        if (isPlay == -1)
+        _lastChannel = Mix_PlayChannelTimed(channel, ptr, loops, ticks);
+        if (_lastChannel == -1)
         {
             return getErrorRes("Error playing mix chunk");
         }
         return ComResult.success;
     }
+
+    int lastChannel() nothrow => _lastChannel;
 
     override bool disposePtr()
     {

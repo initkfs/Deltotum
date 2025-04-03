@@ -140,7 +140,7 @@ class Audio : Control
 
     import api.dm.kit.media.dsp.chunks.audio_chunk : AudioChunk;
 
-    AudioChunk!short chunk;
+    AudioChunk!short[] chunks;
     SoundSynthesizer!short synt;
 
     PianoKey[] pianoKeys;
@@ -252,6 +252,10 @@ class Audio : Control
             pianoContainer.addCreate(bk);
         }
 
+        if(const err = media.mixer.mixer.allocChannels(32)){
+            throw new Exception(err.toString);
+        }
+
         foreach (ii; 0 .. pianoKeys.length)
             (i) {
             auto key = pianoKeys[i];
@@ -276,9 +280,80 @@ class Audio : Control
                         return;
                     }
                 }
+                
                 auto freq = key.freqHz;
-                synt.note(chunk.data.buffer, freq, 0, chunk.data.durationMs, 0, sampleFreq);
-                chunk.play;
+
+                AudioChunk!short noteChunk;
+
+                if (chunks.length == 0)
+                {
+                    noteChunk = newChunk;
+                    chunks ~= noteChunk;
+                }
+                else
+                {
+                    foreach (chunk; chunks)
+                    {
+                        const lastChannel = chunk.lastChannel;
+                        if (lastChannel >= 0 && !media.mixer.isPlaying(lastChannel))
+                        {
+                            noteChunk = chunk;
+                            break;
+                        }
+                    }
+                }
+
+                if (!noteChunk)
+                {
+                    noteChunk = newChunk;
+                    chunks ~= noteChunk;
+                }
+
+                noteChunk.data.buffer[] = 0;
+
+                // MusicNote[] notes = [
+                //     {Octave.C4}, {Octave.C4}, {Octave.D4}, {Octave.C4}, {
+                //         Octave.F4},
+                //         {Octave.E4},
+                //         {Octave.C4}, {Octave.C4}, {Octave.D4
+                //     },
+                //     {Octave.C4}, {Octave.G4},
+                //     {Octave.F4},
+                // ];
+
+                // synt.sequence(notes, 44100, (short[] buff, double time) {
+
+                //     auto chunk = media.newHeapChunk!short(time);
+                //     chunks ~= chunk;
+                //     chunk.data.buffer[] = buff;
+                //     chunk.play;
+
+                //     import api.dm.kit.media.dsp.formats.wav_writer : WavWriter;
+
+                //     auto writer = new WavWriter;
+                //     writer.save("/home/user/sdl-music/out.wav", chunk.data.buffer, chunk
+                //         .spec);
+                // }, 120, 2);
+
+                // chunk.play;
+                ///dspProcessor.lock;
+
+                synt.noteOnce(MusicNote(freq, NoteType.note1), 44100, (buff, time){
+                    noteChunk.data.buffer[] = buff;
+                });
+
+                //synt.note(noteChunk.data.buffer, freq, 0, noteChunk.data.durationMs, 0, sampleFreq);
+
+                if (noteChunk.lastChannel >= 0)
+                {
+                    media.mixer.mixer.stopChannel(noteChunk.lastChannel);
+                }
+
+                if(const err = noteChunk.comChunk.playFadeIn(1000)){
+                    logger.error(err.toString);
+                }
+
+                //noteChunk.play;
             };
 
         }(ii);
@@ -295,7 +370,8 @@ class Audio : Control
         equalizer.onUpdateIndexFreqStartEnd = (band, startFreq, endFreq) {
             import std.format : format;
 
-            auto label = format("%s\n%s", Math.round(startFreq), Math.round(endFreq));
+            auto label = format("%s\n%s", Math.round(startFreq), Math.round(
+                    endFreq));
             level.labels[band].text = label;
         };
 
@@ -303,61 +379,27 @@ class Audio : Control
 
         synt = new SoundSynthesizer!short;
 
-        double noteTimeMs(double bpm, NoteType noteType, double minDurMs = 50)
-        {
-            auto dur = (60.0 / bpm) * (4.0 / noteType) * 1000;
-            if (dur < minDurMs)
-            {
-                dur = minDurMs;
-            }
-            return dur;
-        }
-
-        chunk = media.newHeapChunk!short(noteTimeMs(120, NoteType.note1_4));
-
-        // auto sineBtn = new Button("Play");
-        // musicContainer.addCreate(sineBtn);
-        // sineBtn.onPointerPress ~= (ref e) {
-        //     dspProcessor.unlock;
-
-        //     if (chunk)
-        //     {
-        //         chunk.dispose;
-        //     }
-
-        // import api.dm.kit.media.music.genres.ambient;
-        // import api.dm.kit.media.synthesis.chord_synthesis;
-        // import api.dm.kit.media.synthesis.music_notes;
-
-        // MusicNote[] notes = [
-        //     {Note.C4}, {Note.C4}, {Note.D4}, {Note.C4}, {Note.F4}, {Note.E4},
-        //     {Note.C4}, {Note.C4}, {Note.D4}, {Note.C4}, {Note.G4}, {Note.F4},
-        // ];
-        // synt.sequence(notes, 44100, (short[] buff, double time) {
-        //     chunk = media.newHeapChunk!short(time);
-        //     chunk.data.buffer[] = buff;
-        // }, 120, 2);
-
-        // chunk.play;
-
-        // chunk = media.newHeapChunk!short(200);
-        // chunk.onBuffer((data, spec) { chord(data,  spec.freqHz, 1); });
-
-        //     import api.dm.kit.media.dsp.formats.wav_writer: WavWriter;
-
-        //     auto writer = new WavWriter;
-        //     writer.save("/home/user/sdl-music/out.wav", chunk.data.buffer, chunk.spec);
-
-        //     // chunk.play;
-        //     ///dspProcessor.lock;
-        // };
-
         if (const err = media.mixer.mixer.setPostCallback(&typeof(dspProcessor)
                 .signal_callback, cast(void*)&dspProcessor
                 .dspBuffer))
         {
             throw new Exception(err.toString);
         }
+    }
+
+    AudioChunk!short newChunk()
+    {
+        return media.newHeapChunk!short(noteTimeMs(120, NoteType.note1));
+    }
+
+    double noteTimeMs(double bpm, NoteType noteType, double minDurMs = 50)
+    {
+        auto dur = (60.0 / bpm) * (4.0 / noteType) * 1000;
+        if (dur < minDurMs)
+        {
+            dur = minDurMs;
+        }
+        return dur;
     }
 
     protected bool isForBlackKey(double x, double y)

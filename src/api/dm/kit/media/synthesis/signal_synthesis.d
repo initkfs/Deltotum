@@ -9,16 +9,21 @@ import Math = api.math;
 void onBuffer(T)(T[] buffer, double sampleRateHz, double amplitude0to1 = 1.0, size_t channels, scope double delegate(
         size_t, double) onIndexTimeStep)
 {
-    for (size_t i = 0; i < buffer.length; i++)
+    const timeDt = 1.0 / (sampleRateHz * channels);
+
+    double time = 0;
+    for (size_t i = 0; i < buffer.length; i += channels)
     {
-        double time = i / sampleRateHz;
+        time+= timeDt;
+        //double time =  (i / channels) / sampleRateHz;
+        //size_t channel = i % channels;
         double value = onIndexTimeStep(i, time) * amplitude0to1;
         T buffValue = cast(T)(value * T.max);
         buffer[i] = buffValue;
-        if (channels > 1 && (++i) < buffer.length)
-        {
+        //TODO all channels
+        if(i + 1 < buffer.length){
             //TODO value * leftPan, right pan
-            buffer[i] = buffValue;
+            buffer[i+1] = buffValue;
         }
     }
 }

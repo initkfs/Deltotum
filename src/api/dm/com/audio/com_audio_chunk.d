@@ -13,4 +13,7 @@ nothrow:
     ubyte[] buffer();
 
     ComResult play(int loops, int ticks);
+    ComResult playFadeIn(int ms = 10, int loops = 0, int ticks = -1);
+    
+    int lastChannel() nothrow;
 }

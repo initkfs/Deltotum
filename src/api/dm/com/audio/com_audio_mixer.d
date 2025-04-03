@@ -19,6 +19,8 @@ nothrow:
 
     void close();
 
+    ComResult allocChannels(size_t count);
+
     ComResult newHeapMusic(string path, out ComAudioClip clip);
     ComResult newHeapWav(string path, out ComAudioChunk buffer);
 
@@ -26,6 +28,13 @@ nothrow:
 
     ComResult getTracks(out int tracksCount);
     ComResult setTracks(int tracksCount);
+
+    void stopChannel(int channel);
+
+    bool isPlaying(int channel);
+    bool isPlaying();
+
+    bool fadeOut(int channel, int ms);
 
     ComResult setPostCallback(MixerCallback callback, void* userdata);
     ComResult setChannelCallback(MixerChannelFinishedCallback callback);
