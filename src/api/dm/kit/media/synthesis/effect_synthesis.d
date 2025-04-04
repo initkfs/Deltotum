@@ -14,6 +14,8 @@ double adsr(double time, double duration, double prevAmp)
     double sustain = 0.7;
     double release = 0.2;
 
+    //(Attack + Decay + Release) <= duration
+
     const double releaseTime = 1 - release;
 
     //Attack

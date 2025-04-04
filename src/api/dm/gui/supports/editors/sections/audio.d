@@ -31,62 +31,12 @@ import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.controls.containers.container : Container;
 
+import api.dm.gui.controls.audio.piano : Piano;
+
 import Math = api.math;
 
 import std;
 import api.dm.kit.media.synthesis.music_notes;
-
-class PianoKey : Control
-{
-    bool isBlack;
-    string name;
-    double freqHz;
-
-    Text nameText;
-
-    RGBA backgroundColor;
-
-    this()
-    {
-        // import api.dm.kit.sprites2d.layouts.vlayout: VLayout;
-        // layout = new VLayout;
-        // layout.isAutoResize = true;
-    }
-
-    override void create()
-    {
-        super.create;
-
-        nameText = new Text(name);
-        addCreate(nameText);
-
-        setBackgroundColor;
-    }
-
-    void setBackgroundColor()
-    {
-        backgroundColor = !isBlack ? RGBA.white : RGBA.black;
-    }
-
-    override void drawContent()
-    {
-        super.drawContent;
-        const bounds = boundsRect;
-        nameText.x = bounds.middleX - nameText.halfWidth;
-        nameText.y = bounds.bottom - nameText.height;
-
-        //stroke
-        graphics.changeColor(RGBA.gray);
-        graphics.fillRect(boundsRect);
-        graphics.restoreColor;
-
-        const fillBounds = boundsRect.withPadding(2);
-
-        graphics.changeColor(backgroundColor);
-        graphics.fillRect(fillBounds);
-        graphics.restoreColor;
-    }
-}
 
 /**
  * Authors: initkfs
@@ -98,7 +48,7 @@ class Audio : Control
     BandEqualizer equalizer;
     RectLevel level;
 
-    Container pianoContainer;
+    Piano piano;
 
     this()
     {
@@ -143,8 +93,6 @@ class Audio : Control
     AudioChunk!short[] chunks;
     SoundSynthesizer!short synt;
 
-    PianoKey[] pianoKeys;
-
     override void create()
     {
         super.create;
@@ -163,200 +111,101 @@ class Audio : Control
         auto root = new VBox;
         addCreate(root);
 
-        pianoContainer = new HBox;
+        piano = new Piano;
         //TODO fix window width
         //pianoContainer.width = window.width == 0 ? 1200 : window.width;
-        pianoContainer.width = 1275;
-        pianoContainer.height = 200;
-        root.addCreate(pianoContainer);
+        piano.width = 1275;
+        piano.height = 200;
+        root.addCreate(piano);
 
-        auto pianoCount = 88; //(3 + 12 * 7 + 1)
-        enum whiteKeys = 52;
-        enum blackKeys = 36;
-
-        const pianoKeyWidth = Math.trunc(pianoContainer.width / whiteKeys);
-        const pianoKeyHeight = pianoContainer.height;
-
-        import std.traits : EnumMembers;
-
-        PianoKey[blackKeys] blackKeysArr;
-        size_t blackKeysIndex;
-
-        PianoKey[whiteKeys] whiteKeysArr;
-        size_t whiteKeysIndex;
-
-        foreach (noteIndex, noteCode; EnumMembers!Octave)
+        if (const err = media.mixer.mixer.allocChannels(32))
         {
-            auto pkey = new PianoKey;
-
-            pkey.name = noteCode.to!string;
-
-            auto octaveNum = pkey.name[1];
-            auto keyNum = pkey.name[0];
-            if (octaveNum == '0')
-            {
-                if (keyNum != 'A' && keyNum != 'B')
-                {
-                    continue;
-                }
-            }
-            else if (octaveNum == '8')
-            {
-                if (pkey.name != "C8")
-                {
-                    //TODO break
-                    continue;
-                }
-            }
-
-            pkey.isBlack = pkey.name.length == 3;
-            pkey.freqHz = cast(double) noteCode;
-            pkey.isLayoutManaged = false;
-            pkey.width = pianoKeyWidth;
-            pkey.height = !pkey.isBlack ? pianoKeyHeight : pianoKeyHeight / 2;
-
-            if (!pkey.isBlack)
-            {
-                whiteKeysArr[whiteKeysIndex] = pkey;
-                whiteKeysIndex++;
-            }
-            else
-            {
-                blackKeysArr[blackKeysIndex] = pkey;
-                blackKeysIndex++;
-            }
-            pianoKeys ~= pkey;
-        }
-
-        if (blackKeysIndex != blackKeys)
-        {
-            import std.format : format;
-
-            throw new Exception(format("Expected %s black keys, but created %s", blackKeys, blackKeysIndex));
-        }
-
-        if (whiteKeysIndex != whiteKeys)
-        {
-            import std.format : format;
-
-            throw new Exception(format("Expected %s white keys, but created %s", whiteKeys, whiteKeysIndex));
-        }
-
-        foreach (wk; whiteKeysArr)
-        {
-            pianoContainer.addCreate(wk);
-        }
-
-        foreach (bk; blackKeysArr)
-        {
-            pianoContainer.addCreate(bk);
-        }
-
-        if(const err = media.mixer.mixer.allocChannels(32)){
             throw new Exception(err.toString);
         }
 
-        foreach (ii; 0 .. pianoKeys.length)
-            (i) {
-            auto key = pianoKeys[i];
-            key.onPointerEnter ~= (ref e) {
-                //TODO optimization
-                if (!key.isBlack)
+        piano.onPianoKey = (key) {
+
+            auto freq = key.freqHz;
+
+            AudioChunk!short noteChunk;
+
+            if (chunks.length == 0)
+            {
+                noteChunk = newChunk;
+                chunks ~= noteChunk;
+            }
+            else
+            {
+                foreach (chunk; chunks)
                 {
-                    if (isForBlackKey(e.x, e.y))
+                    const lastChannel = chunk.lastChannel;
+                    if (lastChannel >= 0 && !media.mixer.isPlaying(lastChannel))
                     {
-                        return;
+                        noteChunk = chunk;
+                        break;
                     }
                 }
-                key.backgroundColor = RGBA.lightgrey;
-            };
-            key.onPointerExit ~= (ref e) { key.setBackgroundColor; };
+            }
 
-            key.onPointerPress ~= (ref e) {
-                if (!key.isBlack)
-                {
-                    if (isForBlackKey(e.x, e.y))
-                    {
-                        return;
-                    }
-                }
-                
-                auto freq = key.freqHz;
+            if (!noteChunk)
+            {
+                noteChunk = newChunk;
+                chunks ~= noteChunk;
+            }
 
-                AudioChunk!short noteChunk;
+            noteChunk.data.buffer[] = 0;
 
-                if (chunks.length == 0)
-                {
-                    noteChunk = newChunk;
-                    chunks ~= noteChunk;
-                }
-                else
-                {
-                    foreach (chunk; chunks)
-                    {
-                        const lastChannel = chunk.lastChannel;
-                        if (lastChannel >= 0 && !media.mixer.isPlaying(lastChannel))
-                        {
-                            noteChunk = chunk;
-                            break;
-                        }
-                    }
-                }
+            // MusicNote[] notes = [
+            //     {Octave.C4}, {Octave.C4}, {Octave.D4}, {Octave.C4}, {
+            //         Octave.F4},
+            //         {Octave.E4},
+            //         {Octave.C4}, {Octave.C4}, {Octave.D4
+            //     },
+            //     {Octave.C4}, {Octave.G4},
+            //     {Octave.F4},
+            // ];
 
-                if (!noteChunk)
-                {
-                    noteChunk = newChunk;
-                    chunks ~= noteChunk;
-                }
+            // synt.sequence(notes, 44100, (short[] buff, double time) {
 
-                noteChunk.data.buffer[] = 0;
+            //     auto chunk = media.newHeapChunk!short(time);
+            //     chunks ~= chunk;
+            //     chunk.data.buffer[] = buff;
+            //     chunk.play;
 
-                // MusicNote[] notes = [
-                //     {Octave.C4}, {Octave.C4}, {Octave.D4}, {Octave.C4}, {
-                //         Octave.F4},
-                //         {Octave.E4},
-                //         {Octave.C4}, {Octave.C4}, {Octave.D4
-                //     },
-                //     {Octave.C4}, {Octave.G4},
-                //     {Octave.F4},
-                // ];
+            //     import api.dm.kit.media.dsp.formats.wav_writer : WavWriter;
 
-                // synt.sequence(notes, 44100, (short[] buff, double time) {
+            //     auto writer = new WavWriter;
+            //     writer.save("/home/user/sdl-music/out.wav", chunk.data.buffer, chunk
+            //         .spec);
+            // }, 120, 2);
 
-                //     auto chunk = media.newHeapChunk!short(time);
-                //     chunks ~= chunk;
-                //     chunk.data.buffer[] = buff;
-                //     chunk.play;
+            // chunk.play;
+            ///dspProcessor.lock;
 
-                //     import api.dm.kit.media.dsp.formats.wav_writer : WavWriter;
+            synt.noteOnce(MusicNote(freq, NoteType.note1_4), 44100, (buff, time) {
+                noteChunk.data.buffer[] = buff;
+            },);
 
-                //     auto writer = new WavWriter;
-                //     writer.save("/home/user/sdl-music/out.wav", chunk.data.buffer, chunk
-                //         .spec);
-                // }, 120, 2);
+            //synt.note(noteChunk.data.buffer, freq, 0, noteChunk.data.durationMs, 0, sampleFreq);
 
-                // chunk.play;
-                ///dspProcessor.lock;
+            // if (noteChunk.lastChannel >= 0)
+            // {
+            //     media.mixer.mixer.stopChannel(noteChunk.lastChannel);
+            // }
 
-                synt.noteOnce(MusicNote(freq, NoteType.note1), 44100, (buff, time){
-                    noteChunk.data.buffer[] = buff;
-                });
+            // if (noteChunk.lastChannel >= 0)
+            // {
+            //     media.mixer.mixer.fadeOut(noteChunk.lastChannel, 5);
+            // }
 
-                //synt.note(noteChunk.data.buffer, freq, 0, noteChunk.data.durationMs, 0, sampleFreq);
+            // context.platformContext.sleep(5);
+            // if (const err = noteChunk.comChunk.playFadeIn(400))
+            // {
+            //     logger.error(err.toString);
+            // }
 
-                if (noteChunk.lastChannel >= 0)
-                {
-                    media.mixer.mixer.stopChannel(noteChunk.lastChannel);
-                }
-
-                if(const err = noteChunk.comChunk.playFadeIn(1000)){
-                    logger.error(err.toString);
-                }
-
-                //noteChunk.play;
-            };
-
-        }(ii);
+            noteChunk.play;
+        };
 
         level = new RectLevel((i) {
             if (i < equalizer.bandValues.length)
@@ -389,7 +238,7 @@ class Audio : Control
 
     AudioChunk!short newChunk()
     {
-        return media.newHeapChunk!short(noteTimeMs(120, NoteType.note1));
+        return media.newHeapChunk!short(noteTimeMs(120, NoteType.note1_4));
     }
 
     double noteTimeMs(double bpm, NoteType noteType, double minDurMs = 50)
@@ -402,47 +251,9 @@ class Audio : Control
         return dur;
     }
 
-    protected bool isForBlackKey(double x, double y)
-    {
-        foreach (PianoKey key; pianoKeys)
-        {
-            if (!key.isBlack)
-            {
-                continue;
-            }
-            if (key.boundsRect.contains(x, y))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
     override void drawContent()
     {
         super.drawContent;
-
-        if (!pianoContainer)
-        {
-            return;
-        }
-
-        double nextX = pianoContainer.x;
-        double nextY = pianoContainer.y;
-        foreach (i, PianoKey key; pianoKeys)
-        {
-            if (key.isBlack)
-            {
-                key.x = nextX - key.halfWidth;
-                key.y = nextY;
-                continue;
-            }
-
-            key.x = nextX;
-            key.y = nextY;
-
-            nextX += key.width;
-        }
     }
 
     override void pause()
@@ -460,12 +271,6 @@ class Audio : Control
     override void update(double delta)
     {
         super.update(delta);
-
-        // if (!clip)
-        // {
-        //     return;
-        // }
-
         dspProcessor.step;
     }
 }

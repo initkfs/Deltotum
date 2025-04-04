@@ -14,7 +14,7 @@ double fromMIDI(int midiNote) => 440.0 * Math.pow(2.0, (midiNote - 69) / 12.0);
 struct MusicNote
 {
     double freqHz = 0;
-    NoteType type = NoteType.note1;
+    NoteType type = NoteType.note1_4;
 }
 
 enum NoteType

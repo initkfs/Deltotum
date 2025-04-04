@@ -113,11 +113,12 @@ class SoundSynthesizer(T)
         onScopeBufferTime(seqBuff.buffer, fullTimeMs);
     }
 
-    void noteOnce(MusicNote n, double sampleRateHz,  scope void delegate(T[], double) onScopeBufferTime, double bpm = 120, double amplitude0to1 = 0.9, size_t channels = 2)
+    void noteOnce(MusicNote n, double sampleRateHz, scope void delegate(T[], double) onScopeBufferTime, double bpm = 120, double amplitude0to1 = 0.9, size_t channels = 2)
     {
         auto time = noteTimeMs(bpm, n.type);
         auto noteBuff = FiniteSignalBuffer!T(sampleRateHz, time, channels);
-        scope(exit){
+        scope (exit)
+        {
             noteBuff.dispose;
         }
 
@@ -139,5 +140,4 @@ class SoundSynthesizer(T)
             return sample;
         });
     }
-
 }
