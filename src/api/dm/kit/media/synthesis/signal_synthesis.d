@@ -9,21 +9,40 @@ import Math = api.math;
 void onBuffer(T)(T[] buffer, double sampleRateHz, double amplitude0to1 = 1.0, size_t channels, scope double delegate(
         size_t, double) onIndexTimeStep)
 {
-    const timeDt = 1.0 / (sampleRateHz * channels);
+    assert(buffer.length > 0);
+
+    const timeDt = 1.0 / sampleRateHz;
+    const bool isMultiChans = channels > 1;
+    const bool isStereo = channels == 2;
 
     double time = 0;
     for (size_t i = 0; i < buffer.length; i += channels)
     {
-        time+= timeDt;
+        time += timeDt;
         //double time =  (i / channels) / sampleRateHz;
-        //size_t channel = i % channels;
         double value = onIndexTimeStep(i, time) * amplitude0to1;
         T buffValue = cast(T)(value * T.max);
         buffer[i] = buffValue;
-        //TODO all channels
-        if(i + 1 < buffer.length){
-            //TODO value * leftPan, right pan
-            buffer[i+1] = buffValue;
+
+        if (isStereo)
+        {
+            auto nextIndex = i + 1;
+            if (nextIndex < buffer.length)
+            {
+                buffer[nextIndex] = buffValue;
+            }
+        }
+        else if (isMultiChans)
+        {
+            foreach (ch; 1 .. channels)
+            {
+                auto nextIndex = i + ch;
+                if (nextIndex >= buffer.length)
+                {
+                    break;
+                }
+                buffer[nextIndex] = buffValue;
+            }
         }
     }
 }

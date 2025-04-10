@@ -185,7 +185,7 @@ void lowpass(T)(T[] buffer, double sampleRate, double cutoffFreq)
 double overtones(double time, double freq, double phase)
 {
     double sample = 0.0;
-    sample += Math.sin(Math.PI2 * freq * time + phase) * 0.6;
+    sample += Math.sin(Math.PI2 * freq * time + phase) * 0.7;
     sample += Math.sin(Math.PI2 * 2.0 * freq * time + 2 * phase) * 0.3;
     sample += Math.sin(Math.PI2 * 3.0 * freq * time + 3 * phase) * 0.1;
     sample += Math.sin(Math.PI2 * 4.0 * freq * time + 4 * phase) * 0.05;

@@ -205,13 +205,15 @@ class Audio : Control
             //     chunk.data.buffer[] = buff;
             //     chunk.play;
 
-            // import api.dm.kit.media.dsp.formats.wav_writer : WavWriter;
+            import api.dm.kit.media.dsp.formats.wav_writer : WavWriter;
+
+            //auto newChunk = media.newHeapChunk!short(1000);
+
+            // synt.note( newChunk.data.buffer[], 4186, 0, 1000, 0, 44100);
 
             // auto writer = new WavWriter;
-            // writer.save("/home/user/sdl-music/out.wav", noteChunk.data.buffer, noteChunk
+            // writer.save("/home/user/sdl-music/out.wav", newChunk.data.buffer, newChunk
             //         .spec);
-            //}, 120, 2);
-
             // chunk.play;
             ///dspProcessor.lock;
 
@@ -249,7 +251,7 @@ class Audio : Control
         }, () { return 1; });
         level.levels = 50;
 
-        level.marginTop = 5o
+        level.marginTop = 50;
 
         equalizer.onUpdateIndexFreqStartEnd = (band, startFreq, endFreq) {
             import std.format : format;

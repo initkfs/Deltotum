@@ -135,7 +135,7 @@ class SoundSynthesizer(T)
     void note(T)(T[] buffer, double freqNoteHz, double phase, double durationMs, double prevAmp, double sampleRateHz, double amplitude0to1 = 0.9, size_t channels = 2)
     {
         onBuffer(buffer, sampleRateHz, amplitude0to1, channels, (i, time) {
-            //durationMs / 1000;* adsr(time, durationMs)
+            //durationMs / 1000;* adsr(time, durationMs) 
             auto sample = overtones(time, freqNoteHz, phase) * adsr(time);
             return sample;
         });
