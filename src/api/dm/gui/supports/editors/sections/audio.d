@@ -7,6 +7,7 @@ import api.dm.com.audio.com_audio_chunk : ComAudioChunk;
 import api.dm.kit.media.dsp.signals.analog_signal : AnalogSignal;
 import api.math.geom2.rect2 : Rect2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
+import api.dm.gui.controls.switches.buttons.button : Button;
 
 import std.stdio;
 
@@ -30,6 +31,7 @@ import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.controls.containers.container : Container;
+import api.dm.gui.controls.selects.spinners.spinner : Spinner;
 
 import api.dm.gui.controls.audio.piano : Piano;
 
@@ -49,6 +51,11 @@ class Audio : Control
     RectLevel level;
 
     Piano piano;
+
+    Spinner!double drumA;
+    Spinner!double drumD;
+    Spinner!double drumS;
+    Spinner!double drumR;
 
     this()
     {
@@ -93,6 +100,8 @@ class Audio : Control
     AudioChunk!short[] chunks;
     SoundSynthesizer!short synt;
 
+    AudioChunk!short drumChunk;
+
     override void create()
     {
         super.create;
@@ -110,6 +119,30 @@ class Audio : Control
 
         auto root = new VBox;
         addCreate(root);
+
+        auto panelRoot = new HBox;
+        panelRoot.isAlignY = true;
+        root.addCreate(panelRoot);
+
+        auto drumBtn = new Button("Drum");
+        drumBtn.isFixedButton = true;
+        panelRoot.addCreate(drumBtn);
+
+        drumA = new Spinner!double(0, 0.1, 0.1);
+        panelRoot.addCreate(drumA);
+        drumA.value = 0.1;
+
+        drumD = new Spinner!double(0, 0.1, 0.1);
+        panelRoot.addCreate(drumD);
+        drumD.value = 0.2;
+
+        drumS = new Spinner!double(0, 0.1, 0.1);
+        panelRoot.addCreate(drumS);
+        drumS.value = 0.7;
+
+        drumR = new Spinner!double(0, 0.1, 0.1);
+        panelRoot.addCreate(drumR);
+        drumR.value = 0.2;
 
         piano = new Piano;
         //TODO fix window width
@@ -172,12 +205,12 @@ class Audio : Control
             //     chunk.data.buffer[] = buff;
             //     chunk.play;
 
-            //     import api.dm.kit.media.dsp.formats.wav_writer : WavWriter;
+            // import api.dm.kit.media.dsp.formats.wav_writer : WavWriter;
 
-            //     auto writer = new WavWriter;
-            //     writer.save("/home/user/sdl-music/out.wav", chunk.data.buffer, chunk
+            // auto writer = new WavWriter;
+            // writer.save("/home/user/sdl-music/out.wav", noteChunk.data.buffer, noteChunk
             //         .spec);
-            // }, 120, 2);
+            //}, 120, 2);
 
             // chunk.play;
             ///dspProcessor.lock;
@@ -188,15 +221,15 @@ class Audio : Control
 
             //synt.note(noteChunk.data.buffer, freq, 0, noteChunk.data.durationMs, 0, sampleFreq);
 
-            // if (noteChunk.lastChannel >= 0)
-            // {
-            //     media.mixer.mixer.stopChannel(noteChunk.lastChannel);
-            // }
+            if (noteChunk.lastChannel >= 0)
+            {
+                media.mixer.mixer.stopChannel(noteChunk.lastChannel);
+            }
 
-            // if (noteChunk.lastChannel >= 0)
-            // {
-            //     media.mixer.mixer.fadeOut(noteChunk.lastChannel, 5);
-            // }
+            if (noteChunk.lastChannel >= 0)
+            {
+                media.mixer.mixer.fadeOut(noteChunk.lastChannel, 5);
+            }
 
             // context.platformContext.sleep(5);
             // if (const err = noteChunk.comChunk.playFadeIn(400))
@@ -216,6 +249,8 @@ class Audio : Control
         }, () { return 1; });
         level.levels = 50;
 
+        level.marginTop = 5o
+
         equalizer.onUpdateIndexFreqStartEnd = (band, startFreq, endFreq) {
             import std.format : format;
 
@@ -234,6 +269,34 @@ class Audio : Control
         {
             throw new Exception(err.toString);
         }
+
+        drumChunk = media.newHeapChunk!short(500);
+
+        regenDrum;
+
+        drumBtn.onOldNewValue ~= (oldv, newv) {
+            if (newv)
+            {
+                drumChunk.loop;
+            }
+            else
+            {
+                drumChunk.stop;
+            }
+        };
+
+    }
+
+    void regenDrum()
+    {
+        Drum drum;
+
+        drum.adsr.attack = drumA.value;
+        drum.adsr.decay = drumD.value;
+        drum.adsr.sustain = drumS.value;
+        drum.adsr.release = drumR.value;
+
+        drum.drum(drumChunk.data.buffer, 44100, 0.9);
     }
 
     AudioChunk!short newChunk()

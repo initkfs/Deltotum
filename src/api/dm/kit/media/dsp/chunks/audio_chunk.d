@@ -37,6 +37,15 @@ class AudioChunk(T)
         }
     }
 
+    void stop()
+    {
+        if (const err = comChunk.stop)
+        {
+            //TODO logger;
+            throw new Exception(err.toString);
+        }
+    }
+
     int lastChannel()
     {
         assert(comChunk);

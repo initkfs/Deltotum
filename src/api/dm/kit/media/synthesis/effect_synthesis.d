@@ -5,8 +5,44 @@ import Math = api.math;
 /**
  * Authors: initkfs
  */
+struct ADSR
+{
+    double attack = 0.1;
+    double decay = 0.2;
+    double sustain = 0.7;
+    double release = 0.2;
 
-double adsr(double time, double duration, double prevAmp)
+    double adsr(double time)
+    {
+        //sample * adsr(..)
+        //(Attack + Decay + Release) <= duration
+
+        const double releaseTime = 1 - release;
+
+        //Attack
+        if (time < attack)
+        {
+            return time / attack;
+            //return Math.sin((Math.PI / 2.0) * (time / attack));
+        }
+        //Decay
+        else if (time < (attack + decay))
+        {
+            //return 1.0 - (1.0 - sustain) * (attack / decay);
+            return 1.0 - (1.0 - sustain) * Math.pow((time - attack) / decay, 0.5);
+        }
+        //Release
+        else if (time > releaseTime)
+        {
+            return sustain * (1 - ((time - releaseTime) / release));
+            //return sustain * ((time - (1 - release)) / release);
+        }
+
+        return sustain;
+    }
+}
+
+double adsr(double time)
 {
     //sample * adsr(..)
     double attack = 0.1;

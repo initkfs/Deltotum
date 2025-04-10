@@ -97,13 +97,13 @@ class SdlMixerChunk : SdlObjectWrapper!Mix_Chunk, ComAudioChunk
         assert(ptr);
         int targetChannel = _lastChannel >= 0 ? _lastChannel : -1;
         int channel = Mix_FadeInChannelTimed(targetChannel, ptr, loops, ms, ticks);
-        if(channel == -1){
+        if (channel == -1)
+        {
             return getErrorRes("Error fading chunk");
         }
         _lastChannel = channel;
         return ComResult.success;
     }
-        
 
     ComResult play(int loops = -1, int ticks = -1)
     {
@@ -115,6 +115,16 @@ class SdlMixerChunk : SdlObjectWrapper!Mix_Chunk, ComAudioChunk
         {
             return getErrorRes("Error playing mix chunk");
         }
+        return ComResult.success;
+    }
+
+    ComResult stop()
+    {
+        if (_lastChannel < 0)
+        {
+            return ComResult.error("Error stopping shunk, invalid channel");
+        }
+        Mix_HaltChannel(_lastChannel);
         return ComResult.success;
     }
 

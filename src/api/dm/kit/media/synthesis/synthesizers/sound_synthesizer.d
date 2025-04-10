@@ -136,8 +136,40 @@ class SoundSynthesizer(T)
     {
         onBuffer(buffer, sampleRateHz, amplitude0to1, channels, (i, time) {
             //durationMs / 1000;* adsr(time, durationMs)
-            auto sample = overtones(time, freqNoteHz, phase) * adsr(time, durationMs, prevAmp);
+            auto sample = overtones(time, freqNoteHz, phase) * adsr(time);
             return sample;
         });
     }
+}
+
+struct Drum
+{
+    ADSR adsr;
+
+    void drum(T)(T[] buffer, double sampleRateHz, double amplitude0to1 = 0.9, size_t channels = 2)
+    {
+        onBuffer(buffer, sampleRateHz, amplitude0to1, channels, (i, time) {
+            if (i % 4 == 0)
+            {
+                return kick(time, 0.1) * adsr.adsr(time);
+            }
+            return 0.0;
+        });
+    }
+}
+
+double sine(double phase)
+{
+    return Math.sin(phase * Math.PI2);
+}
+
+double kick(double time, double duration)
+{
+    import std.math : exp;
+
+    double freq = 50.0 * exp(-time * 5.0);
+    double modulator = sine(time * 200.0) * 0.5;
+    double carrier = sine(time * freq + modulator);
+    double envelope = exp(-time * 10.0);
+    return carrier * envelope;
 }

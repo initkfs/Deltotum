@@ -20,7 +20,7 @@ class Spinner(T) : BaseSelector!T
     void delegate(TextField) onCreatedIncLabel;
 
     Button incButton;
-    bool isCreateIncButton;
+    bool isCreateIncButton = true;
     Button delegate(Button) onNewIncButton;
     void delegate(Button) onConfiguredIncButton;
     void delegate(Button) onCreatedIncButton;
@@ -38,7 +38,7 @@ class Spinner(T) : BaseSelector!T
     void delegate(TextField) onCreatedDecLabel;
 
     Button decButton;
-    bool isCreateDecButton;
+    bool isCreateDecButton = true;
     Button delegate(Button) onNewDecButton;
     void delegate(Button) onConfiguredDecButton;
     void delegate(Button) onCreatedDecButton;
@@ -98,7 +98,7 @@ class Spinner(T) : BaseSelector!T
             decButton = !onNewDecButton ? b : onNewDecButton(b);
 
             decButton.onPointerPress ~= (ref e) {
-                const newValue = value - decValue;
+                const newValue = value - initDec;
                 value = newValue;
             };
 
@@ -128,6 +128,21 @@ class Spinner(T) : BaseSelector!T
 
             auto newLabel = newIncLabel;
             incLabel = !onNewIncLabel ? newLabel : onNewIncLabel(newLabel);
+
+            incLabel.onEnter = (ref e) {
+                import std.conv : to;
+
+                try
+                {
+                    initInc = incLabel.text.to!T;
+                }
+                catch (Exception e)
+                {
+                    logger.error(e);
+                    initInc = T.init;
+                    incLabel.text = initInc.to!dstring;
+                }
+            };
 
             if (onConfiguredIncLabel)
             {
@@ -171,6 +186,21 @@ class Spinner(T) : BaseSelector!T
             auto newLabel = newDecLabel;
             decLabel = !onNewDecLabel ? newLabel : onNewDecLabel(newLabel);
 
+            decLabel.onEnter = (ref e) {
+                import std.conv : to;
+
+                try
+                {
+                    initDec = decLabel.text.to!T;
+                }
+                catch (Exception e)
+                {
+                    logger.error(e);
+                    initDec = T.init;
+                    decLabel.text = initDec.to!dstring;
+                }
+            };
+
             if (onConfiguredDecLabel)
             {
                 onConfiguredDecLabel(decLabel);
@@ -193,7 +223,7 @@ class Spinner(T) : BaseSelector!T
             incButton = !onNewIncButton ? b : onNewIncButton(b);
 
             incButton.onPointerPress ~= (ref e) {
-                const newValue = value + incValue;
+                const newValue = value + initInc;
                 value = newValue;
             };
 
@@ -246,19 +276,10 @@ class Spinner(T) : BaseSelector!T
         return new NavigateButton(NavigateDirection.toLeft);
     }
 
-    T incValue()
-    {
-        assert(incLabel);
-        return incLabel.text.to!T;
-    }
+    T incValue() => initInc;
+    T decValue() => initDec;
 
-    T decValue()
-    {
-        assert(decLabel);
-        return decLabel.text.to!T;
-    }
-
-    protected void value(T newValue, bool isTriggerListeners = true)
+    void value(T newValue, bool isTriggerListeners = true)
     {
         import std.conv : to;
 
