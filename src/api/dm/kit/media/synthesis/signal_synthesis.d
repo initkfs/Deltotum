@@ -11,7 +11,7 @@ void onBuffer(T)(T[] buffer, double sampleRateHz, double amplitude0to1 = 1.0, si
 {
     assert(buffer.length > 0);
 
-    const timeDt = 1.0 / sampleRateHz;
+    const timeDt = 1.0 / sampleRateHz * channels;
     const bool isMultiChans = channels > 1;
     const bool isStereo = channels == 2;
 
@@ -19,7 +19,7 @@ void onBuffer(T)(T[] buffer, double sampleRateHz, double amplitude0to1 = 1.0, si
     for (size_t i = 0; i < buffer.length; i += channels)
     {
         time += timeDt;
-        //double time =  (i / channels) / sampleRateHz;
+        //double time =  ((cast(double)i) / channels) / sampleRateHz;
         double value = onIndexTimeStep(i, time) * amplitude0to1;
         T buffValue = cast(T)(value * T.max);
         buffer[i] = buffValue;

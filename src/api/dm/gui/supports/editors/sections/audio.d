@@ -207,13 +207,13 @@ class Audio : Control
 
             import api.dm.kit.media.dsp.formats.wav_writer : WavWriter;
 
-            //auto newChunk = media.newHeapChunk!short(1000);
+            auto newChunk = media.newHeapChunk!short(1000);
 
-            // synt.note( newChunk.data.buffer[], 4186, 0, 1000, 0, 44100);
+            synt.note(newChunk.data.buffer[], freq, 0, 0, 0, 44100);
 
-            // auto writer = new WavWriter;
-            // writer.save("/home/user/sdl-music/out.wav", newChunk.data.buffer, newChunk
-            //         .spec);
+            auto writer = new WavWriter;
+            writer.save("/home/user/sdl-music/out.wav", newChunk.data.buffer, newChunk
+                    .spec);
             // chunk.play;
             ///dspProcessor.lock;
 

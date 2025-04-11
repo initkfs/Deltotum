@@ -48,7 +48,7 @@ double adsr(double time)
     double attack = 0.1;
     double decay = 0.2;
     double sustain = 0.7;
-    double release = 0.2;
+    double release = 0.3;
 
     //(Attack + Decay + Release) <= duration
 
@@ -60,17 +60,19 @@ double adsr(double time)
         return time / attack;
         //return Math.sin((Math.PI / 2.0) * (time / attack));
     }
-    //Decay
-    else if (time < (attack + decay))
-    {
-        //return 1.0 - (1.0 - sustain) * (attack / decay);
-        return 1.0 - (1.0 - sustain) * Math.pow((time - attack) / decay, 0.5);
-    }
+
     //Release
-    else if (time > releaseTime)
+    if (time > releaseTime)
     {
         return sustain * (1 - ((time - releaseTime) / release));
         //return sustain * ((time - (1 - release)) / release);
+    }
+
+    //Decay
+    if (time < (attack + decay))
+    {
+        //return 1.0 - (1.0 - sustain) * (attack / decay);
+        return 1.0 - (1.0 - sustain) * Math.pow((time - attack) / decay, 0.5);
     }
 
     return sustain;

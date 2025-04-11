@@ -125,9 +125,9 @@ class SoundSynthesizer(T)
         note(noteBuff.buffer, n.freqHz, 0, time, 0, sampleRateHz, amplitude0to1, channels);
 
         //≥10 мс
-        size_t samples = cast(size_t)(10.0 / 1000 * sampleRateHz);
-        fadein(noteBuff.buffer, samples, channels);
-        fadeout(noteBuff.buffer, samples, channels);
+        //size_t samples = cast(size_t)(10.0 / 1000 * sampleRateHz);
+        //fadein(noteBuff.buffer, samples, channels);
+        //fadeout(noteBuff.buffer, samples, channels);
 
         onScopeBufferTime(noteBuff.buffer, time);
     }
