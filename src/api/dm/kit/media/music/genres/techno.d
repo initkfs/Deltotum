@@ -8,10 +8,10 @@ void kick(T)(T[] buffer, double freqStart, double freqEndHz, double sampleRateHz
 {
     import std.math: exp;
 
-    onBuffer(buffer, sampleRateHz, amplitude0to1, channels, (i, time) {
-        double t = (cast(double) i) / buffer.length;
-        double freq = freqStart + (freqEndHz - freqStart) * (1.0 - t);
-        double phase = Math.PI2 * freq * t;
-        return Math.sin(phase) * exp(-4.0 * t);
-    });
+    // onBuffer(buffer, sampleRateHz, amplitude0to1, channels, (i, time) {
+    //     double t = (cast(double) i) / buffer.length;
+    //     double freq = freqStart + (freqEndHz - freqStart) * (1.0 - t);
+    //     double phase = Math.PI2 * freq * t;
+    //     return Math.sin(phase) * exp(-4.0 * t);
+    // });
 }

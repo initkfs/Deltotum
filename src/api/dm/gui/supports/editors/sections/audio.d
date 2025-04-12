@@ -8,6 +8,7 @@ import api.dm.kit.media.dsp.signals.analog_signal : AnalogSignal;
 import api.math.geom2.rect2 : Rect2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.controls.switches.buttons.button : Button;
+import api.dm.kit.media.dsp.formats.wav_writer : WavWriter;
 
 import std.stdio;
 
@@ -32,6 +33,8 @@ import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.selects.spinners.spinner : Spinner;
+import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
+import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
 
 import api.dm.gui.controls.audio.piano : Piano;
 
@@ -102,6 +105,8 @@ class Audio : Control
     DrumSynthesizer!short drumSynt;
 
     AudioChunk!short drumChunk;
+
+    Text drumText;
 
     override void create()
     {
@@ -209,21 +214,19 @@ class Audio : Control
             //     chunk.data.buffer[] = buff;
             //     chunk.play;
 
-            import api.dm.kit.media.dsp.formats.wav_writer : WavWriter;
+            //auto newChunk = media.newHeapChunk!short(1000);
+            //synt.sound(newChunk.data.buffer[], freq);
 
-            auto newChunk = media.newHeapChunk!short(1000);
-
-            //synt.note(newChunk.data.buffer[], freq, 0, 0, 0, 44100);
-
-            // auto writer = new WavWriter;
-            // writer.save("/home/user/sdl-music/out.wav", newChunk.data.buffer, newChunk
-            //         .spec);
             // chunk.play;
             ///dspProcessor.lock;
 
             synt.note(MusicNote(freq, NoteType.note1_4), (buff, time) {
                 noteChunk.data.buffer[] = buff;
             });
+
+            auto writer = new WavWriter;
+            writer.save("/home/user/sdl-music/out.wav", noteChunk.data.buffer, noteChunk
+                    .spec);
 
             //synt.note(noteChunk.data.buffer, freq, 0, noteChunk.data.durationMs, 0, sampleFreq);
 
@@ -274,34 +277,89 @@ class Audio : Control
             throw new Exception(err.toString);
         }
 
-        // drumChunk = media.newHeapChunk!short(500);
+        drumChunk = media.newHeapChunk!short(500);
 
-        // regenDrum;
+        regenDrum;
 
-        // drumBtn.onOldNewValue ~= (oldv, newv) {
-        //     if (newv)
-        //     {
-        //         drumChunk.loop;
-        //     }
-        //     else
-        //     {
-        //         drumChunk.stop;
-        //     }
-        // };
+        drumBtn.onOldNewValue ~= (oldv, newv) {
+            if (newv)
+            {
+                parseDrum;
+                drumChunk.loop;
+            }
+            else
+            {
+                drumChunk.stop;
+            }
+        };
 
+        auto fmBox = new VBox;
+        addCreate(fmBox);
+
+        //drumText = new Text("4(70,70,5);4(70,70,5);8(200,5,20);8(200,5,20);4(70,70,5);");
+        drumText = new Text("4(70,70,5);4(70,70,5);8(200,5,20);8(200,5,20);4(70,70,10)");
+        drumText.isEditable = true;
+        drumText.width = 200;
+
+        fmBox.addCreate(drumText);
     }
 
-    // void regenDrum()
-    // {
-    //     Drum drum;
+    void parseDrum()
+    {
+        auto text = drumText.text;
+        assert(text.length > 0);
 
-    //     drum.adsr.attack = drumA.value;
-    //     drum.adsr.decay = drumD.value;
-    //     drum.adsr.sustain = drumS.value;
-    //     drum.adsr.release = drumR.value;
+        import std.format.read : formattedRead;
 
-    //     drum.drum(drumChunk.data.buffer, 44100, 0.9);
-    // }
+        FMdata[] notes;
+
+        foreach (noteData; text.split(";"))
+        {
+            if (noteData.length == 0)
+            {
+                continue;
+            }
+
+            int noteDur, fc, fm, index;
+
+            try
+            {
+                formattedRead(noteData, "%d(%d,%d,%d)", noteDur, fc, fm, index);
+                NoteType type = cast(NoteType) noteDur;
+                auto time = noteTimeMs(120, type);
+
+                notes ~= FMdata(fc, fm, index, time);
+            }
+            catch (Exception e)
+            {
+                logger.error(e.toString);
+            }
+        }
+
+        drumSynt.sequence(notes, (buff, fullTime) {
+            //TODO reuse;
+            if (drumChunk)
+            {
+                drumChunk.dispose;
+            }
+            drumChunk = media.newHeapChunk!short(fullTime);
+            drumChunk.data.buffer[] = buff;
+
+            auto writer = new WavWriter;
+            writer.save("/home/user/sdl-music/out.wav", drumChunk.data.buffer, drumChunk
+                .spec);
+        });
+    }
+
+    void regenDrum()
+    {
+        drumSynt.synt.adsr.attack = drumA.value;
+        drumSynt.synt.adsr.decay = drumD.value;
+        drumSynt.synt.adsr.sustain = drumS.value;
+        drumSynt.synt.adsr.release = drumR.value;
+
+        drumSynt.synt.sound(drumChunk.data.buffer);
+    }
 
     AudioChunk!short newChunk()
     {

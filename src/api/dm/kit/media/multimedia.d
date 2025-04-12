@@ -33,6 +33,7 @@ class MultiMedia : SimpleUnit
     {
         auto freqHz = audioOut.spec.freqHz;
         import api.dm.kit.media.dsp.buffers.finite_signal_buffer : FiniteSignalBuffer;
+        
 
         auto buff = FiniteSignalBuffer!T(freqHz, durationMsec, channels);
 

@@ -7,20 +7,21 @@ import Math = api.math;
  */
 
 void onBuffer(T)(T[] buffer, double sampleRateHz, double amplitude0to1 = 1.0, size_t channels, scope double delegate(
-        size_t, double) onIndexTimeChanStep)
+        size_t, double, double) onIndexFrameTimeNormTime)
 {
     assert(buffer.length > 0);
 
-    const timeDt = 1.0 / sampleRateHz;
+    const frameTimeDt = 1.0 / sampleRateHz;
+    const normTimeDt = 1.0 / (buffer.length / channels);
 
     const bool isMultiChans = channels > 1;
     const bool isStereo = channels == 2;
 
-    double time = 0;
+    double frameTime = 0;
+    double normTime = 0;
     for (size_t i = 0; i < buffer.length; i += channels)
     {
-        //double time =  ((cast(double)i) / channels) / sampleRateHz;
-        double value = onIndexTimeChanStep(i, time) * amplitude0to1;
+        double value = onIndexFrameTimeNormTime(i, frameTime, normTime);
         T buffValue = cast(T)(value * T.max);
         buffer[i] = buffValue;
 
@@ -45,7 +46,8 @@ void onBuffer(T)(T[] buffer, double sampleRateHz, double amplitude0to1 = 1.0, si
             }
         }
 
-        time += timeDt;
+        frameTime += frameTimeDt;
+        normTime += normTimeDt;
     }
 }
 
@@ -57,8 +59,7 @@ double sine(double time, double freq, double phase)
 
 double sinovertones(double time, double freq, double phase)
 {
-    double sample = 0.0;
-    sample += Math.sin(Math.PI2 * freq * time + phase) * 0.7;
+    double sample = Math.sin(Math.PI2 * freq * time + phase) * 0.7;
     sample += Math.sin(Math.PI2 * 2.0 * freq * time + 2 * phase) * 0.3;
     sample += Math.sin(Math.PI2 * 3.0 * freq * time + 3 * phase) * 0.1;
     sample += Math.sin(Math.PI2 * 4.0 * freq * time + 4 * phase) * 0.05;
@@ -84,6 +85,19 @@ double triangle(double time, double freq, double phase)
 {
     //return 1.0 - 4.0 * Math.abs(fmod(freq * time + phase, 1.0) - 0.5);
     return (2.0 * Math.abs(2.0 * ((time * freq + phase) - Math.floor(time * freq + 0.5))) - 1.0);
+}
+
+struct FMdata
+{
+    double fc = 0;
+    double fm = 0;
+    double index = 0;
+    double durationMs = 0;
+}
+
+double fmodulator(double time, double freq, double phase, double fc, double fm, double index)
+{
+    return Math.sin((Math.PI2 * fc * time + phase) + index * Math.sin(Math.PI2 * fm * time));
 }
 
 import api.math.random : Random;
@@ -184,13 +198,6 @@ import api.math.random : Random;
 // {
 //     onBuffer(buffer, sampleRateHz, amplitude0to1, channels, (i, time) {
 //         return (i % period == 0) ? 1 : 0;
-//     });
-// }
-
-// void fm(T)(T[] buffer, double fc, double fm, double index, double sampleRateHz, double amplitude0to1 = 1.0, size_t channels = 2)
-// {
-//     onBuffer(buffer, sampleRateHz, amplitude0to1, channels, (i, time) {
-//         return Math.sin(2 * Math.PI * fc * time + index * Math.sin(2 * PI * fm * time));
 //     });
 // }
 
