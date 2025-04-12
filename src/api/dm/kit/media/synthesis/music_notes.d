@@ -9,8 +9,6 @@ import Math = api.math;
 Authors: initkfs
 */
 
-double fromMIDI(int midiNote) => 440.0 * Math.pow(2.0, (midiNote - 69) / 12.0);
-
 struct MusicNote
 {
     double freqHz = 0;
@@ -24,6 +22,22 @@ enum NoteType
     note1_4 = 4,
     note1_8 = 8,
     note1_16 = 16
+}
+
+double fromMIDI(int midiNote) => 440.0 * Math.pow(2.0, (midiNote - 69) / 12.0);
+
+double noteTimeMs(double bpm, NoteType noteType, double minDurMs = 50)
+{
+    const dur = (60.0 / bpm) * (4.0 / noteType) * 1000;
+    return dur < minDurMs ? minDurMs : dur;
+}
+
+unittest
+{
+    import std.math.operations : isClose;
+
+    assert(isClose(noteTime(120, NoteType.note1_8), 500));
+    assert(isClose(noteTime(60, NoteType.note1_16), 125));
 }
 
 enum Octave : double

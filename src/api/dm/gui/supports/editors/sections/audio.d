@@ -23,7 +23,7 @@ import api.dm.kit.media.dsp.dsp_processor : DspProcessor;
 import api.dm.kit.media.dsp.equalizers.band_equalizer : BandEqualizer;
 import api.dm.gui.controls.meters.levels.rect_level : RectLevel;
 import api.dm.kit.media.synthesis.signal_synthesis;
-import api.dm.kit.media.synthesis.synthesizers.sound_synthesizer;
+import api.dm.kit.media.synthesis.sound_synthesis;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.containers.hbox : HBox;
@@ -99,6 +99,7 @@ class Audio : Control
 
     AudioChunk!short[] chunks;
     SoundSynthesizer!short synt;
+    DrumSynthesizer!short drumSynt;
 
     AudioChunk!short drumChunk;
 
@@ -156,6 +157,9 @@ class Audio : Control
             throw new Exception(err.toString);
         }
 
+        synt = SoundSynthesizer!short(sampleFreq);
+        drumSynt = DrumSynthesizer!short(sampleFreq);
+
         piano.onPianoKey = (key) {
 
             auto freq = key.freqHz;
@@ -209,17 +213,17 @@ class Audio : Control
 
             auto newChunk = media.newHeapChunk!short(1000);
 
-            synt.note(newChunk.data.buffer[], freq, 0, 0, 0, 44100);
+            //synt.note(newChunk.data.buffer[], freq, 0, 0, 0, 44100);
 
-            auto writer = new WavWriter;
-            writer.save("/home/user/sdl-music/out.wav", newChunk.data.buffer, newChunk
-                    .spec);
+            // auto writer = new WavWriter;
+            // writer.save("/home/user/sdl-music/out.wav", newChunk.data.buffer, newChunk
+            //         .spec);
             // chunk.play;
             ///dspProcessor.lock;
 
-            synt.noteOnce(MusicNote(freq, NoteType.note1_4), 44100, (buff, time) {
+            synt.note(MusicNote(freq, NoteType.note1_4), (buff, time) {
                 noteChunk.data.buffer[] = buff;
-            },);
+            });
 
             //synt.note(noteChunk.data.buffer, freq, 0, noteChunk.data.durationMs, 0, sampleFreq);
 
@@ -263,8 +267,6 @@ class Audio : Control
 
         addCreate(level);
 
-        synt = new SoundSynthesizer!short;
-
         if (const err = media.mixer.mixer.setPostCallback(&typeof(dspProcessor)
                 .signal_callback, cast(void*)&dspProcessor
                 .dspBuffer))
@@ -272,34 +274,34 @@ class Audio : Control
             throw new Exception(err.toString);
         }
 
-        drumChunk = media.newHeapChunk!short(500);
+        // drumChunk = media.newHeapChunk!short(500);
 
-        regenDrum;
+        // regenDrum;
 
-        drumBtn.onOldNewValue ~= (oldv, newv) {
-            if (newv)
-            {
-                drumChunk.loop;
-            }
-            else
-            {
-                drumChunk.stop;
-            }
-        };
+        // drumBtn.onOldNewValue ~= (oldv, newv) {
+        //     if (newv)
+        //     {
+        //         drumChunk.loop;
+        //     }
+        //     else
+        //     {
+        //         drumChunk.stop;
+        //     }
+        // };
 
     }
 
-    void regenDrum()
-    {
-        Drum drum;
+    // void regenDrum()
+    // {
+    //     Drum drum;
 
-        drum.adsr.attack = drumA.value;
-        drum.adsr.decay = drumD.value;
-        drum.adsr.sustain = drumS.value;
-        drum.adsr.release = drumR.value;
+    //     drum.adsr.attack = drumA.value;
+    //     drum.adsr.decay = drumD.value;
+    //     drum.adsr.sustain = drumS.value;
+    //     drum.adsr.release = drumR.value;
 
-        drum.drum(drumChunk.data.buffer, 44100, 0.9);
-    }
+    //     drum.drum(drumChunk.data.buffer, 44100, 0.9);
+    // }
 
     AudioChunk!short newChunk()
     {

@@ -7,16 +7,15 @@ import Math = api.math;
  */
 struct ADSR
 {
-    double attack = 0.1;
+    //sample * adsr(..)
+    double attack = 0.2;
     double decay = 0.2;
     double sustain = 0.7;
     double release = 0.2;
 
     double adsr(double time)
     {
-        //sample * adsr(..)
         //(Attack + Decay + Release) <= duration
-
         const double releaseTime = 1 - release;
 
         //Attack
@@ -25,57 +24,30 @@ struct ADSR
             return time / attack;
             //return Math.sin((Math.PI / 2.0) * (time / attack));
         }
+
+        //Release
+        if (time > releaseTime)
+        {
+            if (time >= 1)
+                return 0;
+            const ampDt = (1 - ((time - releaseTime) / release));
+            if (ampDt < 0.001)
+                return 0;
+            return sustain * ampDt;
+            //return sustain * (1 - time / releaseTime);
+            //return sustain * (1 - ((time - releaseTime) / release));
+            //return sustain * ((time - (1 - release)) / release);
+        }
+
         //Decay
-        else if (time < (attack + decay))
+        if (time < (attack + decay))
         {
             //return 1.0 - (1.0 - sustain) * (attack / decay);
             return 1.0 - (1.0 - sustain) * Math.pow((time - attack) / decay, 0.5);
         }
-        //Release
-        else if (time > releaseTime)
-        {
-            return sustain * (1 - ((time - releaseTime) / release));
-            //return sustain * ((time - (1 - release)) / release);
-        }
 
         return sustain;
     }
-}
-
-double adsr(double time)
-{
-    //sample * adsr(..)
-    double attack = 0.1;
-    double decay = 0.2;
-    double sustain = 0.7;
-    double release = 0.3;
-
-    //(Attack + Decay + Release) <= duration
-
-    const double releaseTime = 1 - release;
-
-    //Attack
-    if (time < attack)
-    {
-        return time / attack;
-        //return Math.sin((Math.PI / 2.0) * (time / attack));
-    }
-
-    //Release
-    if (time > releaseTime)
-    {
-        return sustain * (1 - ((time - releaseTime) / release));
-        //return sustain * ((time - (1 - release)) / release);
-    }
-
-    //Decay
-    if (time < (attack + decay))
-    {
-        //return 1.0 - (1.0 - sustain) * (attack / decay);
-        return 1.0 - (1.0 - sustain) * Math.pow((time - attack) / decay, 0.5);
-    }
-
-    return sustain;
 }
 
 double lpf(double sample, double prev, double cutoff)
@@ -182,16 +154,6 @@ void lowpass(T)(T[] buffer, double sampleRate, double cutoffFreq)
         v = cast(T)(sample * T.max);
         prev = sample;
     }
-}
-
-double overtones(double time, double freq, double phase)
-{
-    double sample = 0.0;
-    sample += Math.sin(Math.PI2 * freq * time + phase) * 0.7;
-    sample += Math.sin(Math.PI2 * 2.0 * freq * time + 2 * phase) * 0.3;
-    sample += Math.sin(Math.PI2 * 3.0 * freq * time + 3 * phase) * 0.1;
-    sample += Math.sin(Math.PI2 * 4.0 * freq * time + 4 * phase) * 0.05;
-    return sample;
 }
 
 void echo(T)(T[] buffer, double sampleRate, double delaySec, double decay)
