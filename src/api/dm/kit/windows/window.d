@@ -810,6 +810,26 @@ class Window : GraphicsComponent
         return Vec2d(hRatio, vRatio);
     }
 
+    bool startTextInput()
+    {
+        if (const err = comWindow.startTextInput)
+        {
+            logger.error(err.toString);
+            return false;
+        }
+        return true;
+    }
+
+    bool endTextInput()
+    {
+        if (const err = comWindow.endTextInput)
+        {
+            logger.error(err.toString);
+            return false;
+        }
+        return true;
+    }
+
     bool nativePtr(out ComNativePtr ptr)
     {
         if (const err = comWindow.nativePtr(ptr))

@@ -178,6 +178,10 @@ class Text : Control
                 cursor.isVisible = true;
             };
 
+            onFocusEnter ~= (ref e) { window.startTextInput; };
+
+            onFocusExit ~= (ref e) { window.endTextInput; };
+
             onKeyPress ~= (ref e) {
                 import api.dm.com.inputs.com_keyboard : ComKeyName;
 
@@ -486,7 +490,8 @@ class Text : Control
                 glyphPosX = startRowTextX;
                 glyphPosY += rowHeight;
 
-                if(!isShowNewLineGlyph){
+                if (!isShowNewLineGlyph)
+                {
                     continue;
                 }
             }
@@ -905,14 +910,14 @@ class Text : Control
         return sum;
     }
 
-    void text(string t,  bool isTriggerListeners = true)
+    void text(string t, bool isTriggerListeners = true)
     {
         import std.conv : to;
 
         this.text(t.to!dstring);
     }
 
-    void text(dstring t,  bool isTriggerListeners = true)
+    void text(dstring t, bool isTriggerListeners = true)
     {
         if (!isBuilt || !isCreated)
         {

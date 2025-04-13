@@ -92,4 +92,7 @@ nothrow:
 
     ComResult nativePtr(out ComNativePtr ptr);
 
+    ComResult startTextInput();
+    ComResult endTextInput();
+
 }

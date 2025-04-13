@@ -80,6 +80,15 @@ class Input
         return systemCursor.getPos;
     }
 
+    bool startTextInput(){
+
+        return true;
+    }
+
+    bool endTextInput(){
+        return true;
+    }
+
     void dispose()
     {
         systemCursor.dispose;

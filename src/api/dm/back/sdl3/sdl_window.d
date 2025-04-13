@@ -703,6 +703,26 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         return ComResult.success;
     }
 
+    ComResult startTextInput()
+    {
+        assert(ptr);
+        if (!SDL_StartTextInput(ptr))
+        {
+            return getErrorRes("Error starting text input");
+        }
+        return ComResult.success;
+    }
+
+    ComResult endTextInput()
+    {
+        assert(ptr);
+        if (!SDL_StopTextInput(ptr))
+        {
+            return getErrorRes("Error stopping text input");
+        }
+        return ComResult.success;
+    }
+
     override protected bool disposePtr()
     {
         if (ptr)
