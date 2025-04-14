@@ -12,7 +12,19 @@ Authors: initkfs
 struct MusicNote
 {
     double freqHz = 0;
-    NoteType type = NoteType.note1_4;
+    double durationMs = 0;
+
+    this(double freqHz, double durMs)
+    {
+        this.freqHz = freqHz;
+        this.durationMs = durMs;
+    }
+
+    this(double freqHz, NoteType type, double bpm, double minDurationMs = 10)
+    {
+        this.freqHz = freqHz;
+        this.durationMs = noteTimeMs(bpm, type, minDurationMs);
+    }
 }
 
 enum NoteType

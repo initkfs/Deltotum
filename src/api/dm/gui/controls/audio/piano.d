@@ -239,15 +239,21 @@ class Piano : Control
 
         ampField = new RegulateTextField("Amp:");
         controlPanel.addCreate(ampField);
+        ampField.value = 0.7;
+        ampField.scrollField.valueStep = 0.1;
 
         isFcMulFmField = new Check("FC*FM");
         controlPanel.addCreate(isFcMulFmField);
 
-        fmFMField = new RegulateTextField("FM:");
+        fmFMField = new RegulateTextField("FM:", 1, 10000);
         controlPanel.addCreate(fmFMField);
+        fmFMField.scrollField.valueStep = 1;
+        fmFMField.value = 5000;
 
-        fiFMField = new RegulateTextField("FI:");
+        fiFMField = new RegulateTextField("FI:", 1, 200);
         controlPanel.addCreate(fiFMField);
+        fiFMField.value = 1;
+        fiFMField.scrollField.valueStep = 1;
 
         controlPanel.addCreate(new Text("ADSR:"));
 

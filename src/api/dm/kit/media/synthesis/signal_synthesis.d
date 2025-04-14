@@ -95,7 +95,7 @@ struct FMdata
     double durationMs = 0;
 }
 
-double fmodulator(double time, double freq, double phase, double fc, double fm, double index)
+double fmodulator(double time, double phase, double fc, double fm, double index)
 {
     return Math.sin((Math.PI2 * fc * time + phase) + index * Math.sin(Math.PI2 * fm * time));
 }

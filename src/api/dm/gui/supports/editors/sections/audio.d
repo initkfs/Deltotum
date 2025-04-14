@@ -24,7 +24,6 @@ import api.dm.kit.media.dsp.dsp_processor : DspProcessor;
 import api.dm.kit.media.dsp.equalizers.band_equalizer : BandEqualizer;
 import api.dm.gui.controls.meters.levels.rect_level : RectLevel;
 import api.dm.kit.media.synthesis.signal_synthesis;
-import api.dm.kit.media.synthesis.sound_synthesis;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.containers.hbox : HBox;
@@ -33,11 +32,13 @@ import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.selects.spinners.spinner : Spinner;
-import api.dm.gui.controls.meters.scrolls.hscroll: HScroll;
+import api.dm.gui.controls.meters.scrolls.hscroll : HScroll;
 import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
 import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
 
 import api.dm.gui.controls.audio.piano : Piano;
+
+import api.dm.kit.media.synthesis.synthesizers.fm_synthesizer : FMSynthesizer;
 
 import Math = api.math;
 
@@ -55,17 +56,6 @@ class Audio : Control
     RectLevel level;
 
     Piano piano;
-
-    Spinner!double drumA;
-    Spinner!double drumD;
-    Spinner!double drumS;
-    Spinner!double drumR;
-
-    RegulateTextField pianoAmp;
-    RegulateTextField pianoFm;
-    RegulateTextField pianoFmIndex;
-
-    RegulateTextField drumAmp;
 
     this()
     {
@@ -109,8 +99,8 @@ class Audio : Control
     import api.dm.kit.media.dsp.chunks.audio_chunk : AudioChunk;
 
     AudioChunk!short[] chunks;
-    SoundSynthesizer!short synt;
-    DrumSynthesizer!short drumSynt;
+    FMSynthesizer!short synt;
+    FMSynthesizer!short drumSynt;
 
     AudioChunk!short drumChunk;
 
@@ -140,47 +130,8 @@ class Audio : Control
         panelRoot.isAlignY = true;
         root.addCreate(panelRoot);
 
-        auto drumBtn = new Button("Drum");
-        drumBtn.isFixedButton = true;
-        panelRoot.addCreate(drumBtn);
-
-        drumA = new Spinner!double(0, 0.1, 0.1);
-        panelRoot.addCreate(drumA);
-        drumA.value = 0.1;
-
-        drumD = new Spinner!double(0, 0.1, 0.1);
-        panelRoot.addCreate(drumD);
-        drumD.value = 0.2;
-
-        drumS = new Spinner!double(0, 0.1, 0.1);
-        panelRoot.addCreate(drumS);
-        drumS.value = 0.7;
-
-        drumR = new Spinner!double(0, 0.1, 0.1);
-        panelRoot.addCreate(drumR);
-        drumR.value = 0.2;
-
-        pianoAmp = new RegulateTextField("Amp:");
-        panelRoot.addCreate(pianoAmp);
-        pianoAmp.value = 0.7;
-        pianoAmp.scrollField.valueStep = 0.1;
-
-        pianoFm = new RegulateTextField("FM:", 1, 10000);
-        panelRoot.addCreate(pianoFm);
-        pianoFm.value = 10;
-        pianoFm.scrollField.valueStep = 5;
-
-        pianoFmIndex = new RegulateTextField("FI:", 1, 200);
-        panelRoot.addCreate(pianoFmIndex);
-        pianoFmIndex.value = 1;
-        pianoFmIndex.scrollField.valueStep = 1;
-
-        drumAmp = new RegulateTextField("Amp:");
-        panelRoot.addCreate(drumAmp);
-        drumAmp.value = 0.7;
-        drumAmp.scrollField.valueStep = 0.1;
-
         piano = new Piano;
+
         //TODO fix window width
         //pianoContainer.width = window.width == 0 ? 1200 : window.width;
         piano.width = 1275;
@@ -192,8 +143,10 @@ class Audio : Control
             throw new Exception(err.toString);
         }
 
-        synt = SoundSynthesizer!short(sampleFreq);
-        drumSynt = DrumSynthesizer!short(sampleFreq);
+        synt = new FMSynthesizer!short(sampleFreq);
+        piano.adsr = synt.adsr;
+
+        drumSynt = new FMSynthesizer!short(sampleFreq);
 
         piano.onPianoKey = (key) {
 
@@ -250,17 +203,16 @@ class Audio : Control
             // chunk.play;
             ///dspProcessor.lock;
 
-            double amp = pianoAmp.value;
-            double fm = pianoFm.value;
-            double index = pianoFmIndex.value;
+            synt.adsr = piano.adsr;
 
-            drumSynt.note(MusicNote(freq, NoteType.note1_4), fm, index, (buff, time) {
-                if(noteChunk.data.buffer.length != buff.length){
-                    import std.format: format;
-                    throw new Exception(format("Src buffer len: %s, target %s", buff.length, noteChunk.data.buffer.length));
-                }
-                noteChunk.data.buffer[] = buff;
-            }, 120, amp);
+            double amp = piano.amp;
+            synt.fm = piano.fm;
+            synt.index = piano.fi;
+            synt.isFcMulFm = piano.isFcMulFm;
+
+            synt.note(MusicNote(freq, NoteType.note1_4, 120), amp, (time) {
+                return noteChunk.data.buffer[];
+            });
 
             // synt.note(MusicNote(freq, NoteType.note1_4), (buff, time) {
             //     if(noteChunk.data.buffer.length != buff.length){
@@ -323,21 +275,21 @@ class Audio : Control
             throw new Exception(err.toString);
         }
 
-        drumChunk = media.newHeapChunk!short(500);
+        //drumChunk = media.newHeapChunk!short(500);
 
-        regenDrum;
+        //regenDrum;
 
-        drumBtn.onOldNewValue ~= (oldv, newv) {
-            if (newv)
-            {
-                parseDrum;
-                drumChunk.loop;
-            }
-            else
-            {
-                drumChunk.stop;
-            }
-        };
+        // drumBtn.onOldNewValue ~= (oldv, newv) {
+        //     if (newv)
+        //     {
+        //         parseDrum;
+        //         drumChunk.loop;
+        //     }
+        //     else
+        //     {
+        //         drumChunk.stop;
+        //     }
+        // };
 
         auto fmBox = new VBox;
         addCreate(fmBox);
@@ -382,31 +334,31 @@ class Audio : Control
             }
         }
 
-        double amp = drumAmp.value;
+        double amp = 0.5;
 
-        drumSynt.sequence(notes, (buff, fullTime) {
-            //TODO reuse;
-            if (drumChunk)
-            {
-                drumChunk.dispose;
-            }
-            drumChunk = media.newHeapChunk!short(fullTime);
-            drumChunk.data.buffer[] = buff;
+        // drumSynt.sequence(notes, (buff, fullTime) {
+        //     //TODO reuse;
+        //     if (drumChunk)
+        //     {
+        //         drumChunk.dispose;
+        //     }
+        //     drumChunk = media.newHeapChunk!short(fullTime);
+        //     drumChunk.data.buffer[] = buff;
 
-            // auto writer = new WavWriter;
-            // writer.save("/home/user/sdl-music/out.wav", drumChunk.data.buffer, drumChunk
-            //     .spec);
-        }, amp);
+        //     // auto writer = new WavWriter;
+        //     // writer.save("/home/user/sdl-music/out.wav", drumChunk.data.buffer, drumChunk
+        //     //     .spec);
+        // }, amp);
     }
 
     void regenDrum()
     {
-        drumSynt.synt.adsr.attack = drumA.value;
-        drumSynt.synt.adsr.decay = drumD.value;
-        drumSynt.synt.adsr.sustain = drumS.value;
-        drumSynt.synt.adsr.release = drumR.value;
+        // drumSynt.synt.adsr.attack = drumA.value;
+        // drumSynt.synt.adsr.decay = drumD.value;
+        // drumSynt.synt.adsr.sustain = drumS.value;
+        // drumSynt.synt.adsr.release = drumR.value;
 
-        drumSynt.synt.sound(drumChunk.data.buffer);
+       // drumSynt.synt.sound(drumChunk.data.buffer);
     }
 
     AudioChunk!short newChunk()
