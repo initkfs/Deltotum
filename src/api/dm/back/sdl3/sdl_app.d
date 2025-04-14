@@ -643,7 +643,8 @@ class SdlApp : GuiApp
         {
             auto audio = audioOut.get;
 
-            if (const err = audio.open)
+            ComAudioSpec defaultSpec;
+            if (const err = audio.open(&defaultSpec))
             {
                 return err;
             }

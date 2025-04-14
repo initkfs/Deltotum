@@ -3,10 +3,16 @@ module api.dm.gui.controls.audio.piano;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.containers.container : Container;
+import api.dm.gui.controls.containers.hbox : HBox;
+import api.dm.gui.controls.switches.checks.check : Check;
+import api.dm.gui.controls.selects.spinners.spinner : FracSpinner;
+import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
+import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsla : HSLA;
 
+import api.dm.kit.media.synthesis.effect_synthesis : ADSR;
 import api.dm.kit.media.synthesis.music_notes : Octave, MusicNote;
 
 import Math = api.math;
@@ -78,19 +84,36 @@ class Piano : Control
     enum whiteKeysCount = 52;
     enum blackKeysCount = 36;
 
+    FracSpinner aADSR;
+    FracSpinner dADSR;
+    FracSpinner sADSR;
+    FracSpinner rADSR;
+
+    RegulateTextField ampField;
+
+    RegulateTextField fmFMField;
+    RegulateTextField fiFMField;
+    Check isFcMulFmField;
+
+    Container controlPanel;
+
     void delegate(PianoKey) onPianoKey;
 
     this()
     {
-        import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
+        import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
-        layout = new CenterLayout;
+        layout = new VLayout;
         layout.isAutoResize = true;
     }
 
     override void create()
     {
         super.create;
+
+        controlPanel = new HBox;
+        controlPanel.isAlignY = true;
+        addCreate(controlPanel);
 
         keyContainer = new Container;
         keyContainer.resize(width, height);
@@ -213,6 +236,77 @@ class Piano : Control
                 }
             };
         }(ii);
+
+        ampField = new RegulateTextField("Amp:");
+        controlPanel.addCreate(ampField);
+
+        isFcMulFmField = new Check("FC*FM");
+        controlPanel.addCreate(isFcMulFmField);
+
+        fmFMField = new RegulateTextField("FM:");
+        controlPanel.addCreate(fmFMField);
+
+        fiFMField = new RegulateTextField("FI:");
+        controlPanel.addCreate(fiFMField);
+
+        controlPanel.addCreate(new Text("ADSR:"));
+
+        aADSR = addCreateADSRField;
+        dADSR = addCreateADSRField;
+        sADSR = addCreateADSRField;
+        rADSR = addCreateADSRField;
+    }
+
+    ADSR adsr()
+    {
+        ADSR value;
+        value.attack = aADSR.value;
+        value.decay = dADSR.value;
+        value.sustain = sADSR.value;
+        value.release = rADSR.value;
+        return value;
+    }
+
+    void adsr(ADSR v)
+    {
+        aADSR.value = v.attack;
+        dADSR.value = v.decay;
+        sADSR.value = v.sustain;
+        rADSR.value = v.release;
+    }
+
+    protected FracSpinner addCreateADSRField()
+    {
+        assert(controlPanel);
+        auto field = new FracSpinner(0, 0.1, 0.1);
+        controlPanel.addCreate(field);
+        return field;
+    }
+
+    double amp()
+    {
+        assert(ampField);
+        return ampField.value;
+    }
+
+    void amp(double value)
+    {
+        assert(ampField);
+        ampField.value = value;
+    }
+
+    bool isFcMulFm() => isFcMulFmField.isOn;
+
+    double fm()
+    {
+        assert(fmFMField);
+        return fmFMField.value;
+    }
+
+    double fi()
+    {
+        assert(fiFMField);
+        return fiFMField.value;
     }
 
     protected bool isForBlackKey(double x, double y)

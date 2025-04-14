@@ -175,6 +175,8 @@ struct DrumSynthesizer(T)
     }
 
     /** 
+     * fc = 20...20000Khz, fm = 0.1 * fc.. 10 * fc
+     *
      * Kick,fc:50–100Hz,fm:50–200Hz,i:5–15
      * Snare,fc:150–300Hz,fm:1–5kHz,i:10–30 + white noize
      * Hi-Hat,fc:200–1000Hz,fm:5–10kHz,i:20–50
@@ -186,7 +188,7 @@ struct DrumSynthesizer(T)
      * DX7,fc:100–200Hz,fm(3–5*fc),i:10–20
      */
 
-    void sequence(FMdata[] notes, scope void delegate(T[], double) onScopeBufferTime, double bpm = 120, double amplitude0to1 = 0.9)
+    void sequence(FMdata[] notes, scope void delegate(T[], double) onScopeBufferTime, double amplitude0to1 = 0.9)
     {
         double fullTimeMs = 0;
         foreach (n; notes)
@@ -221,8 +223,6 @@ struct DrumSynthesizer(T)
             auto endIndex = buffIndex + noteBuff.buffer.length;
             seqBuff.buffer[buffIndex .. endIndex][] = noteBuff.buffer;
 
-           
-
             buffIndex = endIndex;
             noteBuff.dispose;
         }
@@ -230,6 +230,29 @@ struct DrumSynthesizer(T)
         //synt.fadeInOut(seqBuff.buffer);
 
         onScopeBufferTime(seqBuff.buffer, fullTimeMs);
+    }
+
+    void note(MusicNote n, double fm, double index, scope void delegate(T[], double) onScopeBufferTime, double bpm = 120, double amplitude0to1 = 0.9)
+    {
+        auto time = noteTimeMs(bpm, n.type);
+        auto noteBuff = FiniteSignalBuffer!T(synt.sampleRateHz, time, synt.channels);
+        scope (exit)
+        {
+            noteBuff.dispose;
+        }
+
+        onBuffer(noteBuff.buffer, synt.sampleRateHz, amplitude0to1, synt.channels, (i, frameTime, fullTime) {
+            auto sample = fmodulator(frameTime, 0, 0, n.freqHz, fm, index);
+            sample *= synt.adsr.adsr(fullTime);
+            return sample;
+        });
+
+        if (synt.isFadeInOut)
+        {
+            synt.fadeInOut(noteBuff.buffer);
+        }
+
+        onScopeBufferTime(noteBuff.buffer, time);
     }
 }
 

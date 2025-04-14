@@ -33,6 +33,7 @@ import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.selects.spinners.spinner : Spinner;
+import api.dm.gui.controls.meters.scrolls.hscroll: HScroll;
 import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
 import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
 
@@ -60,6 +61,12 @@ class Audio : Control
     Spinner!double drumS;
     Spinner!double drumR;
 
+    RegulateTextField pianoAmp;
+    RegulateTextField pianoFm;
+    RegulateTextField pianoFmIndex;
+
+    RegulateTextField drumAmp;
+
     this()
     {
         import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
@@ -82,7 +89,6 @@ class Audio : Control
 
     shared static
     {
-        enum double sampleFreq = 44100;
         enum sampleWindowSize = 8192;
         enum sampleBufferSize = 40960;
 
@@ -90,6 +96,8 @@ class Audio : Control
 
         enum sampleBufferHalfSize = sampleBufferSize / 2;
     }
+
+    double sampleFreq = 0;
 
     alias Sint16 = short;
     alias Uint8 = ubyte;
@@ -111,6 +119,8 @@ class Audio : Control
     override void create()
     {
         super.create;
+
+        sampleFreq = media.audioOutSpec.freqHz;
 
         sampleBufferMutex = new shared Mutex();
 
@@ -149,6 +159,26 @@ class Audio : Control
         drumR = new Spinner!double(0, 0.1, 0.1);
         panelRoot.addCreate(drumR);
         drumR.value = 0.2;
+
+        pianoAmp = new RegulateTextField("Amp:");
+        panelRoot.addCreate(pianoAmp);
+        pianoAmp.value = 0.7;
+        pianoAmp.scrollField.valueStep = 0.1;
+
+        pianoFm = new RegulateTextField("FM:", 1, 10000);
+        panelRoot.addCreate(pianoFm);
+        pianoFm.value = 10;
+        pianoFm.scrollField.valueStep = 5;
+
+        pianoFmIndex = new RegulateTextField("FI:", 1, 200);
+        panelRoot.addCreate(pianoFmIndex);
+        pianoFmIndex.value = 1;
+        pianoFmIndex.scrollField.valueStep = 1;
+
+        drumAmp = new RegulateTextField("Amp:");
+        panelRoot.addCreate(drumAmp);
+        drumAmp.value = 0.7;
+        drumAmp.scrollField.valueStep = 0.1;
 
         piano = new Piano;
         //TODO fix window width
@@ -220,13 +250,29 @@ class Audio : Control
             // chunk.play;
             ///dspProcessor.lock;
 
-            synt.note(MusicNote(freq, NoteType.note1_4), (buff, time) {
-                noteChunk.data.buffer[] = buff;
-            });
+            double amp = pianoAmp.value;
+            double fm = pianoFm.value;
+            double index = pianoFmIndex.value;
 
-            auto writer = new WavWriter;
-            writer.save("/home/user/sdl-music/out.wav", noteChunk.data.buffer, noteChunk
-                    .spec);
+            drumSynt.note(MusicNote(freq, NoteType.note1_4), fm, index, (buff, time) {
+                if(noteChunk.data.buffer.length != buff.length){
+                    import std.format: format;
+                    throw new Exception(format("Src buffer len: %s, target %s", buff.length, noteChunk.data.buffer.length));
+                }
+                noteChunk.data.buffer[] = buff;
+            }, 120, amp);
+
+            // synt.note(MusicNote(freq, NoteType.note1_4), (buff, time) {
+            //     if(noteChunk.data.buffer.length != buff.length){
+            //         import std.format: format;
+            //         throw new Exception(format("Src buffer len: %s, target %s", buff.length, noteChunk.data.buffer.length));
+            //     }
+            //     noteChunk.data.buffer[] = buff;
+            // }, 120, amp);
+
+            // auto writer = new WavWriter;
+            // writer.save("/home/user/sdl-music/out.wav", noteChunk.data.buffer, noteChunk
+            //         .spec);
 
             //synt.note(noteChunk.data.buffer, freq, 0, noteChunk.data.durationMs, 0, sampleFreq);
 
@@ -336,6 +382,8 @@ class Audio : Control
             }
         }
 
+        double amp = drumAmp.value;
+
         drumSynt.sequence(notes, (buff, fullTime) {
             //TODO reuse;
             if (drumChunk)
@@ -345,10 +393,10 @@ class Audio : Control
             drumChunk = media.newHeapChunk!short(fullTime);
             drumChunk.data.buffer[] = buff;
 
-            auto writer = new WavWriter;
-            writer.save("/home/user/sdl-music/out.wav", drumChunk.data.buffer, drumChunk
-                .spec);
-        });
+            // auto writer = new WavWriter;
+            // writer.save("/home/user/sdl-music/out.wav", drumChunk.data.buffer, drumChunk
+            //     .spec);
+        }, amp);
     }
 
     void regenDrum()

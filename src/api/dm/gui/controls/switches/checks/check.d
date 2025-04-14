@@ -176,6 +176,9 @@ class Check : BaseBiswitch
         {
             markerState = false;
             isIndeterminate = true;
+        }else {
+            markerState = isOn;
+            isIndeterminate = false;
         }
 
         if (isCreateMarkerListeners)

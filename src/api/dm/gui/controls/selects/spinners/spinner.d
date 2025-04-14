@@ -11,6 +11,9 @@ import std.conv : to;
 /**
  * Authors: initkfs
  */
+ 
+alias FracSpinner = Spinner!double;
+
 class Spinner(T) : BaseSelector!T
 {
     TextField incLabel;

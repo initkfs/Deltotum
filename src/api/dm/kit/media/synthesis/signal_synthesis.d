@@ -22,7 +22,7 @@ void onBuffer(T)(T[] buffer, double sampleRateHz, double amplitude0to1 = 1.0, si
     for (size_t i = 0; i < buffer.length; i += channels)
     {
         double value = onIndexFrameTimeNormTime(i, frameTime, normTime);
-        T buffValue = cast(T)(value * T.max);
+        T buffValue = cast(T)(value * amplitude0to1 * T.max);
         buffer[i] = buffValue;
 
         if (isStereo)
