@@ -29,38 +29,41 @@ class VConvexPolygon : VShape
         const lineWidth = style.lineWidth;
         canvas.lineWidth(lineWidth);
 
-        const topLineEndX = width - cornerPadding;
-        const topLineEndY = 0;
+        //TODO check corners + halfLine
+        double halfLine = lineWidth / 2;
 
-        canvas.moveTo(cornerPadding, 0);
+        const topLineEndX = width - cornerPadding - halfLine;
+        const topLineEndY = halfLine;
+
+        canvas.moveTo(halfLine + cornerPadding, halfLine);
         canvas.lineTo(topLineEndX, topLineEndY);
 
-        const topRightCornerEndX = width;
-        const topRightCornerEndY = cornerPadding;
+        const topRightCornerEndX = width - halfLine;
+        const topRightCornerEndY = cornerPadding + halfLine;
         canvas.lineTo(topRightCornerEndX, topRightCornerEndY);
 
-        const rightLineEndX = width;
-        const rightLineEndY = height - cornerPadding;
+        const rightLineEndX = width - halfLine;
+        const rightLineEndY = height - cornerPadding - halfLine;
         canvas.lineTo(rightLineEndX, rightLineEndY);
 
-        const bottomRightCornerEndX = width - cornerPadding;
-        const bottomRightCornerEndY = height;
+        const bottomRightCornerEndX = width - cornerPadding - halfLine;
+        const bottomRightCornerEndY = height - halfLine;
         canvas.lineTo(bottomRightCornerEndX, bottomRightCornerEndY);
 
-        const bottomLineEndX = cornerPadding;
-        const bottomLineEndY = height;
+        const bottomLineEndX = cornerPadding + halfLine;
+        const bottomLineEndY = height - halfLine;
         canvas.lineTo(bottomLineEndX, bottomLineEndY);
 
-        const bottomLeftCornerEndX = 0;
-        const bottomLeftCornerEndY = height - cornerPadding;
+        const bottomLeftCornerEndX = halfLine;
+        const bottomLeftCornerEndY = height - cornerPadding - halfLine;
         canvas.lineTo(bottomLeftCornerEndX, bottomLeftCornerEndY);
 
-        const leftLineEndX = 0;
-        const leftLineEndY = cornerPadding;
+        const leftLineEndX = halfLine;
+        const leftLineEndY = cornerPadding + halfLine;
         canvas.lineTo(leftLineEndX, leftLineEndY);
 
-        const topLeftCornerEndX = cornerPadding;
-        const topLeftCornerEndY = 0;
+        const topLeftCornerEndX = cornerPadding + halfLine;
+        const topLeftCornerEndY = halfLine;
         canvas.lineTo(topLeftCornerEndX, topLeftCornerEndY);
 
         canvas.closePath;
