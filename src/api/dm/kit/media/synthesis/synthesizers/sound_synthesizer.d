@@ -53,7 +53,7 @@ class SoundSynthesizer(T) : BaseSynthesizer!T
         onScopeBufferTime(noteBuff.buffer, time);
     }
 
-    void sequence(MusicNote[] notes, double amplitude0to1, T[] delegate(double) bufferOnTimeProvider)
+    void sequence(MusicNote[] notes, double amplitude0to1, T[]delegate(double) bufferOnTimeProvider)
     {
         sequence(notes, amplitude0to1, (scopeBuff, time) {
             T[] outBuff = bufferOnTimeProvider(time);
@@ -70,6 +70,8 @@ class SoundSynthesizer(T) : BaseSynthesizer!T
 
     void sequence(MusicNote[] notes, double amplitude0to1, scope void delegate(T[], double) onScopeBufferTime)
     {
+        assert(notes.length > 0);
+
         double fullTimeMs = 0;
         foreach (n; notes)
         {

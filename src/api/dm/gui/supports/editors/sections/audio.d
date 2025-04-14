@@ -37,6 +37,7 @@ import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPan
 import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
 
 import api.dm.gui.controls.audio.piano : Piano;
+import api.dm.gui.controls.audio.pattern_synthesizer;
 
 import api.dm.kit.media.synthesis.synthesizers.fm_synthesizer : FMSynthesizer;
 
@@ -104,7 +105,11 @@ class Audio : Control
 
     AudioChunk!short drumChunk;
 
+    AudioChunk!short[size_t] channels;
+
     Text drumText;
+
+    PatternSynthesizer!short patternSynt;
 
     override void create()
     {
@@ -294,6 +299,58 @@ class Audio : Control
         auto fmBox = new VBox;
         addCreate(fmBox);
 
+        patternSynt = new PatternSynthesizer!short(sampleFreq);
+        fmBox.addCreate(patternSynt);
+
+        patternSynt.onPattern = (p) {};
+
+        patternSynt.onPatterns = (isPlay, patterns, i, amp) {
+
+            if (!isPlay)
+            {
+                if (auto chunkPtr = i in channels)
+                {
+                    (*chunkPtr).stop;
+                }
+                return;
+            }
+
+            FMdata[] data;
+            foreach (p; patterns)
+            {
+                data ~= FMdata(p.freqHz, p.fmHz, p.index, p.durationMs);
+            }
+
+            import std;
+            writeln(data);
+
+            AudioChunk!short chunk;
+            if (auto chunkPtr = i in channels)
+            {
+                chunk = *chunkPtr;
+            }
+
+            synt.sequence(data, amp, (time) {
+                if (chunk)
+                {
+                    if (chunk.data.buffer.length == data.length)
+                    {
+                        return chunk.data.buffer;
+                    }
+                    else
+                    {
+                        chunk.dispose;
+                    }
+                }
+
+                auto newChunk = media.newHeapChunk!short(time);
+                channels[i] = newChunk;
+                return newChunk.data.buffer;
+            });
+
+            channels[i].loop;
+        };
+
         //drumText = new Text("4(70,70,5);4(70,70,5);8(200,5,20);8(200,5,20);4(70,70,5);");
         drumText = new Text("4(70,70,5);4(70,70,5);8(200,5,20);8(200,5,20);4(70,70,10)");
         drumText.isEditable = true;
@@ -358,7 +415,7 @@ class Audio : Control
         // drumSynt.synt.adsr.sustain = drumS.value;
         // drumSynt.synt.adsr.release = drumR.value;
 
-       // drumSynt.synt.sound(drumChunk.data.buffer);
+        // drumSynt.synt.sound(drumChunk.data.buffer);
     }
 
     AudioChunk!short newChunk()

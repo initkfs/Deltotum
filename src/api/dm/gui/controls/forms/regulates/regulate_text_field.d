@@ -31,6 +31,8 @@ class RegulateTextField : Control
 
     size_t valueFieldPrefGlyphs = 6;
 
+    void delegate(double) onValue;
+
     protected
     {
         dstring labelText;
@@ -162,6 +164,12 @@ class RegulateTextField : Control
     protected bool updateValue(double v, bool isTriggerListeners = true)
     {
         lastValue = v;
+
+        if (onValue && isTriggerListeners)
+        {
+            onValue(v);
+        }
+
         return true;
     }
 

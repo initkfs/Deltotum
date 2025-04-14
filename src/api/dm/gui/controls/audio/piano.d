@@ -95,6 +95,8 @@ class Piano : Control
     RegulateTextField fiFMField;
     Check isFcMulFmField;
 
+    Text lastFreq;
+
     Container controlPanel;
 
     void delegate(PianoKey) onPianoKey;
@@ -230,6 +232,11 @@ class Piano : Control
                     }
                 }
 
+                if(lastFreq){
+                    import std.conv: to;
+                    lastFreq.text = key.freqHz.to!dstring;
+                }
+
                 if (onPianoKey)
                 {
                     onPianoKey(key);
@@ -261,6 +268,9 @@ class Piano : Control
         dADSR = addCreateADSRField;
         sADSR = addCreateADSRField;
         rADSR = addCreateADSRField;
+
+        lastFreq = new Text("0");
+        controlPanel.addCreate(lastFreq);
     }
 
     ADSR adsr()

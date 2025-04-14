@@ -46,4 +46,66 @@ class FMSynthesizer(T) : SoundSynthesizer!T
             return fmodulator(time, phase, freq, targetFm, index);
         };
     }
+
+    void sequence(FMdata[] notes, double amplitude0to1, T[] delegate(double) bufferOnTimeProvider)
+    {
+        sequence(notes, amplitude0to1, (scopeBuff, time) {
+            T[] outBuff = bufferOnTimeProvider(time);
+            if (outBuff.length != scopeBuff.length)
+            {
+                import std.format : format;
+
+                throw new Exception(format("FM sequence src buffer len: %s, target %s", scopeBuff.length, outBuff
+                    .length));
+            }
+            outBuff[] = scopeBuff;
+        });
+    }
+
+    void sequence(FMdata[] notes, double amplitude0to1, scope void delegate(T[], double) onScopeBufferTime)
+    {
+        assert(notes.length > 0);
+        
+        double fullTimeMs = 0;
+        foreach (n; notes)
+        {
+            fullTimeMs += n.durationMs;
+        }
+
+        auto seqBuff = FiniteSignalBuffer!T(sampleRateHz, fullTimeMs, channels);
+        scope (exit)
+        {
+            seqBuff.dispose;
+        }
+
+        size_t buffIndex = 0;
+
+        import std.math : fmod;
+
+        foreach (n; notes)
+        {
+            auto time = n.durationMs;
+            auto noteBuff = FiniteSignalBuffer!T(sampleRateHz, time, channels);
+
+            onBuffer(noteBuff.buffer, sampleRateHz, amplitude0to1, channels, (i, frameTime, time) {
+            auto sample = fmodulator(frameTime, 0, n.fc, n.fm, n.index);
+            sample *= amplitude0to1;
+            sample *= adsr.adsr(time);
+            return sample;
+        });
+
+            auto endIndex = buffIndex + noteBuff.buffer.length;
+            seqBuff.buffer[buffIndex .. endIndex][] = noteBuff.buffer;
+
+            buffIndex = endIndex;
+            noteBuff.dispose;
+        }
+
+        if (isFadeInOut)
+        {
+            fadeInOut(seqBuff.buffer);
+        }
+
+        onScopeBufferTime(seqBuff.buffer, fullTimeMs);
+    }
 }
