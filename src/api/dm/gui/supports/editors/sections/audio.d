@@ -152,41 +152,42 @@ class Audio : Control
         }
 
         synt = new FMSynthesizer!short(sampleFreq);
-        piano.adsr = synt.adsr;
+
+        piano.settings.adsr(synt.adsr);
+        piano.settings.amp = 0.5;
+        piano.settings.fm = 10;
+        piano.settings.isFcMulFm = true;
+        piano.settings.fmIndex = 1;
+        piano.settings.noteType = NoteType.note1_4;
 
         drumSynt = new FMSynthesizer!short(sampleFreq);
 
-        piano.onPianoKey = (key) {
+        piano.onPianoKey = (key, ref e) {
 
             auto freq = key.freqHz;
 
-            AudioChunk!short noteChunk;
+            import api.dm.com.inputs.com_keyboard : ComKeyName;
 
-            if (chunks.length == 0)
+            if (input.isPressedKey(ComKeyName.key_a))
             {
-                noteChunk = newChunk;
-                chunks ~= noteChunk;
+                piano.settings.noteType = NoteType.note1;
             }
-            else
+            else if (input.isPressedKey(ComKeyName.key_s))
             {
-                foreach (chunk; chunks)
-                {
-                    const lastChannel = chunk.lastChannel;
-                    if (lastChannel >= 0 && !media.mixer.isPlaying(lastChannel))
-                    {
-                        noteChunk = chunk;
-                        break;
-                    }
-                }
+                piano.settings.noteType = NoteType.note1_2;
             }
-
-            if (!noteChunk)
+            else if (input.isPressedKey(ComKeyName.key_d))
             {
-                noteChunk = newChunk;
-                chunks ~= noteChunk;
+                piano.settings.noteType = NoteType.note1_4;
             }
-
-            noteChunk.data.buffer[] = 0;
+            else if (input.isPressedKey(ComKeyName.key_f))
+            {
+                piano.settings.noteType = NoteType.note1_8;
+            }
+            else if (input.isPressedKey(ComKeyName.key_g))
+            {
+                piano.settings.noteType = NoteType.note1_16;
+            }
 
             // MusicNote[] notes = [
             //     {Octave.C4}, {Octave.C4}, {Octave.D4}, {Octave.C4}, {
@@ -211,15 +212,38 @@ class Audio : Control
             // chunk.play;
             ///dspProcessor.lock;
 
-            synt.adsr = piano.adsr;
+            auto noteType = piano.settings.noteType;
 
-            double amp = piano.amp;
-            synt.fm = piano.fm;
-            synt.index = piano.fi;
-            synt.isFcMulFm = piano.isFcMulFm;
+            synt.adsr = piano.settings.adsr;
 
-            synt.note(MusicNote(freq, NoteType.note1_4, 120), amp, (time) {
-                return noteChunk.data.buffer[];
+            double amp = piano.settings.amp;
+            synt.fm = piano.settings.fm;
+            synt.index = piano.settings.fmIndex;
+            synt.isFcMulFm = piano.settings.isFcMulFm;
+
+            AudioChunk!short noteChunk;
+
+            synt.note(MusicNote(freq, noteType, 120), amp, (data, time) {
+                foreach (chunk; chunks)
+                {
+                    if (chunk.data.buffer.length == data.length)
+                    {
+                        const lastChannel = chunk.lastChannel;
+                        if (lastChannel >= 0 && !media.mixer.isPlaying(lastChannel))
+                        {
+                            noteChunk = chunk;
+                            break;
+                        }
+                    }
+                }
+
+                if (!noteChunk)
+                {
+                    noteChunk = media.newHeapChunk!short(time);
+                    chunks ~= noteChunk;
+                }
+                assert(noteChunk.data.buffer.length == data.length);
+                noteChunk.data.buffer[] = data;
             });
 
             // synt.note(MusicNote(freq, NoteType.note1_4), (buff, time) {
@@ -235,6 +259,8 @@ class Audio : Control
             //         .spec);
 
             //synt.note(noteChunk.data.buffer, freq, 0, noteChunk.data.durationMs, 0, sampleFreq);
+
+            assert(noteChunk);
 
             if (noteChunk.lastChannel >= 0)
             {
@@ -311,7 +337,7 @@ class Audio : Control
 
             synt.fm = p.pattern.fmHz;
             synt.index = p.pattern.fmIndex;
-            synt.isFcMulFm = false;
+            synt.isFcMulFm = p.pattern.isFcMulFm;
 
             MusicNote note = MusicNote(p.pattern.freqHz, p.pattern.noteType, 120);
 
@@ -348,10 +374,12 @@ class Audio : Control
             FMdata[] data;
             foreach (p; patterns)
             {
-                data ~= FMdata(p.pattern.freqHz, p.pattern.fmHz, p.pattern.fmIndex, noteTimeMs(120, p.pattern.noteType));
+                data ~= FMdata(p.pattern.freqHz, p.pattern.fmHz, p.pattern.fmIndex, noteTimeMs(120, p
+                        .pattern.noteType), p.pattern.isFcMulFm);
             }
 
-            if(data.length == 0){
+            if (data.length == 0)
+            {
                 return;
             }
 
@@ -485,5 +513,17 @@ class Audio : Control
     {
         super.update(delta);
         dspProcessor.step;
+    }
+
+    override void dispose(){
+        super.dispose;
+        foreach (chunk; chunks)
+        {
+            chunk.dispose;
+        }
+
+        if(testPatternChunk){
+            testPatternChunk.dispose;
+        }
     }
 }

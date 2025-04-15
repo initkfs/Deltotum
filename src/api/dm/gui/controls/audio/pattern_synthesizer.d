@@ -130,7 +130,6 @@ class PatternPanel : Container
             auto newP = newPattern;
 
             newP.pattern = pattern.pattern;
-            newP.updateData;
 
             auto oldIndex = patternContainer.findChildIndex(pattern);
             if (oldIndex != -1)
@@ -145,8 +144,10 @@ class PatternPanel : Container
                     patternContainer.addCreate(newP);
                 }
 
+                newP.updateData;
             }
 
+            //TODO throw Exception?
         };
 
         return pattern;
@@ -186,13 +187,14 @@ class PatternSynthesizer(T) : Control
     {
         super.create;
 
-        settings = new SynthesizerPanel(() {
+        settings = new SynthesizerPanel;
+        settings.soundPatternProvider = () {
             if (!_current)
             {
                 return null;
             }
             return &_current.pattern;
-        });
+        };
 
         addCreate(settings);
         settings.enablePadding;

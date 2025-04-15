@@ -38,17 +38,18 @@ class FMSynthesizer(T) : SoundSynthesizer!T
     {
         super(sampleRateHz);
         sampleProvider = (double time, double freq, double phase) {
-            
+
             auto targetFm = fm;
-            if(isFcMulFm){
+            if (isFcMulFm)
+            {
                 targetFm = freq * targetFm;
             }
-            
+
             return fmodulator(time, phase, freq, targetFm, index);
         };
     }
 
-    void sequence(FMdata[] notes, double amplitude0to1, T[] delegate(double) bufferOnTimeProvider)
+    void sequence(FMdata[] notes, double amplitude0to1, T[]delegate(double) bufferOnTimeProvider)
     {
         sequence(notes, amplitude0to1, (scopeBuff, time) {
             T[] outBuff = bufferOnTimeProvider(time);
@@ -66,7 +67,7 @@ class FMSynthesizer(T) : SoundSynthesizer!T
     void sequence(FMdata[] notes, double amplitude0to1, scope void delegate(T[], double) onScopeBufferTime)
     {
         assert(notes.length > 0);
-        
+
         double fullTimeMs = 0;
         foreach (n; notes)
         {
@@ -88,12 +89,18 @@ class FMSynthesizer(T) : SoundSynthesizer!T
             auto time = n.durationMs;
             auto noteBuff = FiniteSignalBuffer!T(sampleRateHz, time, channels);
 
+            auto targetFm = n.fm;
+            if (n.isFcMulFm)
+            {
+                targetFm = n.fc * targetFm;
+            }
+
             onBuffer(noteBuff.buffer, sampleRateHz, amplitude0to1, channels, (i, frameTime, time) {
-            auto sample = fmodulator(frameTime, 0, n.fc, n.fm, n.index);
-            sample *= amplitude0to1;
-            sample *= adsr.adsr(time);
-            return sample;
-        });
+                auto sample = fmodulator(frameTime, 0, n.fc, targetFm, n.index);
+                sample *= amplitude0to1;
+                sample *= adsr.adsr(time);
+                return sample;
+            });
 
             auto endIndex = buffIndex + noteBuff.buffer.length;
             seqBuff.buffer[buffIndex .. endIndex][] = noteBuff.buffer;

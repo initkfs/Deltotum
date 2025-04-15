@@ -31,6 +31,8 @@ class SynthesizerPanel : Container
 
     RegulateTextField ampField;
 
+    Container fmContainer;
+
     RegulateTextField fcField;
     RegulateTextField fmField;
     RegulateTextField fmIndexField;
@@ -45,14 +47,12 @@ class SynthesizerPanel : Container
     SoundPattern* delegate() soundPatternProvider;
     void delegate() onUpdatePattern;
 
-    this(typeof(soundPatternProvider) provider)
+    this()
     {
         import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
         layout = new VLayout;
         layout.isAutoResize = true;
-
-        this.soundPatternProvider = provider;
     }
 
     override void create()
@@ -79,34 +79,49 @@ class SynthesizerPanel : Container
         ampField.value = 0.7;
         ampField.scrollField.valueStep = 0.1;
 
-        auto fmBox = new VBox;
-        addCreate(fmBox);
+        fmContainer = new VBox;
+        addCreate(fmContainer);
 
         fcField = new RegulateTextField("FC:", 1, 10000);
-        fmBox.addCreate(fcField);
+        fmContainer.addCreate(fcField);
         fcField.scrollField.valueStep = 1;
         fcField.value = 10;
 
         fmField = new RegulateTextField("FM:", 1, 10000);
-        fmBox.addCreate(fmField);
+        fmContainer.addCreate(fmField);
         fmField.scrollField.valueStep = 1;
         fmField.value = 10;
 
         fmIndexField = new RegulateTextField("FI:", 1, 200);
-        fmBox.addCreate(fmIndexField);
+        fmContainer.addCreate(fmIndexField);
         fmIndexField.scrollField.valueStep = 1;
         fmIndexField.value = 1;
 
         isFcMulFmField = new Check("FC*FM");
-        fmBox.addCreate(isFcMulFmField);
+        fmContainer.addCreate(isFcMulFmField);
 
         auto adsrBox = new HBox;
         addCreate(adsrBox);
 
         aADSR = newADSRField(adsrBox);
+        aADSR.onChangeOldNew ~= (oldv, newv) {
+            tryChangePattern((p) { p.adsr.attack = newv; return true; });
+        };
+
         dADSR = newADSRField(adsrBox);
+        dADSR.onChangeOldNew ~= (oldv, newv) {
+            tryChangePattern((p) { p.adsr.decay = newv; return true; });
+        };
+
         sADSR = newADSRField(adsrBox);
+        sADSR.onChangeOldNew ~= (oldv, newv) {
+            tryChangePattern((p) { p.adsr.sustain = newv; return true; });
+        };
+
         rADSR = newADSRField(adsrBox);
+        rADSR.onChangeOldNew ~= (oldv, newv) {
+            tryChangePattern((p) { p.adsr.release = newv; return true; });
+        };
 
         fcField.onValue = (v) {
             tryChangePattern((p) { p.freqHz = v; return true; });
@@ -179,21 +194,19 @@ class SynthesizerPanel : Container
         return value;
     }
 
-    void adsr(ADSR v)
+    void adsr(ADSR v, bool isTriggerListeners = true)
     {
-        aADSR.value = v.attack;
-        dADSR.value = v.decay;
-        sADSR.value = v.sustain;
-        rADSR.value = v.release;
+        //TODO one listener;
+        aADSR.value(v.attack, isTriggerListeners);
+        dADSR.value(v.decay, isTriggerListeners);
+        sADSR.value(v.sustain, isTriggerListeners);
+        rADSR.value(v.release, isTriggerListeners);
     }
 
     protected FracSpinner newADSRField(Container root)
     {
         assert(root);
         auto field = new FracSpinner(0, 0.1, 0.1);
-        field.onChangeOldNew ~= (oldv, newv) {
-            tryChangePattern((p) { p.adsr = adsr; return true; });
-        };
         root.addCreate(field);
         return field;
     }
@@ -204,18 +217,30 @@ class SynthesizerPanel : Container
         return ampField.value;
     }
 
-    void amp(double value)
+    void amp(double v, bool isTriggerListeners = true)
     {
         assert(ampField);
-        ampField.value = value;
+        ampField.value(v, isTriggerListeners);
     }
 
     bool isFcMulFm() => isFcMulFmField.isOn;
 
-    void isFcMulFm(bool v)
+    void isFcMulFm(bool v, bool isTriggerListeners = true)
     {
         assert(isFcMulFmField);
-        isFcMulFmField.isOn = v;
+        isFcMulFmField.isOn(v, isTriggerListeners);
+    }
+
+    double fc()
+    {
+        assert(fcField);
+        return fcField.value;
+    }
+
+    void fc(double v, bool isTriggerListeners = true)
+    {
+        assert(fcField);
+        fcField.value(v, isTriggerListeners);
     }
 
     double fm()
@@ -224,9 +249,33 @@ class SynthesizerPanel : Container
         return fmField.value;
     }
 
-    double fi()
+    void fm(double v, bool isTriggerListeners = true)
+    {
+        assert(fmField);
+        fmField.value(v, isTriggerListeners);
+    }
+
+    double fmIndex()
     {
         assert(fmIndexField);
         return fmIndexField.value;
+    }
+
+    void fmIndex(double v, bool isTriggerListeners = true)
+    {
+        assert(fmIndexField);
+        fmIndexField.value(v, isTriggerListeners);
+    }
+
+    void noteType(NoteType type, bool isTriggerListeners = true)
+    {
+        assert(noteDurType);
+        noteDurType.setSelected(type, isTriggerListeners);
+    }
+
+    NoteType noteType()
+    {
+        assert(noteDurType);
+        return noteDurType.current;
     }
 }

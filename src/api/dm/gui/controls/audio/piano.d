@@ -4,10 +4,8 @@ import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.containers.hbox : HBox;
-import api.dm.gui.controls.switches.checks.check : Check;
-import api.dm.gui.controls.selects.spinners.spinner : FracSpinner;
-import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
-import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
+import api.dm.gui.controls.audio.synthesizer_panel : SynthesizerPanel;
+import api.dm.kit.inputs.pointers.events.pointer_event: PointerEvent;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsla : HSLA;
@@ -84,22 +82,12 @@ class Piano : Control
     enum whiteKeysCount = 52;
     enum blackKeysCount = 36;
 
-    FracSpinner aADSR;
-    FracSpinner dADSR;
-    FracSpinner sADSR;
-    FracSpinner rADSR;
-
-    RegulateTextField ampField;
-
-    RegulateTextField fmFMField;
-    RegulateTextField fiFMField;
-    Check isFcMulFmField;
-
-    Text lastFreq;
-
     Container controlPanel;
 
-    void delegate(PianoKey) onPianoKey;
+    SynthesizerPanel settings;
+    void delegate() onUpdateSettings;
+
+    void delegate(PianoKey, ref PointerEvent) onPianoKey;
 
     this()
     {
@@ -116,6 +104,30 @@ class Piano : Control
         controlPanel = new HBox;
         controlPanel.isAlignY = true;
         addCreate(controlPanel);
+
+        settings = new SynthesizerPanel;
+
+        import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
+
+        settings.layout = new HLayout;
+        settings.layout.isAlignY = true;
+        settings.layout.isAutoResize = true;
+
+        controlPanel.addCreate(settings);
+
+        if (settings.fmContainer)
+        {
+            settings.fmContainer.layout = new HLayout;
+            settings.fmContainer.layout.isAlignY = true;
+            settings.fmContainer.layout.isAutoResize = true;
+        }
+
+        settings.onUpdatePattern = () {
+            if (onUpdateSettings)
+            {
+                onUpdateSettings();
+            }
+        };
 
         keyContainer = new Container;
         keyContainer.resize(width, height);
@@ -232,97 +244,18 @@ class Piano : Control
                     }
                 }
 
-                if(lastFreq){
-                    import std.conv: to;
-                    lastFreq.text = key.freqHz.to!dstring;
+                if (settings)
+                {
+                    settings.fc(key.freqHz, isTriggerListeners:
+                        false);
                 }
 
                 if (onPianoKey)
                 {
-                    onPianoKey(key);
+                    onPianoKey(key, e);
                 }
             };
         }(ii);
-
-        ampField = new RegulateTextField("Amp:");
-        controlPanel.addCreate(ampField);
-        ampField.value = 0.7;
-        ampField.scrollField.valueStep = 0.1;
-
-        isFcMulFmField = new Check("FC*FM");
-        controlPanel.addCreate(isFcMulFmField);
-
-        fmFMField = new RegulateTextField("FM:", 1, 10000);
-        controlPanel.addCreate(fmFMField);
-        fmFMField.scrollField.valueStep = 1;
-        fmFMField.value = 5000;
-
-        fiFMField = new RegulateTextField("FI:", 1, 200);
-        controlPanel.addCreate(fiFMField);
-        fiFMField.value = 1;
-        fiFMField.scrollField.valueStep = 1;
-
-        controlPanel.addCreate(new Text("ADSR:"));
-
-        aADSR = addCreateADSRField;
-        dADSR = addCreateADSRField;
-        sADSR = addCreateADSRField;
-        rADSR = addCreateADSRField;
-
-        lastFreq = new Text("0");
-        controlPanel.addCreate(lastFreq);
-    }
-
-    ADSR adsr()
-    {
-        ADSR value;
-        value.attack = aADSR.value;
-        value.decay = dADSR.value;
-        value.sustain = sADSR.value;
-        value.release = rADSR.value;
-        return value;
-    }
-
-    void adsr(ADSR v)
-    {
-        aADSR.value = v.attack;
-        dADSR.value = v.decay;
-        sADSR.value = v.sustain;
-        rADSR.value = v.release;
-    }
-
-    protected FracSpinner addCreateADSRField()
-    {
-        assert(controlPanel);
-        auto field = new FracSpinner(0, 0.1, 0.1);
-        controlPanel.addCreate(field);
-        return field;
-    }
-
-    double amp()
-    {
-        assert(ampField);
-        return ampField.value;
-    }
-
-    void amp(double value)
-    {
-        assert(ampField);
-        ampField.value = value;
-    }
-
-    bool isFcMulFm() => isFcMulFmField.isOn;
-
-    double fm()
-    {
-        assert(fmFMField);
-        return fmFMField.value;
-    }
-
-    double fi()
-    {
-        assert(fiFMField);
-        return fiFMField.value;
     }
 
     protected bool isForBlackKey(double x, double y)

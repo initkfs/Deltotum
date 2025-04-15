@@ -93,6 +93,7 @@ struct FMdata
     double fm = 0;
     double index = 0;
     double durationMs = 0;
+    bool isFcMulFm;
 }
 
 double fmodulator(double time, double phase, double fc, double fm, double index)

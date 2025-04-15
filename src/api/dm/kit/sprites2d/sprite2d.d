@@ -104,6 +104,8 @@ class Sprite2d : EventKitTarget
     bool _layoutManaged = true;
     bool _layoutMovable = true;
 
+    bool isLayoutForChildren;
+
     bool isLayoutOnInvalid;
     bool isLayoutOnInvalidForChildren = true;
 
@@ -708,6 +710,10 @@ class Sprite2d : EventKitTarget
         if (isLayoutOnInvalidForChildren)
         {
             sprite.isLayoutOnInvalid = isLayoutOnInvalid;
+        }
+
+        if(layout && isLayoutForChildren){
+            sprite.layout = layout;
         }
 
         return isSet;
