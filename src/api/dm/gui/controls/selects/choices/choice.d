@@ -377,7 +377,7 @@ class Choice(T) : BaseSelector!T
         return new PopupMenu!T;
     }
 
-    void fill(dstring[] newItems)
+    void fill(T[] newItems)
     {
         if (!isCreated)
         {

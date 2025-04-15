@@ -67,10 +67,13 @@ double arpeggio(double time, double sample)
     return sample;
 }
 
-void fadeout(T)(T[] buffer, size_t samples, size_t channels)
+bool fadeout(T)(T[] buffer, size_t samples, size_t channels)
 {
     assert(buffer.length > 0);
-    assert(samples * channels < buffer.length);
+    if (samples * channels < buffer.length)
+    {
+        return false;
+    }
 
     size_t start = buffer.length - samples * channels;
 
@@ -88,10 +91,17 @@ void fadeout(T)(T[] buffer, size_t samples, size_t channels)
             buffer[buffIndex] = cast(T)(buffer[buffIndex] * factor);
         }
     }
+
+    return true;
 }
 
-void fadein(T)(T[] buffer, size_t samples, size_t channels = 2)
+bool fadein(T)(T[] buffer, size_t samples, size_t channels = 2)
 {
+    if (samples * channels < buffer.length)
+    {
+        return false;
+    }
+
     for (auto i = 0; i < samples * channels; i += channels)
     {
         double factor = ((cast(double) i) / channels) / samples;
@@ -106,6 +116,7 @@ void fadein(T)(T[] buffer, size_t samples, size_t channels = 2)
             buffer[buffIndex] = cast(T)(buffer[buffIndex] * factor);
         }
     }
+    return true;
 }
 
 double tremolo(T)(T[] buffer, double sampleRate, double depth0to1 = 0.5, double rateHz = 5)

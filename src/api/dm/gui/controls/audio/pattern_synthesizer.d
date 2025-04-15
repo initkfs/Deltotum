@@ -12,12 +12,13 @@ import api.dm.gui.controls.meters.scrolls.base_regular_mono_scroll : BaseRegular
 import api.dm.gui.controls.meters.scrolls.hscroll : HScroll;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.controls.selects.spinners.spinner : FracSpinner;
+import api.dm.gui.controls.selects.choices.choice : Choice;
 
 import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
 import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
 
 import api.dm.kit.media.synthesis.effect_synthesis : ADSR;
-import api.dm.kit.media.synthesis.music_notes : Octave, MusicNote;
+import api.dm.kit.media.synthesis.music_notes;
 
 import Math = api.math;
 
@@ -26,12 +27,18 @@ class Pattern : BaseBiswitch
     double freqHz = 0;
     double fmHz = 0;
     double index = 0;
-    double durationMs = 500;
+
+    NoteType noteType = NoteType.note1_4;
 
     Text text;
     Button deleteThis;
+    Button insertNext;
 
     void delegate() onDelete;
+    void delegate() onInsertNext;
+
+    Button play;
+    void delegate() onPlay;
 
     this()
     {
@@ -40,6 +47,14 @@ class Pattern : BaseBiswitch
         layout = new HLayout;
         layout.isAutoResize = true;
         layout.isAlignY = true;
+    }
+
+    void copyTo(Pattern other)
+    {
+        other.freqHz = freqHz;
+        other.fmHz = fmHz;
+        other.index = index;
+        other.noteType = noteType;
     }
 
     override void create()
@@ -63,14 +78,40 @@ class Pattern : BaseBiswitch
         onOldNewValue ~= (oldv, newv) { isDrawBounds = newv; };
 
         onPointerPress ~= (ref e) { toggle; };
+
+        play = new Button("Play");
+        addCreate(play);
+        play.onAction ~= (ref e) {
+            if (onPlay)
+            {
+                onPlay();
+            }
+            e.isConsumed = true;
+        };
+
+        insertNext = new Button(">");
+        addCreate(insertNext);
+        insertNext.width = theme.checkMarkerWidth;
+        insertNext.height = theme.checkMarkerHeight;
+        insertNext.onAction ~= (ref e) {
+            if (onInsertNext)
+            {
+                onInsertNext();
+            }
+        };
     }
 
     void updateData()
     {
         assert(text);
+        text.text = toString;
+    }
+
+    override string toString()
+    {
         import std.format : format;
 
-        text.text = format("(%.02f,%.02f,%.02f)", freqHz, fmHz, index);
+        return format("%d(%.0f,%.0f,%.0f)", cast(int) noteType, freqHz, fmHz, index);
     }
 
 }
@@ -90,6 +131,7 @@ class PatternPanel : Container
 
     void delegate(Pattern) onPattern;
     void delegate(Pattern) onPatternDelete;
+    void delegate(Pattern, double amp) onPatternPlay;
 
     void delegate(bool) onPatterns;
 
@@ -125,39 +167,7 @@ class PatternPanel : Container
         addCreate(addPattern);
 
         addPattern.onAction ~= (ref e) {
-            auto pattern = new Pattern;
-            patterns ~= pattern;
-
-            pattern.onOldNewValue ~= (oldv, newv) {
-                if (newv && onPattern)
-                {
-                    foreach (p; patterns)
-                    {
-                        if (p is pattern)
-                        {
-                            continue;
-                        }
-                        p.isOn = false;
-                    }
-
-                    onPattern(pattern);
-                }
-            };
-
-            pattern.onDelete = () {
-
-                import api.core.utils.arrays : drop;
-
-                drop(patterns, pattern);
-
-                patternContainer.remove(pattern);
-
-                if (onPatternDelete)
-                {
-                    onPatternDelete(pattern);
-                }
-            };
-
+            auto pattern = newPattern;
             patternContainer.addCreate(pattern);
         };
 
@@ -165,6 +175,72 @@ class PatternPanel : Container
         addCreate(patternContainer);
     }
 
+    Pattern newPattern()
+    {
+        auto pattern = new Pattern;
+        patterns ~= pattern;
+
+        pattern.onPlay = () {
+            if (onPatternPlay)
+            {
+                onPatternPlay(pattern, ampValue.value);
+            }
+        };
+
+        pattern.onOldNewValue ~= (oldv, newv) {
+            if (newv && onPattern)
+            {
+                foreach (p; patterns)
+                {
+                    if (p is pattern)
+                    {
+                        continue;
+                    }
+                    p.isOn = false;
+                }
+
+                onPattern(pattern);
+            }
+        };
+
+        pattern.onDelete = () {
+
+            import api.core.utils.arrays : drop;
+
+            drop(patterns, pattern);
+
+            patternContainer.remove(pattern);
+
+            if (onPatternDelete)
+            {
+                onPatternDelete(pattern);
+            }
+        };
+
+        pattern.onInsertNext = () {
+            auto newP = newPattern;
+
+            pattern.copyTo(newP);
+
+            auto oldIndex = patternContainer.findChildIndex(pattern);
+            if (oldIndex != -1)
+            {
+                auto newIndex = oldIndex + 1;
+                if (newIndex < patternContainer.children.length)
+                {
+                    patternContainer.addCreate(newP, newIndex);
+                }
+                else
+                {
+                    patternContainer.addCreate(newP);
+                }
+
+            }
+
+        };
+
+        return pattern;
+    }
 }
 
 class PatternSettings : Container
@@ -173,6 +249,8 @@ class PatternSettings : Container
     FracSpinner dADSR;
     FracSpinner sADSR;
     FracSpinner rADSR;
+
+    Choice!NoteType noteDurType;
 
     RegulateTextField fcField;
     RegulateTextField fmField;
@@ -207,6 +285,16 @@ class PatternSettings : Container
         fmBox.addCreate(fmIndexField);
         fmIndexField.scrollField.valueStep = 1;
         fmIndexField.value = 1;
+
+        noteDurType = new Choice!NoteType;
+        addCreate(noteDurType);
+
+        NoteType[] data = [
+            NoteType.note1, NoteType.note1_2, NoteType.note1_4, NoteType.note1_8,
+            NoteType.note1_16
+        ];
+        noteDurType.fill(data);
+        noteDurType.setSelectedIndex(2);
     }
 
     void reset()
@@ -214,6 +302,7 @@ class PatternSettings : Container
         fcField.value = 0;
         fmField.value = 0;
         fmIndexField.value = 0;
+        noteDurType.setSelectedIndex = 2;
     }
 }
 
@@ -225,6 +314,7 @@ class PatternSynthesizer(T) : Control
     double sampleFreqHz = 0;
 
     void delegate(Pattern) onPattern;
+    void delegate(Pattern, double) onPlay;
     void delegate(bool, Pattern[], size_t, double) onPatterns;
 
     PatternSettings settings;
@@ -276,6 +366,14 @@ class PatternSynthesizer(T) : Control
             }
         };
 
+        settings.noteDurType.onChangeOldNew ~= (oldv, newv) {
+            if (_current)
+            {
+                _current.noteType = newv;
+                _current.updateData;
+            }
+        };
+
         auto patternContainer = new VBox;
         addCreate(patternContainer);
 
@@ -310,6 +408,14 @@ class PatternSynthesizer(T) : Control
                 }
             };
 
+            patternPanel.onPatternPlay = (p, amp) {
+                if (!_current || !onPlay)
+                {
+                    return;
+                }
+                onPlay(p, amp);
+            };
+
             patternContainer.addCreate(patternPanel);
         }(ip);
     }
@@ -321,6 +427,7 @@ class PatternSynthesizer(T) : Control
         settings.fcField.value = p.freqHz;
         settings.fmField.value = p.fmHz;
         settings.fmIndexField.value = p.index;
+        settings.noteDurType.setSelected = p.noteType;
 
     }
 }

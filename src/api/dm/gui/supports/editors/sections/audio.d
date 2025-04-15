@@ -98,6 +98,7 @@ class Audio : Control
     static shared Mutex mutexSwap;
 
     import api.dm.kit.media.dsp.chunks.audio_chunk : AudioChunk;
+    import api.math.numericals.interp;
 
     AudioChunk!short[] chunks;
     FMSynthesizer!short synt;
@@ -106,6 +107,8 @@ class Audio : Control
     AudioChunk!short drumChunk;
 
     AudioChunk!short[size_t] channels;
+
+    AudioChunk!short testPatternChunk;
 
     Text drumText;
 
@@ -304,6 +307,33 @@ class Audio : Control
 
         patternSynt.onPattern = (p) {};
 
+        patternSynt.onPlay = (p, amp) {
+
+            synt.fm = p.fmHz;
+            synt.index = p.index;
+            synt.isFcMulFm = false;
+
+            MusicNote note = MusicNote(p.freqHz, p.noteType, 120);
+
+            synt.note(note, amp, (data, time) {
+                if (testPatternChunk)
+                {
+                    if (testPatternChunk.data.buffer.length == data.length)
+                    {
+                        testPatternChunk.data.buffer[] = data;
+                        return;
+                    }
+
+                    testPatternChunk.dispose;
+                }
+
+                testPatternChunk = media.newHeapChunk!short(time);
+                testPatternChunk.data.buffer[] = data;
+            });
+
+            testPatternChunk.play;
+        };
+
         patternSynt.onPatterns = (isPlay, patterns, i, amp) {
 
             if (!isPlay)
@@ -318,11 +348,12 @@ class Audio : Control
             FMdata[] data;
             foreach (p; patterns)
             {
-                data ~= FMdata(p.freqHz, p.fmHz, p.index, p.durationMs);
+                data ~= FMdata(p.freqHz, p.fmHz, p.index, noteTimeMs(120, p.noteType));
             }
 
-            import std;
-            writeln(data);
+            if(data.length == 0){
+                return;
+            }
 
             AudioChunk!short chunk;
             if (auto chunkPtr = i in channels)

@@ -26,6 +26,7 @@ import Math = api.math;
      * DX7,fc:100–200Hz,fm(3–5*fc),i:10–20
 
      * quack, 11,69.90, adsr(0,4;0.1,0.6,0.4)
+     * bell, fc*8, 1
      */
 class FMSynthesizer(T) : SoundSynthesizer!T
 {
