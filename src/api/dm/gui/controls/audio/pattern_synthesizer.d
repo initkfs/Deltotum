@@ -19,102 +19,11 @@ import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextFie
 
 import api.dm.kit.media.synthesis.effect_synthesis : ADSR;
 import api.dm.kit.media.synthesis.music_notes;
+import api.dm.gui.controls.audio.synthesizer_panel : SynthesizerPanel;
+import api.dm.gui.controls.audio.sound_pattern_item : SoundPatternItem;
+import api.dm.kit.media.synthesis.sound_pattern : SoundPattern;
 
 import Math = api.math;
-
-class Pattern : BaseBiswitch
-{
-    double freqHz = 0;
-    double fmHz = 0;
-    double index = 0;
-
-    NoteType noteType = NoteType.note1_4;
-
-    Text text;
-    Button deleteThis;
-    Button insertNext;
-
-    void delegate() onDelete;
-    void delegate() onInsertNext;
-
-    Button play;
-    void delegate() onPlay;
-
-    this()
-    {
-        import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
-
-        layout = new HLayout;
-        layout.isAutoResize = true;
-        layout.isAlignY = true;
-    }
-
-    void copyTo(Pattern other)
-    {
-        other.freqHz = freqHz;
-        other.fmHz = fmHz;
-        other.index = index;
-        other.noteType = noteType;
-    }
-
-    override void create()
-    {
-        super.create;
-
-        deleteThis = new Button("-");
-        deleteThis.width = theme.checkMarkerWidth;
-        deleteThis.height = theme.checkMarkerHeight;
-        addCreate(deleteThis);
-        deleteThis.onAction ~= (ref e) {
-            if (onDelete)
-            {
-                onDelete();
-            }
-        };
-
-        text = new Text("(0)");
-        addCreate(text);
-
-        onOldNewValue ~= (oldv, newv) { isDrawBounds = newv; };
-
-        onPointerPress ~= (ref e) { toggle; };
-
-        play = new Button("Play");
-        addCreate(play);
-        play.onAction ~= (ref e) {
-            if (onPlay)
-            {
-                onPlay();
-            }
-            e.isConsumed = true;
-        };
-
-        insertNext = new Button(">");
-        addCreate(insertNext);
-        insertNext.width = theme.checkMarkerWidth;
-        insertNext.height = theme.checkMarkerHeight;
-        insertNext.onAction ~= (ref e) {
-            if (onInsertNext)
-            {
-                onInsertNext();
-            }
-        };
-    }
-
-    void updateData()
-    {
-        assert(text);
-        text.text = toString;
-    }
-
-    override string toString()
-    {
-        import std.format : format;
-
-        return format("%d(%.0f,%.0f,%.0f)", cast(int) noteType, freqHz, fmHz, index);
-    }
-
-}
 
 class PatternPanel : Container
 {
@@ -125,13 +34,13 @@ class PatternPanel : Container
 
     Container patternContainer;
 
-    Pattern[] patterns;
+    SoundPatternItem[] patterns;
 
     Button addPattern;
 
-    void delegate(Pattern) onPattern;
-    void delegate(Pattern) onPatternDelete;
-    void delegate(Pattern, double amp) onPatternPlay;
+    void delegate(SoundPatternItem) onPattern;
+    void delegate(SoundPatternItem) onPatternDelete;
+    void delegate(SoundPatternItem, double amp) onPatternPlay;
 
     void delegate(bool) onPatterns;
 
@@ -175,9 +84,9 @@ class PatternPanel : Container
         addCreate(patternContainer);
     }
 
-    Pattern newPattern()
+    SoundPatternItem newPattern()
     {
-        auto pattern = new Pattern;
+        auto pattern = new SoundPatternItem;
         patterns ~= pattern;
 
         pattern.onPlay = () {
@@ -220,7 +129,8 @@ class PatternPanel : Container
         pattern.onInsertNext = () {
             auto newP = newPattern;
 
-            pattern.copyTo(newP);
+            newP.pattern = pattern.pattern;
+            newP.updateData;
 
             auto oldIndex = patternContainer.findChildIndex(pattern);
             if (oldIndex != -1)
@@ -243,69 +153,6 @@ class PatternPanel : Container
     }
 }
 
-class PatternSettings : Container
-{
-    FracSpinner aADSR;
-    FracSpinner dADSR;
-    FracSpinner sADSR;
-    FracSpinner rADSR;
-
-    Choice!NoteType noteDurType;
-
-    RegulateTextField fcField;
-    RegulateTextField fmField;
-    RegulateTextField fmIndexField;
-
-    this()
-    {
-        import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
-
-        layout = new VLayout;
-        layout.isAutoResize = true;
-    }
-
-    override void create()
-    {
-        super.create;
-
-        auto fmBox = new VBox;
-        addCreate(fmBox);
-
-        fcField = new RegulateTextField("FC:", 1, 10000);
-        fmBox.addCreate(fcField);
-        fcField.scrollField.valueStep = 1;
-        fcField.value = 10;
-
-        fmField = new RegulateTextField("FM:", 1, 10000);
-        fmBox.addCreate(fmField);
-        fmField.scrollField.valueStep = 1;
-        fmField.value = 10;
-
-        fmIndexField = new RegulateTextField("FI:", 1, 200);
-        fmBox.addCreate(fmIndexField);
-        fmIndexField.scrollField.valueStep = 1;
-        fmIndexField.value = 1;
-
-        noteDurType = new Choice!NoteType;
-        addCreate(noteDurType);
-
-        NoteType[] data = [
-            NoteType.note1, NoteType.note1_2, NoteType.note1_4, NoteType.note1_8,
-            NoteType.note1_16
-        ];
-        noteDurType.fill(data);
-        noteDurType.setSelectedIndex(2);
-    }
-
-    void reset()
-    {
-        fcField.value = 0;
-        fmField.value = 0;
-        fmIndexField.value = 0;
-        noteDurType.setSelectedIndex = 2;
-    }
-}
-
 /**
  * Authors: initkfs
  */
@@ -313,15 +160,15 @@ class PatternSynthesizer(T) : Control
 {
     double sampleFreqHz = 0;
 
-    void delegate(Pattern) onPattern;
-    void delegate(Pattern, double) onPlay;
-    void delegate(bool, Pattern[], size_t, double) onPatterns;
+    void delegate(SoundPatternItem) onPattern;
+    void delegate(SoundPatternItem, double) onPlay;
+    void delegate(bool, SoundPatternItem[], size_t, double) onPatterns;
 
-    PatternSettings settings;
+    SynthesizerPanel settings;
 
     protected
     {
-        Pattern _current;
+        SoundPatternItem _current;
     }
 
     this(double sampleFreqHz)
@@ -339,37 +186,20 @@ class PatternSynthesizer(T) : Control
     {
         super.create;
 
-        settings = new PatternSettings;
+        settings = new SynthesizerPanel(() {
+            if (!_current)
+            {
+                return null;
+            }
+            return &_current.pattern;
+        });
+
         addCreate(settings);
+        settings.enablePadding;
 
-        settings.fcField.onValue = (v) {
+        settings.onUpdatePattern = () {
             if (_current)
             {
-                _current.freqHz = v;
-                _current.updateData;
-            }
-        };
-
-        settings.fmField.onValue = (v) {
-            if (_current)
-            {
-                _current.fmHz = v;
-                _current.updateData;
-            }
-        };
-
-        settings.fmIndexField.onValue = (v) {
-            if (_current)
-            {
-                _current.index = v;
-                _current.updateData;
-            }
-        };
-
-        settings.noteDurType.onChangeOldNew ~= (oldv, newv) {
-            if (_current)
-            {
-                _current.noteType = newv;
                 _current.updateData;
             }
         };
@@ -397,7 +227,7 @@ class PatternSynthesizer(T) : Control
                     onPattern(p);
                 }
                 _current = p;
-                setPattern(p);
+                settings.setPattern(_current.pattern);
             };
 
             patternPanel.onPatternDelete = (p) {
@@ -418,16 +248,5 @@ class PatternSynthesizer(T) : Control
 
             patternContainer.addCreate(patternPanel);
         }(ip);
-    }
-
-    void setPattern(Pattern p)
-    {
-        assert(p);
-
-        settings.fcField.value = p.freqHz;
-        settings.fmField.value = p.fmHz;
-        settings.fmIndexField.value = p.index;
-        settings.noteDurType.setSelected = p.noteType;
-
     }
 }

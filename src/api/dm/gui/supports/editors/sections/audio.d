@@ -309,11 +309,11 @@ class Audio : Control
 
         patternSynt.onPlay = (p, amp) {
 
-            synt.fm = p.fmHz;
-            synt.index = p.index;
+            synt.fm = p.pattern.fmHz;
+            synt.index = p.pattern.fmIndex;
             synt.isFcMulFm = false;
 
-            MusicNote note = MusicNote(p.freqHz, p.noteType, 120);
+            MusicNote note = MusicNote(p.pattern.freqHz, p.pattern.noteType, 120);
 
             synt.note(note, amp, (data, time) {
                 if (testPatternChunk)
@@ -348,7 +348,7 @@ class Audio : Control
             FMdata[] data;
             foreach (p; patterns)
             {
-                data ~= FMdata(p.freqHz, p.fmHz, p.index, noteTimeMs(120, p.noteType));
+                data ~= FMdata(p.pattern.freqHz, p.pattern.fmHz, p.pattern.fmIndex, noteTimeMs(120, p.pattern.noteType));
             }
 
             if(data.length == 0){
