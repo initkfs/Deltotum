@@ -59,47 +59,6 @@ class SynthesizerPanel : Container
     {
         super.create;
 
-        auto choiceBox = new HBox;
-        addCreate(choiceBox);
-        choiceBox.isAlignY = true;
-
-        noteDurType = new Choice!NoteType;
-        choiceBox.addCreate(noteDurType);
-
-        NoteType[] data = [
-            NoteType.note1, NoteType.note1_2, NoteType.note1_4, NoteType.note1_8,
-            NoteType.note1_16
-        ];
-
-        noteDurType.fill(data);
-        noteDurType.setSelectedIndex(2);
-
-        ampField = new RegulateTextField("Am:");
-        choiceBox.addCreate(ampField);
-        ampField.value = 0.7;
-        ampField.scrollField.valueStep = 0.1;
-
-        fmContainer = new VBox;
-        addCreate(fmContainer);
-
-        fcField = new RegulateTextField("FC:", 1, 10000);
-        fmContainer.addCreate(fcField);
-        fcField.scrollField.valueStep = 1;
-        fcField.value = 10;
-
-        fmField = new RegulateTextField("FM:", 1, 10000);
-        fmContainer.addCreate(fmField);
-        fmField.scrollField.valueStep = 1;
-        fmField.value = 10;
-
-        fmIndexField = new RegulateTextField("FI:", 1, 200);
-        fmContainer.addCreate(fmIndexField);
-        fmIndexField.scrollField.valueStep = 1;
-        fmIndexField.value = 1;
-
-        isFcMulFmField = new Check("FC*FM");
-        fmContainer.addCreate(isFcMulFmField);
-
         auto adsrBox = new HBox;
         addCreate(adsrBox);
 
@@ -122,6 +81,63 @@ class SynthesizerPanel : Container
         rADSR.onChangeOldNew ~= (oldv, newv) {
             tryChangePattern((p) { p.adsr.release = newv; return true; });
         };
+
+        auto choiceBox = new HBox;
+        addCreate(choiceBox);
+        choiceBox.isAlignY = true;
+
+        ampField = new RegulateTextField("Am:");
+        choiceBox.addCreate(ampField);
+        ampField.value = 0.7;
+        ampField.scrollField.valueStep = 0.1;
+
+        noteDurType = new Choice!NoteType;
+        choiceBox.addCreate(noteDurType);
+
+        noteDurType.itemToTextConverter = (type) {
+            final switch (type) with (NoteType)
+            {
+                case note1:
+                    return "1";
+                case note1_2:
+                    return "1/2";
+                case note1_4:
+                    return "1/4";
+                case note1_8:
+                    return "1/8";
+                case note1_16:
+                    return "1/16";
+            }
+        };
+
+        NoteType[] data = [
+            NoteType.note1, NoteType.note1_2, NoteType.note1_4, NoteType.note1_8,
+            NoteType.note1_16
+        ];
+
+        noteDurType.fill(data);
+        noteDurType.setSelectedIndex(2);
+
+        fmContainer = new VBox;
+        addCreate(fmContainer);
+
+        fcField = new RegulateTextField("FC:", 0, 10000);
+        fmContainer.addCreate(fcField);
+        fcField.scrollField.valueStep = 1;
+        fcField.value = 10;
+
+        fmField = new RegulateTextField("FM:", 01, 10000);
+        fmContainer.addCreate(fmField);
+        fmField.scrollField.valueStep = 1;
+        fmField.value = 10;
+
+        fmIndexField = new RegulateTextField("FI:", 1, 200);
+        fmContainer.addCreate(fmIndexField);
+        fmIndexField.scrollField.valueStep = 1;
+        fmIndexField.value = 1;
+
+        isFcMulFmField = new Check("FC*FM");
+        fmContainer.addCreate(isFcMulFmField);
 
         fcField.onValue = (v) {
             tryChangePattern((p) { p.freqHz = v; return true; });

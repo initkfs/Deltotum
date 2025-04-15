@@ -74,6 +74,7 @@ class PatternPanel : Container
 
         addPattern = new Button("+");
         addCreate(addPattern);
+        addPattern.resize(theme.meterThumbWidth, theme.meterThumbHeight);
 
         addPattern.onAction ~= (ref e) {
             auto pattern = newPattern;

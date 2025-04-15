@@ -281,26 +281,6 @@ class Audio : Control
             noteChunk.play;
         };
 
-        level = new RectLevel((i) {
-            if (i < equalizer.bandValues.length)
-            {
-                return equalizer.bandValues[i] * 2;
-            }
-            return 0;
-        }, () { return 1; });
-        level.levels = 50;
-
-        level.marginTop = 50;
-
-        equalizer.onUpdateIndexFreqStartEnd = (band, startFreq, endFreq) {
-            import std.format : format;
-
-            auto label = format("%s\n%s", Math.round(startFreq), Math.round(
-                    endFreq));
-            level.labels[band].text = label;
-        };
-
-        addCreate(level);
 
         if (const err = media.mixer.mixer.setPostCallback(&typeof(dspProcessor)
                 .signal_callback, cast(void*)&dspProcessor
@@ -410,12 +390,26 @@ class Audio : Control
             channels[i].loop;
         };
 
-        //drumText = new Text("4(70,70,5);4(70,70,5);8(200,5,20);8(200,5,20);4(70,70,5);");
-        drumText = new Text("4(70,70,5);4(70,70,5);8(200,5,20);8(200,5,20);4(70,70,10)");
-        drumText.isEditable = true;
-        drumText.width = 200;
+        level = new RectLevel((i) {
+            if (i < equalizer.bandValues.length)
+            {
+                return equalizer.bandValues[i] * 2;
+            }
+            return 0;
+        }, () { return 1; });
+        level.levels = 50;
 
-        fmBox.addCreate(drumText);
+        level.marginTop = 50;
+
+        equalizer.onUpdateIndexFreqStartEnd = (band, startFreq, endFreq) {
+            import std.format : format;
+
+            auto label = format("%s\n%s", Math.round(startFreq), Math.round(
+                    endFreq));
+            level.labels[band].text = label;
+        };
+
+        addCreate(level);
     }
 
     void parseDrum()
