@@ -10,7 +10,7 @@ import api.dm.gui.controls.switches.base_biswitch : BaseBiswitch;
 import api.dm.gui.controls.meters.scrolls.base_regular_mono_scroll : BaseRegularMonoScroll;
 import api.dm.gui.controls.meters.scrolls.hscroll : HScroll;
 import api.dm.gui.controls.switches.buttons.button : Button;
-import api.dm.gui.controls.selects.spinners.spinner : FracSpinner;
+import api.dm.gui.controls.meters.spinners.spinner : FracSpinner;
 import api.dm.gui.controls.selects.choices.choice : Choice;
 
 import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
@@ -222,7 +222,7 @@ class SynthesizerPanel : Container
     protected FracSpinner newADSRField(Container root)
     {
         assert(root);
-        auto field = new FracSpinner(0, 0.1, 0.1);
+        auto field = new FracSpinner;
         root.addCreate(field);
         return field;
     }

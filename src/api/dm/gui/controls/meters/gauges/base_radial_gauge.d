@@ -1,6 +1,6 @@
 module api.dm.gui.controls.meters.gauges.base_radial_gauge;
 
-import api.dm.gui.controls.meters.radial_min_max_value_meter : RadialMinMaxValueMeter;
+import api.dm.gui.controls.meters.radial_min_max_value_meter : RadialMinMaxMeter;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -9,7 +9,7 @@ import api.dm.gui.controls.meters.scales.statics.rscale_static : RScaleStatic;
 /**
  * Authors: initkfs
  */
-abstract class BaseRadialGauge : RadialMinMaxValueMeter!double
+abstract class BaseRadialGauge : RadialMinMaxMeter!double
 {
     RScaleStatic scale;
     bool isCreateScale = true;

@@ -11,7 +11,7 @@ import api.dm.gui.controls.switches.base_biswitch : BaseBiswitch;
 import api.dm.gui.controls.meters.scrolls.base_regular_mono_scroll : BaseRegularMonoScroll;
 import api.dm.gui.controls.meters.scrolls.hscroll : HScroll;
 import api.dm.gui.controls.switches.buttons.button : Button;
-import api.dm.gui.controls.selects.spinners.spinner : FracSpinner;
+import api.dm.gui.controls.meters.spinners.spinner : FracSpinner;
 import api.dm.gui.controls.selects.choices.choice : Choice;
 
 import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;

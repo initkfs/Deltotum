@@ -1,14 +1,14 @@
 module api.dm.gui.controls.meters.progress.base_progress_bar;
 
 import api.dm.gui.controls.control : Control;
-import api.dm.gui.controls.meters.min_max_value_meter: MinMaxValueMeter;
+import api.dm.gui.controls.meters.min_max_meter: MinMaxMeter;
 
 import Math = api.math;
 
 /**
  * Authors: initkfs
  */
-abstract class BaseProgressBar : MinMaxValueMeter!double
+abstract class BaseProgressBar : MinMaxMeter!double
 {
     protected
     {

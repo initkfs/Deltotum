@@ -1,6 +1,6 @@
 module api.dm.gui.controls.meters.gauges.hlinear_gauge;
 
-import api.dm.gui.controls.meters.min_max_value_meter : MinMaxValueMeter;
+import api.dm.gui.controls.meters.min_max_meter : MinMaxMeter;
 import api.dm.gui.controls.meters.scales.dynamics.base_scale_dynamic : BaseScaleDynamic;
 import api.dm.gui.controls.indicators.colorbars.colorbar : ColorBar;
 import api.dm.gui.controls.containers.container : Container;
@@ -22,7 +22,7 @@ import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
 /**
  * Authors: initkfs
  */
-class HLinearGauge : MinMaxValueMeter!double
+class HLinearGauge : MinMaxMeter!double
 {
     Sprite2d scale;
     ColorBar colorRangeBar;

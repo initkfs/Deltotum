@@ -1,13 +1,13 @@
 module api.dm.gui.controls.meters.radial_min_max_value_meter;
 
-import api.dm.gui.controls.meters.min_max_value_meter : MinMaxValueMeter;
+import api.dm.gui.controls.meters.min_max_meter : MinMaxMeter;
 import api.dm.kit.graphics.styles.graphic_style: GraphicStyle;
 import api.math.geom2.rect2: Rect2d;
 
 /**
  * Authors: initkfs
  */
-abstract class RadialMinMaxValueMeter(ValueType) : MinMaxValueMeter!ValueType
+abstract class RadialMinMaxMeter(ValueType) : MinMaxMeter!ValueType
 {
     double minAngleDeg = 0;
     double maxAngleDeg = 0;

@@ -1,6 +1,6 @@
-module api.dm.gui.controls.selects.spinners.spinner;
+module api.dm.gui.controls.meters.spinners.spinner;
 
-import api.dm.gui.controls.selects.base_selector : BaseSelector;
+import api.dm.gui.controls.meters.min_max_value_meter : MinMaxValueMeter;
 import api.dm.gui.controls.containers.expanders.expander : Expander, ExpanderPosition;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.controls.switches.buttons.navigate_button : NavigateButton, NavigateDirection;
@@ -11,10 +11,16 @@ import std.conv : to;
 /**
  * Authors: initkfs
  */
- 
-alias FracSpinner = Spinner!double;
 
-class Spinner(T) : BaseSelector!T
+class FracSpinner : Spinner!double
+{
+    this(double minValue = 0.0, double maxValue = 1.0, double initValue = 0.0, double initInc = 0.1, double initDec = 0.1)
+    {
+        super(minValue, maxValue, initValue, initInc, initDec);
+    }
+}
+
+class Spinner(T) : MinMaxValueMeter!T
 {
     TextField incLabel;
     bool isCreateIncLabel;
@@ -55,8 +61,10 @@ class Spinner(T) : BaseSelector!T
         T initValue;
     }
 
-    this(T initValue = T.init, T initInc = T.init, T initDec = T.init)
+    this(T minValue, T maxValue, T initValue = T.init, T initInc = T.init, T initDec = T.init)
     {
+        super(minValue, maxValue);
+
         import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 
         this.layout = new HLayout;
@@ -91,6 +99,16 @@ class Spinner(T) : BaseSelector!T
         }
     }
 
+    override void updateState()
+    {
+        if (valueLabel)
+        {
+            import std.conv : to;
+
+            valueLabel.text = value.to!dstring;
+        }
+    }
+
     override void create()
     {
         super.create;
@@ -102,6 +120,11 @@ class Spinner(T) : BaseSelector!T
 
             decButton.onPointerPress ~= (ref e) {
                 const newValue = value - initDec;
+                //TODO overflow
+                if (newValue < minValue)
+                {
+                    return;
+                }
                 value = newValue;
             };
 
@@ -227,6 +250,10 @@ class Spinner(T) : BaseSelector!T
 
             incButton.onPointerPress ~= (ref e) {
                 const newValue = value + initInc;
+                if (newValue > maxValue)
+                {
+                    return;
+                }
                 value = newValue;
             };
 
@@ -281,24 +308,4 @@ class Spinner(T) : BaseSelector!T
 
     T incValue() => initInc;
     T decValue() => initDec;
-
-    void value(T newValue, bool isTriggerListeners = true)
-    {
-        import std.conv : to;
-
-        if (auto isChange = current(newValue, isTriggerListeners))
-        {
-            valueLabel.text = newValue.to!dstring;
-        }
-    }
-
-    T value()
-    {
-        if (valueLabel.text.length == 0)
-        {
-            return T.init;
-        }
-
-        return valueLabel.text.to!T;
-    }
 }
