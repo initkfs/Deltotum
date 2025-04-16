@@ -154,8 +154,7 @@ class Audio : Control
         synt = new FMSynthesizer!short(sampleFreq);
 
         piano.settings.adsr(synt.adsr);
-        piano.settings.amp = 0.5;
-        piano.settings.fm = 10;
+        piano.settings.amp = 0.3;
         piano.settings.isFcMulFm = true;
         piano.settings.fmIndex = 1;
         piano.settings.noteType = NoteType.note1_4;

@@ -149,6 +149,8 @@ double distortion(T)(T[] buffer, double threshold)
     }
 }
 
+double distortion(T)(T sample) =>  Math.tanh(sample * 0.3);
+
 double lowpassFilter(double prevSample, double currentSample, double alpha)
 {
     return prevSample + alpha * (currentSample - prevSample);
@@ -195,4 +197,9 @@ void attackNoise(T)(Random rnd, T[] buffer, size_t attackSamples)
             1.0 - cast(double) i / attackSamples);
         buffer[i] += cast(T) noise;
     }
+}
+
+double lfo(double freq, double time)
+{
+    return 0.5 * (1.0 + Math.sin(Math.PI2 * freq * time));
 }

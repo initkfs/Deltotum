@@ -242,7 +242,6 @@ class PatternSynthesizer(T) : Control
         };
 
         patternContainer = new VBox;
-        patternContainer.isAlignX = true;
         addCreate(patternContainer);
 
         foreach (ip; 0 .. 5)

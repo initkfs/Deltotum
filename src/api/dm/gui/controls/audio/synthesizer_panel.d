@@ -126,7 +126,7 @@ class SynthesizerPanel : Container
         fcField.scrollField.valueStep = 1;
         fcField.value = 10;
 
-        fmField = new RegulateTextField("FM:", 01, 10000);
+        fmField = new RegulateTextField("FM:", 0, 10000);
         fmContainer.addCreate(fmField);
         fmField.scrollField.valueStep = 1;
         fmField.value = 10;
