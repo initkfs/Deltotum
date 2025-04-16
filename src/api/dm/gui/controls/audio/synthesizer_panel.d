@@ -197,6 +197,7 @@ class SynthesizerPanel : Container
         fcField.value = p.freqHz;
         fmField.value = p.fmHz;
         fmIndexField.value = p.fmIndex;
+        isFcMulFmField.isOn = p.isFcMulFm;
         adsr = p.adsr;
     }
 

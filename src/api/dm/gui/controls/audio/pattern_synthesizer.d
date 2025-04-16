@@ -23,6 +23,8 @@ import api.dm.gui.controls.audio.synthesizer_panel : SynthesizerPanel;
 import api.dm.gui.controls.audio.sound_pattern_item : SoundPatternItem;
 import api.dm.kit.media.synthesis.sound_pattern : SoundPattern;
 
+import api.dm.gui.controls.audio.patterns.converters.pattern_converter : PatternConverter;
+
 import Math = api.math;
 
 class PatternPanel : Container
@@ -83,6 +85,27 @@ class PatternPanel : Container
 
         patternContainer = new HBox;
         addCreate(patternContainer);
+    }
+
+    bool clear()
+    {
+        if (patterns.length == 0)
+        {
+            return false;
+        }
+        foreach (p; patterns)
+        {
+            patternContainer.remove(p);
+        }
+        patterns = null;
+        return true;
+    }
+
+    SoundPatternItem createPattern()
+    {
+        auto pattern = newPattern;
+        patternContainer.addCreate(pattern);
+        return pattern;
     }
 
     SoundPatternItem newPattern()
@@ -168,12 +191,21 @@ class PatternSynthesizer(T) : Control
 
     SynthesizerPanel settings;
 
+    PatternPanel[] patternPanels;
+
+    string loadFile;
+    string saveFile;
+
+    PatternConverter converter;
+
+    Container patternContainer;
+
     protected
     {
         SoundPatternItem _current;
     }
 
-    this(double sampleFreqHz)
+    this(double sampleFreqHz, PatternConverter converter = null)
     {
         assert(sampleFreqHz > 0);
         this.sampleFreqHz = sampleFreqHz;
@@ -182,6 +214,8 @@ class PatternSynthesizer(T) : Control
 
         layout = new HLayout;
         layout.isAutoResize = true;
+
+        this.converter = converter ? converter : new PatternConverter;
     }
 
     override void create()
@@ -207,49 +241,118 @@ class PatternSynthesizer(T) : Control
             }
         };
 
-        auto patternContainer = new VBox;
+        patternContainer = new VBox;
+        patternContainer.isAlignX = true;
         addCreate(patternContainer);
 
         foreach (ip; 0 .. 5)
-            (i) {
-            auto patternPanel = new PatternPanel;
+            (i) { createPatternPanel(i); }(ip);
 
-            patternPanel.index = i;
+        auto bottomBox = new HBox;
+        patternContainer.addCreate(bottomBox);
 
-            patternPanel.onPatterns = (isPlay) {
-                double amp = patternPanel.ampValue.value;
-                if (onPatterns)
+        auto loadBtn = new Button("Load");
+        loadBtn.onAction ~= (ref ea) {
+            try
+            {
+                foreach (p; patternPanels)
                 {
-                    onPatterns(isPlay, patternPanel.patterns, patternPanel.index, amp);
+                    patternContainer.remove(p);
+                    //p.clear;
                 }
-            };
 
-            patternPanel.onPattern = (p) {
-                if (onPattern)
+                patternPanels = null;
+
+                assert(converter);
+                converter.load(loadFile, (i, patternsArr) {
+                    //TODO reuse
+
+                    auto panel = createPatternPanel(i);
+                    foreach (p; patternsArr)
+                    {
+                        auto patternItem = panel.createPattern;
+                        patternItem.pattern = p;
+                        patternItem.updateData;
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                logger.error(ex.toString);
+            }
+        };
+        bottomBox.addCreate(loadBtn);
+
+        auto saveBtn = new Button("Save");
+        bottomBox.addCreate(saveBtn);
+        saveBtn.onAction ~= (ref e) {
+            try
+            {
+                SoundPattern[][] ps;
+                foreach (panel; patternPanels)
                 {
-                    onPattern(p);
-                }
-                _current = p;
-                settings.setPattern(_current.pattern);
-            };
+                    SoundPattern[] pts;
+                    foreach (p; panel.patterns)
+                    {
+                        pts ~= p.pattern;
+                    }
 
-            patternPanel.onPatternDelete = (p) {
-                if (p is _current)
-                {
-                    _current = null;
-                    settings.reset;
+                    if (pts.length > 0)
+                    {
+                        ps ~= pts;
+                    }
                 }
-            };
+                assert(converter);
+                converter.save(ps, saveFile);
+            }
+            catch (Exception ex)
+            {
+                logger.error(ex.toString);
+            }
+        };
+    }
 
-            patternPanel.onPatternPlay = (p, amp) {
-                if (!_current || !onPlay)
-                {
-                    return;
-                }
-                onPlay(p, amp);
-            };
+    PatternPanel createPatternPanel(size_t index)
+    {
+        auto patternPanel = new PatternPanel;
+        patternPanels ~= patternPanel;
 
-            patternContainer.addCreate(patternPanel);
-        }(ip);
+        patternPanel.index = index;
+
+        patternPanel.onPatterns = (isPlay) {
+            double amp = patternPanel.ampValue.value;
+            if (onPatterns)
+            {
+                onPatterns(isPlay, patternPanel.patterns, patternPanel.index, amp);
+            }
+        };
+
+        patternPanel.onPattern = (p) {
+            if (onPattern)
+            {
+                onPattern(p);
+            }
+            _current = p;
+            settings.setPattern(_current.pattern);
+        };
+
+        patternPanel.onPatternDelete = (p) {
+            if (p is _current)
+            {
+                _current = null;
+                settings.reset;
+            }
+        };
+
+        patternPanel.onPatternPlay = (p, amp) {
+            if (!_current || !onPlay)
+            {
+                return;
+            }
+            onPlay(p, amp);
+        };
+
+        patternContainer.addCreate(patternPanel);
+        return patternPanel;
     }
 }

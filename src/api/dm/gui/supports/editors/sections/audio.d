@@ -311,6 +311,10 @@ class Audio : Control
         patternSynt = new PatternSynthesizer!short(sampleFreq);
         fmBox.addCreate(patternSynt);
 
+        //TODO remove
+        patternSynt.loadFile = "/home/user/sdl-music/pattern-load.txt";
+        patternSynt.saveFile = "/home/user/sdl-music/pattern-save.txt";
+
         patternSynt.onPattern = (p) {};
 
         patternSynt.onPlay = (p, amp) {
