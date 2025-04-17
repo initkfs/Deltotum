@@ -17,12 +17,13 @@ import Math = api.math;
  */
 class RectLevel : Control
 {
-    Container labelContainer;
+    Container[] labelContainers;
     Text[] labels;
 
-    Container levelContainer;
+    Container[] levelContainers;
 
     size_t levels = 10;
+    size_t rows = 1;
 
     RGBA[] levelColors;
 
@@ -86,7 +87,7 @@ class RectLevel : Control
 
         if (levelShapeWidth == 0)
         {
-            levelShapeWidth = theme.meterThumbWidth;
+            levelShapeWidth = theme.meterThumbWidth * 0.8;
         }
 
         if (levelShapeHeight == 0)
@@ -99,22 +100,30 @@ class RectLevel : Control
     {
         super.create;
 
-        levelContainer = new HBox;
-        addCreate(levelContainer);
+        auto levelsInRow = levels / rows;
 
-        auto levelsWidth = levels * levelShapeWidth;
-        levelContainer.resize(levelsWidth, levelShapeHeight);
-
-        labelContainer = new HBox;
-        addCreate(labelContainer);
-
-        foreach (i; 0 .. levels)
+        foreach (ri; 0 .. rows)
         {
-            dstring levelName = levelNameProvider ? levelNameProvider(i) : "0";
-            auto text = new Text(levelName);
-            text.setSmallSize;
-            labels ~= text;
-            labelContainer.addCreate(text);
+            auto levelContainer = new HBox;
+            levelContainers ~= levelContainer;
+            addCreate(levelContainer);
+
+            auto levelsWidth = levelsInRow * levelShapeWidth;
+            levelContainer.resize(levelsWidth, levelShapeHeight);
+
+            auto labelContainer = new HBox;
+            labelContainers ~= labelContainer;
+            addCreate(labelContainer);
+
+            foreach (i; 0 .. levelsInRow)
+            {
+                dstring levelName = levelNameProvider ? levelNameProvider(i + (ri * levelsInRow))
+                    : "0";
+                auto text = new Text(levelName);
+                text.setSmallSize;
+                labels ~= text;
+                labelContainer.addCreate(text);
+            }
         }
 
     }
@@ -123,29 +132,42 @@ class RectLevel : Control
     {
         super.drawContent;
 
-        auto currentY = levelContainer.y + levelContainer.height;
+        assert(levelContainers.length == rows);
 
-        assert(levelNumValueProvider);
-        assert(levelMaxValueProvider);
+        auto levelsInRow = levels / rows;
 
-        auto maxValue = levelMaxValueProvider();
-        auto halfLevelW = levelShapeWidth / 2;
-        foreach (i; 0 .. levels)
+        foreach (ri; 0 .. rows)
         {
-            auto label = labels[i];
-            auto currentX = label.boundsRect.middleX - halfLevelW;
+            auto levelContainer = levelContainers[ri];
+            auto currentY = levelContainer.y + levelContainer.height;
 
-            auto levelValue = levelNumValueProvider(i);
-            auto levelHeight = levelValue * levelShapeHeight / maxValue;
+            assert(levelNumValueProvider);
+            assert(levelMaxValueProvider);
 
-            graphics.changeColor(levelColors[i]);
-            scope (exit)
+            auto maxValue = levelMaxValueProvider();
+            auto halfLevelW = levelShapeWidth / 2;
+            foreach (i; 0 .. levelsInRow)
             {
-                graphics.restoreColor;
-            }
+                auto levelIndex = i + (ri * levelsInRow);
+                auto label = labels[levelIndex];
+                auto currentX = label.boundsRect.middleX - halfLevelW;
+                auto levelValue = levelNumValueProvider(levelIndex);
+                double normValue = levelValue / maxValue;
+                if (normValue > 1)
+                {
+                    normValue = 1;
+                }
+                auto levelHeight = normValue * levelShapeHeight;
 
-            graphics.fillRect(currentX, currentY - levelHeight, levelShapeWidth, levelHeight);
-            currentX += levelShapeWidth;
+                graphics.changeColor(levelColors[levelIndex]);
+                scope (exit)
+                {
+                    graphics.restoreColor;
+                }
+
+                graphics.fillRect(currentX, currentY - levelHeight, levelShapeWidth, levelHeight);
+                currentX += levelShapeWidth;
+            }
         }
     }
 }

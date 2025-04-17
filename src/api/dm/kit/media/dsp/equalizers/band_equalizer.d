@@ -10,6 +10,9 @@ import Math = api.math;
 class BandEqualizer
 {
     size_t numFreqBands;
+
+    size_t bandScale;
+
     double bandWidth = 0;
 
     void delegate() onUpdateStart;
@@ -25,7 +28,7 @@ class BandEqualizer
 
     AnalogSignal delegate(size_t fftIndex) signalProvider;
 
-    this(double sampleWindowSize, AnalogSignal delegate(size_t fftIndex) signalProvider, size_t numFregBands = 10)
+    this(double sampleWindowSize, AnalogSignal delegate(size_t fftIndex) signalProvider, size_t numFregBands = 10, size_t bandScale = 1)
     {
         assert(numFregBands > 0);
         this.numFreqBands = numFregBands;
@@ -33,10 +36,12 @@ class BandEqualizer
         assert(signalProvider);
         this.signalProvider = signalProvider;
 
-        bandWidth = (sampleWindowSize / 2) / cast(double) numFreqBands;
+        bandWidth = (sampleWindowSize / 2 / bandScale) / cast(double) numFreqBands;
 
         bandValues = new double[](numFreqBands);
         bandValues[] = 0;
+        
+        this.bandScale = bandScale;
     }
 
     void update()

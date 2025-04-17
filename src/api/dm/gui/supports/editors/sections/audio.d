@@ -76,16 +76,12 @@ class Audio : Control
 
     alias SignalType = short;
 
-    DspProcessor!(SignalType, sampleBufferSize) dspProcessor;
+    DspProcessor!(SignalType, sampleBufferSize * 2, 2) dspProcessor;
 
     shared static
     {
-        enum sampleWindowSize = 8192;
+        enum sampleWindowSize = 4096;
         enum sampleBufferSize = 40960;
-
-        //pow 2 for FFT
-
-        enum sampleBufferHalfSize = sampleBufferSize / 2;
     }
 
     double sampleFreq = 0;
@@ -127,7 +123,7 @@ class Audio : Control
 
         equalizer = new BandEqualizer(sampleWindowSize, (fftIndex) {
             return dspProcessor.fftBuffer[fftIndex];
-        }, 50);
+        }, 100, 8);
 
         dspProcessor.onUpdateFTBuffer = () { equalizer.update; };
 
@@ -400,9 +396,10 @@ class Audio : Control
             }
             return 0;
         }, () { return 1; });
-        level.levels = 50;
+        level.levels = 100;
+        level.rows = 2;
 
-        level.marginTop = 50;
+        level.marginTop = 10;
 
         equalizer.onUpdateIndexFreqStartEnd = (band, startFreq, endFreq) {
             import std.format : format;

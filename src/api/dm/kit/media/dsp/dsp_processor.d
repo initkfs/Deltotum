@@ -14,13 +14,15 @@ import Math = api.math;
 /**
  * Authors: initkfs
  */
-class DspProcessor(SignalType, size_t SignalBufferSize) : LoggableUnit
+class DspProcessor(SignalType, size_t SignalBufferSize, size_t SignalChannels = 1) : LoggableUnit
 {
     AnalogSignalAnalyzer signalAnalyzer;
 
     RingBuffer!(SignalType, SignalBufferSize) dspBuffer;
 
     size_t sampleWindowSize;
+    size_t sampleSizeForChannels;
+
     SignalType[] localSampleBuffer;
 
     AnalogSignal[] fftBuffer;
@@ -42,9 +44,11 @@ class DspProcessor(SignalType, size_t SignalBufferSize) : LoggableUnit
         assert(sampleWindowSize > 0);
         this.sampleWindowSize = sampleWindowSize;
 
+        sampleSizeForChannels = sampleWindowSize * SignalChannels;
+
         dspBuffer = newDspBuffer(m);
 
-        localSampleBuffer = new SignalType[](sampleWindowSize);
+        localSampleBuffer = new SignalType[](sampleSizeForChannels);
         fftBuffer = new AnalogSignal[](sampleWindowSize / 2);
     }
 
@@ -98,7 +102,7 @@ class DspProcessor(SignalType, size_t SignalBufferSize) : LoggableUnit
 
     void step()
     {
-        const readDspRes = dspBuffer.readIfNoLockedSync(localSampleBuffer[], sampleWindowSize);
+        const readDspRes = dspBuffer.readIfNoLockedSync(localSampleBuffer[], sampleSizeForChannels);
 
         if (readDspRes)
         {
@@ -106,6 +110,27 @@ class DspProcessor(SignalType, size_t SignalBufferSize) : LoggableUnit
 
             // debug writefln("Receive data from buffer, ri %s, wi %s, size: %s", dspBuffer.readIndex, dspBuffer
             //         .writeIndex, dspBuffer.size);
+
+            if (SignalChannels != 1)
+            {
+                size_t nextIndex;
+                for (size_t i = 0; i < sampleSizeForChannels; i += SignalChannels)
+                {
+                    if (i < SignalChannels)
+                    {
+                        continue;
+                    }
+                    //TODO multichannel
+                    auto leftValue = localSampleBuffer[i - SignalChannels];
+                    auto rightValue = localSampleBuffer[i - 1];
+
+                    localSampleBuffer[nextIndex] = (leftValue == rightValue) ? leftValue : (
+                        cast(SignalType)(
+                            (leftValue + rightValue) / SignalChannels));
+
+                    nextIndex++;
+                }
+            }
 
             SignalType[] data = cast(SignalType[]) localSampleBuffer[0 .. sampleWindowSize];
 
