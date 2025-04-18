@@ -10,8 +10,8 @@ import api.dm.kit.inputs.pointers.events.pointer_event: PointerEvent;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsla : HSLA;
 
-import api.dm.kit.media.synthesis.effect_synthesis : ADSR;
-import api.dm.kit.media.synthesis.music_notes : Octave, MusicNote;
+import api.dm.kit.media.dsp.synthesis.effect_synthesis : ADSR;
+import api.dm.kit.media.audio.music_notes : Octave, MusicNote;
 
 import Math = api.math;
 

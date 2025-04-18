@@ -4,9 +4,9 @@ import api.dm.gui.controls.switches.base_biswitch : BaseBiswitch;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.controls.texts.text : Text;
 
-import api.dm.kit.media.synthesis.sound_pattern : SoundPattern;
-import api.dm.kit.media.synthesis.effect_synthesis : ADSR;
-import api.dm.kit.media.synthesis.music_notes;
+import api.dm.kit.media.audio.patterns.sound_pattern : SoundPattern;
+import api.dm.kit.media.dsp.synthesis.effect_synthesis : ADSR;
+import api.dm.kit.media.audio.music_notes;
 
 /**
  * Authors: initkfs

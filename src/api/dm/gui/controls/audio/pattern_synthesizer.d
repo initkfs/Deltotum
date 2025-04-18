@@ -17,11 +17,11 @@ import api.dm.gui.controls.selects.choices.choice : Choice;
 import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
 import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
 
-import api.dm.kit.media.synthesis.effect_synthesis : ADSR;
-import api.dm.kit.media.synthesis.music_notes;
+import api.dm.kit.media.dsp.synthesis.effect_synthesis : ADSR;
+import api.dm.kit.media.audio.music_notes;
 import api.dm.gui.controls.audio.synthesizer_panel : SynthesizerPanel;
 import api.dm.gui.controls.audio.sound_pattern_item : SoundPatternItem;
-import api.dm.kit.media.synthesis.sound_pattern : SoundPattern;
+import api.dm.kit.media.audio.patterns.sound_pattern : SoundPattern;
 
 import api.dm.gui.controls.audio.patterns.converters.pattern_converter : PatternConverter;
 

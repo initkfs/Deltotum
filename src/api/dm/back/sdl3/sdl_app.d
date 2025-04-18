@@ -64,7 +64,7 @@ import api.dm.kit.events.processing.kit_event_processor : KitEventProcessor;
 import std.typecons : Nullable;
 
 import api.dm.kit.media.multimedia : MultiMedia;
-import api.dm.kit.media.mixers.audio_mixer : AudioMixer;
+import api.dm.kit.media.audio.mixers.audio_mixer : AudioMixer;
 import api.dm.kit.inputs.input : Input;
 import api.dm.kit.screens.screening : Screening;
 

@@ -1,8 +1,8 @@
 module api.dm.gui.controls.audio.patterns.converters.pattern_converter;
 
-import api.dm.kit.media.synthesis.sound_pattern : SoundPattern;
-import api.dm.kit.media.synthesis.music_notes : NoteType;
-import api.dm.kit.media.synthesis.effect_synthesis : ADSR;
+import api.dm.kit.media.audio.patterns.sound_pattern : SoundPattern;
+import api.dm.kit.media.audio.music_notes : NoteType;
+import api.dm.kit.media.dsp.synthesis.effect_synthesis : ADSR;
 
 import std.file : exists, isFile;
 import std.stdio: File;

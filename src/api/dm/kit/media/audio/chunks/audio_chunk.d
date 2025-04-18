@@ -1,4 +1,4 @@
-module api.dm.kit.media.dsp.chunks.audio_chunk;
+module api.dm.kit.media.audio.chunks.audio_chunk;
 
 import api.dm.com.audio.com_audio_chunk : ComAudioChunk;
 import api.dm.com.audio.com_audio_device : ComAudioSpec;

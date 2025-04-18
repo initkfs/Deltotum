@@ -1,56 +1,12 @@
-module api.dm.kit.media.synthesis.signal_synthesis;
+module api.dm.kit.media.dsp.synthesis.signal_synthesis;
+
+import api.dm.kit.media.dsp.signal_funcs;
 
 import Math = api.math;
 
 /**
  * Authors: initkfs
  */
-
-void onBuffer(T)(T[] buffer, double sampleRateHz, double amplitude0to1 = 1.0, size_t channels, scope double delegate(
-        size_t, double, double) onIndexFrameTimeNormTime)
-{
-    assert(buffer.length > 0);
-
-    const frameTimeDt = 1.0 / sampleRateHz;
-    const normTimeDt = 1.0 / (buffer.length / channels);
-
-    const bool isMultiChans = channels > 1;
-    const bool isStereo = channels == 2;
-
-    double frameTime = 0;
-    double normTime = 0;
-    for (size_t i = 0; i < buffer.length; i += channels)
-    {
-        double value = onIndexFrameTimeNormTime(i, frameTime, normTime);
-        T buffValue = cast(T)(value * amplitude0to1 * T.max);
-        buffer[i] = buffValue;
-
-        if (isStereo)
-        {
-            auto nextIndex = i + 1;
-            if (nextIndex < buffer.length)
-            {
-                buffer[nextIndex] = buffValue;
-            }
-        }
-        else if (isMultiChans)
-        {
-            foreach (ch; 1 .. channels)
-            {
-                auto nextIndex = i + ch;
-                if (nextIndex >= buffer.length)
-                {
-                    break;
-                }
-                buffer[nextIndex] = buffValue;
-            }
-        }
-
-        frameTime += frameTimeDt;
-        normTime += normTimeDt;
-    }
-}
-
 double sine(double time, double freq, double phase)
 {
     //phase == [0, 1)
@@ -103,12 +59,10 @@ double fmodulator(double time, double phase, double fc, double fm, double index)
 
 import api.math.random : Random;
 
-// void whiteNoise(T)(Random rnd, T[] buffer, double sampleRateHz, double amplitude0to1 = 1.0, size_t channels = 2)
-// {
-//     onBuffer(buffer, sampleRateHz, amplitude0to1, channels, (i, time) {
-//         return rnd.between!double(-1, 1);
-//     });
-// }
+double whiteNoise(Random rnd)
+{
+    return rnd.between!double(-1, 1);
+}
 
 // void chaoticLogistic(T)(T[] buffer, double r, double sampleRateHz, double amplitude0to1 = 1.0, size_t channels = 2)
 // {

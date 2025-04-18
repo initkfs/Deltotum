@@ -4,7 +4,7 @@ import api.core.utils.structs.rings.ring_buffer : RingBuffer;
 import api.core.components.units.services.loggable_unit : LoggableUnit;
 
 import api.dm.kit.media.dsp.signals.analog_signal : AnalogSignal;
-import api.dm.kit.media.dsp.analysis.analog_signal_analyzer : AnalogSignalAnalyzer;
+import api.dm.kit.media.dsp.analyzers.analog_signal_analyzer : AnalogSignalAnalyzer;
 
 import core.sync.mutex : Mutex;
 import api.core.loggers.logging : Logging;

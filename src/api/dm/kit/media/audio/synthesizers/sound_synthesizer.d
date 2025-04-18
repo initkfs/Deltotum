@@ -1,10 +1,10 @@
-module api.dm.kit.media.synthesis.synthesizers.sound_synthesizer;
+module api.dm.kit.media.audio.synthesizers.sound_synthesizer;
 
-import api.dm.kit.media.synthesis.synthesizers.base_synthesizer : BaseSynthesizer;
+import api.dm.kit.media.audio.synthesizers.base_synthesizer : BaseSynthesizer;
 import api.dm.kit.media.dsp.buffers.finite_signal_buffer;
-import api.dm.kit.media.synthesis.music_notes;
-import api.dm.kit.media.synthesis.effect_synthesis;
-import api.dm.kit.media.synthesis.signal_synthesis;
+import api.dm.kit.media.audio.music_notes;
+import api.dm.kit.media.dsp.synthesis.effect_synthesis;
+import api.dm.kit.media.dsp.synthesis.signal_synthesis;
 
 import Math = api.math;
 

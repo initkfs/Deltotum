@@ -1,4 +1,4 @@
-module api.dm.kit.media.mixers.audio_mixer;
+module api.dm.kit.media.audio.mixers.audio_mixer;
 
 import api.dm.com.audio.com_audio_mixer : ComAudioMixer;
 import api.dm.com.audio.com_audio_clip : ComAudioClip;

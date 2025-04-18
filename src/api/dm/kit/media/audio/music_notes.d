@@ -1,7 +1,7 @@
-module api.dm.kit.media.synthesis.music_notes;
+module api.dm.kit.media.audio.music_notes;
 
-import api.dm.kit.media.synthesis.signal_synthesis;
-import api.dm.kit.media.synthesis.effect_synthesis;
+import api.dm.kit.media.dsp.synthesis.signal_synthesis;
+import api.dm.kit.media.dsp.synthesis.effect_synthesis;
 
 import Math = api.math;
 

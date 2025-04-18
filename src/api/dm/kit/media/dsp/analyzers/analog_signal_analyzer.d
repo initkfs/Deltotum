@@ -1,7 +1,7 @@
-module api.dm.kit.media.dsp.analysis.analog_signal_analyzer;
+module api.dm.kit.media.dsp.analyzers.analog_signal_analyzer;
 
 import api.dm.kit.media.dsp.signals.analog_signal : AnalogSignal;
-import DspWinFunc = api.dm.kit.media.dsp.window_funcs;
+import DspWinFunc = api.dm.kit.media.dsp.signal_funcs;
 
 import api.dm.addon.math.geom2.triangulations.fortune;
 
