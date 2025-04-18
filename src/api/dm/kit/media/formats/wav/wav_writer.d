@@ -1,4 +1,4 @@
-module api.dm.kit.media.dsp.formats.wav.wav_writer;
+module api.dm.kit.media.formats.wav.wav_writer;
 
 import api.dm.com.audio.com_audio_device : ComAudioSpec;
 

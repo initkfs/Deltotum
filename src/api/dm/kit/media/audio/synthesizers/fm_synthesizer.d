@@ -6,6 +6,8 @@ import api.dm.kit.media.audio.music_notes;
 import api.dm.kit.media.dsp.synthesis.effect_synthesis;
 import api.dm.kit.media.dsp.synthesis.signal_synthesis;
 
+import api.dm.kit.media.dsp.signal_funcs;
+
 import Math = api.math;
 
 /**

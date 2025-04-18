@@ -4,6 +4,8 @@ import api.dm.kit.media.dsp.buffers.finite_signal_buffer;
 import api.dm.kit.media.dsp.synthesis.effect_synthesis;
 import api.dm.kit.media.dsp.synthesis.signal_synthesis;
 
+import api.dm.kit.media.dsp.signal_funcs;
+
 import Math = api.math;
 
 /**
