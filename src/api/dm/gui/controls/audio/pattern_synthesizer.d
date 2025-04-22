@@ -302,6 +302,8 @@ class PatternSynthesizer(T) : Control
                     }
                 }
                 assert(converter);
+                import std;
+                writeln(ps);
                 converter.save(ps, saveFile);
             }
             catch (Exception ex)

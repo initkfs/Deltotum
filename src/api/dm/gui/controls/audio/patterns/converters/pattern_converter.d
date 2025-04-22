@@ -75,7 +75,7 @@ class PatternConverter
         {
             foreach (p; patternLine)
             {
-                builder ~= format("%d(%f,%f,%f)%d;", cast(int) p.noteType, p.freqHz, p.fmHz, p.fmIndex, cast(
+                builder ~= format("%d(%.2f,%.2f,%.2f)%d;", cast(int) p.noteType, p.freqHz, p.fmHz, p.fmIndex, cast(
                         int) p.isFcMulFm);
             }
             builder ~= "\n";

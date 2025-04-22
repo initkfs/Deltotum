@@ -127,6 +127,28 @@ class RegulateTextField : Control
             valueField.isReduceWidthHeight = false;
             valueField.isEditable = true;
 
+            valueField.onEnter = (ref e) {
+                import std.conv : to;
+
+                try
+                {
+                    auto v = valueField.text.to!double;
+                    updateValue(v, isTriggerListeners:
+                        true);
+                    scrollField.value(v, isTriggerListeners:
+                        false);
+                    if (onScroll)
+                    {
+                        onScroll(v);
+                    }
+                }
+                catch (Exception e)
+                {
+                    //TODO dialog
+                    logger.error(e.toString);
+                }
+            };
+
             if (onConfiguredValueField)
             {
                 onConfiguredValueField(valueField);

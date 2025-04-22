@@ -148,6 +148,8 @@ class Sprite2d : EventKitTarget
     bool isVisibilityForChildren;
 
     bool isReceiveEvents = true;
+    bool isEventsFirstProcessChildren;
+    bool isDispatchChildrenFromLast;
 
     //protected
     //{
@@ -366,18 +368,21 @@ class Sprite2d : EventKitTarget
 
         import api.dm.kit.events.event_kit_target : EventKitPhase;
 
+        if (isEventsFirstProcessChildren)
+        {
+            dispatchEventToChildren(e);
+        }
+
         onEventPhase(e, EventKitPhase.preDispatch);
 
         static if (__traits(compiles, e.target))
         {
-            if (e.target !is null && e.target is this)
+            if (e.target && e.target is this)
             {
                 runEventHandlers(e);
                 return;
             }
         }
-
-        bool isNeedConsumed;
 
         static if (is(Event : PointerEvent))
         {
@@ -519,58 +524,87 @@ class Sprite2d : EventKitTarget
             }
         }
 
+        if (!isEventsFirstProcessChildren)
+        {
+            dispatchEventToChildren(e);
+        }
+
+        onEventPhase(e, EventKitPhase.postDispatch);
+    }
+
+    void dispatchEventToChildren(E)(ref E e)
+    {
         if (isForwardEventsToChildren && children.length > 0)
         {
             onEventPhase(e, EventKitPhase.preDispatchChildren);
 
-            foreach (Sprite2d child; children)
+            if (!isDispatchChildrenFromLast)
             {
-                if (!isClipped)
+                foreach (Sprite2d child; children)
                 {
-                    child.dispatchEvent(e);
+                    dispatchEventToChild(e, child);
+
+                    if (e.isConsumed)
+                    {
+                        break;
+                    }
                 }
-                else
+            }
+            else
+            {
+                foreach_reverse (Sprite2d child; children)
                 {
-                    if (isOutClipForwardEvents)
+                    dispatchEventToChild(e, child);
+
+                    if (e.isConsumed)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            onEventPhase(e, EventKitPhase.postDispatchChildren);
+        }
+    }
+
+    void dispatchEventToChild(E)(ref E e, Sprite2d child)
+    {
+        if (!isClipped)
+        {
+            child.dispatchEvent(e);
+        }
+        else
+        {
+            if (isOutClipForwardEvents)
+            {
+                child.dispatchEvent(e);
+            }
+            else
+            {
+                //TODO specify the events being forwarded
+                static if (__traits(compiles, (e.x == e.y)))
+                {
+                    if (clip.contains(e.x, e.y))
                     {
                         child.dispatchEvent(e);
                     }
                     else
                     {
-                        //TODO specify the events being forwarded
-                        static if (__traits(compiles, (e.x == e.y)))
+                        static if (is(Event : PointerEvent))
                         {
-                            if (clip.contains(e.x, e.y))
+                            if (e.event == PointerEvent.Event.move)
                             {
                                 child.dispatchEvent(e);
                             }
-                            else
-                            {
-                                static if (is(Event : PointerEvent))
-                                {
-                                    if (e.event == PointerEvent.Event.move)
-                                    {
-                                        child.dispatchEvent(e);
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            child.dispatchEvent(e);
                         }
                     }
                 }
-
-                if (e.isConsumed)
+                else
                 {
-                    break;
+                    child.dispatchEvent(e);
                 }
             }
-            onEventPhase(e, EventKitPhase.postDispatchChildren);
         }
-
-        onEventPhase(e, EventKitPhase.postDispatch);
     }
 
     void drawContent()
@@ -712,7 +746,8 @@ class Sprite2d : EventKitTarget
             sprite.isLayoutOnInvalid = isLayoutOnInvalid;
         }
 
-        if(layout && isLayoutForChildren){
+        if (layout && isLayoutForChildren)
+        {
             sprite.layout = layout;
         }
 

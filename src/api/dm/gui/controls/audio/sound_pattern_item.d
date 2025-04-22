@@ -22,7 +22,6 @@ class SoundPatternItem : BaseBiswitch
     void delegate() onDelete;
     void delegate() onInsertNext;
 
-    Button play;
     void delegate() onPlay;
 
     this()
@@ -39,7 +38,7 @@ class SoundPatternItem : BaseBiswitch
         super.create;
 
         deleteThis = new Button("-");
-        deleteThis.resize(theme.checkMarkerWidth, theme.checkMarkerHeight);
+        deleteThis.resize(theme.checkMarkerWidth / 2, theme.checkMarkerHeight);
         addCreate(deleteThis);
         deleteThis.onAction ~= (ref e) {
             if (onDelete)
@@ -52,22 +51,17 @@ class SoundPatternItem : BaseBiswitch
         text = new Text("(0)");
         addCreate(text);
 
-        onOldNewValue ~= (oldv, newv) { isDrawBounds = newv; };
-
-        play = new Button("▶");
-        play.resize(theme.meterThumbWidth, theme.meterThumbHeight);
-        addCreate(play);
-        play.onAction ~= (ref e) {
-            if (onPlay)
+        onOldNewValue ~= (oldv, newv) {
+            isDrawBounds = newv;
+            if (newv && onPlay)
             {
                 onPlay();
             }
-            e.isConsumed = true;
         };
 
         insertNext = new Button(">");
         addCreate(insertNext);
-        insertNext.resize(theme.meterThumbWidth, theme.meterThumbHeight);
+        insertNext.resize(theme.meterThumbWidth / 2, theme.meterThumbHeight);
         insertNext.onAction ~= (ref e) {
             if (onInsertNext)
             {

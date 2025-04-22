@@ -5,7 +5,7 @@ import api.dm.gui.controls.texts.text : Text;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.gui.controls.audio.synthesizer_panel : SynthesizerPanel;
-import api.dm.kit.inputs.pointers.events.pointer_event: PointerEvent;
+import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsla : HSLA;
@@ -222,6 +222,7 @@ class Piano : Control
             (i) {
             auto key = pianoKeys[i];
             key.onPointerEnter ~= (ref e) {
+
                 //TODO optimization
                 if (!key.isBlack)
                 {
@@ -230,7 +231,15 @@ class Piano : Control
                         return;
                     }
                 }
+                else
+                {
+                    resetWhiteKeys;
+                }
                 key.backgroundColor = RGBA.lightgrey;
+            };
+
+            key.onPointerExit ~= (ref e) {
+                resetWhiteKeys;
             };
 
             key.onPointerExit ~= (ref e) { key.setBackgroundColor; };
@@ -258,6 +267,18 @@ class Piano : Control
         }(ii);
     }
 
+    protected void resetWhiteKeys()
+    {
+        foreach (k; pianoKeys)
+        {
+            if (!k.isBlack && k.isMouseOver)
+            {
+                k.isMouseOver = false;
+                k.setBackgroundColor;
+            }
+        }
+    }
+
     protected bool isForBlackKey(double x, double y)
     {
         foreach (PianoKey key; pianoKeys)
@@ -266,7 +287,7 @@ class Piano : Control
             {
                 continue;
             }
-            if (key.boundsRect.contains(x, y))
+            if (key.boundsRect.contains(x, y) && key.isMouseOver)
             {
                 return true;
             }
