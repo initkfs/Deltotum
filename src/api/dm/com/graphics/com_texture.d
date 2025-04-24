@@ -33,6 +33,8 @@ nothrow:
     ComResult createMutABGR32(int width, int height);
     ComResult createMutARGB32(int width, int height);
 
+    ComResult createMutYV(int width, int height);
+
     ComResult createTargetRGBA32(int width, int height);
     ComResult create(ComSurface surface);
 

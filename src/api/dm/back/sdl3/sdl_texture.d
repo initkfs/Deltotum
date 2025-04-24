@@ -127,6 +127,13 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             height);
     }
 
+    ComResult createMutYV(int width, int height) nothrow
+    {
+        return create(SDL_PIXELFORMAT_IYUV,
+            SDL_TextureAccess.SDL_TEXTUREACCESS_STREAMING, width,
+            height);
+    }
+
     ComResult create(ComSurface surface) nothrow
     {
         assert(surface, "Surface for new SDL texture must not be null");

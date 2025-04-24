@@ -95,7 +95,8 @@
     ],
     "importPaths": [
         "./src",
-        "./libs/sdl3"
+        "./libs/sdl3",
+        "./libs/ffmpeg"
     ],
     "dependencies": {
         "bindbc-loader": "~>1.0.3"
@@ -106,13 +107,15 @@
         "-preview=fixAliasThis",
         "-Xcc=-fuse-ld=lld",
         "-J=./data",
-        "-P=-I./libs/sdl3/SDL_lib"
+        "-P=-I./libs/sdl3/SDL_lib",
+        "-P=-I./libs/ffmpeg/include"
     ],
     "lflags": [
         "-L./libs/sdl3",
+        "-L./libs/ffmpeg/lib",
         "-rpath=./libs/sdl3"
     ],
-    "libs": ["SDL3", "SDL3_image", "SDL3_mixer", "SDL3_ttf"],
+    "libs": ["SDL3", "SDL3_image", "SDL3_mixer", "SDL3_ttf", "avcodec", "avdevice", "avfilter", "avformat", "avutil", "swresample", "swscale"],
     "versions": [
         "Cairo116"
     ]

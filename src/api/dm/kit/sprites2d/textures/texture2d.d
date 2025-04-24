@@ -123,6 +123,19 @@ class Texture2d : Sprite2d
         }
     }
 
+    void createMutYV()
+    {
+        assert(width > 0);
+        assert(height > 0);
+        assert(graphics);
+
+        texture = graphics.comTextureProvider.getNew();
+        if (const err = texture.createMutYV(cast(int) width, cast(int) height))
+        {
+            throw new Exception(err.toString);
+        }
+    }
+
     void blendMode(ComBlendMode mode)
     {
         if (const err = texture.setBlendMode(mode))

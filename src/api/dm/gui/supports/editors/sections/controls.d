@@ -433,6 +433,10 @@ class Controls : Control
 
         auto colorPick2 = new ColorPicker;
         root2.addCreate(colorPick2);
+
+        import api.dm.gui.controls.video.video_player: VideoPlayer;
+        auto player = new VideoPlayer;
+        root.addCreate(player);
     }
 
     void createMeters(Container root)

@@ -106,7 +106,7 @@ class GuiEditor : GuiScene
             root.addCreate(fractalsTab);
         }
 
-        root.changeTab(audioTab);
+        root.changeTab(controlsTab);
 
         //import std;
         createDebugger;
