@@ -2,6 +2,8 @@ module api.dm.gui.controls.video.video_player;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.back.sdl3.sounds.sdl_audio_stream : SdlAudioStream;
+import api.dm.com.audio.com_audio_device : ComAudioSpec, ComAudioFormat;
 
 import core.sync.mutex : Mutex;
 import core.sync.condition : Condition;
@@ -39,8 +41,11 @@ class VideoPlayer : Control
     int vidId = -1, audId = -1;
 
     SwsContext* sws_ctx;
+    SwrContext* audioConvertContext;
 
     ubyte* scaleBuffer;
+
+    SdlAudioStream audioStream;
 
     override void create()
     {
@@ -179,6 +184,85 @@ class VideoPlayer : Control
 
         auddev = cast(SDL_AudioDeviceID) media.audioOut.id;
 
+        ComAudioSpec srcSpec;
+        ComAudioSpec outSpec = media.audioOut.spec;
+
+        auto audioSampeFormat = audpar.format;
+        switch (audioSampeFormat) with (AVSampleFormat)
+        {
+            //TODO planar swr_convert, AV_SAMPLE_FMT_S32P, AV_SAMPLE_FMT_S16P
+            case AV_SAMPLE_FMT_S32, AV_SAMPLE_FMT_S32P:
+                srcSpec.format = ComAudioFormat.s32;
+                break;
+            case AV_SAMPLE_FMT_S16, AV_SAMPLE_FMT_S16P:
+                srcSpec.format = ComAudioFormat.s16;
+                break;
+            case AV_SAMPLE_FMT_FLT, AV_SAMPLE_FMT_FLTP:
+                srcSpec.format = ComAudioFormat.f32;
+                break;
+            default:
+                break;
+        }
+
+        //TODO check cast av_get_sample_fmt_name((enum AVSampleFormat)codecpar->format) == NULL
+
+        if (av_sample_fmt_is_planar(cast(AVSampleFormat) audpar.format))
+        {
+            //sws_getContext
+            int isAllocSoundConvert = swr_alloc_set_opts2(
+                &audioConvertContext,
+                &audpar.ch_layout,
+                AV_SAMPLE_FMT_S16,
+                outSpec.freqHz,
+                &audpar.ch_layout,
+                cast(AVSampleFormat) audpar.format,
+                audpar.sample_rate,
+                0,
+                null
+            );
+            if (isAllocSoundConvert != 0)
+            {
+                logger.error("Error allocating sound converter");
+                return;
+            }
+
+            swr_init(audioConvertContext);
+            // if (swr_init(audioConvertContext))
+            // {
+            //     logger.error("Error sound converter context");
+            //     return;
+            // }
+        }
+
+        srcSpec.freqHz = audpar.sample_rate;
+        srcSpec.channels = audpar.ch_layout.nb_channels;
+
+        logger.tracef("Video player audio stream, codec: %s. src:%s, dst%s", audioParams(
+                audpar), srcSpec, outSpec,);
+
+        audioStream = new SdlAudioStream(srcSpec, outSpec);
+        if (const err = audioStream.bind(media.audioOut.id))
+        {
+            logger.error("Error audio stream binding to device");
+        }
+    }
+
+    protected string audioParams(AVCodecParameters* codecpar)
+    {
+        import std.format : format;
+        import std.string : fromStringz;
+
+        char[255] buff = 0;
+        int buffLen = av_channel_layout_describe(&codecpar.ch_layout, buff.ptr, buff.length);
+
+        return format("Format: %s(%s), rate:%dHz, chans:%d, %s",
+            av_get_sample_fmt_name(cast(AVSampleFormat) codecpar.format)
+                .fromStringz,
+            av_sample_fmt_is_planar(cast(AVSampleFormat) codecpar.format) ? "planar" : "packed",
+            codecpar.sample_rate,
+            codecpar.ch_layout.nb_channels,
+            buffLen > 0 ? buff[0 .. buffLen] : "unknown"
+        );
     }
 
     override void update(double dt)
@@ -202,7 +286,6 @@ class VideoPlayer : Control
             else if (packet.stream_index == audId)
             {
                 playaudio(audCtx, packet, aframe, auddev);
-
             }
 
             av_packet_unref(packet);
@@ -259,6 +342,7 @@ class VideoPlayer : Control
         //     srcFrame.width, srcFrame.height, AV_PIX_FMT_YUV420P,
         //     SWS_BILINEAR, null, null, null
         // );
+        //  swr_init(tmpSwsContext);
         // scope (exit)
         // {
         //     sws_freeContext(tmpSwsContext);
@@ -285,42 +369,91 @@ class VideoPlayer : Control
     void playaudio(AVCodecContext* ctx, AVPacket* pkt, AVFrame* frame,
         SDL_AudioDeviceID auddev)
     {
-        // if (avcodec_send_packet(ctx, pkt) < 0)
-        // {
-        //     logger.error("send packet");
-        //     return;
-        // }
-        // if (avcodec_receive_frame(ctx, frame) < 0)
-        // {
-        //     logger.error("receive frame");
-        //     return;
-        // }
+        if (avcodec_send_packet(ctx, pkt) < 0)
+        {
+            logger.error("Error send audio packet");
+            return;
+        }
 
-        // int size;
+        if (avcodec_receive_frame(ctx, frame) < 0)
+        {
+            logger.error("Error receive audio frame");
+            return;
+        }
+
+        if(frame.nb_samples == 0){
+            return;
+        }
+
+        ubyte* audioBuff;
+        int audioBuffSize = av_samples_alloc(&audioBuff,
+            null,
+            frame.ch_layout.nb_channels,
+            frame.nb_samples,
+            AV_SAMPLE_FMT_S16,
+            0
+        );
+
+        scope (exit)
+        {
+            if (audioBuff)
+            {
+                free(audioBuff);
+            }
+        }
+
+        if (audioBuffSize <= 0)
+        {
+            logger.error("Audio buffer allocating error");
+        }
+
+        if (audioConvertContext)
+        {
+            //targetFrame = av_frame_alloc();
+            //swr_convert_frame(audioConvertContext, targetFrame, frame);
+            //isDestroy = true;
+            swr_convert(
+                audioConvertContext,
+                &audioBuff,
+                frame.nb_samples,
+                cast(ubyte**) frame.data,
+                frame.nb_samples
+            );
+        }
+
+        auto isErr = audioStream.putData(audioBuff, audioBuffSize);
 
         // AVChannelLayout chLayout = ctx.ch_layout;
 
-        // int bufsize = av_samples_get_buffer_size(&size, chLayout.nb_channels,
-        //     frame.nb_samples, ctx.sample_fmt, 0);
-        // bool isplanar = av_sample_fmt_is_planar(ctx.sample_fmt) == 1;
-        // for (int ch = 0; ch < chLayout.nb_channels; ch++)
+        // int buffSize;
+        // if (av_samples_get_buffer_size(&buffSize, chLayout.nb_channels, targetFrame.nb_samples, ctx.sample_fmt, 0) < 0)
         // {
-        //     if (!isplanar)
+        //     logger.error("Error getting audio buffer size");
+        //     return;
+        // }
+
+        // foreach (chi; 0 .. chLayout.nb_channels)
+        // {
+        //     int buffChSize = targetFrame.linesize[chi];
+        //     if (buffChSize == 0)
         //     {
-        //         if (SDL_QueueAudio(auddev, frame.data[ch], frame.linesize[ch]) < 0)
-        //         {
-        //             logger.error("playaudio");
-        //             return;
-        //         }
+        //         continue;
         //     }
-        //     else
-        //     {
-        //         if (SDL_QueueAudio(auddev, frame.data[0] + size * ch, size) < 0)
-        //         {
-        //             logger.error("playaudio 2");
-        //             return;
-        //         }
-        //     }
+
+        //     //planar: SDL_QueueAudio(auddev, frame.data[0] + size * ch, size) < 0
+        //     ubyte* buffChPtr = targetFrame.data[chi];
+
+        //     auto isErr = audioStream.putData(buffChPtr, buffChSize);
+
+        //     import std;
+
+        //     writefln("Send %s audio bytes, err: %s", buffChSize, isErr);
+        // }
+
+        // if (isDestroy)
+        // {
+        //     av_frame_unref(targetFrame);
+        //     av_frame_free(&targetFrame);
         // }
     }
 
@@ -378,6 +511,8 @@ class VideoPlayer : Control
     //     null,
     //     null
     // );
+
+    //swr_init(sws_ctx);
 
     // yPlaneSz = pCodecCtx.width * pCodecCtx.height;
     // uvPlaneSz = pCodecCtx.width * pCodecCtx.height / 4;
