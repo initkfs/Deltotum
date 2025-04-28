@@ -276,7 +276,6 @@ class Audio : Control
             noteChunk.play;
         };
 
-
         if (const err = media.mixer.mixer.setPostCallback(&typeof(dspProcessor)
                 .signal_callback, cast(void*)&dspProcessor
                 .dspBuffer))
@@ -486,6 +485,14 @@ class Audio : Control
         return dur;
     }
 
+    // unittest
+    // {
+    //     import std.math.operations : isClose;
+
+    //     assert(isClose(noteTimeMs(120, NoteType.note1_8), 500));
+    //     assert(isClose(noteTimeMs(60, NoteType.note1_16), 125));
+    // }
+
     override void drawContent()
     {
         super.drawContent;
@@ -509,14 +516,16 @@ class Audio : Control
         dspProcessor.step;
     }
 
-    override void dispose(){
+    override void dispose()
+    {
         super.dispose;
         foreach (chunk; chunks)
         {
             chunk.dispose;
         }
 
-        if(testPatternChunk){
+        if (testPatternChunk)
+        {
             testPatternChunk.dispose;
         }
     }

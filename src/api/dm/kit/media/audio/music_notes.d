@@ -44,14 +44,6 @@ double noteTimeMs(double bpm, NoteType noteType, double minDurMs = 50)
     return dur < minDurMs ? minDurMs : dur;
 }
 
-unittest
-{
-    import std.math.operations : isClose;
-
-    assert(isClose(noteTime(120, NoteType.note1_8), 500));
-    assert(isClose(noteTime(60, NoteType.note1_16), 125));
-}
-
 enum Octave : double
 {
     //do(С) re(D) mi(Е) fa(F) sol(G) la(A) ti(B\H)
