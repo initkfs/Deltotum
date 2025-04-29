@@ -11,6 +11,8 @@ import core.sync.mutex : Mutex;
  */
 struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool isStaticArray = false)
 {
+    bool isWriteForFill;
+
     private
     {
         static if (isStaticArray)
@@ -79,6 +81,7 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
         size_t writeIndex() => _writeIndex;
         size_t readIndex() => _readIndex;
         size_t size() => _size;
+        size_t sizeLimit() => BufferSize;
 
         size_t capacity()
         {
@@ -221,7 +224,13 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
 
         if (itemsLen > capacity)
         {
-            return ContainerResult.noenoughspace;
+            if (!isWriteForFill || capacity == 0)
+            {
+                return ContainerResult.noenoughspace;
+            }
+
+            itemsLen = capacity;
+            items = items[0..itemsLen];
         }
 
         size_t rest = _writeIndex == 0 ? BufferSize : BufferSize - _writeIndex;

@@ -1,10 +1,11 @@
 module api.dm.gui.controls.video.player_demuxer;
 
 import api.core.utils.structs.rings.ring_buffer : RingBuffer;
+import api.core.utils.structs.container_result : ContainerResult;
 import api.dm.gui.controls.video.base_player_worker : BasePlayerWorker;
 import api.dm.com.audio.com_audio_device : ComAudioSpec, ComAudioFormat;
 
-import api.dm.gui.controls.video.video_decoder : VideoDecoder;
+import api.dm.gui.controls.video.video_decoder : VideoDecoder, UVFrame;
 import api.dm.gui.controls.video.audio_decoder : AudioDecoder;
 
 import std.logger : Logger;
@@ -28,7 +29,7 @@ class PlayerDemuxer(size_t VideoBufferPacketSize, size_t AudioBufferPacketSize, 
         RingBuffer!(AVPacket*, VideoBufferPacketSize) videoPacketQueue;
         RingBuffer!(AVPacket*, AudioBufferPacketSize) audioPacketQueue;
 
-        RingBuffer!(ubyte, VideoBufferSize) videoBuffer;
+        RingBuffer!(UVFrame, VideoBufferSize) videoBuffer;
         RingBuffer!(ubyte, AudioBufferSize) audioBuffer;
 
         ComAudioSpec outAudioSpec;
@@ -57,7 +58,9 @@ class PlayerDemuxer(size_t VideoBufferPacketSize, size_t AudioBufferPacketSize, 
         audioPacketQueue = typeof(audioPacketQueue)(new shared Mutex);
 
         videoBuffer = typeof(videoBuffer)(new shared Mutex);
+        videoBuffer.isWriteForFill = true;
         audioBuffer = typeof(audioBuffer)(new shared Mutex);
+        audioBuffer.isWriteForFill = true;
 
         logger.tracef("Run demuxer on %s, w:%s,h:%s", path, windowWidth, windowHeight);
 
@@ -72,9 +75,10 @@ class PlayerDemuxer(size_t VideoBufferPacketSize, size_t AudioBufferPacketSize, 
         }
 
         av_log_set_flags(AV_LOG_SKIP_REPEATED | AV_LOG_PRINT_LEVEL);
-        av_log_set_level(AV_LOG_ERROR);
 
         av_dump_format(pFormatCtx, 0, file, 0);
+
+        av_log_set_level(AV_LOG_ERROR);
 
         if (avformat_find_stream_info(pFormatCtx, null) < 0)
         {
@@ -118,10 +122,10 @@ class PlayerDemuxer(size_t VideoBufferPacketSize, size_t AudioBufferPacketSize, 
 
         logger.tracef("Demuxer state, video %s, audio %s", foundVideo, foundAudio);
 
-        videoDecoder = new typeof(videoDecoder)(logger, vidCodec, vidpar, windowWidth, windowHeight);
+        videoDecoder = new typeof(videoDecoder)(logger, vidCodec, vidpar, windowWidth, windowHeight, &videoPacketQueue, &videoBuffer);
         audioDecoder = new typeof(audioDecoder)(logger, audCodec, audpar, outAudioSpec, &audioPacketQueue, &audioBuffer);
 
-        //videoDecoder.start;
+        videoDecoder.start;
         audioDecoder.start;
 
         //data_size + AV_INPUT_BUFFER_PADDING_SIZE
@@ -180,13 +184,13 @@ class PlayerDemuxer(size_t VideoBufferPacketSize, size_t AudioBufferPacketSize, 
         // }
 
         long dropCheckIntervalMcs = 1000;
-        size_t dropTreshold = 5;
+        size_t dropTreshold = 20;
         size_t delayGrowFactor = 2;
-        
+
         size_t lastCheckDropTimeMcs = 0;
         long initDelayMs = 100;
         long currDelayMs = initDelayMs;
-        long maxDelayMs = 5000;
+        long maxDelayMs = 1000;
 
         size_t droppedAudioPackets = 0;
         size_t droppedVideoPackets = 0;
@@ -194,20 +198,23 @@ class PlayerDemuxer(size_t VideoBufferPacketSize, size_t AudioBufferPacketSize, 
         while (true)
         {
             const packetRet = av_read_frame(pFormatCtx, packet);
-            
-            //TODO AVERROR_EOF
-            if(packetRet == FFERRTAG( 'E','O','F',' ')){
-                if(videoDecoder && videoDecoder.isRunning){
-                    videoDecoder.setEnd;
-                }
 
-                if(audioDecoder && audioDecoder.isRunning){
-                    audioDecoder.setEnd;
-                }
+            //TODO AVERROR_EOF
+            if (packetRet == FFERRTAG('E', 'O', 'F', ' '))
+            {
+                import std;
+                writeln("Received EOF for demuxer, break");
+                // if(videoDecoder && videoDecoder.isRunning){
+                //     videoDecoder.setEnd;
+                // }
+
+                // if(audioDecoder && audioDecoder.isRunning){
+                //     audioDecoder.setEnd;
+                // }
 
                 break;
             }
-            
+
             if (packetRet >= 0)
             {
                 const nowMcs = av_gettime_relative();
@@ -222,7 +229,7 @@ class PlayerDemuxer(size_t VideoBufferPacketSize, size_t AudioBufferPacketSize, 
 
                         import core.time : dur;
 
-                        logger.tracef("Detect dropped packets, video %s, audio %s, sleep %sms", droppedVideoPackets, droppedAudioPackets, currDelayMs);
+                        // logger.tracef("Detect dropped packets, video %s, audio %s, sleep %sms", droppedVideoPackets, droppedAudioPackets, currDelayMs);
                         sleep(currDelayMs.dur!"msecs");
                     }
                     else
@@ -248,7 +255,7 @@ class PlayerDemuxer(size_t VideoBufferPacketSize, size_t AudioBufferPacketSize, 
 
                         //import std;
 
-                       // debug writeln("Discard video packet");
+                        // debug writeln("Discard video packet");
                     }
                     else
                     {
@@ -266,16 +273,16 @@ class PlayerDemuxer(size_t VideoBufferPacketSize, size_t AudioBufferPacketSize, 
                 {
                     if (audioPacketQueue.isFull)
                     {
-                        droppedVideoPackets++;
+                        droppedAudioPackets++;
                         import core.time : dur;
 
                         sleep(10.dur!"msecs");
 
                         av_packet_unref(packet);
 
-                        //import std;
+                        import std;
 
-                        //debug writeln("Discard audio packet");
+                        debug writeln("Discard audio packet");
                     }
                     else
                     {
@@ -285,17 +292,26 @@ class PlayerDemuxer(size_t VideoBufferPacketSize, size_t AudioBufferPacketSize, 
                         AVPacket*[1] slice = [copy];
                         const isWrite = audioPacketQueue.writeSync(slice);
 
-                        //import std;
+                        if (isWrite != ContainerResult.success)
+                        {
+                            import std;
 
-                        //debug writeln("Send audio packet ", isWrite);
+                            debug writeln("Cannot send audio packet to decoder", isWrite);
+                        }
+
                     }
                 }
             }
         }
 
-        av_packet_free(&packet);
+        //av_packet_free(&packet);
 
         logger.trace("Demuxer work end");
+
+        while (true)
+        {
+
+        }
     }
 
     override bool stop()

@@ -90,4 +90,5 @@ nothrow:
             .none);
 
     ComResult nativePtr(out ComNativePtr ptr);
+    ComResult nativePtr(out void* tptr);
 }

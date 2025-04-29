@@ -849,6 +849,13 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
+    ComResult nativePtr(out void* tptr)
+    {
+        assert(ptr);
+        tptr = cast(void*) ptr;
+        return ComResult.success;
+    }
+
     ComResult isLocked(out bool value) nothrow
     {
         value = locked;
