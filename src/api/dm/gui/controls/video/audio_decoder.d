@@ -23,9 +23,9 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BasePlayer
         AVCodec* codec;
         AVCodecParameters* codecParams;
         ComAudioSpec audioOut;
-    }
 
-    RingBuffer!(ubyte, AudioBufferSize)* buffer;
+        RingBuffer!(ubyte, AudioBufferSize)* buffer;
+    }
 
     ComAudioSpec srcSpec;
 
@@ -143,9 +143,9 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BasePlayer
 
             if (buffer.isFull)
             {
-                import std;
+                //import std;
 
-                debug writeln("Audio buffer is full. Continue");
+                //debug writeln("Audio buffer is full. Continue");
                 continue;
             }
 

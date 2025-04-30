@@ -18,92 +18,65 @@ import api.dm.gui.controls.video.player_demuxer : PlayerDemuxer;
 import api.dm.gui.controls.video.video_decoder : VideoDecoder;
 import api.dm.gui.controls.video.audio_decoder : AudioDecoder;
 
+import api.dm.gui.controls.video.video_decoder : VideoDecoder, UVFrame;
+import api.dm.gui.controls.video.audio_decoder : AudioDecoder;
+
 import cffmpeg;
 import csdl;
 
 import Math = api.math;
 
-__gshared bool isRun;
+struct AudioDataCallback
+{
+    void delegate(SDL_AudioStream*, int, int) nothrow @nogc dg;
+}
 
 static extern (C) void streamCallback(void* userdata, SDL_AudioStream* stream, int additional_amount, int total_amount) nothrow @nogc
 {
-    VideoPlayer player = cast(VideoPlayer) userdata;
-    assert(player);
-    if (!player.demuxer.audioDecoder.buffer.isEmpty)
-    {
-        if (!isRun)
-        {
-            auto upSize = cast(size_t) player.demuxer.audioDecoder.buffer.sizeLimit * 0.8;
-            if (player.demuxer.audioDecoder.buffer.size < upSize)
-            {
-                return;
-            }
-            isRun = true;
-            import std;
+    AudioDataCallback* callbackData = cast(AudioDataCallback*) userdata;
+    assert(callbackData);
+    assert(callbackData.dg);
+    callbackData.dg(stream, additional_amount, total_amount);
+}
 
-            debug writeln("Wait buffer. Set run");
-        }
+auto mediaPlayer(
+    size_t VideoQueueSize = 8192,
+    size_t AudioQueueSize = 40960,
+    size_t VideoBufferSize = 8192,
+    size_t AudioBufferSize = 1638400)()
+{
 
-        debug
-        {
-            const isRead = player.demuxer.audioDecoder.buffer.readSync((ubyte[] buff, ubyte[] rest) @safe {
-                () @trusted {
-                    
-                    if(buff.length == 0){
-                        return;
-                    }
-                    
-                    if (rest.length == 0)
-                    {
-                        SDL_PutAudioStreamData(stream, buff.ptr, cast(int) buff.length);
-                    }
-                    else
-                    {
-                        //TODO pool
-                        import core.memory : pureMalloc, pureFree;
-
-                        const elems = buff.length + rest.length;
-                        auto fullBuffPtr = pureMalloc(elems);
-                        assert(fullBuffPtr);
-                        auto fullBuff = fullBuffPtr[0 .. elems];
-
-                        size_t index;
-                        fullBuff[0 .. buff.length] = buff;
-                        index += buff.length;
-
-                        fullBuff[index .. (index + rest.length)] = rest;
-
-                        SDL_PutAudioStreamData(stream, fullBuff.ptr, cast(int) elems);
-
-                        scope (exit)
-                        {
-                            pureFree(fullBuffPtr);
-                        }
-                    }
-                }();
-
-            }, additional_amount);
-
-            import api.core.utils.structs.container_result : ContainerResult;
-
-            if (isRead != ContainerResult.success)
-            {
-                // import std;
-
-                // debug writefln("Read %s bytes for audiodevice: %s. Size: %s, ri: %s, wi: %s", additional_amount, isRead, player.demuxer.audioDecoder.buffer.size, player
-                //         .demuxer.audioDecoder.buffer.readIndex, player.demuxer
-                //         .audioDecoder.buffer.writeIndex);
-            }
-        }
-    }
+    return new VideoPlayer!(
+        VideoQueueSize,
+        AudioQueueSize,
+        VideoBufferSize,
+        AudioBufferSize);
 }
 
 /**
  * Authors: initkfs
  */
-class VideoPlayer : Control
+class VideoPlayer(
+    size_t VideoQueueSize,
+    size_t AudioQueueSize,
+    size_t VideoBufferSize,
+    size_t AudioBufferSize) : Control
 {
-    PlayerDemuxer!(8192, 40960, 8192, 1638400) demuxer;
+
+    RingBuffer!(AVPacket*, VideoQueueSize) videoPacketQueue;
+    RingBuffer!(AVPacket*, AudioQueueSize) audioPacketQueue;
+
+    RingBuffer!(UVFrame, VideoBufferSize) videoBuffer;
+    RingBuffer!(ubyte, AudioBufferSize) audioBuffer;
+
+    PlayerDemuxer!(
+        VideoQueueSize,
+        AudioQueueSize,
+        VideoBufferSize,
+        AudioBufferSize) demuxer;
+
+    VideoDecoder!(VideoQueueSize, VideoBufferSize) videoDecoder;
+    AudioDecoder!(AudioQueueSize, AudioBufferSize) audioDecoder;
 
     this()
     {
@@ -120,6 +93,21 @@ class VideoPlayer : Control
 
     ulong lastAudioUpdate;
 
+    private
+    {
+        __gshared bool isRun;
+    }
+
+    AudioDataCallback audioDataCallback;
+
+    protected
+    {
+        AVFormatContext* pFormatCtx;
+        AVCodecParameters* vidpar, audpar;
+        AVCodec* vidCodec, audCodec;
+        bool foundVideo, foundAudio;
+    }
+
     override void create()
     {
         super.create;
@@ -128,9 +116,82 @@ class VideoPlayer : Control
         addCreate(texture);
         texture.createMutYV;
 
-        demuxer = new typeof(demuxer)(logger, "/home/user/sdl-music/WING_IT.mp4", cast(
+        int windowWidth = cast(int) texture.width;
+        int windowHeight = cast(int) texture.height;
+
+        audioDataCallback = AudioDataCallback(&handleAudioData);
+
+        videoPacketQueue = typeof(videoPacketQueue)(new shared Mutex);
+        audioPacketQueue = typeof(audioPacketQueue)(new shared Mutex);
+
+        videoBuffer = typeof(videoBuffer)(new shared Mutex);
+        videoBuffer.isWriteForFill = true;
+        audioBuffer = typeof(audioBuffer)(new shared Mutex);
+        audioBuffer.isWriteForFill = true;
+
+        char* file = cast(char*) "/home/user/sdl-music/WING_IT.mp4";
+
+        pFormatCtx = avformat_alloc_context();
+
+        if (avformat_open_input(&pFormatCtx, file, null, null) != 0)
+        {
+            logger.error("Error ffmpeg file");
+            return;
+        }
+
+        av_log_set_flags(AV_LOG_SKIP_REPEATED | AV_LOG_PRINT_LEVEL);
+
+        av_dump_format(pFormatCtx, 0, file, 0);
+
+        av_log_set_level(AV_LOG_ERROR);
+
+        if (avformat_find_stream_info(pFormatCtx, null) < 0)
+        {
+            logger.error("Cannot find stream info. Quitting.");
+            return;
+        }
+
+        int vidId = -1, audId = -1;
+
+        foreach (int i; 0 .. pFormatCtx.nb_streams)
+        {
+            AVCodecParameters* codecParam = pFormatCtx.streams[i].codecpar;
+            AVCodec* codec = avcodec_find_decoder(codecParam.codec_id);
+            if (codecParam.codec_type == AVMEDIA_TYPE_VIDEO && !foundVideo)
+            {
+                //fmt_ctx.streams[i].discard = AVDISCARD_ALL;
+                vidCodec = codec;
+                vidpar = codecParam;
+                vidId = i;
+                //AVRational rational = pFormatCtx.streams[i].avg_frame_rate;
+                //fpsrendering = 1.0 / (cast(double) rational.num / cast(double)(rational.den));
+                foundVideo = true;
+            }
+            else if (codecParam.codec_type == AVMEDIA_TYPE_AUDIO && !foundAudio)
+            {
+                audCodec = codec;
+                audpar = codecParam;
+                audId = i;
+                foundAudio = true;
+            }
+
+            if (foundVideo && foundAudio)
+            {
+                break;
+            }
+        }
+
+        logger.tracef("Media file, video %s, audio %s, target w:%s,h:%s", foundVideo, foundAudio, windowWidth, windowHeight);
+
+        demuxer = new typeof(demuxer)(logger, cast(
                 int) texture.width, cast(
-                int) texture.height, media.audioOut.spec);
+                int) texture.height, media.audioOut.spec, &videoPacketQueue, &audioPacketQueue, &videoBuffer, &audioBuffer, pFormatCtx, vidId, audId);
+
+        videoDecoder = new typeof(videoDecoder)(logger, vidCodec, vidpar, windowWidth, windowHeight, &videoPacketQueue, &videoBuffer);
+        audioDecoder = new typeof(audioDecoder)(logger, audCodec, audpar, media.audioOut.spec, &audioPacketQueue, &audioBuffer);
+
+        videoDecoder.start;
+        audioDecoder.start;
 
         demuxer.start;
 
@@ -141,29 +202,25 @@ class VideoPlayer : Control
     {
         super.update(dt);
 
-        if (!demuxer.isRunning || !demuxer.audioDecoder)
+        if (audioDecoder && audioDecoder.isRunning)
         {
-            return;
-        }
-
-        if (!audioStream)
-        {
-            audioStream = new SdlAudioStream(demuxer.audioDecoder.srcSpec, media.audioOut.spec);
-            if (const err = audioStream.setPutCallback(&streamCallback, cast(void*) this))
+            if (!audioStream)
             {
-                logger.error("Error setting audio stream callback: ", err.toString);
-                return;
-            }
-            if (const err = audioStream.bind(media.audioOut.id))
-            {
-                logger.error("Error audio stream binding to device");
-                return;
+                audioStream = new SdlAudioStream(audioDecoder.srcSpec, media.audioOut.spec);
+                if (const err = audioStream.setPutCallback(&streamCallback, cast(void*)&audioDataCallback))
+                {
+                    logger.error("Error setting audio stream callback: ", err.toString);
+                    return;
+                }
+                if (const err = audioStream.bind(media.audioOut.id))
+                {
+                    logger.error("Error audio stream binding to device");
+                    return;
+                }
             }
         }
 
-        auto audioDecoder = demuxer.audioDecoder;
-
-        if (audioDecoder.isRunning && !audioDecoder.buffer.isEmpty && audioStream)
+        if (!audioBuffer.isEmpty && audioStream)
         {
             // auto now = SDL_GetTicks();
             // auto elapsed = now - lastAudioUpdate;
@@ -180,61 +237,134 @@ class VideoPlayer : Control
             //         logger.errorf("Out of bounds audio buffer, need %s, but size %s", alignedBytesFrame, audioDecoder
             //                 .buffer.size);
             //     }
-            //     else
-            //     {
-            //         const isRead = audioDecoder.buffer.readSync((ubyte[] buff, count) @safe {
-            //             () @trusted {
-            //                 const isPut = audioStream.putData(buff.ptr, count);
-            //             }();
-            //             //import std;
-
-            //             //debug writefln("Send %s bytes to audio %s", alignedBytesFrame, isPut);
-            //         }, alignedBytesFrame);
-            //         import std;
-
-            //         debug writefln("Read from audio buffer %s bytes: %s", alignedBytesFrame, isRead);
-            //     }
-
             //     lastAudioUpdate = now;
             // }
         }
 
-        auto videoDecoder = demuxer.videoDecoder;
-
-        if (texture && videoDecoder.isRunning && !videoDecoder.buffer.isEmpty)
+        if (videoDecoder)
         {
-            import api.dm.gui.controls.video.video_decoder : UVFrame;
-
-            UVFrame vframe;
-            const isReadUv = videoDecoder.buffer.readSync(vframe);
-            if (isReadUv != ContainerResult.success)
+            if (texture && videoDecoder.isRunning && !videoDecoder.buffer.isEmpty)
             {
-                import std;
+                import api.dm.gui.controls.video.video_decoder : UVFrame;
 
-                debug writeln("Error read videoframe from buffer: ", isReadUv);
-            }else {
+                UVFrame vframe;
+                const isReadUv = videoDecoder.buffer.readSync(vframe);
+                if (isReadUv != ContainerResult.success)
+                {
+                    import std;
 
-                scope(exit){
-                    vframe.free;
+                    debug writeln("Error read videoframe from buffer: ", isReadUv);
                 }
+                else
+                {
 
-                void* ptr;
-                if(const err = texture.nativeTexture.nativePtr(ptr)){
+                    scope (exit)
+                    {
+                        vframe.free;
+                    }
 
+                    void* ptr;
+                    if (const err = texture.nativeTexture.nativePtr(ptr))
+                    {
+
+                    }
+
+                    auto tptr = cast(SDL_Texture*) ptr;
+                    assert(tptr);
+
+                    assert(vframe.yPlane.length > 0);
+                    assert(vframe.uPlane.length > 0);
+                    assert(vframe.vPlane.length > 0);
+
+                    SDL_UpdateYUVTexture(tptr, null,
+                        vframe.yPlane.ptr, cast(int) vframe.yPitch,
+                        vframe.uPlane.ptr, cast(int) vframe.uPitch,
+                        vframe.vPlane.ptr, cast(int) vframe.vPitch);
                 }
-
-                auto tptr = cast(SDL_Texture*) ptr;
-                assert(tptr);
-
-                assert(vframe.yPlane.length > 0);
-                assert(vframe.uPlane.length > 0);
-                assert(vframe.vPlane.length > 0);
-
-                SDL_UpdateYUVTexture(tptr, null,
-                vframe.yPlane.ptr, cast(int) vframe.yPitch,
-                vframe.uPlane.ptr, cast(int) vframe.uPitch,
-                vframe.vPlane.ptr, cast(int) vframe.vPitch);
             }
+        }
+
+    }
+
+    void handleAudioData(SDL_AudioStream* stream, int additional_amount, int total_amount) nothrow @nogc
+    {
+        try
+        {
+            if (!audioBuffer.isEmpty)
+            {
+                audioBuffer.mutex.lock_nothrow;
+                scope (exit)
+                {
+                    audioBuffer.mutex.unlock_nothrow;
+                }
+
+                if (!isRun)
+                {
+                    auto upSize = cast(size_t) audioBuffer.sizeLimit * 0.5;
+                    if (audioBuffer.size < upSize)
+                    {
+                        return;
+                    }
+                    isRun = true;
+                }
+
+                //debug
+                //{
+                const isRead = audioBuffer.read((ubyte[] buff, ubyte[] rest) @safe {
+
+                    () @trusted {
+
+                        if (buff.length == 0)
+                        {
+                            return;
+                        }
+
+                        if (rest.length == 0)
+                        {
+                            SDL_PutAudioStreamData(stream, &buff[0], cast(int) buff.length);
+                            return;
+                        }
+                        //TODO pool
+
+                        import core.memory : pureMalloc, pureFree;
+
+                        const elems = buff.length + rest.length;
+                        auto fullBuffPtr = pureMalloc(elems);
+                        assert(fullBuffPtr);
+                        auto fullBuff = fullBuffPtr[0 .. elems];
+
+                        size_t index;
+                        fullBuff[0 .. buff.length] = buff;
+                        index += buff.length;
+
+                        fullBuff[index .. (index + rest.length)] = rest;
+
+                        SDL_PutAudioStreamData(stream, &fullBuff[0], cast(int) elems);
+
+                        scope (exit)
+                        {
+                            pureFree(fullBuffPtr);
+                        }
+                    }();
+
+                }, additional_amount);
+
+                import api.core.utils.structs.container_result : ContainerResult;
+
+                if (isRead != ContainerResult.success)
+                {
+                    import std;
+
+                    debug writefln("Read %s bytes for audiodevice: %s. Size: %s, ri: %s, wi: %s", additional_amount, isRead, audioBuffer
+                            .size, audioBuffer.readIndex, audioBuffer.writeIndex);
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            import std.stdio : stderr, writeln;
+
+            debug stderr.writeln("Error in audio callback: ", e);
         }
     }
 
