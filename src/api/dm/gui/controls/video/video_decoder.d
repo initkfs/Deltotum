@@ -23,6 +23,8 @@ struct UVFrame
     ubyte[] uPlane;
     ubyte[] vPlane;
 
+    double ptsSec = 0;
+
     static UVFrame newFrame(size_t w, size_t h, size_t yPitch, size_t uPitch, size_t vPitch)
     {
         assert(w > 0);
@@ -82,9 +84,12 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BasePlayer
 
     int windowWidth, windowHeight;
 
+    AVRational videoTimeBase;
+    AVRational videoAvgRate;
+
     this(Logger logger, AVCodec* codec, AVCodecParameters* codecParams, int windowWidth, int windowHeight, typeof(
             packetQueue) newPacketQueue, typeof(
-            buffer) newbuffer)
+            buffer) newbuffer, AVRational videoTimeBase, AVRational videoAvgRate)
     {
         super(logger);
         this.windowHeight = windowHeight;
@@ -104,6 +109,9 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BasePlayer
 
         assert(codecParams);
         this.codecParams = codecParams;
+
+        this.videoTimeBase = videoTimeBase;
+        this.videoAvgRate = videoAvgRate;
     }
 
     override void run()
@@ -302,12 +310,25 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BasePlayer
             UVFrame uvFrame = UVFrame.newFrame(windowWidth, windowHeight, outFrame.linesize[0], outFrame.linesize[1], outFrame
                     .linesize[2]);
 
+            double ptsSec = 0;
+            enum ulong AV_NOPTS_VALUE = 0x8000000000000000;
+            if (frame.pts == AV_NOPTS_VALUE)
+            {
+                ptsSec = frame.pts * av_q2d(videoTimeBase) * videoAvgRate.num / videoAvgRate.den;
+            }
+            else
+            {
+               ptsSec = frame.pts * av_q2d(videoTimeBase);
+            }
+
+            uvFrame.ptsSec = ptsSec;
+
             uvFrame.yPlane[] = outFrame.data[0][0 .. uvFrame.yPlane.length];
             uvFrame.uPlane[] = outFrame.data[1][0 .. uvFrame.uPlane.length];
             uvFrame.vPlane[] = outFrame.data[2][0 .. uvFrame.vPlane.length];
 
             UVFrame[1] frames = [uvFrame];
-            const isWriteUvFrame = buffer.write(frames);
+            const isWriteUvFrame = buffer.writeSync(frames);
 
             // import std;
 

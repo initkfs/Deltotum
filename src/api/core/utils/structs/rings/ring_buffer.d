@@ -189,6 +189,14 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
                 return read(value);
             }
         }
+
+        ContainerResult peekSync(out BufferType value)
+        {
+            synchronized (mutex)
+            {
+                return peek(value);
+            }
+        }
     }
 
     // bool isIndexOverlap(size_t index)
@@ -230,7 +238,7 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
             }
 
             itemsLen = capacity;
-            items = items[0..itemsLen];
+            items = items[0 .. itemsLen];
         }
 
         size_t rest = _writeIndex == 0 ? BufferSize : BufferSize - _writeIndex;
@@ -354,6 +362,41 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
 
     ContainerResult read(out BufferType value)
     {
+        const isPeek = peek(value);
+        if (isPeek != ContainerResult.success)
+        {
+            value = BufferType.init;
+            return isPeek;
+        }
+
+        if (!remove)
+        {
+            return ContainerResult.failread;
+        }
+
+        return ContainerResult.success;
+    }
+
+    bool remove()
+    {
+        if (_size == 0)
+        {
+            return false;
+        }
+
+        _readIndex++;
+        if (_readIndex >= BufferSize)
+        {
+            _readIndex = 0;
+        }
+
+        assert(_size > 0);
+        _size--;
+        return true;
+    }
+
+    ContainerResult peek(out BufferType value)
+    {
         if (_lock)
         {
             return ContainerResult.locked;
@@ -365,15 +408,6 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
         }
 
         value = _buffer[_readIndex];
-
-        _readIndex++;
-        if (_readIndex >= BufferSize)
-        {
-            _readIndex = 0;
-        }
-
-        assert(_size > 0);
-        _size--;
 
         return ContainerResult.success;
     }

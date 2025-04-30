@@ -153,9 +153,14 @@ class VideoPlayer(
 
         int vidId = -1, audId = -1;
 
+        AVRational videoTimeBase;
+        AVRational videoAvgRate;
+
         foreach (int i; 0 .. pFormatCtx.nb_streams)
         {
-            AVCodecParameters* codecParam = pFormatCtx.streams[i].codecpar;
+            auto stream = pFormatCtx.streams[i];
+
+            AVCodecParameters* codecParam = stream.codecpar;
             AVCodec* codec = avcodec_find_decoder(codecParam.codec_id);
             if (codecParam.codec_type == AVMEDIA_TYPE_VIDEO && !foundVideo)
             {
@@ -163,7 +168,10 @@ class VideoPlayer(
                 vidCodec = codec;
                 vidpar = codecParam;
                 vidId = i;
-                //AVRational rational = pFormatCtx.streams[i].avg_frame_rate;
+
+                videoTimeBase = stream.time_base;
+                videoAvgRate = stream.avg_frame_rate;
+
                 //fpsrendering = 1.0 / (cast(double) rational.num / cast(double)(rational.den));
                 foundVideo = true;
             }
@@ -187,7 +195,7 @@ class VideoPlayer(
                 int) texture.width, cast(
                 int) texture.height, media.audioOut.spec, &videoPacketQueue, &audioPacketQueue, &videoBuffer, &audioBuffer, pFormatCtx, vidId, audId);
 
-        videoDecoder = new typeof(videoDecoder)(logger, vidCodec, vidpar, windowWidth, windowHeight, &videoPacketQueue, &videoBuffer);
+        videoDecoder = new typeof(videoDecoder)(logger, vidCodec, vidpar, windowWidth, windowHeight, &videoPacketQueue, &videoBuffer, videoTimeBase, videoAvgRate);
         audioDecoder = new typeof(audioDecoder)(logger, audCodec, audpar, media.audioOut.spec, &audioPacketQueue, &audioBuffer);
 
         videoDecoder.start;
@@ -207,7 +215,7 @@ class VideoPlayer(
             if (!audioStream)
             {
                 audioStream = new SdlAudioStream(audioDecoder.srcSpec, media.audioOut.spec);
-                if (const err = audioStream.setPutCallback(&streamCallback, cast(void*)&audioDataCallback))
+                if (const err = audioStream.setGetByDeviceCallback(&streamCallback, cast(void*)&audioDataCallback))
                 {
                     logger.error("Error setting audio stream callback: ", err.toString);
                     return;
@@ -241,55 +249,115 @@ class VideoPlayer(
             // }
         }
 
-        if (videoDecoder)
+        updateVideo;
+    }
+
+    void updateVideo()
+    {
+        if (videoBuffer.isEmpty)
         {
-            if (texture && videoDecoder.isRunning && !videoDecoder.buffer.isEmpty)
+            return;
+        }
+
+        if (!texture)
+        {
+            return;
+        }
+
+        import api.dm.gui.controls.video.video_decoder : UVFrame;
+
+        videoBuffer.mutex.lock;
+        scope (exit)
+        {
+            videoBuffer.mutex.unlock;
+        }
+
+        UVFrame vframe;
+        const isPeek = videoBuffer.peek(vframe);
+        if (!isPeek)
+        {
+            import std;
+
+            debug writeln("Error peek videoframe from buffer: ", isPeek);
+            return;
+        }
+
+        assert(isPeek);
+
+        auto audioTime = audioTimeSec;
+        auto videoTimeSec = vframe.ptsSec;
+
+        double diffTime = videoTimeSec - audioTime;
+        if (Math.abs(diffTime) > 0.5)
+        {
+            audioSamplesCount += cast(size_t)(diffTime * 48000);
+        }
+
+        //video ahead
+        if (diffTime > 0.01)
+        {
+            return;
+        }
+        //video behind 
+        else if (diffTime < -0.1)
+        {
+            const isRemove = videoBuffer.remove;
+            assert(isRemove);
+            if (isRemove != ContainerResult.success)
             {
-                import api.dm.gui.controls.video.video_decoder : UVFrame;
+                import std;
 
-                UVFrame vframe;
-                const isReadUv = videoDecoder.buffer.readSync(vframe);
-                if (isReadUv != ContainerResult.success)
-                {
-                    import std;
+                writeln("Error removing videoframe from buffer: ", isRemove);
+            }
+            else
+            {
+                vframe.free;
+            }
+            return;
+        }
 
-                    debug writeln("Error read videoframe from buffer: ", isReadUv);
-                }
-                else
-                {
+        scope (exit)
+        {
+            const isRemove = videoBuffer.remove;
+            if (isRemove != ContainerResult.success)
+            {
+                import std;
 
-                    scope (exit)
-                    {
-                        vframe.free;
-                    }
-
-                    void* ptr;
-                    if (const err = texture.nativeTexture.nativePtr(ptr))
-                    {
-
-                    }
-
-                    auto tptr = cast(SDL_Texture*) ptr;
-                    assert(tptr);
-
-                    assert(vframe.yPlane.length > 0);
-                    assert(vframe.uPlane.length > 0);
-                    assert(vframe.vPlane.length > 0);
-
-                    SDL_UpdateYUVTexture(tptr, null,
-                        vframe.yPlane.ptr, cast(int) vframe.yPitch,
-                        vframe.uPlane.ptr, cast(int) vframe.uPitch,
-                        vframe.vPlane.ptr, cast(int) vframe.vPitch);
-                }
+                writeln("Error removing videoframe from buffer: ", isRemove);
+            }
+            else
+            {
+                vframe.free;
             }
         }
 
+        void* ptr;
+        if (const err = texture.nativeTexture.nativePtr(ptr))
+        {
+
+        }
+
+        auto tptr = cast(SDL_Texture*) ptr;
+        assert(tptr);
+
+        assert(vframe.yPlane.length > 0);
+        assert(vframe.uPlane.length > 0);
+        assert(vframe.vPlane.length > 0);
+
+        SDL_UpdateYUVTexture(tptr, null,
+            vframe.yPlane.ptr, cast(int) vframe.yPitch,
+            vframe.uPlane.ptr, cast(int) vframe.uPitch,
+            vframe.vPlane.ptr, cast(int) vframe.vPitch);
     }
+
+    __gshared double audioTimeSec;
+    __gshared ulong audioSamplesCount;
 
     void handleAudioData(SDL_AudioStream* stream, int additional_amount, int total_amount) nothrow @nogc
     {
         try
         {
+
             if (!audioBuffer.isEmpty)
             {
                 audioBuffer.mutex.lock_nothrow;
@@ -307,6 +375,25 @@ class VideoPlayer(
                     }
                     isRun = true;
                 }
+
+                auto newAmount = additional_amount * 16;
+                auto available = SDL_GetAudioStreamAvailable(stream);
+                if (available < newAmount && newAmount < audioBuffer.size)
+                {
+                    additional_amount = newAmount;
+                }
+
+                void updateClock() @nogc nothrow
+                {
+                    audioSamplesCount += additional_amount / (2 * float.sizeof);
+
+                    size_t bytesPerSample = float.sizeof * 2;
+                    auto queueBytes = SDL_GetAudioStreamQueued(stream);
+                    double buffTime = cast(double) queueBytes / (48000 * bytesPerSample);
+                    audioTimeSec = audioSamplesCount / 48000.0 - buffTime;
+                }
+
+                updateClock;
 
                 //debug
                 //{
@@ -329,24 +416,22 @@ class VideoPlayer(
                         import core.memory : pureMalloc, pureFree;
 
                         const elems = buff.length + rest.length;
-                        auto fullBuffPtr = pureMalloc(elems);
+                        auto fullBuffPtr = pureMalloc(
+                            elems);
                         assert(fullBuffPtr);
                         auto fullBuff = fullBuffPtr[0 .. elems];
 
                         size_t index;
                         fullBuff[0 .. buff.length] = buff;
                         index += buff.length;
-
                         fullBuff[index .. (index + rest.length)] = rest;
 
                         SDL_PutAudioStreamData(stream, &fullBuff[0], cast(int) elems);
-
                         scope (exit)
                         {
                             pureFree(fullBuffPtr);
                         }
                     }();
-
                 }, additional_amount);
 
                 import api.core.utils.structs.container_result : ContainerResult;
@@ -360,6 +445,7 @@ class VideoPlayer(
                 }
             }
         }
+
         catch (Exception e)
         {
             import std.stdio : stderr, writeln;

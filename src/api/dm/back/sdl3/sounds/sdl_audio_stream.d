@@ -79,7 +79,7 @@ class SdlAudioStream : SdlObjectWrapper!SDL_AudioStream, ComAudioStream
         return ComResult.success;
     }
 
-    ComResult setPutCallback(StreamCallback callback, void* userdata)
+    ComResult setGetByDeviceCallback(StreamCallback callback, void* userdata)
     {
         if (!SDL_SetAudioStreamGetCallback(ptr, callback, userdata))
         {
