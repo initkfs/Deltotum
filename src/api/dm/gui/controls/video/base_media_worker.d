@@ -63,6 +63,16 @@ abstract class BaseMediaWorker : Thread
         return copy;
     }
 
+    protected AVFrame* allocCopy(AVFrame* src)
+    {
+        assert(src);
+
+        AVFrame* copy = av_frame_alloc();
+        av_frame_ref(copy, src);
+
+        return copy;
+    }
+
     void setEnd()
     {
         _end = true;

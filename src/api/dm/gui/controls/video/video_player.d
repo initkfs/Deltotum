@@ -197,14 +197,14 @@ class VideoPlayer(
             &audioPacketQueue,
             &videoBuffer,
             &audioBuffer,
-        );
+            );
 
         videoDecoder = new typeof(videoDecoder)(
-            logger,
+            logger, 
             VideoDecoderContext(vidpar, vidCodec, windowWidth, windowHeight, videoTimeBase, videoAvgRate),
-            &videoPacketQueue,
+            &videoPacketQueue, 
             &videoBuffer);
-
+        
         audioDecoder = new typeof(audioDecoder)(logger, audCodec, audpar, media.audioOut.spec, &audioPacketQueue, &audioBuffer);
 
         videoDecoder.start;
@@ -472,14 +472,12 @@ class VideoPlayer(
             logger.trace("Try stop demuxer");
         }
 
-        if (videoDecoder && videoDecoder.isRunning)
-        {
+        if(videoDecoder && videoDecoder.isRunning){
             videoDecoder.stop;
             logger.trace("Try stop video decoder");
         }
 
-        if (audioDecoder && audioDecoder.isRunning)
-        {
+        if(audioDecoder && audioDecoder.isRunning){
             audioDecoder.stop;
             logger.trace("Try stop audio decoder");
         }

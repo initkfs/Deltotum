@@ -10,7 +10,10 @@ import cffmpeg;
 
 struct UVFrame
 {
-    import Mem = core.memory;
+    private
+    {
+        AVFrame* frame;
+    }
 
     size_t width;
     size_t height;
@@ -25,48 +28,39 @@ struct UVFrame
 
     double ptsSec = 0;
 
-    static UVFrame newFrame(size_t w, size_t h, size_t yPitch, size_t uPitch, size_t vPitch)
+    this(AVFrame* frame)
     {
-        assert(w > 0);
-        assert(h > 0);
+        assert(frame);
 
-        UVFrame frame = UVFrame(w, h, yPitch, uPitch, vPitch);
+        width = frame.width;
+        height = frame.height;
 
-        const yPlaneSize = yPitch * h;
+        yPitch = frame.linesize[0];
+        uPitch = frame.linesize[1];
+        vPitch = frame.linesize[2];
 
-        const halfHeight = h / 2;
+        const yPlaneSize = yPitch * height;
+
+        const halfHeight = height / 2;
+
         const uPlaneSize = uPitch * halfHeight;
         const vPlaneSize = vPitch * halfHeight;
 
-        auto yPlanePtr = cast(ubyte*) Mem.pureMalloc(yPlaneSize);
-        assert(yPlanePtr);
-        auto uPlanePtr = cast(ubyte*) Mem.pureMalloc(uPlaneSize);
-        assert(uPlanePtr);
-        auto vPlanePtr = cast(ubyte*) Mem.pureMalloc(vPlaneSize);
-        assert(vPlanePtr);
-
-        frame.yPlane = yPlanePtr[0 .. yPlaneSize];
-        frame.uPlane = uPlanePtr[0 .. uPlaneSize];
-        frame.vPlane = vPlanePtr[0 .. vPlaneSize];
-        return frame;
+        yPlane = frame.data[0][0 .. yPlaneSize];
+        uPlane = frame.data[1][0 .. uPlaneSize];
+        vPlane = frame.data[2][0 .. vPlaneSize];
     }
 
-    void free()
+    bool free()
     {
-        if (yPlane)
+        if (!frame)
         {
-            Mem.pureFree(yPlane.ptr);
+            return false;
         }
 
-        if (uPlane)
-        {
-            Mem.pureFree(uPlane.ptr);
-        }
-
-        if (vPlane)
-        {
-            Mem.pureFree(vPlane.ptr);
-        }
+        av_frame_free(&frame);
+        this = UVFrame.init;
+        return true;
     }
 
 }
@@ -156,29 +150,19 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
                 return;
             }
 
-            AVFrame* outFrame = av_frame_alloc();
-            if (!outFrame)
-            {
-                logger.error("Output frame is null");
-            }
-
-            outFrame.width = context.windowWidth;
-            outFrame.height = context.windowHeight;
-            outFrame.format = AV_PIX_FMT_YUV420P;
-
             //https://stackoverflow.com/questions/35678041/what-is-linesize-alignment-meaning
-            int numBytes = av_image_get_buffer_size(AV_PIX_FMT_YUV420P, context.windowWidth,
-                context.windowHeight, 1);
+            // int numBytes = av_image_get_buffer_size(AV_PIX_FMT_YUV420P, context.windowWidth,
+            //     context.windowHeight, 1);
 
-            ubyte* scaleBuffer = cast(ubyte*) av_malloc(numBytes);
+            // ubyte* scaleBuffer = cast(ubyte*) av_malloc(numBytes);
 
-            int res = av_image_fill_arrays(cast(ubyte**) outFrame.data, outFrame.linesize.ptr, scaleBuffer, AV_PIX_FMT_YUV420P, context
-                    .windowWidth,
-                context.windowHeight, 1);
-            if (res < 0)
-            {
-                logger.error("Error fillint buffer");
-            }
+            // int res = av_image_fill_arrays(cast(ubyte**) outFrame.data, outFrame.linesize.ptr, scaleBuffer, AV_PIX_FMT_YUV420P, context
+            //         .windowWidth,
+            //     context.windowHeight, 1);
+            // if (res < 0)
+            // {
+            //     logger.error("Error fillint buffer");
+            // }
 
             SwsContext* convertContext = sws_getContext(
                 ctx.width,
@@ -197,12 +181,6 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
 
             while (_running)
             {
-                // if (_end)
-                // {
-                //     avcodec_send_packet(ctx, null);
-                //     continue;
-                // }
-
                 if (packetQueue.isEmpty)
                 {
                     //import std;
@@ -247,6 +225,8 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
                     if (isSend < 0 && isSend != AVERROR(EAGAIN))
                     {
                         //TODO drop packet?
+                        packetQueue.removeStrict;
+                        av_packet_free(&pkt);
                         logger.error("Error sending packet in video decoder: ", errorText(isSend));
                         continue;
                     }
@@ -254,7 +234,6 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
                     const isReceive = avcodec_receive_frame(ctx, frame);
                     if (isReceive == AVERROR(EAGAIN))
                     {
-                        //av_frame_unref(frame);
                         continue;
                     }
 
@@ -285,6 +264,24 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
                     }
                 }
 
+                AVFrame* outFrame = av_frame_alloc();
+                if (!outFrame)
+                {
+                    logger.error("Output frame is null");
+                }
+
+                outFrame.width = context.windowWidth;
+                outFrame.height = context.windowHeight;
+                outFrame.format = AV_PIX_FMT_YUV420P;
+
+                const isOutBuffer = av_frame_get_buffer(outFrame, 1);
+                if (isOutBuffer < 0)
+                {
+                    logger.error("Error getting out frame buffer: ", errorText(isOutBuffer));
+                    av_frame_free(&outFrame);
+                    continue;
+                }
+
                 sws_scale(convertContext, frame.data.ptr, frame.linesize.ptr, 0, frame.height,
                     outFrame.data.ptr, outFrame.linesize.ptr);
 
@@ -296,12 +293,11 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
                 assert(outFrame.linesize[1] == (outFrame.linesize[0] / 2));
                 assert(outFrame.linesize[2] == (outFrame.linesize[0] / 2));
 
-                UVFrame uvFrame = UVFrame.newFrame(context.windowWidth, context.windowHeight, outFrame.linesize[0], outFrame
-                        .linesize[1], outFrame
-                        .linesize[2]);
+                UVFrame uvFrame = UVFrame(outFrame);
 
                 double ptsSec = 0;
                 enum ulong AV_NOPTS_VALUE = 0x8000000000000000;
+                //TODO precalculate
                 if (frame.pts == AV_NOPTS_VALUE)
                 {
                     ptsSec = frame.pts * av_q2d(
@@ -314,10 +310,6 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
                 }
 
                 uvFrame.ptsSec = ptsSec;
-
-                uvFrame.yPlane[] = outFrame.data[0][0 .. uvFrame.yPlane.length];
-                uvFrame.uPlane[] = outFrame.data[1][0 .. uvFrame.uPlane.length];
-                uvFrame.vPlane[] = outFrame.data[2][0 .. uvFrame.vPlane.length];
 
                 UVFrame[1] frames = [uvFrame];
                 const isWriteUvFrame = buffer.writeSync(frames);
@@ -339,5 +331,4 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
             throw th;
         }
     }
-
 }
