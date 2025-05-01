@@ -10,10 +10,10 @@ import cffmpeg;
 
 struct UVFrame
 {
-    private
-    {
-        AVFrame* frame;
-    }
+    //private
+    //{
+    AVFrame* frame;
+    //}
 
     size_t width;
     size_t height;

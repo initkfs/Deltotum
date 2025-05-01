@@ -40,10 +40,10 @@ static extern (C) void streamCallback(void* userdata, SDL_AudioStream* stream, i
 }
 
 auto mediaPlayer(
-    size_t VideoQueueSize = 8192,
+    size_t VideoQueueSize = 40960,
     size_t AudioQueueSize = 40960,
-    size_t VideoBufferSize = 8192,
-    size_t AudioBufferSize = 1638400)()
+    size_t VideoBufferSize = 10,
+    size_t AudioBufferSize = 102400)()
 {
 
     return new VideoPlayer!(
@@ -287,9 +287,7 @@ class VideoPlayer(
         const isPeek = videoBuffer.peek(vframe);
         if (!isPeek)
         {
-            import std;
-
-            debug writeln("Error peek videoframe from buffer: ", isPeek);
+            logger.error("Error peek videoframe from buffer: ", isPeek);
             return;
         }
 

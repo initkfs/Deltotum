@@ -258,6 +258,7 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
                 _writeIndex = 0;
             }
             //atomicOp!"+="(_size, buffLen);
+            assert(buffLen <= capacity);
             _size += buffLen;
 
             //import std;
@@ -271,8 +272,13 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
 
         size_t endIndex = _writeIndex + lastElems;
 
-        _buffer[writeIndex .. endIndex] = items[0 .. lastElems];
-        _buffer[0 .. remainElems] = items[lastElems .. $];
+        auto endItems = items[0 .. lastElems];
+        auto firstItems = items[lastElems .. $];
+
+        assert((endItems.length + firstItems.length) <= capacity);
+
+        _buffer[writeIndex .. endIndex] = endItems;
+        _buffer[0 .. remainElems] = firstItems;
 
         _writeIndex = remainElems;
         if (_writeIndex >= BufferSize)
@@ -505,12 +511,18 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
 
     assert(buff.write([1, 2, 3, 4, 5, 6]));
     assert(buff.isFull);
+    assert(buff.capacity == 0);
 
     int[3] elems;
     assert(buff.read(elems, 3));
     assert(elems == [1, 2, 3]);
+    assert(buff.readIndex == 3);
+    assert(buff.capacity == 3);
+    assert(buff.writeIndex == 0);
 
     assert(buff.write([7, 8, 9]));
+    assert(buff.writeIndex == 3);
+    assert(buff.capacity == 0);
 
     assert(buff.read(elems, 3));
     assert(elems == [4, 5, 6]);
