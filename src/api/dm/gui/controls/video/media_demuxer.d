@@ -75,138 +75,150 @@ class MediaDemuxer(size_t VideoQueueSize, size_t AudioQueueSize, size_t VideoBuf
 
     override void run()
     {
-        logger.tracef("Run demuxer");
-
-        //data_size + AV_INPUT_BUFFER_PADDING_SIZE
-        AVPacket* packet = av_packet_alloc();
-
-        long dropCheckIntervalMcs = 1000;
-        size_t dropTreshold = 20;
-        size_t delayGrowFactor = 2;
-
-        size_t lastCheckDropTimeMcs = 0;
-        long initDelayMs = 100;
-        long currDelayMs = initDelayMs;
-        long maxDelayMs = 1000;
-
-        size_t droppedAudioPackets = 0;
-        size_t droppedVideoPackets = 0;
-
-        logger.trace("Start demuxer loop");
-
-        while (true)
+        try
         {
-            const packetRet = av_read_frame(context.formatCtx, packet);
+            logger.tracef("Run demuxer");
 
-            if (packetRet == codeEOF)
+            //data_size + AV_INPUT_BUFFER_PADDING_SIZE
+            AVPacket* packet = av_packet_alloc();
+
+            long dropCheckIntervalMcs = 1000;
+            size_t dropTreshold = 20;
+            size_t delayGrowFactor = 2;
+
+            size_t lastCheckDropTimeMcs = 0;
+            long initDelayMs = 100;
+            long currDelayMs = initDelayMs;
+            long maxDelayMs = 1000;
+
+            size_t droppedAudioPackets = 0;
+            size_t droppedVideoPackets = 0;
+
+            logger.trace("Start demuxer loop");
+
+            while (true)
             {
-                logger.trace("Received EOF for media demuxer, break");
-                break;
-            }
+                const packetRet = av_read_frame(context.formatCtx, packet);
 
-            if (packetRet == AVERROR(EAGAIN))
-            {
-                continue;
-            }
-
-            if (packetRet < 0)
-            {
-                logger.error("Demuxer reading frame error: ", errorText(packetRet));
-            }
-
-            const nowMcs = av_gettime_relative();
-            const timeSince = nowMcs - lastCheckDropTimeMcs;
-
-            if (timeSince > dropCheckIntervalMcs)
-            {
-                if ((droppedAudioPackets + droppedVideoPackets) > dropTreshold)
+                if (packetRet == codeEOF)
                 {
-                    currDelayMs = currDelayMs * delayGrowFactor;
-                    currDelayMs = Math.min(currDelayMs, maxDelayMs);
-
-                    import core.time : dur;
-
-                    logger.warningf("Detect dropped packets, video %s, audio %s, sleep %sms", droppedVideoPackets, droppedAudioPackets, currDelayMs);
-                    sleep(currDelayMs.dur!"msecs");
+                    logger.trace("Received EOF for media demuxer, break");
+                    break;
                 }
-                else
+
+                if (packetRet == AVERROR(EAGAIN))
                 {
-                    if (currDelayMs != initDelayMs)
+                    continue;
+                }
+
+                if (packetRet < 0)
+                {
+                    logger.error("Demuxer reading frame error: ", errorText(packetRet));
+                }
+
+                const nowMcs = av_gettime_relative();
+                const timeSince = nowMcs - lastCheckDropTimeMcs;
+
+                if (timeSince > dropCheckIntervalMcs)
+                {
+                    if ((droppedAudioPackets + droppedVideoPackets) > dropTreshold)
                     {
-                        currDelayMs = initDelayMs;
+                        currDelayMs = currDelayMs * delayGrowFactor;
+                        currDelayMs = Math.min(currDelayMs, maxDelayMs);
+
+                        import core.time : dur;
+
+                        logger.warningf("Detect dropped packets, video %s, audio %s, sleep %sms", droppedVideoPackets, droppedAudioPackets, currDelayMs);
+                        sleep(currDelayMs.dur!"msecs");
+                    }
+                    else
+                    {
+                        if (currDelayMs != initDelayMs)
+                        {
+                            currDelayMs = initDelayMs;
+                        }
+                    }
+
+                    droppedAudioPackets = 0;
+                    droppedAudioPackets = 0;
+                    lastCheckDropTimeMcs = nowMcs;
+                }
+
+                if (context.isVideo && packet.stream_index == context.videoFrameIndex)
+                {
+                    videoPacketQueue.mutex.lock;
+                    scope (exit)
+                    {
+                        videoPacketQueue.mutex.unlock;
+                    }
+
+                    if (videoPacketQueue.isFull)
+                    {
+                        droppedVideoPackets++;
+                        av_packet_unref(packet);
+
+                        //import std;
+                        // debug writeln("Discard video packet");
+                    }
+                    else
+                    {
+                        AVPacket* copy = allocCopy(packet);
+
+                        AVPacket*[1] packets = [copy];
+                        const isWrite = videoPacketQueue.write(packets);
+                        if (isWrite != ContainerResult.success)
+                        {
+                            logger.error("Error sending video packet to queue: ", isWrite);
+                        }
                     }
                 }
-
-                droppedAudioPackets = 0;
-                droppedAudioPackets = 0;
-                lastCheckDropTimeMcs = nowMcs;
-            }
-
-            if (context.isVideo && packet.stream_index == context.videoFrameIndex)
-            {
-                videoPacketQueue.mutex.lock;
-                scope (exit)
+                else if (context.isAudio && packet.stream_index == context.audioFrameIndex)
                 {
-                    videoPacketQueue.mutex.unlock;
-                }
-
-                if (videoPacketQueue.isFull)
-                {
-                    droppedVideoPackets++;
-                    av_packet_unref(packet);
-
-                    //import std;
-                    // debug writeln("Discard video packet");
-                }
-                else
-                {
-                    AVPacket* copy = allocCopy(packet);
-
-                    AVPacket*[1] packets = [copy];
-                    const isWrite = videoPacketQueue.write(packets);
-                    if (isWrite != ContainerResult.success)
+                    audioPacketQueue.mutex.lock;
+                    scope (exit)
                     {
-                        logger.error("Error sending video packet to queue: ", isWrite);
+                        audioPacketQueue.mutex.unlock;
+                    }
+
+                    if (audioPacketQueue.isFull)
+                    {
+                        droppedAudioPackets++;
+                        import core.time : dur;
+
+                        sleep(10.dur!"msecs");
+
+                        av_packet_unref(packet);
+
+                        //import std;
+                        //debug writeln("Discard audio packet");
+                    }
+                    else
+                    {
+                        AVPacket* copy = allocCopy(packet);
+
+                        AVPacket*[1] slice = [copy];
+                        const isWrite = audioPacketQueue.write(slice);
+
+                        if (isWrite != ContainerResult.success)
+                        {
+                            logger.error("Error sending audio packet to queue", isWrite);
+                        }
                     }
                 }
             }
-            else if (context.isAudio && packet.stream_index == context.audioFrameIndex)
-            {
-                audioPacketQueue.mutex.lock;
-                scope (exit)
-                {
-                    audioPacketQueue.mutex.unlock;
-                }
 
-                if (audioPacketQueue.isFull)
-                {
-                    droppedAudioPackets++;
-                    import core.time : dur;
+            av_packet_free(&packet);
 
-                    sleep(10.dur!"msecs");
-
-                    av_packet_unref(packet);
-
-                    //import std;
-                    //debug writeln("Discard audio packet");
-                }
-                else
-                {
-                    AVPacket* copy = allocCopy(packet);
-
-                    AVPacket*[1] slice = [copy];
-                    const isWrite = audioPacketQueue.write(slice);
-
-                    if (isWrite != ContainerResult.success)
-                    {
-                        logger.error("Error sending audio packet to queue", isWrite);
-                    }
-                }
-            }
+            logger.trace("Demuxer finished work");
         }
-
-        av_packet_free(&packet);
-
-        logger.trace("Demuxer finished work");
+        catch (Exception e)
+        {
+            logger.error("Exception in demuxer: ", e);
+        }
+        catch (Throwable th)
+        {
+            logger.error("Error in demuxer: ", th);
+            throw th;
+        }
     }
 }

@@ -18,7 +18,7 @@ import api.dm.gui.controls.video.media_demuxer : MediaDemuxer, DemuxerContext;
 import api.dm.gui.controls.video.video_decoder : VideoDecoder;
 import api.dm.gui.controls.video.audio_decoder : AudioDecoder;
 
-import api.dm.gui.controls.video.video_decoder : VideoDecoder, UVFrame;
+import api.dm.gui.controls.video.video_decoder : VideoDecoder, UVFrame, VideoDecoderContext;
 import api.dm.gui.controls.video.audio_decoder : AudioDecoder;
 
 import cffmpeg;
@@ -197,9 +197,14 @@ class VideoPlayer(
             &audioPacketQueue,
             &videoBuffer,
             &audioBuffer,
-            );
+        );
 
-        videoDecoder = new typeof(videoDecoder)(logger, vidCodec, vidpar, windowWidth, windowHeight, &videoPacketQueue, &videoBuffer, videoTimeBase, videoAvgRate);
+        videoDecoder = new typeof(videoDecoder)(
+            logger,
+            VideoDecoderContext(vidpar, vidCodec, windowWidth, windowHeight, videoTimeBase, videoAvgRate),
+            &videoPacketQueue,
+            &videoBuffer);
+
         audioDecoder = new typeof(audioDecoder)(logger, audCodec, audpar, media.audioOut.spec, &audioPacketQueue, &audioBuffer);
 
         videoDecoder.start;
@@ -464,6 +469,19 @@ class VideoPlayer(
         if (demuxer && demuxer.isRunning)
         {
             demuxer.stop;
+            logger.trace("Try stop demuxer");
+        }
+
+        if (videoDecoder && videoDecoder.isRunning)
+        {
+            videoDecoder.stop;
+            logger.trace("Try stop video decoder");
+        }
+
+        if (audioDecoder && audioDecoder.isRunning)
+        {
+            audioDecoder.stop;
+            logger.trace("Try stop audio decoder");
         }
     }
 

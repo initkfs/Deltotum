@@ -395,6 +395,14 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
         return true;
     }
 
+    void removeStrict()
+    {
+        if (!remove)
+        {
+            throw new Exception("Error removing from buffer");
+        }
+    }
+
     ContainerResult peek(out BufferType value)
     {
         if (_lock)
