@@ -2,7 +2,7 @@ module api.dm.gui.controls.video.video_decoder;
 
 import api.core.utils.structs.rings.ring_buffer : RingBuffer;
 import api.core.utils.structs.container_result : ContainerResult;
-import api.dm.gui.controls.video.base_player_worker : BasePlayerWorker;
+import api.dm.gui.controls.video.base_media_worker : BaseMediaWorker;
 
 import std.logger : Logger;
 
@@ -74,7 +74,7 @@ struct UVFrame
 /**
  * Authors: initkfs
  */
-class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BasePlayerWorker
+class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaWorker
 {
     AVCodec* codec;
     AVCodecParameters* codecParams;

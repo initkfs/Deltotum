@@ -14,7 +14,7 @@ import api.core.utils.sync : MutexLock;
 import std.concurrency : spawn, send, receiveTimeout, Tid;
 import core.thread.osthread : Thread;
 
-import api.dm.gui.controls.video.player_demuxer : PlayerDemuxer;
+import api.dm.gui.controls.video.media_demuxer : MediaDemuxer, DemuxerContext;
 import api.dm.gui.controls.video.video_decoder : VideoDecoder;
 import api.dm.gui.controls.video.audio_decoder : AudioDecoder;
 
@@ -69,7 +69,7 @@ class VideoPlayer(
     RingBuffer!(UVFrame, VideoBufferSize) videoBuffer;
     RingBuffer!(ubyte, AudioBufferSize) audioBuffer;
 
-    PlayerDemuxer!(
+    MediaDemuxer!(
         VideoQueueSize,
         AudioQueueSize,
         VideoBufferSize,
@@ -85,13 +85,7 @@ class VideoPlayer(
     }
 
     Texture2d texture;
-
     SdlAudioStream audioStream;
-
-    shared Mutex contextMutex;
-    shared Mutex audioMutex;
-
-    ulong lastAudioUpdate;
 
     private
     {
@@ -102,9 +96,13 @@ class VideoPlayer(
 
     protected
     {
+        shared Mutex contextMutex;
         AVFormatContext* pFormatCtx;
+
         AVCodecParameters* vidpar, audpar;
+
         AVCodec* vidCodec, audCodec;
+
         bool foundVideo, foundAudio;
     }
 
@@ -132,6 +130,7 @@ class VideoPlayer(
         char* file = cast(char*) "/home/user/sdl-music/WING_IT.mp4";
 
         pFormatCtx = avformat_alloc_context();
+        contextMutex = new shared Mutex;
 
         if (avformat_open_input(&pFormatCtx, file, null, null) != 0)
         {
@@ -191,9 +190,14 @@ class VideoPlayer(
 
         logger.tracef("Media file, video %s, audio %s, target w:%s,h:%s", foundVideo, foundAudio, windowWidth, windowHeight);
 
-        demuxer = new typeof(demuxer)(logger, cast(
-                int) texture.width, cast(
-                int) texture.height, media.audioOut.spec, &videoPacketQueue, &audioPacketQueue, &videoBuffer, &audioBuffer, pFormatCtx, vidId, audId);
+        demuxer = new typeof(demuxer)(
+            logger,
+            DemuxerContext(contextMutex, foundVideo, foundAudio, windowWidth, windowHeight, pFormatCtx, vidId, audId),
+            &videoPacketQueue,
+            &audioPacketQueue,
+            &videoBuffer,
+            &audioBuffer,
+            );
 
         videoDecoder = new typeof(videoDecoder)(logger, vidCodec, vidpar, windowWidth, windowHeight, &videoPacketQueue, &videoBuffer, videoTimeBase, videoAvgRate);
         audioDecoder = new typeof(audioDecoder)(logger, audCodec, audpar, media.audioOut.spec, &audioPacketQueue, &audioBuffer);
@@ -202,8 +206,6 @@ class VideoPlayer(
         audioDecoder.start;
 
         demuxer.start;
-
-        lastAudioUpdate = SDL_GetTicks();
     }
 
     override void update(double dt)
@@ -288,10 +290,10 @@ class VideoPlayer(
         auto videoTimeSec = vframe.ptsSec;
 
         double diffTime = videoTimeSec - audioTime;
-        if (Math.abs(diffTime) > 0.5)
-        {
-            audioSamplesCount += cast(size_t)(diffTime * 48000);
-        }
+        // if (Math.abs(diffTime) > 0.5)
+        // {
+        //     audioSamplesCount += cast(size_t)(diffTime * 48000);
+        // }
 
         //video ahead
         if (diffTime > 0.01)
@@ -389,7 +391,8 @@ class VideoPlayer(
 
                     size_t bytesPerSample = float.sizeof * 2;
                     auto queueBytes = SDL_GetAudioStreamQueued(stream);
-                    double buffTime = cast(double) queueBytes / (48000 * bytesPerSample);
+                    //double buffTime = cast(double) queueBytes / (48000 * bytesPerSample);
+                    double buffTime = 0;
                     audioTimeSec = audioSamplesCount / 48000.0 - buffTime;
                 }
 

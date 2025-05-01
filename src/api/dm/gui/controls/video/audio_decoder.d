@@ -2,7 +2,7 @@ module api.dm.gui.controls.video.audio_decoder;
 
 import api.dm.com.audio.com_audio_device : ComAudioSpec, ComAudioFormat;
 import api.core.utils.structs.rings.ring_buffer : RingBuffer;
-import api.dm.gui.controls.video.base_player_worker : BasePlayerWorker;
+import api.dm.gui.controls.video.base_media_worker : BaseMediaWorker;
 import api.core.utils.structs.container_result : ContainerResult;
 
 import core.thread.osthread : Thread;
@@ -14,7 +14,7 @@ import cffmpeg;
 /**
  * Authors: initkfs
  */
-class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BasePlayerWorker
+class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaWorker
 {
     protected
     {
