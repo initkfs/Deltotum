@@ -19,7 +19,7 @@ import api.dm.gui.controls.video.video_decoder : VideoDecoder;
 import api.dm.gui.controls.video.audio_decoder : AudioDecoder;
 
 import api.dm.gui.controls.video.video_decoder : VideoDecoder, UVFrame, VideoDecoderContext;
-import api.dm.gui.controls.video.audio_decoder : AudioDecoder;
+import api.dm.gui.controls.video.audio_decoder : AudioDecoder, AudioDecoderContext;
 
 import cffmpeg;
 import csdl;
@@ -205,7 +205,11 @@ class VideoPlayer(
             &videoPacketQueue, 
             &videoBuffer);
         
-        audioDecoder = new typeof(audioDecoder)(logger, audCodec, audpar, media.audioOut.spec, &audioPacketQueue, &audioBuffer);
+        audioDecoder = new typeof(audioDecoder)(
+            logger, 
+            AudioDecoderContext(audCodec, audpar, media.audioOut.spec),
+            &audioPacketQueue, 
+            &audioBuffer);
 
         videoDecoder.start;
         audioDecoder.start;
