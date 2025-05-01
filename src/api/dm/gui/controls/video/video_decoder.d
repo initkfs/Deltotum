@@ -32,6 +32,8 @@ struct UVFrame
     {
         assert(frame);
 
+        this.frame = frame;
+
         width = frame.width;
         height = frame.height;
 
@@ -176,6 +178,11 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
                 null,
                 null
             );
+
+            scope (exit)
+            {
+                sws_freeContext(convertContext);
+            }
 
             logger.trace("Start videodecoder loop");
 

@@ -197,18 +197,18 @@ class VideoPlayer(
             &audioPacketQueue,
             &videoBuffer,
             &audioBuffer,
-            );
+        );
 
         videoDecoder = new typeof(videoDecoder)(
-            logger, 
+            logger,
             VideoDecoderContext(vidpar, vidCodec, windowWidth, windowHeight, videoTimeBase, videoAvgRate),
-            &videoPacketQueue, 
+            &videoPacketQueue,
             &videoBuffer);
-        
+
         audioDecoder = new typeof(audioDecoder)(
-            logger, 
+            logger,
             AudioDecoderContext(audCodec, audpar, media.audioOut.spec),
-            &audioPacketQueue, 
+            &audioPacketQueue,
             &audioBuffer);
 
         videoDecoder.start;
@@ -293,8 +293,6 @@ class VideoPlayer(
             return;
         }
 
-        assert(isPeek);
-
         auto audioTime = audioTimeSec;
         auto videoTimeSec = vframe.ptsSec;
 
@@ -312,34 +310,15 @@ class VideoPlayer(
         //video behind 
         else if (diffTime < -0.1)
         {
-            const isRemove = videoBuffer.remove;
-            assert(isRemove);
-            if (isRemove != ContainerResult.success)
-            {
-                import std;
-
-                writeln("Error removing videoframe from buffer: ", isRemove);
-            }
-            else
-            {
-                vframe.free;
-            }
+            videoBuffer.removeStrict;
+            vframe.free;
             return;
         }
 
         scope (exit)
         {
-            const isRemove = videoBuffer.remove;
-            if (isRemove != ContainerResult.success)
-            {
-                import std;
-
-                writeln("Error removing videoframe from buffer: ", isRemove);
-            }
-            else
-            {
-                vframe.free;
-            }
+            videoBuffer.removeStrict;
+            vframe.free;
         }
 
         void* ptr;
@@ -476,12 +455,14 @@ class VideoPlayer(
             logger.trace("Try stop demuxer");
         }
 
-        if(videoDecoder && videoDecoder.isRunning){
+        if (videoDecoder && videoDecoder.isRunning)
+        {
             videoDecoder.stop;
             logger.trace("Try stop video decoder");
         }
 
-        if(audioDecoder && audioDecoder.isRunning){
+        if (audioDecoder && audioDecoder.isRunning)
+        {
             audioDecoder.stop;
             logger.trace("Try stop audio decoder");
         }
