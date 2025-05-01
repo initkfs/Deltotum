@@ -85,63 +85,62 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
                 return;
             }
 
+            AVSampleFormat srcFormat = cast(AVSampleFormat) context.codecParams.format;
+            AVSampleFormat destFormat = av_get_packed_sample_fmt(srcFormat);
+
             srcSpec = ComAudioSpec.init;
-
-            auto audioSampeFormat = context.codecParams.format;
-            switch (audioSampeFormat) with (AVSampleFormat)
-            {
-                //TODO planar swr_convert, AV_SAMPLE_FMT_S32P, AV_SAMPLE_FMT_S16P
-                case AV_SAMPLE_FMT_S32, AV_SAMPLE_FMT_S32P:
-                    srcSpec.format = ComAudioFormat.s32;
-                    break;
-                case AV_SAMPLE_FMT_S16, AV_SAMPLE_FMT_S16P:
-                    srcSpec.format = ComAudioFormat.s16;
-                    break;
-                case AV_SAMPLE_FMT_FLT, AV_SAMPLE_FMT_FLTP:
-                    srcSpec.format = ComAudioFormat.f32;
-                    break;
-                default:
-                    break;
-            }
-
             //TODO check cast av_get_sample_fmt_name((enum AVSampleFormat)codecpar->format) == NULL
-
+            srcSpec.format = fromLibFormat(destFormat);
             srcSpec.freqHz = context.codecParams.sample_rate;
             srcSpec.channels = context.codecParams.ch_layout.nb_channels;
 
-            logger.tracef("Audio decoder for stream, codec: %s. src:%s, dst%s", audioParams(
-                    context.codecParams), srcSpec, context.audioOutSpec);
+            bool isPlanar = av_sample_fmt_is_planar(cast(AVSampleFormat) context.codecParams.format) == 1;
+
+            logger.tracef("Audio decoder for stream, codec: %s. src:%s(planar:%s), dst%s", audioParams(
+                    context.codecParams), srcSpec, isPlanar, context.audioOutSpec);
 
             SwrContext* audioConvertContext;
 
-            //if (av_sample_fmt_is_planar(cast(AVSampleFormat) codecParams.format))
-            //{
-            //sws_getContext
-            int isAllocSoundConvert = swr_alloc_set_opts2(
-                &audioConvertContext,
-                &context.codecParams.ch_layout,
-                AV_SAMPLE_FMT_FLT,
-                context.audioOutSpec.freqHz,
-                &context.codecParams.ch_layout,
-                cast(AVSampleFormat) context.codecParams.format,
-                context.codecParams.sample_rate,
-                0,
-                null
-            );
-
-            if (isAllocSoundConvert != 0)
+            if (srcFormat != destFormat)
             {
-                logger.error("Error allocating sound converter: ", errorText(isAllocSoundConvert));
-                return;
+                int isAllocSoundConvert = swr_alloc_set_opts2(
+                    &audioConvertContext,
+
+                    &context.codecParams.ch_layout,
+                    destFormat,
+                    context.codecParams.sample_rate,
+
+                    &context.codecParams.ch_layout,
+                    srcFormat,
+                    context.codecParams.sample_rate,
+
+                    0,
+                    null
+                );
+
+                if (isAllocSoundConvert < 0)
+                {
+                    logger.error("Error allocating audio context: ", errorText(
+                            isAllocSoundConvert));
+                    return;
+                }
+
+                assert(audioConvertContext);
+
+                const isInitSw = swr_init(audioConvertContext);
+                if (isInitSw < 0)
+                {
+                    logger.error("Error audio converter context: ", errorText(isInitSw));
+                    return;
+                }
             }
 
-            assert(audioConvertContext);
-
-            const isInitSw = swr_init(audioConvertContext);
-            if (isInitSw < 0)
+            scope (exit)
             {
-                logger.error("Error audio converter context: ", errorText(isInitSw));
-                return;
+                if (audioConvertContext)
+                {
+                    swr_free(&audioConvertContext);
+                }
             }
 
             logger.trace("Start audio decoder loop");
@@ -203,7 +202,8 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
                         //TODO drop packet?
                         packetQueue.removeStrict;
                         av_packet_free(&pkt);
-                        logger.error("Error sending packet in audio decoder: ", errorText(isSend));
+                        logger.error("Error sending packet in audio decoder: ", errorText(
+                                isSend));
                         continue;
                     }
 
@@ -247,28 +247,20 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
                     continue;
                 }
 
-                // if (frame.format == AV_SAMPLE_FMT_S16 &&
-                //     frame.ch_layout.nb_channels == 2 &&
-                //     frame.ample_rate == 44100)
-                // {
-                //     int dataSize = frame.nb_samples.frame.ch_layout.nb_channels * short.sizeof;
-                //     auto isErr = audioStream.putData(frame.data[0], dataSize);
-                //     return;
-                // }
-
                 ubyte* audioBuff;
 
                 int audioBuffSize = av_samples_alloc(&audioBuff,
                     null,
                     frame.ch_layout.nb_channels,
                     frame.nb_samples,
-                    AV_SAMPLE_FMT_FLT,
+                    destFormat,
                     0
                 );
 
                 if (audioBuffSize < 0)
                 {
-                    logger.error("Error allocating audio frame buffer: ", errorText(audioBuffSize));
+                    logger.error("Error allocating audio frame buffer: ", errorText(
+                            audioBuffSize));
                     continue;
                 }
 
@@ -280,23 +272,32 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
                     }
                 }
 
-                // //if (audioConvertContext)
-                // //{
-                // //targetFrame = av_frame_alloc();
-                // //swr_convert_frame(audioConvertContext, targetFrame, frame);
-                // //isDestroy = true;
-                auto isConvert = swr_convert(
-                    audioConvertContext,
-                    &audioBuff,
-                    audioBuffSize,
-                    frame.data.ptr,
-                    frame.nb_samples
-                );
-                // //}
-                if (isConvert < 0)
+                if (audioConvertContext)
                 {
-                    logger.error("Error converting audio buffer", errorText(isConvert));
-                    continue;
+                    auto isConvert = swr_convert(
+                        audioConvertContext,
+                        &audioBuff,
+                        frame.nb_samples,
+                        frame.data.ptr,
+                        frame.nb_samples
+                    );
+
+                    if (isConvert < 0)
+                    {
+                        logger.error("Error converting audio buffer", errorText(isConvert));
+                        continue;
+                    }
+                }
+                else
+                {
+                    size_t dataSize = frame.nb_samples * frame.ch_layout.nb_channels * av_get_bytes_per_sample(
+                        destFormat);
+                    if (dataSize != audioBuffSize)
+                    {
+                        logger.error("Audiobuffer size %s, but audio data size %s, is planar: %s", audioBuffSize, dataSize, isPlanar);
+                        continue;
+                    }
+                    audioBuff[0 .. audioBuffSize] = frame.data[0][0 .. dataSize];
                 }
 
                 size_t writeBytes = audioBuffSize;
@@ -326,6 +327,49 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
             logger.error("Error in audio decoder: ", th);
             throw th;
         }
+    }
+
+    ComAudioFormat fromLibFormat(AVSampleFormat libFormat)
+    {
+        ComAudioFormat format;
+        switch (libFormat) with (AVSampleFormat)
+        {
+            //TODO planar swr_convert, AV_SAMPLE_FMT_S32P, AV_SAMPLE_FMT_S16P
+            case AV_SAMPLE_FMT_S32, AV_SAMPLE_FMT_S32P:
+                format = ComAudioFormat.s32;
+                break;
+            case AV_SAMPLE_FMT_S16, AV_SAMPLE_FMT_S16P:
+                format = ComAudioFormat.s16;
+                break;
+            case AV_SAMPLE_FMT_FLT, AV_SAMPLE_FMT_FLTP:
+                format = ComAudioFormat.f32;
+                break;
+            default:
+                break;
+        }
+        return format;
+    }
+
+    AVSampleFormat toLibFormat(ComAudioFormat format)
+    {
+        //TODO default
+        AVSampleFormat libFormat = AV_SAMPLE_FMT_S16;
+        switch (format) with (ComAudioFormat)
+        {
+            //TODO planar swr_convert, AV_SAMPLE_FMT_S32P, AV_SAMPLE_FMT_S16P
+            case s16:
+                libFormat = AV_SAMPLE_FMT_S16;
+                break;
+            case s32:
+                libFormat = AV_SAMPLE_FMT_S32;
+                break;
+            case f32:
+                libFormat = AV_SAMPLE_FMT_FLT;
+                break;
+            default:
+                break;
+        }
+        return libFormat;
     }
 
     protected string audioParams(AVCodecParameters* codecpar)

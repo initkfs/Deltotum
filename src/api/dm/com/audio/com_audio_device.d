@@ -16,8 +16,8 @@ enum ComAudioFormat
 
 struct ComAudioSpec
 {
-    ComAudioFormat format = ComAudioFormat.f32;
-    int freqHz = 48000;
+    ComAudioFormat format = ComAudioFormat.s16;
+    int freqHz = 44100;
     size_t channels = 2;
 }
 
