@@ -121,27 +121,45 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
     {
         try
         {
-            AVCodecContext* ctx = avcodec_alloc_context3(context.codec);
+            logger.trace("Run video decoder");
 
-            if (avcodec_parameters_to_context(ctx, context.codecParams) < 0)
+            AVCodecContext* ctx = avcodec_alloc_context3(context.codec);
+            if (!ctx)
             {
-                logger.error("Error parameters to context");
+                logger.error("Video context is null");
                 return;
             }
 
-            if (avcodec_open2(ctx, context.codec, null) < 0)
+            scope (exit)
             {
-                logger.error("Error open video codec");
-                //goto clean_codec_context;
+                avcodec_free_context(&ctx);
+            }
+
+            const isToCtx = avcodec_parameters_to_context(ctx, context.codecParams);
+            if (isToCtx < 0)
+            {
+                logger.error("Error parameters to context in video decoder: ", errorText(isToCtx));
+                return;
+            }
+
+            const isOpenCodec = avcodec_open2(ctx, context.codec, null);
+            if (isOpenCodec < 0)
+            {
+                logger.error("Error open video codec: ", errorText(isOpenCodec));
                 return;
             }
 
             AVFrame* frame = av_frame_alloc();
+            if (!frame)
+            {
+                logger.error("Main frame is null");
+                return;
+            }
 
             AVFrame* outFrame = av_frame_alloc();
-            if (outFrame == null)
+            if (!outFrame)
             {
-                logger.error("Err frame");
+                logger.error("Output frame is null");
             }
 
             outFrame.width = context.windowWidth;
@@ -179,7 +197,6 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
 
             while (_running)
             {
-
                 // if (_end)
                 // {
                 //     avcodec_send_packet(ctx, null);
@@ -203,39 +220,69 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
                 }
 
                 AVPacket* pkt;
-                const isPacketRead = packetQueue.readSync(pkt);
-                if (isPacketRead != ContainerResult.success)
+                try
                 {
-                    import std;
+                    packetQueue.mutex.lock;
 
-                    debug writeln("Error read video packet from queue: ", isPacketRead);
+                    const isPacketRead = packetQueue.peek(pkt);
+                    if (isPacketRead != ContainerResult.success)
+                    {
+                        logger.error("Error peek video packet from queue: ", isPacketRead);
+                        continue;
+                    }
+
+                    const isSend = avcodec_send_packet(ctx, pkt);
+
+                    if (isSend == codeEOF)
+                    {
+                        if (pkt)
+                        {
+                            packetQueue.removeStrict;
+                            av_packet_free(&pkt);
+                        }
+                        logger.error("EOF in video decoder, break");
+                        break;
+                    }
+
+                    if (isSend < 0 && isSend != AVERROR(EAGAIN))
+                    {
+                        //TODO drop packet?
+                        logger.error("Error sending packet in video decoder: ", errorText(isSend));
+                        continue;
+                    }
+
+                    const isReceive = avcodec_receive_frame(ctx, frame);
+                    if (isReceive == AVERROR(EAGAIN))
+                    {
+                        //av_frame_unref(frame);
+                        continue;
+                    }
+
+                    if (isReceive < 0)
+                    {
+                        logger.error("Error receiving frame in video decoder: ", errorText(
+                                isReceive));
+                        continue;
+                    }
+
+                    packetQueue.removeStrict;
+                }
+                finally
+                {
+                    packetQueue.mutex.unlock;
                 }
 
-                //time_t start = time(NULL);
-                //AVERROR_EOF, AVERROR(EAGAIN) == -11
-                int isSend = avcodec_send_packet(ctx, pkt);
-                // if (isSend == FFERRTAG('E', 'O', 'F', ' '))
-                // {
-                //     break;
-                // }
-
-                if (isSend < 0 && isSend != AVERROR(EAGAIN))
+                scope (exit)
                 {
-                    //import std;
+                    if (frame)
+                    {
+                        av_frame_unref(frame);
+                    }
 
-                    //debug writeln("Error send packet to codec");
-                    continue;
-                }
-
-                int isReceive = avcodec_receive_frame(ctx, frame);
-                if (isReceive < 0) //isReceive == AVERROR(EAGAIN) || ret == AVERROR_EOF)
-                {
-                    import std;
-
-                    char[256] buff = 0;
-                    av_strerror(isReceive, buff.ptr, buff.length);
-                    debug writeln("Error receive frame from codec: ", buff.fromStringz);
-                    continue;
+                    if (pkt)
+                    {
+                        av_packet_free(&pkt);
+                    }
                 }
 
                 sws_scale(convertContext, frame.data.ptr, frame.linesize.ptr, 0, frame.height,
