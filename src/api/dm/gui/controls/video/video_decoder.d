@@ -190,6 +190,7 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
             {
                 if (packetQueue.isEmpty)
                 {
+                    waitInLoop;
                     //import std;
 
                     //debug writeln("Packet video queue is empty. Continue");
@@ -198,6 +199,7 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
 
                 if (buffer.isFull)
                 {
+                    waitInLoop;
                     //import std;
 
                     //debug writeln("Video buffer is full. Continue");

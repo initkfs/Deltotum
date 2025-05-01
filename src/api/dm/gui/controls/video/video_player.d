@@ -42,8 +42,8 @@ static extern (C) void streamCallback(void* userdata, SDL_AudioStream* stream, i
 auto mediaPlayer(
     size_t VideoQueueSize = 40960,
     size_t AudioQueueSize = 40960,
-    size_t VideoBufferSize = 10,
-    size_t AudioBufferSize = 102400)()
+    size_t VideoBufferSize = 20,
+    size_t AudioBufferSize = 409600)()
 {
 
     return new VideoPlayer!(

@@ -158,6 +158,7 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
             {
                 if (packetQueue.isEmpty)
                 {
+                    waitInLoop;
                     //import std;
 
                     //debug writeln("Packet audio queue is empty. Continue");
@@ -166,6 +167,7 @@ class AudioDecoder(size_t PacketBufferSize, size_t AudioBufferSize) : BaseMediaW
 
                 if (buffer.isFull)
                 {
+                    waitInLoop;
                     //import std;
 
                     //debug writeln("Audio buffer is full. Continue");

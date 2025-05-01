@@ -73,6 +73,13 @@ abstract class BaseMediaWorker : Thread
         return copy;
     }
 
+    void waitInLoop(long timeMs = 2)
+    {
+        import core.time : dur;
+
+        sleep(timeMs.dur!"msecs");
+    }
+
     void setEnd()
     {
         _end = true;
