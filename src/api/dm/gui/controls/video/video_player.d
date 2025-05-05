@@ -294,19 +294,23 @@ class VideoPlayer(
         auto audioTime = audioTimeSec;
         auto videoTimeSec = vframe.ptsSec;
 
+        const syncThreshold = 0.01;
+        const maxSyncThreshold = syncThreshold * 2;
+
         double diffTime = videoTimeSec - audioTime;
-        // if (Math.abs(diffTime) > 0.5)
-        // {
-        //     audioSamplesCount += cast(size_t)(diffTime * 48000);
-        // }
+        if (Math.abs(diffTime) > maxSyncThreshold)
+        {
+            logger.warningf("Video and audio out of sync by more than %s: %s", maxSyncThreshold, diffTime);
+            // audioSamplesCount += cast(size_t)(diffTime * 48000);
+        }
 
         //video ahead
-        if (diffTime > 0.01)
+        if (diffTime > syncThreshold)
         {
             return;
         }
         //video behind 
-        else if (diffTime < -0.1)
+        else if (diffTime < -syncThreshold)
         {
             videoBuffer.removeStrict;
             vframe.free;
