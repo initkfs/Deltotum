@@ -42,8 +42,8 @@ static extern (C) void streamCallback(void* userdata, SDL_AudioStream* stream, i
 auto mediaPlayer(
     size_t VideoQueueSize = 40960,
     size_t AudioQueueSize = 40960,
-    size_t VideoBufferSize = 20,
-    size_t AudioBufferSize = 409600)()
+    size_t VideoBufferSize = 200,
+    size_t AudioBufferSize = 819200)()
 {
 
     return new VideoPlayer!(
@@ -80,14 +80,14 @@ class VideoPlayer(
 
     this()
     {
-        initSize(300, 200);
+        initSize(600, 400);
         isDrawBounds = true;
     }
 
     Texture2d texture;
     SdlAudioStream audioStream;
 
-    private
+    protected
     {
         __gshared bool isRun;
     }
@@ -113,6 +113,21 @@ class VideoPlayer(
         texture = new Texture2d(width, height);
         addCreate(texture);
         texture.createMutYV;
+
+        texture.lock;
+        scope(exit){
+            texture.unlock;
+        }
+
+        import api.dm.kit.graphics.colors.rgba: RGBA;
+
+        foreach (y; 0 .. (cast(uint) texture.height))
+        {
+            foreach (x; 0 .. (cast(uint)(texture.width)))
+            {
+                texture.changeColor(x, y, RGBA.red);
+            }
+        }
 
         int windowWidth = cast(int) texture.width;
         int windowHeight = cast(int) texture.height;
@@ -294,14 +309,14 @@ class VideoPlayer(
         auto audioTime = audioTimeSec;
         auto videoTimeSec = vframe.ptsSec;
 
-        const syncThreshold = 0.01;
-        const maxSyncThreshold = syncThreshold * 2;
+        const syncThreshold = 0.1;
+        const maxSyncThreshold = syncThreshold * 10;
 
         double diffTime = videoTimeSec - audioTime;
         if (Math.abs(diffTime) > maxSyncThreshold)
         {
-            logger.warningf("Video and audio out of sync by more than %s: %s", maxSyncThreshold, diffTime);
-            // audioSamplesCount += cast(size_t)(diffTime * 48000);
+            //logger.warningf("Video and audio out of sync by more than %s: %s", maxSyncThreshold, diffTime);
+            //audioSamplesCount += cast(size_t)(diffTime * 48000);
         }
 
         //video ahead
@@ -310,7 +325,7 @@ class VideoPlayer(
             return;
         }
         //video behind 
-        else if (diffTime < -syncThreshold)
+        else if (diffTime < -0.2)
         {
             videoBuffer.removeStrict;
             vframe.free;
@@ -381,9 +396,9 @@ class VideoPlayer(
 
                     size_t bytesPerSample = float.sizeof * 2;
                     auto queueBytes = SDL_GetAudioStreamQueued(stream);
-                    //double buffTime = cast(double) queueBytes / (48000 * bytesPerSample);
-                    double buffTime = 0;
-                    audioTimeSec = audioSamplesCount / 48000.0 - buffTime;
+                    double buffTime = cast(double) queueBytes / (44000 * bytesPerSample);
+                    // double buffTime = 0;
+                    audioTimeSec = audioSamplesCount / 44000.0 - buffTime;
                 }
 
                 updateClock;

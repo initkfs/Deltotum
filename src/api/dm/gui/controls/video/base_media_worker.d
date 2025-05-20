@@ -10,8 +10,19 @@ import cffmpeg;
  */
 abstract class BaseMediaWorker : Thread
 {
+    enum WorkerState
+    {
+        none,
+        play,
+        pause,
+        stop,
+        end,
+    }
+
     protected
     {
+        WorkerState state;
+
         Logger logger;
 
         bool _running = true;
@@ -26,6 +37,11 @@ abstract class BaseMediaWorker : Thread
     }
 
     abstract void run();
+
+    void setStatePlay()
+    {
+        state = WorkerState.play;
+    }
 
     bool stop()
     {

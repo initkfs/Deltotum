@@ -98,6 +98,11 @@ class MediaDemuxer(size_t VideoQueueSize, size_t AudioQueueSize, size_t VideoBuf
 
             while (true)
             {
+                if (state != WorkerState.play)
+                {
+                    continue;
+                }
+
                 const packetRet = av_read_frame(context.formatCtx, packet);
 
                 if (packetRet == codeEOF)

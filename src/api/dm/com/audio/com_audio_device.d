@@ -19,6 +19,21 @@ struct ComAudioSpec
     ComAudioFormat format = ComAudioFormat.s16;
     int freqHz = 44100;
     size_t channels = 2;
+
+    size_t bytesPerOnSample() const @nogc pure nothrow
+    {
+        final switch (format) with (ComAudioFormat)
+        {
+            case s16:
+                return 2;
+            case s32, f32:
+                return 4;
+            case none:
+                return 0;
+        }
+    }
+
+    size_t bytesPerSample() const @nogc pure nothrow => bytesPerOnSample * channels;
 }
 
 /**

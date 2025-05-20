@@ -114,6 +114,17 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
         this.buffer = audioBuffer;
     }
 
+    AVFilter* colorbalance;
+    AVFilterContext* colorbalanceCtx;
+
+    void setColor(double r, double g, double b){
+        assert(colorbalanceCtx, "Color balance is null");
+        const isSet = av_opt_set_double(colorbalanceCtx, "rm", r, AV_OPT_SEARCH_CHILDREN);
+        assert(isSet >= 0, errorText(isSet));
+        av_opt_set_double(colorbalanceCtx, "gm", g, AV_OPT_SEARCH_CHILDREN);
+        av_opt_set_double(colorbalanceCtx, "bm", b, AV_OPT_SEARCH_CHILDREN);
+    }
+
     override void run()
     {
         try
@@ -190,10 +201,10 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
             AVFilterGraph* graph = avfilter_graph_alloc();
             //avfilter_graph_set_auto_convert(graph, AVFILTER_AUTO_CONVERT_NONE);
 
-            AVFilterContext* src_ctx, sink_ctx, eq_ctx;
+            AVFilterContext* srcFilter, sinkFilter;
 
-            AVFilter* buffer_src = avfilter_get_by_name("buffer");
-            if (!buffer_src)
+            AVFilter* bufferSrc = avfilter_get_by_name("buffer");
+            if (!bufferSrc)
             {
                 logger.error("Error getting src filter buffer");
                 return;
@@ -202,41 +213,40 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
             import std.format : format;
             import std.string : toStringz, fromStringz;
 
-            auto args = format("video_size=%dx%d:pix_fmt=%d:time_base=%d/%d:pixel_aspect=%d/%d", context.windowWidth, context.windowHeight, AV_PIX_FMT_YUV420P, context
+            auto args = format("video_size=%dx%d:pix_fmt=%d:time_base=%d/%d:pixel_aspect=%d/%d", context.windowWidth, context.windowHeight, destFormat, context
                     .videoTimeBase.num, context.videoTimeBase.den, ctx.sample_aspect_ratio.num, ctx
                     .sample_aspect_ratio.den).toStringz;
 
-            const isNewGraph = avfilter_graph_create_filter(&src_ctx, buffer_src, "in", args, null, graph);
+            const isNewGraph = avfilter_graph_create_filter(&srcFilter, bufferSrc, "in", args, null, graph);
             if (isNewGraph < 0)
             {
                 logger.error("Error creating new filter graph: ", errorText(isNewGraph));
                 return;
             }
 
-            AVFilter* buffer_sink = avfilter_get_by_name("buffersink");
-            if (!buffer_sink)
+            AVFilter* bufferSink = avfilter_get_by_name("buffersink");
+            if (!bufferSink)
             {
                 logger.error("Not found buffer sink",);
                 return;
             }
 
-            AVPixelFormat[2] pix_fmts = [AV_PIX_FMT_YUV420P, AV_PIX_FMT_NONE];
-
-            sink_ctx = avfilter_graph_alloc_filter(graph, buffer_sink, "out");
-            if (!sink_ctx)
+            sinkFilter = avfilter_graph_alloc_filter(graph, bufferSink, "out");
+            if (!sinkFilter)
             {
                 logger.error("Error create sink filter: ");
                 return;
             }
 
-            const isOutFormatSet = av_opt_set(sink_ctx, "pixel_formats", "yuv420p",
+            const isOutFormatSet = av_opt_set(sinkFilter, "pixel_formats", av_get_pix_fmt_name(
+                            destFormat).fromStringz.ptr,
                 AV_OPT_SEARCH_CHILDREN);
             if (isOutFormatSet < 0)
             {
                 logger.error("Error setting out sink format: ", errorText(isOutFormatSet));
             }
 
-            const isInitOutDict = avfilter_init_dict(sink_ctx, null);
+            const isInitOutDict = avfilter_init_dict(sinkFilter, null);
             if (isInitOutDict < 0)
             {
                 logger.error("Error initialization buffer sink: ", errorText(isInitOutDict));
@@ -244,57 +254,57 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
             }
 
             AVFilterInOut* outputs = avfilter_inout_alloc();
+            assert(outputs);
             scope (exit)
             {
                 avfilter_inout_free(&outputs);
             }
+
             outputs.name = av_strdup("in");
-            outputs.filter_ctx = src_ctx;
+            outputs.filter_ctx = srcFilter;
             outputs.pad_idx = 0;
             outputs.next = null;
 
             AVFilterInOut* inputs = avfilter_inout_alloc();
+            assert(inputs);
             scope (exit)
             {
                 avfilter_inout_free(&inputs);
             }
+
             inputs.name = av_strdup("out");
-            inputs.filter_ctx = sink_ctx;
+            inputs.filter_ctx = sinkFilter;
             inputs.pad_idx = 0;
             inputs.next = null;
 
-            auto filterDescr = "colorbalance=0.5:0.1:0.6,format".toStringz;
+            auto filterDescr = "colorbalance=0:0:0,format".toStringz;
 
-            const isParse = avfilter_graph_parse_ptr(graph, filterDescr, &inputs, &outputs, null);
-            if (isParse < 0)
-            {
-                logger.error("Error parsing filter graph: ", isParse);
-                return;
-            }
-
-            //char* args2 = cast(char*) "pix_fmt=yuv420p";
-            // avfilter_init_dict(sink_ctx, cast(AVDictionary**)&args2);
-
-            //AVFilterLink* link = sink_ctx.inputs[0];
-            //link.format = AV_PIX_FMT_YUV420P;
-            //link.incfg.formats = avfilter_make_format_list(cast(int[])pix_fmts);
-
-            // AVFilter* eq = avfilter_get_by_name("colorbalance");
-            // if (!eq)
+            // const isParse = avfilter_graph_parse_ptr(graph, null, &inputs, &outputs, null);
+            // if (isParse < 0)
             // {
-            //     logger.error("Not found eq filter");
+            //     logger.error("Error parsing filter graph: ", isParse);
             //     return;
             // }
 
-            // const isCreateEq = avfilter_graph_create_filter(&eq_ctx, eq, "colorbalance", null, null, graph);
-            // if (isCreateEq < 0)
-            // {
-            //     logger.error("Error creating eq filter: ", errorText(isCreateEq));
-            //     return;
-            // }
+            colorbalance = avfilter_get_by_name("colorbalance");
+            assert(colorbalance);
 
-            // avfilter_link(src_ctx, 0, eq_ctx, 0);
-            // avfilter_link(eq_ctx, 0, sink_ctx, 0);
+            auto res = avfilter_graph_create_filter(&colorbalanceCtx, colorbalance, "colorbalance", null, null, graph);
+            assert(res >= 0);
+
+            av_opt_show2(colorbalanceCtx, null, AV_OPT_FLAG_FILTERING_PARAM, 0);
+
+            AVFilter* formatF = avfilter_get_by_name("format");
+            assert(formatF);
+
+            AVFilterContext* formatContext;
+            res = avfilter_graph_create_filter(&formatContext, formatF, "format", null, null, graph);
+            assert(res >= 0);
+
+            res = avfilter_link(srcFilter, 0, colorbalanceCtx, 0);
+            assert(res >= 0, errorText(res));
+            avfilter_link(colorbalanceCtx, 0, formatContext, 0);
+            avfilter_link(formatContext, 0, sinkFilter, 0);
 
             //av_opt_set_double(eq_ctx, "rs", 0.5, 0);
 
@@ -305,8 +315,8 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
                 return;
             }
 
-            assert(src_ctx);
-            assert(sink_ctx);
+            assert(srcFilter);
+            assert(sinkFilter);
 
             scope (exit)
             {
@@ -427,7 +437,7 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
                 sws_scale(convertContext, frame.data.ptr, frame.linesize.ptr, 0, frame.height,
                     outFrame.data.ptr, outFrame.linesize.ptr);
 
-                const isSrcKeepRef = av_buffersrc_add_frame_flags(src_ctx, outFrame, AV_BUFFERSRC_FLAG_KEEP_REF);
+                const isSrcKeepRef = av_buffersrc_add_frame_flags(srcFilter, outFrame, AV_BUFFERSRC_FLAG_KEEP_REF);
                 if (isSrcKeepRef < 0)
                 {
                     logger.error("Error setting keeping src buffer frame ref");
@@ -435,7 +445,7 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
                 }
                 AVFrame* filterFrame = av_frame_alloc();
                 //while, ret == AVERROR(EAGAIN) || ret == AVERROR_EOF break
-                const isSinkFilterRet = av_buffersink_get_frame(sink_ctx, filterFrame);
+                const isSinkFilterRet = av_buffersink_get_frame(sinkFilter, filterFrame);
                 if (isSinkFilterRet < 0)
                 {
                     logger.error("Error sink filter: ", isSinkFilterRet);
@@ -493,7 +503,7 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
                 }
                 else
                 {
-                    ptsSec = frame.pts * av_q2d(context.videoTimeBase);
+                    ptsSec = frame.best_effort_timestamp * av_q2d(context.videoTimeBase);
                 }
 
                 uvFrame.ptsSec = ptsSec;
@@ -510,7 +520,7 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
             // {
             //     logger.trace("Read filter buffer after EOF");
 
-            //     const isSetFrameFlags = av_buffersrc_add_frame_flags(src_ctx, null, 0);
+            //     const isSetFrameFlags = av_buffersrc_add_frame_flags(srcFilter, null, 0);
             //     if (isSetFrameFlags < 0)
             //     {
             //         logger.error("Error add frame flags");
@@ -520,7 +530,7 @@ class VideoDecoder(size_t PacketBufferSize, size_t VideoBufferSize) : BaseMediaW
             //     {
             //         av_frame_unref(filteredFrame);
 
-            //         const isGetFrame = av_buffersink_get_frame(src_ctx, filteredFrame);
+            //         const isGetFrame = av_buffersink_get_frame(srcFilter, filteredFrame);
             //         if (isGetFrame == AVERROR(EAGAIN) || isGetFrame == codeEOF)
             //             break;
 

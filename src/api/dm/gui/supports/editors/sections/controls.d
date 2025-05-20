@@ -406,37 +406,79 @@ class Controls : Control
         choiceRoot1.addCreate(pagination);
     }
 
+    import api.dm.gui.controls.forms.regulates.regulate_text_field: RegulateTextField;
+
+    RegulateTextField rField;
+    RegulateTextField gField;
+    RegulateTextField bField;
+
     void createPickers(Container root)
     {
-        auto pickersRoot = new VBox;
-        pickersRoot.isAlignX = true;
-        root.addCreate(pickersRoot);
+        // auto pickersRoot = new VBox;
+        // pickersRoot.isAlignX = true;
+        // root.addCreate(pickersRoot);
 
-        import api.dm.gui.controls.selects.calendars.calendar : Calendar;
+        // import api.dm.gui.controls.selects.calendars.calendar : Calendar;
 
-        auto cal1 = new Calendar;
-        pickersRoot.addCreate(cal1);
+        // auto cal1 = new Calendar;
+        // pickersRoot.addCreate(cal1);
 
         auto root2 = new HBox;
         root2.isAlignY = true;
-        pickersRoot.addCreate(root2);
+        root.addCreate(root2);
 
-        import api.dm.gui.controls.selects.time_pickers.time_picker: TimePicker;
+        // import api.dm.gui.controls.selects.time_pickers.time_picker: TimePicker;
 
-        import api.dm.gui.controls.selects.time_pickers.time_picker: TimePicker;
+        // import api.dm.gui.controls.selects.time_pickers.time_picker: TimePicker;
 
-        auto timePick1 = new TimePicker;
-        root2.addCreate(timePick1);
-        timePick1.setCurrentTime;
+        // auto timePick1 = new TimePicker;
+        // root2.addCreate(timePick1);
+        // timePick1.setCurrentTime;
         
-        import api.dm.gui.controls.selects.color_pickers.color_picker: ColorPicker;
+        // import api.dm.gui.controls.selects.color_pickers.color_picker: ColorPicker;
 
-        auto colorPick2 = new ColorPicker;
-        root2.addCreate(colorPick2);
+        // auto colorPick2 = new ColorPicker;
+        // root2.addCreate(colorPick2);
+
+        auto playerBox = new VBox;
+        playerBox.isAlignX = true;
+        root2.addCreate(playerBox);
 
         import api.dm.gui.controls.video.video_player: mediaPlayer, VideoPlayer;
         auto player = mediaPlayer;
-        root.addCreate(player);
+        playerBox.addCreate(player);
+
+        player.onPointerPress ~= (ref e){
+            player.demuxer.setStatePlay;
+        };
+
+        import api.dm.gui.controls.forms.regulates.regulate_text_panel: RegulateTextPanel;
+        import api.dm.gui.controls.forms.regulates.regulate_text_field: RegulateTextField;
+
+        void delegate() updatePlayer = (){
+            auto r = rField.value;
+            auto g = gField.value;
+            auto b = bField.value;
+            player.videoDecoder.setColor(r, g, b);
+        };
+
+        auto tp = new RegulateTextPanel;
+        playerBox.addCreate(tp);
+
+        rField = new RegulateTextField("R", 0, 1.0, (dt){
+            updatePlayer();
+        });
+
+        gField = new RegulateTextField("G", 0, 1.0, (dt){
+            updatePlayer();
+        });
+
+        bField = new RegulateTextField("B", 0, 1.0, (dt){
+            updatePlayer();
+        });
+
+        tp.addCreate([rField, gField, bField]);
+        tp.alignFields;
     }
 
     void createMeters(Container root)
