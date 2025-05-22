@@ -478,20 +478,19 @@ class Controls : Control
         // tp.addCreate([rField, gField, bField]);
         // tp.alignFields;
 
-        import api.dm.kit.media.aimedia.fusion_brain_api;
+        //import api.dm.kit.media.aimedia.fusion_brain_api;
+        // auto brainApi = new FusionBrainApi(logging, config, context);
+        // brainApi.onImageBinaryData = (data) {
 
-        auto brainApi = new FusionBrainApi(logging, config, context);
-        brainApi.onImageBinaryData = (data) {
+        //     import api.dm.kit.sprites2d.images.image : Image;
 
-            import api.dm.kit.sprites2d.images.image : Image;
+        //     auto fusionImage = new Image;
+        //     build(fusionImage);
+        //     fusionImage.loadRaw(data);
 
-            auto fusionImage = new Image;
-            build(fusionImage);
-            fusionImage.loadRaw(data);
-
-            root.addCreate(fusionImage);
-        };
-        brainApi.download("Нарисуй киберпанк котика на космическом корабле");
+        //     root.addCreate(fusionImage);
+        // };
+        //brainApi.download("Нарисуй киберпанк котика на космическом корабле");
         //import std;
         //writeln(brainApi.requestPipeline);
     }
@@ -649,6 +648,14 @@ class Controls : Control
         rProgress.onPointerPress ~= (ref e) { runProgress(); };
         linProgressH.onPointerPress ~= (ref e) { runProgress(); };
         linProgressV.onPointerPress ~= (ref e) { runProgress(); };
+
+        auto loaderContainer = new VBox;
+        root.addCreate(loaderContainer);
+
+        import api.dm.gui.controls.indicators.loaders.radial_loader: RadialLoader;
+
+        auto loader1 = new RadialLoader;
+        loaderContainer.addCreate(loader1);
 
         auto rscroll1 = new RScroll;
         rscroll1.onNewScale = (scale) {

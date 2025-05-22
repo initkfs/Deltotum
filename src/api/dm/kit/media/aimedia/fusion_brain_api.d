@@ -26,7 +26,9 @@ enum FusionStatus
     done = "DONE",
     fail = "FAIL"
 }
-
+/**
+ * Authors: initkfs
+ */
 class FusionBrainApi : ApplicationUnit
 {
     size_t maxPromptLength = 1000;

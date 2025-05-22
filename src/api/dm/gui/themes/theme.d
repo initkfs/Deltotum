@@ -136,6 +136,9 @@ class Theme
     double meterHandWidth = 5;
 
     @ConfigKey
+    double loaderSize = 50;
+
+    @ConfigKey
     double dividerSize = 2;
 
     this(IconPack iconPack)
