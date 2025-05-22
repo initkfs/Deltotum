@@ -52,6 +52,11 @@ class FusionBrainApi : ApplicationUnit
 
     void delegate(ubyte[]) onImageBinaryData;
 
+    //v % 64 == 0
+    enum defaultImageSize = 256;
+    enum defaultPrompt = "Cat image";
+    enum defaultStyle = FusionStyle.detailphoto;
+
     this(Logging logging, Config config, Context context)
     {
         super(logging, config, context);
@@ -111,14 +116,20 @@ class FusionBrainApi : ApplicationUnit
             client.dnsTimeout = clientDnsTimeoutMsecs.dur!"msecs";
         }
 
+        setHeaders(client, url);
+
+        return client;
+    }
+
+    void setHeaders(HTTP client, string url = null)
+    {
         foreach (header, value; createClientHeaders(url))
         {
             client.addRequestHeader(header, value);
         }
-        return client;
     }
 
-    JSONValue buildGenQuery(string prompt, FusionStyle style = FusionStyle.detailphoto, size_t w = 1024, size_t h = 1024, string negPrompt = null)
+    JSONValue buildGenQuery(string prompt = defaultPrompt, FusionStyle style = defaultStyle, size_t w = defaultImageSize, size_t h = defaultImageSize, string negPrompt = null)
     {
         import std.conv : text, to;
         import std.json : JSONValue, toJSON;
@@ -159,10 +170,21 @@ class FusionBrainApi : ApplicationUnit
         return root;
     }
 
-    struct ClientBuffer
+    struct ClientContext
     {
+        HTTP client;
+
         Appender!(char[]) buffer;
         size_t maxClientBufferSize = size_t.max;
+
+        this(HTTP client)
+        {
+            this.client = client;
+            client.onReceive = (ubyte[] data) { return fill(data); };
+        }
+
+        CurlCode perform(ThrowOnError throwOnError = Yes.throwOnError) => client.perform(
+            throwOnError);
 
         size_t fill(ubyte[] data)
         {
@@ -183,30 +205,19 @@ class FusionBrainApi : ApplicationUnit
         inout(char[]) data() inout => buffer.data;
     }
 
-    string requestPipeline(HTTP* clientPtr = null, ClientBuffer* bufferPtr = null)
-    {
+    ClientContext* newClientContext(string url = null) => new ClientContext(createClient(url));
 
-        HTTP client = clientPtr ? *clientPtr : createClient;
+    string requestPipeline(ClientContext* clientCtxPtr = null)
+    {
+        ClientContext* ctx = clientCtxPtr ? clientCtxPtr : newClientContext;
 
         assert(apiUrl[$ - 1] != '/');
+
         const clientUrl = apiUrl ~ "/key/api/v1/pipelines";
-        client.url = clientUrl;
+        ctx.client.url = clientUrl;
+        ctx.client.method = HTTP.Method.get;
 
-        client.method = HTTP.Method.get;
-        import core.thread.osthread : Thread;
-
-        logger.trace("Create client for pipeline url: ", clientUrl);
-
-        ClientBuffer* buffer;
-        if (bufferPtr)
-        {
-            buffer = bufferPtr;
-        }
-        else
-        {
-            buffer = new ClientBuffer;
-            client.onReceive = (ubyte[] data) { return buffer.fill(data); };
-        }
+        logger.trace("Build client for pipeline url: ", clientUrl);
 
         string pipelineId;
 
@@ -214,17 +225,13 @@ class FusionBrainApi : ApplicationUnit
 
         try
         {
-            CurlCode response = client.perform(throwOnError : No.throwOnError);
-            logger.tracef("Received pipeline response, code %s, data len: %s", response, buffer
+            CurlCode code = ctx.perform;
+
+            logger.tracef("Received pipeline response, code %s, data len: %s", code, ctx
+                    .buffer
                     .data.length);
-            if (response != CurlError.ok)
-            {
-                import std.format : format;
 
-                throw new Exception(format("Invalid code received from request: %s", response));
-            }
-
-            auto jsonResultArray = buffer.data.parseJSON;
+            auto jsonResultArray = ctx.buffer.data.parseJSON;
             if (jsonResultArray.type != JSONType.array)
             {
                 import std.format : format;
@@ -295,34 +302,22 @@ class FusionBrainApi : ApplicationUnit
         catch (Exception e)
         {
             logger.errorf("%s Pipeline exception, buffer: %s. %s", pipelineErrMsg, escapeunw(
-                    buffer.data), e);
+                    ctx.buffer.data), e);
         }
 
         return pipelineId;
     }
 
-    string requestGenerate(string pipelineId, string prompt, FusionStyle style = FusionStyle.detailphoto, size_t w = 1024, size_t h = 1024, string negPrompt = null, HTTP* clientPtr = null, ClientBuffer* bufferPtr = null)
+    string requestGenerate(string pipelineId, string prompt = defaultPrompt, FusionStyle style = defaultStyle, size_t w = defaultImageSize, size_t h = defaultImageSize, string negPrompt = null, ClientContext* clientCtxPtr = null)
     {
+        ClientContext* ctx = clientCtxPtr ? clientCtxPtr : newClientContext;
+
         assert(apiUrl[$ - 1] != '/');
         const clientUrl = apiUrl ~ "/key/api/v1/pipeline/run";
-
-        HTTP client = clientPtr ? *clientPtr : createClient;
-        client.method = HTTP.Method.post;
-
-        client.url = clientUrl;
+        ctx.client.url = clientUrl;
+        ctx.client.method = HTTP.Method.post;
 
         logger.trace("Create client for pipeline run: ", clientUrl);
-
-        ClientBuffer* buffer;
-        if (bufferPtr)
-        {
-            buffer = bufferPtr;
-        }
-        else
-        {
-            buffer = new ClientBuffer;
-            client.onReceive = (ubyte[] data) { return buffer.fill(data); };
-        }
 
         immutable errMsg = "Pipeline running error.";
 
@@ -331,7 +326,7 @@ class FusionBrainApi : ApplicationUnit
         //multipart/form-data
         //"---------------------------" ~ to!string(rnd);
         string boundary = "___mfboundary___";
-        client.addRequestHeader("Content-Type", "multipart/form-data; boundary=" ~ boundary);
+        ctx.client.addRequestHeader("Content-Type", "multipart/form-data; boundary=" ~ boundary);
 
         string formData = "--" ~ boundary ~ "\r\n" ~
             "Content-Disposition: form-data; name=\"pipeline_id\"\r\n\r\n" ~
@@ -342,24 +337,18 @@ class FusionBrainApi : ApplicationUnit
             promptJson.toString ~ "\r\n" ~
             "--" ~ boundary ~ "--\r\n";
 
-        client.postData = formData;
+        ctx.client.postData = formData;
 
         string pipelineUUID;
 
         try
         {
-            CurlCode response = client.perform(throwOnError : No.throwOnError);
-            logger.tracef("Received running response, code %s, data len: %s", response, buffer
+            CurlCode code = ctx.perform;
+            logger.tracef("Received running response, code %s, data len: %s", code, ctx
+                    .buffer
                     .data.length);
 
-            if (response != CurlError.ok)
-            {
-                import std.format : format;
-
-                throw new Exception(format("%s Invalid code received from request: %s", errMsg, response));
-            }
-
-            auto jsonResult = buffer.data.parseJSON;
+            auto jsonResult = ctx.buffer.data.parseJSON;
 
             if (const mustBeUuid = "uuid" in jsonResult)
             {
@@ -377,51 +366,33 @@ class FusionBrainApi : ApplicationUnit
         catch (Exception e)
         {
             logger.errorf("Pipeline running exception %s, response buffer: %s", e, escapeunw(
-                    buffer.data));
+                    ctx.buffer.data));
         }
 
         return pipelineUUID;
     }
 
-    bool requestStatusIsContinue(string pipelineId, HTTP* clientPtr = null, ClientBuffer* bufferPtr = null)
+    bool requestStatusIsContinue(string pipelineId, ClientContext* clientCtxPtr = null)
     {
+        ClientContext* ctx = clientCtxPtr ? clientCtxPtr : newClientContext;
+
         assert(apiUrl[$ - 1] != '/');
-
         const clientUrl = apiUrl ~ "/key/api/v1/pipeline/status/" ~ pipelineId;
-
-        HTTP client = clientPtr ? *clientPtr : createClient;
-        client.method = HTTP.Method.get;
-        client.url = clientUrl;
+        ctx.client.url = clientUrl;
+        ctx.client.method = HTTP.Method.get;
 
         logger.trace("Create client for pipeline check: ", clientUrl);
-
-        ClientBuffer* buffer;
-        if (bufferPtr)
-        {
-            buffer = bufferPtr;
-        }
-        else
-        {
-            buffer = new ClientBuffer;
-            client.onReceive = (ubyte[] data) { return buffer.fill(data); };
-        }
 
         immutable errMsg = "Pipeline checking error.";
 
         try
         {
-            CurlCode response = client.perform(throwOnError : No.throwOnError);
-            logger.tracef("Received pipeline status, code %s, data len: %s", response, buffer
+            CurlCode code = ctx.perform;
+            logger.tracef("Received pipeline status, code %s, data len: %s", code, ctx
+                    .buffer
                     .data.length);
 
-            if (response != CurlError.ok)
-            {
-                import std.format : format;
-
-                throw new Exception(format("Invalid code received from request: %s", response));
-            }
-
-            auto jsonResult = buffer.data.parseJSON;
+            auto jsonResult = ctx.buffer.data.parseJSON;
 
             if (const mustBeStatus = "status" in jsonResult)
             {
@@ -458,8 +429,10 @@ class FusionBrainApi : ApplicationUnit
 
                             if (base64.length % 4 != 0)
                             {
-                                import std.conv: text;
-                                throw new Exception(text("Invalid base64 length from response: ", base64.length));
+                                import std.conv : text;
+
+                                throw new Exception(text("Invalid base64 length from response: ", base64
+                                        .length));
                             }
 
                             import std.base64 : Base64;
@@ -501,7 +474,7 @@ class FusionBrainApi : ApplicationUnit
         return true;
     }
 
-    bool requestAvailability(string pipelineId, HTTP* clientPtr = null, ClientBuffer* bufferPtr = null)
+    bool requestAvailability(string pipelineId, ClientContext* clientCtxPtr = null)
     {
         assert(apiUrl[$ - 1] != '/');
 
@@ -510,86 +483,105 @@ class FusionBrainApi : ApplicationUnit
         string pipeUrl = format("/key/api/v1/pipeline/%s/availability", pipelineId);
         const clientUrl = apiUrl ~ pipeUrl;
 
-        HTTP client = clientPtr ? *clientPtr : createClient;
-        client.method = HTTP.Method.get;
+        ClientContext* ctx = clientCtxPtr ? clientCtxPtr : newClientContext;
+        ctx.client.url = clientUrl;
+        ctx.client.method = HTTP.Method.get;
 
         logger.trace("Create client for pipeline availability: ", clientUrl);
-
-        ClientBuffer* buffer;
-        if (bufferPtr)
-        {
-            buffer = bufferPtr;
-        }
-        else
-        {
-            buffer = new ClientBuffer;
-            client.onReceive = (ubyte[] data) { return buffer.fill(data); };
-        }
 
         immutable errMsg = "Availability checking error.";
 
         try
         {
-            CurlCode response = client.perform(throwOnError : No.throwOnError);
-            logger.tracef("Received availability status, code %s, data len: %s", response, buffer
+            CurlCode code = ctx.perform;
+            logger.tracef("Received availability status, code %s, data len: %s", code, ctx
+                    .buffer
                     .data.length);
 
-            if (response != CurlError.ok)
-            {
-                import std.format : format;
-
-                throw new Exception(format("%s Invalid code received from request: %s", errMsg, response));
-            }
-
             //"pipeline_status": "DISABLED_BY_QUEUE"
+            auto jsonResult = ctx.buffer.data.parseJSON;
 
-            auto jsonResult = buffer.data.parseJSON;
+            if (const mustBeStatus = "status" in jsonResult)
+            {
+                auto status = mustBeStatus.str;
+                if (status == "ACTIVE")
+                {
+                    return true;
+                }
+
+                logger.trace("Found status in availability response, but no active: ", escapeunw(status));
+            }
+            else
+            {
+                logger.error("Not found status in availability response: ", escapeunw(
+                        jsonResult.toString));
+                return false;
+            }
         }
         catch (Exception e)
         {
             logger.errorf(errMsg ~ "Exception %s, response buffer: %s", e, escapeunw(
-                    buffer.data));
+                    ctx.buffer.data));
         }
 
         return false;
     }
 
-    void download(string prompt = "Cat image", FusionStyle style = FusionStyle.detailphoto, size_t w = 1024, size_t h = 1024, string negPrompt = null)
+    void download(string prompt = defaultPrompt, FusionStyle style = defaultStyle, size_t w = defaultImageSize, size_t h = defaultImageSize, string negPrompt = null)
     {
-        HTTP client = createClient;
-        ClientBuffer buffer;
-        client.onReceive = (ubyte[] data) { return buffer.fill(data); };
+        ClientContext* ctx = newClientContext;
 
-        string pipelineId = requestPipeline(&client, &buffer);
+        string pipelineId = requestPipeline(ctx);
         if (pipelineId.length == 0)
         {
-            logger.error("Not found pipeline");
+            logger.error("Not found FusionAPI pipeline");
             return;
         }
 
-        buffer.clear;
+        ctx.clear;
 
-        string newId = requestGenerate(pipelineId, prompt, style, w, h, negPrompt, &client, &buffer);
+        if (!requestAvailability(pipelineId, ctx))
+        {
+            logger.trace("Server API not available");
+            return;
+        }
+
+        ctx.clear;
+
+        string newId = requestGenerate(pipelineId, prompt, style, w, h, negPrompt, ctx);
         if (newId.length == 0)
         {
-            logger.error("new UUID is empty");
+            logger.error("New pipeline UUID is empty");
             return;
         }
 
-        logger.trace("Receive new id: ", newId);
+        ctx.clear;
+        ctx.client.clearRequestHeaders;
+        setHeaders(ctx.client);
+
+        logger.trace("Receive new pipeline UUID: ", newId);
 
         import core.thread.osthread;
         import core.time : dur;
 
+        size_t maxChecks = 10;
+        size_t currentCheck;
         while (true)
         {
-            buffer.clear;
-            if (!requestStatusIsContinue(newId, &client, &buffer))
+            ctx.clear;
+            if (!requestStatusIsContinue(newId, ctx))
             {
                 logger.trace("Break api loop");
                 break;
             }
             Thread.sleep(4.dur!"seconds");
+
+            currentCheck++;
+            if (currentCheck >= maxChecks)
+            {
+                logger.trace("Break checking loop on timeout");
+                break;
+            }
         }
     }
 

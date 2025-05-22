@@ -491,7 +491,7 @@ class Controls : Control
 
             root.addCreate(fusionImage);
         };
-        brainApi.download;
+        brainApi.download("Нарисуй киберпанк котика на космическом корабле");
         //import std;
         //writeln(brainApi.requestPipeline);
     }
