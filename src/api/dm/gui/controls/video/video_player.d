@@ -80,7 +80,7 @@ class VideoPlayer(
 
     this()
     {
-        initSize(600, 400);
+        initSize(400, 400);
         isDrawBounds = true;
     }
 

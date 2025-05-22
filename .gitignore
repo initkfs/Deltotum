@@ -1,6 +1,7 @@
 /.vscode
 /.dub
 /data
+/data/configs/private.config
 /dist
 /libs
 /dub.selections.json
