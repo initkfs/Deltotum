@@ -3,6 +3,7 @@ module api.dm.kit.media.multimedia;
 import api.core.components.units.simple_unit : SimpleUnit;
 import api.dm.com.audio.com_audio_device : ComAudioDevice, ComAudioSpec;
 import api.dm.com.audio.com_audio_chunk : ComAudioChunk;
+import api.dm.com.audio.com_audio_clip: ComAudioClip;
 import api.dm.kit.media.audio.chunks.audio_chunk : AudioChunk;
 import api.dm.kit.media.audio.mixers.audio_mixer : AudioMixer;
 
@@ -50,5 +51,11 @@ class MultiMedia : SimpleUnit
         auto chunk = new AudioChunk!T(comChunk, audioOut.spec);
         chunk.data = buff;
         return chunk;
+    }
+
+    ComAudioClip newClip(string path){
+        assert(mixer);
+        auto clip = mixer.newClip(path);
+        return clip;
     }
 }

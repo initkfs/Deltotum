@@ -1388,23 +1388,23 @@ class Sprite2d : EventKitTarget
 
     alias move = pos;
 
-    bool moveToCenter(bool isUseParent = false)
+    bool toCenter(bool isUseParent = false)
     {
         bool isMove;
-        isMove |= moveToCenterX(isUseParent);
-        isMove |= moveToCenterY(isUseParent);
+        isMove |= toCenterX(isUseParent);
+        isMove |= toCenterY(isUseParent);
         return isMove;
     }
 
-    bool moveToCenterX(bool isUseParent = false)
+    bool toCenterX(bool isUseParent = false)
     {
         Rect2d bounds = (isUseParent && parent) ? parent.boundsRect : graphics.renderBounds;
-        if (boundsRect.width == 0)
+        if (bounds.width == 0)
         {
             return false;
         }
 
-        auto middleX = boundsRect.middleX;
+        auto middleX = bounds.middleX;
 
         if (_width > 0)
         {
@@ -1415,15 +1415,15 @@ class Sprite2d : EventKitTarget
         return x = middleX;
     }
 
-    bool moveToCenterY(bool isUseParent = false)
+    bool toCenterY(bool isUseParent = false)
     {
         Rect2d bounds = (isUseParent && parent) ? parent.boundsRect : graphics.renderBounds;
-        if (boundsRect.height == 0)
+        if (bounds.height == 0)
         {
             return false;
         }
 
-        auto middleY = boundsRect.middleY;
+        auto middleY = bounds.middleY;
 
         if (_height > 0)
         {
@@ -1866,8 +1866,8 @@ class Sprite2d : EventKitTarget
             return isResized;
         }
 
-        isResized |= width = newWidth;
-        isResized |= height = newHeight;
+        isResized |= (width = newWidth);
+        isResized |= (height = newHeight);
         //TODO newWidth == oldWidth, etc
         return isResized;
     }

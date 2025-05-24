@@ -127,6 +127,13 @@ class SdlMixerMusic : SdlObjectWrapper!(Mix_Music), ComAudioClip
         return ComResult.success;
     }
 
+    ComResult setVolume(double value) nothrow
+    {
+        auto sdlVolume = cast(typeof(MIX_MAX_VOLUME))(value * MIX_MAX_VOLUME);
+        Mix_VolumeMusic(sdlVolume);
+        return ComResult.success;
+    }
+
     ComResult getVolume(out double value) nothrow
     {
         assert(ptr);
@@ -134,7 +141,10 @@ class SdlMixerMusic : SdlObjectWrapper!(Mix_Music), ComAudioClip
         return ComResult.success;
     }
 
-    ComResult play(int loops = -1) nothrow
+    ComResult play() nothrow => play(0);
+
+    //-1 repeat
+    ComResult play(int loops) nothrow
     {
         assert(ptr);
         if (!Mix_PlayMusic(ptr, loops))
@@ -142,6 +152,39 @@ class SdlMixerMusic : SdlObjectWrapper!(Mix_Music), ComAudioClip
             return getErrorRes;
         }
         return ComResult.success;
+    }
+
+    ComResult stop() nothrow
+    {
+        Mix_HaltMusic();
+        return ComResult.success;
+    }
+
+    ComResult pause() nothrow
+    {
+        Mix_PauseMusic();
+        return ComResult.success;
+    }
+
+    ComResult resume() nothrow
+    {
+        Mix_ResumeMusic();
+        return ComResult.success;
+    }
+
+    ComResult setPos(double posMs) nothrow
+    {
+        double posSec = posMs / 1000.0;
+        if (!Mix_SetMusicPosition(posSec))
+        {
+            return getErrorRes("Error setting music position");
+        }
+        return ComResult.success;
+    }
+
+    bool isPlaying() nothrow
+    {
+        return Mix_PlayingMusic();
     }
 
     override protected bool disposePtr() nothrow

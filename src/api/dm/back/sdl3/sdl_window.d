@@ -39,9 +39,17 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
     Nullable!(SDL_Renderer*) renderer;
 
-    this()
+    protected
+    {
+        int initWidth;
+        int initHeight;
+    }
+
+    this(int width, int height)
     {
         super();
+        this.initWidth = width;
+        this.initHeight = height;
     }
 
     this(SDL_Window* ptr)
@@ -57,7 +65,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         return ComResult.success;
     }
 
-    ComResult create() nothrow => create(0, 0, 0);
+    ComResult create() nothrow => create(initWidth, initHeight, 0);
 
     ComResult create(int width, int height, ulong flags) nothrow
     {

@@ -188,6 +188,17 @@ class Scene2d : EventKitTarget
                                     __traits(getMember, thisInstance, fieldName) = array;
                                 }
                             }
+
+                            static if (is(attr == UDA.Texture2dF))
+                            {
+                                enum udaAttr = Texture2dF.init;
+                                __traits(getMember, thisInstance, fieldName) = f.textures.texture(udaAttr.width, udaAttr
+                                        .height);
+                                static if (udaAttr.isAdd)
+                                {
+                                    add(__traits(getMember, thisInstance, fieldName));
+                                }
+                            }
                         }
                     }
                 }

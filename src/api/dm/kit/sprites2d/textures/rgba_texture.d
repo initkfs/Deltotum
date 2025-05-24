@@ -1,7 +1,7 @@
 module api.dm.kit.sprites2d.textures.rgba_texture;
 
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
-import api.dm.kit.graphics.colors.rgba: RGBA;
+import api.dm.kit.graphics.colors.rgba : RGBA;
 
 import api.math.geom2.rect2 : Rect2d;
 
@@ -19,39 +19,12 @@ abstract class RgbaTexture : Texture2d
         this.id = "rgba_texture";
     }
 
-    bool isClear = true;
-
     abstract void createTextureContent();
 
     override void create()
     {
         super.create;
-
-        if (!texture)
-        {
-            texture = graphics.comTextureProvider.getNew();
-        }
-
-        //autodisposing should work in ComTexture
-        if (const createErr = texture.createTargetRGBA32(cast(int) width, cast(int) height))
-        {
-            throw new Exception(createErr.toString);
-        }
-
-        if (const blendErr = texture.setBlendModeNone)
-        {
-            throw new Exception(blendErr.toString);
-        }
-
-        captureRenderer(() {
-
-            if (isClear && _width > 0 && _height > 0)
-            {
-                graphics.clear(RGBA.transparent);
-            }
-
-            createTextureContent;
-        });
+        recreate;
     }
 
     void captureRenderer(scope void delegate() onRenderer)
@@ -70,5 +43,36 @@ abstract class RgbaTexture : Texture2d
         {
             throw new Exception(err.toString);
         }
+    }
+
+    override bool recreate()
+    {
+        if (!texture)
+        {
+            texture = graphics.comTextureProvider.getNew();
+        }
+
+        //autodisposing should work in ComTexture
+        if (const createErr = texture.createTargetRGBA32(cast(int) width, cast(int) height))
+        {
+            throw new Exception(createErr.toString);
+        }
+
+        if (const blendErr = texture.setBlendModeNone)
+        {
+            throw new Exception(blendErr.toString);
+        }
+
+        captureRenderer(() {
+
+            if (_width > 0 && _height > 0)
+            {
+                graphics.clear(RGBA.transparent);
+            }
+
+            createTextureContent;
+        });
+
+        return true;
     }
 }

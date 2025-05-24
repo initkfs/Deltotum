@@ -785,7 +785,7 @@ class SdlApp : GuiApp
     {
         import std.conv : to;
 
-        auto sdlWindow = new SdlWindow;
+        auto sdlWindow = new SdlWindow(width, height);
         sdlWindow.mode = mode;
 
         auto windowBuilder = newWindowServices;
@@ -831,8 +831,6 @@ class SdlApp : GuiApp
                 .title);
 
         window.setNormalWindow;
-
-        window.resize(width, height);
 
         const int newX = (x == Window.defaultPosX) ? SDL_WINDOWPOS_UNDEFINED : x;
         const int newY = (y == Window.defaultPosY) ? SDL_WINDOWPOS_UNDEFINED : y;

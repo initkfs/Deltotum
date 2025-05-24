@@ -54,3 +54,10 @@ struct AnimImagesF
     size_t count = 1;
     bool isAdd;
 }
+
+struct Texture2dF 
+{
+    int width = 1;
+    int height = 1;
+    bool isAdd;
+}

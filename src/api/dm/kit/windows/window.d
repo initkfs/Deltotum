@@ -621,6 +621,8 @@ class Window : GraphicsComponent
         return Rect2d(winPos.x, winPos.y, winSize.x, winSize.y);
     }
 
+    alias boundsRect = boundsLocal;
+
     Rect2d boundsLocal()
     {
         const Vec2d winSize = size;
