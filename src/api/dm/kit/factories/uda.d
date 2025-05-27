@@ -4,34 +4,13 @@ module api.dm.kit.factories.uda;
  * Authors: initkfs
  */
 
-struct StubF
+struct inject
 {
-    double width = 50;
-    double height = 50;
-    bool isAdd;
-}
-
-struct StubsF
-{
-    size_t count;
-    double width = 50;
-    double height = 50;
-    bool isAdd;
-}
-
-struct ImageF
-{
+    double width = 0;
+    double height = 0;
     string path;
-    bool isAdd;
-    double width = -1;
-    double height = -1;
-}
-
-struct ImagesF
-{
-    string path;
-    bool isAdd;
     size_t count = 1;
+    bool isAdd;
 }
 
 struct AnimImageF
@@ -52,12 +31,5 @@ struct AnimImagesF
     int frameHeight;
     size_t frameDelay = 100;
     size_t count = 1;
-    bool isAdd;
-}
-
-struct Texture2dF 
-{
-    int width = 1;
-    int height = 1;
     bool isAdd;
 }

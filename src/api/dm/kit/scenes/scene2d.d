@@ -81,7 +81,7 @@ class Scene2d : EventKitTarget
 
     void processUDA(alias TargetType)()
     {
-        import std.traits : hasUDA, getUDAs, hasStaticMember;
+        import std.traits : hasUDA, getUDAs, hasStaticMember, isArray, FieldNameTuple;
         import api.core.utils.types : hasOverloads;
         import UDA = api.dm.kit.factories.uda;
 
@@ -90,115 +90,120 @@ class Scene2d : EventKitTarget
         auto thisInstance = cast(TargetType) this;
         assert(thisInstance);
 
-        static foreach (const fieldName; __traits(allMembers, TargetType))
+        enum isInjectable(alias T) = is(T == UDA.inject) || is(typeof(T) == UDA.inject);
+        enum isTypeOrArray(alias T, Target) = is(typeof(T) == Target) || is(typeof(T) == Target[]);
+
+        void injectField(alias Target, Type, string fieldName, alias udaAttr)(
+            scope Type delegate() provider)
+        {
+            static if (isArray!Target)
+            {
+                auto array = new Type[](udaAttr.count);
+                foreach (i; 0 .. udaAttr.count)
+                {
+                    array[i] = provider();
+                    if (udaAttr.isAdd)
+                    {
+                        addCreate(array[i]);
+                    }
+                }
+                __traits(getMember, thisInstance, fieldName) = array;
+            }
+            else
+            {
+                __traits(getMember, thisInstance, fieldName) = provider();
+            }
+        }
+
+        static foreach (const fieldName; FieldNameTuple!TargetType)
         {
             static if (!hasOverloads!(TargetType, fieldName) && !hasStaticMember!(TargetType, fieldName))
             {
                 {
                     alias member = __traits(getMember, thisInstance, fieldName);
+
                     static foreach (attr; __traits(getAttributes, member))
                     {
                         {
-                            static if (is(attr == UDA.StubF))
+                            static if (isInjectable!(attr))
                             {
-                                __traits(getMember, thisInstance, fieldName) = f.placeholder;
-                            }
-
-                            static if (is(typeof(attr) == UDA.StubF))
-                            {
-                                alias placeholderUDA = getUDAs!(member, UDA.StubF)[0];
-                                auto isAdd = placeholderUDA.isAdd;
-                                __traits(getMember, thisInstance, fieldName) = f.placeholder(placeholderUDA.width, placeholderUDA
-                                        .height);
-                                if (isAdd)
+                                static if (is(attr == UDA.inject))
                                 {
-                                    add(__traits(getMember, thisInstance, fieldName));
+                                    enum udaAttr = inject.init;
+                                }
+                                else static if (is(typeof(attr) == UDA.inject))
+                                {
+                                    alias udaAttr = getUDAs!(member, inject)[0];
+                                }
+
+                                import api.dm.kit.sprites2d.images : Image;
+
+                                static if (isTypeOrArray!(member, Image))
+                                {
+                                    const w = udaAttr.width > 0 ? udaAttr.width : -1;
+                                    const h = udaAttr.height > 0 ? udaAttr.height : -1;
+
+                                    injectField!(typeof(member), Image, fieldName, udaAttr)(() {
+                                        return f.images.image(udaAttr.path, w, h);
+                                    });
+                                }
+
+                                import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+
+                                static if (isTypeOrArray!(member, Texture2d))
+                                {
+                                    const w = udaAttr.width > 0 ? udaAttr.width : 1;
+                                    const h = udaAttr.height > 0 ? udaAttr.height : 1;
+
+                                    injectField!(typeof(member), Texture2d, fieldName, udaAttr)(() {
+                                        return f.textures.texture(w, h);
+                                    });
+                                }
+
+                                static if (udaAttr.isAdd && !isArray!(typeof(member)))
+                                {
+                                    addCreate(__traits(getMember, thisInstance, fieldName));
                                 }
                             }
 
-                            static if (is(typeof(attr) == UDA.StubsF))
-                            {
-                                alias udaAttr = getUDAs!(member, UDA.StubsF)[0];
-                                auto isAdd = udaAttr.isAdd;
-                                size_t count = udaAttr.count;
-                                if (count > 0)
-                                {
-                                    typeof(member) array = new typeof(member)(count);
-                                    foreach (i; 0 .. count)
-                                    {
-                                        auto newItem = f.placeholder(udaAttr.width, udaAttr.height);
-                                        array[i] = newItem;
-                                        if (isAdd)
-                                        {
-                                            add(newItem);
-                                        }
-                                    }
+                            // static if (is(typeof(attr) == UDA.AnimImageF))
+                            // {
+                            //     alias udaAttr = getUDAs!(member, AnimImageF)[0];
+                            //     auto isAdd = udaAttr.isAdd;
+                            //     __traits(getMember, thisInstance, fieldName) = f.images.animated(udaAttr.path,
+                            //         udaAttr.frameCols,
+                            //         udaAttr.frameRows,
+                            //         udaAttr.frameWidth,
+                            //         udaAttr.frameHeight,
+                            //         udaAttr.frameDelay);
+                            //     if (isAdd)
+                            //     {
+                            //         add(__traits(getMember, thisInstance, fieldName));
+                            //     }
+                            // }
 
-                                    __traits(getMember, thisInstance, fieldName) = array;
-                                }
-                            }
+                            // static if (is(typeof(attr) == UDA.AnimImagesF))
+                            // {
+                            //     alias udaAttr = getUDAs!(member, AnimImagesF)[0];
+                            //     size_t count = udaAttr.count;
+                            //     if (count > 0)
+                            //     {
+                            //         auto isAdd = udaAttr.isAdd;
+                            //         typeof(member) array = new typeof(member)(count);
+                            //         foreach (i; 0 .. count)
+                            //         {
+                            //             auto newItem = f.images.animated(udaAttr.path, udaAttr.frameWidth, udaAttr
+                            //                     .frameHeight, udaAttr.frameDelay);
+                            //             array[i] = newItem;
+                            //             if (isAdd)
+                            //             {
+                            //                 add(newItem);
+                            //             }
+                            //         }
 
-                            static if (is(typeof(attr) == UDA.ImageF))
-                            {
-                                alias udaAttr = getUDAs!(member, ImageF)[0];
-                                __traits(getMember, thisInstance, fieldName) = f.images.image(udaAttr.path, udaAttr
-                                        .width, udaAttr
-                                        .height);
-                                static if (udaAttr.isAdd)
-                                {
-                                    add(__traits(getMember, thisInstance, fieldName));
-                                }
-                            }
-
-                            static if (is(typeof(attr) == UDA.AnimImageF))
-                            {
-                                alias udaAttr = getUDAs!(member, AnimImageF)[0];
-                                auto isAdd = udaAttr.isAdd;
-                                __traits(getMember, thisInstance, fieldName) = f.images.animated(udaAttr.path,
-                                    udaAttr.frameCols,
-                                    udaAttr.frameRows,
-                                    udaAttr.frameWidth,
-                                    udaAttr.frameHeight,
-                                    udaAttr.frameDelay);
-                                if (isAdd)
-                                {
-                                    add(__traits(getMember, thisInstance, fieldName));
-                                }
-                            }
-
-                            static if (is(typeof(attr) == UDA.AnimImagesF))
-                            {
-                                alias udaAttr = getUDAs!(member, AnimImagesF)[0];
-                                size_t count = udaAttr.count;
-                                if (count > 0)
-                                {
-                                    auto isAdd = udaAttr.isAdd;
-                                    typeof(member) array = new typeof(member)(count);
-                                    foreach (i; 0 .. count)
-                                    {
-                                        auto newItem = f.images.animated(udaAttr.path, udaAttr.frameWidth, udaAttr
-                                                .frameHeight, udaAttr.frameDelay);
-                                        array[i] = newItem;
-                                        if (isAdd)
-                                        {
-                                            add(newItem);
-                                        }
-                                    }
-
-                                    __traits(getMember, thisInstance, fieldName) = array;
-                                }
-                            }
-
-                            static if (is(attr == UDA.Texture2dF))
-                            {
-                                enum udaAttr = Texture2dF.init;
-                                __traits(getMember, thisInstance, fieldName) = f.textures.texture(udaAttr.width, udaAttr
-                                        .height);
-                                static if (udaAttr.isAdd)
-                                {
-                                    add(__traits(getMember, thisInstance, fieldName));
-                                }
-                            }
+                            //         __traits(getMember, thisInstance, fieldName) = array;
+                            //     }
+                            // }
                         }
                     }
                 }
