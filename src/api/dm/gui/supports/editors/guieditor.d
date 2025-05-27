@@ -1,7 +1,7 @@
 module api.dm.gui.supports.editors.guieditor;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.gui.scenes.gui_scene: GuiScene;
+import api.dm.gui.scenes.gui_scene : GuiScene;
 
 /**
  * Authors: initkfs
@@ -43,11 +43,14 @@ class GuiEditor : GuiScene
         graphicsTab.content = new Grahpics;
         root.addCreate(graphicsTab);
 
-        import api.dm.gui.supports.editors.sections.audio: Audio;
+        version (DmAddon)
+        {
+            import api.dm.gui.supports.editors.sections.audio : Audio;
 
-        auto audioTab = new Tab("Audio");
-        audioTab.content = new Audio;
-        root.addCreate(audioTab);
+            auto audioTab = new Tab("Audio");
+            audioTab.content = new Audio;
+            root.addCreate(audioTab);
+        }
 
         import api.dm.gui.supports.editors.sections.colors : Colors;
 

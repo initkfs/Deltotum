@@ -1,14 +1,18 @@
 module api.dm.gui.supports.editors.sections.audio;
 
+// dfmt off
+version(DmAddon):
+// dfmt on
+
 import api.dm.gui.controls.control : Control;
 import api.dm.com.audio.com_audio_mixer : ComAudioMixer;
 import api.dm.com.audio.com_audio_clip : ComAudioClip;
 import api.dm.com.audio.com_audio_chunk : ComAudioChunk;
-import api.dm.kit.media.dsp.signals.analog_signal : AnalogSignal;
+import api.dm.addon.media.dsp.signals.analog_signal : AnalogSignal;
 import api.math.geom2.rect2 : Rect2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.controls.switches.buttons.button : Button;
-import api.dm.kit.media.formats.wav.wav_writer : WavWriter;
+import api.dm.addon.media.formats.wav.wav_writer : WavWriter;
 
 import std.stdio;
 
@@ -17,13 +21,13 @@ import api.dm.com.audio.com_audio_mixer;
 
 import core.sync.mutex;
 import core.sync.semaphore;
-import api.dm.kit.media.dsp.analyzers.analog_signal_analyzer : AnalogSignalAnalyzer;
+import api.dm.addon.media.dsp.analyzers.analog_signal_analyzer : AnalogSignalAnalyzer;
 import std.math.traits : isPowerOf2;
 
-import api.dm.kit.media.dsp.dsp_processor : DspProcessor;
-import api.dm.kit.media.dsp.equalizers.band_equalizer : BandEqualizer;
+import api.dm.addon.media.dsp.dsp_processor : DspProcessor;
+import api.dm.addon.media.dsp.equalizers.band_equalizer : BandEqualizer;
 import api.dm.gui.controls.meters.levels.rect_level : RectLevel;
-import api.dm.kit.media.dsp.synthesis.signal_synthesis;
+import api.dm.addon.media.dsp.synthesis.signal_synthesis;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.containers.hbox : HBox;
@@ -36,15 +40,15 @@ import api.dm.gui.controls.meters.scrolls.hscroll : HScroll;
 import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
 import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
 
-import api.dm.gui.controls.audio.piano : Piano;
-import api.dm.gui.controls.audio.pattern_synthesizer;
+import api.dm.addon.gui.audio.piano : Piano;
+import api.dm.addon.gui.audio.pattern_synthesizer;
 
-import api.dm.kit.media.audio.synthesizers.fm_synthesizer : FMSynthesizer;
+import api.dm.addon.media.synthesizers.fm_synthesizer : FMSynthesizer;
 
 import Math = api.math;
 
 import std;
-import api.dm.kit.media.audio.music_notes;
+import api.dm.addon.media.music_notes;
 
 /**
  * Authors: initkfs

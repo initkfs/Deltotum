@@ -442,7 +442,7 @@ class Controls : Control
         playerBox.isAlignX = true;
         root2.addCreate(playerBox);
 
-        // import api.dm.gui.controls.video.video_player: mediaPlayer, VideoPlayer;
+        // import api.dm.addon.gui.video.video_player: mediaPlayer, VideoPlayer;
         // auto player = mediaPlayer;
         // playerBox.addCreate(player);
 

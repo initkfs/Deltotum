@@ -2,7 +2,7 @@ module api.dm.kit.media.audio.chunks.audio_chunk;
 
 import api.dm.com.audio.com_audio_chunk : ComAudioChunk;
 import api.dm.com.audio.com_audio_device : ComAudioSpec;
-import api.dm.kit.media.dsp.buffers.finite_signal_buffer : FiniteSignalBuffer;
+import api.dm.addon.media.dsp.buffers.finite_signal_buffer : FiniteSignalBuffer;
 
 /**
  * Authors: initkfs
