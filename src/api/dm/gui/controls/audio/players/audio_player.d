@@ -36,14 +36,14 @@ class AudioPlayer : Control
         PauseTween2d checkPosTween;
     }
 
-    double volume = 1;
+    double volume = 0;
 
     protected
     {
         AudioPlayerState _state;
     }
 
-    this(string path, double volume = 0.5)
+    this(string path, double volume = 1.0)
     {
         import api.dm.kit.sprites2d.layouts.vlayout : VLayout;
 
@@ -61,6 +61,8 @@ class AudioPlayer : Control
 
         panel = new AudioPlayerPanel;
         addCreate(panel);
+
+        panel.setVolume = volume;
 
         panel.onPlayPause = () {
 
@@ -155,8 +157,6 @@ class AudioPlayer : Control
                     logger.error(err);
                 }
 
-                panel.setVolume = volume;
-
                 double timeMs;
                 if (const err = audio.getDurationTimeMs(timeMs))
                 {
@@ -239,7 +239,7 @@ class AudioPlayer : Control
 
     override void stop()
     {
-        if (isStopped)
+        if (isStopped && _state != AudioPlayerState.pause)
         {
             return;
         }

@@ -139,7 +139,7 @@ class RectLevel : Control
         foreach (ri; 0 .. rows)
         {
             auto levelContainer = levelContainers[ri];
-            auto currentY = levelContainer.y + levelContainer.height;
+            auto currentY = Math.round(levelContainer.y + levelContainer.height);
 
             assert(levelNumValueProvider);
             assert(levelMaxValueProvider);
@@ -157,7 +157,10 @@ class RectLevel : Control
                 {
                     normValue = 1;
                 }
-                auto levelHeight = normValue * levelShapeHeight;
+                auto levelHeight = Math.round(normValue * levelShapeHeight);
+                if(levelHeight > levelShapeHeight){
+                    levelHeight = levelShapeHeight;
+                }
 
                 graphics.changeColor(levelColors[levelIndex]);
                 scope (exit)
@@ -165,7 +168,9 @@ class RectLevel : Control
                     graphics.restoreColor;
                 }
 
-                graphics.fillRect(currentX, currentY - levelHeight, levelShapeWidth, levelHeight);
+                auto levelY = Math.round(currentY - levelHeight);
+
+                graphics.fillRect(currentX, levelY, levelShapeWidth, levelHeight);
                 currentX += levelShapeWidth;
             }
         }

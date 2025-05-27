@@ -31,6 +31,7 @@ class AudioPlayerPanel : Control
 
         layout = new VLayout;
         layout.isAutoResize = true;
+        //layout.isAlignX = true;
     }
 
     override void create()
@@ -82,7 +83,7 @@ class AudioPlayerPanel : Control
         fullTimeLabel = new Text("00:00");
         timeBox.addCreate(fullTimeLabel);
 
-        volumeField = new RegulateTextField("V", 0.0, 1.0, (v) {
+        volumeField = new RegulateTextField("Volume", 0.0, 1.0, (v) {
             if (onVolume01)
             {
                 onVolume01(v);

@@ -121,7 +121,7 @@ class Audio : Control
         dspProcessor = new typeof(dspProcessor)(sampleBufferMutex, new AnalogSignalAnalyzer, sampleFreq, sampleWindowSize, logging);
         dspProcessor.dspBuffer.lock;
 
-        equalizer = new BandEqualizer(sampleWindowSize, (fftIndex) {
+        equalizer = new BandEqualizer(sampleWindowSize, sampleFreq, (fftIndex) {
             return dspProcessor.fftBuffer[fftIndex];
         }, 100, 8);
 
