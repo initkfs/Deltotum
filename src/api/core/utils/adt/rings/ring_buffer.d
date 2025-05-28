@@ -1,6 +1,6 @@
-module api.core.utils.structs.rings.ring_buffer;
+module api.core.utils.adt.rings.ring_buffer;
 
-import api.core.utils.structs.container_result : ContainerResult;
+import api.core.utils.adt.container_result : ContainerResult;
 
 import core.sync.mutex : Mutex;
 
@@ -28,7 +28,7 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
         size_t _writeIndex; //add
         size_t _size;
 
-        bool _lock;
+        bool _block;
     }
 
     static if (isWithMutex)
@@ -76,7 +76,7 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
     {
         bool isEmpty() => _size == 0;
         bool isFull() => _size >= BufferSize;
-        bool isLocked() => _lock;
+        bool isBlocked() => _block;
 
         size_t writeIndex() => _writeIndex;
         size_t readIndex() => _readIndex;
@@ -92,14 +92,14 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
 
     @nogc nothrow @safe
     {
-        void lock()
+        void block()
         {
-            _lock = true;
+            _block = true;
         }
 
         void unlock()
         {
-            _lock = false;
+            _block = false;
         }
     }
 
@@ -123,11 +123,11 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
                 }
             }
 
-            bool isLockedSync()
+            bool isBlockedSync()
             {
                 synchronized (mutex)
                 {
-                    return isLocked;
+                    return isBlocked;
                 }
             }
         }
@@ -140,11 +140,11 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
             }
         }
 
-        ContainerResult writeIfNoLockedSync(BufferType[] items) @nogc @safe
+        ContainerResult writeIfNoBlockSync(BufferType[] items) @nogc @safe
         {
             synchronized (mutex)
             {
-                if (_lock)
+                if (_block)
                 {
                     return ContainerResult.success;
                 }
@@ -153,11 +153,11 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
             }
         }
 
-        ContainerResult readIfNoLockedSync(BufferType[] elements, size_t count) @safe
+        ContainerResult readIfNoBlockSync(BufferType[] elements, size_t count) @safe
         {
             synchronized (mutex)
             {
-                if (_lock)
+                if (_block)
                 {
                     return ContainerResult.success;
                 }
@@ -213,7 +213,7 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
 
     ContainerResult write(BufferType[] items) nothrow @safe
     {
-        if (_lock)
+        if (_block)
         {
             return ContainerResult.locked;
         }
@@ -312,7 +312,7 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
 
     ContainerResult read(scope void delegate(BufferType[], BufferType[]) @nogc @safe onElementsRest, size_t count) @nogc @safe
     {
-        if (_lock)
+        if (_block)
         {
             return ContainerResult.locked;
         }
@@ -411,7 +411,7 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
 
     ContainerResult peek(out BufferType value)
     {
-        if (_lock)
+        if (_block)
         {
             return ContainerResult.locked;
         }
