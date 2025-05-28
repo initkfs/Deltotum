@@ -1,34 +1,34 @@
-module api.core.mems.allocs.allocator;
+module api.util.allocs.allocator;
 
-import api.core.mems.ptrs.unique_ptr : UniqPtr;
+import api.util.ptrs.unique_ptr : UniqPtr;
 
 /**
  * Authors: initkfs
  */
 
-alias AllocFuncType = bool function(size_t sizeBytes, scope ref void[] ptr) @nogc nothrow @safe;
-alias FreeFuncType = bool function(scope void[] ptr) @nogc nothrow @safe;
-alias ReallocFuncType = bool function(size_t newSizeBytes, scope ref void[]) @nogc nothrow @safe;
+alias AllocFuncType(T) = bool function(size_t size, scope ref T[] ptr) nothrow @safe;
+alias ReallocFuncType(T) = bool function(size_t newSize, scope ref T[]) nothrow @safe;
+alias FreeFuncType(T) = bool function(scope T[] ptr) @nogc nothrow @safe;
 
-mixin template MemFuncs()
+mixin template MemFuncs(T)
 {
     version (D_BetterC)
     {
         __gshared
         {
-            AllocFuncType allocFunPtr;
-            ReallocFuncType reallocFunPtr;
-            FreeFuncType freeFunPtr;
+            AllocFuncType!T allocFunPtr;
+            ReallocFuncType!T reallocFunPtr;
+            FreeFuncType!T freeFunPtr;
         }
     }
     else
     {
-        AllocFuncType allocFunPtr;
-        ReallocFuncType reallocFunPtr;
-        FreeFuncType freeFunPtr;
+        AllocFuncType!T allocFunPtr;
+        ReallocFuncType!T reallocFunPtr;
+        FreeFuncType!T freeFunPtr;
     }
 
-    UniqPtr!T uniq(T)(size_t capacity = 1, bool isAutoFree = true, bool isErrorOnFail = true)
+    UniqPtr!U uniq(U)(size_t capacity = 1, bool isAutoFree = true, bool isErrorOnFail = true)
     in (allocFunPtr)
     {
         if (capacity == 0)
@@ -60,7 +60,7 @@ mixin template MemFuncs()
 
         }
 
-        void[] ptr;
+        T[] ptr;
         if (!allocFunPtr(size, ptr) && isErrorOnFail)
         {
             enum message = "Allocation failed";
@@ -74,23 +74,22 @@ mixin template MemFuncs()
             }
         }
 
-        T[] newPtr = cast(T[]) ptr;
+        U[] newPtr = cast(U[]) ptr;
         assert(newPtr.length == capacity);
 
-        return UniqPtr!T(newPtr, isAutoFree, freeFunPtr, reallocFunPtr);
+        return UniqPtr!U(newPtr, isAutoFree, freeFunPtr, reallocFunPtr);
     }
 }
 
-mixin MemFuncs;
-
 version (D_BetterC)
 {
+    mixin MemFuncs!ubyte;
 }
 else
 {
-    abstract class Allocator
+    abstract class Allocator(T)
     {
-        mixin MemFuncs;
+        mixin MemFuncs!T;
 
         bool canAlloc() const nothrow pure @safe => true;
     }

@@ -1,13 +1,13 @@
 /**
  * Authors: initkfs
  */
-module api.core.mems.ptrs.unique_ptr;
+module api.util.ptrs.unique_ptr;
 
-import api.core.mems.allocs.allocator : FreeFuncType, ReallocFuncType;
+import api.util.allocs.allocator : FreeFuncType, ReallocFuncType;
 
 struct UniqPtr(T,
-    FreeFunc = FreeFuncType,
-    ReallocFunc = ReallocFuncType
+    FreeFunc = FreeFuncType!T,
+    ReallocFunc = ReallocFuncType!T
 )
 {
     private
@@ -124,7 +124,7 @@ struct UniqPtr(T,
     {
         assert(newSizeBytes > 0);
 
-        void[] reallocPtr = _ptr;
+        T[] reallocPtr = _ptr;
         bool isRealloc = _reallocFunPtr(newSizeBytes, reallocPtr);
         assert(isRealloc);
         _ptr = (() @trusted => cast(T[]) reallocPtr)();

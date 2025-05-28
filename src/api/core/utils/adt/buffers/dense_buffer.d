@@ -3,7 +3,9 @@
  */
 module api.core.utils.adt.buffers.dense_buffer;
 
-struct DenseBuffer(T, size_t Capacity = 256, bool isAppendable = true, bool isStatic = true)
+struct DenseBuffer(T, size_t Capacity = 256,
+    bool isAppendable = true,
+    bool isStatic = true)
 {
     private
     {

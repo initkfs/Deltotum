@@ -24,8 +24,8 @@ import api.core.events.bus.core_bus_events : CoreBusEvents;
 import api.core.depends.dep : Dep;
 import api.core.depends.locators.service_locator : ServiceLocator;
 import api.core.mems.memory : Memory;
-import api.core.mems.allocs.allocator : Allocator;
-import api.core.mems.allocs.mallocator : Mallocator;
+import api.util.allocs.allocator : Allocator;
+import api.util.allocs.mallocator : Mallocator;
 import api.core.supports.errors.err_status : ErrStatus;
 import api.core.supports.decisions.decision_system : DecisionSystem;
 
@@ -703,12 +703,12 @@ class CliApp : SimpleUnit
         return new Mallocator;
     }
 
-    Allocator createAllocator(Logging logging, Config config, Context context)
+    Allocator!ubyte createAllocator(Logging logging, Config config, Context context)
     {
         return newMallocator;
     }
 
-    Memory newMemory(Allocator allocator)
+    Memory newMemory(Allocator!ubyte allocator)
     {
         return new Memory(allocator);
     }

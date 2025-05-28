@@ -20,7 +20,7 @@ import api.core.events.bus.event_bus : EventBus;
 import api.core.depends.dep : Dep;
 import api.core.depends.locators.service_locator : ServiceLocator;
 import api.core.mems.memory : Memory;
-import api.core.mems.allocs.allocator : Allocator;
+import api.util.allocs.allocator : Allocator;
 
 import std.logger : Logger;
 
@@ -269,7 +269,7 @@ class UniComponent : SimpleUnit
     }
 
     bool hasMemory() const nothrow pure @safe => _memory !is null;
-    inout(Allocator) alloc() inout nothrow pure @safe => memory.alloc;
+    inout(Allocator!ubyte) alloc() inout nothrow pure @safe => memory.alloc;
 
     inout(Memory) memory() inout nothrow pure @safe
     out (_memory; _memory !is null)
