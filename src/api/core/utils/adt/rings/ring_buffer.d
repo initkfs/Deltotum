@@ -1,6 +1,7 @@
 module api.core.utils.adt.rings.ring_buffer;
 
 import api.core.utils.adt.container_result : ContainerResult;
+import api.core.utils.adt.buffers.dense_buffer : DenseBuffer;
 
 import core.sync.mutex : Mutex;
 
@@ -15,14 +16,7 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
 
     private
     {
-        static if (isStaticArray)
-        {
-            BufferType[BufferSize] _buffer;
-        }
-        else
-        {
-            BufferType[] _buffer;
-        }
+        DenseBuffer!(BufferType, BufferSize, false, isStaticArray) _buffer;
 
         size_t _readIndex; //remove
         size_t _writeIndex; //add
@@ -39,36 +33,6 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
         {
             assert(m);
             mutex = m;
-            initialize;
-        }
-    }
-
-    bool initialize() pure @safe nothrow
-    {
-        static if (!isStaticArray)
-        {
-            if (_buffer.length == BufferSize)
-            {
-                return false;
-            }
-
-            _buffer = new BufferType[](BufferSize);
-        }
-
-        fillInit;
-
-        return true;
-    }
-
-    void fillInit() @nogc nothrow @safe
-    {
-        static if (__traits(isFloating, BufferType))
-        {
-            _buffer[] = 0;
-        }
-        else
-        {
-            _buffer[] = BufferType.init;
         }
     }
 
@@ -90,6 +54,11 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
         }
     }
 
+    void initialize(bool isFillInit = true) nothrow @safe
+    {
+        _buffer.initialize(isFillInit);
+    }
+
     @nogc nothrow @safe
     {
         void block()
@@ -107,19 +76,19 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
     {
         @nogc @safe
         {
-            void lockSync()
+            void blockSync()
             {
                 synchronized (mutex)
                 {
-                    lock;
+                    block;
                 }
             }
 
-            void unlockSync()
+            void unblockSync()
             {
                 synchronized (mutex)
                 {
-                    unlock;
+                    unblock;
                 }
             }
 
@@ -249,7 +218,7 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
         {
             size_t endIndex = _writeIndex + buffLen;
 
-            _buffer[writeIndex .. endIndex] = items;
+            _buffer.raw[writeIndex .. endIndex] = items;
 
             _writeIndex = endIndex;
 
@@ -277,8 +246,8 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
 
         assert((endItems.length + firstItems.length) <= capacity);
 
-        _buffer[writeIndex .. endIndex] = endItems;
-        _buffer[0 .. remainElems] = firstItems;
+        _buffer.raw[writeIndex .. endIndex] = endItems;
+        _buffer.raw[0 .. remainElems] = firstItems;
 
         _writeIndex = remainElems;
         if (_writeIndex >= BufferSize)
@@ -310,7 +279,7 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
         }, count);
     }
 
-    ContainerResult read(scope void delegate(BufferType[], BufferType[]) @nogc @safe onElementsRest, size_t count) @nogc @safe
+    ContainerResult read(scope void delegate(scope BufferType[], scope BufferType[]) @nogc @safe onElementsRest, size_t count) @nogc @safe
     {
         if (_block)
         {
@@ -340,7 +309,7 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
             rest = count - endSliceCapacity;
         }
 
-        BufferType[] endSlice = _buffer[_readIndex .. endIndex];
+        BufferType[] endSlice = _buffer.raw[_readIndex .. endIndex];
 
         _readIndex = endIndex;
         if (_readIndex >= BufferSize)
@@ -351,7 +320,7 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
         BufferType[] startSlice;
         if (rest > 0)
         {
-            startSlice = _buffer[0 .. rest];
+            startSlice = _buffer.raw[0 .. rest];
             _readIndex = rest;
         }
 
@@ -421,7 +390,7 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
             return ContainerResult.empty;
         }
 
-        value = _buffer[_readIndex];
+        value = _buffer.raw[_readIndex];
 
         return ContainerResult.success;
     }
@@ -431,7 +400,7 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
         _writeIndex = 0;
         _readIndex = 0;
         _size = 0;
-        fillInit;
+        _buffer.fillInit;
     }
 
     void onItem(scope bool delegate(BufferType) onItemIsContinue)
@@ -439,19 +408,19 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
         foreach (i; 0 .. _size)
         {
             size_t index = (_readIndex + i) % BufferSize;
-            if (!onItemIsContinue(_buffer[index]))
+            if (!onItemIsContinue(_buffer.raw[index]))
             {
                 break;
             }
         }
     }
 
-    inout(BufferType[]) buffer() return inout => _buffer;
+    inout(BufferType[]) buffer() return inout => _buffer.raw;
 }
 
 @safe unittest
 {
-    auto buff = RingBuffer!(int, 5, false).init;
+    auto buff = RingBuffer!(int, 5, false, true).init;
     buff.initialize;
 
     assert(buff.write([1, 2, 3]));

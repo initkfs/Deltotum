@@ -1,24 +1,38 @@
 /**
  * Authors: initkfs
  */
-module api.core.mems.buffers.static_buffer;
+module api.core.utils.adt.buffers.dense_buffer;
 
-struct StaticBuffer(T, size_t Capacity = 256, bool isAppendableBuffer = true)
+struct DenseBuffer(T, size_t Capacity = 256, bool isAppendable = true, bool isStatic = true)
 {
     private
     {
-        T[Capacity] _buffer;
+        static if (isStatic)
+        {
+            T[Capacity] _buffer;
+        }
+        else
+        {
+            T[] _buffer;
+        }
+
         size_t _length;
     }
 
     invariant
     {
-        assert(_length <= _buffer.length, "Static buffer invariant: length must be less or equal than buffer");
+        assert(_length <= _buffer.length, "Buffer invariant: length must be less or equal than buffer");
     }
 
-    this(T[] slice) @nogc nothrow pure @safe
+    this(bool isFillInit) nothrow pure @safe
     {
-        assert(slice.length <= Capacity, "Static buffer overflow");
+        initialize(isFillInit);
+    }
+
+    this(T[] slice, bool isFillInit = false) nothrow pure @safe
+    {
+        assert(slice.length <= Capacity, "Buffer overflow");
+        this(isFillInit);
         _length = slice.length;
         if (_length > 0)
         {
@@ -28,7 +42,40 @@ struct StaticBuffer(T, size_t Capacity = 256, bool isAppendableBuffer = true)
 
     alias slice this;
 
-    inout(T[]) slice() inout nothrow return @safe
+    void initialize(bool isFillInit = false) nothrow @safe
+    {
+        static if (!isStatic)
+        {
+            if (_buffer.length != Capacity)
+            {
+                _buffer = new T[](Capacity);
+            }
+        }
+
+        if (isFillInit)
+        {
+            fillInit;
+        }
+    }
+
+    void fillInit() @nogc nothrow @safe
+    {
+        static if (__traits(isFloating, T))
+        {
+            _buffer[] = 0;
+        }
+        else
+        {
+            _buffer[] = T.init;
+        }
+    }
+
+    inout(T[]) raw() inout nothrow
+    {
+        return _buffer;
+    }
+
+    inout(T[]) slice() inout nothrow return scope @safe
     {
         return _buffer[0 .. _length];
     }
@@ -37,7 +84,7 @@ struct StaticBuffer(T, size_t Capacity = 256, bool isAppendableBuffer = true)
     {
         static assert(dim == 0, "Only 0 dimension supported");
         assert(i < j, "Start slice index must be less than end");
-        static if (isAppendableBuffer)
+        static if (isAppendable)
         {
             assert(j <= _length, "End length index overflow");
         }
@@ -56,7 +103,7 @@ struct StaticBuffer(T, size_t Capacity = 256, bool isAppendableBuffer = true)
 
     inout(T*) opIndex(size_t i) inout return @safe
     {
-        static if (isAppendableBuffer)
+        static if (isAppendable)
         {
             assert(i < _length, "Static buffer length index overflow");
         }
@@ -70,7 +117,7 @@ struct StaticBuffer(T, size_t Capacity = 256, bool isAppendableBuffer = true)
 
     void opIndexAssign(T value, size_t i) @safe
     {
-        static if (isAppendableBuffer)
+        static if (isAppendable)
         {
             assert(i < _length, "Static buffer length index overflow");
         }
@@ -110,7 +157,7 @@ struct StaticBuffer(T, size_t Capacity = 256, bool isAppendableBuffer = true)
         return _length;
     }
 
-    static if (!isAppendableBuffer)
+    static if (!isAppendable)
     {
         void length(size_t value) @nogc nothrow @safe
         {
@@ -231,7 +278,7 @@ struct StaticBuffer(T, size_t Capacity = 256, bool isAppendableBuffer = true)
 
 @safe unittest
 {
-    StaticBuffer!(char) buffer1;
+    DenseBuffer!(char) buffer1;
 
     assert(buffer1.length == 0);
     buffer1 ~= 'h';
@@ -293,7 +340,7 @@ struct StaticBuffer(T, size_t Capacity = 256, bool isAppendableBuffer = true)
 @safe unittest
 {
     enum str1 = "hello world";
-    StaticBuffer!(char) buffer;
+    DenseBuffer!(char) buffer;
     buffer ~= str1;
     assert(buffer[] == str1);
     buffer[0] = 'e';
