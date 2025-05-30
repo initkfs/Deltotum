@@ -10,7 +10,7 @@ alias AllocFuncType(T) = bool function(size_t size, scope ref T[] ptr) nothrow @
 alias ReallocFuncType(T) = bool function(size_t newSize, scope ref T[]) nothrow @safe;
 alias FreeFuncType(T) = bool function(scope T[] ptr) @nogc nothrow @safe;
 
-mixin template MemFuncs(T)
+mixin template MemFuncs(T = ubyte)
 {
     version (D_BetterC)
     {
@@ -28,7 +28,7 @@ mixin template MemFuncs(T)
         FreeFuncType!T freeFunPtr;
     }
 
-    UniqPtr!U uniq(U)(size_t capacity = 1, bool isAutoFree = true, bool isErrorOnFail = true)
+    UniqPtr!(U, T) uniq(U)(size_t capacity = 1, bool isAutoFree = true, bool isErrorOnFail = true)
     in (allocFunPtr)
     {
         if (capacity == 0)
@@ -44,9 +44,9 @@ mixin template MemFuncs(T)
             }
         }
 
-        const size = capacity * T.sizeof;
+        const size = capacity * U.sizeof;
 
-        if ((size / capacity) != T.sizeof)
+        if ((size / capacity) != U.sizeof)
         {
             enum message = "Allocation size overflow";
             version (D_Exceptions)
@@ -60,8 +60,24 @@ mixin template MemFuncs(T)
 
         }
 
+        const size_t allocSize = size  / T.sizeof;
+
+        if (allocSize == 0)
+        {
+            enum message = "Allocation native size is zero";
+            version (D_Exceptions)
+            {
+                throw new Exception(message);
+            }
+            else
+            {
+                assert(false, message);
+            }
+
+        }
+
         T[] ptr;
-        if (!allocFunPtr(size, ptr) && isErrorOnFail)
+        if (!allocFunPtr(allocSize, ptr) && isErrorOnFail)
         {
             enum message = "Allocation failed";
             version (D_Exceptions)
@@ -77,7 +93,7 @@ mixin template MemFuncs(T)
         U[] newPtr = cast(U[]) ptr;
         assert(newPtr.length == capacity);
 
-        return UniqPtr!U(newPtr, isAutoFree, freeFunPtr, reallocFunPtr);
+        return UniqPtr!(U, T)(newPtr, isAutoFree, freeFunPtr, reallocFunPtr);
     }
 }
 
@@ -87,7 +103,7 @@ version (D_BetterC)
 }
 else
 {
-    abstract class Allocator(T)
+    abstract class Allocator(T = ubyte)
     {
         mixin MemFuncs!T;
 

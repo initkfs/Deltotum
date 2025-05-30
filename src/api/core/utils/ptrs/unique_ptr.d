@@ -5,9 +5,9 @@ module api.util.ptrs.unique_ptr;
 
 import api.util.allocs.allocator : FreeFuncType, ReallocFuncType;
 
-struct UniqPtr(T,
-    FreeFunc = FreeFuncType!T,
-    ReallocFunc = ReallocFuncType!T
+struct UniqPtr(T, AllocType = ubyte,
+    FreeFunc = FreeFuncType!AllocType,
+    ReallocFunc = ReallocFuncType!AllocType
 )
 {
     private
@@ -65,13 +65,11 @@ struct UniqPtr(T,
 
     alias value this;
 
-@nogc nothrow:
-
-    @disable this(ref return scope UniqPtr!T rhs) pure
+    @disable this(ref return scope UniqPtr!(T, AllocType) rhs) nothrow pure
     {
     }
 
-    ~this() @safe
+    ~this() nothrow scope @safe
     {
         if (isAutoFree)
         {
@@ -84,13 +82,13 @@ struct UniqPtr(T,
         return _freed;
     }
 
-    void free() @nogc nothrow @safe
+    void free() @nogc nothrow scope @safe
     in (_ptr)
     in (_freeFunPtr)
     {
         assert(!_freed, "Memory pointer has already been freed");
-
-        bool isFreed = _freeFunPtr(_ptr);
+        AllocType[] nativePtr = cast(AllocType[]) _ptr;
+        bool isFreed = _freeFunPtr(nativePtr);
         assert(isFreed, "Memory pointer not deallocated correctly");
 
         _ptr = null;
@@ -104,7 +102,7 @@ struct UniqPtr(T,
         _freed = false;
     }
 
-    bool reallcap(size_t newCapacity) @nogc nothrow @safe
+    bool reallcap(size_t newCapacity) nothrow @safe
     in (_ptr)
     in (!_freed)
     in (_reallocFunPtr)
@@ -117,22 +115,25 @@ struct UniqPtr(T,
         return realloc(newSize);
     }
 
-    bool realloc(size_t newSizeBytes) @nogc nothrow @safe
+    bool realloc(size_t newSize) nothrow @safe
     in (_ptr)
     in (!_freed)
     in (_reallocFunPtr)
     {
-        assert(newSizeBytes > 0);
+        assert(newSize > 0);
 
-        T[] reallocPtr = _ptr;
-        bool isRealloc = _reallocFunPtr(newSizeBytes, reallocPtr);
+        size_t newNativeSize = newSize / AllocType.sizeof;
+        assert(newNativeSize > 0, "Reallocation native size is zero");
+
+        AllocType[] reallocPtr = cast(AllocType[]) _ptr;
+        bool isRealloc = _reallocFunPtr(newNativeSize, reallocPtr);
         assert(isRealloc);
         _ptr = (() @trusted => cast(T[]) reallocPtr)();
 
         return true;
     }
 
-    protected inout(T*) index(size_t i) @nogc nothrow inout return @safe
+    protected inout(T*) index(size_t i) @nogc nothrow inout return scope @safe
     in (_ptr)
     in (!_freed)
     {
@@ -154,14 +155,14 @@ struct UniqPtr(T,
         *index(0) = newValue;
     }
 
-    inout(T[]) ptr() @nogc nothrow inout return @safe
+    inout(T[]) ptr() @nogc nothrow inout return scope @safe
     in (_ptr)
     in (!_freed)
     {
         return _ptr;
     }
 
-    inout(T[]) ptrUnsafe() @nogc nothrow inout
+    inout(T[]) ptrUnsafe() @nogc nothrow inout return scope
     in (_ptr)
     in (!_freed)
     {
@@ -197,7 +198,7 @@ struct UniqPtr(T,
         this.value(newVal);
     }
 
-    void opAssign(UniqPtr!T newPtr) @nogc nothrow @safe
+    void opAssign(UniqPtr!(T, AllocType) newPtr) @nogc nothrow @safe
     {
         if (_ptr)
         {
@@ -336,7 +337,8 @@ struct UniqPtr(T,
             return (() @trusted {
                 auto sizeBytes = capacity * int.sizeof;
                 void* newPtr = malloc(sizeBytes);
-                if(!newPtr){
+                if (!newPtr)
+                {
                     return false;
                 }
                 ptr = cast(int[]) newPtr[0 .. sizeBytes];
@@ -359,7 +361,7 @@ struct UniqPtr(T,
             return (() @trusted { free(ptr.ptr); return true; })();
         }
 
-        int[] value2; 
+        int[] value2;
         assert(allocate(1, value2));
 
         auto ptrV2 = UniqPtr!(int)(value2, isAutoFree:

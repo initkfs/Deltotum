@@ -56,8 +56,6 @@ protected
     }
 }
 
-
-
 class GcAllocator(T = ubyte) : Allocator!T
 {
     this() pure nothrow @safe
