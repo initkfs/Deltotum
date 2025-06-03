@@ -1,6 +1,7 @@
-module api.util.allocs.allocator;
+module api.core.util.allocs.allocator;
 
-import api.util.ptrs.unique_ptr : UniqPtr;
+import api.core.utils.ptrs.unique_ptr : UniqPtr;
+import api.core.utils.ptrs.shared_ptr : SharedPtr;
 
 /**
  * Authors: initkfs
@@ -28,7 +29,7 @@ mixin template MemFuncs(T = ubyte)
         FreeFuncType!T freeFunPtr;
     }
 
-    UniqPtr!(U, T) uniq(U)(size_t capacity = 1, bool isAutoFree = true, bool isErrorOnFail = true)
+    U[] rawptr(U)(size_t capacity = 1, bool isErrorOnFail = true)
     in (allocFunPtr)
     {
         if (capacity == 0)
@@ -60,24 +61,26 @@ mixin template MemFuncs(T = ubyte)
 
         }
 
-        const size_t allocSize = size  / T.sizeof;
-
-        if (allocSize == 0)
+        static if (T.sizeof != 1)
         {
-            enum message = "Allocation native size is zero";
-            version (D_Exceptions)
-            {
-                throw new Exception(message);
-            }
-            else
-            {
-                assert(false, message);
-            }
+            size = size / T.sizeof;
 
+            if (size == 0)
+            {
+                enum message = "Allocation native size is zero";
+                version (D_Exceptions)
+                {
+                    throw new Exception(message);
+                }
+                else
+                {
+                    assert(false, message);
+                }
+            }
         }
 
         T[] ptr;
-        if (!allocFunPtr(allocSize, ptr) && isErrorOnFail)
+        if (!allocFunPtr(size, ptr) && isErrorOnFail)
         {
             enum message = "Allocation failed";
             version (D_Exceptions)
@@ -93,7 +96,20 @@ mixin template MemFuncs(T = ubyte)
         U[] newPtr = cast(U[]) ptr;
         assert(newPtr.length == capacity);
 
-        return UniqPtr!(U, T)(newPtr, isAutoFree, freeFunPtr, reallocFunPtr);
+        return newPtr;
+    }
+
+    UniqPtr!(U, T) uniqptr(U)(size_t capacity = 1, bool isAutoFree = true, bool isErrorOnFail = true)
+    in (allocFunPtr)
+    {
+
+        return UniqPtr!(U, T)(rawptr!U(capacity, isErrorOnFail), isAutoFree, freeFunPtr, reallocFunPtr);
+    }
+
+    UniqPtr!(U, T) sharedptr(U)(size_t capacity = 1, bool isErrorOnFail = true)
+    in (allocFunPtr)
+    {
+        return SharedPtr!(U, T)(rawptr!U(capacity, isErrorOnFail), allocFunPtr, freeFunPtr, reallocFunPtr);
     }
 }
 

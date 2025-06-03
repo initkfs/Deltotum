@@ -1,7 +1,7 @@
 module api.core.mems.null_memory;
 
 import api.core.mems.memory : Memory;
-import api.util.allocs.null_allocator : NullAllocator;
+import api.core.util.allocs.null_allocator : NullAllocator;
 
 /**
  * Authors: initkfs

@@ -20,7 +20,7 @@ import api.core.events.bus.event_bus : EventBus;
 import api.core.depends.dep : Dep;
 import api.core.depends.locators.service_locator : ServiceLocator;
 import api.core.mems.memory : Memory;
-import api.util.allocs.allocator : Allocator;
+import api.core.util.allocs.allocator : Allocator;
 
 import std.logger : Logger;
 

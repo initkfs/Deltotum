@@ -1,8 +1,8 @@
 module api.core.utils.allocs.gc_allocator;
 
-import api.util.ptrs.unique_ptr : UniqPtr;
+import api.core.utils.ptrs.unique_ptr : UniqPtr;
 
-import api.util.allocs.allocator : Allocator;
+import api.core.util.allocs.allocator : Allocator;
 
 /**
  * Authors: initkfs

@@ -24,8 +24,8 @@ import api.core.events.bus.core_bus_events : CoreBusEvents;
 import api.core.depends.dep : Dep;
 import api.core.depends.locators.service_locator : ServiceLocator;
 import api.core.mems.memory : Memory;
-import api.util.allocs.allocator : Allocator;
-import api.util.allocs.mallocator : Mallocator;
+import api.core.util.allocs.allocator : Allocator;
+import api.core.util.allocs.mallocator : Mallocator;
 import api.core.supports.errors.err_status : ErrStatus;
 import api.core.supports.decisions.decision_system : DecisionSystem;
 

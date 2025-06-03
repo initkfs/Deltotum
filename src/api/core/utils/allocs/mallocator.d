@@ -1,6 +1,6 @@
-module api.util.allocs.mallocator;
+module api.core.util.allocs.mallocator;
 
-import api.util.ptrs.unique_ptr : UniqPtr;
+import api.core.utils.ptrs.unique_ptr : UniqPtr;
 
 /**
  * Authors: initkfs
@@ -23,7 +23,7 @@ protected
         {
             return false;
         }
-        ptr = (cast(T*)newPtr)[0 .. size];
+        ptr = (cast(T*) newPtr)[0 .. size];
         return true;
     }
 
@@ -35,7 +35,7 @@ protected
         {
             return false;
         }
-        ptr = (cast(T*)newPtr)[0 .. newSize];
+        ptr = (cast(T*) newPtr)[0 .. newSize];
         return true;
     }
 
@@ -55,7 +55,7 @@ version (D_BetterC)
 }
 else
 {
-    import api.util.allocs.allocator : Allocator;
+    import api.core.util.allocs.allocator : Allocator;
 
     class Mallocator : Allocator!ubyte
     {
@@ -70,22 +70,22 @@ else
 
 unittest
 {
-    import MemAllocator = api.util.allocs.allocator;
-
     version (D_BetterC)
     {
+        import MemAllocator = api.core.util.allocs.allocator;
+
         MemAllocator.allocFunPtr = &allocate;
         MemAllocator.reallocFunPtr = &reallocate;
         MemAllocator.freeFunPtr = &deallocate;
 
-        UniqPtr!int intPtr1 = MemAllocator.uniq!int;
+        UniqPtr!int intPtr1 = MemAllocator.uniqptr!int;
         intPtr1 = 5;
         assert(intPtr1.value == 5);
     }
     else
     {
         auto mCl2 = new Mallocator;
-        auto intPtr2 = mCl2.uniq!int;
+        auto intPtr2 = mCl2.uniqptr!int;
         intPtr2 = 5;
         assert(intPtr2.value);
     }
