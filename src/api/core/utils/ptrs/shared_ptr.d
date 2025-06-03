@@ -40,6 +40,9 @@ struct SharedPtr(T, AllocType = ubyte,
 
     alias value this;
 
+    //@disable this();
+    @disable this(this);
+
     this(ref return scope SharedPtr!(T, AllocType) other) nothrow
     {
         _ptr = other.ptr;

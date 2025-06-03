@@ -54,8 +54,24 @@ struct UniqPtr(T, AllocType = ubyte,
         this(isAutoFree, newFreeFunPtr, newReallocFunPtr);
     }
 
+    this(UniqPtr!(T, AllocType) rhs) @nogc nothrow @safe
+    {
+        assert(!rhs.isFreed);
+        _ptr = rhs._ptr;
+        isFreed = false;
+        this(rhs.isAutoFree, rhs.freeFunPtr, reallocFunPtr);
+
+        rhs._ptr = null;
+        rhs.freeFunPtr = null;
+        rhs.reallocFunPtr = null;
+        //rhs destructor
+        rhs.isAutoFree = false;
+    }
+
     alias value this;
 
+    //@disable this();
+    @disable this(this);
     @disable this(ref return scope UniqPtr!(T, AllocType) rhs) nothrow pure
     {
     }
@@ -86,7 +102,7 @@ struct UniqPtr(T, AllocType = ubyte,
         value = v;
     }
 
-    void opAssign(UniqPtr!(T, AllocType) newPtr) @nogc nothrow @safe
+    void opAssign(ref UniqPtr!(T, AllocType) newPtr) @nogc nothrow @safe
     {
         if (_ptr)
         {
@@ -230,6 +246,17 @@ struct UniqPtr(T, AllocType = ubyte,
             false, &freePtr, &reallocPtr);
         aCl.ptr = 20;
         assert(aCl.ptr.value == 20);
+
+        //Move
+        int[] moveValue = [1];
+        auto ptrSrc = UniqPtr!int(moveValue, isAutoFree:
+            true);
+        UniqPtr!int ptrDst = __rvalue(ptrSrc);
+        ptrDst.isAutoFree = false;
+        assert(ptrDst._ptr == moveValue);
+        assert(!ptrDst.isFreed);
+        assert(!ptrSrc._ptr);
+        assert(!ptrSrc.isAutoFree);
     }
 
 }
