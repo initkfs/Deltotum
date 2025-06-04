@@ -7,6 +7,20 @@ import core.stdc.string;
 /**
  * Authors: initkfs
  */
+
+enum OperationType
+{
+    opinsert,
+    opremove
+}
+
+struct HistoryRecord
+{
+    OperationType type;
+    int pos;
+    char[] text;
+}
+
 struct Piece
 {
     char[] source;
@@ -39,6 +53,14 @@ struct PieceTable
     size_t numPieces;
     size_t piecesCapacity = 1;
 
+    HistoryRecord[] undoBuffer;
+    int undoTopIndex = -1;
+    size_t undoCapacity = 10;
+
+    HistoryRecord[] redoBuffer;
+    int redoTopIndex = -1;
+    size_t redoCapacity = 10;
+
     void create(const(char)[] text)
     {
         original = (cast(char*) malloc(text.length))[0 .. text.length];
@@ -55,6 +77,9 @@ struct PieceTable
         pieces[0] = Piece(source : original, start:
             0, length:
             original.length);
+
+        undoBuffer = (cast(HistoryRecord*) malloc(HistoryRecord.sizeof * undoCapacity))[0 .. undoCapacity];
+        redoBuffer = (cast(HistoryRecord*) malloc(HistoryRecord.sizeof * redoCapacity))[0 .. redoCapacity];
     }
 
     void destroy()
@@ -62,9 +87,14 @@ struct PieceTable
         free(original.ptr);
         free(additions.ptr);
         free(pieces.ptr);
+
+        free(redoBuffer.ptr);
+        free(undoBuffer.ptr);
+
+        //TODO free undo\redo records
     }
 
-    void insert(int pos, const(char)[] text)
+    void insert(int pos, const(char)[] text,  bool isPushToHistory = true)
     {
         size_t textLen = text.length;
 
@@ -75,7 +105,7 @@ struct PieceTable
             additions = (cast(char*) realloc(additions.ptr, newCapacity))[0 .. newCapacity];
         }
 
-        additions[additionPos .. textLen] = text;
+        additions[additionPos .. additionPos + textLen] = text;
 
         size_t pieceIndex;
         size_t pieceOffset;
@@ -135,13 +165,23 @@ struct PieceTable
 
         numPieces += 2;
         additionPos += textLen;
+
+        if(isPushToHistory){
+            pushHistory(OperationType.opinsert, pos, text);
+        }
     }
 
-    void remove(int pos, int length)
+    void remove(int pos, int length, bool isPushToHistory = true)
     {
         if (length <= 0)
         {
             return;
+        }
+
+        char[] deletedText = piece_table_get_text_range(pos, length);
+        scope (exit)
+        {
+            free(deletedText.ptr);
         }
 
         int remainLen = length;
@@ -209,6 +249,10 @@ struct PieceTable
             pieces[i].start += remainLen;
             pieces[i].length -= remainLen;
         }
+
+        if(isPushToHistory){
+            pushHistory(OperationType.opremove, pos, deletedText);
+        }
     }
 
     char[] text()
@@ -230,6 +274,102 @@ struct PieceTable
         }
 
         return result;
+    }
+
+    void pushHistory(OperationType type, int pos, const(char)[] text)
+    {
+        if (undoTopIndex + 1 >= undoBuffer.length)
+        {
+            auto newCapacity = undoBuffer.length * 2;
+            undoBuffer = (cast(HistoryRecord*) realloc(undoBuffer.ptr,
+                    HistoryRecord.sizeof * newCapacity))[0 .. newCapacity];
+        }
+
+        undoTopIndex++;
+        undoBuffer[undoTopIndex].type = type;
+        undoBuffer[undoTopIndex].pos = pos;
+
+        if (text)
+        {
+            undoBuffer[undoTopIndex].text = (cast(char*) malloc(text.length))[0 .. text.length];
+            undoBuffer[undoTopIndex].text[] = text;
+        }
+        else
+        {
+            undoBuffer[undoTopIndex].text = null;
+        }
+
+        //clear redo stack
+        //TODO redo buffers
+        redoTopIndex = -1;
+    }
+
+    char[] piece_table_get_text_range(int pos, int length)
+    {
+        char[] fullText = text;
+        char[] result = (cast(char*) malloc(length))[0 .. length];
+        result[] = fullText[pos .. pos + length];
+
+        free(fullText.ptr);
+        return result;
+    }
+
+    bool undo()
+    {
+        if (undoTopIndex < 0)
+        {
+            return false;
+        }
+
+        HistoryRecord* record = &undoBuffer[undoTopIndex];
+
+        if (record.type == OperationType.opinsert)
+        {
+            remove(record.pos + 1, cast(int) record.text.length, isPushToHistory: false);
+        }
+        else
+        {
+            insert(record.pos, record.text, isPushToHistory: false);
+        }
+
+        if (redoTopIndex + 1 >= redoBuffer.length)
+        {
+            auto newCapacity = redoBuffer.length * 2;
+            redoBuffer = (cast(HistoryRecord*) realloc(redoBuffer.ptr,
+                    (HistoryRecord.sizeof) * newCapacity))[0 .. newCapacity];
+        }
+
+        redoTopIndex++;
+        redoBuffer[redoTopIndex] = *record;
+
+        undoTopIndex--;
+
+        return true;
+    }
+
+    bool redo()
+    {
+        if (redoTopIndex < 0)
+        {
+            return false;
+        }
+
+        HistoryRecord* record = &redoBuffer[redoTopIndex];
+        if (record.type == OperationType.opinsert)
+        {
+            insert(record.pos, record.text, isPushToHistory: false);
+        }
+        else
+        {
+            remove(record.pos, cast(int) record.text.length, isPushToHistory: false);
+        }
+
+        undoTopIndex++;
+        undoBuffer[undoTopIndex] = *record;
+
+        redoTopIndex--;
+
+        return true;
     }
 }
 
@@ -279,4 +419,17 @@ unittest
     assert(pt.text == "Hello, world!");
     pt.remove(7, 6);
     assert(pt.text == "Hello, ");
+}
+
+unittest
+{
+    PieceTable pt;
+
+    pt.create("Hello");
+    pt.insert(4, " world!");
+    assert(pt.text == "Hello world!");
+    assert(pt.undo);
+    assert(pt.text == "Hello");
+    assert(pt.redo);
+    assert(pt.text == "Hello world!");
 }
