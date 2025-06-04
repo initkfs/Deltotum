@@ -9,131 +9,148 @@ import core.stdc.string;
  */
 struct Piece
 {
-    char* source;
-    int start;
-    int length;
+    char[] source;
+
+    size_t start;
+    size_t length;
+
+    char[] text()
+    {
+        return source[start .. start + length];
+    }
+
+    string toString()
+    {
+        import std.format : format;
+
+        return format("s:%d,len:%s,text:|%s|", start, length, text);
+    }
 }
 
 struct PieceTable
 {
-    char* original;
+    char[] original;
 
-    char* additions;
-    int add_pos;
-    int add_capacity;
+    char[] additions;
+    size_t additionPos;
+    size_t additionsCapacity = 1024;
 
-    Piece* pieces;
-    int num_pieces;
-    int pieces_capacity;
+    Piece[] pieces;
+    size_t numPieces;
+    size_t piecesCapacity = 1;
 
-    void create(const char* text)
+    void create(const(char)[] text)
     {
-        original = strdup(text);
-        additions = cast(char*) malloc(1024);
-        add_pos = 0;
-        add_capacity = 1024;
+        original = (cast(char*) malloc(text.length))[0 .. text.length];
+        original[] = text;
 
-        pieces = cast(Piece*) malloc(Piece.sizeof * 1);
-        num_pieces = 1;
-        pieces_capacity = 1;
+        assert(additionsCapacity > 0);
+        additions = (cast(char*) malloc(additionsCapacity))[0 .. additionsCapacity];
+        additionPos = 0;
+
+        pieces = (cast(Piece*) malloc(Piece.sizeof * piecesCapacity))[0 .. piecesCapacity];
+        numPieces = piecesCapacity;
 
         //Raw text
         pieces[0] = Piece(source : original, start:
             0, length:
-            cast(int) strlen(text));
+            original.length);
     }
 
     void destroy()
     {
-        free(original);
-        free(additions);
-        free(pieces);
+        free(original.ptr);
+        free(additions.ptr);
+        free(pieces.ptr);
     }
 
-    void insert(int pos, const char* text)
+    void insert(int pos, const(char)[] text)
     {
+        size_t textLen = text.length;
 
-        int text_len = cast(int) strlen(text);
-
-        if (add_pos + text_len >= add_capacity)
+        if (additionPos + text.length >= additions.length)
         {
-            add_capacity *= 2;
-            additions = cast(char*) realloc(additions, add_capacity);
+            const newCapacity = additions.length > textLen ? additions.length * 2 : (
+                textLen + additions.length) * 2;
+            additions = (cast(char*) realloc(additions.ptr, newCapacity))[0 .. newCapacity];
         }
 
-        memcpy(additions + add_pos, text, text_len);
+        additions[additionPos .. textLen] = text;
 
-        int piece_index = 0;
-        int offset = 0;
-        for (; piece_index < num_pieces; piece_index++)
+        size_t pieceIndex;
+        size_t pieceOffset;
+        for (; pieceIndex < numPieces; pieceIndex++)
         {
-            if (offset + pieces[piece_index].length >= pos)
+            auto piece = pieces[pieceIndex];
+            if (pieceOffset + piece.length >= pos)
                 break;
-            offset += pieces[piece_index].length;
+            pieceOffset += piece.length;
         }
 
         // split piece into 2 parts, if is not at the end
-        int split_pos = pos - offset;
-        Piece old_piece = pieces[piece_index];
+        size_t splitPos = pos - pieceOffset + 1;
+        Piece oldPiece = pieces[pieceIndex];
 
-        if (num_pieces + 2 > pieces_capacity)
+        const minPieces = numPieces + 2;
+        if (minPieces > pieces.length)
         {
-            pieces_capacity *= 2;
-            pieces = cast(Piece*) realloc(pieces, Piece.sizeof * pieces_capacity);
+            const newCapacity = minPieces * 2;
+            pieces = (cast(Piece*) realloc(pieces.ptr, Piece.sizeof * newCapacity))[0 .. newCapacity];
         }
 
         //right shift
-        memmove(
-            &pieces[piece_index + 2],
-            &pieces[piece_index + 1],
-            Piece.sizeof * (num_pieces - piece_index - 1)
-        );
+        auto srcSlice = pieces[pieceIndex + 1 .. numPieces];
+        foreach (i, ref item; srcSlice)
+        {
+            pieces[pieceIndex + 2 + i] = item;
+        }
 
         //left piece before insertion
-        pieces[piece_index] = Piece(source : old_piece.source,
+        pieces[pieceIndex] = Piece(source : oldPiece.source,
     start:
-            old_piece.start,
+            oldPiece.start,
     length:
-            split_pos
+            splitPos
         );
 
         //new piece, append
-        pieces[piece_index + 1] = Piece(source : additions, start:
-            add_pos, length:
-            text_len
+        pieces[pieceIndex + 1] = Piece(source : additions, start:
+            additionPos, length:
+            textLen
         );
 
         //right piece, after insertion
-        pieces[piece_index + 2] = Piece(
-    source : old_piece.source,
+        pieces[pieceIndex + 2] = Piece(
+    source : oldPiece.source,
     start:
-            old_piece.start + split_pos,
+            oldPiece.start + splitPos,
     length:
-            old_piece.length - split_pos
+            oldPiece.length - splitPos
         );
 
-        num_pieces += 2;
-        add_pos += text_len;
+        numPieces += 2;
+        additionPos += textLen;
     }
 
-    char* text()
+    char[] text()
     {
-        int total_len = 0;
-        for (int i = 0; i < num_pieces; i++)
+        int totalLen = 0;
+        foreach (i; 0 .. numPieces)
         {
-            total_len += pieces[i].length;
+            totalLen += pieces[i].length;
         }
 
-        char* result = cast(char*) malloc(total_len + 1);
+        char[] result = (cast(char*) malloc(totalLen))[0 .. totalLen];
         int pos = 0;
 
-        for (int i = 0; i < num_pieces; i++)
+        foreach (i; 0 .. numPieces)
         {
-            memcpy(result + pos, pieces[i].source + pieces[i].start, pieces[i].length);
-            pos += pieces[i].length;
+            auto piece = pieces[i];
+            writeln(piece);
+            result[pos .. pos + piece.length] = piece.text;
+            pos += piece.length;
         }
 
-        result[total_len] = '\0';
         return result;
     }
 }
@@ -141,12 +158,29 @@ struct PieceTable
 unittest
 {
     PieceTable pt;
+
     pt.create("Hello, world!");
+    assert(pt.numPieces == 1);
+    assert(pt.pieces[0].text == "Hello, world!");
 
-    writefln("Original: %s\n", pt.text.fromStringz);
+    pt.insert(6, "awesome ");
+    assert(pt.pieces.length == (3 * 2));
+    assert(pt.numPieces == 3);
 
-    pt.insert(7, "awesome ");
-    writefln("After insert: %s\n", pt.text.fromStringz);
+    auto p0 = pt.pieces[0];
+    assert(p0.start == 0);
+    assert(p0.length == 7);
+    assert(p0.text == "Hello, ");
 
-    destroy(pt);
+    auto p1 = pt.pieces[1];
+    assert(p1.start == 0);
+    assert(p1.length == 8);
+    assert(p1.text == "awesome ");
+
+    auto p2 = pt.pieces[2];
+    assert(p2.start == 7);
+    assert(p2.length == 6);
+    assert(p2.text == "world!");
+
+    pt.destroy;
 }
