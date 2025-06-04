@@ -99,6 +99,11 @@ struct PieceTable
         }
 
         //right shift
+        /** 
+         * for (int i = numPieces - 1; i >= pieceIndex + 1; i--) {
+              pieces[i + 2] = pieces[i];
+           }
+         */
         auto srcSlice = pieces[pieceIndex + 1 .. numPieces];
         foreach (i, ref item; srcSlice)
         {
@@ -132,6 +137,80 @@ struct PieceTable
         additionPos += textLen;
     }
 
+    void remove(int pos, int length)
+    {
+        if (length <= 0)
+        {
+            return;
+        }
+
+        int remainLen = length;
+        int currentPos = 0;
+        int i = 0;
+
+        //find starting peace
+        while (i < numPieces && currentPos + pieces[i].length <= pos)
+        {
+            currentPos += pieces[i].length;
+            i++;
+        }
+
+        //out of bounds
+        if (i >= numPieces)
+        {
+            return;
+        }
+
+        int offsetInPiece = pos - currentPos;
+        Piece* piece = &pieces[i];
+
+        //Removal starts in the piece middle
+        if (offsetInPiece > 0)
+        {
+            if (numPieces + 1 > pieces.length)
+            {
+                const newCapacity = (numPieces + 1) * 2;
+                pieces = (cast(Piece*) realloc(pieces.ptr, Piece.sizeof * newCapacity))[0 .. newCapacity];
+            }
+
+            //right shift
+            for (size_t j = numPieces - 1; j >= i + 1; j--)
+            {
+                pieces[j + 1] = pieces[j];
+            }
+
+            //left piece before removing
+            pieces[i].length = offsetInPiece;
+
+            //right piece after removing
+            pieces[i + 1] = Piece(
+                piece.source,
+                piece.start + offsetInPiece,
+                piece.length - offsetInPiece);
+            numPieces++;
+            i++;
+        }
+
+        //Removing whole pieces
+        while (i < numPieces && remainLen >= pieces[i].length)
+        {
+            remainLen -= pieces[i].length;
+            //left shift
+            for (size_t j = i; j < numPieces - 1; j++)
+            {
+                pieces[j] = pieces[j + 1];
+            }
+            numPieces--;
+        }
+
+        //Removing part of a piece
+        if (remainLen > 0 && i < numPieces)
+        {
+            pieces[i].start += remainLen;
+            pieces[i].length -= remainLen;
+        }
+    }
+
     char[] text()
     {
         int totalLen = 0;
@@ -146,7 +225,6 @@ struct PieceTable
         foreach (i; 0 .. numPieces)
         {
             auto piece = pieces[i];
-            writeln(piece);
             result[pos .. pos + piece.length] = piece.text;
             pos += piece.length;
         }
@@ -183,4 +261,22 @@ unittest
     assert(p2.text == "world!");
 
     pt.destroy;
+}
+
+unittest
+{
+    PieceTable pt;
+
+    pt.create("Hello, world!");
+    pt.remove(0, 2);
+    assert(pt.text == "llo, world!");
+    pt.remove(8, 3);
+    assert(pt.text == "llo, wor");
+    pt.destroy;
+
+    pt.create("Hello, ");
+    pt.insert(6, "world!");
+    assert(pt.text == "Hello, world!");
+    pt.remove(7, 6);
+    assert(pt.text == "Hello, ");
 }
