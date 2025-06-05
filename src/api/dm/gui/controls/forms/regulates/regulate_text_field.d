@@ -3,6 +3,7 @@ module api.dm.gui.controls.forms.regulates.regulate_text_field;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.meters.scrolls.base_regular_mono_scroll : BaseRegularMonoScroll;
 import api.dm.gui.controls.texts.text : Text;
+import api.dm.gui.controls.texts.text_view: TextView;
 
 /**
  * Authors: initkfs
@@ -21,11 +22,11 @@ class RegulateTextField : Control
     void delegate(BaseRegularMonoScroll) onConfiguredScrollField;
     void delegate(BaseRegularMonoScroll) onCreatedScrollField;
 
-    Text valueField;
+    TextView valueField;
     bool isCreateValueField = true;
-    Text delegate(Text) onNewValueField;
-    void delegate(Text) onConfiguredValueField;
-    void delegate(Text) onCreatedValueField;
+    TextView delegate(TextView) onNewValueField;
+    void delegate(TextView) onConfiguredValueField;
+    void delegate(TextView) onCreatedValueField;
 
     dstring valueFieldInitSymbol = "0";
 
@@ -172,7 +173,7 @@ class RegulateTextField : Control
     }
 
     Text newLabelField(dstring text) => new Text(text);
-    Text newValueField(dstring text) => new Text(text);
+    TextView newValueField(dstring text) => new TextView(text);
 
     BaseRegularMonoScroll newScrollField()
     {

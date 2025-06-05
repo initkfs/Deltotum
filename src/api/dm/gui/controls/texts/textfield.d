@@ -1,6 +1,6 @@
 module api.dm.gui.controls.texts.textfield;
 
-import api.dm.gui.controls.texts.text : Text, CursorState, CursorPos;
+import api.dm.gui.controls.texts.text : Text;
 
 /**
  * Authors: initkfs

@@ -10,6 +10,7 @@ import api.dm.gui.controls.selects.calendars.dialogs.calendar_dialog : CalendarD
 import api.dm.gui.controls.selects.base_dropdown_selector : BaseDropDownSelector;
 
 import api.dm.gui.controls.texts.text : Text;
+import api.dm.gui.controls.texts.text_view: TextView;
 import api.dm.gui.controls.switches.buttons.button : Button;
 
 import KitI18nKeys = api.dm.gui.gui_i18n_keys;
@@ -38,20 +39,20 @@ class Calendar : BaseDropDownSelector!(CalendarDialog, Date)
     void delegate(Button) onCreatedDatePrevNextButton;
     void delegate(Button) onConfiguredDatePrevNextButton;
 
-    Text dayLabel;
-    Text delegate(Text) onNewDayLabel;
-    void delegate(Text) onConfiguredDayLabel;
-    void delegate(Text) onCreatedDayLabel;
+    TextView dayLabel;
+    TextView delegate(TextView) onNewDayLabel;
+    void delegate(TextView) onConfiguredDayLabel;
+    void delegate(TextView) onCreatedDayLabel;
 
-    Text monthLabel;
-    Text delegate(Text) onNewMonthLabel;
-    void delegate(Text) onConfiguredMonthLabel;
-    void delegate(Text) onCreatedMonthLabel;
+    TextView monthLabel;
+    TextView delegate(TextView) onNewMonthLabel;
+    void delegate(TextView) onConfiguredMonthLabel;
+    void delegate(TextView) onCreatedMonthLabel;
 
-    Text yearLabel;
-    Text delegate(Text) onNewYearLabel;
-    void delegate(Text) onConfiguredYearLabel;
-    void delegate(Text) onCreatedYearLabel;
+    TextView yearLabel;
+    TextView delegate(TextView) onNewYearLabel;
+    void delegate(TextView) onConfiguredYearLabel;
+    void delegate(TextView) onCreatedYearLabel;
 
     RGBA dayColor;
     RGBA holidayColor;
@@ -331,9 +332,9 @@ class Calendar : BaseDropDownSelector!(CalendarDialog, Date)
     Button newNextMonthButton() => NavigateButton.newHNextButton;
     Button newPrevYearButton() => NavigateButton.newHPrevButton;
     Button newNextYearButton() => NavigateButton.newHNextButton;
-    Text newMonthLabel(dstring text) => new Text(text);
-    Text newYearLabel(dstring text) => new Text(text);
-    Text newDayLabel(dstring text) => new Text(text);
+    TextView newMonthLabel(dstring text) => new TextView(text);
+    TextView newYearLabel(dstring text) => new TextView(text);
+    TextView newDayLabel(dstring text) => new TextView(text);
 
     void setToday()
     {

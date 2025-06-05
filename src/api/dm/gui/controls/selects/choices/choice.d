@@ -4,7 +4,7 @@ import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.switches.buttons.button : Button;
-import api.dm.gui.controls.texts.text : Text;
+import api.dm.gui.controls.texts.text_view: TextView;
 import api.dm.gui.controls.selects.base_selector : BaseSelector;
 import api.dm.gui.controls.texts.text_area : TextArea;
 import api.dm.gui.controls.popups.menus.popup_menu : PopupMenu;
@@ -31,19 +31,19 @@ class Choice(T) : BaseSelector!T
     void delegate(Button) onConfiguredNextButton;
     void delegate(Button) onCreatedNextButton;
 
-    Text label;
+    TextView label;
     bool isCreateLabel = true;
-    Text delegate(Text) onNewLabel;
-    void delegate(Text) onConfiguredLabel;
-    void delegate(Text) onCreatedLabel;
+    TextView delegate(TextView) onNewLabel;
+    void delegate(TextView) onConfiguredLabel;
+    void delegate(TextView) onCreatedLabel;
 
     dstring delegate(T) itemToTextConverter;
 
-    Text searchField;
+    TextView searchField;
     bool isCreateSearchField;
-    Text delegate(Text) onNewSearchField;
-    void delegate(Text) onConfiguredSearchField;
-    void delegate(Text) onCreatedSearchField;
+    TextView delegate(TextView) onNewSearchField;
+    void delegate(TextView) onConfiguredSearchField;
+    void delegate(TextView) onCreatedSearchField;
 
     PopupMenu!T popupMenu;
 
@@ -353,15 +353,8 @@ class Choice(T) : BaseSelector!T
         return new NavigateButton(direction);
     }
 
-    Text newLabel()
-    {
-        return new Text;
-    }
-
-    Text newSearchField()
-    {
-        return new Text("Search");
-    }
+    TextView newLabel() => new TextView;
+    TextView newSearchField() => new TextView("Search");
 
     override void onRemoveFromParent()
     {

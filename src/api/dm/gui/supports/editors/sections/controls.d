@@ -991,7 +991,7 @@ class Controls : Control
         //exp.close;
 
         auto t1 = new Text("Коммодор никак не мог отделаться от ощущения чудовищных перегрузок и невыносимой яркости освещения. Но он по-прежнему сидел в своем отсеке, хотя рука его еще лежала на клавише «Уничтожение»...");
-        t1.isEditable = true;
+        //t1.isEditable = true;
         t1.maxWidth = 350;
         t1.isBorder = true;
         exp.contentContainer.addCreate(t1);

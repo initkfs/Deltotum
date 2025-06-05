@@ -83,57 +83,57 @@ class TextArea : HBox
         scroll.onValue ~= (value) { textView.scrollTo(value); };
 
         //TODO isDisabled
-        onTextInput ~= (ref key) {
-            foreach (glyph; asset.fontBitmap.glyphs)
-            {
-                if (glyph.grapheme == key.firstLetter)
-                {
-                    textView.text = textView.text ~ glyph.grapheme;
-                }
-            }
-        };
+        // onTextInput ~= (ref key) {
+        //     foreach (glyph; asset.fontBitmap.glyphs)
+        //     {
+        //         if (glyph.grapheme == key.firstLetter)
+        //         {
+        //             textView.text = textView.text ~ glyph.grapheme;
+        //         }
+        //     }
+        // };
 
-        onKeyPress ~= (ref key) {
-            import api.dm.com.inputs.com_keyboard : ComKeyName;
+        // onKeyPress ~= (ref key) {
+        //     import api.dm.com.inputs.com_keyboard : ComKeyName;
 
-            if (key.keyName == ComKeyName.key_backspace && textView.text.length > 0)
-            {
-                textView.text = textView.text[0 .. $ - 1];
-                key.isConsumed = true;
-                return;
-            }
+        //     if (key.keyName == ComKeyName.key_backspace && textView.text.length > 0)
+        //     {
+        //         textView.text = textView.text[0 .. $ - 1];
+        //         key.isConsumed = true;
+        //         return;
+        //     }
 
-            if (key.keyName == ComKeyName.key_return)
-            {
-                if (key.keyMod.isCtrl && onCaret !is null)
-                {
-                    onCaret();
-                    key.isConsumed = true;
-                    return;
-                }
+        //     if (key.keyName == ComKeyName.key_return)
+        //     {
+        //         if (key.keyMod.isCtrl && onCaret !is null)
+        //         {
+        //             onCaret();
+        //             key.isConsumed = true;
+        //             return;
+        //         }
 
-                textView.text = textView.text ~ '\n';
-            }
+        //         textView.text = textView.text ~ '\n';
+        //     }
 
-            if (key.keyMod.isCtrl && key.keyName == ComKeyName.key_c)
-            {
-                import std.conv : to;
+        //     if (key.keyMod.isCtrl && key.keyName == ComKeyName.key_c)
+        //     {
+        //         import std.conv : to;
 
-                if (textView.text.length > 0)
-                {
-                    input.clipboard.setText(textView.text.to!string);
-                }
-            }
+        //         if (textView.text.length > 0)
+        //         {
+        //             input.clipboard.setText(textView.text.to!string);
+        //         }
+        //     }
 
-            if (key.keyMod.isCtrl && key.keyName == ComKeyName.key_v)
-            {
-                import std.conv : to;
+        //     if (key.keyMod.isCtrl && key.keyName == ComKeyName.key_v)
+        //     {
+        //         import std.conv : to;
 
-                if (input.clipboard.hasText)
-                {
-                    textView.text = input.clipboard.getText;
-                }
-            }
-        };
+        //         if (input.clipboard.hasText)
+        //         {
+        //             textView.text = input.clipboard.getText;
+        //         }
+        //     }
+        // };
     }
 }

@@ -7,6 +7,7 @@ import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.controls.switches.buttons.navigate_button : NavigateButton, NavigateDirection;
 import api.dm.gui.controls.texts.text : Text;
+import api.dm.gui.controls.texts.text_view: TextView;
 
 import std.conv : to;
 
@@ -84,11 +85,11 @@ class Pagination : BaseSelector!size_t
     void delegate(Text) onConfiguredInfoPageCurrent;
     void delegate(Text) onCreatedInfoPageCurrent;
 
-    Text selectNewPage;
+    TextView selectNewPage;
     bool isCreateSelectNewPage = true;
-    Text delegate(Text) onNewSelectNewPage;
-    void delegate(Text) onConfiguredSelectNewPage;
-    void delegate(Text) onCreatedSelectNewPage;
+    TextView delegate(TextView) onNewSelectNewPage;
+    void delegate(TextView) onConfiguredSelectNewPage;
+    void delegate(TextView) onCreatedSelectNewPage;
 
     size_t activePageCount = 3;
 
@@ -410,30 +411,11 @@ class Pagination : BaseSelector!size_t
         return infoContainer;
     }
 
-    Text newSkipPagePlaceholder()
-    {
-        return new Text(skipPagePlaceholderText);
-    }
-
-    Text newInfoPageCurrent()
-    {
-        return new Text;
-    }
-
-    Text newSelectNewPage()
-    {
-        return new Text("0");
-    }
-
-    Button newPrevButton()
-    {
-        return NavigateButton.newHPrevButton;
-    }
-
-    Button newNextButton()
-    {
-        return NavigateButton.newHNextButton;
-    }
+    Text newSkipPagePlaceholder() => new Text(skipPagePlaceholderText);
+    Text newInfoPageCurrent() => new Text;
+    TextView newSelectNewPage() => new TextView("0");
+    Button newPrevButton() => NavigateButton.newHPrevButton;
+    Button newNextButton() => NavigateButton.newHNextButton;
 
     protected Button newPageButton(dstring text)
     {
