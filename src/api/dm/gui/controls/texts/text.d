@@ -1,6 +1,6 @@
 module api.dm.gui.controls.texts.text;
 
-import api.dm.gui.controls.texts.base_text: BaseText;
+import api.dm.gui.controls.texts.base_text : BaseText, TextRow;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 import api.math.geom2.rect2 : Rect2d;
@@ -11,18 +11,10 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.math.insets : Insets;
 import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;
-import api.dm.kit.assets.fonts.font_size : FontSize;
 
 import Math = api.math;
-
 import std.conv : to;
-
 import std.stdio;
-
-struct TextRow
-{
-    Glyph*[] glyphs;
-}
 
 /**
  * Authors: initkfs
@@ -30,8 +22,6 @@ struct TextRow
 class Text : BaseText
 {
     BitmapFont fontTexture;
-
-    TextRow[] rows;
 
     protected
     {
@@ -43,8 +33,6 @@ class Text : BaseText
 
     Glyph[] _textBuffer;
     size_t textBufferInitSize = 10;
-
-    bool isRebuildRows;
 
     this(string text)
     {
@@ -122,29 +110,11 @@ class Text : BaseText
         }
 
         size_t bufferOffset = isAppend ? textBufferCount : 0;
-        foreach (i, ref grapheme; textString)
-        {
-            Glyph newGlyph;
-            bool isFound;
-            //TODO hash map
-            foreach (glyph; asset.fontBitmap(fontSize).glyphs)
-            {
-                if (glyph.grapheme == grapheme)
-                {
-                    newGlyph = glyph;
-                    isFound = true;
-                    break;
-                }
-            }
-
-            if (!isFound)
-            {
-                newGlyph = asset.fontBitmap.placeholder;
-            }
-
-            _textBuffer[bufferOffset + i] = newGlyph;
+        textToGlyphs(textString, (glyph, i) {
+            _textBuffer[bufferOffset + i] = glyph;
             textBufferCount++;
-        }
+            return true;
+        });
     }
 
     protected TextRow[] glyphsBufferToRows()
@@ -450,27 +420,6 @@ class Text : BaseText
     {
         addRows(text);
         setInvalid;
-    }
-
-    double calcTextWidth(const(dchar)[] str)
-    {
-        return calcTextWidth(str, fontSize);
-    }
-
-    double calcTextWidth(const(dchar)[] str, FontSize fontSize)
-    {
-        double sum = 0;
-        foreach (ref grapheme; str)
-        {
-            foreach (glyph; asset.fontBitmap(fontSize).glyphs)
-            {
-                if (glyph.grapheme == grapheme)
-                {
-                    sum += glyph.geometry.width;
-                }
-            }
-        }
-        return sum;
     }
 
     void text(string t, bool isTriggerListeners = true)

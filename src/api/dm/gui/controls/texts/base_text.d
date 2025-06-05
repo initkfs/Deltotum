@@ -3,8 +3,6 @@ module api.dm.gui.controls.texts.base_text;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
-import api.math.geom2.vec2 : Vec2d;
-import api.math.flip : Flip;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;
@@ -14,6 +12,10 @@ import Math = api.math;
 
 import std.conv : to;
 
+struct TextRow
+{
+    Glyph*[] glyphs;
+}
 
 /**
  * Authors: initkfs
@@ -36,6 +38,10 @@ class BaseText : Control
 
     bool isShowNewLineGlyph;
 
+    TextRow[] rows;
+
+    bool isRebuildRows;
+
     override void loadTheme()
     {
         super.loadTheme;
@@ -48,6 +54,63 @@ class BaseText : Control
         {
             _color = theme.colorText;
         }
+    }
+
+    void textToGlyphs(const(dchar)[] textString, scope bool delegate(Glyph, size_t) onGlyphIsContinue)
+    {
+        const textLength = textString.length;
+
+        if (textLength == 0)
+        {
+            return;
+        }
+
+        foreach (i, ref grapheme; textString)
+        {
+            Glyph newGlyph;
+            bool isFound;
+            //TODO hash map
+            foreach (glyph; asset.fontBitmap(fontSize).glyphs)
+            {
+                if (glyph.grapheme == grapheme)
+                {
+                    newGlyph = glyph;
+                    isFound = true;
+                    break;
+                }
+            }
+
+            if (!isFound)
+            {
+                newGlyph = asset.fontBitmap.placeholder;
+            }
+
+            if (!onGlyphIsContinue(newGlyph, i))
+            {
+                break;
+            }
+        }
+    }
+
+    double calcTextWidth(const(dchar)[] str)
+    {
+        return calcTextWidth(str, fontSize);
+    }
+
+    double calcTextWidth(const(dchar)[] str, FontSize fontSize)
+    {
+        double sum = 0;
+        foreach (ref grapheme; str)
+        {
+            foreach (glyph; asset.fontBitmap(fontSize).glyphs)
+            {
+                if (glyph.grapheme == grapheme)
+                {
+                    sum += glyph.geometry.width;
+                }
+            }
+        }
+        return sum;
     }
 
     void setLargeSize()
