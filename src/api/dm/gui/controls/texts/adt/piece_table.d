@@ -14,38 +14,38 @@ enum OperationType
     opremove
 }
 
-struct HistoryRecord
+struct PieceTable(CharType = char)
 {
-    OperationType type;
-    int pos;
-    char[] text;
-}
-
-struct Piece
-{
-    char[] source;
-
-    size_t start;
-    size_t length;
-
-    char[] text()
+    struct HistoryRecord
     {
-        return source[start .. start + length];
+        OperationType type;
+        int pos;
+        CharType[] text;
     }
 
-    string toString()
+    struct Piece
     {
-        import std.format : format;
+        CharType[] source;
 
-        return format("s:%d,len:%s,text:|%s|", start, length, text);
+        size_t start;
+        size_t length;
+
+        CharType[] text()
+        {
+            return source[start .. start + length];
+        }
+
+        string toString()
+        {
+            import std.format : format;
+
+            return format("s:%d,len:%s,text:|%s|", start, length, text);
+        }
     }
-}
 
-struct PieceTable
-{
-    char[] original;
+    CharType[] original;
 
-    char[] additions;
+    CharType[] additions;
     size_t additionPos;
     size_t additionsCapacity = 1024;
 
@@ -61,13 +61,13 @@ struct PieceTable
     int redoTopIndex = -1;
     size_t redoCapacity = 10;
 
-    void create(const(char)[] text)
+    void create(const(CharType)[] text)
     {
-        original = (cast(char*) malloc(text.length))[0 .. text.length];
+        original = (cast(CharType*) malloc(text.length * CharType.sizeof))[0 .. text.length];
         original[] = text;
 
         assert(additionsCapacity > 0);
-        additions = (cast(char*) malloc(additionsCapacity))[0 .. additionsCapacity];
+        additions = (cast(CharType*) malloc(additionsCapacity * CharType.sizeof))[0 .. additionsCapacity];
         additionPos = 0;
 
         pieces = (cast(Piece*) malloc(Piece.sizeof * piecesCapacity))[0 .. piecesCapacity];
@@ -94,7 +94,7 @@ struct PieceTable
         //TODO free undo\redo records
     }
 
-    void insert(int pos, const(char)[] text,  bool isPushToHistory = true)
+    void insert(int pos, const(CharType)[] text, bool isPushToHistory = true)
     {
         size_t textLen = text.length;
 
@@ -102,7 +102,7 @@ struct PieceTable
         {
             const newCapacity = additions.length > textLen ? additions.length * 2 : (
                 textLen + additions.length) * 2;
-            additions = (cast(char*) realloc(additions.ptr, newCapacity))[0 .. newCapacity];
+            additions = (cast(CharType*) realloc(additions.ptr, newCapacity * CharType.sizeof))[0 .. newCapacity];
         }
 
         additions[additionPos .. additionPos + textLen] = text;
@@ -166,7 +166,8 @@ struct PieceTable
         numPieces += 2;
         additionPos += textLen;
 
-        if(isPushToHistory){
+        if (isPushToHistory)
+        {
             pushHistory(OperationType.opinsert, pos, text);
         }
     }
@@ -178,7 +179,7 @@ struct PieceTable
             return;
         }
 
-        char[] deletedText = piece_table_get_text_range(pos, length);
+        CharType[] deletedText = fullText(pos, length);
         scope (exit)
         {
             free(deletedText.ptr);
@@ -250,12 +251,13 @@ struct PieceTable
             pieces[i].length -= remainLen;
         }
 
-        if(isPushToHistory){
+        if (isPushToHistory)
+        {
             pushHistory(OperationType.opremove, pos, deletedText);
         }
     }
 
-    char[] text()
+    CharType[] text()
     {
         int totalLen = 0;
         foreach (i; 0 .. numPieces)
@@ -263,7 +265,7 @@ struct PieceTable
             totalLen += pieces[i].length;
         }
 
-        char[] result = (cast(char*) malloc(totalLen))[0 .. totalLen];
+        CharType[] result = (cast(CharType*) malloc(totalLen * CharType.sizeof))[0 .. totalLen];
         int pos = 0;
 
         foreach (i; 0 .. numPieces)
@@ -276,7 +278,7 @@ struct PieceTable
         return result;
     }
 
-    void pushHistory(OperationType type, int pos, const(char)[] text)
+    void pushHistory(OperationType type, int pos, const(CharType)[] text)
     {
         if (undoTopIndex + 1 >= undoBuffer.length)
         {
@@ -291,7 +293,8 @@ struct PieceTable
 
         if (text)
         {
-            undoBuffer[undoTopIndex].text = (cast(char*) malloc(text.length))[0 .. text.length];
+            undoBuffer[undoTopIndex].text = (cast(CharType*) malloc(
+                    text.length * CharType.sizeof))[0 .. text.length];
             undoBuffer[undoTopIndex].text[] = text;
         }
         else
@@ -304,10 +307,10 @@ struct PieceTable
         redoTopIndex = -1;
     }
 
-    char[] piece_table_get_text_range(int pos, int length)
+    CharType[] fullText(int pos, int length)
     {
-        char[] fullText = text;
-        char[] result = (cast(char*) malloc(length))[0 .. length];
+        CharType[] fullText = text;
+        CharType[] result = (cast(CharType*) malloc(length * CharType.sizeof))[0 .. length];
         result[] = fullText[pos .. pos + length];
 
         free(fullText.ptr);
@@ -325,11 +328,13 @@ struct PieceTable
 
         if (record.type == OperationType.opinsert)
         {
-            remove(record.pos + 1, cast(int) record.text.length, isPushToHistory: false);
+            remove(record.pos + 1, cast(int) record.text.length, isPushToHistory:
+                false);
         }
         else
         {
-            insert(record.pos, record.text, isPushToHistory: false);
+            insert(record.pos, record.text, isPushToHistory:
+                false);
         }
 
         if (redoTopIndex + 1 >= redoBuffer.length)
@@ -357,11 +362,13 @@ struct PieceTable
         HistoryRecord* record = &redoBuffer[redoTopIndex];
         if (record.type == OperationType.opinsert)
         {
-            insert(record.pos, record.text, isPushToHistory: false);
+            insert(record.pos, record.text, isPushToHistory:
+                false);
         }
         else
         {
-            remove(record.pos, cast(int) record.text.length, isPushToHistory: false);
+            remove(record.pos, cast(int) record.text.length, isPushToHistory:
+                false);
         }
 
         undoTopIndex++;
@@ -375,7 +382,7 @@ struct PieceTable
 
 unittest
 {
-    PieceTable pt;
+    PieceTable!char pt;
 
     pt.create("Hello, world!");
     assert(pt.numPieces == 1);
@@ -405,7 +412,7 @@ unittest
 
 unittest
 {
-    PieceTable pt;
+    PieceTable!char pt;
 
     pt.create("Hello, world!");
     pt.remove(0, 2);
@@ -423,7 +430,7 @@ unittest
 
 unittest
 {
-    PieceTable pt;
+    PieceTable!char pt;
 
     pt.create("Hello");
     pt.insert(4, " world!");

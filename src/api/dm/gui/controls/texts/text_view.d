@@ -8,6 +8,9 @@ import api.math.flip : Flip;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
+import api.dm.gui.controls.texts.adt.piece_table : PieceTable;
+
+import core.stdc.stdlib;
 
 import std.stdio;
 
@@ -41,9 +44,10 @@ class TextView : Text
         double scrollPosition = 0;
     }
 
+    Rectangle cursor;
     CursorPos cursorPos;
 
-    Rectangle cursor;
+    PieceTable!dchar textEditor;
 
     bool isEditable;
 
@@ -59,14 +63,16 @@ class TextView : Text
         if (isFocusable)
         {
             onFocusEnter ~= (ref e) {
-                if (focusEffect !is null)
+                if (focusEffect)
                 {
                     focusEffect.isVisible = true;
                 }
+
+                window.startTextInput;
             };
 
             onFocusExit ~= (ref e) {
-                if (focusEffect !is null && focusEffect.isVisible)
+                if (focusEffect && focusEffect.isVisible)
                 {
                     focusEffect.isVisible = false;
                     if (cursor)
@@ -74,12 +80,15 @@ class TextView : Text
                         cursor.isVisible = false;
                     }
                 }
+
+                window.endTextInput;
             };
         }
 
         if (isEditable)
         {
             onPointerPress ~= (ref e) {
+
                 const mouseX = e.x;
                 const mouseY = e.y;
 
@@ -123,10 +132,6 @@ class TextView : Text
                 updateCursor;
                 cursor.isVisible = true;
             };
-
-            onFocusEnter ~= (ref e) { window.startTextInput; };
-
-            onFocusExit ~= (ref e) { window.endTextInput; };
 
             onKeyPress ~= (ref e) {
                 import api.dm.com.inputs.com_keyboard : ComKeyName;
@@ -257,9 +262,17 @@ class TextView : Text
 
     override void create()
     {
+        if (tempText.length > 0)
+        {
+            textEditor.create(tempText);
+            tempText = null;
+        }
+
         super.create;
 
-        if (focusEffectFactory !is null)
+        updateText;
+
+        if (focusEffectFactory)
         {
             focusEffect = focusEffectFactory();
             focusEffect.isLayoutManaged = false;
@@ -272,8 +285,8 @@ class TextView : Text
         {
             const cursorColor = theme.colorAccent;
 
-            import api.dm.kit.sprites2d.shapes.rectangle: Rectangle;
-            import api.dm.kit.graphics.styles.graphic_style: GraphicStyle;
+            import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
+            import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
             cursor = new Rectangle(2, 20, GraphicStyle(1, cursorColor, true, cursorColor));
             addCreate(cursor);
@@ -281,6 +294,17 @@ class TextView : Text
             cursor.isVisible = false;
         }
 
+    }
+
+    void updateText()
+    {
+        auto text = textEditor.text;
+        scope (exit)
+        {
+            free(text.ptr);
+        }
+
+        updateRows(text);
     }
 
     override void drawContent()

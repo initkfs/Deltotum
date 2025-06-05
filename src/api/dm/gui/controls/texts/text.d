@@ -1,7 +1,7 @@
 module api.dm.gui.controls.texts.text;
 
+import api.dm.gui.controls.texts.base_text: BaseText;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.gui.controls.control : Control;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 import api.math.geom2.rect2 : Rect2d;
 import api.math.geom2.vec2 : Vec2d;
@@ -27,25 +27,9 @@ struct TextRow
 /**
  * Authors: initkfs
  */
-class Text : Control
+class Text : BaseText
 {
-    int spaceWidth = 5;
-    int rowHeight = 0;
-
-    RGBA _color;
-    FontSize fontSize = FontSize.medium;
-
-    Sprite2d focusEffect;
-    Sprite2d delegate() focusEffectFactory;
-
-    void delegate(ref KeyEvent) onEnter;
-    void delegate() onTextChange;
-
-    bool isReduceWidthHeight = true;
-
     BitmapFont fontTexture;
-
-    bool isShowNewLineGlyph;
 
     TextRow[] rows;
 
@@ -83,33 +67,12 @@ class Text : Control
     override void initialize()
     {
         super.initialize;
-
-        loadTheme;
-
         invalidateListeners ~= () { updateRows; };
-    }
-
-    override void loadTheme()
-    {
-        super.loadTheme;
-        loadTextTheme;
-    }
-
-    void loadTextTheme()
-    {
-        if (_color == RGBA.init)
-        {
-            _color = theme.colorText;
-        }
     }
 
     override void create()
     {
         super.create;
-
-        import api.math.insets : Insets;
-
-        //padding = Insets(0);
 
         setColorTexture;
 
@@ -117,10 +80,6 @@ class Text : Control
         {
             updateRows;
             tempText = null;
-        }
-        else
-        {
-            updateRows;
         }
     }
 
@@ -355,7 +314,7 @@ class Text : Control
             .to!dstring;
     }
 
-    void updateRows(bool isForce = false)
+    void updateRows(const(dchar)[] newText = null, bool isForce = false)
     {
         if (!isBuilt && !isForce)
         {
@@ -363,11 +322,14 @@ class Text : Control
             return;
         }
 
-        if (tempText.length > 0)
+        auto textForUpdate = newText.length > 0 ? newText : tempText;
+        if (textForUpdate.length == 0)
         {
-            textToGlyphsBuffer(tempText);
-            tempText = null;
+            return;
         }
+
+        textToGlyphsBuffer(textForUpdate);
+        tempText = null;
 
         isAllowInvalidate = false;
         scope (exit)
@@ -591,20 +553,5 @@ class Text : Control
             setColorTexture;
         }
         setInvalid;
-    }
-
-    void setLargeSize()
-    {
-        fontSize = FontSize.large;
-    }
-
-    void setMediumSize()
-    {
-        fontSize = FontSize.medium;
-    }
-
-    void setSmallSize()
-    {
-        fontSize = FontSize.small;
     }
 }
