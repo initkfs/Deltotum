@@ -10,7 +10,6 @@ import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.math.insets : Insets;
-import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
 import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 
@@ -44,8 +43,6 @@ class Text : Control
 
     bool isReduceWidthHeight = true;
 
-    Rectangle cursor;
-
     BitmapFont fontTexture;
 
     bool isShowNewLineGlyph;
@@ -54,7 +51,7 @@ class Text : Control
 
     protected
     {
-        double rowWidth = 0;
+        double lastRowWidth = 0;
         dstring tempText;
     }
 
@@ -110,12 +107,14 @@ class Text : Control
 
         setColorTexture;
 
-        updateRows;
-
         if (tempText.length > 0)
         {
             updateRows;
             tempText = null;
+        }
+        else
+        {
+            updateRows;
         }
     }
 
@@ -193,20 +192,20 @@ class Text : Control
         double glyphPosX = startRowTextX;
         double glyphPosY = startRowTextY;
 
-        rowWidth = 0;
+        double maxRowWidth = 0;
+
+        lastRowWidth = 0;
 
         TextRow row;
         size_t glyphCount;
         foreach (ref glyph; glyphs)
         {
             auto nextGlyphPosX = glyphPosX + glyph.geometry.width;
-            if (nextGlyphPosX <= endRowTextX && nextGlyphPosX > rowWidth)
+            lastRowWidth += glyph.geometry.width;
+
+            if (lastRowWidth > maxRowWidth)
             {
-                auto newRowWidth = rowWidth + (nextGlyphPosX - rowWidth + padding.right);
-                if (newRowWidth > rowWidth)
-                {
-                    rowWidth = newRowWidth;
-                }
+                maxRowWidth = lastRowWidth;
             }
 
             if (glyph.isNEL)
@@ -215,6 +214,8 @@ class Text : Control
                 row = TextRow();
                 glyphPosX = startRowTextX;
                 glyphPosY += rowHeight;
+
+                lastRowWidth = 0;
 
                 if (!isShowNewLineGlyph)
                 {
@@ -231,7 +232,7 @@ class Text : Control
                         ptrdiff_t idt = row.glyphs.length - 1;
                         if (idt < 0)
                         {
-                            return [];
+                            continue;
                         }
 
                         if (j == idt)
@@ -264,6 +265,7 @@ class Text : Control
 
                 newRows ~= row;
                 row = newRow;
+                lastRowWidth = 0;
             }
 
             glyph.pos.x = glyphPosX;
@@ -290,16 +292,18 @@ class Text : Control
             newRows ~= row;
         }
 
-        if (rowWidth > width)
+        auto fullRowWidth = maxRowWidth + padding.width;
+
+        if (fullRowWidth > width)
         {
-            width = Math.min(maxWidth, rowWidth);
+            width = Math.min(maxWidth, fullRowWidth);
         }
         else
         {
             if (isReduceWidthHeight)
             {
                 //TODO check minHeight;
-                width = rowWidth;
+                width = maxRowWidth;
             }
         }
 
@@ -345,6 +349,16 @@ class Text : Control
             tempText = null;
         }
 
+        isAllowInvalidate = false;
+        scope (exit)
+        {
+            isAllowInvalidate = true;
+        }
+
+        import std;
+
+        writeln("UPdate rows");
+
         this.rows = glyphsToRows(_text);
     }
 
@@ -357,7 +371,7 @@ class Text : Control
 
     override bool canChangeWidth(double value)
     {
-        if (rowWidth > 0 && value < (rowWidth + padding.width))
+        if (lastRowWidth > 0 && value < (lastRowWidth + padding.width))
         {
             return false;
         }

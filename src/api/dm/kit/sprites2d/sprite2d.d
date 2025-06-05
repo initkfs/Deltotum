@@ -162,6 +162,7 @@ class Sprite2d : EventKitTarget
     void delegate() onStopDrag;
 
     InvalidationState invalidationState;
+    bool isAllowInvalidate = true;
     void delegate()[] invalidateListeners;
 
     //old, new
@@ -1116,11 +1117,16 @@ class Sprite2d : EventKitTarget
             {
                 onInvalid(this);
             }
-            //listeners can expect to call layout manager
-            foreach (invListener; invalidateListeners)
+
+            if (isAllowInvalidate)
             {
-                invListener();
+                //listeners can expect to call layout manager
+                foreach (invListener; invalidateListeners)
+                {
+                    invListener();
+                }
             }
+
         }
     }
 

@@ -7,6 +7,7 @@ import api.math.geom2.vec2 : Vec2d;
 import api.math.flip : Flip;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 import api.dm.gui.controls.texts.text : Text;
+import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
 
 import std.stdio;
 
@@ -41,6 +42,8 @@ class TextView : Text
     }
 
     CursorPos cursorPos;
+
+    Rectangle cursor;
 
     bool isEditable;
 

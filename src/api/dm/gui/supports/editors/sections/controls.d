@@ -79,6 +79,8 @@ class Controls : Control
 
         createPickers(selectionContainer);
 
+        createTexts(selectionContainer);
+
         auto metersContainer = new HBox;
         metersContainer.layout.isAlignY = true;
         rootContainer.addCreate(metersContainer);
@@ -984,6 +986,14 @@ class Controls : Control
         import api.dm.gui.controls.texts.text_area : TextArea;
 
         import api.dm.gui.controls.containers.expanders.expander : Expander, ExpanderPosition;
+
+        auto textBox = new HBox;
+        root.addCreate(textBox);
+
+        auto text = new Text("Text with\nline breaks");
+        text.padding = 5;
+        text.isBorder = true;
+        textBox.addCreate(text);
 
         auto exp = new Expander;
         exp.expandPosition = ExpanderPosition.top;
