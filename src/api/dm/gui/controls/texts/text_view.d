@@ -8,9 +8,6 @@ import api.math.flip : Flip;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 import api.dm.gui.controls.texts.text : Text;
 import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
-import api.dm.gui.controls.texts.adt.piece_table : PieceTable;
-
-import core.stdc.stdlib;
 
 import std.stdio;
 
@@ -46,8 +43,6 @@ class TextView : Text
 
     Rectangle cursor;
     CursorPos cursorPos;
-
-    PieceTable!dchar textEditor;
 
     bool isEditable;
 
@@ -262,17 +257,9 @@ class TextView : Text
 
     override void create()
     {
-        if (tempText.length > 0)
-        {
-            textEditor.create(tempText);
-            tempText = null;
-        }
-
         super.create;
 
-        updateText;
-
-        if (focusEffectFactory)
+        if (focusEffectFactory !is null)
         {
             focusEffect = focusEffectFactory();
             focusEffect.isLayoutManaged = false;
@@ -294,17 +281,6 @@ class TextView : Text
             cursor.isVisible = false;
         }
 
-    }
-
-    void updateText()
-    {
-        auto text = textEditor.text;
-        scope (exit)
-        {
-            free(text.ptr);
-        }
-
-        updateRows(text);
     }
 
     override void drawContent()
