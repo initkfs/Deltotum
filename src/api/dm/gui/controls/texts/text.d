@@ -53,9 +53,13 @@ class Text : Control
     {
         double lastRowWidth = 0;
         dstring tempText;
+
+        size_t textBufferCount;
     }
 
-    Glyph[] _text;
+    Glyph[] _textBuffer;
+    size_t textBufferInitSize = 10;
+
     bool isRebuildRows;
 
     this(string text)
@@ -72,6 +76,8 @@ class Text : Control
         import api.dm.kit.sprites2d.layouts.managed_layout : ManagedLayout;
 
         this.layout = new ManagedLayout;
+
+        _textBuffer = new Glyph[textBufferInitSize];
     }
 
     override void initialize()
@@ -136,18 +142,28 @@ class Text : Control
         }
     }
 
-    //TODO optimizations
-    protected Glyph[] textToGlyphs(const(dchar)[] textString)
+    protected void textToGlyphsBuffer(const(dchar)[] textString, bool isAppend = false)
     {
-        if (textString.length == 0)
+        const textLength = textString.length;
+
+        if (textLength == 0)
         {
-            return [];
+            return;
         }
 
-        Glyph[] newGlyphs;
-        newGlyphs.reserve(textString.length);
+        if (!isAppend)
+        {
+            textBufferCount = 0;
+        }
 
-        foreach (ref grapheme; textString)
+        size_t needCapacity = textBufferCount + textLength;
+        if (needCapacity > _textBuffer.length)
+        {
+            _textBuffer.length = needCapacity;
+        }
+
+        size_t bufferOffset = isAppend ? textBufferCount : 0;
+        foreach (i, ref grapheme; textString)
         {
             Glyph newGlyph;
             bool isFound;
@@ -167,10 +183,14 @@ class Text : Control
                 newGlyph = asset.fontBitmap.placeholder;
             }
 
-            newGlyphs ~= newGlyph;
+            _textBuffer[bufferOffset + i] = newGlyph;
+            textBufferCount++;
         }
+    }
 
-        return newGlyphs;
+    protected TextRow[] glyphsBufferToRows()
+    {
+        return glyphsToRows(_textBuffer[0 .. textBufferCount]);
     }
 
     protected TextRow[] glyphsToRows(Glyph[] glyphs)
@@ -345,7 +365,7 @@ class Text : Control
 
         if (tempText.length > 0)
         {
-            _text = textToGlyphs(tempText);
+            textToGlyphsBuffer(tempText);
             tempText = null;
         }
 
@@ -355,18 +375,15 @@ class Text : Control
             isAllowInvalidate = true;
         }
 
-        import std;
-
-        writeln("UPdate rows");
-
-        this.rows = glyphsToRows(_text);
+        this.rows = glyphsBufferToRows;
     }
 
     void addRows(const(dchar)[] text)
     {
-        auto glyphs = textToGlyphs(text);
-        _text ~= glyphs;
-        this.rows ~= glyphsToRows(glyphs);
+        textToGlyphsBuffer(text, isAppend:
+            true);
+        //TODO only append
+        this.rows = glyphsBufferToRows;
     }
 
     override bool canChangeWidth(double value)
@@ -510,10 +527,8 @@ class Text : Control
             return;
         }
 
-        _text = textToGlyphs(t);
-        rows = glyphsToRows(_text);
-        tempText = null;
-        setInvalid;
+        tempText = t;
+        updateRows(isForce : true);
 
         if (onTextChange && isTriggerListeners)
         {
@@ -523,6 +538,12 @@ class Text : Control
 
     auto textTo(T)() => text.to!T;
     string textString() => textTo!string;
+
+    Glyph[] bufferText()
+    {
+        assert(_textBuffer.length >= textBufferCount);
+        return _textBuffer[0 .. textBufferCount];
+    }
 
     dstring text()
     {
@@ -534,7 +555,7 @@ class Text : Control
         import std.array : appender;
 
         auto builder = appender!dstring;
-        foreach (ref glyph; _text)
+        foreach (ref glyph; bufferText)
         {
             builder ~= glyph.grapheme;
         }

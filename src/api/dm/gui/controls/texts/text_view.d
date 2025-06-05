@@ -194,10 +194,10 @@ class TextView : Text
                         size_t textIndex = cursorGlyphIndex;
                         auto glyph = row.glyphs[cursorPos.glyphIndex];
 
-                        _text = _text.remove(textIndex);
-                        cursorPos.pos.x -= glyph.geometry.width;
+                        // _text = _text.remove(textIndex);
+                        // cursorPos.pos.x -= glyph.geometry.width;
 
-                        logger.tracef("Remove index %s, new cursor pos: %s", textIndex, cursorPos);
+                        // logger.tracef("Remove index %s, new cursor pos: %s", textIndex, cursorPos);
 
                         updateCursor;
                         setInvalid;
@@ -219,21 +219,21 @@ class TextView : Text
                 //TODO one glyph
                 import std.conv : to;
 
-                auto glyphsArr = textToGlyphs(e.firstLetter.to!dstring);
+                // auto glyphsArr = textToGlyphs(e.firstLetter.to!dstring);
 
-                double glyphOffset;
-                foreach (ref glyph; glyphsArr)
-                {
-                    glyphOffset += glyph.geometry.width;
-                }
+                // double glyphOffset;
+                // foreach (ref glyph; glyphsArr)
+                // {
+                //     glyphOffset += glyph.geometry.width;
+                // }
 
-                _text.insertInPlace(textIndex, glyphsArr);
-                logger.tracef("Insert text %s with index %s", glyphsArr, textIndex);
+                // _text.insertInPlace(textIndex, glyphsArr);
+                // logger.tracef("Insert text %s with index %s", glyphsArr, textIndex);
 
-                cursorPos.pos.x += glyphOffset;
-                cursorPos.glyphIndex++;
-                updateCursor;
-                setInvalid;
+                // cursorPos.pos.x += glyphOffset;
+                // cursorPos.glyphIndex++;
+                // updateCursor;
+                // setInvalid;
             };
         }
 
