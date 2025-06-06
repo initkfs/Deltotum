@@ -479,7 +479,7 @@ class Calendar : BaseDropDownSelector!(CalendarDialog, Date)
         return date.day.to!dstring;
     }
 
-    protected double getMaxMonthNameWidth(Text label)
+    protected double getMaxMonthNameWidth(TextView label)
     {
         import std.traits : EnumMembers;
 

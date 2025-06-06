@@ -52,48 +52,48 @@ class Controls : Control
         rootContainer.layout.isAlignY = true;
         addCreate(rootContainer);
 
-        auto switchRoot = new HBox;
-        switchRoot.layout.isAlignY = true;
-        rootContainer.addCreate(switchRoot);
+        // auto switchRoot = new HBox;
+        // switchRoot.layout.isAlignY = true;
+        // rootContainer.addCreate(switchRoot);
 
-        createSwitches(switchRoot);
+        // createSwitches(switchRoot);
 
-        import api.dm.gui.controls.separators.vseparator : VSeparator;
-        import api.dm.gui.controls.separators.hseparator : HSeparator;
+        // import api.dm.gui.controls.separators.vseparator : VSeparator;
+        // import api.dm.gui.controls.separators.hseparator : HSeparator;
 
-        switchRoot.addCreate(new VSeparator);
+        // switchRoot.addCreate(new VSeparator);
 
-        createWindows(switchRoot);
+        // createWindows(switchRoot);
 
-        switchRoot.addCreate(new VSeparator);
+        // switchRoot.addCreate(new VSeparator);
 
-        createLabels(switchRoot);
+        // createLabels(switchRoot);
 
-        rootContainer.addCreate(new HSeparator);
+        // rootContainer.addCreate(new HSeparator);
 
         auto selectionContainer = new HBox;
         selectionContainer.layout.isAlignY = true;
         rootContainer.addCreate(selectionContainer);
 
-        createSelects(selectionContainer);
+        // createSelects(selectionContainer);
 
-        createPickers(selectionContainer);
+        // createPickers(selectionContainer);
 
         createTexts(selectionContainer);
 
-        auto metersContainer = new HBox;
-        metersContainer.layout.isAlignY = true;
-        rootContainer.addCreate(metersContainer);
+        // auto metersContainer = new HBox;
+        // metersContainer.layout.isAlignY = true;
+        // rootContainer.addCreate(metersContainer);
 
-        createMeters(metersContainer);
+        // createMeters(metersContainer);
 
-        auto dataContainer = new HBox(5);
-        dataContainer.layout.isAlignY = true;
-        rootContainer.addCreate(dataContainer);
+        // auto dataContainer = new HBox(5);
+        // dataContainer.layout.isAlignY = true;
+        // rootContainer.addCreate(dataContainer);
 
-        createCharts(dataContainer);
+        // createCharts(dataContainer);
 
-        createIndicators(dataContainer);
+        // createIndicators(dataContainer);
     }
 
     void createSwitches(Container root)
@@ -1000,9 +1000,10 @@ class Controls : Control
         root.addCreate(exp);
         //exp.close;
 
-        auto t1 = new TextView("Коммодор никак не мог отделаться от ощущения чудовищных перегрузок и невыносимой яркости освещения. Но он по-прежнему сидел в своем отсеке, хотя рука его еще лежала на клавише «Уничтожение»...");
-        t1.isEditable = true;
-        t1.maxWidth = 350;
+        auto t1 = new TextArea("Коммодор никак не мог отделаться от ощущения чудовищных перегрузок и невыносимой яркости освещения. Но он по-прежнему сидел в своем отсеке, хотя рука его еще лежала на клавише «Уничтожение»...\nКоммодор никак не мог отделаться от ощущения чудовищных перегрузок и невыносимой яркости освещения. Но он по-прежнему сидел в своем отсеке, хотя рука его еще лежала на клавише «Уничтожение»...");
+        //t1.isEditable = true;
+        t1.width = 350;
+        t1.height = 200;
         t1.isBorder = true;
         t1.isDrawBounds = true;
         exp.contentContainer.addCreate(t1);

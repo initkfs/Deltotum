@@ -21,13 +21,23 @@ class TextArea : HBox
 
     void delegate() onCaret;
 
-    this()
+    protected {
+        dstring tempText;
+    }
+
+    this(){
+        this(""d);
+    }
+
+    this(dstring text)
     {
         if (layout)
         {
             layout.isAlignY = false;
             layout.isAlignX = false;
         }
+
+        tempText = text;
     }
 
     override void initialize()
@@ -58,7 +68,7 @@ class TextArea : HBox
 
         scroll = new VScroll(0, 1.0);
 
-        textView = new TextView;
+        textView = new TextView(tempText);
         textView.isEditable = true;
 
         textView.onPointerEnter ~= (ref e) {
@@ -69,14 +79,15 @@ class TextArea : HBox
 
         textView.onPointerExit ~= (ref e) { input.systemCursor.restore; };
 
-        addCreate(textView);
-
         auto textViewWidth = width - padding.width - textView.margin.width - scroll.width - scroll.margin.width - spacing;
 
         textView.width = textViewWidth;
         textView.maxWidth = textView.width;
 
+        textView.height = height;
         textView.maxHeight = height;
+
+        addCreate(textView);
 
         addCreate(scroll);
 

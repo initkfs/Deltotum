@@ -112,7 +112,7 @@ class GuiEditor : GuiScene
         root.changeTab(controlsTab);
 
         //import std;
-        createDebugger;
+       // createDebugger;
     }
 
 }

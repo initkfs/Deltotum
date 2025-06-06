@@ -56,6 +56,29 @@ class BaseText : Control
         }
     }
 
+    Glyph charToGlyph(dchar ch)
+    {
+        Glyph newGlyph;
+        bool isFound;
+        //TODO hash map
+        foreach (glyph; asset.fontBitmap(fontSize).glyphs)
+        {
+            if (glyph.grapheme == ch)
+            {
+                newGlyph = glyph;
+                isFound = true;
+                break;
+            }
+        }
+
+        if (!isFound)
+        {
+            newGlyph = asset.fontBitmap.placeholder;
+        }
+
+        return newGlyph;
+    }
+
     void textToGlyphs(const(dchar)[] textString, scope bool delegate(Glyph, size_t) onGlyphIsContinue)
     {
         const textLength = textString.length;
@@ -67,24 +90,7 @@ class BaseText : Control
 
         foreach (i, ref grapheme; textString)
         {
-            Glyph newGlyph;
-            bool isFound;
-            //TODO hash map
-            foreach (glyph; asset.fontBitmap(fontSize).glyphs)
-            {
-                if (glyph.grapheme == grapheme)
-                {
-                    newGlyph = glyph;
-                    isFound = true;
-                    break;
-                }
-            }
-
-            if (!isFound)
-            {
-                newGlyph = asset.fontBitmap.placeholder;
-            }
-
+            Glyph newGlyph = charToGlyph(grapheme);
             if (!onGlyphIsContinue(newGlyph, i))
             {
                 break;
