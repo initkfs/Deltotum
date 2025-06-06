@@ -337,7 +337,7 @@ struct PieceTable(CharType = dchar)
         return result;
     }
 
-    Glyph*[] allGlyphsPtr()
+    Glyph*[] newGlyphsPtr()
     {
         int totalLen = 0;
         foreach (i; 0 .. numPieces)

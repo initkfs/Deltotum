@@ -1,6 +1,6 @@
 module api.dm.gui.controls.texts.text_view;
 
-import api.dm.gui.controls.texts.base_text : BaseText, TextRow;
+import api.dm.gui.controls.texts.base_text : BaseText;
 import api.dm.gui.controls.texts.adt.piece_table : PieceTable;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
@@ -33,6 +33,12 @@ struct CursorPos
     bool isValid;
 }
 
+struct DocStruct
+{
+    size_t[] rowsGlyphCount;
+    size_t[] lineBreaks;
+}
+
 /**
  * Authors: initkfs
  */
@@ -50,7 +56,11 @@ class TextView : BaseText
 
     PieceTable!dchar _textBuffer;
 
+    DocStruct docStruct;
+
     BitmapFont fontTexture;
+
+    bool isRebuildRows;
 
     protected
     {
@@ -314,23 +324,13 @@ class TextView : BaseText
         }
     }
 
-    protected TextRow[] glyphsBufferToRows()
+    protected DocStruct glyphsToDocStruct(Glyph*[] glyphs)
     {
-        Glyph*[] glyphs = _textBuffer.allGlyphsPtr;
-        scope (exit)
-        {
-            free(glyphs.ptr);
-        }
-        return glyphsToRows(glyphs);
-    }
-
-    protected TextRow[] glyphsToRows(Glyph*[] glyphs)
-    {
-        TextRow[] newRows;
+        DocStruct docStruct;
 
         if (glyphs.length == 0)
         {
-            return newRows;
+            return docStruct;
         }
 
         rowHeight = cast(int) glyphs[0].geometry.height;
@@ -344,12 +344,9 @@ class TextView : BaseText
         double glyphPosY = startRowTextY;
 
         double maxRowWidth = 0;
-
         lastRowWidth = 0;
 
-        TextRow row;
-        size_t glyphCount;
-        foreach (ref glyph; glyphs)
+        foreach (i, ref glyph; glyphs)
         {
             auto nextGlyphPosX = glyphPosX + glyph.geometry.width;
             lastRowWidth += glyph.geometry.width;
@@ -361,75 +358,58 @@ class TextView : BaseText
 
             if (glyph.isNEL)
             {
-                newRows ~= row;
-                row = TextRow();
+                docStruct.lineBreaks ~= i;
+
                 glyphPosX = startRowTextX;
                 glyphPosY += rowHeight;
-
                 lastRowWidth = 0;
-
-                if (!isShowNewLineGlyph)
-                {
-                    continue;
-                }
             }
             else if (nextGlyphPosX > endRowTextX)
             {
                 long slicePos = -1;
-                foreach_reverse (j, oldGlyph; row.glyphs)
-                {
-                    if (oldGlyph.grapheme == ' ')
-                    {
-                        ptrdiff_t idt = row.glyphs.length - 1;
-                        if (idt < 0)
-                        {
-                            continue;
-                        }
+                // foreach_reverse (j, oldGlyph; row.glyphs)
+                // {
+                //     if (oldGlyph.grapheme == ' ')
+                //     {
+                //         ptrdiff_t idt = row.glyphs.length - 1;
+                //         if (idt < 0)
+                //         {
+                //             continue;
+                //         }
 
-                        if (j == idt)
-                        {
-                            continue;
-                        }
-                        slicePos = j;
-                        break;
-                    }
-                }
+                //         if (j == idt)
+                //         {
+                //             continue;
+                //         }
+                //         slicePos = j;
+                //         break;
+                //     }
+                // }
 
-                auto newRow = TextRow();
                 glyphPosX = startRowTextX;
                 glyphPosY += rowHeight;
-
-                if (slicePos != -1)
-                {
-                    foreach (i; slicePos + 1 .. row.glyphs.length)
-                    {
-                        auto oldGlyph = row.glyphs[i];
-                        oldGlyph.pos.x = glyphPosX;
-                        oldGlyph.pos.y = glyphPosY;
-
-                        newRow.glyphs ~= oldGlyph;
-                        glyphPosX += oldGlyph.geometry.width;
-                    }
-
-                    row.glyphs = row.glyphs[0 .. slicePos];
-                }
-
-                newRows ~= row;
-                row = newRow;
                 lastRowWidth = 0;
+                docStruct.lineBreaks ~= i;
+                // if (slicePos != -1)
+                // {
+                //     foreach (i; slicePos + 1 .. row.glyphs.length)
+                //     {
+                //         auto oldGlyph = row.glyphs[i];
+                //         oldGlyph.pos.x = glyphPosX;
+                //         oldGlyph.pos.y = glyphPosY;
+
+                //         newRow.glyphs ~= oldGlyph;
+                //         glyphPosX += oldGlyph.geometry.width;
+                //     }
+
+                //     row.glyphs = row.glyphs[0 .. slicePos];
+                // }
+
             }
 
             glyph.pos.x = glyphPosX;
             glyph.pos.y = glyphPosY;
-
-            row.glyphs ~= glyph;
-            glyphCount++;
             glyphPosX += glyph.geometry.width;
-        }
-
-        if (row.glyphs.length > 0)
-        {
-            newRows ~= row;
         }
 
         auto fullRowWidth = maxRowWidth + padding.width;
@@ -447,7 +427,7 @@ class TextView : BaseText
             }
         }
 
-        auto newHeight = newRows.length * rowHeight + padding.height;
+        auto newHeight = docStruct.lineBreaks.length * rowHeight + padding.height;
         if (newHeight > height)
         {
             import std.algorithm.comparison : min;
@@ -463,7 +443,7 @@ class TextView : BaseText
             }
         }
 
-        return newRows;
+        return docStruct;
     }
 
     dstring glyphsToStr(Glyph[] glyphs)
@@ -489,7 +469,13 @@ class TextView : BaseText
             isAllowInvalidate = true;
         }
 
-        this.rows = glyphsBufferToRows;
+        Glyph*[] glyphs = _textBuffer.newGlyphsPtr;
+        scope (exit)
+        {
+            free(glyphs.ptr);
+        }
+
+        docStruct = glyphsToDocStruct(glyphs);
     }
 
     void addRows(const(dchar)[] text)
@@ -509,7 +495,7 @@ class TextView : BaseText
         return super.canChangeWidth(value);
     }
 
-    protected void renderText(TextRow[] rows)
+    protected void renderText(Glyph*[] glyphs, size_t startIndex)
     {
         if (width == 0 || height == 0)
         {
@@ -518,78 +504,75 @@ class TextView : BaseText
 
         const thisBounds = boundsRect;
 
-        rowHeight = cast(int) rows[0].glyphs[0].geometry.height;
+        auto rowHeight = cast(int) glyphs[0].geometry.height;
+
         const double startRowTextY = padding.top;
         double glyphPosY = startRowTextY;
 
-        foreach (TextRow row; rows)
+        foreach (ri, Glyph* glyph; glyphs)
         {
-            foreach (Glyph* glyph; row.glyphs)
+            foreach (bi; docStruct.lineBreaks)
             {
-                if (glyph.isNEL)
+                if (startIndex + ri == bi)
                 {
                     glyphPosY += rowHeight;
-
-                    if (!isShowNewLineGlyph)
-                    {
-                        continue;
-                    }
+                    glyph.pos.y = glyphPosY;
+                    continue;
                 }
-
-                glyph.pos.y = glyphPosY;
-
-                Rect2d textureBounds = glyph.geometry;
-                Rect2d destBounds = Rect2d(thisBounds.x + glyph.pos.x, thisBounds.y + glyph.pos.y, glyph
-                        .geometry.width, glyph
-                        .geometry.height);
-                fontTexture.drawTexture(textureBounds, destBounds, angle, Flip
-                        .none);
             }
-            glyphPosY += rowHeight;
+
+            glyph.pos.y = glyphPosY;
+
+            Rect2d textureBounds = glyph.geometry;
+            Rect2d destBounds = Rect2d(thisBounds.x + glyph.pos.x, thisBounds.y + glyph.pos.y, glyph
+                    .geometry.width, glyph
+                    .geometry.height);
+            fontTexture.drawTexture(textureBounds, destBounds, angle, Flip
+                    .none);
         }
     }
 
     void onFontTexture(scope bool delegate(Texture2d, const(Glyph*) glyph) onTextureIsContinue)
     {
-        foreach (TextRow row; rows)
-        {
-            foreach (Glyph* glyph; row.glyphs)
-            {
-                if (!onTextureIsContinue(fontTexture, glyph))
-                {
-                    break;
-                }
-            }
-        }
+        // foreach (TextRow row; rows)
+        // {
+        //     foreach (Glyph* glyph; row.glyphs)
+        //     {
+        //         if (!onTextureIsContinue(fontTexture, glyph))
+        //         {
+        //             break;
+        //         }
+        //     }
+        // }
     }
 
     double rowGlyphWidth()
     {
         double result = 0;
-        foreach (TextRow row; rows)
-        {
-            foreach (Glyph* glyph; row.glyphs)
-            {
-                result += glyph.geometry.width;
-            }
-        }
+        // foreach (TextRow row; rows)
+        // {
+        //     foreach (Glyph* glyph; row.glyphs)
+        //     {
+        //         result += glyph.geometry.width;
+        //     }
+        // }
         return result;
     }
 
     double rowGlyphHeight()
     {
         double result = 0;
-        foreach (TextRow row; rows)
-        {
-            foreach (Glyph* glyph; row.glyphs)
-            {
-                auto h = glyph.geometry.height;
-                if (h > result)
-                {
-                    result = h;
-                }
-            }
-        }
+        // foreach (TextRow row; rows)
+        // {
+        //     foreach (Glyph* glyph; row.glyphs)
+        //     {
+        //         auto h = glyph.geometry.height;
+        //         if (h > result)
+        //         {
+        //             result = h;
+        //         }
+        //     }
+        // }
         return result;
     }
 
@@ -600,14 +583,14 @@ class TextView : BaseText
         import api.math.geom2.rect2 : Rect2d;
 
         //TODO remove duplication with render()
-        foreach (TextRow row; rows)
-        {
-            foreach (Glyph* glyph; row.glyphs)
-            {
-                Rect2d textureBounds = glyph.geometry;
-                texture.copyFrom(fontTexture, textureBounds, destBounds);
-            }
-        }
+        // foreach (TextRow row; rows)
+        // {
+        //     foreach (Glyph* glyph; row.glyphs)
+        //     {
+        //         Rect2d textureBounds = glyph.geometry;
+        //         texture.copyFrom(fontTexture, textureBounds, destBounds);
+        //     }
+        // }
     }
 
     void appendText(const(dchar)[] text)
@@ -725,43 +708,51 @@ class TextView : BaseText
 
     // }
 
+    Glyph*[] viewportRows(out size_t firstRowIndex)
+    {
+        //TODO first line without \n
+        if (docStruct.lineBreaks.length == 0)
+        {
+            return null;
+        }
+
+        const lastRowIndex = docStruct.lineBreaks.length - 1;
+        const rowsInViewport = to!(int)((height - padding.height) / rowHeight);
+
+        import std.math.rounding : round;
+
+        //TODO only one hanging line in text
+        size_t mustBeLastRowIndex = lastRowIndex;
+        if (mustBeLastRowIndex > rowsInViewport)
+        {
+            mustBeLastRowIndex -= rowsInViewport - 1;
+        }
+
+        size_t mustBeStartRowIndex = to!size_t(round(scrollPosition * mustBeLastRowIndex));
+        size_t mustBeEndRowIndex = mustBeStartRowIndex + rowsInViewport - 1;
+        if (mustBeEndRowIndex > lastRowIndex)
+        {
+            mustBeEndRowIndex = lastRowIndex;
+        }
+
+        auto startGlyphIndex = docStruct.lineBreaks[mustBeStartRowIndex];
+        auto endGlyphIndex = docStruct.lineBreaks[mustBeEndRowIndex];
+
+        Glyph*[] glyphs = _textBuffer.newGlyphsPtr[startGlyphIndex + 1 .. endGlyphIndex];
+        firstRowIndex = startGlyphIndex + 1;
+        return glyphs;
+    }
+
     override void drawContent()
     {
-        if (rows.length == 0)
+        if (docStruct.lineBreaks.length == 0)
         {
             return;
         }
 
-        import std.conv : to;
-
-        //TODO Gap buffer, TextRow[]?
-        const lastRowIndex = rows.length - 1;
-        const rowsInViewport = to!(int)((height - padding.height) / rowHeight);
-        if (rows.length <= rowsInViewport)
-        {
-            //renderText(rows);
-        }
-        else
-        {
-            import std.math.rounding : round;
-
-            //TODO only one hanging line in text
-            size_t mustBeLastRowIndex = lastRowIndex;
-            if (mustBeLastRowIndex > rowsInViewport)
-            {
-                mustBeLastRowIndex -= rowsInViewport - 1;
-            }
-
-            size_t mustBeStartRowIndex = to!size_t(round(scrollPosition * mustBeLastRowIndex));
-            size_t mustBeEndRowIndex = mustBeStartRowIndex + rowsInViewport - 1;
-            if (mustBeEndRowIndex > lastRowIndex)
-            {
-                mustBeEndRowIndex = lastRowIndex;
-            }
-
-            auto rowsForView = rows[mustBeStartRowIndex .. mustBeEndRowIndex + 1];
-            renderText(rowsForView);
-        }
+        size_t rowStartIndex;
+        Glyph*[] glyphs = viewportRows(rowStartIndex);
+        renderText(glyphs, rowStartIndex);
     }
 
     void scrollTo(double value)

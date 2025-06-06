@@ -12,11 +12,6 @@ import Math = api.math;
 
 import std.conv : to;
 
-struct TextRow
-{
-    Glyph*[] glyphs;
-}
-
 /**
  * Authors: initkfs
  */
@@ -37,10 +32,6 @@ class BaseText : Control
     bool isReduceWidthHeight = true;
 
     bool isShowNewLineGlyph;
-
-    TextRow[] rows;
-
-    bool isRebuildRows;
 
     override void loadTheme()
     {

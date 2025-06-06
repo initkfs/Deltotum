@@ -1,6 +1,6 @@
 module api.dm.gui.controls.texts.text;
 
-import api.dm.gui.controls.texts.base_text : BaseText, TextRow;
+import api.dm.gui.controls.texts.base_text : BaseText;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 import api.math.geom2.rect2 : Rect2d;
@@ -16,12 +16,21 @@ import Math = api.math;
 import std.conv : to;
 import std.stdio;
 
+struct TextRow
+{
+    Glyph*[] glyphs;
+}
+
 /**
  * Authors: initkfs
  */
 class Text : BaseText
 {
     BitmapFont fontTexture;
+
+    TextRow[] rows;
+
+    bool isRebuildRows;
 
     protected
     {
