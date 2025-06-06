@@ -519,54 +519,24 @@ class TextView : BaseText
         const thisBounds = boundsRect;
 
         rowHeight = cast(int) rows[0].glyphs[0].geometry.height;
-
-        const double startRowTextX = padding.left;
-        const double endRowTextX = maxWidth - padding.right;
-
         const double startRowTextY = padding.top;
-
-        double glyphPosX = startRowTextX;
         double glyphPosY = startRowTextY;
-
-        double maxRowWidth = 0;
-
-        lastRowWidth = 0;
 
         foreach (TextRow row; rows)
         {
             foreach (Glyph* glyph; row.glyphs)
             {
-                auto nextGlyphPosX = glyphPosX + glyph.geometry.width;
-                lastRowWidth += glyph.geometry.width;
-
-                if (lastRowWidth > maxRowWidth)
-                {
-                    maxRowWidth = lastRowWidth;
-                }
-
                 if (glyph.isNEL)
                 {
-                    glyphPosX = startRowTextX;
                     glyphPosY += rowHeight;
-
-                    lastRowWidth = 0;
 
                     if (!isShowNewLineGlyph)
                     {
                         continue;
                     }
                 }
-                else if (nextGlyphPosX > endRowTextX)
-                {
-                    glyphPosX = startRowTextX;
-                    glyphPosY += rowHeight;
-                    lastRowWidth = 0;
-                }
 
-                glyph.pos.x = glyphPosX;
                 glyph.pos.y = glyphPosY;
-
-                glyphPosX += glyph.geometry.width;
 
                 Rect2d textureBounds = glyph.geometry;
                 Rect2d destBounds = Rect2d(thisBounds.x + glyph.pos.x, thisBounds.y + glyph.pos.y, glyph
@@ -575,6 +545,7 @@ class TextView : BaseText
                 fontTexture.drawTexture(textureBounds, destBounds, angle, Flip
                         .none);
             }
+            glyphPosY += rowHeight;
         }
     }
 
