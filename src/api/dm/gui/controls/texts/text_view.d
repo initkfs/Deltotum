@@ -1,6 +1,6 @@
 module api.dm.gui.controls.texts.text_view;
 
-import api.dm.gui.controls.texts.base_text : BaseText;
+import api.dm.gui.controls.texts.editable_text : EditableText;
 import api.dm.gui.controls.texts.adt.piece_table : PieceTable;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
@@ -11,27 +11,11 @@ import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.math.flip : Flip;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 import api.dm.gui.controls.texts.text : Text;
-import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
 
 import std.stdio;
 import core.stdc.stdlib;
 import Math = api.math;
 import std.conv : to;
-
-enum CursorState
-{
-    forPrevGlyph,
-    forNextGlyph
-}
-
-struct CursorPos
-{
-    CursorState state;
-    Vec2d pos;
-    size_t rowIndex;
-    size_t glyphIndex;
-    bool isValid;
-}
 
 struct DocStruct
 {
@@ -42,15 +26,12 @@ struct DocStruct
 /**
  * Authors: initkfs
  */
-class TextView : BaseText
+class TextView : EditableText
 {
     protected
     {
         double scrollPosition = 0;
     }
-
-    Rectangle cursor;
-    CursorPos cursorPos;
 
     bool isEditable;
 
@@ -89,7 +70,10 @@ class TextView : BaseText
         super.initialize;
         invalidateListeners ~= () { updateRows; };
 
-        _textBuffer.glyphProvider = (ch) => charToGlyph(ch);
+        if (!_textBuffer.glyphProvider)
+        {
+            _textBuffer.glyphProvider = (ch) => charToGlyph(ch);
+        }
 
         //     if (isFocusable)
         //     {
@@ -291,13 +275,17 @@ class TextView : BaseText
         //     }
     }
 
+    void bufferCreate()
+    {
+        _textBuffer.create(tempText);
+        tempText = null;
+    }
+
     override void create()
     {
         super.create;
 
-        _textBuffer.create(tempText);
-        tempText = null;
-
+        bufferCreate;
         setColorTexture;
 
         updateRows;
@@ -324,16 +312,17 @@ class TextView : BaseText
         }
     }
 
-    protected DocStruct glyphsToDocStruct(Glyph*[] glyphs)
+    void glyphsToDocStruct()
     {
-        DocStruct docStruct;
+        //TODO reuse array
+        docStruct = DocStruct.init;
 
-        if (glyphs.length == 0)
-        {
-            return docStruct;
-        }
+        // if (glyphs.length == 0)
+        // {
+        //     return docStruct;
+        // }
 
-        rowHeight = cast(int) glyphs[0].geometry.height;
+        //rowHeight = cast(int) glyphs[0].geometry.height;
 
         const double startRowTextX = padding.left;
         const double endRowTextX = maxWidth - padding.right;
@@ -346,8 +335,15 @@ class TextView : BaseText
         double maxRowWidth = 0;
         lastRowWidth = 0;
 
-        foreach (i, ref glyph; glyphs)
-        {
+        size_t glyphCount;
+
+        _textBuffer.onGlyphs((Glyph* glyph, i) {
+            auto newRowHeight = cast(int) glyph.geometry.height;
+            if (newRowHeight > rowHeight)
+            {
+                rowHeight = newRowHeight;
+            }
+
             auto nextGlyphPosX = glyphPosX + glyph.geometry.width;
             lastRowWidth += glyph.geometry.width;
 
@@ -410,7 +406,13 @@ class TextView : BaseText
             glyph.pos.x = glyphPosX;
             glyph.pos.y = glyphPosY;
             glyphPosX += glyph.geometry.width;
-        }
+
+            glyphCount++;
+
+            return true;
+        });
+
+        docStruct.lineBreaks ~= (glyphCount - 1);
 
         auto fullRowWidth = maxRowWidth + padding.width;
 
@@ -442,11 +444,9 @@ class TextView : BaseText
                 height = newHeight;
             }
         }
-
-        return docStruct;
     }
 
-    dstring glyphsToStr(Glyph[] glyphs)
+    dstring glyphsToStr(Glyph*[] glyphs)
     {
         import std.algorithm.iteration : map;
         import std.conv : to;
@@ -469,13 +469,7 @@ class TextView : BaseText
             isAllowInvalidate = true;
         }
 
-        Glyph*[] glyphs = _textBuffer.newGlyphsPtr;
-        scope (exit)
-        {
-            free(glyphs.ptr);
-        }
-
-        docStruct = glyphsToDocStruct(glyphs);
+        glyphsToDocStruct;
     }
 
     void addRows(const(dchar)[] text)
@@ -625,11 +619,11 @@ class TextView : BaseText
     auto textTo(T)() => text.to!T;
     string textString() => textTo!string;
 
-    Glyph[] bufferText()
+    Glyph*[] bufferText()
     {
         // assert(_textBuffer.length >= textBufferCount);
         // return _textBuffer[0 .. textBufferCount];
-        return _textBuffer.allGlyphs;
+        return _textBuffer.newGlyphsPtr;
     }
 
     dstring text()
@@ -708,18 +702,36 @@ class TextView : BaseText
 
     // }
 
-    Glyph*[] viewportRows(out size_t firstRowIndex)
+    size_t rowsInViewport()
     {
-        //TODO first line without \n
-        if (docStruct.lineBreaks.length == 0)
+        if (rowHeight == 0)
         {
-            return null;
+            return 0;
         }
 
-        const lastRowIndex = docStruct.lineBreaks.length - 1;
-        const rowsInViewport = to!(int)((height - padding.height) / rowHeight);
+        return to!(size_t)((height - padding.height) / rowHeight);
+    }
 
-        import std.math.rounding : round;
+    Vec2d viewportRowIndex() => viewportRowIndex(scrollPosition);
+
+    Vec2d viewportRowIndex(double scrollPosition)
+    {
+        if (docStruct.lineBreaks.length == 0)
+        {
+            return Vec2d(0, 0);
+        }
+
+        const rowsInViewport = this.rowsInViewport;
+        if (rowsInViewport == 0)
+        {
+            return Vec2d(0, 0);
+        }
+
+        size_t lastRowIndex = docStruct.lineBreaks.length;
+        if (lastRowIndex > 0)
+        {
+            lastRowIndex--;
+        }
 
         //TODO only one hanging line in text
         size_t mustBeLastRowIndex = lastRowIndex;
@@ -728,18 +740,69 @@ class TextView : BaseText
             mustBeLastRowIndex -= rowsInViewport - 1;
         }
 
+        import std.math.rounding : round;
+
         size_t mustBeStartRowIndex = to!size_t(round(scrollPosition * mustBeLastRowIndex));
+
         size_t mustBeEndRowIndex = mustBeStartRowIndex + rowsInViewport - 1;
-        if (mustBeEndRowIndex > lastRowIndex)
+        //[start..end+1]
+        const maxEndIndex = lastRowIndex;
+        if (mustBeEndRowIndex > maxEndIndex)
         {
-            mustBeEndRowIndex = lastRowIndex;
+            mustBeEndRowIndex = maxEndIndex;
         }
 
-        auto startGlyphIndex = docStruct.lineBreaks[mustBeStartRowIndex];
-        auto endGlyphIndex = docStruct.lineBreaks[mustBeEndRowIndex];
+        return Vec2d(mustBeStartRowIndex, mustBeEndRowIndex);
+    }
 
-        Glyph*[] glyphs = _textBuffer.newGlyphsPtr[startGlyphIndex + 1 .. endGlyphIndex];
-        firstRowIndex = startGlyphIndex + 1;
+    Glyph*[] viewportRows(out size_t firstRowIndex) => viewportRows(firstRowIndex, scrollPosition);
+
+    Glyph*[] viewportRows(out size_t firstRowIndex, double scrollPosition)
+    {
+        //TODO first line without \n
+        if (docStruct.lineBreaks.length == 0)
+        {
+            return null;
+        }
+
+        Vec2d rowIndex = viewportRowIndex(scrollPosition);
+
+        size_t startRowIndex = cast(size_t) rowIndex.x;
+        size_t endRowIndex = cast(size_t) rowIndex.y;
+
+        size_t maxEndIndex = docStruct.lineBreaks.length;
+        if (maxEndIndex > 0)
+        {
+            maxEndIndex--;
+        }
+
+        if (endRowIndex > maxEndIndex)
+        {
+            endRowIndex = maxEndIndex;
+        }
+
+        //DocStruct([], [11, 23, 35, 47, 55])
+
+        auto startBreakIndex = docStruct.lineBreaks[startRowIndex];
+        auto endBreakIndex = docStruct.lineBreaks[endRowIndex];
+
+        size_t startGlyphIndex;
+        size_t endGlyphIndex = endBreakIndex;
+
+        if (startBreakIndex != 0 && startRowIndex > 0)
+        {
+            auto prevLineBreaks = docStruct.lineBreaks[startRowIndex - 1];
+            startGlyphIndex = prevLineBreaks;
+        }
+
+        if (endRowIndex == maxEndIndex)
+        {
+            endGlyphIndex++;
+        }
+
+        Glyph*[] glyphs = _textBuffer.newGlyphsPtr[startGlyphIndex .. endGlyphIndex];
+
+        firstRowIndex = startGlyphIndex;
         return glyphs;
     }
 
@@ -760,196 +823,44 @@ class TextView : BaseText
         scrollPosition = value;
     }
 
-    // bool updateCursor()
-    // {
-    //     if (!cursor || !cursorPos.isValid)
-    //     {
-    //         return false;
-    //     }
-    //     cursor.xy(cursorPos.pos.x, cursorPos.pos.y);
-    //     return true;
-    // }
+    size_t rowCount() => docStruct.lineBreaks.length;
 
-    // size_t cursorGlyphIndex()
-    // {
-    //     return cursorGlyphIndex(cursorPos.rowIndex, cursorPos.glyphIndex);
-    // }
+    ref inout(PieceTable!dchar) textBuffer() inout => _textBuffer;
 
-    // size_t cursorGlyphIndex(size_t rowIndex, size_t glyphIndex)
-    // {
-    //     size_t rowOffset;
-    //     if (rowIndex > 0)
-    //     {
-    //         enum hyphenCorrection = 1;
-    //         foreach (ri; 0 .. rowIndex)
-    //         {
-    //             rowOffset += rows[ri].glyphs.length + hyphenCorrection;
-    //         }
-    //     }
+}
 
-    //     size_t index = rowOffset + glyphIndex;
-    //     return index;
-    // }
+unittest
+{
+    import api.math.geom2.rect2 : Rect2d;
+    import api.math.geom2.vec2 : Vec2d;
 
-    // protected CursorPos coordsToRowPos(double x, double y)
-    // {
-    //     const thisBounds = boundsRect;
-    //     //TODO row height
-    //     foreach (ri, row; rows)
-    //     {
-    //         if (row.glyphs.length == 0)
-    //         {
-    //             continue;
-    //         }
+    auto textView = new TextView("Hello world\nThis is a very short text for the experiment");
+    textView.textBuffer.glyphProvider = (ch) {
+        return Glyph(ch, Rect2d(0, 0, 10, 10), Vec2d(0, 0), null, false, ch == '\n');
+    };
+    textView.width = 120;
+    textView.maxWidth = textView.width;
+    textView.height = 40;
+    textView.maxHeight = textView.height;
 
-    //         //TODO row height
-    //         Glyph* firstGlyph = row.glyphs[0];
+    textView.bufferCreate;
 
-    //         const rowMinY = thisBounds.y + firstGlyph.pos.y;
-    //         const rowMaxY = rowMinY + firstGlyph.geometry.height;
+    textView.glyphsToDocStruct;
+    assert(textView.rowCount == 5);
+    assert(textView.docStruct == DocStruct([], [11, 23, 35, 47, 55]));
 
-    //         if (y < rowMinY || y > rowMaxY)
-    //         {
-    //             continue;
-    //         }
+    assert(textView.rowsInViewport == 4);
+    assert(textView.viewportRowIndex == Vec2d(0, 3));
+    assert(textView.viewportRowIndex(1) == Vec2d(4, 4));
 
-    //         foreach (gi, glyph; row.glyphs)
-    //         {
-    //             const glyphMinX = thisBounds.x + glyph.pos.x;
-    //             const glyphMaxX = glyphMinX + glyph.geometry.width;
+    size_t firstRowIndex;
+    Glyph*[] rows = textView.viewportRows(firstRowIndex);
+    assert(rows.length == 47);
 
-    //             if (x > glyphMinX && x < glyphMaxX)
-    //             {
-    //                 CursorState state = CursorState.forNextGlyph;
-    //                 const minMaxRangeMiddle = glyphMinX + (glyph.geometry.width / 2);
-    //                 double posX = glyphMinX;
-    //                 size_t glyphIndex = gi;
+    dstring rowsStr = textView.glyphsToStr(rows);
+    assert(rowsStr == "Hello world\nThis is a very short text for the e");
 
-    //                 if (x > minMaxRangeMiddle)
-    //                 {
-    //                     if (glyphIndex < row.glyphs.length - 1)
-    //                     {
-    //                         glyphIndex++;
-    //                     }
-    //                     else
-    //                     {
-    //                         posX += glyph.geometry.width;
-    //                         state = CursorState.forPrevGlyph;
-    //                     }
-    //                     posX = glyphMaxX;
-    //                 }
-    //                 const pos = Vec2d(posX, rowMinY);
-    //                 return CursorPos(state, pos, ri, glyphIndex, true);
-    //             }
-    //         }
-    //     }
-    //     return CursorPos.init;
-    // }
-
-    // bool moveCursorLeft()
-    // {
-    //     if (!cursorPos.isValid)
-    //     {
-    //         return false;
-    //     }
-
-    //     if (cursorPos.glyphIndex == 0)
-    //     {
-    //         if (cursorPos.rowIndex == 0)
-    //         {
-    //             return false;
-    //         }
-    //         else
-    //         {
-    //             cursorPos.rowIndex--;
-    //             //TODO empty rows
-    //             auto row = rows[cursorPos.rowIndex];
-    //             auto lastGlyph = row.glyphs[$ - 1];
-    //             cursorPos.pos.x = lastGlyph.pos.x + lastGlyph.geometry.width;
-    //             updateCursor;
-    //             cursorPos.glyphIndex = row.glyphs.length - 1;
-    //             cursorPos.state = CursorState.forPrevGlyph;
-    //             return true;
-    //         }
-    //     }
-
-    //     auto row = rows[cursorPos.rowIndex];
-
-    //     double cursorOffset = 0;
-    //     if (cursorPos.glyphIndex == row.glyphs.length)
-    //     {
-    //         cursorPos.glyphIndex--;
-    //         const glyph = row.glyphs[cursorPos.glyphIndex];
-    //         cursorOffset = glyph.geometry.width;
-    //     }
-    //     else
-    //     {
-    //         const glyph = row.glyphs[cursorPos.glyphIndex];
-    //         cursorPos.glyphIndex--;
-    //         cursorOffset = glyph.geometry.width;
-    //     }
-
-    //     cursor.x = cursor.x - cursorOffset;
-
-    //     return true;
-    // }
-
-    // bool moveCursorRight()
-    // {
-    //     if (!cursorPos.isValid)
-    //     {
-    //         return false;
-    //     }
-    //     const row = rows[cursorPos.rowIndex];
-    //     if (row.glyphs.length == 0)
-    //     {
-    //         return false;
-    //     }
-
-    //     if (cursorPos.glyphIndex >= row.glyphs.length)
-    //     {
-    //         return false;
-    //     }
-
-    //     const glyph = row.glyphs[cursorPos.glyphIndex];
-    //     cursorPos.glyphIndex++;
-    //     cursor.x = cursor.x + glyph.geometry.width;
-    //     return true;
-    // }
-
-    // bool moveCursorUp()
-    // {
-    //     if (cursorPos.rowIndex == 0)
-    //     {
-    //         return false;
-    //     }
-
-    //     const row = rows[cursorPos.rowIndex];
-    //     if (row.glyphs.length == 0)
-    //     {
-    //         return false;
-    //     }
-
-    //     //TODO strings may not match in number of characters
-
-    //     const glyph = rows[cursorPos.rowIndex].glyphs[cursorPos.glyphIndex];
-    //     cursorPos.rowIndex--;
-    //     cursor.y = cursor.y - glyph.geometry.height;
-    //     return true;
-    // }
-
-    // bool moveCursorDown()
-    // {
-    //     if (rows.length <= 1 || cursorPos.rowIndex >= rows.length - 1)
-    //     {
-    //         return false;
-    //     }
-
-    //     //TODO strings may not match in number of characters
-
-    //     const glyph = rows[cursorPos.rowIndex].glyphs[cursorPos.glyphIndex];
-    //     cursorPos.rowIndex++;
-    //     cursor.y = cursor.y + glyph.geometry.height;
-    //     return true;
-    // }
+    Glyph*[] endRows = textView.viewportRows(firstRowIndex, 1);
+    dstring rowsStr1 = textView.glyphsToStr(endRows);
+    assert(rowsStr1 == "xperiment");
 }

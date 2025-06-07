@@ -141,7 +141,7 @@ class Theme
     @ConfigKey
     double dividerSize = 2;
 
-    this(IconPack iconPack)
+    this(IconPack iconPack = null)
     {
         this.iconPack = iconPack;
     }

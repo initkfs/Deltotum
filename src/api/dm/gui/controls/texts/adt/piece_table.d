@@ -301,7 +301,7 @@ struct PieceTable(CharType = dchar)
 
     const(CharType[]) text()
     {
-        Glyph[] glyphs = allGlyphs;
+        Glyph*[] glyphs = newGlyphsPtr;
         scope (exit)
         {
             free(glyphs.ptr);
@@ -316,50 +316,47 @@ struct PieceTable(CharType = dchar)
         return result;
     }
 
-    Glyph[] allGlyphs()
+    Glyph*[] newGlyphsPtr()
     {
-        int totalLen = 0;
-        foreach (i; 0 .. numPieces)
-        {
-            totalLen += pieces[i].length;
-        }
+        size_t totalLen = glyphsCount;
 
-        Glyph[] result = (cast(Glyph*) malloc(totalLen * Glyph.sizeof))[0 .. totalLen];
-        int pos = 0;
-
-        foreach (i; 0 .. numPieces)
-        {
-            auto piece = pieces[i];
-            result[pos .. pos + piece.length] = piece.glyphs;
-            pos += piece.length;
-        }
+        //result[pos .. pos + piece.length] = piece.glyphs;
+        //pos += piece.length;
+        Glyph*[] result = (cast(Glyph**) malloc(totalLen * (Glyph*).sizeof))[0 .. totalLen];
+        onGlyphs((glyphPtr, i) { result[i] = glyphPtr; return true; });
 
         return result;
     }
 
-    Glyph*[] newGlyphsPtr()
+    void onGlyphs(scope bool delegate(Glyph*, size_t) onPtr)
     {
-        int totalLen = 0;
-        foreach (i; 0 .. numPieces)
-        {
-            totalLen += pieces[i].length;
-        }
+        assert(onPtr);
 
-        Glyph*[] result = (cast(Glyph**) malloc(totalLen * (Glyph*).sizeof))[0 .. totalLen];
-        int pos = 0;
-
+        size_t pos;
         foreach (i; 0 .. numPieces)
         {
             auto piece = pieces[i];
             foreach (ref glyph; piece.glyphs)
             {
-                result[pos] = &glyph;
+                if (!onPtr(&glyph, pos))
+                {
+                    return;
+                }
                 pos++;
             }
 
         }
+    }
 
-        return result;
+    size_t glyphsCount()
+    {
+        size_t totalLen;
+        foreach (i; 0 .. numPieces)
+        {
+            totalLen += pieces[i].length;
+        }
+
+        return totalLen;
     }
 
     void pushHistory(OperationType type, int pos, Glyph[] text)
@@ -394,11 +391,22 @@ struct PieceTable(CharType = dchar)
 
     Glyph[] partGlyphs(int pos, int length)
     {
-        Glyph[] partGlyphs = allGlyphs;
-        Glyph[] result = (cast(Glyph*) malloc(length * Glyph.sizeof))[0 .. length];
-        result[] = partGlyphs[pos .. pos + length];
+        // Glyph[] partGlyphs = allGlyphs;
+        // Glyph[] result = (cast(Glyph*) malloc(length * Glyph.sizeof))[0 .. length];
+        // result[] = partGlyphs[pos .. pos + length];
 
-        free(partGlyphs.ptr);
+        Glyph*[] partGlyphs = newGlyphsPtr;
+        scope (exit)
+        {
+            free(partGlyphs.ptr);
+        }
+
+        Glyph[] result = (cast(Glyph*) malloc(length * Glyph.sizeof))[0 .. length];
+        foreach (i, glyphPtr; partGlyphs[pos .. pos + length])
+        {
+            result[i] = *glyphPtr;
+        }
+
         return result;
     }
 
