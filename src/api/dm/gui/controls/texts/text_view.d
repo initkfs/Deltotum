@@ -385,7 +385,7 @@ class TextView : EditableText
                 glyphPosX = startRowTextX;
                 glyphPosY += rowHeight;
                 lastRowWidth = 0;
-                docStruct.lineBreaks ~= i;
+                docStruct.lineBreaks ~= (i == 0 ? 0 : i - 1);
                 // if (slicePos != -1)
                 // {
                 //     foreach (i; slicePos + 1 .. row.glyphs.length)
@@ -491,7 +491,7 @@ class TextView : EditableText
 
     protected void renderText(Glyph*[] glyphs, size_t startIndex)
     {
-        if (width == 0 || height == 0)
+        if (width == 0 || height == 0 || glyphs.length == 0)
         {
             return;
         }
@@ -503,19 +503,24 @@ class TextView : EditableText
         const double startRowTextY = padding.top;
         double glyphPosY = startRowTextY;
 
+        import std.range : assumeSorted;
+
+        auto sortedLineBreaks = docStruct.lineBreaks.assumeSorted;
+        size_t lastIndex = glyphs.length - 1;
+
         foreach (ri, Glyph* glyph; glyphs)
         {
-            foreach (bi; docStruct.lineBreaks)
+            glyph.pos.y = glyphPosY;
+
+            if (sortedLineBreaks.contains(startIndex + ri))
             {
-                if (startIndex + ri == bi)
-                {
-                    glyphPosY += rowHeight;
-                    glyph.pos.y = glyphPosY;
-                    continue;
-                }
+                glyphPosY += rowHeight;
             }
 
-            glyph.pos.y = glyphPosY;
+            if (glyph.isNEL)
+            {
+                continue;
+            }
 
             Rect2d textureBounds = glyph.geometry;
             Rect2d destBounds = Rect2d(thisBounds.x + glyph.pos.x, thisBounds.y + glyph.pos.y, glyph
@@ -786,19 +791,25 @@ class TextView : EditableText
         auto startBreakIndex = docStruct.lineBreaks[startRowIndex];
         auto endBreakIndex = docStruct.lineBreaks[endRowIndex];
 
+        size_t glyphLastIndex = _textBuffer.glyphsCount;
+        if(glyphLastIndex > 0){
+            glyphLastIndex--;
+        }
+
         size_t startGlyphIndex;
-        size_t endGlyphIndex = endBreakIndex;
+        size_t endGlyphIndex = (endBreakIndex <= glyphLastIndex) ? endBreakIndex + 1 : endBreakIndex;
 
         if (startBreakIndex != 0 && startRowIndex > 0)
         {
             auto prevLineBreaks = docStruct.lineBreaks[startRowIndex - 1];
-            startGlyphIndex = prevLineBreaks;
+            //TODO check last index >= glyph.length
+            startGlyphIndex = prevLineBreaks < glyphLastIndex ? prevLineBreaks + 1 : prevLineBreaks;
         }
 
-        if (endRowIndex == maxEndIndex)
-        {
-            endGlyphIndex++;
-        }
+        // if (endRowIndex == maxEndIndex)
+        // {
+        //     endGlyphIndex++;
+        // }
 
         Glyph*[] glyphs = _textBuffer.newGlyphsPtr[startGlyphIndex .. endGlyphIndex];
 
@@ -815,6 +826,10 @@ class TextView : EditableText
 
         size_t rowStartIndex;
         Glyph*[] glyphs = viewportRows(rowStartIndex);
+        scope (exit)
+        {
+           // free(glyphs.ptr);
+        }
         renderText(glyphs, rowStartIndex);
     }
 
@@ -838,7 +853,7 @@ unittest
     textView.textBuffer.glyphProvider = (ch) {
         return Glyph(ch, Rect2d(0, 0, 10, 10), Vec2d(0, 0), null, false, ch == '\n');
     };
-    textView.width = 120;
+    textView.width = 123;
     textView.maxWidth = textView.width;
     textView.height = 40;
     textView.maxHeight = textView.height;
@@ -846,8 +861,9 @@ unittest
     textView.bufferCreate;
 
     textView.glyphsToDocStruct;
+
     assert(textView.rowCount == 5);
-    assert(textView.docStruct == DocStruct([], [11, 23, 35, 47, 55]));
+    assert(textView.docStruct == DocStruct([], [11, 22, 34, 46, 55]));
 
     assert(textView.rowsInViewport == 4);
     assert(textView.viewportRowIndex == Vec2d(0, 3));
