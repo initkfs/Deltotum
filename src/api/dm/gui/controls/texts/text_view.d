@@ -1,7 +1,7 @@
 module api.dm.gui.controls.texts.text_view;
 
 import api.dm.gui.controls.texts.editable_text : EditableText;
-import api.dm.gui.controls.texts.adt.piece_table : PieceTable;
+import api.dm.gui.controls.texts.adt.array_text_buffer: ArrayTextBuffer;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 import api.math.geom2.rect2 : Rect2d;
@@ -33,7 +33,7 @@ class TextView : EditableText
         double scrollPosition = 0;
     }
 
-    PieceTable!dchar _textBuffer;
+    ArrayTextBuffer _textBuffer;
 
     DocStruct docStruct;
 
@@ -82,7 +82,7 @@ class TextView : EditableText
 
     override size_t[] lineBreaks() => docStruct.lineBreaks;
     override Glyph*[] allGlyphs() => _textBuffer.newGlyphsPtr;
-    override size_t  glyphsCount() => _textBuffer.glyphsCount;
+    override size_t glyphsCount() => _textBuffer.glyphsCount;
 
     override void create()
     {
@@ -103,6 +103,18 @@ class TextView : EditableText
             updateRows;
             isRebuildRows = false;
         }
+    }
+
+    override bool insert(size_t pos, dchar text)
+    {
+        dchar[1] newText = [text];
+        if (_textBuffer.insert(cast(int) pos, newText[]))
+        {
+            updateRows;
+            return true;
+        }
+
+        return false;
     }
 
     protected void textToGlyphsBuffer(const(dchar)[] textString, bool isAppend = false)
@@ -526,7 +538,8 @@ class TextView : EditableText
         return Vec2d(mustBeStartRowIndex, mustBeEndRowIndex);
     }
 
-    override Glyph*[] viewportRows(out size_t firstRowIndex) => viewportRows(firstRowIndex, scrollPosition);
+    override Glyph*[] viewportRows(out size_t firstRowIndex) => viewportRows(
+        firstRowIndex, scrollPosition);
 
     Glyph*[] viewportRows(out size_t firstRowIndex, double scrollPosition)
     {
@@ -558,7 +571,8 @@ class TextView : EditableText
         auto endBreakIndex = docStruct.lineBreaks[endRowIndex];
 
         size_t glyphLastIndex = _textBuffer.glyphsCount;
-        if(glyphLastIndex > 0){
+        if (glyphLastIndex > 0)
+        {
             glyphLastIndex--;
         }
 
@@ -594,7 +608,7 @@ class TextView : EditableText
         Glyph*[] glyphs = viewportRows(rowStartIndex);
         scope (exit)
         {
-           // free(glyphs.ptr);
+            // free(glyphs.ptr);
         }
         renderText(glyphs, rowStartIndex);
     }
@@ -606,7 +620,7 @@ class TextView : EditableText
 
     size_t rowCount() => docStruct.lineBreaks.length;
 
-    ref inout(PieceTable!dchar) textBuffer() inout => _textBuffer;
+    ref inout(ArrayTextBuffer) textBuffer() inout => _textBuffer;
 
 }
 

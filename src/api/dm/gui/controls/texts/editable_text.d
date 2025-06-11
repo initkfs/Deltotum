@@ -41,6 +41,11 @@ class EditableText : BaseText
         isFocusable = true;
     }
 
+    abstract
+    {
+        bool insert(size_t pos, dchar letter);
+    }
+
     override void initialize()
     {
         super.initialize;
@@ -93,10 +98,6 @@ class EditableText : BaseText
 
                 cursorPos = coordsToRowPos(mouseX, mouseY);
 
-                import std;
-
-                writeln(mouseX, " ", mouseY, " pos: ", cursorPos);
-
                 // if (!cursorPos.isValid)
                 // {
                 //     Vec2d pos;
@@ -138,112 +139,102 @@ class EditableText : BaseText
                 cursor.isVisible = true;
             };
 
-            // onKeyPress ~= (ref e) {
-            //     import api.dm.com.inputs.com_keyboard : ComKeyName;
+            onKeyPress ~= (ref e) {
+                import api.dm.com.inputs.com_keyboard : ComKeyName;
 
-            //     if (!cursor.isVisible)
-            //     {
-            //         return;
-            //     }
-
-            //     if (e.keyName == ComKeyName.key_return && onEnter)
-            //     {
-            //         onEnter(e);
-            //         return;
-            //     }
-
-            //     switch (e.keyName) with (ComKeyName)
-            //     {
-            //         case key_left:
-            //             moveCursorLeft;
-            //             break;
-            //         case key_right:
-            //             moveCursorRight;
-            //             break;
-            //         case key_down:
-            //             moveCursorDown;
-            //             break;
-            //         case key_up:
-            //             moveCursorUp;
-            //             break;
-            //         case key_backspace:
-
-            //             if (!cursorPos.isValid)
-            //             {
-            //                 return;
-            //             }
-
-            //             logger.tracef("Backspace pressed for cursor: %s", cursorPos);
-
-            //             if (cursorPos.glyphIndex == 0)
-            //             {
-            //                 if (cursorPos.state == CursorState.forNextGlyph)
-            //                 {
-            //                     return;
-            //                 }
-            //             }
-
-            //             auto row = rows[cursorPos.rowIndex];
-
-            //             if (row.glyphs.length == 0)
-            //             {
-            //                 return;
-            //             }
-
-            //             if (cursorPos.state == CursorState.forNextGlyph)
-            //             {
-            //                 cursorPos.glyphIndex--;
-            //             }
-            //             else if (cursorPos.state == CursorState.forPrevGlyph)
-            //             {
-            //                 cursorPos.state = CursorState.forNextGlyph;
-            //             }
-
-            //             import std.algorithm.mutation : remove;
-
-            //             size_t textIndex = cursorGlyphIndex;
-            //             auto glyph = row.glyphs[cursorPos.glyphIndex];
-
-            //             // _text = _text.remove(textIndex);
-            //             // cursorPos.pos.x -= glyph.geometry.width;
-
-            //             // logger.tracef("Remove index %s, new cursor pos: %s", textIndex, cursorPos);
-
-            //             updateCursor;
-            //             setInvalid;
-            //             break;
-            //         default:
-            //             break;
-            //     }
-            // };
-
-            onTextInput ~= (ref e) {
                 if (!cursor.isVisible)
                 {
                     return;
                 }
 
-                // size_t textIndex = cursorGlyphIndex();
-                // import std.array : insertInPlace;
+                if (e.keyName == ComKeyName.key_return && onEnter)
+                {
+                    onEnter(e);
+                    return;
+                }
 
-                //TODO one glyph
-                // import std.conv : to;
+                switch (e.keyName) with (ComKeyName)
+                {
+                    //         case key_left:
+                    //             moveCursorLeft;
+                    //             break;
+                    //         case key_right:
+                    //             moveCursorRight;
+                    //             break;
+                    //         case key_down:
+                    //             moveCursorDown;
+                    //             break;
+                    //         case key_up:
+                    //             moveCursorUp;
+                    //             break;
+                    //         case key_backspace:
 
-                // auto glyphsArr = textToGlyphs(e.firstLetter.to!dstring);
+                    //             if (!cursorPos.isValid)
+                    //             {
+                    //                 return;
+                    //             }
 
-                // double glyphOffset;
-                // foreach (ref glyph; glyphsArr)
-                // {
-                //     glyphOffset += glyph.geometry.width;
-                // }
+                    //             logger.tracef("Backspace pressed for cursor: %s", cursorPos);
 
-                // _text.insertInPlace(textIndex, glyphsArr);
-                // logger.tracef("Insert text %s with index %s", glyphsArr, textIndex);
+                    //             if (cursorPos.glyphIndex == 0)
+                    //             {
+                    //                 if (cursorPos.state == CursorState.forNextGlyph)
+                    //                 {
+                    //                     return;
+                    //                 }
+                    //             }
 
-                // cursorPos.pos.x += glyphOffset;
-                // cursorPos.glyphIndex++;
-                // updateCursor;
-                // setInvalid;
+                    //             auto row = rows[cursorPos.rowIndex];
+
+                    //             if (row.glyphs.length == 0)
+                    //             {
+                    //                 return;
+                    //             }
+
+                    //             if (cursorPos.state == CursorState.forNextGlyph)
+                    //             {
+                    //                 cursorPos.glyphIndex--;
+                    //             }
+                    //             else if (cursorPos.state == CursorState.forPrevGlyph)
+                    //             {
+                    //                 cursorPos.state = CursorState.forNextGlyph;
+                    //             }
+
+                    //             import std.algorithm.mutation : remove;
+
+                    //             size_t textIndex = cursorGlyphIndex;
+                    //             auto glyph = row.glyphs[cursorPos.glyphIndex];
+
+                    //             // _text = _text.remove(textIndex);
+                    //             // cursorPos.pos.x -= glyph.geometry.width;
+
+                    //             // logger.tracef("Remove index %s, new cursor pos: %s", textIndex, cursorPos);
+
+                    //             updateCursor;
+                    //             setInvalid;
+                    //             break;
+                    default:
+                        break;
+                }
+            };
+
+            onTextInput ~= (ref e) {
+
+                if (!cursor.isVisible)
+                {
+                    return;
+                }
+
+                size_t textIndex = cursorPos.glyphIndex;
+                dchar letter = e.firstLetter;
+
+                if (insert(textIndex, letter))
+                {
+                    cursorPos.pos.x += 10;
+                    cursorPos.glyphIndex++;
+                    updateCursor;
+                    setInvalid;
+                }
             };
         }
     }

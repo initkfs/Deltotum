@@ -348,6 +348,17 @@ struct PieceTable(CharType = dchar)
         }
     }
 
+    void onPieces(scope bool delegate(ref Piece, size_t) onPieceIsContinue)
+    {
+        foreach (i; 0 .. numPieces)
+        {
+            if (!onPieceIsContinue(pieces[i], i))
+            {
+                return;
+            }
+        }
+    }
+
     size_t glyphsCount()
     {
         size_t totalLen;
@@ -472,6 +483,27 @@ struct PieceTable(CharType = dchar)
         return true;
     }
 }
+
+//TODO
+// unittest
+// {
+//     PieceTable!dchar pt;
+
+//     pt.create("H");
+//     assert(pt.numPieces == 1);
+//     pt.insert(0, "e");
+//     assert(pt.numPieces == 2);
+//     pt.insert(1, "l");
+//     assert(pt.numPieces == 3);
+//     pt.insert(2, "l");
+//     assert(pt.numPieces == 4);
+//     pt.insert(3, "o");
+//     assert(pt.numPieces == 5);
+    
+//     assert(pt.text == "Hello");
+
+//     pt.destroy;
+// }
 
 unittest
 {
