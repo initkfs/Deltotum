@@ -110,6 +110,15 @@ class BaseText : Control
         return sum;
     }
 
+    dstring glyphsToStr(Glyph*[] glyphs)
+    {
+        import std.algorithm.iteration : map;
+        import std.conv : to;
+
+        return glyphs.map!(g => g.grapheme)
+            .to!dstring;
+    }
+
     void setLargeSize()
     {
         fontSize = FontSize.large;

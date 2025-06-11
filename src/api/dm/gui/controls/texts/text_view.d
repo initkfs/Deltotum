@@ -33,8 +33,6 @@ class TextView : EditableText
         double scrollPosition = 0;
     }
 
-    bool isEditable;
-
     PieceTable!dchar _textBuffer;
 
     DocStruct docStruct;
@@ -74,205 +72,6 @@ class TextView : EditableText
         {
             _textBuffer.glyphProvider = (ch) => charToGlyph(ch);
         }
-
-        //     if (isFocusable)
-        //     {
-        //         onFocusEnter ~= (ref e) {
-        //             if (focusEffect)
-        //             {
-        //                 focusEffect.isVisible = true;
-        //             }
-
-        //             window.startTextInput;
-        //         };
-
-        //         onFocusExit ~= (ref e) {
-        //             if (focusEffect && focusEffect.isVisible)
-        //             {
-        //                 focusEffect.isVisible = false;
-        //                 if (cursor)
-        //                 {
-        //                     cursor.isVisible = false;
-        //                 }
-        //             }
-
-        //             window.endTextInput;
-        //         };
-        //     }
-
-        //     if (isEditable)
-        //     {
-        //         onPointerPress ~= (ref e) {
-
-        //             const mouseX = e.x;
-        //             const mouseY = e.y;
-
-        //             cursorPos = coordsToRowPos(mouseX, mouseY);
-        //             if (!cursorPos.isValid)
-        //             {
-        //                 Vec2d pos;
-        //                 CursorState state;
-        //                 size_t glyphIndex;
-        //                 if (rows.length == 0)
-        //                 {
-        //                     pos = Vec2d(x + padding.left, y + padding.top);
-        //                     state = CursorState.forNextGlyph;
-        //                 }
-        //                 else
-        //                 {
-        //                     //TODO empty rows
-        //                     auto lastRow = rows[$ - 1];
-        //                     glyphIndex = lastRow.glyphs.length - 1;
-        //                     auto lastRowGlyph = lastRow.glyphs[$ - 1];
-        //                     pos = Vec2d(x + lastRowGlyph.pos.x + lastRowGlyph.geometry.width, y + lastRowGlyph
-        //                             .pos.y);
-        //                     state = CursorState.forPrevGlyph;
-        //                     cursorPos = CursorPos(state, pos, 0, glyphIndex, true);
-        //                 }
-
-        //                 updateCursor;
-        //                 cursor.isVisible = true;
-
-        //                 logger.tracef("Mouse position is invalid, new cursor pos: %s", cursorPos);
-        //                 return;
-        //             }
-
-        //             debug
-        //             {
-        //                 import std.stdio;
-
-        //                 writefln("Cursor pos for %s,%s: %s", mouseX, mouseY, cursorPos);
-        //             }
-
-        //             updateCursor;
-        //             cursor.isVisible = true;
-        //         };
-
-        //         onKeyPress ~= (ref e) {
-        //             import api.dm.com.inputs.com_keyboard : ComKeyName;
-
-        //             if (!cursor.isVisible)
-        //             {
-        //                 return;
-        //             }
-
-        //             if (e.keyName == ComKeyName.key_return && onEnter)
-        //             {
-        //                 onEnter(e);
-        //                 return;
-        //             }
-
-        //             switch (e.keyName) with (ComKeyName)
-        //             {
-        //                 case key_left:
-        //                     moveCursorLeft;
-        //                     break;
-        //                 case key_right:
-        //                     moveCursorRight;
-        //                     break;
-        //                 case key_down:
-        //                     moveCursorDown;
-        //                     break;
-        //                 case key_up:
-        //                     moveCursorUp;
-        //                     break;
-        //                 case key_backspace:
-
-        //                     if (!cursorPos.isValid)
-        //                     {
-        //                         return;
-        //                     }
-
-        //                     logger.tracef("Backspace pressed for cursor: %s", cursorPos);
-
-        //                     if (cursorPos.glyphIndex == 0)
-        //                     {
-        //                         if (cursorPos.state == CursorState.forNextGlyph)
-        //                         {
-        //                             return;
-        //                         }
-        //                     }
-
-        //                     auto row = rows[cursorPos.rowIndex];
-
-        //                     if (row.glyphs.length == 0)
-        //                     {
-        //                         return;
-        //                     }
-
-        //                     if (cursorPos.state == CursorState.forNextGlyph)
-        //                     {
-        //                         cursorPos.glyphIndex--;
-        //                     }
-        //                     else if (cursorPos.state == CursorState.forPrevGlyph)
-        //                     {
-        //                         cursorPos.state = CursorState.forNextGlyph;
-        //                     }
-
-        //                     import std.algorithm.mutation : remove;
-
-        //                     size_t textIndex = cursorGlyphIndex;
-        //                     auto glyph = row.glyphs[cursorPos.glyphIndex];
-
-        //                     // _text = _text.remove(textIndex);
-        //                     // cursorPos.pos.x -= glyph.geometry.width;
-
-        //                     // logger.tracef("Remove index %s, new cursor pos: %s", textIndex, cursorPos);
-
-        //                     updateCursor;
-        //                     setInvalid;
-        //                     break;
-        //                 default:
-        //                     break;
-        //             }
-        //         };
-
-        //         onTextInput ~= (ref e) {
-        //             if (!cursor.isVisible)
-        //             {
-        //                 return;
-        //             }
-
-        //             size_t textIndex = cursorGlyphIndex();
-        //             import std.array : insertInPlace;
-
-        //             //TODO one glyph
-        //             import std.conv : to;
-
-        //             // auto glyphsArr = textToGlyphs(e.firstLetter.to!dstring);
-
-        //             // double glyphOffset;
-        //             // foreach (ref glyph; glyphsArr)
-        //             // {
-        //             //     glyphOffset += glyph.geometry.width;
-        //             // }
-
-        //             // _text.insertInPlace(textIndex, glyphsArr);
-        //             // logger.tracef("Insert text %s with index %s", glyphsArr, textIndex);
-
-        //             // cursorPos.pos.x += glyphOffset;
-        //             // cursorPos.glyphIndex++;
-        //             // updateCursor;
-        //             // setInvalid;
-        //         };
-        //     }
-
-        //     if (isFocusable)
-        //     {
-        //         focusEffectFactory = () {
-        //             import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
-        //             import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-
-        //             GraphicStyle style = GraphicStyle(1, theme.colorFocus);
-
-        //             import api.dm.kit.sprites2d.shapes.convex_polygon : ConvexPolygon;
-
-        //             auto effect = new ConvexPolygon(width, height, style, theme.controlCornersBevel);
-        //             //auto effect = new Rectangle(width, height, style);
-        //             effect.isVisible = false;
-        //             return effect;
-        //         };
-        //     }
     }
 
     void bufferCreate()
@@ -280,6 +79,10 @@ class TextView : EditableText
         _textBuffer.create(tempText);
         tempText = null;
     }
+
+    override size_t[] lineBreaks() => docStruct.lineBreaks;
+    override Glyph*[] allGlyphs() => _textBuffer.newGlyphsPtr;
+    override size_t  glyphsCount() => _textBuffer.glyphsCount;
 
     override void create()
     {
@@ -444,15 +247,6 @@ class TextView : EditableText
                 height = newHeight;
             }
         }
-    }
-
-    dstring glyphsToStr(Glyph*[] glyphs)
-    {
-        import std.algorithm.iteration : map;
-        import std.conv : to;
-
-        return glyphs.map!(g => g.grapheme)
-            .to!dstring;
     }
 
     void updateRows(bool isForce = false)
@@ -679,34 +473,6 @@ class TextView : EditableText
         setInvalid;
     }
 
-    // override void create()
-    // {
-    //     super.create;
-
-    //     if (focusEffectFactory !is null)
-    //     {
-    //         focusEffect = focusEffectFactory();
-    //         focusEffect.isLayoutManaged = false;
-    //         focusEffect.isResizedByParent = true;
-    //         focusEffect.isVisible = false;
-    //         addCreate(focusEffect);
-    //     }
-
-    //     if (isEditable)
-    //     {
-    //         const cursorColor = theme.colorAccent;
-
-    //         import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
-    //         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-
-    //         cursor = new Rectangle(2, 20, GraphicStyle(1, cursorColor, true, cursorColor));
-    //         addCreate(cursor);
-    //         cursor.isLayoutManaged = false;
-    //         cursor.isVisible = false;
-    //     }
-
-    // }
-
     size_t rowsInViewport()
     {
         if (rowHeight == 0)
@@ -760,7 +526,7 @@ class TextView : EditableText
         return Vec2d(mustBeStartRowIndex, mustBeEndRowIndex);
     }
 
-    Glyph*[] viewportRows(out size_t firstRowIndex) => viewportRows(firstRowIndex, scrollPosition);
+    override Glyph*[] viewportRows(out size_t firstRowIndex) => viewportRows(firstRowIndex, scrollPosition);
 
     Glyph*[] viewportRows(out size_t firstRowIndex, double scrollPosition)
     {

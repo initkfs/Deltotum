@@ -17,6 +17,8 @@ class TextArea : HBox
     TextView textView;
     VScroll scroll;
 
+    bool isEditable;
+
     bool isShowScroll = true;
 
     void delegate() onCaret;
@@ -69,7 +71,7 @@ class TextArea : HBox
         scroll = new VScroll(0, 1.0);
 
         textView = new TextView(tempText);
-        textView.isEditable = true;
+        textView.isEditable = isEditable;
 
         textView.onPointerEnter ~= (ref e) {
             import api.dm.com.inputs.com_cursor : ComPlatformCursorType;
