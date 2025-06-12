@@ -34,6 +34,9 @@ class Input
 
     this(Keyboard keyboard, Clipboard clipboard, Cursor cursor)
     {
+        assert(keyboard);
+        this.keyboard = keyboard;
+        
         assert(clipboard);
         this.clipboard = clipboard;
 

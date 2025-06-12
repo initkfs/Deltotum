@@ -1,6 +1,6 @@
 module api.dm.gui.controls.texts.text_view;
 
-import api.dm.gui.controls.texts.editable_text : EditableText;
+import api.dm.gui.controls.texts.editable_text : EditableText, DocStruct;
 import api.dm.gui.controls.texts.adt.array_text_buffer: ArrayTextBuffer;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
@@ -17,12 +17,6 @@ import core.stdc.stdlib;
 import Math = api.math;
 import std.conv : to;
 
-struct DocStruct
-{
-    size_t[] rowsGlyphCount;
-    size_t[] lineBreaks;
-}
-
 /**
  * Authors: initkfs
  */
@@ -34,8 +28,6 @@ class TextView : EditableText
     }
 
     ArrayTextBuffer _textBuffer;
-
-    DocStruct docStruct;
 
     BitmapFont fontTexture;
 
@@ -105,16 +97,20 @@ class TextView : EditableText
         }
     }
 
-    override bool insert(size_t pos, dchar text)
+    override bool insertText(size_t pos, dchar text)
     {
         dchar[1] newText = [text];
         if (_textBuffer.insert(cast(int) pos, newText[]))
         {
-            updateRows;
             return true;
         }
-
         return false;
+    }
+
+    override bool removePrevText(size_t pos, size_t count)
+    {
+        auto size = _textBuffer.removePrev(pos, count);
+        return size == count;
     }
 
     protected void textToGlyphsBuffer(const(dchar)[] textString, bool isAppend = false)
@@ -261,7 +257,7 @@ class TextView : EditableText
         }
     }
 
-    void updateRows(bool isForce = false)
+    override void updateRows(bool isForce = false)
     {
         if (!isBuilt && !isForce)
         {

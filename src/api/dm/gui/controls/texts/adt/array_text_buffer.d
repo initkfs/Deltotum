@@ -123,14 +123,14 @@ struct ArrayTextBuffer
         return true;
     }
 
-    size_t remove(size_t pos, size_t removeCount)
+    size_t removeNext(size_t pos, size_t removeCount)
     {
         if (removeCount == 0 || pos + removeCount > count)
         {
             return 0;
         }
 
-        if (count == removeCount)
+        if (pos == 0 && count == removeCount)
         {
             count = 0;
             return removeCount;
@@ -145,6 +145,34 @@ struct ArrayTextBuffer
         }
 
         count -= removeCount;
+
+        return removeCount;
+    }
+
+    size_t removePrev(size_t pos, size_t removeCount)
+    {
+        if (count == 0 || removeCount == 0)
+        {
+            return 0;
+        }
+
+        const lastIndex = count - 1;
+
+        if(pos > lastIndex && removeCount - 1 > pos){
+            return 0;
+        }
+
+        count -= removeCount;
+        if(count == 0 || pos == lastIndex){
+            return removeCount;
+        }
+
+        size_t rest = lastIndex - pos;
+
+        //import std;
+        //writeln(pos, " ", removeCount, " ", rest);
+
+        memmove(&_buffer[pos], &_buffer[pos + 1], rest * Glyph.sizeof);
 
         return removeCount;
     }
@@ -218,21 +246,52 @@ unittest
     dstring text = "Hello world";
 
     textBuff.create(text);
-    assert(textBuff.remove(0, text.length) == text.length);
+    assert(textBuff.removeNext(0, text.length) == text.length);
 
     textBuff.create(text);
-    assert(textBuff.remove(0, 6) == 6);
+    assert(textBuff.removeNext(0, 6) == 6);
     assert(textBuff.text == "world");
-    assert(textBuff.remove(0, 2) == 2);
+    assert(textBuff.removeNext(0, 2) == 2);
     assert(textBuff.text == "rld");
-    assert(textBuff.remove(0, 3) == 3);
+    assert(textBuff.removeNext(0, 3) == 3);
     assert(textBuff.text == "");
 
     textBuff.create(text);
-    assert(textBuff.remove(0, 1) == 1);
+    assert(textBuff.removeNext(0, 1) == 1);
     assert(textBuff.text == "ello world");
 
     textBuff.create(text);
-    assert(textBuff.remove(text.length - 1, 1) == 1);
+    assert(textBuff.removeNext(text.length - 1, 1) == 1);
     assert(textBuff.text == "Hello worl");
+}
+
+unittest
+{
+    ArrayTextBuffer textBuff;
+    dstring text = "Hello world";
+
+    textBuff.create(text);
+    assert(textBuff.removePrev(10, text.length) == text.length);
+    assert(textBuff.text == "");
+
+    textBuff.create(text);
+    assert(textBuff.removePrev(5, 1) == 1);
+    assert(textBuff.text == "Helloworld");
+    
+    textBuff.create(text);
+    assert(textBuff.removePrev(10, 6) == 6);
+    assert(textBuff.text == "Hello");
+    assert(textBuff.removePrev(4, 3) == 3);
+    assert(textBuff.text == "He");
+    assert(textBuff.removePrev(1, 2) == 2);
+    assert(textBuff.text == "");
+
+    textBuff.create("Hello");
+    assert(textBuff.removePrev(4, 1) == 1);
+    assert(textBuff.removePrev(3, 1) == 1);
+    assert(textBuff.removePrev(2, 1) == 1);
+    assert(textBuff.removePrev(1, 1) == 1);
+    assert(textBuff.text == "H");
+    assert(textBuff.removePrev(0, 1) == 1);
+    assert(textBuff.text == "");
 }

@@ -21,9 +21,15 @@ struct CursorPos
     CursorState state;
     Vec2d pos;
     size_t rowIndex;
-    size_t glyphIndex;
+    size_t glyphIndexAbs;
 
     bool isValid;
+}
+
+struct DocStruct
+{
+    size_t[] rowsGlyphCount;
+    size_t[] lineBreaks;
 }
 
 /**
@@ -36,6 +42,8 @@ class EditableText : BaseText
 
     bool isEditable;
 
+    DocStruct docStruct;
+
     this()
     {
         isFocusable = true;
@@ -43,7 +51,14 @@ class EditableText : BaseText
 
     abstract
     {
-        bool insert(size_t pos, dchar letter);
+        bool insertText(size_t pos, dchar letter);
+        bool removePrevText(size_t pos, size_t count);
+
+        Glyph*[] allGlyphs();
+        Glyph*[] viewportRows(out size_t firstRowIndex);
+        size_t[] lineBreaks();
+        size_t glyphsCount();
+        void updateRows(bool isForce = false);
     }
 
     override void initialize()
@@ -125,11 +140,11 @@ class EditableText : BaseText
                     import std.stdio;
 
                     Glyph*[] rows = allGlyphs;
-                    Glyph* first = rows[cursorPos.glyphIndex];
+                    Glyph* first = rows[cursorPos.glyphIndexAbs];
                     Glyph* next;
-                    if (cursorPos.glyphIndex < rows.length - 1)
+                    if (cursorPos.glyphIndexAbs < rows.length - 1)
                     {
-                        next = rows[cursorPos.glyphIndex + 1];
+                        next = rows[cursorPos.glyphIndexAbs + 1];
                     }
                     writefln("Cursor pos for %s,%s: %s, betw %s:%s", mouseX, mouseY, cursorPos, first.grapheme, next ? next
                             .grapheme : '-');
@@ -153,66 +168,72 @@ class EditableText : BaseText
                     return;
                 }
 
+                if (input.keyboard.keyModifier.isCtrl)
+                {
+                    switch (e.keyName) with (ComKeyName)
+                    {
+                        case key_j:
+                            moveCursorLeft;
+                            break;
+                        case key_l:
+                            moveCursorRight;
+                            break;
+                        case key_u:
+                            moveCursorUp;
+                            break;
+                        case key_m:
+                            moveCursorDown;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
                 switch (e.keyName) with (ComKeyName)
                 {
-                    //         case key_left:
-                    //             moveCursorLeft;
-                    //             break;
-                    //         case key_right:
-                    //             moveCursorRight;
-                    //             break;
-                    //         case key_down:
-                    //             moveCursorDown;
-                    //             break;
-                    //         case key_up:
-                    //             moveCursorUp;
-                    //             break;
-                    //         case key_backspace:
+                    case key_left:
+                        moveCursorLeft;
+                        break;
+                    case key_right:
+                        moveCursorRight;
+                        break;
+                    case key_down:
+                        moveCursorDown;
+                        break;
+                    case key_up:
+                        moveCursorUp;
+                        break;
+                    case key_backspace:
 
-                    //             if (!cursorPos.isValid)
-                    //             {
-                    //                 return;
-                    //             }
+                        if (!cursorPos.isValid || cursorPos.state == CursorState.forNextGlyph)
+                        {
+                            return;
+                        }
 
-                    //             logger.tracef("Backspace pressed for cursor: %s", cursorPos);
+                        if (removePrevText(cursorPos.glyphIndexAbs, 1))
+                        {
+                            updateRows;
 
-                    //             if (cursorPos.glyphIndex == 0)
-                    //             {
-                    //                 if (cursorPos.state == CursorState.forNextGlyph)
-                    //                 {
-                    //                     return;
-                    //                 }
-                    //             }
+                            auto nextIndex = cursorPos.glyphIndexAbs;
 
-                    //             auto row = rows[cursorPos.rowIndex];
+                            const bounds = boundsRect;
+                            auto nextGlyph = allGlyphs[nextIndex];
+                            cursorPos.pos.x = bounds.x + padding.left + nextGlyph.pos.x;
+                            cursorPos.pos.y = bounds.y + padding.top + nextGlyph.pos.y;
 
-                    //             if (row.glyphs.length == 0)
-                    //             {
-                    //                 return;
-                    //             }
+                            if (cursorPos.glyphIndexAbs > 0)
+                            {
+                                cursorPos.glyphIndexAbs--;
+                            }
+                            else
+                            {
+                                cursorPos.state = CursorState.forNextGlyph;
+                            }
 
-                    //             if (cursorPos.state == CursorState.forNextGlyph)
-                    //             {
-                    //                 cursorPos.glyphIndex--;
-                    //             }
-                    //             else if (cursorPos.state == CursorState.forPrevGlyph)
-                    //             {
-                    //                 cursorPos.state = CursorState.forNextGlyph;
-                    //             }
-
-                    //             import std.algorithm.mutation : remove;
-
-                    //             size_t textIndex = cursorGlyphIndex;
-                    //             auto glyph = row.glyphs[cursorPos.glyphIndex];
-
-                    //             // _text = _text.remove(textIndex);
-                    //             // cursorPos.pos.x -= glyph.geometry.width;
-
-                    //             // logger.tracef("Remove index %s, new cursor pos: %s", textIndex, cursorPos);
-
-                    //             updateCursor;
-                    //             setInvalid;
-                    //             break;
+                            updateCursor;
+                            setInvalid;
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -225,15 +246,26 @@ class EditableText : BaseText
                     return;
                 }
 
-                size_t textIndex = cursorPos.glyphIndex;
+                size_t textIndex = cursorPos.glyphIndexAbs;
                 dchar letter = e.firstLetter;
 
-                if (insert(textIndex, letter))
+                if (insertText(textIndex, letter))
                 {
-                    cursorPos.pos.x += 10;
-                    cursorPos.glyphIndex++;
-                    updateCursor;
-                    setInvalid;
+                    updateRows;
+
+                    auto nextIndex = cursorPos.glyphIndexAbs + 2;
+                    if (glyphsCount > 0 && nextIndex < glyphsCount)
+                    {
+                        const bounds = boundsRect;
+                        auto nextGlyph = allGlyphs[nextIndex];
+                        cursorPos.pos.x = bounds.x + padding.left + nextGlyph.pos.x;
+                        cursorPos.pos.y = bounds.y + padding.top + nextGlyph.pos.y;
+
+                        cursorPos.glyphIndexAbs++;
+                        updateCursor;
+                        setInvalid;
+                    }
+
                 }
             };
         }
@@ -279,7 +311,7 @@ class EditableText : BaseText
 
     // size_t cursorGlyphIndex()
     // {
-    //     return cursorGlyphIndex(cursorPos.rowIndex, cursorPos.glyphIndex);
+    //     return cursorGlyphIndex(cursorPos.rowIndex, cursorPos.glyphIndexAbs);
     // }
 
     // size_t cursorGlyphIndex(size_t rowIndex, size_t glyphIndex)
@@ -297,11 +329,6 @@ class EditableText : BaseText
     //     size_t index = rowOffset + glyphIndex;
     //     return index;
     // }
-
-    abstract Glyph*[] allGlyphs();
-    abstract Glyph*[] viewportRows(out size_t firstRowIndex);
-    abstract size_t[] lineBreaks();
-    abstract size_t glyphsCount();
 
     protected CursorPos coordsToRowPos(double x, double y)
     {
@@ -366,111 +393,130 @@ class EditableText : BaseText
         return CursorPos.init;
     }
 
-    // bool moveCursorLeft()
-    // {
-    //     if (!cursorPos.isValid)
-    //     {
-    //         return false;
-    //     }
+    bool setCursorPos(size_t index)
+    {
+        if (index >= glyphsCount)
+        {
+            return false;
+        }
+        const bounds = boundsRect;
+        auto nextGlyph = allGlyphs[index];
+        cursorPos.pos.x = bounds.x + padding.left + nextGlyph.pos.x;
+        cursorPos.pos.y = bounds.y + padding.top + nextGlyph.pos.y;
 
-    //     if (cursorPos.glyphIndex == 0)
-    //     {
-    //         if (cursorPos.rowIndex == 0)
-    //         {
-    //             return false;
-    //         }
-    //         else
-    //         {
-    //             cursorPos.rowIndex--;
-    //             //TODO empty rows
-    //             auto row = rows[cursorPos.rowIndex];
-    //             auto lastGlyph = row.glyphs[$ - 1];
-    //             cursorPos.pos.x = lastGlyph.pos.x + lastGlyph.geometry.width;
-    //             updateCursor;
-    //             cursorPos.glyphIndex = row.glyphs.length - 1;
-    //             cursorPos.state = CursorState.forPrevGlyph;
-    //             return true;
-    //         }
-    //     }
+        updateCursor;
 
-    //     auto row = rows[cursorPos.rowIndex];
+        return true;
+    }
 
-    //     double cursorOffset = 0;
-    //     if (cursorPos.glyphIndex == row.glyphs.length)
-    //     {
-    //         cursorPos.glyphIndex--;
-    //         const glyph = row.glyphs[cursorPos.glyphIndex];
-    //         cursorOffset = glyph.geometry.width;
-    //     }
-    //     else
-    //     {
-    //         const glyph = row.glyphs[cursorPos.glyphIndex];
-    //         cursorPos.glyphIndex--;
-    //         cursorOffset = glyph.geometry.width;
-    //     }
+    bool setCursorPos() => setCursorPos(cursorPos.glyphIndexAbs);
 
-    //     cursor.x = cursor.x - cursorOffset;
+    bool moveCursorLeft()
+    {
+        if (!cursorPos.isValid)
+        {
+            return false;
+        }
 
-    //     return true;
-    // }
+        if (cursorPos.glyphIndexAbs == 0)
+        {
+            return false;
+        }
 
-    // bool moveCursorRight()
-    // {
-    //     if (!cursorPos.isValid)
-    //     {
-    //         return false;
-    //     }
-    //     const row = rows[cursorPos.rowIndex];
-    //     if (row.glyphs.length == 0)
-    //     {
-    //         return false;
-    //     }
+        cursorPos.glyphIndexAbs--;
+        setCursorPos;
+        return true;
+    }
 
-    //     if (cursorPos.glyphIndex >= row.glyphs.length)
-    //     {
-    //         return false;
-    //     }
+    bool moveCursorRight()
+    {
+        if (!cursorPos.isValid)
+        {
+            return false;
+        }
 
-    //     const glyph = row.glyphs[cursorPos.glyphIndex];
-    //     cursorPos.glyphIndex++;
-    //     cursor.x = cursor.x + glyph.geometry.width;
-    //     return true;
-    // }
+        if (cursorPos.glyphIndexAbs >= glyphsCount)
+        {
+            return false;
+        }
 
-    // bool moveCursorUp()
-    // {
-    //     if (cursorPos.rowIndex == 0)
-    //     {
-    //         return false;
-    //     }
+        cursorPos.glyphIndexAbs++;
+        setCursorPos;
+        return true;
+    }
 
-    //     const row = rows[cursorPos.rowIndex];
-    //     if (row.glyphs.length == 0)
-    //     {
-    //         return false;
-    //     }
+    Glyph*[] currentRow()
+    {
+        auto currentBreak = docStruct.lineBreaks[cursorPos.rowIndex];
+        if (cursorPos.rowIndex == 0)
+        {
+            return allGlyphs[0 .. currentBreak + 1];
+        }
 
-    //     //TODO strings may not match in number of characters
+        auto prevBreak = docStruct.lineBreaks[cursorPos.rowIndex - 1];
 
-    //     const glyph = rows[cursorPos.rowIndex].glyphs[cursorPos.glyphIndex];
-    //     cursorPos.rowIndex--;
-    //     cursor.y = cursor.y - glyph.geometry.height;
-    //     return true;
-    // }
+        return allGlyphs[prevBreak + 1 .. currentBreak + 1];
+    }
 
-    // bool moveCursorDown()
-    // {
-    //     if (rows.length <= 1 || cursorPos.rowIndex >= rows.length - 1)
-    //     {
-    //         return false;
-    //     }
+    bool moveCursorUp()
+    {
+        if (cursorPos.rowIndex == 0)
+        {
+            return false;
+        }
 
-    //     //TODO strings may not match in number of characters
+        auto row = docStruct.lineBreaks[cursorPos.rowIndex];
 
-    //     const glyph = rows[cursorPos.rowIndex].glyphs[cursorPos.glyphIndex];
-    //     cursorPos.rowIndex++;
-    //     cursor.y = cursor.y + glyph.geometry.height;
-    //     return true;
-    // }
+        cursorPos.rowIndex--;
+
+        auto nextRow = docStruct.lineBreaks[cursorPos.rowIndex];
+
+        ptrdiff_t currentPosRel = row - cursorPos.glyphIndexAbs;
+        if (currentPosRel < 0)
+        {
+            return false;
+        }
+
+        auto nextRowIndex = nextRow - currentPosRel;
+        if (nextRowIndex < glyphsCount)
+        {
+            cursorPos.glyphIndexAbs = nextRowIndex;
+            setCursorPos;
+            return true;
+        }
+
+        return false;
+    }
+
+    bool moveCursorDown()
+    {
+        auto maxRowIndex = docStruct.lineBreaks.length == 0 ? 0 : docStruct.lineBreaks.length - 1;
+        if (cursorPos.rowIndex == maxRowIndex)
+        {
+            return false;
+        }
+
+        auto row = docStruct.lineBreaks[cursorPos.rowIndex];
+
+        cursorPos.rowIndex++;
+
+        auto nextRow = docStruct.lineBreaks[cursorPos.rowIndex];
+
+        ptrdiff_t currentPosRel = row - cursorPos.glyphIndexAbs;
+        if (currentPosRel < 0)
+        {
+            return false;
+        }
+
+        auto nextRowIndex = nextRow - currentPosRel;
+        if (nextRowIndex < glyphsCount)
+        {
+            cursorPos.glyphIndexAbs = nextRowIndex;
+            setCursorPos;
+            return true;
+        }
+
+        return false;
+    }
 
 }
