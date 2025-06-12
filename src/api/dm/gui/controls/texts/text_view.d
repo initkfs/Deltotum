@@ -1,7 +1,7 @@
 module api.dm.gui.controls.texts.text_view;
 
 import api.dm.gui.controls.texts.editable_text : EditableText, DocStruct;
-import api.dm.gui.controls.texts.adt.array_text_buffer: ArrayTextBuffer;
+import api.dm.gui.controls.texts.buffers.array_text_buffer: ArrayTextBuffer;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 import api.math.geom2.rect2 : Rect2d;
@@ -20,14 +20,12 @@ import std.conv : to;
 /**
  * Authors: initkfs
  */
-class TextView : EditableText
+class TextView : EditableText!ArrayTextBuffer
 {
     protected
     {
         double scrollPosition = 0;
     }
-
-    ArrayTextBuffer _textBuffer;
 
     BitmapFont fontTexture;
 
@@ -38,6 +36,8 @@ class TextView : EditableText
         double lastRowWidth = 0;
         size_t textBufferCount;
         dstring tempText;
+
+        Glyph*[] lastViewport;
     }
 
     this(string text)
@@ -73,7 +73,7 @@ class TextView : EditableText
     }
 
     override size_t[] lineBreaks() => docStruct.lineBreaks;
-    override Glyph*[] allGlyphs() => _textBuffer.newGlyphsPtr;
+    override Glyph[] allGlyphs() => _textBuffer.buffer;
     override size_t glyphsCount() => _textBuffer.glyphsCount;
 
     override void create()
@@ -291,7 +291,7 @@ class TextView : EditableText
         return super.canChangeWidth(value);
     }
 
-    protected void renderText(Glyph*[] glyphs, size_t startIndex)
+    protected void renderText(Glyph[] glyphs, size_t startIndex)
     {
         if (width == 0 || height == 0 || glyphs.length == 0)
         {
@@ -310,7 +310,7 @@ class TextView : EditableText
         auto sortedLineBreaks = docStruct.lineBreaks.assumeSorted;
         size_t lastIndex = glyphs.length - 1;
 
-        foreach (ri, Glyph* glyph; glyphs)
+        foreach (ri, ref Glyph glyph; glyphs)
         {
             glyph.pos.y = glyphPosY;
 
@@ -426,11 +426,11 @@ class TextView : EditableText
     auto textTo(T)() => text.to!T;
     string textString() => textTo!string;
 
-    Glyph*[] bufferText()
+    Glyph[] bufferText()
     {
         // assert(_textBuffer.length >= textBufferCount);
         // return _textBuffer[0 .. textBufferCount];
-        return _textBuffer.newGlyphsPtr;
+        return _textBuffer.buffer;
     }
 
     dstring text()
@@ -534,10 +534,10 @@ class TextView : EditableText
         return Vec2d(mustBeStartRowIndex, mustBeEndRowIndex);
     }
 
-    override Glyph*[] viewportRows(out size_t firstRowIndex) => viewportRows(
+    override Glyph[] viewportRows(out size_t firstRowIndex) => viewportRows(
         firstRowIndex, scrollPosition);
 
-    Glyph*[] viewportRows(out size_t firstRowIndex, double scrollPosition)
+    Glyph[] viewportRows(out size_t firstRowIndex, double scrollPosition)
     {
         //TODO first line without \n
         if (docStruct.lineBreaks.length == 0)
@@ -587,7 +587,7 @@ class TextView : EditableText
         //     endGlyphIndex++;
         // }
 
-        Glyph*[] glyphs = _textBuffer.newGlyphsPtr[startGlyphIndex .. endGlyphIndex];
+        Glyph[] glyphs = _textBuffer.buffer[startGlyphIndex .. endGlyphIndex];
 
         firstRowIndex = startGlyphIndex;
         return glyphs;
@@ -601,11 +601,7 @@ class TextView : EditableText
         }
 
         size_t rowStartIndex;
-        Glyph*[] glyphs = viewportRows(rowStartIndex);
-        scope (exit)
-        {
-            // free(glyphs.ptr);
-        }
+        Glyph[] glyphs = viewportRows(rowStartIndex);
         renderText(glyphs, rowStartIndex);
     }
 
@@ -646,13 +642,13 @@ unittest
     assert(textView.viewportRowIndex(1) == Vec2d(4, 4));
 
     size_t firstRowIndex;
-    Glyph*[] rows = textView.viewportRows(firstRowIndex);
+    Glyph[] rows = textView.viewportRows(firstRowIndex);
     assert(rows.length == 47);
 
     dstring rowsStr = textView.glyphsToStr(rows);
     assert(rowsStr == "Hello world\nThis is a very short text for the e");
 
-    Glyph*[] endRows = textView.viewportRows(firstRowIndex, 1);
+    Glyph[] endRows = textView.viewportRows(firstRowIndex, 1);
     dstring rowsStr1 = textView.glyphsToStr(endRows);
     assert(rowsStr1 == "xperiment");
 }

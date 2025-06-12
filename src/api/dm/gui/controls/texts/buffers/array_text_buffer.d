@@ -1,4 +1,4 @@
-module api.dm.gui.controls.texts.adt.array_text_buffer;
+module api.dm.gui.controls.texts.buffers.array_text_buffer;
 
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 
@@ -186,28 +186,6 @@ struct ArrayTextBuffer
 
         return buffer.map!(glyph => glyph.grapheme)
             .to!dstring;
-    }
-
-    Glyph*[] newGlyphsPtr()
-    {
-        if (count == 0)
-        {
-            return null;
-        }
-
-        Glyph** bufPtr = cast(Glyph**) malloc(count * (Glyph*).sizeof);
-        if (!bufPtr)
-        {
-            return null;
-        }
-
-        Glyph*[] buffer = bufPtr[0 .. count];
-        foreach (i, ref g; _buffer[0 .. count])
-        {
-            buffer[i] = &g;
-        }
-
-        return buffer;
     }
 
     size_t glyphsCount() => count;

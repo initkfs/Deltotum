@@ -1,6 +1,7 @@
 module api.dm.gui.controls.texts.editable_text;
 
 import api.dm.gui.controls.texts.base_text : BaseText;
+import api.dm.gui.controls.texts.buffers.array_text_buffer: ArrayTextBuffer;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;
@@ -35,7 +36,7 @@ struct DocStruct
 /**
  * Authors: initkfs
  */
-class EditableText : BaseText
+class EditableText(TextBuffer = ArrayTextBuffer) : BaseText
 {
     Rectangle cursor;
     CursorPos cursorPos;
@@ -43,6 +44,8 @@ class EditableText : BaseText
     bool isEditable;
 
     DocStruct docStruct;
+
+    ArrayTextBuffer _textBuffer;
 
     this()
     {
@@ -54,8 +57,8 @@ class EditableText : BaseText
         bool insertText(size_t pos, dchar letter);
         bool removePrevText(size_t pos, size_t count);
 
-        Glyph*[] allGlyphs();
-        Glyph*[] viewportRows(out size_t firstRowIndex);
+        Glyph[] allGlyphs();
+        Glyph[] viewportRows(out size_t firstRowIndex);
         size_t[] lineBreaks();
         size_t glyphsCount();
         void updateRows(bool isForce = false);
@@ -113,40 +116,18 @@ class EditableText : BaseText
 
                 cursorPos = coordsToRowPos(mouseX, mouseY);
 
-                // if (!cursorPos.isValid)
-                // {
-                //     Vec2d pos;
-                //     CursorState state;
-                //     size_t glyphIndex;
-                // if (rows.length == 0)
-                // {
-                //     pos = Vec2d(x + padding.left, y + padding.top);
-                //     state = CursorState.forNextGlyph;
-                // }
-                // else
-                // {
-                //TODO empty rows
-                // auto lastRow = rows[$ - 1];
-                // glyphIndex = lastRow.glyphs.length - 1;
-                // auto lastRowGlyph = lastRow.glyphs[$ - 1];
-                // pos = Vec2d(x + lastRowGlyph.pos.x + lastRowGlyph.geometry.width, y + lastRowGlyph
-                //         .pos.y);
-                // state = CursorState.forPrevGlyph;
-                // cursorPos = CursorPos(state, pos, 0, glyphIndex, true);
-                //}
-
                 debug
                 {
                     import std.stdio;
 
-                    Glyph*[] rows = allGlyphs;
-                    Glyph* first = rows[cursorPos.glyphIndexAbs];
-                    Glyph* next;
+                    Glyph[] rows = allGlyphs;
+                    Glyph first = rows[cursorPos.glyphIndexAbs];
+                    Glyph next;
                     if (cursorPos.glyphIndexAbs < rows.length - 1)
                     {
                         next = rows[cursorPos.glyphIndexAbs + 1];
                     }
-                    writefln("Cursor pos for %s,%s: %s, betw %s:%s", mouseX, mouseY, cursorPos, first.grapheme, next ? next
+                    writefln("Cursor pos for %s,%s: %s, betw %s:%s", mouseX, mouseY, cursorPos, first.grapheme, next != next.init ? next
                             .grapheme : '-');
                 }
 
@@ -337,7 +318,7 @@ class EditableText : BaseText
         double startY = thisBounds.y + padding.top;
 
         size_t firstIndex;
-        Glyph*[] rows = viewportRows(firstIndex);
+        Glyph[] rows = viewportRows(firstIndex);
 
         size_t rowIndex;
         foreach (ri, lineBreak; lineBreaks)
@@ -360,12 +341,12 @@ class EditableText : BaseText
                 prevBreakLine++;
             }
 
-            Glyph*[] needRow = rows[prevBreakLine .. lineBreak + 1];
+            Glyph[] needRow = rows[prevBreakLine .. lineBreak + 1];
 
             size_t glyphIndex;
             Vec2d pos;
 
-            foreach (gi, Glyph* glyph; needRow)
+            foreach (gi, ref Glyph glyph; needRow)
             {
                 if (startX + glyph.pos.x > x)
                 {
@@ -445,7 +426,7 @@ class EditableText : BaseText
         return true;
     }
 
-    Glyph*[] currentRow()
+    Glyph[] currentRow()
     {
         auto currentBreak = docStruct.lineBreaks[cursorPos.rowIndex];
         if (cursorPos.rowIndex == 0)
