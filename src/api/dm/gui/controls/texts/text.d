@@ -284,15 +284,6 @@ class Text : BaseText
         return newRows;
     }
 
-    dstring glyphsToStr(Glyph[] glyphs)
-    {
-        import std.algorithm.iteration : map;
-        import std.conv : to;
-
-        return glyphs.map!(g => g.grapheme)
-            .to!dstring;
-    }
-
     void updateRows(const(dchar)[] newText = null, bool isForce = false)
     {
         if (!isBuilt && !isForce)

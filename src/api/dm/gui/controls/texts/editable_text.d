@@ -1,7 +1,8 @@
 module api.dm.gui.controls.texts.editable_text;
 
 import api.dm.gui.controls.texts.base_text : BaseText;
-import api.dm.gui.controls.texts.buffers.array_text_buffer: ArrayTextBuffer;
+import api.dm.gui.controls.texts.buffers.base_text_buffer : BaseTextBuffer;
+import api.dm.gui.controls.texts.buffers.array_text_buffer : ArrayTextBuffer;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;
@@ -36,7 +37,7 @@ struct DocStruct
 /**
  * Authors: initkfs
  */
-class EditableText(TextBuffer = ArrayTextBuffer) : BaseText
+class EditableText : BaseText
 {
     Rectangle cursor;
     CursorPos cursorPos;
@@ -45,22 +46,26 @@ class EditableText(TextBuffer = ArrayTextBuffer) : BaseText
 
     DocStruct docStruct;
 
-    ArrayTextBuffer _textBuffer;
+    protected
+    {
+        BaseTextBuffer!Glyph _textBuffer;
+    }
 
-    this()
+    this(typeof(_textBuffer) newBuffer = null)
     {
         isFocusable = true;
+        _textBuffer = newBuffer ? newBuffer : new ArrayTextBuffer!Glyph;
     }
 
     abstract
     {
         bool insertText(size_t pos, dchar letter);
-        bool removePrevText(size_t pos, size_t count);
+        bool removePrevText(size_t pos, size_t bufferLength);
 
         Glyph[] allGlyphs();
         Glyph[] viewportRows(out size_t firstRowIndex);
         size_t[] lineBreaks();
-        size_t glyphsCount();
+        size_t bufferLength();
         void updateRows(bool isForce = false);
     }
 
@@ -127,7 +132,8 @@ class EditableText(TextBuffer = ArrayTextBuffer) : BaseText
                     {
                         next = rows[cursorPos.glyphIndexAbs + 1];
                     }
-                    writefln("Cursor pos for %s,%s: %s, betw %s:%s", mouseX, mouseY, cursorPos, first.grapheme, next != next.init ? next
+                    writefln("Cursor pos for %s,%s: %s, betw %s:%s", mouseX, mouseY, cursorPos, first.grapheme, next != next
+                            .init ? next
                             .grapheme : '-');
                 }
 
@@ -235,7 +241,7 @@ class EditableText(TextBuffer = ArrayTextBuffer) : BaseText
                     updateRows;
 
                     auto nextIndex = cursorPos.glyphIndexAbs + 2;
-                    if (glyphsCount > 0 && nextIndex < glyphsCount)
+                    if (bufferLength > 0 && nextIndex < bufferLength)
                     {
                         const bounds = boundsRect;
                         auto nextGlyph = allGlyphs[nextIndex];
@@ -334,7 +340,7 @@ class EditableText(TextBuffer = ArrayTextBuffer) : BaseText
             auto prevBreakIndex = ri == 0 ? 0 : ri - 1;
             auto prevBreakLine = lineBreaks[prevBreakIndex];
 
-            const maxCount = glyphsCount;
+            const maxCount = bufferLength;
             size_t glyphMaxIndex = maxCount > 0 ? maxCount - 1 : 0;
             if (prevBreakLine < glyphMaxIndex)
             {
@@ -376,7 +382,7 @@ class EditableText(TextBuffer = ArrayTextBuffer) : BaseText
 
     bool setCursorPos(size_t index)
     {
-        if (index >= glyphsCount)
+        if (index >= bufferLength)
         {
             return false;
         }
@@ -416,7 +422,7 @@ class EditableText(TextBuffer = ArrayTextBuffer) : BaseText
             return false;
         }
 
-        if (cursorPos.glyphIndexAbs >= glyphsCount)
+        if (cursorPos.glyphIndexAbs >= bufferLength)
         {
             return false;
         }
@@ -459,7 +465,7 @@ class EditableText(TextBuffer = ArrayTextBuffer) : BaseText
         }
 
         auto nextRowIndex = nextRow - currentPosRel;
-        if (nextRowIndex < glyphsCount)
+        if (nextRowIndex < bufferLength)
         {
             cursorPos.glyphIndexAbs = nextRowIndex;
             setCursorPos;
@@ -490,7 +496,7 @@ class EditableText(TextBuffer = ArrayTextBuffer) : BaseText
         }
 
         auto nextRowIndex = nextRow - currentPosRel;
-        if (nextRowIndex < glyphsCount)
+        if (nextRowIndex < bufferLength)
         {
             cursorPos.glyphIndexAbs = nextRowIndex;
             setCursorPos;
@@ -499,5 +505,7 @@ class EditableText(TextBuffer = ArrayTextBuffer) : BaseText
 
         return false;
     }
+
+    ref inout(typeof(_textBuffer)) textBuffer() inout => _textBuffer;
 
 }

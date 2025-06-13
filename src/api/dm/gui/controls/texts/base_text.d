@@ -110,7 +110,7 @@ class BaseText : Control
         return sum;
     }
 
-    dstring glyphsToStr(Glyph*[] glyphs)
+    dstring glyphsToStr(Glyph[] glyphs)
     {
         import std.algorithm.iteration : map;
         import std.conv : to;

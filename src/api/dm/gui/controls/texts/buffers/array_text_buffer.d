@@ -1,5 +1,6 @@
 module api.dm.gui.controls.texts.buffers.array_text_buffer;
 
+import api.dm.gui.controls.texts.buffers.base_text_buffer : BaseTextBuffer;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 
 import core.stdc.stdlib;
@@ -8,65 +9,64 @@ import core.stdc.string;
 /**
  * Authors: initkfs
  */
-struct ArrayTextBuffer
+class ArrayTextBuffer(T = Glyph) : BaseTextBuffer!T
 {
-    Glyph[] _buffer;
-    size_t count;
+    T[] _buffer;
 
-    Glyph delegate(dchar) glyphProvider;
-
-    bool create(const(dchar)[] text)
-    {
-        if (!glyphProvider)
-        {
-            glyphProvider = (ch) => Glyph(ch);
-        }
-
-        count = 0;
-        if (_buffer.length > 0)
-        {
-            free(_buffer.ptr);
-        }
-
-        _buffer = (cast(Glyph*) malloc(text.length * Glyph.sizeof))[0 .. text.length];
-
-        size_t pos;
-        foreach (ch; text)
-        {
-            _buffer[pos] = glyphProvider(ch);
-            pos++;
-        }
-
-        count = text.length;
-
-        return true;
-    }
-
-    bool destroy()
-    {
-        free(_buffer.ptr);
-        return true;
-    }
-
-    void onGlyphs(scope bool delegate(Glyph*, size_t) onGlyphDg)
-    {
-        foreach (i, ref glyph; _buffer[0 .. count])
-        {
-            if (!onGlyphDg(&glyph, i))
-            {
-                break;
-            }
-        }
-    }
-
-    bool insert(size_t pos, const(dchar)[] text)
+    override bool create(const(dchar)[] text)
     {
         if (text.length == 0)
         {
             return false;
         }
 
-        Glyph[] glyphs = (cast(Glyph*) malloc(Glyph.sizeof * text.length))[0 .. text.length];
+        if (!super.create(text))
+        {
+            return false;
+        }
+
+        destroy;
+        length = 0;
+
+        assert(itemProvider);
+
+        //TODO check prev buffer size?
+        auto bufferPtr = (cast(T*) malloc(text.length * T.sizeof));
+        if (!bufferPtr)
+        {
+            return false;
+        }
+
+        _buffer = bufferPtr[0 .. text.length];
+
+        foreach (i, ch; text)
+        {
+            _buffer[i] = itemProvider(ch);
+        }
+
+        length = text.length;
+
+        return true;
+    }
+
+    override bool destroy()
+    {
+        if (_buffer.length > 0)
+        {
+            free(_buffer.ptr);
+            return true;
+        }
+        return false;
+    }
+
+    override bool insert(size_t pos, const(dchar)[] text)
+    {
+        if (text.length == 0)
+        {
+            return false;
+        }
+
+        T[] glyphs = (cast(T*) malloc(T.sizeof * text.length))[0 .. text.length];
         if (glyphs.length == 0)
         {
             return false;
@@ -79,25 +79,25 @@ struct ArrayTextBuffer
 
         foreach (i, dchar ch; text)
         {
-            glyphs[i] = glyphProvider(ch);
+            glyphs[i] = itemProvider(ch);
         }
 
         return insert(pos, glyphs);
     }
 
-    bool insert(size_t pos, Glyph[] text)
+    override bool insert(size_t pos, T[] text)
     {
-        if (pos > count)
+        if (pos > length)
         {
             return false;
         }
 
-        size_t newLen = count + text.length;
+        size_t newLen = length + text.length;
         if (newLen > _buffer.length)
         {
             size_t newCapacity = _buffer.length * 2;
             newLen = newCapacity > newLen ? newCapacity : newLen;
-            auto newPtr = cast(Glyph*) realloc(_buffer.ptr, newLen * Glyph.sizeof);
+            auto newPtr = cast(T*) realloc(_buffer.ptr, newLen * Glyph.sizeof);
             if (!newPtr)
             {
                 return false;
@@ -105,12 +105,12 @@ struct ArrayTextBuffer
             _buffer = newPtr[0 .. newLen];
         }
 
-        size_t insertPos = count > 0 ? pos + 1 : 0;
+        size_t insertPos = length > 0 ? pos + 1 : 0;
 
-        if (insertPos != count && count > 0)
+        if (insertPos != length && length > 0)
         {
-            ptrdiff_t rest = count - pos - 1;
-            memmove(&_buffer[insertPos + text.length], &_buffer[insertPos], rest * Glyph.sizeof);
+            ptrdiff_t rest = length - pos - 1;
+            memmove(&_buffer[insertPos + text.length], &_buffer[insertPos], rest * T.sizeof);
         }
 
         foreach (i, ch; text)
@@ -118,52 +118,54 @@ struct ArrayTextBuffer
             _buffer[i + insertPos] = ch;
         }
 
-        count += text.length;
+        length += text.length;
 
         return true;
     }
 
     size_t removeNext(size_t pos, size_t removeCount)
     {
-        if (removeCount == 0 || pos + removeCount > count)
+        if (removeCount == 0 || pos + removeCount > length)
         {
             return 0;
         }
 
-        if (pos == 0 && count == removeCount)
+        if (pos == 0 && length == removeCount)
         {
-            count = 0;
+            length = 0;
             return removeCount;
         }
 
         auto rightIndex = pos + removeCount;
-        size_t rest = count - rightIndex;
+        size_t rest = length - rightIndex;
 
         if (rest > 0)
         {
             memmove(&_buffer[pos], &_buffer[rightIndex], rest * Glyph.sizeof);
         }
 
-        count -= removeCount;
+        length -= removeCount;
 
         return removeCount;
     }
 
-    size_t removePrev(size_t pos, size_t removeCount)
+    override size_t removePrev(size_t pos, size_t removeCount)
     {
-        if (count == 0 || removeCount == 0)
+        if (length == 0 || removeCount == 0)
         {
             return 0;
         }
 
-        const lastIndex = count - 1;
+        const lastIndex = length - 1;
 
-        if(pos > lastIndex && removeCount - 1 > pos){
+        if (pos > lastIndex && removeCount - 1 > pos)
+        {
             return 0;
         }
 
-        count -= removeCount;
-        if(count == 0 || pos == lastIndex){
+        length -= removeCount;
+        if (length == 0 || pos == lastIndex)
+        {
             return removeCount;
         }
 
@@ -172,14 +174,14 @@ struct ArrayTextBuffer
         //import std;
         //writeln(pos, " ", removeCount, " ", rest);
 
-        memmove(&_buffer[pos], &_buffer[pos + 1], rest * Glyph.sizeof);
+        memmove(&_buffer[pos], &_buffer[pos + 1], rest * T.sizeof);
 
         return removeCount;
     }
 
-    inout(Glyph[]) buffer() inout => _buffer[0 .. count];
+    override inout(T[]) buffer() inout => _buffer[0 .. length];
 
-    dstring text()
+    override dstring text()
     {
         import std.algorithm.iteration : map;
         import std.conv : to;
@@ -187,13 +189,11 @@ struct ArrayTextBuffer
         return buffer.map!(glyph => glyph.grapheme)
             .to!dstring;
     }
-
-    size_t glyphsCount() => count;
 }
 
 unittest
 {
-    ArrayTextBuffer textBuff;
+    auto textBuff = new ArrayTextBuffer!Glyph;
     dstring text = "Hello world\n";
     textBuff.create(text);
 
@@ -220,7 +220,7 @@ unittest
 
 unittest
 {
-    ArrayTextBuffer textBuff;
+    auto textBuff = new ArrayTextBuffer!Glyph;
     dstring text = "Hello world";
 
     textBuff.create(text);
@@ -245,7 +245,7 @@ unittest
 
 unittest
 {
-    ArrayTextBuffer textBuff;
+    auto textBuff = new ArrayTextBuffer!Glyph;
     dstring text = "Hello world";
 
     textBuff.create(text);
@@ -255,7 +255,7 @@ unittest
     textBuff.create(text);
     assert(textBuff.removePrev(5, 1) == 1);
     assert(textBuff.text == "Helloworld");
-    
+
     textBuff.create(text);
     assert(textBuff.removePrev(10, 6) == 6);
     assert(textBuff.text == "Hello");

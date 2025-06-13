@@ -20,7 +20,7 @@ import std.conv : to;
 /**
  * Authors: initkfs
  */
-class TextView : EditableText!ArrayTextBuffer
+class TextView : EditableText
 {
     protected
     {
@@ -60,9 +60,9 @@ class TextView : EditableText!ArrayTextBuffer
         super.initialize;
         invalidateListeners ~= () { updateRows; };
 
-        if (!_textBuffer.glyphProvider)
+        if (!_textBuffer.itemProvider)
         {
-            _textBuffer.glyphProvider = (ch) => charToGlyph(ch);
+            _textBuffer.itemProvider = (ch) => charToGlyph(ch);
         }
     }
 
@@ -74,7 +74,7 @@ class TextView : EditableText!ArrayTextBuffer
 
     override size_t[] lineBreaks() => docStruct.lineBreaks;
     override Glyph[] allGlyphs() => _textBuffer.buffer;
-    override size_t glyphsCount() => _textBuffer.glyphsCount;
+    override size_t bufferLength() => _textBuffer.length;
 
     override void create()
     {
@@ -107,10 +107,10 @@ class TextView : EditableText!ArrayTextBuffer
         return false;
     }
 
-    override bool removePrevText(size_t pos, size_t count)
+    override bool removePrevText(size_t pos, size_t bufferLength)
     {
-        auto size = _textBuffer.removePrev(pos, count);
-        return size == count;
+        auto size = _textBuffer.removePrev(pos, bufferLength);
+        return size == bufferLength;
     }
 
     protected void textToGlyphsBuffer(const(dchar)[] textString, bool isAppend = false)
@@ -148,7 +148,7 @@ class TextView : EditableText!ArrayTextBuffer
 
         size_t glyphCount;
 
-        _textBuffer.onGlyphs((Glyph* glyph, i) {
+        _textBuffer.onItem((Glyph* glyph, i) {
             auto newRowHeight = cast(int) glyph.geometry.height;
             if (newRowHeight > rowHeight)
             {
@@ -566,7 +566,7 @@ class TextView : EditableText!ArrayTextBuffer
         auto startBreakIndex = docStruct.lineBreaks[startRowIndex];
         auto endBreakIndex = docStruct.lineBreaks[endRowIndex];
 
-        size_t glyphLastIndex = _textBuffer.glyphsCount;
+        size_t glyphLastIndex = _textBuffer.length;
         if (glyphLastIndex > 0)
         {
             glyphLastIndex--;
@@ -611,9 +611,6 @@ class TextView : EditableText!ArrayTextBuffer
     }
 
     size_t rowCount() => docStruct.lineBreaks.length;
-
-    ref inout(ArrayTextBuffer) textBuffer() inout => _textBuffer;
-
 }
 
 unittest
@@ -622,7 +619,7 @@ unittest
     import api.math.geom2.vec2 : Vec2d;
 
     auto textView = new TextView("Hello world\nThis is a very short text for the experiment");
-    textView.textBuffer.glyphProvider = (ch) {
+    textView.textBuffer.itemProvider = (ch) {
         return Glyph(ch, Rect2d(0, 0, 10, 10), Vec2d(0, 0), null, false, ch == '\n');
     };
     textView.width = 123;
