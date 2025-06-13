@@ -214,7 +214,10 @@ class TextView : EditableText
             glyphPosX += glyph.geometry.width;
         }
 
-        docStruct.lineBreaks ~= lastIndex;
+        if (!_textBuffer.buffer[lastIndex].isNEL)
+        {
+            docStruct.lineBreaks ~= lastIndex;
+        }
 
         auto fullRowWidth = maxRowWidth + padding.width;
 
@@ -497,6 +500,10 @@ class TextView : EditableText
             return Vec2d(0, 0);
         }
 
+        if(scrollPosition >= 1.0){
+            scrollPosition = 1;
+        }
+
         size_t lastRowIndex = docStruct.lineBreaks.length;
         if (lastRowIndex > 0)
         {
@@ -622,8 +629,10 @@ unittest
 
     textView.glyphsToDocStruct;
 
+    import std;
+
     assert(textView.rowCount == 5);
-    assert(textView.docStruct == DocStruct([], [11, 22, 34, 46, 55]));
+    assert(textView.docStruct == DocStruct([], [11, 21, 32, 45, 55]));
 
     assert(textView.rowsInViewport == 4);
     assert(textView.viewportRowIndex == Vec2d(0, 3));
@@ -631,12 +640,12 @@ unittest
 
     size_t firstRowIndex;
     Glyph[] rows = textView.viewportRows(firstRowIndex);
-    assert(rows.length == 47);
+    assert(rows.length == 46);
 
     dstring rowsStr = textView.glyphsToStr(rows);
-    assert(rowsStr == "Hello world\nThis is a very short text for the e");
+    assert(rowsStr == "Hello world\nThis is a very short text for the ");
 
     Glyph[] endRows = textView.viewportRows(firstRowIndex, 1);
     dstring rowsStr1 = textView.glyphsToStr(endRows);
-    assert(rowsStr1 == "xperiment");
+    assert(rowsStr1 == "experiment");
 }
