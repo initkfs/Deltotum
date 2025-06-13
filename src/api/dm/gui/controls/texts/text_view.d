@@ -1,7 +1,7 @@
 module api.dm.gui.controls.texts.text_view;
 
 import api.dm.gui.controls.texts.editable_text : EditableText, DocStruct;
-import api.dm.gui.controls.texts.buffers.array_text_buffer: ArrayTextBuffer;
+import api.dm.gui.controls.texts.buffers.array_text_buffer : ArrayTextBuffer;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 import api.math.geom2.rect2 : Rect2d;
@@ -128,10 +128,10 @@ class TextView : EditableText
         //TODO reuse array
         docStruct = DocStruct.init;
 
-        // if (glyphs.length == 0)
-        // {
-        //     return docStruct;
-        // }
+        if (_textBuffer.length == 0)
+        {
+            return;
+        }
 
         //rowHeight = cast(int) glyphs[0].geometry.height;
 
@@ -146,9 +146,12 @@ class TextView : EditableText
         double maxRowWidth = 0;
         lastRowWidth = 0;
 
-        size_t glyphCount;
+        size_t lastIndex;
+        foreach (ref i, ref item; _textBuffer.buffer)
+        {
+            lastIndex = i;
 
-        _textBuffer.onItem((Glyph* glyph, i) {
+            Glyph* glyph = &item;
             auto newRowHeight = cast(int) glyph.geometry.height;
             if (newRowHeight > rowHeight)
             {
@@ -156,74 +159,62 @@ class TextView : EditableText
             }
 
             auto nextGlyphPosX = glyphPosX + glyph.geometry.width;
-            lastRowWidth += glyph.geometry.width;
 
+            if (glyph.isNEL)
+            {
+                docStruct.lineBreaks ~= i;
+                glyphPosX = startRowTextX;
+                glyphPosY += rowHeight;
+                lastRowWidth = 0;
+                continue;
+            }
+            else if (nextGlyphPosX > endRowTextX)
+            {
+                bool isLeftSpace;
+                size_t j = i;
+                searchLeftSpace: while (j >= 0)
+                {
+                    auto leftGlyph = _textBuffer.buffer[j];
+                    if (leftGlyph.grapheme == ' ' || leftGlyph.isNEL)
+                    {
+                        isLeftSpace = true;
+                        break searchLeftSpace;
+                    }
+                    j--;
+                }
+
+                if (isLeftSpace)
+                {
+                    glyphPosX = startRowTextX;
+                    glyphPosY += rowHeight;
+                    lastRowWidth = 0;
+
+                    size_t currPosIndexDiff = i - j;
+                    //TODO loop goes through some characters twice 
+                    i -= currPosIndexDiff;
+                    docStruct.lineBreaks ~= j;
+                    continue;
+                }
+
+                docStruct.lineBreaks ~= (i == 0 ? 0 : i - 1);
+                glyphPosX = startRowTextX;
+                glyphPosY += rowHeight;
+                lastRowWidth = 0;
+            }
+
+            //control glyphs reset width
+            lastRowWidth += glyph.geometry.width;
             if (lastRowWidth > maxRowWidth)
             {
                 maxRowWidth = lastRowWidth;
             }
 
-            if (glyph.isNEL)
-            {
-                docStruct.lineBreaks ~= i;
-
-                glyphPosX = startRowTextX;
-                glyphPosY += rowHeight;
-                lastRowWidth = 0;
-            }
-            else if (nextGlyphPosX > endRowTextX)
-            {
-                long slicePos = -1;
-                // foreach_reverse (j, oldGlyph; row.glyphs)
-                // {
-                //     if (oldGlyph.grapheme == ' ')
-                //     {
-                //         ptrdiff_t idt = row.glyphs.length - 1;
-                //         if (idt < 0)
-                //         {
-                //             continue;
-                //         }
-
-                //         if (j == idt)
-                //         {
-                //             continue;
-                //         }
-                //         slicePos = j;
-                //         break;
-                //     }
-                // }
-
-                glyphPosX = startRowTextX;
-                glyphPosY += rowHeight;
-                lastRowWidth = 0;
-                docStruct.lineBreaks ~= (i == 0 ? 0 : i - 1);
-                // if (slicePos != -1)
-                // {
-                //     foreach (i; slicePos + 1 .. row.glyphs.length)
-                //     {
-                //         auto oldGlyph = row.glyphs[i];
-                //         oldGlyph.pos.x = glyphPosX;
-                //         oldGlyph.pos.y = glyphPosY;
-
-                //         newRow.glyphs ~= oldGlyph;
-                //         glyphPosX += oldGlyph.geometry.width;
-                //     }
-
-                //     row.glyphs = row.glyphs[0 .. slicePos];
-                // }
-
-            }
-
             glyph.pos.x = glyphPosX;
             glyph.pos.y = glyphPosY;
             glyphPosX += glyph.geometry.width;
+        }
 
-            glyphCount++;
-
-            return true;
-        });
-
-        docStruct.lineBreaks ~= (glyphCount - 1);
+        docStruct.lineBreaks ~= lastIndex;
 
         auto fullRowWidth = maxRowWidth + padding.width;
 

@@ -22,9 +22,9 @@ class BaseTextBuffer(T)
         dstring text();
     }
 
-    void onItem(scope bool delegate(T*, size_t) onItemIndexDg)
+    void onItem(scope bool delegate(T*, ref size_t) onItemIndexDg)
     {
-        foreach (i, ref item; buffer)
+        foreach (ref i, ref item; buffer)
         {
             if (!onItemIndexDg(&item, i))
             {
