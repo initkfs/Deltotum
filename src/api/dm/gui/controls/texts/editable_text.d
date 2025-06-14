@@ -22,8 +22,9 @@ struct CursorPos
 {
     CursorState state;
     Vec2d pos;
-    size_t rowIndex;
     size_t glyphIndexAbs;
+    size_t rowIndexAbs;
+    size_t rowIndexInViewport;
 
     bool isValid;
 }
@@ -320,7 +321,7 @@ class EditableText : BaseMonoText
 
             rowIndex = ri;
 
-            size_t prevBreakLine = 0 ;
+            size_t prevBreakLine = 0;
 
             if (ri > 0 || rowStartIndex > 0)
             {
@@ -342,6 +343,7 @@ class EditableText : BaseMonoText
                 return CursorPos.init;
             }
 
+            const rowIndexAbs = rowStartIndex + ri;
             const rowY = startY + ri * rowHeight;
             size_t lastRowIndex = needRow.length - 1;
 
@@ -353,7 +355,7 @@ class EditableText : BaseMonoText
                     const glyphMiddleX = startX + glyph.pos.x + glyph.geometry.halfWidth;
                     if (x < glyphMiddleX)
                     {
-                        return CursorPos(CursorState.forNextGlyph, Vec2d(startX, rowY), ri, prevBreakLine, true);
+                        return CursorPos(CursorState.forNextGlyph, Vec2d(startX, rowY), prevBreakLine, rowIndexAbs, ri, true);
                     }
                 }
 
@@ -362,7 +364,7 @@ class EditableText : BaseMonoText
                     const glyphMiddleX = startX + glyph.pos.x + glyph.geometry.halfWidth;
                     if (x > glyphMiddleX)
                     {
-                        return CursorPos(CursorState.forPrevGlyph, Vec2d(startX + glyph.pos.x + glyph.geometry.width, rowY), ri, prevBreakLine + gi, true);
+                        return CursorPos(CursorState.forPrevGlyph, Vec2d(startX + glyph.pos.x + glyph.geometry.width, rowY), prevBreakLine + gi, rowIndexAbs, ri, true);
                     }
                 }
 
@@ -383,7 +385,7 @@ class EditableText : BaseMonoText
 
                     auto absGlyphIndex = prevBreakLine + glyphIndex;
 
-                    return CursorPos(CursorState.forPrevGlyph, pos, ri, absGlyphIndex, true);
+                    return CursorPos(CursorState.forPrevGlyph, pos, absGlyphIndex, rowIndexAbs, ri, true);
                 }
             }
         }
@@ -392,23 +394,41 @@ class EditableText : BaseMonoText
         return CursorPos.init;
     }
 
-    bool setCursorPos(size_t index)
+    bool setCursorPos(size_t index, bool isFromLeftGlyphCorner = true)
     {
         if (index >= bufferLength)
         {
             return false;
         }
         const bounds = boundsRect;
+
         auto nextGlyph = allGlyphs[index];
-        cursorPos.pos.x = bounds.x + padding.left + nextGlyph.pos.x;
+
+        const startX = bounds.x + padding.left;
+
+        if (isFromLeftGlyphCorner)
+        {
+            cursorPos.pos.x = startX + nextGlyph.pos.x;
+        }
+        else
+        {
+            cursorPos.pos.x = startX + nextGlyph.pos.x + nextGlyph.geometry.width;
+        }
+
         cursorPos.pos.y = bounds.y + padding.top + nextGlyph.pos.y;
+
+        if (index == 0)
+        {
+            cursorPos.state = CursorState.forNextGlyph;
+        }
 
         updateCursor;
 
         return true;
     }
 
-    bool setCursorPos() => setCursorPos(cursorPos.glyphIndexAbs);
+    bool setCursorPos(bool isFromLeftGlyphCorner = true) => setCursorPos(
+        cursorPos.glyphIndexAbs, isFromLeftGlyphCorner);
 
     bool moveCursorLeft()
     {
@@ -417,13 +437,15 @@ class EditableText : BaseMonoText
             return false;
         }
 
+        setCursorPos;
+
         if (cursorPos.glyphIndexAbs == 0)
         {
             return false;
         }
 
         cursorPos.glyphIndexAbs--;
-        setCursorPos;
+
         return true;
     }
 
@@ -440,47 +462,56 @@ class EditableText : BaseMonoText
         }
 
         cursorPos.glyphIndexAbs++;
-        setCursorPos;
+        setCursorPos(isFromLeftGlyphCorner : false);
         return true;
     }
 
-    Glyph[] currentRow()
+    Glyph[] currentRow() => row(cursorPos.rowIndexAbs);
+
+    Glyph[] row(size_t rowIndex)
     {
-        auto currentBreak = textStruct.lineBreaks[cursorPos.rowIndex];
-        if (cursorPos.rowIndex == 0)
+        auto currentBreak = textStruct.lineBreaks[rowIndex];
+        if (rowIndex == 0)
         {
             return allGlyphs[0 .. currentBreak + 1];
         }
 
-        auto prevBreak = textStruct.lineBreaks[cursorPos.rowIndex - 1];
+        auto prevBreak = textStruct.lineBreaks[rowIndex - 1];
 
         return allGlyphs[prevBreak + 1 .. currentBreak + 1];
     }
 
     bool moveCursorUp()
     {
-        if (cursorPos.rowIndex == 0)
+        if (cursorPos.rowIndexInViewport == 0 || cursorPos.rowIndexAbs == 0)
         {
             return false;
         }
 
-        auto row = textStruct.lineBreaks[cursorPos.rowIndex];
+        cursorPos.rowIndexAbs--;
+        cursorPos.rowIndexInViewport = cursorPos.rowIndexInViewport == 0 ? 0
+            : cursorPos.rowIndexInViewport - 1;
 
-        cursorPos.rowIndex--;
+        size_t prevLineBreak = lineBreaks[cursorPos.rowIndexAbs];
 
-        auto nextRow = textStruct.lineBreaks[cursorPos.rowIndex];
-
-        ptrdiff_t currentPosRel = row - cursorPos.glyphIndexAbs;
-        if (currentPosRel < 0)
+        ptrdiff_t posFromStartRow = cursorPos.glyphIndexAbs - prevLineBreak;
+        if (posFromStartRow < 0)
         {
             return false;
         }
 
-        auto nextRowIndex = nextRow - currentPosRel;
-        if (nextRowIndex < bufferLength)
+        size_t prevPrevLineBreak = cursorPos.rowIndexAbs == 0 ? 0
+            : lineBreaks[cursorPos.rowIndexAbs - 1];
+        if (prevPrevLineBreak == 0 && posFromStartRow > 0)
+        {
+            posFromStartRow--;
+        }
+
+        ptrdiff_t nextRowIndex = prevPrevLineBreak + posFromStartRow;
+        if (nextRowIndex >= 0 && nextRowIndex < bufferLength)
         {
             cursorPos.glyphIndexAbs = nextRowIndex;
-            setCursorPos;
+            setCursorPos(isFromLeftGlyphCorner : false);
             return true;
         }
 
@@ -489,33 +520,45 @@ class EditableText : BaseMonoText
 
     bool moveCursorDown()
     {
-        auto maxRowIndex = textStruct.lineBreaks.length == 0 ? 0 : textStruct.lineBreaks.length - 1;
-        if (cursorPos.rowIndex == maxRowIndex)
+        size_t lastRowIndex = lineBreaks.length > 0 ? lineBreaks.length - 1 : 0;
+        //TODO viewport?
+        if (cursorPos.rowIndexAbs == lastRowIndex)
         {
             return false;
         }
 
-        auto row = textStruct.lineBreaks[cursorPos.rowIndex];
+        const viewportRows = rowsInViewport;
+        if(viewportRows > 0 && cursorPos.rowIndexInViewport == viewportRows - 1){
+            return false;
+        }
 
-        cursorPos.rowIndex++;
-
-        auto nextRow = textStruct.lineBreaks[cursorPos.rowIndex];
-
-        ptrdiff_t currentPosRel = row - cursorPos.glyphIndexAbs;
-        if (currentPosRel < 0)
+        size_t prevLineBreak = cursorPos.rowIndexAbs == 0 ? 0 : lineBreaks[cursorPos.rowIndexAbs - 1];
+        ptrdiff_t posFromStartRow = cursorPos.glyphIndexAbs - prevLineBreak;
+        if (posFromStartRow < 0)
         {
             return false;
         }
 
-        auto nextRowIndex = nextRow - currentPosRel;
+        size_t currLineBreak = lineBreaks[cursorPos.rowIndexAbs];
+
+        cursorPos.rowIndexAbs++;
+        
+        if (viewportRows > 0 && cursorPos.rowIndexInViewport < viewportRows - 1)
+        {
+            cursorPos.rowIndexInViewport++;
+        }
+
+        size_t nextRowIndex = currLineBreak + posFromStartRow;
         if (nextRowIndex < bufferLength)
         {
             cursorPos.glyphIndexAbs = nextRowIndex;
-            setCursorPos;
-            return true;
+        }else {
+            cursorPos.glyphIndexAbs = bufferLength - 1;
         }
 
-        return false;
+        setCursorPos(isFromLeftGlyphCorner : false);
+
+        return true;
     }
 
 }
