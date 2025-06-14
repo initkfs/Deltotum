@@ -304,60 +304,91 @@ class EditableText : BaseMonoText
         double startX = thisBounds.x + padding.left;
         double startY = thisBounds.y + padding.top;
 
-        size_t firstIndex;
-        Glyph[] rows = viewportRows(firstIndex);
+        Vec2d breakIdx = viewportRowIndex;
+        size_t rowStartIndex = cast(size_t) breakIdx.x;
+        size_t rowEndIndex = cast(size_t) breakIdx.y;
 
         size_t rowIndex;
-        foreach (ri, lineBreak; lineBreaks)
+        foreach (ri, lineBreak; lineBreaks[rowStartIndex .. rowEndIndex + 1])
         {
-            auto currentH = startY + (1 + ri) * rowHeight;
-            if (currentH < y)
+            auto rowStartY = startY + ri * rowHeight;
+            auto endRowY = rowStartY + rowHeight;
+            if (!(y >= rowStartY && y <= endRowY))
             {
                 continue;
             }
 
             rowIndex = ri;
 
-            auto prevBreakIndex = ri == 0 ? 0 : ri - 1;
-            auto prevBreakLine = lineBreaks[prevBreakIndex];
+            size_t prevBreakLine = 0 ;
 
-            const maxCount = bufferLength;
-            size_t glyphMaxIndex = maxCount > 0 ? maxCount - 1 : 0;
-            if (prevBreakLine < glyphMaxIndex)
+            if (ri > 0 || rowStartIndex > 0)
             {
-                prevBreakLine++;
+                prevBreakLine = lineBreaks[rowStartIndex + ri - 1];
+
+                const maxCount = bufferLength;
+                size_t glyphMaxIndex = maxCount > 0 ? maxCount - 1 : 0;
+                if (prevBreakLine < glyphMaxIndex)
+                {
+                    prevBreakLine++;
+                }
             }
 
-            Glyph[] needRow = rows[prevBreakLine .. lineBreak + 1];
+            Glyph[] needRow = allGlyphs[prevBreakLine .. lineBreak + 1];
 
-            size_t glyphIndex;
-            Vec2d pos;
+            if (needRow.length == 0)
+            {
+                logger.error("Empty row for cursor: ", prevBreakLine, " ", lineBreak + 1);
+                return CursorPos.init;
+            }
+
+            const rowY = startY + ri * rowHeight;
+            size_t lastRowIndex = needRow.length - 1;
 
             foreach (gi, ref Glyph glyph; needRow)
             {
+
+                if (gi == 0)
+                {
+                    const glyphMiddleX = startX + glyph.pos.x + glyph.geometry.halfWidth;
+                    if (x < glyphMiddleX)
+                    {
+                        return CursorPos(CursorState.forNextGlyph, Vec2d(startX, rowY), ri, prevBreakLine, true);
+                    }
+                }
+
+                if (gi == lastRowIndex)
+                {
+                    const glyphMiddleX = startX + glyph.pos.x + glyph.geometry.halfWidth;
+                    if (x > glyphMiddleX)
+                    {
+                        return CursorPos(CursorState.forPrevGlyph, Vec2d(startX + glyph.pos.x + glyph.geometry.width, rowY), ri, prevBreakLine + gi, true);
+                    }
+                }
+
                 if (startX + glyph.pos.x > x)
                 {
-                    glyphIndex = gi;
+                    auto glyphIndex = gi;
+                    Vec2d pos;
                     if (gi > 0)
                     {
                         glyphIndex--;
                         auto prevGlyph = needRow[glyphIndex];
-                        pos = Vec2d(startX + prevGlyph.pos.x + prevGlyph.geometry.width, startY + ri * rowHeight);
+                        pos = Vec2d(startX + prevGlyph.pos.x + prevGlyph.geometry.width, rowY);
                     }
                     else
                     {
-                        pos = Vec2d(startX, startY + ri * rowHeight);
+                        pos = Vec2d(startX, rowY);
                     }
 
-                    break;
+                    auto absGlyphIndex = prevBreakLine + glyphIndex;
+
+                    return CursorPos(CursorState.forPrevGlyph, pos, ri, absGlyphIndex, true);
                 }
             }
-
-            auto absGlyphIndex = prevBreakLine + glyphIndex;
-
-            return CursorPos(CursorState.forPrevGlyph, pos, ri, absGlyphIndex, true);
         }
 
+        logger.error("Not found cursor position");
         return CursorPos.init;
     }
 
