@@ -1,6 +1,6 @@
 module api.dm.gui.controls.texts.text;
 
-import api.dm.gui.controls.texts.base_text : BaseText;
+import api.dm.gui.controls.texts.base_mono_text : BaseMonoText;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 import api.math.geom2.rect2 : Rect2d;
@@ -24,7 +24,7 @@ struct TextRow
 /**
  * Authors: initkfs
  */
-class Text : BaseText
+class Text : BaseMonoText
 {
     BitmapFont fontTexture;
 
@@ -96,6 +96,11 @@ class Text : BaseText
             updateRows;
             isRebuildRows = false;
         }
+    }
+
+    override Vec2d viewportRowIndex() => Vec2d.init;
+    override Glyph[] viewportRows(out size_t firstRowIndex) {
+        return null;
     }
 
     protected void textToGlyphsBuffer(const(dchar)[] textString, bool isAppend = false)
@@ -422,14 +427,14 @@ class Text : BaseText
         setInvalid;
     }
 
-    void text(string t, bool isTriggerListeners = true)
+    override void text(string t, bool isTriggerListeners = true)
     {
         import std.conv : to;
 
         this.text(t.to!dstring, isTriggerListeners);
     }
 
-    void text(dstring t, bool isTriggerListeners = true)
+    override void text(dstring t, bool isTriggerListeners = true)
     {
         if (!isBuilt || !isCreated)
         {
@@ -448,7 +453,7 @@ class Text : BaseText
     }
 
     auto textTo(T)() => text.to!T;
-    string textString() => textTo!string;
+    override string textString() => textTo!string;
 
     Glyph[] bufferText()
     {
@@ -456,7 +461,7 @@ class Text : BaseText
         return _textBuffer[0 .. textBufferCount];
     }
 
-    dstring text()
+    override dstring text()
     {
         if ((!isBuilt || !isCreated) && tempText)
         {

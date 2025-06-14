@@ -25,19 +25,33 @@ class ArrayTextBuffer(T = Glyph) : BaseTextBuffer!T
             return false;
         }
 
-        destroy;
         length = 0;
+
+        if (_buffer.length < text.length)
+        {
+            const newCapacity = text.length;
+            const newSizeBytes = newCapacity * T.sizeof;
+            T* bufferPtr;
+            if (_buffer.length > 0)
+            {
+                bufferPtr = cast(T*) realloc(_buffer.ptr, newSizeBytes);
+            }
+            else
+            {
+                bufferPtr = cast(T*) malloc(newSizeBytes);
+            }
+
+            if (!bufferPtr)
+            {
+                return false;
+            }
+
+            _buffer = bufferPtr[0 .. text.length];
+        }
 
         assert(itemProvider);
 
         //TODO check prev buffer size?
-        auto bufferPtr = (cast(T*) malloc(text.length * T.sizeof));
-        if (!bufferPtr)
-        {
-            return false;
-        }
-
-        _buffer = bufferPtr[0 .. text.length];
 
         foreach (i, ch; text)
         {

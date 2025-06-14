@@ -1,6 +1,7 @@
 module api.dm.gui.controls.texts.text_view;
 
-import api.dm.gui.controls.texts.editable_text : EditableText, DocStruct;
+import api.dm.gui.controls.texts.base_mono_text : BaseMonoText, TextStruct;
+import api.dm.gui.controls.texts.editable_text : EditableText;
 import api.dm.gui.controls.texts.buffers.array_text_buffer : ArrayTextBuffer;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
@@ -22,14 +23,7 @@ import std.conv : to;
  */
 class TextView : EditableText
 {
-    protected
-    {
-        double scrollPosition = 0;
-    }
-
     BitmapFont fontTexture;
-
-    bool isRebuildRows;
 
     protected
     {
@@ -55,6 +49,60 @@ class TextView : EditableText
         tempText = text;
     }
 
+    override void drawContent()
+    {
+        if (textStruct.lineBreaks.length == 0)
+        {
+            return;
+        }
+
+        size_t rowStartIndex;
+        Glyph[] glyphs = viewportRows(rowStartIndex);
+        renderText(glyphs, rowStartIndex);
+    }
+
+    protected void renderText(Glyph[] glyphs, size_t startIndex)
+    {
+        if (width == 0 || height == 0 || glyphs.length == 0)
+        {
+            return;
+        }
+
+        const thisBounds = boundsRect;
+
+        auto rowHeight = cast(int) glyphs[0].geometry.height;
+
+        const double startRowTextY = padding.top;
+        double glyphPosY = startRowTextY;
+
+        import std.range : assumeSorted;
+
+        auto sortedLineBreaks = textStruct.lineBreaks.assumeSorted;
+        size_t lastIndex = glyphs.length - 1;
+
+        foreach (ri, ref Glyph glyph; glyphs)
+        {
+            glyph.pos.y = glyphPosY;
+
+            if (sortedLineBreaks.contains(startIndex + ri))
+            {
+                glyphPosY += rowHeight;
+            }
+
+            if (glyph.isNEL)
+            {
+                continue;
+            }
+
+            Rect2d textureBounds = glyph.geometry;
+            Rect2d destBounds = Rect2d(thisBounds.x + glyph.pos.x, thisBounds.y + glyph.pos.y, glyph
+                    .geometry.width, glyph
+                    .geometry.height);
+            fontTexture.drawTexture(textureBounds, destBounds, angle, Flip
+                    .none);
+        }
+    }
+
     override void initialize()
     {
         super.initialize;
@@ -71,10 +119,6 @@ class TextView : EditableText
         _textBuffer.create(tempText);
         tempText = null;
     }
-
-    override size_t[] lineBreaks() => docStruct.lineBreaks;
-    override Glyph[] allGlyphs() => _textBuffer.buffer;
-    override size_t bufferLength() => _textBuffer.length;
 
     override void create()
     {
@@ -123,151 +167,6 @@ class TextView : EditableText
         }
     }
 
-    void glyphsToDocStruct()
-    {
-        //TODO reuse array
-        docStruct = DocStruct.init;
-
-        if (_textBuffer.length == 0)
-        {
-            return;
-        }
-
-        //rowHeight = cast(int) glyphs[0].geometry.height;
-
-        const double startRowTextX = padding.left;
-        const double endRowTextX = maxWidth - padding.right;
-
-        const double startRowTextY = padding.top;
-
-        double glyphPosX = startRowTextX;
-        double glyphPosY = startRowTextY;
-
-        double maxRowWidth = 0;
-        lastRowWidth = 0;
-
-        size_t lastIndex;
-        foreach (ref i, ref item; _textBuffer.buffer)
-        {
-            lastIndex = i;
-
-            Glyph* glyph = &item;
-            auto newRowHeight = cast(int) glyph.geometry.height;
-            if (newRowHeight > rowHeight)
-            {
-                rowHeight = newRowHeight;
-            }
-
-            auto nextGlyphPosX = glyphPosX + glyph.geometry.width;
-
-            if (glyph.isNEL)
-            {
-                docStruct.lineBreaks ~= i;
-                glyphPosX = startRowTextX;
-                glyphPosY += rowHeight;
-                lastRowWidth = 0;
-                continue;
-            }
-            else if (nextGlyphPosX > endRowTextX)
-            {
-                bool isLeftSpace;
-                size_t j = i;
-                searchLeftSpace: while (j >= 0)
-                {
-                    auto leftGlyph = _textBuffer.buffer[j];
-                    if (leftGlyph.grapheme == ' ' || leftGlyph.isNEL)
-                    {
-                        isLeftSpace = true;
-                        break searchLeftSpace;
-                    }
-                    j--;
-                }
-
-                if (isLeftSpace)
-                {
-                    glyphPosX = startRowTextX;
-                    glyphPosY += rowHeight;
-                    lastRowWidth = 0;
-
-                    size_t currPosIndexDiff = i - j;
-                    //TODO loop goes through some characters twice 
-                    i -= currPosIndexDiff;
-                    docStruct.lineBreaks ~= j;
-                    continue;
-                }
-
-                docStruct.lineBreaks ~= (i == 0 ? 0 : i - 1);
-                glyphPosX = startRowTextX;
-                glyphPosY += rowHeight;
-                lastRowWidth = 0;
-            }
-
-            //control glyphs reset width
-            lastRowWidth += glyph.geometry.width;
-            if (lastRowWidth > maxRowWidth)
-            {
-                maxRowWidth = lastRowWidth;
-            }
-
-            glyph.pos.x = glyphPosX;
-            glyph.pos.y = glyphPosY;
-            glyphPosX += glyph.geometry.width;
-        }
-
-        if (!_textBuffer.buffer[lastIndex].isNEL)
-        {
-            docStruct.lineBreaks ~= lastIndex;
-        }
-
-        auto fullRowWidth = maxRowWidth + padding.width;
-
-        if (fullRowWidth > width)
-        {
-            width = Math.min(maxWidth, fullRowWidth);
-        }
-        else
-        {
-            if (isReduceWidthHeight)
-            {
-                //TODO check minHeight;
-                width = maxRowWidth;
-            }
-        }
-
-        auto newHeight = docStruct.lineBreaks.length * rowHeight + padding.height;
-        if (newHeight > height)
-        {
-            import std.algorithm.comparison : min;
-
-            height = Math.min(maxHeight, newHeight);
-        }
-        else
-        {
-            if (isReduceWidthHeight)
-            {
-                //TODO check minHeight;
-                height = newHeight;
-            }
-        }
-    }
-
-    override void updateRows(bool isForce = false)
-    {
-        if (!isBuilt && !isForce)
-        {
-            isRebuildRows = true;
-            return;
-        }
-
-        isAllowInvalidate = false;
-        scope (exit)
-        {
-            isAllowInvalidate = true;
-        }
-
-        glyphsToDocStruct;
-    }
-
     void addRows(const(dchar)[] text)
     {
         // textToGlyphsBuffer(text, isAppend:
@@ -283,48 +182,6 @@ class TextView : EditableText
             return false;
         }
         return super.canChangeWidth(value);
-    }
-
-    protected void renderText(Glyph[] glyphs, size_t startIndex)
-    {
-        if (width == 0 || height == 0 || glyphs.length == 0)
-        {
-            return;
-        }
-
-        const thisBounds = boundsRect;
-
-        auto rowHeight = cast(int) glyphs[0].geometry.height;
-
-        const double startRowTextY = padding.top;
-        double glyphPosY = startRowTextY;
-
-        import std.range : assumeSorted;
-
-        auto sortedLineBreaks = docStruct.lineBreaks.assumeSorted;
-        size_t lastIndex = glyphs.length - 1;
-
-        foreach (ri, ref Glyph glyph; glyphs)
-        {
-            glyph.pos.y = glyphPosY;
-
-            if (sortedLineBreaks.contains(startIndex + ri))
-            {
-                glyphPosY += rowHeight;
-            }
-
-            if (glyph.isNEL)
-            {
-                continue;
-            }
-
-            Rect2d textureBounds = glyph.geometry;
-            Rect2d destBounds = Rect2d(thisBounds.x + glyph.pos.x, thisBounds.y + glyph.pos.y, glyph
-                    .geometry.width, glyph
-                    .geometry.height);
-            fontTexture.drawTexture(textureBounds, destBounds, angle, Flip
-                    .none);
-        }
     }
 
     void onFontTexture(scope bool delegate(Texture2d, const(Glyph*) glyph) onTextureIsContinue)
@@ -394,56 +251,6 @@ class TextView : EditableText
         setInvalid;
     }
 
-    void text(string t, bool isTriggerListeners = true)
-    {
-        import std.conv : to;
-
-        this.text(t.to!dstring, isTriggerListeners);
-    }
-
-    void text(dstring t, bool isTriggerListeners = true)
-    {
-        if (!isBuilt || !isCreated)
-        {
-            isRebuildRows = true;
-            return;
-        }
-
-        updateRows(isForce : true);
-
-        if (onTextChange && isTriggerListeners)
-        {
-            onTextChange();
-        }
-    }
-
-    auto textTo(T)() => text.to!T;
-    string textString() => textTo!string;
-
-    Glyph[] bufferText()
-    {
-        // assert(_textBuffer.length >= textBufferCount);
-        // return _textBuffer[0 .. textBufferCount];
-        return _textBuffer.buffer;
-    }
-
-    dstring text()
-    {
-        if (!isBuilt)
-        {
-            return "";
-        }
-
-        import std.array : appender;
-
-        auto builder = appender!dstring;
-        foreach (ref glyph; bufferText)
-        {
-            builder ~= glyph.grapheme;
-        }
-        return builder.data;
-    }
-
     protected void setColorTexture()
     {
         if (!asset.hasColorBitmap(_color, fontSize))
@@ -474,141 +281,6 @@ class TextView : EditableText
         }
         setInvalid;
     }
-
-    size_t rowsInViewport()
-    {
-        if (rowHeight == 0)
-        {
-            return 0;
-        }
-
-        return to!(size_t)((height - padding.height) / rowHeight);
-    }
-
-    Vec2d viewportRowIndex() => viewportRowIndex(scrollPosition);
-
-    Vec2d viewportRowIndex(double scrollPosition)
-    {
-        if (docStruct.lineBreaks.length == 0)
-        {
-            return Vec2d(0, 0);
-        }
-
-        const rowsInViewport = this.rowsInViewport;
-        if (rowsInViewport == 0)
-        {
-            return Vec2d(0, 0);
-        }
-
-        if(scrollPosition >= 1.0){
-            scrollPosition = 1;
-        }
-
-        size_t lastRowIndex = docStruct.lineBreaks.length;
-        if (lastRowIndex > 0)
-        {
-            lastRowIndex--;
-        }
-
-        //TODO only one hanging line in text
-        size_t mustBeLastRowIndex = lastRowIndex;
-        if (mustBeLastRowIndex > rowsInViewport)
-        {
-            mustBeLastRowIndex -= rowsInViewport - 1;
-        }
-
-        import std.math.rounding : round;
-
-        size_t mustBeStartRowIndex = to!size_t(round(scrollPosition * mustBeLastRowIndex));
-
-        size_t mustBeEndRowIndex = mustBeStartRowIndex + rowsInViewport - 1;
-        //[start..end+1]
-        const maxEndIndex = lastRowIndex;
-        if (mustBeEndRowIndex > maxEndIndex)
-        {
-            mustBeEndRowIndex = maxEndIndex;
-        }
-
-        return Vec2d(mustBeStartRowIndex, mustBeEndRowIndex);
-    }
-
-    override Glyph[] viewportRows(out size_t firstRowIndex) => viewportRows(
-        firstRowIndex, scrollPosition);
-
-    Glyph[] viewportRows(out size_t firstRowIndex, double scrollPosition)
-    {
-        //TODO first line without \n
-        if (docStruct.lineBreaks.length == 0)
-        {
-            return null;
-        }
-
-        Vec2d rowIndex = viewportRowIndex(scrollPosition);
-
-        size_t startRowIndex = cast(size_t) rowIndex.x;
-        size_t endRowIndex = cast(size_t) rowIndex.y;
-
-        size_t maxEndIndex = docStruct.lineBreaks.length;
-        if (maxEndIndex > 0)
-        {
-            maxEndIndex--;
-        }
-
-        if (endRowIndex > maxEndIndex)
-        {
-            endRowIndex = maxEndIndex;
-        }
-
-        //DocStruct([], [11, 23, 35, 47, 55])
-
-        auto startBreakIndex = docStruct.lineBreaks[startRowIndex];
-        auto endBreakIndex = docStruct.lineBreaks[endRowIndex];
-
-        size_t glyphLastIndex = _textBuffer.length;
-        if (glyphLastIndex > 0)
-        {
-            glyphLastIndex--;
-        }
-
-        size_t startGlyphIndex;
-        size_t endGlyphIndex = (endBreakIndex <= glyphLastIndex) ? endBreakIndex + 1 : endBreakIndex;
-
-        if (startBreakIndex != 0 && startRowIndex > 0)
-        {
-            auto prevLineBreaks = docStruct.lineBreaks[startRowIndex - 1];
-            //TODO check last index >= glyph.length
-            startGlyphIndex = prevLineBreaks < glyphLastIndex ? prevLineBreaks + 1 : prevLineBreaks;
-        }
-
-        // if (endRowIndex == maxEndIndex)
-        // {
-        //     endGlyphIndex++;
-        // }
-
-        Glyph[] glyphs = _textBuffer.buffer[startGlyphIndex .. endGlyphIndex];
-
-        firstRowIndex = startGlyphIndex;
-        return glyphs;
-    }
-
-    override void drawContent()
-    {
-        if (docStruct.lineBreaks.length == 0)
-        {
-            return;
-        }
-
-        size_t rowStartIndex;
-        Glyph[] glyphs = viewportRows(rowStartIndex);
-        renderText(glyphs, rowStartIndex);
-    }
-
-    void scrollTo(double value)
-    {
-        scrollPosition = value;
-    }
-
-    size_t rowCount() => docStruct.lineBreaks.length;
 }
 
 unittest
@@ -627,12 +299,10 @@ unittest
 
     textView.bufferCreate;
 
-    textView.glyphsToDocStruct;
-
-    import std;
+    textView.updateTextStruct;
 
     assert(textView.rowCount == 5);
-    assert(textView.docStruct == DocStruct([], [11, 21, 32, 45, 55]));
+    assert(textView.textStruct.lineBreaks == [11u, 21, 32, 45, 55]);
 
     assert(textView.rowsInViewport == 4);
     assert(textView.viewportRowIndex == Vec2d(0, 3));

@@ -1,6 +1,6 @@
 module api.dm.gui.controls.texts.editable_text;
 
-import api.dm.gui.controls.texts.base_text : BaseText;
+import api.dm.gui.controls.texts.base_mono_text : BaseMonoText, TextStruct;
 import api.dm.gui.controls.texts.buffers.base_text_buffer : BaseTextBuffer;
 import api.dm.gui.controls.texts.buffers.array_text_buffer : ArrayTextBuffer;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
@@ -28,45 +28,26 @@ struct CursorPos
     bool isValid;
 }
 
-struct DocStruct
-{
-    size_t[] rowsGlyphCount;
-    size_t[] lineBreaks;
-}
-
 /**
  * Authors: initkfs
  */
-class EditableText : BaseText
+class EditableText : BaseMonoText
 {
     Rectangle cursor;
     CursorPos cursorPos;
 
     bool isEditable;
 
-    DocStruct docStruct;
-
-    protected
-    {
-        BaseTextBuffer!Glyph _textBuffer;
-    }
-
     this(typeof(_textBuffer) newBuffer = null)
     {
+        super(newBuffer);
         isFocusable = true;
-        _textBuffer = newBuffer ? newBuffer : new ArrayTextBuffer!Glyph;
     }
 
     abstract
     {
         bool insertText(size_t pos, dchar letter);
         bool removePrevText(size_t pos, size_t bufferLength);
-
-        Glyph[] allGlyphs();
-        Glyph[] viewportRows(out size_t firstRowIndex);
-        size_t[] lineBreaks();
-        size_t bufferLength();
-        void updateRows(bool isForce = false);
     }
 
     override void initialize()
@@ -434,13 +415,13 @@ class EditableText : BaseText
 
     Glyph[] currentRow()
     {
-        auto currentBreak = docStruct.lineBreaks[cursorPos.rowIndex];
+        auto currentBreak = textStruct.lineBreaks[cursorPos.rowIndex];
         if (cursorPos.rowIndex == 0)
         {
             return allGlyphs[0 .. currentBreak + 1];
         }
 
-        auto prevBreak = docStruct.lineBreaks[cursorPos.rowIndex - 1];
+        auto prevBreak = textStruct.lineBreaks[cursorPos.rowIndex - 1];
 
         return allGlyphs[prevBreak + 1 .. currentBreak + 1];
     }
@@ -452,11 +433,11 @@ class EditableText : BaseText
             return false;
         }
 
-        auto row = docStruct.lineBreaks[cursorPos.rowIndex];
+        auto row = textStruct.lineBreaks[cursorPos.rowIndex];
 
         cursorPos.rowIndex--;
 
-        auto nextRow = docStruct.lineBreaks[cursorPos.rowIndex];
+        auto nextRow = textStruct.lineBreaks[cursorPos.rowIndex];
 
         ptrdiff_t currentPosRel = row - cursorPos.glyphIndexAbs;
         if (currentPosRel < 0)
@@ -477,17 +458,17 @@ class EditableText : BaseText
 
     bool moveCursorDown()
     {
-        auto maxRowIndex = docStruct.lineBreaks.length == 0 ? 0 : docStruct.lineBreaks.length - 1;
+        auto maxRowIndex = textStruct.lineBreaks.length == 0 ? 0 : textStruct.lineBreaks.length - 1;
         if (cursorPos.rowIndex == maxRowIndex)
         {
             return false;
         }
 
-        auto row = docStruct.lineBreaks[cursorPos.rowIndex];
+        auto row = textStruct.lineBreaks[cursorPos.rowIndex];
 
         cursorPos.rowIndex++;
 
-        auto nextRow = docStruct.lineBreaks[cursorPos.rowIndex];
+        auto nextRow = textStruct.lineBreaks[cursorPos.rowIndex];
 
         ptrdiff_t currentPosRel = row - cursorPos.glyphIndexAbs;
         if (currentPosRel < 0)
@@ -505,7 +486,5 @@ class EditableText : BaseText
 
         return false;
     }
-
-    ref inout(typeof(_textBuffer)) textBuffer() inout => _textBuffer;
 
 }
