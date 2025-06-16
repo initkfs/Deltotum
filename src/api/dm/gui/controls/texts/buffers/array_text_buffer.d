@@ -177,18 +177,17 @@ class ArrayTextBuffer(T = Glyph) : BaseTextBuffer!T
             return 0;
         }
 
-        length -= removeCount;
-        if (length == 0 || pos == lastIndex)
+        if (pos == lastIndex)
         {
+            length -= removeCount;
             return removeCount;
         }
 
+        length -= removeCount;
+
         size_t rest = lastIndex - pos;
 
-        //import std;
-        //writeln(pos, " ", removeCount, " ", rest);
-
-        memmove(&_buffer[pos], &_buffer[pos + 1], rest * T.sizeof);
+        memmove(&_buffer[pos - (removeCount - 1)], &_buffer[pos + 1], rest * T.sizeof);
 
         return removeCount;
     }

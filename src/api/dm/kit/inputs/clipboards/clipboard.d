@@ -27,6 +27,11 @@ class Clipboard
         return result;
     }
 
+    bool setText(dstring text){
+        import std.conv: to;
+        return setText(text.to!string);
+    }
+
     bool setText(string text)
     {
         import std.string : toStringz;

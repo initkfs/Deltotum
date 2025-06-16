@@ -1,6 +1,6 @@
 module api.dm.gui.controls.texts.text_view;
 
-import api.dm.gui.controls.texts.base_mono_text : BaseMonoText, TextStruct;
+import api.dm.gui.controls.texts.base_mono_text : BaseMonoText, TextLayout;
 import api.dm.gui.controls.texts.editable_text : EditableText;
 import api.dm.gui.controls.texts.buffers.array_text_buffer : ArrayTextBuffer;
 import api.dm.gui.controls.control : Control;
@@ -51,7 +51,9 @@ class TextView : EditableText
 
     override void drawContent()
     {
-        if (textStruct.lineBreaks.length == 0)
+        super.drawContent;
+        
+        if (textLayout.lineBreaks.length == 0)
         {
             return;
         }
@@ -77,7 +79,7 @@ class TextView : EditableText
 
         import std.range : assumeSorted;
 
-        auto sortedLineBreaks = textStruct.lineBreaks.assumeSorted;
+        auto sortedLineBreaks = textLayout.lineBreaks.assumeSorted;
         size_t lastIndex = glyphs.length - 1;
 
         foreach (ri, ref Glyph glyph; glyphs)
@@ -299,10 +301,10 @@ unittest
 
     textView.bufferCreate;
 
-    textView.updateTextStruct;
+    textView.updateTextLayout;
 
     assert(textView.rowCount == 5);
-    assert(textView.textStruct.lineBreaks == [11u, 21, 32, 45, 55]);
+    assert(textView.textLayout.lineBreaks == [11u, 21, 32, 45, 55]);
 
     assert(textView.rowsInViewport == 4);
     assert(textView.viewportRowIndex == Vec2d(0, 3));

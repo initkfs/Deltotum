@@ -1,6 +1,6 @@
 module api.dm.gui.controls.texts.editable_text;
 
-import api.dm.gui.controls.texts.base_mono_text : BaseMonoText, TextStruct;
+import api.dm.gui.controls.texts.base_mono_text : BaseMonoText, TextLayout;
 import api.dm.gui.controls.texts.buffers.base_text_buffer : BaseTextBuffer;
 import api.dm.gui.controls.texts.buffers.array_text_buffer : ArrayTextBuffer;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
@@ -8,6 +8,7 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;
 import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
 import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.rect2 : Rect2d;
 
 import std.stdio : writeln, writefln;
 import Math = api.math;
@@ -29,6 +30,14 @@ struct CursorPos
     bool isValid;
 }
 
+struct Selection
+{
+    CursorPos startPos;
+    CursorPos endPos;
+    bool isValid;
+    bool isStart;
+}
+
 /**
  * Authors: initkfs
  */
@@ -36,6 +45,8 @@ class EditableText : BaseMonoText
 {
     Rectangle cursor;
     CursorPos cursorPos;
+
+    Selection selection;
 
     bool isEditable;
 
@@ -103,6 +114,21 @@ class EditableText : BaseMonoText
 
                 cursorPos = coordsToRowPos(mouseX, mouseY);
 
+                if (cursorPos.isValid)
+                {
+                    selection.startPos = cursorPos;
+                    selection.isStart = true;
+
+                    if (selection.startPos.state == CursorState.forPrevGlyph)
+                    {
+                        if (selection.startPos.glyphIndexAbs < lastGlyphIndex)
+                        {
+                            selection.startPos.glyphIndexAbs++;
+                            selection.startPos.state = CursorState.forNextGlyph;
+                        }
+                    }
+                }
+
                 debug
                 {
                     import std.stdio;
@@ -114,9 +140,9 @@ class EditableText : BaseMonoText
                     {
                         next = rows[cursorPos.glyphIndexAbs + 1];
                     }
-                    writefln("Cursor pos for %s,%s: %s, betw %s:%s", mouseX, mouseY, cursorPos, first.grapheme, next != next
+                    writefln("Cursor pos for %s,%s: %s, betw %s:%s, row:%s", mouseX, mouseY, cursorPos, first.grapheme, next != next
                             .init ? next
-                            .grapheme : '-');
+                            .grapheme : '-', glyphsToStr(row(cursorPos.rowIndexAbs)));
                 }
 
                 updateCursor;
@@ -126,15 +152,115 @@ class EditableText : BaseMonoText
             onKeyPress ~= (ref e) {
                 import api.dm.com.inputs.com_keyboard : ComKeyName;
 
-                if (!cursor.isVisible)
-                {
-                    return;
-                }
-
                 if (e.keyName == ComKeyName.key_return && onEnter)
                 {
                     onEnter(e);
                     return;
+                }
+
+                if (input.keyboard.keyModifier.isCtrl)
+                {
+                    switch (e.keyName) with (ComKeyName)
+                    {
+                        case key_c:
+                            if (selection.isValid)
+                            {
+                                auto text = glyphsToStr(
+                                    allGlyphs[selection.startPos.glyphIndexAbs .. selection
+                                        .endPos.glyphIndexAbs + 1]);
+                                if (!input.clipboard.setText(text))
+                                {
+                                    logger.error("Error setting text in clipboard");
+                                }
+                                else
+                                {
+                                    logger.trace("Copy text to clipboard: ", text);
+                                }
+
+                                return;
+                            }
+                            break;
+                        case key_v:
+                            if (selection.isValid && input.clipboard.hasText)
+                            {
+                                import std.conv : to;
+
+                                dstring newText = input.clipboard.getText.to!dstring;
+                                if (removeSelection)
+                                {
+                                    if (!_textBuffer.insert(selection.startPos.glyphIndexAbs, newText))
+                                    {
+                                        logger.error("Error text inserting from clipboard");
+                                    }
+                                    else
+                                    {
+                                        logger.trace("Paste text to clipboard: ", text);
+                                    }
+                                }
+
+                                return;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                if (e.keyName == ComKeyName.key_backspace)
+                {
+                    if (selection.isValid)
+                    {
+                        if (!removeSelection)
+                        {
+                            logger.error("Error removing selection");
+                        }
+                        else
+                        {
+                            logger.trace("Remove selection on backspace");
+                            writeln(selection.startPos, ":", selection.endPos, "::", glyphsToStr(allGlyphs));
+                        }
+                        return;
+                    }
+
+                    if (!cursorPos.isValid || cursorPos.state == CursorState.forNextGlyph)
+                    {
+                        return;
+                    }
+
+                    if (removePrevText(cursorPos.glyphIndexAbs, 1))
+                    {
+                        updateRows;
+
+                        auto nextIndex = cursorPos.glyphIndexAbs;
+
+                        const bounds = boundsRect;
+                        auto nextGlyph = allGlyphs[nextIndex];
+                        cursorPos.pos.x = bounds.x + padding.left + nextGlyph.pos.x;
+                        cursorPos.pos.y = bounds.y + padding.top + nextGlyph.pos.y;
+
+                        if (cursorPos.glyphIndexAbs > 0)
+                        {
+                            cursorPos.glyphIndexAbs--;
+                        }
+                        else
+                        {
+                            cursorPos.state = CursorState.forNextGlyph;
+                        }
+
+                        updateCursor;
+                        setInvalid;
+                    }
+                }
+
+                if (selection.isStart)
+                {
+                    selection.isStart = false;
+                    selection.isValid = false;
+                }
+
+                if (!cursor.isVisible)
+                {
+                    cursor.isVisible = true;
                 }
 
                 if (input.keyboard.keyModifier.isCtrl)
@@ -172,39 +298,15 @@ class EditableText : BaseMonoText
                     case key_up:
                         moveCursorUp;
                         break;
-                    case key_backspace:
-
-                        if (!cursorPos.isValid || cursorPos.state == CursorState.forNextGlyph)
-                        {
-                            return;
-                        }
-
-                        if (removePrevText(cursorPos.glyphIndexAbs, 1))
-                        {
-                            updateRows;
-
-                            auto nextIndex = cursorPos.glyphIndexAbs;
-
-                            const bounds = boundsRect;
-                            auto nextGlyph = allGlyphs[nextIndex];
-                            cursorPos.pos.x = bounds.x + padding.left + nextGlyph.pos.x;
-                            cursorPos.pos.y = bounds.y + padding.top + nextGlyph.pos.y;
-
-                            if (cursorPos.glyphIndexAbs > 0)
-                            {
-                                cursorPos.glyphIndexAbs--;
-                            }
-                            else
-                            {
-                                cursorPos.state = CursorState.forNextGlyph;
-                            }
-
-                            updateCursor;
-                            setInvalid;
-                        }
-                        break;
                     default:
                         break;
+                }
+            };
+
+            onPointerRelease ~= (ref e) {
+                if (selection.isStart)
+                {
+                    selection.isStart = false;
                 }
             };
 
@@ -237,6 +339,34 @@ class EditableText : BaseMonoText
 
                 }
             };
+
+            onPointerMove ~= (ref e) {
+
+                if (!selection.isStart)
+                {
+                    return;
+                }
+
+                auto newPos = coordsToRowPos(e.x, e.y);
+                if (!newPos.isValid || newPos.glyphIndexAbs == cursorPos.glyphIndexAbs)
+                {
+                    return;
+                }
+
+                selection.isValid = true;
+
+                if (newPos.glyphIndexAbs > selection.startPos.glyphIndexAbs)
+                {
+                    selection.endPos = newPos;
+                }
+                else
+                {
+                    selection.endPos = selection.startPos;
+                    selection.startPos = newPos;
+                }
+
+                cursor.isVisible = false;
+            };
         }
     }
 
@@ -266,6 +396,100 @@ class EditableText : BaseMonoText
             cursor.isVisible = false;
         }
 
+    }
+
+    double startGlyphX() => boundsRect.x + padding.left;
+    double startGlyphY() => boundsRect.y + padding.top;
+    Vec2d startGlyphPos() => Vec2d(startGlyphX, startGlyphY);
+
+    void drawSelection()
+    {
+        if (!selection.isValid)
+        {
+            return;
+        }
+
+        const startCursorPos = selection.startPos;
+        const endCursorPos = selection.endPos;
+
+        if (startCursorPos.glyphIndexAbs >= endCursorPos.glyphIndexAbs)
+        {
+            selection.isValid = false;
+            return;
+        }
+
+        RGBA color = theme.colorAccent;
+        color.a = 0.5;
+
+        graphics.changeColor(color);
+        scope (exit)
+        {
+            graphics.restoreColor;
+        }
+
+        const startRow = startCursorPos.rowIndexAbs;
+        const endRow = endCursorPos.rowIndexAbs;
+
+        double shapeWidth = 0;
+
+        if (startRow == endRow)
+        {
+            auto startX = startGlyphX + allGlyphs[startCursorPos.glyphIndexAbs].pos.x;
+            auto startY = startGlyphY + allGlyphs[startCursorPos.glyphIndexAbs].pos.y;
+
+            shapeWidth = allGlyphs[endCursorPos.glyphIndexAbs].pos.x - allGlyphs[startCursorPos
+                    .glyphIndexAbs].pos.x;
+
+            graphics.fillRect(Rect2d(startX, startY, shapeWidth, rowHeight));
+            return;
+        }
+
+        const fullRows = endRow - startRow;
+        if (fullRows > 1)
+        {
+            size_t currRow = startRow + 1;
+            while (currRow < endRow)
+            {
+                auto glyphs = row(currRow);
+                if (glyphs.length > 0)
+                {
+                    auto firstGlyph = glyphs[0];
+                    if (glyphs.length == 1)
+                    {
+                        shapeWidth = firstGlyph.geometry.width;
+                    }
+                    else
+                    {
+                        auto lastGlyph = glyphs[$ - 1];
+                        shapeWidth = lastGlyph.pos.x + lastGlyph.geometry.width - firstGlyph.pos.x;
+                    }
+
+                    graphics.fillRect(Rect2d(startGlyphX + firstGlyph.pos.x, startGlyphY + firstGlyph.pos.y, shapeWidth, rowHeight));
+                }
+
+                currRow++;
+            }
+        }
+
+        auto fullStartRow = row(startRow);
+        auto fullStartFirst = allGlyphs[startCursorPos.glyphIndexAbs];
+        auto fullStartEnd = fullStartRow[$ - 1];
+        shapeWidth = fullStartEnd.pos.x + fullStartEnd.geometry.width - fullStartFirst.pos.x;
+        graphics.fillRect(Rect2d(startGlyphX + fullStartFirst.pos.x, startGlyphY + fullStartFirst.pos.y, shapeWidth, rowHeight));
+
+        auto fullEndRow = row(endRow);
+        auto fullEndFirst = fullEndRow[0];
+        auto fullEndEnd = allGlyphs[endCursorPos.glyphIndexAbs];
+        shapeWidth = fullEndEnd.pos.x + fullStartEnd.geometry.width - fullEndFirst.pos.x;
+        graphics.fillRect(Rect2d(startGlyphX + fullEndFirst.pos.x, startGlyphY + fullEndFirst.pos.y, shapeWidth, rowHeight));
+
+    }
+
+    override void drawContent()
+    {
+        super.drawContent;
+
+        drawSelection;
     }
 
     bool updateCursor()
@@ -390,7 +614,7 @@ class EditableText : BaseMonoText
             }
         }
 
-        logger.error("Not found cursor position");
+        //logger.error("Not found cursor position");
         return CursorPos.init;
     }
 
@@ -425,6 +649,30 @@ class EditableText : BaseMonoText
         updateCursor;
 
         return true;
+    }
+
+    bool removeSelection()
+    {
+        if (!selection.isValid)
+        {
+            return false;
+        }
+
+        ptrdiff_t count = selection.endPos.glyphIndexAbs - selection.startPos.glyphIndexAbs;
+        if (count < 0)
+        {
+            return false;
+        }
+
+        bool isRemove = _textBuffer.removePrev(selection.endPos.glyphIndexAbs, count) != 0;
+        if (isRemove)
+        {
+            selection.isValid = false;
+            selection.isStart = false;
+            updateRows(isForce : true);
+        }
+
+        return isRemove;
     }
 
     bool setCursorPos(bool isFromLeftGlyphCorner = true) => setCursorPos(
@@ -470,15 +718,33 @@ class EditableText : BaseMonoText
 
     Glyph[] row(size_t rowIndex)
     {
-        auto currentBreak = textStruct.lineBreaks[rowIndex];
+        auto currentBreak = textLayout.lineBreaks[rowIndex];
         if (rowIndex == 0)
         {
             return allGlyphs[0 .. currentBreak + 1];
         }
 
-        auto prevBreak = textStruct.lineBreaks[rowIndex - 1];
+        auto prevBreak = textLayout.lineBreaks[rowIndex - 1];
 
         return allGlyphs[prevBreak + 1 .. currentBreak + 1];
+    }
+
+    double rowWidth(size_t rowIndex)
+    {
+        auto glyphs = row(rowIndex);
+
+        if (glyphs.length == 0)
+        {
+            return 0;
+        }
+
+        if (glyphs.length == 1)
+        {
+            return glyphs[0].geometry.width;
+        }
+
+        double dt = glyphs[$ - 1].pos.x - glyphs[0].pos.x;
+        return dt < 0 ? 0 : dt;
     }
 
     bool moveCursorUp()
@@ -528,7 +794,8 @@ class EditableText : BaseMonoText
         }
 
         const viewportRows = rowsInViewport;
-        if(viewportRows > 0 && cursorPos.rowIndexInViewport == viewportRows - 1){
+        if (viewportRows > 0 && cursorPos.rowIndexInViewport == viewportRows - 1)
+        {
             return false;
         }
 
@@ -542,7 +809,7 @@ class EditableText : BaseMonoText
         size_t currLineBreak = lineBreaks[cursorPos.rowIndexAbs];
 
         cursorPos.rowIndexAbs++;
-        
+
         if (viewportRows > 0 && cursorPos.rowIndexInViewport < viewportRows - 1)
         {
             cursorPos.rowIndexInViewport++;
@@ -552,7 +819,9 @@ class EditableText : BaseMonoText
         if (nextRowIndex < bufferLength)
         {
             cursorPos.glyphIndexAbs = nextRowIndex;
-        }else {
+        }
+        else
+        {
             cursorPos.glyphIndexAbs = bufferLength - 1;
         }
 

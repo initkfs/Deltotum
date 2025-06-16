@@ -17,7 +17,7 @@ import Math = api.math;
 import core.stdc.stdlib : malloc, free, realloc;
 import std.conv : to;
 
-struct TextStruct
+struct TextLayout
 {
     private
     {
@@ -115,7 +115,7 @@ class BaseMonoText : Control
     bool isShowNewLineGlyph;
     bool isRebuildRows;
 
-    TextStruct textStruct;
+    TextLayout textLayout;
 
     void delegate() onTextChange;
 
@@ -131,8 +131,9 @@ class BaseMonoText : Control
         _textBuffer = newBuffer ? newBuffer : new ArrayTextBuffer!Glyph;
     }
 
-    size_t[] lineBreaks() => textStruct.lineBreaks;
+    size_t[] lineBreaks() => textLayout.lineBreaks;
     Glyph[] allGlyphs() => _textBuffer.buffer;
+    size_t lastGlyphIndex() => _textBuffer.length == 0 ? 0 : _textBuffer.length - 1;
     size_t bufferLength() => _textBuffer.length;
     ref inout(typeof(_textBuffer)) textBuffer() inout => _textBuffer;
 
@@ -164,14 +165,14 @@ class BaseMonoText : Control
             isAllowInvalidate = true;
         }
 
-        updateTextStruct;
+        updateTextLayout;
     }
 
     Vec2d viewportRowIndex() => viewportRowIndex(scrollPosition);
 
     Vec2d viewportRowIndex(double scrollPosition)
     {
-        if (textStruct.lineBreaks.length == 0)
+        if (textLayout.lineBreaks.length == 0)
         {
             return Vec2d(0, 0);
         }
@@ -187,7 +188,7 @@ class BaseMonoText : Control
             scrollPosition = 1;
         }
 
-        size_t lastRowIndex = textStruct.lineBreaks.length;
+        size_t lastRowIndex = textLayout.lineBreaks.length;
         if (lastRowIndex > 0)
         {
             lastRowIndex--;
@@ -221,7 +222,7 @@ class BaseMonoText : Control
     Glyph[] viewportRows(out size_t firstRowIndex, double scrollPosition)
     {
         //TODO first line without \n
-        if (textStruct.lineBreaks.length == 0)
+        if (textLayout.lineBreaks.length == 0)
         {
             return null;
         }
@@ -231,7 +232,7 @@ class BaseMonoText : Control
         size_t startRowIndex = cast(size_t) rowIndex.x;
         size_t endRowIndex = cast(size_t) rowIndex.y;
 
-        size_t maxEndIndex = textStruct.lineBreaks.length;
+        size_t maxEndIndex = textLayout.lineBreaks.length;
         if (maxEndIndex > 0)
         {
             maxEndIndex--;
@@ -242,10 +243,10 @@ class BaseMonoText : Control
             endRowIndex = maxEndIndex;
         }
 
-        //TextStruct([], [11, 23, 35, 47, 55])
+        //TextLayout([], [11, 23, 35, 47, 55])
 
-        auto startBreakIndex = textStruct.lineBreaks[startRowIndex];
-        auto endBreakIndex = textStruct.lineBreaks[endRowIndex];
+        auto startBreakIndex = textLayout.lineBreaks[startRowIndex];
+        auto endBreakIndex = textLayout.lineBreaks[endRowIndex];
 
         size_t glyphLastIndex = _textBuffer.length;
         if (glyphLastIndex > 0)
@@ -258,7 +259,7 @@ class BaseMonoText : Control
 
         if (startBreakIndex != 0 && startRowIndex > 0)
         {
-            auto prevLineBreaks = textStruct.lineBreaks[startRowIndex - 1];
+            auto prevLineBreaks = textLayout.lineBreaks[startRowIndex - 1];
             //TODO check last index >= glyph.length
             startGlyphIndex = prevLineBreaks < glyphLastIndex ? prevLineBreaks + 1 : prevLineBreaks;
         }
@@ -326,9 +327,9 @@ class BaseMonoText : Control
         }
     }
 
-    void updateTextStruct()
+    void updateTextLayout()
     {
-        textStruct.reset;
+        textLayout.reset;
 
         if (_textBuffer.length == 0)
         {
@@ -364,7 +365,11 @@ class BaseMonoText : Control
 
             if (glyph.isNEL)
             {
-                textStruct ~= i;
+                textLayout ~= i;
+
+                glyph.pos.x = glyphPosX;
+                glyph.pos.y = glyphPosY;
+
                 glyphPosX = startRowTextX;
                 glyphPosY += rowHeight;
                 lastRowWidth = 0;
@@ -387,6 +392,9 @@ class BaseMonoText : Control
 
                 if (isLeftSpace)
                 {
+                    glyph.pos.x = glyphPosX;
+                    glyph.pos.y = glyphPosY;
+
                     glyphPosX = startRowTextX;
                     glyphPosY += rowHeight;
                     lastRowWidth = 0;
@@ -394,11 +402,11 @@ class BaseMonoText : Control
                     size_t currPosIndexDiff = i - j;
                     //TODO loop goes through some characters twice 
                     i -= currPosIndexDiff;
-                    textStruct ~= j;
+                    textLayout ~= j;
                     continue;
                 }
 
-                textStruct ~= (i == 0 ? 0 : i - 1);
+                textLayout ~= (i == 0 ? 0 : i - 1);
                 glyphPosX = startRowTextX;
                 glyphPosY += rowHeight;
                 lastRowWidth = 0;
@@ -418,7 +426,7 @@ class BaseMonoText : Control
 
         if (!_textBuffer.buffer[lastIndex].isNEL)
         {
-            textStruct ~= lastIndex;
+            textLayout ~= lastIndex;
         }
 
         auto fullRowWidth = maxRowWidth + padding.width;
@@ -436,7 +444,7 @@ class BaseMonoText : Control
             }
         }
 
-        auto newHeight = textStruct.lineBreaks.length * rowHeight + padding.height;
+        auto newHeight = textLayout.lineBreaks.length * rowHeight + padding.height;
         if (newHeight > height)
         {
             import std.algorithm.comparison : min;
@@ -501,7 +509,7 @@ class BaseMonoText : Control
     auto textTo(T)() => text.to!T;
     string textString() => textTo!string;
 
-    size_t rowCount() => textStruct.lineBreaks.length;
+    size_t rowCount() => textLayout.lineBreaks.length;
 
     dstring text()
     {
@@ -562,6 +570,6 @@ class BaseMonoText : Control
     {
         super.dispose;
 
-        textStruct.destroy;
+        textLayout.destroy;
     }
 }
