@@ -188,6 +188,8 @@ class Sprite2d : EventKitTarget
     bool isRoundEvenChildX;
     bool isRoundEvenChildY;
 
+    size_t clickCount;
+
     version (SdlBackend)
     {
         //TODO correct max size
@@ -223,7 +225,11 @@ class Sprite2d : EventKitTarget
 
         double _x = 0;
         double _y = 0;
+
+        ulong lastClickTimeMs;
     }
+
+    uint maxClickTimeMs = 300;
 
     bool isDrag;
 
@@ -401,6 +407,11 @@ class Sprite2d : EventKitTarget
 
                 if (e.event == PointerEvent.Event.move)
                 {
+                    if (clickCount != 0)
+                    {
+                        clickCount = 0;
+                    }
+
                     if (!isMouseOver)
                     {
                         isMouseOver = true;
@@ -426,6 +437,36 @@ class Sprite2d : EventKitTarget
                         focus(e.ownerId);
                     }
 
+                    //TODO from config
+                    enum primaryButton = 1;
+                    if (e.button == primaryButton)
+                    {
+                        if (platform.ticksMs - lastClickTimeMs < maxClickTimeMs)
+                        {
+                            clickCount++;
+                            if (clickCount == 1)
+                            {
+                                auto clickEvent = PointerEvent(PointerEvent.Event.click, e
+                                        .ownerId, e
+                                        .x, e.y, e
+                                        .button, e.movementX, e.movementY);
+                                clickEvent.isSynthetic = true;
+                                fireEvent(clickEvent);
+                                clickCount = 0;
+
+                                if (clickEvent.isConsumed)
+                                {
+                                    return;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            clickCount = 0;
+                        }
+                        lastClickTimeMs = platform.ticksMs;
+                    }
+
                     runEventHandlers(e);
                 }
                 else if (!e.isSynthetic)
@@ -435,6 +476,11 @@ class Sprite2d : EventKitTarget
             }
             else
             {
+                if (clickCount != 0)
+                {
+                    clickCount = 0;
+                }
+
                 if (onPointerOutBounds.length > 0)
                 {
                     foreach (dg; onPointerOutBounds)

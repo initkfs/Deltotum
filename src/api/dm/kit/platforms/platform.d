@@ -164,7 +164,7 @@ class Platform : ApplicationUnit
         return false;
     }
 
-    ulong ticks()
+    ulong ticksMs()
     {
         assert(platformTicksProvider);
         return platformTicksProvider();

@@ -266,6 +266,10 @@ unittest
     assert(textBuff.text == "");
 
     textBuff.create(text);
+    assert(textBuff.removePrev(6, 4) == 4);
+    assert(textBuff.text == "Helorld");
+
+    textBuff.create(text);
     assert(textBuff.removePrev(5, 1) == 1);
     assert(textBuff.text == "Helloworld");
 

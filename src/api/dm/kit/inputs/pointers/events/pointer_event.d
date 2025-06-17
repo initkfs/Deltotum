@@ -21,7 +21,9 @@ struct PointerEvent
         enter,
         exit,
         move,
-        wheel
+        wheel,
+
+        click
     }
 
     Event event;

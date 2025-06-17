@@ -57,6 +57,7 @@ class EventKitTarget : GraphicsComponent, EventTarget
 
     void delegate(ref PointerEvent)[] onPointerCancel;
     void delegate(ref PointerEvent)[] onPointerPress;
+    void delegate(ref PointerEvent)[] onPointerClick;
     void delegate(ref PointerEvent)[] onPointerRelease;
     void delegate(ref PointerEvent)[] onPointerMove;
     void delegate(ref PointerEvent)[] onPointerWheel;
@@ -219,6 +220,9 @@ class EventKitTarget : GraphicsComponent, EventTarget
                 break;
             case exit:
                 runDelegates(e, onPointerExit);
+                break;
+            case click:
+                runDelegates(e, onPointerClick);
                 break;
         }
     }

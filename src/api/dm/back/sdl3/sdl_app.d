@@ -702,7 +702,7 @@ class SdlApp : GuiApp
     SdlTTFLib newSdlFont() => new SdlTTFLib;
     SdlJoystickLib newSdlJoystick() => new SdlJoystickLib;
 
-    override ulong ticks()
+    override ulong ticksMs()
     {
         assert(sdlLib);
         return sdlLib.ticksMs;
@@ -711,7 +711,7 @@ class SdlApp : GuiApp
     protected void initLoop(Loop loop)
     {
         loop.onExit = () => exit;
-        loop.timestampMsProvider = () => ticks;
+        loop.timestampMsProvider = () => ticksMs;
         loop.onDelay = () => sdlLib.delayMs(10);
         loop.onDelayTimeRestMs = (restMs) => sdlLib.delayMs(cast(uint) restMs);
         loop.onLoopUpdateMs = (timestamp) => updateLoopMs(timestamp);

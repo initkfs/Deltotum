@@ -94,7 +94,7 @@ abstract class GraphicApp : CliApp
 
         loadSettings;
 
-        _platform = newPlatform(() => ticks);
+        _platform = newPlatform(() => ticksMs);
         initCreateRun(_platform);
 
         _i18n = createI18n(uservices.logging, uservices.config, uservices.context);
@@ -103,7 +103,7 @@ abstract class GraphicApp : CliApp
             true);
     }
 
-    abstract ulong ticks();
+    abstract ulong ticksMs();
 
     void loadSettings()
     {

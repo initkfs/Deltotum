@@ -117,6 +117,7 @@ class EditableText : BaseMonoText
                 if (cursorPos.isValid)
                 {
                     selection.startPos = cursorPos;
+                    
                     selection.isStart = true;
 
                     if (selection.startPos.state == CursorState.forPrevGlyph)
@@ -127,6 +128,8 @@ class EditableText : BaseMonoText
                             selection.startPos.state = CursorState.forNextGlyph;
                         }
                     }
+
+                    selection.endPos = selection.startPos;
                 }
 
                 debug
@@ -147,6 +150,59 @@ class EditableText : BaseMonoText
 
                 updateCursor;
                 cursor.isVisible = true;
+            };
+
+            onPointerRelease ~= (ref e) {
+                if (selection.isStart)
+                {
+                    selection.isStart = false;
+                }
+            };
+
+
+            onPointerClick ~= (ref e) {
+
+                auto cursorPos = coordsToRowPos(e.x, e.y);
+
+                if (cursorPos.isValid)
+                {
+                    size_t startIndex = cursorPos.glyphIndexAbs;
+                    while (startIndex > 0)
+                    {
+                        startIndex--;
+
+                        auto glyph = allGlyphs[startIndex];
+                        if (glyph.grapheme == ' ')
+                        {
+                            selection.startPos = CursorPos(CursorState.forNextGlyph, glyph.pos, startIndex + 1, cursorPos
+                                    .rowIndexAbs, cursorPos.rowIndexInViewport, true);
+                            break;
+                        }
+                    }
+
+                    size_t endGlyphIndex = allGlyphs.length - 1;
+                    startIndex = cursorPos.glyphIndexAbs + 1;
+                    while (startIndex <= endGlyphIndex)
+                    {
+                        auto glyph = allGlyphs[startIndex];
+                        if (glyph.grapheme == ' ')
+                        {
+                            selection.endPos = CursorPos(CursorState.forPrevGlyph, glyph.pos, startIndex - 1, cursorPos
+                                    .rowIndexAbs, cursorPos.rowIndexInViewport, true);
+                            break;
+                        }
+                        startIndex++;
+                    }
+
+                    selection.isStart = false;
+                    selection.isValid = true;
+
+                    if(cursor.isVisible){
+                        cursor.isVisible = false;
+                    }
+                }
+
+                e.isConsumed = true;
             };
 
             onKeyPress ~= (ref e) {
@@ -217,7 +273,25 @@ class EditableText : BaseMonoText
                         else
                         {
                             logger.trace("Remove selection on backspace");
-                            writeln(selection.startPos, ":", selection.endPos, "::", glyphsToStr(allGlyphs));
+
+                            if(!cursor.isVisible){
+                                cursor.isVisible = true;
+                            }
+
+                            cursorPos = selection.startPos;
+
+                            if(cursorPos.glyphIndexAbs == 0){
+                                cursorPos.state = CursorState.forNextGlyph;
+                            }else {
+                                cursorPos.state = CursorState.forPrevGlyph;
+                                cursorPos.glyphIndexAbs--;
+                            }
+
+                            auto glyph = allGlyphs[cursorPos.glyphIndexAbs];
+
+                            auto newPos = cursorPos.state == CursorState.forPrevGlyph ? Vec2d(glyph.pos.x + glyph.geometry.width, glyph.pos.y) : glyph.pos;
+                            cursorPos.pos = startGlyphPos.add(newPos);
+                            updateCursor;
                         }
                         return;
                     }
@@ -300,13 +374,6 @@ class EditableText : BaseMonoText
                         break;
                     default:
                         break;
-                }
-            };
-
-            onPointerRelease ~= (ref e) {
-                if (selection.isStart)
-                {
-                    selection.isStart = false;
                 }
             };
 
@@ -437,7 +504,9 @@ class EditableText : BaseMonoText
             auto startX = startGlyphX + allGlyphs[startCursorPos.glyphIndexAbs].pos.x;
             auto startY = startGlyphY + allGlyphs[startCursorPos.glyphIndexAbs].pos.y;
 
-            shapeWidth = allGlyphs[endCursorPos.glyphIndexAbs].pos.x - allGlyphs[startCursorPos
+            auto endGlyph = allGlyphs[endCursorPos.glyphIndexAbs];
+
+            shapeWidth = (endGlyph.pos.x + endGlyph.geometry.width) - allGlyphs[startCursorPos
                     .glyphIndexAbs].pos.x;
 
             graphics.fillRect(Rect2d(startX, startY, shapeWidth, rowHeight));
@@ -658,8 +727,8 @@ class EditableText : BaseMonoText
             return false;
         }
 
-        ptrdiff_t count = selection.endPos.glyphIndexAbs - selection.startPos.glyphIndexAbs;
-        if (count < 0)
+        ptrdiff_t count = selection.endPos.glyphIndexAbs - selection.startPos.glyphIndexAbs + 1;
+        if (count <= 0)
         {
             return false;
         }
