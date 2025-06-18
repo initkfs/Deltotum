@@ -1,7 +1,7 @@
 module api.dm.gui.controls.texts.editable_text;
 
 import api.dm.gui.controls.texts.base_mono_text : BaseMonoText;
-import api.dm.gui.controls.texts.layouts.simple_text_layout: SimpleTextLayout;
+import api.dm.gui.controls.texts.layouts.simple_text_layout : SimpleTextLayout;
 import api.dm.gui.controls.texts.buffers.base_text_buffer : BaseTextBuffer;
 import api.dm.gui.controls.texts.buffers.array_text_buffer : ArrayTextBuffer;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
@@ -69,33 +69,19 @@ class EditableText : BaseMonoText
 
         if (isFocusable)
         {
-            focusEffectFactory = () {
-                import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
-                import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-
-                GraphicStyle style = GraphicStyle(1, theme.colorFocus);
-
-                import api.dm.kit.sprites2d.shapes.convex_polygon : ConvexPolygon;
-
-                auto effect = new ConvexPolygon(width, height, style, theme.controlCornersBevel);
-                //auto effect = new Rectangle(width, height, style);
-                effect.isVisible = false;
-                return effect;
-            };
-
             onFocusEnter ~= (ref e) {
-                if (focusEffect)
+                if (_focusEffect)
                 {
-                    focusEffect.isVisible = true;
+                    _focusEffect.isVisible = true;
                 }
 
                 window.startTextInput;
             };
 
             onFocusExit ~= (ref e) {
-                if (focusEffect && focusEffect.isVisible)
+                if (_focusEffect && _focusEffect.isVisible)
                 {
-                    focusEffect.isVisible = false;
+                    _focusEffect.isVisible = false;
                     if (cursor)
                     {
                         cursor.isVisible = false;
@@ -118,7 +104,7 @@ class EditableText : BaseMonoText
                 if (cursorPos.isValid)
                 {
                     selection.startPos = cursorPos;
-                    
+
                     selection.isStart = true;
 
                     if (selection.startPos.state == CursorState.forPrevGlyph)
@@ -160,7 +146,6 @@ class EditableText : BaseMonoText
                 }
             };
 
-
             onPointerClick ~= (ref e) {
 
                 auto cursorPos = coordsToRowPos(e.x, e.y);
@@ -198,7 +183,8 @@ class EditableText : BaseMonoText
                     selection.isStart = false;
                     selection.isValid = true;
 
-                    if(cursor.isVisible){
+                    if (cursor.isVisible)
+                    {
                         cursor.isVisible = false;
                     }
                 }
@@ -275,22 +261,27 @@ class EditableText : BaseMonoText
                         {
                             logger.trace("Remove selection on backspace");
 
-                            if(!cursor.isVisible){
+                            if (!cursor.isVisible)
+                            {
                                 cursor.isVisible = true;
                             }
 
                             cursorPos = selection.startPos;
 
-                            if(cursorPos.glyphIndexAbs == 0){
+                            if (cursorPos.glyphIndexAbs == 0)
+                            {
                                 cursorPos.state = CursorState.forNextGlyph;
-                            }else {
+                            }
+                            else
+                            {
                                 cursorPos.state = CursorState.forPrevGlyph;
                                 cursorPos.glyphIndexAbs--;
                             }
 
                             auto glyph = allGlyphs[cursorPos.glyphIndexAbs];
 
-                            auto newPos = cursorPos.state == CursorState.forPrevGlyph ? Vec2d(glyph.pos.x + glyph.geometry.width, glyph.pos.y) : glyph.pos;
+                            auto newPos = cursorPos.state == CursorState.forPrevGlyph ? Vec2d(
+                                glyph.pos.x + glyph.geometry.width, glyph.pos.y) : glyph.pos;
                             cursorPos.pos = startGlyphPos.add(newPos);
                             updateCursor;
                         }
@@ -441,15 +432,6 @@ class EditableText : BaseMonoText
     override void create()
     {
         super.create;
-
-        if (focusEffectFactory)
-        {
-            focusEffect = focusEffectFactory();
-            focusEffect.isLayoutManaged = false;
-            focusEffect.isResizedByParent = true;
-            focusEffect.isVisible = false;
-            addCreate(focusEffect);
-        }
 
         if (isEditable)
         {

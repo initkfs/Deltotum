@@ -39,7 +39,8 @@ class Control : GuiComponent
         idHoverShape = "control_hover",
         idHoverAnimation = "control_hover_animation",
         idActionShape = "control_action",
-        idActionAnimation = "control_action_animation"
+        idActionAnimation = "control_action_animation",
+        idFocus = "control_focus"
     }
 
     protected
@@ -50,6 +51,8 @@ class Control : GuiComponent
 
         Sprite2d _actionEffect;
         Tween2d _actionEffectAnimation;
+
+        Sprite2d _focusEffect;
 
         bool isTooltipDelay;
         bool isTooltipListeners;
@@ -113,6 +116,11 @@ class Control : GuiComponent
     Tween2d delegate(Tween2d) onNewActionEffectAnimation;
     void delegate(Sprite2d) onConfiguredActionEffectAnimation;
     void delegate(Tween2d) onCreatedActionEffectAnimation;
+
+    bool isCreateFocusEffect;
+    Sprite2d delegate(Sprite2d) onNewFocusEffect;
+    void delegate(Sprite2d) onConfiguredFocusEffect;
+    void delegate(Sprite2d) onCreatedFocusEffect;
 
     bool isCreateInteractiveListeners;
 
@@ -329,6 +337,11 @@ class Control : GuiComponent
             createInteractiveListeners;
         }
 
+        if (isFocusable)
+        {
+            createFocusEffect;
+        }
+
         if (onPostControlContentCreated)
         {
             onPostControlContentCreated();
@@ -492,6 +505,35 @@ class Control : GuiComponent
             if (onCreatedActionEffectAnimation)
             {
                 onCreatedActionEffectAnimation(_actionEffectAnimation);
+            }
+        }
+    }
+
+    void createFocusEffect()
+    {
+        if (!_focusEffect && isCreateFocusEffect)
+        {
+            auto effect = newFocusEffect;
+            assert(effect);
+
+            _focusEffect = onNewFocusEffect ? onNewFocusEffect(effect) : effect;
+            assert(_focusEffect);
+
+            _focusEffect.id = idFocus;
+            _focusEffect.isLayoutManaged = false;
+            _focusEffect.isResizedByParent = true;
+            _focusEffect.isVisible = false;
+
+            if (onConfiguredFocusEffect)
+            {
+                onConfiguredFocusEffect(_focusEffect);
+            }
+
+            addCreate(_focusEffect);
+
+            if (onCreatedFocusEffect)
+            {
+                onCreatedFocusEffect(_focusEffect);
             }
         }
     }
@@ -856,6 +898,19 @@ class Control : GuiComponent
     void delegate(ref ActionEvent) newActionEffectEndBehaviour()
     {
         return null;
+    }
+
+    Sprite2d newFocusEffect()
+    {
+        GraphicStyle focusStyle = createDefaultStyle;
+        if (!focusStyle.isNested && !focusStyle.isDefault)
+        {
+            focusStyle.lineColor = theme.colorFocus;
+            focusStyle.fillColor = theme.colorFocus;
+        }
+
+        auto effect = theme.shape(width, height, angle, style);
+        return effect;
     }
 
     GraphicStyle delegate(string id) newStyleFactory()

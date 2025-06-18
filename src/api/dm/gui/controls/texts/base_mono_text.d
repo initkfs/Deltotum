@@ -1,67 +1,62 @@
 module api.dm.gui.controls.texts.base_mono_text;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.gui.controls.control : Control;
-import api.dm.gui.controls.texts.layouts.simple_text_layout: SimpleTextLayout;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
+import api.dm.kit.assets.fonts.font_size : FontSize;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;
-import api.dm.kit.assets.fonts.font_size : FontSize;
+
+import api.dm.gui.controls.control : Control;
+import api.dm.gui.controls.texts.layouts.simple_text_layout : SimpleTextLayout;
 import api.dm.gui.controls.texts.buffers.base_text_buffer : BaseTextBuffer;
 import api.dm.gui.controls.texts.buffers.array_text_buffer : ArrayTextBuffer;
+
 import api.math.geom2.vec2 : Vec2d;
 import api.math.geom2.rect2 : Rect2d;
 
 import Math = api.math;
-
-import core.stdc.stdlib : malloc, free, realloc;
 import std.conv : to;
-
-
 
 /**
  * Authors: initkfs
  */
 class BaseMonoText : Control
 {
-    int spaceWidth = 5;
-    int rowHeight = 0;
+    double spaceWidth = 5;
+    double rowHeight = 0;
 
     RGBA _color;
     FontSize fontSize = FontSize.medium;
 
-    Sprite2d focusEffect;
-    Sprite2d delegate() focusEffectFactory;
-
-    void delegate(ref KeyEvent) onEnter;
-
     bool isReduceWidthHeight = true;
-
     bool isShowNewLineGlyph;
     bool isRebuildRows;
 
-    SimpleTextLayout textLayout;
-
+    void delegate(ref KeyEvent) onEnter;
     void delegate() onTextChange;
+
+    SimpleTextLayout textLayout;
 
     protected
     {
         BaseTextBuffer!Glyph _textBuffer;
+
         double scrollPosition = 0;
     }
 
-    this(typeof(_textBuffer) newBuffer = null)
+    this(typeof(_textBuffer) newBuffer = null, bool isFocusable = true)
     {
-        isFocusable = true;
         _textBuffer = newBuffer ? newBuffer : new ArrayTextBuffer!Glyph;
+        this.isFocusable = isFocusable;
     }
 
-    size_t[] lineBreaks() => textLayout.lineBreaks;
+    ref inout(typeof(_textBuffer)) buffer() inout => _textBuffer;
+    size_t bufferLength() => _textBuffer.length;
     Glyph[] allGlyphs() => _textBuffer.buffer;
     size_t lastGlyphIndex() => _textBuffer.length == 0 ? 0 : _textBuffer.length - 1;
-    size_t bufferLength() => _textBuffer.length;
-    ref inout(typeof(_textBuffer)) textBuffer() inout => _textBuffer;
+
+    size_t[] lineBreaks() => textLayout.lineBreaks;
 
     override void loadTheme()
     {
@@ -75,6 +70,11 @@ class BaseMonoText : Control
         {
             _color = theme.colorText;
         }
+    }
+
+    override void create()
+    {
+        super.create;
     }
 
     void updateRows(bool isForce = false)
@@ -95,7 +95,6 @@ class BaseMonoText : Control
     }
 
     Vec2d viewportRowIndex() => viewportRowIndex(scrollPosition);
-
     Vec2d viewportRowIndex(double scrollPosition)
     {
         if (textLayout.lineBreaks.length == 0)
@@ -169,16 +168,10 @@ class BaseMonoText : Control
             endRowIndex = maxEndIndex;
         }
 
-        //SimpleTextLayout([], [11, 23, 35, 47, 55])
-
         auto startBreakIndex = textLayout.lineBreaks[startRowIndex];
         auto endBreakIndex = textLayout.lineBreaks[endRowIndex];
 
-        size_t glyphLastIndex = _textBuffer.length;
-        if (glyphLastIndex > 0)
-        {
-            glyphLastIndex--;
-        }
+        size_t glyphLastIndex = lastGlyphIndex;
 
         size_t startGlyphIndex;
         size_t endGlyphIndex = (endBreakIndex <= glyphLastIndex) ? endBreakIndex + 1 : endBreakIndex;
@@ -190,13 +183,7 @@ class BaseMonoText : Control
             startGlyphIndex = prevLineBreaks < glyphLastIndex ? prevLineBreaks + 1 : prevLineBreaks;
         }
 
-        // if (endRowIndex == maxEndIndex)
-        // {
-        //     endGlyphIndex++;
-        // }
-
         Glyph[] glyphs = _textBuffer.buffer[startGlyphIndex .. endGlyphIndex];
-
         firstRowIndex = startGlyphIndex;
         return glyphs;
     }
@@ -262,7 +249,7 @@ class BaseMonoText : Control
             return;
         }
 
-        //rowHeight = cast(int) glyphs[0].geometry.height;
+        rowHeight = 0;
 
         const double startRowTextX = padding.left;
         const double endRowTextX = maxWidth - padding.right;
@@ -281,7 +268,7 @@ class BaseMonoText : Control
             lastIndex = i;
 
             Glyph* glyph = &item;
-            auto newRowHeight = cast(int) glyph.geometry.height;
+            auto newRowHeight = glyph.geometry.height;
             if (newRowHeight > rowHeight)
             {
                 rowHeight = newRowHeight;
@@ -447,7 +434,7 @@ class BaseMonoText : Control
         import std.array : appender;
 
         auto builder = appender!dstring;
-        foreach (ref glyph; glyphBuffer)
+        foreach (ref glyph; allGlyphs)
         {
             builder ~= glyph.grapheme;
         }
@@ -469,33 +456,30 @@ class BaseMonoText : Control
             return;
         }
 
+        if (!_textBuffer.create(t))
+        {
+            logger.error("Error creating buffer text: ", t);
+            return;
+        }
+
         updateRows(isForce : true);
 
         if (onTextChange && isTriggerListeners)
         {
             onTextChange();
         }
-
-        if (!_textBuffer.create(t))
-        {
-            logger.error("Error creating buffer text: ", t);
-        }
     }
 
-    Glyph[] glyphBuffer()
+    void scrollTo(double value0to1)
     {
-        return _textBuffer.buffer;
-    }
+        import Math = api.math;
 
-    void scrollTo(double value)
-    {
-        scrollPosition = value;
+        scrollPosition = Math.clamp(value0to1, 0, 1.0);
     }
 
     override void dispose()
     {
         super.dispose;
-
         textLayout.destroy;
     }
 }

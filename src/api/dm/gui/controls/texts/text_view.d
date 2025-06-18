@@ -292,7 +292,7 @@ unittest
     import api.math.geom2.vec2 : Vec2d;
 
     auto textView = new TextView("Hello world\nThis is a very short text for the experiment");
-    textView.textBuffer.itemProvider = (ch) {
+    textView.buffer.itemProvider = (ch) {
         return Glyph(ch, Rect2d(0, 0, 10, 10), Vec2d(0, 0), null, false, ch == '\n');
     };
     textView.width = 123;
