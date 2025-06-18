@@ -1,6 +1,7 @@
 module api.dm.gui.controls.texts.editable_text;
 
-import api.dm.gui.controls.texts.base_mono_text : BaseMonoText, TextLayout;
+import api.dm.gui.controls.texts.base_mono_text : BaseMonoText;
+import api.dm.gui.controls.texts.layouts.simple_text_layout: SimpleTextLayout;
 import api.dm.gui.controls.texts.buffers.base_text_buffer : BaseTextBuffer;
 import api.dm.gui.controls.texts.buffers.array_text_buffer : ArrayTextBuffer;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;

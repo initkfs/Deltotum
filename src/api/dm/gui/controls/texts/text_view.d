@@ -1,6 +1,7 @@
 module api.dm.gui.controls.texts.text_view;
 
-import api.dm.gui.controls.texts.base_mono_text : BaseMonoText, TextLayout;
+import api.dm.gui.controls.texts.base_mono_text : BaseMonoText;
+import api.dm.gui.controls.texts.layouts.simple_text_layout: SimpleTextLayout;
 import api.dm.gui.controls.texts.editable_text : EditableText;
 import api.dm.gui.controls.texts.buffers.array_text_buffer : ArrayTextBuffer;
 import api.dm.gui.controls.control : Control;

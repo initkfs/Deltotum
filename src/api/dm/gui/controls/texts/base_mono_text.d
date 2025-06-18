@@ -2,6 +2,7 @@ module api.dm.gui.controls.texts.base_mono_text;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.control : Control;
+import api.dm.gui.controls.texts.layouts.simple_text_layout: SimpleTextLayout;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -17,82 +18,7 @@ import Math = api.math;
 import core.stdc.stdlib : malloc, free, realloc;
 import std.conv : to;
 
-struct TextLayout
-{
-    private
-    {
-        size_t[] _lineBreaks;
-        size_t _length;
-    }
 
-    size_t initCapacity = 5;
-
-    bool create()
-    {
-        if (_lineBreaks.length > 0)
-        {
-            destroy;
-        }
-
-        assert(initCapacity > 0);
-
-        auto buffPtr = cast(size_t*) malloc(initCapacity * size_t.sizeof);
-        if (!buffPtr)
-        {
-            return false;
-        }
-
-        _lineBreaks = buffPtr[0 .. initCapacity];
-        return true;
-    }
-
-    bool isCreated() const @nogc nothrow => _lineBreaks.length > 0;
-
-    void destroy()
-    {
-        if (isCreated)
-        {
-            free(_lineBreaks.ptr);
-        }
-    }
-
-    void opOpAssign(string op : "~")(size_t rhs)
-    {
-        if (!isCreated && !create)
-        {
-            assert(false, "Error creating text struct buffer");
-        }
-
-        if (_length + 1 >= _lineBreaks.length && !grow)
-        {
-            assert(false, "Error text struct buffer growing");
-        }
-
-        _lineBreaks[_length] = rhs;
-        _length++;
-    }
-
-    bool grow()
-    {
-        const newCapacity = _lineBreaks.length * 2;
-        auto newBufferPtr = cast(size_t*) realloc(_lineBreaks.ptr, newCapacity * size_t.sizeof);
-        if (!newBufferPtr)
-        {
-            return false;
-        }
-
-        _lineBreaks = newBufferPtr[0 .. newCapacity];
-        return true;
-    }
-
-    void reset()
-    {
-        _length = 0;
-    }
-
-    inout(size_t[]) lineBreaks() inout => _lineBreaks[0 .. _length];
-    size_t length() => _length;
-}
 
 /**
  * Authors: initkfs
@@ -115,7 +41,7 @@ class BaseMonoText : Control
     bool isShowNewLineGlyph;
     bool isRebuildRows;
 
-    TextLayout textLayout;
+    SimpleTextLayout textLayout;
 
     void delegate() onTextChange;
 
@@ -243,7 +169,7 @@ class BaseMonoText : Control
             endRowIndex = maxEndIndex;
         }
 
-        //TextLayout([], [11, 23, 35, 47, 55])
+        //SimpleTextLayout([], [11, 23, 35, 47, 55])
 
         auto startBreakIndex = textLayout.lineBreaks[startRowIndex];
         auto endBreakIndex = textLayout.lineBreaks[endRowIndex];
