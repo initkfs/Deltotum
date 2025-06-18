@@ -1,4 +1,4 @@
-module api.dm.gui.controls.texts.editable_text;
+module api.dm.gui.controls.texts.base_editable_text;
 
 import api.dm.gui.controls.texts.base_mono_text : BaseMonoText;
 import api.dm.gui.controls.texts.layouts.simple_text_layout : SimpleTextLayout;
@@ -42,7 +42,7 @@ struct Selection
 /**
  * Authors: initkfs
  */
-class EditableText : BaseMonoText
+class BaseEditableText : BaseMonoText
 {
     Rectangle cursor;
     CursorPos cursorPos;
@@ -51,10 +51,16 @@ class EditableText : BaseMonoText
 
     bool isEditable;
 
-    this(typeof(_textBuffer) newBuffer = null)
+    this(dstring text = "", typeof(_textBuffer) newBuffer = null, bool isFocusable = true)
     {
-        super(newBuffer);
-        isFocusable = true;
+        super(text, newBuffer, isFocusable);
+    }
+
+    this(string text)
+    {
+        import std.conv : to;
+
+        this(text.to!dstring);
     }
 
     abstract

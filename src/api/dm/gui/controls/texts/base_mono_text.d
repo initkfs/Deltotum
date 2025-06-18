@@ -2,10 +2,12 @@ module api.dm.gui.controls.texts.base_mono_text;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
+import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;
+import api.math.flip : Flip;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.texts.layouts.simple_text_layout : SimpleTextLayout;
@@ -25,6 +27,9 @@ class BaseMonoText : Control
 {
     double spaceWidth = 5;
     double rowHeight = 0;
+    double maxRowWidth = 0;
+
+    BitmapFont fontTexture;
 
     RGBA _color;
     FontSize fontSize = FontSize.medium;
@@ -43,12 +48,27 @@ class BaseMonoText : Control
         BaseTextBuffer!Glyph _textBuffer;
 
         double scrollPosition = 0;
+
+        dstring tempText;
     }
 
-    this(typeof(_textBuffer) newBuffer = null, bool isFocusable = true)
+    this(string text)
+    {
+        import std.conv : to;
+
+        this(text.to!dstring);
+    }
+
+    this(dstring text = "", typeof(_textBuffer) newBuffer = null, bool isFocusable = true)
     {
         _textBuffer = newBuffer ? newBuffer : new ArrayTextBuffer!Glyph;
         this.isFocusable = isFocusable;
+
+        import api.dm.kit.sprites2d.layouts.managed_layout : ManagedLayout;
+
+        this.layout = new ManagedLayout;
+        
+        tempText = text;
     }
 
     ref inout(typeof(_textBuffer)) buffer() inout => _textBuffer;
@@ -72,9 +92,36 @@ class BaseMonoText : Control
         }
     }
 
+    override void initialize()
+    {
+        super.initialize;
+        invalidateListeners ~= () { updateRows; };
+
+        if (!_textBuffer.itemProvider)
+        {
+            _textBuffer.itemProvider = (ch) => charToGlyph(ch);
+        }
+    }
+
+    bool bufferCreate()
+    {
+        if (tempText.length == 0)
+        {
+            return false;
+        }
+
+        _textBuffer.create(tempText);
+        tempText = null;
+        updateRows;
+        return true;
+    }
+
     override void create()
     {
         super.create;
+
+        setColorTexture;
+        bufferCreate;
     }
 
     void updateRows(bool isForce = false)
@@ -92,6 +139,22 @@ class BaseMonoText : Control
         }
 
         updateTextLayout;
+    }
+
+    protected void setColorTexture()
+    {
+        if (!asset.hasColorBitmap(_color, fontSize))
+        {
+            fontTexture = asset.fontBitmap(fontSize).copyBitmap;
+            fontTexture.color = _color;
+            fontTexture.blendModeBlend;
+            asset.addFontColorBitmap(fontTexture, _color, fontSize);
+            logger.tracef("Create new font with size %s, color %s", fontSize, _color);
+        }
+        else
+        {
+            fontTexture = asset.fontColorBitmap(_color, fontSize);
+        }
     }
 
     Vec2d viewportRowIndex() => viewportRowIndex(scrollPosition);
@@ -259,7 +322,7 @@ class BaseMonoText : Control
         double glyphPosX = startRowTextX;
         double glyphPosY = startRowTextY;
 
-        double maxRowWidth = 0;
+        maxRowWidth = 0;
         double lastRowWidth = 0;
 
         size_t lastIndex;
@@ -374,6 +437,102 @@ class BaseMonoText : Control
         }
     }
 
+    override void drawContent()
+    {
+        super.drawContent;
+
+        if (textLayout.lineBreaks.length == 0)
+        {
+            return;
+        }
+
+        size_t rowStartIndex;
+        Glyph[] glyphs = viewportRows(rowStartIndex);
+        renderText(glyphs, rowStartIndex);
+    }
+
+    protected void renderText(Glyph[] glyphs, size_t startIndex)
+    {
+        if (width == 0 || height == 0 || glyphs.length == 0)
+        {
+            return;
+        }
+
+        const thisBounds = boundsRect;
+
+        auto rowHeight = cast(int) glyphs[0].geometry.height;
+
+        const double startRowTextY = padding.top;
+        double glyphPosY = startRowTextY;
+
+        import std.range : assumeSorted;
+
+        auto sortedLineBreaks = textLayout.lineBreaks.assumeSorted;
+        size_t lastIndex = glyphs.length - 1;
+
+        foreach (ri, ref Glyph glyph; glyphs)
+        {
+            glyph.pos.y = glyphPosY;
+
+            if (sortedLineBreaks.contains(startIndex + ri))
+            {
+                glyphPosY += rowHeight;
+            }
+
+            if (glyph.isNEL)
+            {
+                continue;
+            }
+
+            Rect2d textureBounds = glyph.geometry;
+            Rect2d destBounds = Rect2d(thisBounds.x + glyph.pos.x, thisBounds.y + glyph.pos.y, glyph
+                    .geometry.width, glyph
+                    .geometry.height);
+            fontTexture.drawTexture(textureBounds, destBounds, angle, Flip
+                    .none);
+        }
+    }
+
+    override void update(double delta)
+    {
+        super.update(delta);
+
+        if (tempText.length > 0)
+        {
+            updateRows;
+            isRebuildRows = false;
+            tempText = null;
+        }
+
+        if (isRebuildRows)
+        {
+            updateRows;
+            isRebuildRows = false;
+        }
+    }
+
+    void onFontTexture(scope bool delegate(Texture2d, const(Glyph*) glyph) onTextureIsContinue)
+    {
+        assert(fontTexture);
+
+        foreach (ref glyph; allGlyphs)
+        {
+            if (!onTextureIsContinue(fontTexture, &glyph))
+            {
+                break;
+            }
+        }
+    }
+
+    override bool canChangeWidth(double value)
+    {
+        if (maxRowWidth > 0 && value < (maxRowWidth + padding.width))
+        {
+            return false;
+        }
+        return super.canChangeWidth(value);
+    }
+
     double calcTextWidth(const(dchar)[] str)
     {
         return calcTextWidth(str, fontSize);
@@ -450,24 +609,24 @@ class BaseMonoText : Control
 
     void text(dstring t, bool isTriggerListeners = true)
     {
-        if (!isBuilt || !isCreated)
-        {
-            isRebuildRows = true;
-            return;
-        }
-
         if (!_textBuffer.create(t))
         {
             logger.error("Error creating buffer text: ", t);
             return;
         }
 
-        updateRows(isForce : true);
-
         if (onTextChange && isTriggerListeners)
         {
             onTextChange();
         }
+
+        if (!isBuilt || !isCreated)
+        {
+            isRebuildRows = true;
+            return;
+        }
+
+        updateRows(isForce : true);
     }
 
     void scrollTo(double value0to1)
@@ -475,6 +634,36 @@ class BaseMonoText : Control
         import Math = api.math;
 
         scrollPosition = Math.clamp(value0to1, 0, 1.0);
+    }
+
+    void copyTo(Texture2d texture, Rect2d destBounds)
+    {
+        assert(texture);
+        assert(fontTexture);
+
+        import api.math.geom2.rect2 : Rect2d;
+
+        //TODO remove duplication with render()
+        foreach (ref glyph; allGlyphs)
+        {
+            Rect2d textureBounds = glyph.geometry;
+            texture.copyFrom(fontTexture, textureBounds, destBounds);
+        }
+    }
+
+    RGBA color()
+    {
+        return _color;
+    }
+
+    void color(RGBA color)
+    {
+        _color = color;
+        if (fontTexture)
+        {
+            setColorTexture;
+        }
+        setInvalid;
     }
 
     override void dispose()
