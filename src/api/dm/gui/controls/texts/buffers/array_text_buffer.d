@@ -17,6 +17,12 @@ class ArrayTextBuffer(T = Glyph) : BaseTextBuffer!T
     {
         if (text.length == 0)
         {
+            if (_buffer.length > 0)
+            {
+                length = 0;
+                return true;
+            }
+
             return false;
         }
 

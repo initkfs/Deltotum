@@ -5,7 +5,7 @@ import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.gui.controls.containers.center_box : CenterBox;
 import api.dm.gui.controls.switches.toggles.toggle : Toggle;
 import api.dm.gui.controls.texts.text : Text;
-import api.dm.gui.controls.texts.textfield : TextField;
+import api.dm.gui.controls.texts.text_field : TextField;
 import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;

@@ -4,7 +4,7 @@ import api.dm.gui.controls.meters.min_max_value_meter : MinMaxValueMeter;
 import api.dm.gui.controls.containers.expanders.expander : Expander, ExpanderPosition;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.controls.switches.buttons.navigate_button : NavigateButton, NavigateDirection;
-import api.dm.gui.controls.texts.textfield : TextField;
+import api.dm.gui.controls.texts.text_field : TextField;
 
 import std.conv : to;
 

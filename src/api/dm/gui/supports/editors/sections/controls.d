@@ -983,6 +983,7 @@ class Controls : Control
     {
         import api.dm.gui.controls.texts.text : Text;
         import api.dm.gui.controls.texts.text_view : TextView;
+        import api.dm.gui.controls.texts.text_field: TextField;
         import api.dm.gui.controls.texts.text_area : TextArea;
 
         import api.dm.gui.controls.containers.expanders.expander : Expander, ExpanderPosition;
@@ -990,10 +991,16 @@ class Controls : Control
         auto textBox = new HBox;
         root.addCreate(textBox);
 
+        auto fieldBox = new VBox;
+        textBox.addCreate(fieldBox);
+
         auto text = new Text("Text with\nline breaks");
         text.padding = 5;
         text.isBorder = true;
-        textBox.addCreate(text);
+        fieldBox.addCreate(text);
+
+        auto textF1 = new TextField("0");
+        fieldBox.addCreate(textF1);
 
         auto exp = new Expander;
         exp.expandPosition = ExpanderPosition.top;
@@ -1002,6 +1009,7 @@ class Controls : Control
         
         auto t1 = new TextArea("Коммодор никак не мог отделаться от ощущения чудовищных перегрузок и невыносимой яркости освещения. Но он по-прежнему сидел в своем отсеке, хотя рука его еще лежала на клавише «Уничтожение»...\nКоммодор никак не мог отделаться от ощущения чудовищных перегрузок и невыносимой яркости освещения. Но он по-прежнему сидел в своем отсеке, хотя рука его еще лежала на клавише «Уничтожение»...");
         t1.isEditable = true;
+        t1.id = "TextArea";
         t1.width = 350;
         t1.height = 200;
         t1.isBorder = true;

@@ -148,6 +148,8 @@ class RegulateTextField : Control
                     //TODO dialog
                     logger.error(e.toString);
                 }
+
+                return false;
             };
 
             if (onConfiguredValueField)

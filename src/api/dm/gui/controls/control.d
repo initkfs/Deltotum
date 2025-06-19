@@ -1218,7 +1218,10 @@ class Control : GuiComponent
         if (isConsumeEventIfBackground && (isBackground || hasBackground) && containsPoint(
                 e.x, e.y))
         {
-            e.isConsumed = true;
+            //TODO focus discharge
+            //e.isConsumed = true;
+            e.x = 0;
+            e.y = 0;
         }
     }
 

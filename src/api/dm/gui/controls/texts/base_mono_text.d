@@ -35,10 +35,12 @@ class BaseMonoText : Control
     FontSize fontSize = FontSize.medium;
 
     bool isReduceWidthHeight = true;
+    bool isAddLastLineBreak = true;
     bool isShowNewLineGlyph;
+    bool isAllowWrapLine = true;
     bool isRebuildRows;
 
-    void delegate(ref KeyEvent) onEnter;
+    bool delegate(ref KeyEvent) onEnter;
     void delegate() onTextChange;
 
     SimpleTextLayout textLayout;
@@ -162,7 +164,7 @@ class BaseMonoText : Control
     {
         if (textLayout.lineBreaks.length == 0)
         {
-            return Vec2d(0, 0);
+            return allGlyphs.length == 0 ? Vec2d(0, 0) : Vec2d(1, 1);
         }
 
         const rowsInViewport = this.rowsInViewport;
@@ -212,7 +214,7 @@ class BaseMonoText : Control
         //TODO first line without \n
         if (textLayout.lineBreaks.length == 0)
         {
-            return null;
+            return allGlyphs;
         }
 
         Vec2d rowIndex = viewportRowIndex(scrollPosition);
@@ -339,53 +341,56 @@ class BaseMonoText : Control
 
             auto nextGlyphPosX = glyphPosX + glyph.geometry.width;
 
-            if (glyph.isNEL)
+            if (isAllowWrapLine)
             {
-                textLayout ~= i;
-
-                glyph.pos.x = glyphPosX;
-                glyph.pos.y = glyphPosY;
-
-                glyphPosX = startRowTextX;
-                glyphPosY += rowHeight;
-                lastRowWidth = 0;
-                continue;
-            }
-            else if (nextGlyphPosX > endRowTextX)
-            {
-                bool isLeftSpace;
-                size_t j = i;
-                searchLeftSpace: while (j >= 0)
+                if (glyph.isNEL)
                 {
-                    auto leftGlyph = _textBuffer.buffer[j];
-                    if (leftGlyph.grapheme == ' ' || leftGlyph.isNEL)
-                    {
-                        isLeftSpace = true;
-                        break searchLeftSpace;
-                    }
-                    j--;
-                }
+                    textLayout ~= i;
 
-                if (isLeftSpace)
-                {
                     glyph.pos.x = glyphPosX;
                     glyph.pos.y = glyphPosY;
 
                     glyphPosX = startRowTextX;
                     glyphPosY += rowHeight;
                     lastRowWidth = 0;
-
-                    size_t currPosIndexDiff = i - j;
-                    //TODO loop goes through some characters twice 
-                    i -= currPosIndexDiff;
-                    textLayout ~= j;
                     continue;
                 }
+                else if (nextGlyphPosX > endRowTextX)
+                {
+                    bool isLeftSpace;
+                    size_t j = i;
+                    searchLeftSpace: while (j >= 0)
+                    {
+                        auto leftGlyph = _textBuffer.buffer[j];
+                        if (leftGlyph.grapheme == ' ' || leftGlyph.isNEL)
+                        {
+                            isLeftSpace = true;
+                            break searchLeftSpace;
+                        }
+                        j--;
+                    }
 
-                textLayout ~= (i == 0 ? 0 : i - 1);
-                glyphPosX = startRowTextX;
-                glyphPosY += rowHeight;
-                lastRowWidth = 0;
+                    if (isLeftSpace)
+                    {
+                        glyph.pos.x = glyphPosX;
+                        glyph.pos.y = glyphPosY;
+
+                        glyphPosX = startRowTextX;
+                        glyphPosY += rowHeight;
+                        lastRowWidth = 0;
+
+                        size_t currPosIndexDiff = i - j;
+                        //TODO loop goes through some characters twice 
+                        i -= currPosIndexDiff;
+                        textLayout ~= j;
+                        continue;
+                    }
+
+                    textLayout ~= (i == 0 ? 0 : i - 1);
+                    glyphPosX = startRowTextX;
+                    glyphPosY += rowHeight;
+                    lastRowWidth = 0;
+                }
             }
 
             //control glyphs reset width
@@ -400,7 +405,7 @@ class BaseMonoText : Control
             glyphPosX += glyph.geometry.width;
         }
 
-        if (!_textBuffer.buffer[lastIndex].isNEL)
+        if (isAddLastLineBreak && !_textBuffer.buffer[lastIndex].isNEL)
         {
             textLayout ~= lastIndex;
         }
@@ -420,7 +425,8 @@ class BaseMonoText : Control
             }
         }
 
-        auto newHeight = textLayout.lineBreaks.length * rowHeight + padding.height;
+        const linesCount = textLayout.lineBreaks.length > 0 ? textLayout.lineBreaks.length : 1;
+        auto newHeight = linesCount * rowHeight + padding.height;
         if (newHeight > height)
         {
             import std.algorithm.comparison : min;
@@ -441,7 +447,7 @@ class BaseMonoText : Control
     {
         super.drawContent;
 
-        if (textLayout.lineBreaks.length == 0)
+        if (allGlyphs.length == 0)
         {
             return;
         }
@@ -465,6 +471,22 @@ class BaseMonoText : Control
 
         size_t rowStartIndex;
         Glyph[] glyphs = viewportRows(rowStartIndex);
+        if (glyphs.length == 0)
+        {
+            return;
+        }
+
+        if (lineBreaks.length == 0)
+        {
+            foreach (ri, ref Glyph glyph; glyphs)
+            {
+                if (!onGlyphIndexIsContinue(glyph, ri))
+                {
+                    break;
+                }
+            }
+            return;
+        }
 
         const double startRowTextY = padding.top;
         double glyphPosY = startRowTextY;
@@ -506,7 +528,7 @@ class BaseMonoText : Control
         onViewportGlyphs((ref glyph, i) {
 
             Rect2d textureBounds = glyph.geometry;
-            Rect2d destBounds = Rect2d(thisBounds.x + glyph.pos.x, thisBounds.y + glyph.pos.y, glyph
+            Rect2d destBounds = Rect2d(startGlyphX + glyph.pos.x, startGlyphY + glyph.pos.y, glyph
                 .geometry.width, glyph
                 .geometry.height);
             fontTexture.drawTexture(textureBounds, destBounds, angle, Flip
@@ -514,6 +536,10 @@ class BaseMonoText : Control
             return true;
         });
     }
+
+    double startGlyphX() => boundsRect.x + padding.left;
+    double startGlyphY() => boundsRect.y + padding.top;
+    Vec2d startGlyphPos() => Vec2d(startGlyphX, startGlyphY);
 
     override void update(double delta)
     {

@@ -50,6 +50,7 @@ class BaseEditableText : BaseMonoText
     Selection selection;
 
     bool isEditable;
+    bool isStartTextInput;
 
     this(dstring text = "", typeof(_textBuffer) newBuffer = null, bool isFocusable = true)
     {
@@ -77,34 +78,43 @@ class BaseEditableText : BaseMonoText
     {
         super.initialize;
 
-        if (isFocusable)
-        {
-            onFocusEnter ~= (ref e) {
-                if (_focusEffect)
-                {
-                    _focusEffect.isVisible = true;
-                }
+        onFocusEnter ~= (ref e) {
+            if (_focusEffect)
+            {
+                _focusEffect.isVisible = true;
+            }
 
-                window.startTextInput;
-            };
+            window.startTextInput;
+            isStartTextInput = true;
+        };
 
-            onFocusExit ~= (ref e) {
-                if (_focusEffect && _focusEffect.isVisible)
-                {
-                    _focusEffect.isVisible = false;
-                    if (cursor)
-                    {
-                        cursor.isVisible = false;
-                    }
-                }
+        onFocusExit ~= (ref e) {
+            if (_focusEffect && _focusEffect.isVisible)
+            {
+                _focusEffect.isVisible = false;
+            }
 
-                window.endTextInput;
-            };
-        }
+            if (cursor)
+            {
+                cursor.isVisible = false;
+            }
+
+            cursorPos.isValid = false;
+            selection.isValid = false;
+            selection.isStart = false;
+
+            isStartTextInput = false;
+
+            window.endTextInput;
+        };
 
         if (isEditable)
         {
             onPointerPress ~= (ref e) {
+
+                // if(!isStartTextInput){
+                //     return false;
+                // }
 
                 const mouseX = e.x;
                 const mouseY = e.y;
@@ -134,15 +144,19 @@ class BaseEditableText : BaseMonoText
                     import std.stdio;
 
                     Glyph[] rows = allGlyphs;
-                    Glyph first = rows[cursorPos.glyphIndexAbs];
-                    Glyph next;
-                    if (cursorPos.glyphIndexAbs < rows.length - 1)
+                    if (rows.length > 0)
                     {
-                        next = rows[cursorPos.glyphIndexAbs + 1];
+                        Glyph first = rows[cursorPos.glyphIndexAbs];
+                        Glyph next;
+                        if (cursorPos.glyphIndexAbs < rows.length - 1)
+                        {
+                            next = rows[cursorPos.glyphIndexAbs + 1];
+                        }
+                        writefln("Cursor pos for %s,%s: %s, betw %s:%s, row:%s", mouseX, mouseY, cursorPos, first.grapheme, next != next
+                                .init ? next
+                                .grapheme : '-', glyphsToStr(row(cursorPos.rowIndexAbs)));
                     }
-                    writefln("Cursor pos for %s,%s: %s, betw %s:%s, row:%s", mouseX, mouseY, cursorPos, first.grapheme, next != next
-                            .init ? next
-                            .grapheme : '-', glyphsToStr(row(cursorPos.rowIndexAbs)));
+
                 }
 
                 updateCursor;
@@ -223,11 +237,20 @@ class BaseEditableText : BaseMonoText
             };
 
             onKeyPress ~= (ref e) {
+
+                if (!isStartTextInput)
+                {
+                    return;
+                }
+
                 import api.dm.com.inputs.com_keyboard : ComKeyName;
 
                 if (e.keyName == ComKeyName.key_return && onEnter)
                 {
-                    onEnter(e);
+                    if (onEnter(e))
+                    {
+
+                    }
                     return;
                 }
 
@@ -273,7 +296,8 @@ class BaseEditableText : BaseMonoText
                                 }
 
                                 dstring newText = input.clipboard.getText.to!dstring;
-                                const insertIndex = cursorPos.state == CursorState.forPrevGlyph ? cursorPos.glyphIndexAbs + 1 : cursorPos.glyphIndexAbs;
+                                const insertIndex = cursorPos.state == CursorState.forPrevGlyph ? cursorPos
+                                    .glyphIndexAbs + 1 : cursorPos.glyphIndexAbs;
                                 if (!_textBuffer.insert(insertIndex, newText))
                                 {
                                     logger.error("Error text inserting from clipboard: ", newText);
@@ -434,6 +458,11 @@ class BaseEditableText : BaseMonoText
 
             onTextInput ~= (ref e) {
 
+                // if (!isStartTextInput)
+                // {
+                //     return;
+                // }
+
                 if (selection.isValid)
                 {
                     if (!removeSelectionWithCursor)
@@ -452,8 +481,9 @@ class BaseEditableText : BaseMonoText
                 size_t textIndex = cursorPos.glyphIndexAbs;
                 dchar letter = e.firstLetter;
 
-                const insertIndex = cursorPos.state == CursorState.forPrevGlyph ? textIndex + 1 : textIndex;
-                
+                const insertIndex = cursorPos.state == CursorState.forPrevGlyph ? textIndex + 1
+                    : textIndex;
+
                 if (insertText(insertIndex, letter))
                 {
                     updateRows;
@@ -537,10 +567,6 @@ class BaseEditableText : BaseMonoText
         }
 
     }
-
-    double startGlyphX() => boundsRect.x + padding.left;
-    double startGlyphY() => boundsRect.y + padding.top;
-    Vec2d startGlyphPos() => Vec2d(startGlyphX, startGlyphY);
 
     void drawSelection()
     {
@@ -671,6 +697,19 @@ class BaseEditableText : BaseMonoText
         double startX = thisBounds.x + padding.left;
         double startY = thisBounds.y + padding.top;
 
+        CursorPos result;
+
+        if (lineBreaks.length == 0)
+        {
+            Glyph[] fullRow = allGlyphs;
+            if (fullRow.length == 0 || !findFromRowX(fullRow, x, 0, 0, 0, result))
+            {
+                return CursorPos.init;
+            }
+
+            return result;
+        }
+
         Vec2d breakIdx = viewportRowIndex;
         size_t rowStartIndex = cast(size_t) breakIdx.x;
         size_t rowEndIndex = cast(size_t) breakIdx.y;
@@ -710,57 +749,80 @@ class BaseEditableText : BaseMonoText
             }
 
             const rowIndexAbs = rowStartIndex + ri;
-            const rowY = startY + ri * rowHeight;
-            size_t lastRowIndex = needRow.length - 1;
 
-            foreach (gi, ref Glyph glyph; needRow)
+            if (findFromRowX(needRow, x, prevBreakLine, rowIndexAbs, ri, result))
             {
-                if (gi == 0)
-                {
-                    const glyphMiddleX = startX + glyph.pos.x + glyph.geometry.halfWidth;
-                    if (x < glyphMiddleX)
-                    {
-                        return CursorPos(CursorState.forNextGlyph, Vec2d(startX, rowY), prevBreakLine, rowIndexAbs, ri, true);
-                    }
-                }
-
-                if (gi == lastRowIndex)
-                {
-                    const glyphMiddleX = startX + glyph.pos.x + glyph.geometry.halfWidth;
-                    if (x > glyphMiddleX)
-                    {
-                        return CursorPos(CursorState.forPrevGlyph, Vec2d(startX + glyph.pos.x + glyph.geometry.width, rowY), prevBreakLine + gi, rowIndexAbs, ri, true);
-                    }
-                }
-
-                const glyphEndX = startX + glyph.pos.x + glyph.geometry.width;
-                if (glyphEndX > x)
-                {
-                    size_t glyphIndex = gi;
-
-                    const glyphMiddleX = glyphEndX - glyph.geometry.width / 2;
-                    Vec2d pos;
-                    if (x <= glyphMiddleX)
-                    {
-                        glyphIndex = (glyphIndex > 0) ? (glyphIndex - 1) : 0;
-                        auto prevGlyph = needRow[glyphIndex];
-                        pos = Vec2d(startX + prevGlyph.pos.x + prevGlyph.geometry.width, rowY);
-                    }
-                    else
-                    {
-                        auto currGlyph = needRow[glyphIndex];
-                        pos = Vec2d(glyphEndX, rowY);
-                    }
-
-                    auto absGlyphIndex = prevBreakLine + glyphIndex;
-
-                    return CursorPos(CursorState.forPrevGlyph, pos, absGlyphIndex, rowIndexAbs, ri, true);
-                }
+                return result;
             }
         }
 
         //logger.error("Not found cursor position");
         return CursorPos.init;
+    }
+
+    bool findFromRowX(Glyph[] needRow, double x, size_t prevBreakLine, size_t rowIndexAbs, size_t ri, out CursorPos result)
+    {
+        if (needRow.length == 0)
+        {
+            return false;
+        }
+
+        const startX = startGlyphX;
+        const startY = startGlyphY;
+
+        const rowY = startY + ri * rowHeight;
+
+        const lastRowIndex = needRow.length - 1;
+
+        foreach (gi, ref Glyph glyph; needRow)
+        {
+            if (gi == 0)
+            {
+                const glyphMiddleX = startX + glyph.pos.x + glyph.geometry.halfWidth;
+                if (x < glyphMiddleX)
+                {
+                    result = CursorPos(CursorState.forNextGlyph, Vec2d(startX, rowY), prevBreakLine, rowIndexAbs, ri, true);
+                    return true;
+                }
+            }
+
+            if (gi == lastRowIndex)
+            {
+                const glyphMiddleX = startX + glyph.pos.x + glyph.geometry.halfWidth;
+                if (x > glyphMiddleX)
+                {
+                    result = CursorPos(CursorState.forPrevGlyph, Vec2d(startX + glyph.pos.x + glyph.geometry.width, rowY), prevBreakLine + gi, rowIndexAbs, ri, true);
+                    return true;
+                }
+            }
+
+            const glyphEndX = startX + glyph.pos.x + glyph.geometry.width;
+            if (glyphEndX > x)
+            {
+                size_t glyphIndex = gi;
+
+                const glyphMiddleX = glyphEndX - glyph.geometry.width / 2;
+                Vec2d pos;
+                if (x <= glyphMiddleX)
+                {
+                    glyphIndex = (glyphIndex > 0) ? (glyphIndex - 1) : 0;
+                    auto prevGlyph = needRow[glyphIndex];
+                    pos = Vec2d(startX + prevGlyph.pos.x + prevGlyph.geometry.width, rowY);
+                }
+                else
+                {
+                    auto currGlyph = needRow[glyphIndex];
+                    pos = Vec2d(glyphEndX, rowY);
+                }
+
+                auto absGlyphIndex = prevBreakLine + glyphIndex;
+
+                result = CursorPos(CursorState.forPrevGlyph, pos, absGlyphIndex, rowIndexAbs, ri, true);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     bool setCursorPos(size_t index, bool isFromLeftGlyphCorner = true, bool isChangeCursorState = true)
@@ -904,6 +966,11 @@ class BaseEditableText : BaseMonoText
 
     Glyph[] row(size_t rowIndex)
     {
+        if (lineBreaks.length == 0)
+        {
+            return allGlyphs;
+        }
+
         auto currentBreak = textLayout.lineBreaks[rowIndex];
         if (rowIndex == 0)
         {
@@ -1014,6 +1081,30 @@ class BaseEditableText : BaseMonoText
         setCursorPos(isFromLeftGlyphCorner : false);
 
         return true;
+    }
+
+    bool clear(bool isShowCursor = false)
+    {
+        if (_textBuffer.length == 0)
+        {
+            return false;
+        }
+
+        if (_textBuffer.create(""))
+        {
+            updateRows;
+            cursorPos = CursorPos(CursorState.forNextGlyph, startGlyphPos, 0, 0, 0, true);
+            updateCursor;
+
+            if (isShowCursor)
+            {
+                cursor.isVisible = true;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     override bool scrollTo(double value0to1)
