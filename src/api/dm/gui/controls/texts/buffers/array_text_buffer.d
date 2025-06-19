@@ -289,4 +289,8 @@ unittest
     assert(textBuff.text == "H");
     assert(textBuff.removePrev(0, 1) == 1);
     assert(textBuff.text == "");
+
+    textBuff.create("H");
+    assert(textBuff.removePrev(0, 1) == 1);
+    assert(textBuff.text == "");
 }

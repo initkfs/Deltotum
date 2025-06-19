@@ -67,7 +67,7 @@ class BaseMonoText : Control
         import api.dm.kit.sprites2d.layouts.managed_layout : ManagedLayout;
 
         this.layout = new ManagedLayout;
-        
+
         tempText = text;
     }
 
@@ -451,16 +451,20 @@ class BaseMonoText : Control
         renderText(glyphs, rowStartIndex);
     }
 
-    protected void renderText(Glyph[] glyphs, size_t startIndex)
+    void updateViewport()
     {
-        if (width == 0 || height == 0 || glyphs.length == 0)
+        onViewportGlyphs((ref glyph, i) { return true; });
+    }
+
+    protected void onViewportGlyphs(scope bool delegate(ref Glyph, size_t) onGlyphIndexIsContinue)
+    {
+        if (width == 0 || height == 0 || rowHeight == 0)
         {
             return;
         }
 
-        const thisBounds = boundsRect;
-
-        auto rowHeight = cast(int) glyphs[0].geometry.height;
+        size_t rowStartIndex;
+        Glyph[] glyphs = viewportRows(rowStartIndex);
 
         const double startRowTextY = padding.top;
         double glyphPosY = startRowTextY;
@@ -468,13 +472,12 @@ class BaseMonoText : Control
         import std.range : assumeSorted;
 
         auto sortedLineBreaks = textLayout.lineBreaks.assumeSorted;
-        size_t lastIndex = glyphs.length - 1;
 
         foreach (ri, ref Glyph glyph; glyphs)
         {
             glyph.pos.y = glyphPosY;
 
-            if (sortedLineBreaks.contains(startIndex + ri))
+            if (sortedLineBreaks.contains(rowStartIndex + ri))
             {
                 glyphPosY += rowHeight;
             }
@@ -484,13 +487,32 @@ class BaseMonoText : Control
                 continue;
             }
 
+            if (!onGlyphIndexIsContinue(glyph, ri))
+            {
+                break;
+            }
+        }
+    }
+
+    protected void renderText(Glyph[] glyphs, size_t startIndex)
+    {
+        if (width == 0 || height == 0 || glyphs.length == 0)
+        {
+            return;
+        }
+
+        const thisBounds = boundsRect;
+
+        onViewportGlyphs((ref glyph, i) {
+
             Rect2d textureBounds = glyph.geometry;
             Rect2d destBounds = Rect2d(thisBounds.x + glyph.pos.x, thisBounds.y + glyph.pos.y, glyph
-                    .geometry.width, glyph
-                    .geometry.height);
+                .geometry.width, glyph
+                .geometry.height);
             fontTexture.drawTexture(textureBounds, destBounds, angle, Flip
-                    .none);
-        }
+                .none);
+            return true;
+        });
     }
 
     override void update(double delta)
@@ -629,11 +651,12 @@ class BaseMonoText : Control
         updateRows(isForce : true);
     }
 
-    void scrollTo(double value0to1)
+    bool scrollTo(double value0to1)
     {
         import Math = api.math;
 
         scrollPosition = Math.clamp(value0to1, 0, 1.0);
+        return true;
     }
 
     void copyTo(Texture2d texture, Rect2d destBounds)

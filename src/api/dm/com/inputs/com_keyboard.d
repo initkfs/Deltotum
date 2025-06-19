@@ -4,7 +4,7 @@ module api.dm.com.inputs.com_keyboard;
  * Authors: initkfs
  */
 import api.dm.com.platforms.results.com_result : ComResult;
-import api.dm.com.graphics.com_window: ComWindow;
+import api.dm.com.graphics.com_window : ComWindow;
 
 interface ComKeyboard
 {
@@ -33,20 +33,10 @@ struct ComKeyModifier
     bool isAltGr;
     bool isScrollLock;
 
-    bool isCtrl()
-    {
-        return isLeftCtrl || isRightCtrl;
-    }
-
-    bool isAlt()
-    {
-        return isLeftAlt || isRightAlt;
-    }
-
-    bool isShift()
-    {
-        return isLeftShift || isRightShift;
-    }
+    bool isCtrl() => isLeftCtrl || isRightCtrl;
+    bool isAlt() => isLeftAlt || isRightAlt;
+    bool isShift() => isLeftShift || isRightShift;
+    bool isKeyModifier() => isCtrl || isAlt || isShift;
 }
 
 // dfmt off
@@ -308,6 +298,10 @@ enum ComKeyName : int
     key_rmeta,                /**< Extended key Right Meta */
     key_lhyper,               /**< Extended key Left Hyper */
     key_rhyper,               /**< Extended key Right Hyper */
+
+
+
+
 
 
 

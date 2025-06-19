@@ -72,6 +72,7 @@ class TextArea : HBox
 
         textView = new TextView(tempText);
         textView.isEditable = isEditable;
+        textView.isReduceWidthHeight = false;
 
         textView.onPointerEnter ~= (ref e) {
             import api.dm.com.inputs.com_cursor : ComPlatformCursorType;
