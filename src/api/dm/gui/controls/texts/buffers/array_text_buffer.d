@@ -119,11 +119,11 @@ class ArrayTextBuffer(T = Glyph) : BaseTextBuffer!T
             _buffer = newPtr[0 .. newLen];
         }
 
-        size_t insertPos = length > 0 ? pos + 1 : 0;
+        size_t insertPos = pos;
 
         if (insertPos != length && length > 0)
         {
-            ptrdiff_t rest = length - pos - 1;
+            ptrdiff_t rest = length - pos;
             memmove(&_buffer[insertPos + text.length], &_buffer[insertPos], rest * T.sizeof);
         }
 
@@ -213,22 +213,26 @@ unittest
     assert(textBuff.buffer.length == text.length);
     assert(textBuff.text == text);
 
-    assert(textBuff.insert(5, "awesome "));
+    assert(textBuff.insert(6, "awesome "));
     assert(textBuff.text == "Hello awesome world\n");
 
     textBuff.create("H");
-    textBuff.insert(0, "e");
-    textBuff.insert(1, "l");
+    textBuff.insert(1, "e");
     textBuff.insert(2, "l");
-    textBuff.insert(3, "o");
+    textBuff.insert(3, "l");
+    textBuff.insert(4, "o");
     assert(textBuff.text == "Hello");
 
     textBuff.create("");
     textBuff.insert(0, "Hello");
 
     textBuff.create("Hel");
-    textBuff.insert(2, "lo");
+    textBuff.insert(3, "lo");
     assert(textBuff.text == "Hello");
+
+    textBuff.create("Hello");
+    textBuff.insert(0, "world ");
+    assert(textBuff.text == "world Hello");
 }
 
 unittest

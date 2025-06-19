@@ -273,7 +273,8 @@ class BaseEditableText : BaseMonoText
                                 }
 
                                 dstring newText = input.clipboard.getText.to!dstring;
-                                if (!_textBuffer.insert(cursorPos.glyphIndexAbs, newText))
+                                const insertIndex = cursorPos.state == CursorState.forPrevGlyph ? cursorPos.glyphIndexAbs + 1 : cursorPos.glyphIndexAbs;
+                                if (!_textBuffer.insert(insertIndex, newText))
                                 {
                                     logger.error("Error text inserting from clipboard: ", newText);
                                 }
@@ -451,9 +452,9 @@ class BaseEditableText : BaseMonoText
                 size_t textIndex = cursorPos.glyphIndexAbs;
                 dchar letter = e.firstLetter;
 
-                writeln("Insert: ", cursorPos);
-
-                if (insertText(textIndex, letter))
+                const insertIndex = cursorPos.state == CursorState.forPrevGlyph ? textIndex + 1 : textIndex;
+                
+                if (insertText(insertIndex, letter))
                 {
                     updateRows;
 
