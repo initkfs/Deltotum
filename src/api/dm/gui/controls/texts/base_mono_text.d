@@ -97,6 +97,7 @@ class BaseMonoText : Control
     override void initialize()
     {
         super.initialize;
+        //TODO check run once
         invalidateListeners ~= () { updateRows; };
 
         if (!_textBuffer.itemProvider)
@@ -132,12 +133,6 @@ class BaseMonoText : Control
         {
             isRebuildRows = true;
             return;
-        }
-
-        isAllowInvalidate = false;
-        scope (exit)
-        {
-            isAllowInvalidate = true;
         }
 
         updateTextLayout;
@@ -255,12 +250,18 @@ class BaseMonoText : Control
 
     size_t rowsInViewport()
     {
-        if (rowHeight == 0)
+        if (rowHeight <= 0 || height <= 0)
         {
             return 0;
         }
 
-        return to!(size_t)((height - padding.height) / rowHeight);
+        double heightDt = height - padding.height;
+        if (heightDt <= 0)
+        {
+            heightDt = height;
+        }
+
+        return cast(size_t)(heightDt / rowHeight);
     }
 
     Glyph charToGlyph(dchar ch)
@@ -316,10 +317,9 @@ class BaseMonoText : Control
 
         rowHeight = 0;
 
-        const double startRowTextX = padding.left;
-        const double endRowTextX = maxWidth - padding.right;
-
-        const double startRowTextY = padding.top;
+        const double startRowTextX = 0;
+        const double endRowTextX = maxWidth - padding.width;
+        const double startRowTextY = 0;
 
         double glyphPosX = startRowTextX;
         double glyphPosY = startRowTextY;
@@ -412,13 +412,15 @@ class BaseMonoText : Control
 
         auto fullRowWidth = maxRowWidth + padding.width;
 
-        if (fullRowWidth > width)
+        enum sizeDt = 1;
+
+        if ((fullRowWidth - width) > sizeDt)
         {
             width = Math.min(maxWidth, fullRowWidth);
         }
         else
         {
-            if (isReduceWidthHeight)
+            if (isReduceWidthHeight && (width - maxRowWidth) > sizeDt)
             {
                 //TODO check minHeight;
                 width = maxRowWidth;
@@ -427,7 +429,7 @@ class BaseMonoText : Control
 
         const linesCount = textLayout.lineBreaks.length > 0 ? textLayout.lineBreaks.length : 1;
         auto newHeight = linesCount * rowHeight + padding.height;
-        if (newHeight > height)
+        if ((newHeight - height) > sizeDt)
         {
             import std.algorithm.comparison : min;
 
@@ -435,7 +437,7 @@ class BaseMonoText : Control
         }
         else
         {
-            if (isReduceWidthHeight)
+            if (isReduceWidthHeight && (newHeight - height) > sizeDt)
             {
                 //TODO check minHeight;
                 height = newHeight;
@@ -488,7 +490,7 @@ class BaseMonoText : Control
             return;
         }
 
-        const double startRowTextY = padding.top;
+        const double startRowTextY = 0;
         double glyphPosY = startRowTextY;
 
         import std.range : assumeSorted;
@@ -523,12 +525,12 @@ class BaseMonoText : Control
             return;
         }
 
-        const thisBounds = boundsRect;
+        const startPos = startGlyphPos;
 
         onViewportGlyphs((ref glyph, i) {
 
             Rect2d textureBounds = glyph.geometry;
-            Rect2d destBounds = Rect2d(startGlyphX + glyph.pos.x, startGlyphY + glyph.pos.y, glyph
+            Rect2d destBounds = Rect2d(startPos.x + glyph.pos.x, startPos.y + glyph.pos.y, glyph
                 .geometry.width, glyph
                 .geometry.height);
             fontTexture.drawTexture(textureBounds, destBounds, angle, Flip
@@ -657,9 +659,14 @@ class BaseMonoText : Control
 
     void text(dstring t, bool isTriggerListeners = true)
     {
+        if (t.length == 0 && _textBuffer.length == 0)
+        {
+            return;
+        }
+
         if (!_textBuffer.create(t))
         {
-            logger.error("Error creating buffer text: ", t);
+            logger.error("Error creating buffer text: '", t, "'");
             return;
         }
 

@@ -1220,8 +1220,8 @@ class Control : GuiComponent
         {
             //TODO focus discharge
             //e.isConsumed = true;
-            e.x = 0;
-            e.y = 0;
+            e.x = double.nan;
+            e.y = double.nan;
         }
     }
 

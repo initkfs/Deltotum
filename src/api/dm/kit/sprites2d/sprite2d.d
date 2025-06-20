@@ -141,8 +141,10 @@ class Sprite2d : EventKitTarget
 
     bool isDrawBounds;
     bool isDrawCenterBounds;
+    bool isDrawInvalidBounds;
     RGBA boundsColor = RGBA.red;
     RGBA boundsCenterColor = RGBA.yellow;
+    RGBA boundsInvalidColor = RGBA.blue;
 
     bool _visible = true;
     bool isVisibilityForChildren;
@@ -725,6 +727,11 @@ class Sprite2d : EventKitTarget
         if (isDrawBounds)
         {
             drawBounds;
+        }
+
+        if (!isValid && isDrawInvalidBounds)
+        {
+            drawBounds(boundsInvalidColor);
         }
 
         if (isDrawCenterBounds)
@@ -1990,6 +1997,11 @@ class Sprite2d : EventKitTarget
 
     void drawBounds()
     {
+        drawBounds(boundsColor);
+    }
+
+    void drawBounds(RGBA color)
+    {
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
@@ -1998,9 +2010,7 @@ class Sprite2d : EventKitTarget
             return;
         }
 
-        const debugColor = boundsColor;
-
-        graphics.changeColor(debugColor);
+        graphics.changeColor(color);
 
         const b = boundsRect;
         //graphics.rect(b.x, b.y, b.width, b.height, GraphicStyle(1, RGBA.red));

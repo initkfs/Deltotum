@@ -21,14 +21,24 @@ class TextField : Control
     }
 
     TextView textView;
+
+    dstring defaultValue;
+
+    bool isCreateClearButton;
     Sprite2d clearButton;
+    Sprite2d delegate(Sprite2d) onNewClearButton;
+    void delegate(Sprite2d) onConfiguredClearButton;
+    void delegate(Sprite2d) onCreatedClearButton;
 
     void delegate(ref KeyEvent) onEnter;
 
-    this(dstring text = "")
+    this(dstring text = "", dstring defaultValue = null)
     {
+        this.defaultValue = defaultValue;
+
         this.tempText = text;
         isBorder = true;
+        isReduceWidthHeight = false;
 
         import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 
@@ -57,7 +67,7 @@ class TextField : Control
 
         if (_height == 0)
         {
-            _height = theme.controlDefaultHeight / 2;
+            _height = theme.controlDefaultHeight / 1.5;
         }
     }
 
@@ -83,20 +93,45 @@ class TextField : Control
 
         addCreate(textView);
 
-        auto clearButton = new Text("X");
-        clearButton.paddingRight = 5;
-        clearButton.isCreateInteractiveListeners = true;
-        clearButton.onPointerPress ~= (ref e) {
-            if (!textView.clear(isShowCursor : true))
+        if (!clearButton && isCreateClearButton)
+        {
+            auto btn = newClearButton;
+            clearButton = !onNewClearButton ? btn : onNewClearButton(btn);
+
+            clearButton.paddingRight = 5;
+
+            import api.dm.gui.controls.control : Control;
+
+            if (auto control = cast(Control) clearButton)
             {
-                logger.error("Error clear text view");
+                control.isCreateInteractiveListeners = true;
             }
-            textView.focus;
-        };
 
-        this.clearButton = clearButton;
+            clearButton.onPointerPress ~= (ref e) {
+                if (!textView.clear(defaultValue, isShowCursor : true))
+                {
+                    logger.error("Error clear text view");
+                }
+                textView.focus;
+            };
 
-        addCreate(clearButton);
+            if (onConfiguredClearButton)
+            {
+                onConfiguredClearButton(clearButton);
+            }
+
+            addCreate(clearButton);
+
+            if (onCreatedClearButton)
+            {
+                onCreatedClearButton(clearButton);
+            }
+        }
+    }
+
+    Sprite2d newClearButton()
+    {
+        return new Text("X");
     }
 
     dstring text()

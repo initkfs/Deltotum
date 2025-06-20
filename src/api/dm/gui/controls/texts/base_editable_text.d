@@ -1083,14 +1083,16 @@ class BaseEditableText : BaseMonoText
         return true;
     }
 
-    bool clear(bool isShowCursor = false)
+    bool clear(dstring defaultValue = null, bool isShowCursor = false)
     {
         if (_textBuffer.length == 0)
         {
             return false;
         }
 
-        if (_textBuffer.create(""))
+        dstring newStr = defaultValue.length > 0 ? defaultValue : "";
+
+        if (_textBuffer.create(newStr))
         {
             updateRows;
             cursorPos = CursorPos(CursorState.forNextGlyph, startGlyphPos, 0, 0, 0, true);

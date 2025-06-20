@@ -52,48 +52,48 @@ class Controls : Control
         rootContainer.layout.isAlignY = true;
         addCreate(rootContainer);
 
-        // auto switchRoot = new HBox;
-        // switchRoot.layout.isAlignY = true;
-        // rootContainer.addCreate(switchRoot);
+        auto switchRoot = new HBox;
+        switchRoot.layout.isAlignY = true;
+        rootContainer.addCreate(switchRoot);
 
-        // createSwitches(switchRoot);
+        createSwitches(switchRoot);
 
-        // import api.dm.gui.controls.separators.vseparator : VSeparator;
-        // import api.dm.gui.controls.separators.hseparator : HSeparator;
+        import api.dm.gui.controls.separators.vseparator : VSeparator;
+        import api.dm.gui.controls.separators.hseparator : HSeparator;
 
-        // switchRoot.addCreate(new VSeparator);
+        switchRoot.addCreate(new VSeparator);
 
-        // createWindows(switchRoot);
+        createWindows(switchRoot);
 
-        // switchRoot.addCreate(new VSeparator);
+        switchRoot.addCreate(new VSeparator);
 
-        // createLabels(switchRoot);
+        createLabels(switchRoot);
 
-        // rootContainer.addCreate(new HSeparator);
+        rootContainer.addCreate(new HSeparator);
 
         auto selectionContainer = new HBox;
         selectionContainer.layout.isAlignY = true;
         rootContainer.addCreate(selectionContainer);
 
-        // createSelects(selectionContainer);
+        createSelects(selectionContainer);
 
-        // createPickers(selectionContainer);
+        createPickers(selectionContainer);
 
         createTexts(selectionContainer);
 
-        // auto metersContainer = new HBox;
-        // metersContainer.layout.isAlignY = true;
-        // rootContainer.addCreate(metersContainer);
+        auto metersContainer = new HBox;
+        metersContainer.layout.isAlignY = true;
+        rootContainer.addCreate(metersContainer);
 
-        // createMeters(metersContainer);
+        createMeters(metersContainer);
 
-        // auto dataContainer = new HBox(5);
-        // dataContainer.layout.isAlignY = true;
-        // rootContainer.addCreate(dataContainer);
+        auto dataContainer = new HBox(5);
+        dataContainer.layout.isAlignY = true;
+        rootContainer.addCreate(dataContainer);
 
-        // createCharts(dataContainer);
+        createCharts(dataContainer);
 
-        // createIndicators(dataContainer);
+        createIndicators(dataContainer);
     }
 
     void createSwitches(Container root)
@@ -1000,6 +1000,7 @@ class Controls : Control
         fieldBox.addCreate(text);
 
         auto textF1 = new TextField("0");
+        textF1.isCreateClearButton = true;
         fieldBox.addCreate(textF1);
 
         auto exp = new Expander;
@@ -1013,7 +1014,6 @@ class Controls : Control
         t1.width = 350;
         t1.height = 200;
         t1.isBorder = true;
-        t1.isDrawBounds = true;
         exp.contentContainer.addCreate(t1);
         t1.enablePadding;
     }
