@@ -2,7 +2,7 @@ module api.dm.kit.graphics.canvases.renderer_canvas;
 
 import api.dm.kit.graphics.canvases.state_canvas : StateCanvas;
 import api.dm.kit.graphics.canvases.graphics_canvas : GraphicsCanvas, GradientStopPoint;
-import api.dm.kit.graphics.graphics : Graphics;
+import api.dm.kit.graphics.graphic : Graphic;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.vec2 : Vec2d;
 
@@ -13,14 +13,14 @@ class RendererCanvas : StateCanvas
 {
     protected
     {
-        Graphics graphics;
+        Graphic graphics;
     }
 
-    this(Graphics graphics)
+    this(Graphic graphics)
     {
         if (!graphics)
         {
-            throw new Exception("Graphics must not be null");
+            throw new Exception("Graphic must not be null");
         }
         this.graphics = graphics;
     }

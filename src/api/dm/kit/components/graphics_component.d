@@ -6,11 +6,10 @@ import api.core.components.component_service : Service;
 
 import api.dm.kit.assets.asset : Asset;
 import api.dm.kit.media.multimedia : MultiMedia;
-import api.dm.kit.graphics.graphics : Graphics;
+import api.dm.kit.graphics.graphic : Graphic;
 import api.dm.kit.inputs.input : Input;
 import api.dm.kit.windows.window : Window;
 import api.dm.kit.windows.windowing : Windowing;
-import api.dm.kit.events.kit_event_manager : KitEventManager;
 import api.dm.kit.platforms.platform : Platform;
 import api.dm.kit.i18n.i18n : I18n;
 import api.dm.kit.windows.window : Window;
@@ -23,15 +22,13 @@ class GraphicsComponent : UniComponent
 {
     private
     {
-        @Service MultiMedia _media;
-        @Service Asset _asset;
-        @Service Graphics _graphics;
+        @Service Graphic _graphics;
         @Service Input _input;
-        @Service KitEventManager _eventManager;
         @Service Platform _platform;
+        @Service Asset _asset;
         @Service I18n _i18n;
-
         @Service Windowing _windowing;
+        @Service MultiMedia _media;
     }
 
     alias build = UniComponent.build;
@@ -62,23 +59,23 @@ class GraphicsComponent : UniComponent
         run(component);
     }
 
-    bool hasAsset() const nothrow pure @safe
+    bool hasGraphics() const nothrow pure @safe
     {
-        return _asset !is null;
+        return _graphics !is null;
     }
 
-    inout(Asset) asset() inout nothrow pure @safe
-    out (_asset; _asset !is null)
+    inout(Graphic) graphics() inout nothrow pure @safe
+    out (_graphics; _graphics !is null)
     {
-        return _asset;
+        return _graphics;
     }
 
-    void asset(Asset assetManager) pure @safe
+    void graphics(Graphic graphics) pure @safe
     {
         import std.exception : enforce;
 
-        enforce(assetManager, "Asset manager must not be null");
-        _asset = assetManager;
+        enforce(graphics, "Graphic must not be null");
+        _graphics = graphics;
     }
 
     bool hasInput() const nothrow pure @safe
@@ -100,63 +97,6 @@ class GraphicsComponent : UniComponent
         _input = input;
     }
 
-    bool hasMedia() const nothrow pure @safe
-    {
-        return _media !is null;
-    }
-
-    inout(MultiMedia) media() inout nothrow pure @safe
-    out (_media; _media !is null)
-    {
-        return _media;
-    }
-
-    void media(MultiMedia newMedia) pure @safe
-    {
-        import std.exception : enforce;
-
-        enforce(newMedia, "Multimedia system must not be null");
-        _media = newMedia;
-    }
-
-    bool hasGraphics() const nothrow pure @safe
-    {
-        return _graphics !is null;
-    }
-
-    inout(Graphics) graphics() inout nothrow pure @safe
-    out (_graphics; _graphics !is null)
-    {
-        return _graphics;
-    }
-
-    void graphics(Graphics graphics) pure @safe
-    {
-        import std.exception : enforce;
-
-        enforce(graphics, "Graphics must not be null");
-        _graphics = graphics;
-    }
-
-    bool hasEventManager() const nothrow pure @safe
-    {
-        return _eventManager !is null;
-    }
-
-    inout(KitEventManager) eventManager() inout nothrow pure @safe
-    out (_eventManager; _eventManager !is null)
-    {
-        return _eventManager;
-    }
-
-    void eventManager(KitEventManager manager) pure @safe
-    {
-        import std.exception : enforce;
-
-        enforce(manager, "Event manager must not be null");
-        _eventManager = manager;
-    }
-
     bool hasPlatform() const nothrow pure @safe
     {
         return _platform !is null;
@@ -174,6 +114,25 @@ class GraphicsComponent : UniComponent
 
         enforce(p, "Platform must not be null");
         _platform = p;
+    }
+
+    bool hasAsset() const nothrow pure @safe
+    {
+        return _asset !is null;
+    }
+
+    inout(Asset) asset() inout nothrow pure @safe
+    out (_asset; _asset !is null)
+    {
+        return _asset;
+    }
+
+    void asset(Asset assetManager) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(assetManager, "Asset manager must not be null");
+        _asset = assetManager;
     }
 
     bool hasI18n() const nothrow pure @safe
@@ -223,5 +182,24 @@ class GraphicsComponent : UniComponent
     out (_window; _window !is null)
     {
         return _windowing.main;
+    }
+
+    bool hasMedia() const nothrow pure @safe
+    {
+        return _media !is null;
+    }
+
+    inout(MultiMedia) media() inout nothrow pure @safe
+    out (_media; _media !is null)
+    {
+        return _media;
+    }
+
+    void media(MultiMedia newMedia) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(newMedia, "Multimedia system must not be null");
+        _media = newMedia;
     }
 }

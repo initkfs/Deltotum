@@ -1,4 +1,4 @@
-module api.dm.kit.graphics.graphics;
+module api.dm.kit.graphics.graphic;
 
 import api.core.components.units.services.loggable_unit;
 import api.core.utils.factories : ProviderFactory;
@@ -27,7 +27,7 @@ import api.dm.com.graphics.com_blend_mode : ComBlendMode;
 /**
  * Authors: initkfs
  */
-class Graphics : LoggableUnit
+class Graphic : LoggableUnit
 {
     //TODO remove
     static RGBA defaultColor = RGBA.red;

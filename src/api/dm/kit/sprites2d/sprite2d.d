@@ -358,7 +358,7 @@ class Sprite2d : EventKitTarget
     {
         // if (_gContext)
         // {
-        //     throw new Exception("Graphics context already exists");
+        //     throw new Exception("Graphic context already exists");
         // }
         _gContext = newGraphicsContext;
         assert(_gContext);

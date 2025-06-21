@@ -480,7 +480,7 @@ class Controls : Control
         // tp.addCreate([rField, gField, bField]);
         // tp.alignFields;
 
-        //import api.dm.kit.media.aimedia.fusion_brain_api;
+        //import api.dm.kit.addon.media.aimedia.fusion_brain_api;
         // auto brainApi = new FusionBrainApi(logging, config, context);
         // brainApi.onImageBinaryData = (data) {
 

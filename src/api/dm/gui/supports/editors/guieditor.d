@@ -39,7 +39,7 @@ class GuiEditor : GuiScene
 
         import api.dm.gui.supports.editors.sections.graphics : Grahpics;
 
-        auto graphicsTab = new Tab("Graphics");
+        auto graphicsTab = new Tab("Graphic");
         graphicsTab.content = new Grahpics;
         root.addCreate(graphicsTab);
 

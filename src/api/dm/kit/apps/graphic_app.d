@@ -10,7 +10,7 @@ import api.core.apps.cli_app : CliApp;
 import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.core.components.uni_component : UniComponent;
-import api.dm.kit.graphics.graphics : Graphics;
+import api.dm.kit.graphics.graphic : Graphic;
 import api.dm.kit.assets.asset : Asset;
 
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
@@ -240,7 +240,6 @@ abstract class GraphicApp : CliApp
         component.input = _input;
         component.platform = _platform;
         component.i18n = _i18n;
-        component.eventManager = eventManager;
         component.windowing = windowing;
     }
 
@@ -314,9 +313,9 @@ abstract class GraphicApp : CliApp
         exit;
     }
 
-    Graphics createGraphics(Logging logging, ComRenderer renderer)
+    Graphic createGraphics(Logging logging, ComRenderer renderer)
     {
-        return new Graphics(logging, renderer);
+        return new Graphic(logging, renderer);
     }
 
     Asset createAsset(Logging logging, Config config, Context context, ComFont delegate() comFontProvider)
@@ -664,7 +663,7 @@ abstract class GraphicApp : CliApp
     {
         import std.exception : enforce;
 
-        enforce(services !is null, "Graphics services must not be null");
+        enforce(services !is null, "Graphic services must not be null");
         _graphicServices = services;
     }
 

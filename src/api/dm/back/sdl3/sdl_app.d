@@ -16,7 +16,7 @@ import api.dm.gui.apps.gui_app : GuiApp;
 import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.dm.kit.events.kit_event_manager : KitEventManager;
 import api.dm.back.sdl3.sdl_event_processor : SdlEventProcessor;
-import api.dm.kit.graphics.graphics : Graphics;
+import api.dm.kit.graphics.graphic : Graphic;
 import api.dm.gui.interacts.interact : Interact;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.assets.asset : Asset;
@@ -130,7 +130,7 @@ class SdlApp : GuiApp
             return initRes;
         }
 
-        uservices.logger.trace("Graphics app initialized, starting backend");
+        uservices.logger.trace("Graphic app initialized, starting backend");
 
         if (isHeadless)
         {
@@ -863,7 +863,7 @@ class SdlApp : GuiApp
         window.theme = theme;
         window.interact = interact;
 
-        import api.dm.kit.graphics.graphics : Graphics;
+        import api.dm.kit.graphics.graphic : Graphic;
 
         //TODO factory method
         windowBuilder.graphics = createGraphics(uservices.logging, sdlRenderer);

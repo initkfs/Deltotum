@@ -1,4 +1,4 @@
-module api.dm.kit.media.aimedia.fusion_brain_api;
+module api.dm.kit.addon.media.aimedia.fusion_brain_api;
 
 import api.core.components.units.services.application_unit : ApplicationUnit;
 import api.core.contexts.context : Context;

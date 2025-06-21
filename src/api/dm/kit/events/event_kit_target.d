@@ -40,7 +40,7 @@ mixin template EventPhaseProcesor()
 
     static foreach (e; AllAppEvents)
     {
-        mixin((i"void onEventPhase(ref $(e.stringof) e, $(EventKitPhase.stringof) phase){}").text);
+        mixin(text("void onEventPhase(ref ", e.stringof, " e, ", EventKitPhase.stringof, " phase){}"));
     }
 }
 
