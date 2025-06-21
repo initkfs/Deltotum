@@ -2,7 +2,7 @@ module api.dm.kit.sprites2d.textures.vectors.vector_texture;
 
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
+import api.dm.kit.graphics.canvases.graphics_canvas : GraphicsCanvas;
 
 import api.dm.com.graphics.com_surface : ComSurface;
 
@@ -296,11 +296,11 @@ class VectorTexture : Texture2d
         return true;
     }
 
-    override GraphicsContext newGraphicsContext()
+    override GraphicsCanvas newGraphicsContext()
     {
-        import api.dm.kit.sprites2d.textures.vectors.contexts.vector_graphics_context : VectorGraphicsContext;
+        import api.dm.kit.sprites2d.textures.vectors.canvases.vector_canvas : VectorCanvas;
 
-        return new VectorGraphicsContext(cairoContext);
+        return new VectorCanvas(cairoContext);
     }
 
     override void color(RGBA newColor)

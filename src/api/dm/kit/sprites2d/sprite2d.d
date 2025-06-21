@@ -16,7 +16,7 @@ import api.dm.kit.events.focus.focus_event : FocusEvent;
 import api.dm.kit.inputs.keyboards.events.text_input_event : TextInputEvent;
 import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
+import api.dm.kit.graphics.canvases.graphics_canvas : GraphicsCanvas;
 import api.dm.kit.scenes.scene2d : Scene2d;
 
 import std.container : DList;
@@ -217,7 +217,7 @@ class Sprite2d : EventKitTarget
     protected
     {
         Sprite2d _hitbox;
-        GraphicsContext _gContext;
+        GraphicsCanvas _gContext;
 
         double _width = 0;
         double _height = 0;
@@ -342,11 +342,11 @@ class Sprite2d : EventKitTarget
         isCreated = true;
     }
 
-    GraphicsContext newGraphicsContext()
+    GraphicsCanvas newGraphicsContext()
     {
-        import api.dm.kit.graphics.contexts.renderer_graphics_context : RendererGraphicsContext;
+        import api.dm.kit.graphics.canvases.renderer_canvas : RendererCanvas;
 
-        return new RendererGraphicsContext(this.graphics);
+        return new RendererCanvas(this.graphics);
     }
 
     bool hasGraphicsContext()
@@ -2676,14 +2676,14 @@ class Sprite2d : EventKitTarget
         opacity = v;
     }
 
-    GraphicsContext canvas()
+    GraphicsCanvas canvas()
 
     out (_gContext; _gContext !is null)
     {
         return _gContext;
     }
 
-    void canvas(GraphicsContext context)
+    void canvas(GraphicsCanvas context)
     in (context !is null)
     {
         _gContext = context;

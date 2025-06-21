@@ -1,6 +1,6 @@
-module api.dm.kit.sprites2d.textures.vectors.contexts.vector_graphics_context;
+module api.dm.kit.sprites2d.textures.vectors.canvases.vector_canvas;
 
-import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext, GradientStopPoint;
+import api.dm.kit.graphics.canvases.graphics_canvas : GraphicsCanvas, GradientStopPoint;
 import api.dm.sys.cairo.cairo_context : CairoContext;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.vec2 : Vec2d;
@@ -11,7 +11,7 @@ import api.dm.sys.cairo.libs;
 /**
  * Authors: initkfs
  */
-class VectorGraphicsContext : GraphicsContext
+class VectorCanvas : GraphicsCanvas
 {
     protected
     {
@@ -47,9 +47,9 @@ class VectorGraphicsContext : GraphicsContext
 
     RGBA color() => lastColor;
 
-    void lineEnd(GraphicsContext.LineEnd end)
+    void lineEnd(GraphicsCanvas.LineEnd end)
     {
-        final switch (end) with (GraphicsContext.LineEnd)
+        final switch (end) with (GraphicsCanvas.LineEnd)
         {
             case butt:
                 cairo_set_line_cap(cr, cairo_line_cap_t.CAIRO_LINE_CAP_BUTT);
@@ -63,9 +63,9 @@ class VectorGraphicsContext : GraphicsContext
         }
     }
 
-    void lineJoin(GraphicsContext.LineJoin joinType)
+    void lineJoin(GraphicsCanvas.LineJoin joinType)
     {
-        final switch (joinType) with (GraphicsContext.LineJoin)
+        final switch (joinType) with (GraphicsCanvas.LineJoin)
         {
             case miter:
                 cairo_set_line_join(cr, cairo_line_join_t.CAIRO_LINE_JOIN_MITER);

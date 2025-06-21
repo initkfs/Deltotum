@@ -286,7 +286,7 @@ class ColorPickerDialog : Control
             {
                 auto ctx = canvas;
 
-                import api.dm.kit.graphics.contexts.graphics_context : GradientStopPoint;
+                import api.dm.kit.graphics.canvases.graphics_canvas : GradientStopPoint;
                 import api.math.geom2.vec2 : Vec2d;
 
                 enum pointsCount = 10;

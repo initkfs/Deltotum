@@ -1,7 +1,7 @@
-module api.dm.kit.graphics.contexts.renderer_graphics_context;
+module api.dm.kit.graphics.canvases.renderer_canvas;
 
-import api.dm.kit.graphics.contexts.state_graphics_context : StateGraphicsContext;
-import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext, GradientStopPoint;
+import api.dm.kit.graphics.canvases.state_canvas : StateCanvas;
+import api.dm.kit.graphics.canvases.graphics_canvas : GraphicsCanvas, GradientStopPoint;
 import api.dm.kit.graphics.graphics : Graphics;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.vec2 : Vec2d;
@@ -9,7 +9,7 @@ import api.math.geom2.vec2 : Vec2d;
 /**
  * Authors: initkfs
  */
-class RendererGraphicsContext : StateGraphicsContext
+class RendererCanvas : StateCanvas
 {
     protected
     {
@@ -37,12 +37,12 @@ class RendererGraphicsContext : StateGraphicsContext
         graphics.restoreColor;
     }
 
-    void lineEnd(GraphicsContext.LineEnd end)
+    void lineEnd(GraphicsCanvas.LineEnd end)
     {
 
     }
 
-    void lineJoin(GraphicsContext.LineJoin join)
+    void lineJoin(GraphicsCanvas.LineJoin join)
     {
 
     }

@@ -2,8 +2,8 @@ module api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d;
 
 import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
-import api.dm.kit.sprites2d.textures.vectors.contexts.vector_graphics_context : VectorGraphicsContext;
+import api.dm.kit.graphics.canvases.graphics_canvas : GraphicsCanvas;
+import api.dm.kit.sprites2d.textures.vectors.canvases.vector_canvas : VectorCanvas;
 
 /**
  * Authors: initkfs

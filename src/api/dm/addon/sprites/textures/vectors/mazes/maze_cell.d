@@ -64,9 +64,9 @@ class MazeCell : Sprite2d
 
             override void createTextureContent()
             {
-                import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
+                import api.dm.kit.graphics.canvases.graphics_canvas : GraphicsCanvas;
 
-                canvas.lineEnd(GraphicsContext.LineEnd.round);
+                canvas.lineEnd(GraphicsCanvas.LineEnd.round);
                 canvas.lineWidth(style.lineWidth);
 
                 //TODO check if no walls

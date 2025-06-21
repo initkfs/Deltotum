@@ -2,9 +2,9 @@ module api.dm.kit.sprites2d.textures.vectors.vector_texture_mut;
 
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.graphics.contexts.graphics_context : GraphicsContext;
+import api.dm.kit.graphics.canvases.graphics_canvas : GraphicsCanvas;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.kit.sprites2d.textures.vectors.contexts.vector_graphics_context : VectorGraphicsContext;
+import api.dm.kit.sprites2d.textures.vectors.canvases.vector_canvas : VectorCanvas;
 
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.math.geom2.rect2 : Rect2d;
@@ -74,13 +74,13 @@ class VectorTextureMut : Texture2d
         });
     }
 
-    protected void drawTo(GraphicsContext context, Vec2d next)
+    protected void drawTo(GraphicsCanvas context, Vec2d next)
     {
         context.moveTo(center.x + prevPoint.x, center.y + prevPoint.y);
         context.lineTo(center.x + next.x, center.y + next.y);
     }
 
-    void updateTextureDraw(scope void delegate(VectorGraphicsContext) onContext)
+    void updateTextureDraw(scope void delegate(VectorCanvas) onContext)
     {
         updateTexture((context) {
             context.color = style.lineColor;
@@ -97,7 +97,7 @@ class VectorTextureMut : Texture2d
         });
     }
 
-    void updateTexture(scope void delegate(VectorGraphicsContext) onContext)
+    void updateTexture(scope void delegate(VectorCanvas) onContext)
     {
         assert(texture);
         if (const err = texture.lock)
@@ -137,7 +137,7 @@ class VectorTextureMut : Texture2d
             cairoContext.dispose;
         }
 
-        auto graphicContext = new VectorGraphicsContext(cairoContext);
+        auto graphicContext = new VectorCanvas(cairoContext);
         onContext(graphicContext);
 
         // if (const err = texture.update(Rect2d(0, 0, width, height), pixels, pitch))
