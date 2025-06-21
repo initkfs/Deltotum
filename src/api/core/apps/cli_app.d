@@ -174,7 +174,7 @@ class CliApp : SimpleUnit
     void exit(int code = 0)
     {
         assert(uservices.context);
-        uservices.context.appContext.exit(code);
+        uservices.context.app.exit(code);
     }
 
     UniComponent newUniServices() => new UniComponent;
@@ -285,12 +285,12 @@ class CliApp : SimpleUnit
                 "User directory not found");
         }
 
-        auto appContext = newAppContext(curDir, dataDirectory, userDir, isDebugMode, isSilentMode);
-        auto platformContext = newPlatformContext;
+        auto app = newAppContext(curDir, dataDirectory, userDir, isDebugMode, isSilentMode);
+        auto platform = newPlatformContext;
         
         auto locator = newServiceLocator;
         
-        auto context = newContext(appContext, platformContext, locator);
+        auto context = newContext(app, platform, locator);
         return context;
     }
 
@@ -303,9 +303,9 @@ class CliApp : SimpleUnit
     
     LocatorContext newServiceLocator() =>  new LocatorContext;
 
-    Context newContext(AppContext appContext, PlatformContext platformContext, LocatorContext locator)
+    Context newContext(AppContext app, PlatformContext platform, LocatorContext locator)
     {
-        return new Context(appContext, platformContext, locator);
+        return new Context(app, platform, locator);
     }
 
     Config newConfigFromFile(string configFile)
@@ -363,7 +363,7 @@ class CliApp : SimpleUnit
             if (!configDir.isAbsolute)
             {
                 const mustBeDataDir = context
-                    .appContext.dataDir;
+                    .app.dataDir;
                 if (
                     mustBeDataDir.length == 0)
                 {
@@ -377,7 +377,7 @@ class CliApp : SimpleUnit
         else
         {
             const mustBeDataDir = context
-                .appContext.dataDir;
+                .app.dataDir;
             if (mustBeDataDir.length > 0)
             {
                 configDir = buildPath(mustBeDataDir, defaultConfigsDir);
@@ -598,7 +598,7 @@ class CliApp : SimpleUnit
         }
         else
         {
-            const mustBeDataDir = context.appContext.dataDir;
+            const mustBeDataDir = context.app.dataDir;
             if (mustBeDataDir.length == 0)
             {
                 logging.logger.infof(

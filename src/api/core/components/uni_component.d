@@ -213,8 +213,8 @@ class UniComponent : SimpleUnit
     }
 
     bool hasContext() const nothrow pure @safe => _context !is null;
-    const(AppContext) appContext() pure @safe => context.appContext;
-    const(PlatformContext) platformContext() pure @safe => context.platformContext;
+    const(AppContext) app() pure @safe => context.app;
+    const(PlatformContext) platform() pure @safe => context.platform;
 
     inout(Context) context() inout nothrow pure @safe
     out (_context; _context !is null)

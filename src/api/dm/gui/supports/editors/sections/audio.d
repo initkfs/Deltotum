@@ -271,7 +271,7 @@ class Audio : Control
                 media.mixer.mixer.fadeOut(noteChunk.lastChannel, 5);
             }
 
-            // context.platformContext.sleep(5);
+            // context.platform.sleep(5);
             // if (const err = noteChunk.comChunk.playFadeIn(400))
             // {
             //     logger.error(err.toString);

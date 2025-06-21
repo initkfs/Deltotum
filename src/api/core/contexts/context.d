@@ -10,42 +10,42 @@ import api.core.contexts.locators.locator_context : LocatorContext;
  */
 class Context : ComponentService
 {
-    AppContext appContext;
-    PlatformContext platformContext;
-    LocatorContext locatorContext;
+    AppContext app;
+    PlatformContext platform;
+    LocatorContext locator;
 
-    this(AppContext appContext, PlatformContext platformContext, LocatorContext locatorContext) pure @safe
+    this(AppContext app, PlatformContext platform, LocatorContext locator) pure @safe
     {
-        assert(appContext);
-        assert(platformContext);
-        assert(locatorContext);
+        assert(app);
+        assert(platform);
+        assert(locator);
 
-        this.appContext = appContext;
-        this.platformContext = platformContext;
-        this.locatorContext = locatorContext;
+        this.app = app;
+        this.platform = platform;
+        this.locator = locator;
     }
 
-    this(immutable AppContext appContext, immutable PlatformContext platformContext, immutable LocatorContext locatorContext) immutable pure @safe
+    this(immutable AppContext app, immutable PlatformContext platform, immutable LocatorContext locator) immutable pure @safe
     {
-        assert(appContext);
-        assert(platformContext);
-        assert(locatorContext);
+        assert(app);
+        assert(platform);
+        assert(locator);
 
-        this.appContext = appContext;
-        this.platformContext = platformContext;
-        this.locatorContext = locatorContext;
+        this.app = app;
+        this.platform = platform;
+        this.locator = locator;
     }
 
     immutable(Context) idup()
     {
-        return new immutable Context(appContext.idup, platformContext.idup, locatorContext.idup);
+        return new immutable Context(app.idup, platform.idup, locator.idup);
     }
 }
 
 unittest
 {
     immutable c = new immutable Context(new AppContext, new PlatformContext, new LocatorContext);
-    assert(is(typeof(c.appContext) : immutable(AppContext)));
-    assert(is(typeof(c.platformContext) : immutable(PlatformContext)));
-    assert(is(typeof(c.locatorContext) : immutable(LocatorContext)));
+    assert(is(typeof(c.app) : immutable(AppContext)));
+    assert(is(typeof(c.platform) : immutable(PlatformContext)));
+    assert(is(typeof(c.locator) : immutable(LocatorContext)));
 }

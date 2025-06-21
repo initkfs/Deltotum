@@ -130,7 +130,7 @@ abstract class GraphicApp : CliApp
 
     I18n createI18n(Logging logging, Config config, Context context)
     {
-        const dataDir = context.appContext.dataDir;
+        const dataDir = context.app.dataDir;
         if (dataDir.length == 0)
         {
             logging.logger.trace("Not found data dir, i18n not loaded");
