@@ -10,8 +10,6 @@ import api.core.supports.null_support : NullSupport;
 import api.core.events.null_event_bridge: NullEventBridge;
 import api.core.depends.null_dep: NullDep;
 import api.core.mems.null_memory: NullMemory;
-import api.core.caps.null_cap: NullCap;
-
 
 /**
  * Authors: initkfs
@@ -29,7 +27,6 @@ class NullUniComponent : UniComponent
         _cli = new NullCli;
         _resources = new NullResourcing;
         _support = new NullSupport;
-        _cap = new NullCap;
         _eventBridge = new NullEventBridge;
         _dep = new NullDep;
         isBuilt = true;

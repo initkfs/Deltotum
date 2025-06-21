@@ -1,6 +1,8 @@
 module api.dm.kit.apps.caps.cap_graphics;
 
-class CapGraphics
+import api.core.components.component_service : ComponentService;
+
+class CapGraphics : ComponentService
 {
     bool isAudio;
     bool isJoystick;

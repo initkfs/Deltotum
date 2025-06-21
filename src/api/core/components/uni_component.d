@@ -13,8 +13,6 @@ import api.core.clis.cli : Cli;
 import api.core.supports.support : Support;
 import api.core.resources.locals.local_resources : LocalResources;
 import api.core.resources.resourcing : Resourcing;
-import api.core.caps.cap : Cap;
-import api.core.caps.core.cap_core : CapCore;
 import api.core.events.event_bridge : EventBridge;
 import api.core.events.bus.event_bus : EventBus;
 import api.core.depends.dep : Dep;
@@ -54,7 +52,6 @@ class UniComponent : SimpleUnit
         @Service Cli _cli;
         @Service Resourcing _resources;
         @Service Support _support;
-        @Service Cap _cap;
         @Service EventBridge _eventBridge;
         @Service Dep _dep;
     }
@@ -332,23 +329,6 @@ class UniComponent : SimpleUnit
 
         enforce(resources !is null, "Resourcing must not be null");
         _resources = resources;
-    }
-
-    bool hasCap() const nothrow pure @safe => _cap !is null;
-    inout(CapCore) capCore() inout nothrow pure @safe => cap.capCore;
-
-    inout(Cap) cap() inout nothrow pure @safe
-    out (_cap; _cap !is null)
-    {
-        return _cap;
-    }
-
-    void cap(Cap newCap) pure @safe
-    {
-        import std.exception : enforce;
-
-        enforce(newCap !is null, "Capabilities must not be null");
-        _cap = newCap;
     }
 
     bool hasEventBridge() const nothrow pure @safe => _eventBridge !is null;

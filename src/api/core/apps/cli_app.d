@@ -16,8 +16,6 @@ import api.core.supports.support : Support;
 import api.core.contexts.apps.app_context : AppContext;
 import api.core.resources.locals.local_resources : LocalResources;
 import api.core.resources.resourcing : Resourcing;
-import api.core.caps.cap : Cap;
-import api.core.caps.core.cap_core : CapCore;
 import api.core.events.event_bridge : EventBridge;
 import api.core.events.bus.event_bus : EventBus;
 import api.core.events.bus.core_bus_events : CoreBusEvents;
@@ -71,8 +69,6 @@ class CliApp : SimpleUnit
 
             _uniServices = newUniServices;
             assert(_uniServices);
-
-            uservices.cap = createCap;
 
             auto cli = createCli(args);
             assert(cli);
@@ -192,14 +188,6 @@ class CliApp : SimpleUnit
     }
 
     UniComponent newUniServices() => new UniComponent;
-
-    CapCore newCapCore() => new CapCore;
-
-    Cap createCap()
-    {
-        auto capCore = newCapCore;
-        return new Cap(capCore);
-    }
 
     protected void consumeThrowable(Throwable ex, bool isRethrow = true)
     {
