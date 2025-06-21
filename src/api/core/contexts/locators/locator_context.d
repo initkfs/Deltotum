@@ -1,15 +1,12 @@
-module api.core.depends.locators.service_locator;
+module api.core.contexts.locators.locator_context;
 
-import api.core.components.units.services.loggable_unit : LoggableUnit;
-
-import api.core.loggers.logging : Logging;
 import std.variant;
 
 /**
  * Authors: initkfs
  */
-//TODO logging
-class ServiceLocator : LoggableUnit
+
+class LocatorContext
 {
     private
     {
@@ -17,19 +14,15 @@ class ServiceLocator : LoggableUnit
         Object[string] objects;
     }
 
-    this(Logging logging) pure @safe
+    this() pure @safe
     {
-        super(logging);
+
     }
 
-    this(const Logging logging) const pure @safe
+    this(immutable Variant[string] variants, immutable Object[string] objects) immutable pure @safe
     {
-        super(logging);
-    }
-
-    this(immutable Logging logging) immutable pure @safe
-    {
-        super(logging);
+        this.variants = variants;
+        this.objects = objects;
     }
 
     inout(Variant*) hasVarPtr(string key) inout pure @safe
@@ -70,7 +63,7 @@ class ServiceLocator : LoggableUnit
         throw new Exception("Not found variant with key: " ~ key);
     }
 
-    T getVarTo(T)(string key)
+    inout(T) getVarTo(T)(string key) inout
     {
         Variant service = getVar(key);
         if (!service.convertsTo!T)
@@ -110,20 +103,26 @@ class ServiceLocator : LoggableUnit
         {
             return *objPtr;
         }
-        
+
         throw new Exception("Not found object with key: " ~ key);
+    }
+
+    immutable(LocatorContext) idup()
+    {
+        import std.conv : to;
+
+        return new immutable LocatorContext(variants.to!(immutable(typeof(variants))), objects.to!(
+                immutable(typeof(objects))));
     }
 }
 
 unittest
 {
-    import api.core.loggers.null_logging : NullLogging;
-
     import std.exception : assertThrown;
 
     string key1 = "key";
 
-    auto locator = new ServiceLocator(new NullLogging());
+    auto locator = new LocatorContext;
     Variant a;
     assertThrown(locator.putVar(key1, a));
     a = 5;
@@ -139,4 +138,8 @@ unittest
     assert(locator.putVar(fkey, f));
     assertThrown(locator.getVarTo!(string delegate())(fkey));
     assert(locator.getVarTo!(int delegate())(fkey)() == 5);
+
+    immutable immLocator = locator.idup;
+    assert(immLocator.hasVar(key1));
+    assert(immLocator.getVarTo!int(key1) == 5);
 }

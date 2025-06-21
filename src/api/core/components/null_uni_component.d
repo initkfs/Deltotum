@@ -8,7 +8,6 @@ import api.core.clis.null_cli : NullCli;
 import api.core.resources.null_resourcing : NullResourcing;
 import api.core.supports.null_support : NullSupport;
 import api.core.events.null_event_bridge: NullEventBridge;
-import api.core.depends.null_dep: NullDep;
 import api.core.mems.null_memory: NullMemory;
 
 /**
@@ -28,7 +27,6 @@ class NullUniComponent : UniComponent
         _resources = new NullResourcing;
         _support = new NullSupport;
         _eventBridge = new NullEventBridge;
-        _dep = new NullDep;
         isBuilt = true;
     }
 }

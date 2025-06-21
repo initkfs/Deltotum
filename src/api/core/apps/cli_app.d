@@ -19,8 +19,7 @@ import api.core.resources.resourcing : Resourcing;
 import api.core.events.event_bridge : EventBridge;
 import api.core.events.bus.event_bus : EventBus;
 import api.core.events.bus.core_bus_events : CoreBusEvents;
-import api.core.depends.dep : Dep;
-import api.core.depends.locators.service_locator : ServiceLocator;
+import api.core.contexts.locators.locator_context : LocatorContext;
 import api.core.mems.memory : Memory;
 import api.core.util.allocs.allocator : Allocator;
 import api.core.util.allocs.mallocator : Mallocator;
@@ -158,15 +157,6 @@ class CliApp : SimpleUnit
                 uservices.eventBus.fire(CoreBusEvents.build_resourcing, uservices.resources);
             }
 
-            uservices.dep = createDep(uservices.logging, uservices.config, uservices
-                    .context);
-            assert(uservices.dep);
-            uservices.logger.trace("Dependency service built");
-            version (EventBusCoreEvents)
-            {
-                uservices.eventBus.fire(CoreBusEvents.build_dep, uservices.locator);
-            }
-
             uservices.isBuilt = true;
             version (EventBusCoreEvents)
             {
@@ -295,9 +285,12 @@ class CliApp : SimpleUnit
                 "User directory not found");
         }
 
-        const appContext = newAppContext(curDir, dataDirectory, userDir, isDebugMode, isSilentMode);
-        const platformContext = newPlatformContext;
-        auto context = newContext(appContext, platformContext);
+        auto appContext = newAppContext(curDir, dataDirectory, userDir, isDebugMode, isSilentMode);
+        auto platformContext = newPlatformContext;
+        
+        auto locator = newServiceLocator;
+        
+        auto context = newContext(appContext, platformContext, locator);
         return context;
     }
 
@@ -306,14 +299,13 @@ class CliApp : SimpleUnit
         return new AppContext(curDir, dataDir, userDir, isDebugMode, isSilentMode);
     }
 
-    PlatformContext newPlatformContext()
-    {
-        return new PlatformContext;
-    }
+    PlatformContext newPlatformContext() => new PlatformContext;
+    
+    LocatorContext newServiceLocator() =>  new LocatorContext;
 
-    Context newContext(const AppContext appContext, const PlatformContext platformContext)
+    Context newContext(AppContext appContext, PlatformContext platformContext, LocatorContext locator)
     {
-        return new Context(appContext, platformContext);
+        return new Context(appContext, platformContext, locator);
     }
 
     Config newConfigFromFile(string configFile)
@@ -662,28 +654,6 @@ class CliApp : SimpleUnit
     EventBridge newEventBridge(EventBus bus)
     {
         return new EventBridge(bus);
-    }
-
-    protected ServiceLocator createLocator(Logging logging, Config config, Context context)
-    {
-        return newServiceLocator(logging);
-    }
-
-    ServiceLocator newServiceLocator(
-        Logging logging)
-    {
-        return new ServiceLocator(logging);
-    }
-
-    Dep createDep(Logging logging, Config config, Context context)
-    {
-        auto locator = createLocator(logging, config, context);
-        return newDep(locator);
-    }
-
-    Dep newDep(ServiceLocator locator)
-    {
-        return new Dep(locator);
     }
 
     Mallocator newMallocator()

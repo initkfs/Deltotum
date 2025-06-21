@@ -15,8 +15,7 @@ import api.core.resources.locals.local_resources : LocalResources;
 import api.core.resources.resourcing : Resourcing;
 import api.core.events.event_bridge : EventBridge;
 import api.core.events.bus.event_bus : EventBus;
-import api.core.depends.dep : Dep;
-import api.core.depends.locators.service_locator : ServiceLocator;
+import api.core.contexts.locators.locator_context : LocatorContext;
 import api.core.mems.memory : Memory;
 import api.core.util.allocs.allocator : Allocator;
 
@@ -48,12 +47,13 @@ class UniComponent : SimpleUnit
         @Service Context _context;
         @Service Logging _logging;
         @Service Configuration _configs;
-        @Service Memory _memory;
+
         @Service Cli _cli;
         @Service Resourcing _resources;
+
         @Service Support _support;
         @Service EventBridge _eventBridge;
-        @Service Dep _dep;
+        @Service Memory _memory;
     }
 
     void build(UniComponent uniComponent)
@@ -346,22 +346,5 @@ class UniComponent : SimpleUnit
 
         enforce(eb !is null, "Event bridge must not be null");
         _eventBridge = eb;
-    }
-
-    bool hasDep() const nothrow pure @safe => _dep !is null;
-    inout(ServiceLocator) locator() inout nothrow pure @safe => dep.locator;
-
-    inout(Dep) dep() inout nothrow pure @safe
-    out (_dep; _dep !is null)
-    {
-        return _dep;
-    }
-
-    void dep(Dep newDep) pure @safe
-    {
-        import std.exception : enforce;
-
-        enforce(newDep !is null, "Dependency service must not be null");
-        _dep = newDep;
     }
 }

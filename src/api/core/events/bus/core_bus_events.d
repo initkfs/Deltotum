@@ -12,7 +12,6 @@ enum CoreBusEvents {
     build_logging = "build_logging",
     build_resourcing = "build_resourcing",
     build_memory = "build_memory",
-    build_dep = "build_dep",
-
+    
     build_core_services = "build_core_services"
 }

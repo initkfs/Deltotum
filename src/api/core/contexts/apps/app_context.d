@@ -40,7 +40,7 @@ class AppContext
         string userDir() => _userDir;
     }
 
-    immutable(AppContext) idup() immutable
+    immutable(AppContext) idup()
     {
         return new immutable AppContext(_workDir, _dataDir, _userDir, isDebug, isSilent);
     }
