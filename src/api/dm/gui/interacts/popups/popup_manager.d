@@ -1,4 +1,4 @@
-module api.dm.kit.interacts.popups.popup_manager;
+module api.dm.gui.interacts.popups.popup_manager;
 
 import api.dm.kit.sprites2d.sprite2d: Sprite2d;
 

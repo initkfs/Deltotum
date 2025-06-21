@@ -7,6 +7,7 @@ import api.core.contexts.context : Context;
 import api.core.resources.resourcing : Resourcing;
 import api.dm.kit.apps.loop_app : LoopApp;
 import api.dm.gui.themes.theme : Theme;
+import api.dm.gui.interacts.interact: Interact;
 import api.dm.gui.themes.icons.icon_pack : IconPack;
 import api.dm.kit.apps.loops.loop : Loop;
 
@@ -18,6 +19,7 @@ abstract class GuiApp : LoopApp
     {
         IconPack iconPack;
         Theme theme;
+        Interact interact;
     }
 
     this(Loop loop)
@@ -53,7 +55,11 @@ abstract class GuiApp : LoopApp
                 .context, uservices
                 .resources);
         assert(theme);
-        uservices.logger.trace("Theme load");
+        uservices.logger.trace("Create and load theme");
+
+        interact = createInteract(uservices.logging, uservices.config, uservices
+                .context);
+        uservices.logger.trace("Create interaction");
 
         return AppResult(isExit : false, isInit:
             true);
@@ -78,5 +84,10 @@ abstract class GuiApp : LoopApp
 
         auto theme = themeLoader.createTheme;
         return theme;
+    }
+
+    Interact createInteract(Logging logging, Config config, Context context)
+    {
+        return new Interact;
     }
 }

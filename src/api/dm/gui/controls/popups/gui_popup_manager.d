@@ -1,6 +1,6 @@
 module api.dm.gui.controls.popups.gui_popup_manager;
 
-import api.dm.kit.interacts.popups.popup_manager : PopupManager;
+import api.dm.gui.interacts.popups.popup_manager : PopupManager;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.containers.vbox : VBox;

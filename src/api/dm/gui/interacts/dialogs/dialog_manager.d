@@ -1,4 +1,4 @@
-module api.dm.kit.interacts.dialogs.dialog_manager;
+module api.dm.gui.interacts.dialogs.dialog_manager;
 
 /**
  * Authors: initkfs

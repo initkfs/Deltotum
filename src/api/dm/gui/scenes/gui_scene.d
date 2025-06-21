@@ -2,6 +2,7 @@ module api.dm.gui.scenes.gui_scene;
 
 import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.gui.themes.theme : Theme;
+import api.dm.gui.interacts.interact: Interact;
 import api.dm.gui.supports.sceneview : SceneView;
 import api.dm.gui.components.gui_component : GuiComponent;
 import api.dm.kit.sprites2d.sprite2d: Sprite2d;
@@ -13,6 +14,7 @@ import api.dm.gui.controls.control: Control;
 class GuiScene : Scene2d
 {
     Theme theme;
+    Interact interact;
 
     SceneView debugger;
 
@@ -30,6 +32,12 @@ class GuiScene : Scene2d
         {
             assert(theme, "Theme must not be null");
             guiComponent.theme = theme;
+        }
+
+        if (!guiComponent.hasInteract)
+        {
+            assert(interact, "Interaction must not be null");
+            guiComponent.interact = interact;
         }
         super.addCreate(guiComponent);
     }

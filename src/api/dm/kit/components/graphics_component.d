@@ -14,7 +14,7 @@ import api.dm.kit.events.kit_event_manager : KitEventManager;
 import api.dm.kit.platforms.platform : Platform;
 import api.dm.kit.i18n.i18n : I18n;
 import api.dm.kit.windows.window : Window;
-import api.dm.kit.interacts.interact : Interact;
+import api.dm.gui.interacts.interact : Interact;
 
 /**
  * Authors: initkfs
@@ -32,7 +32,6 @@ class GraphicsComponent : UniComponent
         @Service I18n _i18n;
 
         @Service Windowing _windowing;
-        @Service Interact _interact;
     }
 
     alias build = UniComponent.build;
@@ -224,24 +223,5 @@ class GraphicsComponent : UniComponent
     out (_window; _window !is null)
     {
         return _windowing.main;
-    }
-
-    bool hasInteract() nothrow pure @safe
-    {
-        return _interact !is null;
-    }
-
-    Interact interact() nothrow pure @safe
-    out (_interact; _interact !is null)
-    {
-        return _interact;
-    }
-
-    void interact(Interact interact) pure @safe
-    {
-        import std.exception : enforce;
-
-        enforce(interact !is null, "Interaction must not be null");
-        _interact = interact;
     }
 }

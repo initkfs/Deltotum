@@ -3,6 +3,7 @@ module api.dm.gui.components.gui_component;
 import api.core.components.component_service : Service;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.themes.theme : Theme;
+import api.dm.gui.interacts.interact : Interact;
 
 /**
  * Authors: initkfs
@@ -12,6 +13,7 @@ class GuiComponent : Sprite2d
     protected
     {
         @Service Theme _theme;
+        @Service Interact _interact;
     }
 
     alias build = Sprite2d.build;
@@ -59,6 +61,25 @@ class GuiComponent : Sprite2d
 
         enforce(newTheme, "Theme must not be null");
         _theme = newTheme;
+    }
+
+    bool hasInteract() nothrow pure @safe
+    {
+        return _interact !is null;
+    }
+
+    Interact interact() nothrow pure @safe
+    out (_interact; _interact !is null)
+    {
+        return _interact;
+    }
+
+    void interact(Interact interact) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(interact !is null, "Interaction must not be null");
+        _interact = interact;
     }
 
 }

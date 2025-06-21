@@ -17,7 +17,7 @@ import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.dm.kit.events.kit_event_manager : KitEventManager;
 import api.dm.back.sdl3.sdl_event_processor : SdlEventProcessor;
 import api.dm.kit.graphics.graphics : Graphics;
-import api.dm.kit.interacts.interact : Interact;
+import api.dm.gui.interacts.interact : Interact;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.assets.asset : Asset;
 import api.dm.back.sdl3.sdl_screen : SDLScreen;
@@ -861,6 +861,7 @@ class SdlApp : GuiApp
         uservices.logger.trace("Set theme font: ", theme.defaultMediumFont.fontPath);
 
         window.theme = theme;
+        window.interact = interact;
 
         import api.dm.kit.graphics.graphics : Graphics;
 
@@ -882,9 +883,6 @@ class SdlApp : GuiApp
             &newComImage,
             &newComImageScoped
         );
-
-        auto interact = new Interact;
-        windowBuilder.interact = interact;
 
         windowBuilder.isBuilt = true;
 

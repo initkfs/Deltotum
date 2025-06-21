@@ -40,7 +40,7 @@ import api.dm.kit.platforms.timers.timing : Timing;
 import api.dm.com.graphics.com_screen : ComScreen;
 import api.dm.kit.i18n.i18n : I18n;
 import api.dm.kit.i18n.langs.lang_messages : LangMessages;
-import api.dm.kit.interacts.interact : Interact;
+import api.dm.gui.interacts.interact : Interact;
 import api.dm.kit.factories.factory_kit : FactoryKit;
 import api.dm.kit.windows.windowing : Windowing;
 import api.dm.kit.graphics.colors.rgba : RGBA;

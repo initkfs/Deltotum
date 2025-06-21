@@ -1,7 +1,7 @@
-module api.dm.kit.interacts.interact;
+module api.dm.gui.interacts.interact;
 
-import api.dm.kit.interacts.dialogs.dialog_manager : DialogManager;
-import api.dm.kit.interacts.popups.popup_manager : PopupManager;
+import api.dm.gui.interacts.dialogs.dialog_manager : DialogManager;
+import api.dm.gui.interacts.popups.popup_manager : PopupManager;
 
 /**
  * Authors: initkfs
