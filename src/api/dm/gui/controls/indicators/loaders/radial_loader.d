@@ -25,7 +25,6 @@ class RadialLoader : BaseLoader
     this(size_t segmentsCount = 6)
     {
         this.segmentsCount = segmentsCount;
-        isDrawBounds = true;
     }
 
     override void loadTheme()
@@ -93,10 +92,10 @@ class RadialLoader : BaseLoader
     {
         super.drawContent;
 
-        // if (!isRunning)
-        // {
-        //     return;
-        // }
+        if (!isRunning)
+        {
+            return;
+        }
 
         const bounds = boundsRect;
         const center = bounds.center;

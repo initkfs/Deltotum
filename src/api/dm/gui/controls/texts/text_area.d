@@ -69,6 +69,7 @@ class TextArea : HBox
         super.create;
 
         scroll = new VScroll(0, 1.0);
+        scroll.isBorder = true;
 
         textView = new TextView(tempText);
         textView.isEditable = isEditable;

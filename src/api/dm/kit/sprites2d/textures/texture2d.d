@@ -274,7 +274,7 @@ class Texture2d : Sprite2d
                 logger.error(err.toString);
             }
 
-            if (!isTextureCreated && Math.abs(oldChangedWidth - value) > changeSizeDelta)
+            if (isTextureCreated && Math.abs(oldChangedWidth - value) > changeSizeDelta)
             {
                 if (!isDisableRecreate)
                 {
@@ -308,18 +308,27 @@ class Texture2d : Sprite2d
         }
         import Math = api.dm.math;
 
-        if (texture && Math.abs(oldChangedHeight - value) > changeSizeDelta)
+        if (texture)
         {
-            if (!isDisableRecreate)
+            bool isTextureCreated;
+            if (const err = texture.isCreated(isTextureCreated))
             {
-                if (onPreRecreateHeightOldNew)
-                {
-                    onPreRecreateHeightOldNew(oldChangedHeight, value);
-                }
-                recreate;
+                logger.error(err.toString);
             }
-            oldChangedHeight = value;
-            return true;
+
+            if (isTextureCreated && Math.abs(oldChangedHeight - value) > changeSizeDelta)
+            {
+                if (!isDisableRecreate)
+                {
+                    if (onPreRecreateHeightOldNew)
+                    {
+                        onPreRecreateHeightOldNew(oldChangedHeight, value);
+                    }
+                    recreate;
+                }
+                oldChangedHeight = value;
+                return true;
+            }
         }
 
         return isResized;
