@@ -1,8 +1,8 @@
-module api.dm.kit.assets.fonts.bitmap.bitmap_font_generator;
+module api.dm.kit.assets.fonts.factories.bitmap_font_factory;
 
 import api.dm.com.graphics.com_font : ComFontHinting, ComFont;
 import api.dm.com.graphics.com_surface : ComSurface;
-import api.dm.kit.assets.fonts.font_generator : FontGenerator;
+import api.dm.kit.assets.fonts.factories.font_factory : FontFactory;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 import api.core.utils.factories : ProviderFactory;
 
@@ -10,7 +10,7 @@ import api.dm.kit.assets.fonts.font : Font;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
-import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
+import api.dm.kit.assets.fonts.bitmaps.bitmap_font : BitmapFont;
 import api.dm.kit.i18n.langs.alphabets.alphabet : Alphabet;
 import api.math.geom2.rect2 : Rect2d;
 import api.math.geom2.vec2 : Vec2d;
@@ -23,7 +23,7 @@ import std.stdio;
 /**
  * Authors: initkfs
  */
-class BitmapFontGenerator : FontGenerator
+class BitmapFontFactory : FontFactory
 {
     ProviderFactory!ComSurface comSurfaceProvider;
 

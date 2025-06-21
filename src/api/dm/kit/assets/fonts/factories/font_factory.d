@@ -1,11 +1,11 @@
-module api.dm.kit.assets.fonts.font_generator;
+module api.dm.kit.assets.fonts.factories.font_factory;
 
 import api.dm.kit.components.graphics_component: GraphicsComponent;
 
 /**
  * Authors: initkfs
  */
-class FontGenerator : GraphicsComponent
+class FontFactory : GraphicsComponent
 {
 
 }

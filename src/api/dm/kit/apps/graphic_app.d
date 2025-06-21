@@ -10,13 +10,13 @@ import api.core.apps.cli_app : CliApp;
 import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.core.components.uni_component : UniComponent;
-import api.dm.kit.apps.caps.cap_graphics : CapGraphics;
+import api.dm.kit.caps.cap_graphics : CapGraphics;
 import api.dm.kit.graphics.graphics : Graphics;
 import api.dm.kit.assets.asset : Asset;
 
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
-import api.dm.kit.assets.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
-import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
+import api.dm.kit.assets.fonts.factories.bitmap_font_factory : BitmapFontFactory;
+import api.dm.kit.assets.fonts.bitmaps.bitmap_font : BitmapFont;
 import api.core.utils.factories : ProviderFactory;
 import api.dm.kit.i18n.langs.alphabets.alphabet : Alphabet;
 import api.dm.kit.factories.image_factory : ImageFactory;
@@ -537,9 +537,9 @@ abstract class GraphicApp : CliApp
         return asset;
     }
 
-    BitmapFontGenerator newFontGenerator(ProviderFactory!ComSurface comSurfaceProvider)
+    BitmapFontFactory newFontGenerator(ProviderFactory!ComSurface comSurfaceProvider)
     {
-        return new BitmapFontGenerator(comSurfaceProvider);
+        return new BitmapFontFactory(comSurfaceProvider);
     }
 
     Alphabet[] createMediumFontAlphabets()
@@ -598,7 +598,7 @@ abstract class GraphicApp : CliApp
     }
 
     //TODO split function
-    void createFontBitmaps(BitmapFontGenerator generator, Asset assets, RGBA colorText, RGBA colorTextBackground, scope void delegate(
+    void createFontBitmaps(BitmapFontFactory generator, Asset assets, RGBA colorText, RGBA colorTextBackground, scope void delegate(
             BitmapFont) onBitmap)
     {
         //TODO from config

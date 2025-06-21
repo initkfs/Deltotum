@@ -1,4 +1,4 @@
-module api.dm.kit.utils.state_manager;
+module api.dm.kit.addon.utils.state_manager;
 
 import std.container.util: make;
 import std.container.dlist : DList;

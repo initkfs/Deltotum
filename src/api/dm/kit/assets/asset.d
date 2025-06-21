@@ -12,11 +12,11 @@ import std.stdio;
 
 import api.dm.com.graphics.com_font : ComFont;
 import api.dm.kit.assets.fonts.font : Font;
-import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
+import api.dm.kit.assets.fonts.bitmaps.bitmap_font : BitmapFont;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.core.resources.locals.local_resources : LocalResources;
-import api.dm.kit.assets.fonts.font_cache : FontCache;
+import api.dm.kit.assets.fonts.caches.font_cache : FontCache;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 
 /**

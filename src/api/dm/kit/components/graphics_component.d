@@ -13,7 +13,7 @@ import api.dm.kit.windows.windowing : Windowing;
 import api.dm.kit.screens.screening : Screening;
 import api.dm.kit.screens.single_screen : SingleScreen;
 import api.dm.kit.events.kit_event_manager : KitEventManager;
-import api.dm.kit.apps.caps.cap_graphics : CapGraphics;
+import api.dm.kit.caps.cap_graphics : CapGraphics;
 import api.dm.kit.platforms.platform : Platform;
 import api.dm.kit.i18n.i18n : I18n;
 import api.dm.kit.windows.window : Window;

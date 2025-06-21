@@ -58,7 +58,7 @@ import api.dm.gui.windows.gui_window : GuiWindow;
 import api.dm.kit.apps.loops.integrated_loop : IntegratedLoop;
 import api.dm.kit.apps.loops.interrupted_loop : InterruptedLoop;
 import api.dm.kit.apps.loops.loop : Loop;
-import api.dm.kit.apps.caps.cap_graphics : CapGraphics;
+import api.dm.kit.caps.cap_graphics : CapGraphics;
 import api.dm.kit.events.processing.kit_event_processor : KitEventProcessor;
 
 import std.typecons : Nullable;
@@ -885,10 +885,10 @@ class SdlApp : GuiApp
         //TODO from locale\config;
         if (mode == SdlWindowMode.none)
         {
-            import api.dm.kit.assets.fonts.bitmap.bitmap_font_generator : BitmapFontGenerator;
+            import api.dm.kit.assets.fonts.factories.bitmap_font_factory : BitmapFontFactory;
 
             //TODO build and run services after all
-            import api.dm.kit.assets.fonts.bitmap.bitmap_font : BitmapFont;
+            import api.dm.kit.assets.fonts.bitmaps.bitmap_font : BitmapFont;
 
             auto comSurfProvider = ProviderFactory!ComSurface(
                 &newComSurface,
