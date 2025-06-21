@@ -3,7 +3,7 @@
  */
 module api.core.utils.ptrs.shared_ptr;
 
-import api.core.util.allocs.allocator : AllocFuncType, FreeFuncType, ReallocFuncType;
+import api.core.utils.allocs.allocator : AllocFuncType, FreeFuncType, ReallocFuncType;
 import api.core.utils.ptrs.array_ptr : ArrayPtr;
 
 struct SharedPtr(T, AllocType = ubyte,

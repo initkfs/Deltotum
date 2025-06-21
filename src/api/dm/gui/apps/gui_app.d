@@ -1,6 +1,6 @@
 module api.dm.gui.apps.gui_app;
 
-import api.core.apps.app_init_ret : AppInitRet;
+import api.core.apps.app_result : AppResult;
 import api.core.loggers.logging : Logging;
 import api.core.configs.keyvalues.config : Config;
 import api.core.contexts.context : Context;
@@ -25,7 +25,7 @@ abstract class GuiApp : LoopApp
         super(loop);
     }
 
-    override AppInitRet initialize(string[] args)
+    override AppResult initialize(string[] args)
     {
         const initRes = super.initialize(args);
         if (!initRes.isInit || initRes.isExit)
@@ -55,7 +55,7 @@ abstract class GuiApp : LoopApp
         assert(theme);
         uservices.logger.trace("Theme load");
 
-        return AppInitRet(isExit : false, isInit:
+        return AppResult(isExit : false, isInit:
             true);
     }
 

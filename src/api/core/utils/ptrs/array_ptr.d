@@ -3,7 +3,7 @@
  */
 module api.core.utils.ptrs.array_ptr;
 
-import api.core.util.allocs.allocator : FreeFuncType, ReallocFuncType;
+import api.core.utils.allocs.allocator : FreeFuncType, ReallocFuncType;
 
 mixin template ArrayPtr(
     T,

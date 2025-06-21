@@ -2,7 +2,7 @@ module api.core.apps.cli_app;
 
 import api.core.components.units.simple_unit : SimpleUnit;
 import api.core.apps.crashes.crash_handler : CrashHandler;
-import api.core.apps.app_init_ret : AppInitRet;
+import api.core.apps.app_result : AppResult;
 import api.core.components.uni_component : UniComponent;
 import api.core.loggers.logging : Logging;
 import api.core.configs.configs : Configuration;
@@ -18,8 +18,8 @@ import api.core.resources.locals.local_resources : LocalResources;
 import api.core.resources.resourcing : Resourcing;
 import api.core.contexts.locators.locator_context : LocatorContext;
 import api.core.mems.memory : Memory;
-import api.core.util.allocs.allocator : Allocator;
-import api.core.util.allocs.mallocator : Mallocator;
+import api.core.utils.allocs.allocator : Allocator;
+import api.core.utils.allocs.mallocator : Mallocator;
 import api.core.supports.errors.err_status : ErrStatus;
 import api.core.supports.decisions.decision_system : DecisionSystem;
 
@@ -55,7 +55,7 @@ class CliApp : SimpleUnit
         size_t cliStartupDelayMs;
     }
 
-    AppInitRet initialize(string[] args)
+    AppResult initialize(string[] args)
     {
         super.initialize;
 
@@ -85,7 +85,7 @@ class CliApp : SimpleUnit
             if (cliResult.helpWanted)
             {
                 cli.printer.printHelp(cliResult);
-                return AppInitRet(isExit : true, isInit:
+                return AppResult(isExit : true, isInit:
                     false);
             }
 
@@ -136,7 +136,7 @@ class CliApp : SimpleUnit
             consumeThrowable(e, true);
         }
 
-        return AppInitRet(false, true);
+        return AppResult(false, true);
     }
 
     void exit(int code = 0)

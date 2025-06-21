@@ -10,7 +10,7 @@ import api.dm.com.platforms.results.com_result : ComResult;
 import api.core.loggers.logging : Logging;
 import api.core.configs.keyvalues.config : Config;
 import api.core.contexts.context : Context;
-import api.core.apps.app_init_ret : AppInitRet;
+import api.core.apps.app_result : AppResult;
 import api.core.utils.factories : ProviderFactory;
 import api.dm.gui.apps.gui_app : GuiApp;
 import api.dm.kit.components.graphics_component : GraphicsComponent;
@@ -122,7 +122,7 @@ class SdlApp : GuiApp
         this.id = id.length > 0 ? id : name;
     }
 
-    override AppInitRet initialize(string[] args)
+    override AppResult initialize(string[] args)
     {
         const initRes = super.initialize(args);
         if (!initRes.isInit || initRes.isExit)
@@ -562,7 +562,7 @@ class SdlApp : GuiApp
             }
         };
 
-        return AppInitRet(isExit : false, isInit:
+        return AppResult(isExit : false, isInit:
             true);
     }
 

@@ -1,6 +1,6 @@
 module api.dm.gui.components.gui_component;
 
-import api.core.components.uda : Service;
+import api.core.components.component_service : Service;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.themes.theme : Theme;
 

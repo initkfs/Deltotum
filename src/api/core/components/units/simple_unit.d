@@ -1,7 +1,10 @@
 module api.core.components.units.simple_unit;
 
 import api.core.components.units.unitable : Unitable;
-import api.core.components.units.states.unit_state : UnitState;
+
+enum UnitState {
+    none, initialize, create, run, pause, stop, dispose
+}
 
 /**
  * Authors: initkfs

@@ -1,11 +1,11 @@
-module api.core.apps.app_init_ret;
+module api.core.apps.app_result;
 
 import core.attribute : mustuse;
 
 /**
  * Authors: initkfs
  */
-@mustuse struct AppInitRet
+@mustuse struct AppResult
 {
     bool isExit;
     bool isInit;

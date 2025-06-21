@@ -2,67 +2,57 @@ module api.core.utils.allocs.gc_allocator;
 
 import api.core.utils.ptrs.unique_ptr : UniqPtr;
 
-import api.core.util.allocs.allocator : Allocator;
+import api.core.utils.allocs.allocator : Allocator;
 
 /**
  * Authors: initkfs
  */
-
-bool allocate(T)(size_t size, scope ref T[] ptr) nothrow @safe => allocateGc(
-    size, ptr);
-bool reallocate(T)(size_t newSize, scope ref T[] ptr) nothrow @safe => reallocateGc(
-    newSize, ptr);
-bool deallocate(T)(scope T[] ptr) @nogc nothrow @safe => deallocateGc(ptr);
-
-protected
+bool allocateGc(T)(size_t size, scope ref T[] ptr) nothrow @safe
 {
-    bool allocateGc(T)(size_t size, scope ref T[] ptr) nothrow @safe
+    ptr = new T[](size);
+    return true;
+}
+
+bool reallocateGc(T)(size_t newSize, scope ref T[] ptr) nothrow @trusted
+{
+    if (ptr.length == newSize)
     {
-        ptr = new T[](size);
-        return true;
-    }
-
-    bool reallocateGc(T)(size_t newSize, scope ref T[] ptr) nothrow @trusted
-    {
-        if (ptr.length == newSize)
-        {
-            return false;
-        }
-
-        if (newSize < ptr.length)
-        {
-            ptr = ptr[0 .. newSize];
-            return true;
-        }
-
-        auto newPtr = new T[](newSize);
-        newPtr[0 .. ptr.length] = ptr;
-
-        ptr = newPtr;
-        return true;
-    }
-
-    bool deallocateGc(T)(scope T[] ptr) @nogc nothrow @trusted
-    {
-        import core.memory : GC;
-
-        if (auto arrBlk = GC.addrOf(ptr.ptr))
-        {
-            GC.free(arrBlk);
-            return true;
-        }
-
         return false;
     }
+
+    if (newSize < ptr.length)
+    {
+        ptr = ptr[0 .. newSize];
+        return true;
+    }
+
+    auto newPtr = new T[](newSize);
+    newPtr[0 .. ptr.length] = ptr;
+
+    ptr = newPtr;
+    return true;
+}
+
+bool deallocateGc(T)(scope T[] ptr) @nogc nothrow @trusted
+{
+    import core.memory : GC;
+
+    if (auto arrBlk = GC.addrOf(ptr.ptr))
+    {
+        GC.free(arrBlk);
+        return true;
+    }
+
+    return false;
 }
 
 class GcAllocator(T = ubyte) : Allocator!T
 {
     this() pure nothrow @safe
     {
-        allocFunPtr = &allocate!T;
-        reallocFunPtr = &reallocate!T;
-        freeFunPtr = &deallocate!T;
+        allocFunPtr = &allocateGc!T;
+        reallocFunPtr = &reallocateGc!T;
+        freeFunPtr = &deallocateGc!T;
     }
 }
 

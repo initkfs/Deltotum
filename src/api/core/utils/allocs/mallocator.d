@@ -1,4 +1,4 @@
-module api.core.util.allocs.mallocator;
+module api.core.utils.allocs.mallocator;
 
 import api.core.utils.ptrs.unique_ptr : UniqPtr;
 
@@ -8,46 +8,37 @@ import api.core.utils.ptrs.unique_ptr : UniqPtr;
 
 import core.stdc.stdlib : malloc, realloc, free;
 
-bool allocate(T)(size_t sizeBytes, scope ref T[] ptr) @nogc nothrow @safe => allocateBytes(
-    sizeBytes, ptr);
-bool reallocate(T)(size_t newBytes, scope ref T[] ptr) @nogc nothrow @safe => reallocateBytes(
-    newBytes, ptr);
-bool deallocate(T)(scope T[] ptr) @nogc nothrow @safe => deallocateBytes(ptr);
-
-protected
+bool allocateBytes(T)(size_t size, scope ref T[] ptr) @nogc nothrow @trusted
 {
-    bool allocateBytes(T)(size_t size, scope ref T[] ptr) @nogc nothrow @trusted
+    void* newPtr = malloc(size * T.sizeof);
+    if (!newPtr)
     {
-        void* newPtr = malloc(size * T.sizeof);
-        if (!newPtr)
-        {
-            return false;
-        }
-        ptr = (cast(T*) newPtr)[0 .. size];
-        return true;
+        return false;
     }
+    ptr = (cast(T*) newPtr)[0 .. size];
+    return true;
+}
 
-    bool reallocateBytes(T)(size_t newSize, scope ref T[] ptr) @nogc nothrow @trusted
+bool reallocateBytes(T)(size_t newSize, scope ref T[] ptr) @nogc nothrow @trusted
+{
+    const newSizeBytes = newSize * T.sizeof;
+    void* newPtr = realloc(ptr.ptr, newSizeBytes);
+    if (!newPtr)
     {
-        const newSizeBytes = newSize * T.sizeof;
-        void* newPtr = realloc(ptr.ptr, newSizeBytes);
-        if (!newPtr)
-        {
-            return false;
-        }
-        ptr = (cast(T*) newPtr)[0 .. newSize];
-        return true;
+        return false;
     }
+    ptr = (cast(T*) newPtr)[0 .. newSize];
+    return true;
+}
 
-    bool deallocateBytes(T)(scope T[] ptr) @nogc nothrow @trusted
+bool deallocateBytes(T)(scope T[] ptr) @nogc nothrow @trusted
+{
+    if (!ptr)
     {
-        if (!ptr)
-        {
-            return false;
-        }
-        free(ptr.ptr);
-        return true;
+        return false;
     }
+    free(ptr.ptr);
+    return true;
 }
 
 version (D_BetterC)
@@ -55,15 +46,15 @@ version (D_BetterC)
 }
 else
 {
-    import api.core.util.allocs.allocator : Allocator;
+    import api.core.utils.allocs.allocator : Allocator;
 
     class Mallocator : Allocator!ubyte
     {
         this() pure nothrow @safe
         {
-            allocFunPtr = &allocate!ubyte;
-            reallocFunPtr = &reallocate!ubyte;
-            freeFunPtr = &deallocate!ubyte;
+            allocFunPtr = &allocateBytes!ubyte;
+            reallocFunPtr = &reallocateBytes!ubyte;
+            freeFunPtr = &deallocateBytes!ubyte;
         }
     }
 }
@@ -72,7 +63,7 @@ unittest
 {
     version (D_BetterC)
     {
-        import MemAllocator = api.core.util.allocs.allocator;
+        import MemAllocator = api.core.utils.allocs.allocator;
 
         MemAllocator.allocFunPtr = &allocate;
         MemAllocator.reallocFunPtr = &reallocate;

@@ -1,7 +1,7 @@
 module api.core.components.uni_component;
 
 import api.core.components.units.simple_unit : SimpleUnit;
-import api.core.components.uda : Service;
+import api.core.components.component_service : Service;
 import api.core.contexts.context : Context;
 import api.core.contexts.apps.app_context : AppContext;
 import api.core.contexts.platforms.platform_context : PlatformContext;
@@ -15,7 +15,7 @@ import api.core.resources.locals.local_resources : LocalResources;
 import api.core.resources.resourcing : Resourcing;
 import api.core.contexts.locators.locator_context : LocatorContext;
 import api.core.mems.memory : Memory;
-import api.core.util.allocs.allocator : Allocator;
+import api.core.utils.allocs.allocator : Allocator;
 
 import std.logger : Logger;
 

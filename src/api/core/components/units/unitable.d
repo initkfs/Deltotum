@@ -3,19 +3,19 @@ module api.core.components.units.unitable;
 /**
  * Authors: initkfs
  */
-class Unitable
+interface Unitable
 {
-    string className() const nothrow pure @safe
+    final string className() const nothrow pure @safe
     {
         return this.classinfo.name;
     }
 
-    string classNameShort() const pure @safe
+    final string classNameShort() const pure @safe
     {
         return classNameShort(className);
     }
 
-    string classNameShort(string name, string nameSep = ".") const pure @safe
+    final string classNameShort(string name, string nameSep = ".") const pure @safe
     {
         assert(nameSep.length > 0);
 
@@ -39,7 +39,9 @@ class Unitable
 
 unittest
 {
-    auto unit = new Unitable;
+    auto unit = new class Unitable {
+        
+    };
     assert(unit.classNameShort("") == "");
     assert(unit.classNameShort("foo.") == "foo.");
     assert(unit.classNameShort(".") == ".");

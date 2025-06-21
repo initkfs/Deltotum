@@ -5,7 +5,7 @@ import api.core.loggers.logging : Logging;
 import api.core.configs.keyvalues.config : Config;
 import api.core.contexts.context : Context;
 import api.core.resources.resourcing : Resourcing;
-import api.core.apps.app_init_ret : AppInitRet;
+import api.core.apps.app_result : AppResult;
 import api.core.apps.cli_app : CliApp;
 import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.dm.kit.components.graphics_component : GraphicsComponent;
@@ -74,7 +74,7 @@ abstract class GraphicApp : CliApp
 
     abstract ComPlatform newComPlatform();
 
-    override AppInitRet initialize(string[] args)
+    override AppResult initialize(string[] args)
     {
         const initRes = super.initialize(args);
         if (!initRes.isInit || initRes.isExit)
@@ -99,7 +99,7 @@ abstract class GraphicApp : CliApp
 
         _i18n = createI18n(uservices.logging, uservices.config, uservices.context);
 
-        return AppInitRet(isExit : false, isInit:
+        return AppResult(isExit : false, isInit:
             true);
     }
 

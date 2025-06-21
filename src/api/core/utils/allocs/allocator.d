@@ -1,4 +1,4 @@
-module api.core.util.allocs.allocator;
+module api.core.utils.allocs.allocator;
 
 import api.core.utils.ptrs.unique_ptr : UniqPtr;
 import api.core.utils.ptrs.shared_ptr : SharedPtr;
