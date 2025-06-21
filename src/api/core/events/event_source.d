@@ -1,4 +1,4 @@
-module api.core.events.base.event_source;
+module api.core.events.event_source;
 
 /**
  * Authors: initkfs

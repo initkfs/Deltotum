@@ -1,9 +1,9 @@
 module api.dm.kit.inputs.pointers.events.pointer_event;
 
-import api.core.events.base.event_base : EventBase;
+import api.core.events.event_base : EventBase;
 import api.core.utils.types : enumNameByIndex;
-import api.core.events.base.event_target : EventTarget;
-import api.core.events.base.event_source : EventSource;
+import api.core.events.event_target : EventTarget;
+import api.core.events.event_source : EventSource;
 
 /**
  * Authors: initkfs

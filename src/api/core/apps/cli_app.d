@@ -16,9 +16,6 @@ import api.core.supports.support : Support;
 import api.core.contexts.apps.app_context : AppContext;
 import api.core.resources.locals.local_resources : LocalResources;
 import api.core.resources.resourcing : Resourcing;
-import api.core.events.event_bridge : EventBridge;
-import api.core.events.bus.event_bus : EventBus;
-import api.core.events.bus.core_bus_events : CoreBusEvents;
 import api.core.contexts.locators.locator_context : LocatorContext;
 import api.core.mems.memory : Memory;
 import api.core.util.allocs.allocator : Allocator;
@@ -116,52 +113,23 @@ class CliApp : SimpleUnit
             uservices.context = createContext;
             assert(uservices.context);
 
-            uservices.eventBridge = createEventBridge(uservices.context);
-            assert(uservices.eventBridge);
-            assert(uservices.eventBus);
-            version (EventBusCoreEvents)
-            {
-                uservices.eventBus.fire(CoreBusEvents.build_context, uservices.context);
-                uservices.eventBus.fire(CoreBusEvents.build_event_bus, uservices.eventBus);
-            }
-
             uservices.configs = createConfiguration(uservices.context);
             assert(uservices.config);
-            version (EventBusCoreEvents)
-            {
-                uservices.eventBus.fire(CoreBusEvents.build_config, uservices.config);
-            }
 
             uservices.logging = createLogging(uservices.support);
             assert(uservices.logging);
-            version (EventBusCoreEvents)
-            {
-                uservices.eventBus.fire(CoreBusEvents.build_logging, uservices.logging);
-            }
 
             uservices.memory = createMemory(uservices.logging, uservices.config, uservices
                     .context);
             assert(uservices.memory);
             uservices.logger.trace("Memory service built");
-            version (EventBusCoreEvents)
-            {
-                uservices.eventBus.fire(CoreBusEvents.build_memory, uservices.alloc);
-            }
 
             uservices.resources = createResourcing(uservices.logging, uservices.config, uservices
                     .context);
             assert(uservices.resources);
             uservices.logger.trace("Resourcing service built");
-            version (EventBusCoreEvents)
-            {
-                uservices.eventBus.fire(CoreBusEvents.build_resourcing, uservices.resources);
-            }
 
             uservices.isBuilt = true;
-            version (EventBusCoreEvents)
-            {
-                uservices.eventBus.fire(CoreBusEvents.build_core_services, uservices);
-            }
         }
         catch (Exception e)
         {
@@ -633,27 +601,6 @@ class CliApp : SimpleUnit
     {
         auto locals = newLocalResources(logging, resourcesDir);
         return new Resourcing(locals);
-    }
-
-    protected EventBus createEventBus(Context context)
-    {
-        return newEventBus;
-    }
-
-    EventBus newEventBus()
-    {
-        return new EventBus;
-    }
-
-    protected EventBridge createEventBridge(Context context)
-    {
-        auto bus = createEventBus(context);
-        return newEventBridge(bus);
-    }
-
-    EventBridge newEventBridge(EventBus bus)
-    {
-        return new EventBridge(bus);
     }
 
     Mallocator newMallocator()

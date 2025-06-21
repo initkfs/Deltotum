@@ -1,6 +1,6 @@
 module api.dm.kit.windows.events.window_event;
 
-import api.core.events.base.event_base : EventBase;
+import api.core.events.event_base : EventBase;
 import api.core.utils.types: enumNameByIndex;
 
 

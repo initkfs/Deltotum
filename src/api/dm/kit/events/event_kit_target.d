@@ -1,7 +1,7 @@
 module api.dm.kit.events.event_kit_target;
 
 import api.dm.kit.components.graphics_component : GraphicsComponent;
-import api.core.events.base.event_target : EventTarget;
+import api.core.events.event_target : EventTarget;
 
 import api.core.apps.events.app_event : AppEvent;
 import api.dm.kit.events.focus.focus_event : FocusEvent;

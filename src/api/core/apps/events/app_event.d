@@ -1,6 +1,6 @@
 module api.core.apps.events.app_event;
 
-import api.core.events.base.event_base : EventBase;
+import api.core.events.event_base : EventBase;
 import api.core.utils.types : enumNameByIndex;
 
 /**
