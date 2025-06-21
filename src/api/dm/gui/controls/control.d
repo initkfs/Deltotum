@@ -283,7 +283,7 @@ class Control : GuiComponent
             return;
         }
 
-        if (capGraphics.isPointer)
+        if (platform.cap.isPointer)
         {
             onPointerEnter ~= (ref e) {
                 if (tooltips.length > 0)
@@ -543,7 +543,7 @@ class Control : GuiComponent
         //TODO remove previous
         if (hoverEffectStartBehaviour)
         {
-            if (capGraphics.isPointer)
+            if (platform.cap.isPointer)
             {
                 onPointerEnter ~= (ref e) {
 
@@ -559,7 +559,7 @@ class Control : GuiComponent
 
         if (hoverEffectEndBehaviour)
         {
-            if (capGraphics.isPointer)
+            if (platform.cap.isPointer)
             {
                 onPointerExit ~= (ref e) {
 
@@ -574,7 +574,7 @@ class Control : GuiComponent
 
         if (actionEffectStartBehaviour)
         {
-            if (capGraphics.isPointer)
+            if (platform.cap.isPointer)
             {
                 onPointerPress ~= (ref e) {
 
@@ -591,7 +591,7 @@ class Control : GuiComponent
 
         if (actionEffectEndBehaviour)
         {
-            if (capGraphics.isPointer)
+            if (platform.cap.isPointer)
             {
                 onPointerRelease ~= (ref e) {
 

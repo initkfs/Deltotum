@@ -78,7 +78,7 @@ class RadialSegmentBar : Control
 
         _segmentsOn.reserve(segmentsCount);
 
-        if (capGraphics.isVectorGraphics)
+        if (platform.cap.isVectorGraphics)
         {
             import api.dm.kit.sprites2d.textures.vectors.shapes.varc : VArc;
             import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;

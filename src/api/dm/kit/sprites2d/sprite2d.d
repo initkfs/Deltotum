@@ -443,7 +443,7 @@ class Sprite2d : EventKitTarget
                     enum primaryButton = 1;
                     if (e.button == primaryButton)
                     {
-                        if (platform.ticksMs - lastClickTimeMs < maxClickTimeMs)
+                        if (platform.timer.ticksMs - lastClickTimeMs < maxClickTimeMs)
                         {
                             clickCount++;
                             if (clickCount == 1)
@@ -466,7 +466,7 @@ class Sprite2d : EventKitTarget
                         {
                             clickCount = 0;
                         }
-                        lastClickTimeMs = platform.ticksMs;
+                        lastClickTimeMs = platform.timer.ticksMs;
                     }
 
                     runEventHandlers(e);

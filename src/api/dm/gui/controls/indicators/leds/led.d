@@ -27,7 +27,7 @@ class Led : BaseLed
     {
         auto diameter = layerInnerPadding;
 
-        if (!capGraphics.isVectorGraphics)
+        if (!platform.cap.isVectorGraphics)
         {
             return theme.circleShape(diameter, style);
         }

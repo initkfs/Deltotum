@@ -1,4 +1,4 @@
-module api.dm.kit.screens.screening;
+module api.dm.kit.platforms.screens.screening;
 
 import api.dm.com.graphics.com_screen : ComScreenId, ComScreen;
 import api.dm.com.graphics.com_screen : ComScreenId, ComScreen, ComScreenMode, ComScreenDpi, ComScreenOrientation;
@@ -28,7 +28,7 @@ class Screening
         this.comScreen = comScreen;
     }
 
-    SingleScreen screen(ComScreenId id)
+    SingleScreen single(ComScreenId id)
     {
         string screenName = name(id);
         Rect2d screenBounds = bounds(id);

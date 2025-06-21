@@ -30,7 +30,7 @@ class SDLPlatform : SdlObject, ComPlatform
         return ComResult.success;
     }
 
-    ComResult addTimer(out int timerId, uint intervalMs, RetNextIntervalCallback callback, void* param)
+    ComResult add(out int timerId, uint intervalMs, RetNextIntervalCallback callback, void* param)
     {
         const timerIdOrZeroErr = SDL_AddTimer(intervalMs, callback, param);
         if (timerIdOrZeroErr == 0)
@@ -41,7 +41,7 @@ class SDLPlatform : SdlObject, ComPlatform
         return ComResult.success;
     }
 
-    ComResult removeTimer(int timerId)
+    ComResult remove(int timerId)
     {
         if (!SDL_RemoveTimer(timerId))
         {

@@ -58,7 +58,7 @@ import api.dm.gui.windows.gui_window : GuiWindow;
 import api.dm.kit.apps.loops.integrated_loop : IntegratedLoop;
 import api.dm.kit.apps.loops.interrupted_loop : InterruptedLoop;
 import api.dm.kit.apps.loops.loop : Loop;
-import api.dm.kit.caps.cap_graphics : CapGraphics;
+import api.dm.kit.platforms.caps.cap_graphics : CapGraphics;
 import api.dm.kit.events.processing.kit_event_processor : KitEventProcessor;
 
 import std.typecons : Nullable;
@@ -66,7 +66,7 @@ import std.typecons : Nullable;
 import api.dm.kit.media.multimedia : MultiMedia;
 import api.dm.kit.media.audio.mixers.audio_mixer : AudioMixer;
 import api.dm.kit.inputs.input : Input;
-import api.dm.kit.screens.screening : Screening;
+import api.dm.kit.platforms.screens.screening : Screening;
 
 import std.logger : Logger, MultiLogger, FileLogger, LogLevel, sharedLog;
 import std.stdio;
@@ -148,14 +148,14 @@ class SdlApp : GuiApp
         if (isAudioEnabled)
         {
             flags |= SDL_INIT_AUDIO;
-            gservices.capGraphics.isAudio = true;
+            gservices.platform.cap.isAudio = true;
             uservices.logger.trace("Audio enabled");
         }
 
         if (isJoystickEnabled)
         {
             flags |= SDL_INIT_JOYSTICK;
-            gservices.capGraphics.isJoystick = true;
+            gservices.platform.cap.isJoystick = true;
             uservices.logger.trace("Joystick enabled");
         }
 
@@ -164,7 +164,7 @@ class SdlApp : GuiApp
             flags = onCreatedInitFlags(flags);
         }
 
-        if (const err = createSystems(gservices.capGraphics))
+        if (const err = createSystems(gservices.platform.cap))
         {
             uservices.logger.errorf("SDL systems creation error: " ~ err.toString);
             return initRes;
@@ -177,7 +177,7 @@ class SdlApp : GuiApp
             onCreatedSystems();
         }
 
-        if (const err = initializeSystems(flags, gservices.capGraphics))
+        if (const err = initializeSystems(flags, gservices.platform.cap))
         {
             uservices.logger.errorf("SDL systems initialization error: " ~ err.toString);
             return initRes;
@@ -267,7 +267,7 @@ class SdlApp : GuiApp
                 if (!mustBeIsUseVector.isNull)
                 {
                     const bool isUseVector = mustBeIsUseVector.get;
-                    gservices.capGraphics.isVectorGraphics = isUseVector;
+                    gservices.platform.cap.isVectorGraphics = isUseVector;
                     uservices.logger.trace("Found using vector graphics from config: ", isUseVector);
                 }
                 else
@@ -278,10 +278,10 @@ class SdlApp : GuiApp
             }
             else
             {
-                gservices.capGraphics.isVectorGraphics = true;
+                gservices.platform.cap.isVectorGraphics = true;
             }
 
-            theme.isUseVectorGraphics = gservices.capGraphics.isVectorGraphics;
+            theme.isUseVectorGraphics = gservices.platform.cap.isVectorGraphics;
 
             uservices.logger.trace("Load Cairo library.");
         };
@@ -680,7 +680,7 @@ class SdlApp : GuiApp
             }
         }
 
-        if (gservices.capGraphics.isJoystick)
+        if (gservices.platform.cap.isJoystick)
         {
             assert(!sdlJoystick.isNull);
             if (const err = sdlJoystick.get.initialize)
@@ -729,6 +729,12 @@ class SdlApp : GuiApp
         import api.dm.back.sdl3.sdl_platform : SDLPlatform;
 
         return new SDLPlatform;
+    }
+
+    override ComScreen newComScreen(){
+        import api.dm.back.sdl3.sdl_screen: SDLScreen;
+
+        return new SDLScreen;
     }
 
     SdlRenderer newRenderer(SDL_Renderer* ptr)
@@ -824,7 +830,7 @@ class SdlApp : GuiApp
             uservices.logger.error("Error getting display for window: ", window.title);
         }
 
-        window.screen = _screening.screen(screenId);
+        window.screen = _platform.screen.single(screenId);
         const screenMode = window.screen.mode;
         uservices.logger.tracef("Screen id %s, %sx%s, rate %s, density %s, driver %s for window id %s, title '%s'", window.screen.id, screenMode.width, screenMode
                 .height, screenMode.rateHz, screenMode.density, _screening.videoDriverName, window.id, window

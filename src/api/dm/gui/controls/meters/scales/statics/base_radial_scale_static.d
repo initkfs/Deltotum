@@ -93,7 +93,7 @@ class BaseRadialScaleStatic : BaseScaleStatic
 
     override void create()
     {
-        if (isUseTickProtos || !capGraphics.isVectorGraphics)
+        if (isUseTickProtos || !platform.cap.isVectorGraphics)
         {
 
             super.create;

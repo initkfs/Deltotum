@@ -11,6 +11,6 @@ interface ComPlatform
 {
 nothrow:
     ComResult openURL(string link) nothrow;
-    ComResult addTimer(out int timerId, uint intervalMs, RetNextIntervalCallback callback, void* param);
-    ComResult removeTimer(int timerId);
+    ComResult add(out int timerId, uint intervalMs, RetNextIntervalCallback callback, void* param);
+    ComResult remove(int timerId);
 }

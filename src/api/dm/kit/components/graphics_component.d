@@ -10,10 +10,7 @@ import api.dm.kit.graphics.graphics : Graphics;
 import api.dm.kit.inputs.input : Input;
 import api.dm.kit.windows.window : Window;
 import api.dm.kit.windows.windowing : Windowing;
-import api.dm.kit.screens.screening : Screening;
-import api.dm.kit.screens.single_screen : SingleScreen;
 import api.dm.kit.events.kit_event_manager : KitEventManager;
-import api.dm.kit.caps.cap_graphics : CapGraphics;
 import api.dm.kit.platforms.platform : Platform;
 import api.dm.kit.i18n.i18n : I18n;
 import api.dm.kit.windows.window : Window;
@@ -30,9 +27,7 @@ class GraphicsComponent : UniComponent
         @Service Asset _asset;
         @Service Graphics _graphics;
         @Service Input _input;
-        @Service Screening _screening;
         @Service KitEventManager _eventManager;
-        @Service CapGraphics _capGraphics;
         @Service Platform _platform;
         @Service I18n _i18n;
 
@@ -144,30 +139,6 @@ class GraphicsComponent : UniComponent
         _graphics = graphics;
     }
 
-    bool hasScreening() const nothrow pure @safe
-    {
-        return _screening !is null;
-    }
-
-    inout(Screening) screening() inout nothrow pure @safe
-    out (_screening; _screening !is null)
-    {
-        return _screening;
-    }
-
-    void screening(Screening screen) pure @safe
-    {
-        import std.exception : enforce;
-
-        enforce(screen, "Screening must not be null");
-        _screening = screen;
-    }
-
-    inout(SingleScreen) screen() inout nothrow pure @safe
-    {
-        return window.screen;
-    }
-
     bool hasEventManager() const nothrow pure @safe
     {
         return _eventManager !is null;
@@ -185,25 +156,6 @@ class GraphicsComponent : UniComponent
 
         enforce(manager, "Event manager must not be null");
         _eventManager = manager;
-    }
-
-    bool hasCapGraphics() const nothrow pure @safe
-    {
-        return _capGraphics !is null;
-    }
-
-    inout(CapGraphics) capGraphics() inout nothrow pure @safe
-    out (_capGraphics; _capGraphics !is null)
-    {
-        return _capGraphics;
-    }
-
-    void capGraphics(CapGraphics caps) pure @safe
-    {
-        import std.exception : enforce;
-
-        enforce(caps, "Graphics capabilities must not be null");
-        _capGraphics = caps;
     }
 
     bool hasPlatform() const nothrow pure @safe

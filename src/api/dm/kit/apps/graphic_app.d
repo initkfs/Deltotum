@@ -10,7 +10,6 @@ import api.core.apps.cli_app : CliApp;
 import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.dm.kit.components.graphics_component : GraphicsComponent;
 import api.core.components.uni_component : UniComponent;
-import api.dm.kit.caps.cap_graphics : CapGraphics;
 import api.dm.kit.graphics.graphics : Graphics;
 import api.dm.kit.assets.asset : Asset;
 
@@ -25,9 +24,8 @@ import api.dm.kit.factories.shape_factory : ShapeFactory;
 import api.dm.kit.windows.window : Window;
 import api.dm.kit.apps.loops.loop : Loop;
 
-import api.dm.kit.media.multimedia: MultiMedia;
+import api.dm.kit.media.multimedia : MultiMedia;
 import api.dm.kit.inputs.input : Input;
-import api.dm.kit.screens.screening : Screening;
 import api.dm.kit.events.kit_event_manager : KitEventManager;
 
 import std.typecons : Nullable;
@@ -36,6 +34,10 @@ import api.dm.com.graphics.com_renderer : ComRenderer;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.com.platforms.com_platform : ComPlatform;
 import api.dm.kit.platforms.platform : Platform;
+import api.dm.kit.platforms.screens.screening : Screening;
+import api.dm.kit.platforms.caps.cap_graphics : CapGraphics;
+import api.dm.kit.platforms.timers.timing : Timing;
+import api.dm.com.graphics.com_screen : ComScreen;
 import api.dm.kit.i18n.i18n : I18n;
 import api.dm.kit.i18n.langs.lang_messages : LangMessages;
 import api.dm.kit.interacts.interact : Interact;
@@ -72,7 +74,11 @@ abstract class GraphicApp : CliApp
         GraphicsComponent _graphicServices;
     }
 
-    abstract ComPlatform newComPlatform();
+    abstract
+    {
+        ComPlatform newComPlatform();
+        ComScreen newComScreen();
+    }
 
     override AppResult initialize(string[] args)
     {
@@ -87,15 +93,13 @@ abstract class GraphicApp : CliApp
             _graphicServices = newGraphicServices;
         }
 
-        if (!_graphicServices.hasCapGraphics)
-        {
-            _graphicServices.capGraphics = newCapability;
+        _platform = createPlatform;
+
+        if(!_graphicServices.hasPlatform){
+            _graphicServices.platform = _platform;
         }
 
         loadSettings;
-
-        _platform = newPlatform(() => ticksMs);
-        initCreateRun(_platform);
 
         _i18n = createI18n(uservices.logging, uservices.config, uservices.context);
 
@@ -118,9 +122,30 @@ abstract class GraphicApp : CliApp
         uservices.logger.trace("Joystick enabled: ", isJoystickEnabled);
     }
 
-    Platform newPlatform(ulong delegate() tickProvider)
+    Platform createPlatform()
     {
-        return new Platform(newComPlatform, uservices.logging, uservices.config, uservices.context, tickProvider);
+        auto sysPlaftorm = newComPlatform;
+        auto caps = newCapGraphics;
+        auto timing = newTiming(sysPlaftorm, () => ticksMs);
+        auto screening = newScreening;
+        return newPlatform(sysPlaftorm, caps, screening, timing);
+    }
+
+    CapGraphics newCapGraphics() => new CapGraphics;
+
+    Screening newScreening()
+    {
+        return new Screening(newComScreen, uservices.logging);
+    }
+
+    Platform newPlatform(ComPlatform platform,CapGraphics caps,  Screening screens, Timing timing)
+    {
+        return new Platform(platform, caps, screens, timing);
+    }
+
+    Timing newTiming(ComPlatform comPlatform, ulong delegate() tickProvider)
+    {
+        return new Timing(comPlatform, tickProvider);
     }
 
     I18n newI18n()
@@ -188,11 +213,6 @@ abstract class GraphicApp : CliApp
         return i18n;
     }
 
-    CapGraphics newCapability()
-    {
-        return new CapGraphics;
-    }
-
     GraphicsComponent newWindowServices()
     {
         return new GraphicsComponent;
@@ -218,10 +238,8 @@ abstract class GraphicApp : CliApp
         component.isBuilt = false;
         component.media = _media;
         component.input = _input;
-        component.screening = _screening;
         component.platform = _platform;
         component.i18n = _i18n;
-        component.capGraphics = gservices.capGraphics;
         component.eventManager = eventManager;
         component.windowing = windowing;
     }
@@ -277,7 +295,7 @@ abstract class GraphicApp : CliApp
 
         if (_platform)
         {
-            stopDisposeSafe(_platform);
+            _platform.dispose;
             uservices.logger.trace("Dispose platform");
         }
 

@@ -82,7 +82,7 @@ class Labeled : Control
     {
         super.create;
 
-        if (isCreateLabelIcon && _iconName && capGraphics.isIconPack)
+        if (isCreateLabelIcon && _iconName && platform.cap.isIconPack)
         {
             if (onPreIconCreate)
             {
@@ -120,7 +120,7 @@ class Labeled : Control
 
     protected void createLabelIcon()
     {
-        if (_iconName && capGraphics.isIconPack)
+        if (_iconName && platform.cap.isIconPack)
         {
             if (_icon)
             {

@@ -1,4 +1,4 @@
-module api.dm.kit.caps.cap_graphics;
+module api.dm.kit.platforms.caps.cap_graphics;
 
 import api.core.components.component_service : ComponentService;
 

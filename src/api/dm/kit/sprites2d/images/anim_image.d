@@ -211,7 +211,7 @@ class AnimImage : Image
             currentAnimation.flip = flip;
         }
 
-        currentAnimationStartTime = platform.ticksMs;
+        currentAnimationStartTime = platform.timer.ticksMs;
 
         super.run;
         assert(isRunning);
@@ -347,7 +347,7 @@ class AnimImage : Image
 
         auto delay = currentAnimation.frameDelay > 0 ? currentAnimation.frameDelay : frameDelay;
 
-        auto newIndex = ((platform.ticksMs - currentAnimationStartTime) / delay) % animLength;
+        auto newIndex = ((platform.timer.ticksMs - currentAnimationStartTime) / delay) % animLength;
         if (currentAnimationIndex > 0 && newIndex == 0)
         {
             if (currentAnimation.isLoopRow && currentAnimation.maxFrameRows > 1)

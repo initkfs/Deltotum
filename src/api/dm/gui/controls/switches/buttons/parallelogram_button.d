@@ -67,7 +67,7 @@ class ParallelogramButton : BaseButton
     protected override Sprite2d createShape(double width, double height, double angle, GraphicStyle style)
     {
 
-        if (capGraphics.isVectorGraphics)
+        if (platform.cap.isVectorGraphics)
         {
             import api.dm.kit.sprites2d.textures.vectors.shapes.vparallelogram : VParallelogram;
 

@@ -124,7 +124,7 @@ class Textures : Control
         auto vContainer = new HBox(5);
         root.addCreate(vContainer);
 
-        if(capGraphics.isVectorGraphics){
+        if(platform.cap.isVectorGraphics){
             import api.dm.kit.sprites2d.textures.vectors.shapes.vcircle: VCircle;
 
             auto style = GraphicStyle(3.0, RGBA.red, true, RGBA.green);

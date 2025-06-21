@@ -45,7 +45,7 @@ abstract class GuiApp : LoopApp
             auto iconPath = mustBeIconPath.get;
             newIconPack.load(iconPath);
             iconPack = newIconPack;
-            gservices.capGraphics.isIconPack = true;
+            gservices.platform.cap.isIconPack = true;
             uservices.logger.trace("Load icon pack: ", iconPath);
         }
 
