@@ -1,6 +1,6 @@
 module api.dm.kit.tweens.tween;
 
-import api.dm.kit.components.graphics_component : GraphicsComponent;
+import api.dm.kit.components.graphic_component : GraphicComponent;
 
 import std.container.dlist : DList;
 
@@ -16,7 +16,7 @@ enum TweenState
 /**
  * Authors: initkfs
  */
-abstract class Tween : GraphicsComponent
+abstract class Tween : GraphicComponent
 {
     bool isReverse;
     bool isInfinite;

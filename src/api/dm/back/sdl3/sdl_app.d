@@ -1,6 +1,6 @@
 module api.dm.back.sdl3.sdl_app;
 
-import api.dm.com.graphics.com_screen;
+import api.dm.com.graphic.com_screen;
 
 // dfmt off
 version(SdlBackend):
@@ -13,7 +13,7 @@ import api.core.contexts.context : Context;
 import api.core.apps.app_result : AppResult;
 import api.core.utils.factories : ProviderFactory;
 import api.dm.gui.apps.gui_app : GuiApp;
-import api.dm.kit.components.graphics_component : GraphicsComponent;
+import api.dm.kit.components.graphic_component : GraphicComponent;
 import api.dm.kit.events.kit_event_manager : KitEventManager;
 import api.dm.back.sdl3.sdl_event_processor : SdlEventProcessor;
 import api.dm.kit.graphics.graphic : Graphic;
@@ -45,11 +45,11 @@ import api.dm.back.sdl3.sdl_surface : SdlSurface;
 import api.dm.back.sdl3.ttf.sdl_ttf_font : SdlTTFFont;
 import api.dm.back.sdl3.img.sdl_image : SdlImage;
 import api.dm.back.sdl3.mixer.sdl_mixer_chunk : SdlMixerChunk;
-import api.dm.com.graphics.com_texture : ComTexture;
-import api.dm.com.graphics.com_surface : ComSurface;
-import api.dm.com.graphics.com_screen : ComScreenId;
-import api.dm.com.graphics.com_font : ComFont;
-import api.dm.com.graphics.com_image : ComImage;
+import api.dm.com.graphic.com_texture : ComTexture;
+import api.dm.com.graphic.com_surface : ComSurface;
+import api.dm.com.graphic.com_screen : ComScreenId;
+import api.dm.com.graphic.com_font : ComFont;
+import api.dm.com.graphic.com_image : ComImage;
 import api.dm.com.platforms.com_platform : ComPlatform;
 
 import api.dm.kit.windows.window : Window;
@@ -268,11 +268,11 @@ class SdlApp : GuiApp
                 {
                     const bool isUseVector = mustBeIsUseVector.get;
                     gservices.platform.cap.isVectorGraphics = isUseVector;
-                    uservices.logger.trace("Found using vector graphics from config: ", isUseVector);
+                    uservices.logger.trace("Found using vector graphic from config: ", isUseVector);
                 }
                 else
                 {
-                    uservices.logger.error("Found using vector graphics key, but not value: ", KitConfigKeys
+                    uservices.logger.error("Found using vector graphic key, but not value: ", KitConfigKeys
                             .graphicsUseVector);
                 }
             }
@@ -866,20 +866,20 @@ class SdlApp : GuiApp
         import api.dm.kit.graphics.graphic : Graphic;
 
         //TODO factory method
-        windowBuilder.graphics = createGraphics(uservices.logging, sdlRenderer);
-        windowBuilder.graphics.initialize;
+        windowBuilder.graphic = createGraphics(uservices.logging, sdlRenderer);
+        windowBuilder.graphic.initialize;
 
-        windowBuilder.graphics.comTextureProvider = ProviderFactory!ComTexture(
+        windowBuilder.graphic.comTextureProvider = ProviderFactory!ComTexture(
             () => newComTexture(sdlRenderer),
             (dg) => newComTextureScoped(dg, sdlRenderer)
         );
 
-        windowBuilder.graphics.comSurfaceProvider = ProviderFactory!ComSurface(
+        windowBuilder.graphic.comSurfaceProvider = ProviderFactory!ComSurface(
             &newComSurface,
             &newComSurfaceScoped
         );
 
-        windowBuilder.graphics.comImageProvider = ProviderFactory!ComImage(
+        windowBuilder.graphic.comImageProvider = ProviderFactory!ComImage(
             &newComImage,
             &newComImageScoped
         );
@@ -961,7 +961,7 @@ class SdlApp : GuiApp
         window.onAfterDestroy ~= () {
             //TODO who should manage the assets?
             window.asset.dispose;
-            window.graphics.dispose;
+            window.graphic.dispose;
         };
 
         windowing.add(window);

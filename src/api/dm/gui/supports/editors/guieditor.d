@@ -37,7 +37,7 @@ class GuiEditor : GuiScene
         containerTab.content = new Containers;
         root.addCreate(containerTab);
 
-        import api.dm.gui.supports.editors.sections.graphics : Grahpics;
+        import api.dm.gui.supports.editors.sections.graphic : Grahpics;
 
         auto graphicsTab = new Tab("Graphic");
         graphicsTab.content = new Grahpics;

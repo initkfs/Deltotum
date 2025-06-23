@@ -162,15 +162,15 @@ class RectLevel : Control
                     levelHeight = levelShapeHeight;
                 }
 
-                graphics.changeColor(levelColors[levelIndex]);
+                graphic.changeColor(levelColors[levelIndex]);
                 scope (exit)
                 {
-                    graphics.restoreColor;
+                    graphic.restoreColor;
                 }
 
                 auto levelY = Math.round(currentY - levelHeight);
 
-                graphics.fillRect(currentX, levelY, levelShapeWidth, levelHeight);
+                graphic.fillRect(currentX, levelY, levelShapeWidth, levelHeight);
                 currentX += levelShapeWidth;
             }
         }

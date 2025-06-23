@@ -265,7 +265,7 @@ class DigitalClockFace : Control
         {
             sepTexture.restoreRendererTarget;
         }
-        graphics.clearTransparent;
+        graphic.clearTransparent;
 
         auto dotRadius = w / 3;
 
@@ -277,14 +277,14 @@ class DigitalClockFace : Control
 
         if (!platform.cap.isVectorGraphics)
         {
-            graphics.changeColor(theme.colorAccent);
+            graphic.changeColor(theme.colorAccent);
             scope (exit)
             {
-                graphics.restoreColor;
+                graphic.restoreColor;
             }
 
-            graphics.fillCircle(dot1Center, dotRadius);
-            graphics.fillCircle(dot2Center, dotRadius);
+            graphic.fillCircle(dot1Center, dotRadius);
+            graphic.fillCircle(dot2Center, dotRadius);
         }
         else
         {

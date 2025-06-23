@@ -1,7 +1,7 @@
-module api.dm.com.graphics.com_screen;
+module api.dm.com.graphic.com_screen;
 
 import api.dm.com.platforms.results.com_result : ComResult;
-import api.dm.com.graphics.com_window : ComWindow;
+import api.dm.com.graphic.com_window : ComWindow;
 import api.dm.com.destroyable : Destroyable;
 
 alias ComScreenId = int;

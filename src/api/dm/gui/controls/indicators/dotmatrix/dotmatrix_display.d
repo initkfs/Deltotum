@@ -135,7 +135,7 @@ class DotMatrixDisplay(size_t Row = 7, size_t Col = 5) : VBox
         {
             newTexture.restoreRendererTarget;
         }
-        graphics.clearTransparent;
+        graphic.clearTransparent;
 
         led.draw;
 

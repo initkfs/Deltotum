@@ -10,7 +10,7 @@ import std.typecons : Nullable;
 
 import std.stdio;
 
-import api.dm.com.graphics.com_font : ComFont;
+import api.dm.com.graphic.com_font : ComFont;
 import api.dm.kit.assets.fonts.font : Font;
 import api.dm.kit.assets.fonts.bitmaps.bitmap_font : BitmapFont;
 import api.dm.kit.graphics.colors.rgba : RGBA;

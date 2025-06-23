@@ -3,7 +3,7 @@ module api.dm.kit.graphics.graphic;
 import api.core.components.units.services.loggable_unit;
 import api.core.utils.factories : ProviderFactory;
 
-import api.dm.com.graphics.com_renderer : ComRenderer;
+import api.dm.com.graphic.com_renderer : ComRenderer;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.vec2 : Vec2d, Vec2i, Vec2f;
 import math = api.dm.math;
@@ -19,10 +19,10 @@ import api.math.geom2.line2 : Line2d;
 import api.core.loggers.logging : Logging;
 import std.conv : to;
 
-import api.dm.com.graphics.com_texture : ComTexture;
-import api.dm.com.graphics.com_surface : ComSurface;
-import api.dm.com.graphics.com_image : ComImage;
-import api.dm.com.graphics.com_blend_mode : ComBlendMode;
+import api.dm.com.graphic.com_texture : ComTexture;
+import api.dm.com.graphic.com_surface : ComSurface;
+import api.dm.com.graphic.com_image : ComImage;
+import api.dm.com.graphic.com_blend_mode : ComBlendMode;
 
 /**
  * Authors: initkfs

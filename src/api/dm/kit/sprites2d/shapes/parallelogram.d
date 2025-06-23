@@ -31,10 +31,10 @@ class Parallelogram : Shape2d
 
         super.drawContent;
         
-        graphics.changeColor(style.lineColor);
+        graphic.changeColor(style.lineColor);
         scope (exit)
         {
-            graphics.restoreColor;
+            graphic.restoreColor;
         }
 
         double prevX;
@@ -53,7 +53,7 @@ class Parallelogram : Shape2d
             }
             else
             {
-                graphics.line(prevX, prevY, endX, endY);
+                graphic.line(prevX, prevY, endX, endY);
             }
 
             prevX = endX;
@@ -62,6 +62,6 @@ class Parallelogram : Shape2d
             return true;
         });
 
-        graphics.line(prevX, prevY, firstX, firstY);
+        graphic.line(prevX, prevY, firstX, firstY);
     }
 }

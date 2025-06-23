@@ -587,10 +587,10 @@ class BaseEditableText : BaseMonoText
         RGBA color = theme.colorAccent;
         color.a = 0.5;
 
-        graphics.changeColor(color);
+        graphic.changeColor(color);
         scope (exit)
         {
-            graphics.restoreColor;
+            graphic.restoreColor;
         }
 
         const startRow = startCursorPos.rowIndexAbs;
@@ -608,7 +608,7 @@ class BaseEditableText : BaseMonoText
             shapeWidth = (endGlyph.pos.x + endGlyph.geometry.width) - allGlyphs[startCursorPos
                     .glyphIndexAbs].pos.x;
 
-            graphics.fillRect(Rect2d(startX, startY, shapeWidth, rowHeight));
+            graphic.fillRect(Rect2d(startX, startY, shapeWidth, rowHeight));
             return;
         }
 
@@ -632,7 +632,7 @@ class BaseEditableText : BaseMonoText
                         shapeWidth = lastGlyph.pos.x + lastGlyph.geometry.width - firstGlyph.pos.x;
                     }
 
-                    graphics.fillRect(Rect2d(startGlyphX + firstGlyph.pos.x, startGlyphY + firstGlyph.pos.y, shapeWidth, rowHeight));
+                    graphic.fillRect(Rect2d(startGlyphX + firstGlyph.pos.x, startGlyphY + firstGlyph.pos.y, shapeWidth, rowHeight));
                 }
 
                 currRow++;
@@ -643,13 +643,13 @@ class BaseEditableText : BaseMonoText
         auto fullStartFirst = allGlyphs[startCursorPos.glyphIndexAbs];
         auto fullStartEnd = fullStartRow[$ - 1];
         shapeWidth = fullStartEnd.pos.x + fullStartEnd.geometry.width - fullStartFirst.pos.x;
-        graphics.fillRect(Rect2d(startGlyphX + fullStartFirst.pos.x, startGlyphY + fullStartFirst.pos.y, shapeWidth, rowHeight));
+        graphic.fillRect(Rect2d(startGlyphX + fullStartFirst.pos.x, startGlyphY + fullStartFirst.pos.y, shapeWidth, rowHeight));
 
         auto fullEndRow = row(endRow);
         auto fullEndFirst = fullEndRow[0];
         auto fullEndEnd = allGlyphs[endCursorPos.glyphIndexAbs];
         shapeWidth = fullEndEnd.pos.x + fullStartEnd.geometry.width - fullEndFirst.pos.x;
-        graphics.fillRect(Rect2d(startGlyphX + fullEndFirst.pos.x, startGlyphY + fullEndFirst.pos.y, shapeWidth, rowHeight));
+        graphic.fillRect(Rect2d(startGlyphX + fullEndFirst.pos.x, startGlyphY + fullEndFirst.pos.y, shapeWidth, rowHeight));
 
     }
 

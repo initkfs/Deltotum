@@ -72,13 +72,13 @@ class BarChart : XYChart
         //TODO from xScale
         if(!isShowXScale){
              auto color = xScale1 ? xScale1.axisColor : xAxisColor;
-             graphics.line(chartArea.x, chartArea.boundsRect.bottom, chartArea.boundsRect.right, chartArea.boundsRect.bottom , color);
+             graphic.line(chartArea.x, chartArea.boundsRect.bottom, chartArea.boundsRect.right, chartArea.boundsRect.bottom , color);
         }
 
-        graphics.clip(chartArea.boundsRect);
+        graphic.clip(chartArea.boundsRect);
         scope (exit)
         {
-            graphics.removeClip;
+            graphic.removeClip;
         }
         
         foreach (BarSet dataset; datasets)
@@ -87,7 +87,7 @@ class BarChart : XYChart
             {
                 auto dataBlockH = Math.round(rangeYToHeight(Math.abs(data.valueY), false));
                 auto posY = (data.valueY > 0) ? startPos.y - dataBlockH : startPos.y;
-                graphics.fillRect(Vec2d(nextX,posY), dataBlockW, dataBlockH, data.color);
+                graphic.fillRect(Vec2d(nextX,posY), dataBlockW, dataBlockH, data.color);
                 nextX+= dataBlockW;
             }
             nextX+= datasetSpacing;

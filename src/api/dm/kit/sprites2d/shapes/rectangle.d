@@ -25,10 +25,10 @@ class Rectangle : Shape2d
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
         const lineWidth = style.lineWidth;
-        graphics.rect(x, y, width, height, style.lineColor);
+        graphic.rect(x, y, width, height, style.lineColor);
         if (style.isFill)
         {
-            graphics.fillRect(x + lineWidth, y + lineWidth, width - lineWidth * 2, height - lineWidth * 2, style
+            graphic.fillRect(x + lineWidth, y + lineWidth, width - lineWidth * 2, height - lineWidth * 2, style
                     .fillColor);
         }
     }

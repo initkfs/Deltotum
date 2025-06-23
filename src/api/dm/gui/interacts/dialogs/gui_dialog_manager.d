@@ -2,7 +2,7 @@ module api.dm.gui.interacts.dialogs.gui_dialog_manager;
 
 import api.dm.gui.interacts.dialogs.gui_dialog : GuiDialog;
 import api.dm.gui.interacts.dialogs.dialog_manager : DialogManager;
-import api.dm.kit.components.graphics_component : GraphicsComponent;
+import api.dm.kit.components.graphic_component : GraphicComponent;
 import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.kit.windows.window : Window;
 import api.math.geom2.rect2 : Rect2d;
@@ -70,7 +70,7 @@ class GuiDialogManager : Container, DialogManager
             createDialog(mainDialog);
         }
 
-        const sceneBounds = graphics.renderBounds;
+        const sceneBounds = graphic.renderBounds;
         mainDialog.x = sceneBounds.middleX - mainDialog.boundsRect.halfWidth;
         mainDialog.y = sceneBounds.middleY - mainDialog.boundsRect.halfHeight;
 

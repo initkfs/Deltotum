@@ -398,13 +398,13 @@ class ColorPickerDialog : Control
                 double nextX = 0;
                 double nextY = 0;
                 size_t colIndex;
-                auto oldColor = graphics.getColor;
+                auto oldColor = graphic.getColor;
 
                 MaterialPalette.onColor((color, i) {
-                    graphics.changeColor(RGBA.web(color));
-                    graphics.fillRect(nextX, nextY, paletteColorSize, paletteColorSize);
+                    graphic.changeColor(RGBA.web(color));
+                    graphic.fillRect(nextX, nextY, paletteColorSize, paletteColorSize);
 
-                    colorPixels[i] = ColorInfo(Rect2d(nextX, nextY, paletteColorSize, paletteColorSize), graphics
+                    colorPixels[i] = ColorInfo(Rect2d(nextX, nextY, paletteColorSize, paletteColorSize), graphic
                         .getColor, color);
 
                     nextX += paletteColorSize;
@@ -424,10 +424,10 @@ class ColorPickerDialog : Control
                 // {
                 //     static if (is(typeof(__traits(getMember, MaterialPalette, color)) : string))
                 //     {
-                //         graphics.changeColor(RGBA.web(__traits(getMember, MaterialPalette, color)));
-                //         graphics.fillRect(nextX, nextY, paletteColorSize, paletteColorSize);
+                //         graphic.changeColor(RGBA.web(__traits(getMember, MaterialPalette, color)));
+                //         graphic.fillRect(nextX, nextY, paletteColorSize, paletteColorSize);
 
-                //         colorPixels[pixelCounter] = ColorInfo(Rect2d(nextX, nextY, paletteColorSize, paletteColorSize), graphics
+                //         colorPixels[pixelCounter] = ColorInfo(Rect2d(nextX, nextY, paletteColorSize, paletteColorSize), graphic
                 //                 .getColor, color);
                 //         pixelCounter++;
 
@@ -444,7 +444,7 @@ class ColorPickerDialog : Control
                 // }
 
                 //assert(pixelCounter == colorPixels.length);
-                graphics.setColor(oldColor);
+                graphic.setColor(oldColor);
             }
         };
 
@@ -573,9 +573,9 @@ class ColorPickerDialog : Control
             palTabColor.restoreRendererTarget;
         }
 
-        graphics.clearTransparent;
+        graphic.clearTransparent;
 
-        graphics.fillRect(0, 0, colorSize, colorSize, RGBA.web("#CC00FF"));
+        graphic.fillRect(0, 0, colorSize, colorSize, RGBA.web("#CC00FF"));
         tab.addCreate(palTabColor);
         return tab;
     }

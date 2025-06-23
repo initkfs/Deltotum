@@ -155,7 +155,7 @@ abstract class BaseTimeChooser : Control
             auto center = boundsRect.center;
             auto thumbCenter = thumb.boundsRect.center;
             auto color = theme.colorAccent;
-            graphics.line(center.x, center.y, thumbCenter.x, thumbCenter.y, color);
+            graphic.line(center.x, center.y, thumbCenter.x, thumbCenter.y, color);
         }
     }
 

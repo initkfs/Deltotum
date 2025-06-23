@@ -1,11 +1,11 @@
 module api.dm.kit.windows.window;
 
 import api.dm.kit.scenes.scene2d : Scene2d;
-import api.dm.com.graphics.com_screen : ComScreenId;
+import api.dm.com.graphic.com_screen : ComScreenId;
 import api.dm.kit.factories.factory_kit : FactoryKit;
-import api.dm.kit.components.graphics_component : GraphicsComponent;
+import api.dm.kit.components.graphic_component : GraphicComponent;
 import api.dm.com.com_native_ptr : ComNativePtr;
-import api.dm.com.graphics.com_window : ComWindowId, ComWindow;
+import api.dm.com.graphic.com_window : ComWindowId, ComWindow;
 import api.math.geom2.rect2 : Rect2d;
 import api.math.geom2.vec2 : Vec2d, Vec2i;
 
@@ -13,13 +13,13 @@ import api.dm.kit.screens.single_screen : SingleScreen;
 
 import api.core.loggers.logging : Logging;
 
-import api.dm.com.graphics.com_renderer : ComRenderer;
+import api.dm.com.graphic.com_renderer : ComRenderer;
 import api.dm.gui.themes.icons.icon_name;
 
 /**
  * Authors: initkfs
  */
-class Window : GraphicsComponent
+class Window : GraphicComponent
 {
     enum : int
     {
@@ -126,7 +126,7 @@ class Window : GraphicsComponent
         throw new Exception("Scene not found in scene list: " ~ scene.name);
     }
 
-    alias build = GraphicsComponent.build;
+    alias build = GraphicComponent.build;
 
     void build(Scene2d scene)
     {
@@ -136,7 +136,7 @@ class Window : GraphicsComponent
         scene.factory = factory;
     }
 
-    alias create = GraphicsComponent.create;
+    alias create = GraphicComponent.create;
 
     void create(Scene2d scene)
     {
@@ -800,7 +800,7 @@ class Window : GraphicsComponent
         double winWidth = winSize.x;
         double winHeight = winSize.y;
 
-        auto renderBounds = graphics.renderBounds;
+        auto renderBounds = graphic.renderBounds;
         if (renderBounds.width == 0 || renderBounds.height == 0)
         {
             return Vec2d.init;

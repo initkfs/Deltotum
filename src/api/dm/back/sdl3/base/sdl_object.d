@@ -8,7 +8,7 @@ version(SdlBackend):
 
 import api.dm.com.platforms.objects.com_object : ComObject;
 import api.dm.com.platforms.results.com_result : ComResult;
-import api.dm.com.graphics.com_blend_mode : ComBlendMode;
+import api.dm.com.graphic.com_blend_mode : ComBlendMode;
 
 import api.math.geom2.rect2 : Rect2d;
 

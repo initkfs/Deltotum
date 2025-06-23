@@ -8,7 +8,7 @@ import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 import api.dm.gui.controls.texts.text : Text;
 import api.math.geom2.rect2 : Rect2d;
 import Math = api.dm.math;
-import api.dm.com.graphics.com_surface: ComSurface;
+import api.dm.com.graphic.com_surface: ComSurface;
 
 enum Source
 {
@@ -85,7 +85,7 @@ class Magnifier : Control
                 {
                     case screen:
                         magnifier.lock;
-                        graphics.readPixelsToBuffer(textureBounds, buffer);
+                        graphic.readPixelsToBuffer(textureBounds, buffer);
                         //InvalidPointerError@src/etc/linux/memoryerror.d(325)
                         magnifier.unlock;
                         break;

@@ -26,7 +26,7 @@ import std.math.algebraic : abs;
 import std.typecons : Nullable;
 import std.variant : Variant;
 
-import api.dm.com.graphics.com_surface : ComSurface;
+import api.dm.com.graphic.com_surface : ComSurface;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
 import Math = api.dm.math;
@@ -346,7 +346,7 @@ class Sprite2d : EventKitTarget
     {
         import api.dm.kit.graphics.canvases.renderer_canvas : RendererCanvas;
 
-        return new RendererCanvas(this.graphics);
+        return new RendererCanvas(this.graphic);
     }
 
     bool hasGraphicsContext()
@@ -758,9 +758,9 @@ class Sprite2d : EventKitTarget
         return true;
     }
 
-    import api.dm.kit.components.graphics_component : GraphicsComponent;
+    import api.dm.kit.components.graphic_component : GraphicComponent;
 
-    alias build = GraphicsComponent.build;
+    alias build = GraphicComponent.build;
 
     void build(Sprite2d sprite)
     {
@@ -1106,12 +1106,12 @@ class Sprite2d : EventKitTarget
 
     void enableClipping()
     {
-        graphics.clip(clip);
+        graphic.clip(clip);
     }
 
     void disableClipping()
     {
-        graphics.removeClip;
+        graphic.removeClip;
     }
 
     bool isClipped() => clip.width > 0 || clip.height > 0;
@@ -1227,7 +1227,7 @@ class Sprite2d : EventKitTarget
                 thisBounds.x = _x + dx;
                 thisBounds.y = _y + dy;
 
-                const screen = graphics.renderBounds;
+                const screen = graphic.renderBounds;
                 if (!screen.contains(thisBounds))
                 {
                     if (!onScreenBoundsIsStop || onScreenBoundsIsStop())
@@ -1281,8 +1281,8 @@ class Sprite2d : EventKitTarget
 
     bool isInScreenBounds()
     {
-        assert(graphics);
-        return graphics.renderBounds.contains(boundsRect);
+        assert(graphic);
+        return graphic.renderBounds.contains(boundsRect);
     }
 
     bool isClipSet() => clip.width > 0 || clip.height > 0;
@@ -1457,7 +1457,7 @@ class Sprite2d : EventKitTarget
 
     bool toCenterX(bool isUseParent = false)
     {
-        Rect2d bounds = (isUseParent && parent) ? parent.boundsRect : graphics.renderBounds;
+        Rect2d bounds = (isUseParent && parent) ? parent.boundsRect : graphic.renderBounds;
         if (bounds.width == 0)
         {
             return false;
@@ -1476,7 +1476,7 @@ class Sprite2d : EventKitTarget
 
     bool toCenterY(bool isUseParent = false)
     {
-        Rect2d bounds = (isUseParent && parent) ? parent.boundsRect : graphics.renderBounds;
+        Rect2d bounds = (isUseParent && parent) ? parent.boundsRect : graphic.renderBounds;
         if (bounds.height == 0)
         {
             return false;
@@ -2010,24 +2010,24 @@ class Sprite2d : EventKitTarget
             return;
         }
 
-        graphics.changeColor(color);
+        graphic.changeColor(color);
 
         const b = boundsRect;
-        //graphics.rect(b.x, b.y, b.width, b.height, GraphicStyle(1, RGBA.red));
+        //graphic.rect(b.x, b.y, b.width, b.height, GraphicStyle(1, RGBA.red));
         const double leftTopX = b.x, leftTopY = b.y;
 
         const double rightTopX = leftTopX + b.width, rightTopY = leftTopY;
-        graphics.line(leftTopX, leftTopY, rightTopX, rightTopY);
+        graphic.line(leftTopX, leftTopY, rightTopX, rightTopY);
 
         const double rightBottomX = rightTopX, rightBottomY = rightTopY + b.height;
-        graphics.line(rightTopX, rightTopY, rightBottomX, rightBottomY);
+        graphic.line(rightTopX, rightTopY, rightBottomX, rightBottomY);
 
         const double leftBottomX = leftTopX, leftBottomY = leftTopY + b.height;
-        graphics.line(rightBottomX, rightBottomY, leftBottomX, leftBottomY);
+        graphic.line(rightBottomX, rightBottomY, leftBottomX, leftBottomY);
 
-        graphics.line(leftBottomX, leftBottomY, leftTopX, leftTopY);
+        graphic.line(leftBottomX, leftBottomY, leftTopX, leftTopY);
 
-        graphics.restoreColor;
+        graphic.restoreColor;
     }
 
     void drawCenterBounds()
@@ -2040,15 +2040,15 @@ class Sprite2d : EventKitTarget
             return;
         }
 
-        graphics.changeColor(boundsCenterColor);
+        graphic.changeColor(boundsCenterColor);
         scope (exit)
         {
-            graphics.restoreColor;
+            graphic.restoreColor;
         }
 
         const thisBounds = boundsRect;
-        graphics.line(thisBounds.middleX, thisBounds.y, thisBounds.middleX, thisBounds.bottom);
-        graphics.line(thisBounds.x, thisBounds.middleY, thisBounds.right, thisBounds.middleY);
+        graphic.line(thisBounds.middleX, thisBounds.y, thisBounds.middleX, thisBounds.bottom);
+        graphic.line(thisBounds.x, thisBounds.middleY, thisBounds.right, thisBounds.middleY);
     }
 
     void drawClip()
@@ -2063,13 +2063,13 @@ class Sprite2d : EventKitTarget
 
         const color = RGBA.blueviolet;
 
-        graphics.changeColor(color);
+        graphic.changeColor(color);
 
         import api.math.geom2.vec2 : Vec2d;
 
-        graphics.rect(Vec2d(clip.x, clip.y), clip.width, clip.height);
+        graphic.rect(Vec2d(clip.x, clip.y), clip.width, clip.height);
 
-        graphics.restoreColor;
+        graphic.restoreColor;
     }
 
     void drawAllBounds(bool isDraw)
@@ -2233,7 +2233,7 @@ class Sprite2d : EventKitTarget
             dest.restoreRendererTarget;
         }
 
-        graphics.clearTransparent;
+        graphic.clearTransparent;
 
         bool isVisibleTemp = isVisible;
         if (!isVisibleTemp)
@@ -2254,13 +2254,13 @@ class Sprite2d : EventKitTarget
         auto bounds = Rect2d(
             0, 0, width, height
         );
-        auto surf = graphics.comSurfaceProvider.getNew();
+        auto surf = graphic.comSurfaceProvider.getNew();
         auto err = surf.createRGBA32(cast(int) width, cast(int) height);
         if (err)
         {
             throw new Exception(err.toString);
         }
-        graphics.readPixelsToBuffer(bounds, surf);
+        graphic.readPixelsToBuffer(bounds, surf);
         return surf;
     }
 

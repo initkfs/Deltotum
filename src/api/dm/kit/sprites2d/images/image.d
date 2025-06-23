@@ -2,9 +2,9 @@ module api.dm.kit.sprites2d.images.image;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
-import api.dm.com.graphics.com_texture : ComTexture;
-import api.dm.com.graphics.com_image : ComImage;
-import api.dm.com.graphics.com_surface : ComSurface;
+import api.dm.com.graphic.com_texture : ComTexture;
+import api.dm.com.graphic.com_image : ComImage;
+import api.dm.com.graphic.com_surface : ComSurface;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.math.geom2.rect2 : Rect2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -191,7 +191,7 @@ class Image : Texture2d
 
         if (!texture)
         {
-            texture = graphics.comTextureProvider.getNew();
+            texture = graphic.comTextureProvider.getNew();
         }
 
         if (const err = texture.create(image))
@@ -228,7 +228,7 @@ class Image : Texture2d
             return false;
         }
 
-        ComImage image = graphics.comImageProvider.getNew();
+        ComImage image = graphic.comImageProvider.getNew();
         if (const err = image.load(path))
         {
             logger.error("Unable to load image: ", err);
@@ -253,7 +253,7 @@ class Image : Texture2d
 
     bool loadRaw(const(void[]) content, int requestWidth = -1, int requestHeight = -1)
     {
-        auto image = graphics.comImageProvider.getNew();
+        auto image = graphic.comImageProvider.getNew();
         import std.conv : to;
 
         if (const err = image.load(content))
@@ -321,7 +321,7 @@ class Image : Texture2d
 
     void savePNG(ComSurface surf, string path)
     {
-        auto image = graphics.comImageProvider.getNew();
+        auto image = graphic.comImageProvider.getNew();
         if (const err = image.savePNG(surf, path))
         {
             throw new Exception(err.toString);

@@ -110,7 +110,7 @@ class BaseRadialScaleStatic : BaseScaleStatic
                 scaleShape.restoreRendererTarget;
             }
 
-            graphics.clearTransparent;
+            graphic.clearTransparent;
 
             drawScale;
         }
@@ -235,7 +235,7 @@ class BaseRadialScaleStatic : BaseScaleStatic
                 scaleShape.restoreRendererTarget;
             }
 
-            graphics.clearTransparent;
+            graphic.clearTransparent;
 
             scaleShape.copyFrom(tickShape);
             drawScale(

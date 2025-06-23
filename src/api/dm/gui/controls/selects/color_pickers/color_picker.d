@@ -96,12 +96,12 @@ class ColorPicker : BaseDropDownSelector!(ColorPickerDialog, RGBA)
         super.drawContent;
         if (colorCanvas && colorCanvas.isVisible)
         {
-            graphics.changeColor(current);
+            graphic.changeColor(current);
             scope (exit)
             {
-                graphics.restoreColor;
+                graphic.restoreColor;
             }
-            graphics.fillRect(colorCanvas.boundsRect);
+            graphic.fillRect(colorCanvas.boundsRect);
         }
     }
 
@@ -167,7 +167,7 @@ class ColorPicker : BaseDropDownSelector!(ColorPickerDialog, RGBA)
             texture.restoreRendererTarget;
         }
 
-        graphics.clearTransparent;
+        graphic.clearTransparent;
 
         RGBA color1 = RGBA(200, 200, 200);
         RGBA color2 = RGBA.white;
@@ -179,7 +179,7 @@ class ColorPicker : BaseDropDownSelector!(ColorPickerDialog, RGBA)
             foreach (ci; 0 .. probeCount)
             {
                 auto color = (ci + ri) % 2 == 0 ? color1 : color2;
-                graphics.fillRect(nextX, nextY, probeWSize, probeHSize, color);
+                graphic.fillRect(nextX, nextY, probeWSize, probeHSize, color);
                 nextX += probeWSize;
             }
             nextY += probeHSize;

@@ -49,7 +49,7 @@ abstract class RgbaTexture : Texture2d
     {
         if (!texture)
         {
-            texture = graphics.comTextureProvider.getNew();
+            texture = graphic.comTextureProvider.getNew();
         }
 
         //autodisposing should work in ComTexture
@@ -67,7 +67,7 @@ abstract class RgbaTexture : Texture2d
 
             if (_width > 0 && _height > 0)
             {
-                graphics.clear(RGBA.transparent);
+                graphic.clear(RGBA.transparent);
             }
 
             createTextureContent;

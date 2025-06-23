@@ -402,15 +402,15 @@ class MDLandscapeGenerator : Control
     {
         super.drawContent;
 
-        // graphics.clip(Rect2d(x, y, canvasWidth, canvasHeight));
+        // graphic.clip(Rect2d(x, y, canvasWidth, canvasHeight));
         // scope (exit)
         // {
-        //     graphics.removeClip;
+        //     graphic.removeClip;
         // }
 
         // foreach (ref color, linePoints; layerLinePoints)
         // {
-        //     graphics.polygon(linePoints, linePoints.length - 2, color);
+        //     graphic.polygon(linePoints, linePoints.length - 2, color);
         // }
     }
 

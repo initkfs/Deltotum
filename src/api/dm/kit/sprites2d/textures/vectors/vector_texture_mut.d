@@ -6,7 +6,7 @@ import api.dm.kit.graphics.canvases.graphics_canvas : GraphicsCanvas;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites2d.textures.vectors.canvases.vector_canvas : VectorCanvas;
 
-import api.dm.com.graphics.com_surface : ComSurface;
+import api.dm.com.graphic.com_surface : ComSurface;
 import api.math.geom2.rect2 : Rect2d;
 import api.math.geom2.vec2 : Vec2d;
 
@@ -37,7 +37,7 @@ class VectorTextureMut : Texture2d
     override void create()
     {
         super.create;
-        texture = graphics.comTextureProvider.getNew();
+        texture = graphic.comTextureProvider.getNew();
 
         if (const err = texture.createMutARGB32(cast(int) width, cast(int) height))
         {

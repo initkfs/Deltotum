@@ -58,7 +58,7 @@ class ColorBar : BaseMonoColorBar
                 texture.restoreRendererTarget;
             }
 
-            graphics.clearTransparent;
+            graphic.clearTransparent;
 
             drawBar;
 
@@ -74,7 +74,7 @@ class ColorBar : BaseMonoColorBar
         foreach (r; rangeData)
         {
             const rangeWidth = Math.round(r.value * width / rangeSum);
-            graphics.fillRect(nextX, 0, rangeWidth, height, r.color);
+            graphic.fillRect(nextX, 0, rangeWidth, height, r.color);
             nextX += rangeWidth;
         }
     }

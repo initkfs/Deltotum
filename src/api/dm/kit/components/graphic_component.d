@@ -1,4 +1,4 @@
-module api.dm.kit.components.graphics_component;
+module api.dm.kit.components.graphic_component;
 
 import api.core.components.uni_component : UniComponent;
 
@@ -12,17 +12,15 @@ import api.dm.kit.windows.window : Window;
 import api.dm.kit.windows.windowing : Windowing;
 import api.dm.kit.platforms.platform : Platform;
 import api.dm.kit.i18n.i18n : I18n;
-import api.dm.kit.windows.window : Window;
-import api.dm.gui.interacts.interact : Interact;
 
 /**
  * Authors: initkfs
  */
-class GraphicsComponent : UniComponent
+class GraphicComponent : UniComponent
 {
     private
     {
-        @Service Graphic _graphics;
+        @Service Graphic _graphic;
         @Service Input _input;
         @Service Platform _platform;
         @Service Asset _asset;
@@ -36,46 +34,46 @@ class GraphicsComponent : UniComponent
     alias buildInitCreate = UniComponent.buildInitCreate;
     alias buildInitCreateRun = UniComponent.buildInitCreateRun;
 
-    void build(GraphicsComponent gComponent)
+    void build(GraphicComponent gComponent)
     {
         buildFromParent(gComponent, this);
     }
 
-    void buildInit(GraphicsComponent component)
+    void buildInit(GraphicComponent component)
     {
         build(component);
         initialize(component);
     }
 
-    void buildInitCreate(GraphicsComponent component)
+    void buildInitCreate(GraphicComponent component)
     {
         buildInit(component);
         create(component);
     }
 
-    void buildInitCreateRun(GraphicsComponent component)
+    void buildInitCreateRun(GraphicComponent component)
     {
         buildInitCreate(component);
         run(component);
     }
 
-    bool hasGraphics() const nothrow pure @safe
+    bool hasGraphic() const nothrow pure @safe
     {
-        return _graphics !is null;
+        return _graphic !is null;
     }
 
-    inout(Graphic) graphics() inout nothrow pure @safe
-    out (_graphics; _graphics !is null)
+    inout(Graphic) graphic() inout nothrow pure @safe
+    out (_graphic; _graphic !is null)
     {
-        return _graphics;
+        return _graphic;
     }
 
-    void graphics(Graphic graphics) pure @safe
+    void graphic(Graphic graphic) pure @safe
     {
         import std.exception : enforce;
 
-        enforce(graphics, "Graphic must not be null");
-        _graphics = graphics;
+        enforce(graphic, "Graphic must not be null");
+        _graphic = graphic;
     }
 
     bool hasInput() const nothrow pure @safe

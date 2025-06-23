@@ -13,28 +13,28 @@ class RendererCanvas : StateCanvas
 {
     protected
     {
-        Graphic graphics;
+        Graphic graphic;
     }
 
-    this(Graphic graphics)
+    this(Graphic graphic)
     {
-        if (!graphics)
+        if (!graphic)
         {
             throw new Exception("Graphic must not be null");
         }
-        this.graphics = graphics;
+        this.graphic = graphic;
     }
 
     void color(RGBA rgba)
     {
-        graphics.setColor(rgba);
+        graphic.setColor(rgba);
     }
 
-    RGBA color() => graphics.getColor;
+    RGBA color() => graphic.getColor;
 
     void restoreColor()
     {
-        graphics.restoreColor;
+        graphic.restoreColor;
     }
 
     void lineEnd(GraphicsCanvas.LineEnd end)
@@ -49,7 +49,7 @@ class RendererCanvas : StateCanvas
 
     void lineTo(double endX, double endY)
     {
-        graphics.line(x, y, endX, endY);
+        graphic.line(x, y, endX, endY);
         moveTo(endX, endY);
     }
 
@@ -95,17 +95,17 @@ class RendererCanvas : StateCanvas
 
     void rect(double x, double y, double width, double height)
     {
-        graphics.rect(Vec2d(x, y), width, height);
+        graphic.rect(Vec2d(x, y), width, height);
     }
 
     void fillRect(double x, double y, double width, double height)
     {
-        graphics.fillRect(Vec2d(x, y), width, height);
+        graphic.fillRect(Vec2d(x, y), width, height);
     }
 
     void fillTriangle(double x1, double y1, double x2, double y2, double x3, double y3)
     {
-        graphics.fillTriangle(Vec2d(x1, y1), Vec2d(x2, y2), Vec2d(x3, y3));
+        graphic.fillTriangle(Vec2d(x1, y1), Vec2d(x2, y2), Vec2d(x3, y3));
     }
 
     void arc(double xc, double yc, double radius, double angle1, double angle2)

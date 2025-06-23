@@ -152,7 +152,7 @@ class BaseLed : Control
             texture.restoreRendererTarget;
         }
 
-        graphics.clearTransparent;
+        graphic.clearTransparent;
 
         foreach (layer; layers)
         {

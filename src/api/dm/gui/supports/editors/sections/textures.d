@@ -54,10 +54,10 @@ class Textures : Control
 
             override void createTextureContent()
             {
-                this.graphics.fillRect(0, 0, 25, 25, RGBA.red);
-                this.graphics.fillRect(25, 0, 25, 25, RGBA.yellow);
-                this.graphics.fillRect(0, 25, 25, 25, RGBA.green);
-                this.graphics.fillRect(25, 25, 25, 25, RGBA.blue);
+                this.graphic.fillRect(0, 0, 25, 25, RGBA.red);
+                this.graphic.fillRect(25, 0, 25, 25, RGBA.yellow);
+                this.graphic.fillRect(0, 25, 25, 25, RGBA.green);
+                this.graphic.fillRect(25, 25, 25, 25, RGBA.blue);
             }
         }
 

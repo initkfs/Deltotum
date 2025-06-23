@@ -139,7 +139,7 @@ class MinSecChooser : BaseCircularTimeChooser
                 newLabelBox.restoreRendererTarget;
             }
 
-            graphics.clearTransparent;
+            graphic.clearTransparent;
 
             const textureCenter = newLabelBox.center;
             const protoBounds = proto.boundsRect;

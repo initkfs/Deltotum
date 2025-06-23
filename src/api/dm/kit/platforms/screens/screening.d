@@ -1,7 +1,7 @@
 module api.dm.kit.platforms.screens.screening;
 
-import api.dm.com.graphics.com_screen : ComScreenId, ComScreen;
-import api.dm.com.graphics.com_screen : ComScreenId, ComScreen, ComScreenMode, ComScreenDpi, ComScreenOrientation;
+import api.dm.com.graphic.com_screen : ComScreenId, ComScreen;
+import api.dm.com.graphic.com_screen : ComScreenId, ComScreen, ComScreenMode, ComScreenDpi, ComScreenOrientation;
 import api.dm.kit.screens.single_screen : SingleScreen;
 
 import api.math.geom2.rect2 : Rect2d;
@@ -87,7 +87,7 @@ class Screening
 
     ComScreenMode mode(ComScreenId id)
     {
-        import api.dm.com.graphics.com_screen : ComScreenMode, ComScreenDpi;
+        import api.dm.com.graphic.com_screen : ComScreenMode, ComScreenDpi;
 
         ComScreenMode mode;
         if (const err = comScreen.getMode(id, mode))

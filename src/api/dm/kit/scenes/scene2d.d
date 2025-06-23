@@ -5,7 +5,7 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.factories.factory_kit : FactoryKit;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.windows.window : Window;
-import api.dm.com.graphics.com_surface : ComSurface;
+import api.dm.com.graphic.com_surface : ComSurface;
 
 import std.stdio;
 
@@ -286,14 +286,14 @@ class Scene2d : EventKitTarget
 
         startDrawProcess = false;
         //TODO multiple scenes
-        graphics.rendererPresent;
+        graphic.rendererPresent;
     }
 
     void update(double delta)
     {
         if (!startDrawProcess)
         {
-            graphics.clear;
+            graphic.clear;
             startDrawProcess = true;
         }
 
@@ -478,13 +478,13 @@ class Scene2d : EventKitTarget
         auto bounds = Rect2d(
             0, 0, window.width, window.height
         );
-        auto surf = graphics.comSurfaceProvider.getNew();
+        auto surf = graphic.comSurfaceProvider.getNew();
         auto err = surf.createRGBA32(cast(int) window.width, cast(int) window.height);
         if (err)
         {
             throw new Exception(err.toString);
         }
-        graphics.readPixelsToBuffer(bounds, surf);
+        graphic.readPixelsToBuffer(bounds, surf);
         return surf;
     }
 

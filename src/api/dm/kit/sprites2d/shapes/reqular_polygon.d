@@ -37,10 +37,10 @@ class RegularPolygon : Shape2d
     {
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        graphics.changeColor(style.lineColor);
+        graphic.changeColor(style.lineColor);
         scope (exit)
         {
-            graphics.restoreColor;
+            graphic.restoreColor;
         }
         drawPolygon;
     }
@@ -64,7 +64,7 @@ class RegularPolygon : Shape2d
             }
             else
             {
-                graphics.line(prevX, prevY, newX, newY);
+                graphic.line(prevX, prevY, newX, newY);
             }
 
             prevX = newX;
@@ -73,6 +73,6 @@ class RegularPolygon : Shape2d
             return true;
         });
 
-        graphics.line(prevX, prevY, firstX, firstY);
+        graphic.line(prevX, prevY, firstX, firstY);
     }
 }

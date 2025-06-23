@@ -63,13 +63,13 @@ abstract class BaseDrawableScale : BaseMinMaxScale
 
         auto tickColor = isMajorTick ? theme.colorDanger : theme.colorAccent;
 
-        graphics.fillRect(tickPos.x, tickPos.y, tickW, tickH, tickColor);
+        graphic.fillRect(tickPos.x, tickPos.y, tickW, tickH, tickColor);
         return true;
     }
 
     void drawAxis(Vec2d start, Vec2d end, RGBA color)
     {
-        graphics.line(start, end, color);
+        graphic.line(start, end, color);
     }
 
     void drawScale()

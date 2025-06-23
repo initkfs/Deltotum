@@ -1,14 +1,14 @@
 module api.dm.kit.apps.graphic_app;
 
-import api.dm.com.graphics.com_font : ComFont;
+import api.dm.com.graphic.com_font : ComFont;
 import api.core.loggers.logging : Logging;
 import api.core.configs.keyvalues.config : Config;
 import api.core.contexts.context : Context;
 import api.core.resources.resourcing : Resourcing;
 import api.core.apps.app_result : AppResult;
 import api.core.apps.cli_app : CliApp;
-import api.dm.kit.components.graphics_component : GraphicsComponent;
-import api.dm.kit.components.graphics_component : GraphicsComponent;
+import api.dm.kit.components.graphic_component : GraphicComponent;
+import api.dm.kit.components.graphic_component : GraphicComponent;
 import api.core.components.uni_component : UniComponent;
 import api.dm.kit.graphics.graphic : Graphic;
 import api.dm.kit.assets.asset : Asset;
@@ -30,14 +30,14 @@ import api.dm.kit.events.kit_event_manager : KitEventManager;
 
 import std.typecons : Nullable;
 
-import api.dm.com.graphics.com_renderer : ComRenderer;
-import api.dm.com.graphics.com_surface : ComSurface;
+import api.dm.com.graphic.com_renderer : ComRenderer;
+import api.dm.com.graphic.com_surface : ComSurface;
 import api.dm.com.platforms.com_platform : ComPlatform;
 import api.dm.kit.platforms.platform : Platform;
 import api.dm.kit.platforms.screens.screening : Screening;
 import api.dm.kit.platforms.caps.cap_graphics : CapGraphics;
 import api.dm.kit.platforms.timers.timing : Timing;
-import api.dm.com.graphics.com_screen : ComScreen;
+import api.dm.com.graphic.com_screen : ComScreen;
 import api.dm.kit.i18n.i18n : I18n;
 import api.dm.kit.i18n.langs.lang_messages : LangMessages;
 import api.dm.gui.interacts.interact : Interact;
@@ -71,7 +71,7 @@ abstract class GraphicApp : CliApp
 
     private
     {
-        GraphicsComponent _graphicServices;
+        GraphicComponent _graphicServices;
     }
 
     abstract
@@ -213,22 +213,22 @@ abstract class GraphicApp : CliApp
         return i18n;
     }
 
-    GraphicsComponent newWindowServices()
+    GraphicComponent newWindowServices()
     {
-        return new GraphicsComponent;
+        return new GraphicComponent;
     }
 
-    GraphicsComponent newGraphicServices()
+    GraphicComponent newGraphicServices()
     {
-        return new GraphicsComponent;
+        return new GraphicComponent;
     }
 
-    void build(GraphicsComponent component)
+    void build(GraphicComponent component)
     {
         gservices.build(component);
     }
 
-    protected void buildPartially(GraphicsComponent component)
+    protected void buildPartially(GraphicComponent component)
     {
         import api.core.components.uni_component : UniComponent;
         import api.core.utils.types : castSafe;
@@ -653,13 +653,13 @@ abstract class GraphicApp : CliApp
         }
     }
 
-    GraphicsComponent gservices() nothrow pure @safe
+    GraphicComponent gservices() nothrow pure @safe
     out (_graphicServices; _graphicServices !is null)
     {
         return _graphicServices;
     }
 
-    void gservices(GraphicsComponent services) pure @safe
+    void gservices(GraphicComponent services) pure @safe
     {
         import std.exception : enforce;
 

@@ -583,7 +583,7 @@ class DiamondSquareGenerator : Control
         super.drawContent;
         foreach (color, rects; terrainPoints)
         {
-            graphics.fillRects(rects, color);
+            graphic.fillRects(rects, color);
         }
     }
 

@@ -129,7 +129,7 @@ class RScroll : BaseRadialMonoScroll
 
         thumb.setRendererTarget;
 
-        graphics.clear(RGBA.transparent);
+        graphic.clear(RGBA.transparent);
 
         thumbShape.draw;
 
@@ -147,7 +147,7 @@ class RScroll : BaseRadialMonoScroll
         auto leftTopVert = Vec2d(thumbPx + pointerPos.x - pointerSize, thumbPy + pointerPos.y - pointerSize / 2);
         auto leftBottomVert = Vec2d(thumbPx + pointerPos.x - pointerSize, thumbPy + pointerPos.y + pointerSize / 2);
 
-        graphics.fillTriangle(rightVert, leftTopVert, leftBottomVert, theme.colorAccent);
+        graphic.fillTriangle(rightVert, leftTopVert, leftBottomVert, theme.colorAccent);
 
         thumb.restoreRendererTarget;
 

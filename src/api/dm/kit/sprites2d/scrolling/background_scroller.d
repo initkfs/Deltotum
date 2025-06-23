@@ -40,7 +40,7 @@ class BackgroundScroller : Sprite2d
         super.create;
         if (!worldBoundsProvider)
         {
-            worldBoundsProvider = () { return graphics.renderBounds; };
+            worldBoundsProvider = () { return graphic.renderBounds; };
         }
     }
 

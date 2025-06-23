@@ -8,7 +8,7 @@ import api.dm.com.inputs.com_cursor : ComCursor, ComPlatformCursorType;
 
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
 import api.dm.com.platforms.results.com_result : ComResult;
-import api.dm.com.graphics.com_window : ComWindow;
+import api.dm.com.graphic.com_window : ComWindow;
 
 import api.dm.back.sdl3.externs.csdl3;
 

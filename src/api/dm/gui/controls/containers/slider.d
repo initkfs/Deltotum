@@ -194,7 +194,7 @@ class Slider : Container
     protected Vec2d checkSceneBoundsExceed()
     {
         double dx = 0, dy = 0;
-        const sceneBounds = graphics.renderBounds;
+        const sceneBounds = graphic.renderBounds;
         if (sliderWidth > sceneBounds.width)
         {
             dx = width - sceneBounds.width;
@@ -227,7 +227,7 @@ class Slider : Container
         import api.math.geom2.rect2 : Rect2d;
 
         double newX = 0, newY = 0;
-        const Rect2d sceneBounds = graphics.renderBounds;
+        const Rect2d sceneBounds = graphic.renderBounds;
 
         final switch (position) with (SliderPos)
         {

@@ -1,6 +1,6 @@
 module api.dm.kit.factories.factory_kit;
 
-import api.dm.kit.components.graphics_component : GraphicsComponent;
+import api.dm.kit.components.graphic_component : GraphicComponent;
 
 import api.dm.kit.factories.image_factory : ImageFactory;
 import api.dm.kit.factories.shape_factory : ShapeFactory;
@@ -13,7 +13,7 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 /**
  * Authors: initkfs
  */
-class FactoryKit : GraphicsComponent
+class FactoryKit : GraphicComponent
 {
     ImageFactory images;
     ShapeFactory shapes;
@@ -37,7 +37,7 @@ class FactoryKit : GraphicsComponent
         return textures.texture(pWidth, pHeight, () {
             import api.math.geom2.vec2 : Vec2d;
 
-            graphics.fillRect(Vec2d(0, 0), pWidth, pHeight, color);
+            graphic.fillRect(Vec2d(0, 0), pWidth, pHeight, color);
         });
     }
 

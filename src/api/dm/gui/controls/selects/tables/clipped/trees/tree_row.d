@@ -50,10 +50,10 @@ class TreeRowLevelGraphics : Control
 
         const b = boundsRect;
 
-        graphics.changeColor(theme.colorAccent);
+        graphic.changeColor(theme.colorAccent);
         scope (exit)
         {
-            graphics.restoreColor;
+            graphic.restoreColor;
         }
 
         double nextX = b.x + graphicsGap;
@@ -61,8 +61,8 @@ class TreeRowLevelGraphics : Control
         {
             if (!isLastLevelRow)
             {
-                graphics.line(Vec2d(nextX, b.y), Vec2d(nextX, b.bottom));
-                graphics.line(Vec2d(nextX, b.middleY), Vec2d(nextX + graphicsGap, b.middleY));
+                graphic.line(Vec2d(nextX, b.y), Vec2d(nextX, b.bottom));
+                graphic.line(Vec2d(nextX, b.middleY), Vec2d(nextX + graphicsGap, b.middleY));
             }
         }
         else
@@ -75,8 +75,8 @@ class TreeRowLevelGraphics : Control
                 {
                     if (!isLastLevelRow)
                     {
-                        graphics.line(Vec2d(nextX, b.y), Vec2d(nextX, b.bottom));
-                        graphics.line(Vec2d(nextX, b.middleY), Vec2d(nextX + graphicsGap, b.middleY));
+                        graphic.line(Vec2d(nextX, b.y), Vec2d(nextX, b.bottom));
+                        graphic.line(Vec2d(nextX, b.middleY), Vec2d(nextX + graphicsGap, b.middleY));
                     }
                     else
                     {
@@ -87,19 +87,19 @@ class TreeRowLevelGraphics : Control
                 {
                     if (!isLastLevelRow)
                     {
-                        graphics.line(Vec2d(nextX, b.y), Vec2d(nextX, b.bottom));
+                        graphic.line(Vec2d(nextX, b.y), Vec2d(nextX, b.bottom));
                     }
                     else
                     {
                         // if (level > 0 && !isLastRow)
                         // {
-                        //     graphics.line(Vec2d(nextX, b.y), Vec2d(nextX, b.bottom));
+                        //     graphic.line(Vec2d(nextX, b.y), Vec2d(nextX, b.bottom));
                         // }
                         // else
                         // {
-                            graphics.line(Vec2d(nextX, b.y), Vec2d(nextX, b.middleY));
+                            graphic.line(Vec2d(nextX, b.y), Vec2d(nextX, b.middleY));
                         //}
-                        graphics.line(Vec2d(nextX, b.middleY), Vec2d(b.right, b
+                        graphic.line(Vec2d(nextX, b.middleY), Vec2d(b.right, b
                                 .middleY));
                     }
                 }
@@ -112,13 +112,13 @@ class TreeRowLevelGraphics : Control
         {
             // if (level > 0 && !isLastRow)
             // {
-            //     graphics.line(Vec2d(nextX, b.y), Vec2d(nextX, b.bottom));
+            //     graphic.line(Vec2d(nextX, b.y), Vec2d(nextX, b.bottom));
             // }
             // else
             // {
-                graphics.line(Vec2d(nextX, b.y), Vec2d(nextX, b.middleY));
+                graphic.line(Vec2d(nextX, b.y), Vec2d(nextX, b.middleY));
             //}
-            graphics.line(Vec2d(nextX, b.middleY), Vec2d(nextX + graphicsGap, b
+            graphic.line(Vec2d(nextX, b.middleY), Vec2d(nextX + graphicsGap, b
                     .middleY));
             return;
         }

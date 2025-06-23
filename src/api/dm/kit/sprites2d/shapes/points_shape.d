@@ -53,14 +53,14 @@ class PointsShape : Shape2d
         double startX = firstX, startY = firstY;
         foreach (p; points[1 .. $])
         {
-            graphics.line(offsetX + startX, offsetY + startY, offsetX + p.x, offsetY + p.y);
+            graphic.line(offsetX + startX, offsetY + startY, offsetX + p.x, offsetY + p.y);
             startX = p.x;
             startY = p.y;
         }
 
         if (isClosePath)
         {
-            graphics.line(offsetX + startX, offsetY + startY, offsetX + firstX, offsetY +  firstY);
+            graphic.line(offsetX + startX, offsetY + startY, offsetX + firstX, offsetY +  firstY);
         }
     }
 }

@@ -3,9 +3,9 @@ module api.dm.kit.assets.fonts.font;
 import api.core.components.units.services.loggable_unit : LoggableUnit;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
-import api.dm.com.graphics.com_font : ComFont, ComFontHinting;
-import api.dm.com.graphics.com_surface : ComSurface;
-import api.dm.com.graphics.com_texture : ComTexture;
+import api.dm.com.graphic.com_font : ComFont, ComFontHinting;
+import api.dm.com.graphic.com_surface : ComSurface;
+import api.dm.com.graphic.com_texture : ComTexture;
 
 import api.core.loggers.logging : Logging;
 import std.string : toStringz;

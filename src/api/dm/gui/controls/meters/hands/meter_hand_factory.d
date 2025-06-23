@@ -40,7 +40,7 @@ private
         override void create()
         {
             super.create;
-            import api.dm.com.graphics.com_texture : ComTextureScaleMode;
+            import api.dm.com.graphic.com_texture : ComTextureScaleMode;
 
             textureScaleMode = ComTextureScaleMode.quality;
         }
@@ -150,8 +150,8 @@ class MeterHandFactory : Control
 
             const center = newHand.boundsRect.center;
 
-            graphics.clearTransparent;
-            graphics.fillRect(center.x - handWidth / 2, center.y - handHeight, handWidth, handHeight, handStyle
+            graphic.clearTransparent;
+            graphic.fillRect(center.x - handWidth / 2, center.y - handHeight, handWidth, handHeight, handStyle
                     .fillColor);
         }
 

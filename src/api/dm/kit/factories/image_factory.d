@@ -1,13 +1,13 @@
 module api.dm.kit.factories.image_factory;
 
-import api.dm.kit.components.graphics_component : GraphicsComponent;
+import api.dm.kit.components.graphic_component : GraphicComponent;
 import api.dm.kit.sprites2d.images.image : Image;
 import api.dm.kit.sprites2d.images.anim_image : AnimImage;
 
 /**
  * Authors: initkfs
  */
-class ImageFactory : GraphicsComponent
+class ImageFactory : GraphicComponent
 {
     Image[] images(string[] paths, int requestWidth = -1, int requestHeight = -1)
     {

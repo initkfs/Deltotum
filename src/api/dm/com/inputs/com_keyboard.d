@@ -4,7 +4,7 @@ module api.dm.com.inputs.com_keyboard;
  * Authors: initkfs
  */
 import api.dm.com.platforms.results.com_result : ComResult;
-import api.dm.com.graphics.com_window : ComWindow;
+import api.dm.com.graphic.com_window : ComWindow;
 
 interface ComKeyboard
 {

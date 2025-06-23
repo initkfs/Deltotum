@@ -124,15 +124,15 @@ class VecFieldGen : Container
     {
         super.drawContent;
 
-        graphics.changeColor(RGBA.lightblue);
+        graphic.changeColor(RGBA.lightblue);
         scope (exit)
         {
-            graphics.restoreColor;
+            graphic.restoreColor;
         }
 
         vecField.drawGrid((p1, p2) {
-            graphics.line(p1, p2);
-            graphics.fillCircle(p1.x, p1.y, 2);
+            graphic.line(p1, p2);
+            graphic.fillCircle(p1.x, p1.y, 2);
         });
     }
 }

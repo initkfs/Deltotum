@@ -1,8 +1,8 @@
-module api.dm.com.graphics.com_font;
+module api.dm.com.graphic.com_font;
 
 import api.dm.com.platforms.results.com_result : ComResult;
 import api.dm.com.destroyable : Destroyable;
-import api.dm.com.graphics.com_surface : ComSurface;
+import api.dm.com.graphic.com_surface : ComSurface;
 
 /**
  * Authors: initkfs

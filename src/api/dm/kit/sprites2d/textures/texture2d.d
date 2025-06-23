@@ -2,10 +2,10 @@ module api.dm.kit.sprites2d.textures.texture2d;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
-import api.dm.com.graphics.com_texture : ComTexture;
-import api.dm.com.graphics.com_surface : ComSurface;
-import api.dm.com.graphics.com_blend_mode : ComBlendMode;
-import api.dm.com.graphics.com_texture : ComTextureScaleMode;
+import api.dm.com.graphic.com_texture : ComTexture;
+import api.dm.com.graphic.com_surface : ComSurface;
+import api.dm.com.graphic.com_blend_mode : ComBlendMode;
+import api.dm.com.graphic.com_texture : ComTextureScaleMode;
 import api.math.geom2.rect2 : Rect2d;
 import api.math.flip : Flip;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -79,7 +79,7 @@ class Texture2d : Sprite2d
         auto newTexture = texture;
         if (!newTexture)
         {
-            newTexture = graphics.comTextureProvider.getNew();
+            newTexture = graphic.comTextureProvider.getNew();
         }
 
         if (const err = newTexture.create(surface))
@@ -103,7 +103,7 @@ class Texture2d : Sprite2d
         assert(width > 0);
         assert(height > 0);
 
-        texture = graphics.comTextureProvider.getNew();
+        texture = graphic.comTextureProvider.getNew();
         if (const err = texture.createMutRGBA32(cast(int) width, cast(int) height))
         {
             throw new Exception(err.toString);
@@ -114,9 +114,9 @@ class Texture2d : Sprite2d
     {
         assert(width > 0);
         assert(height > 0);
-        assert(graphics);
+        assert(graphic);
 
-        texture = graphics.comTextureProvider.getNew();
+        texture = graphic.comTextureProvider.getNew();
         if (const err = texture.createTargetRGBA32(cast(int) width, cast(int) height))
         {
             throw new Exception(err.toString);
@@ -127,9 +127,9 @@ class Texture2d : Sprite2d
     {
         assert(width > 0);
         assert(height > 0);
-        assert(graphics);
+        assert(graphic);
 
-        texture = graphics.comTextureProvider.getNew();
+        texture = graphic.comTextureProvider.getNew();
         if (const err = texture.createMutYV(cast(int) width, cast(int) height))
         {
             throw new Exception(err.toString);
@@ -365,7 +365,7 @@ class Texture2d : Sprite2d
         {
             newTexture.restoreRendererTarget;
         }
-        graphics.clearTransparent;
+        graphic.clearTransparent;
 
         copyTo(newTexture, isToCenter);
         return newTexture;

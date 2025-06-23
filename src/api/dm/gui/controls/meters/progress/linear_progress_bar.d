@@ -85,10 +85,10 @@ class LinearProgressBar : BaseLabeledProgressBar
     {
         super.drawContent;
 
-        graphics.changeColor(barColor);
+        graphic.changeColor(barColor);
         scope (exit)
         {
-            graphics.restoreColor;
+            graphic.restoreColor;
         }
 
         //TODO vertical
@@ -103,8 +103,8 @@ class LinearProgressBar : BaseLabeledProgressBar
             const drawW = value * drawFullW / maxValue;
             const drawH = bounds.height - padding.height;
 
-            graphics.rect(leftTopX, leftTopY, drawFullW, drawH);
-            graphics.fillRect(leftTopX, leftTopY, drawW, drawH);
+            graphic.rect(leftTopX, leftTopY, drawFullW, drawH);
+            graphic.fillRect(leftTopX, leftTopY, drawW, drawH);
         }
         else
         {
@@ -115,8 +115,8 @@ class LinearProgressBar : BaseLabeledProgressBar
             const drawH = value * drawFullH / maxValue;
             const drawW = bounds.width - padding.width;
 
-            graphics.rect(leftBottomX, leftBottomY - drawFullH, drawW, drawFullH);
-            graphics.fillRect(leftBottomX, leftBottomY - drawH, drawW, drawH);
+            graphic.rect(leftBottomX, leftBottomY - drawFullH, drawW, drawFullH);
+            graphic.fillRect(leftBottomX, leftBottomY - drawH, drawW, drawH);
         }
 
     }

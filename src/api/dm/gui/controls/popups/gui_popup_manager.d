@@ -187,7 +187,7 @@ class GuiPopupManager : Container, PopupManager
 
         if (activeUrgentPopupsCount > 0)
         {
-            auto middleBounds = graphics.renderBounds;
+            auto middleBounds = graphic.renderBounds;
             double nextX = middleBounds.middleX;
             double nextY = middleBounds.middleY;
             foreach (Popup popup; activeUrgentPopups[])

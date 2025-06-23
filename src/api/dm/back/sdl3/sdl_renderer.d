@@ -7,14 +7,14 @@ version(SdlBackend):
 // dfmt on
 
 import api.dm.com.com_native_ptr : ComNativePtr;
-import api.dm.com.graphics.com_renderer : ComRenderer, ComRendererLogicalScaling;
-import api.dm.com.graphics.com_texture : ComTexture;
+import api.dm.com.graphic.com_renderer : ComRenderer, ComRendererLogicalScaling;
+import api.dm.com.graphic.com_texture : ComTexture;
 import api.dm.com.platforms.results.com_result : ComResult;
-import api.dm.com.graphics.com_blend_mode : ComBlendMode;
+import api.dm.com.graphic.com_blend_mode : ComBlendMode;
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
 import api.dm.back.sdl3.sdl_window : SdlWindow;
 import api.dm.back.sdl3.sdl_texture : SdlTexture;
-import api.dm.com.graphics.com_surface : ComSurface;
+import api.dm.com.graphic.com_surface : ComSurface;
 
 import api.math.flip : Flip;
 import api.math.geom2.vec2 : Vec2d, Vec2i, Vec2f;

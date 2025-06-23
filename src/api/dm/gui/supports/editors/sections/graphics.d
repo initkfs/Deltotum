@@ -1,4 +1,4 @@
-module api.dm.gui.supports.editors.sections.graphics;
+module api.dm.gui.supports.editors.sections.graphic;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
@@ -75,56 +75,56 @@ class Grahpics : Control
     {
         super.draw();
 
-        graphics.line(20, 100, 200, 100, RGBA.red);
-        graphics.line(20, 110, 200, 110, RGBA.yellow);
-        graphics.line(20, 120, 200, 120, RGBA.green);
+        graphic.line(20, 100, 200, 100, RGBA.red);
+        graphic.line(20, 110, 200, 110, RGBA.yellow);
+        graphic.line(20, 120, 200, 120, RGBA.green);
 
-        graphics.setColor(RGBA.pink);
-        graphics.line(20, 140, 200, 140);
-        graphics.line(20, 150, 200, 150);
-        graphics.restoreColor;
+        graphic.setColor(RGBA.pink);
+        graphic.line(20, 140, 200, 140);
+        graphic.line(20, 150, 200, 150);
+        graphic.restoreColor;
 
-        graphics.setColor(RGBA.lightblue);
+        graphic.setColor(RGBA.lightblue);
         foreach (i; 0 .. 10)
         {
-            graphics.point(220 + i * 5, 100);
+            graphic.point(220 + i * 5, 100);
         }
 
-        graphics.linePoints(Vec2d(220, 120), Vec2d(250, 120), (p) {
-            graphics.point(p);
+        graphic.linePoints(Vec2d(220, 120), Vec2d(250, 120), (p) {
+            graphic.point(p);
             return true;
         });
 
-        graphics.circlePoints(Vec2d(235, 150), 10, (p) {
-            graphics.point(p);
+        graphic.circlePoints(Vec2d(235, 150), 10, (p) {
+            graphic.point(p);
             return true;
         });
 
-        graphics.restoreColor;
+        graphic.restoreColor;
 
-        graphics.fillTriangle(Vec2d(300, 100), Vec2d(325, 150), Vec2d(350, 100), RGBA
+        graphic.fillTriangle(Vec2d(300, 100), Vec2d(325, 150), Vec2d(350, 100), RGBA
                 .yellowgreen);
-        graphics.fillTriangle(Vec2d(360, 150), Vec2d(410, 150), Vec2d(385, 100), RGBA
+        graphic.fillTriangle(Vec2d(360, 150), Vec2d(410, 150), Vec2d(385, 100), RGBA
                 .yellowgreen);
-        graphics.fillTriangle(Vec2d(420, 150), Vec2d(450, 100), Vec2d(430, 200), RGBA
+        graphic.fillTriangle(Vec2d(420, 150), Vec2d(450, 100), Vec2d(430, 200), RGBA
                 .yellowgreen);
 
-        graphics.fillRect(480, 100, 50, 20, RGBA.lightsalmon);
-        graphics.rect(480, 130, 50, 20, RGBA.lightcoral);
+        graphic.fillRect(480, 100, 50, 20, RGBA.lightsalmon);
+        graphic.rect(480, 130, 50, 20, RGBA.lightcoral);
 
-        graphics.setColor(RGBA.lightskyblue);
+        graphic.setColor(RGBA.lightskyblue);
 
-        graphics.bezier(Vec2d(550, 150), Vec2d(510, 150), Vec2d(580, 100));
+        graphic.bezier(Vec2d(550, 150), Vec2d(510, 150), Vec2d(580, 100));
 
-        graphics.ellipse(Vec2d(650, 100), Vec2d(40, 20), RGBA.lightseagreen, true, false);
-        graphics.ellipse(Vec2d(650, 150), Vec2d(40, 20), RGBA.lightseagreen, false, true);
+        graphic.ellipse(Vec2d(650, 100), Vec2d(40, 20), RGBA.lightseagreen, true, false);
+        graphic.ellipse(Vec2d(650, 150), Vec2d(40, 20), RGBA.lightseagreen, false, true);
 
-        import api.dm.com.graphics.com_blend_mode : ComBlendMode;
+        import api.dm.com.graphic.com_blend_mode : ComBlendMode;
 
-        graphics.fillRect(750, 100, 50, 50, RGBA.lightpink);
+        graphic.fillRect(750, 100, 50, 50, RGBA.lightpink);
         auto color2 = RGBA.lightcoral;
         color2.a = 0.5;
-        graphics.fillRect(775, 100, 50, 50, color2);
+        graphic.fillRect(775, 100, 50, 50, color2);
 
         auto points = [
             Vec2d(20, 200),
@@ -133,7 +133,7 @@ class Grahpics : Control
             Vec2d(40, 260),
             Vec2d(10, 270),
         ];
-        graphics.polygon(points);
+        graphic.polygon(points);
 
         version (DmAddon)
         {
@@ -143,17 +143,17 @@ class Grahpics : Control
 
             foreach (t; res)
             {
-                graphics.line(t.a, t.b);
-                graphics.line(t.b, t.c);
-                graphics.line(t.c, t.a);
-                //graphics.fillTriangle(t.a, t.b, t.c, RGBA.red);
+                graphic.line(t.a, t.b);
+                graphic.line(t.b, t.c);
+                graphic.line(t.c, t.a);
+                //graphic.fillTriangle(t.a, t.b, t.c, RGBA.red);
             }
         }
 
-        graphics.restoreColor;
+        graphic.restoreColor;
 
-        graphics.point(150, 200);
-        graphics.arc(150, 200, 0, 90, 50);
+        graphic.point(150, 200);
+        graphic.arc(150, 200, 0, 90, 50);
 
         return true;
     }

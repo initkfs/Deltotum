@@ -42,7 +42,7 @@ class SpaceableContainer : Container
     {
         debug
         {
-            if (!hasGraphics || !theme)
+            if (!hasGraphic || !theme)
             {
                 throw new Exception(
                     "Unable to enable spacing: graphic or theme is null. Perhaps the component is not built correctly");

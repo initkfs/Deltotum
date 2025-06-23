@@ -265,7 +265,7 @@ class PieChart : Container
                 boundsRect.center);
             auto pointerEndPos = label.colorLabel.boundsRect.center;
 
-            graphics.line(pointerStartPos, pointerEndPos, label.color);
+            graphic.line(pointerStartPos, pointerEndPos, label.color);
         }
     }
 

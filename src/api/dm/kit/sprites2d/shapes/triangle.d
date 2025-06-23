@@ -27,9 +27,9 @@ class Triangle : Shape2d
 
         Vec2d[3] verts;
 
-        graphics.changeColor(style.lineColor);
+        graphic.changeColor(style.lineColor);
         scope(exit){
-            graphics.restoreColor;
+            graphic.restoreColor;
         }
 
         const b = boundsPoly;
@@ -39,9 +39,9 @@ class Triangle : Shape2d
         verts[2] = b.rightBottom;
         
         if(!style.isFill){
-            graphics.polygon(verts[]);
+            graphic.polygon(verts[]);
         }else {
-            graphics.fillTriangle(verts[0], verts[1], verts[2]);
+            graphic.fillTriangle(verts[0], verts[1], verts[2]);
         }
     }
 

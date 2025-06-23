@@ -5,8 +5,8 @@ version(SdlBackend):
 // dfmt on
 
 import api.dm.com.platforms.results.com_result : ComResult;
-import api.dm.com.graphics.com_surface : ComSurface;
-import api.dm.com.graphics.com_image : ComImage;
+import api.dm.com.graphic.com_surface : ComSurface;
+import api.dm.com.graphic.com_image : ComImage;
 
 import api.dm.back.sdl3.sdl_surface : SdlSurface;
 

@@ -111,16 +111,16 @@ class LinearChart : XYChart
         drawGrid;
 
         //TODO best clipping
-        graphics.clip(chartBounds);
+        graphic.clip(chartBounds);
         scope (exit)
         {
-            graphics.removeClip;
+            graphic.removeClip;
         }
 
-        graphics.setColor(colorChartLine);
+        graphic.setColor(colorChartLine);
         scope (exit)
         {
-            graphics.restoreColor;
+            graphic.restoreColor;
         }
 
         Vec2d prev;
@@ -132,11 +132,11 @@ class LinearChart : XYChart
 
             if (i > 0)
             {
-                graphics.line(prev.x, prev.y, pos.x, pos.y);
+                graphic.line(prev.x, prev.y, pos.x, pos.y);
                 if (isThickLine)
                 {
-                    graphics.line(prev.x, prev.y - 1, pos.x, pos.y - 1);
-                    graphics.line(prev.x, prev.y + 1, pos.x, pos.y + 1);
+                    graphic.line(prev.x, prev.y - 1, pos.x, pos.y - 1);
+                    graphic.line(prev.x, prev.y + 1, pos.x, pos.y + 1);
                 }
 
             }

@@ -57,15 +57,15 @@ class PianoKey : Control
         nameText.y = bounds.bottom - nameText.height;
 
         //stroke
-        graphics.changeColor(RGBA.gray);
-        graphics.fillRect(boundsRect);
-        graphics.restoreColor;
+        graphic.changeColor(RGBA.gray);
+        graphic.fillRect(boundsRect);
+        graphic.restoreColor;
 
         const fillBounds = boundsRect.withPadding(2);
 
-        graphics.changeColor(backgroundColor);
-        graphics.fillRect(fillBounds);
-        graphics.restoreColor;
+        graphic.changeColor(backgroundColor);
+        graphic.fillRect(fillBounds);
+        graphic.restoreColor;
     }
 }
 

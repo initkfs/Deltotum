@@ -4,7 +4,7 @@ import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.canvases.graphics_canvas : GraphicsCanvas;
 
-import api.dm.com.graphics.com_surface : ComSurface;
+import api.dm.com.graphic.com_surface : ComSurface;
 
 //TODO remove native api
 import api.dm.sys.cairo.cairo_surface : CairoSurface;
@@ -48,7 +48,7 @@ class VectorTexture : Texture2d
     {
         if (!comSurface)
         {
-            comSurface = graphics.comSurfaceProvider.getNew();
+            comSurface = graphic.comSurfaceProvider.getNew();
         }
 
         import api.dm.com.platforms.results.com_result : ComResult;
@@ -130,7 +130,7 @@ class VectorTexture : Texture2d
 
         if (!texture)
         {
-            texture = graphics.comTextureProvider.getNew();
+            texture = graphic.comTextureProvider.getNew();
         }
 
         loadStaticTexture;
@@ -165,7 +165,7 @@ class VectorTexture : Texture2d
 
         if (!texture)
         {
-            texture = graphics.comTextureProvider.getNew();
+            texture = graphic.comTextureProvider.getNew();
         }
 
         const createErr = texture.createMutARGB32(cast(int) width, cast(int) height);

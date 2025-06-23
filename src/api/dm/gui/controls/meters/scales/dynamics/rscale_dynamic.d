@@ -95,7 +95,7 @@ class RScaleDynamic : BaseScaleDynamic
         auto tickColor = isMajorTick ? theme.colorDanger : theme.colorAccent;
 
         const end = pos.add(Vec2d.fromPolarDeg(i * tickOffset, tickH));
-        graphics.line(pos, end, tickColor);
+        graphic.line(pos, end, tickColor);
         return true;
     }
 

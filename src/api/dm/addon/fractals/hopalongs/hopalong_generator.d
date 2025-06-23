@@ -95,12 +95,12 @@ class HopalongGenerator : Control
             auto newHue = (color.hue + 50) % color.maxHue;
             color.hue = newHue;
 
-            graphics.points(slice, color.toRGBA);
+            graphic.points(slice, color.toRGBA);
 
             windowStartPos = windowEndPos;
         }
 
-        //graphics.points(points);
+        //graphic.points(points);
     }
 
     override void create()
@@ -116,7 +116,7 @@ class HopalongGenerator : Control
             auto newX = x + px + width / 2;
             auto newY = y + py + height / 2;
 
-            import api.dm.com.graphics.com_blend_mode : ComBlendMode;
+            import api.dm.com.graphic.com_blend_mode : ComBlendMode;
 
             // if(const err = screenSurface.lock){
 
@@ -127,14 +127,14 @@ class HopalongGenerator : Control
             // }
 
             // auto radius = 3;
-            // graphics.changeBlendMode(ComBlendMode.blend);
+            // graphic.changeBlendMode(ComBlendMode.blend);
             // scope(exit){
-            //     graphics.restoreBlendMode;
+            //     graphic.restoreBlendMode;
             // }
-            //graphics.circle(newX, newY, radius, color.toRGBA);
+            //graphic.circle(newX, newY, radius, color.toRGBA);
             points[i].x = cast(int) newX;
             points[i].y = cast(int) newY;
-            //graphics.point(newX, newY, color.toRGBA);
+            //graphic.point(newX, newY, color.toRGBA);
             return true;
         };
 
