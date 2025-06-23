@@ -261,7 +261,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
     ComResult drawRects(Rect2d[] rects) nothrow => drawRects(toSdlRects(rects));
     ComResult drawRects(Rect2f[] rects) nothrow => drawRects(cast(SDL_FRect[]) rects);
 
-    ComResult drawFillRect(int x, int y, int width, int height) nothrow
+    ComResult drawFillRect(float x, float y, float width, float height) nothrow
     {
         SDL_FRect rect = {x, y, width, height};
         return drawFillRect(&rect);

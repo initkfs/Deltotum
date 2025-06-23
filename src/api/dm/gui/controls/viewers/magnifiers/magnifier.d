@@ -85,7 +85,7 @@ class Magnifier : Control
                 {
                     case screen:
                         magnifier.lock;
-                        graphic.readPixelsToBuffer(textureBounds, buffer);
+                        graphic.readPixels(textureBounds, buffer);
                         //InvalidPointerError@src/etc/linux/memoryerror.d(325)
                         magnifier.unlock;
                         break;

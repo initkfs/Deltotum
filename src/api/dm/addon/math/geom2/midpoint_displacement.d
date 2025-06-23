@@ -405,7 +405,7 @@ class MDLandscapeGenerator : Control
         // graphic.clip(Rect2d(x, y, canvasWidth, canvasHeight));
         // scope (exit)
         // {
-        //     graphic.removeClip;
+        //     graphic.clearClip;
         // }
 
         // foreach (ref color, linePoints; layerLinePoints)

@@ -277,7 +277,7 @@ class DigitalClockFace : Control
 
         if (!platform.cap.isVectorGraphics)
         {
-            graphic.changeColor(theme.colorAccent);
+            graphic.color(theme.colorAccent);
             scope (exit)
             {
                 graphic.restoreColor;

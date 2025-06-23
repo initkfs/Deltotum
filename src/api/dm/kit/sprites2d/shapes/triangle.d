@@ -27,7 +27,7 @@ class Triangle : Shape2d
 
         Vec2d[3] verts;
 
-        graphic.changeColor(style.lineColor);
+        graphic.color(style.lineColor);
         scope(exit){
             graphic.restoreColor;
         }

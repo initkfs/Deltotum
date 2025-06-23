@@ -57,13 +57,13 @@ class PianoKey : Control
         nameText.y = bounds.bottom - nameText.height;
 
         //stroke
-        graphic.changeColor(RGBA.gray);
+        graphic.color(RGBA.gray);
         graphic.fillRect(boundsRect);
         graphic.restoreColor;
 
         const fillBounds = boundsRect.withPadding(2);
 
-        graphic.changeColor(backgroundColor);
+        graphic.color(backgroundColor);
         graphic.fillRect(fillBounds);
         graphic.restoreColor;
     }

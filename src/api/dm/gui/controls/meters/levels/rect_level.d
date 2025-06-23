@@ -162,7 +162,7 @@ class RectLevel : Control
                     levelHeight = levelShapeHeight;
                 }
 
-                graphic.changeColor(levelColors[levelIndex]);
+                graphic.color(levelColors[levelIndex]);
                 scope (exit)
                 {
                     graphic.restoreColor;

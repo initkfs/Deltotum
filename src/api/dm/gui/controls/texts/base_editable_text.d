@@ -587,7 +587,7 @@ class BaseEditableText : BaseMonoText
         RGBA color = theme.colorAccent;
         color.a = 0.5;
 
-        graphic.changeColor(color);
+        graphic.color(color);
         scope (exit)
         {
             graphic.restoreColor;

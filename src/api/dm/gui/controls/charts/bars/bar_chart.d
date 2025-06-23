@@ -78,7 +78,7 @@ class BarChart : XYChart
         graphic.clip(chartArea.boundsRect);
         scope (exit)
         {
-            graphic.removeClip;
+            graphic.clearClip;
         }
         
         foreach (BarSet dataset; datasets)

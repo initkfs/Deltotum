@@ -1111,7 +1111,7 @@ class Sprite2d : EventKitTarget
 
     void disableClipping()
     {
-        graphic.removeClip;
+        graphic.clearClip;
     }
 
     bool isClipped() => clip.width > 0 || clip.height > 0;
@@ -2010,7 +2010,7 @@ class Sprite2d : EventKitTarget
             return;
         }
 
-        graphic.changeColor(color);
+        graphic.color(color);
 
         const b = boundsRect;
         //graphic.rect(b.x, b.y, b.width, b.height, GraphicStyle(1, RGBA.red));
@@ -2040,7 +2040,7 @@ class Sprite2d : EventKitTarget
             return;
         }
 
-        graphic.changeColor(boundsCenterColor);
+        graphic.color(boundsCenterColor);
         scope (exit)
         {
             graphic.restoreColor;
@@ -2063,7 +2063,7 @@ class Sprite2d : EventKitTarget
 
         const color = RGBA.blueviolet;
 
-        graphic.changeColor(color);
+        graphic.color(color);
 
         import api.math.geom2.vec2 : Vec2d;
 
@@ -2260,7 +2260,7 @@ class Sprite2d : EventKitTarget
         {
             throw new Exception(err.toString);
         }
-        graphic.readPixelsToBuffer(bounds, surf);
+        graphic.readPixels(bounds, surf);
         return surf;
     }
 

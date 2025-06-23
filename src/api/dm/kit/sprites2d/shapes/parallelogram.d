@@ -31,7 +31,7 @@ class Parallelogram : Shape2d
 
         super.drawContent;
         
-        graphic.changeColor(style.lineColor);
+        graphic.color(style.lineColor);
         scope (exit)
         {
             graphic.restoreColor;

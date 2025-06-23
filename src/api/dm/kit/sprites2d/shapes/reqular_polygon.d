@@ -37,7 +37,7 @@ class RegularPolygon : Shape2d
     {
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        graphic.changeColor(style.lineColor);
+        graphic.color(style.lineColor);
         scope (exit)
         {
             graphic.restoreColor;

@@ -63,7 +63,13 @@ class Graphic : LoggableUnit
         return cast(int) value;
     }
 
-    Rect2d getClip()
+    pragma(inline, true)
+    private float toFloat(double value) pure @safe const nothrow
+    {
+        return cast(float) value;
+    }
+
+    Rect2d clip()
     {
         Rect2d clip;
         if (const err = renderer.getClipRect(clip))
@@ -81,7 +87,7 @@ class Graphic : LoggableUnit
         }
     }
 
-    void removeClip()
+    void clearClip()
     {
         if (const err = renderer.removeClipRect)
         {
@@ -89,7 +95,7 @@ class Graphic : LoggableUnit
         }
     }
 
-    void readPixelsToBuffer(Rect2d bounds, ComSurface pixelBuffer)
+    void readPixels(Rect2d bounds, ComSurface pixelBuffer)
     {
         if (const err = renderer.readPixels(bounds, pixelBuffer))
         {
@@ -97,7 +103,7 @@ class Graphic : LoggableUnit
         }
     }
 
-    RGBA getColor()
+    RGBA color()
     {
         ubyte r, g, b, a;
         if (const err = renderer.getDrawColor(r, g, b, a))
@@ -108,13 +114,13 @@ class Graphic : LoggableUnit
         return RGBA(r, g, b, (cast(double) a) / RGBA.maxColor);
     }
 
-    RGBA changeColor(RGBA color = defaultColor)
+    RGBA color(RGBA newColor)
     {
-        prevColor = getColor;
+        prevColor = newColor;
 
-        setColor(color);
+        changeColor(newColor);
 
-        if (color.a != RGBA.maxAlpha)
+        if (newColor.a != RGBA.maxAlpha)
         {
             changeBlendMode(ComBlendMode.blend);
             isBlendModeByColorChanged = true;
@@ -123,7 +129,7 @@ class Graphic : LoggableUnit
         return prevColor;
     }
 
-    void setColor(RGBA color)
+    void changeColor(RGBA color)
     {
         if (const err = renderer.setDrawColor(color.r, color.g, color.b, color.aByte))
         {
@@ -138,7 +144,7 @@ class Graphic : LoggableUnit
             restoreBlendMode;
             isBlendModeByColorChanged = false;
         }
-        setColor(prevColor);
+        changeColor(prevColor);
     }
 
     ComBlendMode changeBlendMode(ComBlendMode mode = ComBlendMode.blend)
@@ -150,15 +156,18 @@ class Graphic : LoggableUnit
             return ComBlendMode.none;
         }
 
-        //TODO check prev == mode
+        if(mode == mustBePrevMode){
+            return mustBePrevMode;
+        }
+        
         prevMode = mustBePrevMode;
 
-        setBlendMode(mode);
+        blendMode(mode);
 
         return prevMode;
     }
 
-    void setBlendMode(ComBlendMode mode = ComBlendMode.blend)
+    void blendMode(ComBlendMode mode = ComBlendMode.blend)
     {
         if (const err = renderer.setBlendMode(mode))
         {
@@ -168,12 +177,12 @@ class Graphic : LoggableUnit
 
     void restoreBlendMode()
     {
-        setBlendMode(prevMode);
+        blendMode(prevMode);
     }
 
     void line(double startX, double startY, double endX, double endY)
     {
-        if (const err = renderer.drawLine(toInt(startX), toInt(startY), toInt(endX), toInt(endY)))
+        if (const err = renderer.drawLine(toFloat(startX), toFloat(startY), toFloat(endX), toFloat(endY)))
         {
             logger.error("Line drawing error. ", err);
         }
@@ -201,7 +210,7 @@ class Graphic : LoggableUnit
 
     void line(double startX, double startY, double endX, double endY, RGBA color = defaultColor)
     {
-        changeColor(color);
+        this.color(color);
         scope (exit)
         {
             restoreColor;
@@ -225,11 +234,7 @@ class Graphic : LoggableUnit
         {
             const last = points[$ - 1];
             const first = points[0];
-            if (const err = renderer.drawLine(cast(int) last.x, cast(int) last.y, cast(int) first.x, cast(
-                    int) first.y))
-            {
-                logger.errorf("Lines drawing error. %s", err);
-            }
+            line(last.x, last.y, first.x, first.y);
         }
     }
 
@@ -241,7 +246,7 @@ class Graphic : LoggableUnit
         {
             return;
         }
-        changeColor(color);
+        this.color(color);
         scope (exit)
         {
             restoreColor;
@@ -252,7 +257,7 @@ class Graphic : LoggableUnit
 
     void point(double x, double y)
     {
-        if (const err = renderer.drawPoint(toInt(x), toInt(y)))
+        if (const err = renderer.drawPoint(toFloat(x), toFloat(y)))
         {
             logger.errorf("Point drawing error. %s", err);
         }
@@ -265,7 +270,7 @@ class Graphic : LoggableUnit
 
     void point(double x, double y, RGBA color = defaultColor)
     {
-        changeColor(color);
+        this.color(color);
         scope (exit)
         {
             restoreColor;
@@ -298,7 +303,7 @@ class Graphic : LoggableUnit
         {
             return;
         }
-        changeColor(color);
+        this.color(color);
         scope (exit)
         {
             restoreColor;
@@ -313,7 +318,7 @@ class Graphic : LoggableUnit
         {
             return;
         }
-        changeColor(color);
+        this.color(color);
         scope (exit)
         {
             restoreColor;
@@ -536,7 +541,7 @@ class Graphic : LoggableUnit
 
     void ellipse(Vec2d centerPos, Vec2d radiusXY, RGBA color, bool isFillTop = false, bool isFillBottom = false)
     {
-        changeColor(color);
+        this.color(color);
         scope (exit)
         {
             restoreColor;
@@ -672,7 +677,7 @@ class Graphic : LoggableUnit
 
     void fillTriangle(Vec2d v01, Vec2d v02, Vec2d v03, RGBA fillColor)
     {
-        changeColor(fillColor);
+        color(fillColor);
         scope (exit)
         {
             restoreColor;
@@ -762,7 +767,7 @@ class Graphic : LoggableUnit
 
     void fillRect(double x, double y, double width, double height, RGBA fillColor = defaultColor)
     {
-        changeColor(fillColor);
+        color(fillColor);
         scope (exit)
         {
             restoreColor;
@@ -772,7 +777,7 @@ class Graphic : LoggableUnit
 
     void fillRect(double x, double y, double width, double height)
     {
-        if (const err = renderer.drawFillRect(toInt(x), toInt(y), toInt(width), toInt(height)))
+        if (const err = renderer.drawFillRect(toFloat(x), toFloat(y), toFloat(width), toFloat(height)))
         {
             logger.errorf("Fill rect error. %s", err);
         }
@@ -780,7 +785,7 @@ class Graphic : LoggableUnit
 
     void fillRects(Rect2d[] rects, RGBA fillColor = defaultColor)
     {
-        changeColor(fillColor);
+        color(fillColor);
         scope (exit)
         {
             restoreColor;
@@ -798,7 +803,7 @@ class Graphic : LoggableUnit
 
     void rect(double x, double y, double width, double height, RGBA color = defaultColor)
     {
-        changeColor(color);
+        this.color(color);
         scope (exit)
         {
             restoreColor;
@@ -818,7 +823,7 @@ class Graphic : LoggableUnit
 
     void rect(double x, double y, double width, double height)
     {
-        if (const err = renderer.drawRect(toInt(x), toInt(y), toInt(width), toInt(height)))
+        if (const err = renderer.drawRect(toFloat(x), toFloat(y), toFloat(width), toFloat(height)))
         {
             logger.errorf("Draw rect error. %s", err);
         }
@@ -848,7 +853,7 @@ class Graphic : LoggableUnit
     void bezier(Vec2d p0, RGBA color, scope Vec2d delegate(double v) onInterpValue, bool delegate(
             Vec2d) onPoint = null)
     {
-        changeColor(color);
+        this.color(color);
         scope (exit)
         {
             restoreColor;
@@ -872,7 +877,7 @@ class Graphic : LoggableUnit
                 start = end;
                 continue;
             }
-            line(toInt(start.x), toInt(start.y), toInt(end.x), toInt(end.y));
+            line(toFloat(start.x), toFloat(start.y), toFloat(end.x), toFloat(end.y));
             start = end;
         }
     }
@@ -913,7 +918,7 @@ class Graphic : LoggableUnit
 
     bool fillPolyLines(Vec2d[] vertexStart, Vec2d[] vertexEnd, RGBA fillColor)
     {
-        changeColor(fillColor);
+        color(fillColor);
         scope (exit)
         {
             restoreColor;
@@ -955,7 +960,7 @@ class Graphic : LoggableUnit
 
     void clear(RGBA color)
     {
-        changeColor(color);
+        this.color(color);
         scope (exit)
         {
             restoreColor;

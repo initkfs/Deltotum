@@ -27,10 +27,10 @@ class RendererCanvas : StateCanvas
 
     void color(RGBA rgba)
     {
-        graphic.setColor(rgba);
+        graphic.changeColor(rgba);
     }
 
-    RGBA color() => graphic.getColor;
+    RGBA color() => graphic.color;
 
     void restoreColor()
     {

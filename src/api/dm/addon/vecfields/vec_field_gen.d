@@ -124,7 +124,7 @@ class VecFieldGen : Container
     {
         super.drawContent;
 
-        graphic.changeColor(RGBA.lightblue);
+        graphic.color(RGBA.lightblue);
         scope (exit)
         {
             graphic.restoreColor;

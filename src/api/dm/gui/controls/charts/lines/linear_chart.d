@@ -114,10 +114,10 @@ class LinearChart : XYChart
         graphic.clip(chartBounds);
         scope (exit)
         {
-            graphic.removeClip;
+            graphic.clearClip;
         }
 
-        graphic.setColor(colorChartLine);
+        graphic.changeColor(colorChartLine);
         scope (exit)
         {
             graphic.restoreColor;

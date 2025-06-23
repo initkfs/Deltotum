@@ -96,7 +96,7 @@ class ColorPicker : BaseDropDownSelector!(ColorPickerDialog, RGBA)
         super.drawContent;
         if (colorCanvas && colorCanvas.isVisible)
         {
-            graphic.changeColor(current);
+            graphic.color(current);
             scope (exit)
             {
                 graphic.restoreColor;

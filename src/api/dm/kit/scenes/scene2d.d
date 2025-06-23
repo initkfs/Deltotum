@@ -484,7 +484,7 @@ class Scene2d : EventKitTarget
         {
             throw new Exception(err.toString);
         }
-        graphic.readPixelsToBuffer(bounds, surf);
+        graphic.readPixels(bounds, surf);
         return surf;
     }
 

@@ -50,7 +50,7 @@ class TreeRowLevelGraphics : Control
 
         const b = boundsRect;
 
-        graphic.changeColor(theme.colorAccent);
+        graphic.color(theme.colorAccent);
         scope (exit)
         {
             graphic.restoreColor;

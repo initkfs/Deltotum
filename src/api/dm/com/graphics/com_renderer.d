@@ -66,7 +66,7 @@ nothrow:
     ComResult drawRects(Rect2d[] rects);
     ComResult drawRects(Rect2f[] rects);
 
-    ComResult drawFillRect(int x, int y, int width, int height);
+    ComResult drawFillRect(float x, float y, float width, float height);
     ComResult drawFillRects(Rect2d[] rects);
     ComResult drawFillRects(Rect2f[] rects);
 

@@ -85,7 +85,7 @@ class LinearProgressBar : BaseLabeledProgressBar
     {
         super.drawContent;
 
-        graphic.changeColor(barColor);
+        graphic.color(barColor);
         scope (exit)
         {
             graphic.restoreColor;

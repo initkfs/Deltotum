@@ -79,12 +79,12 @@ class Grahpics : Control
         graphic.line(20, 110, 200, 110, RGBA.yellow);
         graphic.line(20, 120, 200, 120, RGBA.green);
 
-        graphic.setColor(RGBA.pink);
+        graphic.changeColor(RGBA.pink);
         graphic.line(20, 140, 200, 140);
         graphic.line(20, 150, 200, 150);
         graphic.restoreColor;
 
-        graphic.setColor(RGBA.lightblue);
+        graphic.changeColor(RGBA.lightblue);
         foreach (i; 0 .. 10)
         {
             graphic.point(220 + i * 5, 100);
@@ -112,7 +112,7 @@ class Grahpics : Control
         graphic.fillRect(480, 100, 50, 20, RGBA.lightsalmon);
         graphic.rect(480, 130, 50, 20, RGBA.lightcoral);
 
-        graphic.setColor(RGBA.lightskyblue);
+        graphic.changeColor(RGBA.lightskyblue);
 
         graphic.bezier(Vec2d(550, 150), Vec2d(510, 150), Vec2d(580, 100));
 
