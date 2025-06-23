@@ -1,8 +1,8 @@
 module api.dm.kit.assets.fonts.factories.bitmap_font_factory;
 
+import api.dm.kit.components.graphics_component: GraphicsComponent;
 import api.dm.com.graphics.com_font : ComFontHinting, ComFont;
 import api.dm.com.graphics.com_surface : ComSurface;
-import api.dm.kit.assets.fonts.factories.font_factory : FontFactory;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 import api.core.utils.factories : ProviderFactory;
 
@@ -23,7 +23,7 @@ import std.stdio;
 /**
  * Authors: initkfs
  */
-class BitmapFontFactory : FontFactory
+class BitmapFontFactory : GraphicsComponent
 {
     ProviderFactory!ComSurface comSurfaceProvider;
 
