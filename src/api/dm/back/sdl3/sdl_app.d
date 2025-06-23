@@ -204,7 +204,7 @@ class SdlApp : GuiApp
         import api.dm.back.sdl3.sdl_clipboard;
 
         auto sdlClipboard = new SdlClipboard;
-        auto clipboard = new Clipboard(sdlClipboard);
+        auto clipboard = new Clipboard(sdlClipboard, uservices.logging);
 
         import api.dm.kit.inputs.cursors.cursor : Cursor;
         import api.dm.back.sdl3.sdl_cursor : SDLCursor;
@@ -402,10 +402,10 @@ class SdlApp : GuiApp
                 case none:
                     break;
                 case press:
-                    _input.addPressedKey(key.keyName);
+                    _input.addKeyPress(key.keyName);
                     break;
                 case release:
-                    _input.addReleasedKey(key.keyName);
+                    _input.addKeyRelease(key.keyName);
                     break;
             }
         };

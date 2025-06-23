@@ -1,6 +1,7 @@
 module api.dm.kit.inputs.clipboards.clipboard;
 
-import api.dm.com.inputs.com_clipboard: ComClipboard;
+import api.core.loggers.logging : Logging;
+import api.dm.com.inputs.com_clipboard : ComClipboard;
 
 /**
  * Authors: initkfs
@@ -10,25 +11,41 @@ class Clipboard
     private
     {
         ComClipboard clipboard;
+        Logging logging;
     }
 
-    this(ComClipboard c)
+    this(ComClipboard c, Logging logging)
     {
+        assert(logging);
+        this.logging = logging;
+
         assert(c);
         this.clipboard = c;
     }
 
-    string getText(){
+    string getText()
+    {
         string result;
-        const err = clipboard.getText(result);
-        if(err){
-            throw new Exception(err.toString);
-        }
+        getText(result);
         return result;
     }
 
-    bool setText(dstring text){
-        import std.conv: to;
+    bool getText(out string text)
+    {
+        string result;
+        if (const err = clipboard.getText(result))
+        {
+            logging.logger.error(err.toString);
+            return false;
+        }
+        text = result;
+        return true;
+    }
+
+    bool setText(dstring text)
+    {
+        import std.conv : to;
+
         return setText(text.to!string);
     }
 
@@ -36,27 +53,32 @@ class Clipboard
     {
         import std.string : toStringz;
 
-        const err = clipboard.setText(text);
-        if (err)
+        if (const err = clipboard.setText(text))
         {
-            //logging?
+            logging.logger.error(err.toString);
             return false;
         }
+
         return true;
     }
 
     bool hasText()
     {
         bool isHasText;
-        const err = clipboard.hasText(isHasText);
-        if (err)
+        if (const err = clipboard.hasText(isHasText))
         {
-            throw new Exception(err.toString);
+            logging.logger.error(err.toString);
+            return false;
         }
+
         return isHasText;
     }
 
-    void dispose(){
-        clipboard.dispose;
+    void dispose()
+    {
+        if (clipboard)
+        {
+            clipboard.dispose;
+        }
     }
 }

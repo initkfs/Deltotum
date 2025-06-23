@@ -4,7 +4,7 @@ import api.dm.kit.inputs.cursors.cursor : Cursor;
 import api.dm.kit.inputs.clipboards.clipboard : Clipboard;
 import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import api.dm.com.inputs.com_keyboard : ComKeyName;
-import api.dm.kit.inputs.keyboards.keyboard: Keyboard;
+import api.dm.kit.inputs.keyboards.keyboard : Keyboard;
 import api.math.geom2.vec2 : Vec2d;
 
 import api.math.geom2.vec2 : Vec2d;
@@ -36,7 +36,7 @@ class Input
     {
         assert(keyboard);
         this.keyboard = keyboard;
-        
+
         assert(clipboard);
         this.clipboard = clipboard;
 
@@ -49,7 +49,7 @@ class Input
         return cast(size_t) key;
     }
 
-    bool addPressedKey(ComKeyName keyName)
+    bool addKeyPress(ComKeyName keyName)
     {
         const ki = keyIndex(keyName);
         if (pressedKeys[ki])
@@ -60,7 +60,7 @@ class Input
         return true;
     }
 
-    bool addReleasedKey(ComKeyName keyName)
+    bool addKeyRelease(ComKeyName keyName)
     {
         const ki = keyIndex(keyName);
         if (pressedKeys[ki])
@@ -83,19 +83,27 @@ class Input
         return systemCursor.getPos;
     }
 
-    bool startTextInput(){
-
+    bool startTextInput()
+    {
         return true;
     }
 
-    bool endTextInput(){
+    bool endTextInput()
+    {
         return true;
     }
 
     void dispose()
     {
-        systemCursor.dispose;
-        clipboard.dispose;
+        if (systemCursor)
+        {
+            systemCursor.dispose;
+        }
+
+        if (clipboard)
+        {
+            clipboard.dispose;
+        }
     }
 
 }
