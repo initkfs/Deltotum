@@ -2,7 +2,7 @@ module api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d;
 
 import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.dm.kit.graphics.canvases.graphics_canvas : GraphicsCanvas;
+import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
 import api.dm.kit.sprites2d.textures.vectors.canvases.vector_canvas : VectorCanvas;
 
 /**

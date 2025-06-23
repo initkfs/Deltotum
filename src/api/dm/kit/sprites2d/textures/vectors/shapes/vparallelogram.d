@@ -35,7 +35,7 @@ class VParallelogram : VShape
         Vec2d prev;
         Vec2d first;
 
-        import api.dm.kit.graphics.canvases.graphics_canvas: GraphicsCanvas;
+        import api.dm.kit.graphics.canvases.graphic_canvas: GraphicCanvas;
 
         shape.draw(width, height, angleDeg, isInverted, (i, p) {
 

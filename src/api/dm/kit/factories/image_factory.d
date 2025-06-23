@@ -11,11 +11,10 @@ class ImageFactory : GraphicComponent
 {
     Image[] images(string[] paths, int requestWidth = -1, int requestHeight = -1)
     {
-        Image[] newImages;
-        foreach (p; paths)
+        Image[] newImages = new Image[paths.length];
+        foreach (pi, p; paths)
         {
-            //TODO appender
-            newImages ~= image(p, requestWidth, requestHeight);
+            newImages[pi] = image(p, requestWidth, requestHeight);
         }
         return newImages;
     }
@@ -33,10 +32,7 @@ class ImageFactory : GraphicComponent
             logger.errorf("Unable to load image with width %s, height %s from path %s", reqWidth, reqHeight, path);
             //TODO log, exception, placeholder, blank image?
         }
-        newImage.initialize;
-        assert(newImage.isInitialized);
-        newImage.create;
-        assert(newImage.isCreated);
+        initCreate(newImage);
         return newImage;
     }
 
@@ -48,10 +44,7 @@ class ImageFactory : GraphicComponent
         {
             //TODO log, exception, placeholder, blank image?
         }
-        newAnimated.initialize;
-        assert(newAnimated.isInitialized);
-        newAnimated.create;
-        assert(newAnimated.isCreated);
+        initCreate(newAnimated);
         return newAnimated;
     }
 }

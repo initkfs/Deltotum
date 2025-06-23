@@ -1,7 +1,5 @@
 module api.dm.kit.events.kit_event_manager;
 
-import api.dm.kit.events.processing.event_processor : EventProcessor;
-import api.dm.kit.events.event_manager : EventManager;
 import api.dm.kit.events.processing.kit_event_processor : KitEventProcessor;
 
 import api.core.apps.events.app_event : AppEvent;
@@ -20,7 +18,7 @@ import std.typecons : Nullable;
 /**
  * Authors: initkfs
  */
-class KitEventManager : EventManager
+class KitEventManager
 {
     Nullable!(Window) delegate(long) windowProviderById;
 

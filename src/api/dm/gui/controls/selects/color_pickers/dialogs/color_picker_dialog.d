@@ -13,7 +13,6 @@ import api.dm.gui.controls.forms.regulates.regulate_text_field;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsva : HSVA;
 import api.dm.kit.graphics.colors.hsla : HSLA;
-import api.dm.kit.graphics.colors.lcha : LCHA;
 
 import api.math.geom2.rect2 : Rect2d;
 import Math = api.math;
@@ -286,7 +285,7 @@ class ColorPickerDialog : Control
             {
                 auto ctx = canvas;
 
-                import api.dm.kit.graphics.canvases.graphics_canvas : GradientStopPoint;
+                import api.dm.kit.graphics.canvases.graphic_canvas : GradientStopPoint;
                 import api.math.geom2.vec2 : Vec2d;
 
                 enum pointsCount = 10;

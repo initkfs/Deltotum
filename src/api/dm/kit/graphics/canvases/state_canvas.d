@@ -1,12 +1,12 @@
 module api.dm.kit.graphics.canvases.state_canvas;
 
-import api.dm.kit.graphics.canvases.graphics_canvas : GraphicsCanvas;
+import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
 import api.math.geom2.vec2: Vec2d;
 
 /**
  * Authors: initkfs
  */
-abstract class StateCanvas : GraphicsCanvas
+abstract class StateCanvas : GraphicCanvas
 {
     protected
     {

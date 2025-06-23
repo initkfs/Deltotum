@@ -90,7 +90,7 @@ class Scene2d : EventKitTarget
         auto thisInstance = cast(TargetType) this;
         assert(thisInstance);
 
-        enum isInjectable(alias T) = is(T == UDA.inject) || is(typeof(T) == UDA.inject);
+        enum isInjectable(alias T) = is(T == UDA.Load) || is(typeof(T) == UDA.Load);
         enum isTypeOrArray(alias T, Target) = is(typeof(T) == Target) || is(typeof(T) == Target[]);
 
         void injectField(alias Target, Type, string fieldName, alias udaAttr)(
@@ -127,13 +127,13 @@ class Scene2d : EventKitTarget
                         {
                             static if (isInjectable!(attr))
                             {
-                                static if (is(attr == UDA.inject))
+                                static if (is(attr == UDA.Load))
                                 {
-                                    enum udaAttr = inject.init;
+                                    enum udaAttr = Load.init;
                                 }
-                                else static if (is(typeof(attr) == UDA.inject))
+                                else static if (is(typeof(attr) == UDA.Load))
                                 {
-                                    alias udaAttr = getUDAs!(member, inject)[0];
+                                    alias udaAttr = getUDAs!(member, Load)[0];
                                 }
 
                                 import api.dm.kit.sprites2d.images : Image;
@@ -166,9 +166,9 @@ class Scene2d : EventKitTarget
                                 }
                             }
 
-                            // static if (is(typeof(attr) == UDA.AnimImageF))
+                            // static if (is(typeof(attr) == UDA.LAnimImage))
                             // {
-                            //     alias udaAttr = getUDAs!(member, AnimImageF)[0];
+                            //     alias udaAttr = getUDAs!(member, LAnimImage)[0];
                             //     auto isAdd = udaAttr.isAdd;
                             //     __traits(getMember, thisInstance, fieldName) = f.images.animated(udaAttr.path,
                             //         udaAttr.frameCols,
@@ -182,9 +182,9 @@ class Scene2d : EventKitTarget
                             //     }
                             // }
 
-                            // static if (is(typeof(attr) == UDA.AnimImagesF))
+                            // static if (is(typeof(attr) == UDA.LAnimImages))
                             // {
-                            //     alias udaAttr = getUDAs!(member, AnimImagesF)[0];
+                            //     alias udaAttr = getUDAs!(member, LAnimImages)[0];
                             //     size_t count = udaAttr.count;
                             //     if (count > 0)
                             //     {

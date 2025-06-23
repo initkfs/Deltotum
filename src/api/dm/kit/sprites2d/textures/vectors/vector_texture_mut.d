@@ -2,7 +2,7 @@ module api.dm.kit.sprites2d.textures.vectors.vector_texture_mut;
 
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.graphics.canvases.graphics_canvas : GraphicsCanvas;
+import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites2d.textures.vectors.canvases.vector_canvas : VectorCanvas;
 
@@ -74,7 +74,7 @@ class VectorTextureMut : Texture2d
         });
     }
 
-    protected void drawTo(GraphicsCanvas context, Vec2d next)
+    protected void drawTo(GraphicCanvas context, Vec2d next)
     {
         context.moveTo(center.x + prevPoint.x, center.y + prevPoint.y);
         context.lineTo(center.x + next.x, center.y + next.y);

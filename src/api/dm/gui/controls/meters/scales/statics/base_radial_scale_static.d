@@ -1,7 +1,7 @@
 module api.dm.gui.controls.meters.scales.statics.base_radial_scale_static;
 
 import api.dm.gui.controls.meters.scales.statics.base_scale_static : BaseScaleStatic;
-import api.dm.kit.graphics.canvases.graphics_canvas : GraphicsCanvas;
+import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.sprites2d.textures.rgba_texture : RgbaTexture;
 import api.math.geom2.vec2 : Vec2d;
@@ -32,7 +32,7 @@ class BaseRadialScaleStatic : BaseScaleStatic
     dstring delegate(size_t labelIndex, size_t tickIndex, Vec2d pos, bool isMajorTick, double offsetTick) labelTextProvider;
     double delegate(double angledDeg, double radius) labelPosRadiusProvider;
 
-    bool delegate(GraphicsCanvas ctx, Rect2d tickBounds, bool isMajorTick) onVTickIsContinue;
+    bool delegate(GraphicCanvas ctx, Rect2d tickBounds, bool isMajorTick) onVTickIsContinue;
 
     protected
     {

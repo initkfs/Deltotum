@@ -267,7 +267,7 @@ class MDLandscapeGenerator : Control
             super.createTextureContent;
             auto ctx = canvas;
 
-            import api.dm.kit.graphics.canvases.graphics_canvas : GradientStopPoint;
+            import api.dm.kit.graphics.canvases.graphic_canvas : GradientStopPoint;
             import api.dm.kit.graphics.colors.hsva : HSVA;
 
             auto mainColorHSV = mainColor.toHSVA;

@@ -1,6 +1,5 @@
 module api.dm.kit.graphics.colors.hsla;
 
-import Color = api.dm.kit.graphics.colors.color;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsva : HSVA;
 
@@ -19,8 +18,8 @@ struct HSLA
         maxSaturation = 1,
         minLightness = 0,
         maxLightness = 1,
-        minAlpha = Color.minAlpha,
-        maxAlpha = Color.maxAlpha
+        minAlpha = 0,
+        maxAlpha = 1
     }
 
     double h = 0;

@@ -1,4 +1,4 @@
-module api.dm.kit.graphics.canvases.graphics_canvas;
+module api.dm.kit.graphics.canvases.graphic_canvas;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.vec2 : Vec2d;
@@ -12,7 +12,7 @@ struct GradientStopPoint
 /**
  * Authors: initkfs
  */
-interface GraphicsCanvas
+interface GraphicCanvas
 {
     enum LineEnd
     {

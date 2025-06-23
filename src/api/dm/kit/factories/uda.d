@@ -4,7 +4,7 @@ module api.dm.kit.factories.uda;
  * Authors: initkfs
  */
 
-struct inject
+struct Load
 {
     double width = 0;
     double height = 0;
@@ -13,7 +13,7 @@ struct inject
     bool isAdd;
 }
 
-struct AnimImageF
+struct LAnimImage
 {
     string path;
     size_t frameCols;
@@ -24,7 +24,7 @@ struct AnimImageF
     int frameHeight;
 }
 
-struct AnimImagesF
+struct LAnimImages
 {
     string path;
     int frameWidth;
