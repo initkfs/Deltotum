@@ -1,4 +1,4 @@
-module api.math.lsystems.lsystem;
+module api.dm.addon.math.lsystems.lsystem;
 
 /**
  * Authors: initkfs

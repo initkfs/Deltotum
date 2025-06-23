@@ -6,7 +6,7 @@ import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
 import api.dm.kit.sprites2d.textures.vectors.shapes.vpoints_shape : VPointsShape;
 import api.dm.kit.graphics.brushes.brush : Brush;
 import api.math.geom2.vec2 : Vec2d;
-import api.math.lsystems.lsystem_parser : LSystemParser;
+import api.dm.addon.math.lsystems.lsystem_parser : LSystemParser;
 
 import std.stdio;
 

@@ -1,6 +1,6 @@
-module api.math.lsystems.lsystem_parser;
+module api.dm.addon.math.lsystems.lsystem_parser;
 
-import api.math.lsystems.lsystem : LSystem;
+import api.dm.addon.math.lsystems.lsystem : LSystem;
 
 /**
  * Authors: initkfs

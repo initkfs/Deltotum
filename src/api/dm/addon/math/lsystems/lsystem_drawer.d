@@ -1,7 +1,7 @@
-module api.math.lsystems.lsystem_drawer;
+module api.dm.addon.math.lsystems.lsystem_drawer;
 
 import api.dm.kit.graphics.brushes.brush : Brush;
-import api.math.lsystems.lsystem_parser : LSystemParser;
+import api.dm.addon.math.lsystems.lsystem_parser : LSystemParser;
 
 import api.math.geom2.vec2 : Vec2d;
 
