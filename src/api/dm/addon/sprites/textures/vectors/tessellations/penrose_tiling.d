@@ -8,7 +8,7 @@ import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
 
 import Math = api.dm.math;
 import std : Tuple, tuple;
-import api.dm.sys.cairo.libs;
+import api.dm.lib.cairo;
 
 /**
  * Authors: initkfs

@@ -1,10 +1,10 @@
-module api.dm.sys.cairo.libs.v116.binddynamic;
+module api.dm.lib.cairo.native.v116.binddynamic;
 
 /**
  * Authors: initkfs
  */
-version (Cairo116)  : import api.dm.sys.cairo.libs.v116.types;
-import api.dm.sys.base.sys_lib : SysLib;
+version (Cairo116)  : import api.dm.lib.cairo.native.v116.types;
+import api.core.libs.shareds.shared_loader: SharedLoader;
 
 extern (C) @nogc nothrow
 {
@@ -165,7 +165,7 @@ __gshared
     c_cairo_set_source  cairo_set_source;
 }
 
-class CairoLib : SysLib
+class CairoLib : SharedLoader
 {
     version (Windows)
     {
@@ -189,7 +189,7 @@ class CairoLib : SysLib
         return paths;
     }
 
-    override void bindSymbols()
+    override void bindAll()
     {
         bind(cast(void**)&cairo_image_surface_create, "cairo_image_surface_create");
         bind(cast(void**)&cairo_create, "cairo_create");
@@ -247,7 +247,7 @@ class CairoLib : SysLib
         bind(cast(void**)&cairo_set_source, "cairo_set_source");
     }
 
-    override protected int needVersion()
+    override int libVersion()
     {
         return 116;
     }

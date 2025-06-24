@@ -1,4 +1,4 @@
-module api.dm.sys.cairo.libs.v116.types;
+module api.dm.lib.cairo.native.v116.types;
 /**
  * Authors: initkfs
  */

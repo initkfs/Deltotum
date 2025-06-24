@@ -7,7 +7,7 @@ import api.math.geom2.vec2 : Vec2d;
 import std.container.dlist : DList;
 
 //TODO remove native api
-import api.dm.sys.cairo.libs;
+import api.dm.lib.cairo;
 
 /**
  * Authors: initkfs

@@ -7,11 +7,11 @@ import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
 import api.dm.com.graphic.com_surface : ComSurface;
 
 //TODO remove native api
-import api.dm.sys.cairo.cairo_surface : CairoSurface;
-import api.dm.sys.cairo.cairo_context : CairoContext;
+import api.dm.lib.cairo.cairo_surface : CairoSurface;
+import api.dm.lib.cairo.cairo_context : CairoContext;
 
 //TODO remove native api
-import api.dm.sys.cairo.libs;
+import api.dm.lib.cairo;
 
 /**
  * Authors: initkfs
@@ -61,7 +61,7 @@ class VectorTexture : Texture2d
 
     private void tryCreateCairoContext()
     {
-        import api.dm.sys.cairo.libs : cairo_format_t;
+        import api.dm.lib.cairo : cairo_format_t;
 
         assert(comSurface);
 

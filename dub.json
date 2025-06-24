@@ -98,7 +98,7 @@
         "./libs/ffmpeg"
     ],
     "dependencies": {
-        "bindbc-loader": "~>1.0.3"
+        
     },
     "dflags": [
         "-dip1000",

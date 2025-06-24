@@ -1,8 +1,8 @@
-module api.dm.sys.cairo.libs.v116;
+module api.dm.lib.cairo.native.v116;
 
 version (Cairo116)
 {
-    public import api.dm.sys.cairo.libs.v116.types;
+    public import api.dm.lib.cairo.native.v116.types;
 
     version (BindCairoStatic)
     {
@@ -10,6 +10,6 @@ version (Cairo116)
     }
     else
     {
-        public import api.dm.sys.cairo.libs.v116.binddynamic;
+        public import api.dm.lib.cairo.native.v116.binddynamic;
     }
 }

@@ -1,7 +1,8 @@
-module api.dm.sys.cairo.cairo_surface;
+module api.dm.lib.cairo.cairo_surface;
 
-import api.dm.sys.cairo.base.cairo_object_wrapper : CairoObjectWrapper;
-import api.dm.sys.cairo.libs;
+import api.dm.lib.cairo.base.cairo_object_wrapper : CairoObjectWrapper;
+
+import api.dm.lib.cairo.native;
 
 /**
  * Authors: initkfs

@@ -11,11 +11,11 @@ import api.math.geom2.rect2 : Rect2d;
 import api.math.geom2.vec2 : Vec2d;
 
 //TODO remove native api
-import api.dm.sys.cairo.cairo_surface : CairoSurface;
-import api.dm.sys.cairo.cairo_context : CairoContext;
+import api.dm.lib.cairo.cairo_surface : CairoSurface;
+import api.dm.lib.cairo.cairo_context : CairoContext;
 
 //TODO remove native api
-import api.dm.sys.cairo.libs;
+import api.dm.lib.cairo;
 
 /**
  * Authors: initkfs
@@ -117,7 +117,7 @@ class VectorTextureMut : Texture2d
             throw new Exception(err.toString);
         }
 
-        import api.dm.sys.cairo.libs : cairo_format_t;
+        import api.dm.lib.cairo : cairo_format_t;
 
         cairo_surface_t* cairoSurfacePtr = cairo_image_surface_create_for_data(
             cast(ubyte*) pixels,

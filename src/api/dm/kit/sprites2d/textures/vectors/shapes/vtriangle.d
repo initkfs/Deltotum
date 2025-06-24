@@ -23,7 +23,7 @@ class VTriangle : VShape
         import Math = api.dm.math;
 
         //TODO remove native api
-        import api.dm.sys.cairo.libs;
+        import api.dm.lib.cairo;
 
         auto cr = cairoContext.getObject;
 

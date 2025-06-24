@@ -1,4 +1,4 @@
-module api.dm.sys.cairo.base.cairo_object_wrapper;
+module api.dm.lib.cairo.base.cairo_object_wrapper;
 
 import api.dm.com.platforms.objects.com_ptr_manager : ComPtrManager;
 

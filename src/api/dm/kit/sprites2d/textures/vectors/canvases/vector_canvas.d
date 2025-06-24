@@ -1,12 +1,12 @@
 module api.dm.kit.sprites2d.textures.vectors.canvases.vector_canvas;
 
 import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas, GradientStopPoint;
-import api.dm.sys.cairo.cairo_context : CairoContext;
+import api.dm.lib.cairo.cairo_context : CairoContext;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.vec2 : Vec2d;
 
 //TODO remove native api
-import api.dm.sys.cairo.libs;
+import api.dm.lib.cairo;
 
 /**
  * Authors: initkfs

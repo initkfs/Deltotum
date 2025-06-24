@@ -71,9 +71,9 @@ import api.dm.kit.platforms.screens.screening : Screening;
 import std.logger : Logger, MultiLogger, FileLogger, LogLevel, sharedLog;
 import std.stdio;
 
-import api.dm.sys.cairo.libs : CairoLib;
+import api.dm.lib.cairo : CairoLib;
 
-//import api.dm.sys.chipmunk.libs : ChipmLib;
+//import api.dm.lib.chipmunk.libs : ChipmLib;
 
 import api.dm.back.sdl3.externs.csdl3;
 import std.typecons : Nullable;
@@ -255,7 +255,7 @@ class SdlApp : GuiApp
         //TODO lazy load with config value
         auto cairoLibForLoad = new CairoLib;
 
-        cairoLibForLoad.onAfterLoad = () {
+        cairoLibForLoad.onLoad = () {
             cairoLib = cairoLibForLoad;
 
             import KitConfigKeys = api.dm.kit.kit_config_keys;
@@ -286,13 +286,8 @@ class SdlApp : GuiApp
             uservices.logger.trace("Load Cairo library.");
         };
 
-        cairoLibForLoad.onNoLibrary = () => uservices.logger.error("Cairo library loading error.");
-        cairoLibForLoad.onBadLibrary = () => uservices.logger.error("Cairo bad library.");
-        cairoLibForLoad.onErrorWithMessage = (err, msg) {
-            import std.string : fromStringz;
-
-            uservices.logger.errorf("Cairo loading error. %s: %s\n", err.fromStringz.idup, msg
-                    .fromStringz.idup);
+        cairoLibForLoad.onLoadErrors = (err) {
+            uservices.logger.error("Cairo loading error: ", err);
             cairoLibForLoad.unload;
             cairoLib = null;
         };
@@ -302,7 +297,7 @@ class SdlApp : GuiApp
         //Physics
         // auto physLibForLoad = new ChipmLib;
 
-        // physLibForLoad.onAfterLoad = () {
+        // physLibForLoad.onLoad = () {
         //     chipmLib = physLibForLoad;
         //     _cap.isPhysics = true;
         //     uservices.logger.trace("Load Chipmunk library.");
