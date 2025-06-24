@@ -2,7 +2,7 @@ module api.dm.kit.sprites2d.layouts.anchor_layout;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites2d.layouts.managed_layout : ManagedLayout;
-import api.math.alignment : Alignment;
+import api.math.pos2.alignment : Alignment;
 
 /**
  * Authors: initkfs

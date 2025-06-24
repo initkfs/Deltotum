@@ -6,7 +6,7 @@ import api.dm.com.graphic.com_surface : ComSurface;
 import api.dm.com.graphic.com_blend_mode : ComBlendMode;
 import api.dm.com.destroyable : Destroyable;
 
-import api.math.flip: Flip;
+import api.math.pos2.flip: Flip;
 import api.math.geom2.vec2 : Vec2d, Vec2f;
 import api.math.geom2.rect2 : Rect2d, Rect2f;
 

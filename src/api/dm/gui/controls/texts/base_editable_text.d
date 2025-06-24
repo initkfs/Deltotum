@@ -56,7 +56,7 @@ class BaseEditableText : BaseMonoText
     {
         super(text, newBuffer, isFocusable);
 
-        //import api.math.insets : Insets;
+        //import api.math.pos2.insets : Insets;
 
         //_padding = Insets(5);
     }

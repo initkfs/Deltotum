@@ -2,7 +2,7 @@ module api.dm.kit.sprites2d.layouts.vlayout;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.sprites2d.layouts.spaceable_layout : SpaceableLayout;
-import api.math.alignment : Alignment;
+import api.math.pos2.alignment : Alignment;
 
 import Math = api.dm.math;
 

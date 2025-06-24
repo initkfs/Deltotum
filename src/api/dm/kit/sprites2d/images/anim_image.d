@@ -6,7 +6,7 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.math.geom2.rect2 : Rect2d;
 import std.math.rounding : floor;
 import std.conv : to;
-import api.math.flip : Flip;
+import api.math.pos2.flip : Flip;
 
 class ImageAnimation
 {

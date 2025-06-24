@@ -10,7 +10,7 @@ import api.dm.gui.controls.containers.center_box : CenterBox;
 import api.dm.gui.controls.meters.scrolls.hscroll : HScroll;
 import api.dm.gui.controls.meters.scrolls.vscroll : VScroll;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.math.insets : Insets;
+import api.math.pos2.insets : Insets;
 
 enum ScrollBarPolicy
 {

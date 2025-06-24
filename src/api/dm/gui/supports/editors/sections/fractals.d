@@ -101,7 +101,7 @@ class Fractals : Control
         super.create;
 
         import api.dm.gui.controls.containers.center_box : CenterBox;
-        import api.math.insets : Insets;
+        import api.math.pos2.insets : Insets;
 
         auto container = newHContainer;
         addCreate(container);

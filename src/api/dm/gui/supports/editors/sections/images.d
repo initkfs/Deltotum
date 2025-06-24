@@ -82,7 +82,7 @@ class Images : Control
         import api.dm.gui.controls.containers.vbox : VBox;
         import api.dm.gui.controls.containers.container : Container;
         import api.dm.gui.controls.containers.center_box : CenterBox;
-        import api.math.insets : Insets;
+        import api.math.pos2.insets : Insets;
 
         auto container = new HBox;
         addCreate(container);

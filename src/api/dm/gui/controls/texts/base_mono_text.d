@@ -7,7 +7,7 @@ import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;
-import api.math.flip : Flip;
+import api.math.pos2.flip : Flip;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.gui.controls.texts.layouts.simple_text_layout : SimpleTextLayout;

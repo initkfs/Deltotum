@@ -46,7 +46,7 @@ class TextArea : HBox
     {
         super.initialize;
 
-        import api.math.insets;
+        import api.math.pos2.insets;
 
         padding = Insets(0);
         spacing = 0;

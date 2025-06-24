@@ -2,7 +2,7 @@ module api.dm.gui.themes.theme;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.assets.fonts.font : Font;
-import api.math.insets : Insets;
+import api.math.pos2.insets : Insets;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.themes.icons.icon_pack : IconPack;
 import api.dm.kit.sprites2d.images.image : Image;

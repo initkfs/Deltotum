@@ -4,7 +4,7 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.meters.scrolls.base_mono_scroll : BaseMonoScroll;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.controls.texts.text : Text;
-import api.math.position : Position;
+import api.math.pos2.position : Position;
 
 /**
  * Authors: initkfs

@@ -8,7 +8,7 @@ import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsla : HSLA;
-import api.math.insets : Insets;
+import api.math.pos2.insets : Insets;
 
 import ColorProcessor = api.dm.kit.graphics.colors.processing.color_processor;
 

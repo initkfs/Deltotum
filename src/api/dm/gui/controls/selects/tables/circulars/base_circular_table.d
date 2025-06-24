@@ -13,7 +13,7 @@ import api.dm.gui.controls.selects.tables.base_table : BaseTable;
 
 import api.dm.gui.controls.meters.scrolls.vscroll : VScroll;
 
-import api.math.insets : Insets;
+import api.math.pos2.insets : Insets;
 import Math = api.math;
 
 import std.container.dlist : DList;

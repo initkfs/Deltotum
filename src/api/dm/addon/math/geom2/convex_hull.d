@@ -1,4 +1,4 @@
-module api.math.geom2.convex_hull;
+module api.dm.addon.math.geom2.convex_hull;
 
 import api.math.geom2.polygon2 : Polygon2d;
 import api.math.geom2.vec2 : Vec2d;

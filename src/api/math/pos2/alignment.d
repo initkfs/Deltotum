@@ -1,4 +1,4 @@
-module api.math.alignment;
+module api.math.pos2.alignment;
 /**
  * Authors: initkfs
  */

@@ -2,7 +2,7 @@ module api.dm.kit.sprites2d.textures.vectors.shapes.vcircle;
 
 import api.dm.kit.sprites2d.textures.vectors.shapes.varc: VArc;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
-import api.math.insets: Insets;
+import api.math.pos2.insets: Insets;
 
 import Math = api.dm.math;
 

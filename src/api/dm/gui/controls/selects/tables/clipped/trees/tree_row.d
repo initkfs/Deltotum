@@ -213,7 +213,7 @@ class TreeRow(T) : BaseTableRow!(T, BaseTableColumn!T)
     override void create()
     {
         import api.dm.gui.controls.texts.text : Text;
-        import api.math.insets : Insets;
+        import api.math.pos2.insets : Insets;
 
         if (treeLevel > 0 && !levelGraphics && isCreateLevelGraphics)
         {

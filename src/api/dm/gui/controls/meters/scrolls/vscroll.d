@@ -9,7 +9,7 @@ import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites2d.layouts.center_layout : CenterLayout;
 import api.dm.kit.sprites2d.shapes.rectangle : Rectangle;
-import api.math.alignment : Alignment;
+import api.math.pos2.alignment : Alignment;
 import std.math.operations : isClose;
 
 import Math = api.math;

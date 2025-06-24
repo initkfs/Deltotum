@@ -13,7 +13,7 @@ import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.texts.text_area : TextArea;
 import api.dm.gui.controls.selects.tables.clipped.trees.tree_item : TreeItem;
 import api.dm.gui.controls.selects.tables.clipped.trees.tree_list : TreeList, newTreeList;
-import api.math.insets : Insets;
+import api.math.pos2.insets : Insets;
 import api.dm.gui.controls.containers.scroll_box : ScrollBox;
 import api.dm.gui.controls.containers.tabs.tab : Tab;
 import api.dm.gui.controls.containers.tabs.tabbox : TabBox;

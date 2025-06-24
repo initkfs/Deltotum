@@ -1,4 +1,4 @@
-module api.math.orientation;
+module api.math.pos2.orientation;
 
 enum Orientation
 {

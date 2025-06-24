@@ -1,4 +1,4 @@
-module api.math.insets;
+module api.math.pos2.insets;
 
 /**
  * Authors: initkfs

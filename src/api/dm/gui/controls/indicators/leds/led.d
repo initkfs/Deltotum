@@ -7,7 +7,7 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsva : HSVA;
-import api.math.insets : Insets;
+import api.math.pos2.insets : Insets;
 
 import ColorProcessor = api.dm.kit.graphics.colors.processing.color_processor;
 

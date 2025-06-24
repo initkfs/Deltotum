@@ -1,4 +1,4 @@
-module api.math.flip;
+module api.math.pos2.flip;
 
 enum Flip {
     none,

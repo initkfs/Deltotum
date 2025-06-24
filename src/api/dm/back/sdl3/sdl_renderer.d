@@ -16,7 +16,7 @@ import api.dm.back.sdl3.sdl_window : SdlWindow;
 import api.dm.back.sdl3.sdl_texture : SdlTexture;
 import api.dm.com.graphic.com_surface : ComSurface;
 
-import api.math.flip : Flip;
+import api.math.pos2.flip : Flip;
 import api.math.geom2.vec2 : Vec2d, Vec2i, Vec2f;
 import api.math.geom2.rect2 : Rect2d, Rect2i, Rect2f;
 

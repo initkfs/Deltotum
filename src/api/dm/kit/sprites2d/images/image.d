@@ -8,7 +8,7 @@ import api.dm.com.graphic.com_surface : ComSurface;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.math.geom2.rect2 : Rect2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.math.flip : Flip;
+import api.math.pos2.flip : Flip;
 
 import Math = api.math;
 

@@ -3,7 +3,7 @@ module api.dm.gui.supports.editors.sections.physics;
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.math.flip : Flip;
+import api.math.pos2.flip : Flip;
 
 import Math = api.dm.math;
 import api.math.geom2.vec2 : Vec2d;

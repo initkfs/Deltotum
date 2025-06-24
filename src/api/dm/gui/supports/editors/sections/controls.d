@@ -209,7 +209,7 @@ class Controls : Control
         root.addCreate(toggleContainer);
 
         import api.dm.gui.controls.switches.toggles.toggle : Toggle;
-        import api.math.orientation : Orientation;
+        import api.math.pos2.orientation : Orientation;
 
         auto switch1 = new Toggle(null, Icons.flash_outline);
         toggleContainer.addCreate(switch1);
@@ -516,7 +516,7 @@ class Controls : Control
         hscaleDyn.isHGrow = true;
         container1.addCreate(hscaleDyn);
 
-        import api.math.position : Position;
+        import api.math.pos2.position : Position;
 
         auto hs = new HScroll;
         hs.labelPos = Position.bottomCenter;
@@ -608,7 +608,7 @@ class Controls : Control
         progressContainer.addCreate(rProgress);
         rProgress.value = 0.5;
 
-        import api.math.orientation : Orientation;
+        import api.math.pos2.orientation : Orientation;
 
         auto linProgressV = new LinearProgressBar(0, 1.0, Orientation.vertical);
         root.addCreate(linProgressV);

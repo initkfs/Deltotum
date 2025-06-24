@@ -12,7 +12,7 @@ import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 
 import Math = api.dm.math;
 
-import api.math.flip : Flip;
+import api.math.pos2.flip : Flip;
 import api.math.geom2.rect2 : Rect2d, Rect2f;
 import api.math.geom2.line2 : Line2d;
 

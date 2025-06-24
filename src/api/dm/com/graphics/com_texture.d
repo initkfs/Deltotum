@@ -7,7 +7,7 @@ import api.dm.com.com_native_ptr : ComNativePtr;
 import api.dm.com.destroyable : Destroyable;
 
 import api.math.geom2.rect2 : Rect2d;
-import api.math.flip : Flip;
+import api.math.pos2.flip : Flip;
 import api.dm.com.graphic.com_surface : ComSurface;
 
 enum ComTextureScaleMode
