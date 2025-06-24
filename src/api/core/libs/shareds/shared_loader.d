@@ -112,7 +112,7 @@ class SharedLoader
         return false;
     }
 
-    bool bind(void** funcPtr, const(char)[] name, bool isCheckError = true)
+    bool bind(void* funcPtr, const(char)[] name, bool isCheckError = true)
     {
         if (!isLoad)
         {
@@ -122,7 +122,7 @@ class SharedLoader
         void* mustBePtr;
         if (libBind(sharedLib.handlePtr, name.ptr, mustBePtr))
         {
-            *funcPtr = mustBePtr;
+            *(cast(void**) funcPtr) = mustBePtr;
             return true;
         }
 
