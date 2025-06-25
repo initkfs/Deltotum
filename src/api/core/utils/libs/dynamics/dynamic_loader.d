@@ -1,6 +1,6 @@
-module api.core.libs.shareds.shared_loader;
+module api.core.utils.libs.dynamics.dynamic_loader;
 
-struct SharedLib
+struct DynLib
 {
     void* handlePtr;
     const(char)[] name;
@@ -74,7 +74,7 @@ else
 /**
  * Authors: initkfs
  */
-class SharedLoader
+class DynamicLoader
 {
     string workDirPath;
 
@@ -90,7 +90,7 @@ class SharedLoader
 
     protected
     {
-        SharedLib sharedLib;
+        DynLib lib;
     }
 
     abstract
@@ -120,7 +120,7 @@ class SharedLoader
         }
 
         void* mustBePtr;
-        if (libBind(sharedLib.handlePtr, name.ptr, mustBePtr))
+        if (libBind(lib.handlePtr, name.ptr, mustBePtr))
         {
             *(cast(void**) funcPtr) = mustBePtr;
             return true;
@@ -135,7 +135,7 @@ class SharedLoader
 
     bool unload()
     {
-        if (!sharedLib.isLoad)
+        if (!lib.isLoad)
         {
             return false;
         }
@@ -145,9 +145,9 @@ class SharedLoader
             onAfterUnload();
         }
 
-        if (!libUnload(sharedLib.handlePtr))
+        if (!libUnload(lib.handlePtr))
         {
-            checkError("Error unloading library: " ~ sharedLib.toString);
+            checkError("Error unloading library: " ~ lib.toString);
             return false;
         }
 
@@ -159,7 +159,7 @@ class SharedLoader
         return true;
     }
 
-    bool isLoad() => sharedLib.isLoad;
+    bool isLoad() => lib.isLoad;
 
     void load()
     {
@@ -250,7 +250,7 @@ class SharedLoader
         import std.string : toStringz;
         import std.conv : to;
 
-        sharedLib = SharedLib.init;
+        lib = DynLib.init;
 
         void* handle;
         if (!libLoad(libPath.toStringz, handle))
@@ -264,7 +264,7 @@ class SharedLoader
             return false;
         }
 
-        sharedLib = SharedLib(handle, libPath, 0, true);
+        lib = DynLib(handle, libPath, 0, true);
 
         bindAll;
 

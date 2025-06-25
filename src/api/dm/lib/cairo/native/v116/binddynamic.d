@@ -4,7 +4,7 @@ module api.dm.lib.cairo.native.v116.binddynamic;
  * Authors: initkfs
  */
 version (Cairo116)  : import api.dm.lib.cairo.native.v116.types;
-import api.core.libs.shareds.shared_loader : SharedLoader;
+import api.core.utils.libs.dynamics.dynamic_loader : DynamicLoader;
 
 extern (C) @nogc nothrow
 {
@@ -99,7 +99,7 @@ extern (C) @nogc nothrow
     void function(cairo_t* cr, cairo_pattern_t* source) cairo_set_source;
 }
 
-class CairoLib : SharedLoader
+class CairoLib : DynamicLoader
 {
     override void bindAll()
     {
