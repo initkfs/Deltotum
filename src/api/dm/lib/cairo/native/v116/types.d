@@ -2,7 +2,6 @@ module api.dm.lib.cairo.native.v116.types;
 /**
  * Authors: initkfs
  */
-version(Cairo116):
 
 extern (C):
 

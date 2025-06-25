@@ -6,13 +6,13 @@
     ],
     "copyright": "Copyright © 2022, initkfs",
     "name": "deltotum",
+    "dependencies": {},
     "configurations": [
         {
             "name": "app-dev",
             "versions": [
                 "dev",
-                "SdlBackend",
-                "DmLayoutCompact"
+                "SdlBackend"
             ],
             "targetType": "executable",
             "targetName": "dm",
@@ -28,7 +28,6 @@
             "versions": [
                 "dev",
                 "SdlBackend",
-                "DmLayoutCompact",
                 "DmAddon"
             ],
             "targetType": "executable",
@@ -41,8 +40,7 @@
             "name": "app-dist",
             "versions": [
                 "SdlBackend",
-                "DmAddon",
-                "DmLayoutCompact"
+                "DmAddon"
             ],
             "targetType": "executable",
             "targetName": "dm-dist",
@@ -51,22 +49,11 @@
             ]
         },
         {
-            "name": "app-lib",
-            "versions": [
-                "dev",
-                "SdlBackend"
-            ],
-            "targetType": "dynamicLibrary",
-            "targetName": "dm",
-            "platforms": [
-                "linux"
-            ]
-        },
-        {
             "name": "app-trace",
             "versions": [
                 "dev",
-                "SdlBackend"
+                "SdlBackend",
+                "DmAddon"
             ],
             "targetType": "executable",
             "targetName": "dm",
@@ -79,9 +66,6 @@
             ],
             "postBuildCommands": [
                 "timetrace2txt $PACKAGE_DIR/trace.json --tsv $PACKAGE_DIR/trace.tsv -o $PACKAGE_DIR/trace.txt"
-            ],
-            "excludedSourceFiles": [
-                "src/api/dm/addon/*"
             ]
         }
     ],
@@ -97,9 +81,6 @@
         "./libs/sdl3",
         "./libs/ffmpeg"
     ],
-    "dependencies": {
-        
-    },
     "dflags": [
         "-dip1000",
         "-preview=in",
@@ -114,8 +95,18 @@
         "-L./libs/ffmpeg/lib",
         "-rpath=./libs/sdl3"
     ],
-    "libs": ["SDL3", "SDL3_image", "SDL3_mixer", "SDL3_ttf", "avcodec", "avdevice", "avfilter", "avformat", "avutil", "swresample", "swscale"],
-    "versions": [
-        "Cairo116"
-    ]
+    "libs": [
+        "SDL3",
+        "SDL3_image",
+        "SDL3_mixer",
+        "SDL3_ttf",
+        "avcodec",
+        "avdevice",
+        "avfilter",
+        "avformat",
+        "avutil",
+        "swresample",
+        "swscale"
+    ],
+    "versions": []
 }

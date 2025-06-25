@@ -3,7 +3,7 @@ module api.dm.lib.cairo.native.v116.binddynamic;
 /**
  * Authors: initkfs
  */
-version (Cairo116)  : import api.dm.lib.cairo.native.v116.types;
+import api.dm.lib.cairo.native.v116.types;
 import api.core.utils.libs.dynamics.dynamic_loader : DynamicLoader;
 
 extern (C) @nogc nothrow
