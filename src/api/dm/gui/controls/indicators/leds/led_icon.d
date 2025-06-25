@@ -15,7 +15,7 @@ import api.dm.kit.sprites2d.images.image : Image;
 
 import std.conv : to;
 
-import ColorProcessor = api.dm.kit.graphics.colors.processing.color_processor;
+import ColorProcessor = api.dm.kit.graphics.colors.processings.processing;
 
 /**
  * Authors: initkfs

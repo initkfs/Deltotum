@@ -18,7 +18,7 @@ import Math = api.math;
 //TODO remove duplication with animation bitmap, but it's not clear what code would be required
 class Image : Texture2d
 {
-    RGBA delegate(int x, int y, RGBA color) colorProcessor;
+    RGBA delegate(int x, int y, RGBA color) onColor;
 
     bool isInterpolationResize;
     bool isKeepOriginalColorBuffer;
@@ -140,7 +140,7 @@ class Image : Texture2d
             }
         }
 
-        if (colorProcessor)
+        if (onColor)
         {
             if (const err = image.lock)
             {
@@ -171,7 +171,7 @@ class Image : Texture2d
                         throw new Exception(err.toString);
                     }
                     RGBA oldColor = {r, g, b, RGBA.fromAByte(a)};
-                    RGBA newColor = colorProcessor(x, y, oldColor);
+                    RGBA newColor = onColor(x, y, oldColor);
                     if (newColor != oldColor)
                     {
                         if (const err = image.setPixelRGBA(x, y, newColor.r, newColor.g, newColor.b, newColor
@@ -306,7 +306,7 @@ class Image : Texture2d
                 uint x = cast(uint) xx;
                 uint y = cast(uint) yy;
 
-                RGBA newColor = colorProcessor ? colorProcessor(x, y, color) : color;
+                RGBA newColor = onColor ? onColor(x, y, color) : color;
                 changeColor(x, y, newColor);
             }
         }
@@ -355,9 +355,9 @@ class Image : Texture2d
         {
             if (dwidth >= dsizeDelta)
             {
-                import ColorProcessor = api.dm.kit.graphics.colors.processing.color_processor;
+                import Transform = api.dm.kit.graphics.colors.processings.transforms;
 
-                auto biBuff = ColorProcessor.resizeBilinear(originalBuffer, width.to!size_t, height
+                auto biBuff = Transform.bilinear(originalBuffer, width.to!size_t, height
                         .to!size_t);
                 load(biBuff);
 
@@ -393,9 +393,9 @@ class Image : Texture2d
         {
             if (dheight >= dsizeDelta)
             {
-                import ColorProcessor = api.dm.kit.graphics.colors.processing.color_processor;
+                import Transform = api.dm.kit.graphics.colors.processings.transforms;
 
-                auto biBuff = ColorProcessor.resizeBilinear(originalBuffer, width.to!size_t, height
+                auto biBuff = Transform.bilinear(originalBuffer, width.to!size_t, height
                         .to!size_t);
                 load(biBuff);
                 dheight = 0;

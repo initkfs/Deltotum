@@ -10,7 +10,7 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsla : HSLA;
 import api.math.pos2.insets : Insets;
 
-import ColorProcessor = api.dm.kit.graphics.colors.processing.color_processor;
+import ColorProcessor = api.dm.kit.graphics.colors.processings.processing;
 
 /**
  * Authors: initkfs

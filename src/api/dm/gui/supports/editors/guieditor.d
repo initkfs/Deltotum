@@ -82,14 +82,14 @@ class GuiEditor : GuiScene
         physTab.content = new Physics;
         root.addCreate(physTab);
 
-        import api.dm.gui.supports.editors.sections.images : Images;
-
-        auto imagesTab = new Tab("Images");
-        imagesTab.content = new Images;
-        root.addCreate(imagesTab);
-
         version (DmAddon)
         {
+            import api.dm.gui.supports.editors.sections.images : Images;
+
+            auto imagesTab = new Tab("Images");
+            imagesTab.content = new Images;
+            root.addCreate(imagesTab);
+
             import api.dm.gui.supports.editors.sections.procedural : Procedural;
 
             auto procTab = new Tab("Procedural");
@@ -112,7 +112,7 @@ class GuiEditor : GuiScene
         root.changeTab(controlsTab);
 
         //import std;
-       // createDebugger;
+        // createDebugger;
     }
 
 }

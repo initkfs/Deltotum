@@ -9,8 +9,6 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsva : HSVA;
 import api.math.pos2.insets : Insets;
 
-import ColorProcessor = api.dm.kit.graphics.colors.processing.color_processor;
-
 import std.conv : to;
 
 /**

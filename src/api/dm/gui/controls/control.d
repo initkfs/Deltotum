@@ -1123,7 +1123,7 @@ class Control : GuiComponent
     import api.dm.kit.sprites2d.images.image : Image;
 
     //TODO or move to scene factory?
-    Sprite2d createIcon(string iconName, double newIconSize = 0, RGBA delegate(int x, int y, RGBA color) colorProcessor = null)
+    Sprite2d createIcon(string iconName, double newIconSize = 0, RGBA delegate(int x, int y, RGBA color) onColor = null)
     {
         assert(isCreated, "Sprite2d not created");
 
@@ -1152,9 +1152,9 @@ class Control : GuiComponent
         auto icon = new Image;
         build(icon);
 
-        if (colorProcessor)
+        if (onColor)
         {
-            icon.colorProcessor = colorProcessor;
+            icon.onColor = onColor;
         }
 
         import std.conv : to;

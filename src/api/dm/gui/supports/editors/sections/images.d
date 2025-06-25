@@ -1,5 +1,9 @@
 module api.dm.gui.supports.editors.sections.images;
 
+// dfmt off
+version(DmAddon):
+// dfmt on
+
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -8,7 +12,7 @@ import api.dm.kit.sprites2d.images.image : Image;
 import api.dm.kit.sprites2d.images.image : Image;
 import std.string : toStringz;
 
-import ColorProcessor = api.dm.kit.graphics.colors.processing.color_processor;
+import ColorProcessor = api.dm.kit.graphics.colors.processings.processing;
 
 import Math = api.dm.math;
 
@@ -93,7 +97,7 @@ class Images : Control
 
         static RGBA[][] colorBuff = new RGBA[][](imageSize, imageSize);
 
-        original.colorProcessor = (x, y, color) {
+        original.onColor = (x, y, color) {
             colorBuff[y][x] = color;
             return color;
         };
@@ -111,7 +115,7 @@ class Images : Control
 
         auto grayscale = new Image(imageWidth, imageHeight);
         build(grayscale);
-        grayscale.colorProcessor = (x, y, color) {
+        grayscale.onColor = (x, y, color) {
             return ColorProcessor.grayscale(color);
         };
         grayscale.load(colorBuff);
@@ -119,7 +123,7 @@ class Images : Control
 
         auto grayscaleThreshold = new Image(imageWidth, imageHeight);
         build(grayscaleThreshold);
-        grayscaleThreshold.colorProcessor = (x, y, color) {
+        grayscaleThreshold.onColor = (x, y, color) {
             return ColorProcessor.grayscale(color, 200);
         };
         grayscaleThreshold.load(colorBuff);
@@ -127,7 +131,7 @@ class Images : Control
 
         auto negative = new Image(imageWidth, imageHeight);
         build(negative);
-        negative.colorProcessor = (x, y, color) {
+        negative.onColor = (x, y, color) {
             return ColorProcessor.negative(color);
         };
         negative.load(colorBuff);
@@ -135,7 +139,7 @@ class Images : Control
 
         auto solar1 = new Image(imageWidth, imageHeight);
         build(solar1);
-        solar1.colorProcessor = (x, y, color) {
+        solar1.onColor = (x, y, color) {
             return ColorProcessor.solarization(color, 120);
         };
         solar1.load(colorBuff);
@@ -143,7 +147,7 @@ class Images : Control
 
         auto sepia = new Image(imageWidth, imageHeight);
         build(sepia);
-        sepia.colorProcessor = (x, y, color) {
+        sepia.onColor = (x, y, color) {
             return ColorProcessor.sepia(color);
         };
         sepia.load(colorBuff);
@@ -151,7 +155,7 @@ class Images : Control
 
         auto poster = new Image(imageWidth, imageHeight);
         build(poster);
-        poster.colorProcessor = (x, y, color) {
+        poster.onColor = (x, y, color) {
             return ColorProcessor.posterize(color, [
                     RGBA.red,
                     RGBA.blue,
@@ -171,25 +175,25 @@ class Images : Control
 
         auto br1 = new Image(imageWidth, imageHeight);
         build(br1);
-        br1.colorProcessor = (x, y, color) { color.brightness(2); return color; };
+        br1.onColor = (x, y, color) { color.brightness(2); return color; };
         br1.load(colorBuff);
         container2.addCreate(createImageInfo("Bright x2", br1));
 
         auto gamma1 = new Image(imageWidth, imageHeight);
         build(gamma1);
-        gamma1.colorProcessor = (x, y, color) { color.gamma(0.2); return color; };
+        gamma1.onColor = (x, y, color) { color.gamma(0.2); return color; };
         gamma1.load(colorBuff);
         container2.addCreate(createImageInfo("Gamma 0.2", gamma1));
 
         auto gamma2 = new Image(imageWidth, imageHeight);
         build(gamma2);
-        gamma2.colorProcessor = (x, y, color) { color.gamma(2.0); return color; };
+        gamma2.onColor = (x, y, color) { color.gamma(2.0); return color; };
         gamma2.load(colorBuff);
         container2.addCreate(createImageInfo("Gamma 2.0", gamma2));
 
         auto contrast1 = new Image(imageWidth, imageHeight);
         build(contrast1);
-        contrast1.colorProcessor = (x, y, color) {
+        contrast1.onColor = (x, y, color) {
             color.contrast(-50);
             return color;
         };
@@ -198,7 +202,7 @@ class Images : Control
 
         auto contrast2 = new Image(imageWidth, imageHeight);
         build(contrast2);
-        contrast2.colorProcessor = (x, y, color) {
+        contrast2.onColor = (x, y, color) {
             color.contrast(80);
             return color;
         };
