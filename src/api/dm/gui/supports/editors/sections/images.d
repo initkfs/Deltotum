@@ -1,9 +1,5 @@
 module api.dm.gui.supports.editors.sections.images;
 
-// dfmt off
-version(DmAddon):
-// dfmt on
-
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -12,7 +8,7 @@ import api.dm.kit.sprites2d.images.image : Image;
 import api.dm.kit.sprites2d.images.image : Image;
 import std.string : toStringz;
 
-import ColorProcessor = api.dm.kit.graphics.colors.processings.processing;
+import ColorProcessor = api.dm.kit.graphics.colors.processings;
 
 import Math = api.dm.math;
 
@@ -65,11 +61,11 @@ class Images : Control
         import api.dm.gui.controls.texts.text : Text;
 
         auto container = new VBox;
+        container.isAlignX = true;
         buildInitCreate(container);
         container.enablePadding;
 
-        auto label = new Text;
-        label.text = name;
+        auto label = new Text(name);
         container.addCreate(label);
 
         container.addCreate(image);
@@ -229,16 +225,10 @@ class Images : Control
         rotate45.load(ColorProcessor.rotate(colorBuff, 45));
         container2.addCreate(createImageInfo("Rotate 45", rotate45));
 
-        import api.dm.gui.controls.viewers.magnifiers.magnifier : Magnifier, Source;
-        auto magn1 = new Magnifier;
-        container2.addCreate(magn1);
-        magn1.source = Source.screen;
-        magn1.original = original;
-        
         auto bilinear = new Image(imageWidth / 2, imageHeight / 2);
         build(bilinear);
-        bilinear.load(ColorProcessor.resizeBilinear(colorBuff, imageWidth / 2, imageHeight / 2));
-        magn1.addCreate(createImageInfo("Bilinear", bilinear));
+        bilinear.load(ColorProcessor.bilinear(colorBuff, imageWidth / 2, imageHeight / 2));
+        container2.addCreate(createImageInfo("Bilinear", bilinear));
 
         import api.math.geom2.rect2 : Rect2d;
 

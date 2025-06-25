@@ -28,10 +28,14 @@ struct RGBA
     ubyte b;
     double a = 1;
 
-    static enum
+    enum : ubyte
     {
         minColor = 0,
         maxColor = 255,
+    }
+
+    enum : double
+    {
         minAlpha = 0,
         maxAlpha = 1
     }
