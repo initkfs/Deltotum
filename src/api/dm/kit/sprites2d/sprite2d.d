@@ -179,6 +179,7 @@ class Sprite2d : EventKitTarget
     double multiplyInitWidth = 1.0;
     double multiplyInitHeight = 1.0;
 
+    //TODO replace with field
     Scene2d delegate() sceneProvider;
 
     void delegate(ref PointerEvent)[] onPointerInBounds;
@@ -504,7 +505,7 @@ class Sprite2d : EventKitTarget
                         fireEvent(exitEvent);
                     }
 
-                    runEventHandlers(e);
+                    //runEventHandlers(e);
                 }
                 else if (e.event == PointerEvent.Event.press)
                 {
@@ -2260,7 +2261,9 @@ class Sprite2d : EventKitTarget
         {
             throw new Exception(err.toString);
         }
-        graphic.readPixels(bounds, surf);
+        if(const errRead = graphic.readPixels(bounds, surf)){
+            logger.error(errRead.toString);
+        }
         return surf;
     }
 

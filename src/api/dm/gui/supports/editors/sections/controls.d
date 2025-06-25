@@ -873,6 +873,11 @@ class Controls : Control
 
         auto ledIcon3 = new LedIcon(IconNames.thermometer_outline, RGBA.green);
         ledContainer2.addCreate(ledIcon3);
+
+        import api.dm.gui.controls.viewers.magnifiers.magnifier: Magnifier;
+
+        auto magn = new Magnifier;
+        root.addCreate(magn);
     }
 
     private void createWindows(Container root)

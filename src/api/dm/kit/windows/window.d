@@ -55,6 +55,8 @@ class Window : GraphicComponent
     void delegate(double)[] showingTasks;
     size_t showingTaskDelayTicks = 1;
 
+    void delegate(double)[] drawingSceneTasks;
+
     //Some delegates can be called by the event manager
     void delegate()[] onCreate;
     void delegate()[] onShow;
@@ -304,6 +306,16 @@ class Window : GraphicComponent
         }
 
         _currentScene.drawAll;
+
+        if (drawingSceneTasks.length > 0)
+        {
+            foreach (dg; drawingSceneTasks)
+            {
+                dg(alpha);
+            }
+            drawingSceneTasks = null;
+        }
+
         return true;
     }
 

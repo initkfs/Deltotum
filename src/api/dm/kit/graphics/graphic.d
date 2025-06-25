@@ -1,5 +1,7 @@
 module api.dm.kit.graphics.graphic;
 
+import api.dm.com.platforms.results.com_result: ComResult;
+
 import api.core.components.units.services.loggable_unit;
 import api.core.utils.factories : ProviderFactory;
 
@@ -95,13 +97,7 @@ class Graphic : LoggableUnit
         }
     }
 
-    void readPixels(Rect2d bounds, ComSurface pixelBuffer)
-    {
-        if (const err = renderer.readPixels(bounds, pixelBuffer))
-        {
-            throw new Exception(err.toString);
-        }
-    }
+    ComResult readPixels(Rect2d bounds, ComSurface pixelBuffer) => renderer.readPixels(bounds, pixelBuffer);
 
     RGBA color()
     {

@@ -517,6 +517,8 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
     //it should be called after rendering and before SDL_RenderPresent().
     ComResult readPixels(Rect2d rect, ComSurface buffer) nothrow
     {
+        assert(ptr);
+        assert(buffer);
         //TODO SDL_GetRenderLogicalPresentationRect
         //https://wiki.libsdl.org/SDL3/SDL_RenderReadPixels
         SDL_Rect bounds;
@@ -536,6 +538,7 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
             import api.dm.back.sdl3.sdl_surface : SdlSurface;
 
             auto sdlBuffer = cast(SdlSurface) buffer;
+            assert(sdlBuffer);
             sdlBuffer.updateObject(surface);
         }
         catch (Exception e)

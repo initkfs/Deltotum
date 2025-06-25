@@ -660,10 +660,40 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
+    ComResult getSize(out int w, out int h)
+    {
+        w = width;
+        h = height;
+        return ComResult.success;
+    }
+
     ComResult nativePtr(out ComNativePtr nptr) nothrow
     {
         assert(ptr);
         nptr = ComNativePtr(ptr);
+        return ComResult.success;
+    }
+
+    ComResult saveBMP(const(char)[] file) nothrow
+    {
+        assert(ptr);
+        if (!SDL_SaveBMP(ptr, file.ptr))
+        {
+            return getErrorRes("Error saving surface to bmp file");
+        }
+        return ComResult.success;
+    }
+
+    ComResult loadBMP(const(char)[] file) nothrow
+    {
+        auto newPtr = SDL_LoadBMP(file.ptr);
+        if (!newPtr)
+        {
+            return getErrorRes("Error loading surface from file");
+        }
+
+        updateObject(newPtr);
+
         return ComResult.success;
     }
 

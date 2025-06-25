@@ -39,10 +39,10 @@ class Scene2d : EventKitTarget
 
     void delegate(double dt)[] eternalTasks;
 
-    protected
-    {
+    //protected
+    //{
         Sprite2d[] sprites;
-    }
+    //}
 
     Sprite2d[] controlledSprites;
 
@@ -484,7 +484,11 @@ class Scene2d : EventKitTarget
         {
             throw new Exception(err.toString);
         }
-        graphic.readPixels(bounds, surf);
+        
+        if (const errRead = graphic.readPixels(bounds, surf))
+        {
+            logger.error(errRead.toString);
+        }
         return surf;
     }
 

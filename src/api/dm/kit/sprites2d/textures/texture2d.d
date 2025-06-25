@@ -380,7 +380,7 @@ class Texture2d : Sprite2d
     {
         //TODO check bounds;
         Rect2d srcRect = {0, 0, other.width, other.height};
-        Rect2d destRect = !isToCenter ? Rect2d(0, 0, other.width, other.height) : Rect2d(width / 2 - other.width / 2, height / 2 - other
+        Rect2d destRect = !isToCenter ? Rect2d(0, 0, width, height) : Rect2d(width / 2 - other.width / 2, height / 2 - other
                 .height / 2, other.width, other.height);
 
         copyFrom(other, srcRect, destRect);
@@ -415,6 +415,14 @@ class Texture2d : Sprite2d
     void lock()
     {
         if (const err = texture.lock)
+        {
+            throw new Exception(err.toString);
+        }
+    }
+
+    void changeColor(uint x, uint y, ubyte r, ubyte g, ubyte b, ubyte a)
+    {
+        if (const err = texture.setPixelColor(x, y, r, g, b, a))
         {
             throw new Exception(err.toString);
         }

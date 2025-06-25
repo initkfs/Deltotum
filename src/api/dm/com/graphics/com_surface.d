@@ -36,6 +36,7 @@ nothrow:
     ComResult getFormat(out uint format);
     ComResult getWidth(out int w);
     ComResult getHeight(out int h);
+    ComResult getSize(out int w, out int h);
 
     ComResult resize(int newWidth, int newHeight, out bool isResized);
 
@@ -64,6 +65,9 @@ nothrow:
     ComResult setPixelRGBA(uint* pixel, ubyte r, ubyte g, ubyte b, ubyte a);
     ComResult setPixelIsTransparent(bool isTransparent, ubyte r, ubyte g, ubyte b, ubyte a);
     ComResult setPixels(Tuple!(ubyte, ubyte, ubyte, ubyte)[][] buff);
+
+    ComResult saveBMP(const(char)[] file);
+    ComResult loadBMP(const(char)[] file);
 
     ComResult nativePtr(out ComNativePtr ptr);
 }
