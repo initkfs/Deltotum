@@ -199,45 +199,14 @@ class SevenSegment : Control
         segments ~= segment;
     }
 
-    Sprite2d createSegmentA()
-    {
-        return createHSegment;
-    }
-
-    Sprite2d createSegmentB()
-    {
-        return createVSegment;
-    }
-
-    Sprite2d createSegmentC()
-    {
-        return createVSegment;
-    }
-
-    Sprite2d createSegmentD()
-    {
-        return createHSegment;
-    }
-
-    Sprite2d createSegmentE()
-    {
-        return createVSegment;
-    }
-
-    Sprite2d createSegmentF()
-    {
-        return createVSegment;
-    }
-
-    Sprite2d createSegmentG()
-    {
-        return createHSegment;
-    }
-
-    Sprite2d createDot()
-    {
-        return createDotSegment;
-    }
+    Sprite2d createSegmentA() => createHSegment;
+    Sprite2d createSegmentB() => createVSegment;
+    Sprite2d createSegmentC() => createVSegment;
+    Sprite2d createSegmentD() => createHSegment;
+    Sprite2d createSegmentE() => createVSegment;
+    Sprite2d createSegmentF() => createVSegment;
+    Sprite2d createSegmentG() =>  createHSegment;
+    Sprite2d createDot() => createDotSegment;
 
     protected GraphicStyle createSegmentStyle()
     {
@@ -253,18 +222,19 @@ class SevenSegment : Control
 
     protected Sprite2d createDotSegment()
     {
-        const double radius = dotDiameter / 2;
+        const double size = dotDiameter;
 
-        Rect2d box = Rect2d(0, 0, dotDiameter, dotDiameter).boundingBox(segmentAngle);
-        auto segment = createVShapeSegment(box, segmentAngle, dotDiameter / 2, createSegmentStyle);
+        Rect2d box = Rect2d(0, 0, size, size).boundingBox(segmentAngle);
+        auto segment = createVShapeSegment(box, size, size, segmentAngle, size, createSegmentStyle);
 
         return segment;
     }
 
     protected Sprite2d createHSegment()
     {
-        Sprite2d segment = theme.convexPolyShape(hSegmentWidth, hSegmentHeight, angle, segmentCornerBevel, createSegmentStyle);
-        return segment;
+        Rect2d box = Rect2d(0, 0, hSegmentWidth, hSegmentHeight);
+        double cornerBevel = segmentCornerBevel;
+        return createHShapeSegment(box, cornerBevel, createSegmentStyle);
     }
 
     protected Sprite2d createVSegment()
@@ -283,12 +253,61 @@ class SevenSegment : Control
 
         Rect2d box = Rect2d(0, 0, vSegmentWidth, vSegmentHeight).boundingBox(segmentAngle);
 
-        auto segment = createVShapeSegment(box, segmentAngle, segmentCornerBevel, segmentStyle);
+        auto segment = createVShapeSegment(box, vSegmentWidth, vSegmentHeight, segmentAngle, segmentCornerBevel, segmentStyle);
 
         return segment;
     }
 
-    protected Sprite2d createVShapeSegment(Rect2d box, double angle, double cornerBevel, GraphicStyle segmentStyle)
+    protected Sprite2d createVShapeSegment(Rect2d box, double w, double h, double angle, double cornerBevel, GraphicStyle segmentStyle)
+    {
+        import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
+
+        auto segment = new class VShape
+        {
+            this()
+            {
+                super(box.width, box.height, segmentStyle);
+            }
+
+            override void createTextureContent()
+            {
+                auto ctx = canvas;
+                auto thisStyle = segmentStyle;
+
+                auto thisHeight = h;
+                auto thisWidth = w;
+
+                auto halfLineW = thisStyle.lineWidth / 2;
+
+                ctx.translate(box.width / 2, box.height / 2);
+                ctx.rotateRad(Math.degToRad(segmentAngle));
+
+                auto halfW = thisWidth / 2;
+                auto halfH = thisHeight / 2;
+
+                ctx.moveTo(0, halfH);
+                ctx.lineTo(-cornerBevel, halfH - cornerBevel);
+                ctx.lineTo(-cornerBevel, -halfH + cornerBevel);
+                ctx.lineTo(0, -halfH);
+                ctx.lineTo(cornerBevel, -halfH + cornerBevel);
+                ctx.lineTo(cornerBevel, halfH - cornerBevel);
+                ctx.lineTo(0, halfH);
+
+                if(thisStyle.isFill){
+                    ctx.color = thisStyle.fillColor;
+                    ctx.fill;
+                }
+
+                ctx.color = thisStyle.lineColor;
+                ctx.lineWidth = thisStyle.lineWidth;
+                ctx.stroke;
+            }
+        };
+
+        return segment;
+    }
+
+    protected Sprite2d createHShapeSegment(Rect2d box, double cornerBevel, GraphicStyle segmentStyle)
     {
         import api.dm.kit.sprites2d.textures.vectors.shapes.vshape2d : VShape;
 
@@ -309,19 +328,16 @@ class SevenSegment : Control
 
                 auto halfLineW = thisStyle.lineWidth / 2;
 
-                ctx.translate(thisWidth / 2, thisHeight / 2);
-                ctx.rotateRad(Math.degToRad(segmentAngle));
-
                 auto halfW = thisWidth / 2;
                 auto halfH = thisHeight / 2;
 
-                ctx.moveTo(0, halfH - halfLineW);
-                ctx.lineTo(-cornerBevel, halfH - cornerBevel - halfLineW);
-                ctx.lineTo(-cornerBevel, -halfH + cornerBevel + halfLineW);
-                ctx.lineTo(0, -halfH + halfLineW);
-                ctx.lineTo(cornerBevel, -halfH + cornerBevel + halfLineW);
-                ctx.lineTo(cornerBevel, halfH - cornerBevel - halfLineW);
-                ctx.lineTo(0, halfH - halfLineW);
+                ctx.moveTo(0, halfH);
+                ctx.lineTo(cornerBevel,  0);
+                ctx.lineTo(thisWidth - cornerBevel, 0);
+                ctx.lineTo(thisWidth, cornerBevel);
+                ctx.lineTo(thisWidth - cornerBevel, thisHeight);
+                ctx.lineTo(cornerBevel, thisHeight);
+                ctx.lineTo(0, halfH);
 
                 if(thisStyle.isFill){
                     ctx.color = thisStyle.fillColor;

@@ -20,7 +20,11 @@ class RadialLoader : BaseLoader
         size_t segmentsCount;
         size_t segmentDistance = 40;
         size_t segmentDiameter = 15;
+
+        double progress = 0;
     }
+
+    double speed = 2;
 
     this(size_t segmentsCount = 6)
     {
@@ -78,15 +82,8 @@ class RadialLoader : BaseLoader
             segments ~= segment;
         }
 
-        // onPointerPress ~= (ref e){
-        //     if(!isRunning){
-        //         run;
-        //     }
-        // };
+        drawSegments;
     }
-
-    float progress = 0.0f;
-    float speed = 2;
 
     override void drawContent()
     {
@@ -97,10 +94,17 @@ class RadialLoader : BaseLoader
             return;
         }
 
+        drawSegments;
+    }
+
+    void drawSegments()
+    {
         const bounds = boundsRect;
         const center = bounds.center;
 
-        auto angleDiff = 360 / segmentsCount;
+        const double fullAngleDeg = 360;
+
+        auto angleDiff = fullAngleDeg / segmentsCount;
         float currAngle = progress;
 
         auto newSegmentCenter = width / 2 - segmentDiameter / 2;
@@ -110,7 +114,7 @@ class RadialLoader : BaseLoader
             auto pos = Vec2d.fromPolarDeg(currAngle, newSegmentCenter)
                 .add(center).subtract(Vec2d(s.halfWidth, s.halfHeight));
             s.pos = pos;
-            currAngle = (currAngle + angleDiff) % 360;
+            currAngle = (currAngle + angleDiff) % fullAngleDeg;
 
             if (auto segmentTexture = cast(Texture2d) s)
             {
@@ -137,8 +141,10 @@ class RadialLoader : BaseLoader
         }
 
         progress += speed;
-        if (progress > 360)
+        if (progress > fullAngleDeg)
+        {
             progress = 0;
+        }
 
     }
 

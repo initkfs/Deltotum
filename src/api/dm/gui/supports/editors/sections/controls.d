@@ -414,35 +414,35 @@ class Controls : Control
 
     void createPickers(Container root)
     {
-        // auto pickersRoot = new VBox;
-        // pickersRoot.isAlignX = true;
-        // root.addCreate(pickersRoot);
+        auto pickersRoot = new VBox;
+        pickersRoot.isAlignX = true;
+        root.addCreate(pickersRoot);
 
-        // import api.dm.gui.controls.selects.calendars.calendar : Calendar;
+        import api.dm.gui.controls.selects.calendars.calendar : Calendar;
 
-        // auto cal1 = new Calendar;
-        // pickersRoot.addCreate(cal1);
+        auto cal1 = new Calendar;
+        pickersRoot.addCreate(cal1);
 
         auto root2 = new HBox;
         root2.isAlignY = true;
-        root.addCreate(root2);
+        pickersRoot.addCreate(root2);
 
-        // import api.dm.gui.controls.selects.time_pickers.time_picker: TimePicker;
+        import api.dm.gui.controls.selects.time_pickers.time_picker : TimePicker;
 
-        // import api.dm.gui.controls.selects.time_pickers.time_picker: TimePicker;
+        import api.dm.gui.controls.selects.time_pickers.time_picker : TimePicker;
 
-        // auto timePick1 = new TimePicker;
-        // root2.addCreate(timePick1);
-        // timePick1.setCurrentTime;
+        auto timePick1 = new TimePicker;
+        root2.addCreate(timePick1);
+        timePick1.setCurrentTime;
 
-        // import api.dm.gui.controls.selects.color_pickers.color_picker: ColorPicker;
+        import api.dm.gui.controls.selects.color_pickers.color_picker : ColorPicker;
 
-        // auto colorPick2 = new ColorPicker;
-        // root2.addCreate(colorPick2);
+        auto colorPick2 = new ColorPicker;
+        root2.addCreate(colorPick2);
 
-        auto playerBox = new VBox;
-        playerBox.isAlignX = true;
-        root2.addCreate(playerBox);
+        // auto playerBox = new VBox;
+        // playerBox.isAlignX = true;
+        // root2.addCreate(playerBox);
 
         // import api.dm.addon.gui.video.video_player: mediaPlayer, VideoPlayer;
         // auto player = mediaPlayer;
@@ -654,10 +654,20 @@ class Controls : Control
         auto loaderContainer = new VBox;
         root.addCreate(loaderContainer);
 
-        import api.dm.gui.controls.indicators.loaders.radial_loader: RadialLoader;
+        import api.dm.gui.controls.indicators.loaders.radial_loader : RadialLoader;
 
         auto loader1 = new RadialLoader;
         loaderContainer.addCreate(loader1);
+        loader1.onPointerPress ~= (ref e) {
+            if (loader1.isRunning)
+            {
+                loader1.stop;
+            }
+            else
+            {
+                loader1.run;
+            }
+        };
 
         auto rscroll1 = new RScroll;
         rscroll1.onNewScale = (scale) {
@@ -874,7 +884,7 @@ class Controls : Control
         auto ledIcon3 = new LedIcon(IconNames.thermometer_outline, RGBA.green);
         ledContainer2.addCreate(ledIcon3);
 
-        import api.dm.gui.controls.viewers.magnifiers.magnifier: Magnifier;
+        import api.dm.gui.controls.viewers.magnifiers.magnifier : Magnifier;
 
         auto magn = new Magnifier;
         root.addCreate(magn);
@@ -988,7 +998,7 @@ class Controls : Control
     {
         import api.dm.gui.controls.texts.text : Text;
         import api.dm.gui.controls.texts.text_view : TextView;
-        import api.dm.gui.controls.texts.text_field: TextField;
+        import api.dm.gui.controls.texts.text_field : TextField;
         import api.dm.gui.controls.texts.text_area : TextArea;
 
         import api.dm.gui.controls.containers.expanders.expander : Expander, ExpanderPosition;
@@ -1012,7 +1022,7 @@ class Controls : Control
         exp.expandPosition = ExpanderPosition.top;
         root.addCreate(exp);
         //exp.close;
-        
+
         auto t1 = new TextArea("Коммодор никак не мог отделаться от ощущения чудовищных перегрузок и невыносимой яркости освещения. Но он по-прежнему сидел в своем отсеке, хотя рука его еще лежала на клавише «Уничтожение»...\nКоммодор никак не мог отделаться от ощущения чудовищных перегрузок и невыносимой яркости освещения. Но он по-прежнему сидел в своем отсеке, хотя рука его еще лежала на клавише «Уничтожение»...");
         t1.isEditable = true;
         t1.id = "TextArea";
