@@ -52,12 +52,6 @@ class GuiEditor : GuiScene
             root.addCreate(audioTab);
         }
 
-        import api.dm.gui.supports.editors.sections.colors : Colors;
-
-        auto colorsTab = new Tab("Colors");
-        colorsTab.content = new Colors;
-        root.addCreate(colorsTab);
-
         import api.dm.gui.supports.editors.sections.textures : Textures;
 
         auto texturesTab = new Tab("Textures");

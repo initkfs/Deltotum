@@ -1,6 +1,6 @@
 module api.dm.addon.math.curves.spirals;
 
-import api.dm.addon.math.curves.curve_maker : CurveMaker;
+import api.dm.addon.math.curves.plane_curves : onPointStep;
 import api.math.geom2.vec2 : Vec2d;
 
 import Math = api.dm.math;
@@ -8,46 +8,34 @@ import Math = api.dm.math;
 /**
  * Authors: initkfs
  */
-class Spirals : CurveMaker
+void archimedean(scope bool delegate(Vec2d) onPointIsContinue, double innerRadius, double growthRate, size_t turnCount = 1, double step = 0.2)
 {
-    Vec2d[] archimedean(double innerRadius, double growthRate, size_t turnCount = 1, double step = 0.2)
-    {
-        Vec2d[] result;
-        pointsIteration(step, 0, Math.PI * 2 * turnCount, (double angleRad) {
-            const polarR = innerRadius + growthRate * angleRad;
-            result ~= Vec2d.fromPolarRad(angleRad, polarR);
-            return true;
-        });
+    assert(onPointIsContinue);
 
-        return result;
-    }
+    onPointStep(step, 0, Math.PI * 2 * turnCount, (double angleRad) {
+        const polarR = innerRadius + growthRate * angleRad;
+        return onPointIsContinue(Vec2d.fromPolarRad(angleRad, polarR));
+    });
+}
 
-     Vec2d[] lituus(double k, size_t turnCount = 1, double scale = 1.0, double step = 0.2)
-    {
-        assert(k != 0);
+void lituus(scope bool delegate(Vec2d) onPointIsContinue, double k, size_t turnCount = 1, double scale = 1.0, double step = 0.2)
+{
+    assert(onPointIsContinue);
+    assert(k != 0);
 
-        Vec2d[] result;
-        pointsIteration(step, step, Math.PI * 2 * turnCount, (double angleRad) {
-            const polarR = k / (Math.sqrt(angleRad)) * scale;
-            result ~= Vec2d.fromPolarRad(angleRad, polarR);
-            return true;
-        });
+    onPointStep(step, step, Math.PI * 2 * turnCount, (double angleRad) {
+        const polarR = k / (Math.sqrt(angleRad)) * scale;
+        return onPointIsContinue(Vec2d.fromPolarRad(angleRad, polarR));
+    });
+}
 
-        return result;
-    }
+void cochleoid(scope bool delegate(Vec2d) onPointIsContinue, double a, size_t turnCount = 1, double scale = 1.0, double step = 0.2)
+{
+    assert(onPointIsContinue);
+    assert(a != 0);
 
-    Vec2d[] cochleoid(double a, size_t turnCount = 1, double scale = 1.0, double step = 0.2)
-    {
-        assert(a != 0);
-
-        Vec2d[] result;
-        pointsIteration(step, step, Math.PI * 2 * turnCount, (double angleRad) {
-            const polarR = ((a * Math.sin(angleRad)) / angleRad) * scale;
-            result ~= Vec2d.fromPolarRad(angleRad, polarR);
-            return true;
-        });
-
-        return result;
-    }
-    
+    onPointStep(step, step, Math.PI * 2 * turnCount, (double angleRad) {
+        const polarR = ((a * Math.sin(angleRad)) / angleRad) * scale;
+        return onPointIsContinue(Vec2d.fromPolarRad(angleRad, polarR));
+    });
 }

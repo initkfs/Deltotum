@@ -637,7 +637,7 @@ class BaseMonoText : Control
     {
         if (!isBuilt)
         {
-            return "";
+            return tempText;
         }
 
         import std.array : appender;
@@ -661,6 +661,14 @@ class BaseMonoText : Control
     {
         if (t.length == 0 && _textBuffer.length == 0)
         {
+            tempText = null;
+            return;
+        }
+
+        if (!isBuilt || !isCreated)
+        {
+            isRebuildRows = true;
+            tempText = t;
             return;
         }
 
@@ -673,12 +681,6 @@ class BaseMonoText : Control
         if (onTextChange && isTriggerListeners)
         {
             onTextChange();
-        }
-
-        if (!isBuilt || !isCreated)
-        {
-            isRebuildRows = true;
-            return;
         }
 
         updateRows(isForce : true);
