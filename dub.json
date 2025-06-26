@@ -48,10 +48,8 @@
         {
             "name": "app-trace",
             "versions": [
-                "dev"
-            ],
-            "excludedSourceFiles": [
-                "src/api/dm/addon/*"
+                "dev",
+                "DmAddon"
             ],
             "targetType": "executable",
             "targetName": "dm",

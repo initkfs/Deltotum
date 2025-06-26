@@ -85,32 +85,6 @@ class Procedural : Control
         vodRoot.addCreate(vodRoot1);
         vodRoot1.enablePadding;
 
-        import api.dm.addon.sprites2d.textures.vectors.tessellations.voderberg : Voderberg, ShapeType;
-
-        auto v1 = new Voderberg;
-        v1.style = GraphicStyle(1, RGBA.web("#64b5f6"), false);
-        v1.scale(10, 10);
-        v1.shapeType = ShapeType.triangle;
-        vodRoot1.addCreate(v1);
-
-        auto v2 = new Voderberg;
-        v2.style = GraphicStyle(1, RGBA.web("#dce775"), false);
-        v2.scale(10, 10);
-        v2.shapeType = ShapeType.voderberg;
-        vodRoot1.addCreate(v2);
-
-        auto v3 = new Voderberg;
-        v3.style = GraphicStyle(1, RGBA.web("#f48fb1"), false);
-        v3.scale(10, 10);
-        v3.shapeType = ShapeType.bentwedge;
-        vodRoot1.addCreate(v3);
-
-        auto v4 = new Voderberg;
-        v4.style = GraphicStyle(1, RGBA.web("#a5d6a7"), false);
-        v4.shapeType = ShapeType.tent;
-        v4.scale(15, 15);
-        vodRoot1.addCreate(v4);
-
         auto noiseRoot1 = new HBox(5);
         root.addCreate(noiseRoot1);
         noiseRoot1.enablePadding;
