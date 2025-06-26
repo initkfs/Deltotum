@@ -2,9 +2,7 @@ module api.dm.back.sdl3.sdl_screen;
 
 import api.dm.com.platforms.results.com_result;
 
-// dfmt off
-version(SdlBackend):
-// dfmt on
+
 
 import api.dm.com.graphic.com_screen : ComScreenId, ComScreen, ComScreenMode, ComScreenOrientation, ComScreenDpi;
 import api.dm.com.platforms.results.com_result : ComResult;

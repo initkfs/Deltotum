@@ -1,8 +1,4 @@
-module api.dm.back.sdl3.mixer.sdl_mixer_object;
-
-// dfmt off
-version(SdlBackend):
-// dfmt on
+module api.dm.back.sdl3.mixers.sdl_mixer_object;
 
 import api.dm.back.sdl3.base.sdl_object : SdlObject;
 import std.string : fromStringz, toStringz;

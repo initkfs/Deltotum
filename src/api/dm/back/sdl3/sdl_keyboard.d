@@ -1,8 +1,6 @@
 module api.dm.back.sdl3.sdl_keyboard;
 
-// dfmt off
-version(SdlBackend):
-// dfmt on
+
 
 import api.dm.com.inputs.com_keyboard : ComKeyName, ComKeyboard, ComKeyModifier;
 import api.dm.back.sdl3.base.sdl_object : SdlObject;

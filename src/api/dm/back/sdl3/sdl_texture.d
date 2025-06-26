@@ -1,8 +1,6 @@
 module api.dm.back.sdl3.sdl_texture;
 
-// dfmt off
-version(SdlBackend):
-// dfmt on
+
 
 import api.dm.com.platforms.results.com_result : ComResult;
 import api.dm.com.graphic.com_texture : ComTexture;

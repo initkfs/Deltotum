@@ -1,8 +1,4 @@
-module api.dm.back.sdl3.img.sdl_image;
-
-// dfmt off
-version(SdlBackend):
-// dfmt on
+module api.dm.back.sdl3.images.sdl_image;
 
 import api.dm.com.platforms.results.com_result : ComResult;
 import api.dm.com.graphic.com_surface : ComSurface;
@@ -98,7 +94,7 @@ class SdlImage : SdlSurface, ComImage
         assert(surface, "Surface must not be null");
         assert(path.length > 0, "Image path must not be empty");
 
-        import api.dm.com.com_native_ptr: ComNativePtr;
+        import api.dm.com.com_native_ptr : ComNativePtr;
 
         ComNativePtr nativePtr;
         if (const err = surface.nativePtr(nativePtr))

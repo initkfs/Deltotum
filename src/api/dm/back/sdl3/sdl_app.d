@@ -2,9 +2,7 @@ module api.dm.back.sdl3.sdl_app;
 
 import api.dm.com.graphic.com_screen;
 
-// dfmt off
-version(SdlBackend):
-// dfmt on
+
 
 import api.dm.com.platforms.results.com_result : ComResult;
 import api.core.loggers.logging : Logging;
@@ -25,26 +23,25 @@ import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.kit.inputs.keyboards.events.key_event : KeyEvent;
 import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import api.dm.back.sdl3.sdl_lib : SdlLib;
-import api.dm.back.sdl3.img.sdl_img_lib : SdlImgLib;
-import api.dm.back.sdl3.mixer.sdl_mixer_lib : SdlMixerLib;
+import api.dm.back.sdl3.mixers.sdl_mixer_lib : SdlMixerLib;
 import api.dm.com.audio.com_audio_device;
 import api.dm.back.sdl3.sounds.sdl_audio_device : SdlAudioDevice;
-import api.dm.back.sdl3.ttf.sdl_ttf_lib : SdlTTFLib;
+import api.dm.back.sdl3.fonts.sdl_ttf_lib : SdlTTFLib;
 import api.dm.back.sdl3.sdl_window : SdlWindow;
 import api.dm.back.sdl3.sdl_window : SdlWindowMode;
 import api.dm.back.sdl3.sdl_renderer : SdlRenderer;
 import api.dm.kit.inputs.keyboards.keyboard : Keyboard;
 import api.dm.kit.screens.single_screen : SingleScreen;
 
-import api.dm.back.sdl3.joysticks.sdl_joystick_lib : SdlJoystickLib;
-import api.dm.back.sdl3.joysticks.sdl_joystick : SdlJoystick;
+import api.dm.back.sdl3.joystick.sdl_joystick_lib : SdlJoystickLib;
+import api.dm.back.sdl3.joystick.sdl_joystick : SdlJoystick;
 import api.dm.kit.windows.events.window_event : WindowEvent;
 import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import api.dm.back.sdl3.sdl_texture : SdlTexture;
 import api.dm.back.sdl3.sdl_surface : SdlSurface;
-import api.dm.back.sdl3.ttf.sdl_ttf_font : SdlTTFFont;
-import api.dm.back.sdl3.img.sdl_image : SdlImage;
-import api.dm.back.sdl3.mixer.sdl_mixer_chunk : SdlMixerChunk;
+import api.dm.back.sdl3.fonts.sdl_ttf_font : SdlTTFFont;
+import api.dm.back.sdl3.images.sdl_image : SdlImage;
+import api.dm.back.sdl3.mixers.sdl_mixer_chunk : SdlMixerChunk;
 import api.dm.com.graphic.com_texture : ComTexture;
 import api.dm.com.graphic.com_surface : ComSurface;
 import api.dm.com.graphic.com_screen : ComScreenId;
@@ -91,7 +88,6 @@ class SdlApp : GuiApp
     {
         SdlLib sdlLib;
 
-        SdlImgLib sdlImage;
         SdlTTFLib sdlFont;
 
         Nullable!SdlAudioDevice audioOut;
@@ -568,11 +564,6 @@ class SdlApp : GuiApp
             sdlLib = newSdlLib;
         }
 
-        if (!sdlImage)
-        {
-            sdlImage = newSdlImage;
-        }
-
         if (!sdlFont)
         {
             sdlFont = newSdlFont;
@@ -621,12 +612,6 @@ class SdlApp : GuiApp
 
         //TODO move to hal layer
         SDL_SetLogPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_WARN);
-
-        assert(sdlImage);
-        if (const err = sdlImage.initialize)
-        {
-            return err;
-        }
 
         assert(sdlFont);
         if (const err = sdlFont.initialize)
@@ -691,7 +676,6 @@ class SdlApp : GuiApp
 
     Loop newMainLoop() => new IntegratedLoop;
     SdlLib newSdlLib() => new SdlLib;
-    SdlImgLib newSdlImage() => new SdlImgLib;
     SdlAudioDevice newSdlAudio() => new SdlAudioDevice;
     SdlMixerLib newSdlAudioMixer() => new SdlMixerLib;
     SdlTTFLib newSdlFont() => new SdlTTFLib;
@@ -1012,7 +996,6 @@ class SdlApp : GuiApp
             }
         }
 
-        sdlImage.quit;
         sdlFont.quit;
 
         if (const err = sdlLib.quit)

@@ -2,10 +2,6 @@ module api.dm.back.sdl3.sounds.sdl_audio_device;
 
 import api.dm.com.platforms.results.com_result;
 
-// dfmt off
-version(SdlBackend):
-// dfmt on
-
 import api.dm.com.platforms.results.com_result : ComResult;
 import api.dm.com.audio.com_audio_device;
 import api.dm.back.sdl3.base.sdl_object : SdlObject;

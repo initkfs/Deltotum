@@ -1,13 +1,9 @@
-module api.dm.back.sdl3.ttf.sdl_ttf_font;
-
-// dfmt off
-version(SdlBackend):
-// dfmt on
+module api.dm.back.sdl3.fonts.sdl_ttf_font;
 
 import api.dm.com.graphic.com_font : ComFont, ComFontHinting;
 import api.dm.com.platforms.results.com_result : ComResult;
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
-import api.dm.back.sdl3.ttf.base.sdl_ttf_object : SdlTTFObject;
+import api.dm.back.sdl3.fonts.base.sdl_ttf_object : SdlTTFObject;
 import api.dm.com.graphic.com_surface : ComSurface;
 
 import std.conv : to;
@@ -91,7 +87,7 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
             return getErrorRes("Unable to render text");
         }
 
-        import api.dm.com.com_native_ptr: ComNativePtr;
+        import api.dm.com.com_native_ptr : ComNativePtr;
 
         //TODO unsafe
         if (const err = targetSurface.create(ComNativePtr(fontSurfacePtr)))

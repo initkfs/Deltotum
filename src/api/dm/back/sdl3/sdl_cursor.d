@@ -1,8 +1,6 @@
 module api.dm.back.sdl3.sdl_cursor;
 
-// dfmt off
-version(SdlBackend):
-// dfmt on
+
 
 import api.dm.com.inputs.com_cursor : ComCursor, ComPlatformCursorType;
 

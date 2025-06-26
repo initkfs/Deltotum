@@ -1,8 +1,6 @@
 module api.dm.back.sdl3.sdl_lib;
 
-// dfmt off
-version(SdlBackend):
-// dfmt on
+
 
 import std.string : toStringz, fromStringz;
 

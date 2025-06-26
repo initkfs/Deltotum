@@ -2,10 +2,6 @@ module api.dm.back.sdl3.base.sdl_object;
 
 import api.math.geom2.rect2;
 
-// dfmt off
-version(SdlBackend):
-// dfmt on
-
 import api.dm.com.platforms.objects.com_object : ComObject;
 import api.dm.com.platforms.results.com_result : ComResult;
 import api.dm.com.graphic.com_blend_mode : ComBlendMode;

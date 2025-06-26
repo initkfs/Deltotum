@@ -36,4 +36,5 @@ enum : ulong
     SDL_WINDOW_METAL = 0x0000000020000000, /**< window usable for Metal view */
     SDL_WINDOW_TRANSPARENT = 0x0000000040000000, /**< window with transparent buffer */
     SDL_WINDOW_NOT_FOCUSABLE = 0x0000000080000000, /**< window should not be focusable */
+
 }

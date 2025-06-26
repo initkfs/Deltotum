@@ -1,8 +1,6 @@
 module api.dm.back.sdl3.sdl_event_processor;
 
-// dfmt off
-version(SdlBackend):
-// dfmt on
+
 
 import api.dm.kit.events.processing.kit_event_processor : KitEventProcessor;
 

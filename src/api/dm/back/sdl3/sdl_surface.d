@@ -1,8 +1,6 @@
 module api.dm.back.sdl3.sdl_surface;
 
-// dfmt off
-version(SdlBackend):
-// dfmt on
+
 
 import api.dm.com.com_native_ptr : ComNativePtr;
 import api.dm.com.graphic.com_surface : ComSurface;

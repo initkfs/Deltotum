@@ -1,8 +1,6 @@
 module api.dm.back.sdl3.sdl_clipboard;
 
-// dfmt off
-version(SdlBackend):
-// dfmt on
+
 
 import api.dm.com.inputs.com_clipboard : ComClipboard;
 import api.dm.back.sdl3.base.sdl_object : SdlObject;

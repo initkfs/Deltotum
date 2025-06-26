@@ -1,8 +1,4 @@
-module api.dm.back.sdl3.joysticks.sdl_joystick;
-
-// dfmt off
-version(SdlBackend):
-// dfmt on
+module api.dm.back.sdl3.joystick.sdl_joystick;
 
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
 

@@ -2,9 +2,7 @@ module api.dm.back.sdl3.sdl_window;
 
 import api.dm.com.platforms.results.com_result;
 
-// dfmt off
-version(SdlBackend):
-// dfmt on
+
 
 import api.dm.com.graphic.com_window : ComWindowId, ComWindow, ComWindowTheme;
 import api.dm.com.com_native_ptr : ComNativePtr;
