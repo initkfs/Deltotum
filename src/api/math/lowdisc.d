@@ -1,4 +1,4 @@
-module api.dm.addon.math.geom2.low_discrepancy;
+module api.math.lowdisc;
 
 import api.math.geom2.vec2 : Vec2d;
 import api.math.geom2.vec3: Vec3d;
@@ -16,13 +16,16 @@ import Math = api.math;
 * https://habr.com/ru/articles/440892/
 */
 
-enum goldenRatio = (Math.sqrt(5.0) + 1) / 2;
+//enum goldenRatio = (Math.sqrt(5.0) + 1) / 2;
+enum goldenRatio = 1.618033988749895;
 enum plasticRatio = 1.32471795724474602596090885447809;
 
 protected
 {
-    enum a1 = 1.0 / plasticRatio;
-    enum a2 = 1.0 / (plasticRatio * plasticRatio);
+    //enum a1 = 1.0 / plasticRatio;
+    //enum a2 = 1.0 / (plasticRatio * plasticRatio);
+    enum a1 = 0.7548776662466927;
+    enum a2 = 0.5698402909980532;
 }
 
 protected double seqValue(double v, size_t nn, double seed = 0.5) => (seed + v * nn) % 1;
