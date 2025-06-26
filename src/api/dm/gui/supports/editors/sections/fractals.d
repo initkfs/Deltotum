@@ -109,7 +109,7 @@ class Fractals : Control
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        import api.dm.addon.fractals.fractal_generator : FractalGenerator;
+        import api.dm.addon.math.fractals.fractal_generator : FractalGenerator;
 
         enum shapeSize = 100;
 
@@ -211,18 +211,18 @@ class Fractals : Control
         auto container3 = newHContainer;
         addCreate(container3);
 
-        import api.dm.addon.sprites.images.fractals.mandelbrot : Mandelbrot;
+        import api.dm.addon.sprites2d.images.fractals.mandelbrot : Mandelbrot;
 
         auto mand = new Mandelbrot(shapeSize, shapeSize);
         mand.foregroundColor = RGBA.web(MaterialPalette.purpleA100);
         container3.addCreate(createFractalInfo("Mandelbrot", mand, false));
 
-        import api.dm.addon.sprites.images.fractals.julia : Julia;
+        import api.dm.addon.sprites2d.images.fractals.julia : Julia;
 
         auto julia = new Julia(shapeSize, shapeSize);
         container3.addCreate(createFractalInfo("Julia", julia, false));
 
-        import api.dm.addon.sprites.images.fractals.newton : Newton;
+        import api.dm.addon.sprites2d.images.fractals.newton : Newton;
 
         auto newton = new Newton(shapeSize, shapeSize);
         container3.addCreate(createFractalInfo("Newton", newton, false));

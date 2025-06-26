@@ -4,9 +4,6 @@ import std.container.util: make;
 import std.container.dlist : DList;
 import std.typecons : Nullable;
 
-alias NumericStateManager = StateManager!int;
-alias StringStateManager = StateManager!string;
-
 /**
  * Authors: initkfs
  */

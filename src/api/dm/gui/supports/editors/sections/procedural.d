@@ -11,7 +11,7 @@ import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
 import api.math.random : Random;
-import api.dm.addon.sprites.textures.vectors.tessellations.penrose_tiling : PenroseTiling;
+import api.dm.addon.sprites2d.textures.vectors.tessellations.penrose_tiling : PenroseTiling;
 import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.gui.controls.containers.vbox : VBox;
 
@@ -85,7 +85,7 @@ class Procedural : Control
         vodRoot.addCreate(vodRoot1);
         vodRoot1.enablePadding;
 
-        import api.dm.addon.sprites.textures.vectors.tessellations.voderberg : Voderberg, ShapeType;
+        import api.dm.addon.sprites2d.textures.vectors.tessellations.voderberg : Voderberg, ShapeType;
 
         auto v1 = new Voderberg;
         v1.style = GraphicStyle(1, RGBA.web("#64b5f6"), false);
@@ -115,8 +115,8 @@ class Procedural : Control
         root.addCreate(noiseRoot1);
         noiseRoot1.enablePadding;
 
-        import api.dm.addon.sprites.textures.vectors.noises.perlin : Perlin;
-        import api.dm.addon.sprites.textures.vectors.noises.open_simplex : OpenSimplex;
+        import api.dm.addon.sprites2d.textures.vectors.noises.perlin : Perlin;
+        import api.dm.addon.sprites2d.textures.vectors.noises.open_simplex : OpenSimplex;
         import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
         import api.math.random : Random;
 
@@ -124,12 +124,12 @@ class Procedural : Control
         // enum h = 100;
         // enum hue = 110;
 
-        // import api.dm.addon.sprites.textures.vectors.noises.samples.fractal_noise : FractalNoise;
-        // import api.dm.addon.sprites.textures.vectors.noises.samples.voronoi : Voronoi;
-        // import api.dm.addon.sprites.textures.vectors.noises.samples.value : Value;
-        // import api.dm.addon.sprites.textures.vectors.noises.samples.worley : Worley;
-        // import api.dm.addon.sprites.textures.vectors.noises.samples.simplex : Simplex;
-        // import api.dm.addon.sprites.textures.vectors.noises.samples.perlin : SPerlin = Perlin;
+        // import api.dm.addon.sprites2d.textures.vectors.noises.samples.fractal_noise : FractalNoise;
+        // import api.dm.addon.sprites2d.textures.vectors.noises.samples.voronoi : Voronoi;
+        // import api.dm.addon.sprites2d.textures.vectors.noises.samples.value : Value;
+        // import api.dm.addon.sprites2d.textures.vectors.noises.samples.worley : Worley;
+        // import api.dm.addon.sprites2d.textures.vectors.noises.samples.simplex : Simplex;
+        // import api.dm.addon.sprites2d.textures.vectors.noises.samples.perlin : SPerlin = Perlin;
 
         // uint seed = 0;
 
@@ -171,7 +171,7 @@ class Procedural : Control
         // simplex.noiseColor.hue = 210;
         // noiseRoot2.addCreate(simplex);
 
-        // import api.dm.addon.sprites.textures.vectors.noises.fractal_cell: FractalCell;
+        // import api.dm.addon.sprites2d.textures.vectors.noises.fractal_cell: FractalCell;
         // auto fr1 = new FractalCell(w, h);
         // fr1.noiseColor.hue = 50;
         // noiseRoot2.addCreate(fr1);
@@ -180,7 +180,7 @@ class Procedural : Control
         root.addCreate(mazeRoot);
         mazeRoot.enablePadding;
 
-        import api.dm.addon.sprites.textures.vectors.mazes.binary_tree : BinaryTree;
+        import api.dm.addon.sprites2d.textures.vectors.mazes.binary_tree : BinaryTree;
 
         enum mazeWidth = 300;
         enum mazeHeight = 200;
@@ -189,13 +189,13 @@ class Procedural : Control
         binTree1.cellStyle = GraphicStyle(4, RGBA.lightpink);
         mazeRoot.addCreate(binTree1);
 
-        import api.dm.addon.sprites.textures.vectors.mazes.sidewinder : Sidewinder;
+        import api.dm.addon.sprites2d.textures.vectors.mazes.sidewinder : Sidewinder;
 
         auto sidew1 = new Sidewinder(mazeWidth, mazeHeight, 10, 10);
         sidew1.cellStyle = GraphicStyle(4, RGBA.lightskyblue);
         mazeRoot.addCreate(sidew1);
 
-        import api.dm.addon.sprites.textures.vectors.mazes.aldous_broder : AldousBroder;
+        import api.dm.addon.sprites2d.textures.vectors.mazes.aldous_broder : AldousBroder;
 
         auto aldBrod1 = new AldousBroder(mazeWidth, mazeHeight, 10, 10);
         aldBrod1.cellStyle = GraphicStyle(4, RGBA.lightgreen);
