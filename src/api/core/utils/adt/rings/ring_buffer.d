@@ -66,7 +66,7 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
             _block = true;
         }
 
-        void unlock()
+        void unblock()
         {
             _block = false;
         }
@@ -135,7 +135,7 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
             }
         }
 
-        ContainerResult readSync(scope void delegate(BufferType[], BufferType[]) @nogc @safe onBuffer, size_t count) @nogc @safe
+        ContainerResult readSync(scope void delegate(scope BufferType[], scope BufferType[]) @nogc @safe onBuffer, size_t count) @nogc @safe
         {
             synchronized (mutex)
             {

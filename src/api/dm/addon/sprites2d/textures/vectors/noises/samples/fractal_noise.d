@@ -118,7 +118,7 @@ class FractalNoise : Texture2d
             {
                 float n = noiseValues[y][x];
                 //ubyte b = cast(ubyte)(n * ubyte.max);
-                newColor.value = Math.clamp(n * valueScale, HSVA.minValue, HSVA.maxValue);
+                newColor.v = Math.clamp(n * valueScale, HSVA.minValue, HSVA.maxValue);
                 color = newColor.toRGBA;
                 if (const err = texture.setPixelColor(x, y, color.r, color.g, color.b, color.aByte))
                 {

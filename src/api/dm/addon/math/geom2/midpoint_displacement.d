@@ -273,10 +273,10 @@ class MDLandscapeGenerator : Control
             auto mainColorHSV = mainColor.toHSVA;
             auto endColor = mainColorHSV;
 
-            mainColorHSV.value= 0.25;
-            endColor.hue = HSVA.maxHue - mainColorHSV.hue;
-            endColor.value = 1.0;
-            endColor.saturation = 1.0;
+            mainColorHSV.v= 0.25;
+            endColor.h = HSVA.maxHue - mainColorHSV.h;
+            endColor.v = 1.0;
+            endColor.s = 1.0;
 
             GradientStopPoint[] points = [
                 {0, mainColorHSV.toRGBA},
@@ -305,8 +305,8 @@ class MDLandscapeGenerator : Control
             auto innerLightColor = lightColorHSV;
             auto outerLightColor = lightColorHSV;
 
-            outerLightColor.value = 1;
-            outerLightColor.saturation = 1;
+            outerLightColor.v = 1;
+            outerLightColor.s = 1;
             
             //innerLightColor.value = 0.88;
 
@@ -332,8 +332,8 @@ class MDLandscapeGenerator : Control
                 auto startLineColor = color.toHSVA;
                 auto endLineColor = startLineColor;
 
-                startLineColor.value = 1;
-                endLineColor.value = 0.25;
+                startLineColor.v = 1;
+                endLineColor.v = 0.25;
 
                 double maxY = 0;
                 foreach (ref p; linePoints)

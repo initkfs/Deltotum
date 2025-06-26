@@ -65,4 +65,14 @@ class BaseTextPopup : BasePopup
         return label;
     }
 
+    void text(dstring t){
+        assert(label);
+        label.text = t;
+    }
+
+    void text(string t){
+        assert(label);
+        label.text = t;
+    }
+
 }

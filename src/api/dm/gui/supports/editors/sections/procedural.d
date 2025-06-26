@@ -134,28 +134,28 @@ class Procedural : Control
         // uint seed = 0;
 
         // auto frVor = new FractalNoise(new Voronoi(seed), w, h);
-        // frVor.noiseColor.hue = hue;
+        // frVor.noiseColor.h = hue;
         // frVor.valueScale = 3;
         // noiseRoot1.addCreate(frVor);
 
         // auto frWorl = new FractalNoise(new Worley(seed), w, h);
-        // frWorl.noiseColor.hue = 210;
+        // frWorl.noiseColor.h = 210;
         // frWorl.valueScale = 2;
         // noiseRoot1.addCreate(frWorl);
 
         // auto frSimplex = new FractalNoise(new Simplex(seed), w, h);
-        // frSimplex.noiseColor.hue = 320;
+        // frSimplex.noiseColor.h = 320;
         // frSimplex.valueScale = 1.2;
         // noiseRoot1.addCreate(frSimplex);
 
         // auto frPerlin = new FractalNoise(new SPerlin(seed), w, h);
-        // frPerlin.noiseColor.hue = 10;
+        // frPerlin.noiseColor.h = 10;
         // frPerlin.valueScale = 1.2;
         // noiseRoot1.addCreate(frPerlin);
 
         //  auto frVal = new FractalNoise(new Value(seed), w, h);
-        // frVal.noiseColor.hue = 130;
-        // frVal.noiseColor.saturation = 0.3;
+        // frVal.noiseColor.h = 130;
+        // frVal.noiseColor.s = 0.3;
         // frVal.valueScale = 1.2;
         // noiseRoot1.addCreate(frVal);
 
@@ -164,16 +164,16 @@ class Procedural : Control
         // noiseRoot2.enablePadding;
 
         // auto perlin = new Perlin(w, h);
-        // perlin.noiseColor.hue = hue;
+        // perlin.noiseColor.h = hue;
         // noiseRoot2.addCreate(perlin);
 
         // auto simplex = new OpenSimplex(w, h);
-        // simplex.noiseColor.hue = 210;
+        // simplex.noiseColor.h = 210;
         // noiseRoot2.addCreate(simplex);
 
         // import api.dm.addon.sprites2d.textures.vectors.noises.fractal_cell: FractalCell;
         // auto fr1 = new FractalCell(w, h);
-        // fr1.noiseColor.hue = 50;
+        // fr1.noiseColor.h = 50;
         // noiseRoot2.addCreate(fr1);
 
         auto mazeRoot = new HBox(5);

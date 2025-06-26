@@ -16,7 +16,7 @@ import api.dm.gui.controls.selects.choices.choice : Choice;
 import api.math.random : Random;
 
 import Math = api.math;
-import api.math.geom2.vec2 : Vec2i;
+import api.math.geom2.vec2 : Vec2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsva : HSVA;
 import api.dm.back.sdl3.sdl_surface : SdlSurface;
@@ -34,7 +34,7 @@ class HopalongGenerator : Control
     RegulateTextField cCoeffField;
     RegulateTextField dCoeffField;
 
-    Choice fractalType;
+    Choice!dstring fractalType;
 
     Container canvas;
     double canvasWidth;
@@ -46,7 +46,7 @@ class HopalongGenerator : Control
 
     protected
     {
-        Vec2i[] points;
+        Vec2d[] points;
     }
 
     size_t colorVariations = 1000;
@@ -66,7 +66,7 @@ class HopalongGenerator : Control
         isDrawBounds = true;
 
         hopalong = new Hopalong;
-        points = new Vec2i[](hopalong.iterations);
+        points = new Vec2d[](hopalong.iterations);
     }
 
     HSVA color;
@@ -92,8 +92,8 @@ class HopalongGenerator : Control
             }
             auto slice = points[windowStartPos .. windowEndPos];
 
-            auto newHue = (color.hue + 50) % color.maxHue;
-            color.hue = newHue;
+            auto newHue = (color.h + 50) % color.maxHue;
+            color.h = newHue;
 
             graphic.points(slice, color.toRGBA);
 
@@ -107,8 +107,8 @@ class HopalongGenerator : Control
     {
         super.create;
 
-        color.saturation = 0.98;
-        color.value = 0.98;
+        color.s = 0.98;
+        color.v = 0.98;
 
         hopalong.onPostIterate = () {};
 
@@ -132,8 +132,8 @@ class HopalongGenerator : Control
             //     graphic.restoreBlendMode;
             // }
             //graphic.circle(newX, newY, radius, color.toRGBA);
-            points[i].x = cast(int) newX;
-            points[i].y = cast(int) newY;
+            points[i].x = newX;
+            points[i].y = newY;
             //graphic.point(newX, newY, color.toRGBA);
             return true;
         };
@@ -188,7 +188,7 @@ class HopalongGenerator : Control
 
         fieldRoot.alignFields;
 
-        fractalType = new Choice;
+        fractalType = new Choice!dstring;
         fieldRoot.addCreate(fractalType);
 
         dstring[] types;
@@ -202,7 +202,7 @@ class HopalongGenerator : Control
         }
         fractalType.fill(types);
 
-        fractalType.onChoice = (oldType, newType){
+        fractalType.onChangeOldNew ~= (oldType, newType){
             if(oldType == newType){
                 return;
             }

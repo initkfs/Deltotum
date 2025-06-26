@@ -70,7 +70,7 @@ class DspProcessor(SignalType, size_t SignalBufferSize, size_t SignalChannels = 
         {
             import std.stdio : stderr, writefln;
 
-            const writeRes = dspBuffer.writeIfNoLockedSync(streamSlice);
+            const writeRes = dspBuffer.writeIfNoBlockSync(streamSlice);
             if (!writeRes)
             {
                 debug stderr.writefln("Warn, dsp buffer data loss: %s, reason: %s", len, writeRes);
@@ -90,19 +90,19 @@ class DspProcessor(SignalType, size_t SignalBufferSize, size_t SignalChannels = 
         }
     }
 
-    void lock()
+    void block()
     {
-        dspBuffer.lockSync;
+        dspBuffer.blockSync;
     }
 
-    void unlock()
+    void unblock()
     {
-        dspBuffer.unlockSync;
+        dspBuffer.unblockSync;
     }
 
     void step()
     {
-        const readDspRes = dspBuffer.readIfNoLockedSync(localSampleBuffer[], sampleSizeForChannels);
+        const readDspRes = dspBuffer.readIfNoBlockSync(localSampleBuffer[], sampleSizeForChannels);
 
         if (readDspRes)
         {

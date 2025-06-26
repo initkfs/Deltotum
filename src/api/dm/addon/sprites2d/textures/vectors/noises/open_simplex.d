@@ -1448,7 +1448,7 @@ class OpenSimplex : Noise
 
         double value = noise3_ImproveXY(SEED, x * FREQUENCY, y * FREQUENCY, 0.0);
         auto newColor = noiseColor;
-        newColor.value = Math.clamp(value, HSVA.minValue, HSVA.maxValue);
+        newColor.v = Math.clamp(value, HSVA.minValue, HSVA.maxValue);
         return newColor.toRGBA;
         // int rgb = 0x010101 * cast(int)((value + 1) * 127.5);
         // RGBA color = RGBA.fromUint(cast(uint) rgb);

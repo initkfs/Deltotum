@@ -123,7 +123,7 @@ class Audio : Control
         sampleBufferMutex = new shared Mutex();
 
         dspProcessor = new typeof(dspProcessor)(sampleBufferMutex, new AnalogSignalAnalyzer, sampleFreq, sampleWindowSize, logging);
-        dspProcessor.dspBuffer.lock;
+        dspProcessor.dspBuffer.block;
 
         equalizer = new BandEqualizer(sampleWindowSize, sampleFreq, (fftIndex) {
             return dspProcessor.fftBuffer[fftIndex];
@@ -505,13 +505,13 @@ class Audio : Control
     override void pause()
     {
         super.pause;
-        dspProcessor.lock;
+        dspProcessor.block;
     }
 
     override void run()
     {
         super.run;
-        dspProcessor.unlock;
+        dspProcessor.unblock;
     }
 
     override void update(double delta)

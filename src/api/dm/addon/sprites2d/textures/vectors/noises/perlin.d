@@ -66,7 +66,7 @@ class Perlin : Noise
         //ubyte value = cast(ubyte)(ubyte.max * value1);
         //RGBA color = RGBA(ucolor, ucolor, ucolor);
         auto newColor = noiseColor;
-        newColor.value = Math.clamp(value, HSVA.minValue, HSVA.maxValue);
+        newColor.v = Math.clamp(value, HSVA.minValue, HSVA.maxValue);
         return newColor.toRGBA;
     }
 

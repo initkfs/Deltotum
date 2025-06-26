@@ -108,15 +108,15 @@ class LedIcon : BaseLed
         super.create;
 
         // auto hsvColor = colorHue.toHSVA;
-        // hsvColor.saturation = 1;
+        // hsvColor.s = 1;
         // hsvColor.value = 1;
 
         // auto bottomHsvColor = hsvColor;
         // bottomHsvColor.value = 0.8;
-        // bottomHsvColor.saturation = 0.7;
+        // bottomHsvColor.s = 0.7;
         // auto middleHsvColor = hsvColor;
         // auto topHsvColor = hsvColor;
-        // topHsvColor.saturation = 0.1;
+        // topHsvColor.s = 0.1;
 
         // auto style = createStyle;
         // style.isFill = true;

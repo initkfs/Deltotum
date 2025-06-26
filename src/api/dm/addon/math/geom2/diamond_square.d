@@ -393,9 +393,9 @@ struct DiamondSquareTerrain
             : terrains[terrains.length - 1];
 
         auto finalVariance = Math.floor(rnd.between0to1 * terrain.variance);
-        auto finalHue = (terrain.color.hue + finalVariance) % HSVA.maxHue;
+        auto finalHue = (terrain.color.h + finalVariance) % HSVA.maxHue;
 
-        return TerrainInfo(terrain, HSVA(finalHue, terrain.color.saturation, terrain.color.value));
+        return TerrainInfo(terrain, HSVA(finalHue, terrain.color.s, terrain.color.v));
     }
 
     void generate()
@@ -444,7 +444,7 @@ class DiamondSquareGenerator : Control
     import api.math.geom2.rect2 : Rect2d;
     import api.dm.kit.sprites2d.sprite2d : Sprite2d;
     import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
-    import api.dm.gui.controls.popups.pointer_popup : PointerPopup;
+    import api.dm.gui.controls.popups.text_popup : TextPopup;
 
     CenterBox contentContainer;
     double canvasWidth = 0;
@@ -497,7 +497,7 @@ class DiamondSquareGenerator : Control
         contentContainer.height = generator.canvasHeight;
         addCreate(contentContainer);
 
-        auto popup = new PointerPopup();
+        auto popup = new TextPopup;
         contentContainer.addCreate(popup);
 
         contentContainer.onPointerMove ~= (ref e) {
@@ -511,7 +511,7 @@ class DiamondSquareGenerator : Control
                 {
                     auto text = px.terrain.type.name;
                     popup.text = text;
-                    popup.show;
+                    popup.show(e.x, e.y);
                     break;
                 }
             }
