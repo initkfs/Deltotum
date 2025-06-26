@@ -1,6 +1,6 @@
 module api.dm.back.sdl3.sounds.sdl_audio_stream;
 
-import api.dm.com.platforms.results.com_result : ComResult;
+import api.dm.com.com_result : ComResult;
 import api.dm.com.audio.com_audio_stream : ComAudioStream;
 import api.dm.com.audio.com_audio_device : ComAudioSpec, ComAudioDeviceId;
 import SdlAudioTypes = api.dm.back.sdl3.sounds.sdl_audio_types;

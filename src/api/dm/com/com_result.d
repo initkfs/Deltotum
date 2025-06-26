@@ -1,4 +1,4 @@
-module api.dm.com.platforms.results.com_result;
+module api.dm.com.com_result;
 
 import core.attribute : mustuse;
 

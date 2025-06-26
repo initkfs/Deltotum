@@ -1,10 +1,10 @@
 module api.dm.com.graphic.com_texture;
 
-import api.dm.com.platforms.objects.com_objectable : ComObjectable;
-import api.dm.com.platforms.results.com_result : ComResult;
+import api.dm.com.objects.com_objectable : ComObjectable;
+import api.dm.com.com_result : ComResult;
 import api.dm.com.graphic.com_blend_mode : ComBlendMode;
 import api.dm.com.com_native_ptr : ComNativePtr;
-import api.dm.com.destroyable : Destroyable;
+import api.dm.com.com_destroyable : ComDestroyable;
 
 import api.math.geom2.rect2 : Rect2d;
 import api.math.pos2.flip : Flip;
@@ -19,7 +19,7 @@ enum ComTextureScaleMode
 /**
  * Authors: initkfs
  */
-interface ComTexture : ComObjectable, Destroyable
+interface ComTexture : ComObjectable, ComDestroyable
 {
 nothrow:
 

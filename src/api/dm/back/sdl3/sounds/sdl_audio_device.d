@@ -1,8 +1,8 @@
 module api.dm.back.sdl3.sounds.sdl_audio_device;
 
-import api.dm.com.platforms.results.com_result;
+import api.dm.com.com_result;
 
-import api.dm.com.platforms.results.com_result : ComResult;
+import api.dm.com.com_result : ComResult;
 import api.dm.com.audio.com_audio_device;
 import api.dm.back.sdl3.base.sdl_object : SdlObject;
 

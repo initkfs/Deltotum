@@ -1,11 +1,11 @@
-module api.dm.com.platforms.objects.com_ptr_manager;
+module api.dm.com.objects.com_ptr_manager;
 
 /**
  * Authors: initkfs
  */
 mixin template ComPtrManager(T)
 {
-    import api.dm.com.platforms.results.com_result : ComResult;
+    import api.dm.com.com_result : ComResult;
     
     protected
     {

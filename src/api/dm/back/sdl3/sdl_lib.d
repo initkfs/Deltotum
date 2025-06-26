@@ -6,7 +6,7 @@ import std.string : toStringz, fromStringz;
 
 import api.dm.back.sdl3.externs.csdl3;
 
-import api.dm.com.platforms.results.com_result : ComResult;
+import api.dm.com.com_result : ComResult;
 import api.dm.back.sdl3.base.sdl_object : SdlObject;
 
 /**

@@ -3,7 +3,7 @@ module api.dm.back.sdl3.sdl_platform;
 
 import api.dm.back.sdl3.base.sdl_object : SdlObject;
 import api.dm.com.platforms.com_platform : ComPlatform, RetNextIntervalCallback;
-import api.dm.com.platforms.results.com_result : ComResult;
+import api.dm.com.com_result : ComResult;
 
 import api.dm.back.sdl3.externs.csdl3;
 

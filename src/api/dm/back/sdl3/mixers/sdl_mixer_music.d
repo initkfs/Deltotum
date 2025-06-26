@@ -1,8 +1,8 @@
 module api.dm.back.sdl3.mixers.sdl_mixer_music;
 
-import api.dm.com.platforms.results.com_result;
+import api.dm.com.com_result;
 
-import api.dm.com.platforms.results.com_result : ComResult;
+import api.dm.com.com_result : ComResult;
 import api.dm.back.sdl3.mixers.sdl_mixer_object : SdlMixerObject;
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
 import api.dm.com.audio.com_audio_clip : ComAudioClip;

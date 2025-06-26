@@ -1,6 +1,6 @@
-module api.dm.com.platforms.objects.com_object;
+module api.dm.com.objects.com_object;
 
-import api.dm.com.platforms.objects.com_objectable: ComObjectable;
+import api.dm.com.objects.com_objectable: ComObjectable;
 
 /**
  * Authors: initkfs

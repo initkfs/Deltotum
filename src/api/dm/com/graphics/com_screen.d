@@ -1,8 +1,8 @@
 module api.dm.com.graphic.com_screen;
 
-import api.dm.com.platforms.results.com_result : ComResult;
+import api.dm.com.com_result : ComResult;
 import api.dm.com.graphic.com_window : ComWindow;
-import api.dm.com.destroyable : Destroyable;
+import api.dm.com.com_destroyable : ComDestroyable;
 
 alias ComScreenId = int;
 
@@ -34,7 +34,7 @@ struct ComScreenDpi
 /**
  * Authors: initkfs
  */
-interface ComScreen : Destroyable
+interface ComScreen : ComDestroyable
 {
 
 nothrow:

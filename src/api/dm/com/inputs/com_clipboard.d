@@ -1,12 +1,12 @@
 module api.dm.com.inputs.com_clipboard;
 
-import api.dm.com.platforms.results.com_result : ComResult;
-import api.dm.com.destroyable : Destroyable;
+import api.dm.com.com_result : ComResult;
+import api.dm.com.com_destroyable : ComDestroyable;
 
 /**
  * Authors: initkfs
  */
-interface ComClipboard : Destroyable
+interface ComClipboard : ComDestroyable
 {
 nothrow:
 

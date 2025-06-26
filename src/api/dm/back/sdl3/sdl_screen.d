@@ -1,11 +1,11 @@
 module api.dm.back.sdl3.sdl_screen;
 
-import api.dm.com.platforms.results.com_result;
+import api.dm.com.com_result;
 
 
 
 import api.dm.com.graphic.com_screen : ComScreenId, ComScreen, ComScreenMode, ComScreenOrientation, ComScreenDpi;
-import api.dm.com.platforms.results.com_result : ComResult;
+import api.dm.com.com_result : ComResult;
 import api.dm.com.graphic.com_window : ComWindow;
 import api.dm.back.sdl3.base.sdl_object : SdlObject;
 

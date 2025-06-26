@@ -51,7 +51,7 @@ class VectorTexture : Texture2d
             comSurface = graphic.comSurfaceProvider.getNew();
         }
 
-        import api.dm.com.platforms.results.com_result : ComResult;
+        import api.dm.com.com_result : ComResult;
 
         if (const createErr = comSurface.createBGRA32(cast(int) width, cast(int) height))
         {

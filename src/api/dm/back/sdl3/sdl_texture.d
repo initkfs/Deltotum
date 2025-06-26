@@ -2,7 +2,7 @@ module api.dm.back.sdl3.sdl_texture;
 
 
 
-import api.dm.com.platforms.results.com_result : ComResult;
+import api.dm.com.com_result : ComResult;
 import api.dm.com.graphic.com_texture : ComTexture;
 import api.dm.com.com_native_ptr : ComNativePtr;
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;

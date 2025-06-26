@@ -4,7 +4,7 @@ import api.dm.com.graphic.com_screen;
 
 
 
-import api.dm.com.platforms.results.com_result : ComResult;
+import api.dm.com.com_result : ComResult;
 import api.core.loggers.logging : Logging;
 import api.core.configs.keyvalues.config : Config;
 import api.core.contexts.context : Context;

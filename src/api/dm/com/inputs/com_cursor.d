@@ -1,7 +1,7 @@
 module api.dm.com.inputs.com_cursor;
 
-import api.dm.com.platforms.results.com_result : ComResult;
-import api.dm.com.destroyable : Destroyable;
+import api.dm.com.com_result : ComResult;
+import api.dm.com.com_destroyable : ComDestroyable;
 
 enum ComPlatformCursorType
 {
@@ -23,7 +23,7 @@ enum ComPlatformCursorType
 /**
  * Authors: initkfs
  */
-interface ComCursor : Destroyable
+interface ComCursor : ComDestroyable
 {
 nothrow:
 

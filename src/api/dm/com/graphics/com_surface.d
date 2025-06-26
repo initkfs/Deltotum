@@ -1,7 +1,7 @@
 module api.dm.com.graphic.com_surface;
 
-import api.dm.com.platforms.results.com_result : ComResult;
-import api.dm.com.destroyable : Destroyable;
+import api.dm.com.com_result : ComResult;
+import api.dm.com.com_destroyable : ComDestroyable;
 import api.dm.com.graphic.com_blend_mode : ComBlendMode;
 import api.dm.com.com_native_ptr : ComNativePtr;
 
@@ -12,7 +12,7 @@ import std.typecons : Tuple;
 /**
  * Authors: initkfs
  */
-interface ComSurface : Destroyable
+interface ComSurface : ComDestroyable
 {
     ComResult getPixels(
         scope bool delegate(size_t, size_t, ubyte, ubyte, ubyte, ubyte) onXYRGBAIsContinue

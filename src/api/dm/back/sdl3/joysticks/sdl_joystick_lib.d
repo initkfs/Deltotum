@@ -1,6 +1,6 @@
 module api.dm.back.sdl3.joystick.sdl_joystick_lib;
 
-import api.dm.com.platforms.results.com_result : ComResult;
+import api.dm.com.com_result : ComResult;
 import api.dm.back.sdl3.base.sdl_object : SdlObject;
 import api.dm.back.sdl3.joystick.sdl_joystick : SdlJoystick;
 

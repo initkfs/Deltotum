@@ -1,10 +1,10 @@
 module api.dm.com.graphic.com_renderer;
 
-import api.dm.com.platforms.results.com_result : ComResult;
+import api.dm.com.com_result : ComResult;
 import api.dm.com.graphic.com_texture : ComTexture;
 import api.dm.com.graphic.com_surface : ComSurface;
 import api.dm.com.graphic.com_blend_mode : ComBlendMode;
-import api.dm.com.destroyable : Destroyable;
+import api.dm.com.com_destroyable : ComDestroyable;
 
 import api.math.pos2.flip: Flip;
 import api.math.geom2.vec2 : Vec2d, Vec2f;
@@ -21,7 +21,7 @@ enum ComRendererLogicalScaling {
 /**
  * Authors: initkfs
  */
-interface ComRenderer : Destroyable
+interface ComRenderer : ComDestroyable
 {
 nothrow:
 

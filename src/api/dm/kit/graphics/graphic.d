@@ -1,6 +1,6 @@
 module api.dm.kit.graphics.graphic;
 
-import api.dm.com.platforms.results.com_result: ComResult;
+import api.dm.com.com_result: ComResult;
 
 import api.core.components.units.services.loggable_unit;
 import api.core.utils.factories : ProviderFactory;

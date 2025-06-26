@@ -1,12 +1,12 @@
 module api.dm.com.audio.com_audio_clip;
 
-import api.dm.com.platforms.results.com_result : ComResult;
-import api.dm.com.destroyable: Destroyable;
+import api.dm.com.com_result : ComResult;
+import api.dm.com.com_destroyable: ComDestroyable;
 
 /**
  * Authors: initkfs
  */
-interface ComAudioClip : Destroyable
+interface ComAudioClip : ComDestroyable
 {
 nothrow:
 

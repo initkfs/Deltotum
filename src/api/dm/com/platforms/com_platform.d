@@ -1,6 +1,6 @@
 module api.dm.com.platforms.com_platform;
 
-import api.dm.com.platforms.results.com_result : ComResult;
+import api.dm.com.com_result : ComResult;
 
 extern (C) alias RetNextIntervalCallback = uint function(void* userdata, uint timerID, uint interval) nothrow @nogc;
 

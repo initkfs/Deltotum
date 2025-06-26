@@ -1,4 +1,4 @@
-module api.dm.com.platforms.objects.com_objectable;
+module api.dm.com.objects.com_objectable;
 
 /**
  * Authors: initkfs

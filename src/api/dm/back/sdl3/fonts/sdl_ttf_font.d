@@ -1,7 +1,7 @@
 module api.dm.back.sdl3.fonts.sdl_ttf_font;
 
 import api.dm.com.graphic.com_font : ComFont, ComFontHinting;
-import api.dm.com.platforms.results.com_result : ComResult;
+import api.dm.com.com_result : ComResult;
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
 import api.dm.back.sdl3.fonts.base.sdl_ttf_object : SdlTTFObject;
 import api.dm.com.graphic.com_surface : ComSurface;
