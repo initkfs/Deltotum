@@ -1,8 +1,8 @@
 module api.demo.main_controller;
 
-import std;
-
 import api.dm.back.sdl3.sdl_app : SdlApp;
+
+import std.stdio : writeln;
 
 /**
  * Authors: initkfs
@@ -18,6 +18,8 @@ class MainController
 
     static extern (C) void err(int code, const(char)* err) nothrow
     {
+        import std.string : fromStringz;
+
         debug writeln(err.fromStringz);
     }
 
@@ -31,13 +33,14 @@ class MainController
         auto initRes = application.initialize(args);
         if (!initRes.isInit)
         {
-            import std.stdio: stderr;
+            import std.stdio : stderr;
 
             stderr.writeln("Not initialized!");
             return 1;
         }
 
-        if(initRes.isExit){
+        if (initRes.isExit)
+        {
             writeln("Exit after initializaion");
             return 0;
         }

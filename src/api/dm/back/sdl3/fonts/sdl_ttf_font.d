@@ -98,19 +98,16 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
         return ComResult.success;
     }
 
-    ComResult getFontPath(out string path) nothrow
+    string getFontPath() nothrow
     {
         assert(ptr, "Font not loaded");
-
-        path = this._fontPath;
-        return ComResult.success;
+        return _fontPath;
     }
 
-    ComResult getFontSize(out double size) nothrow
+    double getFontSize() nothrow
     {
         assert(ptr, "Font not loaded");
-        size = _fontSize;
-        return ComResult.success;
+        return _fontSize;
     }
 
     ComResult setHinting(ComFontHinting hinting)
@@ -135,10 +132,9 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
         return ComResult.success;
     }
 
-    ComResult getMaxHeight(out double size)
+    double getMaxHeight()
     {
-        size = _maxHeight;
-        return ComResult.success;
+        return _maxHeight;
     }
 
     override bool disposePtr()

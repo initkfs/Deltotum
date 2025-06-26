@@ -1,12 +1,12 @@
 module api.dm.kit.assets.fonts.factories.bitmap_font_factory;
 
-import api.dm.kit.components.graphic_component: GraphicComponent;
+import api.dm.kit.components.graphic_component : GraphicComponent;
 import api.dm.com.graphic.com_font : ComFontHinting, ComFont;
 import api.dm.com.graphic.com_surface : ComSurface;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 import api.core.utils.factories : ProviderFactory;
 
-import api.dm.kit.assets.fonts.font : Font;
+import api.dm.com.graphic.com_font : ComFont;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
@@ -37,17 +37,17 @@ class BitmapFontFactory : GraphicComponent
     }
 
     BitmapFont generate(
-        Alphabet[] alphabets, 
-        Font font, 
-        RGBA foregroundColor = RGBA.white, 
-        RGBA backgroundColor = RGBA.black, 
-        int  fontTextureWidth = defaultFontTextureWidth, 
+        Alphabet[] alphabets,
+        ComFont font,
+        RGBA foregroundColor = RGBA.white,
+        RGBA backgroundColor = RGBA.black,
+        int fontTextureWidth = defaultFontTextureWidth,
         int fontTextureHeight = defaultFontTextureWidth
-        )
+    )
     {
         assert(fontTextureWidth > 0);
         assert(fontTextureHeight > 0);
-        
+
         //The size can be very large to create on a stack
         ComSurface fontMapSurface = comSurfaceProvider.getNew();
         if (const err = fontMapSurface.createRGBA32(fontTextureWidth, fontTextureHeight))
@@ -66,7 +66,10 @@ class BitmapFontFactory : GraphicComponent
         Rect2d glyphPosition;
         Glyph[] glyphs;
 
-        font.setHinting(ComFontHinting.normal);
+        if (const err = font.setHinting(ComFontHinting.normal))
+        {
+            logger.error(err);
+        }
 
         auto bitmapFont = new BitmapFont;
         build(bitmapFont);
@@ -82,19 +85,17 @@ class BitmapFontFactory : GraphicComponent
                 const(dchar[1]) letters = [letter];
                 //TODO does SDL keep a reference?
                 comSurfaceProvider.getNewScoped((glyphRepresentation) {
-                    font.renderSurface(glyphRepresentation, letters[], foregroundColor, backgroundColor);
-                    int w, h;
-                    if (auto err = glyphRepresentation.getWidth(w))
+                    const isErr = font.renderFont(glyphRepresentation, letters[], foregroundColor.r, foregroundColor.g, foregroundColor.b, foregroundColor
+                        .aByte, backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor
+                        .aByte);
+
+                    if (isErr)
                     {
-                        throw new Exception(err.toString);
-                    }
-                    if (auto err = glyphRepresentation.getHeight(h))
-                    {
-                        throw new Exception(err.toString);
+                        throw new Exception(isErr.toString);
                     }
 
-                    glyphPosition.width = w;
-                    glyphPosition.height = h;
+                    glyphPosition.width = glyphRepresentation.width;
+                    glyphPosition.height = glyphRepresentation.height;
 
                     if (glyphPosition.x + glyphPosition.width >= fontTextureWidth)
                     {
@@ -128,7 +129,8 @@ class BitmapFontFactory : GraphicComponent
                         bitmapFont.placeholder = glyph;
                     }
 
-                    if(glyph.grapheme == '0'){
+                    if (glyph.grapheme == '0')
+                    {
                         bitmapFont.e0 = glyph;
                     }
 

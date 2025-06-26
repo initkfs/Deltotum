@@ -27,9 +27,9 @@ nothrow:
         ubyte br, ubyte bg, ubyte bb, ubyte ba);
 
     ComResult load(string path, double size);
-    ComResult getFontPath(out string path);
-    ComResult getFontSize(out double size);
+    string getFontPath();
+    double getFontSize();
+    double getMaxHeight();
     ComResult setHinting(ComFontHinting hinting);
-    ComResult getMaxHeight(out double size);
 
 }

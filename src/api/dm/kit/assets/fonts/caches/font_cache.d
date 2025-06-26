@@ -4,7 +4,7 @@ import api.core.components.units.services.loggable_unit : LoggableUnit;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.assets.fonts.bitmaps.bitmap_font : BitmapFont;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
-import api.dm.kit.assets.fonts.font : Font;
+import api.dm.com.graphic.com_font: ComFont;
 import api.dm.kit.assets.fonts.font_size : FontSize;
 
 /**
@@ -16,7 +16,7 @@ class FontCache
 
     protected
     {
-        Font[size_t] _fontCache;
+        ComFont[size_t] _fontCache;
         BitmapFont[RGBA][size_t] _bitmapCache;
     }
 
@@ -29,17 +29,17 @@ class FontCache
         this.name = name;
     }
 
-    inout(Font) defaultFont() inout
+    inout(ComFont) defaultFont() inout
     {
         return font(FontSize.medium);
     }
 
-    inout(Font*) hasFont(size_t size) inout
+    inout(ComFont*) hasFont(size_t size) inout
     {
         return size in _fontCache;
     }
 
-    inout(Font) font(size_t size) inout
+    inout(ComFont) font(size_t size) inout
     {
         if (auto fontPtr = hasFont(size))
         {
@@ -51,7 +51,7 @@ class FontCache
         throw new Exception(format("Not found font '%s' with size '%s'", name, size));
     }
 
-    void addFont(size_t size, Font font)
+    void addFont(size_t size, ComFont font)
     {
         _fontCache[size] = font;
     }

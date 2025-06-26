@@ -837,7 +837,7 @@ class SdlApp : GuiApp
         windowBuilder.asset = asset;
 
         theme.defaultMediumFont = asset.font;
-        uservices.logger.trace("Set theme font: ", theme.defaultMediumFont.fontPath);
+        uservices.logger.trace("Set theme font: ", theme.defaultMediumFont.getFontPath);
 
         window.theme = theme;
         window.interact = interact;

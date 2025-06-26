@@ -11,7 +11,7 @@ import std.typecons : Nullable;
 import std.stdio;
 
 import api.dm.com.graphic.com_font : ComFont;
-import api.dm.kit.assets.fonts.font : Font;
+
 import api.dm.kit.assets.fonts.bitmaps.bitmap_font : BitmapFont;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
@@ -86,7 +86,7 @@ class Asset : LocalResources
         return mustBeFontPath.get;
     }
 
-    Font newFont(string fontFilePath, size_t size)
+    ComFont newFont(string fontFilePath, size_t size)
     {
         const path = fontPath(fontFilePath);
         auto comFont = comFontProvider();
@@ -94,10 +94,7 @@ class Asset : LocalResources
         {
             throw new Exception(err.toString);
         }
-        Font nFont = new Font(logging, comFont);
-        nFont.initialize;
-        logger.trace("Create new font from ", path);
-        return nFont;
+        return comFont;
     }
 
     bool hasFont(size_t size = FontSize.medium, string name = defaultFontName)
@@ -113,34 +110,34 @@ class Asset : LocalResources
     bool hasLargeFont(string name = defaultFontName) => hasFont(FontSize.large, name);
     bool hasSmallFont(string name = defaultFontName) => hasFont(FontSize.small, name);
 
-    void addFont(Font font, size_t size = FontSize.medium, string name = defaultFontName)
+    void addFont(ComFont font, size_t size = FontSize.medium, string name = defaultFontName)
     {
         fontCaches[name].addFont(size, font);
     }
 
-    void addFontSmall(Font font, string name = defaultFontName)
+    void addFontSmall(ComFont font, string name = defaultFontName)
     {
         addFont(font, FontSize.small, name);
     }
 
-    void addFontLarge(Font font, string name = defaultFontName)
+    void addFontLarge(ComFont font, string name = defaultFontName)
     {
         addFont(font, FontSize.large, name);
     }
 
-    Font font(size_t size = FontSize.medium, string name = defaultFontName)
+    ComFont font(size_t size = FontSize.medium, string name = defaultFontName)
     {
         auto cachedFont = fontCaches[name].font(size);
         assert(cachedFont);
         return cachedFont;
     }
 
-    Font fontSmall(string name = defaultFontName)
+    ComFont fontSmall(string name = defaultFontName)
     {
         return font(FontSize.small, name);
     }
 
-    Font fontLarge(string name = defaultFontName)
+    ComFont fontLarge(string name = defaultFontName)
     {
         return font(FontSize.large, name);
     }
@@ -244,7 +241,7 @@ class Asset : LocalResources
             return 1;
         }
         auto currFont = font(size, name);
-        return currFont.maxHeight;
+        return currFont.getMaxHeight;
     }
 
     import api.math.geom2.vec2 : Vec2d;

@@ -34,6 +34,10 @@ nothrow:
     //pitch = image-width × bytes-per-pixel + padding-between-rows
     ComResult getPixelRowLenBytes(out int pitch);
     ComResult getFormat(out uint format);
+
+    int width();
+    int height();
+
     ComResult getWidth(out int w);
     ComResult getHeight(out int h);
     ComResult getSize(out int w, out int h);

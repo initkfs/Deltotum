@@ -95,7 +95,8 @@ abstract class GraphicApp : CliApp
 
         _platform = createPlatform;
 
-        if(!_graphicServices.hasPlatform){
+        if (!_graphicServices.hasPlatform)
+        {
             _graphicServices.platform = _platform;
         }
 
@@ -138,7 +139,7 @@ abstract class GraphicApp : CliApp
         return new Screening(newComScreen, uservices.logging);
     }
 
-    Platform newPlatform(ComPlatform platform,CapGraphics caps,  Screening screens, Timing timing)
+    Platform newPlatform(ComPlatform platform, CapGraphics caps, Screening screens, Timing timing)
     {
         return new Platform(platform, caps, screens, timing);
     }
@@ -272,13 +273,11 @@ abstract class GraphicApp : CliApp
         if (_media && !_media.isDisposed)
         {
             _media.dispose;
-            uservices.logger.trace("Dispose media");
         }
 
         if (_input)
         {
             _input.dispose;
-            uservices.logger.trace("Dispose input");
         }
 
         // if (_screen)
@@ -295,7 +294,6 @@ abstract class GraphicApp : CliApp
         if (_platform)
         {
             _platform.dispose;
-            uservices.logger.trace("Dispose platform");
         }
 
         // if(eventManager){
@@ -331,7 +329,7 @@ abstract class GraphicApp : CliApp
         auto mustBeResDir = uservices.reslocal.resourcesDir;
 
         import api.dm.kit.assets.asset : Asset;
-        import api.dm.kit.assets.fonts.font : Font;
+        import api.dm.com.graphic.com_font: ComFont;
 
         //default dir?
         string assetsDir = !mustBeResDir.isNull ? mustBeResDir.get : null;
@@ -353,8 +351,6 @@ abstract class GraphicApp : CliApp
         }
         else
         {
-            uservices.logger.trace("Resources directory not found");
-
             if (config.hasKey(KitConfigKeys.fontDir))
             {
                 auto mustBeFontDir = config.getNotEmptyString(KitConfigKeys.fontDir);
@@ -370,7 +366,6 @@ abstract class GraphicApp : CliApp
             }
             else
             {
-                logging.logger.trace("Search font directory in system");
                 //TODO Fontconfig 
                 version (linux)
                 {
@@ -402,15 +397,9 @@ abstract class GraphicApp : CliApp
                 {
                     static assert(false, "Not supported default fonts for platform");
                 }
+
                 logging.logger.tracef("Set system font directory %s and font file %s", fontDir, fontFile);
             }
-        }
-
-        if (!fontDir.exists || !fontDir.isDir)
-        {
-            //TODO on all platforms?
-            throw new Exception(
-                "Font directory does not exist or is not a directory: " ~ fontDir);
         }
 
         if (config.hasKey(KitConfigKeys.fontTTFFile))
@@ -435,120 +424,115 @@ abstract class GraphicApp : CliApp
                     .fontTTFFile);
         }
 
-        if (fontFile.length == 0)
+        if (fontFile.length > 0)
         {
-            throw new Exception("Font file is empty");
-        }
-
-        auto fontFilePath = buildPath(fontDir, fontFile);
-        if (!fontFilePath.exists || !fontFilePath.isFile)
-        {
-            throw new Exception("Font path does not exist or not a file: " ~ fontFilePath);
-        }
-
-        //TODO default font
-        asset = new Asset(uservices.logging, fontDir, comFontProvider);
-
-        auto defaultSize = fontSizeMedium;
-        if (config.hasKey(KitConfigKeys.fontSizeMedium))
-        {
-            logging.logger.trace("Check font medium size in config with key: ", KitConfigKeys
-                    .fontSizeMedium);
-            auto mustBeNewSize = config.getLong(KitConfigKeys.fontSizeMedium);
-            if (!mustBeNewSize.isNull)
+            auto fontFilePath = buildPath(fontDir, fontFile);
+            if (!fontFilePath.exists || !fontFilePath.isFile)
             {
-                defaultSize = mustBeNewSize.get;
-                logging.logger.trace("Set font default medium size from config: ", defaultSize);
+                throw new Exception("Font path does not exist or not a file: " ~ fontFilePath);
             }
-        }
-        else
-        {
-            logging.logger.tracef("Default font medium size is used: ", defaultSize);
-        }
 
-        Font defaultFont = asset.newFont(fontFilePath, defaultSize);
-        asset.addFont(defaultFont);
-        logging.logger.tracef("Create medium font with size %s from %s", defaultSize, fontFilePath);
-
-        if (config.hasKey(KitConfigKeys.fontIsCreateSmall))
-        {
-            logging.logger.trace("Checking FactoryKit small font in config with key: ", KitConfigKeys
-                    .fontIsCreateSmall);
-            const isSmallFontCreate = config.getBool(KitConfigKeys.fontIsCreateSmall);
-            if (!isSmallFontCreate.isNull && isSmallFontCreate.get)
+            auto defaultSize = fontSizeMedium;
+            if (config.hasKey(KitConfigKeys.fontSizeMedium))
             {
-                size_t size = fontSizeSmall;
-                if (config.hasKey(KitConfigKeys.fontSizeSmall))
+                logging.logger.trace("Check font medium size in config with key: ", KitConfigKeys
+                        .fontSizeMedium);
+                auto mustBeNewSize = config.getLong(KitConfigKeys.fontSizeMedium);
+                if (!mustBeNewSize.isNull)
                 {
-                    logging.logger.trace("Search small font size in config with key: ", KitConfigKeys
-                            .fontSizeSmall);
-                    const mustBeSmallSize = config.getPositiveLong(KitConfigKeys.fontSizeSmall);
-                    if (!mustBeSmallSize.isNull)
-                    {
-                        size = mustBeSmallSize.get;
-                        logging.logger.trace("Set small font size from config: ", size);
-                    }
+                    defaultSize = mustBeNewSize.get;
+                    logging.logger.trace("Set font default medium size from config: ", defaultSize);
                 }
-                else
-                {
-                    logging.logger.trace("Default font small size is used: ", size);
-                }
-
-                Font fontSmall = asset.newFont(fontFilePath, size);
-                asset.addFontSmall(fontSmall);
-                logging.logger.tracef("Create small font with size %s from file %s", size, fontFilePath);
             }
             else
             {
-                logging.logger.trace("The config does not allow creating a small font with key: ", KitConfigKeys
+                logging.logger.tracef("Default font medium size is used: ", defaultSize);
+            }
+
+            ComFont defaultFont = asset.newFont(fontFilePath, defaultSize);
+            asset.addFont(defaultFont);
+            logging.logger.tracef("Create medium font with size %s from %s", defaultSize, fontFilePath);
+
+            if (config.hasKey(KitConfigKeys.fontIsCreateSmall))
+            {
+                logging.logger.trace("Checking FactoryKit small font in config with key: ", KitConfigKeys
+                        .fontIsCreateSmall);
+                const isSmallFontCreate = config.getBool(KitConfigKeys.fontIsCreateSmall);
+                if (!isSmallFontCreate.isNull && isSmallFontCreate.get)
+                {
+                    size_t size = fontSizeSmall;
+                    if (config.hasKey(KitConfigKeys.fontSizeSmall))
+                    {
+                        logging.logger.trace("Search small font size in config with key: ", KitConfigKeys
+                                .fontSizeSmall);
+                        const mustBeSmallSize = config.getPositiveLong(KitConfigKeys.fontSizeSmall);
+                        if (!mustBeSmallSize.isNull)
+                        {
+                            size = mustBeSmallSize.get;
+                            logging.logger.trace("Set small font size from config: ", size);
+                        }
+                    }
+                    else
+                    {
+                        logging.logger.trace("Default font small size is used: ", size);
+                    }
+
+                    ComFont fontSmall = asset.newFont(fontFilePath, size);
+                    asset.addFontSmall(fontSmall);
+                    logging.logger.tracef("Create small font with size %s from file %s", size, fontFilePath);
+                }
+                else
+                {
+                    logging.logger.trace("The config does not allow creating a small font with key: ", KitConfigKeys
+                            .fontIsCreateSmall);
+                }
+            }
+            else
+            {
+                logging.logger.trace("Config does not contain small font key: ", KitConfigKeys
                         .fontIsCreateSmall);
             }
-        }
-        else
-        {
-            logging.logger.trace("Config does not contain small font key: ", KitConfigKeys
-                    .fontIsCreateSmall);
-        }
 
-        if (config.hasKey(KitConfigKeys.fontIsCreateLarge))
-        {
-            logging.logger.trace("Checking FactoryKit large font in config with key: ", KitConfigKeys
-                    .fontIsCreateLarge);
-
-            const isLargeFontCreate = config.getBool(KitConfigKeys.fontIsCreateLarge);
-            if (!isLargeFontCreate.isNull && isLargeFontCreate.get)
+            if (config.hasKey(KitConfigKeys.fontIsCreateLarge))
             {
-                size_t size = fontSizeLarge;
-                if (config.hasKey(KitConfigKeys.fontSizeLarge))
+                logging.logger.trace("Checking FactoryKit large font in config with key: ", KitConfigKeys
+                        .fontIsCreateLarge);
+
+                const isLargeFontCreate = config.getBool(KitConfigKeys.fontIsCreateLarge);
+                if (!isLargeFontCreate.isNull && isLargeFontCreate.get)
                 {
-                    logging.logger.trace("Search large font size in config with key: ", KitConfigKeys
-                            .fontSizeLarge);
-                    const mustBeNewSize = config.getPositiveLong(KitConfigKeys.fontSizeLarge);
-                    if (!mustBeNewSize.isNull)
+                    size_t size = fontSizeLarge;
+                    if (config.hasKey(KitConfigKeys.fontSizeLarge))
                     {
-                        size = mustBeNewSize.get;
-                        logging.logger.trace("Set large font size from config: ", size);
+                        logging.logger.trace("Search large font size in config with key: ", KitConfigKeys
+                                .fontSizeLarge);
+                        const mustBeNewSize = config.getPositiveLong(KitConfigKeys.fontSizeLarge);
+                        if (!mustBeNewSize.isNull)
+                        {
+                            size = mustBeNewSize.get;
+                            logging.logger.trace("Set large font size from config: ", size);
+                        }
                     }
+                    else
+                    {
+                        logging.logger.trace("Default font large size is used: ", size);
+                    }
+
+                    ComFont fontLarge = asset.newFont(fontFilePath, size);
+                    asset.addFontLarge(fontLarge);
+                    logging.logger.tracef("Create large font with size %s from file %s", size, fontFilePath);
                 }
                 else
                 {
-                    logging.logger.trace("Default font large size is used: ", size);
+                    logging.logger.trace("The config does not allow creating a large font with key: ", KitConfigKeys
+                            .fontIsCreateLarge);
                 }
-
-                Font fontLarge = asset.newFont(fontFilePath, size);
-                asset.addFontLarge(fontLarge);
-                logging.logger.tracef("Create large font with size %s from file %s", size, fontFilePath);
             }
             else
             {
-                logging.logger.trace("The config does not allow creating a large font with key: ", KitConfigKeys
+                logging.logger.trace("The config does not contain the large font FactoryKit key: ", KitConfigKeys
                         .fontIsCreateLarge);
             }
-        }
-        else
-        {
-            logging.logger.trace("The config does not contain the large font FactoryKit key: ", KitConfigKeys
-                    .fontIsCreateLarge);
         }
 
         return asset;
@@ -625,7 +609,7 @@ abstract class GraphicApp : CliApp
         if (assets.hasFont)
         {
             auto font = assets.font;
-            uservices.logger.trace("Found default font for default font bitmap: ", font.fontPath);
+            uservices.logger.trace("Found default font for default font bitmap: ", font.getFontPath);
             BitmapFont bitmapFont = generator.generate(createMediumFontAlphabets, font, colorText, colorTextBackground);
             onBitmap(bitmapFont);
             assets.setFontBitmap(bitmapFont);
@@ -635,7 +619,7 @@ abstract class GraphicApp : CliApp
         if (assets.hasSmallFont)
         {
             auto font = assets.fontSmall;
-            uservices.logger.trace("Found small font for bitmap: ", font.fontPath);
+            uservices.logger.trace("Found small font for bitmap: ", font.getFontPath);
             BitmapFont bitmap = generator.generate(createSmallFontAlphabets, font, colorText, colorTextBackground);
             onBitmap(bitmap);
             assets.setFontBitmapSmall(bitmap);
@@ -645,7 +629,7 @@ abstract class GraphicApp : CliApp
         if (assets.hasLargeFont)
         {
             auto font = assets.fontLarge;
-            uservices.logger.trace("Found large font for bitmap: ", font.fontPath);
+            uservices.logger.trace("Found large font for bitmap: ", font.getFontPath);
             BitmapFont bitmap = generator.generate(createLargeFontAlphabets, font, colorText, colorTextBackground);
             onBitmap(bitmap);
             assets.setFontBitmapLarge(bitmap);

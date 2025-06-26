@@ -3,7 +3,7 @@ module api.dm.kit.assets.null_asset;
 import api.dm.kit.assets.asset : Asset;
 import api.core.loggers.null_logging : NullLogging;
 
-import api.dm.kit.assets.fonts.font : Font;
+import api.dm.com.graphic.com_font : ComFont;
 
 /**
  * Authors: initkfs
@@ -29,8 +29,28 @@ class NullAsset : Asset
         return null;
     }
 
-    override Font newFont(string fontFilePath, size_t size)
+    override ComFont newFont(string fontFilePath, size_t size)
     {
-        return new Font(logging, null);
+        import api.dm.com.com_result : ComResult;
+        import api.dm.com.graphic.com_surface : ComSurface;
+        import api.dm.com.graphic.com_font: ComFontHinting;
+
+        return new class ComFont
+        {
+            bool dispose() nothrow => false;
+            bool isDisposed() => false;
+
+            ComResult renderFont(
+                ComSurface targetSurface,
+                const(dchar[]) text,
+                ubyte fr, ubyte fg, ubyte fb, ubyte fa,
+                ubyte br, ubyte bg, ubyte bb, ubyte ba) => ComResult.success;
+
+            ComResult load(string path, double size) => ComResult.success;
+            string getFontPath() => null;
+            double getFontSize() => 0;
+            double getMaxHeight() => 0;
+            ComResult setHinting(ComFontHinting hinting) => ComResult.success;
+        };
     }
 }

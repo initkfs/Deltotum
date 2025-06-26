@@ -122,12 +122,12 @@ class CliApp : SimpleUnit
             uservices.memory = createMemory(uservices.logging, uservices.config, uservices
                     .context);
             assert(uservices.memory);
-            uservices.logger.trace("Memory service built");
 
             uservices.resources = createResourcing(uservices.logging, uservices.config, uservices
                     .context);
             assert(uservices.resources);
-            uservices.logger.trace("Resourcing service built");
+
+            uservices.logger.trace("Cli services built");
 
             uservices.isBuilt = true;
         }

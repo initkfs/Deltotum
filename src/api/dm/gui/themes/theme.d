@@ -1,7 +1,7 @@
 module api.dm.gui.themes.theme;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.kit.assets.fonts.font : Font;
+import api.dm.com.graphic.com_font: ComFont;
 import api.math.pos2.insets : Insets;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.themes.icons.icon_pack : IconPack;
@@ -20,7 +20,7 @@ class Theme
 {
     private
     {
-        Font _defaultMediumFont;
+        ComFont _defaultMediumFont;
         IconPack iconPack;
     }
 
@@ -146,13 +146,13 @@ class Theme
         this.iconPack = iconPack;
     }
 
-    void defaultMediumFont(Font font)
+    void defaultMediumFont(ComFont font)
     {
         assert(font);
         _defaultMediumFont = font;
     }
 
-    Font defaultMediumFont()
+    ComFont defaultMediumFont()
     {
         assert(_defaultMediumFont, "Default medium font is null");
         return _defaultMediumFont;
