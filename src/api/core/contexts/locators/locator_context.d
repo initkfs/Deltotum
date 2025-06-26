@@ -1,16 +1,20 @@
 module api.core.contexts.locators.locator_context;
 
-import std.variant;
-
 /**
  * Authors: initkfs
  */
+
+struct LocatorItem
+{
+    void* ptr;
+    TypeInfo type;
+}
 
 class LocatorContext
 {
     private
     {
-        Variant[string] variants;
+        LocatorItem[string] variants;
         Object[string] objects;
     }
 
@@ -19,13 +23,13 @@ class LocatorContext
 
     }
 
-    this(immutable Variant[string] variants, immutable Object[string] objects) immutable pure @safe
+    this(immutable LocatorItem[string] variants, immutable Object[string] objects) immutable pure @safe
     {
         this.variants = variants;
         this.objects = objects;
     }
 
-    inout(Variant*) hasVarPtr(string key) inout pure @safe
+    inout(LocatorItem*) hasVarPtr(string key) inout pure @safe
     {
         import std.exception : enforce;
 
@@ -35,45 +39,50 @@ class LocatorContext
 
     bool hasVar(string key) const pure @safe => hasVarPtr(key) !is null;
 
-    bool putVar(string key, Variant value)
+    bool putVar(T)(string key, T* value)
     {
         if (hasVar(key))
         {
             return false;
         }
 
-        if (!value.hasValue)
+        static if (__traits(compiles, value is null))
         {
-            throw new Exception("Variant does not contain a value for key: " ~ key);
+            if (!value)
+            {
+                throw new Exception("Value must not be null for key: " ~ key);
+            }
         }
 
-        variants[key] = value;
+        variants[key] = LocatorItem(value, typeid(value));
 
         return true;
     }
 
-    inout(Variant) getVar(string key) inout
+    inout(LocatorItem*) getVar(string key) inout
     {
         if (auto varPtr = hasVarPtr(key))
         {
-            return *varPtr;
+            return varPtr;
 
         }
-
-        throw new Exception("Not found variant with key: " ~ key);
+        throw new Exception("Not found value for key: " ~ key);
     }
 
     inout(T) getVarTo(T)(string key) inout
     {
-        Variant service = getVar(key);
-        if (!service.convertsTo!T)
+        auto item = getVar(key);
+        
+        if (item.type != typeid(T*))
         {
             import std.format : format;
 
-            throw new Exception(format("Variant with key '%s' and type '%s' cannot be converted to type '%s'", key, service
-                    .type(), T.stringof));
+            throw new Exception(format("Variant with key '%s' and type '%s' cannot be converted to type '%s'", key, item
+                    .type, T.stringof));
         }
-        return service.get!T;
+
+        T* tPtr = cast(T*) item.ptr;
+        return *tPtr;
     }
 
     inout(Object*) hasObjectPtr(string key) inout pure @safe
@@ -111,7 +120,9 @@ class LocatorContext
     {
         import std.conv : to;
 
-        return new immutable LocatorContext(variants.to!(immutable(typeof(variants))), objects.to!(
+        immutable(typeof(variants)) vars = cast(immutable(typeof(variants))) variants.dup;
+
+        return new immutable LocatorContext(vars, objects.to!(
                 immutable(typeof(objects))));
     }
 }
@@ -123,9 +134,7 @@ unittest
     string key1 = "key";
 
     auto locator = new LocatorContext;
-    Variant a;
-    assertThrown(locator.putVar(key1, a));
-    a = 5;
+    int* a = new int(5);
     assert(locator.putVar(key1, a));
     assert(!locator.putVar(key1, a));
     assert(locator.hasVar(key1));
@@ -134,7 +143,7 @@ unittest
 
     int delegate() factory = () => 5;
     string fkey = "fkey";
-    Variant f = factory;
+    auto f = &factory;
     assert(locator.putVar(fkey, f));
     assertThrown(locator.getVarTo!(string delegate())(fkey));
     assert(locator.getVarTo!(int delegate())(fkey)() == 5);

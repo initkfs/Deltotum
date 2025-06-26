@@ -12,7 +12,6 @@
             "name": "app-dev",
             "versions": [
                 "dev",
-                "SdlBackend"
             ],
             "targetType": "executable",
             "targetName": "dm",
@@ -27,7 +26,6 @@
             "name": "app-dev-addon",
             "versions": [
                 "dev",
-                "SdlBackend",
                 "DmAddon"
             ],
             "targetType": "executable",
@@ -39,7 +37,6 @@
         {
             "name": "app-dist",
             "versions": [
-                "SdlBackend",
                 "DmAddon"
             ],
             "targetType": "executable",
@@ -51,9 +48,10 @@
         {
             "name": "app-trace",
             "versions": [
-                "dev",
-                "SdlBackend",
-                "DmAddon"
+                "dev"
+            ],
+            "excludedSourceFiles": [
+                "src/api/dm/addon/*"
             ],
             "targetType": "executable",
             "targetName": "dm",
