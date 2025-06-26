@@ -2,6 +2,7 @@ module api.dm.addon.procedural.lsystems.lsystem_drawer;
 
 import api.dm.kit.graphics.brushes.brush : Brush;
 import api.dm.addon.procedural.lsystems.lsystem_parser : LSystemParser;
+import api.dm.addon.procedural.lsystems.lsystem: LSystemData;
 
 import api.math.geom2.vec2 : Vec2d;
 
@@ -13,18 +14,12 @@ class LSystemDrawer
     LSystemParser lparser;
     Brush brush;
 
-    double step = 2;
-    double angleDeg = 90;
-
-    bool isDrawFromCenter;
-    bool isClosePath;
+    LSystemData data;
 
     void delegate(Vec2d, Vec2d) onLineStartEnd;
 
-    this(bool isClosePath = false, bool isDrawFromCenter = true, LSystemParser parser = null, Brush newBrush = null)
+    this(LSystemParser parser = null, Brush newBrush = null)
     {
-        this.isClosePath = isClosePath;
-        this.isDrawFromCenter = isDrawFromCenter;
         this.lparser = !parser ? new LSystemParser : parser;
         this.brush = !newBrush ? new Brush : newBrush;
 
@@ -35,18 +30,18 @@ class LSystemDrawer
             }
         };
 
-        lparser.onMoveDraw = () { brush.moveDraw(step); };
-        lparser.onMove = () { brush.move(step); };
+        lparser.onMoveDraw = () { brush.moveDraw(data.step); };
+        lparser.onMove = () { brush.move(data.step); };
         lparser.onSaveState = () => brush.saveState;
         lparser.onRestoreState = () => brush.restoreState;
-        lparser.onRotateLeft = () => brush.rotateLeft(angleDeg);
-        lparser.onRotateRight = () => brush.rotateRight(angleDeg);
+        lparser.onRotateLeft = () => brush.rotateLeft(data.angleDeg);
+        lparser.onRotateRight = () => brush.rotateRight(data.angleDeg);
     }
 
-    void draw(dstring startAxiom, dstring[dchar] rules, size_t generations)
+    void draw()
     {
         assert(lparser);
-        lparser.parse(startAxiom, rules, generations);
+        lparser.parse(data.startAxiom, data.rules, data.generations);
     }
 
 }

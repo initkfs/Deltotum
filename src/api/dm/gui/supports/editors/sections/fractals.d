@@ -10,12 +10,17 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.math.geom2.vec2 : Vec2d;
 import api.math.random : Random;
-import api.dm.gui.controls.containers.container: Container;
-import api.dm.gui.controls.containers.hbox: HBox;
+import api.dm.gui.controls.containers.container : Container;
+import api.dm.gui.controls.containers.hbox : HBox;
+
+import api.dm.addon.procedural.lsystems.shapes.lshape : LShape;
+import api.dm.addon.procedural.lsystems.lsystem : LSystemData;
+import LFractals = api.dm.addon.procedural.fractals.lfractals;
 
 import Math = api.dm.math;
 
 import std.stdio;
+import api.math.matrices.affine3;
 
 /**
  * Authors: initkfs
@@ -24,10 +29,11 @@ class Fractals : Control
 {
     private
     {
-        enum shapeSize = 60;
         GraphicStyle shapeStyle = GraphicStyle.simple;
         Random random;
     }
+
+    double shapeSize = 100;
 
     this()
     {
@@ -38,6 +44,7 @@ class Fractals : Control
         layout = new VLayout;
         layout.isAutoResize = true;
         isBackground = false;
+        layout.isAlignY = true;
 
         random = new Random;
     }
@@ -58,40 +65,41 @@ class Fractals : Control
         return sprite;
     }
 
-    protected Container newHContainer(){
+    protected Container newHContainer()
+    {
         auto container = new HBox(10);
-        container.layout.isAlign = true;
+        container.layout.isAlignY = true;
         return container;
     }
 
-    Sprite2d createFractalInfo(string name, Sprite2d fractal, bool isDrawFromCenter = true, double translateX = 0, double translateY = 0, double rotateAngleDeg = 0)
+    protected LShape createShape(LSystemData data, GraphicStyle style, bool isClosePath = false, bool isDrawFromCenter = true, double translateX = 0, double translateY = 0)
+    {
+        auto shape = new LShape(shapeSize, shapeSize, style, isClosePath, isDrawFromCenter);
+        shape.translateX = translateX;
+        shape.translateY = translateY;
+        shape.data = data;
+        return shape;
+    }
+
+    Sprite2d createFractalInfo(string name, LSystemData fractal, GraphicStyle style, bool isDrawFromCenter = true, double translateX = 0, double translateY = 0, double rotateAngle = 0)
     {
         import api.dm.gui.controls.containers.vbox : VBox;
         import api.dm.gui.controls.texts.text : Text;
 
         auto container = new VBox;
+        container.isAlignX = true;
         buildInitCreate(container);
 
         auto label = new Text;
         label.text = name;
         container.addCreate(label);
 
-        //fractal.isDrawBounds = true;
-        fractal.angle = rotateAngleDeg;
-
         if (platform.cap.isVectorGraphics)
         {
-            import api.dm.kit.sprites2d.textures.vectors.shapes.vpoints_shape : VPointsShape;
-
-            if (auto shape = cast(VPointsShape) fractal)
-            {
-                shape.isDrawFromCenter = isDrawFromCenter;
-                shape.translateX = translateX;
-                shape.translateY = translateY;
-            }
+            auto shape = createShape(fractal, style, false, isDrawFromCenter, translateX, translateY);
+            shape.angle = rotateAngle;
+            container.addCreate(shape);
         }
-
-        container.addCreate(fractal);
 
         return container;
     }
@@ -109,123 +117,93 @@ class Fractals : Control
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        import api.dm.addon.procedural.fractals.fractal_generator : FractalGenerator;
-
-        enum shapeSize = 100;
-
-        auto fracGen = new FractalGenerator;
-        fracGen.width = shapeSize;
-        fracGen.height = shapeSize;
-        build(fracGen);
-
         import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
 
         enum lineWidth = 2;
-        fracGen.style = GraphicStyle(lineWidth, RGBA.web(MaterialPalette.limeA400));
 
-        container.addCreate(createFractalInfo("Heighway\ndragon", fracGen.heighwayDragon, false, shapeSize / 3, shapeSize / 3.5 - 5));
+        auto styleDragon = GraphicStyle(lineWidth, RGBA.web(MaterialPalette.limeA400));
+        container.addCreate(createFractalInfo("Heighway\ndragon", LFractals.heighwayDragon, styleDragon, false, shapeSize / 2, shapeSize / 4));
 
-        fracGen.style = GraphicStyle(lineWidth, RGBA.web(MaterialPalette.amberA400));
+        auto levyStyle = GraphicStyle(lineWidth, RGBA.web(MaterialPalette.amberA400));
+        container.addCreate(createFractalInfo("Levy", LFractals.levyCurve, levyStyle, false, shapeSize / 4, shapeSize / 4));
 
-        container.addCreate(createFractalInfo("Levy", fracGen.levyCurve, false, shapeSize / 3 - 5, shapeSize / 2));
+        auto kochStyle = GraphicStyle(lineWidth, RGBA.web(MaterialPalette.pinkA100));
+        container.addCreate(createFractalInfo("Koch curve", LFractals.kochSnowflake, kochStyle, false, shapeSize / 10, shapeSize / 4));
 
-        fracGen.style = GraphicStyle(lineWidth, RGBA.web(MaterialPalette.pinkA100));
+        auto sierpinskiStyle = GraphicStyle(lineWidth, RGBA.web(MaterialPalette.purpleA100));
+        container.addCreate(createFractalInfo("Sierpinski\ntriangle", LFractals.sierpińskiTriangle, sierpinskiStyle, true, -shapeSize / 2.5, shapeSize / 5));
 
-        container.addCreate(createFractalInfo("Koch curve", fracGen.kochSnowflake, false, 10, shapeSize / 2));
+        auto squareSierpStyle = GraphicStyle(lineWidth, RGBA.web(MaterialPalette.deeporangeA100));
+        container.addCreate(createFractalInfo("Square\nSierpinski", LFractals.squareSierpinski, squareSierpStyle, true, 0, -(
+                shapeSize / 2) + 5));
 
-        fracGen.style = GraphicStyle(lineWidth, RGBA.web(MaterialPalette.purpleA100));
+        auto hgStyle = GraphicStyle(lineWidth, RGBA.web(MaterialPalette.cyanA100));
+        container.addCreate(createFractalInfo("Hexagonal\nGosper", LFractals.hexagonalGosper, hgStyle, false, shapeSize / 2, 0));
 
-        container.addCreate(createFractalInfo("Sierpinski\ntriangle", fracGen.sierpińskiTriangle, false, 10, shapeSize - 10));
+        auto qgStyle = GraphicStyle(lineWidth, RGBA.web(MaterialPalette.limeA700));
+        container.addCreate(createFractalInfo("Quadratic\nGosper", LFractals.quadraticGosper, qgStyle, true, -shapeSize / 2, shapeSize / 2));
 
-        fracGen.style = GraphicStyle(lineWidth, RGBA.web(
-                MaterialPalette.deeporangeA100));
+        auto peanoStyle = GraphicStyle(lineWidth, RGBA.web(MaterialPalette.lightblue300));
+        container.addCreate(createFractalInfo("Peano", LFractals.peano, peanoStyle, false, 0, 0));
 
-        container.addCreate(createFractalInfo("Square\nSierpinski", fracGen.squareSierpinski, false, shapeSize / 2, 5));
-
-        fracGen.style = GraphicStyle(lineWidth, RGBA.web(
-                MaterialPalette.cyanA100));
-
-        container.addCreate(createFractalInfo("Hexagonal\nGosper", fracGen.hexagonalGosper, false, shapeSize / 2, 0));
-
-        fracGen.style = GraphicStyle(lineWidth, RGBA.web(
-                MaterialPalette.limeA700));
-
-        container.addCreate(createFractalInfo("Quadratic\nGosper", fracGen.quadraticGosper, false, 0, shapeSize));
-
-        fracGen.style = GraphicStyle(lineWidth, RGBA.web(
-                MaterialPalette.lightblue300));
-
-        container.addCreate(createFractalInfo("Peano", fracGen.peano, false, 0, 0));
-
-        fracGen.style = GraphicStyle(lineWidth, RGBA.web(
-                MaterialPalette.purpleA700));
-
-        container.addCreate(createFractalInfo("Triangle", fracGen.triangle, false, 70, 90));
+        auto trigStyle = GraphicStyle(lineWidth, RGBA.web(MaterialPalette.purpleA700));
+        container.addCreate(createFractalInfo("Triangle", LFractals.triangle, trigStyle, true, shapeSize / 5, shapeSize / 4));
 
         auto container2 = newHContainer;
         addCreate(container2);
 
-        fracGen.style = GraphicStyle(lineWidth, RGBA.web(
-                MaterialPalette.tealA100));
+        auto kistyle = GraphicStyle(lineWidth, RGBA.web(MaterialPalette.tealA100));
+        container2.addCreate(createFractalInfo("Koch island", LFractals.kochIsland, kistyle, false, shapeSize / 2, 0));
 
-        container2.addCreate(createFractalInfo("Koch island", fracGen.kochIsland, false, 50, 0));
+        auto minkstyle = GraphicStyle(lineWidth, RGBA.web(MaterialPalette.purpleA200));
+        container2.addCreate(createFractalInfo("Minkowski", LFractals.minkowski, minkstyle, false, 0, shapeSize / 2));
 
-        fracGen.style = GraphicStyle(lineWidth, RGBA.web(
-                MaterialPalette.purpleA200));
+        auto ringstyle = GraphicStyle(lineWidth, RGBA.web(MaterialPalette.lime500));
+        container2.addCreate(createFractalInfo("Rings", LFractals.rings, ringstyle, false, 0, 0));
 
-        container2.addCreate(createFractalInfo("Minkowski", fracGen.minkowski, false, 0, 60));
+        auto crstyle = GraphicStyle(lineWidth, RGBA.web(MaterialPalette.cyan500));
+        container2.addCreate(createFractalInfo("Crystal", LFractals.crystal, crstyle, false, 0, 0));
 
-        fracGen.style = GraphicStyle(lineWidth, RGBA.web(
-                MaterialPalette.lime500));
+        auto boardStyle = GraphicStyle(lineWidth, RGBA.web(MaterialPalette.lightgreenA400));
+        container2.addCreate(createFractalInfo("Board", LFractals.board, boardStyle, false, 0, 0));
 
-        container2.addCreate(createFractalInfo("Rings", fracGen.rings, false, 0, 0));
+        auto hilstyle = GraphicStyle(lineWidth, RGBA.web(MaterialPalette.pinkA700));
+        container2.addCreate(createFractalInfo("Hilbert", LFractals.hilbert, hilstyle, false, 0, 100));
 
-        fracGen.style = GraphicStyle(lineWidth, RGBA.web(
-                MaterialPalette.cyan500));
+        auto tileStyle = GraphicStyle(lineWidth, RGBA.web(MaterialPalette.lime500));
+        container2.addCreate(createFractalInfo("Tiles", LFractals.tiles, tileStyle, true, shapeSize / 2 - 10, 0));
 
-        container2.addCreate(createFractalInfo("Crystal", fracGen.crystal, false, 0, 0));
+        auto plantStyle = GraphicStyle(lineWidth, RGBA.web(MaterialPalette.greenA400));
 
-        fracGen.style = GraphicStyle(lineWidth, RGBA.web(
-                MaterialPalette.lightgreenA400));
-
-        container2.addCreate(createFractalInfo("Board", fracGen.board, false, 0, 0));
-
-        fracGen.style = GraphicStyle(lineWidth, RGBA.web(
-                MaterialPalette.pinkA700));
-
-        container2.addCreate(createFractalInfo("Hilbert", fracGen.hilbert, false, 0, 100));
-
-        fracGen.style = GraphicStyle(lineWidth, RGBA.web(
-                MaterialPalette.lime500));
-
-        container2.addCreate(createFractalInfo("Tiles", fracGen.tiles, false, 90, 60));
-
-        fracGen.style = GraphicStyle(lineWidth, RGBA.web(
-                MaterialPalette.greenA400));
-
-        container2.addCreate(createFractalInfo("Plant 1", fracGen.simplePlant, false, 0, 50, -90));
-        container2.addCreate(createFractalInfo("Plant 2", fracGen.plant2, false, 10, 50, -90));
-        container2.addCreate(createFractalInfo("Plant 3", fracGen.plant3, false, -20, 50, -90));
-        container2.addCreate(createFractalInfo("Bush plant", fracGen.plantBushes, false, 0, 50, -90));
+        container2.addCreate(createFractalInfo("Plant 1", LFractals.simplePlant, plantStyle, false, 0, shapeSize / 2, -90));
+        container2.addCreate(createFractalInfo("Plant 2", LFractals.plant2, plantStyle, false, 0, shapeSize / 2, -90));
+        container2.addCreate(createFractalInfo("Plant 3", LFractals.plant3, plantStyle, false, -(
+                shapeSize / 4), shapeSize / 2, -90));
+        container2.addCreate(createFractalInfo("Bush plant", LFractals.plantBushes, plantStyle, false, 0, shapeSize / 2, -90));
 
         auto container3 = newHContainer;
         addCreate(container3);
 
-        import api.dm.addon.sprites2d.images.fractals.mandelbrot : Mandelbrot;
+        import api.dm.addon.procedural.fractals.hopalongs.hopalong_generator : HopalongGenerator;
 
-        auto mand = new Mandelbrot(shapeSize, shapeSize);
-        mand.foregroundColor = RGBA.web(MaterialPalette.purpleA100);
-        container3.addCreate(createFractalInfo("Mandelbrot", mand, false));
+        auto hopGen = new HopalongGenerator;
+        container3.addCreate(hopGen);
 
-        import api.dm.addon.sprites2d.images.fractals.julia : Julia;
+        // import api.dm.addon.sprites2d.images.fractals.mandelbrot : Mandelbrot;
 
-        auto julia = new Julia(shapeSize, shapeSize);
-        container3.addCreate(createFractalInfo("Julia", julia, false));
+        // auto mand = new Mandelbrot(shapeSize, shapeSize);
+        // mand.foregroundColor = RGBA.web(MaterialPalette.purpleA100);
+        // container3.addCreate(createFractalInfo("Mandelbrot", mand, false));
 
-        import api.dm.addon.sprites2d.images.fractals.newton : Newton;
+        // import api.dm.addon.sprites2d.images.fractals.julia : Julia;
 
-        auto newton = new Newton(shapeSize, shapeSize);
-        container3.addCreate(createFractalInfo("Newton", newton, false));
+        // auto julia = new Julia(shapeSize, shapeSize);
+        // container3.addCreate(createFractalInfo("Julia", julia, false));
+
+        // import api.dm.addon.sprites2d.images.fractals.newton : Newton;
+
+        // auto newton = new Newton(shapeSize, shapeSize);
+        // container3.addCreate(createFractalInfo("Newton", newton, false));
     }
 
 }

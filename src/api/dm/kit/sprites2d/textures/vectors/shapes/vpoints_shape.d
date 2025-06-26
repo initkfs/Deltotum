@@ -14,18 +14,14 @@ import api.dm.lib.cairo;
  */
 class VPointsShape : VShape
 {
-    bool isClosePath;
-    bool isDrawFromCenter;
-
-    double translateX = 0;
-    double translateY = 0;
-
     void delegate() onDraw;
 
     // protected
     // {
     DList!Vec2d points;
     //}
+
+    bool isFlipY;
 
     this(Vec2d[] points, double width, double height, GraphicStyle style, bool isClosePath = false, bool isDrawFromCenter = false)
     {
@@ -49,8 +45,11 @@ class VPointsShape : VShape
     {
         auto ctx = cairoContext.getObject;
 
-        const cairo_matrix_t flipYAxisMatrix = {1, 0, 0, -1, 0, height};
-        cairo_set_matrix(ctx, &flipYAxisMatrix);
+        if (isFlipY)
+        {
+            const cairo_matrix_t flipYAxisMatrix = {1, 0, 0, -1, 0, height};
+            cairo_set_matrix(ctx, &flipYAxisMatrix);
+        }
 
         if (isDrawFromCenter)
         {

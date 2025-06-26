@@ -1,4 +1,4 @@
-module api.dm.addon.math.procedural.fractals.lfractals;
+module api.dm.addon.procedural.fractals.lfractals;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.addon.procedural.lsystems.lsystem : LSystemData;
