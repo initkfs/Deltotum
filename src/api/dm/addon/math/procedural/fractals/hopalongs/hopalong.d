@@ -1,4 +1,4 @@
-module api.dm.addon.math.fractals.hopalongs.hopalong;
+module api.dm.addon.procedural.fractals.hopalongs.hopalong;
 
 import api.math.geom2.vec2 : Vec2d;
 import Math = api.math;

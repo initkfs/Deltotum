@@ -1,7 +1,7 @@
-module api.dm.addon.math.fractals.fractal_generator;
+module api.dm.addon.procedural.fractals.fractal_generator;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.addon.math.fractals.lshape : LShape;
+import api.dm.addon.procedural.fractals.lshape : LShape;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
 private

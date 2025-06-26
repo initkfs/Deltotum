@@ -1,6 +1,6 @@
-module api.dm.addon.math.fractals.hopalongs.hopalong_generator;
+module api.dm.addon.procedural.fractals.hopalongs.hopalong_generator;
 
-import api.dm.addon.math.fractals.hopalongs.hopalong : Hopalong, HopalongType;
+import api.dm.addon.procedural.fractals.hopalongs.hopalong : Hopalong, HopalongType;
 
 import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
 import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;

@@ -1,4 +1,4 @@
-module api.dm.addon.math.fractals.lshape;
+module api.dm.addon.procedural.fractals.lshape;
 
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
@@ -6,7 +6,7 @@ import api.dm.kit.sprites2d.shapes.shape2d : Shape2d;
 import api.dm.kit.sprites2d.textures.vectors.shapes.vpoints_shape : VPointsShape;
 import api.dm.kit.graphics.brushes.brush : Brush;
 import api.math.geom2.vec2 : Vec2d;
-import api.dm.addon.math.lsystems.lsystem_parser : LSystemParser;
+import api.dm.addon.procedural.lsystems.lsystem_drawer : LSystemDrawer;
 
 import std.stdio;
 
@@ -17,8 +17,7 @@ class LShape : VPointsShape
 {
     protected
     {
-        LSystemParser lparser;
-        Brush brush;
+        LSystemDrawer drawer;
     }
 
     double step = 2;
@@ -38,32 +37,23 @@ class LShape : VPointsShape
     override void initialize()
     {
         super.initialize;
-        if (!lparser)
+        if (!drawer)
         {
-            lparser = new LSystemParser;
+            drawer = new LSystemDrawer;
         }
 
-        if (!brush)
-        {
-            brush = new Brush(Vec2d(0, 0));
-            brush.onDrawLineStartEnd = (start, end) {
-                Vec2d[2] pp = [start, end];
-                points.insert(pp[]);
-            };
-
-            lparser.onMoveDraw = () { brush.moveDraw(step); };
-            lparser.onMove = () { brush.move(step); };
-            lparser.onSaveState = () => brush.saveState;
-            lparser.onRestoreState = () => brush.restoreState;
-            lparser.onRotateLeft = () => brush.rotateLeft(angleDeg);
-            lparser.onRotateRight = () => brush.rotateRight(angleDeg);
-        }
+        drawer.onLineStartEnd = (start, end) {
+            Vec2d[2] pp = [start, end];
+            points.insert(pp[]);
+        };
     }
 
     void parse()
     {
-        assert(lparser);
-        lparser.parse(startAxiom, rules, generations);
+        assert(drawer);
+        drawer.step = step;
+        drawer.angleDeg = angleDeg;
+        drawer.draw(startAxiom, rules, generations);
     }
 
     override void createTextureContent()

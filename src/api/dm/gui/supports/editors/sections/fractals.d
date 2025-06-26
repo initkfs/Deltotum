@@ -109,7 +109,7 @@ class Fractals : Control
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        import api.dm.addon.math.fractals.fractal_generator : FractalGenerator;
+        import api.dm.addon.procedural.fractals.fractal_generator : FractalGenerator;
 
         enum shapeSize = 100;
 
