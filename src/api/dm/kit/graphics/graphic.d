@@ -1,6 +1,6 @@
 module api.dm.kit.graphics.graphic;
 
-import api.dm.com.com_result: ComResult;
+import api.dm.com.com_result : ComResult;
 
 import api.core.components.units.services.loggable_unit;
 import api.core.utils.factories : ProviderFactory;
@@ -76,7 +76,9 @@ class Graphic : LoggableUnit
         Rect2d clip;
         if (const err = renderer.getClipRect(clip))
         {
-            logger.error("Error receiving clipping. ", err.toString);
+            import std.conv : text;
+
+            throw new Exception(text("Error receiving clipping. ", err));
         }
         return clip;
     }
@@ -85,7 +87,9 @@ class Graphic : LoggableUnit
     {
         if (const err = renderer.setClipRect(clipRect))
         {
-            logger.error("Error setting clipping. ", err.toString);
+            import std.conv : text;
+
+            throw new Exception(text("Error setting clipping. ", err));
         }
     }
 
@@ -93,7 +97,9 @@ class Graphic : LoggableUnit
     {
         if (const err = renderer.removeClipRect)
         {
-            logger.error("Error removing clipping. ", err.toString);
+            import std.conv : text;
+
+            throw new Exception(text("Error removing clipping. ", err));
         }
     }
 
@@ -104,7 +110,7 @@ class Graphic : LoggableUnit
         ubyte r, g, b, a;
         if (const err = renderer.getDrawColor(r, g, b, a))
         {
-            logger.errorf("Error getting current renderer color");
+            logger.error("Error getting current renderer color: ", err);
             return RGBA.init;
         }
         return RGBA(r, g, b, (cast(double) a) / RGBA.maxColor);
@@ -129,7 +135,7 @@ class Graphic : LoggableUnit
     {
         if (const err = renderer.setDrawColor(color.r, color.g, color.b, color.aByte))
         {
-            logger.errorf("Adjust render error. %s", err);
+            logger.error("Error setting render color: ", err);
         }
     }
 
@@ -148,14 +154,15 @@ class Graphic : LoggableUnit
         ComBlendMode mustBePrevMode;
         if (const err = renderer.getBlendMode(mustBePrevMode))
         {
-            logger.errorf("Error getting renderer blengind mode");
+            logger.error("Error getting renderer blengind mode: ", err);
             return ComBlendMode.none;
         }
 
-        if(mode == mustBePrevMode){
+        if (mode == mustBePrevMode)
+        {
             return mustBePrevMode;
         }
-        
+
         prevMode = mustBePrevMode;
 
         blendMode(mode);
@@ -167,7 +174,7 @@ class Graphic : LoggableUnit
     {
         if (const err = renderer.setBlendMode(mode))
         {
-            logger.error("Error setting blending mode for the renderer. ", err);
+            logger.error("Error setting blending mode for the renderer: ", err);
         }
     }
 
@@ -178,7 +185,8 @@ class Graphic : LoggableUnit
 
     void line(double startX, double startY, double endX, double endY)
     {
-        if (const err = renderer.drawLine(toFloat(startX), toFloat(startY), toFloat(endX), toFloat(endY)))
+        if (const err = renderer.drawLine(toFloat(startX), toFloat(startY), toFloat(endX), toFloat(
+                endY)))
         {
             logger.error("Line drawing error. ", err);
         }
@@ -223,7 +231,7 @@ class Graphic : LoggableUnit
 
         if (const err = renderer.drawLines(points))
         {
-            logger.errorf("Lines drawing error. %s", err);
+            logger.error("Lines drawing error: ", err);
         }
 
         if (points.length >= 3)
@@ -255,7 +263,7 @@ class Graphic : LoggableUnit
     {
         if (const err = renderer.drawPoint(toFloat(x), toFloat(y)))
         {
-            logger.errorf("Point drawing error. %s", err);
+            logger.error("Point drawing error: ", err);
         }
     }
 
@@ -288,8 +296,7 @@ class Graphic : LoggableUnit
         }
         if (const err = renderer.drawPoints(points))
         {
-            //TODO log
-            throw new Exception(err.toString);
+            logger.error("Double points drawing error: ", err);
         }
     }
 
@@ -322,8 +329,7 @@ class Graphic : LoggableUnit
 
         if (const err = renderer.drawPoints(p))
         {
-            //TODO log
-            throw new Exception(err.toString);
+            logger.error("Float points drawing error: ", err);
         }
     }
 
@@ -773,9 +779,10 @@ class Graphic : LoggableUnit
 
     void fillRect(double x, double y, double width, double height)
     {
-        if (const err = renderer.drawFillRect(toFloat(x), toFloat(y), toFloat(width), toFloat(height)))
+        if (const err = renderer.drawFillRect(toFloat(x), toFloat(y), toFloat(width), toFloat(
+                height)))
         {
-            logger.errorf("Fill rect error. %s", err);
+            logger.error("Fill rect error: ", err);
         }
     }
 
@@ -788,7 +795,7 @@ class Graphic : LoggableUnit
         }
         if (const err = renderer.drawFillRects(rects))
         {
-            logger.errorf("Fill rects error. %s", err);
+            logger.error("Fill rects error: ", err);
         }
     }
 
@@ -821,7 +828,7 @@ class Graphic : LoggableUnit
     {
         if (const err = renderer.drawRect(toFloat(x), toFloat(y), toFloat(width), toFloat(height)))
         {
-            logger.errorf("Draw rect error. %s", err);
+            logger.error("Draw rect error: ", err);
         }
     }
 
@@ -973,7 +980,7 @@ class Graphic : LoggableUnit
         Rect2d v;
         if (const err = renderer.getViewport(v))
         {
-            logger.error("Error getting renderer viewport", err);
+            logger.error("Error getting renderer viewport: ", err);
         }
         return v;
     }
@@ -982,7 +989,7 @@ class Graphic : LoggableUnit
     {
         if (const err = renderer.setViewport(v))
         {
-            logger.error("Error setting renderer viewport", err);
+            logger.error("Error setting renderer viewport: ", err);
         }
     }
 
@@ -1004,14 +1011,13 @@ class Graphic : LoggableUnit
 
     Rect2d renderBounds()
     {
-
         int outputWidth;
         int outputHeight;
 
         if (const err = renderer.getOutputSize(outputWidth, outputHeight))
         {
-            logger.error("Error getting renderer size: ", err.toString);
-            return Rect2d();
+            logger.error("Error getting renderer output size: ", err);
+            return Rect2d.init;
         }
 
         return Rect2d(0, 0, outputWidth, outputHeight);
