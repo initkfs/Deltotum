@@ -152,9 +152,9 @@ class RScroll : BaseRadialMonoScroll
         thumb.restoreRendererTarget;
 
         thumb.initialize;
-        assert(thumb.isInitialized);
+        assert(thumb.isInitializing);
         thumb.create;
-        assert(thumb.isCreated);
+        assert(thumb.isCreating);
 
         thumb.onPointerPress ~= (ref e) {
             lastDragAngle = thumb.boundsRect.center.angleDeg360To(input.pointerPos);

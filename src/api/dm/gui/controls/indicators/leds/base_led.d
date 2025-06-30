@@ -133,7 +133,7 @@ class BaseLed : Control
         if (!shape.isCreated)
         {
             shape.create;
-            assert(shape.isCreated);
+            assert(shape.isCreating);
         }
 
         return shape;

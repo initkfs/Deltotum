@@ -259,10 +259,10 @@ abstract class GraphicApp : CliApp
     {
         super.stop;
         windowing.onWindows((win) {
-            if (!win.isDisposed && !win.isStopped)
+            if (!win.isDisposed && !win.isStopping)
             {
                 win.stop;
-                assert(win.isStopped);
+                assert(win.isStopping);
             }
             return true;
         });

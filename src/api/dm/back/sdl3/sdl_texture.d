@@ -173,7 +173,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    ComResult isCreated(out bool created) nothrow
+    ComResult isCreating(out bool created) nothrow
     {
         created = ptr !is null;
         return ComResult.success;

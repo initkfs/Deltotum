@@ -229,7 +229,7 @@ unittest
                 break;
             case 6:
                 //Frame after animation stops
-                assert(tr1.isStopped);
+                assert(tr1.isStopping);
                 assert(isClose(tr1.lastValue, 0, 0.0, eps));
                 break;
             default:

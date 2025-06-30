@@ -88,7 +88,7 @@ abstract class Tween : GraphicComponent
             throw new Exception("Animation duration is zero.");
         }
 
-        if (isPaused)
+        if (isPausing)
         {
             state = prevState;
             if (isReverse && state == TweenState.direct)
@@ -268,7 +268,7 @@ abstract class Tween : GraphicComponent
 
         //TODO remove and clear prevs
         newPrev.onStop ~= () {
-            if (!isStopped)
+            if (!isStopping)
             {
                 stop;
             }

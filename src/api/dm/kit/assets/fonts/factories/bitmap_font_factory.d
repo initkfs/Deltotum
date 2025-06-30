@@ -74,7 +74,7 @@ class BitmapFontFactory : GraphicComponent
         auto bitmapFont = new BitmapFont;
         build(bitmapFont);
         bitmapFont.initialize;
-        assert(bitmapFont.isInitialized);
+        assert(bitmapFont.isInitializing);
 
         foreach (alphabet; alphabets)
         {

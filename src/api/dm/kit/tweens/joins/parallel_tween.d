@@ -13,7 +13,7 @@ class ParallelTween : TweenManager
     {
         foreach (tr; tweens)
         {
-            if (isStopOnAnyStopped && tr.isStopped)
+            if (isStopOnAnyStopped && tr.isStopping)
             {
                 stop;
                 break;

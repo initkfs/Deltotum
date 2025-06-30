@@ -212,7 +212,7 @@ class AudioPlayer : Control
 
     override void pause()
     {
-        if (isPaused)
+        if (isPausing)
         {
             return;
         }
@@ -239,7 +239,7 @@ class AudioPlayer : Control
 
     override void stop()
     {
-        if (isStopped && _state != AudioPlayerState.pause)
+        if (isStopping && _state != AudioPlayerState.pause)
         {
             return;
         }

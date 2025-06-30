@@ -69,7 +69,7 @@ class UniComponent : SimpleUnit
 
         initialize(component);
 
-        if (isStrictState && !component.isInitialized)
+        if (isStrictState && !component.isInitializing)
         {
             throw new Exception("Component not initialized: " ~ component.className);
         }
@@ -80,7 +80,7 @@ class UniComponent : SimpleUnit
         buildInit(component);
         create(component);
 
-        if (isStrictState && !component.isCreated)
+        if (isStrictState && !component.isCreating)
         {
             throw new Exception("Component not created: " ~ component.className);
         }

@@ -269,7 +269,7 @@ class Texture2d : Sprite2d
         if (texture)
         {
             bool isTextureCreated;
-            if (const err = texture.isCreated(isTextureCreated))
+            if (const err = texture.isCreating(isTextureCreated))
             {
                 logger.error(err.toString);
             }
@@ -311,7 +311,7 @@ class Texture2d : Sprite2d
         if (texture)
         {
             bool isTextureCreated;
-            if (const err = texture.isCreated(isTextureCreated))
+            if (const err = texture.isCreating(isTextureCreated))
             {
                 logger.error(err.toString);
             }

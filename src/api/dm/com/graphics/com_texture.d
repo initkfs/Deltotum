@@ -38,7 +38,7 @@ nothrow:
     ComResult createTargetRGBA32(int width, int height);
     ComResult create(ComSurface surface);
 
-    ComResult isCreated(out bool created);
+    ComResult isCreating(out bool created);
 
     ComResult getFormat(out uint format);
     ComResult getPixelRowLenBytes(out int pitch);

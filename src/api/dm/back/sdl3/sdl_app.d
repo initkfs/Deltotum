@@ -463,7 +463,7 @@ class SdlApp : GuiApp
                                 dg();
                             }
                         }
-                        if (win.isStopped || win.isPaused)
+                        if (win.isStopping || win.isPausing)
                         {
                             win.run;
                         }
@@ -891,7 +891,7 @@ class SdlApp : GuiApp
                     bitmap) {
                 // windowBuilder.build(bitmap);
                 // bitmap.initialize;
-                // assert(bitmap.isInitialized);
+                // assert(bitmap.isInitializing);
                 // bitmap.create;
                 // assert(bitmap.isCreated);
             });
@@ -965,7 +965,7 @@ class SdlApp : GuiApp
                 if (win.isRunning)
                 {
                     win.stop;
-                    assert(win.isStopped);
+                    assert(win.isStopping);
                 }
                 win.dispose;
                 return true;

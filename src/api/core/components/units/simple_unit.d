@@ -14,6 +14,7 @@ class SimpleUnit : Unitable
     private
     {
         UnitState _state = UnitState.none;
+        bool _create;
     }
 
     bool isThrowInvalidState = true;
@@ -41,11 +42,13 @@ class SimpleUnit : Unitable
         UnitState state() => _state;
         bool isState(UnitState s) => _state == s;
         bool isNone() => isState(UnitState.none);
-        bool isInitialized() => isState(UnitState.initialize);
-        bool isCreated() => isState(UnitState.create);
+        
+        bool isInitializing() => isState(UnitState.initialize);
+        bool isCreating() => isState(UnitState.create);
+        bool isCreated() => _create;
         bool isRunning() => isState(UnitState.run);
-        bool isPaused() => isState(UnitState.pause);
-        bool isStopped() => isState(UnitState.stop);
+        bool isPausing() => isState(UnitState.pause);
+        bool isStopping() => isState(UnitState.stop);
         bool isDisposed() => isState(UnitState.dispose);
     }
 
@@ -90,7 +93,7 @@ class SimpleUnit : Unitable
         assert(unit !is this, "Unit must not be this");
 
         unit.initialize;
-        if (!unit.isInitialized)
+        if (!unit.isInitializing)
         {
             if (onInvalidChangeNewState)
             {
@@ -106,7 +109,7 @@ class SimpleUnit : Unitable
 
     void create()
     {
-        if (!isNone && !isInitialized)
+        if (!isNone && !isInitializing)
         {
             if (onInvalidNewState)
             {
@@ -123,6 +126,7 @@ class SimpleUnit : Unitable
         }
 
         _state = UnitState.create;
+        _create = true;
 
         triggerListeners(onCreate);
     }
@@ -133,7 +137,7 @@ class SimpleUnit : Unitable
         assert(unit !is this, "Unit must not be this");
 
         unit.create;
-        if (!unit.isCreated)
+        if (!unit.isCreating)
         {
             if (onInvalidChangeNewState)
             {
@@ -155,7 +159,7 @@ class SimpleUnit : Unitable
 
     void run()
     {
-        if (!isCreated && !isStopped && !isPaused)
+        if (!isCreating && !isStopping && !isPausing)
         {
             if (onInvalidNewState)
             {
@@ -232,7 +236,7 @@ class SimpleUnit : Unitable
         assert(unit !is this, "Unit must not be this");
 
         unit.pause;
-        if (!unit.isPaused)
+        if (!unit.isPausing)
         {
             if (onInvalidChangeNewState)
             {
@@ -249,7 +253,7 @@ class SimpleUnit : Unitable
 
     void stop()
     {
-        if (!isRunning && !isPaused)
+        if (!isRunning && !isPausing)
         {
             if (onInvalidNewState)
             {
@@ -276,7 +280,7 @@ class SimpleUnit : Unitable
         assert(unit !is this, "Unit must not be this");
 
         unit.stop;
-        if (!unit.isStopped)
+        if (!unit.isStopping)
         {
             if (onInvalidChangeNewState)
             {
@@ -293,7 +297,7 @@ class SimpleUnit : Unitable
     void dispose()
     {
         //allow dispose without running
-        if (!isStopped && !isInitialized && !isCreated && !isPaused)
+        if (!isStopping && !isInitializing && !isCreating && !isPausing)
         {
             if (onInvalidNewState)
             {
@@ -310,6 +314,7 @@ class SimpleUnit : Unitable
         }
 
         _state = UnitState.dispose;
+        _create = false;
 
         triggerListeners(onDispose);
 
@@ -386,7 +391,7 @@ class SimpleUnit : Unitable
         assert(immcomp.isRunning);
 
         const immcomp2 = new const ImmComponent(UnitState.stop);
-        assert(immcomp2.isStopped);
+        assert(immcomp2.isStopping);
 
         class TestComponent : SimpleUnit
         {
@@ -400,7 +405,7 @@ class SimpleUnit : Unitable
         assertThrown(component.dispose);
 
         component.initialize;
-        assert(component.isInitialized);
+        assert(component.isInitializing);
         assertThrown(component.initialize);
         assertThrown(component.stop);
 
@@ -411,10 +416,10 @@ class SimpleUnit : Unitable
         assertThrown(component.stop);
 
         component.initialize;
-        assert(component.isInitialized);
+        assert(component.isInitializing);
 
         component.create;
-        assert(component.isCreated);
+        assert(component.isCreating);
         assertThrown(component.initialize);
 
         component.run;
@@ -424,7 +429,7 @@ class SimpleUnit : Unitable
         assertThrown(component.dispose);
 
         component.pause;
-        assert(component.isPaused);
+        assert(component.isPausing);
         assertThrown(component.create);
         assertThrown(component.initialize);
         //assertThrown(component.dispose);
@@ -436,7 +441,7 @@ class SimpleUnit : Unitable
         assertThrown(component.dispose);
 
         component.stop;
-        assert(component.isStopped);
+        assert(component.isStopping);
         assertThrown(component.stop);
         assertThrown(component.initialize);
 
@@ -444,7 +449,7 @@ class SimpleUnit : Unitable
         assert(component.isRunning);
 
         component.stop;
-        assert(component.isStopped);
+        assert(component.isStopping);
 
         component.dispose;
         assert(component.isDisposed);

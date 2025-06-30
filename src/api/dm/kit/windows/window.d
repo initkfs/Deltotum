@@ -153,10 +153,10 @@ class Window : GraphicComponent
         }
 
         scene.initialize;
-        assert(scene.isInitialized);
+        assert(scene.isInitializing);
 
         scene.create;
-        assert(scene.isCreated);
+        assert(scene.isCreating);
     }
 
     bool addCreate(Scene2d scene)
@@ -362,7 +362,7 @@ class Window : GraphicComponent
                     if (scene.isRunning)
                     {
                         scene.stop;
-                        assert(scene.isStopped);
+                        assert(scene.isStopping);
                         logger.trace("Stop created scene: ", sceneName);
                     }
 

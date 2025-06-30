@@ -133,7 +133,6 @@ class Sprite2d : EventKitTarget
 
     bool isDisableRecreate;
 
-    bool isCreated;
     bool isFocus;
     bool isDraggable;
     bool isScalable;
@@ -262,7 +261,7 @@ class Sprite2d : EventKitTarget
 
     override void run()
     {
-        if (isPaused)
+        if (isPausing)
         {
             onResume;
         }
@@ -339,8 +338,6 @@ class Sprite2d : EventKitTarget
                 }
             }
         };
-
-        isCreated = true;
     }
 
     GraphicCanvas newGraphicsContext()
@@ -843,7 +840,7 @@ class Sprite2d : EventKitTarget
 
         if (!sprite.isCreated)
         {
-            if (!sprite.isInitialized)
+            if (!sprite.isInitializing)
             {
                 initialize(sprite);
             }
@@ -2390,7 +2387,7 @@ class Sprite2d : EventKitTarget
 
     void onSceneResume()
     {
-        if (isManagedByScene && isPaused)
+        if (isManagedByScene && isPausing)
         {
             run;
         }

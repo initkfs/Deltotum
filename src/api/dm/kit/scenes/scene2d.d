@@ -346,7 +346,7 @@ class Scene2d : EventKitTarget
 
     override void run()
     {
-        if (isPaused)
+        if (isPausing)
         {
             if (sprites.length > 0)
             {
@@ -385,14 +385,14 @@ class Scene2d : EventKitTarget
 
         if (!obj.isCreated)
         {
-            if (!obj.isInitialized)
+            if (!obj.isInitializing)
             {
                 obj.initialize;
-                assert(obj.isInitialized);
+                assert(obj.isInitializing);
             }
 
             obj.create;
-            assert(obj.isCreated);
+            assert(obj.isCreating);
         }
 
         add(obj);

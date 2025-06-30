@@ -22,17 +22,17 @@ class SequenceTween : TweenManager
 
     override void onFrame()
     {
-        bool isStopped = true;
+        bool isStopping = true;
         foreach (tr; tweens)
         {
-            if (!tr.isStopped)
+            if (!tr.isStopping)
             {
-                isStopped = false;
+                isStopping = false;
                 break;
             }
         }
 
-        if (isStopped)
+        if (isStopping)
         {
             stop;
         }
@@ -96,7 +96,7 @@ class SequenceTween : TweenManager
     {
         foreach (tr; tweens)
         {
-            if (tr.isPaused)
+            if (tr.isPausing)
             {
                 tr.run;
             }

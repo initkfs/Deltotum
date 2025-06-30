@@ -1066,7 +1066,7 @@ class Control : GuiComponent
             build(control);
             assert(control.isBuilt);
             control.initialize;
-            assert(control.isInitialized);
+            assert(control.isInitializing);
         }
         super.addCreate(control, index);
     }
