@@ -232,17 +232,17 @@ abstract class BaseScaleStatic : BaseDrawableScale
     {
         super.dispose;
 
-        if (minorTickProto && !minorTickProto.isDisposed)
+        if (minorTickProto && !minorTickProto.isDisposing)
         {
             minorTickProto.dispose;
         }
 
-        if (majorTickProto && !majorTickProto.isDisposed)
+        if (majorTickProto && !majorTickProto.isDisposing)
         {
             majorTickProto.dispose;
         }
 
-        if (labelProto && !labelProto.isDisposed)
+        if (labelProto && !labelProto.isDisposing)
         {
             labelProto.dispose;
         }

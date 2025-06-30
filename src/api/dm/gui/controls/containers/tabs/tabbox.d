@@ -249,7 +249,7 @@ class TabBox : Container
         {
             foreach (tab; header.tabs)
             {
-                if (tab.content && !tab.content.isNone && !tab.content.isDisposed)
+                if (tab.content && !tab.content.isNone && !tab.content.isDisposing)
                 {
                     stopDisposeSafe(tab.content);
                 }

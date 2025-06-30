@@ -270,7 +270,7 @@ abstract class GraphicApp : CliApp
 
     override void exit(int code = 0)
     {
-        if (_media && !_media.isDisposed)
+        if (_media && !_media.isDisposing)
         {
             _media.dispose;
         }

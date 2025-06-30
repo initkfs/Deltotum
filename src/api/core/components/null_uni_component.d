@@ -54,5 +54,5 @@ unittest
     }
 
     nc1.stopDispose(nc);
-    assert(nc.isDisposed);
+    assert(nc.isDisposing);
 }

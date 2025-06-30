@@ -49,12 +49,12 @@ class SimpleUnit : Unitable
         bool isRunning() => isState(UnitState.run);
         bool isPausing() => isState(UnitState.pause);
         bool isStopping() => isState(UnitState.stop);
-        bool isDisposed() => isState(UnitState.dispose);
+        bool isDisposing() => isState(UnitState.dispose);
     }
 
     void initialize()
     {
-        if (!isNone && !isDisposed)
+        if (!isNone && !isDisposing)
         {
             if (onInvalidNewState)
             {
@@ -332,7 +332,7 @@ class SimpleUnit : Unitable
         assert(unit !is this, "Unit must not be this");
 
         unit.dispose;
-        if (!unit.isDisposed)
+        if (!unit.isDisposing)
         {
             if (onInvalidChangeNewState)
             {
@@ -359,7 +359,7 @@ class SimpleUnit : Unitable
         {
             stop(unit);
         }
-        if (!unit.isDisposed)
+        if (!unit.isDisposing)
         {
             dispose(unit);
         }
@@ -410,7 +410,7 @@ class SimpleUnit : Unitable
         assertThrown(component.stop);
 
         component.dispose;
-        assert(component.isDisposed);
+        assert(component.isDisposing);
         assertThrown(component.dispose);
         assertThrown(component.run);
         assertThrown(component.stop);
@@ -452,6 +452,6 @@ class SimpleUnit : Unitable
         assert(component.isStopping);
 
         component.dispose;
-        assert(component.isDisposed);
+        assert(component.isDisposing);
     }
 }

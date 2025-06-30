@@ -946,7 +946,7 @@ class Sprite2d : EventKitTarget
         {
             ch.onRemoveFromParent;
 
-            if (isDestroy && !ch.isDisposed)
+            if (isDestroy && !ch.isDisposing)
             {
                 stopDisposeSafe(ch);
             }
@@ -1008,7 +1008,7 @@ class Sprite2d : EventKitTarget
 
         obj.onRemoveFromParent;
 
-        if (isDestroy && !obj.isDisposed)
+        if (isDestroy && !obj.isDisposing)
         {
             if (obj.isRunning)
             {

@@ -108,7 +108,7 @@ class FontCache
         {
             foreach (ref color, bitmap; colorCache)
             {
-                if (!bitmap.isDisposed)
+                if (!bitmap.isDisposing)
                 {
                     bitmap.dispose;
                 }
