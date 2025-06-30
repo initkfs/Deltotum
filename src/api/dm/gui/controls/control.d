@@ -1033,12 +1033,36 @@ class Control : GuiComponent
         trySetParentProps(control);
     }
 
+    alias build = GuiComponent.build;
+    alias buildInit = GuiComponent.buildInit;
+    alias buildInitCreate = GuiComponent.buildInitCreate;
+    alias buildInitCreateRun = GuiComponent.buildInitCreateRun;
+
+    void buildInit(Control component)
+    {
+        build(component);
+        super.initialize(component);
+    }
+
+    void buildInitCreate(Control component)
+    {
+        buildInit(component);
+        super.create(component);
+    }
+
+    void buildInitCreateRun(Control component)
+    {
+        buildInitCreate(component);
+        super.run(component);
+    }
+
     alias addCreate = GuiComponent.addCreate;
 
     void addCreate(Control control, long index = -1)
     {
         if (!control.isBuilt)
         {
+            //FIXME TODO bug buildInitCreate
             build(control);
             assert(control.isBuilt);
             control.initialize;

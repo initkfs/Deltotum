@@ -1,7 +1,5 @@
 module api.dm.back.sdl3.sdl_texture;
 
-
-
 import api.dm.com.com_result : ComResult;
 import api.dm.com.graphic.com_texture : ComTexture;
 import api.dm.com.com_native_ptr : ComNativePtr;
@@ -567,6 +565,39 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
+    ComResult fill(ubyte r, ubyte g, ubyte b, ubyte a) nothrow
+    {
+        assert(locked);
+        assert(pixelPtr);
+        assert(pitch > 0);
+
+        int w, h;
+        if (const err = getSize(w, h))
+        {
+            return err;
+        }
+
+        if (h <= 0 || w <= 0)
+        {
+            return ComResult.error("Invalid texture size for filling");
+        }
+
+        SDL_PixelFormat formatValue = getPixelFormat;
+
+        SDL_PixelFormatDetails* details;
+        if (const err = getFormatDetails(cast(SDL_PixelFormat) formatValue, details))
+        {
+            return err;
+        }
+
+        Uint32 color = SDL_MapRGBA(details, null, r, g, b, a);
+
+        import core.stdc.string : memset;
+
+        memset(pixelPtr, color, pitch * h);
+        return ComResult.success;
+    }
+
     ComResult update(Rect2d rect, void* pixels, int pitch) nothrow
     {
         assert(ptr);
@@ -590,7 +621,6 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
     ComResult getPixels(out void* pixels)
     {
         assert(ptr);
-        assert(pixels);
 
         if (!locked)
         {

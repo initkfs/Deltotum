@@ -28,6 +28,7 @@ class VectorTexture : Texture2d
     bool delegate(ComSurface) onSurfaceIsContinue;
 
     bool isMutable;
+    bool isClearOnRecreate = true;
 
     this(double width, double height)
     {
@@ -265,6 +266,10 @@ class VectorTexture : Texture2d
         {
             createMutTexture;
             return true;
+        }
+
+        if(isClearOnRecreate){
+            fillColor(RGBA.transparent);
         }
 
         int w, h;

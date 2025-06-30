@@ -68,6 +68,8 @@ nothrow:
     ComResult unlock();
     ComResult isLocked(out bool locked);
 
+    ComResult fill(ubyte r, ubyte g, ubyte b, ubyte a);
+
     ComResult update(Rect2d rect, void* pixels, int pitch);
 
     ComResult getPixels(out void* pixels);

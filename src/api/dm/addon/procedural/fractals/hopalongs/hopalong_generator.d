@@ -51,7 +51,7 @@ class HopalongGenerator : Control
 
     size_t colorVariations = 1000;
 
-    this(double canvasWidth = 400, double canvasHeight = 400)
+    this(double canvasWidth = 200, double canvasHeight = 200)
     {
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
@@ -63,7 +63,6 @@ class HopalongGenerator : Control
         layout = new HLayout(5);
         layout.isAlignY = true;
         layout.isAutoResize = true;
-        isDrawBounds = true;
 
         hopalong = new Hopalong;
         points = new Vec2d[](hopalong.iterations);
@@ -112,9 +111,16 @@ class HopalongGenerator : Control
 
         hopalong.onPostIterate = () {};
 
+        canvas = new Container;
+        canvas.resize(canvasWidth, canvasHeight);
+        addCreate(canvas);
+
         hopalong.onIterXYIsContinue = (i, px, py) {
-            auto newX = x + px + width / 2;
-            auto newY = y + py + height / 2;
+
+            Vec2d pCenter = canvas.boundsRect.center;
+
+            auto newX = pCenter.x + px;
+            auto newY = pCenter.y + py;
 
             import api.dm.com.graphic.com_blend_mode : ComBlendMode;
 
@@ -138,14 +144,10 @@ class HopalongGenerator : Control
             return true;
         };
 
-        canvas = new Container;
-        canvas.resize(canvasWidth, canvasHeight);
-        addCreate(canvas);
-
         auto fieldRoot = new RegulateTextPanel(5);
         addCreate(fieldRoot);
-        fieldRoot.paddingBottom = 600;
-        fieldRoot.paddingLeft = 200;
+        //fieldRoot.paddingBottom = 600;
+        //fieldRoot.paddingLeft = 200;
 
         double minV = 0;
         double maxV = 1000;
@@ -232,6 +234,7 @@ class HopalongGenerator : Control
         field.scrollField.minValue = minValue;
         field.scrollField.maxValue = maxValue;
         field.scrollField.onValue ~= onScrollValue;
+        field.scrollField.valueStep = 0.1;
         return field;
     }
 

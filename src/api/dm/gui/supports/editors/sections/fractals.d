@@ -1,5 +1,7 @@
 module api.dm.gui.supports.editors.sections.fractals;
 
+import api.dm.gui.controls.containers.container;
+
 // dfmt off
 version(DmAddon):
 // dfmt on
@@ -13,7 +15,7 @@ import api.math.random : Random;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.containers.hbox : HBox;
 
-import api.dm.addon.procedural.lsystems.shapes.lshape : LShape;
+import api.dm.addon.procedural.lsystems.textures.lshape : LShape;
 import api.dm.addon.procedural.lsystems.lsystem : LSystemData;
 import LFractals = api.dm.addon.procedural.fractals.lfractals;
 
@@ -81,18 +83,33 @@ class Fractals : Control
         return shape;
     }
 
+    Container createVContainer()
+    {
+        import api.dm.gui.controls.containers.vbox : VBox;
+
+        auto container = new VBox;
+        container.isAlignX = true;
+        buildInitCreate(container);
+        return container;
+    }
+
+    Container createVTextContainer(string name)
+    {
+        import api.dm.gui.controls.texts.text: Text;
+
+        auto container = createVContainer;
+        auto label = new Text(name);
+        container.addCreate(label);
+
+        return container;
+    }
+
     Sprite2d createFractalInfo(string name, LSystemData fractal, GraphicStyle style, bool isDrawFromCenter = true, double translateX = 0, double translateY = 0, double rotateAngle = 0)
     {
         import api.dm.gui.controls.containers.vbox : VBox;
         import api.dm.gui.controls.texts.text : Text;
 
-        auto container = new VBox;
-        container.isAlignX = true;
-        buildInitCreate(container);
-
-        auto label = new Text;
-        label.text = name;
-        container.addCreate(label);
+        auto container = createVTextContainer(name);
 
         if (platform.cap.isVectorGraphics)
         {
@@ -104,12 +121,23 @@ class Fractals : Control
         return container;
     }
 
+    Sprite2d createFractalInfo(string name, Sprite2d fractal)
+    {
+        auto container = createVTextContainer(name);
+        container.addCreate(fractal);
+        return container;
+    }
+
+    Control createFractalControlInfo(string name, Control fractal)
+    {
+        auto container = createVTextContainer(name);
+        container.addCreate(fractal);
+        return container;
+    }
+
     override void create()
     {
         super.create;
-
-        import api.dm.gui.controls.containers.center_box : CenterBox;
-        import api.math.pos2.insets : Insets;
 
         auto container = newHContainer;
         addCreate(container);
@@ -184,26 +212,27 @@ class Fractals : Control
         auto container3 = newHContainer;
         addCreate(container3);
 
+        import api.dm.addon.procedural.fractals.images.mandelbrot : Mandelbrot;
+
+        auto mand = new Mandelbrot(shapeSize, shapeSize);
+        mand.foregroundColor = RGBA.web(MaterialPalette.purpleA100);
+        container3.addCreate(createFractalInfo("Mandelbrot", mand));
+
+        import api.dm.addon.procedural.fractals.images.julia : Julia;
+
+        auto julia = new Julia(shapeSize, shapeSize);
+        container3.addCreate(createFractalInfo("Julia", julia));
+
+        import api.dm.addon.procedural.fractals.images.newton : Newton;
+
+        auto newton = new Newton(shapeSize, shapeSize);
+        container3.addCreate(createFractalInfo("Newton", newton));
+
         import api.dm.addon.procedural.fractals.hopalongs.hopalong_generator : HopalongGenerator;
 
         auto hopGen = new HopalongGenerator;
-        container3.addCreate(hopGen);
-
-        // import api.dm.addon.sprites2d.images.fractals.mandelbrot : Mandelbrot;
-
-        // auto mand = new Mandelbrot(shapeSize, shapeSize);
-        // mand.foregroundColor = RGBA.web(MaterialPalette.purpleA100);
-        // container3.addCreate(createFractalInfo("Mandelbrot", mand, false));
-
-        // import api.dm.addon.sprites2d.images.fractals.julia : Julia;
-
-        // auto julia = new Julia(shapeSize, shapeSize);
-        // container3.addCreate(createFractalInfo("Julia", julia, false));
-
-        // import api.dm.addon.sprites2d.images.fractals.newton : Newton;
-
-        // auto newton = new Newton(shapeSize, shapeSize);
-        // container3.addCreate(createFractalInfo("Newton", newton, false));
+        hopGen.isBorder = true;
+        container3.addCreate(createFractalControlInfo("Hopalong", hopGen));
     }
 
 }

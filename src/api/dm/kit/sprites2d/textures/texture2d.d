@@ -420,6 +420,18 @@ class Texture2d : Sprite2d
         }
     }
 
+    void fillColor(RGBA color)
+    {
+        lock;
+        scope(exit){
+            unlock;
+        }
+        if (const err = texture.fill(color.r, color.g, color.b, color.aByte))
+        {
+            throw new Exception(err.toString);
+        }
+    }
+
     void changeColor(uint x, uint y, ubyte r, ubyte g, ubyte b, ubyte a)
     {
         if (const err = texture.setPixelColor(x, y, r, g, b, a))
