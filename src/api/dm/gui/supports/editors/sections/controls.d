@@ -884,9 +884,9 @@ class Controls : Control
         auto ledIcon3 = new LedIcon(IconNames.thermometer_outline, RGBA.green);
         ledContainer2.addCreate(ledIcon3);
 
-        import api.dm.gui.controls.viewers.magnifiers.magnifier : Magnifier;
+        import api.dm.gui.controls.viewers.magnifiers.window_magnifier : WindowMagnifier;
 
-        auto magn = new Magnifier;
+        auto magn = new WindowMagnifier;
         root.addCreate(magn);
     }
 
