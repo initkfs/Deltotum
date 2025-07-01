@@ -1,4 +1,4 @@
-module api.dm.gui.supports.editors.sections.audio;
+module api.dm.gui.supports.editors.sections.media;
 
 // dfmt off
 version(DmAddon):
@@ -53,7 +53,7 @@ import api.dm.addon.media.music_notes;
 /**
  * Authors: initkfs
  */
-class Audio : Control
+class Media : Control
 {
     ComAudioClip clip;
 

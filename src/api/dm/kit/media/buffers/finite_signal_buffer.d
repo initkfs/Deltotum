@@ -1,4 +1,4 @@
-module api.dm.addon.media.dsp.buffers.finite_signal_buffer;
+module api.dm.kit.media.buffers.finite_signal_buffer;
 
 import Math = api.math;
 

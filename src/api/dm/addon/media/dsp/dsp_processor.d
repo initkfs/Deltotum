@@ -47,6 +47,7 @@ class DspProcessor(SignalType, size_t SignalBufferSize, size_t SignalChannels = 
         sampleSizeForChannels = sampleWindowSize * SignalChannels;
 
         dspBuffer = newDspBuffer(m);
+        dspBuffer.initialize(isFillInit : false);
 
         localSampleBuffer = new SignalType[](sampleSizeForChannels);
         fftBuffer = new AnalogSignal[](sampleWindowSize / 2);

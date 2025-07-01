@@ -41,7 +41,7 @@ class MultiMedia : SimpleUnit
     AudioChunk!T newHeapChunk(T)(double durationMsec, size_t channels)
     {
         auto freqHz = audioOut.spec.freqHz;
-        import api.dm.addon.media.dsp.buffers.finite_signal_buffer : FiniteSignalBuffer;
+        import api.dm.kit.media.buffers.finite_signal_buffer : FiniteSignalBuffer;
         
 
         auto buff = FiniteSignalBuffer!T(freqHz, durationMsec, channels);

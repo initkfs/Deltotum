@@ -45,10 +45,10 @@ class GuiEditor : GuiScene
 
         version (DmAddon)
         {
-            import api.dm.gui.supports.editors.sections.audio : Audio;
+            import api.dm.gui.supports.editors.sections.media: Media;
 
-            auto audioTab = new Tab("Audio");
-            audioTab.content = new Audio;
+            auto audioTab = new Tab("Media");
+            audioTab.content = new Media;
             root.addCreate(audioTab);
         }
 
