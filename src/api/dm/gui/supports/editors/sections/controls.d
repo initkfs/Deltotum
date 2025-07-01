@@ -440,45 +440,6 @@ class Controls : Control
         auto colorPick2 = new ColorPicker;
         root2.addCreate(colorPick2);
 
-        // auto playerBox = new VBox;
-        // playerBox.isAlignX = true;
-        // root2.addCreate(playerBox);
-
-        // import api.dm.addon.gui.video.video_player: mediaPlayer, VideoPlayer;
-        // auto player = mediaPlayer;
-        // playerBox.addCreate(player);
-
-        // player.onPointerPress ~= (ref e){
-        //     player.demuxer.setStatePlay;
-        // };
-
-        // import api.dm.gui.controls.forms.regulates.regulate_text_panel: RegulateTextPanel;
-        // import api.dm.gui.controls.forms.regulates.regulate_text_field: RegulateTextField;
-
-        // void delegate() updatePlayer = (){
-        //     auto r = rField.value;
-        //     auto g = gField.value;
-        //     auto b = bField.value;
-        //     player.videoDecoder.setColor(r, g, b);
-        // };
-
-        // auto tp = new RegulateTextPanel;
-        // playerBox.addCreate(tp);
-
-        // rField = new RegulateTextField("R", 0, 1.0, (dt){
-        //     updatePlayer();
-        // });
-
-        // gField = new RegulateTextField("G", 0, 1.0, (dt){
-        //     updatePlayer();
-        // });
-
-        // bField = new RegulateTextField("B", 0, 1.0, (dt){
-        //     updatePlayer();
-        // });
-
-        // tp.addCreate([rField, gField, bField]);
-        // tp.alignFields;
 
         //import api.dm.kit.addon.media.ai.images.fusion_brain_api;
         // auto brainApi = new FusionBrainApi(logging, config, context);

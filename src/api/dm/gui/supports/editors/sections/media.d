@@ -4,51 +4,42 @@ module api.dm.gui.supports.editors.sections.media;
 version(DmAddon):
 // dfmt on
 
+import api.dm.com.audio.com_audio_mixer;
+import api.dm.com.audio.com_audio_clip;
+import api.dm.com.audio.com_audio_chunk;
+
 import api.dm.gui.controls.control : Control;
-import api.dm.com.audio.com_audio_mixer : ComAudioMixer;
-import api.dm.com.audio.com_audio_clip : ComAudioClip;
-import api.dm.com.audio.com_audio_chunk : ComAudioChunk;
-import api.dm.addon.media.dsp.signals.analog_signal : AnalogSignal;
-import api.math.geom2.rect2 : Rect2d;
+
+import api.dm.addon.dsp.signals.analog_signal : AnalogSignal;
+import api.dm.addon.dsp.analyzers.analog_signal_analyzer : AnalogSignalAnalyzer;
+
+import api.dm.addon.media.audio.music_notes;
+
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.controls.switches.buttons.button : Button;
-import api.dm.addon.media.formats.wav.wav_writer : WavWriter;
-
-import std.stdio;
-
-import api.dm.back.sdl3.externs.csdl3;
-import api.dm.com.audio.com_audio_mixer;
+import api.dm.addon.media.audio.formats.wav.wav_writer : WavWriter;
 
 import core.sync.mutex;
-import core.sync.semaphore;
-import api.dm.addon.media.dsp.analyzers.analog_signal_analyzer : AnalogSignalAnalyzer;
-import std.math.traits : isPowerOf2;
 
-import api.dm.addon.media.dsp.dsp_processor : DspProcessor;
-import api.dm.addon.media.dsp.equalizers.band_equalizer : BandEqualizer;
+import api.dm.addon.dsp.dsp_processor : DspProcessor;
+import api.dm.addon.dsp.equalizers.band_equalizer : BandEqualizer;
 import api.dm.gui.controls.meters.levels.rect_level : RectLevel;
-import api.dm.addon.media.dsp.synthesis.signal_synthesis;
+import api.dm.addon.dsp.synthesis.signal_synthesis;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.gui.controls.texts.text : Text;
-import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.meters.spinners.spinner : Spinner;
 import api.dm.gui.controls.meters.scrolls.hscroll : HScroll;
 import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
 import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
-
-import api.dm.addon.gui.audio.piano : Piano;
-import api.dm.addon.gui.audio.pattern_synthesizer;
-
-import api.dm.addon.media.synthesizers.fm_synthesizer : FMSynthesizer;
+import api.dm.addon.media.audio.gui.piano : Piano;
+import api.dm.addon.media.audio.synthesizers.fm_synthesizer : FMSynthesizer;
 
 import Math = api.math;
-
-import std;
-import api.dm.addon.media.music_notes;
+import api.math.geom2.rect2 : Rect2d;
 
 /**
  * Authors: initkfs
@@ -94,8 +85,6 @@ class Media : Control
     alias Uint8 = ubyte;
 
     static shared Mutex sampleBufferMutex;
-    static shared Mutex mutexWrite;
-    static shared Mutex mutexSwap;
 
     import api.dm.kit.media.audio.chunks.audio_chunk : AudioChunk;
     import api.math.numericals.interp;
@@ -104,15 +93,13 @@ class Media : Control
     FMSynthesizer!short synt;
     FMSynthesizer!short drumSynt;
 
-    AudioChunk!short drumChunk;
-
     AudioChunk!short[size_t] channels;
 
-    AudioChunk!short testPatternChunk;
+    import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
 
-    Text drumText;
-
-    PatternSynthesizer!short patternSynt;
+    RegulateTextField rField;
+    RegulateTextField gField;
+    RegulateTextField bField;
 
     override void create()
     {
@@ -287,111 +274,6 @@ class Media : Control
             throw new Exception(err.toString);
         }
 
-        //drumChunk = media.newHeapChunk!short(500);
-
-        //regenDrum;
-
-        // drumBtn.onOldNewValue ~= (oldv, newv) {
-        //     if (newv)
-        //     {
-        //         parseDrum;
-        //         drumChunk.loop;
-        //     }
-        //     else
-        //     {
-        //         drumChunk.stop;
-        //     }
-        // };
-
-        auto fmBox = new VBox;
-        addCreate(fmBox);
-
-        patternSynt = new PatternSynthesizer!short(sampleFreq);
-        fmBox.addCreate(patternSynt);
-
-        //TODO remove
-        patternSynt.loadFile = "/home/user/sdl-music/pattern-load.txt";
-        patternSynt.saveFile = "/home/user/sdl-music/pattern-save.txt";
-
-        patternSynt.onPattern = (p) {};
-
-        patternSynt.onPlay = (p, amp) {
-
-            synt.fm = p.pattern.fmHz;
-            synt.index = p.pattern.fmIndex;
-            synt.isFcMulFm = p.pattern.isFcMulFm;
-
-            MusicNote note = MusicNote(p.pattern.freqHz, p.pattern.noteType, 120);
-
-            synt.note(note, amp, (data, time) {
-                if (testPatternChunk)
-                {
-                    if (testPatternChunk.data.buffer.length == data.length)
-                    {
-                        testPatternChunk.data.buffer[] = data;
-                        return;
-                    }
-
-                    testPatternChunk.dispose;
-                }
-
-                testPatternChunk = media.newHeapChunk!short(time);
-                testPatternChunk.data.buffer[] = data;
-            });
-
-            testPatternChunk.play;
-        };
-
-        patternSynt.onPatterns = (isPlay, patterns, i, amp) {
-
-            if (!isPlay)
-            {
-                if (auto chunkPtr = i in channels)
-                {
-                    (*chunkPtr).stop;
-                }
-                return;
-            }
-
-            FMdata[] data;
-            foreach (p; patterns)
-            {
-                data ~= FMdata(p.pattern.freqHz, p.pattern.fmHz, p.pattern.fmIndex, noteTimeMs(120, p
-                        .pattern.noteType), p.pattern.isFcMulFm);
-            }
-
-            if (data.length == 0)
-            {
-                return;
-            }
-
-            AudioChunk!short chunk;
-            if (auto chunkPtr = i in channels)
-            {
-                chunk = *chunkPtr;
-            }
-
-            synt.sequence(data, amp, (time) {
-                if (chunk)
-                {
-                    if (chunk.data.buffer.length == data.length)
-                    {
-                        return chunk.data.buffer;
-                    }
-                    else
-                    {
-                        chunk.dispose;
-                    }
-                }
-
-                auto newChunk = media.newHeapChunk!short(time);
-                channels[i] = newChunk;
-                return newChunk.data.buffer;
-            });
-
-            channels[i].loop;
-        };
-
         level = new RectLevel((i) {
             if (i < equalizer.bandValues.length)
             {
@@ -413,93 +295,50 @@ class Media : Control
         };
 
         addCreate(level);
-    }
 
-    void parseDrum()
-    {
-        auto text = drumText.text;
-        assert(text.length > 0);
+        import api.dm.addon.media.video.gui.video_player : mediaPlayer;
+        import api.dm.gui.controls.containers.hbox: HBox;
 
-        import std.format.read : formattedRead;
+        auto playerBox = new HBox;
+        playerBox.isAlignY = true;
+        addCreate(playerBox);
 
-        FMdata[] notes;
+        import api.dm.addon.media.video.gui.video_player : mediaPlayer, VideoPlayer;
 
-        foreach (noteData; text.split(";"))
-        {
-            if (noteData.length == 0)
-            {
-                continue;
-            }
+        auto player = mediaPlayer("https://ndtv24x7elemarchana.akamaized.net/hls/live/2003678/ndtv24x7/master.m3u8");
+        playerBox.addCreate(player);
 
-            int noteDur, fc, fm, index;
+        player.onPointerPress ~= (ref e) {
+            player.load;
+            player.demuxer.setStatePlay;
+        };
 
-            try
-            {
-                formattedRead(noteData, "%d(%d,%d,%d)", noteDur, fc, fm, index);
-                NoteType type = cast(NoteType) noteDur;
-                auto time = noteTimeMs(120, type);
+        import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
+        import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
 
-                notes ~= FMdata(fc, fm, index, time);
-            }
-            catch (Exception e)
-            {
-                logger.error(e.toString);
-            }
-        }
+        void delegate() updatePlayer = () {
+            auto r = rField.value;
+            auto g = gField.value;
+            auto b = bField.value;
+            player.videoDecoder.setColor(r, g, b);
+        };
 
-        double amp = 0.5;
+        auto tp = new RegulateTextPanel;
+        playerBox.addCreate(tp);
 
-        // drumSynt.sequence(notes, (buff, fullTime) {
-        //     //TODO reuse;
-        //     if (drumChunk)
-        //     {
-        //         drumChunk.dispose;
-        //     }
-        //     drumChunk = media.newHeapChunk!short(fullTime);
-        //     drumChunk.data.buffer[] = buff;
+        rField = new RegulateTextField("R", 0, 1.0, (dt) { updatePlayer(); });
 
-        //     // auto writer = new WavWriter;
-        //     // writer.save("/home/user/sdl-music/out.wav", drumChunk.data.buffer, drumChunk
-        //     //     .spec);
-        // }, amp);
-    }
+        gField = new RegulateTextField("G", 0, 1.0, (dt) { updatePlayer(); });
 
-    void regenDrum()
-    {
-        // drumSynt.synt.adsr.attack = drumA.value;
-        // drumSynt.synt.adsr.decay = drumD.value;
-        // drumSynt.synt.adsr.sustain = drumS.value;
-        // drumSynt.synt.adsr.release = drumR.value;
+        bField = new RegulateTextField("B", 0, 1.0, (dt) { updatePlayer(); });
 
-        // drumSynt.synt.sound(drumChunk.data.buffer);
+        tp.addCreate([rField, gField, bField]);
+        tp.alignFields;
     }
 
     AudioChunk!short newChunk()
     {
         return media.newHeapChunk!short(noteTimeMs(120, NoteType.note1_4));
-    }
-
-    double noteTimeMs(double bpm, NoteType noteType, double minDurMs = 50)
-    {
-        auto dur = (60.0 / bpm) * (4.0 / noteType) * 1000;
-        if (dur < minDurMs)
-        {
-            dur = minDurMs;
-        }
-        return dur;
-    }
-
-    // unittest
-    // {
-    //     import std.math.operations : isClose;
-
-    //     assert(isClose(noteTimeMs(120, NoteType.note1_8), 500));
-    //     assert(isClose(noteTimeMs(60, NoteType.note1_16), 125));
-    // }
-
-    override void drawContent()
-    {
-        super.drawContent;
     }
 
     override void pause()
@@ -526,11 +365,6 @@ class Media : Control
         foreach (chunk; chunks)
         {
             chunk.dispose;
-        }
-
-        if (testPatternChunk)
-        {
-            testPatternChunk.dispose;
         }
     }
 }
