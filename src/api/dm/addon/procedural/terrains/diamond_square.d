@@ -1,4 +1,4 @@
-module api.dm.addon.math.geom2.diamond_square;
+module api.dm.addon.procedural.terrains.diamond_square;
 /**
  * Authors: initkfs
  */

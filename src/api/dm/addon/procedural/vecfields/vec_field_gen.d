@@ -1,6 +1,6 @@
-module api.dm.addon.math.vecfields.vec_field_gen;
+module api.dm.addon.procedural.vecfields.vec_field_gen;
 
-import api.dm.addon.math.vecfields.vec_field : VecField;
+import api.dm.addon.procedural.vecfields.vec_field : VecField;
 import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
 
 import api.dm.gui.controls.containers.container : Container;
@@ -30,16 +30,14 @@ class VecFieldGen : Container
 
     Random rnd;
 
-    bool isStartRender;
-
-    this(double canvasWidth = 100, double canvasHeight = 100)
+    this(double canvasWidth = 200, double canvasHeight = 200)
     {
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
 
         import api.dm.kit.sprites2d.layouts.hlayout : HLayout;
 
-        layout = new HLayout(5);
+        layout = new HLayout;
         layout.isAutoResize = true;
     }
 
@@ -50,7 +48,7 @@ class VecFieldGen : Container
         rnd = new Random;
 
         vecField = new VecField(canvasWidth, canvasHeight);
-        vecField.create(x, y);
+        vecField.create(0, 0);
 
         canvas = new class VectorTexture
         {
@@ -63,21 +61,16 @@ class VecFieldGen : Container
             {
                 super.createTextureContent;
 
-                if (!isStartRender)
-                {
-                    return;
-                }
-
                 auto ctx = canvas;
+                //ctx.translate(canvasWidth / 2, canvasHeight / 2);
 
                 ctx.color = RGBA.lightblue;
-
-                ctx.color = RGBA.red;
 
                 Vec2d[] points;
                 foreach (newX; vecField.gridBounds.x .. vecField.gridBounds.right)
                 {
-                    points ~= Vec2d(newX, vecField.gridBounds.bottom - 250);
+                    points ~= Vec2d(newX, vecField.gridBounds.bottom);
+                    import std;
                 }
 
                 vecField.drawFlows(points, (p) {
@@ -91,7 +84,7 @@ class VecFieldGen : Container
         };
 
         addCreate(canvas);
-        //canvas.isDrawBounds = true;
+        canvas.isDrawBounds = true;
 
         RegulateTextPanel controlPanel = new RegulateTextPanel;
         addCreate(controlPanel);
@@ -131,8 +124,15 @@ class VecFieldGen : Container
         }
 
         vecField.drawGrid((p1, p2) {
-            graphic.line(p1, p2);
-            graphic.fillCircle(p1.x, p1.y, 2);
+
+            assert(canvas);
+            const pos = canvas.boundsRect.center;
+
+            auto cp1 = pos.add(p1);
+            auto cp2 = pos.add(p2);
+
+            graphic.line(cp1, cp2);
+            graphic.fillCircle(cp1.x, cp1.y, 2);
         });
     }
 }

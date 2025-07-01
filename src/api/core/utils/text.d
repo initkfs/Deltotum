@@ -7,7 +7,6 @@ import std.stdio;
 
 import std.traits : isAutodecodableString, isSomeChar;
 import std.range.primitives : isInputRange, ElementEncodingType;
-import api.dm.addon.math.geom2.triangulations.fortune;
 
 bool isUnwant(dchar ch) nothrow @nogc pure @safe
 {

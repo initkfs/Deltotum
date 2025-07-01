@@ -3,8 +3,6 @@ module api.dm.addon.media.dsp.analyzers.analog_signal_analyzer;
 import api.dm.addon.media.dsp.signals.analog_signal : AnalogSignal;
 import DspWinFunc = api.dm.addon.media.dsp.signal_funcs;
 
-import api.dm.addon.math.geom2.triangulations.fortune;
-
 import Math = api.math;
 
 /**

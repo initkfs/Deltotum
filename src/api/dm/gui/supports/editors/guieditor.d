@@ -39,7 +39,7 @@ class GuiEditor : GuiScene
 
         import api.dm.gui.supports.editors.sections.graphic : Grahpics;
 
-        auto graphicsTab = new Tab("Graphic");
+        auto graphicsTab = new Tab("Graphics");
         graphicsTab.content = new Grahpics;
         root.addCreate(graphicsTab);
 
@@ -51,12 +51,6 @@ class GuiEditor : GuiScene
             audioTab.content = new Audio;
             root.addCreate(audioTab);
         }
-
-        import api.dm.gui.supports.editors.sections.textures : Textures;
-
-        auto texturesTab = new Tab("Textures");
-        texturesTab.content = new Textures;
-        root.addCreate(texturesTab);
 
         import api.dm.gui.supports.editors.sections.fonts : Fonts;
 

@@ -148,7 +148,6 @@ class Procedural : Control
 
     void createNoise(Control noiseRoot)
     {
-
         enum w = 100;
         enum h = 100;
         enum hue = 110;
@@ -192,12 +191,12 @@ class Procedural : Control
         auto noiseRoot2 = new HBox(5);
         noiseRoot.addCreate(noiseRoot2);
 
-        import api.dm.addon.procedural.noises.textures.perlin: Perlin;
+        import api.dm.addon.procedural.noises.textures.perlin : Perlin;
 
         auto p2 = new Perlin;
         noiseRoot.addCreate(createInfo("Perlin 2", p2));
 
-        import  api.dm.addon.procedural.noises.textures.open_simplex: OpenSimplex;
+        import api.dm.addon.procedural.noises.textures.open_simplex : OpenSimplex;
 
         auto op2 = new OpenSimplex;
         noiseRoot.addCreate(createInfo("Simplex 2", op2));

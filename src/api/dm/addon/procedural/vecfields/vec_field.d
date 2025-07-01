@@ -1,4 +1,4 @@
-module api.dm.addon.math.vecfields.vec_field;
+module api.dm.addon.procedural.vecfields.vec_field;
 
 import api.math.geom2.rect2 : Rect2d;
 import api.math.geom2.vec2 : Vec2d;
@@ -22,7 +22,7 @@ class VecField
     FieldVec[][] grid;
 
     size_t steps = 20;
-    double resolution = 5;
+    double resolution = 40;
 
     protected
     {
@@ -47,7 +47,8 @@ class VecField
         auto rightX = _width * 1.5;
         auto topY = _height * -0.5;
         auto bottomY = _height * 1.5;
-        resolution = _width * 0.05;
+        //resolution = _width * 0.05;
+        
         _colCount = cast(size_t)((rightX - leftX) / resolution);
         _rowCount = cast(size_t)((bottomY - topY) / resolution);
 
