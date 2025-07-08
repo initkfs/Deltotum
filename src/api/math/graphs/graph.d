@@ -1,7 +1,7 @@
-module api.dm.addon.math.graphs.graph;
+module api.math.graphs.graph;
 
-import api.dm.addon.math.graphs.vertex : Vertex;
-import api.dm.addon.math.graphs.edge : Edge;
+import api.math.graphs.vertex : Vertex;
+import api.math.graphs.edge : Edge;
 
 import std.typecons : Nullable;
 import std.container.dlist : DList;
@@ -262,13 +262,12 @@ class Graph
             }
         }
     }
-
 }
 
 unittest
 {
-    import api.dm.addon.math.graphs.vertex : Vertex;
-    import api.dm.addon.math.graphs.edge : Edge;
+    import api.math.graphs.vertex : Vertex;
+    import api.math.graphs.edge : Edge;
 
     Vertex v1 = new Vertex(1);
     Vertex v11 = new Vertex(1);

@@ -762,6 +762,11 @@ class Graphic : LoggableUnit
         fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
     }
 
+    void fillRect(Rect2d bounds, RGBA color)
+    {
+        fillRect(bounds.x, bounds.y, bounds.width, bounds.height, color);
+    }
+
     void fillRect(Vec2d pos, double width, double height, RGBA fillColor = defaultColor)
     {
         fillRect(pos.x, pos.y, width, height, fillColor);

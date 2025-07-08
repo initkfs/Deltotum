@@ -1,6 +1,6 @@
-module api.dm.addon.math.graphs.edge;
+module api.math.graphs.edge;
 
-import api.dm.addon.math.graphs.vertex : Vertex;
+import api.math.graphs.vertex : Vertex;
 
 /**
  * Authors: initkfs

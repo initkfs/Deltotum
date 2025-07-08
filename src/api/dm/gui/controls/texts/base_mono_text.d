@@ -76,6 +76,7 @@ class BaseMonoText : Control
     ref inout(typeof(_textBuffer)) buffer() inout => _textBuffer;
     size_t bufferLength() => _textBuffer.length;
     Glyph[] allGlyphs() => _textBuffer.buffer;
+    const(Glyph)[] allGlyphsConst() const => _textBuffer.buffer;
     size_t lastGlyphIndex() => _textBuffer.length == 0 ? 0 : _textBuffer.length - 1;
 
     size_t[] lineBreaks() => textLayout.lineBreaks;
@@ -633,7 +634,7 @@ class BaseMonoText : Control
 
     size_t rowCount() => textLayout.lineBreaks.length;
 
-    dstring text()
+    dstring text() const
     {
         if (!isBuilt)
         {
@@ -643,7 +644,7 @@ class BaseMonoText : Control
         import std.array : appender;
 
         auto builder = appender!dstring;
-        foreach (ref glyph; allGlyphs)
+        foreach (ref glyph; allGlyphsConst)
         {
             builder ~= glyph.grapheme;
         }

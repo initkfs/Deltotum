@@ -45,7 +45,7 @@ class GuiEditor : GuiScene
 
         version (DmAddon)
         {
-            import api.dm.gui.supports.editors.sections.media: Media;
+            import api.dm.gui.supports.editors.sections.media : Media;
 
             auto audioTab = new Tab("Media");
             audioTab.content = new Media;
@@ -97,7 +97,13 @@ class GuiEditor : GuiScene
             root.addCreate(fractalsTab);
         }
 
-        root.changeTab(controlsTab);
+        import api.dm.gui.supports.editors.sections.electronics : Electronics;
+
+        auto eleTab = new Tab("Ele");
+        eleTab.content = new Electronics;
+        root.addCreate(eleTab);
+
+        root.changeTab(eleTab);
 
         //import std;
         // createDebugger;

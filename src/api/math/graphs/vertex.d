@@ -1,4 +1,6 @@
-module api.dm.addon.math.graphs.vertex;
+module api.math.graphs.vertex;
+
+import api.math.geom2.vec2 : Vec2d;
 
 /**
  * Authors: initkfs
@@ -6,6 +8,8 @@ module api.dm.addon.math.graphs.vertex;
 class Vertex
 {
     long id;
+    Vec2d pos;
+    Vec2d force;
     bool isVisited;
 
     this(long id) pure @safe

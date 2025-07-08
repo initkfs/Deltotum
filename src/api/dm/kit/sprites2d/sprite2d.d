@@ -1665,6 +1665,8 @@ class Sprite2d : EventKitTarget
         return isWidth || isHeight;
     }
 
+    protected bool initSize(double newSize) => initSize(newSize, newSize);
+
     protected void initSizeForce(double newWidth, double newHeight)
     {
         initWidthForce(newWidth);

@@ -1,8 +1,8 @@
-module api.dm.addon.math.graphs.traversal;
+module api.math.graphs.traversal;
 
-import api.dm.addon.math.graphs.vertex : Vertex;
-import api.dm.addon.math.graphs.edge : Edge;
-import api.dm.addon.math.graphs.graph : Graph;
+import api.math.graphs.vertex : Vertex;
+import api.math.graphs.edge : Edge;
+import api.math.graphs.graph : Graph;
 
 /**
  * Authors: initkfs
