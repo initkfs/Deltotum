@@ -179,7 +179,7 @@ struct DenseBuffer(T, size_t Capacity = 256,
         return true;
     }
 
-    bool append(scope T[] value) @nogc nothrow @safe
+    bool append(scope const(T)[] value) @nogc nothrow @safe
     {
         //TODO overflow
         size_t newLength = _length + value.length;
