@@ -33,14 +33,23 @@ class Simulator : Container
 
         auto battery = new VoltageSource(12.0);
         auto resistor = new Resistor(4.0, "R1");
+        auto ground = new Ground; 
 
-        auto wire1 = new Wire(battery.p, resistor.p);
-        auto wire2 = new Wire(resistor.n, battery.n);
+        circuit.addCreateItem(battery);
+        circuit.addCreateItem(resistor);
+        circuit.addCreateItem(ground);
 
-        circuit.addCreate(battery);
-        circuit.addCreate(resistor);
-        circuit.addCreate(wire1);
-        circuit.addCreate(wire2);
+        auto wire1 = new Wire(battery.p, resistor.p, battery, resistor);
+        auto wire2 = new Wire(resistor.n, ground.p, resistor, ground);
+        auto wire3 = new Wire(ground.p, battery.n, ground, battery);
+
+        circuit.addCreateItem(wire1);
+        circuit.addCreateItem(wire2);
+        circuit.addCreateItem(wire3);
+
+        circuit.onPointerPress ~= (ref e){
+            circuit.alignComponents;
+        };
     }
 
 }

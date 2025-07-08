@@ -12,13 +12,13 @@ class Vertex
     Vec2d force;
     bool isVisited;
 
-    this(long id) pure @safe
+    this(long id = 0) pure @safe
     {
         this.id = id;
     }
 
     override bool opEquals(Object o) const => opEquals(cast(const(Vertex)) o);
-    bool opEquals(const Vertex other) const @safe nothrow pure => (other && other.id == id && other.isVisited == isVisited);
+    bool opEquals(const Vertex other) const @safe nothrow pure => (other && other.id == id && other.isVisited == isVisited && other.pos == other.pos && other.force == other.force);
 
     override size_t toHash() const pure nothrow
     {

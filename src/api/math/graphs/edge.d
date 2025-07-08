@@ -10,6 +10,8 @@ class Edge
     Vertex src;
     Vertex dest;
 
+    bool isVisited;
+
     double weight = 0;
 
     this(Vertex src, Vertex dest) pure @safe
@@ -24,7 +26,12 @@ class Edge
             throw new Exception("Destination vertex must not be null");
         }
 
-        if ((cast(const(Vertex)) src).opEquals(cast(const(Vertex)) dest))
+        // if ((cast(const(Vertex)) src).opEquals(cast(const(Vertex)) dest))
+        // {
+        //     throw new Exception("Source vertex must not be destination");
+        // }
+
+        if (src is dest)
         {
             throw new Exception("Source vertex must not be destination");
         }

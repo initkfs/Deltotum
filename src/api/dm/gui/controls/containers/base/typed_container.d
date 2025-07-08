@@ -1,6 +1,6 @@
 module api.dm.gui.controls.containers.base.typed_container;
 
-import api.dm.gui.controls.containers.container: Container;
+import api.dm.gui.controls.containers.container : Container;
 
 /**
  * Authors: initkfs
@@ -10,16 +10,26 @@ class TypedContainer(T) : Container
     protected
     {
         T[] items;
+
+        bool delegate(T) canItemAddToItems;
+        void delegate(T) onItemAdd;
     }
 
-    alias add = Container.add;
-
-    void add(T component, long index = -1)
+    void addCreateItem(T item, long index = -1)
     {
-        super.add(component, index);
-        items ~= component;
+        super.addCreate(item, index);
+
+        if (canItemAddToItems && !canItemAddToItems(item))
+        {
+            return;
+        }
+        items ~= item;
+        if (onItemAdd)
+        {
+            onItemAdd(item);
+        }
     }
-    
+
     override void dispose()
     {
         super.dispose;
