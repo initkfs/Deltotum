@@ -5,8 +5,8 @@ import api.subs.ele.circuit;
 import api.subs.ele.components;
 
 import api.math.graphs.graph;
-import api.math.graphs.vertex: Vertex;
-import api.math.graphs.edge: Edge;
+import api.math.graphs.vertex : Vertex;
+import api.math.graphs.edge : Edge;
 
 /**
  * Authors: initkfs
@@ -32,8 +32,8 @@ class Simulator : Container
         circuit.toCenter;
 
         auto battery = new VoltageSource(12.0);
-        auto resistor = new Resistor(4.0, "R1");
-        auto ground = new Ground; 
+        auto resistor = new Resistor(500.0, "R1");
+        auto ground = new Ground;
 
         circuit.addCreateItem(battery);
         circuit.addCreateItem(resistor);
@@ -47,9 +47,12 @@ class Simulator : Container
         circuit.addCreateItem(wire2);
         circuit.addCreateItem(wire3);
 
-        circuit.onPointerPress ~= (ref e){
-            circuit.alignComponents;
-        };
+        circuit.onPointerPress ~= (ref e) { circuit.alignComponents; };
+
+        /*foreach (node; nodes) {
+        assert(node.pins.map!(p => p.current).sum.approxEqual(0.0));
+        }*/
+
     }
 
 }

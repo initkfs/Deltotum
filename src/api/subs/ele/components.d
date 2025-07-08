@@ -9,6 +9,9 @@ import api.dm.gui.controls.control : Control;
 import api.math.graphs.vertex : Vertex;
 import api.math.graphs.edge : Edge;
 import api.math.pos2.orientation : Orientation;
+import api.math.geom2.vec2 : Vec2d;
+
+import Math = api.math;
 
 struct Pin
 {
@@ -34,6 +37,8 @@ abstract class Component : Control
 abstract class Element : Component
 {
     import api.dm.gui.controls.texts.text : Text;
+    import api.math.geom2.vec3;
+    import api.dm.kit.graphics.colors.processings.processing;
 
     Text label;
     Vertex vertex;
@@ -136,6 +141,10 @@ abstract class ConnectorTwoPin : Component
     Connection fromPin;
     Connection toPin;
 
+    Vec2d[1] points;
+
+    double spacing = 5;
+
     this(Connection fromPin, Connection toPin, TwoPinElement src, TwoPinElement dst)
     {
         assert(fromPin);
@@ -157,39 +166,102 @@ abstract class ConnectorTwoPin : Component
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
         graphic.line(fromPin.pos, toPin.pos, RGBA.green);
-    }
-}
 
-class Wire : ConnectorTwoPin
-{
-    double length; //pixels
-    double[] points; //normalization
+        graphic.color = RGBA.red;
+        scope (exit)
+        {
+            graphic.restoreColor;
+        }
 
-    this(Connection fromPin, Connection toPin, TwoPinElement src, TwoPinElement dst)
-    {
-        super(fromPin, toPin, src, dst);
+        auto start = fromPin.pos;
 
-        //length = distance(p1, p2);
-        points = new double[cast(size_t)(length / 10)]; // pixels
-        points[] = 0;
+        foreach (ref p; points)
+        {
+            graphic.fillRect(start.add(p), 5, 5);
+        }
     }
 
     override void update(double dt)
     {
         super.update(dt);
 
-        //Color color = (I > 0) ? COLOR_RED : COLOR_BLUE;
-        enum scale = 1.0;
-        //AC if (I < 0) pos -=
+        toPin.pin.voltage = fromPin.pin.voltage;
+        if (cast(Ground) dst)
+        {
+            fromPin.pin.voltage = 0;
+        }
 
-        // double I = start.current;
-        // foreach (ref pos; points)
-        // {
-        //     pos += (I * dt * scale) / (length * 1e-9); // q = 1e-9
-        //     if (pos > 1)
-        //         pos = 0;
-        // }
-        //pos = lerp(oldPos, newPos, 0.2);
+        import api.dm.kit.graphics.colors.rgba : RGBA;
+
+        double current = 0;
+
+        //RGBA color = (I > 0) ? RGBA.red : RGBA.blue;
+
+        Vec2d direction;
+        double currentFlow = 0;
+
+        if (fromPin.pin.current > 0 && toPin.pin.current < 0)
+        {
+            //from -> to
+            direction = (toPin.pos - fromPin.pos).normalize;
+            currentFlow = Math.min(fromPin.pin.current, -toPin.pin.current);
+        }
+        else if (fromPin.pin.current < 0 && toPin.pin.current > 0)
+        {
+            //to -> from
+            direction = (fromPin.pos - toPin.pos).normalize;
+            currentFlow = Math.min(-fromPin.pin.current, toPin.pin.current);
+        }
+        else if (fromPin.pin.current != 0 || toPin.pin.current != 0)
+        {
+            if (Math.abs(fromPin.pin.current) > Math.abs(toPin.pin.current))
+            {
+                direction = (toPin.pos - fromPin.pos).normalize;
+                currentFlow = Math.abs(fromPin.pin.current);
+            }
+            else
+            {
+                direction = (fromPin.pos - toPin.pos).normalize;
+                currentFlow = Math.abs(fromPin.pin.current);
+            }
+
+            if ((fromPin.pin.current > 0 && toPin.pin.current == 0) || (fromPin.pin.current == 0 && toPin.pin.current < 0))
+            {
+
+            }
+            else
+            {
+                direction = direction.reflect;
+            }
+        }
+
+        double minSpeed = 5;
+        double scale = 50;
+        double speed = minSpeed + currentFlow * scale;
+
+        double moveDist = speed * dt;
+
+        Vec2d start = fromPin.pos;
+
+        foreach (ref point; points)
+        {
+            if ((start.add(point) - fromPin.pos)
+                .dotProduct(direction) > (toPin.pos - fromPin.pos).length)
+            {
+                point = Vec2d(0, 0);
+                continue;
+            }
+            //auto dp = (I * dt * scale) / (length * 1e-9); // q = 1e-9
+            point = point.add(direction.scale(moveDist));
+        }
+    }
+}
+
+class Wire : ConnectorTwoPin
+{
+    this(Connection fromPin, Connection toPin, TwoPinElement src, TwoPinElement dst)
+    {
+        super(fromPin, toPin, src, dst);
     }
 }
 
@@ -261,6 +333,14 @@ class VoltageSource : TwoPinElement
         super.update(dt);
         p.pin.voltage = voltage;
         n.pin.voltage = 0; // Ground
+
+        //const Rinternal = 0.1;
+        // double current = (p.voltage - n.voltage) / Rinternal;
+        // double I = p.current;
+        // double terminalVoltage = V - current * R_internal;
+        // p.voltage = terminalVoltage;
+        // n.voltage = 0;
+        // n.current = -p.current;
     }
 
     override Sprite2d createContent()
