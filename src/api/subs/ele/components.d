@@ -19,11 +19,16 @@ struct Pin
     double currentIn = 0;
     double currentOut = 0;
 
+    double currentInMa() => currentMa(currentIn);
+    double currentOutMa() => currentMa(currentOut);
+
     void current(double inValue, double outValue)
     {
         currentIn = inValue;
         currentOut = outValue;
     }
+
+    double currentMa(double currentA) => currentA * 1000;
 }
 
 class Connection : Control
@@ -158,9 +163,9 @@ abstract class TwoPinElement : OnePinElement
         tooltip.onShow ~= () {
             import std.format : format;
 
-            string text = format("P.in:%.2fmA,out:%.2fmA,v:%.2fV\nN.in:%.2fmA,out:%.2fmA,v:%.2fV", p.pin.currentIn, p
-                    .pin.currentOut, p.pin.voltage, n
-                    .pin.currentIn, n.pin.currentOut, n.pin.voltage);
+            string text = format("P.in:%.2fmA,out:%.2fmA,v:%.2fV\nN.in:%.2fmA,out:%.2fmA,v:%.2fV", p.pin.currentInMa, p
+                    .pin.currentOutMa, p.pin.voltage, n
+                    .pin.currentInMa, n.pin.currentOutMa, n.pin.voltage);
             assert(tooltip.label);
             tooltip.label.text = text;
         };
@@ -202,7 +207,7 @@ abstract class ConnectorTwoPin : Component
 
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        graphic.line(fromPin.pos, toPin.pos, RGBA.green);
+        graphic.line(fromPin.pos, toPin.pos, RGBA.yellowgreen);
 
         graphic.color = RGBA.red;
         scope (exit)
@@ -231,6 +236,23 @@ abstract class ConnectorTwoPin : Component
         if (cast(VoltageSource) src)
         {
             fromPin.pin.currentOut = toPin.pin.currentIn;
+        }
+
+        if (cast(Resistor) src && cast(Resistor) dst)
+        {
+            auto srcR = cast(Resistor) src;
+            auto dstR = cast(Resistor) dst;
+
+            double totalR = srcR.resistance + dstR.resistance;
+            double current = srcR.p.pin.voltage / totalR;
+
+            double midVoltage = srcR.p.pin.voltage - (current * srcR.resistance);
+            srcR.n.pin.voltage = midVoltage;
+        }
+
+        if(cast(VoltageSource) dst && cast(Ground) src){
+            auto bat = cast(VoltageSource) dst;
+            bat.n.pin.currentIn = src.p.pin.currentIn;
         }
 
         //toPin.pin.currentIn = fromPin.pin.currentOut;
@@ -276,7 +298,7 @@ abstract class ConnectorTwoPin : Component
             current = 0;
         }
 
-        double minSpeed = 5;
+        double minSpeed = 70;
         double scale = 50;
         double speed = minSpeed + currentFlow * scale;
 
