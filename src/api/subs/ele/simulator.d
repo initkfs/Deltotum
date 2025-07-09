@@ -52,6 +52,8 @@ class Simulator : Container
         /*foreach (node; nodes) {
         assert(node.pins.map!(p => p.current).sum.approxEqual(0.0));
         }*/
+        //assert(abs(GND.pin.currentIn - battery.currentOut) < 1e-9);
+
 
     }
 

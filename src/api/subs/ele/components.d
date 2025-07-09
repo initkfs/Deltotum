@@ -16,7 +16,14 @@ import Math = api.math;
 struct Pin
 {
     double voltage = 0;
-    double current = 0;
+    double currentIn = 0;
+    double currentOut = 0;
+
+    void current(double inValue, double outValue)
+    {
+        currentIn = inValue;
+        currentOut = outValue;
+    }
 }
 
 class Connection : Control
@@ -96,10 +103,9 @@ abstract class Element : Component
     }
 }
 
-abstract class TwoPinElement : Element
+abstract class OnePinElement : Element
 {
     Connection p;
-    Connection n;
 
     Sprite2d content;
 
@@ -117,9 +123,6 @@ abstract class TwoPinElement : Element
 
         content = createContent;
         addCreate(content);
-
-        n = new Connection;
-        addCreate(n);
     }
 
     Sprite2d createContent()
@@ -128,6 +131,24 @@ abstract class TwoPinElement : Element
 
         auto style = createDefaultStyle;
         return theme.rectShape(width, height, angle, style);
+    }
+}
+
+abstract class TwoPinElement : OnePinElement
+{
+    Connection n;
+
+    this(dstring text, Orientation orientation = Orientation.vertical)
+    {
+        super(text, orientation);
+    }
+
+    override void create()
+    {
+        super.create;
+
+        n = new Connection;
+        addCreate(n);
     }
 }
 
@@ -188,8 +209,12 @@ abstract class ConnectorTwoPin : Component
         toPin.pin.voltage = fromPin.pin.voltage;
         if (cast(Ground) dst)
         {
-            fromPin.pin.voltage = 0;
+            toPin.pin.currentIn = fromPin.pin.currentOut;
         }
+
+        toPin.pin.currentIn = fromPin.pin.currentOut;
+
+        assert(Math.abs(fromPin.pin.currentOut - toPin.pin.currentIn) < 1e-9);
 
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
@@ -200,39 +225,34 @@ abstract class ConnectorTwoPin : Component
         Vec2d direction;
         double currentFlow = 0;
 
-        if (fromPin.pin.current > 0 && toPin.pin.current < 0)
+        //fromPin > toPin
+        if (fromPin.pin.currentOut > 0 && toPin.pin.currentIn > 0)
         {
-            //from -> to
             direction = (toPin.pos - fromPin.pos).normalize;
-            currentFlow = Math.min(fromPin.pin.current, -toPin.pin.current);
+            current = Math.min(fromPin.pin.currentOut, toPin.pin.currentIn);
         }
-        else if (fromPin.pin.current < 0 && toPin.pin.current > 0)
+        // toPin > fromPin
+        else if (fromPin.pin.currentIn > 0 && toPin.pin.currentOut > 0)
         {
-            //to -> from
             direction = (fromPin.pos - toPin.pos).normalize;
-            currentFlow = Math.min(-fromPin.pin.current, toPin.pin.current);
+            current = Math.min(fromPin.pin.currentIn, toPin.pin.currentOut);
         }
-        else if (fromPin.pin.current != 0 || toPin.pin.current != 0)
+        //
+        else if (fromPin.pin.currentOut > 0 || toPin.pin.currentIn > 0)
         {
-            if (Math.abs(fromPin.pin.current) > Math.abs(toPin.pin.current))
-            {
-                direction = (toPin.pos - fromPin.pos).normalize;
-                currentFlow = Math.abs(fromPin.pin.current);
-            }
-            else
-            {
-                direction = (fromPin.pos - toPin.pos).normalize;
-                currentFlow = Math.abs(fromPin.pin.current);
-            }
-
-            if ((fromPin.pin.current > 0 && toPin.pin.current == 0) || (fromPin.pin.current == 0 && toPin.pin.current < 0))
-            {
-
-            }
-            else
-            {
-                direction = direction.reflect;
-            }
+            direction = (toPin.pos - fromPin.pos).normalize;
+            current = Math.max(fromPin.pin.currentOut, toPin.pin.currentIn);
+        }
+        // revert
+        else if (fromPin.pin.currentIn > 0 || toPin.pin.currentOut > 0)
+        {
+            direction = (fromPin.pos - toPin.pos).normalize;
+            current = Math.max(fromPin.pin.currentIn, toPin.pin.currentOut);
+        }
+        else
+        {
+            direction = Vec2d.zero;
+            current = 0;
         }
 
         double minSpeed = 5;
@@ -284,8 +304,9 @@ class Resistor : TwoPinElement
         double current = voltageDiff / resistance;
 
         //Current flows into p, flows out of n (Kirchhoff's Law)
-        p.pin.current = current;
-        n.pin.current = -current;
+        p.pin.current(current, 0);
+        n.pin.current(0, current);
+        n.pin.voltage = p.pin.voltage - current * resistance;
 
         //p.voltage > n.voltage, p --> n
         //p.voltage < n.voltage, p <-- n
@@ -313,7 +334,7 @@ class Resistor : TwoPinElement
     {
         import std.format : format;
 
-        return format("%s: %.2f Ω | I=%.2f A", label.text, resistance, p.pin.current);
+        return format("%s: %.2f Ω | I=%s A", label.text, resistance, p.pin);
     }
 
 }
@@ -335,7 +356,7 @@ class VoltageSource : TwoPinElement
         n.pin.voltage = 0; // Ground
 
         //const Rinternal = 0.1;
-        // double current = (p.voltage - n.voltage) / Rinternal;
+        //double current = (p.voltage - n.voltage) / Rinternal;
         // double I = p.current;
         // double terminalVoltage = V - current * R_internal;
         // p.voltage = terminalVoltage;
@@ -381,7 +402,7 @@ class Ground : TwoPinElement
     override void update(double dt)
     {
         super.update(dt);
-        p.pin.current = (p.pin.voltage - n.pin.voltage) * conductance;
-        n.pin.current = -p.pin.current;
+        p.pin.currentOut = 0;
+        n.pin.currentOut = 0;
     }
 }

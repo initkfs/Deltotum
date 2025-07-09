@@ -81,9 +81,6 @@ class Circuit : TypedContainer!Component
             if (auto vertComp = cast(Element) item)
             {
                 vertComp.pos = vertComp.vertex.pos;
-
-                import std;
-                writeln(vertComp.pos, "TTT: ", vertComp);
             }
 
         }
