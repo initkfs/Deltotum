@@ -7,6 +7,8 @@ import api.dm.gui.controls.control : Control;
  */
 class BasePopup : Control
 {
+    void delegate()[] onShow;
+
     this(bool isCreateLayout = true)
     {
         isDrawByParent = false;
@@ -68,6 +70,14 @@ class BasePopup : Control
         if (!isVisible)
         {
             isVisible = true;
+        }
+
+        if (onShow.length > 0)
+        {
+            foreach (dg; onShow)
+            {
+                dg();
+            }
         }
     }
 }

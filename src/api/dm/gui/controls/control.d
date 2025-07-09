@@ -1105,6 +1105,16 @@ class Control : GuiComponent
 
     void installTooltip(BaseTooltip tooltip)
     {
+        if (!tooltip.parent)
+        {
+            add(tooltip);
+        }
+
+        if (!tooltip.isBuilt)
+        {
+            buildInitCreate(tooltip);
+        }
+
         tooltips ~= tooltip;
         if (!isTooltipListeners)
         {

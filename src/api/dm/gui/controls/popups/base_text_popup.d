@@ -8,18 +8,18 @@ import api.dm.gui.controls.labeled : Labeled;
  */
 class BaseTextPopup : BasePopup
 {
+    Labeled label;
+
+    bool isCreateLabel = true;
+    Labeled delegate(Labeled) onNewLabel;
+    void delegate(Labeled) onConfiguredLabel;
+    void delegate(Labeled) onCreatedLabel;
+
     protected
     {
         dstring _labelText;
         string _iconName;
         double _graphicsGap = 0;
-
-        Labeled label;
-
-        bool isCreateLabel = true;
-        Labeled delegate(Labeled) onNewLabel;
-        void delegate(Labeled) onConfiguredLabel;
-        void delegate(Labeled) onCreatedLabel;
     }
 
     this(dstring text = "Popup", string iconName = null, double graphicsGap = 0, bool isCreateLayout = true)
@@ -65,12 +65,14 @@ class BaseTextPopup : BasePopup
         return label;
     }
 
-    void text(dstring t){
+    void text(dstring t)
+    {
         assert(label);
         label.text = t;
     }
 
-    void text(string t){
+    void text(string t)
+    {
         assert(label);
         label.text = t;
     }

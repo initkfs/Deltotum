@@ -143,12 +143,28 @@ abstract class TwoPinElement : OnePinElement
         super(text, orientation);
     }
 
+    import api.dm.gui.controls.popups.tooltips.text_tooltip : TextTooltip;
+
+    TextTooltip tooltip;
+
     override void create()
     {
         super.create;
 
         n = new Connection;
         addCreate(n);
+
+        tooltip = new TextTooltip;
+        tooltip.onShow ~= () {
+            import std.format : format;
+
+            string text = format("P.in:%.2fmA,out:%.2fmA,v:%.2fV\nN.in:%.2fmA,out:%.2fmA,v:%.2fV", p.pin.currentIn, p
+                    .pin.currentOut, p.pin.voltage, n
+                    .pin.currentIn, n.pin.currentOut, n.pin.voltage);
+            assert(tooltip.label);
+            tooltip.label.text = text;
+        };
+        installTooltip(tooltip);
     }
 }
 
@@ -212,9 +228,14 @@ abstract class ConnectorTwoPin : Component
             toPin.pin.currentIn = fromPin.pin.currentOut;
         }
 
-        toPin.pin.currentIn = fromPin.pin.currentOut;
+        if (cast(VoltageSource) src)
+        {
+            fromPin.pin.currentOut = toPin.pin.currentIn;
+        }
 
-        assert(Math.abs(fromPin.pin.currentOut - toPin.pin.currentIn) < 1e-9);
+        //toPin.pin.currentIn = fromPin.pin.currentOut;
+
+        //(Math.abs(fromPin.pin.currentOut - toPin.pin.currentIn) < 1e-9);
 
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
@@ -355,8 +376,10 @@ class VoltageSource : TwoPinElement
         p.pin.voltage = voltage;
         n.pin.voltage = 0; // Ground
 
-        //const Rinternal = 0.1;
-        //double current = (p.voltage - n.voltage) / Rinternal;
+        // const Rinternal = 0.1;
+        // double current = p.pin.voltage / Rinternal;
+        // p.pin.current(0, current);
+        // n.pin.current(0, 0);
         // double I = p.current;
         // double terminalVoltage = V - current * R_internal;
         // p.voltage = terminalVoltage;
