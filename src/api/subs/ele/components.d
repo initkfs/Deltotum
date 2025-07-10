@@ -34,10 +34,31 @@ struct Pin
 class Connection : Control
 {
     Pin pin;
+    bool isNeg;
 
     this()
     {
         initSize(10);
+    }
+
+    override void create()
+    {
+        super.create;
+
+        import api.dm.kit.graphics.colors.rgba : RGBA;
+
+        auto style = createDefaultStyle;
+        if (!isNeg)
+        {
+            style.color = RGBA.red;
+        }
+        else
+        {
+            style.color = RGBA.blue;
+        }
+        style.isFill = true;
+        auto shape = theme.rectShape(width, height, angle, style);
+        addCreate(shape);
     }
 }
 
@@ -157,6 +178,7 @@ abstract class TwoPinElement : OnePinElement
         super.create;
 
         n = new Connection;
+        n.isNeg = true;
         addCreate(n);
 
         tooltip = new TextTooltip;
@@ -207,7 +229,8 @@ abstract class ConnectorTwoPin : Component
 
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        graphic.line(fromPin.pos, toPin.pos, RGBA.yellowgreen);
+        graphic.line(fromPin.boundsRect.center, toPin.boundsRect.center, RGBA.yellowgreen);
+        graphic.line(fromPin.boundsRect.center.x, fromPin.boundsRect.center.y - 1, toPin.boundsRect.center.x, toPin.boundsRect.center.y - 1, RGBA.yellowgreen);
 
         graphic.color = RGBA.red;
         scope (exit)
@@ -250,7 +273,8 @@ abstract class ConnectorTwoPin : Component
             srcR.n.pin.voltage = midVoltage;
         }
 
-        if(cast(VoltageSource) dst && cast(Ground) src){
+        if (cast(VoltageSource) dst && cast(Ground) src)
+        {
             auto bat = cast(VoltageSource) dst;
             bat.n.pin.currentIn = src.p.pin.currentIn;
         }
@@ -359,6 +383,10 @@ class Resistor : TwoPinElement
     {
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
+        auto style = createFillStyle;
+
+        import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
+
         double w = 20;
         double h = 50;
         if (orientation == Orientation.horizontal)
@@ -368,9 +396,41 @@ class Resistor : TwoPinElement
             swap(w, h);
         }
 
-        auto style = createDefaultStyle;
-        style.isFill = false;
-        return theme.rectShape(w, h, angle, style);
+        auto shape = new class VectorTexture
+        {
+            this()
+            {
+                super(w, h);
+            }
+
+            override void createTextureContent()
+            {
+                super.createTextureContent;
+
+                auto ctx = canvas;
+                ctx.color = style.fillColor;
+                ctx.lineWidth = style.lineWidth;
+
+                const paddingPin = height / 5;
+
+                ctx.translate(width / 2, height / 2);
+
+                ctx.moveTo(0, -height / 2);
+                ctx.lineTo(0, -height / 2 + paddingPin);
+
+                ctx.rect(-width / 2, -height / 2 + paddingPin, width, height - paddingPin * 2);
+
+                ctx.moveTo(0, height / 2 - paddingPin);
+                ctx.lineTo(0, height / 2);
+
+                // ctx.moveTo(0, padding);
+                // ctx.lineTo(0, height / 2);
+
+                ctx.stroke;
+            }
+        };
+
+        return shape;
     }
 
     override string toString() const
@@ -413,11 +473,49 @@ class VoltageSource : TwoPinElement
     {
         import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
-        double size = 50;
+        auto style = createFillStyle;
 
-        auto style = createDefaultStyle;
-        style.isFill = true;
-        return theme.rectShape(size, size, angle, style);
+        import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
+
+        const w = width;
+        const h = height;
+
+        auto shape = new class VectorTexture
+        {
+            this()
+            {
+                super(w, h);
+            }
+
+            override void createTextureContent()
+            {
+                super.createTextureContent;
+
+                auto ctx = canvas;
+                ctx.color = style.fillColor;
+                ctx.lineWidth = style.lineWidth;
+
+                const padding = height / 10;
+
+                ctx.translate(width / 2, height / 2);
+
+                ctx.moveTo(0, -height);
+                ctx.lineTo(0, -padding);
+
+                ctx.moveTo(-width / 2, -padding);
+                ctx.lineTo(width / 2, -padding);
+
+                ctx.moveTo(-width / 4, padding);
+                ctx.lineTo(width / 4, padding);
+
+                ctx.moveTo(0, padding);
+                ctx.lineTo(0, height / 2);
+
+                ctx.stroke;
+            }
+        };
+
+        return shape;
     }
 
     override string toString() const
@@ -442,6 +540,8 @@ class Ground : TwoPinElement
         super.create;
         p.pin.voltage = 0;
         n.pin.voltage = 0;
+
+        n.isVisible = false;
     }
 
     override void update(double dt)
@@ -449,5 +549,60 @@ class Ground : TwoPinElement
         super.update(dt);
         p.pin.currentOut = 0;
         n.pin.currentOut = 0;
+    }
+
+    override Sprite2d createContent()
+    {
+        import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
+
+        auto style = createFillStyle;
+
+        import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
+
+        double w = 20;
+        double h = 50;
+        if (orientation == Orientation.horizontal)
+        {
+            import std.algorithm.mutation : swap;
+
+            swap(w, h);
+        }
+
+        auto shape = new class VectorTexture
+        {
+            this()
+            {
+                super(w, h);
+            }
+
+            override void createTextureContent()
+            {
+                super.createTextureContent;
+
+                auto ctx = canvas;
+                ctx.color = style.fillColor;
+                ctx.lineWidth = style.lineWidth;
+
+                ctx.translate(width / 2, height / 2);
+
+                ctx.moveTo(0, -height / 2);
+                ctx.lineTo(0, 0);
+
+                auto lineSize = height / 2 / 3;
+
+                ctx.moveTo(-width / 2, 0);
+                ctx.lineTo(width / 2, 0);
+
+                ctx.moveTo(-width / 2 / 2, lineSize);
+                ctx.lineTo(width / 2 / 2, lineSize);
+
+                ctx.moveTo(-width / 2 / 4, lineSize * 2);
+                ctx.lineTo(width / 2 / 4, lineSize * 2);
+
+                ctx.stroke;
+            }
+        };
+
+        return shape;
     }
 }
