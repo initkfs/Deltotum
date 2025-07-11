@@ -188,6 +188,12 @@ abstract class TwoPinElement : OnePinElement
             string text = format("P.in:%.2fmA,out:%.2fmA,v:%.2fV\nN.in:%.2fmA,out:%.2fmA,v:%.2fV", p.pin.currentInMa, p
                     .pin.currentOutMa, p.pin.voltage, n
                     .pin.currentInMa, n.pin.currentOutMa, n.pin.voltage);
+
+            if (auto res = cast(Resistor) this)
+            {
+                text ~= format(",eqR=%0.2f,eqV=%0.2f\ndU=%0.2f", res.eqvResistance, res.eqvVoltage, res.dU);
+            }
+
             assert(tooltip.label);
             tooltip.label.text = text;
         };
@@ -230,7 +236,8 @@ abstract class ConnectorTwoPin : Component
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
         graphic.line(fromPin.boundsRect.center, toPin.boundsRect.center, RGBA.yellowgreen);
-        graphic.line(fromPin.boundsRect.center.x, fromPin.boundsRect.center.y - 1, toPin.boundsRect.center.x, toPin.boundsRect.center.y - 1, RGBA.yellowgreen);
+        graphic.line(fromPin.boundsRect.center.x, fromPin.boundsRect.center.y - 1, toPin.boundsRect.center.x, toPin
+                .boundsRect.center.y - 1, RGBA.yellowgreen);
 
         graphic.color = RGBA.red;
         scope (exit)
@@ -250,11 +257,7 @@ abstract class ConnectorTwoPin : Component
     {
         super.update(dt);
 
-        toPin.pin.voltage = fromPin.pin.voltage;
-        if (cast(Ground) dst)
-        {
-            toPin.pin.currentIn = fromPin.pin.currentOut;
-        }
+        bool isUpdatePin = true;
 
         if (cast(VoltageSource) src)
         {
@@ -266,17 +269,51 @@ abstract class ConnectorTwoPin : Component
             auto srcR = cast(Resistor) src;
             auto dstR = cast(Resistor) dst;
 
-            double totalR = srcR.resistance + dstR.resistance;
-            double current = srcR.p.pin.voltage / totalR;
+            if (dstR.eqvResistance > 0)
+            {
+                if (dstR.eqvResistance != srcR.eqvResistance)
+                {
+                    srcR.eqvResistance = dstR.eqvResistance;
+                }
+            }
+            else
+            {
+                double totalR = srcR.resistance + dstR.resistance;
 
-            double midVoltage = srcR.p.pin.voltage - (current * srcR.resistance);
-            srcR.n.pin.voltage = midVoltage;
+                if (srcR.eqvResistance != 0 && dstR.eqvResistance == 0)
+                {
+                    totalR = srcR.eqvResistance + dstR.resistance;
+                }
+
+                dstR.eqvResistance = totalR;
+                //dstR.p.pin.voltage = srcR.n.pin.voltage;
+            }
+
+            if (dstR.eqvResistance > 0 && dstR.eqvVoltage == 0)
+            {
+                dstR.eqvVoltage = srcR.eqvVoltage == 0 ? srcR.p.pin.voltage : srcR.eqvVoltage;
+            }
+
+            if (srcR.eqvResistance > 0 && srcR.eqvVoltage == 0 && dstR.eqvResistance > 0 && dstR.eqvVoltage > 0)
+            {
+                srcR.eqvVoltage = dstR.eqvVoltage;
+            }
+        }
+
+        if (isUpdatePin)
+        {
+            toPin.pin.voltage = fromPin.pin.voltage;
         }
 
         if (cast(VoltageSource) dst && cast(Ground) src)
         {
             auto bat = cast(VoltageSource) dst;
             bat.n.pin.currentIn = src.p.pin.currentIn;
+        }
+
+        if (cast(Ground) dst)
+        {
+            toPin.pin.currentIn = fromPin.pin.currentOut;
         }
 
         //toPin.pin.currentIn = fromPin.pin.currentOut;
@@ -355,6 +392,9 @@ class Wire : ConnectorTwoPin
 class Resistor : TwoPinElement
 {
     double resistance = 0;
+    double eqvResistance = 0;
+    double eqvVoltage = 0;
+    double dU = 0;
 
     this(double R, dstring label = "R1", Orientation orientation = Orientation.vertical)
     {
@@ -367,13 +407,15 @@ class Resistor : TwoPinElement
         super.update(dt);
 
         //I = (Vp - Vn) / R
-        double voltageDiff = p.pin.voltage - n.pin.voltage;
-        double current = voltageDiff / resistance;
+        double voltageDiff = eqvVoltage == 0 ? p.pin.voltage - n.pin.voltage : eqvVoltage;
+        double targetR = eqvResistance == 0 ? resistance : eqvResistance;
+        double current = voltageDiff / targetR;
 
         //Current flows into p, flows out of n (Kirchhoff's Law)
         p.pin.current(current, 0);
         n.pin.current(0, current);
-        n.pin.voltage = p.pin.voltage - current * resistance;
+        dU = current * resistance;
+        n.pin.voltage = p.pin.voltage - dU;
 
         //p.voltage > n.voltage, p --> n
         //p.voltage < n.voltage, p <-- n
