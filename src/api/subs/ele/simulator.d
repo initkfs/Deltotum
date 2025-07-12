@@ -31,11 +31,11 @@ class Simulator : Container
         addCreate(circuit);
         circuit.toCenter;
 
-        auto battery = new VoltageSource(12.0);
-        auto resistor = new Resistor(50.0, "R1");
-        auto resistor2 = new Resistor(50.0, "R2");
-        auto resistor3 = new Resistor(50.0, "R3");
-        auto resistor4 = new Resistor(50.0, "R4");
+        auto battery = new VoltageSource(12.0, "V1 12V");
+        auto resistor = new Resistor(22.0, "R1 22");
+        auto resistor2 = new Resistor(42.0, "R2 42");
+        auto resistor3 = new Resistor(89.0, "R3 89");
+        auto resistor4 = new Resistor(100.0, "R4 100");
         auto ground = new Ground;
 
         circuit.addCreateItem(battery);
@@ -59,7 +59,7 @@ class Simulator : Container
         circuit.addCreateItem(wire44);
         circuit.addCreateItem(wireу);
 
-        circuit.onPointerPress ~= (ref e) { circuit.alignComponents; };
+        //circuit.onPointerPress ~= (ref e) { circuit.alignComponents; };
 
         /*foreach (node; nodes) {
         assert(node.pins.map!(p => p.current).sum.approxEqual(0.0));

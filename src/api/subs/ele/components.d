@@ -64,7 +64,15 @@ class Connection : Control
 
 abstract class Component : Control
 {
+    import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
+    override GraphicStyle createDefaultStyle()
+    {
+        auto style = super.createDefaultStyle;
+        style.isFill = false;
+        style.lineWidth = theme.lineThickness * 2;
+        return style;
+    }
 }
 
 abstract class Element : Component
@@ -127,6 +135,20 @@ abstract class Element : Component
         label.isLayoutManaged = false;
         addCreate(label);
     }
+
+    override void applyLayout()
+    {
+        super.applyLayout;
+
+        if (label)
+        {
+            const labelPosX = boundsRect.right; 
+            const labelPosY = boundsRect.center.y - label
+                .halfHeight;
+            label.pos(labelPosX, labelPosY);
+        }
+
+    }
 }
 
 abstract class OnePinElement : Element
@@ -170,6 +192,7 @@ abstract class TwoPinElement : OnePinElement
     }
 
     import api.dm.gui.controls.popups.tooltips.text_tooltip : TextTooltip;
+    import api.math.geom2.points2;
 
     TextTooltip tooltip;
 
@@ -191,7 +214,8 @@ abstract class TwoPinElement : OnePinElement
 
             if (auto res = cast(Resistor) this)
             {
-                text ~= format(",eqR=%0.2f,eqV=%0.2f\ndU=%0.2f", res.eqvResistance, res.eqvVoltage, res.dU);
+                text ~= format("\neqR=%0.2f(Om),eqV=%0.2fV\ndU=%0.2fV", res.eqvResistance, res.eqvVoltage, res
+                        .dU);
             }
 
             assert(tooltip.label);
@@ -215,6 +239,9 @@ abstract class ConnectorTwoPin : Component
 
     double spacing = 5;
 
+    double horizontalThreshold = 2.0; // dx/dy > 2 == horizontal
+    double verticalThreshold = 0.5; // dx/dy < 0.5 == vertical
+
     this(Connection fromPin, Connection toPin, TwoPinElement src, TwoPinElement dst)
     {
         assert(fromPin);
@@ -229,15 +256,72 @@ abstract class ConnectorTwoPin : Component
         edge = new Edge(src.vertex, dst.vertex);
     }
 
+    Vec2d direction() => toPin.pos - fromPin.pos;
+    Vec2d directionAbs()
+    {
+        const dir = direction;
+        double dx = Math.abs(dir.x);
+        double dy = Math.abs(dir.y);
+        return Vec2d(dx, dy);
+    }
+
+    double directionRatio()
+    {
+        const dir = directionAbs;
+        double ratio = dir.x / dir.y;
+        return ratio;
+    }
+
+    Orientation orientation()
+    {
+        const dirAbs = directionAbs;
+        const dx = dirAbs.x;
+        const dy = dirAbs.y;
+
+        const ratio = dx / dy;
+
+        if (dx < 1.0 && dy < 1.0)
+        {
+            return Orientation.point;
+        }
+        else if (ratio > horizontalThreshold)
+        {
+            return Orientation.horizontal;
+        }
+        else if (ratio < verticalThreshold)
+        {
+            return Orientation.vertical;
+        }
+
+        return Orientation.diagonal;
+    }
+
     override void drawContent()
     {
         super.drawContent;
 
         import api.dm.kit.graphics.colors.rgba : RGBA;
 
-        graphic.line(fromPin.boundsRect.center, toPin.boundsRect.center, RGBA.yellowgreen);
-        graphic.line(fromPin.boundsRect.center.x, fromPin.boundsRect.center.y - 1, toPin.boundsRect.center.x, toPin
-                .boundsRect.center.y - 1, RGBA.yellowgreen);
+        graphic.color = RGBA.yellowgreen;
+
+        const startCenter = fromPin.boundsRect.center;
+        const endCenter = toPin.boundsRect.center;
+
+        graphic.line(startCenter, endCenter);
+
+        auto orient = orientation;
+        if (orient == Orientation.vertical || orient == Orientation.diagonal)
+        {
+            graphic.line(startCenter.x - 1, startCenter.y, endCenter.x - 1, endCenter.y);
+            graphic.line(startCenter.x + 1, startCenter.y, endCenter.x + 1, endCenter.y);
+        }
+        else if (orient == Orientation.horizontal)
+        {
+            graphic.line(startCenter.x, startCenter.y - 1, endCenter.x, endCenter.y - 1);
+            graphic.line(startCenter.x, startCenter.y + 1, endCenter.x, endCenter.y + 1);
+        }
+
+        graphic.restoreColor;
 
         graphic.color = RGBA.red;
         scope (exit)
@@ -455,18 +539,19 @@ class Resistor : TwoPinElement
 
                 const paddingPin = height / 5;
 
+                const halfW = width / 2;
+                const halfH = height / 2;
+                const halfLine = style.lineWidth / 2;
+
                 ctx.translate(width / 2, height / 2);
 
-                ctx.moveTo(0, -height / 2);
-                ctx.lineTo(0, -height / 2 + paddingPin);
+                ctx.moveTo(0, -halfH);
+                ctx.lineTo(0, -halfH + paddingPin);
 
-                ctx.rect(-width / 2, -height / 2 + paddingPin, width, height - paddingPin * 2);
+                ctx.rect(-halfW + halfLine, -halfH + paddingPin, width - halfLine * 2, height - paddingPin * 2);
 
-                ctx.moveTo(0, height / 2 - paddingPin);
-                ctx.lineTo(0, height / 2);
-
-                // ctx.moveTo(0, padding);
-                // ctx.lineTo(0, height / 2);
+                ctx.moveTo(0, halfH - paddingPin);
+                ctx.lineTo(0, halfH);
 
                 ctx.stroke;
             }

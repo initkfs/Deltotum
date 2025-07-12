@@ -9,6 +9,8 @@ class BasePopup : Control
 {
     void delegate()[] onShow;
 
+    double showPadding = 10;
+
     this(bool isCreateLayout = true)
     {
         isDrawByParent = false;
@@ -42,7 +44,7 @@ class BasePopup : Control
         const windowBounds = window.boundsLocal;
         const thisBounds = boundsRect;
 
-        auto newX = x;
+        auto newX = showPadding + x;
         if (newX < 0)
         {
             newX = 0;
