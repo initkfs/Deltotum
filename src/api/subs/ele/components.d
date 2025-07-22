@@ -19,8 +19,12 @@ struct Pin
     double currentIn = 0;
     double currentOut = 0;
 
+    double eqvCurrentIn = 0;
+    double eqvCurrentOut = 0;
+
     double currentInMa() => currentMa(currentIn);
     double currentOutMa() => currentMa(currentOut);
+    double eqvCurrentInMa() => currentMa(eqvCurrentIn);
 
     void current(double inValue, double outValue)
     {
@@ -142,7 +146,7 @@ abstract class Element : Component
 
         if (label)
         {
-            const labelPosX = boundsRect.right; 
+            const labelPosX = boundsRect.right;
             const labelPosY = boundsRect.center.y - label
                 .halfHeight;
             label.pos(labelPosX, labelPosY);
@@ -238,6 +242,8 @@ abstract class ConnectorTwoPin : Component
     Vec2d[1] points;
 
     double spacing = 5;
+    
+    double eqvCurrent = 0;
 
     double horizontalThreshold = 2.0; // dx/dy > 2 == horizontal
     double verticalThreshold = 0.5; // dx/dy < 0.5 == vertical
@@ -353,35 +359,56 @@ abstract class ConnectorTwoPin : Component
             auto srcR = cast(Resistor) src;
             auto dstR = cast(Resistor) dst;
 
-            if (dstR.eqvResistance > 0)
+            if (fromPin is srcR.n && toPin is dstR.p)
             {
-                if (dstR.eqvResistance != srcR.eqvResistance)
+                if (dstR.eqvResistance > 0)
                 {
-                    srcR.eqvResistance = dstR.eqvResistance;
+                    if (dstR.eqvResistance != srcR.eqvResistance)
+                    {
+                        srcR.eqvResistance = dstR.eqvResistance;
+                    }
                 }
-            }
-            else
-            {
-                double totalR = srcR.resistance + dstR.resistance;
-
-                if (srcR.eqvResistance != 0 && dstR.eqvResistance == 0)
+                else
                 {
-                    totalR = srcR.eqvResistance + dstR.resistance;
+                    double totalR = srcR.resistance + dstR.resistance;
+
+                    if (srcR.eqvResistance != 0 && dstR.eqvResistance == 0)
+                    {
+                        totalR = srcR.eqvResistance + dstR.resistance;
+                    }
+
+                    dstR.eqvResistance = totalR;
+                    //dstR.p.pin.voltage = srcR.n.pin.voltage;
                 }
 
-                dstR.eqvResistance = totalR;
-                //dstR.p.pin.voltage = srcR.n.pin.voltage;
+                if (dstR.eqvResistance > 0 && dstR.eqvVoltage == 0)
+                {
+                    dstR.eqvVoltage = srcR.eqvVoltage == 0 ? srcR.p.pin.voltage : srcR.eqvVoltage;
+                }
+
+                if (srcR.eqvResistance > 0 && srcR.eqvVoltage == 0 && dstR.eqvResistance > 0 && dstR.eqvVoltage > 0)
+                {
+                    srcR.eqvVoltage = dstR.eqvVoltage;
+                }
+            }else {
+                //parallel
+                if(srcR.eqvResistance > 0 && dstR.eqvResistance > 0){
+                    auto eqvR = 1 / srcR.eqvResistance + 1 / dstR.eqvResistance;
+                    auto r = 1 / eqvR;
+                    auto v = srcR.eqvVoltage > 0 ? srcR.eqvVoltage : fromPin.pin.voltage;
+                    auto current = v / r;
+
+                    if(fromPin is srcR.p){
+                        fromPin.pin.eqvCurrentIn = current;
+                    }else {
+                        toPin.pin.eqvCurrentOut = current;
+                    }
+
+                    
+                }
+
             }
 
-            if (dstR.eqvResistance > 0 && dstR.eqvVoltage == 0)
-            {
-                dstR.eqvVoltage = srcR.eqvVoltage == 0 ? srcR.p.pin.voltage : srcR.eqvVoltage;
-            }
-
-            if (srcR.eqvResistance > 0 && srcR.eqvVoltage == 0 && dstR.eqvResistance > 0 && dstR.eqvVoltage > 0)
-            {
-                srcR.eqvVoltage = dstR.eqvVoltage;
-            }
         }
 
         if (isUpdatePin)
@@ -398,6 +425,14 @@ abstract class ConnectorTwoPin : Component
         if (cast(Ground) dst)
         {
             toPin.pin.currentIn = fromPin.pin.currentOut;
+        }
+
+        if(toPin.pin.eqvCurrentIn > 0){
+            fromPin.pin.currentOut = toPin.pin.eqvCurrentIn;
+        }
+
+        if(toPin.pin.eqvCurrentOut > 0){
+            fromPin.pin.currentIn = toPin.pin.eqvCurrentOut;
         }
 
         //toPin.pin.currentIn = fromPin.pin.currentOut;
@@ -471,6 +506,12 @@ class Wire : ConnectorTwoPin
     {
         super(fromPin, toPin, src, dst);
     }
+}
+
+class ConnectionNode : Component
+{
+    ConnectorTwoPin[] fromPins;
+    ConnectorTwoPin[] toPins;
 }
 
 class Resistor : TwoPinElement
