@@ -17,14 +17,15 @@ struct DynLib
     }
 }
 
-version (Posix)
+version (linux)
 {
     import core.sys.posix.dlfcn;
 
     bool libLoad(const(char)* name, out void* handle)
     {
+        //void* handle = dlmopen(LM_ID_NEWLM, "libfoo.so", RTLD_NOW);
         //RTLD_DEEPBIND
-        if (void* handlePtr = dlopen(name, RTLD_NOW))
+        if (void* handlePtr = dlopen(name, RTLD_NOW | RTLD_LOCAL | RTLD_DEEPBIND))
         {
             handle = handlePtr;
             return true;

@@ -2,6 +2,7 @@
 /.dub
 /data
 /data/configs/private.config
+/data/userdata
 /dist
 /libs
 /dub.selections.json
