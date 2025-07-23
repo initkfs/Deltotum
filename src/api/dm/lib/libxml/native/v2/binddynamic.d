@@ -35,6 +35,7 @@ extern (C) @nogc nothrow
     xmlDoc* function(const xmlChar* ver) xmlNewDoc;
     xmlNode* function(xmlDoc* doc, xmlNode* root) xmlDocSetRootElement;
     xmlNode* function(xmlNs* ns, const xmlChar* name) xmlNewNode;
+    xmlNode * function	(xmlNode *parent,xmlNs *	ns, const xmlChar *	name, const xmlChar *	content )xmlNewChild;
     xmlNode* function(xmlNode* parent, xmlNode* cur) xmlAddChild;
     xmlNode* function(const xmlChar* content) xmlNewText;
 
@@ -71,6 +72,7 @@ class LibxmlLib : DynamicLoader
         bind(&xmlNewDoc, "xmlNewDoc");
         bind(&xmlDocSetRootElement, "xmlDocSetRootElement");
         bind(&xmlNewNode, "xmlNewNode");
+        bind(&xmlNewChild, "xmlNewChild");
         bind(&xmlAddChild, "xmlAddChild");
         bind(&xmlNewText, "xmlNewText");
 

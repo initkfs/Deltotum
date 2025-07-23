@@ -1,4 +1,4 @@
-module api.dm.lib.libxml.html_reader;
+module api.dm.lib.libxml.svg_reader;
 
 import api.dm.lib.libxml.native;
 
@@ -10,7 +10,7 @@ import std.string: fromStringz, toStringz;
  * Authors: initkfs
  */
 
-class HtmlReader
+class SvgReader
 {
 
     void load(string file)

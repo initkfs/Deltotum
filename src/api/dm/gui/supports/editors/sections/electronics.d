@@ -32,18 +32,18 @@ class Electronics : Control
         auto sim = new Simulator;
         addCreate(sim);
 
-        import api.dm.lib.libxml.html_reader : HtmlReader;
+        import api.dm.lib.libxml.svg_reader: SvgReader;
 
-        auto parser = new HtmlReader;
+        auto parser = new SvgReader;
 
         auto userDir = context.app.userDir;
         auto testFile = userDir ~ "/test.svg";
 
         parser.load(testFile);
 
-        import api.dm.lib.libxml.html_writer : HtmlWriter;
+        import api.dm.lib.libxml.svg_writer: SvgWriter;
 
-        auto writer = new HtmlWriter;
+        auto writer = new SvgWriter;
         writer.save(userDir ~ "/test2.svg");
     }
 }
