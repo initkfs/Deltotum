@@ -134,3 +134,8 @@ enum xmlSaveOption
     XML_SAVE_NO_INDENT = 1 << 9,
     XML_SAVE_INDENT = 1 << 10
 }
+
+enum xmlParserOption {
+    XML_PARSE_NOERROR	= 1<<5,	
+    XML_PARSE_NOWARNING	= 1<<6
+}

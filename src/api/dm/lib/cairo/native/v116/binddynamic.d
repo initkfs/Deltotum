@@ -6,14 +6,23 @@ module api.dm.lib.cairo.native.v116.binddynamic;
 import api.dm.lib.cairo.native.v116.types;
 import api.core.utils.libs.dynamics.dynamic_loader : DynamicLoader;
 
+alias cairo_write_func_t = extern (C) cairo_status_t function(void* closure, const ubyte* data, uint length);
+
 extern (C) @nogc nothrow
 {
     cairo_t* function(cairo_surface_t* target) cairo_create;
     cairo_surface_t* function(cairo_format_t format, int width, int height) cairo_image_surface_create;
     cairo_surface_t* function(
         ubyte* data, cairo_format_t format, int width, int height, int stride) cairo_image_surface_create_for_data;
+    void function(cairo_surface_t* cr) cairo_surface_finish;
+    void function(cairo_surface_t* cr) cairo_surface_flush;
     void function(cairo_surface_t* surface) cairo_surface_destroy;
     void function(cairo_t* cr) cairo_destroy;
+
+    cairo_surface_t* function(cairo_write_func_t write_func,
+        void* closure,
+        double width_in_points,
+        double height_in_points) cairo_svg_surface_create_for_stream;
 
     void function(cairo_t* cr, double width) cairo_set_line_width;
     void function(cairo_t* cr, double red, double green, double blue) cairo_set_source_rgb;
@@ -106,6 +115,9 @@ class CairoLib : DynamicLoader
         bind(&cairo_image_surface_create, "cairo_image_surface_create");
         bind(&cairo_create, "cairo_create");
         bind(&cairo_image_surface_create_for_data, "cairo_image_surface_create_for_data");
+        bind(&cairo_svg_surface_create_for_stream, "cairo_svg_surface_create_for_stream");
+        bind(&cairo_surface_finish, "cairo_surface_finish");
+        bind(&cairo_surface_flush, "cairo_surface_flush");
         bind(&cairo_surface_destroy, "cairo_surface_destroy");
         bind(&cairo_destroy, "cairo_destroy");
 

@@ -10,6 +10,7 @@ import api.math.graphs.vertex : Vertex;
 import api.math.graphs.edge : Edge;
 import api.math.pos2.orientation : Orientation;
 import api.math.geom2.vec2 : Vec2d;
+import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
 import Math = api.math;
 
@@ -35,7 +36,12 @@ struct Pin
     double currentMa(double currentA) => currentA * 1000;
 }
 
-class Connection : Control
+class DrawableComponent : Control
+{
+
+}
+
+class Connection : DrawableComponent
 {
     Pin pin;
     bool isNeg;
@@ -66,7 +72,7 @@ class Connection : Control
     }
 }
 
-abstract class Component : Control
+abstract class Component : DrawableComponent
 {
     import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 
@@ -184,6 +190,19 @@ abstract class OnePinElement : Element
         auto style = createDefaultStyle;
         return theme.rectShape(width, height, angle, style);
     }
+
+    string createSVG()
+    {
+        import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
+
+        if (auto vtexture = cast(VectorTexture) content)
+        {
+            auto svg = vtexture.createSVG;
+            return svg;
+        }
+
+        return "";
+    }
 }
 
 abstract class TwoPinElement : OnePinElement
@@ -242,7 +261,7 @@ abstract class ConnectorTwoPin : Component
     Vec2d[1] points;
 
     double spacing = 5;
-    
+
     double eqvCurrent = 0;
 
     double horizontalThreshold = 2.0; // dx/dy > 2 == horizontal
@@ -390,21 +409,26 @@ abstract class ConnectorTwoPin : Component
                 {
                     srcR.eqvVoltage = dstR.eqvVoltage;
                 }
-            }else {
+            }
+            else
+            {
                 //parallel
-                if(srcR.eqvResistance > 0 && dstR.eqvResistance > 0){
+                if (srcR.eqvResistance > 0 && dstR.eqvResistance > 0)
+                {
                     auto eqvR = 1 / srcR.eqvResistance + 1 / dstR.eqvResistance;
                     auto r = 1 / eqvR;
                     auto v = srcR.eqvVoltage > 0 ? srcR.eqvVoltage : fromPin.pin.voltage;
                     auto current = v / r;
 
-                    if(fromPin is srcR.p){
+                    if (fromPin is srcR.p)
+                    {
                         fromPin.pin.eqvCurrentIn = current;
-                    }else {
+                    }
+                    else
+                    {
                         toPin.pin.eqvCurrentOut = current;
                     }
 
-                    
                 }
 
             }
@@ -427,11 +451,13 @@ abstract class ConnectorTwoPin : Component
             toPin.pin.currentIn = fromPin.pin.currentOut;
         }
 
-        if(toPin.pin.eqvCurrentIn > 0){
+        if (toPin.pin.eqvCurrentIn > 0)
+        {
             fromPin.pin.currentOut = toPin.pin.eqvCurrentIn;
         }
 
-        if(toPin.pin.eqvCurrentOut > 0){
+        if (toPin.pin.eqvCurrentOut > 0)
+        {
             fromPin.pin.currentIn = toPin.pin.eqvCurrentOut;
         }
 
@@ -570,11 +596,12 @@ class Resistor : TwoPinElement
                 super(w, h);
             }
 
-            override void createTextureContent()
+            import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
+
+            override void createTextureContent(GraphicCanvas ctx)
             {
                 super.createTextureContent;
-
-                auto ctx = canvas;
+                
                 ctx.color = style.fillColor;
                 ctx.lineWidth = style.lineWidth;
 

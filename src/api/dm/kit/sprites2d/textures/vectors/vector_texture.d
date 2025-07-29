@@ -13,6 +13,18 @@ import api.dm.lib.cairo.cairo_context : CairoContext;
 //TODO remove native api
 import api.dm.lib.cairo;
 
+struct BufferWrapper {
+    char[] data;
+    void put(const char[] slice) { data ~= slice; }
+}
+
+extern (C) cairo_status_t writeSvgToBuffer(void* closure, const ubyte* data, uint length)
+{
+    auto buffer = cast(BufferWrapper*) closure;
+    buffer.put(cast(char[]) data[0 .. length]);
+    return cairo_status_t.CAIRO_STATUS_SUCCESS;
+}
+
 /**
  * Authors: initkfs
  */
@@ -40,9 +52,46 @@ class VectorTexture : Texture2d
         this.id = "vector_texture";
     }
 
+    void createTextureContent(GraphicCanvas ctx)
+    {
+
+    }
+
     void createTextureContent()
     {
 
+    }
+
+    string createSVG()
+    {
+        import std.array : Appender;
+
+        BufferWrapper svgBuffer;
+
+        auto svgCairoSurface = new CairoSurface(&writeSvgToBuffer, &svgBuffer, width, height);
+        scope (exit)
+        {
+            svgCairoSurface.dispose;
+        }
+
+        auto svgContext = new CairoContext(svgCairoSurface);
+        scope (exit)
+        {
+            svgContext.dispose;
+        }
+
+        import api.dm.kit.sprites2d.textures.vectors.canvases.vector_canvas : VectorCanvas;
+
+        auto ctx = new VectorCanvas(svgContext);
+
+        createTextureContent(ctx);
+
+        svgCairoSurface.flush;
+        svgCairoSurface.finish;
+
+        import std.conv : to;
+
+        return svgBuffer.data.to!string;
     }
 
     private void tryCreateTempSurface()
@@ -120,6 +169,7 @@ class VectorTexture : Texture2d
         }
 
         createTextureContent;
+        createTextureContent(canvas);
 
         if (onSurfaceIsContinue)
         {
@@ -155,6 +205,7 @@ class VectorTexture : Texture2d
         tryCreateCairoContext;
 
         createTextureContent;
+        createTextureContent(canvas);
 
         if (onSurfaceIsContinue)
         {
@@ -268,7 +319,8 @@ class VectorTexture : Texture2d
             return true;
         }
 
-        if(isClearOnRecreate){
+        if (isClearOnRecreate)
+        {
             fillColor(RGBA.transparent);
         }
 
@@ -285,8 +337,9 @@ class VectorTexture : Texture2d
             return true;
         }
 
-        _gContext.clear(RGBA.transparent);
+        canvas.clear(RGBA.transparent);
         createTextureContent;
+        createTextureContent(canvas);
 
         if (onSurfaceIsContinue)
         {

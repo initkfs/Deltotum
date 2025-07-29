@@ -11,6 +11,8 @@ extern (C) @nogc nothrow
     xmlDoc* function(const char* buffer, int size, const char* URL, const char* encoding, int options) htmlReadMemory;
     void function(xmlDoc*) xmlFreeDoc;
 
+    xmlDoc* function(const char* buffer, int size, const char* URL, const char* encoding, int options) xmlReadMemory;
+
     xmlDtd* function(xmlDoc* doc,
         const xmlChar* name,
         const xmlChar* publicId,
@@ -24,6 +26,7 @@ extern (C) @nogc nothrow
     xmlNode* function(xmlNode* node) xmlNextElementSibling;
     xmlAttr* function(xmlNode* node, const xmlChar* name, const xmlChar* value) xmlNewProp;
     xmlChar* function(const xmlNode* node, const xmlChar* name) xmlGetProp;
+    xmlAttr * 	function (xmlNode *node, const xmlChar *name, const xmlChar *value) xmlSetProp;
     xmlAttr* function(const xmlNode* node, const xmlChar* name) xmlHasProp;
 
     long function(const xmlNode* node) xmlGetLineNo;
@@ -35,7 +38,9 @@ extern (C) @nogc nothrow
     xmlDoc* function(const xmlChar* ver) xmlNewDoc;
     xmlNode* function(xmlDoc* doc, xmlNode* root) xmlDocSetRootElement;
     xmlNode* function(xmlNs* ns, const xmlChar* name) xmlNewNode;
-    xmlNode * function	(xmlNode *parent,xmlNs *	ns, const xmlChar *	name, const xmlChar *	content )xmlNewChild;
+    xmlNode* function(xmlNode* node, int extended) xmlCopyNode;
+
+    xmlNode* function(xmlNode* parent, xmlNs* ns, const xmlChar* name, const xmlChar* content) xmlNewChild;
     xmlNode* function(xmlNode* parent, xmlNode* cur) xmlAddChild;
     xmlNode* function(const xmlChar* content) xmlNewText;
 
@@ -45,8 +50,8 @@ extern (C) @nogc nothrow
 
     xmlError* function() xmlGetLastError;
     void function() xmlResetLastError;
-    
-    xmlDoc * function(	const xmlChar *	URI, const xmlChar *	publicId ) htmlNewDocNoDtD;
+
+    xmlDoc* function(const xmlChar* URI, const xmlChar* publicId) htmlNewDocNoDtD;
 
 }
 
@@ -55,6 +60,7 @@ class LibxmlLib : DynamicLoader
     override void bindAll()
     {
         bind(&htmlReadMemory, "htmlReadMemory");
+        bind(&xmlReadMemory, "xmlReadMemory");
         bind(&xmlCleanupParser, "xmlCleanupParser");
         bind(&xmlFreeDoc, "xmlFreeDoc");
         bind(&xmlNewDtd, "xmlNewDtd");
@@ -65,6 +71,7 @@ class LibxmlLib : DynamicLoader
         bind(&xmlNextElementSibling, "xmlNextElementSibling");
         bind(&xmlNewProp, "xmlNewProp");
         bind(&xmlGetProp, "xmlGetProp");
+        bind(&xmlSetProp, "xmlSetProp");
         bind(&xmlHasProp, "xmlHasProp");
         bind(&xmlGetLineNo, "xmlGetLineNo");
         bind(&xmlFreeNode, "xmlFreeNode");
@@ -72,6 +79,7 @@ class LibxmlLib : DynamicLoader
         bind(&xmlNewDoc, "xmlNewDoc");
         bind(&xmlDocSetRootElement, "xmlDocSetRootElement");
         bind(&xmlNewNode, "xmlNewNode");
+        bind(&xmlCopyNode, "xmlCopyNode");
         bind(&xmlNewChild, "xmlNewChild");
         bind(&xmlAddChild, "xmlAddChild");
         bind(&xmlNewText, "xmlNewText");

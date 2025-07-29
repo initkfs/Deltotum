@@ -7,13 +7,10 @@ import api.dm.gui.controls.containers.container : Container;
  */
 class TypedContainer(T) : Container
 {
-    protected
-    {
-        T[] items;
+    T[] items;
 
-        bool delegate(T) canItemAddToItems;
-        void delegate(T) onItemAdd;
-    }
+    bool delegate(T) canItemAddToItems;
+    void delegate(T) onItemAdd;
 
     void addCreateItem(T item, long index = -1)
     {
