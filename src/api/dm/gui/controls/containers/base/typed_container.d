@@ -27,6 +27,17 @@ class TypedContainer(T) : Container
         }
     }
 
+    override bool removeAll(bool isDestroy = true)
+    {
+        if (super.removeAll(isDestroy))
+        {
+            items = null;
+            return true;
+        }
+
+        return false;
+    }
+
     override void dispose()
     {
         super.dispose;

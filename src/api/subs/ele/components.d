@@ -96,9 +96,13 @@ abstract class Element : Component
 
     Orientation orientation;
 
-    this(dstring text, Orientation orientation = Orientation.vertical)
+    dstring elementId;
+
+    this(dstring id, Orientation orientation = Orientation.vertical)
     {
-        label = new Text(text);
+        this.elementId = id;
+
+        label = new Text(elementId);
         vertex = new Vertex;
         isDraggable = true;
 
@@ -167,9 +171,9 @@ abstract class OnePinElement : Element
 
     Sprite2d content;
 
-    this(dstring text, Orientation orientation = Orientation.vertical)
+    this(dstring id, Orientation orientation = Orientation.vertical)
     {
-        super(text, orientation);
+        super(id, orientation);
     }
 
     override void create()
@@ -209,9 +213,9 @@ abstract class TwoPinElement : OnePinElement
 {
     Connection n;
 
-    this(dstring text, Orientation orientation = Orientation.vertical)
+    this(dstring id, Orientation orientation = Orientation.vertical)
     {
-        super(text, orientation);
+        super(id, orientation);
     }
 
     import api.dm.gui.controls.popups.tooltips.text_tooltip : TextTooltip;
@@ -266,6 +270,9 @@ abstract class ConnectorTwoPin : Component
 
     double horizontalThreshold = 2.0; // dx/dy > 2 == horizontal
     double verticalThreshold = 0.5; // dx/dy < 0.5 == vertical
+
+    Vec2d startLine;
+    Vec2d endLine;
 
     this(Connection fromPin, Connection toPin, TwoPinElement src, TwoPinElement dst)
     {
@@ -331,6 +338,9 @@ abstract class ConnectorTwoPin : Component
 
         const startCenter = fromPin.boundsRect.center;
         const endCenter = toPin.boundsRect.center;
+
+        startLine = startCenter;
+        endLine = endCenter;
 
         graphic.line(startCenter, endCenter);
 
@@ -524,6 +534,13 @@ abstract class ConnectorTwoPin : Component
             point = point.add(direction.scale(moveDist));
         }
     }
+
+    override string toString()
+    {
+        import std.format : format;
+
+        return format("Wire");
+    }
 }
 
 class Wire : ConnectorTwoPin
@@ -531,6 +548,38 @@ class Wire : ConnectorTwoPin
     this(Connection fromPin, Connection toPin, TwoPinElement src, TwoPinElement dst)
     {
         super(fromPin, toPin, src, dst);
+    }
+}
+
+class WirePP : Wire
+{
+    this(TwoPinElement src, TwoPinElement dst)
+    {
+        super(src.p, dst.p, src, dst);
+    }
+}
+
+class WirePN : Wire
+{
+    this(TwoPinElement src, TwoPinElement dst)
+    {
+        super(src.p, dst.n, src, dst);
+    }
+}
+
+class WireNP : Wire
+{
+    this(TwoPinElement src, TwoPinElement dst)
+    {
+        super(src.n, dst.p, src, dst);
+    }
+}
+
+class WireNN : Wire
+{
+    this(TwoPinElement src, TwoPinElement dst)
+    {
+        super(src.n, dst.n, src, dst);
     }
 }
 
@@ -601,7 +650,7 @@ class Resistor : TwoPinElement
             override void createTextureContent(GraphicCanvas ctx)
             {
                 super.createTextureContent;
-                
+
                 ctx.color = style.fillColor;
                 ctx.lineWidth = style.lineWidth;
 

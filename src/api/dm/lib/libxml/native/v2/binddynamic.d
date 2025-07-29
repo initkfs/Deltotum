@@ -8,6 +8,8 @@ import api.core.utils.libs.dynamics.dynamic_loader : DynamicLoader;
 
 extern (C) @nogc nothrow
 {
+    void function(void* ) xmlFree;
+
     xmlDoc* function(const char* buffer, int size, const char* URL, const char* encoding, int options) htmlReadMemory;
     void function(xmlDoc*) xmlFreeDoc;
 
@@ -59,6 +61,7 @@ class LibxmlLib : DynamicLoader
 {
     override void bindAll()
     {
+        bind(&xmlFree, "xmlFree");
         bind(&htmlReadMemory, "htmlReadMemory");
         bind(&xmlReadMemory, "xmlReadMemory");
         bind(&xmlCleanupParser, "xmlCleanupParser");

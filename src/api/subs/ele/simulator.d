@@ -4,6 +4,8 @@ import api.dm.gui.controls.containers.container : Container;
 import api.subs.ele.circuit;
 import api.subs.ele.components;
 
+import api.dm.gui.controls.switches.buttons.button : Button;
+
 import api.math.graphs.graph;
 import api.math.graphs.vertex : Vertex;
 import api.math.graphs.edge : Edge;
@@ -17,6 +19,9 @@ class Simulator : Container
 {
     Circuit circuit;
 
+    Button loadButton;
+    Button saveButton;
+
     this()
     {
         import api.dm.kit.sprites2d.layouts.managed_layout : ManagedLayout;
@@ -29,16 +34,26 @@ class Simulator : Container
     {
         super.create;
 
+        import api.dm.gui.controls.containers.hbox : HBox;
+
+        auto panel = new HBox;
+
+        loadButton = new Button("Load");
+        saveButton = new Button("Save");
+
         circuit = new Circuit;
         addCreate(circuit);
         circuit.toCenter;
 
-        auto battery = new VoltageSource(12.0, "V1 12V");
-        auto resistor = new Resistor(100, "R1 100");
-        auto resistor2 = new Resistor(100, "R2 100");
+        addCreate(panel);
+        panel.addCreate([loadButton, saveButton]);
 
-        auto resistor11 = new Resistor(50, "R11 50");
-        auto resistor21 = new Resistor(25, "R22 25");
+        auto battery = new VoltageSource(12.0, "V1");
+        auto resistor = new Resistor(100, "R1");
+        auto resistor2 = new Resistor(100, "R2");
+
+        auto resistor11 = new Resistor(50, "R11");
+        auto resistor21 = new Resistor(25, "R22");
 
         circuit.addCreateItem(battery);
         circuit.addCreateItem(resistor);
@@ -47,14 +62,14 @@ class Simulator : Container
         circuit.addCreateItem(resistor11);
         circuit.addCreateItem(resistor21);
 
-        auto wire1 = new Wire(battery.p, resistor.p, battery, resistor);
-        auto wire2 = new Wire(resistor.n, resistor2.p, resistor, resistor2);
+        auto wire1 = new WirePP(battery, resistor);
+        auto wire2 = new WireNP(resistor, resistor2);
 
-        auto wire21 = new Wire(resistor.p, resistor11.p, resistor, resistor11);
-        auto wire31 = new Wire(resistor11.n, resistor21.p, resistor11, resistor21);
-        auto wire41 = new Wire(resistor21.n, resistor2.n, resistor21, resistor2);
+        auto wire21 = new WirePP(resistor, resistor11);
+        auto wire31 = new WireNP(resistor11, resistor21);
+        auto wire41 = new WireNN(resistor21, resistor2);
 
-        auto wire3 = new Wire(resistor2.n, battery.n, resistor2, battery);
+        auto wire3 = new WireNN(resistor2, battery);
 
         circuit.addCreateItem(wire1);
         circuit.addCreateItem(wire2);
@@ -72,7 +87,95 @@ class Simulator : Container
         }*/
         //assert(abs(GND.pin.currentIn - battery.currentOut) < 1e-9);
 
-        save(null);
+        saveButton.onAction ~= (ref e) {
+            auto userDir = context.app.userDir;
+            auto file = userDir ~ "/test2.svg";
+            save(file);
+        };
+
+        loadButton.onAction ~= (ref e) {
+            auto userDir = context.app.userDir;
+            auto file = userDir ~ "/test2.svg";
+            load(file);
+        };
+    }
+
+    void load(string path)
+    {
+        import std.string : toStringz;
+        import std.conv : to;
+        import std.format : format;
+
+        import Math = api.math;
+
+        import std : readText;
+
+        auto text = readText(path);
+
+        circuit.removeAll;
+
+        xmlDoc* docPtr = xmlReadMemory(text.toStringz, cast(int) text.length, null, null, xmlParserOption
+                .XML_PARSE_NOERROR | xmlParserOption
+                .XML_PARSE_NOWARNING);
+
+        assert(docPtr);
+
+        xmlNode* root = xmlDocGetRootElement(docPtr);
+        assert(root);
+
+        xmlNode* node = root;
+        while (node)
+        {
+            xmlNode* child = xmlFirstElementChild(node);
+            while (child)
+            {
+                auto typeAttr = xmlGetProp(child, "data-type".toXmlStr);
+
+                if (typeAttr)
+                {
+                    auto type = typeAttr.fromXmlStr;
+                    switch (type)
+                    {
+                        case "resistor":
+                            auto resValueAttr = xmlGetProp(child, "data-resistance".toXmlStr);
+                            assert(resValueAttr);
+                            double resistance = resValueAttr.fromXmlStr.to!double;
+                            //xmlFree(resValueAttr);
+                            //" data-x="591.908" data-y="223.919" data-width="50" data-height="80"
+
+                            auto res = new Resistor(resistance);
+
+                            auto wValueAttr = xmlGetProp(child, "data-width".toXmlStr);
+                            assert(wValueAttr);
+                            res.width = wValueAttr.fromXmlStr.to!double;
+
+                            auto hValueAttr = xmlGetProp(child, "data-height".toXmlStr);
+                            assert(hValueAttr);
+                            res.height = hValueAttr.fromXmlStr.to!double;
+
+                            circuit.addCreateItem(res);
+
+                            auto xValueAttr = xmlGetProp(child, "data-x".toXmlStr);
+                            assert(xValueAttr);
+                            res.x = xValueAttr.fromXmlStr.to!double;
+
+                            auto yValueAttr = xmlGetProp(child, "data-y".toXmlStr);
+                            assert(yValueAttr);
+                            res.y = yValueAttr.fromXmlStr.to!double;
+
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                child = xmlNextElementSibling(child);
+            }
+
+            node = xmlNextElementSibling(node);
+        }
+
+        xmlFreeDoc(docPtr);
     }
 
     void save(string path)
@@ -82,8 +185,6 @@ class Simulator : Container
         import std.format : format;
 
         import Math = api.math;
-
-        auto userDir = context.app.userDir;
 
         xmlDoc* doc = xmlNewDoc("1.0".toXmlStr);
 
@@ -98,7 +199,7 @@ class Simulator : Container
         xmlNewProp(root, "height".toXmlStr, windowHeight.to!string.toXmlStr);
         xmlNewProp(root, "xmlns".toXmlStr, "http://www.w3.org/2000/svg".toXmlStr);
 
-        foreach (item; circuit.items)
+        foreach (item; circuit.children)
         {
             xmlNode* elemNode;
 
@@ -144,9 +245,11 @@ class Simulator : Container
                                     elemNode = xmlCopyNode(firstChild, 1);
                                     xmlAddChild(root, elemNode);
 
+                                    const offset = resistor.content.pos;
+
                                     //TODO with xmlAttr structure
                                     xmlSetProp(elemNode, "transform".toXmlStr, format("translate(%d, %d)", cast(
-                                            int) element.x, cast(int) element.y).toXmlStr);
+                                            int) (offset.x), cast(int) (offset.y)).toXmlStr);
 
                                     import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
@@ -179,6 +282,54 @@ class Simulator : Container
                             .resistance.to!string.toXmlStr);
                 }
             }
+            else if (auto wire = cast(Wire) item)
+            {
+                elemNode = xmlNewChild(root, null, "line".toXmlStr, null);
+                auto src = wire.src;
+                auto dst = wire.dst;
+
+                auto x1 = wire.startLine.x;
+                auto y1 = wire.startLine.y;
+
+                auto x2 = wire.endLine.x;
+                auto y2 = wire.endLine.y;
+
+                xmlNewProp(elemNode, "data-src".toXmlStr, src.elementId.toXmlStr);
+                xmlNewProp(elemNode, "data-dst".toXmlStr, dst.elementId.toXmlStr);
+
+                xmlNewProp(elemNode, "x1".toXmlStr, x1.to!string.toXmlStr);
+                xmlNewProp(elemNode, "y1".toXmlStr, y1.to!string.toXmlStr);
+                xmlNewProp(elemNode, "x2".toXmlStr, x2.to!string.toXmlStr);
+                xmlNewProp(elemNode, "y2".toXmlStr, y2.to!string.toXmlStr);
+
+                xmlNewProp(elemNode, "stroke".toXmlStr, "red".toXmlStr);
+                xmlNewProp(elemNode, "stroke-width".toXmlStr, "2".toXmlStr);
+
+                string fromPin, toPin;
+                if (cast(WirePP) wire)
+                {
+                    fromPin = "p";
+                    toPin = "p";
+                }
+                else if (cast(WireNN) wire)
+                {
+                    fromPin = "n";
+                    toPin = "n";
+                }
+                else if (cast(WirePN) wire)
+                {
+                    fromPin = "p";
+                    toPin = "n";
+                }
+                else if (cast(WireNP) wire)
+                {
+                    fromPin = "n";
+                    toPin = "p";
+                }
+
+                xmlNewProp(elemNode, "data-from".toXmlStr, fromPin.toXmlStr);
+                xmlNewProp(elemNode, "data-to".toXmlStr, toPin.toXmlStr);
+            }
 
             if (!elemNode)
             {
@@ -188,7 +339,7 @@ class Simulator : Container
         }
 
         xmlSaveCtxt* saveCtx = xmlSaveToFilename(
-            (userDir ~ "/test2.svg").toStringz,
+            (path).toStringz,
             "UTF-8",
             xmlSaveOption.XML_SAVE_FORMAT | xmlSaveOption.XML_SAVE_NO_DECL
         );

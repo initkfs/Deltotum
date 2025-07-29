@@ -7,10 +7,10 @@ extern (C):
 
 alias xmlChar = ubyte;
 
-struct xmlAttr;
 struct xmlNs;
 struct xmlDtd;
 struct xmlDict;
+struct xmlID;
 
 struct xmlSaveCtxt;
 
@@ -62,6 +62,37 @@ struct xmlDoc
     void* psvi;
     int parseFlags;
     int properties;
+}
+
+struct xmlAttr
+{
+    void* _private;
+    xmlElementType type;
+    const xmlChar* name;
+    xmlNode* children;
+    xmlNode* last;
+    xmlNode* parent;
+    xmlAttr* next;
+    xmlAttr* prev;
+    xmlDoc* doc;
+    xmlNs* ns;
+    xmlAttributeType atype;
+    void* psvi;
+    xmlID* id;
+}
+
+enum xmlAttributeType
+{
+    XML_ATTRIBUTE_CDATA = 1,
+    XML_ATTRIBUTE_ID,
+    XML_ATTRIBUTE_IDREF,
+    XML_ATTRIBUTE_IDREFS,
+    XML_ATTRIBUTE_ENTITY,
+    XML_ATTRIBUTE_ENTITIES,
+    XML_ATTRIBUTE_NMTOKEN,
+    XML_ATTRIBUTE_NMTOKENS,
+    XML_ATTRIBUTE_ENUMERATION,
+    XML_ATTRIBUTE_NOTATION
 }
 
 enum xmlElementType
@@ -135,7 +166,8 @@ enum xmlSaveOption
     XML_SAVE_INDENT = 1 << 10
 }
 
-enum xmlParserOption {
-    XML_PARSE_NOERROR	= 1<<5,	
-    XML_PARSE_NOWARNING	= 1<<6
+enum xmlParserOption
+{
+    XML_PARSE_NOERROR = 1 << 5,
+    XML_PARSE_NOWARNING = 1 << 6
 }
