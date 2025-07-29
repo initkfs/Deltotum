@@ -98,6 +98,8 @@ abstract class Element : Component
 
     dstring elementId;
 
+    Sprite2d content;
+
     this(dstring id, Orientation orientation = Orientation.vertical)
     {
         this.elementId = id;
@@ -161,15 +163,25 @@ abstract class Element : Component
                 .halfHeight;
             label.pos(labelPosX, labelPosY);
         }
+    }
 
+    string createSVG()
+    {
+        import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
+
+        if (auto vtexture = cast(VectorTexture) content)
+        {
+            auto svg = vtexture.createSVG;
+            return svg;
+        }
+
+        return "";
     }
 }
 
 abstract class OnePinElement : Element
 {
     Connection p;
-
-    Sprite2d content;
 
     this(dstring id, Orientation orientation = Orientation.vertical)
     {
@@ -193,19 +205,6 @@ abstract class OnePinElement : Element
 
         auto style = createDefaultStyle;
         return theme.rectShape(width, height, angle, style);
-    }
-
-    string createSVG()
-    {
-        import api.dm.kit.sprites2d.textures.vectors.vector_texture : VectorTexture;
-
-        if (auto vtexture = cast(VectorTexture) content)
-        {
-            auto svg = vtexture.createSVG;
-            return svg;
-        }
-
-        return "";
     }
 }
 
@@ -731,11 +730,12 @@ class VoltageSource : TwoPinElement
                 super(w, h);
             }
 
-            override void createTextureContent()
+            import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
+
+            override void createTextureContent(GraphicCanvas ctx)
             {
                 super.createTextureContent;
 
-                auto ctx = canvas;
                 ctx.color = style.fillColor;
                 ctx.lineWidth = style.lineWidth;
 

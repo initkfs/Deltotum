@@ -9,6 +9,7 @@ import api.dm.gui.controls.switches.buttons.button : Button;
 import api.math.graphs.graph;
 import api.math.graphs.vertex : Vertex;
 import api.math.graphs.edge : Edge;
+import api.math.geom2.vec2 : Vec2d;
 
 import api.dm.lib.libxml.native;
 
@@ -131,6 +132,10 @@ class Simulator : Container
             {
                 auto typeAttr = xmlGetProp(child, "data-type".toXmlStr);
 
+                import api.dm.kit.sprites2d.sprite2d : Sprite2d;
+
+                Sprite2d spriteNode;
+
                 if (typeAttr)
                 {
                     auto type = typeAttr.fromXmlStr;
@@ -140,32 +145,50 @@ class Simulator : Container
                             auto resValueAttr = xmlGetProp(child, "data-resistance".toXmlStr);
                             assert(resValueAttr);
                             double resistance = resValueAttr.fromXmlStr.to!double;
-                            //xmlFree(resValueAttr);
-                            //" data-x="591.908" data-y="223.919" data-width="50" data-height="80"
 
-                            auto res = new Resistor(resistance);
+                            spriteNode = new Resistor(resistance);
+                            break;
+                        case "voltage-source":
+                            auto valueAttr = xmlGetProp(child, "data-voltage".toXmlStr);
+                            assert(valueAttr);
+                            double voltage = valueAttr.fromXmlStr.to!double;
 
-                            auto wValueAttr = xmlGetProp(child, "data-width".toXmlStr);
-                            assert(wValueAttr);
-                            res.width = wValueAttr.fromXmlStr.to!double;
-
-                            auto hValueAttr = xmlGetProp(child, "data-height".toXmlStr);
-                            assert(hValueAttr);
-                            res.height = hValueAttr.fromXmlStr.to!double;
-
-                            circuit.addCreateItem(res);
-
-                            auto xValueAttr = xmlGetProp(child, "data-x".toXmlStr);
-                            assert(xValueAttr);
-                            res.x = xValueAttr.fromXmlStr.to!double;
-
-                            auto yValueAttr = xmlGetProp(child, "data-y".toXmlStr);
-                            assert(yValueAttr);
-                            res.y = yValueAttr.fromXmlStr.to!double;
-
+                            spriteNode = new VoltageSource(voltage);
                             break;
                         default:
                             break;
+                    }
+                }
+
+                if (spriteNode)
+                {
+                    auto wValueAttr = xmlGetProp(child, "data-width".toXmlStr);
+                    if (wValueAttr)
+                    {
+                        spriteNode.width = wValueAttr.fromXmlStr.to!double;
+                    }
+
+                    auto hValueAttr = xmlGetProp(child, "data-height".toXmlStr);
+                    if (hValueAttr)
+                    {
+                        spriteNode.height = hValueAttr.fromXmlStr.to!double;
+                    }
+
+                    if (auto comp = cast(Component) node)
+                    {
+                        circuit.addCreateItem(comp);
+                    }
+
+                    auto xValueAttr = xmlGetProp(child, "data-x".toXmlStr);
+                    if (xValueAttr)
+                    {
+                        spriteNode.x = xValueAttr.fromXmlStr.to!double;
+                    }
+
+                    auto yValueAttr = xmlGetProp(child, "data-y".toXmlStr);
+                    if (yValueAttr)
+                    {
+                        spriteNode.y = yValueAttr.fromXmlStr.to!double;
                     }
                 }
 
@@ -205,81 +228,80 @@ class Simulator : Container
 
             if (auto element = cast(Element) item)
             {
-                if (auto resistor = cast(Resistor) element)
+                Vec2d translateOffset = Vec2d.zero;
+                if (element.content)
                 {
-                    auto svgText = resistor.createSVG;
-                    if (svgText.length == 0)
+                    translateOffset = element.content.pos;
+                }
+
+                auto svgText = element.createSVG;
+                if (svgText.length > 0)
+                {
+                    import std.string : toStringz;
+
+                    xmlDoc* drawSvgPtr = xmlReadMemory(
+                        svgText.toStringz,
+                        cast(int) svgText.length,
+                        null,
+                        null,
+                        xmlParserOption.XML_PARSE_NOERROR | xmlParserOption.XML_PARSE_NOWARNING
+                    );
+
+                    scope (exit)
                     {
-                        elemNode = xmlNewChild(root, null, "rect".toXmlStr, null);
-                    }
-                    else
-                    {
-                        import std.string : toStringz;
-
-                        xmlDoc* drawSvgPtr = xmlReadMemory(
-                            svgText.toStringz,
-                            cast(int) svgText.length,
-                            null,
-                            null,
-                            xmlParserOption.XML_PARSE_NOERROR | xmlParserOption.XML_PARSE_NOWARNING
-                        );
-
-                        scope (exit)
-                        {
-                            if (drawSvgPtr)
-                            {
-                                xmlFreeDoc(drawSvgPtr);
-                            }
-                        }
-
                         if (drawSvgPtr)
                         {
-                            auto rootNode = xmlDocGetRootElement(drawSvgPtr);
-                            if (rootNode)
-                            {
-                                auto firstChild = xmlFirstElementChild(rootNode);
-                                //xmlNode* copy = xmlCopyNode(svgRoot, 1); // 1 = deep copy
-                                //xmlAddChild(elemNode, copy);
-                                if (firstChild)
-                                {
-                                    elemNode = xmlCopyNode(firstChild, 1);
-                                    xmlAddChild(root, elemNode);
-
-                                    const offset = resistor.content.pos;
-
-                                    //TODO with xmlAttr structure
-                                    xmlSetProp(elemNode, "transform".toXmlStr, format("translate(%d, %d)", cast(
-                                            int) (offset.x), cast(int) (offset.y)).toXmlStr);
-
-                                    import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-
-                                    if (auto sprite = cast(Sprite2d) item)
-                                    {
-                                        const x = sprite.x;
-                                        const y = sprite.y;
-
-                                        xmlNewProp(elemNode, "data-x".toXmlStr, x
-                                                .to!string.toXmlStr);
-                                        xmlNewProp(elemNode, "data-y".toXmlStr, y
-                                                .to!string.toXmlStr);
-                                    }
-
-                                    if (elemNode)
-                                    {
-                                        const bounds = element.boundsRect;
-                                        xmlNewProp(elemNode, "data-width".toXmlStr, bounds
-                                                .width.to!string.toXmlStr);
-                                        xmlNewProp(elemNode, "data-height".toXmlStr, bounds
-                                                .height.to!string.toXmlStr);
-                                    }
-                                }
-                            }
+                            xmlFreeDoc(drawSvgPtr);
                         }
                     }
 
+                    if (drawSvgPtr)
+                    {
+                        auto rootNode = xmlDocGetRootElement(drawSvgPtr);
+                        if (rootNode)
+                        {
+                            auto firstChild = xmlFirstElementChild(rootNode);
+                            //xmlNode* copy = xmlCopyNode(svgRoot, 1); // 1 = deep copy
+                            //xmlAddChild(elemNode, copy);
+                            if (firstChild)
+                            {
+                                elemNode = xmlCopyNode(firstChild, 1);
+                                xmlAddChild(root, elemNode);
+
+                                xmlSetProp(elemNode, "transform".toXmlStr, format("translate(%d, %d)",
+                                        cast(int) translateOffset.x, cast(int) translateOffset.y)
+                                        .toXmlStr);
+
+                            }
+                        }
+                    }
+                }
+
+                if (!elemNode)
+                {
+                    elemNode = xmlNewChild(root, null, "rect".toXmlStr, null);
+                }
+
+                if (auto resistor = cast(Resistor) element)
+                {
                     xmlNewProp(elemNode, "data-type".toXmlStr, "resistor".toXmlStr);
                     xmlNewProp(elemNode, "data-resistance".toXmlStr, resistor
                             .resistance.to!string.toXmlStr);
+                }
+                else if (auto voltageSource = cast(VoltageSource) element)
+                {
+                    xmlNewProp(elemNode, "data-type".toXmlStr, "voltage-source".toXmlStr);
+                    xmlNewProp(elemNode, "data-voltage".toXmlStr, voltageSource
+                            .voltage.to!string.toXmlStr);
+                }
+
+                if (elemNode)
+                {
+                    const bounds = element.boundsRect;
+                    xmlNewProp(elemNode, "data-width".toXmlStr, bounds
+                            .width.to!string.toXmlStr);
+                    xmlNewProp(elemNode, "data-height".toXmlStr, bounds
+                            .height.to!string.toXmlStr);
                 }
             }
             else if (auto wire = cast(Wire) item)
@@ -334,6 +356,19 @@ class Simulator : Container
             if (!elemNode)
             {
                 continue;
+            }
+
+            import api.dm.kit.sprites2d.sprite2d : Sprite2d;
+
+            if (auto sprite = cast(Sprite2d) item)
+            {
+                const x = sprite.x;
+                const y = sprite.y;
+
+                xmlNewProp(elemNode, "data-x".toXmlStr, x
+                        .to!string.toXmlStr);
+                xmlNewProp(elemNode, "data-y".toXmlStr, y
+                        .to!string.toXmlStr);
             }
 
         }
