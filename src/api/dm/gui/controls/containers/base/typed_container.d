@@ -27,6 +27,18 @@ class TypedContainer(T) : Container
         }
     }
 
+    T findItemUnsafe(const(char)[] id)
+    {
+        foreach (T ch; items)
+        {
+            if (ch.id == id)
+            {
+                return ch;
+            }
+        }
+        return null;
+    }
+
     override bool removeAll(bool isDestroy = true)
     {
         if (super.removeAll(isDestroy))

@@ -6,9 +6,29 @@ module api.dm.lib.libxml.native.v2.binddynamic;
 import api.dm.lib.libxml.native.v2.types;
 import api.core.utils.libs.dynamics.dynamic_loader : DynamicLoader;
 
+import core.stdc.stdlib: free;
+
+alias xmlFreeF = free;
+
 extern (C) @nogc nothrow
 {
-    void function(void* ) xmlFree;
+    char** xmlParserVersion;
+
+    int function(xmlFreeFunc freeFunc,
+        xmlMallocFunc mallocFunc,
+        xmlMallocFunc mallocAtomicFunc,
+        xmlReallocFunc reallocFunc,
+        xmlStrdupFunc strdupFunc) xmlGcMemSetup;
+
+    int function(xmlFreeFunc* freeFunc, xmlMallocFunc* mallocFunc,
+        xmlMallocFunc* mallocAtomicFunc, xmlReallocFunc* reallocFunc,
+        xmlStrdupFunc* strdupFunc) xmlGcMemGet;
+
+    void function(void*) xmlFree;
+    void* function(size_t size) xmlMalloc;
+
+    void function() xmlInitParser;
+    void function() xmlCleanupParser;
 
     xmlDoc* function(const char* buffer, int size, const char* URL, const char* encoding, int options) htmlReadMemory;
     void function(xmlDoc*) xmlFreeDoc;
@@ -23,19 +43,17 @@ extern (C) @nogc nothrow
     xmlNode* function(xmlNode* parent) xmlFirstElementChild;
 
     xmlNode* function(const xmlDoc* doc) xmlDocGetRootElement;
-    xmlChar* function(const xmlNode* cur) xmlNodeGetContent;
+    xmlChar* function(xmlNode* cur) xmlNodeGetContent;
     xmlChar* function(const xmlNode* node) xmlGetNodePath;
     xmlNode* function(xmlNode* node) xmlNextElementSibling;
     xmlAttr* function(xmlNode* node, const xmlChar* name, const xmlChar* value) xmlNewProp;
     xmlChar* function(const xmlNode* node, const xmlChar* name) xmlGetProp;
-    xmlAttr * 	function (xmlNode *node, const xmlChar *name, const xmlChar *value) xmlSetProp;
+    xmlAttr* function(xmlNode* node, const xmlChar* name, const xmlChar* value) xmlSetProp;
     xmlAttr* function(const xmlNode* node, const xmlChar* name) xmlHasProp;
 
     long function(const xmlNode* node) xmlGetLineNo;
 
     void function(xmlNode* cur) xmlFreeNode;
-
-    void function() xmlCleanupParser;
 
     xmlDoc* function(const xmlChar* ver) xmlNewDoc;
     xmlNode* function(xmlDoc* doc, xmlNode* root) xmlDocSetRootElement;
@@ -55,16 +73,31 @@ extern (C) @nogc nothrow
 
     xmlDoc* function(const xmlChar* URI, const xmlChar* publicId) htmlNewDocNoDtD;
 
+    xmlBuffer* function() xmlBufferCreate;
+    void function(xmlBuffer*) xmlBufferFree;
+    xmlChar* function(xmlBuffer* buf) xmlBufferContent;
+
+    int function(xmlBuffer* buf,
+        xmlDoc* doc,
+        xmlNode* cur,
+        int level,
+        int format) xmlNodeDump;
+
 }
 
 class LibxmlLib : DynamicLoader
 {
     override void bindAll()
     {
+        bind(cast(void*)&xmlParserVersion, "xmlParserVersion");
+        bind(&xmlGcMemSetup, "xmlGcMemSetup");
+        bind(&xmlGcMemGet, "xmlGcMemGet");
         bind(&xmlFree, "xmlFree");
+        bind(&xmlMalloc, "xmlMalloc");
+        bind(&xmlInitParser, "xmlInitParser");
+        bind(&xmlCleanupParser, "xmlCleanupParser");
         bind(&htmlReadMemory, "htmlReadMemory");
         bind(&xmlReadMemory, "xmlReadMemory");
-        bind(&xmlCleanupParser, "xmlCleanupParser");
         bind(&xmlFreeDoc, "xmlFreeDoc");
         bind(&xmlNewDtd, "xmlNewDtd");
         bind(&xmlDocGetRootElement, "xmlDocGetRootElement");
@@ -95,6 +128,11 @@ class LibxmlLib : DynamicLoader
         bind(&xmlResetLastError, "xmlResetLastError");
 
         bind(&htmlNewDocNoDtD, "htmlNewDocNoDtD");
+
+        bind(&xmlBufferCreate, "xmlBufferCreate");
+        bind(&xmlBufferContent, "xmlBufferContent");
+        bind(&xmlBufferFree, "xmlBufferFree");
+        bind(&xmlNodeDump, "xmlNodeDump");
     }
 
     version (Windows)
@@ -118,6 +156,20 @@ class LibxmlLib : DynamicLoader
     override int libVersion()
     {
         return 2;
+    }
+
+    override string libVersionStr()
+    {
+        import std.conv : to;
+
+        if (!xmlParserVersion)
+        {
+            return super.libVersionStr;
+        }
+
+        import std.string : fromStringz;
+
+        return (*xmlParserVersion).fromStringz.idup;
     }
 
 }

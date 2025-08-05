@@ -49,37 +49,37 @@ class Simulator : Container
         addCreate(panel);
         panel.addCreate([loadButton, saveButton]);
 
-        auto battery = new VoltageSource(12.0, "V1");
-        auto resistor = new Resistor(100, "R1");
-        auto resistor2 = new Resistor(100, "R2");
+        // auto battery = new VoltageSource(12.0, "V1");
+        // auto resistor = new Resistor(100, "R1");
+        // auto resistor2 = new Resistor(100, "R2");
 
-        auto resistor11 = new Resistor(50, "R11");
-        auto resistor21 = new Resistor(25, "R22");
+        // auto resistor11 = new Resistor(50, "R11");
+        // auto resistor21 = new Resistor(25, "R22");
 
-        circuit.addCreateItem(battery);
-        circuit.addCreateItem(resistor);
-        circuit.addCreateItem(resistor2);
+        // circuit.addCreateItem(battery);
+        // circuit.addCreateItem(resistor);
+        // circuit.addCreateItem(resistor2);
 
-        circuit.addCreateItem(resistor11);
-        circuit.addCreateItem(resistor21);
+        // circuit.addCreateItem(resistor11);
+        // circuit.addCreateItem(resistor21);
 
-        auto wire1 = new WirePP(battery, resistor);
-        auto wire2 = new WireNP(resistor, resistor2);
+        // auto wire1 = new WirePP(battery, resistor);
+        // auto wire2 = new WireNP(resistor, resistor2);
 
-        auto wire21 = new WirePP(resistor, resistor11);
-        auto wire31 = new WireNP(resistor11, resistor21);
-        auto wire41 = new WireNN(resistor21, resistor2);
+        // auto wire21 = new WirePP(resistor, resistor11);
+        // auto wire31 = new WireNP(resistor11, resistor21);
+        // auto wire41 = new WireNN(resistor21, resistor2);
 
-        auto wire3 = new WireNN(resistor2, battery);
+        // auto wire3 = new WireNN(resistor2, battery);
 
-        circuit.addCreateItem(wire1);
-        circuit.addCreateItem(wire2);
+        // circuit.addCreateItem(wire1);
+        // circuit.addCreateItem(wire2);
 
-        circuit.addCreateItem(wire21);
-        circuit.addCreateItem(wire31);
-        circuit.addCreateItem(wire41);
+        // circuit.addCreateItem(wire21);
+        // circuit.addCreateItem(wire31);
+        // circuit.addCreateItem(wire41);
 
-        circuit.addCreateItem(wire3);
+        // circuit.addCreateItem(wire3);
 
         //circuit.onPointerPress ~= (ref e) { circuit.alignComponents; };
 
@@ -97,11 +97,15 @@ class Simulator : Container
         loadButton.onAction ~= (ref e) {
             auto userDir = context.app.userDir;
             auto file = userDir ~ "/test2.svg";
-            load(file);
+            load(file, circuit);
         };
+
+        auto userDir = context.app.userDir;
+        auto file = userDir ~ "/test2.svg";
+        load(file, circuit);
     }
 
-    void load(string path)
+    void load(string path, Circuit circuit)
     {
         import std.string : toStringz;
         import std.conv : to;
@@ -120,6 +124,10 @@ class Simulator : Container
                 .XML_PARSE_NOWARNING);
 
         assert(docPtr);
+        scope (exit)
+        {
+            xmlFreeDoc(docPtr);
+        }
 
         xmlNode* root = xmlDocGetRootElement(docPtr);
         assert(root);
@@ -130,11 +138,29 @@ class Simulator : Container
             xmlNode* child = xmlFirstElementChild(node);
             while (child)
             {
+                string id;
+
+                auto idAttr = xmlGetProp(child, "data-id".toXmlStr);
+                if (idAttr)
+                {
+                    id = idAttr.fromXmlStr.idup;
+                    xmlFreeF(idAttr);
+                }
+
                 auto typeAttr = xmlGetProp(child, "data-type".toXmlStr);
+                if (!typeAttr)
+                {
+                    throw new Exception("Not found type: " ~ dump(docPtr, child));
+                }
+
+                scope (exit)
+                {
+                    xmlFreeF(typeAttr);
+                }
 
                 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
-                Sprite2d spriteNode;
+                Component spriteNode;
 
                 if (typeAttr)
                 {
@@ -145,50 +171,134 @@ class Simulator : Container
                             auto resValueAttr = xmlGetProp(child, "data-resistance".toXmlStr);
                             assert(resValueAttr);
                             double resistance = resValueAttr.fromXmlStr.to!double;
+                            scope (exit)
+                            {
+                                xmlFreeF(resValueAttr);
+                            }
 
-                            spriteNode = new Resistor(resistance);
+                            spriteNode = new Resistor(resistance, id);
                             break;
                         case "voltage-source":
                             auto valueAttr = xmlGetProp(child, "data-voltage".toXmlStr);
                             assert(valueAttr);
+                            scope (exit)
+                            {
+                                xmlFreeF(valueAttr);
+                            }
+
                             double voltage = valueAttr.fromXmlStr.to!double;
 
-                            spriteNode = new VoltageSource(voltage);
+                            spriteNode = new VoltageSource(voltage, id);
+                            break;
+
+                        case "wire":
+                            auto dataSrcAttr = xmlGetProp(child, "data-src".toXmlStr);
+                            assert(dataSrcAttr);
+                            scope (exit)
+                            {
+                                xmlFreeF(dataSrcAttr);
+                            }
+
+                            auto srcId = dataSrcAttr.fromXmlStr;
+                            TwoPinElement src = cast(TwoPinElement) circuit.findItemUnsafe(srcId);
+                            if (!src)
+                            {
+                                throw new Exception("Source not found for wire: " ~ dump(docPtr, child));
+                            }
+
+                            auto dataDstAttr = xmlGetProp(child, "data-dst".toXmlStr);
+                            assert(dataDstAttr);
+                            scope (exit)
+                            {
+                                xmlFreeF(dataDstAttr);
+                            }
+
+                            auto dstId = dataDstAttr.fromXmlStr;
+                            TwoPinElement dst = cast(TwoPinElement) circuit.findItemUnsafe(dstId);
+                            if (!dst)
+                            {
+                                throw new Exception("Dest not found for wire: " ~ dump(docPtr, child));
+                            }
+
+                            auto dataPinFromAttr = xmlGetProp(child, "data-pin-from".toXmlStr);
+                            assert(dataPinFromAttr);
+                            scope (exit)
+                            {
+                                xmlFreeF(dataPinFromAttr);
+                            }
+
+                            auto sourcePinType = dataPinFromAttr.fromXmlStr;
+
+                            auto dataPinToAttr = xmlGetProp(child, "data-pin-to".toXmlStr);
+                            assert(dataPinToAttr);
+                            scope (exit)
+                            {
+                                xmlFreeF(dataPinToAttr);
+                            }
+
+                            auto destPinType = dataPinToAttr.fromXmlStr;
+
+                            if (sourcePinType == "n" && destPinType == "n")
+                            {
+                                spriteNode = new WireNN(src, dst);
+                            }
+                            else if (sourcePinType == "p" && destPinType == "n")
+                            {
+                                spriteNode = new WirePN(src, dst);
+                            }
+                            else if (sourcePinType == "n" && destPinType == "p")
+                            {
+                                spriteNode = new WireNP(src, dst);
+                            }
+                            else if (sourcePinType == "p" && destPinType == "p")
+                            {
+                                spriteNode = new WirePP(src, dst);
+                            }
+                            else
+                            {
+                                import std.format : format;
+
+                                throw new Exception(format("Not supported wire pins: %s, %s", sourcePinType, destPinType));
+                            }
                             break;
                         default:
                             break;
                     }
                 }
 
-                if (spriteNode)
+                if (auto comp = cast(Element) spriteNode)
                 {
                     auto wValueAttr = xmlGetProp(child, "data-width".toXmlStr);
                     if (wValueAttr)
                     {
                         spriteNode.width = wValueAttr.fromXmlStr.to!double;
+                        xmlFreeF(wValueAttr);
                     }
 
                     auto hValueAttr = xmlGetProp(child, "data-height".toXmlStr);
                     if (hValueAttr)
                     {
                         spriteNode.height = hValueAttr.fromXmlStr.to!double;
+                        xmlFreeF(hValueAttr);
                     }
+                }
 
-                    if (auto comp = cast(Component) node)
-                    {
-                        circuit.addCreateItem(comp);
-                    }
+                circuit.addCreateItem(spriteNode);
 
+                if (auto comp = cast(Element) spriteNode)
+                {
                     auto xValueAttr = xmlGetProp(child, "data-x".toXmlStr);
                     if (xValueAttr)
                     {
                         spriteNode.x = xValueAttr.fromXmlStr.to!double;
+                        xmlFreeF(xValueAttr);
                     }
 
                     auto yValueAttr = xmlGetProp(child, "data-y".toXmlStr);
                     if (yValueAttr)
                     {
                         spriteNode.y = yValueAttr.fromXmlStr.to!double;
+                        xmlFreeF(yValueAttr);
                     }
                 }
 
@@ -197,8 +307,6 @@ class Simulator : Container
 
             node = xmlNextElementSibling(node);
         }
-
-        xmlFreeDoc(docPtr);
     }
 
     void save(string path)
@@ -221,6 +329,12 @@ class Simulator : Container
         xmlNewProp(root, "width".toXmlStr, windowWidth.to!string.toXmlStr);
         xmlNewProp(root, "height".toXmlStr, windowHeight.to!string.toXmlStr);
         xmlNewProp(root, "xmlns".toXmlStr, "http://www.w3.org/2000/svg".toXmlStr);
+
+        import std.format : format;
+
+        string colorStr = graphic.screenColor.toWebHex;
+        //style="background-color: black;"
+        xmlNewProp(root, "style".toXmlStr, format("background-color: %s;", colorStr).toXmlStr);
 
         foreach (item; circuit.children)
         {
@@ -316,8 +430,10 @@ class Simulator : Container
                 auto x2 = wire.endLine.x;
                 auto y2 = wire.endLine.y;
 
-                xmlNewProp(elemNode, "data-src".toXmlStr, src.elementId.toXmlStr);
-                xmlNewProp(elemNode, "data-dst".toXmlStr, dst.elementId.toXmlStr);
+                xmlNewProp(elemNode, "data-type".toXmlStr, "wire".toXmlStr);
+
+                xmlNewProp(elemNode, "data-src".toXmlStr, src.id.toXmlStr);
+                xmlNewProp(elemNode, "data-dst".toXmlStr, dst.id.toXmlStr);
 
                 xmlNewProp(elemNode, "x1".toXmlStr, x1.to!string.toXmlStr);
                 xmlNewProp(elemNode, "y1".toXmlStr, y1.to!string.toXmlStr);
@@ -349,8 +465,8 @@ class Simulator : Container
                     toPin = "p";
                 }
 
-                xmlNewProp(elemNode, "data-from".toXmlStr, fromPin.toXmlStr);
-                xmlNewProp(elemNode, "data-to".toXmlStr, toPin.toXmlStr);
+                xmlNewProp(elemNode, "data-pin-from".toXmlStr, fromPin.toXmlStr);
+                xmlNewProp(elemNode, "data-pin-to".toXmlStr, toPin.toXmlStr);
             }
 
             if (!elemNode)
@@ -369,6 +485,12 @@ class Simulator : Container
                         .to!string.toXmlStr);
                 xmlNewProp(elemNode, "data-y".toXmlStr, y
                         .to!string.toXmlStr);
+
+                if (sprite.id.length > 0)
+                {
+                    auto idPropName = "data-id".toXmlStr;
+                    xmlNewProp(elemNode, idPropName, sprite.id.toXmlStr);
+                }
             }
 
         }
@@ -391,6 +513,22 @@ class Simulator : Container
         }
 
         xmlFreeDoc(doc);
+    }
+
+    string dump(xmlDoc* docPtr, xmlNode* child, int level = 1, int format = 1)
+    {
+        auto buff = xmlBufferCreate();
+        assert(buff);
+        scope (exit)
+        {
+            xmlBufferFree(buff);
+        }
+
+        xmlNodeDump(buff, docPtr, child, level, format);
+
+        auto buffStr = xmlBufferContent(buff);
+        string nodeXml = !buffStr ? "null" : buffStr.fromXmlStr.idup;
+        return nodeXml;
     }
 
     string getLastError()

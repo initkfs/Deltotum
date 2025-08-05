@@ -16,46 +16,46 @@ class SvgReader
     void load(string file)
     {
 
-        import std.string : toStringz;
-        import std: readText;
+        // import std.string : toStringz;
+        // import std: readText;
 
-        auto htmlText = readText(file);
+        // auto htmlText = readText(file);
 
-        xmlDoc* docPtr = htmlReadMemory(htmlText.toStringz, cast(int) htmlText.length, null, null, htmlParserOption.HTML_PARSE_NOERROR | htmlParserOption
-                .HTML_PARSE_NOWARNING | htmlParserOption
-                .HTML_PARSE_HTML5);
+        // xmlDoc* docPtr = htmlReadMemory(htmlText.toStringz, cast(int) htmlText.length, null, null, htmlParserOption.HTML_PARSE_NOERROR | htmlParserOption
+        //         .HTML_PARSE_NOWARNING | htmlParserOption
+        //         .HTML_PARSE_HTML5);
 
-         assert(docPtr);
+        //  assert(docPtr);
 
-        xmlNode* root = xmlDocGetRootElement(docPtr);
-        assert(root);
+        // xmlNode* root = xmlDocGetRootElement(docPtr);
+        // assert(root); // @suppress(dscanner.style.long_line)
 
-        xmlNode* node = root;
-        while (node)
-        {
-            xmlNode* child = xmlFirstElementChild(node);
-            while (child)
-            {
-                const xmlChar* content = xmlNodeGetContent(child);
-                if (content)
-                {
-                    auto name = child.name;
-                    writefln("Тег: <%s>, Текст: %s\n", (cast(char*)name).fromStringz, (cast(char*) content)
-                            .fromStringz);
-                }
-                else
-                {
-                    writeln("Тег: <%s>\n", (cast(char*)child.name).fromStringz);
-                }
+        // xmlNode* node = root;
+        // while (node)
+        // {
+        //     xmlNode* child = xmlFirstElementChild(node);
+        //     while (child)
+        //     {
+        //         const xmlChar* content = xmlNodeGetContent(child);
+        //         if (content)
+        //         {
+        //             auto name = child.name;
+        //             writefln("Тег: <%s>, Текст: %s\n", (cast(char*)name).fromStringz, (cast(char*) content)
+        //                     .fromStringz);
+        //         }
+        //         else
+        //         {
+        //             writeln("Тег: <%s>\n", (cast(char*)child.name).fromStringz);
+        //         }
 
-                child = xmlNextElementSibling(child);
-            }
+        //         child = xmlNextElementSibling(child);
+        //     }
 
-            node = xmlNextElementSibling(node);
-        }
+        //     node = xmlNextElementSibling(node);
+        // }
 
-        xmlFreeDoc(docPtr);
-        xmlCleanupParser();
+        // xmlFreeDoc(docPtr);
+        // xmlCleanupParser();
     }
 
 }

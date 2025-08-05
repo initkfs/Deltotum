@@ -102,6 +102,13 @@ class DynamicLoader
 
     int libVersion() => 0;
 
+    string libVersionStr()
+    {
+        import std.conv : to;
+
+        return libVersion.to!string;
+    }
+
     bool checkError(string message = null)
     {
         string err;
@@ -125,6 +132,12 @@ class DynamicLoader
         {
             *(cast(void**) funcPtr) = mustBePtr;
             return true;
+        }
+        else
+        {
+            import std.conv : text;
+
+            errors ~= text("Not found symbol: ", name);
         }
 
         if (isCheckError)

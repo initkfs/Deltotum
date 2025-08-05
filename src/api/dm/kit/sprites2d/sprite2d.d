@@ -2190,7 +2190,19 @@ class Sprite2d : EventKitTarget
         return Nullable!Sprite2d.init;
     }
 
-    Nullable!Sprite2d findChild(string id)
+    Sprite2d findChildUnsafe(const(char)[] id)
+    {
+        foreach (Sprite2d ch; children)
+        {
+            if (ch.id == id)
+            {
+                return ch;
+            }
+        }
+        return null;
+    }
+
+    Nullable!Sprite2d findChild(const(char)[] id)
     {
         foreach (Sprite2d ch; children)
         {

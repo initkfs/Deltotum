@@ -297,7 +297,7 @@ class SdlApp : GuiApp
 
         xmlLibForLoad.onLoad = () {
             libxmlLib = xmlLibForLoad;
-            uservices.logger.trace("Load libxml library.");
+            uservices.logger.trace("Load libxml library: ", xmlLibForLoad.libVersionStr);
         };
 
         xmlLibForLoad.onLoadErrors = (err) {

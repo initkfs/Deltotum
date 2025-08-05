@@ -96,15 +96,13 @@ abstract class Element : Component
 
     Orientation orientation;
 
-    dstring elementId;
-
     Sprite2d content;
 
-    this(dstring id, Orientation orientation = Orientation.vertical)
+    this(string id, Orientation orientation = Orientation.vertical)
     {
-        this.elementId = id;
+        this.id = id;
 
-        label = new Text(elementId);
+        label = new Text(id);
         vertex = new Vertex;
         isDraggable = true;
 
@@ -183,7 +181,7 @@ abstract class OnePinElement : Element
 {
     Connection p;
 
-    this(dstring id, Orientation orientation = Orientation.vertical)
+    this(string id, Orientation orientation = Orientation.vertical)
     {
         super(id, orientation);
     }
@@ -212,7 +210,7 @@ abstract class TwoPinElement : OnePinElement
 {
     Connection n;
 
-    this(dstring id, Orientation orientation = Orientation.vertical)
+    this(string id, Orientation orientation = Orientation.vertical)
     {
         super(id, orientation);
     }
@@ -365,10 +363,10 @@ abstract class ConnectorTwoPin : Component
 
         auto start = fromPin.pos;
 
-        foreach (ref p; points)
-        {
-            graphic.fillRect(start.add(p), 5, 5);
-        }
+        // foreach (ref p; points)
+        // {
+        //     graphic.fillRect(start.add(p), 5, 5);
+        // }
     }
 
     override void update(double dt)
@@ -595,7 +593,7 @@ class Resistor : TwoPinElement
     double eqvVoltage = 0;
     double dU = 0;
 
-    this(double R, dstring label = "R1", Orientation orientation = Orientation.vertical)
+    this(double R, string label = "R1", Orientation orientation = Orientation.vertical)
     {
         super(label, orientation);
         this.resistance = R;
@@ -689,7 +687,7 @@ class VoltageSource : TwoPinElement
 {
     double voltage = 0;
 
-    this(double V, dstring label = "V1", Orientation orientation = Orientation.vertical)
+    this(double V, string label = "V1", Orientation orientation = Orientation.vertical)
     {
         super(label, orientation);
         this.voltage = V;
@@ -774,7 +772,7 @@ class Ground : TwoPinElement
 {
     double conductance = 1e9;
 
-    this(dstring label = "Gnd", Orientation orientation = Orientation.vertical)
+    this(string label = "Gnd", Orientation orientation = Orientation.vertical)
     {
         super(label, orientation);
     }
