@@ -1,4 +1,4 @@
-module api.dm.gui.supports.editors.sections.graphic;
+module api.dm.gui.supports.editors.sections.graphics;
 
 import api.dm.gui.controls.control : Control;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
@@ -16,7 +16,7 @@ import std.stdio;
 /**
  * Authors: initkfs
  */
-class Grahpics : Control
+class Graphics : Control
 {
     this()
     {

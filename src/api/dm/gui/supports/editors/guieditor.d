@@ -37,10 +37,10 @@ class GuiEditor : GuiScene
         containerTab.content = new Containers;
         root.addCreate(containerTab);
 
-        import api.dm.gui.supports.editors.sections.graphic : Grahpics;
+        import api.dm.gui.supports.editors.sections.graphics : Graphics;
 
         auto graphicsTab = new Tab("Graphics");
-        graphicsTab.content = new Grahpics;
+        graphicsTab.content = new Graphics;
         root.addCreate(graphicsTab);
 
         version (DmAddon)
@@ -103,7 +103,7 @@ class GuiEditor : GuiScene
         eleTab.content = new Electronics;
         root.addCreate(eleTab);
 
-        root.changeTab(eleTab);
+        root.changeTab(graphicsTab);
 
         //import std;
         // createDebugger;
