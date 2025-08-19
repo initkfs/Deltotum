@@ -14,8 +14,8 @@ struct Config
 {
     NeighborhoodType neighborhood = NeighborhoodType.Moore;
     double initialDensity = 0.3;
-    size_t width = 400;
-    size_t height = 400;
+    size_t width = 300;
+    size_t height = 300;
     size_t cellSize = 1;
     RuleType rule = RuleType.Rule30;
     bool wrapAround;
@@ -62,8 +62,11 @@ class CellularAutomaton : Sprite2d
     override void drawContent()
     {
         super.drawContent;
-
         render;
+    }
+
+    override void update(double dt){
+        super.update(dt);
         updateState;
     }
 
@@ -417,11 +420,23 @@ class CellularAutomaton : Sprite2d
         // Rule30 and Rule110 from row 2
         size_t startRow = (config.rule == RuleType.GameOfLife) ? 0 : 1;
 
+        size_t bufferPos;
+
+        cellDrawBuffer[] = Rect2d.init;
+
         foreach (i; startRow .. _currentState.length)
         {
             foreach (j; 0 .. _currentState[i].length)
             {
-                _nextState[i][j] = applyRules(i, j);
+                bool isRule = applyRules(i, j);
+                if (isRule)
+                {
+                    _nextState[i][j] = isRule;
+                    cellDrawBuffer[bufferPos] = Rect2d(x + j * config.cellSize, y + i * config.cellSize, config
+                            .cellSize, config
+                            .cellSize);
+                    bufferPos++;
+                }
             }
         }
 
@@ -432,30 +447,7 @@ class CellularAutomaton : Sprite2d
 
     private void render()
     {
-        size_t bufferPos;
-        foreach (i; 0 .. _currentState.length)
-        {
-            foreach (j; 0 .. _currentState[i].length)
-            {
-                if (_currentState[i][j])
-                {
-                    cellDrawBuffer[bufferPos] = Rect2d(x + j * config.cellSize, y + i * config.cellSize, config
-                            .cellSize, config
-                            .cellSize);
-                    //graphic.fillRect(x + j * config.cellSize, y + i * config.cellSize, config.cellSize, config
-                    //        .cellSize);
-                }
-                else
-                {
-                    cellDrawBuffer[bufferPos] = Rect2d(x + j * config.cellSize, y + i * config.cellSize, 0, 0);
-                }
-
-                bufferPos++;
-            }
-        }
-
         graphic.fillRects(cellDrawBuffer, RGBA.yellowgreen);
-
     }
 
     void reset()
