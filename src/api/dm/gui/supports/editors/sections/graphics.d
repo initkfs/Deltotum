@@ -191,6 +191,14 @@ class Graphics : Control
         drawContainer = new Control;
         drawContainer.resize(window.width, 100);
         addCreate(drawContainer);
+
+        import api.dm.kit.cellulars.cellular_automata: CellularAutomaton;
+
+        auto ca = new CellularAutomaton;
+        addCreate(ca);
+        ca.initializeState;
+        ca.isLayoutManaged = false;
+        ca.pos(500, 0);
     }
 
     override bool draw()

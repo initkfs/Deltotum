@@ -193,6 +193,35 @@ struct DenseBuffer(T, size_t Capacity = 256,
         return true;
     }
 
+    bool append(const T[] value) @nogc nothrow @safe
+    {
+        //TODO overflow
+        size_t newLength = _length + value.length;
+        if (newLength >= Capacity)
+        {
+            return false;
+        }
+        size_t oldLength = _length;
+        _length = newLength;
+        opSlice(oldLength, newLength)[] = value;
+        return true;
+    }
+
+    //TODO remove dupl
+    bool append(T[] value) @nogc nothrow @safe
+    {
+        //TODO overflow
+        size_t newLength = _length + value.length;
+        if (newLength >= Capacity)
+        {
+            return false;
+        }
+        size_t oldLength = _length;
+        _length = newLength;
+        opSlice(oldLength, newLength)[] = value;
+        return true;
+    }
+
     void opOpAssign(string op : "~")(T rhs)
     {
         append(rhs);
