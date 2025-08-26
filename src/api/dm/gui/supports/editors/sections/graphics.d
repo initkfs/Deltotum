@@ -192,9 +192,9 @@ class Graphics : Control
         drawContainer.resize(window.width, 100);
         addCreate(drawContainer);
 
-        import api.dm.kit.cellulars.cellular_automata: CellularAutomaton;
+        import api.dm.kit.cellulars.elementary_cellular: ElementaryCellular;
 
-        auto ca = new CellularAutomaton;
+        auto ca = new ElementaryCellular(135);
         addCreate(ca);
         ca.initializeState;
         ca.isLayoutManaged = false;

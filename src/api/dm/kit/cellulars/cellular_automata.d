@@ -10,13 +10,13 @@ enum NeighborhoodType : uint
     VonNeumann = 4
 }
 
-struct Config
+struct CellConfig
 {
     NeighborhoodType neighborhood = NeighborhoodType.Moore;
     double initialDensity = 0.3;
     size_t width = 300;
     size_t height = 300;
-    size_t cellSize = 1;
+    size_t cellSize = 3;
     RuleType rule = RuleType.Rule30;
     bool wrapAround;
 }
@@ -31,7 +31,7 @@ enum RuleType
 class CellularAutomaton : Sprite2d
 {
 
-    Config config;
+    CellConfig config;
 
     protected
     {
@@ -44,7 +44,7 @@ class CellularAutomaton : Sprite2d
 
     Rect2d[] cellDrawBuffer;
 
-    this(Config config = Config.init)
+    this(CellConfig config = CellConfig.init)
     {
         this.config = config;
 
@@ -55,7 +55,6 @@ class CellularAutomaton : Sprite2d
         _nextState = new bool[][](_rows, _cols);
 
         cellDrawBuffer = new Rect2d[_rows * _cols];
-
         //initializeState;
     }
 
@@ -65,25 +64,15 @@ class CellularAutomaton : Sprite2d
         render;
     }
 
-    override void update(double dt){
+    override void update(double dt)
+    {
         super.update(dt);
         updateState;
     }
 
     void initializeState()
     {
-        final switch (config.rule)
-        {
-            case RuleType.GameOfLife:
-                initializeRandom;
-                break;
-            case RuleType.Rule30:
-                initializeRule30;
-                break;
-            case RuleType.Rule110:
-                initializeRule110;
-                break;
-        }
+        initializeRandom;
     }
 
     private void initializeRandom()
@@ -97,29 +86,6 @@ class CellularAutomaton : Sprite2d
                 _currentState[i][j] = uniform(0.0, 1.0) < config.initialDensity;
             }
         }
-    }
-
-    private void initializeRule30()
-    {
-        foreach (i; 0 .. _currentState.length)
-        {
-            foreach (j; 0 .. _currentState[i].length)
-            {
-                _currentState[i][j] = false;
-            }
-        }
-
-        //1 cell
-        if (_currentState.length > 0 && _currentState[0].length > 0)
-        {
-            auto center = _currentState[0].length / 2;
-            _currentState[0][center] = true;
-        }
-    }
-
-    private void initializeRule110()
-    {
-        initializeRule30;
     }
 
     void onCurrentState(scope bool delegate(size_t ri, size_t ci, bool ptr) onCellValueIsContinue)
@@ -324,69 +290,6 @@ class CellularAutomaton : Sprite2d
         return count;
     }
 
-    private bool applyRule30(size_t row, size_t col)
-    {
-        if (row <= 0)
-            return false; // Start with row 2
-
-        bool left = cell(row - 1, col - 1);
-        bool center = cell(row - 1, col);
-        bool right = cell(row - 1, col + 1);
-
-        // 00011110
-        // 111 -> 0, 110 -> 0, 101 -> 0, 100 -> 1,
-        // 011 -> 1, 010 -> 1, 001 -> 1, 000 -> 0
-
-        if (left && center && right)
-            return false; // 111 -> 0
-        if (left && center && !right)
-            return false; // 110 -> 0
-        if (left && !center && right)
-            return false; // 101 -> 0
-        if (left && !center && !right)
-            return true; // 100 -> 1
-        if (!left && center && right)
-            return true; // 011 -> 1
-        if (!left && center && !right)
-            return true; // 010 -> 1
-        if (!left && !center && right)
-            return true; // 001 -> 1
-        if (!left && !center && !right)
-            return false; // 000 -> 0
-
-        return false;
-    }
-
-    private bool applyRule110(size_t row, size_t col)
-    {
-        if (row <= 0)
-            return false;
-
-        bool left = cell(row - 1, col - 1);
-        bool center = cell(row - 1, col);
-        bool right = cell(row - 1, col + 1);
-
-        //01101110
-        if (left && center && right)
-            return false; // 111 -> 0
-        if (left && center && !right)
-            return true; // 110 -> 1
-        if (left && !center && right)
-            return true; // 101 -> 1
-        if (left && !center && !right)
-            return false; // 100 -> 0
-        if (!left && center && right)
-            return true; // 011 -> 1
-        if (!left && center && !right)
-            return true; // 010 -> 1
-        if (!left && !center && right)
-            return true; // 001 -> 1
-        if (!left && !center && !right)
-            return false; // 000 -> 0
-
-        return false;
-    }
-
     private bool applyGameOfLife(size_t row, size_t col)
     {
         size_t neighbors = countNeighbors(row, col);
@@ -402,40 +305,63 @@ class CellularAutomaton : Sprite2d
         }
     }
 
-    private bool applyRules(size_t row, size_t col)
+    bool applyRules(size_t row, size_t col)
     {
-        final switch (config.rule)
-        {
-            case RuleType.GameOfLife:
-                return applyGameOfLife(row, col);
-            case RuleType.Rule30:
-                return applyRule30(row, col);
-            case RuleType.Rule110:
-                return applyRule110(row, col);
-        }
+        return false;
     }
 
-    private void updateState()
+    size_t startRow() => 0;
+
+    size_t count;
+
+    void updateState()
     {
-        // Rule30 and Rule110 from row 2
-        size_t startRow = (config.rule == RuleType.GameOfLife) ? 0 : 1;
+        // if (count <= 50)
+        // {
+        //     count++;
+        //     return;
+        // }
+
+        // count = 0;
+
+        size_t firstRow = startRow;
 
         size_t bufferPos;
 
         cellDrawBuffer[] = Rect2d.init;
 
-        foreach (i; startRow .. _currentState.length)
+        if (firstRow != 0)
         {
-            foreach (j; 0 .. _currentState[i].length)
+            if (firstRow == 1)
             {
-                bool isRule = applyRules(i, j);
+                _nextState[0][] = _currentState[0][];
+            }
+            else
+            {
+                foreach (ri; 0 .. firstRow)
+                {
+                    _nextState[ri][] = _currentState[ri][];
+                }
+            }
+        }
+
+        foreach (ri; firstRow .. _currentState.length)
+        {
+            foreach (ci; 0 .. _currentState[ri].length)
+            {
+                bool isRule = applyRules(ri, ci);
                 if (isRule)
                 {
-                    _nextState[i][j] = isRule;
-                    cellDrawBuffer[bufferPos] = Rect2d(x + j * config.cellSize, y + i * config.cellSize, config
+                    _nextState[ri][ci] = true;
+                    cellDrawBuffer[bufferPos] = Rect2d(x + ci * config.cellSize, y + (
+                            ri * config.cellSize + (firstRow * config.cellSize)), config
                             .cellSize, config
                             .cellSize);
                     bufferPos++;
+                }
+                else
+                {
+                    _nextState[ri][ci] = false;
                 }
             }
         }
@@ -463,12 +389,23 @@ class CellularAutomaton : Sprite2d
     }
 
     inout(bool[][]) currentState() inout => _currentState;
+    size_t rows() => _rows;
+    size_t cols() => _cols;
 
+    void printState()
+    {
+        import std.stdio : writeln;
+
+        foreach (ref row; _currentState)
+        {
+            writeln(row);
+        }
+    }
 }
 
 unittest
 {
-    Config config;
+    CellConfig config;
     config.width = 6;
     config.height = 4;
     config.cellSize = 1;
@@ -488,9 +425,7 @@ unittest
         assert(!col, format("%s:%s", ri, ci));
         return true;
     });
-
     assert(cellurar.cell(1, 2));
-
     cellurar.config.wrapAround = true;
     assert(cellurar.cell(5, 8));
     assert(!cellurar.cell(5, 7));
@@ -502,19 +437,23 @@ unittest
 
 unittest
 {
-    Config config;
+    CellConfig config;
     config.width = 5;
     config.height = 5;
     config.cellSize = 1;
     config.neighborhood = NeighborhoodType.Moore;
-
-    auto cellular = new CellularAutomaton(config);
+    auto cellular = new CellularAutomaton(
+        config);
     cellular.cell(0, 0, true);
     cellular.cell(2, 2, true);
 
     assert(cellular.countMooreNeighbors(0, 0) == 0);
-    assert(cellular.countMooreNeighbors(2, 2) == 0);
-    assert(cellular.countMooreNeighbors(1, 1) == 2);
-    assert(cellular.countMooreNeighbors(1, 0) == 1);
-    assert(cellular.countMooreNeighbors(2, 1) == 1);
+    assert(
+        cellular.countMooreNeighbors(2, 2) == 0);
+    assert(
+        cellular.countMooreNeighbors(1, 1) == 2);
+    assert(
+        cellular.countMooreNeighbors(1, 0) == 1);
+    assert(
+        cellular.countMooreNeighbors(2, 1) == 1);
 }
