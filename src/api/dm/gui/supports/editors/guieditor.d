@@ -103,7 +103,7 @@ class GuiEditor : GuiScene
         eleTab.content = new Electronics;
         root.addCreate(eleTab);
 
-        root.changeTab(graphicsTab);
+        root.changeTab(eleTab);
 
         //import std;
         // createDebugger;

@@ -1658,6 +1658,25 @@ class Sprite2d : EventKitTarget
         _height = newHeight * multiplyInitHeight;
     }
 
+    protected bool initSizeIfZero(double newWidth, double newHeight)
+    {
+        bool isWidth, isHeight;
+
+        if (_width == 0)
+        {
+            isWidth = initWidth(newWidth);
+        }
+
+        if (_height == 0)
+        {
+            isHeight = initHeight(newHeight);
+        }
+
+        return isWidth || isHeight;
+    }
+
+    protected bool initSizeIfZero(double newSize) => initSizeIfZero(newSize, newSize);
+
     protected bool initSize(double newWidth, double newHeight)
     {
         bool isWidth = initWidth(newWidth);
@@ -2272,7 +2291,8 @@ class Sprite2d : EventKitTarget
         {
             throw new Exception(err.toString);
         }
-        if(const errRead = graphic.readPixels(bounds, surf)){
+        if (const errRead = graphic.readPixels(bounds, surf))
+        {
             logger.error(errRead.toString);
         }
         return surf;

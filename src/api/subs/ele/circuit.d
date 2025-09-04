@@ -8,6 +8,10 @@ import api.subs.ele.components;
 import api.math.graphs.graph : Graph;
 import api.math.geom2.vec2: Vec2d;
 
+import api.subs.ele.components.base_component: BaseComponent;
+import api.subs.ele.components.elements.base_element: BaseElement;
+import api.subs.ele.components.connects.connector_two_pin: ConnectorTwoPin;
+
 import std.stdio;
 
 import Math = api.math;
@@ -16,7 +20,7 @@ import Math = api.math;
  * Authors: initkfs
  */
 
-class Circuit : TypedContainer!Component
+class Circuit : TypedContainer!BaseComponent
 {
     Graph graph;
 
@@ -39,7 +43,7 @@ class Circuit : TypedContainer!Component
         super.create;
 
         onItemAdd = (item) {
-            if (auto vertComp = cast(Element) item)
+            if (auto vertComp = cast(BaseElement) item)
             {
                 graph.addVertex(vertComp.vertex);
                 vertComp.vertex.id = nextId;
@@ -62,7 +66,7 @@ class Circuit : TypedContainer!Component
     {
         foreach (item; items)
         {
-            if (auto vertComp = cast(Element) item)
+            if (auto vertComp = cast(BaseElement) item)
             {
                 vertComp.vertex.pos = vertComp.pos;
             }
@@ -78,7 +82,7 @@ class Circuit : TypedContainer!Component
 
         foreach (item; items)
         {
-            if (auto vertComp = cast(Element) item)
+            if (auto vertComp = cast(BaseElement) item)
             {
                 vertComp.pos = vertComp.vertex.pos;
             }

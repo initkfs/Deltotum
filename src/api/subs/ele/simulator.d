@@ -160,7 +160,7 @@ class Simulator : Container
 
                 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
-                Component spriteNode;
+                BaseComponent spriteNode;
 
                 if (typeAttr)
                 {
@@ -200,7 +200,7 @@ class Simulator : Container
                             }
 
                             auto srcId = dataSrcAttr.fromXmlStr;
-                            TwoPinElement src = cast(TwoPinElement) circuit.findItemUnsafe(srcId);
+                            BaseTwoPinElement src = cast(BaseTwoPinElement) circuit.findItemUnsafe(srcId);
                             if (!src)
                             {
                                 throw new Exception("Source not found for wire: " ~ dump(docPtr, child));
@@ -214,7 +214,7 @@ class Simulator : Container
                             }
 
                             auto dstId = dataDstAttr.fromXmlStr;
-                            TwoPinElement dst = cast(TwoPinElement) circuit.findItemUnsafe(dstId);
+                            BaseTwoPinElement dst = cast(BaseTwoPinElement) circuit.findItemUnsafe(dstId);
                             if (!dst)
                             {
                                 throw new Exception("Dest not found for wire: " ~ dump(docPtr, child));
@@ -266,7 +266,7 @@ class Simulator : Container
                     }
                 }
 
-                if (auto comp = cast(Element) spriteNode)
+                if (auto comp = cast(BaseElement) spriteNode)
                 {
                     auto wValueAttr = xmlGetProp(child, "data-width".toXmlStr);
                     if (wValueAttr)
@@ -285,7 +285,7 @@ class Simulator : Container
 
                 circuit.addCreateItem(spriteNode);
 
-                if (auto comp = cast(Element) spriteNode)
+                if (auto comp = cast(BaseElement) spriteNode)
                 {
                     auto xValueAttr = xmlGetProp(child, "data-x".toXmlStr);
                     if (xValueAttr)
@@ -340,7 +340,7 @@ class Simulator : Container
         {
             xmlNode* elemNode;
 
-            if (auto element = cast(Element) item)
+            if (auto element = cast(BaseElement) item)
             {
                 Vec2d translateOffset = Vec2d.zero;
                 if (element.content)
