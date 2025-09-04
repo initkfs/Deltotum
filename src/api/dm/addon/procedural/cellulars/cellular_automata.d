@@ -1,4 +1,4 @@
-module api.dm.kit.cellulars.cellular_automata;
+module api.dm.addon.procedural.cellulars.cellular_automata;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.math.geom2.rect2 : Rect2d;
@@ -14,8 +14,8 @@ struct CellConfig
 {
     NeighborhoodType neighborhood = NeighborhoodType.Moore;
     double initialDensity = 0.3;
-    size_t width = 300;
-    size_t height = 300;
+    size_t width = 200;
+    size_t height = 200;
     size_t cellSize = 3;
     RuleType rule = RuleType.Rule30;
     bool wrapAround;
@@ -56,6 +56,8 @@ class CellularAutomaton : Sprite2d
 
         cellDrawBuffer = new Rect2d[_rows * _cols];
         //initializeState;
+
+        resize(config.width, config.height);
     }
 
     override void drawContent()

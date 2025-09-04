@@ -1,6 +1,6 @@
-module api.dm.kit.cellulars.elementary_cellular;
+module api.dm.addon.procedural.cellulars.elementary_cellular;
 
-import api.dm.kit.cellulars.cellular_automata;
+import api.dm.addon.procedural.cellulars.cellular_automata;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.math.geom2.rect2 : Rect2d;

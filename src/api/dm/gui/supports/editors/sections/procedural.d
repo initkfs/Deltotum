@@ -72,6 +72,8 @@ class Procedural : Control
         auto tilingRoot = new HBox;
         addCreate(tilingRoot);
         createTiling(tilingRoot);
+
+        createCellulars(tilingRoot);
     }
 
     private void createTiling(Control root)
@@ -120,6 +122,17 @@ class Procedural : Control
             }
             tween.run;
         };
+    }
+
+    void createCellulars(Control root)
+    {
+        import api.dm.addon.procedural.cellulars.elementary_cellular : ElementaryCellular;
+
+        auto ca = new ElementaryCellular(90);
+        ca.initializeState;
+
+        auto cellsRoot = createInfo("Rule 90", ca);
+        root.addCreate(cellsRoot);
     }
 
     void createMaze(Control mazeRoot)
