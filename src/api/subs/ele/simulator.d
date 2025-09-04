@@ -178,6 +178,17 @@ class Simulator : Container
 
                             spriteNode = new Resistor(resistance, id);
                             break;
+                        case "capacitor":
+                            auto valueAttr = xmlGetProp(child, "data-capacitance".toXmlStr);
+                            assert(valueAttr);
+                            double cap = valueAttr.fromXmlStr.to!double;
+                            scope (exit)
+                            {
+                                xmlFreeF(valueAttr);
+                            }
+
+                            spriteNode = new Capacitor(cap, id);
+                            break;
                         case "voltage-source":
                             auto valueAttr = xmlGetProp(child, "data-voltage".toXmlStr);
                             assert(valueAttr);
@@ -200,7 +211,8 @@ class Simulator : Container
                             }
 
                             auto srcId = dataSrcAttr.fromXmlStr;
-                            BaseTwoPinElement src = cast(BaseTwoPinElement) circuit.findItemUnsafe(srcId);
+                            BaseTwoPinElement src = cast(BaseTwoPinElement) circuit.findItemUnsafe(
+                                srcId);
                             if (!src)
                             {
                                 throw new Exception("Source not found for wire: " ~ dump(docPtr, child));
@@ -214,7 +226,8 @@ class Simulator : Container
                             }
 
                             auto dstId = dataDstAttr.fromXmlStr;
-                            BaseTwoPinElement dst = cast(BaseTwoPinElement) circuit.findItemUnsafe(dstId);
+                            BaseTwoPinElement dst = cast(BaseTwoPinElement) circuit.findItemUnsafe(
+                                dstId);
                             if (!dst)
                             {
                                 throw new Exception("Dest not found for wire: " ~ dump(docPtr, child));
