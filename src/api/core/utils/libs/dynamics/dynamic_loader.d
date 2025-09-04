@@ -234,6 +234,12 @@ class DynamicLoader
             }
         }
 
+        if (!isLoad)
+        {
+            import std.conv: text;
+            errors ~= text("Not found library ", libPaths);
+        }
+
         if (errors.length > 0)
         {
             if (onLoadErrors)
@@ -243,12 +249,6 @@ class DynamicLoader
                     onLoadErrors(err);
                 }
             }
-            return;
-        }
-
-        if (!isLoad)
-        {
-            errors ~= "Not found library";
             return;
         }
 
