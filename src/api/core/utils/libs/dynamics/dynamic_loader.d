@@ -122,6 +122,16 @@ class DynamicLoader
 
     bool bind(void* funcPtr, const(char)[] name, bool isCheckError = true)
     {
+        return bindT(funcPtr, name, isCheckError);
+    }
+
+    bool bind(shared void* funcPtr, const(char)[] name, bool isCheckError = true)
+    {
+        return bindT(funcPtr, name, isCheckError);
+    }
+
+    bool bindT(T)(T funcPtr, const(char)[] name, bool isCheckError = true)
+    {
         if (!isLoad)
         {
             return false;
@@ -130,6 +140,7 @@ class DynamicLoader
         void* mustBePtr;
         if (libBind(lib.handlePtr, name.ptr, mustBePtr))
         {
+            //TODO or cast(shared(...))?
             *(cast(void**) funcPtr) = mustBePtr;
             return true;
         }
@@ -236,7 +247,8 @@ class DynamicLoader
 
         if (!isLoad)
         {
-            import std.conv: text;
+            import std.conv : text;
+
             errors ~= text("Not found library ", libPaths);
         }
 
