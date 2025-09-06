@@ -11,6 +11,7 @@ class Connection : BaseComponent
 {
     Pin pin;
     bool isNeg;
+    bool isNode;
 
     this()
     {

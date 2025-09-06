@@ -28,12 +28,16 @@ class NGSpiceWorker : Thread
 
         DList!(char[]) commands;
         shared Condition _commandCondition;
+
+        char** nextCircuit;
     }
 
     this(Logger logger, bool isAutorun = true)
     {
         super(&run);
         this.logger = logger;
+
+        isDaemon = true;
 
         commands = DList!(char[])();
 
@@ -82,6 +86,12 @@ class NGSpiceWorker : Thread
 
             synchronized (_mutexState)
             {
+                if(nextCircuit){
+                    //TODO send res
+                    int circRes = ngSpice_Circ(nextCircuit);
+                    nextCircuit = null;
+                }
+
                 while (commands.empty)
                 {
                     _commandCondition.wait;
@@ -139,7 +149,7 @@ class NGSpiceWorker : Thread
 
     int tryAddCircuit(char** circs)
     {
-        assert(ngSpice_Circ);
+        //assert(!ngSpice_Circ); false in other thread (TLS)
         
         if (_mutexState.tryLock_nothrow)
         {
@@ -148,7 +158,13 @@ class NGSpiceWorker : Thread
                 _mutexState.unlock_nothrow;
             }
 
-            return ngSpice_Circ(circs);
+            if(nextCircuit){
+                return false;
+            }
+            
+            nextCircuit = circs;
+            _commandCondition.notifyAll;
+            return true;
         }
 
         return false;

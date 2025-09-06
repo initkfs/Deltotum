@@ -22,8 +22,8 @@ abstract class BaseTwoPinElement : BaseOnePinElement
     {
         import std.format : format;
 
-        string text = format("P.in:%.2fmA,out:%.2fmA,v:%.2fV\nN.in:%.2fmA,out:%.2fmA,v:%.2fV", p.pin.currentInMa, p
-                .pin.currentOutMa, p.pin.voltage, n
+        string text = format("P(%s).in:%.2fmA,out:%.2fmA,v:%.2fV\nN(%s).in:%.2fmA,out:%.2fmA,v:%.2fV", p.id, p.pin.currentInMa, p
+                .pin.currentOutMa, p.pin.voltage, n.id, n
                 .pin.currentInMa, n.pin.currentOutMa, n.pin.voltage);
         return text;
     }

@@ -7,7 +7,7 @@ import api.subs.ele.lib.ngspice.native.v45.types;
 
 import api.core.utils.libs.dynamics.dynamic_loader : DynamicLoader;
 
-shared extern (C) nothrow
+extern (C) nothrow
 {
     alias SendChar = int function(char*, int, void*);
     alias SendStat = int function(char*, int, void*);
