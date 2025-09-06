@@ -56,6 +56,10 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
 
     void initialize(bool isFillInit = true) nothrow @safe
     {
+        static if (isWithMutex)
+        {
+            assert(mutex);
+        }
         _buffer.initialize(isFillInit);
     }
 
@@ -140,6 +144,14 @@ struct RingBuffer(BufferType, size_t BufferSize, bool isWithMutex = true, bool i
             synchronized (mutex)
             {
                 return read(onBuffer, count);
+            }
+        }
+
+        ContainerResult readSyncAll(scope void delegate(scope BufferType[], scope BufferType[]) @nogc @safe onBuffer) @nogc @safe
+        {
+            synchronized (mutex)
+            {
+                return read(onBuffer, _size);
             }
         }
 

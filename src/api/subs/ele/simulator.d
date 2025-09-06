@@ -37,13 +37,15 @@ struct Netlist
 {
     NetlistElement[string] elements;
 
-    private {
+    private
+    {
         char** lastPtrs;
     }
 
     string formatElement(string id, NetlistElement ele)
     {
         import std.format : format;
+
         return format("%s %s %s %s\n", id, ele.inPin, ele.outPin, ele.value);
     }
 
@@ -60,14 +62,24 @@ struct Netlist
 
     char** toPtrString()
     {
-        import std.string: toStringz;
+        import std.string : toStringz;
+
         char*[] ptrs;
+        //ptrs ~= "spice\n\0".dup.ptr;
+        ptrs ~= ".option numdgt=6\n\0".dup.ptr;
+
         foreach (k, ref v; elements)
         {
             ptrs ~= (formatElement(k, v).dup ~ ['\0']).ptr;
         }
 
-        ptrs ~= ".end\n".dup.ptr;
+        ptrs ~= ".control\n\0".dup.ptr;
+        ptrs ~= ".probe alli\n\0".dup.ptr;
+        //ptrs ~= "op\n\0".dup.ptr;
+        //ptrs ~= "print i(r1)\n\0".dup.ptr;
+        ptrs ~= ".endc\n\0".dup.ptr;
+
+        ptrs ~= ".end\n\0".dup.ptr;
         ptrs ~= null;
 
         lastPtrs = ptrs.ptr;
@@ -89,6 +101,8 @@ class Simulator : Container
     Button saveButton;
 
     Netlist netlist;
+
+    bool isRunSim;
 
     this()
     {
@@ -470,14 +484,58 @@ class Simulator : Container
 
             }
         }
+    }
 
-        import std;
+    void runSim()
+    {
+        logger.trace("Run simulator");
 
-        if (ngWorker.tryAddCircuit(netlist.toPtrString)){
+        if (ngWorker.addCircuit(netlist.toPtrString))
+        {
             logger.trace("Send netlist to ngspice: ", netlist.toString);
-        }else {
+        }
+        else
+        {
             logger.error("Netlist error: ", netlist.toString);
         }
+
+        ngWorker.addCommand("op");
+
+        string command = "print ";
+        foreach (ch; circuit.children)
+        {
+            if (auto ele = cast(BaseElement) ch)
+            {
+                import std.conv : text;
+
+                assert(ele.id.length > 0);
+                command ~= text("i(", ele.id, ") ");
+            }
+        }
+
+        ngWorker.addCommand(command);
+
+        // if (res.isFail)
+        // {
+        //     logger.error(res);
+        // }
+
+    }
+
+    override void update(double dt)
+    {
+        super.update(dt);
+
+        if (!isRunSim && ngWorker.tryLoad)
+        {
+            runSim;
+            isRunSim = true;
+        }
+
+        auto res = ngWorker.outBuffer.readSyncAll((elements, rest) @nogc @safe {
+            import std;
+            debug writeln(elements);
+        });
     }
 
     void save(string path)
