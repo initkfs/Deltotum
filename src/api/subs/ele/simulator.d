@@ -500,7 +500,7 @@ class Simulator : Container
         }
 
         ngWorker.addCommand("op");
-
+        ngWorker.addCommand("echo startcalc");
         string command = "print ";
         foreach (ch; circuit.children)
         {
@@ -509,11 +509,13 @@ class Simulator : Container
                 import std.conv : text;
 
                 assert(ele.id.length > 0);
-                command ~= text("i(", ele.id, ") ");
+                command ~= text("i(", ele.id, "), ");
             }
         }
 
         ngWorker.addCommand(command);
+
+        ngWorker.addCommand("echo endcalc");
 
         // if (res.isFail)
         // {
@@ -532,10 +534,93 @@ class Simulator : Container
             isRunSim = true;
         }
 
-        auto res = ngWorker.outBuffer.readSyncAll((elements, rest) @nogc @safe {
-            import std;
-            debug writeln(elements);
-        });
+        if (ngWorker.tryIsSimEnd)
+        {
+            auto res = ngWorker.outBuffer.readSyncAll((elements, rest) @safe {
+
+                import core.memory : pureMalloc, pureFree;
+
+                char[] makeBuffer(size_t size) @trusted
+                {
+                    char[] buff = (cast(char*) pureMalloc(size))[0 .. size];
+                    assert(buff.length > 0);
+                    return buff;
+                }
+
+                void freeBuffer(void* ptr) @trusted
+                {
+                    pureFree(ptr);
+                }
+
+                import core.memory : pureMalloc, pureFree;
+
+                const size_t size = elements.length + rest.length;
+                char[] buff = makeBuffer(size);
+                scope (exit)
+                {
+                    freeBuffer(&buff[0]);
+                }
+
+                buff[0 .. elements.length][] = elements;
+                buff[elements.length .. size][] = rest;
+
+                import std.string: indexOf;
+
+                string startCalcTag = "startcalc";
+                string endCalcTag = "endcalc";
+
+                ptrdiff_t bufferStart = buff.indexOf(startCalcTag);
+                assert(bufferStart > 0);
+
+                ptrdiff_t bufferEnd = buff.indexOf(endCalcTag);
+                assert(bufferEnd > 0);
+                assert(bufferStart < bufferEnd);
+
+                char[] calcBuff = buff[(bufferStart + startCalcTag.length) .. bufferEnd];
+
+                import std.algorithm.iteration: splitter;
+                import std.string: strip, startsWith, endsWith;
+                import std.range: front;
+                import std.conv: to;
+
+                foreach(data; calcBuff.splitter("\n")){
+                    if(data.length == 0){
+                        continue;
+                    }
+
+                    auto keyValue = data.splitter("=");
+                    if(keyValue.empty){
+                        continue;
+                    }
+
+                    auto key = keyValue.front.strip;
+                    keyValue.popFront;
+                    if(keyValue.empty){
+                        continue;
+                    }
+
+                    if(key.startsWith("i")){
+                        key = key[1..$];
+                    }
+                    if(key.startsWith("(") && key.endsWith(")")){
+                        key = key[1..($ - 1)];
+                    }
+
+                    import std.uni: toUpper;
+                    key = key.toUpper;
+
+                    double currValue = keyValue.front.strip.to!double;
+                    
+                    import std;
+
+
+                    write("|", key, "<>", currValue, "|");
+                }
+            });
+
+            ngWorker.isSimEnd = false;
+        }
+
     }
 
     void save(string path)

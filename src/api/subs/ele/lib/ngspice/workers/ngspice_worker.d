@@ -31,6 +31,8 @@ class NGSpiceWorker : Thread
         shared Condition _commandCondition;
 
         char** nextCircuit;
+
+        bool _simEnd;
     }
 
     RingBuffer!(char, 4096, true, false) outBuffer;
@@ -136,6 +138,37 @@ class NGSpiceWorker : Thread
             import std.stdio : stderr;
 
             stderr.writeln(e);
+        }
+    }
+
+    bool isSimEnd()
+    {
+        synchronized (_mutexState)
+        {
+            return _simEnd;
+        }
+    }
+
+    bool tryIsSimEnd()
+    {
+        if (_mutexState.tryLock_nothrow)
+        {
+            scope (exit)
+            {
+                _mutexState.unlock_nothrow;
+            }
+
+            return _simEnd;
+        }
+
+        return false;
+    }
+
+    void isSimEnd(bool value)
+    {
+        synchronized (_mutexState)
+        {
+            _simEnd = value;
         }
     }
 
@@ -251,11 +284,45 @@ class NGSpiceWorker : Thread
 
         try
         {
-            auto res = sim.outBuffer.writeSync(ch.fromStringz);
-            if (!res.isSuccess)
+            import std.algorithm.searching : startsWith;
+
+            char[] strSlice = ch.fromStringz;
+            if (strSlice.startsWith("stderr"))
             {
-               sim.logger.error(res);
+                //idup?
+                sim.logger.error(strSlice);
             }
+            else
+            {
+                import std.algorithm.searching : canFind;
+
+                char[] str = strSlice;
+                const stdOutTag = "stdout";
+
+                if (str.startsWith(stdOutTag))
+                {
+                    str = str[stdOutTag.length .. $];
+                }
+
+                auto res = sim.outBuffer.writeSync(str);
+                if (!res.isSuccess)
+                {
+                    sim.logger.error(res);
+                }
+
+                char[1] seps = ['\n'];
+                res = sim.outBuffer.writeSync(seps);
+                if (!res.isSuccess)
+                {
+                    sim.logger.error(res);
+                }
+
+                if (strSlice.canFind("endcalc"))
+                {
+                    sim.isSimEnd = true;
+                }
+            }
+
         }
         catch (Exception e)
         {
