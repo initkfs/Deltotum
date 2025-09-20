@@ -12,13 +12,13 @@ struct Line2d
     Vec2d start;
     Vec2d end;
 
-    this(Vec2d newStart, Vec2d newEnd) pure @nogc @safe
+    this(Vec2d newStart, Vec2d newEnd) pure  @safe
     {
         this.start = newStart;
         this.end = newEnd;
     }
 
-    this(double x0, double y0, double x1, double y1) pure @nogc @safe
+    this(double x0, double y0, double x1, double y1) pure  @safe
     {
         start = Vec2d(x0, y0);
         end = Vec2d(x1, y1);
@@ -251,7 +251,7 @@ struct Line2d
         return intersect;
     }
 
-    bool isZero() const @nogc pure @safe
+    bool isZero() const  pure @safe
     {
         return start == end;
     }

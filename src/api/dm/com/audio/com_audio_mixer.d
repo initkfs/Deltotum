@@ -5,10 +5,10 @@ import api.dm.com.audio.com_audio_clip : ComAudioClip;
 import api.dm.com.audio.com_audio_chunk : ComAudioChunk;
 import api.dm.com.audio.com_audio_device;
 
-alias TrackFinishedCallback = extern (C) void function(int trackNum) nothrow @nogc;
+alias TrackFinishedCallback = extern (C) void function(int trackNum) nothrow ;
 
-alias MixerCallback = extern (C) void function(void* udata, ubyte* stream, int len) nothrow @nogc;
-alias MixerChannelFinishedCallback = extern (C) void function(int channel) nothrow @nogc;
+alias MixerCallback = extern (C) void function(void* udata, ubyte* stream, int len) nothrow ;
+alias MixerChannelFinishedCallback = extern (C) void function(int channel) nothrow ;
 
 /**
  * Authors: initkfs

@@ -20,7 +20,7 @@ mixin template ArrayPtr(
     FreeFunc freeFunPtr;
     ReallocFunc reallocFunPtr;
 
-    void release() @nogc nothrow @safe
+    void release()  nothrow @safe
     {
         _ptr = null;
         isFreed = false;
@@ -62,36 +62,36 @@ mixin template ArrayPtr(
         return true;
     }
 
-    protected inout(T*) index(size_t i) @nogc nothrow inout return scope @safe
+    protected inout(T*) index(size_t i)  nothrow inout return scope @safe
     in (_ptr)
     in (!isFreed)
     {
         return &_ptr[i];
     }
 
-    inout(T) opIndex(size_t i) @nogc nothrow inout @safe
+    inout(T) opIndex(size_t i)  nothrow inout @safe
     {
         return *(index(i));
     }
 
-    inout(T) value() @nogc nothrow inout @safe
+    inout(T) value()  nothrow inout @safe
     {
         return opIndex(0);
     }
 
-    void value(T newValue) @nogc nothrow @safe
+    void value(T newValue)  nothrow @safe
     {
         *index(0) = newValue;
     }
 
-    inout(T[]) ptr() @nogc nothrow inout return scope @safe
+    inout(T[]) ptr()  nothrow inout return scope @safe
     in (_ptr)
     in (!isFreed)
     {
         return _ptr;
     }
 
-    inout(T[]) ptrUnsafe() @nogc nothrow inout return scope
+    inout(T[]) ptrUnsafe()  nothrow inout return scope
     in (_ptr)
     in (!isFreed)
     {
@@ -99,40 +99,40 @@ mixin template ArrayPtr(
     }
 
     // a[i] = v
-    void opIndexAssign(T value, size_t i) @nogc nothrow @safe
+    void opIndexAssign(T value, size_t i)  nothrow @safe
     {
         *(index(i)) = value;
     }
 
     // a[i1, i2] = v
-    void opIndexAssign(T value, size_t i1, size_t i2) @nogc nothrow @safe
+    void opIndexAssign(T value, size_t i1, size_t i2)  nothrow @safe
     {
         opSlice(i1, i2)[] = value;
     }
 
-    void opIndexAssign(T[] value, size_t i1, size_t i2) @nogc nothrow @safe
+    void opIndexAssign(T[] value, size_t i1, size_t i2)  nothrow @safe
     {
         opSlice(i1, i2)[] = value;
     }
 
-    inout(T[]) opSlice(size_t i, size_t j) @nogc nothrow inout return scope @safe
+    inout(T[]) opSlice(size_t i, size_t j)  nothrow inout return scope @safe
     in (_ptr)
     in (!isFreed)
     {
         return _ptr[i .. j];
     }
 
-    size_t sizeBytes() const @nogc nothrow @safe
+    size_t sizeBytes() const  nothrow @safe
     {
         return _ptr.length * T.sizeof;
     }
 
-    size_t capacity() const @nogc nothrow @safe
+    size_t capacity() const  nothrow @safe
     {
         return _ptr.length;
     }
 
-    auto range() @nogc nothrow return scope @safe
+    auto range()  nothrow return scope @safe
     {
         static struct PtrRange
         {

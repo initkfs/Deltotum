@@ -8,7 +8,7 @@ import api.core.utils.ptrs.unique_ptr : UniqPtr;
 
 import core.stdc.stdlib : malloc, realloc, free;
 
-bool allocateBytes(T)(size_t size, scope ref T[] ptr) @nogc nothrow @trusted
+bool allocateBytes(T)(size_t size, scope ref T[] ptr)  nothrow @trusted
 {
     void* newPtr = malloc(size * T.sizeof);
     if (!newPtr)
@@ -19,7 +19,7 @@ bool allocateBytes(T)(size_t size, scope ref T[] ptr) @nogc nothrow @trusted
     return true;
 }
 
-bool reallocateBytes(T)(size_t newSize, scope ref T[] ptr) @nogc nothrow @trusted
+bool reallocateBytes(T)(size_t newSize, scope ref T[] ptr)  nothrow @trusted
 {
     const newSizeBytes = newSize * T.sizeof;
     void* newPtr = realloc(ptr.ptr, newSizeBytes);
@@ -31,7 +31,7 @@ bool reallocateBytes(T)(size_t newSize, scope ref T[] ptr) @nogc nothrow @truste
     return true;
 }
 
-bool deallocateBytes(T)(scope T[] ptr) @nogc nothrow @trusted
+bool deallocateBytes(T)(scope T[] ptr)  nothrow @trusted
 {
     if (!ptr)
     {

@@ -29,7 +29,7 @@ class SdlMixerChunk : SdlObjectWrapper!Mix_Chunk, ComAudioChunk
 
     }
 
-    this(Mix_Chunk* ptr) pure @nogc nothrow
+    this(Mix_Chunk* ptr) pure  nothrow
     {
         assert(ptr);
         this.ptr = ptr;
@@ -52,25 +52,25 @@ class SdlMixerChunk : SdlObjectWrapper!Mix_Chunk, ComAudioChunk
         return buffStart[0 .. length];
     }
 
-    int allocated() @nogc nothrow @safe
+    int allocated()  nothrow @safe
     {
         assert(ptr);
         return ptr.allocated;
     }
 
-    ubyte* buffStart() @nogc nothrow @safe
+    ubyte* buffStart()  nothrow @safe
     {
         assert(ptr);
         return ptr.abuf;
     }
 
-    ubyte* buffEnd() @nogc nothrow
+    ubyte* buffEnd()  nothrow
     {
         assert(ptr);
         return buffStart + length;
     }
 
-    uint length() @nogc nothrow @safe
+    uint length()  nothrow @safe
     {
         assert(ptr);
         return ptr.alen;

@@ -30,24 +30,24 @@ struct Rect2d
     double width = 0;
     double height = 0;
 
-    bool contains(double x, double y) const @nogc nothrow pure @safe
+    bool contains(double x, double y) const  nothrow pure @safe
     {
         return x >= this.x && y >= this.y && x < right && y < bottom;
     }
 
-    bool contains(Vec2d point) const @nogc nothrow pure @safe
+    bool contains(Vec2d point) const  nothrow pure @safe
     {
         return contains(point.x, point.y);
     }
 
-    bool contains(Circle2d circle) const @nogc nothrow pure @safe
+    bool contains(Circle2d circle) const  nothrow pure @safe
     {
         return (circle.x + circle.radius <= right) && (circle.x - circle.radius >= x) && (
             circle.y + circle.radius <= bottom) && (
             circle.y - circle.radius >= y);
     }
 
-    bool contains(Rect2d rect) const @nogc nothrow pure @safe
+    bool contains(Rect2d rect) const  nothrow pure @safe
     {
         return ((rect.x >= x && rect.x <= right) && (rect.right >= x && rect.right <= right))
             && ((rect.y >= y && rect.y <= bottom) && (rect.bottom >= y && rect.bottom <= bottom));
@@ -99,42 +99,42 @@ struct Rect2d
         return (cornerDistance <= (circle.radius ^^ 2));
     }
 
-    double right() const @nogc nothrow pure @safe
+    double right() const  nothrow pure @safe
     {
         return x + width;
     }
 
-    double bottom() const @nogc nothrow pure @safe
+    double bottom() const  nothrow pure @safe
     {
         return y + height;
     }
 
-    double halfWidth() const @nogc nothrow pure @safe
+    double halfWidth() const  nothrow pure @safe
     {
         return width / 2;
     }
 
-    double middleX() const @nogc nothrow pure @safe
+    double middleX() const  nothrow pure @safe
     {
         return x + halfWidth;
     }
 
-    double middleY() const @nogc nothrow pure @safe
+    double middleY() const  nothrow pure @safe
     {
         return y + halfHeight;
     }
 
-    double halfHeight() const @nogc nothrow pure @safe
+    double halfHeight() const  nothrow pure @safe
     {
         return height / 2;
     }
 
-    Vec2d center() const @nogc nothrow pure @safe
+    Vec2d center() const  nothrow pure @safe
     {
         return Vec2d(middleX, middleY);
     }
 
-    double aspectRatio() const @nogc nothrow pure @safe
+    double aspectRatio() const  nothrow pure @safe
     {
         import std.math.operations : isClose;
 
@@ -146,7 +146,7 @@ struct Rect2d
         return width / height;
     }
 
-    double diagonal() const @nogc nothrow pure @safe
+    double diagonal() const  nothrow pure @safe
     {
         import Math = api.math;
 

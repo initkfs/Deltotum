@@ -14,7 +14,7 @@ struct ScreenRatio
         assert(heightRatio > 0);
     }
 
-    const @nogc pure @safe
+    const  pure @safe
     {
         double getHeight(double width) => heightRatio * width / widthRatio;
         double getWidth(double height) => widthRatio * height / heightRatio;

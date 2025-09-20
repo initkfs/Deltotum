@@ -7,7 +7,7 @@ struct DynLib
     int loadVersion;
     bool _load;
 
-    bool isLoad() const @nogc pure @safe => _load && handlePtr;
+    bool isLoad() const  pure @safe => _load && handlePtr;
 
     string toString() const
     {

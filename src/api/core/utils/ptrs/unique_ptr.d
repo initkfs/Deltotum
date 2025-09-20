@@ -17,7 +17,7 @@ struct UniqPtr(T, AllocType = ubyte,
         bool isAutoFree,
         FreeFunc newFreeFunPtr,
         ReallocFunc newReallocFunPtr
-    ) @nogc nothrow pure @safe
+    )  nothrow pure @safe
     {
         this.isAutoFree = isAutoFree;
 
@@ -29,7 +29,7 @@ struct UniqPtr(T, AllocType = ubyte,
         bool isAutoFree = true,
         FreeFunc newFreeFunPtr = null,
         ReallocFunc newReallocFunPtr = null
-    ) @nogc nothrow pure @safe
+    )  nothrow pure @safe
     {
         _ptr = ptrs;
         this(isAutoFree, newFreeFunPtr, newReallocFunPtr);
@@ -40,7 +40,7 @@ struct UniqPtr(T, AllocType = ubyte,
         bool isAutoFree = true,
         FreeFunc newFreeFunPtr = null,
         ReallocFunc newReallocFunPtr = null
-    ) @nogc nothrow pure
+    )  nothrow pure
     {
         assert(newPtr);
 
@@ -54,7 +54,7 @@ struct UniqPtr(T, AllocType = ubyte,
         this(isAutoFree, newFreeFunPtr, newReallocFunPtr);
     }
 
-    this(UniqPtr!(T, AllocType) rhs) @nogc nothrow @safe
+    this(UniqPtr!(T, AllocType) rhs)  nothrow @safe
     {
         assert(!rhs.isFreed);
         _ptr = rhs._ptr;
@@ -84,7 +84,7 @@ struct UniqPtr(T, AllocType = ubyte,
         }
     }
 
-    void free() @nogc nothrow scope @safe
+    void free()  nothrow scope @safe
     in (_ptr)
     in (freeFunPtr)
     {
@@ -97,12 +97,12 @@ struct UniqPtr(T, AllocType = ubyte,
     }
 
     // a = v
-    void opAssign(T v) @nogc nothrow @safe
+    void opAssign(T v)  nothrow @safe
     {
         value = v;
     }
 
-    void opAssign(ref UniqPtr!(T, AllocType) newPtr) @nogc nothrow @safe
+    void opAssign(ref UniqPtr!(T, AllocType) newPtr)  nothrow @safe
     {
         if (_ptr)
         {
@@ -193,7 +193,7 @@ struct UniqPtr(T, AllocType = ubyte,
             })();
         }
 
-        static bool reallocPtr(size_t newBytes, scope ref void[] ptr) @nogc nothrow @safe
+        static bool reallocPtr(size_t newBytes, scope ref void[] ptr)  nothrow @safe
         {
             return (() @trusted {
                 void* newPtr = realloc(ptr.ptr, newBytes);
@@ -203,7 +203,7 @@ struct UniqPtr(T, AllocType = ubyte,
             })();
         }
 
-        static bool freePtr(scope void[] ptr) @nogc nothrow @safe
+        static bool freePtr(scope void[] ptr)  nothrow @safe
         {
             return (() @trusted { free(ptr.ptr); return true; })();
         }

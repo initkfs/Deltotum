@@ -8,7 +8,7 @@ import api.core.utils.libs.dynamics.dynamic_loader : DynamicLoader;
 
 alias cairo_write_func_t = extern (C) cairo_status_t function(void* closure, const ubyte* data, uint length);
 
-extern (C) @nogc nothrow
+extern (C)  nothrow
 {
     cairo_t* function(cairo_surface_t* target) cairo_create;
     cairo_surface_t* function(cairo_format_t format, int width, int height) cairo_image_surface_create;

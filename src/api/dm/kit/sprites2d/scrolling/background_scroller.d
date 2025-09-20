@@ -89,7 +89,7 @@ class BackgroundScroller : Sprite2d
         }
     }
 
-    Sprite2d current() @nogc nothrow
+    Sprite2d current()  nothrow
     {
         return _current;
     }
@@ -106,7 +106,7 @@ class BackgroundScroller : Sprite2d
         setCurrentPos(_current);
     }
 
-    Sprite2d next() @nogc nothrow
+    Sprite2d next()  nothrow
     {
         return _next;
     }

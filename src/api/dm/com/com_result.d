@@ -14,24 +14,24 @@ import core.attribute : mustuse;
     string message;
     bool isError;
 
-    this(int code, string message = null, bool isError = false) inout @nogc nothrow pure @safe
+    this(int code, string message = null, bool isError = false) inout  nothrow pure @safe
     {
         this.code = code;
         this.message = message;
         this.isError = isError;
     }
 
-    static ComResult success(int code = defaultCodeSuccess) @nogc nothrow pure @safe
+    static ComResult success(int code = defaultCodeSuccess)  nothrow pure @safe
     {
         return ComResult(code, null, false);
     }
 
-    static ComResult error(int code = defaultCodeError) @nogc nothrow pure @safe
+    static ComResult error(int code = defaultCodeError)  nothrow pure @safe
     {
         return ComResult(code, null, true);
     }
 
-    static ComResult error(string message) @nogc nothrow pure @safe
+    static ComResult error(string message)  nothrow pure @safe
     {
         return ComResult(defaultCodeError, message, true);
     }
@@ -50,7 +50,7 @@ import core.attribute : mustuse;
         }
     }
 
-    bool convToBool() const @nogc nothrow pure @safe
+    bool convToBool() const  nothrow pure @safe
     {
         return isError;
     }

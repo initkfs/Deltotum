@@ -11,7 +11,7 @@ private
     enum noMoveGcAttr = GC.BlkAttr.NO_MOVE;
 }
 
-void addRange(void[] mem) @nogc nothrow
+void addRange(void[] mem)  nothrow
 {
     GC.addRange(mem.ptr, mem.length);
 }

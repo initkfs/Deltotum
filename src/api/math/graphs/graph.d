@@ -37,7 +37,7 @@ class Graph
         return true;
     }
 
-    protected DList!Edge** hasVertexUnsafe(Vertex vertex) nothrow @nogc @safe
+    protected DList!Edge** hasVertexUnsafe(Vertex vertex) nothrow  @safe
     {
         return (vertex in graph);
     }
@@ -212,8 +212,8 @@ class Graph
         return false;
     }
 
-    size_t countVertices() nothrow @nogc pure @safe => graph.length;
-    size_t countEdges() nothrow @nogc pure @safe => edgeCounter;
+    size_t countVertices() nothrow  pure @safe => graph.length;
+    size_t countEdges() nothrow  pure @safe => edgeCounter;
 
     bool removeEdge(Edge edge)
     {

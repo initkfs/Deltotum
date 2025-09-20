@@ -15,14 +15,14 @@ struct MutexLock(bool isNothrow = false)
 
     static if (isNothrow)
     {
-        this(shared Mutex mtx) @nogc nothrow @safe
+        this(shared Mutex mtx)  nothrow @safe
         {
             assert(mtx);
             atomicStore(this.mtx, mtx);
             mtx.lock_nothrow;
         }
 
-        ~this() @nogc nothrow @safe
+        ~this()  nothrow @safe
         {
             mtx.unlock_nothrow;
         }

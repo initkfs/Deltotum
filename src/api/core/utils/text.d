@@ -8,7 +8,7 @@ import std.stdio;
 import std.traits : isAutodecodableString, isSomeChar;
 import std.range.primitives : isInputRange, ElementEncodingType;
 
-bool isUnwant(dchar ch) nothrow @nogc pure @safe
+bool isUnwant(dchar ch) nothrow  pure @safe
 {
     import std.uni : isControl;
 

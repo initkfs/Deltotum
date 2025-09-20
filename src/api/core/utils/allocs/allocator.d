@@ -9,7 +9,7 @@ import api.core.utils.ptrs.shared_ptr : SharedPtr;
 
 alias AllocFuncType(T) = bool function(size_t size, scope ref T[] ptr) nothrow @safe;
 alias ReallocFuncType(T) = bool function(size_t newSize, scope ref T[]) nothrow @safe;
-alias FreeFuncType(T) = bool function(scope T[] ptr) @nogc nothrow @safe;
+alias FreeFuncType(T) = bool function(scope T[] ptr)  nothrow @safe;
 
 mixin template MemFuncs(T = ubyte)
 {

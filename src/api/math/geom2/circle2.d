@@ -21,7 +21,7 @@ struct Circle2d
         this(center.x, center.y, radius);
     }
 
-    bool contains(double x1, double y1) const @nogc nothrow pure @safe
+    bool contains(double x1, double y1) const  nothrow pure @safe
     {
         //(x-centerX)^2 + (y - centerY)^2 < radius^2, or <=
         immutable dx = x - x1;
@@ -29,12 +29,12 @@ struct Circle2d
         return dx * dx + dy * dy <= radius * radius;
     }
 
-    bool contains(Vec2d p) const @nogc nothrow pure @safe
+    bool contains(Vec2d p) const  nothrow pure @safe
     {
         return contains(p.x, p.y);
     }
 
-    bool contains(Circle2d other) const @nogc nothrow pure @safe
+    bool contains(Circle2d other) const  nothrow pure @safe
     {
         immutable deltaRadius = radius - other.radius;
         if (deltaRadius < 0.0)
@@ -55,7 +55,7 @@ struct Circle2d
         return false;
     }
 
-    bool intersect(Circle2d other) const @nogc nothrow pure @safe
+    bool intersect(Circle2d other) const  nothrow pure @safe
     {
         immutable dx = x - other.x;
         immutable dy = y - other.y;
@@ -66,7 +66,7 @@ struct Circle2d
         return distanceSqr < radiusAll * radiusAll;
     }
 
-    double circumference() const @nogc nothrow pure @safe
+    double circumference() const  nothrow pure @safe
     {
         import math = api.dm.math;
 
@@ -75,7 +75,7 @@ struct Circle2d
 
     Vec2d center() => Vec2d(x, y);
 
-    double area() const @nogc nothrow pure @safe
+    double area() const  nothrow pure @safe
     {
         import math = api.dm.math;
 

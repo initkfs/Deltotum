@@ -28,10 +28,10 @@ import Math = api.math;
 
 struct AudioDataCallback
 {
-    void delegate(SDL_AudioStream*, int, int) nothrow @nogc dg;
+    void delegate(SDL_AudioStream*, int, int) nothrow dg;
 }
 
-static extern (C) void streamCallback(void* userdata, SDL_AudioStream* stream, int additional_amount, int total_amount) nothrow @nogc
+static extern (C) void streamCallback(void* userdata, SDL_AudioStream* stream, int additional_amount, int total_amount) nothrow
 {
     AudioDataCallback* callbackData = cast(AudioDataCallback*) userdata;
     assert(callbackData);
@@ -376,7 +376,7 @@ class VideoPlayer(
     __gshared double audioTimeSec;
     __gshared ulong audioSamplesCount;
 
-    void handleAudioData(SDL_AudioStream* stream, int additional_amount, int total_amount) nothrow @nogc
+    void handleAudioData(SDL_AudioStream* stream, int additional_amount, int total_amount) nothrow
     {
         try
         {
@@ -406,7 +406,7 @@ class VideoPlayer(
                     additional_amount = newAmount;
                 }
 
-                void updateClock() @nogc nothrow
+                void updateClock()  nothrow
                 {
                     audioSamplesCount += additional_amount / (2 * float.sizeof);
 

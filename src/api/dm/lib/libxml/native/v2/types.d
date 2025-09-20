@@ -5,13 +5,10 @@ module api.dm.lib.libxml.native.v2.types;
 
 extern (C):
 
-@nogc
-{
-    alias xmlMallocFunc = void* function(size_t size);
-    alias xmlReallocFunc = void* function(void* mem, size_t size);
-    alias xmlFreeFunc = void function(void* mem);
-    alias xmlStrdupFunc = char* function(const char* str);
-}
+alias xmlMallocFunc = void* function(size_t size);
+alias xmlReallocFunc = void* function(void* mem, size_t size);
+alias xmlFreeFunc = void function(void* mem);
+alias xmlStrdupFunc = char* function(const char* str);
 
 alias xmlChar = ubyte;
 

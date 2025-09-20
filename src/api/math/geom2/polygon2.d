@@ -21,10 +21,10 @@ struct Quadrilateral2d
         leftBottom = Vec2d(leftTop.x, rightBottom.y);
     }
 
-    Vec2d middleLeft() const @nogc nothrow pure @safe => leftBottom.add(leftTop).div(2.0);
-    Vec2d middleRight() const @nogc nothrow pure @safe => rightBottom.add(rightTop).div(2.0);
-    Vec2d middleTop() const @nogc nothrow pure @safe => rightTop.add(leftTop).div(2.0);
-    Vec2d middleBottom() const @nogc nothrow pure @safe => rightBottom.add(
+    Vec2d middleLeft() const  nothrow pure @safe => leftBottom.add(leftTop).div(2.0);
+    Vec2d middleRight() const  nothrow pure @safe => rightBottom.add(rightTop).div(2.0);
+    Vec2d middleTop() const  nothrow pure @safe => rightTop.add(leftTop).div(2.0);
+    Vec2d middleBottom() const  nothrow pure @safe => rightBottom.add(
         leftBottom).div(2.0);
 
     Vec2d center() const nothrow pure @safe

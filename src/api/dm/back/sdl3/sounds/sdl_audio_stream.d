@@ -8,7 +8,7 @@ import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
 
 import api.dm.back.sdl3.externs.csdl3;
 
-alias StreamCallback = extern (C) void function(void* userdata, SDL_AudioStream* stream, int additional_amount, int total_amount) nothrow @nogc;
+alias StreamCallback = extern (C) void function(void* userdata, SDL_AudioStream* stream, int additional_amount, int total_amount) nothrow ;
 
 /**
  * Authors: initkfs

@@ -61,7 +61,7 @@ struct SharedPtr(T, AllocType = ubyte,
         dec;
     }
 
-    void free() @nogc nothrow scope @trusted
+    void free()  nothrow scope @trusted
     in (_ptr)
     in (freeFunPtr)
     {
@@ -81,12 +81,12 @@ struct SharedPtr(T, AllocType = ubyte,
     }
 
     // a = v
-    void opAssign(T v) @nogc nothrow @safe
+    void opAssign(T v)  nothrow @safe
     {
         value = v;
     }
 
-    void opAssign(ref SharedPtr!(T, AllocType) other) @nogc nothrow @safe
+    void opAssign(ref SharedPtr!(T, AllocType) other)  nothrow @safe
     {
         if (this is other)
         {
@@ -107,7 +107,7 @@ struct SharedPtr(T, AllocType = ubyte,
         isFreed = other.isFreed;
     }
 
-    bool inc() @nogc nothrow pure @safe
+    bool inc()  nothrow pure @safe
     {
         if (!countPtr)
         {
@@ -123,7 +123,7 @@ struct SharedPtr(T, AllocType = ubyte,
         return true;
     }
 
-    bool dec() @nogc nothrow @safe
+    bool dec()  nothrow @safe
     {
         if (!countPtr || *countPtr == 0)
         {
@@ -138,7 +138,7 @@ struct SharedPtr(T, AllocType = ubyte,
         return true;
     }
 
-    size_t count() const nothrow @nogc pure @safe => countPtr ? *countPtr : 0;
+    size_t count() const nothrow  pure @safe => countPtr ? *countPtr : 0;
 }
 
 unittest
@@ -156,7 +156,7 @@ unittest
         return true;
     }
 
-    static bool free(scope ubyte[] ptr) @nogc nothrow @safe
+    static bool free(scope ubyte[] ptr)  nothrow @safe
     {
         return isFree = true;
     }

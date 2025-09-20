@@ -10,7 +10,7 @@ import core.stdc.stdlib: free;
 
 alias xmlFreeF = free;
 
-extern (C) @nogc nothrow
+extern (C)  nothrow
 {
     char** xmlParserVersion;
 

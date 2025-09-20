@@ -60,7 +60,7 @@ struct DenseBuffer(T, size_t Capacity = 256,
         }
     }
 
-    void fillInit() @nogc nothrow @safe
+    void fillInit()  nothrow @safe
     {
         static if (__traits(isFloating, T))
         {
@@ -149,26 +149,26 @@ struct DenseBuffer(T, size_t Capacity = 256,
         slice[] = value;
     }
 
-    size_t capacity() const @nogc nothrow pure @safe
+    size_t capacity() const  nothrow pure @safe
     {
         return Capacity;
     }
 
-    size_t length() const @nogc nothrow pure @safe
+    size_t length() const  nothrow pure @safe
     {
         return _length;
     }
 
     static if (!isAppendable)
     {
-        void length(size_t value) @nogc nothrow @safe
+        void length(size_t value)  nothrow @safe
         {
             assert(value <= Capacity);
             _length = value;
         }
     }
 
-    bool append(T value) @nogc nothrow @safe
+    bool append(T value)  nothrow @safe
     {
         if (_length >= Capacity)
         {
@@ -179,7 +179,7 @@ struct DenseBuffer(T, size_t Capacity = 256,
         return true;
     }
 
-    bool append(scope T[] value) @nogc nothrow @safe
+    bool append(scope T[] value)  nothrow @safe
     {
         //TODO overflow
         size_t newLength = _length + value.length;
@@ -193,7 +193,7 @@ struct DenseBuffer(T, size_t Capacity = 256,
         return true;
     }
 
-    bool append(T[] value) @nogc nothrow @safe
+    bool append(T[] value)  nothrow @safe
     {
         //TODO overflow
         size_t newLength = _length + value.length;
@@ -217,7 +217,7 @@ struct DenseBuffer(T, size_t Capacity = 256,
         append(rhs);
     }
 
-    bool reset() @nogc nothrow @safe
+    bool reset()  nothrow @safe
     {
         _length = 0;
         return true;
@@ -252,23 +252,23 @@ struct DenseBuffer(T, size_t Capacity = 256,
                 size_t capacity;
             }
 
-            this(scope T[] buff) @nogc nothrow pure @safe
+            this(scope T[] buff)  nothrow pure @safe
             {
                 this.slice = buff;
                 capacity = slice.length;
             }
 
-            bool empty() const @nogc nothrow pure @safe
+            bool empty() const  nothrow pure @safe
             {
                 return currentIndex >= capacity;
             }
 
-            inout(T) front() inout @nogc nothrow pure @safe
+            inout(T) front() inout  nothrow pure @safe
             {
                 return slice[currentIndex];
             }
 
-            void popFront() @nogc nothrow @safe
+            void popFront()  nothrow @safe
             {
                 currentIndex++;
             }

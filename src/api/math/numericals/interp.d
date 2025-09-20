@@ -8,7 +8,7 @@ import api.dm.math : clamp01;
 
 import std.math.traits : isFinite;
 
-double lagrange(in double x, in double[] xValues, in double[] yValues) @nogc pure @safe nothrow
+double lagrange(in double x, in double[] xValues, in double[] yValues)  pure @safe nothrow
 in (xValues.length >= 2)
 in (xValues.length == yValues.length)
 out (result; isFinite(result))
@@ -62,7 +62,7 @@ unittest
 }
 
 //the start value and the end value should not change during the interpolation.
-double lerp(double start, double end, double t, bool clamp = true) @nogc nothrow pure @safe
+double lerp(double start, double end, double t, bool clamp = true)  nothrow pure @safe
 {
     immutable progressValue = clamp ? clamp01(t) : t;
     return start + (end - start) * progressValue;
@@ -92,14 +92,14 @@ double blerp(double c00, double c10, double c01, double c11, double tx, double t
     return lerp(lerp(c00, c10, tx, clamp), lerp(c01, c11, tx, clamp), ty);
 }
 
-Vec2d lerp(Vec2d a, Vec2d b, double t, bool clamp = true) @nogc nothrow pure @safe
+Vec2d lerp(Vec2d a, Vec2d b, double t, bool clamp = true)  nothrow pure @safe
 {
     const double progress0to1 = clamp ? clamp01(t) : t;
     return Vec2d(a.x + (b.x - a.x) * progress0to1,
         a.y + (b.y - a.y) * progress0to1);
 }
 
-double slerp(double a, double b, double angleRad, double t) @nogc nothrow pure @safe
+double slerp(double a, double b, double angleRad, double t)  nothrow pure @safe
 {
     import Math = api.math;
 

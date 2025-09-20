@@ -13,7 +13,7 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
     T[ColDim][RowDim] matrix;
     //}
 
-    this(T initValue) pure @nogc nothrow @safe
+    this(T initValue) pure  nothrow @safe
     {
         fill(initValue);
     }
@@ -253,7 +253,7 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         return newMatrix;
     }
 
-    void fill(T val) @nogc pure @safe
+    void fill(T val)  pure @safe
     {
         foreach (rowIndex; 0 .. RowDim)
         {
@@ -264,7 +264,7 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         }
     }
 
-    void fillInit() @nogc pure @safe
+    void fillInit()  pure @safe
     {
         import std.traits : isFloatingPoint;
 
@@ -280,12 +280,12 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         fill(initValue);
     }
 
-    bool isSquare() const @nogc nothrow pure @safe
+    bool isSquare() const  nothrow pure @safe
     {
         return RowDim == ColDim;
     }
 
-    bool isEmpty() const @nogc nothrow pure @safe
+    bool isEmpty() const  nothrow pure @safe
     {
         return RowDim == 0;
     }
@@ -462,12 +462,12 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         return buffer.data;
     }
 
-    size_t rowDimension() const @nogc nothrow pure @safe
+    size_t rowDimension() const  nothrow pure @safe
     {
         return RowDim;
     }
 
-    size_t columnDimension() const @nogc nothrow pure @safe
+    size_t columnDimension() const  nothrow pure @safe
     {
         return ColDim;
     }

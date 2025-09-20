@@ -55,7 +55,7 @@ class DspProcessor(SignalType, size_t SignalBufferSize, size_t SignalChannels = 
 
     typeof(dspBuffer) newDspBuffer(shared Mutex m) => typeof(dspBuffer)(m);
 
-    static extern (C) void signal_callback(void* userdata, ubyte* stream, int len) nothrow @nogc
+    static extern (C) void signal_callback(void* userdata, ubyte* stream, int len) nothrow 
     {
         if (len == 0)
         {

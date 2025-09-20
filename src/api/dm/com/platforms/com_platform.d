@@ -2,7 +2,7 @@ module api.dm.com.platforms.com_platform;
 
 import api.dm.com.com_result : ComResult;
 
-extern (C) alias RetNextIntervalCallback = uint function(void* userdata, uint timerID, uint interval) nothrow @nogc;
+extern (C) alias RetNextIntervalCallback = uint function(void* userdata, uint timerID, uint interval) nothrow ;
 
 /**
  * Authors: initkfs

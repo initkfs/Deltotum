@@ -21,14 +21,14 @@ class Timing
         struct TimerParam
         {
             int timerId = -1;
-            nothrow @nogc int delegate() dg;
+            nothrow  int delegate() dg;
             Timing thisPtr;
         }
     }
 
     private static extern (C)
     {
-        uint timer_callback(void* userdata, uint timerID, uint interval) nothrow @nogc
+        uint timer_callback(void* userdata, uint timerID, uint interval) nothrow 
         {
             assert(userdata);
             TimerParam* timerParam = cast(TimerParam*) userdata;
@@ -52,7 +52,7 @@ class Timing
         this.platformTicksProvider = tickProvider;
     }
 
-    int add(int intervalMs, int delegate() nothrow @nogc onTimer)
+    int add(int intervalMs, int delegate() nothrow  onTimer)
     {
         TimerParam* param = new TimerParam;
         param.dg = onTimer;
@@ -120,7 +120,7 @@ class Timing
         return platformTicksProvider();
     }
 
-    private int callTimer(int timerId) nothrow @nogc
+    private int callTimer(int timerId) nothrow 
     {
         if (auto paramPtr = timerId in timers)
         {

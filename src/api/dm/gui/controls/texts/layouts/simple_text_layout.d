@@ -24,7 +24,7 @@ struct SimpleTextLayout
         destroy;
     }
 
-    bool create() nothrow @nogc
+    bool create() nothrow 
     {
         if (isCreated)
         {
@@ -45,9 +45,9 @@ struct SimpleTextLayout
         return true;
     }
 
-    bool isCreated() const @nogc nothrow @safe => _lineBreaks.length > 0;
+    bool isCreated() const  nothrow @safe => _lineBreaks.length > 0;
 
-    bool destroy() nothrow @nogc
+    bool destroy() nothrow 
     {
         if (isCreated)
         {
@@ -58,7 +58,7 @@ struct SimpleTextLayout
         return false;
     }
 
-    void opOpAssign(string op : "~")(Type rhs) nothrow @nogc
+    void opOpAssign(string op : "~")(Type rhs) nothrow 
     {
         if (!isCreated && !create)
         {
@@ -76,7 +76,7 @@ struct SimpleTextLayout
         _length++;
     }
 
-    bool grow(size_t factor, size_t needSize) nothrow @nogc
+    bool grow(size_t factor, size_t needSize) nothrow 
     {
         assert(factor > 0);
         assert(needSize > 0);
@@ -102,12 +102,12 @@ struct SimpleTextLayout
         return true;
     }
 
-    void reset() nothrow @nogc @safe
+    void reset() nothrow  @safe
     {
         _length = 0;
     }
 
-    inout(size_t[]) lineBreaks() return scope inout nothrow @nogc @safe => _lineBreaks[0 .. _length];
+    inout(size_t[]) lineBreaks() return scope inout nothrow  @safe => _lineBreaks[0 .. _length];
 }
 
 unittest

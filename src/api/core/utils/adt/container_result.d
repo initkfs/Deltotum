@@ -33,7 +33,7 @@ import core.attribute : mustuse;
 
     alias isSuccess this;
 
-    const pure @nogc nothrow @safe
+    const pure  nothrow @safe
     {
         bool isFail() => !isSuccess;
         bool isFailRead() => state == State.failread;
@@ -52,7 +52,7 @@ import core.attribute : mustuse;
         string toString() => state;
     }
 
-    static pure @nogc nothrow @safe
+    static pure  nothrow @safe
     {
         ContainerResult success() => ContainerResult(State.success, true);
 

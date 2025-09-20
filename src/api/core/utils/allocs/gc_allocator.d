@@ -33,7 +33,7 @@ bool reallocateGc(T)(size_t newSize, scope ref T[] ptr) nothrow @trusted
     return true;
 }
 
-bool deallocateGc(T)(scope T[] ptr) @nogc nothrow @trusted
+bool deallocateGc(T)(scope T[] ptr)  nothrow @trusted
 {
     import core.memory : GC;
 
