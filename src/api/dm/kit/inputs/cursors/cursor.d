@@ -23,27 +23,28 @@ abstract class Cursor
         Sprite2d _cursorOwner;
     }
 
-    void change(ComPlatformCursorType type)
+    bool isDisposeOnChangeNotCached = true;
+
+    bool change(ComPlatformCursorType type)
     {
         if (!defaultCursor || _locked)
         {
-            return;
+            return false;
         }
 
         if (lastCursor)
         {
-            //TODO dispose?
+            if ((type !in cursors) && isDisposeOnChangeNotCached)
+            {
+                lastCursor.dispose;
+            }
             lastCursor = null;
         }
 
         if (auto typePtr = type in cursors)
         {
             lastCursor = *typePtr;
-            if (const err = lastCursor.set)
-            {
-                throw new Exception(err.toString);
-            }
-            return;
+            return lastCursor.set;
         }
 
         if (cursorFactory)
@@ -54,7 +55,10 @@ abstract class Cursor
                 throw new Exception(err.toString);
             }
             cursors[type] = newCursor;
+            return newCursor.set;
         }
+
+        return false;
     }
 
     bool restore()
@@ -64,12 +68,7 @@ abstract class Cursor
             return false;
         }
 
-        if (const err = defaultCursor.set)
-        {
-            throw new Exception(err.toString);
-        }
-
-        return true;
+        return defaultCursor.set;
     }
 
     bool unlock(Sprite2d owner)
@@ -104,7 +103,7 @@ abstract class Cursor
         return _locked;
     }
 
-    Vec2d getPos()
+    Vec2d getPos(out bool isError)
     {
         auto cursor = lastCursor;
         if (!cursor)
@@ -112,31 +111,26 @@ abstract class Cursor
             cursor = defaultCursor;
         }
         float x, y;
-        if (const err = cursor.getPos(x, y))
+        if (!cursor.getPos(x, y))
         {
-            //TODO log
-            throw new Exception(err.toString);
+            isError = true;
         }
         return Vec2d(x, y);
     }
 
-    void show()
+    bool show()
     {
         assert(defaultCursor);
-        if (const err = defaultCursor.show)
-        {
-            throw new Exception(err.toString);
-        }
+        return defaultCursor.show;
     }
 
-    void hide()
+    bool hide()
     {
         assert(defaultCursor);
-        if (const err = defaultCursor.hide)
-        {
-            throw new Exception(err.toString);
-        }
+        return defaultCursor.hide;
     }
+
+    string getLastErrorStr() => defaultCursor.getLastErrorStr;
 
     void dispose()
     {

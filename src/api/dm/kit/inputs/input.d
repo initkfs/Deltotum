@@ -80,7 +80,14 @@ class Input
 
     Vec2d pointerPos()
     {
-        return systemCursor.getPos;
+        bool isValid;
+        Vec2d pos = systemCursor.getPos(isValid);
+        if (!isValid)
+        {
+            //TODO logging?
+            throw new Exception("Pointer not valid: " ~ systemCursor.getLastErrorStr);
+        }
+        return pos;
     }
 
     bool startTextInput()

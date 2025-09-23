@@ -10,14 +10,14 @@ import core.attribute : mustuse;
     enum defaultCodeSuccess = 0;
     enum defaultCodeError = -1;
 
-    int code;
     string message;
+    int code;
     bool isError;
 
     this(int code, string message = null, bool isError = false) inout  nothrow pure @safe
     {
-        this.code = code;
         this.message = message;
+        this.code = code;
         this.isError = isError;
     }
 

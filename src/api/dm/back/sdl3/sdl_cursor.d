@@ -1,7 +1,5 @@
 module api.dm.back.sdl3.sdl_cursor;
 
-
-
 import api.dm.com.inputs.com_cursor : ComCursor, ComPlatformCursorType;
 
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
@@ -101,62 +99,7 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor, ComCursor
         return ComResult.success;
     }
 
-    ComResult set() nothrow
-    {
-        if (!ptr)
-        {
-            return ComResult.error("Cursor pointer is null");
-        }
-
-        if (!SDL_SetCursor(ptr))
-        {
-            return getErrorRes;
-        }
-
-        return ComResult.success;
-    }
-
-    ComResult redraw() nothrow
-    {
-        if (!SDL_SetCursor(null))
-        {
-            return getErrorRes;
-        }
-        return ComResult.success;
-    }
-
-    ComResult getPos(out float x, out float y) nothrow
-    {
-        //const buttonMask = 
-        SDL_GetMouseState(&x, &y);
-        return ComResult.success;
-    }
-
-    ComResult show() nothrow
-    {
-        if (!SDL_ShowCursor())
-        {
-            return getErrorRes;
-        }
-        return ComResult.success;
-    }
-
-    ComResult hide() nothrow
-    {
-        if (!SDL_HideCursor())
-        {
-            return getErrorRes;
-        }
-        return ComResult.success;
-    }
-
-    ComResult isVisible(out bool isVisible) nothrow
-    {
-        isVisible = SDL_CursorVisible;
-        return ComResult.success;
-    }
-
-    ComResult getCursorFocus(ComWindow buffer) nothrow
+    ComResult getWindowHasFocus(ComWindow buffer) nothrow
     {
         import api.dm.com.com_native_ptr : ComNativePtr;
 
@@ -167,6 +110,59 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor, ComCursor
         }
         return buffer.create(ComNativePtr(window));
     }
+
+    bool set() nothrow
+    {
+        if (!ptr)
+        {
+            return false;
+        }
+
+        if (!SDL_SetCursor(ptr))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    bool redraw() nothrow
+    {
+        if (!SDL_SetCursor(null))
+        {
+            return false;
+        }
+        return true;
+    }
+
+    bool getPos(out float x, out float y) nothrow
+    {
+        //const buttonMask = 
+        SDL_GetMouseState(&x, &y);
+        return true;
+    }
+
+    bool show() nothrow
+    {
+        if (!SDL_ShowCursor())
+        {
+            return false;
+        }
+        return true;
+    }
+
+    bool hide() nothrow
+    {
+        if (!SDL_HideCursor())
+        {
+            return false;
+        }
+        return true;
+    }
+
+    bool isVisible() nothrow => SDL_CursorVisible;
+
+    string getLastErrorStr() nothrow => getError;
 
     override protected bool disposePtr() nothrow
     {

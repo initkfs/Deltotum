@@ -515,8 +515,9 @@ class Sprite2d : EventKitTarget
                 {
                     if (onPointerWheel.length > 0)
                     {
-                        auto pointerPos = input.systemCursor.getPos;
-                        if (containsPoint(pointerPos.x, pointerPos.y))
+                        bool isErr;
+                        auto pointerPos = input.systemCursor.getPos(isErr);
+                        if (!isErr && containsPoint(pointerPos.x, pointerPos.y))
                         {
                             runEventHandlers(e);
                         }

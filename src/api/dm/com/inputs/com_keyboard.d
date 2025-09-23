@@ -298,13 +298,4 @@ enum ComKeyName : int
     key_rmeta,                /**< Extended key Right Meta */
     key_lhyper,               /**< Extended key Left Hyper */
     key_rhyper,               /**< Extended key Right Hyper */
-
-
-
-
-
-
-
-
-
 }
