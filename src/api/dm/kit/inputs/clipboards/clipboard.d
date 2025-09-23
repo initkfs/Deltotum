@@ -23,24 +23,7 @@ class Clipboard
         this.clipboard = c;
     }
 
-    string getText()
-    {
-        string result;
-        getText(result);
-        return result;
-    }
-
-    bool getText(out string text)
-    {
-        string result;
-        if (const err = clipboard.getText(result))
-        {
-            logging.logger.error(err.toString);
-            return false;
-        }
-        text = result;
-        return true;
-    }
+    string getText() => clipboard.getTextNew;
 
     bool setText(dstring text)
     {
@@ -62,17 +45,7 @@ class Clipboard
         return true;
     }
 
-    bool hasText()
-    {
-        bool isHasText;
-        if (const err = clipboard.hasText(isHasText))
-        {
-            logging.logger.error(err.toString);
-            return false;
-        }
-
-        return isHasText;
-    }
+    bool hasText() => clipboard.hasText;
 
     void dispose()
     {

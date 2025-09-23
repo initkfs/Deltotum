@@ -10,14 +10,16 @@ interface ComClipboard : ComDestroyable
 {
 nothrow:
 
-    ComResult hasText(out bool isHasText);
-    ComResult getText(out string newText);
+    string getTextNew();
+    bool hasText();
+    
     ComResult setText(const(char)[] text);
 
-    ComResult hasData(string dataType, out bool isHasData);
+    bool hasData(string dataType, out bool isHasData);
     ComResult getData(string dataType, scope void delegate(void* data, size_t dataLength) nothrow onData);
+    ComResult clearData();
 
-    ComResult getPrimarySelectionText(out string newText);
+    ComResult getPrimarySelectionTextNew(out string newText);
     ComResult setPrimarySelectionText(const(char)[] text);
-    ComResult hasPrimarySelectionText(out bool isHasText);
+    bool hasPrimarySelectionText(out bool isHasText);
 }

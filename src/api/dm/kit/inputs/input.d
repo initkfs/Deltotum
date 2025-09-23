@@ -1,5 +1,7 @@
 module api.dm.kit.inputs.input;
 
+import api.core.loggers.logging : Logging;
+
 import api.dm.kit.inputs.cursors.cursor : Cursor;
 import api.dm.kit.inputs.clipboards.clipboard : Clipboard;
 import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
@@ -32,7 +34,9 @@ class Input
     Cursor systemCursor;
     Keyboard keyboard;
 
-    this(Keyboard keyboard, Clipboard clipboard, Cursor cursor)
+    Logging logging;
+
+    this(Logging logging, Keyboard keyboard, Clipboard clipboard, Cursor cursor)
     {
         assert(keyboard);
         this.keyboard = keyboard;
@@ -84,8 +88,8 @@ class Input
         Vec2d pos = systemCursor.getPos(isValid);
         if (!isValid)
         {
-            //TODO logging?
-            throw new Exception("Pointer not valid: " ~ systemCursor.getLastErrorStr);
+            logging.logger.error("Invalid cursor position: ", systemCursor.getLastErrorStr);
+            return Vec2d.init;
         }
         return pos;
     }

@@ -243,7 +243,7 @@ class SdlApp : GuiApp
             cursor = new EmptyCursor;
         }
 
-        _input = new Input(keyboard, clipboard, cursor);
+        _input = new Input(uservices.logging, keyboard, clipboard, cursor);
 
         auto audioClip = new AudioMixer(sdlAudioMixer.get);
 

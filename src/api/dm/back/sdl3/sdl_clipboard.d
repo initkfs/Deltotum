@@ -1,7 +1,5 @@
 module api.dm.back.sdl3.sdl_clipboard;
 
-
-
 import api.dm.com.inputs.com_clipboard : ComClipboard;
 import api.dm.back.sdl3.base.sdl_object : SdlObject;
 import api.dm.com.com_result : ComResult;
@@ -15,12 +13,12 @@ import std.string : toStringz, fromStringz;
  */
 class SdlClipboard : SdlObject, ComClipboard
 {
-    ComResult getText(out string newText) nothrow
+    string getTextNew() nothrow
     {
         const(char*) text = SDL_GetClipboardText();
         if (!text)
         {
-            return getErrorRes("Error getting text from clipboard.");
+            return null;
         }
 
         scope (exit)
@@ -28,19 +26,10 @@ class SdlClipboard : SdlObject, ComClipboard
             freeSdlPtr(cast(void*) text);
         }
 
-        newText = text.fromStringz.idup;
-        return ComResult.success;
+        return text.fromStringz.idup;
     }
 
-    ComResult hasText(out bool isHasText) nothrow
-    {
-        if (SDL_HasClipboardText())
-        {
-            isHasText = true;
-        }
-
-        return ComResult.success;
-    }
+    bool hasText() nothrow => SDL_HasClipboardText();
 
     ComResult setText(const(char)[] text) nothrow
     {
@@ -51,15 +40,12 @@ class SdlClipboard : SdlObject, ComClipboard
         return ComResult.success;
     }
 
-    ComResult hasData(string dataType, out bool isHasData) nothrow
-    {
-        isHasData = SDL_HasClipboardData(dataType.toStringz);
-        return ComResult.success;
-    }
+    bool hasData(string dataType, out bool isHasData) nothrow => SDL_HasClipboardData(
+        dataType.toStringz);
 
-    ComResult getData(string dataType, scope void delegate(void* data, size_t dataLength) nothrow onData) nothrow
+    ComResult getData(string dataType, scope void delegate(void* data, size_t dataLength) nothrow onScopeData) nothrow
     {
-        assert(onData);
+        assert(onScopeData);
 
         size_t dataLen;
         void* dataPtr = SDL_GetClipboardData(dataType.toStringz, &dataLen);
@@ -72,20 +58,26 @@ class SdlClipboard : SdlObject, ComClipboard
         {
             freeSdlPtr(dataPtr);
         }
-        //TODO dataLen == 0?
-        onData(dataPtr, dataLen);
+
+        if (dataLen == 0)
+        {
+            return getErrorRes("Error getting data from clipboard: data length == 0");
+        }
+
+        onScopeData(dataPtr, dataLen);
         return ComResult.success;
     }
 
-    // ComResult clear()
-    // {
-    //     if (!SDL_ClearClipboardData)
-    //     {
-    //         return getErrorRes("Error clearing clipboard");
-    //     }
-    // }
+    ComResult clearData() nothrow
+    {
+        if (!SDL_ClearClipboardData)
+        {
+            return getErrorRes("Error clearing clipboard data");
+        }
+        return ComResult.success;
+    }
 
-    ComResult getPrimarySelectionText(out string newText) nothrow
+    ComResult getPrimarySelectionTextNew(out string newText) nothrow
     {
         const(char*) text = SDL_GetPrimarySelectionText();
         if (!text)
@@ -111,15 +103,7 @@ class SdlClipboard : SdlObject, ComClipboard
         return ComResult.success;
     }
 
-    ComResult hasPrimarySelectionText(out bool isHasText) nothrow
-    {
-        if (SDL_HasPrimarySelectionText())
-        {
-            isHasText = true;
-        }
-
-        return ComResult.success;
-    }
+    bool hasPrimarySelectionText(out bool isHasText) nothrow => SDL_HasPrimarySelectionText();
 
     bool isDisposed() nothrow pure @safe
     {
