@@ -5,6 +5,7 @@ import api.dm.com.com_result : ComResult;
 import api.dm.com.graphic.com_blend_mode : ComBlendMode;
 import api.dm.com.com_native_ptr : ComNativePtr;
 import api.dm.com.com_destroyable : ComDestroyable;
+import api.dm.com.com_error_manageable: ComErrorManageable;
 
 import api.math.geom2.rect2 : Rect2d;
 import api.math.pos2.flip : Flip;
@@ -19,7 +20,7 @@ enum ComTextureScaleMode
 /**
  * Authors: initkfs
  */
-interface ComTexture : ComObjectable, ComDestroyable
+interface ComTexture : ComObjectable, ComDestroyable, ComErrorManageable
 {
 nothrow:
 
@@ -80,9 +81,9 @@ nothrow:
     ComResult getPixelColor(uint* ptr, out ubyte r, out ubyte g, out ubyte b, out ubyte aByte);
     ComResult getPixelColor(int x, int y, out ubyte r, out ubyte g, out ubyte b, out ubyte aByte);
 
-    ComResult draw(ComTexture other, Rect2d textureBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
+    bool draw(ComTexture other, Rect2d textureBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
             .none);
-    ComResult draw(Rect2d textureBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
+    bool draw(Rect2d textureBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
             .none);
 
     ComResult copyToNew(out ComTexture);

@@ -222,9 +222,9 @@ class Texture2d : Sprite2d
     void drawTexture(ComTexture texture, Rect2d textureBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
             .none)
     {
-        if (const err = texture.draw(textureBounds, destBounds, angle, flip))
+        if (!texture.draw(textureBounds, destBounds, angle, flip))
         {
-            logger.error(err.toString);
+            logger.error("Error texture drawing: ", texture.getLastErrorStr);
         }
     }
 

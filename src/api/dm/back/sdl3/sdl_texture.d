@@ -702,13 +702,13 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    ComResult draw(Rect2d srcBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
+    bool draw(Rect2d srcBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
             .none)
     {
         return draw(this, srcBounds, destBounds, angle, flip);
     }
 
-    ComResult draw(ComTexture other, Rect2d srcBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
+    bool draw(ComTexture other, Rect2d srcBounds, Rect2d destBounds, double angle = 0, Flip flip = Flip
             .none)
     {
         SDL_FRect srcRect;
@@ -751,7 +751,11 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         SdlTexture t = cast(SdlTexture) other;
         assert(t);
         SDL_FPoint* rotateCenter = null;
-        return renderer.renderTextureEx(t, &srcRect, &destRect, angle, rotateCenter, sdlFlip);
+        if (const err = renderer.renderTextureEx(t, &srcRect, &destRect, angle, rotateCenter, sdlFlip))
+        {
+            return false;
+        }
+        return true;
     }
 
     ComResult copyToNew(out ComTexture toTexture)
@@ -805,9 +809,9 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             return err;
         }
 
-        if (const err = draw(srcRect, destRect, angle, flip))
+        if (!draw(srcRect, destRect, angle, flip))
         {
-            return err;
+            return ComResult.error("Error texture drawing: " ~ getLastErrorStr);
         }
 
         if (const err = restoreRendererTarget)
@@ -831,9 +835,9 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             return err;
         }
 
-        if (const err = draw(other, srcRect, dstRect, angle, flip))
+        if (!draw(other, srcRect, dstRect, angle, flip))
         {
-            return err;
+            return ComResult.error("Error texture drawing");
         }
 
         if (const err = restoreRendererTarget)
@@ -889,6 +893,8 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         value = locked;
         return ComResult.success;
     }
+
+    string getLastErrorStr() => getError;
 
     override protected bool disposePtr() nothrow
     {
