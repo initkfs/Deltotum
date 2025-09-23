@@ -1,7 +1,5 @@
 module api.dm.back.sdl3.sdl_surface;
 
-
-
 import api.dm.com.com_native_ptr : ComNativePtr;
 import api.dm.com.graphic.com_surface : ComSurface;
 import api.dm.com.graphic.com_blend_mode : ComBlendMode;
@@ -186,8 +184,8 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
             return ComResult.error("Surface size must be positive values");
         }
 
-        int w = width;
-        int h = height;
+        int w = getWidth;
+        int h = getHeight;
 
         if (w == newWidth && h == newHeight)
         {
@@ -479,16 +477,9 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     ComResult getPixels(scope bool delegate(size_t, size_t, ubyte, ubyte, ubyte, ubyte) onXYRGBAIsContinue) @trusted
     {
-        int h, w;
-        if (auto err = getWidth(w))
-        {
-            return err;
-        }
+        int h = getHeight;
+        int w = getWidth;
 
-        if (auto err = getHeight(h))
-        {
-            return err;
-        }
         foreach (y; 0 .. h)
         {
             foreach (x; 0 .. w)
@@ -535,16 +526,8 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     ComResult getPixels(out Tuple!(ubyte, ubyte, ubyte, ubyte)[][] buff) nothrow
     {
-        int w, h;
-        if (auto err = getWidth(w))
-        {
-            return err;
-        }
-
-        if (auto err = getHeight(h))
-        {
-            return err;
-        }
+        int w = getWidth;
+        int h = getHeight;
 
         auto newBuff = new Tuple!(ubyte, ubyte, ubyte, ubyte)[][](h, w);
         if (auto err = getPixels(newBuff))
@@ -557,15 +540,9 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
     ComResult setPixels(scope bool delegate(size_t, size_t, out Tuple!(ubyte, ubyte, ubyte, ubyte)) onXYRGBAIsContinue) @trusted
     {
-        int w, h;
-        if (auto err = getWidth(w))
-        {
-            return err;
-        }
-        if (auto err = getHeight(h))
-        {
-            return err;
-        }
+        int w = getWidth;
+        int h = getHeight;
+        
         foreach (y; 0 .. h)
         {
             foreach (x; 0 .. w)
@@ -610,22 +587,16 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    ComResult getPixelRowLenBytes(out int value) nothrow
-    {
-        value = pitch;
-        return ComResult.success;
-    }
-
-    ComResult getFormat(out uint value) nothrow
-    {
-        value = pixelFormat;
-        return ComResult.success;
-    }
-
-    int pitch() nothrow
+    int getPixelRowLenBytes() nothrow
     {
         assert(ptr);
         return ptr.pitch;
+    }
+
+    uint getFormat() nothrow
+    {
+        assert(ptr);
+        return pixelFormat;
     }
 
     SDL_PixelFormat pixelFormat() nothrow
@@ -634,35 +605,22 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ptr.format;
     }
 
-    int width() nothrow
+    int getWidth() nothrow
     {
         assert(ptr);
         return ptr.w;
     }
 
-    ComResult getWidth(out int w) nothrow
-    {
-        w = width;
-        return ComResult.success;
-    }
-
-    int height() nothrow
+    int getHeight() nothrow
     {
         assert(ptr);
         return ptr.h;
     }
 
-    ComResult getHeight(out int h) nothrow
+    void getSize(out int w, out int h)
     {
-        h = height;
-        return ComResult.success;
-    }
-
-    ComResult getSize(out int w, out int h)
-    {
-        w = width;
-        h = height;
-        return ComResult.success;
+        w = getWidth;
+        h = getHeight;
     }
 
     ComResult nativePtr(out ComNativePtr nptr) nothrow
@@ -694,6 +652,8 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
 
         return ComResult.success;
     }
+
+    string getLastErrorStr() => getError;
 
     override protected bool disposePtr() nothrow
     {

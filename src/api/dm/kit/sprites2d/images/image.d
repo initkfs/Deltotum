@@ -47,18 +47,8 @@ class Image : Texture2d
     bool load(ComSurface image, int requestWidth = -1, int requestHeight = -1)
     {
         assert(image);
-        int imageWidth;
-        int imageHeight;
-
-        if (auto err = image.getWidth(imageWidth))
-        {
-            throw new Exception(err.toString);
-        }
-
-        if (auto err = image.getHeight(imageHeight))
-        {
-            throw new Exception(err.toString);
-        }
+        int imageWidth = image.getWidth;
+        int imageHeight = image.getHeight;
 
         if (requestWidth > 0 && requestWidth != imageWidth || requestHeight > 0 && requestHeight != imageHeight)
         {
@@ -69,15 +59,8 @@ class Image : Texture2d
                 throw new Exception(err.toString);
             }
 
-            if (auto err = image.getWidth(imageWidth))
-            {
-                throw new Exception(err.toString);
-            }
-
-            if (auto err = image.getHeight(imageHeight))
-            {
-                throw new Exception(err.toString);
-            }
+            imageWidth = image.getWidth;
+            imageHeight = image.getHeight;
         }
         else
         {
@@ -91,15 +74,8 @@ class Image : Texture2d
                     throw new Exception(err.toString);
                 }
 
-                if (auto err = image.getWidth(imageWidth))
-                {
-                    throw new Exception(err.toString);
-                }
-
-                if (auto err = image.getHeight(imageHeight))
-                {
-                    throw new Exception(err.toString);
-                }
+                imageWidth = image.getWidth;
+                imageHeight = image.getHeight;
             }
         }
 

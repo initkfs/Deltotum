@@ -55,11 +55,7 @@ class WindowMagnifier : BaseMagnifier
                 }
 
                 int w, h;
-                if (const err = buffer.getSize(w, h))
-                {
-                    logger.error(err.toString);
-                    return;
-                }
+                buffer.getSize(w, h);
 
                 auto winTexture = new Texture2d(w, h);
                 buildInitCreate(winTexture);

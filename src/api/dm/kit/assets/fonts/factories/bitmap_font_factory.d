@@ -94,8 +94,8 @@ class BitmapFontFactory : GraphicComponent
                         throw new Exception(isErr.toString);
                     }
 
-                    glyphPosition.width = glyphRepresentation.width;
-                    glyphPosition.height = glyphRepresentation.height;
+                    glyphPosition.width = glyphRepresentation.getWidth;
+                    glyphPosition.height = glyphRepresentation.getHeight;
 
                     if (glyphPosition.x + glyphPosition.width >= fontTextureWidth)
                     {

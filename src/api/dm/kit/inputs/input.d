@@ -46,6 +46,9 @@ class Input
 
         assert(cursor);
         this.systemCursor = cursor;
+
+        assert(logging);
+        this.logging = logging;
     }
 
     protected size_t keyIndex(ComKeyName key)
@@ -84,9 +87,10 @@ class Input
 
     Vec2d pointerPos()
     {
-        bool isValid;
-        Vec2d pos = systemCursor.getPos(isValid);
-        if (!isValid)
+        assert(systemCursor);
+
+        Vec2d pos;
+        if (!systemCursor.getPos(pos))
         {
             logging.logger.error("Invalid cursor position: ", systemCursor.getLastErrorStr);
             return Vec2d.init;

@@ -2,6 +2,7 @@ module api.dm.com.graphic.com_surface;
 
 import api.dm.com.com_result : ComResult;
 import api.dm.com.com_destroyable : ComDestroyable;
+import api.dm.com.com_error_manageable: ComErrorManageable;
 import api.dm.com.graphic.com_blend_mode : ComBlendMode;
 import api.dm.com.com_native_ptr : ComNativePtr;
 
@@ -31,16 +32,14 @@ nothrow:
     ComResult createUnsafe(void* ptr) nothrow;
     ComResult create(ComNativePtr ptr) nothrow;
 
+    uint getFormat();
+    int getWidth();
+    int getHeight();
+    void getSize(out int w, out int h);
+
     //pitch = image-width × bytes-per-pixel + padding-between-rows
-    ComResult getPixelRowLenBytes(out int pitch);
-    ComResult getFormat(out uint format);
-
-    int width();
-    int height();
-
-    ComResult getWidth(out int w);
-    ComResult getHeight(out int h);
-    ComResult getSize(out int w, out int h);
+    alias getPitch = getPixelRowLenBytes;
+    int getPixelRowLenBytes();
 
     ComResult resize(int newWidth, int newHeight, out bool isResized);
 

@@ -515,9 +515,8 @@ class Sprite2d : EventKitTarget
                 {
                     if (onPointerWheel.length > 0)
                     {
-                        bool isErr;
-                        auto pointerPos = input.systemCursor.getPos(isErr);
-                        if (!isErr && containsPoint(pointerPos.x, pointerPos.y))
+                        auto pointerPos = input.pointerPos;
+                        if (containsPoint(pointerPos.x, pointerPos.y))
                         {
                             runEventHandlers(e);
                         }
@@ -2799,16 +2798,8 @@ class Sprite2d : EventKitTarget
     RGBA[][] surfaceToBuffer(ComSurface surf)
     {
         assert(surf);
-        int w, h;
-        if (const err = surf.getWidth(w))
-        {
-            throw new Exception(err.toString);
-        }
-
-        if (const err = surf.getHeight(h))
-        {
-            throw new Exception(err.toString);
-        }
+        int w = surf.getWidth;
+        int h = surf.getHeight;
 
         assert(w > 0 && h > 0);
         RGBA[][] buff = new RGBA[][](h, w);
@@ -2820,16 +2811,8 @@ class Sprite2d : EventKitTarget
     {
         assert(surf);
 
-        int surfWidth, surfHeight;
-        if (const err = surf.getWidth(surfWidth))
-        {
-            throw new Exception(err.toString);
-        }
-
-        if (const err = surf.getHeight(surfHeight))
-        {
-            throw new Exception(err.toString);
-        }
+        int surfWidth = surf.getWidth;
+        int surfHeight = surf.getHeight;
 
         assert(surfWidth > 0 && surfHeight > 0);
         assert(buff.length >= surfHeight);

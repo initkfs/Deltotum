@@ -103,19 +103,21 @@ abstract class Cursor
         return _locked;
     }
 
-    Vec2d getPos(out bool isError)
+    bool getPos(out Vec2d pos)
     {
         auto cursor = lastCursor;
         if (!cursor)
         {
             cursor = defaultCursor;
+            assert(cursor);
         }
         float x, y;
         if (!cursor.getPos(x, y))
         {
-            isError = true;
+            return false;
         }
-        return Vec2d(x, y);
+        pos = Vec2d(x, y);
+        return true;
     }
 
     bool show()

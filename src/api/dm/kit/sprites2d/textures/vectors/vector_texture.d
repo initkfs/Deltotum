@@ -130,11 +130,7 @@ class VectorTexture : Texture2d
         {
             throw new Exception(err.toString);
         }
-        int pitch;
-        if (const err = comSurface.getPixelRowLenBytes(pitch))
-        {
-            throw new Exception(err.toString);
-        }
+        int pitch = comSurface.getPixelRowLenBytes;
 
         cairoSurface = new CairoSurface(cast(ubyte*) pixels, cairo_format_t
                 .CAIRO_FORMAT_ARGB32, cast(int) width, cast(int) height, pitch);
@@ -269,11 +265,7 @@ class VectorTexture : Texture2d
             throw new Exception(err.toString);
         }
 
-        int surfacePitch;
-        if (const err = comSurface.getPixelRowLenBytes(surfacePitch))
-        {
-            throw new Exception(err.toString);
-        }
+        int surfacePitch = comSurface.getPixelRowLenBytes;
 
         if (pitch != surfacePitch)
         {
@@ -282,11 +274,7 @@ class VectorTexture : Texture2d
             throw new Exception(format("Pitch values do not match. Texture2d: %s, surface: %s", pitch, surfacePitch));
         }
 
-        int surfHeight;
-        if (const err = comSurface.getHeight(surfHeight))
-        {
-            throw new Exception(err.toString);
-        }
+        int surfHeight = comSurface.getHeight;
 
         assert(height > 0);
 
