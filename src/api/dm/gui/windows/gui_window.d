@@ -3,9 +3,12 @@ module api.dm.gui.windows.gui_window;
 import api.dm.kit.windows.window : Window;
 import api.dm.com.graphic.com_window : ComWindow;
 import api.dm.gui.themes.theme : Theme;
-import api.dm.gui.interacts.interact: Interact;
+import api.dm.gui.interacts.interact : Interact;
 import api.dm.gui.scenes.gui_scene : GuiScene;
 import api.dm.kit.scenes.scene2d : Scene2d;
+
+//TODO remove
+import api.dm.back.sdl3.gpu.gpu_device : SdlGPUDevice;
 
 /**
  * Authors: initkfs
@@ -15,6 +18,7 @@ class GuiWindow : Window
 
     Theme theme;
     Interact interact;
+    SdlGPUDevice gpuDevice;
 
     this(ComWindow window)
     {
@@ -34,6 +38,20 @@ class GuiWindow : Window
         }
 
         super.build(scene);
+    }
+
+    override void dispose()
+    {
+        if (gpuDevice && comWindow)
+        {
+            if (const err = gpuDevice.releaseFromWindow(comWindow))
+            {
+                throw new Exception(err.toString);
+            }
+            logger.trace("Release window from GPU device");
+        }
+
+        super.dispose;
     }
 
 }

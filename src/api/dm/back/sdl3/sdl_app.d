@@ -2,8 +2,6 @@ module api.dm.back.sdl3.sdl_app;
 
 import api.dm.com.graphic.com_screen;
 
-
-
 import api.dm.com.com_result : ComResult;
 import api.core.loggers.logging : Logging;
 import api.core.configs.keyvalues.config : Config;
@@ -71,11 +69,11 @@ import std.stdio;
 import api.dm.lib.cairo : CairoLib;
 import api.dm.lib.libxml.native : LibxmlLib;
 
-
 //import api.dm.lib.chipmunk.libs : ChipmLib;
 
 import api.dm.back.sdl3.externs.csdl3;
 import std.typecons : Nullable;
+import api.dm.back.sdl3.gpu.gpu_device;
 
 /**
  * Authors: initkfs
@@ -102,6 +100,8 @@ class SdlApp : GuiApp
         LibxmlLib libxmlLib;
 
         SDLScreen comScreen;
+
+        SdlGPUDevice gpuDevice;
     }
 
     protected
@@ -180,6 +180,27 @@ class SdlApp : GuiApp
         {
             uservices.logger.errorf("SDL systems initialization error: " ~ err.toString);
             return initRes;
+        }
+
+        //TODO move to systems
+        import KitConfigKeys = api.dm.kit.kit_config_keys;
+
+        gpuDevice = new SdlGPUDevice;
+        if (uservices.config.getBool(KitConfigKeys.backendIsGPU))
+        {
+            if (const err = gpuDevice.create)
+            {
+                throw new Exception(err.toString);
+            }
+            string gpuName;
+            if (const err = gpuDevice.getDriverNameNew(gpuName))
+            {
+                uservices.logger.trace("Error reading GPU driver name: ", err.toString);
+            }
+            else
+            {
+                uservices.logger.trace("Create GPU device: ", gpuName);
+            }
         }
 
         uservices.logger.trace("SDL systems initialized");
@@ -728,8 +749,9 @@ class SdlApp : GuiApp
         return new SDLPlatform;
     }
 
-    override ComScreen newComScreen(){
-        import api.dm.back.sdl3.sdl_screen: SDLScreen;
+    override ComScreen newComScreen()
+    {
+        import api.dm.back.sdl3.sdl_screen : SDLScreen;
 
         return new SDLScreen;
     }
@@ -825,6 +847,15 @@ class SdlApp : GuiApp
         if (const err = comScreen.getScreenForWindow(sdlWindow, screenId))
         {
             uservices.logger.error("Error getting display for window: ", window.title);
+        }
+
+        if (gpuDevice)
+        {
+            window.gpuDevice = gpuDevice;
+            if (const err = gpuDevice.attachToWindow(sdlWindow))
+            {
+                uservices.logger.error(err.toString);
+            }
         }
 
         window.screen = _platform.screen.single(screenId);
@@ -1015,6 +1046,13 @@ class SdlApp : GuiApp
         }
 
         sdlFont.quit;
+
+        if (gpuDevice)
+        {
+            gpuDevice.dispose;
+            uservices.logger.trace("Dispose GPU device");
+            gpuDevice = null;
+        }
 
         if (const err = sdlLib.quit)
         {

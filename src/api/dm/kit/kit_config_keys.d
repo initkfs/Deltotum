@@ -13,6 +13,7 @@ string sceneIsDebug = "sceneIsDebug";
 
 string backendIsAudio = "backendIsAudio";
 string backendIsJoystick = "backendIsJoystick";
+string backendIsGPU = "backendIsGPU";
 
 string graphicsUseVector = "graphicsUseVector";
 string graphicsIsIconPack = "graphicsIsIconPack";
