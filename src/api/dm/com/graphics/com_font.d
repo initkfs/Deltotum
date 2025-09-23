@@ -26,7 +26,7 @@ nothrow:
         ubyte fr, ubyte fg, ubyte fb, ubyte fa,
         ubyte br, ubyte bg, ubyte bb, ubyte ba);
 
-    ComResult load(string path, double size);
+    ComResult create(string path, double size);
     string getFontPath();
     double getFontSize();
     double getMaxHeight();

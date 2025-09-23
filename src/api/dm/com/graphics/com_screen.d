@@ -3,6 +3,7 @@ module api.dm.com.graphic.com_screen;
 import api.dm.com.com_result : ComResult;
 import api.dm.com.graphic.com_window : ComWindow;
 import api.dm.com.com_destroyable : ComDestroyable;
+import api.dm.com.com_error_manageable : ComErrorManageable;
 
 alias ComScreenId = int;
 
@@ -34,18 +35,20 @@ struct ComScreenDpi
 /**
  * Authors: initkfs
  */
-interface ComScreen : ComDestroyable
+interface ComScreen : ComDestroyable, ComErrorManageable
 {
 
 nothrow:
 
-    ComResult onScreens(scope bool delegate(ComScreenId) nothrow onScreenIdIsContinue);
-    ComResult getBounds(ComScreenId id, out int x, out int y, out int width, out int height);
-    ComResult getUsableBounds(ComScreenId id, out int x, out int y, out int width, out int height);
-    ComResult getName(ComScreenId id, out string name);
-    ComResult getVideoDriverName(out string name);
-    ComResult getMode(ComScreenId id, out ComScreenMode mode);
-    ComResult getScreenForWindow(ComWindow window, out ComScreenId id);
-    ComResult getOrientation(ComScreenId id, out ComScreenOrientation result);
+    void onScreens(scope bool delegate(ComScreenId) nothrow onScreenIdIsContinue);
 
+    ComResult getScreenForWindow(ComWindow window, out ComScreenId id);
+
+    bool getBounds(ComScreenId id, out int x, out int y, out int width, out int height);
+    bool getUsableBounds(ComScreenId id, out int x, out int y, out int width, out int height);
+    bool getMode(ComScreenId id, out ComScreenMode mode);
+    bool getOrientation(ComScreenId id, out ComScreenOrientation result);
+
+    string getNameNew(ComScreenId id);
+    string getDriverNameNew();
 }

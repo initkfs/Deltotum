@@ -229,7 +229,7 @@ class Image : Texture2d
         }
 
         ComImage image = graphic.comImageProvider.getNew();
-        if (const err = image.load(path))
+        if (const err = image.create(path))
         {
             logger.error("Unable to load image: ", err);
             return false;
@@ -256,7 +256,7 @@ class Image : Texture2d
         auto image = graphic.comImageProvider.getNew();
         import std.conv : to;
 
-        if (const err = image.load(content))
+        if (const err = image.create(content))
         {
             logger.error("Cannot load image from raw data: ", err);
         }

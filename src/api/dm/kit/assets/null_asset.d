@@ -46,7 +46,7 @@ class NullAsset : Asset
                 ubyte fr, ubyte fg, ubyte fb, ubyte fa,
                 ubyte br, ubyte bg, ubyte bb, ubyte ba) => ComResult.success;
 
-            ComResult load(string path, double size) => ComResult.success;
+            ComResult create(string path, double size) => ComResult.success;
             string getFontPath() => null;
             double getFontSize() => 0;
             double getMaxHeight() => 0;

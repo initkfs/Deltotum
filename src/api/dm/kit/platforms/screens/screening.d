@@ -39,18 +39,16 @@ class Screening
 
     void onScreens(scope bool delegate(ComScreenId) nothrow onScreenIdIsContinue)
     {
-        if (const err = comScreen.onScreens(onScreenIdIsContinue))
-        {
-            logging.logger.error(err.toString);
-        }
+        comScreen.onScreens(onScreenIdIsContinue);
     }
 
     Rect2d bounds(ComScreenId id)
     {
         int x, y, width, height;
-        if (const err = comScreen.getBounds(id, x, y, width, height))
+        if (!comScreen.getBounds(id, x, y, width, height))
         {
-            logging.logger.errorf("Error getting screen bounds with id %s: %s", id, err.toString);
+            logging.logger.errorf("Error getting screen bounds with id: ", id, comScreen
+                    .getLastErrorStr);
         }
         return Rect2d(x, y, width, height);
     }
@@ -58,41 +56,24 @@ class Screening
     Rect2d usableBounds(ComScreenId id)
     {
         int x, y, width, height;
-        if (const err = comScreen.getUsableBounds(id, x, y, width, height))
+        if (!comScreen.getUsableBounds(id, x, y, width, height))
         {
-            logging.logger.errorf("Error getting screen bounds with id %s: %s", id, err.toString);
+            logging.logger.errorf("Error getting screen bounds with id %s: %s", id, comScreen
+                    .getLastErrorStr);
         }
         return Rect2d(x, y, width, height);
     }
 
-    string name(ComScreenId id)
-    {
-        string screenName;
-        if (const err = comScreen.getName(id, screenName))
-        {
-            logging.logger.errorf("Error getting screen name with id %s: %s", id, err.toString);
-        }
-        return screenName;
-    }
-
-    string videoDriverName()
-    {
-        string name;
-        if (const err = comScreen.getVideoDriverName(name))
-        {
-            logging.logger.error("Error getting screen videodriver: ", err.toString);
-        }
-        return name;
-    }
+    string name(ComScreenId id) => comScreen.getNameNew(id);
+    string driverName() => comScreen.getDriverNameNew;
 
     ComScreenMode mode(ComScreenId id)
     {
-        import api.dm.com.graphic.com_screen : ComScreenMode, ComScreenDpi;
-
         ComScreenMode mode;
-        if (const err = comScreen.getMode(id, mode))
+        if (!comScreen.getMode(id, mode))
         {
-            logging.logger.errorf("Error getting screen mode with id %s: %s", id, err.toString);
+            logging.logger.errorf("Error getting screen mode with id %s: %s", id, comScreen
+                    .getLastErrorStr);
         }
 
         return mode;
@@ -101,10 +82,9 @@ class Screening
     ComScreenOrientation orientation(ComScreenId id)
     {
         ComScreenOrientation result;
-        if (const err = comScreen.getOrientation(id, result))
+        if (!comScreen.getOrientation(id, result))
         {
-            logging.logger.errorf("Error getting screen orientation with index %s: %s", id, err
-                    .toString);
+            logging.logger.errorf("Error getting screen orientation with index %s: %s", id, comScreen.getLastErrorStr);
         }
         return result;
     }

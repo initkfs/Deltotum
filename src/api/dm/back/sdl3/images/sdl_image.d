@@ -30,7 +30,7 @@ class SdlImage : SdlSurface, ComImage
         super(surfPtr);
     }
 
-    ComResult load(string path) nothrow
+    ComResult create(string path) nothrow
     {
         if (ptr)
         {
@@ -52,7 +52,7 @@ class SdlImage : SdlSurface, ComImage
         return ComResult.success;
     }
 
-    ComResult load(const(void[]) content) nothrow
+    ComResult create(const(void[]) content) nothrow
     {
         if (ptr)
         {

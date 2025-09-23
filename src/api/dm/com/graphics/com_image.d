@@ -11,8 +11,8 @@ interface ComImage : ComDestroyable
 {
     nothrow: 
     
-    ComResult load(string path);
-    ComResult load(const(void[]) contentRaw);
+    ComResult create(string path);
+    ComResult create(const(void[]) contentRaw);
     ComResult toSurface(out ComSurface toSurface);
     ComResult savePNG(ComSurface surface, string path);
 }

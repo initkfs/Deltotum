@@ -24,7 +24,7 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
         double _maxHeight = 1;
     }
 
-    ComResult load(string fontFilePath, double fontSize = 12) nothrow
+    ComResult create(string fontFilePath, double fontSize = 12) nothrow
     {
         if (ptr)
         {

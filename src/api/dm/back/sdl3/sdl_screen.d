@@ -1,9 +1,5 @@
 module api.dm.back.sdl3.sdl_screen;
 
-import api.dm.com.com_result;
-
-
-
 import api.dm.com.graphic.com_screen : ComScreenId, ComScreen, ComScreenMode, ComScreenOrientation, ComScreenDpi;
 import api.dm.com.com_result : ComResult;
 import api.dm.com.graphic.com_window : ComWindow;
@@ -18,13 +14,13 @@ import api.dm.back.sdl3.externs.csdl3;
  */
 class SDLScreen : SdlObject, ComScreen
 {
-    ComResult onScreens(scope bool delegate(ComScreenId) nothrow onScreenIdIsContinue) nothrow
+    void onScreens(scope bool delegate(ComScreenId) nothrow onScreenIdIsContinue) nothrow
     {
         int count;
         SDL_DisplayID* displays = SDL_GetDisplays(&count);
         if (!displays)
         {
-            return getErrorRes("Error getting screens array");
+            return;
         }
 
         foreach (i; 0 .. count)
@@ -35,7 +31,6 @@ class SDLScreen : SdlObject, ComScreen
                 break;
             }
         }
-        return ComResult.success;
     }
 
     ComResult getScreenForWindow(ComWindow window, out ComScreenId id) nothrow
@@ -70,81 +65,78 @@ class SDLScreen : SdlObject, ComScreen
         return ComResult.success;
     }
 
-    ComResult getBounds(ComScreenId id, out int x, out int y,
+    bool getBounds(ComScreenId id, out int x, out int y,
         out int width, out int height) nothrow
     {
         SDL_Rect bounds;
         if (!SDL_GetDisplayBounds(id, &bounds))
         {
-            return getErrorRes("Error getting display bounds");
+            return false;
         }
 
         x = bounds.x;
         y = bounds.y;
         width = bounds.w;
         height = bounds.h;
-        return ComResult.success;
+        return true;
     }
 
-    ComResult getUsableBounds(ComScreenId id, out int x, out int y,
+    bool getUsableBounds(ComScreenId id, out int x, out int y,
         out int width, out int height) nothrow
     {
         SDL_Rect bounds;
         if (!SDL_GetDisplayUsableBounds(id, &bounds))
         {
-            return getErrorRes("Error getting display usable bounds");
+            return false;
         }
 
         x = bounds.x;
         y = bounds.y;
         width = bounds.w;
         height = bounds.h;
-        return ComResult.success;
+        return true;
     }
 
-    ComResult getName(ComScreenId id, out string name) nothrow
+    string getNameNew(ComScreenId id) nothrow
     {
         const namePtr = SDL_GetDisplayName(id);
         if (!namePtr)
         {
-            return getErrorRes("Error getting display name");
+            return null;
         }
 
         import std.string : fromStringz;
 
-        name = namePtr.fromStringz.idup;
-        return ComResult.success;
+        return namePtr.fromStringz.idup;
     }
 
-    ComResult getVideoDriverName(out string name) nothrow
+    string getDriverNameNew() nothrow
     {
         const char* namePtr = SDL_GetCurrentVideoDriver();
         if (!namePtr)
         {
-            name = "null";
-            return ComResult.success;
+            return null;
         }
 
         import std.string : fromStringz;
 
-        name = namePtr.fromStringz.idup;
-        return ComResult.success;
+        return namePtr.fromStringz.idup;
     }
 
-    ComResult getMode(ComScreenId id, out ComScreenMode mode) nothrow
+    bool getMode(ComScreenId id, out ComScreenMode mode) nothrow
     {
         SDL_DisplayMode* screenMode = SDL_GetCurrentDisplayMode(id);
         if (!screenMode)
         {
-            return getErrorRes("Error getting screen mode");
+            return false;
         }
 
         mode = ComScreenMode(id, screenMode.w, screenMode.h, screenMode.refresh_rate, screenMode
                 .pixel_density);
-        return ComResult.success;
+        return true;
     }
 
-    ComResult getOrientation(ComScreenId id, out ComScreenOrientation result) nothrow
+    bool getOrientation(ComScreenId id, out ComScreenOrientation result) nothrow
     {
         const orientation = SDL_GetCurrentDisplayOrientation(id);
         final switch (orientation)
@@ -166,8 +158,10 @@ class SDLScreen : SdlObject, ComScreen
                 break;
         }
 
-        return ComResult.success;
+        return true;
     }
+
+    string getLastErrorStr() nothrow => getError;
 
     bool isDisposed() nothrow pure @safe
     {

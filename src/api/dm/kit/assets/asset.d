@@ -90,7 +90,7 @@ class Asset : LocalResources
     {
         const path = fontPath(fontFilePath);
         auto comFont = comFontProvider();
-        if (const err = comFont.load(path, size))
+        if (const err = comFont.create(path, size))
         {
             throw new Exception(err.toString);
         }
