@@ -30,6 +30,7 @@ class Scene2d : EventKitTarget
     bool startDrawProcess;
 
     bool isProcessUDA = true;
+    bool isClearScreen = true;
 
     bool isPause;
     Sprite2d[] eternalSprites;
@@ -41,7 +42,7 @@ class Scene2d : EventKitTarget
 
     //protected
     //{
-        Sprite2d[] sprites;
+    Sprite2d[] sprites;
     //}
 
     Sprite2d[] controlledSprites;
@@ -293,7 +294,11 @@ class Scene2d : EventKitTarget
     {
         if (!startDrawProcess)
         {
-            graphic.clear;
+            if (isClearScreen)
+            {
+                graphic.clear;
+            }
+
             startDrawProcess = true;
         }
 
@@ -484,7 +489,7 @@ class Scene2d : EventKitTarget
         {
             throw new Exception(err.toString);
         }
-        
+
         if (const errRead = graphic.readPixels(bounds, surf))
         {
             logger.error(errRead.toString);
