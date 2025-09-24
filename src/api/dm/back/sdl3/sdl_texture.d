@@ -859,6 +859,8 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
                 //     return ComTextureScaleMode.balance;
             case SDL_SCALEMODE_LINEAR:
                 return ComTextureScaleMode.quality;
+            case SDL_SCALEMODE_INVALID:
+                return ComTextureScaleMode.speed;
         }
     }
 

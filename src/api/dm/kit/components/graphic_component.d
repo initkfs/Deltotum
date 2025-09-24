@@ -7,6 +7,7 @@ import api.core.components.component_service : Service;
 import api.dm.kit.assets.asset : Asset;
 import api.dm.kit.media.multimedia : MultiMedia;
 import api.dm.kit.graphics.graphic : Graphic;
+import api.dm.kit.graphics.gpu.gpu_graphic : GPUGraphic;
 import api.dm.kit.inputs.input : Input;
 import api.dm.kit.windows.window : Window;
 import api.dm.kit.windows.windowing : Windowing;
@@ -21,6 +22,7 @@ class GraphicComponent : UniComponent
     private
     {
         @Service Graphic _graphic;
+        @Service GPUGraphic _gpu;
         @Service Input _input;
         @Service Platform _platform;
         @Service Asset _asset;
@@ -74,6 +76,25 @@ class GraphicComponent : UniComponent
 
         enforce(graphic, "Graphic must not be null");
         _graphic = graphic;
+    }
+
+    bool hasGpu() const nothrow pure @safe
+    {
+        return _gpu !is null;
+    }
+
+    inout(GPUGraphic) gpu() inout nothrow pure @safe
+    out (_gpu; _gpu !is null)
+    {
+        return _gpu;
+    }
+
+    void gpu(GPUGraphic graphic) pure @safe
+    {
+        import std.exception : enforce;
+
+        enforce(graphic, "GPU Graphic must not be null");
+        _gpu = graphic;
     }
 
     bool hasInput() const nothrow pure @safe

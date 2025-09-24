@@ -1,4 +1,4 @@
-module api.dm.back.sdl3.gpu.gpu_shader;
+module api.dm.back.sdl3.gpu.sdl_gpu_shader;
 
 import api.dm.com.com_result : ComResult;
 import api.dm.com.graphic.com_window : ComWindow;

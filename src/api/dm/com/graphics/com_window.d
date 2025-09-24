@@ -91,6 +91,7 @@ nothrow:
     ComResult getSystemTheme(out ComWindowTheme theme);
 
     ComResult nativePtr(out ComNativePtr ptr);
+    void* rawPtr();
 
     ComResult startTextInput();
     ComResult endTextInput();

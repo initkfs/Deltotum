@@ -130,5 +130,4 @@ class GuiScene : Scene2d
             debugger.gcUsedBytes.text = usedSize.to!dstring;
         }
     }
-
 }

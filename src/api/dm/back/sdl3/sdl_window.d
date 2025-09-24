@@ -2,8 +2,6 @@ module api.dm.back.sdl3.sdl_window;
 
 import api.dm.com.com_result;
 
-
-
 import api.dm.com.graphic.com_window : ComWindowId, ComWindow, ComWindowTheme;
 import api.dm.com.com_native_ptr : ComNativePtr;
 import api.dm.com.com_result : ComResult;
@@ -707,6 +705,11 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
 
         ptrInfo = ComNativePtr(ptr);
         return ComResult.success;
+    }
+
+    void* rawPtr() nothrow
+    {
+        return ptr;
     }
 
     ComResult startTextInput()

@@ -20,9 +20,9 @@ import api.dm.kit.factories;
 
 import std : writeln;
 
-import api.dm.back.sdl3.gpu.gpu_device : SdlGPUDevice;
-import api.dm.back.sdl3.gpu.gpu_pipeline : SdlGPUPipeline;
-import api.dm.back.sdl3.gpu.gpu_shader : SdlGPUShader;
+import api.dm.back.sdl3.gpu.sdl_gpu_device : SdlGPUDevice;
+import api.dm.back.sdl3.gpu.sdl_gpu_pipeline : SdlGPUPipeline;
+import api.dm.back.sdl3.gpu.sdl_gpu_shader : SdlGPUShader;
 
 import api.dm.back.sdl3.externs.csdl3;
 
@@ -45,7 +45,7 @@ class Start : GuiScene
 
     Random rnd;
 
-    SdlGPUDevice gpu;
+    SdlGPUDevice _gpu;
 
     override void create()
     {
@@ -54,8 +54,8 @@ class Start : GuiScene
 
         import api.dm.gui.windows.gui_window : GuiWindow;
 
-        gpu = (cast(GuiWindow) window).gpuDevice;
-        assert(gpu);
+        _gpu = (cast(GuiWindow) window).gpuDevice;
+        assert(_gpu);
 
         //TODO remove test
         import std.file : read;
@@ -63,12 +63,12 @@ class Start : GuiScene
         auto vertShaderFile = context.app.userDir ~ "/shaders/RawTriangle.vert.spv";
         auto vertexText = cast(ubyte[]) vertShaderFile.read;
 
-        auto vertexShader = gpu.newVertexSPIRV(vertexText);
+        auto vertexShader = _gpu.newVertexSPIRV(vertexText);
 
         auto fragShaderFile = context.app.userDir ~ "/shaders/SolidColor.frag.spv";
         auto fragText = cast(ubyte[]) fragShaderFile.read;
 
-        auto fragmentShader = gpu.newFragmentSPIRV(fragText);
+        auto fragmentShader = _gpu.newFragmentSPIRV(fragText);
 
         SDL_GPUGraphicsPipelineCreateInfo info;
         info.target_info.num_color_targets = 1;
@@ -80,7 +80,7 @@ class Start : GuiScene
 
         winPtr = winNat.castSafe!(SDL_Window*);
 
-        auto format = SDL_GetGPUSwapchainTextureFormat(gpu.getObject, winNat.castSafe!(
+        auto format = SDL_GetGPUSwapchainTextureFormat(_gpu.getObject, winNat.castSafe!(
                 SDL_Window*));
 
         SDL_GPUColorTargetDescription[] desc = [
@@ -95,14 +95,14 @@ class Start : GuiScene
 
         info.rasterizer_state.fill_mode = SDL_GPU_FILLMODE_FILL;
 
-        FillPipeline = gpu.newPipeline(info);
+        FillPipeline = _gpu.newPipeline(info);
 
         info.rasterizer_state.fill_mode = SDL_GPU_FILLMODE_LINE;
 
-        LinePipeline = gpu.newPipeline(info);
+        LinePipeline = _gpu.newPipeline(info);
 
-        gpu.deleteShader(vertexShader);
-        gpu.deleteShader(fragmentShader);
+        _gpu.deleteShader(vertexShader);
+        _gpu.deleteShader(fragmentShader);
 
         //auto pipeline = gpuDevice.newVertexSPIRV(shaderText);
 
@@ -117,39 +117,14 @@ class Start : GuiScene
     override void draw()
     {
         super.draw;
-
-        SDL_GPUCommandBuffer* cmdbuf = SDL_AcquireGPUCommandBuffer(gpu.getObject);
-        assert(cmdbuf);
-
-        SDL_GPUTexture* swapchainTexture;
-        if (!SDL_WaitAndAcquireGPUSwapchainTexture(cmdbuf, winPtr,  & swapchainTexture, null, null))
-        {
-            logger.errorf("WaitAndAcquireGPUSwapchainTexture failed: %s", SDL_GetError());
-            return;
-        }
-
-        assert(swapchainTexture);
-
-        SDL_GPUColorTargetInfo colorTargetInfo;
-		colorTargetInfo.texture = swapchainTexture;
-		colorTargetInfo.clear_color = SDL_FColor( 0.0f, 0.0f, 0.0f, 1.0f);
-		colorTargetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
-		colorTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
-
-        SDL_GPURenderPass* renderPass = SDL_BeginGPURenderPass(cmdbuf, &colorTargetInfo, 1, null);
-		SDL_BindGPUGraphicsPipeline(renderPass, FillPipeline.getObject);
-
-        SDL_DrawGPUPrimitives(renderPass, 3, 1, 0, 0);
-		SDL_EndGPURenderPass(renderPass);
-
-        SDL_SubmitGPUCommandBuffer(cmdbuf);
-
+        gpu.bindPipeline( FillPipeline);
+        gpu.draw(3, 1, 0, 0);
     }
 
     override void dispose()
     {
         super.dispose;
-        gpu.deletePipeline(FillPipeline);
-        gpu.deletePipeline(LinePipeline);
+        _gpu.deletePipeline(FillPipeline);
+        _gpu.deletePipeline(LinePipeline);
     }
 }

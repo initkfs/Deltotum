@@ -11,6 +11,7 @@ import api.dm.kit.components.graphic_component : GraphicComponent;
 import api.dm.kit.components.graphic_component : GraphicComponent;
 import api.core.components.uni_component : UniComponent;
 import api.dm.kit.graphics.graphic : Graphic;
+import api.dm.kit.graphics.gpu.gpu_graphic: GPUGraphic;
 import api.dm.kit.assets.asset : Asset;
 
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
@@ -314,6 +315,11 @@ abstract class GraphicApp : CliApp
     Graphic createGraphics(Logging logging, ComRenderer renderer)
     {
         return new Graphic(logging, renderer);
+    }
+
+    GPUGraphic createGpuGraphics(Logging logging)
+    {
+        return new GPUGraphic(logging);
     }
 
     Asset createAsset(Logging logging, Config config, Context context, ComFont delegate() comFontProvider)

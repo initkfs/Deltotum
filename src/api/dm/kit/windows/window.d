@@ -853,4 +853,6 @@ class Window : GraphicComponent
         }
         return true;
     }
+
+    void* rawPtr() => comWindow.rawPtr;
 }

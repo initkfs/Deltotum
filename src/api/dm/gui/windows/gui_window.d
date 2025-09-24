@@ -8,7 +8,7 @@ import api.dm.gui.scenes.gui_scene : GuiScene;
 import api.dm.kit.scenes.scene2d : Scene2d;
 
 //TODO remove
-import api.dm.back.sdl3.gpu.gpu_device : SdlGPUDevice;
+import api.dm.back.sdl3.gpu.sdl_gpu_device : SdlGPUDevice;
 
 /**
  * Authors: initkfs

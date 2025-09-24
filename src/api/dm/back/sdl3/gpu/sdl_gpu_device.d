@@ -1,11 +1,11 @@
-module api.dm.back.sdl3.gpu.gpu_device;
+module api.dm.back.sdl3.gpu.sdl_gpu_device;
 
 import api.dm.com.com_result : ComResult;
 import api.dm.com.graphic.com_window : ComWindow;
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
 
-import api.dm.back.sdl3.gpu.gpu_shader : SdlGPUShader;
-import api.dm.back.sdl3.gpu.gpu_pipeline : SdlGPUPipeline;
+import api.dm.back.sdl3.gpu.sdl_gpu_shader : SdlGPUShader;
+import api.dm.back.sdl3.gpu.sdl_gpu_pipeline : SdlGPUPipeline;
 
 import std.string : toStringz, fromStringz;
 

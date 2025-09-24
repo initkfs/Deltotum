@@ -1,11 +1,10 @@
-module api.dm.back.sdl3.gpu.gpu_pipeline;
+module api.dm.back.sdl3.gpu.sdl_gpu_pipeline;
 
 import api.dm.com.com_result : ComResult;
 import api.dm.com.graphic.com_window : ComWindow;
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
 
 import api.dm.back.sdl3.externs.csdl3;
-import api.dm.back.sdl3.gpu.gpu_shader : SdlGPUShader;
 
 class SdlGPUPipeline : SdlObjectWrapper!SDL_GPUGraphicsPipeline
 {

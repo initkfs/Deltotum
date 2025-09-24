@@ -249,6 +249,18 @@ class Scene2d : EventKitTarget
 
     void drawAll()
     {
+        bool isGPU = gpu.isActive;
+
+        if (isGPU)
+        {
+            if (!gpu.startRenderPass(window))
+            {
+                gpu.resetRenderer;
+                logger.error("Error starting gpu rendering");
+                return;
+            }
+        }
+
         if (!isDrawAfterAllSprites && !drawBeforeSprite)
         {
             drawSelf;
@@ -287,7 +299,18 @@ class Scene2d : EventKitTarget
 
         startDrawProcess = false;
         //TODO multiple scenes
-        graphic.rendererPresent;
+        if (!isGPU)
+        {
+            graphic.rendererPresent;
+        }
+        else
+        {
+            if (!gpu.endRenderPass)
+            {
+                logger.error("Error ending gpu renderer");
+                gpu.resetRenderer;
+            }
+        }
     }
 
     void update(double delta)
@@ -296,7 +319,10 @@ class Scene2d : EventKitTarget
         {
             if (isClearScreen)
             {
-                graphic.clear;
+                if (!gpu.isActive)
+                {
+                    graphic.clear;
+                }
             }
 
             startDrawProcess = true;
