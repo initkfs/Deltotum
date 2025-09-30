@@ -27,6 +27,16 @@ class SdlGPUShader : SdlObjectWrapper!SDL_GPUShader
         super(shaderPtr);
     }
 
+    bool disposeWithGpu(SDL_GPUDevice* gpuPtr){
+        if(!ptr){
+            return false;
+        }
+        
+        SDL_ReleaseGPUShader(gpuPtr, ptr);
+        ptr = null;
+        return true;
+    }
+
     override protected bool disposePtr() nothrow
     {
         if (ptr)

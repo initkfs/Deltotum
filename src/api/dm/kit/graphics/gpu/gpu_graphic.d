@@ -26,6 +26,10 @@ class GPUGraphic : LoggableUnit
         SDL_GPUTexture* lastSwapchain;
     }
 
+    SDL_GPUCommandBuffer* cmdBuff() => lastCmdBuff;
+    SDL_GPURenderPass* renderPass() => lastPass;
+    SDL_GPUTexture* swapchain() => lastSwapchain;
+
     bool isActive() => _gpu !is null;
 
     this(Logging logging)
@@ -52,18 +56,22 @@ class GPUGraphic : LoggableUnit
         //TODO unsafe cast
         SDL_Window* winPtr = cast(SDL_Window*) window.rawPtr;
 
-        if (!lastCmdBuff && !winPtr)
+        if (!winPtr)
         {
+            submitCmdBuffer;
             return false;
         }
 
+        //not SDL_AcquireGPUSwapchainTexture
         if (!SDL_WaitAndAcquireGPUSwapchainTexture(lastCmdBuff, winPtr, &lastSwapchain, null, null))
         {
+            submitCmdBuffer;
             return false;
         }
 
         if (!lastSwapchain)
         {
+            submitCmdBuffer;
             return false;
         }
 
@@ -76,10 +84,21 @@ class GPUGraphic : LoggableUnit
         lastPass = SDL_BeginGPURenderPass(lastCmdBuff, &colorTargetInfo, 1, null);
         if (!lastPass)
         {
+            submitCmdBuffer;
             return false;
         }
 
         return true;
+    }
+
+    bool submitCmdBuffer()
+    {
+        if (!lastCmdBuff)
+        {
+            return false;
+        }
+
+        return SDL_SubmitGPUCommandBuffer(lastCmdBuff);
     }
 
     bool endRenderPass()
@@ -91,11 +110,11 @@ class GPUGraphic : LoggableUnit
 
         SDL_EndGPURenderPass(lastPass);
 
-        SDL_SubmitGPUCommandBuffer(lastCmdBuff);
+        bool isSubmit = submitCmdBuffer;
 
         resetRenderer;
 
-        return true;
+        return isSubmit;
     }
 
     void resetRenderer()

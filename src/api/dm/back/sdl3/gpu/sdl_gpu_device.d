@@ -171,7 +171,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
     void deleteShader(SdlGPUShader shader)
     {
         assert(ptr);
-        SDL_ReleaseGPUShader(ptr, shader.getObject);
+        shader.disposeWithGpu(ptr);
     }
 
     string getLastErrorStr() => getError;
