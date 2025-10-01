@@ -6,7 +6,7 @@ module api.dm.com.objects.com_ptr_manager;
 mixin template ComPtrManager(T)
 {
     import api.dm.com.com_result : ComResult;
-    
+
     protected
     {
         T* ptr;
@@ -65,6 +65,11 @@ mixin template ComPtrManager(T)
         }
         ptr = newPtr;
         return ComResult.success;
+    }
+
+    void setNull() nothrow
+    {
+        ptr = null;
     }
 
     final inout(T*) getObject() inout nothrow @safe

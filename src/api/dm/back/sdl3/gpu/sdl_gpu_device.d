@@ -27,6 +27,12 @@ enum ComShaderType
     fragment
 }
 
+struct ComVertex
+{
+    float x = 0, y = 0, z = 0; //vec3 position
+    float r = 0, g = 0, b = 0, a = 1.0; //vec4 color
+}
+
 struct GPUPipelineData
 {
     SDL_GPUShader* vertex_shader;
@@ -204,16 +210,88 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return new SdlGPUPipeline(pipePtr);
     }
 
+    import api.dm.kit.windows.window : Window;
+
+    SdlGPUPipeline newPipeline(Window window,
+        string vertexPath,
+        string fragmentPath,
+        uint numVertexSamples = 0,
+        uint numVertexStorageBuffers = 0,
+        uint numVertexUniformBuffers = 0,
+        uint numVertexStorageTextures = 0,
+        uint numFragSamples = 0,
+        uint numFragStorageBuffers = 0,
+        uint numFragUniformBuffers = 0,
+        uint numFragStorageTextures = 0
+    )
+    {
+        auto vertexShader = newVertexSPIRV(vertexPath, numVertexSamples, numVertexStorageBuffers, numVertexUniformBuffers, numVertexStorageTextures);
+
+        auto fragmentShader = newFragmentSPIRV(fragmentPath, numFragSamples, numFragStorageBuffers, numFragUniformBuffers, numFragStorageTextures);
+
+        auto pipeline = newVertexPipeline(window, vertexShader, fragmentShader);
+
+        deleteShader(vertexShader);
+        deleteShader(fragmentShader);
+
+        return pipeline;
+    }
+
+    SdlGPUPipeline newVertexPipeline(Window window, SdlGPUShader vertexShader, SdlGPUShader fragmentShader)
+    {
+        SDL_GPUGraphicsPipelineCreateInfo info;
+
+        info.primitive_type = SDL_GPU_PRIMITIVETYPE_TRIANGLELIST;
+        info.vertex_shader = vertexShader.getObject;
+        info.fragment_shader = fragmentShader.getObject;
+
+        SDL_GPUVertexBufferDescription[1] vertexBufferDesctiptions = comVertexDesc;
+        info.vertex_input_state.num_vertex_buffers = vertexBufferDesctiptions.length;
+        info.vertex_input_state.vertex_buffer_descriptions = vertexBufferDesctiptions.ptr;
+
+        SDL_GPUVertexAttribute[2] vertexAttributes = comVertexAttrs;
+
+        info.vertex_input_state.num_vertex_attributes = vertexAttributes.length;
+        info.vertex_input_state.vertex_attributes = vertexAttributes.ptr;
+
+        SDL_GPUColorTargetDescription[1] colorTargetDescriptions = blendingAlpha(window);
+        info.target_info.num_color_targets = colorTargetDescriptions.length;
+        info.target_info.color_target_descriptions = colorTargetDescriptions.ptr;
+
+        auto pipeline = newPipeline(info);
+        return pipeline;
+    }
+
+    SDL_GPUColorTargetDescription[1] blendingAlpha(Window window)
+    {
+        SDL_GPUColorTargetDescription[1] colorTargetDescriptions;
+
+        colorTargetDescriptions[0] = SDL_GPUColorTargetDescription();
+
+        colorTargetDescriptions[0].blend_state.enable_blend = true;
+        colorTargetDescriptions[0].blend_state.color_blend_op = SDL_GPU_BLENDOP_ADD;
+        colorTargetDescriptions[0].blend_state.alpha_blend_op = SDL_GPU_BLENDOP_ADD;
+        colorTargetDescriptions[0].blend_state.src_color_blendfactor = SDL_GPU_BLENDFACTOR_SRC_ALPHA;
+        colorTargetDescriptions[0].blend_state.dst_color_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
+        colorTargetDescriptions[0].blend_state.src_alpha_blendfactor = SDL_GPU_BLENDFACTOR_SRC_ALPHA;
+        colorTargetDescriptions[0].blend_state.dst_alpha_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
+        colorTargetDescriptions[0].format = window.swapchainTextureFormat;
+
+        return colorTargetDescriptions;
+    }
+
     void deletePipeline(SdlGPUPipeline pipe)
     {
         assert(ptr);
         SDL_ReleaseGPUGraphicsPipeline(ptr, pipe.getObject);
+        pipe.setNull;
     }
 
     void deleteShader(SdlGPUShader shader)
     {
         assert(ptr);
         shader.disposeWithGpu(ptr);
+        shader.setNull;
     }
 
     SDL_GPUBuffer* newGPUBufferVertex(uint size) => newGPUBuffer(SDL_GPU_BUFFERUSAGE_VERTEX, size);
@@ -284,6 +362,17 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
             throw new Exception("Mapped buffer address is null");
         }
         return addrPtr;
+    }
+
+    void copyToNewGPUBuffer(ComVertex[] verts, bool isCycle = true, out SDL_GPUBuffer* vertexBuffer, out SDL_GPUTransferBuffer* transferBuffer)
+    {
+        uint len = cast(uint) (verts.length * ComVertex.sizeof);
+        vertexBuffer = newGPUBufferVertex(len);
+        transferBuffer = newTransferUploadBuffer(len);
+
+        ComVertex[] data = (cast(ComVertex*) mapTransferBuffer(transferBuffer, isCycle))[0..(verts.length)];
+
+        data[0..verts.length] = verts[];
     }
 
     void uploadToGPUBuffer(SDL_GPUCopyPass* copyPass, SDL_GPUTransferBufferLocation* source, SDL_GPUBufferRegion* dest, bool cycle = true)
@@ -398,6 +487,36 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         auto sdlWinPtr = winNat.castSafe!(SDL_Window*);
 
         return SDL_GetGPUSwapchainTextureFormat(ptr, sdlWinPtr);
+    }
+
+    SDL_GPUVertexBufferDescription[1] comVertexDesc()
+    {
+        SDL_GPUVertexBufferDescription[1] vertexBufferDesctiptions;
+        vertexBufferDesctiptions[0].slot = 0;
+        vertexBufferDesctiptions[0].input_rate = SDL_GPU_VERTEXINPUTRATE_VERTEX;
+        vertexBufferDesctiptions[0].instance_step_rate = 0;
+        vertexBufferDesctiptions[0].pitch = ComVertex.sizeof;
+
+        return vertexBufferDesctiptions;
+    }
+
+    SDL_GPUVertexAttribute[2] comVertexAttrs()
+    {
+        SDL_GPUVertexAttribute[2] vertexAttributes;
+
+        //position
+        vertexAttributes[0].buffer_slot = 0;
+        vertexAttributes[0].location = 0; //location = 0 in shader
+        vertexAttributes[0].format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3; //vec3
+        vertexAttributes[0].offset = 0; // start from the first byte from current buffer position
+
+        // color
+        vertexAttributes[1].buffer_slot = 0;
+        vertexAttributes[1].location = 1; // layout (location = 1) in shader
+        vertexAttributes[1].format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4; //vec4
+        vertexAttributes[1].offset = float.sizeof * 3; // 4th float from current buffer position
+
+        return vertexAttributes;
     }
 
 }
