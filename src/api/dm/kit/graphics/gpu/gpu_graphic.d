@@ -11,6 +11,13 @@ import api.dm.back.sdl3.externs.csdl3;
 import api.dm.back.sdl3.gpu.sdl_gpu_device : SdlGPUDevice;
 import api.dm.back.sdl3.gpu.sdl_gpu_pipeline : SdlGPUPipeline;
 
+enum GPUGraphicState
+{
+    none,
+    copyStart,
+    renderStart
+}
+
 /**
  * Authors: initkfs
  */
@@ -24,10 +31,15 @@ class GPUGraphic : LoggableUnit
         SDL_GPUCommandBuffer* lastCmdBuff;
         SDL_GPURenderPass* lastPass;
         SDL_GPUTexture* lastSwapchain;
+
+        SDL_GPUCopyPass* lastCopyPass;
+
+        GPUGraphicState state;
     }
 
     SDL_GPUCommandBuffer* cmdBuff() => lastCmdBuff;
     SDL_GPURenderPass* renderPass() => lastPass;
+    SDL_GPUCopyPass* copyPass() => lastCopyPass;
     SDL_GPUTexture* swapchain() => lastSwapchain;
 
     bool isActive() => _gpu !is null;
@@ -47,6 +59,11 @@ class GPUGraphic : LoggableUnit
 
     bool startRenderPass(Window window)
     {
+        if (state != GPUGraphicState.none)
+        {
+            return false;
+        }
+
         lastCmdBuff = SDL_AcquireGPUCommandBuffer(_gpu.getObject);
         if (!lastCmdBuff)
         {
@@ -88,21 +105,20 @@ class GPUGraphic : LoggableUnit
             return false;
         }
 
+        state = GPUGraphicState.renderStart;
+
         return true;
-    }
-
-    bool submitCmdBuffer()
-    {
-        if (!lastCmdBuff)
-        {
-            return false;
-        }
-
-        return SDL_SubmitGPUCommandBuffer(lastCmdBuff);
     }
 
     bool endRenderPass()
     {
+        if (state != GPUGraphicState.renderStart)
+        {
+            return false;
+        }
+
+        state = GPUGraphicState.none;
+
         if (!lastPass || !lastCmdBuff)
         {
             return false;
@@ -117,11 +133,97 @@ class GPUGraphic : LoggableUnit
         return isSubmit;
     }
 
+    bool startCopyPass()
+    {
+        if (state != GPUGraphicState.none)
+        {
+            return false;
+        }
+
+        lastCmdBuff = SDL_AcquireGPUCommandBuffer(_gpu.getObject);
+        if (!lastCmdBuff)
+        {
+            return false;
+        }
+
+        lastCopyPass = SDL_BeginGPUCopyPass(lastCmdBuff);
+        if (!lastCopyPass)
+        {
+            submitCmdBuffer;
+            return false;
+        }
+
+        state = GPUGraphicState.copyStart;
+
+        return true;
+    }
+
+    bool endCopyPass()
+    {
+        if (state != GPUGraphicState.copyStart || !lastCopyPass)
+        {
+            return false;
+        }
+
+        state = GPUGraphicState.none;
+
+        SDL_EndGPUCopyPass(lastCopyPass);
+
+        bool isSubmit = submitCmdBuffer;
+
+        resetRenderer;
+
+        return isSubmit;
+    }
+
+    bool uploadCopyGPUBuffer(SDL_GPUTransferBuffer* transferBufferSrc, SDL_GPUBuffer* vertexBufferDst, uint bufferRegionSizeof, uint transferOffset = 0, uint regionOffset = 0, bool isCycle = true)
+    {
+        if (!startCopyPass)
+        {
+            return false;
+        }
+        if (!uploadGPUBuffer(transferBufferSrc, vertexBufferDst, bufferRegionSizeof, transferOffset, regionOffset, isCycle))
+        {
+            return false;
+        }
+        return endCopyPass;
+    }
+
+    bool uploadGPUBuffer(SDL_GPUTransferBuffer* transferBufferSrc, SDL_GPUBuffer* vertexBufferDst, uint bufferDstRegionSizeof, uint transferOffset = 0, uint regionOffset = 0, bool isCycle = true)
+    {
+        assert(state == GPUGraphicState.copyStart);
+
+        SDL_GPUTransferBufferLocation location;
+        location.transfer_buffer = transferBufferSrc;
+        location.offset = transferOffset;
+
+        SDL_GPUBufferRegion region;
+        region.buffer = vertexBufferDst;
+        region.size = bufferDstRegionSizeof;
+        region.offset = regionOffset;
+
+        SDL_UnmapGPUTransferBuffer(_gpu.getObject, transferBufferSrc);
+
+        SDL_UploadToGPUBuffer(lastCopyPass, &location, &region, isCycle);
+        return true;
+    }
+
+    bool submitCmdBuffer()
+    {
+        if (!lastCmdBuff)
+        {
+            return false;
+        }
+
+        return SDL_SubmitGPUCommandBuffer(lastCmdBuff);
+    }
+
     void resetRenderer()
     {
         lastCmdBuff = null;
         lastPass = null;
         lastSwapchain = null;
+        lastCopyPass = null;
     }
 
     bool bindPipeline(SdlGPUPipeline pipeline)

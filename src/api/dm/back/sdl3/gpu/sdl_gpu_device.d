@@ -174,6 +174,86 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         shader.disposeWithGpu(ptr);
     }
 
+    SDL_GPUBuffer* newGPUBufferVertex(uint size) => newGPUBuffer(SDL_GPU_BUFFERUSAGE_VERTEX, size);
+    SDL_GPUBuffer* newGPUBufferIndex(uint size) => newGPUBuffer(SDL_GPU_BUFFERUSAGE_INDEX, size);
+    SDL_GPUBuffer* newGPUBufferIndirect(uint size) => newGPUBuffer(
+        SDL_GPU_BUFFERUSAGE_INDIRECT, size);
+    //for STORAGE flag, the data in the buffer must respect std140 layout conventions. vec3 and vec4 fields are 16-byte aligned.
+    SDL_GPUBuffer* newGPUBufferGraphicsStorageRead(uint size) => newGPUBuffer(
+        SDL_GPU_BUFFERUSAGE_GRAPHICS_STORAGE_READ, size);
+    SDL_GPUBuffer* newGPUBufferComputeStorageRead(uint size) => newGPUBuffer(
+        SDL_GPU_BUFFERUSAGE_COMPUTE_STORAGE_READ, size);
+    SDL_GPUBuffer* newGPUBufferComputeStorageWrite(uint size) => newGPUBuffer(
+        SDL_GPU_BUFFERUSAGE_COMPUTE_STORAGE_WRITE, size);
+    SDL_GPUBuffer* newGPUBufferComputeStorageReadWrite(uint size) => newGPUBuffer(
+        SDL_GPU_BUFFERUSAGE_GRAPHICS_STORAGE_READ | SDL_GPU_BUFFERUSAGE_COMPUTE_STORAGE_WRITE, size);
+
+    SDL_GPUBuffer* newGPUBuffer(SDL_GPUBufferUsageFlags usageFlag, uint size)
+    {
+        SDL_GPUBufferCreateInfo createInfo;
+        createInfo.usage = usageFlag;
+        createInfo.size = size;
+
+        SDL_GPUBuffer* newPtr = SDL_CreateGPUBuffer(ptr, &createInfo);
+        if (!newPtr)
+        {
+            throw new Exception("New GPU buffer is null");
+        }
+        return newPtr;
+    }
+
+    SDL_GPUTransferBuffer* newTransferUploadBuffer(uint size) => newTransferBuffer(
+        SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD, size);
+    SDL_GPUTransferBuffer* newTransferDownloadBuffer(uint size) => newTransferBuffer(
+        SDL_GPU_TRANSFERBUFFERUSAGE_DOWNLOAD, size);
+
+    SDL_GPUTransferBuffer* newTransferBuffer(SDL_GPUTransferBufferUsage usage, uint size)
+    {
+        assert(ptr);
+
+        SDL_GPUTransferBufferCreateInfo info;
+        info.usage = usage;
+        info.size = size;
+
+        SDL_GPUTransferBuffer* buffPtr = SDL_CreateGPUTransferBuffer(ptr, &info);
+        if (!buffPtr)
+        {
+            throw new Exception("Transfer buffer is null");
+        }
+        return buffPtr;
+    }
+
+    void deleteTransferBuffer(SDL_GPUTransferBuffer* buffPtr)
+    {
+        SDL_ReleaseGPUTransferBuffer(ptr, buffPtr);
+    }
+
+    void* mapTransferBuffer(SDL_GPUTransferBuffer* transferBuffer, bool cycle = true)
+    {
+        assert(ptr);
+        void* addrPtr = SDL_MapGPUTransferBuffer(ptr, transferBuffer, cycle);
+        if (!addrPtr)
+        {
+            throw new Exception("Mapped buffer address is null");
+        }
+        return addrPtr;
+    }
+
+    void uploadToGPUBuffer(SDL_GPUCopyPass* copyPass, SDL_GPUTransferBufferLocation* source, SDL_GPUBufferRegion* dest, bool cycle = true)
+    {
+        SDL_UploadToGPUBuffer(copyPass, source, dest, cycle);
+    }
+
+    void uploadToGPUTexture(SDL_GPUCopyPass* copyPass, SDL_GPUTextureTransferInfo* source, SDL_GPUTextureRegion* dest, bool cycle = true)
+    {
+        SDL_UploadToGPUTexture(copyPass, source, dest, cycle);
+    }
+
+    void unmapTransferBuffer(SDL_GPUTransferBuffer* transferBuffer)
+    {
+        SDL_UnmapGPUTransferBuffer(ptr, transferBuffer);
+    }
+
     string getLastErrorStr() => getError;
 
     override protected bool disposePtr() nothrow

@@ -170,52 +170,17 @@ class Start : GuiScene
         _gpu.deleteShader(vertexShader);
         _gpu.deleteShader(fragmentShader);
 
-        SDL_GPUBufferCreateInfo bufferInfo;
-        bufferInfo.size = vertices.sizeof;
-        bufferInfo.usage = SDL_GPU_BUFFERUSAGE_VERTEX;
-        vertexBuffer = SDL_CreateGPUBuffer(_gpu.getObject, &bufferInfo);
+        vertexBuffer = _gpu.newGPUBufferVertex(vertices.sizeof);
+        transferBuffer = _gpu.newTransferUploadBuffer(vertices.sizeof);
 
-        SDL_GPUTransferBufferCreateInfo transferInfo;
-        transferInfo.size = vertices.sizeof;
-        transferInfo.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD;
-        transferBuffer = SDL_CreateGPUTransferBuffer(_gpu.getObject, &transferInfo);
-
-        Vertex* data = cast(Vertex*) SDL_MapGPUTransferBuffer(_gpu.getObject, transferBuffer, false);
+        Vertex* data = cast(Vertex*) _gpu.mapTransferBuffer(transferBuffer, false);
 
         data[0] = vertices[0];
         data[1] = vertices[1];
-        data[2] = vertices[2];
+        data[2] = vertices[2];        
 
-        // or you can copy them all in one operation
-        // SDL_memcpy(data, vertices, sizeof(vertices));
-
-        // unmap the pointer when you are done updating the transfer buffer
-        SDL_UnmapGPUTransferBuffer(_gpu.getObject, transferBuffer);
-
-        // start a copy pass
-        SDL_GPUCommandBuffer* commandBuffer = SDL_AcquireGPUCommandBuffer(_gpu.getObject);
-        SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass(commandBuffer);
-
-        // where is the data
-        SDL_GPUTransferBufferLocation location;
-        location.transfer_buffer = transferBuffer;
-        location.offset = 0;
-
-        // where to upload the data
-        SDL_GPUBufferRegion region;
-        region.buffer = vertexBuffer;
-        region.size = vertices.sizeof;
-        region.offset = 0;
-
-        // upload the data
-        SDL_UploadToGPUBuffer(copyPass, &location, &region, true);
-
-        // end the copy pass
-        SDL_EndGPUCopyPass(copyPass);
-        SDL_SubmitGPUCommandBuffer(commandBuffer);
-        //SDL_ReleaseGPUTransferBuffer(context->Device, transferBuffer);
-
-        //auto pipeline = gpuDevice.newVertexSPIRV(shaderText);
+        gpu.uploadCopyGPUBuffer(transferBuffer, vertexBuffer, vertices.sizeof);
+        _gpu.deleteTransferBuffer(transferBuffer);
 
         //createDebugger;
     }
