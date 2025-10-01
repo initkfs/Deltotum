@@ -76,6 +76,26 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return ComResult.success;
     }
 
+    protected ubyte[] readShader(string path)
+    {
+        import std.file : read;
+
+        auto vertexText = cast(ubyte[]) path.read;
+        return vertexText;
+    }
+
+    SdlGPUShader newVertexSPIRV(
+        string path,
+        uint numSamples = 0,
+        uint numStorageBuffers = 0,
+        uint numUniformBuffers = 0,
+        uint numStorageTextures = 0,
+    )
+    {
+        ubyte[] code = readShader(path);
+        return newVertexSPIRV(code, numSamples, numStorageBuffers, numUniformBuffers, numStorageTextures);
+    }
+
     SdlGPUShader newVertexSPIRV(
         ubyte[] code,
         uint numSamples = 0,
@@ -85,6 +105,28 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
     )
     {
         return newSPIRV(code, ComShaderType.vertex, numSamples, numStorageBuffers, numUniformBuffers, numStorageTextures);
+    }
+
+    SDL_GPUVertexAttribute vertexAttribute(uint location, uint bufferSlot, SDL_GPUVertexElementFormat format, uint offset = 0)
+    {
+        SDL_GPUVertexAttribute attr;
+        attr.location = location;
+        attr.buffer_slot = bufferSlot;
+        attr.format = format;
+        attr.offset = offset;
+        return attr;
+    }
+
+    SdlGPUShader newFragmentSPIRV(
+        string path,
+        uint numSamples = 0,
+        uint numStorageBuffers = 0,
+        uint numUniformBuffers = 0,
+        uint numStorageTextures = 0,
+    )
+    {
+        ubyte[] code = readShader(path);
+        return newFragmentSPIRV(code, numSamples, numStorageBuffers, numUniformBuffers, numStorageTextures);
     }
 
     SdlGPUShader newFragmentSPIRV(
@@ -200,6 +242,11 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
             throw new Exception("New GPU buffer is null");
         }
         return newPtr;
+    }
+
+    void deleteGPUBuffer(SDL_GPUBuffer* buffPtr)
+    {
+        SDL_ReleaseGPUBuffer(ptr, buffPtr);
     }
 
     SDL_GPUTransferBuffer* newTransferUploadBuffer(uint size) => newTransferBuffer(
@@ -336,6 +383,21 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         SDL_ReleaseWindowFromGPUDevice(ptr, sdlWinPtr);
 
         return ComResult.success;
+    }
+
+    SDL_GPUTextureFormat getSwapchainTextureFormat(ComWindow comWindow)
+    {
+        import api.dm.com.com_native_ptr : ComNativePtr;
+
+        ComNativePtr winNat;
+        if (const err = comWindow.nativePtr(winNat))
+        {
+            return SDL_GPU_TEXTUREFORMAT_INVALID;
+        }
+
+        auto sdlWinPtr = winNat.castSafe!(SDL_Window*);
+
+        return SDL_GetGPUSwapchainTextureFormat(ptr, sdlWinPtr);
     }
 
 }

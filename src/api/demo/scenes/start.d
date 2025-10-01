@@ -31,15 +31,8 @@ import api.dm.back.sdl3.externs.csdl3;
  */
 class Start : GuiScene
 {
-    static SDL_GPUViewport SmallViewport = {160, 120, 320, 240, 0.1f, 1.0f};
-    static SDL_Rect ScissorRect = {320, 240, 320, 240};
 
-    static bool UseWireframeMode = false;
-    static bool UseSmallViewport = false;
-    static bool UseScissorRect = false;
-
-    SdlGPUPipeline FillPipeline;
-    SdlGPUPipeline LinePipeline;
+    SdlGPUPipeline fillPipeline;
 
     SDL_Window* winPtr;
 
@@ -87,33 +80,12 @@ class Start : GuiScene
         import std.file : read;
 
         auto vertShaderFile = context.app.userDir ~ "/shaders/RawTriangle.vert.spv";
-        auto vertexText = cast(ubyte[]) vertShaderFile.read;
-
-        auto vertexShader = _gpu.newVertexSPIRV(vertexText);
+        auto vertexShader = _gpu.newVertexSPIRV(vertShaderFile);
 
         auto fragShaderFile = context.app.userDir ~ "/shaders/SolidColor.frag.spv";
-        auto fragText = cast(ubyte[]) fragShaderFile.read;
-
-        auto fragmentShader = _gpu.newFragmentSPIRV(fragText, 0, 0, 1);
+        auto fragmentShader = _gpu.newFragmentSPIRV(fragShaderFile, 0, 0, 1);
 
         SDL_GPUGraphicsPipelineCreateInfo info;
-        info.target_info.num_color_targets = 1;
-
-        import api.dm.com.com_native_ptr : ComNativePtr;
-
-        ComNativePtr winNat;
-        window.nativePtr(winNat);
-
-        winPtr = winNat.castSafe!(SDL_Window*);
-
-        auto format = SDL_GetGPUSwapchainTextureFormat(_gpu.getObject, winNat.castSafe!(
-                SDL_Window*));
-
-        SDL_GPUColorTargetDescription[] desc = [
-            SDL_GPUColorTargetDescription(format)
-        ];
-
-        info.target_info.color_target_descriptions = desc.ptr;
 
         info.primitive_type = SDL_GPU_PRIMITIVETYPE_TRIANGLELIST;
         info.vertex_shader = vertexShader.getObject;
@@ -145,27 +117,11 @@ class Start : GuiScene
         info.vertex_input_state.num_vertex_attributes = 2;
         info.vertex_input_state.vertex_attributes = vertexAttributes.ptr;
 
-        //info.rasterizer_state.fill_mode = SDL_GPU_FILLMODE_FILL;
-
-        SDL_GPUColorTargetDescription[1] colorTargetDescriptions;
-        colorTargetDescriptions[0] = SDL_GPUColorTargetDescription();
-        colorTargetDescriptions[0].blend_state.enable_blend = true;
-        colorTargetDescriptions[0].blend_state.color_blend_op = SDL_GPU_BLENDOP_ADD;
-        colorTargetDescriptions[0].blend_state.alpha_blend_op = SDL_GPU_BLENDOP_ADD;
-        colorTargetDescriptions[0].blend_state.src_color_blendfactor = SDL_GPU_BLENDFACTOR_SRC_ALPHA;
-        colorTargetDescriptions[0].blend_state.dst_color_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
-        colorTargetDescriptions[0].blend_state.src_alpha_blendfactor = SDL_GPU_BLENDFACTOR_SRC_ALPHA;
-        colorTargetDescriptions[0].blend_state.dst_alpha_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
-        colorTargetDescriptions[0].format = SDL_GetGPUSwapchainTextureFormat(_gpu.getObject, winPtr);
-
-        info.target_info.num_color_targets = 1;
+        SDL_GPUColorTargetDescription[1] colorTargetDescriptions = gpu.blendingAlpha(window);
+        info.target_info.num_color_targets = colorTargetDescriptions.length;
         info.target_info.color_target_descriptions = colorTargetDescriptions.ptr;
 
-        FillPipeline = _gpu.newPipeline(info);
-
-        //info.rasterizer_state.fill_mode = SDL_GPU_FILLMODE_LINE;
-
-        LinePipeline = _gpu.newPipeline(info);
+        fillPipeline = _gpu.newPipeline(info);
 
         _gpu.deleteShader(vertexShader);
         _gpu.deleteShader(fragmentShader);
@@ -193,28 +149,25 @@ class Start : GuiScene
     override void draw()
     {
         super.draw;
-        gpu.bindPipeline(FillPipeline);
+        gpu.bindPipeline(fillPipeline);
 
         timeUniform.time = SDL_GetTicksNS() / 1e9f;
-        SDL_PushGPUFragmentUniformData(gpu.cmdBuff, 0, &timeUniform, UniformBuffer.sizeof);
+        gpu.pushUniformFragmentData(0,  &timeUniform, UniformBuffer.sizeof);
 
         static SDL_GPUBufferBinding[1] bufferBindings;
-        bufferBindings[0].buffer = vertexBuffer; // index 0 is slot 0 in this example
-        bufferBindings[0].offset = 0; // start from the first byte
+        bufferBindings[0].buffer = vertexBuffer;
+        bufferBindings[0].offset = 0;
 
-        SDL_BindGPUVertexBuffers(gpu.renderPass, 0, bufferBindings.ptr, 1); // bind one buffer starting from slot 0
-
-        SDL_DrawGPUPrimitives(gpu.renderPass, 3, 1, 0, 0);
-
+        gpu.bindVertexBuffer(0, bufferBindings);
+        SDL_BindGPUVertexBuffers(gpu.renderPass, 0, bufferBindings.ptr, 1);
+        gpu.draw(3, 1);
     }
 
     override void dispose()
     {
         super.dispose;
-        _gpu.deletePipeline(FillPipeline);
+        _gpu.deletePipeline(fillPipeline);
         _gpu.deletePipeline(LinePipeline);
-
-        SDL_ReleaseGPUBuffer(_gpu.getObject, vertexBuffer);
-        SDL_ReleaseGPUTransferBuffer(_gpu.getObject, transferBuffer);
+        _gpu.deleteGPUBuffer(vertexBuffer);
     }
 }

@@ -237,6 +237,22 @@ class GPUGraphic : LoggableUnit
         return true;
     }
 
+    void bindVertexBuffer(uint firstSlot, SDL_GPUBufferBinding[] bindings)
+    {
+        assert(state == GPUGraphicState.renderStart);
+        assert(lastPass);
+        SDL_BindGPUVertexBuffers(lastPass, firstSlot, bindings.ptr, cast(uint) bindings.length);
+    }
+
+    void bindStaticVertexBuffer(uint firstSlot, SDL_GPUBuffer* vertexBuffer, uint offset = 0)
+    {
+        static SDL_GPUBufferBinding[1] bufferBindings;
+        bufferBindings[0].buffer = vertexBuffer;
+        bufferBindings[0].offset = offset;
+
+        bindVertexBuffer(firstSlot, bufferBindings);
+    }
+
     bool draw(uint numVertices = 1, uint numInstances = 1, uint firstVertex = 0, uint firstInstance = 0)
     {
         if (!lastPass)
@@ -251,5 +267,43 @@ class GPUGraphic : LoggableUnit
             firstVertex,
             firstInstance);
         return true;
+    }
+
+    void pushUniformFragmentData(uint slotIndex, void* data, uint length)
+    {
+        assert(state == GPUGraphicState.renderStart);
+        assert(lastCmdBuff);
+        SDL_PushGPUFragmentUniformData(lastCmdBuff, slotIndex, data, length);
+    }
+
+    import api.dm.kit.windows.window : Window;
+
+    SDL_GPUColorTargetDescription[1] blendingAlpha(Window window)
+    {
+        SDL_GPUColorTargetDescription[1] colorTargetDescriptions;
+
+        colorTargetDescriptions[0] = SDL_GPUColorTargetDescription();
+
+        colorTargetDescriptions[0].blend_state.enable_blend = true;
+        colorTargetDescriptions[0].blend_state.color_blend_op = SDL_GPU_BLENDOP_ADD;
+        colorTargetDescriptions[0].blend_state.alpha_blend_op = SDL_GPU_BLENDOP_ADD;
+        colorTargetDescriptions[0].blend_state.src_color_blendfactor = SDL_GPU_BLENDFACTOR_SRC_ALPHA;
+        colorTargetDescriptions[0].blend_state.dst_color_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
+        colorTargetDescriptions[0].blend_state.src_alpha_blendfactor = SDL_GPU_BLENDFACTOR_SRC_ALPHA;
+        colorTargetDescriptions[0].blend_state.dst_alpha_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
+        colorTargetDescriptions[0].format = window.swapchainTextureFormat;
+
+        return colorTargetDescriptions;
+    }
+
+    SDL_GPUColorTargetDescription[1] defaultColorTarget(Window window)
+    {
+        auto format = window.swapchainTextureFormat;
+
+        SDL_GPUColorTargetDescription[1] desc = [
+            SDL_GPUColorTargetDescription(format)
+        ];
+
+        return desc;
     }
 }

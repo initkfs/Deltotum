@@ -9,6 +9,9 @@ import api.dm.com.graphic.com_window : ComWindowId, ComWindow;
 import api.math.geom2.rect2 : Rect2d;
 import api.math.geom2.vec2 : Vec2d, Vec2i;
 
+//TODO extract COM interfaces
+import api.dm.back.sdl3.gpu.sdl_gpu_device : SdlGPUDevice;
+
 import api.dm.kit.screens.single_screen : SingleScreen;
 
 import api.core.loggers.logging : Logging;
@@ -48,6 +51,8 @@ class Window : GraphicComponent
     SingleScreen screen;
     FactoryKit factory;
     ComRenderer renderer;
+
+    SdlGPUDevice gpuDevice;
 
     Window delegate(dstring, int, int, int, int, Window) childWindowProvider;
     void delegate(double, double, double, double)[] onResizeOldNewWidthHeight;
@@ -842,6 +847,14 @@ class Window : GraphicComponent
             return false;
         }
         return true;
+    }
+
+    import api.dm.back.sdl3.externs.csdl3: SDL_GPUTextureFormat;
+
+    SDL_GPUTextureFormat swapchainTextureFormat()
+    {
+        assert(gpuDevice);
+        return gpuDevice.getSwapchainTextureFormat(comWindow);
     }
 
     bool nativePtr(out ComNativePtr ptr)
