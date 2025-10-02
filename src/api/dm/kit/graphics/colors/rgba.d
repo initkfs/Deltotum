@@ -18,6 +18,14 @@ private
     }
 }
 
+struct RGBAb
+{
+    ubyte r;
+    ubyte g;
+    ubyte b;
+    ubyte a;
+}
+
 /**
  * Authors: initkfs
  */
@@ -440,6 +448,8 @@ struct RGBA
 
         return HSLA(h, s, l, a);
     }
+
+    RGBAb toRGBAb() => RGBAb(r, g, b, aByte);
 
     static
     {

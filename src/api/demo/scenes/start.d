@@ -42,13 +42,15 @@ class Start : GuiScene
 
     static ComVertex[3] vertices =
         [
-            ComVertex(0.0f, 0.5f, 0.0f, 1.0f), // top vertex
-            ComVertex(-0.5f, -0.5f, 0.0f, 1.0f, 1.0f), // bottom left vertex
-            ComVertex(0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f) // bottom right vertex
+            {-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f}, // Bottom-left
+            {0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f}, // Bottom-right
+            {0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.5f, 0.0f} // Top-center
     ];
 
     SDL_GPUBuffer* vertexBuffer;
     SDL_GPUTransferBuffer* transferBuffer;
+    SDL_GPUTexture* newTexture;
+    SDL_GPUSampler* sampler;
 
     struct UniformBuffer
     {
@@ -73,15 +75,94 @@ class Start : GuiScene
 
         auto vertShaderFile = context.app.userDir ~ "/shaders/RawTriangle.vert.spv";
         auto fragShaderFile = context.app.userDir ~ "/shaders/SolidColor.frag.spv";
-        auto imageFile = context.app.userDir ~ "Lenna.png";
 
-        fillPipeline = _gpu.newPipeline(window, vertShaderFile, fragShaderFile, 0, 0, 0, 0, 0, 0, 1);
+        auto texturePath = context.app.userDir ~ "/Lenna.png";
+
+        import api.dm.back.sdl3.images.sdl_image : SdlImage;
+
+        auto image = new SdlImage();
+        if (const err = image.create(texturePath))
+        {
+            throw new Exception(err.toString);
+        }
+
+        import std;
+
+        writeln(image.getWidth, " ", image.getHeight);
+
+        if(const err = image.convert(SDL_PIXELFORMAT_RGBA8888)){
+            throw new Exception(err.toString);
+        }
+
+        void* rawImagePtr;
+        if (const err = image.getPixels(rawImagePtr))
+        {
+            throw new Exception(err.toString);
+        }
+
+        size_t imageLen = image.getWidth * image.getHeight * 4;
+
+        ubyte[] imagePtr = (cast(ubyte*) rawImagePtr)[0 .. imageLen];
+
+        fillPipeline = _gpu.newPipeline(window, vertShaderFile, fragShaderFile, 0, 0, 0, 0, 1, 0, 1, 0);
 
         _gpu.copyToNewGPUBuffer(vertices, false, vertexBuffer, transferBuffer);
-        assert(vertexBuffer);        
+        assert(vertexBuffer);
 
         gpu.uploadCopyGPUBuffer(transferBuffer, vertexBuffer, vertices.sizeof);
         _gpu.deleteTransferBuffer(transferBuffer);
+
+        SDL_GPUSamplerCreateInfo samplerInfo;
+        samplerInfo.min_filter = SDL_GPU_FILTER_LINEAR;
+        samplerInfo.mag_filter = SDL_GPU_FILTER_LINEAR;
+        samplerInfo.mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_NEAREST;
+        samplerInfo.address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_REPEAT;
+        samplerInfo.address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_REPEAT;
+        samplerInfo.address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_REPEAT;
+        samplerInfo.mip_lod_bias = 0;
+        samplerInfo.max_anisotropy = 0;
+        samplerInfo.min_lod = 0;
+        samplerInfo.max_lod = 0;
+
+        sampler = SDL_CreateGPUSampler(_gpu.getObject, &samplerInfo);
+
+        newTexture = _gpu.newTexture(SDL_GPU_TEXTURETYPE_2D, SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM, SDL_GPU_TEXTUREUSAGE_SAMPLER, 512, 512, 1, 1);
+
+        SDL_SetGPUTextureName(_gpu.getObject, newTexture, "Test texture");
+
+        auto transferBuffer2 = _gpu.newTransferUploadBuffer(cast(uint) imageLen);
+
+        auto transBuffMap = _gpu.mapTransferBuffer(transferBuffer2, true);
+        ubyte[] transBuffSlice = (cast(ubyte*) transBuffMap)[0 .. imageLen];
+        transBuffSlice[0 .. imageLen] = imagePtr[];
+
+        _gpu.unmapTransferBuffer(transferBuffer2);
+
+        SDL_GPUTextureTransferInfo source;
+        //Direct3D 12
+        //pixels_per_row align 256
+        //offset align 512
+
+        source.transfer_buffer = transferBuffer2;
+        source.offset = 0;
+        //source.pixels_per_row = 512;
+        //source.rows_per_layer = 512;
+
+        SDL_GPUTextureRegion dest;
+        dest.texture = newTexture;
+        dest.mip_level = 0;
+        dest.x = 0;
+        dest.y = 0;
+        dest.z = 0;
+        dest.w = 512;
+        dest.h = 512;
+        dest.d = 1;
+
+        gpu.startCopyPass;
+        gpu.uploadToTexture(&source, &dest, false);
+        gpu.endCopyPass;
+
+        //_gpu.deleteTransferBuffer(transferBuffer2);
 
         //createDebugger;
     }
@@ -96,8 +177,8 @@ class Start : GuiScene
         super.draw;
         gpu.bindPipeline(fillPipeline);
 
-        timeUniform.time = SDL_GetTicksNS() / 1e9f;
-        gpu.pushUniformFragmentData(0,  &timeUniform, UniformBuffer.sizeof);
+        timeUniform.time = SDL_GetTicks() / 250.0;
+        gpu.pushUniformFragmentData(0, &timeUniform, UniformBuffer.sizeof);
 
         static SDL_GPUBufferBinding[1] bufferBindings;
         bufferBindings[0].buffer = vertexBuffer;
@@ -105,6 +186,14 @@ class Start : GuiScene
 
         gpu.bindVertexBuffer(0, bufferBindings);
         SDL_BindGPUVertexBuffers(gpu.renderPass, 0, bufferBindings.ptr, 1);
+
+        static SDL_GPUTextureSamplerBinding sampleBinding;
+        sampleBinding.texture = newTexture;
+        assert(newTexture);
+        sampleBinding.sampler = sampler;
+
+        SDL_BindGPUFragmentSamplers(gpu.renderPass, 0, &sampleBinding, 1);
+
         gpu.draw(3, 1);
     }
 
@@ -113,5 +202,7 @@ class Start : GuiScene
         super.dispose;
         _gpu.deletePipeline(fillPipeline);
         _gpu.deleteGPUBuffer(vertexBuffer);
+        _gpu.deleteTexture(newTexture);
+        SDL_ReleaseGPUSampler(_gpu.getObject, sampler);
     }
 }

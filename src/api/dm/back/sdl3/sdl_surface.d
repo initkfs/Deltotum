@@ -137,6 +137,21 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
+    ComResult convert(SDL_PixelFormat format) nothrow
+    {
+        assert(ptr);
+
+        // Returns the new SDL_Surface
+        SDL_Surface* newPtr = SDL_ConvertSurface(ptr, format);
+        if (!newPtr)
+        {
+            return getErrorRes("New surface сonverted pointer is null.");
+        }
+        SDL_DestroySurface(ptr);
+        ptr = newPtr;
+        return ComResult.success;
+    }
+
     ComResult convert(SDL_Surface* src, out SDL_Surface* dest, SDL_PixelFormat format) nothrow
     {
         assert(src);
@@ -148,6 +163,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
             return getErrorRes("New surface сonverted pointer is null.");
         }
         dest = ptr;
+        //SDL_DestroySurface(src)
         return ComResult.success;
     }
 

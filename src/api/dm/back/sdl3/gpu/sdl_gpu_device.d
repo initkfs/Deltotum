@@ -31,6 +31,7 @@ struct ComVertex
 {
     float x = 0, y = 0, z = 0; //vec3 position
     float r = 0, g = 0, b = 0, a = 1.0; //vec4 color
+    float u = 0, v = 0; //0..1
 }
 
 struct GPUPipelineData
@@ -249,7 +250,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         info.vertex_input_state.num_vertex_buffers = vertexBufferDesctiptions.length;
         info.vertex_input_state.vertex_buffer_descriptions = vertexBufferDesctiptions.ptr;
 
-        SDL_GPUVertexAttribute[2] vertexAttributes = comVertexAttrs;
+        SDL_GPUVertexAttribute[3] vertexAttributes = comVertexAttrs;
 
         info.vertex_input_state.num_vertex_attributes = vertexAttributes.length;
         info.vertex_input_state.vertex_attributes = vertexAttributes.ptr;
@@ -402,7 +403,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
      SDL_GPU_SAMPLECOUNT_4,  MSAA 4x
      SDL_GPU_SAMPLECOUNT_8   MSAA 8x
      */
-    SDL_GPUTexture* newGTexture(SDL_GPUTextureType type, SDL_GPUTextureFormat format, SDL_GPUTextureUsageFlags usage, uint width, uint height, uint layerCountOrDepth, uint numLevels = 1, SDL_GPUSampleCount sampleCount = SDL_GPU_SAMPLECOUNT_1)
+    SDL_GPUTexture* newTexture(SDL_GPUTextureType type, SDL_GPUTextureFormat format, SDL_GPUTextureUsageFlags usage, uint width, uint height, uint layerCountOrDepth, uint numLevels = 1, SDL_GPUSampleCount sampleCount = SDL_GPU_SAMPLECOUNT_1)
     {
         SDL_GPUTextureCreateInfo info;
         info.type = type;
@@ -545,9 +546,9 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return vertexBufferDesctiptions;
     }
 
-    SDL_GPUVertexAttribute[2] comVertexAttrs()
+    SDL_GPUVertexAttribute[3] comVertexAttrs()
     {
-        SDL_GPUVertexAttribute[2] vertexAttributes;
+        SDL_GPUVertexAttribute[3] vertexAttributes;
 
         //position
         vertexAttributes[0].buffer_slot = 0;
@@ -560,6 +561,12 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         vertexAttributes[1].location = 1; // layout (location = 1) in shader
         vertexAttributes[1].format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4; //vec4
         vertexAttributes[1].offset = float.sizeof * 3; // 4th float from current buffer position
+
+        //uv
+        vertexAttributes[2].buffer_slot = 0;
+        vertexAttributes[2].location = 2; // layout (location = 2) in shader
+        vertexAttributes[2].format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2; //vec2
+        vertexAttributes[2].offset = float.sizeof * 7; // 4th float from current buffer position
 
         return vertexAttributes;
     }

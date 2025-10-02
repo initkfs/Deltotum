@@ -213,6 +213,9 @@ class GPUGraphic : LoggableUnit
     {
         assert(state == GPUGraphicState.copyStart);
         assert(lastCopyPass);
+        assert(source);
+        assert(destination);
+
         SDL_UploadToGPUTexture(lastCopyPass, source, destination, isCycle);
     }
 
