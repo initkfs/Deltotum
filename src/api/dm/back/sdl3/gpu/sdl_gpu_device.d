@@ -366,13 +366,14 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
     void copyToNewGPUBuffer(ComVertex[] verts, bool isCycle = true, out SDL_GPUBuffer* vertexBuffer, out SDL_GPUTransferBuffer* transferBuffer)
     {
-        uint len = cast(uint) (verts.length * ComVertex.sizeof);
+        uint len = cast(uint)(verts.length * ComVertex.sizeof);
         vertexBuffer = newGPUBufferVertex(len);
         transferBuffer = newTransferUploadBuffer(len);
 
-        ComVertex[] data = (cast(ComVertex*) mapTransferBuffer(transferBuffer, isCycle))[0..(verts.length)];
+        ComVertex[] data = (cast(ComVertex*) mapTransferBuffer(transferBuffer, isCycle))[0 .. (
+                verts.length)];
 
-        data[0..verts.length] = verts[];
+        data[0 .. verts.length] = verts[];
     }
 
     void uploadToGPUBuffer(SDL_GPUCopyPass* copyPass, SDL_GPUTransferBufferLocation* source, SDL_GPUBufferRegion* dest, bool cycle = true)
@@ -388,6 +389,50 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
     void unmapTransferBuffer(SDL_GPUTransferBuffer* transferBuffer)
     {
         SDL_UnmapGPUTransferBuffer(ptr, transferBuffer);
+    }
+
+    bool isSupportTexture(SDL_GPUTextureFormat format, SDL_GPUTextureType type, SDL_GPUTextureUsageFlags usage)
+    {
+        return SDL_GPUTextureSupportsFormat(ptr, format, type, usage);
+    }
+
+    /** 
+     *SDL_GPU_SAMPLECOUNT_1, No multisampling.
+     SDL_GPU_SAMPLECOUNT_2, MSAA 2x 
+     SDL_GPU_SAMPLECOUNT_4,  MSAA 4x
+     SDL_GPU_SAMPLECOUNT_8   MSAA 8x
+     */
+    SDL_GPUTexture* newGTexture(SDL_GPUTextureType type, SDL_GPUTextureFormat format, SDL_GPUTextureUsageFlags usage, uint width, uint height, uint layerCountOrDepth, uint numLevels = 1, SDL_GPUSampleCount sampleCount = SDL_GPU_SAMPLECOUNT_1)
+    {
+        SDL_GPUTextureCreateInfo info;
+        info.type = type;
+
+        //R8G8B8A8_UNORM (R-G-B-A),  B8G8R8A8_UNORM (B-G-R-A), _SRGB for PNG\JPEG
+        info.format = format;
+        info.usage = usage;
+        info.width = width;
+        info.height = height;
+        info.layer_count_or_depth = layerCountOrDepth;
+        info.num_levels = numLevels;
+        info.sample_count = sampleCount;
+        info.props = 0;
+
+        return newTexture(&info);
+    }
+
+    SDL_GPUTexture* newTexture(SDL_GPUTextureCreateInfo* info)
+    {
+        auto textPtr = SDL_CreateGPUTexture(ptr, info);
+        if (!textPtr)
+        {
+            throw new Exception("Texture is null: " ~ getError);
+        }
+        return textPtr;
+    }
+
+    void deleteTexture(SDL_GPUTexture* tPtr)
+    {
+        SDL_ReleaseGPUTexture(ptr, tPtr);
     }
 
     string getLastErrorStr() => getError;

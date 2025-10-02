@@ -177,7 +177,7 @@ class GPUGraphic : LoggableUnit
     }
 
     bool uploadCopyGPUBuffer(SDL_GPUTransferBuffer* transferBufferSrc, SDL_GPUBuffer* vertexBufferDst, uint bufferRegionSizeof, uint transferOffset = 0, uint regionOffset = 0, bool isCycle = true)
-    {        
+    {
         if (!startCopyPass)
         {
             return false;
@@ -207,6 +207,13 @@ class GPUGraphic : LoggableUnit
 
         SDL_UploadToGPUBuffer(lastCopyPass, &location, &region, isCycle);
         return true;
+    }
+
+    void uploadToTexture(SDL_GPUTextureTransferInfo* source, SDL_GPUTextureRegion* destination, bool isCycle = true)
+    {
+        assert(state == GPUGraphicState.copyStart);
+        assert(lastCopyPass);
+        SDL_UploadToGPUTexture(lastCopyPass, source, destination, isCycle);
     }
 
     bool submitCmdBuffer()

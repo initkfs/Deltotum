@@ -73,6 +73,7 @@ class Start : GuiScene
 
         auto vertShaderFile = context.app.userDir ~ "/shaders/RawTriangle.vert.spv";
         auto fragShaderFile = context.app.userDir ~ "/shaders/SolidColor.frag.spv";
+        auto imageFile = context.app.userDir ~ "Lenna.png";
 
         fillPipeline = _gpu.newPipeline(window, vertShaderFile, fragShaderFile, 0, 0, 0, 0, 0, 0, 1);
 
