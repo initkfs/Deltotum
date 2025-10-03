@@ -771,20 +771,50 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         SDL_BindGPUGraphicsPipeline(lastPass, pipeline.getObject);
     }
 
-    void bindVertexBuffer(uint firstSlot, SDL_GPUBufferBinding[] bindings)
+    void bindVertexBuffer(SDL_GPUBuffer* vertexBuffer, uint firstSlot = 0, uint offset = 0)
+    {
+        SDL_GPUBufferBinding[1] bufferBindings;
+        bufferBindings[0].buffer = vertexBuffer;
+        bufferBindings[0].offset = offset;
+
+        bindVertexBuffer(bufferBindings, firstSlot);
+    }
+
+    void bindVertexBuffer(SDL_GPUBufferBinding[] bindings, uint firstSlot = 0)
     {
         assert(state == GPUGraphicState.renderStart);
         assert(lastPass);
         SDL_BindGPUVertexBuffers(lastPass, firstSlot, bindings.ptr, cast(uint) bindings.length);
     }
 
-    void bindVertexBuffer(uint firstSlot, SDL_GPUBuffer* vertexBuffer, uint offset = 0)
+    void bindIndexBuffer(SDL_GPUBuffer* indexBuffer, uint offset = 0, SDL_GPUIndexElementSize indexElementSize = SDL_GPU_INDEXELEMENTSIZE_16BIT)
     {
-        SDL_GPUBufferBinding[1] bufferBindings;
-        bufferBindings[0].buffer = vertexBuffer;
-        bufferBindings[0].offset = offset;
+        SDL_GPUBufferBinding indexBinding;
+        indexBinding.buffer = indexBuffer;
+        indexBinding.offset = offset;
 
-        bindVertexBuffer(firstSlot, bufferBindings);
+        bindIndexBuffer(&indexBinding, indexElementSize);
+    }
+
+    void bindFragmentSamplers(SDL_GPUTexture * texture, SDL_GPUSampler * sampler, uint firstSlot = 0){
+        SDL_GPUTextureSamplerBinding[1] sampleBinding;
+        sampleBinding[0].texture = texture;
+        sampleBinding[0].sampler = sampler;
+        bindFragmentSamplers(sampleBinding, firstSlot);
+    }
+
+    void bindFragmentSamplers(SDL_GPUTextureSamplerBinding[] bindings, uint firstSlot = 0){
+        assert(state == GPUGraphicState.renderStart);
+        assert(lastPass);
+
+        SDL_BindGPUFragmentSamplers(lastPass,firstSlot, bindings.ptr,cast(uint) bindings.length);
+    }
+
+    void bindIndexBuffer(SDL_GPUBufferBinding* bindings, SDL_GPUIndexElementSize indexElementSize)
+    {
+        assert(state == GPUGraphicState.renderStart);
+        assert(lastPass);
+        SDL_BindGPUIndexBuffer(lastPass, bindings, indexElementSize);
     }
 
     bool draw(uint numVertices = 1, uint numInstances = 1, uint firstVertex = 0, uint firstInstance = 0)
@@ -801,6 +831,13 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
             firstVertex,
             firstInstance);
         return true;
+    }
+
+    void drawIndexed(uint numIndices, uint numInstances, uint firstIndex = 0, int vertexOffset = 0, uint firstInstance = 0)
+    {
+        assert(state == GPUGraphicState.renderStart);
+        assert(lastPass);
+        SDL_DrawGPUIndexedPrimitives(lastPass, numIndices, numInstances, firstIndex, vertexOffset, firstInstance);
     }
 
     void pushUniformFragmentData(uint slotIndex, void* data, uint length)

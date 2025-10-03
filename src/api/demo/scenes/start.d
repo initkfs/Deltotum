@@ -199,28 +199,12 @@ class Start : GuiScene
         //timeUniform.time = SDL_GetTicks() / 250.0;
         //gpu.dev.pushUniformFragmentData(0, &timeUniform, UniformBuffer.sizeof);
 
-        SDL_GPUBufferBinding[1] bufferBindings;
-        bufferBindings[0].buffer = vertexBuffer;
-        bufferBindings[0].offset = 0;
-
-        gpu.dev.bindVertexBuffer(0, bufferBindings);
-        SDL_BindGPUVertexBuffers(gpu.dev.renderPass, 0, bufferBindings.ptr, 1);
-
-        SDL_GPUTextureSamplerBinding sampleBinding;
-        sampleBinding.texture = newTexture;
-        assert(newTexture);
-        sampleBinding.sampler = sampler;
-
-        SDL_GPUBufferBinding indexBinding;
-        indexBinding.buffer = indexBuffer;
-        indexBinding.offset = 0;
-
-        SDL_BindGPUIndexBuffer(gpu.dev. renderPass, &indexBinding, SDL_GPU_INDEXELEMENTSIZE_16BIT);
-
-        SDL_BindGPUFragmentSamplers(gpu.dev.renderPass, 0, &sampleBinding, 1);
+        gpu.dev.bindVertexBuffer(vertexBuffer);
+        gpu.dev.bindIndexBuffer(indexBuffer);
+        gpu.dev.bindFragmentSamplers(newTexture, sampler);
 
         //gpu.dev.draw(3, 1);
-        SDL_DrawGPUIndexedPrimitives(gpu.dev.renderPass, 6, 1, 0, 0, 0);
+        gpu.dev.drawIndexed(6, 1, 0, 0, 0);
 
         assert(gpu.dev.endRenderPass);
     }
