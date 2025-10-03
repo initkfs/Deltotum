@@ -110,32 +110,13 @@ class Start : GuiScene
 
         transferBuffer = gpu.dev.newTransferUploadBuffer(len);
 
-        ubyte * ptr = cast(ubyte*) gpu.dev.mapTransferBuffer(transferBuffer, false);
-
-        ComVertex[] data = (cast(ComVertex*) ptr)[0 .. (
-                vertices.length)];
-
-        data[0 .. vertices.length] = vertices[];
-
-        ushort[] indexData = (cast(ushort*) &ptr[ComVertex.sizeof * 4])[0 .. 6];
-        indexData[0] = 0;
-        indexData[1] = 1;
-        indexData[2] = 2;
-        indexData[3] = 0;
-        indexData[4] = 2;
-        indexData[5] = 3;
+        ushort[] idx =  [0, 1, 2, 0, 2, 3];
+        gpu.dev.copyToBuffer(transferBuffer, false, vertices, idx);
 
         indexBuffer = gpu.dev.newGPUBufferIndex(ushort.sizeof * 6);
 
-         SDL_GPUSamplerCreateInfo samplerInfo;
-        samplerInfo.min_filter = SDL_GPU_FILTER_NEAREST,
-		samplerInfo.mag_filter = SDL_GPU_FILTER_NEAREST,
-		samplerInfo.mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_NEAREST,
-		samplerInfo.address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
-		samplerInfo.address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
-		samplerInfo.address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
-
-        sampler = SDL_CreateGPUSampler(gpu.dev.getObject, &samplerInfo);
+        SDL_GPUSamplerCreateInfo samplerInfo = gpu.dev.nearestRepeat;
+        sampler = gpu.dev.newSampler(&samplerInfo);
 
         newTexture = gpu.dev.newTexture(SDL_GPU_TEXTURETYPE_2D, SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM, SDL_GPU_TEXTUREUSAGE_SAMPLER, w, h, 1, 1);
 
@@ -154,31 +135,12 @@ class Start : GuiScene
         gpu.dev.unmapAndUpload(transferBuffer, vertexBuffer, ComVertex.sizeof * 4, 0, 0, false);
         gpu.dev.unmapAndUpload(transferBuffer, indexBuffer, ushort.sizeof * 6, ComVertex.sizeof * 4, 0, false);
 
-        SDL_GPUTextureTransferInfo source;
-        //Direct3D 12
-        //pixels_per_row align 256
-        //offset align 512
-        source.transfer_buffer = transferBuffer2;
-        source.offset = 0;
-        //source.pixels_per_row = 512;
-        //source.rows_per_layer = 512;
-
-        SDL_GPUTextureRegion dest;
-        dest.texture = newTexture;
-        dest.mip_level = 0;
-        dest.x = 0;
-        dest.y = 0;
-        dest.z = 0;
-        dest.w = w;
-        dest.h = h;
-        dest.d = 1;
-
-        gpu.dev.uploadTexture(&source, &dest, false);
+        gpu.dev.uploadTexture(transferBuffer2, newTexture, w, h);
         
         assert(gpu.dev.endCopyPass);
 
-        //_gpu.dev.deleteTransferBuffer(transferBuffer);
-        //_gpu.dev.deleteTransferBuffer(transferBuffer2);
+        gpu.dev.deleteTransferBuffer(transferBuffer);
+        gpu.dev.deleteTransferBuffer(transferBuffer2);
 
         //createDebugger;
     }

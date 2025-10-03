@@ -381,7 +381,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         SDL_ReleaseGPUTransferBuffer(ptr, buffPtr);
     }
 
-    void* mapTransferBuffer(SDL_GPUTransferBuffer* transferBuffer, bool cycle = true)
+    void* mapTransferBuffer(SDL_GPUTransferBuffer* transferBuffer, bool cycle = false)
     {
         assert(ptr);
         void* addrPtr = SDL_MapGPUTransferBuffer(ptr, transferBuffer, cycle);
@@ -390,6 +390,22 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
             throw new Exception("Mapped buffer address is null");
         }
         return addrPtr;
+    }
+
+    void copyToBuffer(T...)(SDL_GPUTransferBuffer* transferBuffer, bool isCycle, T args)
+    {
+        ubyte* buffPtr = cast(ubyte*) mapTransferBuffer(transferBuffer, isCycle);
+        size_t offset = 0;
+
+        static foreach (arg; args)
+        {
+            {
+                alias Type = typeof(arg[0]);
+                Type[] buff = (cast(Type*) &buffPtr[offset])[0 .. arg.length];
+                buff[0 .. arg.length] = arg;
+                offset += arg.length * Type.sizeof;
+            }
+        }
     }
 
     void copyToNewGPUBuffer(ComVertex[] verts, bool isCycle = true, out SDL_GPUBuffer* vertexBuffer, out SDL_GPUTransferBuffer* transferBuffer)
@@ -717,7 +733,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return isSubmit;
     }
 
-    void unmapAndUpload(SDL_GPUTransferBuffer* transferBufferSrc, SDL_GPUBuffer* vertexBufferDst, uint bufferDstRegionSizeof, uint transferOffset = 0, uint regionOffset = 0, bool isCycle = true)
+    void unmapAndUpload(SDL_GPUTransferBuffer* transferBufferSrc, SDL_GPUBuffer* vertexBufferDst, uint bufferDstRegionSizeof, uint transferOffset = 0, uint regionOffset = 0, bool isCycle = false)
     {
         assert(state == GPUGraphicState.copyStart);
         assert(lastCopyPass);
@@ -735,7 +751,31 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         SDL_UploadToGPUBuffer(lastCopyPass, &location, &region, isCycle);
     }
 
-    void uploadTexture(SDL_GPUTextureTransferInfo* source, SDL_GPUTextureRegion* destination, bool isCycle = true)
+    void uploadTexture(SDL_GPUTransferBuffer* sourceBuffer, SDL_GPUTexture* destTexture, uint width, uint height, uint sourceBufferOffset = 0, bool isCycle = false)
+    {
+        SDL_GPUTextureTransferInfo source;
+        //Direct3D 12
+        //pixels_per_row align 256
+        //offset align 512
+        source.transfer_buffer = sourceBuffer;
+        source.offset = sourceBufferOffset;
+        //source.pixels_per_row = 512;
+        //source.rows_per_layer = 512;
+
+        SDL_GPUTextureRegion dest;
+        dest.texture = destTexture;
+        dest.mip_level = 0;
+        dest.x = 0;
+        dest.y = 0;
+        dest.z = 0;
+        dest.w = width;
+        dest.h = height;
+        dest.d = 1;
+
+        uploadTexture(&source, &dest, isCycle);
+    }
+
+    void uploadTexture(SDL_GPUTextureTransferInfo* source, SDL_GPUTextureRegion* destination, bool isCycle = false)
     {
         assert(state == GPUGraphicState.copyStart);
         assert(lastCopyPass);
@@ -796,18 +836,20 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         bindIndexBuffer(&indexBinding, indexElementSize);
     }
 
-    void bindFragmentSamplers(SDL_GPUTexture * texture, SDL_GPUSampler * sampler, uint firstSlot = 0){
+    void bindFragmentSamplers(SDL_GPUTexture* texture, SDL_GPUSampler* sampler, uint firstSlot = 0)
+    {
         SDL_GPUTextureSamplerBinding[1] sampleBinding;
         sampleBinding[0].texture = texture;
         sampleBinding[0].sampler = sampler;
         bindFragmentSamplers(sampleBinding, firstSlot);
     }
 
-    void bindFragmentSamplers(SDL_GPUTextureSamplerBinding[] bindings, uint firstSlot = 0){
+    void bindFragmentSamplers(SDL_GPUTextureSamplerBinding[] bindings, uint firstSlot = 0)
+    {
         assert(state == GPUGraphicState.renderStart);
         assert(lastPass);
 
-        SDL_BindGPUFragmentSamplers(lastPass,firstSlot, bindings.ptr,cast(uint) bindings.length);
+        SDL_BindGPUFragmentSamplers(lastPass, firstSlot, bindings.ptr, cast(uint) bindings.length);
     }
 
     void bindIndexBuffer(SDL_GPUBufferBinding* bindings, SDL_GPUIndexElementSize indexElementSize)
@@ -856,6 +898,29 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         ];
 
         return desc;
+    }
+
+    SDL_GPUSamplerCreateInfo nearestRepeat()
+    {
+        SDL_GPUSamplerCreateInfo info;
+        info.min_filter = SDL_GPU_FILTER_NEAREST,
+        info.mag_filter = SDL_GPU_FILTER_NEAREST,
+        info.mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_NEAREST,
+        info.address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
+        info.address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
+        info.address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_REPEAT;
+        return info;
+    }
+
+    SDL_GPUSampler* newSampler(SDL_GPUSamplerCreateInfo* info)
+    {
+        assert(ptr);
+        auto samplerPtr = SDL_CreateGPUSampler(ptr, info);
+        if (!samplerPtr)
+        {
+            throw new Exception("Sampler pointer is null: " ~ getError);
+        }
+        return samplerPtr;
     }
 
 }
