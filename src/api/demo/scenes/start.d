@@ -75,7 +75,6 @@ class Start : GuiScene
 
         fillPipeline = gpu.newPipeline(vertShaderFile, fragShaderFile, 0, 0, 0, 0, 1, 0, 0, 0);
 
-
         auto texturePath = context.app.userDir ~ "/Content/Images/ravioli.bmp";
 
         import api.dm.back.sdl3.images.sdl_image : SdlImage;
@@ -85,10 +84,13 @@ class Start : GuiScene
         {
             throw new Exception(err.toString);
         }
-        
-        if (const err = image.convert(SDL_PIXELFORMAT_RGBA8888))
+
+        if (image.getFormat != SDL_PIXELFORMAT_ABGR8888)
         {
-            throw new Exception(err.toString);
+            if (const err = image.convert(SDL_PIXELFORMAT_ABGR8888))
+            {
+                throw new Exception(err.toString);
+            }
         }
 
         int w = image.getWidth;
@@ -110,7 +112,7 @@ class Start : GuiScene
 
         transferBuffer = gpu.dev.newTransferUploadBuffer(len);
 
-        ushort[] idx =  [0, 1, 2, 0, 2, 3];
+        ushort[] idx = [0, 1, 2, 0, 2, 3];
         gpu.dev.copyToBuffer(transferBuffer, false, vertices, idx);
 
         indexBuffer = gpu.dev.newGPUBufferIndex(ushort.sizeof * 6);
@@ -136,7 +138,7 @@ class Start : GuiScene
         gpu.dev.unmapAndUpload(transferBuffer, indexBuffer, ushort.sizeof * 6, ComVertex.sizeof * 4, 0, false);
 
         gpu.dev.uploadTexture(transferBuffer2, newTexture, w, h);
-        
+
         assert(gpu.dev.endCopyPass);
 
         gpu.dev.deleteTransferBuffer(transferBuffer);
