@@ -74,6 +74,7 @@ import api.dm.lib.libxml.native : LibxmlLib;
 import api.dm.back.sdl3.externs.csdl3;
 import std.typecons : Nullable;
 import api.dm.back.sdl3.gpu.sdl_gpu_device;
+import api.dm.kit.graphics.gpu.gpu_graphic: GPUGraphic;
 
 /**
  * Authors: initkfs
@@ -897,9 +898,7 @@ class SdlApp : GuiApp
         windowBuilder.graphic = createGraphics(uservices.logging, sdlRenderer);
         windowBuilder.graphic.initialize;
 
-        windowBuilder.gpu = createGpuGraphics(uservices.logging);
-        windowBuilder.gpu.gpu = gpuDevice;
-        windowBuilder.gpu.initialize;
+        windowBuilder.gpu = new GPUGraphic(uservices.logging, gpuDevice, window);
 
         windowBuilder.graphic.comTextureProvider = ProviderFactory!ComTexture(
             () => newComTexture(sdlRenderer),

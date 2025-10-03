@@ -48,6 +48,13 @@ struct GPUPipelineData
     SDL_PropertiesID props;
 }
 
+enum GPUGraphicState
+{
+    none,
+    copyStart,
+    renderStart
+}
+
 class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 {
     protected
@@ -55,6 +62,13 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         string driverName;
 
         string entryPointName = "main";
+
+        SDL_GPUCommandBuffer* lastCmdBuff;
+        SDL_GPURenderPass* lastPass;
+        SDL_GPUCopyPass* lastCopyPass;
+        SDL_GPUTexture* lastSwapchain;
+
+        GPUGraphicState state;
     }
 
     this()
@@ -67,13 +81,18 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         super(newPtr);
     }
 
-    ComResult create(ComShaderFormat foramtFlags = SDL_GPU_SHADERFORMAT_SPIRV, bool isDebugMode = true, string driverName = ComGPUDriver
+    SDL_GPUCommandBuffer* cmdBuff() => lastCmdBuff;
+    SDL_GPURenderPass* renderPass() => lastPass;
+    SDL_GPUCopyPass* copyPass() => lastCopyPass;
+    SDL_GPUTexture* swapchain() => lastSwapchain;
+
+    ComResult create(ComShaderFormat formatFlags = SDL_GPU_SHADERFORMAT_SPIRV, bool isDebugMode = true, string driverName = ComGPUDriver
             .any)
     {
         this.driverName = driverName;
 
         ptr = SDL_CreateGPUDevice(
-            foramtFlags,
+            formatFlags,
             isDebugMode,
             driverName.length > 0 ? driverName.toStringz : null);
         if (!ptr)
@@ -211,9 +230,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return new SdlGPUPipeline(pipePtr);
     }
 
-    import api.dm.kit.windows.window : Window;
-
-    SdlGPUPipeline newPipeline(Window window,
+    SdlGPUPipeline newPipeline(SDL_Window* window,
         string vertexPath,
         string fragmentPath,
         uint numVertexSamples = 0,
@@ -238,7 +255,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return pipeline;
     }
 
-    SdlGPUPipeline newVertexPipeline(Window window, SdlGPUShader vertexShader, SdlGPUShader fragmentShader)
+    SdlGPUPipeline newVertexPipeline(SDL_Window* window, SdlGPUShader vertexShader, SdlGPUShader fragmentShader)
     {
         SDL_GPUGraphicsPipelineCreateInfo info;
 
@@ -263,17 +280,17 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return pipeline;
     }
 
-    SDL_GPUColorTargetDescription[1] colorTarget(Window window)
+    SDL_GPUColorTargetDescription[1] colorTarget(SDL_Window* window)
     {
         SDL_GPUColorTargetDescription[1] colorTargetDescriptions;
 
         colorTargetDescriptions[0] = SDL_GPUColorTargetDescription();
-        colorTargetDescriptions[0].format = window.swapchainTextureFormat;
+        colorTargetDescriptions[0].format = getSwapchainTextureFormat(window);
 
         return colorTargetDescriptions;
     }
 
-    SDL_GPUColorTargetDescription[1] blendingAlpha(Window window)
+    SDL_GPUColorTargetDescription[1] blendingAlpha(SDL_Window* window)
     {
         SDL_GPUColorTargetDescription[1] colorTargetDescriptions;
 
@@ -286,7 +303,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         colorTargetDescriptions[0].blend_state.dst_color_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
         colorTargetDescriptions[0].blend_state.src_alpha_blendfactor = SDL_GPU_BLENDFACTOR_SRC_ALPHA;
         colorTargetDescriptions[0].blend_state.dst_alpha_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
-        colorTargetDescriptions[0].format = window.swapchainTextureFormat;
+        colorTargetDescriptions[0].format = getSwapchainTextureFormat(window);
 
         return colorTargetDescriptions;
     }
@@ -385,16 +402,6 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
                 verts.length)];
 
         data[0 .. verts.length] = verts[];
-    }
-
-    void uploadToGPUBuffer(SDL_GPUCopyPass* copyPass, SDL_GPUTransferBufferLocation* source, SDL_GPUBufferRegion* dest, bool cycle = true)
-    {
-        SDL_UploadToGPUBuffer(copyPass, source, dest, cycle);
-    }
-
-    void uploadToGPUTexture(SDL_GPUCopyPass* copyPass, SDL_GPUTextureTransferInfo* source, SDL_GPUTextureRegion* dest, bool cycle = true)
-    {
-        SDL_UploadToGPUTexture(copyPass, source, dest, cycle);
     }
 
     void unmapTransferBuffer(SDL_GPUTransferBuffer* transferBuffer)
@@ -502,7 +509,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return ComResult.success;
     }
 
-    ComResult releaseFromWindow(ComWindow window)
+    ComResult removeFromWindow(ComWindow window)
     {
         assert(window);
         assert(ptr);
@@ -517,10 +524,10 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
         SDL_Window* sdlWinPtr = natWinPtr.castSafe!(SDL_Window*);
 
-        return releaseFromWindow(sdlWinPtr);
+        return removeFromWindow(sdlWinPtr);
     }
 
-    ComResult releaseFromWindow(SDL_Window* sdlWinPtr)
+    ComResult removeFromWindow(SDL_Window* sdlWinPtr)
     {
         assert(sdlWinPtr);
         assert(ptr);
@@ -528,6 +535,11 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         SDL_ReleaseWindowFromGPUDevice(ptr, sdlWinPtr);
 
         return ComResult.success;
+    }
+
+    SDL_GPUTextureFormat getSwapchainTextureFormat(SDL_Window* comWindow)
+    {
+        return SDL_GetGPUSwapchainTextureFormat(ptr, comWindow);
     }
 
     SDL_GPUTextureFormat getSwapchainTextureFormat(ComWindow comWindow)
@@ -542,7 +554,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
         auto sdlWinPtr = winNat.castSafe!(SDL_Window*);
 
-        return SDL_GetGPUSwapchainTextureFormat(ptr, sdlWinPtr);
+        return getSwapchainTextureFormat(sdlWinPtr);
     }
 
     SDL_GPUVertexBufferDescription[1] comVertexDesc()
@@ -579,6 +591,234 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         vertexAttributes[1].offset = float.sizeof * 3; // 4th float from current buffer position
 
         return vertexAttributes;
+    }
+
+    bool startRenderPass(SDL_Window* currSdlWindow, SDL_FColor clearColor)
+    {
+        SDL_GPUColorTargetInfo[1] colorTargetInfo;
+        colorTargetInfo[0].clear_color = clearColor;
+        colorTargetInfo[0].load_op = SDL_GPU_LOADOP_CLEAR;
+        colorTargetInfo[0].store_op = SDL_GPU_STOREOP_STORE;
+
+        return startRenderPass(colorTargetInfo, currSdlWindow);
+    }
+
+    bool startRenderPass(SDL_GPUColorTargetInfo[] colorTargets, SDL_Window* currSdlWindow)
+    {
+        assert(currSdlWindow);
+        assert(ptr);
+
+        if (state != GPUGraphicState.none)
+        {
+            return false;
+        }
+
+        lastCmdBuff = SDL_AcquireGPUCommandBuffer(ptr);
+        if (!lastCmdBuff)
+        {
+            return false;
+        }
+
+        //not SDL_AcquireGPUSwapchainTexture
+        if (!SDL_WaitAndAcquireGPUSwapchainTexture(lastCmdBuff, currSdlWindow, &lastSwapchain, null, null))
+        {
+            submitCmdBuffer;
+            return false;
+        }
+
+        if (!lastSwapchain)
+        {
+            submitCmdBuffer;
+            return false;
+        }
+
+        assert(colorTargets.length > 0);
+        if (!colorTargets[0].texture)
+        {
+            colorTargets[0].texture = lastSwapchain;
+        }
+
+        lastPass = SDL_BeginGPURenderPass(lastCmdBuff, colorTargets.ptr, cast(uint) colorTargets.length, null);
+        if (!lastPass)
+        {
+            submitCmdBuffer;
+            return false;
+        }
+
+        state = GPUGraphicState.renderStart;
+
+        return true;
+    }
+
+    bool endRenderPass()
+    {
+        if (state != GPUGraphicState.renderStart)
+        {
+            return false;
+        }
+
+        state = GPUGraphicState.none;
+
+        if (!lastPass || !lastCmdBuff)
+        {
+            return false;
+        }
+
+        SDL_EndGPURenderPass(lastPass);
+
+        bool isSubmit = submitCmdBuffer;
+
+        resetState;
+
+        return isSubmit;
+    }
+
+    bool startCopyPass()
+    {
+        assert(ptr);
+        if (state != GPUGraphicState.none)
+        {
+            return false;
+        }
+
+        lastCmdBuff = SDL_AcquireGPUCommandBuffer(ptr);
+        if (!lastCmdBuff)
+        {
+            return false;
+        }
+
+        lastCopyPass = SDL_BeginGPUCopyPass(lastCmdBuff);
+        if (!lastCopyPass)
+        {
+            submitCmdBuffer;
+            return false;
+        }
+
+        state = GPUGraphicState.copyStart;
+
+        return true;
+    }
+
+    bool endCopyPass()
+    {
+        if (state != GPUGraphicState.copyStart || !lastCopyPass)
+        {
+            return false;
+        }
+
+        state = GPUGraphicState.none;
+
+        SDL_EndGPUCopyPass(lastCopyPass);
+
+        bool isSubmit = submitCmdBuffer;
+
+        resetState;
+
+        return isSubmit;
+    }
+
+    void unmapAndUpload(SDL_GPUTransferBuffer* transferBufferSrc, SDL_GPUBuffer* vertexBufferDst, uint bufferDstRegionSizeof, uint transferOffset = 0, uint regionOffset = 0, bool isCycle = true)
+    {
+        assert(state == GPUGraphicState.copyStart);
+        assert(lastCopyPass);
+
+        SDL_GPUTransferBufferLocation location;
+        location.transfer_buffer = transferBufferSrc;
+        location.offset = transferOffset;
+
+        SDL_GPUBufferRegion region;
+        region.buffer = vertexBufferDst;
+        region.size = bufferDstRegionSizeof;
+        region.offset = regionOffset;
+
+        SDL_UnmapGPUTransferBuffer(ptr, transferBufferSrc);
+        SDL_UploadToGPUBuffer(lastCopyPass, &location, &region, isCycle);
+    }
+
+    void uploadTexture(SDL_GPUTextureTransferInfo* source, SDL_GPUTextureRegion* destination, bool isCycle = true)
+    {
+        assert(state == GPUGraphicState.copyStart);
+        assert(lastCopyPass);
+        assert(source);
+        assert(destination);
+
+        SDL_UploadToGPUTexture(lastCopyPass, source, destination, isCycle);
+    }
+
+    bool submitCmdBuffer()
+    {
+        if (!lastCmdBuff)
+        {
+            return false;
+        }
+
+        return SDL_SubmitGPUCommandBuffer(lastCmdBuff);
+    }
+
+    void resetState()
+    {
+        lastCmdBuff = null;
+        lastPass = null;
+        lastCopyPass = null;
+        lastSwapchain = null;
+    }
+
+    void bindPipeline(SdlGPUPipeline pipeline)
+    {
+        assert(state == GPUGraphicState.renderStart);
+        assert(lastPass);
+
+        SDL_BindGPUGraphicsPipeline(lastPass, pipeline.getObject);
+    }
+
+    void bindVertexBuffer(uint firstSlot, SDL_GPUBufferBinding[] bindings)
+    {
+        assert(state == GPUGraphicState.renderStart);
+        assert(lastPass);
+        SDL_BindGPUVertexBuffers(lastPass, firstSlot, bindings.ptr, cast(uint) bindings.length);
+    }
+
+    void bindVertexBuffer(uint firstSlot, SDL_GPUBuffer* vertexBuffer, uint offset = 0)
+    {
+        SDL_GPUBufferBinding[1] bufferBindings;
+        bufferBindings[0].buffer = vertexBuffer;
+        bufferBindings[0].offset = offset;
+
+        bindVertexBuffer(firstSlot, bufferBindings);
+    }
+
+    bool draw(uint numVertices = 1, uint numInstances = 1, uint firstVertex = 0, uint firstInstance = 0)
+    {
+        if (!lastPass)
+        {
+            return false;
+        }
+
+        SDL_DrawGPUPrimitives(
+            lastPass,
+            numVertices,
+            numInstances,
+            firstVertex,
+            firstInstance);
+        return true;
+    }
+
+    void pushUniformFragmentData(uint slotIndex, void* data, uint length)
+    {
+        assert(state == GPUGraphicState.renderStart);
+        assert(lastCmdBuff);
+        SDL_PushGPUFragmentUniformData(lastCmdBuff, slotIndex, data, length);
+    }
+
+    SDL_GPUColorTargetDescription[1] defaultColorTarget(SDL_Window* window)
+    {
+        auto format = getSwapchainTextureFormat(window);
+
+        SDL_GPUColorTargetDescription[1] desc = [
+            SDL_GPUColorTargetDescription(format)
+        ];
+
+        return desc;
     }
 
 }

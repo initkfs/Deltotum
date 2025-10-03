@@ -317,11 +317,6 @@ abstract class GraphicApp : CliApp
         return new Graphic(logging, renderer);
     }
 
-    GPUGraphic createGpuGraphics(Logging logging)
-    {
-        return new GPUGraphic(logging);
-    }
-
     Asset createAsset(Logging logging, Config config, Context context, ComFont delegate() comFontProvider)
     {
         import api.dm.kit.assets.fonts.font_size : FontSize;

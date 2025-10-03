@@ -40,7 +40,7 @@ class GuiWindow : Window
     {
         if (gpuDevice && comWindow)
         {
-            if (const err = gpuDevice.releaseFromWindow(comWindow))
+            if (const err = gpuDevice.removeFromWindow(comWindow))
             {
                 throw new Exception(err.toString);
             }

@@ -255,7 +255,7 @@ class Scene2d : EventKitTarget
         {
             // if (!gpu.startRenderPass(window))
             // {
-            //     gpu.resetRenderer;
+            //     gpu.resetState;
             //     //logger.error("Error starting gpu rendering");
             //     throw new Exception("Error starting gpu rendering");
             //     return;
@@ -310,7 +310,7 @@ class Scene2d : EventKitTarget
             // {
             //     //logger.error("Error ending gpu renderer");
             //     throw new Exception("Error ending gpu renderer");
-            //     gpu.resetRenderer;
+            //     gpu.resetState;
             // }
         }
     }

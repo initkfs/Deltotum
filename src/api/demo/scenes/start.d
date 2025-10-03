@@ -38,8 +38,6 @@ class Start : GuiScene
 
     Random rnd;
 
-    SdlGPUDevice _gpu;
-
     static ComVertex[4] vertices =
         [
             {-1, 1, 0, 0, 0},
@@ -69,16 +67,13 @@ class Start : GuiScene
 
         import api.dm.gui.windows.gui_window : GuiWindow;
 
-        _gpu = (cast(GuiWindow) window).gpuDevice;
-        assert(_gpu);
-
         //TODO remove test
         import std.file : read;
 
         auto vertShaderFile = context.app.userDir ~ "/Content/Shaders/Compiled/SPIRV/TexturedQuad.vert.spv";
         auto fragShaderFile = context.app.userDir ~ "/Content/Shaders/Compiled/SPIRV/TexturedQuad.frag.spv";
 
-        fillPipeline = _gpu.newPipeline(window, vertShaderFile, fragShaderFile, 0, 0, 0, 0, 1, 0, 0, 0);
+        fillPipeline = gpu.newPipeline(vertShaderFile, fragShaderFile, 0, 0, 0, 0, 1, 0, 0, 0);
 
 
         auto texturePath = context.app.userDir ~ "/Content/Images/ravioli.bmp";
@@ -111,11 +106,11 @@ class Start : GuiScene
 
         uint len = cast(uint)(vertices.length * ComVertex.sizeof + ushort.sizeof * 6);
 
-        vertexBuffer = _gpu.newGPUBufferVertex(vertices.length * ComVertex.sizeof);
+        vertexBuffer = gpu.dev.newGPUBufferVertex(vertices.length * ComVertex.sizeof);
 
-        transferBuffer = _gpu.newTransferUploadBuffer(len);
+        transferBuffer = gpu.dev.newTransferUploadBuffer(len);
 
-        ubyte * ptr = cast(ubyte*) _gpu.mapTransferBuffer(transferBuffer, false);
+        ubyte * ptr = cast(ubyte*) gpu.dev.mapTransferBuffer(transferBuffer, false);
 
         ComVertex[] data = (cast(ComVertex*) ptr)[0 .. (
                 vertices.length)];
@@ -130,7 +125,7 @@ class Start : GuiScene
         indexData[4] = 2;
         indexData[5] = 3;
 
-        indexBuffer = _gpu.newGPUBufferIndex(ushort.sizeof * 6);
+        indexBuffer = gpu.dev.newGPUBufferIndex(ushort.sizeof * 6);
 
          SDL_GPUSamplerCreateInfo samplerInfo;
         samplerInfo.min_filter = SDL_GPU_FILTER_NEAREST,
@@ -140,24 +135,24 @@ class Start : GuiScene
 		samplerInfo.address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
 		samplerInfo.address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
 
-        sampler = SDL_CreateGPUSampler(_gpu.getObject, &samplerInfo);
+        sampler = SDL_CreateGPUSampler(gpu.dev.getObject, &samplerInfo);
 
-        newTexture = _gpu.newTexture(SDL_GPU_TEXTURETYPE_2D, SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM, SDL_GPU_TEXTUREUSAGE_SAMPLER, w, h, 1, 1);
+        newTexture = gpu.dev.newTexture(SDL_GPU_TEXTURETYPE_2D, SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM, SDL_GPU_TEXTUREUSAGE_SAMPLER, w, h, 1, 1);
 
-        SDL_SetGPUTextureName(_gpu.getObject, newTexture, "Test texture");
+        SDL_SetGPUTextureName(gpu.dev.getObject, newTexture, "Test texture");
 
-        auto transferBuffer2 = _gpu.newTransferUploadBuffer(cast(uint) imageLen);
+        auto transferBuffer2 = gpu.dev.newTransferUploadBuffer(cast(uint) imageLen);
 
-        auto transBuffMap = _gpu.mapTransferBuffer(transferBuffer2, false);
+        auto transBuffMap = gpu.dev.mapTransferBuffer(transferBuffer2, false);
         ubyte[] transBuffSlice = (cast(ubyte*) transBuffMap)[0 .. imageLen];
         transBuffSlice[0 .. imageLen] = imagePtr[];
 
-        _gpu.unmapTransferBuffer(transferBuffer2);
+        gpu.dev.unmapTransferBuffer(transferBuffer2);
 
-        assert(gpu.startCopyPass);
+        assert(gpu.dev.startCopyPass);
 
-        gpu.uploadCopyGPUBuffer(transferBuffer, vertexBuffer, ComVertex.sizeof * 4, 0, 0, false);
-        gpu.uploadCopyGPUBuffer(transferBuffer, indexBuffer, ushort.sizeof * 6, ComVertex.sizeof * 4, 0, false);
+        gpu.dev.unmapAndUpload(transferBuffer, vertexBuffer, ComVertex.sizeof * 4, 0, 0, false);
+        gpu.dev.unmapAndUpload(transferBuffer, indexBuffer, ushort.sizeof * 6, ComVertex.sizeof * 4, 0, false);
 
         SDL_GPUTextureTransferInfo source;
         //Direct3D 12
@@ -178,12 +173,12 @@ class Start : GuiScene
         dest.h = h;
         dest.d = 1;
 
-        gpu.uploadToTexture(&source, &dest, false);
+        gpu.dev.uploadTexture(&source, &dest, false);
         
-        assert(gpu.endCopyPass);
+        assert(gpu.dev.endCopyPass);
 
-        //_gpu.deleteTransferBuffer(transferBuffer);
-        //_gpu.deleteTransferBuffer(transferBuffer2);
+        //_gpu.dev.deleteTransferBuffer(transferBuffer);
+        //_gpu.dev.deleteTransferBuffer(transferBuffer2);
 
         //createDebugger;
     }
@@ -197,20 +192,19 @@ class Start : GuiScene
     {
         super.draw;
 
-        assert(gpu.startRenderPass(window));
+        assert(gpu.startRenderPass);
 
-
-        assert(gpu.bindPipeline(fillPipeline));
+        gpu.dev.bindPipeline(fillPipeline);
 
         //timeUniform.time = SDL_GetTicks() / 250.0;
-        //gpu.pushUniformFragmentData(0, &timeUniform, UniformBuffer.sizeof);
+        //gpu.dev.pushUniformFragmentData(0, &timeUniform, UniformBuffer.sizeof);
 
         SDL_GPUBufferBinding[1] bufferBindings;
         bufferBindings[0].buffer = vertexBuffer;
         bufferBindings[0].offset = 0;
 
-        gpu.bindVertexBuffer(0, bufferBindings);
-        SDL_BindGPUVertexBuffers(gpu.renderPass, 0, bufferBindings.ptr, 1);
+        gpu.dev.bindVertexBuffer(0, bufferBindings);
+        SDL_BindGPUVertexBuffers(gpu.dev.renderPass, 0, bufferBindings.ptr, 1);
 
         SDL_GPUTextureSamplerBinding sampleBinding;
         sampleBinding.texture = newTexture;
@@ -221,22 +215,22 @@ class Start : GuiScene
         indexBinding.buffer = indexBuffer;
         indexBinding.offset = 0;
 
-        SDL_BindGPUIndexBuffer(gpu. renderPass, &indexBinding, SDL_GPU_INDEXELEMENTSIZE_16BIT);
+        SDL_BindGPUIndexBuffer(gpu.dev. renderPass, &indexBinding, SDL_GPU_INDEXELEMENTSIZE_16BIT);
 
-        SDL_BindGPUFragmentSamplers(gpu.renderPass, 0, &sampleBinding, 1);
+        SDL_BindGPUFragmentSamplers(gpu.dev.renderPass, 0, &sampleBinding, 1);
 
-        //gpu.draw(3, 1);
-        SDL_DrawGPUIndexedPrimitives(gpu.renderPass, 6, 1, 0, 0, 0);
+        //gpu.dev.draw(3, 1);
+        SDL_DrawGPUIndexedPrimitives(gpu.dev.renderPass, 6, 1, 0, 0, 0);
 
-        assert(gpu.endRenderPass);
+        assert(gpu.dev.endRenderPass);
     }
 
     override void dispose()
     {
         super.dispose;
-        _gpu.deletePipeline(fillPipeline);
-        _gpu.deleteGPUBuffer(vertexBuffer);
-        _gpu.deleteTexture(newTexture);
-        SDL_ReleaseGPUSampler(_gpu.getObject, sampler);
+        gpu.dev.deletePipeline(fillPipeline);
+        gpu.dev.deleteGPUBuffer(vertexBuffer);
+        gpu.dev.deleteTexture(newTexture);
+        SDL_ReleaseGPUSampler(gpu.dev.getObject, sampler);
     }
 }

@@ -849,14 +849,6 @@ class Window : GraphicComponent
         return true;
     }
 
-    import api.dm.back.sdl3.externs.csdl3: SDL_GPUTextureFormat;
-
-    SDL_GPUTextureFormat swapchainTextureFormat()
-    {
-        assert(gpuDevice);
-        return gpuDevice.getSwapchainTextureFormat(comWindow);
-    }
-
     bool nativePtr(out ComNativePtr ptr)
     {
         if (const err = comWindow.nativePtr(ptr))
