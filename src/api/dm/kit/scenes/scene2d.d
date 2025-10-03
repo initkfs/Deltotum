@@ -253,12 +253,13 @@ class Scene2d : EventKitTarget
 
         if (isGPU)
         {
-            if (!gpu.startRenderPass(window))
-            {
-                gpu.resetRenderer;
-                logger.error("Error starting gpu rendering");
-                return;
-            }
+            // if (!gpu.startRenderPass(window))
+            // {
+            //     gpu.resetRenderer;
+            //     //logger.error("Error starting gpu rendering");
+            //     throw new Exception("Error starting gpu rendering");
+            //     return;
+            // }
         }
 
         if (!isDrawAfterAllSprites && !drawBeforeSprite)
@@ -305,11 +306,12 @@ class Scene2d : EventKitTarget
         }
         else
         {
-            if (!gpu.endRenderPass)
-            {
-                logger.error("Error ending gpu renderer");
-                gpu.resetRenderer;
-            }
+            // if (!gpu.endRenderPass)
+            // {
+            //     //logger.error("Error ending gpu renderer");
+            //     throw new Exception("Error ending gpu renderer");
+            //     gpu.resetRenderer;
+            // }
         }
     }
 

@@ -30,7 +30,7 @@ enum ComShaderType
 struct ComVertex
 {
     float x = 0, y = 0, z = 0; //vec3 position
-    float r = 0, g = 0, b = 0, a = 1.0; //vec4 color
+    //float r = 0, g = 0, b = 0, a = 1.0; //vec4 color
     float u = 0, v = 0; //0..1
 }
 
@@ -67,7 +67,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         super(newPtr);
     }
 
-    ComResult create(ComShaderFormat foramtFlags = SDL_GPU_SHADERFORMAT_SPIRV, bool isDebugMode = false, string driverName = ComGPUDriver
+    ComResult create(ComShaderFormat foramtFlags = SDL_GPU_SHADERFORMAT_SPIRV, bool isDebugMode = true, string driverName = ComGPUDriver
             .any)
     {
         this.driverName = driverName;
@@ -250,17 +250,27 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         info.vertex_input_state.num_vertex_buffers = vertexBufferDesctiptions.length;
         info.vertex_input_state.vertex_buffer_descriptions = vertexBufferDesctiptions.ptr;
 
-        SDL_GPUVertexAttribute[3] vertexAttributes = comVertexAttrs;
+        SDL_GPUVertexAttribute[2] vertexAttributes = comVertexAttrs;
 
         info.vertex_input_state.num_vertex_attributes = vertexAttributes.length;
         info.vertex_input_state.vertex_attributes = vertexAttributes.ptr;
 
-        SDL_GPUColorTargetDescription[1] colorTargetDescriptions = blendingAlpha(window);
+        SDL_GPUColorTargetDescription[1] colorTargetDescriptions = colorTarget(window);
         info.target_info.num_color_targets = colorTargetDescriptions.length;
         info.target_info.color_target_descriptions = colorTargetDescriptions.ptr;
 
         auto pipeline = newPipeline(info);
         return pipeline;
+    }
+
+    SDL_GPUColorTargetDescription[1] colorTarget(Window window)
+    {
+        SDL_GPUColorTargetDescription[1] colorTargetDescriptions;
+
+        colorTargetDescriptions[0] = SDL_GPUColorTargetDescription();
+        colorTargetDescriptions[0].format = window.swapchainTextureFormat;
+
+        return colorTargetDescriptions;
     }
 
     SDL_GPUColorTargetDescription[1] blendingAlpha(Window window)
@@ -546,9 +556,9 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return vertexBufferDesctiptions;
     }
 
-    SDL_GPUVertexAttribute[3] comVertexAttrs()
+    SDL_GPUVertexAttribute[2] comVertexAttrs()
     {
-        SDL_GPUVertexAttribute[3] vertexAttributes;
+        SDL_GPUVertexAttribute[2] vertexAttributes;
 
         //position
         vertexAttributes[0].buffer_slot = 0;
@@ -557,16 +567,16 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         vertexAttributes[0].offset = 0; // start from the first byte from current buffer position
 
         // color
-        vertexAttributes[1].buffer_slot = 0;
-        vertexAttributes[1].location = 1; // layout (location = 1) in shader
-        vertexAttributes[1].format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4; //vec4
-        vertexAttributes[1].offset = float.sizeof * 3; // 4th float from current buffer position
+        // vertexAttributes[1].buffer_slot = 0;
+        // vertexAttributes[1].location = 1; // layout (location = 1) in shader
+        // vertexAttributes[1].format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4; //vec4
+        // vertexAttributes[1].offset = float.sizeof * 3; // 4th float from current buffer position
 
         //uv
-        vertexAttributes[2].buffer_slot = 0;
-        vertexAttributes[2].location = 2; // layout (location = 2) in shader
-        vertexAttributes[2].format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2; //vec2
-        vertexAttributes[2].offset = float.sizeof * 7; // 4th float from current buffer position
+        vertexAttributes[1].buffer_slot = 0;
+        vertexAttributes[1].location = 1; // layout (location = 2) in shader
+        vertexAttributes[1].format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2; //vec2
+        vertexAttributes[1].offset = float.sizeof * 3; // 4th float from current buffer position
 
         return vertexAttributes;
     }

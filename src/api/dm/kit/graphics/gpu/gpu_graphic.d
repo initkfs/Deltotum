@@ -176,23 +176,15 @@ class GPUGraphic : LoggableUnit
         return isSubmit;
     }
 
-    bool uploadCopyGPUBuffer(SDL_GPUTransferBuffer* transferBufferSrc, SDL_GPUBuffer* vertexBufferDst, uint bufferRegionSizeof, uint transferOffset = 0, uint regionOffset = 0, bool isCycle = true)
+    void uploadCopyGPUBuffer(SDL_GPUTransferBuffer* transferBufferSrc, SDL_GPUBuffer* vertexBufferDst, uint bufferRegionSizeof, uint transferOffset = 0, uint regionOffset = 0, bool isCycle = true)
     {
-        if (!startCopyPass)
-        {
-            return false;
-        }
-        if (!uploadGPUBuffer(transferBufferSrc, vertexBufferDst, bufferRegionSizeof, transferOffset, regionOffset, isCycle))
-        {
-            return false;
-        }
-
-        return endCopyPass;
+       uploadGPUBuffer(transferBufferSrc, vertexBufferDst, bufferRegionSizeof, transferOffset, regionOffset, isCycle);
     }
 
-    bool uploadGPUBuffer(SDL_GPUTransferBuffer* transferBufferSrc, SDL_GPUBuffer* vertexBufferDst, uint bufferDstRegionSizeof, uint transferOffset = 0, uint regionOffset = 0, bool isCycle = true)
+    void uploadGPUBuffer(SDL_GPUTransferBuffer* transferBufferSrc, SDL_GPUBuffer* vertexBufferDst, uint bufferDstRegionSizeof, uint transferOffset = 0, uint regionOffset = 0, bool isCycle = true)
     {
         assert(state == GPUGraphicState.copyStart);
+        assert(lastCopyPass);
 
         SDL_GPUTransferBufferLocation location;
         location.transfer_buffer = transferBufferSrc;
@@ -206,7 +198,6 @@ class GPUGraphic : LoggableUnit
         SDL_UnmapGPUTransferBuffer(_gpu.getObject, transferBufferSrc);
 
         SDL_UploadToGPUBuffer(lastCopyPass, &location, &region, isCycle);
-        return true;
     }
 
     void uploadToTexture(SDL_GPUTextureTransferInfo* source, SDL_GPUTextureRegion* destination, bool isCycle = true)
