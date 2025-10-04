@@ -8,6 +8,7 @@ import api.dm.back.sdl3.gpu.sdl_gpu_shader : SdlGPUShader;
 import api.dm.back.sdl3.gpu.sdl_gpu_pipeline : SdlGPUPipeline;
 
 import std.string : toStringz, fromStringz;
+import api.math.geom2.rect2 : Rect2d;
 
 import api.dm.back.sdl3.externs.csdl3;
 
@@ -240,14 +241,17 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         uint numFragSamples = 0,
         uint numFragStorageBuffers = 0,
         uint numFragUniformBuffers = 0,
-        uint numFragStorageTextures = 0
+        uint numFragStorageTextures = 0,
+        SDL_GPURasterizerState* rasterState = null,
+        SDL_GPUDepthStencilState* stencilState = null
+
     )
     {
         auto vertexShader = newVertexSPIRV(vertexPath, numVertexSamples, numVertexStorageBuffers, numVertexUniformBuffers, numVertexStorageTextures);
 
         auto fragmentShader = newFragmentSPIRV(fragmentPath, numFragSamples, numFragStorageBuffers, numFragUniformBuffers, numFragStorageTextures);
 
-        auto pipeline = newVertexPipeline(window, vertexShader, fragmentShader);
+        auto pipeline = newPipeline(window, vertexShader, fragmentShader, rasterState, stencilState);
 
         deleteShader(vertexShader);
         deleteShader(fragmentShader);
@@ -255,7 +259,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return pipeline;
     }
 
-    SdlGPUPipeline newVertexPipeline(SDL_Window* window, SdlGPUShader vertexShader, SdlGPUShader fragmentShader)
+    SdlGPUPipeline newPipeline(SDL_Window* window, SdlGPUShader vertexShader, SdlGPUShader fragmentShader, SDL_GPURasterizerState* rasterState = null, SDL_GPUDepthStencilState* stencilState = null)
     {
         SDL_GPUGraphicsPipelineCreateInfo info;
 
@@ -275,6 +279,16 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         SDL_GPUColorTargetDescription[1] colorTargetDescriptions = colorTarget(window);
         info.target_info.num_color_targets = colorTargetDescriptions.length;
         info.target_info.color_target_descriptions = colorTargetDescriptions.ptr;
+
+        if (rasterState)
+        {
+            info.rasterizer_state = *rasterState;
+        }
+
+        if (stencilState)
+        {
+            info.depth_stencil_state = *stencilState;
+        }
 
         auto pipeline = newPipeline(info);
         return pipeline;
@@ -401,7 +415,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         {
             {
                 alias Type = typeof(arg[0]);
-                Type[] buff = (cast(Type*) &buffPtr[offset])[0 .. arg.length];
+                Type[] buff = (cast(Type*)&buffPtr[offset])[0 .. arg.length];
                 buff[0 .. arg.length] = arg;
                 offset += arg.length * Type.sizeof;
             }
@@ -436,7 +450,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
      SDL_GPU_SAMPLECOUNT_4,  MSAA 4x
      SDL_GPU_SAMPLECOUNT_8   MSAA 8x
      */
-    SDL_GPUTexture* newTexture(SDL_GPUTextureType type, SDL_GPUTextureFormat format, SDL_GPUTextureUsageFlags usage, uint width, uint height, uint layerCountOrDepth, uint numLevels = 1, SDL_GPUSampleCount sampleCount = SDL_GPU_SAMPLECOUNT_1)
+    SDL_GPUTexture* newTexture(uint width, uint height, SDL_GPUTextureType type, SDL_GPUTextureFormat format, SDL_GPUTextureUsageFlags usage, uint layerCountOrDepth = 1, uint numLevels = 1, SDL_GPUSampleCount sampleCount = SDL_GPU_SAMPLECOUNT_1)
     {
         SDL_GPUTextureCreateInfo info;
         info.type = type;
@@ -462,6 +476,11 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
             throw new Exception("Texture is null: " ~ getError);
         }
         return textPtr;
+    }
+
+    SDL_GPUTexture* newStencilTexture(uint width, uint height, SDL_GPUTextureFormat format, SDL_GPUTextureType type = SDL_GPU_TEXTURETYPE_2D, uint layerCountOrDepth = 1, uint numLevels = 1, SDL_GPUSampleCount sampleCount = SDL_GPU_SAMPLECOUNT_1)
+    {
+        return newTexture(width, height, type, format, SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET, layerCountOrDepth, numLevels, sampleCount);
     }
 
     void deleteTexture(SDL_GPUTexture* tPtr)
@@ -619,7 +638,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return startRenderPass(colorTargetInfo, currSdlWindow);
     }
 
-    bool startRenderPass(SDL_GPUColorTargetInfo[] colorTargets, SDL_Window* currSdlWindow)
+    bool startRenderPass(SDL_GPUColorTargetInfo[] colorTargets, SDL_Window* currSdlWindow, SDL_GPUDepthStencilTargetInfo* stencilInfo = null)
     {
         assert(currSdlWindow);
         assert(ptr);
@@ -654,7 +673,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
             colorTargets[0].texture = lastSwapchain;
         }
 
-        lastPass = SDL_BeginGPURenderPass(lastCmdBuff, colorTargets.ptr, cast(uint) colorTargets.length, null);
+        lastPass = SDL_BeginGPURenderPass(lastCmdBuff, colorTargets.ptr, cast(uint) colorTargets.length, stencilInfo);
         if (!lastPass)
         {
             submitCmdBuffer;
@@ -921,6 +940,94 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
             throw new Exception("Sampler pointer is null: " ~ getError);
         }
         return samplerPtr;
+    }
+
+    void setScissorRect(Rect2d scissor)
+    {
+        SDL_Rect rect;
+        rect.w = cast(int) scissor.width;
+        rect.h = cast(int) scissor.height;
+        rect.x = cast(int) scissor.x;
+        rect.y = cast(int) scissor.y;
+
+        assert(state == GPUGraphicState.renderStart);
+        assert(lastPass);
+
+        SDL_SetGPUScissor(lastPass, &rect);
+    }
+
+    SDL_GPUTextureFormat stencilFormat()
+    {
+        if (isSupportTexture(SDL_GPU_TEXTUREFORMAT_D24_UNORM_S8_UINT, SDL_GPU_TEXTURETYPE_2D, SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET))
+        {
+            return SDL_GPU_TEXTUREFORMAT_D24_UNORM_S8_UINT;
+        }
+
+        if (isSupportTexture(SDL_GPU_TEXTUREFORMAT_D32_FLOAT_S8_UINT, SDL_GPU_TEXTURETYPE_2D, SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET))
+        {
+            return SDL_GPU_TEXTUREFORMAT_D32_FLOAT_S8_UINT;
+        }
+
+        //TODO return error?
+        throw new Exception("Not found stencil format");
+    }
+
+    SDL_GPUDepthStencilState stencilState()
+    {
+        SDL_GPUDepthStencilState stState;
+
+        stState.enable_stencil_test = true;
+
+        SDL_GPUStencilOpState frontState;
+        frontState.compare_op = SDL_GPU_COMPAREOP_NEVER;
+        frontState.fail_op = SDL_GPU_STENCILOP_REPLACE;
+        frontState.pass_op = SDL_GPU_STENCILOP_KEEP;
+        frontState.depth_fail_op = SDL_GPU_STENCILOP_KEEP;
+
+        stState.front_stencil_state = frontState;
+
+        SDL_GPUStencilOpState backState;
+        backState.compare_op = SDL_GPU_COMPAREOP_NEVER;
+        backState.fail_op = SDL_GPU_STENCILOP_REPLACE;
+        backState.pass_op = SDL_GPU_STENCILOP_KEEP;
+        backState.depth_fail_op = SDL_GPU_STENCILOP_KEEP;
+
+        stState.back_stencil_state = backState;
+        stState.write_mask = 0xFF;
+
+        return stState;
+    }
+
+    SDL_GPUDepthStencilTargetInfo stencilTarget(SDL_GPUTexture* texture, float clearDepth = 0, ubyte clearStencil = 0, bool isCycle = true)
+    {
+        SDL_GPUDepthStencilTargetInfo info;
+        info.texture = texture;
+        info.cycle = isCycle;
+        info.clear_depth = clearDepth;
+        info.clear_stencil = clearStencil;
+        info.load_op = SDL_GPU_LOADOP_CLEAR;
+        info.store_op = SDL_GPU_STOREOP_DONT_CARE;
+        info.stencil_load_op = SDL_GPU_LOADOP_CLEAR;
+        info.stencil_store_op = SDL_GPU_STOREOP_DONT_CARE;
+        return info;
+    }
+
+    void setStencilReference(ubyte reference)
+    {
+        assert(state == GPUGraphicState.renderStart);
+        assert(lastPass);
+        //(reference & stencilMask) CompFunc (StencilBufferValue & StencilMask)
+        SDL_SetGPUStencilReference(lastPass, reference);
+    }
+
+    SDL_GPURasterizerState rasterizerState()
+    {
+        SDL_GPURasterizerState rstState;
+        rstState.cull_mode = SDL_GPU_CULLMODE_NONE;
+        rstState.fill_mode = SDL_GPU_FILLMODE_FILL;
+        rstState.front_face = SDL_GPU_FRONTFACE_COUNTER_CLOCKWISE;
+
+        return rstState;
     }
 
 }

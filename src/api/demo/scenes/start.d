@@ -120,7 +120,7 @@ class Start : GuiScene
         SDL_GPUSamplerCreateInfo samplerInfo = gpu.dev.nearestRepeat;
         sampler = gpu.dev.newSampler(&samplerInfo);
 
-        newTexture = gpu.dev.newTexture(SDL_GPU_TEXTURETYPE_2D, SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM, SDL_GPU_TEXTUREUSAGE_SAMPLER, w, h, 1, 1);
+        newTexture = gpu.dev.newTexture( w, h, SDL_GPU_TEXTURETYPE_2D, SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM, SDL_GPU_TEXTUREUSAGE_SAMPLER, 1, 1);
 
         SDL_SetGPUTextureName(gpu.dev.getObject, newTexture, "Test texture");
 
