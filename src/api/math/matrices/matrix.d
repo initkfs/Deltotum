@@ -9,6 +9,7 @@ import api.math.geom2.vec2 : Vec2d;
 alias Matrix2x1 = DenseMatrix!(double, 2, 1);
 alias Matrix2x2 = DenseMatrix!(double, 2, 2);
 alias Matrix3x3 = DenseMatrix!(double, 3, 3);
+alias Matrix4x4f = DenseMatrix!(float, 4, 4);
 alias Matrix3x1 = DenseMatrix!(double, 3, 1);
 
 Vec2d toVec2d(ref Matrix2x1 m) => Vec2d(m[0][0], m[1][0]);

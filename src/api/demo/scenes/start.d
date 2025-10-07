@@ -26,6 +26,8 @@ import api.dm.back.sdl3.gpu.sdl_gpu_shader : SdlGPUShader;
 
 import api.dm.back.sdl3.externs.csdl3;
 
+import api.math.matrices.matrix;
+
 /**
  * Authors: initkfs
  */
@@ -38,12 +40,30 @@ class Start : GuiScene
 
     Random rnd;
 
-    static ComVertex[4] vertices =
-        [
-            {-1, 1, 0, 0, 0},
-            {1, 1, 0, 4, 0},
-            {1, -1, 0, 4, 4},
-            {-1, -1, 0, 0, 4}
+    ComVertex[] vertices = [
+        ComVertex(-0.5f, -0.5f, 0.5f, 0.0f, 1.0f), 
+        ComVertex(0.5f, -0.5f, 0.5f, 1.0f, 1.0f), 
+        ComVertex(0.5f, 0.5f, 0.5f, 1.0f, 0.0f),
+        ComVertex(-0.5f, 0.5f, 0.5f, 0.0f, 0.0f),
+        ComVertex(0.5f, -0.5f, -0.5f, 0.0f, 1.0f),
+        ComVertex(-0.5f, -0.5f, -0.5f, 1.0f, 1.0f),
+        ComVertex(-0.5f, 0.5f, -0.5f, 1.0f, 0.0f),
+        ComVertex(0.5f, 0.5f, -0.5f, 0.0f, 0.0f), 
+        ComVertex(-0.5f, -0.5f, -0.5f, 0.0f, 1.0f),
+        ComVertex(-0.5f, -0.5f, 0.5f, 1.0f, 1.0f),
+        ComVertex(-0.5f, 0.5f, 0.5f, 1.0f, 0.0f),
+        ComVertex(-0.5f, 0.5f, -0.5f, 0.0f, 0.0f), 
+        ComVertex(0.5f, -0.5f, 0.5f, 0.0f, 1.0f),
+        ComVertex(0.5f, -0.5f, -0.5f, 1.0f, 1.0f),
+        ComVertex(0.5f, 0.5f, -0.5f, 1.0f, 0.0f),
+        ComVertex(0.5f, 0.5f, 0.5f, 0.0f, 0.0f),
+    ];
+    ushort[] indices = [
+
+        0, 1, 2, 0, 2, 3, 
+        4, 5, 6, 4, 6, 7, 
+        8, 9, 10, 8, 10, 11,
+        12, 13, 14, 12, 14, 15
     ];
 
     SDL_GPUBuffer* vertexBuffer;
@@ -60,6 +80,17 @@ class Start : GuiScene
 
     static UniformBuffer timeUniform;
 
+    align(16)
+    {
+        Matrix4x4f transform;
+
+        Matrix4x4f model;
+        Matrix4x4f view;
+        Matrix4x4f projection;
+    }
+
+    Matrix4x4f[3] matrixBuff;
+
     override void create()
     {
         super.create;
@@ -70,12 +101,12 @@ class Start : GuiScene
         //TODO remove test
         import std.file : read;
 
-        auto vertShaderFile = context.app.userDir ~ "/Content/Shaders/Compiled/SPIRV/TexturedQuad.vert.spv";
-        auto fragShaderFile = context.app.userDir ~ "/Content/Shaders/Compiled/SPIRV/TexturedQuad.frag.spv";
+        auto vertShaderFile = context.app.userDir ~ "/shaders/TexturedBox.vert.spv";
+        auto fragShaderFile = context.app.userDir ~ "/shaders/TexturedBox.frag.spv";
 
-        fillPipeline = gpu.newPipeline(vertShaderFile, fragShaderFile, 0, 0, 0, 0, 1, 0, 0, 0);
+        fillPipeline = gpu.newPipeline(vertShaderFile, fragShaderFile, 0, 0, 1, 0, 1, 0, 0, 0);
 
-        auto texturePath = context.app.userDir ~ "/Content/Images/ravioli.bmp";
+        auto texturePath = context.app.userDir ~ "/container.bmp";
 
         import api.dm.back.sdl3.images.sdl_image : SdlImage;
 
@@ -106,21 +137,20 @@ class Start : GuiScene
 
         ubyte[] imagePtr = (cast(ubyte*) rawImagePtr)[0 .. imageLen];
 
-        uint len = cast(uint)(vertices.length * ComVertex.sizeof + ushort.sizeof * 6);
+        uint len = cast(uint)(vertices.length * ComVertex.sizeof + ushort.sizeof * indices.length);
 
         vertexBuffer = gpu.dev.newGPUBufferVertex(vertices.length * ComVertex.sizeof);
 
         transferBuffer = gpu.dev.newTransferUploadBuffer(len);
 
-        ushort[] idx = [0, 1, 2, 0, 2, 3];
-        gpu.dev.copyToBuffer(transferBuffer, false, vertices, idx);
+        gpu.dev.copyToBuffer(transferBuffer, false, vertices, indices);
 
-        indexBuffer = gpu.dev.newGPUBufferIndex(ushort.sizeof * 6);
+        indexBuffer = gpu.dev.newGPUBufferIndex(ushort.sizeof * indices.length);
 
         SDL_GPUSamplerCreateInfo samplerInfo = gpu.dev.nearestRepeat;
         sampler = gpu.dev.newSampler(&samplerInfo);
 
-        newTexture = gpu.dev.newTexture( w, h, SDL_GPU_TEXTURETYPE_2D, SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM, SDL_GPU_TEXTUREUSAGE_SAMPLER, 1, 1);
+        newTexture = gpu.dev.newTexture(w, h, SDL_GPU_TEXTURETYPE_2D, SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM, SDL_GPU_TEXTUREUSAGE_SAMPLER, 1, 1);
 
         SDL_SetGPUTextureName(gpu.dev.getObject, newTexture, "Test texture");
 
@@ -134,8 +164,9 @@ class Start : GuiScene
 
         assert(gpu.dev.startCopyPass);
 
-        gpu.dev.unmapAndUpload(transferBuffer, vertexBuffer, ComVertex.sizeof * 4, 0, 0, false);
-        gpu.dev.unmapAndUpload(transferBuffer, indexBuffer, ushort.sizeof * 6, ComVertex.sizeof * 4, 0, false);
+        gpu.dev.unmapAndUpload(transferBuffer, vertexBuffer, ComVertex.sizeof * vertices.length, 0, 0, false);
+        gpu.dev.unmapAndUpload(transferBuffer, indexBuffer, ushort.sizeof * indices.length, ComVertex.sizeof * vertices
+                .length, 0, false);
 
         gpu.dev.uploadTexture(transferBuffer2, newTexture, w, h);
 
@@ -144,12 +175,46 @@ class Start : GuiScene
         gpu.dev.deleteTransferBuffer(transferBuffer);
         gpu.dev.deleteTransferBuffer(transferBuffer2);
 
+        transform.fillInit;
+
+        import api.math.matrices.affine3;
+
+        model = rotateMatrix(-55, 1.0f, 0.0f, 0.0f);
+        view = translateMatrix(0.0f, 0.0f, 3.0f);
+
+        import api.math.geom2.vec3;
+
+        view = lookAt(
+            Vec3f(0, 0, -3), 
+            Vec3f(0, 0, 0),
+            Vec3f(0, 1, 0)
+            
+        );
+
+        projection = perspectiveMatrix(45.0f, window.width / window.height, 0.1f, 100.0f);
+        transform = projection;
+
+        matrixBuff[0] = model;
+        matrixBuff[1] = view;
+        matrixBuff[2] = projection;
         //createDebugger;
+
+        import api.dm.kit.sprites2d.tweens.pause_tween2d: PauseTween2d;
     }
+
+    float angle  = 9;
 
     override void update(double dt)
     {
         super.update(dt);
+
+        import api.math.matrices.affine3;
+
+        model = rotateMatrix((angle = (angle + 1)) % 360, 1.0f, 1.0f, 0.0f);
+
+        matrixBuff[0] = model;
+        matrixBuff[1] = view;
+        matrixBuff[2] = projection;
     }
 
     override void draw()
@@ -161,14 +226,14 @@ class Start : GuiScene
         gpu.dev.bindPipeline(fillPipeline);
 
         //timeUniform.time = SDL_GetTicks() / 250.0;
-        //gpu.dev.pushUniformFragmentData(0, &timeUniform, UniformBuffer.sizeof);
+        gpu.dev.pushUniformFragmentData(0, matrixBuff.ptr, matrixBuff.sizeof);
 
         gpu.dev.bindVertexBuffer(vertexBuffer);
         gpu.dev.bindIndexBuffer(indexBuffer);
         gpu.dev.bindFragmentSamplers(newTexture, sampler);
 
         //gpu.dev.draw(3, 1);
-        gpu.dev.drawIndexed(6, 1, 0, 0, 0);
+        gpu.dev.drawIndexed(indices.length, 1, 0, 0, 0);
 
         assert(gpu.dev.endRenderPass);
     }

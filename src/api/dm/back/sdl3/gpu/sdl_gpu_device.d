@@ -336,25 +336,25 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         shader.setNull;
     }
 
-    SDL_GPUBuffer* newGPUBufferVertex(uint size) => newGPUBuffer(SDL_GPU_BUFFERUSAGE_VERTEX, size);
-    SDL_GPUBuffer* newGPUBufferIndex(uint size) => newGPUBuffer(SDL_GPU_BUFFERUSAGE_INDEX, size);
-    SDL_GPUBuffer* newGPUBufferIndirect(uint size) => newGPUBuffer(
+    SDL_GPUBuffer* newGPUBufferVertex(size_t size) => newGPUBuffer(SDL_GPU_BUFFERUSAGE_VERTEX, size);
+    SDL_GPUBuffer* newGPUBufferIndex(size_t size) => newGPUBuffer(SDL_GPU_BUFFERUSAGE_INDEX, size);
+    SDL_GPUBuffer* newGPUBufferIndirect(size_t size) => newGPUBuffer(
         SDL_GPU_BUFFERUSAGE_INDIRECT, size);
     //for STORAGE flag, the data in the buffer must respect std140 layout conventions. vec3 and vec4 fields are 16-byte aligned.
-    SDL_GPUBuffer* newGPUBufferGraphicsStorageRead(uint size) => newGPUBuffer(
+    SDL_GPUBuffer* newGPUBufferGraphicsStorageRead(size_t size) => newGPUBuffer(
         SDL_GPU_BUFFERUSAGE_GRAPHICS_STORAGE_READ, size);
-    SDL_GPUBuffer* newGPUBufferComputeStorageRead(uint size) => newGPUBuffer(
+    SDL_GPUBuffer* newGPUBufferComputeStorageRead(size_t size) => newGPUBuffer(
         SDL_GPU_BUFFERUSAGE_COMPUTE_STORAGE_READ, size);
-    SDL_GPUBuffer* newGPUBufferComputeStorageWrite(uint size) => newGPUBuffer(
+    SDL_GPUBuffer* newGPUBufferComputeStorageWrite(size_t size) => newGPUBuffer(
         SDL_GPU_BUFFERUSAGE_COMPUTE_STORAGE_WRITE, size);
-    SDL_GPUBuffer* newGPUBufferComputeStorageReadWrite(uint size) => newGPUBuffer(
+    SDL_GPUBuffer* newGPUBufferComputeStorageReadWrite(size_t size) => newGPUBuffer(
         SDL_GPU_BUFFERUSAGE_GRAPHICS_STORAGE_READ | SDL_GPU_BUFFERUSAGE_COMPUTE_STORAGE_WRITE, size);
 
-    SDL_GPUBuffer* newGPUBuffer(SDL_GPUBufferUsageFlags usageFlag, uint size)
+    SDL_GPUBuffer* newGPUBuffer(SDL_GPUBufferUsageFlags usageFlag, size_t size)
     {
         SDL_GPUBufferCreateInfo createInfo;
         createInfo.usage = usageFlag;
-        createInfo.size = size;
+        createInfo.size = cast(uint) size;
 
         SDL_GPUBuffer* newPtr = SDL_CreateGPUBuffer(ptr, &createInfo);
         if (!newPtr)
@@ -369,18 +369,18 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         SDL_ReleaseGPUBuffer(ptr, buffPtr);
     }
 
-    SDL_GPUTransferBuffer* newTransferUploadBuffer(uint size) => newTransferBuffer(
+    SDL_GPUTransferBuffer* newTransferUploadBuffer(size_t size) => newTransferBuffer(
         SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD, size);
-    SDL_GPUTransferBuffer* newTransferDownloadBuffer(uint size) => newTransferBuffer(
+    SDL_GPUTransferBuffer* newTransferDownloadBuffer(size_t size) => newTransferBuffer(
         SDL_GPU_TRANSFERBUFFERUSAGE_DOWNLOAD, size);
 
-    SDL_GPUTransferBuffer* newTransferBuffer(SDL_GPUTransferBufferUsage usage, uint size)
+    SDL_GPUTransferBuffer* newTransferBuffer(SDL_GPUTransferBufferUsage usage, size_t size)
     {
         assert(ptr);
 
         SDL_GPUTransferBufferCreateInfo info;
         info.usage = usage;
-        info.size = size;
+        info.size = cast(uint) size;
 
         SDL_GPUTransferBuffer* buffPtr = SDL_CreateGPUTransferBuffer(ptr, &info);
         if (!buffPtr)
@@ -752,19 +752,19 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return isSubmit;
     }
 
-    void unmapAndUpload(SDL_GPUTransferBuffer* transferBufferSrc, SDL_GPUBuffer* vertexBufferDst, uint bufferDstRegionSizeof, uint transferOffset = 0, uint regionOffset = 0, bool isCycle = false)
+    void unmapAndUpload(SDL_GPUTransferBuffer* transferBufferSrc, SDL_GPUBuffer* vertexBufferDst, size_t bufferDstRegionSizeof, size_t transferOffset = 0, size_t regionOffset = 0, bool isCycle = false)
     {
         assert(state == GPUGraphicState.copyStart);
         assert(lastCopyPass);
 
         SDL_GPUTransferBufferLocation location;
         location.transfer_buffer = transferBufferSrc;
-        location.offset = transferOffset;
+        location.offset = cast(uint) transferOffset;
 
         SDL_GPUBufferRegion region;
         region.buffer = vertexBufferDst;
-        region.size = bufferDstRegionSizeof;
-        region.offset = regionOffset;
+        region.size = cast(uint) bufferDstRegionSizeof;
+        region.offset = cast(uint) regionOffset;
 
         SDL_UnmapGPUTransferBuffer(ptr, transferBufferSrc);
         SDL_UploadToGPUBuffer(lastCopyPass, &location, &region, isCycle);
@@ -894,18 +894,18 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return true;
     }
 
-    void drawIndexed(uint numIndices, uint numInstances, uint firstIndex = 0, int vertexOffset = 0, uint firstInstance = 0)
+    void drawIndexed(size_t numIndices, size_t numInstances, size_t firstIndex = 0, int vertexOffset = 0, size_t firstInstance = 0)
     {
         assert(state == GPUGraphicState.renderStart);
         assert(lastPass);
-        SDL_DrawGPUIndexedPrimitives(lastPass, numIndices, numInstances, firstIndex, vertexOffset, firstInstance);
+        SDL_DrawGPUIndexedPrimitives(lastPass, cast(uint) numIndices, cast(uint) numInstances, cast(uint) firstIndex, vertexOffset, cast(uint) firstInstance);
     }
 
-    void pushUniformFragmentData(uint slotIndex, void* data, uint length)
+    void pushUniformFragmentData(uint slotIndex, void* data, size_t length)
     {
         assert(state == GPUGraphicState.renderStart);
         assert(lastCmdBuff);
-        SDL_PushGPUFragmentUniformData(lastCmdBuff, slotIndex, data, length);
+        SDL_PushGPUFragmentUniformData(lastCmdBuff, slotIndex, data, cast(uint) length);
     }
 
     SDL_GPUColorTargetDescription[1] defaultColorTarget(SDL_Window* window)

@@ -13,7 +13,7 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
     T[ColDim][RowDim] matrix;
     //}
 
-    this(T initValue) pure  nothrow @safe
+    this(T initValue) pure nothrow @safe
     {
         fill(initValue);
     }
@@ -176,14 +176,14 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
 
     //maximum column sum.
     //norm 2 in the SVD
-    double opnorm1() const pure @safe
+    T opnorm1() const pure @safe
     {
         import Math = api.dm.math;
 
-        double f = 0;
+        T f = 0;
         foreach (j; 0 .. ColDim)
         {
-            double s = 0;
+            T s = 0;
             foreach (i; 0 .. RowDim)
             {
                 s += Math.abs!T(matrix[i][j]);
@@ -253,7 +253,7 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         return newMatrix;
     }
 
-    void fill(T val)  pure @safe
+    void fill(T val) pure @safe
     {
         foreach (rowIndex; 0 .. RowDim)
         {
@@ -264,7 +264,7 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         }
     }
 
-    void fillInit()  pure @safe
+    void fillInit() pure @safe
     {
         import std.traits : isFloatingPoint;
 
@@ -280,12 +280,12 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         fill(initValue);
     }
 
-    bool isSquare() const  nothrow pure @safe
+    bool isSquare() const nothrow pure @safe
     {
         return RowDim == ColDim;
     }
 
-    bool isEmpty() const  nothrow pure @safe
+    bool isEmpty() const nothrow pure @safe
     {
         return RowDim == 0;
     }
@@ -396,6 +396,8 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         return matrix[0].ptr;
     }
 
+    T* ptrRaw() => matrix[0].ptr;
+
     ref inout(T) value(size_t rowIndex, size_t columnIndex) inout @safe
     {
         if (rowIndex >= RowDim)
@@ -443,6 +445,11 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         return matrix[rowDim][start .. end];
     }
 
+    size_t sizeBytes()
+    {
+        return matrix.sizeof;
+    }
+
     string toString() const
     {
         import std.array : appender, join;
@@ -462,12 +469,12 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         return buffer.data;
     }
 
-    size_t rowDimension() const  nothrow pure @safe
+    size_t rowDimension() const nothrow pure @safe
     {
         return RowDim;
     }
 
-    size_t columnDimension() const  nothrow pure @safe
+    size_t columnDimension() const nothrow pure @safe
     {
         return ColDim;
     }

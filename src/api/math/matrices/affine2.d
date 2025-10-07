@@ -1,4 +1,4 @@
-module api.math.matrices.affine3;
+module api.math.matrices.affine2;
 
 import api.math.matrices.matrix;
 import api.math.geom2.vec2 : Vec2d;
