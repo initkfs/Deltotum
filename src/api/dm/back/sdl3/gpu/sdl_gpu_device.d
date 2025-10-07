@@ -243,7 +243,8 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         uint numFragUniformBuffers = 0,
         uint numFragStorageTextures = 0,
         SDL_GPURasterizerState* rasterState = null,
-        SDL_GPUDepthStencilState* stencilState = null
+        SDL_GPUDepthStencilState* stencilState = null,
+        SDL_GPUGraphicsPipelineTargetInfo* targetInfo = null
 
     )
     {
@@ -251,7 +252,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
         auto fragmentShader = newFragmentSPIRV(fragmentPath, numFragSamples, numFragStorageBuffers, numFragUniformBuffers, numFragStorageTextures);
 
-        auto pipeline = newPipeline(window, vertexShader, fragmentShader, rasterState, stencilState);
+        auto pipeline = newPipeline(window, vertexShader, fragmentShader, rasterState, stencilState, targetInfo);
 
         deleteShader(vertexShader);
         deleteShader(fragmentShader);
@@ -259,7 +260,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return pipeline;
     }
 
-    SdlGPUPipeline newPipeline(SDL_Window* window, SdlGPUShader vertexShader, SdlGPUShader fragmentShader, SDL_GPURasterizerState* rasterState = null, SDL_GPUDepthStencilState* stencilState = null)
+    SdlGPUPipeline newPipeline(SDL_Window* window, SdlGPUShader vertexShader, SdlGPUShader fragmentShader, SDL_GPURasterizerState* rasterState = null, SDL_GPUDepthStencilState* stencilState = null, SDL_GPUGraphicsPipelineTargetInfo* targetInfo = null)
     {
         SDL_GPUGraphicsPipelineCreateInfo info;
 
@@ -276,9 +277,14 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         info.vertex_input_state.num_vertex_attributes = vertexAttributes.length;
         info.vertex_input_state.vertex_attributes = vertexAttributes.ptr;
 
-        SDL_GPUColorTargetDescription[1] colorTargetDescriptions = colorTarget(window);
-        info.target_info.num_color_targets = colorTargetDescriptions.length;
-        info.target_info.color_target_descriptions = colorTargetDescriptions.ptr;
+        if (!targetInfo)
+        {
+            SDL_GPUColorTargetDescription[1] colorTargetDescriptions = colorTarget(window);
+            info.target_info.num_color_targets = colorTargetDescriptions.length;
+            info.target_info.color_target_descriptions = colorTargetDescriptions.ptr;
+        }else {
+            info.target_info = *targetInfo;
+        }
 
         if (rasterState)
         {
@@ -628,14 +634,14 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return vertexAttributes;
     }
 
-    bool startRenderPass(SDL_Window* currSdlWindow, SDL_FColor clearColor)
+    bool startRenderPass(SDL_Window* currSdlWindow, SDL_FColor clearColor, SDL_GPUDepthStencilTargetInfo* stencilInfo = null)
     {
         SDL_GPUColorTargetInfo[1] colorTargetInfo;
         colorTargetInfo[0].clear_color = clearColor;
         colorTargetInfo[0].load_op = SDL_GPU_LOADOP_CLEAR;
         colorTargetInfo[0].store_op = SDL_GPU_STOREOP_STORE;
 
-        return startRenderPass(colorTargetInfo, currSdlWindow);
+        return startRenderPass(colorTargetInfo, currSdlWindow, stencilInfo);
     }
 
     bool startRenderPass(SDL_GPUColorTargetInfo[] colorTargets, SDL_Window* currSdlWindow, SDL_GPUDepthStencilTargetInfo* stencilInfo = null)
@@ -898,7 +904,8 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
     {
         assert(state == GPUGraphicState.renderStart);
         assert(lastPass);
-        SDL_DrawGPUIndexedPrimitives(lastPass, cast(uint) numIndices, cast(uint) numInstances, cast(uint) firstIndex, vertexOffset, cast(uint) firstInstance);
+        SDL_DrawGPUIndexedPrimitives(lastPass, cast(uint) numIndices, cast(uint) numInstances, cast(
+                uint) firstIndex, vertexOffset, cast(uint) firstInstance);
     }
 
     void pushUniformFragmentData(uint slotIndex, void* data, size_t length)
@@ -906,6 +913,13 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         assert(state == GPUGraphicState.renderStart);
         assert(lastCmdBuff);
         SDL_PushGPUFragmentUniformData(lastCmdBuff, slotIndex, data, cast(uint) length);
+    }
+
+    void pushUniformVertexData(uint slotIndex, void* data, size_t length)
+    {
+        assert(state == GPUGraphicState.renderStart);
+        assert(lastCmdBuff);
+        SDL_PushGPUVertexUniformData(lastCmdBuff, slotIndex, data, cast(uint) length);
     }
 
     SDL_GPUColorTargetDescription[1] defaultColorTarget(SDL_Window* window)
@@ -996,6 +1010,27 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         stState.write_mask = 0xFF;
 
         return stState;
+    }
+
+    SDL_GPUDepthStencilState depthStencilState()
+    {
+        SDL_GPUDepthStencilState stState;
+
+        stState.enable_depth_test = true;
+        stState.enable_depth_write = true;
+        stState.enable_stencil_test = false;
+        stState.compare_op = SDL_GPU_COMPAREOP_LESS;
+        stState.write_mask = 0xFF;
+        return stState;
+    }
+
+    SDL_GPURasterizerState depthRasterizerState()
+    {
+        SDL_GPURasterizerState rstate;
+        rstate.cull_mode = SDL_GPU_CULLMODE_NONE,
+        rstate.fill_mode = SDL_GPU_FILLMODE_FILL,
+        rstate.front_face = SDL_GPU_FRONTFACE_COUNTER_CLOCKWISE;
+        return rstate;
     }
 
     SDL_GPUDepthStencilTargetInfo stencilTarget(SDL_GPUTexture* texture, float clearDepth = 0, ubyte clearStencil = 0, bool isCycle = true)

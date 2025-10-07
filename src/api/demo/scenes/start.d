@@ -41,29 +41,57 @@ class Start : GuiScene
     Random rnd;
 
     ComVertex[] vertices = [
-        ComVertex(-0.5f, -0.5f, 0.5f, 0.0f, 1.0f), 
-        ComVertex(0.5f, -0.5f, 0.5f, 1.0f, 1.0f), 
-        ComVertex(0.5f, 0.5f, 0.5f, 1.0f, 0.0f),
-        ComVertex(-0.5f, 0.5f, 0.5f, 0.0f, 0.0f),
-        ComVertex(0.5f, -0.5f, -0.5f, 0.0f, 1.0f),
-        ComVertex(-0.5f, -0.5f, -0.5f, 1.0f, 1.0f),
-        ComVertex(-0.5f, 0.5f, -0.5f, 1.0f, 0.0f),
-        ComVertex(0.5f, 0.5f, -0.5f, 0.0f, 0.0f), 
-        ComVertex(-0.5f, -0.5f, -0.5f, 0.0f, 1.0f),
-        ComVertex(-0.5f, -0.5f, 0.5f, 1.0f, 1.0f),
-        ComVertex(-0.5f, 0.5f, 0.5f, 1.0f, 0.0f),
-        ComVertex(-0.5f, 0.5f, -0.5f, 0.0f, 0.0f), 
-        ComVertex(0.5f, -0.5f, 0.5f, 0.0f, 1.0f),
-        ComVertex(0.5f, -0.5f, -0.5f, 1.0f, 1.0f),
-        ComVertex(0.5f, 0.5f, -0.5f, 1.0f, 0.0f),
-        ComVertex(0.5f, 0.5f, 0.5f, 0.0f, 0.0f),
-    ];
-    ushort[] indices = [
+        // Front face (Z = 0.5)
+        ComVertex(-0.5f, -0.5f, 0.5f, 0.0f, 1.0f), // 0: left bottom
+        ComVertex(0.5f, -0.5f, 0.5f, 1.0f, 1.0f), // 1: bottom right
+        ComVertex(0.5f, 0.5f, 0.5f, 1.0f, 0.0f), // 2: top right
+        ComVertex(-0.5f, 0.5f, 0.5f, 0.0f, 0.0f), // 3: top left
 
-        0, 1, 2, 0, 2, 3, 
-        4, 5, 6, 4, 6, 7, 
+        //back face (Z = -0.5) 
+        ComVertex(0.5f, -0.5f, -0.5f, 0.0f, 1.0f), // 4: bottom right
+        ComVertex(-0.5f, -0.5f, -0.5f, 1.0f, 1.0f), // 5: bottom left
+        ComVertex(-0.5f, 0.5f, -0.5f, 1.0f, 0.0f), // 6: top left
+        ComVertex(0.5f, 0.5f, -0.5f, 0.0f, 0.0f), // 7: top right
+
+        // Left face (X = -0.5)
+        ComVertex(-0.5f, -0.5f, -0.5f, 0.0f, 1.0f), // 8: bottom back
+        ComVertex(-0.5f, -0.5f, 0.5f, 1.0f, 1.0f), // 9: bottom front
+        ComVertex(-0.5f, 0.5f, 0.5f, 1.0f, 0.0f), // 10: top front
+        ComVertex(-0.5f, 0.5f, -0.5f, 0.0f, 0.0f), // 11: top back
+
+        // Right face (X = 0.5)
+        ComVertex(0.5f, -0.5f, 0.5f, 0.0f, 1.0f), // 12: bottom front
+        ComVertex(0.5f, -0.5f, -0.5f, 1.0f, 1.0f), // 13: bottom back
+        ComVertex(0.5f, 0.5f, -0.5f, 1.0f, 0.0f), // 14: top back
+        ComVertex(0.5f, 0.5f, 0.5f, 0.0f, 0.0f), // 15: top front
+
+        // Top face (Y = 0.5)
+        ComVertex(-0.5f, 0.5f, 0.5f, 0.0f, 1.0f), // 16: front left
+        ComVertex(0.5f, 0.5f, 0.5f, 1.0f, 1.0f), // 17: front right
+        ComVertex(0.5f, 0.5f, -0.5f, 1.0f, 0.0f), // 18: back rigth
+        ComVertex(-0.5f, 0.5f, -0.5f, 0.0f, 0.0f), // 19: back left
+
+        // Bottom face (Y = -0.5)
+        ComVertex(-0.5f, -0.5f, -0.5f, 0.0f, 1.0f), // 20: back left
+        ComVertex(0.5f, -0.5f, -0.5f, 1.0f, 1.0f), // 21: back right
+        ComVertex(0.5f, -0.5f, 0.5f, 1.0f, 0.0f), // 22: front right
+        ComVertex(-0.5f, -0.5f, 0.5f, 0.0f, 0.0f) // 23: front left
+    ];
+
+    //ccw
+    ushort[] indices = [
+        // front face
+        0, 1, 2, 0, 2, 3,
+        // back face
+        4, 5, 6, 4, 6, 7,
+        //left face
         8, 9, 10, 8, 10, 11,
-        12, 13, 14, 12, 14, 15
+        // right face
+        12, 13, 14, 12, 14, 15,
+        //top face
+        16, 17, 18, 16, 18, 19,
+        // bottom face
+        20, 21, 22, 20, 22, 23
     ];
 
     SDL_GPUBuffer* vertexBuffer;
@@ -71,6 +99,8 @@ class Start : GuiScene
     SDL_GPUTexture* newTexture;
     SDL_GPUSampler* sampler;
     SDL_GPUBuffer* indexBuffer;
+
+    SDL_GPUTexture* sceneDepthTexture;
 
     struct UniformBuffer
     {
@@ -104,7 +134,19 @@ class Start : GuiScene
         auto vertShaderFile = context.app.userDir ~ "/shaders/TexturedBox.vert.spv";
         auto fragShaderFile = context.app.userDir ~ "/shaders/TexturedBox.frag.spv";
 
-        fillPipeline = gpu.newPipeline(vertShaderFile, fragShaderFile, 0, 0, 1, 0, 1, 0, 0, 0);
+        SDL_GPUGraphicsPipelineTargetInfo targetInfo;
+
+        SDL_GPUColorTargetDescription[1] targetDesc;
+        targetDesc[0].format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
+        targetInfo.num_color_targets = 1;
+        targetInfo.color_target_descriptions = targetDesc.ptr;
+        targetInfo.has_depth_stencil_target = true;
+        targetInfo.depth_stencil_format = SDL_GPU_TEXTUREFORMAT_D16_UNORM;
+
+        auto stencilState = gpu.dev.depthStencilState;
+        auto rastState = gpu.dev.depthRasterizerState;
+
+        fillPipeline = gpu.newPipeline(vertShaderFile, fragShaderFile, 0, 0, 1, 0, 1, 0, 1, 0, &rastState, &stencilState, &targetInfo);
 
         auto texturePath = context.app.userDir ~ "/container.bmp";
 
@@ -162,6 +204,19 @@ class Start : GuiScene
 
         gpu.dev.unmapTransferBuffer(transferBuffer2);
 
+        SDL_GPUTextureCreateInfo depthInfo;
+        depthInfo.type = SDL_GPU_TEXTURETYPE_2D;
+        depthInfo.width = cast(int) window.width;
+        ;
+        depthInfo.height = cast(int) window.height;
+        depthInfo.layer_count_or_depth = 1;
+        depthInfo.num_levels = 1;
+        depthInfo.sample_count = SDL_GPU_SAMPLECOUNT_1;
+        depthInfo.format = SDL_GPU_TEXTUREFORMAT_D16_UNORM;
+        depthInfo.usage = SDL_GPU_TEXTUREUSAGE_SAMPLER | SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET;
+
+        sceneDepthTexture = gpu.dev.newTexture(&depthInfo);
+
         assert(gpu.dev.startCopyPass);
 
         gpu.dev.unmapAndUpload(transferBuffer, vertexBuffer, ComVertex.sizeof * vertices.length, 0, 0, false);
@@ -185,10 +240,10 @@ class Start : GuiScene
         import api.math.geom2.vec3;
 
         view = lookAt(
-            Vec3f(0, 0, -3), 
+            Vec3f(0, 0, -3),
             Vec3f(0, 0, 0),
             Vec3f(0, 1, 0)
-            
+
         );
 
         projection = perspectiveMatrix(45.0f, window.width / window.height, 0.1f, 100.0f);
@@ -199,10 +254,10 @@ class Start : GuiScene
         matrixBuff[2] = projection;
         //createDebugger;
 
-        import api.dm.kit.sprites2d.tweens.pause_tween2d: PauseTween2d;
+        import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
     }
 
-    float angle  = 9;
+    float angle = 9;
 
     override void update(double dt)
     {
@@ -221,12 +276,26 @@ class Start : GuiScene
     {
         super.draw;
 
-        assert(gpu.startRenderPass);
+        SDL_GPUDepthStencilTargetInfo depthStencilTargetInfo;
+        depthStencilTargetInfo.texture = sceneDepthTexture;
+        depthStencilTargetInfo.cycle = true;
+        depthStencilTargetInfo.clear_depth = 1;
+        depthStencilTargetInfo.clear_stencil = 0;
+        depthStencilTargetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
+        depthStencilTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
+        depthStencilTargetInfo.stencil_load_op = SDL_GPU_LOADOP_CLEAR;
+        depthStencilTargetInfo.stencil_store_op = SDL_GPU_STOREOP_STORE;
+
+        assert(gpu.startRenderPass(&depthStencilTargetInfo));
 
         gpu.dev.bindPipeline(fillPipeline);
 
         //timeUniform.time = SDL_GetTicks() / 250.0;
-        gpu.dev.pushUniformFragmentData(0, matrixBuff.ptr, matrixBuff.sizeof);
+        gpu.dev.pushUniformVertexData(0, matrixBuff.ptr, matrixBuff.sizeof);
+
+        float[2] planes = [10, 60];
+
+        gpu.dev.pushUniformFragmentData(0, planes.ptr, planes.sizeof);
 
         gpu.dev.bindVertexBuffer(vertexBuffer);
         gpu.dev.bindIndexBuffer(indexBuffer);

@@ -56,6 +56,8 @@ class GPUGraphic : LoggableUnit
     bool startRenderPass() => dev.startRenderPass(currSdlWindow, clearColor);
     bool startRenderPass(SDL_GPUColorTargetInfo[] colorTargets) => dev.startRenderPass(
         colorTargets, currSdlWindow);
+    bool startRenderPass(SDL_GPUDepthStencilTargetInfo* depthInfo) => dev.startRenderPass(
+    currSdlWindow, clearColor, depthInfo);
 
     SdlGPUPipeline newPipeline(
         string vertexPath,
@@ -67,10 +69,13 @@ class GPUGraphic : LoggableUnit
         uint numFragSamples = 0,
         uint numFragStorageBuffers = 0,
         uint numFragUniformBuffers = 0,
-        uint numFragStorageTextures = 0
+        uint numFragStorageTextures = 0,
+        SDL_GPURasterizerState* rasterState = null,
+        SDL_GPUDepthStencilState* stencilState = null,
+        SDL_GPUGraphicsPipelineTargetInfo* colorDesc = null
     )
     {
-        return dev.newPipeline(currSdlWindow, vertexPath, fragmentPath, numVertexSamples, numVertexStorageBuffers, numVertexUniformBuffers, numVertexStorageTextures, numFragSamples, numFragStorageBuffers, numFragUniformBuffers, numFragStorageTextures);
+        return dev.newPipeline(currSdlWindow, vertexPath, fragmentPath, numVertexSamples, numVertexStorageBuffers, numVertexUniformBuffers, numVertexStorageTextures, numFragSamples, numFragStorageBuffers, numFragUniformBuffers, numFragStorageTextures, rasterState, stencilState, colorDesc);
     }
 
 }
