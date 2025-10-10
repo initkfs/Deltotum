@@ -2,6 +2,9 @@ module api.math.matrices.affine3;
 
 import api.math.matrices.matrix;
 import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec3: Vec3f;
+
+import Math = api.math;
 
 /**
  * Authors: initkfs
@@ -153,20 +156,11 @@ Matrix4x4f translateMatrix(float offsetX, float offsetY, float offsetZ)
     matrix.fillInit;
 
     matrix[0][0] = 1;
-    matrix[0][1] = 0;
-    matrix[0][2] = 0;
     matrix[0][3] = offsetX;
-    matrix[1][0] = 0;
     matrix[1][1] = 1;
-    matrix[1][2] = 0;
     matrix[1][3] = offsetY;
-    matrix[2][0] = 0;
-    matrix[2][1] = 0;
     matrix[2][2] = 1;
     matrix[2][3] = offsetZ;
-    matrix[3][0] = 0;
-    matrix[3][1] = 0;
-    matrix[3][2] = 0;
     matrix[3][3] = 1;
 
     return matrix;
@@ -177,22 +171,11 @@ Matrix4x4f scaleMatrix(float scaleX, float scaleY, float scaleZ)
     import Math = api.math;
 
     Matrix4x4f matrix;
+    matrix.fillInit;
 
     matrix[0][0] = scaleX;
-    matrix[0][1] = 0;
-    matrix[0][2] = 0;
-    matrix[0][3] = 0;
-    matrix[1][0] = 0;
     matrix[1][1] = scaleY;
-    matrix[1][2] = 0;
-    matrix[1][3] = 0;
-    matrix[2][0] = 0;
-    matrix[2][1] = 0;
     matrix[2][2] = scaleZ;
-    matrix[2][3] = 0;
-    matrix[3][0] = 0;
-    matrix[3][1] = 0;
-    matrix[3][2] = 0;
     matrix[3][3] = 1;
 
     return matrix;
@@ -223,8 +206,6 @@ Matrix4x4f perspectiveMatrix(float fovYDeg, float aspectRatio, float nearZ = 0.1
     matrix[3][2] = -(farZ * nearZ) / (farZ - nearZ);
     return matrix;
 }
-
-import api.math.geom2.vec3 : Vec3f;
 
 Matrix4x4f lookAt(Vec3f eye, Vec3f target, Vec3f up)
 {

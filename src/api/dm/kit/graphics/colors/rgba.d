@@ -451,6 +451,8 @@ struct RGBA
 
     RGBAb toRGBAb() => RGBAb(r, g, b, aByte);
 
+    float[3] toRGBArray() => [r, g, b];
+
     static
     {
         RGBA transparent() nothrow pure @safe => RGBA(0, 0, 0, 0);

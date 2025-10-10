@@ -18,6 +18,20 @@ struct Vec3f
     float y = 0;
     float z = 0;
 
+    Vec3f add(Vec3f other) const  nothrow pure @safe
+    {
+        return Vec3f(x + other.x, y + other.y, z + other.z);
+    }
+
+     Vec3f sub(Vec3f other) const  nothrow pure @safe
+    {
+        return Vec3f(x - other.x, y - other.y, z - other.z);
+    }
+
+    Vec3f scale(float v){
+        return Vec3f(x * v, y * v, z * v);
+    }
+
     Vec3f normalize()
     {
         float length = Math.sqrt(x * x + y * y + z * z);

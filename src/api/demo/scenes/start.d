@@ -15,6 +15,7 @@ import api.dm.kit.sprites2d.images;
 import Math = api.dm.math;
 import api.math.random : Random;
 import api.math.geom2.vec2 : Vec2d;
+import api.math.geom2.vec3 : Vec3f;
 
 import api.dm.kit.factories;
 
@@ -27,6 +28,7 @@ import api.dm.back.sdl3.gpu.sdl_gpu_shader : SdlGPUShader;
 import api.dm.back.sdl3.externs.csdl3;
 
 import api.math.matrices.matrix;
+import api.core.utils.text;
 
 /**
  * Authors: initkfs
@@ -78,6 +80,19 @@ class Start : GuiScene
         ComVertex(-0.5f, -0.5f, 0.5f, 0.0f, 0.0f) // 23: front left
     ];
 
+    Vec3f[] cubePositions = [
+        Vec3f(0.0f, 0.0f, 0.0f),
+        Vec3f(2.0f, 5.0f, -15.0f),
+        Vec3f(-1.5f, -2.2f, -2.5f),
+        Vec3f(-3.8f, -2.0f, -12.3f),
+        Vec3f(2.4f, -0.4f, -3.5f),
+        Vec3f(-1.7f, 3.0f, -7.5f),
+        Vec3f(1.3f, -2.0f, -2.5f),
+        Vec3f(1.5f, 2.0f, -2.5f),
+        Vec3f(1.5f, 0.2f, -1.5f),
+        Vec3f(-1.3f, 1.0f, -1.5f)
+    ];
+
     //ccw
     ushort[] indices = [
         // front face
@@ -94,11 +109,18 @@ class Start : GuiScene
         20, 21, 22, 20, 22, 23
     ];
 
+    ComVertex[] vertices2;
+    ushort[] indices2;
+
     SDL_GPUBuffer* vertexBuffer;
     SDL_GPUTransferBuffer* transferBuffer;
     SDL_GPUTexture* newTexture;
     SDL_GPUSampler* sampler;
     SDL_GPUBuffer* indexBuffer;
+
+    SDL_GPUBuffer* lightBuffer;
+    SDL_GPUTransferBuffer* lightTransferBuffer;
+    SDL_GPUBuffer* lightIndexBuffer;
 
     SDL_GPUTexture* sceneDepthTexture;
 
@@ -112,19 +134,25 @@ class Start : GuiScene
 
     align(16)
     {
-        Matrix4x4f transform;
-
         Matrix4x4f model;
         Matrix4x4f view;
         Matrix4x4f projection;
+
+        Matrix4x4f lmodel;
+        Matrix4x4f lview;
+        Matrix4x4f lprojection;
     }
 
     Matrix4x4f[3] matrixBuff;
+    Matrix4x4f[3] lmatrixBuff;
 
     override void create()
     {
         super.create;
         rnd = new Random;
+
+        vertices2 = vertices.dup;
+        indices2 = indices.dup;
 
         import api.dm.gui.windows.gui_window : GuiWindow;
 
@@ -137,7 +165,7 @@ class Start : GuiScene
         SDL_GPUGraphicsPipelineTargetInfo targetInfo;
 
         SDL_GPUColorTargetDescription[1] targetDesc;
-        targetDesc[0].format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
+        targetDesc[0].format = gpu.getSwapchainTextureFormat;
         targetInfo.num_color_targets = 1;
         targetInfo.color_target_descriptions = targetDesc.ptr;
         targetInfo.has_depth_stencil_target = true;
@@ -207,7 +235,7 @@ class Start : GuiScene
         SDL_GPUTextureCreateInfo depthInfo;
         depthInfo.type = SDL_GPU_TEXTURETYPE_2D;
         depthInfo.width = cast(int) window.width;
-        ;
+
         depthInfo.height = cast(int) window.height;
         depthInfo.layer_count_or_depth = 1;
         depthInfo.num_levels = 1;
@@ -217,10 +245,19 @@ class Start : GuiScene
 
         sceneDepthTexture = gpu.dev.newTexture(&depthInfo);
 
+        lightBuffer = gpu.dev.newGPUBufferVertex(vertices2.length * ComVertex.sizeof);
+        lightTransferBuffer = gpu.dev.newTransferUploadBuffer(len);
+        gpu.dev.copyToBuffer(lightTransferBuffer, false, vertices2, indices2);
+        lightIndexBuffer = gpu.dev.newGPUBufferIndex(ushort.sizeof * indices2.length);
+
         assert(gpu.dev.startCopyPass);
 
         gpu.dev.unmapAndUpload(transferBuffer, vertexBuffer, ComVertex.sizeof * vertices.length, 0, 0, false);
         gpu.dev.unmapAndUpload(transferBuffer, indexBuffer, ushort.sizeof * indices.length, ComVertex.sizeof * vertices
+                .length, 0, false);
+
+        gpu.dev.unmapAndUpload(lightTransferBuffer, lightBuffer, ComVertex.sizeof * vertices2.length, 0, 0, false);
+        gpu.dev.unmapAndUpload(lightTransferBuffer, lightIndexBuffer, ushort.sizeof * indices.length, ComVertex.sizeof * vertices2
                 .length, 0, false);
 
         gpu.dev.uploadTexture(transferBuffer2, newTexture, w, h);
@@ -229,8 +266,6 @@ class Start : GuiScene
 
         gpu.dev.deleteTransferBuffer(transferBuffer);
         gpu.dev.deleteTransferBuffer(transferBuffer2);
-
-        transform.fillInit;
 
         import api.math.matrices.affine3;
 
@@ -243,21 +278,87 @@ class Start : GuiScene
             Vec3f(0, 0, -3),
             Vec3f(0, 0, 0),
             Vec3f(0, 1, 0)
-
         );
 
+        lmodel = scaleMatrix(0.2, 0.2, 0.2f).multiply(translateMatrix(10, 10, 20));
+
         projection = perspectiveMatrix(45.0f, window.width / window.height, 0.1f, 100.0f);
-        transform = projection;
 
         matrixBuff[0] = model;
         matrixBuff[1] = view;
         matrixBuff[2] = projection;
         //createDebugger;
+        lmatrixBuff[0] = lmodel;
+        lmatrixBuff[1] = view;
+        lmatrixBuff[2] = projection;
 
-        import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
+        lastCursorX = window.width;
+        lastCursorY = window.height;
+
+        import api.dm.com.inputs.com_keyboard : ComKeyName;
+
+        onKeyPress ~= (ref e) {
+            if (e.keyName == ComKeyName.key_lctrl)
+            {
+                auto pos = input.pointerPos;
+                lastCursorX = pos.x;
+                lastCursorY = pos.y;
+            }
+        };
+
+        onPointerWheel ~= (ref e) {
+            auto dy = e.y;
+
+            if (fov >= 1.0f && fov <= 45.0f)
+                fov -= dy;
+            if (fov <= 1.0f)
+                fov = 1.0f;
+            if (fov >= 45.0f)
+                fov = 45.0f;
+
+            import std;
+            writeln(fov, " ", e);
+        };
+
+        onPointerMove ~= (ref e) {
+
+            if (!input.keyboard.keyModifier.isCtrl)
+            {
+                return;
+            }
+
+            double xpos = e.x;
+            double ypos = e.y;
+
+            auto xoffset = xpos - lastCursorX;
+            auto yoffset = lastCursorY - ypos; //Y up
+
+            lastCursorX = xpos;
+            lastCursorY = ypos;
+
+            double sensitivity = 0.0512f;
+            xoffset *= sensitivity;
+            yoffset *= sensitivity;
+
+            cursorYaw += xoffset;
+            cursorPitch += yoffset;
+
+            if (cursorPitch > 89.0f) //cos > 90 = neg
+                cursorPitch = 89.0f;
+            if (cursorPitch < -89.0f)
+                cursorPitch = -89.0f;
+
+            Vec3f front;
+            front.x = -Math.cos(Math.degToRad(cursorPitch)) * Math.cos(Math.degToRad(cursorYaw));
+            front.y = Math.sin(Math.degToRad(cursorPitch));
+            front.z = Math.cos(Math.degToRad(cursorPitch)) * Math.sin(Math.degToRad(cursorYaw));
+            cameraFront = front.normalize;
+        };
+
     }
 
     float angle = 9;
+    float time;
 
     override void update(double dt)
     {
@@ -267,10 +368,53 @@ class Start : GuiScene
 
         model = rotateMatrix((angle = (angle + 1)) % 360, 1.0f, 1.0f, 0.0f);
 
+        time = SDL_GetTicks / 1000.0;
+
         matrixBuff[0] = model;
         matrixBuff[1] = view;
+
+        projection = perspectiveMatrix(fov, window.width / window.height, 0.1f, 100.0f);
+
         matrixBuff[2] = projection;
+
+        view = lookAt(cameraPos, cameraPos.add(cameraFront), cameraUp);
+
+        import api.dm.com.inputs.com_keyboard : ComKeyName;
+
+        //* dt
+        float cameraSpeed = 0.05f;
+
+        if (input.isPressedKey(ComKeyName.key_w))
+        {
+            cameraPos = cameraPos.add(cameraFront.scale(cameraSpeed));
+        }
+
+        if (input.isPressedKey(ComKeyName.key_s))
+        {
+            cameraPos = cameraPos.sub(cameraFront.scale(cameraSpeed));
+        }
+
+        if (input.isPressedKey(ComKeyName.key_d))
+        {
+            cameraPos = cameraPos.sub(cameraFront.cross(cameraUp).normalize.scale(cameraSpeed));
+        }
+
+        if (input.isPressedKey(ComKeyName.key_a))
+        {
+            cameraPos = cameraPos.add(cameraFront.cross(cameraUp).normalize.scale(cameraSpeed));
+        }
     }
+
+    double lastCursorX = 0;
+    double lastCursorY = 0;
+    double cursorYaw = -90.0f;
+    double cursorPitch = 0.0f;
+    bool isFirstCursor;
+
+    Vec3f cameraPos = Vec3f(0.0f, 0.0f, 3.0f);
+    Vec3f cameraFront = Vec3f(0.0f, 0.0f, -1.0f);
+    Vec3f cameraUp = Vec3f(0.0f, 1.0f, 0.0f);
+    double fov = 45;
 
     override void draw()
     {
@@ -293,7 +437,13 @@ class Start : GuiScene
         //timeUniform.time = SDL_GetTicks() / 250.0;
         gpu.dev.pushUniformVertexData(0, matrixBuff.ptr, matrixBuff.sizeof);
 
-        float[2] planes = [10, 60];
+        auto lightColor = RGBA.white;
+        auto objectColor = RGBA.white;
+
+        float[8] planes = [
+            10, 200, lightColor.r, lightColor.g, lightColor.b, objectColor.r,
+            objectColor.g, objectColor.b
+        ];
 
         gpu.dev.pushUniformFragmentData(0, planes.ptr, planes.sizeof);
 
@@ -301,8 +451,12 @@ class Start : GuiScene
         gpu.dev.bindIndexBuffer(indexBuffer);
         gpu.dev.bindFragmentSamplers(newTexture, sampler);
 
-        //gpu.dev.draw(3, 1);
         gpu.dev.drawIndexed(indices.length, 1, 0, 0, 0);
+
+        // gpu.dev.pushUniformVertexData(0, lmatrixBuff.ptr, lmatrixBuff.sizeof);
+
+        // gpu.dev.bindVertexBuffer(lightBuffer);
+        // gpu.dev.drawIndexed(indices.length, 1, 0, 0, 0);
 
         assert(gpu.dev.endRenderPass);
     }

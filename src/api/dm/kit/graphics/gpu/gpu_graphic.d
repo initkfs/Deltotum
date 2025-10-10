@@ -78,4 +78,6 @@ class GPUGraphic : LoggableUnit
         return dev.newPipeline(currSdlWindow, vertexPath, fragmentPath, numVertexSamples, numVertexStorageBuffers, numVertexUniformBuffers, numVertexStorageTextures, numFragSamples, numFragStorageBuffers, numFragUniformBuffers, numFragStorageTextures, rasterState, stencilState, colorDesc);
     }
 
+    SDL_GPUTextureFormat getSwapchainTextureFormat() => dev.getSwapchainTextureFormat(currSdlWindow);
+
 }
