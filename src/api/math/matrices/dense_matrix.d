@@ -46,6 +46,13 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         }
     }
 
+    static typeof(this) onesDiag(T initValue = 1)
+    {
+        typeof(this) result;
+        result.onMainDiagonal((ref v) { v = initValue; return true; });
+        return result;
+    }
+
     void eachRow(scope bool delegate(size_t rowIndex, scope const T[]) pure @safe onRow) const pure @safe
     {
         foreach (size_t rowIndex, const ref row; matrix)
@@ -152,6 +159,19 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
             return true;
         });
         return result;
+    }
+
+    void onMainDiagonal(scope bool delegate(ref T v) onDiagValueIsContinue)
+    {
+        assert(onDiagValueIsContinue);
+
+        foreach (size_t rowIndex, ref row; matrix)
+        {
+            if (!onDiagValueIsContinue(matrix[rowIndex][rowIndex]))
+            {
+                break;
+            }
+        }
     }
 
     T[] mainDiagonal() const pure @safe
@@ -384,6 +404,8 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         return sum;
     }
 
+    inout(typeof(matrix)) array() inout => matrix;
+
     T[][] toArrayCopy() const pure @safe
     {
         T[][] result;
@@ -483,6 +505,14 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
 unittest
 {
     import std.math.operations : isClose;
+
+    immutable onceM = DenseMatrix!(int, 4, 4).onesDiag;
+    assert(onceM.array == [
+        [1, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 1]
+    ]);
 
     immutable m0 = DenseMatrix!(double, 1, 1)([[0]]);
     assert(m0.transpose.toArrayCopy == [[0]]);

@@ -179,6 +179,20 @@ struct DenseBuffer(T, size_t Capacity = 256,
         return true;
     }
 
+    //TODO remove copypaste with append(T[])
+    bool append(const(T)[] value)  nothrow @safe
+    {
+        size_t newLength = _length + value.length;
+        if (newLength >= Capacity)
+        {
+            return false;
+        }
+        size_t oldLength = _length;
+        _length = newLength;
+        opSlice(oldLength, newLength)[] = value;
+        return true;
+    }
+
     bool append(scope T[] value)  nothrow @safe
     {
         //TODO overflow
