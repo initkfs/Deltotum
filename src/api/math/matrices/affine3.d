@@ -182,28 +182,29 @@ Matrix4x4f scaleMatrix(float scaleX, float scaleY, float scaleZ)
 }
 
 /** 
- * 
- * [  f/aspect    0       0           0      ]
-   [     0        f       0           0      ]
-   [     0        0    (far+near)/(near-far)   (2*far*near)/(near-far) ]
-   [     0        0       -1          0      ]
+* https://learn.microsoft.com/en-en/windows/win32/direct3d9/d3dxmatrixperspectivefovrh
+ * xScale     0          0              0
+   0        yScale       0              0
+   0        0        zf/(zn-zf)        -1
+   0        0        zn*zf/(zn-zf)      0 
  */
-Matrix4x4f perspectiveMatrix(float fovYDeg, float aspectRatio, float nearZ = 0.1, float farZ = 100)
+Matrix4x4f perspectiveMatrixRH(float fovYDeg, float aspectRatio, float nearZ = 0.1, float farZ = 100)
 {
     import Math = api.math;
 
     Matrix4x4f matrix;
     matrix.fillInit;
-
+    
     float fovYRad = Math.degToRad(fovYDeg);
     float tanHalfFov = Math.tan(fovYRad * 0.5f);
     float f = 1.0f / tanHalfFov;
 
     matrix[0][0] = f / aspectRatio;
     matrix[1][1] = f;
-    matrix[2][2] = farZ / (farZ - nearZ);
-    matrix[2][3] = 1.0f;
-    matrix[3][2] = -(farZ * nearZ) / (farZ - nearZ);
+    matrix[2][2] = farZ / (nearZ - farZ);
+    matrix[2][3] = -1.0f;
+    matrix[3][2] = (nearZ * farZ) / (nearZ - farZ);
+	
     return matrix;
 }
 
@@ -211,27 +212,31 @@ Matrix4x4f lookAt(Vec3f eye, Vec3f target, Vec3f up)
 {
     import Math = api.math;
 
-    Vec3f z = target.subtract(eye).normalize;
-    Vec3f x = up.cross(z).normalize;
-    Vec3f y = z.cross(x);
+    Vec3f toTarget = eye.sub(target);
+
+	Vec3f va = toTarget.normalize;
+	Vec3f vb = up.cross(va).normalize;
+	Vec3f vc = va.cross(vb);
 
     Matrix4x4f view;
     view.fillInit;
 
-    view[0][0] = x.x;
-    view[0][1] = x.y;
-    view[0][2] = x.z;
-    view[1][0] = y.x;
-    view[1][1] = y.y;
-    view[1][2] = y.z;
-    view[2][0] = z.x;
-    view[2][1] = z.y;
-    view[2][2] = z.z;
+    view[0][0] = vb.x;
+    view[0][1] = vc.x;
+    view[0][2] = va.x;
 
-    view[3][0] = -x.dot(eye);
-    view[3][1] = -y.dot(eye);
-    view[3][2] = -z.dot(eye);
-    view[3][3] = 1.0f;
+    view[1][0] = vb.y;
+    view[1][1] = vc.y;
+    view[1][2] = va.y;
+
+    view[2][0] = vb.z;
+    view[2][1] = vc.z;
+    view[2][2] = va.z;
+
+    view[3][0] = -vb.dot(eye);
+    view[3][1] = -vc.dot(eye);
+    view[3][2] = -va.dot(eye);
+    view[3][3] = 1;
 
     return view;
 }

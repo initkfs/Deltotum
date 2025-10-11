@@ -1027,7 +1027,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
     SDL_GPURasterizerState depthRasterizerState()
     {
         SDL_GPURasterizerState rstate;
-        rstate.cull_mode = SDL_GPU_CULLMODE_BACK,
+        rstate.cull_mode = SDL_GPU_CULLMODE_FRONT,
         rstate.fill_mode = SDL_GPU_FILLMODE_FILL,
         rstate.front_face = SDL_GPU_FRONTFACE_CLOCKWISE;
         return rstate;

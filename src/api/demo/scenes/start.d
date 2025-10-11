@@ -280,9 +280,9 @@ class Start : GuiScene
             Vec3f(0, 1, 0)
         );
 
-        lmodel = scaleMatrix(0.2, 0.2, 0.2f).multiply(translateMatrix(10, 10, 20));
+        lmodel = scaleMatrix(0.5, 0.5, 0.5f).multiply(translateMatrix(0, 2.5, 0));
 
-        projection = perspectiveMatrix(45.0f, window.width / window.height, 0.1f, 100.0f);
+        projection = perspectiveMatrixRH(45.0f, window.width / window.height, 0.1f, 100.0f);
 
         matrixBuff[0] = model;
         matrixBuff[1] = view;
@@ -315,9 +315,6 @@ class Start : GuiScene
                 fov = 1.0f;
             if (fov >= 45.0f)
                 fov = 45.0f;
-
-            import std;
-            writeln(fov, " ", e);
         };
 
         onPointerMove ~= (ref e) {
@@ -336,7 +333,7 @@ class Start : GuiScene
             lastCursorX = xpos;
             lastCursorY = ypos;
 
-            double sensitivity = 0.0512f;
+            double sensitivity = 0.055f;
             xoffset *= sensitivity;
             yoffset *= sensitivity;
 
@@ -373,9 +370,12 @@ class Start : GuiScene
         matrixBuff[0] = model;
         matrixBuff[1] = view;
 
-        projection = perspectiveMatrix(fov, window.width / window.height, 0.1f, 100.0f);
+        lmatrixBuff[1] = view;
+
+        projection = perspectiveMatrixRH(fov, window.width / window.height, 0.1f, 100.0f);
 
         matrixBuff[2] = projection;
+        lmatrixBuff[2]  = projection;
 
         view = lookAt(cameraPos, cameraPos.add(cameraFront), cameraUp);
 
@@ -440,9 +440,11 @@ class Start : GuiScene
         auto lightColor = RGBA.white;
         auto objectColor = RGBA.white;
 
+        float[4] la = lightColor.toRGBArrayF;
+        float[4] oa = objectColor.toRGBArrayF;
+
         float[8] planes = [
-            10, 200, lightColor.r, lightColor.g, lightColor.b, objectColor.r,
-            objectColor.g, objectColor.b
+            10, 1000, la[0], la[1], la[2], oa[0], oa[1], oa[2]
         ];
 
         gpu.dev.pushUniformFragmentData(0, planes.ptr, planes.sizeof);
@@ -454,8 +456,7 @@ class Start : GuiScene
         gpu.dev.drawIndexed(indices.length, 1, 0, 0, 0);
 
         // gpu.dev.pushUniformVertexData(0, lmatrixBuff.ptr, lmatrixBuff.sizeof);
-
-        // gpu.dev.bindVertexBuffer(lightBuffer);
+        // gpu.dev.pushUniformFragmentData(0, planes.ptr, planes.sizeof);
         // gpu.dev.drawIndexed(indices.length, 1, 0, 0, 0);
 
         assert(gpu.dev.endRenderPass);
