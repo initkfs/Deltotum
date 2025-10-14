@@ -120,7 +120,7 @@ struct Vec2d
     {
         import Math = api.dm.math;
 
-        return dotProduct(other) / (magnitude * other.magnitude);
+        return dot(other) / (magnitude * other.magnitude);
     }
 
     Vec2d scale(double factor) const  nothrow pure @safe
@@ -189,13 +189,13 @@ struct Vec2d
     Vec2d projectTo(Vec2d other) const  nothrow pure @safe
     {
         const norm = normalize;
-        const otherProject = norm.scale(norm.dotProduct(other));
+        const otherProject = norm.scale(norm.dot(other));
         return otherProject;
     }
 
     double project(Vec2d other) const  nothrow pure @safe
     {
-        const dop = dotProduct(other);
+        const dop = dot(other);
         const otherLen = other.length;
         return dop / otherLen;
     }
@@ -206,7 +206,7 @@ struct Vec2d
         return Vec2d(x / factor, y / factor);
     }
 
-    double dotProduct(Vec2d other) const  nothrow pure @safe
+    double dot(Vec2d other) const  nothrow pure @safe
     {
         return x * other.x + y * other.y;
     }
@@ -268,7 +268,6 @@ struct Vec2d
 
     double angleDeg(Vec2d vec) const  nothrow pure @safe
     {
-
         immutable anleDeg = Math.radToDeg(angleRad(vec));
         return anleDeg;
     }
@@ -510,7 +509,7 @@ struct Vec2d
         assert(horizontalReflect.x == -5);
         assert(horizontalReflect.y == 6);
 
-        double dot = Vec2d(5, 6).dotProduct(Vec2d(2, 4));
+        double dot = Vec2d(5, 6).dot(Vec2d(2, 4));
         assert(dot == 34);
 
         auto mVec1 = Vec2d(23, 25);

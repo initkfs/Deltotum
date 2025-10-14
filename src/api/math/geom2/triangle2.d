@@ -28,11 +28,11 @@ struct Triangle2d
         immutable Vec2d v1 = c - a;
         immutable Vec2d v2 = p - a;
 
-        immutable double d00 = v0.dotProduct(v0);
-        immutable double d01 = v0.dotProduct(v1);
-        immutable double d11 = v1.dotProduct(v1);
-        immutable double d20 = v2.dotProduct(v0);
-        immutable double d21 = v2.dotProduct(v1);
+        immutable double d00 = v0.dot(v0);
+        immutable double d01 = v0.dot(v1);
+        immutable double d11 = v1.dot(v1);
+        immutable double d20 = v2.dot(v0);
+        immutable double d21 = v2.dot(v1);
 
         immutable double denom = d00 * d11 - d01 * d01;
         immutable x = (d11 * d20 - d01 * d21) / denom;

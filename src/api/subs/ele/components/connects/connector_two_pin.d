@@ -291,7 +291,7 @@ abstract class ConnectorTwoPin : BaseComponent
         foreach (ref point; points)
         {
             if ((start.add(point) - fromPin.pos)
-                .dotProduct(direction) > (toPin.pos - fromPin.pos).length)
+                .dot(direction) > (toPin.pos - fromPin.pos).length)
             {
                 point = Vec2d(0, 0);
                 continue;
