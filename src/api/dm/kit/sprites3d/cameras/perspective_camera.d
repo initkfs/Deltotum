@@ -1,11 +1,11 @@
-module api.dm.kit.scene3d.perspective_camera;
+module api.dm.kit.sprites3d.cameras.perspective_camera;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.scenes.scene2d : Scene2d;
 
 import Math = api.math;
 import api.math.geom2.vec3 : Vec3f;
-import api.math.matrices.matrix: Matrix4x4f;
+import api.math.matrices.matrix : Matrix4x4f;
 import api.math.matrices.affine3;
 
 /**
@@ -27,12 +27,15 @@ class PerspectiveCamera : Sprite2d
     Vec3f cameraPos = Vec3f(0.0f, 0.0f, 3.0f);
     Vec3f cameraFront = Vec3f(0.0f, 0.0f, -1.0f);
     Vec3f cameraUp = Vec3f(0.0f, 1.0f, 0.0f);
-    
+
     double fov = 45;
 
-    Matrix4x4f view;
-    //TODO extract perspective
-    Matrix4x4f projection;
+    align(16)
+    {
+        Matrix4x4f view;
+        //TODO extract perspective
+        Matrix4x4f projection;
+    }
 
     this(Scene2d targetScene)
     {
