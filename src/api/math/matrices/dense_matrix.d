@@ -263,6 +263,7 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
     DenseMatrix!(T, RowDim, ColDim) identity() const pure @safe
     {
         typeof(return) newMatrix;
+        newMatrix.fillInit;
         foreach (i; 0 .. RowDim)
         {
             foreach (j; 0 .. ColDim)

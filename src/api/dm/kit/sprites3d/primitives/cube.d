@@ -6,6 +6,8 @@ import api.dm.com.gpu.com_3d_types : ComVertex;
 import api.math.matrices.matrix : Matrix4x4f;
 import api.dm.back.sdl3.externs.csdl3;
 
+import api.math.geom2.vec3 : Vec3f;
+
 /**
  * Authors: initkfs
  */
@@ -14,9 +16,17 @@ class Cube : Sprite3d
 {
     ComVertex[24] vertices;
 
-    align(16)
+    Vec3f rotation;
+    Vec3f scale = Vec3f(1, 1, 1);
+
+    float posZ = 0;
+
+    protected
     {
-        Matrix4x4f local;
+        align(16)
+        {
+            Matrix4x4f localMatrix;
+        }
     }
 
     //ccw
@@ -55,7 +65,7 @@ class Cube : Sprite3d
     {
         super.create;
 
-        local.fillInit;
+        localMatrix = Matrix4x4f.onesDiag;
 
         const halfWidth = cast(float)(width / 2.0);
         const halfHeight = cast(float)(height / 2.0);
@@ -140,13 +150,31 @@ class Cube : Sprite3d
     override void update(double dt)
     {
         super.update(dt);
+    }
 
-        if (angle > 0)
-        {
-            import api.math.matrices.affine3;
+    ref Matrix4x4f worldMatrix()
+    {
+        //TODO lazy
+        localMatrix = localMatrix.identity;
 
-            local = rotateMatrix(angle, 1.0f, 1.0f, 0.0f);
+        //Scale -> Rotate -> Translate
+        import api.math.matrices.affine3;
+
+        //TODO dirty flag
+        if(scale.x != 1 || scale.y != 1 || scale.z != 1){
+            localMatrix = localMatrix.mul(scaleMatrix(scale));
         }
+
+        if (angle != 0 && (rotation.x != 0 || rotation.y != 0 || rotation.z != 0))
+        {
+            localMatrix = localMatrix.mul(rotateMatrix(angle, rotation));
+        }
+
+        if(pos.x != 0 || pos.y != 0 || posZ != 0){
+            localMatrix = localMatrix.mul(translateMatrix(Vec3f(pos.x, pos.y, posZ)));
+        }
+
+        return localMatrix;
     }
 
     override void dispose()

@@ -2,7 +2,7 @@ module api.math.matrices.affine3;
 
 import api.math.matrices.matrix;
 import api.math.geom2.vec2 : Vec2d;
-import api.math.geom2.vec3: Vec3f;
+import api.math.geom2.vec3 : Vec3f;
 
 import Math = api.math;
 
@@ -106,8 +106,12 @@ Matrix4x4f rotateMatrixZ(double angleDeg)
     return matrix;
 }
 
+Matrix4x4f rotateMatrix(double angleDeg, Vec3f angles) => rotateMatrix(angleDeg, angles.x, angles.y, angles
+        .z);
+
 Matrix4x4f rotateMatrix(double angleDeg, float axisX, float axisY, float axisZ)
 {
+    //auto rotX = rotateMatrix(45.0f, 1.0f, 0.0f, 0.0f);
     import Math = api.math;
 
     Matrix4x4f matrix;
@@ -148,23 +152,32 @@ Matrix4x4f rotateMatrix(double angleDeg, float axisX, float axisY, float axisZ)
     return matrix;
 }
 
+Matrix4x4f translateMatrix(Vec3f offsets) => translateMatrix(offsets.x, offsets.y, offsets.z);
+
 Matrix4x4f translateMatrix(float offsetX, float offsetY, float offsetZ)
 {
+    //row-order
     import Math = api.math;
 
     Matrix4x4f matrix;
     matrix.fillInit;
 
     matrix[0][0] = 1;
-    matrix[0][3] = offsetX;
+    matrix[0][3] = 0;
     matrix[1][1] = 1;
-    matrix[1][3] = offsetY;
+    matrix[1][3] = 0;
     matrix[2][2] = 1;
-    matrix[2][3] = offsetZ;
+    matrix[2][3] = 0;
+
+    matrix[3][0] = offsetX;
+    matrix[3][1] = offsetY;
+    matrix[3][2] = offsetZ;
     matrix[3][3] = 1;
 
     return matrix;
 }
+
+Matrix4x4f scaleMatrix(Vec3f vec) => scaleMatrix(vec.x, vec.y, vec.z);
 
 Matrix4x4f scaleMatrix(float scaleX, float scaleY, float scaleZ)
 {
@@ -194,7 +207,7 @@ Matrix4x4f perspectiveMatrixRH(float fovYDeg, float aspectRatio, float nearZ = 0
 
     Matrix4x4f matrix;
     matrix.fillInit;
-    
+
     float fovYRad = Math.degToRad(fovYDeg);
     float tanHalfFov = Math.tan(fovYRad * 0.5f);
     float f = 1.0f / tanHalfFov;
@@ -204,7 +217,7 @@ Matrix4x4f perspectiveMatrixRH(float fovYDeg, float aspectRatio, float nearZ = 0
     matrix[2][2] = farZ / (nearZ - farZ);
     matrix[2][3] = -1.0f;
     matrix[3][2] = (nearZ * farZ) / (nearZ - farZ);
-	
+
     return matrix;
 }
 
@@ -214,9 +227,9 @@ Matrix4x4f lookAt(Vec3f eye, Vec3f target, Vec3f up)
 
     Vec3f toTarget = eye.sub(target);
 
-	Vec3f va = toTarget.normalize;
-	Vec3f vb = up.cross(va).normalize;
-	Vec3f vc = va.cross(vb);
+    Vec3f va = toTarget.normalize;
+    Vec3f vb = up.cross(va).normalize;
+    Vec3f vc = va.cross(vb);
 
     Matrix4x4f view;
     view.fillInit;

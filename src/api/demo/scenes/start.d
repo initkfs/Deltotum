@@ -46,6 +46,7 @@ class Start : GuiScene
     Random rnd;
 
     Cube cube;
+    Cube lamp;
 
     SDL_GPUTexture* newTexture;
     SDL_GPUSampler* sampler;
@@ -71,7 +72,16 @@ class Start : GuiScene
         addCreate(camera);
 
         cube = new Cube(1, 1, 1);
+        cube.rotation.y = 1;
+        cube.angle = 45;
+        cube.scale = Vec3f(0.5, 0.5, 0.5);
         addCreate(cube);
+
+        lamp = new Cube(1, 1, 1);
+        lamp.scale = Vec3f(0.4, 0.4, 0.4);
+        lamp.pos = Vec2d(1, 0.5);
+        lamp.posZ = -0.3;
+        addCreate(lamp);
 
         import api.dm.gui.windows.gui_window : GuiWindow;
 
@@ -157,12 +167,14 @@ class Start : GuiScene
         assert(gpu.dev.startCopyPass);
 
         cube.uploadStart;
+        lamp.uploadStart;
 
         gpu.dev.uploadTexture(transferBuffer2, newTexture, w, h);
 
         assert(gpu.dev.endCopyPass);
 
         cube.uploadEnd;
+        lamp.uploadEnd;
         
         gpu.dev.deleteTransferBuffer(transferBuffer2);
     }
@@ -175,7 +187,7 @@ class Start : GuiScene
 
         import api.math.matrices.affine3;
 
-        cube.angle = cube.angle + 1;
+        //cube.angle = cube.angle + 1;
 
         time = SDL_GetTicks / 1000.0;
     }
@@ -197,9 +209,10 @@ class Start : GuiScene
         assert(gpu.startRenderPass(&depthStencilTargetInfo));
 
         gpu.dev.bindPipeline(fillPipeline);
+        gpu.dev.bindFragmentSamplers(newTexture, sampler);
 
         Matrix4x4f[3] matrixBuff;
-        matrixBuff[0] = cube.local;
+        matrixBuff[0] = cube.worldMatrix;
         matrixBuff[1] = camera.view;
         matrixBuff[2] = camera.projection;
 
@@ -217,15 +230,16 @@ class Start : GuiScene
         ];
 
         gpu.dev.pushUniformFragmentData(0, planes.ptr, planes.sizeof);
-
+        
         cube.bindBuffers;
-        gpu.dev.bindFragmentSamplers(newTexture, sampler);
-
         cube.drawIndexed;
 
-        // gpu.dev.pushUniformVertexData(0, lmatrixBuff.ptr, lmatrixBuff.sizeof);
-        // gpu.dev.pushUniformFragmentData(0, planes.ptr, planes.sizeof);
-        // gpu.dev.drawIndexed(indices.length, 1, 0, 0, 0);
+        matrixBuff[0] = lamp.worldMatrix;
+
+        gpu.dev.pushUniformVertexData(0, matrixBuff.ptr, matrixBuff.sizeof);
+
+        lamp.bindBuffers;
+        lamp.drawIndexed;
 
         assert(gpu.dev.endRenderPass);
     }
