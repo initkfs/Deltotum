@@ -212,7 +212,7 @@ Matrix4x4f lookAt(Vec3f eye, Vec3f target, Vec3f up)
 {
     import Math = api.math;
 
-    Vec3f toTarget = eye.sub(target);
+    Vec3f toTarget = eye.subtract(target);
 
 	Vec3f va = toTarget.normalize;
 	Vec3f vb = up.cross(va).normalize;
