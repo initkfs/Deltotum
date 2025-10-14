@@ -70,6 +70,8 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         SDL_GPUTexture* lastSwapchain;
 
         GPUGraphicState state;
+
+        bool _isCreated;
     }
 
     this()
@@ -100,8 +102,11 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         {
             return getErrorRes("GPU device not created");
         }
+        _isCreated = true;
         return ComResult.success;
     }
+
+    bool isCreated() => _isCreated;
 
     protected ubyte[] readShader(string path)
     {

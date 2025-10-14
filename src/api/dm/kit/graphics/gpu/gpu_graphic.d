@@ -26,7 +26,7 @@ class GPUGraphic : LoggableUnit
         SdlGPUDevice device;
     }
 
-    bool isActive() => currSdlWindow !is null;
+    bool isActive() => device.isCreated;
     SdlGPUDevice dev() => device;
 
     this( Logging logging, SdlGPUDevice device, Window window)

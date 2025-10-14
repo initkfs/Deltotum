@@ -74,7 +74,7 @@ import api.dm.lib.libxml.native : LibxmlLib;
 import api.dm.back.sdl3.externs.csdl3;
 import std.typecons : Nullable;
 import api.dm.back.sdl3.gpu.sdl_gpu_device;
-import api.dm.kit.graphics.gpu.gpu_graphic: GPUGraphic;
+import api.dm.kit.graphics.gpu.gpu_graphic : GPUGraphic;
 
 /**
  * Authors: initkfs
@@ -187,7 +187,7 @@ class SdlApp : GuiApp
         import KitConfigKeys = api.dm.kit.kit_config_keys;
 
         gpuDevice = new SdlGPUDevice;
-        if (uservices.config.getBool(KitConfigKeys.backendIsGPU))
+        if (uservices.config.getBool(KitConfigKeys.backendIsGPU).get)
         {
             if (const err = gpuDevice.create)
             {
@@ -202,6 +202,10 @@ class SdlApp : GuiApp
             {
                 uservices.logger.trace("Create GPU device: ", gpuName);
             }
+        }
+        else
+        {
+            uservices.logger.trace("GPU device not requested");
         }
 
         uservices.logger.trace("SDL systems initialized");
@@ -850,7 +854,7 @@ class SdlApp : GuiApp
             uservices.logger.error("Error getting display for window: ", window.title);
         }
 
-        if (gpuDevice)
+        if (gpuDevice.isCreated)
         {
             window.gpuDevice = gpuDevice;
             if (const err = gpuDevice.attachToWindow(sdlWindow))
