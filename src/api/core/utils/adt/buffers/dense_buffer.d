@@ -179,8 +179,10 @@ struct DenseBuffer(T, size_t Capacity = 256,
         return true;
     }
 
+    import std.traits: Unqual;
+
     //TODO remove copypaste with append(T[])
-    bool append(Array)(Array value) nothrow @safe if (is(Array : T[]))
+    bool append(Array)(Array value) nothrow @safe
     {
         size_t newLength = _length + value.length;
         if (newLength >= Capacity)
@@ -198,7 +200,7 @@ struct DenseBuffer(T, size_t Capacity = 256,
         append(rhs);
     }
 
-    void opOpAssign(string op : "~")(scope const(T)[] rhs)
+    void opOpAssign(string op : "~", Array)(Array rhs)
     {
         append(rhs);
     }

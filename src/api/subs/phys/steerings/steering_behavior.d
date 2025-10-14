@@ -46,7 +46,7 @@ class SteeringBehavior
     Vec2d seekForce(Vec2d spritePos, Vec2d spriteVelocity, Vec2d targetPos, double maxVelocity = defaultMaxVelocity) const nothrow @safe
     {
         const Vec2d targetDist = (targetPos - spritePos);
-        //targetDist.magnitudeSquared
+        //targetDist.lengthSquared
         if (targetDist.length <= distanceDelta)
         {
             return Vec2d.zero;
@@ -118,7 +118,7 @@ class SteeringBehavior
         const Vec2d circleCenter = velocity.normalize.scale(circle.distance);
         Vec2d displacement = Vec2d(0, -1).scale(circle.radius);
 
-        displacement = Vec2d.fromPolarDeg(angle.angleDeg, displacement.magnitude);
+        displacement = Vec2d.fromPolarDeg(angle.angleDeg, displacement.length);
         const angleDiff = rnd.between0to1 * angle.angleChange - angle.angleChange * 0.5;
 
         auto newAngleDeg = (angle.angleDeg + angleDiff * angle.andleVariation) % 360;

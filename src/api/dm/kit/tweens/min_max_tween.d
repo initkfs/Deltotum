@@ -149,7 +149,7 @@ class MinMaxTween(T) if (isFloatingPoint!T || is(T : Vec2d)) : Tween
         }
         else static if (is(T : Vec2d))
         {
-            return maxValue.subtractAbs(minValue);
+            return maxValue.subAbs(minValue);
         }
         else
         {

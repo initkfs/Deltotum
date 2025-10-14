@@ -33,7 +33,7 @@ void fru(Graph g, size_t iterations = 10, double repulsion = 10, double stiffnes
                     {
                         dir = Vec2d(1, 1);
                     }
-                    auto magnSqr = dir.magnitudeSquared;
+                    auto magnSqr = dir.lengthSquared;
 
                     double minDistanceSqr = 1;
                     if (magnSqr < minDistanceSqr)

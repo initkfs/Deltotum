@@ -18,7 +18,7 @@ Matrix3x1 posMatrix(Vec2d pos, double defaultNorm = 1)
 
 Vec2d mul2Affine(in Matrix3x3 m1, in Matrix3x1 m2) @safe
 {
-    auto result = m1.multiply(m2);
+    auto result = m1.mul(m2);
     return Vec2d(result[0][0], result[1][0]);
 }
 

@@ -1405,17 +1405,17 @@ class Sprite2d : EventKitTarget
 
         Vec2d pivot = bounds.center;
 
-        fromVec2d(vecm, bounds.leftTop.subtract(pivot));
-        bounds.leftTop = rotM.multiply(vecm).toVec2d.add(pivot);
+        fromVec2d(vecm, bounds.leftTop.sub(pivot));
+        bounds.leftTop = rotM.mul(vecm).toVec2d.add(pivot);
 
-        fromVec2d(vecm, bounds.rightTop.subtract(pivot));
-        bounds.rightTop = rotM.multiply(vecm).toVec2d.add(pivot);
+        fromVec2d(vecm, bounds.rightTop.sub(pivot));
+        bounds.rightTop = rotM.mul(vecm).toVec2d.add(pivot);
 
-        fromVec2d(vecm, bounds.rightBottom.subtract(pivot));
-        bounds.rightBottom = rotM.multiply(vecm).toVec2d.add(pivot);
+        fromVec2d(vecm, bounds.rightBottom.sub(pivot));
+        bounds.rightBottom = rotM.mul(vecm).toVec2d.add(pivot);
 
-        fromVec2d(vecm, bounds.leftBottom.subtract(pivot));
-        bounds.leftBottom = rotM.multiply(vecm).toVec2d.add(pivot);
+        fromVec2d(vecm, bounds.leftBottom.sub(pivot));
+        bounds.leftBottom = rotM.mul(vecm).toVec2d.add(pivot);
     }
 
     Rect2d boundsRectPadding()
@@ -1514,7 +1514,7 @@ class Sprite2d : EventKitTarget
     void centering(Sprite2d child)
     {
         assert(child);
-        auto childPos = center.subtract(Vec2d(child.halfWidth, child.halfHeight));
+        auto childPos = center.sub(Vec2d(child.halfWidth, child.halfHeight));
         child.xy(childPos);
     }
 

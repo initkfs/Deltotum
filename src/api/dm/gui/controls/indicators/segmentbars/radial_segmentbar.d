@@ -233,9 +233,9 @@ class RadialSegmentBar : Control
             auto polarPos = Vec2d.fromPolarDeg(angleMiddle, radius);
 
             segmentOff.xy = currPos.add(polarPos)
-                .subtract(Vec2d(segmentOff.halfWidth, segmentOff.halfHeight));
+                .sub(Vec2d(segmentOff.halfWidth, segmentOff.halfHeight));
             segmentOn.xy = currPos.add(polarPos)
-                .subtract(Vec2d(segmentOn.halfWidth, segmentOn.halfHeight));
+                .sub(Vec2d(segmentOn.halfWidth, segmentOn.halfHeight));
             return true;
         });
     }

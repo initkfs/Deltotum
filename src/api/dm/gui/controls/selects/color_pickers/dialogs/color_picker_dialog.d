@@ -453,7 +453,7 @@ class ColorPickerDialog : Control
             import api.math.geom2.vec2 : Vec2d;
 
             //binary search
-            auto rawPoint = Vec2d(e.x, e.y).subtract(colorTexture.pos);
+            auto rawPoint = Vec2d(e.x, e.y).sub(colorTexture.pos);
             foreach (ref colorInfo; colorPixels)
             {
                 if (colorInfo.bounds.contains(rawPoint))

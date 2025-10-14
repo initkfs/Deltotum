@@ -115,10 +115,10 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
     DenseMatrix!(T, RowDim, ColDimOther) opBinary(string op : "*", T, size_t RowDimOther, size_t ColDimOther)(
         in DenseMatrix!(T, RowDimOther, ColDimOther) other)
     {
-        return multiply(other);
+        return mul(other);
     }
 
-    DenseMatrix!(T, RowDim, ColDimOther) multiply(T, size_t RowDimOther, size_t ColDimOther)(
+    DenseMatrix!(T, RowDim, ColDimOther) mul(T, size_t RowDimOther, size_t ColDimOther)(
         in DenseMatrix!(T, RowDimOther, ColDimOther) other) const pure @safe
             if (ColDim == RowDimOther)
     {
@@ -519,7 +519,7 @@ unittest
     assert(m0.mainDiagonal == [0]);
     assert(m0.sideDiagonal == [0]);
     assert(m0.add(m0).toArrayCopy == [[0]]);
-    assert(m0.multiply(m0).toArrayCopy == [[0]]);
+    assert(m0.mul(m0).toArrayCopy == [[0]]);
 
     double[][] m1Data = [
         [1, 2, 3],
@@ -543,7 +543,7 @@ unittest
         [1, 2, 3], [4, 5, 6], [6, 7, 8]
     ]);
 
-    auto m1m2Multiply = m1.multiply(m2);
+    auto m1m2Multiply = m1.mul(m2);
     assert(m1m2Multiply.toArrayCopy == [[27, 33, 39], [60, 75, 90]]);
 
     immutable m3 = DenseMatrix!(double, 3, 4)([

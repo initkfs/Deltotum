@@ -121,7 +121,7 @@ RGBA[][] rotate(RGBA[][] colors, double angleDegClockwise)
         [0.0, 0, 1]
     ]);
 
-    const resultMatrix = moveMatrix.multiply(rotateMatrix).multiply(backMatrix);
+    const resultMatrix = moveMatrix.mul(rotateMatrix).mul(backMatrix);
 
     //TODO it's all copied
     import api.math.matrices.dense_matrix : DenseMatrix;
@@ -136,7 +136,7 @@ RGBA[][] rotate(RGBA[][] colors, double angleDegClockwise)
                 [1.0]
             ]);
 
-            auto pixelPosMatrix = resultMatrix.multiply(pixelMatrix);
+            auto pixelPosMatrix = resultMatrix.mul(pixelMatrix);
             const size_t newX = cast(size_t) pixelPosMatrix.value(0, 0);
             const size_t newY = cast(size_t) pixelPosMatrix.value(1, 0);
             if (newX > colorWidth - 1 || newY > colorHeight - 1)

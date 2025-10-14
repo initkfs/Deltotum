@@ -67,21 +67,21 @@ class AnalogSignalAnalyzer
             //fftVal.re = fftVal.re / fftResLen;
             //fftVal.im = fftVal.im / fftResLen;
 
-            double magnitude = Math.sqrt(fftVal.re * fftVal.re + fftVal.im * fftVal.im);
+            double length = Math.sqrt(fftVal.re * fftVal.re + fftVal.im * fftVal.im);
 
-            magnitude = Math.clamp(magnitude, 0, SignalType.max) / SignalType.max;
+            length = Math.clamp(length, 0, SignalType.max) / SignalType.max;
 
             auto magnMax = SignalType.max;
-            if (magnitude > magnMax)
+            if (length > magnMax)
             {
                 import std.stdio : stderr, writefln;
 
-                stderr.writefln("Warn. Signal magnitude %s exceeds the maximum value %s", magnitude, magnMax);
+                stderr.writefln("Warn. Signal length %s exceeds the maximum value %s", length, magnMax);
             }
 
-            //magnitude = magnitude / (sampleWindowSize / 2)
+            //length = length / (sampleWindowSize / 2)
             double freq = i * signalFreq / fftResLen;
-            outBuffer[i] = AnalogSignal(freq, magnitude);
+            outBuffer[i] = AnalogSignal(freq, length);
         }
 
         return true;

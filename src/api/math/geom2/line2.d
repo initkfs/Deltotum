@@ -246,7 +246,7 @@ struct Line2d
         const ua = ((other.end.x - other.start.x) * (start.y - other.start.y) - (
                 other.end.y - other.start.y) * (start.x - other.start.x)) / denom;
 
-        Vec2d intersect = start.add(end.subtract(start).scale(ua));
+        Vec2d intersect = start.add(end.sub(start).scale(ua));
 
         return intersect;
     }

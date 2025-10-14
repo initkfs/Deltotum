@@ -112,7 +112,7 @@ class RadialLoader : BaseLoader
         foreach (Sprite2d s; segments)
         {
             auto pos = Vec2d.fromPolarDeg(currAngle, newSegmentCenter)
-                .add(center).subtract(Vec2d(s.halfWidth, s.halfHeight));
+                .add(center).sub(Vec2d(s.halfWidth, s.halfHeight));
             s.pos = pos;
             currAngle = (currAngle + angleDiff) % fullAngleDeg;
 

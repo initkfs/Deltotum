@@ -15,14 +15,14 @@ struct Triangle2d
     Vec2d b;
     Vec2d c;
 
-    bool contains(Vec2d p) const  pure @safe
+    bool contains(Vec2d p) const pure @safe
     {
         immutable Vec2d barCoords = toBarycentric(p);
         bool isInside = (barCoords.x >= 0) && (barCoords.y >= 0) && ((barCoords.x + barCoords.y) <= 1);
         return isInside;
     }
 
-    Vec2d toBarycentric(Vec2d p) const  pure @safe
+    Vec2d toBarycentric(Vec2d p) const pure @safe
     {
         immutable Vec2d v0 = b - a;
         immutable Vec2d v1 = c - a;
@@ -41,7 +41,7 @@ struct Triangle2d
     }
 
     //https://totologic.blogspot.com/2014/01/accurate-point-in-triangle-test.html
-    bool contains2(Vec2d p) const  pure @safe
+    bool contains2(Vec2d p) const pure @safe
     {
         float denom = ((b.y - c.y) * (a.x - c.x) + (c.x - b.x) * (a.y - c.y));
 
@@ -57,7 +57,7 @@ struct Triangle2d
         return false;
     }
 
-    bool hasVertex(Vec2d vertex) const  pure @safe
+    bool hasVertex(Vec2d vertex) const pure @safe
     {
         if (a == vertex || b == vertex || c == vertex)
         {
@@ -83,7 +83,6 @@ struct Triangle2d
 
     bool isNeighbor(Triangle2d other) => commonVertices(other) == 2;
     bool isAdjacent(Triangle2d other) => commonVertices(other) != 0;
-    
 
     Vec2d circumcircleCenter()
     {
@@ -111,7 +110,7 @@ struct Triangle2d
     Circle2d circumcircle()
     {
         const center = circumcircleCenter;
-        const radius = a.subtract(center).length;
+        const radius = a.sub(center).length;
         return Circle2d(center, radius);
     }
 

@@ -272,7 +272,7 @@ class Start : GuiScene
 
         model = rotateMatrix(-55, 1.0f, 0.0f, 0.0f);
         
-        lmodel = scaleMatrix(0.5, 0.5, 0.5f).multiply(translateMatrix(0, 2.5, 0));
+        lmodel = scaleMatrix(0.5, 0.5, 0.5f).mul(translateMatrix(0, 2.5, 0));
 
         matrixBuff[0] = model;
         matrixBuff[1] = camera.view;

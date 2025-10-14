@@ -137,12 +137,12 @@ class PerspectiveCamera : Sprite2d
 
         if (input.isPressedKey(ComKeyName.key_s))
         {
-            cameraPos = cameraPos.subtract(cameraFront.scale(cameraSpeed));
+            cameraPos = cameraPos.sub(cameraFront.scale(cameraSpeed));
         }
 
         if (input.isPressedKey(ComKeyName.key_d))
         {
-            cameraPos = cameraPos.subtract(cameraFront.cross(cameraUp).normalize.scale(cameraSpeed));
+            cameraPos = cameraPos.sub(cameraFront.cross(cameraUp).normalize.scale(cameraSpeed));
         }
 
         if (input.isPressedKey(ComKeyName.key_a))
