@@ -13,6 +13,8 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
     T[ColDim][RowDim] matrix;
     //}
 
+    alias Type = T;
+
     this(T initValue) pure nothrow @safe
     {
         fill(initValue);

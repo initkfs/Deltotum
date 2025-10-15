@@ -81,7 +81,7 @@ class Start : GuiScene
         lamp = new Cube(1, 1, 1);
         lamp.scale = Vec3f(0.4, 0.4, 0.4);
         lamp.pos = Vec2d(1, 0.5);
-        lamp.posZ = -0.3;
+        lamp.z = -0.3;
         addCreate(lamp);
 
         import api.dm.gui.windows.gui_window : GuiWindow;
@@ -220,6 +220,7 @@ class Start : GuiScene
             Matrix4x4f world;
             Matrix4x4f view;
             Matrix4x4f projection;
+            Matrix4x4f normal;
         }
 
         static assert((SceneTransforms.sizeof % 16) == 0, "Buffer size must be 16-byte aligned");
@@ -232,19 +233,20 @@ class Start : GuiScene
         //timeUniform.time = SDL_GetTicks() / 250.0;
         gpu.dev.pushUniformVertexData(0, &transforms, SceneTransforms.sizeof);
 
-
         struct Planes {
             float nearPlane;
             float farPlane;
             align(16):
             float[3] lightColor;
             float[3] objectColor;
+            float[3] lightPos;
+            float[3] cameraPos;
         }
 
         // float[8] planes = [
         //     10, 1000, 1, 0.5, 0.31, 1, 1, 1
         // ];
-        Planes planes = Planes(10, 1000, [1, 0.5, 0.31], [1, 1, 1]);
+        Planes planes = Planes(10, 1000, [1, 0.5, 0.31], [1, 1, 1], [lamp.translatePos.x, lamp.translatePos.y, lamp.translatePos.z], [camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z]);
 
         gpu.dev.pushUniformFragmentData(0, &planes, planes.sizeof);
         

@@ -7,5 +7,6 @@ struct ComVertex
 {
     float x = 0, y = 0, z = 0; //vec3 position
     //float r = 0, g = 0, b = 0, a = 1.0; //vec4 color
+    float[3] normals = 0;
     float u = 0, v = 0; //0..1
 }

@@ -33,7 +33,7 @@ import Math = api.dm.math;
 
 struct InvalidationState
 {
-    bool x, y, width, height, visible, managed, layout;
+    bool x, y, z, width, height, visible, managed, layout;
 
     void reset()
     {

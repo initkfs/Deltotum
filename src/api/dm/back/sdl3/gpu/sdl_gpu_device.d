@@ -271,7 +271,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         info.vertex_input_state.num_vertex_buffers = vertexBufferDesctiptions.length;
         info.vertex_input_state.vertex_buffer_descriptions = vertexBufferDesctiptions.ptr;
 
-        SDL_GPUVertexAttribute[2] vertexAttributes = comVertexAttrs;
+        auto vertexAttributes = comVertexAttrs;
 
         info.vertex_input_state.num_vertex_attributes = vertexAttributes.length;
         info.vertex_input_state.vertex_attributes = vertexAttributes.ptr;
@@ -608,9 +608,9 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return vertexBufferDesctiptions;
     }
 
-    SDL_GPUVertexAttribute[2] comVertexAttrs()
+    SDL_GPUVertexAttribute[3] comVertexAttrs()
     {
-        SDL_GPUVertexAttribute[2] vertexAttributes;
+        SDL_GPUVertexAttribute[3] vertexAttributes;
 
         //position
         vertexAttributes[0].buffer_slot = 0;
@@ -618,17 +618,17 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         vertexAttributes[0].format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3; //vec3
         vertexAttributes[0].offset = 0; // start from the first byte from current buffer position
 
-        // color
-        // vertexAttributes[1].buffer_slot = 0;
-        // vertexAttributes[1].location = 1; // layout (location = 1) in shader
-        // vertexAttributes[1].format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT4; //vec4
-        // vertexAttributes[1].offset = float.sizeof * 3; // 4th float from current buffer position
+        //normals
+        vertexAttributes[1].buffer_slot = 0;
+        vertexAttributes[1].location = 1; // layout (location = 1) in shader
+        vertexAttributes[1].format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3; //vec4
+        vertexAttributes[1].offset = float.sizeof * 3; // 4th float from current buffer position
 
         //uv
-        vertexAttributes[1].buffer_slot = 0;
-        vertexAttributes[1].location = 1; // layout (location = 2) in shader
-        vertexAttributes[1].format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2; //vec2
-        vertexAttributes[1].offset = float.sizeof * 3; // 4th float from current buffer position
+        vertexAttributes[2].buffer_slot = 0;
+        vertexAttributes[2].location = 2; // layout (location = 2) in shader
+        vertexAttributes[2].format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT2; //vec2
+        vertexAttributes[2].offset = float.sizeof * 6; // 4th float from current buffer position
 
         return vertexAttributes;
     }
