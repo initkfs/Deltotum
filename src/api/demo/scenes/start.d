@@ -40,6 +40,7 @@ class Start : GuiScene
 {
 
     SdlGPUPipeline fillPipeline;
+    SdlGPUPipeline lampPipeline;
 
     SDL_Window* winPtr;
 
@@ -104,6 +105,10 @@ class Start : GuiScene
         auto rastState = gpu.dev.depthRasterizerState;
 
         fillPipeline = gpu.newPipeline(vertShaderFile, fragShaderFile, 0, 0, 1, 0, 1, 0, 1, 0, &rastState, &stencilState, &targetInfo);
+
+        auto fragLampFile = context.app.userDir ~ "/shaders/Lamp.frag.spv";
+
+        lampPipeline = gpu.newPipeline(vertShaderFile, fragLampFile, 0, 0, 1, 0, 1, 0, 1, 0, &rastState, &stencilState, &targetInfo);
 
         auto texturePath = context.app.userDir ~ "/container.bmp";
 
@@ -211,32 +216,45 @@ class Start : GuiScene
         gpu.dev.bindPipeline(fillPipeline);
         gpu.dev.bindFragmentSamplers(newTexture, sampler);
 
-        Matrix4x4f[3] matrixBuff;
-        matrixBuff[0] = cube.worldMatrix;
-        matrixBuff[1] = camera.view;
-        matrixBuff[2] = camera.projection;
+        struct SceneTransforms {
+            Matrix4x4f world;
+            Matrix4x4f view;
+            Matrix4x4f projection;
+        }
+
+        static assert((SceneTransforms.sizeof % 16) == 0, "Buffer size must be 16-byte aligned");
+
+        SceneTransforms transforms;
+        transforms.world = cube.worldMatrix;
+        transforms.view = camera.view;
+        transforms.projection = camera.projection;
 
         //timeUniform.time = SDL_GetTicks() / 250.0;
-        gpu.dev.pushUniformVertexData(0, matrixBuff.ptr, matrixBuff.sizeof);
+        gpu.dev.pushUniformVertexData(0, &transforms, SceneTransforms.sizeof);
 
-        auto lightColor = RGBA.white;
-        auto objectColor = RGBA.white;
 
-        float[4] la = lightColor.toRGBArrayF;
-        float[4] oa = objectColor.toRGBArrayF;
+        struct Planes {
+            float nearPlane;
+            float farPlane;
+            align(16):
+            float[3] lightColor;
+            float[3] objectColor;
+        }
 
-        float[8] planes = [
-            10, 1000, la[0], la[1], la[2], oa[0], oa[1], oa[2]
-        ];
+        // float[8] planes = [
+        //     10, 1000, 1, 0.5, 0.31, 1, 1, 1
+        // ];
+        Planes planes = Planes(10, 1000, [1, 0.5, 0.31], [1, 1, 1]);
 
-        gpu.dev.pushUniformFragmentData(0, planes.ptr, planes.sizeof);
+        gpu.dev.pushUniformFragmentData(0, &planes, planes.sizeof);
         
         cube.bindBuffers;
         cube.drawIndexed;
 
-        matrixBuff[0] = lamp.worldMatrix;
+        transforms.world = lamp.worldMatrix;
 
-        gpu.dev.pushUniformVertexData(0, matrixBuff.ptr, matrixBuff.sizeof);
+        gpu.dev.bindPipeline(lampPipeline);
+        gpu.dev.pushUniformVertexData(0, &transforms, SceneTransforms.sizeof);
 
         lamp.bindBuffers;
         lamp.drawIndexed;
