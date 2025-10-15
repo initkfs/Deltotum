@@ -2723,11 +2723,11 @@ class Sprite2d : EventKitTarget
         _gContext = context;
     }
 
-    void angle(double value)
+    bool angle(double value)
     {
         if (_angle == value)
         {
-            return;
+            return false;
         }
 
         _angle = value;
@@ -2741,6 +2741,7 @@ class Sprite2d : EventKitTarget
         }
 
         setInvalid;
+        return true;
     }
 
     double angle()

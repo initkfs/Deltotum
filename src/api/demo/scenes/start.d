@@ -81,7 +81,7 @@ class Start : GuiScene
         lamp = new Cube(1, 1, 1);
         lamp.scale = Vec3f(0.4, 0.4, 0.4);
         lamp.pos = Vec2d(1, 0.5);
-        lamp.z = -0.3;
+        lamp.z = 1;
         addCreate(lamp);
 
         import api.dm.gui.windows.gui_window : GuiWindow;
@@ -229,24 +229,38 @@ class Start : GuiScene
         transforms.world = cube.worldMatrix;
         transforms.view = camera.view;
         transforms.projection = camera.projection;
+        transforms.normal = cube.worldMatrixInverse;
 
         //timeUniform.time = SDL_GetTicks() / 250.0;
         gpu.dev.pushUniformVertexData(0, &transforms, SceneTransforms.sizeof);
+
+        import api.dm.kit.sprites3d.materials.material;
 
         struct Planes {
             float nearPlane;
             float farPlane;
             align(16):
-            float[3] lightColor;
             float[3] objectColor;
             float[3] lightPos;
             float[3] cameraPos;
+            Material material;
+            Light light;
         }
 
         // float[8] planes = [
         //     10, 1000, 1, 0.5, 0.31, 1, 1, 1
         // ];
-        Planes planes = Planes(10, 1000, [1, 0.5, 0.31], [1, 1, 1], [lamp.translatePos.x, lamp.translatePos.y, lamp.translatePos.z], [camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z]);
+        Planes planes = Planes(10, 1000, [1.0f, 0.5f, 0.31f], [lamp.translatePos.x, lamp.translatePos.y, lamp.translatePos.z], [camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z]);
+
+        planes.material.ambient = Vec3f(1.0f, 0.5f, 0.31f);
+        planes.material.diffuse = Vec3f(1.0f, 0.5f, 0.31f);
+        planes.material.specular = Vec3f(0.5f, 0.5f, 0.5f);
+        planes.material.shininess = 32;
+
+        planes.light.position = Vec3f(lamp.translatePos.x, lamp.translatePos.y, lamp.translatePos.z);
+        planes.light.ambient = Vec3f(0.2f, 0.2f, 0.2f);
+        planes.light.diffuse = Vec3f(0.5f, 0.5f, 0.5f);
+        planes.light.specular = Vec3f(1.0f, 1.0f, 1.0f);
 
         gpu.dev.pushUniformFragmentData(0, &planes, planes.sizeof);
         

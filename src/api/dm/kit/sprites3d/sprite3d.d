@@ -21,7 +21,7 @@ class Sprite3d : Sprite2d
         }
     }
 
-    bool isCalcInverseWorldMatrix;
+    bool isCalcInverseWorldMatrix = true;
 
     Vec3f rotation;
     Vec3f scale = Vec3f(1, 1, 1);
@@ -88,6 +88,11 @@ class Sprite3d : Sprite2d
         }
 
         return _wolrdMatrix;
+    }
+
+    ref Matrix4x4f worldMatrixInverse()
+    {
+        return _wolrdMatrixInverse;
     }
 
     Vec3f translatePos() => Vec3f(x, y, z);
@@ -160,5 +165,17 @@ class Sprite3d : Sprite2d
 
         return true;
     }
+
+    override bool angle(double value)
+    {
+        if (super.angle(value))
+        {
+            isMatrixRecalc = true;
+            return true;
+        }
+        return false;
+    }
+
+    override double angle() => _angle;
 
 }
