@@ -1,4 +1,4 @@
-module api.dm.kit.sprites3d.primitives.cube;
+module api.dm.kit.sprites3d.shapes.cube;
 
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.dm.com.gpu.com_3d_types : ComVertex;

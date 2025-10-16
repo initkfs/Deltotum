@@ -24,9 +24,10 @@ import std : writeln;
 import api.dm.back.sdl3.gpu.sdl_gpu_device : SdlGPUDevice;
 import api.dm.back.sdl3.gpu.sdl_gpu_pipeline : SdlGPUPipeline;
 import api.dm.back.sdl3.gpu.sdl_gpu_shader : SdlGPUShader;
-import api.dm.kit.sprites3d.cameras.perspective_camera: PerspectiveCamera;
-import api.dm.com.gpu.com_3d_types: ComVertex;
-import api.dm.kit.sprites3d.primitives.cube: Cube;
+import api.dm.kit.sprites3d.cameras.perspective_camera : PerspectiveCamera;
+import api.dm.com.gpu.com_3d_types : ComVertex;
+import api.dm.kit.sprites3d.shapes.cube : Cube;
+import api.dm.kit.sprites3d.textures.texture3d : Texture3d;
 
 import api.dm.back.sdl3.externs.csdl3;
 
@@ -49,9 +50,8 @@ class Start : GuiScene
     Cube cube;
     Cube lamp;
 
-    SDL_GPUTexture* newTexture;
-    SDL_GPUSampler* sampler;
-
+    Texture3d newTexture;
+    Texture3d newTexture2;
     SDL_GPUTexture* sceneDepthTexture;
 
     PerspectiveCamera camera;
@@ -62,7 +62,16 @@ class Start : GuiScene
         // you can add other properties here
     }
 
+    struct FragmentBuffer
+    {
+        align(16):
+        float[4] colors;
+    }
+
     static UniformBuffer timeUniform;
+
+    SDL_GPUBuffer* debugBuffer;
+    SDL_GPUTransferBuffer* debugTransferBuffer;
 
     override void create()
     {
@@ -104,57 +113,28 @@ class Start : GuiScene
         auto stencilState = gpu.dev.depthStencilState;
         auto rastState = gpu.dev.depthRasterizerState;
 
-        fillPipeline = gpu.newPipeline(vertShaderFile, fragShaderFile, 0, 0, 1, 0, 1, 0, 1, 0, &rastState, &stencilState, &targetInfo);
+        fillPipeline = gpu.newPipeline(vertShaderFile, fragShaderFile, 0, 0, 1, 0, 2, 1, 1, 0, &rastState, &stencilState, &targetInfo);
 
         auto fragLampFile = context.app.userDir ~ "/shaders/Lamp.frag.spv";
 
-        lampPipeline = gpu.newPipeline(vertShaderFile, fragLampFile, 0, 0, 1, 0, 1, 0, 1, 0, &rastState, &stencilState, &targetInfo);
+        lampPipeline = gpu.newPipeline(vertShaderFile, fragLampFile, 0, 0, 1, 0, 1, 1, 1, 0, &rastState, &stencilState, &targetInfo);
 
-        auto texturePath = context.app.userDir ~ "/container.bmp";
+        auto texturePath = context.app.userDir ~ "/container2.png";
+
+        newTexture = new Texture3d;
+        build(newTexture);
+        newTexture.create(texturePath);
+
+        newTexture2 = new Texture3d;
+        build(newTexture2);
+        texturePath = context.app.userDir ~ "/container.jpg";
+        newTexture2.create(texturePath);
+
+        debugBuffer = gpu.dev.newGPUBuffer(SDL_GPU_BUFFERUSAGE_GRAPHICS_STORAGE_READ, FragmentBuffer
+                .sizeof);
+        debugTransferBuffer = gpu.dev.newTransferDownloadBuffer(FragmentBuffer.sizeof);
 
         import api.dm.back.sdl3.images.sdl_image : SdlImage;
-
-        auto image = new SdlImage();
-        if (const err = image.loadBMP(texturePath))
-        {
-            throw new Exception(err.toString);
-        }
-
-        if (image.getFormat != SDL_PIXELFORMAT_ABGR8888)
-        {
-            if (const err = image.convert(SDL_PIXELFORMAT_ABGR8888))
-            {
-                throw new Exception(err.toString);
-            }
-        }
-
-        int w = image.getWidth;
-        int h = image.getHeight;
-
-        void* rawImagePtr;
-        if (const err = image.getPixels(rawImagePtr))
-        {
-            throw new Exception(err.toString);
-        }
-
-        size_t imageLen = w * h * 4;
-
-        ubyte[] imagePtr = (cast(ubyte*) rawImagePtr)[0 .. imageLen];
-
-        SDL_GPUSamplerCreateInfo samplerInfo = gpu.dev.nearestRepeat;
-        sampler = gpu.dev.newSampler(&samplerInfo);
-
-        newTexture = gpu.dev.newTexture(w, h, SDL_GPU_TEXTURETYPE_2D, SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM, SDL_GPU_TEXTUREUSAGE_SAMPLER, 1, 1);
-
-        SDL_SetGPUTextureName(gpu.dev.getObject, newTexture, "Test texture");
-
-        auto transferBuffer2 = gpu.dev.newTransferUploadBuffer(cast(uint) imageLen);
-
-        auto transBuffMap = gpu.dev.mapTransferBuffer(transferBuffer2, false);
-        ubyte[] transBuffSlice = (cast(ubyte*) transBuffMap)[0 .. imageLen];
-        transBuffSlice[0 .. imageLen] = imagePtr[];
-
-        gpu.dev.unmapTransferBuffer(transferBuffer2);
 
         SDL_GPUTextureCreateInfo depthInfo;
         depthInfo.type = SDL_GPU_TEXTURETYPE_2D;
@@ -173,15 +153,15 @@ class Start : GuiScene
 
         cube.uploadStart;
         lamp.uploadStart;
-
-        gpu.dev.uploadTexture(transferBuffer2, newTexture, w, h);
+        newTexture.uploadStart;
+        newTexture2.uploadStart;
 
         assert(gpu.dev.endCopyPass);
 
         cube.uploadEnd;
         lamp.uploadEnd;
-        
-        gpu.dev.deleteTransferBuffer(transferBuffer2);
+        newTexture.uploadEnd;
+        newTexture2.uploadEnd;
     }
 
     float time;
@@ -214,9 +194,14 @@ class Start : GuiScene
         assert(gpu.startRenderPass(&depthStencilTargetInfo));
 
         gpu.dev.bindPipeline(fillPipeline);
-        gpu.dev.bindFragmentSamplers(newTexture, sampler);
 
-        struct SceneTransforms {
+        Texture3d[2] textures = [newTexture, newTexture2];
+        gpu.dev.bindFragmentSamplers(textures);
+
+        gpu.dev.bindFragmentStorageBuffer(debugBuffer);
+
+        struct SceneTransforms
+        {
             Matrix4x4f world;
             Matrix4x4f view;
             Matrix4x4f projection;
@@ -236,10 +221,11 @@ class Start : GuiScene
 
         import api.dm.kit.sprites3d.materials.material;
 
-        struct Planes {
+        struct Planes
+        {
             float nearPlane;
             float farPlane;
-            align(16):
+        align(16):
             float[3] objectColor;
             float[3] lightPos;
             float[3] cameraPos;
@@ -250,7 +236,9 @@ class Start : GuiScene
         // float[8] planes = [
         //     10, 1000, 1, 0.5, 0.31, 1, 1, 1
         // ];
-        Planes planes = Planes(10, 1000, [1.0f, 0.5f, 0.31f], [lamp.translatePos.x, lamp.translatePos.y, lamp.translatePos.z], [camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z]);
+        Planes planes = Planes(10, 1000, [1.0f, 0.5f, 0.31f], [
+            lamp.translatePos.x, lamp.translatePos.y, lamp.translatePos.z
+        ], [camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z]);
 
         planes.material.ambient = Vec3f(1.0f, 0.5f, 0.31f);
         planes.material.diffuse = Vec3f(1.0f, 0.5f, 0.31f);
@@ -263,26 +251,39 @@ class Start : GuiScene
         planes.light.specular = Vec3f(1.0f, 1.0f, 1.0f);
 
         gpu.dev.pushUniformFragmentData(0, &planes, planes.sizeof);
-        
+
         cube.bindBuffers;
         cube.drawIndexed;
 
         transforms.world = lamp.worldMatrix;
 
-        gpu.dev.bindPipeline(lampPipeline);
-        gpu.dev.pushUniformVertexData(0, &transforms, SceneTransforms.sizeof);
+        // gpu.dev.bindPipeline(lampPipeline);
+        // gpu.dev.pushUniformVertexData(0, &transforms, SceneTransforms.sizeof);
 
-        lamp.bindBuffers;
-        lamp.drawIndexed;
+        // gpu.dev.bindFragmentStorageBuffer(debugBuffer);
+
+        // lamp.bindBuffers;
+        // lamp.drawIndexed;
 
         assert(gpu.dev.endRenderPass);
+
+        gpu.dev.startCopyPass;
+
+        gpu.dev.downloadBuffer(debugBuffer, debugTransferBuffer, float.sizeof * 4);
+
+        gpu.dev.endCopyPass(true);
+
+        // auto fragBuf = cast(FragmentBuffer*) gpu.dev.mapTransferBuffer(
+        //     debugTransferBuffer);
+        // import std;
+
+        // gpu.dev.unmapTransferBuffer(debugTransferBuffer);
+
     }
 
     override void dispose()
     {
         super.dispose;
         gpu.dev.deletePipeline(fillPipeline);
-        gpu.dev.deleteTexture(newTexture);
-        SDL_ReleaseGPUSampler(gpu.dev.getObject, sampler);
     }
 }

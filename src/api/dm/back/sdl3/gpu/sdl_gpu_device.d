@@ -9,7 +9,7 @@ import api.dm.back.sdl3.gpu.sdl_gpu_pipeline : SdlGPUPipeline;
 
 import std.string : toStringz, fromStringz;
 import api.math.geom2.rect2 : Rect2d;
-import api.dm.com.gpu.com_3d_types: ComVertex;
+import api.dm.com.gpu.com_3d_types : ComVertex;
 
 import api.dm.back.sdl3.externs.csdl3;
 
@@ -281,7 +281,9 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
             SDL_GPUColorTargetDescription[1] colorTargetDescriptions = colorTarget(window);
             info.target_info.num_color_targets = colorTargetDescriptions.length;
             info.target_info.color_target_descriptions = colorTargetDescriptions.ptr;
-        }else {
+        }
+        else
+        {
             info.target_info = *targetInfo;
         }
 
@@ -739,7 +741,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return true;
     }
 
-    bool endCopyPass()
+    bool endCopyPass(bool isWaitForFence = false)
     {
         if (state != GPUGraphicState.copyStart || !lastCopyPass)
         {
@@ -750,7 +752,15 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
         SDL_EndGPUCopyPass(lastCopyPass);
 
-        bool isSubmit = submitCmdBuffer;
+        bool isSubmit;
+        if (!isWaitForFence)
+        {
+            isSubmit = submitCmdBuffer;
+        }
+        else
+        {
+            isSubmit = submitWaitFence;
+        }
 
         resetState;
 
@@ -809,6 +819,23 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         SDL_UploadToGPUTexture(lastCopyPass, source, destination, isCycle);
     }
 
+    void downloadBuffer(SDL_GPUBuffer* buff, SDL_GPUTransferBuffer* destBuff, size_t buffSize, size_t buffOffset = 0, size_t destBuffOffet = 0)
+    {
+        assert(state == GPUGraphicState.copyStart);
+        assert(lastCopyPass);
+
+        SDL_GPUBufferRegion source;
+        source.buffer = buff;
+        source.size = cast(uint) buffSize;
+        source.offset = cast(uint) buffOffset;
+
+        SDL_GPUTransferBufferLocation dest;
+        dest.transfer_buffer = destBuff;
+        dest.offset = cast(uint) destBuffOffet;
+
+        SDL_DownloadFromGPUBuffer(lastCopyPass, &source, &dest);
+    }
+
     bool submitCmdBuffer()
     {
         if (!lastCmdBuff)
@@ -817,6 +844,19 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         }
 
         return SDL_SubmitGPUCommandBuffer(lastCmdBuff);
+    }
+
+    bool submitWaitFence()
+    {
+        if (!lastCmdBuff)
+        {
+            return false;
+        }
+        SDL_GPUFence* fence = SDL_SubmitGPUCommandBufferAndAcquireFence(lastCmdBuff);
+        assert(fence);
+        SDL_WaitForGPUFences(ptr, true, &fence, 1);
+        SDL_ReleaseGPUFence(ptr, fence);
+        return true;
     }
 
     void resetState()
@@ -860,6 +900,29 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         bindIndexBuffer(&indexBinding, indexElementSize);
     }
 
+    import api.dm.kit.sprites3d.textures.texture3d : Texture3d;
+
+    void bindFragmentSamplers(Texture3d texture, uint firstSlot = 0)
+    {
+        SDL_GPUTextureSamplerBinding[1] sampleBinding;
+        sampleBinding[0].texture = texture.texture;
+        sampleBinding[0].sampler = texture.sampler;
+        bindFragmentSamplers(sampleBinding, firstSlot);
+    }
+
+    void bindFragmentSamplers(Texture3d[] textures, uint firstSlot = 0)
+    {
+        SDL_GPUTextureSamplerBinding[] sampleBinding = new SDL_GPUTextureSamplerBinding[textures
+                .length];
+        foreach (ti, texture; textures)
+        {
+            sampleBinding[ti].texture = texture.texture;
+            sampleBinding[ti].sampler = texture.sampler;
+        }
+
+        bindFragmentSamplers(sampleBinding, firstSlot);
+    }
+
     void bindFragmentSamplers(SDL_GPUTexture* texture, SDL_GPUSampler* sampler, uint firstSlot = 0)
     {
         SDL_GPUTextureSamplerBinding[1] sampleBinding;
@@ -873,7 +936,8 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         assert(state == GPUGraphicState.renderStart);
         assert(lastPass);
 
-        SDL_BindGPUFragmentSamplers(lastPass, firstSlot, bindings.ptr, cast(uint) bindings.length);
+        SDL_BindGPUFragmentSamplers(lastPass, firstSlot, bindings.ptr, cast(uint) bindings
+                .length);
     }
 
     void bindIndexBuffer(SDL_GPUBufferBinding* bindings, SDL_GPUIndexElementSize indexElementSize)
@@ -881,6 +945,12 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         assert(state == GPUGraphicState.renderStart);
         assert(lastPass);
         SDL_BindGPUIndexBuffer(lastPass, bindings, indexElementSize);
+    }
+
+    void bindFragmentStorageBuffer(SDL_GPUBuffer* buffer, uint firstSlot = 0){
+        assert(state == GPUGraphicState.renderStart);
+        assert(lastPass);
+        SDL_BindGPUFragmentStorageBuffers(lastPass, firstSlot, &buffer, 1);
     }
 
     bool draw(uint numVertices = 1, uint numInstances = 1, uint firstVertex = 0, uint firstInstance = 0)
@@ -1026,10 +1096,9 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
     SDL_GPURasterizerState depthRasterizerState()
     {
         SDL_GPURasterizerState rstate;
-        rstate.cull_mode = SDL_GPU_CULLMODE_FRONT,
-        //SDL_GPU_FILLMODE_LINE, SDL_GPU_FILLMODE_FILL
-        rstate.fill_mode = SDL_GPU_FILLMODE_FILL,
-        rstate.front_face = SDL_GPU_FRONTFACE_CLOCKWISE;
+        rstate.cull_mode = SDL_GPU_CULLMODE_FRONT, //SDL_GPU_FILLMODE_LINE, SDL_GPU_FILLMODE_FILL
+            rstate.fill_mode = SDL_GPU_FILLMODE_FILL,
+            rstate.front_face = SDL_GPU_FRONTFACE_CLOCKWISE;
         return rstate;
     }
 
