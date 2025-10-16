@@ -64,8 +64,14 @@ class Start : GuiScene
 
     struct FragmentBuffer
     {
-        align(16):
-        float[4] colors;
+        float[4] value1;
+        float[4] value2;
+        float[4] value3;
+    }
+
+    struct PlaneInfo {
+        float nearPlane;
+        float farPlane;
     }
 
     static UniformBuffer timeUniform;
@@ -223,27 +229,32 @@ class Start : GuiScene
 
         struct Planes
         {
-            float nearPlane;
-            float farPlane;
-        align(16):
-            float[3] objectColor;
-            float[3] lightPos;
+            PlaneInfo planeInfo;
+            align(16):
             float[3] cameraPos;
-            Material material;
+            PhongMaterial material;
             Light light;
         }
 
         // float[8] planes = [
         //     10, 1000, 1, 0.5, 0.31, 1, 1, 1
         // ];
-        Planes planes = Planes(10, 1000, [1.0f, 0.5f, 0.31f], [
-            lamp.translatePos.x, lamp.translatePos.y, lamp.translatePos.z
-        ], [camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z]);
+        // Planes planes = Planes(10, 1000, [1.0f, 0.5f, 0.31f], [
+        //     lamp.translatePos.x, lamp.translatePos.y, lamp.translatePos.z
+        // ], [camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z]);
+
+        Planes planes = Planes();
+
+        planes.planeInfo.nearPlane = 10;
+        planes.planeInfo.farPlane = 1000;
+
+        planes.cameraPos = [camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z];
 
         planes.material.ambient = Vec3f(1.0f, 0.5f, 0.31f);
         planes.material.diffuse = Vec3f(1.0f, 0.5f, 0.31f);
         planes.material.specular = Vec3f(0.5f, 0.5f, 0.5f);
         planes.material.shininess = 32;
+        planes.material.color = Vec3f(1.0f, 0.5f, 0.31f);
 
         planes.light.position = Vec3f(lamp.translatePos.x, lamp.translatePos.y, lamp.translatePos.z);
         planes.light.ambient = Vec3f(0.2f, 0.2f, 0.2f);
@@ -257,26 +268,23 @@ class Start : GuiScene
 
         transforms.world = lamp.worldMatrix;
 
-        // gpu.dev.bindPipeline(lampPipeline);
-        // gpu.dev.pushUniformVertexData(0, &transforms, SceneTransforms.sizeof);
+        gpu.dev.bindPipeline(lampPipeline);
+        gpu.dev.pushUniformVertexData(0, &transforms, SceneTransforms.sizeof);
 
-        // gpu.dev.bindFragmentStorageBuffer(debugBuffer);
+        gpu.dev.bindFragmentStorageBuffer(debugBuffer);
 
-        // lamp.bindBuffers;
-        // lamp.drawIndexed;
+        lamp.bindBuffers;
+        lamp.drawIndexed;
 
         assert(gpu.dev.endRenderPass);
 
-        gpu.dev.startCopyPass;
-
-        gpu.dev.downloadBuffer(debugBuffer, debugTransferBuffer, float.sizeof * 4);
-
-        gpu.dev.endCopyPass(true);
-
+        // gpu.dev.startCopyPass;
+        // gpu.dev.downloadBuffer(debugBuffer, debugTransferBuffer, FragmentBuffer.sizeof);
+        // gpu.dev.endCopyPass(true);
         // auto fragBuf = cast(FragmentBuffer*) gpu.dev.mapTransferBuffer(
         //     debugTransferBuffer);
         // import std;
-
+        // writeln(*fragBuf);
         // gpu.dev.unmapTransferBuffer(debugTransferBuffer);
 
     }

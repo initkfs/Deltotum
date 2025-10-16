@@ -6,17 +6,18 @@ import api.math.geom2.vec3 : Vec3f;
  * Authors: initkfs
  */
 
-struct Material
+struct PhongMaterial
 {
-    //specular
-    float shininess = 32;
+    align(16):
     Vec3f ambient;
     Vec3f diffuse;
     Vec3f specular;
-    float[2] _padding;
+    Vec3f color;
+    align(4):
+    float shininess = 32;
 }
 
-static assert(Material.sizeof % 16 == 0);
+static assert(PhongMaterial.sizeof % 16 == 0);
 
 struct Light {
     align(16):
