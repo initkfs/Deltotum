@@ -27,6 +27,8 @@ import api.dm.back.sdl3.gpu.sdl_gpu_shader : SdlGPUShader;
 import api.dm.kit.sprites3d.cameras.perspective_camera : PerspectiveCamera;
 import api.dm.com.gpu.com_3d_types : ComVertex;
 import api.dm.kit.sprites3d.shapes.cube : Cube;
+import api.dm.kit.sprites3d.shapes.sphere: Sphere;
+import api.dm.kit.sprites3d.shapes.cylinder: Cylinder;
 import api.dm.kit.sprites3d.textures.texture3d : Texture3d;
 
 import api.dm.back.sdl3.externs.csdl3;
@@ -48,7 +50,7 @@ class Start : GuiScene
     Random rnd;
 
     Cube cube;
-    Cube lamp;
+    Sphere lamp;
 
     Texture3d diffuseMap;
     Texture3d specularMap;
@@ -93,7 +95,7 @@ class Start : GuiScene
         cube.scale = Vec3f(0.5, 0.5, 0.5);
         addCreate(cube);
 
-        lamp = new Cube(1, 1, 1);
+        lamp = new Sphere(0.5);
         lamp.scale = Vec3f(0.4, 0.4, 0.4);
         lamp.pos = Vec2d(1, 0.5);
         lamp.z = 1;
