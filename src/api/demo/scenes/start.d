@@ -50,8 +50,8 @@ class Start : GuiScene
     Cube cube;
     Cube lamp;
 
-    Texture3d newTexture;
-    Texture3d newTexture2;
+    Texture3d diffuseMap;
+    Texture3d specularMap;
     SDL_GPUTexture* sceneDepthTexture;
 
     PerspectiveCamera camera;
@@ -127,14 +127,14 @@ class Start : GuiScene
 
         auto texturePath = context.app.userDir ~ "/container2.png";
 
-        newTexture = new Texture3d;
-        build(newTexture);
-        newTexture.create(texturePath);
+        diffuseMap = new Texture3d;
+        build(diffuseMap);
+        diffuseMap.create(texturePath);
 
-        newTexture2 = new Texture3d;
-        build(newTexture2);
-        texturePath = context.app.userDir ~ "/container.jpg";
-        newTexture2.create(texturePath);
+        specularMap = new Texture3d;
+        build(specularMap);
+        texturePath = context.app.userDir ~ "/container2_specular.png";
+        specularMap.create(texturePath);
 
         debugBuffer = gpu.dev.newGPUBuffer(SDL_GPU_BUFFERUSAGE_GRAPHICS_STORAGE_READ, FragmentBuffer
                 .sizeof);
@@ -159,15 +159,15 @@ class Start : GuiScene
 
         cube.uploadStart;
         lamp.uploadStart;
-        newTexture.uploadStart;
-        newTexture2.uploadStart;
+        diffuseMap.uploadStart;
+        specularMap.uploadStart;
 
         assert(gpu.dev.endCopyPass);
 
         cube.uploadEnd;
         lamp.uploadEnd;
-        newTexture.uploadEnd;
-        newTexture2.uploadEnd;
+        diffuseMap.uploadEnd;
+        specularMap.uploadEnd;
     }
 
     float time;
@@ -178,7 +178,7 @@ class Start : GuiScene
 
         import api.math.matrices.affine3;
 
-        //cube.angle = cube.angle + 1;
+        cube.angle = cube.angle + 1;
 
         time = SDL_GetTicks / 1000.0;
     }
@@ -201,7 +201,7 @@ class Start : GuiScene
 
         gpu.dev.bindPipeline(fillPipeline);
 
-        Texture3d[2] textures = [newTexture, newTexture2];
+        Texture3d[2] textures = [diffuseMap, specularMap];
         gpu.dev.bindFragmentSamplers(textures);
 
         gpu.dev.bindFragmentStorageBuffer(debugBuffer);
@@ -256,10 +256,17 @@ class Start : GuiScene
         planes.material.shininess = 32;
         planes.material.color = Vec3f(1.0f, 0.5f, 0.31f);
 
-        planes.light.position = Vec3f(lamp.translatePos.x, lamp.translatePos.y, lamp.translatePos.z);
-        planes.light.ambient = Vec3f(0.2f, 0.2f, 0.2f);
-        planes.light.diffuse = Vec3f(0.5f, 0.5f, 0.5f);
+        planes.light.position = camera.cameraPos;
+        planes.light.direction = camera.cameraFront;
+        planes.light.ambient = Vec3f(0.5f, 0.5f, 0.5f);
+        planes.light.diffuse = Vec3f(1f, 1f, 1f);
         planes.light.specular = Vec3f(1.0f, 1.0f, 1.0f);
+        planes.light.constant = 1.0;
+        planes.light.linear = 0.09f;
+        planes.light.quadratic = 0;
+        planes.light.type = 1;
+        planes.light.cutoff = Math.cosDeg(12.5);
+        planes.light.outerCutoff = Math.cosDeg(17.5);
 
         gpu.dev.pushUniformFragmentData(0, &planes, planes.sizeof);
 
