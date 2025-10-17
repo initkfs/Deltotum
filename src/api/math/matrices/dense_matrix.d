@@ -51,6 +51,7 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
     static typeof(this) onesDiag(T initValue = 1)
     {
         typeof(this) result;
+        result.fillInit;
         result.onMainDiagonal((ref v) { v = initValue; return true; });
         return result;
     }
@@ -61,6 +62,18 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         {
             const T[] rowSlice = row;
             immutable isContinue = onRow(rowIndex, rowSlice);
+            if (!isContinue)
+            {
+                break;
+            }
+        }
+    }
+
+    void eachRowRef(scope bool delegate(size_t rowIndex, scope ref T[ColDim]) pure @safe onRow) pure @safe
+    {
+        foreach (size_t rowIndex, ref row; matrix)
+        {
+            immutable isContinue = onRow(rowIndex, row);
             if (!isContinue)
             {
                 break;

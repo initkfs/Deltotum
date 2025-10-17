@@ -16,8 +16,8 @@ class Sprite3d : Sprite2d
 
         align(16)
         {
-            Matrix4x4f _wolrdMatrix;
-            Matrix4x4f _wolrdMatrixInverse;
+            Matrix4x4f _worldMatrix;
+            Matrix4x4f _worldMatrixInverse;
         }
     }
 
@@ -45,37 +45,53 @@ class Sprite3d : Sprite2d
     {
         super.create;
 
-        _wolrdMatrix = Matrix4x4f.onesDiag;
+        _worldMatrix = Matrix4x4f.onesDiag;
 
         calcWorldMatrix;
     }
 
     protected void calcWorldMatrix()
     {
-        _wolrdMatrix = _wolrdMatrix.identity;
+        _worldMatrix = _worldMatrix.identity;
 
         //Scale -> Rotate -> Translate
         import api.math.matrices.affine3;
 
-        _wolrdMatrix = _wolrdMatrix.mul(scaleMatrix(scale));
+        _worldMatrix = _worldMatrix.mul(scaleMatrix(scale));
 
         if ((rotation.x != 0) || (rotation.y != 0) || (rotation.z != 0))
         {
-            _wolrdMatrix = _wolrdMatrix.mul(rotateMatrix(angle, rotation));
+            _worldMatrix = _worldMatrix.mul(rotateMatrix(angle, rotation));
         }
 
         //TODO all set to 0, pos = 0
         if (x != 0 || y != 0 || z != 0)
         {
-            _wolrdMatrix = _wolrdMatrix.mul(translateMatrix(Vec3f(x, y, z)));
+            _worldMatrix = _worldMatrix.mul(translateMatrix(Vec3f(x, y, z)));
         }
 
         if (isCalcInverseWorldMatrix)
         {
+            //left right block for row-order matrix
             import api.math.matrices.decompose.lup : decompose, invert;
 
-            auto decomposeModel = decompose!(_wolrdMatrix.Type, 4, 4)(_wolrdMatrix);
-            _wolrdMatrixInverse = invert(decomposeModel);
+            _worldMatrixInverse = Matrix4x4f.onesDiag;
+
+            //TODO more optimal
+            _worldMatrixInverse.eachRowRef((ri, ref scope float[4] row) {
+
+                if (ri >= 3)
+                {
+                    return false;
+                }
+
+                row[0 .. 3] = _worldMatrix[ri][0 .. 3];
+
+                return true;
+            });
+
+            auto decomposeModel = decompose!(_worldMatrix.Type, 4, 4)(_worldMatrix);
+            _worldMatrixInverse = invert(decomposeModel);
         }
     }
 
@@ -87,12 +103,12 @@ class Sprite3d : Sprite2d
             isMatrixRecalc = false;
         }
 
-        return _wolrdMatrix;
+        return _worldMatrix;
     }
 
     ref Matrix4x4f worldMatrixInverse()
     {
-        return _wolrdMatrixInverse;
+        return _worldMatrixInverse;
     }
 
     Vec3f translatePos() => Vec3f(x, y, z);
