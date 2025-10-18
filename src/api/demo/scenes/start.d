@@ -27,10 +27,10 @@ import api.dm.back.sdl3.gpu.sdl_gpu_shader : SdlGPUShader;
 import api.dm.kit.sprites3d.cameras.perspective_camera : PerspectiveCamera;
 import api.dm.com.gpu.com_3d_types : ComVertex;
 import api.dm.kit.sprites3d.shapes.cube : Cube;
-import api.dm.kit.sprites3d.shapes.sphere: Sphere;
-import api.dm.kit.sprites3d.shapes.cylinder: Cylinder;
+import api.dm.kit.sprites3d.shapes.sphere : Sphere;
+import api.dm.kit.sprites3d.shapes.cylinder : Cylinder;
 import api.dm.kit.sprites3d.textures.texture3d : Texture3d;
-import api.dm.kit.sprites3d.phong_sprite3d: PhongSprite3d;
+import api.dm.kit.sprites3d.phong_sprite3d : PhongSprite3d;
 
 import api.dm.back.sdl3.externs.csdl3;
 
@@ -69,7 +69,8 @@ class Start : GuiScene
         float[4] value3;
     }
 
-    struct PlaneInfo {
+    struct PlaneInfo
+    {
         float nearPlane;
         float farPlane;
     }
@@ -101,7 +102,13 @@ class Start : GuiScene
         lamp.scale = Vec3f(0.2, 0.2, 0.2);
         lamp.pos = Vec2d(1, 0.5);
         lamp.z = 1;
+        lamp.isRotateAroundPivot = true;
+        lamp.rotateRadius = 0.8;
+        lamp.rotatePivot = cube.mesh.translatePos;
+        lamp.rotation.y = 1;
         addCreate(lamp);
+
+        lamp.isCalcInverseWorldMatrix = false;
 
         import api.dm.gui.windows.gui_window : GuiWindow;
 
@@ -167,9 +174,39 @@ class Start : GuiScene
 
         import api.math.matrices.affine3;
 
-        cube.mesh.angle = cube.mesh.angle + 1;
+        //cube.mesh.angle = cube.mesh.angle + 1;
 
         time = SDL_GetTicks / 1000.0;
+
+        lamp.angle = lamp.angle + 1;
+
+        //float radius = 1.0f;
+        
+        //sin(t) 0 on t = π/2 + πk
+        //cons(t) 0 on t = πk
+        // static float currentAngle = 0.0f;
+
+        // currentAngle += 1;
+
+        // if (currentAngle > 360)
+        // {
+        //     currentAngle = 0;
+        // }
+
+        // float eps = 0.000000001;
+
+        // float lampX = Math.sinDeg(currentAngle) * radius;
+        // if(Math.abs(lampX) < eps){
+        //     lampX =0;
+        // }
+        // float lampZ = Math.cosDeg(currentAngle) * radius;
+        //  if(Math.abs(lampZ) < eps){
+        //      lampZ = 0;
+        //  }
+        // auto lampPosition = Vec3f(lampX, 0, lampZ);
+        // lamp.x = lampPosition.x;
+        // lamp.y = lampPosition.y;
+        // lamp.z = lampPosition.z;
     }
 
     override void draw()
@@ -218,7 +255,7 @@ class Start : GuiScene
         struct Planes
         {
             PlaneInfo planeInfo;
-            align(16):
+        align(16):
             float[3] cameraPos;
             PhongMaterial material;
             Light light;
@@ -236,7 +273,9 @@ class Start : GuiScene
         planes.planeInfo.nearPlane = 10;
         planes.planeInfo.farPlane = 1000;
 
-        planes.cameraPos = [camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z];
+        planes.cameraPos = [
+            camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z
+        ];
 
         planes.material.ambient = Vec3f(1.0f, 0.5f, 0.31f);
         planes.material.diffuse = Vec3f(1.0f, 0.5f, 0.31f);
@@ -247,7 +286,7 @@ class Start : GuiScene
         planes.light.position = lamp.translatePos;
         planes.light.direction = camera.cameraFront;
         planes.light.ambient = Vec3f(0.2f, 0.2f, 0.2f);
-        planes.light.diffuse = Vec3f(0.5f, 0.5f, 0.5f);
+        planes.light.diffuse = Vec3f(0.7f, 0.7f, 0.7f);
         planes.light.specular = Vec3f(1.0f, 1.0f, 1.0f);
         planes.light.constant = 1.0;
         planes.light.linear = 0.09f;

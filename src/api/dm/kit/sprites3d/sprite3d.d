@@ -26,6 +26,10 @@ class Sprite3d : Sprite2d
     Vec3f rotation;
     Vec3f scale = Vec3f(1, 1, 1);
 
+    Vec3f rotatePivot;
+    float rotateRadius = 1;
+    bool isRotateAroundPivot;
+
     bool isRoundEvenZ;
     bool isRoundEvenChildZ;
 
@@ -59,15 +63,27 @@ class Sprite3d : Sprite2d
 
         _worldMatrix = _worldMatrix.mul(scaleMatrix(scale));
 
+        if (isRotateAroundPivot)
+        {
+            _worldMatrix = _worldMatrix.mul(translateMatrix(rotateRadius, 0, 0));
+        }
+
         if ((rotation.x != 0) || (rotation.y != 0) || (rotation.z != 0))
         {
             _worldMatrix = _worldMatrix.mul(rotateMatrix(angle, rotation));
         }
 
         //TODO all set to 0, pos = 0
-        if (x != 0 || y != 0 || z != 0)
+        if (!isRotateAroundPivot)
         {
-            _worldMatrix = _worldMatrix.mul(translateMatrix(Vec3f(x, y, z)));
+            if (x != 0 || y != 0 || z != 0)
+            {
+                _worldMatrix = _worldMatrix.mul(translateMatrix(Vec3f(x, y, z)));
+            }
+        }
+        else
+        {
+            _worldMatrix = _worldMatrix.mul(translateMatrix(rotatePivot));
         }
 
         if (isCalcInverseWorldMatrix)
@@ -111,7 +127,19 @@ class Sprite3d : Sprite2d
         return _worldMatrixInverse;
     }
 
-    Vec3f translatePos() => Vec3f(x, y, z);
+    Vec3f translatePos()
+    {
+        if (!isRotateAroundPivot)
+        {
+            return Vec3f(x, y, z);
+        }
+
+        //TODO all axis
+        Vec3f local = Vec3f(rotateRadius, 0, 0);
+        Vec3f rotatedOffset = local.rotateAroundAxis(Vec3f(0, 1, 0), -angle);
+        Vec3f worldPos = rotatePivot.add(rotatedOffset);
+        return worldPos;
+    }
 
     override double x() @safe pure nothrow => super.x;
 

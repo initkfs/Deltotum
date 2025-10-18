@@ -43,6 +43,8 @@ struct Vec3f
             return Vec3f(Math.abs(x - other.x), Math.abs(y - other.y), Math.abs(z - other.z));
         }
 
+        Vec3f neg() => Vec3f(-x, -y, -z);
+
         Vec3f normalize()
         {
             const double len = length;
