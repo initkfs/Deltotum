@@ -30,6 +30,7 @@ import api.dm.kit.sprites3d.shapes.cube : Cube;
 import api.dm.kit.sprites3d.shapes.sphere: Sphere;
 import api.dm.kit.sprites3d.shapes.cylinder: Cylinder;
 import api.dm.kit.sprites3d.textures.texture3d : Texture3d;
+import api.dm.kit.sprites3d.phong_sprite3d: PhongSprite3d;
 
 import api.dm.back.sdl3.externs.csdl3;
 
@@ -49,11 +50,8 @@ class Start : GuiScene
 
     Random rnd;
 
-    Cube cube;
+    PhongSprite3d cube;
     Sphere lamp;
-
-    Texture3d diffuseMap;
-    Texture3d specularMap;
     SDL_GPUTexture* sceneDepthTexture;
 
     PerspectiveCamera camera;
@@ -89,14 +87,18 @@ class Start : GuiScene
         camera = new PerspectiveCamera(this);
         addCreate(camera);
 
-        cube = new Cube(1, 1, 1);
-        cube.rotation.y = 1;
-        cube.angle = 45;
-        cube.scale = Vec3f(0.5, 0.5, 0.5);
+        auto diffusePath = context.app.userDir ~ "/container2.png";
+        auto specularPath = context.app.userDir ~ "/container2_specular.png";
+
+        cube = new PhongSprite3d(diffusePath, specularPath);
+        cube.mesh = new Cube(1, 1, 1);
+        cube.mesh.rotation.y = 1;
+        cube.mesh.angle = 45;
+        cube.mesh.scale = Vec3f(0.5, 0.5, 0.5);
         addCreate(cube);
 
         lamp = new Sphere(0.5);
-        lamp.scale = Vec3f(0.4, 0.4, 0.4);
+        lamp.scale = Vec3f(0.2, 0.2, 0.2);
         lamp.pos = Vec2d(1, 0.5);
         lamp.z = 1;
         addCreate(lamp);
@@ -127,17 +129,6 @@ class Start : GuiScene
 
         lampPipeline = gpu.newPipeline(vertShaderFile, fragLampFile, 0, 0, 1, 0, 1, 1, 1, 0, &rastState, &stencilState, &targetInfo);
 
-        auto texturePath = context.app.userDir ~ "/container2.png";
-
-        diffuseMap = new Texture3d;
-        build(diffuseMap);
-        diffuseMap.create(texturePath);
-
-        specularMap = new Texture3d;
-        build(specularMap);
-        texturePath = context.app.userDir ~ "/container2_specular.png";
-        specularMap.create(texturePath);
-
         debugBuffer = gpu.dev.newGPUBuffer(SDL_GPU_BUFFERUSAGE_GRAPHICS_STORAGE_READ, FragmentBuffer
                 .sizeof);
         debugTransferBuffer = gpu.dev.newTransferDownloadBuffer(FragmentBuffer.sizeof);
@@ -161,15 +152,11 @@ class Start : GuiScene
 
         cube.uploadStart;
         lamp.uploadStart;
-        diffuseMap.uploadStart;
-        specularMap.uploadStart;
 
         assert(gpu.dev.endCopyPass);
 
         cube.uploadEnd;
         lamp.uploadEnd;
-        diffuseMap.uploadEnd;
-        specularMap.uploadEnd;
     }
 
     float time;
@@ -180,7 +167,7 @@ class Start : GuiScene
 
         import api.math.matrices.affine3;
 
-        cube.angle = cube.angle + 1;
+        cube.mesh.angle = cube.mesh.angle + 1;
 
         time = SDL_GetTicks / 1000.0;
     }
@@ -203,8 +190,7 @@ class Start : GuiScene
 
         gpu.dev.bindPipeline(fillPipeline);
 
-        Texture3d[2] textures = [diffuseMap, specularMap];
-        gpu.dev.bindFragmentSamplers(textures);
+        cube.bindTextures;
 
         gpu.dev.bindFragmentStorageBuffer(debugBuffer);
 
@@ -219,10 +205,10 @@ class Start : GuiScene
         static assert((SceneTransforms.sizeof % 16) == 0, "Buffer size must be 16-byte aligned");
 
         SceneTransforms transforms;
-        transforms.world = cube.worldMatrix;
+        transforms.world = cube.mesh.worldMatrix;
         transforms.view = camera.view;
         transforms.projection = camera.projection;
-        transforms.normal = cube.worldMatrixInverse;
+        transforms.normal = cube.mesh.worldMatrixInverse;
 
         //timeUniform.time = SDL_GetTicks() / 250.0;
         gpu.dev.pushUniformVertexData(0, &transforms, SceneTransforms.sizeof);
@@ -258,10 +244,10 @@ class Start : GuiScene
         planes.material.shininess = 32;
         planes.material.color = Vec3f(1.0f, 0.5f, 0.31f);
 
-        planes.light.position = camera.cameraPos;
+        planes.light.position = lamp.translatePos;
         planes.light.direction = camera.cameraFront;
-        planes.light.ambient = Vec3f(0.5f, 0.5f, 0.5f);
-        planes.light.diffuse = Vec3f(1f, 1f, 1f);
+        planes.light.ambient = Vec3f(0.2f, 0.2f, 0.2f);
+        planes.light.diffuse = Vec3f(0.5f, 0.5f, 0.5f);
         planes.light.specular = Vec3f(1.0f, 1.0f, 1.0f);
         planes.light.constant = 1.0;
         planes.light.linear = 0.09f;
