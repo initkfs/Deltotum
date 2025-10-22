@@ -58,7 +58,7 @@ class SkyBox : Sprite3d
         22, 21, 20, 23, 22, 20
     ];
 
-    SdlGPUPipeline skyboxPipeline;
+    SdlGPUPipeline pipeline;
 
     Cube cube;
     CubeMap cubeMap;
@@ -73,6 +73,9 @@ class SkyBox : Sprite3d
     {
         this.basepath = basepath;
         this.ext = ext;
+        isPushUniformVertexMatrix = false;
+
+        id = "SkyBox3d";
     }
 
     override void create()
@@ -87,54 +90,37 @@ class SkyBox : Sprite3d
                 indices = skyboxIndices;
             }
         };
+        cube.id = "SkyBoxCube";
 
-        build(cube);
-        cube.create;
+        addCreate(cube);
 
         cubeMap = new CubeMap(basepath, ext);
-        build(cubeMap);
-        cubeMap.create;
+        addCreate(cubeMap);
+        cubeMap.id = "SkyBoxCubeMap";
 
         auto skyboxVert = gpu.shaderDefaultPath(vertexShaderName);
         auto skyboxFrag = gpu.shaderDefaultPath(fragmentShaderName);
 
-        skyboxPipeline = gpu.newPipeline(skyboxVert, skyboxFrag, 0, 0, 1, 0, 1, 0, 0, 0);
+        pipeline = gpu.newPipeline(skyboxVert, skyboxFrag, 0, 0, 1, 0, 1, 0, 0, 0);
     }
 
-    void uploadStart()
-    {
-        assert(cube);
-        cube.uploadStart;
-        assert(cubeMap);
-        cubeMap.uploadStart;
+    void bindPipeline(){
+        assert(pipeline);
+        gpu.dev.bindPipeline(pipeline);
     }
 
-    void uploadEnd()
-    {
-        assert(cube);
-        cube.uploadEnd;
-        assert(cubeMap);
-        cubeMap.uploadEnd;
+    override void bindAll(){
+        bindPipeline;
+        super.bindAll;
     }
 
-    void bind(SceneTransforms* transforms = null)
+    override void dispose()
     {
-        assert(skyboxPipeline);
-        gpu.dev.bindPipeline(skyboxPipeline);
+        super.dispose;
 
-        SceneTransforms transforms1;
-        transforms1.world = cube.worldMatrix;
-
-        if (transforms)
+        if (pipeline)
         {
-            transforms1.camera = transforms.camera;
-            transforms1.projection = transforms.projection;
-            gpu.dev.pushUniformVertexData(0, &transforms1, SceneTransforms.sizeof);
+            gpu.dev.deletePipeline(pipeline);
         }
-
-        gpu.dev.bindFragmentSamplers(cubeMap);
-
-        cube.bindBuffers;
-        cube.drawIndexed;
     }
 }

@@ -1,6 +1,6 @@
 module api.dm.gui.scenes.gui_scene;
 
-import api.dm.kit.scenes.scene2d : Scene2d;
+import api.dm.kit.scenes.scene3d: Scene3d;
 import api.dm.gui.themes.theme : Theme;
 import api.dm.gui.interacts.interact: Interact;
 import api.dm.gui.supports.sceneview : SceneView;
@@ -11,14 +11,14 @@ import api.dm.gui.controls.control: Control;
 /**
  * Authors: initkfs
  */
-class GuiScene : Scene2d
+class GuiScene : Scene3d
 {
     Theme theme;
     Interact interact;
 
     SceneView debugger;
 
-    alias addCreate = Scene2d.addCreate;
+    alias addCreate = Scene3d.addCreate;
 
     this(this ThisType)(bool isInitUDAProcessor = true)
     {

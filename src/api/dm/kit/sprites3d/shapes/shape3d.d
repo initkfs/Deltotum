@@ -25,6 +25,11 @@ class Shape3d : Sprite3d
         SDL_GPUTransferBuffer* transferBuffer;
     }
 
+    this(){
+        id = "Shape3d";
+        isPushUniformVertexMatrix = true;
+    }
+
     void createMesh()
     {
 
@@ -68,8 +73,10 @@ class Shape3d : Sprite3d
         gpu.dev.copyToBuffer(transferBuffer, false, vertices, indices);
     }
 
-    void uploadStart()
+    override void uploadStart()
     {
+        super.uploadStart;
+
         assert(transferBuffer);
         assert(vertexBuffer);
         assert(indexBuffer);
@@ -78,14 +85,15 @@ class Shape3d : Sprite3d
                 .length, 0, false);
     }
 
-    void uploadEnd()
+    override void uploadEnd()
     {
+        super.uploadEnd;
         assert(transferBuffer);
         gpu.dev.deleteTransferBuffer(transferBuffer);
         transferBuffer = null;
     }
 
-    void bindBuffers()
+    override void bindAll()
     {
         gpu.dev.bindVertexBuffer(vertexBuffer);
         gpu.dev.bindIndexBuffer(indexBuffer);
@@ -94,6 +102,11 @@ class Shape3d : Sprite3d
     void drawIndexed()
     {
         gpu.dev.drawIndexed(indices.length, 1, 0, 0, 0);
+    }
+
+    override void drawContent()
+    {
+        drawIndexed;
     }
 
     override void update(double dt)

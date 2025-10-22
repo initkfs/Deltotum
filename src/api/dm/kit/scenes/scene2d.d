@@ -247,21 +247,8 @@ class Scene2d : EventKitTarget
         draw;
     }
 
-    void drawAll()
+    protected void drawSelfAndChildren()
     {
-        bool isGPU = gpu.isActive;
-
-        if (isGPU)
-        {
-            // if (!gpu.startRenderPass(window))
-            // {
-            //     gpu.resetState;
-            //     //logger.error("Error starting gpu rendering");
-            //     throw new Exception("Error starting gpu rendering");
-            //     return;
-            // }
-        }
-
         if (!isDrawAfterAllSprites && !drawBeforeSprite)
         {
             drawSelf;
@@ -299,20 +286,12 @@ class Scene2d : EventKitTarget
         }
 
         startDrawProcess = false;
-        //TODO multiple scenes
-        if (!isGPU)
-        {
-            graphic.rendererPresent;
-        }
-        else
-        {
-            // if (!gpu.endRenderPass)
-            // {
-            //     //logger.error("Error ending gpu renderer");
-            //     throw new Exception("Error ending gpu renderer");
-            //     gpu.resetState;
-            // }
-        }
+    }
+
+    void drawAll()
+    {
+        drawSelfAndChildren;
+        graphic.rendererPresent;
     }
 
     void update(double delta)

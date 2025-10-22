@@ -64,38 +64,11 @@ class PhongSprite3d : Sprite3d
         gpu.dev.bindFragmentSamplers(textures);
     }
 
-    void uploadStart()
+    override void bindAll()
     {
         assert(mesh);
-        mesh.uploadStart;
-        if (diffuseMap)
-        {
-            diffuseMap.uploadStart;
-        }
-        if (specularMap)
-        {
-            specularMap.uploadStart;
-        }
-    }
-
-    void uploadEnd()
-    {
-        assert(mesh);
-        mesh.uploadEnd;
-        if (diffuseMap)
-        {
-            diffuseMap.uploadEnd;
-        }
-        if (specularMap)
-        {
-            specularMap.uploadEnd;
-        }
-    }
-
-    void bindBuffers()
-    {
-        assert(mesh);
-        mesh.bindBuffers;
+        mesh.bindAll;
+        bindTextures;
     }
 
     void drawIndexed()

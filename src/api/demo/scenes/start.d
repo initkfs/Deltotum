@@ -45,51 +45,8 @@ import api.core.utils.text;
  */
 class Start : GuiScene
 {
-    // ComVertex[] skyboxVertices = [
-    //     // positions          
-    //     ComVertex(-10, -10, -10),
-    //     ComVertex(10, -10, -10),
-    //     ComVertex(10, 10, -10),
-    //     ComVertex(-10, 10, -10),
-
-    //     ComVertex(-10, -10, 10),
-    //     ComVertex(10, -10, 10),
-    //     ComVertex(10, 10, 10),
-    //     ComVertex(-10, 10, 10),
-
-    //     ComVertex(-10, -10, -10),
-    //     ComVertex(-10, 10, -10),
-    //     ComVertex(-10, 10, 10),
-    //     ComVertex(-10, -10, 10),
-
-    //     ComVertex(10, -10, -10),
-    //     ComVertex(10, 10, -10),
-    //     ComVertex(10, 10, 10),
-    //     ComVertex(10, -10, 10),
-
-    //     ComVertex(-10, -10, -10),
-    //     ComVertex(-10, -10, 10),
-    //     ComVertex(10, -10, 10),
-    //     ComVertex(10, -10, -10),
-
-    //     ComVertex(-10, 10, -10),
-    //     ComVertex(-10, 10, 10),
-    //     ComVertex(10, 10, 10),
-    //     ComVertex(10, 10, -10)
-    // ];
-
-    // ushort[] skyboxIndices = [
-    //     0, 1, 2, 0, 2, 3,
-    //     6, 5, 4, 7, 6, 4,
-    //     8, 9, 10, 8, 10, 11,
-    //     14, 13, 12, 15, 14, 12,
-    //     16, 17, 18, 16, 18, 19,
-    //     22, 21, 20, 23, 22, 20
-    // ];
-
     SdlGPUPipeline fillPipeline;
     SdlGPUPipeline lampPipeline;
-    //SdlGPUPipeline skyboxPipeline;
 
     SDL_Window* winPtr;
 
@@ -97,20 +54,13 @@ class Start : GuiScene
 
     Random rnd;
 
-    // CubeMap skyboxCube;
-    // SDL_GPUBuffer* skyboxVertexBuffer;
-    // SDL_GPUBuffer* skyboxIndexBuffer;
-
     PhongSprite3d cube;
     Sphere lamp;
     SDL_GPUTexture* sceneDepthTexture;
 
-    PerspectiveCamera camera;
-
     struct UniformBuffer
     {
         float time = 0;
-        // you can add other properties here
     }
 
     struct FragmentBuffer
@@ -136,93 +86,80 @@ class Start : GuiScene
         super.create;
         rnd = new Random;
 
-        camera = new PerspectiveCamera(this);
-        addCreate(camera);
         //camera.fov = 90;
+
+        assert(camera);
 
         auto skyBoxPath = context.app.userDir ~ "/nebula/";
         skybox = new SkyBox(skyBoxPath, "png");
-        build(skybox);
-        skybox.create;
+        addCreate(skybox);
 
         auto diffusePath = context.app.userDir ~ "/container2.png";
         auto specularPath = context.app.userDir ~ "/container2_specular.png";
 
-        cube = new PhongSprite3d(diffusePath, specularPath);
-        cube.mesh = new Cube(1, 1, 1);
-        cube.mesh.rotation.y = 1;
-        cube.mesh.angle = 45;
-        cube.mesh.scale = Vec3f(0.5, 0.5, 0.5);
-        addCreate(cube);
+        // cube = new PhongSprite3d(diffusePath, specularPath);
+        // cube.mesh = new Cube(1, 1, 1);
+        // cube.mesh.rotation.y = 1;
+        // cube.mesh.angle = 45;
+        // cube.mesh.scale = Vec3f(0.5, 0.5, 0.5);
+        // addCreate(cube);
 
-        lamp = new Sphere(0.5);
-        lamp.scale = Vec3f(0.2, 0.2, 0.2);
-        lamp.pos = Vec2d(1, 0.5);
-        lamp.z = 1;
-        lamp.isRotateAroundPivot = true;
-        lamp.rotateRadius = 0.8;
-        lamp.rotatePivot = cube.mesh.translatePos;
-        lamp.rotation.y = 1;
-        addCreate(lamp);
+        // lamp = new Sphere(0.5);
+        // lamp.scale = Vec3f(0.2, 0.2, 0.2);
+        // lamp.pos = Vec2d(1, 0.5);
+        // lamp.z = 1;
+        // lamp.isRotateAroundPivot = true;
+        // lamp.rotateRadius = 0.8;
+        // lamp.rotatePivot = cube.mesh.translatePos;
+        // lamp.rotation.y = 1;
+        // addCreate(lamp);
 
-        lamp.isCalcInverseWorldMatrix = false;
+        // lamp.isCalcInverseWorldMatrix = false;
 
-        import api.dm.gui.windows.gui_window : GuiWindow;
+        // import api.dm.gui.windows.gui_window : GuiWindow;
 
-        //TODO remove test
-        import std.file : read;
+        // //TODO remove test
+        // import std.file : read;
 
-        auto vertShaderFile = context.app.userDir ~ "/shaders/TexturedBox.vert.spv";
-        auto fragShaderFile = context.app.userDir ~ "/shaders/TexturedBox.frag.spv";
+        // auto vertShaderFile = context.app.userDir ~ "/shaders/TexturedBox.vert.spv";
+        // auto fragShaderFile = context.app.userDir ~ "/shaders/TexturedBox.frag.spv";
 
-        SDL_GPUGraphicsPipelineTargetInfo targetInfo;
+        // SDL_GPUGraphicsPipelineTargetInfo targetInfo;
 
-        SDL_GPUColorTargetDescription[1] targetDesc;
-        targetDesc[0].format = gpu.getSwapchainTextureFormat;
-        targetInfo.num_color_targets = 1;
-        targetInfo.color_target_descriptions = targetDesc.ptr;
-        targetInfo.has_depth_stencil_target = true;
-        targetInfo.depth_stencil_format = SDL_GPU_TEXTUREFORMAT_D16_UNORM;
+        // SDL_GPUColorTargetDescription[1] targetDesc;
+        // targetDesc[0].format = gpu.getSwapchainTextureFormat;
+        // targetInfo.num_color_targets = 1;
+        // targetInfo.color_target_descriptions = targetDesc.ptr;
+        // targetInfo.has_depth_stencil_target = true;
+        // targetInfo.depth_stencil_format = SDL_GPU_TEXTUREFORMAT_D16_UNORM;
 
-        auto stencilState = gpu.dev.depthStencilState;
-        auto rastState = gpu.dev.depthRasterizerState;
+        // auto stencilState = gpu.dev.depthStencilState;
+        // auto rastState = gpu.dev.depthRasterizerState;
 
-        fillPipeline = gpu.newPipeline(vertShaderFile, fragShaderFile, 0, 0, 1, 0, 2, 1, 1, 0, &rastState, &stencilState, &targetInfo);
+        // fillPipeline = gpu.newPipeline(vertShaderFile, fragShaderFile, 0, 0, 1, 0, 2, 1, 1, 0, &rastState, &stencilState, &targetInfo);
 
-        auto fragLampFile = context.app.userDir ~ "/shaders/Lamp.frag.spv";
+        // auto fragLampFile = context.app.userDir ~ "/shaders/Lamp.frag.spv";
 
-        lampPipeline = gpu.newPipeline(vertShaderFile, fragLampFile, 0, 0, 1, 0, 1, 1, 1, 0, &rastState, &stencilState, &targetInfo);
+        // lampPipeline = gpu.newPipeline(vertShaderFile, fragLampFile, 0, 0, 1, 0, 1, 1, 1, 0, &rastState, &stencilState, &targetInfo);
 
-        debugBuffer = gpu.dev.newGPUBuffer(SDL_GPU_BUFFERUSAGE_GRAPHICS_STORAGE_READ, FragmentBuffer
-                .sizeof);
-        debugTransferBuffer = gpu.dev.newTransferDownloadBuffer(FragmentBuffer.sizeof);
+        // debugBuffer = gpu.dev.newGPUBuffer(SDL_GPU_BUFFERUSAGE_GRAPHICS_STORAGE_READ, FragmentBuffer
+        //         .sizeof);
+        // debugTransferBuffer = gpu.dev.newTransferDownloadBuffer(FragmentBuffer.sizeof);
 
-        import api.dm.back.sdl3.images.sdl_image : SdlImage;
+        // import api.dm.back.sdl3.images.sdl_image : SdlImage;
 
-        SDL_GPUTextureCreateInfo depthInfo;
-        depthInfo.type = SDL_GPU_TEXTURETYPE_2D;
-        depthInfo.width = cast(int) window.width;
+        // SDL_GPUTextureCreateInfo depthInfo;
+        // depthInfo.type = SDL_GPU_TEXTURETYPE_2D;
+        // depthInfo.width = cast(int) window.width;
 
-        depthInfo.height = cast(int) window.height;
-        depthInfo.layer_count_or_depth = 1;
-        depthInfo.num_levels = 1;
-        depthInfo.sample_count = SDL_GPU_SAMPLECOUNT_1;
-        depthInfo.format = SDL_GPU_TEXTUREFORMAT_D16_UNORM;
-        depthInfo.usage = SDL_GPU_TEXTUREUSAGE_SAMPLER | SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET;
+        // depthInfo.height = cast(int) window.height;
+        // depthInfo.layer_count_or_depth = 1;
+        // depthInfo.num_levels = 1;
+        // depthInfo.sample_count = SDL_GPU_SAMPLECOUNT_1;
+        // depthInfo.format = SDL_GPU_TEXTUREFORMAT_D16_UNORM;
+        // depthInfo.usage = SDL_GPU_TEXTUREUSAGE_SAMPLER | SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET;
 
-        sceneDepthTexture = gpu.dev.newTexture(&depthInfo);
-
-        assert(gpu.dev.startCopyPass);
-
-        skybox.uploadStart;
-        cube.uploadStart;
-        lamp.uploadStart;
-
-        assert(gpu.dev.endCopyPass);
-
-        cube.uploadEnd;
-        lamp.uploadEnd;
-        skybox.uploadEnd;
+        // sceneDepthTexture = gpu.dev.newTexture(&depthInfo);
     }
 
     float time;
@@ -235,9 +172,9 @@ class Start : GuiScene
 
         //cube.mesh.angle = cube.mesh.angle + 1;
 
-        time = SDL_GetTicks / 1000.0;
+        //time = SDL_GetTicks / 1000.0;
 
-        lamp.angle = lamp.angle + 1;
+        //lamp.angle = lamp.angle + 1;
 
         //float radius = 1.0f;
 
@@ -272,6 +209,16 @@ class Start : GuiScene
     {
         super.draw;
 
+        // gpu.startRenderPass;
+
+        // skybox.bindPipeline;
+        // skybox.cube.pushUniforms;
+        // skybox.cube.bindAll;
+        // skybox.cubeMap.bindAll;
+        // skybox.cube.drawIndexed;
+
+        // gpu.dev.endRenderPass;
+
         // SDL_GPUDepthStencilTargetInfo depthStencilTargetInfo;
         // depthStencilTargetInfo.texture = sceneDepthTexture;
         // depthStencilTargetInfo.cycle = true;
@@ -293,17 +240,17 @@ class Start : GuiScene
 
         // static assert((SceneTransforms.sizeof % 16) == 0, "Buffer size must be 16-byte aligned");
 
-        SceneTransforms transforms;
-        transforms.world = cube.mesh.worldMatrix;
-        transforms.camera = camera.view;
-        transforms.projection = camera.projection;
-        transforms.normal = cube.mesh.worldMatrixInverse;
+        // SceneTransforms transforms;
+        // transforms.world = cube.mesh.worldMatrix;
+        // transforms.camera = camera.view;
+        // transforms.projection = camera.projection;
+        // transforms.normal = cube.mesh.worldMatrixInverse;
 
-        gpu.startRenderPass;
+        // gpu.startRenderPass;
 
-        skybox.bind(&transforms);
+        // skybox.bind(&transforms);
 
-        gpu.dev.endRenderPass;
+        // gpu.dev.endRenderPass;
         //timeUniform.time = SDL_GetTicks() / 250.0;
         // gpu.dev.pushUniformVertexData(0, &transforms, SceneTransforms.sizeof);
 
@@ -388,6 +335,6 @@ class Start : GuiScene
     override void dispose()
     {
         super.dispose;
-        gpu.dev.deletePipeline(fillPipeline);
+        //gpu.dev.deletePipeline(fillPipeline);
     }
 }

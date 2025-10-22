@@ -19,6 +19,7 @@ class Cube : Shape3d
     {
         this.initSize(width, height);
         this.depth = depth;
+        id = "Cube3d";
     }
 
     override void createMesh()

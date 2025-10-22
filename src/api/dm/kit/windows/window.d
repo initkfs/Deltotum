@@ -1,6 +1,7 @@
 module api.dm.kit.windows.window;
 
 import api.dm.kit.scenes.scene2d : Scene2d;
+import api.dm.kit.scenes.scene3d : Scene3d;
 import api.dm.com.graphic.com_screen : ComScreenId;
 import api.dm.kit.factories.factory_kit : FactoryKit;
 import api.dm.kit.components.graphic_component : GraphicComponent;
@@ -162,6 +163,11 @@ class Window : GraphicComponent
 
         scene.create;
         assert(scene.isCreating);
+
+        if (auto scene3d = cast(Scene3d) scene)
+        {
+            scene3d.uploadToGPU;
+        }
     }
 
     bool addCreate(Scene2d scene)

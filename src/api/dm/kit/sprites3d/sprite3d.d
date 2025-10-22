@@ -1,6 +1,8 @@
 module api.dm.kit.sprites3d.sprite3d;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.scenes.scene3d : SceneTransforms;
+import api.dm.kit.sprites3d.cameras.perspective_camera : PerspectiveCamera;
 import api.math.geom2.vec3 : Vec3f;
 import api.math.matrices.matrix : Matrix4x4f;
 import Math = api.math;
@@ -10,8 +12,11 @@ import Math = api.math;
  */
 class Sprite3d : Sprite2d
 {
+
     protected
     {
+        PerspectiveCamera _camera;
+
         double _z = 0;
 
         align(16)
@@ -33,6 +38,8 @@ class Sprite3d : Sprite2d
     bool isRoundEvenZ;
     bool isRoundEvenChildZ;
 
+    bool isPushUniformVertexMatrix;
+
     void delegate(double, double) onChangeZOldNew;
 
     double zChangeThreshold = defaultTrashold;
@@ -52,6 +59,41 @@ class Sprite3d : Sprite2d
         _worldMatrix = Matrix4x4f.onesDiag;
 
         calcWorldMatrix;
+    }
+
+    override void add(Sprite2d object, long index = -1)
+    {
+        super.add(object, index);
+
+        if (auto sprite3d = cast(Sprite3d) object)
+        {
+            if (!sprite3d.hasCamera)
+            {
+                sprite3d.camera = _camera;
+            }
+        }
+    }
+
+    void pushUniforms()
+    {
+        foreach (child; children)
+        {
+            if (auto sprite3d = cast(Sprite3d) child)
+            {
+                sprite3d.pushUniforms;
+            }
+        }
+
+        if (isPushUniformVertexMatrix)
+        {
+            SceneTransforms transforms;
+            transforms.world = worldMatrix;
+            transforms.camera = camera.view;
+            transforms.projection = camera.projection;
+            transforms.normal = worldMatrixInverse;
+
+            gpu.dev.pushUniformVertexData(0, &transforms, SceneTransforms.sizeof);
+        }
     }
 
     protected void calcWorldMatrix()
@@ -221,5 +263,52 @@ class Sprite3d : Sprite2d
     }
 
     override double angle() => _angle;
+
+    void uploadStart()
+    {
+        foreach (child; children)
+        {
+            if (auto sprite3d = cast(Sprite3d) child)
+            {
+                sprite3d.uploadStart;
+            }
+        }
+    }
+
+    void uploadEnd()
+    {
+        foreach (child; children)
+        {
+            if (auto sprite3d = cast(Sprite3d) child)
+            {
+                sprite3d.uploadEnd;
+            }
+        }
+    }
+
+    void bindAll()
+    {
+        foreach (sprite; children)
+        {
+            if (auto sprite3d = cast(Sprite3d) sprite)
+            {
+                sprite3d.bindAll;
+            }
+        }
+    }
+
+    void camera(PerspectiveCamera newCamera)
+    {
+        assert(newCamera, "New camera must not be null");
+        _camera = newCamera;
+    }
+
+    PerspectiveCamera camera()
+    {
+        assert(_camera, "Camera must not be null");
+        return _camera;
+    }
+
+    bool hasCamera() => _camera !is null;
 
 }

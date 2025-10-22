@@ -36,6 +36,8 @@ class CubeMap : Texture3d
 
     override void uploadStart()
     {
+        // assert w == 0, not super.uploadStart;
+
         import api.dm.back.sdl3.images.sdl_image : SdlImage;
 
         scope imageLoader = new SdlImage;
@@ -113,6 +115,11 @@ class CubeMap : Texture3d
     override void uploadEnd()
     {
         super.uploadEnd;
+    }
+
+    override void bindAll(){
+        super.bindAll;
+        gpu.dev.bindFragmentSamplers(this);
     }
 
     override void createSampler()

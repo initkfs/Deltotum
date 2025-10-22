@@ -10,13 +10,15 @@ import api.dm.back.sdl3.externs.csdl3;
 
 class Texture3d : Sprite3d
 {
-    string name = "Texture3D";
-
     protected
     {
         SDL_GPUTexture* _texture;
         SDL_GPUSampler* _sampler;
         SDL_GPUTransferBuffer* _transferBuffer;
+    }
+
+    this(){
+        id = "Texture3d";
     }
 
     void createSampler()
@@ -81,7 +83,7 @@ class Texture3d : Sprite3d
 
         import std.string : toStringz;
 
-        SDL_SetGPUTextureName(gpu.dev.getObject, _texture, name.toStringz);
+        SDL_SetGPUTextureName(gpu.dev.getObject, _texture, id.toStringz);
     }
 
     override void create()
@@ -89,8 +91,10 @@ class Texture3d : Sprite3d
         super.create();
     }
 
-    void uploadStart()
+    override void uploadStart()
     {
+        super.uploadStart;
+
         assert(width > 0);
         assert(height > 0);
         assert(_transferBuffer);
@@ -98,8 +102,9 @@ class Texture3d : Sprite3d
         gpu.dev.uploadTexture(_transferBuffer, _texture, cast(uint) width, cast(uint) height);
     }
 
-    void uploadEnd()
+    override void uploadEnd()
     {
+        super.uploadEnd;
         if (_transferBuffer)
         {
             gpu.dev.deleteTransferBuffer(_transferBuffer);

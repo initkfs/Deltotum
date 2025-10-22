@@ -1,7 +1,7 @@
 module api.dm.kit.sprites3d.cameras.perspective_camera;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.scenes.scene2d : Scene2d;
+import api.dm.kit.scenes.scene3d: Scene3d;
 
 import Math = api.math;
 import api.math.geom2.vec3 : Vec3f;
@@ -16,7 +16,7 @@ class PerspectiveCamera : Sprite2d
 
     protected
     {
-        Scene2d targetScene;
+        Scene3d targetScene;
     }
 
     double lastCursorX = 0;
@@ -37,7 +37,7 @@ class PerspectiveCamera : Sprite2d
         Matrix4x4f projection;
     }
 
-    this(Scene2d targetScene)
+    this(Scene3d targetScene)
     {
         assert(targetScene);
         this.targetScene = targetScene;
