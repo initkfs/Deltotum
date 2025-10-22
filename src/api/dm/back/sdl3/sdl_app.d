@@ -902,7 +902,7 @@ class SdlApp : GuiApp
         windowBuilder.graphic = createGraphics(uservices.logging, sdlRenderer);
         windowBuilder.graphic.initialize;
 
-        windowBuilder.gpu = new GPUGraphic(uservices.logging, gpuDevice, window);
+        windowBuilder.gpu = new GPUGraphic(uservices.logging, uservices.config, uservices.context, gpuDevice, window);
 
         windowBuilder.graphic.comTextureProvider = ProviderFactory!ComTexture(
             () => newComTexture(sdlRenderer),

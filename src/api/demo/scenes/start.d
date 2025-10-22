@@ -9,6 +9,7 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.controls.switches.buttons.button : Button;
+import api.dm.kit.sprites3d.skyboxes.skybox : SkyBox;
 
 import api.dm.kit.sprites2d.tweens;
 import api.dm.kit.sprites2d.images;
@@ -32,6 +33,7 @@ import api.dm.kit.sprites3d.shapes.sphere : Sphere;
 import api.dm.kit.sprites3d.shapes.cylinder : Cylinder;
 import api.dm.kit.sprites3d.textures.texture3d : Texture3d;
 import api.dm.kit.sprites3d.phong_sprite3d : PhongSprite3d;
+import api.dm.kit.scenes.scene3d: SceneTransforms;
 
 import api.dm.back.sdl3.externs.csdl3;
 
@@ -43,59 +45,61 @@ import api.core.utils.text;
  */
 class Start : GuiScene
 {
-    ComVertex[] skyboxVertices = [
-        // positions          
-        ComVertex(-10, -10, -10),
-        ComVertex(10, -10, -10),
-        ComVertex(10, 10, -10),
-        ComVertex(-10, 10, -10),
+    // ComVertex[] skyboxVertices = [
+    //     // positions          
+    //     ComVertex(-10, -10, -10),
+    //     ComVertex(10, -10, -10),
+    //     ComVertex(10, 10, -10),
+    //     ComVertex(-10, 10, -10),
 
-        ComVertex(-10, -10, 10),
-        ComVertex(10, -10, 10),
-        ComVertex(10, 10, 10),
-        ComVertex(-10, 10, 10),
+    //     ComVertex(-10, -10, 10),
+    //     ComVertex(10, -10, 10),
+    //     ComVertex(10, 10, 10),
+    //     ComVertex(-10, 10, 10),
 
-        ComVertex(-10, -10, -10),
-        ComVertex(-10, 10, -10),
-        ComVertex(-10, 10, 10),
-        ComVertex(-10, -10, 10),
+    //     ComVertex(-10, -10, -10),
+    //     ComVertex(-10, 10, -10),
+    //     ComVertex(-10, 10, 10),
+    //     ComVertex(-10, -10, 10),
 
-        ComVertex(10, -10, -10),
-        ComVertex(10, 10, -10),
-        ComVertex(10, 10, 10),
-        ComVertex(10, -10, 10),
+    //     ComVertex(10, -10, -10),
+    //     ComVertex(10, 10, -10),
+    //     ComVertex(10, 10, 10),
+    //     ComVertex(10, -10, 10),
 
-        ComVertex(-10, -10, -10),
-        ComVertex(-10, -10, 10),
-        ComVertex(10, -10, 10),
-        ComVertex(10, -10, -10),
+    //     ComVertex(-10, -10, -10),
+    //     ComVertex(-10, -10, 10),
+    //     ComVertex(10, -10, 10),
+    //     ComVertex(10, -10, -10),
 
-        ComVertex(-10, 10, -10),
-        ComVertex(-10, 10, 10),
-        ComVertex(10, 10, 10),
-        ComVertex(10, 10, -10)
-    ];
+    //     ComVertex(-10, 10, -10),
+    //     ComVertex(-10, 10, 10),
+    //     ComVertex(10, 10, 10),
+    //     ComVertex(10, 10, -10)
+    // ];
 
-    ushort[] skyboxIndices = [
-        0, 1, 2, 0, 2, 3,
-        6, 5, 4, 7, 6, 4,
-        8, 9, 10, 8, 10, 11,
-        14, 13, 12, 15, 14, 12,
-        16, 17, 18, 16, 18, 19,
-        22, 21, 20, 23, 22, 20
-    ];
+    // ushort[] skyboxIndices = [
+    //     0, 1, 2, 0, 2, 3,
+    //     6, 5, 4, 7, 6, 4,
+    //     8, 9, 10, 8, 10, 11,
+    //     14, 13, 12, 15, 14, 12,
+    //     16, 17, 18, 16, 18, 19,
+    //     22, 21, 20, 23, 22, 20
+    // ];
 
     SdlGPUPipeline fillPipeline;
     SdlGPUPipeline lampPipeline;
-    SdlGPUPipeline skyboxPipeline;
+    //SdlGPUPipeline skyboxPipeline;
 
     SDL_Window* winPtr;
 
+    SkyBox skybox;
+
     Random rnd;
 
-    CubeMap skybox;
-    SDL_GPUBuffer* skyboxVertexBuffer;
-    SDL_GPUBuffer* skyboxIndexBuffer;
+    // CubeMap skyboxCube;
+    // SDL_GPUBuffer* skyboxVertexBuffer;
+    // SDL_GPUBuffer* skyboxIndexBuffer;
 
     PhongSprite3d cube;
     Sphere lamp;
@@ -136,9 +140,8 @@ class Start : GuiScene
         addCreate(camera);
         //camera.fov = 90;
 
-        
         auto skyBoxPath = context.app.userDir ~ "/nebula/";
-        skybox = new CubeMap(skyBoxPath, "png");
+        skybox = new SkyBox(skyBoxPath, "png");
         build(skybox);
         skybox.create;
 
@@ -194,21 +197,6 @@ class Start : GuiScene
                 .sizeof);
         debugTransferBuffer = gpu.dev.newTransferDownloadBuffer(FragmentBuffer.sizeof);
 
-        auto skyboxVert = context.app.userDir ~ "/shaders/SkyBox.vert.spv";
-        auto skyboxFrag = context.app.userDir ~ "/shaders/SkyBox.frag.spv";
-
-        skyboxPipeline = gpu.newPipeline(skyboxVert, skyboxFrag, 0, 0, 1, 0, 1, 0, 0, 0);
-
-        const skyBoxVertexBuffLen = skyboxVertices.length * ComVertex.sizeof;
-        const skyIndexBuffLen = skyboxIndices.length * ushort.sizeof;
-
-        skyboxVertexBuffer = gpu.dev.newGPUBufferVertex(skyBoxVertexBuffLen);
-        skyboxIndexBuffer = gpu.dev.newGPUBufferIndex(skyIndexBuffLen);
-        SDL_GPUTransferBuffer* skyboxTransfer = gpu.dev.newTransferUploadBuffer(
-            skyBoxVertexBuffLen + skyIndexBuffLen);
-
-        gpu.dev.copyToBuffer(skyboxTransfer, false, skyboxVertices, skyboxIndices);
-
         import api.dm.back.sdl3.images.sdl_image : SdlImage;
 
         SDL_GPUTextureCreateInfo depthInfo;
@@ -226,25 +214,15 @@ class Start : GuiScene
 
         assert(gpu.dev.startCopyPass);
 
-        gpu.dev.unmapAndUpload(skyboxTransfer, skyboxVertexBuffer, ComVertex.sizeof * skyboxVertices.length, 0, 0, false);
-        gpu.dev.unmapAndUpload(skyboxTransfer, skyboxIndexBuffer, ushort.sizeof * skyboxIndices.length, ComVertex
-                .sizeof * skyboxVertices
-                .length, 0, false);
-
-        gpu.dev.unmapAndUpload(skyboxTransfer, skyboxVertexBuffer, ComVertex.sizeof * skyboxVertices
-                .length);
-
+        skybox.uploadStart;
         cube.uploadStart;
         lamp.uploadStart;
-        skybox.uploadStart;
 
         assert(gpu.dev.endCopyPass);
 
         cube.uploadEnd;
         lamp.uploadEnd;
         skybox.uploadEnd;
-
-        gpu.dev.deleteTransferBuffer(skyboxTransfer);
     }
 
     float time;
@@ -312,32 +290,18 @@ class Start : GuiScene
 
         // gpu.dev.bindFragmentStorageBuffer(debugBuffer);
 
-        struct SceneTransforms
-        {
-            Matrix4x4f world;
-            Matrix4x4f view;
-            Matrix4x4f projection;
-            Matrix4x4f normal;
-        }
 
         // static assert((SceneTransforms.sizeof % 16) == 0, "Buffer size must be 16-byte aligned");
 
         SceneTransforms transforms;
         transforms.world = cube.mesh.worldMatrix;
-        transforms.view = camera.view;
+        transforms.camera = camera.view;
         transforms.projection = camera.projection;
         transforms.normal = cube.mesh.worldMatrixInverse;
 
         gpu.startRenderPass;
 
-        gpu.dev.bindPipeline(skyboxPipeline);
-        gpu.dev.pushUniformVertexData(0, &transforms, SceneTransforms.sizeof);
-        gpu.dev.bindFragmentSamplers(skybox);
-
-        // gpu.dev.bindVertexBuffer(skyboxVertexBuffer);
-        gpu.dev.bindVertexBuffer(skyboxVertexBuffer);
-        gpu.dev.bindIndexBuffer(skyboxIndexBuffer);
-        gpu.dev.drawIndexed(skyboxIndices.length, 1, 0, 0, 0);
+        skybox.bind(&transforms);
 
         gpu.dev.endRenderPass;
         //timeUniform.time = SDL_GetTicks() / 250.0;

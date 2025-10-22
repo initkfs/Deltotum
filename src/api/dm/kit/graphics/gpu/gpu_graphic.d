@@ -3,19 +3,21 @@ module api.dm.kit.graphics.gpu.gpu_graphic;
 import api.core.loggers.logging : Logging;
 import api.dm.kit.windows.window : Window;
 
-import api.core.components.units.services.loggable_unit : LoggableUnit;
+import api.core.components.units.services.application_unit : ApplicationUnit;
+import api.core.contexts.context : Context;
+import api.core.configs.keyvalues.config : Config;
 import api.core.utils.factories : ProviderFactory;
 
 //TODO extract COM interfaces
 import api.dm.back.sdl3.externs.csdl3;
 import api.dm.back.sdl3.gpu.sdl_gpu_device : SdlGPUDevice;
 import api.dm.back.sdl3.gpu.sdl_gpu_pipeline : SdlGPUPipeline;
-import api.dm.com.gpu.com_3d_types: ComVertex;
+import api.dm.com.gpu.com_3d_types : ComVertex;
 
 /**
  * Authors: initkfs
  */
-class GPUGraphic : LoggableUnit
+class GPUGraphic : ApplicationUnit
 {
     protected
     {
@@ -30,9 +32,9 @@ class GPUGraphic : LoggableUnit
     bool isActive() => device.isCreated;
     SdlGPUDevice dev() => device;
 
-    this( Logging logging, SdlGPUDevice device, Window window)
+    this(Logging logging, Config config, Context context, SdlGPUDevice device, Window window)
     {
-        super(logging);
+        super(logging, config, context);
         assert(device);
         assert(window);
 
@@ -58,7 +60,7 @@ class GPUGraphic : LoggableUnit
     bool startRenderPass(SDL_GPUColorTargetInfo[] colorTargets) => dev.startRenderPass(
         colorTargets, currSdlWindow);
     bool startRenderPass(SDL_GPUDepthStencilTargetInfo* depthInfo) => dev.startRenderPass(
-    currSdlWindow, clearColor, depthInfo);
+        currSdlWindow, clearColor, depthInfo);
 
     SdlGPUPipeline newPipeline(
         string vertexPath,
@@ -79,6 +81,30 @@ class GPUGraphic : LoggableUnit
         return dev.newPipeline(currSdlWindow, vertexPath, fragmentPath, numVertexSamples, numVertexStorageBuffers, numVertexUniformBuffers, numVertexStorageTextures, numFragSamples, numFragStorageBuffers, numFragUniformBuffers, numFragStorageTextures, rasterState, stencilState, colorDesc);
     }
 
-    SDL_GPUTextureFormat getSwapchainTextureFormat() => dev.getSwapchainTextureFormat(currSdlWindow);
+    SDL_GPUTextureFormat getSwapchainTextureFormat() => dev.getSwapchainTextureFormat(
+        currSdlWindow);
+
+    string shaderDefaultPath(string fileNameWithoutExt, string shadersDirName = "shaders")
+    {
+        import std.path : buildPath;
+        import std.file : exists, isFile;
+
+        assert(fileNameWithoutExt.length > 0);
+        assert(shadersDirName.length > 0);
+        //TODO other shaders
+        string shaderExt = ".spv";
+        if (fileNameWithoutExt[$ - 1] == '.')
+        {
+            shaderExt = shaderExt[1 .. $];
+        }
+
+        immutable path = buildPath(context.app.dataDir, shadersDirName, fileNameWithoutExt ~ shaderExt);
+        if (!path.exists || !path.isFile)
+        {
+            throw new Exception("Shader file doesn't exist or not a file: " ~ path);
+        }
+
+        return path;
+    }
 
 }
