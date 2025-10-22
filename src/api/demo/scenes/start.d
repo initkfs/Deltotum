@@ -9,7 +9,7 @@ import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.controls.switches.buttons.button : Button;
-import api.dm.kit.sprites3d.skyboxes.skybox : SkyBox;
+import api.dm.kit.sprites3d.pipelines.skyboxes.skybox : SkyBox;
 
 import api.dm.kit.sprites2d.tweens;
 import api.dm.kit.sprites2d.images;

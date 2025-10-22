@@ -1,5 +1,6 @@
-module api.dm.kit.sprites3d.skyboxes.skybox;
+module api.dm.kit.sprites3d.pipelines.skyboxes.skybox;
 
+import api.dm.kit.sprites3d.pipelines.pipelined_sprite : PipelinedSprite;
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.dm.kit.sprites3d.shapes.cube : Cube;
 import api.dm.kit.sprites3d.textures.cubemap : CubeMap;
@@ -13,7 +14,7 @@ import api.dm.back.sdl3.externs.csdl3;
 /**
  * Authors: initkfs
  */
-class SkyBox : Sprite3d
+class SkyBox : PipelinedSprite
 {
 
     ComVertex[] skyboxVertices = [
@@ -58,16 +59,11 @@ class SkyBox : Sprite3d
         22, 21, 20, 23, 22, 20
     ];
 
-    SdlGPUPipeline pipeline;
-
     Cube cube;
     CubeMap cubeMap;
 
     string basepath;
     string ext;
-
-    string vertexShaderName = "SkyBox.vert";
-    string fragmentShaderName = "SkyBox.frag";
 
     this(string basepath, string ext = "jpg")
     {
@@ -76,6 +72,9 @@ class SkyBox : Sprite3d
         isPushUniformVertexMatrix = false;
 
         id = "SkyBox3d";
+
+        vertexShaderName = "SkyBox.vert";
+        fragmentShaderName = "SkyBox.frag";
     }
 
     override void create()
@@ -98,29 +97,6 @@ class SkyBox : Sprite3d
         addCreate(cubeMap);
         cubeMap.id = "SkyBoxCubeMap";
 
-        auto skyboxVert = gpu.shaderDefaultPath(vertexShaderName);
-        auto skyboxFrag = gpu.shaderDefaultPath(fragmentShaderName);
-
-        pipeline = gpu.newPipeline(skyboxVert, skyboxFrag, 0, 0, 1, 0, 1, 0, 0, 0);
-    }
-
-    void bindPipeline(){
-        assert(pipeline);
-        gpu.dev.bindPipeline(pipeline);
-    }
-
-    override void bindAll(){
-        bindPipeline;
-        super.bindAll;
-    }
-
-    override void dispose()
-    {
-        super.dispose;
-
-        if (pipeline)
-        {
-            gpu.dev.deletePipeline(pipeline);
-        }
+        createPipeline(0, 0, 1, 0, 1, 0, 0, 0);
     }
 }
