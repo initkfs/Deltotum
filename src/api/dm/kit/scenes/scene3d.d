@@ -3,6 +3,7 @@ module api.dm.kit.scenes.scene3d;
 import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
+import api.dm.kit.sprites3d.textures.depth_texture : DepthTexture;
 import api.dm.kit.sprites3d.cameras.perspective_camera : PerspectiveCamera;
 import api.math.matrices.matrix;
 
@@ -22,6 +23,10 @@ class Scene3d : Scene2d
 {
     PerspectiveCamera camera;
 
+    bool isDepth = true;
+
+    DepthTexture depthTexture;
+
     this(this ThisType)(bool isInitUDAProcessor = true)
     {
         super(isInitUDAProcessor);
@@ -33,6 +38,13 @@ class Scene3d : Scene2d
         super.create;
         camera = createCamera;
         assert(camera);
+
+        if (isDepth)
+        {
+            depthTexture = new DepthTexture;
+            build(depthTexture);
+            depthTexture.create;
+        }
     }
 
     PerspectiveCamera createCamera()
@@ -108,11 +120,35 @@ class Scene3d : Scene2d
             return;
         }
 
-        if (!gpu.startRenderPass)
+        if (isDepth && depthTexture)
         {
-            gpu.dev.resetState;
-            //logger.error("Error starting gpu rendering");
-            throw new Exception("Error starting gpu rendering");
+            import api.dm.back.sdl3.externs.csdl3;
+
+            SDL_GPUDepthStencilTargetInfo depthStencilTargetInfo;
+            depthStencilTargetInfo.texture = depthTexture.texture;
+            depthStencilTargetInfo.cycle = true;
+            depthStencilTargetInfo.clear_depth = 1;
+            depthStencilTargetInfo.clear_stencil = 0;
+            depthStencilTargetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
+            depthStencilTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
+            depthStencilTargetInfo.stencil_load_op = SDL_GPU_LOADOP_CLEAR;
+            depthStencilTargetInfo.stencil_store_op = SDL_GPU_STOREOP_STORE;
+
+            if (!gpu.startRenderPass(&depthStencilTargetInfo))
+            {
+                gpu.dev.resetState;
+                //logger.error("Error starting gpu rendering");
+                throw new Exception("Error starting gpu rendering with depth");
+            }
+        }
+        else
+        {
+            if (!gpu.startRenderPass)
+            {
+                gpu.dev.resetState;
+                //logger.error("Error starting gpu rendering");
+                throw new Exception("Error starting gpu rendering");
+            }
         }
 
         drawSelfAndChildren;

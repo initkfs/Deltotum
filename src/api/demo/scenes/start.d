@@ -147,19 +147,6 @@ class Start : GuiScene
         // debugTransferBuffer = gpu.dev.newTransferDownloadBuffer(FragmentBuffer.sizeof);
 
         // import api.dm.back.sdl3.images.sdl_image : SdlImage;
-
-        // SDL_GPUTextureCreateInfo depthInfo;
-        // depthInfo.type = SDL_GPU_TEXTURETYPE_2D;
-        // depthInfo.width = cast(int) window.width;
-
-        // depthInfo.height = cast(int) window.height;
-        // depthInfo.layer_count_or_depth = 1;
-        // depthInfo.num_levels = 1;
-        // depthInfo.sample_count = SDL_GPU_SAMPLECOUNT_1;
-        // depthInfo.format = SDL_GPU_TEXTUREFORMAT_D16_UNORM;
-        // depthInfo.usage = SDL_GPU_TEXTUREUSAGE_SAMPLER | SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET;
-
-        // sceneDepthTexture = gpu.dev.newTexture(&depthInfo);
     }
 
     float time;
@@ -208,28 +195,6 @@ class Start : GuiScene
     override void draw()
     {
         super.draw;
-
-        // gpu.startRenderPass;
-
-        // skybox.bindPipeline;
-        // skybox.cube.pushUniforms;
-        // skybox.cube.bindAll;
-        // skybox.cubeMap.bindAll;
-        // skybox.cube.drawIndexed;
-
-        // gpu.dev.endRenderPass;
-
-        // SDL_GPUDepthStencilTargetInfo depthStencilTargetInfo;
-        // depthStencilTargetInfo.texture = sceneDepthTexture;
-        // depthStencilTargetInfo.cycle = true;
-        // depthStencilTargetInfo.clear_depth = 1;
-        // depthStencilTargetInfo.clear_stencil = 0;
-        // depthStencilTargetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
-        // depthStencilTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
-        // depthStencilTargetInfo.stencil_load_op = SDL_GPU_LOADOP_CLEAR;
-        // depthStencilTargetInfo.stencil_store_op = SDL_GPU_STOREOP_STORE;
-
-        // assert(gpu.startRenderPass(&depthStencilTargetInfo));
 
         // gpu.dev.bindPipeline(fillPipeline);
 
