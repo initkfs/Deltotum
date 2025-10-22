@@ -785,7 +785,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         SDL_UploadToGPUBuffer(lastCopyPass, &location, &region, isCycle);
     }
 
-    void uploadTexture(SDL_GPUTransferBuffer* sourceBuffer, SDL_GPUTexture* destTexture, uint width, uint height, uint sourceBufferOffset = 0, bool isCycle = false)
+    void uploadTexture(SDL_GPUTransferBuffer* sourceBuffer, SDL_GPUTexture* destTexture, uint width, uint height, uint sourceBufferOffset = 0, bool isCycle = false, uint layer = 0)
     {
         SDL_GPUTextureTransferInfo source;
         //Direct3D 12
@@ -805,6 +805,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         dest.w = width;
         dest.h = height;
         dest.d = 1;
+        dest.layer = layer;
 
         uploadTexture(&source, &dest, isCycle);
     }
@@ -953,7 +954,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         SDL_BindGPUFragmentStorageBuffers(lastPass, firstSlot, &buffer, 1);
     }
 
-    bool draw(uint numVertices = 1, uint numInstances = 1, uint firstVertex = 0, uint firstInstance = 0)
+    bool draw(size_t numVertices = 1, size_t numInstances = 1, size_t firstVertex = 0, size_t firstInstance = 0)
     {
         if (!lastPass)
         {
@@ -962,10 +963,10 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
         SDL_DrawGPUPrimitives(
             lastPass,
-            numVertices,
-            numInstances,
-            firstVertex,
-            firstInstance);
+            cast(uint) numVertices,
+            cast(uint) numInstances,
+            cast(uint) firstVertex,
+            cast(uint) firstInstance);
         return true;
     }
 
@@ -1011,6 +1012,18 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         info.address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
         info.address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
         info.address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_REPEAT;
+        return info;
+    }
+
+    SDL_GPUSamplerCreateInfo nearestClampToEdge()
+    {
+        SDL_GPUSamplerCreateInfo info;
+        info.min_filter = SDL_GPU_FILTER_NEAREST,
+        info.mag_filter = SDL_GPU_FILTER_NEAREST,
+        info.mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_NEAREST,
+        info.address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+        info.address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+        info.address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE;
         return info;
     }
 

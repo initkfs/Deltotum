@@ -4,6 +4,7 @@ import api.dm.gui.scenes.gui_scene : GuiScene;
 import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
+import api.dm.kit.sprites3d.textures.cubemap : CubeMap;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
@@ -42,13 +43,59 @@ import api.core.utils.text;
  */
 class Start : GuiScene
 {
+    ComVertex[] skyboxVertices = [
+        // positions          
+        ComVertex(-10, -10, -10),
+        ComVertex(10, -10, -10),
+        ComVertex(10, 10, -10),
+        ComVertex(-10, 10, -10),
+
+        ComVertex(-10, -10, 10),
+        ComVertex(10, -10, 10),
+        ComVertex(10, 10, 10),
+        ComVertex(-10, 10, 10),
+
+        ComVertex(-10, -10, -10),
+        ComVertex(-10, 10, -10),
+        ComVertex(-10, 10, 10),
+        ComVertex(-10, -10, 10),
+
+        ComVertex(10, -10, -10),
+        ComVertex(10, 10, -10),
+        ComVertex(10, 10, 10),
+        ComVertex(10, -10, 10),
+
+        ComVertex(-10, -10, -10),
+        ComVertex(-10, -10, 10),
+        ComVertex(10, -10, 10),
+        ComVertex(10, -10, -10),
+
+        ComVertex(-10, 10, -10),
+        ComVertex(-10, 10, 10),
+        ComVertex(10, 10, 10),
+        ComVertex(10, 10, -10)
+    ];
+
+    ushort[] skyboxIndices = [
+        0, 1, 2, 0, 2, 3,
+        6, 5, 4, 7, 6, 4,
+        8, 9, 10, 8, 10, 11,
+        14, 13, 12, 15, 14, 12,
+        16, 17, 18, 16, 18, 19,
+        22, 21, 20, 23, 22, 20
+    ];
 
     SdlGPUPipeline fillPipeline;
     SdlGPUPipeline lampPipeline;
+    SdlGPUPipeline skyboxPipeline;
 
     SDL_Window* winPtr;
 
     Random rnd;
+
+    CubeMap skybox;
+    SDL_GPUBuffer* skyboxVertexBuffer;
+    SDL_GPUBuffer* skyboxIndexBuffer;
 
     PhongSprite3d cube;
     Sphere lamp;
@@ -87,6 +134,13 @@ class Start : GuiScene
 
         camera = new PerspectiveCamera(this);
         addCreate(camera);
+        //camera.fov = 90;
+
+        
+        auto skyBoxPath = context.app.userDir ~ "/nebula/";
+        skybox = new CubeMap(skyBoxPath, "png");
+        build(skybox);
+        skybox.create;
 
         auto diffusePath = context.app.userDir ~ "/container2.png";
         auto specularPath = context.app.userDir ~ "/container2_specular.png";
@@ -140,6 +194,21 @@ class Start : GuiScene
                 .sizeof);
         debugTransferBuffer = gpu.dev.newTransferDownloadBuffer(FragmentBuffer.sizeof);
 
+        auto skyboxVert = context.app.userDir ~ "/shaders/SkyBox.vert.spv";
+        auto skyboxFrag = context.app.userDir ~ "/shaders/SkyBox.frag.spv";
+
+        skyboxPipeline = gpu.newPipeline(skyboxVert, skyboxFrag, 0, 0, 1, 0, 1, 0, 0, 0);
+
+        const skyBoxVertexBuffLen = skyboxVertices.length * ComVertex.sizeof;
+        const skyIndexBuffLen = skyboxIndices.length * ushort.sizeof;
+
+        skyboxVertexBuffer = gpu.dev.newGPUBufferVertex(skyBoxVertexBuffLen);
+        skyboxIndexBuffer = gpu.dev.newGPUBufferIndex(skyIndexBuffLen);
+        SDL_GPUTransferBuffer* skyboxTransfer = gpu.dev.newTransferUploadBuffer(
+            skyBoxVertexBuffLen + skyIndexBuffLen);
+
+        gpu.dev.copyToBuffer(skyboxTransfer, false, skyboxVertices, skyboxIndices);
+
         import api.dm.back.sdl3.images.sdl_image : SdlImage;
 
         SDL_GPUTextureCreateInfo depthInfo;
@@ -157,13 +226,25 @@ class Start : GuiScene
 
         assert(gpu.dev.startCopyPass);
 
+        gpu.dev.unmapAndUpload(skyboxTransfer, skyboxVertexBuffer, ComVertex.sizeof * skyboxVertices.length, 0, 0, false);
+        gpu.dev.unmapAndUpload(skyboxTransfer, skyboxIndexBuffer, ushort.sizeof * skyboxIndices.length, ComVertex
+                .sizeof * skyboxVertices
+                .length, 0, false);
+
+        gpu.dev.unmapAndUpload(skyboxTransfer, skyboxVertexBuffer, ComVertex.sizeof * skyboxVertices
+                .length);
+
         cube.uploadStart;
         lamp.uploadStart;
+        skybox.uploadStart;
 
         assert(gpu.dev.endCopyPass);
 
         cube.uploadEnd;
         lamp.uploadEnd;
+        skybox.uploadEnd;
+
+        gpu.dev.deleteTransferBuffer(skyboxTransfer);
     }
 
     float time;
@@ -181,7 +262,7 @@ class Start : GuiScene
         lamp.angle = lamp.angle + 1;
 
         //float radius = 1.0f;
-        
+
         //sin(t) 0 on t = π/2 + πk
         //cons(t) 0 on t = πk
         // static float currentAngle = 0.0f;
@@ -213,23 +294,23 @@ class Start : GuiScene
     {
         super.draw;
 
-        SDL_GPUDepthStencilTargetInfo depthStencilTargetInfo;
-        depthStencilTargetInfo.texture = sceneDepthTexture;
-        depthStencilTargetInfo.cycle = true;
-        depthStencilTargetInfo.clear_depth = 1;
-        depthStencilTargetInfo.clear_stencil = 0;
-        depthStencilTargetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
-        depthStencilTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
-        depthStencilTargetInfo.stencil_load_op = SDL_GPU_LOADOP_CLEAR;
-        depthStencilTargetInfo.stencil_store_op = SDL_GPU_STOREOP_STORE;
+        // SDL_GPUDepthStencilTargetInfo depthStencilTargetInfo;
+        // depthStencilTargetInfo.texture = sceneDepthTexture;
+        // depthStencilTargetInfo.cycle = true;
+        // depthStencilTargetInfo.clear_depth = 1;
+        // depthStencilTargetInfo.clear_stencil = 0;
+        // depthStencilTargetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
+        // depthStencilTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
+        // depthStencilTargetInfo.stencil_load_op = SDL_GPU_LOADOP_CLEAR;
+        // depthStencilTargetInfo.stencil_store_op = SDL_GPU_STOREOP_STORE;
 
-        assert(gpu.startRenderPass(&depthStencilTargetInfo));
+        // assert(gpu.startRenderPass(&depthStencilTargetInfo));
 
-        gpu.dev.bindPipeline(fillPipeline);
+        // gpu.dev.bindPipeline(fillPipeline);
 
-        cube.bindTextures;
+        // cube.bindTextures;
 
-        gpu.dev.bindFragmentStorageBuffer(debugBuffer);
+        // gpu.dev.bindFragmentStorageBuffer(debugBuffer);
 
         struct SceneTransforms
         {
@@ -239,7 +320,7 @@ class Start : GuiScene
             Matrix4x4f normal;
         }
 
-        static assert((SceneTransforms.sizeof % 16) == 0, "Buffer size must be 16-byte aligned");
+        // static assert((SceneTransforms.sizeof % 16) == 0, "Buffer size must be 16-byte aligned");
 
         SceneTransforms transforms;
         transforms.world = cube.mesh.worldMatrix;
@@ -247,19 +328,31 @@ class Start : GuiScene
         transforms.projection = camera.projection;
         transforms.normal = cube.mesh.worldMatrixInverse;
 
-        //timeUniform.time = SDL_GetTicks() / 250.0;
+        gpu.startRenderPass;
+
+        gpu.dev.bindPipeline(skyboxPipeline);
         gpu.dev.pushUniformVertexData(0, &transforms, SceneTransforms.sizeof);
+        gpu.dev.bindFragmentSamplers(skybox);
 
-        import api.dm.kit.sprites3d.materials.material;
+        // gpu.dev.bindVertexBuffer(skyboxVertexBuffer);
+        gpu.dev.bindVertexBuffer(skyboxVertexBuffer);
+        gpu.dev.bindIndexBuffer(skyboxIndexBuffer);
+        gpu.dev.drawIndexed(skyboxIndices.length, 1, 0, 0, 0);
 
-        struct Planes
-        {
-            PlaneInfo planeInfo;
-        align(16):
-            float[3] cameraPos;
-            PhongMaterial material;
-            Light light;
-        }
+        gpu.dev.endRenderPass;
+        //timeUniform.time = SDL_GetTicks() / 250.0;
+        // gpu.dev.pushUniformVertexData(0, &transforms, SceneTransforms.sizeof);
+
+        // import api.dm.kit.sprites3d.materials.material;
+
+        // struct Planes
+        // {
+        //     PlaneInfo planeInfo;
+        // align(16):
+        //     float[3] cameraPos;
+        //     PhongMaterial material;
+        //     Light light;
+        // }
 
         // float[8] planes = [
         //     10, 1000, 1, 0.5, 0.31, 1, 1, 1
@@ -268,49 +361,54 @@ class Start : GuiScene
         //     lamp.translatePos.x, lamp.translatePos.y, lamp.translatePos.z
         // ], [camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z]);
 
-        Planes planes = Planes();
+        // Planes planes = Planes();
 
-        planes.planeInfo.nearPlane = 10;
-        planes.planeInfo.farPlane = 1000;
+        // planes.planeInfo.nearPlane = 10;
+        // planes.planeInfo.farPlane = 1000;
 
-        planes.cameraPos = [
-            camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z
-        ];
+        // planes.cameraPos = [
+        //     camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z
+        // ];
 
-        planes.material.ambient = Vec3f(1.0f, 0.5f, 0.31f);
-        planes.material.diffuse = Vec3f(1.0f, 0.5f, 0.31f);
-        planes.material.specular = Vec3f(0.5f, 0.5f, 0.5f);
-        planes.material.shininess = 32;
-        planes.material.color = Vec3f(1.0f, 0.5f, 0.31f);
+        // planes.material.ambient = Vec3f(1.0f, 0.5f, 0.31f);
+        // planes.material.diffuse = Vec3f(1.0f, 0.5f, 0.31f);
+        // planes.material.specular = Vec3f(0.5f, 0.5f, 0.5f);
+        // planes.material.shininess = 32;
+        // planes.material.color = Vec3f(1.0f, 0.5f, 0.31f);
 
-        planes.light.position = lamp.translatePos;
-        planes.light.direction = camera.cameraFront;
-        planes.light.ambient = Vec3f(0.2f, 0.2f, 0.2f);
-        planes.light.diffuse = Vec3f(0.7f, 0.7f, 0.7f);
-        planes.light.specular = Vec3f(1.0f, 1.0f, 1.0f);
-        planes.light.constant = 1.0;
-        planes.light.linear = 0.09f;
-        planes.light.quadratic = 0;
-        planes.light.type = 1;
-        planes.light.cutoff = Math.cosDeg(12.5);
-        planes.light.outerCutoff = Math.cosDeg(17.5);
+        // planes.light.position = lamp.translatePos;
+        // planes.light.direction = camera.cameraFront;
+        // planes.light.ambient = Vec3f(0.2f, 0.2f, 0.2f);
+        // planes.light.diffuse = Vec3f(0.7f, 0.7f, 0.7f);
+        // planes.light.specular = Vec3f(1.0f, 1.0f, 1.0f);
+        // planes.light.constant = 1.0;
+        // planes.light.linear = 0.09f;
+        // planes.light.quadratic = 0;
+        // planes.light.type = 1;
+        // planes.light.cutoff = Math.cosDeg(12.5);
+        // planes.light.outerCutoff = Math.cosDeg(17.5);
 
-        gpu.dev.pushUniformFragmentData(0, &planes, planes.sizeof);
+        // gpu.dev.pushUniformFragmentData(0, &planes, planes.sizeof);
 
-        cube.bindBuffers;
-        cube.drawIndexed;
+        // cube.bindBuffers;
+        // cube.drawIndexed;
 
-        transforms.world = lamp.worldMatrix;
+        // transforms.world = lamp.worldMatrix;
 
-        gpu.dev.bindPipeline(lampPipeline);
-        gpu.dev.pushUniformVertexData(0, &transforms, SceneTransforms.sizeof);
+        // gpu.dev.bindPipeline(lampPipeline);
+        // gpu.dev.pushUniformVertexData(0, &transforms, SceneTransforms.sizeof);
 
-        gpu.dev.bindFragmentStorageBuffer(debugBuffer);
+        // gpu.dev.bindFragmentStorageBuffer(debugBuffer);
 
-        lamp.bindBuffers;
-        lamp.drawIndexed;
+        // lamp.bindBuffers;
+        // lamp.drawIndexed;
 
-        assert(gpu.dev.endRenderPass);
+        // gpu.dev.bindFragmentStorageBuffer(debugBuffer);
+
+        // lamp.bindBuffers;
+        // lamp.drawIndexed;
+
+        //assert(gpu.dev.endRenderPass);
 
         // gpu.dev.startCopyPass;
         // gpu.dev.downloadBuffer(debugBuffer, debugTransferBuffer, FragmentBuffer.sizeof);
