@@ -28,6 +28,9 @@ class PerspectiveCamera : Sprite2d
     Vec3f cameraFront = Vec3f(0.0f, 0.0f, -1.0f);
     Vec3f cameraUp = Vec3f(0.0f, 1.0f, 0.0f);
 
+    float nearPlane = 0.1;
+    float farPlane = 100;
+
     double fov = 45;
 
     align(16)
@@ -119,7 +122,7 @@ class PerspectiveCamera : Sprite2d
         assert(w > 0);
         assert(h > 0);
 
-        projection = perspectiveMatrixRH(fov, w / h, 0.1f, 100.0f);
+        projection = perspectiveMatrixRH(fov, w / h, nearPlane, farPlane);
     }
 
     override void update(double dt)

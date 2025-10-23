@@ -10,6 +10,8 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.kit.sprites3d.pipelines.skyboxes.skybox : SkyBox;
+import api.dm.kit.sprites3d.pipelines.envs.env_group: EnvGroup;
+import api.dm.kit.sprites3d.lightings.lights.light_group: LightGroup;
 
 import api.dm.kit.sprites2d.tweens;
 import api.dm.kit.sprites2d.images;
@@ -28,17 +30,19 @@ import api.dm.back.sdl3.gpu.sdl_gpu_pipeline : SdlGPUPipeline;
 import api.dm.back.sdl3.gpu.sdl_gpu_shader : SdlGPUShader;
 import api.dm.kit.sprites3d.cameras.perspective_camera : PerspectiveCamera;
 import api.dm.com.gpu.com_3d_types : ComVertex;
+import api.dm.kit.sprites3d.lightings.phongs.materials.phong_material: PhongMaterial;
 import api.dm.kit.sprites3d.shapes.cube : Cube;
 import api.dm.kit.sprites3d.shapes.sphere : Sphere;
 import api.dm.kit.sprites3d.shapes.cylinder : Cylinder;
 import api.dm.kit.sprites3d.textures.texture3d : Texture3d;
-import api.dm.kit.sprites3d.phong_sprite3d : PhongSprite3d;
 import api.dm.kit.scenes.scene3d: SceneTransforms;
+import api.dm.kit.sprites3d.lightings.lights.dir_light: DirLight;
 
 import api.dm.back.sdl3.externs.csdl3;
 
 import api.math.matrices.matrix;
 import api.core.utils.text;
+import api.dm.kit.sprites3d.lightings.phongs.materials.material;
 
 /**
  * Authors: initkfs
@@ -54,9 +58,10 @@ class Start : GuiScene
 
     Random rnd;
 
-    PhongSprite3d cube;
-    Sphere lamp;
-    SDL_GPUTexture* sceneDepthTexture;
+    Cube cube;
+    DirLight lamp;
+
+    EnvGroup env;
 
     struct UniformBuffer
     {
@@ -90,33 +95,41 @@ class Start : GuiScene
 
         assert(camera);
 
-        auto skyBoxPath = context.app.userDir ~ "/nebula/";
-        skybox = new SkyBox(skyBoxPath, "png");
-        addCreate(skybox);
+        env = new EnvGroup;
+        addCreate(env);
+        assert(env.hasCamera);
+
+        // auto skyBoxPath = context.app.userDir ~ "/nebula/";
+        // skybox = new SkyBox(skyBoxPath, "png");
+        // addCreate(skybox);
 
         auto diffusePath = context.app.userDir ~ "/container2.png";
         auto specularPath = context.app.userDir ~ "/container2_specular.png";
 
-        // cube = new PhongSprite3d(diffusePath, specularPath);
-        // cube.mesh = new Cube(1, 1, 1);
-        // cube.mesh.rotation.y = 1;
-        // cube.mesh.angle = 45;
-        // cube.mesh.scale = Vec3f(0.5, 0.5, 0.5);
-        // addCreate(cube);
+        cube = new Cube(1, 1, 1);
+        cube.lightingMaterial = new PhongMaterial(diffusePath, specularPath);
+        cube.rotation.y = 1;
+        cube.angle = 45;
+        cube.scale = Vec3f(0.5, 0.5, 0.5);
+        env.addCreate(cube);
 
-        // lamp = new Sphere(0.5);
-        // lamp.scale = Vec3f(0.2, 0.2, 0.2);
-        // lamp.pos = Vec2d(1, 0.5);
-        // lamp.z = 1;
-        // lamp.isRotateAroundPivot = true;
-        // lamp.rotateRadius = 0.8;
-        // lamp.rotatePivot = cube.mesh.translatePos;
-        // lamp.rotation.y = 1;
-        // addCreate(lamp);
-
-        // lamp.isCalcInverseWorldMatrix = false;
-
-        // import api.dm.gui.windows.gui_window : GuiWindow;
+        lamp = new DirLight;
+        lamp.mesh = new Sphere(0.5);
+        lamp.mesh.scale = Vec3f(0.2, 0.2, 0.2);
+        lamp.pos = Vec2d(1, 0.5);
+        lamp.mesh.pos = lamp.pos;
+        lamp.z = 1;
+        lamp.mesh.z = 1;
+        lamp.isRotateAroundPivot = true;
+        lamp.rotateRadius = 0.8;
+        lamp.rotatePivot = cube.translatePos;
+        lamp.rotation.y = 1;
+        lamp.mesh.isRotateAroundPivot = true;
+        lamp.mesh.rotateRadius = 0.8;
+        lamp.mesh.rotatePivot = cube.translatePos;
+        lamp.mesh.rotation.y = 1;
+        
+        env.lights.addCreate(lamp);
 
         // //TODO remove test
         // import std.file : read;
@@ -219,7 +232,7 @@ class Start : GuiScene
         //timeUniform.time = SDL_GetTicks() / 250.0;
         // gpu.dev.pushUniformVertexData(0, &transforms, SceneTransforms.sizeof);
 
-        // import api.dm.kit.sprites3d.materials.material;
+        // import api.dm.kit.sprites3d.lightings.phongs.materials.material;
 
         // struct Planes
         // {

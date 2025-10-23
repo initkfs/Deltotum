@@ -1,4 +1,4 @@
-module api.dm.kit.sprites3d.materials.material;
+module api.dm.kit.sprites3d.lightings.phongs.materials.material;
 
 import api.math.geom2.vec3 : Vec3f;
 
@@ -6,7 +6,7 @@ import api.math.geom2.vec3 : Vec3f;
  * Authors: initkfs
  */
 
-struct PhongMaterial
+struct PhongData
 {
     align(16):
     Vec3f ambient;
@@ -17,17 +17,9 @@ struct PhongMaterial
     float shininess = 32;
 }
 
-static assert(PhongMaterial.sizeof % 16 == 0);
+static assert(PhongData.sizeof % 16 == 0);
 
-struct DirLight {
-    align(16):
-    Vec3f direction;
-    Vec3f ambient;
-    Vec3f diffuse;
-    Vec3f specular;
-}
-
-struct Light {
+struct LightData {
     align(16):
     Vec3f position;
     Vec3f direction;
@@ -43,5 +35,5 @@ struct Light {
     uint type;
 }
 
-static assert(Light.sizeof % 16 == 0);
+static assert(LightData.sizeof % 16 == 0);
 

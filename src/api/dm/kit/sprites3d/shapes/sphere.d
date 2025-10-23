@@ -95,8 +95,6 @@ class Sphere : Shape3d
     override void create()
     {
         super.create;
-
-        
     }
 
     override void dispose()

@@ -62,6 +62,10 @@ class Scene3d : Scene2d
         {
             if (!sprite3d.hasCamera)
             {
+                if (!camera)
+                {
+                    throw new Exception("Not found camera in scene");
+                }
                 sprite3d.camera = camera;
             }
         }
@@ -176,8 +180,6 @@ class Scene3d : Scene2d
                 continue;
             }
 
-            sprite3d.pushUniforms;
-            sprite3d.bindAll;
             sprite3d.draw;
             sprite3d.unvalidate;
         }
@@ -204,6 +206,10 @@ class Scene3d : Scene2d
         if (camera)
         {
             camera.dispose;
+        }
+
+        if(depthTexture){
+            depthTexture.dispose;
         }
     }
 }

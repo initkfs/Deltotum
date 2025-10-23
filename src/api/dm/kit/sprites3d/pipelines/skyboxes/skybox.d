@@ -1,6 +1,6 @@
 module api.dm.kit.sprites3d.pipelines.skyboxes.skybox;
 
-import api.dm.kit.sprites3d.pipelines.pipelined_sprite : PipelinedSprite;
+import api.dm.kit.sprites3d.pipelines.pipeline_group : PipelineGroup;
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.dm.kit.sprites3d.shapes.cube : Cube;
 import api.dm.kit.sprites3d.textures.cubemap : CubeMap;
@@ -14,7 +14,7 @@ import api.dm.back.sdl3.externs.csdl3;
 /**
  * Authors: initkfs
  */
-class SkyBox : PipelinedSprite
+class SkyBox : PipelineGroup
 {
 
     ComVertex[] skyboxVertices = [
@@ -90,6 +90,7 @@ class SkyBox : PipelinedSprite
             }
         };
         cube.id = "SkyBoxCube";
+        cube.isCreateLightingMaterial = false;
 
         addCreate(cube);
 

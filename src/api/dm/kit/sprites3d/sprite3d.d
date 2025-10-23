@@ -50,6 +50,7 @@ class Sprite3d : Sprite2d
     {
         isManaged = false;
         isLayoutManaged = false;
+        id = "Sprite3d";
     }
 
     override void create()
@@ -61,6 +62,53 @@ class Sprite3d : Sprite2d
         calcWorldMatrix;
     }
 
+    override bool draw()
+    {
+        if (!isVisible)
+        {
+            return false;
+        }
+
+        bindAll;
+        pushUniforms;
+
+        bool redraw;
+
+        foreach (Sprite2d obj; children)
+        {
+            if (!obj.isDrawByParent)
+            {
+                continue;
+            }
+
+            if (!obj.isDrawAfterParent && obj.isVisible)
+            {
+                obj.draw;
+            }
+        }
+
+        if (isRedraw)
+        {
+            drawContent;
+            redraw = true;
+        }
+
+        foreach (Sprite2d obj; children)
+        {
+            if (!obj.isDrawByParent)
+            {
+                continue;
+            }
+
+            if (obj.isDrawAfterParent && obj.isVisible)
+            {
+                obj.draw;
+            }
+        }
+
+        return redraw;
+    }
+
     override void add(Sprite2d object, long index = -1)
     {
         super.add(object, index);
@@ -69,9 +117,35 @@ class Sprite3d : Sprite2d
         {
             if (!sprite3d.hasCamera)
             {
+                if (!_camera)
+                {
+                    import std.format : format;
+
+                    throw new Exception(format("Camera in parent sprite must not be null: %s", toString));
+                }
                 sprite3d.camera = _camera;
             }
         }
+    }
+
+    override void addCreate(Sprite2d object, long index = -1)
+    {
+        if (auto sprite3d = cast(Sprite3d) object)
+        {
+            if (!sprite3d.hasCamera)
+            {
+                if (!_camera)
+                {
+                    import std.format : format;
+
+                    throw new Exception(format("Camera in parent sprite must not be null: %s", toString));
+                }
+                sprite3d.camera = _camera;
+            }
+        }
+
+        super.addCreate(object, index);
+
     }
 
     void pushUniforms()
@@ -299,7 +373,10 @@ class Sprite3d : Sprite2d
 
     void camera(PerspectiveCamera newCamera)
     {
-        assert(newCamera, "New camera must not be null");
+        if (!newCamera)
+        {
+            throw new Exception("New camera must not be null.");
+        }
         _camera = newCamera;
     }
 

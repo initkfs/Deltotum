@@ -2,6 +2,7 @@ module api.dm.kit.sprites3d.shapes.shape3d;
 
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.dm.com.gpu.com_3d_types : ComVertex;
+import api.dm.kit.sprites3d.lightings.lighting_material : LightingMaterial;
 
 import api.math.matrices.matrix : Matrix4x4f;
 import api.dm.back.sdl3.externs.csdl3;
@@ -20,12 +21,19 @@ class Shape3d : Sprite3d
     SDL_GPUBuffer* vertexBuffer;
     SDL_GPUBuffer* indexBuffer;
 
+    LightingMaterial lightingMaterial;
+    bool isCreateLightingMaterial = true;
+
+    string diffupseMapPath;
+    string specularMapPath;
+
     protected
     {
         SDL_GPUTransferBuffer* transferBuffer;
     }
 
-    this(){
+    this()
+    {
         id = "Shape3d";
         isPushUniformVertexMatrix = true;
     }
@@ -66,6 +74,24 @@ class Shape3d : Sprite3d
         }
 
         copyToBuffer;
+
+        if (!lightingMaterial)
+        {
+            if (isCreateLightingMaterial)
+            {
+                import api.dm.kit.sprites3d.lightings.phongs.materials.phong_material : PhongMaterial;
+
+                lightingMaterial = new PhongMaterial(diffupseMapPath, specularMapPath);
+                addCreate(lightingMaterial);
+            }
+        }
+        else
+        {
+            if (!lightingMaterial.isCreated)
+            {
+                addCreate(lightingMaterial);
+            }
+        }
     }
 
     void copyToBuffer()
@@ -95,6 +121,7 @@ class Shape3d : Sprite3d
 
     override void bindAll()
     {
+        super.bindAll;
         gpu.dev.bindVertexBuffer(vertexBuffer);
         gpu.dev.bindIndexBuffer(indexBuffer);
     }
