@@ -34,7 +34,7 @@ class LightGroup : PipelineGroup
         auto stencilState = gpu.dev.depthStencilState;
         auto rastState = gpu.dev.depthRasterizerState;
 
-        createPipeline(0, 0, 1, 0, 0, 0, 1, 0, &rastState, &stencilState);
+        createPipeline(0, 0, 1, 0, 0, 0, 1, 0, &rastState, &stencilState, &targetInfo);
     }
 
     override void add(Sprite2d object, long index = -1)

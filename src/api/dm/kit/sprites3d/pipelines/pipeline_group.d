@@ -22,6 +22,10 @@ class PipelineGroup : Sprite3d
     string vertexShaderName;
     string fragmentShaderName;
 
+    this(){
+        isPushUniformVertexMatrix = false;
+    }
+
     override bool draw()
     {
         foreach (pipe; childPipelines)

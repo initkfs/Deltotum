@@ -46,7 +46,7 @@ class EnvGroup : PipelineGroup
         auto rastState = gpu.dev.depthRasterizerState;
 
         //TODO debug storage buffer
-        createPipeline(0, 0, 1, 0, 2, 0, 1, 0, &rastState, &stencilState);
+        createPipeline(0, 0, 1, 0, 2, 0, 1, 0, &rastState, &stencilState, &targetInfo);
     }
 
     override void pushUniforms()

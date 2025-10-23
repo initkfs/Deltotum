@@ -99,10 +99,6 @@ class Start : GuiScene
         addCreate(env);
         assert(env.hasCamera);
 
-        // auto skyBoxPath = context.app.userDir ~ "/nebula/";
-        // skybox = new SkyBox(skyBoxPath, "png");
-        // addCreate(skybox);
-
         auto diffusePath = context.app.userDir ~ "/container2.png";
         auto specularPath = context.app.userDir ~ "/container2_specular.png";
 
@@ -130,6 +126,10 @@ class Start : GuiScene
         lamp.mesh.rotation.y = 1;
         
         env.lights.addCreate(lamp);
+
+        // auto skyBoxPath = context.app.userDir ~ "/nebula/";
+        // skybox = new SkyBox(skyBoxPath, "png");
+        // addCreate(skybox);
 
         // //TODO remove test
         // import std.file : read;
@@ -174,7 +174,7 @@ class Start : GuiScene
 
         //time = SDL_GetTicks / 1000.0;
 
-        //lamp.angle = lamp.angle + 1;
+        lamp.angle = lamp.angle + 1;
 
         //float radius = 1.0f;
 
