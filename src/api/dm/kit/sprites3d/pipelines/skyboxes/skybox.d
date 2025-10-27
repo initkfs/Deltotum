@@ -98,6 +98,9 @@ class SkyBox : PipelineGroup
         addCreate(cubeMap);
         cubeMap.id = "SkyBoxCubeMap";
 
-        createPipeline(0, 0, 1, 0, 1, 0, 0, 0);
+        auto buff = pipeBuffers;
+        buff.numVertexUniformBuffers = 1;
+        buff.numFragSamples = 1;
+        createPipeline(buff);
     }
 }

@@ -238,10 +238,7 @@ class Sprite3d : Sprite2d
         return _worldMatrix;
     }
 
-    ref Matrix4x4f worldMatrixInverse()
-    {
-        return _worldMatrixInverse;
-    }
+    ref Matrix4x4f worldMatrixInverse() => _worldMatrixInverse;
 
     Vec3f translatePos()
     {

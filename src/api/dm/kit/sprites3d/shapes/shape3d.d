@@ -22,7 +22,7 @@ class Shape3d : Sprite3d
     SDL_GPUBuffer* indexBuffer;
 
     LightingMaterial lightingMaterial;
-    bool isCreateLightingMaterial = true;
+    bool isCreateLightingMaterial;
 
     string diffupseMapPath;
     string specularMapPath;
@@ -36,6 +36,7 @@ class Shape3d : Sprite3d
     {
         id = "Shape3d";
         isPushUniformVertexMatrix = true;
+        isCreateLightingMaterial = true;
     }
 
     void createMesh()

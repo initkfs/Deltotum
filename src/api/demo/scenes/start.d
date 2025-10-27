@@ -10,7 +10,7 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.kit.sprites3d.pipelines.skyboxes.skybox : SkyBox;
-import api.dm.kit.sprites3d.pipelines.envs.env_group: EnvGroup;
+import api.dm.kit.sprites3d.pipelines.items.detailed_group: DetailedGroup;
 import api.dm.kit.sprites3d.lightings.lights.light_group: LightGroup;
 
 import api.dm.kit.sprites2d.tweens;
@@ -61,7 +61,7 @@ class Start : GuiScene
     Cube cube;
     DirLight lamp;
 
-    EnvGroup env;
+    DetailedGroup env;
 
     struct UniformBuffer
     {
@@ -95,7 +95,7 @@ class Start : GuiScene
 
         assert(camera);
 
-        env = new EnvGroup;
+        env = new DetailedGroup;
         addCreate(env);
         assert(env.hasCamera);
 
@@ -127,9 +127,9 @@ class Start : GuiScene
         
         env.lights.addCreate(lamp);
 
-        // auto skyBoxPath = context.app.userDir ~ "/nebula/";
-        // skybox = new SkyBox(skyBoxPath, "png");
-        // addCreate(skybox);
+        auto skyBoxPath = context.app.userDir ~ "/nebula/";
+        skybox = new SkyBox(skyBoxPath, "png");
+        addCreate(skybox);
 
         // //TODO remove test
         // import std.file : read;

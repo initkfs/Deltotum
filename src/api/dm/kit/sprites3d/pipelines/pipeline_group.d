@@ -6,6 +6,18 @@ import api.dm.back.sdl3.gpu.sdl_gpu_pipeline : SdlGPUPipeline;
 
 import api.dm.back.sdl3.externs.csdl3;
 
+struct PipelineBuffers
+{
+    uint numVertexSamples;
+    uint numVertexStorageBuffers;
+    uint numVertexUniformBuffers;
+    uint numVertexStorageTextures;
+    uint numFragSamples;
+    uint numFragStorageBuffers;
+    uint numFragUniformBuffers;
+    uint numFragStorageTextures;
+}
+
 /**
  * Authors: initkfs
  */
@@ -22,7 +34,10 @@ class PipelineGroup : Sprite3d
     string vertexShaderName;
     string fragmentShaderName;
 
-    this(){
+    bool isDepth = true;
+
+    this()
+    {
         isPushUniformVertexMatrix = false;
     }
 
@@ -56,15 +71,10 @@ class PipelineGroup : Sprite3d
         }
     }
 
-    void createPipeline(
-        uint numVertexSamples = 0,
-        uint numVertexStorageBuffers = 0,
-        uint numVertexUniformBuffers = 0,
-        uint numVertexStorageTextures = 0,
-        uint numFragSamples = 0,
-        uint numFragStorageBuffers = 0,
-        uint numFragUniformBuffers = 0,
-        uint numFragStorageTextures = 0,
+    PipelineBuffers pipeBuffers() => PipelineBuffers();
+
+    void createPipelineFull(
+        in PipelineBuffers buffers,
         SDL_GPURasterizerState* rasterState = null,
         SDL_GPUDepthStencilState* stencilState = null,
         SDL_GPUGraphicsPipelineTargetInfo* colorDesc = null
@@ -80,14 +90,14 @@ class PipelineGroup : Sprite3d
         _pipeline = gpu.newPipeline(
             vertShaderPath,
             fragShaderPath,
-            numVertexSamples,
-            numVertexStorageBuffers,
-            numVertexUniformBuffers,
-            numVertexStorageTextures,
-            numFragSamples,
-            numFragStorageBuffers,
-            numFragUniformBuffers,
-            numFragStorageTextures,
+            buffers.numVertexSamples,
+            buffers.numVertexStorageBuffers,
+            buffers.numVertexUniformBuffers,
+            buffers.numVertexStorageTextures,
+            buffers.numFragSamples,
+            buffers.numFragStorageBuffers,
+            buffers.numFragUniformBuffers,
+            buffers.numFragStorageTextures,
             rasterState,
             stencilState,
             colorDesc);
@@ -96,7 +106,31 @@ class PipelineGroup : Sprite3d
         {
             throw new Exception("Pipeline is null");
         }
+    }
 
+    void createPipeline(in PipelineBuffers buffers)
+    {
+        SDL_GPUGraphicsPipelineTargetInfo targetInfo;
+
+        SDL_GPUColorTargetDescription[1] targetDesc;
+        targetDesc[0].format = gpu.getSwapchainTextureFormat;
+        targetInfo.num_color_targets = 1;
+        targetInfo.color_target_descriptions = targetDesc.ptr;
+
+        if (isDepth)
+        {
+            targetInfo.has_depth_stencil_target = true;
+            targetInfo.depth_stencil_format = SDL_GPU_TEXTUREFORMAT_D16_UNORM;
+        }
+
+        auto stencilState = isDepth ? gpu.dev.depthStencilState : gpu.dev.stencilState;
+        auto rastState = isDepth ? gpu.dev.depthRasterizerState : gpu.dev.rasterizerState;
+
+        createPipelineFull(
+            buffers,
+            &rastState,
+            &stencilState,
+            &targetInfo);
     }
 
     SdlGPUPipeline pipeline()

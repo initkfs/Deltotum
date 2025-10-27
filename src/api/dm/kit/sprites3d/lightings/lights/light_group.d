@@ -19,22 +19,15 @@ class LightGroup : PipelineGroup
         fragmentShaderName = "Light.frag";
     }
 
-    override void create(){
+    override void create()
+    {
         super.create;
 
-        SDL_GPUGraphicsPipelineTargetInfo targetInfo;
+        auto buffers = pipeBuffers;
+        buffers.numFragUniformBuffers = 1;
+        buffers.numVertexUniformBuffers = 1;
 
-        SDL_GPUColorTargetDescription[1] targetDesc;
-        targetDesc[0].format = gpu.getSwapchainTextureFormat;
-        targetInfo.num_color_targets = 1;
-        targetInfo.color_target_descriptions = targetDesc.ptr;
-        targetInfo.has_depth_stencil_target = true;
-        targetInfo.depth_stencil_format = SDL_GPU_TEXTUREFORMAT_D16_UNORM;
-
-        auto stencilState = gpu.dev.depthStencilState;
-        auto rastState = gpu.dev.depthRasterizerState;
-
-        createPipeline(0, 0, 1, 0, 0, 0, 1, 0, &rastState, &stencilState, &targetInfo);
+        createPipeline(buffers);
     }
 
     override void add(Sprite2d object, long index = -1)

@@ -1,30 +1,18 @@
-module api.dm.kit.sprites3d.pipelines.envs.env_group;
+module api.dm.kit.sprites3d.pipelines.items.base_lighting_group;
 
 import api.dm.kit.sprites3d.pipelines.pipeline_group : PipelineGroup;
-import api.dm.kit.sprites3d.lightings.lighting_material : LightingMaterial;
-import api.dm.kit.sprites3d.lightings.lights.base_light : BaseLight;
-import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.sprites3d.lightings.phongs.materials.material : PhongData, LightData;
 import api.dm.kit.sprites3d.lightings.lights.light_group : LightGroup;
 
-import api.math.geom2.vec3 : Vec3f;
+import api.math.geom2.vec3: Vec3f;
 import Math = api.math;
-
-import api.dm.back.sdl3.externs.csdl3;
 
 /**
  * Authors: initkfs
  */
 
-class EnvGroup : PipelineGroup
+class BaseLightingGroup : PipelineGroup
 {
     LightGroup lights;
-
-    this()
-    {
-        vertexShaderName = "EnvFull.vert";
-        fragmentShaderName = "EnvFull.frag";
-    }
 
     override void create()
     {
@@ -32,26 +20,13 @@ class EnvGroup : PipelineGroup
 
         lights = new LightGroup;
         addCreate(lights);
-
-        SDL_GPUGraphicsPipelineTargetInfo targetInfo;
-
-        SDL_GPUColorTargetDescription[1] targetDesc;
-        targetDesc[0].format = gpu.getSwapchainTextureFormat;
-        targetInfo.num_color_targets = 1;
-        targetInfo.color_target_descriptions = targetDesc.ptr;
-        targetInfo.has_depth_stencil_target = true;
-        targetInfo.depth_stencil_format = SDL_GPU_TEXTUREFORMAT_D16_UNORM;
-
-        auto stencilState = gpu.dev.depthStencilState;
-        auto rastState = gpu.dev.depthRasterizerState;
-
-        //TODO debug storage buffer
-        createPipeline(0, 0, 1, 0, 2, 0, 1, 0, &rastState, &stencilState, &targetInfo);
     }
 
     override void pushUniforms()
     {
         super.pushUniforms;
+
+        import api.dm.kit.sprites3d.lightings.phongs.materials.material;
 
         struct PlaneInfo
         {
@@ -70,8 +45,8 @@ class EnvGroup : PipelineGroup
 
         Planes planes = Planes();
 
-        planes.planeInfo.nearPlane = 0.1;
-        planes.planeInfo.farPlane = 100;
+        planes.planeInfo.nearPlane = camera.nearPlane;
+        planes.planeInfo.farPlane = camera.farPlane;
 
         planes.cameraPos = [
             camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z
@@ -99,5 +74,4 @@ class EnvGroup : PipelineGroup
 
         gpu.dev.pushUniformFragmentData(0, &planes, planes.sizeof);
     }
-
 }
