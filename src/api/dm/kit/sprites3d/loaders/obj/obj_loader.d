@@ -41,12 +41,20 @@ class ObjLoader
     Coord3f[] normalsCoords;
     Coord2f[] texCoords;
 
-    ComVertex[] verts;
+    ComVertex[] uniqueVertices;
+    ushort[] indices;
 
-    void parse(string text, char lineSep = '\n')
+    protected
+    {
+        ushort[ComVertex] vertexCache;
+    }
+
+    void parse(string text, char lineSep = '\n', bool isIndices = true)
     {
         //TODO reuse
-        verts = null;
+        vertexCache = null;
+        indices = null;
+        uniqueVertices = null;
         normalsCoords = null;
         vertCoords = null;
         texCoords = null;
@@ -76,7 +84,14 @@ class ObjLoader
 
             if (line.startsWith(faceStart))
             {
-                parseFace(line[faceStart.length .. $]);
+                if (isIndices)
+                {
+                    parseFaceWithIndices(line[faceStart.length .. $]);
+                }
+                else
+                {
+                    parseFace(line[faceStart.length .. $]);
+                }
                 continue;
             }
         }
@@ -144,11 +159,107 @@ class ObjLoader
         triangulate(polygonVertices);
     }
 
+    void parseFaceWithIndices(const(char[]) line)
+    {
+        auto vertexComponents = line.splitter(fieldSeparator)
+            .filter!(comp => comp.length > 0)
+            .array;
+
+        if (vertexComponents.length < 3)
+            return;
+
+        ushort[] faceIndices;
+        foreach (vertexDesc; vertexComponents)
+        {
+            auto parts = vertexDesc.splitter('/').array;
+
+            if (parts.length < 1)
+                continue;
+
+            int vertexIndex = parts[0].to!int - 1;
+            int texCoordIndex = -1;
+            int normalIndex = -1;
+
+            if (parts.length >= 2 && parts[1].length > 0)
+                texCoordIndex = parts[1].to!int - 1;
+            if (parts.length >= 3 && parts[2].length > 0)
+                normalIndex = parts[2].to!int - 1;
+
+            if (vertexIndex < 0 || vertexIndex >= vertCoords.length)
+                continue;
+
+            ComVertex vertex;
+            vertex.x = vertCoords[vertexIndex].x;
+            vertex.y = vertCoords[vertexIndex].y;
+            vertex.z = vertCoords[vertexIndex].z;
+
+            if (normalIndex >= 0 && normalIndex < normalsCoords.length)
+            {
+                vertex.normals[0] = normalsCoords[normalIndex].x;
+                vertex.normals[1] = normalsCoords[normalIndex].y;
+                vertex.normals[2] = normalsCoords[normalIndex].z;
+            }
+
+            if (texCoordIndex >= 0 && texCoordIndex < texCoords.length)
+            {
+                vertex.u = texCoords[texCoordIndex].u;
+                vertex.v = texCoords[texCoordIndex].v;
+            }
+
+            ushort index = getOrCreateVertexIndex(vertex);
+            faceIndices ~= index;
+        }
+
+        triangulateIndices(faceIndices);
+    }
+
+    ushort getOrCreateVertexIndex(ComVertex vertex)
+    {
+        if (auto existing = vertex in vertexCache)
+        {
+            return *existing;
+        }
+
+        ushort newIndex = cast(ushort) uniqueVertices.length;
+        uniqueVertices ~= vertex;
+        vertexCache[vertex] = newIndex;
+        return newIndex;
+    }
+
+    void triangulateIndices(ushort[] faceIndices)
+    {
+        if (faceIndices.length == 3)
+        {
+            indices ~= faceIndices[0];
+            indices ~= faceIndices[1];
+            indices ~= faceIndices[2];
+        }
+        else if (faceIndices.length == 4)
+        {
+            indices ~= faceIndices[0];
+            indices ~= faceIndices[1];
+            indices ~= faceIndices[2];
+
+            indices ~= faceIndices[0];
+            indices ~= faceIndices[2];
+            indices ~= faceIndices[3];
+        }
+        else if (faceIndices.length > 4)
+        {
+            for (int i = 1; i < faceIndices.length - 1; i++)
+            {
+                indices ~= faceIndices[0];
+                indices ~= faceIndices[i];
+                indices ~= faceIndices[i + 1];
+            }
+        }
+    }
+
     void triangulate(ComVertex[] polygon)
     {
         if (polygon.length == 3)
         {
-            verts ~= polygon;
+            uniqueVertices ~= polygon;
             return;
         }
 
@@ -156,14 +267,14 @@ class ObjLoader
         if (polygon.length == 4)
         {
             //1: v0 -> v1 -> v2
-            verts ~= polygon[0];
-            verts ~= polygon[1];
-            verts ~= polygon[2];
+            uniqueVertices ~= polygon[0];
+            uniqueVertices ~= polygon[1];
+            uniqueVertices ~= polygon[2];
 
             //2: v0 -> v2 -> v3
-            verts ~= polygon[0];
-            verts ~= polygon[2];
-            verts ~= polygon[3];
+            uniqueVertices ~= polygon[0];
+            uniqueVertices ~= polygon[2];
+            uniqueVertices ~= polygon[3];
 
             return;
         }
@@ -173,9 +284,9 @@ class ObjLoader
         {
             for (int i = 1; i < polygon.length - 1; i++)
             {
-                verts ~= polygon[0];
-                verts ~= polygon[i];
-                verts ~= polygon[i + 1];
+                uniqueVertices ~= polygon[0];
+                uniqueVertices ~= polygon[i];
+                uniqueVertices ~= polygon[i + 1];
             }
 
             return;
@@ -282,7 +393,8 @@ f 3//6 4//6 1//6
 f 3//6 1//6 2//6
     ";
 
-    parser.parse(objText);
+    parser.parse(objText, '\n', isIndices:
+        false);
     assert(parser.vertCoords.length == 8);
     assert(parser.vertCoords == [
         Coord3f(),
@@ -305,7 +417,7 @@ f 3//6 1//6 2//6
         Coord3f(0.0, 0.0, -1.0),
     ]);
 
-    assert(parser.verts == [
+    assert(parser.uniqueVertices == [
         //1: f 3//1 7//1 8//1
         ComVertex(1.0, 1.0, 0.0, [1.0, 0.0, 0.0], 0, 0), // v3 vn1
         ComVertex(1.0, 1.0, 1.0, [1.0, 0.0, 0.0], 0, 0), // v7 vn1  
@@ -367,4 +479,236 @@ f 3//6 1//6 2//6
         ComVertex(0.0, 1.0, 0.0, [0.0, 0.0, -1.0], 0, 0) //  v2 vn6
     ]);
 
+    parser.parse(objText, '\n', isIndices:
+        true);
+
+    assert(parser.vertCoords.length == 8);
+    assert(parser.vertCoords == [
+        Coord3f(),
+        Coord3f(0.0, 1.0),
+        Coord3f(1.0, 1.0),
+        Coord3f(1.0, 0.0),
+        Coord3f(0.0, 0.0, 1.0),
+        Coord3f(0.0, 1.0, 1.0),
+        Coord3f(1.0, 1.0, 1.0),
+        Coord3f(1.0, 0.0, 1.0),
+    ]);
+
+    assert(parser.normalsCoords.length == 6);
+    assert(parser.normalsCoords == [
+        Coord3f(1.0),
+        Coord3f(-1.0),
+        Coord3f(0.0, 1.0),
+        Coord3f(0.0, -1.0),
+        Coord3f(0.0, 0.0, 1.0),
+        Coord3f(0.0, 0.0, -1.0),
+    ]);
+
+    import std.format : format;
+
+    assert(parser.uniqueVertices.length == 24, format("Expected 24 unique vertices, got %s", parser
+            .uniqueVertices.length));
+
+    assert(parser.indices.length == 36, format("Expected 36 indices, got %s", parser.indices.length));
+
+    assert(parser.indices[0 .. 3] == [0, 1, 2]); // First triangle
+    assert(parser.indices[3 .. 6] == [0, 2, 3]); // Second triangle
+
+    foreach (idx; parser.indices)
+    {
+        assert(idx < parser.uniqueVertices.length,
+            format("Invalid index %s, max is %s", idx, parser.uniqueVertices.length - 1));
+    }
+
+    bool foundRightNormal = false;
+    bool foundLeftNormal = false;
+    bool foundTopNormal = false;
+    bool foundBottomNormal = false;
+    bool foundFrontNormal = false;
+    bool foundBackNormal = false;
+
+    foreach (vertex; parser.uniqueVertices)
+    {
+        if (vertex.normals[0] == 1.0 && vertex.normals[1] == 0.0 && vertex.normals[2] == 0.0)
+            foundRightNormal = true;
+        if (vertex.normals[0] == -1.0 && vertex.normals[1] == 0.0 && vertex.normals[2] == 0.0)
+            foundLeftNormal = true;
+        if (vertex.normals[0] == 0.0 && vertex.normals[1] == 1.0 && vertex.normals[2] == 0.0)
+            foundTopNormal = true;
+        if (vertex.normals[0] == 0.0 && vertex.normals[1] == -1.0 && vertex.normals[2] == 0.0)
+            foundBottomNormal = true;
+        if (vertex.normals[0] == 0.0 && vertex.normals[1] == 0.0 && vertex.normals[2] == 1.0)
+            foundFrontNormal = true;
+        if (vertex.normals[0] == 0.0 && vertex.normals[1] == 0.0 && vertex.normals[2] == -1.0)
+            foundBackNormal = true;
+    }
+
+    assert(foundRightNormal, "Should have vertices with right normal");
+    assert(foundLeftNormal, "Should have vertices with left normal");
+    assert(foundTopNormal, "Should have vertices with top normal");
+    assert(foundBottomNormal, "Should have vertices with bottom normal");
+    assert(foundFrontNormal, "Should have vertices with front normal");
+    assert(foundBackNormal, "Should have vertices with back normal");
+
+    assert(parser.indices.length % 3 == 0, "Indices should form complete triangles");
+    assert(parser.indices.length / 3 == 12, "Should have exactly 12 triangles");
+}
+
+unittest
+{
+    import std.format : format;
+
+    auto parser = new ObjLoader;
+
+    auto objText = "
+v 0.0 0.0 0.0
+v 1.0 0.0 0.0
+v 1.0 1.0 0.0
+v 0.0 1.0 0.0
+
+vt 0.0 0.0
+vt 1.0 0.0
+vt 1.0 1.0
+vt 0.0 1.0
+
+vn 0.0 0.0 1.0
+vn 0.0 0.0 -1.0
+
+f 1/1/1 2/2/1 3/3/1
+f 1//1 4//1 3//1
+f 1/1 2/2 4/4
+f 1 2 4
+";
+    parser.parse(objText);
+
+    assert(parser.vertCoords.length == 4);
+    assert(parser.vertCoords == [
+        Coord3f(),
+        Coord3f(1.0),
+        Coord3f(1.0, 1.0),
+        Coord3f(0.0, 1.0),
+    ]);
+
+    assert(parser.texCoords.length == 4);
+    assert(parser.texCoords == [
+        Coord2f(),
+        Coord2f(1.0),
+        Coord2f(1.0, 1.0),
+        Coord2f(0.0, 1.0),
+    ]);
+
+    assert(parser.normalsCoords.length == 2);
+    assert(parser.normalsCoords == [
+        Coord3f(0.0, 0.0, 1.0),
+        Coord3f(0.0, 0.0, -1.0),
+    ]);
+
+    assert(parser.uniqueVertices.length > 0, "Should have unique vertices");
+    assert(parser.indices.length == 12, format("Expected 12 indices for 4 triangles, got %s", parser
+            .indices.length));
+
+    // 1. v/vt/vn: f 1/1/1 2/2/1 3/3/1
+    bool foundFullFormat = false;
+    foreach (vertex; parser.uniqueVertices)
+    {
+        // (1.0, 1.0) and normal (0,0,1)
+        if (vertex.u == 1.0 && vertex.v == 1.0 &&
+            vertex.normals[0] == 0.0 && vertex.normals[1] == 0.0 && vertex.normals[2] == 1.0)
+        {
+            foundFullFormat = true;
+            break;
+        }
+    }
+    assert(foundFullFormat, "Should have vertices from full format v/vt/vn");
+
+    // 2. v//vn: f 1//1 4//1 3//1
+    bool foundNoTexture = false;
+    foreach (vertex; parser.uniqueVertices)
+    {
+        // null coords and normal (0,0,1)
+        if (vertex.u == 0.0 && vertex.v == 0.0 &&
+            vertex.normals[0] == 0.0 && vertex.normals[1] == 0.0 && vertex.normals[2] == 1.0)
+        {
+            foundNoTexture = true;
+            break;
+        }
+    }
+    assert(foundNoTexture, "Should have vertices from format v//vn");
+
+    // 3. v/vt: f 1/1 2/2 4/4
+    bool foundNoNormal = false;
+    foreach (vertex; parser.uniqueVertices)
+    {
+        if (vertex.u == 1.0 && vertex.v == 0.0 &&
+            vertex.normals[0] == 0.0 && vertex.normals[1] == 0.0 && vertex.normals[2] == 0.0)
+        {
+            foundNoNormal = true;
+            break;
+        }
+    }
+    assert(foundNoNormal, "Should have vertices from format v/vt");
+
+    // 4. v: f 1 2 4
+    bool foundVertexOnly = false;
+    foreach (vertex; parser.uniqueVertices)
+    {
+        // vertex (1,0,0)
+        if (vertex.x == 1.0 && vertex.y == 0.0 && vertex.z == 0.0 &&
+            vertex.normals[0] == 0.0 && vertex.normals[1] == 0.0 && vertex.normals[2] == 0.0 &&
+            vertex.u == 0.0 && vertex.v == 0.0)
+        {
+            foundVertexOnly = true;
+            break;
+        }
+    }
+    assert(foundVertexOnly, "Should have vertices from format v only");
+
+    foreach (idx; parser.indices)
+    {
+        assert(idx < parser.uniqueVertices.length,
+            format("Invalid index %s, max is %s", idx, parser.uniqueVertices.length - 1));
+    }
+
+    // 4 triangles
+    assert(parser.indices.length % 3 == 0, "Indices should form complete triangles");
+    assert(parser.indices.length / 3 == 4, "Should have exactly 4 triangles");
+}
+
+unittest
+{
+    import std.format : format;
+
+    auto parser = new ObjLoader;
+
+    auto objText = "
+v 0.0 0.0 0.0
+v 2.0 0.0 0.0
+v 2.0 2.0 0.0
+v 0.0 2.0 0.0
+
+vn 0.0 0.0 1.0
+
+f 1//1 2//1 3//1 4//1
+";
+    parser.parse(objText);
+
+    assert(parser.vertCoords.length == 4);
+
+    assert(parser.indices.length == 6, format("Quad should produce 6 indices, got %s", parser
+            .indices.length));
+    assert(parser.indices.length / 3 == 2, "Quad should produce 2 triangles");
+
+    //
+    // 1-2-3, 1-3-4
+    ushort v1 = 0, v2 = 1, v3 = 2, v4 = 3; // vertex indices (0-based)
+
+    // First triangle: 1-2-3
+    assert(parser.indices[0] == v1);
+    assert(parser.indices[1] == v2);
+    assert(parser.indices[2] == v3);
+
+    // Second triangle: 1-3-4
+    assert(parser.indices[3] == v1);
+    assert(parser.indices[4] == v3);
+    assert(parser.indices[5] == v4);
 }
