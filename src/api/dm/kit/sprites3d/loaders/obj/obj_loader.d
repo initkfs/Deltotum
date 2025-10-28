@@ -29,6 +29,16 @@ struct Coord2f
     float u = 0, v = 0;
 }
 
+struct Mesh
+{
+    string name; // g or o
+    string material; // usemtl
+    ushort[] indices;
+    uint vertexCount;
+    uint indexOffset; // offsets in vertex buffer
+    uint indexCount;
+}
+
 class ObjLoader
 {
     string vertexStart = "v ";
@@ -44,6 +54,15 @@ class ObjLoader
     ComVertex[] uniqueVertices;
     ushort[] indices;
 
+    Mesh[] meshes;
+    string mtlLib; // mtllib
+    private Mesh currentMesh;
+
+    string groupStart = "g ";
+    string objectStart = "o ";
+    string useMtlStart = "usemtl ";
+    string mtlLibStart = "mtllib ";
+
     protected
     {
         ushort[ComVertex] vertexCache;
@@ -52,6 +71,8 @@ class ObjLoader
     void parse(string text, char lineSep = '\n', bool isIndices = true)
     {
         //TODO reuse
+        meshes = null;
+        mtlLib = null;
         vertexCache = null;
         indices = null;
         uniqueVertices = null;
@@ -94,6 +115,62 @@ class ObjLoader
                 }
                 continue;
             }
+
+            if (line.startsWith(mtlLibStart))
+            {
+                mtlLib = line[mtlLibStart.length .. $].strip();
+                continue;
+            }
+
+            if (line.startsWith(useMtlStart))
+            {
+                string materialName = line[useMtlStart.length .. $].strip();
+                if (currentMesh.material.length > 0 || currentMesh.name.length > 0)
+                {
+                    startNewMesh;
+                }
+
+                currentMesh.material = materialName;
+                continue;
+            }
+
+            if (line.startsWith(groupStart) || line.startsWith(objectStart))
+            {
+                string name = line[line.startsWith(groupStart) ? groupStart.length: objectStart.length .. $].strip();
+                if (currentMesh.name.length > 0 || currentMesh.material.length > 0)
+                {
+                    startNewMesh;
+                }
+
+                currentMesh.name = name;
+                continue;
+            }
+
+        }
+
+        finalizeCurrentMesh;
+    }
+
+    private void startNewMesh(string nameOrMaterial = null)
+    {
+        finalizeCurrentMesh;
+
+        currentMesh = Mesh();
+        if (nameOrMaterial.length > 0)
+        {
+            currentMesh.name = nameOrMaterial;
+        }
+
+        currentMesh.indexOffset = cast(uint) indices.length;
+    }
+
+    private void finalizeCurrentMesh()
+    {
+        if (currentMesh.name.length > 0 || currentMesh.material.length > 0)
+        {
+            currentMesh.indexCount = cast(uint) indices.length - currentMesh.indexOffset;
+            currentMesh.vertexCount = cast(uint) uniqueVertices.length;
+            meshes ~= currentMesh;
         }
     }
 
@@ -355,6 +432,18 @@ class ObjLoader
         }
         return coord;
     }
+
+    ushort[] getMeshIndices(uint meshIndex)
+    {
+        if (meshIndex >= meshes.length)
+            return null;
+
+        auto mesh = meshes[meshIndex];
+        return indices[mesh.indexOffset .. mesh.indexOffset + mesh.indexCount];
+    }
+
+    ComVertex[] getVertices() => uniqueVertices;
+    ushort[] getIndices() => indices;
 
 }
 
@@ -711,4 +800,59 @@ f 1//1 2//1 3//1 4//1
     assert(parser.indices[3] == v1);
     assert(parser.indices[4] == v3);
     assert(parser.indices[5] == v4);
+}
+
+unittest
+{
+    import std.format : format;
+
+    auto parser = new ObjLoader();
+    string objText = `
+mtllib materials.mtl
+v 0.0 0.0 0.0
+v 1.0 0.0 0.0
+v 1.0 1.0 0.0
+v 0.0 1.0 0.0
+
+usemtl RedMaterial
+f 1 2 3
+f 1 3 4
+ 
+usemtl BlueMaterial
+f 1 2 4
+`;
+
+    parser.parse(objText);
+
+    assert(parser.mtlLib == "materials.mtl");
+
+    assert(parser.meshes.length == 2, format("Expected 2 meshes, got %s", parser.meshes.length));
+
+    assert(parser.meshes[0].material == "RedMaterial",
+        format("Expected mesh 0 material 'RedMaterial', got '%s'", parser.meshes[0].material));
+    assert(parser.meshes[0].indexCount == 6,
+        format("Expected mesh 0 index count 6, got %s", parser.meshes[0].indexCount));
+
+    assert(parser.meshes[1].material == "BlueMaterial",
+        format("Expected mesh 1 material 'BlueMaterial', got '%s'", parser.meshes[1].material));
+    assert(parser.meshes[1].indexCount == 3,
+        format("Expected mesh 1 index count 3, got %s", parser.meshes[1].indexCount));
+
+    assert(parser.vertCoords.length == 4,
+        format("Expected 4 vertices, got %s", parser.vertCoords.length));
+    assert(parser.indices.length == 9,
+        format("Expected 9 total indices, got %s", parser.indices.length));
+
+    auto mesh1Indices = parser.getMeshIndices(0);
+    auto mesh2Indices = parser.getMeshIndices(1);
+
+    assert(mesh1Indices.length == 6,
+        format("Expected mesh 1 indices length 6, got %s", mesh1Indices.length));
+    assert(mesh2Indices.length == 3,
+        format("Expected mesh 2 indices length 3, got %s", mesh2Indices.length));
+
+    assert(parser.meshes[0].indexOffset == 0,
+        format("Expected mesh 0 offset 0, got %s", parser.meshes[0].indexOffset));
+    assert(parser.meshes[1].indexOffset == 6,
+        format("Expected mesh 1 offset 6, got %s", parser.meshes[1].indexOffset));
 }
