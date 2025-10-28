@@ -127,9 +127,9 @@ class Start : GuiScene
         
         env.lights.addCreate(lamp);
 
-        auto skyBoxPath = context.app.userDir ~ "/nebula/";
-        skybox = new SkyBox(skyBoxPath, "png");
-        addCreate(skybox);
+        // auto skyBoxPath = context.app.userDir ~ "/nebula/";
+        // skybox = new SkyBox(skyBoxPath, "png");
+        // addCreate(skybox);
 
         // //TODO remove test
         // import std.file : read;

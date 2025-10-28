@@ -7,7 +7,7 @@ struct DynLib
     int loadVersion;
     bool _load;
 
-    bool isLoad() const  pure @safe => _load && handlePtr;
+    bool isLoad() const pure @safe => _load && handlePtr;
 
     string toString() const
     {
@@ -88,6 +88,8 @@ class DynamicLoader
     void delegate() onAfterUnload;
 
     string[] errors;
+
+    bool isChangeCwd = true;
 
     protected
     {
@@ -215,21 +217,25 @@ class DynamicLoader
                 auto cwdDir = workDirPath ? workDirPath : lastWorkDir;
                 auto cwdPath = buildPath(cwdDir, path);
 
-                version (Posix)
+                if (isChangeCwd)
                 {
-                    //TODO check symlink
-                    if (cwdPath.exists)
+                    version (Posix)
                     {
-                        import std.path : dirName;
-                        import std.file : chdir, readLink;
-
-                        auto newCwd = cwdPath.readLink.dirName;
-                        isChangeWorkDir = true;
-                        if (!workDirPath)
+                        //TODO check symlink
+                        if (cwdPath.exists)
                         {
-                            workDirPath = newCwd;
+                            import std.path : dirName;
+                            import std.file : chdir, readLink, isSymlink;
+
+                            auto newCwd = cwdPath.isSymlink ? cwdPath.readLink.dirName
+                                : cwdPath.dirName;
+                            isChangeWorkDir = true;
+                            if (!workDirPath)
+                            {
+                                workDirPath = newCwd;
+                            }
+                            chdir(newCwd);
                         }
-                        chdir(newCwd);
                     }
                 }
 

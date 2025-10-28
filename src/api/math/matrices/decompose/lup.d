@@ -168,7 +168,7 @@ double det(T = double, size_t RowDim, size_t ColDim)(ref LUP!(T, RowDim, ColDim)
 unittest
 {
     import std.math.operations : isClose;
-    import deltotum.math.matrices.dense_matrix : DenseMatrix;
+    import api.math.matrices.dense_matrix : DenseMatrix;
 
     auto m1 = DenseMatrix!(double, 4, 4)([
         [2, 7, 6, 2],
