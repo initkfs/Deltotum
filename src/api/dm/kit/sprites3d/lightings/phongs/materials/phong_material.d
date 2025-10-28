@@ -8,8 +8,8 @@ import api.math.geom2.vec3 : Vec3f;
  */
 class PhongMaterial : LightingMaterial
 {
-    this(string diffupseMapPath, string specularMapPath)
+    this(string diffuseMapPath, string specularMapPath)
     {
-        super(diffupseMapPath, specularMapPath);
+        super(diffuseMapPath, specularMapPath);
     }
 }

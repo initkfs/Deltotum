@@ -28,8 +28,6 @@ class LightingMaterial : Sprite3d
 
     this(string diffuseMapPath, string specularMapPath)
     {
-        assert(diffuseMapPath.length > 0);
-        assert(specularMapPath.length > 0);
         this.diffuseMapPath = diffuseMapPath;
         this.specularMapPath = specularMapPath;
     }
@@ -38,7 +36,7 @@ class LightingMaterial : Sprite3d
     {
         super.create;
 
-        if (!diffuseMap)
+        if (!diffuseMap && diffuseMapPath.length > 0)
         {
             diffuseMap = new Texture3d;
             build(diffuseMap);
@@ -50,7 +48,7 @@ class LightingMaterial : Sprite3d
             addCreate(diffuseMap);
         }
 
-        if (!specularMap)
+        if (!specularMap && specularMapPath.length > 0)
         {
             specularMap = new Texture3d;
             build(specularMap);
@@ -71,6 +69,19 @@ class LightingMaterial : Sprite3d
             gpu.dev.bindFragmentSamplers(textures);
             return true;
         }
+
+        if (diffuseMap)
+        {
+            gpu.dev.bindFragmentSamplers(diffuseMap);
+            return true;
+        }
+
+        if (specularMap)
+        {
+            gpu.dev.bindFragmentSamplers(specularMap);
+            return true;
+        }
+
         return false;
     }
 

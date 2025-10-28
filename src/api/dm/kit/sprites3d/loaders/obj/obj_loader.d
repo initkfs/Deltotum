@@ -41,6 +41,7 @@ struct Mesh
 
 class ObjLoader
 {
+    string commentStart = "#";
     string vertexStart = "v ";
     string normalStart = "vn";
     string faceStart = "f ";
@@ -68,6 +69,21 @@ class ObjLoader
         ushort[ComVertex] vertexCache;
     }
 
+    const(char)[] extractLine(string command, const(char)[] line)
+    {
+
+        import std.string : lastIndexOf;
+
+        auto newLine = line[command.length .. $].strip;
+
+        ptrdiff_t lastCommentPos = newLine.lastIndexOf(commentStart);
+        if (lastCommentPos != -1 && lastCommentPos > 0)
+        {
+            newLine = newLine[0 .. lastCommentPos].strip;
+        }
+        return newLine;
+    }
+
     void parse(string text, char lineSep = '\n', bool isIndices = true)
     {
         //TODO reuse
@@ -82,23 +98,28 @@ class ObjLoader
 
         foreach (line; text.splitter(lineSep))
         {
+            if (line.startsWith("#"))
+            {
+                continue;
+            }
+
             if (line.startsWith(vertexStart))
             {
-                Coord3f vertex = parseCoord3d(line[vertexStart.length .. $]);
+                Coord3f vertex = parseCoord3d(extractLine(vertexStart, line));
                 vertCoords ~= vertex;
                 continue;
             }
 
             if (line.startsWith(normalStart))
             {
-                Coord3f normal = parseCoord3d(line[normalStart.length .. $]);
+                Coord3f normal = parseCoord3d(extractLine(normalStart, line));
                 normalsCoords ~= normal;
                 continue;
             }
 
             if (line.startsWith(texCoordStart))
             {
-                Coord2f texCoord = parseCoord2d(line[texCoordStart.length .. $]);
+                Coord2f texCoord = parseCoord2d(extractLine(texCoordStart, line));
                 texCoords ~= texCoord;
                 continue;
             }
@@ -107,17 +128,18 @@ class ObjLoader
             {
                 if (isIndices)
                 {
-                    parseFaceWithIndices(line[faceStart.length .. $]);
+                    parseFaceWithIndices(extractLine(faceStart, line));
                 }
                 else
                 {
-                    parseFace(line[faceStart.length .. $]);
+                    parseFace(extractLine(faceStart, line));
                 }
                 continue;
             }
 
             if (line.startsWith(mtlLibStart))
             {
+                //TODO last comments
                 mtlLib = line[mtlLibStart.length .. $].strip();
                 continue;
             }

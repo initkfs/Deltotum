@@ -24,12 +24,25 @@ class Shape3d : Sprite3d
     LightingMaterial lightingMaterial;
     bool isCreateLightingMaterial;
 
-    string diffupseMapPath;
+    string diffuseMapPath;
     string specularMapPath;
 
     protected
     {
         SDL_GPUTransferBuffer* transferBuffer;
+    }
+
+    this(ComVertex[] vertices, ushort[] indices = null, string diffuseMapPath = null, string specularMapPath = null)
+    {
+        this.vertices = vertices;
+        this.indices = indices;
+        this.diffuseMapPath = diffuseMapPath;
+        this.specularMapPath = specularMapPath;
+
+        if (diffuseMapPath.length > 0 || specularMapPath.length > 0)
+        {
+            isCreateLightingMaterial = true;
+        }
     }
 
     this()
@@ -82,7 +95,7 @@ class Shape3d : Sprite3d
             {
                 import api.dm.kit.sprites3d.lightings.phongs.materials.phong_material : PhongMaterial;
 
-                lightingMaterial = new PhongMaterial(diffupseMapPath, specularMapPath);
+                lightingMaterial = new PhongMaterial(diffuseMapPath, specularMapPath);
                 addCreate(lightingMaterial);
             }
         }

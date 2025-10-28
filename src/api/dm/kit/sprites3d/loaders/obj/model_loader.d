@@ -17,6 +17,14 @@ class ModelLoader
         mtlLoader = new MtlLoader;
     }
 
+    void parseFile(string objFile, string basePath = null)
+    {
+        import std.file : readText;
+
+        auto fileText = objFile.readText;
+        parse(fileText, null, basePath);
+    }
+
     void parse(string objFile, string mtlFile = null, string basePath = null)
     {
         objLoader.parse(objFile);
@@ -26,7 +34,7 @@ class ModelLoader
             mtlLoader.parse(mtlFile);
             return;
         }
-        
+
         if (objLoader.mtlLib)
         {
 

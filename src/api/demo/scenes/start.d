@@ -30,11 +30,13 @@ import api.dm.back.sdl3.gpu.sdl_gpu_pipeline : SdlGPUPipeline;
 import api.dm.back.sdl3.gpu.sdl_gpu_shader : SdlGPUShader;
 import api.dm.kit.sprites3d.cameras.perspective_camera : PerspectiveCamera;
 import api.dm.com.gpu.com_3d_types : ComVertex;
+import api.dm.kit.sprites3d.shapes.shape3d: Shape3d;
 import api.dm.kit.sprites3d.lightings.phongs.materials.phong_material: PhongMaterial;
 import api.dm.kit.sprites3d.shapes.cube : Cube;
 import api.dm.kit.sprites3d.shapes.sphere : Sphere;
 import api.dm.kit.sprites3d.shapes.cylinder : Cylinder;
 import api.dm.kit.sprites3d.textures.texture3d : Texture3d;
+import api.dm.kit.sprites3d.pipelines.items.simple_group: SimpleGroup;
 import api.dm.kit.scenes.scene3d: SceneTransforms;
 import api.dm.kit.sprites3d.lightings.lights.dir_light: DirLight;
 
@@ -61,7 +63,7 @@ class Start : GuiScene
     Cube cube;
     DirLight lamp;
 
-    DetailedGroup env;
+    SimpleGroup env;
 
     struct UniformBuffer
     {
@@ -86,6 +88,8 @@ class Start : GuiScene
     SDL_GPUBuffer* debugBuffer;
     SDL_GPUTransferBuffer* debugTransferBuffer;
 
+    Shape3d shape;
+
     override void create()
     {
         super.create;
@@ -95,19 +99,34 @@ class Start : GuiScene
 
         assert(camera);
 
-        env = new DetailedGroup;
+        env = new SimpleGroup;
         addCreate(env);
         assert(env.hasCamera);
 
-        auto diffusePath = context.app.userDir ~ "/container2.png";
-        auto specularPath = context.app.userDir ~ "/container2_specular.png";
+        // auto diffusePath = context.app.userDir ~ "/container2.png";
+        // auto specularPath = context.app.userDir ~ "/container2_specular.png";
 
-        cube = new Cube(1, 1, 1);
-        cube.lightingMaterial = new PhongMaterial(diffusePath, specularPath);
-        cube.rotation.y = 1;
-        cube.angle = 45;
-        cube.scale = Vec3f(0.5, 0.5, 0.5);
-        env.addCreate(cube);
+        // cube = new Cube(1, 1, 1);
+        // cube.lightingMaterial = new PhongMaterial(diffusePath, specularPath);
+        // cube.rotation.y = 1;
+        // cube.angle = 45;
+        // cube.scale = Vec3f(0.5, 0.5, 0.5);
+        // env.addCreate(cube);
+
+        import api.dm.kit.sprites3d.loaders.obj.model_loader: ModelLoader;
+
+        auto modelLoader =new ModelLoader;
+        auto modelPath = context.app.userDir ~ "/guardians-of-the-galaxy/GotG Warbird complete.obj";
+        modelLoader.parseFile(modelPath, context.app.userDir ~ "/guardians-of-the-galaxy");
+
+        auto verts = modelLoader.objLoader.getVertices;
+        auto idx = modelLoader.objLoader.getIndices;
+
+        auto diffMap = context.app.userDir ~ "/guardians-of-the-galaxy/GotG Warbird Rocket.png";
+
+        shape = new Shape3d(verts, idx, diffMap);
+        shape.isCreateLightingMaterial = true;
+        env.addCreate(shape);
 
         lamp = new DirLight;
         lamp.mesh = new Sphere(0.5);
@@ -118,11 +137,11 @@ class Start : GuiScene
         lamp.mesh.z = 1;
         lamp.isRotateAroundPivot = true;
         lamp.rotateRadius = 0.8;
-        lamp.rotatePivot = cube.translatePos;
+        lamp.rotatePivot = shape.translatePos;
         lamp.rotation.y = 1;
         lamp.mesh.isRotateAroundPivot = true;
         lamp.mesh.rotateRadius = 0.8;
-        lamp.mesh.rotatePivot = cube.translatePos;
+        lamp.mesh.rotatePivot = shape.translatePos;
         lamp.mesh.rotation.y = 1;
         
         env.lights.addCreate(lamp);
@@ -170,7 +189,7 @@ class Start : GuiScene
 
         import api.math.matrices.affine3;
 
-        //cube.mesh.angle = cube.mesh.angle + 1;
+        shape.angle = shape.angle + 1;
 
         //time = SDL_GetTicks / 1000.0;
 

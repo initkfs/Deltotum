@@ -15,12 +15,18 @@ class SimpleGroup : BaseLightingGroup
 {
     this()
     {
-        vertexShaderName = "EnvSimple.vert";
+        vertexShaderName = "EnvFull.vert";
         fragmentShaderName = "EnvSimple.frag";
     }
 
     override void create()
     {
         super.create;
+
+        auto buff = pipeBuffers;
+        buff.numVertexUniformBuffers = 1;
+        buff.numFragSamples = 1;
+        buff.numFragUniformBuffers = 1;
+        createPipeline(buff);
     }
 }
