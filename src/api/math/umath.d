@@ -68,9 +68,9 @@ alias tanh = mathTrig.tanh;
 alias tanHyp = tanh;
 alias cosHyp = cosh;
 
-double sinDeg(double valueDeg)  nothrow pure @safe => sin(degToRad(valueDeg));
-double cosDeg(double valueDeg)  nothrow pure @safe => cos(degToRad(valueDeg));
-double tanDeg(double valueDeg)  nothrow pure @safe => tan(degToRad(valueDeg));
+double sinDeg(double valueDeg) nothrow pure @safe => sin(degToRad(valueDeg));
+double cosDeg(double valueDeg) nothrow pure @safe => cos(degToRad(valueDeg));
+double tanDeg(double valueDeg) nothrow pure @safe => tan(degToRad(valueDeg));
 
 double csc(double x)
 {
@@ -92,7 +92,7 @@ double csch(double x)
     return 1.0 / sinHyp;
 }
 
-double sec(double value)  nothrow pure @safe
+double sec(double value) nothrow pure @safe
 {
     auto cosv = cos(value);
     if (cosv == 0)
@@ -102,7 +102,7 @@ double sec(double value)  nothrow pure @safe
     return 1.0 / cosv;
 }
 
-double sech(double value)  nothrow pure @safe
+double sech(double value) nothrow pure @safe
 {
     auto cosHyp = cosh(value);
     if (cosHyp == 0)
@@ -112,18 +112,18 @@ double sech(double value)  nothrow pure @safe
     return 1.0 / cosHyp;
 }
 
-double acsc(double v)  nothrow pure @safe => asin(1.0 / v);
-double asec(double v)  nothrow pure @safe => acos(1.0 / v);
+double acsc(double v) nothrow pure @safe => asin(1.0 / v);
+double asec(double v) nothrow pure @safe => acos(1.0 / v);
 
 alias cot = ctg;
 alias acot = actg;
 alias coth = ctgh;
 
 pragma(inline, true);
-double ctg(double x)  nothrow pure @safe => 1.0 / tan(x);
+double ctg(double x) nothrow pure @safe => 1.0 / tan(x);
 
 pragma(inline, true);
-double ctgh(double x)  nothrow pure @safe => 1.0 / tanh(x);
+double ctgh(double x) nothrow pure @safe => 1.0 / tanh(x);
 
 pragma(inline, true);
 double actg(double x) => atan(1.0 / x);
@@ -135,15 +135,15 @@ double actgs(double x)
 }
 
 pragma(inline, true);
-double arcctg(double x)  nothrow pure @safe => PI / 2.0 - atan(x);
+double arcctg(double x) nothrow pure @safe => PI / 2.0 - atan(x);
 
 //alias sqrt = mathCore.sqrt;
-double sqrt(double v)  nothrow pure @safe => mathCore.sqrt(v);
+double sqrt(double v) nothrow pure @safe => mathCore.sqrt(v);
 
 alias pow = mathExp.pow;
 
-double degToRad(double deg)  nothrow pure @safe => deg * (PI / angleHalfDeg);
-double radToDeg(double rad)  nothrow pure @safe => rad * (angleHalfDeg / PI);
+double degToRad(double deg) nothrow pure @safe => deg * (PI / angleHalfDeg);
+double radToDeg(double rad) nothrow pure @safe => rad * (angleHalfDeg / PI);
 
 alias min = StdComp.min;
 alias max = StdComp.max;
@@ -157,7 +157,7 @@ alias abs = StdAlgebraic.abs;
 
 //TODO mixing numeric types
 pragma(inline, true);
-bool greater(T)(T oldValue, T newValue, T eps)  nothrow pure @safe
+bool greater(T)(T oldValue, T newValue, T eps) nothrow pure @safe
 {
     return (abs(newValue - oldValue) > eps);
 }
@@ -167,7 +167,7 @@ T factorial(T)(T n)
     return (n == 0 || n == 1) ? 1 : n * factorial(n - 1);
 }
 
-double hypot(double a, double b)  nothrow pure @safe
+double hypot(double a, double b) nothrow pure @safe
 {
     double result = 0;
     if (abs(a) > abs(b))
@@ -191,17 +191,17 @@ import StdMathTraits = std.math.traits;
 
 alias sign = StdMathTraits.sgn;
 
-bool isSameSign(double a, double b)  nothrow pure @safe
+bool isSameSign(double a, double b) nothrow pure @safe
 {
     return sign(a) == sign(b);
 }
 
-double toRange(double oldRangeValue, double oldMinInc, double oldMaxInc, double newMinInc, double newMaxInc)  nothrow pure @safe
+double toRange(double oldRangeValue, double oldMinInc, double oldMaxInc, double newMinInc, double newMaxInc) nothrow pure @safe
 {
     return (((oldRangeValue - oldMinInc) * (newMaxInc - newMinInc)) / (oldMaxInc - oldMinInc)) + newMinInc;
 }
 
-double norm(double x, double minX = 0, double maxX = 1)  nothrow pure @safe
+double norm(double x, double minX = 0, double maxX = 1) nothrow pure @safe
 {
     return (x - minX) / (maxX - minX);
 }
@@ -229,7 +229,7 @@ T clampAbs(T)(T value, T min, T max)
     return clamp(value, -max, min);
 }
 
-double clamp01(double value)  nothrow pure @safe => clamp(value, 0.0, 1.0);
+double clamp01(double value) nothrow pure @safe => clamp(value, 0.0, 1.0);
 
 double wrap(double x, double min = 0.0, double max = 1.0)
 {
@@ -270,7 +270,7 @@ double roundEven(double v)
     //return nearbyint(v * 0.5) * 2.0;
 }
 
-double angleDegDiff(double startAngleDeg, double endAngleDeg)  nothrow pure @safe
+double angleDegDiff(double startAngleDeg, double endAngleDeg) nothrow pure @safe
 {
     if (startAngleDeg < endAngleDeg)
     {
@@ -280,13 +280,13 @@ double angleDegDiff(double startAngleDeg, double endAngleDeg)  nothrow pure @saf
     return angleFullDeg - (startAngleDeg - endAngleDeg);
 }
 
-double angleDegMiddle(double startAngleDeg, double endAngleDeg)  nothrow pure @safe
+double angleDegMiddle(double startAngleDeg, double endAngleDeg) nothrow pure @safe
 {
     auto angleMiddle = angleDegDiff(startAngleDeg, endAngleDeg) / 2;
     return startAngleDeg + angleMiddle;
 }
 
-bool nearAngleDeg(double angleDeg, double targetAngle, double delta = 3)  nothrow pure @safe
+bool nearAngleDeg(double angleDeg, double targetAngle, double delta = 3) nothrow pure @safe
 {
     const startAngle = targetAngle > delta ? (targetAngle - delta) : (
         angleFullDeg - (delta - targetAngle));
@@ -301,7 +301,7 @@ struct GoldenResult
     double shortest = 0;
 }
 
-GoldenResult goldenDiv(double value)  nothrow pure @safe
+GoldenResult goldenDiv(double value) nothrow pure @safe
 {
     if (value == 0)
     {
@@ -343,3 +343,55 @@ int pow2roundup(int x)
 //TODO negative values
 T incmod(T)(T value, T inc, T mod) => (value + inc) % mod;
 T decmod(T)(T value, T dec, T mod) => (value - dec + mod) % mod;
+
+double wrapAngle(double angle, double minAngle = 0, double maxAngle = 360)
+{
+    assert(minAngle < maxAngle);
+
+    import std.math.remainder : fmod;
+
+    if (angle >= minAngle && angle <= maxAngle)
+    {
+        return angle;
+    }
+
+    double range = maxAngle - minAngle;
+
+    double offset = angle - minAngle;
+
+    double addRanges = floor(offset / range);
+    double result = angle - addRanges * range;
+
+    if (result < minAngle)
+    {
+        result += range;
+    }
+
+    else if (result > maxAngle)
+    {
+        result -= range;
+    }
+
+    return result;
+}
+
+unittest
+{
+    assert(cast(int)(wrapAngle(0, 0, 360)) == 0);
+    assert(cast(int)(wrapAngle(1, 0, 360)) == 1);
+    assert(cast(int)(wrapAngle(10, 0, 360)) == 10);
+    assert(cast(int)(wrapAngle(359, 0, 360)) == 359);
+    assert(cast(int)(wrapAngle(360, 0, 360)) == 360);
+    assert(cast(int)(wrapAngle(370, 0, 360)) == 10);
+    assert(cast(int)(wrapAngle(400, 0, 360)) == 40);
+
+    assert(cast(int)(wrapAngle(-180, -180, 180)) == -180);
+    assert(cast(int)(wrapAngle(180, -180, 180)) == 180);
+    assert(cast(int)(wrapAngle(190, -180, 180)) == -170);
+    assert(cast(int)(wrapAngle(-190, -180, 180)) == 170);
+}
+
+import std.math.remainder : fmod;
+
+//[0, 360]
+double wrapAngle360(double angle) => wrapAngle(angle, 0, 360.0);

@@ -187,10 +187,7 @@ class Sprite3d : Sprite2d
 
         if (angleY != 0 || angleX != 0 || angle != 0)
         {
-            import std;
-
-            writeln("ROTATE: ", angleX, " ", angleY, " ", angle);
-            _worldMatrix = _worldMatrix.mul(сombinedRotation(angleX, angleY, angle));
+            _worldMatrix = _worldMatrix.mul(combinedRotation(angleX, angleY, angle));
         }
 
         //TODO all set to 0, pos = 0

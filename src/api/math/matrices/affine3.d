@@ -152,7 +152,7 @@ Matrix4x4f rotateMatrix(double angleDeg, float axisX, float axisY, float axisZ)
     return matrix;
 }
 
-Matrix4x4f сombinedRotation(float pitchX, float yawY, float rollZ)
+Matrix4x4f combinedRotation(float pitchX, float yawY, float rollZ)
 {
     //XYZ 
     //row vector XYZ

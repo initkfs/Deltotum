@@ -1,7 +1,7 @@
 module api.dm.kit.sprites3d.cameras.perspective_camera;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
-import api.dm.kit.scenes.scene3d: Scene3d;
+import api.dm.kit.scenes.scene3d : Scene3d;
 
 import Math = api.math;
 import api.math.geom2.vec3 : Vec3f;
@@ -25,13 +25,25 @@ class PerspectiveCamera : Sprite2d
     double cursorPitch = 0.0f;
 
     Vec3f cameraPos = Vec3f(0.0f, 0.0f, 3.0f);
-    Vec3f cameraFront = Vec3f(0.0f, 0.0f, -1.0f);
-    Vec3f cameraUp = Vec3f(0.0f, 1.0f, 0.0f);
+
+    Vec3f cameraFront;
+    Vec3f cameraUp;
+    Vec3f cameraRight;
 
     float nearPlane = 0.1;
     float farPlane = 100;
 
     double fov = 45;
+
+    float angleX = 0;
+    float angleY = 0;
+
+    bool isRecalcPos;
+
+    float mouseSensitivity = 0.1f;
+    bool mouseCaptured = false;
+    double lastMouseX = 0, lastMouseY = 0;
+    bool firstMouse = true;
 
     align(16)
     {
@@ -52,15 +64,6 @@ class PerspectiveCamera : Sprite2d
 
         import api.dm.com.inputs.com_keyboard : ComKeyName;
 
-        targetScene.onKeyPress ~= (ref e) {
-            if (e.keyName == ComKeyName.key_lctrl)
-            {
-                auto pos = input.pointerPos;
-                lastCursorX = pos.x;
-                lastCursorY = pos.y;
-            }
-        };
-
         targetScene.onPointerWheel ~= (ref e) {
             auto dy = e.y;
 
@@ -76,46 +79,12 @@ class PerspectiveCamera : Sprite2d
 
             if (!input.keyboard.keyModifier.isCtrl)
             {
+                handlePointerMove(e.x, e.y, false);
                 return;
             }
 
-            double xpos = e.x;
-            double ypos = e.y;
-
-            auto xoffset = xpos - lastCursorX;
-            auto yoffset = lastCursorY - ypos; //Y up
-
-            lastCursorX = xpos;
-            lastCursorY = ypos;
-
-            double sensitivity = 0.055f;
-            xoffset *= sensitivity;
-            yoffset *= sensitivity;
-
-            cursorYaw += xoffset;
-            cursorPitch += yoffset;
-
-            if (cursorPitch > 89.0f) //cos > 90 = neg
-                cursorPitch = 89.0f;
-            if (cursorPitch < -89.0f)
-                cursorPitch = -89.0f;
-
-            Vec3f front;
-            front.x = -Math.cos(Math.degToRad(cursorPitch)) * Math.cos(Math.degToRad(cursorYaw));
-            front.y = Math.sin(Math.degToRad(cursorPitch));
-            front.z = Math.cos(Math.degToRad(cursorPitch)) * Math.sin(Math.degToRad(cursorYaw));
-            cameraFront = front.normalize;
+            handlePointerMove(e.x, e.y, true);
         };
-
-        view = translateMatrix(0.0f, 0.0f, 3.0f);
-
-        import api.math.geom2.vec3;
-
-        view = lookAt(
-            Vec3f(0, 0, -3),
-            Vec3f(0, 0, 0),
-            Vec3f(0, 1, 0)
-        );
 
         float w = window.width;
         float h = window.height;
@@ -123,38 +92,232 @@ class PerspectiveCamera : Sprite2d
         assert(h > 0);
 
         projection = perspectiveMatrixRH(fov, w / h, nearPlane, farPlane);
+
+        recalcView;
+    }
+
+    void recalcView()
+    {
+        Vec3f localFront = Vec3f(0.0f, 0.0f, -1.0f);
+        Vec3f localUp = Vec3f(0.0f, 1.0f, 0.0f);
+        Vec3f localRight = Vec3f(1.0f, 0.0f, 0.0f);
+
+        if (angleX != 0 || angleY != 0 || angle != 0)
+        {
+            Matrix4x4f rotation = combinedRotation(angleX, angleY, angle);
+
+            cameraFront = rotation.transformDir(localFront).normalize;
+            cameraUp = rotation.transformDir(localUp).normalize;
+            cameraRight = rotation.transformDir(localRight).normalize;
+        }
+        else
+        {
+            cameraFront = localFront; // (0, 0, -1)
+            cameraUp = localUp; // (0, 1, 0)
+            cameraRight = localRight; // (1, 0, 0)
+        }
+
+        view = lookAt(cameraPos, cameraPos.add(cameraFront), cameraUp);
     }
 
     override void update(double dt)
     {
         super.update(dt);
 
-        view = lookAt(cameraPos, cameraPos.add(cameraFront), cameraUp);
+        if (isRecalcPos)
+        {
+            recalcView;
+            isRecalcPos = false;
+        }
+
+        import api.math.matrices.affine3;
 
         import api.dm.com.inputs.com_keyboard : ComKeyName;
 
         //* dt
         float cameraSpeed = 0.05f;
 
-        if (input.isPressedKey(ComKeyName.key_w))
+        if (input.isPressedKey(ComKeyName.key_a))
         {
-            cameraPos = cameraPos.add(cameraFront.scale(cameraSpeed));
-        }
-
-        if (input.isPressedKey(ComKeyName.key_s))
-        {
-            cameraPos = cameraPos.sub(cameraFront.scale(cameraSpeed));
+            moveLeft(cameraSpeed);
         }
 
         if (input.isPressedKey(ComKeyName.key_d))
         {
-            cameraPos = cameraPos.add(cameraFront.cross(cameraUp).normalize.scale(cameraSpeed));
+            moveRight(cameraSpeed);
         }
 
-        if (input.isPressedKey(ComKeyName.key_a))
+        if (input.isPressedKey(ComKeyName.key_w))
         {
-            cameraPos = cameraPos.sub(cameraFront.cross(cameraUp).normalize.scale(cameraSpeed));
+            moveUp(cameraSpeed);
         }
+
+        if (input.isPressedKey(ComKeyName.key_s))
+        {
+            moveDown(cameraSpeed);
+        }
+
+        if (input.isPressedKey(ComKeyName.key_q))
+        {
+            moveForward(cameraSpeed);
+        }
+
+        if (input.isPressedKey(ComKeyName.key_z))
+        {
+            moveBack(cameraSpeed);
+        }
+
+        auto rotateSpeedDeg = 5;
+
+        if (input.isPressedKey(ComKeyName.key_r))
+        {
+            angle = Math.wrapAngle360(angle + rotateSpeedDeg);
+            isRecalcPos = true;
+        }
+
+        if (input.isPressedKey(ComKeyName.key_t))
+        {
+            angle = Math.wrapAngle360(angle - rotateSpeedDeg);
+            isRecalcPos = true;
+        }
+
+        if (input.isPressedKey(ComKeyName.key_f))
+        {
+            angleX = Math.wrapAngle360(angleX + rotateSpeedDeg);
+            isRecalcPos = true;
+        }
+
+        if (input.isPressedKey(ComKeyName.key_g))
+        {
+            angleX = Math.wrapAngle360(angleX - rotateSpeedDeg);
+            isRecalcPos = true;
+        }
+
+        if (input.isPressedKey(ComKeyName.key_v))
+        {
+            angleY = Math.wrapAngle360(angleY - rotateSpeedDeg);
+            isRecalcPos = true;
+        }
+
+        if (input.isPressedKey(ComKeyName.key_b))
+        {
+            angleY = Math.wrapAngle360(angleY - rotateSpeedDeg);
+            isRecalcPos = true;
+        }
+    }
+
+    void handlePointerMove(double mouseX, double mouseY, bool ctrlPressed)
+    {
+        if (ctrlPressed)
+        {
+            if (!mouseCaptured)
+            {
+                mouseCaptured = true;
+                firstMouse = true;
+            }
+
+            if (firstMouse)
+            {
+                lastMouseX = mouseX;
+                lastMouseY = mouseY;
+                firstMouse = false;
+                return;
+            }
+
+            double deltaX = mouseX - lastMouseX;
+            double deltaY = mouseY - lastMouseY;
+            lastMouseX = mouseX;
+            lastMouseY = mouseY;
+
+            processMouseMovement(deltaX, deltaY);
+        }
+        else
+        {
+            if (mouseCaptured)
+            {
+                mouseCaptured = false;
+                firstMouse = true;
+            }
+        }
+    }
+
+    void processMouseMovement(float deltaX, float deltaY)
+    {
+        deltaX *= mouseSensitivity;
+        deltaY *= mouseSensitivity;
+
+        angleY += deltaX;
+        angleX -= deltaY;
+
+        const float MAX_PITCH = 89.0f;
+        if (angleX > MAX_PITCH)
+            angleX = MAX_PITCH;
+        if (angleX < -MAX_PITCH)
+            angleX = -MAX_PITCH;
+
+        isRecalcPos = true;
+    }
+
+    void moveRight(float speed)
+    {
+        cameraPos = cameraPos.add(cameraRight.scale(speed));
+        isRecalcPos = true;
+    }
+
+    void moveLeft(float speed)
+    {
+        cameraPos = cameraPos.sub(cameraRight.scale(speed));
+        isRecalcPos = true;
+    }
+
+    void moveForward(float speed)
+    {
+        cameraPos = cameraPos.add(cameraFront.scale(speed));
+        isRecalcPos = true;
+    }
+
+    void moveBack(float speed)
+    {
+        cameraPos = cameraPos.sub(cameraFront.scale(speed));
+        isRecalcPos = true;
+    }
+
+    void moveUp(float speed)
+    {
+        cameraPos = cameraPos.add(cameraUp.scale(speed));
+        isRecalcPos = true;
+    }
+
+    void moveDown(float speed)
+    {
+        cameraPos = cameraPos.sub(cameraUp.scale(speed));
+        isRecalcPos = true;
+    }
+
+    void moveHorizontal(float speed)
+    {
+        Vec3f horizontalRight = cameraFront.cross(Vec3f(0, 1, 0)).normalize;
+        cameraPos = cameraPos.add(horizontalRight.scale(speed));
+        isRecalcPos = true;
+    }
+
+    void moveAroundTarget(Vec3f target, float horizontalAngleDeg, float verticalAngleDeg, float radius = 5.0f)
+    {
+        //TODO vertical angle incorrect
+        import api.math.matrices.affine3;
+
+        Vec3f cameraOffset = Vec3f(0, 0, radius);
+        
+        Matrix4x4f rotation = combinedRotation(verticalAngleDeg, horizontalAngleDeg, 0);
+        cameraOffset = rotation.transformDir(cameraOffset);
+
+        cameraPos = target + cameraOffset;
+
+        Vec3f forward = (target - cameraPos).normalize;
+        Vec3f right = forward.cross(Vec3f(0, 1, 0)).normalize;
+        Vec3f up = right.cross(forward).normalize;
+
+        view = lookAt(cameraPos, target, up);
     }
 
 }

@@ -152,9 +152,9 @@ class Start : GuiScene
 
         env.lights.addCreate(lamp);
 
-        // auto skyBoxPath = context.app.userDir ~ "/nebula/";
-        // skybox = new SkyBox(skyBoxPath, "png");
-        // addCreate(skybox);
+        auto skyBoxPath = context.app.userDir ~ "/nebula/";
+        skybox = new SkyBox(skyBoxPath, "png");
+        addCreate(skybox);
 
         // //TODO remove test
         // import std.file : read;
@@ -185,6 +185,8 @@ class Start : GuiScene
         // debugTransferBuffer = gpu.dev.newTransferDownloadBuffer(FragmentBuffer.sizeof);
 
         // import api.dm.back.sdl3.images.sdl_image : SdlImage;
+
+        lamp.isVisible = false;
     }
 
     float time;
@@ -231,6 +233,16 @@ class Start : GuiScene
                 shape.angle = shape.angle + 1;
             }
         }
+
+        static double anglev = 0;
+        if(anglev >= 360){
+            anglev = 0;
+        }
+
+        //0, -0.5, 0
+        
+        //camera.moveAroundTarget(shape.translatePos, anglev, 0, 3);
+        //anglev++;
 
         //shape.angle = shape.angle + 1;
 

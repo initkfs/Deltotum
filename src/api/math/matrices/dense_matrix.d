@@ -420,6 +420,58 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
         return sum;
     }
 
+    static if (RowDim == 4 && ColDim == 4)
+    {
+        import api.math.geom2.vec3 : Vec3f;
+
+        Vec3f transformDir(Vec3f direction) const nothrow pure @safe
+        {
+            Vec3f result;
+            result.x = matrix[0][0] * direction.x + matrix[0][1] * direction.y + matrix[0][2] * direction
+                .z;
+            result.y = matrix[1][0] * direction.x + matrix[1][1] * direction.y + matrix[1][2] * direction
+                .z;
+            result.z = matrix[2][0] * direction.x + matrix[2][1] * direction.y + matrix[2][2] * direction
+                .z;
+
+            return result;
+        }
+
+        Vec3f transformDirColMajor(Vec3f direction) const nothrow pure @safe
+        {
+            Vec3f result;
+
+            // column-major: [column][row]
+            result.x = matrix[0][0] * direction.x + matrix[1][0] * direction.y + matrix[2][0] * direction
+                .z;
+            result.y = matrix[0][1] * direction.x + matrix[1][1] * direction.y + matrix[2][1] * direction
+                .z;
+            result.z = matrix[0][2] * direction.x + matrix[1][2] * direction.y + matrix[2][2] * direction
+                .z;
+
+            return result;
+        }
+
+        Vec3f transformPoint(Vec3f point)
+        {
+            // row-major: v' = v × M
+            float x = point.x * matrix[0][0] + point.y * matrix[1][0] + point.z * matrix[2][0] + matrix[3][0];
+            float y = point.x * matrix[0][1] + point.y * matrix[1][1] + point.z * matrix[2][1] + matrix[3][1];
+            float z = point.x * matrix[0][2] + point.y * matrix[1][2] + point.z * matrix[2][2] + matrix[3][2];
+            float w = point.x * matrix[0][3] + point.y * matrix[1][3] + point.z * matrix[2][3] + matrix[3][3];
+
+            // Perspective
+            if (w != 0.0f && w != 1.0f)
+            {
+                x /= w;
+                y /= w;
+                z /= w;
+            }
+
+            return Vec3f(x, y, z);
+        }
+    }
+
     inout(typeof(matrix)) array() inout => matrix;
 
     T[][] toArrayCopy() const pure @safe
