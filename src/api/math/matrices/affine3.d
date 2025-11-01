@@ -152,6 +152,39 @@ Matrix4x4f rotateMatrix(double angleDeg, float axisX, float axisY, float axisZ)
     return matrix;
 }
 
+Matrix4x4f сombinedRotation(float pitchX, float yawY, float rollZ)
+{
+    //XYZ 
+    //row vector XYZ
+    //±90° parallel axis, ex, pitch = 90°, cos(pitch) = 0, sin(pitch) = 1
+    /** 
+     * XYZ - lock pitch = ±90°
+       YZX - lock yaw = ±90°
+       ZXY - lock roll = ±90°
+     */
+    Matrix4x4f current = Matrix4x4f.onesDiag;
+    if (pitchX != 0)
+    {
+        Matrix4x4f rotX = rotateMatrix(pitchX, 1, 0, 0); // Pitch, X
+        current = current.mul(rotX);
+    }
+
+    if (yawY != 0)
+    {
+        Matrix4x4f rotY = rotateMatrix(yawY, 0, 1, 0); // Yaw, Y 
+        current = current.mul(rotY);
+    }
+
+    if (rollZ != 0)
+    {
+        Matrix4x4f rotZ = rotateMatrix(rollZ, 0, 0, 1); // Roll, Z
+        current = current.mul(rotZ);
+    }
+
+    // row-major: M_roll * M_pitch * M_yaw
+    return current;
+}
+
 Matrix4x4f translateMatrix(Vec3f offsets) => translateMatrix(offsets.x, offsets.y, offsets.z);
 
 Matrix4x4f translateMatrix(float offsetX, float offsetY, float offsetZ)

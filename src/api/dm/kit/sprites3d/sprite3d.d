@@ -24,11 +24,13 @@ class Sprite3d : Sprite2d
             Matrix4x4f _worldMatrix;
             Matrix4x4f _worldMatrixInverse;
         }
+
+        double _angleX = 0;
+        double _angleY = 0;
     }
 
     bool isCalcInverseWorldMatrix = true;
 
-    Vec3f rotation;
     Vec3f scale = Vec3f(1, 1, 1);
 
     Vec3f rotatePivot;
@@ -145,7 +147,6 @@ class Sprite3d : Sprite2d
         }
 
         super.addCreate(object, index);
-
     }
 
     void pushUniforms()
@@ -170,7 +171,7 @@ class Sprite3d : Sprite2d
         }
     }
 
-    protected void calcWorldMatrix()
+    void calcWorldMatrix()
     {
         _worldMatrix = _worldMatrix.identity;
 
@@ -184,9 +185,12 @@ class Sprite3d : Sprite2d
             _worldMatrix = _worldMatrix.mul(translateMatrix(rotateRadius, 0, 0));
         }
 
-        if ((rotation.x != 0) || (rotation.y != 0) || (rotation.z != 0))
+        if (angleY != 0 || angleX != 0 || angle != 0)
         {
-            _worldMatrix = _worldMatrix.mul(rotateMatrix(angle, rotation));
+            import std;
+
+            writeln("ROTATE: ", angleX, " ", angleY, " ", angle);
+            _worldMatrix = _worldMatrix.mul(сombinedRotation(angleX, angleY, angle));
         }
 
         //TODO all set to 0, pos = 0
@@ -225,6 +229,8 @@ class Sprite3d : Sprite2d
             auto decomposeModel = decompose!(_worldMatrix.Type, 4, 4)(_worldMatrix);
             _worldMatrixInverse = invert(decomposeModel);
         }
+
+        isMatrixRecalc = false;
     }
 
     ref Matrix4x4f worldMatrix()
@@ -384,5 +390,33 @@ class Sprite3d : Sprite2d
     }
 
     bool hasCamera() => _camera !is null;
+
+    double angleX() => _angleX;
+    double angleY() => _angleY;
+
+    bool angleX(double v)
+    {
+
+        if (_angleX == v)
+        {
+            return false;
+        }
+
+        _angleX = v;
+        isMatrixRecalc = true;
+        return true;
+    }
+
+    bool angleY(double v)
+    {
+        if (_angleY == v)
+        {
+            return false;
+        }
+
+        _angleY = v;
+        isMatrixRecalc = true;
+        return true;
+    }
 
 }

@@ -34,6 +34,7 @@ class Shape3d : Sprite3d
 
     this(ComVertex[] vertices, ushort[] indices = null, string diffuseMapPath = null, string specularMapPath = null)
     {
+        this();
         this.vertices = vertices;
         this.indices = indices;
         this.diffuseMapPath = diffuseMapPath;

@@ -10,8 +10,8 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.kit.sprites3d.pipelines.skyboxes.skybox : SkyBox;
-import api.dm.kit.sprites3d.pipelines.items.detailed_group: DetailedGroup;
-import api.dm.kit.sprites3d.lightings.lights.light_group: LightGroup;
+import api.dm.kit.sprites3d.pipelines.items.detailed_group : DetailedGroup;
+import api.dm.kit.sprites3d.lightings.lights.light_group : LightGroup;
 
 import api.dm.kit.sprites2d.tweens;
 import api.dm.kit.sprites2d.images;
@@ -30,15 +30,15 @@ import api.dm.back.sdl3.gpu.sdl_gpu_pipeline : SdlGPUPipeline;
 import api.dm.back.sdl3.gpu.sdl_gpu_shader : SdlGPUShader;
 import api.dm.kit.sprites3d.cameras.perspective_camera : PerspectiveCamera;
 import api.dm.com.gpu.com_3d_types : ComVertex;
-import api.dm.kit.sprites3d.shapes.shape3d: Shape3d;
-import api.dm.kit.sprites3d.lightings.phongs.materials.phong_material: PhongMaterial;
+import api.dm.kit.sprites3d.shapes.shape3d : Shape3d;
+import api.dm.kit.sprites3d.lightings.phongs.materials.phong_material : PhongMaterial;
 import api.dm.kit.sprites3d.shapes.cube : Cube;
 import api.dm.kit.sprites3d.shapes.sphere : Sphere;
 import api.dm.kit.sprites3d.shapes.cylinder : Cylinder;
 import api.dm.kit.sprites3d.textures.texture3d : Texture3d;
-import api.dm.kit.sprites3d.pipelines.items.simple_group: SimpleGroup;
-import api.dm.kit.scenes.scene3d: SceneTransforms;
-import api.dm.kit.sprites3d.lightings.lights.dir_light: DirLight;
+import api.dm.kit.sprites3d.pipelines.items.simple_group : SimpleGroup;
+import api.dm.kit.scenes.scene3d : SceneTransforms;
+import api.dm.kit.sprites3d.lightings.lights.dir_light : DirLight;
 
 import api.dm.back.sdl3.externs.csdl3;
 
@@ -113,9 +113,9 @@ class Start : GuiScene
         // cube.scale = Vec3f(0.5, 0.5, 0.5);
         // env.addCreate(cube);
 
-        import api.dm.kit.sprites3d.loaders.obj.model_loader: ModelLoader;
+        import api.dm.kit.sprites3d.loaders.obj.model_loader : ModelLoader;
 
-        auto modelLoader =new ModelLoader;
+        auto modelLoader = new ModelLoader;
         auto modelPath = context.app.userDir ~ "/guardians-of-the-galaxy/GotG Warbird complete.obj";
         modelLoader.parseFile(modelPath, context.app.userDir ~ "/guardians-of-the-galaxy");
 
@@ -126,6 +126,12 @@ class Start : GuiScene
 
         shape = new Shape3d(verts, idx, diffMap);
         shape.isCreateLightingMaterial = true;
+
+        shape.scale = Vec3f(0.15, 0.15, 0.15);
+        //shape.x = -0.8;
+        shape.y = -0.5;
+        shape.isCalcInverseWorldMatrix = true;
+
         env.addCreate(shape);
 
         lamp = new DirLight;
@@ -138,12 +144,12 @@ class Start : GuiScene
         lamp.isRotateAroundPivot = true;
         lamp.rotateRadius = 0.8;
         lamp.rotatePivot = shape.translatePos;
-        lamp.rotation.y = 1;
+        //lamp.rotation.y = 1;
         lamp.mesh.isRotateAroundPivot = true;
         lamp.mesh.rotateRadius = 0.8;
         lamp.mesh.rotatePivot = shape.translatePos;
-        lamp.mesh.rotation.y = 1;
-        
+        //lamp.mesh.rotation.y = 1;
+
         env.lights.addCreate(lamp);
 
         // auto skyBoxPath = context.app.userDir ~ "/nebula/";
@@ -183,17 +189,54 @@ class Start : GuiScene
 
     float time;
 
+    float currentPitchX = 0.0f;
+    float currentRollZ = 0.0f;
+
     override void update(double dt)
     {
         super.update(dt);
 
         import api.math.matrices.affine3;
 
-        shape.angle = shape.angle + 1;
+        import api.dm.com.inputs.com_keyboard : ComKeyName;
+
+        if (input.isPressedKey(ComKeyName.key_down))
+        {
+            if (shape.angleX > -45)
+            {
+                shape.angleX = shape.angleX - 1;
+            }
+        }
+
+        if (input.isPressedKey(ComKeyName.key_up))
+        {
+            if (shape.angleX < 45)
+            {
+                shape.angleX = shape.angleX + 1;
+            }
+        }
+
+        if (input.isPressedKey(ComKeyName.key_left))
+        {
+            if (shape.angle > -45)
+            {
+                shape.angle = shape.angle - 1;
+            }
+        }
+
+        if (input.isPressedKey(ComKeyName.key_right))
+        {
+            if (shape.angle < 45)
+            {
+                shape.angle = shape.angle + 1;
+            }
+        }
+
+        //shape.angle = shape.angle + 1;
 
         //time = SDL_GetTicks / 1000.0;
 
-        lamp.angle = lamp.angle + 1;
+        //lamp.angle = lamp.angle + 1;
 
         //float radius = 1.0f;
 
@@ -233,7 +276,6 @@ class Start : GuiScene
         // cube.bindTextures;
 
         // gpu.dev.bindFragmentStorageBuffer(debugBuffer);
-
 
         // static assert((SceneTransforms.sizeof % 16) == 0, "Buffer size must be 16-byte aligned");
 
