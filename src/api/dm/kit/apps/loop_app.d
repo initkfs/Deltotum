@@ -13,13 +13,6 @@ abstract class LoopApp : GraphicApp
     Loop mainLoop;
     bool isProcessEvents = true;
 
-    this(Loop loop)
-    {
-        import std.exception : enforce;
-
-        this.mainLoop = enforce(loop, "Main loop must not be null");
-    }
-
     override void run()
     {
         super.run;

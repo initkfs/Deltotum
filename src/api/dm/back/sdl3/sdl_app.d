@@ -114,10 +114,8 @@ class SdlApp : GuiApp
     SdlEventProcessor eventProcessor;
     bool isScreenSaverEnabled = true;
 
-    this(string name, string id = null, Loop loop = null)
+    this(string name, string id = null)
     {
-        super(loop ? loop : newMainLoop);
-
         this.name = name;
         this.id = id.length > 0 ? id : name;
     }
@@ -718,7 +716,6 @@ class SdlApp : GuiApp
         return ComResult.success;
     }
 
-    Loop newMainLoop() => new IntegratedLoop;
     SdlLib newSdlLib() => new SdlLib;
     SdlAudioDevice newSdlAudio() => new SdlAudioDevice;
     SdlMixerLib newSdlAudioMixer() => new SdlMixerLib;

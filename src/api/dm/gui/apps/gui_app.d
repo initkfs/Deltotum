@@ -6,10 +6,11 @@ import api.core.configs.keyvalues.config : Config;
 import api.core.contexts.context : Context;
 import api.core.resources.resourcing : Resourcing;
 import api.dm.kit.apps.loop_app : LoopApp;
-import api.dm.gui.themes.theme : Theme;
-import api.dm.gui.interacts.interact: Interact;
-import api.dm.gui.themes.icons.icon_pack : IconPack;
 import api.dm.kit.apps.loops.loop : Loop;
+import api.dm.kit.apps.loops.integrated_loop : IntegratedLoop;
+import api.dm.gui.themes.theme : Theme;
+import api.dm.gui.interacts.interact : Interact;
+import api.dm.gui.themes.icons.icon_pack : IconPack;
 
 abstract class GuiApp : LoopApp
 {
@@ -22,11 +23,6 @@ abstract class GuiApp : LoopApp
         Interact interact;
     }
 
-    this(Loop loop)
-    {
-        super(loop);
-    }
-
     override AppResult initialize(string[] args)
     {
         const initRes = super.initialize(args);
@@ -34,6 +30,11 @@ abstract class GuiApp : LoopApp
         {
             return initRes;
         }
+
+        mainLoop = newMainLoop;
+        assert(mainLoop);
+
+        uservices.logger.tracef("Create main loop with frame rate: %s, update delta: %s", mainLoop.frameRate, mainLoop.updateDelta);
 
         if (isIconPackEnabled)
         {
@@ -63,6 +64,24 @@ abstract class GuiApp : LoopApp
 
         return AppResult(isExit : false, isInit:
             true);
+    }
+
+    Loop newMainLoop()
+    {
+        import KitConfigKeys = api.dm.kit.kit_config_keys;
+
+        double frameRate = 0;
+        if (uservices.config.hasKey(KitConfigKeys.engineFrameRate))
+        {
+            frameRate = uservices.config.getDouble(KitConfigKeys.engineFrameRate).get;
+        }
+
+        if (frameRate > 0)
+        {
+            return new IntegratedLoop(frameRate);
+        }
+
+        return new IntegratedLoop;
     }
 
     override void loadSettings()

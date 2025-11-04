@@ -1,5 +1,13 @@
 module api.dm.kit.apps.loops.loop;
 
+enum FrameRate
+{
+    low = 30,
+    medium = 50,
+    high = 60,
+    ultra = 120
+}
+
 /**
  * Authors: initkfs
  */
@@ -9,7 +17,7 @@ abstract class Loop
     bool isAutoStart;
 
     double msInSec = 1000;
-    double frameRate = 60;
+    double frameRate = 0;
 
     double frameTimeMs = 0;
     double updateDelta = 0;
@@ -27,21 +35,32 @@ abstract class Loop
     void delegate() onRun;
     void delegate() onExit;
 
+    this(double frameRate)
+    {
+        this.frameRate = frameRate;
+        assert(frameRate > 0);
+
+        //TODO auto perfFreqMs = SDL_GetPerformanceFrequency() / 1000.0 / 1000;
+        frameTimeMs = msInSec / frameRate;
+        //or 1.0 / frameTimeMs, ~0.016666
+        //updateDelta = frameTimeMs / deltaFactor; //deltaFactor == 100
+        updateDelta = 1.0 / frameRate;
+    }
+
     abstract
     {
         void updateMs(size_t);
     }
 
-    void setUp(double deltaFactor = 100)
+    void setUp()
     {
-        //TODO auto perfFreqMs = SDL_GetPerformanceFrequency() / 1000.0 / 1000;
-        frameTimeMs = msInSec / frameRate;
-        updateDelta = frameTimeMs / deltaFactor;
-        if(isAutoStart){
+        if (isAutoStart)
+        {
             isRunning = true;
         }
 
-        if(onInit){
+        if (onInit)
+        {
             onInit();
         }
     }
@@ -57,7 +76,7 @@ abstract class Loop
             updateMs(timeMs);
         }
     }
-    
+
     void run()
     {
         if (onRun)

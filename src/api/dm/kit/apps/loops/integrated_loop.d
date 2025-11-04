@@ -1,6 +1,6 @@
 module api.dm.kit.apps.loops.integrated_loop;
 
-import api.dm.kit.apps.loops.loop : Loop;
+import api.dm.kit.apps.loops.loop : Loop, FrameRate;
 
 import api.dm.back.sdl3.externs.csdl3;
 
@@ -15,6 +15,11 @@ class IntegratedLoop : Loop
     {
         double deltaTimeAccumulatorMs = 0;
         double lastUpdateTimeMs = 0;
+    }
+
+    this(double frameRate = FrameRate.high)
+    {
+        super(frameRate);
     }
 
     override void updateMs(size_t startMs)

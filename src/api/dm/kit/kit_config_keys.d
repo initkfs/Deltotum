@@ -28,3 +28,5 @@ string fontSizeMedium = "fontSizeMedium";
 string fontSizeLarge = "fontSizeLarge";
 string fontSizeSmall = "fontSizeSmall";
 
+string engineFrameRate = "engineFrameRate";
+
