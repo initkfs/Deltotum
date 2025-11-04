@@ -241,8 +241,8 @@ class Start : GuiScene
 
         //0, -0.5, 0
         
-        //camera.moveAroundTarget(shape.translatePos, anglev, 0, 3);
-        //anglev++;
+        camera.moveAroundTarget(shape.translatePos, anglev, 0, 3);
+        anglev++;
 
         //shape.angle = shape.angle + 1;
 

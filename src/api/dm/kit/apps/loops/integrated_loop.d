@@ -36,10 +36,13 @@ class IntegratedLoop : Loop
 
         onLoopUpdateMs(startMs);
 
+        //int updatesThisFrame = 0;
+        //deltaTimeAccumulatorMs >= frameTimeMs && updatesThisFrame < 4
         while (deltaTimeAccumulatorMs >= frameTimeMs)
         {
             onFreqLoopUpdateDelta(updateDelta);
             deltaTimeAccumulatorMs -= frameTimeMs;
+            //updatesThisFrame++;
         }
 
         immutable double accumRest = deltaTimeAccumulatorMs / frameTimeMs;
@@ -50,6 +53,11 @@ class IntegratedLoop : Loop
         {
             immutable delay = frameTimeMs - deltaTimeAccumulatorMs;
             onDelayTimeRestMs(delay);
+        }
+
+        if (deltaTimeAccumulatorMs < 0)
+        {
+            deltaTimeAccumulatorMs = 0;
         }
     }
 }
