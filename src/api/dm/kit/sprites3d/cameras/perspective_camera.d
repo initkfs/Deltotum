@@ -30,6 +30,8 @@ class PerspectiveCamera : Sprite2d
     Vec3f cameraUp;
     Vec3f cameraRight;
 
+    Vec3f cameraTarget;
+
     float nearPlane = 0.1;
     float farPlane = 100;
 
@@ -98,6 +100,29 @@ class PerspectiveCamera : Sprite2d
 
     void recalcView()
     {
+        if (cameraTarget != Vec3f.init)
+        {
+            cameraFront = (cameraTarget - cameraPos).normalize;
+
+            if (angle != 0)
+            {
+                Matrix4x4f zRotation = combinedRotation(0, 0, angle);
+                Vec3f baseUp = Vec3f(0, 1, 0);
+                cameraUp = zRotation.transformDir(baseUp).normalize;
+            }
+            else
+            {
+                cameraUp = Vec3f(0, 1, 0);
+            }
+
+            cameraRight = cameraFront.cross(cameraUp).normalize;
+            cameraUp = cameraRight.cross(cameraFront).normalize;
+
+            view = lookAt(cameraPos, cameraTarget, cameraUp);
+
+            return;
+        }
+
         Vec3f localFront = Vec3f(0.0f, 0.0f, -1.0f);
         Vec3f localUp = Vec3f(0.0f, 1.0f, 0.0f);
         Vec3f localRight = Vec3f(1.0f, 0.0f, 0.0f);
@@ -301,23 +326,23 @@ class PerspectiveCamera : Sprite2d
         isRecalcPos = true;
     }
 
-    void moveAroundTarget(Vec3f target, float horizontalAngleDeg, float verticalAngleDeg, float radius = 5.0f)
+    void moveAroundTarget(Vec3f target, float horizontalAngleDeg, float verticalAngleDeg = 0, float radius = 5.0f)
     {
         //TODO vertical angle incorrect
         import api.math.matrices.affine3;
 
         Vec3f cameraOffset = Vec3f(0, 0, radius);
-        
-        Matrix4x4f rotation = combinedRotation(verticalAngleDeg, horizontalAngleDeg, 0);
+
+        Matrix4x4f rotation = combinedRotation(verticalAngleDeg, horizontalAngleDeg, angle);
         cameraOffset = rotation.transformDir(cameraOffset);
 
         cameraPos = target + cameraOffset;
 
-        Vec3f forward = (target - cameraPos).normalize;
-        Vec3f right = forward.cross(Vec3f(0, 1, 0)).normalize;
-        Vec3f up = right.cross(forward).normalize;
+        cameraFront = (target - cameraPos).normalize;
+        cameraRight = cameraFront.cross(Vec3f(0, 1, 0)).normalize;
+        cameraUp = cameraRight.cross(cameraFront).normalize;
 
-        view = lookAt(cameraPos, target, up);
+        view = lookAt(cameraPos, target, cameraUp);
     }
 
 }

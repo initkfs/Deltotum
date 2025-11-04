@@ -207,6 +207,9 @@ class Start : GuiScene
             if (shape.angleX > -45)
             {
                 shape.angleX = shape.angleX - 1;
+                auto camAngleX = shape.angleX - 1;
+                auto dist = shape.translatePos.sub(camera.cameraPos).length;
+                camera.moveAroundTarget(shape.translatePos, 0, camAngleX, dist);
             }
         }
 
@@ -215,6 +218,9 @@ class Start : GuiScene
             if (shape.angleX < 45)
             {
                 shape.angleX = shape.angleX + 1;
+                auto camAngleX = shape.angleX + 1;
+                auto dist = shape.translatePos.sub(camera.cameraPos).length;
+                camera.moveAroundTarget(shape.translatePos, 0, camAngleX, dist);
             }
         }
 
@@ -223,6 +229,9 @@ class Start : GuiScene
             if (shape.angle > -45)
             {
                 shape.angle = shape.angle - 1;
+                camera.angle = camera.angle - 0.5;
+                camera.cameraTarget = shape.translatePos;
+                camera.isRecalcPos = true;
             }
         }
 
@@ -231,18 +240,21 @@ class Start : GuiScene
             if (shape.angle < 45)
             {
                 shape.angle = shape.angle + 1;
+                camera.angle = camera.angle + 0.5;
+                camera.cameraTarget = shape.translatePos;
+                camera.isRecalcPos = true;
             }
         }
 
-        static double anglev = 0;
-        if(anglev >= 360){
-            anglev = 0;
-        }
+        // static double anglev = 0;
+        // if(anglev >= 360){
+        //     anglev = 0;
+        // }
 
-        //0, -0.5, 0
-        
-        camera.moveAroundTarget(shape.translatePos, anglev, 0, 3);
-        anglev++;
+        // //0, -0.5, 0
+
+        // camera.moveAroundTarget(shape.translatePos, anglev, 0, 3);
+        // anglev++;
 
         //shape.angle = shape.angle + 1;
 
