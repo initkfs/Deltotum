@@ -164,9 +164,12 @@ class Window : GraphicComponent
         scene.create;
         assert(scene.isCreating);
 
-        if (auto scene3d = cast(Scene3d) scene)
+        if (gpu.isActive)
         {
-            scene3d.uploadToGPU;
+            if (auto scene3d = cast(Scene3d) scene)
+            {
+                scene3d.uploadToGPU;
+            }
         }
     }
 

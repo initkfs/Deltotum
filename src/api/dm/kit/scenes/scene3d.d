@@ -36,14 +36,18 @@ class Scene3d : Scene2d
     override void create()
     {
         super.create;
-        camera = createCamera;
-        assert(camera);
 
-        if (isDepth)
+        if (gpu.isActive)
         {
-            depthTexture = new DepthTexture;
-            build(depthTexture);
-            depthTexture.create;
+            camera = createCamera;
+            assert(camera);
+
+            if (isDepth)
+            {
+                depthTexture = new DepthTexture;
+                build(depthTexture);
+                depthTexture.create;
+            }
         }
     }
 
@@ -87,6 +91,11 @@ class Scene3d : Scene2d
 
     void uploadToGPU()
     {
+        if (!gpu.isActive)
+        {
+            return;
+        }
+
         if (!gpu.dev.startCopyPass)
         {
             throw new Exception("Unable to start copy pass");
@@ -167,6 +176,12 @@ class Scene3d : Scene2d
 
     override protected void drawSelfAndChildren()
     {
+        if (!gpu.isActive)
+        {
+            super.drawSelfAndChildren;
+            return;
+        }
+
         if (!isDrawAfterAllSprites && !drawBeforeSprite)
         {
             drawSelf;
@@ -194,6 +209,8 @@ class Scene3d : Scene2d
 
     override void update(double dt)
     {
+        super.update(dt);
+        
         if (camera)
         {
             camera.update(dt);
@@ -208,7 +225,8 @@ class Scene3d : Scene2d
             camera.dispose;
         }
 
-        if(depthTexture){
+        if (depthTexture)
+        {
             depthTexture.dispose;
         }
     }
