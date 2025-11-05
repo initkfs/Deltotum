@@ -241,6 +241,10 @@ class Start : GuiScene
         //     }
 
         // };
+
+        camera.cameraTarget = shape.translatePos;
+        camera.isOrbital = true;
+        camera.isRecalcPos = true;
     }
 
     float time;
@@ -250,65 +254,44 @@ class Start : GuiScene
 
     void moveDown(double speed)
     {
-        //if (shape.angleX > -45)
-        //{
-            shape.angleX = shape.angleX - speed;
-            auto dist = shape.translatePos.sub(camera.cameraPos).length;
-            //const horAngle = shape.angleY == 0 ? 0 : -shape.angleY;
-            //camera.moveAroundTarget(shape.translatePos, horAngle, shape.angleX, dist);
-        //}
+        shape.angleX = Math.wrapAngle(shape.angleX - speed, -360, 360);
+        auto dist = shape.translatePos.sub(camera.cameraPos).length;
+        camera.targetDistance = dist;
+        camera.cameraTarget = shape.translatePos;
+        camera.angleX = shape.angleX;
+        camera.isRecalcPos = true;
     }
 
     void moveUp(double speed)
     {
-        //if (shape.angleX < 45)
-        //{
-            shape.angleX = shape.angleX + speed;
-            auto dist = shape.translatePos.sub(camera.cameraPos).length;
-            //const horAngle = shape.angleY == 0 ? 0 : -shape.angleY;
-            //camera.moveAroundTarget(shape.translatePos, horAngle, shape.angleX, dist);
-        //}
+        shape.angleX = Math.wrapAngle(shape.angleX + speed, -360, 360);
+        auto dist = shape.translatePos.sub(camera.cameraPos).length;
+        camera.targetDistance = dist;
+        camera.cameraTarget = shape.translatePos;
+        camera.angleX = shape.angleX;
+        camera.isRecalcPos = true;
     }
 
     void moveLeft(double speedShape, double speedCamera)
     {
-        //if ((shape.angleY - speedShape) > -89)
-        //{
-            shape.angleY = shape.angleY - speedShape;
-
-            //auto dist = shape.translatePos.sub(camera.cameraPos).length;
-            //camera.moveAroundTarget(shape.translatePos, -shape.angleY, shape.angleX, dist);
-        //}
-
-        //if (shape.angle > -45)
-        //{
-            //shape.angle = shape.angle - speedShape / 2;
-            //camera.angle = camera.angle - speedCamera;
-            //camera.cameraTarget = shape.translatePos;
-            //camera.isRecalcPos = true;
-        //}
-
+        shape.angleY = shape.angleY - speedShape;
+        //shape.angle = shape.angle - speedShape / 3;
+        auto dist = shape.translatePos.sub(camera.cameraPos).length;
+        camera.targetDistance = dist;
+        camera.cameraTarget = shape.translatePos;
+        camera.angleY = -shape.angleY;
+        camera.isRecalcPos = true;
     }
 
     void moveRight(double speedShape, double speedCamera)
     {
-        //shape.angle = shape.angle + speedShape;
-        //if ((shape.angleY + speedShape) < 89)
-        //{
-            shape.angleY = shape.angleY + speedShape;
-
-            //auto dist = shape.translatePos.sub(camera.cameraPos).length;
-            //camera.moveAroundTarget(shape.translatePos, -shape.angleY, shape.angleX, dist);
-        //}
-
-        //if (shape.angle < 45)
-        //{
-            //shape.angle = shape.angle + speedShape / 2;
-            //camera.angle = camera.angle + speedCamera;
-            //camera.cameraTarget = shape.translatePos;
-            //camera.isRecalcPos = true;
-        //}
-
+        shape.angleY = shape.angleY + speedShape;
+        //shape.angle = shape.angle + speedShape / 3;
+        auto dist = shape.translatePos.sub(camera.cameraPos).length;
+        camera.targetDistance = dist;
+        camera.cameraTarget = shape.translatePos;
+        camera.angleY = -shape.angleY;
+        camera.isRecalcPos = true;
     }
 
     override void update(double dt)
@@ -342,7 +325,7 @@ class Start : GuiScene
             }
             else
             {
-               moveRight(speed * (-lrV), cameraSpeed * (-lrV));
+                moveRight(speed * (-lrV), cameraSpeed * (-lrV));
             }
         }
 

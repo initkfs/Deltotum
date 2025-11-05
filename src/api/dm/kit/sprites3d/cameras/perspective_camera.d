@@ -32,6 +32,8 @@ class PerspectiveCamera : Sprite2d
 
     Vec3f cameraTarget;
 
+    bool isOrbital;
+
     float nearPlane = 0.1;
     float farPlane = 100;
 
@@ -98,30 +100,11 @@ class PerspectiveCamera : Sprite2d
         recalcView;
     }
 
+    double targetDistance;
+
     void recalcView()
     {
-        if (cameraTarget != Vec3f.init)
-        {
-            cameraFront = (cameraTarget - cameraPos).normalize;
-
-            if (angle != 0)
-            {
-                Matrix4x4f zRotation = combinedRotation(0, 0, angle);
-                Vec3f baseUp = Vec3f(0, 1, 0);
-                cameraUp = zRotation.transformDir(baseUp).normalize;
-            }
-            else
-            {
-                cameraUp = Vec3f(0, 1, 0);
-            }
-
-            cameraRight = cameraFront.cross(cameraUp).normalize;
-            cameraUp = cameraRight.cross(cameraFront).normalize;
-
-            view = lookAt(cameraPos, cameraTarget, cameraUp);
-
-            return;
-        }
+        import api.math.quaternion : Quaternion;
 
         Vec3f localFront = Vec3f(0.0f, 0.0f, -1.0f);
         Vec3f localUp = Vec3f(0.0f, 1.0f, 0.0f);
@@ -129,11 +112,15 @@ class PerspectiveCamera : Sprite2d
 
         if (angleX != 0 || angleY != 0 || angle != 0)
         {
-            Matrix4x4f rotation = combinedRotation(angleX, angleY, angle);
+            Quaternion q1 = Quaternion.fromEuler(angleX, angleY, angle);
+            Matrix4x4f rotation = q1.toMatrix4x4LH;
 
             cameraFront = rotation.transformDir(localFront).normalize;
             cameraUp = rotation.transformDir(localUp).normalize;
             cameraRight = rotation.transformDir(localRight).normalize;
+
+            Vec3f orbitOffset = cameraFront.scale(-targetDistance);
+            cameraPos = cameraTarget + orbitOffset;
         }
         else
         {
@@ -142,7 +129,15 @@ class PerspectiveCamera : Sprite2d
             cameraRight = localRight; // (1, 0, 0)
         }
 
-        view = lookAt(cameraPos, cameraPos.add(cameraFront), cameraUp);
+        if (isOrbital)
+        {
+
+            view = lookAt(cameraPos, cameraTarget, cameraUp);
+        }
+        else
+        {
+            // view = lookAt(cameraPos, cameraPos.add(cameraFront), cameraUp);
+        }
     }
 
     override void update(double dt)
