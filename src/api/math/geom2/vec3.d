@@ -455,6 +455,6 @@ struct Vec3f
     {
         import std.format : format;
 
-        return format("x:%.10f,y:%.10f:z%.10f", x, y, z);
+        return format("x:%.10f,y:%.10f:z:%.10f", x, y, z);
     }
 }

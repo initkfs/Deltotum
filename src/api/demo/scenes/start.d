@@ -254,8 +254,8 @@ class Start : GuiScene
         //{
             shape.angleX = shape.angleX - speed;
             auto dist = shape.translatePos.sub(camera.cameraPos).length;
-            const horAngle = shape.angleY == 0 ? 0 : -shape.angleY;
-            camera.moveAroundTarget(shape.translatePos, horAngle, shape.angleX, dist);
+            //const horAngle = shape.angleY == 0 ? 0 : -shape.angleY;
+            //camera.moveAroundTarget(shape.translatePos, horAngle, shape.angleX, dist);
         //}
     }
 
@@ -265,8 +265,8 @@ class Start : GuiScene
         //{
             shape.angleX = shape.angleX + speed;
             auto dist = shape.translatePos.sub(camera.cameraPos).length;
-            const horAngle = shape.angleY == 0 ? 0 : -shape.angleY;
-            camera.moveAroundTarget(shape.translatePos, horAngle, shape.angleX, dist);
+            //const horAngle = shape.angleY == 0 ? 0 : -shape.angleY;
+            //camera.moveAroundTarget(shape.translatePos, horAngle, shape.angleX, dist);
         //}
     }
 
@@ -276,17 +276,17 @@ class Start : GuiScene
         //{
             shape.angleY = shape.angleY - speedShape;
 
-            auto dist = shape.translatePos.sub(camera.cameraPos).length;
-            camera.moveAroundTarget(shape.translatePos, -shape.angleY, shape.angleX, dist);
+            //auto dist = shape.translatePos.sub(camera.cameraPos).length;
+            //camera.moveAroundTarget(shape.translatePos, -shape.angleY, shape.angleX, dist);
         //}
 
-        if (shape.angle > -45)
-        {
-            shape.angle = shape.angle - speedShape;
+        //if (shape.angle > -45)
+        //{
+            //shape.angle = shape.angle - speedShape / 2;
             //camera.angle = camera.angle - speedCamera;
             //camera.cameraTarget = shape.translatePos;
             //camera.isRecalcPos = true;
-        }
+        //}
 
     }
 
@@ -297,17 +297,17 @@ class Start : GuiScene
         //{
             shape.angleY = shape.angleY + speedShape;
 
-            auto dist = shape.translatePos.sub(camera.cameraPos).length;
-            camera.moveAroundTarget(shape.translatePos, -shape.angleY, shape.angleX, dist);
+            //auto dist = shape.translatePos.sub(camera.cameraPos).length;
+            //camera.moveAroundTarget(shape.translatePos, -shape.angleY, shape.angleX, dist);
         //}
 
-        if (shape.angle < 45)
-        {
-            shape.angle = shape.angle + speedShape;
+        //if (shape.angle < 45)
+        //{
+            //shape.angle = shape.angle + speedShape / 2;
             //camera.angle = camera.angle + speedCamera;
             //camera.cameraTarget = shape.translatePos;
             //camera.isRecalcPos = true;
-        }
+        //}
 
     }
 
@@ -318,7 +318,7 @@ class Start : GuiScene
         import api.math.matrices.affine3;
 
         const int deadzone = 4000;
-        const double speed = 1.5;
+        const double speed = 2;
         const double cameraSpeed = 0.5;
         const int upDownAxis = 1;
         const int leftRightAxis = 0;
@@ -326,11 +326,11 @@ class Start : GuiScene
         {
             if (udV > 0)
             {
-                moveDown(speed * (udV));
+                moveUp(speed * udV);
             }
             else
             {
-                moveUp(speed * (-udV));
+                moveDown(speed * (-udV));
             }
         }
 
@@ -338,11 +338,11 @@ class Start : GuiScene
         {
             if (lrV > 0)
             {
-                moveRight(speed * lrV, cameraSpeed * lrV);
+                moveLeft(speed * (lrV), cameraSpeed * (lrV));
             }
             else
             {
-                moveLeft(speed * (-lrV), cameraSpeed * (-lrV));
+               moveRight(speed * (-lrV), cameraSpeed * (-lrV));
             }
         }
 

@@ -5,6 +5,7 @@ import api.dm.kit.scenes.scene3d : SceneTransforms;
 import api.dm.kit.sprites3d.cameras.perspective_camera : PerspectiveCamera;
 import api.math.geom2.vec3 : Vec3f;
 import api.math.matrices.matrix : Matrix4x4f;
+import api.math.quaternion : Quaternion;
 import Math = api.math;
 
 /**
@@ -187,7 +188,8 @@ class Sprite3d : Sprite2d
 
         if (angleY != 0 || angleX != 0 || angle != 0)
         {
-            _worldMatrix = _worldMatrix.mul(combinedRotation(angleX, angleY, angle));
+            Quaternion rotation = Quaternion.fromEuler(angleX, angleY, angle);
+            _worldMatrix = _worldMatrix.mul(rotation.toMatrix4x4LH);
         }
 
         //TODO all set to 0, pos = 0
