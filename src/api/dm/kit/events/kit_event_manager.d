@@ -20,7 +20,8 @@ import std.typecons : Nullable;
  */
 class KitEventManager
 {
-    Nullable!(Window) delegate(long) windowProviderById;
+    Window delegate(long) windowProviderById;
+    Window delegate() currentWindowProvider;
 
     void delegate(ref KeyEvent) onKey;
     void delegate(ref JoystickEvent) onJoystick;
@@ -30,20 +31,26 @@ class KitEventManager
 
     void dispatchEvent(E)(ref E e)
     {
-        if (!windowProviderById)
+
+        Window targetWindow;
+        
+        static if (is(E : JoystickEvent))
         {
+            assert(currentWindowProvider, "Window provider is null");
+            targetWindow = currentWindowProvider();
+        }
+        else
+        {
+            const windowId = e.ownerId;
+            targetWindow = windowProviderById(windowId);
+        }
+
+        if (!targetWindow)
+        {
+            //TODO or error?
             return;
         }
 
-        const windowId = e.ownerId;
-
-        auto mustBeTargetWindow = windowProviderById(windowId);
-        if (mustBeTargetWindow.isNull)
-        {
-            return;
-        }
-
-        Window targetWindow = mustBeTargetWindow.get;
         Scene2d targetScene = targetWindow.currentScene;
         Sprite2d[] targets = targetScene.activeSprites;
 

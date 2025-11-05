@@ -15,6 +15,8 @@ string backendIsAudio = "backendIsAudio";
 string backendIsJoystick = "backendIsJoystick";
 string backendIsGPU = "backendIsGPU";
 
+string backendJoystickIndex = "backendJoystickIndex";
+
 string graphicsUseVector = "graphicsUseVector";
 string graphicsIsIconPack = "graphicsIsIconPack";
 

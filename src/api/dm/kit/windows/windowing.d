@@ -50,20 +50,28 @@ class Windowing : LoggableUnit
         });
     }
 
-    Nullable!Window byFirstId(long id)
+    Window byFirstIdOrNull(long id)
     {
-        Nullable!Window mustBeWindow;
-        onWindowsById(id, (win) {
-            mustBeWindow = Nullable!Window(win);
-            return false;
-        });
+        Window mustBeWindow;
+        onWindowsById(id, (win) { mustBeWindow = win; return false; });
 
         return mustBeWindow;
     }
 
-    Nullable!Window current()
+    Nullable!Window byFirstId(long id)
     {
-        Nullable!Window mustBeWindow;
+        auto window = byFirstIdOrNull(id);
+        if (!window)
+        {
+            return Nullable!Window.init;
+        }
+
+        return Nullable!Window(window);
+    }
+
+    Window currentOrNull()
+    {
+        Window mustBeWindow;
         onWindows((window) {
             if (window.isShowing && window.isFocus)
             {
@@ -74,6 +82,17 @@ class Windowing : LoggableUnit
         });
 
         return mustBeWindow;
+    }
+
+    Nullable!Window current()
+    {
+        auto mustBeWindow = currentOrNull;
+        if (!mustBeWindow)
+        {
+            return Nullable!Window.init;
+        }
+
+        return Nullable!Window(mustBeWindow);
     }
 
     bool add(Window window)

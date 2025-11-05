@@ -187,6 +187,16 @@ class Start : GuiScene
         // import api.dm.back.sdl3.images.sdl_image : SdlImage;
 
         lamp.isVisible = false;
+
+        onJoystickButtonPress ~= (ref e){
+            import std;
+            writeln("Button: ", e.button);
+        };
+
+        onJoystickAxis ~= (ref e){
+            import std;
+            writeln("Axis: ", e.axis, " value: ", e.axisValue);
+        };
     }
 
     float time;

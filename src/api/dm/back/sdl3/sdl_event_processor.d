@@ -1,7 +1,5 @@
 module api.dm.back.sdl3.sdl_event_processor;
 
-
-
 import api.dm.kit.events.processing.kit_event_processor : KitEventProcessor;
 
 import api.core.apps.events.app_event : AppEvent;
@@ -55,7 +53,7 @@ class SdlEventProcessor : KitEventProcessor!(SDL_Event*)
             case SDL_EVENT_MOUSE_MOTION, SDL_EVENT_MOUSE_BUTTON_DOWN, SDL_EVENT_MOUSE_BUTTON_UP, SDL_EVENT_MOUSE_WHEEL:
                 handleMouseEvent(event);
                 break;
-            case SDL_EVENT_JOYSTICK_AXIS_MOTION, SDL_EVENT_JOYSTICK_BUTTON_DOWN, SDL_EVENT_JOYSTICK_BUTTON_UP:
+            case SDL_EVENT_JOYSTICK_BUTTON_DOWN, SDL_EVENT_JOYSTICK_BUTTON_UP, SDL_EVENT_JOYSTICK_AXIS_MOTION:
                 handleJoystickEvent(event);
                 break;
             case SDL_EVENT_QUIT:
@@ -215,23 +213,29 @@ class SdlEventProcessor : KitEventProcessor!(SDL_Event*)
             return;
         }
 
+        SDL_JoystickID id;
+
         JoystickEvent.Event type = JoystickEvent.Event.none;
         switch (event.type)
         {
             case SDL_EVENT_JOYSTICK_AXIS_MOTION:
                 type = JoystickEvent.Event.axis;
+                id = (cast(SDL_JoyAxisEvent*) event).which;
                 break;
             case SDL_EVENT_JOYSTICK_BUTTON_DOWN:
                 type = JoystickEvent.Event.press;
+                id = (cast(SDL_JoyButtonEvent*) event).which;
                 break;
             case SDL_EVENT_JOYSTICK_BUTTON_UP:
                 type = JoystickEvent.Event.release;
+                id = (cast(SDL_JoyButtonEvent*) event).which;
                 break;
             default:
                 break;
         }
+
         auto joystickEvent = JoystickEvent(
-            type, event.window.windowID, event.jbutton.button, event
+            type, id, event.jbutton.button, event.jbutton.down, event
                 .jaxis.axis, event.jaxis.value);
         onJoystick(joystickEvent);
     }

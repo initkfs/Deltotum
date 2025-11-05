@@ -31,8 +31,8 @@ import api.dm.back.sdl3.sdl_renderer : SdlRenderer;
 import api.dm.kit.inputs.keyboards.keyboard : Keyboard;
 import api.dm.kit.screens.single_screen : SingleScreen;
 
-import api.dm.back.sdl3.joystick.sdl_joystick_lib : SdlJoystickLib;
-import api.dm.back.sdl3.joystick.sdl_joystick : SdlJoystick;
+import api.dm.back.sdl3.joysticks.sdl_joystick_lib : SdlJoystickLib;
+import api.dm.back.sdl3.joysticks.sdl_joystick : SdlJoystick;
 import api.dm.kit.windows.events.window_event : WindowEvent;
 import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import api.dm.back.sdl3.sdl_texture : SdlTexture;
@@ -154,6 +154,7 @@ class SdlApp : GuiApp
         {
             flags |= SDL_INIT_JOYSTICK;
             gservices.platform.cap.isJoystick = true;
+
             uservices.logger.trace("Joystick enabled");
         }
 
@@ -376,17 +377,16 @@ class SdlApp : GuiApp
         eventManager = new KitEventManager;
 
         eventManager.windowProviderById = (windowId) {
-            auto mustBeCurrentWindow = windowing.byFirstId(windowId);
-            if (mustBeCurrentWindow.isNull)
+            auto mustBeCurrentWindow = windowing.byFirstIdOrNull(windowId);
+            if (mustBeCurrentWindow && (mustBeCurrentWindow.isShowing && mustBeCurrentWindow.isFocus))
             {
-                return Nullable!(Window).init;
+                return mustBeCurrentWindow;
             }
-            auto currWindow = mustBeCurrentWindow.get;
-            if (!currWindow.isShowing || !currWindow.isFocus)
-            {
-                return Nullable!(Window).init;
-            }
-            return Nullable!Window(currWindow);
+            return null;
+        };
+
+        eventManager.currentWindowProvider = () {
+            return windowing.currentOrNull;
         };
 
         eventProcessor.onWindow = (ref windowEvent) {
@@ -626,7 +626,7 @@ class SdlApp : GuiApp
 
         if (sdlJoystick.isNull && caps.isJoystick)
         {
-            sdlJoystick = newSdlJoystick;
+            sdlJoystick = newSdlJoystickLib;
         }
 
         return ComResult.success;
@@ -707,10 +707,53 @@ class SdlApp : GuiApp
             assert(!sdlJoystick.isNull);
             if (const err = sdlJoystick.get.initialize)
             {
-                return err;
+                gservices.platform.cap.isJoystick = false;
+                uservices.logger.error(err);
+            }
+            else
+            {
+                //input-remapper will be found on Linux, but there may be an opening error
+                SdlJoystick defaultJoystick;
+
+                import KitConfigKeys = api.dm.kit.kit_config_keys;
+
+                if (uservices.config.hasKey(KitConfigKeys.backendJoystickIndex))
+                {
+                    int index = uservices.config.getInt(KitConfigKeys.backendJoystickIndex).get;
+                    if (index < 0)
+                    {
+                        throw new Exception("Joystick index must be positive number");
+                    }
+
+                    defaultJoystick = sdlJoystick.get.joystickByIndex(index);
+                    if (!defaultJoystick)
+                    {
+                        uservices.logger.errorf("Found joystick index %s, but joystick is null. Joystics count: %s", index, sdlJoystick
+                                .get.joystickCount);
+                    }
+                }
+                else
+                {
+                    defaultJoystick = sdlJoystick.get.firstJoystick;
+                }
+
+                if (!defaultJoystick)
+                {
+                    uservices.logger.trace("Not found default joystick");
+                    gservices.platform.cap.isJoystick = false;
+                }
+                else
+                {
+                    sdlCurrentJoystick = defaultJoystick;
+
+                    sdlJoystick.get.setEventsEnabled(true);
+
+                    bool isConnected = defaultJoystick.isConnected;
+                    string gname = defaultJoystick.getNameNew;
+                    uservices.logger.tracef("Found joystick '%s', connected: %s", gname, isConnected);
+                }
             }
 
-            sdlCurrentJoystick = sdlJoystick.get.currentJoystick;
         }
 
         return ComResult.success;
@@ -720,7 +763,7 @@ class SdlApp : GuiApp
     SdlAudioDevice newSdlAudio() => new SdlAudioDevice;
     SdlMixerLib newSdlAudioMixer() => new SdlMixerLib;
     SdlTTFLib newSdlFont() => new SdlTTFLib;
-    SdlJoystickLib newSdlJoystick() => new SdlJoystickLib;
+    SdlJoystickLib newSdlJoystickLib() => new SdlJoystickLib;
 
     override ulong ticksMs()
     {
@@ -1068,15 +1111,14 @@ class SdlApp : GuiApp
     {
         SDL_Event event;
 
-        auto mustBeWindow = windowing.current;
+        auto currWindow = windowing.currentOrNull;
 
-        if (!mustBeWindow.isNull)
+        if (currWindow)
         {
-            auto currWindow = mustBeWindow.get;
             //FIXME stop loop after destroy
             if (!currWindow.isDisposed)
             {
-                mustBeWindow.get.currentScene.timeEventProcessingMs = 0;
+                currWindow.currentScene.timeEventProcessingMs = 0;
             }
 
         }
@@ -1087,9 +1129,8 @@ class SdlApp : GuiApp
             handleEvent(&event);
             const endEvent = SDL_GetTicks();
 
-            if (!mustBeWindow.isNull)
+            if (currWindow)
             {
-                auto currWindow = mustBeWindow.get;
                 if (!currWindow.isDisposed)
                 {
                     currWindow.currentScene.timeEventProcessingMs = endEvent - startEvent;

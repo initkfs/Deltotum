@@ -117,11 +117,9 @@ abstract class GraphicApp : CliApp
 
         immutable isAudioFlag = uservices.config.getBool(KitConfigKeys.backendIsAudio);
         isAudioEnabled = isAudioFlag.isNull ? false : isAudioFlag.get;
-        uservices.logger.trace("Audio enabled: ", isAudioEnabled);
 
         immutable isJoystickFlag = uservices.config.getBool(KitConfigKeys.backendIsJoystick);
         isJoystickEnabled = isJoystickFlag.isNull ? false : isJoystickFlag.get;
-        uservices.logger.trace("Joystick enabled: ", isJoystickEnabled);
     }
 
     Platform createPlatform()
