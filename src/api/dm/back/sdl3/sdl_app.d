@@ -268,7 +268,8 @@ class SdlApp : GuiApp
             cursor = new EmptyCursor;
         }
 
-        _input = new Input(uservices.logging, keyboard, clipboard, cursor);
+        SdlJoystick currentJoy = sdlCurrentJoystick.isNull ? null : sdlCurrentJoystick.get;
+        _input = new Input(uservices.logging, keyboard, clipboard, cursor, currentJoy);
 
         auto audioClip = new AudioMixer(sdlAudioMixer.get);
 
@@ -378,16 +379,15 @@ class SdlApp : GuiApp
 
         eventManager.windowProviderById = (windowId) {
             auto mustBeCurrentWindow = windowing.byFirstIdOrNull(windowId);
-            if (mustBeCurrentWindow && (mustBeCurrentWindow.isShowing && mustBeCurrentWindow.isFocus))
+            if (mustBeCurrentWindow && (mustBeCurrentWindow.isShowing && mustBeCurrentWindow
+                    .isFocus))
             {
                 return mustBeCurrentWindow;
             }
             return null;
         };
 
-        eventManager.currentWindowProvider = () {
-            return windowing.currentOrNull;
-        };
+        eventManager.currentWindowProvider = () { return windowing.currentOrNull; };
 
         eventProcessor.onWindow = (ref windowEvent) {
             if (eventManager.onWindow)
@@ -646,6 +646,32 @@ class SdlApp : GuiApp
             throw new Exception(err.toString);
         }
 
+        import KitConfigKeys = api.dm.kit.kit_config_keys;
+
+        version (linux)
+        {
+            //This hint should be set before SDL is initialized.
+            if (uservices.config.hasKey(KitConfigKeys.backendJoystickIsClassic))
+            {
+                bool isClassicDev = uservices.config.getBool(KitConfigKeys.backendJoystickIsClassic)
+                    .get;
+
+                if (isClassicDev)
+                {
+                    //"0": Use /dev/input/event* (default)
+                    //"1": Use /dev/input/js*
+                    if (const err = sdlLib.setHint(SDL_HINT_JOYSTICK_LINUX_CLASSIC.ptr, "1".ptr))
+                    {
+                        uservices.logger.error("Error change joystick interface: ", err);
+                    }
+                    else
+                    {
+                        uservices.logger.trace("Set joystick classic interface");
+                    }
+                }
+            }
+        }
+
         if (const err = sdlLib.initialize(flags))
         {
             throw new Exception(err.toString);
@@ -715,8 +741,6 @@ class SdlApp : GuiApp
                 //input-remapper will be found on Linux, but there may be an opening error
                 SdlJoystick defaultJoystick;
 
-                import KitConfigKeys = api.dm.kit.kit_config_keys;
-
                 if (uservices.config.hasKey(KitConfigKeys.backendJoystickIndex))
                 {
                     int index = uservices.config.getInt(KitConfigKeys.backendJoystickIndex).get;
@@ -750,7 +774,8 @@ class SdlApp : GuiApp
 
                     bool isConnected = defaultJoystick.isConnected;
                     string gname = defaultJoystick.getNameNew;
-                    uservices.logger.tracef("Found joystick '%s', connected: %s", gname, isConnected);
+                    uservices.logger.tracef("Found joystick '%s', connected: %s, path: %s", gname, isConnected, defaultJoystick
+                            .getPathNew);
                 }
             }
 

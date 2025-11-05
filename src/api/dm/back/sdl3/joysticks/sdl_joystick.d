@@ -1,5 +1,6 @@
 module api.dm.back.sdl3.joysticks.sdl_joystick;
 
+import api.dm.com.inputs.com_joystick : ComJoystick;
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
 import api.dm.com.com_result : ComResult;
 
@@ -8,7 +9,7 @@ import api.dm.back.sdl3.externs.csdl3;
 /**
  * Authors: initkfs
  */
-class SdlJoystick : SdlObjectWrapper!SDL_Joystick
+class SdlJoystick : SdlObjectWrapper!SDL_Joystick, ComJoystick
 {
     this(SDL_Joystick* ptr)
     {
@@ -74,6 +75,18 @@ class SdlJoystick : SdlObjectWrapper!SDL_Joystick
 
         str = buff.fromStringz.idup;
         return ComResult.success;
+    }
+
+    short getAxisOr0(size_t index) nothrow
+    {
+        short value = SDL_GetJoystickAxis(ptr, cast(int) index);
+        //valur == 0 on error
+        return value;
+    }
+
+    bool getButton(size_t button)  nothrow
+    {
+        return SDL_GetJoystickButton(ptr, cast(int) button);
     }
 
     override protected bool disposePtr() nothrow

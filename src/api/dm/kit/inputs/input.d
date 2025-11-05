@@ -7,6 +7,7 @@ import api.dm.kit.inputs.clipboards.clipboard : Clipboard;
 import api.dm.kit.inputs.joysticks.events.joystick_event : JoystickEvent;
 import api.dm.com.inputs.com_keyboard : ComKeyName;
 import api.dm.kit.inputs.keyboards.keyboard : Keyboard;
+import api.dm.com.inputs.com_joystick : ComJoystick;
 import api.math.geom2.vec2 : Vec2d;
 
 import api.math.geom2.vec2 : Vec2d;
@@ -34,9 +35,11 @@ class Input
     Cursor systemCursor;
     Keyboard keyboard;
 
+    ComJoystick joystick;
+
     Logging logging;
 
-    this(Logging logging, Keyboard keyboard, Clipboard clipboard, Cursor cursor)
+    this(Logging logging, Keyboard keyboard, Clipboard clipboard, Cursor cursor, ComJoystick joystick)
     {
         assert(keyboard);
         this.keyboard = keyboard;
@@ -49,6 +52,8 @@ class Input
 
         assert(logging);
         this.logging = logging;
+
+        this.joystick = joystick;
     }
 
     protected size_t keyIndex(ComKeyName key)
@@ -83,6 +88,62 @@ class Input
     {
         const ki = keyIndex(keyName);
         return pressedKeys[ki];
+    }
+
+    bool isJoystickButton(size_t buttonIndexFrom0)
+    {
+        if (!joystick)
+        {
+            return false;
+        }
+
+        return joystick.getButton(buttonIndexFrom0);
+    }
+
+    float isJoystickAxisNorm01(size_t axisFrom0, double deadzone = 2000, double errorDelta = 0.01, double maxValue = short
+            .max)
+    {
+        if (!joystick)
+        {
+            return 0;
+        }
+
+        short axisValue = isJoystickAxis(axisFrom0);
+
+        if (axisValue == 0 || (axisValue > -deadzone && axisValue < deadzone))
+        {
+            return 0;
+        }
+
+        float normalizedValue = 0;
+        if (axisValue > 0)
+        {
+            normalizedValue = cast(float)(axisValue - deadzone) / (maxValue - deadzone);
+            if (normalizedValue < errorDelta)
+            {
+                return 0;
+            }
+        }
+        else
+        {
+            normalizedValue = cast(float)(axisValue + deadzone) / (maxValue - deadzone);
+            if ((-normalizedValue) < errorDelta)
+            {
+                return 0;
+            }
+        }
+
+        return normalizedValue;
+    }
+
+    short isJoystickAxis(size_t axisFrom0)
+    {
+        if (!joystick)
+        {
+            return 0;
+        }
+
+        return joystick.getAxisOr0(axisFrom0);
     }
 
     Vec2d pointerPos()

@@ -129,7 +129,7 @@ class Start : GuiScene
 
         shape.scale = Vec3f(0.15, 0.15, 0.15);
         //shape.x = -0.8;
-        shape.y = -0.5;
+        //shape.y = -0.5;
         shape.isCalcInverseWorldMatrix = true;
 
         env.addCreate(shape);
@@ -188,15 +188,59 @@ class Start : GuiScene
 
         lamp.isVisible = false;
 
-        onJoystickButtonPress ~= (ref e){
+        onJoystickButtonPress ~= (ref e) {
             import std;
+
             writeln("Button: ", e.button);
         };
 
-        onJoystickAxis ~= (ref e){
-            import std;
-            writeln("Axis: ", e.axis, " value: ", e.axisValue);
-        };
+        // onJoystickAxis ~= (ref e) {
+        //     const int deadzone = 4000;
+        //     const int maxValue = 32767;
+        //     if (e.axisValue > -deadzone && e.axisValue < deadzone)
+        //     {
+        //         return;
+        //     }
+
+        //     float normalizedValue = 0.0f;
+        //     if (e.axisValue != 0)
+        //     {
+        //         if (e.axisValue > 0)
+        //         {
+        //             normalizedValue = cast(float)(e.axisValue - deadzone) / (maxValue - deadzone);
+        //         }
+        //         else
+        //         {
+        //             normalizedValue = cast(float)(e.axisValue + deadzone) / (maxValue - deadzone);
+        //         }
+        //     }
+
+        //     const double speed = 1;
+        //     if (e.axis == 1)
+        //     {
+        //         if (normalizedValue > 0)
+        //         {
+        //             moveUp(speed * normalizedValue);
+        //         }
+        //         else
+        //         {
+        //             moveDown(speed * (-normalizedValue));
+        //         }
+
+        //     }
+        //     else if (e.axis == 1)
+        //     {
+        //         // if (normalizedValue > 0)
+        //         // {
+        //         //     moveLeft(speed * normalizedValue, speed * normalizedValue);
+        //         // }
+        //         // else
+        //         // {
+        //         //     moveRight(speed * normalizedValue, speed * normalizedValue);
+        //         // }
+        //     }
+
+        // };
     }
 
     float time;
@@ -204,56 +248,124 @@ class Start : GuiScene
     float currentPitchX = 0.0f;
     float currentRollZ = 0.0f;
 
+    void moveDown(double speed)
+    {
+        //if (shape.angleX > -45)
+        //{
+            shape.angleX = shape.angleX - speed;
+            auto dist = shape.translatePos.sub(camera.cameraPos).length;
+            const horAngle = shape.angleY == 0 ? 0 : -shape.angleY;
+            camera.moveAroundTarget(shape.translatePos, horAngle, shape.angleX, dist);
+        //}
+    }
+
+    void moveUp(double speed)
+    {
+        //if (shape.angleX < 45)
+        //{
+            shape.angleX = shape.angleX + speed;
+            auto dist = shape.translatePos.sub(camera.cameraPos).length;
+            const horAngle = shape.angleY == 0 ? 0 : -shape.angleY;
+            camera.moveAroundTarget(shape.translatePos, horAngle, shape.angleX, dist);
+        //}
+    }
+
+    void moveLeft(double speedShape, double speedCamera)
+    {
+        //if ((shape.angleY - speedShape) > -89)
+        //{
+            shape.angleY = shape.angleY - speedShape;
+
+            auto dist = shape.translatePos.sub(camera.cameraPos).length;
+            camera.moveAroundTarget(shape.translatePos, -shape.angleY, shape.angleX, dist);
+        //}
+
+        if (shape.angle > -45)
+        {
+            shape.angle = shape.angle - speedShape;
+            //camera.angle = camera.angle - speedCamera;
+            //camera.cameraTarget = shape.translatePos;
+            //camera.isRecalcPos = true;
+        }
+
+    }
+
+    void moveRight(double speedShape, double speedCamera)
+    {
+        //shape.angle = shape.angle + speedShape;
+        //if ((shape.angleY + speedShape) < 89)
+        //{
+            shape.angleY = shape.angleY + speedShape;
+
+            auto dist = shape.translatePos.sub(camera.cameraPos).length;
+            camera.moveAroundTarget(shape.translatePos, -shape.angleY, shape.angleX, dist);
+        //}
+
+        if (shape.angle < 45)
+        {
+            shape.angle = shape.angle + speedShape;
+            //camera.angle = camera.angle + speedCamera;
+            //camera.cameraTarget = shape.translatePos;
+            //camera.isRecalcPos = true;
+        }
+
+    }
+
     override void update(double dt)
     {
         super.update(dt);
 
         import api.math.matrices.affine3;
 
+        const int deadzone = 4000;
+        const double speed = 1.5;
+        const double cameraSpeed = 0.5;
+        const int upDownAxis = 1;
+        const int leftRightAxis = 0;
+        if (const udV = input.isJoystickAxisNorm01(upDownAxis, deadzone))
+        {
+            if (udV > 0)
+            {
+                moveDown(speed * (udV));
+            }
+            else
+            {
+                moveUp(speed * (-udV));
+            }
+        }
+
+        if (const lrV = input.isJoystickAxisNorm01(leftRightAxis, deadzone))
+        {
+            if (lrV > 0)
+            {
+                moveRight(speed * lrV, cameraSpeed * lrV);
+            }
+            else
+            {
+                moveLeft(speed * (-lrV), cameraSpeed * (-lrV));
+            }
+        }
+
         import api.dm.com.inputs.com_keyboard : ComKeyName;
 
         if (input.isPressedKey(ComKeyName.key_down))
         {
-            if (shape.angleX > -45)
-            {
-                shape.angleX = shape.angleX - 1;
-                auto camAngleX = shape.angleX - 1;
-                auto dist = shape.translatePos.sub(camera.cameraPos).length;
-                camera.moveAroundTarget(shape.translatePos, 0, camAngleX, dist);
-            }
+            moveDown(1);
         }
 
         if (input.isPressedKey(ComKeyName.key_up))
         {
-            if (shape.angleX < 45)
-            {
-                shape.angleX = shape.angleX + 1;
-                auto camAngleX = shape.angleX + 1;
-                auto dist = shape.translatePos.sub(camera.cameraPos).length;
-                camera.moveAroundTarget(shape.translatePos, 0, camAngleX, dist);
-            }
+            moveUp(1);
         }
 
         if (input.isPressedKey(ComKeyName.key_left))
         {
-            if (shape.angle > -45)
-            {
-                shape.angle = shape.angle - 1;
-                camera.angle = camera.angle - 0.5;
-                camera.cameraTarget = shape.translatePos;
-                camera.isRecalcPos = true;
-            }
+            moveLeft(1, 0.5);
         }
 
         if (input.isPressedKey(ComKeyName.key_right))
         {
-            if (shape.angle < 45)
-            {
-                shape.angle = shape.angle + 1;
-                camera.angle = camera.angle + 0.5;
-                camera.cameraTarget = shape.translatePos;
-                camera.isRecalcPos = true;
-            }
+            moveRight(1, 0.5);
         }
 
         // static double anglev = 0;
