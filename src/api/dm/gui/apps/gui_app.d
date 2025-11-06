@@ -34,7 +34,8 @@ abstract class GuiApp : LoopApp
         mainLoop = newMainLoop;
         assert(mainLoop);
 
-        uservices.logger.tracef("Create main loop with frame rate: %s, update delta: %s", mainLoop.frameRate, mainLoop.updateDelta);
+        uservices.logger.tracef("Create main loop with frame rate: %s, update delta: %s", mainLoop.frameRate, mainLoop
+                .updateDelta);
 
         if (isIconPackEnabled)
         {
@@ -73,7 +74,7 @@ abstract class GuiApp : LoopApp
         double frameRate = 0;
         if (uservices.config.hasKey(KitConfigKeys.engineFrameRate))
         {
-            frameRate = uservices.config.getDouble(KitConfigKeys.engineFrameRate).get;
+            frameRate = uservices.config.getDouble(KitConfigKeys.engineFrameRate);
         }
 
         if (frameRate > 0)
@@ -90,8 +91,11 @@ abstract class GuiApp : LoopApp
 
         import KitConfigKeys = api.dm.kit.kit_config_keys;
 
-        immutable isIconPackFlag = uservices.config.getBool(KitConfigKeys.graphicsIsIconPack);
-        isIconPackEnabled = isIconPackFlag.isNull ? true : isIconPackFlag.get;
+        if (uservices.config.hasKey(KitConfigKeys.graphicsIsIconPack))
+        {
+            isIconPackEnabled = uservices.config.getBool(KitConfigKeys.graphicsIsIconPack);
+        }
+
         uservices.logger.trace("Icon pack enabled: ", isIconPackEnabled);
     }
 

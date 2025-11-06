@@ -2,7 +2,6 @@ module api.core.configs.keyvalues.aa_const_config;
 
 import api.core.configs.keyvalues.config : Config;
 
-import std.typecons : Nullable;
 import std.conv : to;
 
 /**
@@ -28,28 +27,15 @@ class AAConstConfig(V = string) : Config
         this.config = config;
     }
 
-    override bool load() const
-    {
-        return false;
-    }
+    override bool load() const => false;
+    override bool save() const => false;
+    override bool clear() const => false;
 
-    override bool save() const
-    {
-        return false;
-    }
-
-    override bool clear() const
-    {
-        return false;
-    }
-
-    override bool hasKey(string key) const
-    {
-        return containsPtr(key) !is null;
-    }
+    override bool hasKey(string key) const => containsPtr(key) !is null;
 
     const(V*) containsPtr(string key) const
     {
+        assert(key.length > 0);
         return key in config;
     }
 
@@ -63,132 +49,73 @@ class AAConstConfig(V = string) : Config
         return config[key].to!T;
     }
 
-    bool setValue(T)(string key, T value) const
-    {
-        return false;
-    }
+    bool setValue(T)(string key, T value) const => false;
 
-    override Nullable!bool getBool(string key) const
+    override bool getBool(string key) const
     {
         const valuePtr = containsPtr(key);
         if (!valuePtr)
         {
-            if (isThrowOnNotExistentKey)
-            {
-                throw new Exception(
-                    "Not found boolean value in AA config with key: " ~ key);
-            }
-            else
-            {
-                return Nullable!bool.init;
-            }
+            throw new Exception(
+                "Not found boolean value in AA config with key: " ~ key);
         }
-        const bool value = getValue!bool(valuePtr);
-        return Nullable!bool(value);
+        return getValue!bool(valuePtr);
     }
 
-    override bool setBool(string key, bool value) const
-    {
-        return false;
-    }
+    override bool setBool(string key, bool value) const => false;
 
-    override Nullable!string getString(string key) const
+    override string getString(string key) const
     {
         const valuePtr = containsPtr(key);
         if (!valuePtr)
         {
-            if (isThrowOnNotExistentKey)
-            {
-                throw new Exception(
-                    "Not found string value in AA config with key: " ~ key);
-            }
-            else
-            {
-                return Nullable!string.init;
-            }
+            throw new Exception(
+                "Not found string value in AA config with key: " ~ key);
         }
 
-        const strValue = getValue!string(valuePtr);
-        return Nullable!string(strValue);
+        return getValue!string(valuePtr);
     }
 
-    override bool setString(string key, string value) const
-    {
-        return false;
-    }
+    override bool setString(string key, string value) const => false;
 
-    override Nullable!int getInt(string key) const
+    override int getInt(string key) const
     {
         const valuePtr = containsPtr(key);
         if (!valuePtr)
         {
-            if (isThrowOnNotExistentKey)
-            {
-                throw new Exception(
-                    "Not found integer value in AA config with key: " ~ key);
-            }
-            else
-            {
-                return Nullable!int.init;
-            }
+            throw new Exception(
+                "Not found integer value in AA config with key: " ~ key);
         }
-        const int value = getValue!int(valuePtr);
-        return Nullable!int(value);
+        return getValue!int(valuePtr);
     }
 
-    override bool setInt(string key, int value)
-    {
-        return false;
-    }
+    override bool setInt(string key, int value) => false;
 
-    override Nullable!long getLong(string key) const
+    override long getLong(string key) const
     {
         const valuePtr = containsPtr(key);
         if (!valuePtr)
         {
-            if (isThrowOnNotExistentKey)
-            {
-                throw new Exception(
-                    "Not found long value in AA config with key: " ~ key);
-            }
-            else
-            {
-                return Nullable!long.init;
-            }
+            throw new Exception("Not found long value in AA config with key: " ~ key);
         }
-        const long value = getValue!long(valuePtr);
-        return Nullable!long(value);
+        return getValue!long(valuePtr);
     }
 
-    override bool setLong(string key, long value) const
-    {
-        return false;
-    }
+    override bool setLong(string key, long value) const => false;
 
-    override Nullable!double getDouble(string key) const
+    override double getDouble(string key) const
     {
         const valuePtr = containsPtr(key);
         if (!valuePtr)
         {
-            if (isThrowOnNotExistentKey)
-            {
-                throw new Exception(
-                    "Not found double value in AA config with key: " ~ key);
-            }
-            else
-            {
-                return Nullable!double.init;
-            }
+            throw new Exception(
+                "Not found double value in AA config with key: " ~ key);
         }
 
-        const double value = getValue!double(valuePtr);
-        return Nullable!double(value);
+        return getValue!double(valuePtr);
     }
 
-    override bool setDouble(string key, double value) const
-    {
-        return false;
-    }
+    override bool setDouble(string key, double value) const => false;
 
     T[] getList(T)(string key) const
     {
@@ -229,19 +156,15 @@ unittest
     assert(!config.save);
 
     auto val1 = config.getLong("value1");
-    assert(!val1.isNull);
     assert(val1 == 1, val1.toString);
 
     auto val2 = config.getString("value2");
-    assert(!val2.isNull);
     assert(val2 == "random text", val2.toString);
 
     auto val3 = config.getDouble("value3");
-    assert(!val3.isNull);
     assert(isClose(val3, 2.5), val3.toString);
 
     auto val4 = config.getBool("value4");
-    assert(!val4.isNull);
     assert(val4 == true);
 
     assert(!config.setValue("value1", 2));

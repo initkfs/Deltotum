@@ -11,7 +11,7 @@ import api.dm.kit.components.graphic_component : GraphicComponent;
 import api.dm.kit.components.graphic_component : GraphicComponent;
 import api.core.components.uni_component : UniComponent;
 import api.dm.kit.graphics.graphic : Graphic;
-import api.dm.kit.graphics.gpu.gpu_graphic: GPUGraphic;
+import api.dm.kit.graphics.gpu.gpu_graphic : GPUGraphic;
 import api.dm.kit.assets.asset : Asset;
 
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
@@ -115,11 +115,15 @@ abstract class GraphicApp : CliApp
     {
         import KitConfigKeys = api.dm.kit.kit_config_keys;
 
-        immutable isAudioFlag = uservices.config.getBool(KitConfigKeys.backendIsAudio);
-        isAudioEnabled = isAudioFlag.isNull ? false : isAudioFlag.get;
+        if (uservices.config.hasKey(KitConfigKeys.backendIsAudio))
+        {
+            isAudioEnabled = uservices.config.getBool(KitConfigKeys.backendIsAudio);
+        }
 
-        immutable isJoystickFlag = uservices.config.getBool(KitConfigKeys.backendIsJoystick);
-        isJoystickEnabled = isJoystickFlag.isNull ? false : isJoystickFlag.get;
+        if (uservices.config.hasKey(KitConfigKeys.backendIsJoystick))
+        {
+            isJoystickEnabled = uservices.config.getBool(KitConfigKeys.backendIsJoystick);
+        }
     }
 
     Platform createPlatform()
@@ -180,17 +184,7 @@ abstract class GraphicApp : CliApp
         string lang = "en_EN";
         if (config.hasKey(KitConfigKeys.i18nLang))
         {
-            auto mustBeLang = config.getNotEmptyString(KitConfigKeys.i18nLang);
-            if (mustBeLang.isNull)
-            {
-                logging.logger.error("Received empty language from config with key ", KitConfigKeys
-                        .i18nLang);
-            }
-            else
-            {
-                logging.logger.trace("Found i18n language from config: ", mustBeLang);
-                lang = mustBeLang.get;
-            }
+            lang = config.getNotEmptyString(KitConfigKeys.i18nLang);
         }
 
         LangMessages[] messages;
@@ -328,7 +322,7 @@ abstract class GraphicApp : CliApp
         auto mustBeResDir = uservices.reslocal.resourcesDir;
 
         import api.dm.kit.assets.asset : Asset;
-        import api.dm.com.graphic.com_font: ComFont;
+        import api.dm.com.graphic.com_font : ComFont;
 
         //default dir?
         string assetsDir = !mustBeResDir.isNull ? mustBeResDir.get : null;
@@ -352,15 +346,7 @@ abstract class GraphicApp : CliApp
         {
             if (config.hasKey(KitConfigKeys.fontDir))
             {
-                auto mustBeFontDir = config.getNotEmptyString(KitConfigKeys.fontDir);
-                if (mustBeFontDir.isNull)
-                {
-                    throw new Exception(
-                        "Font directory is empty for config key: " ~ KitConfigKeys
-                            .fontDir);
-                }
-
-                fontDir = mustBeFontDir.get;
+                fontDir = config.getNotEmptyString(KitConfigKeys.fontDir);
                 logging.logger.trace("Set font directory from config: ", fontDir);
             }
             else
@@ -405,9 +391,9 @@ abstract class GraphicApp : CliApp
         {
             logging.logger.trace("Search font file in config with key: ", KitConfigKeys.fontTTFFile);
             if (config.hasKey(KitConfigKeys.fontIsOverwriteFontFile) && config.getBool(
-                    KitConfigKeys.fontIsOverwriteFontFile).get)
+                    KitConfigKeys.fontIsOverwriteFontFile))
             {
-                fontFile = config.getNotEmptyString(KitConfigKeys.fontTTFFile).get;
+                fontFile = config.getNotEmptyString(KitConfigKeys.fontTTFFile);
                 logging.logger.trace("Set font file from config: ", fontFile);
             }
             else
@@ -436,12 +422,8 @@ abstract class GraphicApp : CliApp
             {
                 logging.logger.trace("Check font medium size in config with key: ", KitConfigKeys
                         .fontSizeMedium);
-                auto mustBeNewSize = config.getLong(KitConfigKeys.fontSizeMedium);
-                if (!mustBeNewSize.isNull)
-                {
-                    defaultSize = mustBeNewSize.get;
-                    logging.logger.trace("Set font default medium size from config: ", defaultSize);
-                }
+                defaultSize = config.getPositiveLong(KitConfigKeys.fontSizeMedium);
+                logging.logger.trace("Set font default medium size from config: ", defaultSize);
             }
             else
             {
@@ -457,19 +439,14 @@ abstract class GraphicApp : CliApp
                 logging.logger.trace("Checking FactoryKit small font in config with key: ", KitConfigKeys
                         .fontIsCreateSmall);
                 const isSmallFontCreate = config.getBool(KitConfigKeys.fontIsCreateSmall);
-                if (!isSmallFontCreate.isNull && isSmallFontCreate.get)
+                if (isSmallFontCreate)
                 {
                     size_t size = fontSizeSmall;
                     if (config.hasKey(KitConfigKeys.fontSizeSmall))
                     {
                         logging.logger.trace("Search small font size in config with key: ", KitConfigKeys
                                 .fontSizeSmall);
-                        const mustBeSmallSize = config.getPositiveLong(KitConfigKeys.fontSizeSmall);
-                        if (!mustBeSmallSize.isNull)
-                        {
-                            size = mustBeSmallSize.get;
-                            logging.logger.trace("Set small font size from config: ", size);
-                        }
+                        size = config.getPositiveLong(KitConfigKeys.fontSizeSmall);
                     }
                     else
                     {
@@ -498,19 +475,15 @@ abstract class GraphicApp : CliApp
                         .fontIsCreateLarge);
 
                 const isLargeFontCreate = config.getBool(KitConfigKeys.fontIsCreateLarge);
-                if (!isLargeFontCreate.isNull && isLargeFontCreate.get)
+                if (isLargeFontCreate)
                 {
                     size_t size = fontSizeLarge;
                     if (config.hasKey(KitConfigKeys.fontSizeLarge))
                     {
                         logging.logger.trace("Search large font size in config with key: ", KitConfigKeys
                                 .fontSizeLarge);
-                        const mustBeNewSize = config.getPositiveLong(KitConfigKeys.fontSizeLarge);
-                        if (!mustBeNewSize.isNull)
-                        {
-                            size = mustBeNewSize.get;
-                            logging.logger.trace("Set large font size from config: ", size);
-                        }
+                        size = config.getPositiveLong(KitConfigKeys.fontSizeLarge);
+                        logging.logger.trace("Set large font size from config: ", size);
                     }
                     else
                     {
@@ -590,8 +563,7 @@ abstract class GraphicApp : CliApp
 
         if (config.hasKey(KitConfigKeys.fontDefaultTextureIsColorless))
         {
-            auto mustBeValue = config.getBool(KitConfigKeys.fontDefaultTextureIsColorless);
-            return !mustBeValue.isNull ? mustBeValue.get : false;
+            return config.getBool(KitConfigKeys.fontDefaultTextureIsColorless);
         }
 
         return false;

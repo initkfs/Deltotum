@@ -3,7 +3,6 @@ module api.core.configs.keyvalues.properties.property_config;
 import api.core.configs.keyvalues.config : Config;
 
 import std.container.slist : SList;
-import std.typecons : Nullable;
 import std.conv : to;
 
 /**
@@ -176,141 +175,78 @@ class PropertyConfig : Config
         auto valuePtr = containsLinePtr(key);
         if (!valuePtr)
         {
-            if (isThrowOnNotExistentKey)
-            {
-                throw new Exception(
-                    "Not found config key: " ~ key);
-            }
-            else
-            {
-                return false;
-            }
+            return false;
         }
         (*valuePtr).value = value.to!string;
         return true;
     }
 
-    override Nullable!bool getBool(string key) const
+    override bool getBool(string key) const
     {
         auto valuePtr = containsLinePtr(key);
         if (!valuePtr)
         {
-            if (isThrowOnNotExistentKey)
-            {
-                throw new Exception(
-                    "Not found boolean value in config with key: " ~ key);
-            }
-            else
-            {
-                return Nullable!bool.init;
-            }
+            throw new Exception(
+                "Not found boolean value in config with key: " ~ key);
         }
-        const bool value = getValue!bool(valuePtr);
-        return Nullable!bool(value);
+        return getValue!bool(valuePtr);
     }
 
-    override bool setBool(string key, bool value)
-    {
-        return setValue(key, value);
-    }
+    override bool setBool(string key, bool value) => setValue(key, value);
 
-    override Nullable!string getString(string key) const
+    override string getString(string key) const
     {
         auto valuePtr = containsLinePtr(key);
         if (!valuePtr)
         {
-            if (isThrowOnNotExistentKey)
-            {
-                throw new Exception(
-                    "Not found string value in config with key: " ~ key);
-            }
-            else
-            {
-                return Nullable!string.init;
-            }
+            throw new Exception(
+                "Not found string value in config with key: " ~ key);
         }
 
-        auto str = getValue!string(valuePtr);
-        return Nullable!string(str);
+        return getValue!string(valuePtr);
     }
 
-    override bool setString(string key, string value)
-    {
-        return setValue(key, value);
-    }
+    override bool setString(string key, string value) => setValue(key, value);
 
-    override Nullable!int getInt(string key) const
+    override int getInt(string key) const
     {
         auto valuePtr = containsLinePtr(key);
         if (!valuePtr)
         {
-            if (isThrowOnNotExistentKey)
-            {
-                throw new Exception(
-                    "Not found integer value in config with key: " ~ key);
-            }
-            else
-            {
-                return Nullable!int.init;
-            }
+            throw new Exception(
+                "Not found integer value in config with key: " ~ key);
         }
-        const int value = getValue!int(valuePtr);
-        return Nullable!int(value);
+        return getValue!int(valuePtr);
     }
 
-    override bool setInt(string key, int value)
-    {
-        return setValue(key, value);
-    }
+    override bool setInt(string key, int value) => setValue(key, value);
 
-    override Nullable!long getLong(string key) const
+    override long getLong(string key) const
     {
         auto valuePtr = containsLinePtr(key);
         if (!valuePtr)
         {
-            if (isThrowOnNotExistentKey)
-            {
-                throw new Exception(
-                    "Not found long value in config with key: " ~ key);
-            }
-            else
-            {
-                return Nullable!long.init;
-            }
+            throw new Exception(
+                "Not found long value in config with key: " ~ key);
         }
-        const long value = getValue!long(valuePtr);
-        return Nullable!long(value);
+        return getValue!long(valuePtr);
     }
 
-    override bool setLong(string key, long value)
-    {
-        return setValue(key, value);
-    }
+    override bool setLong(string key, long value) => setValue(key, value);
 
-    override Nullable!double getDouble(string key) const
+    override double getDouble(string key) const
     {
         auto valuePtr = containsLinePtr(key);
         if (!valuePtr)
         {
-            if (isThrowOnNotExistentKey)
-            {
-                throw new Exception(
-                    "Not found double value in config with key: " ~ key);
-            }
-            else
-            {
-                return Nullable!double.init;
-            }
+            throw new Exception(
+                "Not found double value in config with key: " ~ key);
         }
 
-        const double value = getValue!double(valuePtr);
-        return Nullable!double(value);
+        return getValue!double(valuePtr);
     }
 
-    override bool setDouble(string key, double value)
-    {
-        return setValue(key, value);
-    }
+    override bool setDouble(string key, double value) => setValue(key, value);
 
     T[] getList(T)(string key) const
     {
@@ -335,10 +271,7 @@ class PropertyConfig : Config
         return list;
     }
 
-    bool hasConfigPath() const nothrow pure @safe
-    {
-        return _configPath.length > 0;
-    }
+    bool hasConfigPath() const nothrow pure @safe => _configPath.length > 0;
 
     string configPath() const nothrow pure @safe
     in (_configPath.length > 0)
@@ -442,15 +375,12 @@ value4=true";
     assert(config.hasKey("value4"));
 
     auto val1 = config.getLong("value1");
-    assert(!val1.isNull);
     assert(val1 == 1, val1.toString);
 
     auto val3 = config.getDouble("value3");
-    assert(!val3.isNull);
     assert(val3 == 2.5, val3.toString);
 
     auto val4 = config.getBool("value4");
-    assert(!val4.isNull);
     assert(val4 == true);
 
     bool isSet1 = config.setValue("value1", 2);
@@ -461,25 +391,20 @@ value4=true";
     assert(isSet3);
 
     auto longV1 = config.getLong("value1");
-    assert(!longV1.isNull);
     assert(longV1 == 2, longV1.toString);
 
     auto dV3 = config.getDouble("value3");
-    assert(!dV3.isNull);
     assert(dV3 == 10.5, dV3.toString);
 
     auto bV4 = config.getBool("value4");
-    assert(!bV4.isNull);
     assert(bV4 == false);
 
     immutable immConfig = config.idup;
     assert(immConfig.hasKey("value1"));
 
     auto immVal1 = config.getLong("value1");
-    assert(!immVal1.isNull);
     assert(immVal1 == 2, immVal1.toString);
 
     auto immVal3 = config.getDouble("value3");
-    assert(!immVal3.isNull);
     assert(immVal3 == 10.5, immVal3.toString);
 }

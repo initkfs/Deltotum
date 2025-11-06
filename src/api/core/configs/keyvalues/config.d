@@ -1,15 +1,10 @@
 module api.core.configs.keyvalues.config;
 
-import std.typecons : Nullable;
-
 /**
  * Authors: initkfs
 */
 abstract class Config
 {
-    bool isThrowOnNotExistentKey = true;
-    bool isThrowOnSetValueNotExistentKey = true;
-
     abstract
     {
         bool load();
@@ -19,41 +14,36 @@ abstract class Config
 
         bool hasKey(const string key) const;
 
-        Nullable!bool getBool(string key) const;
+        bool getBool(string key) const;
         bool setBool(string key, bool value);
 
-        Nullable!string getString(string key) const;
+        string getString(string key) const;
         bool setString(string key, string value);
-        
-        Nullable!int getInt(string key) const;
+
+        int getInt(string key) const;
         bool setInt(string key, int value);
 
-        Nullable!long getLong(string key) const;
+        long getLong(string key) const;
         bool setLong(string key, long value);
 
-        Nullable!double getDouble(string key) const;
+        double getDouble(string key) const;
         bool setDouble(string key, double value);
 
         immutable(Config) idup() const;
     }
 
-    Nullable!long getPositiveLong(string key) const
+    long getPositiveLong(string key) const
     {
-        auto mustBeValue = getLong(key);
-        if (!mustBeValue.isNull)
+        auto value = getLong(key);
+        if (value <= 0)
         {
-            const long value = mustBeValue.get;
+            import std.format : format;
 
-            if (value <= 0)
-            {
-                import std.format : format;
-
-                throw new Exception(format(
-                        "Expected positive long value from config with key '%s', but received %s", key, value));
-            }
+            throw new Exception(format(
+                    "Expected positive long value from config with key '%s', but received %s", key, value));
         }
 
-        return mustBeValue;
+        return value;
     }
 
     bool setPositiveLong(string key, long value)
@@ -68,25 +58,20 @@ abstract class Config
         return setLong(key, value);
     }
 
-    Nullable!double getFiniteDouble(string key) const
+    double getFiniteDouble(string key) const
     {
-        auto mustBeValue = getDouble(key);
-        if (!mustBeValue.isNull)
+        auto value = getDouble(key);
+        import std.math.traits : isFinite;
+
+        if (!isFinite(value))
         {
-            double val = mustBeValue.get;
+            import std.format : format;
 
-            import std.math.traits : isFinite;
-
-            if (!isFinite(val))
-            {
-                import std.format : format;
-
-                throw new Exception(format(
-                        "Expected finite double from config with key '%s', but received %s", key, val));
-            }
+            throw new Exception(format(
+                    "Expected finite double value from config with key '%s', but received %s", key, value));
         }
 
-        return mustBeValue;
+        return value;
     }
 
     bool setFiniteDouble(string key, double value)
@@ -103,19 +88,15 @@ abstract class Config
         return setDouble(key, value);
     }
 
-    Nullable!string getNotEmptyString(string key) const
+    string getNotEmptyString(string key) const
     {
-        auto mustBeString = getString(key);
-        if (!mustBeString.isNull)
+        auto value = getString(key);
+        if (value.length == 0)
         {
-            const string value = mustBeString.get;
-            if (value.length == 0)
-            {
-                throw new Exception(
-                    "Received empty string value from config with key: " ~ key);
-            }
+            throw new Exception(
+                "Received empty string value from config with key: " ~ key);
         }
-        return mustBeString;
+        return value;
     }
 
     bool setNotEmptyString(string key, string value)

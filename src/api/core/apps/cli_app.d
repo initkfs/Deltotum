@@ -35,7 +35,6 @@ import std.getopt : GetoptResult;
 class CliApp : SimpleUnit
 {
     bool isStopMainController = true;
-    bool isStrictConfigs = true;
 
     string defaultDataDir = "data";
     string defaultConfigsDir = "configs";
@@ -362,8 +361,6 @@ class CliApp : SimpleUnit
 
         auto envConfig = newAAConstConfig;
         uservices.cli.printer.printIfNotSilent("Create config from environment");
-        envConfig.isThrowOnNotExistentKey = isStrictConfigs;
-        envConfig.isThrowOnSetValueNotExistentKey = isStrictConfigs;
 
         Config[] configs = [envConfig]; //TODO is hidden
 
@@ -389,8 +386,6 @@ class CliApp : SimpleUnit
                 {
                     auto newConfig = newConfigFromFile(
                         configPath.name);
-                    newConfig.isThrowOnNotExistentKey = isStrictConfigs;
-                    newConfig.isThrowOnSetValueNotExistentKey = isStrictConfigs;
                     configs ~= newConfig;
                     uservices.cli.printer.printIfNotSilent(
                         "Load config: " ~ configPath.name);
@@ -404,8 +399,6 @@ class CliApp : SimpleUnit
         }
 
         auto config = newConfigAggregator(configs);
-        config.isThrowOnNotExistentKey = isStrictConfigs;
-        config.isThrowOnSetValueNotExistentKey = isStrictConfigs;
         immutable bool isLoad = config.load;
         import std.format : format;
 

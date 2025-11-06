@@ -65,6 +65,7 @@ import api.dm.kit.platforms.screens.screening : Screening;
 
 import std.logger : Logger, MultiLogger, FileLogger, LogLevel, sharedLog;
 import std.stdio;
+import KitConfigKeys = api.dm.kit.kit_config_keys;
 
 import api.dm.lib.cairo : CairoLib;
 import api.dm.lib.libxml.native : LibxmlLib;
@@ -186,7 +187,8 @@ class SdlApp : GuiApp
         import KitConfigKeys = api.dm.kit.kit_config_keys;
 
         gpuDevice = new SdlGPUDevice;
-        if (uservices.config.getBool(KitConfigKeys.backendIsGPU).get)
+        if (uservices.config.hasKey(KitConfigKeys.backendIsGPU) && uservices.config.getBool(
+                KitConfigKeys.backendIsGPU))
         {
             if (const err = gpuDevice.create)
             {
@@ -277,47 +279,31 @@ class SdlApp : GuiApp
         _media.chunkFromBufferProvider = (buff) { return new SdlMixerChunk(buff); };
         _media.initialize;
 
-        //TODO lazy load with config value
-        auto cairoLibForLoad = new CairoLib;
+        gservices.platform.cap.isVectorGraphics = true;
+        if (uservices.config.hasKey(KitConfigKeys.graphicsUseVector))
+        {
+            gservices.platform.cap.isVectorGraphics = uservices.config.getBool(
+                KitConfigKeys.graphicsUseVector);
+        }
 
-        cairoLibForLoad.onLoad = () {
-            cairoLib = cairoLibForLoad;
+        if (gservices.platform.cap.isVectorGraphics)
+        {
+            auto cairoLibForLoad = new CairoLib;
 
-            import KitConfigKeys = api.dm.kit.kit_config_keys;
+            cairoLibForLoad.onLoad = () {
+                cairoLib = cairoLibForLoad;
+                theme.isUseVectorGraphics = gservices.platform.cap.isVectorGraphics;
+                uservices.logger.trace("Load Cairo library.");
+            };
 
-            if (uservices.config.hasKey(KitConfigKeys.graphicsUseVector))
-            {
-                const mustBeIsUseVector = uservices.config.getBool(
-                    KitConfigKeys.graphicsUseVector);
-                if (!mustBeIsUseVector.isNull)
-                {
-                    const bool isUseVector = mustBeIsUseVector.get;
-                    gservices.platform.cap.isVectorGraphics = isUseVector;
-                    uservices.logger.trace("Found using vector graphic from config: ", isUseVector);
-                }
-                else
-                {
-                    uservices.logger.error("Found using vector graphic key, but not value: ", KitConfigKeys
-                            .graphicsUseVector);
-                }
-            }
-            else
-            {
-                gservices.platform.cap.isVectorGraphics = true;
-            }
+            cairoLibForLoad.onLoadErrors = (err) {
+                uservices.logger.error("Cairo loading error: ", err);
+                cairoLibForLoad.unload;
+                cairoLib = null;
+            };
 
-            theme.isUseVectorGraphics = gservices.platform.cap.isVectorGraphics;
-
-            uservices.logger.trace("Load Cairo library.");
-        };
-
-        cairoLibForLoad.onLoadErrors = (err) {
-            uservices.logger.error("Cairo loading error: ", err);
-            cairoLibForLoad.unload;
-            cairoLib = null;
-        };
-
-        cairoLibForLoad.load;
+            cairoLibForLoad.load;
+        }
 
         auto xmlLibForLoad = new LibxmlLib;
 
@@ -653,8 +639,8 @@ class SdlApp : GuiApp
             //This hint should be set before SDL is initialized.
             if (uservices.config.hasKey(KitConfigKeys.backendJoystickIsClassic))
             {
-                bool isClassicDev = uservices.config.getBool(KitConfigKeys.backendJoystickIsClassic)
-                    .get;
+                bool isClassicDev = uservices.config.getBool(
+                    KitConfigKeys.backendJoystickIsClassic);
 
                 if (isClassicDev)
                 {
@@ -743,7 +729,7 @@ class SdlApp : GuiApp
 
                 if (uservices.config.hasKey(KitConfigKeys.backendJoystickIndex))
                 {
-                    int index = uservices.config.getInt(KitConfigKeys.backendJoystickIndex).get;
+                    int index = uservices.config.getInt(KitConfigKeys.backendJoystickIndex);
                     if (index < 0)
                     {
                         throw new Exception("Joystick index must be positive number");
@@ -1043,8 +1029,8 @@ class SdlApp : GuiApp
 
         if (uservices.config.hasKey(KitConfigKeys.sceneIsDebug))
         {
-            auto mustBeDebug = uservices.config.getBool(KitConfigKeys.sceneIsDebug);
-            if (!mustBeDebug.isNull && mustBeDebug.get)
+            auto isSceneDebug = uservices.config.getBool(KitConfigKeys.sceneIsDebug);
+            if (isSceneDebug)
             {
                 import api.dm.gui.supports.editors.guieditor : GuiEditor;
 

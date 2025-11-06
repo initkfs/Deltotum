@@ -2,13 +2,12 @@ module api.core.configs.keyvalues.config_aggregator;
 
 import api.core.configs.keyvalues.config : Config;
 
-import std.typecons : Nullable;
-
 /**
  * Authors: initkfs
 */
 class ConfigAggregator : Config
 {
+    bool isThrowOnFailSetter = true;
 
     protected
     {
@@ -93,10 +92,7 @@ class ConfigAggregator : Config
         return true;
     }
 
-    size_t length()
-    {
-        return _configs.length;
-    }
+    size_t length() => _configs.length;
 
     override bool hasKey(string key) const
     {
@@ -110,7 +106,7 @@ class ConfigAggregator : Config
         return false;
     }
 
-    inout(Config) searchConfigByKey(string key) inout
+    inout(Config) searchConfigOrNull(string key) inout
     {
         foreach (config; _configs)
         {
@@ -120,147 +116,137 @@ class ConfigAggregator : Config
             }
         }
 
-        if (isThrowOnNotExistentKey)
-        {
-            throw new Exception("Not found config for key: " ~ key);
-        }
-
         return null;
     }
 
-    override Nullable!bool getBool(string key) const
+    override bool getBool(string key) const
     {
-        if (auto config = searchConfigByKey(key))
+        if (auto config = searchConfigOrNull(key))
         {
             return config.getBool(key);
         }
-        return Nullable!bool.init;
+
+        throw new Exception("Not found boolean value in configs with key: " ~ key);
     }
 
     override bool setBool(string key, bool value)
     {
-        if (auto config = searchConfigByKey(key))
+        if (auto config = searchConfigOrNull(key))
         {
             return config.setBool(key, value);
         }
 
-        if (isThrowOnSetValueNotExistentKey)
+        if (isThrowOnFailSetter)
         {
             import std.conv : text;
 
             throw new Exception(text("Not found config for key ", key, " and bool value ", value));
         }
-
         return false;
     }
 
-    override Nullable!string getString(string key) const
+    override string getString(string key) const
     {
-        if (auto config = searchConfigByKey(key))
+        if (auto config = searchConfigOrNull(key))
         {
             return config.getString(key);
         }
-        return Nullable!string.init;
+        throw new Exception("Not found string value in configs with key: " ~ key);
     }
 
     override bool setString(string key, string value)
     {
-        if (auto config = searchConfigByKey(key))
+        if (auto config = searchConfigOrNull(key))
         {
             return config.setString(key, value);
         }
 
-        if (isThrowOnSetValueNotExistentKey)
+        if (isThrowOnFailSetter)
         {
             import std.conv : text;
 
             throw new Exception(text("Not found config for key ", key, " and string value ", value));
-        }
 
+        }
         return false;
     }
 
-    override Nullable!int getInt(string key) const
+    override int getInt(string key) const
     {
-        if (auto config = searchConfigByKey(key))
+        if (auto config = searchConfigOrNull(key))
         {
             return config.getInt(key);
         }
-        return Nullable!int.init;
+        throw new Exception("Not found integer value in configs with key: " ~ key);
     }
 
     override bool setInt(string key, int value)
     {
-        if (auto config = searchConfigByKey(key))
+        if (auto config = searchConfigOrNull(key))
         {
             return config.setInt(key, value);
         }
 
-        if (isThrowOnSetValueNotExistentKey)
+        if (isThrowOnFailSetter)
         {
             import std.conv : text;
 
             throw new Exception(text("Not found config for key ", key, " and int value ", value));
         }
-
         return false;
     }
 
-    override Nullable!long getLong(string key) const
+    override long getLong(string key) const
     {
-        if (auto config = searchConfigByKey(key))
+        if (auto config = searchConfigOrNull(key))
         {
             return config.getLong(key);
         }
-        return Nullable!long.init;
+        throw new Exception("Not found long value in configs with key: " ~ key);
     }
 
     override bool setLong(string key, long value)
     {
-        if (auto config = searchConfigByKey(key))
+        if (auto config = searchConfigOrNull(key))
         {
             return config.setLong(key, value);
         }
 
-        if (isThrowOnSetValueNotExistentKey)
+        if (isThrowOnFailSetter)
         {
             import std.conv : text;
 
             throw new Exception(text("Not found config for key ", key, " and long value ", value));
         }
-
         return false;
     }
 
-    override Nullable!double getDouble(string key) const
+    override double getDouble(string key) const
     {
-        if (auto config = searchConfigByKey(key))
+        if (auto config = searchConfigOrNull(key))
         {
             return config.getDouble(key);
         }
-        return Nullable!double.init;
+        throw new Exception("Not found double value in configs with key: " ~ key);
     }
 
     override bool setDouble(string key, double value)
     {
-        if (auto config = searchConfigByKey(key))
+        if (auto config = searchConfigOrNull(key))
         {
             return config.setDouble(key, value);
         }
-        if (isThrowOnSetValueNotExistentKey)
+        
+        if (isThrowOnFailSetter)
         {
             import std.conv : text;
 
             throw new Exception(text("Not found config for key ", key, " and double value ", value));
         }
-
         return false;
     }
 
-    inout(Config[]) configs() inout
-    {
-        return _configs;
-    }
+    inout(Config[]) configs() inout => _configs;
 
     override immutable(ConfigAggregator) idup() const
     {
@@ -297,14 +283,4 @@ unittest
     immutable ca = new immutable ConfigAggregator([]);
     assert(!ca.hasKey(keyName));
     assertThrown(ca.getNotEmptyString(keyName));
-
-    auto cMut = new ConfigAggregator([]);
-
-    assertThrown(cMut.getNotEmptyString(keyName));
-    cMut.isThrowOnNotExistentKey = false;
-    assert(cMut.getNotEmptyString(keyName).isNull);
-
-    assertThrown(cMut.setString(keyName, "value"));
-    cMut.isThrowOnSetValueNotExistentKey = false;
-    assert(!cMut.setString(keyName, "value"));
 }

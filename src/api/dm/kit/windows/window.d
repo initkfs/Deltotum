@@ -227,10 +227,7 @@ class Window : GraphicComponent
         if (config.hasKey(ConfigKeys.sceneNameCurrent))
         {
             const sceneName = config.getNotEmptyString(ConfigKeys.sceneNameCurrent);
-            if (!sceneName.isNull)
-            {
-                return changeByName(sceneName.get);
-            }
+            return changeByName(sceneName);
         }
 
         return setCurrent(scene);

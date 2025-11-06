@@ -77,25 +77,20 @@ class ThemeFromConfigFactory : ApplicationUnit
                         static assert(false, text("Not found type ", fieldType.stringof, " in theme with config key", themeConfigKey));
                     }
 
-                    if (value.isNull)
-                    {
-                        throw new Exception(
-                            "Received empty value for theme config key: " ~ themeConfigKey);
-                    }
 
                     static if (is(fieldType : RGBA))
                     {
-                        __traits(getMember, newTheme, fieldName) = RGBA.web(value.get);
+                        __traits(getMember, newTheme, fieldName) = RGBA.web(value);
                     }
                     else static if (is(fieldType == ulong))
                     {
                         import std.conv : to;
 
-                        __traits(getMember, newTheme, fieldName) = value.get.to!ulong;
+                        __traits(getMember, newTheme, fieldName) = value.to!ulong;
                     }
                     else
                     {
-                        __traits(getMember, newTheme, fieldName) = value.get;
+                        __traits(getMember, newTheme, fieldName) = value;
                     }
                 }
 
