@@ -3,7 +3,7 @@ module api.dm.kit.sprites3d.pipelines.items.base_lighting_group;
 import api.dm.kit.sprites3d.pipelines.pipeline_group : PipelineGroup;
 import api.dm.kit.sprites3d.lightings.lights.light_group : LightGroup;
 
-import api.math.geom2.vec3: Vec3f;
+import api.math.geom2.vec3 : Vec3f;
 import Math = api.math;
 
 /**
@@ -34,16 +34,18 @@ class BaseLightingGroup : PipelineGroup
             float farPlane;
         }
 
-        struct Planes
+        struct UniformData
         {
             PlaneInfo planeInfo;
         align(16):
             float[3] cameraPos;
             PhongData material;
-            LightData light;
+            LightData[16] lights;
+        align(4):
+            uint lightCount;
         }
 
-        Planes planes = Planes();
+        UniformData planes = UniformData();
 
         planes.planeInfo.nearPlane = camera.nearPlane;
         planes.planeInfo.farPlane = camera.farPlane;
@@ -52,25 +54,30 @@ class BaseLightingGroup : PipelineGroup
             camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z
         ];
 
+        planes.lightCount = cast(uint) lights.length;
+
         planes.material.ambient = Vec3f(1.0f, 0.5f, 0.31f);
         planes.material.diffuse = Vec3f(1.0f, 0.5f, 0.31f);
         planes.material.specular = Vec3f(0.5f, 0.5f, 0.5f);
         planes.material.shininess = 32;
         planes.material.color = Vec3f(1.0f, 0.5f, 0.31f);
 
-        auto lamp = lights.lights[0];
+        foreach (li; 0 .. planes.lightCount)
+        {
+            auto lamp = lights.lights[li];
 
-        planes.light.position = lamp.translatePos;
-        planes.light.direction = camera.cameraFront;
-        planes.light.ambient = Vec3f(0.2f, 0.2f, 0.2f);
-        planes.light.diffuse = Vec3f(0.7f, 0.7f, 0.7f);
-        planes.light.specular = Vec3f(1.0f, 1.0f, 1.0f);
-        planes.light.constant = 1.0;
-        planes.light.linear = 0.09f;
-        planes.light.quadratic = 0;
-        planes.light.type = 0;
-        planes.light.cutoff = Math.cosDeg(12.5);
-        planes.light.outerCutoff = Math.cosDeg(17.5);
+            planes.lights[li].position = lamp.translatePos;
+            planes.lights[li].direction = camera.cameraFront;
+            planes.lights[li].ambient = Vec3f(0.2f, 0.2f, 0.2f);
+            planes.lights[li].diffuse = Vec3f(0.7f, 0.7f, 0.7f);
+            planes.lights[li].specular = Vec3f(1.0f, 1.0f, 1.0f);
+            planes.lights[li].constant = 1.0;
+            planes.lights[li].linear = 0.09f;
+            planes.lights[li].quadratic = 0;
+            planes.lights[li].type = 0;
+            planes.lights[li].cutoff = Math.cosDeg(12.5);
+            planes.lights[li].outerCutoff = Math.cosDeg(17.5);
+        }
 
         gpu.dev.pushUniformFragmentData(0, &planes, planes.sizeof);
     }

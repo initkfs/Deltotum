@@ -16,6 +16,18 @@ struct PipelineBuffers
     uint numFragStorageBuffers;
     uint numFragUniformBuffers;
     uint numFragStorageTextures;
+
+    string toString() const
+    {
+        import std.format : format;
+
+        return format("VertexSample:%d, VertexStorage:%d, VertexUniform:%d, VertexStorageTexture:%d, FragSample:%d, FragStorage:%d, FragUniform:%d, FragStorageTexture:%d", numVertexSamples, numVertexStorageBuffers, numVertexUniformBuffers, numVertexStorageTextures, numFragSamples, numFragStorageBuffers, numFragUniformBuffers, numFragStorageTextures);
+    }
+}
+
+struct SimpleDataBuffer
+{
+    float[4] value1;
 }
 
 /**
@@ -29,49 +41,119 @@ class PipelineGroup : Sprite3d
         SdlGPUPipeline _pipeline;
 
         PipelineGroup[] childPipelines;
+
+        bool _hasSprites;
     }
 
     string vertexShaderName;
     string fragmentShaderName;
 
     bool isDepth = true;
+    bool isCreateDataBuffer;
+    bool isBindForEmptyChildren;
+
+    SDL_GPUBuffer* dataBufferPtr;
+    SDL_GPUTransferBuffer* dataTransferBufferPtr;
 
     this()
     {
         isPushUniformVertexMatrix = false;
     }
 
+    override void create()
+    {
+        super.create;
+
+        if (isCreateDataBuffer)
+        {
+            dataBufferPtr = gpu.dev.newGPUBuffer(SDL_GPU_BUFFERUSAGE_GRAPHICS_STORAGE_READ, SimpleDataBuffer
+                    .sizeof);
+            gpu.dev.setGPUBufferName(dataBufferPtr, "DataBuffer");
+            dataTransferBufferPtr = gpu.dev.newTransferDownloadBuffer(SimpleDataBuffer.sizeof);
+        }
+    }
+
     override bool draw()
     {
         foreach (pipe; childPipelines)
         {
-            pipe.bindPipeline;
-            pipe.draw;
+            if (pipe.bindPipeline)
+            {
+                if (pipe.isCreateDataBuffer)
+                {
+                    pipe.bindDataBuffer;
+                }
+                pipe.draw;
+            }
+
         }
 
-        bindPipeline;
-        return super.draw;
+        if (bindPipeline)
+        {
+            if (isCreateDataBuffer)
+            {
+                bindDataBuffer;
+            }
+            return super.draw;
+        }
+
+        return false;
     }
 
-    void bindPipeline()
+    override void bindAll()
     {
-        assert(_pipeline);
+        super.bindAll;
+    }
+
+    void bindDataBuffer()
+    {
+        gpu.dev.bindFragmentStorageBuffer(dataBufferPtr);
+    }
+
+    bool bindPipeline()
+    {
+        //assert(_pipeline);
+        if(!_pipeline){
+            return false;
+        }
+
+        if (((!_hasSprites) || children.length == 0) && !isBindForEmptyChildren)
+        {
+            return false;
+        }
+
         gpu.dev.bindPipeline(_pipeline);
+        return true;
     }
 
     override void add(Sprite2d object, long index = -1)
     {
         super.add(object, index);
-
         if (auto pipeline = cast(PipelineGroup) object)
         {
             //TODO check exists
             childPipelines ~= pipeline;
             pipeline.isDrawByParent = false;
         }
+        else
+        {
+            if (!_hasSprites)
+            {
+                //TODO on remove
+                _hasSprites = true;
+            }
+        }
     }
 
-    PipelineBuffers pipeBuffers() => PipelineBuffers();
+    PipelineBuffers pipeBuffers()
+    {
+        PipelineBuffers buffers;
+        if (isCreateDataBuffer)
+        {
+            buffers.numFragStorageBuffers = 1;
+        }
+        return buffers;
+    }
 
     void createPipelineFull(
         in PipelineBuffers buffers,
@@ -80,12 +162,16 @@ class PipelineGroup : Sprite3d
         SDL_GPUGraphicsPipelineTargetInfo* colorDesc = null
     )
     {
+        assert(!_pipeline, "Found old pipeline");
 
         assert(vertexShaderName.length > 0);
-        assert(fragmentShaderName.length > 0);
+        assert(
+            fragmentShaderName.length > 0);
 
-        auto vertShaderPath = gpu.shaderDefaultPath(vertexShaderName);
-        auto fragShaderPath = gpu.shaderDefaultPath(fragmentShaderName);
+        auto vertShaderPath = gpu.shaderDefaultPath(
+            vertexShaderName);
+        auto fragShaderPath = gpu.shaderDefaultPath(
+            fragmentShaderName);
 
         _pipeline = gpu.newPipeline(
             vertShaderPath,
@@ -101,7 +187,6 @@ class PipelineGroup : Sprite3d
             rasterState,
             stencilState,
             colorDesc);
-
         if (!_pipeline)
         {
             throw new Exception("Pipeline is null");
@@ -115,8 +200,8 @@ class PipelineGroup : Sprite3d
         SDL_GPUColorTargetDescription[1] targetDesc;
         targetDesc[0].format = gpu.getSwapchainTextureFormat;
         targetInfo.num_color_targets = 1;
-        targetInfo.color_target_descriptions = targetDesc.ptr;
-
+        targetInfo.color_target_descriptions = targetDesc
+            .ptr;
         if (isDepth)
         {
             targetInfo.has_depth_stencil_target = true;
@@ -124,7 +209,8 @@ class PipelineGroup : Sprite3d
         }
 
         auto stencilState = isDepth ? gpu.dev.depthStencilState : gpu.dev.stencilState;
-        auto rastState = isDepth ? gpu.dev.depthRasterizerState : gpu.dev.rasterizerState;
+        auto rastState = isDepth ? gpu.dev
+            .depthRasterizerState : gpu.dev.rasterizerState;
 
         createPipelineFull(
             buffers,
@@ -145,13 +231,37 @@ class PipelineGroup : Sprite3d
         _pipeline = npipeline;
     }
 
+    SimpleDataBuffer downloadData()
+    {
+        gpu.dev.startCopyPass;
+        gpu.dev.downloadBuffer(dataBufferPtr, dataTransferBufferPtr, SimpleDataBuffer.sizeof);
+        gpu.dev.endCopyPass(true);
+
+        SimpleDataBuffer dataBuffer;
+        auto dataBuffPtr = cast(SimpleDataBuffer*) gpu.dev.mapTransferBuffer(dataTransferBufferPtr);
+        dataBuffer.value1 = (*dataBuffPtr).value1;
+        gpu.dev.unmapTransferBuffer(dataTransferBufferPtr);
+        return dataBuffer;
+    }
+
     override void dispose()
     {
         super.dispose;
-
         if (_pipeline)
         {
             gpu.dev.deletePipeline(_pipeline);
+        }
+
+        if (dataBufferPtr)
+        {
+            gpu.dev.deleteGPUBuffer(dataBufferPtr);
+            dataBufferPtr = null;
+        }
+
+        if (dataTransferBufferPtr)
+        {
+            gpu.dev.deleteTransferBuffer(dataTransferBufferPtr);
+            dataTransferBufferPtr = null;
         }
     }
 

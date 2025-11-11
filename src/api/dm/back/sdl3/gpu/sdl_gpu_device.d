@@ -243,15 +243,19 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         uint numFragStorageTextures = 0,
         SDL_GPURasterizerState* rasterState = null,
         SDL_GPUDepthStencilState* stencilState = null,
-        SDL_GPUGraphicsPipelineTargetInfo* targetInfo = null
+        SDL_GPUGraphicsPipelineTargetInfo* targetInfo = null,
+        string name = null
 
     )
     {
         auto vertexShader = newVertexSPIRV(vertexPath, numVertexSamples, numVertexStorageBuffers, numVertexUniformBuffers, numVertexStorageTextures);
 
+        import std;
+        debug writeln("\n", fragmentPath, " ", numFragStorageBuffers);
+
         auto fragmentShader = newFragmentSPIRV(fragmentPath, numFragSamples, numFragStorageBuffers, numFragUniformBuffers, numFragStorageTextures);
 
-        auto pipeline = newPipeline(window, vertexShader, fragmentShader, rasterState, stencilState, targetInfo);
+        auto pipeline = newPipeline(window, vertexShader, fragmentShader, rasterState, stencilState, targetInfo, name);
 
         deleteShader(vertexShader);
         deleteShader(fragmentShader);
@@ -259,9 +263,17 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return pipeline;
     }
 
-    SdlGPUPipeline newPipeline(SDL_Window* window, SdlGPUShader vertexShader, SdlGPUShader fragmentShader, SDL_GPURasterizerState* rasterState = null, SDL_GPUDepthStencilState* stencilState = null, SDL_GPUGraphicsPipelineTargetInfo* targetInfo = null)
+    SdlGPUPipeline newPipeline(SDL_Window* window, SdlGPUShader vertexShader, SdlGPUShader fragmentShader, SDL_GPURasterizerState* rasterState = null, SDL_GPUDepthStencilState* stencilState = null, SDL_GPUGraphicsPipelineTargetInfo* targetInfo = null, string name = null)
     {
         SDL_GPUGraphicsPipelineCreateInfo info;
+
+        if (name.length > 0)
+        {
+            import std.string : toStringz;
+
+            SDL_SetStringProperty(info.props, SDL_PROP_GPU_GRAPHICSPIPELINE_CREATE_NAME_STRING.ptr, name
+                    .toStringz);
+        }
 
         info.primitive_type = SDL_GPU_PRIMITIVETYPE_TRIANGLELIST;
         info.vertex_shader = vertexShader.getObject;
@@ -374,6 +386,17 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
     void deleteGPUBuffer(SDL_GPUBuffer* buffPtr)
     {
         SDL_ReleaseGPUBuffer(ptr, buffPtr);
+    }
+
+    void setGPUBufferName(SDL_GPUBuffer* buffer, string text)
+    {
+        import std.string: toStringz;
+        SDL_SetGPUBufferName(ptr, buffer, text.toStringz);
+    }
+
+    void setGPUBufferName(SDL_GPUBuffer* buffer, const(char*) text)
+    {
+        SDL_SetGPUBufferName(ptr, buffer, text);
     }
 
     SDL_GPUTransferBuffer* newTransferUploadBuffer(size_t size) => newTransferBuffer(
@@ -948,7 +971,8 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         SDL_BindGPUIndexBuffer(lastPass, bindings, indexElementSize);
     }
 
-    void bindFragmentStorageBuffer(SDL_GPUBuffer* buffer, uint firstSlot = 0){
+    void bindFragmentStorageBuffer(SDL_GPUBuffer* buffer, uint firstSlot = 0)
+    {
         assert(state == GPUGraphicState.renderStart);
         assert(lastPass);
         SDL_BindGPUFragmentStorageBuffers(lastPass, firstSlot, &buffer, 1);

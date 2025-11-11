@@ -10,7 +10,6 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.gui.controls.switches.buttons.button : Button;
 import api.dm.kit.sprites3d.pipelines.skyboxes.skybox : SkyBox;
-import api.dm.kit.sprites3d.pipelines.items.detailed_group : DetailedGroup;
 import api.dm.kit.sprites3d.lightings.lights.light_group : LightGroup;
 
 import api.dm.kit.sprites2d.tweens;
@@ -62,6 +61,7 @@ class Start : GuiScene
 
     Cube cube;
     DirLight lamp;
+    DirLight lamp2;
 
     SimpleGroup env;
 
@@ -100,6 +100,7 @@ class Start : GuiScene
         assert(camera);
 
         env = new SimpleGroup;
+        env.isCreateDataBuffer = true;
         addCreate(env);
         assert(env.hasCamera);
 
@@ -135,22 +136,12 @@ class Start : GuiScene
         env.addCreate(shape);
 
         lamp = new DirLight;
-        lamp.mesh = new Sphere(0.5);
-        lamp.mesh.scale = Vec3f(0.2, 0.2, 0.2);
-        lamp.pos = Vec2d(1, 0.5);
-        lamp.mesh.pos = lamp.pos;
-        lamp.z = 1;
-        lamp.mesh.z = 1;
-        lamp.isRotateAroundPivot = true;
-        lamp.rotateRadius = 0.8;
-        lamp.rotatePivot = shape.translatePos;
-        //lamp.rotation.y = 1;
-        lamp.mesh.isRotateAroundPivot = true;
-        lamp.mesh.rotateRadius = 0.8;
-        lamp.mesh.rotatePivot = shape.translatePos;
-        //lamp.mesh.rotation.y = 1;
-
         env.lights.addCreate(lamp);
+        lamp.pos = Vec3f(1, 1, -1);
+
+        lamp2 = new DirLight;
+        env.lights.addCreate(lamp2);
+        lamp2.pos = Vec3f(-1, -1, -1);
 
         auto skyBoxPath = context.app.userDir ~ "/nebula/";
         skybox = new SkyBox(skyBoxPath, "png");
@@ -186,13 +177,7 @@ class Start : GuiScene
 
         // import api.dm.back.sdl3.images.sdl_image : SdlImage;
 
-        lamp.isVisible = false;
-
-        onJoystickButtonPress ~= (ref e) {
-            import std;
-
-            writeln("Button: ", e.button);
-        };
+        //lamp.isVisible = false;
 
         // onJoystickAxis ~= (ref e) {
         //     const int deadzone = 4000;
@@ -394,6 +379,10 @@ class Start : GuiScene
         // lamp.x = lampPosition.x;
         // lamp.y = lampPosition.y;
         // lamp.z = lampPosition.z;
+
+        import std;
+
+        writeln(env.downloadData.value1);
     }
 
     override void draw()

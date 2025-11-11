@@ -15,6 +15,7 @@ class SimpleGroup : BaseLightingGroup
 {
     this()
     {
+        super();
         vertexShaderName = "EnvFull.vert";
         fragmentShaderName = "EnvSimple.frag";
     }
@@ -24,9 +25,9 @@ class SimpleGroup : BaseLightingGroup
         super.create;
 
         auto buff = pipeBuffers;
-        buff.numVertexUniformBuffers = 1;
-        buff.numFragSamples = 1;
-        buff.numFragUniformBuffers = 1;
+        buff.numVertexUniformBuffers += 1;
+        buff.numFragSamples += 1;
+        buff.numFragUniformBuffers += 1;
         createPipeline(buff);
     }
 }

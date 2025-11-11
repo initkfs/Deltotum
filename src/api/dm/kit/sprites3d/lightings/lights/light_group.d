@@ -48,6 +48,8 @@ class LightGroup : PipelineGroup
         }
     }
 
+    size_t length() => lights.length;
+
     override void pushUniforms()
     {
         super.pushUniforms;

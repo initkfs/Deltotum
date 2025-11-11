@@ -75,10 +75,11 @@ class GPUGraphic : ApplicationUnit
         uint numFragStorageTextures = 0,
         SDL_GPURasterizerState* rasterState = null,
         SDL_GPUDepthStencilState* stencilState = null,
-        SDL_GPUGraphicsPipelineTargetInfo* colorDesc = null
+        SDL_GPUGraphicsPipelineTargetInfo* colorDesc = null,
+        string name = null
     )
     {
-        return dev.newPipeline(currSdlWindow, vertexPath, fragmentPath, numVertexSamples, numVertexStorageBuffers, numVertexUniformBuffers, numVertexStorageTextures, numFragSamples, numFragStorageBuffers, numFragUniformBuffers, numFragStorageTextures, rasterState, stencilState, colorDesc);
+        return dev.newPipeline(currSdlWindow, vertexPath, fragmentPath, numVertexSamples, numVertexStorageBuffers, numVertexUniformBuffers, numVertexStorageTextures, numFragSamples, numFragStorageBuffers, numFragUniformBuffers, numFragStorageTextures, rasterState, stencilState, colorDesc, name);
     }
 
     SDL_GPUTextureFormat getSwapchainTextureFormat() => dev.getSwapchainTextureFormat(

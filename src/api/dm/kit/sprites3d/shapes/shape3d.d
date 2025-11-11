@@ -74,6 +74,7 @@ class Shape3d : Sprite3d
         if (!vertexBuffer)
         {
             vertexBuffer = gpu.dev.newGPUBufferVertex(vertexBuffLen);
+            gpu.dev.setGPUBufferName(vertexBuffer, "ShapeVertexBuffer");
         }
 
         const indexBuffLen = indexCount * ushort.sizeof;
@@ -81,6 +82,7 @@ class Shape3d : Sprite3d
         if (!indexBuffer)
         {
             indexBuffer = gpu.dev.newGPUBufferIndex(indexBuffLen);
+            gpu.dev.setGPUBufferName(indexBuffer, "ShapeIndexBuffer");
         }
 
         if (!transferBuffer)

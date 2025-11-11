@@ -89,6 +89,14 @@ class Scene3d : Scene2d
         }
     }
 
+    void uploadStart(){
+
+    }
+
+    void uploadEnd(){
+
+    }
+
     void uploadToGPU()
     {
         if (!gpu.isActive)
@@ -101,6 +109,8 @@ class Scene3d : Scene2d
             throw new Exception("Unable to start copy pass");
         }
 
+        uploadStart;
+
         foreach (sprite; sprites)
         {
             if (auto sprite3d = cast(Sprite3d) sprite)
@@ -108,6 +118,8 @@ class Scene3d : Scene2d
                 sprite3d.uploadStart;
             }
         }
+
+        uploadEnd;
 
         if (!gpu.dev.endCopyPass)
         {
