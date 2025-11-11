@@ -23,6 +23,7 @@ struct LightData {
     align(16):
     Vec3f position;
     Vec3f direction;
+    Vec3f lightDirection;
     Vec3f ambient;
     Vec3f diffuse;
     Vec3f specular;

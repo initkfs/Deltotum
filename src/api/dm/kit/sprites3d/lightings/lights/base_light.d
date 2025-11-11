@@ -14,6 +14,13 @@ class BaseLight : Sprite3d
 
     bool isCreateMesh = true;
 
+    Vec3f ambient = Vec3f(0.5f, 0.5f, 0.5f);
+    Vec3f diffuse = Vec3f(0.7f, 0.7f, 0.7f);
+    Vec3f specular = Vec3f(1.0f, 1.0f, 1.0f);
+
+    Vec3f direction;
+    Vec3f lightDirection;
+
     override void create()
     {
         super.create;

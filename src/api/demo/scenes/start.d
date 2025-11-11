@@ -38,6 +38,8 @@ import api.dm.kit.sprites3d.textures.texture3d : Texture3d;
 import api.dm.kit.sprites3d.pipelines.items.simple_group : SimpleGroup;
 import api.dm.kit.scenes.scene3d : SceneTransforms;
 import api.dm.kit.sprites3d.lightings.lights.dir_light : DirLight;
+import api.dm.kit.sprites3d.lightings.lights.point_light : PointLight;
+import api.dm.kit.sprites3d.lightings.lights.spot_light : SpotLight;
 
 import api.dm.back.sdl3.externs.csdl3;
 
@@ -60,8 +62,8 @@ class Start : GuiScene
     Random rnd;
 
     Cube cube;
-    DirLight lamp;
-    DirLight lamp2;
+    PointLight lamp;
+    PointLight lamp2;
 
     SimpleGroup env;
 
@@ -135,13 +137,30 @@ class Start : GuiScene
 
         env.addCreate(shape);
 
-        lamp = new DirLight;
+        lamp = new PointLight;
+        lamp.diffuse = RGBA.web("#2EDCA3").toVec3Norm;
+        lamp.ambient = Vec3f(0.3, 0.3, 0.3);
         env.lights.addCreate(lamp);
-        lamp.pos = Vec3f(1, 1, -1);
+        lamp.pos = Vec3f(0, 2, 0);
+        lamp.mesh.isVisible = false;
+        lamp.isManaged = false;
+        lamp.isRotateAroundPivot = true;
+        lamp.rotateRadius = 2;
+        lamp.rotatePivot = Vec3f();
 
-        lamp2 = new DirLight;
+        lamp2 = new PointLight;
+
+        lamp2.diffuse = RGBA.web("#00909C").toVec3Norm;
+        lamp2.isManaged = false;
         env.lights.addCreate(lamp2);
-        lamp2.pos = Vec3f(-1, -1, -1);
+        lamp2.mesh.isVisible = false;
+        lamp2.pos = Vec3f(0, -1, 0);
+        lamp2.ambient = Vec3f(0.2, 0.2, 0.2);
+        lamp2.lightDirection = Vec3f(0, 1, 0);
+
+        lamp2.isRotateAroundPivot = true;
+        lamp2.rotateRadius = 1;
+        lamp2.rotatePivot = Vec3f();
 
         auto skyBoxPath = context.app.userDir ~ "/nebula/";
         skybox = new SkyBox(skyBoxPath, "png");
@@ -245,6 +264,9 @@ class Start : GuiScene
         camera.cameraTarget = shape.translatePos;
         camera.angleX = shape.angleX;
         camera.isRecalcPos = true;
+
+        lamp.z = lamp.z + 0.1;
+        lamp2.z = lamp2.z - 0.1;
     }
 
     void moveUp(double speed)
@@ -255,6 +277,9 @@ class Start : GuiScene
         camera.cameraTarget = shape.translatePos;
         camera.angleX = shape.angleX;
         camera.isRecalcPos = true;
+
+        lamp.z = lamp.z - 0.1;
+        lamp2.z = lamp2.z + 0.1;
     }
 
     void moveLeft(double speedShape, double speedCamera)
@@ -266,6 +291,10 @@ class Start : GuiScene
         camera.cameraTarget = shape.translatePos;
         camera.angleY = -shape.angleY;
         camera.isRecalcPos = true;
+
+        lamp.x = lamp.x+ 0.1;
+        lamp2.x = lamp2.x - 0.1;
+
     }
 
     void moveRight(double speedShape, double speedCamera)
@@ -277,6 +306,9 @@ class Start : GuiScene
         camera.cameraTarget = shape.translatePos;
         camera.angleY = -shape.angleY;
         camera.isRecalcPos = true;
+
+        lamp.x = lamp.x - 0.1;
+        lamp2.x = lamp2.x + 0.1;
     }
 
     override void update(double dt)
@@ -380,9 +412,8 @@ class Start : GuiScene
         // lamp.y = lampPosition.y;
         // lamp.z = lampPosition.z;
 
-        import std;
-
-        writeln(env.downloadData.value1);
+        //import std;
+        //writeln(env.downloadData.value1);
     }
 
     override void draw()

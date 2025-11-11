@@ -40,7 +40,7 @@ class BaseLightingGroup : PipelineGroup
         align(16):
             float[3] cameraPos;
             PhongData material;
-            LightData[16] lights;
+            LightData[6] lights;
         align(4):
             uint lightCount;
         }
@@ -67,14 +67,38 @@ class BaseLightingGroup : PipelineGroup
             auto lamp = lights.lights[li];
 
             planes.lights[li].position = lamp.translatePos;
+            
             planes.lights[li].direction = camera.cameraFront;
-            planes.lights[li].ambient = Vec3f(0.2f, 0.2f, 0.2f);
-            planes.lights[li].diffuse = Vec3f(0.7f, 0.7f, 0.7f);
-            planes.lights[li].specular = Vec3f(1.0f, 1.0f, 1.0f);
+            
+            planes.lights[li].ambient = lamp.ambient;
+            planes.lights[li].diffuse = lamp.diffuse;
+            planes.lights[li].specular = lamp.specular;
             planes.lights[li].constant = 1.0;
             planes.lights[li].linear = 0.09f;
             planes.lights[li].quadratic = 0;
-            planes.lights[li].type = 0;
+
+            uint type;
+            import api.dm.kit.sprites3d.lightings.lights.dir_light : DirLight;
+            import api.dm.kit.sprites3d.lightings.lights.spot_light : SpotLight;
+            import api.dm.kit.sprites3d.lightings.lights.point_light : PointLight;
+
+            //TODO remove
+            if (cast(DirLight) lamp)
+            {
+                type = 0;
+            }
+            else if (cast(SpotLight) lamp)
+            {
+                planes.lights[li].lightDirection = lamp.lightDirection;
+                type = 2;
+            }
+            else if (cast(PointLight) lamp)
+            {
+                type = 1;
+            }
+
+            planes.lights[li].type = type;
+
             planes.lights[li].cutoff = Math.cosDeg(12.5);
             planes.lights[li].outerCutoff = Math.cosDeg(17.5);
         }

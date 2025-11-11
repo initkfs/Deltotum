@@ -451,7 +451,11 @@ struct RGBA
 
     RGBAb toRGBAb() => RGBAb(r, g, b, aByte);
 
-    float[4] toRGBArrayF() => [rNorm, gNorm, bNorm, a];
+    float[3] toArrayFRGB() => [rNorm, gNorm, bNorm];
+
+    import api.math.geom2.vec3: Vec3f;
+
+    Vec3f toVec3Norm() => Vec3f(rNorm, gNorm, bNorm);
 
     static
     {
