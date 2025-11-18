@@ -35,6 +35,7 @@ import api.dm.kit.sprites3d.shapes.cube : Cube;
 import api.dm.kit.sprites3d.shapes.sphere : Sphere;
 import api.dm.kit.sprites3d.shapes.cylinder : Cylinder;
 import api.dm.kit.sprites3d.textures.texture3d : Texture3d;
+import api.dm.kit.sprites3d.pipelines.items.full_group: FullGroup;
 import api.dm.kit.sprites3d.pipelines.items.simple_group : SimpleGroup;
 import api.dm.kit.scenes.scene3d : SceneTransforms;
 import api.dm.kit.sprites3d.lightings.lights.dir_light : DirLight;
@@ -65,7 +66,7 @@ class Start : GuiScene
     PointLight lamp;
     PointLight lamp2;
 
-    SimpleGroup env;
+    FullGroup env;
 
     struct UniformBuffer
     {
@@ -101,7 +102,7 @@ class Start : GuiScene
 
         assert(camera);
 
-        env = new SimpleGroup;
+        env = new FullGroup;
         env.isCreateDataBuffer = true;
         addCreate(env);
         assert(env.hasCamera);

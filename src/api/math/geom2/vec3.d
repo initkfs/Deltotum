@@ -409,6 +409,24 @@ struct Vec3f
             else
                 static assert(0, "Operator " ~ op ~ " not implemented");
         }
+
+        Vec3f opBinary(string op)(float factor)
+        {
+            static if (op == "*")
+                return scale(factor);
+            else static if (op == "/")
+                return div(factor);
+            else
+                static assert(0, "Operator " ~ op ~ " not implemented");
+        }
+
+        Vec3f opUnary(string op)()
+        {
+            static if (op == "-")
+                return neg;
+            else
+                static assert(0, "Unary operator " ~ op ~ " not implemented");
+        }
     }
 
     void opIndexAssign(double value, size_t i) @safe

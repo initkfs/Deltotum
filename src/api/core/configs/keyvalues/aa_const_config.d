@@ -155,14 +155,16 @@ unittest
     assert(!config.load);
     assert(!config.save);
 
+    import std.conv: to;
+
     auto val1 = config.getLong("value1");
-    assert(val1 == 1, val1.toString);
+    assert(val1 == 1, val1.to!string);
 
     auto val2 = config.getString("value2");
-    assert(val2 == "random text", val2.toString);
+    assert(val2 == "random text", val2.to!string);
 
     auto val3 = config.getDouble("value3");
-    assert(isClose(val3, 2.5), val3.toString);
+    assert(isClose(val3, 2.5), val3.to!string);
 
     auto val4 = config.getBool("value4");
     assert(val4 == true);

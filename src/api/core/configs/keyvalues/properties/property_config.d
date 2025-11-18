@@ -374,11 +374,13 @@ value4=true";
     assert(config.hasKey("value3"));
     assert(config.hasKey("value4"));
 
+    import std.conv: to;
+
     auto val1 = config.getLong("value1");
-    assert(val1 == 1, val1.toString);
+    assert(val1 == 1, val1.to!string);
 
     auto val3 = config.getDouble("value3");
-    assert(val3 == 2.5, val3.toString);
+    assert(val3 == 2.5, val3.to!string);
 
     auto val4 = config.getBool("value4");
     assert(val4 == true);
@@ -391,10 +393,10 @@ value4=true";
     assert(isSet3);
 
     auto longV1 = config.getLong("value1");
-    assert(longV1 == 2, longV1.toString);
+    assert(longV1 == 2, longV1.to!string);
 
     auto dV3 = config.getDouble("value3");
-    assert(dV3 == 10.5, dV3.toString);
+    assert(dV3 == 10.5, dV3.to!string);
 
     auto bV4 = config.getBool("value4");
     assert(bV4 == false);
@@ -403,8 +405,8 @@ value4=true";
     assert(immConfig.hasKey("value1"));
 
     auto immVal1 = config.getLong("value1");
-    assert(immVal1 == 2, immVal1.toString);
+    assert(immVal1 == 2, immVal1.to!string);
 
     auto immVal3 = config.getDouble("value3");
-    assert(immVal3 == 10.5, immVal3.toString);
+    assert(immVal3 == 10.5, immVal3.to!string);
 }
