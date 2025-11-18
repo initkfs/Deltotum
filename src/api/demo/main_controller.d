@@ -47,12 +47,13 @@ class MainController
         application.create;
 
         import api.demo.demo1.scenes.start : Start;
+        import api.demo.scenes.planet: Planet;
         import api.demo.demo1.scenes.game : Demo1;
         import api.demo.demo1.scenes.settings : Settings;
         import api.demo.demo1.scenes.about : About;
         import api.demo.demo1.scenes.help : Help;
 
-        auto startScene = new Start;
+        auto startScene = new Planet;
 
         import api.dm.kit.windows.window : Window;
 

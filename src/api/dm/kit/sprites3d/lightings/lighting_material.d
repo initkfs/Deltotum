@@ -20,6 +20,9 @@ class LightingMaterial : Sprite3d
     Vec3f color;
     float shininess = 32;
 
+    bool isBindDiffuseMap = true;
+    bool isBindSpecularMap = true;
+
     protected
     {
         string diffuseMapPath;
@@ -63,23 +66,28 @@ class LightingMaterial : Sprite3d
 
     bool bindTextures()
     {
-        if (diffuseMap && specularMap)
+        if (diffuseMap && specularMap && isBindDiffuseMap && isBindSpecularMap)
         {
             Texture3d[2] textures = [diffuseMap, specularMap];
             gpu.dev.bindFragmentSamplers(textures);
             return true;
         }
-
-        if (diffuseMap)
+        else
         {
-            gpu.dev.bindFragmentSamplers(diffuseMap);
-            return true;
-        }
+            bool isBind;
+            if (diffuseMap && isBindDiffuseMap)
+            {
+                gpu.dev.bindFragmentSamplers(diffuseMap);
+                isBind |= true;
+            }
 
-        if (specularMap)
-        {
-            gpu.dev.bindFragmentSamplers(specularMap);
-            return true;
+            if (specularMap && isBindSpecularMap)
+            {
+                gpu.dev.bindFragmentSamplers(specularMap);
+                isBind |= true;
+            }
+
+            return isBind;
         }
 
         return false;

@@ -24,6 +24,9 @@ class Shape3d : Sprite3d
     LightingMaterial lightingMaterial;
     bool isCreateLightingMaterial;
 
+    bool isBindDiffuseMap = true;
+    bool isBindSpecularMap;
+
     string diffuseMapPath;
     string specularMapPath;
 
@@ -99,6 +102,8 @@ class Shape3d : Sprite3d
                 import api.dm.kit.sprites3d.lightings.phongs.materials.phong_material : PhongMaterial;
 
                 lightingMaterial = new PhongMaterial(diffuseMapPath, specularMapPath);
+                lightingMaterial.isBindDiffuseMap = isBindDiffuseMap;
+                lightingMaterial.isBindSpecularMap = isBindSpecularMap;
                 addCreate(lightingMaterial);
             }
         }

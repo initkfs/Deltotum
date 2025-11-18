@@ -119,8 +119,11 @@ class PerspectiveCamera : Sprite2d
             cameraUp = rotation.transformDir(localUp).normalize;
             cameraRight = rotation.transformDir(localRight).normalize;
 
-            Vec3f orbitOffset = cameraFront.scale(-targetDistance);
-            cameraPos = cameraTarget + orbitOffset;
+            if (isOrbital)
+            {
+                Vec3f orbitOffset = cameraFront.scale(-targetDistance);
+                cameraPos = cameraTarget + orbitOffset;
+            }
         }
         else
         {
@@ -136,7 +139,7 @@ class PerspectiveCamera : Sprite2d
         }
         else
         {
-            // view = lookAt(cameraPos, cameraPos.add(cameraFront), cameraUp);
+            view = lookAt(cameraPos, cameraPos.add(cameraFront), cameraUp);
         }
     }
 
