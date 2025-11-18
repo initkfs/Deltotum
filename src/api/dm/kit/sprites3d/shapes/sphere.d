@@ -92,6 +92,15 @@ class Sphere : Shape3d
 
     }
 
+    override bool isInCameraFrustum()
+    {
+        if (camera.frustum.isSphereVisible(pos3, radius))
+        {
+            return true;
+        }
+        return false;
+    }
+
     override void create()
     {
         super.create;

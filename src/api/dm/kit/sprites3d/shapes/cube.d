@@ -11,8 +11,9 @@ class Cube : Shape3d
 {
     double depth = 0;
 
-    this(){
-        
+    this()
+    {
+
     }
 
     this(double width, double height, double depth)
@@ -81,5 +82,20 @@ class Cube : Shape3d
             // bottom face
             20, 21, 22, 20, 22, 23
         ];
+    }
+
+    override bool isInCameraFrustum()
+    {
+        import Math = api.math;
+
+        //d = √(a² + a² + a²) 
+        //R = d / 2
+        const float diag = Math.sqrt(width * width + height * height + depth * depth);
+        const sphereR = diag / 2.0;
+        if (camera.frustum.isSphereVisible(pos3, sphereR))
+        {
+            return true;
+        }
+        return false;
     }
 }

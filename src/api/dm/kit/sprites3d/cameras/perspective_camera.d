@@ -2,6 +2,7 @@ module api.dm.kit.sprites3d.cameras.perspective_camera;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.scenes.scene3d : Scene3d;
+import api.math.geom3.frustum3 : Frustum3;
 
 import Math = api.math;
 import api.math.geom2.vec3 : Vec3f;
@@ -17,6 +18,8 @@ class PerspectiveCamera : Sprite2d
     protected
     {
         Scene3d targetScene;
+
+        Frustum3 _frustum;
     }
 
     double lastCursorX = 0;
@@ -48,6 +51,8 @@ class PerspectiveCamera : Sprite2d
     bool mouseCaptured = false;
     double lastMouseX = 0, lastMouseY = 0;
     bool firstMouse = true;
+
+    bool isAutoRecalcFrustum = true;
 
     align(16)
     {
@@ -141,7 +146,20 @@ class PerspectiveCamera : Sprite2d
         {
             view = lookAt(cameraPos, cameraPos.add(cameraFront), cameraUp);
         }
+
+        if (isAutoRecalcFrustum)
+        {
+            recalcFrustum;
+        }
     }
+
+    void recalcFrustum()
+    {
+        float ratio = window.width / window.height;
+        _frustum = Frustum3(cameraPos, cameraFront, cameraUp, cameraRight, Math.degToRad(fov), ratio, nearPlane, farPlane);
+    }
+
+    Frustum3 frustum() const => _frustum;
 
     override void update(double dt)
     {

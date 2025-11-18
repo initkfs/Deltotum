@@ -87,13 +87,13 @@ class Planet : GuiScene
         auto diffusePath = context.app.userDir ~ "/container2.png";
         auto specularPath = context.app.userDir ~ "/container2_specular.png";
 
-        // shape = new Cube(1, 1, 1);
-        // shape.lightingMaterial = new PhongMaterial(diffusePath, null);
-        // shape.isCalcInverseWorldMatrix = true;
+        shape = new Cube(1, 1, 1);
+        //shape.lightingMaterial = new PhongMaterial(diffusePath, null);
+        //shape.isCalcInverseWorldMatrix = true;
 
         camera.recalcView;
 
-        shape = new Frustum(camera.cameraPos, camera.cameraFront, camera.cameraUp, camera.cameraRight, camera.fov, window.width / window.height, camera.nearPlane, camera.farPlane);
+        //shape = new Frustum(camera.cameraPos, camera.cameraFront, camera.cameraUp, camera.cameraRight, camera.//fov, window.width / window.height, camera.nearPlane, camera.farPlane);
 
         env.addCreate(shape);
 

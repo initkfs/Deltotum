@@ -13,6 +13,7 @@ import Math = api.math;
  */
 class Sprite3d : Sprite2d
 {
+    bool isNoDrawOutOfFrustum;
 
     protected
     {
@@ -75,6 +76,11 @@ class Sprite3d : Sprite2d
         bindAll;
         pushUniforms;
 
+        if (isNoDrawOutOfFrustum && !isInCameraFrustum)
+        {
+            return false;
+        }
+
         bool redraw;
 
         foreach (Sprite2d obj; children)
@@ -111,6 +117,8 @@ class Sprite3d : Sprite2d
 
         return redraw;
     }
+
+    bool isInCameraFrustum() => true;
 
     override void add(Sprite2d object, long index = -1)
     {
