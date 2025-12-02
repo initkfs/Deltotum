@@ -1,7 +1,7 @@
 module api.dm.back.sdl3.sdl_texture;
 
 import api.dm.com.com_result : ComResult;
-import api.dm.com.graphic.com_texture : ComTexture;
+import api.dm.com.graphic.com_texture : ComTexture, ComTextureWrapMode, ComTextureScaleMode;
 import api.dm.com.com_native_ptr : ComNativePtr;
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
 import api.dm.back.sdl3.sdl_renderer : SdlRenderer;
@@ -861,6 +861,8 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
                 return ComTextureScaleMode.quality;
             case SDL_SCALEMODE_INVALID:
                 return ComTextureScaleMode.speed;
+            case SDL_SCALEMODE_PIXELART:
+                return ComTextureScaleMode.pixelart;
         }
     }
 
@@ -873,6 +875,8 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
                 return SDL_SCALEMODE_NEAREST;
             case quality:
                 return SDL_SCALEMODE_LINEAR;
+            case pixelart:
+                return SDL_SCALEMODE_PIXELART;
         }
     }
 

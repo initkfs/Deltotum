@@ -2,7 +2,7 @@ module api.dm.back.sdl3.sdl_window;
 
 import api.dm.com.com_result;
 
-import api.dm.com.graphic.com_window : ComWindowId, ComWindow, ComWindowTheme;
+import api.dm.com.graphic.com_window : ComWindowId, ComWindow, ComWindowTheme, ComWindowProgressState;
 import api.dm.com.com_native_ptr : ComNativePtr;
 import api.dm.com.com_result : ComResult;
 import api.dm.com.graphic.com_screen : ComScreenId;
@@ -694,6 +694,73 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
         dpi = factor * scale;
 
         return ComResult.success;
+    }
+
+    bool getProgress(out float value)
+    {
+        float newValue = SDL_GetWindowProgressValue(ptr);
+        if (newValue == -1)
+        {
+            return false;
+        }
+        value = newValue;
+        return true;
+    }
+
+    bool setProgress(float value0to1) => SDL_SetWindowProgressValue(ptr, value0to1);
+
+    bool getProgressState(out ComWindowProgressState newState)
+    {
+        SDL_ProgressState state = SDL_GetWindowProgressState(ptr);
+        ComWindowProgressState targetState;
+        final switch (state) with (SDL_ProgressState)
+        {
+            case SDL_PROGRESS_STATE_INVALID:
+                return false;
+            case SDL_PROGRESS_STATE_NONE:
+                targetState = ComWindowProgressState.none;
+                break;
+            case SDL_PROGRESS_STATE_INDETERMINATE:
+                targetState = ComWindowProgressState.indeterminate;
+                break;
+            case SDL_PROGRESS_STATE_NORMAL:
+                targetState = ComWindowProgressState.normal;
+                break;
+            case SDL_PROGRESS_STATE_PAUSED:
+                targetState = ComWindowProgressState.paused;
+                break;
+            case SDL_PROGRESS_STATE_ERROR:
+                targetState = ComWindowProgressState.error;
+                break;
+        }
+
+        newState = targetState;
+        return true;
+    }
+
+    bool setProgressState(ComWindowProgressState state)
+    {
+        SDL_ProgressState targetState;
+        final switch (state) with (ComWindowProgressState)
+        {
+            case none:
+                targetState = SDL_PROGRESS_STATE_NONE;
+                break;
+            case indeterminate:
+                targetState = SDL_PROGRESS_STATE_INDETERMINATE;
+                break;
+            case normal:
+                targetState = SDL_PROGRESS_STATE_NORMAL;
+                break;
+            case paused:
+                targetState = SDL_PROGRESS_STATE_PAUSED;
+                break;
+            case error:
+                targetState = SDL_PROGRESS_STATE_ERROR;
+                break;
+        }
+
+        return SDL_SetWindowProgressState(ptr, targetState);
     }
 
     ComResult nativePtr(out ComNativePtr ptrInfo) nothrow

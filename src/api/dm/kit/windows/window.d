@@ -6,7 +6,7 @@ import api.dm.com.graphic.com_screen : ComScreenId;
 import api.dm.kit.factories.factory_kit : FactoryKit;
 import api.dm.kit.components.graphic_component : GraphicComponent;
 import api.dm.com.com_native_ptr : ComNativePtr;
-import api.dm.com.graphic.com_window : ComWindowId, ComWindow;
+import api.dm.com.graphic.com_window : ComWindowId, ComWindow, ComWindowProgressState;
 import api.math.geom2.rect2 : Rect2d;
 import api.math.geom2.vec2 : Vec2d, Vec2i;
 
@@ -854,6 +854,31 @@ class Window : GraphicComponent
         }
         return true;
     }
+
+    bool progress(float value) => comWindow.setProgress(value);
+
+    float progress()
+    {
+        float value;
+        if (!comWindow.getProgress(value))
+        {
+            return 0;
+        }
+        return value;
+    }
+
+    ComWindowProgressState progressState()
+    {
+        ComWindowProgressState state;
+        if (!comWindow.getProgressState(state))
+        {
+            return ComWindowProgressState.none;
+        }
+
+        return state;
+    }
+
+    bool progressState(ComWindowProgressState state) => comWindow.setProgressState(state);
 
     bool nativePtr(out ComNativePtr ptr)
     {

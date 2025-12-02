@@ -230,6 +230,17 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
+    ComResult rotateTo(float angleDeg, ComSurface target)
+    {
+        SDL_Surface* copy = SDL_RotateSurface(ptr, angleDeg);
+        if (!copy)
+        {
+            return getErrorRes("Cannot rotate surface");
+        }
+
+        return target.createUnsafe(copy);
+    }
+
     ComResult copyTo(ComSurface dst) nothrow
     {
         assert(ptr);
@@ -558,7 +569,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
     {
         int w = getWidth;
         int h = getHeight;
-        
+
         foreach (y; 0 .. h)
         {
             foreach (x; 0 .. w)

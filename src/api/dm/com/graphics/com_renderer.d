@@ -1,7 +1,7 @@
 module api.dm.com.graphic.com_renderer;
 
 import api.dm.com.com_result : ComResult;
-import api.dm.com.graphic.com_texture : ComTexture;
+import api.dm.com.graphic.com_texture : ComTexture, ComTextureWrapMode;
 import api.dm.com.graphic.com_surface : ComSurface;
 import api.dm.com.graphic.com_blend_mode : ComBlendMode;
 import api.dm.com.com_destroyable : ComDestroyable;
@@ -78,6 +78,9 @@ nothrow:
 
     ComResult setViewport(Rect2d viewport);
     ComResult getViewport(out Rect2d viewport);
+
+    ComResult getTextureWrapMode(out ComTextureWrapMode xMode, out ComTextureWrapMode yMode);
+    ComResult setTextureWrapMode(ComTextureWrapMode xMode, ComTextureWrapMode yMode);
 
     ComResult getLogicalSize(out int w, out int h, out ComRendererLogicalScaling mode);
     ComResult setLogicalSize(int w, int h, ComRendererLogicalScaling mode);

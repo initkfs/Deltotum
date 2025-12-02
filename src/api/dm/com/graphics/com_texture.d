@@ -5,7 +5,7 @@ import api.dm.com.com_result : ComResult;
 import api.dm.com.graphic.com_blend_mode : ComBlendMode;
 import api.dm.com.com_native_ptr : ComNativePtr;
 import api.dm.com.com_destroyable : ComDestroyable;
-import api.dm.com.com_error_manageable: ComErrorManageable;
+import api.dm.com.com_error_manageable : ComErrorManageable;
 
 import api.math.geom2.rect2 : Rect2d;
 import api.math.pos2.flip : Flip;
@@ -14,7 +14,16 @@ import api.dm.com.graphic.com_surface : ComSurface;
 enum ComTextureScaleMode
 {
     speed,
-    quality
+    quality,
+    pixelart
+}
+
+enum ComTextureWrapMode
+{
+    none,
+    wrap, //Wrapping is enabled if texture coordinates are outside [0, 1], this is the default
+    clamp, //Texture coordinates are clamped to the [0, 1] range
+    tiled //The texture is repeated
 }
 
 /**
@@ -74,7 +83,7 @@ nothrow:
     ComResult update(Rect2d rect, void* pixels, int pitch);
 
     ComResult getPixels(out void* pixels);
-    
+
     ComResult getPixel(uint x, uint y, out uint* pixel);
     ComResult setPixelColor(uint x, uint y, ubyte r, ubyte g, ubyte b, ubyte aByte);
     ComResult setPixelColor(uint* ptr, ubyte r, ubyte g, ubyte b, ubyte aByte);

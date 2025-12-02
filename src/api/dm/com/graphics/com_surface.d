@@ -42,6 +42,7 @@ nothrow:
     int getPixelRowLenBytes();
 
     ComResult resize(int newWidth, int newHeight, out bool isResized);
+    ComResult rotateTo(float angleDeg, ComSurface target);
 
     ComResult copyTo(ComSurface dst);
     ComResult copyTo(ComSurface dst, Rect2d dstRect);

@@ -17,6 +17,15 @@ enum ComWindowTheme
     light
 }
 
+enum ComWindowProgressState
+{
+    none,
+    indeterminate,
+    normal,
+    paused,
+    error
+}
+
 /**
  * Authors: initkfs
  */
@@ -95,5 +104,11 @@ nothrow:
 
     ComResult startTextInput();
     ComResult endTextInput();
+
+    bool getProgress(out float value);
+    bool setProgress(float value0to1);
+
+    bool getProgressState(out ComWindowProgressState newState);
+    bool setProgressState(ComWindowProgressState state);
 
 }

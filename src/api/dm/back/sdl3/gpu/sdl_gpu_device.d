@@ -2,6 +2,7 @@ module api.dm.back.sdl3.gpu.sdl_gpu_device;
 
 import api.dm.com.com_result : ComResult;
 import api.dm.com.graphic.com_window : ComWindow;
+import api.dm.com.graphic.com_renderer : ComRenderer;
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
 
 import api.dm.back.sdl3.gpu.sdl_gpu_shader : SdlGPUShader;
@@ -12,6 +13,7 @@ import api.math.geom2.rect2 : Rect2d;
 import api.dm.com.gpu.com_3d_types : ComVertex;
 
 import api.dm.back.sdl3.externs.csdl3;
+import api.dm.com.graphic.com_renderer;
 
 alias ComShaderFormat = SDL_GPUShaderFormat;
 
@@ -82,6 +84,21 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
     SDL_GPURenderPass* renderPass() => lastPass;
     SDL_GPUCopyPass* copyPass() => lastCopyPass;
     SDL_GPUTexture* swapchain() => lastSwapchain;
+
+    ComResult createRenderer(SDL_Window* window, ComRenderer renderer)
+    {
+        auto ptr = SDL_CreateGPURenderer(ptr, window);
+        if (!ptr)
+        {
+            return getErrorRes("Error create GPU renderer");
+        }
+
+        import api.dm.back.sdl3.sdl_renderer : SdlRenderer;
+
+        renderer = new SdlRenderer(ptr);
+
+        return ComResult.success;
+    }
 
     ComResult create(ComShaderFormat formatFlags = SDL_GPU_SHADERFORMAT_SPIRV, bool isDebugMode = true, string driverName = ComGPUDriver
             .any)
@@ -251,6 +268,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         auto vertexShader = newVertexSPIRV(vertexPath, numVertexSamples, numVertexStorageBuffers, numVertexUniformBuffers, numVertexStorageTextures);
 
         import std;
+
         debug writeln("\n", fragmentPath, " ", numFragStorageBuffers);
 
         auto fragmentShader = newFragmentSPIRV(fragmentPath, numFragSamples, numFragStorageBuffers, numFragUniformBuffers, numFragStorageTextures);
@@ -390,7 +408,8 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
     void setGPUBufferName(SDL_GPUBuffer* buffer, string text)
     {
-        import std.string: toStringz;
+        import std.string : toStringz;
+
         SDL_SetGPUBufferName(ptr, buffer, text.toStringz);
     }
 

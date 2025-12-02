@@ -8,7 +8,7 @@ import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
 
 import api.dm.back.sdl3.externs.csdl3;
 
-alias StreamCallback = extern (C) void function(void* userdata, SDL_AudioStream* stream, int additional_amount, int total_amount) nothrow ;
+alias StreamCallback = extern (C) void function(void* userdata, SDL_AudioStream* stream, int additional_amount, int total_amount) nothrow;
 
 /**
  * Authors: initkfs
@@ -86,6 +86,20 @@ class SdlAudioStream : SdlObjectWrapper!SDL_AudioStream, ComAudioStream
             return getErrorRes("Error setting stream callback");
         }
 
+        return ComResult.success;
+    }
+
+    ComResult putDataNoCopy(void* buf, size_t len)
+    {
+        import std.conv : to;
+
+        SDL_AudioStreamDataCompleteCallback callback = null;
+        void* userdata = null;
+
+        if (!SDL_PutAudioStreamDataNoCopy(ptr, buf, len.to!int, callback, userdata))
+        {
+            return getErrorRes("Error sending data to stream");
+        }
         return ComResult.success;
     }
 

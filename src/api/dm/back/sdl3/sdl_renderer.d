@@ -2,11 +2,9 @@ module api.dm.back.sdl3.sdl_renderer;
 
 import api.dm.com.com_result;
 
-
-
 import api.dm.com.com_native_ptr : ComNativePtr;
 import api.dm.com.graphic.com_renderer : ComRenderer, ComRendererLogicalScaling;
-import api.dm.com.graphic.com_texture : ComTexture;
+import api.dm.com.graphic.com_texture : ComTexture, ComTextureWrapMode;
 import api.dm.com.com_result : ComResult;
 import api.dm.com.graphic.com_blend_mode : ComBlendMode;
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
@@ -365,6 +363,66 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         return setViewport(&rect);
     }
 
+    protected ComTextureWrapMode toComMode(SDL_TextureAddressMode mode) nothrow
+    {
+        final switch (mode) with (SDL_TextureAddressMode)
+        {
+            case SDL_TEXTURE_ADDRESS_INVALID:
+                return ComTextureWrapMode.none;
+            case SDL_TEXTURE_ADDRESS_AUTO:
+                return ComTextureWrapMode.wrap;
+            case SDL_TEXTURE_ADDRESS_CLAMP:
+                return ComTextureWrapMode.clamp;
+            case SDL_TEXTURE_ADDRESS_WRAP:
+                return ComTextureWrapMode.tiled;
+        }
+    }
+
+    protected SDL_TextureAddressMode fromComMode(ComTextureWrapMode mode) nothrow
+    {
+        final switch (mode) with (ComTextureWrapMode)
+        {
+            case none:
+                return SDL_TEXTURE_ADDRESS_INVALID;
+            case wrap:
+                return SDL_TEXTURE_ADDRESS_AUTO;
+            case clamp:
+                return SDL_TEXTURE_ADDRESS_CLAMP;
+            case tiled:
+                return SDL_TEXTURE_ADDRESS_WRAP;
+        }
+    }
+
+    ComResult getTextureWrapMode(out ComTextureWrapMode xMode, out ComTextureWrapMode yMode)
+    {
+        SDL_TextureAddressMode* targetXMode;
+        SDL_TextureAddressMode* targetYMode;
+        if (!SDL_GetRenderTextureAddressMode(ptr, targetXMode, targetYMode))
+        {
+            return getErrorRes("Error getting texture wrap mode");
+        }
+
+        if (!targetXMode || !targetYMode)
+        {
+            return getErrorRes("Texture wrapping mode must not be null");
+        }
+
+        xMode = toComMode(*targetXMode);
+        yMode = toComMode(*targetYMode);
+        return ComResult.success;
+    }
+
+    ComResult setTextureWrapMode(ComTextureWrapMode xMode, ComTextureWrapMode yMode)
+    {
+        SDL_TextureAddressMode uMode = fromComMode(xMode);
+        SDL_TextureAddressMode vMode = fromComMode(yMode);
+        if (!SDL_SetRenderTextureAddressMode(ptr, uMode, vMode))
+        {
+            return getErrorRes("Error setting texture wrapping mode");
+        }
+        return ComResult.success;
+    }
+
     ComResult getLogicalSize(out int w, out int h, out ComRendererLogicalScaling mode) nothrow
     {
         SDL_RendererLogicalPresentation rmode;
@@ -423,6 +481,18 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
     bool renderTexture(SDL_Texture* texture, SDL_FRect* src, SDL_FRect* dst)
     {
         return SDL_RenderTexture(ptr, texture, src, dst);
+    }
+
+    bool renderTexture9Grid(SDL_Texture* texture, float leftWidth, float rightWidth, float topHeight, float bottomHeight, float scale = 0, SDL_FRect* dstrect = null)
+    {
+        SDL_FRect* srcrect = null;
+        return SDL_RenderTexture9Grid(ptr, texture, srcrect, leftWidth, rightWidth, topHeight, bottomHeight, scale, dstrect);
+    }
+
+    bool renderTexture9GridTiled(SDL_Texture* texture, float leftWidth, float rightWidth, float topHeight, float bottomHeight, float scale = 0, SDL_FRect* dstrect = null, float tileScale = 1)
+    {
+        SDL_FRect* srcrect = null;
+        return SDL_RenderTexture9GridTiled(ptr, texture, srcrect, leftWidth, rightWidth, topHeight, bottomHeight, scale, dstrect, tileScale);
     }
 
     ComResult renderTextureEx(SdlTexture texture, SDL_FRect* srcRect = null, SDL_FRect* destRect = null, double angle = 0, SDL_FPoint* center = null, SDL_FlipMode flip = SDL_FLIP_NONE) nothrow
