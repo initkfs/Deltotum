@@ -56,6 +56,7 @@ class GPUGraphic : ApplicationUnit
         this.device = device;
     }
 
+    bool startRenderPass(SDL_GPUColorTargetInfo[] colorTargets, SDL_GPUDepthStencilTargetInfo* depthInfo) => dev.startRenderPass(colorTargets, currSdlWindow, depthInfo);
     bool startRenderPass() => dev.startRenderPass(currSdlWindow, clearColor);
     bool startRenderPass(SDL_GPUColorTargetInfo[] colorTargets) => dev.startRenderPass(
         colorTargets, currSdlWindow);

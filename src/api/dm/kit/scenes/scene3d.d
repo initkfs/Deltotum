@@ -7,6 +7,9 @@ import api.dm.kit.sprites3d.textures.depth_texture : DepthTexture;
 import api.dm.kit.sprites3d.cameras.perspective_camera : PerspectiveCamera;
 import api.math.matrices.matrix;
 
+//TODO remove native api
+import api.dm.back.sdl3.externs.csdl3;
+
 /**
  * Authors: initkfs
  */
@@ -24,6 +27,12 @@ class Scene3d : Scene2d
     PerspectiveCamera camera;
 
     bool isDepth = true;
+    bool isAntiAliasing;
+
+    SDL_GPUSampleCount aliasingSampleCount = SDL_GPU_SAMPLECOUNT_4;
+
+    SDL_GPUTexture* msaaTexture;
+    SDL_GPUTexture* resultTexture;
 
     DepthTexture depthTexture;
 
@@ -42,9 +51,59 @@ class Scene3d : Scene2d
             camera = createCamera;
             assert(camera);
 
+            if (isAntiAliasing)
+            {
+                auto format = gpu.getSwapchainTextureFormat;
+                if (SDL_GPUTextureSupportsSampleCount(gpu.dev.getObject, format, aliasingSampleCount))
+                {
+                    gpu.dev.isUseSampleCount = true;
+                    gpu.dev.sampleCount = aliasingSampleCount;
+
+                    SDL_GPUTextureCreateInfo msaTextureInfo;
+                    msaTextureInfo.type = SDL_GPU_TEXTURETYPE_2D;
+                    msaTextureInfo.width = window.widthu;
+                    msaTextureInfo.height = window.heightu;
+                    msaTextureInfo.layer_count_or_depth = 1;
+                    msaTextureInfo.num_levels = 1;
+                    msaTextureInfo.format = format;
+                    msaTextureInfo.usage = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET;
+                    msaTextureInfo.sample_count = aliasingSampleCount;
+
+                    if (aliasingSampleCount == SDL_GPU_SAMPLECOUNT_1)
+                    {
+                        msaTextureInfo.usage |= SDL_GPU_TEXTUREUSAGE_SAMPLER;
+                    }
+
+                    msaaTexture = SDL_CreateGPUTexture(gpu.dev.getObject, &msaTextureInfo);
+                    assert(msaaTexture);
+
+                    SDL_GPUTextureCreateInfo resultTextureInfo;
+                    resultTextureInfo.type = SDL_GPU_TEXTURETYPE_2D;
+                    resultTextureInfo.width = window.widthu;
+                    resultTextureInfo.height = window.heightu;
+                    resultTextureInfo.layer_count_or_depth = 1;
+                    resultTextureInfo.num_levels = 1;
+                    resultTextureInfo.format = format;
+                    resultTextureInfo.usage = SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER;
+
+                    resultTexture = SDL_CreateGPUTexture(gpu.dev.getObject, &resultTextureInfo);
+                    assert(resultTexture);
+                }
+                else
+                {
+                    logger.errorf("Texture format %s not supported with sample count: %s", format, aliasingSampleCount);
+                    isAntiAliasing = false;
+                }
+            }
+
             if (isDepth)
             {
                 depthTexture = new DepthTexture;
+                if (isAntiAliasing)
+                {
+                    depthTexture.sampleCount = aliasingSampleCount;
+                    depthTexture.isMultiSampler = true;
+                }
                 build(depthTexture);
                 depthTexture.create;
             }
@@ -89,11 +148,13 @@ class Scene3d : Scene2d
         }
     }
 
-    void uploadStart(){
+    void uploadStart()
+    {
 
     }
 
-    void uploadEnd(){
+    void uploadEnd()
+    {
 
     }
 
@@ -135,6 +196,25 @@ class Scene3d : Scene2d
         }
     }
 
+    protected SDL_GPUColorTargetInfo createTargetInfo()
+    {
+        SDL_GPUColorTargetInfo colorTargetInfo;
+        colorTargetInfo.texture = msaaTexture;
+        colorTargetInfo.clear_color = gpu.dev.clearColor;
+        colorTargetInfo.load_op = SDL_GPU_LOADOP_CLEAR;
+
+        if (aliasingSampleCount == SDL_GPU_SAMPLECOUNT_1)
+        {
+            colorTargetInfo.store_op = SDL_GPU_STOREOP_STORE;
+        }
+        else
+        {
+            colorTargetInfo.store_op = SDL_GPU_STOREOP_RESOLVE;
+            colorTargetInfo.resolve_texture = resultTexture;
+        }
+        return colorTargetInfo;
+    }
+
     override void drawAll()
     {
         bool isGPU = gpu.isActive;
@@ -159,30 +239,90 @@ class Scene3d : Scene2d
             depthStencilTargetInfo.stencil_load_op = SDL_GPU_LOADOP_CLEAR;
             depthStencilTargetInfo.stencil_store_op = SDL_GPU_STOREOP_STORE;
 
-            if (!gpu.startRenderPass(&depthStencilTargetInfo))
+            if (isAntiAliasing)
             {
-                gpu.dev.resetState;
-                //logger.error("Error starting gpu rendering");
-                throw new Exception("Error starting gpu rendering with depth");
+                SDL_GPUColorTargetInfo[1] targets = [createTargetInfo];
+                if (!gpu.startRenderPass(targets, &depthStencilTargetInfo))
+                {
+                    gpu.dev.resetState;
+                    throw new Exception("Error starting gpu rendering with depth");
+                }
             }
+            else
+            {
+                if (!gpu.startRenderPass(&depthStencilTargetInfo))
+                {
+                    gpu.dev.resetState;
+                    //logger.error("Error starting gpu rendering");
+                    throw new Exception("Error starting gpu rendering with depth");
+                }
+            }
+
         }
         else
         {
-            if (!gpu.startRenderPass)
+            if (isAntiAliasing)
             {
-                gpu.dev.resetState;
-                //logger.error("Error starting gpu rendering");
-                throw new Exception("Error starting gpu rendering");
+                SDL_GPUColorTargetInfo[1] targets = [createTargetInfo];
+                if (!gpu.startRenderPass(targets))
+                {
+                    gpu.dev.resetState;
+                    throw new Exception("Error starting gpu rendering with depth");
+                }
             }
+            else
+            {
+                if (!gpu.startRenderPass)
+                {
+                    gpu.dev.resetState;
+                    //logger.error("Error starting gpu rendering");
+                    throw new Exception("Error starting gpu rendering");
+                }
+            }
+
         }
 
         drawSelfAndChildren;
 
-        if (!gpu.dev.endRenderPass)
+        if (isAntiAliasing)
         {
+            if (!gpu.dev.endRenderPass(isSubmit : false))
+            {
+                gpu.dev.resetState;
+                //logger.error("Error ending gpu renderer");
+                throw new Exception("Error ending gpu renderer");
+            }
+        }
+        else
+        {
+            if (!gpu.dev.endRenderPass)
+            {
+                gpu.dev.resetState;
+                //logger.error("Error ending gpu renderer");
+                throw new Exception("Error ending gpu renderer");
+            }
+        }
+
+        if (resultTexture)
+        {
+            SDL_GPUBlitInfo blitInfo;
+
+            uint w = window.widthu;
+            uint h = window.heightu;
+
+            blitInfo.source.texture = resultTexture;
+            blitInfo.source.w = w;
+            blitInfo.source.h = h;
+            blitInfo.destination.texture = gpu.dev.swapchain;
+            blitInfo.destination.w = w;
+            blitInfo.destination.h = h;
+            blitInfo.load_op = SDL_GPU_LOADOP_DONT_CARE;
+            blitInfo.filter = SDL_GPU_FILTER_LINEAR;
+
+            SDL_BlitGPUTexture(gpu.dev.cmdBuff, &blitInfo);
+
+            gpu.dev.submitCmdBuffer;
             gpu.dev.resetState;
-            //logger.error("Error ending gpu renderer");
-            throw new Exception("Error ending gpu renderer");
         }
     }
 
@@ -222,7 +362,7 @@ class Scene3d : Scene2d
     override void update(double dt)
     {
         super.update(dt);
-        
+
         if (camera)
         {
             camera.update(dt);
@@ -240,6 +380,16 @@ class Scene3d : Scene2d
         if (depthTexture)
         {
             depthTexture.dispose;
+        }
+
+        if (resultTexture)
+        {
+            gpu.dev.deleteTexture(resultTexture);
+        }
+
+        if (msaaTexture)
+        {
+            gpu.dev.deleteTexture(msaaTexture);
         }
     }
 }

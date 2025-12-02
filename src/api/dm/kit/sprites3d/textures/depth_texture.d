@@ -10,6 +10,8 @@ import api.dm.back.sdl3.externs.csdl3;
 
 class DepthTexture : Texture3d
 {
+    SDL_GPUSampleCount sampleCount = SDL_GPU_SAMPLECOUNT_1;
+    bool isMultiSampler;
 
     this()
     {
@@ -27,9 +29,14 @@ class DepthTexture : Texture3d
         depthInfo.height = cast(int) window.height;
         depthInfo.layer_count_or_depth = 1;
         depthInfo.num_levels = 1;
-        depthInfo.sample_count = SDL_GPU_SAMPLECOUNT_1;
+        depthInfo.sample_count = sampleCount;
         depthInfo.format = SDL_GPU_TEXTUREFORMAT_D16_UNORM;
-        depthInfo.usage = SDL_GPU_TEXTUREUSAGE_SAMPLER | SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET;
+        if (isMultiSampler)
+        {
+            depthInfo.usage = SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET;
+        }else {
+            depthInfo.usage = SDL_GPU_TEXTUREUSAGE_SAMPLER | SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET;
+        }
 
         _texture = gpu.dev.newTexture(&depthInfo);
         if (!_texture)

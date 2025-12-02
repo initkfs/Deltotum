@@ -697,6 +697,9 @@ class Window : GraphicComponent
         return height;
     }
 
+    uint widthu() => cast(uint) width;
+    uint heightu() => cast(uint) height;
+
     Vec2d size()
     {
         int width, height;

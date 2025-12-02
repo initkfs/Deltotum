@@ -70,6 +70,11 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         bool _isCreated;
     }
 
+    SDL_GPUSampleCount sampleCount;
+    bool isUseSampleCount;
+
+    SDL_FColor clearColor = SDL_FColor(1, 1, 1, 1);
+
     this()
     {
 
@@ -325,6 +330,11 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         if (stencilState)
         {
             info.depth_stencil_state = *stencilState;
+        }
+
+        if (isUseSampleCount)
+        {
+            info.multisample_state.sample_count = sampleCount;
         }
 
         auto pipeline = newPipeline(info);
@@ -734,7 +744,7 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         return true;
     }
 
-    bool endRenderPass()
+    bool endRenderPass(bool isSubmit = true)
     {
         if (state != GPUGraphicState.renderStart)
         {
@@ -750,11 +760,12 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
 
         SDL_EndGPURenderPass(lastPass);
 
-        bool isSubmit = submitCmdBuffer;
+        if (isSubmit)
+        {
+            return submitCmdBuffer;
+        }
 
-        resetState;
-
-        return isSubmit;
+        return true;
     }
 
     bool startCopyPass()
@@ -1188,6 +1199,11 @@ class SdlGPUDevice : SdlObjectWrapper!SDL_GPUDevice
         rstState.front_face = SDL_GPU_FRONTFACE_COUNTER_CLOCKWISE;
 
         return rstState;
+    }
+
+    bool setMaxSubmitFrames(uint frames1to3)
+    {
+        return SDL_SetGPUAllowedFramesInFlight(ptr, frames1to3);
     }
 
 }
