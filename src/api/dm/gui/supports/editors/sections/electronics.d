@@ -27,7 +27,7 @@ class Electronics : Control
     {
         super.create;
 
-        import api.subs.ele.simulator : Simulator;
+        import api.sims.ele.simulator : Simulator;
 
         auto sim = new Simulator;
         addCreate(sim);
