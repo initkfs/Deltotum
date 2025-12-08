@@ -86,7 +86,7 @@ class Asset : LocalResources
         return mustBeFontPath.get;
     }
 
-    ComFont newFont(string fontFilePath, size_t size)
+    ComFont newFont(string fontFilePath, uint size)
     {
         const path = fontPath(fontFilePath);
         auto comFont = comFontProvider();
@@ -97,7 +97,7 @@ class Asset : LocalResources
         return comFont;
     }
 
-    bool hasFont(size_t size = FontSize.medium, string name = defaultFontName)
+    bool hasFont(uint size = FontSize.medium, string name = defaultFontName)
     {
         if (auto fontCachePtr = name in fontCaches)
         {
@@ -110,7 +110,7 @@ class Asset : LocalResources
     bool hasLargeFont(string name = defaultFontName) => hasFont(FontSize.large, name);
     bool hasSmallFont(string name = defaultFontName) => hasFont(FontSize.small, name);
 
-    void addFont(ComFont font, size_t size = FontSize.medium, string name = defaultFontName)
+    void addFont(ComFont font, uint size = FontSize.medium, string name = defaultFontName)
     {
         fontCaches[name].addFont(size, font);
     }
@@ -125,7 +125,7 @@ class Asset : LocalResources
         addFont(font, FontSize.large, name);
     }
 
-    ComFont font(size_t size = FontSize.medium, string name = defaultFontName)
+    ComFont font(uint size = FontSize.medium, string name = defaultFontName)
     {
         auto cachedFont = fontCaches[name].font(size);
         assert(cachedFont);
@@ -142,7 +142,7 @@ class Asset : LocalResources
         return font(FontSize.large, name);
     }
 
-    void addFontColorBitmap(BitmapFont fontTexture, RGBA color, size_t size = FontSize.medium, string name = defaultFontName)
+    void addFontColorBitmap(BitmapFont fontTexture, RGBA color, uint size = FontSize.medium, string name = defaultFontName)
     {
         //TODO error not exists
         fontCaches[name].bitmap(fontTexture, size, color);
@@ -173,7 +173,7 @@ class Asset : LocalResources
         addFontColorBitmap(fontTexture, defaultFontColor, FontSize.small);
     }
 
-    inout(BitmapFont*) hasColorBitmapUnsafe(RGBA color, size_t size = FontSize.medium, string name = defaultFontName) inout
+    inout(BitmapFont*) hasColorBitmapUnsafe(RGBA color, uint size = FontSize.medium, string name = defaultFontName) inout
     {
         inout(FontCache)* ptr = name in fontCaches;
         if (!ptr)
@@ -183,12 +183,12 @@ class Asset : LocalResources
         return (*ptr).hasBitmap(size, color);
     }
 
-    bool hasColorBitmap(RGBA color, size_t size = FontSize.medium, string name = defaultFontName)
+    bool hasColorBitmap(RGBA color, uint size = FontSize.medium, string name = defaultFontName)
     {
         return hasColorBitmapUnsafe(color, size, name) !is null;
     }
 
-    BitmapFont fontColorBitmap(RGBA color, size_t size = FontSize.medium, string name = defaultFontName)
+    BitmapFont fontColorBitmap(RGBA color, uint size = FontSize.medium, string name = defaultFontName)
     {
         auto fontCache = fontCaches[name];
         auto bitmapPtr = fontCache.hasBitmap(size, color);
@@ -209,7 +209,7 @@ class Asset : LocalResources
         return *bitmapPtr;
     }
 
-    BitmapFont fontBitmap(size_t size = FontSize.medium, string name = defaultFontName)
+    BitmapFont fontBitmap(uint size = FontSize.medium, string name = defaultFontName)
     {
         return fontColorBitmap(defaultFontColor, size, name);
     }
@@ -234,7 +234,7 @@ class Asset : LocalResources
         return fontColorBitmap(color, FontSize.small);
     }
 
-    double fontMaxHeight(string name = defaultFontName, size_t size = FontSize.medium)
+    double fontMaxHeight(string name = defaultFontName, uint size = FontSize.medium)
     {
         if (!hasFont(size, name))
         {
@@ -246,12 +246,12 @@ class Asset : LocalResources
 
     import api.math.geom2.vec2 : Vec2d;
 
-    Vec2d rem(size_t size = FontSize.medium, string name = defaultFontName)
+    Vec2d rem(uint size = FontSize.medium, string name = defaultFontName)
     {
         return rem(defaultFontColor, size, name);
     }
 
-    Vec2d rem(RGBA color, size_t size = FontSize.medium, string name = defaultFontName)
+    Vec2d rem(RGBA color, uint size = FontSize.medium, string name = defaultFontName)
     {
         enum defaultSize = 1;
         auto bitmapPtr = hasColorBitmapUnsafe(color, size, name);

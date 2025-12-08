@@ -188,7 +188,7 @@ class Graphic : LoggableUnit
         if (const err = renderer.drawLine(toFloat(startX), toFloat(startY), toFloat(endX), toFloat(
                 endY)))
         {
-            logger.error("Line drawing error. ", err);
+            logger.error("Line drawing error. ", renderer.getLastErrorNew);
         }
     }
 

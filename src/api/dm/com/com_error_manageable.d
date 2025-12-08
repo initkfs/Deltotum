@@ -7,5 +7,5 @@ interface ComErrorManageable
 {
 nothrow:
 
-    string getLastErrorStr();
+    string getLastErrorNew();
 }

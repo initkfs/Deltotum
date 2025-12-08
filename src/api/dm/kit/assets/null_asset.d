@@ -29,7 +29,7 @@ class NullAsset : Asset
         return null;
     }
 
-    override ComFont newFont(string fontFilePath, size_t size)
+    override ComFont newFont(string fontFilePath, uint size)
     {
         import api.dm.com.com_result : ComResult;
         import api.dm.com.graphics.com_surface : ComSurface;
@@ -46,10 +46,10 @@ class NullAsset : Asset
                 ubyte fr, ubyte fg, ubyte fb, ubyte fa,
                 ubyte br, ubyte bg, ubyte bb, ubyte ba) => ComResult.success;
 
-            ComResult create(string path, double size) => ComResult.success;
+            ComResult create(string path, uint size) => ComResult.success;
             string getFontPath() => null;
-            double getFontSize() => 0;
-            double getMaxHeight() => 0;
+            uint getFontSize() => 0;
+            uint getMaxHeight() => 0;
             ComResult setHinting(ComFontHinting hinting) => ComResult.success;
         };
     }

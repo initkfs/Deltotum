@@ -3,7 +3,6 @@ module api.dm.back.sdl3.fonts.sdl_ttf_font;
 import api.dm.com.graphics.com_font : ComFont, ComFontHinting;
 import api.dm.com.com_result : ComResult;
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
-import api.dm.back.sdl3.fonts.base.sdl_ttf_object : SdlTTFObject;
 import api.dm.com.graphics.com_surface : ComSurface;
 
 import std.conv : to;
@@ -20,11 +19,11 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
     private
     {
         string _fontPath;
-        double _fontSize;
-        double _maxHeight = 1;
+        uint _fontSize;
+        uint _maxHeight = 1;
     }
 
-    ComResult create(string fontFilePath, double fontSize = 12) nothrow
+    ComResult create(string fontFilePath, uint fontSize = 12) nothrow
     {
         if (ptr)
         {
@@ -44,7 +43,7 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
         this._fontPath = fontFilePath;
         this._fontSize = fontSize;
 
-        ptr = TTF_OpenFont(_fontPath.toStringz, cast(float) _fontSize);
+        ptr = TTF_OpenFont(_fontPath.toStringz, cast(int) _fontSize);
         if (!ptr)
         {
             return getErrorRes("Unable to load ttf font from " ~ fontFilePath);
@@ -65,7 +64,7 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
 
         SDL_Color color = {fr, fg, fb, fa};
         //TODO TTF_RenderText_Shaded
-        SDL_Color backgroundColor = {br, bg, bb, ba};
+        //SDL_Color backgroundColor = {br, bg, bb, ba};
         //TODO calculate background color
         import std.utf : toUTFz;
 
@@ -104,7 +103,7 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
         return _fontPath;
     }
 
-    double getFontSize() nothrow
+    uint getFontSize() nothrow
     {
         assert(ptr, "Font not loaded");
         return _fontSize;
@@ -132,10 +131,7 @@ class SdlTTFFont : SdlObjectWrapper!TTF_Font, ComFont
         return ComResult.success;
     }
 
-    double getMaxHeight()
-    {
-        return _maxHeight;
-    }
+    uint getMaxHeight() => _maxHeight;
 
     override bool disposePtr()
     {

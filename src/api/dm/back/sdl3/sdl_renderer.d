@@ -178,71 +178,16 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         return points;
     }
 
-    ComResult drawPoint(float x, float y) nothrow
-    {
-        if (!SDL_RenderPoint(ptr, x, y))
-        {
-            return getErrorRes("Error drawing point with SDL renderer");
-        }
-        return ComResult.success;
-    }
+    bool drawPoint(float x, float y) nothrow => SDL_RenderPoint(ptr, x, y);
+    bool drawPoints(SDL_FPoint[] ps) nothrow => SDL_RenderPoints(ptr, ps.ptr, cast(int) ps.length);
+    bool drawPoints(Vec2d[] ps) nothrow => drawPoints(toSdlPoints(ps));
+    bool drawPoints(Vec2f[] ps) nothrow => drawPoints(cast(SDL_FPoint[]) ps);
 
-    ComResult drawPoints(SDL_FPoint[] ps) nothrow
-    {
-        if (!SDL_RenderPoints(ptr, ps.ptr, cast(int) ps.length))
-        {
-            return getErrorRes("Error drawing points with SDL renderer");
-        }
-        return ComResult.success;
-    }
-
-    ComResult drawPoints(Vec2d[] ps) nothrow => drawPoints(toSdlPoints(ps));
-    ComResult drawPoints(Vec2f[] ps) nothrow => drawPoints(cast(SDL_FPoint[]) ps);
-
-    ComResult drawLine(float startX, float startY, float endX, float endY) nothrow
-    {
-        if (!SDL_RenderLine(ptr, startX, startY, endX, endY))
-        {
-            return getErrorRes("Error drawing line with SDL renderer");
-        }
-        return ComResult.success;
-    }
-
-    ComResult drawLines(SDL_FPoint[] linePoints) nothrow
-    {
-        if (!SDL_RenderLines(ptr, linePoints.ptr, cast(int) linePoints.length))
-        {
-            return getErrorRes("Error drawing lines with SDL renderer");
-        }
-        return ComResult.success;
-    }
-
-    ComResult drawLines(Vec2d[] linePoints) nothrow => drawLines(toSdlPoints(linePoints));
-    ComResult drawLines(Vec2f[] linePoints) nothrow => drawLines(cast(SDL_FPoint[]) linePoints);
-
-    ComResult drawRect(float x, float y, float width, float height) nothrow
-    {
-        SDL_FRect r = {x, y, width, height};
-        return drawRect(&r);
-    }
-
-    ComResult drawRect(SDL_FRect* r) nothrow
-    {
-        if (!SDL_RenderRect(ptr, r))
-        {
-            return getErrorRes("Error drawing rectangle with SDL renderer");
-        }
-        return ComResult.success;
-    }
-
-    ComResult drawRects(SDL_FRect[] rects) nothrow
-    {
-        if (!SDL_RenderRects(ptr, rects.ptr, cast(int) rects.length))
-        {
-            return getErrorRes("Error drawing rectangles with SDL renderer");
-        }
-        return ComResult.success;
-    }
+    bool drawLine(float startX, float startY, float endX, float endY) nothrow => SDL_RenderLine(ptr, startX, startY, endX, endY);
+    bool drawLines(SDL_FPoint[] linePoints) nothrow => SDL_RenderLines(ptr, linePoints.ptr, cast(
+            int) linePoints.length);
+    bool drawLines(Vec2d[] linePoints) nothrow => drawLines(toSdlPoints(linePoints));
+    bool drawLines(Vec2f[] linePoints) nothrow => drawLines(cast(SDL_FPoint[]) linePoints);
 
     protected SDL_FRect[] toSdlRects(Rect2d[] rects) nothrow
     {
@@ -254,35 +199,28 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         return sdlRects;
     }
 
-    ComResult drawRects(Rect2d[] rects) nothrow => drawRects(toSdlRects(rects));
-    ComResult drawRects(Rect2f[] rects) nothrow => drawRects(cast(SDL_FRect[]) rects);
+    bool drawRect(float x, float y, float width, float height) nothrow
+    {
+        SDL_FRect r = {x, y, width, height};
+        return drawRect(&r);
+    }
 
-    ComResult drawFillRect(float x, float y, float width, float height) nothrow
+    bool drawRect(SDL_FRect* r) nothrow => SDL_RenderRect(ptr, r);
+    bool drawRects(SDL_FRect[] rects) nothrow => SDL_RenderRects(ptr, rects.ptr, cast(int) rects
+            .length);
+    bool drawRects(Rect2d[] rects) nothrow => drawRects(toSdlRects(rects));
+    bool drawRects(Rect2f[] rects) nothrow => drawRects(cast(SDL_FRect[]) rects);
+
+    bool drawFillRect(float x, float y, float width, float height) nothrow
     {
         SDL_FRect rect = {x, y, width, height};
         return drawFillRect(&rect);
     }
 
-    ComResult drawFillRect(SDL_FRect* rect) nothrow
-    {
-        if (!SDL_RenderFillRect(ptr, rect))
-        {
-            return getErrorRes("Error filling rectangle with SDL renderer");
-        }
-        return ComResult.success;
-    }
-
-    ComResult drawFillRects(SDL_FRect[] rects) nothrow
-    {
-        if (!SDL_RenderFillRects(ptr, rects.ptr, cast(int) rects.length))
-        {
-            return getErrorRes("Error filling rectangles with SDL renderer");
-        }
-        return ComResult.success;
-    }
-
-    ComResult drawFillRects(Rect2d[] rects) nothrow => drawFillRects(toSdlRects(rects));
-    ComResult drawFillRects(Rect2f[] rects) nothrow => drawFillRects(cast(SDL_FRect[]) rects);
+    bool drawFillRect(SDL_FRect* rect) nothrow => SDL_RenderFillRect(ptr, rect);
+    bool drawFillRects(SDL_FRect[] rects) nothrow => SDL_RenderFillRects(ptr, rects.ptr, cast(int) rects.length);
+    bool drawFillRects(Rect2d[] rects) nothrow => drawFillRects(toSdlRects(rects));
+    bool drawFillRects(Rect2f[] rects) nothrow => drawFillRects(cast(SDL_FRect[]) rects);
 
     ComResult getOutputSize(out int width, out int height) nothrow
     {
@@ -574,6 +512,8 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
         winY = wY;
         return ComResult.success;
     }
+
+    string getLastErrorNew() => getError;
 
     override protected bool disposePtr()
     {

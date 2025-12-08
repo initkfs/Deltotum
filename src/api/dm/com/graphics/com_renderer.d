@@ -5,6 +5,7 @@ import api.dm.com.graphics.com_texture : ComTexture, ComTextureWrapMode;
 import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.com.graphics.com_blend_mode : ComBlendMode;
 import api.dm.com.com_destroyable : ComDestroyable;
+import api.dm.com.com_error_manageable: ComErrorManageable;
 
 import api.math.pos2.flip: Flip;
 import api.math.geom2.vec2 : Vec2d, Vec2f;
@@ -21,7 +22,7 @@ enum ComRendererLogicalScaling {
 /**
  * Authors: initkfs
  */
-interface ComRenderer : ComDestroyable
+interface ComRenderer : ComDestroyable, ComErrorManageable
 {
 nothrow:
 
@@ -53,22 +54,22 @@ nothrow:
     ComResult setBlendModeBlend();
     ComResult setBlendModeNone();
 
-    ComResult drawPoint(float x, float y);
-    ComResult drawPoints(Vec2d[] points);
-    ComResult drawPoints(Vec2f[] points);
+    bool drawPoint(float x, float y);
+    bool drawPoints(Vec2d[] points);
+    bool drawPoints(Vec2f[] points);
 
-    ComResult drawLine(float startX, float startY, float endX, float endY);
-    ComResult drawLines(Vec2d[] linePoints);
+    bool drawLine(float startX, float startY, float endX, float endY);
+    bool drawLines(Vec2d[] linePoints);
     //ComResult drawLines(Vec2d[] linePoints, size_t count);
-    ComResult drawLines(Vec2f[] linePoints);
+    bool drawLines(Vec2f[] linePoints);
 
-    ComResult drawRect(float x, float y, float width, float height);
-    ComResult drawRects(Rect2d[] rects);
-    ComResult drawRects(Rect2f[] rects);
+    bool drawRect(float x, float y, float width, float height);
+    bool drawRects(Rect2d[] rects);
+    bool drawRects(Rect2f[] rects);
 
-    ComResult drawFillRect(float x, float y, float width, float height);
-    ComResult drawFillRects(Rect2d[] rects);
-    ComResult drawFillRects(Rect2f[] rects);
+    bool drawFillRect(float x, float y, float width, float height);
+    bool drawFillRects(Rect2d[] rects);
+    bool drawFillRects(Rect2f[] rects);
 
     ComResult getOutputSize(out int width, out int height);
     ComResult getSafeBounds(out Rect2d bounds);

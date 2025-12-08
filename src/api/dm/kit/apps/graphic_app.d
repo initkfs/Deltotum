@@ -330,9 +330,9 @@ abstract class GraphicApp : CliApp
         Asset asset = new Asset(uservices.logging, assetsDir, comFontProvider);
 
         //TODO from config, allsystem;
-        size_t fontSizeSmall = 8;
-        size_t fontSizeMedium = 14;
-        size_t fontSizeLarge = 20;
+        uint fontSizeSmall = 8;
+        uint fontSizeMedium = 14;
+        uint fontSizeLarge = 20;
 
         string fontDir;
         string fontFile;
@@ -422,7 +422,7 @@ abstract class GraphicApp : CliApp
             {
                 logging.logger.trace("Check font medium size in config with key: ", KitConfigKeys
                         .fontSizeMedium);
-                defaultSize = config.getPositiveLong(KitConfigKeys.fontSizeMedium);
+                defaultSize = cast(uint) config.getPositiveLong(KitConfigKeys.fontSizeMedium);
                 logging.logger.trace("Set font default medium size from config: ", defaultSize);
             }
             else
@@ -441,12 +441,12 @@ abstract class GraphicApp : CliApp
                 const isSmallFontCreate = config.getBool(KitConfigKeys.fontIsCreateSmall);
                 if (isSmallFontCreate)
                 {
-                    size_t size = fontSizeSmall;
+                    uint size = fontSizeSmall;
                     if (config.hasKey(KitConfigKeys.fontSizeSmall))
                     {
                         logging.logger.trace("Search small font size in config with key: ", KitConfigKeys
                                 .fontSizeSmall);
-                        size = config.getPositiveLong(KitConfigKeys.fontSizeSmall);
+                        size = cast(uint) config.getPositiveLong(KitConfigKeys.fontSizeSmall);
                     }
                     else
                     {
@@ -477,12 +477,12 @@ abstract class GraphicApp : CliApp
                 const isLargeFontCreate = config.getBool(KitConfigKeys.fontIsCreateLarge);
                 if (isLargeFontCreate)
                 {
-                    size_t size = fontSizeLarge;
+                    uint size = fontSizeLarge;
                     if (config.hasKey(KitConfigKeys.fontSizeLarge))
                     {
                         logging.logger.trace("Search large font size in config with key: ", KitConfigKeys
                                 .fontSizeLarge);
-                        size = config.getPositiveLong(KitConfigKeys.fontSizeLarge);
+                        size = cast(uint) config.getPositiveLong(KitConfigKeys.fontSizeLarge);
                         logging.logger.trace("Set large font size from config: ", size);
                     }
                     else

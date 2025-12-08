@@ -161,15 +161,8 @@ class SDLScreen : SdlObject, ComScreen
         return true;
     }
 
-    string getLastErrorStr() nothrow => getError;
+    string getLastErrorNew() nothrow => getError;
 
-    bool isDisposed() nothrow pure @safe
-    {
-        return false;
-    }
-
-    bool dispose()
-    {
-        return false;
-    }
+    bool isDisposed() nothrow pure @safe => false;
+    bool dispose() nothrow => false;
 }

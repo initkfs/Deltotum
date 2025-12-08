@@ -224,7 +224,7 @@ class Texture2d : Sprite2d
     {
         if (!texture.draw(textureBounds, destBounds, angle, flip))
         {
-            logger.error("Error texture drawing: ", texture.getLastErrorStr);
+            logger.error("Error texture drawing: ", texture.getLastErrorNew);
         }
     }
 

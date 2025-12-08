@@ -811,7 +811,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
 
         if (!draw(srcRect, destRect, angle, flip))
         {
-            return ComResult.error("Error texture drawing: " ~ getLastErrorStr);
+            return ComResult.error("Error texture drawing: " ~ getLastErrorNew);
         }
 
         if (const err = restoreRendererTarget)
@@ -900,7 +900,7 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
         return ComResult.success;
     }
 
-    string getLastErrorStr() => getError;
+    string getLastErrorNew() => getError;
 
     override protected bool disposePtr() nothrow
     {

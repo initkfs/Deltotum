@@ -680,7 +680,7 @@ class SdlSurface : SdlObjectWrapper!SDL_Surface, ComSurface
         return ComResult.success;
     }
 
-    string getLastErrorStr() => getError;
+    string getLastErrorNew() => getError;
 
     override protected bool disposePtr() nothrow
     {

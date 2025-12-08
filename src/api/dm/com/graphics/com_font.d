@@ -26,10 +26,11 @@ nothrow:
         ubyte fr, ubyte fg, ubyte fb, ubyte fa,
         ubyte br, ubyte bg, ubyte bb, ubyte ba);
 
-    ComResult create(string path, double size);
-    string getFontPath();
-    double getFontSize();
-    double getMaxHeight();
+    ComResult create(string path, uint size);
     ComResult setHinting(ComFontHinting hinting);
+    
+    string getFontPath();
+    uint getFontSize();
+    uint getMaxHeight();
 
 }

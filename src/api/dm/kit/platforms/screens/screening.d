@@ -48,7 +48,7 @@ class Screening
         if (!comScreen.getBounds(id, x, y, width, height))
         {
             logging.logger.errorf("Error getting screen bounds with id: ", id, comScreen
-                    .getLastErrorStr);
+                    .getLastErrorNew);
         }
         return Rect2d(x, y, width, height);
     }
@@ -59,7 +59,7 @@ class Screening
         if (!comScreen.getUsableBounds(id, x, y, width, height))
         {
             logging.logger.errorf("Error getting screen bounds with id %s: %s", id, comScreen
-                    .getLastErrorStr);
+                    .getLastErrorNew);
         }
         return Rect2d(x, y, width, height);
     }
@@ -73,7 +73,7 @@ class Screening
         if (!comScreen.getMode(id, mode))
         {
             logging.logger.errorf("Error getting screen mode with id %s: %s", id, comScreen
-                    .getLastErrorStr);
+                    .getLastErrorNew);
         }
 
         return mode;
@@ -84,7 +84,7 @@ class Screening
         ComScreenOrientation result;
         if (!comScreen.getOrientation(id, result))
         {
-            logging.logger.errorf("Error getting screen orientation with index %s: %s", id, comScreen.getLastErrorStr);
+            logging.logger.errorf("Error getting screen orientation with index %s: %s", id, comScreen.getLastErrorNew);
         }
         return result;
     }

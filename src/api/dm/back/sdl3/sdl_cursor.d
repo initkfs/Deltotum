@@ -162,7 +162,7 @@ class SDLCursor : SdlObjectWrapper!SDL_Cursor, ComCursor
 
     bool isVisible() nothrow => SDL_CursorVisible;
 
-    string getLastErrorStr() nothrow => getError;
+    string getLastErrorNew() nothrow => getError;
 
     override protected bool disposePtr() nothrow
     {
