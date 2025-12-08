@@ -6,7 +6,6 @@ import api.dm.com.com_result : ComResult;
 import api.core.loggers.logging : Logging;
 import api.core.configs.keyvalues.config : Config;
 import api.core.contexts.context : Context;
-import api.core.apps.app_result : AppResult;
 import api.core.utils.factories : ProviderFactory;
 import api.dm.gui.apps.gui_app : GuiApp;
 import api.dm.kit.components.graphic_component : GraphicComponent;
@@ -121,12 +120,11 @@ class SdlApp : GuiApp
         this.id = id.length > 0 ? id : name;
     }
 
-    override AppResult initialize(string[] args)
+    override bool initialize(string[] args)
     {
-        const initRes = super.initialize(args);
-        if (!initRes.isInit || initRes.isExit)
+        if (!super.initialize(args))
         {
-            return initRes;
+            return false;
         }
 
         if (isHeadless)
@@ -164,7 +162,7 @@ class SdlApp : GuiApp
         if (const err = createSystems(gservices.platform.cap))
         {
             uservices.logger.errorf("SDL systems creation error: " ~ err.toString);
-            return initRes;
+            return false;
         }
 
         if (onCreatedSystems)
@@ -175,7 +173,7 @@ class SdlApp : GuiApp
         if (const err = initializeSystems(flags, gservices.platform.cap))
         {
             uservices.logger.errorf("SDL systems initialization error: " ~ err.toString);
-            return initRes;
+            return false;
         }
 
         //TODO move to systems
@@ -568,8 +566,7 @@ class SdlApp : GuiApp
             }
         };
 
-        return AppResult(isExit : false, isInit:
-            true);
+        return true;
     }
 
     ComResult createSystems(CapGraphics caps)

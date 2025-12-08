@@ -1,6 +1,5 @@
 module api.dm.gui.apps.gui_app;
 
-import api.core.apps.app_result : AppResult;
 import api.core.loggers.logging : Logging;
 import api.core.configs.keyvalues.config : Config;
 import api.core.contexts.context : Context;
@@ -23,12 +22,11 @@ abstract class GuiApp : LoopApp
         Interact interact;
     }
 
-    override AppResult initialize(string[] args)
+    override bool initialize(string[] args)
     {
-        const initRes = super.initialize(args);
-        if (!initRes.isInit || initRes.isExit)
+        if (!super.initialize(args))
         {
-            return initRes;
+            return false;
         }
 
         mainLoop = newMainLoop;
@@ -58,8 +56,7 @@ abstract class GuiApp : LoopApp
         interact = createInteract(uservices.logging, uservices.config, uservices
                 .context);
 
-        return AppResult(isExit : false, isInit:
-            true);
+        return true;
     }
 
     Loop newMainLoop()

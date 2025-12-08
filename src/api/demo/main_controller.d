@@ -30,17 +30,11 @@ class MainController
 
         application = new SdlApp("SdlApp");
         auto initRes = application.initialize(args);
-        if (!initRes.isInit)
+        if (!initRes)
         {
             import std.stdio : stderr;
 
-            stderr.writeln("Not initialized!");
-            return 1;
-        }
-
-        if (initRes.isExit)
-        {
-            writeln("Exit after initializaion");
+            stderr.writeln("Not initialized or exit!");
             return 0;
         }
 

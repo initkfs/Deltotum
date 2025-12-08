@@ -2,7 +2,6 @@ module api.core.apps.cli_app;
 
 import api.core.components.units.simple_unit : SimpleUnit;
 import api.core.apps.crashes.crash_handler : CrashHandler;
-import api.core.apps.app_result : AppResult;
 import api.core.components.uni_component : UniComponent;
 import api.core.loggers.logging : Logging;
 import api.core.configs.configs : Configuration;
@@ -54,7 +53,7 @@ class CliApp : SimpleUnit
         size_t cliStartupDelayMs;
     }
 
-    AppResult initialize(string[] args)
+    bool initialize(string[] args)
     {
         super.initialize;
 
@@ -84,8 +83,7 @@ class CliApp : SimpleUnit
             if (cliResult.helpWanted)
             {
                 cli.printer.printHelp(cliResult);
-                return AppResult(isExit : true, isInit:
-                    false);
+                return false;
             }
 
             if (cliStartupDelayMs > 0)
@@ -133,7 +131,7 @@ class CliApp : SimpleUnit
             consumeThrowable(e, true);
         }
 
-        return AppResult(false, true);
+        return true;
     }
 
     void exit(int code = 0)

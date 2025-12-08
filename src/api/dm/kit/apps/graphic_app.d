@@ -5,7 +5,6 @@ import api.core.loggers.logging : Logging;
 import api.core.configs.keyvalues.config : Config;
 import api.core.contexts.context : Context;
 import api.core.resources.resourcing : Resourcing;
-import api.core.apps.app_result : AppResult;
 import api.core.apps.cli_app : CliApp;
 import api.dm.kit.components.graphic_component : GraphicComponent;
 import api.dm.kit.components.graphic_component : GraphicComponent;
@@ -81,12 +80,11 @@ abstract class GraphicApp : CliApp
         ComScreen newComScreen();
     }
 
-    override AppResult initialize(string[] args)
+    override bool initialize(string[] args)
     {
-        const initRes = super.initialize(args);
-        if (!initRes.isInit || initRes.isExit)
+        if (!super.initialize(args))
         {
-            return initRes;
+            return false;
         }
 
         if (!_graphicServices)
@@ -105,8 +103,7 @@ abstract class GraphicApp : CliApp
 
         _i18n = createI18n(uservices.logging, uservices.config, uservices.context);
 
-        return AppResult(isExit : false, isInit:
-            true);
+        return true;
     }
 
     abstract ulong ticksMs();
