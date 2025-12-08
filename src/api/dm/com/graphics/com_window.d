@@ -1,10 +1,10 @@
-module api.dm.com.graphic.com_window;
+module api.dm.com.graphics.com_window;
 
 import api.dm.com.com_result : ComResult;
-import api.dm.com.graphic.com_surface : ComSurface;
+import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.com.com_native_ptr : ComNativePtr;
 import api.dm.com.com_destroyable : ComDestroyable;
-import api.dm.com.graphic.com_screen : ComScreenId;
+import api.dm.com.graphics.com_screen : ComScreenId;
 
 import api.math.geom2.rect2 : Rect2d;
 

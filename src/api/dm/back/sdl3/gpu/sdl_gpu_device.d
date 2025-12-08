@@ -1,8 +1,8 @@
 module api.dm.back.sdl3.gpu.sdl_gpu_device;
 
 import api.dm.com.com_result : ComResult;
-import api.dm.com.graphic.com_window : ComWindow;
-import api.dm.com.graphic.com_renderer : ComRenderer;
+import api.dm.com.graphics.com_window : ComWindow;
+import api.dm.com.graphics.com_renderer : ComRenderer;
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
 
 import api.dm.back.sdl3.gpu.sdl_gpu_shader : SdlGPUShader;
@@ -10,10 +10,10 @@ import api.dm.back.sdl3.gpu.sdl_gpu_pipeline : SdlGPUPipeline;
 
 import std.string : toStringz, fromStringz;
 import api.math.geom2.rect2 : Rect2d;
-import api.dm.com.gpu.com_3d_types : ComVertex;
+import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 
 import api.dm.back.sdl3.externs.csdl3;
-import api.dm.com.graphic.com_renderer;
+import api.dm.com.graphics.com_renderer;
 
 alias ComShaderFormat = SDL_GPUShaderFormat;
 

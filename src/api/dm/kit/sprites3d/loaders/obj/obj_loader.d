@@ -1,6 +1,6 @@
 module api.dm.kit.sprites3d.loaders.obj.obj_loader;
 
-import api.dm.com.gpu.com_3d_types : ComVertex;
+import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 import std.algorithm.iteration : splitter;
 import std.algorithm.searching : startsWith;
 import std.algorithm : filter;

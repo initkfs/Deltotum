@@ -5,7 +5,7 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.factories.factory_kit : FactoryKit;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.windows.window : Window;
-import api.dm.com.graphic.com_surface : ComSurface;
+import api.dm.com.graphics.com_surface : ComSurface;
 
 import std.stdio;
 

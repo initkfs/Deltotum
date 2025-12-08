@@ -1,12 +1,12 @@
 module api.dm.kit.assets.fonts.factories.bitmap_font_factory;
 
 import api.dm.kit.components.graphic_component : GraphicComponent;
-import api.dm.com.graphic.com_font : ComFontHinting, ComFont;
-import api.dm.com.graphic.com_surface : ComSurface;
+import api.dm.com.graphics.com_font : ComFontHinting, ComFont;
+import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.kit.assets.fonts.glyphs.glyph : Glyph;
 import api.core.utils.factories : ProviderFactory;
 
-import api.dm.com.graphic.com_font : ComFont;
+import api.dm.com.graphics.com_font : ComFont;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 

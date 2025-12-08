@@ -4,7 +4,7 @@ import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
 
-import api.dm.com.graphic.com_surface : ComSurface;
+import api.dm.com.graphics.com_surface : ComSurface;
 
 //TODO remove native api
 import api.dm.lib.cairo.cairo_surface : CairoSurface;

@@ -1,5 +1,5 @@
 module api.dm.kit.screens.single_screen;
-import api.dm.com.graphic.com_screen : ComScreenId, ComScreenMode;
+import api.dm.com.graphics.com_screen : ComScreenId, ComScreenMode;
 import api.math.geom2.rect2 : Rect2d;
 
 /**

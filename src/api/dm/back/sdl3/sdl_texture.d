@@ -1,13 +1,13 @@
 module api.dm.back.sdl3.sdl_texture;
 
 import api.dm.com.com_result : ComResult;
-import api.dm.com.graphic.com_texture : ComTexture, ComTextureWrapMode, ComTextureScaleMode;
+import api.dm.com.graphics.com_texture : ComTexture, ComTextureWrapMode, ComTextureScaleMode;
 import api.dm.com.com_native_ptr : ComNativePtr;
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
 import api.dm.back.sdl3.sdl_renderer : SdlRenderer;
-import api.dm.com.graphic.com_surface : ComSurface;
-import api.dm.com.graphic.com_blend_mode : ComBlendMode;
-import api.dm.com.graphic.com_texture : ComTextureScaleMode;
+import api.dm.com.graphics.com_surface : ComSurface;
+import api.dm.com.graphics.com_blend_mode : ComBlendMode;
+import api.dm.com.graphics.com_texture : ComTextureScaleMode;
 
 import api.math.geom2.rect2 : Rect2d;
 import api.math.pos2.flip : Flip;

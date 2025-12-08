@@ -1,9 +1,9 @@
-module api.dm.com.graphic.com_renderer;
+module api.dm.com.graphics.com_renderer;
 
 import api.dm.com.com_result : ComResult;
-import api.dm.com.graphic.com_texture : ComTexture, ComTextureWrapMode;
-import api.dm.com.graphic.com_surface : ComSurface;
-import api.dm.com.graphic.com_blend_mode : ComBlendMode;
+import api.dm.com.graphics.com_texture : ComTexture, ComTextureWrapMode;
+import api.dm.com.graphics.com_surface : ComSurface;
+import api.dm.com.graphics.com_blend_mode : ComBlendMode;
 import api.dm.com.com_destroyable : ComDestroyable;
 
 import api.math.pos2.flip: Flip;

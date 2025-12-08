@@ -122,7 +122,7 @@ class HopalongGenerator : Control
             auto newX = pCenter.x + px;
             auto newY = pCenter.y + py;
 
-            import api.dm.com.graphic.com_blend_mode : ComBlendMode;
+            import api.dm.com.graphics.com_blend_mode : ComBlendMode;
 
             // if(const err = screenSurface.lock){
 

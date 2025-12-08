@@ -1,6 +1,6 @@
 module api.dm.back.sdl3.sdl_app;
 
-import api.dm.com.graphic.com_screen;
+import api.dm.com.graphics.com_screen;
 
 import api.dm.com.com_result : ComResult;
 import api.core.loggers.logging : Logging;
@@ -40,11 +40,11 @@ import api.dm.back.sdl3.sdl_surface : SdlSurface;
 import api.dm.back.sdl3.fonts.sdl_ttf_font : SdlTTFFont;
 import api.dm.back.sdl3.images.sdl_image : SdlImage;
 import api.dm.back.sdl3.mixers.sdl_mixer_chunk : SdlMixerChunk;
-import api.dm.com.graphic.com_texture : ComTexture;
-import api.dm.com.graphic.com_surface : ComSurface;
-import api.dm.com.graphic.com_screen : ComScreenId;
-import api.dm.com.graphic.com_font : ComFont;
-import api.dm.com.graphic.com_image : ComImage;
+import api.dm.com.graphics.com_texture : ComTexture;
+import api.dm.com.graphics.com_surface : ComSurface;
+import api.dm.com.graphics.com_screen : ComScreenId;
+import api.dm.com.graphics.com_font : ComFont;
+import api.dm.com.graphics.com_image : ComImage;
 import api.dm.com.platforms.com_platform : ComPlatform;
 
 import api.dm.kit.windows.window : Window;

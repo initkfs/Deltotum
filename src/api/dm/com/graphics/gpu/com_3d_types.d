@@ -1,4 +1,4 @@
-module api.dm.com.gpu.com_3d_types;
+module api.dm.com.graphics.gpu.com_3d_types;
 
 import api.math.geom2.vec3 : Vec3f;
 

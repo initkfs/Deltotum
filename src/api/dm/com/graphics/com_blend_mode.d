@@ -1,4 +1,4 @@
-module api.dm.com.graphic.com_blend_mode;
+module api.dm.com.graphics.com_blend_mode;
 
 /**
  * Authors: initkfs

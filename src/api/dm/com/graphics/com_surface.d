@@ -1,9 +1,9 @@
-module api.dm.com.graphic.com_surface;
+module api.dm.com.graphics.com_surface;
 
 import api.dm.com.com_result : ComResult;
 import api.dm.com.com_destroyable : ComDestroyable;
 import api.dm.com.com_error_manageable: ComErrorManageable;
-import api.dm.com.graphic.com_blend_mode : ComBlendMode;
+import api.dm.com.graphics.com_blend_mode : ComBlendMode;
 import api.dm.com.com_native_ptr : ComNativePtr;
 
 import api.math.geom2.rect2 : Rect2d;

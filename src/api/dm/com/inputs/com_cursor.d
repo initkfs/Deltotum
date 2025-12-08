@@ -1,7 +1,7 @@
 module api.dm.com.inputs.com_cursor;
 
 import api.dm.com.com_result : ComResult;
-import api.dm.com.graphic.com_window: ComWindow;
+import api.dm.com.graphics.com_window: ComWindow;
 import api.dm.com.com_destroyable : ComDestroyable;
 import api.dm.com.com_error_manageable: ComErrorManageable;
 

@@ -2,11 +2,11 @@ module api.dm.kit.windows.window;
 
 import api.dm.kit.scenes.scene2d : Scene2d;
 import api.dm.kit.scenes.scene3d : Scene3d;
-import api.dm.com.graphic.com_screen : ComScreenId;
+import api.dm.com.graphics.com_screen : ComScreenId;
 import api.dm.kit.factories.factory_kit : FactoryKit;
 import api.dm.kit.components.graphic_component : GraphicComponent;
 import api.dm.com.com_native_ptr : ComNativePtr;
-import api.dm.com.graphic.com_window : ComWindowId, ComWindow, ComWindowProgressState;
+import api.dm.com.graphics.com_window : ComWindowId, ComWindow, ComWindowProgressState;
 import api.math.geom2.rect2 : Rect2d;
 import api.math.geom2.vec2 : Vec2d, Vec2i;
 
@@ -17,7 +17,7 @@ import api.dm.kit.screens.single_screen : SingleScreen;
 
 import api.core.loggers.logging : Logging;
 
-import api.dm.com.graphic.com_renderer : ComRenderer;
+import api.dm.com.graphics.com_renderer : ComRenderer;
 import api.dm.gui.themes.icons.icon_name;
 
 /**

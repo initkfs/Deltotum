@@ -3,7 +3,7 @@ module api.dm.kit.assets.null_asset;
 import api.dm.kit.assets.asset : Asset;
 import api.core.loggers.null_logging : NullLogging;
 
-import api.dm.com.graphic.com_font : ComFont;
+import api.dm.com.graphics.com_font : ComFont;
 
 /**
  * Authors: initkfs
@@ -32,8 +32,8 @@ class NullAsset : Asset
     override ComFont newFont(string fontFilePath, size_t size)
     {
         import api.dm.com.com_result : ComResult;
-        import api.dm.com.graphic.com_surface : ComSurface;
-        import api.dm.com.graphic.com_font: ComFontHinting;
+        import api.dm.com.graphics.com_surface : ComSurface;
+        import api.dm.com.graphics.com_font: ComFontHinting;
 
         return new class ComFont
         {

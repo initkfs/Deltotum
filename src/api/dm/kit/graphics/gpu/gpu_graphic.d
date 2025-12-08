@@ -12,7 +12,7 @@ import api.core.utils.factories : ProviderFactory;
 import api.dm.back.sdl3.externs.csdl3;
 import api.dm.back.sdl3.gpu.sdl_gpu_device : SdlGPUDevice;
 import api.dm.back.sdl3.gpu.sdl_gpu_pipeline : SdlGPUPipeline;
-import api.dm.com.gpu.com_3d_types : ComVertex;
+import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 
 /**
  * Authors: initkfs

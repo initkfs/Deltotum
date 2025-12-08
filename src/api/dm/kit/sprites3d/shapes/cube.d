@@ -1,7 +1,7 @@
 module api.dm.kit.sprites3d.shapes.cube;
 
 import api.dm.kit.sprites3d.shapes.shape3d : Shape3d;
-import api.dm.com.gpu.com_3d_types : ComVertex;
+import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 
 /**
  * Authors: initkfs

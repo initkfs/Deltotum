@@ -250,7 +250,7 @@ class Graphics : Control
         // graphic.ellipse(Vec2d(650, 100), Vec2d(40, 20), RGBA.lightseagreen, true, false);
         // graphic.ellipse(Vec2d(650, 150), Vec2d(40, 20), RGBA.lightseagreen, false, true);
 
-        // import api.dm.com.graphic.com_blend_mode : ComBlendMode;
+        // import api.dm.com.graphics.com_blend_mode : ComBlendMode;
 
         // graphic.fillRect(750, 100, 50, 50, RGBA.lightpink);
         // auto color2 = RGBA.lightcoral;

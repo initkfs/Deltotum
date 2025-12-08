@@ -1,7 +1,7 @@
 module api.dm.back.sdl3.gpu.sdl_gpu_shader;
 
 import api.dm.com.com_result : ComResult;
-import api.dm.com.graphic.com_window : ComWindow;
+import api.dm.com.graphics.com_window : ComWindow;
 import api.dm.back.sdl3.base.sdl_object_wrapper : SdlObjectWrapper;
 
 import api.dm.back.sdl3.externs.csdl3;

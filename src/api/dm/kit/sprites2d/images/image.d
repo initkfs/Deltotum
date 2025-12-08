@@ -2,9 +2,9 @@ module api.dm.kit.sprites2d.images.image;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 
-import api.dm.com.graphic.com_texture : ComTexture;
-import api.dm.com.graphic.com_image : ComImage;
-import api.dm.com.graphic.com_surface : ComSurface;
+import api.dm.com.graphics.com_texture : ComTexture;
+import api.dm.com.graphics.com_image : ComImage;
+import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;
 import api.math.geom2.rect2 : Rect2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;

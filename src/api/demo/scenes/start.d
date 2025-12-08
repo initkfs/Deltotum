@@ -28,7 +28,7 @@ import api.dm.back.sdl3.gpu.sdl_gpu_device : SdlGPUDevice;
 import api.dm.back.sdl3.gpu.sdl_gpu_pipeline : SdlGPUPipeline;
 import api.dm.back.sdl3.gpu.sdl_gpu_shader : SdlGPUShader;
 import api.dm.kit.sprites3d.cameras.perspective_camera : PerspectiveCamera;
-import api.dm.com.gpu.com_3d_types : ComVertex;
+import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 import api.dm.kit.sprites3d.shapes.shape3d : Shape3d;
 import api.dm.kit.sprites3d.lightings.phongs.materials.phong_material : PhongMaterial;
 import api.dm.kit.sprites3d.shapes.cube : Cube;

@@ -26,7 +26,7 @@ import std.math.algebraic : abs;
 import std.typecons : Nullable;
 import std.variant : Variant;
 
-import api.dm.com.graphic.com_surface : ComSurface;
+import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 
 import Math = api.dm.math;

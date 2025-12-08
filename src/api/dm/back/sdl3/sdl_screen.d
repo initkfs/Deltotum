@@ -1,8 +1,8 @@
 module api.dm.back.sdl3.sdl_screen;
 
-import api.dm.com.graphic.com_screen : ComScreenId, ComScreen, ComScreenMode, ComScreenOrientation, ComScreenDpi;
+import api.dm.com.graphics.com_screen : ComScreenId, ComScreen, ComScreenMode, ComScreenOrientation, ComScreenDpi;
 import api.dm.com.com_result : ComResult;
-import api.dm.com.graphic.com_window : ComWindow;
+import api.dm.com.graphics.com_window : ComWindow;
 import api.dm.back.sdl3.base.sdl_object : SdlObject;
 
 import api.math.geom2.rect2 : Rect2d;

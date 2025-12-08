@@ -1,7 +1,7 @@
 module api.dm.gui.windows.gui_window;
 
 import api.dm.kit.windows.window : Window;
-import api.dm.com.graphic.com_window : ComWindow;
+import api.dm.com.graphics.com_window : ComWindow;
 import api.dm.gui.themes.theme : Theme;
 import api.dm.gui.interacts.interact : Interact;
 import api.dm.gui.scenes.gui_scene : GuiScene;

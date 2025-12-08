@@ -6,7 +6,7 @@ import api.dm.com.inputs.com_keyboard : ComKeyName, ComKeyboard, ComKeyModifier;
 import api.dm.back.sdl3.base.sdl_object : SdlObject;
 import api.dm.com.com_result : ComResult;
 import api.dm.com.com_native_ptr : ComNativePtr;
-import api.dm.com.graphic.com_window : ComWindow;
+import api.dm.com.graphics.com_window : ComWindow;
 
 import api.dm.back.sdl3.externs.csdl3;
 

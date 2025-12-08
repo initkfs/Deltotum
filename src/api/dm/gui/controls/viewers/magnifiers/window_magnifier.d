@@ -1,6 +1,6 @@
 module api.dm.gui.controls.viewers.magnifiers.window_magnifier;
 
-import api.dm.com.graphic.com_surface : ComSurface;
+import api.dm.com.graphics.com_surface : ComSurface;
 
 import api.dm.kit.inputs.pointers.events.pointer_event : PointerEvent;
 import api.dm.kit.sprites2d.textures.texture2d : Texture2d;

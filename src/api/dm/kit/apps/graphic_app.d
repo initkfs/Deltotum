@@ -1,6 +1,6 @@
 module api.dm.kit.apps.graphic_app;
 
-import api.dm.com.graphic.com_font : ComFont;
+import api.dm.com.graphics.com_font : ComFont;
 import api.core.loggers.logging : Logging;
 import api.core.configs.keyvalues.config : Config;
 import api.core.contexts.context : Context;
@@ -31,14 +31,14 @@ import api.dm.kit.events.kit_event_manager : KitEventManager;
 
 import std.typecons : Nullable;
 
-import api.dm.com.graphic.com_renderer : ComRenderer;
-import api.dm.com.graphic.com_surface : ComSurface;
+import api.dm.com.graphics.com_renderer : ComRenderer;
+import api.dm.com.graphics.com_surface : ComSurface;
 import api.dm.com.platforms.com_platform : ComPlatform;
 import api.dm.kit.platforms.platform : Platform;
 import api.dm.kit.platforms.screens.screening : Screening;
 import api.dm.kit.platforms.caps.cap_graphics : CapGraphics;
 import api.dm.kit.platforms.timers.timing : Timing;
-import api.dm.com.graphic.com_screen : ComScreen;
+import api.dm.com.graphics.com_screen : ComScreen;
 import api.dm.kit.i18n.i18n : I18n;
 import api.dm.kit.i18n.langs.lang_messages : LangMessages;
 import api.dm.gui.interacts.interact : Interact;
@@ -322,7 +322,7 @@ abstract class GraphicApp : CliApp
         auto mustBeResDir = uservices.reslocal.resourcesDir;
 
         import api.dm.kit.assets.asset : Asset;
-        import api.dm.com.graphic.com_font : ComFont;
+        import api.dm.com.graphics.com_font : ComFont;
 
         //default dir?
         string assetsDir = !mustBeResDir.isNull ? mustBeResDir.get : null;

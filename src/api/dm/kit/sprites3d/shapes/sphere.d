@@ -1,7 +1,7 @@
 module api.dm.kit.sprites3d.shapes.sphere;
 
 import api.dm.kit.sprites3d.shapes.shape3d : Shape3d;
-import api.dm.com.gpu.com_3d_types : ComVertex;
+import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 
 import api.math.matrices.matrix : Matrix4x4f;
 import api.dm.back.sdl3.externs.csdl3;

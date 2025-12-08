@@ -1,7 +1,7 @@
 module api.dm.gui.themes.theme;
 
 import api.dm.kit.graphics.colors.rgba : RGBA;
-import api.dm.com.graphic.com_font: ComFont;
+import api.dm.com.graphics.com_font: ComFont;
 import api.math.pos2.insets : Insets;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.gui.themes.icons.icon_pack : IconPack;

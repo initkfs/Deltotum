@@ -1,7 +1,7 @@
 module api.dm.kit.sprites3d.shapes.frustum;
 
 import api.dm.kit.sprites3d.shapes.shape3d : Shape3d;
-import api.dm.com.gpu.com_3d_types : ComVertex;
+import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 
 import api.math.geom3.frustum3 : Frustum3;
 import api.math.geom3.plane : Plane;
