@@ -33,7 +33,7 @@ class TabHeader : Control
             bool isAdd = addTab(tab);
             if (!isAdd)
             {
-                logger.error("Failed to add tab: ", tab);
+                throw new Exception("Failed to add tab: " ~ tab.toString);
             }
         }
     }

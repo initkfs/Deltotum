@@ -34,9 +34,6 @@ abstract class GuiApp : LoopApp
         mainLoop = newMainLoop;
         assert(mainLoop);
 
-        uservices.logger.tracef("Create main loop with frame rate: %s, update delta: %s", mainLoop.frameRate, mainLoop
-                .updateDelta);
-
         if (isIconPackEnabled)
         {
             auto newIconPack = new IconPack;
@@ -57,11 +54,9 @@ abstract class GuiApp : LoopApp
                 .context, uservices
                 .resources);
         assert(theme);
-        uservices.logger.trace("Create and load theme");
 
         interact = createInteract(uservices.logging, uservices.config, uservices
                 .context);
-        uservices.logger.trace("Create interaction");
 
         return AppResult(isExit : false, isInit:
             true);
@@ -95,8 +90,6 @@ abstract class GuiApp : LoopApp
         {
             isIconPackEnabled = uservices.config.getBool(KitConfigKeys.graphicsIsIconPack);
         }
-
-        uservices.logger.trace("Icon pack enabled: ", isIconPackEnabled);
     }
 
     Theme createTheme(Logging logging, Config config, Context context, Resourcing resources)

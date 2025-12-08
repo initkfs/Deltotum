@@ -262,7 +262,7 @@ class Window : GraphicComponent
         ComWindowId winId;
         if (const err = comWindow.getId(winId))
         {
-            logger.error(err.toString);
+            throw new Exception(err.toString);
         }
         return winId;
     }
@@ -287,8 +287,7 @@ class Window : GraphicComponent
 
         if (const err = comWindow.show)
         {
-            logger.error(err.toString);
-            return false;
+            throw new Exception(err.toString);
         }
 
         isShowing = true;
@@ -358,31 +357,23 @@ class Window : GraphicComponent
         if (renderer && isDestroyRenderer)
         {
             renderer.dispose;
-            logger.trace("Dispose renderer in window with id: ", windowId);
         }
 
         if (isDestroyScenes)
         {
-            logger.trace("Start dispose all scenes");
             foreach (Scene2d scene; _scenes)
             {
                 const sceneName = scene.name;
                 if (scene.isComponentCreated)
                 {
-                    logger.trace("Found created scene in window: ", sceneName);
                     if (scene.isRunning)
                     {
                         scene.stop;
                         assert(scene.isStopping);
-                        logger.trace("Stop created scene: ", sceneName);
                     }
 
                     scene.dispose;
                     logger.trace("Dispose created scene in window with name: ", sceneName);
-                }
-                else
-                {
-                    logger.trace("Scene2d not created, disposing skipped: ", sceneName);
                 }
             }
         }

@@ -110,8 +110,7 @@ class Graphic : LoggableUnit
         ubyte r, g, b, a;
         if (const err = renderer.getDrawColor(r, g, b, a))
         {
-            logger.error("Error getting current renderer color: ", err);
-            return RGBA.init;
+            throw new Exception("Error getting current renderer color: " ~ err.toString);
         }
         return RGBA(r, g, b, (cast(double) a) / RGBA.maxColor);
     }
@@ -135,7 +134,7 @@ class Graphic : LoggableUnit
     {
         if (const err = renderer.setDrawColor(color.r, color.g, color.b, color.aByte))
         {
-            logger.error("Error setting render color: ", err);
+            throw new Exception("Error setting render color: " ~ err.toString);
         }
     }
 
@@ -154,7 +153,7 @@ class Graphic : LoggableUnit
         ComBlendMode mustBePrevMode;
         if (const err = renderer.getBlendMode(mustBePrevMode))
         {
-            logger.error("Error getting renderer blengind mode: ", err);
+            logger.error("Error getting renderer blending mode: ", err);
             return ComBlendMode.none;
         }
 
@@ -185,10 +184,10 @@ class Graphic : LoggableUnit
 
     void line(double startX, double startY, double endX, double endY)
     {
-        if (const err = renderer.drawLine(toFloat(startX), toFloat(startY), toFloat(endX), toFloat(
+        if (!renderer.drawLine(toFloat(startX), toFloat(startY), toFloat(endX), toFloat(
                 endY)))
         {
-            logger.error("Line drawing error. ", renderer.getLastErrorNew);
+            throw new Exception("Line drawing error: " ~ renderer.getLastErrorNew);
         }
     }
 
@@ -229,9 +228,9 @@ class Graphic : LoggableUnit
             return;
         }
 
-        if (const err = renderer.drawLines(points))
+        if (!renderer.drawLines(points))
         {
-            logger.error("Lines drawing error: ", err);
+            throw new Exception("Lines drawing error: " ~ renderer.getLastErrorNew);
         }
 
         if (points.length >= 3)
@@ -261,9 +260,9 @@ class Graphic : LoggableUnit
 
     void point(double x, double y)
     {
-        if (const err = renderer.drawPoint(toFloat(x), toFloat(y)))
+        if (!renderer.drawPoint(toFloat(x), toFloat(y)))
         {
-            logger.error("Point drawing error: ", err);
+            throw new Exception("Point drawing error: " ~ renderer.getLastErrorNew);
         }
     }
 
@@ -294,9 +293,9 @@ class Graphic : LoggableUnit
         {
             return;
         }
-        if (const err = renderer.drawPoints(points))
+        if (!renderer.drawPoints(points))
         {
-            logger.error("Double points drawing error: ", err);
+            throw new Exception("Double points drawing error: " ~ renderer.getLastErrorNew);
         }
     }
 
@@ -327,9 +326,9 @@ class Graphic : LoggableUnit
             restoreColor;
         }
 
-        if (const err = renderer.drawPoints(p))
+        if (!renderer.drawPoints(p))
         {
-            logger.error("Float points drawing error: ", err);
+            throw new Exception("Float points drawing error: " ~ renderer.getLastErrorNew);
         }
     }
 
@@ -784,10 +783,10 @@ class Graphic : LoggableUnit
 
     void fillRect(double x, double y, double width, double height)
     {
-        if (const err = renderer.drawFillRect(toFloat(x), toFloat(y), toFloat(width), toFloat(
+        if (!renderer.drawFillRect(toFloat(x), toFloat(y), toFloat(width), toFloat(
                 height)))
         {
-            logger.error("Fill rect error: ", err);
+            throw new Exception("Fill rect error: " ~ renderer.getLastErrorNew);
         }
     }
 
@@ -798,9 +797,9 @@ class Graphic : LoggableUnit
         {
             restoreColor;
         }
-        if (const err = renderer.drawFillRects(rects))
+        if (!renderer.drawFillRects(rects))
         {
-            logger.error("Fill rects error: ", err);
+            throw new Exception("Fill rects error: " ~ renderer.getLastErrorNew);
         }
     }
 
@@ -831,9 +830,9 @@ class Graphic : LoggableUnit
 
     void rect(double x, double y, double width, double height)
     {
-        if (const err = renderer.drawRect(toFloat(x), toFloat(y), toFloat(width), toFloat(height)))
+        if (!renderer.drawRect(toFloat(x), toFloat(y), toFloat(width), toFloat(height)))
         {
-            logger.error("Draw rect error: ", err);
+            throw new Exception("Draw rect error: " ~ renderer.getLastErrorNew);
         }
     }
 
@@ -950,9 +949,9 @@ class Graphic : LoggableUnit
 
     void rendererPresent()
     {
-        if (const err = renderer.present)
+        if (!renderer.tryPresent)
         {
-            logger.error(err.toString);
+            throw new Exception("Error presenting renderer: " ~ renderer.getLastErrorNew);
         }
     }
 
@@ -974,8 +973,9 @@ class Graphic : LoggableUnit
             restoreColor;
         }
 
-        if (const err = renderer.clearAndFill)
+        if (!renderer.tryClearAndFill)
         {
+            throw new Exception("Error clearing error: " ~ renderer.getLastErrorNew);
             //TODO logging in main loop?
         }
     }
@@ -985,7 +985,7 @@ class Graphic : LoggableUnit
         Rect2d v;
         if (const err = renderer.getViewport(v))
         {
-            logger.error("Error getting renderer viewport: ", err);
+            throw new Exception("Error getting renderer viewport: " ~ err);
         }
         return v;
     }
@@ -994,7 +994,7 @@ class Graphic : LoggableUnit
     {
         if (const err = renderer.setViewport(v))
         {
-            logger.error("Error setting renderer viewport: ", err);
+            throw new Exception("Error setting renderer viewport: " ~ err);
         }
     }
 

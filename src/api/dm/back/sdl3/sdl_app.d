@@ -129,8 +129,6 @@ class SdlApp : GuiApp
             return initRes;
         }
 
-        uservices.logger.trace("Graphic app initialized, starting backend");
-
         if (isHeadless)
         {
             import std.process : environment;
@@ -142,7 +140,6 @@ class SdlApp : GuiApp
         uint flags = 0;
 
         flags |= SDL_INIT_VIDEO;
-        uservices.logger.trace("Video enabled");
 
         if (isAudioEnabled)
         {
@@ -170,8 +167,6 @@ class SdlApp : GuiApp
             return initRes;
         }
 
-        uservices.logger.trace("SDL systems created");
-
         if (onCreatedSystems)
         {
             onCreatedSystems();
@@ -197,16 +192,12 @@ class SdlApp : GuiApp
             string gpuName;
             if (const err = gpuDevice.getDriverNameNew(gpuName))
             {
-                uservices.logger.trace("Error reading GPU driver name: ", err.toString);
+                uservices.logger.error("Error reading GPU driver name: ", err.toString);
             }
             else
             {
                 uservices.logger.trace("Create GPU device: ", gpuName);
             }
-        }
-        else
-        {
-            uservices.logger.trace("GPU device not requested");
         }
 
         uservices.logger.trace("SDL systems initialized");
@@ -345,10 +336,6 @@ class SdlApp : GuiApp
         if (const err = sdlLib.setEnableScreenSaver(isScreenSaverEnabled))
         {
             uservices.logger.errorf("Error screensaver: " ~ err.toString);
-        }
-        else
-        {
-            uservices.logger.trace("Screensaver: ", sdlLib.isScreenSaverEnabled);
         }
 
         comScreen = new SDLScreen;
@@ -794,8 +781,8 @@ class SdlApp : GuiApp
 
         loop.isAutoStart = isAutoStart;
         loop.setUp;
-        uservices.logger.tracef("Init loop, autostart: %s, running: %s", loop.isAutoStart, loop
-                .isRunning);
+        uservices.logger.tracef("Init loop, autostart: %s, running: %s, fps: %s, udt: %s", loop.isAutoStart, loop
+                .isRunning, loop.frameRate, loop.updateDelta);
     }
 
     override ComPlatform newComPlatform()

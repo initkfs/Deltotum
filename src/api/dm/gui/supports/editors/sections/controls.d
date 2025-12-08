@@ -440,7 +440,6 @@ class Controls : Control
         auto colorPick2 = new ColorPicker;
         root2.addCreate(colorPick2);
 
-
         //import api.dm.kit.addon.media.ai.images.fusion_brain_api;
         // auto brainApi = new FusionBrainApi(logging, config, context);
         // brainApi.onImageBinaryData = (data) {
@@ -866,16 +865,12 @@ class Controls : Control
         winRoot1.layout.isDecreaseRootWidth = true;
 
         auto winMin = new ParallelogramButton("Min", IconName.arrow_down_outline, (ref e) {
-            logger.trace("Window is minimized before request: ", window.isMinimized);
             window.minimize;
-            logger.trace("Window is minimized after request: ", window.isMinimized);
         });
         winRoot1.addCreate(winMin);
 
         auto winMax = new ParallelogramButton("Max", IconName.arrow_up_outline, (ref e) {
-            logger.trace("Window is maximized before request: ", window.isMaximized);
             window.maximize;
-            logger.trace("Window is maximized after request: ", window.isMaximized);
         });
         winRoot1.addCreate(winMax);
         winMax.layout.isFillStartToEnd = false;
@@ -898,9 +893,7 @@ class Controls : Control
 
         auto winFull = new Button("FullScr", IconName.expand_outline, (ref e) {
             auto oldValue = window.isFullScreen;
-            logger.trace("Window fullscreen before request: ", oldValue);
             window.isFullScreen = !oldValue;
-            logger.trace("Window fullscreen after request: ", window.isFullScreen);
         });
 
         winFull.styleId = DefaultStyle.danger;
@@ -916,9 +909,7 @@ class Controls : Control
 
         auto winDec = new ParallelogramButton(null, IconName.image_outline, (ref e) {
             auto oldValue = window.isDecorated;
-            logger.trace("Window decorated before request: ", oldValue);
             window.isDecorated = !oldValue;
-            logger.trace("Window fullscreen after request: ", window.isDecorated);
         });
         winDec.styleId = DefaultStyle.warning;
         winDec.isInverted = true;
@@ -926,9 +917,7 @@ class Controls : Control
 
         auto winResize = new ParallelogramButton(null, IconName.resize_outline, (ref e) {
             auto oldValue = window.isResizable;
-            logger.trace("Window resizable before request: ", oldValue);
             window.isResizable = !oldValue;
-            logger.trace("Window resizable after request: ", window.isResizable);
         });
         winResize.styleId = DefaultStyle.warning;
         winResize.isInverted = true;

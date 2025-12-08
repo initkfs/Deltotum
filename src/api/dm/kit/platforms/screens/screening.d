@@ -47,8 +47,10 @@ class Screening
         int x, y, width, height;
         if (!comScreen.getBounds(id, x, y, width, height))
         {
-            logging.logger.errorf("Error getting screen bounds with id: ", id, comScreen
-                    .getLastErrorNew);
+            import std.format : format;
+
+            throw new Exception(format("Error getting screen bounds with id: ", id, comScreen
+                    .getLastErrorNew));
         }
         return Rect2d(x, y, width, height);
     }
@@ -58,8 +60,10 @@ class Screening
         int x, y, width, height;
         if (!comScreen.getUsableBounds(id, x, y, width, height))
         {
-            logging.logger.errorf("Error getting screen bounds with id %s: %s", id, comScreen
-                    .getLastErrorNew);
+            import std.format : format;
+
+            throw new Exception(format("Error getting screen bounds with id %s: %s", id, comScreen
+                    .getLastErrorNew));
         }
         return Rect2d(x, y, width, height);
     }
@@ -72,8 +76,10 @@ class Screening
         ComScreenMode mode;
         if (!comScreen.getMode(id, mode))
         {
-            logging.logger.errorf("Error getting screen mode with id %s: %s", id, comScreen
-                    .getLastErrorNew);
+            import std.format : format;
+
+            throw new Exception(format("Error getting screen mode with id %s: %s", id, comScreen
+                    .getLastErrorNew));
         }
 
         return mode;
@@ -84,7 +90,10 @@ class Screening
         ComScreenOrientation result;
         if (!comScreen.getOrientation(id, result))
         {
-            logging.logger.errorf("Error getting screen orientation with index %s: %s", id, comScreen.getLastErrorNew);
+            import std.format : format;
+
+            throw new Exception(format("Error getting screen orientation with index %s: %s", id, comScreen
+                    .getLastErrorNew));
         }
         return result;
     }

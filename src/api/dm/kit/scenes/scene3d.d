@@ -253,7 +253,6 @@ class Scene3d : Scene2d
                 if (!gpu.startRenderPass(&depthStencilTargetInfo))
                 {
                     gpu.dev.resetState;
-                    //logger.error("Error starting gpu rendering");
                     throw new Exception("Error starting gpu rendering with depth");
                 }
             }
@@ -275,7 +274,6 @@ class Scene3d : Scene2d
                 if (!gpu.startRenderPass)
                 {
                     gpu.dev.resetState;
-                    //logger.error("Error starting gpu rendering");
                     throw new Exception("Error starting gpu rendering");
                 }
             }
@@ -289,7 +287,6 @@ class Scene3d : Scene2d
             if (!gpu.dev.endRenderPass(isSubmit : false))
             {
                 gpu.dev.resetState;
-                //logger.error("Error ending gpu renderer");
                 throw new Exception("Error ending gpu renderer");
             }
         }
@@ -298,7 +295,6 @@ class Scene3d : Scene2d
             if (!gpu.dev.endRenderPass)
             {
                 gpu.dev.resetState;
-                //logger.error("Error ending gpu renderer");
                 throw new Exception("Error ending gpu renderer");
             }
         }

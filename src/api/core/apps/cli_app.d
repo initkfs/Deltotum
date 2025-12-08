@@ -126,8 +126,6 @@ class CliApp : SimpleUnit
                     .context);
             assert(uservices.resources);
 
-            uservices.logger.trace("Cli services built");
-
             uservices.isBuilt = true;
         }
         catch (Exception e)
