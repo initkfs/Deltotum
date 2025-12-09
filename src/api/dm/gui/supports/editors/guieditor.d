@@ -97,13 +97,7 @@ class GuiEditor : GuiScene
             root.addCreate(fractalsTab);
         }
 
-        import api.dm.gui.supports.editors.sections.electronics : Electronics;
-
-        auto eleTab = new Tab("Ele");
-        eleTab.content = new Electronics;
-        root.addCreate(eleTab);
-
-        root.changeTab(eleTab);
+        root.changeTab(controlsTab);
 
         //import std;
         // createDebugger;

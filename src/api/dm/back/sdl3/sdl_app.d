@@ -67,7 +67,6 @@ import std.stdio;
 import KitConfigKeys = api.dm.kit.kit_config_keys;
 
 import api.dm.lib.cairo : CairoLib;
-import api.dm.lib.libxml.native : LibxmlLib;
 
 //import api.dm.lib.chipmunk.libs : ChipmLib;
 
@@ -98,7 +97,6 @@ class SdlApp : GuiApp
         Nullable!SdlJoystick sdlCurrentJoystick;
 
         CairoLib cairoLib;
-        LibxmlLib libxmlLib;
 
         SDLScreen comScreen;
 
@@ -293,21 +291,6 @@ class SdlApp : GuiApp
 
             cairoLibForLoad.load;
         }
-
-        auto xmlLibForLoad = new LibxmlLib;
-
-        xmlLibForLoad.onLoad = () {
-            libxmlLib = xmlLibForLoad;
-            uservices.logger.trace("Load libxml library: ", xmlLibForLoad.libVersionStr);
-        };
-
-        xmlLibForLoad.onLoadErrors = (err) {
-            uservices.logger.error("Libxml loading error: ", err);
-            xmlLibForLoad.unload;
-            libxmlLib = null;
-        };
-
-        xmlLibForLoad.load;
 
         //Physics
         // auto physLibForLoad = new ChipmLib;
