@@ -326,7 +326,6 @@ abstract class GraphicApp : CliApp
 
         Asset asset = new Asset(uservices.logging, assetsDir, comFontProvider);
 
-        //TODO from config, allsystem;
         uint fontSizeSmall = 8;
         uint fontSizeMedium = 14;
         uint fontSizeLarge = 20;
@@ -417,90 +416,40 @@ abstract class GraphicApp : CliApp
             auto defaultSize = fontSizeMedium;
             if (config.hasKey(KitConfigKeys.fontSizeMedium))
             {
-                logging.logger.trace("Check font medium size in config with key: ", KitConfigKeys
-                        .fontSizeMedium);
                 defaultSize = cast(uint) config.getPositiveLong(KitConfigKeys.fontSizeMedium);
-                logging.logger.trace("Set font default medium size from config: ", defaultSize);
-            }
-            else
-            {
-                logging.logger.tracef("Default font medium size is used: ", defaultSize);
             }
 
             ComFont defaultFont = asset.newFont(fontFilePath, defaultSize);
             asset.addFont(defaultFont);
             logging.logger.tracef("Create medium font with size %s from %s", defaultSize, fontFilePath);
 
-            if (config.hasKey(KitConfigKeys.fontIsCreateSmall))
+            if (config.hasKey(KitConfigKeys.fontIsCreateSmall) && config.getBool(
+                    KitConfigKeys.fontIsCreateSmall))
             {
-                logging.logger.trace("Checking FactoryKit small font in config with key: ", KitConfigKeys
-                        .fontIsCreateSmall);
-                const isSmallFontCreate = config.getBool(KitConfigKeys.fontIsCreateSmall);
-                if (isSmallFontCreate)
+                uint size = fontSizeSmall;
+                if (config.hasKey(KitConfigKeys.fontSizeSmall))
                 {
-                    uint size = fontSizeSmall;
-                    if (config.hasKey(KitConfigKeys.fontSizeSmall))
-                    {
-                        logging.logger.trace("Search small font size in config with key: ", KitConfigKeys
-                                .fontSizeSmall);
-                        size = cast(uint) config.getPositiveLong(KitConfigKeys.fontSizeSmall);
-                    }
-                    else
-                    {
-                        logging.logger.trace("Default font small size is used: ", size);
-                    }
+                    size = cast(uint) config.getPositiveLong(KitConfigKeys.fontSizeSmall);
+                }
 
-                    ComFont fontSmall = asset.newFont(fontFilePath, size);
-                    asset.addFontSmall(fontSmall);
-                    logging.logger.tracef("Create small font with size %s from file %s", size, fontFilePath);
-                }
-                else
-                {
-                    logging.logger.trace("The config does not allow creating a small font with key: ", KitConfigKeys
-                            .fontIsCreateSmall);
-                }
-            }
-            else
-            {
-                logging.logger.trace("Config does not contain small font key: ", KitConfigKeys
-                        .fontIsCreateSmall);
+                ComFont fontSmall = asset.newFont(fontFilePath, size);
+                asset.addFontSmall(fontSmall);
+                logging.logger.tracef("Create small font with size %s from file %s", size, fontFilePath);
+
             }
 
-            if (config.hasKey(KitConfigKeys.fontIsCreateLarge))
+            if (config.hasKey(KitConfigKeys.fontIsCreateLarge) && config.getBool(
+                    KitConfigKeys.fontIsCreateLarge))
             {
-                logging.logger.trace("Checking FactoryKit large font in config with key: ", KitConfigKeys
-                        .fontIsCreateLarge);
-
-                const isLargeFontCreate = config.getBool(KitConfigKeys.fontIsCreateLarge);
-                if (isLargeFontCreate)
+                uint size = fontSizeLarge;
+                if (config.hasKey(KitConfigKeys.fontSizeLarge))
                 {
-                    uint size = fontSizeLarge;
-                    if (config.hasKey(KitConfigKeys.fontSizeLarge))
-                    {
-                        logging.logger.trace("Search large font size in config with key: ", KitConfigKeys
-                                .fontSizeLarge);
-                        size = cast(uint) config.getPositiveLong(KitConfigKeys.fontSizeLarge);
-                        logging.logger.trace("Set large font size from config: ", size);
-                    }
-                    else
-                    {
-                        logging.logger.trace("Default font large size is used: ", size);
-                    }
+                    size = cast(uint) config.getPositiveLong(KitConfigKeys.fontSizeLarge);
+                }
 
-                    ComFont fontLarge = asset.newFont(fontFilePath, size);
-                    asset.addFontLarge(fontLarge);
-                    logging.logger.tracef("Create large font with size %s from file %s", size, fontFilePath);
-                }
-                else
-                {
-                    logging.logger.trace("The config does not allow creating a large font with key: ", KitConfigKeys
-                            .fontIsCreateLarge);
-                }
-            }
-            else
-            {
-                logging.logger.trace("The config does not contain the large font FactoryKit key: ", KitConfigKeys
-                        .fontIsCreateLarge);
+                ComFont fontLarge = asset.newFont(fontFilePath, size);
+                asset.addFontLarge(fontLarge);
+                logging.logger.tracef("Create large font with size %s from file %s", size, fontFilePath);
             }
         }
 
