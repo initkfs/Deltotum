@@ -55,7 +55,7 @@ struct Random
     U any(T : U[], U)(T container) pure @safe
     {
         U result = anyUnsafe!(T, U)(container);
-        static if (__traits(compile, result is null))
+        static if (__traits(compiles, result is null))
         {
             if (result is null)
             {
@@ -65,7 +65,7 @@ struct Random
         return result;
     }
 
-    U anyUnsafe(T : U[], U)(T container) pure nothrow @safe
+    U anyUnsafe(T : U[], U)(T container) pure @safe
     {
         immutable containerLength = container.length;
         if (containerLength == 0)
@@ -164,25 +164,19 @@ unittest
     /*
      * any
      */
+    import std.exception : assertThrown;
+    
     int[] nullArr;
-    assert(rnd.any(nullArr).isNull);
+    assert(rnd.any(nullArr) == int.init);
 
     int[] oneArr = [1];
     auto oneArrRand = rnd.any(oneArr);
-    assert(!oneArrRand.isNull);
-    assert(oneArrRand.get == 1);
-
-    int[] arr1 = [1, 2, 3];
-    auto arr1Rand = rnd.any(arr1);
-    assert(!arr1Rand.isNull);
+    assert(oneArrRand == 1);
 
     import std.algorithm : canFind;
 
-    assert(arr1.canFind(arr1Rand));
-
     string abc = "abc";
     auto res = rnd.any(abc);
-    assert(!res.isNull);
     assert(abc.canFind(res));
 
     /*

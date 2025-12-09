@@ -1,7 +1,7 @@
 module api.dm.kit.sprites3d.pipelines.items.simple_group;
 
 import api.dm.kit.sprites3d.pipelines.pipeline_group : PipelineGroup;
-import api.math.geom2.vec3 : Vec3f;
+import api.math.geom3.vec3 : Vec3f;
 import Math = api.math;
 
 import api.dm.back.sdl3.externs.csdl3;

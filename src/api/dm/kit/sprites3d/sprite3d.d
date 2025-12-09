@@ -3,7 +3,7 @@ module api.dm.kit.sprites3d.sprite3d;
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.scenes.scene3d : SceneTransforms;
 import api.dm.kit.sprites3d.cameras.perspective_camera : PerspectiveCamera;
-import api.math.geom2.vec3 : Vec3f;
+import api.math.geom3.vec3 : Vec3f;
 import api.math.matrices.matrix : Matrix4x4f;
 import api.math.quaternion : Quaternion;
 import Math = api.math;

@@ -422,7 +422,7 @@ struct DenseMatrix(T = double, size_t RowDim = 1, size_t ColDim = 1)
 
     static if (RowDim == 4 && ColDim == 4)
     {
-        import api.math.geom2.vec3 : Vec3f;
+        import api.math.geom3.vec3 : Vec3f;
 
         Vec3f transformDir(Vec3f direction) const nothrow pure @safe
         {

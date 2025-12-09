@@ -2,10 +2,10 @@ module api.dm.kit.sprites3d.cameras.perspective_camera;
 
 import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.scenes.scene3d : Scene3d;
-import api.math.geom3.frustum3 : Frustum3;
+import api.math.geom3.frustum3 : Frustum3f;
 
 import Math = api.math;
-import api.math.geom2.vec3 : Vec3f;
+import api.math.geom3.vec3 : Vec3f;
 import api.math.matrices.matrix : Matrix4x4f;
 import api.math.matrices.affine3;
 
@@ -19,7 +19,7 @@ class PerspectiveCamera : Sprite2d
     {
         Scene3d targetScene;
 
-        Frustum3 _frustum;
+        Frustum3f _frustum;
     }
 
     double lastCursorX = 0;
@@ -156,10 +156,10 @@ class PerspectiveCamera : Sprite2d
     void recalcFrustum()
     {
         float ratio = window.width / window.height;
-        _frustum = Frustum3(cameraPos, cameraFront, cameraUp, cameraRight, Math.degToRad(fov), ratio, nearPlane, farPlane);
+        _frustum = Frustum3f(cameraPos, cameraFront, cameraUp, cameraRight, Math.degToRad(fov), ratio, nearPlane, farPlane);
     }
 
-    Frustum3 frustum() const => _frustum;
+    Frustum3f frustum() const => _frustum;
 
     override void update(double dt)
     {

@@ -7,7 +7,7 @@ import api.dm.kit.sprites3d.lightings.lighting_material : LightingMaterial;
 import api.math.matrices.matrix : Matrix4x4f;
 import api.dm.back.sdl3.externs.csdl3;
 
-import api.math.geom2.vec3 : Vec3f;
+import api.math.geom3.vec3 : Vec3f;
 
 /**
  * Authors: initkfs

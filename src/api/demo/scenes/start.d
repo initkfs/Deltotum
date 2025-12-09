@@ -18,7 +18,7 @@ import api.dm.kit.sprites2d.images;
 import Math = api.dm.math;
 import api.math.random : Random;
 import api.math.geom2.vec2 : Vec2d;
-import api.math.geom2.vec3 : Vec3f;
+import api.math.geom3.vec3 : Vec3f;
 
 import api.dm.kit.factories;
 

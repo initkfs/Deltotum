@@ -1,12 +1,12 @@
-module api.math.geom3.plane;
+module api.math.geom3.plane3;
 
-import api.math.geom2.vec3: Vec3f;
+import api.math.geom3.vec3: Vec3f;
 
 /**
  * Authors: initkfs
  * 3D plane in normal form: ax + by + cz + d = 0
  */
-struct Plane
+struct Plane3f
 {
     Vec3f normal;
     float distance = 0;

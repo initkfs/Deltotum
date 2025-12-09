@@ -1,6 +1,6 @@
 module api.math.quaternion;
 
-import api.math.geom2.vec3 : Vec3f;
+import api.math.geom3.vec3 : Vec3f;
 import api.math.matrices.matrix : Matrix4x4f;
 
 import Math = api.math;

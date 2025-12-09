@@ -3,7 +3,7 @@ module api.dm.kit.sprites3d.lightings.lights.base_light;
 import api.dm.kit.sprites3d.sprite3d : Sprite3d;
 import api.dm.kit.sprites3d.shapes.shape3d : Shape3d;
 
-import api.math.geom2.vec3: Vec3f;
+import api.math.geom3.vec3: Vec3f;
 
 /**
  * Authors: initkfs

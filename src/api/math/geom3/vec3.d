@@ -1,4 +1,4 @@
-module api.math.geom2.vec3;
+module api.math.geom3.vec3;
 
 import Math = api.math;
 

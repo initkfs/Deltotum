@@ -3,9 +3,9 @@ module api.dm.kit.sprites3d.shapes.frustum;
 import api.dm.kit.sprites3d.shapes.shape3d : Shape3d;
 import api.dm.com.graphics.gpu.com_3d_types : ComVertex;
 
-import api.math.geom3.frustum3 : Frustum3;
-import api.math.geom3.plane : Plane;
-import api.math.geom2.vec3 : Vec3f;
+import api.math.geom3.frustum3 : Frustum3f;
+import api.math.geom3.plane3 : Plane3f;
+import api.math.geom3.vec3 : Vec3f;
 
 import Math = api.math;
 
@@ -17,17 +17,17 @@ class Frustum : Shape3d
 {
     protected
     {
-        Frustum3 frustum;
+        Frustum3f frustum;
     }
 
     this(Vec3f cameraPos, Vec3f cameraFront, Vec3f cameraUp, Vec3f cameraRight,
         float fovYRad, float aspectRatio, float nearDist, float farDist)
     {
-        this.frustum = Frustum3(cameraPos, cameraFront, cameraUp, cameraRight,
+        this.frustum = Frustum3f(cameraPos, cameraFront, cameraUp, cameraRight,
             Math.degToRad(fovYRad), aspectRatio, nearDist, farDist);
     }
 
-    this(Frustum3 frustum)
+    this(Frustum3f frustum)
     {
         this.frustum = frustum;
     }
@@ -36,12 +36,12 @@ class Frustum : Shape3d
     {
         vertices = new ComVertex[8];
 
-        Plane near = frustum.getPlane(0);
-        Plane far = frustum.getPlane(1);
-        Plane left = frustum.getPlane(2);
-        Plane right = frustum.getPlane(3);
-        Plane top = frustum.getPlane(4);
-        Plane bottom = frustum.getPlane(5);
+        Plane3f near = frustum.getPlane(0);
+        Plane3f far = frustum.getPlane(1);
+        Plane3f left = frustum.getPlane(2);
+        Plane3f right = frustum.getPlane(3);
+        Plane3f top = frustum.getPlane(4);
+        Plane3f bottom = frustum.getPlane(5);
 
         // Near plane corners
         vertices[0] = intersectThreePlanes(near, top, left); // Near-top-left
@@ -77,7 +77,7 @@ class Frustum : Shape3d
         ];
     }
 
-    ComVertex intersectThreePlanes(Plane p1, Plane p2, Plane p3)
+    ComVertex intersectThreePlanes(Plane3f p1, Plane3f p2, Plane3f p3)
     {
         Vec3f n1 = p1.normal;
         Vec3f n2 = p2.normal;

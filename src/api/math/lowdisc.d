@@ -1,7 +1,7 @@
 module api.math.lowdisc;
 
 import api.math.geom2.vec2 : Vec2d;
-import api.math.geom2.vec3: Vec3d;
+import api.math.geom3.vec3: Vec3d;
 
 
 import Math = api.math;
