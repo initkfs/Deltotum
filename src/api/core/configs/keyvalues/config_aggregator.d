@@ -221,6 +221,31 @@ class ConfigAggregator : Config
         return false;
     }
 
+    override float getFloat(string key) const
+    {
+        if (auto config = searchConfigOrNull(key))
+        {
+            return config.getFloat(key);
+        }
+        throw new Exception("Not found float value in configs with key: " ~ key);
+    }
+
+    override bool setFloat(string key, float value)
+    {
+        if (auto config = searchConfigOrNull(key))
+        {
+            return config.setFloat(key, value);
+        }
+        
+        if (isThrowOnFailSetter)
+        {
+            import std.conv : text;
+
+            throw new Exception(text("Not found config for key ", key, " and float value ", value));
+        }
+        return false;
+    }
+
     override double getDouble(string key) const
     {
         if (auto config = searchConfigOrNull(key))

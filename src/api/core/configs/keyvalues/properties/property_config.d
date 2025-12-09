@@ -234,6 +234,20 @@ class PropertyConfig : Config
 
     override bool setLong(string key, long value) => setValue(key, value);
 
+    override float getFloat(string key) const
+    {
+        auto valuePtr = containsLinePtr(key);
+        if (!valuePtr)
+        {
+            throw new Exception(
+                "Not found float value in config with key: " ~ key);
+        }
+
+        return getValue!float(valuePtr);
+    }
+
+    override bool setFloat(string key, float value) => setValue(key, value);
+
     override double getDouble(string key) const
     {
         auto valuePtr = containsLinePtr(key);
@@ -374,10 +388,13 @@ value4=true";
     assert(config.hasKey("value3"));
     assert(config.hasKey("value4"));
 
-    import std.conv: to;
+    import std.conv : to;
 
     auto val1 = config.getLong("value1");
     assert(val1 == 1, val1.to!string);
+
+    auto val3f = config.getFloat("value3");
+    assert(val3f == 2.5, val3f.to!string);
 
     auto val3 = config.getDouble("value3");
     assert(val3 == 2.5, val3.to!string);
@@ -394,6 +411,9 @@ value4=true";
 
     auto longV1 = config.getLong("value1");
     assert(longV1 == 2, longV1.to!string);
+
+    auto fV3 = config.getFloat("value3");
+    assert(fV3 == 10.5, fV3.to!string);
 
     auto dV3 = config.getDouble("value3");
     assert(dV3 == 10.5, dV3.to!string);

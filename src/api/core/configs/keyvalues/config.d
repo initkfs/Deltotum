@@ -26,6 +26,9 @@ abstract class Config
         long getLong(string key) const;
         bool setLong(string key, long value);
 
+        float getFloat(string key) const;
+        bool setFloat(string key, float value);
+
         double getDouble(string key) const;
         bool setDouble(string key, double value);
 
@@ -86,6 +89,36 @@ abstract class Config
                     "Expected finite double for config with key '%s', but received %s", key, value));
         }
         return setDouble(key, value);
+    }
+
+    float getFiniteFloat(string key) const
+    {
+        auto value = getFloat(key);
+        import std.math.traits : isFinite;
+
+        if (!isFinite(value))
+        {
+            import std.format : format;
+
+            throw new Exception(format(
+                    "Expected finite float value from config with key '%s', but received %s", key, value));
+        }
+
+        return value;
+    }
+
+    bool setFiniteFloat(string key, float value)
+    {
+        import std.math.traits : isFinite;
+
+        if (!isFinite(value))
+        {
+            import std.format : format;
+
+            throw new Exception(format(
+                    "Expected finite float for config with key '%s', but received %s", key, value));
+        }
+        return setFloat(key, value);
     }
 
     string getNotEmptyString(string key) const

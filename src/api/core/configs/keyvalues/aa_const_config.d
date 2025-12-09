@@ -103,6 +103,20 @@ class AAConstConfig(V = string) : Config
 
     override bool setLong(string key, long value) const => false;
 
+    override float getFloat(string key) const
+    {
+        const valuePtr = containsPtr(key);
+        if (!valuePtr)
+        {
+            throw new Exception(
+                "Not found float value in AA config with key: " ~ key);
+        }
+
+        return getValue!float(valuePtr);
+    }
+
+    override bool setFloat(string key, float value) const => false;
+
     override double getDouble(string key) const
     {
         const valuePtr = containsPtr(key);
@@ -162,6 +176,9 @@ unittest
 
     auto val2 = config.getString("value2");
     assert(val2 == "random text", val2.to!string);
+
+    auto val3f = config.getFloat("value3");
+    assert(isClose(val3f, 2.5), val3f.to!string);
 
     auto val3 = config.getDouble("value3");
     assert(isClose(val3, 2.5), val3.to!string);

@@ -46,6 +46,12 @@ class NullConfig : Config
     override long getPositiveLong(string key) const => 1;
     override bool setPositiveLong(string key, long value) const => false;
 
+    override float getFloat(string key) const => 0;
+    override bool setFloat(string key, float value) const => false;
+
+    override float getFiniteFloat(string key) const => 0;
+    override bool setFiniteFloat(string key, float value) const => false;
+
     override double getFiniteDouble(string key) const => 0;
     override bool setFiniteDouble(string key, double value) const => false;
 
@@ -82,6 +88,9 @@ unittest
 
     assert(nc.getLong(key) == 0);
     assert(!nc.setLong(key, 0));
+
+    assert(nc.getFloat(key) == 0);
+    assert(!nc.setFloat(key, 4.5));
 
     assert(nc.getDouble(key) == 0);
     assert(!nc.setDouble(key, 4.5));
