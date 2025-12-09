@@ -227,12 +227,6 @@ class Fractals : Control
 
         auto newton = new Newton(shapeSize, shapeSize);
         container3.addCreate(createFractalInfo("Newton", newton));
-
-        import api.dm.addon.procedural.fractals.hopalongs.hopalong_generator : HopalongGenerator;
-
-        auto hopGen = new HopalongGenerator;
-        hopGen.isBorder = true;
-        container3.addCreate(createFractalControlInfo("Hopalong", hopGen));
     }
 
 }
