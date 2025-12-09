@@ -44,7 +44,7 @@ class Image : Texture2d
         super(texture);
     }
 
-    bool load(ComSurface image, int requestWidth = -1, int requestHeight = -1)
+    void load(ComSurface image, int requestWidth = -1, int requestHeight = -1)
     {
         assert(image);
         int imageWidth = image.getWidth;
@@ -180,17 +180,14 @@ class Image : Texture2d
 
         if (const err = texture.getSize(width, height))
         {
-            logger.errorf(err.toString);
-            return false;
+            throw new Exception(err.toString);
         }
 
         forceWidth = width;
         forceHeight = height;
-
-        return true;
     }
 
-    bool load(string path, int requestWidth = -1, int requestHeight = -1)
+    void load(string path, int requestWidth = -1, int requestHeight = -1)
     {
         import std.path : isAbsolute;
         import std.file : isFile, exists;
@@ -200,60 +197,52 @@ class Image : Texture2d
         string imagePath = path.isAbsolute ? path : asset.imagePath(path);
         if (imagePath.length == 0 || !imagePath.exists || !imagePath.isFile)
         {
-            logger.error("Unable to load image, empty path or not a file: ", imagePath);
-            return false;
+            throw new Exception("Unable to load image, empty path or not a file: " ~ imagePath);
         }
 
         ComImage image = graphic.comImageProvider.getNew();
         if (const err = image.create(path))
         {
-            logger.error("Unable to load image: ", err);
-            return false;
+            throw new Exception("Unable to load image: "~ err);
         }
 
         ComSurface comSurf;
         if (const err = image.toSurface(comSurf))
         {
-            logger.error("Cannot convert image to surface from path ", path);
-            return false;
-        }
-        if (load(comSurf, requestWidth, requestHeight))
-        {
-            comSurf.dispose;
-            return true;
+            throw new Exception("Cannot convert image to surface from path ", path);
         }
 
-        logger.error("Error loading image from ", path);
-        return false;
+        scope(exit){
+            comSurf.dispose;
+        }
+
+        load(comSurf, requestWidth, requestHeight);
     }
 
-    bool loadRaw(const(void[]) content, int requestWidth = -1, int requestHeight = -1)
+    void loadRaw(const(void[]) content, int requestWidth = -1, int requestHeight = -1)
     {
         auto image = graphic.comImageProvider.getNew();
         import std.conv : to;
 
         if (const err = image.create(content))
         {
-            logger.error("Cannot load image from raw data: ", err);
+            throw new Exception("Cannot load image from raw data: " ~ err);
         }
 
         ComSurface surf;
         if (const err = image.toSurface(surf))
         {
-            logger.error("Cannot convert image to surface from raw data: ", err);
+            throw new Exception("Cannot convert image to surface from raw data: " ~ err);
         }
 
-        if (load(surf, requestWidth, requestHeight))
-        {
+        scope(exit){
             surf.dispose;
-            return true;
         }
 
-        logger.error("Error loading raw image");
-        return false;
+        load(surf, requestWidth, requestHeight);
     }
 
-    bool load(RGBA[][] colorBuf, bool isKeepColorBuffer = false)
+    void load(RGBA[][] colorBuf, bool isKeepColorBuffer = false)
     {
         assert(width > 0);
         assert(height > 0);
@@ -291,8 +280,6 @@ class Image : Texture2d
         {
             originalBuffer = colorBuf;
         }
-
-        return true;
     }
 
     void savePNG(ComSurface surf, string path)

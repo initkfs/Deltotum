@@ -67,48 +67,43 @@ class AnimImage : Image
         isDrawTexture = false;
     }
 
-    override bool load(string path, int requestWidth = -1, int requestHeight = -1)
+    override void load(string path, int requestWidth = -1, int requestHeight = -1)
     {
-        const isLoad = super.load(path, requestWidth, requestHeight);
+        super.load(path, requestWidth, requestHeight);
 
-        if (isLoad)
+        if (frameWidth == 0)
         {
-            if (frameWidth == 0)
+            if (frameCols == 0)
             {
-                if (frameCols == 0)
-                {
-                    throw new Exception("Cannot set frame width: number of columns is zero");
-                }
-
-                if (width == 0)
-                {
-                    throw new Exception("Cannot set frame width: texture width is zero");
-                }
-                frameWidth = width / frameCols;
+                throw new Exception("Cannot set frame width: number of columns is zero");
             }
 
-            if (frameHeight == 0)
+            if (width == 0)
             {
-                if (frameRows == 0)
-                {
-                    throw new Exception("Cannot set frame height: number of rows is zero");
-                }
-
-                if (height == 0)
-                {
-                    throw new Exception("Cannot set frame height: texture height is zero");
-                }
-                frameHeight = height / frameRows;
+                throw new Exception("Cannot set frame width: texture width is zero");
             }
-
-            _textureWidth = width;
-            _textureHeight = height;
-
-            width = frameWidth * scale;
-            height = frameHeight * scale;
+            frameWidth = width / frameCols;
         }
 
-        return isLoad;
+        if (frameHeight == 0)
+        {
+            if (frameRows == 0)
+            {
+                throw new Exception("Cannot set frame height: number of rows is zero");
+            }
+
+            if (height == 0)
+            {
+                throw new Exception("Cannot set frame height: texture height is zero");
+            }
+            frameHeight = height / frameRows;
+        }
+
+        _textureWidth = width;
+        _textureHeight = height;
+
+        width = frameWidth * scale;
+        height = frameHeight * scale;
     }
 
     bool addIdle(size_t frameCount, int frameRow = 0, bool autoplay = false, int frameDelay = 0, bool isLooping = true, Flip flip = Flip
@@ -259,7 +254,8 @@ class AnimImage : Image
         srcRect.width = frameWidth;
         srcRect.height = frameHeight;
 
-        Flip animFlip = (currentAnimation && currentAnimation.flip != Flip.none) ? currentAnimation.flip : flip;
+        Flip animFlip = (currentAnimation && currentAnimation.flip != Flip.none) ? currentAnimation.flip
+            : flip;
 
         assert(texture);
         Rect2d destRect = {x, y, width, height};

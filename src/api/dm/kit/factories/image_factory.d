@@ -27,11 +27,16 @@ class ImageFactory : GraphicComponent
         build(newImage);
         int reqWidth = requestWidth.to!int;
         int reqHeight = requestHeight.to!int;
-        if (!newImage.load(path, reqWidth, reqHeight))
+
+        try
         {
-            logger.errorf("Unable to load image with width %s, height %s from path %s", reqWidth, reqHeight, path);
-            //TODO log, exception, placeholder, blank image?
+            newImage.load(path, reqWidth, reqHeight);
         }
+        catch (Exception e)
+        {
+            logger.errorf("Unable to load image with width %s, height %s from path %s: %s", reqWidth, reqHeight, path, e);
+        }
+
         initCreate(newImage);
         return newImage;
     }
@@ -40,10 +45,15 @@ class ImageFactory : GraphicComponent
     {
         auto newAnimated = new AnimImage(frameCols, frameRows, frameWidth, frameHeight, frameDelay);
         build(newAnimated);
-        if (!newAnimated.load(path, requestWidth, requestHeight))
+        try
         {
-            //TODO log, exception, placeholder, blank image?
+            newAnimated.load(path, requestWidth, requestHeight);
         }
+        catch (Exception e)
+        {
+            logger.error(e);
+        }
+
         initCreate(newAnimated);
         return newAnimated;
     }
