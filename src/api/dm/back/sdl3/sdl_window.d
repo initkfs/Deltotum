@@ -403,7 +403,7 @@ class SdlWindow : SdlObjectWrapper!SDL_Window, ComWindow
             return ComResult.error("SDL window opacity must be in the range from 0 to 1.0");
         }
 
-        if (!SDL_SetWindowOpacity(ptr, cast(float) value0to1))
+        if (!SDL_SetWindowOpacity(ptr, value0to1))
         {
             return getErrorRes("Error setting SDL window opacity");
         }

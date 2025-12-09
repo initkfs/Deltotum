@@ -169,15 +169,6 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
     ComResult setBlendModeBlend() nothrow => setBlendMode(ComBlendMode.blend);
     ComResult setBlendModeNone() nothrow => setBlendMode(ComBlendMode.none);
 
-    private SDL_FPoint[] toSdlPoints(Vec2f[] vecs) nothrow
-    {
-        import std.algorithm.iteration : map;
-        import std.array : array;
-
-        SDL_FPoint[] points = vecs.map!(p => SDL_FPoint(cast(float) p.x, cast(float) p.y)).array;
-        return points;
-    }
-
     bool drawPoint(float x, float y) nothrow => SDL_RenderPoint(ptr, x, y);
     bool drawPoints(SDL_FPoint[] ps) nothrow => SDL_RenderPoints(ptr, ps.ptr, cast(int) ps.length);
     bool drawPoints(Vec2f[] ps) nothrow => drawPoints(cast(SDL_FPoint[]) ps);
@@ -186,16 +177,6 @@ class SdlRenderer : SdlObjectWrapper!SDL_Renderer, ComRenderer
     bool drawLines(SDL_FPoint[] linePoints) nothrow => SDL_RenderLines(ptr, linePoints.ptr, cast(
             int) linePoints.length);
     bool drawLines(Vec2f[] linePoints) nothrow => drawLines(cast(SDL_FPoint[]) linePoints);
-
-    protected SDL_FRect[] toSdlRects(Rect2f[] rects) nothrow
-    {
-        import std.algorithm.iteration : map;
-        import std.array : array;
-
-        SDL_FRect[] sdlRects = rects.map!(rect => SDL_FRect(cast(float) rect.x, cast(float) rect.y, cast(
-                float) rect.width, cast(float) rect.height)).array;
-        return sdlRects;
-    }
 
     bool drawRect(float x, float y, float width, float height) nothrow
     {

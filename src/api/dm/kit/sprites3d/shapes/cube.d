@@ -25,9 +25,9 @@ class Cube : Shape3d
 
     override void createMesh()
     {
-        const halfWidth = cast(float)(width / 2.0);
-        const halfHeight = cast(float)(height / 2.0);
-        const halfDepth = cast(float)(depth / 2.0);
+        const halfWidth = width / 2.0;
+        const halfHeight = height / 2.0;
+        const halfDepth = depth / 2.0;
 
         vertices = [
             // Front face (Z = +halfDepth), normal: (0, 0, 1)

@@ -112,7 +112,7 @@ class OpenSimplex : Noise
         ];
         for (int i = 0; i < grad2.length; i++)
         {
-            grad2[i] = cast(float)(grad2[i] / NORMALIZER_2D);
+            grad2[i] = (grad2[i] / NORMALIZER_2D);
         }
         for (int i = 0, j = 0; i < GRADIENTS_2D.length; i++, j++)
         {
@@ -175,7 +175,7 @@ class OpenSimplex : Noise
 
         for (int i = 0; i < grad3.length; i++)
         {
-            grad3[i] = cast(float)(grad3[i] / NORMALIZER_3D);
+            grad3[i] = (grad3[i] / NORMALIZER_3D);
         }
         for (int i = 0, j = 0; i < GRADIENTS_3D.length; i++, j++)
         {
@@ -510,7 +510,7 @@ class OpenSimplex : Noise
 
         for (int i = 0; i < grad4.length; i++)
         {
-            grad4[i] = cast(float)(grad4[i] / NORMALIZER_4D);
+            grad4[i] = (grad4[i] / NORMALIZER_4D);
         }
         for (int i = 0, j = 0; i < GRADIENTS_4D.length; i++, j++)
         {
@@ -1493,13 +1493,13 @@ class OpenSimplex : Noise
 
         // Get base points and offsets.
         int xsb = fastFloor(xs), ysb = fastFloor(ys);
-        float xi = cast(float)(xs - xsb), yi = cast(float)(ys - ysb);
+        float xi = (xs - xsb), yi = (ys - ysb);
 
         // Prime pre-multiplication for hash.
         long xsbp = xsb * PRIME_X, ysbp = ysb * PRIME_Y;
 
         // Unskew.
-        float t = (xi + yi) * cast(float) UNSKEW_2D;
+        float t = (xi + yi) * UNSKEW_2D;
         float dx0 = xi + t, dy0 = yi + t;
 
         // First vertex.
@@ -1507,10 +1507,10 @@ class OpenSimplex : Noise
         float value = (a0 * a0) * (a0 * a0) * grad(seed, xsbp, ysbp, dx0, dy0);
 
         // Second vertex.
-        float a1 = cast(float)(2 * (1 + 2 * UNSKEW_2D) * (1 / UNSKEW_2D + 2)) * t + (
-            cast(float)(-2 * (1 + 2 * UNSKEW_2D) * (1 + 2 * UNSKEW_2D)) + a0);
-        float dx1 = dx0 - cast(float)(1 + 2 * UNSKEW_2D);
-        float dy1 = dy0 - cast(float)(1 + 2 * UNSKEW_2D);
+        float a1 = (2 * (1 + 2 * UNSKEW_2D) * (1 / UNSKEW_2D + 2)) * t + (
+            (-2 * (1 + 2 * UNSKEW_2D) * (1 + 2 * UNSKEW_2D)) + a0);
+        float dx1 = dx0 - (1 + 2 * UNSKEW_2D);
+        float dy1 = dy0 - (1 + 2 * UNSKEW_2D);
         value += (a1 * a1) * (a1 * a1) * grad(seed, xsbp + PRIME_X, ysbp + PRIME_Y, dx1, dy1);
 
         // Third and fourth vertices.
@@ -1520,8 +1520,8 @@ class OpenSimplex : Noise
         {
             if (xi + xmyi > 1)
             {
-                float dx2 = dx0 - cast(float)(3 * UNSKEW_2D + 2);
-                float dy2 = dy0 - cast(float)(3 * UNSKEW_2D + 1);
+                float dx2 = dx0 - (3 * UNSKEW_2D + 2);
+                float dy2 = dy0 - (3 * UNSKEW_2D + 1);
                 float a2 = RSQUARED_2D - dx2 * dx2 - dy2 * dy2;
                 if (a2 > 0)
                 {
@@ -1530,8 +1530,8 @@ class OpenSimplex : Noise
             }
             else
             {
-                float dx2 = dx0 - cast(float) UNSKEW_2D;
-                float dy2 = dy0 - cast(float)(UNSKEW_2D + 1);
+                float dx2 = dx0 - UNSKEW_2D;
+                float dy2 = dy0 - (UNSKEW_2D + 1);
                 float a2 = RSQUARED_2D - dx2 * dx2 - dy2 * dy2;
                 if (a2 > 0)
                 {
@@ -1541,8 +1541,8 @@ class OpenSimplex : Noise
 
             if (yi - xmyi > 1)
             {
-                float dx3 = dx0 - cast(float)(3 * UNSKEW_2D + 1);
-                float dy3 = dy0 - cast(float)(3 * UNSKEW_2D + 2);
+                float dx3 = dx0 - (3 * UNSKEW_2D + 1);
+                float dy3 = dy0 - (3 * UNSKEW_2D + 2);
                 float a3 = RSQUARED_2D - dx3 * dx3 - dy3 * dy3;
                 if (a3 > 0)
                 {
@@ -1551,8 +1551,8 @@ class OpenSimplex : Noise
             }
             else
             {
-                float dx3 = dx0 - cast(float)(UNSKEW_2D + 1);
-                float dy3 = dy0 - cast(float) UNSKEW_2D;
+                float dx3 = dx0 - (UNSKEW_2D + 1);
+                float dy3 = dy0 - UNSKEW_2D;
                 float a3 = RSQUARED_2D - dx3 * dx3 - dy3 * dy3;
                 if (a3 > 0)
                 {
@@ -1564,8 +1564,8 @@ class OpenSimplex : Noise
         {
             if (xi + xmyi < 0)
             {
-                float dx2 = dx0 + cast(float)(1 + UNSKEW_2D);
-                float dy2 = dy0 + cast(float) UNSKEW_2D;
+                float dx2 = dx0 + (1 + UNSKEW_2D);
+                float dy2 = dy0 + UNSKEW_2D;
                 float a2 = RSQUARED_2D - dx2 * dx2 - dy2 * dy2;
                 if (a2 > 0)
                 {
@@ -1574,8 +1574,8 @@ class OpenSimplex : Noise
             }
             else
             {
-                float dx2 = dx0 - cast(float)(UNSKEW_2D + 1);
-                float dy2 = dy0 - cast(float) UNSKEW_2D;
+                float dx2 = dx0 - (UNSKEW_2D + 1);
+                float dy2 = dy0 - UNSKEW_2D;
                 float a2 = RSQUARED_2D - dx2 * dx2 - dy2 * dy2;
                 if (a2 > 0)
                 {
@@ -1585,8 +1585,8 @@ class OpenSimplex : Noise
 
             if (yi < xmyi)
             {
-                float dx2 = dx0 + cast(float) UNSKEW_2D;
-                float dy2 = dy0 + cast(float)(UNSKEW_2D + 1);
+                float dx2 = dx0 + UNSKEW_2D;
+                float dy2 = dy0 + (UNSKEW_2D + 1);
                 float a2 = RSQUARED_2D - dx2 * dx2 - dy2 * dy2;
                 if (a2 > 0)
                 {
@@ -1595,8 +1595,8 @@ class OpenSimplex : Noise
             }
             else
             {
-                float dx2 = dx0 - cast(float) UNSKEW_2D;
-                float dy2 = dy0 - cast(float)(UNSKEW_2D + 1);
+                float dx2 = dx0 - UNSKEW_2D;
+                float dy2 = dy0 - (UNSKEW_2D + 1);
                 float a2 = RSQUARED_2D - dx2 * dx2 - dy2 * dy2;
                 if (a2 > 0)
                 {
@@ -1686,7 +1686,7 @@ class OpenSimplex : Noise
 
         // Get base points and offsets.
         int xrb = fastFloor(xr), yrb = fastFloor(yr), zrb = fastFloor(zr);
-        float xi = cast(float)(xr - xrb), yi = cast(float)(yr - yrb), zi = cast(float)(zr - zrb);
+        float xi = (xr - xrb), yi = (yr - yrb), zi = (zr - zrb);
 
         // Prime pre-multiplication for hash. Also flip seed for second lattice copy.
         long xrbp = xrb * PRIME_X, yrbp = yrb * PRIME_Y, zrbp = zrb * PRIME_Z;

@@ -118,7 +118,7 @@ class Input
         float normalizedValue = 0;
         if (axisValue > 0)
         {
-            normalizedValue = cast(float)(axisValue - deadzone) / (maxValue - deadzone);
+            normalizedValue = (axisValue - deadzone) / (maxValue - deadzone);
             if (normalizedValue < errorDelta)
             {
                 return 0;
@@ -126,7 +126,7 @@ class Input
         }
         else
         {
-            normalizedValue = cast(float)(axisValue + deadzone) / (maxValue - deadzone);
+            normalizedValue = (axisValue + deadzone) / (maxValue - deadzone);
             if ((-normalizedValue) < errorDelta)
             {
                 return 0;

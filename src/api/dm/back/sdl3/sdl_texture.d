@@ -712,18 +712,18 @@ class SdlTexture : SdlObjectWrapper!SDL_Texture, ComTexture
             .none)
     {
         SDL_FRect srcRect;
-        srcRect.x = cast(float) srcBounds.x;
-        srcRect.y = cast(float) srcBounds.y;
-        srcRect.w = cast(float) srcBounds.width;
-        srcRect.h = cast(float) srcBounds.height;
+        srcRect.x = srcBounds.x;
+        srcRect.y = srcBounds.y;
+        srcRect.w = srcBounds.width;
+        srcRect.h = srcBounds.height;
 
         //SDL_Rect bounds = window.getScaleBounds;
 
         SDL_FRect destRect;
-        destRect.x = cast(float)(destBounds.x); // + boundsRect.x);
-        destRect.y = cast(float)(destBounds.y); // + boundsRect.y);
-        destRect.w = cast(float) destBounds.width;
-        destRect.h = cast(float) destBounds.height;
+        destRect.x = destBounds.x; // + boundsRect.x);
+        destRect.y = destBounds.y; // + boundsRect.y);
+        destRect.w = destBounds.width;
+        destRect.h = destBounds.height;
 
         //FIXME some texture sizes can crash when changing the angle
         //float newW = height * abs(math.sinDeg(angle)) + width * abs(math.cosDeg(angle));

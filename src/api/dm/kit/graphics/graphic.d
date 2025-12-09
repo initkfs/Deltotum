@@ -2,7 +2,7 @@ module api.dm.kit.graphics.graphic;
 
 import api.dm.com.com_result : ComResult;
 
-import api.core.components.units.services.loggable_unit: LoggableUnit;
+import api.core.components.units.services.loggable_unit : LoggableUnit;
 import api.core.utils.factories : ProviderFactory;
 
 import api.dm.com.graphics.com_renderer : ComRenderer;
@@ -63,12 +63,6 @@ class Graphic : LoggableUnit
     private int toInt(float value) pure @safe const nothrow
     {
         return cast(int) value;
-    }
-
-    pragma(inline, true)
-    private float toFloat(float value) pure @safe const nothrow
-    {
-        return cast(float) value;
     }
 
     Rect2f clip()
@@ -184,8 +178,7 @@ class Graphic : LoggableUnit
 
     void line(float startX, float startY, float endX, float endY)
     {
-        if (!renderer.drawLine(toFloat(startX), toFloat(startY), toFloat(endX), toFloat(
-                endY)))
+        if (!renderer.drawLine(startX, startY, endX, endY))
         {
             throw new Exception("Line drawing error: " ~ renderer.getLastErrorNew);
         }
@@ -260,7 +253,7 @@ class Graphic : LoggableUnit
 
     void point(float x, float y)
     {
-        if (!renderer.drawPoint(toFloat(x), toFloat(y)))
+        if (!renderer.drawPoint(x, y))
         {
             throw new Exception("Point drawing error: " ~ renderer.getLastErrorNew);
         }
@@ -768,8 +761,7 @@ class Graphic : LoggableUnit
 
     void fillRect(float x, float y, float width, float height)
     {
-        if (!renderer.drawFillRect(toFloat(x), toFloat(y), toFloat(width), toFloat(
-                height)))
+        if (!renderer.drawFillRect(x, y, width, height))
         {
             throw new Exception("Fill rect error: " ~ renderer.getLastErrorNew);
         }
@@ -815,7 +807,7 @@ class Graphic : LoggableUnit
 
     void rect(float x, float y, float width, float height)
     {
-        if (!renderer.drawRect(toFloat(x), toFloat(y), toFloat(width), toFloat(height)))
+        if (!renderer.drawRect(x, y, width, height))
         {
             throw new Exception("Draw rect error: " ~ renderer.getLastErrorNew);
         }
@@ -869,7 +861,7 @@ class Graphic : LoggableUnit
                 start = end;
                 continue;
             }
-            line(toFloat(start.x), toFloat(start.y), toFloat(end.x), toFloat(end.y));
+            line(start.x, start.y, end.x, end.y);
             start = end;
         }
     }

@@ -60,8 +60,8 @@ class Perlin : Noise
 
     override RGBA drawNoise(int x, int y)
     {
-        float xCoord = xOrg + x / (cast(float) width) * scale;
-        float yCoord = yOrg + y / (cast(float) height) * scale;
+        float xCoord = xOrg + x / width * scale;
+        float yCoord = yOrg + y / height * scale;
         float value = perlin2d(xCoord, yCoord, freq, depth);
         //ubyte value = cast(ubyte)(ubyte.max * value1);
         //RGBA color = RGBA(ucolor, ucolor, ucolor);
