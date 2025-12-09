@@ -10,7 +10,7 @@ import api.dm.gui.controls.containers.vbox : VBox;
 import api.dm.gui.controls.control: Control;
 
 import Math = api.dm.math;
-import api.math.random : Random;
+import api.math.random : Random, rands;
 import std.conv : to;
 
 import std.random : unpredictableSeed;
@@ -55,7 +55,7 @@ abstract class Maze : Control
         this.cellHeight = cellHeight;
 
         //TODO seed
-        rnd = new Random(seed);
+        rnd = rands(seed);
     }
 
     override void create()

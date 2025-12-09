@@ -6,7 +6,7 @@ import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.colors.hsva : HSVA;
 import api.dm.kit.graphics.canvases.graphic_canvas : GraphicCanvas;
-import api.math.random : Random;
+import api.math.random : Random, rands;
 
 import Math = api.dm.math;
 import api.math.geom2.vec2 : Vec2d;
@@ -38,7 +38,7 @@ class FractalCell : Noise
     this(double width = 100, double height = 100)
     {
         super(width, height);
-        rnd = new Random;
+        rnd = rands;
     }
 
     override RGBA drawNoise(int x, int y)

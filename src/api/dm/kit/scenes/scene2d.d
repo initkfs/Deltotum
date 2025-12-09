@@ -6,6 +6,7 @@ import api.dm.kit.factories.factory_kit : FactoryKit;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.windows.window : Window;
 import api.dm.com.graphics.com_surface : ComSurface;
+import api.math.random : Random, nrands;
 
 import std.stdio;
 
@@ -39,6 +40,11 @@ class Scene2d : EventKitTarget
     Sprite2d drawBeforeSprite;
 
     void delegate(double dt)[] eternalTasks;
+
+    Random* rnd;
+    bool isCreateRandom = true;
+    Random* delegate(Random*) onNewRandom;
+    void delegate(Random*) onRandomCreated;
 
     //protected
     //{
@@ -216,6 +222,16 @@ class Scene2d : EventKitTarget
     override void create()
     {
         super.create;
+
+        if (!rnd && isCreateRandom)
+        {
+            rnd = !onNewRandom ? newRandom : onNewRandom(newRandom);
+            if (onRandomCreated)
+            {
+                onRandomCreated(rnd);
+            }
+        }
+
         createHandlers;
 
         if (udaProcessor)
@@ -223,6 +239,8 @@ class Scene2d : EventKitTarget
             udaProcessor();
         }
     }
+
+    Random* newRandom() => nrands;
 
     void dispatchEvent(Event)(Event e)
     {

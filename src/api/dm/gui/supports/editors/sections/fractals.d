@@ -11,7 +11,7 @@ import api.dm.kit.sprites2d.sprite2d : Sprite2d;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.math.geom2.vec2 : Vec2d;
-import api.math.random : Random;
+import api.math.random : Random, rands;
 import api.dm.gui.controls.containers.container : Container;
 import api.dm.gui.controls.containers.hbox : HBox;
 
@@ -48,7 +48,7 @@ class Fractals : Control
         isBackground = false;
         layout.isAlignY = true;
 
-        random = new Random;
+        random = rands;
     }
 
     override void initialize()

@@ -125,11 +125,11 @@ struct RGBA
         return c;
     }
 
-    import api.math.random : Random;
+    import api.math.random : Random, rands;
 
     static RGBA random(double alpha = maxAlpha)
     {
-        auto rnd = new Random;
+        auto rnd = rands;
         return random(rnd, alpha);
     }
 

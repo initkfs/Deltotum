@@ -3,22 +3,23 @@ module api.math.random;
 import api.core.components.units.services.loggable_unit : LoggableUnit;
 import api.math.geom2.vec2 : Vec2d;
 import std.random : uniform, unpredictableSeed, StdRandom = Random;
-import std.range.primitives;
-import std.typecons : Nullable, Tuple;
-import std.traits;
+import std.range.primitives : isRandomAccessRange;
+import std.traits : isNumeric;
+
+Random rands(uint seed = unpredictableSeed) => Random(seed);
+Random* nrands(uint seed = unpredictableSeed) => new Random(seed);
 
 /**
  * Authors: initkfs
  */
-class Random
+struct Random
 {
-
     private
     {
         StdRandom rnd;
     }
 
-    this(uint seed = unpredictableSeed)
+    this(uint seed)
     {
         rnd = StdRandom(seed);
     }
@@ -46,44 +47,25 @@ class Random
         return value;
     }
 
-    T betweenType(T)() pure @safe if (isNumeric!T)
-    {
-        return between!T(T.min, T.max);
-    }
+    T betweenType(T)() pure @safe if (isNumeric!T) => between!T(T.min, T.max);
+    double between0to1() pure @safe => between!double(0, 1);
+    Vec2d betweenVec(Vec2d min, Vec2d max) pure @safe => Vec2d(between(min.x, max.x), between(min.y, max
+            .y));
 
-    double between0to1() pure @safe
+    U any(T : U[], U)(T container) pure @safe
     {
-        return between!double(0, 1);
-    }
-
-    Vec2d betweenVec(Vec2d min, Vec2d max) pure @safe
-    {
-        const newX = between(min.x, max.x);
-        const newY = between(min.y, max.y);
-        return Vec2d(newX, newY);
-    }
-
-    Nullable!(Unqual!U) any(T : U[], U)(T container) pure @safe
-    {
-        Nullable!(Unqual!U) result;
-        immutable containerLength = container.length;
-        if (containerLength == 0)
+        U result = anyUnsafe!(T, U)(container);
+        static if (__traits(compile, result is null))
         {
-            return result;
+            if (result is null)
+            {
+                throw new Exception("Result must not be null");
+            }
         }
-
-        if (containerLength == 1)
-        {
-            result = container[0];
-            return result;
-        }
-
-        immutable size_t index = between!size_t(0, containerLength - 1);
-        result = container[index];
         return result;
     }
 
-    U anyUnsafe(T : U[], U)(T container) pure @safe
+    U anyUnsafe(T : U[], U)(T container) pure nothrow @safe
     {
         immutable containerLength = container.length;
         if (containerLength == 0)
@@ -107,10 +89,7 @@ class Random
         randomShuffle(range, rnd);
     }
 
-    bool chanceHalf() pure @safe
-    {
-        return chance(0.5);
-    }
+    bool chanceHalf() pure @safe => chance(0.5);
 
     bool chance(double chance0to1) pure @safe
     {
@@ -123,18 +102,28 @@ class Random
         return isChance;
     }
 
-    double chanceAll(Tuple!(double, void delegate())[] chanceDelegates)
+    struct ChanceDg
+    {
+        double chance = 0;
+        void delegate() dg;
+    }
+
+    double chanceAll(ChanceDg[] chanceDelegates)
     {
         const double random0to1 = between0to1;
         double accumulator = 0;
         foreach (chanceDg; chanceDelegates)
         {
-            const double chance = chanceDg[0];
+            const double chance = chanceDg.chance;
             accumulator += chance;
             if (random0to1 <= accumulator)
             {
-                auto delegateForRun = chanceDg[1];
-                delegateForRun();
+                auto delegateForRun = chanceDg.dg;
+                if (delegateForRun)
+                {
+                    delegateForRun();
+                }
+
                 break;
             }
         }

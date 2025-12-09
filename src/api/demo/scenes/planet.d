@@ -60,8 +60,6 @@ class Planet : GuiScene
 
     SkyBox skybox;
 
-    Random rnd;
-
     Cube cube;
     PointLight lamp;
 
@@ -73,7 +71,6 @@ class Planet : GuiScene
     override void create()
     {
         super.create;
-        rnd = new Random;
 
         //camera.fov = 90;
 

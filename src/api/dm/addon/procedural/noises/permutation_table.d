@@ -1,7 +1,7 @@
 module api.dm.addon.procedural.noises.permutation_table;
 
 import Math = api.dm.math;
-import api.math.random : Random;
+import api.math.random : Random, rands;
 import std.random : unpredictableSeed;
 import std.conv : to;
 
@@ -31,7 +31,7 @@ class PermutationTable(size_t Size) if (Size > 1)
         this.inverse = 1.0 / max;
         this._seed = seed;
 
-        this.rnd = new Random(seed);
+        this.rnd = rands(seed);
 
         foreach (i; 0 .. Size)
         {

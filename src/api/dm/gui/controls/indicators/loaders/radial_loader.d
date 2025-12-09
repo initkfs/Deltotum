@@ -61,9 +61,9 @@ class RadialLoader : BaseLoader
     {
         super.create;
 
-        import api.math.random : Random;
+        import api.math.random : rands;
 
-        auto rnd = new Random;
+        auto rnd = rands;
 
         foreach (i; 0 .. segmentsCount)
         {

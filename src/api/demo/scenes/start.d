@@ -60,8 +60,6 @@ class Start : GuiScene
 
     SkyBox skybox;
 
-    Random rnd;
-
     Cube cube;
     PointLight lamp;
     PointLight lamp2;
@@ -96,8 +94,7 @@ class Start : GuiScene
     override void create()
     {
         super.create;
-        rnd = new Random;
-
+        
         //camera.fov = 90;
 
         assert(camera);

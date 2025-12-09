@@ -11,7 +11,7 @@ import api.dm.kit.graphics.colors.rgba : RGBA;
 import MaterialPalette = api.dm.kit.graphics.colors.palettes.material_palette;
 import api.dm.kit.graphics.styles.graphic_style : GraphicStyle;
 import api.dm.kit.sprites2d.tweens.pause_tween2d : PauseTween2d;
-import api.math.random : Random;
+import api.math.random : Random, rands;
 import api.dm.gui.controls.containers.hbox : HBox;
 import api.dm.gui.controls.containers.vbox : VBox;
 
@@ -60,7 +60,7 @@ class Procedural : Control
     {
         super.create;
 
-        rnd = new Random;
+        rnd = rands;
 
         auto mazeRoot = new HBox;
         mazeRoot.isAlignY = true;

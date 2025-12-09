@@ -7,7 +7,7 @@ import api.dm.gui.controls.containers.container : Container;
 import api.dm.kit.graphics.colors.rgba : RGBA;
 import api.math.geom2.rect2 : Rect2d;
 import api.math.geom2.vec2 : Vec2d;
-import api.math.random : Random;
+import api.math.random : Random, rands;
 
 import api.dm.gui.controls.forms.regulates.regulate_text_panel : RegulateTextPanel;
 import api.dm.gui.controls.forms.regulates.regulate_text_field : RegulateTextField;
@@ -45,7 +45,7 @@ class VecFieldGen : Container
     {
         super.create;
 
-        rnd = new Random;
+        rnd = rands;
 
         vecField = new VecField(canvasWidth, canvasHeight);
         vecField.create(0, 0);
